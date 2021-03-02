@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  api:
+    build: .
+    command: npm run server:dev
+    volumes:
+      - ./server:/usr/app/server
+      - ./.env:/usr/app/.env
+      - /usr/app/node_modules
+    ports:
+      - 9006:9006
+    depends_on:
+      - postgres
+    environment:
+      - SQL_HOST=dapp_postgres_1
+
+  postgres:
+    image: postgres:9.6.6-alpine
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: ab1f6hh942sm
+      POSTGRES_USER: dapp_sql_user
+      POSTGRES_DB: dapp_db

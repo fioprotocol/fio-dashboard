@@ -1,0 +1,57 @@
+:global {
+  .checkmark {
+    display: inline-block;
+    width: 138px;
+    height: 112px;
+    background: url("../images/check-mark.svg") no-repeat;
+  }
+
+  .square {
+    display: inline-block;
+    width: 350px;
+    height: 350px;
+    background: url("../images/square.svg") no-repeat;
+  }
+
+  .square-thin {
+    display: inline-block;
+    width: 584px;
+    height: 584px;
+    background: url("../images/square-thin.svg") no-repeat;
+  }
+
+  .polygon {
+    display: inline-block;
+    width: 145px;
+    height: 123px;
+    background: url("../images/polygon.svg") no-repeat;
+  }
+
+  .circle {
+    display: inline-block;
+    width: 402px;
+    height: 622px;
+    background: url("../images/circle.svg") no-repeat;
+  }
+
+  .unlocked {
+    display: inline-block;
+    width: 19px;
+    height: 17px;
+    background: url("../images/unlocked.svg") no-repeat;
+  }
+
+  .locked {
+    display: inline-block;
+    width: 11.6px;
+    height: 15px;
+    background: url("../images/locked-dark.svg") no-repeat;
+  }
+
+  .locked-white {
+    display: inline-block;
+    width: 11.6px;
+    height: 15px;
+    background: url("../images/locked-white.svg") no-repeat;
+  }
+}

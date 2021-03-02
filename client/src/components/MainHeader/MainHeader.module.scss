@@ -1,0 +1,73 @@
+@import "../../assets/styles/colors";
+
+.header {
+  display: flex;
+  justify-content: space-between;background: rgb(4,0,82);
+  background: linear-gradient(90deg, rgba(4,0,82,1) 0%, rgba(0,0,0,1) 50%, rgba(1,0,24,1) 100%);
+  padding: 10px 0;
+  height: auto;
+
+  &.home {
+    background-color: transparent;
+    z-index: 4;
+
+    .menu {
+      border-bottom: none;
+    }
+  }
+
+  .logo {
+    width: 200px;
+    background-image: url("../../assets/images/fiologo.svg");
+    background-size: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  @media only screen and (max-width: 1280px) {
+    padding: 10px 0;
+  }
+}
+
+.menu {
+  display: flex;
+  align-items: center;
+  line-height: 64px;
+  min-height: 64px;
+  background: transparent;
+  overflow: hidden;
+}
+
+:global {
+  .ant-menu-dark.ant-menu-horizontal > .ant-menu-item {
+    text-transform: uppercase;
+    font-size: 16px;
+    padding: 0;
+    margin: 0 20px;
+
+    a {
+      line-height: 2;
+      color: $white;
+    }
+
+    &.ant-menu-item-selected {
+      background-color: transparent;
+      border-bottom: 1px solid $picton-blue;
+    }
+
+    &:hover {
+      border-bottom: 1px solid $picton-blue;
+      box-sizing: border-box;
+    }
+
+    @media only screen and (max-width: 1280px) {
+      margin: 0 10px;
+      font-size: 12px;
+
+      .ant-btn-danger span {
+        display: none;
+      }
+    }
+  }
+}
+

@@ -1,0 +1,39 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "prettier"
+  ],
+  "plugins": [
+    "prettier"
+  ],
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "trailingComma": "all",
+        "printWidth": 90,
+        "singleQuote": true
+      }
+    ],
+    "no-unused-vars": "error",
+    "prefer-const": "error",
+    "no-underscore-dangle": 0,
+    "comma-dangle": [
+      "error",
+      "always-multiline"
+    ],
+    "no-console": "error"
+  },
+  "env": {
+    "es6": true,
+    "node": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "modules": true
+    }
+  },
+  "root": true
+}

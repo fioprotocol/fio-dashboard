@@ -1,0 +1,112 @@
+@import '../../assets/styles/fontMixins';
+@import '../../assets/styles/colors';
+@import '../../assets/styles/forms';
+
+.icon {
+  color: rgba(0,0,0,.25);
+}
+
+:global {
+  .register-success {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    background: $white;
+    z-index: 5;
+    top: 0;
+    left: 0;
+    border-radius: 9.47px;
+    padding: 0 30px;
+    text-align: center;
+
+    h3 {
+      @include code-pro;
+      margin-top: 100px;
+      margin-bottom: 45px;
+      font-size: 36px;
+      @media only screen and (max-width: 1280px) {
+        margin-top: 50px;
+      }
+    }
+
+    p {
+      @include helvetica-neue;
+      font-size: 16px;
+    }
+
+    .checkmark {
+      position: relative;
+      opacity: 1;
+    }
+  }
+  .form {
+    .register-success {
+      display: none;
+    }
+    &.success .register-success {
+      display: flex;
+    }
+  }
+
+}
+
+.input {
+  @extend .form-input;
+
+  &.birthday {
+    margin-top: 10px;
+    :global {
+      .ant-input {
+        width: 100%;
+        text-align: left;
+      }
+      .ant-form-item-children {
+        display: flex;
+        justify-content: flex-start;
+
+        & > div:nth-child(1) {
+          max-width: 82px;
+        }
+
+        & > div:nth-child(2) {
+          max-width: 102px;
+        }
+
+        & > div:nth-child(3) {
+          max-width: 97px;
+        }
+
+        .ant-form-item {
+          width: 100%;
+          margin-right: 20px;
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+}
+
+.passwords {
+  :global {
+    .ant-form-item-children {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+
+      & > .ant-form-item {
+        width: 50%;
+
+        &:first-child {
+          margin-right: 10px;
+        }
+        &:last-child {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+}

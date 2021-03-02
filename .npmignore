@@ -1,0 +1,16 @@
+node_modules/
+.idea/
+.env
+.env.*
+!.env.example
+dump/
+.DS_Store
+
+
+# testing
+/coverage
+
+# production
+/build
+client/build
+/.project
