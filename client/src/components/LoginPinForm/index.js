@@ -2,21 +2,19 @@ import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 
 import { compose } from '../../utils';
-import { login } from '../../redux/profile/actions';
 
-import LoginForm from './LoginForm';
+import LoginPinForm from './LoginPinForm';
 
 const reduxConect = connect(
   null,
-  null,
-  // { onSubmit: login },
+  null
 );
 
 const formConect = reduxForm({
-  form: 'login',
+  form: 'loginPin',
 });
 
 export default compose(
   reduxConect,
   formConect,
-)(LoginForm);
+)(LoginPinForm);
