@@ -55,7 +55,6 @@
     "edge-core-js": "^0.17.23",
     "edge-currency-accountbased": "^0.7.47",
     "edge-currency-ethereum": "^0.11.2",
-    "edge-login-ui-web": "^0.6.12",
     "express": "^4.16.2",
     "json-pointer": "^0.6.0",
     "jsonpath": "^1.0.0",

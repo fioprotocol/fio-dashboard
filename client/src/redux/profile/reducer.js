@@ -39,7 +39,6 @@ export default combineReducers({
         try {
           // Find the app wallet, or create one if necessary:
           const walletInfo = account.getFirstWalletInfo('wallet:fio')
-          console.log(account);
           // const wallet =
           //   walletInfo == null
           //     ? await account.createCurrencyWallet('wallet:fio')
@@ -51,6 +50,15 @@ export default combineReducers({
       }
       case actions.LOGOUT_SUCCESS:
         return null;
+      default:
+        return state;
+    }
+  },
+  edgeContext(state = null, action) {
+    switch (action.type) {
+      case actions.EDGE_CONTEXT_SUCCESS: {
+        return action.data;
+      }
       default:
         return state;
     }

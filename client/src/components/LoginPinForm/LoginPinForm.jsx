@@ -5,10 +5,10 @@ import { TextField } from 'redux-form-antd';
 import { Field } from 'redux-form';
 import { Link } from 'react-router-dom';
 
-import styles from './LoginForm.module.scss';
+import styles from './LoginPinForm.module.scss';
 import { ROUTES } from '../../constants/routes';
 
-export default class LoginForm extends Component {
+export default class LoginPinForm extends Component {
   static propTypes = {
     handleSubmit: PropTypes.func.isRequired
   };
@@ -27,15 +27,15 @@ export default class LoginForm extends Component {
         </Form.Item>
         <Form.Item className={styles.input}>
           <Field
-            name="password"
+            name="pin"
             type="password"
-            label="Password"
-            placeholder="password"
+            label="PIN"
+            placeholder="pin"
             component={TextField}
           />
         </Form.Item>
         <Row className="auth-controls">
-          <Link to={ROUTES.PASSWORD_RECOVERY}>Forgot your password?</Link>
+          <Link onClick={this.props.exitPin} to="#">Exit PIN</Link>
         </Row>
         <Row className="auth-controls">
           <Button htmlType="submit" className="submit">
