@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { makeEdgeContext } from 'edge-core-js'
-import { ethereumCurrencyPluginFactory } from 'edge-currency-ethereum'
+// import { makeEdgeContext } from 'edge-core-js'
+// import { ethereumCurrencyPluginFactory } from 'edge-currency-ethereum'
 import plugins from 'edge-currency-accountbased'
 
 import logo from '../../assets/images/logo.png'
@@ -16,51 +16,51 @@ export default class LoginPage extends Component {
 
   componentDidMount() {
     // Make the context:
-    this.makeEdgeContext()
+    // this.makeEdgeContext()
   }
 
-  makeEdgeContext = async () => {
-    try {
-      const options = { // EdgeUiContextOptions
-        // plugins: {
-        //   'bitcoin': true,
-        //   'fio': true,
-        //   'ethereum': false,
-        // },
-        assetsPath: '/login-window/index.html',
-        vendorImageUrl: logo,
-        vendorName: 'FIO'
-      }
+  // makeEdgeContext = async () => {
+  //   try {
+  //     const options = { // EdgeUiContextOptions
+  //       // plugins: {
+  //       //   'bitcoin': true,
+  //       //   'fio': true,
+  //       //   'ethereum': false,
+  //       // },
+  //       assetsPath: '/login-window/index.html',
+  //       vendorImageUrl: logo,
+  //       vendorName: 'FIO'
+  //     }
 
-      // Core context:
-      const context = await makeEdgeContext({
-        apiKey: process.env.REACT_APP_EDGE_LOGIN_API_KEY,
-        appId: process.env.REACT_APP_EDGE_LOGIN_API_ID,
-        hideKeys: false,
-        plugins: [ethereumCurrencyPluginFactory]
-        // plugins: [plugins.fio]
-      })
-      context.on('login', account => {
-        console.log(account);
-        this.onLoginSuccess(account)
-      })
-      context.on('error', e => {
-        console.error(e);
-        this.setState({ loading: false })
-      })
-      this.setState({ context })
-    } catch (e) {
-      console.log(e);
-    }
-  }
+  //     // Core context:
+  //     const context = await makeEdgeContext({
+  //       apiKey: process.env.REACT_APP_EDGE_LOGIN_API_KEY,
+  //       appId: process.env.REACT_APP_EDGE_LOGIN_API_ID,
+  //       hideKeys: false,
+  //       plugins: [ethereumCurrencyPluginFactory]
+  //       // plugins: [plugins.fio]
+  //     })
+  //     context.on('login', account => {
+  //       console.log(account);
+  //       this.onLoginSuccess(account)
+  //     })
+  //     context.on('error', e => {
+  //       console.error(e);
+  //       this.setState({ loading: false })
+  //     })
+  //     this.setState({ context })
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }
 
 
   /**
    * Handles logging in.
    */
-  onLoginSuccess = async (account) => { // EdgeAccount
-    this.props.setAccount(account)
-  }
+  // onLoginSuccess = async (account) => { // EdgeAccount
+  //   this.props.setAccount(account)
+  // }
 
   onLoginCB = (data) => {
     this.onLogin(data)
@@ -69,12 +69,12 @@ export default class LoginPage extends Component {
    * Handles logging in.
    */
   onLogin = async ({ username, password }) => { // EdgeAccount
-    if (!username) return
-    const { context } = this.state
-    this.setState({ loading: true })
-    console.log(context.loginWithPIN);
-    const account = await context.loginWithPIN(username, password)
-    console.log('account==============', account);
+    // if (!username) return
+    // const { context } = this.state
+    // this.setState({ loading: true })
+    // console.log(context.loginWithPIN);
+    // const account = await context.loginWithPIN(username, password)
+    // console.log('account==============', account);
     // context.loginWithPassword(username, password)
     // if (error.wait > 0) {
     //   const currentWaitSpan = error.wait
@@ -92,7 +92,7 @@ export default class LoginPage extends Component {
 
   render() {
     const { context, loading } = this.state
-    if (!context || loading) return <p>Loading...</p>
+    // if (!context || loading) return <p>Loading...</p>
 
     return <LoginForm edgeContext={context} onSubmit={this.onLoginCB}/>
   }

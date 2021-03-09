@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { reduxForm } from 'redux-form';
+// import { reduxForm } from 'redux-form';
 
 import { compose } from '../../utils';
 import { login } from '../../redux/profile/actions';
@@ -12,13 +12,13 @@ const reduxConect = connect(
   // { onSubmit: login },
 );
 
-const formConect = reduxForm({
-  form: 'login',
-});
+// const formConect = reduxForm({
+//   form: 'login',
+// });
 
 export { LoginForm };
 
 export default compose(
   reduxConect,
-  formConect,
+  // formConect,
 )(LoginForm);
