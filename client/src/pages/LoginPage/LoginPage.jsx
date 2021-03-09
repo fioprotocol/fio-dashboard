@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 
+// import { makeEdgeContext } from 'edge-core-js'
+// import { ethereumCurrencyPluginFactory } from 'edge-currency-ethereum'
+import plugins from 'edge-currency-accountbased'
+
 import LoginForm from "../../components/LoginForm";
 import LoginPinForm from "../../components/LoginPinForm";
 import { Spin } from "antd";
