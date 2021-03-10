@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import exact from 'prop-types-exact';
-import { Layout, Row, Col } from 'antd';
+import { Container } from 'react-bootstrap'; 
 import { Link } from 'react-router-dom';
 import MainHeader from '../../components/MainHeader/MainHeader';
 import Sidebar from '../../components/Sidebar/Sidebar';
+import Footer from '../../components/Footer/Footer';
 import { ROUTES } from '../../constants/routes';
 import { LINK_LABELS } from '../../constants/labels';
 import classes from './MainLayout.module.scss';
 
-const { Content, Sider, Footer } = Layout;
 
 export default class MainLayout extends Component {
   static propTypes = exact({
@@ -30,7 +30,7 @@ export default class MainLayout extends Component {
     const { user, account, pathname, logout, children } = this.props;
     const isHomePage = pathname === '/';
     return (
-      <Layout className={classes.root}>
+      <div className={classes.root}>
         <MainHeader
           user={user}
           account={account}
@@ -38,20 +38,12 @@ export default class MainLayout extends Component {
           logout={logout}
           isHomePage={isHomePage}
         />
-        <Layout>
-          <Sider className={classes.sider}><Sidebar/></Sider>
-          <Content className={`${classes.content} ${isHomePage && classes.home}`}>
-            {children}
-          </Content>
-        </Layout>
-        <Footer theme="dark" className={classes.footer}>
-          <ul>
-            <li>
-              <Link to={ROUTES.DASHBOARD}>{LINK_LABELS.DASHBOARD}</Link>
-            </li>
-          </ul>
-        </Footer>
-      </Layout>
+        {account && <Sidebar />}
+        <div className={`${classes.content} ${isHomePage && classes.home}`}>
+          {children}
+        </div>
+        <Footer />
+      </div>
     );
   }
 }

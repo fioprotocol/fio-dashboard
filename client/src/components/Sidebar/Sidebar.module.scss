@@ -1,0 +1,31 @@
+@import '../../assets/styles/colors.scss';
+
+.sideWrapper {
+  background-color: $milk;
+  height: 50px;
+  justify-content: center;
+  align-items: center;
+
+  .sideItem {
+    font-size: 14px;
+    
+    .sideLink {
+      color: $blue;
+      position: relative;
+      overflow: hidden;
+      transition: clip-path 275ms ease;
+
+      &:hover::before {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      }
+
+      &::before {
+        position: absolute;
+        content: attr(data-content);
+        color: midnightblue;
+        clip-path: polygon(0 0, 0 0, 0% 100%, 0 100%);
+        transition: clip-path 275ms ease;
+      }
+    }
+  }
+}

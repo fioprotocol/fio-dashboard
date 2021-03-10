@@ -5,3 +5,9 @@ export function compose(...funcs) {
 
   return funcs.reduce((a, b) => (...args) => a(b(...args)));
 }
+
+export function currentYear() {
+  const year = new Date().getFullYear();
+  const startYear = 2021;
+  return year === startYear ? year : `${startYear} - ${year}`;
+}
