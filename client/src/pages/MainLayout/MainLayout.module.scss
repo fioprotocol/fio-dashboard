@@ -5,6 +5,8 @@
   min-height: 100vh;
   height: 100%;
   background: $white;
+  display: flex;
+  flex-direction: column;
 }
 .header {
   background: $elephant;
@@ -27,37 +29,11 @@
   display: flex;
   justify-content: center;
   align-items: stretch;
-  font-size: 2em;
+  flex: 1 0 auto;
+  // font-size: 2em;
 
   &.home {
     margin-top: -64px;
   }
 }
 
-.footer {
-  text-align: right;
-  background: $white;
-
-  ul {
-    @include myriad-pro-regular;
-    margin: 0;
-    padding: 0;
-
-    & > li {
-      display: inline-block;
-      margin: 0 20px;
-
-      a {
-        color: $picton-blue;
-
-        &:focus {
-          text-decoration: none;
-        }
-      }
-
-      &:hover {
-        cursor: pointer;
-      }
-    }
-  }
-}
