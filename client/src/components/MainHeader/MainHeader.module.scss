@@ -52,17 +52,20 @@
 
     .notifWrapper {
       position: relative;
-      .notification {
-        
-      }
+
       .notifActiveWrapper {
         position: absolute;
-        top: -4px;
-        .notifActive {
-          color: red !important;
-          width: 9px;
-          height: 9px;
-        }
+        top: -6px;
+      }
+
+      .notifActive {
+        width: 9px;
+        height: 9px;
+      }
+
+      .notifActiveWrapperRight {
+        width: 100%;
+        right: -15px;
       }
     }
 
@@ -86,8 +89,14 @@
       transform: rotate(90deg);
     }
 
-    &:hover .notifWrapper {
+    &:hover .bellshake {
       animation: bellshake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+      backface-visibility: hidden;
+      transform-origin: center;
+    }
+
+    &:hover .cartanim {
+      animation: cartscale 0.6s cubic-bezier(.36,.07,.19,.97) both;
       backface-visibility: hidden;
       transform-origin: center;
     }
@@ -118,6 +127,11 @@
   85% { transform: rotate(-2deg); }
   92% { transform: rotate(1deg); }
   100% { transform: rotate(0); }
+}
+
+@keyframes cartscale {
+  0% { transform: scale(1.0); }
+  100% { transform: scale(1.1);; }
 }
 
 .menu {

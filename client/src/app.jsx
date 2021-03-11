@@ -5,7 +5,7 @@ import createHistory from 'history/createBrowserHistory';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { addLocationQuery } from './helpers/routeParams';
 
-import { faEye, faEyeSlash, faArrowLeft, faCog, faBell, faCircle } from '@fortawesome/free-solid-svg-icons';
+import { faEye, faEyeSlash, faArrowLeft, faCog, faBell, faCircle, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -21,7 +21,15 @@ addLocationQuery(history);
 
 history.listen(() => addLocationQuery(history));
 
-library.add(faEye, faEyeSlash, faArrowLeft, faCog, faBell, faCircle);
+library.add(
+  faEye,
+  faEyeSlash,
+  faArrowLeft,
+  faCog,
+  faBell,
+  faCircle,
+  faShoppingCart
+);
 
 const store = configureStore(api, history);
 

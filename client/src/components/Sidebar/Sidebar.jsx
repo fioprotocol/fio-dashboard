@@ -25,13 +25,14 @@ export default class Sidebar extends Component {
   render() {
     return (
       <Nav className={classes.sideWrapper}>
-        {navItems.map((item) => (
+        {navItems.map((item, i) => (
           <Nav.Item className={classes.sideItem}>
             <Nav.Link
               as={Link}
               to={ROUTES[item]}
               className={classes.sideLink}
               data-content={LINK_LABELS[item]}
+              eventKey={i}
             >
               {LINK_LABELS[item]}
             </Nav.Link>
