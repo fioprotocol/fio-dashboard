@@ -20,11 +20,20 @@ export default class MainHeader extends Component {
 
   renderLoggedMenu = () => (
     <Nav className='pr-0 align-items-center'>
-      <Nav.Link href='#' className={classnames(classes.navItem,'text-white')}>
-        <div className={classes.notifWrapper}>
+      <Nav.Link className={classnames(classes.navItem, 'text-white')}>
+        <div className={classnames(classes.notifWrapper, classes.cartanim)}>
+          <FontAwesomeIcon icon="shopping-cart" className={classnames(classes.icon)} />
+          <div className={classnames(classes.notifActiveWrapper, classes.notifActiveWrapperRight)}>
+            <FontAwesomeIcon icon="circle" className={classnames(classes.notifActive, 'text-success')} />
+          </div>
+        </div>
+      </Nav.Link>
+      <hr className={classnames(classes.vertical, 'mx-3')} />
+      <Nav.Link href='#' className={classnames(classes.navItem, 'text-white')}>
+        <div className={classnames(classes.notifWrapper, classes.bellshake)}>
           <FontAwesomeIcon icon="bell" className={classnames(classes.icon, classes.notification, 'text-white')} />
           <div className={classes.notifActiveWrapper}>
-            <FontAwesomeIcon icon="circle" className={classnames(classes.notifActive, 'mr-2', 'text-white')} />
+            <FontAwesomeIcon icon="circle" className={classnames(classes.notifActive, 'mr-2', 'text-danger')} />
           </div>
         </div>
         <div className="ml-3">Notifications</div>
@@ -58,6 +67,14 @@ export default class MainHeader extends Component {
       <Navbar className='pr-0'>
         <Navbar.Collapse id='basic-navbar-nav'>
           <Nav className='mr-auto'>
+            <Nav.Link className={classnames(classes.navItem, 'text-white')}>
+              <div className={classnames(classes.notifWrapper, classes.cartanim)}>
+                <FontAwesomeIcon icon="shopping-cart" className={classnames(classes.icon, 'mr-4')} />
+                <div className={classnames(classes.notifActiveWrapper, classes.notifActiveWrapperRight)}>
+                  <FontAwesomeIcon icon="circle" className={classnames(classes.notifActive, 'text-success', 'mr-2')} />
+                </div>
+              </div>
+            </Nav.Link>
             <Nav.Link>
               <Button variant='outline-primary' className={classnames(classes.button, 'text-white', 'mr-3')} size="lg">
                 Create account
@@ -76,7 +93,7 @@ export default class MainHeader extends Component {
     const { pathname, account, user } = this.props;
     return (
       <div className={`${classes.header}`}>
-        <Link to='/' className="mr-5">
+        <Link to='/' className='mr-5'>
           <div className={classes.logo} />
         </Link>
         {account ? this.renderLoggedMenu() : this.renderRegularNav()}
