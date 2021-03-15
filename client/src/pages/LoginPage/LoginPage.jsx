@@ -1,9 +1,4 @@
 import React, { Component } from 'react';
-import _ from 'lodash';
-
-// import { makeEdgeContext } from 'edge-core-js'
-// import { ethereumCurrencyPluginFactory } from 'edge-currency-ethereum'
-import plugins from 'edge-currency-accountbased'
 
 import LoginForm from "../../components/LoginForm";
 import LoginPinForm from "../../components/LoginPinForm";
@@ -25,7 +20,7 @@ export default class LoginPage extends Component {
     this.setState({ loading: true });
     try {
       const cachedUsers = await edgeContext.listUsernames();
-      !_.isEmpty(cachedUsers) && this.setState({ cachedUsers, pinLogin: true });
+      this.setState({ cachedUsers, pinLogin: !!cachedUsers.length });
     } catch (e) {
       console.log(e);
     }
