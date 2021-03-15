@@ -18,8 +18,7 @@ const Input = props => {
   const clearInputFn = () => {
     input.onChange(meta.initial);
   };
-
-  const hasError = meta.error && meta.touched;
+  const hasError = meta.error && (meta.touched || meta.modified);
 
   const regularInputWrapper = children => (
     <div className={classes.regInputWrapper}>

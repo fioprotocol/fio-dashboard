@@ -22,7 +22,7 @@ export default class MainLayout extends Component {
     logout: PropTypes.func.isRequired,
   });
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.init();
   }
 

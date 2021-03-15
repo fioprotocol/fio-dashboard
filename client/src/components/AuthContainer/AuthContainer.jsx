@@ -75,7 +75,7 @@ export default class AuthContainer extends Component {
         )}
         {!isAuthenticated && !loading && edgeContext && (
           <Switch>
-            <Route path={ROUTES.LOGIN} component={LoginPage} exact />
+            {/* <Route path={ROUTES.LOGIN} component={LoginPage} exact /> */}
             {/*<Route path={ROUTES.SIGNUP} component={SignupPage} exact />*/}
             {/*<Route*/}
             {/*  path={ROUTES.RESET_PASSWORD}*/}

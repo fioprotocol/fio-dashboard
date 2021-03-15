@@ -8,9 +8,21 @@ import classnames from 'classnames';
 
 // import { ROUTES } from '../../constants/routes';
 // import { LINK_LABELS } from '../../constants/labels';
+import LoginForm from '../LoginForm';
 import classes from './MainHeader.module.scss';
 
 export default class MainHeader extends Component {
+  constructor(props) {
+    super();
+    this.state = {
+      showLogin: false,
+    }
+  }
+
+  onHandleLoginClose = () => {
+    this.setState({ showLogin: false })
+  }
+
   static propTypes = exact({
     pathname: PropTypes.string.isRequired,
     user: PropTypes.object,
@@ -81,7 +93,13 @@ export default class MainHeader extends Component {
               </Button>
             </Nav.Link>
             <Nav.Link className='pr-0'>
-              <Button className={classes.button} size="lg">Sign in</Button>
+              <Button
+                className={classes.button}
+                size="lg"
+                onClick={() => this.setState({ showLogin: true })}
+              >
+                Sign in
+              </Button>
             </Nav.Link>
           </Nav>
         </Navbar.Collapse>
@@ -91,12 +109,14 @@ export default class MainHeader extends Component {
 
   render() {
     const { pathname, account, user } = this.props;
+    const { showLogin } = this.state;
     return (
       <div className={`${classes.header}`}>
         <Link to='/' className='mr-5'>
           <div className={classes.logo} />
         </Link>
         {account ? this.renderLoggedMenu() : this.renderRegularNav()}
+        <LoginForm show={showLogin} onClose={this.onHandleLoginClose} />
       </div>
     );
   }

@@ -17,8 +17,9 @@ export default class LoginForm extends Component {
     // handleSubmit: PropTypes.func.isRequired
   };
   render() {
+    const { show, onClose } = this.props;
     return (
-      <ModalComponent show={true} backdrop='static'>
+      <ModalComponent show={show} backdrop='static' onClose={onClose}>
         <Form
           // initialValues={}
           onSubmit={(values) => {

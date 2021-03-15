@@ -4,10 +4,13 @@ import classnames from 'classnames';
 import classes from './Modal.module.scss';
 
 const ModalComponent = props => {
-  const { show: extShow, params, isDanger, title } = props;
+  const { show: extShow, isDanger, title, onClose } = props;
   const [show, setShow] = useState(false);
 
-  const handleClose = () => setShow(false);
+  const handleClose = () => { 
+    setShow(false);
+    onClose();
+  }
   const handleShow = () => setShow(true);
 
   useEffect(() => {
@@ -19,7 +22,7 @@ const ModalComponent = props => {
       onHide={handleClose}
       contentClassName={classnames(classes.modal, isDanger && classes.danger)}
       dialogClassName={classes.dialog}
-      {...params}
+      {...props}
     >
       <Modal.Header closeButton>{title}</Modal.Header>
       <Modal.Body>{props.children}</Modal.Body>
