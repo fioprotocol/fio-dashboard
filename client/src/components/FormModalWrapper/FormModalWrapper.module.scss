@@ -1,0 +1,11 @@
+@import '../../assets/styles/colors.scss';
+
+.wrapper {
+  width: 100%;
+  max-width: 375px;
+  background-color: $deep-blue;
+  border-radius: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

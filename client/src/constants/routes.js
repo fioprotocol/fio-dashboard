@@ -9,12 +9,13 @@ const ROUTES = {
   PROFILE: '/profile',
   RESET_PASSWORD: '/reset-password/:hash',
   PASSWORD_RECOVERY: '/password-recovery',
-  FIO_ADDRESSES: 'fio-addresses',
-  FIO_DOMAINS: 'fio-domains',
-  FIO_REQUESTS: 'fio-requests',
-  FIO_WALLET: 'fio-wallet',
-  GOVERNANCE: 'governance',
-  PROTOCOL_UPDATES: 'protocol-updates',
+  CREATE_ACCOUNT: '/create-account',
+  FIO_ADDRESSES: '/fio-addresses',
+  FIO_DOMAINS: '/fio-domains',
+  FIO_REQUESTS: '/fio-requests',
+  FIO_WALLET: '/fio-wallet',
+  GOVERNANCE: '/governance',
+  PROTOCOL_UPDATES: '/protocol-updates',
 };
 
 export { ROUTES };

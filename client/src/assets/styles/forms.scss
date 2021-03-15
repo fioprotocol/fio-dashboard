@@ -1,7 +1,34 @@
-@import "./colors";
+@import './colors';
 @import './fontMixins';
 
 :global {
+  form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+
+    button {
+      width: 100%;
+      height: 54px;
+      font-weight: bold !important;
+    }
+
+    & button, a, p, h1, h2, h3, h4, h5 {
+      margin-bottom: 30px;
+    }
+
+    & a {
+      color: inherit;
+      font-weight: bold !important;
+    }
+
+    .regular-text {
+      font-size: 15px;
+    }
+  }
+
   .blue-button {
     height: 67px;
     width: 100%;

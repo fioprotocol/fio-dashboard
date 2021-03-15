@@ -5,7 +5,17 @@ import createHistory from 'history/createBrowserHistory';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { addLocationQuery } from './helpers/routeParams';
 
-import { faEye, faEyeSlash, faArrowLeft, faCog, faBell, faCircle, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import {
+  faEye,
+  faEyeSlash,
+  faArrowLeft,
+  faCog,
+  faBell,
+  faCircle,
+  faShoppingCart,
+  faTimesCircle,
+  faInfoCircle
+} from '@fortawesome/free-solid-svg-icons';
 
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -28,7 +38,9 @@ library.add(
   faCog,
   faBell,
   faCircle,
-  faShoppingCart
+  faShoppingCart,
+  faTimesCircle,
+  faInfoCircle,
 );
 
 const store = configureStore(api, history);
