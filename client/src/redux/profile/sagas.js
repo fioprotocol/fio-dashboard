@@ -1,7 +1,6 @@
 import { put, takeEvery } from 'redux-saga/effects';
 import {
   LOGIN_SUCCESS,
-  ACCOUNT_SUCCESS,
   SIGNUP_SUCCESS,
   LOGOUT_SUCCESS,
   loadProfile,
@@ -14,12 +13,6 @@ export function* loginSuccess(history, api) {
     api.client.setToken(action.data.jwt);
     yield put(loadProfile());
     yield history.push(ROUTES.HOME);
-  });
-}
-
-export function* accountSuccess(history, api) {
-  yield takeEvery(ACCOUNT_SUCCESS, function*(action) {
-    yield history.push(ROUTES.DASHBOARD);
   });
 }
 

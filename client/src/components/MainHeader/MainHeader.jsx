@@ -14,7 +14,18 @@ export default class MainHeader extends Component {
     super();
     this.state = {
       showLogin: false,
+      loginSuccess: props.loginSuccess
     }
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.loginSuccess !== state.loginSuccess) {
+      const updatedState = { loginSuccess: props.loginSuccess }
+      if (props.loginSuccess) updatedState.showLogin = false
+      return updatedState
+    }
+
+    return null
   }
 
   onHandleLoginClose = () => {
@@ -24,6 +35,7 @@ export default class MainHeader extends Component {
   showLogin = () => this.setState({ showLogin: true });
 
   static propTypes = exact({
+    account: PropTypes.object,
     pathname: PropTypes.string.isRequired,
     user: PropTypes.object,
     isHomePage: PropTypes.bool,

@@ -4,8 +4,10 @@ import {
   loginSuccess,
   signupSuccess,
   logoutSuccess,
-  accountSuccess,
 } from './profile/sagas';
+import {
+  loginSuccess as accountSuccess,
+} from './edge/sagas';
 import { listFailure } from './users/sagas';
 import { notify } from './notify/sagas';
 

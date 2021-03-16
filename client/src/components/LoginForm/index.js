@@ -1,15 +1,19 @@
 import { connect } from 'react-redux';
+import { createStructuredSelector } from "reselect";
 
 import { compose } from '../../utils';
-import { login } from '../../redux/profile/actions';
+import { loading } from '../../redux/edge/selectors';
+import { login } from '../../redux/edge/actions';
 
 import LoginForm from './LoginForm';
 
-const reduxConect = connect(
-  null,
-  null,
+const reduxConnect = connect(
+  createStructuredSelector({
+    loading,
+  }),
+  { onSubmit: login },
 );
 
 export default compose(
-  reduxConect,
+  reduxConnect,
 )(LoginForm);
