@@ -1,0 +1,10 @@
+.circleci/
+.env
+.git/
+.gitignore
+bin/
+client/
+docker-compose.yml
+Dockerfile
+logs/
+node_modules/

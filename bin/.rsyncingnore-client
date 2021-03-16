@@ -1,0 +1,4 @@
+.env
+logs/
+node_modules/
+upload/

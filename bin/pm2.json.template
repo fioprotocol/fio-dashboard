@@ -1,0 +1,17 @@
+{
+  "apps" : [{
+    "name"         : "fio-dapp-server",
+    "script"       : "npm",
+    "args"         : ["run","server:prod"],
+    "error_file"   : "${WORK_DIR}/logs/error.log",
+    "out_file"     : "${WORK_DIR}/logs/info.log",
+    "ignore_watch" : ["node_modules"],
+    "watch"        : false,
+    "cwd"          : "${WORK_DIR}",
+    "env": {
+      "NODE_ENV"   : "${NODE_ENV}",
+      "HOST"       : "127.0.0.1",
+      "PORT"       : "3000"
+    }
+  }]
+}
