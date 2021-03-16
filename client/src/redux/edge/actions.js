@@ -7,20 +7,6 @@ export const setEdgeContext = edgeContext => ({
   data: edgeContext
 });
 
-export const ACCOUNT_SUCCESS = `${prefix}/ACCOUNT_SUCCESS`;
-
-export const setAccount = account => ({
-  type: ACCOUNT_SUCCESS,
-  data: account
-});
-// export const EDGE_LOGIN_REQUEST = `${prefix}/EDGE_LOGIN_REQUEST`;
-// export const EDGE_LOGIN_SUCCESS = `${prefix}/EDGE_LOGIN_SUCCESS`;
-// export const EDGE_LOGIN_FAILURE = `${prefix}/EDGE_LOGIN_FAILURE`;
-//
-// export const edgeLogin = ({ email, password }) => ({
-//   types: [EDGE_LOGIN_REQUEST, EDGE_LOGIN_SUCCESS, EDGE_LOGIN_FAILURE],
-//   promise: api => api.edge.login(email, password),
-// });
 export const LOGIN_REQUEST = `${prefix}/LOGIN_REQUEST`;
 export const LOGIN_SUCCESS = `${prefix}/LOGIN_SUCCESS`;
 export const LOGIN_FAILURE = `${prefix}/LOGIN_FAILURE`;
