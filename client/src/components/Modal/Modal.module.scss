@@ -1,0 +1,21 @@
+@import '../../assets/styles/colors.scss'; 
+
+.modal {
+  width: 100%;
+  min-width: 375px;
+  background-color: $deep-blue;
+  border-radius: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 20px 10px 20px;
+
+  & .danger {
+    background-color: $warn-red;
+  }
+}
+
+.dialog {
+  margin-top: 160px;
+  width: 375px;
+}

@@ -1,0 +1,73 @@
+@import '../../assets/styles/colors.scss';
+
+
+.regInputWrapper {
+  width: 100%;
+  color: white;
+  margin-bottom: 30px;
+  overflow: hidden;
+
+  .errorMessage {
+    max-height: 0;
+    font-size: 12px;
+    line-height: 15px;
+    margin-left: 20px;
+    transition: max-height 0.3s ease-out;
+
+    .errorIcon {
+      width: 14px;
+      height: 14px;
+      margin-right: 10px;
+      max-height: inherit;
+    }
+
+    &.error {
+      max-height: 30px;
+      margin-bottom: 8px;
+      margin-top: 13px;
+    }
+  }
+}
+
+.inputGroup {
+  position: relative;
+
+  .inputIcon {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 24px !important;
+    height: 24px;
+  }
+
+  .doubleIcon {
+    position: absolute;
+    right: 60px;
+  }
+
+  .regInput {
+    width: 100%;
+    height: 54px;
+    padding: 0px 20px;
+    border: 1px solid $violet;
+    box-sizing: border-box;
+    border-radius: 7px;
+    box-shadow: 0 0 8px 0 rgba(0,0,0,0.11);
+    background: transparent;
+    color: white !important;
+    outline: none;
+    font-size: 14px;
+
+    &::placeholder {
+      color: inherit;
+    }
+
+    &.error {
+      border-color: $warn-red;
+    }
+  }
+}
+
+
