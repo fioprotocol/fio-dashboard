@@ -5,7 +5,7 @@ import classes from './FormHeader.module.scss';
 const FormHeader = props => {
   const { title, subtitle, isDoubleColor } = props;
   
-  const firstWord = isDoubleColor && typeof title === 'string' && title.split(' ')[0] || '';
+  const firstWord = isDoubleColor && `${title}`.split(' ')[0];
   return (
     <div className={classnames(!subtitle && 'mb-4','d-flex flex-column text-white align-items-center justify-center')}>
       <h4

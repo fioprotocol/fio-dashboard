@@ -3,7 +3,6 @@ const ROUTES = {
   ADMIN: '/admin',
   ADMIN_USERS: '/admin/users',
   DASHBOARD: '/dashboard',
-  // LOGIN: '/login',
   // SIGNUP: '/signup',
   CONFIRM_EMAIL: '/confirmEmail/:hash',
   PROFILE: '/profile',

@@ -4,6 +4,10 @@ import _ from 'lodash';
 import classnames from 'classnames';
 import classes from './Input.module.scss';
 
+const regularInputWrapper = (children) => (
+  <div className={classes.regInputWrapper}>{children}</div>
+);
+
 const Input = props => {
   const { input, meta } = props;
   const { type, value } = input;
@@ -19,12 +23,6 @@ const Input = props => {
     input.onChange(meta.initial);
   };
   const hasError = meta.error && (meta.touched || meta.modified);
-
-  const regularInputWrapper = children => (
-    <div className={classes.regInputWrapper}>
-      {children}
-    </div>
-  );
 
   const regularInput = (
     <>

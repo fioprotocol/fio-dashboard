@@ -21,24 +21,23 @@ export default class Sidebar extends Component {
     account: PropTypes.object,
   });
 
+  renderItems = () => {
+    return navItems.map((item, i) => (
+      <Nav.Item className={classes.sideItem} key={LINK_LABELS[item]}>
+        <Nav.Link
+          as={Link}
+          to={ROUTES[item]}
+          className={classes.sideLink}
+          data-content={LINK_LABELS[item]}
+          eventKey={i}
+        >
+          {LINK_LABELS[item]}
+        </Nav.Link>
+      </Nav.Item>
+    ));
+  }
 
   render() {
-    return (
-      <Nav className={classes.sideWrapper}>
-        {navItems.map((item, i) => (
-          <Nav.Item className={classes.sideItem}>
-            <Nav.Link
-              as={Link}
-              to={ROUTES[item]}
-              className={classes.sideLink}
-              data-content={LINK_LABELS[item]}
-              eventKey={i}
-            >
-              {LINK_LABELS[item]}
-            </Nav.Link>
-          </Nav.Item>
-        ))}
-      </Nav>
-    );
+    return <Nav className={classes.sideWrapper}>{this.renderItems()}</Nav>;
   }
 }

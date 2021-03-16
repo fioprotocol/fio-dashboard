@@ -93,4 +93,8 @@ a {
   padding: 0 !important;
   margin: 0 !important;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }

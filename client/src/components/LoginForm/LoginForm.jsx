@@ -1,9 +1,10 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { Form, Field } from 'react-final-form';
 import { Link } from 'react-router-dom';
 import validator from 'email-validator';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classnames from 'classnames';
 
 import ModalComponent from '../Modal/Modal';
 import Input from '../Input/Input'; 
@@ -12,14 +13,46 @@ import FormHeader from '../FormHeader/FormHeader';
 import classes from './LoginForm.module.scss';
 import { ROUTES } from '../../constants/routes';
 
-export default class LoginForm extends Component {
-  static propTypes = {
-    // handleSubmit: PropTypes.func.isRequired
+const LoginForm = props => {
+  const { show, onClose } = props;
+  const [isForgotPass, toggleForgotPass] = useState(false);
+
+  const onForgotPassHandler = e => {
+    e.preventDefault();
+    toggleForgotPass(true);
   };
-  render() {
-    const { show, onClose } = this.props;
-    return (
-      <ModalComponent show={show} backdrop='static' onClose={onClose}>
+
+  const onForgotPassClose = () => {
+    toggleForgotPass(false);
+  }
+
+  const renderForgotPass = () => (
+    <div className={classes.forgotPass}>
+      <FontAwesomeIcon icon='ban' className={classes.icon} />
+      <FormHeader
+        title='Forgot Password?'
+        subtitle={
+          <>
+            <p className={classes.subtitle}>
+              To recover your password, you must have setup password recovery
+              prior.
+            </p>
+            <p className={classes.subtitle}>
+              Please find the recovery email you sent yourself and click on the
+              link from this device.
+            </p>
+          </>
+        }
+      />
+      <Button variant='primary' className={classes.button} onClick={onForgotPassClose}>
+        Ok
+      </Button>
+    </div>
+  );
+
+  const renderForm = () => (
+    <div className={classes.formBox}>
+      <div className={classnames(classes.box, isForgotPass && classes.show)}>
         <Form
           // initialValues={}
           onSubmit={(values) => {
@@ -35,7 +68,7 @@ export default class LoginForm extends Component {
             if (!values.password) {
               errors.password = 'Password Field Should Be Filled';
             }
-            
+
             return errors;
           }}
         >
@@ -57,7 +90,11 @@ export default class LoginForm extends Component {
               <Button htmltype='submit' variant='primary' className='w-100'>
                 Sign In
               </Button>
-              <Link to={ROUTES.PASSWORD_RECOVERY} className='regular-text'>
+              <Link
+                className='regular-text'
+                to=''
+                onClick={onForgotPassHandler}
+              >
                 Forgot your password?
               </Link>
               <p className='regular-text'>
@@ -67,7 +104,23 @@ export default class LoginForm extends Component {
             </form>
           )}
         </Form>
-      </ModalComponent>
-    );
-  }
-}
+      </div>
+      <div className={classnames(classes.box, isForgotPass && classes.show)}>
+        {renderForgotPass()}
+      </div>
+    </div>
+  );
+
+  return (
+    <ModalComponent
+      show={show}
+      backdrop='static'
+      onClose={isForgotPass ? onForgotPassClose : onClose}
+    >
+      {/* {isForgotPass ? renderForgotPass() : renderForm()} */}
+      {renderForm()}
+    </ModalComponent>
+  );
+};
+
+export default LoginForm;

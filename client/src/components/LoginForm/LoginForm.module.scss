@@ -2,21 +2,53 @@
 @import '../../assets/styles/colors';
 @import '../../assets/styles/forms';
 
-// .form {
-//   top: 50%;
-//   transform: translateY(-50%);
+.formBox {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
 
-//   @media only screen and (max-width: 1280px) {
-//     .auth-controls > button {
-//       margin-top: 24px;
-//     }
-//   }
-// }
+  .forgotPass {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    .icon {
+      color: $violet;
+      width: 64px !important;
+      height: 64px;
+      margin-top: 30px;
+      margin-bottom: 20px;
+    }
 
-// .icon {
-//   color: rgba(0,0,0,.25);
-// }
+    .subtitle {
+      font-size: 15px;
+      line-height: 18px;
+      width: 92%;
+      margin: 15px auto;
+      @include proxima-nova-thin
+    }
 
-// .input {
-//   @extend .form-input;
-// }
+    .button {
+      width: 98%; //should be 100% but transition bug articfact
+      height: 54px;
+      font-weight: bold !important;
+      margin-bottom: 40px;
+    }
+  }
+  
+  .box {
+    flex-shrink: 0;
+    position: relative;
+    width: 100%;
+    left: 0;
+    transition: all 0.4s ease;
+
+    &.show {
+      left: -100%;
+    }
+  }
+}
+
+
+

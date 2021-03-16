@@ -1,15 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import exact from 'prop-types-exact';
-import { Container } from 'react-bootstrap'; 
-import { Link } from 'react-router-dom';
 import MainHeader from '../../components/MainHeader/MainHeader';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Footer from '../../components/Footer/Footer';
-import { ROUTES } from '../../constants/routes';
-import { LINK_LABELS } from '../../constants/labels';
 import classes from './MainLayout.module.scss';
-
 
 export default class MainLayout extends Component {
   static propTypes = exact({

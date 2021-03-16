@@ -14,7 +14,8 @@ import {
   faCircle,
   faShoppingCart,
   faTimesCircle,
-  faInfoCircle
+  faInfoCircle,
+  faBan,
 } from '@fortawesome/free-solid-svg-icons';
 
 import 'antd/dist/antd.css';
@@ -41,6 +42,7 @@ library.add(
   faShoppingCart,
   faTimesCircle,
   faInfoCircle,
+  faBan,
 );
 
 const store = configureStore(api, history);

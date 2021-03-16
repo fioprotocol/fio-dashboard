@@ -6,8 +6,6 @@ import { Button, Navbar, Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-// import { ROUTES } from '../../constants/routes';
-// import { LINK_LABELS } from '../../constants/labels';
 import LoginForm from '../LoginForm';
 import classes from './MainHeader.module.scss';
 
@@ -22,6 +20,8 @@ export default class MainHeader extends Component {
   onHandleLoginClose = () => {
     this.setState({ showLogin: false })
   }
+
+  showLogin = () => this.setState({ showLogin: true });
 
   static propTypes = exact({
     pathname: PropTypes.string.isRequired,
@@ -77,7 +77,7 @@ export default class MainHeader extends Component {
         </a>
       </div>
       <Navbar className='pr-0'>
-        <Navbar.Collapse id='basic-navbar-nav'>
+        <Navbar.Collapse>
           <Nav className='mr-auto'>
             <Nav.Link className={classnames(classes.navItem, 'text-white')}>
               <div className={classnames(classes.notifWrapper, classes.cartanim)}>
@@ -96,7 +96,7 @@ export default class MainHeader extends Component {
               <Button
                 className={classes.button}
                 size="lg"
-                onClick={() => this.setState({ showLogin: true })}
+                onClick={this.showLogin}
               >
                 Sign in
               </Button>
