@@ -3,8 +3,6 @@ import { createSelector } from 'reselect';
 
 export const loading = state => state[prefix].loading;
 export const user = state => state[prefix].user;
-export const account = state => state[prefix].account;
-export const edgeContext = state => state[prefix].edgeContext;
 export const role = state => state[prefix].user && state[prefix].user.role;
 export const isAdmin = state =>
   state[prefix].user && state[prefix].user.role === 'ADMIN';
@@ -16,6 +14,6 @@ export const successfullyRegistered = state =>
   state[prefix].successfullyRegistered;
 
 export const isAuthenticated = createSelector(
-  account,
-  account => !!account,
+  user,
+  user => !!user,
 );

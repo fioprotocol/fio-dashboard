@@ -1,4 +1,5 @@
 import logo from "../assets/images/logo.png";
+import { makeEdgeContext } from 'edge-core-js';
 import { addEdgeCorePlugins, lockEdgeCorePlugins } from "edge-core-js";
 import plugins from "edge-currency-accountbased";
 
@@ -39,11 +40,13 @@ export default class Edge {
     return this.edgeContext.listUsernames()
   }
 
-  login(username, password) {
+  login(username, password) { // returns EdgeAccount
     try {
       return this.edgeContext.loginWithPassword(username, password)
     } catch (e) {
       console.log(e);
+      throw e
+      // todo:
       // if (error.wait > 0) {
       //   const currentWaitSpan = error.wait
       //   const reEnableLoginTime = Date.now() + currentWaitSpan * 1000
@@ -57,6 +60,7 @@ export default class Edge {
       return this.edgeContext.loginWithPIN(username, pin)
     } catch (e) {
       console.log(e);
+      throw e
       // if (error.wait > 0) {
       //   const currentWaitSpan = error.wait
       //   const reEnableLoginTime = Date.now() + currentWaitSpan * 1000

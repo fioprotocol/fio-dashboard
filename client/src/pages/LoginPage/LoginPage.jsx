@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 
 import LoginForm from "../../components/LoginForm";
 import LoginPinForm from "../../components/LoginPinForm";
-import { Spin } from "antd";
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 export default class LoginPage extends Component {
   constructor(props) {
@@ -16,15 +18,15 @@ export default class LoginPage extends Component {
   }
 
   checkCachedUsers = async () => {
-    const { edgeContext } = this.props;
-    this.setState({ loading: true });
-    try {
-      const cachedUsers = await edgeContext.listUsernames();
-      this.setState({ cachedUsers, pinLogin: !!cachedUsers.length });
-    } catch (e) {
-      console.log(e);
-    }
-    this.setState({ loading: false });
+    // const { edgeContext } = this.props;
+    // this.setState({ loading: true });
+    // try {
+    //   const cachedUsers = await edgeContext.listUsernames();
+    //   this.setState({ cachedUsers, pinLogin: !!cachedUsers.length });
+    // } catch (e) {
+    //   console.log(e);
+    // }
+    // this.setState({ loading: false });
   }
 
   onLoginSuccess = async (account) => { // EdgeAccount
@@ -72,8 +74,9 @@ export default class LoginPage extends Component {
 
     return (
       <>
-        {loading && <Spin
-          size="large"
+        {loading && <FontAwesomeIcon
+          icon={faSpinner}
+          spin
           style={{
             position: 'absolute',
             top: '50%',
