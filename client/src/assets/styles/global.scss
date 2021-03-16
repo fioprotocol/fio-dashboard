@@ -22,6 +22,7 @@ input[type=number] {
 }
 
 body {
+  font-family: 'Proxima Nova Regular' !important;
   :global {
     div.container {
       width: 100%;
@@ -69,20 +70,21 @@ a {
     & span[aria-hidden=true] {
       transition: transform 0.3s ease-in-out;
       display: block;
-      width: 24px;
-      height: 24px;
+      // width: 24px;
+      // height: 24px;
       text-align: center;
       display: flex;
       align-items: baseline;
       justify-content: center;
       font-size: 28px;
       line-height: 20px;
-      transform: scale(1.15, 1); 
+      transform: scale(1.3, 1.3);
+      font-family: 'Proxima Nova Thin'
     }
 
     &:hover span[aria-hidden=true] {
       color: white;
-      transform: rotate(90deg) scale(1.15, 1);
+      transform: rotate(90deg) scale(1.3, 1.3);
     }
   }
 }
