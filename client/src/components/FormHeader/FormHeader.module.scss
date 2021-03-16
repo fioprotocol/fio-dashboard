@@ -1,0 +1,21 @@
+@import '../../assets/styles/colors.scss';
+
+.baseColored {
+  color: white;
+  margin-bottom: 18px;
+}
+
+.baseColored.colored {
+  color: $violet;
+}
+
+.colored[data-highlightword] {
+  position: relative;
+}
+.colored[data-highlightword]::before {
+  content: attr(data-highlightword);
+  color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+}

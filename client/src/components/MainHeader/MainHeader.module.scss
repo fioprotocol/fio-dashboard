@@ -2,10 +2,11 @@
 
 .header {
   display: flex;
-  justify-content: space-between;background: rgb(4,0,82);
-  background: linear-gradient(90deg, rgba(4,0,82,1) 0%, rgba(0,0,0,1) 50%, rgba(1,0,24,1) 100%);
-  padding: 10px 0;
-  height: auto;
+  justify-content: space-between;
+  background: $main-background;
+  box-shadow: 0 0 20px 8px rgba(0,0,0,0.2);
+  padding: 5px 3%;
+  min-height: 80px;
 
   &.home {
     background-color: transparent;
@@ -17,16 +18,120 @@
   }
 
   .logo {
-    width: 200px;
+    width: 76px;
+    height: 100%;
     background-image: url("../../assets/images/fiologo.svg");
-    background-size: 50%;
+    background-size: 100%;
     background-repeat: no-repeat;
-    background-position: center;
+    background-position: left;
+  }
+
+  .link, .navItem {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  .link {
+    .arrow {
+      position: relative;
+      transition: 0.2s ease-in-out;
+      transform: translateX(0);
+    }
+
+    &:hover .arrow {
+      transform: translateX(-4px);
+    }
+  }
+
+  .navItem {
+    .icon {
+      width: 20px;
+      height: 20px;
+    }
+
+    .notifWrapper {
+      position: relative;
+
+      .notifActiveWrapper {
+        position: absolute;
+        top: -6px;
+      }
+
+      .notifActive {
+        width: 9px;
+        height: 9px;
+      }
+
+      .notifActiveWrapperRight {
+        width: 100%;
+        right: -15px;
+      }
+    }
+
+    .settings {
+      background-color: white;
+      padding: 3px;
+      border-radius: 2px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .settingsIcon {
+        width: 14px;
+        height: 14px;
+        color: black !important;
+        transition: transform 0.4s ease-in-out;
+      }
+    }
+
+    &:hover .settings .settingsIcon {
+      transform: rotate(90deg);
+    }
+
+    &:hover .bellshake {
+      animation: bellshake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+      backface-visibility: hidden;
+      transform-origin: center;
+    }
+
+    &:hover .cartanim {
+      animation: cartscale 0.6s cubic-bezier(.36,.07,.19,.97) both;
+      backface-visibility: hidden;
+      transform-origin: center;
+    }
+  }
+
+  .button, .navItem {
+    font-size: 13px;
   }
 
   @media only screen and (max-width: 1280px) {
     padding: 10px 0;
   }
+}
+
+.vertical {
+  width: 1px;
+  height: 20px;
+  background-color: #4D4D4D;
+}
+
+@keyframes bellshake {
+  0% { transform: rotate(0); }
+  15% { transform: rotate(5deg); }
+  30% { transform: rotate(-5deg); }
+  45% { transform: rotate(4deg); }
+  60% { transform: rotate(-4deg); }
+  75% { transform: rotate(2deg); }
+  85% { transform: rotate(-2deg); }
+  92% { transform: rotate(1deg); }
+  100% { transform: rotate(0); }
+}
+
+@keyframes cartscale {
+  0% { transform: scale(1.0); }
+  100% { transform: scale(1.1);; }
 }
 
 .menu {
