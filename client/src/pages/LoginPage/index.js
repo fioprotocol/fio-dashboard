@@ -1,14 +1,14 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from "reselect";
 
-import { edgeContext } from '../../redux/profile/selectors';
-import { setAccount } from '../../redux/profile/actions';
+import { edgeContextSet } from '../../redux/edge/selectors';
+import { login } from '../../redux/edge/actions';
 
 import LoginPage from './LoginPage';
 const selector = createStructuredSelector({
-  edgeContext,
+  edgeContextSet,
 });
 export default connect(
   selector,
-  { setAccount },
+  { login },
 )(LoginPage);

@@ -32,37 +32,6 @@ export default combineReducers({
         return state;
     }
   },
-  account(state = null, action) {
-    switch (action.type) {
-      case actions.ACCOUNT_SUCCESS: {
-        const account = action.data
-        try {
-          // Find the app wallet, or create one if necessary:
-          const walletInfo = account.getFirstWalletInfo('wallet:fio')
-          // const wallet =
-          //   walletInfo == null
-          //     ? await account.createCurrencyWallet('wallet:fio')
-          //     : await account.waitForCurrencyWallet(walletInfo.id)
-        } catch (e) {
-          console.error(e)
-        }
-        return account;
-      }
-      case actions.LOGOUT_SUCCESS:
-        return null;
-      default:
-        return state;
-    }
-  },
-  edgeContext(state = null, action) {
-    switch (action.type) {
-      case actions.EDGE_CONTEXT_SUCCESS: {
-        return action.data;
-      }
-      default:
-        return state;
-    }
-  },
   isConfirmed(state = false, action) {
     switch (action.type) {
       case actions.CONFIRM_SUCCESS:

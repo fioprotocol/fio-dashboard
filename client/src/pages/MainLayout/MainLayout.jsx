@@ -12,6 +12,7 @@ export default class MainLayout extends Component {
     pathname: PropTypes.string.isRequired,
     user: PropTypes.object,
     account: PropTypes.object,
+    loginSuccess: PropTypes.bool,
 
     init: PropTypes.func.isRequired,
     logout: PropTypes.func.isRequired,
@@ -22,18 +23,20 @@ export default class MainLayout extends Component {
   }
 
   render() {
-    const { user, account, pathname, logout, children } = this.props;
+    const { user, account, loginSuccess, pathname, logout, children } = this.props;
     const isHomePage = pathname === '/';
     return (
       <div className={classes.root}>
         <MainHeader
           user={user}
           account={account}
+          loginSuccess={loginSuccess}
           pathname={pathname}
           logout={logout}
           isHomePage={isHomePage}
         />
         {account && <Sidebar />}
+        {account && <p>Welcome, {account.username}!</p>}
         <div className={`${classes.content} ${isHomePage && classes.home}`}>
           {children}
         </div>

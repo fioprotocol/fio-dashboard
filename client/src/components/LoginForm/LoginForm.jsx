@@ -7,14 +7,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
 import ModalComponent from '../Modal/Modal';
-import Input from '../Input/Input'; 
+import Input from '../Input/Input';
 import FormHeader from '../FormHeader/FormHeader';
 
 import classes from './LoginForm.module.scss';
 import { ROUTES } from '../../constants/routes';
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 const LoginForm = props => {
-  const { show, onClose } = props;
+  const { show, onSubmit, loading, onClose } = props;
   const [isForgotPass, toggleForgotPass] = useState(false);
 
   const onForgotPassHandler = e => {
@@ -55,7 +56,11 @@ const LoginForm = props => {
       <div className={classnames(classes.box, isForgotPass && classes.show)}>
         <Form
           // initialValues={}
-          onSubmit={(values) => {
+          onSubmit={({ email, password }) => {
+            onSubmit({
+              username: `${email.split('@')[0]}`,
+              password
+            })
             // send values to the cloud
           }}
           validate={(values) => {
@@ -79,6 +84,7 @@ const LoginForm = props => {
                 name='email'
                 type='text'
                 placeholder='Enter Your Email Address'
+                disabled={loading}
                 component={Input}
               />
               <Field
@@ -86,9 +92,10 @@ const LoginForm = props => {
                 type='password'
                 placeholder='Enter Your Password'
                 component={Input}
+                disabled={loading}
               />
-              <Button htmltype='submit' variant='primary' className='w-100'>
-                Sign In
+              <Button htmltype='submit' variant='primary' className='w-100' onClick={handleSubmit} disabled={loading}>
+                {loading ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Sign In'}
               </Button>
               <Link
                 className='regular-text'

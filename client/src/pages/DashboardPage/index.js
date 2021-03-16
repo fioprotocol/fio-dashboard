@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { account } from '../../redux/profile/selectors';
+import { account } from '../../redux/edge/selectors';
 import DashboardPage from './DashboardPage';
 
 const selector = createStructuredSelector({

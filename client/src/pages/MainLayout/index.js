@@ -3,7 +3,8 @@ import { createStructuredSelector } from 'reselect';
 
 import { pathname } from '../../redux/router/selectors';
 import { loadProfile, logout } from '../../redux/profile/actions';
-import { user, account } from '../../redux/profile/selectors';
+import { user } from '../../redux/profile/selectors';
+import { account, loginSuccess } from '../../redux/edge/selectors';
 
 import MainLayout from './MainLayout';
 
@@ -11,6 +12,7 @@ const selector = createStructuredSelector({
   pathname,
   user,
   account,
+  loginSuccess,
 });
 
 const actions = {
