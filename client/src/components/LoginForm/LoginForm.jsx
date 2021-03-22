@@ -16,16 +16,8 @@ import { ROUTES } from '../../constants/routes';
 const LoginForm = props => {
   const { show, onSubmit, loading, onClose, getCachedUsers, cachedUsers } = props;
   const [isForgotPass, toggleForgotPass] = useState(false);
-  const [cachedUsersRequested, toggleCachedUsersRequested] = useState(false);
 
-  useEffect(() => {
-    if (!cachedUsersRequested) {
-      setTimeout(() => {
-        getCachedUsers()
-      }, 2000)
-      toggleCachedUsersRequested(true)
-    }
-  })
+  useEffect(getCachedUsers, [])
 
   const onForgotPassHandler = e => {
     e.preventDefault();
