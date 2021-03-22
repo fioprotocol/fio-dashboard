@@ -1,11 +1,10 @@
 import { connect } from 'react-redux';
-import { reduxForm } from 'redux-form';
 import { createSelector, createStructuredSelector } from 'reselect';
 import { compose } from '../../utils';
 import { signup, resetSuccessState } from '../../redux/profile/actions';
 import { successfullyRegistered, loading } from '../../redux/profile/selectors';
 import { withRouter } from 'react-router-dom';
-import SignupForm from './SignupForm';
+import CreateAccountForm from './CreateAccountForm';
 
 const signupSuccess = createSelector(
   successfullyRegistered,
@@ -24,15 +23,6 @@ const reduxConnect = connect(
   actions,
 );
 
-const formConnect = reduxForm({
-  form: 'signup',
-});
+export { CreateAccountForm };
 
-export { SignupForm };
-
-export default withRouter(
-  compose(
-    reduxConnect,
-    formConnect,
-  )(SignupForm),
-);
+export default withRouter(compose(reduxConnect)(CreateAccountForm));

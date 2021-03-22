@@ -3,14 +3,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import classnames from 'classnames';
 import classes from './Input.module.scss';
+import PinInput from 'react-pin-input';
 
 const regularInputWrapper = (children) => (
   <div className={classes.regInputWrapper}>{children}</div>
 );
 
 const Input = props => {
-  const { input, meta } = props;
-  const { type, value } = input;
+  const { input, meta, onComplete } = props;
+  const { type, value, name } = input;
 
   const [showPass, toggleShowPass] = useState(false);
   const [clearInput, toggleClearInput] = useState(value !== '');
@@ -64,8 +65,26 @@ const Input = props => {
     return regularInputWrapper(regularInput);
   }
 
-  if (type === 'password') {
+  if (type === 'password' && name !== 'pin') {
     return regularInputWrapper(regularInput);
+  }
+
+  if (name === 'pin') {
+    return (
+      <div className={classes.pin}>
+        <PinInput
+          length={6}
+          initialValue=''
+          focus
+          type='numeric'
+          inputMode='number'
+          onComplete={(value, index) => {}}
+          regexCriteria={/^[0-9]*$/}
+          {...props}
+          {...input}
+        />
+      </div>
+    );
   }
 
   return <input {...input} {...props} />;

@@ -1,8 +1,10 @@
 @import '../../assets/styles/colors.scss';
+@import '../../assets//styles/fontMixins.scss';
 
 .baseColored {
   color: white;
   margin-bottom: 18px;
+  @include proxima-nova-bold
 }
 
 .baseColored.colored {
@@ -12,10 +14,20 @@
 .colored[data-highlightword] {
   position: relative;
 }
+
 .colored[data-highlightword]::before {
   content: attr(data-highlightword);
   color: white;
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.header {
+  font-size: 14px;
+  margin-bottom: 30px;
+}
+
+.subtitle {
+  @include proxima-nova-thin
 }

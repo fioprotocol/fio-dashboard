@@ -1,0 +1,128 @@
+@import '../../assets/styles/fontMixins';
+@import '../../assets/styles/colors';
+@import '../../assets/styles/forms';
+
+
+.arrow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: auto;
+  height: auto;
+  margin: 0;
+  color: white;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  transform: translateX(0);
+
+  &:hover {
+    transform: translateX(-4px);
+  }
+}
+
+.infoBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background-color: #00315A;
+  font-size: 12px;
+  line-height: 15px;
+  padding: 15px 30px;
+  text-align: center;
+  margin-bottom: 1.5rem;
+
+  .icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  & p {
+    @include proxima-nova-regular;
+  }
+}
+
+.accountInfo {
+  width: 100%;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    height: 54px;
+    padding: 0px 20px;
+    border: 1px solid $violet;
+    box-sizing: border-box;
+    border-radius: 7px;
+    box-shadow: 0 0 8px 0 rgba(0,0,0,0.11);
+    background: transparent;
+    color: white !important;
+    outline: none;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 10px;
+
+    &:hover .icon {
+      color: $violet;
+    }
+  }
+}
+
+.icon {
+  width: 14px;
+  height: 14px;
+}
+
+.icon.checked {
+  color: $green;
+  opacity: 1;
+}
+
+.validationWrapper {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+
+  &:first-child {
+    margin-top: 20px;
+  }
+
+  &:last-child {
+    margin-bottom: 20px;
+  }
+}
+
+.checkedIcon {
+  margin-left: 20px;
+  opacity: 0.2;
+}
+
+.textWrapper {
+  margin: 0 0 0 10px;
+}
+
+.badge {
+  font-size: 12px;
+  border-radius: 14px;
+  background-color: #001A30;
+  width: 100%;
+  margin-bottom: 30px;
+  
+  &.roll {
+    max-height: 0;
+    transition: max-height 0.2s ease-out;
+    margin-bottom: 0;
+  }
+
+  &.open {
+    max-height: 110px;
+  }
+
+  .icon {
+    width: 14px !important;
+  }
+}

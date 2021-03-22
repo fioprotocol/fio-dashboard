@@ -6,6 +6,7 @@ import { Button, Navbar, Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
+import { ROUTES } from '../../constants/routes';
 import LoginForm from '../LoginForm';
 import classes from './MainHeader.module.scss';
 
@@ -40,6 +41,7 @@ export default class MainHeader extends Component {
     user: PropTypes.object,
     isHomePage: PropTypes.bool,
     logout: PropTypes.func.isRequired,
+    loginSuccess: PropTypes.bool,
   });
 
   renderLoggedMenu = () => (
@@ -99,7 +101,7 @@ export default class MainHeader extends Component {
                 </div>
               </div>
             </Nav.Link>
-            <Nav.Link>
+            <Nav.Link as={Link} to={ROUTES.CREATE_ACCOUNT}>
               <Button variant='outline-primary' className={classnames(classes.button, 'text-white', 'mr-3')} size="lg">
                 Create account
               </Button>

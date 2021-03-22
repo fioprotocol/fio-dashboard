@@ -25,6 +25,8 @@
       max-height: 30px;
       margin-bottom: 8px;
       margin-top: 13px;
+      display: flex;
+      align-items: center;
     }
   }
 }
@@ -70,4 +72,7 @@
   }
 }
 
-
+.pin {
+  width: 219px;
+  margin: 56px auto 70px;
+}

@@ -16,7 +16,16 @@ import {
   faTimesCircle,
   faInfoCircle,
   faBan,
+  faChevronUp,
+  faChevronDown,
+  faUserCircle,
+  faKeyboard,
+  faCheckCircle,
 } from '@fortawesome/free-solid-svg-icons';
+
+import {
+  faCircle as faRegularCircle
+} from '@fortawesome/free-regular-svg-icons';
 
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -43,6 +52,12 @@ library.add(
   faTimesCircle,
   faInfoCircle,
   faBan,
+  faChevronUp,
+  faChevronDown,
+  faUserCircle,
+  faKeyboard,
+  faCheckCircle,
+  faRegularCircle,
 );
 
 const store = configureStore(api, history);

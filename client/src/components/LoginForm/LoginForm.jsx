@@ -106,7 +106,7 @@ const LoginForm = props => {
               </Link>
               <p className='regular-text'>
                 Don’t have an account?{' '}
-                <Link to={ROUTES.CREATE_ACCOUNT}>Create Account</Link>
+                <Link to={ROUTES.CREATE_ACCOUNT} onClick={onClose}>Create Account</Link>
               </p>
             </form>
           )}
@@ -124,7 +124,6 @@ const LoginForm = props => {
       backdrop='static'
       onClose={isForgotPass ? onForgotPassClose : onClose}
     >
-      {/* {isForgotPass ? renderForgotPass() : renderForm()} */}
       {renderForm()}
     </ModalComponent>
   );
