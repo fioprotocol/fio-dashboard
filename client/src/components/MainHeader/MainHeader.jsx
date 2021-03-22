@@ -7,7 +7,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
 import { ROUTES } from '../../constants/routes';
-import LoginForm from '../LoginForm';
 import classes from './MainHeader.module.scss';
 
 export default class MainHeader extends Component {
@@ -36,7 +35,7 @@ export default class MainHeader extends Component {
     account: PropTypes.object,
     pathname: PropTypes.string.isRequired,
     user: PropTypes.object,
-    // isHomePage: PropTypes.bool,
+    edgeContextSet: PropTypes.bool,
     logout: PropTypes.func.isRequired,
     loginSuccess: PropTypes.bool,
     showLoginModal: PropTypes.func.isRequired,
@@ -120,7 +119,7 @@ export default class MainHeader extends Component {
   );
 
   render() {
-    const { pathname, account, user } = this.props;
+    const { pathname, account, user, edgeContextSet } = this.props;
     return (
       <div className={`${classes.header}`}>
         <Link to='/' className='mr-5'>

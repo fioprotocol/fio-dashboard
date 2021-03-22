@@ -1,31 +1,61 @@
 export const prefix = 'edge';
 
-export const EDGE_CONTEXT_SUCCESS = `${prefix}/EDGE_CONTEXT_SUCCESS`;
+export const EDGE_CONTEXT_INIT_REQUEST = `${prefix}/EDGE_CONTEXT_INIT_REQUEST`;
+export const EDGE_CONTEXT_INIT_SUCCESS = `${prefix}/EDGE_CONTEXT_INIT_SUCCESS`;
+export const EDGE_CONTEXT_INIT_FAILURE = `${prefix}/EDGE_CONTEXT_INIT_FAILURE`;
 
-export const setEdgeContext = edgeContext => ({
-  type: EDGE_CONTEXT_SUCCESS,
-  data: edgeContext
+export const edgeContextInit = () => ({
+  types: [EDGE_CONTEXT_INIT_REQUEST, EDGE_CONTEXT_INIT_SUCCESS, EDGE_CONTEXT_INIT_FAILURE],
+  promise: api => api.edge.makeEdgeContext(),
 });
 
 export const LOGIN_REQUEST = `${prefix}/LOGIN_REQUEST`;
 export const LOGIN_SUCCESS = `${prefix}/LOGIN_SUCCESS`;
 export const LOGIN_FAILURE = `${prefix}/LOGIN_FAILURE`;
 
-export const login = ({ username, password }) => ({
+export const login = ({ username, password, pin }) => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
-  promise: api => api.edge.login(username, password),
+  promise: api => pin ? api.edge.loginPIN(username, pin) : api.edge.login(username, password),
 });
 
 export const SIGNUP_REQUEST = `${prefix}/SIGNUP_REQUEST`;
 export const SIGNUP_SUCCESS = `${prefix}/SIGNUP_SUCCESS`;
 export const SIGNUP_FAILURE = `${prefix}/SIGNUP_FAILURE`;
-export const RESET_SUCCESS_STATE = `${prefix}/RESET_SUCCESS_STATE`;
 
-export const signup = data => ({
+export const signup = ({ username, password, repeatPassword, pin }) => ({
   types: [SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE],
-  promise: api => api.edge.signup(data),
+  promise: api => api.edge.signup(username, password, repeatPassword, pin),
 });
 
+export const CACHED_USERS_REQUEST = `${prefix}/CACHED_USERS_REQUEST`;
+export const CACHED_USERS_SUCCESS = `${prefix}/CACHED_USERS_SUCCESS`;
+export const CACHED_USERS_FAILURE = `${prefix}/CACHED_USERS_FAILURE`;
+
+export const getCachedUsers = () => ({
+  types: [CACHED_USERS_REQUEST, CACHED_USERS_SUCCESS, CACHED_USERS_FAILURE],
+  promise: api => api.edge.getCachedUsers(),
+});
+
+export const RECOVERY_QUEST_REQUEST = `${prefix}/RECOVERY_QUEST_REQUEST`;
+export const RECOVERY_QUEST_SUCCESS = `${prefix}/RECOVERY_QUEST_SUCCESS`;
+export const RECOVERY_QUEST_FAILURE = `${prefix}/RECOVERY_QUEST_FAILURE`;
+
+export const getRecoveryQuestions = () => ({
+  types: [RECOVERY_QUEST_REQUEST, RECOVERY_QUEST_SUCCESS, RECOVERY_QUEST_FAILURE],
+  promise: api => api.edge.getRecoveryQuestions(),
+});
+
+export const USERNAME_AVAIL_REQUEST = `${prefix}/USERNAME_AVAIL_REQUEST`;
+export const USERNAME_AVAIL_SUCCESS = `${prefix}/USERNAME_AVAIL_SUCCESS`;
+export const USERNAME_AVAIL_FAILURE = `${prefix}/USERNAME_AVAIL_FAILURE`;
+
+export const usernameAvailable = username => ({
+  types: [USERNAME_AVAIL_REQUEST, USERNAME_AVAIL_SUCCESS, USERNAME_AVAIL_FAILURE],
+  promise: api => api.edge.usernameAvailable(username),
+});
+
+// todo: check if it need
+export const RESET_SUCCESS_STATE = `${prefix}/RESET_SUCCESS_STATE`;
 export const resetSuccessState = () => ({
   type: RESET_SUCCESS_STATE,
 });

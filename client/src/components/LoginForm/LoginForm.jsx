@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { Form, Field } from 'react-final-form';
 import { Link } from 'react-router-dom';
@@ -14,8 +14,18 @@ import classes from './LoginForm.module.scss';
 import { ROUTES } from '../../constants/routes';
 
 const LoginForm = props => {
-  const { show, onSubmit, loading, onClose } = props;
+  const { show, onSubmit, loading, onClose, getCachedUsers, cachedUsers } = props;
   const [isForgotPass, toggleForgotPass] = useState(false);
+  const [cachedUsersRequested, toggleCachedUsersRequested] = useState(false);
+
+  useEffect(() => {
+    if (!cachedUsersRequested) {
+      setTimeout(() => {
+        getCachedUsers()
+      }, 2000)
+      toggleCachedUsersRequested(true)
+    }
+  })
 
   const onForgotPassHandler = e => {
     e.preventDefault();
@@ -49,6 +59,14 @@ const LoginForm = props => {
       </Button>
     </div>
   );
+
+  const renderPinForm = () => (
+    <div className={classes.formBox}>
+      <div className={classnames(classes.box, isForgotPass && classes.show)}>
+        Pin Form
+      </div>
+    </div>
+  )
 
   const renderForm = () => (
     <div className={classes.formBox}>
@@ -122,7 +140,7 @@ const LoginForm = props => {
       onClose={isForgotPass ? onForgotPassClose : onClose}
       closeButton
     >
-      {renderForm()}
+      {!cachedUsers.length ? renderForm() : renderPinForm()}
     </ModalComponent>
   );
 };

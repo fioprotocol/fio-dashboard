@@ -5,9 +5,6 @@ import plugins from "edge-currency-accountbased";
 
 export default class Edge {
   edgeContext
-  constructor() {
-    this.makeEdgeContext()
-  }
 
   makeEdgeContext = async () => {
     try {
@@ -16,6 +13,8 @@ export default class Edge {
         vendorImageUrl: logo,
         vendorName: 'FIO'
       }
+
+      if (this.edgeContext) return true
 
       this.edgeContext = await makeEdgeContext({
         apiKey: process.env.REACT_APP_EDGE_LOGIN_API_KEY,
@@ -27,6 +26,8 @@ export default class Edge {
         fio: plugins.fio
       })
       lockEdgeCorePlugins()
+
+      return true
     } catch (e) {
       console.log(e);
     }
@@ -37,7 +38,11 @@ export default class Edge {
   }
 
   getCachedUsers() {
-    return this.edgeContext.listUsernames()
+    try {
+      return this.edgeContext.listUsernames()
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   login(username, password) { // returns EdgeAccount
@@ -69,9 +74,49 @@ export default class Edge {
     }
   }
 
-  signup(data) {
-    //
+  async signup(username, password, passwordRepeat, pin) {
+    // check password rules
+    try {
+      const check = await this.edgeContext.checkPasswordRules(password)
+      if (!check.passed) {
+        throw new Error('Password is not valid')
+      }
+      if (password !== passwordRepeat) {
+        throw new Error('Passwords is not match')
+      }
+    } catch (e) {
+      throw e
+    }
+
+    // create account
+    return this.edgeContext.createAccount(username, password, pin, {})
   }
+
+  usernameAvailable(username) {
+    return this.edgeContext.usernameAvailable(username) // returns bool `available`
+  }
+
+  getRecoveryQuestions() {
+    return this.edgeContext.listRecoveryQuestionChoices()
+    // .then(results => {
+    //   const questions = results
+    //     .filter(result => result.category === 'recovery2')
+    //     .map(result => result.question)
+    //   dispatch(action.setPasswordRecoveryQuestions(questions))
+    //   dispatch(action.closeLoadingQuestions())
+    // })
+    // .catch(error => {
+    //   dispatch(openNotification(error.name))
+    //   dispatch(action.closeLoadingQuestions())
+    // })
+  }
+
+  // async setRecovery(questions, answers) {
+  //   if (answers[0].length > 3 && answers[1].length > 3) {
+  //     const token = await account.changeRecovery(questions, answers)
+  //   }
+  //   throw new Error('There was an issue setting recovery questions')
+  // }
 
   confirm(hash) {
     //
