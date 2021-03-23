@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import _ from 'lodash';
 import classnames from 'classnames';
 import PinInput from 'react-pin-input';
@@ -36,7 +37,7 @@ const Input = props => {
           {...props}
           type={showPass ? 'text' : type}
         />
-        {clearInput && (
+        {(clearInput && !props.loading) && (
           <FontAwesomeIcon
             icon='times-circle'
             className={classnames(
@@ -51,6 +52,13 @@ const Input = props => {
             icon={!showPass ? 'eye' : 'eye-slash'}
             className={classes.inputIcon}
             onClick={() => toggleShowPass(!showPass)}
+          />
+        )}
+        {props.loading && (
+          <FontAwesomeIcon
+            icon={faSpinner}
+            spin
+            className={classnames(classes.inputIcon, classes.inputSpinnerIcon)}
           />
         )}
       </div>

@@ -132,7 +132,8 @@ const LoginForm = props => {
       onClose={isForgotPass ? onForgotPassClose : onClose}
       closeButton
     >
-      {!cachedUsers.length ? renderForm() : renderPinForm()}
+      {/*{!cachedUsers.length ? renderForm() : renderPinForm()}*/}
+      {renderForm()}
     </ModalComponent>
   );
 };

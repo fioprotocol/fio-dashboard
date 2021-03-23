@@ -4,6 +4,7 @@ import { Form } from 'react-final-form';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classes from './CreateAccountForm.module.scss';
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 export default class Wizard extends React.Component {
   static propTypes = {
@@ -44,25 +45,30 @@ export default class Wizard extends React.Component {
       : {};
   };
 
-  handleSubmit = (values) => {
-    const { children, onSubmit } = this.props;
+  handleSubmit = (values, form, cb) => {
+    const { children, onSubmit, onUserSubmit } = this.props;
     const { page } = this.state;
     const isLastPage = page === React.Children.count(children) - 1;
+    const isFirstPage = page === 0;
     if (isLastPage) {
       return onSubmit(values);
+    } else if (isFirstPage) {
+      onUserSubmit(values, this.next, cb);
     } else {
       this.next(values);
     }
   };
 
   renderFormChildren = (props) => {
-    const { handleSubmit, submitting, valid, pristine } = props;
-    const { children } = this.props;
+    const { handleSubmit, submitting, valid, pristine, form } = props;
+    const { children, loading } = this.props;
     const { page } = this.state;
 
     const activePage = React.Children.toArray(children)[page];
     const isLastPage = page === React.Children.count(children) - 1;
     const { props: { bottomText, hideNext, hideBack, onBack } = {} } = activePage || {};
+
+    activePage.props.setForm && activePage.props.setForm(form)
     return (
       <form onSubmit={handleSubmit} className={classes.form} id='createAccountForm'>
         {activePage}
@@ -75,7 +81,7 @@ export default class Wizard extends React.Component {
         )}
         {!isLastPage && !hideNext && (
           <Button type='submit' className='w-100'>
-            NEXT
+            NEXT {loading && <FontAwesomeIcon icon={faSpinner} spin />}
           </Button>
         )}
         {!isLastPage && onBack && !valid && !pristine && (
@@ -100,6 +106,7 @@ export default class Wizard extends React.Component {
 
     return activePage ? (
       <Form
+        mutators={{ setDataMutator: activePage.props.setDataMutator }}
         initialValues={values}
         validate={this.validate}
         onSubmit={this.handleSubmit}

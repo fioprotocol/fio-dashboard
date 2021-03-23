@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Field, useFormState } from 'react-final-form';
+import { Field } from 'react-final-form';
 import { Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import classnames from 'classnames';
@@ -23,6 +23,15 @@ const VALIDATION_TITLES = {
   number: 'Must have at least 1 number',
 }
 
+const setDataMutator = (args, state) => {
+  const [name, data] = args
+  let field = state.fields[name]
+
+  if (field) {
+    field.data = { ...field.data, ...data }
+  }
+}
+
 export default class CreateAccountForm extends Component {
   constructor(props) {
     super();
@@ -34,12 +43,26 @@ export default class CreateAccountForm extends Component {
         upper: { isChecked: false },
         number: { isChecked: false }
       },
+      usernameAvailableLoading: props.usernameAvailableLoading,
+      usernameError: null,
+      goToPin: null
     }
   }
   static propTypes = {
     resetSuccessState: PropTypes.func.isRequired,
+    usernameIsAvailable: PropTypes.bool,
+    usernameAvailableLoading: PropTypes.bool,
+    usernameAvailable: PropTypes.func.isRequired,
     loading: PropTypes.bool,
   };
+
+  static getDerivedStateFromProps(props, state) {
+    if (props.usernameAvailableLoading !== state.usernameAvailableLoading) {
+      return { usernameAvailableLoading: props.usernameAvailableLoading }
+    }
+
+    return null
+  }
 
   componentDidMount() {
     const { location, replace } = this.props.history;
@@ -48,6 +71,17 @@ export default class CreateAccountForm extends Component {
         email: location.query.email,
       });
       replace(ROUTES.CREATE_ACCOUNT);
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.usernameAvailableLoading && !this.state.usernameAvailableLoading) {
+      this.setState({ usernameError: !this.props.usernameIsAvailable }, () => {
+
+        console.log(this.userForm);
+        this.userForm && this.userForm.mutators && this.userForm.mutators.setDataMutator('email', { error: !this.props.usernameIsAvailable })
+      }
+      )
     }
   }
 
@@ -78,8 +112,19 @@ export default class CreateAccountForm extends Component {
     });
   }
 
-  isEmailExists = email => {
-    //todo: add logic to check email
+  onUsersPageSubmit = (values, next, cb) => {
+    if (this.props.usernameIsAvailable) {
+      cb()
+      return next(values)
+    }
+    // todo: validate on click 'next'?
+    const { email } = values
+    if (email && email.indexOf('@') > 0) this.props.usernameAvailable(email.split('@')[0]);
+  }
+
+  isEmailExists = (e) => {
+    const email = e.target.value
+    if (email && email.indexOf('@') > 0) this.props.usernameAvailable(email.split('@')[0]);
   }
 
   renderPassValidBadge = () => {
@@ -89,7 +134,7 @@ export default class CreateAccountForm extends Component {
       <div className={classnames(classes.badge)}>
         {Object.keys(passwordValidation).map((key) => (
           <div
-            key={VALIDATION_TITLES.key}
+            key={VALIDATION_TITLES[key]}
             className={classes.validationWrapper}
           >
             <FontAwesomeIcon
@@ -108,20 +153,21 @@ export default class CreateAccountForm extends Component {
   }
 
   validateUsersPage = (values) => {
-    const { passwordValidation } = this.state;
+    const { usernameIsAvailable } = this.props;
+    const { passwordValidation, usernameError } = this.state;
     const errors = {};
     const passValid = {};
     if (!values.email || !validator.validate(values.email)) {
       errors.email = 'Invalid Email Address';
     }
 
-    if (this.isEmailExists(values.email)) {
-      errors.email = (
+    if (!usernameIsAvailable) {
+      errors.email = usernameError ? (
         <span>
-          This Email Address is already registered,{' '}
+              This Email Address is already registered,{' '}
           <Link to=''>Sign-in</Link> instead
-        </span>
-      );
+            </span>
+      ) : '';
     }
 
     if (!values.password) {
@@ -190,8 +236,8 @@ export default class CreateAccountForm extends Component {
   }
 
   render() {
-    const { signupSuccess, loading, onSubmit } = this.props;
-    const { isOpen } = this.state;
+    const { signupSuccess, loading, usernameAvailableLoading, onSubmit } = this.props;
+    const { isOpen, usernameError } = this.state;
 
     /* MOCKED DATA REMOVE ON LOGIC END */
     const data = {
@@ -205,14 +251,18 @@ export default class CreateAccountForm extends Component {
       <FormModalWrapper>
         <Wizard
           onSubmit={onSubmit}
+          onUserSubmit={this.onUsersPageSubmit}
         >
           <Wizard.Page
+            setDataMutator={setDataMutator}
+            setForm={form => this.userForm = form}
             bottomText={
               <p>
                 Already have an account? <Link to=''>Sign In</Link>
               </p>
             }
             validate={this.validateUsersPage}
+            loading={loading}
           >
             <FormHeader
               title='Create Your FIO Account'
@@ -225,6 +275,9 @@ export default class CreateAccountForm extends Component {
               component={Input}
               type='text'
               placeholder='Enter Your Email Address'
+              disabled={loading || usernameAvailableLoading}
+              loading={usernameAvailableLoading}
+              onBlur={this.isEmailExists}
             />
             {this.renderPassValidBadge()}
             <Field
@@ -232,12 +285,14 @@ export default class CreateAccountForm extends Component {
               component={Input}
               type='password'
               placeholder='Choose a Password'
+              disabled={loading}
             />
             <Field
               name='confirmPassword'
               component={Input}
               type='password'
               placeholder='Confirm Password'
+              disabled={loading}
             />
           </Wizard.Page>
           <Wizard.Page
@@ -249,7 +304,7 @@ export default class CreateAccountForm extends Component {
               header='Set 2 of 2'
               subtitle='Enter a 6 digit PIN to use for sign in and transaction approvals'
             />
-            <Field name='pin' component={Input} />
+            <Field name='pin' component={Input} disabled={loading} />
           </Wizard.Page>
           <Wizard.Page
             hideNext
@@ -262,7 +317,7 @@ export default class CreateAccountForm extends Component {
               header='Set 2 of 2'
               subtitle='Enter a 6 digit PIN to use for sign in and transaction approvals'
             />
-            <Field name='confirmPin' component={Input} />
+            <Field name='confirmPin' component={Input} disabled={loading} />
           </Wizard.Page>
           <Wizard.Page
             hideBack
