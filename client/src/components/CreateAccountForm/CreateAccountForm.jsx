@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Field } from 'react-final-form';
+import { Field, useFormState } from 'react-final-form';
 import { Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import classnames from 'classnames';
@@ -16,28 +16,23 @@ import { ROUTES } from '../../constants/routes';
 import classes from './CreateAccountForm.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+const VALIDATION_TITLES = {
+  length: 'Must have at least 10 characters',
+  lower: 'Must have at least 1 lower case letter',
+  upper: 'Must have at least 1 upper case letter',
+  number: 'Must have at least 1 number',
+}
+
 export default class CreateAccountForm extends Component {
   constructor(props) {
     super();
     this.state = {
       isOpen: true,
       passwordValidation: {
-        length: {
-          title: 'Must have at least 10 characters',
-          isChecked: false,
-        },
-        lower: {
-          title: 'Must have at least 1 lower case letter',
-          isChecked: false,
-        },
-        upper: {
-          title: 'Must have at least 1 upper case letter',
-          isChecked: false,
-        },
-        number: {
-          title: 'Must have at least 1 number',
-          isChecked: false,
-        }
+        length: { isChecked: false },
+        lower: { isChecked: false },
+        upper: { isChecked: false },
+        number: { isChecked: false }
       },
     }
   }
@@ -71,7 +66,6 @@ export default class CreateAccountForm extends Component {
 
     Object.keys(passwordValidation).forEach(key => {
       retObj[key] = {};
-      retObj[key].title = passwordValidation[key].title;
       retObj[key].isChecked = passValid[key];
     });
 
@@ -85,7 +79,7 @@ export default class CreateAccountForm extends Component {
   }
 
   isEmailExists = email => {
-    //TO DO add logic to check email
+    //todo: add logic to check email
   }
 
   renderPassValidBadge = () => {
@@ -93,26 +87,111 @@ export default class CreateAccountForm extends Component {
 
     return (
       <div className={classnames(classes.badge)}>
-        {Object.values(passwordValidation).map((values) => (
-          <div key={values.title} className={classes.validationWrapper}>
+        {Object.keys(passwordValidation).map((key) => (
+          <div
+            key={VALIDATION_TITLES.key}
+            className={classes.validationWrapper}
+          >
             <FontAwesomeIcon
               icon='check-circle'
               className={classnames(
                 classes.icon,
                 classes.checkedIcon,
-                values.isChecked && classes.checked
+                passwordValidation[key].isChecked && classes.checked
               )}
             />
-            <p className={classes.textWrapper}>{values.title}</p>
+            <p className={classes.textWrapper}>{VALIDATION_TITLES[key]}</p>
           </div>
         ))}
       </div>
     );
   }
 
+  validateUsersPage = (values) => {
+    const { passwordValidation } = this.state;
+    const errors = {};
+    const passValid = {};
+    if (!values.email || !validator.validate(values.email)) {
+      errors.email = 'Invalid Email Address';
+    }
+
+    if (this.isEmailExists(values.email)) {
+      errors.email = (
+        <span>
+          This Email Address is already registered,{' '}
+          <Link to=''>Sign-in</Link> instead
+        </span>
+      );
+    }
+
+    if (!values.password) {
+      errors.password = 'Password Field Should Be Filled';
+      Object.keys(passwordValidation).forEach(item => passValid[item] = false);
+    }
+
+    if (!values.confirmPassword) {
+      errors.confirmPassword = 'Password Field Should Be Filled';
+    }
+
+    if (values.confirmPassword !== values.password) {
+      errors.confirmPassword = 'Passwords do not match';
+    }
+
+    //special password validate rules
+    if (values && values.password && values.password.length >= 10) {
+      passValid.length = true;
+    } else {
+      passValid.length = false;
+    }
+
+    if (
+      values &&
+      values.password &&
+      values.password.search(/^(?=.*[a-z])/) >= 0
+    ) {
+      passValid.lower = true;
+    } else {
+      passValid.lower = false;
+    }
+
+    if (
+      values &&
+      values.password &&
+      values.password.search(/^(?=.*[A-Z])/) >= 0
+    ) {
+      passValid.upper = true;
+    } else {
+      passValid.upper = false;
+    }
+
+    if (
+      values &&
+      values.password &&
+      values.password.search(/^(?=.*\d)/) >= 0
+    ) {
+      passValid.number = true;
+    } else {
+      passValid.number = false;
+    }
+
+    this.passwordValidation(passValid);
+
+    return errors;
+  }
+
+  validateConfirmPin = (values) => {
+    const errors = {};
+    if (values.confirmPin && values.confirmPin.length === 6 &&
+      values.pin !== values.confirmPin
+    ) {
+      errors.confirmPin = 'Invalid PIN Entry - Try again or start over';
+    }
+    return errors;
+  }
+
   render() {
     const { signupSuccess, loading, onSubmit } = this.props;
-    const { isOpen, passwordValidation } = this.state;
+    const { isOpen } = this.state;
 
     /* MOCKED DATA REMOVE ON LOGIC END */
     const data = {
@@ -125,7 +204,6 @@ export default class CreateAccountForm extends Component {
     return (
       <FormModalWrapper>
         <Wizard
-          // initialValues={{ employed: true, stooge: 'larry' }}
           onSubmit={onSubmit}
         >
           <Wizard.Page
@@ -134,76 +212,7 @@ export default class CreateAccountForm extends Component {
                 Already have an account? <Link to=''>Sign In</Link>
               </p>
             }
-            validate={(values) => {
-              const errors = {};
-              const passValid = {};
-              if (!values.email || !validator.validate(values.email)) {
-                errors.email = 'Invalid Email Address';
-              }
-
-              if (this.isEmailExists(values.email)) {
-                errors.email = (
-                  <span>
-                    This Email Address is already registered,{' '}
-                    <Link to=''>Sign-in</Link> instead
-                  </span>
-                );
-              }
-
-              if (!values.password) {
-                errors.password = 'Password Field Should Be Filled';
-                Object.keys(passwordValidation).forEach(item => passValid[item] = false);
-              }
-
-              if (!values.confirmPassword) {
-                errors.confirmPassword = 'Password Field Should Be Filled';
-              }
-
-              if (values.confirmPassword !== values.password) {
-                errors.confirmPassword = 'Passwords do not match';
-              }
-
-              //special password validate rules
-              if (values && values.password && values.password.length >= 10) {
-                passValid.length = true;
-              } else {
-                passValid.length = false;
-              }
-
-              if (
-                values &&
-                values.password &&
-                values.password.search(/^(?=.*[a-z])/) >= 0
-              ) {
-                passValid.lower = true;
-              } else {
-                passValid.lower = false;
-              }
-
-              if (
-                values &&
-                values.password &&
-                values.password.search(/^(?=.*[A-Z])/) >= 0
-              ) {
-                passValid.upper = true;
-              } else {
-                passValid.upper = false;
-              }
-
-              if (
-                values &&
-                values.password &&
-                values.password.search(/^(?=.*\d)/) >= 0
-              ) {
-                passValid.number = true;
-              } else {
-                passValid.number = false;
-              }
-
-              this.passwordValidation(passValid);
-
-              return errors;
-            }}
+            validate={this.validateUsersPage}
           >
             <FormHeader
               title='Create Your FIO Account'
@@ -233,12 +242,6 @@ export default class CreateAccountForm extends Component {
           </Wizard.Page>
           <Wizard.Page
             hideNext
-            validate={(values) => {
-              console.log(values)
-              const errors = {};
-              //TODO pin validation logic
-              return errors;
-            }}
           >
             <FormHeader
               title='Enter PIN'
@@ -249,16 +252,9 @@ export default class CreateAccountForm extends Component {
             <Field name='pin' component={Input} />
           </Wizard.Page>
           <Wizard.Page
-          // hideNext
-          // validate={(values) => {
-          //   const errors = {};
-          //   if (!values.toppings) {
-          //     errors.toppings = 'Required';
-          //   } else if (values.toppings.length < 2) {
-          //     errors.toppings = 'Choose more';
-          //   }
-          //   return errors;
-          // }}
+            hideNext
+            onBack
+            validate={this.validateConfirmPin}
           >
             <FormHeader
               title='Confirm PIN'
@@ -266,17 +262,10 @@ export default class CreateAccountForm extends Component {
               header='Set 2 of 2'
               subtitle='Enter a 6 digit PIN to use for sign in and transaction approvals'
             />
-            <Field name='pin' component={Input} type='password' />
+            <Field name='confirmPin' component={Input} />
           </Wizard.Page>
           <Wizard.Page
             hideBack
-            // validate={(values) => {
-            //   const errors = {};
-            //   if (!values.notes) {
-            //     errors.notes = 'Required';
-            //   }
-            //   return errors;
-            // }}
           >
             <FormHeader
               header='Almost Done!'

@@ -2,15 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import classnames from 'classnames';
-import classes from './Input.module.scss';
 import PinInput from 'react-pin-input';
+import { useForm } from 'react-final-form';
+
+import classes from './Input.module.scss';
 
 const regularInputWrapper = (children) => (
   <div className={classes.regInputWrapper}>{children}</div>
 );
 
 const Input = props => {
-  const { input, meta, onComplete } = props;
+  const { input, meta } = props;
   const { type, value, name } = input;
 
   const [showPass, toggleShowPass] = useState(false);
@@ -69,21 +71,33 @@ const Input = props => {
     return regularInputWrapper(regularInput);
   }
 
-  if (name === 'pin') {
+  if (name === 'pin' || name === 'confirmPin') {
+    const form = useForm();
+
     return (
-      <div className={classes.pin}>
-        <PinInput
-          length={6}
-          initialValue=''
-          focus
-          type='numeric'
-          inputMode='number'
-          onComplete={(value, index) => {}}
-          regexCriteria={/^[0-9]*$/}
-          {...props}
-          {...input}
-        />
-      </div>
+      <>
+        <div className={classnames(classes.pin, hasError && classes.error)}>
+          <PinInput
+            length={6}
+            initialValue=''
+            focus
+            type='numeric'
+            inputMode='number'
+            onComplete={(value, index) => {
+              !hasError && form.submit();
+            }}
+            regexCriteria={/^[0-9]*$/}
+            {...props}
+            {...input}
+          />
+        </div>
+        {hasError && (
+          <div className={classes.pinError}>
+            <FontAwesomeIcon icon='info-circle' className={classes.icon} />
+            {meta.error}
+          </div>
+        )}
+      </>
     );
   }
 

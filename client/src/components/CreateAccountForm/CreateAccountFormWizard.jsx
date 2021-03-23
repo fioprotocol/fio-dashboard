@@ -55,14 +55,48 @@ export default class Wizard extends React.Component {
     }
   };
 
-  renderForm = () => {
+  renderFormChildren = (props) => {
+    const { handleSubmit, submitting, valid, pristine } = props;
     const { children } = this.props;
-    const { page, values, completed } = this.state;
+    const { page } = this.state;
+
     const activePage = React.Children.toArray(children)[page];
     const isLastPage = page === React.Children.count(children) - 1;
+    const { props: { bottomText, hideNext, hideBack, onBack } = {} } = activePage || {};
+    return (
+      <form onSubmit={handleSubmit} className={classes.form} id='createAccountForm'>
+        {activePage}
+        {page > 0 && !hideBack && (
+          <FontAwesomeIcon
+            icon='arrow-left'
+            className={classes.arrow}
+            onClick={this.previous}
+          />
+        )}
+        {!isLastPage && !hideNext && (
+          <Button type='submit' className='w-100'>
+            NEXT
+          </Button>
+        )}
+        {!isLastPage && onBack && !valid && !pristine && (
+           <Button className='w-100' onClick={this.previous}>
+            START OVER
+          </Button>
+        )}
+        {isLastPage && (
+          <Button type='submit' disabled={submitting}>
+            CREATE ACCOUNT
+          </Button>
+        )}
+        {bottomText}
+      </form>
+    );
+  }
 
-    const { props: { bottomText, hideNext, hideBack } = {} } =
-      activePage || {};
+  renderForm = () => {
+    const { children } = this.props;
+    const { page, values } = this.state;
+    const activePage = React.Children.toArray(children)[page];
 
     return activePage ? (
       <Form
@@ -70,32 +104,7 @@ export default class Wizard extends React.Component {
         validate={this.validate}
         onSubmit={this.handleSubmit}
       >
-        {({ handleSubmit, submitting, values }) => (
-          <form
-            onSubmit={handleSubmit}
-            className={classes.form}
-          >
-            {activePage}
-            {page > 0 && !hideBack && (
-              <FontAwesomeIcon
-                icon='arrow-left'
-                className={classes.arrow}
-                onClick={this.previous}
-              />
-            )}
-            {!isLastPage && !hideNext && (
-              <Button type='submit' className='w-100'>
-                NEXT
-              </Button>
-            )}
-            {isLastPage && (
-              <Button type='submit' disabled={submitting}>
-                CREATE ACCOUNT
-              </Button>
-            )}
-            {bottomText}
-          </form>
-        )}
+        {this.renderFormChildren}
       </Form>
     ) : null;
   }
