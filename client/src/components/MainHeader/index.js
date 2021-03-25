@@ -2,29 +2,26 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 import { pathname } from '../../redux/router/selectors';
-import { loadProfile, logout } from '../../redux/profile/actions';
 import { user } from '../../redux/profile/selectors';
 import { account, loginSuccess } from '../../redux/edge/selectors';
-import { showLogin } from '../../redux/modal/selectors';
+import { logout } from '../../redux/profile/actions';
+import { showLoginModal } from '../../redux/modal/actions';
 
-import MainLayout from './MainLayout';
+import MainHeader from './MainHeader';
 
 const selector = createStructuredSelector({
   pathname,
   user,
   account,
   loginSuccess,
-  showLogin,
 });
 
 const actions = {
-  init: loadProfile,
+  showLoginModal,
   logout,
 };
 
-export { MainLayout };
 
-export default connect(
-  selector,
-  actions,
-)(MainLayout);
+export { MainHeader };
+
+export default connect(selector,actions)(MainHeader);

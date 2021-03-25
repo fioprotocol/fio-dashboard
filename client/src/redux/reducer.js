@@ -5,6 +5,7 @@ import form from './forms/reducer';
 import router from './router/reducer';
 import users from './users/reducer';
 import edge from './edge/reducer';
+import modal from './modal/reducer';
 
 export default combineReducers({
   profile,
@@ -12,4 +13,5 @@ export default combineReducers({
   router,
   form,
   edge,
+  modal,
 });
