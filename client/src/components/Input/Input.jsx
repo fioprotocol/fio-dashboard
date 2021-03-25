@@ -26,7 +26,7 @@ const Input = props => {
   const clearInputFn = () => {
     input.onChange(meta.initial);
   };
-  const hasError = meta.error && (meta.touched || meta.modified);
+  const hasError = (meta.error || meta.data.error) && (meta.touched || meta.modified);
 
   const regularInput = (
     <>
@@ -66,7 +66,7 @@ const Input = props => {
         className={classnames(classes.errorMessage, hasError && classes.error)}
       >
         <FontAwesomeIcon icon={'info-circle'} className={classes.errorIcon} />
-        {meta.error}
+        {meta.error || meta.data.error}
       </div>
     </>
   );
