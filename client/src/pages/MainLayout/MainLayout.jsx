@@ -5,6 +5,8 @@ import MainHeader from '../../components/MainHeader';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Footer from '../../components/Footer/Footer';
 import LoginForm from '../../components/LoginForm';
+import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
+
 import classes from './MainLayout.module.scss';
 
 export default class MainLayout extends Component {
@@ -15,6 +17,7 @@ export default class MainLayout extends Component {
     account: PropTypes.object,
     loginSuccess: PropTypes.bool,
     showLogin: PropTypes.bool,
+    showRecovery: PropTypes.bool,
 
     init: PropTypes.func.isRequired,
     logout: PropTypes.func.isRequired,
@@ -30,8 +33,23 @@ export default class MainLayout extends Component {
     return showLogin && <LoginForm />
   }
 
+  recoveryFormModalRender = () => {
+    const { showRecovery } = this.props;
+
+    return showRecovery && <PasswordRecoveryForm />
+  }
+
   render() {
-    const { user, account, loginSuccess, pathname, logout, children, showLogin } = this.props;
+    const {
+      user,
+      account,
+      loginSuccess,
+      pathname,
+      logout,
+      children,
+      showLogin,
+      showRecovery,
+    } = this.props;
     const isHomePage = pathname === '/';
     return (
       <div className={classes.root}>
@@ -43,6 +61,7 @@ export default class MainLayout extends Component {
         </div>
         <Footer />
         {showLogin && this.loginFormModalRender()}
+        {showRecovery && this.recoveryFormModalRender()}
       </div>
     );
   }

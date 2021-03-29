@@ -4,7 +4,14 @@ import classnames from 'classnames';
 import classes from './Modal.module.scss';
 
 const ModalComponent = props => {
-  const { show: extShow, isDanger, title, onClose } = props;
+  const {
+    show: extShow,
+    isDanger,
+    title,
+    onClose,
+    closeButton,
+    backdrop,
+  } = props;
   const [show, setShow] = useState(false);
 
   const handleClose = () => { 
@@ -22,9 +29,9 @@ const ModalComponent = props => {
       onHide={handleClose}
       contentClassName={classnames(classes.modal, isDanger && classes.danger)}
       dialogClassName={classes.dialog}
-      {...props}
+      backdrop={backdrop}
     >
-      <Modal.Header closeButton>{title}</Modal.Header>
+      <Modal.Header closeButton={closeButton}>{title}</Modal.Header>
       <Modal.Body>{props.children}</Modal.Body>
     </Modal>
   );
