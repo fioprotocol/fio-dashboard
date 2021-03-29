@@ -5,7 +5,7 @@ import { pathname } from '../../redux/router/selectors';
 import { loadProfile, logout } from '../../redux/profile/actions';
 import { user } from '../../redux/profile/selectors';
 import { account, loginSuccess } from '../../redux/edge/selectors';
-import { showLogin } from '../../redux/modal/selectors';
+import { showLogin, showRecovery } from '../../redux/modal/selectors';
 
 import MainLayout from './MainLayout';
 
@@ -15,6 +15,7 @@ const selector = createStructuredSelector({
   account,
   loginSuccess,
   showLogin,
+  showRecovery,
 });
 
 const actions = {

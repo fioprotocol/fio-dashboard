@@ -12,7 +12,6 @@ import FormHeader from '../FormHeader/FormHeader';
 
 import classes from './LoginForm.module.scss';
 import { ROUTES } from '../../constants/routes';
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 const LoginForm = props => {
   const { show, onSubmit, loading, onClose } = props;
@@ -55,13 +54,11 @@ const LoginForm = props => {
     <div className={classes.formBox}>
       <div className={classnames(classes.box, isForgotPass && classes.show)}>
         <Form
-          // initialValues={}
           onSubmit={({ email, password }) => {
             onSubmit({
               username: `${email.split('@')[0]}`,
               password
             })
-            // send values to the cloud
           }}
           validate={(values) => {
             const errors = {};
@@ -95,7 +92,7 @@ const LoginForm = props => {
                 disabled={loading}
               />
               <Button htmltype='submit' variant='primary' className='w-100' onClick={handleSubmit} disabled={loading}>
-                {loading ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Sign In'}
+                {loading ? <FontAwesomeIcon icon='spinner' spin /> : 'Sign In'}
               </Button>
               <Link
                 className='regular-text'
@@ -123,6 +120,7 @@ const LoginForm = props => {
       show={show}
       backdrop='static'
       onClose={isForgotPass ? onForgotPassClose : onClose}
+      closeButton
     >
       {renderForm()}
     </ModalComponent>

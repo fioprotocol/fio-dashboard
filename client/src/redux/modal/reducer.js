@@ -12,4 +12,14 @@ export default combineReducers({
         return state;
     }
   },
+  showRecovery(state = false, action) {
+    switch (action.type) {
+      case actions.SHOW_RECOVERY_PASSWORD:
+        return true;
+      case actions.CLOSE_RECOVERY_PASSWORD:
+        return false;
+      default:
+        return state;
+    }
+  }
 });

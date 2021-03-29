@@ -9,8 +9,9 @@
   justify-content: center;
   align-items: center;
   padding: 30px 20px 10px 20px;
+  overflow: hidden;
 
-  & .danger {
+  &.danger {
     background-color: $warn-red;
   }
 }

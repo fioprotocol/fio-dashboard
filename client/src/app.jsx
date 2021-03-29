@@ -21,6 +21,8 @@ import {
   faUserCircle,
   faKeyboard,
   faCheckCircle,
+  faSpinner,
+  faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
@@ -54,10 +56,12 @@ library.add(
   faBan,
   faChevronUp,
   faChevronDown,
+  faChevronRight,
   faUserCircle,
   faKeyboard,
   faCheckCircle,
   faRegularCircle,
+  faSpinner
 );
 
 const store = configureStore(api, history);
