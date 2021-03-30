@@ -27,6 +27,10 @@ export default class Auth extends Base {
     });
   }
 
+  setRecovery(token) {
+    return this.apiClient.post('users/setRecovery', { data: { token } });
+  }
+
   async logout() {
     return null;
   }

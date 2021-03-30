@@ -114,13 +114,6 @@ export default class Edge {
     // })
   }
 
-  // async setRecovery(questions, answers) {
-  //   if (answers[0].length > 3 && answers[1].length > 3) {
-  //     const token = await account.changeRecovery(questions, answers)
-  //   }
-  //   throw new Error('There was an issue setting recovery questions')
-  // }
-
   confirm(hash) {
     //
   }

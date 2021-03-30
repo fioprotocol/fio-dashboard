@@ -3,9 +3,11 @@ import {
   LOGIN_SUCCESS,
   SIGNUP_SUCCESS,
   LOGOUT_SUCCESS,
+  SET_RECOVERY_SUCCESS,
   loadProfile,
 } from './actions';
 
+import { closeRecoveryModal } from '../modal/actions';
 import { ROUTES } from '../../constants/routes';
 
 export function* loginSuccess(history, api) {
@@ -25,5 +27,11 @@ export function* logoutSuccess(history, api) {
     api.client.removeToken();
     history.push(ROUTES.HOME);
     window.location.reload();
+  });
+}
+
+export function* setRecoverySuccess() {
+  yield takeEvery(SET_RECOVERY_SUCCESS, function*() {
+    yield put(closeRecoveryModal());
   });
 }
