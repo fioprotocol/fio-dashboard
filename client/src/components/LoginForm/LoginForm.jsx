@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { Form, Field } from 'react-final-form';
 import { Link } from 'react-router-dom';
@@ -12,11 +12,12 @@ import FormHeader from '../FormHeader/FormHeader';
 
 import classes from './LoginForm.module.scss';
 import { ROUTES } from '../../constants/routes';
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 const LoginForm = props => {
-  const { show, onSubmit, loading, onClose } = props;
+  const { show, onSubmit, loading, onClose, getCachedUsers, cachedUsers } = props;
   const [isForgotPass, toggleForgotPass] = useState(false);
+
+  useEffect(getCachedUsers, [])
 
   const onForgotPassHandler = e => {
     e.preventDefault();
@@ -51,17 +52,23 @@ const LoginForm = props => {
     </div>
   );
 
+  const renderPinForm = () => (
+    <div className={classes.formBox}>
+      <div className={classnames(classes.box, isForgotPass && classes.show)}>
+        Pin Form
+      </div>
+    </div>
+  )
+
   const renderForm = () => (
     <div className={classes.formBox}>
       <div className={classnames(classes.box, isForgotPass && classes.show)}>
         <Form
-          // initialValues={}
           onSubmit={({ email, password }) => {
             onSubmit({
               username: `${email.split('@')[0]}`,
               password
             })
-            // send values to the cloud
           }}
           validate={(values) => {
             const errors = {};
@@ -95,7 +102,7 @@ const LoginForm = props => {
                 disabled={loading}
               />
               <Button htmltype='submit' variant='primary' className='w-100' onClick={handleSubmit} disabled={loading}>
-                {loading ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Sign In'}
+                {loading ? <FontAwesomeIcon icon='spinner' spin /> : 'Sign In'}
               </Button>
               <Link
                 className='regular-text'
@@ -106,7 +113,7 @@ const LoginForm = props => {
               </Link>
               <p className='regular-text'>
                 Don’t have an account?{' '}
-                <Link to={ROUTES.CREATE_ACCOUNT}>Create Account</Link>
+                <Link to={ROUTES.CREATE_ACCOUNT} onClick={onClose}>Create Account</Link>
               </p>
             </form>
           )}
@@ -123,8 +130,9 @@ const LoginForm = props => {
       show={show}
       backdrop='static'
       onClose={isForgotPass ? onForgotPassClose : onClose}
+      closeButton
     >
-      {/* {isForgotPass ? renderForgotPass() : renderForm()} */}
+      {/*{!cachedUsers.length ? renderForm() : renderPinForm()}*/}
       {renderForm()}
     </ModalComponent>
   );

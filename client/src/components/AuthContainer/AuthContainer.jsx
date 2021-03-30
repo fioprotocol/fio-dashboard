@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import LoginPage from '../../pages/LoginPage';
-import SignupPage from '../../pages/SignupPage';
+import CreateAccount from '../../pages/CreateAccountPage';
 import ResetPasswordPage from '../../pages/ResetPasswordPage';
 import PasswordRecoveryPage from '../../pages/PasswordRecoveryPage';
 import { ROUTES } from '../../constants/routes';
@@ -31,7 +31,7 @@ export default class AuthContainer extends Component {
         )}
         {!isAuthenticated && !loading && edgeContextSet && (
           <Switch>
-            {/*<Route path={ROUTES.SIGNUP} component={SignupPage} exact />*/}
+            <Route path={ROUTES.CREATE_ACCOUNT} component={CreateAccount} exact />
             {/*<Route*/}
             {/*  path={ROUTES.RESET_PASSWORD}*/}
             {/*  component={ResetPasswordPage}*/}

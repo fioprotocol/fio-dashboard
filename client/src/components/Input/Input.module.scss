@@ -25,6 +25,8 @@
       max-height: 30px;
       margin-bottom: 8px;
       margin-top: 13px;
+      display: flex;
+      align-items: center;
     }
   }
 }
@@ -45,6 +47,11 @@
   .doubleIcon {
     position: absolute;
     right: 60px;
+  }
+
+  .inputSpinnerIcon {
+    top: 30%;
+    cursor: default;
   }
 
   .regInput {
@@ -70,4 +77,43 @@
   }
 }
 
+.pin {
+  width: 219px;
+  margin: 56px auto 70px;
 
+  &.error {
+    input {
+      border-color: $warn-red !important;
+    }
+
+    input:not([value=""]) {
+      background-color: $warn-red !important;
+    }
+
+    input::selection {
+      color: transparent;
+      background: transparent;
+    }
+  }
+}
+
+.pinError {
+  font-size: 12px;
+  position: relative;
+  height: 40px;
+  background-color: $warn-red;
+  border-radius: 7px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  box-shadow: 0 0 8px 0 rgba(0,0,0,0.11);
+  margin-bottom: 17px;
+
+  .icon {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 15px;
+  }
+}

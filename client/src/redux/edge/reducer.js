@@ -53,9 +53,58 @@ export default combineReducers({
         return state;
     }
   },
-  edgeContextSet(state = true, action) {
+  edgeContextSet(state = false, action) {
     switch (action.type) {
-      case actions.EDGE_CONTEXT_SUCCESS: {
+      case actions.EDGE_CONTEXT_INIT_SUCCESS: {
+        return true;
+      }
+      default:
+        return state;
+    }
+  },
+  cachedUsers(state = [], action) {
+    switch (action.type) {
+      case actions.CACHED_USERS_REQUEST: {
+        return [];
+      }
+      case actions.CACHED_USERS_SUCCESS: {
+        return action.data;
+      }
+      default:
+        return state;
+    }
+  },
+  recoveryQuestions(state = [], action) {
+    switch (action.type) {
+      case actions.RECOVERY_QUEST_REQUEST: {
+        return [];
+      }
+      case actions.RECOVERY_QUEST_SUCCESS: {
+        return action.data;
+      }
+      default:
+        return state;
+    }
+  },
+  usernameIsAvailable(state = false, action) {
+    switch (action.type) {
+      case actions.USERNAME_AVAIL_SUCCESS: {
+        return action.data;
+      }
+      case actions.USERNAME_AVAIL_REQUEST: {
+        return false;
+      }
+      default:
+        return state;
+    }
+  },
+  usernameAvailableLoading(state = false, action) {
+    switch (action.type) {
+      case actions.USERNAME_AVAIL_FAILURE:
+      case actions.USERNAME_AVAIL_SUCCESS: {
+        return false;
+      }
+      case actions.USERNAME_AVAIL_REQUEST: {
         return true;
       }
       default:

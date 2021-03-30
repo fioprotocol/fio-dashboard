@@ -6,14 +6,13 @@ import { Button, Navbar, Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import LoginForm from '../LoginForm';
+import { ROUTES } from '../../constants/routes';
 import classes from './MainHeader.module.scss';
 
 export default class MainHeader extends Component {
   constructor(props) {
     super();
     this.state = {
-      showLogin: false,
       loginSuccess: props.loginSuccess
     }
   }
@@ -21,25 +20,25 @@ export default class MainHeader extends Component {
   static getDerivedStateFromProps(props, state) {
     if (props.loginSuccess !== state.loginSuccess) {
       const updatedState = { loginSuccess: props.loginSuccess }
-      if (props.loginSuccess) updatedState.showLogin = false
       return updatedState
     }
 
     return null
   }
 
-  onHandleLoginClose = () => {
-    this.setState({ showLogin: false })
+  showLogin = () => {
+    const { showLoginModal } = this.props;
+    showLoginModal();
   }
-
-  showLogin = () => this.setState({ showLogin: true });
 
   static propTypes = exact({
     account: PropTypes.object,
     pathname: PropTypes.string.isRequired,
     user: PropTypes.object,
-    isHomePage: PropTypes.bool,
+    edgeContextSet: PropTypes.bool,
     logout: PropTypes.func.isRequired,
+    loginSuccess: PropTypes.bool,
+    showLoginModal: PropTypes.func.isRequired,
   });
 
   renderLoggedMenu = () => (
@@ -99,7 +98,7 @@ export default class MainHeader extends Component {
                 </div>
               </div>
             </Nav.Link>
-            <Nav.Link>
+            <Nav.Link as={Link} to={ROUTES.CREATE_ACCOUNT}>
               <Button variant='outline-primary' className={classnames(classes.button, 'text-white', 'mr-3')} size="lg">
                 Create account
               </Button>
@@ -120,15 +119,13 @@ export default class MainHeader extends Component {
   );
 
   render() {
-    const { pathname, account, user } = this.props;
-    const { showLogin } = this.state;
+    const { pathname, account, user, edgeContextSet } = this.props;
     return (
       <div className={`${classes.header}`}>
         <Link to='/' className='mr-5'>
           <div className={classes.logo} />
         </Link>
         {account ? this.renderLoggedMenu() : this.renderRegularNav()}
-        <LoginForm show={showLogin} onClose={this.onHandleLoginClose} />
       </div>
     );
   }
