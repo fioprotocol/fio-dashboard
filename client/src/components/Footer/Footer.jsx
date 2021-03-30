@@ -9,19 +9,19 @@ import classes from './Footer.module.scss';
 const Footer = () => {
   return (
     <section className={classes.footer}>
-      <Link to='/'>
+      <Link to="/">
         <div className={classes.logo} />
       </Link>
       <hr className={classes.divider} />
-      <Nav className='pr-0 align-items-center'>
+      <Nav className="pr-0 align-items-center">
         <Nav.Link
-          href='#'
+          href="#"
           className={classnames(classes.navItem, 'text-white', 'p-0')}
         >
           Privacy Policy
         </Nav.Link>
         <Nav.Link
-          href='#'
+          href="#"
           className={classnames(classes.navItem, 'text-white', 'p-0')}
         >
           © {currentYear()} FIO

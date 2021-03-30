@@ -13,7 +13,4 @@ export const isRecoveryRequested = state => state[prefix].isRecoveryRequested;
 export const successfullyRegistered = state =>
   state[prefix].successfullyRegistered;
 
-export const isAuthenticated = createSelector(
-  user,
-  user => !!user,
-);
+export const isAuthenticated = createSelector(user, user => !!user);

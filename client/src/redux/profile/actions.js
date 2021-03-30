@@ -13,9 +13,9 @@ export const LOGIN_REQUEST = `${prefix}/LOGIN_REQUEST`;
 export const LOGIN_SUCCESS = `${prefix}/LOGIN_SUCCESS`;
 export const LOGIN_FAILURE = `${prefix}/LOGIN_FAILURE`;
 
-export const login = ({ email, password }) => ({
+export const login = ({ email, password, pin }) => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
-  promise: api => api.auth.login(email, password),
+  promise: api => api.auth.login(email, password, pin),
 });
 
 export const SIGNUP_REQUEST = `${prefix}/SIGNUP_REQUEST`;

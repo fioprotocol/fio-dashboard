@@ -13,15 +13,13 @@ const reduxConnect = connect(
   createStructuredSelector({
     loading,
     show,
-    cachedUsers
+    cachedUsers,
   }),
   {
     onSubmit: login,
     onClose,
-    getCachedUsers
+    getCachedUsers,
   },
 );
 
-export default compose(
-  reduxConnect,
-)(LoginForm);
+export default compose(reduxConnect)(LoginForm);

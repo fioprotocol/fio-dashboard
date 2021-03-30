@@ -13,7 +13,4 @@ const actions = {};
 
 export { ProfilePage };
 
-export default connect(
-  selector,
-  actions,
-)(ProfilePage);
+export default connect(selector, actions)(ProfilePage);

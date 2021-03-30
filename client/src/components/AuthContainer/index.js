@@ -12,10 +12,7 @@ const selector = createStructuredSelector({
 });
 
 const actions = {
-  edgeContextInit
+  edgeContextInit,
 };
 
-export default connect(
-  selector,
-  actions,
-)(AuthContainer);
+export default connect(selector, actions)(AuthContainer);

@@ -25,9 +25,7 @@ import {
   faChevronRight,
 } from '@fortawesome/free-solid-svg-icons';
 
-import {
-  faCircle as faRegularCircle
-} from '@fortawesome/free-regular-svg-icons';
+import { faCircle as faRegularCircle } from '@fortawesome/free-regular-svg-icons';
 
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -61,7 +59,7 @@ library.add(
   faKeyboard,
   faCheckCircle,
   faRegularCircle,
-  faSpinner
+  faSpinner,
 );
 
 const store = configureStore(api, history);

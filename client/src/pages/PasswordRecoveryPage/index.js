@@ -12,7 +12,4 @@ const actions = {};
 
 export { PasswordRecoveryPage };
 
-export default connect(
-  selector,
-  actions,
-)(PasswordRecoveryPage);
+export default connect(selector, actions)(PasswordRecoveryPage);

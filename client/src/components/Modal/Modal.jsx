@@ -14,10 +14,10 @@ const ModalComponent = props => {
   } = props;
   const [show, setShow] = useState(false);
 
-  const handleClose = () => { 
+  const handleClose = () => {
     setShow(false);
     onClose();
-  }
+  };
   const handleShow = () => setShow(true);
 
   useEffect(() => {

@@ -8,7 +8,4 @@ const actions = {};
 
 export { HomePage };
 
-export default connect(
-  selector,
-  actions,
-)(HomePage);
+export default connect(selector, actions)(HomePage);

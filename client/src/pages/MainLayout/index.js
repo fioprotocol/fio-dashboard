@@ -2,9 +2,13 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 import { pathname } from '../../redux/router/selectors';
-import { loadProfile, logout } from '../../redux/profile/actions';
+import { logout } from '../../redux/profile/actions';
 import { user } from '../../redux/profile/selectors';
-import { account, loginSuccess, edgeContextSet } from '../../redux/edge/selectors';
+import {
+  account,
+  loginSuccess,
+  edgeContextSet,
+} from '../../redux/edge/selectors';
 import { edgeContextInit } from '../../redux/edge/actions';
 import { showLogin, showRecovery } from '../../redux/modal/selectors';
 
@@ -17,20 +21,17 @@ const selector = createStructuredSelector({
   loginSuccess,
   showLogin,
   showRecovery,
-  edgeContextSet
+  edgeContextSet,
 });
 
 const actions = dispatch => ({
   init: () => {
-    dispatch(loadProfile())
-    dispatch(edgeContextInit())
+    // dispatch(loadProfile()); // todo: if jwt exists, show PIN modal to edge pinLogin?
+    dispatch(edgeContextInit());
   },
-  logout: () => dispatch(logout())
+  logout: () => dispatch(logout()),
 });
 
 export { MainLayout };
 
-export default connect(
-  selector,
-  actions,
-)(MainLayout);
+export default connect(selector, actions)(MainLayout);

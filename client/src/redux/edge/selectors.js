@@ -8,9 +8,7 @@ export const cachedUsers = state => state[prefix].cachedUsers;
 export const loginSuccess = state => state[prefix].loginSuccess;
 export const recoveryQuestions = state => state[prefix].recoveryQuestions;
 export const usernameIsAvailable = state => state[prefix].usernameIsAvailable;
-export const usernameAvailableLoading = state => state[prefix].usernameAvailableLoading;
+export const usernameAvailableLoading = state =>
+  state[prefix].usernameAvailableLoading;
 
-export const isAuthenticated = createSelector(
-  account,
-  account => !!account,
-);
+export const isAuthenticated = createSelector(account, account => !!account);

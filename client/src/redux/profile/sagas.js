@@ -12,7 +12,7 @@ export function* loginSuccess(history, api) {
   yield takeEvery(LOGIN_SUCCESS, function*(action) {
     api.client.setToken(action.data.jwt);
     yield put(loadProfile());
-    yield history.push(ROUTES.HOME);
+    yield history.push(ROUTES.DASHBOARD);
   });
 }
 
@@ -23,7 +23,7 @@ export function* signupSuccess() {
 export function* logoutSuccess(history, api) {
   yield takeEvery(LOGOUT_SUCCESS, function() {
     api.client.removeToken();
-    history.push(ROUTES.LOGIN);
+    history.push(ROUTES.HOME);
     window.location.reload();
   });
 }

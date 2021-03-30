@@ -7,7 +7,4 @@ const selector = createStructuredSelector({
   isAdmin,
 });
 
-export default connect(
-  selector,
-  null,
-)(AdminContainer);
+export default connect(selector, null)(AdminContainer);

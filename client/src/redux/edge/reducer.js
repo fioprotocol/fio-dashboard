@@ -21,21 +21,9 @@ export default combineReducers({
   },
   account(state = null, action) {
     switch (action.type) {
-      case actions.LOGIN_SUCCESS: {
-        console.log(action.data);
-        const account = action.data
-        try {
-          // Find the app wallet, or create one if necessary:
-          const walletInfo = account.getFirstWalletInfo('wallet:fio')
-          // const wallet =
-          //   walletInfo == null
-          //     ? await account.createCurrencyWallet('wallet:fio')
-          //     : await account.waitForCurrencyWallet(walletInfo.id)
-        } catch (e) {
-          console.error(e)
-        }
-        return account;
-      }
+      case actions.LOGIN_SUCCESS:
+      case actions.SET_ACCOUNT:
+        return action.data;
       case actions.LOGOUT_SUCCESS:
         return null;
       default:

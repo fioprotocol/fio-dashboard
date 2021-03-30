@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
-import _ from 'lodash';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import classnames from 'classnames';
 import PinInput from 'react-pin-input';
 import { useForm } from 'react-final-form';
 
 import classes from './Input.module.scss';
 
-const regularInputWrapper = (children) => (
+const regularInputWrapper = children => (
   <div className={classes.regInputWrapper}>{children}</div>
 );
 
@@ -27,7 +26,11 @@ const Input = props => {
     input.onChange(meta.initial);
   };
 
-  const hasError = (meta.error || meta.data.error) && (meta.touched || meta.modified) && !meta.active || (meta.submitError && !meta.modifiedSinceLastSubmit);
+  const hasError =
+    ((meta.error || meta.data.error) &&
+      (meta.touched || meta.modified) &&
+      !meta.active) ||
+    (meta.submitError && !meta.modifiedSinceLastSubmit);
 
   const regularInput = (
     <>
@@ -38,12 +41,12 @@ const Input = props => {
           {...props}
           type={showPass ? 'text' : type}
         />
-        {(clearInput && !props.loading) && (
+        {clearInput && !props.loading && (
           <FontAwesomeIcon
-            icon='times-circle'
+            icon="times-circle"
             className={classnames(
               classes.inputIcon,
-              type === 'password' && classes.doubleIcon
+              type === 'password' && classes.doubleIcon,
             )}
             onClick={() => clearInputFn()}
           />
@@ -66,7 +69,7 @@ const Input = props => {
       <div
         className={classnames(classes.errorMessage, hasError && classes.error)}
       >
-        <FontAwesomeIcon icon={'info-circle'} className={classes.errorIcon}/>
+        <FontAwesomeIcon icon="info-circle" className={classes.errorIcon} />
         {hasError && (meta.error || meta.data.error || meta.submitError)}
       </div>
     </>
@@ -88,10 +91,10 @@ const Input = props => {
         <div className={classnames(classes.pin, hasError && classes.error)}>
           <PinInput
             length={6}
-            initialValue=''
+            initialValue=""
             focus
-            type='numeric'
-            inputMode='number'
+            type="numeric"
+            inputMode="number"
             onComplete={(value, index) => {
               !hasError && form.submit();
             }}
@@ -102,7 +105,7 @@ const Input = props => {
         </div>
         {hasError && (
           <div className={classes.pinError}>
-            <FontAwesomeIcon icon='info-circle' className={classes.icon}/>
+            <FontAwesomeIcon icon="info-circle" className={classes.icon} />
             {meta.error}
           </div>
         )}
