@@ -1,5 +1,8 @@
-import { makeEdgeContext } from 'edge-core-js';
-import { addEdgeCorePlugins, lockEdgeCorePlugins } from 'edge-core-js';
+import {
+  addEdgeCorePlugins,
+  lockEdgeCorePlugins,
+  makeEdgeContext,
+} from 'edge-core-js';
 import plugins from 'edge-currency-accountbased';
 
 export default class Edge {
@@ -27,8 +30,10 @@ export default class Edge {
       lockEdgeCorePlugins();
       return true;
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
+
+    return false;
   };
 
   account() {
