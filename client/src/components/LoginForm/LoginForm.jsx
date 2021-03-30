@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { Form, Field } from 'react-final-form';
 import { Link } from 'react-router-dom';
@@ -12,11 +12,13 @@ import FormHeader from '../FormHeader/FormHeader';
 
 import classes from './LoginForm.module.scss';
 import { ROUTES } from '../../constants/routes';
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { emailToUsername } from '../../utils';
 
 const LoginForm = props => {
-  const { show, onSubmit, loading, onClose } = props;
+  const { show, onSubmit, loading, onClose, getCachedUsers } = props;
   const [isForgotPass, toggleForgotPass] = useState(false);
+
+  useEffect(getCachedUsers, []);
 
   const onForgotPassHandler = e => {
     e.preventDefault();
@@ -25,13 +27,13 @@ const LoginForm = props => {
 
   const onForgotPassClose = () => {
     toggleForgotPass(false);
-  }
+  };
 
   const renderForgotPass = () => (
     <div className={classes.forgotPass}>
-      <FontAwesomeIcon icon='ban' className={classes.icon} />
+      <FontAwesomeIcon icon="ban" className={classes.icon} />
       <FormHeader
-        title='Forgot Password?'
+        title="Forgot Password?"
         subtitle={
           <>
             <p className={classes.subtitle}>
@@ -45,7 +47,11 @@ const LoginForm = props => {
           </>
         }
       />
-      <Button variant='primary' className={classes.button} onClick={onForgotPassClose}>
+      <Button
+        variant="primary"
+        className={classes.button}
+        onClick={onForgotPassClose}
+      >
         Ok
       </Button>
     </div>
@@ -55,15 +61,13 @@ const LoginForm = props => {
     <div className={classes.formBox}>
       <div className={classnames(classes.box, isForgotPass && classes.show)}>
         <Form
-          // initialValues={}
           onSubmit={({ email, password }) => {
             onSubmit({
-              username: `${email.split('@')[0]}`,
-              password
-            })
-            // send values to the cloud
+              username: emailToUsername(email),
+              password,
+            });
           }}
-          validate={(values) => {
+          validate={values => {
             const errors = {};
 
             if (!values.email || !validator.validate(values.email)) {
@@ -79,34 +83,42 @@ const LoginForm = props => {
         >
           {({ handleSubmit, pristine, form, submitting }) => (
             <form onSubmit={handleSubmit}>
-              <FormHeader title='Sign In' />
+              <FormHeader title="Sign In" />
               <Field
-                name='email'
-                type='text'
-                placeholder='Enter Your Email Address'
+                name="email"
+                type="text"
+                placeholder="Enter Your Email Address"
                 disabled={loading}
                 component={Input}
               />
               <Field
-                name='password'
-                type='password'
-                placeholder='Enter Your Password'
+                name="password"
+                type="password"
+                placeholder="Enter Your Password"
                 component={Input}
                 disabled={loading}
               />
-              <Button htmltype='submit' variant='primary' className='w-100' onClick={handleSubmit} disabled={loading}>
-                {loading ? <FontAwesomeIcon icon={faSpinner} spin /> : 'Sign In'}
+              <Button
+                htmltype="submit"
+                variant="primary"
+                className="w-100"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                {loading ? <FontAwesomeIcon icon="spinner" spin /> : 'Sign In'}
               </Button>
               <Link
-                className='regular-text'
-                to=''
+                className="regular-text"
+                to=""
                 onClick={onForgotPassHandler}
               >
                 Forgot your password?
               </Link>
-              <p className='regular-text'>
+              <p className="regular-text">
                 Don’t have an account?{' '}
-                <Link to={ROUTES.CREATE_ACCOUNT}>Create Account</Link>
+                <Link to={ROUTES.CREATE_ACCOUNT} onClick={onClose}>
+                  Create Account
+                </Link>
               </p>
             </form>
           )}
@@ -121,10 +133,10 @@ const LoginForm = props => {
   return (
     <ModalComponent
       show={show}
-      backdrop='static'
+      backdrop="static"
       onClose={isForgotPass ? onForgotPassClose : onClose}
+      closeButton
     >
-      {/* {isForgotPass ? renderForgotPass() : renderForm()} */}
       {renderForm()}
     </ModalComponent>
   );

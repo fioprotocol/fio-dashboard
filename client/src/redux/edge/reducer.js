@@ -21,21 +21,9 @@ export default combineReducers({
   },
   account(state = null, action) {
     switch (action.type) {
-      case actions.LOGIN_SUCCESS: {
-        console.log(action.data);
-        const account = action.data
-        try {
-          // Find the app wallet, or create one if necessary:
-          const walletInfo = account.getFirstWalletInfo('wallet:fio')
-          // const wallet =
-          //   walletInfo == null
-          //     ? await account.createCurrencyWallet('wallet:fio')
-          //     : await account.waitForCurrencyWallet(walletInfo.id)
-        } catch (e) {
-          console.error(e)
-        }
-        return account;
-      }
+      case actions.LOGIN_SUCCESS:
+      case actions.SET_ACCOUNT:
+        return action.data;
       case actions.LOGOUT_SUCCESS:
         return null;
       default:
@@ -53,9 +41,58 @@ export default combineReducers({
         return state;
     }
   },
-  edgeContextSet(state = true, action) {
+  edgeContextSet(state = false, action) {
     switch (action.type) {
-      case actions.EDGE_CONTEXT_SUCCESS: {
+      case actions.EDGE_CONTEXT_INIT_SUCCESS: {
+        return true;
+      }
+      default:
+        return state;
+    }
+  },
+  cachedUsers(state = [], action) {
+    switch (action.type) {
+      case actions.CACHED_USERS_REQUEST: {
+        return [];
+      }
+      case actions.CACHED_USERS_SUCCESS: {
+        return action.data;
+      }
+      default:
+        return state;
+    }
+  },
+  recoveryQuestions(state = [], action) {
+    switch (action.type) {
+      case actions.RECOVERY_QUEST_REQUEST: {
+        return [];
+      }
+      case actions.RECOVERY_QUEST_SUCCESS: {
+        return action.data;
+      }
+      default:
+        return state;
+    }
+  },
+  usernameIsAvailable(state = false, action) {
+    switch (action.type) {
+      case actions.USERNAME_AVAIL_SUCCESS: {
+        return action.data;
+      }
+      case actions.USERNAME_AVAIL_REQUEST: {
+        return false;
+      }
+      default:
+        return state;
+    }
+  },
+  usernameAvailableLoading(state = false, action) {
+    switch (action.type) {
+      case actions.USERNAME_AVAIL_FAILURE:
+      case actions.USERNAME_AVAIL_SUCCESS: {
+        return false;
+      }
+      case actions.USERNAME_AVAIL_REQUEST: {
         return true;
       }
       default:

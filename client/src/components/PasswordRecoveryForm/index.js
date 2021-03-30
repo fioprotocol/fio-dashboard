@@ -1,23 +1,29 @@
 import { connect } from 'react-redux';
-import { reduxForm } from 'redux-form';
+import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
-import { passwordRecovery } from '../../redux/profile/actions';
+import { setRecoveryQuestions } from '../../redux/profile/actions';
+import { getRecoveryQuestions } from '../../redux/edge/actions';
+import {
+  loading,
+  recoveryQuestions,
+  account,
+} from '../../redux/edge/selectors';
+import { showRecovery as show } from '../../redux/modal/selectors';
+import { closeRecoveryModal as onClose } from '../../redux/modal/actions';
 
 import PasswordRecoveryForm from './PasswordRecoveryForm';
 
-const reduxConect = connect(
-  null,
-  { onSubmit: passwordRecovery },
+const reduxConcect = connect(
+  createStructuredSelector({
+    account,
+    loading,
+    show,
+    questions: recoveryQuestions,
+  }),
+  { onSubmit: setRecoveryQuestions, onClose, getRecoveryQuestions },
 );
-
-const formConect = reduxForm({
-  form: 'password-recovery',
-});
 
 export { PasswordRecoveryForm };
 
-export default compose(
-  reduxConect,
-  formConect,
-)(PasswordRecoveryForm);
+export default compose(reduxConcect)(PasswordRecoveryForm);

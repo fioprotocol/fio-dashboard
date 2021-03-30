@@ -13,9 +13,9 @@ export const LOGIN_REQUEST = `${prefix}/LOGIN_REQUEST`;
 export const LOGIN_SUCCESS = `${prefix}/LOGIN_SUCCESS`;
 export const LOGIN_FAILURE = `${prefix}/LOGIN_FAILURE`;
 
-export const login = ({ email, password }) => ({
+export const login = ({ email, password, pin }) => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
-  promise: api => api.auth.login(email, password),
+  promise: api => api.auth.login(email, password, pin),
 });
 
 export const SIGNUP_REQUEST = `${prefix}/SIGNUP_REQUEST`;
@@ -61,6 +61,15 @@ export const passwordRecovery = ({ email }) => ({
     PASSWORD_RECOVERY_FAILURE,
   ],
   promise: api => api.auth.resetPassword(email),
+});
+
+export const SET_RECOVERY_REQUEST = `${prefix}/SET_RECOVERY_REQUEST`;
+export const SET_RECOVERY_SUCCESS = `${prefix}/SET_RECOVERY_SUCCESS`;
+export const SET_RECOVERY_FAILURE = `${prefix}/SET_RECOVERY_FAILURE`;
+
+export const setRecoveryQuestions = token => ({
+  types: [SET_RECOVERY_REQUEST, SET_RECOVERY_SUCCESS, SET_RECOVERY_FAILURE],
+  promise: api => api.auth.setRecovery(token),
 });
 
 export const RESET_PASSWORD_REQUEST = `${prefix}/RESET_PASSWORD_REQUEST`;

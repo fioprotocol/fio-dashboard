@@ -18,7 +18,4 @@ const actions = {
 
 export { ConfirmEmail };
 
-export default connect(
-  selector,
-  actions,
-)(ConfirmEmail);
+export default connect(selector, actions)(ConfirmEmail);

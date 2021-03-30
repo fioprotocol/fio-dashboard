@@ -9,6 +9,7 @@ import {
   faEye,
   faEyeSlash,
   faArrowLeft,
+  faArrowRight,
   faCog,
   faBell,
   faCircle,
@@ -16,7 +17,17 @@ import {
   faTimesCircle,
   faInfoCircle,
   faBan,
+  faChevronUp,
+  faChevronDown,
+  faUserCircle,
+  faKeyboard,
+  faCheckCircle,
+  faSpinner,
+  faChevronRight,
+  faExclamationCircle,
 } from '@fortawesome/free-solid-svg-icons';
+
+import { faCircle as faRegularCircle } from '@fortawesome/free-regular-svg-icons';
 
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -36,6 +47,7 @@ library.add(
   faEye,
   faEyeSlash,
   faArrowLeft,
+  faArrowRight,
   faCog,
   faBell,
   faCircle,
@@ -43,6 +55,15 @@ library.add(
   faTimesCircle,
   faInfoCircle,
   faBan,
+  faChevronUp,
+  faChevronDown,
+  faChevronRight,
+  faUserCircle,
+  faKeyboard,
+  faCheckCircle,
+  faRegularCircle,
+  faSpinner,
+  faExclamationCircle,
 );
 
 const store = configureStore(api, history);

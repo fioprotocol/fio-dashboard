@@ -9,11 +9,14 @@
     align-items: center;
     color: white;
     width: 100%;
+    height: 100%;
+    position: relative;
 
     button {
       width: 100%;
       height: 54px;
       font-weight: bold !important;
+      @include proxima-nova-bold;
     }
 
     & button, a, p, h1, h2, h3, h4, h5 {
@@ -23,10 +26,42 @@
     & a {
       color: inherit;
       font-weight: bold !important;
+      @include proxima-nova-bold;
+    }
+
+    & p {
+      @include proxima-nova-thin;
     }
 
     .regular-text {
       font-size: 15px;
+    }
+  }
+
+  .pincode-input-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .pincode-input-text {
+      height: 25px !important;
+      width: 25px !important;
+      border: 1px solid $violet !important;
+      border-radius: 50%;
+      background: none !important;
+      color: transparent;
+      margin: 0 !important;
+    }
+    .pincode-input-text:focus{
+      outline:none;
+      box-shadow:none;
+    }
+    .pincode-input-text:not([value=""]) {
+      background-color: $violet !important;
+    }
+    .pincode-input-text::selection {
+      color: transparent;
     }
   }
 
