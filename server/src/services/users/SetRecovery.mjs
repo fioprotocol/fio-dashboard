@@ -1,0 +1,55 @@
+import Base from '../Base';
+import X from '../Exception';
+import emailSender from '../emailSender';
+
+import { User } from '../../models';
+
+export default class UsersSetRecovery extends Base {
+  static get validationRules() {
+    return {
+      data: {
+        nested_object: {
+          token: ['required', 'string'],
+        },
+      },
+    };
+  }
+
+  async execute({ data: { token } }) {
+    const user = await User.findActive(this.context.id);
+
+    if (!user) {
+      throw new X({
+        code: 'NOT_FOUND',
+        fields: {
+          id: 'NOT_FOUND',
+        },
+      });
+    }
+
+    if (user.status === User.STATUS.BLOCKED) {
+      throw new X({
+        code: 'BLOCKED_USER',
+        fields: {
+          email: 'BLOCKED_USER',
+        },
+      });
+    }
+
+    user.secretSet = true;
+    await user.save();
+
+    // todo: should we send token to user?
+    await emailSender.send('setRecovery', user.email, { token });
+
+    return {};
+  }
+
+  static get paramsSecret() {
+    return ['data.token'];
+  }
+
+  static get resultSecret() {
+    return [];
+  }
+}

@@ -35,7 +35,9 @@ export default class DashboardPage extends Component {
         <br />
         <br />
         <h3>Dashboard</h3>
-        <p>Hi, {user.email}</p>
+        <p>
+          Hi, <i>{user.email}</i>
+        </p>
         <p>Fio Wallet Key: {fioWalletKey || '-'}</p>
       </div>
     );

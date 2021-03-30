@@ -63,6 +63,15 @@ export const passwordRecovery = ({ email }) => ({
   promise: api => api.auth.resetPassword(email),
 });
 
+export const SET_RECOVERY_REQUEST = `${prefix}/SET_RECOVERY_REQUEST`;
+export const SET_RECOVERY_SUCCESS = `${prefix}/SET_RECOVERY_SUCCESS`;
+export const SET_RECOVERY_FAILURE = `${prefix}/SET_RECOVERY_FAILURE`;
+
+export const setRecoveryQuestions = token => ({
+  types: [SET_RECOVERY_REQUEST, SET_RECOVERY_SUCCESS, SET_RECOVERY_FAILURE],
+  promise: api => api.auth.setRecovery(token),
+});
+
 export const RESET_PASSWORD_REQUEST = `${prefix}/RESET_PASSWORD_REQUEST`;
 export const RESET_PASSWORD_SUCCESS = `${prefix}/RESET_PASSWORD_SUCCESS`;
 export const RESET_PASSWORD_FAILURE = `${prefix}/RESET_PASSWORD_FAILURE`;

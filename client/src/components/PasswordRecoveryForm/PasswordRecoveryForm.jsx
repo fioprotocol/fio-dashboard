@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Field, useForm } from 'react-final-form';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,11 +12,21 @@ import Input from '../Input/Input';
 import classes from './PasswordRecoveryForm.module.scss';
 
 const PasswordRecoveryForm = props => {
-  const { show, onClose, loading, questions } = props;
+  const {
+    show,
+    onClose,
+    loading,
+    questions,
+    getRecoveryQuestions,
+    account,
+    onSubmit,
+  } = props;
 
   const [isSkip, toggleSkip] = useState(false);
   const [isQuestions, toggleQuestions] = useState(false);
   const [questionNumber, setQuestionNumber] = useState(null);
+
+  useEffect(getRecoveryQuestions, []);
 
   const showSkip = () => {
     toggleSkip(true);
@@ -219,7 +229,7 @@ const PasswordRecoveryForm = props => {
                 <Field
                   name={item}
                   component={renderQuestionItem}
-                  key={item.type}
+                  key={`${item.question.replace(/ /, '')}${item.category}`}
                 />
               ))}
             </Scrollbar>
@@ -234,9 +244,31 @@ const PasswordRecoveryForm = props => {
       renderSkip()
     ) : (
       <Form
-        onSubmit={values => {
-          console.log(values);
-        }} //todo: transform values data into appropriate format
+        onSubmit={async values => {
+          const {
+            recoveryAnswerTwo,
+            recoveryAnswerOne,
+            recoveryQuestionTwo,
+            recoveryQuestionOne,
+          } = values;
+
+          try {
+            const token = await account.changeRecovery(
+              [recoveryQuestionOne.question, recoveryQuestionTwo.question],
+              [recoveryAnswerOne, recoveryAnswerTwo],
+            );
+            onSubmit(token);
+            return {};
+          } catch (e) {
+            console.error(e);
+            return {
+              errors: {
+                recoveryAnswerOne:
+                  'There was an issue setting recovery questions',
+              },
+            };
+          }
+        }}
         validate={validateForm}
       >
         {renderFormItems}

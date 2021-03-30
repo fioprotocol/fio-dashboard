@@ -59,7 +59,7 @@ export default class MainLayout extends Component {
         </div>
         <Footer />
         {showLogin && edgeContextSet && this.loginFormModalRender()}
-        {showRecovery && this.recoveryFormModalRender()}
+        {showRecovery && edgeContextSet && this.recoveryFormModalRender()}
       </div>
     );
   }

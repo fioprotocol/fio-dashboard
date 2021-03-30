@@ -1,6 +1,11 @@
 import { all } from 'redux-saga/effects';
 
-import { loginSuccess, signupSuccess, logoutSuccess } from './profile/sagas';
+import {
+  loginSuccess,
+  signupSuccess,
+  logoutSuccess,
+  setRecoverySuccess,
+} from './profile/sagas';
 import {
   loginSuccess as loginEdgeSuccess,
   logoutSuccess as logoutEdgeSuccess,
@@ -16,6 +21,7 @@ export default function* rootSaga(history, api) {
     logoutEdgeSuccess(),
     listFailure(history),
     signupSuccess(history),
+    setRecoverySuccess(),
     notify(),
   ]);
 }

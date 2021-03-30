@@ -3,7 +3,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { pathname } from '../../redux/router/selectors';
 import { user } from '../../redux/profile/selectors';
-import { account, loginSuccess, loading } from '../../redux/edge/selectors';
+import { account, loading } from '../../redux/edge/selectors';
 import { logout } from '../../redux/edge/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 
@@ -14,7 +14,6 @@ const selector = createStructuredSelector({
   user,
   account,
   loading,
-  loginSuccess,
 });
 
 const actions = dispatch => ({
