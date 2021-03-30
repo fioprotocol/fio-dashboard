@@ -4,16 +4,11 @@ import { Field } from 'react-final-form';
 import FormHeader from '../FormHeader/FormHeader';
 import Input from '../Input/Input';
 
-import classes from './CreateAccountForm.module.scss';
+import { Button } from "react-bootstrap";
 
 export default class Pin extends Component {
-  constructor(props) {
-    super();
-    this.state = {}
-  }
-
   render() {
-    const { isConfirm, loading } = this.props;
+    const { isConfirm, startOver, error, loading } = this.props;
 
     if (isConfirm) return (
       <>
@@ -24,6 +19,11 @@ export default class Pin extends Component {
           subtitle='Enter a 6 digit PIN to use for sign in and transaction approvals'
         />
         <Field name='confirmPin' component={Input} disabled={loading}/>
+        {error && (
+          <Button className='w-100' onClick={startOver}>
+            START OVER
+          </Button>
+        )}
       </>
     )
 

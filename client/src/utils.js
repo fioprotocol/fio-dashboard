@@ -15,6 +15,7 @@ export function currentYear() {
 export function emailToUsername(email) {
   if (email && email.indexOf('@') > 0) {
     const [name, domain] = email.split('@')
+    // return name
     return `${name}_${domain}_fio.dapp`
   }
 }

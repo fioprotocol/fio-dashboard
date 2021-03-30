@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Form } from 'react-final-form';
 import { Link } from 'react-router-dom';
-import classnames from 'classnames';
 
 import Wizard from './CreateAccountFormWizard';
 import FormModalWrapper from '../FormModalWrapper/FormModalWrapper';
@@ -10,7 +9,7 @@ import { isEmpty } from '../../helpers/verifying';
 import { ROUTES } from '../../constants/routes';
 
 import classes from './CreateAccountForm.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { usernameAvailable, createAccount, checkUsernameAndPassword } from './middleware';
 import { emailToUsername } from "../../utils";
 import Pin from "./Pin";
 import EmailPassword, { validate as validateEmailPassword } from "./EmailPassword";
@@ -40,6 +39,12 @@ const setDataMutator = (args, state) => {
 }
 
 export default class CreateAccountForm extends Component {
+
+  static propTypes = {
+    resetSuccessState: PropTypes.func.isRequired,
+    loading: PropTypes.bool,
+  };
+
   constructor(props) {
     super();
     this.state = {
@@ -49,27 +54,19 @@ export default class CreateAccountForm extends Component {
         upper: { isChecked: false },
         number: { isChecked: false }
       },
-      usernameAvailableLoading: props.usernameAvailableLoading,
-      usernameError: null,
+      usernameAvailableLoading: false,
+      usernameIsAvailable: false,
       step: STEPS.EMAIL_PASSWORD
     }
   }
 
-  static propTypes = {
-    resetSuccessState: PropTypes.func.isRequired,
-    usernameIsAvailable: PropTypes.bool,
-    usernameAvailableLoading: PropTypes.bool,
-    usernameAvailable: PropTypes.func.isRequired,
-    loading: PropTypes.bool,
-  };
-
-  static getDerivedStateFromProps(props, state) {
-    if (props.usernameAvailableLoading !== state.usernameAvailableLoading) {
-      return { usernameAvailableLoading: props.usernameAvailableLoading }
-    }
-
-    return null
-  }
+  // static getDerivedStateFromProps(props, state) {
+  //   if (props.usernameAvailableLoading !== state.usernameAvailableLoading) {
+  //     return { usernameAvailableLoading: props.usernameAvailableLoading }
+  //   }
+  //
+  //   return null
+  // }
 
   componentDidMount() {
     const { location, replace } = this.props.history;
@@ -81,38 +78,33 @@ export default class CreateAccountForm extends Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevState.usernameAvailableLoading && !this.state.usernameAvailableLoading) {
-      this.setState({ usernameError: !this.props.usernameIsAvailable }, () => {
-        console.log(this.props.usernameIsAvailable);
-        this.form && this.form.mutators && this.form.mutators.setDataMutator('email', {
-          error: !this.props.usernameIsAvailable && (
-            <span>
-               This Email Address is already registered,{' '}
-              <Link to=''>Sign-in</Link> instead
-             </span>
-          )
-        })
-      })
-    }
-  }
+  // componentDidUpdate(prevProps, prevState) {
+  //   if (prevState.usernameAvailableLoading && !this.state.usernameAvailableLoading) {
+  //     this.setState({ usernameError: !this.props.usernameIsAvailable }, () => {
+  //     })
+  //   }
+  // }
 
   componentWillUnmount() {
     this.props.resetSuccessState();
   }
 
-  onUsersPageSubmit = (values, cb) => {
-    if (this.props.usernameIsAvailable) {
-      cb()
-    }
-    // todo: validate on click 'next'?
-    const { email } = values
-    this.props.usernameAvailable(emailToUsername(email));
-  }
-
-  isEmailExists = (e) => {
+  isEmailExists = async e => {
+    const emailField = this.form.getFieldState('email')
+    if (!emailField.valid) return
     const email = e.target.value
-    this.props.usernameAvailable(emailToUsername(email));
+    this.setState({ usernameAvailableLoading: true, usernameIsAvailable: false })
+    const { error } = await usernameAvailable(emailToUsername(email));
+    this.setState({ usernameAvailableLoading: false, usernameIsAvailable: !error })
+
+    this.form && this.form.mutators && this.form.mutators.setDataMutator('email', {
+      error: !!error && (
+        <span>
+               This Email Address is already registered,{' '}
+          <Link to=''>Sign-in</Link> instead
+             </span>
+      )
+    })
   }
 
   validate = values => {
@@ -126,19 +118,9 @@ export default class CreateAccountForm extends Component {
     return {}
   }
 
-  validateUser = (values) => {
-    const { usernameIsAvailable } = this.props;
-    const { passwordValidation, usernameError, step } = this.state;
+  validateUser = values => {
+    const { passwordValidation } = this.state;
     const passValid = {}
-
-    // if (!usernameIsAvailable) {
-    //   errors.email = usernameError ? (
-    //     <span>
-    //           This Email Address is already registered,{' '}
-    //       <Link to=''>Sign-in</Link> instead
-    //         </span>
-    //   ) : '';
-    // }
 
     if (!values.password) {
       Object.keys(passwordValidation).forEach(item => passValid[item] = false);
@@ -151,7 +133,7 @@ export default class CreateAccountForm extends Component {
     return errors;
   }
 
-  validateConfirmPin = (values) => {
+  validateConfirmPin = values => {
     const errors = {};
     if (values.confirmPin && values.confirmPin.length === 6 &&
       values.pin !== values.confirmPin
@@ -180,33 +162,53 @@ export default class CreateAccountForm extends Component {
     });
   }
 
-  // todo:
-  handleSubmit = (values, form, cb) => {
+  handleSubmit = async values => {
     const { onSubmit } = this.props;
     const { step } = this.state;
-    const isLastStep = step === STEPS.CONFIRMATION;
-    const isFirstStep = step === STEPS.EMAIL_PASSWORD;
-    if (isLastStep) {
-      return onSubmit(values);
-    } else if (isFirstStep) {
-      this.onUsersPageSubmit(values, cb);
-    } else {
-      this.next(values);
+
+    switch (step) {
+      case STEPS.EMAIL_PASSWORD: {
+        const { email, password, confirmPassword } = values
+        this.setState({ loading: true })
+        const { errors } = await checkUsernameAndPassword(emailToUsername(email), password, confirmPassword);
+        this.setState({ loading: false })
+        if (!Object.values(errors).length)
+          return this.setState({ step: STEPS.PIN })
+        return errors
+      }
+      case STEPS.PIN: {
+        this.setState({ step: STEPS.PIN_CONFIRM })
+        break
+      }
+      case STEPS.PIN_CONFIRM: {
+        this.setState({ step: STEPS.CONFIRMATION })
+        break
+      }
+      case STEPS.CONFIRMATION: {
+        const { email, password, pin } = values
+        this.setState({ loading: true })
+        const { errors } = await createAccount(emailToUsername(email), password, pin);
+        // onSubmit(values); // todo: create account on server
+        this.setState({ loading: false })
+        if (!Object.values(errors).length)
+          return {} // todo: show success page
+        return errors
+      }
+      default:
+        return {}
     }
   };
 
-  onNextStep = nextStep => {
-    switch (nextStep) {
-      case STEPS_ORDER[STEPS.PIN]: {
+  onPrevStep = () => {
+    const { step } = this.state
+    switch (step) {
+      case STEPS.PIN: {
+        this.setState({ step: STEPS.EMAIL_PASSWORD })
+        break
+      }
+      case STEPS.PIN_CONFIRM:
+      case STEPS.CONFIRMATION: {
         this.setState({ step: STEPS.PIN })
-        break
-      }
-      case STEPS_ORDER[STEPS.PIN_CONFIRM]: {
-        this.setState({ step: STEPS.PIN_CONFIRM })
-        break
-      }
-      case STEPS_ORDER[STEPS.CONFIRMATION]: {
-        this.setState({ step: STEPS.CONFIRMATION })
         break
       }
       default:
@@ -214,29 +216,19 @@ export default class CreateAccountForm extends Component {
     }
   }
 
-  onPrevStep = prevStep => {
-    switch (prevStep) {
-      case STEPS_ORDER[STEPS.PIN]: {
-        this.setState({ step: STEPS.PIN })
-        break
-      }
-      case STEPS_ORDER[STEPS.PIN_CONFIRM]: {
-        this.setState({ step: STEPS.PIN_CONFIRM })
-        break
-      }
-      case STEPS_ORDER[STEPS.CONFIRMATION]: {
-        this.setState({ step: STEPS.CONFIRMATION })
-        break
-      }
-      default:
-        this.setState({ step: STEPS.EMAIL_PASSWORD })
-    }
-  }
-
-  renderForm = (formProps) => {
-    const { handleSubmit, submitting, valid, pristine, form } = formProps;
-    const { loading, usernameAvailableLoading } = this.props;
-    const { step, passwordValidation } = this.state;
+  renderForm = formProps => {
+    const {
+      handleSubmit,
+      submitting,
+      modifiedSinceLastSubmit,
+      hasSubmitErrors,
+      hasValidationErrors,
+      pristine,
+      values,
+      errors,
+      form } = formProps;
+    const { loading } = this.props;
+    const { step, passwordValidation, usernameAvailableLoading } = this.state;
 
     this.form = form
 
@@ -244,9 +236,8 @@ export default class CreateAccountForm extends Component {
       <form onSubmit={handleSubmit} className={classes.form}>
         <Wizard
           activePage={STEPS_ORDER[step]}
-          actionDisabled={!valid || !pristine}
+          actionDisabled={(hasSubmitErrors && !modifiedSinceLastSubmit) || hasValidationErrors || pristine}
           loading={loading || submitting}
-          onNext={this.onNextStep}
           onPrev={this.onPrevStep}
         >
           <Wizard.Page
@@ -266,11 +257,11 @@ export default class CreateAccountForm extends Component {
           <Wizard.Page hideNext>
             <Pin/>
           </Wizard.Page>
-          <Wizard.Page onBack hideNext>
-            <Pin isConfirm/>
+          <Wizard.Page hideNext>
+            <Pin isConfirm error={errors.confirmPin} startOver={this.onPrevStep} />
           </Wizard.Page>
-          <Wizard.Page hideBack>
-            <Confirmation/>
+          <Wizard.Page hideBack hideNext>
+            <Confirmation data={values} errors={errors} loading={loading} />
           </Wizard.Page>
         </Wizard>
       </form>
@@ -278,8 +269,7 @@ export default class CreateAccountForm extends Component {
   }
 
   render() {
-    const { signupSuccess, onSubmit } = this.props;
-    const { isOpen, usernameError } = this.state;
+    const { signupSuccess } = this.props;
 
     const formStyleName = signupSuccess ? 'form success' : 'form';
     return (
@@ -288,7 +278,7 @@ export default class CreateAccountForm extends Component {
           mutators={{ setDataMutator }}
           // initialValues={values}
           validate={this.validate}
-          onSubmit={onSubmit}
+          onSubmit={this.handleSubmit}
         >
           {this.renderForm}
         </Form>

@@ -74,7 +74,7 @@ export default class Edge {
     }
   }
 
-  async signup(username, password, passwordRepeat, pin) {
+  async checkPasswordRules(password, passwordRepeat) {
     // check password rules
     try {
       const check = await this.edgeContext.checkPasswordRules(password)
@@ -88,6 +88,10 @@ export default class Edge {
       throw e
     }
 
+    return true
+  }
+
+  async signup(username, password, pin) {
     // create account
     return this.edgeContext.createAccount(username, password, pin, {})
   }

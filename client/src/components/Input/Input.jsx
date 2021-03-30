@@ -26,7 +26,8 @@ const Input = props => {
   const clearInputFn = () => {
     input.onChange(meta.initial);
   };
-  const hasError = (meta.error || meta.data.error) && (meta.touched || meta.modified);
+
+  const hasError = (meta.error || meta.data.error) && (meta.touched || meta.modified) && !meta.active || (meta.submitError && !meta.modifiedSinceLastSubmit);
 
   const regularInput = (
     <>
@@ -65,8 +66,8 @@ const Input = props => {
       <div
         className={classnames(classes.errorMessage, hasError && classes.error)}
       >
-        <FontAwesomeIcon icon={'info-circle'} className={classes.errorIcon} />
-        {meta.error || meta.data.error}
+        <FontAwesomeIcon icon={'info-circle'} className={classes.errorIcon}/>
+        {hasError && (meta.error || meta.data.error || meta.submitError)}
       </div>
     </>
   );
@@ -101,7 +102,7 @@ const Input = props => {
         </div>
         {hasError && (
           <div className={classes.pinError}>
-            <FontAwesomeIcon icon='info-circle' className={classes.icon} />
+            <FontAwesomeIcon icon='info-circle' className={classes.icon}/>
             {meta.error}
           </div>
         )}

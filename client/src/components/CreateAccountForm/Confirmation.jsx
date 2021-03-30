@@ -1,16 +1,12 @@
 import React, { Component } from 'react';
-import { Field } from 'react-final-form';
 import classnames from 'classnames';
-import validator from 'email-validator';
 
 import FormHeader from '../FormHeader/FormHeader';
-import Input from '../Input/Input';
 
 import classes from './CreateAccountForm.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { emailToUsername } from "../../utils";
-import { Col, Row } from "react-bootstrap";
-import Wizard from "./CreateAccountFormWizard";
+import { Button, Col, Row } from "react-bootstrap";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 export default class Confirmation extends Component {
   constructor() {
@@ -87,6 +83,10 @@ export default class Confirmation extends Component {
             </Row>
           </div>
         </div>
+
+        <Button type='submit' disabled={loading}>
+          CREATE ACCOUNT {loading && <FontAwesomeIcon icon={faSpinner} spin/>}
+        </Button>
       </>
     );
   }

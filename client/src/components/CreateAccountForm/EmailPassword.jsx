@@ -39,6 +39,7 @@ export const validate = (values, passValid) => {
     passValid.length = true;
   } else {
     passValid.length = false;
+    errors.password = VALIDATION_TITLES.length
   }
 
   if (
@@ -49,6 +50,7 @@ export const validate = (values, passValid) => {
     passValid.lower = true;
   } else {
     passValid.lower = false;
+    errors.password = VALIDATION_TITLES.lower
   }
 
   if (
@@ -59,6 +61,7 @@ export const validate = (values, passValid) => {
     passValid.upper = true;
   } else {
     passValid.upper = false;
+    errors.password = VALIDATION_TITLES.upper
   }
 
   if (
@@ -69,6 +72,7 @@ export const validate = (values, passValid) => {
     passValid.number = true;
   } else {
     passValid.number = false;
+    errors.password = VALIDATION_TITLES.number
   }
 
   return errors;
