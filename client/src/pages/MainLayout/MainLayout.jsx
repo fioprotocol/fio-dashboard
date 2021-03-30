@@ -18,6 +18,7 @@ export default class MainLayout extends Component {
     loginSuccess: PropTypes.bool,
     showLogin: PropTypes.bool,
     showRecovery: PropTypes.bool,
+    edgeContextSet: PropTypes.bool,
 
     init: PropTypes.func.isRequired,
     logout: PropTypes.func.isRequired,
@@ -47,6 +48,7 @@ export default class MainLayout extends Component {
       pathname,
       logout,
       children,
+      edgeContextSet,
       showLogin,
       showRecovery,
     } = this.props;
@@ -60,7 +62,7 @@ export default class MainLayout extends Component {
           {children}
         </div>
         <Footer />
-        {showLogin && this.loginFormModalRender()}
+        {showLogin && edgeContextSet && this.loginFormModalRender()}
         {showRecovery && this.recoveryFormModalRender()}
       </div>
     );

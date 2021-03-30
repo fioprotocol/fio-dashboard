@@ -1,8 +1,10 @@
 import { connect } from 'react-redux';
 import { createSelector, createStructuredSelector } from 'reselect';
 import { compose } from '../../utils';
-import { signup, resetSuccessState } from '../../redux/profile/actions';
-import { successfullyRegistered, loading } from '../../redux/profile/selectors';
+import { resetSuccessState } from '../../redux/profile/actions';
+import { successfullyRegistered } from '../../redux/profile/selectors';
+import { signup } from '../../redux/edge/actions';
+import { loading } from '../../redux/edge/selectors';
 import { withRouter } from 'react-router-dom';
 import CreateAccountForm from './CreateAccountForm';
 

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 import _ from 'lodash';
 import classnames from 'classnames';
 import PinInput from 'react-pin-input';
@@ -25,7 +26,8 @@ const Input = props => {
   const clearInputFn = () => {
     input.onChange(meta.initial);
   };
-  const hasError = meta.error && (meta.touched || meta.modified);
+
+  const hasError = (meta.error || meta.data.error) && (meta.touched || meta.modified) && !meta.active || (meta.submitError && !meta.modifiedSinceLastSubmit);
 
   const regularInput = (
     <>
@@ -36,7 +38,7 @@ const Input = props => {
           {...props}
           type={showPass ? 'text' : type}
         />
-        {clearInput && (
+        {(clearInput && !props.loading) && (
           <FontAwesomeIcon
             icon='times-circle'
             className={classnames(
@@ -53,12 +55,19 @@ const Input = props => {
             onClick={() => toggleShowPass(!showPass)}
           />
         )}
+        {props.loading && (
+          <FontAwesomeIcon
+            icon={faSpinner}
+            spin
+            className={classnames(classes.inputIcon, classes.inputSpinnerIcon)}
+          />
+        )}
       </div>
       <div
         className={classnames(classes.errorMessage, hasError && classes.error)}
       >
-        <FontAwesomeIcon icon={'info-circle'} className={classes.errorIcon} />
-        {meta.error}
+        <FontAwesomeIcon icon={'info-circle'} className={classes.errorIcon}/>
+        {hasError && (meta.error || meta.data.error || meta.submitError)}
       </div>
     </>
   );
@@ -93,7 +102,7 @@ const Input = props => {
         </div>
         {hasError && (
           <div className={classes.pinError}>
-            <FontAwesomeIcon icon='info-circle' className={classes.icon} />
+            <FontAwesomeIcon icon='info-circle' className={classes.icon}/>
             {meta.error}
           </div>
         )}
