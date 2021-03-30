@@ -9,6 +9,7 @@ import {
   faEye,
   faEyeSlash,
   faArrowLeft,
+  faArrowRight,
   faCog,
   faBell,
   faCircle,
@@ -23,6 +24,7 @@ import {
   faCheckCircle,
   faSpinner,
   faChevronRight,
+  faExclamationCircle,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { faCircle as faRegularCircle } from '@fortawesome/free-regular-svg-icons';
@@ -45,6 +47,7 @@ library.add(
   faEye,
   faEyeSlash,
   faArrowLeft,
+  faArrowRight,
   faCog,
   faBell,
   faCircle,
@@ -60,6 +63,7 @@ library.add(
   faCheckCircle,
   faRegularCircle,
   faSpinner,
+  faExclamationCircle,
 );
 
 const store = configureStore(api, history);

@@ -6,10 +6,19 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Footer from '../../components/Footer/Footer';
 import LoginForm from '../../components/LoginForm';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
+import SecretQuestionBadge from '../../components/SecretQuestionBadge';
 
 import classes from './MainLayout.module.scss';
 
 export default class MainLayout extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isSecretQuestionBadge: false,
+      isSkipped: false,
+    };
+  }
+
   static propTypes = exact({
     children: PropTypes.element,
     pathname: PropTypes.string.isRequired,
@@ -26,6 +35,7 @@ export default class MainLayout extends Component {
 
   componentDidMount() {
     this.props.init();
+    //todo: handle secret questions badge init state
   }
 
   loginFormModalRender = () => {
@@ -40,6 +50,10 @@ export default class MainLayout extends Component {
     return showRecovery && account && <PasswordRecoveryForm />;
   };
 
+  onBadgeClose = () => {
+    this.setState({ isSecretQuestionBadge: false });
+  }
+
   render() {
     const {
       account,
@@ -49,11 +63,15 @@ export default class MainLayout extends Component {
       showLogin,
       showRecovery,
     } = this.props;
+    const { isSecretQuestionBadge, isSkipped } = this.state;
     const isHomePage = pathname === '/';
     return (
       <div className={classes.root}>
         <MainHeader />
         {account && <Sidebar />}
+        {isSecretQuestionBadge && (
+          <SecretQuestionBadge onClose={this.onBadgeClose} isSkipped={isSkipped} />
+        )}
         <div className={`${classes.content} ${isHomePage && classes.home}`}>
           {children}
         </div>
