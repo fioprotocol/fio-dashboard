@@ -4,12 +4,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classes from './SecretQuestionBadge.module.scss';
 
 const SecretQuestionBadge = props => {
-  const { isSkipped, onClose, showModal } = props;
-   
+  const { user, onClose, showModal } = props;
+  if (!user) return null;
+  const { secretSet } = user;
+
   return (
-    <div className={classnames(classes.badge, isSkipped && classes.isSkipped)}>
-      <FontAwesomeIcon icon='exclamation-circle' className={classes.icon} />
-      {isSkipped ? (
+    <div className={classnames(classes.badge, !secretSet && classes.isSkipped)}>
+      <FontAwesomeIcon icon="exclamation-circle" className={classes.icon} />
+      {!secretSet ? (
         <p>
           <span className={classes.title}>Password Recovery</span> - You have
           skipped setting up password recovery, Please make sure to complete
@@ -22,15 +24,15 @@ const SecretQuestionBadge = props => {
           up to date
         </p>
       )}
-      {isSkipped && (
+      {!secretSet && (
         <FontAwesomeIcon
-          icon='arrow-right'
+          icon="arrow-right"
           className={classes.arrow}
           onClick={showModal}
         />
       )}
       <FontAwesomeIcon
-        icon='times-circle'
+        icon="times-circle"
         className={classes.closeIcon}
         onClick={onClose}
       />

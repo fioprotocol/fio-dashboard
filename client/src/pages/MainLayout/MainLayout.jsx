@@ -14,8 +14,7 @@ export default class MainLayout extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isSecretQuestionBadge: false,
-      isSkipped: false,
+      isSecretQuestionBadge: true,
     };
   }
 
@@ -35,7 +34,6 @@ export default class MainLayout extends Component {
 
   componentDidMount() {
     this.props.init();
-    //todo: handle secret questions badge init state
   }
 
   loginFormModalRender = () => {
@@ -52,7 +50,7 @@ export default class MainLayout extends Component {
 
   onBadgeClose = () => {
     this.setState({ isSecretQuestionBadge: false });
-  }
+  };
 
   render() {
     const {
@@ -63,14 +61,14 @@ export default class MainLayout extends Component {
       showLogin,
       showRecovery,
     } = this.props;
-    const { isSecretQuestionBadge, isSkipped } = this.state;
+    const { isSecretQuestionBadge } = this.state;
     const isHomePage = pathname === '/';
     return (
       <div className={classes.root}>
         <MainHeader />
         {account && <Sidebar />}
-        {isSecretQuestionBadge && (
-          <SecretQuestionBadge onClose={this.onBadgeClose} isSkipped={isSkipped} />
+        {account && isSecretQuestionBadge && (
+          <SecretQuestionBadge onClose={this.onBadgeClose} />
         )}
         <div className={`${classes.content} ${isHomePage && classes.home}`}>
           {children}

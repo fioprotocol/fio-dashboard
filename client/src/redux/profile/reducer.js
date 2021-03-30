@@ -26,6 +26,8 @@ export default combineReducers({
     switch (action.type) {
       case actions.PROFILE_SUCCESS:
         return action.data;
+      case actions.SET_RECOVERY_SUCCESS:
+        return { ...state, secretSet: true };
       case actions.LOGOUT_SUCCESS:
         return null;
       default:
