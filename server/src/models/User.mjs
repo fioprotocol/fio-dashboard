@@ -39,6 +39,12 @@ export class User extends Base {
             this.setDataValue('password', User.generateHash(value));
           },
         },
+        pin: {
+          type: DT.STRING,
+          set(value) {
+            this.setDataValue('pin', User.generateHash(value));
+          },
+        },
         status: {
           type: DT.ENUM,
           values: Object.values(this.STATUS),
@@ -51,6 +57,7 @@ export class User extends Base {
         },
         avatar: DT.STRING,
         location: DT.STRING,
+        secretSet: DT.BOOLEAN,
       },
       {
         sequelize,
@@ -61,7 +68,16 @@ export class User extends Base {
 
   static attrs(type = 'default') {
     const attributes = {
-      default: ['id', 'username', 'email', 'status', 'role', 'avatar', 'location'],
+      default: [
+        'id',
+        'username',
+        'email',
+        'status',
+        'role',
+        'avatar',
+        'location',
+        'secretSet',
+      ],
     };
 
     if (type in attributes) {
@@ -73,6 +89,10 @@ export class User extends Base {
 
   checkPassword(password) {
     return this.get('password') === User.generateHash(password);
+  }
+
+  checkPin(pin) {
+    return this.get('pin') === User.generateHash(pin);
   }
 
   static generateHash(string) {

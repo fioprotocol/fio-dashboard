@@ -5,8 +5,8 @@ export default class Auth extends Base {
     return this.apiClient.get('users/me');
   }
 
-  login(email, password) {
-    return this.apiClient.post('auth', { data: { email, password } });
+  login(email, password, pin) {
+    return this.apiClient.post('auth', { data: { email, password, pin } });
   }
 
   signup(data) {

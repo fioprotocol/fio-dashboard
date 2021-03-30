@@ -29,7 +29,7 @@ export const PrivateRoute = ({
         ) : (
           <Redirect
             to={{
-              pathname: ROUTES.LOGIN,
+              pathname: ROUTES.HOME,
               state: { from: props.location },
             }}
           />

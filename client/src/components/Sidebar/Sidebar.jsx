@@ -35,7 +35,7 @@ export default class Sidebar extends Component {
         </Nav.Link>
       </Nav.Item>
     ));
-  }
+  };
 
   render() {
     return <Nav className={classes.sideWrapper}>{this.renderItems()}</Nav>;

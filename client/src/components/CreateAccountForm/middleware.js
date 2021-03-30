@@ -1,57 +1,65 @@
 import apis from '../../api/index';
 
 export const usernameAvailable = async username => {
-  const result = {}
+  const result = {};
   try {
-    const res = await apis.edge.usernameAvailable(username)
+    const res = await apis.edge.usernameAvailable(username);
 
     if (!res) {
-      result.error = 'Not available'
+      result.error = 'Not available';
     }
   } catch (e) {
-    result.error = e.message
+    result.error = e.message;
   }
 
-  return result
-}
+  return result;
+};
 
 export const checkPassword = async (password, passwordRepeat) => {
-  const result = {}
+  const result = {};
   try {
-    const res = await apis.edge.checkPasswordRules(password, passwordRepeat)
+    const res = await apis.edge.checkPasswordRules(password, passwordRepeat);
 
     if (!res) {
-      result.error = 'Password is invalid'
+      result.error = 'Password is invalid';
     }
   } catch (e) {
-    result.error = e.message
+    result.error = e.message;
   }
 
-  return result
-}
+  return result;
+};
 
-export const checkUsernameAndPassword = async (username, password, passwordRepeat) => {
-  const result = { errors: {} }
-  const { error: usernameError } = await usernameAvailable(username)
-  const { error: passwordError } = await checkPassword(password, passwordRepeat)
+export const checkUsernameAndPassword = async (
+  username,
+  password,
+  passwordRepeat,
+) => {
+  const result = { errors: {} };
+  const { error: usernameError } = await usernameAvailable(username);
+  const { error: passwordError } = await checkPassword(
+    password,
+    passwordRepeat,
+  );
   if (usernameError) {
-    result.errors.email = usernameError
+    result.errors.email = usernameError;
   }
   if (passwordError) {
-    result.errors.password = passwordError
+    result.errors.password = passwordError;
   }
 
-  return result
-}
+  return result;
+};
 
 export const createAccount = async (username, password, pin) => {
-  const result = { errors: {} }
+  const result = { errors: {} };
   try {
-    const account = await apis.edge.signup(username, password, pin)
+    result.account = await apis.edge.signup(username, password, pin);
+    await result.account.createCurrencyWallet('wallet:fio');
   } catch (e) {
     console.log(e);
-    result.errors = { email: e.message }
+    result.errors = { email: e.message };
   }
 
-  return result
-}
+  return result;
+};

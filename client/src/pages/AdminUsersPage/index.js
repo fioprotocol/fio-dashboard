@@ -17,7 +17,4 @@ const actions = {
 
 export { AdminUsersPage };
 
-export default connect(
-  selector,
-  actions,
-)(AdminUsersPage);
+export default connect(selector, actions)(AdminUsersPage);

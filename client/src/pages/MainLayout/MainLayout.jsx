@@ -31,22 +31,19 @@ export default class MainLayout extends Component {
   loginFormModalRender = () => {
     const { showLogin } = this.props;
 
-    return showLogin && <LoginForm />
-  }
+    return showLogin && <LoginForm />;
+  };
 
   recoveryFormModalRender = () => {
-    const { showRecovery } = this.props;
+    const { showRecovery, account } = this.props;
 
-    return showRecovery && <PasswordRecoveryForm />
-  }
+    return showRecovery && account && <PasswordRecoveryForm />;
+  };
 
   render() {
     const {
-      user,
       account,
-      loginSuccess,
       pathname,
-      logout,
       children,
       edgeContextSet,
       showLogin,
@@ -57,7 +54,6 @@ export default class MainLayout extends Component {
       <div className={classes.root}>
         <MainHeader />
         {account && <Sidebar />}
-        {account && <p>Welcome, {account.username}!</p>}
         <div className={`${classes.content} ${isHomePage && classes.home}`}>
           {children}
         </div>

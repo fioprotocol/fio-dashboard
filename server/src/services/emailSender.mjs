@@ -52,7 +52,8 @@ class EmailSender {
       return response.message;
     } catch (err) {
       logger.error(err);
-      throw err;
+      // todo: ask if we need to send emails
+      // throw err;
     }
   }
 
@@ -70,16 +71,12 @@ class EmailSender {
       case 'confirmEmail':
         return {
           subject: 'Confirm your email',
-          body: `To confirm your email click this link: <a href="${
-            sendData.mainUrl
-          }/confirmEmail/${sendData.hash}">Confirm email!</a>`,
+          body: `To confirm your email click this link: <a href="${sendData.mainUrl}/confirmEmail/${sendData.hash}">Confirm email!</a>`,
         };
       case 'resetPassword':
         return {
           subject: 'Reset your password',
-          body: `To reset your password click this link: <a href="${
-            sendData.mainUrl
-          }/reset-password/${sendData.hash}">Reset password!</a>`,
+          body: `To reset your password click this link: <a href="${sendData.mainUrl}/reset-password/${sendData.hash}">Reset password!</a>`,
         };
       case 'resetPasswordSuccess':
         return {
@@ -89,9 +86,7 @@ class EmailSender {
       case 'accountActivated':
         return {
           subject: 'Account successfully activated',
-          body: `Your account activated successfully. <a href="${
-            sendData.mainUrl
-          }">Go to site!</a>`,
+          body: `Your account activated successfully. <a href="${sendData.mainUrl}">Go to site!</a>`,
         };
     }
     return { subject: 'test', body: 'this is test email' };

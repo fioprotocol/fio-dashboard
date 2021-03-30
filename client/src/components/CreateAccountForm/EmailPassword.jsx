@@ -14,7 +14,7 @@ const VALIDATION_TITLES = {
   lower: 'Must have at least 1 lower case letter',
   upper: 'Must have at least 1 upper case letter',
   number: 'Must have at least 1 number',
-}
+};
 
 export const validate = (values, passValid) => {
   const errors = {};
@@ -39,7 +39,7 @@ export const validate = (values, passValid) => {
     passValid.length = true;
   } else {
     passValid.length = false;
-    errors.password = VALIDATION_TITLES.length
+    errors.password = VALIDATION_TITLES.length;
   }
 
   if (
@@ -50,7 +50,7 @@ export const validate = (values, passValid) => {
     passValid.lower = true;
   } else {
     passValid.lower = false;
-    errors.password = VALIDATION_TITLES.lower
+    errors.password = VALIDATION_TITLES.lower;
   }
 
   if (
@@ -61,22 +61,18 @@ export const validate = (values, passValid) => {
     passValid.upper = true;
   } else {
     passValid.upper = false;
-    errors.password = VALIDATION_TITLES.upper
+    errors.password = VALIDATION_TITLES.upper;
   }
 
-  if (
-    values &&
-    values.password &&
-    values.password.search(/^(?=.*\d)/) >= 0
-  ) {
+  if (values && values.password && values.password.search(/^(?=.*\d)/) >= 0) {
     passValid.number = true;
   } else {
     passValid.number = false;
-    errors.password = VALIDATION_TITLES.number
+    errors.password = VALIDATION_TITLES.number;
   }
 
   return errors;
-}
+};
 
 export default class EmailPassword extends Component {
   constructor(props) {
@@ -86,11 +82,11 @@ export default class EmailPassword extends Component {
         length: { isChecked: false },
         lower: { isChecked: false },
         upper: { isChecked: false },
-        number: { isChecked: false }
+        number: { isChecked: false },
       },
       usernameAvailableLoading: props.usernameAvailableLoading,
       usernameError: null,
-    }
+    };
   }
 
   renderPassValidBadge = () => {
@@ -98,17 +94,17 @@ export default class EmailPassword extends Component {
 
     return (
       <div className={classnames(classes.badge)}>
-        {Object.keys(passwordValidation).map((key) => (
+        {Object.keys(passwordValidation).map(key => (
           <div
             key={VALIDATION_TITLES[key]}
             className={classes.validationWrapper}
           >
             <FontAwesomeIcon
-              icon='check-circle'
+              icon="check-circle"
               className={classnames(
                 classes.icon,
                 classes.checkedIcon,
-                passwordValidation[key].isChecked && classes.checked
+                passwordValidation[key].isChecked && classes.checked,
               )}
             />
             <p className={classes.textWrapper}>{VALIDATION_TITLES[key]}</p>
@@ -116,7 +112,7 @@ export default class EmailPassword extends Component {
         ))}
       </div>
     );
-  }
+  };
 
   render() {
     const { onEmailBlur, loading, usernameAvailableLoading } = this.props;
@@ -124,33 +120,33 @@ export default class EmailPassword extends Component {
     return (
       <>
         <FormHeader
-          title='Create Your FIO Account'
+          title="Create Your FIO Account"
           isDoubleColor
-          header='Set 1 of 2'
-          subtitle='Simply choose a username and password. We will use these to encrypt your account.'
+          header="Set 1 of 2"
+          subtitle="Simply choose a username and password. We will use these to encrypt your account."
         />
         <Field
-          name='email'
+          name="email"
           component={Input}
-          type='text'
-          placeholder='Enter Your Email Address'
+          type="text"
+          placeholder="Enter Your Email Address"
           disabled={loading || usernameAvailableLoading}
           loading={usernameAvailableLoading}
           onBlur={onEmailBlur}
         />
         {this.renderPassValidBadge()}
         <Field
-          name='password'
+          name="password"
           component={Input}
-          type='password'
-          placeholder='Choose a Password'
+          type="password"
+          placeholder="Choose a Password"
           disabled={loading}
         />
         <Field
-          name='confirmPassword'
+          name="confirmPassword"
           component={Input}
-          type='password'
-          placeholder='Confirm Password'
+          type="password"
+          placeholder="Confirm Password"
           disabled={loading}
         />
       </>

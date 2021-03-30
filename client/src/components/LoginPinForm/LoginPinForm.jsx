@@ -6,11 +6,10 @@ import { Field } from 'redux-form';
 import { Link } from 'react-router-dom';
 
 import styles from './LoginPinForm.module.scss';
-import { ROUTES } from '../../constants/routes';
 
 export default class LoginPinForm extends Component {
   static propTypes = {
-    handleSubmit: PropTypes.func.isRequired
+    handleSubmit: PropTypes.func.isRequired,
   };
 
   render() {
@@ -35,7 +34,9 @@ export default class LoginPinForm extends Component {
           />
         </Form.Item>
         <Row className="auth-controls">
-          <Link onClick={this.props.exitPin} to="#">Exit PIN</Link>
+          <Link onClick={this.props.exitPin} to="#">
+            Exit PIN
+          </Link>
         </Row>
         <Row className="auth-controls">
           <Button htmlType="submit" className="submit">

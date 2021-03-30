@@ -5,16 +5,10 @@ import { compose } from '../../utils';
 
 import LoginPinForm from './LoginPinForm';
 
-const reduxConect = connect(
-  null,
-  null
-);
+const reduxConect = connect(null, null);
 
 const formConect = reduxForm({
   form: 'loginPin',
 });
 
-export default compose(
-  reduxConect,
-  formConect,
-)(LoginPinForm);
+export default compose(reduxConect, formConect)(LoginPinForm);

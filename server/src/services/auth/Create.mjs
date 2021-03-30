@@ -12,22 +12,33 @@ export default class AuthCreate extends Base {
         {
           nested_object: {
             email: ['required', 'trim', 'email', 'to_lc'],
-            password: 'required',
+            pin: ['integer'],
+            password: ['string'],
           },
         },
       ],
     };
   }
 
-  async execute({ data: { email, password } }) {
+  async execute({ data: { email, password, pin } }) {
     const user = await User.findOneWhere({ email });
 
-    if (!user || !user.checkPassword(password)) {
+    if (pin && (!user || !user.checkPin(pin))) {
       throw new X({
         code: 'AUTHENTICATION_FAILED',
         fields: {
           email: 'INVALID',
-          password: 'INVALID',
+          pin: 'INVALID',
+        },
+      });
+    }
+
+    if (password && (!user || !user.checkPassword(password))) {
+      throw new X({
+        code: 'AUTHENTICATION_FAILED',
+        fields: {
+          email: 'INVALID',
+          pin: 'INVALID',
         },
       });
     }
@@ -49,7 +60,7 @@ export default class AuthCreate extends Base {
   }
 
   static get paramsSecret() {
-    return ['data.email', 'data.password'];
+    return ['data.email', 'data.pin'];
   }
 
   static get resultSecret() {

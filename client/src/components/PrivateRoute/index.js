@@ -10,10 +10,5 @@ const selector = createStructuredSelector({
 });
 
 export default withRouter(
-  connect(
-    selector,
-    null,
-    null,
-    { pure: false },
-  )(PrivateRoute),
+  connect(selector, null, null, { pure: false })(PrivateRoute),
 );

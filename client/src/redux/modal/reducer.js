@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import * as actions from './actions';
+import { PROFILE_SUCCESS } from '../profile/actions';
 
 export default combineReducers({
   showLogin(state = false, action) {
@@ -18,8 +19,10 @@ export default combineReducers({
         return true;
       case actions.CLOSE_RECOVERY_PASSWORD:
         return false;
+      case PROFILE_SUCCESS:
+        return !action.data.secretSet;
       default:
         return state;
     }
-  }
+  },
 });

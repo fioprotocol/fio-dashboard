@@ -9,7 +9,6 @@ import { closeRecoveryModal as onClose } from '../../redux/modal/actions';
 
 import PasswordRecoveryForm from './PasswordRecoveryForm';
 
-
 //todo: Remove mocked data
 const questions = () => [
   {
@@ -61,11 +60,9 @@ const reduxConect = connect(
     show,
     questions,
   }),
-  { onSubmit: passwordRecovery, onClose }
+  { onSubmit: passwordRecovery, onClose },
 );
 
 export { PasswordRecoveryForm };
 
-export default compose(
-  reduxConect,
-)(PasswordRecoveryForm);
+export default compose(reduxConect)(PasswordRecoveryForm);

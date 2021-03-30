@@ -16,7 +16,4 @@ const actions = { onSubmit: resetPassword };
 
 export { ResetPasswordPage };
 
-export default connect(
-  selector,
-  actions,
-)(ResetPasswordPage);
+export default connect(selector, actions)(ResetPasswordPage);

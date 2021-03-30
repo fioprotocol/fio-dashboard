@@ -11,17 +11,18 @@ export default class UsersCreate extends Base {
         'required',
         {
           nested_object: {
-            username: ['required'],
+            username: ['string'],
             email: ['required', 'trim', 'email', 'to_lc'],
-            password: 'required',
-            confirmPassword: ['required', { equal_to_field: ['password'] }],
+            pin: 'required',
+            confirmPin: ['required', { equal_to_field: ['pin'] }],
+            password: ['required'],
           },
         },
       ],
     };
   }
 
-  async execute({ data: { username, email, password } }) {
+  async execute({ data: { username, email, pin, password } }) {
     if (await User.findOneWhere({ email })) {
       throw new X({
         code: 'NOT_UNIQUE',
@@ -34,7 +35,9 @@ export default class UsersCreate extends Base {
     const user = new User({
       username,
       email,
+      pin,
       password,
+      status: User.STATUS.ACTIVE, // todo: should we set NEW and then activate via email?
     });
 
     await user.save();
