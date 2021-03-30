@@ -14,12 +14,14 @@ import { emailToUsername } from "../../utils";
 import Pin from "./Pin";
 import EmailPassword, { validate as validateEmailPassword } from "./EmailPassword";
 import Confirmation from "./Confirmation";
+import Success from "./Success";
 
 const STEPS = {
   EMAIL_PASSWORD: 'EMAIL_PASSWORD',
   PIN: 'PIN',
   PIN_CONFIRM: 'PIN_CONFIRM',
-  CONFIRMATION: 'CONFIRMATION'
+  CONFIRMATION: 'CONFIRMATION',
+  SUCCESS: 'SUCCESS'
 }
 
 const STEPS_ORDER = {
@@ -27,6 +29,7 @@ const STEPS_ORDER = {
   [STEPS.PIN]: 1,
   [STEPS.PIN_CONFIRM]: 2,
   [STEPS.CONFIRMATION]: 3,
+  [STEPS.SUCCESS]: 4,
 }
 
 const setDataMutator = (args, state) => {
@@ -191,7 +194,7 @@ export default class CreateAccountForm extends Component {
         // onSubmit(values); // todo: create account on server
         this.setState({ loading: false })
         if (!Object.values(errors).length)
-          return {} // todo: show success page
+          return this.setState({ step: STEPS.SUCCESS }) // todo: show success page
         return errors
       }
       default:
@@ -262,6 +265,9 @@ export default class CreateAccountForm extends Component {
           </Wizard.Page>
           <Wizard.Page hideBack hideNext>
             <Confirmation data={values} errors={errors} loading={loading} />
+          </Wizard.Page>
+          <Wizard.Page hideBack hideNext>
+            <Success />
           </Wizard.Page>
         </Wizard>
       </form>

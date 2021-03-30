@@ -12,7 +12,7 @@ export default class Confirmation extends Component {
   constructor() {
     super();
     this.state = {
-      isOpen: false,
+      isOpen: true,
     }
   }
 
