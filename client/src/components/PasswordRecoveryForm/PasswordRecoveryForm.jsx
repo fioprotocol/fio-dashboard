@@ -69,7 +69,7 @@ const PasswordRecoveryForm = props => {
       errors.recoveryAnswerOne = 'Answer Field Should be Filled';
     }
     if (values.recoveryAnswerOne && values.recoveryQuestionOne) {
-      if (values.recoveryAnswerOne.length <= values.recoveryQuestionOne.min_length) {
+      if (values.recoveryAnswerOne.length < values.recoveryQuestionOne.min_length) {
         errors.recoveryAnswerOne = `Must have at least ${values.recoveryQuestionOne.min_length} characters`;
       }
     }
@@ -78,7 +78,7 @@ const PasswordRecoveryForm = props => {
       errors.recoveryAnswerTwo = 'Answer Field Should be Filled';
     }
     if (values.recoveryAnswerTwo && values.recoveryQuestionTwo) {
-      if (values.recoveryAnswerTwo.length <= values.recoveryQuestionTwo.min_length) {
+      if (values.recoveryAnswerTwo.length < values.recoveryQuestionTwo.min_length) {
         errors.recoveryAnswerTwo = `Must have at least ${values.recoveryQuestionTwo.min_length} characters`;
       }
     }

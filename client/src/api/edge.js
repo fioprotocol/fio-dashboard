@@ -105,7 +105,7 @@ export default class Edge {
   }
 
   async getRecoveryQuestions() {
-    const results = this.edgeContext.listRecoveryQuestionChoices();
+    const results = await this.edgeContext.listRecoveryQuestionChoices();
     return results.filter(result => result.category === 'recovery2');
   }
 
