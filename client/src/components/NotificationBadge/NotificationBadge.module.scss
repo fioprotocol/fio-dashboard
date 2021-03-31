@@ -6,11 +6,13 @@
   margin: 40px auto 0;
   padding: 15px 20px;
   width: 80%;
+  max-width: 1040px;
   border-radius: 10px;
   color: white;
   display: flex;
   align-items: center;
   font-size: 14px;
+  justify-content: space-between;
 
   &.isSkipped {
     background-color: $simple-red;
@@ -27,7 +29,7 @@
 
   .arrow {
     font-size: 15px;
-    margin: 0 auto 0 0;
+    margin: 0 30px;
     transition: 0.2s ease-in-out;
     transform: translateX(0);
 
@@ -50,6 +52,6 @@
   }
 
   p {
-    margin: 0 auto 0 20px;
+    margin: 0 0 0 20px;
   }
 }

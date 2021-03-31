@@ -11,6 +11,7 @@ import {
 } from '../../redux/edge/selectors';
 import { edgeContextInit } from '../../redux/edge/actions';
 import { showLogin, showRecovery } from '../../redux/modal/selectors';
+import { showRecoveryModal } from '../../redux/modal/actions';
 
 import MainLayout from './MainLayout';
 
@@ -24,12 +25,13 @@ const selector = createStructuredSelector({
   edgeContextSet,
 });
 
-const actions = dispatch => ({
+const actions = (dispatch) => ({
   init: () => {
     // dispatch(loadProfile()); // todo: if jwt exists, show PIN modal to edge pinLogin?
     dispatch(edgeContextInit());
   },
   logout: () => dispatch(logout()),
+  showRecoveryModal: () => dispatch(showRecoveryModal()),
 });
 
 export { MainLayout };
