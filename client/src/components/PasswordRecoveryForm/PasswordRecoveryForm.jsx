@@ -68,8 +68,19 @@ const PasswordRecoveryForm = props => {
     if (!values.recoveryAnswerOne) {
       errors.recoveryAnswerOne = 'Answer Field Should be Filled';
     }
+    if (values.recoveryAnswerOne && values.recoveryQuestionOne) {
+      if (values.recoveryAnswerOne.length <= values.recoveryQuestionOne.min_length) {
+        errors.recoveryAnswerOne = `Must have at least ${values.recoveryQuestionOne.min_length} characters`;
+      }
+    }
+
     if (!values.recoveryAnswerTwo) {
       errors.recoveryAnswerTwo = 'Answer Field Should be Filled';
+    }
+    if (values.recoveryAnswerTwo && values.recoveryQuestionTwo) {
+      if (values.recoveryAnswerTwo.length <= values.recoveryQuestionTwo.min_length) {
+        errors.recoveryAnswerTwo = `Must have at least ${values.recoveryQuestionTwo.min_length} characters`;
+      }
     }
 
     return errors;
@@ -120,21 +131,21 @@ const PasswordRecoveryForm = props => {
     const { change, getState } = useForm();
 
     const values = getState().values;
-    const type = parseInt(name.type);
+    const question = name.question;
     const formSelectedOne =
       values &&
       values.recoveryQuestionOne &&
-      parseInt(values.recoveryQuestionOne.type);
+      values.recoveryQuestionOne.question;
     const formSelectedTwo =
       values &&
       values.recoveryQuestionTwo &&
-      parseInt(values.recoveryQuestionTwo.type);
+      values.recoveryQuestionTwo.question;
 
     let isSelected = false;
-    if (type === formSelectedOne) {
+    if (question === formSelectedOne) {
       isSelected = true;
     }
-    if (type === formSelectedTwo) {
+    if (question === formSelectedTwo) {
       isSelected = true;
     }
 
