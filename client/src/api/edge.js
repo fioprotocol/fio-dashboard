@@ -104,19 +104,9 @@ export default class Edge {
     return this.edgeContext.usernameAvailable(username); // returns bool `available`
   }
 
-  getRecoveryQuestions() {
-    return this.edgeContext.listRecoveryQuestionChoices();
-    // .then(results => {
-    //   const questions = results
-    //     .filter(result => result.category === 'recovery2')
-    //     .map(result => result.question)
-    //   dispatch(action.setPasswordRecoveryQuestions(questions))
-    //   dispatch(action.closeLoadingQuestions())
-    // })
-    // .catch(error => {
-    //   dispatch(openNotification(error.name))
-    //   dispatch(action.closeLoadingQuestions())
-    // })
+  async getRecoveryQuestions() {
+    const results = await this.edgeContext.listRecoveryQuestionChoices();
+    return results.filter(result => result.category === 'recovery2');
   }
 
   confirm(hash) {
