@@ -7,6 +7,7 @@ import Footer from '../../components/Footer/Footer';
 import LoginForm from '../../components/LoginForm';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
 import NotificationBadge from '../../components/NotificationBadge';
+import { BADGE_TYPES } from '../../constants/labels';
 
 import classes from './MainLayout.module.scss';
 
@@ -63,9 +64,9 @@ export default class MainLayout extends Component {
 
     if (account && isNotificationBadge && user) {
       if (!secretSet) return (
-          <NotificationBadge onClose={this.onBadgeClose} arrowAction={showRecoveryModal} type='recovery' warn hasArrow />
+          <NotificationBadge onClose={this.onBadgeClose} arrowAction={showRecoveryModal} type={BADGE_TYPES.RECOVERY} warn hasArrow />
         );
-      return <NotificationBadge onClose={this.onBadgeClose} type='create' />; 
+      return <NotificationBadge onClose={this.onBadgeClose} type={BADGE_TYPES.CREATE} />; 
     }
   };
 

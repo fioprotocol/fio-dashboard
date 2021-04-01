@@ -12,7 +12,6 @@
   display: flex;
   align-items: center;
   font-size: 14px;
-  justify-content: space-between;
 
   &.isSkipped {
     background-color: $simple-red;
@@ -42,6 +41,7 @@
     width: 20px;
     height: 20px;
     transition: 0.3s ease-in-out;
+    margin-left: auto;
     &:hover {
       transform: rotate(90deg);
     }
@@ -52,6 +52,6 @@
   }
 
   p {
-    margin: 0 0 0 20px;
+    margin: 0 auto 0 20px;
   }
 }

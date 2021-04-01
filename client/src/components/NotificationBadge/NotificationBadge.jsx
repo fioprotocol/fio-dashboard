@@ -3,14 +3,18 @@ import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classes from './NotificationBadge.module.scss';
 
+import { BADGE_TYPES } from '../../constants/labels';
+
 const TYPE_TEXT = {
-  create: {
+  [BADGE_TYPES.CREATE]: {
     title: 'Account Create',
-    text: 'You\'re all set to start managing FIO Addresses, Domains, Requests as well as staying',
+    text:
+      "You're all set to start managing FIO Addresses, Domains, Requests as well as staying",
   },
-  recovery: {
+  [BADGE_TYPES.RECOVERY]: {
     title: 'Password Recovery',
-    text: 'You have skipped setting up password recovery, Please make sure to complete this so you do not loose access',
+    text:
+      'You have skipped setting up password recovery, Please make sure to complete this so you do not loose access',
   },
 };
 
