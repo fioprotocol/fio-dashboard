@@ -6,6 +6,7 @@
   margin: 40px auto 0;
   padding: 15px 20px;
   width: 80%;
+  max-width: 1040px;
   border-radius: 10px;
   color: white;
   display: flex;
@@ -27,7 +28,7 @@
 
   .arrow {
     font-size: 15px;
-    margin: 0 auto 0 0;
+    margin: 0 30px;
     transition: 0.2s ease-in-out;
     transform: translateX(0);
 
@@ -40,6 +41,7 @@
     width: 20px;
     height: 20px;
     transition: 0.3s ease-in-out;
+    margin-left: auto;
     &:hover {
       transform: rotate(90deg);
     }
