@@ -3,7 +3,10 @@ import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classes from './NotificationBadge.module.scss';
 
-import { BADGE_TYPES } from '../../constants/labels';
+export const BADGE_TYPES = {
+  CREATE: 'create',
+  RECOVERY: 'recovery',
+};
 
 const TYPE_TEXT = {
   [BADGE_TYPES.CREATE]: {
@@ -23,20 +26,20 @@ const NotificationBadge = props => {
 
   return (
     <div className={classnames(classes.badge, warn && classes.isSkipped)}>
-      <FontAwesomeIcon icon='exclamation-circle' className={classes.icon} />
+      <FontAwesomeIcon icon="exclamation-circle" className={classes.icon} />
       <p>
         <span className={classes.title}>{TYPE_TEXT[type].title}</span> -{' '}
         {TYPE_TEXT[type].text}
       </p>
       {hasArrow && (
         <FontAwesomeIcon
-          icon='arrow-right'
+          icon="arrow-right"
           className={classes.arrow}
           onClick={arrowAction}
         />
       )}
       <FontAwesomeIcon
-        icon='times-circle'
+        icon="times-circle"
         className={classes.closeIcon}
         onClick={onClose}
       />

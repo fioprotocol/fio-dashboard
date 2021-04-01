@@ -13,8 +13,3 @@ export const LINK_LABELS = {
   GOVERNANCE: 'Governance',
   PROTOCOL_UPDATES: 'Protocol Updates',
 };
-
-export const BADGE_TYPES = {
-  CREATE: 'create',
-  RECOVERY: 'recovery',
-};

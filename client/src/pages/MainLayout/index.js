@@ -25,7 +25,7 @@ const selector = createStructuredSelector({
   edgeContextSet,
 });
 
-const actions = (dispatch) => ({
+const actions = dispatch => ({
   init: () => {
     // dispatch(loadProfile()); // todo: if jwt exists, show PIN modal to edge pinLogin?
     dispatch(edgeContextInit());

@@ -7,7 +7,7 @@ import Footer from '../../components/Footer/Footer';
 import LoginForm from '../../components/LoginForm';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
 import NotificationBadge from '../../components/NotificationBadge';
-import { BADGE_TYPES } from '../../constants/labels';
+import { BADGE_TYPES } from '../../components/NotificationBadge/NotificationBadge';
 
 import classes from './MainLayout.module.scss';
 
@@ -63,10 +63,22 @@ export default class MainLayout extends Component {
     const { secretSet } = user;
 
     if (account && isNotificationBadge && user) {
-      if (!secretSet) return (
-          <NotificationBadge onClose={this.onBadgeClose} arrowAction={showRecoveryModal} type={BADGE_TYPES.RECOVERY} warn hasArrow />
+      if (!secretSet)
+        return (
+          <NotificationBadge
+            onClose={this.onBadgeClose}
+            arrowAction={showRecoveryModal}
+            type={BADGE_TYPES.RECOVERY}
+            warn
+            hasArrow
+          />
         );
-      return <NotificationBadge onClose={this.onBadgeClose} type={BADGE_TYPES.CREATE} />; 
+      return (
+        <NotificationBadge
+          onClose={this.onBadgeClose}
+          type={BADGE_TYPES.CREATE}
+        />
+      );
     }
   };
 
@@ -80,7 +92,7 @@ export default class MainLayout extends Component {
       showRecovery,
     } = this.props;
     const isHomePage = pathname === '/';
-    
+
     return (
       <div className={classes.root}>
         <MainHeader />
