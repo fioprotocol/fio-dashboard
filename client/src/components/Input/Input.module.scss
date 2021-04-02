@@ -1,4 +1,5 @@
 @import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
 
 
 .regInputWrapper {
@@ -40,8 +41,12 @@
     right: 20px;
     transform: translateY(-50%);
     cursor: pointer;
-    width: 24px !important;
-    height: 24px;
+    width: 20px !important;
+    height: 20px;
+
+    &.bw {
+      color: $dark-gray;
+    }
   }
 
   .doubleIcon {
@@ -71,10 +76,32 @@
       color: inherit;
     }
 
-    &.error {
+    &.bw {
+      background-color: $light-gray;
+      border-color: transparent;
+      color: $gray-main !important;
+      height: 40px;
+    }
+
+     &.error {
       border-color: $warn-red;
     }
   }
+}
+
+.badge {
+  margin-left: 20px;
+  margin-top: 15px;
+  height: 24px;
+  padding: 6px;
+  background-color: $green-main;
+  font-size: 11px;
+  line-height: 15px;
+  border-radius: 4px;
+  width: fit-content;
+  @include proxima-nova-regular-it;
+  display: flex;
+  align-items: center;
 }
 
 .pin {

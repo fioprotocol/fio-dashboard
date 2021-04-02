@@ -7,13 +7,20 @@ import { useForm } from 'react-final-form';
 
 import classes from './Input.module.scss';
 
+export const INPUT_COLOR_SCHEMA = {
+  BLACK_AND_WHITE: 'black_and_white',
+};
+
 const regularInputWrapper = children => (
   <div className={classes.regInputWrapper}>{children}</div>
 );
 
 const Input = props => {
-  const { input, meta } = props;
+  const { input, meta, colorschema, onClose, badge } = props;
+  const { error, data, touched, active, modified, submitError, modifiedSinceLastSubmit, visited, initial } = meta;
   const { type, value, name } = input;
+
+  const isBW = colorschema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
 
   const [showPass, toggleShowPass] = useState(false);
   const [clearInput, toggleClearInput] = useState(value !== '');
@@ -23,32 +30,38 @@ const Input = props => {
   });
 
   const clearInputFn = () => {
-    input.onChange(meta.initial);
+    input.onChange(initial);
   };
 
   const hasError =
-    ((meta.error || meta.data.error) &&
-      (meta.touched || meta.modified) &&
-      !meta.active) ||
-    (meta.submitError && !meta.modifiedSinceLastSubmit);
+    ((error || data.error) &&
+      (touched || modified) &&
+      !active) ||
+    (submitError && !modifiedSinceLastSubmit);
 
   const regularInput = (
     <>
       <div className={classes.inputGroup}>
         <input
-          className={classnames(classes.regInput, hasError && classes.error)}
+          className={classnames(classes.regInput, hasError && classes.error, isBW && classes.bw)}
           {...input}
           {...props}
           type={showPass ? 'text' : type}
         />
-        {clearInput && !props.loading && (
+        {(clearInput || onClose) && !props.loading && (
           <FontAwesomeIcon
             icon="times-circle"
             className={classnames(
               classes.inputIcon,
               type === 'password' && classes.doubleIcon,
+              isBW && classes.bw
             )}
-            onClick={() => clearInputFn()}
+            onClick={() => {
+              clearInputFn();
+              if (onClose) {
+                onClose(false);
+              }
+            }}
           />
         )}
         {clearInput && type === 'password' && (
@@ -70,8 +83,9 @@ const Input = props => {
         className={classnames(classes.errorMessage, hasError && classes.error)}
       >
         <FontAwesomeIcon icon="info-circle" className={classes.errorIcon} />
-        {hasError && (meta.error || meta.data.error || meta.submitError)}
+        {hasError && (error || data.error || submitError)}
       </div>
+      {badge && visited && <div className={classes.badge}>{badge}</div>}
     </>
   );
 
@@ -106,7 +120,7 @@ const Input = props => {
         {hasError && (
           <div className={classes.pinError}>
             <FontAwesomeIcon icon="info-circle" className={classes.icon} />
-            {meta.error}
+            {error}
           </div>
         )}
       </>

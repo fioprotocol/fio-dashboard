@@ -1,0 +1,33 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+
+.container {
+  background: $footer-background;
+  color: white;
+  text-align: center;
+  padding: 9% 0 0% 0;
+
+  .title {
+    color: white;
+    font-size: 4rem;
+  }
+
+  .coloredText {
+    color: $violet;
+  }
+
+  .subtitle {
+    @include sf-pro-display-thin;
+    font-size: 20px;
+    line-height: 24px;
+    margin-top: 1%;
+  }
+
+  .form {
+    margin: 3% 5% 0%;
+  }
+
+  .bottom {
+    height: 110px;
+  }
+}
