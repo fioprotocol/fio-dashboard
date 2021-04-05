@@ -17,7 +17,7 @@ const regularInputWrapper = children => (
 
 const Input = props => {
   const { input, meta, colorschema, onClose, badge } = props;
-  const { error, data, touched, active, modified, submitError, modifiedSinceLastSubmit, visited, initial } = meta;
+  const { error, data, touched, active, modified, submitError, modifiedSinceLastSubmit, initial, dirty } = meta;
   const { type, value, name } = input;
 
   const isBW = colorschema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
@@ -85,7 +85,7 @@ const Input = props => {
         <FontAwesomeIcon icon="info-circle" className={classes.errorIcon} />
         {hasError && (error || data.error || submitError)}
       </div>
-      {badge && visited && <div className={classes.badge}>{badge}</div>}
+      <div className={classnames(classes.badge, badge && dirty && classes.showBadge)}>{badge}</div>
     </>
   );
 

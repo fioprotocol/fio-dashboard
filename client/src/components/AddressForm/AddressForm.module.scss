@@ -1,5 +1,6 @@
 @import '../../assets/styles/colors.scss';
 @import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
 
 .form {
   width: 100%;
@@ -66,6 +67,8 @@
     margin-top: -7px;
     padding-top: 7px;
     max-height: fit-content;
+    animation-name: expand;
+    animation-duration: 0.4s;
   }
 
   .optionItem {
@@ -120,4 +123,49 @@
       background-color: $violet;
     }
   }
+}
+
+@include sm {
+  .form {
+    flex-direction: column;
+    align-items: center;
+
+    .dropdown, .domainContainer {
+      max-width: 100%;
+      width: 100%;
+    }
+
+    .dropdown, .control, .submit {
+      height: 54px;
+    }
+
+    .at {
+      margin: -10px auto 20px;
+    }
+
+    .submit {
+      width: 100%;
+      margin: 0 auto 25px;
+      font-size: 18px;
+    }
+
+
+    .optionItem {
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .control, .optionItem, .optionButton {
+      font-size: 15px;
+    }
+
+    .optionButton {
+      height: 40px;
+    }
+  }
+}
+
+@keyframes expand {
+  0%   { max-height: 0; }
+  100% { max-height: 15em; }
 }
