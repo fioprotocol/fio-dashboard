@@ -1,0 +1,28 @@
+@import './mediaQueries.scss';
+// Small devices
+@mixin sm {
+  @media (max-width: #{$screen-mobile}) {
+    @content;
+  }
+}
+
+// Medium devices
+@mixin md {
+  @media (min-width: #{$screen-mobile}) and (max-width: #{$screen-tablet}) {
+    @content;
+  }
+}
+
+// Large devices
+@mixin lg {
+  @media (min-width: #{$screen-desktop}) {
+    @content;
+  }
+}
+
+// Custom screensize
+@mixin rwd($screen) {
+  @media (min-width: $screen+'px') {
+    @content;
+  }
+}

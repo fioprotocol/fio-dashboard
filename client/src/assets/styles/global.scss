@@ -1,4 +1,5 @@
 @import './fonts';
+@import './fontMixins.scss';
 @import './forms';
 @import './icons';
 
@@ -45,6 +46,10 @@ a {
 
 .active {
   font-weight: 600;
+}
+
+.boldText {
+  @include proxima-nova-bold
 }
 
 // custom modal styles
