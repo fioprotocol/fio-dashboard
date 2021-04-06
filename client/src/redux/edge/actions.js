@@ -30,6 +30,33 @@ export const setAccount = account => ({
   data: account,
 });
 
+export const REFRESH_FIO_WALLETS = `${prefix}/REFRESH_FIO_WALLETS`;
+export const REFRESH_FIO_WALLETS_SUCCESS = `${prefix}/REFRESH_FIO_WALLETS_SUCCESS`;
+export const REFRESH_FIO_WALLETS_FAILURE = `${prefix}/REFRESH_FIO_WALLETS_FAILURE`;
+
+export const refreshFioWallets = account => ({
+  types: [
+    REFRESH_FIO_WALLETS,
+    REFRESH_FIO_WALLETS_SUCCESS,
+    REFRESH_FIO_WALLETS_FAILURE,
+  ],
+  promise: async () => {
+    const fioWallets = [];
+    try {
+      for (const walletId of account.activeWalletIds) {
+        const wallet = await account.waitForCurrencyWallet(walletId);
+        if (wallet.currencyInfo.currencyCode === 'FIO') {
+          fioWallets.push(wallet);
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    return fioWallets;
+  },
+});
+
 export const SIGNUP_REQUEST = `${prefix}/SIGNUP_REQUEST`;
 export const SIGNUP_SUCCESS = `${prefix}/SIGNUP_SUCCESS`;
 export const SIGNUP_FAILURE = `${prefix}/SIGNUP_FAILURE`;
