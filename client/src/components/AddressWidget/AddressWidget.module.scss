@@ -1,0 +1,66 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  background: $footer-background;
+  color: white;
+  text-align: center;
+  padding: 9% 0 0% 0;
+
+  .title {
+    color: white;
+    font-size: 4rem;
+  }
+
+  .coloredText {
+    color: $violet;
+  }
+
+  .subtitle {
+    @include sf-pro-display-thin;
+    font-size: 20px;
+    line-height: 24px;
+    margin: 1% 10%;
+  }
+
+  .form {
+    margin: 3% 5% 0%;
+  }
+
+  .bottom {
+    height: 110px;
+  }
+
+  @include md {
+    .title {
+      font-size: 3rem;
+    }
+
+    .subtitle {
+      font-size: 16px;
+    }
+
+    .bottom {
+      height: 70px;
+    }
+  }
+
+  @include sm {
+    .title {
+      font-size: 2.8rem;
+    }
+
+    .subtitle {
+      margin: 5% 5%;
+    }
+
+    .form {
+      margin-top: 7%;
+    }
+
+    .bottom {
+      height: 30px;
+    }
+  }
+}

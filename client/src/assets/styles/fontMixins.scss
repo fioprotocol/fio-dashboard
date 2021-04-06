@@ -46,3 +46,31 @@
 @mixin proxima-nova-thin {
   font-family: 'Proxima Nova Thin';
 }
+
+@mixin proxima-nova-regular-it {
+  font-family: 'Proxima Nova Regular Italic';
+}
+
+@mixin proxima-nova-thin-it {
+  font-family: 'Proxima Nova Thin Italic';
+}
+
+@mixin sf-pro-display-regular {
+  font-family: 'SF Pro Display Regular';
+  letter-spacing: 0.05em;
+}
+
+@mixin sf-pro-display-thin {
+  font-family: 'SF Pro Display Thin';
+  letter-spacing: 0.05em;
+}
+
+@mixin sf-pro-display-bold {
+  font-family: 'SF Pro Display Bold';
+  letter-spacing: 0.05em;
+}
+
+@mixin sf-pro-display-medium {
+  font-family: 'SF Pro Display Medium';
+  letter-spacing: 0.05em;
+}

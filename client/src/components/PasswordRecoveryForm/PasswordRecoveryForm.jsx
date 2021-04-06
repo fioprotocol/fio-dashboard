@@ -58,18 +58,37 @@ const PasswordRecoveryForm = props => {
   const validateForm = values => {
     const errors = {};
 
-    if (!values.recoveryQuestionOne) {
+    const {
+      recoveryQuestionOne,
+      recoveryQuestionTwo,
+      recoveryAnswerOne,
+      recoveryAnswerTwo,
+    } = values;
+
+    const { length: lengthOne } = recoveryAnswerOne || {};
+    const { length: lengthTwo } = recoveryAnswerTwo || {};
+    const { min_length: minLengthOne } = recoveryQuestionOne || {};
+    const { min_length: minLengthTwo } = recoveryQuestionTwo || {};
+
+    if (!recoveryQuestionOne) {
       errors.recoveryQuestionOne = 'Please Select Question';
     }
-    if (!values.recoveryQuestionTwo) {
+    if (!recoveryQuestionTwo) {
       errors.recoveryQuestionTwo = 'Please Select Question';
     }
 
-    if (!values.recoveryAnswerOne) {
+    if (!recoveryAnswerOne) {
       errors.recoveryAnswerOne = 'Answer Field Should be Filled';
     }
-    if (!values.recoveryAnswerTwo) {
+    if (lengthOne < minLengthOne) {
+      errors.recoveryAnswerOne = `Must have at least ${minLengthOne} characters`;
+    }
+
+    if (!recoveryAnswerTwo) {
       errors.recoveryAnswerTwo = 'Answer Field Should be Filled';
+    }
+    if (lengthTwo < minLengthTwo) {
+      errors.recoveryAnswerTwo = `Must have at least ${minLengthTwo} characters`;
     }
 
     return errors;
@@ -99,13 +118,15 @@ const PasswordRecoveryForm = props => {
       input: { type, value, name },
     } = props;
 
+    const { question } = value;
+
     return (
       <div className={classes.header} onClick={() => showQuestions(name)}>
         <div className={classes.text}>
           {type === '1'
-            ? value.question || 'Choose Recovery Question 1'
+            ? question || 'Choose Recovery Question 1'
             : type === '2'
-            ? value.question || 'Choose Recovery Question 2'
+            ? question || 'Choose Recovery Question 2'
             : null}
         </div>
         <FontAwesomeIcon icon="chevron-right" className={classes.icon} />
@@ -119,22 +140,17 @@ const PasswordRecoveryForm = props => {
     } = props;
     const { change, getState } = useForm();
 
-    const values = getState().values;
-    const type = parseInt(name.type);
-    const formSelectedOne =
-      values &&
-      values.recoveryQuestionOne &&
-      parseInt(values.recoveryQuestionOne.type);
-    const formSelectedTwo =
-      values &&
-      values.recoveryQuestionTwo &&
-      parseInt(values.recoveryQuestionTwo.type);
+    const { values } = getState() || {};
+    const { recoveryQuestionOne, recoveryQuestionTwo } = values || {};
+    const { question: questionOne } = recoveryQuestionOne || {};
+    const { question: questionTwo } = recoveryQuestionTwo || {};
+    const { question } = name || {};
 
     let isSelected = false;
-    if (type === formSelectedOne) {
+    if (question === questionOne) {
       isSelected = true;
     }
-    if (type === formSelectedTwo) {
+    if (question === questionTwo) {
       isSelected = true;
     }
 
@@ -147,7 +163,7 @@ const PasswordRecoveryForm = props => {
         key={name}
         onClick={() => !isSelected && setQuestion(change, name)}
       >
-        {name.question}
+        {question}
       </div>
     );
   };

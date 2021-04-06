@@ -2,33 +2,6 @@
 @import "../../assets/styles/fontMixins";
 @import '../../assets/styles/forms';
 
-.table {
-  flex: 1;
-  align-self: stretch;
-  padding: 15px;
-}
-
-.inactive {
-  opacity: 0;
-  transition: all .3s ease-in-out;
-  display: inline;
-}
-
-:global {
-  .ant-table-row:hover {
-    :local {
-      .inactive {
-        opacity: 0.5;
-
-        &:hover {
-          opacity: 1;
-        }
-      }
-    }
-  }
-}
-
 .container {
   width: 100%;
-  padding: 33px 0 33px 110px;
 }

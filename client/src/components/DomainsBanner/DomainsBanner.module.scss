@@ -1,0 +1,66 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.domainContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 5% 0;
+
+  .header {
+    color: $violet;
+    font-size: 14px;
+    line-height: 24px;
+    margin-bottom: 19px;
+    @include proxima-nova-bold;
+  }
+
+  .title {
+    margin-bottom: 15px;
+    color: $black-meduim;
+    text-align: center;
+  }
+
+  .subtitle {
+    @include proxima-nova-thin;
+    font-size: 18px;
+    line-height: 24px;
+    text-align: center;
+    color: $black-meduim;
+    margin-bottom: 40px;
+  }
+
+  .button {
+    width: 189px;
+    height: 40px;
+    border-radius: 7px;
+
+    a {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 13px;
+      line-height: 16px;
+    }
+  }
+}
+
+@include sm {
+  .domainContainer {
+    padding: 15% 10%;
+
+    .button {
+      width: 100%;
+      height: 54px;
+
+      a {
+        font-size: 15px;
+      }
+    }
+  }
+}

@@ -6,7 +6,8 @@ import Sidebar from '../../components/Sidebar/Sidebar';
 import Footer from '../../components/Footer/Footer';
 import LoginForm from '../../components/LoginForm';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
-import SecretQuestionBadge from '../../components/SecretQuestionBadge';
+import NotificationBadge from '../../components/NotificationBadge';
+import { BADGE_TYPES } from '../../components/NotificationBadge/NotificationBadge';
 
 import classes from './MainLayout.module.scss';
 
@@ -14,7 +15,7 @@ export default class MainLayout extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isSecretQuestionBadge: true,
+      isNotificationBadge: true,
     };
   }
 
@@ -30,6 +31,7 @@ export default class MainLayout extends Component {
 
     init: PropTypes.func.isRequired,
     logout: PropTypes.func.isRequired,
+    showRecoveryModal: PropTypes.func.isRequired,
   });
 
   componentDidMount() {
@@ -49,7 +51,35 @@ export default class MainLayout extends Component {
   };
 
   onBadgeClose = () => {
-    this.setState({ isSecretQuestionBadge: false });
+    this.setState({ isNotificationBadge: false });
+  };
+
+  renderBadge = () => {
+    const { showRecoveryModal, account, user } = this.props;
+    const { isNotificationBadge } = this.state;
+
+    if (!user) return;
+
+    const { secretSet } = user;
+
+    if (account && isNotificationBadge && user) {
+      if (!secretSet)
+        return (
+          <NotificationBadge
+            onClose={this.onBadgeClose}
+            arrowAction={showRecoveryModal}
+            type={BADGE_TYPES.RECOVERY}
+            warn
+            hasArrow
+          />
+        );
+      return (
+        <NotificationBadge
+          onClose={this.onBadgeClose}
+          type={BADGE_TYPES.CREATE}
+        />
+      );
+    }
   };
 
   render() {
@@ -61,15 +91,13 @@ export default class MainLayout extends Component {
       showLogin,
       showRecovery,
     } = this.props;
-    const { isSecretQuestionBadge } = this.state;
     const isHomePage = pathname === '/';
+
     return (
       <div className={classes.root}>
         <MainHeader />
         {account && <Sidebar />}
-        {account && isSecretQuestionBadge && (
-          <SecretQuestionBadge onClose={this.onBadgeClose} />
-        )}
+        {this.renderBadge()}
         <div className={`${classes.content} ${isHomePage && classes.home}`}>
           {children}
         </div>
