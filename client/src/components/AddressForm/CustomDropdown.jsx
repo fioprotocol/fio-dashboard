@@ -12,7 +12,7 @@ const CustomDropdown = props => {
   const { onChange } = input;
 
   const styledOptions = options
-    .map((item) => ({
+    .map(item => ({
       value: item,
       label: item,
       className: [classes.optionItem],
@@ -25,7 +25,7 @@ const CustomDropdown = props => {
     className: [classes.optionButton],
   });
 
-  const onDropdownChange = (value) => {
+  const onDropdownChange = value => {
     const { value: itemValue } = value || {};
     if (itemValue === CUSTOM_DOMAIN_VALUE) {
       onChange('');
@@ -39,15 +39,15 @@ const CustomDropdown = props => {
     <Dropdown
       options={styledOptions}
       onChange={onDropdownChange}
-      placeholder='Select Domain'
+      placeholder="Select Domain"
       className={classes.dropdown}
       controlClassName={classes.control}
       placeholderClassName={classes.placeholder}
       menuClassName={classes.menu}
       arrowClosed={
-        <FontAwesomeIcon icon='chevron-down' className={classes.icon} />
+        <FontAwesomeIcon icon="chevron-down" className={classes.icon} />
       }
-      arrowOpen={<FontAwesomeIcon icon='chevron-up' className={classes.icon} />}
+      arrowOpen={<FontAwesomeIcon icon="chevron-up" className={classes.icon} />}
     />
   );
 };

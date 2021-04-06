@@ -36,9 +36,9 @@ const AddressForm = props => {
     return (
       <form onSubmit={handleSubmit} className={classes.form}>
         <Field
-          name='username'
-          type='text'
-          placeholder='Find the perfect username ..'
+          name="username"
+          type="text"
+          placeholder="Find the perfect username .."
           colorschema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
           badge={showPrice(prices.address)}
           component={Input}
@@ -47,9 +47,9 @@ const AddressForm = props => {
         <div className={classes.domainContainer}>
           {isCustomDomain ? (
             <Field
-              name='domain'
-              type='text'
-              placeholder='Custom domain'
+              name="domain"
+              type="text"
+              placeholder="Custom domain"
               colorschema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
               component={Input}
               onClose={toggleCustomDomain}
@@ -57,7 +57,7 @@ const AddressForm = props => {
             />
           ) : (
             <Field
-              name='domain'
+              name="domain"
               component={CustomDropdown}
               options={options}
               toggle={toggleCustomDomain}
@@ -65,26 +65,23 @@ const AddressForm = props => {
           )}
         </div>
         {isHomepage ? (
-          <Button
-            variant='primary'
-            className={classes.submit}
-          >
+          <Button variant="primary" className={classes.submit}>
             <Link to={ROUTES.FIO_ADDRESSES}>
-              <FontAwesomeIcon icon='search' />
+              <FontAwesomeIcon icon="search" />
             </Link>
           </Button>
         ) : (
           <Button
-            htmltype='submit'
+            htmltype="submit"
             className={classes.submit}
             disabled={loading}
             onClick={handleSubmit}
-            variant='primary'
+            variant="primary"
           >
             {loading ? (
-              <FontAwesomeIcon icon='spinner' spin />
+              <FontAwesomeIcon icon="spinner" spin />
             ) : (
-              <FontAwesomeIcon icon='search' />
+              <FontAwesomeIcon icon="search" />
             )}
           </Button>
         )}

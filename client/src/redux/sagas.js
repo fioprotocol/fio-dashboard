@@ -5,6 +5,7 @@ import {
   signupSuccess,
   logoutSuccess,
   setRecoverySuccess,
+  profileSuccess,
 } from './profile/sagas';
 import {
   loginSuccess as loginEdgeSuccess,
@@ -17,6 +18,7 @@ export default function* rootSaga(history, api) {
   yield all([
     loginSuccess(history, api),
     logoutSuccess(history, api),
+    profileSuccess(),
     loginEdgeSuccess(),
     logoutEdgeSuccess(),
     listFailure(history),

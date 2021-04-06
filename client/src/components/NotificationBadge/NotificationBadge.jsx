@@ -4,34 +4,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classes from './NotificationBadge.module.scss';
 
 export const BADGE_TYPES = {
-  CREATE: 'create',
-  RECOVERY: 'recovery',
-};
-
-const TYPE_TEXT = {
-  [BADGE_TYPES.CREATE]: {
-    title: 'Account Create',
-    text:
-      "You're all set to start managing FIO Addresses, Domains, Requests as well as staying",
-  },
-  [BADGE_TYPES.RECOVERY]: {
-    title: 'Password Recovery',
-    text:
-      'You have skipped setting up password recovery, Please make sure to complete this so you do not loose access',
-  },
+  WARNING: 'WARNING',
+  ALERT: 'ALERT',
+  ERROR: 'ERROR',
+  INFO: 'INFO',
+  SUCCESS: 'SUCCESS',
 };
 
 const NotificationBadge = props => {
-  const { onClose, arrowAction, type, hasArrow, warn } = props;
+  const { onClose, arrowAction, type, title, message } = props;
 
   return (
-    <div className={classnames(classes.badge, warn && classes.isSkipped)}>
+    <div className={classnames(classes.badge, classes[type.toLowerCase()])}>
       <FontAwesomeIcon icon="exclamation-circle" className={classes.icon} />
       <p>
-        <span className={classes.title}>{TYPE_TEXT[type].title}</span> -{' '}
-        {TYPE_TEXT[type].text}
+        <span className={classes.title}>{title}</span> - {message}
       </p>
-      {hasArrow && (
+      {arrowAction && (
         <FontAwesomeIcon
           icon="arrow-right"
           className={classes.arrow}
