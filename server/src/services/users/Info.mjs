@@ -1,7 +1,7 @@
 import Base from '../Base';
 import X from '../Exception';
 
-import { User } from '../../models';
+import { User, Notification } from '../../models';
 
 export default class UsersInfo extends Base {
   async execute() {
@@ -16,8 +16,19 @@ export default class UsersInfo extends Base {
       });
     }
 
+    const userObj = user.json();
+    userObj.secretSetNotification = false;
+
+    if (!userObj.secretSet) {
+      const secretSetNotification = await Notification.getItem({
+        action: Notification.ACTION.RECOVERY,
+        userId: user.id,
+      });
+      userObj.secretSetNotification = !!secretSetNotification;
+    }
+
     return {
-      data: user.json(),
+      data: userObj,
     };
   }
 

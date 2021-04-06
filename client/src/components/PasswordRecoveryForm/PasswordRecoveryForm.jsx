@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Scrollbar } from 'react-scrollbars-custom';
 import classnames from 'classnames';
 
+import { ACTIONS } from '../Notifications/Notifications';
+import { BADGE_TYPES } from '../NotificationBadge/NotificationBadge';
 import ModalComponent from '../Modal/Modal';
 import FormHeader from '../FormHeader/FormHeader';
 import Input from '../Input/Input';
@@ -39,6 +41,10 @@ const PasswordRecoveryForm = props => {
   const closeSkip = () => {
     hideSkip();
     onClose();
+    props.createNotification({
+      action: ACTIONS.RECOVERY,
+      type: BADGE_TYPES.ALERT,
+    });
   };
 
   const showQuestions = name => {

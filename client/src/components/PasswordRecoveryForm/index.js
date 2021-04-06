@@ -4,6 +4,7 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from '../../utils';
 import { setRecoveryQuestions } from '../../redux/profile/actions';
 import { getRecoveryQuestions } from '../../redux/edge/actions';
+import { createNotification } from '../../redux/notifications/actions';
 import {
   loading,
   recoveryQuestions,
@@ -21,7 +22,12 @@ const reduxConcect = connect(
     show,
     questions: recoveryQuestions,
   }),
-  { onSubmit: setRecoveryQuestions, onClose, getRecoveryQuestions },
+  {
+    onSubmit: setRecoveryQuestions,
+    onClose,
+    getRecoveryQuestions,
+    createNotification,
+  },
 );
 
 export { PasswordRecoveryForm };

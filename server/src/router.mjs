@@ -17,4 +17,8 @@ router.post('/users/resetPassword', routes.users.resetPassword);
 router.post('/users/setRecovery', checkAuth, routes.users.setRecovery);
 router.put('/users', checkAuth, routes.users.update);
 
+router.get('/notifications', checkAuth, routes.notifications.list);
+router.post('/notifications', checkAuth, routes.notifications.create);
+router.put('/notifications', checkAuth, routes.notifications.update);
+
 export default router;

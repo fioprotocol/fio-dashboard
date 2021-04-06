@@ -9,7 +9,7 @@ import AddressForm from './AddressForm';
 
 //todo: change to real data
 const options = () => ['FIO', 'crypto', 'myDomainX', 'myDomainY'];
-const prices = () => ({ address: 2.00, domain: 40.00 });
+const prices = () => ({ address: 2.0, domain: 40.0 });
 
 const reduxConnect = connect(
   createStructuredSelector({
@@ -17,8 +17,7 @@ const reduxConnect = connect(
     loading,
     prices,
   }),
-  {}
+  {},
 );
-
 
 export default compose(reduxConnect)(AddressForm);

@@ -3,7 +3,7 @@
 
 .badge {
   background-color: $blue;
-  margin: 40px auto 0;
+  margin: 40px auto;
   padding: 15px 20px;
   width: 80%;
   max-width: 1040px;
@@ -13,7 +13,23 @@
   align-items: center;
   font-size: 14px;
 
-  &.isSkipped {
+  &.info {
+    background-color: $blue;
+  }
+
+  &.success {
+    background-color: $green;
+  }
+
+  &.warning {
+    background-color: $simple-orange;
+  }
+
+  &.alert {
+    background-color: $simple-red;
+  }
+
+  &.error {
     background-color: $simple-red;
   }
 
