@@ -23,12 +23,13 @@ export default class MainHeader extends Component {
     loading: PropTypes.bool,
     logout: PropTypes.func.isRequired,
     showLoginModal: PropTypes.func.isRequired,
+    notifications: PropTypes.arrayOf(PropTypes.object),
   });
 
   logout = () => this.props.logout(this.props.account);
 
   renderLoggedMenu = () => {
-    const { loading } = this.props;
+    const { loading, notifications } = this.props;
 
     return (
       <Nav className="pr-0 align-items-center">
@@ -65,16 +66,18 @@ export default class MainHeader extends Component {
                 'text-white',
               )}
             />
-            <div className={classes.notifActiveWrapper}>
-              <FontAwesomeIcon
-                icon="circle"
-                className={classnames(
-                  classes.notifActive,
-                  'mr-2',
-                  'text-danger',
-                )}
-              />
-            </div>
+            {!!notifications.length && (
+              <div className={classes.notifActiveWrapper}>
+                <FontAwesomeIcon
+                  icon="circle"
+                  className={classnames(
+                    classes.notifActive,
+                    'mr-2',
+                    'text-danger',
+                  )}
+                />
+              </div>
+            )}
           </div>
           <div className="ml-3">Notifications</div>
         </Nav.Link>

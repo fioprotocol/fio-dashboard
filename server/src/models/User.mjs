@@ -2,6 +2,7 @@ import Sequelize from 'sequelize';
 import crypto from 'crypto';
 
 import Base from './Base';
+import { Notification } from './Notification';
 
 const { DataTypes: DT, Op } = Sequelize;
 
@@ -64,6 +65,10 @@ export class User extends Base {
         tableName: 'users',
       },
     );
+  }
+
+  static associate() {
+    this.hasMany(Notification, { foreignKey: 'userId', sourceKey: 'id' });
   }
 
   static attrs(type = 'default') {

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 
-import { ROUTES } from '../../constants/routes'; 
+import { ROUTES } from '../../constants/routes';
 import classes from './DomainsBanner.module.scss';
 
 const DomainsBanner = () => {
@@ -14,7 +14,7 @@ const DomainsBanner = () => {
         Register a custom domain for your own unique address creation
         opportunities.
       </p>
-      <Button variant='primary' className={classes.button}>
+      <Button variant="primary" className={classes.button}>
         <Link to={ROUTES.FIO_DOMAINS}>Register a Domain</Link>
       </Button>
     </div>

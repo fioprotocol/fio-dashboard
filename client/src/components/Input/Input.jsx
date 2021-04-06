@@ -17,7 +17,17 @@ const regularInputWrapper = children => (
 
 const Input = props => {
   const { input, meta, colorschema, onClose, badge } = props;
-  const { error, data, touched, active, modified, submitError, modifiedSinceLastSubmit, initial, dirty } = meta;
+  const {
+    error,
+    data,
+    touched,
+    active,
+    modified,
+    submitError,
+    modifiedSinceLastSubmit,
+    initial,
+    dirty,
+  } = meta;
   const { type, value, name } = input;
 
   const isBW = colorschema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
@@ -34,16 +44,18 @@ const Input = props => {
   };
 
   const hasError =
-    ((error || data.error) &&
-      (touched || modified) &&
-      !active) ||
+    ((error || data.error) && (touched || modified) && !active) ||
     (submitError && !modifiedSinceLastSubmit);
 
   const regularInput = (
     <>
       <div className={classes.inputGroup}>
         <input
-          className={classnames(classes.regInput, hasError && classes.error, isBW && classes.bw)}
+          className={classnames(
+            classes.regInput,
+            hasError && classes.error,
+            isBW && classes.bw,
+          )}
           {...input}
           {...props}
           type={showPass ? 'text' : type}
@@ -54,7 +66,7 @@ const Input = props => {
             className={classnames(
               classes.inputIcon,
               type === 'password' && classes.doubleIcon,
-              isBW && classes.bw
+              isBW && classes.bw,
             )}
             onClick={() => {
               clearInputFn();
@@ -85,7 +97,14 @@ const Input = props => {
         <FontAwesomeIcon icon="info-circle" className={classes.errorIcon} />
         {hasError && (error || data.error || submitError)}
       </div>
-      <div className={classnames(classes.badge, badge && dirty && classes.showBadge)}>{badge}</div>
+      <div
+        className={classnames(
+          classes.badge,
+          badge && dirty && classes.showBadge,
+        )}
+      >
+        {badge}
+      </div>
     </>
   );
 

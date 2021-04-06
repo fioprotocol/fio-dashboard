@@ -3,11 +3,13 @@ import config from './config';
 
 import { User } from './models/User';
 import { Action } from './models/Action';
+import { Notification } from './models/Notification';
 
 const sequelize = new Sequelize(config.postgres);
 
 User.init(sequelize);
 Action.init(sequelize);
+Notification.init(sequelize);
 
 const { models } = sequelize;
 

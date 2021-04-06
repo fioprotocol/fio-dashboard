@@ -1,0 +1,27 @@
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+
+import { showRecoveryModal } from '../../redux/modal/actions';
+import { list } from '../../redux/notifications/selectors';
+import {
+  listNotifications,
+  updateNotification,
+} from '../../redux/notifications/actions';
+import { user } from '../../redux/profile/selectors';
+import { account } from '../../redux/edge/selectors';
+
+import Notifications from './Notifications';
+
+const selector = createStructuredSelector({
+  list,
+  user,
+  account,
+});
+
+const actions = dispatch => ({
+  update: data => dispatch(updateNotification(data)),
+  listNotifications: () => dispatch(listNotifications()),
+  showRecoveryModal: () => dispatch(showRecoveryModal()),
+});
+
+export default connect(selector, actions)(Notifications);

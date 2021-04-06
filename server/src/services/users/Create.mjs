@@ -2,7 +2,7 @@ import Base from '../Base';
 import X from '../Exception';
 import emailSender from '../emailSender';
 
-import { Action, User } from '../../models';
+import { Action, User, Notification } from '../../models';
 
 export default class UsersCreate extends Base {
   static get validationRules() {
@@ -54,6 +54,14 @@ export default class UsersCreate extends Base {
     await emailSender.send('confirmEmail', email, {
       hash: action.hash,
     });
+
+    await new Notification({
+      type: Notification.TYPE.INFO,
+      title: 'Account Create',
+      message:
+        "You're all set to start managing FIO Addresses, Domains, Requests as well as staying",
+      userId: user.id,
+    }).save();
 
     return {
       data: user.json(),

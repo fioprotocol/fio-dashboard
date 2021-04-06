@@ -20,7 +20,7 @@ export default combineReducers({
       case actions.CLOSE_RECOVERY_PASSWORD:
         return false;
       case PROFILE_SUCCESS:
-        return !action.data.secretSet;
+        return !action.data.secretSet && !action.data.secretSetNotification;
       default:
         return state;
     }
