@@ -104,7 +104,7 @@
   display: flex;
   align-items: center;
   max-height: 0;
-  transition: max-height 0.3s ease-out;
+  transition: max-height 0.1s ease-in;
 
   &.showBadge {
     max-height: 24px;

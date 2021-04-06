@@ -16,7 +16,6 @@ const AddressForm = props => {
 
   const validation = values => {
     const errors = {};
-console.log(values)
     const { username, domain } = values || {};
 
     if (!username) {
