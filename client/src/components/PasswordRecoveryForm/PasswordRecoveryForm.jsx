@@ -13,6 +13,8 @@ import Input from '../Input/Input';
 
 import classes from './PasswordRecoveryForm.module.scss';
 
+const MIN_VALID_LENGTH = 3;
+
 const PasswordRecoveryForm = props => {
   const {
     show,
@@ -73,8 +75,6 @@ const PasswordRecoveryForm = props => {
 
     const { length: lengthOne } = recoveryAnswerOne || {};
     const { length: lengthTwo } = recoveryAnswerTwo || {};
-    const { min_length: minLengthOne } = recoveryQuestionOne || {};
-    const { min_length: minLengthTwo } = recoveryQuestionTwo || {};
 
     if (!recoveryQuestionOne) {
       errors.recoveryQuestionOne = 'Please Select Question';
@@ -86,15 +86,15 @@ const PasswordRecoveryForm = props => {
     if (!recoveryAnswerOne) {
       errors.recoveryAnswerOne = 'Answer Field Should be Filled';
     }
-    if (lengthOne < minLengthOne) {
-      errors.recoveryAnswerOne = `Must have at least ${minLengthOne} characters`;
+    if (lengthOne < MIN_VALID_LENGTH) {
+      errors.recoveryAnswerOne = `Must have at least 3 characters`;
     }
 
     if (!recoveryAnswerTwo) {
       errors.recoveryAnswerTwo = 'Answer Field Should be Filled';
     }
-    if (lengthTwo < minLengthTwo) {
-      errors.recoveryAnswerTwo = `Must have at least ${minLengthTwo} characters`;
+    if (lengthTwo < MIN_VALID_LENGTH) {
+      errors.recoveryAnswerTwo = `Must have at least 3 characters`;
     }
 
     return errors;
