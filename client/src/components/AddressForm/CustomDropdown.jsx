@@ -5,7 +5,7 @@ import Dropdown from 'react-dropdown';
 import classes from './AddressForm.module.scss';
 import 'react-dropdown/style.css';
 
-const customDomainValue = 'addCustomDomain';
+const CUSTOM_DOMAIN_VALUE = 'addCustomDomain';
 
 const CustomDropdown = props => {
   const { toggle, input, options } = props;
@@ -20,14 +20,14 @@ const CustomDropdown = props => {
     .sort((a, b) => a.value.localeCompare(b.value));
 
   styledOptions.push({
-    value: customDomainValue,
+    value: CUSTOM_DOMAIN_VALUE,
     label: 'Add Custom Domain',
     className: [classes.optionButton],
   });
 
   const onDropdownChange = (value) => {
     const { value: itemValue } = value || {};
-    if (itemValue === customDomainValue) {
+    if (itemValue === CUSTOM_DOMAIN_VALUE) {
       onChange('');
       return toggle(true);
     }
