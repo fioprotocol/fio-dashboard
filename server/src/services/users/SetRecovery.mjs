@@ -2,7 +2,7 @@ import Base from '../Base';
 import X from '../Exception';
 import emailSender from '../emailSender';
 
-import { User } from '../../models';
+import { Notification, User } from '../../models';
 
 export default class UsersSetRecovery extends Base {
   static get validationRules() {
@@ -38,6 +38,20 @@ export default class UsersSetRecovery extends Base {
 
     user.secretSet = true;
     await user.save();
+
+    try {
+      const secretSetNotification = await Notification.getItem({
+        action: Notification.ACTION.RECOVERY,
+        userId: user.id,
+        closeDate: null,
+      });
+      if (secretSetNotification) {
+        secretSetNotification.closeDate = new Date();
+        await secretSetNotification.save();
+      }
+    } catch (e) {
+      //
+    }
 
     // todo: should we send token to user?
     await emailSender.send('setRecovery', user.email, { token });
