@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
-import Badge, { BADGE_BG_COLOR } from '../Badge/Badge';
+import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { ROUTES } from '../../constants/routes';
 import classes from './AddressDomainBadge.module.scss';
 
@@ -30,7 +30,7 @@ const AddressDomainBadge = props => {
   const { type } = props;
 
   return (
-    <Badge bgColor={BADGE_BG_COLOR.REGULAR} show>
+    <Badge type={BADGE_TYPES.REGULAR} show>
       <div className={classes.container}>
         <h5 className={classes.title}>{content[type].title}</h5>
         <p>{content[type].text}</p>

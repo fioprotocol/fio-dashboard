@@ -5,15 +5,14 @@ import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import Card from '../Card/Card';
-import Badge, { BADGE_BG_COLOR } from '../Badge/Badge';
-import NotificationBadge from '../NotificationBadge';
-import { BADGE_TYPES } from '../NotificationBadge/NotificationBadge';
+import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import Input, { INPUT_COLOR_SCHEMA } from '../Input/Input';
 import { ROUTES } from '../../constants/routes';
 import { ADDRESS_REGEXP } from '../../constants/regExps';
 import CustomDropdown from './CustomDropdown';
 import { sleep } from '../../utils';
 import { SCREEN_TYPE } from '../../constants/screen';
+import InfoBadge from '../InfoBadge/InfoBadge';
 
 import { currentScreenType } from '../../screenType';
 
@@ -145,13 +144,19 @@ const AddressForm = props => {
 
       return (
         <>
-          <NotificationBadge type={BADGE_TYPES.AVAILABLE} show={isAvailable} />
+          <InfoBadge
+            type={BADGE_TYPES.SUCCESS}
+            show={isAvailable}
+            title='Available!'
+            message='The FIO address you requested is available'
+          />
           {Object.keys(errors).map((key) => {
             const message = errors[key];
 
             return (
-              <NotificationBadge
+              <InfoBadge
                 type={BADGE_TYPES.ERROR}
+                title='Try Again!'
                 show={hasFields && hasErrors && anyTouched && anyModified}
                 message={message}
                 key={key}
@@ -165,7 +170,7 @@ const AddressForm = props => {
     return (
       <div key='badges'>
         {notifBadge()}
-        <Badge bgColor={BADGE_BG_COLOR.SIMPLE} show={isAvailable}>
+        <Badge type={BADGE_TYPES.SIMPLE} show={isAvailable}>
           <div
             className={classnames(
               classes.addressContainer,

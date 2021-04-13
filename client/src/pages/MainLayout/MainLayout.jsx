@@ -2,23 +2,15 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import exact from 'prop-types-exact';
 import MainHeader from '../../components/MainHeader';
+import Notifications from '../../components/Notifications';
 import Sidebar from '../../components/Sidebar/Sidebar';
 import Footer from '../../components/Footer/Footer';
 import LoginForm from '../../components/LoginForm';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
-import NotificationBadge from '../../components/NotificationBadge';
-import { BADGE_TYPES } from '../../components/NotificationBadge/NotificationBadge';
 
 import classes from './MainLayout.module.scss';
 
 export default class MainLayout extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isNotificationBadge: true,
-    }
-  }
-
   static propTypes = exact({
     children: PropTypes.element,
     pathname: PropTypes.string.isRequired,
@@ -50,40 +42,6 @@ export default class MainLayout extends Component {
     return showRecovery && account && <PasswordRecoveryForm />;
   };
 
-  onBadgeClose = () => {
-    this.setState({ isNotificationBadge: false });
-  };
-
-  renderBadge = () => {
-    const { showRecoveryModal, account, user } = this.props;
-    const { isNotificationBadge } = this.state;
-
-    if (!user) return;
-
-    const { secretSet } = user;
-
-    if (account && isNotificationBadge && user) {
-      if (!secretSet)
-        return (
-          <NotificationBadge
-            onClose={this.onBadgeClose}
-            arrowAction={showRecoveryModal}
-            type={BADGE_TYPES.RECOVERY}
-            warn
-            hasArrow
-            show={isNotificationBadge}
-          />
-        );
-      return (
-        <NotificationBadge
-          onClose={this.onBadgeClose}
-          type={BADGE_TYPES.CREATE}
-          show={isNotificationBadge}
-        />
-      );
-    }
-  };
-
   render() {
     const {
       account,
@@ -99,7 +57,7 @@ export default class MainLayout extends Component {
       <div className={classes.root}>
         <MainHeader />
         {account && <Sidebar />}
-        <div className={classes.badge}>{this.renderBadge()}</div>
+        <Notifications />
         <div className={`${classes.content} ${isHomePage && classes.home}`}>
           {children}
         </div>
