@@ -8,18 +8,32 @@
   margin: 0 auto;
   display: flex;
   flex-direction: row;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: center;
 
+  .username {
+    max-width: 225px;
+    width: 100%;
+  }
+
   .at {
-    margin: 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    margin: 0 10px;
     font-size: 18px;
+    line-height: 18px;
   }
 
   .submit {
     width: 40px;
     height: 40px;
     margin-left: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .domainContainer {
@@ -125,42 +139,162 @@
   }
 }
 
+.addressContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  color: $dark-jungle-green;
+
+  .address {
+    margin-bottom: 0;
+    margin-right: 30px;
+    word-break: break-word;
+    .name {
+      @include proxima-nova-bold;
+    }
+  }
+  .price {
+    @include proxima-nova-bold;
+    margin: 0 30px 0 auto;
+    flex-shrink: 0;
+
+    .fioAmount {
+      @include proxima-nova-thin;
+    }
+  }
+
+  .actionContainer {
+    display: flex;
+    flex-shrink: 0;
+
+    .added {
+      display: none;
+      align-items: center;
+
+      .fioBadge {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: fit-content;
+        border-radius: 7px;
+        min-height: 36px;
+        padding: 0 10px;
+        background-color: $irish-green;
+        color: $white;
+
+        .icon {
+          font-size: 20px;
+        }
+
+        .title {
+          margin-bottom: 0;
+          margin-left: 10px;
+          font-size: 13px;
+          line-height: 20px;
+        }
+      }
+
+      .iconClose {
+        margin-left: 10px;
+        font-size: 20px;
+        cursor: pointer;
+        transition: 0.3s ease-in-out;
+
+        &:hover {
+          transform: rotate(90deg);
+        }
+      }
+      &.show {
+        display: flex;
+      }
+    }
+
+    .button {
+      border-radius: 7px;
+      font-size: 13px;
+      @include sf-pro-display-thin;
+      display: none;
+      align-items: center;
+      min-height: 36px;
+
+      .icon {
+        margin-right: 10px;
+        font-size: 20px;
+      }
+      &.show {
+        display: flex;
+      }
+    }
+  }
+}
+
+.showPrice {
+  max-height: fit-content;
+}
+
 @include sm {
   .form {
-    flex-direction: column;
-    align-items: center;
+    flex-flow: wrap;
+    justify-content: space-between;
 
-    .dropdown, .domainContainer {
+    .dropdown {
       max-width: 100%;
       width: 100%;
     }
 
-    .dropdown, .control, .submit {
-      height: 54px;
+    .username, .domainContainer {
+      flex-basis: 80%;
+      max-width: 100%;
+    }
+
+    .dropdown, .control, .submit, .optionButton {
+      height: 40px;
     }
 
     .at {
-      margin: -10px auto 20px;
+      margin: 0;
     }
 
     .submit {
-      width: 100%;
-      margin: 0 auto 25px;
+      margin: 0;
       font-size: 18px;
     }
-
 
     .optionItem {
       padding-top: 10px;
       padding-bottom: 10px;
     }
+  }
 
-    .control, .optionItem, .optionButton {
-      font-size: 15px;
+  .addressContainer {
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    .address, .price {
+      margin-bottom: 15px;
     }
 
-    .optionButton {
-      height: 40px;
+    .price {
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    .actionContainer {
+      width: 100%;
+
+      .button {
+        width: 100%;
+      }
+
+      .added {
+        width: 100%;
+
+        .fioBadge {
+          width: 100%;
+        }
+      }
     }
   }
 }

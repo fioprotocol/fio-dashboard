@@ -7,6 +7,11 @@
   background: $white;
   display: flex;
   flex-direction: column;
+
+  .badge {
+    width: 80%;
+    margin: 0 auto;
+  }
 }
 .header {
   background: $elephant;

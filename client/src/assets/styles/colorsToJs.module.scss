@@ -1,0 +1,38 @@
+@import './colors.scss';
+
+:export {
+  white: $white;
+  black: $black;
+  curious-blue: $curious-blue;
+  picton-blue: $picton-blue;
+  mercury: $mercury;
+  elephant: $elephant;
+  dove-gray: $dove-gray;
+  alabaster: $alabaster;
+  cerulean: $cerulean;
+  gallery: $gallery;
+
+  dark-jungle-green: $dark-jungle-green;
+  desert-storm: $desert-storm;
+  lack-meduim: $black-meduim;
+  milk: $milk;
+  light: $light;
+  blue: $blue;
+  blue-dark: $blue-dark;
+  cyan: $cyan;
+  violet: $violet;
+  bright-violet: $bright-violet;
+  content-background: $content-background;
+  deep-blue: $deep-blue;
+  warn-red: $warn-red;
+  simple-red: $simple-red;
+  green: $green;
+  irish-green: $irish-green;
+  green-main: $green-main;
+  dark-gray: $dark-gray;
+  gray-main: $gray-main;
+  light-gray: $light-gray;
+  main-background: $main-background;
+  card-background: $card-background;
+  footer-background: $footer-background;
+}

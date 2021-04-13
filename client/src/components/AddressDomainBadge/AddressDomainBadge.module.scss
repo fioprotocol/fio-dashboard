@@ -1,0 +1,63 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+
+.container {
+  padding-left: 30px;
+  padding-right: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 70px;
+  
+  .title {
+    font-size: 17px;
+    color: $white;
+    margin-bottom: 0;
+    @include proxima-nova-semibold
+  }
+
+  .link {
+    flex-shrink: 0;
+    .button {
+      background-color: transparent;
+      border-color: $white;
+      min-height: 40px;
+      border-radius: 7px;
+      font-size: 13px;
+      padding-left: 22px;
+      padding-right: 22px;
+      margin-left: 40px;
+
+      &:hover {
+        background-color: $white;
+        color: $cyan;
+        border-color: $white;
+      }
+    }
+  }
+}
+
+@include sm {
+  .container {
+    flex-direction: column;
+    padding: 0;
+  
+    .title {
+      font-size: 18px;
+      line-height: 26px;
+      text-align: left;
+    }
+
+    .link {
+      align-self: flex-end;
+      .button {
+        margin-left: 0;
+        width: 100%;
+        font-size: 14px;
+      }
+    }
+  }
+}

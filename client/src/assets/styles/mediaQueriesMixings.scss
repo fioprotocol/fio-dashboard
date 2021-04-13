@@ -8,7 +8,7 @@
 
 // Medium devices
 @mixin md {
-  @media (min-width: #{$screen-mobile}) and (max-width: #{$screen-tablet}) {
+  @media (min-width: #{$screen-mobile}) and (max-width: #{$screen-desktop}) {
     @content;
   }
 }
