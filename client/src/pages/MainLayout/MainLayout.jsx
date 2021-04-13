@@ -56,7 +56,6 @@ export default class MainLayout extends Component {
 
   renderBadge = () => {
     const { showRecoveryModal, account, user } = this.props;
-    console.log(this.state)
     const { isNotificationBadge } = this.state;
 
     if (!user) return;
