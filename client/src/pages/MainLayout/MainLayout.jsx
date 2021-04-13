@@ -71,12 +71,14 @@ export default class MainLayout extends Component {
             type={BADGE_TYPES.RECOVERY}
             warn
             hasArrow
+            show={isNotificationBadge}
           />
         );
       return (
         <NotificationBadge
           onClose={this.onBadgeClose}
           type={BADGE_TYPES.CREATE}
+          show={isNotificationBadge}
         />
       );
     }
@@ -97,7 +99,7 @@ export default class MainLayout extends Component {
       <div className={classes.root}>
         <MainHeader />
         {account && <Sidebar />}
-        {this.renderBadge()}
+        <div className={classes.badge}>{this.renderBadge()}</div>
         <div className={`${classes.content} ${isHomePage && classes.home}`}>
           {children}
         </div>

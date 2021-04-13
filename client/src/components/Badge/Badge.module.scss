@@ -1,0 +1,36 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+@import '../../assets/styles/fontMixins.scss';
+
+.badge {
+  width: 100%;
+  max-width: 1040px;
+  border-radius: 12px;
+  color: white;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease-out;
+
+  & > p {
+    margin: 0 auto 0 20px;
+    @include proxima-nova-thin;
+  }
+
+  &.show {
+    max-height: fit-content;
+    margin: 30px auto 0;
+    padding: 15px 20px;
+  }
+}
+
+@include sm {
+  .badge {
+    align-items: flex-start;
+    &.show {
+      padding: 20px;
+    }
+  }
+}

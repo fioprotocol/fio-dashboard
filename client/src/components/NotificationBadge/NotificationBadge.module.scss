@@ -1,57 +1,76 @@
 @import '../../assets/styles/colors.scss';
 @import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
 
-.badge {
-  background-color: $blue;
-  margin: 40px auto 0;
-  padding: 15px 20px;
-  width: 80%;
-  max-width: 1040px;
-  border-radius: 10px;
-  color: white;
-  display: flex;
-  align-items: center;
-  font-size: 14px;
+.title {
+  @include proxima-nova-bold;
+}
 
-  &.isSkipped {
-    background-color: $simple-red;
+.icon {
+  font-size: 20px;
+}
+
+.arrow {
+  font-size: 15px;
+  margin: 0 30px;
+  transition: 0.2s ease-in-out;
+  transform: translateX(0);
+
+  &:hover {
+    transform: translateX(4px);
   }
+}
 
-  .title {
-    @include proxima-nova-bold;
+.actionButton {
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 20px;
+  height: 54px;
+  border-radius: 7px;
+  background-color: transparent;
+  border-color: $white;
+
+  &:hover {
+    background-color: $violet;
+    border-color: $violet;
   }
+}
 
-  .icon {
-    width: 25px;
-    height: 25px;
+.closeButton {
+  background-color: $black;
+  border: none;
+  width: 100%;
+  height: 54px;
+  border-radius: 7px;
+
+  &:hover {
+    opacity: 0.8;
+    background-color: $black !important;
+  }
+}
+
+.closeIcon {
+  font-size: 16px;
+  transition: 0.3s ease-in-out;
+  margin-left: auto;
+  &:hover {
+    transform: rotate(90deg);
+  }
+}
+
+.closeIcon, .arrow {
+  cursor: pointer;
+}
+
+@include sm {
+  .icon, .closeIcon {
+    font-size: 18px;
   }
 
   .arrow {
-    font-size: 15px;
-    margin: 0 30px;
-    transition: 0.2s ease-in-out;
-    transform: translateX(0);
-
-    &:hover {
-      transform: translateX(4px);
-    }
-  }
-
-  .closeIcon {
-    width: 20px;
-    height: 20px;
-    transition: 0.3s ease-in-out;
-    margin-left: auto;
-    &:hover {
-      transform: rotate(90deg);
-    }
-  }
-
-  .closeIcon, .arrow {
-    cursor: pointer;
-  }
-
-  p {
-    margin: 0 auto 0 20px;
+    margin-left: 0;
+    margin-top: 10px;
+    transform: scale(1.2);
+    display: block;
   }
 }
