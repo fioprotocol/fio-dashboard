@@ -41,15 +41,15 @@ const AddressForm = props => {
   const [prevValues, changePrevValues] = useState({});
   const [cartItems, updateCart] = useState([]); //todo: replace with cart data
 
-  const verifyAddress = async values => {
+  const verifyAddress = async (values, forceValidate) => {
     const { domain, username } = values;
     const errors = {};
 
-    if (_.isEqual(values, prevValues)) return;
-    //todo: mocked request call 
+    if (_.isEqual(values, prevValues) && !forceValidate) return;
+    //todo: mocked request call
     const availCheck = async () => {
-      await sleep (1000)
-      return {is_registered: 0};
+      await sleep(1000);
+      return { is_registered: 0 };
     };
 
     if (domain) {
@@ -76,7 +76,7 @@ const AddressForm = props => {
     }
 
     changePrevValues(values);
-    
+
     return errors;
   };
 
@@ -92,7 +92,7 @@ const AddressForm = props => {
     updateFormState(form, state);
   };
 
-  const validation = async values => {
+  const validation = async (values, forceValidate) => {
     const errors = {};
     const { username, domain } = values || {};
 
@@ -121,7 +121,11 @@ const AddressForm = props => {
       toggleAvailable(false);
     }
 
-    return !_.isEmpty(errors) ? errors : verifyAddress(values);
+    return !_.isEmpty(errors) ? errors : verifyAddress(values, forceValidate);
+  };
+
+  const handleSubmit = values => {
+    validation(values, true);
   };
 
   const showPrice = (price) =>
@@ -320,7 +324,7 @@ const AddressForm = props => {
 
   return (
     <Form
-      onSubmit={() => {}}
+      onSubmit={!isHomepage && handleSubmit}
       validate={!isHomepage && validation}
       initialValues={formState}
     >
