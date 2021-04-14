@@ -125,7 +125,7 @@ const AddressForm = props => {
   };
 
   const handleSubmit = values => {
-    validation(values, true);
+    !isHomepage && validation(values, true);
   };
 
   const showPrice = (price) =>
@@ -324,7 +324,7 @@ const AddressForm = props => {
 
   return (
     <Form
-      onSubmit={!isHomepage && handleSubmit}
+      onSubmit={handleSubmit}
       validate={!isHomepage && validation}
       initialValues={formState}
     >
