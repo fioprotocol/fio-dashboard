@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import CreateAccount from '../../pages/CreateAccountPage';
-import FioAddresses from '../../components/FioAddresses';
 import { ROUTES } from '../../constants/routes';
 
 import styles from './AuthContainer.module.scss';
@@ -30,11 +29,6 @@ export default class AuthContainer extends Component {
             <Route
               path={ROUTES.CREATE_ACCOUNT}
               component={CreateAccount}
-              exact
-            />
-            <Route
-              path={ROUTES.FIO_ADDRESSES}
-              component={FioAddresses}
               exact
             />
           </Switch>
