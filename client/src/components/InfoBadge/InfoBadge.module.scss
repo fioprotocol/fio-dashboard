@@ -1,0 +1,9 @@
+@import '../../assets/styles/fontMixins.scss';
+
+.title {
+  @include proxima-nova-bold;
+}
+
+.icon {
+  font-size: 20px;
+}

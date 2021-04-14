@@ -4,7 +4,6 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import classnames from 'classnames';
 import PinInput from 'react-pin-input';
 import { useForm } from 'react-final-form';
-
 import classes from './Input.module.scss';
 
 export const INPUT_COLOR_SCHEMA = {
@@ -16,7 +15,7 @@ const regularInputWrapper = children => (
 );
 
 const Input = props => {
-  const { input, meta, colorschema, onClose, badge } = props;
+  const { input, meta, colorschema, onClose, badge, hideerror } = props;
   const {
     error,
     data,
@@ -28,7 +27,7 @@ const Input = props => {
     initial,
     dirty,
   } = meta;
-  const { type, value, name } = input;
+  const { type, value, name, onChange } = input;
 
   const isBW = colorschema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
 
@@ -40,7 +39,7 @@ const Input = props => {
   });
 
   const clearInputFn = () => {
-    input.onChange(initial);
+    onChange('');
   };
 
   const hasError =
@@ -59,6 +58,7 @@ const Input = props => {
           {...input}
           {...props}
           type={showPass ? 'text' : type}
+          data-clear={clearInput}
         />
         {(clearInput || onClose) && !props.loading && (
           <FontAwesomeIcon
@@ -67,6 +67,7 @@ const Input = props => {
               classes.inputIcon,
               type === 'password' && classes.doubleIcon,
               isBW && classes.bw,
+              badge && classes.iconPosition,
             )}
             onClick={() => {
               clearInputFn();
@@ -90,21 +91,26 @@ const Input = props => {
             className={classnames(classes.inputIcon, classes.inputSpinnerIcon)}
           />
         )}
+        <div
+          className={classnames(
+            classes.badge,
+            badge && (dirty || initial) && classes.showBadge,
+          )}
+        >
+          {badge}
+        </div>
       </div>
-      <div
-        className={classnames(classes.errorMessage, hasError && classes.error)}
-      >
-        <FontAwesomeIcon icon="info-circle" className={classes.errorIcon} />
-        {hasError && (error || data.error || submitError)}
-      </div>
-      <div
-        className={classnames(
-          classes.badge,
-          badge && dirty && classes.showBadge,
-        )}
-      >
-        {badge}
-      </div>
+      {!hideerror && (
+        <div
+          className={classnames(
+            classes.errorMessage,
+            hasError && classes.error,
+          )}
+        >
+          <FontAwesomeIcon icon="info-circle" className={classes.errorIcon} />
+          {hasError && (error || data.error || submitError)}
+        </div>
+      )}
     </>
   );
 

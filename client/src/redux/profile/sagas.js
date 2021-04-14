@@ -1,5 +1,5 @@
 import { put, takeEvery } from 'redux-saga/effects';
-import { BADGE_TYPES } from '../../components/NotificationBadge/NotificationBadge';
+import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ACTIONS } from '../../components/Notifications/Notifications';
 import {
   LOGIN_SUCCESS,

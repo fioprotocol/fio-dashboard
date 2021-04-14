@@ -26,6 +26,7 @@ import {
   faChevronRight,
   faExclamationCircle,
   faSearch,
+  faPlusSquare,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { faCircle as faRegularCircle } from '@fortawesome/free-regular-svg-icons';
@@ -66,6 +67,7 @@ library.add(
   faSpinner,
   faExclamationCircle,
   faSearch,
+  faPlusSquare,
 );
 
 const store = configureStore(api, history);

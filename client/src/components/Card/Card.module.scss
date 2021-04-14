@@ -1,0 +1,40 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  background: $card-background;
+  border-radius: 12px;
+  max-width: 673px;
+  padding: 55px 50px 20px;
+
+  .title {
+    @include proxima-nova-bold;
+    color: $white;
+    line-height: 34px;
+  }
+
+  .subtitle {
+    @include sf-pro-display-thin;
+    color: $white;
+    font-size: 14px;
+    line-height: 24px;
+    margin-top: 20px;
+    margin-bottom: 22px;
+  }
+}
+
+@include sm {
+  .container {
+    padding: 35px 25px 0px;
+
+    .title {
+      font-size: 24px;
+      line-height: 29px;
+    }
+
+    .subtitle {
+      margin-bottom: 28px;
+    }
+  }
+}

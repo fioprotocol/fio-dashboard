@@ -8,7 +8,7 @@ import 'react-dropdown/style.css';
 const CUSTOM_DOMAIN_VALUE = 'addCustomDomain';
 
 const CustomDropdown = props => {
-  const { toggle, input, options } = props;
+  const { toggle, input, options, initValue } = props;
   const { onChange } = input;
 
   const styledOptions = options
@@ -38,6 +38,7 @@ const CustomDropdown = props => {
   return (
     <Dropdown
       options={styledOptions}
+      value={initValue}
       onChange={onDropdownChange}
       placeholder="Select Domain"
       className={classes.dropdown}
