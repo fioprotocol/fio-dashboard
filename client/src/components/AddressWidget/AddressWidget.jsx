@@ -9,7 +9,7 @@ const AddressWidget = props => {
   return (
     <div className={classes.container}>
       <h1 className={classes.title}>
-        <span className='boldText'>Hi!</span> Get Your{' '}
+        <span className="boldText">Hi!</span> Get Your{' '}
         <span className={classes.newLine}>
           <span className={classnames(classes.coloredText, 'boldText')}>
             FIO Address

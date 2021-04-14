@@ -8,7 +8,6 @@ import { ROUTES } from '../../constants/routes';
 
 import styles from './AuthContainer.module.scss';
 
-
 export default class AuthContainer extends Component {
   static propTypes = {
     edgeContextSet: PropTypes.bool,

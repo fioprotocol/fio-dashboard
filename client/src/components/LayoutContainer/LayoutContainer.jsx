@@ -8,7 +8,7 @@ const LayoutContainer = props => {
       <h3 className={classes.title}>{title}</h3>
       {children}
     </div>
-  )
+  );
 };
 
 export default LayoutContainer;

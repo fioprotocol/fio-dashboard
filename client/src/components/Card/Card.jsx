@@ -9,7 +9,7 @@ const Card = props => {
       <p className={classes.subtitle}>{subtitle}</p>
       {children}
     </div>
-  )
+  );
 };
 
 export default Card;

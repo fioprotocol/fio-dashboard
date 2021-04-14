@@ -12,9 +12,9 @@ import AddressForm from './AddressForm';
 //todo: change to real data
 /*****/
 const options = () => ['fio', 'crypto'];
-const prices = () => ({ address: 2.00, domain: 40.00 });
+const prices = () => ({ address: 2.0, domain: 40.0 });
 const fioAmount = () => 55.0123;
-const cart = () => ({items: ['1', '2']});
+const cart = () => ({ items: ['1', '2'] });
 /*****/
 
 const reduxConnect = connect(
@@ -29,7 +29,7 @@ const reduxConnect = connect(
       return !isHomepage ? getFormState(state, formNameGet) : {};
     },
   }),
-  { updateFormState }
+  { updateFormState },
 );
 
 export default compose(reduxConnect)(AddressForm);

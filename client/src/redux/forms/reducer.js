@@ -5,7 +5,7 @@ export default function reducer(state = {}, action = {}) {
     case actions.UPDATE_FORM_STATE:
       return {
         ...state,
-        [action.form]: action.payload
+        [action.form]: action.payload,
       };
     default:
       return state;

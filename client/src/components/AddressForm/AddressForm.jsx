@@ -19,7 +19,6 @@ import { currentScreenType } from '../../screenType';
 
 import classes from './AddressForm.module.scss';
 
-
 const AddressForm = props => {
   const {
     loading,
@@ -57,7 +56,7 @@ const AddressForm = props => {
       if (
         isAvail &&
         isAvail.is_registered === 1 &&
-        options.every((option) => option !== domain)
+        options.every(option => option !== domain)
       ) {
         errors.domain =
           'Unfortunately the domain name you have selected is not available. Please select an alternative.';
@@ -113,7 +112,7 @@ const AddressForm = props => {
       errors.username = 'Domain name should be less than 62 characters';
     }
 
-    if (username && domain && (username.length + domain.length > 63)) {
+    if (username && domain && username.length + domain.length > 63) {
       errors.username = 'Address should be less than 63 characters';
     }
 
@@ -128,20 +127,21 @@ const AddressForm = props => {
     !isHomepage && validation(values, true);
   };
 
-  const showPrice = (price) =>
-    `${isDesktop ? 'Cost: ' : ''}${price} USDC`;
+  const showPrice = price => `${isDesktop ? 'Cost: ' : ''}${price} USDC`;
 
   const renderNotifications = props => {
     const { values, errors, touched, modified } = props;
     const { username, domain: domainName } = values || {};
     const { domain: domainPrice, address: addressPrice } = prices;
- 
-    const isOnCart = cartItems.some(item => JSON.stringify(item) === JSON.stringify(values));
+
+    const isOnCart = cartItems.some(
+      item => JSON.stringify(item) === JSON.stringify(values),
+    );
     const hasErrors = !_.isEmpty(errors);
     const hasFields = !_.isEmpty(touched);
     let price = parseInt(addressPrice);
 
-    if(isCustomDomain) {
+    if (isCustomDomain) {
       price += parseInt(domainPrice);
     }
 
@@ -154,16 +154,16 @@ const AddressForm = props => {
           <InfoBadge
             type={BADGE_TYPES.SUCCESS}
             show={isAvailable}
-            title='Available!'
-            message='The FIO address you requested is available'
+            title="Available!"
+            message="The FIO address you requested is available"
           />
-          {Object.keys(errors).map((key) => {
+          {Object.keys(errors).map(key => {
             const message = errors[key];
 
             return (
               <InfoBadge
                 type={BADGE_TYPES.ERROR}
-                title='Try Again!'
+                title="Try Again!"
                 show={hasFields && hasErrors && anyTouched && anyModified}
                 message={message}
                 key={key}
@@ -172,16 +172,16 @@ const AddressForm = props => {
           })}
         </>
       );
-    }
+    };
 
     return (
-      <div key='badges'>
+      <div key="badges">
         {notifBadge()}
         <Badge type={BADGE_TYPES.SIMPLE} show={isAvailable}>
           <div
             className={classnames(
               classes.addressContainer,
-              !hasErrors && classes.showPrice
+              !hasErrors && classes.showPrice,
             )}
           >
             <p className={classes.address}>
@@ -197,11 +197,11 @@ const AddressForm = props => {
               <Button
                 className={classnames(
                   classes.button,
-                  !isOnCart && classes.show
+                  !isOnCart && classes.show,
                 )}
                 onClick={() => updateCart([...cartItems, values])} //todo: set add item to cart action
               >
-                <FontAwesomeIcon icon='plus-square' className={classes.icon} />
+                <FontAwesomeIcon icon="plus-square" className={classes.icon} />
                 Add to Cart
               </Button>
               <div
@@ -209,16 +209,18 @@ const AddressForm = props => {
               >
                 <div className={classes.fioBadge}>
                   <FontAwesomeIcon
-                    icon='check-circle'
+                    icon="check-circle"
                     className={classes.icon}
                   />
                   <p className={classes.title}>Added</p>
                 </div>
                 <FontAwesomeIcon
-                  icon='times-circle'
+                  icon="times-circle"
                   className={classes.iconClose}
                   onClick={() => {
-                    const updArr = cartItems.filter(item => !_.isEqual(item, values));
+                    const updArr = cartItems.filter(
+                      item => !_.isEqual(item, values),
+                    );
                     updateCart(updArr);
                     toggleAvailable(false);
                   }} //todo: set remove item from cart action
@@ -229,31 +231,31 @@ const AddressForm = props => {
         </Badge>
       </div>
     );
-  }
+  };
 
   const renderFormBody = props => {
     const { handleSubmit } = props;
     return (
-      <form onSubmit={handleSubmit} className={classes.form} key='form'>
+      <form onSubmit={handleSubmit} className={classes.form} key="form">
         {isHomepage && (
           <FormSpy
-            onChange={(state) => {
+            onChange={state => {
               setTimeout(
                 () => updateFormStateCurrent(formName, state.values),
-                0
+                0,
               ); //stupid lib issue, fixed with hack from github issues
             }}
           />
         )}
         <div className={classes.username}>
           <Field
-            name='username'
-            type='text'
-            placeholder='Find the perfect username ..'
+            name="username"
+            type="text"
+            placeholder="Find the perfect username .."
             colorschema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
             badge={showPrice(prices.address)}
             component={Input}
-            hideerror='true'
+            hideerror="true"
           />
         </div>
         <div className={classnames(classes.at, 'boldText')}>@</div>
@@ -267,7 +269,7 @@ const AddressForm = props => {
               component={Input}
               onClose={toggleCustomDomain}
               badge={showPrice(prices.domain)}
-              hideerror='true'
+              hideerror="true"
             />
           ) : (
             <Field
@@ -281,8 +283,8 @@ const AddressForm = props => {
         </div>
         {isHomepage ? (
           <Link to={ROUTES.FIO_ADDRESSES} className={classes.link}>
-            <Button variant='primary' className={classes.submit}>
-              <FontAwesomeIcon icon='search' />
+            <Button variant="primary" className={classes.submit}>
+              <FontAwesomeIcon icon="search" />
             </Button>
           </Link>
         ) : (
@@ -302,16 +304,16 @@ const AddressForm = props => {
         )}
       </form>
     );
-  }
+  };
 
-  const renderForm = props => { 
+  const renderForm = props => {
     return isHomepage ? (
       renderFormBody(props)
     ) : (
       <Card
-        title='Create FIO Address'
-        subtitle='Registering a FIO Address is fast and easy. Simply add a username and select a domain.'
-        key='form'
+        title="Create FIO Address"
+        subtitle="Registering a FIO Address is fast and easy. Simply add a username and select a domain."
+        key="form"
       >
         {renderFormBody(props)}
       </Card>

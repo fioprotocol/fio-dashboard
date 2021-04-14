@@ -27,10 +27,13 @@ const Badge = props => {
   const { children, type, show } = props;
 
   return (
-    <div className={classnames(classes.badge, show && classes.show)} style={{ backgroundColor: BADGE_BG_COLOR[type] }}>
+    <div
+      className={classnames(classes.badge, show && classes.show)}
+      style={{ backgroundColor: BADGE_BG_COLOR[type] }}
+    >
       {children}
     </div>
-  )
+  );
 };
 
 export default Badge;

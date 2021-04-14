@@ -53,7 +53,7 @@ const Input = props => {
           className={classnames(
             classes.regInput,
             hasError && classes.error,
-            isBW && classes.bw
+            isBW && classes.bw,
           )}
           {...input}
           {...props}
@@ -62,12 +62,12 @@ const Input = props => {
         />
         {(clearInput || onClose) && !props.loading && (
           <FontAwesomeIcon
-            icon='times-circle'
+            icon="times-circle"
             className={classnames(
               classes.inputIcon,
               type === 'password' && classes.doubleIcon,
               isBW && classes.bw,
-              badge && classes.iconPosition
+              badge && classes.iconPosition,
             )}
             onClick={() => {
               clearInputFn();
@@ -94,7 +94,7 @@ const Input = props => {
         <div
           className={classnames(
             classes.badge,
-            badge && (dirty || initial) && classes.showBadge
+            badge && (dirty || initial) && classes.showBadge,
           )}
         >
           {badge}
@@ -104,10 +104,10 @@ const Input = props => {
         <div
           className={classnames(
             classes.errorMessage,
-            hasError && classes.error
+            hasError && classes.error,
           )}
         >
-          <FontAwesomeIcon icon='info-circle' className={classes.errorIcon} />
+          <FontAwesomeIcon icon="info-circle" className={classes.errorIcon} />
           {hasError && (error || data.error || submitError)}
         </div>
       )}
