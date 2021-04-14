@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
+import _ from 'lodash';
 import Card from '../Card/Card';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import Input, { INPUT_COLOR_SCHEMA } from '../Input/Input';
@@ -15,8 +16,6 @@ import { SCREEN_TYPE } from '../../constants/screen';
 import InfoBadge from '../InfoBadge/InfoBadge';
 
 import { currentScreenType } from '../../screenType';
-
-import _ from 'lodash';
 
 import classes from './AddressForm.module.scss';
 
@@ -39,12 +38,14 @@ const AddressForm = props => {
 
   const [isCustomDomain, toggleCustomDomain] = useState(false);
   const [isAvailable, toggleAvailable] = useState(false);
+  const [prevValues, changePrevValues] = useState({});
   const [cartItems, updateCart] = useState([]); //todo: replace with cart data
 
   const verifyAddress = async values => {
     const { domain, username } = values;
     const errors = {};
 
+    if (_.isEqual(values, prevValues)) return;
     //todo: mocked request call 
     const availCheck = async () => {
       await sleep (1000)
@@ -73,6 +74,8 @@ const AddressForm = props => {
     if (_.isEmpty(errors)) {
       toggleAvailable(true);
     }
+
+    changePrevValues(values);
     
     return errors;
   };
@@ -211,10 +214,9 @@ const AddressForm = props => {
                   icon='times-circle'
                   className={classes.iconClose}
                   onClick={() => {
-                    const updArr = cartItems.filter(
-                      (item) => JSON.stringify(item) !== JSON.stringify(values)
-                    );
+                    const updArr = cartItems.filter(item => !_.isEqual(item, values));
                     updateCart(updArr);
+                    toggleAvailable(false);
                   }} //todo: set remove item from cart action
                 />
               </div>
