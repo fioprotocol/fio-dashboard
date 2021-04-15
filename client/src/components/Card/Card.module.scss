@@ -21,6 +21,10 @@
     margin-top: 20px;
     margin-bottom: 22px;
   }
+
+  form {
+    max-width: none;
+  }
 }
 
 @include sm {
