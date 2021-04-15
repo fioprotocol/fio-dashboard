@@ -11,10 +11,15 @@ import { addressValidation, domainValidation } from './validation';
 
 const AddressDomainForm = props => {
   const {
-    options,
+    domains,
     isHomepage,
     formState,
     type,
+    getPrices,
+    getDomains,
+    fioWallets,
+    refreshFioWallets,
+    account,
     // cart, //todo: replace with cart data
   } = props;
 
@@ -25,8 +30,13 @@ const AddressDomainForm = props => {
   const [isAvailable, toggleAvailable] = useState(false);
   const [prevValues, changePrevValues] = useState({});
   const [cartItems, updateCart] = useState([]); //todo: replace with cart data
+  const [userDomains, setUserDomains] = useState([]);
 
   const { domain } = formState;
+  const options = [
+    ...domains.map(({ domain }) => domain),
+    ...userDomains.map(({ name }) => name),
+  ];
 
   const { screenType } = currentScreenType();
   const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
@@ -37,6 +47,22 @@ const AddressDomainForm = props => {
   useEffect(() => {
     if (!isHomepage && domain && options.every(option => option !== domain)) {
       toggleCustomDomain(true);
+    }
+  }, []);
+
+  useEffect(async () => {
+    getPrices();
+    getDomains();
+    if (account) {
+      refreshFioWallets(account);
+    }
+    if (fioWallets) {
+      const userDomains = [];
+      for (const fioWallet of fioWallets) {
+        const domains = await fioWallet.otherMethods.getFioDomains();
+        if (domains.length) userDomains.push(domains);
+      }
+      setUserDomains(userDomains);
     }
   }, []);
 
@@ -62,6 +88,7 @@ const AddressDomainForm = props => {
       <FormContainer
         formProps={formProps}
         {...props}
+        options={options}
         isAddress={isAddress}
         isCustomDomain={isCustomDomain}
         toggleCustomDomain={toggleCustomDomain}

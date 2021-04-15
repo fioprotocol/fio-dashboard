@@ -39,7 +39,7 @@ const AddressForm = props => {
           type="text"
           placeholder="Find the perfect username .."
           colorschema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
-          badge={showPrice(prices.address)}
+          badge={showPrice(prices.usdt.address)}
           component={Input}
           hideerror="true"
         />
@@ -54,7 +54,7 @@ const AddressForm = props => {
             colorschema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
             component={Input}
             onClose={toggleCustomDomain}
-            badge={showPrice(prices.domain)}
+            badge={showPrice(prices.usdt.domain)}
             hideerror="true"
           />
         ) : (

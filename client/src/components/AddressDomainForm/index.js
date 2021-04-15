@@ -16,11 +16,8 @@ import { compose } from '../../utils';
 
 import AddressDomainForm from './AddressDomainForm';
 
-//todo: change to real data
-/*****/
-const fioAmount = () => 55.0123;
+// todo: change to real data
 const cart = () => ({ items: ['1', '2'] });
-/*****/
 
 const reduxConnect = connect(
   createStructuredSelector({
@@ -28,7 +25,6 @@ const reduxConnect = connect(
     loading,
     pricesLoading,
     prices,
-    fioAmount,
     cart,
     domains,
     fioWallets,
