@@ -10,6 +10,15 @@ import Fio from './fio';
 
 const apiClient = new ApiClient(config.apiPrefix);
 
+// todo: temporary fix to prevent CORS
+const fetch = window.fetch;
+window.fetch = (uri, opts = {}) => {
+  if (opts.headers) {
+    delete opts.headers['Content-Type'];
+  }
+  return fetch(uri, { ...opts });
+};
+
 export default {
   auth: new Auth(apiClient),
   users: new Users(apiClient),
