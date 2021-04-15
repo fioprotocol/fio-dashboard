@@ -10,7 +10,7 @@
   .cardContainer {
     display: flex;
     flex-direction: column;
-    max-width: 673px;
+    width: 64%;
   }
 
   .vertical {
@@ -32,6 +32,9 @@
 @include sm {
   .container {
     flex-direction: column;
+    .cardContainer {
+      width: 100%;
+    }
   }
 
   .vertical {
@@ -42,5 +45,9 @@
 @include md {
   .container {
     flex-direction: column;
+
+    .cardContainer {
+      width: 100%;
+    }
   }
 }

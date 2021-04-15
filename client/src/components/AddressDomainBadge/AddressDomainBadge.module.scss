@@ -11,16 +11,31 @@
   justify-content: space-between;
   align-items: center;
   min-height: 70px;
-  
-  .title {
-    font-size: 17px;
-    color: $white;
-    margin-bottom: 0;
-    @include proxima-nova-semibold
+
+  .textContainer {
+    margin-top: 5px;
+
+    .title {
+      font-size: 17px;
+      line-height: 24px;
+      color: $white;
+      margin-bottom: 0;
+      @include proxima-nova-semibold
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 20px;
+      margin-top: 5px;
+      margin-bottom: 5px;
+      @include proxima-nova-thin
+    }
   }
 
   .link {
     flex-shrink: 0;
+    @include sf-pro-display-regular;
+
     .button {
       background-color: transparent;
       border-color: $white;
@@ -44,11 +59,17 @@
   .container {
     flex-direction: column;
     padding: 0;
-  
-    .title {
-      font-size: 18px;
-      line-height: 26px;
-      text-align: left;
+
+    .textContainer {
+      .title {
+        font-size: 18px;
+        line-height: 26px;
+        text-align: left;
+      }
+
+      p {
+        margin-bottom: 15px;
+      }
     }
 
     .link {

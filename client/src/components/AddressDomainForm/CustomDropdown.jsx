@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Dropdown from 'react-dropdown';
 
-import classes from './AddressForm.module.scss';
+import classes from './AddressDomainForm.module.scss';
 import 'react-dropdown/style.css';
 
 const CUSTOM_DOMAIN_VALUE = 'addCustomDomain';

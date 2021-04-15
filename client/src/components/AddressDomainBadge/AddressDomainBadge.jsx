@@ -32,8 +32,10 @@ const AddressDomainBadge = props => {
   return (
     <Badge type={BADGE_TYPES.REGULAR} show>
       <div className={classes.container}>
-        <h5 className={classes.title}>{content[type].title}</h5>
-        <p>{content[type].text}</p>
+        <div className={classes.textContainer}>
+          <h5 className={classes.title}>{content[type].title}</h5>
+          <p>{content[type].text}</p>
+        </div>
         <Link to={content[type].link} className={classes.link}>
           <Button className={classes.button}>{content[type].button}</Button>
         </Link>
