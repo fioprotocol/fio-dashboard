@@ -26,14 +26,16 @@ const Notifications = props => {
     type,
     cartItems,
     updateCart,
-    fioAmount,
     prices,
     isAddress,
     isDomain,
   } = props;
   const { values, errors, touched, modified } = formProps;
   const { username, domain: domainName } = values || {};
-  const { domain: domainPrice, address: addressPrice } = prices;
+  const {
+    usdt: { domain: domainPrice, address: addressPrice },
+  } = prices;
+  const fioAmount = prices.fio.address;
 
   const isOnCart = cartItems.some(item => _.isEqual(item, values));
   const hasErrors = !_.isEmpty(errors);

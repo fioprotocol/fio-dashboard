@@ -7,6 +7,7 @@ export const edgeContextSet = state => state[prefix].edgeContextSet;
 export const cachedUsers = state => state[prefix].cachedUsers;
 export const loginSuccess = state => state[prefix].loginSuccess;
 export const recoveryQuestions = state => state[prefix].recoveryQuestions;
+export const fioWallets = state => state[prefix].fioWallets;
 export const usernameIsAvailable = state => state[prefix].usernameIsAvailable;
 export const usernameAvailableLoading = state =>
   state[prefix].usernameAvailableLoading;

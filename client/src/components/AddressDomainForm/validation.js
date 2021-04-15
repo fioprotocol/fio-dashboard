@@ -1,6 +1,6 @@
 import _ from 'lodash';
+import apis from '../../api/index';
 import { ADDRESS_REGEXP } from '../../constants/regExps';
-import { sleep } from '../../utils';
 
 const verifyAddress = async props => {
   const {
@@ -15,14 +15,9 @@ const verifyAddress = async props => {
   const errors = {};
 
   if (_.isEqual(values, prevValues) && !forceValidate) return;
-  //todo: mocked request call
-  const availCheck = async () => {
-    await sleep(1000);
-    return { is_registered: 0 };
-  };
 
   if (domain) {
-    const isAvail = await availCheck();
+    const isAvail = await apis.fio.availCheck(domain);
     if (
       isAvail &&
       isAvail.is_registered === 1 &&
@@ -34,22 +29,20 @@ const verifyAddress = async props => {
   }
 
   if (username && domain) {
-    const isAvail = await availCheck();
+    const isAvail = await apis.fio.availCheck(`${username}@${domain}`);
     if (isAvail && isAvail.is_registered === 1) {
       errors.username = 'This FIO Address is already registered.';
     }
   }
 
-  if (_.isEmpty(errors)) {
-    toggleAvailable(true);
-  }
+  toggleAvailable(_.isEmpty(errors));
 
   changePrevValues(values);
 
   return errors;
 };
 
-export const addressValidation = props => {
+export const addressValidation = async props => {
   const { values, toggleAvailable } = props;
   const errors = {};
   const { username, domain } = values || {};
@@ -79,7 +72,7 @@ export const addressValidation = props => {
     toggleAvailable(false);
   }
 
-  return !_.isEmpty(errors) ? errors : verifyAddress(props);
+  return !_.isEmpty(errors) ? errors : await verifyAddress(props);
 };
 
 export const domainValidation = props => {

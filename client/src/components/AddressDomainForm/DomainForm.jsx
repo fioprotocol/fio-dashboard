@@ -14,7 +14,7 @@ const DomainForm = props => {
         placeholder="Domain name"
         colorschema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
         component={Input}
-        badge={showPrice(prices.domain)}
+        badge={showPrice(prices.usdt.domain)}
         hideerror="true"
       />
     </div>
