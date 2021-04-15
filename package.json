@@ -43,6 +43,7 @@
     "supertest": "^3.0.0"
   },
   "dependencies": {
+    "@fioprotocol/fiosdk": "^1.2.1",
     "@fortawesome/fontawesome-svg-core": "1.2.34",
     "@fortawesome/free-regular-svg-icons": "5.15.2",
     "@fortawesome/free-solid-svg-icons": "5.15.2",

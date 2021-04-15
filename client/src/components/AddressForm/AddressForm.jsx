@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Field, FormSpy } from 'react-final-form';
+import apis from '../../api/index';
 import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -11,7 +12,6 @@ import Input, { INPUT_COLOR_SCHEMA } from '../Input/Input';
 import { ROUTES } from '../../constants/routes';
 import { ADDRESS_REGEXP } from '../../constants/regExps';
 import CustomDropdown from './CustomDropdown';
-import { sleep } from '../../utils';
 import { SCREEN_TYPE } from '../../constants/screen';
 import InfoBadge from '../InfoBadge/InfoBadge';
 
@@ -22,17 +22,17 @@ import classes from './AddressForm.module.scss';
 const AddressForm = props => {
   const {
     loading,
-    options,
+    domains,
     prices,
     isHomepage,
     formState,
     formName,
     updateFormState,
-    fioAmount,
     getPrices,
     getDomains,
     fioWallets,
     refreshFioWallets,
+    account,
     // cart, //todo: replace with cart data
   } = props;
 
@@ -45,19 +45,20 @@ const AddressForm = props => {
   const [cartItems, updateCart] = useState([]); //todo: replace with cart data
   const [userDomains, setUserDomains] = useState([]);
 
+  const { domain } = formState;
+  const options = [
+    ...domains.map(({ domain }) => domain),
+    ...userDomains.map(({ name }) => name),
+  ];
+  const fioAmount = prices.fio.address;
   const verifyAddress = async (values, forceValidate) => {
     const { domain, username } = values;
     const errors = {};
 
     if (_.isEqual(values, prevValues) && !forceValidate) return;
-    //todo: mocked request call
-    const availCheck = async () => {
-      await sleep(1000);
-      return { is_registered: 0 };
-    };
 
     if (domain) {
-      const isAvail = await availCheck();
+      const isAvail = await apis.fio.availCheck(domain);
       if (
         isAvail &&
         isAvail.is_registered === 1 &&
@@ -69,7 +70,7 @@ const AddressForm = props => {
     }
 
     if (username && domain) {
-      const isAvail = await availCheck();
+      const isAvail = await apis.fio.availCheck(`${username}@${domain}`);
       if (isAvail && isAvail.is_registered === 1) {
         errors.username = 'This FIO Address is already registered.';
       }
@@ -83,8 +84,6 @@ const AddressForm = props => {
 
     return errors;
   };
-
-  const { domain } = formState;
 
   useEffect(() => {
     if (!isHomepage && domain && options.every(option => option !== domain)) {
@@ -153,7 +152,9 @@ const AddressForm = props => {
   const renderNotifications = props => {
     const { values, errors, touched, modified } = props;
     const { username, domain: domainName } = values || {};
-    const { domain: domainPrice, address: addressPrice } = prices;
+    const {
+      usdt: { domain: domainPrice, address: addressPrice },
+    } = prices;
 
     const isOnCart = cartItems.some(
       item => JSON.stringify(item) === JSON.stringify(values),
@@ -274,7 +275,7 @@ const AddressForm = props => {
             type="text"
             placeholder="Find the perfect username .."
             colorschema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
-            badge={showPrice(prices.address)}
+            badge={showPrice(prices.usdt.address)}
             component={Input}
             hideerror="true"
           />
@@ -289,7 +290,7 @@ const AddressForm = props => {
               colorschema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
               component={Input}
               onClose={toggleCustomDomain}
-              badge={showPrice(prices.domain)}
+              badge={showPrice(prices.usdt.domain)}
               hideerror="true"
             />
           ) : (

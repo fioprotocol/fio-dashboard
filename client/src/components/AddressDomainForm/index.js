@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { loading, account, fioWallets  } from '../../redux/edge/selectors';
+import { loading, account, fioWallets } from '../../redux/edge/selectors';
 import {
   loading as pricesLoading,
   prices,
@@ -18,7 +18,6 @@ import AddressDomainForm from './AddressDomainForm';
 
 //todo: change to real data
 /*****/
-const options = () => ['fio', 'crypto'];
 const fioAmount = () => 55.0123;
 const cart = () => ({ items: ['1', '2'] });
 /*****/
@@ -26,7 +25,6 @@ const cart = () => ({ items: ['1', '2'] });
 const reduxConnect = connect(
   createStructuredSelector({
     account,
-    options,
     loading,
     pricesLoading,
     prices,

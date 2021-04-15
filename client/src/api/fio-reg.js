@@ -4,6 +4,18 @@ export default class FioReg {
   baseurl = 'https://reg.fioprotocol.io/';
 
   prices() {
+    return Promise.resolve({
+      pricing: {
+        fio: {
+          domain: 500,
+          address: 4,
+        },
+        usdt: {
+          domain: 3,
+          address: 1,
+        },
+      },
+    });
     return this._request({
       url: 'public-api/get-pricing/fio',
       method: 'get',
@@ -11,6 +23,12 @@ export default class FioReg {
   }
 
   domains() {
+    return Promise.resolve({
+      domains: [
+        { domain: 'edge', free: true },
+        { domain: 'fio', free: true },
+      ],
+    });
     return this._request({
       url: 'public-api/get-domains/fio',
       method: 'get',
