@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
-import AddressForm from '../../components/AddressForm';
+import AddressDomainForm from '../../components/AddressDomainForm';
 import { FORM_NAMES } from '../../constants/form';
 
 import classes from './AddressWidget.module.scss';
@@ -22,7 +22,7 @@ const AddressWidget = props => {
         select a domain.
       </p>
       <div className={classes.form}>
-        <AddressForm isHomepage formName={FORM_NAMES.ADDRESS} />
+        <AddressDomainForm isHomepage formName={FORM_NAMES.ADDRESS} />
       </div>
       <div className={classes.bottom} />
     </div>

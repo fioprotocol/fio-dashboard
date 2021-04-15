@@ -7,7 +7,7 @@ import { updateFormState } from '../../redux/forms/actions';
 
 import { compose } from '../../utils';
 
-import AddressForm from './AddressForm';
+import AddressDomainForm from './AddressDomainForm';
 
 //todo: change to real data
 /*****/
@@ -32,4 +32,4 @@ const reduxConnect = connect(
   { updateFormState },
 );
 
-export default compose(reduxConnect)(AddressForm);
+export default compose(reduxConnect)(AddressDomainForm);

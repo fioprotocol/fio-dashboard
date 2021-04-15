@@ -9,6 +9,7 @@ import ConfirmEmail from './pages/ConfirmEmail';
 import AuthContainer from './components/AuthContainer';
 import PrivateRoute from './components/PrivateRoute';
 import FioAddressPage from './pages/FioAddressPage';
+import FioDomainPage from './pages/FioDomainPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -20,6 +21,8 @@ const Routes = () => (
       <PrivateRoute path={ROUTES.ADMIN} component={AdminContainer} exact />
       <Route path={ROUTES.CONFIRM_EMAIL} component={ConfirmEmail} />
       <Route path={ROUTES.FIO_ADDRESSES} component={FioAddressPage} exact />
+      <Route path={ROUTES.FIO_DOMAINS} component={FioDomainPage} exact />
+
       <AuthContainer />
     </Switch>
   </MainLayout>
