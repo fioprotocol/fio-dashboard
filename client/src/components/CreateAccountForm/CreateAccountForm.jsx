@@ -14,7 +14,7 @@ import {
   createAccount,
   checkUsernameAndPassword,
 } from './middleware';
-import { emailToUsername, setDataMutator } from '../../utils';
+import { emailToUsername, setDataMutator, sleep } from '../../utils';
 import Pin from './Pin';
 import EmailPassword, {
   validate as validateEmailPassword,
@@ -210,7 +210,11 @@ export default class CreateAccountForm extends Component {
         break;
       }
       case STEPS.CONFIRMATION: {
+        this.setState({ step: STEPS.SUCCESS });
+      }
+      case STEPS.SUCCESS: {
         const { email, password, pin, confirmPin } = values;
+        const t0 = performance.now();
         this.setState({ loading: true });
         const { account, errors } = await createAccount(
           emailToUsername(email),
@@ -220,13 +224,18 @@ export default class CreateAccountForm extends Component {
         this.setState({ loading: false });
         if (!Object.values(errors).length) {
           this.setState({ account });
-          return onSubmit({
+          onSubmit({
             username: emailToUsername(email),
             email,
             pin,
             confirmPin,
             password: account.id,
           });
+          const t1 = performance.now();
+          if (t1 - t0 < 3000) {
+            await sleep(t1 - t0);
+          }
+          this.redirectHome();
         }
         return errors;
       }
@@ -314,14 +323,10 @@ export default class CreateAccountForm extends Component {
             />
           </Wizard.Page>
           <Wizard.Page hideBack hideNext>
-            <Confirmation
-              data={values}
-              errors={errors}
-              loading={loading || serverSignUpLoading}
-            />
+            <Confirmation data={values} errors={errors} />
           </Wizard.Page>
           <Wizard.Page hideBack hideNext>
-            <Success redirect={this.redirectHome} />
+            <Success loading={loading || serverSignUpLoading} form={form} />
           </Wizard.Page>
         </Wizard>
       </form>
@@ -333,7 +338,6 @@ export default class CreateAccountForm extends Component {
       <FormModalWrapper>
         <Form
           mutators={{ setDataMutator }}
-          // initialValues={values}
           validate={this.validate}
           onSubmit={this.handleSubmit}
         >
