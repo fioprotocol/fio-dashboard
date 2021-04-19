@@ -4,27 +4,30 @@ import { ADDRESS_REGEXP } from '../../constants/regExps';
 
 const verifyAddress = async props => {
   const {
-    values,
-    forceValidate,
+    formProps,
     toggleAvailable,
-    changePrevValues,
     options,
-    prevValues,
+    changeFormErrors,
+    isAddress,
+    toggleValidating,
   } = props;
-  const { domain, username } = values;
+  const { mutators } = formProps;
+  const { domain, username } = formProps.getState().values;
+
   const errors = {};
-
-  if (_.isEqual(values, prevValues) && !forceValidate) return;
-
+  toggleValidating(true);
   if (domain) {
     const isAvail = await apis.fio.availCheck(domain);
-    if (
-      isAvail &&
-      isAvail.is_registered === 1 &&
-      options.every(option => option !== domain)
-    ) {
-      errors.domain =
-        'Unfortunately the domain name you have selected is not available. Please select an alternative.';
+
+    if (isAvail && isAvail.is_registered === 1) {
+      if (isAddress && options.every(option => option !== domain)) {
+        errors.domain =
+          'Unfortunately the domain name you have selected is not available. Please select an alternative.';
+      }
+      if (!isAddress) {
+        errors.domain =
+          'Unfortunately the domain name you have selected is not available. Please select an alternative.';
+      }
     }
   }
 
@@ -37,15 +40,25 @@ const verifyAddress = async props => {
 
   toggleAvailable(_.isEmpty(errors));
 
-  changePrevValues(values);
-
+  mutators.setDataMutator('username', {
+    error: errors.username,
+    valid: !!errors.username,
+  });
+  mutators.setDataMutator('domain', {
+    error: errors.domain,
+    valid: !!errors.domain,
+  });
+  changeFormErrors(errors);
+  toggleValidating(false);
   return errors;
 };
 
 export const addressValidation = async props => {
-  const { values, toggleAvailable } = props;
+  const { formProps, toggleAvailable, changeFormErrors } = props;
+  const { mutators } = formProps;
+
   const errors = {};
-  const { username, domain } = values || {};
+  const { username, domain } = formProps.getState().values || {};
 
   if (!username) {
     errors.username = 'Username Field Should Be Filled';
@@ -72,13 +85,26 @@ export const addressValidation = async props => {
     toggleAvailable(false);
   }
 
-  return !_.isEmpty(errors) ? errors : await verifyAddress(props);
+  mutators.setDataMutator('username', {
+    error: errors.username,
+    valid: !errors.username,
+  });
+  mutators.setDataMutator('domain', {
+    error: errors.domain,
+    valid: !errors.domain,
+  });
+
+  changeFormErrors(errors);
+
+  return !_.isEmpty(errors) ? errors : verifyAddress(props);
 };
 
 export const domainValidation = props => {
-  const { values, toggleAvailable } = props;
+  const { formProps, toggleAvailable, changeFormErrors } = props;
   const errors = {};
-  const { domain } = values || {};
+  const { mutators } = formProps;
+
+  const { domain } = formProps.getState().values || {};
 
   if (!domain) {
     errors.domain = 'Select Domain Please';
@@ -93,6 +119,13 @@ export const domainValidation = props => {
   if (!_.isEmpty(errors)) {
     toggleAvailable(false);
   }
+
+  mutators.setDataMutator('domain', {
+    error: errors.domain,
+    valid: !errors.domain,
+  });
+
+  changeFormErrors(errors);
 
   return !_.isEmpty(errors) ? errors : verifyAddress(props);
 };

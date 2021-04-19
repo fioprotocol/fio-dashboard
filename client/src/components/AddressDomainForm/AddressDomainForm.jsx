@@ -3,9 +3,10 @@ import { Form } from 'react-final-form';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../../components/AddressDomainBadge/AddressDomainBadge';
 import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
-
 import Notifications from './Notifications';
 import FormContainer from './FormContainer';
+import { debounce } from 'lodash';
+import { setDataMutator } from '../../utils';
 
 import { addressValidation, domainValidation } from './validation';
 
@@ -28,9 +29,10 @@ const AddressDomainForm = props => {
 
   const [isCustomDomain, toggleCustomDomain] = useState(false);
   const [isAvailable, toggleAvailable] = useState(false);
-  const [prevValues, changePrevValues] = useState({});
   const [cartItems, updateCart] = useState([]); //todo: replace with cart data
   const [userDomains, setUserDomains] = useState([]);
+  const [formErrors, changeFormErrors] = useState({});
+  const [isValidating, toggleValidating] = useState(false);
 
   const { domain } = formState;
   const options = [
@@ -64,24 +66,39 @@ const AddressDomainForm = props => {
       }
       setUserDomains(userDomains);
     }
+    return () => {
+      setUserDomains([]);
+    };
   }, []);
 
   const validationProps = {
-    forceValidate: false,
     options,
-    prevValues,
     toggleAvailable,
-    changePrevValues,
+    changeFormErrors,
+    isAddress,
+    toggleValidating,
   };
 
-  const handleSubmit = values => {
+  const handleSubmit = (values, form) => {
     if (isHomepage) return;
 
-    if (isAddress)
-      addressValidation({ values, ...validationProps, forceValidate: true });
-    if (isDomain)
-      domainValidation({ values, ...validationProps, forceValidate: true });
+    const validationPropsToPass = {
+      formProps: form,
+      ...validationProps,
+    };
+
+    if (isAddress) addressValidation(validationPropsToPass);
+    if (isDomain) domainValidation(validationPropsToPass);
   };
+
+  const handleChange = debounce(formProps => {
+    const validationPropsToPass = {
+      formProps,
+      ...validationProps,
+    };
+    if (isAddress) addressValidation(validationPropsToPass);
+    if (isDomain) domainValidation(validationPropsToPass);
+  }, 500);
 
   const renderItems = formProps => {
     return [
@@ -92,14 +109,17 @@ const AddressDomainForm = props => {
         isAddress={isAddress}
         isCustomDomain={isCustomDomain}
         toggleCustomDomain={toggleCustomDomain}
-        isAvailable={isAvailable}
         domain={domain}
         key="form"
         showPrice={showPrice}
+        handleChange={handleChange}
+        toggleAvailable={toggleAvailable}
+        isValidating={isValidating}
       />,
       !isHomepage && (
         <Notifications
           formProps={formProps}
+          formErrors={formErrors}
           {...props}
           isCustomDomain={isCustomDomain}
           isAvailable={isAvailable}
@@ -117,15 +137,7 @@ const AddressDomainForm = props => {
   return (
     <Form
       onSubmit={handleSubmit}
-      validate={values =>
-        !isHomepage
-          ? isAddress
-            ? addressValidation({ values, ...validationProps })
-            : isDomain
-            ? domainValidation({ values, ...validationProps })
-            : null
-          : null
-      }
+      mutators={{ setDataMutator }}
       initialValues={formState}
     >
       {renderItems}

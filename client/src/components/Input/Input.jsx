@@ -26,9 +26,9 @@ const Input = props => {
     modifiedSinceLastSubmit,
     initial,
     dirty,
+    submitSucceeded,
   } = meta;
   const { type, value, name, onChange } = input;
-
   const isBW = colorschema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
 
   const [showPass, toggleShowPass] = useState(false);
@@ -43,7 +43,9 @@ const Input = props => {
   };
 
   const hasError =
-    ((error || data.error) && (touched || modified) && !active) ||
+    ((error || data.error) &&
+      (touched || modified || submitSucceeded) &&
+      !active) || // todo: remove !active to show red border on focused field. make debounce on create account user field
     (submitError && !modifiedSinceLastSubmit);
 
   const regularInput = (
