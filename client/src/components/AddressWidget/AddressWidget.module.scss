@@ -11,6 +11,7 @@
   .title {
     color: white;
     font-size: 4rem;
+    margin: 0 5%;
   }
 
   .coloredText {
@@ -47,12 +48,23 @@
   }
 
   @include sm {
+    .title, .subtitle {
+      text-align: left;
+    }
+
     .title {
-      font-size: 2.8rem;
+      font-size: 34px;
+      line-height: 41px;
+    }
+
+    .newLine {
+      display: block;
     }
 
     .subtitle {
-      margin: 5% 5%;
+      margin: 4% 5%;
+      font-size: 16px;
+      line-height: 26px;
     }
 
     .form {

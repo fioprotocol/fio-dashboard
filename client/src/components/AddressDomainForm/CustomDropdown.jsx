@@ -2,13 +2,13 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Dropdown from 'react-dropdown';
 
-import classes from './AddressForm.module.scss';
+import classes from './AddressDomainForm.module.scss';
 import 'react-dropdown/style.css';
 
 const CUSTOM_DOMAIN_VALUE = 'addCustomDomain';
 
 const CustomDropdown = props => {
-  const { toggle, input, options } = props;
+  const { toggle, input, options, initValue } = props;
   const { onChange } = input;
 
   const styledOptions = options
@@ -38,6 +38,7 @@ const CustomDropdown = props => {
   return (
     <Dropdown
       options={styledOptions}
+      value={initValue}
       onChange={onDropdownChange}
       placeholder="Select Domain"
       className={classes.dropdown}

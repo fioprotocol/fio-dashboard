@@ -33,3 +33,16 @@ export function usernameToEmail(username) {
 
   return '';
 }
+
+export function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export const setDataMutator = (args, state) => {
+  const [name, data] = args;
+  const field = state.fields[name];
+
+  if (field) {
+    field.data = { ...field.data, ...data };
+  }
+};

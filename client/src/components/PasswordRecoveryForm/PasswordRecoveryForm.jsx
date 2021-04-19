@@ -6,7 +6,7 @@ import { Scrollbar } from 'react-scrollbars-custom';
 import classnames from 'classnames';
 
 import { ACTIONS } from '../Notifications/Notifications';
-import { BADGE_TYPES } from '../NotificationBadge/NotificationBadge';
+import { BADGE_TYPES } from '../Badge/Badge';
 import ModalComponent from '../Modal/Modal';
 import FormHeader from '../FormHeader/FormHeader';
 import Input from '../Input/Input';

@@ -43,6 +43,7 @@
     "supertest": "^3.0.0"
   },
   "dependencies": {
+    "@fioprotocol/fiosdk": "^1.2.1",
     "@fortawesome/fontawesome-svg-core": "1.2.34",
     "@fortawesome/free-regular-svg-icons": "5.15.2",
     "@fortawesome/free-solid-svg-icons": "5.15.2",
@@ -80,6 +81,7 @@
     "react-dom": "17.0.1",
     "react-dropdown": "1.9.2",
     "react-final-form": "6.5.2",
+    "react-final-form-listeners": "1.0.3",
     "react-pin-input": "1.0.1",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",

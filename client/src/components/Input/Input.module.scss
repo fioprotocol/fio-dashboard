@@ -50,6 +50,10 @@
     }
   }
 
+  .iconPosition {
+    top: 20px;
+  }
+
   .doubleIcon {
     position: absolute;
     right: 60px;
@@ -73,6 +77,10 @@
     outline: none;
     font-size: 14px;
 
+    &[data-clear='true'] {
+      padding-right: 110px;
+    }
+
     &::placeholder {
       color: inherit;
     }
@@ -82,10 +90,10 @@
       border-color: transparent;
       color: $gray-main !important;
       height: 40px;
+    }
 
-      @include sm {
-        height: 54px;
-      }
+    &.bw::placeholder {
+      @include proxima-nova-regular-it;
     }
 
      &.error {
@@ -105,6 +113,7 @@
   align-items: center;
   max-height: 0;
   transition: max-height 0.1s ease-in;
+  overflow: hidden;
 
   &.showBadge {
     max-height: 24px;
@@ -152,5 +161,17 @@
     width: 20px;
     height: 20px;
     left: 15px;
+  }
+}
+
+@include sm {
+  .badge {
+    box-sizing: content-box;
+    &.showBadge {
+      position: absolute;
+      margin: 0;
+      top: 8px;
+      right: 20%;
+    }
   }
 }

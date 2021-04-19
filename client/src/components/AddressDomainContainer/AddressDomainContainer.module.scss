@@ -1,0 +1,53 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+@import '../../assets/styles/fontMixins.scss';
+
+.container {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: row;
+
+  .cardContainer {
+    display: flex;
+    flex-direction: column;
+    width: 64%;
+  }
+
+  .vertical {
+    width: 1px;
+    height: 100%;
+    background-color: #DCDCDC;
+    height: auto;
+    margin: 0 30px;
+  }
+
+  .cart {
+    height: 249px;
+    width: 335px;
+    border-radius: 12px;
+    background-color: #F3F3F3;
+  }
+}
+
+@include sm {
+  .container {
+    flex-direction: column;
+    .cardContainer {
+      width: 100%;
+    }
+  }
+
+  .vertical {
+    visibility: hidden;
+  }
+}
+
+@include md {
+  .container {
+    flex-direction: column;
+
+    .cardContainer {
+      width: 100%;
+    }
+  }
+}

@@ -99,4 +99,13 @@ export default combineReducers({
         return state;
     }
   },
+  fioWallets(state = [], action) {
+    switch (action.type) {
+      case actions.REFRESH_FIO_WALLETS_SUCCESS: {
+        return action.data;
+      }
+      default:
+        return state;
+    }
+  },
 });
