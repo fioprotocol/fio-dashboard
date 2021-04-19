@@ -1,12 +1,30 @@
 import React, { Component } from 'react';
+import { sleep } from '../../utils';
 
 import FormHeader from '../FormHeader/FormHeader';
 import classes from './CreateAccountForm.module.scss';
 
-export default class Pin extends Component {
+export default class Success extends Component {
+  t0 = null;
   componentDidMount() {
-    setTimeout(this.props.redirect, 3000);
+    const { form } = this.props;
+    form.submit();
+    this.t0 = performance.now();
   }
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    if (!prevProps.signupSuccess && this.props.signupSuccess) {
+      this.handleComplete();
+    }
+  }
+
+  handleComplete = async () => {
+    const t1 = performance.now();
+    if (t1 - this.t0 < 3000) {
+      await sleep(t1 - this.t0);
+    }
+    this.props.redirect();
+  };
 
   render() {
     return (
