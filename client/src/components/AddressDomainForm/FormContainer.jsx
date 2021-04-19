@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 import Card from '../Card/Card';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../../components/AddressDomainBadge/AddressDomainBadge';
+import { FORM_NAMES } from '../../constants/form';
 
 import AddressForm from './AddressForm';
 import DomainForm from './DomainForm';
@@ -25,25 +26,19 @@ const FORM_TYPES = {
 };
 
 const FormContainer = props => {
-  const {
-    isHomepage,
-    formProps,
-    type,
-    isAddress,
-    prices,
-    loading,
-    showPrice,
-  } = props;
+  const { isHomepage, formProps, type, isAddress, isValidating } = props;
 
   const renderFormBody = () => {
     const { handleSubmit } = formProps;
 
     return (
       <form onSubmit={handleSubmit} className={classes.form} key="form">
-        {isAddress || isHomepage ? (
+        {isHomepage ? (
+          <AddressForm {...props} formName={FORM_NAMES.ADDRESS} />
+        ) : isAddress ? (
           <AddressForm {...props} />
         ) : (
-          <DomainForm prices={prices} showPrice={showPrice} />
+          <DomainForm {...props} />
         )}
         {isHomepage ? (
           <Link to={ROUTES.FIO_ADDRESSES} className={classes.link}>
@@ -55,11 +50,11 @@ const FormContainer = props => {
           <Button
             htmltype="submit"
             className={classes.submit}
-            disabled={loading}
+            disabled={isValidating}
             onClick={handleSubmit}
             variant="primary"
           >
-            {loading ? (
+            {isValidating ? (
               <FontAwesomeIcon icon="spinner" spin />
             ) : (
               <FontAwesomeIcon icon="search" />

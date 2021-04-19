@@ -14,7 +14,7 @@ import {
   createAccount,
   checkUsernameAndPassword,
 } from './middleware';
-import { emailToUsername } from '../../utils';
+import { emailToUsername, setDataMutator } from '../../utils';
 import Pin from './Pin';
 import EmailPassword, {
   validate as validateEmailPassword,
@@ -38,14 +38,6 @@ const STEPS_ORDER = {
   [STEPS.SUCCESS]: 4,
 };
 
-const setDataMutator = (args, state) => {
-  const [name, data] = args;
-  const field = state.fields[name];
-
-  if (field) {
-    field.data = { ...field.data, ...data };
-  }
-};
 
 export default class CreateAccountForm extends Component {
   static propTypes = {

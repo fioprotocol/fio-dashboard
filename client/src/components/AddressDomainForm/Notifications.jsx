@@ -29,8 +29,20 @@ const Notifications = props => {
     prices,
     isAddress,
     isDomain,
+    formErrors,
   } = props;
-  const { values, errors, touched, modified } = formProps;
+  const { values, form } = formProps;
+  const errors = [];
+
+  !_.isEmpty(formErrors) &&
+    Object.keys(formErrors).forEach(key => {
+      const fieldState = form.getFieldState(key) || {};
+      const { touched, modified, submitSucceeded } = fieldState;
+      if (touched || modified || submitSucceeded) {
+        errors.push(formErrors[key]);
+      }
+    });
+
   const { username, domain: domainName } = values || {};
   const {
     usdt: { domain: domainPrice, address: addressPrice },
@@ -39,41 +51,33 @@ const Notifications = props => {
 
   const isOnCart = cartItems.some(item => _.isEqual(item, values));
   const hasErrors = !_.isEmpty(errors);
-  const hasFields = !_.isEmpty(touched);
   let price = isAddress ? parseInt(addressPrice) : parseInt(domainPrice);
 
   if (isCustomDomain) {
     price += parseInt(domainPrice);
   }
 
-  const notifBadge = () => {
-    const anyTouched = Object.values(touched).some(val => val === true);
-    const anyModified = Object.values(modified).some(val => val === true);
-
-    return (
-      <>
-        <InfoBadge
-          type={BADGE_TYPES.SUCCESS}
-          show={isAvailable}
-          title="Available!"
-          message={AVAILABLE_MESSAGE[type]}
-        />
-        {Object.keys(errors).map(key => {
-          const message = errors[key];
-
-          return (
-            <InfoBadge
-              type={BADGE_TYPES.ERROR}
-              title="Try Again!"
-              show={hasFields && hasErrors && anyTouched && anyModified}
-              message={message}
-              key={key}
-            />
-          );
-        })}
-      </>
-    );
-  };
+  const notifBadge = () => (
+    <>
+      <InfoBadge
+        type={BADGE_TYPES.SUCCESS}
+        show={isAvailable}
+        title="Available!"
+        message={AVAILABLE_MESSAGE[type]}
+      />
+      {errors.map(message => {
+        return (
+          <InfoBadge
+            type={BADGE_TYPES.ERROR}
+            title="Try Again!"
+            show={hasErrors}
+            message={message}
+            key={message}
+          />
+        );
+      })}
+    </>
+  );
 
   return (
     <div key="badges">

@@ -1,9 +1,10 @@
 import React from 'react';
-import { Field, FormSpy } from 'react-final-form';
+import { Field, FormSpy, useForm } from 'react-final-form';
 import classnames from 'classnames';
 
 import CustomDropdown from './CustomDropdown';
 import Input, { INPUT_COLOR_SCHEMA } from '../Input/Input';
+import { OnChange, OnBlur } from 'react-final-form-listeners';
 
 import classes from './AddressDomainForm.module.scss';
 
@@ -18,10 +19,23 @@ const AddressForm = props => {
     domain,
     updateFormState,
     showPrice,
+    handleChange,
+    toggleAvailable,
   } = props;
 
   const updateFormStateCurrent = (form, state) => {
     updateFormState(form, state);
+  };
+
+  const formProps = useForm();
+
+  const onChangeHandleField = () => {
+    toggleAvailable(false);
+    handleChange(formProps);
+  };
+
+  const onBlurHandleField = () => {
+    handleChange(formProps);
   };
 
   return (
@@ -43,6 +57,8 @@ const AddressForm = props => {
           component={Input}
           hideerror="true"
         />
+        <OnChange name="username">{onChangeHandleField}</OnChange>
+        <OnBlur name="username">{onBlurHandleField}</OnBlur>
       </div>
       <div className={classnames(classes.at, 'boldText')}>@</div>
       <div className={classes.domainContainer}>
@@ -66,6 +82,8 @@ const AddressForm = props => {
             initValue={domain}
           />
         )}
+        <OnChange name="domain">{onChangeHandleField}</OnChange>
+        <OnBlur name="username">{onBlurHandleField}</OnBlur>
       </div>
     </>
   );
