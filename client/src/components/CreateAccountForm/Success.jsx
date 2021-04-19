@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { sleep } from '../../utils';
 
 import FormHeader from '../FormHeader/FormHeader';
-import classes from './CreateAccountForm.module.scss';
+
+import logoAnimation from './logo-animation.json';
 
 export default class Success extends Component {
   t0 = null;
@@ -29,7 +30,15 @@ export default class Success extends Component {
   render() {
     return (
       <FormHeader
-        header={<div className={classes.logo} />}
+        header={
+          <lottie-player
+            id="logo-loading"
+            autoplay
+            loop
+            mode="normal"
+            src={JSON.stringify(logoAnimation)}
+          ></lottie-player>
+        }
         title="Great job!"
         subtitle="Hang tight while we create and secure your account"
         isSubNarrow
