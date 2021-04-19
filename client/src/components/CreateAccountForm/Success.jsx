@@ -5,10 +5,12 @@ import classes from './CreateAccountForm.module.scss';
 
 export default class Pin extends Component {
   componentDidMount() {
-    setTimeout(this.props.redirect, 3000);
+    const { form } = this.props;
+    form.submit();
   }
 
   render() {
+    // const { loading } = this.props; // todo: uncommit on animation ready
     return (
       <FormHeader
         header={<div className={classes.logo} />}
