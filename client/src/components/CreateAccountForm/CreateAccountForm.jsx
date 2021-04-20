@@ -38,7 +38,6 @@ const STEPS_ORDER = {
   [STEPS.SUCCESS]: 4,
 };
 
-
 export default class CreateAccountForm extends Component {
   static propTypes = {
     resetSuccessState: PropTypes.func.isRequired,
@@ -210,6 +209,8 @@ export default class CreateAccountForm extends Component {
         break;
       }
       case STEPS.CONFIRMATION: {
+        this.setState({ step: STEPS.SUCCESS });
+
         const { email, password, pin, confirmPin } = values;
         this.setState({ loading: true });
         const { account, errors } = await createAccount(
@@ -264,7 +265,7 @@ export default class CreateAccountForm extends Component {
       errors,
       form,
     } = formProps;
-    const { serverSignUpLoading } = this.props;
+    const { serverSignUpLoading, signupSuccess } = this.props;
     const {
       step,
       passwordValidation,
@@ -314,14 +315,13 @@ export default class CreateAccountForm extends Component {
             />
           </Wizard.Page>
           <Wizard.Page hideBack hideNext>
-            <Confirmation
-              data={values}
-              errors={errors}
-              loading={loading || serverSignUpLoading}
-            />
+            <Confirmation data={values} errors={errors} />
           </Wizard.Page>
           <Wizard.Page hideBack hideNext>
-            <Success redirect={this.redirectHome} />
+            <Success
+              redirect={this.redirectHome}
+              signupSuccess={signupSuccess}
+            />
           </Wizard.Page>
         </Wizard>
       </form>
@@ -333,7 +333,6 @@ export default class CreateAccountForm extends Component {
       <FormModalWrapper>
         <Form
           mutators={{ setDataMutator }}
-          // initialValues={values}
           validate={this.validate}
           onSubmit={this.handleSubmit}
         >
