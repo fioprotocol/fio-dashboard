@@ -41,6 +41,18 @@ export default combineReducers({
         return state;
     }
   },
+  loginFailure(state = {}, action) {
+    switch (action.type) {
+      case actions.LOGIN_FAILURE: {
+        return action.error;
+      }
+      case actions.LOGIN_SUCCESS:
+      case actions.LOGIN_REQUEST:
+        return {};
+      default:
+        return state;
+    }
+  },
   edgeContextSet(state = false, action) {
     switch (action.type) {
       case actions.EDGE_CONTEXT_INIT_SUCCESS: {

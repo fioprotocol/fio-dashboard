@@ -52,10 +52,10 @@ const AddressForm = props => {
           name="username"
           type="text"
           placeholder="Find the perfect username .."
-          colorschema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
+          colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
           badge={showPrice(prices.usdt.address)}
           component={Input}
-          hideerror="true"
+          hideError="true"
         />
         <OnChange name="username">{onChangeHandleField}</OnChange>
         <OnBlur name="username">{onBlurHandleField}</OnBlur>
@@ -67,11 +67,11 @@ const AddressForm = props => {
             name="domain"
             type="text"
             placeholder="Custom domain"
-            colorschema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
+            colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
             component={Input}
             onClose={toggleCustomDomain}
             badge={showPrice(prices.usdt.domain)}
-            hideerror="true"
+            hideError="true"
           />
         ) : (
           <Field
