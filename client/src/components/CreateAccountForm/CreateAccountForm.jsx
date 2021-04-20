@@ -210,9 +210,7 @@ export default class CreateAccountForm extends Component {
       }
       case STEPS.CONFIRMATION: {
         this.setState({ step: STEPS.SUCCESS });
-        break;
-      }
-      case STEPS.SUCCESS: {
+
         const { email, password, pin, confirmPin } = values;
         this.setState({ loading: true });
         const { account, errors } = await createAccount(
@@ -321,7 +319,6 @@ export default class CreateAccountForm extends Component {
           </Wizard.Page>
           <Wizard.Page hideBack hideNext>
             <Success
-              form={form}
               redirect={this.redirectHome}
               signupSuccess={signupSuccess}
             />

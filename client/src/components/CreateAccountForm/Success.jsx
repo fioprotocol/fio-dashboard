@@ -8,8 +8,6 @@ import logoAnimation from './logo-animation.json';
 export default class Success extends Component {
   t0 = null;
   componentDidMount() {
-    const { form } = this.props;
-    form.submit();
     this.t0 = performance.now();
   }
 
