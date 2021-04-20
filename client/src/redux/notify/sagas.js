@@ -10,7 +10,11 @@ const toString = obj =>
 
 export function* notify() {
   yield takeEvery('*', function(action) {
-    if (action.error && action.type !== (PROFILE_FAILURE && LOGIN_FAILURE))
+    if (
+      action.error &&
+      action.type !== PROFILE_FAILURE &&
+      action.type !== LOGIN_FAILURE
+    )
       notification.error(
         {
           message: action.error.code,
