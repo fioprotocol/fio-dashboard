@@ -1,5 +1,6 @@
 import { takeEvery } from 'redux-saga/effects';
 import { PROFILE_FAILURE } from '../profile/actions';
+import { LOGIN_FAILURE } from '../edge/actions';
 import { notification } from 'antd';
 
 const toString = obj =>
@@ -9,7 +10,11 @@ const toString = obj =>
 
 export function* notify() {
   yield takeEvery('*', function(action) {
-    if (action.error && action.type !== PROFILE_FAILURE)
+    if (
+      action.error &&
+      action.type !== PROFILE_FAILURE &&
+      action.type !== LOGIN_FAILURE
+    )
       notification.error(
         {
           message: action.error.code,
