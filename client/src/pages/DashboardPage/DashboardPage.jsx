@@ -8,8 +8,6 @@ export default class DashboardPage extends Component {
 
   componentDidMount() {
     this.getFioWallet();
-    // todo: create fio wallet if not exist
-    // await account.createCurrencyWallet('wallet:fio')
   }
 
   getFioWallet = async () => {
@@ -19,7 +17,7 @@ export default class DashboardPage extends Component {
       const walletInfo = account.getFirstWalletInfo('wallet:fio');
       const wallet =
         walletInfo == null
-          ? {}
+          ? await account.createCurrencyWallet('wallet:fio')
           : await account.waitForCurrencyWallet(walletInfo.id);
       this.setState({ fioWalletKey: wallet.getDisplayPublicSeed() });
     } catch (e) {

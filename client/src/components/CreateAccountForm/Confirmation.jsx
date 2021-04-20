@@ -11,7 +11,7 @@ export default class Confirmation extends Component {
   constructor() {
     super();
     this.state = {
-      isOpen: true,
+      isOpen: false,
     };
   }
 
@@ -20,7 +20,7 @@ export default class Confirmation extends Component {
   };
 
   render() {
-    const { data, loading } = this.props;
+    const { data } = this.props;
     const { isOpen } = this.state;
 
     return (
@@ -80,9 +80,7 @@ export default class Confirmation extends Component {
           </div>
         </div>
 
-        <Button type="submit" disabled={loading}>
-          CREATE ACCOUNT {loading && <FontAwesomeIcon icon="spinner" spin />}
-        </Button>
+        <Button type="submit">CREATE ACCOUNT</Button>
       </>
     );
   }

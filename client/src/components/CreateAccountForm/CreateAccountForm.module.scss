@@ -3,6 +3,12 @@
 @import '../../assets/styles/forms';
 
 
+:global {
+  #logo-loading {
+    width: 70px;
+    height: 70px;
+  }
+}
 .arrow {
   position: absolute;
   top: 0;
