@@ -38,7 +38,6 @@ const STEPS_ORDER = {
   [STEPS.SUCCESS]: 4,
 };
 
-
 export default class CreateAccountForm extends Component {
   static propTypes = {
     resetSuccessState: PropTypes.func.isRequired,

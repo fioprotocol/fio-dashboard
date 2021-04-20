@@ -15,7 +15,16 @@ const regularInputWrapper = children => (
 );
 
 const Input = props => {
-  const { input, meta, colorschema, onClose, badge, hideerror } = props;
+  const {
+    input,
+    meta,
+    colorSchema,
+    onClose,
+    badge,
+    hideError,
+    loading,
+    ...rest
+  } = props;
   const {
     error,
     data,
@@ -29,7 +38,7 @@ const Input = props => {
     submitSucceeded,
   } = meta;
   const { type, value, name, onChange } = input;
-  const isBW = colorschema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
+  const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
 
   const [showPass, toggleShowPass] = useState(false);
   const [clearInput, toggleClearInput] = useState(value !== '');
@@ -58,11 +67,11 @@ const Input = props => {
             isBW && classes.bw,
           )}
           {...input}
-          {...props}
+          {...rest}
           type={showPass ? 'text' : type}
           data-clear={clearInput}
         />
-        {(clearInput || onClose) && !props.loading && (
+        {(clearInput || onClose) && !loading && (
           <FontAwesomeIcon
             icon="times-circle"
             className={classnames(
@@ -86,7 +95,7 @@ const Input = props => {
             onClick={() => toggleShowPass(!showPass)}
           />
         )}
-        {props.loading && (
+        {loading && (
           <FontAwesomeIcon
             icon={faSpinner}
             spin
@@ -102,7 +111,7 @@ const Input = props => {
           {badge}
         </div>
       </div>
-      {!hideerror && (
+      {!hideError && !data.hideError && (
         <div
           className={classnames(
             classes.errorMessage,

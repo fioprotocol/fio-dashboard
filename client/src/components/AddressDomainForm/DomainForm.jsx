@@ -23,10 +23,10 @@ const DomainForm = props => {
         name="domain"
         type="text"
         placeholder="Domain name"
-        colorschema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
+        colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
         component={Input}
         badge={showPrice(prices.usdt.domain)}
-        hideerror="true"
+        hideError="true"
       />
       <OnChange name="domain">{onChangeHandleField}</OnChange>
       <OnBlur name="domain">{onBlurHandleField}</OnBlur>
