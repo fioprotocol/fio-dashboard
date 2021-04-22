@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import exact from 'prop-types-exact';
 import MainHeader from '../../components/MainHeader';
 import Notifications from '../../components/Notifications';
-import Sidebar from '../../components/Sidebar/Sidebar';
+import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import LoginForm from '../../components/LoginForm';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
@@ -56,7 +56,7 @@ export default class MainLayout extends Component {
     return (
       <div className={classes.root}>
         <MainHeader />
-        {account && <Sidebar />}
+        {account && <Navigation />}
         <Notifications />
         <div className={`${classes.content} ${isHomePage && classes.home}`}>
           {children}

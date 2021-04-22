@@ -6,7 +6,7 @@ import { Nav } from 'react-bootstrap';
 
 import { ROUTES } from '../../constants/routes';
 import { LINK_LABELS } from '../../constants/labels';
-import classes from './Sidebar.module.scss';
+import classes from './Navigation.module.scss';
 
 const navItems = [
   'FIO_ADDRESSES',
@@ -16,7 +16,7 @@ const navItems = [
   'GOVERNANCE',
   'PROTOCOL_UPDATES',
 ];
-export default class Sidebar extends Component {
+export default class Navigation extends Component {
   static propTypes = exact({
     account: PropTypes.object,
   });

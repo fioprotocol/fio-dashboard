@@ -1,20 +1,18 @@
 @import "../../assets/styles/colors";
+@import "../../assets/styles/mediaQueriesMixings.scss";
 
 .header {
   display: flex;
   justify-content: space-between;
   background: $main-background;
   box-shadow: 0 0 20px 8px rgba(0,0,0,0.2);
-  padding: 5px 3%;
+  padding: 5px 25px;
   min-height: 80px;
 
-  &.home {
-    background-color: transparent;
-    z-index: 4;
-
-    .menu {
-      border-bottom: none;
-    }
+  &.isOpen {
+    position: sticky;
+    top: 0;
+    z-index: 1002;
   }
 
   .logo {
@@ -24,6 +22,37 @@
     background-size: 100%;
     background-repeat: no-repeat;
     background-position: left;
+  }
+
+  .regularNavContainer {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: space-between;
+    justify-content: space-between;
+    margin-left: 2rem;
+
+    .actionContainer {
+      display: flex;
+
+      &.isOpen {
+        flex-direction: column;
+
+        a {
+          padding: 0;
+          margin-top: 25px;
+          .button {
+            width: 100%;
+            margin-right: 0 !important;
+            height: 40px;
+          }
+        }
+
+        a:nth-child(1) {
+          margin-top: 0;
+        }
+      }
+    }
   }
 
   .link, .navItem {
@@ -52,6 +81,9 @@
 
     .notifWrapper {
       position: relative;
+      align-items: center;
+      position: relative;
+      display: flex;
 
       .notifActiveWrapper {
         position: absolute;
@@ -113,6 +145,85 @@
   background-color: #4D4D4D;
 }
 
+.menuIcon {
+  width: 24px;
+  height: 20px;
+  position: relative;
+  transform: rotate(0deg);
+  transition: .5s ease-in-out;
+  cursor: pointer;
+
+  & span {
+    display: block;
+    position: absolute;
+    height: 1px;
+    width: 50%;
+    background: $white;
+    opacity: 1;
+    transform: rotate(0deg);
+    transition: .25s ease-in-out;
+  }
+  & span:nth-child(even) {
+    left: 50%;
+    border-radius: 0 0.5px 0.5px 0;
+  }
+
+  & span:nth-child(odd) {
+    left:0px;
+    border-radius: 0.5px 0 0 0.5px;
+  }
+
+  & span:nth-child(1), & span:nth-child(2) {
+    top: 0px;
+  }
+
+  & span:nth-child(3), & span:nth-child(4) {
+    top: 9px;
+  }
+
+  & span:nth-child(5), & span:nth-child(6) {
+    top: 19px;
+  }
+
+  &.isOpen span:nth-child(1),&.isOpen span:nth-child(6) {
+    transform: rotate(45deg);
+  }
+
+  &.isOpen span:nth-child(2),&.isOpen span:nth-child(5) {
+    transform: rotate(-45deg);
+  }
+
+  &.isOpen span:nth-child(1) {
+    left: 2px;
+    top: 4px;
+  }
+
+  &.isOpen span:nth-child(2) {
+    left: calc(50% - 2px);
+    top: 4px;
+  }
+
+  &.isOpen span:nth-child(3) {
+    left: -50%;
+    opacity: 0;
+  }
+
+  &.isOpen span:nth-child(4) {
+    left: 100%;
+    opacity: 0;
+  }
+
+  &.isOpen span:nth-child(5) {
+    left: 2px;
+    top: 12px;
+  }
+
+  &.isOpen span:nth-child(6) {
+    left: calc(50% - 2px);
+    top: 12px;
+  }
+}
+
 @keyframes bellshake {
   0% { transform: rotate(0); }
   15% { transform: rotate(5deg); }
@@ -130,45 +241,12 @@
   100% { transform: scale(1.1);; }
 }
 
-.menu {
-  display: flex;
-  align-items: center;
-  line-height: 64px;
-  min-height: 64px;
-  background: transparent;
-  overflow: hidden;
-}
+@include lg {
+  .header {
+    padding: 5px 3.75rem;
 
-:global {
-  .ant-menu-dark.ant-menu-horizontal > .ant-menu-item {
-    text-transform: uppercase;
-    font-size: 16px;
-    padding: 0;
-    margin: 0 20px;
-
-    a {
-      line-height: 2;
-      color: $white;
-    }
-
-    &.ant-menu-item-selected {
-      background-color: transparent;
-      border-bottom: 1px solid $picton-blue;
-    }
-
-    &:hover {
-      border-bottom: 1px solid $picton-blue;
-      box-sizing: border-box;
-    }
-
-    @media only screen and (max-width: 1280px) {
-      margin: 0 10px;
-      font-size: 12px;
-
-      .ant-btn-danger span {
-        display: none;
-      }
+    .regularNavContainer {
+      margin-left: 5rem;
     }
   }
-}
-
+} 

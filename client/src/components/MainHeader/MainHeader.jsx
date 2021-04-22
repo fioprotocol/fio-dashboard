@@ -1,36 +1,47 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import exact from 'prop-types-exact';
 import { Link } from 'react-router-dom';
 import { Button, Navbar, Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import { currentScreenType } from '../../screenType';
+import { SCREEN_TYPE } from '../../constants/screen';
+import Menu from '../Menu';
 
 import { ROUTES } from '../../constants/routes';
 import classes from './MainHeader.module.scss';
 
-export default class MainHeader extends Component {
-  showLogin = () => {
-    const { showLoginModal } = this.props;
+const MainHeader = props => {
+  const {
+    showLoginModal,
+    logout: logoutFn,
+    account,
+    loading,
+    notifications,
+  } = props;
+  const [isMenuOpen, toggleMenuOpen] = useState(false);
+
+  const isDesktop = () => {
+    const { screenType } = currentScreenType();
+    return screenType === SCREEN_TYPE.DESKTOP;
+  };
+
+  const closeMenu = () => {
+    toggleMenuOpen(false);
+  };
+
+  const showLogin = () => {
+    closeMenu();
     showLoginModal();
   };
 
-  static propTypes = exact({
-    account: PropTypes.object,
-    pathname: PropTypes.string.isRequired,
-    user: PropTypes.object,
-    edgeContextSet: PropTypes.bool,
-    loading: PropTypes.bool,
-    logout: PropTypes.func.isRequired,
-    showLoginModal: PropTypes.func.isRequired,
-    notifications: PropTypes.arrayOf(PropTypes.object),
-  });
+  const logout = () => {
+    closeMenu();
+    logoutFn(account);
+  };
 
-  logout = () => this.props.logout(this.props.account);
-
-  renderLoggedMenu = () => {
-    const { loading, notifications } = this.props;
-
+  const renderLoggedMenu = () => {
     return (
       <Nav className="pr-0 align-items-center">
         <Nav.Link className={classnames(classes.navItem, 'text-white')}>
@@ -79,7 +90,7 @@ export default class MainHeader extends Component {
               </div>
             )}
           </div>
-          <div className="ml-3">Notifications</div>
+          {isDesktop() && <div className="ml-3">Notifications</div>}
         </Nav.Link>
         <hr className={classnames(classes.vertical, 'mx-3')} />
         <Nav.Link
@@ -92,12 +103,12 @@ export default class MainHeader extends Component {
               className={classnames(classes.settingsIcon)}
             />
           </div>
-          <div className="ml-3">Settings</div>
+          {isDesktop() && <div className="ml-3">Settings</div>}
         </Nav.Link>
         <Nav.Link href="#" className="pr-0">
           <Button
             className={classnames(classes.button, 'ml-4')}
-            onClick={this.logout}
+            onClick={logout}
             size="lg"
             disabled={loading}
           >
@@ -108,10 +119,41 @@ export default class MainHeader extends Component {
     );
   };
 
-  renderRegularNav = () => {
-    const { loading } = this.props;
+  const renderActionButtons = () => {
     return (
-      <div className="ml-5 d-flex flex-row w-100 justify-content-between">
+      <div
+        className={classnames(
+          classes.actionContainer,
+          isMenuOpen && classes.isOpen,
+        )}
+      >
+        <Nav.Link as={Link} to={ROUTES.CREATE_ACCOUNT}>
+          <Button
+            variant="outline-primary"
+            className={classnames(classes.button, 'text-white', 'mr-3')}
+            size="lg"
+            onClick={closeMenu}
+          >
+            Create Account
+          </Button>
+        </Nav.Link>
+        <Nav.Link className="pr-0">
+          <Button
+            className={classes.button}
+            size="lg"
+            onClick={showLogin}
+            disabled={loading}
+          >
+            Sign In {loading && <FontAwesomeIcon icon="spinner" spin />}
+          </Button>
+        </Nav.Link>
+      </div>
+    );
+  };
+
+  const renderRegularNav = () => {
+    return (
+      <div className={classes.regularNavContainer}>
         <div className={classes.link}>
           <a
             href="https://fioprotocol.io/"
@@ -127,68 +169,78 @@ export default class MainHeader extends Component {
           </a>
         </div>
         <Navbar className="pr-0">
-          <Navbar.Collapse>
-            <Nav className="mr-auto">
-              <Nav.Link className={classnames(classes.navItem, 'text-white')}>
+          <Nav className="mr-auto align-items-center">
+            <Nav.Link className={classnames(classes.navItem, 'text-white')}>
+              <div
+                className={classnames(classes.notifWrapper, classes.cartanim)}
+              >
+                <FontAwesomeIcon
+                  icon="shopping-cart"
+                  className={classnames(classes.icon, 'mr-4')}
+                />
                 <div
-                  className={classnames(classes.notifWrapper, classes.cartanim)}
+                  className={classnames(
+                    classes.notifActiveWrapper,
+                    classes.notifActiveWrapperRight,
+                  )}
                 >
                   <FontAwesomeIcon
-                    icon="shopping-cart"
-                    className={classnames(classes.icon, 'mr-4')}
-                  />
-                  <div
+                    icon="circle"
                     className={classnames(
-                      classes.notifActiveWrapper,
-                      classes.notifActiveWrapperRight,
+                      classes.notifActive,
+                      'text-success',
+                      'mr-2',
                     )}
-                  >
-                    <FontAwesomeIcon
-                      icon="circle"
-                      className={classnames(
-                        classes.notifActive,
-                        'text-success',
-                        'mr-2',
-                      )}
-                    />
-                  </div>
+                  />
                 </div>
-              </Nav.Link>
-              <Nav.Link as={Link} to={ROUTES.CREATE_ACCOUNT}>
-                <Button
-                  variant="outline-primary"
-                  className={classnames(classes.button, 'text-white', 'mr-3')}
-                  size="lg"
+              </div>
+            </Nav.Link>
+            {isDesktop() ? (
+              renderActionButtons()
+            ) : (
+              <>
+                <div
+                  className={classnames(
+                    classes.menuIcon,
+                    isMenuOpen && classes.isOpen,
+                  )}
+                  onClick={() => toggleMenuOpen(!isMenuOpen)}
                 >
-                  Create account
-                </Button>
-              </Nav.Link>
-              <Nav.Link className="pr-0">
-                <Button
-                  className={classes.button}
-                  size="lg"
-                  onClick={this.showLogin}
-                  disabled={loading}
-                >
-                  Sign in {loading && <FontAwesomeIcon icon="spinner" spin />}
-                </Button>
-              </Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <Menu isOpen={isMenuOpen}>{renderActionButtons()}</Menu>
+              </>
+            )}
+          </Nav>
         </Navbar>
       </div>
     );
   };
 
-  render() {
-    const { account } = this.props;
-    return (
-      <div className={`${classes.header}`}>
-        <Link to="/" className="mr-5">
-          <div className={classes.logo} />
-        </Link>
-        {account ? this.renderLoggedMenu() : this.renderRegularNav()}
-      </div>
-    );
-  }
-}
+  return (
+    <div className={classnames(classes.header, isMenuOpen && classes.isOpen)}>
+      <Link to="/">
+        <div className={classes.logo} onClick={closeMenu} />
+      </Link>
+      {account ? renderLoggedMenu() : renderRegularNav()}
+    </div>
+  );
+};
+
+MainHeader.propTypes = exact({
+  account: PropTypes.object,
+  pathname: PropTypes.string.isRequired,
+  user: PropTypes.object,
+  edgeContextSet: PropTypes.bool,
+  loading: PropTypes.bool,
+  logout: PropTypes.func.isRequired,
+  showLoginModal: PropTypes.func.isRequired,
+  notifications: PropTypes.arrayOf(PropTypes.object),
+});
+
+export default MainHeader;
