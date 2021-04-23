@@ -1,5 +1,5 @@
 import React from 'react';
-import { Field, FormSpy, useForm } from 'react-final-form';
+import { Field, FormSpy } from 'react-final-form';
 import classnames from 'classnames';
 
 import CustomDropdown from './CustomDropdown';
@@ -19,23 +19,12 @@ const AddressForm = props => {
     domain,
     updateFormState,
     showPrice,
-    handleChange,
-    toggleAvailable,
+    onChangeHandleField,
+    onBlurHandleField,
   } = props;
 
   const updateFormStateCurrent = (form, state) => {
     updateFormState(form, state);
-  };
-
-  const formProps = useForm();
-
-  const onChangeHandleField = () => {
-    toggleAvailable(false);
-    handleChange(formProps);
-  };
-
-  const onBlurHandleField = () => {
-    handleChange(formProps);
   };
 
   return (
@@ -58,7 +47,7 @@ const AddressForm = props => {
           hideError="true"
         />
         <OnChange name="username">{onChangeHandleField}</OnChange>
-        <OnBlur name="username">{onBlurHandleField}</OnBlur>
+        <OnBlur name="username">{() => onBlurHandleField('username')}</OnBlur>
       </div>
       <div className={classnames(classes.at, 'boldText')}>@</div>
       <div className={classes.domainContainer}>
@@ -83,7 +72,7 @@ const AddressForm = props => {
           />
         )}
         <OnChange name="domain">{onChangeHandleField}</OnChange>
-        <OnBlur name="username">{onBlurHandleField}</OnBlur>
+        <OnBlur name="domain">{() => onBlurHandleField('domain')}</OnBlur>
       </div>
     </>
   );
