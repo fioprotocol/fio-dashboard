@@ -35,5 +35,18 @@
     width: 100%;
     top: 100%;
     transform: translateY(-100%) !important;
+    animation: slide-up 0.4s ease-in-out;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    top: 200%;
+    transform: translateY(0) !important; 
+  }
+
+  to {
+    top: 100%;
+    transform: translateY(-100%) !important;
   }
 }
