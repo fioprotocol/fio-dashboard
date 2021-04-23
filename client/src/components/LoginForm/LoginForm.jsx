@@ -26,7 +26,6 @@ const LoginForm = props => {
     loginFailure,
   } = props;
   const [isForgotPass, toggleForgotPass] = useState(false);
-
   let currentForm = {};
   useEffect(getCachedUsers, []);
   useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import exact from 'prop-types-exact';
 import MainHeader from '../../components/MainHeader';
@@ -7,64 +7,63 @@ import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import LoginForm from '../../components/LoginForm';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
+import { currentScreenType } from '../../screenType';
+import { SCREEN_TYPE } from '../../constants/screen';
 
 import classes from './MainLayout.module.scss';
 
-export default class MainLayout extends Component {
-  static propTypes = exact({
-    children: PropTypes.element,
-    pathname: PropTypes.string.isRequired,
-    user: PropTypes.object,
-    account: PropTypes.object,
-    loginSuccess: PropTypes.bool,
-    showLogin: PropTypes.bool,
-    showRecovery: PropTypes.bool,
-    edgeContextSet: PropTypes.bool,
+const MainLayout = props => {
+  const {
+    account,
+    pathname,
+    children,
+    edgeContextSet,
+    showLogin,
+    showRecovery,
+    init,
+  } = props;
 
-    init: PropTypes.func.isRequired,
-    logout: PropTypes.func.isRequired,
-    showRecoveryModal: PropTypes.func.isRequired,
-  });
+  const { screenType } = currentScreenType();
+  const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
 
-  componentDidMount() {
-    this.props.init();
-  }
+  useEffect(() => {
+    init();
+  }, []);
 
-  loginFormModalRender = () => {
-    const { showLogin } = this.props;
+  const loginFormModalRender = () => showLogin && <LoginForm />;
+  const recoveryFormModalRender = () =>
+    showRecovery && account && <PasswordRecoveryForm />;
 
-    return showLogin && <LoginForm />;
-  };
+  const isHomePage = pathname === '/';
 
-  recoveryFormModalRender = () => {
-    const { showRecovery, account } = this.props;
-
-    return showRecovery && account && <PasswordRecoveryForm />;
-  };
-
-  render() {
-    const {
-      account,
-      pathname,
-      children,
-      edgeContextSet,
-      showLogin,
-      showRecovery,
-    } = this.props;
-    const isHomePage = pathname === '/';
-
-    return (
-      <div className={classes.root}>
-        <MainHeader />
-        {account && <Navigation />}
-        <Notifications />
-        <div className={`${classes.content} ${isHomePage && classes.home}`}>
-          {children}
-        </div>
-        <Footer />
-        {showLogin && edgeContextSet && this.loginFormModalRender()}
-        {showRecovery && edgeContextSet && this.recoveryFormModalRender()}
+  return (
+    <div className={classes.root}>
+      <MainHeader />
+      {account && isDesktop && <Navigation />}
+      <Notifications />
+      <div className={`${classes.content} ${isHomePage && classes.home}`}>
+        {children}
       </div>
-    );
-  }
-}
+      <Footer />
+      {showLogin && edgeContextSet && loginFormModalRender()}
+      {showRecovery && edgeContextSet && recoveryFormModalRender()}
+    </div>
+  );
+};
+
+MainLayout.propTypes = exact({
+  children: PropTypes.element,
+  pathname: PropTypes.string.isRequired,
+  user: PropTypes.object,
+  account: PropTypes.object,
+  loginSuccess: PropTypes.bool,
+  showLogin: PropTypes.bool,
+  showRecovery: PropTypes.bool,
+  edgeContextSet: PropTypes.bool,
+
+  init: PropTypes.func.isRequired,
+  logout: PropTypes.func.isRequired,
+  showRecoveryModal: PropTypes.func.isRequired,
+});
+
+export default MainLayout;

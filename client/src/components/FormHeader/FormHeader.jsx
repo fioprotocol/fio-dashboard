@@ -9,7 +9,7 @@ const FormHeader = props => {
   return (
     <div
       className={classnames(
-        !subtitle && 'mb-4',
+        !subtitle && 'mb-4' && 'mt-4',
         'd-flex flex-column text-white align-items-center justify-center',
       )}
     >

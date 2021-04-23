@@ -8,6 +8,7 @@ import classnames from 'classnames';
 import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
 import Menu from '../Menu';
+import Navigation from '../Navigation/Navigation';
 
 import { ROUTES } from '../../constants/routes';
 import classes from './MainHeader.module.scss';
@@ -22,10 +23,8 @@ const MainHeader = props => {
   } = props;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
 
-  const isDesktop = () => {
-    const { screenType } = currentScreenType();
-    return screenType === SCREEN_TYPE.DESKTOP;
-  };
+  const { screenType } = currentScreenType();
+  const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
 
   const closeMenu = () => {
     toggleMenuOpen(false);
@@ -41,10 +40,71 @@ const MainHeader = props => {
     logoutFn(account);
   };
 
+  const renderSideMenu = children => {
+    return (
+      <>
+        <div
+          className={classnames(classes.menuIcon, isMenuOpen && classes.isOpen)}
+          onClick={() => toggleMenuOpen(!isMenuOpen)}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <Menu isOpen={isMenuOpen}>{children}</Menu>
+      </>
+    );
+  };
+
+  const renderLoggedActionButtons = () => {
+    return (
+      <div
+        className={classnames(
+          classes.loggedActionButtons,
+          isMenuOpen && classes.isOpen,
+        )}
+      >
+        {isMenuOpen && (
+          <Navigation isOnSide={isMenuOpen} closeMenu={closeMenu} />
+        )}
+        {isMenuOpen && <hr className={classes.horizontal} />}
+        <Nav.Link
+          href="#"
+          className={classnames(classes.navItem, 'text-white')}
+          onClick={closeMenu}
+        >
+          <div className={classnames(classes.settings)}>
+            <FontAwesomeIcon
+              icon="cog"
+              className={classnames(classes.settingsIcon)}
+            />
+          </div>
+          <div className="ml-3">Settings</div>
+        </Nav.Link>
+        <Nav.Link href="#" className="pr-0">
+          <Button
+            className={classnames(classes.button, !isMenuOpen && 'ml-4')}
+            onClick={logout}
+            size="lg"
+            disabled={loading}
+          >
+            Sign Out {loading && <FontAwesomeIcon icon="spinner" spin />}
+          </Button>
+        </Nav.Link>
+      </div>
+    );
+  };
+
   const renderLoggedMenu = () => {
     return (
       <Nav className="pr-0 align-items-center">
-        <Nav.Link className={classnames(classes.navItem, 'text-white')}>
+        <Nav.Link
+          className={classnames(classes.navItem, 'text-white')}
+          onClick={closeMenu}
+        >
           <div className={classnames(classes.notifWrapper, classes.cartanim)}>
             <FontAwesomeIcon
               icon="shopping-cart"
@@ -67,6 +127,7 @@ const MainHeader = props => {
         <Nav.Link
           href="#"
           className={classnames(classes.navItem, 'text-white')}
+          onClick={closeMenu}
         >
           <div className={classnames(classes.notifWrapper, classes.bellshake)}>
             <FontAwesomeIcon
@@ -90,31 +151,16 @@ const MainHeader = props => {
               </div>
             )}
           </div>
-          {isDesktop() && <div className="ml-3">Notifications</div>}
+          {isDesktop && <div className="ml-3">Notifications</div>}
         </Nav.Link>
-        <hr className={classnames(classes.vertical, 'mx-3')} />
-        <Nav.Link
-          href="#"
-          className={classnames(classes.navItem, 'text-white')}
-        >
-          <div className={classnames(classes.settings)}>
-            <FontAwesomeIcon
-              icon="cog"
-              className={classnames(classes.settingsIcon)}
-            />
-          </div>
-          {isDesktop() && <div className="ml-3">Settings</div>}
-        </Nav.Link>
-        <Nav.Link href="#" className="pr-0">
-          <Button
-            className={classnames(classes.button, 'ml-4')}
-            onClick={logout}
-            size="lg"
-            disabled={loading}
-          >
-            Sign Out {loading && <FontAwesomeIcon icon="spinner" spin />}
-          </Button>
-        </Nav.Link>
+        {isDesktop ? (
+          <hr className={classnames(classes.vertical, 'mx-3')} />
+        ) : (
+          <div className="mx-3" />
+        )}
+        {isDesktop
+          ? renderLoggedActionButtons()
+          : renderSideMenu(renderLoggedActionButtons())}
       </Nav>
     );
   };
@@ -195,27 +241,9 @@ const MainHeader = props => {
                 </div>
               </div>
             </Nav.Link>
-            {isDesktop() ? (
-              renderActionButtons()
-            ) : (
-              <>
-                <div
-                  className={classnames(
-                    classes.menuIcon,
-                    isMenuOpen && classes.isOpen,
-                  )}
-                  onClick={() => toggleMenuOpen(!isMenuOpen)}
-                >
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-                <Menu isOpen={isMenuOpen}>{renderActionButtons()}</Menu>
-              </>
-            )}
+            {isDesktop
+              ? renderActionButtons()
+              : renderSideMenu(renderActionButtons())}
           </Nav>
         </Navbar>
       </div>

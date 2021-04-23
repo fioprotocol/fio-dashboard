@@ -145,6 +145,31 @@
   background-color: #4D4D4D;
 }
 
+.horizontal {
+  width: 100%;
+  background-color: $mine-shaft;
+  margin-top: 35px;
+  margin-bottom: 0;
+}
+
+.loggedActionButtons {
+  display: flex;
+  flex-direction: row;
+
+  &.isOpen {
+    flex-direction: column;
+     a {
+      padding: 0;
+      margin-top: 35px;
+      .button {
+        width: 100%;
+        margin-right: 0 !important;
+        height: 40px;
+      }
+    }
+  }
+}
+
 .menuIcon {
   width: 24px;
   height: 20px;

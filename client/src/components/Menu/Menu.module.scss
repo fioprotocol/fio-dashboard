@@ -23,6 +23,7 @@
   .menu {
     position: fixed;
     width: 76%;
+    max-width: 350px;
     float: right;
     height: 100vh;
     background-color: $cod-gray;

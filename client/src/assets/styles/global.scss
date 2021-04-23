@@ -45,11 +45,11 @@ a {
 }
 
 .active {
-  font-weight: 600;
+  @include proxima-nova-bold;
 }
 
 .boldText {
-  @include proxima-nova-bold
+  @include proxima-nova-bold;
 }
 
 // custom modal styles

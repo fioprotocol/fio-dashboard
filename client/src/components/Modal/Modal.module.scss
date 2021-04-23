@@ -1,4 +1,5 @@
-@import '../../assets/styles/colors.scss'; 
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
 
 .modal {
   width: 100%;
@@ -19,4 +20,20 @@
 .dialog {
   margin-top: 160px;
   width: 375px;
+}
+
+@include sm {
+  .modal {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    min-width: 100%;
+    padding-bottom: 80px;
+    border: none;
+  }
+  .dialog {
+    margin: 0;
+    width: 100%;
+    top: 100%;
+    transform: translateY(-100%) !important;
+  }
 }

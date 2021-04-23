@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import NotificationBadge from '../NotificationBadge';
+import classes from './Notifications.module.scss';
 
 const RELOAD_TIME = 3000;
 export const ACTIONS = {
@@ -74,13 +75,15 @@ export default class Notifications extends Component {
     if (last.closeDate) return null;
 
     return (
-      <NotificationBadge
-        onClose={this.onBadgeClose}
-        arrowAction={this.arrowAction()}
-        type={last.type}
-        title={last.title}
-        message={last.message}
-      />
+      <div className={classes.container}>
+        <NotificationBadge
+          onClose={this.onBadgeClose}
+          arrowAction={this.arrowAction()}
+          type={last.type}
+          title={last.title}
+          message={last.message}
+        />
+      </div>
     );
   }
 }
