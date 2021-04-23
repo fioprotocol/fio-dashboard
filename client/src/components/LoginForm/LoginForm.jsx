@@ -29,7 +29,7 @@ const LoginForm = props => {
   let currentForm = {};
   useEffect(getCachedUsers, []);
   useEffect(() => {
-    if (!isEmpty(currentForm)) {
+    if (!isEmpty(currentForm) && !isEmpty(loginFailure)) {
       const { mutators } = currentForm;
 
       mutators.setDataMutator('password', {
