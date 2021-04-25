@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
+import { isEmpty } from 'lodash';
+
 import { ROUTES } from '../../constants/routes';
 import Card from '../Card/Card';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../../components/AddressDomainBadge/AddressDomainBadge';
@@ -34,7 +36,15 @@ const FormContainer = props => {
     isValidating,
     toggleAvailable,
     handleChange,
+    formState,
   } = props;
+
+  useEffect(() => {
+    if (!isHomepage && isAddress && !isEmpty(formState)) {
+      const { handleSubmit } = formProps || {};
+      handleSubmit();
+    }
+  }, []);
 
   const renderFormBody = () => {
     const { handleSubmit, form } = formProps;
