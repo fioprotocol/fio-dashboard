@@ -115,6 +115,7 @@ const AddressDomainForm = props => {
         handleChange={handleChange}
         toggleAvailable={toggleAvailable}
         isValidating={isValidating}
+        formState={formState}
       />,
       !isHomepage && (
         <Notifications
