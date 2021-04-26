@@ -105,7 +105,7 @@ const Input = props => {
         <div
           className={classnames(
             classes.badge,
-            badge && (dirty || initial) && classes.showBadge,
+            badge && !hasError && (dirty || initial) && classes.showBadge,
           )}
         >
           {badge}
