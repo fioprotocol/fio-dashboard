@@ -105,7 +105,7 @@ const Input = props => {
         <div
           className={classnames(
             classes.badge,
-            badge && (dirty || initial) && classes.showBadge,
+            badge && !hasError && (dirty || initial) && classes.showBadge,
           )}
         >
           {badge}
@@ -149,7 +149,7 @@ const Input = props => {
               !hasError && form.submit();
             }}
             regexCriteria={/^[0-9]*$/}
-            {...props}
+            {...rest}
             {...input}
           />
         </div>

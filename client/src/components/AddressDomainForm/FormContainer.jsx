@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
+import { isEmpty } from 'lodash';
+
 import { ROUTES } from '../../constants/routes';
 import Card from '../Card/Card';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../../components/AddressDomainBadge/AddressDomainBadge';
@@ -26,19 +28,53 @@ const FORM_TYPES = {
 };
 
 const FormContainer = props => {
-  const { isHomepage, formProps, type, isAddress, isValidating } = props;
+  const {
+    isHomepage,
+    formProps,
+    type,
+    isAddress,
+    isValidating,
+    toggleAvailable,
+    handleChange,
+    formState,
+  } = props;
+
+  useEffect(() => {
+    if (!isHomepage && isAddress && !isEmpty(formState)) {
+      const { handleSubmit } = formProps || {};
+      handleSubmit();
+    }
+  }, []);
 
   const renderFormBody = () => {
-    const { handleSubmit } = formProps;
+    const { handleSubmit, form } = formProps;
+
+    const onChangeHandleField = () => {
+      toggleAvailable(false);
+      handleChange(form);
+    };
+
+    const onBlurHandleField = name => {
+      const fieldState = form.getFieldState(name);
+      const { change, value } = fieldState || {};
+      fieldState && change(value.toLowerCase());
+      handleChange(form);
+    };
+
+    const propsToForm = {
+      ...props,
+      onChangeHandleField,
+      onBlurHandleField,
+    };
 
     return (
       <form onSubmit={handleSubmit} className={classes.form} key="form">
         {isHomepage ? (
-          <AddressForm {...props} formName={FORM_NAMES.ADDRESS} />
+          <AddressForm {...propsToForm} formName={FORM_NAMES.ADDRESS} />
         ) : isAddress ? (
-          <AddressForm {...props} />
+          <AddressForm {...propsToForm} />
         ) : (
-          <DomainForm {...props} />
+          <DomainForm {...propsToForm} />
         )}
         {isHomepage ? (
           <Link to={ROUTES.FIO_ADDRESSES} className={classes.link}>

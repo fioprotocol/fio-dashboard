@@ -49,13 +49,7 @@ export default class Confirmation extends Component {
               className={classes.icon}
             />
           </div>
-          <div
-            className={classnames(
-              classes.badge,
-              isOpen && classes.open,
-              classes.roll,
-            )}
-          >
+          <div className={classnames(classes.badge, isOpen && classes.roll)}>
             <Row className="mx-3 pt-3">
               <Col xs={1}>
                 <FontAwesomeIcon icon="user-circle" className={classes.icon} />

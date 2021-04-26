@@ -2,12 +2,24 @@
 
 .sideWrapper {
   background-color: $milk;
-  height: 50px;
+  min-height: 50px;
   justify-content: center;
   align-items: center;
 
+  &.isOnSide {
+    background-color: transparent;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .sideItem {
     font-size: 14px;
+
+    &.isOnSide:nth-child(1) {
+      a {
+        margin-top: 0;
+      }
+    }
     
     .sideLink {
       color: $blue;

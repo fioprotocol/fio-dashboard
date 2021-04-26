@@ -64,14 +64,16 @@ export const addressValidation = async props => {
     errors.username = 'Username Field Should Be Filled';
   }
   if (username && !ADDRESS_REGEXP.test(username)) {
-    errors.username = 'Username only allows letters, numbers and dash';
+    errors.username =
+      'Username only allows letters, numbers and dash in the middle';
   }
 
   if (!domain) {
     errors.domain = 'Select Domain Please';
   }
   if (!ADDRESS_REGEXP.test(domain)) {
-    errors.domain = 'Domain name only allows letters, numbers and dash';
+    errors.domain =
+      'Domain name only allows letters, numbers and dash in the middle';
   }
   if (domain && domain.length > 62) {
     errors.username = 'Domain name should be less than 62 characters';
@@ -110,7 +112,8 @@ export const domainValidation = props => {
     errors.domain = 'Select Domain Please';
   }
   if (!ADDRESS_REGEXP.test(domain)) {
-    errors.domain = 'Domain name only allows letters, numbers and dash';
+    errors.domain =
+      'Domain name only allows letters, numbers and dash in the middle';
   }
   if (domain && domain.length > 62) {
     errors.domain = 'Domain name should be less than 62 characters';

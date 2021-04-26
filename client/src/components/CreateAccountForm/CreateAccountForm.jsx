@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Form } from 'react-final-form';
 import { Link } from 'react-router-dom';
+import classnames from 'classnames';
 
 import Wizard from './CreateAccountFormWizard';
 import FormModalWrapper from '../FormModalWrapper/FormModalWrapper';
@@ -276,7 +277,13 @@ export default class CreateAccountForm extends Component {
     this.form = form;
 
     return (
-      <form onSubmit={handleSubmit} className={classes.form}>
+      <form
+        onSubmit={handleSubmit}
+        className={classnames(
+          classes.form,
+          step === STEPS.SUCCESS && classes.formSuccess,
+        )}
+      >
         <Wizard
           activePage={STEPS_ORDER[step]}
           actionDisabled={

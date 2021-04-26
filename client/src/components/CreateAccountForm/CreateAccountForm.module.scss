@@ -116,16 +116,17 @@
   border-radius: 14px;
   background-color: #001A30;
   width: 100%;
-  margin-bottom: 30px;
-
-  &.roll {
-    max-height: 0;
-    transition: max-height 0.2s ease-out;
-    margin-bottom: 0;
-  }
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
 
   &.open {
+    max-height: 142px;
+    margin-bottom: 30px;
+  }
+  &.roll {
     max-height: 110px;
+    margin-bottom: 0;
   }
 
   .icon {
@@ -157,4 +158,9 @@
   background-size: 271% 100%;
   background-repeat: no-repeat;
   background-position: left;
+}
+
+.formSuccess {
+  align-self: center;
+  margin-top: -40px;
 }

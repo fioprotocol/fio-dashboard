@@ -26,11 +26,10 @@ const LoginForm = props => {
     loginFailure,
   } = props;
   const [isForgotPass, toggleForgotPass] = useState(false);
-
   let currentForm = {};
   useEffect(getCachedUsers, []);
   useEffect(() => {
-    if (!isEmpty(currentForm)) {
+    if (!isEmpty(currentForm) && !isEmpty(loginFailure)) {
       const { mutators } = currentForm;
 
       mutators.setDataMutator('password', {

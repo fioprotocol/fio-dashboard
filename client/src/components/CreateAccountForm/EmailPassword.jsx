@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Field } from 'react-final-form';
 import classnames from 'classnames';
 import validator from 'email-validator';
+import { OnFocus } from 'react-final-form-listeners';
 
 import FormHeader from '../FormHeader/FormHeader';
 import Input from '../Input/Input';
@@ -86,14 +87,24 @@ export default class EmailPassword extends Component {
       },
       usernameAvailableLoading: props.usernameAvailableLoading,
       usernameError: null,
+      showValidationRules: false,
     };
   }
 
+  handleFocus = () => {
+    this.setState({ showValidationRules: true });
+  };
+
   renderPassValidBadge = () => {
     const { passwordValidation } = this.props;
-
+    const { showValidationRules } = this.state;
     return (
-      <div className={classnames(classes.badge)}>
+      <div
+        className={classnames(
+          classes.badge,
+          showValidationRules && classes.open,
+        )}
+      >
         {Object.keys(passwordValidation).map(key => (
           <div
             key={VALIDATION_TITLES[key]}
@@ -142,6 +153,7 @@ export default class EmailPassword extends Component {
           placeholder="Choose a Password"
           disabled={loading}
         />
+        <OnFocus name="password">{this.handleFocus}</OnFocus>
         <Field
           name="confirmPassword"
           component={Input}

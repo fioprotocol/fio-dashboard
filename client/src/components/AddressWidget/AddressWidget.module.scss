@@ -6,12 +6,11 @@
   background: $footer-background;
   color: white;
   text-align: center;
-  padding: 9% 0 0% 0;
+  padding: 9% 25px 0;
 
   .title {
     color: white;
     font-size: 4rem;
-    margin: 0 5%;
   }
 
   .coloredText {
@@ -22,11 +21,11 @@
     @include sf-pro-display-thin;
     font-size: 20px;
     line-height: 24px;
-    margin: 1% 10%;
+    margin: 1% 0;
   }
 
   .form {
-    margin: 3% 5% 0%;
+    margin: 3% 0 0;
   }
 
   .bottom {
@@ -62,7 +61,7 @@
     }
 
     .subtitle {
-      margin: 4% 5%;
+      margin: 4% 0;
       font-size: 16px;
       line-height: 26px;
     }
