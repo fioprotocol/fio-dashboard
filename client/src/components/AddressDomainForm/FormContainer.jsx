@@ -26,19 +26,45 @@ const FORM_TYPES = {
 };
 
 const FormContainer = props => {
-  const { isHomepage, formProps, type, isAddress, isValidating } = props;
+  const {
+    isHomepage,
+    formProps,
+    type,
+    isAddress,
+    isValidating,
+    toggleAvailable,
+    handleChange,
+  } = props;
 
   const renderFormBody = () => {
-    const { handleSubmit } = formProps;
+    const { handleSubmit, form } = formProps;
+
+    const onChangeHandleField = () => {
+      toggleAvailable(false);
+      handleChange(form);
+    };
+
+    const onBlurHandleField = name => {
+      const fieldState = form.getFieldState(name);
+      const { change, value } = fieldState || {};
+      fieldState && change(value.toLowerCase());
+      handleChange(form);
+    };
+
+    const propsToForm = {
+      ...props,
+      onChangeHandleField,
+      onBlurHandleField,
+    };
 
     return (
       <form onSubmit={handleSubmit} className={classes.form} key="form">
         {isHomepage ? (
-          <AddressForm {...props} formName={FORM_NAMES.ADDRESS} />
+          <AddressForm {...propsToForm} formName={FORM_NAMES.ADDRESS} />
         ) : isAddress ? (
-          <AddressForm {...props} />
+          <AddressForm {...propsToForm} />
         ) : (
-          <DomainForm {...props} />
+          <DomainForm {...propsToForm} />
         )}
         {isHomepage ? (
           <Link to={ROUTES.FIO_ADDRESSES} className={classes.link}>
