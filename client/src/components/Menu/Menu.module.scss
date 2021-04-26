@@ -1,0 +1,34 @@
+@import '../../assets/styles/colors.scss';
+
+.container {
+  position: fixed;
+  top: 80px;
+  width: 100vw;
+  height: 100vh;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  background-color: rgba(0, 0, 0, 0);
+  overflow: hidden;
+  transition: background-color 0.2s ease-out;
+
+  &.isOpen {
+    background-color: rgba(0, 0, 0, 0.78);
+    z-index: 1002; //override z-index of the form
+    .menu {
+      right: 0;
+    }
+  }
+
+  .menu {
+    position: fixed;
+    width: 76%;
+    max-width: 350px;
+    float: right;
+    height: 100vh;
+    background-color: $cod-gray;
+    transition: right 0.4s ease-out;
+    right: -100%;
+    padding: 25px;
+  }
+}

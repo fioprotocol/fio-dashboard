@@ -31,3 +31,8 @@ export function currentScreenType() {
   if (width > 480 && width < 1024) return { screenType: SCREEN_TYPE.TABLET };
   return { screenType: SCREEN_TYPE.DESKTOP };
 }
+
+export const isDesktop = () => {
+  const { screenType } = currentScreenType();
+  return screenType === SCREEN_TYPE.DESKTOP;
+};

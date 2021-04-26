@@ -25,6 +25,7 @@ export default class Wizard extends React.Component {
       this.setState({ pageIsActive: false }, () =>
         setTimeout(() => this.setState({ pageIsActive: true }), 10),
       );
+      window.scrollTo(0, 0);
     }
   }
 

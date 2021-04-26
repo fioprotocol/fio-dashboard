@@ -149,7 +149,7 @@ const Input = props => {
               !hasError && form.submit();
             }}
             regexCriteria={/^[0-9]*$/}
-            {...props}
+            {...rest}
             {...input}
           />
         </div>
