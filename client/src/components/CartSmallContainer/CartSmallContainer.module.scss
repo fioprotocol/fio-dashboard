@@ -1,0 +1,16 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  border-radius: 12px;
+  background-color: #F3F3F3;
+  height: fit-content;
+  padding: 1.875rem;
+  margin-top: 1.875rem;
+  width: 100%;
+
+  @include lg {
+    margin-top: 0;
+    width: 335px;
+  }
+}
