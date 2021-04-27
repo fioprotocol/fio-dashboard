@@ -1,0 +1,92 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .title {
+    padding: 0;
+    margin: 0 0 0 1.25rem;
+    @include sf-pro-display-medium;
+  }
+}
+
+.textContainer {
+  margin-top: 2.25rem;
+
+  .textTitle {
+    @include proxima-nova-semibold;
+  }
+
+  .text {
+    @include proxima-nova-thin;
+    margin-top: 1rem;
+  }
+}
+
+.button {
+  width: 100%;
+  margin-top: 1.25rem;
+  background-color: $violet;
+  border-radius: 7px;
+  text-align: left;
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  @include sf-pro-display-thin;
+
+  .cartIcon {
+    font-size: 1.25em;
+    line-height: 0,9375em;
+  }
+
+  p {
+    font-size: 0,8125em;
+    line-height: 0,9375em;
+    margin-bottom: 0;
+    margin-left: 10px;
+  }
+}
+
+.itemContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+  justify-content: space-between;
+  margin-top: 20px;
+
+  .itemInfo {
+    .itemName, .itemPrice {
+      font-size: 0.875em;
+      line-height: 1.0625em;
+      margin-bottom: 10px;
+    }
+    .thin {
+      @include proxima-nova-thin;
+    }
+  }
+
+  .deleteIcon {
+    font-size: 1em;
+  }
+}
+
+@include sm {
+  .textContainer {
+    margin-top: 1.25rem;
+
+    .textTitle {
+      @include proxima-nova-bold;
+      font-size: 0.875em;
+    }
+
+    .text {
+      font-size: 0,8125em;
+    }
+  }
+}
