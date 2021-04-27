@@ -1,0 +1,18 @@
+@import '../../assets/styles/colors.scss';
+
+.container {
+  background-color: $black;
+  width: 24px;
+  height: 26px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  color: $white;
+  font-size: 13px;
+  line-height: 16px;
+
+  &.isEmpty {
+    background-color: $red;
+  }
+}
