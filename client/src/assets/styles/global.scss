@@ -104,3 +104,7 @@ a {
   justify-content: center;
   align-items: center;
 }
+
+.tooltip.show {
+  opacity: 1 !important;
+}

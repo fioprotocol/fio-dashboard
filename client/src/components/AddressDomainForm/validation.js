@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 import apis from '../../api/index';
 import { ADDRESS_REGEXP } from '../../constants/regExps';
 
@@ -38,7 +38,7 @@ const verifyAddress = async props => {
     }
   }
 
-  toggleAvailable(_.isEmpty(errors));
+  toggleAvailable(isEmpty(errors));
 
   mutators.setDataMutator('username', {
     error: errors.username,
@@ -50,15 +50,14 @@ const verifyAddress = async props => {
   });
   changeFormErrors(errors);
   toggleValidating(false);
-  return errors;
 };
 
 export const addressValidation = async props => {
   const { formProps, toggleAvailable, changeFormErrors } = props;
-  const { mutators } = formProps;
+  const { mutators, getState } = formProps;
 
   const errors = {};
-  const { username, domain } = formProps.getState().values || {};
+  const { username, domain } = getState().values || {};
 
   if (!username) {
     errors.username = 'Username Field Should Be Filled';
@@ -83,30 +82,28 @@ export const addressValidation = async props => {
     errors.username = 'Address should be less than 63 characters';
   }
 
-  if (!_.isEmpty(errors)) {
+  if (!isEmpty(errors)) {
     toggleAvailable(false);
+    mutators.setDataMutator('username', {
+      error: errors.username,
+      valid: !errors.username,
+    });
+    mutators.setDataMutator('domain', {
+      error: errors.domain,
+      valid: !errors.domain,
+    });
+
+    changeFormErrors(errors);
+  } else {
+    verifyAddress(props);
   }
-
-  mutators.setDataMutator('username', {
-    error: errors.username,
-    valid: !errors.username,
-  });
-  mutators.setDataMutator('domain', {
-    error: errors.domain,
-    valid: !errors.domain,
-  });
-
-  changeFormErrors(errors);
-
-  return !_.isEmpty(errors) ? errors : verifyAddress(props);
 };
 
 export const domainValidation = props => {
   const { formProps, toggleAvailable, changeFormErrors } = props;
   const errors = {};
-  const { mutators } = formProps;
-
-  const { domain } = formProps.getState().values || {};
+  const { mutators, getState } = formProps;
+  const { domain } = getState().values || {};
 
   if (!domain) {
     errors.domain = 'Select Domain Please';
@@ -119,16 +116,14 @@ export const domainValidation = props => {
     errors.domain = 'Domain name should be less than 62 characters';
   }
 
-  if (!_.isEmpty(errors)) {
+  if (!isEmpty(errors)) {
     toggleAvailable(false);
+    mutators.setDataMutator('domain', {
+      error: errors.domain,
+      valid: !errors.domain,
+    });
+    changeFormErrors(errors);
+  } else {
+    verifyAddress(props);
   }
-
-  mutators.setDataMutator('domain', {
-    error: errors.domain,
-    valid: !errors.domain,
-  });
-
-  changeFormErrors(errors);
-
-  return !_.isEmpty(errors) ? errors : verifyAddress(props);
 };
