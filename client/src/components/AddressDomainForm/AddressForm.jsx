@@ -14,13 +14,13 @@ const AddressForm = props => {
     formName,
     isCustomDomain,
     toggleCustomDomain,
-    prices,
     options,
     domain,
     updateFormState,
     showPrice,
     onChangeHandleField,
     onBlurHandleField,
+    isFree,
   } = props;
 
   const updateFormStateCurrent = (form, state) => {
@@ -42,9 +42,21 @@ const AddressForm = props => {
           type="text"
           placeholder="Find the perfect username .."
           colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
-          badge={showPrice(prices.usdt.address)}
+          badge={showPrice({ isAddressPrice: true })}
           component={Input}
           hideError="true"
+          isFree={isFree}
+          tooltip={
+            <>
+              <span className="boldText">Address Cost</span>
+              <span>
+                {' '}
+                - Address Cost will fluctuate based on market condition. In
+                addition, if you are already have a free public address, there
+                will be cost assosiated with another address
+              </span>
+            </>
+          }
         />
         <OnChange name="username">{onChangeHandleField}</OnChange>
         <OnBlur name="username">{() => onBlurHandleField('username')}</OnBlur>
@@ -59,7 +71,7 @@ const AddressForm = props => {
             colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
             component={Input}
             onClose={toggleCustomDomain}
-            badge={showPrice(prices.usdt.domain)}
+            badge={showPrice({ isDomainPrice: true })}
             hideError="true"
           />
         ) : (

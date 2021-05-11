@@ -6,7 +6,7 @@ import Input, { INPUT_COLOR_SCHEMA } from '../Input/Input';
 import classes from './AddressDomainForm.module.scss';
 
 const DomainForm = props => {
-  const { prices, showPrice, onChangeHandleField, onBlurHandleField } = props;
+  const { showPrice, onChangeHandleField, onBlurHandleField } = props;
 
   return (
     <div className={classes.domainInput}>
@@ -16,7 +16,7 @@ const DomainForm = props => {
         placeholder="Domain name"
         colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
         component={Input}
-        badge={showPrice(prices.usdt.domain)}
+        badge={showPrice({ isDomainPrice: true })}
         hideError="true"
       />
       <OnChange name="domain">{onChangeHandleField}</OnChange>

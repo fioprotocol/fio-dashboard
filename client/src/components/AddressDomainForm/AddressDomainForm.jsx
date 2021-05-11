@@ -21,6 +21,7 @@ const AddressDomainForm = props => {
     fioWallets,
     refreshFioWallets,
     account,
+    prices,
     // cart, //todo: replace with cart data
   } = props;
 
@@ -33,6 +34,7 @@ const AddressDomainForm = props => {
   const [userDomains, setUserDomains] = useState([]);
   const [formErrors, changeFormErrors] = useState({});
   const [isValidating, toggleValidating] = useState(false);
+  const [isFree, setFree] = useState(true);
 
   const { domain } = formState;
   const options = [
@@ -42,8 +44,31 @@ const AddressDomainForm = props => {
 
   const { screenType } = currentScreenType();
   const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
-  const showPrice = price => {
-    return `${isDesktop ? 'Cost: ' : ''}${price} USDC`;
+  const showPrice = ({ isAddressPrice, isDomainPrice }) => {
+    const {
+      usdt: { address: usdcAddressPrice, domain: usdcDomainPrice },
+      fio: { address: fioAddressPrice, domain: fioDomainPrice },
+    } = prices;
+    let price;
+
+    if (isAddressPrice) {
+      price = isFree
+        ? 'FREE'
+        : `${fioAddressPrice.toFixed(2)} FIO (${usdcAddressPrice.toFixed(
+            2,
+          )} USDC)`;
+    }
+    if (isDomainPrice) {
+      price =
+        isFree && !isCustomDomain
+          ? 'FREE'
+          : `${fioDomainPrice.toFixed(2)} FIO (${usdcDomainPrice.toFixed(
+              2,
+            )} USDC)`;
+    }
+
+    const cost = isDesktop ? 'Cost: ' : '';
+    return cost + price;
   };
 
   useEffect(() => {
@@ -60,15 +85,26 @@ const AddressDomainForm = props => {
     }
     if (fioWallets) {
       const userDomains = [];
+      const userAddresses = [];
       for (const fioWallet of fioWallets) {
         const domains = await fioWallet.otherMethods.getFioDomains();
+        const addresses = await fioWallet.otherMethods.getFioAddresses();
         if (domains.length) userDomains.push(domains);
+        if (addresses.length) userAddresses.push(addresses);
       }
       setUserDomains(userDomains);
+      setFree(userAddresses.length === 0);
     }
     return () => {
       setUserDomains([]);
+      setFree(true);
     };
+  }, []);
+
+  useEffect(() => {
+    if (isDomain) {
+      toggleCustomDomain(true);
+    }
   }, []);
 
   const validationProps = {
@@ -116,6 +152,7 @@ const AddressDomainForm = props => {
         toggleAvailable={toggleAvailable}
         isValidating={isValidating}
         formState={formState}
+        isFree={isFree}
       />,
       !isHomepage && (
         <Notifications
@@ -130,6 +167,7 @@ const AddressDomainForm = props => {
           isAddress={isAddress}
           isDomain={isDomain}
           key="notifications"
+          isFree={isFree}
         />
       ),
     ];
