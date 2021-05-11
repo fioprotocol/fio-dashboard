@@ -30,6 +30,7 @@ const Notifications = props => {
     isAddress,
     isDomain,
     formErrors,
+    isFree,
   } = props;
   const { values, form } = formProps;
   const errors = [];
@@ -46,15 +47,23 @@ const Notifications = props => {
   const { username, domain: domainName } = values || {};
   const {
     usdt: { domain: domainPrice, address: addressPrice },
+    fio: { domain: fioDomainPrice, address: fioAddressPrice },
   } = prices;
-  const fioAmount = prices.fio.address;
 
   const isOnCart = cartItems.some(item => _.isEqual(item, values));
   const hasErrors = !_.isEmpty(errors);
-  let price = isAddress ? parseInt(addressPrice) : parseInt(domainPrice);
+  let price;
+  let fioPrice;
 
+  if (!isFree) {
+    price = isAddress ? parseInt(addressPrice) : parseInt(domainPrice);
+    fioPrice = isAddress ? parseInt(fioAddressPrice) : parseInt(fioDomainPrice);
+  }
   if (isCustomDomain) {
-    price += parseInt(domainPrice);
+    price = price ? price + parseInt(domainPrice) : parseInt(domainPrice);
+    fioPrice = fioPrice
+      ? fioPrice + parseInt(fioDomainPrice)
+      : parseInt(fioDomainPrice);
   }
 
   const notifBadge = () => (
@@ -102,9 +111,15 @@ const Notifications = props => {
             )}
           </p>
           <p className={classes.price}>
-            {price} USDC{' '}
-            {fioAmount && (
-              <span className={classes.fioAmount}>({fioAmount} FIO)</span>
+            {isFree && !isCustomDomain ? (
+              'FREE'
+            ) : (
+              <>
+                {fioPrice}FIO{' '}
+                {price && (
+                  <span className={classes.usdcAmount}>({price} USDC)</span>
+                )}
+              </>
             )}
           </p>
           <div className={classes.actionContainer}>

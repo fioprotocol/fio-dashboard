@@ -57,7 +57,7 @@ const FormContainer = props => {
     const onBlurHandleField = name => {
       const fieldState = form.getFieldState(name);
       const { change, value } = fieldState || {};
-      fieldState && change(value.toLowerCase());
+      fieldState && value && change(value.toLowerCase());
       handleChange(form);
     };
 

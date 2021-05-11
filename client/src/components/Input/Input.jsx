@@ -4,6 +4,8 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import classnames from 'classnames';
 import PinInput from 'react-pin-input';
 import { useForm } from 'react-final-form';
+
+import TooltipComponent from '../Tooltip/Tooltip';
 import classes from './Input.module.scss';
 
 export const INPUT_COLOR_SCHEMA = {
@@ -22,6 +24,8 @@ const Input = props => {
     onClose,
     badge,
     hideError,
+    isFree,
+    tooltip,
     loading,
     ...rest
   } = props;
@@ -104,11 +108,23 @@ const Input = props => {
         )}
         <div
           className={classnames(
-            classes.badge,
+            classes.badgeContainer,
             badge && !hasError && (dirty || initial) && classes.showBadge,
           )}
         >
-          {badge}
+          <div
+            className={classnames(
+              classes.badge,
+              badge && !hasError && (dirty || initial) && classes.showBadge,
+            )}
+          >
+            {badge}
+          </div>
+          {tooltip && !isFree && (
+            <div className={classnames(classes.tooltip)}>
+              <TooltipComponent>{tooltip}</TooltipComponent>
+            </div>
+          )}
         </div>
       </div>
       {!hideError && !data.hideError && (
