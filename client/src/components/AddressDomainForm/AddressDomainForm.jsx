@@ -48,24 +48,23 @@ const AddressDomainForm = props => {
       usdt: { address: usdcAddressPrice, domain: usdcDomainPrice },
       fio: { address: fioAddressPrice, domain: fioDomainPrice },
     } = prices;
-    let price;
 
-    if (isAddressPrice) {
-      price =
-        isFree && !isCustomDomain
-          ? 'FREE'
-          : `${fioAddressPrice.toFixed(2)} FIO (${usdcAddressPrice.toFixed(
-              2,
-            )} USDC)`;
-    }
-    if (isDomainPrice) {
-      price =
-        isFree && !isCustomDomain
-          ? 'FREE'
-          : `${fioDomainPrice.toFixed(2)} FIO (${usdcDomainPrice.toFixed(
-              2,
-            )} USDC)`;
-    }
+    const price =
+      isFree && !isCustomDomain
+        ? 'FREE'
+        : `${
+            isAddressPrice
+              ? fioAddressPrice.toFixed(2)
+              : isDomainPrice
+              ? fioDomainPrice.toFixed(2)
+              : 'no price'
+          } FIO (${
+            isAddressPrice
+              ? usdcAddressPrice.toFixed(2)
+              : isDomainPrice
+              ? usdcDomainPrice.toFixed(2)
+              : 'no price'
+          } USDC)`;
 
     const cost = isDesktop ? 'Cost: ' : '';
     return cost + price;
