@@ -62,7 +62,7 @@
 
   .itemInfo {
     .itemName, .itemPrice {
-      font-size: 0.875em;
+      font-size: 0.8em;
       line-height: 1.0625em;
       margin-bottom: 10px;
     }
@@ -73,6 +73,7 @@
 
   .deleteIcon {
     font-size: 1em;
+    cursor: pointer;
   }
 }
 
