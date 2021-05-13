@@ -1,19 +1,15 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { isEmpty } from 'lodash';
 
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import CounterContainer from '../CounterContainer/CounterContainer';
 import classes from './AddressDomainCart.module.scss';
 
 const AddressDomainCart = props => {
-  const {
-    cartItems = [
-      { domain: 'tester', cost: 2 },
-      { address: 'test1', domain: 'tester1', cost: 42 },
-    ],
-  } = props;
-  const count = cartItems.length;
+  const { cart, deleteItem } = props;
+  const count = cart.length;
   const isCartEmpty = count === 0;
   return (
     <CartSmallContainer>
@@ -31,32 +27,40 @@ const AddressDomainCart = props => {
         </div>
       ) : (
         <div>
-          {cartItems.map(item => (
-            <div key={item.cost} className={classes.itemContainer}>
-              <div className={classes.itemInfo}>
-                {item.address ? (
-                  <p className={classes.itemName}>
-                    <span className="boldText">{item.address}</span>
-                    <span className={classes.thin}>@{item.domain}</span>
+          {!isEmpty(cart) &&
+            cart.map(item => (
+              <div key={item.id} className={classes.itemContainer}>
+                <div className={classes.itemInfo}>
+                  {item.address ? (
+                    <p className={classes.itemName}>
+                      <span className="boldText">{item.address}</span>
+                      <span className={classes.thin}>@{item.domain}</span>
+                    </p>
+                  ) : (
+                    <p className={classes.itemName}>
+                      <span className="boldText">{item.domain}</span>
+                    </p>
+                  )}
+                  <p className={classes.itemPrice}>
+                    Cost:{' '}
+                    <span className="boldText">
+                      {!Number.isFinite(item.costFio) ||
+                      !Number.isFinite(item.costUsdc)
+                        ? 'FREE'
+                        : `${item.costFio.toFixed(2)} FIO
+                      (${item.costUsdc.toFixed(2)} USDC)`}
+                    </span>{' '}
+                    <span className={classes.thin}>- annually</span>
                   </p>
-                ) : (
-                  <p className={classes.itemName}>
-                    <span className="boldText">{item.domain}</span>
-                  </p>
-                )}
-                <p className={classes.itemPrice}>
-                  Cost:{' '}
-                  <span className="boldText">
-                    {item.cost.toFixed(2)} USDC/{(item.cost / 0.31).toFixed(2)}{' '}
-                    FIO
-                  </span>{' '}
-                  <span className={classes.thin}>(annually)</span>
-                </p>
-              </div>
+                </div>
 
-              <FontAwesomeIcon icon="trash" className={classes.deleteIcon} />
-            </div>
-          ))}
+                <FontAwesomeIcon
+                  icon="trash"
+                  className={classes.deleteIcon}
+                  onClick={() => deleteItem(item.id)}
+                />
+              </div>
+            ))}
           <Button className={classes.button}>
             <FontAwesomeIcon
               icon="shopping-cart"
