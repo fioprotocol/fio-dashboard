@@ -20,6 +20,7 @@ const MainHeader = props => {
     account,
     loading,
     notifications,
+    cart,
   } = props;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
 
@@ -104,23 +105,27 @@ const MainHeader = props => {
         <Nav.Link
           className={classnames(classes.navItem, 'text-white')}
           onClick={closeMenu}
+          as={Link}
+          to={cart.length > 0 ? ROUTES.CART : ROUTES.FIO_ADDRESSES}
         >
           <div className={classnames(classes.notifWrapper, classes.cartanim)}>
             <FontAwesomeIcon
               icon="shopping-cart"
               className={classnames(classes.icon)}
             />
-            <div
-              className={classnames(
-                classes.notifActiveWrapper,
-                classes.notifActiveWrapperRight,
-              )}
-            >
-              <FontAwesomeIcon
-                icon="circle"
-                className={classnames(classes.notifActive, 'text-success')}
-              />
-            </div>
+            {cart.length > 0 && (
+              <div
+                className={classnames(
+                  classes.notifActiveWrapper,
+                  classes.notifActiveWrapperRight,
+                )}
+              >
+                <FontAwesomeIcon
+                  icon="circle"
+                  className={classnames(classes.notifActive, 'text-success')}
+                />
+              </div>
+            )}
           </div>
         </Nav.Link>
         <hr className={classnames(classes.vertical, 'mx-3')} />
@@ -216,7 +221,11 @@ const MainHeader = props => {
         </div>
         <Navbar className="pr-0">
           <Nav className="mr-auto align-items-center">
-            <Nav.Link className={classnames(classes.navItem, 'text-white')}>
+            <Nav.Link
+              className={classnames(classes.navItem, 'text-white')}
+              as={Link}
+              to={cart.length > 0 ? ROUTES.CART : ROUTES.FIO_ADDRESSES}
+            >
               <div
                 className={classnames(classes.notifWrapper, classes.cartanim)}
               >
@@ -224,21 +233,23 @@ const MainHeader = props => {
                   icon="shopping-cart"
                   className={classnames(classes.icon, 'mr-4')}
                 />
-                <div
-                  className={classnames(
-                    classes.notifActiveWrapper,
-                    classes.notifActiveWrapperRight,
-                  )}
-                >
-                  <FontAwesomeIcon
-                    icon="circle"
+                {cart.length > 0 && (
+                  <div
                     className={classnames(
-                      classes.notifActive,
-                      'text-success',
-                      'mr-2',
+                      classes.notifActiveWrapper,
+                      classes.notifActiveWrapperRight,
                     )}
-                  />
-                </div>
+                  >
+                    <FontAwesomeIcon
+                      icon="circle"
+                      className={classnames(
+                        classes.notifActive,
+                        'text-success',
+                        'mr-2',
+                      )}
+                    />
+                  </div>
+                )}
               </div>
             </Nav.Link>
             {isDesktop
@@ -269,6 +280,7 @@ MainHeader.propTypes = exact({
   logout: PropTypes.func.isRequired,
   showLoginModal: PropTypes.func.isRequired,
   notifications: PropTypes.arrayOf(PropTypes.object),
+  cart: PropTypes.arrayOf(PropTypes.object),
 });
 
 export default MainHeader;

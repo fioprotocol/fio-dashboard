@@ -22,7 +22,10 @@ export function* loginSuccess(history, api) {
     api.client.setToken(action.data.jwt);
     yield put(loadProfile());
     yield put(listNotifications());
-    yield history.push(ROUTES.DASHBOARD);
+    const currentLocation = history.location.pathname;
+    if (currentLocation === '/') yield history.push(ROUTES.DASHBOARD);
+    if (currentLocation === ROUTES.FIO_ADDRESSES || ROUTES.FIO_DOMAINS)
+      yield history.push(ROUTES.CART);
   });
 }
 

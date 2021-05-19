@@ -3,6 +3,8 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
 import createHistory from 'history/createBrowserHistory';
 import { library } from '@fortawesome/fontawesome-svg-core';
+import { LastLocationProvider } from 'react-router-last-location';
+
 import { addLocationQuery } from './helpers/routeParams';
 
 import {
@@ -28,6 +30,7 @@ import {
   faSearch,
   faPlusSquare,
   faTrash,
+  faWallet,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { faCircle as faRegularCircle } from '@fortawesome/free-regular-svg-icons';
@@ -70,6 +73,7 @@ library.add(
   faSearch,
   faPlusSquare,
   faTrash,
+  faWallet,
 );
 
 const store = configureStore(api, history);
@@ -79,7 +83,9 @@ export default class App extends Component {
     return (
       <Provider store={store}>
         <ConnectedRouter history={history}>
-          <Routes />
+          <LastLocationProvider>
+            <Routes />
+          </LastLocationProvider>
         </ConnectedRouter>
       </Provider>
     );

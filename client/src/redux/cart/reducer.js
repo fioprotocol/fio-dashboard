@@ -5,7 +5,10 @@ export default function reducer(state = [], action = {}) {
     case actions.ADD_ITEM:
       return [...state, action.data];
     case actions.DELETE_ITEM:
-      return state.filter(item => item.id !== action.data);
+      if (action.data.cart) {
+        return action.data.cart;
+      }
+      return state.filter(item => item.id !== action.data.id);
     case actions.CLEAR_CART:
       return [];
     default:

@@ -3,14 +3,15 @@
 
 .container {
   border-radius: 12px;
-  background-color: #F3F3F3;
   height: fit-content;
   padding: 1.875rem;
-  margin-top: 1.875rem;
   width: 100%;
+  position: relative;
+  margin-top: 5.625rem;
 
   @include lg {
     margin-top: 0;
     width: 335px;
+    position: static;
   }
 }

@@ -7,6 +7,7 @@
   height: 100%;
   background-color: $white;
   padding: 60px 10%;
+  position: relative;
 
   .title {
     @include proxima-nova-semibold;

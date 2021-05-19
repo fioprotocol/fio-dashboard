@@ -5,14 +5,33 @@ import { isEmpty } from 'lodash';
 
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import CounterContainer from '../CounterContainer/CounterContainer';
+import { ROUTES } from '../../constants/routes';
+import colors from '../../assets/styles/colorsToJs.module.scss';
+import { recalculateCart } from '../../utils';
+
 import classes from './AddressDomainCart.module.scss';
 
 const AddressDomainCart = props => {
-  const { cart, deleteItem } = props;
+  const { cart, deleteItem, account, domains, history, showLoginModal } = props;
   const count = cart.length;
   const isCartEmpty = count === 0;
+
+  const handleCheckout = () => {
+    if (!account) {
+      showLoginModal();
+      return;
+    }
+    const route = count === 1 ? ROUTES.CHECKOUT : ROUTES.CART;
+    history.push(route);
+  };
+
+  const handleDeleteItem = id => {
+    const data = recalculateCart({ domains, cart, id }) || id;
+    deleteItem(data);
+  };
+
   return (
-    <CartSmallContainer>
+    <CartSmallContainer bgColor={colors['aqua-haze']}>
       <div className={classes.header}>
         <CounterContainer isEmpty={isCartEmpty}>{count}</CounterContainer>
         <h5 className={classes.title}>Cart</h5>
@@ -57,11 +76,11 @@ const AddressDomainCart = props => {
                 <FontAwesomeIcon
                   icon="trash"
                   className={classes.deleteIcon}
-                  onClick={() => deleteItem(item.id)}
+                  onClick={() => handleDeleteItem(item.id)}
                 />
               </div>
             ))}
-          <Button className={classes.button}>
+          <Button className={classes.button} onClick={handleCheckout}>
             <FontAwesomeIcon
               icon="shopping-cart"
               className={classes.cartIcon}

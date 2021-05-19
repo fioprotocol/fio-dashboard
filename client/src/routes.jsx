@@ -10,6 +10,8 @@ import AuthContainer from './components/AuthContainer';
 import PrivateRoute from './components/PrivateRoute';
 import FioAddressPage from './pages/FioAddressPage';
 import FioDomainPage from './pages/FioDomainPage';
+import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/CheckoutPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -22,6 +24,8 @@ const Routes = () => (
       <Route path={ROUTES.CONFIRM_EMAIL} component={ConfirmEmail} />
       <Route path={ROUTES.FIO_ADDRESSES} component={FioAddressPage} exact />
       <Route path={ROUTES.FIO_DOMAINS} component={FioDomainPage} exact />
+      <Route path={ROUTES.CART} component={CartPage} exact />
+      <Route path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
 
       <AuthContainer />
     </Switch>

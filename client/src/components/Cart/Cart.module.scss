@@ -1,0 +1,130 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  background-color: $hint;
+  border-radius: 12px;
+  padding: 1.875rem;
+
+  .header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .title {
+      margin: 0 0 0 1.25rem;
+    }
+  }
+
+  .itemContainer {
+    color: $dark-jungle-green;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    .address {
+      font-size: 0.9375em;
+    }
+
+    .price {
+      margin: 0 1.875rem 0 auto;
+      font-size: 0.9375em;
+    }
+
+    .icon {
+      color: $black;
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: 0.3s ease-in-out;
+
+      &:hover {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  .cta {
+    display: flex;
+    flex-direction: row;
+    margin-top: 1.875rem;
+
+    .ctaIconContainer {
+      width: 26px;
+      height: 26px;
+      background-color: $violet;
+      border-radius: 6px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .ctaIcon {
+        font-size: 0.825em;
+        color: $white;
+      }
+    }
+
+    .ctaText {
+      margin-left: 0.625rem;
+      font-size: 0.9375em;
+      color: $black;
+    }
+  }
+}
+
+.amountTitle {
+  @include proxima-nova-semibold;
+  position: absolute;
+  top: 60px;
+  margin-left: -1.875rem;
+}
+
+.amountSubtitle {
+  @include proxima-nova-regular;
+}
+
+.checkout {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 36px;
+  border-radius: 7px;
+  padding: 0 0.625rem;
+  font-size: 1em;
+
+  p {
+    margin: 0 0 0 0.5625rem;
+    font-size: 0.9375em;
+    @include sf-pro-display-thin;
+  }
+}
+
+.total {
+  margin-top: 0.625rem;
+
+  .divider {
+    margin-top: 1.25rem;
+  }
+
+  .cost {
+    margin-top: 1.25rem;
+    margin-bottom: 0;
+    font-size: 0.8125em;
+    @include proxima-nova-semibold;
+
+    .light {
+      @include proxima-nova-thin;
+    }
+  }
+}
+
+@include sm {
+  .amountTitle {
+    font-size: 1.25em;
+    line-height: 1.25em;
+    top: -50px;
+    left: 0;
+    margin-left: 0;
+  }
+}

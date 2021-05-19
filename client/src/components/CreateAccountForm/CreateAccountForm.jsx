@@ -84,13 +84,17 @@ export default class CreateAccountForm extends Component {
     this.props.resetSuccessState();
   }
 
-  redirectHome = () => {
+  redirectToPrev = () => {
     const {
       values: { email },
     } = this.form.getState();
+
     this.props.setAccount(this.state.account);
     this.props.login({ email, password: this.state.account.id });
-    this.props.history.push(ROUTES.HOME);
+    this.props.history.push(
+      (this.props.lastLocation && this.props.lastLocation.pathname) ||
+        ROUTES.HOME,
+    );
   };
 
   isEmailExists = async e => {
@@ -326,7 +330,7 @@ export default class CreateAccountForm extends Component {
           </Wizard.Page>
           <Wizard.Page hideBack hideNext>
             <Success
-              redirect={this.redirectHome}
+              redirect={this.redirectToPrev}
               signupSuccess={signupSuccess}
             />
           </Wizard.Page>

@@ -5,7 +5,8 @@ import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
 import Notifications from './Notifications';
 import FormContainer from './FormContainer';
-import { debounce } from 'lodash';
+import debounce from 'lodash/debounce';
+import isEmpty from 'lodash/isEmpty';
 import { setDataMutator } from '../../utils';
 
 import { addressValidation, domainValidation } from './validation';
@@ -31,6 +32,7 @@ const AddressDomainForm = props => {
   const [isCustomDomain, toggleCustomDomain] = useState(false);
   const [isAvailable, toggleAvailable] = useState(false);
   const [userDomains, setUserDomains] = useState([]);
+  const [userAddresses, setUserAddresses] = useState([]);
   const [formErrors, changeFormErrors] = useState({});
   const [isValidating, toggleValidating] = useState(false);
   const [isFree, setFree] = useState(true);
@@ -92,7 +94,11 @@ const AddressDomainForm = props => {
         if (addresses.length) userAddresses.push(addresses);
       }
       setUserDomains(userDomains);
-      setFree(userAddresses.length === 0);
+      setUserAddresses(userAddresses);
+      setFree(
+        userAddresses.length === 0 &&
+          !cart.some(item => !item.costFio && !item.costUsdc),
+      );
     }
     return () => {
       setUserDomains([]);
@@ -105,6 +111,12 @@ const AddressDomainForm = props => {
       toggleCustomDomain(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (!isEmpty(cart) && cart.some(item => !item.costFio && !item.costUsdc))
+      setFree(false);
+    if (isEmpty(cart) && isEmpty(userAddresses)) setFree(true);
+  }, [cart]);
 
   const validationProps = {
     options,

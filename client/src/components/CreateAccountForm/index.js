@@ -1,5 +1,7 @@
 import { connect } from 'react-redux';
 import { createSelector, createStructuredSelector } from 'reselect';
+import { withLastLocation } from 'react-router-last-location';
+
 import { compose } from '../../utils';
 import { resetSuccessState, login } from '../../redux/profile/actions';
 import { setAccount } from '../../redux/edge/actions';
@@ -33,4 +35,6 @@ const reduxConnect = connect(selector, actions);
 
 export { CreateAccountForm };
 
-export default withRouter(compose(reduxConnect)(CreateAccountForm));
+export default withLastLocation(
+  withRouter(compose(reduxConnect)(CreateAccountForm)),
+);

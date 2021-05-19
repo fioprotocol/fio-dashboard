@@ -9,9 +9,9 @@ export const addItem = item => ({
   data: item,
 });
 
-export const deleteItem = id => ({
+export const deleteItem = ({ id, cart }) => ({
   type: DELETE_ITEM,
-  data: id,
+  data: { id, cart },
 });
 
 export const clear = () => ({

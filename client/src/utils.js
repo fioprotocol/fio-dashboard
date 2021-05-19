@@ -46,3 +46,39 @@ export const setDataMutator = (args, state) => {
     field.data = { ...field.data, ...data };
   }
 };
+
+export const recalculateCart = ({ domains, cart, id }) => {
+  const deletedElement = cart.find(item => item.id === id);
+  if (!deletedElement) return;
+
+  const data = {
+    id,
+  };
+
+  const recalculate = () => {
+    const deletedElemCart = cart.filter(item => item.id !== id);
+    const recalcElem = deletedElemCart.find(
+      item =>
+        item.address &&
+        item.domain &&
+        domains.some(domain => domain.domain === item.domain && domain.free),
+    );
+    if (recalcElem) {
+      delete recalcElem.costFio;
+      delete recalcElem.costUsdc;
+      const retCart = deletedElemCart.map(item =>
+        item.id === recalcElem.id ? recalcElem : item,
+      );
+      return retCart;
+    }
+
+    return deletedElemCart;
+  };
+
+  if (!deletedElement.costUsdc && !deletedElement.costFio) {
+    const recCart = recalculate({ domains, cart, id });
+    data['cart'] = recCart;
+  }
+
+  return data;
+};

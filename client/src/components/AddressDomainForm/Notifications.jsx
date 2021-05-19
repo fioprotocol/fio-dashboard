@@ -125,9 +125,11 @@ const Notifications = props => {
               'FREE'
             ) : (
               <>
-                {costFio}FIO{' '}
+                {costFio.toFixed(2)}FIO{' '}
                 {costUsdc && (
-                  <span className={classes.usdcAmount}>({costUsdc} USDC)</span>
+                  <span className={classes.usdcAmount}>
+                    ({costUsdc.toFixed(2)} USDC)
+                  </span>
                 )}
               </>
             )}
@@ -164,7 +166,7 @@ const Notifications = props => {
                 icon="times-circle"
                 className={classes.iconClose}
                 onClick={() => {
-                  deleteItem(currentId);
+                  deleteItem({ id: currentId });
                   toggleAvailable(false);
                 }}
               />
