@@ -5,7 +5,7 @@ import { ROUTES } from '../../constants/routes';
 import DoubleCardContainer from '../../components/DoubleCardContainer';
 import Cart from '../../components/Cart/Cart';
 import CartAmount from '../../components/Cart/CartAmount';
-import { removeFreeCart, setFreeCart, cartHasFreeItem } from '../../utils';
+import { handleFreeAddressCart } from '../../utils';
 
 const CartPage = props => {
   const {
@@ -40,28 +40,16 @@ const CartPage = props => {
 
   useEffect(async () => {
     if (!account) {
-      let retCart = [];
-      if (!cartHasFreeItem(cart)) {
-        retCart = setFreeCart({ domains, cart });
-      }
-      recalculate(!isEmpty(retCart) ? retCart : cart);
       history.push(ROUTES.FIO_ADDRESSES);
     }
-    if (fioWallets) {
-      const userAddresses = [];
-      for (const fioWallet of fioWallets) {
-        const addresses = await fioWallet.otherMethods.getFioAddresses();
-        if (addresses.length) userAddresses.push(addresses);
-      }
-      let retCart = [];
-      if (userAddresses.length > 0) {
-        retCart = removeFreeCart({ cart, prices });
-      } else if (!cartHasFreeItem(cart)) {
-        retCart = setFreeCart({ domains, cart });
-      }
-      recalculate(!isEmpty(retCart) ? retCart : cart);
-    }
-  }, [account]);
+    await handleFreeAddressCart({
+      domains,
+      fioWallets,
+      recalculate,
+      cart,
+      prices,
+    });
+  }, [account, domains, fioWallets]);
 
   return (
     <DoubleCardContainer

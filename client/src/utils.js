@@ -1,3 +1,4 @@
+import isEmpty from 'lodash/isEmpty';
 const FIO_DAPP_USERNAME_DELIMITER = '_fio.dapp_';
 
 export function compose(...funcs) {
@@ -105,4 +106,27 @@ export const removeFreeCart = ({ cart, prices }) => {
 
 export const cartHasFreeItem = cart => {
   return cart.some(item => !item.costFio && !item.costUsdc);
+};
+
+export const handleFreeAddressCart = async ({
+  domains,
+  fioWallets,
+  recalculate,
+  cart,
+  prices,
+}) => {
+  if (fioWallets) {
+    const userAddresses = [];
+    for (const fioWallet of fioWallets) {
+      const addresses = await fioWallet.otherMethods.getFioAddresses();
+      if (addresses.length) userAddresses.push(addresses);
+    }
+    let retCart = [];
+    if (userAddresses.length > 0) {
+      retCart = removeFreeCart({ cart, prices });
+    } else if (!cartHasFreeItem(cart)) {
+      retCart = setFreeCart({ domains, cart });
+    }
+    recalculate(!isEmpty(retCart) ? retCart : cart);
+  }
 };

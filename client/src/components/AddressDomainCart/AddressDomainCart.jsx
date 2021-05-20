@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { isEmpty } from 'lodash';
@@ -7,12 +7,22 @@ import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import CounterContainer from '../CounterContainer/CounterContainer';
 import { ROUTES } from '../../constants/routes';
 import colors from '../../assets/styles/colorsToJs.module.scss';
-import { recalculateCart } from '../../utils';
+import { recalculateCart, handleFreeAddressCart } from '../../utils';
 
 import classes from './AddressDomainCart.module.scss';
 
 const AddressDomainCart = props => {
-  const { cart, deleteItem, account, domains, history, showLoginModal } = props;
+  const {
+    cart,
+    deleteItem,
+    account,
+    domains,
+    history,
+    showLoginModal,
+    fioWallets,
+    prices,
+    recalculate,
+  } = props;
   const count = cart.length;
   const isCartEmpty = count === 0;
 
@@ -29,6 +39,16 @@ const AddressDomainCart = props => {
     const data = recalculateCart({ domains, cart, id }) || id;
     deleteItem(data);
   };
+
+  useEffect(async () => {
+    await handleFreeAddressCart({
+      domains,
+      fioWallets,
+      recalculate,
+      cart,
+      prices,
+    });
+  }, [account, domains, fioWallets]);
 
   return (
     <CartSmallContainer bgColor={colors['aqua-haze']}>
