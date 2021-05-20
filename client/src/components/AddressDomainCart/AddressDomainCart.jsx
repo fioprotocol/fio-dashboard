@@ -18,7 +18,7 @@ const AddressDomainCart = props => {
 
   const handleCheckout = () => {
     if (!account) {
-      showLoginModal();
+      showLoginModal(ROUTES.CART);
       return;
     }
     const route = count === 1 ? ROUTES.CHECKOUT : ROUTES.CART;

@@ -102,3 +102,7 @@ export const removeFreeCart = ({ cart, prices }) => {
   });
   return retCart;
 };
+
+export const cartHasFreeItem = cart => {
+  return cart.some(item => !item.costFio && !item.costUsdc);
+};

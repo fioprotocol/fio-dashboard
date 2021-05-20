@@ -28,12 +28,8 @@ const Cart = props => {
       </div>
       {!isCartEmpty &&
         cart.map(item => (
-          <>
-            <Badge
-              show
-              type={BADGE_TYPES.WHITE}
-              key={item.domain + item.address}
-            >
+          <div key={item.domain + item.address}>
+            <Badge show type={BADGE_TYPES.WHITE}>
               <div className={classes.itemContainer}>
                 {item.address ? (
                   <span className={classes.address}>
@@ -73,7 +69,7 @@ const Cart = props => {
                 </div>
               </Badge>
             )}
-          </>
+          </div>
         ))}
       <Link to={ROUTES.FIO_ADDRESSES} className={classes.cta}>
         <div className={classes.ctaIconContainer}>

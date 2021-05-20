@@ -7,7 +7,7 @@ import Notifications from './Notifications';
 import FormContainer from './FormContainer';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
-import { setDataMutator } from '../../utils';
+import { setDataMutator, cartHasFreeItem } from '../../utils';
 
 import { addressValidation, domainValidation } from './validation';
 
@@ -95,10 +95,7 @@ const AddressDomainForm = props => {
       }
       setUserDomains(userDomains);
       setUserAddresses(userAddresses);
-      setFree(
-        userAddresses.length === 0 &&
-          !cart.some(item => !item.costFio && !item.costUsdc),
-      );
+      setFree(userAddresses.length === 0 && !cartHasFreeItem(cart));
     }
     return () => {
       setUserDomains([]);
@@ -114,7 +111,7 @@ const AddressDomainForm = props => {
 
   useEffect(() => {
     if (!isEmpty(cart) && isEmpty(userAddresses)) {
-      setFree(!cart.some(item => !item.costFio && !item.costUsdc));
+      setFree(!cartHasFreeItem(cart));
     }
     if (isEmpty(cart) && isEmpty(userAddresses)) setFree(true);
   }, [cart]);

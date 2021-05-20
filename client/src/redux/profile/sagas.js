@@ -1,4 +1,4 @@
-import { put, takeEvery } from 'redux-saga/effects';
+import { put, takeEvery, select } from 'redux-saga/effects';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ACTIONS } from '../../components/Notifications/Notifications';
 import {
@@ -10,22 +10,26 @@ import {
   loadProfile,
 } from './actions';
 
-import { closeRecoveryModal } from '../modal/actions';
+import { closeRecoveryModal, closeLoginModal } from '../modal/actions';
 import {
   listNotifications,
   createNotification,
 } from '../notifications/actions';
+import { hasRedirect } from '../modal/selectors';
 import { ROUTES } from '../../constants/routes';
 
 export function* loginSuccess(history, api) {
   yield takeEvery(LOGIN_SUCCESS, function*(action) {
+    const hasRedirectTo = yield select(hasRedirect);
     api.client.setToken(action.data.jwt);
     yield put(loadProfile());
     yield put(listNotifications());
     const currentLocation = history.location.pathname;
     if (currentLocation === '/') yield history.push(ROUTES.DASHBOARD);
-    if (currentLocation === ROUTES.FIO_ADDRESSES || ROUTES.FIO_DOMAINS)
-      yield history.push(ROUTES.CART);
+    if (hasRedirectTo) {
+      yield history.push(hasRedirectTo);
+    }
+    yield put(closeLoginModal());
   });
 }
 
