@@ -24,7 +24,7 @@ export default {
   users: new Users(apiClient),
   edge: new Edge(),
   notifications: new Notifications(apiClient),
-  fioReg: new FioReg(),
+  fioReg: new FioReg(apiClient),
   fio: new Fio(),
   client: apiClient,
 };

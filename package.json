@@ -70,6 +70,7 @@
     "jsonwebtoken": "^8.1.1",
     "livr": "^2.0.2",
     "livr-extra-rules": "^1.0.2",
+    "node-fetch": "^2.6.1",
     "nodemailer": "^4.4.2",
     "nodemailer-sendmail-transport": "^1.0.2",
     "nodemailer-smtp-transport": "^2.7.4",
