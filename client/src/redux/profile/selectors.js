@@ -14,3 +14,7 @@ export const successfullyRegistered = state =>
   state[prefix].successfullyRegistered;
 
 export const isAuthenticated = createSelector(user, user => !!user);
+export const hasFreeAddress = createSelector(
+  user,
+  user => !!user.freeAddresses.length,
+);

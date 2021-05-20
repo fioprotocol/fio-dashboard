@@ -4,6 +4,7 @@ import UsersCreate from '../services/users/Create';
 import UsersUpdate from '../services/users/Update';
 import UsersInfo from '../services/users/Info';
 import ShowInfo from '../services/users/Show';
+import FreeAddressRegistered from '../services/users/FreeAddressRegistered';
 import UsersResetPassword from '../services/users/ResetPassword';
 import UsersSetRecovery from '../services/users/SetRecovery';
 import UsersList from '../services/users/List';
@@ -16,4 +17,5 @@ export default {
   setRecovery: makeServiceRunner(UsersSetRecovery, req => req.body),
   list: makeServiceRunner(UsersList),
   show: makeServiceRunner(ShowInfo, req => req.params),
+  freeAddress: makeServiceRunner(FreeAddressRegistered, req => req.params),
 };
