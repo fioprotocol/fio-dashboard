@@ -4,7 +4,7 @@
 .container {
   border-radius: 12px;
   height: fit-content;
-  padding: 1.875rem;
+  padding: 1.25rem;
   width: 100%;
   position: relative;
   margin-top: 5.625rem;
@@ -13,5 +13,6 @@
     margin-top: 0;
     width: 335px;
     position: static;
+    padding: 1.875rem;
   }
 }

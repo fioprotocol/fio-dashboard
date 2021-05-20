@@ -1,6 +1,5 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import { isEmpty } from 'lodash';
 import { ROUTES } from '../../constants/routes';
@@ -9,7 +8,7 @@ import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import classes from './Cart.module.scss';
 
 const CartAmount = props => {
-  const { cart } = props;
+  const { cart, history } = props;
   const totalCost = () => {
     if (cart.length === 1 && cart.some(item => !item.costFio && !item.costUsdc))
       return 'FREE';
@@ -34,6 +33,11 @@ const CartAmount = props => {
       </span>
     );
   };
+
+  const handleCheckout = () => {
+    history.push(ROUTES.CHECKOUT);
+  };
+
   return (
     <CartSmallContainer bgColor={colors.hint}>
       <h3 className={classes.amountTitle}>Amount Due</h3>
@@ -45,12 +49,10 @@ const CartAmount = props => {
         </p>
         <hr className={classes.divider} />
       </div>
-      <Link to={ROUTES.CHECKOUT}>
-        <Button className={classes.checkout}>
-          <FontAwesomeIcon icon="wallet" className={classes.icon} />
-          <p>Pay with FIO</p>
-        </Button>
-      </Link>
+      <Button className={classes.checkout} onClick={handleCheckout}>
+        <FontAwesomeIcon icon="wallet" className={classes.icon} />
+        <p>Pay with FIO</p>
+      </Button>
     </CartSmallContainer>
   );
 };

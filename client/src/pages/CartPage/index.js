@@ -10,8 +10,28 @@ import { account, fioWallets } from '../../redux/edge/selectors';
 
 import CartPage from './CartPage';
 
+const wallets = () => [
+  {
+    name: 'testName',
+    balance: 5000,
+    publicAddress: 'testaddress1',
+  },
+  {
+    name: 'testNameSecond',
+    balance: 15000,
+    publicAddress: 'test2address',
+  },
+]; //todo: change to real data
+
 const reduxConnect = connect(
-  createStructuredSelector({ cart, domains, fioWallets, prices, account }),
+  createStructuredSelector({
+    cart,
+    domains,
+    fioWallets,
+    prices,
+    account,
+    wallets,
+  }),
   {
     deleteItem,
     recalculate,

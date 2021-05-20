@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 
 import { ROUTES } from '../../constants/routes';
@@ -17,6 +17,8 @@ const CartPage = props => {
     account,
     domains,
   } = props;
+
+  const [selectedWallet, setWallet] = useState({});
 
   function usePrevious(value) {
     const ref = useRef();
@@ -55,8 +57,8 @@ const CartPage = props => {
     <DoubleCardContainer
       title="Your Cart"
       secondTitle="Amount Due"
-      bigCart={<Cart {...props} />}
-      smallCart={<CartAmount {...props} />}
+      bigCart={<Cart {...props} setWallet={setWallet} />}
+      smallCart={<CartAmount {...props} selectedWallet={selectedWallet} />}
     />
   );
 };

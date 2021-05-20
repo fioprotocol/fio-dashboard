@@ -1,9 +1,11 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
+import { Form, Field } from 'react-final-form';
 import classNames from 'classnames';
 
 import CounterContainer from '../CounterContainer/CounterContainer';
+import WalletDropdown from './WalletDropdown';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { ROUTES } from '../../constants/routes';
 import { recalculateCart } from '../../utils';
@@ -11,7 +13,7 @@ import { recalculateCart } from '../../utils';
 import classes from './Cart.module.scss';
 
 const Cart = props => {
-  const { cart, deleteItem, domains } = props;
+  const { cart, deleteItem, domains, wallets, setWallet } = props;
   const count = cart.length;
   const isCartEmpty = count === 0;
 
@@ -79,6 +81,26 @@ const Cart = props => {
           Search for more FIO addresses?
         </p>
       </Link>
+      <div className={classes.walletContainer}>
+        <h6 className={classes.title}>FIO Wallet Assignment</h6>
+        <p className={classes.subtitle}>
+          Please choose which FIO wallet you would like these addresses assigned
+          to.
+        </p>
+        <Form
+          onSubmit={() => {}}
+          render={() => (
+            <form>
+              <Field
+                name="wallet"
+                component={WalletDropdown}
+                options={wallets}
+                setWallet={setWallet}
+              />
+            </form>
+          )}
+        />
+      </div>
     </div>
   );
 };
