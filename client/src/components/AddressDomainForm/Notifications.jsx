@@ -63,7 +63,7 @@ const Notifications = props => {
   let costUsdc;
   let costFio;
 
-  if (!isFree) {
+  if (!isFree && isAddress) {
     costUsdc = isAddress ? parseInt(addressPrice) : parseInt(domainPrice);
     costFio = isAddress ? parseInt(fioAddressPrice) : parseInt(fioDomainPrice);
   }

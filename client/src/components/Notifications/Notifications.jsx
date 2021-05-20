@@ -26,6 +26,7 @@ export default class Notifications extends Component {
     if (
       prevProps.list.length &&
       this.props.list.length &&
+      prevProps.list[0] &&
       prevProps.list[0].id !== this.props.list[0].id
     ) {
       this.setState({ last: this.props.list[0] });

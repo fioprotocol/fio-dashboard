@@ -5,9 +5,18 @@ import { ROUTES } from '../../constants/routes';
 import DoubleCardContainer from '../../components/DoubleCardContainer';
 import Cart from '../../components/Cart/Cart';
 import CartAmount from '../../components/Cart/CartAmount';
+import { removeFreeCart, setFreeCart } from '../../utils';
 
 const CartPage = props => {
-  const { cart, history } = props;
+  const {
+    cart,
+    history,
+    fioWallets,
+    recalculate,
+    prices,
+    account,
+    domains,
+  } = props;
 
   function usePrevious(value) {
     const ref = useRef();
@@ -28,6 +37,23 @@ const CartPage = props => {
       history.push(ROUTES.CHECKOUT);
     }
   }, [prevAmount]);
+
+  useEffect(async () => {
+    if (fioWallets) {
+      const userAddresses = [];
+      for (const fioWallet of fioWallets) {
+        const addresses = await fioWallet.otherMethods.getFioAddresses();
+        if (addresses.length) userAddresses.push(addresses);
+      }
+      let retCart = [];
+      if (userAddresses.length > 0) {
+        retCart = removeFreeCart({ cart, prices });
+      } else if (!cart.some(item => !item.costFio && !item.costUsdc)) {
+        retCart = setFreeCart({ domains, cart });
+      }
+      recalculate(!isEmpty(retCart) ? retCart : cart);
+    }
+  }, [account]);
 
   return (
     <DoubleCardContainer

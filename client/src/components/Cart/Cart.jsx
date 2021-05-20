@@ -28,32 +28,52 @@ const Cart = props => {
       </div>
       {!isCartEmpty &&
         cart.map(item => (
-          <Badge show type={BADGE_TYPES.WHITE} key={item.domain + item.address}>
-            <div className={classes.itemContainer}>
-              {item.address ? (
-                <span className={classes.address}>
-                  <span className="boldText">{item.address}@</span>
-                  <span>{item.domain}</span>
-                </span>
-              ) : (
-                <span className="boldText">{item.domain && item.domain}</span>
-              )}
-              <p className={classes.price}>
-                <span className="boldText">
-                  {!item.costFio
-                    ? 'FREE'
-                    : `${item.costFio.toFixed(2)}FIO (${item.costUsdc.toFixed(
-                        2,
-                      )} USDC)`}
-                </span>
-              </p>
-              <FontAwesomeIcon
-                icon="times-circle"
-                className={classes.icon}
-                onClick={() => handleDeleteItem(item.id)}
-              />
-            </div>
-          </Badge>
+          <>
+            <Badge
+              show
+              type={BADGE_TYPES.WHITE}
+              key={item.domain + item.address}
+            >
+              <div className={classes.itemContainer}>
+                {item.address ? (
+                  <span className={classes.address}>
+                    <span className="boldText">{item.address}@</span>
+                    <span>{item.domain}</span>
+                  </span>
+                ) : (
+                  <span className="boldText">{item.domain && item.domain}</span>
+                )}
+                <p className={classes.price}>
+                  <span className="boldText">
+                    {!item.costFio
+                      ? 'FREE'
+                      : `${item.costFio.toFixed(2)}FIO (${item.costUsdc.toFixed(
+                          2,
+                        )} USDC)`}
+                  </span>
+                </p>
+                <FontAwesomeIcon
+                  icon="times-circle"
+                  className={classes.icon}
+                  onClick={() => handleDeleteItem(item.id)}
+                />
+              </div>
+            </Badge>
+            {item.showBadge && (
+              <Badge show type={BADGE_TYPES.INFO}>
+                <div className={classes.infoBadge}>
+                  <FontAwesomeIcon
+                    icon="exclamation-circle"
+                    className={classes.infoIcon}
+                  />
+                  <p className={classes.infoText}>
+                    <span className="boldText">Address Cost</span> - Your
+                    account already has a free address associated with it.
+                  </p>
+                </div>
+              </Badge>
+            )}
+          </>
         ))}
       <Link to={ROUTES.FIO_ADDRESSES} className={classes.cta}>
         <div className={classes.ctaIconContainer}>

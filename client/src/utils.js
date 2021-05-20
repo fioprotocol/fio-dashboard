@@ -47,6 +47,27 @@ export const setDataMutator = (args, state) => {
   }
 };
 
+export const setFreeCart = ({ domains, cart }) => {
+  const recalcElem = cart.find(
+    item =>
+      item.address &&
+      item.domain &&
+      domains.some(domain => domain.domain === item.domain && domain.free),
+  );
+  if (recalcElem) {
+    delete recalcElem.costFio;
+    delete recalcElem.costUsdc;
+
+    const retCart = cart.map(item => {
+      delete item.showBadge;
+      return item.id === recalcElem.id ? recalcElem : item;
+    });
+    return retCart;
+  } else {
+    return cart;
+  }
+};
+
 export const recalculateCart = ({ domains, cart, id }) => {
   const deletedElement = cart.find(item => item.id === id);
   if (!deletedElement) return;
@@ -55,30 +76,29 @@ export const recalculateCart = ({ domains, cart, id }) => {
     id,
   };
 
-  const recalculate = () => {
-    const deletedElemCart = cart.filter(item => item.id !== id);
-    const recalcElem = deletedElemCart.find(
-      item =>
-        item.address &&
-        item.domain &&
-        domains.some(domain => domain.domain === item.domain && domain.free),
-    );
-    if (recalcElem) {
-      delete recalcElem.costFio;
-      delete recalcElem.costUsdc;
-      const retCart = deletedElemCart.map(item =>
-        item.id === recalcElem.id ? recalcElem : item,
-      );
-      return retCart;
-    }
-
-    return deletedElemCart;
-  };
+  const deletedElemCart = cart.filter(item => item.id !== id);
 
   if (!deletedElement.costUsdc && !deletedElement.costFio) {
-    const recCart = recalculate({ domains, cart, id });
+    const recCart = setFreeCart({ domains, cart: deletedElemCart });
     data['cart'] = recCart;
   }
 
   return data;
+};
+
+export const removeFreeCart = ({ cart, prices }) => {
+  const {
+    fio: { address: addressFio },
+    usdt: { address: addressUsdc },
+  } = prices;
+
+  const retCart = cart.map(item => {
+    if (!item.costFio && !item.costUsdc) {
+      item.costFio = addressFio;
+      item.costUsdc = addressUsdc;
+      item.showBadge = true;
+    }
+    return item;
+  });
+  return retCart;
 };

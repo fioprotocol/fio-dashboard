@@ -113,8 +113,9 @@ const AddressDomainForm = props => {
   }, []);
 
   useEffect(() => {
-    if (!isEmpty(cart) && cart.some(item => !item.costFio && !item.costUsdc))
-      setFree(false);
+    if (!isEmpty(cart) && isEmpty(userAddresses)) {
+      setFree(!cart.some(item => !item.costFio && !item.costUsdc));
+    }
     if (isEmpty(cart) && isEmpty(userAddresses)) setFree(true);
   }, [cart]);
 

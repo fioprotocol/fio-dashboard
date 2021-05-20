@@ -11,6 +11,8 @@ export default function reducer(state = [], action = {}) {
       return state.filter(item => item.id !== action.data.id);
     case actions.CLEAR_CART:
       return [];
+    case actions.RECALCULATE_CART:
+      return action.data;
     default:
       return state;
   }

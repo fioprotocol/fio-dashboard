@@ -48,7 +48,7 @@ const CartAmount = props => {
       <Link to={ROUTES.CHECKOUT}>
         <Button className={classes.checkout}>
           <FontAwesomeIcon icon="wallet" className={classes.icon} />
-          <p>Pay with Crypto</p>
+          <p>Pay with FIO</p>
         </Button>
       </Link>
     </CartSmallContainer>

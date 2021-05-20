@@ -44,6 +44,23 @@
     }
   }
 
+  .infoBadge {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .infoIcon {
+      font-size: 1em;
+    }
+
+    .infoText {
+      margin-bottom: 0;
+      margin-left: 1rem;
+      font-size: 0.9375em;
+      line-height: 0.9375em;
+    }
+  }
+
   .cta {
     display: flex;
     flex-direction: row;
@@ -126,5 +143,28 @@
     top: -50px;
     left: 0;
     margin-left: 0;
+  }
+
+  .container {
+    .itemContainer {
+      flex-direction: column;
+      position: relative;
+
+      .price {
+        margin: 0.625rem 1.875rem 0 0;
+      }
+      
+      .icon {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        top: 50%;
+        right: -10px;
+      }
+    }
+    .infoBadge {
+      .infoText {
+        line-height: 1.5em;
+      }
+    }
   }
 }
