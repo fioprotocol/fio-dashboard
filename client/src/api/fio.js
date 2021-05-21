@@ -13,8 +13,19 @@ export default class Fio {
     return this.publicFioSDK.isAvailable(fioName);
   };
 
-  registrationFee = (forDomain = false) => {
+  registrationFee = async (forDomain = false) => {
     if (forDomain) return this.publicFioSDK.getFee(EndPoint.registerFioDomain);
     return this.publicFioSDK.getFee(EndPoint.registerFioAddress);
+  };
+
+  getBalance = async publicKey => {
+    try {
+      const { balance } = await this.publicFioSDK.getFioBalance(publicKey);
+      return balance;
+    } catch (e) {
+      console.error(e);
+    }
+
+    return 0;
   };
 }
