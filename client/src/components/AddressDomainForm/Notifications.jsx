@@ -63,16 +63,18 @@ const Notifications = props => {
   let costFio;
 
   if (!isFree && isAddress) {
-    costUsdc = isAddress ? parseInt(addressPrice) : parseInt(domainPrice);
-    costFio = isAddress ? parseInt(fioAddressPrice) : parseInt(fioDomainPrice);
+    costUsdc = isAddress ? parseFloat(addressPrice) : parseFloat(domainPrice);
+    costFio = isAddress
+      ? parseFloat(fioAddressPrice)
+      : parseFloat(fioDomainPrice);
   }
   if (isCustomDomain) {
     costUsdc = costUsdc
-      ? costUsdc + parseInt(domainPrice)
-      : parseInt(domainPrice);
+      ? costUsdc + parseFloat(domainPrice)
+      : parseFloat(domainPrice);
     costFio = costFio
-      ? costFio + parseInt(fioDomainPrice)
-      : parseInt(fioDomainPrice);
+      ? costFio + parseFloat(fioDomainPrice)
+      : parseFloat(fioDomainPrice);
   }
 
   const notifBadge = () => (
