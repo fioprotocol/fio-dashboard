@@ -21,6 +21,7 @@ const AddressForm = props => {
     onChangeHandleField,
     onBlurHandleField,
     isFree,
+    setFree,
   } = props;
 
   const updateFormStateCurrent = (form, state) => {
@@ -38,7 +39,7 @@ const AddressForm = props => {
       )}
       <div className={classes.username}>
         <Field
-          name="username"
+          name="address"
           type="text"
           placeholder="Find the perfect username .."
           colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
@@ -58,8 +59,8 @@ const AddressForm = props => {
             </>
           }
         />
-        <OnChange name="username">{onChangeHandleField}</OnChange>
-        <OnBlur name="username">{() => onBlurHandleField('username')}</OnBlur>
+        <OnChange name="address">{onChangeHandleField}</OnChange>
+        <OnBlur name="address">{() => onBlurHandleField('address')}</OnBlur>
       </div>
       <div className={classnames(classes.at, 'boldText')}>@</div>
       <div className={classes.domainContainer}>
@@ -70,7 +71,10 @@ const AddressForm = props => {
             placeholder="Custom domain"
             colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
             component={Input}
-            onClose={toggleCustomDomain}
+            onClose={() => {
+              toggleCustomDomain(false);
+              setFree(true);
+            }}
             badge={showPrice({ isDomainPrice: true })}
             hideError="true"
           />
@@ -79,7 +83,10 @@ const AddressForm = props => {
             name="domain"
             component={CustomDropdown}
             options={options}
-            toggle={toggleCustomDomain}
+            toggle={() => {
+              toggleCustomDomain(true);
+              setFree(false);
+            }}
             initValue={domain}
           />
         )}

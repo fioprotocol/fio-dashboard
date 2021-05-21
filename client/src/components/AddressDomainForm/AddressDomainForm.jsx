@@ -5,8 +5,9 @@ import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
 import Notifications from './Notifications';
 import FormContainer from './FormContainer';
-import { debounce } from 'lodash';
-import { setDataMutator } from '../../utils';
+import debounce from 'lodash/debounce';
+import isEmpty from 'lodash/isEmpty';
+import { setDataMutator, cartHasFreeItem } from '../../utils';
 
 import { addressValidation, domainValidation } from './validation';
 
@@ -22,7 +23,7 @@ const AddressDomainForm = props => {
     refreshFioWallets,
     account,
     prices,
-    // cart, //todo: replace with cart data
+    cart,
   } = props;
 
   const isAddress = type === ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS;
@@ -30,8 +31,8 @@ const AddressDomainForm = props => {
 
   const [isCustomDomain, toggleCustomDomain] = useState(false);
   const [isAvailable, toggleAvailable] = useState(false);
-  const [cartItems, updateCart] = useState([]); //todo: replace with cart data
   const [userDomains, setUserDomains] = useState([]);
+  const [userAddresses, setUserAddresses] = useState([]);
   const [formErrors, changeFormErrors] = useState({});
   const [isValidating, toggleValidating] = useState(false);
   const [isFree, setFree] = useState(true);
@@ -93,7 +94,8 @@ const AddressDomainForm = props => {
         if (addresses.length) userAddresses.push(addresses);
       }
       setUserDomains(userDomains);
-      setFree(userAddresses.length === 0);
+      setUserAddresses(userAddresses);
+      setFree(userAddresses.length === 0 && !cartHasFreeItem(cart));
     }
     return () => {
       setUserDomains([]);
@@ -107,12 +109,20 @@ const AddressDomainForm = props => {
     }
   }, []);
 
+  useEffect(() => {
+    if (!isEmpty(cart) && isEmpty(userAddresses)) {
+      setFree(!cartHasFreeItem(cart));
+    }
+    if (isEmpty(cart) && isEmpty(userAddresses)) setFree(true);
+  }, [cart]);
+
   const validationProps = {
     options,
     toggleAvailable,
     changeFormErrors,
     isAddress,
     toggleValidating,
+    cart,
   };
 
   const handleSubmit = (values, form) => {
@@ -145,6 +155,7 @@ const AddressDomainForm = props => {
         isAddress={isAddress}
         isCustomDomain={isCustomDomain}
         toggleCustomDomain={toggleCustomDomain}
+        setFree={setFree}
         domain={domain}
         key="form"
         showPrice={showPrice}
@@ -162,8 +173,6 @@ const AddressDomainForm = props => {
           isCustomDomain={isCustomDomain}
           isAvailable={isAvailable}
           toggleAvailable={toggleAvailable}
-          cartItems={cartItems} //todo: remove on real cart data
-          updateCart={updateCart}
           isAddress={isAddress}
           isDomain={isDomain}
           key="notifications"

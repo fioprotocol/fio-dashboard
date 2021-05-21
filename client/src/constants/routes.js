@@ -14,6 +14,8 @@ const ROUTES = {
   FIO_WALLET: '/fio-wallet',
   GOVERNANCE: '/governance',
   PROTOCOL_UPDATES: '/protocol-updates',
+  CART: '/cart',
+  CHECKOUT: '/checkout',
 };
 
 export { ROUTES };

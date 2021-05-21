@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
-import _ from 'lodash';
+import isEmpty from 'lodash/isEmpty';
+import { v4 as uuidv4 } from 'uuid';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../AddressDomainBadge/AddressDomainBadge';
@@ -24,8 +25,9 @@ const Notifications = props => {
     isAvailable,
     toggleAvailable,
     type,
-    cartItems,
-    updateCart,
+    cart,
+    addItem,
+    deleteItem,
     prices,
     isAddress,
     isDomain,
@@ -34,8 +36,13 @@ const Notifications = props => {
   } = props;
   const { values, form } = formProps;
   const errors = [];
+  const [currentId, setCurrentId] = useState(null);
 
-  !_.isEmpty(formErrors) &&
+  useEffect(() => {
+    setCurrentId(null);
+  }, [values]);
+
+  !isEmpty(formErrors) &&
     Object.keys(formErrors).forEach(key => {
       const fieldState = form.getFieldState(key) || {};
       const { touched, modified, submitSucceeded } = fieldState;
@@ -44,25 +51,28 @@ const Notifications = props => {
       }
     });
 
-  const { username, domain: domainName } = values || {};
+  const { address, domain: domainName } = values || {};
   const {
     usdt: { domain: domainPrice, address: addressPrice },
     fio: { domain: fioDomainPrice, address: fioAddressPrice },
   } = prices;
 
-  const isOnCart = cartItems.some(item => _.isEqual(item, values));
-  const hasErrors = !_.isEmpty(errors);
-  let price;
-  let fioPrice;
+  const isOnCart = cart.some(item => item.id === currentId);
 
-  if (!isFree) {
-    price = isAddress ? parseInt(addressPrice) : parseInt(domainPrice);
-    fioPrice = isAddress ? parseInt(fioAddressPrice) : parseInt(fioDomainPrice);
+  const hasErrors = !isEmpty(errors);
+  let costUsdc;
+  let costFio;
+
+  if (!isFree && isAddress) {
+    costUsdc = isAddress ? parseInt(addressPrice) : parseInt(domainPrice);
+    costFio = isAddress ? parseInt(fioAddressPrice) : parseInt(fioDomainPrice);
   }
   if (isCustomDomain) {
-    price = price ? price + parseInt(domainPrice) : parseInt(domainPrice);
-    fioPrice = fioPrice
-      ? fioPrice + parseInt(fioDomainPrice)
+    costUsdc = costUsdc
+      ? costUsdc + parseInt(domainPrice)
+      : parseInt(domainPrice);
+    costFio = costFio
+      ? costFio + parseInt(fioDomainPrice)
       : parseInt(fioDomainPrice);
   }
 
@@ -101,7 +111,7 @@ const Notifications = props => {
           <p className={classes.address}>
             {isAddress && (
               <>
-                <span className={classes.name}>{username}</span>@
+                <span className={classes.name}>{address}</span>@
               </>
             )}
             {isDomain ? (
@@ -115,9 +125,11 @@ const Notifications = props => {
               'FREE'
             ) : (
               <>
-                {fioPrice}FIO{' '}
-                {price && (
-                  <span className={classes.usdcAmount}>({price} USDC)</span>
+                {costFio.toFixed(2)}FIO{' '}
+                {costUsdc && (
+                  <span className={classes.usdcAmount}>
+                    ({costUsdc.toFixed(2)} USDC)
+                  </span>
                 )}
               </>
             )}
@@ -125,7 +137,20 @@ const Notifications = props => {
           <div className={classes.actionContainer}>
             <Button
               className={classnames(classes.button, !isOnCart && classes.show)}
-              onClick={() => updateCart([...cartItems, values])} //todo: set add item to cart action
+              onClick={() => {
+                const id = uuidv4();
+                const data = {
+                  ...values,
+                  costFio: costFio,
+                  costUsdc: costUsdc,
+                  id,
+                };
+
+                if (costFio) data.costFio = costFio;
+                if (costUsdc) data.costUsdc = costUsdc;
+                addItem(data);
+                setCurrentId(id);
+              }}
             >
               <FontAwesomeIcon icon="plus-square" className={classes.icon} />
               Add to Cart
@@ -141,12 +166,9 @@ const Notifications = props => {
                 icon="times-circle"
                 className={classes.iconClose}
                 onClick={() => {
-                  const updArr = cartItems.filter(
-                    item => !_.isEqual(item, values),
-                  );
-                  updateCart(updArr);
+                  deleteItem({ id: currentId });
                   toggleAvailable(false);
-                }} //todo: set remove item from cart action
+                }}
               />
             </div>
           </div>

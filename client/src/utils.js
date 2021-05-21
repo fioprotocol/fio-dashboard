@@ -1,3 +1,4 @@
+import isEmpty from 'lodash/isEmpty';
 const FIO_DAPP_USERNAME_DELIMITER = '_fio.dapp_';
 
 export function compose(...funcs) {
@@ -44,5 +45,88 @@ export const setDataMutator = (args, state) => {
 
   if (field) {
     field.data = { ...field.data, ...data };
+  }
+};
+
+export const setFreeCart = ({ domains, cart }) => {
+  const recalcElem = cart.find(
+    item =>
+      item.address &&
+      item.domain &&
+      domains.some(domain => domain.domain === item.domain && domain.free),
+  );
+  if (recalcElem) {
+    delete recalcElem.costFio;
+    delete recalcElem.costUsdc;
+
+    const retCart = cart.map(item => {
+      delete item.showBadge;
+      return item.id === recalcElem.id ? recalcElem : item;
+    });
+    return retCart;
+  } else {
+    return cart;
+  }
+};
+
+export const recalculateCart = ({ domains, cart, id }) => {
+  const deletedElement = cart.find(item => item.id === id);
+  if (!deletedElement) return;
+
+  const data = {
+    id,
+  };
+
+  const deletedElemCart = cart.filter(item => item.id !== id);
+
+  if (!deletedElement.costUsdc && !deletedElement.costFio) {
+    const recCart = setFreeCart({ domains, cart: deletedElemCart });
+    data['cart'] = recCart;
+  }
+
+  return data;
+};
+
+export const removeFreeCart = ({ cart, prices }) => {
+  const {
+    fio: { address: addressFio },
+    usdt: { address: addressUsdc },
+  } = prices;
+
+  const retCart = cart.map(item => {
+    if (!item.costFio && !item.costUsdc) {
+      item.costFio = addressFio;
+      item.costUsdc = addressUsdc;
+      item.showBadge = true;
+    }
+    return item;
+  });
+  return retCart;
+};
+
+export const cartHasFreeItem = cart => {
+  return cart.some(item => !item.costFio && !item.costUsdc);
+};
+
+export const handleFreeAddressCart = async ({
+  domains,
+  fioWallets,
+  recalculate,
+  cart,
+  prices,
+}) => {
+  if (fioWallets) {
+    const userAddresses = [];
+    for (const fioWallet of fioWallets) {
+      const addresses = await fioWallet.otherMethods.getFioAddresses();
+      if (addresses.length) userAddresses.push(addresses);
+    }
+    let retCart = [];
+    if (userAddresses.length > 0) {
+      retCart = removeFreeCart({ cart, prices });
+    } else if (!cartHasFreeItem(cart)) {
+      retCart = setFreeCart({ domains, cart });
+    }
+    recalculate(!isEmpty(retCart) ? retCart : cart);
   }
 };
