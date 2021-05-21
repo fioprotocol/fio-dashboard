@@ -21,8 +21,8 @@ const Notifications = props => {
   const {
     formProps,
     isCustomDomain,
-    isAvailable,
-    toggleAvailable,
+    showAvailable,
+    toggleShowAvailable,
     type,
     cartItems,
     addItem,
@@ -81,7 +81,7 @@ const Notifications = props => {
     <>
       <InfoBadge
         type={BADGE_TYPES.SUCCESS}
-        show={isAvailable}
+        show={showAvailable}
         title="Available!"
         message={AVAILABLE_MESSAGE[type]}
       />
@@ -102,7 +102,7 @@ const Notifications = props => {
   return (
     <div key="badges">
       {notifBadge()}
-      <Badge type={BADGE_TYPES.SIMPLE} show={isAvailable}>
+      <Badge type={BADGE_TYPES.SIMPLE} show={showAvailable}>
         <div
           className={classnames(
             classes.addressContainer,
@@ -172,7 +172,7 @@ const Notifications = props => {
                 className={classes.iconClose}
                 onClick={() => {
                   deleteItem({ id: currentId });
-                  toggleAvailable(false);
+                  toggleShowAvailable(false);
                 }}
               />
             </div>

@@ -5,7 +5,7 @@ import { ADDRESS_REGEXP } from '../../constants/regExps';
 const verifyAddress = async props => {
   const {
     formProps,
-    toggleAvailable,
+    toggleShowAvailable,
     options,
     changeFormErrors,
     isAddress,
@@ -38,7 +38,7 @@ const verifyAddress = async props => {
     }
   }
 
-  toggleAvailable(isEmpty(errors));
+  toggleShowAvailable(isEmpty(errors));
 
   mutators.setDataMutator('address', {
     error: errors.address,
@@ -53,7 +53,7 @@ const verifyAddress = async props => {
 };
 
 export const addressValidation = async props => {
-  const { formProps, toggleAvailable, changeFormErrors, cartItems } = props;
+  const { formProps, toggleShowAvailable, changeFormErrors, cartItems } = props;
   const { mutators, getState } = formProps;
 
   const errors = {};
@@ -94,7 +94,7 @@ export const addressValidation = async props => {
   }
 
   if (!isEmpty(errors)) {
-    toggleAvailable(false);
+    toggleShowAvailable(false);
     mutators.setDataMutator('address', {
       error: errors.address,
       valid: !errors.address,
@@ -111,7 +111,7 @@ export const addressValidation = async props => {
 };
 
 export const domainValidation = props => {
-  const { formProps, toggleAvailable, changeFormErrors, cartItems } = props;
+  const { formProps, toggleShowAvailable, changeFormErrors, cartItems } = props;
   const errors = {};
   const { mutators, getState } = formProps;
   const { domain } = getState().values || {};
@@ -136,7 +136,7 @@ export const domainValidation = props => {
   }
 
   if (!isEmpty(errors)) {
-    toggleAvailable(false);
+    toggleShowAvailable(false);
     mutators.setDataMutator('domain', {
       error: errors.domain,
       valid: !errors.domain,

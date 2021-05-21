@@ -34,7 +34,7 @@ const FormContainer = props => {
     type,
     isAddress,
     isValidating,
-    toggleAvailable,
+    toggleShowAvailable,
     handleChange,
     formState,
   } = props;
@@ -50,7 +50,7 @@ const FormContainer = props => {
     const { handleSubmit, form } = formProps;
 
     const onChangeHandleField = () => {
-      toggleAvailable(false);
+      toggleShowAvailable(false);
       handleChange(form);
     };
 

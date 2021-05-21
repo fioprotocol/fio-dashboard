@@ -30,7 +30,7 @@ const AddressDomainForm = props => {
   const isDomain = type === ADDRESS_DOMAIN_BADGE_TYPE.DOMAIN;
 
   const [isCustomDomain, toggleCustomDomain] = useState(false);
-  const [isAvailable, toggleAvailable] = useState(false);
+  const [showAvailable, toggleShowAvailable] = useState(false);
   const [userDomains, setUserDomains] = useState([]);
   const [userAddresses, setUserAddresses] = useState([]);
   const [formErrors, changeFormErrors] = useState({});
@@ -118,7 +118,7 @@ const AddressDomainForm = props => {
 
   const validationProps = {
     options,
-    toggleAvailable,
+    toggleShowAvailable,
     changeFormErrors,
     isAddress,
     toggleValidating,
@@ -160,7 +160,7 @@ const AddressDomainForm = props => {
         key="form"
         showPrice={showPrice}
         handleChange={handleChange}
-        toggleAvailable={toggleAvailable}
+        toggleShowAvailable={toggleShowAvailable}
         isValidating={isValidating}
         formState={formState}
         isFree={isFree}
@@ -171,8 +171,8 @@ const AddressDomainForm = props => {
           formErrors={formErrors}
           {...props}
           isCustomDomain={isCustomDomain}
-          isAvailable={isAvailable}
-          toggleAvailable={toggleAvailable}
+          showAvailable={showAvailable}
+          toggleShowAvailable={toggleShowAvailable}
           isAddress={isAddress}
           isDomain={isDomain}
           key="notifications"
