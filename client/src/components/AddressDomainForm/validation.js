@@ -53,7 +53,7 @@ const verifyAddress = async props => {
 };
 
 export const addressValidation = async props => {
-  const { formProps, toggleAvailable, changeFormErrors, cart } = props;
+  const { formProps, toggleAvailable, changeFormErrors, cartItems } = props;
   const { mutators, getState } = formProps;
 
   const errors = {};
@@ -84,7 +84,7 @@ export const addressValidation = async props => {
   if (
     address &&
     domain &&
-    cart.some(
+    cartItems.some(
       item =>
         item.address === address.toLowerCase() &&
         item.domain === domain.toLowerCase(),
@@ -111,7 +111,7 @@ export const addressValidation = async props => {
 };
 
 export const domainValidation = props => {
-  const { formProps, toggleAvailable, changeFormErrors, cart } = props;
+  const { formProps, toggleAvailable, changeFormErrors, cartItems } = props;
   const errors = {};
   const { mutators, getState } = formProps;
   const { domain } = getState().values || {};
@@ -128,7 +128,9 @@ export const domainValidation = props => {
   }
   if (
     domain &&
-    cart.some(item => !item.address && item.domain === domain.toLowerCase())
+    cartItems.some(
+      item => !item.address && item.domain === domain.toLowerCase(),
+    )
   ) {
     errors.domain = 'This domain is on a cart';
   }

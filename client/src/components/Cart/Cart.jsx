@@ -13,12 +13,12 @@ import { recalculateCart } from '../../utils';
 import classes from './Cart.module.scss';
 
 const Cart = props => {
-  const { cart, deleteItem, domains, userWallets, setWallet } = props;
-  const count = cart.length;
+  const { cartItems, deleteItem, domains, userWallets, setWallet } = props;
+  const count = cartItems.length;
   const isCartEmpty = count === 0;
 
   const handleDeleteItem = id => {
-    const data = recalculateCart({ domains, cart, id }) || id;
+    const data = recalculateCart({ domains, cartItems, id }) || id;
     deleteItem(data);
   };
 
@@ -29,7 +29,7 @@ const Cart = props => {
         <h5 className={classes.title}>Cart</h5>
       </div>
       {!isCartEmpty &&
-        cart.map(item => (
+        cartItems.map(item => (
           <div key={item.domain + item.address}>
             <Badge show type={BADGE_TYPES.WHITE}>
               <div className={classes.itemContainer}>

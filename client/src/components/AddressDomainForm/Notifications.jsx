@@ -24,7 +24,7 @@ const Notifications = props => {
     isAvailable,
     toggleAvailable,
     type,
-    cart,
+    cartItems,
     addItem,
     deleteItem,
     prices,
@@ -56,7 +56,7 @@ const Notifications = props => {
     fio: { domain: fioDomainPrice, address: fioAddressPrice },
   } = prices;
 
-  const isOnCart = cart.some(item => item.id === currentId);
+  const isOnCart = cartItems.some(item => item.id === currentId);
 
   const hasErrors = !isEmpty(errors);
   let costUsdc;

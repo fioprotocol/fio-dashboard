@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 
 import { ROUTES } from '../../constants/routes';
@@ -9,7 +9,7 @@ import { handleFreeAddressCart } from '../../utils';
 
 const CartPage = props => {
   const {
-    cart,
+    cartItems,
     history,
     fioWallets,
     recalculate,
@@ -17,12 +17,16 @@ const CartPage = props => {
     account,
     domains,
     userWallets,
+    setWallet,
+    paymentWallet,
   } = props;
 
-  const [selectedWallet, setWallet] = useState({});
-
   useEffect(() => {
-    if (!isEmpty(cart) && cart.length === 1 && userWallets.length === 1) {
+    if (
+      !isEmpty(cartItems) &&
+      cartItems.length === 1 &&
+      userWallets.length === 1
+    ) {
       history.push(ROUTES.CHECKOUT);
     }
   }, []);
@@ -35,7 +39,7 @@ const CartPage = props => {
       domains,
       fioWallets,
       recalculate,
-      cart,
+      cartItems,
       prices,
     });
   }, [account, domains, fioWallets]);
@@ -45,7 +49,7 @@ const CartPage = props => {
       title="Your Cart"
       secondTitle="Amount Due"
       bigCart={<Cart {...props} setWallet={setWallet} />}
-      smallCart={<CartAmount {...props} selectedWallet={selectedWallet} />}
+      smallCart={<CartAmount {...props} selectedWallet={paymentWallet} />}
     />
   );
 };

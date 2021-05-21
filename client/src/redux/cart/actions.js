@@ -10,16 +10,28 @@ export const addItem = item => ({
   data: item,
 });
 
-export const deleteItem = ({ id, cart }) => ({
+export const deleteItem = ({ id, cartItems }) => ({
   type: DELETE_ITEM,
-  data: { id, cart },
+  data: { id, cartItems },
 });
 
 export const clear = () => ({
   type: CLEAR_CART,
 });
 
-export const recalculate = cart => ({
+export const recalculate = cartItems => ({
   type: RECALCULATE_CART,
-  data: cart,
+  data: cartItems,
+});
+
+export const SET_WALLET_FOR_PAYMENT = `${prefix}/SET_WALLET_FOR_PAYMENT`;
+export const UNSET_WALLET_FOR_PAYMENT = `${prefix}/UNSET_WALLET_FOR_PAYMENT`;
+
+export const setWallet = walletData => ({
+  type: SET_WALLET_FOR_PAYMENT,
+  data: walletData,
+});
+
+export const unsetWallet = () => ({
+  type: UNSET_WALLET_FOR_PAYMENT,
 });

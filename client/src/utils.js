@@ -48,8 +48,8 @@ export const setDataMutator = (args, state) => {
   }
 };
 
-export const setFreeCart = ({ domains, cart }) => {
-  const recalcElem = cart.find(
+export const setFreeCart = ({ domains, cartItems }) => {
+  const recalcElem = cartItems.find(
     item =>
       item.address &&
       item.domain &&
@@ -59,41 +59,41 @@ export const setFreeCart = ({ domains, cart }) => {
     delete recalcElem.costFio;
     delete recalcElem.costUsdc;
 
-    const retCart = cart.map(item => {
+    const retCart = cartItems.map(item => {
       delete item.showBadge;
       return item.id === recalcElem.id ? recalcElem : item;
     });
     return retCart;
   } else {
-    return cart;
+    return cartItems;
   }
 };
 
-export const recalculateCart = ({ domains, cart, id }) => {
-  const deletedElement = cart.find(item => item.id === id);
+export const recalculateCart = ({ domains, cartItems, id }) => {
+  const deletedElement = cartItems.find(item => item.id === id);
   if (!deletedElement) return;
 
   const data = {
     id,
   };
 
-  const deletedElemCart = cart.filter(item => item.id !== id);
+  const deletedElemCart = cartItems.filter(item => item.id !== id);
 
   if (!deletedElement.costUsdc && !deletedElement.costFio) {
-    const recCart = setFreeCart({ domains, cart: deletedElemCart });
-    data['cart'] = recCart;
+    const recCart = setFreeCart({ domains, cartItems: deletedElemCart });
+    data['cartItems'] = recCart;
   }
 
   return data;
 };
 
-export const removeFreeCart = ({ cart, prices }) => {
+export const removeFreeCart = ({ cartItems, prices }) => {
   const {
     fio: { address: addressFio },
     usdt: { address: addressUsdc },
   } = prices;
 
-  const retCart = cart.map(item => {
+  const retCart = cartItems.map(item => {
     if (!item.costFio && !item.costUsdc) {
       item.costFio = addressFio;
       item.costUsdc = addressUsdc;
@@ -104,15 +104,15 @@ export const removeFreeCart = ({ cart, prices }) => {
   return retCart;
 };
 
-export const cartHasFreeItem = cart => {
-  return cart.some(item => !item.costFio && !item.costUsdc);
+export const cartHasFreeItem = cartItems => {
+  return cartItems.some(item => !item.costFio && !item.costUsdc);
 };
 
 export const handleFreeAddressCart = async ({
   domains,
   fioWallets,
   recalculate,
-  cart,
+  cartItems,
   prices,
 }) => {
   if (fioWallets) {
@@ -123,10 +123,10 @@ export const handleFreeAddressCart = async ({
     }
     let retCart = [];
     if (userAddresses.length > 0) {
-      retCart = removeFreeCart({ cart, prices });
-    } else if (!cartHasFreeItem(cart)) {
-      retCart = setFreeCart({ domains, cart });
+      retCart = removeFreeCart({ cartItems, prices });
+    } else if (!cartHasFreeItem(cartItems)) {
+      retCart = setFreeCart({ domains, cartItems });
     }
-    recalculate(!isEmpty(retCart) ? retCart : cart);
+    recalculate(!isEmpty(retCart) ? retCart : cartItems);
   }
 };

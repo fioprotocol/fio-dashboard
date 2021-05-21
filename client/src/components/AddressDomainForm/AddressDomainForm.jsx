@@ -23,7 +23,7 @@ const AddressDomainForm = props => {
     refreshFioWallets,
     account,
     prices,
-    cart,
+    cartItems,
   } = props;
 
   const isAddress = type === ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS;
@@ -95,7 +95,7 @@ const AddressDomainForm = props => {
       }
       setUserDomains(userDomains);
       setUserAddresses(userAddresses);
-      setFree(userAddresses.length === 0 && !cartHasFreeItem(cart));
+      setFree(userAddresses.length === 0 && !cartHasFreeItem(cartItems));
     }
     return () => {
       setUserDomains([]);
@@ -110,11 +110,11 @@ const AddressDomainForm = props => {
   }, []);
 
   useEffect(() => {
-    if (!isEmpty(cart) && isEmpty(userAddresses)) {
-      setFree(!cartHasFreeItem(cart));
+    if (!isEmpty(cartItems) && isEmpty(userAddresses)) {
+      setFree(!cartHasFreeItem(cartItems));
     }
-    if (isEmpty(cart) && isEmpty(userAddresses)) setFree(true);
-  }, [cart]);
+    if (isEmpty(cartItems) && isEmpty(userAddresses)) setFree(true);
+  }, [cartItems]);
 
   const validationProps = {
     options,
@@ -122,7 +122,7 @@ const AddressDomainForm = props => {
     changeFormErrors,
     isAddress,
     toggleValidating,
-    cart,
+    cartItems,
   };
 
   const handleSubmit = (values, form) => {

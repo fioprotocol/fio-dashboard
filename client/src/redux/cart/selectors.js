@@ -1,3 +1,4 @@
 import { prefix } from './actions';
 
-export const cart = state => state[prefix] || [];
+export const cartItems = state => state[prefix].cartItems || [];
+export const paymentWallet = state => state[prefix].paymentWallet || '';

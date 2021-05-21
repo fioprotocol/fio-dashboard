@@ -13,7 +13,7 @@ import classes from './AddressDomainCart.module.scss';
 
 const AddressDomainCart = props => {
   const {
-    cart,
+    cartItems,
     deleteItem,
     account,
     domains,
@@ -23,7 +23,7 @@ const AddressDomainCart = props => {
     prices,
     recalculate,
   } = props;
-  const count = cart.length;
+  const count = cartItems.length;
   const isCartEmpty = count === 0;
 
   const handleCheckout = () => {
@@ -36,7 +36,7 @@ const AddressDomainCart = props => {
   };
 
   const handleDeleteItem = id => {
-    const data = recalculateCart({ domains, cart, id }) || id;
+    const data = recalculateCart({ domains, cartItems, id }) || id;
     deleteItem(data);
   };
 
@@ -45,7 +45,7 @@ const AddressDomainCart = props => {
       domains,
       fioWallets,
       recalculate,
-      cart,
+      cartItems,
       prices,
     });
   }, [account, domains, fioWallets]);
@@ -66,8 +66,8 @@ const AddressDomainCart = props => {
         </div>
       ) : (
         <div>
-          {!isEmpty(cart) &&
-            cart.map(item => (
+          {!isEmpty(cartItems) &&
+            cartItems.map(item => (
               <div key={item.id} className={classes.itemContainer}>
                 <div className={classes.itemInfo}>
                   {item.address ? (
