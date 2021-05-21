@@ -13,7 +13,7 @@ import { recalculateCart } from '../../utils';
 import classes from './Cart.module.scss';
 
 const Cart = props => {
-  const { cart, deleteItem, domains, wallets, setWallet } = props;
+  const { cart, deleteItem, domains, userWallets, setWallet } = props;
   const count = cart.length;
   const isCartEmpty = count === 0;
 
@@ -94,7 +94,7 @@ const Cart = props => {
               <Field
                 name="wallet"
                 component={WalletDropdown}
-                options={wallets}
+                options={userWallets}
                 setWallet={setWallet}
               />
             </form>
