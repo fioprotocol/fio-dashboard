@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
 import isEmpty from 'lodash/isEmpty';
-import { v4 as uuidv4 } from 'uuid';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../AddressDomainBadge/AddressDomainBadge';
@@ -138,7 +137,11 @@ const Notifications = props => {
             <Button
               className={classnames(classes.button, !isOnCart && classes.show)}
               onClick={() => {
-                const id = uuidv4();
+                let id = domainName;
+                if (address) {
+                  id += address;
+                }
+
                 const data = {
                   ...values,
                   costFio: costFio,
