@@ -21,7 +21,6 @@ const AddressForm = props => {
     onChangeHandleField,
     onBlurHandleField,
     isFree,
-    setFree,
   } = props;
 
   const updateFormStateCurrent = (form, state) => {
@@ -73,7 +72,6 @@ const AddressForm = props => {
             component={Input}
             onClose={() => {
               toggleCustomDomain(false);
-              setFree(true);
             }}
             badge={showPrice({ isDomainPrice: true })}
             hideError="true"
@@ -85,7 +83,6 @@ const AddressForm = props => {
             options={options}
             toggle={() => {
               toggleCustomDomain(true);
-              setFree(false);
             }}
             initValue={domain}
           />

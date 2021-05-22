@@ -72,18 +72,7 @@ const AddressDomainForm = props => {
     return cost + price;
   };
 
-  useEffect(() => {
-    if (!isHomepage && domain && options.every(option => option !== domain)) {
-      toggleCustomDomain(true);
-    }
-  }, []);
-
-  useEffect(async () => {
-    getPrices();
-    getDomains();
-    if (account) {
-      refreshFioWallets(account);
-    }
+  const setUserAddressesAndDomains = async () => {
     if (fioWallets) {
       const userDomains = [];
       const userAddresses = [];
@@ -95,26 +84,39 @@ const AddressDomainForm = props => {
       }
       setUserDomains(userDomains);
       setUserAddresses(userAddresses);
-      setFree(userAddresses.length === 0 && !cartHasFreeItem(cartItems));
     }
-    return () => {
-      setUserDomains([]);
-      setFree(true);
-    };
-  }, []);
+  };
 
   useEffect(() => {
-    if (isDomain) {
+    if ((!isHomepage && domain && options.every(option => option !== domain)) || isDomain) {
       toggleCustomDomain(true);
     }
   }, []);
 
   useEffect(() => {
-    if (!isEmpty(cartItems) && isEmpty(userAddresses)) {
-      setFree(!cartHasFreeItem(cartItems));
+    getPrices();
+    getDomains();
+    if (account) {
+      refreshFioWallets(account);
     }
-    if (isEmpty(cartItems) && isEmpty(userAddresses)) setFree(true);
-  }, [cartItems]);
+    setUserAddressesAndDomains();
+    return () => {
+      setUserDomains([]);
+      setUserAddresses([]);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isCustomDomain) {
+      setFree(!cartHasFreeItem(cartItems) && isEmpty(userAddresses));
+    } else {
+      setFree(false);
+    }
+  }, [isCustomDomain, userAddresses, cartItems]);
+
+  useEffect(() => {
+    setUserAddressesAndDomains();
+  }, [fioWallets]);
 
   const validationProps = {
     options,
@@ -155,7 +157,6 @@ const AddressDomainForm = props => {
         isAddress={isAddress}
         isCustomDomain={isCustomDomain}
         toggleCustomDomain={toggleCustomDomain}
-        setFree={setFree}
         domain={domain}
         key="form"
         showPrice={showPrice}

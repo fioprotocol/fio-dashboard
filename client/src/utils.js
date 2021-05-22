@@ -105,7 +105,10 @@ export const removeFreeCart = ({ cartItems, prices }) => {
 };
 
 export const cartHasFreeItem = cartItems => {
-  return cartItems.some(item => !item.costFio && !item.costUsdc);
+  return (
+    !isEmpty(cartItems) &&
+    cartItems.some(item => !item.costFio && !item.costUsdc)
+  );
 };
 
 export const handleFreeAddressCart = async ({
