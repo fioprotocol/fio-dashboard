@@ -35,7 +35,9 @@ const AddressDomainForm = props => {
   const [userAddresses, setUserAddresses] = useState([]);
   const [formErrors, changeFormErrors] = useState({});
   const [isValidating, toggleValidating] = useState(false);
-  const [isFree, setFree] = useState(true);
+
+  const isFree =
+    !isCustomDomain && !cartHasFreeItem(cartItems) && isEmpty(userAddresses);
 
   const { domain } = formState;
   const options = [
@@ -108,14 +110,6 @@ const AddressDomainForm = props => {
       setUserAddresses([]);
     };
   }, []);
-
-  useEffect(() => {
-    if (!isCustomDomain) {
-      setFree(!cartHasFreeItem(cartItems) && isEmpty(userAddresses));
-    } else {
-      setFree(false);
-    }
-  }, [isCustomDomain, userAddresses, cartItems]);
 
   useEffect(() => {
     setUserAddressesAndDomains();

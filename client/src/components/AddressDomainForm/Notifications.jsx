@@ -126,7 +126,7 @@ const Notifications = props => {
               'FREE'
             ) : (
               <>
-                {costFio.toFixed(2)}FIO{' '}
+                {costFio && costFio.toFixed(2)}FIO{' '}
                 {costUsdc && (
                   <span className={classes.usdcAmount}>
                     ({costUsdc.toFixed(2)} USDC)
