@@ -115,12 +115,6 @@ const AddressDomainForm = props => {
     setUserAddressesAndDomains();
   }, [fioWallets]);
 
-  useEffect(() => {
-    document
-      .getElementById('addressForm')
-      .dispatchEvent(new Event('submit', { cancelable: true }));
-  }, [cartItems]);
-
   const validationProps = {
     options,
     toggleShowAvailable,
@@ -142,14 +136,16 @@ const AddressDomainForm = props => {
     if (isDomain) domainValidation(validationPropsToPass);
   };
 
-  const handleChange = debounce(formProps => {
+  const handleChange = formProps => {
     const validationPropsToPass = {
       formProps,
       ...validationProps,
     };
     if (isAddress) addressValidation(validationPropsToPass);
     if (isDomain) domainValidation(validationPropsToPass);
-  }, 500);
+  };
+
+  const debouncedHandleChange = debounce(handleChange, 500);
 
   const renderItems = formProps => {
     return [
@@ -164,6 +160,7 @@ const AddressDomainForm = props => {
         key="form"
         showPrice={showPrice}
         handleChange={handleChange}
+        debouncedHandleChange={debouncedHandleChange}
         toggleShowAvailable={toggleShowAvailable}
         isValidating={isValidating}
         formState={formState}

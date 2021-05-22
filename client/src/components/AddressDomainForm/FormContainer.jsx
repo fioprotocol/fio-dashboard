@@ -37,6 +37,7 @@ const FormContainer = props => {
     toggleShowAvailable,
     handleChange,
     formState,
+    debouncedHandleChange,
   } = props;
 
   useEffect(() => {
@@ -54,17 +55,15 @@ const FormContainer = props => {
       handleChange(form);
     };
 
-    const onBlurHandleField = name => {
-      const fieldState = form.getFieldState(name);
-      const { change, value } = fieldState || {};
-      fieldState && value && change(value.toLowerCase());
-      handleChange(form);
+    const debouncedOnChangeHandleField = () => {
+      toggleShowAvailable(false);
+      debouncedHandleChange(form);
     };
 
     const propsToForm = {
       ...props,
       onChangeHandleField,
-      onBlurHandleField,
+      debouncedOnChangeHandleField,
     };
 
     return (

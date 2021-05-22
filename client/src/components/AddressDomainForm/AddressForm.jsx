@@ -4,7 +4,7 @@ import classnames from 'classnames';
 
 import CustomDropdown from './CustomDropdown';
 import Input, { INPUT_COLOR_SCHEMA } from '../Input/Input';
-import { OnChange, OnBlur } from 'react-final-form-listeners';
+import { OnChange } from 'react-final-form-listeners';
 
 import classes from './AddressDomainForm.module.scss';
 
@@ -19,7 +19,7 @@ const AddressForm = props => {
     updateFormState,
     showPrice,
     onChangeHandleField,
-    onBlurHandleField,
+    debouncedOnChangeHandleField,
     isFree,
   } = props;
 
@@ -58,8 +58,7 @@ const AddressForm = props => {
             </>
           }
         />
-        <OnChange name="address">{onChangeHandleField}</OnChange>
-        <OnBlur name="address">{() => onBlurHandleField('address')}</OnBlur>
+        <OnChange name="address">{debouncedOnChangeHandleField}</OnChange>
       </div>
       <div className={classnames(classes.at, 'boldText')}>@</div>
       <div className={classes.domainContainer}>
@@ -87,8 +86,9 @@ const AddressForm = props => {
             initValue={domain}
           />
         )}
-        <OnChange name="domain">{onChangeHandleField}</OnChange>
-        <OnBlur name="domain">{() => onBlurHandleField('domain')}</OnBlur>
+        <OnChange name="domain">
+          {isCustomDomain ? debouncedOnChangeHandleField : onChangeHandleField}
+        </OnChange>
       </div>
     </>
   );

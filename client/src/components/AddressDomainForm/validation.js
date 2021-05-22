@@ -55,19 +55,23 @@ const verifyAddress = async props => {
 export const addressValidation = async props => {
   const { formProps, toggleShowAvailable, changeFormErrors, cartItems } = props;
   const { mutators, getState } = formProps;
+  const { values, modified } = getState();
 
   const errors = {};
-  const { address, domain } = getState().values || {};
+  const { address, domain } = values || {};
 
-  if (!address) {
-    errors.address = 'Username Field Should Be Filled';
-  }
+  if (!address || !modified.domain) return;
+  // todo: show this error separately only on search icon click
+  // {
+  //   errors.address = 'Address Field Should Be Filled';
+  // }
+
   if (address && !ADDRESS_REGEXP.test(address)) {
     errors.address =
-      'Username only allows letters, numbers and dash in the middle';
+      'Address only allows letters, numbers and dash in the middle';
   }
 
-  if (!domain) {
+  if (!domain && modified.domain) {
     errors.domain = 'Select Domain Please';
   }
   if (!ADDRESS_REGEXP.test(domain)) {
@@ -116,9 +120,11 @@ export const domainValidation = props => {
   const { mutators, getState } = formProps;
   const { domain } = getState().values || {};
 
-  if (!domain) {
-    errors.domain = 'Select Domain Please';
-  }
+  if (!domain) return;
+  // todo: show this error separately only on search icon click
+  // {
+  //   errors.domain = 'Domain Field Should Be Filled';
+  // }
   if (!ADDRESS_REGEXP.test(domain)) {
     errors.domain =
       'Domain name only allows letters, numbers and dash in the middle';

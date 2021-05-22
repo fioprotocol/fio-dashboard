@@ -38,6 +38,15 @@ const AddressDomainCart = props => {
   const handleDeleteItem = id => {
     const data = recalculateCart({ domains, cartItems, id }) || id;
     deleteItem(data);
+    setTimeout(
+      () =>
+        document
+          .getElementById('addressForm')
+          .dispatchEvent(
+            new Event('submit', { cancelable: true, bubbles: true }),
+          ),
+      0,
+    );
   };
 
   useEffect(async () => {
