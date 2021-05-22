@@ -68,7 +68,12 @@ const FormContainer = props => {
     };
 
     return (
-      <form onSubmit={handleSubmit} className={classes.form} key="form">
+      <form
+        onSubmit={handleSubmit}
+        className={classes.form}
+        key="form"
+        id="addressForm"
+      >
         {isHomepage ? (
           <AddressForm {...propsToForm} formName={FORM_NAMES.ADDRESS} />
         ) : isAddress ? (

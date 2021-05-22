@@ -88,7 +88,10 @@ const AddressDomainForm = props => {
   };
 
   useEffect(() => {
-    if ((!isHomepage && domain && options.every(option => option !== domain)) || isDomain) {
+    if (
+      (!isHomepage && domain && options.every(option => option !== domain)) ||
+      isDomain
+    ) {
       toggleCustomDomain(true);
     }
   }, []);
@@ -117,6 +120,12 @@ const AddressDomainForm = props => {
   useEffect(() => {
     setUserAddressesAndDomains();
   }, [fioWallets]);
+
+  useEffect(() => {
+    document
+      .getElementById('addressForm')
+      .dispatchEvent(new Event('submit', { cancelable: true }));
+  }, [cartItems]);
 
   const validationProps = {
     options,
