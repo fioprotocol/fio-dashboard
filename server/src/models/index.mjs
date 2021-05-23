@@ -1,3 +1,3 @@
 import db from '../db';
 
-export const { Action, User, Notification } = db.models;
+export const { Action, User, Notification, FreeAddress } = db.models;

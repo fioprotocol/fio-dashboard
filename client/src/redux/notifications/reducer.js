@@ -23,7 +23,7 @@ export default combineReducers({
           notification.id === action.id ? action.data : notification,
         );
       case actions.CREATE_SUCCESS:
-        return [...state, action.data];
+        return action.data ? [...state, action.data] : state;
       case SET_RECOVERY_SUCCESS:
         return [];
       default:

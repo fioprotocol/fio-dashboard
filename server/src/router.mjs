@@ -15,10 +15,14 @@ router.get('/users/:id', checkAuth, routes.users.show);
 router.post('/users', routes.users.create);
 router.post('/users/resetPassword', routes.users.resetPassword);
 router.post('/users/setRecovery', checkAuth, routes.users.setRecovery);
+router.post('/users/freeAddress', checkAuth, routes.users.freeAddress);
 router.put('/users', checkAuth, routes.users.update);
 
 router.get('/notifications', checkAuth, routes.notifications.list);
 router.post('/notifications', checkAuth, routes.notifications.create);
 router.put('/notifications', checkAuth, routes.notifications.update);
+
+router.get('/reg/domains', checkAuth, routes.external.domains);
+router.get('/reg/prices', checkAuth, routes.external.prices);
 
 export default router;

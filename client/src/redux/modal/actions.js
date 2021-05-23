@@ -3,8 +3,9 @@ export const prefix = 'modal';
 export const SHOW_LOGIN = `${prefix}/SHOW_LOGIN`;
 export const CLOSE_LOGIN = `${prefix}/CLOSE_LOGIN`;
 
-export const showLoginModal = () => ({
+export const showLoginModal = hasRedirect => ({
   type: SHOW_LOGIN,
+  data: hasRedirect || false,
 });
 
 export const closeLoginModal = () => ({

@@ -1,3 +1,4 @@
+import isEmpty from 'lodash/isEmpty';
 const FIO_DAPP_USERNAME_DELIMITER = '_fio.dapp_';
 
 export function compose(...funcs) {
@@ -44,5 +45,91 @@ export const setDataMutator = (args, state) => {
 
   if (field) {
     field.data = { ...field.data, ...data };
+  }
+};
+
+export const setFreeCart = ({ domains, cartItems }) => {
+  const recalcElem = cartItems.find(
+    item =>
+      item.address &&
+      item.domain &&
+      domains.some(domain => domain.domain === item.domain && domain.free),
+  );
+  if (recalcElem) {
+    delete recalcElem.costFio;
+    delete recalcElem.costUsdc;
+
+    const retCart = cartItems.map(item => {
+      delete item.showBadge;
+      return item.id === recalcElem.id ? recalcElem : item;
+    });
+    return retCart;
+  } else {
+    return cartItems;
+  }
+};
+
+export const recalculateCart = ({ domains, cartItems, id }) => {
+  const deletedElement = cartItems.find(item => item.id === id);
+  if (!deletedElement) return;
+
+  const data = {
+    id,
+  };
+
+  const deletedElemCart = cartItems.filter(item => item.id !== id);
+
+  if (!deletedElement.costUsdc && !deletedElement.costFio) {
+    const recCart = setFreeCart({ domains, cartItems: deletedElemCart });
+    data['cartItems'] = recCart;
+  }
+
+  return data;
+};
+
+export const removeFreeCart = ({ cartItems, prices }) => {
+  const {
+    fio: { address: addressFio },
+    usdt: { address: addressUsdc },
+  } = prices;
+
+  const retCart = cartItems.map(item => {
+    if (!item.costFio && !item.costUsdc) {
+      item.costFio = addressFio;
+      item.costUsdc = addressUsdc;
+      item.showBadge = true;
+    }
+    return item;
+  });
+  return retCart;
+};
+
+export const cartHasFreeItem = cartItems => {
+  return (
+    !isEmpty(cartItems) &&
+    cartItems.some(item => !item.costFio && !item.costUsdc)
+  );
+};
+
+export const handleFreeAddressCart = async ({
+  domains,
+  fioWallets,
+  recalculate,
+  cartItems,
+  prices,
+}) => {
+  if (fioWallets) {
+    const userAddresses = [];
+    for (const fioWallet of fioWallets) {
+      const addresses = await fioWallet.otherMethods.getFioAddresses();
+      if (addresses.length) userAddresses.push(addresses);
+    }
+    let retCart = [];
+    if (userAddresses.length > 0) {
+      retCart = removeFreeCart({ cartItems, prices });
+    } else if (!cartHasFreeItem(cartItems)) {
+      retCart = setFreeCart({ domains, cartItems });
+    }
+    recalculate(!isEmpty(retCart) ? retCart : cartItems);
   }
 };

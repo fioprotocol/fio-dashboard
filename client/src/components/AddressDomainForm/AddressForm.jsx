@@ -4,7 +4,7 @@ import classnames from 'classnames';
 
 import CustomDropdown from './CustomDropdown';
 import Input, { INPUT_COLOR_SCHEMA } from '../Input/Input';
-import { OnChange, OnBlur } from 'react-final-form-listeners';
+import { OnChange } from 'react-final-form-listeners';
 
 import classes from './AddressDomainForm.module.scss';
 
@@ -19,7 +19,7 @@ const AddressForm = props => {
     updateFormState,
     showPrice,
     onChangeHandleField,
-    onBlurHandleField,
+    debouncedOnChangeHandleField,
     isFree,
   } = props;
 
@@ -38,7 +38,7 @@ const AddressForm = props => {
       )}
       <div className={classes.username}>
         <Field
-          name="username"
+          name="address"
           type="text"
           placeholder="Find the perfect username .."
           colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
@@ -58,8 +58,7 @@ const AddressForm = props => {
             </>
           }
         />
-        <OnChange name="username">{onChangeHandleField}</OnChange>
-        <OnBlur name="username">{() => onBlurHandleField('username')}</OnBlur>
+        <OnChange name="address">{debouncedOnChangeHandleField}</OnChange>
       </div>
       <div className={classnames(classes.at, 'boldText')}>@</div>
       <div className={classes.domainContainer}>
@@ -70,7 +69,9 @@ const AddressForm = props => {
             placeholder="Custom domain"
             colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
             component={Input}
-            onClose={toggleCustomDomain}
+            onClose={() => {
+              toggleCustomDomain(false);
+            }}
             badge={showPrice({ isDomainPrice: true })}
             hideError="true"
           />
@@ -79,12 +80,15 @@ const AddressForm = props => {
             name="domain"
             component={CustomDropdown}
             options={options}
-            toggle={toggleCustomDomain}
+            toggle={() => {
+              toggleCustomDomain(true);
+            }}
             initValue={domain}
           />
         )}
-        <OnChange name="domain">{onChangeHandleField}</OnChange>
-        <OnBlur name="domain">{() => onBlurHandleField('domain')}</OnBlur>
+        <OnChange name="domain">
+          {isCustomDomain ? debouncedOnChangeHandleField : onChangeHandleField}
+        </OnChange>
       </div>
     </>
   );

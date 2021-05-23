@@ -7,6 +7,7 @@ import { account, loading } from '../../redux/edge/selectors';
 import { list as notifications } from '../../redux/notifications/selectors';
 import { logout } from '../../redux/edge/actions';
 import { showLoginModal } from '../../redux/modal/actions';
+import { cartItems } from '../../redux/cart/selectors';
 
 import MainHeader from './MainHeader';
 
@@ -16,6 +17,7 @@ const selector = createStructuredSelector({
   account,
   loading,
   notifications,
+  cartItems,
 });
 
 const actions = dispatch => ({

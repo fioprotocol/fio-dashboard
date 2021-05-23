@@ -5,14 +5,14 @@ import { ADDRESS_REGEXP } from '../../constants/regExps';
 const verifyAddress = async props => {
   const {
     formProps,
-    toggleAvailable,
+    toggleShowAvailable,
     options,
     changeFormErrors,
     isAddress,
     toggleValidating,
   } = props;
   const { mutators } = formProps;
-  const { domain, username } = formProps.getState().values;
+  const { domain, address } = formProps.getState().values;
 
   const errors = {};
   toggleValidating(true);
@@ -31,18 +31,18 @@ const verifyAddress = async props => {
     }
   }
 
-  if (username && domain) {
-    const isAvail = await apis.fio.availCheck(`${username}@${domain}`);
+  if (address && domain) {
+    const isAvail = await apis.fio.availCheck(`${address}@${domain}`);
     if (isAvail && isAvail.is_registered === 1) {
-      errors.username = 'This FIO Address is already registered.';
+      errors.address = 'This FIO Address is already registered.';
     }
   }
 
-  toggleAvailable(isEmpty(errors));
+  toggleShowAvailable(isEmpty(errors));
 
-  mutators.setDataMutator('username', {
-    error: errors.username,
-    valid: !!errors.username,
+  mutators.setDataMutator('address', {
+    error: errors.address,
+    valid: !!errors.address,
   });
   mutators.setDataMutator('domain', {
     error: errors.domain,
@@ -53,21 +53,25 @@ const verifyAddress = async props => {
 };
 
 export const addressValidation = async props => {
-  const { formProps, toggleAvailable, changeFormErrors } = props;
+  const { formProps, toggleShowAvailable, changeFormErrors, cartItems } = props;
   const { mutators, getState } = formProps;
+  const { values, modified } = getState();
 
   const errors = {};
-  const { username, domain } = getState().values || {};
+  const { address, domain } = values || {};
 
-  if (!username) {
-    errors.username = 'Username Field Should Be Filled';
-  }
-  if (username && !ADDRESS_REGEXP.test(username)) {
-    errors.username =
-      'Username only allows letters, numbers and dash in the middle';
+  if (!address || !modified.domain) return;
+  // todo: show this error separately only on search icon click
+  // {
+  //   errors.address = 'Address Field Should Be Filled';
+  // }
+
+  if (address && !ADDRESS_REGEXP.test(address)) {
+    errors.address =
+      'Address only allows letters, numbers and dash in the middle';
   }
 
-  if (!domain) {
+  if (!domain && modified.domain) {
     errors.domain = 'Select Domain Please';
   }
   if (!ADDRESS_REGEXP.test(domain)) {
@@ -75,18 +79,29 @@ export const addressValidation = async props => {
       'Domain name only allows letters, numbers and dash in the middle';
   }
   if (domain && domain.length > 62) {
-    errors.username = 'Domain name should be less than 62 characters';
+    errors.address = 'Domain name should be less than 62 characters';
   }
 
-  if (username && domain && username.length + domain.length > 63) {
-    errors.username = 'Address should be less than 63 characters';
+  if (address && domain && address.length + domain.length > 63) {
+    errors.address = 'Address should be less than 63 characters';
+  }
+  if (
+    address &&
+    domain &&
+    cartItems.some(
+      item =>
+        item.address === address.toLowerCase() &&
+        item.domain === domain.toLowerCase(),
+    )
+  ) {
+    errors.address = 'This address is on a cart';
   }
 
   if (!isEmpty(errors)) {
-    toggleAvailable(false);
-    mutators.setDataMutator('username', {
-      error: errors.username,
-      valid: !errors.username,
+    toggleShowAvailable(false);
+    mutators.setDataMutator('address', {
+      error: errors.address,
+      valid: !errors.address,
     });
     mutators.setDataMutator('domain', {
       error: errors.domain,
@@ -100,14 +115,16 @@ export const addressValidation = async props => {
 };
 
 export const domainValidation = props => {
-  const { formProps, toggleAvailable, changeFormErrors } = props;
+  const { formProps, toggleShowAvailable, changeFormErrors, cartItems } = props;
   const errors = {};
   const { mutators, getState } = formProps;
   const { domain } = getState().values || {};
 
-  if (!domain) {
-    errors.domain = 'Select Domain Please';
-  }
+  if (!domain) return;
+  // todo: show this error separately only on search icon click
+  // {
+  //   errors.domain = 'Domain Field Should Be Filled';
+  // }
   if (!ADDRESS_REGEXP.test(domain)) {
     errors.domain =
       'Domain name only allows letters, numbers and dash in the middle';
@@ -115,9 +132,17 @@ export const domainValidation = props => {
   if (domain && domain.length > 62) {
     errors.domain = 'Domain name should be less than 62 characters';
   }
+  if (
+    domain &&
+    cartItems.some(
+      item => !item.address && item.domain === domain.toLowerCase(),
+    )
+  ) {
+    errors.domain = 'This domain is on a cart';
+  }
 
   if (!isEmpty(errors)) {
-    toggleAvailable(false);
+    toggleShowAvailable(false);
     mutators.setDataMutator('domain', {
       error: errors.domain,
       valid: !errors.domain,

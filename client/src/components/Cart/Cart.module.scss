@@ -1,0 +1,275 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  background-color: $hint;
+  border-radius: 12px;
+  padding: 1.875rem;
+
+  .header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .title {
+      margin: 0 0 0 1.25rem;
+    }
+  }
+
+  .itemContainer {
+    color: $dark-jungle-green;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    .address {
+      font-size: 0.9375em;
+    }
+
+    .price {
+      margin: 0 1.875rem 0 auto;
+      font-size: 0.9375em;
+    }
+
+    .icon {
+      color: $black;
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: 0.3s ease-in-out;
+
+      &:hover {
+        transform: rotate(90deg);
+      }
+    }
+  }
+
+  .infoBadge {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .infoIcon {
+      font-size: 1em;
+    }
+
+    .infoText {
+      margin-bottom: 0;
+      margin-left: 1rem;
+      font-size: 0.9375em;
+      line-height: 0.9375em;
+    }
+  }
+
+  .cta {
+    display: flex;
+    flex-direction: row;
+    margin-top: 1.875rem;
+
+    .ctaIconContainer {
+      width: 26px;
+      height: 26px;
+      background-color: $violet;
+      border-radius: 6px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .ctaIcon {
+        font-size: 0.825em;
+        color: $white;
+      }
+    }
+
+    .ctaText {
+      margin-left: 0.625rem;
+      font-size: 0.9375em;
+      color: $black;
+      margin-bottom: 0;
+    }
+  }
+}
+
+.amountTitle {
+  @include proxima-nova-semibold;
+  position: absolute;
+  top: 60px;
+  margin-left: -1.875rem;
+}
+
+.amountSubtitle {
+  @include proxima-nova-regular;
+}
+
+.checkout {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 36px;
+  border-radius: 7px;
+  padding: 0 0.625rem;
+  font-size: 1em;
+
+  p {
+    margin: 0 0 0 0.5625rem;
+    font-size: 0.9375em;
+    @include sf-pro-display-thin;
+  }
+}
+
+.total {
+  margin-top: 0.625rem;
+
+  .divider {
+    margin-top: 1.25rem;
+  }
+
+  .cost {
+    margin-top: 1.25rem;
+    margin-bottom: 0;
+    font-size: 0.8125em;
+    @include proxima-nova-semibold;
+
+    .light {
+      @include proxima-nova-thin;
+    }
+  }
+}
+
+.walletContainer {
+  margin-top: 2.5rem;
+
+  .title {
+    @include proxima-nova-semibold;
+  }
+  .subtitle {
+    margin-top: 0.5rem;
+    font-size: 0.8125em;
+    line-height: 1em;
+    @include proxima-nova-thin;
+  }
+  .dropdown {
+    margin-top: 4px;
+    align-self: flex-start;
+    min-width: 335px;
+
+    .icon {
+      font-size: 1em;
+    }
+
+    .control {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      border: 1px solid $light;
+      border-radius: 12px;
+      background-color: $white;
+      position: relative;
+      padding: 0.9375rem 1.25rem 0.9375rem 1.5625rem;
+      z-index: 1001; //show over menu
+    }
+    .placeholder {
+      @include proxima-nova-semibold;
+      font-size: 0.9375em;
+    }
+    .menu {
+      border-radius: 0 0 12px 12px;
+      border: none;
+      box-shadow: 0 0 6px 0 rgba(0,0,0,0.53);
+      margin-top: -12px;
+      padding-top: 12px;
+      max-height: fit-content;
+      animation-name: expand;
+      animation-duration: 0.4s;
+      margin-left: auto;
+      margin-right: auto;
+      left: 0;
+      right: 0;
+      text-align: center;
+      width: 99%;
+    }
+    .optionItem {
+      @include sf-pro-display-medium;
+      margin: 0 auto;
+      font-size: 13px;
+      color: $black;
+      text-align: left;
+      padding: 0.9375rem 1.25rem;
+
+      &:after {
+        content: ' ';
+        position: absolute;
+        width: calc(100% - 20px);
+        left: 10px;
+        margin: -0.9375rem auto 0;
+        border-bottom: 1px solid $light;
+      }
+
+      &:first-child:after {
+        border: none;
+      }
+
+      &:hover {
+        color: $white;
+        background-color: $dark-gray;
+      }
+
+      &:hover:after {
+        border-color: $dark-gray;
+      }
+    }
+  }
+}
+
+@include sm {
+  .amountTitle {
+    font-size: 1.25em;
+    line-height: 1.25em;
+    top: -50px;
+    left: 0;
+    margin-left: 0;
+  }
+
+  .container {
+    padding: 1.25rem;
+
+    .itemContainer {
+      flex-direction: column;
+      position: relative;
+
+      .price {
+        margin: 0.625rem 1.875rem 0 0;
+      }
+      
+      .icon {
+        position: absolute;
+        transform: translate(-50%, -50%);
+        top: 50%;
+        right: -10px;
+      }
+    }
+    .infoBadge {
+      .infoText {
+        line-height: 1.5em;
+      }
+    }
+
+    .walletContainer {
+      margin-top: 1.875rem;
+      .subtitle {
+        line-height: 1.5em;
+      }
+      .dropdown {
+        width: 100%;
+        min-width: unset;
+      }
+    }
+  }
+}
+
+@keyframes expand {
+  0%   { max-height: 0; }
+  100% { max-height: 15em; }
+}
