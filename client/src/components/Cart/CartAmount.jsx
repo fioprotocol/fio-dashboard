@@ -8,14 +8,17 @@ import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import classes from './Cart.module.scss';
 
 const CartAmount = props => {
-  const { cart, history } = props;
+  const { cartItems, history } = props;
   const totalCost = () => {
-    if (cart.length === 1 && cart.some(item => !item.costFio && !item.costUsdc))
+    if (
+      cartItems.length === 1 &&
+      cartItems.some(item => !item.costFio && !item.costUsdc)
+    )
       return 'FREE';
 
     const cost =
-      !isEmpty(cart) &&
-      cart
+      !isEmpty(cartItems) &&
+      cartItems
         .filter(item => item.costFio && item.costUsdc)
         .reduce((acc, item) => {
           if (!acc['costFio']) acc['costFio'] = 0;

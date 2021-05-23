@@ -34,9 +34,10 @@ const FormContainer = props => {
     type,
     isAddress,
     isValidating,
-    toggleAvailable,
+    toggleShowAvailable,
     handleChange,
     formState,
+    debouncedHandleChange,
   } = props;
 
   useEffect(() => {
@@ -50,25 +51,28 @@ const FormContainer = props => {
     const { handleSubmit, form } = formProps;
 
     const onChangeHandleField = () => {
-      toggleAvailable(false);
+      toggleShowAvailable(false);
       handleChange(form);
     };
 
-    const onBlurHandleField = name => {
-      const fieldState = form.getFieldState(name);
-      const { change, value } = fieldState || {};
-      fieldState && value && change(value.toLowerCase());
-      handleChange(form);
+    const debouncedOnChangeHandleField = () => {
+      toggleShowAvailable(false);
+      debouncedHandleChange(form);
     };
 
     const propsToForm = {
       ...props,
       onChangeHandleField,
-      onBlurHandleField,
+      debouncedOnChangeHandleField,
     };
 
     return (
-      <form onSubmit={handleSubmit} className={classes.form} key="form">
+      <form
+        onSubmit={handleSubmit}
+        className={classes.form}
+        key="form"
+        id="addressForm"
+      >
         {isHomepage ? (
           <AddressForm {...propsToForm} formName={FORM_NAMES.ADDRESS} />
         ) : isAddress ? (

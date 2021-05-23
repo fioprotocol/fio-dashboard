@@ -23,19 +23,21 @@ const AddressDomainForm = props => {
     refreshFioWallets,
     account,
     prices,
-    cart,
+    cartItems,
   } = props;
 
   const isAddress = type === ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS;
   const isDomain = type === ADDRESS_DOMAIN_BADGE_TYPE.DOMAIN;
 
   const [isCustomDomain, toggleCustomDomain] = useState(false);
-  const [isAvailable, toggleAvailable] = useState(false);
+  const [showAvailable, toggleShowAvailable] = useState(false);
   const [userDomains, setUserDomains] = useState([]);
   const [userAddresses, setUserAddresses] = useState([]);
   const [formErrors, changeFormErrors] = useState({});
   const [isValidating, toggleValidating] = useState(false);
-  const [isFree, setFree] = useState(true);
+
+  const isFree =
+    !isCustomDomain && !cartHasFreeItem(cartItems) && isEmpty(userAddresses);
 
   const { domain } = formState;
   const options = [
@@ -72,18 +74,7 @@ const AddressDomainForm = props => {
     return cost + price;
   };
 
-  useEffect(() => {
-    if (!isHomepage && domain && options.every(option => option !== domain)) {
-      toggleCustomDomain(true);
-    }
-  }, []);
-
-  useEffect(async () => {
-    getPrices();
-    getDomains();
-    if (account) {
-      refreshFioWallets(account);
-    }
+  const setUserAddressesAndDomains = async () => {
     if (fioWallets) {
       const userDomains = [];
       const userAddresses = [];
@@ -95,34 +86,42 @@ const AddressDomainForm = props => {
       }
       setUserDomains(userDomains);
       setUserAddresses(userAddresses);
-      setFree(userAddresses.length === 0 && !cartHasFreeItem(cart));
     }
-    return () => {
-      setUserDomains([]);
-      setFree(true);
-    };
-  }, []);
+  };
 
   useEffect(() => {
-    if (isDomain) {
+    if (
+      (!isHomepage && domain && options.every(option => option !== domain)) ||
+      isDomain
+    ) {
       toggleCustomDomain(true);
     }
   }, []);
 
   useEffect(() => {
-    if (!isEmpty(cart) && isEmpty(userAddresses)) {
-      setFree(!cartHasFreeItem(cart));
+    getPrices();
+    getDomains();
+    if (account) {
+      refreshFioWallets(account);
     }
-    if (isEmpty(cart) && isEmpty(userAddresses)) setFree(true);
-  }, [cart]);
+    setUserAddressesAndDomains();
+    return () => {
+      setUserDomains([]);
+      setUserAddresses([]);
+    };
+  }, []);
+
+  useEffect(() => {
+    setUserAddressesAndDomains();
+  }, [fioWallets]);
 
   const validationProps = {
     options,
-    toggleAvailable,
+    toggleShowAvailable,
     changeFormErrors,
     isAddress,
     toggleValidating,
-    cart,
+    cartItems,
   };
 
   const handleSubmit = (values, form) => {
@@ -137,14 +136,16 @@ const AddressDomainForm = props => {
     if (isDomain) domainValidation(validationPropsToPass);
   };
 
-  const handleChange = debounce(formProps => {
+  const handleChange = formProps => {
     const validationPropsToPass = {
       formProps,
       ...validationProps,
     };
     if (isAddress) addressValidation(validationPropsToPass);
     if (isDomain) domainValidation(validationPropsToPass);
-  }, 500);
+  };
+
+  const debouncedHandleChange = debounce(handleChange, 500);
 
   const renderItems = formProps => {
     return [
@@ -155,12 +156,12 @@ const AddressDomainForm = props => {
         isAddress={isAddress}
         isCustomDomain={isCustomDomain}
         toggleCustomDomain={toggleCustomDomain}
-        setFree={setFree}
         domain={domain}
         key="form"
         showPrice={showPrice}
         handleChange={handleChange}
-        toggleAvailable={toggleAvailable}
+        debouncedHandleChange={debouncedHandleChange}
+        toggleShowAvailable={toggleShowAvailable}
         isValidating={isValidating}
         formState={formState}
         isFree={isFree}
@@ -171,8 +172,8 @@ const AddressDomainForm = props => {
           formErrors={formErrors}
           {...props}
           isCustomDomain={isCustomDomain}
-          isAvailable={isAvailable}
-          toggleAvailable={toggleAvailable}
+          showAvailable={showAvailable}
+          toggleShowAvailable={toggleShowAvailable}
           isAddress={isAddress}
           isDomain={isDomain}
           key="notifications"

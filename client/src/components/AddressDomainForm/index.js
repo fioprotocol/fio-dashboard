@@ -11,7 +11,7 @@ import { getFormState } from '../../redux/forms/selectors';
 import { updateFormState } from '../../redux/forms/actions';
 import { refreshFioWallets } from '../../redux/edge/actions';
 import { getPrices, getDomains } from '../../redux/registrations/actions';
-import { cart } from '../../redux/cart/selectors';
+import { cartItems } from '../../redux/cart/selectors';
 import { addItem, deleteItem } from '../../redux/cart/actions';
 
 import { compose } from '../../utils';
@@ -24,7 +24,7 @@ const reduxConnect = connect(
     loading,
     pricesLoading,
     prices,
-    cart,
+    cartItems,
     domains,
     fioWallets,
     formState: (state, ownProps) => {

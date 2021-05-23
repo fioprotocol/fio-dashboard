@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
 import isEmpty from 'lodash/isEmpty';
-import { v4 as uuidv4 } from 'uuid';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../AddressDomainBadge/AddressDomainBadge';
@@ -22,10 +21,10 @@ const Notifications = props => {
   const {
     formProps,
     isCustomDomain,
-    isAvailable,
-    toggleAvailable,
+    showAvailable,
+    toggleShowAvailable,
     type,
-    cart,
+    cartItems,
     addItem,
     deleteItem,
     prices,
@@ -57,30 +56,32 @@ const Notifications = props => {
     fio: { domain: fioDomainPrice, address: fioAddressPrice },
   } = prices;
 
-  const isOnCart = cart.some(item => item.id === currentId);
+  const isOnCart = cartItems.some(item => item.id === currentId);
 
   const hasErrors = !isEmpty(errors);
   let costUsdc;
   let costFio;
 
   if (!isFree && isAddress) {
-    costUsdc = isAddress ? parseInt(addressPrice) : parseInt(domainPrice);
-    costFio = isAddress ? parseInt(fioAddressPrice) : parseInt(fioDomainPrice);
+    costUsdc = isAddress ? parseFloat(addressPrice) : parseFloat(domainPrice);
+    costFio = isAddress
+      ? parseFloat(fioAddressPrice)
+      : parseFloat(fioDomainPrice);
   }
   if (isCustomDomain) {
     costUsdc = costUsdc
-      ? costUsdc + parseInt(domainPrice)
-      : parseInt(domainPrice);
+      ? costUsdc + parseFloat(domainPrice)
+      : parseFloat(domainPrice);
     costFio = costFio
-      ? costFio + parseInt(fioDomainPrice)
-      : parseInt(fioDomainPrice);
+      ? costFio + parseFloat(fioDomainPrice)
+      : parseFloat(fioDomainPrice);
   }
 
   const notifBadge = () => (
     <>
       <InfoBadge
         type={BADGE_TYPES.SUCCESS}
-        show={isAvailable}
+        show={showAvailable}
         title="Available!"
         message={AVAILABLE_MESSAGE[type]}
       />
@@ -101,7 +102,7 @@ const Notifications = props => {
   return (
     <div key="badges">
       {notifBadge()}
-      <Badge type={BADGE_TYPES.SIMPLE} show={isAvailable}>
+      <Badge type={BADGE_TYPES.SIMPLE} show={showAvailable}>
         <div
           className={classnames(
             classes.addressContainer,
@@ -125,7 +126,7 @@ const Notifications = props => {
               'FREE'
             ) : (
               <>
-                {costFio.toFixed(2)}FIO{' '}
+                {costFio && costFio.toFixed(2)}FIO{' '}
                 {costUsdc && (
                   <span className={classes.usdcAmount}>
                     ({costUsdc.toFixed(2)} USDC)
@@ -138,7 +139,11 @@ const Notifications = props => {
             <Button
               className={classnames(classes.button, !isOnCart && classes.show)}
               onClick={() => {
-                const id = uuidv4();
+                let id = domainName;
+                if (address) {
+                  id += address;
+                }
+
                 const data = {
                   ...values,
                   costFio: costFio,
@@ -167,7 +172,7 @@ const Notifications = props => {
                 className={classes.iconClose}
                 onClick={() => {
                   deleteItem({ id: currentId });
-                  toggleAvailable(false);
+                  toggleShowAvailable(false);
                 }}
               />
             </div>

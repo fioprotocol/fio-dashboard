@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 
 import { ROUTES } from '../../constants/routes';
@@ -9,36 +9,27 @@ import { handleFreeAddressCart } from '../../utils';
 
 const CartPage = props => {
   const {
-    cart,
+    cartItems,
     history,
     fioWallets,
     recalculate,
     prices,
     account,
     domains,
+    userWallets,
+    setWallet,
+    paymentWallet,
   } = props;
 
-  const [selectedWallet, setWallet] = useState({});
-
-  function usePrevious(value) {
-    const ref = useRef();
-    useEffect(() => {
-      ref.current = value;
-    });
-    return ref.current;
-  }
-
-  const prevAmount = usePrevious({ cart });
   useEffect(() => {
     if (
-      !isEmpty(cart) &&
-      cart.length === 1 &&
-      prevAmount &&
-      prevAmount.cart.length === 1
+      !isEmpty(cartItems) &&
+      cartItems.length === 1 &&
+      userWallets.length === 1
     ) {
       history.push(ROUTES.CHECKOUT);
     }
-  }, [prevAmount]);
+  }, []);
 
   useEffect(async () => {
     if (!account) {
@@ -48,7 +39,7 @@ const CartPage = props => {
       domains,
       fioWallets,
       recalculate,
-      cart,
+      cartItems,
       prices,
     });
   }, [account, domains, fioWallets]);
@@ -58,7 +49,7 @@ const CartPage = props => {
       title="Your Cart"
       secondTitle="Amount Due"
       bigCart={<Cart {...props} setWallet={setWallet} />}
-      smallCart={<CartAmount {...props} selectedWallet={selectedWallet} />}
+      smallCart={<CartAmount {...props} selectedWallet={paymentWallet} />}
     />
   );
 };

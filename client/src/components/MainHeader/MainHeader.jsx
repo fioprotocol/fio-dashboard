@@ -20,7 +20,7 @@ const MainHeader = props => {
     account,
     loading,
     notifications,
-    cart,
+    cartItems,
   } = props;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
 
@@ -106,14 +106,14 @@ const MainHeader = props => {
           className={classnames(classes.navItem, 'text-white')}
           onClick={closeMenu}
           as={Link}
-          to={cart.length > 0 ? ROUTES.CART : ROUTES.FIO_ADDRESSES}
+          to={cartItems.length > 0 ? ROUTES.CART : ROUTES.FIO_ADDRESSES}
         >
           <div className={classnames(classes.notifWrapper, classes.cartanim)}>
             <FontAwesomeIcon
               icon="shopping-cart"
               className={classnames(classes.icon)}
             />
-            {cart.length > 0 && (
+            {cartItems.length > 0 && (
               <div
                 className={classnames(
                   classes.notifActiveWrapper,
@@ -224,7 +224,7 @@ const MainHeader = props => {
             <Nav.Link
               className={classnames(classes.navItem, 'text-white')}
               as={Link}
-              to={cart.length > 0 ? ROUTES.CART : ROUTES.FIO_ADDRESSES}
+              to={cartItems.length > 0 ? ROUTES.CART : ROUTES.FIO_ADDRESSES}
             >
               <div
                 className={classnames(classes.notifWrapper, classes.cartanim)}
@@ -233,7 +233,7 @@ const MainHeader = props => {
                   icon="shopping-cart"
                   className={classnames(classes.icon, 'mr-4')}
                 />
-                {cart.length > 0 && (
+                {cartItems.length > 0 && (
                   <div
                     className={classnames(
                       classes.notifActiveWrapper,
@@ -280,7 +280,7 @@ MainHeader.propTypes = exact({
   logout: PropTypes.func.isRequired,
   showLoginModal: PropTypes.func.isRequired,
   notifications: PropTypes.arrayOf(PropTypes.object),
-  cart: PropTypes.arrayOf(PropTypes.object),
+  cartItems: PropTypes.arrayOf(PropTypes.object),
 });
 
 export default MainHeader;

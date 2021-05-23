@@ -11,7 +11,7 @@ const WalletDropdown = props => {
 
   const styledOptions = options
     .map(item => ({
-      value: item.publicAddress,
+      value: item,
       label: item.name,
       className: [classes.optionItem],
     }))

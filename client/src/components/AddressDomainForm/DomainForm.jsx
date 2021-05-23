@@ -1,12 +1,12 @@
 import React from 'react';
 import { Field } from 'react-final-form';
-import { OnChange, OnBlur } from 'react-final-form-listeners';
+import { OnChange } from 'react-final-form-listeners';
 
 import Input, { INPUT_COLOR_SCHEMA } from '../Input/Input';
 import classes from './AddressDomainForm.module.scss';
 
 const DomainForm = props => {
-  const { showPrice, onChangeHandleField, onBlurHandleField } = props;
+  const { showPrice, debouncedOnChangeHandleField } = props;
 
   return (
     <div className={classes.domainInput}>
@@ -19,8 +19,7 @@ const DomainForm = props => {
         badge={showPrice({ isDomainPrice: true })}
         hideError="true"
       />
-      <OnChange name="domain">{onChangeHandleField}</OnChange>
-      <OnBlur name="domain">{() => onBlurHandleField('domain')}</OnBlur>
+      <OnChange name="domain">{debouncedOnChangeHandleField}</OnChange>
     </div>
   );
 };

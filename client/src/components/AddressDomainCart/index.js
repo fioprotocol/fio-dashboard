@@ -3,7 +3,7 @@ import { createStructuredSelector } from 'reselect';
 import { withRouter } from 'react-router-dom';
 
 import { compose } from '../../utils';
-import { cart } from '../../redux/cart/selectors';
+import { cartItems } from '../../redux/cart/selectors';
 import { account, fioWallets } from '../../redux/edge/selectors';
 import { deleteItem, recalculate } from '../../redux/cart/actions';
 import { showLoginModal } from '../../redux/modal/actions';
@@ -13,7 +13,7 @@ import AddressDomainCart from './AddressDomainCart';
 
 const reduxConnect = connect(
   createStructuredSelector({
-    cart,
+    cartItems,
     account,
     domains,
     fioWallets,
