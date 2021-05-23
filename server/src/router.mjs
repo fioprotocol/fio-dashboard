@@ -22,7 +22,7 @@ router.get('/notifications', checkAuth, routes.notifications.list);
 router.post('/notifications', checkAuth, routes.notifications.create);
 router.put('/notifications', checkAuth, routes.notifications.update);
 
-router.get('/reg/domains', checkAuth, routes.external.domains);
-router.get('/reg/prices', checkAuth, routes.external.prices);
+router.get('/reg/domains', routes.external.domains);
+router.get('/reg/prices', routes.external.prices);
 
 export default router;
