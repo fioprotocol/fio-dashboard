@@ -5,6 +5,7 @@ import { Form, Field } from 'react-final-form';
 import classNames from 'classnames';
 
 import CounterContainer from '../CounterContainer/CounterContainer';
+import CartItem from './CartItem';
 import WalletDropdown from './WalletDropdown';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { ROUTES } from '../../constants/routes';
@@ -30,33 +31,8 @@ const Cart = props => {
       </div>
       {!isCartEmpty &&
         cartItems.map(item => (
-          <div key={item.domain + item.address}>
-            <Badge show type={BADGE_TYPES.WHITE}>
-              <div className={classes.itemContainer}>
-                {item.address ? (
-                  <span className={classes.address}>
-                    <span className="boldText">{item.address}@</span>
-                    <span>{item.domain}</span>
-                  </span>
-                ) : (
-                  <span className="boldText">{item.domain && item.domain}</span>
-                )}
-                <p className={classes.price}>
-                  <span className="boldText">
-                    {!item.costFio
-                      ? 'FREE'
-                      : `${item.costFio.toFixed(2)}FIO (${item.costUsdc.toFixed(
-                          2,
-                        )} USDC)`}
-                  </span>
-                </p>
-                <FontAwesomeIcon
-                  icon="times-circle"
-                  className={classes.icon}
-                  onClick={() => handleDeleteItem(item.id)}
-                />
-              </div>
-            </Badge>
+          <div key={item.id}>
+            <CartItem item={item} onDelete={handleDeleteItem} />
             {item.showBadge && (
               <Badge show type={BADGE_TYPES.INFO}>
                 <div className={classes.infoBadge}>

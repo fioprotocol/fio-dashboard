@@ -1,0 +1,42 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+@import '../../assets/styles/fontMixins.scss';
+
+.container {
+  background-color: $aqua-haze;
+  padding: 1.875rem 1.875rem 3.125rem;
+  margin: 6.25rem auto;
+  position: relative;
+  border-radius: 12px;
+  width: calc(100%-40px);
+
+  .actionContainer {
+    .withClose {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-start;
+
+      .title {
+        margin-top: 2rem;
+        font-size: 1.25em;
+        @include proxima-nova-bold;
+      }
+    }
+  }
+}
+
+@include lg {
+  .container {
+    width: 42%;
+
+    .actionContainer {
+      .withClose {
+        .title {
+          margin-top: 0.625rem;
+          font-size: 2.125em;
+        }
+      }
+    }
+  }
+}

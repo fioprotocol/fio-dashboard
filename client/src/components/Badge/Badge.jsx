@@ -12,6 +12,7 @@ export const BADGE_TYPES = {
   REGULAR: 'REGULAR',
   SIMPLE: 'SIMPLE',
   WHITE: 'WHITE',
+  BLACK: 'BLACK',
 };
 
 export const BADGE_BG_COLOR = {
@@ -23,6 +24,7 @@ export const BADGE_BG_COLOR = {
   [BADGE_TYPES.REGULAR]: colors['cyan'],
   [BADGE_TYPES.SIMPLE]: colors['desert-storm'],
   [BADGE_TYPES.WHITE]: colors['white'],
+  [BADGE_TYPES.BLACK]: colors['black'],
 };
 
 const Badge = props => {
