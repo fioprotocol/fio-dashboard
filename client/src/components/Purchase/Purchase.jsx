@@ -5,6 +5,7 @@ import classnames from 'classnames';
 import { withRouter } from 'react-router-dom';
 
 import CartItem from '../Cart/CartItem';
+import PurchaseNow from '../PurchaseNow';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
@@ -15,8 +16,14 @@ import classes from './Purchase.module.scss';
 const Purchase = props => {
   const { isCheckout, isPurchase, cart, paymentWallet, history } = props;
 
-  const handleClick = () => {
+  const handleClick = results => {
     if (isCheckout) {
+      for (const item of results.registered) {
+        //
+      }
+      for (const item of results.errors) {
+        //
+      }
       history.push(ROUTES.PURCHASE);
     }
 
@@ -89,9 +96,13 @@ const Purchase = props => {
           </>
         )}
       </div>
-      <Button onClick={handleClick} className={classes.button}>
-        {isCheckout ? 'Purchase Now' : isPurchase ? 'Close' : ''}
-      </Button>
+      {isCheckout ? (
+        <PurchaseNow onFinish={handleClick} />
+      ) : (
+        <Button onClick={handleClick} className={classes.button}>
+          Close
+        </Button>
+      )}
     </div>
   );
 };

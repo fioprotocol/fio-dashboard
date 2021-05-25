@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { Button } from 'react-bootstrap';
+import classes from '../Purchase/Purchase.module.scss';
 import { executeRegistration } from './middleware';
 
-export const Register = props => {
+export const PurchaseNow = props => {
   const {
     cartItems,
     pinConfirmation,
@@ -12,6 +14,7 @@ export const Register = props => {
     recordFreeAddress,
     confirmingPin,
     captchaResolving,
+    onFinish,
   } = props;
   const [isWaiting, setWaiting] = useState(false);
 
@@ -25,13 +28,7 @@ export const Register = props => {
         cartItems,
         keys[paymentWallet.id],
       );
-      // todo: handle results
-      for (const item of results.registered) {
-        //
-      }
-      for (const item of results.errors) {
-        //
-      }
+      onFinish(results);
 
       setWaiting(false);
     }
@@ -50,7 +47,7 @@ export const Register = props => {
         },
         verifyParams,
       );
-      // todo: handle results
+      onFinish(results);
 
       for (const item of results.registered) {
         recordFreeAddress(item.fioName);
@@ -73,8 +70,8 @@ export const Register = props => {
   };
 
   return (
-    <button type="submit" onClick={purchase} disabled={loading}>
+    <Button onClick={purchase} className={classes.button} disabled={loading}>
       Purchase Now
-    </button>
+    </Button>
   );
 };

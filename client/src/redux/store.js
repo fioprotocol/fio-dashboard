@@ -34,7 +34,7 @@ export default function configureStore(api, history) {
     throttle(() => {
       saveState({
         cart: {
-          cartItems: store.getState().cart.cartItems
+          cartItems: store.getState().cart.cartItems,
         },
       });
     }, 1000),

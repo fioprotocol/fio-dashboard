@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import Purchase from '../../components/Purchase/Purchase';
-import Register from '../../components/Register';
 import '../../helpers/gt-sdk';
 import { ROUTES } from '../../constants/routes';
 
@@ -26,7 +25,6 @@ const CheckoutPage = props => {
   return (
     <PseudoModalContainer title="Make Purchase" onClose={onClose}>
       <Purchase cart={cartItems} paymentWallet={paymentWallet} isCheckout />
-      <Register />
     </PseudoModalContainer>
   );
 };

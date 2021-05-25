@@ -12,7 +12,7 @@ import {
   captchaResult,
   captchaResolving,
 } from '../../redux/registrations/selectors';
-import { Register } from './Register';
+import { PurchaseNow } from './PurchaseNow';
 
 const selector = createStructuredSelector({
   cartItems,
@@ -31,4 +31,4 @@ const actions = {
 
 const reduxConnect = connect(selector, actions);
 
-export default compose(reduxConnect)(Register);
+export default compose(reduxConnect)(PurchaseNow);
