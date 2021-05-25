@@ -36,9 +36,19 @@ const Purchase = props => {
   const { screenType } = currentScreenType();
   const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
 
-  const { costFio, costUsdc } = totalCost(cart);
+  const erroredItems = cart.filter(item => item.error),
+    successedItems = cart.filter(item => !item.error),
+    hasErrors = erroredItems.length > 0;
 
-  const walletBalance = () => {
+  const { costFio: successedCostFio, costUsdc: successedCostUsdc } = totalCost(
+    successedItems,
+  );
+
+  const { costFio: erroredCostFio, costUsdc: erroredCostUsdc } = totalCost(
+    erroredItems,
+  );
+
+  const walletBalance = (costFio, costUsdc) => {
     const wallet = paymentWallet.balance || 0;
     let walletUsdc = 0;
     if (wallet > 0) {
@@ -51,18 +61,24 @@ const Purchase = props => {
   return (
     <div className={classes.container}>
       <div className={classes.details}>
+        {hasErrors && (
+          <h5 className={classes.completeTitle}>Purchases Completed</h5>
+        )}
         <h6 className={classes.subtitle}>Purchase Details</h6>
         {!isEmpty(cart) &&
           cart.map(item => <CartItem item={item} key={item.id} />)}
       </div>
       <div className={classes.details}>
+        {hasErrors && (
+          <h5 className={classes.completeTitle}>Purchases Not Completed</h5>
+        )}
         <h6 className={classes.subtitle}>Payment Details</h6>
         <Badge type={BADGE_TYPES.BLACK} show>
           <div className={classnames(classes.item, classes.total)}>
             <span className="boldText">Total Cost</span>
             <p className={classes.totalPrice}>
               <span className="boldText">
-                {costFio} FIO / {costUsdc} USDC
+                {successedCostFio} FIO / {successedCostUsdc} USDC
               </span>
             </p>
           </div>
@@ -88,7 +104,8 @@ const Purchase = props => {
                     <span className="boldText">FIO Wallet</span>
                   </p>
                   <p className={classes.balance}>
-                    (Available Balance {walletBalance()})
+                    (Available Balance{' '}
+                    {walletBalance(successedCostFio, successedCostUsdc)})
                   </p>
                 </div>
               </div>
@@ -100,7 +117,7 @@ const Purchase = props => {
         <PurchaseNow onFinish={handleClick} />
       ) : (
         <Button onClick={handleClick} className={classes.button}>
-          Close
+          {hasErrors ? 'Try Again' : 'Close'}
         </Button>
       )}
     </div>
