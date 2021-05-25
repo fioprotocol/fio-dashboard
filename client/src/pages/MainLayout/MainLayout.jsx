@@ -6,6 +6,7 @@ import Notifications from '../../components/Notifications';
 import Navigation from '../../components/Navigation/Navigation';
 import Footer from '../../components/Footer/Footer';
 import LoginForm from '../../components/LoginForm';
+import PinConfirmModal from '../../components/PinConfirmModal';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
 import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
@@ -47,6 +48,7 @@ const MainLayout = props => {
       <Footer />
       {showLogin && edgeContextSet && loginFormModalRender()}
       {showRecovery && edgeContextSet && recoveryFormModalRender()}
+      <PinConfirmModal />
     </div>
   );
 };

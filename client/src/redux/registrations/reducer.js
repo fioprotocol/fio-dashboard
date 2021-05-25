@@ -40,4 +40,14 @@ export default combineReducers({
         return state;
     }
   },
+  captchaResult(state = {}, action) {
+    switch (action.type) {
+      case actions.CAPTCHA_SUCCESS:
+        return action.data;
+      case actions.CAPTCHA_REQUEST:
+        return [];
+      default:
+        return state;
+    }
+  },
 });

@@ -7,4 +7,7 @@ export default class FioReg extends Base {
   domains() {
     return this.apiClient.get('reg/domains');
   }
+  register(data) {
+    return this.apiClient.post('reg/register', { data });
+  }
 }

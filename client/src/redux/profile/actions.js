@@ -84,3 +84,11 @@ export const resetPassword = ({ hash, password, confirmPassword }) => ({
   ],
   promise: api => api.auth.setPassword(hash, password, confirmPassword),
 });
+
+export const RECORD_FREE_REQUEST = `${prefix}/RECORD_FREE_REQUEST`;
+export const RECORD_FREE_SUCCESS = `${prefix}/RECORD_FREE_SUCCESS`;
+export const RECORD_FREE_FAILURE = `${prefix}/RECORD_FREE_FAILURE`;
+export const recordFreeAddress = () => ({
+  types: [RECORD_FREE_REQUEST, RECORD_FREE_SUCCESS, RECORD_FREE_FAILURE],
+  promise: api => api.users.recordFreeAddress(),
+});

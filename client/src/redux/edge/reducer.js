@@ -120,4 +120,17 @@ export default combineReducers({
         return state;
     }
   },
+  pinConfirmation(state = {}, action) {
+    switch (action.type) {
+      case actions.CONFIRM_PIN_SUCCESS: {
+        return action.data;
+      }
+      case actions.CONFIRM_PIN_REQUEST:
+      case actions.CONFIRM_PIN_FAILURE: {
+        return {};
+      }
+      default:
+        return state;
+    }
+  },
 });

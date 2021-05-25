@@ -9,6 +9,7 @@ export const loginSuccess = state => state[prefix].loginSuccess;
 export const loginFailure = state => state[prefix].loginFailure;
 export const recoveryQuestions = state => state[prefix].recoveryQuestions;
 export const fioWallets = state => state[prefix].fioWallets;
+export const pinConfirmation = state => state[prefix].pinConfirmation;
 export const usernameIsAvailable = state => state[prefix].usernameIsAvailable;
 export const usernameAvailableLoading = state =>
   state[prefix].usernameAvailableLoading;

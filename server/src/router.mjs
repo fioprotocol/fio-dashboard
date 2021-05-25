@@ -24,5 +24,6 @@ router.put('/notifications', checkAuth, routes.notifications.update);
 
 router.get('/reg/domains', routes.external.domains);
 router.get('/reg/prices', routes.external.prices);
+router.post('/reg/register', routes.external.register);
 
 export default router;
