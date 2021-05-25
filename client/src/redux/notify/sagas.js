@@ -3,7 +3,7 @@ import { PROFILE_FAILURE } from '../profile/actions';
 import { LOGIN_FAILURE } from '../edge/actions';
 import { notification } from 'antd';
 
-const toString = obj =>
+export const toString = obj =>
   Object.entries(obj)
     .map(([key, val]) => `${key}: ${val}`)
     .join(', ');

@@ -3,22 +3,26 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 import {
-  loading,
   cachedUsers,
   edgeContextSet,
+  confirmingPin,
+  pinConfirmation,
+  username,
 } from '../../redux/edge/selectors';
 import { confirmPin, getCachedUsers } from '../../redux/edge/actions';
 import { showPinConfirm } from '../../redux/modal/selectors';
-import { closeLoginModal as onClose } from '../../redux/modal/actions';
+import { closePinConfirmModal as onClose } from '../../redux/modal/actions';
 
 import PinConfirmModal from './PinConfirmModal';
 
 const reduxConnect = connect(
   createStructuredSelector({
-    loading,
+    username,
     edgeContextSet,
     showPinConfirm,
     cachedUsers,
+    confirmingPin,
+    pinConfirmation,
   }),
   {
     onSubmit: confirmPin,

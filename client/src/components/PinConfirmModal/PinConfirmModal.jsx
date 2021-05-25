@@ -1,3 +1,4 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect } from 'react';
 import { Field, Form } from 'react-final-form';
 import { isEmpty } from 'lodash';
@@ -13,23 +14,23 @@ const PinConfirmModal = props => {
     showPinConfirm,
     edgeContextSet,
     onSubmit,
-    loading,
+    confirmingPin,
     onClose,
     username,
-    pinFailure,
+    pinConfirmation,
   } = props;
   if (!showPinConfirm || !edgeContextSet) return null;
   let currentForm = {};
   useEffect(() => {
-    if (!isEmpty(currentForm) && !isEmpty(pinFailure)) {
+    if (!isEmpty(currentForm) && !isEmpty(pinConfirmation.error)) {
       const { mutators } = currentForm;
 
       mutators.setDataMutator('pin', {
-        error: true,
+        error: pinConfirmation.error,
         hideError: true,
       });
     }
-  }, [pinFailure]);
+  }, [pinConfirmation]);
 
   const handleSubmit = values => {
     const { pin } = values;
@@ -45,7 +46,8 @@ const PinConfirmModal = props => {
     return (
       <form onSubmit={handleSubmit}>
         <FormHeader title="Enter PIN" isDoubleColor />
-        <Field name="pin" component={Input} disabled={loading} />
+        <Field name="pin" component={Input} disabled={confirmingPin} />
+        {confirmingPin && <FontAwesomeIcon icon="spinner" spin />}
       </form>
     );
   };

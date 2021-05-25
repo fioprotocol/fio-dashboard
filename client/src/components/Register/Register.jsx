@@ -10,41 +10,59 @@ export const Register = props => {
     showPinModal,
     checkCaptcha,
     recordFreeAddress,
+    confirmingPin,
+    captchaResolving,
   } = props;
   const [isWaiting, setWaiting] = useState(false);
 
+  const loading = confirmingPin || captchaResolving;
+
   // registration
   useEffect(async () => {
-    const { keys } = pinConfirmation;
+    const { keys, error } = pinConfirmation;
     if (keys && keys[paymentWallet.id] && isWaiting) {
       const results = await executeRegistration(
         cartItems,
         keys[paymentWallet.id],
       );
       // todo: handle results
+      for (const item of results.registered) {
+        //
+      }
+      for (const item of results.errors) {
+        //
+      }
+
+      setWaiting(false);
     }
 
-    setWaiting(false);
+    if (error) setWaiting(false);
   }, [pinConfirmation]);
 
   useEffect(async () => {
-    const { success } = captchaResult;
+    const { success, verifyParams } = captchaResult;
+
     if (success && isWaiting) {
-      const results = await executeRegistration(cartItems, {
-        public: paymentWallet.publicKey,
-      });
+      const results = await executeRegistration(
+        cartItems,
+        {
+          public: paymentWallet.publicKey,
+        },
+        verifyParams,
+      );
       // todo: handle results
 
       for (const item of results.registered) {
-        if (item.isFree) {
-          recordFreeAddress(item.fioName);
-        }
+        recordFreeAddress(item.fioName);
       }
+
+      setWaiting(false);
     }
-    setWaiting(false);
+
+    if (success === false) setWaiting(false);
   }, [captchaResult]);
 
-  const purchase = async () => {
+  const purchase = () => {
     setWaiting(true);
     for (const item of cartItems) {
       if (item.costFio) {
@@ -55,7 +73,7 @@ export const Register = props => {
   };
 
   return (
-    <button type="submit" onClick={purchase}>
+    <button type="submit" onClick={purchase} disabled={loading}>
       Purchase Now
     </button>
   );

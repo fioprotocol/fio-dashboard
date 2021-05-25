@@ -29,3 +29,7 @@ export const CLOSE_PIN_CONFIRM = `${prefix}/CLOSE_PIN_CONFIRM`;
 export const showPinModal = () => ({
   type: SHOW_PIN_CONFIRM,
 });
+
+export const closePinConfirmModal = () => ({
+  type: CLOSE_PIN_CONFIRM,
+});

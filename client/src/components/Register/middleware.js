@@ -1,24 +1,28 @@
 import apis from '../../api/index';
+import { toString } from '../../redux/notify/sagas';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
-export const registerFree = async (fioName, publicKey) => {
-  let result = {};
+export const registerFree = async (fioName, publicKey, verifyParams) => {
+  let result = { fioName, isFree: true };
   try {
-    const res = await apis.fioReg.register({ address: fioName, publicKey });
-
-    if (!res) {
-      throw new Error('Server Error');
+    const res = await apis.fioReg.register({
+      address: fioName,
+      publicKey,
+      verifyParams,
+    });
+    if (res.error) {
+      result.error = res.error;
+    } else {
+      result = { ...res, ...result };
     }
-    result = { ...result, ...res, fioName, isFree: true };
   } catch (e) {
-    result.error = e.message;
+    result.error = e.message || toString(e.fields);
   }
-
   return result;
 };
 
 export const register = async (fioName, costFio) => {
-  let result = {};
+  let result = { fioName };
   try {
     const res = await apis.fio.register(fioName, apis.fio.amountToSUF(costFio));
 
@@ -26,7 +30,7 @@ export const register = async (fioName, costFio) => {
       throw new Error('Server Error');
     }
 
-    result = { ...result, ...res, isFree: true };
+    result = { ...result, ...res };
   } catch (e) {
     result.error = e.message;
   }
@@ -34,7 +38,7 @@ export const register = async (fioName, costFio) => {
   return result;
 };
 
-export const executeRegistration = async (items, keys) => {
+export const executeRegistration = async (items, keys, verifyParams = {}) => {
   const result = { errors: [], registered: [] };
   const registrations = [];
   if (keys.private) apis.fio.setWalletFioSdk(keys);
@@ -46,19 +50,21 @@ export const executeRegistration = async (items, keys) => {
       if (item.costFio) {
         registrations.push(register(fioName, item.costFio));
       } else {
-        registrations.push(registerFree(fioName, keys.public));
+        registrations.push(registerFree(fioName, keys.public, verifyParams));
       }
     }
+
     const responses = await Promise.allSettled(registrations);
+
     for (const response of responses) {
-      if (response.error) {
-        result.errors.push(response.error);
+      if (response.status === 'rejected' || response.value.error) {
+        result.errors.push(response.value);
       } else {
-        result.registered.push(response);
+        result.registered.push(response.value);
       }
     }
   } catch (e) {
-    console.log(e);
+    //
   }
   if (keys.private) apis.fio.clearWalletFioSdk();
 

@@ -64,9 +64,10 @@ export default class Edge {
     }
   }
 
-  loginPIN(username, pin) {
+  async loginPIN(username, pin) {
     try {
-      return this.edgeContext.loginWithPIN(username, pin);
+      const account = await this.edgeContext.loginWithPIN(username, pin);
+      return account;
     } catch (e) {
       console.log(e);
       throw e;

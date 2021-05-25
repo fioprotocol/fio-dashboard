@@ -10,4 +10,7 @@ export default class FioReg extends Base {
   register(data) {
     return this.apiClient.post('reg/register', { data });
   }
+  initCaptcha() {
+    return this.apiClient.post('reg/captcha/init');
+  }
 }
