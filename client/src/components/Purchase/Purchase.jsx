@@ -4,6 +4,8 @@ import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 import CartItem from '../Cart/CartItem';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
+import { currentScreenType } from '../../screenType';
+import { SCREEN_TYPE } from '../../constants/screen';
 import { totalCost } from '../../utils';
 import classes from './Purchase.module.scss';
 
@@ -12,6 +14,21 @@ const Purchase = props => {
 
   const handleClick = () => {
     //todo: set action
+  };
+
+  const { screenType } = currentScreenType();
+  const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
+
+  const { costFio, costUsdc } = totalCost(cart);
+
+  const walletBalance = () => {
+    const wallet = paymentWallet.balance || 0;
+    let walletUsdc = 0;
+    if (wallet > 0) {
+      walletUsdc = (wallet * costUsdc) / costFio;
+    }
+    return `${wallet && wallet.toFixed(2)} FIO / ${walletUsdc &&
+      walletUsdc.toFixed(2)} USDC`;
   };
 
   return (
@@ -27,19 +44,30 @@ const Purchase = props => {
           <div className={classnames(classes.item, classes.total)}>
             <span className="boldText">Total Cost</span>
             <p className={classes.totalPrice}>
-              <span className="boldText">{totalCost(cart)}</span>
+              <span className="boldText">
+                {costFio} FIO / {costUsdc} USDC
+              </span>
             </p>
           </div>
         </Badge>
+        {!isDesktop && (
+          <h6 className={classnames(classes.subtitle, classes.paymentTitle)}>
+            Paying With
+          </h6>
+        )}
         <Badge type={BADGE_TYPES.WHITE} show>
           <div className={classes.item}>
-            <span className="boldText">Paying With</span>
+            {isDesktop && (
+              <span className={classnames('boldText', classes.title)}>
+                Paying With
+              </span>
+            )}
             <div className={classes.wallet}>
               <p className={classes.title}>
                 <span className="boldText">FIO Wallet</span>
               </p>
               <p className={classes.balance}>
-                (Available Balance {paymentWallet.balance} FIO)
+                (Available Balance {walletBalance()})
               </p>
             </div>
           </div>

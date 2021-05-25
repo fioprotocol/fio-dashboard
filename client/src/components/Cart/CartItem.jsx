@@ -24,7 +24,7 @@ const CartItem = props => {
           <span className="boldText">
             {!item.costFio
               ? 'FREE'
-              : `${item.costFio.toFixed(2)}FIO (${item.costUsdc.toFixed(
+              : `${item.costFio.toFixed(2)} FIO (${item.costUsdc.toFixed(
                   2,
                 )} USDC)`}
           </span>

@@ -4,11 +4,11 @@
 
 .container {
   background-color: $aqua-haze;
-  padding: 1.875rem 1.875rem 3.125rem;
-  margin: 6.25rem auto;
+  padding: 1.25rem;
+  margin: 1.25rem;
   position: relative;
   border-radius: 12px;
-  width: calc(100%-40px);
+  width: 100%;
 
   .actionContainer {
     .withClose {
@@ -29,6 +29,8 @@
 @include lg {
   .container {
     width: 42%;
+    padding: 1.875rem 1.875rem 3.125rem;
+    margin: 6.25rem auto;
 
     .actionContainer {
       .withClose {

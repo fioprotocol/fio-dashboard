@@ -15,6 +15,8 @@ const CartAmount = props => {
     history.push(ROUTES.CHECKOUT);
   };
 
+  const { costFio, costUsdc } = totalCost(cartItems);
+
   return (
     <CartSmallContainer bgColor={colors.hint}>
       <h3 className={classes.amountTitle}>Amount Due</h3>
@@ -22,7 +24,7 @@ const CartAmount = props => {
       <div className={classes.total}>
         <hr className={classes.divider} />
         <p className={classes.cost}>
-          Cost: {totalCost(cartItems)}{' '}
+          Cost: {costFio} FIO / {costUsdc} USDC{' '}
           <span className={classes.light}>(annually)</span>
         </p>
         <hr className={classes.divider} />

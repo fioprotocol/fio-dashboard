@@ -151,7 +151,8 @@ export const totalCost = cart => {
         };
       }, {});
 
-  return `${(Number.isFinite(cost.costFio) && cost.costFio.toFixed(2)) ||
-    0}FIO (${(Number.isFinite(cost.costUsdc) && cost.costUsdc.toFixed(2)) ||
-    0} USDC)`;
+  return {
+    costFio: (Number.isFinite(cost.costFio) && cost.costFio.toFixed(2)) || 0,
+    costUsdc: (Number.isFinite(cost.costUsdc) && cost.costUsdc.toFixed(2)) || 0,
+  };
 };

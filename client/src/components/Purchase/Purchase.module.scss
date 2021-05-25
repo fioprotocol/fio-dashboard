@@ -1,5 +1,6 @@
 @import '../../assets/styles/colors.scss';
 @import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
   margin-top: 1.875rem;
@@ -41,6 +42,12 @@
       @include proxima-nova-semibold;
     }
 
+    .paymentTitle {
+      margin-top: 1.875rem;
+      margin-bottom: -10px;
+      font-size: 0.9375em;
+      @include proxima-nova-bold;
+    }
   }
 
   .button {
@@ -51,5 +58,21 @@
     border-radius: 7px;
     height: 54px;
     @include sf-pro-display-medium;
+  }
+}
+
+@include sm {
+  .container {
+    .details {
+      .item {
+        flex-direction: column;
+
+        &.total {
+          .totalPrice {
+            margin: 0.625rem 0 0;
+          }
+        }
+      }
+    }
   }
 }
