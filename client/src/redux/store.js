@@ -33,7 +33,7 @@ export default function configureStore(api, history) {
   store.subscribe(
     throttle(() => {
       saveState({
-        cart: store.getState().cart,
+        cart: store.getState().cart.cartItems,
       });
     }, 1000),
   );
