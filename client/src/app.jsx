@@ -31,6 +31,7 @@ import {
   faPlusSquare,
   faTrash,
   faWallet,
+  faPlusCircle,
 } from '@fortawesome/free-solid-svg-icons';
 
 import { faCircle as faRegularCircle } from '@fortawesome/free-regular-svg-icons';
@@ -74,6 +75,7 @@ library.add(
   faPlusSquare,
   faTrash,
   faWallet,
+  faPlusCircle,
 );
 
 const store = configureStore(api, history);

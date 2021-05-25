@@ -133,3 +133,26 @@ export const handleFreeAddressCart = async ({
     recalculate(!isEmpty(retCart) ? retCart : cartItems);
   }
 };
+
+export const totalCost = cart => {
+  if (cart.length === 1 && cart.some(item => !item.costFio && !item.costUsdc))
+    return 'FREE';
+
+  const cost =
+    !isEmpty(cart) &&
+    cart
+      .filter(item => item.costFio && item.costUsdc)
+      .reduce((acc, item) => {
+        if (!acc['costFio']) acc['costFio'] = 0;
+        if (!acc['costUsdc']) acc['costUsdc'] = 0;
+        return {
+          costFio: acc['costFio'] + item.costFio,
+          costUsdc: acc['costUsdc'] + item.costUsdc,
+        };
+      }, {});
+
+  return {
+    costFio: (Number.isFinite(cost.costFio) && cost.costFio.toFixed(2)) || 0,
+    costUsdc: (Number.isFinite(cost.costUsdc) && cost.costUsdc.toFixed(2)) || 0,
+  };
+};

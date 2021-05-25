@@ -1,0 +1,78 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  margin-top: 1.875rem;
+
+  .details {
+    margin-bottom: 1.875rem;
+
+    .item {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 100%;
+      color: $black;
+
+      &.total {
+        color: $white;
+
+        .totalPrice {
+          margin: 0 1.875rem 0 auto;
+        }
+      }
+
+      .wallet {
+        margin-right: 1.875rem;
+        .title {
+          margin-bottom: 0.2rem;
+        }
+        .balance {
+          margin-bottom: 0;
+          font-size: 0.875em;
+          @include proxima-nova-thin
+        }
+      }
+    }
+
+    .subtitle {
+      font-size: 0.875em;
+      margin-bottom: -15px;
+      @include proxima-nova-semibold;
+    }
+
+    .paymentTitle {
+      margin-top: 1.875rem;
+      margin-bottom: -10px;
+      font-size: 0.9375em;
+      @include proxima-nova-bold;
+    }
+  }
+
+  .button {
+    display: block;
+    margin: 2.5rem auto 0;
+    width: 100%;
+    max-width: 335px;
+    border-radius: 7px;
+    height: 54px;
+    @include sf-pro-display-medium;
+  }
+}
+
+@include sm {
+  .container {
+    .details {
+      .item {
+        flex-direction: column;
+
+        &.total {
+          .totalPrice {
+            margin: 0.625rem 0 0;
+          }
+        }
+      }
+    }
+  }
+}
