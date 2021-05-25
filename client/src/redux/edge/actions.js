@@ -23,6 +23,36 @@ export const login = ({ username, password, pin }) => ({
     pin ? api.edge.loginPIN(username, pin) : api.edge.login(username, password),
 });
 
+export const CONFIRM_PIN_REQUEST = `${prefix}/CONFIRM_PIN_REQUEST`;
+export const CONFIRM_PIN_SUCCESS = `${prefix}/CONFIRM_PIN_SUCCESS`;
+export const CONFIRM_PIN_FAILURE = `${prefix}/CONFIRM_PIN_FAILURE`;
+
+export const confirmPin = ({ username, pin }) => ({
+  types: [CONFIRM_PIN_REQUEST, CONFIRM_PIN_SUCCESS, CONFIRM_PIN_FAILURE],
+  promise: async api => {
+    const account = await api.edge.loginPIN(username, pin);
+
+    const keys = {};
+    try {
+      for (const walletId of account.activeWalletIds) {
+        const wallet = await account.waitForCurrencyWallet(walletId);
+        if (wallet.currencyInfo.currencyCode === 'FIO') {
+          console.log('===========', wallet.keys);
+          console.log('===========', wallet);
+          keys[walletId] = {
+            private: wallet.keys.private,
+            public: wallet.publicWalletInfo.keys.publicKey,
+          };
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    return keys;
+  },
+});
+
 export const SET_ACCOUNT = `${prefix}/SET_ACCOUNT`;
 
 export const setAccount = account => ({

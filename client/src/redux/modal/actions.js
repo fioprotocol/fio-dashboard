@@ -22,3 +22,14 @@ export const showRecoveryModal = () => ({
 export const closeRecoveryModal = () => ({
   type: CLOSE_RECOVERY_PASSWORD,
 });
+
+export const SHOW_PIN_CONFIRM = `${prefix}/SHOW_PIN_CONFIRM`;
+export const CLOSE_PIN_CONFIRM = `${prefix}/CLOSE_PIN_CONFIRM`;
+
+export const showPinModal = () => ({
+  type: SHOW_PIN_CONFIRM,
+});
+
+export const closePinConfirmModal = () => ({
+  type: CLOSE_PIN_CONFIRM,
+});

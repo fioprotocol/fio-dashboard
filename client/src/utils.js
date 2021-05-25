@@ -1,6 +1,8 @@
 import isEmpty from 'lodash/isEmpty';
 const FIO_DAPP_USERNAME_DELIMITER = '_fio.dapp_';
 
+export const FIO_ADDRESS_DELIMITER = '@';
+
 export function compose(...funcs) {
   if (funcs.length === 1) {
     return funcs[0];
@@ -156,3 +158,5 @@ export const totalCost = cart => {
     costUsdc: (Number.isFinite(cost.costUsdc) && cost.costUsdc.toFixed(2)) || 0,
   };
 };
+
+export const isDomain = fioName => fioName.indexOf(FIO_ADDRESS_DELIMITER) > 0;
