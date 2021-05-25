@@ -2,17 +2,27 @@ import React from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
+import { withRouter } from 'react-router-dom';
+
 import CartItem from '../Cart/CartItem';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
 import { totalCost } from '../../utils';
+import { ROUTES } from '../../constants/routes';
 import classes from './Purchase.module.scss';
 
 const Purchase = props => {
-  const { isCheckout, isPurchase, cart, paymentWallet } = props;
+  const { isCheckout, isPurchase, cart, paymentWallet, history } = props;
 
   const handleClick = () => {
+    if (isCheckout) {
+      history.push(ROUTES.PURCHASE);
+    }
+
+    if (isPurchase) {
+      history.push(ROUTES.DASHBOARD);
+    }
     //todo: set action
   };
 
@@ -50,28 +60,34 @@ const Purchase = props => {
             </p>
           </div>
         </Badge>
-        {!isDesktop && (
-          <h6 className={classnames(classes.subtitle, classes.paymentTitle)}>
-            Paying With
-          </h6>
-        )}
-        <Badge type={BADGE_TYPES.WHITE} show>
-          <div className={classes.item}>
-            {isDesktop && (
-              <span className={classnames('boldText', classes.title)}>
+        {isCheckout && (
+          <>
+            {!isDesktop && (
+              <h6
+                className={classnames(classes.subtitle, classes.paymentTitle)}
+              >
                 Paying With
-              </span>
+              </h6>
             )}
-            <div className={classes.wallet}>
-              <p className={classes.title}>
-                <span className="boldText">FIO Wallet</span>
-              </p>
-              <p className={classes.balance}>
-                (Available Balance {walletBalance()})
-              </p>
-            </div>
-          </div>
-        </Badge>
+            <Badge type={BADGE_TYPES.WHITE} show>
+              <div className={classes.item}>
+                {isDesktop && (
+                  <span className={classnames('boldText', classes.title)}>
+                    Paying With
+                  </span>
+                )}
+                <div className={classes.wallet}>
+                  <p className={classes.title}>
+                    <span className="boldText">FIO Wallet</span>
+                  </p>
+                  <p className={classes.balance}>
+                    (Available Balance {walletBalance()})
+                  </p>
+                </div>
+              </div>
+            </Badge>
+          </>
+        )}
       </div>
       <Button onClick={handleClick} className={classes.button}>
         {isCheckout ? 'Purchase Now' : isPurchase ? 'Close' : ''}
@@ -80,4 +96,4 @@ const Purchase = props => {
   );
 };
 
-export default Purchase;
+export default withRouter(Purchase);
