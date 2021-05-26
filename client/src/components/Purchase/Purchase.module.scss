@@ -48,6 +48,15 @@
       font-size: 0.9375em;
       @include proxima-nova-bold;
     }
+
+    .completeTitle {
+      font-size: 1.125em;
+      margin-top: 1rem;
+      @include proxima-nova-semibold;
+      &.second {
+        margin-top: 2.8rem;
+      }
+    }
   }
 
   .button {
@@ -58,6 +67,30 @@
     border-radius: 7px;
     height: 54px;
     @include sf-pro-display-medium;
+  }
+
+  .errorContainer {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: row;
+
+    .textContainer {
+      display: flex;
+      flex-direction: row;
+      .icon {
+        font-size: 18px;
+      }
+      .text {
+        font-size: 0.857em;
+        margin-left: 0.625rem;
+        margin-right: 1.25rem;
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  &.hasErrors {
+    margin-top: 0;
   }
 }
 

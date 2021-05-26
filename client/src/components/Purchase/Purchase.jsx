@@ -3,6 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 import { withRouter } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import CartItem from '../Cart/CartItem';
 import PurchaseNow from '../PurchaseNow';
@@ -36,16 +37,16 @@ const Purchase = props => {
   const { screenType } = currentScreenType();
   const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
 
-  const erroredItems = cart.filter(item => item.error),
-    successedItems = cart.filter(item => !item.error),
-    hasErrors = erroredItems.length > 0;
+  const errItems = cart.filter(item => item.error),
+    regItems = cart.filter(item => !item.error),
+    hasErrors = errItems.length > 0;
 
-  const { costFio: successedCostFio, costUsdc: successedCostUsdc } = totalCost(
-    successedItems,
+  const { costFio: regCostFio, costUsdc: regCostUsdc, costFree: regFree } = totalCost(
+    regItems,
   );
 
-  const { costFio: erroredCostFio, costUsdc: erroredCostUsdc } = totalCost(
-    erroredItems,
+  const { costFio: errCostFio, costUsdc: errCostUsdc, costFree: errFree } = totalCost(
+    errItems,
   );
 
   const walletBalance = (costFio, costUsdc) => {
@@ -58,61 +59,131 @@ const Purchase = props => {
       walletUsdc.toFixed(2)} USDC`;
   };
 
-  return (
-    <div className={classes.container}>
+  const renderTotalBadge = ({ fio, usdc, costFree, customTitle, customType }) => (
+    <Badge type={customType || BADGE_TYPES.BLACK} show>
+      <div className={classnames(classes.item, classes.total)}>
+        <span className='boldText'>{customTitle || 'Total Cost'}</span>
+        <p className={classes.totalPrice}>
+          <span className='boldText'>
+            {fio && usdc ? `${fio} FIO / ${usdc} USDC` : costFree}
+          </span>
+        </p>
+      </div>
+    </Badge>
+  );
+
+  const renderChekout = () => {
+   return (
+    <>
       <div className={classes.details}>
-        {hasErrors && (
-          <h5 className={classes.completeTitle}>Purchases Completed</h5>
-        )}
         <h6 className={classes.subtitle}>Purchase Details</h6>
         {!isEmpty(cart) &&
-          cart.map(item => <CartItem item={item} key={item.id} />)}
+          cart.map((item) => <CartItem item={item} key={item.id} />)}
       </div>
       <div className={classes.details}>
-        {hasErrors && (
-          <h5 className={classes.completeTitle}>Purchases Not Completed</h5>
-        )}
         <h6 className={classes.subtitle}>Payment Details</h6>
-        <Badge type={BADGE_TYPES.BLACK} show>
-          <div className={classnames(classes.item, classes.total)}>
-            <span className="boldText">Total Cost</span>
-            <p className={classes.totalPrice}>
-              <span className="boldText">
-                {successedCostFio} FIO / {successedCostUsdc} USDC
+        {renderTotalBadge({ fio: regCostFio, usdc: regCostUsdc })}
+        {!isDesktop && (
+          <h6 className={classnames(classes.subtitle, classes.paymentTitle)}>
+            Paying With
+          </h6>
+        )}
+        <Badge type={BADGE_TYPES.WHITE} show>
+          <div className={classes.item}>
+            {isDesktop && (
+              <span className={classnames('boldText', classes.title)}>
+                Paying With
               </span>
-            </p>
+            )}
+            <div className={classes.wallet}>
+              <p className={classes.title}>
+                <span className='boldText'>FIO Wallet</span>
+              </p>
+              <p className={classes.balance}>
+                (Available Balance{' '}
+                {walletBalance(regCostFio, regCostUsdc)})
+              </p>
+            </div>
           </div>
         </Badge>
-        {isCheckout && (
-          <>
-            {!isDesktop && (
-              <h6
-                className={classnames(classes.subtitle, classes.paymentTitle)}
-              >
-                Paying With
-              </h6>
-            )}
-            <Badge type={BADGE_TYPES.WHITE} show>
-              <div className={classes.item}>
-                {isDesktop && (
-                  <span className={classnames('boldText', classes.title)}>
-                    Paying With
-                  </span>
-                )}
-                <div className={classes.wallet}>
-                  <p className={classes.title}>
-                    <span className="boldText">FIO Wallet</span>
-                  </p>
-                  <p className={classes.balance}>
-                    (Available Balance{' '}
-                    {walletBalance(successedCostFio, successedCostUsdc)})
-                  </p>
-                </div>
-              </div>
-            </Badge>
-          </>
-        )}
       </div>
+    </>
+   );
+  };
+
+  const renderPurchase = () => {
+    let totalFio = regCostFio,
+      totalUsdc = regCostUsdc,
+      totalFree = regFree,
+      customTitle = '',
+      customType = '',
+      totalSubtitle = 'Payment Details';
+
+    if (hasErrors) {
+      totalFio = errCostFio;
+      totalUsdc = errCostUsdc;
+      totalFree = errFree;
+      customTitle = 'Total Cost Remaining';
+      customType = BADGE_TYPES.ERROR;
+      totalSubtitle = 'Purchase Details';
+    }
+
+    return (
+      <>
+        <div className={classes.details}>
+          {hasErrors && (
+            <h5 className={classes.completeTitle}>Purchases Completed</h5>
+          )}
+          <h6 className={classes.subtitle}>Purchase Details</h6>
+          {!isEmpty(regItems) &&
+            regItems.map((item) => <CartItem item={item} key={item.id} />)}
+          {hasErrors &&
+            renderTotalBadge({
+              fio: regCostFio,
+              usdc: regCostUsdc,
+            })}
+        </div>
+        {hasErrors && (
+          <Badge type={BADGE_TYPES.ERROR} show>
+            <div className={classes.errorContainer}>
+              <div className={classes.textContainer}>
+                <FontAwesomeIcon
+                  icon='exclamation-circle'
+                  className={classes.icon}
+                />
+                <p className={classes.text}>
+                  <span className='boldText'>Incomplete Purchase!</span> - Your
+                  purchase was not completed in full. Please see below what
+                  failed to be completed.
+                </p>
+              </div>
+            </div>
+          </Badge>
+        )}
+        <div className={classes.details}>
+          {hasErrors && (
+            <h5 className={classnames(classes.completeTitle, classes.second)}>Purchases Not Completed</h5>
+          )}
+          <h6 className={classes.subtitle}>{totalSubtitle}</h6>
+          {hasErrors &&
+            !isEmpty(errItems) &&
+            errItems.map((item) => <CartItem item={item} key={item.id} />)}
+          {renderTotalBadge({
+            fio: totalFio,
+            usdc: totalUsdc,
+            costFree: totalFree,
+            customTitle,
+            customType,
+          })}
+        </div>
+      </>
+    );
+  };
+
+  return (
+    <div className={classnames(classes.container, hasErrors && classes.hasErrors)}>
+      {isCheckout && renderChekout()}
+      {isPurchase && renderPurchase()}
       {isCheckout ? (
         <PurchaseNow onFinish={handleClick} />
       ) : (
