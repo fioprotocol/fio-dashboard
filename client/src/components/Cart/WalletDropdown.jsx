@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Dropdown from 'react-dropdown';
 
@@ -24,12 +24,18 @@ const WalletDropdown = props => {
     setWallet(itemValue);
   };
 
+  useEffect(() => {
+    if (initValue) {
+      onChange(initValue);
+      setWallet(initValue);
+    }
+  }, []);
+
   return (
     <Dropdown
       options={styledOptions}
-      value={initValue}
+      value={initValue && initValue.name}
       onChange={onDropdownChange}
-      placeholder="FIO Wallet Name"
       className={classes.dropdown}
       controlClassName={classes.control}
       placeholderClassName={classes.placeholder}

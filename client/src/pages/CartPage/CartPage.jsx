@@ -5,7 +5,7 @@ import { ROUTES } from '../../constants/routes';
 import DoubleCardContainer from '../../components/DoubleCardContainer';
 import Cart from '../../components/Cart/Cart';
 import CartAmount from '../../components/Cart/CartAmount';
-import { handleFreeAddressCart } from '../../utils';
+import { handleFreeAddressCart, totalCost } from '../../utils';
 
 const CartPage = props => {
   const {
@@ -20,6 +20,13 @@ const CartPage = props => {
     setWallet,
     paymentWallet,
   } = props;
+
+  const walletCount = userWallets.length;
+
+  const totalCartAmount =
+    (cartItems && parseFloat(totalCost(cartItems).costFio)) || 0;
+  const hasLowBalance =
+    paymentWallet && paymentWallet.balance < totalCartAmount;
 
   useEffect(() => {
     if (
@@ -44,12 +51,23 @@ const CartPage = props => {
     });
   }, [account, domains, fioWallets]);
 
+  useEffect(() => {
+    userWallets && walletCount === 1 && setWallet(userWallets[0]);
+  }, []);
+
+  const additionalProps = {
+    hasLowBalance,
+    walletCount,
+    setWallet,
+    selectedWallet: paymentWallet,
+  };
+
   return (
     <DoubleCardContainer
       title="Your Cart"
       secondTitle="Amount Due"
-      bigCart={<Cart {...props} setWallet={setWallet} />}
-      smallCart={<CartAmount {...props} selectedWallet={paymentWallet} />}
+      bigCart={<Cart {...props} {...additionalProps} />}
+      smallCart={<CartAmount {...props} {...additionalProps} />}
     />
   );
 };

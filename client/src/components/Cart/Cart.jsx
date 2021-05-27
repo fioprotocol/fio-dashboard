@@ -22,6 +22,7 @@ const Cart = props => {
     userWallets,
     setWallet,
     hasLowBalance,
+    walletCount,
   } = props;
   const count = cartItems.length;
   const isCartEmpty = count === 0;
@@ -66,26 +67,29 @@ const Cart = props => {
             Search for more FIO addresses?
           </p>
         </Link>
-        <div className={classes.walletContainer}>
-          <h6 className={classes.title}>FIO Wallet Assignment</h6>
-          <p className={classes.subtitle}>
-            Please choose which FIO wallet you would like these addresses
-            assigned to.
-          </p>
-          <Form
-            onSubmit={() => {}}
-            render={() => (
-              <form>
-                <Field
-                  name="wallet"
-                  component={WalletDropdown}
-                  options={userWallets}
-                  setWallet={setWallet}
-                />
-              </form>
-            )}
-          />
-        </div>
+        {walletCount > 1 && (
+          <div className={classes.walletContainer}>
+            <h6 className={classes.title}>FIO Wallet Assignment</h6>
+            <p className={classes.subtitle}>
+              Please choose which FIO wallet you would like these addresses
+              assigned to.
+            </p>
+            <Form
+              onSubmit={() => {}}
+              render={() => (
+                <form>
+                  <Field
+                    name="wallet"
+                    component={WalletDropdown}
+                    options={userWallets}
+                    setWallet={setWallet}
+                    initValue={userWallets[0]}
+                  />
+                </form>
+              )}
+            />
+          </div>
+        )}
       </div>
       {hasLowBalance && (
         <Badge type={BADGE_TYPES.ERROR} show>

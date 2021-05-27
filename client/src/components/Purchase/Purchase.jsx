@@ -41,13 +41,17 @@ const Purchase = props => {
     regItems = cart.filter(item => !item.error),
     hasErrors = errItems.length > 0;
 
-  const { costFio: regCostFio, costUsdc: regCostUsdc, costFree: regFree } = totalCost(
-    regItems,
-  );
+  const {
+    costFio: regCostFio,
+    costUsdc: regCostUsdc,
+    costFree: regFree,
+  } = totalCost(regItems);
 
-  const { costFio: errCostFio, costUsdc: errCostUsdc, costFree: errFree } = totalCost(
-    errItems,
-  );
+  const {
+    costFio: errCostFio,
+    costUsdc: errCostUsdc,
+    costFree: errFree,
+  } = totalCost(errItems);
 
   const walletBalance = (costFio, costUsdc) => {
     const wallet = paymentWallet.balance || 0;
@@ -59,12 +63,18 @@ const Purchase = props => {
       walletUsdc.toFixed(2)} USDC`;
   };
 
-  const renderTotalBadge = ({ fio, usdc, costFree, customTitle, customType }) => (
+  const renderTotalBadge = ({
+    fio,
+    usdc,
+    costFree,
+    customTitle,
+    customType,
+  }) => (
     <Badge type={customType || BADGE_TYPES.BLACK} show>
       <div className={classnames(classes.item, classes.total)}>
-        <span className='boldText'>{customTitle || 'Total Cost'}</span>
+        <span className="boldText">{customTitle || 'Total Cost'}</span>
         <p className={classes.totalPrice}>
-          <span className='boldText'>
+          <span className="boldText">
             {fio && usdc ? `${fio} FIO / ${usdc} USDC` : costFree}
           </span>
         </p>
@@ -73,42 +83,41 @@ const Purchase = props => {
   );
 
   const renderChekout = () => {
-   return (
-    <>
-      <div className={classes.details}>
-        <h6 className={classes.subtitle}>Purchase Details</h6>
-        {!isEmpty(cart) &&
-          cart.map((item) => <CartItem item={item} key={item.id} />)}
-      </div>
-      <div className={classes.details}>
-        <h6 className={classes.subtitle}>Payment Details</h6>
-        {renderTotalBadge({ fio: regCostFio, usdc: regCostUsdc })}
-        {!isDesktop && (
-          <h6 className={classnames(classes.subtitle, classes.paymentTitle)}>
-            Paying With
-          </h6>
-        )}
-        <Badge type={BADGE_TYPES.WHITE} show>
-          <div className={classes.item}>
-            {isDesktop && (
-              <span className={classnames('boldText', classes.title)}>
-                Paying With
-              </span>
-            )}
-            <div className={classes.wallet}>
-              <p className={classes.title}>
-                <span className='boldText'>FIO Wallet</span>
-              </p>
-              <p className={classes.balance}>
-                (Available Balance{' '}
-                {walletBalance(regCostFio, regCostUsdc)})
-              </p>
+    return (
+      <>
+        <div className={classes.details}>
+          <h6 className={classes.subtitle}>Purchase Details</h6>
+          {!isEmpty(cart) &&
+            cart.map(item => <CartItem item={item} key={item.id} />)}
+        </div>
+        <div className={classes.details}>
+          <h6 className={classes.subtitle}>Payment Details</h6>
+          {renderTotalBadge({ fio: regCostFio, usdc: regCostUsdc })}
+          {!isDesktop && (
+            <h6 className={classnames(classes.subtitle, classes.paymentTitle)}>
+              Paying With
+            </h6>
+          )}
+          <Badge type={BADGE_TYPES.WHITE} show>
+            <div className={classes.item}>
+              {isDesktop && (
+                <span className={classnames('boldText', classes.title)}>
+                  Paying With
+                </span>
+              )}
+              <div className={classes.wallet}>
+                <p className={classes.title}>
+                  <span className="boldText">FIO Wallet</span>
+                </p>
+                <p className={classes.balance}>
+                  (Available Balance {walletBalance(regCostFio, regCostUsdc)})
+                </p>
+              </div>
             </div>
-          </div>
-        </Badge>
-      </div>
-    </>
-   );
+          </Badge>
+        </div>
+      </>
+    );
   };
 
   const renderPurchase = () => {
@@ -136,7 +145,7 @@ const Purchase = props => {
           )}
           <h6 className={classes.subtitle}>Purchase Details</h6>
           {!isEmpty(regItems) &&
-            regItems.map((item) => <CartItem item={item} key={item.id} />)}
+            regItems.map(item => <CartItem item={item} key={item.id} />)}
           {hasErrors &&
             renderTotalBadge({
               fio: regCostFio,
@@ -148,11 +157,11 @@ const Purchase = props => {
             <div className={classes.errorContainer}>
               <div className={classes.textContainer}>
                 <FontAwesomeIcon
-                  icon='exclamation-circle'
+                  icon="exclamation-circle"
                   className={classes.icon}
                 />
                 <p className={classes.text}>
-                  <span className='boldText'>Incomplete Purchase!</span> - Your
+                  <span className="boldText">Incomplete Purchase!</span> - Your
                   purchase was not completed in full. Please see below what
                   failed to be completed.
                 </p>
@@ -162,12 +171,14 @@ const Purchase = props => {
         )}
         <div className={classes.details}>
           {hasErrors && (
-            <h5 className={classnames(classes.completeTitle, classes.second)}>Purchases Not Completed</h5>
+            <h5 className={classnames(classes.completeTitle, classes.second)}>
+              Purchases Not Completed
+            </h5>
           )}
           <h6 className={classes.subtitle}>{totalSubtitle}</h6>
           {hasErrors &&
             !isEmpty(errItems) &&
-            errItems.map((item) => <CartItem item={item} key={item.id} />)}
+            errItems.map(item => <CartItem item={item} key={item.id} />)}
           {renderTotalBadge({
             fio: totalFio,
             usdc: totalUsdc,
@@ -181,7 +192,9 @@ const Purchase = props => {
   };
 
   return (
-    <div className={classnames(classes.container, hasErrors && classes.hasErrors)}>
+    <div
+      className={classnames(classes.container, hasErrors && classes.hasErrors)}
+    >
       {isCheckout && renderChekout()}
       {isPurchase && renderPurchase()}
       {isCheckout ? (
