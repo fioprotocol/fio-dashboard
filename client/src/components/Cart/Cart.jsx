@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Form, Field } from 'react-final-form';
 import classNames from 'classnames';
 import { Button } from 'react-bootstrap';
+import isEmpty from 'lodash/isEmpty';
 
 import CounterContainer from '../CounterContainer/CounterContainer';
 import CartItem from './CartItem';
@@ -23,9 +24,15 @@ const Cart = props => {
     setWallet,
     hasLowBalance,
     walletCount,
+    totalCartAmount,
+    paymentWallet,
   } = props;
   const count = cartItems.length;
   const isCartEmpty = count === 0;
+
+  const walletBalance =
+    (!isEmpty(paymentWallet) && parseFloat(paymentWallet.balance).toFixed(2)) ||
+    0;
 
   const handleDeleteItem = id => {
     const data = recalculateCart({ domains, cartItems, id }) || id;
@@ -83,7 +90,6 @@ const Cart = props => {
                     component={WalletDropdown}
                     options={userWallets}
                     setWallet={setWallet}
-                    initValue={userWallets[0]}
                   />
                 </form>
               )}
@@ -100,10 +106,10 @@ const Cart = props => {
                 className={classes.icon}
               />
               <p className={classes.text}>
-                <span className="boldText">Low Balance!</span> - Unfortunately
-                there is not enough FIO available to complete your purchase.
-                Please deposit additional FIO or select a different payment
-                method.
+                <span className="boldText">Low Balance!</span> - There are not
+                enough FIO tokens in this FIO Wallet to complete the purchase.
+                Needed: {totalCartAmount - walletBalance} FIO, available in
+                wallet: {walletBalance} FIO. Please add FIO tokens.
               </p>
             </div>
             <Button

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
+import { withLastLocation } from 'react-router-last-location';
 
 import { ROUTES } from '../../constants/routes';
 import DoubleCardContainer from '../../components/DoubleCardContainer';
@@ -19,6 +20,7 @@ const CartPage = props => {
     userWallets,
     setWallet,
     paymentWallet,
+    lastLocation,
   } = props;
 
   const walletCount = userWallets.length;
@@ -28,11 +30,17 @@ const CartPage = props => {
   const hasLowBalance =
     paymentWallet && paymentWallet.balance < totalCartAmount;
 
+  const isFree =
+    !isEmpty(cartItems) &&
+    cartItems.length === 1 &&
+    cartItems.every(item => !item.costFio && !item.costUsdc);
+
   useEffect(() => {
     if (
       !isEmpty(cartItems) &&
       cartItems.length === 1 &&
-      userWallets.length === 1
+      userWallets.length === 1 &&
+      lastLocation.pathname !== ROUTES.CHECKOUT
     ) {
       history.push(ROUTES.CHECKOUT);
     }
@@ -60,6 +68,8 @@ const CartPage = props => {
     walletCount,
     setWallet,
     selectedWallet: paymentWallet,
+    isFree,
+    totalCartAmount,
   };
 
   return (
@@ -72,4 +82,4 @@ const CartPage = props => {
   );
 };
 
-export default CartPage;
+export default withLastLocation(CartPage);
