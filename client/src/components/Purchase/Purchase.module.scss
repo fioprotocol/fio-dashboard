@@ -94,6 +94,26 @@
   }
 }
 
+.processingContainer {
+  display: flex;
+  flex-direction: column;
+  color: $white;
+  align-items: center;
+
+  .title {
+    margin-top: 1.25rem;
+    color: $white;
+    @include proxima-nova-semibold;
+  }
+
+  .subtitle {
+    width: 70%;
+    text-align: center;
+    font-size: 0.875em;
+    @include proxima-nova-thin;
+  }
+}
+
 @include sm {
   .container {
     .details {

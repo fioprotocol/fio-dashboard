@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import Purchase from '../../components/Purchase/Purchase';
 import '../../helpers/gt-sdk';
@@ -18,13 +19,23 @@ const CheckoutPage = props => {
     }
   }, []);
 
+  const isFree =
+    !isEmpty(cartItems) &&
+    cartItems.length === 1 &&
+    cartItems.every(item => !item.costFio && !item.costUsdc);
+
   const onClose = () => {
     history.push(ROUTES.CART);
   };
 
   return (
     <PseudoModalContainer title="Make Purchase" onClose={onClose}>
-      <Purchase cart={cartItems} paymentWallet={paymentWallet} isCheckout />
+      <Purchase
+        cart={cartItems}
+        paymentWallet={paymentWallet}
+        isFree={isFree}
+        isCheckout
+      />
     </PseudoModalContainer>
   );
 };

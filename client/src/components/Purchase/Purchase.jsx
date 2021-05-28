@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import CartItem from '../Cart/CartItem';
 import PurchaseNow from '../PurchaseNow';
+import Processing from './Processing';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
@@ -15,16 +16,27 @@ import { ROUTES } from '../../constants/routes';
 import classes from './Purchase.module.scss';
 
 const Purchase = props => {
-  const { isCheckout, isPurchase, cart, paymentWallet, history } = props;
+  const {
+    isCheckout,
+    isPurchase,
+    cart,
+    paymentWallet,
+    history,
+    isFree,
+  } = props;
+
+  const [isProcessing, setProcessing] = useState(false);
 
   const handleClick = results => {
     if (isCheckout) {
+      console.log(results);
       for (const item of results.registered) {
         //
       }
       for (const item of results.errors) {
         //
       }
+      setProcessing(false);
       history.push(ROUTES.PURCHASE);
     }
 
@@ -92,29 +104,35 @@ const Purchase = props => {
         </div>
         <div className={classes.details}>
           <h6 className={classes.subtitle}>Payment Details</h6>
-          {renderTotalBadge({ fio: regCostFio, usdc: regCostUsdc })}
-          {!isDesktop && (
+          {renderTotalBadge({
+            fio: regCostFio,
+            usdc: regCostUsdc,
+            costFree: regFree,
+          })}
+          {!isDesktop && !isFree && (
             <h6 className={classnames(classes.subtitle, classes.paymentTitle)}>
               Paying With
             </h6>
           )}
-          <Badge type={BADGE_TYPES.WHITE} show>
-            <div className={classes.item}>
-              {isDesktop && (
-                <span className={classnames('boldText', classes.title)}>
-                  Paying With
-                </span>
-              )}
-              <div className={classes.wallet}>
-                <p className={classes.title}>
-                  <span className="boldText">FIO Wallet</span>
-                </p>
-                <p className={classes.balance}>
-                  (Available Balance {walletBalance(regCostFio, regCostUsdc)})
-                </p>
+          {!isFree && (
+            <Badge type={BADGE_TYPES.WHITE} show>
+              <div className={classes.item}>
+                {isDesktop && (
+                  <span className={classnames('boldText', classes.title)}>
+                    Paying With
+                  </span>
+                )}
+                <div className={classes.wallet}>
+                  <p className={classes.title}>
+                    <span className="boldText">FIO Wallet</span>
+                  </p>
+                  <p className={classes.balance}>
+                    (Available Balance {walletBalance(regCostFio, regCostUsdc)})
+                  </p>
+                </div>
               </div>
-            </div>
-          </Badge>
+            </Badge>
+          )}
         </div>
       </>
     );
@@ -150,6 +168,7 @@ const Purchase = props => {
             renderTotalBadge({
               fio: regCostFio,
               usdc: regCostUsdc,
+              costFree: totalFree,
             })}
         </div>
         {hasErrors && (
@@ -198,12 +217,16 @@ const Purchase = props => {
       {isCheckout && renderChekout()}
       {isPurchase && renderPurchase()}
       {isCheckout ? (
-        <PurchaseNow onFinish={handleClick} />
+        <PurchaseNow onFinish={handleClick} setProcessing={setProcessing} />
       ) : (
         <Button onClick={handleClick} className={classes.button}>
           {hasErrors ? 'Try Again' : 'Close'}
         </Button>
       )}
+      <Processing
+        redirect={() => history.push(ROUTES.PURCHASE)}
+        isProcessing={isProcessing}
+      />
     </div>
   );
 };

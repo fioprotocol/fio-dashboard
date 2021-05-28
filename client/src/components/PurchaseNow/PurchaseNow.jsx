@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import classes from '../Purchase/Purchase.module.scss';
 import { executeRegistration } from './middleware';
+import { sleep } from '../../utils';
 
 export const PurchaseNow = props => {
   const {
@@ -15,8 +16,20 @@ export const PurchaseNow = props => {
     confirmingPin,
     captchaResolving,
     onFinish,
+    setProcessing,
   } = props;
+
   const [isWaiting, setWaiting] = useState(false);
+  const t0 = performance.now();
+
+  const waitFn = async (fn, results) => {
+    const t1 = performance.now();
+
+    if (t1 - t0 < 3000) {
+      await sleep(3000 - (t1 - t0));
+    }
+    fn(results);
+  };
 
   const loading = confirmingPin || captchaResolving;
 
@@ -24,13 +37,14 @@ export const PurchaseNow = props => {
   useEffect(async () => {
     const { keys, error } = pinConfirmation;
     if (keys && keys[paymentWallet.id] && isWaiting) {
+      setProcessing(true);
       const results = await executeRegistration(
         cartItems,
         keys[paymentWallet.id],
       );
-      onFinish(results);
-
       setWaiting(false);
+
+      waitFn(onFinish, results);
     }
 
     if (error) setWaiting(false);
@@ -40,6 +54,7 @@ export const PurchaseNow = props => {
     const { success, verifyParams } = captchaResult;
 
     if (success && isWaiting) {
+      setProcessing(true);
       const results = await executeRegistration(
         cartItems,
         {
@@ -47,13 +62,13 @@ export const PurchaseNow = props => {
         },
         verifyParams,
       );
-      onFinish(results);
 
       for (const item of results.registered) {
         recordFreeAddress(item.fioName);
       }
 
       setWaiting(false);
+      waitFn(onFinish, results);
     }
 
     if (success === false) setWaiting(false);
