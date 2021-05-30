@@ -1,6 +1,6 @@
 import React from 'react';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
-import Purchase from '../../components/Purchase/Purchase';
+import Purchase from '../../components/Purchase';
 import { ROUTES } from '../../constants/routes';
 
 const PurchasePage = props => {

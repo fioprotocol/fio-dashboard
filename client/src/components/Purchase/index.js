@@ -1,17 +1,19 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { withRouter } from 'react-router-dom';
-
 import { compose } from '../../utils';
-import { cartItems } from '../../redux/cart/selectors';
+
+import { recalculate } from '../../redux/cart/actions';
 import { registrationResult } from '../../redux/registrations/selectors';
-import PurchasePage from './PurchasePage';
+
+import Purchase from './Purchase';
 
 const reduxConnect = connect(
   createStructuredSelector({
-    cartItems,
     registrationResult,
   }),
+  {
+    recalculate,
+  },
 );
 
-export default withRouter(compose(reduxConnect)(PurchasePage));
+export default compose(reduxConnect)(Purchase);

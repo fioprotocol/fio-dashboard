@@ -17,18 +17,20 @@ export const PurchaseNow = props => {
     captchaResolving,
     onFinish,
     setProcessing,
+    setRegistration,
+    isRetry,
   } = props;
 
   const [isWaiting, setWaiting] = useState(false);
   const t0 = performance.now();
 
-  const waitFn = async (fn, results) => {
+  const waitFn = async fn => {
     const t1 = performance.now();
 
     if (t1 - t0 < 3000) {
       await sleep(3000 - (t1 - t0));
     }
-    fn(results);
+    fn();
   };
 
   const loading = confirmingPin || captchaResolving;
@@ -43,8 +45,8 @@ export const PurchaseNow = props => {
         keys[paymentWallet.id],
       );
       setWaiting(false);
-
-      waitFn(onFinish, results);
+      setRegistration(results);
+      waitFn(onFinish);
     }
 
     if (error) setWaiting(false);
@@ -68,7 +70,8 @@ export const PurchaseNow = props => {
       }
 
       setWaiting(false);
-      waitFn(onFinish, results);
+      setRegistration(results);
+      waitFn(onFinish);
     }
 
     if (success === false) setWaiting(false);
@@ -86,7 +89,7 @@ export const PurchaseNow = props => {
 
   return (
     <Button onClick={purchase} className={classes.button} disabled={loading}>
-      Purchase Now
+      {isRetry ? 'Try Again' : 'Purchase Now'}
     </Button>
   );
 };

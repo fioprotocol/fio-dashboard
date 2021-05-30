@@ -40,7 +40,7 @@ const CartPage = props => {
       !isEmpty(cartItems) &&
       cartItems.length === 1 &&
       userWallets.length === 1 &&
-      lastLocation.pathname !== ROUTES.CHECKOUT
+      lastLocation.pathname === (ROUTES.FIO_ADDRESSES || ROUTES.FIO_DOMAINS)
     ) {
       history.push(ROUTES.CHECKOUT);
     }

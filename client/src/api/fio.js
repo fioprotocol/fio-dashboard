@@ -42,7 +42,9 @@ export default class Fio {
 
   getBalance = async publicKey => {
     try {
-      const { balance } = await this.publicFioSDK.getFioBalance(publicKey);
+      const publicFioSDK = new FIOSDK('', '', this.baseurl, window.fetch); //todo: remove on fio sdk fix
+
+      const { balance } = await publicFioSDK.getFioBalance(publicKey);
       return balance;
     } catch (e) {
       console.error(e);

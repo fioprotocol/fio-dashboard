@@ -32,3 +32,10 @@ export const checkCaptcha = () => ({
     return verifyCaptcha(captchaObj);
   },
 });
+
+export const SET_REGISTRATION_RESULTS = `${prefix}/SET_REGISTRATION_RESULTS`;
+
+export const setRegistration = results => ({
+  type: SET_REGISTRATION_RESULTS,
+  data: results,
+});

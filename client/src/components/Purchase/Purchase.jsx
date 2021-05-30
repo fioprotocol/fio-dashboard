@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
@@ -23,35 +23,64 @@ const Purchase = props => {
     paymentWallet,
     history,
     isFree,
+    recalculate,
+    registrationResult: results,
   } = props;
 
   const [isProcessing, setProcessing] = useState(false);
+  const [errItems, setErrItems] = useState([]);
+  const [regItems, setRegItems] = useState([]);
 
-  const handleClick = results => {
-    if (isCheckout) {
-      console.log(results);
-      for (const item of results.registered) {
-        //
+  const hasErrors = !isEmpty(errItems);
+
+  useEffect(() => {
+    if (!isEmpty(results)) {
+      let retCart = [];
+
+      if (!isEmpty(results.errors)) {
+        for (const item of results.errors) {
+          const { fioName, error } = item;
+
+          retCart = cart.map(cartItem => {
+            const rep = fioName.replace('@');
+            if (cartItem.id === rep && error) {
+              cartItem.error = true;
+            }
+            return cartItem;
+          });
+        }
+      } else {
+        retCart = [...cart];
       }
-      for (const item of results.errors) {
-        //
-      }
+
+      const regCart = retCart.filter(item => !item.error);
+      const errCart = retCart.filter(item => item.error);
+
+      recalculate(errCart);
+      setRegItems(regCart);
+      setErrItems(errCart);
+    }
+    return () => {
+      setRegItems([]);
+      setErrItems([]);
+    };
+  }, [results]);
+
+  const handleClick = () => {
+    if (results) {
       setProcessing(false);
       history.push(ROUTES.PURCHASE);
     }
 
-    if (isPurchase) {
+    if (isPurchase && !hasErrors) {
       history.push(ROUTES.DASHBOARD);
     }
-    //todo: set action
   };
 
   const { screenType } = currentScreenType();
   const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
 
-  const errItems = cart.filter(item => item.error),
-    regItems = cart.filter(item => !item.error),
-    hasErrors = errItems.length > 0;
+  const { costFio, costUsdc, costFree } = totalCost(cart);
 
   const {
     costFio: regCostFio,
@@ -105,9 +134,9 @@ const Purchase = props => {
         <div className={classes.details}>
           <h6 className={classes.subtitle}>Payment Details</h6>
           {renderTotalBadge({
-            fio: regCostFio,
-            usdc: regCostUsdc,
-            costFree: regFree,
+            fio: costFio,
+            usdc: costUsdc,
+            costFree,
           })}
           {!isDesktop && !isFree && (
             <h6 className={classnames(classes.subtitle, classes.paymentTitle)}>
@@ -157,55 +186,55 @@ const Purchase = props => {
 
     return (
       <>
-        <div className={classes.details}>
-          {hasErrors && (
+        {!isEmpty(regItems) && (
+          <div className={classes.details}>
             <h5 className={classes.completeTitle}>Purchases Completed</h5>
-          )}
-          <h6 className={classes.subtitle}>Purchase Details</h6>
-          {!isEmpty(regItems) &&
-            regItems.map(item => <CartItem item={item} key={item.id} />)}
-          {hasErrors &&
-            renderTotalBadge({
+            <h6 className={classes.subtitle}>Purchase Details</h6>
+            {regItems.map(item => (
+              <CartItem item={item} key={item.id} />
+            ))}
+            {renderTotalBadge({
               fio: regCostFio,
               usdc: regCostUsdc,
               costFree: totalFree,
             })}
-        </div>
-        {hasErrors && (
-          <Badge type={BADGE_TYPES.ERROR} show>
-            <div className={classes.errorContainer}>
-              <div className={classes.textContainer}>
-                <FontAwesomeIcon
-                  icon="exclamation-circle"
-                  className={classes.icon}
-                />
-                <p className={classes.text}>
-                  <span className="boldText">Incomplete Purchase!</span> - Your
-                  purchase was not completed in full. Please see below what
-                  failed to be completed.
-                </p>
-              </div>
-            </div>
-          </Badge>
+          </div>
         )}
-        <div className={classes.details}>
-          {hasErrors && (
-            <h5 className={classnames(classes.completeTitle, classes.second)}>
-              Purchases Not Completed
-            </h5>
-          )}
-          <h6 className={classes.subtitle}>{totalSubtitle}</h6>
-          {hasErrors &&
-            !isEmpty(errItems) &&
-            errItems.map(item => <CartItem item={item} key={item.id} />)}
-          {renderTotalBadge({
-            fio: totalFio,
-            usdc: totalUsdc,
-            costFree: totalFree,
-            customTitle,
-            customType,
-          })}
-        </div>
+        {hasErrors && (
+          <>
+            <Badge type={BADGE_TYPES.ERROR} show>
+              <div className={classes.errorContainer}>
+                <div className={classes.textContainer}>
+                  <FontAwesomeIcon
+                    icon="exclamation-circle"
+                    className={classes.icon}
+                  />
+                  <p className={classes.text}>
+                    <span className="boldText">Incomplete Purchase!</span> -
+                    Your purchase was not completed in full. Please see below
+                    what failed to be completed.
+                  </p>
+                </div>
+              </div>
+            </Badge>
+            <div className={classes.details}>
+              <h5 className={classnames(classes.completeTitle, classes.second)}>
+                Purchases Not Completed
+              </h5>
+              <h6 className={classes.subtitle}>{totalSubtitle}</h6>
+              {errItems.map(item => (
+                <CartItem item={item} key={item.id} />
+              ))}
+              {renderTotalBadge({
+                fio: totalFio,
+                usdc: totalUsdc,
+                costFree: totalFree,
+                customTitle,
+                customType,
+              })}
+            </div>
+          </>
+        )}
       </>
     );
   };
@@ -216,17 +245,18 @@ const Purchase = props => {
     >
       {isCheckout && renderChekout()}
       {isPurchase && renderPurchase()}
-      {isCheckout ? (
-        <PurchaseNow onFinish={handleClick} setProcessing={setProcessing} />
+      {isCheckout || (isPurchase && hasErrors) ? (
+        <PurchaseNow
+          onFinish={handleClick}
+          setProcessing={setProcessing}
+          isRetry={isPurchase && hasErrors}
+        />
       ) : (
         <Button onClick={handleClick} className={classes.button}>
-          {hasErrors ? 'Try Again' : 'Close'}
+          Close
         </Button>
       )}
-      <Processing
-        redirect={() => history.push(ROUTES.PURCHASE)}
-        isProcessing={isProcessing}
-      />
+      <Processing isProcessing={isProcessing} />
     </div>
   );
 };

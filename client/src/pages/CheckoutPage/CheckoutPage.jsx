@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
-import Purchase from '../../components/Purchase/Purchase';
+import Purchase from '../../components/Purchase';
 import '../../helpers/gt-sdk';
 import { ROUTES } from '../../constants/routes';
 
