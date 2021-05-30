@@ -21,14 +21,13 @@ const CartPage = props => {
     setWallet,
     paymentWallet,
     lastLocation,
+    refreshBalance,
   } = props;
 
   const walletCount = userWallets.length;
 
   const totalCartAmount =
     (cartItems && parseFloat(totalCost(cartItems).costFio)) || 0;
-  const hasLowBalance =
-    paymentWallet && paymentWallet.balance < totalCartAmount;
 
   const isFree =
     !isEmpty(cartItems) &&
@@ -60,14 +59,33 @@ const CartPage = props => {
   }, [account, domains, fioWallets]);
 
   useEffect(() => {
-    userWallets && walletCount === 1 && setWallet(userWallets[0]);
+    if (!isEmpty(userWallets)) {
+      for (const fioWallet of userWallets) {
+        if (fioWallet.publicKey) {
+          refreshBalance(fioWallet.publicKey);
+        }
+      }
+    }
   }, []);
+
+  useEffect(() => {
+    userWallets && walletCount === 1 && setWallet(userWallets[0].id);
+  }, []);
+
+  const currentWallet =
+    paymentWallet &&
+    !isEmpty(userWallets) &&
+    userWallets.find(item => item.id === paymentWallet);
+
+  const hasLowBalance =
+    (!isEmpty(currentWallet) && currentWallet.balance < totalCartAmount) ||
+    false;
 
   const additionalProps = {
     hasLowBalance,
     walletCount,
     setWallet,
-    selectedWallet: paymentWallet,
+    selectedWallet: currentWallet,
     isFree,
     totalCartAmount,
   };

@@ -25,13 +25,14 @@ const Cart = props => {
     hasLowBalance,
     walletCount,
     totalCartAmount,
-    paymentWallet,
+    selectedWallet,
   } = props;
   const count = cartItems.length;
   const isCartEmpty = count === 0;
 
   const walletBalance =
-    (!isEmpty(paymentWallet) && parseFloat(paymentWallet.balance).toFixed(2)) ||
+    (!isEmpty(selectedWallet) &&
+      parseFloat(selectedWallet.balance).toFixed(2)) ||
     0;
 
   const handleDeleteItem = id => {

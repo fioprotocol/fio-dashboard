@@ -156,7 +156,7 @@ const Purchase = props => {
                     <span className="boldText">FIO Wallet</span>
                   </p>
                   <p className={classes.balance}>
-                    (Available Balance {walletBalance(regCostFio, regCostUsdc)})
+                    (Available Balance {walletBalance(costFio, costUsdc)})
                   </p>
                 </div>
               </div>

@@ -18,6 +18,10 @@ const CheckoutPage = props => {
       refreshBalance(fioWallet.publicKey);
     }
   }, []);
+  const currentWallet =
+    paymentWallet &&
+    !isEmpty(fioWallets) &&
+    fioWallets.find(item => item.id === paymentWallet);
 
   const isFree =
     !isEmpty(cartItems) &&
@@ -32,7 +36,7 @@ const CheckoutPage = props => {
     <PseudoModalContainer title="Make Purchase" onClose={onClose}>
       <Purchase
         cart={cartItems}
-        paymentWallet={paymentWallet}
+        paymentWallet={currentWallet}
         isFree={isFree}
         isCheckout
       />
