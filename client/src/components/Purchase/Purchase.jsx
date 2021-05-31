@@ -25,6 +25,9 @@ const Purchase = props => {
     isFree,
     recalculate,
     registrationResult: results,
+    fioWallets,
+    refreshBalance,
+    setWallet,
   } = props;
 
   const [isProcessing, setProcessing] = useState(false);
@@ -65,6 +68,19 @@ const Purchase = props => {
       setErrItems([]);
     };
   }, [results]);
+
+  useEffect(() => {
+    if (!isEmpty(fioWallets) && isCheckout) {
+      for (const fioWallet of fioWallets) {
+        if (fioWallet.publicKey) {
+          refreshBalance(fioWallet.publicKey);
+        }
+      }
+      if (!paymentWallet && fioWallets.length === 1) {
+        setWallet(fioWallets[0].id);
+      }
+    }
+  }, []);
 
   const handleClick = () => {
     if (results) {
