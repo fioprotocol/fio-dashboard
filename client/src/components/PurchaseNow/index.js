@@ -15,6 +15,8 @@ import {
   captchaResult,
   captchaResolving,
 } from '../../redux/registrations/selectors';
+import { fioWallets } from '../../redux/fio/selectors';
+
 import { PurchaseNow } from './PurchaseNow';
 
 const selector = createStructuredSelector({
@@ -24,6 +26,7 @@ const selector = createStructuredSelector({
   pinConfirmation,
   confirmingPin,
   captchaResolving,
+  fioWallets,
 });
 
 const actions = {

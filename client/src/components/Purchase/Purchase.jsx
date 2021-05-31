@@ -38,22 +38,18 @@ const Purchase = props => {
 
   useEffect(() => {
     if (!isEmpty(results)) {
-      let retCart = [];
+      const retCart = [...cart];
 
       if (!isEmpty(results.errors)) {
         for (const item of results.errors) {
           const { fioName, error } = item;
 
-          retCart = cart.map(cartItem => {
-            const rep = fioName.replace('@');
-            if (cartItem.id === rep && error) {
-              cartItem.error = true;
-            }
-            return cartItem;
+          const retItemIndex = retCart.findIndex(cartItem => {
+            const rep = fioName.replace('@', '');
+            return cartItem.id === rep;
           });
+          retCart[retItemIndex] = { ...retCart[retItemIndex], error };
         }
-      } else {
-        retCart = [...cart];
       }
 
       const regCart = retCart.filter(item => !item.error);

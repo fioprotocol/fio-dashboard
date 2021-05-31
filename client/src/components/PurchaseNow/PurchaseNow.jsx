@@ -21,6 +21,7 @@ export const PurchaseNow = props => {
     setProcessing,
     setRegistration,
     isRetry,
+    fioWallets,
   } = props;
 
   const [isWaiting, setWaiting] = useState(false);
@@ -37,14 +38,20 @@ export const PurchaseNow = props => {
 
   const loading = confirmingPin || captchaResolving;
 
+  const currentWallet =
+    (paymentWallet &&
+      fioWallets &&
+      fioWallets.find(item => item.id === paymentWallet)) ||
+    {};
+
   // registration
   useEffect(async () => {
     const { keys, error } = pinConfirmation;
-    if (keys && keys[paymentWallet.id] && isWaiting) {
+    if (keys && keys[currentWallet.id] && isWaiting) {
       setProcessing(true);
       const results = await executeRegistration(
         cartItems,
-        keys[paymentWallet.id],
+        keys[currentWallet.id],
       );
       setWaiting(false);
       setRegistration(results);
@@ -62,7 +69,7 @@ export const PurchaseNow = props => {
       const results = await executeRegistration(
         cartItems,
         {
-          public: paymentWallet.publicKey,
+          public: currentWallet.publicKey,
         },
         verifyParams,
       );

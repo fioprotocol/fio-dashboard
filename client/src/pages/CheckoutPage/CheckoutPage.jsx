@@ -14,8 +14,10 @@ const CheckoutPage = props => {
     paymentWallet,
   } = props;
   useEffect(() => {
-    for (const fioWallet of fioWallets) {
-      refreshBalance(fioWallet.publicKey);
+    if (!isEmpty(fioWallets)) {
+      for (const fioWallet of fioWallets) {
+        refreshBalance(fioWallet.publicKey);
+      }
     }
   }, []);
   const currentWallet =
