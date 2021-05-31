@@ -1,6 +1,6 @@
 import { takeEvery } from 'redux-saga/effects';
 import { PROFILE_FAILURE } from '../profile/actions';
-import { LOGIN_FAILURE } from '../edge/actions';
+import { LOGIN_FAILURE, CONFIRM_PIN_FAILURE } from '../edge/actions';
 import { notification } from 'antd';
 
 export const toString = obj =>
@@ -13,7 +13,8 @@ export function* notify() {
     if (
       action.error &&
       action.type !== PROFILE_FAILURE &&
-      action.type !== LOGIN_FAILURE
+      action.type !== LOGIN_FAILURE &&
+      action.type !== CONFIRM_PIN_FAILURE
     )
       notification.error(
         {
