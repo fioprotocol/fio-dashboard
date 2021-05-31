@@ -12,7 +12,9 @@ const CheckoutPage = props => {
     cartItems,
     history,
     paymentWallet,
+    isAuthenticated,
   } = props;
+
   useEffect(() => {
     if (!isEmpty(fioWallets)) {
       for (const fioWallet of fioWallets) {
@@ -20,6 +22,13 @@ const CheckoutPage = props => {
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      history.push(ROUTES.FIO_ADDRESSES);
+    }
+  }, [isAuthenticated]);
+
   const currentWallet =
     paymentWallet &&
     !isEmpty(fioWallets) &&

@@ -6,6 +6,8 @@ import { compose } from '../../utils';
 import { refreshBalance } from '../../redux/fio/actions';
 import { fioWallets } from '../../redux/fio/selectors';
 import { cartItems, paymentWallet } from '../../redux/cart/selectors';
+import { isAuthenticated } from '../../redux/profile/selectors';
+
 import CheckoutPage from './CheckoutPage';
 
 const reduxConnect = connect(
@@ -13,6 +15,7 @@ const reduxConnect = connect(
     fioWallets,
     cartItems,
     paymentWallet,
+    isAuthenticated,
   }),
   {
     refreshBalance,
