@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import classes from '../Purchase/Purchase.module.scss';
 import { executeRegistration } from './middleware';
 import { sleep } from '../../utils';
@@ -89,7 +91,13 @@ export const PurchaseNow = props => {
 
   return (
     <Button onClick={purchase} className={classes.button} disabled={loading}>
-      {isRetry ? 'Try Again' : 'Purchase Now'}
+      {isWaiting && loading ? (
+        <FontAwesomeIcon icon="spinner" spin />
+      ) : isRetry ? (
+        'Try Again'
+      ) : (
+        'Purchase Now'
+      )}
     </Button>
   );
 };
