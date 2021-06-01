@@ -1,5 +1,6 @@
 import { FIOSDK } from '@fioprotocol/fiosdk';
 import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
+import { Transactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
 import { isDomain } from '../utils';
 
 export default class Fio {
@@ -14,6 +15,8 @@ export default class Fio {
   amountToSUF = amount => FIOSDK.amountToSUF(amount);
 
   sufToAmount = suf => FIOSDK.SUFToAmount(suf);
+
+  setBaseUrl = () => (Transactions.baseUrl = this.baseurl);
 
   setWalletFioSdk = keys =>
     (this.walletFioSDK = new FIOSDK(
@@ -36,6 +39,7 @@ export default class Fio {
 
   register = async (fioName, fee) => {
     if (!this.walletFioSDK) throw new Error('No wallet set.');
+    this.setBaseUrl();
     if (isDomain(fioName)) {
       return await this.walletFioSDK.registerFioDomain(fioName, fee);
     }
@@ -43,10 +47,9 @@ export default class Fio {
   };
 
   getBalance = async publicKey => {
+    this.setBaseUrl();
     try {
-      const publicFioSDK = new FIOSDK('', '', this.baseurl, window.fetch); //todo: remove on fio sdk fix
-
-      const { balance } = await publicFioSDK.getFioBalance(publicKey);
+      const { balance } = await this.publicFioSDK.getFioBalance(publicKey);
       return FIOSDK.SUFToAmount(balance);
     } catch (e) {
       console.error(e);
