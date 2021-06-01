@@ -1,6 +1,8 @@
 import isEmpty from 'lodash/isEmpty';
 const FIO_DAPP_USERNAME_DELIMITER = '_fio.dapp_';
 
+export const FIO_ADDRESS_DELIMITER = '@';
+
 export function compose(...funcs) {
   if (funcs.length === 1) {
     return funcs[0];
@@ -133,3 +135,28 @@ export const handleFreeAddressCart = async ({
     recalculate(!isEmpty(retCart) ? retCart : cartItems);
   }
 };
+
+export const totalCost = cart => {
+  if (cart.length === 1 && cart.some(item => !item.costFio && !item.costUsdc))
+    return { costFree: 'FREE' };
+
+  const cost =
+    !isEmpty(cart) &&
+    cart
+      .filter(item => item.costFio && item.costUsdc)
+      .reduce((acc, item) => {
+        if (!acc['costFio']) acc['costFio'] = 0;
+        if (!acc['costUsdc']) acc['costUsdc'] = 0;
+        return {
+          costFio: acc['costFio'] + item.costFio,
+          costUsdc: acc['costUsdc'] + item.costUsdc,
+        };
+      }, {});
+
+  return {
+    costFio: (Number.isFinite(cost.costFio) && cost.costFio.toFixed(2)) || 0,
+    costUsdc: (Number.isFinite(cost.costUsdc) && cost.costUsdc.toFixed(2)) || 0,
+  };
+};
+
+export const isDomain = fioName => fioName.indexOf(FIO_ADDRESS_DELIMITER) < 0;

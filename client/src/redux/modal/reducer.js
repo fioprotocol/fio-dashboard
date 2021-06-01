@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import * as actions from './actions';
+import { CONFIRM_PIN_SUCCESS } from '../edge/actions';
 import { PROFILE_SUCCESS } from '../profile/actions';
 
 export default combineReducers({
@@ -31,6 +32,17 @@ export default combineReducers({
         return false;
       case PROFILE_SUCCESS:
         return !action.data.secretSet && !action.data.secretSetNotification;
+      default:
+        return state;
+    }
+  },
+  showPinConfirm(state = false, action) {
+    switch (action.type) {
+      case actions.SHOW_PIN_CONFIRM:
+        return true;
+      case CONFIRM_PIN_SUCCESS:
+      case actions.CLOSE_PIN_CONFIRM:
+        return false;
       default:
         return state;
     }

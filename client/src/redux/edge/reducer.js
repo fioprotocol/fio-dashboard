@@ -30,6 +30,17 @@ export default combineReducers({
         return state;
     }
   },
+  username(state = null, action) {
+    switch (action.type) {
+      case actions.LOGIN_SUCCESS:
+      case actions.SET_ACCOUNT:
+        return action.data.username;
+      case actions.LOGOUT_SUCCESS:
+        return null;
+      default:
+        return state;
+    }
+  },
   loginSuccess(state = false, action) {
     switch (action.type) {
       case actions.LOGIN_SUCCESS: {
@@ -115,6 +126,33 @@ export default combineReducers({
     switch (action.type) {
       case actions.REFRESH_FIO_WALLETS_SUCCESS: {
         return action.data;
+      }
+      default:
+        return state;
+    }
+  },
+  pinConfirmation(state = {}, action) {
+    switch (action.type) {
+      case actions.CONFIRM_PIN_REQUEST: {
+        return {};
+      }
+      case actions.CONFIRM_PIN_SUCCESS:
+      case actions.CONFIRM_PIN_FAILURE: {
+        if (action.error) return { error: action.error };
+        return action.data;
+      }
+      default:
+        return state;
+    }
+  },
+  confirmingPin(state = false, action) {
+    switch (action.type) {
+      case actions.CONFIRM_PIN_REQUEST: {
+        return true;
+      }
+      case actions.CONFIRM_PIN_SUCCESS:
+      case actions.CONFIRM_PIN_FAILURE: {
+        return false;
       }
       default:
         return state;

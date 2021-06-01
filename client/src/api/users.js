@@ -8,8 +8,4 @@ export default class Users extends Base {
   show(id) {
     return this.apiClient.get(`users/${id}`);
   }
-
-  recordFreeAddress(freeAddress) {
-    return this.apiClient.post(`users/freeAddress`, { data: freeAddress });
-  }
 }

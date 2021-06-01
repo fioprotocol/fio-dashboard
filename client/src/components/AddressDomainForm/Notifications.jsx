@@ -139,10 +139,12 @@ const Notifications = props => {
             <Button
               className={classnames(classes.button, !isOnCart && classes.show)}
               onClick={() => {
-                let id = domainName;
+                let id = '';
                 if (address) {
-                  id += address;
+                  id = address + '@';
                 }
+
+                id += domainName;
 
                 const data = {
                   ...values,

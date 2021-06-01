@@ -17,33 +17,6 @@
     }
   }
 
-  .itemContainer {
-    color: $dark-jungle-green;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-
-    .address {
-      font-size: 0.9375em;
-    }
-
-    .price {
-      margin: 0 1.875rem 0 auto;
-      font-size: 0.9375em;
-    }
-
-    .icon {
-      color: $black;
-      font-size: 1.25rem;
-      cursor: pointer;
-      transition: 0.3s ease-in-out;
-
-      &:hover {
-        transform: rotate(90deg);
-      }
-    }
-  }
-
   .infoBadge {
     display: flex;
     flex-direction: row;
@@ -65,6 +38,7 @@
     display: flex;
     flex-direction: row;
     margin-top: 1.875rem;
+    width: fit-content;
 
     .ctaIconContainer {
       width: 26px;
@@ -86,6 +60,33 @@
       font-size: 0.9375em;
       color: $black;
       margin-bottom: 0;
+    }
+  }
+}
+
+.itemContainer {
+  color: $dark-jungle-green;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  .address {
+    font-size: 1em;
+  }
+
+  .price {
+    margin: 0 1.875rem 0 auto;
+    font-size: 1em;
+  }
+
+  .icon {
+    color: $black;
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+
+    &:hover {
+      transform: rotate(90deg);
     }
   }
 }
@@ -223,6 +224,50 @@
   }
 }
 
+.errorContainer {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: row;
+
+  .textContainer {
+    display: flex;
+    flex-direction: row;
+    .icon {
+      font-size: 18px;
+    }
+    .text {
+      font-size: 0.925em;
+      margin-left: 0.625rem;
+      margin-right: 1.25rem;
+      margin-bottom: 0;
+    }
+  }
+
+  .button {
+    background-color: $dark;
+    border-radius: 7px;
+    height: 36px;
+    display: flex;
+    flex-direction: row;
+    border: none;
+    justify-items: center;
+    align-items: center;
+    align-self: center;
+    flex-shrink: 0;
+
+    .buttonIcon {
+      font-size: 1.25em;
+    }
+
+    .buttonText {
+      @include sf-pro-display-thin;
+      font-size: 0.8125em;
+      margin-bottom: 0;
+      margin-left: 0.625rem;
+    }
+  }
+}
+
 @include sm {
   .amountTitle {
     font-size: 1.25em;
@@ -235,21 +280,6 @@
   .container {
     padding: 1.25rem;
 
-    .itemContainer {
-      flex-direction: column;
-      position: relative;
-
-      .price {
-        margin: 0.625rem 1.875rem 0 0;
-      }
-      
-      .icon {
-        position: absolute;
-        transform: translate(-50%, -50%);
-        top: 50%;
-        right: -10px;
-      }
-    }
     .infoBadge {
       .infoText {
         line-height: 1.5em;
@@ -265,6 +295,31 @@
         width: 100%;
         min-width: unset;
       }
+    }
+  }
+  
+  .itemContainer {
+    flex-direction: column;
+    position: relative;
+
+    .price {
+      margin: 0.625rem 1.875rem 0 0;
+    }
+    
+    .icon {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      top: 50%;
+      right: -10px;
+    }
+  }
+
+  .errorContainer {
+    flex-direction: column;
+
+    .button {
+      width: 100%;
+      margin-top: 1.25rem;
     }
   }
 }

@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
+import { withLastLocation } from 'react-router-last-location';
 
 import { ROUTES } from '../../constants/routes';
 import DoubleCardContainer from '../../components/DoubleCardContainer';
 import Cart from '../../components/Cart/Cart';
 import CartAmount from '../../components/Cart/CartAmount';
-import { handleFreeAddressCart } from '../../utils';
+import { handleFreeAddressCart, totalCost } from '../../utils';
 
 const CartPage = props => {
   const {
@@ -18,14 +19,27 @@ const CartPage = props => {
     domains,
     userWallets,
     setWallet,
-    paymentWallet,
+    paymentWalletId,
+    lastLocation,
+    refreshBalance,
   } = props;
+
+  const walletCount = userWallets.length;
+
+  const totalCartAmount =
+    (cartItems && parseFloat(totalCost(cartItems).costFio)) || 0;
+
+  const isFree =
+    !isEmpty(cartItems) &&
+    cartItems.length === 1 &&
+    cartItems.every(item => !item.costFio && !item.costUsdc);
 
   useEffect(() => {
     if (
       !isEmpty(cartItems) &&
       cartItems.length === 1 &&
-      userWallets.length === 1
+      userWallets.length === 1 &&
+      lastLocation.pathname === (ROUTES.FIO_ADDRESSES || ROUTES.FIO_DOMAINS)
     ) {
       history.push(ROUTES.CHECKOUT);
     }
@@ -44,14 +58,44 @@ const CartPage = props => {
     });
   }, [account, domains, fioWallets]);
 
+  useEffect(async () => {
+    if (!isEmpty(userWallets)) {
+      for (const fioWallet of userWallets) {
+        if (fioWallet.publicKey) {
+          await refreshBalance(fioWallet.publicKey);
+        }
+      }
+      if (walletCount === 1) {
+        setWallet(userWallets[0].id);
+      }
+    }
+  }, []);
+
+  const currentWallet =
+    paymentWalletId &&
+    !isEmpty(userWallets) &&
+    userWallets.find(item => item.id === paymentWalletId);
+
+  const hasLowBalance =
+    !isEmpty(currentWallet) && currentWallet.balance < totalCartAmount;
+
+  const additionalProps = {
+    hasLowBalance,
+    walletCount,
+    setWallet,
+    selectedWallet: currentWallet,
+    isFree,
+    totalCartAmount,
+  };
+
   return (
     <DoubleCardContainer
       title="Your Cart"
       secondTitle="Amount Due"
-      bigCart={<Cart {...props} setWallet={setWallet} />}
-      smallCart={<CartAmount {...props} selectedWallet={paymentWallet} />}
+      bigCart={<Cart {...props} {...additionalProps} />}
+      smallCart={<CartAmount {...props} {...additionalProps} />}
     />
   );
 };
 
-export default CartPage;
+export default withLastLocation(CartPage);

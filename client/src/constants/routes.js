@@ -16,6 +16,7 @@ const ROUTES = {
   PROTOCOL_UPDATES: '/protocol-updates',
   CART: '/cart',
   CHECKOUT: '/checkout',
+  PURCHASE: '/purchase',
 };
 
 export { ROUTES };
