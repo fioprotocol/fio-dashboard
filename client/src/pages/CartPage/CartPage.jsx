@@ -58,18 +58,17 @@ const CartPage = props => {
     });
   }, [account, domains, fioWallets]);
 
-  useEffect(() => {
+  useEffect(async () => {
     if (!isEmpty(userWallets)) {
       for (const fioWallet of userWallets) {
         if (fioWallet.publicKey) {
-          refreshBalance(fioWallet.publicKey);
+          await refreshBalance(fioWallet.publicKey);
         }
       }
+      if (walletCount === 1) {
+        setWallet(userWallets[0].id);
+      }
     }
-  }, []);
-
-  useEffect(() => {
-    userWallets && walletCount === 1 && setWallet(userWallets[0].id);
   }, []);
 
   const currentWallet =
@@ -78,8 +77,7 @@ const CartPage = props => {
     userWallets.find(item => item.id === paymentWallet);
 
   const hasLowBalance =
-    (!isEmpty(currentWallet) && currentWallet.balance < totalCartAmount) ||
-    false;
+    !isEmpty(currentWallet) && currentWallet.balance < totalCartAmount;
 
   const additionalProps = {
     hasLowBalance,
