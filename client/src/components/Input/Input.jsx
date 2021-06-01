@@ -158,7 +158,7 @@ const Input = props => {
           <PinInput
             length={6}
             initialValue=""
-            focus
+            focus={true}
             type="numeric"
             inputMode="number"
             onComplete={(value, index) => {
@@ -167,12 +167,17 @@ const Input = props => {
             regexCriteria={/^[0-9]*$/}
             {...rest}
             {...input}
+            ref={n => {
+              if (!dirty && n) {
+                n.clear();
+              }
+            }}
           />
         </div>
         {hasError && (
           <div className={classes.pinError}>
             <FontAwesomeIcon icon="info-circle" className={classes.icon} />
-            {error}
+            {error || data.error}
           </div>
         )}
       </>

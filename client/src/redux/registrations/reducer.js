@@ -63,4 +63,12 @@ export default combineReducers({
         return state;
     }
   },
+  registrationResult(state = {}, action) {
+    switch (action.type) {
+      case actions.SET_REGISTRATION_RESULTS:
+        return action.data;
+      default:
+        return state;
+    }
+  },
 });

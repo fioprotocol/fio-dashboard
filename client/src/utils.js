@@ -138,7 +138,7 @@ export const handleFreeAddressCart = async ({
 
 export const totalCost = cart => {
   if (cart.length === 1 && cart.some(item => !item.costFio && !item.costUsdc))
-    return 'FREE';
+    return { costFree: 'FREE' };
 
   const cost =
     !isEmpty(cart) &&

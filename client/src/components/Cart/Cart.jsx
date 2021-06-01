@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Form, Field } from 'react-final-form';
 import classNames from 'classnames';
 import { Button } from 'react-bootstrap';
+import isEmpty from 'lodash/isEmpty';
 
 import CounterContainer from '../CounterContainer/CounterContainer';
 import CartItem from './CartItem';
@@ -22,9 +23,17 @@ const Cart = props => {
     userWallets,
     setWallet,
     hasLowBalance,
+    walletCount,
+    totalCartAmount,
+    selectedWallet,
   } = props;
   const count = cartItems.length;
   const isCartEmpty = count === 0;
+
+  const walletBalance =
+    (!isEmpty(selectedWallet) &&
+      parseFloat(selectedWallet.balance).toFixed(2)) ||
+    0;
 
   const handleDeleteItem = id => {
     const data = recalculateCart({ domains, cartItems, id }) || id;
@@ -66,26 +75,28 @@ const Cart = props => {
             Search for more FIO addresses?
           </p>
         </Link>
-        <div className={classes.walletContainer}>
-          <h6 className={classes.title}>FIO Wallet Assignment</h6>
-          <p className={classes.subtitle}>
-            Please choose which FIO wallet you would like these addresses
-            assigned to.
-          </p>
-          <Form
-            onSubmit={() => {}}
-            render={() => (
-              <form>
-                <Field
-                  name="wallet"
-                  component={WalletDropdown}
-                  options={userWallets}
-                  setWallet={setWallet}
-                />
-              </form>
-            )}
-          />
-        </div>
+        {walletCount > 1 && (
+          <div className={classes.walletContainer}>
+            <h6 className={classes.title}>FIO Wallet Assignment</h6>
+            <p className={classes.subtitle}>
+              Please choose which FIO wallet you would like these addresses
+              assigned to.
+            </p>
+            <Form
+              onSubmit={() => {}}
+              render={() => (
+                <form>
+                  <Field
+                    name="wallet"
+                    component={WalletDropdown}
+                    options={userWallets}
+                    setWallet={setWallet}
+                  />
+                </form>
+              )}
+            />
+          </div>
+        )}
       </div>
       {hasLowBalance && (
         <Badge type={BADGE_TYPES.ERROR} show>
@@ -96,10 +107,10 @@ const Cart = props => {
                 className={classes.icon}
               />
               <p className={classes.text}>
-                <span className="boldText">Low Balance!</span> - Unfortunately
-                there is not enough FIO available to complete your purchase.
-                Please deposit additional FIO or select a different payment
-                method.
+                <span className="boldText">Low Balance!</span> - There are not
+                enough FIO tokens in this FIO Wallet to complete the purchase.
+                Needed: {totalCartAmount - walletBalance} FIO, available in
+                wallet: {walletBalance} FIO. Please add FIO tokens.
               </p>
             </div>
             <Button

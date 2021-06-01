@@ -13,6 +13,8 @@ export default class Fio {
 
   amountToSUF = amount => FIOSDK.amountToSUF(amount);
 
+  sufToAmount = suf => FIOSDK.SUFToAmount(suf);
+
   setWalletFioSdk = keys =>
     (this.walletFioSDK = new FIOSDK(
       keys.private,
@@ -42,8 +44,10 @@ export default class Fio {
 
   getBalance = async publicKey => {
     try {
-      const { balance } = await this.publicFioSDK.getFioBalance(publicKey);
-      return balance;
+      const publicFioSDK = new FIOSDK('', '', this.baseurl, window.fetch); //todo: remove on fio sdk fix
+
+      const { balance } = await publicFioSDK.getFioBalance(publicKey);
+      return FIOSDK.SUFToAmount(balance);
     } catch (e) {
       console.error(e);
     }

@@ -1,21 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Dropdown from 'react-dropdown';
+import isEmpty from 'lodash/isEmpty';
 
 import classes from './Cart.module.scss';
 import 'react-dropdown/style.css';
 
 const WalletDropdown = props => {
-  const { input, options, initValue, setWallet } = props;
+  const { input, options, setWallet } = props;
   const { onChange } = input;
 
-  const styledOptions = options
-    .map(item => ({
-      value: item,
-      label: item.name,
-      className: [classes.optionItem],
-    }))
-    .sort((a, b) => a.label.localeCompare(b.label));
+  const sortedOptions = options.sort(
+    (a, b) => b.balance - a.balance || a.name.localeCompare(b.name),
+  );
+
+  const initValue =
+    (!isEmpty(sortedOptions) && sortedOptions[0]) || 'Wallet name';
+
+  const styledOptions = sortedOptions.map(item => ({
+    value: item.id,
+    label: item.name,
+    className: [classes.optionItem],
+  }));
 
   const onDropdownChange = value => {
     const { value: itemValue } = value || {};
@@ -24,12 +30,18 @@ const WalletDropdown = props => {
     setWallet(itemValue);
   };
 
+  useEffect(() => {
+    if (initValue) {
+      onChange(initValue);
+      setWallet(initValue.id);
+    }
+  }, []);
+
   return (
     <Dropdown
       options={styledOptions}
-      value={initValue}
+      value={initValue && initValue.id}
       onChange={onDropdownChange}
-      placeholder="FIO Wallet Name"
       className={classes.dropdown}
       controlClassName={classes.control}
       placeholderClassName={classes.placeholder}

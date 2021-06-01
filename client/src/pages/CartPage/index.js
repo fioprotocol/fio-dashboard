@@ -5,6 +5,8 @@ import { withRouter } from 'react-router-dom';
 import { compose } from '../../utils';
 import { cartItems, paymentWallet } from '../../redux/cart/selectors';
 import { deleteItem, recalculate, setWallet } from '../../redux/cart/actions';
+import { refreshBalance } from '../../redux/fio/actions';
+
 import { domains, prices } from '../../redux/registrations/selectors';
 import { account, fioWallets } from '../../redux/edge/selectors';
 import { fioWallets as userWallets } from '../../redux/fio/selectors';
@@ -25,6 +27,7 @@ const reduxConnect = connect(
     deleteItem,
     recalculate,
     setWallet,
+    refreshBalance,
   },
 );
 

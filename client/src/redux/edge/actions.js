@@ -37,10 +37,8 @@ export const confirmPin = ({ username, pin }) => ({
       for (const walletId of account.activeWalletIds) {
         const wallet = await account.waitForCurrencyWallet(walletId);
         if (wallet.currencyInfo.currencyCode === 'FIO') {
-          console.log('===========', wallet.keys);
-          console.log('===========', wallet);
           keys[walletId] = {
-            private: wallet.keys.private,
+            private: wallet.keys.fioKey,
             public: wallet.publicWalletInfo.keys.publicKey,
           };
         }
@@ -49,7 +47,7 @@ export const confirmPin = ({ username, pin }) => ({
       console.log(e);
     }
 
-    return keys;
+    return { keys };
   },
 });
 
