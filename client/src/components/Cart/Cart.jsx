@@ -109,8 +109,8 @@ const Cart = props => {
               <p className={classes.text}>
                 <span className="boldText">Low Balance!</span> - There are not
                 enough FIO tokens in this FIO Wallet to complete the purchase.
-                Needed: {(totalCartAmount - walletBalance).toFixed(2)} FIO, available in
-                wallet: {walletBalance} FIO. Please add FIO tokens.
+                Needed: {(totalCartAmount - walletBalance).toFixed(2)} FIO,
+                available in wallet: {walletBalance} FIO. Please add FIO tokens.
               </p>
             </div>
             <Button
