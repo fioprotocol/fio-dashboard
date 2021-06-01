@@ -4,6 +4,7 @@ import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
 export const registerFree = async (fioName, publicKey, verifyParams) => {
   let result = { fioName, isFree: true };
+  console.log('========', verifyParams);
   try {
     const res = await apis.fioReg.register({
       address: fioName,
@@ -33,10 +34,7 @@ export const register = async (fioName, costFio) => {
     result = { ...result, ...res };
   } catch (e) {
     console.error(e.json);
-    result.error =
-      e.json && e.json.fields && e.json.fields[0]
-        ? e.json.fields[0].error
-        : e.message;
+    result.error = apis.fio.extractError(e.json) || e.message;
   }
 
   return result;

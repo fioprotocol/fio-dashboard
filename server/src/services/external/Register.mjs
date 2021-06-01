@@ -1,7 +1,9 @@
 import logger from '../../logger';
+import { FreeAddress, User } from '../../models/index';
 import Base from '../Base';
 import { FioRegApi } from '../../external/fio-reg';
 import { validate } from '../../external/captcha';
+import X from '../Exception';
 
 export default class Register extends Base {
   static get validationRules() {
@@ -12,9 +14,10 @@ export default class Register extends Base {
           publicKey: ['required', 'string'],
           verifyParams: {
             nested_object: {
-              geetest_challenge: ['required', 'string'],
-              geetest_validate: ['required', 'string'],
-              geetest_seccode: ['required', 'string'],
+              pin: ['string'],
+              geetest_challenge: ['string'],
+              geetest_validate: ['string'],
+              geetest_seccode: ['string'],
             },
           },
         },
@@ -24,20 +27,41 @@ export default class Register extends Base {
 
   async execute({ data: { address, publicKey, verifyParams } }) {
     try {
-      await validate(verifyParams);
+      if (!verifyParams.pin && !verifyParams.geetest_challenge)
+        throw new Error('Verification needed.');
+
+      if (verifyParams.geetest_challenge) await validate(verifyParams);
+
+      if (verifyParams.pin) {
+        // todo: other verification method not captcha
+      }
     } catch (error) {
       return {
-        data: { error },
+        data: { error: error.message },
       };
     }
-    // todo: check if user has free address here
+
+    const user = await User.findActive(this.context.id);
+
+    if (!user) {
+      throw new X({
+        code: 'NOT_FOUND',
+        fields: {
+          id: 'NOT_FOUND',
+        },
+      });
+    }
+
+    if (user.freeAddresses.length)
+      throw new Error('Your account is already have a free address registered.');
+
+    let res;
+
     try {
-      const res = await FioRegApi.register({
+      res = await FioRegApi.register({
         address,
         publicKey,
       });
-
-      return { data: res };
     } catch (error) {
       let message = error.message;
       if (error.response && error.response.body) {
@@ -48,6 +72,23 @@ export default class Register extends Base {
         data: { error: message },
       };
     }
+
+    if (res) {
+      const freeAddressRecord = new FreeAddress({
+        name: address,
+        userId: user.id,
+      });
+      await freeAddressRecord.save();
+
+      return {
+        data: {
+          ...res,
+          freeAddress: FreeAddress.format(freeAddressRecord.get({ plain: true })),
+        },
+      };
+    }
+
+    throw new Error('Server error. Please try again later.');
   }
 
   static get paramsSecret() {
