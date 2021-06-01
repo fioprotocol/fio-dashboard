@@ -20,7 +20,7 @@ const Purchase = props => {
     isCheckout,
     isPurchase,
     cart,
-    paymentWallet,
+    currentWallet,
     history,
     isFree,
     recalculate,
@@ -28,6 +28,7 @@ const Purchase = props => {
     fioWallets,
     refreshBalance,
     setWallet,
+    setRegistration,
   } = props;
 
   const [isProcessing, setProcessing] = useState(false);
@@ -51,7 +52,6 @@ const Purchase = props => {
           retCart[retItemIndex] = { ...retCart[retItemIndex], error };
         }
       }
-
       const regCart = retCart.filter(item => !item.error);
       const errCart = retCart.filter(item => item.error);
 
@@ -66,27 +66,34 @@ const Purchase = props => {
   }, [results]);
 
   useEffect(() => {
+    return () => {
+      if (isPurchase) {
+        setRegistration({});
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (!isEmpty(fioWallets) && isCheckout) {
       for (const fioWallet of fioWallets) {
         if (fioWallet.publicKey) {
           refreshBalance(fioWallet.publicKey);
         }
       }
-      if (!paymentWallet && fioWallets.length === 1) {
+      if (!currentWallet && fioWallets.length === 1) {
         setWallet(fioWallets[0].id);
       }
     }
   }, []);
 
-  const handleClick = () => {
-    if (results) {
-      setProcessing(false);
-      history.push(ROUTES.PURCHASE);
-    }
+  const onClose = () => {
+    setRegistration({});
+    history.push(ROUTES.DASHBOARD);
+  };
 
-    if (isPurchase && !hasErrors) {
-      history.push(ROUTES.DASHBOARD);
-    }
+  const onFinish = () => {
+    setProcessing(false);
+    history.push(ROUTES.PURCHASE);
   };
 
   const { screenType } = currentScreenType();
@@ -107,7 +114,7 @@ const Purchase = props => {
   } = totalCost(errItems);
 
   const walletBalance = (costFio, costUsdc) => {
-    const wallet = paymentWallet.balance || 0;
+    const wallet = currentWallet.balance || 0;
     let walletUsdc = 0;
     if (wallet > 0) {
       walletUsdc = (wallet * costUsdc) / costFio;
@@ -259,12 +266,12 @@ const Purchase = props => {
       {isPurchase && renderPurchase()}
       {isCheckout || (isPurchase && hasErrors) ? (
         <PurchaseNow
-          onFinish={handleClick}
+          onFinish={onFinish}
           setProcessing={setProcessing}
           isRetry={isPurchase && hasErrors}
         />
       ) : (
-        <Button onClick={handleClick} className={classes.button}>
+        <Button onClick={onClose} className={classes.button}>
           Close
         </Button>
       )}

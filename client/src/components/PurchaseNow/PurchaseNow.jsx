@@ -11,7 +11,7 @@ export const PurchaseNow = props => {
     cartItems,
     pinConfirmation,
     captchaResult,
-    paymentWallet,
+    paymentWalletID,
     showPinModal,
     checkCaptcha,
     recordFreeAddress,
@@ -39,9 +39,9 @@ export const PurchaseNow = props => {
   const loading = confirmingPin || captchaResolving;
 
   const currentWallet =
-    (paymentWallet &&
+    (paymentWalletID &&
       fioWallets &&
-      fioWallets.find(item => item.id === paymentWallet)) ||
+      fioWallets.find(item => item.id === paymentWalletID)) ||
     {};
 
   // registration
@@ -87,6 +87,7 @@ export const PurchaseNow = props => {
   }, [captchaResult]);
 
   const purchase = () => {
+    setRegistration({});
     setWaiting(true);
     for (const item of cartItems) {
       if (item.costFio) {
