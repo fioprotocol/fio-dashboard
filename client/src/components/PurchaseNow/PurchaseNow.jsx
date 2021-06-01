@@ -27,13 +27,13 @@ export const PurchaseNow = props => {
   const [isWaiting, setWaiting] = useState(false);
   const t0 = performance.now();
 
-  const waitFn = async fn => {
+  const waitFn = async (fn, results) => {
     const t1 = performance.now();
 
     if (t1 - t0 < 3000) {
       await sleep(3000 - (t1 - t0));
     }
-    fn();
+    fn(results);
   };
 
   const loading = confirmingPin || captchaResolving;
@@ -54,7 +54,7 @@ export const PurchaseNow = props => {
 
     setWaiting(false);
     setRegistration(results);
-    waitFn(onFinish);
+    waitFn(onFinish, results);
   };
 
   // registration
@@ -67,6 +67,7 @@ export const PurchaseNow = props => {
         keys[currentWallet.id],
         { pin: keys[currentWallet.id].public }, // todo: change to other verification method
       );
+      
       onProcessingEnd(results);
     }
 
@@ -85,6 +86,7 @@ export const PurchaseNow = props => {
         },
         verifyParams,
       );
+
       onProcessingEnd(results);
     }
 

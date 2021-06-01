@@ -3,17 +3,17 @@ import isEmpty from 'lodash/isEmpty';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 import { withRouter } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import apis from '../../api/index';
 
-import CartItem from '../Cart/CartItem';
 import PurchaseNow from '../PurchaseNow';
 import Processing from './Processing';
-import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
-import { totalCost } from '../../utils';
 import { ROUTES } from '../../constants/routes';
 import classes from './Purchase.module.scss';
+import { isDomain } from '../../utils';
+
+import { RenderChekout, RenderPurchase } from './PurchaseComponents';
 
 const Purchase = props => {
   const {
@@ -29,6 +29,9 @@ const Purchase = props => {
     refreshBalance,
     setWallet,
     setRegistration,
+    prices,
+    getPrices,
+    domains,
   } = props;
 
   const [isProcessing, setProcessing] = useState(false);
@@ -37,27 +40,98 @@ const Purchase = props => {
 
   const hasErrors = !isEmpty(errItems);
 
-  useEffect(() => {
-    if (!isEmpty(results)) {
-      const retCart = [...cart];
+  const setResults = (results, isRecalcCart) => {
+    const registered = [];
+    const errored = [];
 
-      if (!isEmpty(results.errors)) {
-        for (const item of results.errors) {
-          const { fioName, error } = item;
+    const {
+      fio: { address: addressCostFio, domain: domainCostFio },
+      usdt: { address: addressCostUsdc, domain: domainCostUsdc },
+    } = prices;
 
-          const retItemIndex = retCart.findIndex(cartItem => {
-            const rep = fioName.replace('@', '');
-            return cartItem.id === rep;
-          });
-          retCart[retItemIndex] = { ...retCart[retItemIndex], error };
+    if (!isEmpty(results.errors)) {
+      for (const item of results.errors) {
+        const { fioName, error, isFree } = item;
+
+        const retObj = {
+          id: fioName,
+        };
+
+        if (!isDomain(fioName)) {
+          const name = fioName.split('@');
+          const addressName = name[0];
+          const domainName = name[1];
+
+          retObj['address'] = addressName;
+          retObj['domain'] = domainName;
+          retObj['error'] = error;
+
+          if (isFree) {
+            retObj['isFree'] = isFree;
+          } else {
+            const { free } = domains.find(item => item.domain === domainName);
+            if (!free) {
+              retObj['costFio'] = addressCostFio + domainCostFio;
+              retObj['costUsdc'] = addressCostUsdc + domainCostUsdc;
+            } else {
+              retObj['costFio'] = addressCostFio;
+              retObj['costUsdc'] = addressCostUsdc;
+            }
+          }
+        } else {
+          retObj['domain'] = fioName;
+          retObj['costFio'] = domainCostFio;
+          retObj['costUsdc'] = domainCostUsdc;
         }
-      }
-      const regCart = retCart.filter(item => !item.error);
-      const errCart = retCart.filter(item => item.error);
 
-      recalculate(errCart);
-      setRegItems(regCart);
-      setErrItems(errCart);
+        errored.push(retObj);
+      }
+    }
+
+    if (!isEmpty(results.registered)) {
+      for (const item of results.registered) {
+        const { fioName, isFree, fee_collected } = item;
+
+        const retObj = {
+          id: fioName,
+        };
+
+        if (!isDomain(fioName)) {
+          const name = fioName.split('@');
+          const addressName = name[0];
+          const domainName = name[1];
+
+          retObj['address'] = addressName;
+          retObj['domain'] = domainName;
+
+          if (isFree) {
+            retObj['isFree'] = isFree;
+          } else {
+            retObj['costFio'] = apis.fio.sufToAmount(fee_collected);
+            retObj['costUsdc'] =
+              (apis.fio.sufToAmount(fee_collected) * addressCostUsdc) /
+              addressCostFio;
+          }
+        } else {
+          retObj['domain'] = fioName;
+          retObj['costFio'] = apis.fio.sufToAmount(fee_collected);
+          retObj['costUsdc'] =
+            (apis.fio.sufToAmount(fee_collected) * domainCostUsdc) /
+            domainCostFio;
+        }
+
+        registered.push(retObj);
+      }
+    }
+
+    isRecalcCart && recalculate(errored);
+    setRegItems(registered);
+    setErrItems(errored);
+  };
+
+  useEffect(async () => {
+    if (!isEmpty(results)) {
+      setResults(results);
     }
     return () => {
       setRegItems([]);
@@ -66,6 +140,7 @@ const Purchase = props => {
   }, [results]);
 
   useEffect(() => {
+    getPrices();
     return () => {
       if (isPurchase) {
         setRegistration({});
@@ -91,7 +166,9 @@ const Purchase = props => {
     history.push(ROUTES.DASHBOARD);
   };
 
-  const onFinish = () => {
+  const onFinish = results => {
+    setResults(results, true);
+
     setProcessing(false);
     history.push(ROUTES.PURCHASE);
   };
@@ -99,171 +176,25 @@ const Purchase = props => {
   const { screenType } = currentScreenType();
   const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
 
-  const { costFio, costUsdc, costFree } = totalCost(cart);
-
-  const {
-    costFio: regCostFio,
-    costUsdc: regCostUsdc,
-    costFree: regFree,
-  } = totalCost(regItems);
-
-  const {
-    costFio: errCostFio,
-    costUsdc: errCostUsdc,
-    costFree: errFree,
-  } = totalCost(errItems);
-
-  const walletBalance = (costFio, costUsdc) => {
-    const wallet = currentWallet.balance || 0;
-    let walletUsdc = 0;
-    if (wallet > 0) {
-      walletUsdc = (wallet * costUsdc) / costFio;
-    }
-    return `${wallet && wallet.toFixed(2)} FIO / ${walletUsdc &&
-      walletUsdc.toFixed(2)} USDC`;
-  };
-
-  const renderTotalBadge = ({
-    fio,
-    usdc,
-    costFree,
-    customTitle,
-    customType,
-  }) => (
-    <Badge type={customType || BADGE_TYPES.BLACK} show>
-      <div className={classnames(classes.item, classes.total)}>
-        <span className="boldText">{customTitle || 'Total Cost'}</span>
-        <p className={classes.totalPrice}>
-          <span className="boldText">
-            {fio && usdc ? `${fio} FIO / ${usdc} USDC` : costFree}
-          </span>
-        </p>
-      </div>
-    </Badge>
-  );
-
-  const renderChekout = () => {
-    return (
-      <>
-        <div className={classes.details}>
-          <h6 className={classes.subtitle}>Purchase Details</h6>
-          {!isEmpty(cart) &&
-            cart.map(item => <CartItem item={item} key={item.id} />)}
-        </div>
-        <div className={classes.details}>
-          <h6 className={classes.subtitle}>Payment Details</h6>
-          {renderTotalBadge({
-            fio: costFio,
-            usdc: costUsdc,
-            costFree,
-          })}
-          {!isDesktop && !isFree && (
-            <h6 className={classnames(classes.subtitle, classes.paymentTitle)}>
-              Paying With
-            </h6>
-          )}
-          {!isFree && (
-            <Badge type={BADGE_TYPES.WHITE} show>
-              <div className={classes.item}>
-                {isDesktop && (
-                  <span className={classnames('boldText', classes.title)}>
-                    Paying With
-                  </span>
-                )}
-                <div className={classes.wallet}>
-                  <p className={classes.title}>
-                    <span className="boldText">FIO Wallet</span>
-                  </p>
-                  <p className={classes.balance}>
-                    (Available Balance {walletBalance(costFio, costUsdc)})
-                  </p>
-                </div>
-              </div>
-            </Badge>
-          )}
-        </div>
-      </>
-    );
-  };
-
-  const renderPurchase = () => {
-    let totalFio = regCostFio,
-      totalUsdc = regCostUsdc,
-      totalFree = regFree,
-      customTitle = '',
-      customType = '',
-      totalSubtitle = 'Payment Details';
-
-    if (hasErrors) {
-      totalFio = errCostFio;
-      totalUsdc = errCostUsdc;
-      totalFree = errFree;
-      customTitle = 'Total Cost Remaining';
-      customType = BADGE_TYPES.ERROR;
-      totalSubtitle = 'Purchase Details';
-    }
-
-    return (
-      <>
-        {!isEmpty(regItems) && (
-          <div className={classes.details}>
-            <h5 className={classes.completeTitle}>Purchases Completed</h5>
-            <h6 className={classes.subtitle}>Purchase Details</h6>
-            {regItems.map(item => (
-              <CartItem item={item} key={item.id} />
-            ))}
-            {renderTotalBadge({
-              fio: regCostFio,
-              usdc: regCostUsdc,
-              costFree: totalFree,
-            })}
-          </div>
-        )}
-        {hasErrors && (
-          <>
-            <Badge type={BADGE_TYPES.ERROR} show>
-              <div className={classes.errorContainer}>
-                <div className={classes.textContainer}>
-                  <FontAwesomeIcon
-                    icon="exclamation-circle"
-                    className={classes.icon}
-                  />
-                  <p className={classes.text}>
-                    <span className="boldText">Incomplete Purchase!</span> -
-                    Your purchase was not completed in full. Please see below
-                    what failed to be completed.
-                  </p>
-                </div>
-              </div>
-            </Badge>
-            <div className={classes.details}>
-              <h5 className={classnames(classes.completeTitle, classes.second)}>
-                Purchases Not Completed
-              </h5>
-              <h6 className={classes.subtitle}>{totalSubtitle}</h6>
-              {errItems.map(item => (
-                <CartItem item={item} key={item.id} />
-              ))}
-              {renderTotalBadge({
-                fio: totalFio,
-                usdc: totalUsdc,
-                costFree: totalFree,
-                customTitle,
-                customType,
-              })}
-            </div>
-          </>
-        )}
-      </>
-    );
-  };
-
   return (
     <div
       className={classnames(classes.container, hasErrors && classes.hasErrors)}
     >
-      {isCheckout && renderChekout()}
-      {isPurchase && renderPurchase()}
+      {isCheckout && (
+        <RenderChekout
+          cart={cart}
+          isDesktop={isDesktop}
+          isFree={isFree}
+          currentWallet={currentWallet}
+        />
+      )}
+      {isPurchase && (
+        <RenderPurchase
+          hasErrors={hasErrors}
+          regItems={regItems}
+          errItems={errItems}
+        />
+      )}
       {isCheckout || (isPurchase && hasErrors) ? (
         <PurchaseNow
           onFinish={onFinish}
