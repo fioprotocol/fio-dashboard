@@ -159,4 +159,4 @@ export const totalCost = cart => {
   };
 };
 
-export const isDomain = fioName => fioName.indexOf(FIO_ADDRESS_DELIMITER) > 0;
+export const isDomain = fioName => fioName.indexOf(FIO_ADDRESS_DELIMITER) < 0;

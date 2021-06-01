@@ -32,7 +32,11 @@ export const register = async (fioName, costFio) => {
 
     result = { ...result, ...res };
   } catch (e) {
-    result.error = e.message;
+    console.error(e.json);
+    result.error =
+      e.json && e.json.fields && e.json.fields[0]
+        ? e.json.fields[0].error
+        : e.message;
   }
 
   return result;
