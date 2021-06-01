@@ -19,7 +19,7 @@ const CartPage = props => {
     domains,
     userWallets,
     setWallet,
-    paymentWalletID,
+    paymentWalletId,
     lastLocation,
     refreshBalance,
   } = props;
@@ -72,9 +72,9 @@ const CartPage = props => {
   }, []);
 
   const currentWallet =
-    paymentWalletID &&
+    paymentWalletId &&
     !isEmpty(userWallets) &&
-    userWallets.find(item => item.id === paymentWalletID);
+    userWallets.find(item => item.id === paymentWalletId);
 
   const hasLowBalance =
     !isEmpty(currentWallet) && currentWallet.balance < totalCartAmount;

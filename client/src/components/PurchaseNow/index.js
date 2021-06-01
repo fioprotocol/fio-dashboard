@@ -9,7 +9,7 @@ import {
 } from '../../redux/registrations/actions';
 import { recordFreeAddress } from '../../redux/profile/actions';
 import { confirmingPin } from '../../redux/edge/selectors';
-import { cartItems, paymentWalletID } from '../../redux/cart/selectors';
+import { cartItems, paymentWalletId } from '../../redux/cart/selectors';
 import { pinConfirmation } from '../../redux/edge/selectors';
 import {
   captchaResult,
@@ -21,7 +21,7 @@ import { PurchaseNow } from './PurchaseNow';
 
 const selector = createStructuredSelector({
   cartItems,
-  paymentWalletID,
+  paymentWalletId,
   captchaResult,
   pinConfirmation,
   confirmingPin,

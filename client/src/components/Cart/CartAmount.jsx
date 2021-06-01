@@ -9,7 +9,7 @@ import { totalCost } from '../../utils';
 import classes from './Cart.module.scss';
 
 const CartAmount = props => {
-  const { cartItems, history, hasLowBalance, isFree, paymentWalletID } = props;
+  const { cartItems, history, hasLowBalance, isFree, paymentWalletId } = props;
 
   const handleCheckout = () => {
     history.push(ROUTES.CHECKOUT);
@@ -32,7 +32,7 @@ const CartAmount = props => {
       <Button
         className={classes.checkout}
         onClick={handleCheckout}
-        disabled={hasLowBalance || paymentWalletID === ''}
+        disabled={hasLowBalance || paymentWalletId === ''}
       >
         <FontAwesomeIcon icon="wallet" className={classes.icon} />
         <p>{isFree ? 'Complete Transaction' : 'Pay with FIO'}</p>

@@ -11,7 +11,7 @@ const CheckoutPage = props => {
     refreshBalance,
     cartItems,
     history,
-    paymentWalletID,
+    paymentWalletId,
     isAuthenticated,
   } = props;
 
@@ -30,9 +30,9 @@ const CheckoutPage = props => {
   }, [isAuthenticated]);
 
   const currentWallet =
-    paymentWalletID &&
+    paymentWalletId &&
     !isEmpty(fioWallets) &&
-    fioWallets.find(item => item.id === paymentWalletID);
+    fioWallets.find(item => item.id === paymentWalletId);
 
   const isFree =
     !isEmpty(cartItems) &&
