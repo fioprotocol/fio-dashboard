@@ -28,6 +28,14 @@ export default class Fio {
 
   clearWalletFioSdk = () => (this.walletFioSDK = null);
 
+  extractError = json => {
+    if (!json) return '';
+
+    return json && json.fields && json.fields[0]
+      ? json.fields[0].error
+      : json.message;
+  };
+
   availCheck = fioName => {
     return this.publicFioSDK.isAvailable(fioName);
   };

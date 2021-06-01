@@ -14,7 +14,7 @@ export const PurchaseNow = props => {
     paymentWallet,
     showPinModal,
     checkCaptcha,
-    recordFreeAddress,
+    loadProfile,
     confirmingPin,
     captchaResolving,
     onFinish,
@@ -44,6 +44,19 @@ export const PurchaseNow = props => {
       fioWallets.find(item => item.id === paymentWallet)) ||
     {};
 
+  const onProcessingEnd = results => {
+    for (const registered of results.registered) {
+      if (registered.isFree) {
+        loadProfile();
+        break;
+      }
+    }
+
+    setWaiting(false);
+    setRegistration(results);
+    waitFn(onFinish);
+  };
+
   // registration
   useEffect(async () => {
     const { keys, error } = pinConfirmation;
@@ -52,10 +65,9 @@ export const PurchaseNow = props => {
       const results = await executeRegistration(
         cartItems,
         keys[currentWallet.id],
+        { pin: keys[currentWallet.id].public }, // todo: change to other verification method
       );
-      setWaiting(false);
-      setRegistration(results);
-      waitFn(onFinish);
+      onProcessingEnd(results);
     }
 
     if (error) setWaiting(false);
@@ -73,14 +85,7 @@ export const PurchaseNow = props => {
         },
         verifyParams,
       );
-
-      for (const item of results.registered) {
-        recordFreeAddress(item.fioName);
-      }
-
-      setWaiting(false);
-      setRegistration(results);
-      waitFn(onFinish);
+      onProcessingEnd(results);
     }
 
     if (success === false) setWaiting(false);

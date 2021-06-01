@@ -7,7 +7,7 @@ import {
   checkCaptcha,
   setRegistration,
 } from '../../redux/registrations/actions';
-import { recordFreeAddress } from '../../redux/profile/actions';
+import { loadProfile } from '../../redux/profile/actions';
 import { confirmingPin } from '../../redux/edge/selectors';
 import { cartItems, paymentWallet } from '../../redux/cart/selectors';
 import { pinConfirmation } from '../../redux/edge/selectors';
@@ -30,7 +30,7 @@ const selector = createStructuredSelector({
 });
 
 const actions = {
-  recordFreeAddress,
+  loadProfile,
   showPinModal,
   checkCaptcha,
   setRegistration,
