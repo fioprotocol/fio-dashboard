@@ -32,7 +32,7 @@ const Cart = props => {
 
   const walletBalance =
     (!isEmpty(selectedWallet) &&
-      parseFloat(selectedWallet.balance).toFixed(2)) ||
+      +parseFloat(selectedWallet.balance).toFixed(2)) ||
     0;
 
   const handleDeleteItem = id => {
@@ -109,7 +109,7 @@ const Cart = props => {
               <p className={classes.text}>
                 <span className="boldText">Low Balance!</span> - There are not
                 enough FIO tokens in this FIO Wallet to complete the purchase.
-                Needed: {totalCartAmount - walletBalance} FIO, available in
+                Needed: {(totalCartAmount - walletBalance).toFixed(2)} FIO, available in
                 wallet: {walletBalance} FIO. Please add FIO tokens.
               </p>
             </div>
