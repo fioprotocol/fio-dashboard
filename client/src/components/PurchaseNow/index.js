@@ -8,12 +8,12 @@ import {
   setRegistration,
 } from '../../redux/registrations/actions';
 import { loadProfile } from '../../redux/profile/actions';
-import { confirmingPin } from '../../redux/edge/selectors';
+import { confirmingPin, pinConfirmation } from '../../redux/edge/selectors';
 import { cartItems, paymentWalletId } from '../../redux/cart/selectors';
-import { pinConfirmation } from '../../redux/edge/selectors';
 import {
   captchaResult,
   captchaResolving,
+  prices,
 } from '../../redux/registrations/selectors';
 import { fioWallets } from '../../redux/fio/selectors';
 
@@ -27,6 +27,7 @@ const selector = createStructuredSelector({
   confirmingPin,
   captchaResolving,
   fioWallets,
+  prices,
 });
 
 const actions = {

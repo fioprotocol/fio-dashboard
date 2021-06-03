@@ -2,9 +2,16 @@ import apis from '../../api/index';
 import { toString } from '../../redux/notify/sagas';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
-export const registerFree = async (fioName, publicKey, verifyParams) => {
+/**
+ *
+ * @param fioName
+ * @param publicKey
+ * @param verifyParams
+ * @returns {Promise<{isFree: boolean, fioName: *}>}
+ */
+export const registerFree = async ({ fioName, publicKey, verifyParams }) => {
   let result = { fioName, isFree: true };
-  console.log('========', verifyParams);
+
   try {
     const res = await apis.fioReg.register({
       address: fioName,
@@ -22,10 +29,23 @@ export const registerFree = async (fioName, publicKey, verifyParams) => {
   return result;
 };
 
-export const register = async (fioName, costFio) => {
+/**
+ *
+ * @param fioName
+ * @param fee
+ * @param costFio
+ * @param hasCustomDomain
+ * @returns {Promise<{fioName: *}>}
+ */
+export const register = async ({
+  fioName,
+  fee,
+  costFio,
+  hasCustomDomain = false,
+}) => {
   let result = { fioName };
   try {
-    const res = await apis.fio.register(fioName, apis.fio.amountToSUF(costFio));
+    const res = await apis.fio.register(fioName, fee);
 
     if (!res) {
       throw new Error('Server Error');
@@ -40,7 +60,22 @@ export const register = async (fioName, costFio) => {
   return result;
 };
 
-export const executeRegistration = async (items, keys, verifyParams = {}) => {
+/**
+ *
+ * @param items
+ * @param keys
+ * @param fees
+ * @param fees.address
+ * @param fees.domain
+ * @param verifyParams
+ * @returns {Promise<{registered: [], errors: []}>}
+ */
+export const executeRegistration = async (
+  items,
+  keys,
+  fees,
+  verifyParams = {},
+) => {
   const result = { errors: [], registered: [] };
   const registrations = [];
   if (keys.private) apis.fio.setWalletFioSdk(keys);
@@ -50,9 +85,17 @@ export const executeRegistration = async (items, keys, verifyParams = {}) => {
         ? `${item.address}${FIO_ADDRESS_DELIMITER}${item.domain}`
         : item.domain;
       if (item.costFio) {
-        registrations.push(register(fioName, item.costFio));
+        registrations.push(
+          register({
+            fioName,
+            fee: item.address ? fees.address : fees.domain,
+            costFio: item.costFio,
+          }),
+        );
       } else {
-        registrations.push(registerFree(fioName, keys.public, verifyParams));
+        registrations.push(
+          registerFree({ fioName, publicKey: keys.public, verifyParams }),
+        );
       }
     }
 

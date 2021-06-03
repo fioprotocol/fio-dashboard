@@ -22,6 +22,7 @@ export const PurchaseNow = props => {
     setRegistration,
     isRetry,
     fioWallets,
+    prices,
   } = props;
 
   const [isWaiting, setWaiting] = useState(false);
@@ -65,9 +66,10 @@ export const PurchaseNow = props => {
       const results = await executeRegistration(
         cartItems,
         keys[currentWallet.id],
+        prices.fioNative,
         { pin: keys[currentWallet.id].public }, // todo: change to other verification method
       );
-      
+
       onProcessingEnd(results);
     }
 
@@ -84,6 +86,7 @@ export const PurchaseNow = props => {
         {
           public: currentWallet.publicKey,
         },
+        prices.fioNative,
         verifyParams,
       );
 
