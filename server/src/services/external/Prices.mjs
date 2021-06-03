@@ -11,6 +11,10 @@ export default class Prices extends Base {
         domain: null,
         address: null,
       },
+      fioNative: {
+        domain: null,
+        address: null,
+      },
       usdt: {
         domain: null,
         address: null,
@@ -20,10 +24,12 @@ export default class Prices extends Base {
       const roe = await getROE();
       const accountRegFee = await fioApi.registrationFee();
       const accountUsdt = convert(accountRegFee, roe);
+      pricing.fioNative.address = accountRegFee;
       pricing.fio.address = FIOSDK.SUFToAmount(accountRegFee);
       pricing.usdt.address = accountUsdt;
       const domainRegFee = await fioApi.registrationFee(true);
       const domainUsdt = convert(domainRegFee, roe);
+      pricing.fioNative.domain = domainRegFee;
       pricing.fio.domain = FIOSDK.SUFToAmount(domainRegFee);
       pricing.usdt.domain = domainUsdt;
     } catch (e) {
