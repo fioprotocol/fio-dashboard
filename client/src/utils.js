@@ -136,6 +136,49 @@ export const handleFreeAddressCart = async ({
   }
 };
 
+export const deleteCartItem = ({
+  id,
+  prices,
+  deleteItem,
+  domains,
+  cartItems,
+  recalculate,
+} = {}) => {
+  const data = recalculateCart({ domains, cartItems, id }) || id;
+  deleteItem(data);
+
+  const { domain, isFirstCustom } =
+    cartItems.find(item => item.id === id) || {};
+  const updCart = cartItems.filter(item => item.id !== id);
+
+  if (isFirstCustom) {
+    const hasCurrentDomain =
+      domain && updCart.some(item => item.domain === domain.toLowerCase());
+    if (hasCurrentDomain) {
+      const firstMatchElem =
+        (domain &&
+          updCart.find(item => item.domain === domain.toLowerCase())) ||
+        {};
+      if (firstMatchElem) {
+        const {
+          usdt: { domain: domainPrice, address: addressPrice },
+          fio: { domain: fioDomainPrice, address: fioAddressPrice },
+        } = prices;
+        const retObj = {
+          ...firstMatchElem,
+          costFio: parseFloat(fioAddressPrice) + parseFloat(fioDomainPrice),
+          costUsdc: parseFloat(addressPrice) + parseFloat(domainPrice),
+          isFirstCustom: true,
+        };
+        const retData = updCart.map(item =>
+          item.id === firstMatchElem.id ? retObj : item,
+        );
+        recalculate(retData);
+      }
+    }
+  }
+};
+
 export const totalCost = cart => {
   if (cart.length === 1 && cart.some(item => !item.costFio && !item.costUsdc))
     return { costFree: 'FREE' };

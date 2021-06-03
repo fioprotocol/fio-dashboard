@@ -67,7 +67,7 @@ export const PurchaseNow = props => {
         keys[currentWallet.id],
         { pin: keys[currentWallet.id].public }, // todo: change to other verification method
       );
-      
+
       onProcessingEnd(results);
     }
 

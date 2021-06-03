@@ -24,6 +24,7 @@ const AddressDomainForm = props => {
     account,
     prices,
     cartItems,
+    recalculate,
   } = props;
 
   const isAddress = type === ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS;
@@ -122,6 +123,7 @@ const AddressDomainForm = props => {
     isAddress,
     toggleValidating,
     cartItems,
+    recalculate,
   };
 
   const handleSubmit = (values, form) => {

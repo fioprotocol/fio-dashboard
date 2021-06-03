@@ -53,7 +53,7 @@ const verifyAddress = async props => {
 };
 
 export const addressValidation = async props => {
-  const { formProps, toggleShowAvailable, changeFormErrors, cartItems } = props;
+  const { formProps, toggleShowAvailable, changeFormErrors } = props;
   const { mutators, getState } = formProps;
   const { values, modified } = getState();
 
@@ -84,17 +84,6 @@ export const addressValidation = async props => {
 
   if (address && domain && address.length + domain.length > 63) {
     errors.address = 'Address should be less than 63 characters';
-  }
-  if (
-    address &&
-    domain &&
-    cartItems.some(
-      item =>
-        item.address === address.toLowerCase() &&
-        item.domain === domain.toLowerCase(),
-    )
-  ) {
-    errors.address = 'This address is on a cart';
   }
 
   if (!isEmpty(errors)) {
@@ -132,13 +121,12 @@ export const domainValidation = props => {
   if (domain && domain.length > 62) {
     errors.domain = 'Domain name should be less than 62 characters';
   }
-  if (
-    domain &&
-    cartItems.some(
-      item => !item.address && item.domain === domain.toLowerCase(),
-    )
-  ) {
-    errors.domain = 'This domain is on a cart';
+  if (domain && cartItems.some(item => item.domain === domain.toLowerCase())) {
+    errors.domain = {};
+    errors.domain['message'] =
+      'This domain has already been added to your cart';
+
+    errors.domain['showInfoError'] = true;
   }
 
   if (!isEmpty(errors)) {

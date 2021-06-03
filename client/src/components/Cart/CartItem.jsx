@@ -13,7 +13,9 @@ const CartItem = props => {
         {item.address ? (
           <span className={classes.address}>
             <span className="boldText">{item.address}@</span>
-            <span>{item.domain}</span>
+            <span className={item.isFirstCustom && 'boldText'}>
+              {item.domain}
+            </span>
           </span>
         ) : (
           <span className="boldText">{item.domain && item.domain}</span>
