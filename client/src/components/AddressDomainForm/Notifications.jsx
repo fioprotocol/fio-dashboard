@@ -35,6 +35,7 @@ const Notifications = props => {
     isFree,
     recalculate,
     domains,
+    currentCartItem,
   } = props;
   const { values, form } = formProps;
   const errors = [];
@@ -54,15 +55,10 @@ const Notifications = props => {
     fio: { domain: fioDomainPrice, address: fioAddressPrice },
   } = prices;
 
-  const currentItem = cartItems.find(
-    item => address && item.address === address && item.domain === domainName,
-  );
-  const hasCurrentDomain =
+  const hasOnlyDomain =
     domainName &&
     cartItems.some(
-      item =>
-        item.domain === domainName.toLowerCase() &&
-        item.id !== (currentItem && currentItem.id),
+      item => !item.address && item.domain === domainName.toLowerCase(),
     );
 
   const hasErrors = !isEmpty(errors);
@@ -75,7 +71,7 @@ const Notifications = props => {
       ? parseFloat(fioAddressPrice)
       : parseFloat(fioDomainPrice);
   }
-  if (isCustomDomain && !hasCurrentDomain) {
+  if (isCustomDomain || hasOnlyDomain) {
     costUsdc = costUsdc
       ? costUsdc + parseFloat(domainPrice)
       : parseFloat(domainPrice);
@@ -83,9 +79,9 @@ const Notifications = props => {
       ? costFio + parseFloat(fioDomainPrice)
       : parseFloat(fioDomainPrice);
   }
-  if (!isFree && currentItem) {
-    costFio = currentItem.costFio;
-    costUsdc = currentItem.costUsdc;
+  if (!isFree && currentCartItem) {
+    costFio = currentCartItem.costFio;
+    costUsdc = currentCartItem.costUsdc;
   }
 
   const addItemToCart = () => {
@@ -103,22 +99,11 @@ const Notifications = props => {
       id,
     };
 
-    if (address && isCustomDomain) {
+    if ((address && isCustomDomain) || hasOnlyDomain)
       data.isCustomDomain = true;
-
-      if (!hasCurrentDomain) {
-        data.isFirstCustom = true;
-      }
-    }
     if (costFio) data.costFio = costFio;
     if (costUsdc) data.costUsdc = costUsdc;
-    if (
-      address &&
-      domainName &&
-      cartItems.some(
-        item => !item.address && item.domain === domainName.toLowerCase(),
-      )
-    ) {
+    if (address && hasOnlyDomain) {
       recalculate([
         ...cartItems.filter(item => item.domain !== domainName.toLowerCase()),
         data,
@@ -201,7 +186,7 @@ const Notifications = props => {
             <Button
               className={classnames(
                 classes.button,
-                !currentItem && classes.show,
+                !currentCartItem && classes.show,
               )}
               onClick={addItemToCart}
             >
@@ -209,7 +194,10 @@ const Notifications = props => {
               Add to Cart
             </Button>
             <div
-              className={classnames(classes.added, currentItem && classes.show)}
+              className={classnames(
+                classes.added,
+                currentCartItem && classes.show,
+              )}
             >
               <div className={classes.fioBadge}>
                 <FontAwesomeIcon icon="check-circle" className={classes.icon} />
@@ -220,7 +208,7 @@ const Notifications = props => {
                 className={classes.iconClose}
                 onClick={() => {
                   deleteCartItem({
-                    id: currentItem.id,
+                    id: currentCartItem.id,
                     prices,
                     deleteItem,
                     cartItems,

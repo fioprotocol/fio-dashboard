@@ -104,16 +104,23 @@ export const addressValidation = async props => {
 };
 
 export const domainValidation = props => {
-  const { formProps, toggleShowAvailable, changeFormErrors, cartItems } = props;
+  const {
+    formProps,
+    toggleShowAvailable,
+    changeFormErrors,
+    cartItems,
+    options,
+  } = props;
   const errors = {};
   const { mutators, getState } = formProps;
   const { domain } = getState().values || {};
 
-  if (!domain) return;
+  if (!domain) return changeFormErrors(errors);
   // todo: show this error separately only on search icon click
   // {
   //   errors.domain = 'Domain Field Should Be Filled';
   // }
+
   if (!ADDRESS_REGEXP.test(domain)) {
     errors.domain =
       'Domain name only allows letters, numbers and dash in the middle';
@@ -121,12 +128,15 @@ export const domainValidation = props => {
   if (domain && domain.length > 62) {
     errors.domain = 'Domain name should be less than 62 characters';
   }
-  if (domain && cartItems.some(item => item.domain === domain.toLowerCase())) {
+  if (
+    domain &&
+    options.every(item => item !== domain) &&
+    cartItems.some(item => item.domain === domain.toLowerCase())
+  ) {
     errors.domain = {};
-    errors.domain['message'] =
-      'This domain has already been added to your cart';
+    errors.domain.message = 'This domain has already been added to your cart';
 
-    errors.domain['showInfoError'] = true;
+    errors.domain.showInfoError = true;
   }
 
   if (!isEmpty(errors)) {

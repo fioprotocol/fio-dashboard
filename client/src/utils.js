@@ -147,11 +147,11 @@ export const deleteCartItem = ({
   const data = recalculateCart({ domains, cartItems, id }) || id;
   deleteItem(data);
 
-  const { domain, isFirstCustom } =
+  const { domain, isCustomDomain } =
     cartItems.find(item => item.id === id) || {};
   const updCart = cartItems.filter(item => item.id !== id);
 
-  if (isFirstCustom) {
+  if (isCustomDomain) {
     const hasCurrentDomain =
       domain && updCart.some(item => item.domain === domain.toLowerCase());
     if (hasCurrentDomain) {
@@ -168,7 +168,7 @@ export const deleteCartItem = ({
           ...firstMatchElem,
           costFio: parseFloat(fioAddressPrice) + parseFloat(fioDomainPrice),
           costUsdc: parseFloat(addressPrice) + parseFloat(domainPrice),
-          isFirstCustom: true,
+          isCustomDomain: true,
         };
         const retData = updCart.map(item =>
           item.id === firstMatchElem.id ? retObj : item,
