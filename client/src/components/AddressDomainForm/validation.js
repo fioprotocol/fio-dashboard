@@ -55,16 +55,31 @@ const verifyAddress = async props => {
 export const addressValidation = async props => {
   const { formProps, toggleShowAvailable, changeFormErrors } = props;
   const { mutators, getState } = formProps;
-  const { values, modified } = getState();
+  const { values, modified, submitting } = getState();
 
   const errors = {};
   const { address, domain } = values || {};
 
-  if (!address || !modified.domain) return;
-  // todo: show this error separately only on search icon click
-  // {
-  //   errors.address = 'Address Field Should Be Filled';
-  // }
+  if ((!address || !domain || !modified.domain) && !submitting) {
+    changeFormErrors(errors);
+    mutators.setDataMutator('address', {
+      error: errors.address,
+      valid: !errors.address,
+    });
+    mutators.setDataMutator('domain', {
+      error: errors.domain,
+      valid: !errors.domain,
+    });
+    return;
+  }
+
+  if (!address) {
+    errors.address = 'Address Field Should Be Filled';
+  }
+
+  if (!domain && !modified.domain) {
+    errors.domain = 'Domain Field Should Be Filled';
+  }
 
   if (address && !ADDRESS_REGEXP.test(address)) {
     errors.address =

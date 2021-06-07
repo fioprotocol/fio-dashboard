@@ -12,6 +12,7 @@ const AddressForm = props => {
   const {
     isHomepage,
     formName,
+    isCustomDomain,
     showCustomDomain,
     toggleShowCustomDomain,
     options,
@@ -62,7 +63,7 @@ const AddressForm = props => {
       </div>
       <div className={classnames(classes.at, 'boldText')}>@</div>
       <div className={classes.domainContainer}>
-        {showCustomDomain ? (
+        {isCustomDomain || showCustomDomain ? (
           <Field
             name="domain"
             type="text"
