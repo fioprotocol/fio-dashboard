@@ -15,13 +15,13 @@ const CartPage = props => {
     fioWallets,
     recalculate,
     prices,
-    account,
     domains,
     userWallets,
     setWallet,
     paymentWalletId,
     lastLocation,
     refreshBalance,
+    isAuthenticated,
   } = props;
 
   const walletCount = userWallets.length;
@@ -46,7 +46,7 @@ const CartPage = props => {
   }, []);
 
   useEffect(async () => {
-    if (!account) {
+    if (!isAuthenticated) {
       history.push(ROUTES.FIO_ADDRESSES);
     }
     await handleFreeAddressCart({
@@ -56,7 +56,7 @@ const CartPage = props => {
       cartItems,
       prices,
     });
-  }, [account, domains, fioWallets]);
+  }, [isAuthenticated, domains, fioWallets]);
 
   useEffect(async () => {
     if (!isEmpty(userWallets)) {

@@ -6,7 +6,7 @@ import { compose } from '../../utils';
 import { refreshBalance } from '../../redux/fio/actions';
 import { fioWallets } from '../../redux/fio/selectors';
 import { cartItems, paymentWalletId } from '../../redux/cart/selectors';
-import { isAuthenticated } from '../../redux/profile/selectors';
+import { isAuthenticated } from '../../redux/edge/selectors';
 
 import CheckoutPage from './CheckoutPage';
 
