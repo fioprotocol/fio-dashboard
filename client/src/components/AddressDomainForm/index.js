@@ -12,7 +12,7 @@ import { updateFormState } from '../../redux/forms/actions';
 import { refreshFioWallets } from '../../redux/edge/actions';
 import { getPrices, getDomains } from '../../redux/registrations/actions';
 import { cartItems } from '../../redux/cart/selectors';
-import { addItem, deleteItem } from '../../redux/cart/actions';
+import { addItem, deleteItem, recalculate } from '../../redux/cart/actions';
 
 import { compose } from '../../utils';
 
@@ -39,6 +39,7 @@ const reduxConnect = connect(
     updateFormState,
     addItem,
     deleteItem,
+    recalculate,
   },
 );
 

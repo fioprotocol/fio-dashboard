@@ -7,7 +7,7 @@ import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import CounterContainer from '../CounterContainer/CounterContainer';
 import { ROUTES } from '../../constants/routes';
 import colors from '../../assets/styles/colorsToJs.module.scss';
-import { recalculateCart, handleFreeAddressCart } from '../../utils';
+import { handleFreeAddressCart, deleteCartItem } from '../../utils';
 
 import classes from './AddressDomainCart.module.scss';
 
@@ -36,17 +36,14 @@ const AddressDomainCart = props => {
   };
 
   const handleDeleteItem = id => {
-    const data = recalculateCart({ domains, cartItems, id }) || id;
-    deleteItem(data);
-    setTimeout(
-      () =>
-        document
-          .getElementById('addressForm')
-          .dispatchEvent(
-            new Event('submit', { cancelable: true, bubbles: true }),
-          ),
-      0,
-    );
+    deleteCartItem({
+      id,
+      prices,
+      deleteItem,
+      cartItems,
+      recalculate,
+      domains,
+    });
   };
 
   useEffect(async () => {
@@ -82,7 +79,13 @@ const AddressDomainCart = props => {
                   {item.address ? (
                     <p className={classes.itemName}>
                       <span className="boldText">{item.address}</span>
-                      <span className={classes.thin}>@{item.domain}</span>
+                      <span
+                        className={
+                          item.isCustomDomain ? 'boldText' : classes.thin
+                        }
+                      >
+                        @{item.domain}
+                      </span>
                     </p>
                   ) : (
                     <p className={classes.itemName}>

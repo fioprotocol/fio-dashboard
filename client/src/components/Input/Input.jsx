@@ -131,7 +131,7 @@ const Input = props => {
         <div
           className={classnames(
             classes.errorMessage,
-            hasError && classes.error,
+            hasError && !data.showInfoError && classes.error,
           )}
         >
           <FontAwesomeIcon icon="info-circle" className={classes.errorIcon} />

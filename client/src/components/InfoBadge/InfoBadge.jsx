@@ -10,7 +10,9 @@ const InfoBadge = props => {
     <Badge type={type} show={show}>
       <FontAwesomeIcon icon="exclamation-circle" className={classes.icon} />
       <p>
-        <span className={classes.title}>{title}</span> - {message}
+        <span className={classes.title}>{title}</span>
+        <span>{title && ' - '}</span>
+        {message}
       </p>
     </Badge>
   );

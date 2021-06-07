@@ -11,7 +11,7 @@ import CartItem from './CartItem';
 import WalletDropdown from './WalletDropdown';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { ROUTES } from '../../constants/routes';
-import { recalculateCart } from '../../utils';
+import { deleteCartItem } from '../../utils';
 
 import classes from './Cart.module.scss';
 
@@ -26,6 +26,8 @@ const Cart = props => {
     walletCount,
     totalCartAmount,
     selectedWallet,
+    prices,
+    recalculate,
   } = props;
   const count = cartItems.length;
   const isCartEmpty = count === 0;
@@ -36,8 +38,14 @@ const Cart = props => {
     0;
 
   const handleDeleteItem = id => {
-    const data = recalculateCart({ domains, cartItems, id }) || id;
-    deleteItem(data);
+    deleteCartItem({
+      id,
+      prices,
+      deleteItem,
+      cartItems,
+      recalculate,
+      domains,
+    });
   };
 
   return (

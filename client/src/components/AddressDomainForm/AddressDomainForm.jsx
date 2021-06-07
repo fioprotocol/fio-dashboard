@@ -24,22 +24,19 @@ const AddressDomainForm = props => {
     account,
     prices,
     cartItems,
+    recalculate,
   } = props;
 
   const isAddress = type === ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS;
   const isDomain = type === ADDRESS_DOMAIN_BADGE_TYPE.DOMAIN;
 
-  const [isCustomDomain, toggleCustomDomain] = useState(false);
+  const [showCustomDomain, toggleShowCustomDomain] = useState(false);
   const [showAvailable, toggleShowAvailable] = useState(false);
   const [userDomains, setUserDomains] = useState([]);
   const [userAddresses, setUserAddresses] = useState([]);
   const [formErrors, changeFormErrors] = useState({});
   const [isValidating, toggleValidating] = useState(false);
 
-  const isFree =
-    !isCustomDomain && !cartHasFreeItem(cartItems) && isEmpty(userAddresses);
-
-  const { domain } = formState;
   const options = [
     ...domains.map(({ domain }) => domain),
     ...userDomains.map(({ name }) => name),
@@ -47,32 +44,6 @@ const AddressDomainForm = props => {
 
   const { screenType } = currentScreenType();
   const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
-  const showPrice = ({ isAddressPrice, isDomainPrice }) => {
-    const {
-      usdt: { address: usdcAddressPrice, domain: usdcDomainPrice },
-      fio: { address: fioAddressPrice, domain: fioDomainPrice },
-    } = prices;
-
-    const price =
-      isFree && !isCustomDomain
-        ? 'FREE'
-        : `${
-            isAddressPrice
-              ? fioAddressPrice.toFixed(2)
-              : isDomainPrice
-              ? fioDomainPrice.toFixed(2)
-              : 'no price'
-          } FIO (${
-            isAddressPrice
-              ? usdcAddressPrice.toFixed(2)
-              : isDomainPrice
-              ? usdcDomainPrice.toFixed(2)
-              : 'no price'
-          } USDC)`;
-
-    const cost = isDesktop ? 'Cost: ' : '';
-    return cost + price;
-  };
 
   const setUserAddressesAndDomains = async () => {
     if (fioWallets) {
@@ -88,15 +59,6 @@ const AddressDomainForm = props => {
       setUserAddresses(userAddresses);
     }
   };
-
-  useEffect(() => {
-    if (
-      (!isHomepage && domain && options.every(option => option !== domain)) ||
-      isDomain
-    ) {
-      toggleCustomDomain(true);
-    }
-  }, []);
 
   useEffect(() => {
     getPrices();
@@ -122,6 +84,7 @@ const AddressDomainForm = props => {
     isAddress,
     toggleValidating,
     cartItems,
+    recalculate,
   };
 
   const handleSubmit = (values, form) => {
@@ -148,6 +111,59 @@ const AddressDomainForm = props => {
   const debouncedHandleChange = debounce(handleChange, 500);
 
   const renderItems = formProps => {
+    const { values: { address, domain } = {} } = formProps || {};
+
+    const currentCartItem = cartItems.find(
+      item => address && item.address === address && item.domain === domain,
+    );
+
+    const isCustomDomain =
+      (!isHomepage &&
+        domain &&
+        options.every(option => option !== domain) &&
+        cartItems.every(item => item.domain !== domain)) ||
+      isDomain ||
+      (currentCartItem && currentCartItem.isCustomDomain);
+
+    const isFree =
+      !isCustomDomain && !cartHasFreeItem(cartItems) && isEmpty(userAddresses);
+
+    const hasCurrentDomain =
+      domain &&
+      cartItems.some(
+        item =>
+          item.domain === domain.toLowerCase() &&
+          item.id !== (currentCartItem && currentCartItem.id),
+      );
+
+    const showPrice = ({ isAddressPrice, isDomainPrice }) => {
+      const {
+        usdt: { address: usdcAddressPrice, domain: usdcDomainPrice },
+        fio: { address: fioAddressPrice, domain: fioDomainPrice },
+      } = prices;
+
+      const price = isFree
+        ? 'FREE'
+        : `${
+            isAddressPrice
+              ? fioAddressPrice.toFixed(2)
+              : isDomainPrice
+              ? fioDomainPrice.toFixed(2)
+              : 'no price'
+          } FIO (${
+            isAddressPrice
+              ? usdcAddressPrice.toFixed(2)
+              : isDomainPrice
+              ? usdcDomainPrice.toFixed(2)
+              : 'no price'
+          } USDC)`;
+
+      const cost = isDesktop ? 'Cost: ' : '';
+      return isDomainPrice && !isCustomDomain && hasCurrentDomain
+        ? null
+        : cost + price;
+    };
+
     return [
       <FormContainer
         formProps={formProps}
@@ -155,7 +171,8 @@ const AddressDomainForm = props => {
         options={options}
         isAddress={isAddress}
         isCustomDomain={isCustomDomain}
-        toggleCustomDomain={toggleCustomDomain}
+        showCustomDomain={showCustomDomain}
+        toggleShowCustomDomain={toggleShowCustomDomain}
         domain={domain}
         key="form"
         showPrice={showPrice}
@@ -172,6 +189,8 @@ const AddressDomainForm = props => {
           formErrors={formErrors}
           {...props}
           isCustomDomain={isCustomDomain}
+          showCustomDomain={showCustomDomain}
+          currentCartItem={currentCartItem}
           showAvailable={showAvailable}
           toggleShowAvailable={toggleShowAvailable}
           isAddress={isAddress}

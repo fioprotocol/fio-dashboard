@@ -13,7 +13,8 @@ const AddressForm = props => {
     isHomepage,
     formName,
     isCustomDomain,
-    toggleCustomDomain,
+    showCustomDomain,
+    toggleShowCustomDomain,
     options,
     domain,
     updateFormState,
@@ -62,7 +63,7 @@ const AddressForm = props => {
       </div>
       <div className={classnames(classes.at, 'boldText')}>@</div>
       <div className={classes.domainContainer}>
-        {isCustomDomain ? (
+        {isCustomDomain || showCustomDomain ? (
           <Field
             name="domain"
             type="text"
@@ -70,7 +71,7 @@ const AddressForm = props => {
             colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
             component={Input}
             onClose={() => {
-              toggleCustomDomain(false);
+              toggleShowCustomDomain(false);
             }}
             badge={showPrice({ isDomainPrice: true })}
             hideError="true"
@@ -81,13 +82,15 @@ const AddressForm = props => {
             component={CustomDropdown}
             options={options}
             toggle={() => {
-              toggleCustomDomain(true);
+              toggleShowCustomDomain(true);
             }}
             initValue={domain}
           />
         )}
         <OnChange name="domain">
-          {isCustomDomain ? debouncedOnChangeHandleField : onChangeHandleField}
+          {showCustomDomain
+            ? debouncedOnChangeHandleField
+            : onChangeHandleField}
         </OnChange>
       </div>
     </>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
@@ -7,6 +7,7 @@ import isEmpty from 'lodash/isEmpty';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../AddressDomainBadge/AddressDomainBadge';
 import InfoBadge from '../InfoBadge/InfoBadge';
+import { deleteCartItem } from '../../utils';
 
 import classes from './AddressDomainForm.module.scss';
 
@@ -32,14 +33,12 @@ const Notifications = props => {
     isDomain,
     formErrors,
     isFree,
+    recalculate,
+    domains,
+    currentCartItem,
   } = props;
   const { values, form } = formProps;
   const errors = [];
-  const [currentId, setCurrentId] = useState(null);
-
-  useEffect(() => {
-    setCurrentId(null);
-  }, [values]);
 
   !isEmpty(formErrors) &&
     Object.keys(formErrors).forEach(key => {
@@ -56,7 +55,11 @@ const Notifications = props => {
     fio: { domain: fioDomainPrice, address: fioAddressPrice },
   } = prices;
 
-  const isOnCart = cartItems.some(item => item.id === currentId);
+  const hasOnlyDomain =
+    domainName &&
+    cartItems.some(
+      item => !item.address && item.domain === domainName.toLowerCase(),
+    );
 
   const hasErrors = !isEmpty(errors);
   let costUsdc;
@@ -68,7 +71,7 @@ const Notifications = props => {
       ? parseFloat(fioAddressPrice)
       : parseFloat(fioDomainPrice);
   }
-  if (isCustomDomain) {
+  if (isCustomDomain || hasOnlyDomain) {
     costUsdc = costUsdc
       ? costUsdc + parseFloat(domainPrice)
       : parseFloat(domainPrice);
@@ -76,6 +79,39 @@ const Notifications = props => {
       ? costFio + parseFloat(fioDomainPrice)
       : parseFloat(fioDomainPrice);
   }
+  if (!isFree && currentCartItem) {
+    costFio = currentCartItem.costFio;
+    costUsdc = currentCartItem.costUsdc;
+  }
+
+  const addItemToCart = () => {
+    let id = '';
+    if (address) {
+      id = address + '@';
+    }
+
+    id += domainName;
+
+    const data = {
+      ...values,
+      costFio: costFio,
+      costUsdc: costUsdc,
+      id,
+    };
+
+    if ((address && isCustomDomain) || hasOnlyDomain)
+      data.isCustomDomain = true;
+    if (costFio) data.costFio = costFio;
+    if (costUsdc) data.costUsdc = costUsdc;
+    if (address && hasOnlyDomain) {
+      recalculate([
+        ...cartItems.filter(item => item.domain !== domainName.toLowerCase()),
+        data,
+      ]);
+    } else {
+      addItem(data);
+    }
+  };
 
   const notifBadge = () => (
     <>
@@ -85,14 +121,25 @@ const Notifications = props => {
         title="Available!"
         message={AVAILABLE_MESSAGE[type]}
       />
-      {errors.map(message => {
+      {errors.map(error => {
+        if (error.message) {
+          return (
+            <InfoBadge
+              type={error.showInfoError ? BADGE_TYPES.INFO : BADGE_TYPES.ERROR}
+              title={error.showInfoError ? '' : 'Try Again!'}
+              show={hasErrors}
+              message={error.message}
+              key={error.message}
+            />
+          );
+        }
         return (
           <InfoBadge
             type={BADGE_TYPES.ERROR}
             title="Try Again!"
             show={hasErrors}
-            message={message}
-            key={message}
+            message={error}
+            key={error}
           />
         );
       })}
@@ -137,33 +184,20 @@ const Notifications = props => {
           </p>
           <div className={classes.actionContainer}>
             <Button
-              className={classnames(classes.button, !isOnCart && classes.show)}
-              onClick={() => {
-                let id = '';
-                if (address) {
-                  id = address + '@';
-                }
-
-                id += domainName;
-
-                const data = {
-                  ...values,
-                  costFio: costFio,
-                  costUsdc: costUsdc,
-                  id,
-                };
-
-                if (costFio) data.costFio = costFio;
-                if (costUsdc) data.costUsdc = costUsdc;
-                addItem(data);
-                setCurrentId(id);
-              }}
+              className={classnames(
+                classes.button,
+                !currentCartItem && classes.show,
+              )}
+              onClick={addItemToCart}
             >
               <FontAwesomeIcon icon="plus-square" className={classes.icon} />
               Add to Cart
             </Button>
             <div
-              className={classnames(classes.added, isOnCart && classes.show)}
+              className={classnames(
+                classes.added,
+                currentCartItem && classes.show,
+              )}
             >
               <div className={classes.fioBadge}>
                 <FontAwesomeIcon icon="check-circle" className={classes.icon} />
@@ -173,7 +207,14 @@ const Notifications = props => {
                 icon="times-circle"
                 className={classes.iconClose}
                 onClick={() => {
-                  deleteItem({ id: currentId });
+                  deleteCartItem({
+                    id: currentCartItem.id,
+                    prices,
+                    deleteItem,
+                    cartItems,
+                    recalculate,
+                    domains,
+                  });
                   toggleShowAvailable(false);
                 }}
               />
