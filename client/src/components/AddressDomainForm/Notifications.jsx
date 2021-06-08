@@ -21,7 +21,7 @@ const AVAILABLE_MESSAGE = {
 const Notifications = props => {
   const {
     formProps,
-    isCustomDomain,
+    hasCustomDomain,
     showAvailable,
     toggleShowAvailable,
     type,
@@ -71,7 +71,7 @@ const Notifications = props => {
       ? parseFloat(fioAddressPrice)
       : parseFloat(fioDomainPrice);
   }
-  if (isCustomDomain || hasOnlyDomain) {
+  if (hasCustomDomain || hasOnlyDomain) {
     costUsdc = costUsdc
       ? costUsdc + parseFloat(domainPrice)
       : parseFloat(domainPrice);
@@ -99,8 +99,8 @@ const Notifications = props => {
       id,
     };
 
-    if ((address && isCustomDomain) || hasOnlyDomain)
-      data.isCustomDomain = true;
+    if ((address && hasCustomDomain) || hasOnlyDomain)
+      data.hasCustomDomain = true;
     if (costFio) data.costFio = costFio;
     if (costUsdc) data.costUsdc = costUsdc;
     if (address && hasOnlyDomain) {
@@ -169,7 +169,7 @@ const Notifications = props => {
             )}
           </p>
           <p className={classes.price}>
-            {isFree && !isCustomDomain ? (
+            {isFree && !hasCustomDomain ? (
               'FREE'
             ) : (
               <>

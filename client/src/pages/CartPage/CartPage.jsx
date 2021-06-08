@@ -51,7 +51,7 @@ const CartPage = props => {
         retObj.costFio = fioAddressPrice;
         retObj.costUsdc = usdcAddressPrice;
 
-        if (item.isCustomDomain) {
+        if (item.hasCustomDomain) {
           retObj.costFio += fioDomainPrice;
           retObj.costUsdc += usdcDomainPrice;
         }

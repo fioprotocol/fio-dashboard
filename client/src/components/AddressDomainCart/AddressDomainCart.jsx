@@ -81,7 +81,7 @@ const AddressDomainCart = props => {
                       <span className="boldText">{item.address}</span>
                       <span
                         className={
-                          item.isCustomDomain ? 'boldText' : classes.thin
+                          item.hasCustomDomain ? 'boldText' : classes.thin
                         }
                       >
                         @{item.domain}

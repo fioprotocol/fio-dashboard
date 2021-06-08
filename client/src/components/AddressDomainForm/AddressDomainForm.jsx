@@ -117,13 +117,13 @@ const AddressDomainForm = props => {
       item => address && item.address === address && item.domain === domain,
     );
 
-    const isCustomDomain =
+    const hasCustomDomain =
       (!isHomepage &&
         domain &&
         options.every(option => option !== domain) &&
         cartItems.every(item => item.domain !== domain)) ||
       isDomain ||
-      (currentCartItem && currentCartItem.isCustomDomain);
+      (currentCartItem && currentCartItem.hasCustomDomain);
 
     const hasCurrentDomain =
       domain &&
@@ -134,7 +134,7 @@ const AddressDomainForm = props => {
       );
 
     const isFree =
-      (!isCustomDomain &&
+      (!hasCustomDomain &&
         !cartHasFreeItem(cartItems) &&
         isEmpty(userAddresses)) ||
       (currentCartItem && !currentCartItem.costFio);
@@ -162,7 +162,7 @@ const AddressDomainForm = props => {
           } USDC)`;
 
       const cost = isDesktop ? 'Cost: ' : '';
-      return isDomainPrice && !isCustomDomain && hasCurrentDomain
+      return isDomainPrice && !hasCustomDomain && hasCurrentDomain
         ? null
         : cost + price;
     };
@@ -173,7 +173,7 @@ const AddressDomainForm = props => {
         {...props}
         options={options}
         isAddress={isAddress}
-        isCustomDomain={isCustomDomain}
+        hasCustomDomain={hasCustomDomain}
         showCustomDomain={showCustomDomain}
         toggleShowCustomDomain={toggleShowCustomDomain}
         domain={domain}
@@ -191,7 +191,7 @@ const AddressDomainForm = props => {
           formProps={formProps}
           formErrors={formErrors}
           {...props}
-          isCustomDomain={isCustomDomain}
+          hasCustomDomain={hasCustomDomain}
           showCustomDomain={showCustomDomain}
           currentCartItem={currentCartItem}
           showAvailable={showAvailable}
