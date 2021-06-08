@@ -4,6 +4,7 @@ import PseudoModalContainer from '../../components/PseudoModalContainer';
 import Purchase from '../../components/Purchase';
 import '../../helpers/gt-sdk';
 import { ROUTES } from '../../constants/routes';
+import { totalCost } from '../../utils';
 
 const CheckoutPage = props => {
   const {
@@ -23,12 +24,6 @@ const CheckoutPage = props => {
     }
   }, []);
 
-  useEffect(() => {
-    if (!isAuthenticated) {
-      history.push(ROUTES.FIO_ADDRESSES);
-    }
-  }, [isAuthenticated]);
-
   const currentWallet =
     paymentWalletId &&
     !isEmpty(fioWallets) &&
@@ -38,6 +33,21 @@ const CheckoutPage = props => {
     !isEmpty(cartItems) &&
     cartItems.length === 1 &&
     cartItems.every(item => !item.costFio && !item.costUsdc);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      history.push(ROUTES.FIO_ADDRESSES);
+    }
+
+    if (
+      !isEmpty(fioWallets) &&
+      !isFree &&
+      currentWallet &&
+      currentWallet.balance < totalCost(cartItems).costFio
+    ) {
+      history.push(ROUTES.CART);
+    }
+  }, [isAuthenticated, fioWallets]);
 
   const onClose = () => {
     history.push(ROUTES.CART);
