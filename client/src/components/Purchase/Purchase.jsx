@@ -69,7 +69,8 @@ const Purchase = props => {
           if (isFree) {
             retObj['isFree'] = isFree;
           } else {
-            const { free } = domains.find(item => item.domain === domainName);
+            const { free } =
+              domains.find(item => item.domain === domainName) || {};
             if (!free) {
               retObj['costFio'] = addressCostFio + domainCostFio;
               retObj['costUsdc'] = addressCostUsdc + domainCostUsdc;
