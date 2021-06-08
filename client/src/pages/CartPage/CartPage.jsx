@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { withLastLocation } from 'react-router-last-location';
 
@@ -24,6 +24,8 @@ const CartPage = props => {
     isAuthenticated,
   } = props;
 
+  const [isPriceChanged, handlePriceChange] = useState(false);
+
   const walletCount = userWallets.length;
 
   const totalCartAmount =
@@ -33,6 +35,48 @@ const CartPage = props => {
     !isEmpty(cartItems) &&
     cartItems.length === 1 &&
     cartItems.every(item => !item.costFio && !item.costUsdc);
+
+  const {
+    usdt: { address: usdcAddressPrice, domain: usdcDomainPrice },
+    fio: { address: fioAddressPrice, domain: fioDomainPrice },
+  } = prices;
+
+  const recalculateBalance = () => {
+    if (totalCartAmount > 0) {
+      const updatedCartItems = cartItems.map(item => {
+        if (!item.costFio) return item;
+
+        const retObj = { ...item };
+
+        retObj.costFio = fioAddressPrice;
+        retObj.costUsdc = usdcAddressPrice;
+
+        if (item.isCustomDomain) {
+          retObj.costFio += fioDomainPrice;
+          retObj.costUsdc += usdcDomainPrice;
+        }
+
+        return retObj;
+      });
+
+      const { costFio: updatedTotalPrice, costFree: updatedFree } = totalCost(
+        updatedCartItems,
+      );
+
+      if (updatedFree) return history.push(ROUTES.CHECKOUT);
+      const isEqualPrice =
+        +parseFloat(totalCartAmount).toFixed(2) ===
+        +parseFloat(updatedTotalPrice).toFixed(2);
+
+      handlePriceChange(!isEqualPrice);
+
+      if (isEqualPrice) return history.push(ROUTES.CHECKOUT);
+      recalculate(updatedCartItems);
+    } else {
+      handlePriceChange(false);
+      history.push(ROUTES.CHECKOUT);
+    }
+  };
 
   useEffect(() => {
     if (
@@ -86,6 +130,8 @@ const CartPage = props => {
     selectedWallet: currentWallet,
     isFree,
     totalCartAmount,
+    isPriceChanged,
+    recalculateBalance,
   };
 
   return (

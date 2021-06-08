@@ -2,6 +2,32 @@
 @import '../../assets/styles/fontMixins.scss';
 @import '../../assets/styles/mediaQueriesMixings.scss';
 
+.infoBadge {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .infoIcon {
+    font-size: 1em;
+  }
+
+  .infoText {
+    margin-bottom: 0;
+    margin-left: 1rem;
+    font-size: 0.9375em;
+    line-height: 0.9375em;
+  }
+}
+
+.priceBadge {
+  padding: 5px;
+}
+
+.badgeContainer {
+  margin-top: -30px;
+  margin-bottom: 30px;
+}
+
 .container {
   background-color: $hint;
   border-radius: 12px;
@@ -14,23 +40,6 @@
 
     .title {
       margin: 0 0 0 1.25rem;
-    }
-  }
-
-  .infoBadge {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-
-    .infoIcon {
-      font-size: 1em;
-    }
-
-    .infoText {
-      margin-bottom: 0;
-      margin-left: 1rem;
-      font-size: 0.9375em;
-      line-height: 0.9375em;
     }
   }
 
@@ -277,14 +286,14 @@
     margin-left: 0;
   }
 
+  .infoBadge {
+    .infoText {
+      line-height: 1.5em;
+    }
+  }
+
   .container {
     padding: 1.25rem;
-
-    .infoBadge {
-      .infoText {
-        line-height: 1.5em;
-      }
-    }
 
     .walletContainer {
       margin-top: 1.875rem;

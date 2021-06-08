@@ -5,6 +5,7 @@ import { Form, Field } from 'react-final-form';
 import classNames from 'classnames';
 import { Button } from 'react-bootstrap';
 import isEmpty from 'lodash/isEmpty';
+import classnames from 'classnames';
 
 import CounterContainer from '../CounterContainer/CounterContainer';
 import CartItem from './CartItem';
@@ -28,6 +29,7 @@ const Cart = props => {
     selectedWallet,
     prices,
     recalculate,
+    isPriceChanged,
   } = props;
   const count = cartItems.length;
   const isCartEmpty = count === 0;
@@ -50,6 +52,22 @@ const Cart = props => {
 
   return (
     <>
+      {isPriceChanged && (
+        <div className={classes.badgeContainer}>
+          <Badge show type={BADGE_TYPES.ERROR}>
+            <div className={classnames(classes.infoBadge, classes.priceBadge)}>
+              <FontAwesomeIcon
+                icon="exclamation-circle"
+                className={classes.infoIcon}
+              />
+              <p className={classes.infoText}>
+                <span className="boldText">Pricing update</span> - Your price
+                has been updated due to pricing changes.
+              </p>
+            </div>
+          </Badge>
+        </div>
+      )}
       <div className={classes.container}>
         <div className={classes.header}>
           <CounterContainer isEmpty={isCartEmpty}>{count}</CounterContainer>
