@@ -43,6 +43,7 @@ const Purchase = props => {
   const setResults = (results, isRecalcCart) => {
     const registered = [];
     const errored = [];
+    const updatedCart = [...cart];
 
     const {
       fio: { address: addressCostFio, domain: domainCostFio },
@@ -122,10 +123,15 @@ const Purchase = props => {
         }
 
         registered.push(retObj);
+        for (let i = updatedCart.length - 1; i >= 0; i--) {
+          if (updatedCart[i].id === fioName) {
+            updatedCart.splice(i, 1);
+          }
+        }
       }
     }
 
-    isRecalcCart && recalculate(errored);
+    isRecalcCart && recalculate(updatedCart);
     setRegItems(registered);
     setErrItems(errored);
   };
