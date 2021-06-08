@@ -43,7 +43,6 @@ const Purchase = props => {
   const setResults = (results, isRecalcCart) => {
     const registered = [];
     const errored = [];
-    const updatedCart = [...cart];
 
     const {
       fio: { address: addressCostFio, domain: domainCostFio },
@@ -70,8 +69,7 @@ const Purchase = props => {
           if (isFree) {
             retObj['isFree'] = isFree;
           } else {
-            const { free } =
-              domains.find(item => item.domain === domainName) || {};
+            const free = domains.find(item => item.domain === domainName);
             if (!free) {
               retObj['costFio'] = addressCostFio + domainCostFio;
               retObj['costUsdc'] = addressCostUsdc + domainCostUsdc;
@@ -123,15 +121,10 @@ const Purchase = props => {
         }
 
         registered.push(retObj);
-        for (let i = updatedCart.length - 1; i >= 0; i--) {
-          if (updatedCart[i].id === fioName) {
-            updatedCart.splice(i, 1);
-          }
-        }
       }
     }
 
-    isRecalcCart && recalculate(updatedCart);
+    isRecalcCart && !isEmpty(errored) && recalculate(errored);
     setRegItems(registered);
     setErrItems(errored);
   };
@@ -147,7 +140,7 @@ const Purchase = props => {
   }, [results]);
 
   useEffect(() => {
-    getPrices();
+    if (isCheckout) getPrices();
     return () => {
       if (isPurchase) {
         setRegistration({});
