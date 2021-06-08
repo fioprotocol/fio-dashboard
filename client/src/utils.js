@@ -55,7 +55,7 @@ export const setFreeCart = ({ domains, cartItems }) => {
     item =>
       item.address &&
       item.domain &&
-      domains.some(domain => domain.domain === item.domain && domain.free),
+      domains.some(domain => domain.domain === item.domain),
   );
   if (recalcElem) {
     delete recalcElem.costFio;

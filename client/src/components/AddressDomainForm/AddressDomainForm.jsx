@@ -125,9 +125,6 @@ const AddressDomainForm = props => {
       isDomain ||
       (currentCartItem && currentCartItem.isCustomDomain);
 
-    const isFree =
-      !isCustomDomain && !cartHasFreeItem(cartItems) && isEmpty(userAddresses);
-
     const hasCurrentDomain =
       domain &&
       cartItems.some(
@@ -135,6 +132,12 @@ const AddressDomainForm = props => {
           item.domain === domain.toLowerCase() &&
           item.id !== (currentCartItem && currentCartItem.id),
       );
+
+    const isFree =
+      (!isCustomDomain &&
+        !cartHasFreeItem(cartItems) &&
+        isEmpty(userAddresses)) ||
+      (currentCartItem && !currentCartItem.costFio);
 
     const showPrice = ({ isAddressPrice, isDomainPrice }) => {
       const {
