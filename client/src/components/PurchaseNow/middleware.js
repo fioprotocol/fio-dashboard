@@ -76,7 +76,7 @@ export const register = async ({ fioName, fee, cartItemId }) => {
  * @param items[].domain
  * @param items[].costFio
  * @param items[].costUsdc
- * @param items[].isCustomDomain
+ * @param items[].hasCustomDomain
  * @param keys
  * @param fees
  * @param fees.address
@@ -141,7 +141,7 @@ export const executeRegistration = async (
  * @param cartItems[].domain
  * @param cartItems[].costFio
  * @param cartItems[].costUsdc
- * @param cartItems[].isCustomDomain
+ * @param cartItems[].hasCustomDomain
  * @param fees
  * @param fees.address
  * @param fees.domain
@@ -150,7 +150,7 @@ export const executeRegistration = async (
 const makeRegistrationOrder = (cartItems, fees) => {
   const registrations = [];
   for (const cartItem of cartItems.sort(item =>
-    item.isCustomDomain ? -1 : 1,
+    item.hasCustomDomain ? -1 : 1,
   )) {
     const registration = {
       cartItemId: cartItem.id,
@@ -173,7 +173,7 @@ const makeRegistrationOrder = (cartItems, fees) => {
       registration.depended = { domain: cartItem.domain };
     }
 
-    if (cartItem.isCustomDomain) {
+    if (cartItem.hasCustomDomain) {
       registrations.push({
         cartItemId: cartItem.id,
         fioName: cartItem.domain,

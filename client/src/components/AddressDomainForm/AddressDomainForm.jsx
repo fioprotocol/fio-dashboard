@@ -115,8 +115,7 @@ const AddressDomainForm = props => {
       );
 
     const isFree =
-      (!hasCustomDomain &&
-        !cartHasFreeItem(cartItems)) ||
+      (!hasCustomDomain && !cartHasFreeItem(cartItems)) ||
       (currentCartItem && !currentCartItem.costFio);
 
     const showPrice = ({ isAddressPrice, isDomainPrice }) => {
