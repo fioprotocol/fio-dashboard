@@ -50,6 +50,10 @@ export const confirmPin = ({ username, pin }) => ({
     return { keys };
   },
 });
+export const RESET_PIN_CONFIRM = `${prefix}/RESET_PIN_CONFIRM`;
+export const resetPinConfirm = () => ({
+  type: RESET_PIN_CONFIRM,
+});
 
 export const SET_ACCOUNT = `${prefix}/SET_ACCOUNT`;
 

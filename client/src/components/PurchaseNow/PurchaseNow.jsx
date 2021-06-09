@@ -19,6 +19,7 @@ export const PurchaseNow = props => {
     captchaResolving,
     onFinish,
     setProcessing,
+    resetPinConfirm,
     isRetry,
     fioWallets,
     prices,
@@ -59,6 +60,7 @@ export const PurchaseNow = props => {
   useEffect(async () => {
     const { keys, error } = pinConfirmation;
 
+    if (keys && Object.keys(keys).length) resetPinConfirm();
     if (keys && keys[currentWallet.id] && (isWaiting || !error)) {
       setProcessing(true);
       const results = await executeRegistration(
