@@ -26,6 +26,7 @@ const AddressDomainForm = props => {
     prices,
     cartItems,
     recalculate,
+    hasFreeAddress,
   } = props;
 
   const isAddress = type === ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS;
@@ -94,9 +95,10 @@ const AddressDomainForm = props => {
   const renderItems = formProps => {
     const { values: { address, domain } = {} } = formProps || {};
 
-    const currentCartItem = cartItems.find(
-      item => address && item.address === address && item.domain === domain,
-    );
+    const currentCartItem = cartItems.find(item => {
+      if (!address) return item.domain === domain;
+      return item.address === address && item.domain === domain;
+    });
 
     const hasCustomDomain =
       (!isHomepage &&
@@ -115,7 +117,10 @@ const AddressDomainForm = props => {
       );
 
     const isFree =
-      (!hasCustomDomain && !cartHasFreeItem(cartItems)) ||
+      (!hasCustomDomain &&
+        !cartHasFreeItem(cartItems) &&
+        !hasFreeAddress &&
+        domains.find(item => item.domain === domain && item.free)) ||
       (currentCartItem && !currentCartItem.costFio);
 
     const showPrice = ({ isAddressPrice, isDomainPrice }) => {

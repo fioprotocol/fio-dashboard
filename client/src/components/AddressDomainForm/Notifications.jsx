@@ -60,7 +60,6 @@ const Notifications = props => {
     cartItems.some(
       item => !item.address && item.domain === domainName.toLowerCase(),
     );
-
   const hasErrors = !isEmpty(errors);
   let costUsdc;
   let costFio;
@@ -71,7 +70,7 @@ const Notifications = props => {
       ? parseFloat(fioAddressPrice)
       : parseFloat(fioDomainPrice);
   }
-  if (hasCustomDomain || hasOnlyDomain) {
+  if (hasCustomDomain) {
     costUsdc = costUsdc
       ? costUsdc + parseFloat(domainPrice)
       : parseFloat(domainPrice);
@@ -104,6 +103,8 @@ const Notifications = props => {
     if (costFio) data.costFio = costFio;
     if (costUsdc) data.costUsdc = costUsdc;
     if (address && hasOnlyDomain) {
+      data.costFio += parseFloat(fioDomainPrice);
+      data.costUsdc += parseFloat(domainPrice);
       recalculate([
         ...cartItems.filter(item => item.domain !== domainName.toLowerCase()),
         data,
