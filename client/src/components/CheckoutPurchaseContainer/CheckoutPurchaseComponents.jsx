@@ -7,7 +7,7 @@ import CartItem from '../Cart/CartItem';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { totalCost } from '../../utils';
 
-import classes from './Purchase.module.scss';
+import classes from './CheckoutPurchaseContainer.module.scss';
 
 const RenderTotalBadge = ({ fio, usdc, costFree, customTitle, customType }) => (
   <Badge type={customType || BADGE_TYPES.BLACK} show>
@@ -22,7 +22,7 @@ const RenderTotalBadge = ({ fio, usdc, costFree, customTitle, customType }) => (
   </Badge>
 );
 
-export const RenderChekout = props => {
+export const RenderCheckout = props => {
   const { cart, isDesktop, isFree, currentWallet } = props;
   const { costFio, costUsdc, costFree } = totalCost(cart);
 

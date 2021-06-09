@@ -1,15 +1,21 @@
 import React, { useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
-import Purchase from '../../components/Purchase';
+import CheckoutPurchaseContainer from '../../components/CheckoutPurchaseContainer';
+import { RenderPurchase } from '../../components/CheckoutPurchaseContainer/CheckoutPurchaseComponents';
 import { ROUTES } from '../../constants/routes';
+import { transformResult } from '../../utils';
 
 const PurchasePage = props => {
-  const { cartItems, history, isAuthenticated, registrationResult } = props;
-
-  const onClose = () => {
-    history.push(ROUTES.DASHBOARD);
-  };
+  const {
+    history,
+    isAuthenticated,
+    registrationResult,
+    cartItems,
+    prices,
+    recalculate,
+    domains,
+  } = props;
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -17,13 +23,37 @@ const PurchasePage = props => {
     }
   }, [isAuthenticated]);
 
-  const { registered } = registrationResult || {};
+  const { registered, errors } = registrationResult || {};
+
+  const hasErrors = !isEmpty(errors || []);
 
   const title = !isEmpty(registered) ? 'Purchased!' : 'Purchase Error!';
 
+  const { regItems, errItems, updatedCart } = transformResult({
+    result: registrationResult,
+    cart: cartItems,
+    prices,
+    recalculate,
+    domains,
+  });
+
+  useEffect(() => {
+    recalculate(updatedCart);
+  }, []);
+
+  const onClose = () => {
+    history.push(ROUTES.DASHBOARD);
+  };
+
   return (
     <PseudoModalContainer title={title} onClose={onClose}>
-      <Purchase cart={cartItems} isPurchase />
+      <CheckoutPurchaseContainer isPurchase>
+        <RenderPurchase
+          hasErrors={hasErrors}
+          regItems={regItems}
+          errItems={errItems}
+        />
+      </CheckoutPurchaseContainer>
     </PseudoModalContainer>
   );
 };

@@ -1,4 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
+import apis from './api/index';
 const FIO_DAPP_USERNAME_DELIMITER = '_fio.dapp_';
 
 export const FIO_ADDRESS_DELIMITER = '@';
@@ -55,7 +56,7 @@ export const setFreeCart = ({ domains, cartItems }) => {
     item =>
       item.address &&
       item.domain &&
-      domains.some(domain => domain.domain === item.domain),
+      domains.some(domain => domain.domain === item.domain && domain.free),
   );
   if (recalcElem) {
     delete recalcElem.costFio;
@@ -203,3 +204,104 @@ export const totalCost = cart => {
 };
 
 export const isDomain = fioName => fioName.indexOf(FIO_ADDRESS_DELIMITER) < 0;
+
+export const transformResult = ({ result, cart, prices, domains }) => {
+  const errItems = [],
+    regItems = [];
+
+  const { registered, errors, partial } = result;
+
+  const updatedCart = [...cart];
+
+  const {
+    fio: { address: addressCostFio, domain: domainCostFio },
+    usdt: { address: addressCostUsdc, domain: domainCostUsdc },
+  } = prices;
+
+  if (!isEmpty(errors)) {
+    for (const item of errors) {
+      const { fioName, error, isFree, cartItemId } = item;
+
+      const retObj = {
+        id: fioName,
+      };
+
+      if (!isDomain(fioName)) {
+        const name = fioName.split('@');
+        const addressName = name[0];
+        const domainName = name[1];
+
+        retObj['address'] = addressName;
+        retObj['domain'] = domainName;
+        retObj['error'] = error;
+
+        if (isFree) {
+          retObj['isFree'] = isFree;
+        } else {
+          const free = domains.find(item => item.domain === domainName);
+          if (!free) {
+            retObj['costFio'] = addressCostFio + domainCostFio;
+            retObj['costUsdc'] = addressCostUsdc + domainCostUsdc;
+          } else {
+            retObj['costFio'] = addressCostFio;
+            retObj['costUsdc'] = addressCostUsdc;
+          }
+        }
+      } else {
+        retObj['domain'] = fioName;
+        retObj['costFio'] = domainCostFio;
+        retObj['costUsdc'] = domainCostUsdc;
+      }
+
+      errItems.push(retObj);
+      const partialIndex = partial && partial.indexOf(id => id === cartItemId);
+      if (partialIndex > 0) {
+        updatedCart.splice(partialIndex, 1, retObj);
+      }
+    }
+  }
+
+  if (!isEmpty(registered)) {
+    for (const item of registered) {
+      const { fioName, isFree, fee_collected } = item;
+
+      const retObj = {
+        id: fioName,
+      };
+
+      if (!isDomain(fioName)) {
+        const name = fioName.split('@');
+        const addressName = name[0];
+        const domainName = name[1];
+
+        retObj['address'] = addressName;
+        retObj['domain'] = domainName;
+
+        if (isFree) {
+          retObj['isFree'] = isFree;
+        } else {
+          retObj['costFio'] = apis.fio.sufToAmount(fee_collected);
+          retObj['costUsdc'] =
+            (apis.fio.sufToAmount(fee_collected) * addressCostUsdc) /
+            addressCostFio;
+        }
+      } else {
+        retObj['domain'] = fioName;
+        retObj['costFio'] = apis.fio.sufToAmount(fee_collected);
+        retObj['costUsdc'] =
+          (apis.fio.sufToAmount(fee_collected) * domainCostUsdc) /
+          domainCostFio;
+      }
+
+      regItems.push(retObj);
+
+      for (let i = updatedCart.length - 1; i >= 0; i--) {
+        if (updatedCart[i].id === fioName) {
+          updatedCart.splice(i, 1);
+        }
+      }
+    }
+  }
+
+  return { errItems, regItems, updatedCart };
+};

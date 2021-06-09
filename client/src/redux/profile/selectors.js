@@ -16,5 +16,5 @@ export const successfullyRegistered = state =>
 export const isAuthenticated = createSelector(user, user => !!user);
 export const hasFreeAddress = createSelector(
   user,
-  user => !!user.freeAddresses.length,
+  user => user && !!user.freeAddresses.length,
 );

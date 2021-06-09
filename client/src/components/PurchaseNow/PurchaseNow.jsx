@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import classes from '../Purchase/Purchase.module.scss';
+import classes from './PurchaseNow.module.scss';
 import { executeRegistration } from './middleware';
 import { sleep } from '../../utils';
 
@@ -19,7 +19,6 @@ export const PurchaseNow = props => {
     captchaResolving,
     onFinish,
     setProcessing,
-    setRegistration,
     isRetry,
     fioWallets,
     prices,
@@ -52,9 +51,7 @@ export const PurchaseNow = props => {
         break;
       }
     }
-
     setWaiting(false);
-    setRegistration(results);
     waitFn(onFinish, results);
   };
 
@@ -98,7 +95,6 @@ export const PurchaseNow = props => {
   }, [captchaResult]);
 
   const purchase = () => {
-    setRegistration({});
     setWaiting(true);
     for (const item of cartItems) {
       if (item.costFio) {

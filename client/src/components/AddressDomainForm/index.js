@@ -15,6 +15,7 @@ import { getPrices, getDomains } from '../../redux/registrations/actions';
 import { cartItems } from '../../redux/cart/selectors';
 import { fioDomains } from '../../redux/fio/selectors';
 import { addItem, deleteItem, recalculate } from '../../redux/cart/actions';
+import { hasFreeAddress } from '../../redux/profile/selectors';
 
 import { compose } from '../../utils';
 
@@ -34,6 +35,7 @@ const reduxConnect = connect(
       const { isHomepage, formNameGet } = ownProps;
       return !isHomepage ? getFormState(state, formNameGet) : {};
     },
+    hasFreeAddress,
   }),
   {
     getPrices,

@@ -3,10 +3,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 import { showPinModal } from '../../redux/modal/actions';
-import {
-  checkCaptcha,
-  setRegistration,
-} from '../../redux/registrations/actions';
+import { checkCaptcha } from '../../redux/registrations/actions';
 import { loadProfile } from '../../redux/profile/actions';
 import { confirmingPin, pinConfirmation } from '../../redux/edge/selectors';
 import { cartItems, paymentWalletId } from '../../redux/cart/selectors';
@@ -34,7 +31,6 @@ const actions = {
   loadProfile,
   showPinModal,
   checkCaptcha,
-  setRegistration,
 };
 
 const reduxConnect = connect(selector, actions);
