@@ -37,6 +37,7 @@ export default class Fio {
   };
 
   availCheck = fioName => {
+    this.setBaseUrl();
     return this.publicFioSDK.isAvailable(fioName);
   };
 
@@ -59,6 +60,19 @@ export default class Fio {
     try {
       const { balance } = await this.publicFioSDK.getFioBalance(publicKey);
       return FIOSDK.SUFToAmount(balance);
+    } catch (e) {
+      console.error(e);
+    }
+
+    return 0;
+  };
+
+  getFioNames = async publicKey => {
+    this.setBaseUrl();
+    try {
+      const res = await this.publicFioSDK.getFioNames(publicKey);
+      console.log('===getFioNames', res);
+      return res;
     } catch (e) {
       console.error(e);
     }
