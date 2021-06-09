@@ -22,7 +22,7 @@ const RenderTotalBadge = ({ fio, usdc, costFree, customTitle, customType }) => (
   </Badge>
 );
 
-export const RenderChekout = props => {
+export const RenderCheckout = props => {
   const { cart, isDesktop, isFree, currentWallet } = props;
   const { costFio, costUsdc, costFree } = totalCost(cart);
 

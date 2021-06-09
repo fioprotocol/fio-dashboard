@@ -59,7 +59,7 @@ export const PurchaseNow = props => {
   useEffect(async () => {
     const { keys, error } = pinConfirmation;
 
-    if (keys && keys[currentWallet.id] && isWaiting) {
+    if (keys && keys[currentWallet.id] && (isWaiting || !error)) {
       setProcessing(true);
       const results = await executeRegistration(
         cartItems,

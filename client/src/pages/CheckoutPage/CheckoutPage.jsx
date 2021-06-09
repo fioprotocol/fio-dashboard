@@ -4,7 +4,7 @@ import PseudoModalContainer from '../../components/PseudoModalContainer';
 import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
 import CheckoutPurchaseContainer from '../../components/CheckoutPurchaseContainer';
-import { RenderChekout } from '../../components/CheckoutPurchaseContainer/CheckoutPurchaseComponents';
+import { RenderCheckout } from '../../components/CheckoutPurchaseContainer/CheckoutPurchaseComponents';
 import '../../helpers/gt-sdk';
 import { ROUTES } from '../../constants/routes';
 import { totalCost } from '../../utils';
@@ -70,7 +70,7 @@ const CheckoutPage = props => {
   return (
     <PseudoModalContainer title="Make Purchase" onClose={onClose}>
       <CheckoutPurchaseContainer isCheckout>
-        <RenderChekout
+        <RenderCheckout
           cart={cartItems}
           isDesktop={isDesktop}
           isFree={isFree}
