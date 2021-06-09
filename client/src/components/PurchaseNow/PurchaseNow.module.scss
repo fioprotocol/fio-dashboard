@@ -1,0 +1,12 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+
+.button {
+  display: block;
+  margin: 2.5rem auto 0;
+  width: 100%;
+  max-width: 335px;
+  border-radius: 7px;
+  height: 54px;
+  @include sf-pro-display-medium;
+}
