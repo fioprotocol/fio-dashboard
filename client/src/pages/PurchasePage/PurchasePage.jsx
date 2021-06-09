@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import Purchase from '../../components/Purchase';
 import { ROUTES } from '../../constants/routes';
@@ -16,12 +17,9 @@ const PurchasePage = props => {
     }
   }, [isAuthenticated]);
 
-  const { registered, errors } = registrationResult || {};
+  const { registered } = registrationResult || {};
 
-  const title =
-    errors && errors.length > 0 && registered && registered.length === 0
-      ? 'Purchase Error!'
-      : 'Purchased!';
+  const title = !isEmpty(registered) ? 'Purchased!' : 'Purchase Error!';
 
   return (
     <PseudoModalContainer title={title} onClose={onClose}>

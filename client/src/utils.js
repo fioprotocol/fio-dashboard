@@ -55,7 +55,7 @@ export const setFreeCart = ({ domains, cartItems }) => {
     item =>
       item.address &&
       item.domain &&
-      domains.some(domain => domain.domain === item.domain && domain.free),
+      domains.some(domain => domain.domain === item.domain),
   );
   if (recalcElem) {
     delete recalcElem.costFio;
@@ -147,11 +147,11 @@ export const deleteCartItem = ({
   const data = recalculateCart({ domains, cartItems, id }) || id;
   deleteItem(data);
 
-  const { domain, isCustomDomain } =
+  const { domain, hasCustomDomain } =
     cartItems.find(item => item.id === id) || {};
   const updCart = cartItems.filter(item => item.id !== id);
 
-  if (isCustomDomain) {
+  if (hasCustomDomain) {
     const hasCurrentDomain =
       domain && updCart.some(item => item.domain === domain.toLowerCase());
     if (hasCurrentDomain) {
@@ -168,7 +168,7 @@ export const deleteCartItem = ({
           ...firstMatchElem,
           costFio: parseFloat(fioAddressPrice) + parseFloat(fioDomainPrice),
           costUsdc: parseFloat(addressPrice) + parseFloat(domainPrice),
-          isCustomDomain: true,
+          hasCustomDomain: true,
         };
         const retData = updCart.map(item =>
           item.id === firstMatchElem.id ? retObj : item,

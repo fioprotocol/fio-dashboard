@@ -100,6 +100,8 @@ export const RenderPurchase = props => {
     totalSubtitle = 'Purchase Details';
   }
 
+  const allErrored = isEmpty(regItems) && !isEmpty(errItems);
+
   return (
     <>
       {!isEmpty(regItems) && (
@@ -125,11 +127,20 @@ export const RenderPurchase = props => {
                   icon="exclamation-circle"
                   className={classes.icon}
                 />
-                <p className={classes.text}>
-                  <span className="boldText">Incomplete Purchase!</span> - Your
-                  purchase was not completed in full. Please see below what
-                  failed to be completed.
-                </p>
+                {allErrored ? (
+                  <p className={classes.text}>
+                    <span className="boldText">Purchase failed!</span> - Your
+                    purchase has failed due to an error. Your funds remain in
+                    your account and your registrations did not complete. Please
+                    try again later.
+                  </p>
+                ) : (
+                  <p className={classes.text}>
+                    <span className="boldText">Incomplete Purchase!</span> -
+                    Your purchase was not completed in full. Please see below
+                    what failed to be completed.
+                  </p>
+                )}
               </div>
             </div>
           </Badge>
@@ -141,13 +152,15 @@ export const RenderPurchase = props => {
             {errItems.map(item => (
               <CartItem item={item} key={item.id} />
             ))}
-            <RenderTotalBadge
-              fio={errCostFio}
-              usdc={errCostUsdc}
-              costFree={errFree}
-              customTitle={customTitle}
-              customType={customType}
-            />
+            {!errFree && !allErrored && (
+              <RenderTotalBadge
+                fio={errCostFio}
+                usdc={errCostUsdc}
+                costFree={errFree}
+                customTitle={customTitle}
+                customType={customType}
+              />
+            )}
           </div>
         </>
       )}
