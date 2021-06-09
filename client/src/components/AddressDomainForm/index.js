@@ -10,8 +10,10 @@ import {
 import { getFormState } from '../../redux/forms/selectors';
 import { updateFormState } from '../../redux/forms/actions';
 import { refreshFioWallets } from '../../redux/edge/actions';
+import { refreshFioNames } from '../../redux/fio/actions';
 import { getPrices, getDomains } from '../../redux/registrations/actions';
 import { cartItems } from '../../redux/cart/selectors';
+import { fioDomains } from '../../redux/fio/selectors';
 import { addItem, deleteItem, recalculate } from '../../redux/cart/actions';
 
 import { compose } from '../../utils';
@@ -27,6 +29,7 @@ const reduxConnect = connect(
     cartItems,
     domains,
     fioWallets,
+    fioDomains,
     formState: (state, ownProps) => {
       const { isHomepage, formNameGet } = ownProps;
       return !isHomepage ? getFormState(state, formNameGet) : {};
@@ -36,6 +39,7 @@ const reduxConnect = connect(
     getPrices,
     getDomains,
     refreshFioWallets,
+    refreshFioNames,
     updateFormState,
     addItem,
     deleteItem,

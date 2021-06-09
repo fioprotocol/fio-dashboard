@@ -2,6 +2,12 @@ import apis from '../../api/index';
 import { toString } from '../../redux/notify/sagas';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
+const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 2000;
+const wait = () =>
+  new Promise(resolve =>
+    setTimeout(resolve, TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION),
+  );
+
 /**
  *
  * @param registration
@@ -84,15 +90,19 @@ export const executeRegistration = async (
   fees,
   verifyParams = {},
 ) => {
-  const result = { errors: [], registered: [] };
+  const result = { errors: [], registered: [], partial: [] };
   const registrations = makeRegistrationOrder([...items], fees);
   const registrationPromises = [];
   const dependedRegistrationPromises = [];
 
   if (keys.private) apis.fio.setWalletFioSdk(keys);
   try {
+    let hasDepended = false;
     for (const registration of registrations) {
-      if (registration.depended) continue;
+      if (registration.depended) {
+        hasDepended = true;
+        continue;
+      }
       registrationPromises.push(
         makeRegistrationPromise(registration, keys, verifyParams),
       );
@@ -103,6 +113,7 @@ export const executeRegistration = async (
 
     // todo: could be improved to handle inherit dependencies
     // depended registrations
+    if (hasDepended) await wait();
     for (const registration of registrations) {
       if (!registration.depended) continue;
       dependedRegistrationPromises.push(
@@ -202,17 +213,55 @@ const makeRegistrationPromise = (registration, keys, verifyParams) => {
 
 /**
  *
- * @param responses[]
- * @param result
- * @param result.errors
- * @param result.registered
+ * @param {Array<Object>} responses
+ * @param {Object} result
+ * @param {Array<Object>} result.errors
+ * @param {Array<Object>} result.registered
+ * @param {Array<string>} result.partial
  */
 const handleResponses = (responses, result) => {
   for (const response of responses) {
+    const responseValue = response.value;
+    const existingCartItemErrorIndex = result.errors.findIndex(
+      item => item.cartItemId === responseValue.cartItemId,
+    );
+    const existingCartItemRegisteredIndex = result.registered.findIndex(
+      item => item.cartItemId === responseValue.cartItemId,
+    );
     if (response.status === 'rejected' || response.value.error) {
+      if (existingCartItemErrorIndex > -1) {
+        result.errors[existingCartItemErrorIndex] = {
+          ...result.errors[existingCartItemErrorIndex],
+          ...response.value,
+        };
+        continue;
+      }
+      if (existingCartItemRegisteredIndex > -1) {
+        result.partial.push(response.value.cartItemId);
+      }
       result.errors.push(response.value);
     } else {
+      if (existingCartItemRegisteredIndex > -1) {
+        result.registered[existingCartItemRegisteredIndex] = {
+          ...result.registered[existingCartItemRegisteredIndex],
+          ...response.value,
+          fee_collected: combineFee(
+            result.registered[existingCartItemRegisteredIndex],
+            response.value,
+          ),
+        };
+        continue;
+      }
+      if (existingCartItemErrorIndex > -1) {
+        result.partial.push(response.value.cartItemId);
+      }
       result.registered.push(response.value);
     }
   }
+};
+
+const combineFee = (registered1, registered2) => {
+  if (!registered1.fee_collected) return null;
+
+  return registered1.fee_collected + registered2.fee_collected;
 };

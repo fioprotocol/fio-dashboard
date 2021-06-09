@@ -6,7 +6,6 @@ import { SCREEN_TYPE } from '../../constants/screen';
 import Notifications from './Notifications';
 import FormContainer from './FormContainer';
 import debounce from 'lodash/debounce';
-import isEmpty from 'lodash/isEmpty';
 import { setDataMutator, cartHasFreeItem } from '../../utils';
 
 import { addressValidation, domainValidation } from './validation';
@@ -20,7 +19,9 @@ const AddressDomainForm = props => {
     getPrices,
     getDomains,
     fioWallets,
+    fioDomains,
     refreshFioWallets,
+    refreshFioNames,
     account,
     prices,
     cartItems,
@@ -32,33 +33,16 @@ const AddressDomainForm = props => {
 
   const [showCustomDomain, toggleShowCustomDomain] = useState(false);
   const [showAvailable, toggleShowAvailable] = useState(false);
-  const [userDomains, setUserDomains] = useState([]);
-  const [userAddresses, setUserAddresses] = useState([]);
   const [formErrors, changeFormErrors] = useState({});
   const [isValidating, toggleValidating] = useState(false);
 
   const options = [
     ...domains.map(({ domain }) => domain),
-    ...userDomains.map(({ name }) => name),
+    ...fioDomains.map(({ name }) => name),
   ];
 
   const { screenType } = currentScreenType();
   const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
-
-  const setUserAddressesAndDomains = async () => {
-    if (fioWallets) {
-      const userDomains = [];
-      const userAddresses = [];
-      for (const fioWallet of fioWallets) {
-        const domains = await fioWallet.otherMethods.getFioDomains();
-        const addresses = await fioWallet.otherMethods.getFioAddresses();
-        if (domains.length) userDomains.push(domains);
-        if (addresses.length) userAddresses.push(addresses);
-      }
-      setUserDomains(userDomains);
-      setUserAddresses(userAddresses);
-    }
-  };
 
   useEffect(() => {
     getPrices();
@@ -66,15 +50,12 @@ const AddressDomainForm = props => {
     if (account) {
       refreshFioWallets(account);
     }
-    setUserAddressesAndDomains();
-    return () => {
-      setUserDomains([]);
-      setUserAddresses([]);
-    };
   }, []);
 
   useEffect(() => {
-    setUserAddressesAndDomains();
+    for (const fioWallet of fioWallets) {
+      refreshFioNames(fioWallet.publicWalletInfo.keys.publicKey);
+    }
   }, [fioWallets]);
 
   const validationProps = {
@@ -135,8 +116,7 @@ const AddressDomainForm = props => {
 
     const isFree =
       (!hasCustomDomain &&
-        !cartHasFreeItem(cartItems) &&
-        isEmpty(userAddresses)) ||
+        !cartHasFreeItem(cartItems)) ||
       (currentCartItem && !currentCartItem.costFio);
 
     const showPrice = ({ isAddressPrice, isDomainPrice }) => {
