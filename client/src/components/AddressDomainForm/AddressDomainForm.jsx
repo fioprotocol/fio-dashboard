@@ -6,7 +6,6 @@ import { SCREEN_TYPE } from '../../constants/screen';
 import Notifications from './Notifications';
 import FormContainer from './FormContainer';
 import debounce from 'lodash/debounce';
-import isEmpty from 'lodash/isEmpty';
 import { setDataMutator, cartHasFreeItem } from '../../utils';
 
 import { addressValidation, domainValidation } from './validation';
@@ -20,83 +19,31 @@ const AddressDomainForm = props => {
     getPrices,
     getDomains,
     fioWallets,
+    fioDomains,
     refreshFioWallets,
+    refreshFioNames,
     account,
     prices,
     cartItems,
+    recalculate,
+    hasFreeAddress,
   } = props;
 
   const isAddress = type === ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS;
   const isDomain = type === ADDRESS_DOMAIN_BADGE_TYPE.DOMAIN;
 
-  const [isCustomDomain, toggleCustomDomain] = useState(false);
+  const [showCustomDomain, toggleShowCustomDomain] = useState(false);
   const [showAvailable, toggleShowAvailable] = useState(false);
-  const [userDomains, setUserDomains] = useState([]);
-  const [userAddresses, setUserAddresses] = useState([]);
   const [formErrors, changeFormErrors] = useState({});
   const [isValidating, toggleValidating] = useState(false);
 
-  const isFree =
-    !isCustomDomain && !cartHasFreeItem(cartItems) && isEmpty(userAddresses);
-
-  const { domain } = formState;
   const options = [
     ...domains.map(({ domain }) => domain),
-    ...userDomains.map(({ name }) => name),
+    ...fioDomains.map(({ name }) => name),
   ];
 
   const { screenType } = currentScreenType();
   const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
-  const showPrice = ({ isAddressPrice, isDomainPrice }) => {
-    const {
-      usdt: { address: usdcAddressPrice, domain: usdcDomainPrice },
-      fio: { address: fioAddressPrice, domain: fioDomainPrice },
-    } = prices;
-
-    const price =
-      isFree && !isCustomDomain
-        ? 'FREE'
-        : `${
-            isAddressPrice
-              ? fioAddressPrice.toFixed(2)
-              : isDomainPrice
-              ? fioDomainPrice.toFixed(2)
-              : 'no price'
-          } FIO (${
-            isAddressPrice
-              ? usdcAddressPrice.toFixed(2)
-              : isDomainPrice
-              ? usdcDomainPrice.toFixed(2)
-              : 'no price'
-          } USDC)`;
-
-    const cost = isDesktop ? 'Cost: ' : '';
-    return cost + price;
-  };
-
-  const setUserAddressesAndDomains = async () => {
-    if (fioWallets) {
-      const userDomains = [];
-      const userAddresses = [];
-      for (const fioWallet of fioWallets) {
-        const domains = await fioWallet.otherMethods.getFioDomains();
-        const addresses = await fioWallet.otherMethods.getFioAddresses();
-        if (domains.length) userDomains.push(domains);
-        if (addresses.length) userAddresses.push(addresses);
-      }
-      setUserDomains(userDomains);
-      setUserAddresses(userAddresses);
-    }
-  };
-
-  useEffect(() => {
-    if (
-      (!isHomepage && domain && options.every(option => option !== domain)) ||
-      isDomain
-    ) {
-      toggleCustomDomain(true);
-    }
-  }, []);
 
   useEffect(() => {
     getPrices();
@@ -104,15 +51,12 @@ const AddressDomainForm = props => {
     if (account) {
       refreshFioWallets(account);
     }
-    setUserAddressesAndDomains();
-    return () => {
-      setUserDomains([]);
-      setUserAddresses([]);
-    };
   }, []);
 
   useEffect(() => {
-    setUserAddressesAndDomains();
+    for (const fioWallet of fioWallets) {
+      refreshFioNames(fioWallet.publicWalletInfo.keys.publicKey);
+    }
   }, [fioWallets]);
 
   const validationProps = {
@@ -122,6 +66,7 @@ const AddressDomainForm = props => {
     isAddress,
     toggleValidating,
     cartItems,
+    recalculate,
   };
 
   const handleSubmit = (values, form) => {
@@ -148,14 +93,73 @@ const AddressDomainForm = props => {
   const debouncedHandleChange = debounce(handleChange, 500);
 
   const renderItems = formProps => {
+    const { values: { address, domain } = {} } = formProps || {};
+
+    const currentCartItem = cartItems.find(item => {
+      if (!address) return item.domain === domain;
+      return item.address === address && item.domain === domain;
+    });
+
+    const hasCustomDomain =
+      (!isHomepage &&
+        domain &&
+        options.every(option => option !== domain) &&
+        cartItems.every(item => item.domain !== domain)) ||
+      isDomain ||
+      (currentCartItem && currentCartItem.hasCustomDomain);
+
+    const hasCurrentDomain =
+      domain &&
+      cartItems.some(
+        item =>
+          item.domain === domain.toLowerCase() &&
+          item.id !== (currentCartItem && currentCartItem.id),
+      );
+
+    const isFree =
+      (!hasCustomDomain &&
+        !cartHasFreeItem(cartItems) &&
+        !hasFreeAddress &&
+        domains.find(item => item.domain === domain && item.free)) ||
+      (currentCartItem && !currentCartItem.costFio);
+
+    const showPrice = ({ isAddressPrice, isDomainPrice }) => {
+      const {
+        usdt: { address: usdcAddressPrice, domain: usdcDomainPrice },
+        fio: { address: fioAddressPrice, domain: fioDomainPrice },
+      } = prices;
+
+      const price = isFree
+        ? 'FREE'
+        : `${
+            isAddressPrice
+              ? fioAddressPrice.toFixed(2)
+              : isDomainPrice
+              ? fioDomainPrice.toFixed(2)
+              : 'no price'
+          } FIO (${
+            isAddressPrice
+              ? usdcAddressPrice.toFixed(2)
+              : isDomainPrice
+              ? usdcDomainPrice.toFixed(2)
+              : 'no price'
+          } USDC)`;
+
+      const cost = isDesktop ? 'Cost: ' : '';
+      return isDomainPrice && !hasCustomDomain && hasCurrentDomain
+        ? null
+        : cost + price;
+    };
+
     return [
       <FormContainer
         formProps={formProps}
         {...props}
         options={options}
         isAddress={isAddress}
-        isCustomDomain={isCustomDomain}
-        toggleCustomDomain={toggleCustomDomain}
+        hasCustomDomain={hasCustomDomain}
+        showCustomDomain={showCustomDomain}
+        toggleShowCustomDomain={toggleShowCustomDomain}
         domain={domain}
         key="form"
         showPrice={showPrice}
@@ -171,7 +175,9 @@ const AddressDomainForm = props => {
           formProps={formProps}
           formErrors={formErrors}
           {...props}
-          isCustomDomain={isCustomDomain}
+          hasCustomDomain={hasCustomDomain}
+          showCustomDomain={showCustomDomain}
+          currentCartItem={currentCartItem}
           showAvailable={showAvailable}
           toggleShowAvailable={toggleShowAvailable}
           isAddress={isAddress}

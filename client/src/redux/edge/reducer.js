@@ -133,6 +133,7 @@ export default combineReducers({
   },
   pinConfirmation(state = {}, action) {
     switch (action.type) {
+      case actions.RESET_PIN_CONFIRM:
       case actions.CONFIRM_PIN_REQUEST: {
         return {};
       }

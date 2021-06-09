@@ -1,7 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'react-bootstrap';
-import { ROUTES } from '../../constants/routes';
 import colors from '../../assets/styles/colorsToJs.module.scss';
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 
@@ -9,10 +8,16 @@ import { totalCost } from '../../utils';
 import classes from './Cart.module.scss';
 
 const CartAmount = props => {
-  const { cartItems, history, hasLowBalance, isFree, paymentWalletId } = props;
+  const {
+    cartItems,
+    hasLowBalance,
+    isFree,
+    paymentWalletId,
+    recalculateBalance,
+  } = props;
 
   const handleCheckout = () => {
-    history.push(ROUTES.CHECKOUT);
+    recalculateBalance();
   };
 
   const { costFio, costUsdc } = totalCost(cartItems);

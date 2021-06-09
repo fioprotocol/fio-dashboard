@@ -13,3 +13,17 @@ export const refreshBalance = publicKey => ({
   promise: api => api.fio.getBalance(publicKey),
   publicKey,
 });
+
+export const REFRESH_FIO_NAMES_REQUEST = `${prefix}/REFRESH_FIO_NAMES_REQUEST`;
+export const REFRESH_FIO_NAMES_SUCCESS = `${prefix}/REFRESH_FIO_NAMES_SUCCESS`;
+export const REFRESH_FIO_NAMES_FAILURE = `${prefix}/REFRESH_FIO_NAMES_FAILURE`;
+
+export const refreshFioNames = publicKey => ({
+  types: [
+    REFRESH_FIO_NAMES_REQUEST,
+    REFRESH_FIO_NAMES_SUCCESS,
+    REFRESH_FIO_NAMES_FAILURE,
+  ],
+  promise: api => api.fio.getFioNames(publicKey),
+  publicKey,
+});

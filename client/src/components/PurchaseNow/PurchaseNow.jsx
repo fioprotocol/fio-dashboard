@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import classes from '../Purchase/Purchase.module.scss';
+import classes from './PurchaseNow.module.scss';
 import { executeRegistration } from './middleware';
 import { sleep } from '../../utils';
 
@@ -19,9 +19,10 @@ export const PurchaseNow = props => {
     captchaResolving,
     onFinish,
     setProcessing,
-    setRegistration,
+    resetPinConfirm,
     isRetry,
     fioWallets,
+    prices,
   } = props;
 
   const [isWaiting, setWaiting] = useState(false);
@@ -51,23 +52,24 @@ export const PurchaseNow = props => {
         break;
       }
     }
-
     setWaiting(false);
-    setRegistration(results);
     waitFn(onFinish, results);
   };
 
   // registration
   useEffect(async () => {
     const { keys, error } = pinConfirmation;
-    if (keys && keys[currentWallet.id] && isWaiting) {
+
+    if (keys && Object.keys(keys).length) resetPinConfirm();
+    if (keys && keys[currentWallet.id] && (isWaiting || !error)) {
       setProcessing(true);
       const results = await executeRegistration(
         cartItems,
         keys[currentWallet.id],
+        prices.fioNative,
         { pin: keys[currentWallet.id].public }, // todo: change to other verification method
       );
-      
+
       onProcessingEnd(results);
     }
 
@@ -84,6 +86,7 @@ export const PurchaseNow = props => {
         {
           public: currentWallet.publicKey,
         },
+        prices.fioNative,
         verifyParams,
       );
 
@@ -94,7 +97,6 @@ export const PurchaseNow = props => {
   }, [captchaResult]);
 
   const purchase = () => {
-    setRegistration({});
     setWaiting(true);
     for (const item of cartItems) {
       if (item.costFio) {

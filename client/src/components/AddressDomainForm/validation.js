@@ -53,18 +53,33 @@ const verifyAddress = async props => {
 };
 
 export const addressValidation = async props => {
-  const { formProps, toggleShowAvailable, changeFormErrors, cartItems } = props;
+  const { formProps, toggleShowAvailable, changeFormErrors } = props;
   const { mutators, getState } = formProps;
-  const { values, modified } = getState();
+  const { values, modified, submitting } = getState();
 
   const errors = {};
   const { address, domain } = values || {};
 
-  if (!address || !modified.domain) return;
-  // todo: show this error separately only on search icon click
-  // {
-  //   errors.address = 'Address Field Should Be Filled';
-  // }
+  if ((!address || !domain || !modified.domain) && !submitting) {
+    changeFormErrors(errors);
+    mutators.setDataMutator('address', {
+      error: errors.address,
+      valid: !errors.address,
+    });
+    mutators.setDataMutator('domain', {
+      error: errors.domain,
+      valid: !errors.domain,
+    });
+    return;
+  }
+
+  if (!address) {
+    errors.address = 'Address Field Should Be Filled';
+  }
+
+  if (!domain && !modified.domain) {
+    errors.domain = 'Domain Field Should Be Filled';
+  }
 
   if (address && !ADDRESS_REGEXP.test(address)) {
     errors.address =
@@ -85,17 +100,6 @@ export const addressValidation = async props => {
   if (address && domain && address.length + domain.length > 63) {
     errors.address = 'Address should be less than 63 characters';
   }
-  if (
-    address &&
-    domain &&
-    cartItems.some(
-      item =>
-        item.address === address.toLowerCase() &&
-        item.domain === domain.toLowerCase(),
-    )
-  ) {
-    errors.address = 'This address is on a cart';
-  }
 
   if (!isEmpty(errors)) {
     toggleShowAvailable(false);
@@ -115,16 +119,23 @@ export const addressValidation = async props => {
 };
 
 export const domainValidation = props => {
-  const { formProps, toggleShowAvailable, changeFormErrors, cartItems } = props;
+  const {
+    formProps,
+    toggleShowAvailable,
+    changeFormErrors,
+    cartItems,
+    options,
+  } = props;
   const errors = {};
   const { mutators, getState } = formProps;
   const { domain } = getState().values || {};
 
-  if (!domain) return;
+  if (!domain) return changeFormErrors(errors);
   // todo: show this error separately only on search icon click
   // {
   //   errors.domain = 'Domain Field Should Be Filled';
   // }
+
   if (!ADDRESS_REGEXP.test(domain)) {
     errors.domain =
       'Domain name only allows letters, numbers and dash in the middle';
@@ -134,11 +145,13 @@ export const domainValidation = props => {
   }
   if (
     domain &&
-    cartItems.some(
-      item => !item.address && item.domain === domain.toLowerCase(),
-    )
+    options.every(item => item !== domain) &&
+    cartItems.some(item => item.domain === domain.toLowerCase())
   ) {
-    errors.domain = 'This domain is on a cart';
+    errors.domain = {};
+    errors.domain.message = 'This domain has already been added to your cart';
+
+    errors.domain.showInfoError = true;
   }
 
   if (!isEmpty(errors)) {

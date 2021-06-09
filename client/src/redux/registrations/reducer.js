@@ -3,6 +3,7 @@ import * as actions from './actions';
 
 const PRICES_DEFAULT = {
   fio: { address: 0, domain: 0 },
+  fioNative: { address: 0, domain: 0 },
   usdt: { address: 0, domain: 0 },
 };
 export default combineReducers({

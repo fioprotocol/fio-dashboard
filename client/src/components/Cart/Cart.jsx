@@ -5,13 +5,14 @@ import { Form, Field } from 'react-final-form';
 import classNames from 'classnames';
 import { Button } from 'react-bootstrap';
 import isEmpty from 'lodash/isEmpty';
+import classnames from 'classnames';
 
 import CounterContainer from '../CounterContainer/CounterContainer';
 import CartItem from './CartItem';
 import WalletDropdown from './WalletDropdown';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { ROUTES } from '../../constants/routes';
-import { recalculateCart } from '../../utils';
+import { deleteCartItem } from '../../utils';
 
 import classes from './Cart.module.scss';
 
@@ -26,6 +27,9 @@ const Cart = props => {
     walletCount,
     totalCartAmount,
     selectedWallet,
+    prices,
+    recalculate,
+    isPriceChanged,
   } = props;
   const count = cartItems.length;
   const isCartEmpty = count === 0;
@@ -36,12 +40,34 @@ const Cart = props => {
     0;
 
   const handleDeleteItem = id => {
-    const data = recalculateCart({ domains, cartItems, id }) || id;
-    deleteItem(data);
+    deleteCartItem({
+      id,
+      prices,
+      deleteItem,
+      cartItems,
+      recalculate,
+      domains,
+    });
   };
 
   return (
     <>
+      {isPriceChanged && (
+        <div className={classes.badgeContainer}>
+          <Badge show type={BADGE_TYPES.ERROR}>
+            <div className={classnames(classes.infoBadge, classes.priceBadge)}>
+              <FontAwesomeIcon
+                icon="exclamation-circle"
+                className={classes.infoIcon}
+              />
+              <p className={classes.infoText}>
+                <span className="boldText">Pricing update</span> - Your price
+                has been updated due to pricing changes.
+              </p>
+            </div>
+          </Badge>
+        </div>
+      )}
       <div className={classes.container}>
         <div className={classes.header}>
           <CounterContainer isEmpty={isCartEmpty}>{count}</CounterContainer>
@@ -109,8 +135,8 @@ const Cart = props => {
               <p className={classes.text}>
                 <span className="boldText">Low Balance!</span> - There are not
                 enough FIO tokens in this FIO Wallet to complete the purchase.
-                Needed: {(totalCartAmount - walletBalance).toFixed(2)} FIO,
-                available in wallet: {walletBalance} FIO. Please add FIO tokens.
+                Needed: {totalCartAmount.toFixed(2)} FIO, available in wallet:{' '}
+                {walletBalance} FIO. Please add FIO tokens.
               </p>
             </div>
             <Button
