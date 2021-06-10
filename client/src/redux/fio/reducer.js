@@ -24,12 +24,18 @@ export default combineReducers({
   fioWallets(state = [], action) {
     switch (action.type) {
       case REFRESH_FIO_WALLETS_SUCCESS: {
-        return action.data.map(fioWallet => ({
-          ...emptyWallet,
-          id: fioWallet.id,
-          publicKey: fioWallet.publicWalletInfo.keys.publicKey,
-          name: fioWallet.name,
-        }));
+        const fioWallets = [...state];
+
+        for (const fioWallet of action.data) {
+          if (fioWallets.find(item => item.id === fioWallet.id)) continue;
+          fioWallets.push({
+            ...emptyWallet,
+            id: fioWallet.id,
+            publicKey: fioWallet.publicWalletInfo.keys.publicKey,
+            name: fioWallet.name,
+          });
+        }
+        return fioWallets;
       }
       case actions.REFRESH_BALANCE_SUCCESS: {
         return state.map(fioWallet =>

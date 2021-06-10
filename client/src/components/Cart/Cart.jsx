@@ -77,20 +77,6 @@ const Cart = props => {
           cartItems.map(item => (
             <div key={item.id}>
               <CartItem item={item} onDelete={handleDeleteItem} />
-              {item.showBadge && (
-                <Badge show type={BADGE_TYPES.INFO}>
-                  <div className={classes.infoBadge}>
-                    <FontAwesomeIcon
-                      icon="exclamation-circle"
-                      className={classes.infoIcon}
-                    />
-                    <p className={classes.infoText}>
-                      <span className="boldText">Address Cost</span> - Your
-                      account already has a free address associated with it.
-                    </p>
-                  </div>
-                </Badge>
-              )}
             </div>
           ))}
         <Link to={ROUTES.FIO_ADDRESSES} className={classes.cta}>

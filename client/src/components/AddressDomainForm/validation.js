@@ -56,11 +56,10 @@ export const addressValidation = async props => {
   const { formProps, toggleShowAvailable, changeFormErrors } = props;
   const { mutators, getState } = formProps;
   const { values, modified, submitting } = getState();
-
   const errors = {};
   const { address, domain } = values || {};
 
-  if ((!address || !domain || !modified.domain) && !submitting) {
+  if ((!address || !domain) && !submitting) {
     changeFormErrors(errors);
     mutators.setDataMutator('address', {
       error: errors.address,

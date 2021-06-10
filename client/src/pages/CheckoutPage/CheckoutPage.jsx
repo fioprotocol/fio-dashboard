@@ -7,7 +7,7 @@ import CheckoutPurchaseContainer from '../../components/CheckoutPurchaseContaine
 import { RenderCheckout } from '../../components/CheckoutPurchaseContainer/CheckoutPurchaseComponents';
 import '../../helpers/gt-sdk';
 import { ROUTES } from '../../constants/routes';
-import { totalCost } from '../../utils';
+import { totalCost, handleFreeAddressCart } from '../../utils';
 
 const CheckoutPage = props => {
   const {
@@ -17,15 +17,17 @@ const CheckoutPage = props => {
     history,
     paymentWalletId,
     isAuthenticated,
-    getPrices,
     setWallet,
+    domains,
+    hasFreeAddress,
+    recalculate,
+    prices,
   } = props;
 
   const { screenType } = currentScreenType();
   const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
 
   useEffect(() => {
-    getPrices();
     if (!isEmpty(fioWallets)) {
       for (const fioWallet of fioWallets) {
         if (fioWallet.publicKey) {
@@ -44,9 +46,7 @@ const CheckoutPage = props => {
     fioWallets.find(item => item.id === paymentWalletId);
 
   const isFree =
-    !isEmpty(cartItems) &&
-    cartItems.length === 1 &&
-    cartItems.every(item => !item.costFio && !item.costUsdc);
+    !isEmpty(cartItems) && cartItems.length === 1 && !hasFreeAddress;
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -62,6 +62,17 @@ const CheckoutPage = props => {
       history.push(ROUTES.CART);
     }
   }, [isAuthenticated, fioWallets]);
+
+  useEffect(async () => {
+    await handleFreeAddressCart({
+      domains,
+      fioWallets,
+      recalculate,
+      cartItems,
+      prices,
+      hasFreeAddress,
+    });
+  }, [domains, fioWallets, hasFreeAddress, prices]);
 
   const onClose = () => {
     history.push(ROUTES.CART);
