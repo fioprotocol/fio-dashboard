@@ -104,11 +104,11 @@ const CartPage = props => {
     });
   }, [isAuthenticated, domains, fioWallets, hasFreeAddress]);
 
-  useEffect(async () => {
+  useEffect(() => {
     if (!isEmpty(userWallets)) {
       for (const fioWallet of userWallets) {
         if (fioWallet.publicKey) {
-          await refreshBalance(fioWallet.publicKey);
+          refreshBalance(fioWallet.publicKey);
         }
       }
       if (walletCount === 1) {
