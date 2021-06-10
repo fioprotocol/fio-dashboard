@@ -1,5 +1,5 @@
 {
-  "name": "fio-dapp",
+  "name": "fio-dashboard",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
@@ -9,16 +9,35 @@
     "client:test": "cd ./client && CI=true react-app-rewired test --env=jsdom",
     "client:analyze": "cd ./client && source-map-explorer build/static/js/main.*",
     "server:dev": "npm run migrate && nodemon -L --inspect --experimental-modules --watch server server/src/index.mjs",
-    "lint": "eslint ./server/src ./client/src --ext js,jsx,mjs",
+    "lint": "eslint ./server/src --ext js,jsx,mjs",
     "lint:fix": "eslint ./server/src ./client/src --ext js,jsx,mjs --fix",
     "server:prod": "npm run migrate && node --experimental-modules server/src/index.mjs",
     "migrate": "sequelize db:migrate",
+    "tslint": "npx concurrently \"npm run tslint:client\"",
+    "tslint:client": "tslint -c client/tslint.json client/src/**/*.{ts,tsx} --format verbose",
+    "tslint:fix": "npx concurrently \"npm run tslint:client -- --fix\"",
     "test:api": "cross-env TEST_MODE=0 LOG_LEVEL=error babel-node --extensions .js,.mjs node_modules/.bin/_mocha --exit --timeout 60000 --reporter spec --ui qunit server/tests/api/*",
     "test": "npm run lint && npm run test:create.db && npm run test:api",
     "test:create.db": "node --experimental-modules server/tests/createDB.mjs"
   },
   "license": "ISC",
   "devDependencies": {
+    "@types/bluebird": "^3.5.29",
+    "@types/history": "^4.7.5",
+    "@types/jest": "^25.1.3",
+    "@types/json-pointer": "^1.0.30",
+    "@types/jsonpath": "^0.2.0",
+    "@types/jsonwebtoken": "^8.3.7",
+    "@types/node": "^13.7.4",
+    "@types/react": "^16.9.21",
+    "@types/react-dom": "^16.9.5",
+    "@types/react-redux": "^7.1.7",
+    "@types/react-router": "^5.1.4",
+    "@types/react-router-dom": "^5.1.3",
+    "@types/redux-saga": "^0.10.5",
+    "@types/sequelize": "^4.28.8",
+    "@types/superagent": "^4.1.7",
+    "@types/validator": "^12.0.1",
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.1",
@@ -40,7 +59,14 @@
     "react-app-rewired": "^2.0.2",
     "react-scripts": "2.1.3",
     "source-map-explorer": "^1.6.0",
-    "supertest": "^3.0.0"
+    "supertest": "^3.0.0",
+    "tsc-watch": "^4.1.0",
+    "tslint": "^6.0.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "tslint-plugin-prettier": "^2.1.0",
+    "tslint-react": "^4.2.0",
+    "typescript": "^3.8.2"
   },
   "dependencies": {
     "@fioprotocol/fiosdk": "^1.2.1",
@@ -102,6 +128,9 @@
     "superagent": "^3.8.2"
   },
   "proxy": "http://localhost:9000",
+  "resolutions": {
+    "@types/react": "16.7.18"
+  },
   "browserslist": [
     ">0.2%",
     "not dead",
@@ -109,6 +138,7 @@
     "not op_mini all"
   ],
   "pre-commit": [
-    "test"
+    "lint",
+    "tslint"
   ]
 }
