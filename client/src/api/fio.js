@@ -74,7 +74,9 @@ export default class Fio {
   getFioNames = async publicKey => {
     this.setBaseUrl();
     try {
-      return this.publicFioSDK.getFioNames(publicKey);
+      // do not return method to handle errors here
+      const res = await this.publicFioSDK.getFioNames(publicKey);
+      return res;
     } catch (e) {
       this.logError(e);
     }
