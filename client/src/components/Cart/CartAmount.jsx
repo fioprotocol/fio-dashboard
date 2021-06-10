@@ -37,7 +37,9 @@ const CartAmount = props => {
       <Button
         className={classes.checkout}
         onClick={handleCheckout}
-        disabled={hasLowBalance || paymentWalletId === ''}
+        disabled={
+          hasLowBalance || paymentWalletId === '' || cartItems.length === 0
+        }
       >
         <FontAwesomeIcon icon="wallet" className={classes.icon} />
         <p>{isFree ? 'Complete Transaction' : 'Pay with FIO'}</p>
