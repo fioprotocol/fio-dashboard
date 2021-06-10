@@ -28,6 +28,10 @@ export default class Fio {
 
   clearWalletFioSdk = () => (this.walletFioSDK = null);
 
+  logError = e => {
+    if (e.errorCode !== 404) console.error(e);
+  };
+
   extractError = json => {
     if (!json) return '';
 
@@ -61,7 +65,7 @@ export default class Fio {
       const { balance } = await this.publicFioSDK.getFioBalance(publicKey);
       return FIOSDK.SUFToAmount(balance);
     } catch (e) {
-      console.error(e);
+      this.logError(e);
     }
 
     return 0;
@@ -70,13 +74,13 @@ export default class Fio {
   getFioNames = async publicKey => {
     this.setBaseUrl();
     try {
+      // do not return method to handle errors here
       const res = await this.publicFioSDK.getFioNames(publicKey);
-      console.log('===getFioNames', res);
       return res;
     } catch (e) {
-      console.error(e);
+      this.logError(e);
     }
 
-    return 0;
+    return { fio_addresses: [], fio_domains: [] };
   };
 }
