@@ -22,6 +22,7 @@ const CartPage = props => {
     lastLocation,
     refreshBalance,
     isAuthenticated,
+    hasFreeAddress,
   } = props;
 
   const [isPriceChanged, handlePriceChange] = useState(false);
@@ -99,8 +100,9 @@ const CartPage = props => {
       recalculate,
       cartItems,
       prices,
+      hasFreeAddress,
     });
-  }, [isAuthenticated, domains, fioWallets]);
+  }, [isAuthenticated, domains, fioWallets, hasFreeAddress]);
 
   useEffect(async () => {
     if (!isEmpty(userWallets)) {

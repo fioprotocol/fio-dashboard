@@ -7,6 +7,7 @@ import { cartItems, paymentWalletId } from '../../redux/cart/selectors';
 import { deleteItem, recalculate, setWallet } from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
 
+import { hasFreeAddress } from '../../redux/profile/selectors';
 import { domains, prices } from '../../redux/registrations/selectors';
 import {
   account,
@@ -27,6 +28,7 @@ const reduxConnect = connect(
     userWallets,
     paymentWalletId,
     isAuthenticated,
+    hasFreeAddress,
   }),
   {
     deleteItem,
