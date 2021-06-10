@@ -47,7 +47,10 @@ const CheckoutPage = props => {
     fioWallets.find(item => item.id === paymentWalletId);
 
   const isFree =
-    !isEmpty(cartItems) && cartItems.length === 1 && !hasFreeAddress;
+    !isEmpty(cartItems) &&
+    cartItems.length === 1 &&
+    !hasFreeAddress &&
+    cartItems.every(item => !item.hasCustomDomain);
 
   useEffect(() => {
     if (!isAuthenticated) {
