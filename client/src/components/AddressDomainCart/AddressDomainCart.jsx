@@ -56,7 +56,7 @@ const AddressDomainCart = props => {
       prices,
       hasFreeAddress,
     });
-  }, [isAuthenticated, domains, fioWallets, hasFreeAddress]);
+  }, [domains, fioWallets, hasFreeAddress]);
 
   return (
     <CartSmallContainer bgColor={colors['aqua-haze']}>
