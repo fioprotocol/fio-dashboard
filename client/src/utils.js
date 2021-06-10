@@ -120,15 +120,11 @@ export const handleFreeAddressCart = async ({
   recalculate,
   cartItems,
   prices,
+  hasFreeAddress,
 }) => {
   if (fioWallets) {
-    const userAddresses = [];
-    for (const fioWallet of fioWallets) {
-      const addresses = await fioWallet.otherMethods.getFioAddresses();
-      if (addresses.length) userAddresses.push(addresses);
-    }
     let retCart = [];
-    if (userAddresses.length > 0) {
+    if (hasFreeAddress) {
       retCart = removeFreeCart({ cartItems, prices });
     } else if (!cartHasFreeItem(cartItems)) {
       retCart = setFreeCart({ domains, cartItems });

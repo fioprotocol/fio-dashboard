@@ -15,19 +15,20 @@ const AddressDomainCart = props => {
   const {
     cartItems,
     deleteItem,
-    account,
     domains,
     history,
     showLoginModal,
     fioWallets,
     prices,
     recalculate,
+    hasFreeAddress,
+    isAuthenticated,
   } = props;
   const count = cartItems.length;
   const isCartEmpty = count === 0;
 
   const handleCheckout = () => {
-    if (!account) {
+    if (!isAuthenticated) {
       showLoginModal(ROUTES.CART);
       return;
     }
@@ -53,8 +54,9 @@ const AddressDomainCart = props => {
       recalculate,
       cartItems,
       prices,
+      hasFreeAddress,
     });
-  }, [account, domains, fioWallets]);
+  }, [isAuthenticated, domains, fioWallets, hasFreeAddress]);
 
   return (
     <CartSmallContainer bgColor={colors['aqua-haze']}>
