@@ -51,12 +51,15 @@ export const setDataMutator = (args, state) => {
   }
 };
 
+export const domainFromList = ({ domains, domain }) =>
+  domains.find(item => item.domain === domain) || {};
+
 export const setFreeCart = ({ domains, cartItems }) => {
   const recalcElem = cartItems.find(
     item =>
       item.address &&
       item.domain &&
-      domains.some(domain => domain.domain === item.domain && domain.free),
+      domainFromList({ domains, domain: item.domain }).free,
   );
   if (recalcElem) {
     delete recalcElem.costFio;
@@ -234,8 +237,7 @@ export const transformResult = ({ result, cart, prices, domains }) => {
         if (isFree) {
           retObj['isFree'] = isFree;
         } else {
-          const free = domains.find(item => item.domain === domainName);
-          if (!free) {
+          if (isEmpty(domainFromList({ domains, domain: domainName }))) {
             retObj['costFio'] = addressCostFio + domainCostFio;
             retObj['costUsdc'] = addressCostUsdc + domainCostUsdc;
           } else {
