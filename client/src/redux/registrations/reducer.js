@@ -25,8 +25,6 @@ export default combineReducers({
     switch (action.type) {
       case actions.PRICES_SUCCESS:
         return action.data.pricing;
-      case actions.PRICES_REQUEST:
-        return PRICES_DEFAULT;
       default:
         return state;
     }
@@ -35,8 +33,6 @@ export default combineReducers({
     switch (action.type) {
       case actions.DOMAINS_SUCCESS:
         return action.data.domains;
-      case actions.DOMAINS_REQUEST:
-        return [];
       default:
         return state;
     }
