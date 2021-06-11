@@ -54,12 +54,9 @@ export const setDataMutator = (args, state) => {
 export const domainFromList = ({ domains, domain }) =>
   domains.find(item => item.domain === domain) || {};
 
-export const setFreeCart = ({ domains, cartItems }) => {
+export const setFreeCart = ({ cartItems }) => {
   const recalcElem = cartItems.find(
-    item =>
-      item.address &&
-      item.domain &&
-      item.allowFree,
+    item => item.address && item.domain && item.allowFree,
   );
   if (recalcElem) {
     delete recalcElem.costFio;
@@ -204,7 +201,7 @@ export const totalCost = cart => {
 
 export const isDomain = fioName => fioName.indexOf(FIO_ADDRESS_DELIMITER) < 0;
 
-export const transformResult = ({ result, cart, prices, domains }) => {
+export const transformResult = ({ result, cart, prices }) => {
   const errItems = [],
     regItems = [];
 
@@ -225,6 +222,7 @@ export const transformResult = ({ result, cart, prices, domains }) => {
         id: fioName,
       };
 
+      const partialIndex = partial && partial.indexOf(id => id === cartItemId);
       if (!isDomain(fioName)) {
         const name = fioName.split('@');
         const addressName = name[0];
@@ -234,15 +232,11 @@ export const transformResult = ({ result, cart, prices, domains }) => {
         retObj['domain'] = domainName;
         retObj['error'] = error;
 
-        const partialIndex = partial && partial.indexOf(id => id === cartItemId);
-
         if (isFree) {
           retObj['isFree'] = isFree;
         } else {
           if (
-            cart.find(
-              (item) => item.id === cartItemId && item.hasCustomDomain
-            ) &&
+            cart.find(item => item.id === cartItemId && item.hasCustomDomain) &&
             partialIndex < 0
           ) {
             retObj['costFio'] = addressCostFio + domainCostFio;
