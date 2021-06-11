@@ -47,13 +47,18 @@ const CheckoutPage = props => {
     fioWallets.find(item => item.id === paymentWalletId);
 
   const isFree =
-    !isEmpty(cartItems) && cartItems.length === 1 && !hasFreeAddress;
+    !isEmpty(cartItems) &&
+    cartItems.length === 1 &&
+    !hasFreeAddress &&
+    cartItems[0].allowFree;
 
   useEffect(() => {
     if (!isAuthenticated) {
       history.push(ROUTES.FIO_ADDRESSES);
     }
+  }, [isAuthenticated]);
 
+  useEffect(() => {
     if (
       !loading &&
       !isEmpty(fioWallets) &&
@@ -64,7 +69,7 @@ const CheckoutPage = props => {
     ) {
       history.push(ROUTES.CART);
     }
-  }, [isAuthenticated, fioWallets]);
+  }, [fioWallets]);
 
   useEffect(async () => {
     await handleFreeAddressCart({
