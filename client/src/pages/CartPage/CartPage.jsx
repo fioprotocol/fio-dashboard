@@ -123,7 +123,9 @@ const CartPage = props => {
     userWallets.find(item => item.id === paymentWalletId);
 
   const hasLowBalance =
-    !isEmpty(currentWallet) && currentWallet.balance < totalCartAmount;
+    !isEmpty(currentWallet) &&
+    currentWallet.balance !== null &&
+    currentWallet.balance < totalCartAmount;
 
   const additionalProps = {
     hasLowBalance,

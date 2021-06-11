@@ -11,6 +11,7 @@ import { totalCost, handleFreeAddressCart } from '../../utils';
 
 const CheckoutPage = props => {
   const {
+    loading,
     fioWallets,
     refreshBalance,
     cartItems,
@@ -54,9 +55,11 @@ const CheckoutPage = props => {
     }
 
     if (
+      !loading &&
       !isEmpty(fioWallets) &&
       !isFree &&
       currentWallet &&
+      currentWallet.balance !== null &&
       currentWallet.balance < totalCost(cartItems).costFio
     ) {
       history.push(ROUTES.CART);
