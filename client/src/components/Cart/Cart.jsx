@@ -36,7 +36,8 @@ const Cart = props => {
 
   const walletBalance =
     (!isEmpty(selectedWallet) &&
-      +parseFloat(selectedWallet.balance).toFixed(2)) ||
+      selectedWallet.balance !==
+        null + parseFloat(selectedWallet.balance).toFixed(2)) ||
     0;
 
   const handleDeleteItem = id => {

@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 
 import { compose } from '../../utils';
 import { refreshBalance } from '../../redux/fio/actions';
-import { fioWallets } from '../../redux/fio/selectors';
+import { fioWallets, loading } from '../../redux/fio/selectors';
 import { cartItems, paymentWalletId } from '../../redux/cart/selectors';
 import { isAuthenticated } from '../../redux/edge/selectors';
 import { setRegistration } from '../../redux/registrations/actions';
@@ -17,6 +17,7 @@ import CheckoutPage from './CheckoutPage';
 
 const reduxConnect = connect(
   createStructuredSelector({
+    loading,
     fioWallets,
     cartItems,
     paymentWalletId,
