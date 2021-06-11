@@ -51,12 +51,15 @@ export const setDataMutator = (args, state) => {
   }
 };
 
+export const domainFromList = ({ domains, domain }) =>
+  domains.find(item => item.domain === domain) || {};
+
 export const setFreeCart = ({ domains, cartItems }) => {
   const recalcElem = cartItems.find(
     item =>
       item.address &&
       item.domain &&
-      domains.some(domain => domain.domain === item.domain && domain.free),
+      item.allowFree,
   );
   if (recalcElem) {
     delete recalcElem.costFio;
@@ -231,11 +234,17 @@ export const transformResult = ({ result, cart, prices, domains }) => {
         retObj['domain'] = domainName;
         retObj['error'] = error;
 
+        const partialIndex = partial && partial.indexOf(id => id === cartItemId);
+
         if (isFree) {
           retObj['isFree'] = isFree;
         } else {
-          const free = domains.find(item => item.domain === domainName);
-          if (!free) {
+          if (
+            cart.find(
+              (item) => item.id === cartItemId && item.hasCustomDomain
+            ) &&
+            partialIndex < 0
+          ) {
             retObj['costFio'] = addressCostFio + domainCostFio;
             retObj['costUsdc'] = addressCostUsdc + domainCostUsdc;
           } else {
@@ -250,7 +259,6 @@ export const transformResult = ({ result, cart, prices, domains }) => {
       }
 
       errItems.push(retObj);
-      const partialIndex = partial && partial.indexOf(id => id === cartItemId);
       if (partialIndex > 0) {
         updatedCart.splice(partialIndex, 1, retObj);
       }

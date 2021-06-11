@@ -6,7 +6,7 @@ import { SCREEN_TYPE } from '../../constants/screen';
 import Notifications from './Notifications';
 import FormContainer from './FormContainer';
 import debounce from 'lodash/debounce';
-import { setDataMutator, cartHasFreeItem } from '../../utils';
+import { setDataMutator, cartHasFreeItem, domainFromList } from '../../utils';
 
 import { addressValidation, domainValidation } from './validation';
 
@@ -120,7 +120,7 @@ const AddressDomainForm = props => {
       (!hasCustomDomain &&
         !cartHasFreeItem(cartItems) &&
         !hasFreeAddress &&
-        domains.find(item => item.domain === domain && item.free)) ||
+        domainFromList({ domains, domain }).free) ||
       (currentCartItem && !currentCartItem.costFio);
 
     const showPrice = ({ isAddressPrice, isDomainPrice }) => {

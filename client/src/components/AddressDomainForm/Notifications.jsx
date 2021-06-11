@@ -7,7 +7,7 @@ import isEmpty from 'lodash/isEmpty';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../AddressDomainBadge/AddressDomainBadge';
 import InfoBadge from '../InfoBadge/InfoBadge';
-import { deleteCartItem } from '../../utils';
+import { deleteCartItem, domainFromList } from '../../utils';
 
 import classes from './AddressDomainForm.module.scss';
 
@@ -96,6 +96,7 @@ const Notifications = props => {
       costFio: costFio,
       costUsdc: costUsdc,
       id,
+      allowFree: domainFromList({ domains, domain: domainName }).free,
     };
 
     if ((address && hasCustomDomain) || hasOnlyDomain)
