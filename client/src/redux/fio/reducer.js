@@ -6,7 +6,7 @@ const emptyWallet = {
   id: '',
   name: '',
   publicKey: '',
-  balance: 0,
+  balance: null,
 };
 
 export default combineReducers({
