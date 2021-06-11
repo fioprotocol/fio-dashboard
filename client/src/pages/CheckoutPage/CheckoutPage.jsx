@@ -50,13 +50,19 @@ const CheckoutPage = props => {
     !isEmpty(cartItems) &&
     cartItems.length === 1 &&
     !hasFreeAddress &&
-    cartItems.every(item => !item.hasCustomDomain);
+    cartItems.every(item => {
+      const { free } =
+        domains.find(domain => domain.domain === item.domain) || {};
+      return free && !item.hasCustomDomain;
+    });
 
   useEffect(() => {
     if (!isAuthenticated) {
       history.push(ROUTES.FIO_ADDRESSES);
     }
+  }, [isAuthenticated]);
 
+  useEffect(() => {
     if (
       !loading &&
       !isEmpty(fioWallets) &&
@@ -67,7 +73,7 @@ const CheckoutPage = props => {
     ) {
       history.push(ROUTES.CART);
     }
-  }, [isAuthenticated, fioWallets]);
+  }, [fioWallets]);
 
   useEffect(async () => {
     await handleFreeAddressCart({
