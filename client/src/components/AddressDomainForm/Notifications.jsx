@@ -91,11 +91,14 @@ const Notifications = props => {
 
     id += domainName;
 
+    const { free } = domains.find(domain => domain.domain === domainName) || {};
+
     const data = {
       ...values,
       costFio: costFio,
       costUsdc: costUsdc,
       id,
+      allowFree: free,
     };
 
     if ((address && hasCustomDomain) || hasOnlyDomain)

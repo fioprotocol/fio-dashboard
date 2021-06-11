@@ -50,11 +50,7 @@ const CheckoutPage = props => {
     !isEmpty(cartItems) &&
     cartItems.length === 1 &&
     !hasFreeAddress &&
-    cartItems.every(item => {
-      const { free } =
-        domains.find(domain => domain.domain === item.domain) || {};
-      return free && !item.hasCustomDomain;
-    });
+    cartItems[0].allowFree;
 
   useEffect(() => {
     if (!isAuthenticated) {
