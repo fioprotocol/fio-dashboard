@@ -29,4 +29,12 @@ export default combineReducers({
         return state;
     }
   },
+  date(state = null, action = {}) {
+    switch (action.type) {
+      case actions.SET_CART_DATE:
+        return action.data;
+      default:
+        return state;
+    }
+  },
 });

@@ -39,3 +39,10 @@ export const setRegistration = results => ({
   type: SET_REGISTRATION_RESULTS,
   data: results,
 });
+
+export const SET_PROCESSING = `${prefix}/SET_PROCESSING`;
+
+export const setProcessing = isProcessing => ({
+  type: SET_PROCESSING,
+  data: isProcessing,
+});

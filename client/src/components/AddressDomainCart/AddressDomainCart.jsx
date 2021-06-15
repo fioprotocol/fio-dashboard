@@ -18,7 +18,6 @@ const AddressDomainCart = props => {
     domains,
     history,
     showLoginModal,
-    fioWallets,
     prices,
     recalculate,
     hasFreeAddress,
@@ -47,16 +46,16 @@ const AddressDomainCart = props => {
     });
   };
 
-  useEffect(async () => {
-    await handleFreeAddressCart({
+  useEffect(() => {
+    if (domains.length === 0 && hasFreeAddress === null) return;
+    handleFreeAddressCart({
       domains,
-      fioWallets,
       recalculate,
       cartItems,
       prices,
       hasFreeAddress,
     });
-  }, [domains, fioWallets, hasFreeAddress]);
+  }, [domains, hasFreeAddress]);
 
   return (
     <CartSmallContainer bgColor={colors['aqua-haze']}>

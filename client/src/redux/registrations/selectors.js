@@ -6,3 +6,4 @@ export const domains = state => state[prefix].domains;
 export const captchaResult = state => state[prefix].captchaResult;
 export const captchaResolving = state => state[prefix].captchaResolving;
 export const registrationResult = state => state[prefix].registrationResult;
+export const isProcessing = state => state[prefix].isProcessing;

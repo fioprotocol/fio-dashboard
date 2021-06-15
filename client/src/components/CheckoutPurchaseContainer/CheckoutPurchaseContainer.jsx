@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from 'react-bootstrap';
 import isEmpty from 'lodash/isEmpty';
 import PurchaseNow from '../PurchaseNow';
@@ -11,12 +11,13 @@ const CheckoutPurchaseContainer = props => {
   const {
     isCheckout,
     isPurchase,
+    isProcessing,
+    setProcessing,
     setRegistration,
     history,
     children,
     registrationResult,
   } = props;
-  const [isProcessing, setProcessing] = useState(false);
 
   const hasErrors = !isEmpty(registrationResult.errors || []);
 
@@ -36,11 +37,7 @@ const CheckoutPurchaseContainer = props => {
     <div className={classes.container}>
       {children}
       {isCheckout || (isPurchase && hasErrors) ? (
-        <PurchaseNow
-          onFinish={onFinish}
-          setProcessing={setProcessing}
-          isRetry={isPurchase && hasErrors}
-        />
+        <PurchaseNow onFinish={onFinish} isRetry={isPurchase && hasErrors} />
       ) : (
         <Button onClick={onClose} className={classes.button}>
           Close
