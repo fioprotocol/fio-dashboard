@@ -4,6 +4,7 @@ export const ADD_ITEM = `${prefix}/ADD_ITEM`;
 export const DELETE_ITEM = `${prefix}/DELETE_ITEM`;
 export const CLEAR_CART = `${prefix}/CLEAR_CART`;
 export const RECALCULATE_CART = `${prefix}/RECALCULATE_CART`;
+export const SET_CART_DATE = `${prefix}/SET_CART_DATE`;
 
 export const addItem = item => ({
   type: ADD_ITEM,
@@ -34,4 +35,9 @@ export const setWallet = walletData => ({
 
 export const unsetWallet = () => ({
   type: UNSET_WALLET_FOR_PAYMENT,
+});
+
+export const setCartDate = date => ({
+  type: SET_CART_DATE,
+  data: date,
 });

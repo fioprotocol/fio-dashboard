@@ -5,6 +5,7 @@ import classes from './Notifications.module.scss';
 const RELOAD_TIME = 3000;
 export const ACTIONS = {
   RECOVERY: 'RECOVERY',
+  CART_TIMEOUT: 'CART_TIMEOUT',
 };
 
 export default class Notifications extends Component {
@@ -51,9 +52,13 @@ export default class Notifications extends Component {
   };
 
   onBadgeClose = () => {
-    const { update } = this.props;
+    const { update, removeManual } = this.props;
     const { last } = this.state;
-    update({ id: last.id, closeDate: new Date() });
+    if (last.id) {
+      update({ id: last.id, closeDate: new Date() });
+    } else {
+      removeManual({ type: last.type, closeDate: new Date() });
+    }
     this.setState({ last: null });
   };
 
@@ -68,9 +73,7 @@ export default class Notifications extends Component {
   };
 
   render() {
-    const { user } = this.props;
     const { last } = this.state;
-    if (!user) return null;
     if (!last) return null;
     if (last.closeDate) return null;
 

@@ -21,6 +21,14 @@ export default combineReducers({
         return state;
     }
   },
+  isProcessing(state = false, action) {
+    switch (action.type) {
+      case actions.SET_PROCESSING:
+        return action.data;
+      default:
+        return state;
+    }
+  },
   prices(state = PRICES_DEFAULT, action) {
     switch (action.type) {
       case actions.PRICES_SUCCESS:

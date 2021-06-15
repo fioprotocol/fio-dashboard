@@ -35,6 +35,8 @@ export default function configureStore(api, history) {
       saveState({
         cart: {
           cartItems: store.getState().cart.cartItems,
+          date: store.getState().cart.date,
+          // date: 1623779664285,
         },
       });
     }, 1000),

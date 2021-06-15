@@ -4,11 +4,7 @@ import { withRouter } from 'react-router-dom';
 
 import { compose } from '../../utils';
 import { cartItems } from '../../redux/cart/selectors';
-import {
-  account,
-  fioWallets,
-  isAuthenticated,
-} from '../../redux/edge/selectors';
+import { account, isAuthenticated } from '../../redux/edge/selectors';
 import { deleteItem, recalculate } from '../../redux/cart/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 import { domains, prices } from '../../redux/registrations/selectors';
@@ -21,7 +17,6 @@ const reduxConnect = connect(
     cartItems,
     account,
     domains,
-    fioWallets,
     prices,
     hasFreeAddress,
     isAuthenticated,

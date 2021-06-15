@@ -114,23 +114,20 @@ export const cartHasFreeItem = cartItems => {
   );
 };
 
-export const handleFreeAddressCart = async ({
+export const handleFreeAddressCart = ({
   domains,
-  fioWallets,
   recalculate,
   cartItems,
   prices,
   hasFreeAddress,
 }) => {
-  if (fioWallets) {
-    let retCart = [];
-    if (hasFreeAddress) {
-      retCart = removeFreeCart({ cartItems, prices });
-    } else if (!cartHasFreeItem(cartItems)) {
-      retCart = setFreeCart({ domains, cartItems });
-    }
-    recalculate(!isEmpty(retCart) ? retCart : cartItems);
+  let retCart = [];
+  if (hasFreeAddress) {
+    retCart = removeFreeCart({ cartItems, prices });
+  } else if (!cartHasFreeItem(cartItems)) {
+    retCart = setFreeCart({ domains, cartItems });
   }
+  recalculate(!isEmpty(retCart) ? retCart : cartItems);
 };
 
 export const deleteCartItem = ({
