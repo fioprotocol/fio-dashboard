@@ -206,10 +206,14 @@ export default class CreateAccountForm extends Component {
         return errors;
       }
       case STEPS.PIN: {
+        const { pin } = values;
+        if (!pin || (pin && pin.length < 6)) return;
         this.setState({ step: STEPS.PIN_CONFIRM });
         break;
       }
       case STEPS.PIN_CONFIRM: {
+        const { confirmPin } = values;
+        if (!confirmPin || (confirmPin && confirmPin.length < 6)) return;
         this.setState({ step: STEPS.CONFIRMATION });
         break;
       }
@@ -245,11 +249,14 @@ export default class CreateAccountForm extends Component {
     const { step } = this.state;
     switch (step) {
       case STEPS.PIN: {
+        this.form.change('pin', '');
         this.setState({ step: STEPS.EMAIL_PASSWORD });
         break;
       }
       case STEPS.PIN_CONFIRM:
       case STEPS.CONFIRMATION: {
+        this.form.change('pin', '');
+        this.form.change('confirmPin', '');
         this.setState({ step: STEPS.PIN });
         break;
       }

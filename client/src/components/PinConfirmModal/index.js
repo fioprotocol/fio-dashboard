@@ -9,7 +9,11 @@ import {
   pinConfirmation,
   username,
 } from '../../redux/edge/selectors';
-import { confirmPin, getCachedUsers } from '../../redux/edge/actions';
+import {
+  confirmPin,
+  getCachedUsers,
+  resetPinConfirm,
+} from '../../redux/edge/actions';
 import { showPinConfirm } from '../../redux/modal/selectors';
 import { closePinConfirmModal as onClose } from '../../redux/modal/actions';
 
@@ -28,6 +32,7 @@ const reduxConnect = connect(
     onSubmit: confirmPin,
     onClose,
     getCachedUsers,
+    resetPinConfirm,
   },
 );
 
