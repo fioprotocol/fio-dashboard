@@ -13,24 +13,27 @@ import FioDomainPage from './pages/FioDomainPage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import PurchasePage from './pages/PurchasePage';
+import ScrollToTop from './components/ScrollToTop';
 
 import { ROUTES } from './constants/routes';
 
 const Routes = () => (
   <MainLayout>
-    <Switch>
-      <Route path={ROUTES.HOME} component={HomePage} exact />
-      <PrivateRoute path={ROUTES.DASHBOARD} component={DashboardPage} exact />
-      <PrivateRoute path={ROUTES.ADMIN} component={AdminContainer} exact />
-      <Route path={ROUTES.CONFIRM_EMAIL} component={ConfirmEmail} />
-      <Route path={ROUTES.FIO_ADDRESSES} component={FioAddressPage} exact />
-      <Route path={ROUTES.FIO_DOMAINS} component={FioDomainPage} exact />
-      <Route path={ROUTES.CART} component={CartPage} exact />
-      <Route path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
-      <Route path={ROUTES.PURCHASE} component={PurchasePage} exact />
+    <ScrollToTop>
+      <Switch>
+        <Route path={ROUTES.HOME} component={HomePage} exact />
+        <PrivateRoute path={ROUTES.DASHBOARD} component={DashboardPage} exact />
+        <PrivateRoute path={ROUTES.ADMIN} component={AdminContainer} exact />
+        <Route path={ROUTES.CONFIRM_EMAIL} component={ConfirmEmail} />
+        <Route path={ROUTES.FIO_ADDRESSES} component={FioAddressPage} exact />
+        <Route path={ROUTES.FIO_DOMAINS} component={FioDomainPage} exact />
+        <Route path={ROUTES.CART} component={CartPage} exact />
+        <Route path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
+        <Route path={ROUTES.PURCHASE} component={PurchasePage} exact />
 
-      <AuthContainer />
-    </Switch>
+        <AuthContainer />
+      </Switch>
+    </ScrollToTop>
   </MainLayout>
 );
 
