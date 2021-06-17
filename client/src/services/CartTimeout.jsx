@@ -61,6 +61,7 @@ const CartTimeout = props => {
 
   const timeIsOut = () => {
     setTime('');
+    clearCartTimeout();
     history.push(ROUTES.FIO_ADDRESSES);
     createNotification({
       action: ACTIONS.CART_TIMEOUT,

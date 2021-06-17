@@ -22,7 +22,7 @@ const selector = createStructuredSelector({
 const actions = dispatch => ({
   update: data => dispatch(updateNotification(data)),
   listNotifications: () => dispatch(listNotifications()),
-  removeManual: () => dispatch(removeManual()),
+  removeManual: data => dispatch(removeManual(data)),
   showRecoveryModal: () => dispatch(showRecoveryModal()),
 });
 

@@ -18,22 +18,22 @@ export default combineReducers({
     switch (action.type) {
       case actions.LIST_SUCCESS:
         return [
-          ...state.filter(notification => !notification.id),
+          ...state.filter(notification => notification.isManual),
           ...action.data,
-        ];
+        ].sort((a, b) =>
+          new Date(a.createdAt).getTime() < new Date(b.createdAt).getTime()
+            ? 1
+            : -1,
+        );
       case actions.UPDATE_SUCCESS:
         return state.map(notification =>
           notification.id === action.id ? action.data : notification,
         );
       case actions.MANUAL_REMOVE:
-        return state.map(notification =>
-          notification.type === action.type
-            ? { ...notification, ...action.data.closeDate }
-            : notification,
-        );
+        return state.filter(notification => notification.id !== action.data.id);
       case actions.MANUAL_CREATE:
       case actions.CREATE_SUCCESS:
-        return action.data ? [...state, action.data] : state;
+        return action.data ? [action.data, ...state] : state;
       case SET_RECOVERY_SUCCESS:
         return [];
       default:
