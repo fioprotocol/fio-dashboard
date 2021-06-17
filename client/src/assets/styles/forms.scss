@@ -38,33 +38,6 @@
     }
   }
 
-  .pincode-input-container {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-
-    .pincode-input-text {
-      height: 25px !important;
-      width: 25px !important;
-      border: 1px solid $violet !important;
-      border-radius: 50%;
-      background: none !important;
-      color: transparent;
-      margin: 0 !important;
-    }
-    .pincode-input-text:focus{
-      outline:none;
-      box-shadow:none;
-    }
-    .pincode-input-text:not([value=""]) {
-      background-color: $violet !important;
-    }
-    .pincode-input-text::selection {
-      color: transparent;
-    }
-  }
-
   .blue-button {
     height: 67px;
     width: 100%;
