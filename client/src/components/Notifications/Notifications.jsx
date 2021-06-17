@@ -54,10 +54,10 @@ export default class Notifications extends Component {
   onBadgeClose = () => {
     const { update, removeManual } = this.props;
     const { last } = this.state;
-    if (last.id) {
-      update({ id: last.id, closeDate: new Date() });
+    if (last.isManual) {
+      removeManual({ id: last.id, closeDate: new Date() });
     } else {
-      removeManual({ type: last.type, closeDate: new Date() });
+      update({ id: last.id, closeDate: new Date() });
     }
     this.setState({ last: null });
   };

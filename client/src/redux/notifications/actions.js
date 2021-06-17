@@ -33,7 +33,12 @@ export const MANUAL_REMOVE = `${prefix}/MANUAL_REMOVE`;
 
 export const addManual = data => ({
   type: MANUAL_CREATE,
-  data,
+  data: {
+    ...data,
+    id: new Date().getTime(),
+    isManual: true,
+    createdAt: new Date(),
+  },
 });
 
 export const removeManual = data => ({
