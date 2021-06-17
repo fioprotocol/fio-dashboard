@@ -8,6 +8,7 @@ import Wizard from './CreateAccountFormWizard';
 import FormModalWrapper from '../FormModalWrapper/FormModalWrapper';
 import { isEmpty } from '../../helpers/verifying';
 import { ROUTES } from '../../constants/routes';
+import { PIN_LENGTH } from '../../constants/form';
 
 import classes from './CreateAccountForm.module.scss';
 import {
@@ -160,7 +161,7 @@ export default class CreateAccountForm extends Component {
     const errors = {};
     if (
       values.confirmPin &&
-      values.confirmPin.length === 6 &&
+      values.confirmPin.length === PIN_LENGTH &&
       values.pin !== values.confirmPin
     ) {
       errors.confirmPin = 'Invalid PIN Entry - Try again or start over';
@@ -207,13 +208,14 @@ export default class CreateAccountForm extends Component {
       }
       case STEPS.PIN: {
         const { pin } = values;
-        if (!pin || (pin && pin.length < 6)) return;
+        if (!pin || (pin && pin.length < PIN_LENGTH)) return;
         this.setState({ step: STEPS.PIN_CONFIRM });
         break;
       }
       case STEPS.PIN_CONFIRM: {
         const { confirmPin } = values;
-        if (!confirmPin || (confirmPin && confirmPin.length < 6)) return;
+        if (!confirmPin || (confirmPin && confirmPin.length < PIN_LENGTH))
+          return;
         this.setState({ step: STEPS.CONFIRMATION });
         break;
       }

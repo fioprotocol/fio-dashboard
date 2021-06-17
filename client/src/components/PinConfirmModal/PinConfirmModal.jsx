@@ -9,6 +9,7 @@ import Input from '../Input/Input';
 import ModalComponent from '../Modal/Modal';
 import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
+import { PIN_LENGTH } from '../../constants/form';
 
 import { setDataMutator } from '../../utils';
 import classes from './PinConfirmModal.module.scss';
@@ -53,6 +54,7 @@ const PinConfirmModal = props => {
 
   const handleSubmit = values => {
     const { pin } = values;
+    if (pin && pin.length !== PIN_LENGTH) return;
     onSubmit({
       username,
       pin,
@@ -110,7 +112,7 @@ const PinConfirmModal = props => {
         {confirmingPin && (
           <FontAwesomeIcon icon="spinner" spin className={classes.icon} />
         )}
-        {!isEmpty(error) && values.pin && values.pin.length === 6 && (
+        {!isEmpty(error) && values.pin && values.pin.length === PIN_LENGTH && (
           <Button className="w-100" onClick={resetForm}>
             Try Again
           </Button>

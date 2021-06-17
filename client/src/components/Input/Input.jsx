@@ -6,6 +6,7 @@ import { useForm } from 'react-final-form';
 
 import TooltipComponent from '../Tooltip/Tooltip';
 import classes from './Input.module.scss';
+import { PIN_LENGTH } from '../../constants/form';
 
 export const INPUT_COLOR_SCHEMA = {
   BLACK_AND_WHITE: 'black_and_white',
@@ -64,8 +65,8 @@ const Input = props => {
   const handlePinChange = (e, currentForm) => {
     if ((name === 'pin' || name === 'confirmPin') && currentForm) {
       const { key } = e;
-      const { getState, change, submit, focus } = currentForm;
-      focus(name);
+      const { getState, change, submit } = currentForm;
+
       const { values, visited } = getState();
       const currentValue = values[name];
       const isActiveField = Object.keys(visited)[0] === name;
@@ -74,10 +75,10 @@ const Input = props => {
         if (/\d/.test(key)) {
           const retValue = (currentValue && currentValue + key) || '';
 
-          if (retValue && retValue.length > 6) return;
+          if (retValue && retValue.length > PIN_LENGTH) return;
 
           change(name, currentValue ? retValue : key);
-          if (currentValue && retValue.length === 6) {
+          if (currentValue && retValue.length === PIN_LENGTH) {
             innerRef.current && innerRef.current.blur();
             return !error && submit();
           }
@@ -206,7 +207,7 @@ const Input = props => {
 
     const renderDots = () => {
       const dots = [];
-      for (let i = 1; i < 7; i++) {
+      for (let i = 1; i < PIN_LENGTH + 1; i++) {
         dots.push(
           <div
             key={i}
@@ -229,7 +230,7 @@ const Input = props => {
         >
           <input
             type="tel"
-            max={6}
+            max={PIN_LENGTH}
             {...props}
             {...input}
             className={classes.pinInput}
