@@ -10,6 +10,7 @@ import PinConfirmModal from '../../components/PinConfirmModal';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
 import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
+import CartTimeout from '../../services/CartTimeout';
 
 import classes from './MainLayout.module.scss';
 
@@ -40,6 +41,7 @@ const MainLayout = props => {
   return (
     <div className={classes.root}>
       <MainHeader />
+      <CartTimeout />
       {account && isDesktop && <Navigation />}
       <Notifications />
       <div className={`${classes.content} ${isHomePage && classes.home}`}>

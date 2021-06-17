@@ -3,7 +3,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 import { showPinModal } from '../../redux/modal/actions';
-import { checkCaptcha } from '../../redux/registrations/actions';
+import { checkCaptcha, setProcessing } from '../../redux/registrations/actions';
 import { loadProfile } from '../../redux/profile/actions';
 import { resetPinConfirm } from '../../redux/edge/actions';
 import { confirmingPin, pinConfirmation } from '../../redux/edge/selectors';
@@ -33,6 +33,7 @@ const actions = {
   showPinModal,
   checkCaptcha,
   resetPinConfirm,
+  setProcessing,
 };
 
 const reduxConnect = connect(selector, actions);

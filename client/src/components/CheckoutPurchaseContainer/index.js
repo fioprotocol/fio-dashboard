@@ -4,18 +4,26 @@ import { withRouter } from 'react-router-dom';
 
 import { compose } from '../../utils';
 
-import { setRegistration } from '../../redux/registrations/actions';
+import {
+  setRegistration,
+  setProcessing,
+} from '../../redux/registrations/actions';
 
-import { registrationResult } from '../../redux/registrations/selectors';
+import {
+  registrationResult,
+  isProcessing,
+} from '../../redux/registrations/selectors';
 
 import CheckoutPurchaseContainer from './CheckoutPurchaseContainer';
 
 const reduxConnect = connect(
   createStructuredSelector({
     registrationResult,
+    isProcessing,
   }),
   {
     setRegistration,
+    setProcessing,
   },
 );
 

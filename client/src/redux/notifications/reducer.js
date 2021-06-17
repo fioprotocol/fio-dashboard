@@ -17,13 +17,23 @@ export default combineReducers({
   list(state = [], action) {
     switch (action.type) {
       case actions.LIST_SUCCESS:
-        return action.data;
+        return [
+          ...state.filter(notification => notification.isManual),
+          ...action.data,
+        ].sort((a, b) =>
+          new Date(a.createdAt).getTime() < new Date(b.createdAt).getTime()
+            ? 1
+            : -1,
+        );
       case actions.UPDATE_SUCCESS:
         return state.map(notification =>
           notification.id === action.id ? action.data : notification,
         );
+      case actions.MANUAL_REMOVE:
+        return state.filter(notification => notification.id !== action.data.id);
+      case actions.MANUAL_CREATE:
       case actions.CREATE_SUCCESS:
-        return action.data ? [...state, action.data] : state;
+        return action.data ? [action.data, ...state] : state;
       case SET_RECOVERY_SUCCESS:
         return [];
       default:

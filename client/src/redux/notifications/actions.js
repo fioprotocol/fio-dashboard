@@ -27,3 +27,21 @@ export const updateNotification = ({ id, closeDate }) => ({
   promise: api => api.notifications.update({ id, closeDate }),
   id,
 });
+
+export const MANUAL_CREATE = `${prefix}/MANUAL_CREATE`;
+export const MANUAL_REMOVE = `${prefix}/MANUAL_REMOVE`;
+
+export const addManual = data => ({
+  type: MANUAL_CREATE,
+  data: {
+    ...data,
+    id: new Date().getTime(),
+    isManual: true,
+    createdAt: new Date(),
+  },
+});
+
+export const removeManual = data => ({
+  type: MANUAL_REMOVE,
+  data,
+});

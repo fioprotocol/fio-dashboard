@@ -6,6 +6,7 @@ import { list } from '../../redux/notifications/selectors';
 import {
   listNotifications,
   updateNotification,
+  removeManual,
 } from '../../redux/notifications/actions';
 import { user } from '../../redux/profile/selectors';
 import { account } from '../../redux/edge/selectors';
@@ -21,6 +22,7 @@ const selector = createStructuredSelector({
 const actions = dispatch => ({
   update: data => dispatch(updateNotification(data)),
   listNotifications: () => dispatch(listNotifications()),
+  removeManual: data => dispatch(removeManual(data)),
   showRecoveryModal: () => dispatch(showRecoveryModal()),
 });
 
