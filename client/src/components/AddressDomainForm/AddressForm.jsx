@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Field, FormSpy } from 'react-final-form';
 import classnames from 'classnames';
 
@@ -22,11 +22,17 @@ const AddressForm = props => {
     onChangeHandleField,
     debouncedOnChangeHandleField,
     isFree,
+    formNameGet,
   } = props;
 
   const updateFormStateCurrent = (form, state) => {
     updateFormState(form, state);
   };
+
+  useEffect(
+    () => () => !isHomepage && updateFormStateCurrent(formNameGet, {}),
+    [],
+  );
 
   return (
     <>
