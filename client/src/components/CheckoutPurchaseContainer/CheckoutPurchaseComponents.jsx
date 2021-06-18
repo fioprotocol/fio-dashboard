@@ -23,7 +23,7 @@ const RenderTotalBadge = ({ fio, usdc, costFree, customTitle, customType }) => (
 );
 
 export const RenderCheckout = props => {
-  const { cart, isDesktop, isFree, currentWallet } = props;
+  const { cart, isDesktop, currentWallet } = props;
   const { costFio, costUsdc, costFree } = totalCost(cart);
 
   const walletBalance = (costFio, costUsdc) => {
@@ -46,12 +46,12 @@ export const RenderCheckout = props => {
       <div className={classes.details}>
         <h6 className={classes.subtitle}>Payment Details</h6>
         <RenderTotalBadge fio={costFio} usdc={costUsdc} costFree={costFree} />
-        {!isDesktop && !isFree && (
+        {!isDesktop && !costFree && (
           <h6 className={classnames(classes.subtitle, classes.paymentTitle)}>
             Paying With
           </h6>
         )}
-        {!isFree && (
+        {!costFree && (
           <Badge type={BADGE_TYPES.WHITE} show>
             <div className={classes.item}>
               {isDesktop && (
