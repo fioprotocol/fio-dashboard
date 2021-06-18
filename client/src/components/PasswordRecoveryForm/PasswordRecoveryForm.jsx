@@ -4,6 +4,7 @@ import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Scrollbar } from 'react-scrollbars-custom';
 import classnames from 'classnames';
+import { ROUTES } from '../../constants/routes';
 
 import { ACTIONS } from '../Notifications/Notifications';
 import { BADGE_TYPES } from '../Badge/Badge';
@@ -46,6 +47,7 @@ const PasswordRecoveryForm = props => {
     props.createNotification({
       action: ACTIONS.RECOVERY,
       type: BADGE_TYPES.ALERT,
+      pagesToShow: [ROUTES.DASHBOARD],
     });
   };
 

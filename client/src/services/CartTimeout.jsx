@@ -60,14 +60,28 @@ const CartTimeout = props => {
   };
 
   const timeIsOut = () => {
+    const { location } = history;
     setTime('');
     clearCartTimeout();
-    history.push(ROUTES.FIO_ADDRESSES);
+    if (
+      [ROUTES.CART, ROUTES.CHECKOUT, ROUTES.PURCHASE].indexOf(
+        location.pathname,
+      ) > -1
+    ) {
+      history.push(ROUTES.FIO_ADDRESSES_SELECTION);
+    }
     createNotification({
       action: ACTIONS.CART_TIMEOUT,
       type: BADGE_TYPES.WARNING,
-      title: 'Your cart was cleared',
-      message: 'Time to purchase was out, so we cleared your cart.',
+      title: 'Cart was emptied',
+      message:
+        'Your session has expired and your cart was emptied. Add your items again.',
+      pagesToShow: [
+        ROUTES.CART,
+        ROUTES.FIO_ADDRESSES_SELECTION,
+        ROUTES.FIO_DOMAINS_SELECTION,
+        ROUTES.DASHBOARD,
+      ],
     });
   };
 

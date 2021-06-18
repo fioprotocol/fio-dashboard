@@ -81,7 +81,7 @@ const FormContainer = props => {
           <DomainForm {...propsToForm} />
         )}
         {isHomepage ? (
-          <Link to={ROUTES.FIO_ADDRESSES} className={classes.link}>
+          <Link to={ROUTES.FIO_ADDRESSES_SELECTION} className={classes.link}>
             <Button variant="primary" className={classes.submit}>
               <FontAwesomeIcon icon="search" />
             </Button>

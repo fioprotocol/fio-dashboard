@@ -13,13 +13,14 @@ export default class NotificationsCreate extends Base {
             action: 'string',
             title: 'string',
             message: 'string',
+            pagesToShow: { list_of: 'string' },
           },
         },
       ],
     };
   }
 
-  async execute({ data: { type, action, title, message } }) {
+  async execute({ data: { type, action, title, message, pagesToShow = null } }) {
     if (action && action === Notification.ACTION.RECOVERY) {
       title = title || 'Password Recovery';
       message =
@@ -41,6 +42,7 @@ export default class NotificationsCreate extends Base {
       title,
       message,
       userId: this.context.id,
+      data: { pagesToShow },
     });
 
     await notification.save();

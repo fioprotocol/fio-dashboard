@@ -1,4 +1,5 @@
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 
 import { showRecoveryModal } from '../../redux/modal/actions';
@@ -26,4 +27,4 @@ const actions = dispatch => ({
   showRecoveryModal: () => dispatch(showRecoveryModal()),
 });
 
-export default connect(selector, actions)(Notifications);
+export default withRouter(connect(selector, actions)(Notifications));
