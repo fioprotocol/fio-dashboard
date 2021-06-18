@@ -19,7 +19,7 @@ const PurchasePage = props => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      history.push(ROUTES.FIO_ADDRESSES);
+      history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
   }, [isAuthenticated]);
 

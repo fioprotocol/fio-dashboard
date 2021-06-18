@@ -106,7 +106,9 @@ const MainHeader = props => {
           className={classnames(classes.navItem, 'text-white')}
           onClick={closeMenu}
           as={Link}
-          to={cartItems.length > 0 ? ROUTES.CART : ROUTES.FIO_ADDRESSES}
+          to={
+            cartItems.length > 0 ? ROUTES.CART : ROUTES.FIO_ADDRESSES_SELECTION
+          }
         >
           <div className={classnames(classes.notifWrapper, classes.cartanim)}>
             <FontAwesomeIcon
@@ -224,7 +226,11 @@ const MainHeader = props => {
             <Nav.Link
               className={classnames(classes.navItem, 'text-white')}
               as={Link}
-              to={cartItems.length > 0 ? ROUTES.CART : ROUTES.FIO_ADDRESSES}
+              to={
+                cartItems.length > 0
+                  ? ROUTES.CART
+                  : ROUTES.FIO_ADDRESSES_SELECTION
+              }
             >
               <div
                 className={classnames(classes.notifWrapper, classes.cartanim)}

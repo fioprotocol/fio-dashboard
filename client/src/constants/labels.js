@@ -6,6 +6,8 @@ export const LINK_LABELS = {
   PROFILE: 'My profile',
   ABOUT_US: 'About Us',
   CONTACT_US: 'Contact Us',
+  FIO_ADDRESSES_SELECTION: 'FIO Addresses Selection',
+  FIO_DOMAINS_SELECTION: 'FIO Domains Selection',
   FIO_ADDRESSES: 'FIO Addresses',
   FIO_DOMAINS: 'FIO Domains',
   FIO_REQUESTS: 'FIO Requests',

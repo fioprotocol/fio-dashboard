@@ -15,7 +15,7 @@ const DomainsBanner = () => {
         opportunities.
       </p>
       <Button variant="primary" className={classes.button}>
-        <Link to={ROUTES.FIO_DOMAINS}>Register a Domain</Link>
+        <Link to={ROUTES.FIO_DOMAINS_SELECTION}>Register a Domain</Link>
       </Button>
     </div>
   );

@@ -80,7 +80,7 @@ const Cart = props => {
               <CartItem item={item} onDelete={handleDeleteItem} />
             </div>
           ))}
-        <Link to={ROUTES.FIO_ADDRESSES} className={classes.cta}>
+        <Link to={ROUTES.FIO_ADDRESSES_SELECTION} className={classes.cta}>
           <div className={classes.ctaIconContainer}>
             <FontAwesomeIcon icon="search" className={classes.ctaIcon} />
           </div>
