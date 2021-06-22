@@ -115,7 +115,7 @@ const Input = props => {
       <div className={classes.inputGroup}>
         {suffix && (
           <div
-            className={classnames(classes.atSign, hasError && classes.error)}
+            className={classnames(classes.suffix, hasError && classes.error)}
           >
             {suffix}
           </div>
@@ -125,7 +125,7 @@ const Input = props => {
             classes.regInput,
             hasError && classes.error,
             isBW && classes.bw,
-            suffix && classes.suffix,
+            suffix && classes.suffixSpace,
           )}
           {...input}
           {...rest}
