@@ -52,6 +52,7 @@ const AddressForm = props => {
           component={Input}
           hideError="true"
           isFree={isFree}
+          lowerCased
           tooltip={
             <>
               <span className="boldText">Address Cost</span>
@@ -75,6 +76,7 @@ const AddressForm = props => {
             placeholder="Custom domain"
             colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
             component={Input}
+            lowerCased
             onClose={() => {
               toggleShowCustomDomain(false);
             }}
