@@ -13,9 +13,10 @@ export const LOGIN_REQUEST = `${prefix}/LOGIN_REQUEST`;
 export const LOGIN_SUCCESS = `${prefix}/LOGIN_SUCCESS`;
 export const LOGIN_FAILURE = `${prefix}/LOGIN_FAILURE`;
 
-export const login = ({ email, password, pin }) => ({
+export const login = ({ email, password, pin }, fioWallets = null) => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
   promise: api => api.auth.login(email, password, pin),
+  fioWallets,
 });
 
 export const SIGNUP_REQUEST = `${prefix}/SIGNUP_REQUEST`;
@@ -26,6 +27,7 @@ export const RESET_SUCCESS_STATE = `${prefix}/RESET_SUCCESS_STATE`;
 export const signup = data => ({
   types: [SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE],
   promise: api => api.auth.signup(data),
+  fioWallets: data.fioWallets,
 });
 
 export const resetSuccessState = () => ({

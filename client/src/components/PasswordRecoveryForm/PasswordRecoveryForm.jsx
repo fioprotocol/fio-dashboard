@@ -4,6 +4,7 @@ import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Scrollbar } from 'react-scrollbars-custom';
 import classnames from 'classnames';
+import apis from '../../api';
 import { ROUTES } from '../../constants/routes';
 
 import { ACTIONS } from '../Notifications/Notifications';
@@ -20,10 +21,10 @@ const PasswordRecoveryForm = props => {
   const {
     show,
     onClose,
-    loading,
+    edgeAuthLoading,
+    edgeUsername,
     questions,
     getRecoveryQuestions,
-    account,
     onSubmit,
   } = props;
 
@@ -192,7 +193,7 @@ const PasswordRecoveryForm = props => {
             <Field
               name="recoveryQuestionOne"
               type="1"
-              disabled={loading}
+              disabled={edgeAuthLoading}
               component={renderQuestionType}
               options={questions}
             />
@@ -201,14 +202,14 @@ const PasswordRecoveryForm = props => {
                 name="recoveryAnswerOne"
                 type="text"
                 placeholder="Answer"
-                disabled={loading}
+                disabled={edgeAuthLoading}
                 component={Input}
               />
             )}
             <Field
               name="recoveryQuestionTwo"
               type="2"
-              disabled={loading}
+              disabled={edgeAuthLoading}
               component={renderQuestionType}
               options={questions}
             />
@@ -217,7 +218,7 @@ const PasswordRecoveryForm = props => {
                 name="recoveryAnswerTwo"
                 type="text"
                 placeholder="Answer"
-                disabled={loading}
+                disabled={edgeAuthLoading}
                 component={Input}
               />
             )}
@@ -226,9 +227,9 @@ const PasswordRecoveryForm = props => {
               variant="primary"
               className="w-100"
               onClick={handleSubmit}
-              disabled={loading || !valid}
+              disabled={edgeAuthLoading || !valid}
             >
-              {loading || submitting ? (
+              {edgeAuthLoading || submitting ? (
                 <FontAwesomeIcon icon="spinner" spin />
               ) : (
                 'NEXT'
@@ -277,6 +278,8 @@ const PasswordRecoveryForm = props => {
           } = values;
 
           try {
+            // todo: get account from login (pin/password)
+            const account = apis.edge.loginPIN(edgeUsername, values.pin);
             const token = await account.changeRecovery(
               [recoveryQuestionOne.question, recoveryQuestionTwo.question],
               [recoveryAnswerOne, recoveryAnswerTwo],

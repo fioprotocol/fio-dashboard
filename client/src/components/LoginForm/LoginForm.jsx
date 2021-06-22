@@ -20,7 +20,7 @@ const LoginForm = props => {
   const {
     show,
     onSubmit,
-    loading,
+    edgeAuthLoading,
     onClose,
     getCachedUsers,
     loginFailure,
@@ -115,7 +115,7 @@ const LoginForm = props => {
           name="email"
           type="text"
           placeholder="Enter Your Email Address"
-          disabled={loading}
+          disabled={edgeAuthLoading}
           component={Input}
         />
         <OnChange name="email">{handleChange}</OnChange>
@@ -124,7 +124,7 @@ const LoginForm = props => {
           type="password"
           placeholder="Enter Your Password"
           component={Input}
-          disabled={loading}
+          disabled={edgeAuthLoading}
         />
         <OnChange name="password">{handleChange}</OnChange>
         <Button
@@ -132,9 +132,13 @@ const LoginForm = props => {
           variant="primary"
           className="w-100"
           onClick={handleSubmit}
-          disabled={loading}
+          disabled={edgeAuthLoading}
         >
-          {loading ? <FontAwesomeIcon icon="spinner" spin /> : 'Sign In'}
+          {edgeAuthLoading ? (
+            <FontAwesomeIcon icon="spinner" spin />
+          ) : (
+            'Sign In'
+          )}
         </Button>
         <Link className="regular-text" to="" onClick={onForgotPassHandler}>
           Forgot your password?

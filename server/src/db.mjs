@@ -5,6 +5,7 @@ import { User } from './models/User';
 import { Action } from './models/Action';
 import { Notification } from './models/Notification';
 import { FreeAddress } from './models/FreeAddress';
+import { Wallet } from './models/Wallet';
 
 const sequelize = new Sequelize(config.postgres);
 
@@ -12,6 +13,7 @@ User.init(sequelize);
 Action.init(sequelize);
 Notification.init(sequelize);
 FreeAddress.init(sequelize);
+Wallet.init(sequelize);
 
 const { models } = sequelize;
 

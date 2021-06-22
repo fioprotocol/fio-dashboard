@@ -26,4 +26,7 @@ router.get('/reg/prices', routes.external.prices);
 router.post('/reg/register', checkAuth, routes.external.register);
 router.post('/reg/captcha/init', checkAuth, routes.external.initCaptcha);
 
+router.get('/account/wallets', checkAuth, routes.account.walletsList);
+router.post('/account/wallets', checkAuth, routes.account.setWallets);
+
 export default router;
