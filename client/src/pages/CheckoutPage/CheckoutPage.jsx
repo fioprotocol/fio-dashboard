@@ -23,6 +23,7 @@ const CheckoutPage = props => {
     hasFreeAddress,
     recalculate,
     prices,
+    isProcessing,
   } = props;
 
   const { screenType } = currentScreenType();
@@ -54,7 +55,7 @@ const CheckoutPage = props => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      history.push(ROUTES.FIO_ADDRESSES);
+      history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
   }, [isAuthenticated]);
 
@@ -71,16 +72,16 @@ const CheckoutPage = props => {
     }
   }, [fioWallets]);
 
-  useEffect(async () => {
-    await handleFreeAddressCart({
-      domains,
-      fioWallets,
-      recalculate,
-      cartItems,
-      prices,
-      hasFreeAddress,
-    });
-  }, [domains, fioWallets, hasFreeAddress, prices]);
+  useEffect(() => {
+    !isProcessing &&
+      handleFreeAddressCart({
+        domains,
+        recalculate,
+        cartItems,
+        prices,
+        hasFreeAddress,
+      });
+  }, [domains, hasFreeAddress, prices]);
 
   const onClose = () => {
     history.push(ROUTES.CART);
@@ -92,7 +93,6 @@ const CheckoutPage = props => {
         <RenderCheckout
           cart={cartItems}
           isDesktop={isDesktop}
-          isFree={isFree}
           currentWallet={currentWallet}
         />
       </CheckoutPurchaseContainer>

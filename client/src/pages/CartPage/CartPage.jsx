@@ -49,8 +49,13 @@ const CartPage = props => {
 
         const retObj = { ...item };
 
-        retObj.costFio = fioAddressPrice;
-        retObj.costUsdc = usdcAddressPrice;
+        if (!item.address) {
+          retObj.costFio = fioDomainPrice;
+          retObj.costUsdc = usdcDomainPrice;
+        } else {
+          retObj.costFio = fioAddressPrice;
+          retObj.costUsdc = usdcAddressPrice;
+        }
 
         if (item.hasCustomDomain) {
           retObj.costFio += fioDomainPrice;
@@ -84,7 +89,8 @@ const CartPage = props => {
       !isEmpty(cartItems) &&
       cartItems.length === 1 &&
       userWallets.length === 1 &&
-      lastLocation.pathname === (ROUTES.FIO_ADDRESSES || ROUTES.FIO_DOMAINS)
+      lastLocation.pathname ===
+        (ROUTES.FIO_ADDRESSES_SELECTION || ROUTES.FIO_DOMAINS_SELECTION)
     ) {
       history.push(ROUTES.CHECKOUT);
     }
@@ -92,7 +98,7 @@ const CartPage = props => {
 
   useEffect(async () => {
     if (!isAuthenticated) {
-      history.push(ROUTES.FIO_ADDRESSES);
+      history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
     await handleFreeAddressCart({
       domains,

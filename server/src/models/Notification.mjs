@@ -64,7 +64,17 @@ export class Notification extends Base {
     });
   }
 
-  static format({ id, type, action, title, message, seenDate, closeDate, createdAt }) {
+  static format({
+    id,
+    type,
+    action,
+    title,
+    message,
+    seenDate,
+    closeDate,
+    data,
+    createdAt,
+  }) {
     return {
       id,
       type,
@@ -74,6 +84,7 @@ export class Notification extends Base {
       seenDate,
       closeDate,
       createdAt,
+      pagesToShow: data && (data.pagesToShow || null),
     };
   }
 }

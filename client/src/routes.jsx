@@ -25,8 +25,16 @@ const Routes = () => (
         <PrivateRoute path={ROUTES.DASHBOARD} component={DashboardPage} exact />
         <PrivateRoute path={ROUTES.ADMIN} component={AdminContainer} exact />
         <Route path={ROUTES.CONFIRM_EMAIL} component={ConfirmEmail} />
-        <Route path={ROUTES.FIO_ADDRESSES} component={FioAddressPage} exact />
-        <Route path={ROUTES.FIO_DOMAINS} component={FioDomainPage} exact />
+        <Route
+          path={ROUTES.FIO_ADDRESSES_SELECTION}
+          component={FioAddressPage}
+          exact
+        />
+        <Route
+          path={ROUTES.FIO_DOMAINS_SELECTION}
+          component={FioDomainPage}
+          exact
+        />
         <Route path={ROUTES.CART} component={CartPage} exact />
         <Route path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
         <Route path={ROUTES.PURCHASE} component={PurchasePage} exact />

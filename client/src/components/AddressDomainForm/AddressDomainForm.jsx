@@ -6,7 +6,12 @@ import { SCREEN_TYPE } from '../../constants/screen';
 import Notifications from './Notifications';
 import FormContainer from './FormContainer';
 import debounce from 'lodash/debounce';
-import { setDataMutator, cartHasFreeItem, domainFromList } from '../../utils';
+import {
+  setDataMutator,
+  cartHasFreeItem,
+  domainFromList,
+  priceToNumber,
+} from '../../utils';
 
 import { addressValidation, domainValidation } from './validation';
 
@@ -101,8 +106,7 @@ const AddressDomainForm = props => {
     });
 
     const hasCustomDomain =
-      (!isHomepage &&
-        domain &&
+      (domain &&
         options.every(option => option !== domain) &&
         cartItems.every(item => item.domain !== domain)) ||
       isDomain ||
@@ -123,27 +127,31 @@ const AddressDomainForm = props => {
         domainFromList({ domains, domain }).free) ||
       (currentCartItem && !currentCartItem.costFio);
 
-    const showPrice = ({ isAddressPrice, isDomainPrice }) => {
+    const showPrice = ({ isDomainPrice = null } = {}) => {
       const {
         usdt: { address: usdcAddressPrice, domain: usdcDomainPrice },
         fio: { address: fioAddressPrice, domain: fioDomainPrice },
       } = prices;
 
+      let costUsdc;
+      let costFio;
+
+      if (!isFree && !isDomain) {
+        costUsdc = priceToNumber(usdcAddressPrice);
+        costFio = priceToNumber(fioAddressPrice);
+      }
+      if (hasCustomDomain) {
+        costUsdc = costUsdc
+          ? costUsdc + priceToNumber(usdcDomainPrice)
+          : priceToNumber(usdcDomainPrice);
+        costFio = costFio
+          ? costFio + priceToNumber(fioDomainPrice)
+          : priceToNumber(fioDomainPrice);
+      }
+
       const price = isFree
         ? 'FREE'
-        : `${
-            isAddressPrice
-              ? fioAddressPrice.toFixed(2)
-              : isDomainPrice
-              ? fioDomainPrice.toFixed(2)
-              : 'no price'
-          } FIO (${
-            isAddressPrice
-              ? usdcAddressPrice.toFixed(2)
-              : isDomainPrice
-              ? usdcDomainPrice.toFixed(2)
-              : 'no price'
-          } USDC)`;
+        : `${costFio.toFixed(2)} FIO (${costUsdc.toFixed(2)} USDC)`;
 
       const cost = isDesktop ? 'Cost: ' : '';
       return isDomainPrice && !hasCustomDomain && hasCurrentDomain
@@ -169,6 +177,7 @@ const AddressDomainForm = props => {
         isValidating={isValidating}
         formState={formState}
         isFree={isFree}
+        hasFreeAddress={hasFreeAddress}
       />,
       !isHomepage && (
         <Notifications

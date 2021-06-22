@@ -6,6 +6,7 @@ import { isEmpty } from 'lodash';
 
 import { ROUTES } from '../../constants/routes';
 import Card from '../Card/Card';
+import PriceBadge from '../PriceBadge/PriceBadge';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../../components/AddressDomainBadge/AddressDomainBadge';
 import { FORM_NAMES } from '../../constants/form';
 
@@ -27,6 +28,8 @@ const FORM_TYPES = {
   },
 };
 
+const buttonText = 'Get My FIO Address';
+
 const FormContainer = props => {
   const {
     isHomepage,
@@ -38,6 +41,9 @@ const FormContainer = props => {
     handleChange,
     formState,
     debouncedHandleChange,
+    showPrice,
+    hasFreeAddress,
+    domains,
   } = props;
 
   useEffect(() => {
@@ -73,17 +79,35 @@ const FormContainer = props => {
         key="form"
         id="addressForm"
       >
+        <div className={classes.selectionContainer}>
+          {isHomepage ? (
+            <AddressForm {...propsToForm} formName={FORM_NAMES.ADDRESS} />
+          ) : isAddress ? (
+            <AddressForm {...propsToForm} />
+          ) : (
+            <DomainForm {...propsToForm} />
+          )}
+        </div>
+        <PriceBadge
+          showPrice={showPrice}
+          hasFreeAddress={hasFreeAddress}
+          domains={domains}
+          tooltip={
+            <>
+              <span className="boldText">Address Cost</span>
+              <span>
+                {' '}
+                - Address Cost will fluctuate based on market condition. In
+                addition, if you are already have a free public address, there
+                will be cost assosiated with another address
+              </span>
+            </>
+          }
+        />
         {isHomepage ? (
-          <AddressForm {...propsToForm} formName={FORM_NAMES.ADDRESS} />
-        ) : isAddress ? (
-          <AddressForm {...propsToForm} />
-        ) : (
-          <DomainForm {...propsToForm} />
-        )}
-        {isHomepage ? (
-          <Link to={ROUTES.FIO_ADDRESSES} className={classes.link}>
+          <Link to={ROUTES.FIO_ADDRESSES_SELECTION} className={classes.link}>
             <Button variant="primary" className={classes.submit}>
-              <FontAwesomeIcon icon="search" />
+              {buttonText}
             </Button>
           </Link>
         ) : (
@@ -94,10 +118,9 @@ const FormContainer = props => {
             onClick={handleSubmit}
             variant="primary"
           >
-            {isValidating ? (
-              <FontAwesomeIcon icon="spinner" spin />
-            ) : (
-              <FontAwesomeIcon icon="search" />
+            {buttonText}
+            {isValidating && (
+              <FontAwesomeIcon icon="spinner" spin className="ml-3" />
             )}
           </Button>
         )}

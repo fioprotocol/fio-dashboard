@@ -12,13 +12,13 @@ export const ADDRESS_DOMAIN_BADGE_TYPE = {
 
 const content = {
   [ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS]: {
-    link: ROUTES.FIO_DOMAINS,
+    link: ROUTES.FIO_DOMAINS_SELECTION,
     button: 'Purchase Domain',
     title: 'Want to register an address with a custom domain?',
     text: '',
   },
   [ADDRESS_DOMAIN_BADGE_TYPE.DOMAIN]: {
-    link: ROUTES.FIO_ADDRESSES,
+    link: ROUTES.FIO_ADDRESSES_SELECTION,
     button: 'Register an Address',
     title: 'Need an Address?',
     text:

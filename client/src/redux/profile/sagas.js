@@ -41,6 +41,7 @@ export function* profileSuccess() {
           createNotification({
             action: ACTIONS.RECOVERY,
             type: BADGE_TYPES.ALERT,
+            pagesToShow: [ROUTES.DASHBOARD],
           }),
         );
     } catch (e) {

@@ -11,7 +11,11 @@ import { setRegistration } from '../../redux/registrations/actions';
 import { setWallet, recalculate } from '../../redux/cart/actions';
 
 import { hasFreeAddress } from '../../redux/profile/selectors';
-import { domains, prices } from '../../redux/registrations/selectors';
+import {
+  domains,
+  prices,
+  isProcessing,
+} from '../../redux/registrations/selectors';
 
 import CheckoutPage from './CheckoutPage';
 
@@ -25,6 +29,7 @@ const reduxConnect = connect(
     prices,
     domains,
     hasFreeAddress,
+    isProcessing,
   }),
   {
     refreshBalance,

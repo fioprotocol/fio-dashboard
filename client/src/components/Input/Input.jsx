@@ -4,7 +4,6 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import classnames from 'classnames';
 import { useForm } from 'react-final-form';
 
-import TooltipComponent from '../Tooltip/Tooltip';
 import classes from './Input.module.scss';
 import { PIN_LENGTH } from '../../constants/form';
 
@@ -22,11 +21,11 @@ const Input = props => {
     meta,
     colorSchema,
     onClose,
-    badge,
     hideError,
     isFree,
     tooltip,
     loading,
+    suffix,
     ...rest
   } = props;
   const {
@@ -37,8 +36,6 @@ const Input = props => {
     modified,
     submitError,
     modifiedSinceLastSubmit,
-    initial,
-    dirty,
     submitSucceeded,
   } = meta;
   const { type, value, name, onChange } = input;
@@ -116,11 +113,19 @@ const Input = props => {
   const regularInput = (
     <>
       <div className={classes.inputGroup}>
+        {suffix && (
+          <div
+            className={classnames(classes.suffix, hasError && classes.error)}
+          >
+            {suffix}
+          </div>
+        )}
         <input
           className={classnames(
             classes.regInput,
             hasError && classes.error,
             isBW && classes.bw,
+            suffix && classes.suffixSpace,
           )}
           {...input}
           {...rest}
@@ -134,7 +139,6 @@ const Input = props => {
               classes.inputIcon,
               type === 'password' && classes.doubleIcon,
               isBW && classes.bw,
-              badge && classes.iconPosition,
             )}
             onClick={() => {
               clearInputFn();
@@ -158,26 +162,6 @@ const Input = props => {
             className={classnames(classes.inputIcon, classes.inputSpinnerIcon)}
           />
         )}
-        <div
-          className={classnames(
-            classes.badgeContainer,
-            badge && !hasError && (dirty || initial) && classes.showBadge,
-          )}
-        >
-          <div
-            className={classnames(
-              classes.badge,
-              badge && !hasError && (dirty || initial) && classes.showBadge,
-            )}
-          >
-            {badge}
-          </div>
-          {tooltip && !isFree && (
-            <div className={classnames(classes.tooltip)}>
-              <TooltipComponent>{tooltip}</TooltipComponent>
-            </div>
-          )}
-        </div>
       </div>
       {!hideError && !data.hideError && (
         <div
