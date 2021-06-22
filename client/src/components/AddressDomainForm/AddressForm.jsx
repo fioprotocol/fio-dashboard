@@ -7,6 +7,8 @@ import { OnChange } from 'react-final-form-listeners';
 
 import classes from './AddressDomainForm.module.scss';
 
+const suffix = '@';
+
 const AddressForm = props => {
   const {
     isHomepage,
@@ -71,7 +73,7 @@ const AddressForm = props => {
               toggleShowCustomDomain(false);
             }}
             hideError="true"
-            withAtSign
+            suffix={suffix}
           />
         ) : (
           <Field
@@ -82,7 +84,6 @@ const AddressForm = props => {
               toggleShowCustomDomain(true);
             }}
             initValue={domain}
-            withAtSign
           />
         )}
         <OnChange name="domain">

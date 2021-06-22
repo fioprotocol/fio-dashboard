@@ -25,7 +25,7 @@ const Input = props => {
     isFree,
     tooltip,
     loading,
-    withAtSign,
+    suffix,
     ...rest
   } = props;
   const {
@@ -113,11 +113,11 @@ const Input = props => {
   const regularInput = (
     <>
       <div className={classes.inputGroup}>
-        {withAtSign && (
+        {suffix && (
           <div
             className={classnames(classes.atSign, hasError && classes.error)}
           >
-            @
+            {suffix}
           </div>
         )}
         <input
@@ -125,7 +125,7 @@ const Input = props => {
             classes.regInput,
             hasError && classes.error,
             isBW && classes.bw,
-            withAtSign && classes.withAt,
+            suffix && classes.suffix,
           )}
           {...input}
           {...rest}
