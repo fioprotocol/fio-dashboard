@@ -25,7 +25,8 @@ const Input = props => {
     isFree,
     tooltip,
     loading,
-    suffix,
+    suffix = '',
+    lowerCased = false,
     ...rest
   } = props;
   const {
@@ -129,6 +130,11 @@ const Input = props => {
           )}
           {...input}
           {...rest}
+          onChange={e => {
+            const currentValue = e.target.value;
+            if (lowerCased) return onChange(currentValue.toLowerCase());
+            onChange(currentValue);
+          }}
           type={showPass ? 'text' : type}
           data-clear={clearInput}
         />
