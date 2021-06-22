@@ -25,8 +25,8 @@ const Input = props => {
     isFree,
     tooltip,
     loading,
-    suffix,
-    lowerCased,
+    suffix = '',
+    lowerCased = false,
     ...rest
   } = props;
   const {
