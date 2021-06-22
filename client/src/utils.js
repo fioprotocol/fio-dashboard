@@ -300,3 +300,5 @@ export const transformResult = ({ result, cart, prices }) => {
 
   return { errItems, regItems, updatedCart };
 };
+
+export const priceToNumber = price => +parseFloat(price).toFixed(2);

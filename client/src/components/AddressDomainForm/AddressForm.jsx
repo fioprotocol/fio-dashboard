@@ -1,6 +1,5 @@
 import React from 'react';
 import { Field, FormSpy } from 'react-final-form';
-import classnames from 'classnames';
 
 import CustomDropdown from './CustomDropdown';
 import Input, { INPUT_COLOR_SCHEMA } from '../Input/Input';
@@ -18,7 +17,6 @@ const AddressForm = props => {
     options,
     domain,
     updateFormState,
-    showPrice,
     onChangeHandleField,
     debouncedOnChangeHandleField,
     isFree,
@@ -43,7 +41,6 @@ const AddressForm = props => {
           type="text"
           placeholder="Find the perfect username .."
           colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
-          badge={showPrice({ isAddressPrice: true })}
           component={Input}
           hideError="true"
           isFree={isFree}
@@ -61,7 +58,7 @@ const AddressForm = props => {
         />
         <OnChange name="address">{debouncedOnChangeHandleField}</OnChange>
       </div>
-      <div className={classnames(classes.at, 'boldText')}>@</div>
+      <div className={classes.space}></div>
       <div className={classes.domainContainer}>
         {hasCustomDomain || showCustomDomain ? (
           <Field
@@ -73,8 +70,8 @@ const AddressForm = props => {
             onClose={() => {
               toggleShowCustomDomain(false);
             }}
-            badge={showPrice({ isDomainPrice: true })}
             hideError="true"
+            withAtSign
           />
         ) : (
           <Field
@@ -85,6 +82,7 @@ const AddressForm = props => {
               toggleShowCustomDomain(true);
             }}
             initValue={domain}
+            withAtSign
           />
         )}
         <OnChange name="domain">
