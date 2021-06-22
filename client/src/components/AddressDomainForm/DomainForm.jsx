@@ -16,6 +16,7 @@ const DomainForm = props => {
         placeholder="Domain name"
         colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
         component={Input}
+        lowerCased
         hideError="true"
       />
       <OnChange name="domain">{debouncedOnChangeHandleField}</OnChange>
