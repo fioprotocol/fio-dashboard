@@ -54,14 +54,28 @@ const FormContainer = props => {
   }, []);
 
   const renderFormBody = () => {
-    const { handleSubmit, form } = formProps;
+    const { handleSubmit, form, values } = formProps;
+
+    const transformToLowerCase = () => {
+      if (!isEmpty(values)) {
+        const { change } = form || {};
+        if (values.address) {
+          change('address', values.address.toLowerCase());
+        }
+        if (values.domain) {
+          change('domain', values.domain.toLowerCase());
+        }
+      }
+    };
 
     const onChangeHandleField = () => {
+      transformToLowerCase();
       toggleShowAvailable(false);
       handleChange(form);
     };
 
     const debouncedOnChangeHandleField = () => {
+      transformToLowerCase();
       toggleShowAvailable(false);
       debouncedHandleChange(form);
     };

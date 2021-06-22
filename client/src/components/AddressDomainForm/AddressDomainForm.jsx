@@ -87,14 +87,6 @@ const AddressDomainForm = props => {
   };
 
   const handleChange = formProps => {
-    const { change, getState } = formProps || {};
-    const { values: { address, domain } = {} } = getState() || {};
-    if (address) {
-      change('address', address.toLowerCase());
-    }
-    if (domain) {
-      change('domain', domain.toLowerCase());
-    }
     const validationPropsToPass = {
       formProps,
       ...validationProps,
