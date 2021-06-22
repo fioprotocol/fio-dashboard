@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
 import { Field, FormSpy } from 'react-final-form';
-import classnames from 'classnames';
 
 import CustomDropdown from './CustomDropdown';
 import Input, { INPUT_COLOR_SCHEMA } from '../Input/Input';
 import { OnChange } from 'react-final-form-listeners';
 
 import classes from './AddressDomainForm.module.scss';
+
+const suffix = '@';
 
 const AddressForm = props => {
   const {
@@ -18,7 +19,6 @@ const AddressForm = props => {
     options,
     domain,
     updateFormState,
-    showPrice,
     onChangeHandleField,
     debouncedOnChangeHandleField,
     isFree,
@@ -49,7 +49,6 @@ const AddressForm = props => {
           type="text"
           placeholder="Find the perfect username .."
           colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
-          badge={showPrice({ isAddressPrice: true })}
           component={Input}
           hideError="true"
           isFree={isFree}
@@ -67,7 +66,7 @@ const AddressForm = props => {
         />
         <OnChange name="address">{debouncedOnChangeHandleField}</OnChange>
       </div>
-      <div className={classnames(classes.at, 'boldText')}>@</div>
+      <div className={classes.space}></div>
       <div className={classes.domainContainer}>
         {hasCustomDomain || showCustomDomain ? (
           <Field
@@ -79,8 +78,8 @@ const AddressForm = props => {
             onClose={() => {
               toggleShowCustomDomain(false);
             }}
-            badge={showPrice({ isDomainPrice: true })}
             hideError="true"
+            suffix={suffix}
           />
         ) : (
           <Field

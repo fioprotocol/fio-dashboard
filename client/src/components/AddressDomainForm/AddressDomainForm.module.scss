@@ -6,30 +6,35 @@
   width: 100%;
   margin: 0 auto;
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
+  flex-direction: column;
   justify-content: center;
   max-width: 610px;
+
+  .selectionContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+  }
 
   .username {
     width: 100%;
   }
 
-  .at {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .space {
     width: 40px;
     height: 40px;
     margin: 0 10px;
-    font-size: 18px;
-    line-height: 18px;
+  }
+
+  .link {
+    width: 50%;
   }
 
   .submit {
-    width: 40px;
     height: 40px;
-    margin-left: 15px;
+    font-size: 0.875em;
+    border-radius: 7px;
+    align-self: center;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -81,7 +86,7 @@
     box-shadow: 0 0 10px 0 rgba(0,0,0,0.53);
     margin-top: -7px;
     padding-top: 7px;
-    max-height: fit-content;
+    max-height: 250px;
     animation-name: expand;
     animation-duration: 0.4s;
   }
@@ -238,7 +243,10 @@
 @include sm {
   .form {
     flex-flow: wrap;
-    justify-content: space-between;
+
+    .selectionContainer {
+      flex-direction: column;
+    }
 
     .dropdown {
       max-width: 100%;
@@ -254,13 +262,16 @@
       height: 40px;
     }
 
-    .at {
-      margin: 0;
+    .space {
+      display: none;
+    }
+
+    .link {
+      width: 100%;
     }
 
     .submit {
       margin: 0;
-      font-size: 18px;
     }
 
     .optionItem {
