@@ -5,21 +5,21 @@ import { compose } from '../../utils';
 import { setRecoveryQuestions } from '../../redux/profile/actions';
 import { getRecoveryQuestions } from '../../redux/edge/actions';
 import { createNotification } from '../../redux/notifications/actions';
+import { closeRecoveryModal as onClose } from '../../redux/modal/actions';
 import {
-  loading,
+  loading as edgeAuthLoading,
   recoveryQuestions,
-  account,
 } from '../../redux/edge/selectors';
 import { showRecovery as show } from '../../redux/modal/selectors';
-import { closeRecoveryModal as onClose } from '../../redux/modal/actions';
+import { edgeUsername } from '../../redux/profile/selectors';
 
 import PasswordRecoveryForm from './PasswordRecoveryForm';
 
 const reduxConcect = connect(
   createStructuredSelector({
-    account,
-    loading,
+    edgeAuthLoading,
     show,
+    edgeUsername,
     questions: recoveryQuestions,
   }),
   {

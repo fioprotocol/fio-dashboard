@@ -6,11 +6,10 @@ import { compose } from '../../utils';
 import { refreshBalance } from '../../redux/fio/actions';
 import { fioWallets, loading } from '../../redux/fio/selectors';
 import { cartItems, paymentWalletId } from '../../redux/cart/selectors';
-import { isAuthenticated } from '../../redux/edge/selectors';
 import { setRegistration } from '../../redux/registrations/actions';
 import { setWallet, recalculate } from '../../redux/cart/actions';
 
-import { hasFreeAddress } from '../../redux/profile/selectors';
+import { isAuthenticated, hasFreeAddress } from '../../redux/profile/selectors';
 import {
   domains,
   prices,

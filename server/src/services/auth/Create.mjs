@@ -4,6 +4,8 @@ import { generate } from './authToken';
 
 import { User } from '../../models';
 
+const EXPIRATION_TIME = 1000 * 60 * 30;
+
 export default class AuthCreate extends Base {
   static get validationRules() {
     return {
@@ -52,9 +54,10 @@ export default class AuthCreate extends Base {
       });
     }
 
+    const now = new Date();
     return {
       data: {
-        jwt: generate({ id: user.id }),
+        jwt: generate({ id: user.id }, new Date(EXPIRATION_TIME + now.getTime())),
       },
     };
   }

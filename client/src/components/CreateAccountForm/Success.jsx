@@ -23,7 +23,7 @@ export default class Success extends Component {
     if (t1 - this.t0 < 3000) {
       await sleep(t1 - this.t0);
     }
-    this.props.redirect();
+    this.props.onFinish();
   };
 
   render() {

@@ -7,6 +7,7 @@ import Edge from './edge';
 import Notifications from './notifications';
 import FioReg from './fio-reg';
 import Fio from './fio';
+import Account from './account';
 
 const apiClient = new ApiClient(config.apiPrefix);
 
@@ -26,5 +27,6 @@ export default {
   notifications: new Notifications(apiClient),
   fioReg: new FioReg(apiClient),
   fio: new Fio(),
+  account: new Account(apiClient),
   client: apiClient,
 };

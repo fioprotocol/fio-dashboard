@@ -12,7 +12,6 @@ const CartPage = props => {
   const {
     cartItems,
     history,
-    fioWallets,
     recalculate,
     prices,
     domains,
@@ -102,13 +101,12 @@ const CartPage = props => {
     }
     await handleFreeAddressCart({
       domains,
-      fioWallets,
       recalculate,
       cartItems,
       prices,
       hasFreeAddress,
     });
-  }, [isAuthenticated, domains, fioWallets, hasFreeAddress]);
+  }, [isAuthenticated, domains, hasFreeAddress]);
 
   useEffect(() => {
     if (!isEmpty(userWallets)) {

@@ -43,7 +43,7 @@ const STEPS_ORDER = {
 export default class CreateAccountForm extends Component {
   static propTypes = {
     resetSuccessState: PropTypes.func.isRequired,
-    loading: PropTypes.bool,
+    edgeAuthLoading: PropTypes.bool,
     serverSignUpLoading: PropTypes.bool,
   };
 
@@ -59,7 +59,7 @@ export default class CreateAccountForm extends Component {
       usernameAvailableLoading: false,
       usernameIsAvailable: false,
       step: STEPS.EMAIL_PASSWORD,
-      account: null,
+      accountId: null,
     };
   }
 
@@ -85,13 +85,12 @@ export default class CreateAccountForm extends Component {
     this.props.resetSuccessState();
   }
 
-  redirectToPrev = () => {
+  onFinish = () => {
     const {
       values: { email },
     } = this.form.getState();
 
-    this.props.setAccount(this.state.account);
-    this.props.login({ email, password: this.state.account.id });
+    this.props.login({ email, password: this.state.accountId });
     this.props.history.push(
       (this.props.lastLocation && this.props.lastLocation.pathname) ||
         ROUTES.HOME,
@@ -224,20 +223,22 @@ export default class CreateAccountForm extends Component {
 
         const { email, password, pin, confirmPin } = values;
         this.setState({ loading: true });
-        const { account, errors } = await createAccount(
+        const { account, fioWallets, errors } = await createAccount(
           emailToUsername(email),
           password,
           pin,
         );
         this.setState({ loading: false });
-        if (!Object.values(errors).length) {
-          this.setState({ account });
+        if (!Object.values(errors).length && account) {
+          this.setState({ accountId: account.id });
+          await account.logout();
           return onSubmit({
             username: emailToUsername(email),
             email,
             pin,
             confirmPin,
             password: account.id,
+            fioWallets,
           });
         }
         return errors;
@@ -338,10 +339,7 @@ export default class CreateAccountForm extends Component {
             <Confirmation data={values} errors={errors} />
           </Wizard.Page>
           <Wizard.Page hideBack hideNext>
-            <Success
-              redirect={this.redirectToPrev}
-              signupSuccess={signupSuccess}
-            />
+            <Success onFinish={this.onFinish} signupSuccess={signupSuccess} />
           </Wizard.Page>
         </Wizard>
       </form>

@@ -25,9 +25,7 @@ const AddressDomainForm = props => {
     getDomains,
     fioWallets,
     fioDomains,
-    refreshFioWallets,
     refreshFioNames,
-    account,
     prices,
     cartItems,
     recalculate,
@@ -53,14 +51,11 @@ const AddressDomainForm = props => {
   useEffect(() => {
     getPrices();
     getDomains();
-    if (account) {
-      refreshFioWallets(account);
-    }
   }, []);
 
   useEffect(() => {
     for (const fioWallet of fioWallets) {
-      refreshFioNames(fioWallet.publicWalletInfo.keys.publicKey);
+      refreshFioNames(fioWallet.publicKey);
     }
   }, [fioWallets]);
 

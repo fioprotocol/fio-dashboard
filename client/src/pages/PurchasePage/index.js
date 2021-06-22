@@ -10,7 +10,7 @@ import {
   prices,
   domains,
 } from '../../redux/registrations/selectors';
-import { isAuthenticated } from '../../redux/edge/selectors';
+import { isAuthenticated } from '../../redux/profile/selectors';
 import { cartItems } from '../../redux/cart/selectors';
 
 import PurchasePage from './PurchasePage';

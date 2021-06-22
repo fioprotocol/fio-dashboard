@@ -2,7 +2,7 @@ import Base from '../Base';
 import X from '../Exception';
 import emailSender from '../emailSender';
 
-import { Action, User, Notification } from '../../models';
+import { Action, User, Notification, Wallet } from '../../models';
 
 export default class UsersCreate extends Base {
   static get validationRules() {
@@ -16,13 +16,23 @@ export default class UsersCreate extends Base {
             pin: 'required',
             confirmPin: ['required', { equal_to_field: ['pin'] }],
             password: ['required'],
+            fioWallets: [
+              'required',
+              {
+                list_of_objects: {
+                  id: 'string',
+                  name: 'string',
+                  publicKey: 'string',
+                },
+              },
+            ],
           },
         },
       ],
     };
   }
 
-  async execute({ data: { username, email, pin, password } }) {
+  async execute({ data: { username, email, pin, password, fioWallets } }) {
     if (await User.findOneWhere({ email })) {
       throw new X({
         code: 'NOT_UNIQUE',
@@ -62,6 +72,17 @@ export default class UsersCreate extends Base {
         "You're all set to start managing FIO Addresses, Domains, Requests as well as staying",
       userId: user.id,
     }).save();
+
+    for (const { id, name, publicKey } of fioWallets) {
+      const newWallet = new Wallet({
+        edgeId: id,
+        name,
+        publicKey,
+        userId: user.id,
+      });
+
+      await newWallet.save();
+    }
 
     return {
       data: user.json(),

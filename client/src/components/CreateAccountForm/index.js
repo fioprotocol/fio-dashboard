@@ -11,7 +11,6 @@ import {
   loading as serverSignUpLoading,
 } from '../../redux/profile/selectors';
 import { signup } from '../../redux/profile/actions';
-import { loading } from '../../redux/edge/selectors';
 import { withRouter } from 'react-router-dom';
 import CreateAccountForm from './CreateAccountForm';
 
@@ -20,7 +19,6 @@ const signupSuccess = createSelector(successfullyRegistered, f => f);
 const selector = createStructuredSelector({
   serverSignUpLoading,
   signupSuccess,
-  loading,
 });
 
 const actions = {

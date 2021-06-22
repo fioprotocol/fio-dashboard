@@ -30,17 +30,6 @@ export default combineReducers({
         return state;
     }
   },
-  username(state = null, action) {
-    switch (action.type) {
-      case actions.LOGIN_SUCCESS:
-      case actions.SET_ACCOUNT:
-        return action.data.username;
-      case actions.LOGOUT_SUCCESS:
-        return null;
-      default:
-        return state;
-    }
-  },
   loginSuccess(state = false, action) {
     switch (action.type) {
       case actions.LOGIN_SUCCESS: {
@@ -117,15 +106,6 @@ export default combineReducers({
       }
       case actions.USERNAME_AVAIL_REQUEST: {
         return true;
-      }
-      default:
-        return state;
-    }
-  },
-  fioWallets(state = [], action) {
-    switch (action.type) {
-      case actions.REFRESH_FIO_WALLETS_SUCCESS: {
-        return action.data;
       }
       default:
         return state;

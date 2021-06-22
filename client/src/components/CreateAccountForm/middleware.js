@@ -1,4 +1,8 @@
 import apis from '../../api/index';
+import {
+  DEFAULT_WALLET_OPTIONS,
+  FIO_WALLET_TYPE,
+} from '../../constants/common';
 
 export const usernameAvailable = async username => {
   const result = {};
@@ -55,7 +59,18 @@ export const createAccount = async (username, password, pin) => {
   const result = { errors: {} };
   try {
     result.account = await apis.edge.signup(username, password, pin);
-    await result.account.createCurrencyWallet('wallet:fio');
+    const fioWallet = await result.account.createCurrencyWallet(
+      FIO_WALLET_TYPE,
+      DEFAULT_WALLET_OPTIONS,
+    );
+    await fioWallet.renameWallet(DEFAULT_WALLET_OPTIONS.name);
+    result.fioWallets = [
+      {
+        id: fioWallet.id,
+        name: fioWallet.name,
+        publicKey: fioWallet.getDisplayPublicSeed(),
+      },
+    ];
   } catch (e) {
     console.log(e);
     result.errors = { email: e.message };
