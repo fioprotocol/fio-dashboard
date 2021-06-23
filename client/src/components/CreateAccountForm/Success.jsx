@@ -35,6 +35,7 @@ export default class Success extends Component {
             loop
             mode="normal"
             src={JSON.stringify(logoAnimation)}
+            style={{ marginTop: '30px' }}
           ></lottie-player>
         }
         title="Great job!"
