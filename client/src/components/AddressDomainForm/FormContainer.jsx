@@ -28,8 +28,6 @@ const FORM_TYPES = {
   },
 };
 
-const buttonText = 'Get My FIO Address';
-
 const FormContainer = props => {
   const {
     isHomepage,
@@ -44,7 +42,10 @@ const FormContainer = props => {
     showPrice,
     hasFreeAddress,
     domains,
+    isDomain,
   } = props;
+
+  const buttonText = `Get My FIO ${isDomain ? 'Domain' : 'Address'}`;
 
   useEffect(() => {
     if (!isHomepage && isAddress && !isEmpty(formState)) {

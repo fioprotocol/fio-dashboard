@@ -5,9 +5,9 @@
 .container {
   width: 100%;
   height: 100%;
-  background-color: $white;
-  padding: 60px 10%;
+  padding: 60px 0;
   position: relative;
+  max-width: 1066px;
 
   .title {
     @include proxima-nova-semibold;

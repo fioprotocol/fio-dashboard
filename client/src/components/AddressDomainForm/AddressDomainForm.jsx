@@ -165,6 +165,7 @@ const AddressDomainForm = props => {
         {...props}
         options={options}
         isAddress={isAddress}
+        isDomain={isDomain}
         hasCustomDomain={hasCustomDomain}
         showCustomDomain={showCustomDomain}
         toggleShowCustomDomain={toggleShowCustomDomain}
