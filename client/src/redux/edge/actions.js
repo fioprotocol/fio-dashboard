@@ -50,7 +50,7 @@ export const CONFIRM_PIN_REQUEST = `${prefix}/CONFIRM_PIN_REQUEST`;
 export const CONFIRM_PIN_SUCCESS = `${prefix}/CONFIRM_PIN_SUCCESS`;
 export const CONFIRM_PIN_FAILURE = `${prefix}/CONFIRM_PIN_FAILURE`;
 
-export const confirmPin = ({ username, pin }) => ({
+export const confirmPin = ({ username, pin }, { action, data }) => ({
   types: [CONFIRM_PIN_REQUEST, CONFIRM_PIN_SUCCESS, CONFIRM_PIN_FAILURE],
   promise: async api => {
     const account = await api.edge.loginPIN(username, pin);
@@ -70,7 +70,7 @@ export const confirmPin = ({ username, pin }) => ({
       console.log(e);
     }
 
-    return { keys };
+    return { account, keys, action, data };
   },
 });
 export const RESET_PIN_CONFIRM = `${prefix}/RESET_PIN_CONFIRM`;

@@ -37,4 +37,15 @@ export default combineReducers({
         return state;
     }
   },
+  pinConfirmData(state = {}, action) {
+    switch (action.type) {
+      case actions.SHOW_PIN_CONFIRM:
+        return { action: action.data.confirmAction, data: action.data.data };
+      case CONFIRM_PIN_SUCCESS:
+      case actions.CLOSE_PIN_CONFIRM:
+        return {};
+      default:
+        return state;
+    }
+  },
 });
