@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import classnames from 'classnames';
 import { useForm } from 'react-final-form';
+import { ErrorBadge } from './ErrorBadge';
 
 import classes from './Input.module.scss';
 import { PIN_LENGTH } from '../../constants/form';
@@ -171,15 +172,12 @@ const Input = props => {
         )}
       </div>
       {!hideError && !data.hideError && (
-        <div
-          className={classnames(
-            classes.errorMessage,
-            hasError && !data.showInfoError && classes.error,
-          )}
-        >
-          <FontAwesomeIcon icon="info-circle" className={classes.errorIcon} />
-          {hasError && (error || data.error || submitError)}
-        </div>
+        <ErrorBadge
+          error={error}
+          data={data}
+          hasError={hasError}
+          submitError={submitError}
+        />
       )}
     </>
   );
