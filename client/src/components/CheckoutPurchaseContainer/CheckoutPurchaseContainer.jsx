@@ -23,7 +23,7 @@ const CheckoutPurchaseContainer = props => {
 
   const onClose = () => {
     setRegistration({});
-    history.push(ROUTES.DASHBOARD);
+    history.push(ROUTES.HOME);
   };
 
   const onFinish = results => {

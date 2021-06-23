@@ -19,7 +19,7 @@ export default class AuthContainer extends Component {
     const { edgeContextSet, isAuthenticated, loading } = this.props;
     return (
       <div className={styles.container}>
-        {isAuthenticated && !loading && <Redirect to={ROUTES.DASHBOARD} />}
+        {isAuthenticated && !loading && <Redirect to={ROUTES.HOME} />}
         {!edgeContextSet && (
           <FontAwesomeIcon icon={faSpinner} spin className={styles.spinner} />
         )}

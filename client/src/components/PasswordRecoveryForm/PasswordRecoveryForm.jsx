@@ -47,7 +47,7 @@ const PasswordRecoveryForm = props => {
     props.createNotification({
       action: ACTIONS.RECOVERY,
       type: BADGE_TYPES.ALERT,
-      pagesToShow: [ROUTES.DASHBOARD],
+      pagesToShow: [ROUTES.HOME],
     });
   };
 
