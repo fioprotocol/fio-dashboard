@@ -80,7 +80,7 @@ const CartTimeout = props => {
         ROUTES.CART,
         ROUTES.FIO_ADDRESSES_SELECTION,
         ROUTES.FIO_DOMAINS_SELECTION,
-        ROUTES.DASHBOARD,
+        ROUTES.HOME,
       ],
     });
   };

@@ -25,7 +25,7 @@ export function* loginSuccess(history, api) {
     yield put(loadProfile());
     yield put(listNotifications());
     const currentLocation = history.location.pathname;
-    if (currentLocation === '/') yield history.push(ROUTES.DASHBOARD);
+    if (currentLocation === '/') yield history.push(ROUTES.HOME);
     if (hasRedirectTo) {
       yield history.push(hasRedirectTo);
     }
@@ -41,7 +41,7 @@ export function* profileSuccess() {
           createNotification({
             action: ACTIONS.RECOVERY,
             type: BADGE_TYPES.ALERT,
-            pagesToShow: [ROUTES.DASHBOARD],
+            pagesToShow: [ROUTES.HOME],
           }),
         );
     } catch (e) {
