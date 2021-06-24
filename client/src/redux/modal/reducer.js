@@ -14,16 +14,6 @@ export default combineReducers({
         return state;
     }
   },
-  hasRedirect(state = false, action) {
-    switch (action.type) {
-      case actions.SHOW_LOGIN:
-        return action.data;
-      case actions.CLOSE_LOGIN:
-        return false;
-      default:
-        return state;
-    }
-  },
   showRecovery(state = false, action) {
     switch (action.type) {
       case actions.SHOW_RECOVERY_PASSWORD:

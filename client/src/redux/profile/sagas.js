@@ -15,7 +15,9 @@ import {
   listNotifications,
   createNotification,
 } from '../notifications/actions';
-import { hasRedirect } from '../modal/selectors';
+import { setRedirectPath } from '../router/actions';
+
+import { hasRedirect } from '../router/selectors';
 import { ROUTES } from '../../constants/routes';
 
 export function* loginSuccess(history, api) {
@@ -30,6 +32,7 @@ export function* loginSuccess(history, api) {
       yield history.push(hasRedirectTo);
     }
     yield put(closeLoginModal());
+    yield put(setRedirectPath(null));
   });
 }
 
