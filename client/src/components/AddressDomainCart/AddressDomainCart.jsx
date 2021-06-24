@@ -27,11 +27,12 @@ const AddressDomainCart = props => {
   const isCartEmpty = count === 0;
 
   const handleCheckout = () => {
+    const route = count === 1 ? ROUTES.CHECKOUT : ROUTES.CART;
+
     if (!isAuthenticated) {
-      setRedirectPath(ROUTES.CHECKOUT);
+      setRedirectPath(route);
       return history.push(ROUTES.CREATE_ACCOUNT);
     }
-    const route = count === 1 ? ROUTES.CHECKOUT : ROUTES.CART;
     history.push(route);
   };
 
