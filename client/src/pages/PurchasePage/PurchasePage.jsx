@@ -42,7 +42,7 @@ const PurchasePage = props => {
   }, []);
 
   const onClose = () => {
-    history.push(ROUTES.DASHBOARD);
+    history.push(ROUTES.HOME);
   };
 
   return (

@@ -17,21 +17,22 @@ const AddressDomainCart = props => {
     deleteItem,
     domains,
     history,
-    showLoginModal,
     prices,
     recalculate,
     hasFreeAddress,
     isAuthenticated,
+    setRedirectPath,
   } = props;
   const count = cartItems.length;
   const isCartEmpty = count === 0;
 
   const handleCheckout = () => {
-    if (!isAuthenticated) {
-      showLoginModal(ROUTES.CART);
-      return;
-    }
     const route = count === 1 ? ROUTES.CHECKOUT : ROUTES.CART;
+
+    if (!isAuthenticated) {
+      setRedirectPath(route);
+      return history.push(ROUTES.CREATE_ACCOUNT);
+    }
     history.push(route);
   };
 

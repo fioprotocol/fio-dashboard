@@ -48,7 +48,7 @@ export default class CreateAccountForm extends Component {
   };
 
   constructor(props) {
-    super();
+    super(props);
     this.state = {
       passwordValidation: {
         length: { isChecked: false },
