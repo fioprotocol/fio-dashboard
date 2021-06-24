@@ -121,7 +121,11 @@ const FormContainer = props => {
           >
             {buttonText}
             {isValidating && (
-              <FontAwesomeIcon icon="spinner" spin className="ml-3" />
+              <FontAwesomeIcon
+                icon="spinner"
+                spin
+                className={classes.loaderIcon}
+              />
             )}
           </Button>
         )}

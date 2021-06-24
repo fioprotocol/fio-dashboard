@@ -31,6 +31,7 @@
   }
 
   .submit {
+    position: relative;
     max-width: 275px;
     height: 40px;
     font-size: 0.875em;
@@ -39,6 +40,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .loaderIcon {
+    margin-left: 1rem;
+    position: absolute;
+    right: 15%;
   }
 
   .domainContainer {
