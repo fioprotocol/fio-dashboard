@@ -29,6 +29,7 @@ const PasswordRecoveryForm = props => {
     getRecoveryQuestions,
     onSubmit,
     showPinModal,
+    resetPinConfirm,
   } = props;
 
   const [isSkip, toggleSkip] = useState(false);
@@ -53,6 +54,7 @@ const PasswordRecoveryForm = props => {
     }
 
     if (pinConfirmation.error) {
+      resetPinConfirm();
       setProcessing(false);
     }
   }, [pinConfirmation]);
@@ -337,7 +339,6 @@ const PasswordRecoveryForm = props => {
               [recoveryQuestionOne.question, recoveryQuestionTwo.question],
               [recoveryAnswerOne, recoveryAnswerTwo],
             );
-            await pinConfirmation.account.logout();
             setDefaultValues({});
             onSubmit(token);
             setProcessing(false);
@@ -351,7 +352,7 @@ const PasswordRecoveryForm = props => {
             //     'There was an issue setting recovery questions',
             // };
           }
-
+          resetPinConfirm();
           return {};
         }}
         initialValues={defaultValues}

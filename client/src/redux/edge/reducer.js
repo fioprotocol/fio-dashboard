@@ -115,6 +115,7 @@ export default combineReducers({
     switch (action.type) {
       case actions.RESET_PIN_CONFIRM:
       case actions.CONFIRM_PIN_REQUEST: {
+        if (state.account) state.account.logout();
         return {};
       }
       case actions.CONFIRM_PIN_SUCCESS:

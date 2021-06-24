@@ -3,7 +3,10 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 import { setRecoveryQuestions } from '../../redux/profile/actions';
-import { getRecoveryQuestions } from '../../redux/edge/actions';
+import {
+  getRecoveryQuestions,
+  resetPinConfirm,
+} from '../../redux/edge/actions';
 import { createNotification } from '../../redux/notifications/actions';
 import {
   closeRecoveryModal as onClose,
@@ -37,6 +40,7 @@ const reduxConnect = connect(
     getRecoveryQuestions,
     createNotification,
     showPinModal,
+    resetPinConfirm,
   },
 );
 
