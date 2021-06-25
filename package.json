@@ -60,7 +60,7 @@
     "dotenv-expand": "4.2.0",
     "dotenv-safe": "^4.0.4",
     "edge-core-js": "0.17.23",
-    "edge-currency-accountbased": "^0.7.47",
+    "edge-currency-accountbased": "0.7.47",
     "edge-currency-ethereum": "^0.11.2",
     "email-validator": "2.0.4",
     "express": "^4.16.2",
