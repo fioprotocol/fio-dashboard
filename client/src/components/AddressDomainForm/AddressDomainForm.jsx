@@ -3,7 +3,7 @@ import { Form } from 'react-final-form';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../../components/AddressDomainBadge/AddressDomainBadge';
 import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
-import Notifications from './Notifications';
+import Notifications from './Notifications.tsx';
 import FormContainer from './FormContainer';
 import debounce from 'lodash/debounce';
 import {
