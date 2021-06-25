@@ -1,6 +1,10 @@
 import { combineReducers } from 'redux';
 import { LOGIN_SUCCESS } from '../edge/actions';
-import { PROFILE_SUCCESS, SIGNUP_SUCCESS } from '../profile/actions';
+import {
+  LOGOUT_SUCCESS,
+  PROFILE_SUCCESS,
+  SIGNUP_SUCCESS,
+} from '../profile/actions';
 import * as actions from './actions';
 
 const emptyWallet = {
@@ -74,6 +78,8 @@ export default combineReducers({
             : fioWallet,
         );
       }
+      case LOGOUT_SUCCESS:
+        return [];
       default:
         return state;
     }
@@ -98,6 +104,8 @@ export default combineReducers({
         }
         return fioAddresses;
       }
+      case LOGOUT_SUCCESS:
+        return [];
       default:
         return state;
     }
@@ -123,6 +131,8 @@ export default combineReducers({
         }
         return fioDomains;
       }
+      case LOGOUT_SUCCESS:
+        return [];
       default:
         return state;
     }

@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { LOGOUT_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
 
 export default combineReducers({
@@ -25,6 +26,7 @@ export default combineReducers({
       case actions.SET_ACCOUNT:
         return action.data;
       case actions.LOGOUT_SUCCESS:
+      case LOGOUT_SUCCESS:
         return null;
       default:
         return state;
