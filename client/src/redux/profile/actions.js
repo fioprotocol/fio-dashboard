@@ -1,3 +1,5 @@
+import { ROUTES } from '../../constants/routes';
+
 export const prefix = 'profile';
 
 export const PROFILE_REQUEST = `${prefix}/PROFILE_REQUEST`;
@@ -38,9 +40,13 @@ export const LOGOUT_REQUEST = `${prefix}/LOGOUT_REQUEST`;
 export const LOGOUT_SUCCESS = `${prefix}/LOGOUT_SUCCESS`;
 export const LOGOUT_FAILURE = `${prefix}/LOGOUT_FAILURE`;
 
-export const logout = () => ({
+export const logout = history => ({
   types: [LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE],
-  promise: api => api.auth.logout(),
+  promise: async api => {
+    const res = await api.auth.logout();
+    history.push(ROUTES.HOME);
+    return res;
+  },
 });
 
 export const CONFIRM_REQUEST = `${prefix}/CONFIRM_REQUEST`;

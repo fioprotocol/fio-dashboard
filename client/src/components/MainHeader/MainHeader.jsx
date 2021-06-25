@@ -18,9 +18,11 @@ const MainHeader = props => {
     showLoginModal,
     logout: logoutFn,
     isAuthenticated,
+    profileLoading,
     edgeAuthLoading,
     notifications,
     cartItems,
+    history,
   } = props;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
 
@@ -38,7 +40,7 @@ const MainHeader = props => {
 
   const logout = () => {
     closeMenu();
-    logoutFn();
+    logoutFn(history);
   };
 
   const renderSideMenu = children => {
@@ -93,7 +95,9 @@ const MainHeader = props => {
             disabled={edgeAuthLoading}
           >
             Sign Out{' '}
-            {edgeAuthLoading && <FontAwesomeIcon icon="spinner" spin />}
+            {(edgeAuthLoading || profileLoading) && (
+              <FontAwesomeIcon icon="spinner" spin />
+            )}
           </Button>
         </Nav.Link>
       </div>
@@ -198,7 +202,10 @@ const MainHeader = props => {
             onClick={showLogin}
             disabled={edgeAuthLoading}
           >
-            Sign In {edgeAuthLoading && <FontAwesomeIcon icon="spinner" spin />}
+            Sign In{' '}
+            {(edgeAuthLoading || profileLoading) && (
+              <FontAwesomeIcon icon="spinner" spin />
+            )}
           </Button>
         </Nav.Link>
       </div>
@@ -282,7 +289,9 @@ MainHeader.propTypes = exact({
   isAuthenticated: PropTypes.bool,
   pathname: PropTypes.string.isRequired,
   user: PropTypes.object,
+  history: PropTypes.object,
   edgeContextSet: PropTypes.bool,
+  profileLoading: PropTypes.bool,
   edgeAuthLoading: PropTypes.bool,
   logout: PropTypes.func.isRequired,
   showLoginModal: PropTypes.func.isRequired,

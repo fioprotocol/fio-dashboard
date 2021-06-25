@@ -67,8 +67,6 @@ export function* signupSuccess() {
 export function* logoutSuccess(history, api) {
   yield takeEvery(LOGOUT_SUCCESS, function() {
     api.client.removeToken();
-    history.push(ROUTES.HOME);
-    window.location.reload();
   });
 }
 

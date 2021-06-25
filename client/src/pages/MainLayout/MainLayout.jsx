@@ -67,7 +67,6 @@ MainLayout.propTypes = exact({
   edgeContextSet: PropTypes.bool,
 
   init: PropTypes.func.isRequired,
-  logout: PropTypes.func.isRequired,
   showRecoveryModal: PropTypes.func.isRequired,
 });
 
