@@ -52,11 +52,6 @@ const PasswordRecoveryForm = props => {
         new Event('submit', { cancelable: true, bubbles: true }),
       );
     }
-
-    if (pinConfirmation.error) {
-      resetPinConfirm();
-      setProcessing(false);
-    }
   }, [pinConfirmation]);
   useEffect(() => {
     setProcessing(showPinConfirm);
