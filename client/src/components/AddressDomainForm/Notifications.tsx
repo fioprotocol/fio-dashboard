@@ -98,7 +98,7 @@ const Notifications = (props: any) => {
       costFio: costFio,
       costUsdc: costUsdc,
       id,
-      allowFree: domainFromList({ domains, domain: domainName }).free,
+      allowFree: (domainFromList({ domains, domain: domainName }) as any).free,
     };
 
     if ((address && hasCustomDomain) || hasOnlyDomain)
