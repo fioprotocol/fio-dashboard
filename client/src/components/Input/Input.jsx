@@ -127,6 +127,7 @@ const Input = props => {
             hasError && classes.error,
             isBW && classes.bw,
             suffix && classes.suffixSpace,
+            type === 'password' && classes.doubleIconInput,
           )}
           {...input}
           {...rest}
