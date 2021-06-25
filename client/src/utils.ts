@@ -1,5 +1,14 @@
 import isEmpty from 'lodash/isEmpty';
 import apis from './api/index';
+import {
+  CartItem,
+  DeleteCartItem,
+  Domain,
+  FioWallets,
+  Prices,
+  RegistrationResult,
+} from './types';
+
 const FIO_DAPP_USERNAME_DELIMITER = '_fio.dapp_';
 
 export const FIO_ADDRESS_DELIMITER = '@';
@@ -51,11 +60,15 @@ export const setDataMutator = (args: any[], state: any) => {
   }
 };
 
-type Domain = { domain: string; free?: boolean };
-export const domainFromList = ({ domains, domain }: { domains: Domain[], domain: string }) =>
-  domains.find(item => item.domain === domain) || {};
+export const domainFromList = ({
+  domains,
+  domain,
+}: {
+  domains: Domain[];
+  domain: string;
+}) => domains.find(item => item.domain === domain);
 
-export const setFreeCart = ({ cartItems }) => {
+export const setFreeCart = ({ cartItems }: { cartItems: CartItem[] }) => {
   const recalcElem = cartItems.find(
     item => item.address && item.domain && item.allowFree,
   );
@@ -74,25 +87,23 @@ export const setFreeCart = ({ cartItems }) => {
 };
 
 export const recalculateCart = ({
-  domains,
   cartItems,
   id,
 }: {
-  domains: any[];
-  cartItems: any[];
+  cartItems: CartItem[];
   id: string;
 }) => {
   const deletedElement = cartItems.find(item => item.id === id);
   if (!deletedElement) return;
 
-  const data: any = {
+  const data: { id: string; cartItems?: CartItem[] } = {
     id,
   };
 
   const deletedElemCart = cartItems.filter(item => item.id !== id);
 
   if (!deletedElement.costUsdc && !deletedElement.costFio) {
-    const recCart = setFreeCart({ domains, cartItems: deletedElemCart });
+    const recCart = setFreeCart({ cartItems: deletedElemCart });
     data.cartItems = recCart;
   }
 
@@ -103,8 +114,8 @@ export const removeFreeCart = ({
   cartItems,
   prices,
 }: {
-  cartItems: any[];
-  prices: any;
+  cartItems: CartItem[];
+  prices: Prices;
 }) => {
   const {
     fio: { address: addressFio },
@@ -122,7 +133,7 @@ export const removeFreeCart = ({
   return retCart;
 };
 
-export const cartHasFreeItem = (cartItems: any[]) => {
+export const cartHasFreeItem = (cartItems: CartItem[]) => {
   return (
     !isEmpty(cartItems) &&
     cartItems.some(item => !item.costFio && !item.costUsdc)
@@ -130,24 +141,22 @@ export const cartHasFreeItem = (cartItems: any[]) => {
 };
 
 export const handleFreeAddressCart = ({
-  domains,
   recalculate,
   cartItems,
   prices,
   hasFreeAddress,
 }: {
-  domains: any[];
-  fioWallets: any[];
-  recalculate: (cartItems: any[]) => {};
-  cartItems: any[];
-  prices: any;
+  fioWallets: FioWallets;
+  recalculate: (cartItems: CartItem[]) => {};
+  cartItems: CartItem[];
+  prices: Prices;
   hasFreeAddress: boolean;
 }) => {
-  let retCart = [];
+  let retCart: CartItem[] = [];
   if (hasFreeAddress) {
     retCart = removeFreeCart({ cartItems, prices });
   } else if (!cartHasFreeItem(cartItems)) {
-    retCart = setFreeCart({ domains, cartItems });
+    retCart = setFreeCart({ cartItems });
   }
   recalculate(!isEmpty(retCart) ? retCart : cartItems);
 };
@@ -156,18 +165,16 @@ export const deleteCartItem = ({
   id,
   prices,
   deleteItem,
-  domains,
   cartItems,
   recalculate,
 }: {
   id?: string;
-  prices?: any;
-  deleteItem?: (item: any) => {};
-  domains?: any[];
-  cartItems?: any[];
-  recalculate?: (cartItems: any[]) => {};
+  prices?: Prices;
+  deleteItem?: (data: DeleteCartItem | string) => {};
+  cartItems?: CartItem[];
+  recalculate?: (cartItems: CartItem[]) => {};
 } = {}) => {
-  const data = recalculateCart({ domains, cartItems, id }) || id;
+  const data = recalculateCart({ cartItems, id }) || id;
   deleteItem(data);
 
   const { domain, hasCustomDomain } =
@@ -179,30 +186,29 @@ export const deleteCartItem = ({
       domain && updCart.some(item => item.domain === domain.toLowerCase());
     if (hasCurrentDomain) {
       const firstMatchElem =
-        (domain &&
-          updCart.find(item => item.domain === domain.toLowerCase())) ||
-        {};
-      if (firstMatchElem) {
+        domain && updCart.find(item => item.domain === domain.toLowerCase());
+      if (!isEmpty(firstMatchElem)) {
         const {
           usdt: { domain: domainPrice, address: addressPrice },
           fio: { domain: fioDomainPrice, address: fioAddressPrice },
         } = prices;
         const retObj = {
           ...firstMatchElem,
-          costFio: parseFloat(fioAddressPrice) + parseFloat(fioDomainPrice),
-          costUsdc: parseFloat(addressPrice) + parseFloat(domainPrice),
+          costFio: fioAddressPrice + fioDomainPrice,
+          costUsdc: addressPrice + domainPrice,
           hasCustomDomain: true,
         };
         const retData = updCart.map(item =>
           item.id === firstMatchElem.id ? retObj : item,
         );
+
         recalculate(retData);
       }
     }
   }
 };
 
-export const totalCost = (cart: any[]) => {
+export const totalCost = (cart: CartItem[]) => {
   if (cart.length === 1 && cart.some(item => !item.costFio && !item.costUsdc))
     return { costFree: 'FREE' };
 
@@ -210,7 +216,7 @@ export const totalCost = (cart: any[]) => {
     !isEmpty(cart) &&
     cart
       .filter(item => item.costFio && item.costUsdc)
-      .reduce((acc, item) => {
+      .reduce<Record<string, number>>((acc, item) => {
         if (!acc.costFio) acc.costFio = 0;
         if (!acc.costUsdc) acc.costUsdc = 0;
         return {
@@ -233,9 +239,9 @@ export const transformResult = ({
   cart,
   prices,
 }: {
-  result: any,
-  cart: any[],
-  prices: any,
+  result: RegistrationResult;
+  cart: CartItem[];
+  prices: Prices;
 }) => {
   const errItems = [];
   const regItems = [];
@@ -253,11 +259,13 @@ export const transformResult = ({
     for (const item of errors) {
       const { fioName, error, isFree, cartItemId } = item;
 
-      const retObj: any = {
+      const retObj: CartItem = {
         id: fioName,
+        domain: '',
       };
 
-      const partialIndex = partial && partial.indexOf(id => id === cartItemId);
+      const partialIndex =
+        partial && partial.indexOf((id: string) => id === cartItemId);
       if (!isDomain(fioName)) {
         const name = fioName.split('@');
         const addressName = name[0];
@@ -298,8 +306,9 @@ export const transformResult = ({
     for (const item of registered) {
       const { fioName, isFree, fee_collected } = item;
 
-      const retObj: any = {
+      const retObj: CartItem = {
         id: fioName,
+        domain: '',
       };
 
       if (!isDomain(fioName)) {
@@ -339,4 +348,4 @@ export const transformResult = ({
   return { errItems, regItems, updatedCart };
 };
 
-export const priceToNumber = price => +parseFloat(price).toFixed(2);
+export const priceToNumber = (price: string) => +parseFloat(price).toFixed(2);

@@ -43,7 +43,6 @@ const AddressDomainCart = props => {
       deleteItem,
       cartItems,
       recalculate,
-      domains,
     });
   };
 

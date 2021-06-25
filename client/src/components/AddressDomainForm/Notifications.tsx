@@ -8,6 +8,7 @@ import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../AddressDomainBadge/AddressDomainBadge';
 import InfoBadge from '../InfoBadge/InfoBadge';
 import { deleteCartItem, domainFromList } from '../../utils';
+import { CartItem } from '../../types';
 
 import classes from './AddressDomainForm.module.scss';
 
@@ -18,7 +19,7 @@ const AVAILABLE_MESSAGE = {
     'The FIO domain you requested is available',
 };
 
-const Notifications = props => {
+const Notifications = (props: any) => {
   const {
     formProps,
     hasCustomDomain,
@@ -38,7 +39,7 @@ const Notifications = props => {
     currentCartItem,
   } = props;
   const { values, form } = formProps;
-  const errors = [];
+  const errors: { message?: string; showInfoError?: boolean }[] = [];
 
   !isEmpty(formErrors) &&
     Object.keys(formErrors).forEach(key => {
@@ -58,25 +59,26 @@ const Notifications = props => {
   const hasOnlyDomain =
     domainName &&
     cartItems.some(
-      item => !item.address && item.domain === domainName.toLowerCase(),
+      (item: CartItem) =>
+        !item.address && item.domain === domainName.toLowerCase(),
     );
   const hasErrors = !isEmpty(errors);
-  let costUsdc;
-  let costFio;
+  let costUsdc = 0;
+  let costFio = 0;
 
   if (!isFree && isAddress) {
-    costUsdc = isAddress ? parseFloat(addressPrice) : parseFloat(domainPrice);
+    costUsdc = isAddress ? +parseFloat(addressPrice) : +parseFloat(domainPrice);
     costFio = isAddress
-      ? parseFloat(fioAddressPrice)
-      : parseFloat(fioDomainPrice);
+      ? +parseFloat(fioAddressPrice)
+      : +parseFloat(fioDomainPrice);
   }
   if (hasCustomDomain) {
     costUsdc = costUsdc
-      ? costUsdc + parseFloat(domainPrice)
-      : parseFloat(domainPrice);
+      ? costUsdc + +parseFloat(domainPrice)
+      : +parseFloat(domainPrice);
     costFio = costFio
-      ? costFio + parseFloat(fioDomainPrice)
-      : parseFloat(fioDomainPrice);
+      ? costFio + +parseFloat(fioDomainPrice)
+      : +parseFloat(fioDomainPrice);
   }
   if (!isFree && currentCartItem) {
     costFio = currentCartItem.costFio;
@@ -91,7 +93,7 @@ const Notifications = props => {
 
     id += domainName;
 
-    const data = {
+    const data: CartItem = {
       ...values,
       costFio: costFio,
       costUsdc: costUsdc,
@@ -107,7 +109,9 @@ const Notifications = props => {
       data.costFio += parseFloat(fioDomainPrice);
       data.costUsdc += parseFloat(domainPrice);
       recalculate([
-        ...cartItems.filter(item => item.domain !== domainName.toLowerCase()),
+        ...cartItems.filter(
+          (item: CartItem) => item.domain !== domainName.toLowerCase(),
+        ),
         data,
       ]);
     } else {
@@ -215,7 +219,6 @@ const Notifications = props => {
                     deleteItem,
                     cartItems,
                     recalculate,
-                    domains,
                   });
                   toggleShowAvailable(false);
                 }}
