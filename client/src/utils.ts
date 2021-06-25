@@ -66,7 +66,7 @@ export const domainFromList = ({
 }: {
   domains: Domain[];
   domain: string;
-}) => domains.find(item => item.domain === domain);
+}) => domains.find(item => item.domain === domain) || {};
 
 export const setFreeCart = ({ cartItems }: { cartItems: CartItem[] }) => {
   const recalcElem = cartItems.find(
