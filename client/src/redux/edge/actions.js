@@ -41,7 +41,6 @@ export const login = ({ username, password, pin }) => ({
     } catch (e) {
       console.log(e);
     }
-    console.log(account);
     return { account, fioWallets };
   },
 });
