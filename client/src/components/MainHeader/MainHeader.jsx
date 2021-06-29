@@ -297,6 +297,9 @@ MainHeader.propTypes = exact({
   showLoginModal: PropTypes.func.isRequired,
   notifications: PropTypes.arrayOf(PropTypes.object),
   cartItems: PropTypes.arrayOf(PropTypes.object),
+  location: PropTypes.object,
+  match: PropTypes.object,
+  staticContext: PropTypes.object,
 });
 
 export default MainHeader;
