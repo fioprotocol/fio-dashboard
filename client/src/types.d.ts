@@ -9,7 +9,7 @@ export type CartItem = {
   hasCustomDomain?: boolean;
   allowFree?: boolean;
   showBadge?: boolean;
-  error?: any;
+  error?: string;
   isFree?: boolean;
 };
 
@@ -20,12 +20,20 @@ export type Prices = {
 };
 
 export type RegistrationResult = {
-  errors: any[];
-  registered: any[];
-  partial: any[];
+  errors: {
+    fioName: string;
+    error: string;
+    isFree?: boolean;
+    cartItemId: string;
+  }[];
+  registered: {
+    fioName: string;
+    isFree?: boolean;
+    fee_collected: number;
+    cartItemId: string;
+  }[];
+  partial: string[];
 };
-
-export type FioWallets = any[];
 
 export type DeleteCartItem =
   | {

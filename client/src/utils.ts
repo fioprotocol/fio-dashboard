@@ -4,7 +4,6 @@ import {
   CartItem,
   DeleteCartItem,
   Domain,
-  FioWallets,
   Prices,
   RegistrationResult,
 } from './types';
@@ -149,7 +148,7 @@ export const handleFreeAddressCart = ({
   prices,
   hasFreeAddress,
 }: {
-  fioWallets: FioWallets;
+  fioWallets: any[];
   recalculate: (cartItems: CartItem[]) => {};
   cartItems: CartItem[];
   prices: Prices;
@@ -267,8 +266,7 @@ export const transformResult = ({
         domain: '',
       };
 
-      const partialIndex =
-        partial && partial.indexOf((id: string) => id === cartItemId);
+      const partialIndex = partial && partial.indexOf(cartItemId);
       if (!isDomain(fioName)) {
         const name = fioName.split('@');
         const addressName = name[0];
