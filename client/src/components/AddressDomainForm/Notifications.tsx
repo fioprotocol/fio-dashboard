@@ -3,12 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
 import isEmpty from 'lodash/isEmpty';
+import { FormProps } from 'react-final-form';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../AddressDomainBadge/AddressDomainBadge';
 import InfoBadge from '../InfoBadge/InfoBadge';
 import { deleteCartItem, isFreeDomain } from '../../utils';
-import { CartItem } from '../../types';
+import { CartItem, Domain, DeleteCartItem, Prices } from '../../types';
 
 import classes from './AddressDomainForm.module.scss';
 
@@ -19,32 +20,61 @@ const AVAILABLE_MESSAGE = {
     'The FIO domain you requested is available',
 };
 
-const Notifications = (props: any) => {
+type Error =
+  | {
+      message: string;
+      showInfoError?: boolean;
+    }
+  | string;
+
+type FormError = {
+  [key: string]: Error;
+};
+
+type Props = {
+  cartItems: CartItem[];
+  currentCartItem: CartItem | undefined;
+  domains: Domain[];
+  formErrors: FormError;
+  formProps: FormProps;
+  isAddress: boolean;
+  isDomain: boolean;
+  isFree: boolean;
+  hasCustomDomain: boolean;
+  prices: Prices;
+  showAvailable: boolean;
+  type: string;
+  addItem: (data: CartItem) => void;
+  deleteItem: (data: DeleteCartItem) => {};
+  recalculate: (cartItems: CartItem[]) => {};
+  toggleShowAvailable: (flag: boolean) => boolean;
+};
+
+const Notifications = (props: Props) => {
   const {
-    formProps,
-    hasCustomDomain,
-    showAvailable,
-    toggleShowAvailable,
-    type,
     cartItems,
-    addItem,
-    deleteItem,
-    prices,
+    currentCartItem,
+    domains,
+    formErrors,
+    formProps,
     isAddress,
     isDomain,
-    formErrors,
     isFree,
+    hasCustomDomain,
+    prices,
+    showAvailable,
+    type,
+    addItem,
+    deleteItem,
     recalculate,
-    domains,
-    currentCartItem,
+    toggleShowAvailable,
   } = props;
   const { values, form } = formProps;
-  const errors: { message?: string; showInfoError?: boolean }[] = [];
-
+  const errors: (string | { message: string; showInfoError?: boolean })[] = [];
   !isEmpty(formErrors) &&
     Object.keys(formErrors).forEach(key => {
-      const fieldState = form.getFieldState(key) || {};
-      const { touched, modified, submitSucceeded } = fieldState;
+      const fieldState = form.getFieldState(key);
+      const { touched, modified, submitSucceeded } = fieldState || {};
       if (touched || modified || submitSucceeded) {
         errors.push(formErrors[key]);
       }
@@ -67,18 +97,12 @@ const Notifications = (props: any) => {
   let costFio = 0;
 
   if (!isFree && isAddress) {
-    costUsdc = isAddress ? +parseFloat(addressPrice) : +parseFloat(domainPrice);
-    costFio = isAddress
-      ? +parseFloat(fioAddressPrice)
-      : +parseFloat(fioDomainPrice);
+    costUsdc = isAddress ? addressPrice : domainPrice;
+    costFio = isAddress ? fioAddressPrice : fioDomainPrice;
   }
   if (hasCustomDomain) {
-    costUsdc = costUsdc
-      ? costUsdc + +parseFloat(domainPrice)
-      : +parseFloat(domainPrice);
-    costFio = costFio
-      ? costFio + +parseFloat(fioDomainPrice)
-      : +parseFloat(fioDomainPrice);
+    costUsdc = costUsdc ? costUsdc + domainPrice : domainPrice;
+    costFio = costFio ? costFio + fioDomainPrice : fioDomainPrice;
   }
   if (!isFree && currentCartItem) {
     costFio = currentCartItem.costFio;
@@ -104,8 +128,8 @@ const Notifications = (props: any) => {
     if (costFio && costFio > 0) data.costFio = costFio;
     if (costUsdc && costUsdc > 0) data.costUsdc = costUsdc;
     if (address && hasOnlyDomain) {
-      data.costFio += parseFloat(fioDomainPrice);
-      data.costUsdc += parseFloat(domainPrice);
+      data.costFio += fioDomainPrice;
+      data.costUsdc += domainPrice;
       recalculate([
         ...cartItems.filter(
           (item: CartItem) => item.domain !== domainName.toLowerCase(),
@@ -126,7 +150,7 @@ const Notifications = (props: any) => {
         message={AVAILABLE_MESSAGE[type]}
       />
       {errors.map(error => {
-        if (error.message) {
+        if (typeof error !== 'string' && error.message) {
           return (
             <InfoBadge
               type={error.showInfoError ? BADGE_TYPES.INFO : BADGE_TYPES.ERROR}
