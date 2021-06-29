@@ -7,7 +7,7 @@ import isEmpty from 'lodash/isEmpty';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../AddressDomainBadge/AddressDomainBadge';
 import InfoBadge from '../InfoBadge/InfoBadge';
-import { deleteCartItem, domainFromList } from '../../utils';
+import { deleteCartItem, isFreeDomain } from '../../utils';
 import { CartItem } from '../../types';
 
 import classes from './AddressDomainForm.module.scss';
@@ -95,16 +95,14 @@ const Notifications = (props: any) => {
 
     const data: CartItem = {
       ...values,
-      costFio: costFio,
-      costUsdc: costUsdc,
       id,
-      allowFree: (domainFromList({ domains, domain: domainName }) as any).free,
+      allowFree: isFreeDomain({ domains, domain: domainName }),
     };
 
     if ((address && hasCustomDomain) || hasOnlyDomain)
       data.hasCustomDomain = true;
-    if (costFio) data.costFio = costFio;
-    if (costUsdc) data.costUsdc = costUsdc;
+    if (costFio && costFio > 0) data.costFio = costFio;
+    if (costUsdc && costUsdc > 0) data.costUsdc = costUsdc;
     if (address && hasOnlyDomain) {
       data.costFio += parseFloat(fioDomainPrice);
       data.costUsdc += parseFloat(domainPrice);
