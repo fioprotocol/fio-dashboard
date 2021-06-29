@@ -148,7 +148,6 @@ export const handleFreeAddressCart = ({
   prices,
   hasFreeAddress,
 }: {
-  fioWallets: any[];
   recalculate: (cartItems: CartItem[]) => {};
   cartItems: CartItem[];
   prices: Prices;
