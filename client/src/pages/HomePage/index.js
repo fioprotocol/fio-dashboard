@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 
 import { compose } from '../../utils';
 
-import { isAuthenticated } from '../../redux/edge/selectors';
+import { isAuthenticated } from '../../redux/profile/selectors';
 
 import HomePage from './HomePage';
 

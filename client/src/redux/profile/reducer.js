@@ -60,6 +60,8 @@ export default combineReducers({
         return false;
       case actions.PASSWORD_RECOVERY_SUCCESS:
         return true;
+      case actions.LOGOUT_SUCCESS:
+        return false;
       default:
         return state;
     }

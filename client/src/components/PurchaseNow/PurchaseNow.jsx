@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
 import classes from './PurchaseNow.module.scss';
 import { executeRegistration } from './middleware';
@@ -58,8 +59,9 @@ export const PurchaseNow = props => {
 
   // registration
   useEffect(async () => {
-    const { keys, error } = pinConfirmation;
+    const { keys, error, action } = pinConfirmation;
 
+    if (action !== CONFIRM_PIN_ACTIONS.PURCHASE) return;
     if (keys && Object.keys(keys).length) resetPinConfirm();
     if (keys && keys[currentWallet.id] && (isWaiting || !error)) {
       setProcessing(true);
@@ -100,7 +102,7 @@ export const PurchaseNow = props => {
     setWaiting(true);
     for (const item of cartItems) {
       if (item.costFio) {
-        return showPinModal();
+        return showPinModal(CONFIRM_PIN_ACTIONS.PURCHASE);
       }
     }
     checkCaptcha();

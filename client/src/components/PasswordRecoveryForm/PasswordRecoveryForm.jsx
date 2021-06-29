@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Field, useForm } from 'react-final-form';
+import { Form, Field, useForm, FormSpy } from 'react-final-form';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Scrollbar } from 'react-scrollbars-custom';
 import classnames from 'classnames';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
+import { ErrorBadge } from '../Input/ErrorBadge';
 
 import { ACTIONS } from '../Notifications/Notifications';
 import { BADGE_TYPES } from '../Badge/Badge';
@@ -20,18 +22,62 @@ const PasswordRecoveryForm = props => {
   const {
     show,
     onClose,
-    loading,
+    edgeAuthLoading,
+    pinConfirmation,
+    showPinConfirm,
     questions,
     getRecoveryQuestions,
-    account,
     onSubmit,
+    showPinModal,
+    resetPinConfirm,
   } = props;
 
   const [isSkip, toggleSkip] = useState(false);
   const [isQuestions, toggleQuestions] = useState(false);
   const [questionNumber, setQuestionNumber] = useState(null);
+  const [processing, setProcessing] = useState(false);
+  const [defaultValues, setDefaultValues] = useState({});
+  const [errorMessage, setError] = useState('');
 
   useEffect(getRecoveryQuestions, []);
+  useEffect(async () => {
+    if (
+      processing &&
+      pinConfirmation &&
+      pinConfirmation.account &&
+      pinConfirmation.action === CONFIRM_PIN_ACTIONS.RECOVERY
+    ) {
+      const recoveryForm = document.getElementById('recovery-form');
+      recoveryForm.dispatchEvent(
+        new Event('submit', { cancelable: true, bubbles: true }),
+      );
+    }
+  }, [pinConfirmation]);
+  useEffect(() => {
+    setProcessing(showPinConfirm);
+  }, [showPinConfirm]);
+
+  const fieldValuesChanged = () => {
+    setError('');
+  };
+
+  const confirmPin = values => () => {
+    setProcessing(true);
+    const {
+      recoveryAnswerTwo,
+      recoveryAnswerOne,
+      recoveryQuestionTwo,
+      recoveryQuestionOne,
+    } = values;
+
+    setDefaultValues(values);
+    showPinModal(CONFIRM_PIN_ACTIONS.RECOVERY, {
+      recoveryAnswerTwo,
+      recoveryAnswerOne,
+      recoveryQuestionTwo,
+      recoveryQuestionOne,
+    });
+  };
 
   const showSkip = () => {
     toggleSkip(true);
@@ -180,7 +226,11 @@ const PasswordRecoveryForm = props => {
     const { handleSubmit, valid, submitting, values } = props;
 
     return (
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} id="recovery-form">
+        <FormSpy
+          subscription={{ values: true }}
+          onChange={fieldValuesChanged}
+        />
         <div className={classes.formBox}>
           <div className={classnames(classes.box, isQuestions && classes.show)}>
             <FormHeader
@@ -192,7 +242,7 @@ const PasswordRecoveryForm = props => {
             <Field
               name="recoveryQuestionOne"
               type="1"
-              disabled={loading}
+              disabled={edgeAuthLoading || processing}
               component={renderQuestionType}
               options={questions}
             />
@@ -201,14 +251,14 @@ const PasswordRecoveryForm = props => {
                 name="recoveryAnswerOne"
                 type="text"
                 placeholder="Answer"
-                disabled={loading}
+                disabled={edgeAuthLoading || processing}
                 component={Input}
               />
             )}
             <Field
               name="recoveryQuestionTwo"
               type="2"
-              disabled={loading}
+              disabled={edgeAuthLoading || processing}
               component={renderQuestionType}
               options={questions}
             />
@@ -217,18 +267,22 @@ const PasswordRecoveryForm = props => {
                 name="recoveryAnswerTwo"
                 type="text"
                 placeholder="Answer"
-                disabled={loading}
+                disabled={edgeAuthLoading || processing}
                 component={Input}
               />
+            )}
+
+            {errorMessage && (
+              <ErrorBadge error={errorMessage} hasError={true} data={{}} wrap />
             )}
             <Button
               htmltype="submit"
               variant="primary"
               className="w-100"
-              onClick={handleSubmit}
-              disabled={loading || !valid}
+              onClick={confirmPin(values)}
+              disabled={edgeAuthLoading || !valid || processing}
             >
-              {loading || submitting ? (
+              {edgeAuthLoading || submitting || processing ? (
                 <FontAwesomeIcon icon="spinner" spin />
               ) : (
                 'NEXT'
@@ -275,24 +329,28 @@ const PasswordRecoveryForm = props => {
             recoveryQuestionTwo,
             recoveryQuestionOne,
           } = values;
-
           try {
-            const token = await account.changeRecovery(
+            const token = await pinConfirmation.account.changeRecovery(
               [recoveryQuestionOne.question, recoveryQuestionTwo.question],
               [recoveryAnswerOne, recoveryAnswerTwo],
             );
+            setDefaultValues({});
             onSubmit(token);
-            return {};
+            setProcessing(false);
           } catch (e) {
             console.error(e);
-            return {
-              errors: {
-                recoveryAnswerOne:
-                  'There was an issue setting recovery questions',
-              },
-            };
+            setProcessing(false);
+            setError('There was an issue setting recovery questions');
+            // todo: handle error for each field
+            // return {
+            //   recoveryAnswerTwo:
+            //     'There was an issue setting recovery questions',
+            // };
           }
+          resetPinConfirm();
+          return {};
         }}
+        initialValues={defaultValues}
         validate={validateForm}
       >
         {renderFormItems}
@@ -301,7 +359,7 @@ const PasswordRecoveryForm = props => {
 
   return (
     <ModalComponent
-      show={show}
+      show={show && !showPinConfirm}
       backdrop="static"
       onClose={isSkip ? closeSkip : showSkip}
       isDanger={isSkip}

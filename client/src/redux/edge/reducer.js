@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { LOGOUT_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
 
 export default combineReducers({
@@ -25,17 +26,7 @@ export default combineReducers({
       case actions.SET_ACCOUNT:
         return action.data;
       case actions.LOGOUT_SUCCESS:
-        return null;
-      default:
-        return state;
-    }
-  },
-  username(state = null, action) {
-    switch (action.type) {
-      case actions.LOGIN_SUCCESS:
-      case actions.SET_ACCOUNT:
-        return action.data.username;
-      case actions.LOGOUT_SUCCESS:
+      case LOGOUT_SUCCESS:
         return null;
       default:
         return state;
@@ -122,19 +113,11 @@ export default combineReducers({
         return state;
     }
   },
-  fioWallets(state = [], action) {
-    switch (action.type) {
-      case actions.REFRESH_FIO_WALLETS_SUCCESS: {
-        return action.data;
-      }
-      default:
-        return state;
-    }
-  },
   pinConfirmation(state = {}, action) {
     switch (action.type) {
       case actions.RESET_PIN_CONFIRM:
       case actions.CONFIRM_PIN_REQUEST: {
+        if (state.account) state.account.logout();
         return {};
       }
       case actions.CONFIRM_PIN_SUCCESS:

@@ -122,6 +122,10 @@
      &.error {
       border-color: $warn-red;
     }
+
+    &.doubleIconInput {
+      padding-right: 90px;
+    }
   }
 }
 

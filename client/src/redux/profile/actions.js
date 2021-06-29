@@ -1,3 +1,5 @@
+import { ROUTES } from '../../constants/routes';
+
 export const prefix = 'profile';
 
 export const PROFILE_REQUEST = `${prefix}/PROFILE_REQUEST`;
@@ -13,9 +15,10 @@ export const LOGIN_REQUEST = `${prefix}/LOGIN_REQUEST`;
 export const LOGIN_SUCCESS = `${prefix}/LOGIN_SUCCESS`;
 export const LOGIN_FAILURE = `${prefix}/LOGIN_FAILURE`;
 
-export const login = ({ email, password, pin }) => ({
+export const login = ({ email, password, pin }, fioWallets = null) => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
   promise: api => api.auth.login(email, password, pin),
+  fioWallets,
 });
 
 export const SIGNUP_REQUEST = `${prefix}/SIGNUP_REQUEST`;
@@ -26,6 +29,7 @@ export const RESET_SUCCESS_STATE = `${prefix}/RESET_SUCCESS_STATE`;
 export const signup = data => ({
   types: [SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE],
   promise: api => api.auth.signup(data),
+  fioWallets: data.fioWallets,
 });
 
 export const resetSuccessState = () => ({
@@ -36,9 +40,13 @@ export const LOGOUT_REQUEST = `${prefix}/LOGOUT_REQUEST`;
 export const LOGOUT_SUCCESS = `${prefix}/LOGOUT_SUCCESS`;
 export const LOGOUT_FAILURE = `${prefix}/LOGOUT_FAILURE`;
 
-export const logout = () => ({
+export const logout = history => ({
   types: [LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE],
-  promise: api => api.auth.logout(),
+  promise: async api => {
+    const res = await api.auth.logout();
+    history.push(ROUTES.HOME);
+    return res;
+  },
 });
 
 export const CONFIRM_REQUEST = `${prefix}/CONFIRM_REQUEST`;

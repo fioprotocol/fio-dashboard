@@ -24,6 +24,7 @@ const PinConfirmModal = props => {
     username,
     pinConfirmation,
     resetPinConfirm,
+    pinConfirmData,
   } = props;
   if (!showPinConfirm || !edgeContextSet) return null;
   const { screenType } = currentScreenType();
@@ -53,12 +54,16 @@ const PinConfirmModal = props => {
   }, [pinConfirmation]);
 
   const handleSubmit = values => {
+    if (confirmingPin) return;
     const { pin } = values;
     if (pin && pin.length !== PIN_LENGTH) return;
-    onSubmit({
-      username,
-      pin,
-    });
+    onSubmit(
+      {
+        username,
+        pin,
+      },
+      pinConfirmData,
+    );
   };
 
   const resetForm = () => {
@@ -75,6 +80,7 @@ const PinConfirmModal = props => {
   };
 
   const handleClose = () => {
+    if (confirmingPin) return;
     resetForm();
     onClose();
   };

@@ -1,12 +1,12 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { account } from '../../redux/edge/selectors';
 import { user } from '../../redux/profile/selectors';
+import { fioWallets } from '../../redux/fio/selectors';
 import DashboardPage from './DashboardPage';
 
 const selector = createStructuredSelector({
-  account,
+  fioWallets,
   user,
 });
 

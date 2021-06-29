@@ -16,10 +16,10 @@ import classes from './MainLayout.module.scss';
 
 const MainLayout = props => {
   const {
-    account,
     pathname,
     children,
     edgeContextSet,
+    isAuthenticated,
     showLogin,
     showRecovery,
     init,
@@ -34,7 +34,9 @@ const MainLayout = props => {
 
   const loginFormModalRender = () => showLogin && <LoginForm />;
   const recoveryFormModalRender = () =>
-    showRecovery && account && <PasswordRecoveryForm />;
+    showRecovery &&
+    edgeContextSet &&
+    isAuthenticated && <PasswordRecoveryForm />;
 
   const isHomePage = pathname === '/';
 
@@ -42,8 +44,8 @@ const MainLayout = props => {
     <div className={classes.root}>
       <MainHeader />
       <CartTimeout />
-      {account && isDesktop && <Navigation />}
-      <Notifications />
+      {isAuthenticated && isDesktop && <Navigation />}
+      {(!isHomePage || isAuthenticated) && <Notifications />}
       <div className={`${classes.content} ${isHomePage && classes.home}`}>
         {children}
       </div>
@@ -58,15 +60,13 @@ const MainLayout = props => {
 MainLayout.propTypes = exact({
   children: PropTypes.element,
   pathname: PropTypes.string.isRequired,
-  user: PropTypes.object,
-  account: PropTypes.object,
+  isAuthenticated: PropTypes.bool,
   loginSuccess: PropTypes.bool,
   showLogin: PropTypes.bool,
   showRecovery: PropTypes.bool,
   edgeContextSet: PropTypes.bool,
 
   init: PropTypes.func.isRequired,
-  logout: PropTypes.func.isRequired,
   showRecoveryModal: PropTypes.func.isRequired,
 });
 

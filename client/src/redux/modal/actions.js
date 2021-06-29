@@ -26,8 +26,9 @@ export const closeRecoveryModal = () => ({
 export const SHOW_PIN_CONFIRM = `${prefix}/SHOW_PIN_CONFIRM`;
 export const CLOSE_PIN_CONFIRM = `${prefix}/CLOSE_PIN_CONFIRM`;
 
-export const showPinModal = () => ({
+export const showPinModal = (confirmAction, data) => ({
   type: SHOW_PIN_CONFIRM,
+  data: { confirmAction, data },
 });
 
 export const closePinConfirmModal = () => ({

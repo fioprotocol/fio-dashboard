@@ -1,3 +1,5 @@
+import { DEFAULT_WALLET_OPTIONS } from '../../constants/common';
+
 export const prefix = 'edge';
 
 export const EDGE_CONTEXT_INIT_REQUEST = `${prefix}/EDGE_CONTEXT_INIT_REQUEST`;
@@ -19,15 +21,35 @@ export const LOGIN_FAILURE = `${prefix}/LOGIN_FAILURE`;
 
 export const login = ({ username, password, pin }) => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
-  promise: api =>
-    pin ? api.edge.loginPIN(username, pin) : api.edge.login(username, password),
+  promise: async api => {
+    const account = pin
+      ? await api.edge.loginPIN(username, pin)
+      : await api.edge.login(username, password);
+    const fioWallets = [];
+    try {
+      for (const walletId of account.activeWalletIds) {
+        const wallet = await account.waitForCurrencyWallet(walletId);
+
+        // todo: investigate why wallet name changes
+        if (wallet.name === 'io.fioprotocol.app')
+          await wallet.renameWallet(DEFAULT_WALLET_OPTIONS.name);
+
+        if (wallet.currencyInfo.currencyCode === 'FIO') {
+          fioWallets.push(wallet);
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    return { account, fioWallets };
+  },
 });
 
 export const CONFIRM_PIN_REQUEST = `${prefix}/CONFIRM_PIN_REQUEST`;
 export const CONFIRM_PIN_SUCCESS = `${prefix}/CONFIRM_PIN_SUCCESS`;
 export const CONFIRM_PIN_FAILURE = `${prefix}/CONFIRM_PIN_FAILURE`;
 
-export const confirmPin = ({ username, pin }) => ({
+export const confirmPin = ({ username, pin }, { action, data }) => ({
   types: [CONFIRM_PIN_REQUEST, CONFIRM_PIN_SUCCESS, CONFIRM_PIN_FAILURE],
   promise: async api => {
     const account = await api.edge.loginPIN(username, pin);
@@ -47,7 +69,7 @@ export const confirmPin = ({ username, pin }) => ({
       console.log(e);
     }
 
-    return { keys };
+    return { account, keys, action, data };
   },
 });
 export const RESET_PIN_CONFIRM = `${prefix}/RESET_PIN_CONFIRM`;
@@ -60,33 +82,6 @@ export const SET_ACCOUNT = `${prefix}/SET_ACCOUNT`;
 export const setAccount = account => ({
   type: SET_ACCOUNT,
   data: account,
-});
-
-export const REFRESH_FIO_WALLETS = `${prefix}/REFRESH_FIO_WALLETS`;
-export const REFRESH_FIO_WALLETS_SUCCESS = `${prefix}/REFRESH_FIO_WALLETS_SUCCESS`;
-export const REFRESH_FIO_WALLETS_FAILURE = `${prefix}/REFRESH_FIO_WALLETS_FAILURE`;
-
-export const refreshFioWallets = account => ({
-  types: [
-    REFRESH_FIO_WALLETS,
-    REFRESH_FIO_WALLETS_SUCCESS,
-    REFRESH_FIO_WALLETS_FAILURE,
-  ],
-  promise: async () => {
-    const fioWallets = [];
-    try {
-      for (const walletId of account.activeWalletIds) {
-        const wallet = await account.waitForCurrencyWallet(walletId);
-        if (wallet.currencyInfo.currencyCode === 'FIO') {
-          fioWallets.push(wallet);
-        }
-      }
-    } catch (e) {
-      console.log(e);
-    }
-
-    return fioWallets;
-  },
 });
 
 export const SIGNUP_REQUEST = `${prefix}/SIGNUP_REQUEST`;
@@ -144,7 +139,6 @@ export const LOGOUT_SUCCESS = `${prefix}/LOGOUT_SUCCESS`;
 export const LOGOUT_FAILURE = `${prefix}/LOGOUT_FAILURE`;
 
 export const logout = account => {
-  console.log('logout', account);
   if (!account) return { type: LOGOUT_FAILURE };
   return {
     types: [LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE],

@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { SET_RECOVERY_SUCCESS } from '../profile/actions';
+import { LOGOUT_SUCCESS, SET_RECOVERY_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
 
 export default combineReducers({
@@ -35,6 +35,8 @@ export default combineReducers({
       case actions.CREATE_SUCCESS:
         return action.data ? [action.data, ...state] : state;
       case SET_RECOVERY_SUCCESS:
+        return [];
+      case LOGOUT_SUCCESS:
         return [];
       default:
         return state;

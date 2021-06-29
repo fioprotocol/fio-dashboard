@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import Base from './Base';
 import { Notification } from './Notification';
 import { FreeAddress } from './FreeAddress';
+import { Wallet } from './Wallet';
 
 const { DataTypes: DT, Op } = Sequelize;
 
@@ -70,6 +71,7 @@ export class User extends Base {
 
   static associate() {
     this.hasMany(Notification, { foreignKey: 'userId', sourceKey: 'id' });
+    this.hasMany(Wallet, { foreignKey: 'userId', sourceKey: 'id', as: 'fioWallets' });
     this.hasMany(FreeAddress, {
       foreignKey: 'userId',
       sourceKey: 'id',
@@ -89,6 +91,7 @@ export class User extends Base {
         'location',
         'secretSet',
         'freeAddresses',
+        'fioWallets',
       ],
     };
 
@@ -117,7 +120,10 @@ export class User extends Base {
   static findActive(id) {
     return this.findById(id, {
       where: { status: { [Op.ne]: this.STATUS.BLOCKED } },
-      include: [{ model: FreeAddress, as: 'freeAddresses' }],
+      include: [
+        { model: FreeAddress, as: 'freeAddresses' },
+        { model: Wallet, as: 'fioWallets' },
+      ],
     });
   }
 

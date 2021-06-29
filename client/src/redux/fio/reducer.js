@@ -1,5 +1,10 @@
 import { combineReducers } from 'redux';
-import { REFRESH_FIO_WALLETS_SUCCESS } from '../edge/actions';
+import { LOGIN_SUCCESS } from '../edge/actions';
+import {
+  LOGOUT_SUCCESS,
+  PROFILE_SUCCESS,
+  SIGNUP_SUCCESS,
+} from '../profile/actions';
 import * as actions from './actions';
 
 const emptyWallet = {
@@ -23,15 +28,41 @@ export default combineReducers({
   },
   fioWallets(state = [], action) {
     switch (action.type) {
-      case REFRESH_FIO_WALLETS_SUCCESS: {
+      case SIGNUP_SUCCESS: {
+        const fioWallets = [...state];
+        for (const fioWallet of action.fioWallets) {
+          fioWallets.push({
+            ...emptyWallet,
+            id: fioWallet.id,
+            publicKey: fioWallet.publicKey,
+            name: fioWallet.name,
+          });
+        }
+        return fioWallets;
+      }
+      case LOGIN_SUCCESS: {
         const fioWallets = [...state];
 
-        for (const fioWallet of action.data) {
+        for (const fioWallet of action.data.fioWallets) {
           if (fioWallets.find(item => item.id === fioWallet.id)) continue;
           fioWallets.push({
             ...emptyWallet,
             id: fioWallet.id,
-            publicKey: fioWallet.publicWalletInfo.keys.publicKey,
+            publicKey: fioWallet.getDisplayPublicSeed(),
+            name: fioWallet.name,
+          });
+        }
+        return fioWallets;
+      }
+      case PROFILE_SUCCESS: {
+        const fioWallets = [...state];
+
+        for (const fioWallet of action.data.fioWallets) {
+          if (fioWallets.find(item => item.id === fioWallet.id)) continue;
+          fioWallets.push({
+            ...emptyWallet,
+            id: fioWallet.id,
+            publicKey: fioWallet.publicKey,
             name: fioWallet.name,
           });
         }
@@ -47,6 +78,8 @@ export default combineReducers({
             : fioWallet,
         );
       }
+      case LOGOUT_SUCCESS:
+        return [];
       default:
         return state;
     }
@@ -71,6 +104,8 @@ export default combineReducers({
         }
         return fioAddresses;
       }
+      case LOGOUT_SUCCESS:
+        return [];
       default:
         return state;
     }
@@ -96,6 +131,8 @@ export default combineReducers({
         }
         return fioDomains;
       }
+      case LOGOUT_SUCCESS:
+        return [];
       default:
         return state;
     }

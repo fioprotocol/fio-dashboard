@@ -18,6 +18,11 @@ export default class UsersInfo extends Base {
 
     const userObj = user.json();
     userObj.secretSetNotification = false;
+    userObj.fioWallets = userObj.fioWallets.map(({ edgeId, name, publicKey }) => ({
+      id: edgeId,
+      name,
+      publicKey,
+    }));
 
     if (!userObj.secretSet) {
       const secretSetNotification = await Notification.getItem({

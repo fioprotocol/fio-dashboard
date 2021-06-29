@@ -10,14 +10,12 @@ import {
   removeManual,
 } from '../../redux/notifications/actions';
 import { user } from '../../redux/profile/selectors';
-import { account } from '../../redux/edge/selectors';
 
 import Notifications from './Notifications';
 
 const selector = createStructuredSelector({
   list,
   user,
-  account,
 });
 
 const actions = dispatch => ({

@@ -1,24 +1,19 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { pathname } from '../../redux/router/selectors';
-import { logout } from '../../redux/profile/actions';
-import { user } from '../../redux/profile/selectors';
-import {
-  account,
-  loginSuccess,
-  edgeContextSet,
-} from '../../redux/edge/selectors';
 import { edgeContextInit } from '../../redux/edge/actions';
-import { showLogin, showRecovery } from '../../redux/modal/selectors';
+import { loadProfile } from '../../redux/profile/actions';
 import { showRecoveryModal } from '../../redux/modal/actions';
+import { pathname } from '../../redux/router/selectors';
+import { isAuthenticated } from '../../redux/profile/selectors';
+import { loginSuccess, edgeContextSet } from '../../redux/edge/selectors';
+import { showLogin, showRecovery } from '../../redux/modal/selectors';
 
 import MainLayout from './MainLayout';
 
 const selector = createStructuredSelector({
   pathname,
-  user,
-  account,
+  isAuthenticated,
   loginSuccess,
   showLogin,
   showRecovery,
@@ -27,10 +22,9 @@ const selector = createStructuredSelector({
 
 const actions = dispatch => ({
   init: () => {
-    // dispatch(loadProfile()); // todo: if jwt exists, show PIN modal to edge pinLogin?
+    dispatch(loadProfile());
     dispatch(edgeContextInit());
   },
-  logout: () => dispatch(logout()),
   showRecoveryModal: () => dispatch(showRecoveryModal()),
 });
 

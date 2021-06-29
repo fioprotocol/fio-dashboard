@@ -1,6 +1,8 @@
 import { put, takeEvery, select } from 'redux-saga/effects';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ACTIONS } from '../../components/Notifications/Notifications';
+import { setWallets } from '../account/actions';
+import { refreshBalance } from '../fio/actions';
 import {
   LOGIN_SUCCESS,
   PROFILE_SUCCESS,
@@ -24,6 +26,7 @@ export function* loginSuccess(history, api) {
   yield takeEvery(LOGIN_SUCCESS, function*(action) {
     const hasRedirectTo = yield select(hasRedirect);
     api.client.setToken(action.data.jwt);
+    if (action.fioWallets) yield put(setWallets(action.fioWallets));
     yield put(loadProfile());
     yield put(listNotifications());
     const currentLocation = history.location.pathname;
@@ -50,6 +53,10 @@ export function* profileSuccess() {
     } catch (e) {
       console.error(e);
     }
+
+    for (const fioWallet of action.data.fioWallets) {
+      yield put(refreshBalance(fioWallet.publicKey));
+    }
   });
 }
 
@@ -60,8 +67,6 @@ export function* signupSuccess() {
 export function* logoutSuccess(history, api) {
   yield takeEvery(LOGOUT_SUCCESS, function() {
     api.client.removeToken();
-    history.push(ROUTES.HOME);
-    window.location.reload();
   });
 }
 

@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import * as actions from './actions';
+import { LOGOUT_SUCCESS } from '../profile/actions';
 
 export default combineReducers({
   cartItems(state = [], action = {}) {
@@ -24,6 +25,8 @@ export default combineReducers({
       case actions.SET_WALLET_FOR_PAYMENT:
         return action.data;
       case actions.UNSET_WALLET_FOR_PAYMENT:
+        return '';
+      case LOGOUT_SUCCESS:
         return '';
       default:
         return state;

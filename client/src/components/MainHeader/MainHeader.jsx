@@ -17,10 +17,12 @@ const MainHeader = props => {
   const {
     showLoginModal,
     logout: logoutFn,
-    account,
-    loading,
+    isAuthenticated,
+    profileLoading,
+    edgeAuthLoading,
     notifications,
     cartItems,
+    history,
   } = props;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
 
@@ -38,7 +40,7 @@ const MainHeader = props => {
 
   const logout = () => {
     closeMenu();
-    logoutFn(account);
+    logoutFn(history);
   };
 
   const renderSideMenu = children => {
@@ -90,9 +92,12 @@ const MainHeader = props => {
             className={classnames(classes.button, !isMenuOpen && 'ml-4')}
             onClick={logout}
             size="lg"
-            disabled={loading}
+            disabled={edgeAuthLoading}
           >
-            Sign Out {loading && <FontAwesomeIcon icon="spinner" spin />}
+            Sign Out{' '}
+            {(edgeAuthLoading || profileLoading) && (
+              <FontAwesomeIcon icon="spinner" spin />
+            )}
           </Button>
         </Nav.Link>
       </div>
@@ -195,9 +200,12 @@ const MainHeader = props => {
             className={classes.button}
             size="lg"
             onClick={showLogin}
-            disabled={loading}
+            disabled={edgeAuthLoading}
           >
-            Sign In {loading && <FontAwesomeIcon icon="spinner" spin />}
+            Sign In{' '}
+            {(edgeAuthLoading || profileLoading) && (
+              <FontAwesomeIcon icon="spinner" spin />
+            )}
           </Button>
         </Nav.Link>
       </div>
@@ -272,17 +280,19 @@ const MainHeader = props => {
       <Link to="/">
         <div className={classes.logo} onClick={closeMenu} />
       </Link>
-      {account ? renderLoggedMenu() : renderRegularNav()}
+      {isAuthenticated ? renderLoggedMenu() : renderRegularNav()}
     </div>
   );
 };
 
 MainHeader.propTypes = exact({
-  account: PropTypes.object,
+  isAuthenticated: PropTypes.bool,
   pathname: PropTypes.string.isRequired,
   user: PropTypes.object,
+  history: PropTypes.object,
   edgeContextSet: PropTypes.bool,
-  loading: PropTypes.bool,
+  profileLoading: PropTypes.bool,
+  edgeAuthLoading: PropTypes.bool,
   logout: PropTypes.func.isRequired,
   showLoginModal: PropTypes.func.isRequired,
   notifications: PropTypes.arrayOf(PropTypes.object),
