@@ -65,7 +65,7 @@ export const isFreeDomain = ({
 }: {
   domains: Domain[];
   domain: string;
-}): Boolean => {
+}): boolean => {
   const domainFromList = domains.find(item => item.domain === domain);
   return domainFromList && domainFromList.free;
 };
@@ -279,11 +279,14 @@ export const transformResult = ({
           retObj.isFree = isFree;
         } else {
           if (
-            cart.find(item => item.id === cartItemId && item.hasCustomDomain) &&
+            cart.find(
+              cartItem =>
+                cartItem.id === cartItemId && cartItem.hasCustomDomain,
+            ) &&
             partialIndex < 0
           ) {
-            retObj['costFio'] = addressCostFio + domainCostFio;
-            retObj['costUsdc'] = addressCostUsdc + domainCostUsdc;
+            retObj.costFio = addressCostFio + domainCostFio;
+            retObj.costUsdc = addressCostUsdc + domainCostUsdc;
           } else {
             retObj.costFio = addressCostFio;
             retObj.costUsdc = addressCostUsdc;
