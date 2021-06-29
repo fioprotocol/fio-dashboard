@@ -27,7 +27,9 @@ export type RegistrationResult = {
 
 export type FioWallets = any[];
 
-export type DeleteCartItem = {
-  id?: string;
-  cartItems?: CartItem[];
-};
+export type DeleteCartItem =
+  | {
+      id?: string;
+      cartItems?: CartItem[];
+    }
+  | string;
