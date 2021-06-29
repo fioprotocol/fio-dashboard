@@ -1,7 +1,7 @@
 import superagent from 'superagent';
 import logger from '../logger';
 
-const roeEndpoint = 'https://bitmax.io/api/pro/v1/';
+const roeEndpoint = 'https://ascendex.com/api/pro/v1/';
 const minToUpdate = 15;
 const roe = {
   value: null,
