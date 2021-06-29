@@ -60,13 +60,16 @@ export const setDataMutator = (args: any[], state: any) => {
   }
 };
 
-export const domainFromList = ({
+export const isFreeDomain = ({
   domains,
   domain,
 }: {
   domains: Domain[];
   domain: string;
-}) => domains.find(item => item.domain === domain) || {};
+}): Boolean => {
+  const domainFromList = domains.find(item => item.domain === domain);
+  return domainFromList && domainFromList.free;
+};
 
 export const setFreeCart = ({ cartItems }: { cartItems: CartItem[] }) => {
   const recalcElem = cartItems.find(

@@ -9,7 +9,7 @@ import debounce from 'lodash/debounce';
 import {
   setDataMutator,
   cartHasFreeItem,
-  domainFromList,
+  isFreeDomain,
   priceToNumber,
 } from '../../utils';
 
@@ -119,7 +119,7 @@ const AddressDomainForm = props => {
       (!hasCustomDomain &&
         !cartHasFreeItem(cartItems) &&
         !hasFreeAddress &&
-        domainFromList({ domains, domain }).free) ||
+        isFreeDomain({ domains, domain })) ||
       (currentCartItem && !currentCartItem.costFio);
 
     const showPrice = ({ isDomainPrice = null } = {}) => {
