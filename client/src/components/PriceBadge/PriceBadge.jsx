@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import isEmpty from 'lodash/isEmpty';
 
 import TooltipComponent from '../Tooltip/Tooltip';
-import { domainFromList } from '../../utils';
+import { isFreeDomain } from '../../utils';
 
 import classes from './PriceBadge.module.scss';
 
@@ -38,7 +38,7 @@ const PriceBadge = props => {
     hasFreeAddress &&
     values &&
     values.domain &&
-    domainFromList({ domains, domain: values.domain }).free;
+    isFreeDomain({ domains, domain: values.domain });
 
   const renderPrice = showPrice();
 

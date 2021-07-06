@@ -1,10 +1,18 @@
 import isEmpty from 'lodash/isEmpty';
 import apis from './api/index';
+import {
+  CartItem,
+  DeleteCartItem,
+  Domain,
+  Prices,
+  RegistrationResult,
+} from './types';
+
 const FIO_DAPP_USERNAME_DELIMITER = '_fio.dapp_';
 
 export const FIO_ADDRESS_DELIMITER = '@';
 
-export function compose(...funcs) {
+export function compose(...funcs: ((args?: any) => any)[]) {
   if (funcs.length === 1) {
     return funcs[0];
   }
@@ -18,7 +26,7 @@ export function currentYear() {
   return year === startYear ? year : `${startYear} - ${year}`;
 }
 
-export function emailToUsername(email) {
+export function emailToUsername(email: string) {
   if (email && email.indexOf('@') > 0) {
     const [name, domain] = email.split('@');
     // return name
@@ -28,7 +36,7 @@ export function emailToUsername(email) {
   return '';
 }
 
-export function usernameToEmail(username) {
+export function usernameToEmail(username: string) {
   if (username && username.indexOf(FIO_DAPP_USERNAME_DELIMITER) > 0) {
     const [name, domain] = username.split(FIO_DAPP_USERNAME_DELIMITER);
     // return name
@@ -38,11 +46,11 @@ export function usernameToEmail(username) {
   return '';
 }
 
-export function sleep(ms) {
+export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export const setDataMutator = (args, state) => {
+export const setDataMutator = (args: any[], state: any) => {
   const [name, data] = args;
   const field = state.fields[name];
 
@@ -51,10 +59,18 @@ export const setDataMutator = (args, state) => {
   }
 };
 
-export const domainFromList = ({ domains, domain }) =>
-  domains.find(item => item.domain === domain) || {};
+export const isFreeDomain = ({
+  domains,
+  domain,
+}: {
+  domains: Domain[];
+  domain: string;
+}): boolean => {
+  const domainFromList = domains.find(item => item.domain === domain);
+  return domainFromList && domainFromList.free;
+};
 
-export const setFreeCart = ({ cartItems }) => {
+export const setFreeCart = ({ cartItems }: { cartItems: CartItem[] }) => {
   const recalcElem = cartItems.find(
     item => item.address && item.domain && item.allowFree,
   );
@@ -72,25 +88,37 @@ export const setFreeCart = ({ cartItems }) => {
   }
 };
 
-export const recalculateCart = ({ domains, cartItems, id }) => {
+export const recalculateCart = ({
+  cartItems,
+  id,
+}: {
+  cartItems: CartItem[];
+  id: string;
+}) => {
   const deletedElement = cartItems.find(item => item.id === id);
   if (!deletedElement) return;
 
-  const data = {
+  const data: { id: string; cartItems?: CartItem[] } = {
     id,
   };
 
   const deletedElemCart = cartItems.filter(item => item.id !== id);
 
   if (!deletedElement.costUsdc && !deletedElement.costFio) {
-    const recCart = setFreeCart({ domains, cartItems: deletedElemCart });
-    data['cartItems'] = recCart;
+    const recCart = setFreeCart({ cartItems: deletedElemCart });
+    data.cartItems = recCart;
   }
 
   return data;
 };
 
-export const removeFreeCart = ({ cartItems, prices }) => {
+export const removeFreeCart = ({
+  cartItems,
+  prices,
+}: {
+  cartItems: CartItem[];
+  prices: Prices;
+}) => {
   const {
     fio: { address: addressFio },
     usdt: { address: addressUsdc },
@@ -107,7 +135,7 @@ export const removeFreeCart = ({ cartItems, prices }) => {
   return retCart;
 };
 
-export const cartHasFreeItem = cartItems => {
+export const cartHasFreeItem = (cartItems: CartItem[]) => {
   return (
     !isEmpty(cartItems) &&
     cartItems.some(item => !item.costFio && !item.costUsdc)
@@ -115,17 +143,21 @@ export const cartHasFreeItem = cartItems => {
 };
 
 export const handleFreeAddressCart = ({
-  domains,
   recalculate,
   cartItems,
   prices,
   hasFreeAddress,
+}: {
+  recalculate: (cartItems: CartItem[]) => {};
+  cartItems: CartItem[];
+  prices: Prices;
+  hasFreeAddress: boolean;
 }) => {
-  let retCart = [];
+  let retCart: CartItem[] = [];
   if (hasFreeAddress) {
     retCart = removeFreeCart({ cartItems, prices });
   } else if (!cartHasFreeItem(cartItems)) {
-    retCart = setFreeCart({ domains, cartItems });
+    retCart = setFreeCart({ cartItems });
   }
   recalculate(!isEmpty(retCart) ? retCart : cartItems);
 };
@@ -134,11 +166,16 @@ export const deleteCartItem = ({
   id,
   prices,
   deleteItem,
-  domains,
   cartItems,
   recalculate,
+}: {
+  id?: string;
+  prices?: Prices;
+  deleteItem?: (data: DeleteCartItem | string) => {};
+  cartItems?: CartItem[];
+  recalculate?: (cartItems: CartItem[]) => {};
 } = {}) => {
-  const data = recalculateCart({ domains, cartItems, id }) || id;
+  const data = recalculateCart({ cartItems, id }) || id;
   deleteItem(data);
 
   const { domain, hasCustomDomain } =
@@ -150,30 +187,29 @@ export const deleteCartItem = ({
       domain && updCart.some(item => item.domain === domain.toLowerCase());
     if (hasCurrentDomain) {
       const firstMatchElem =
-        (domain &&
-          updCart.find(item => item.domain === domain.toLowerCase())) ||
-        {};
-      if (firstMatchElem) {
+        domain && updCart.find(item => item.domain === domain.toLowerCase());
+      if (!isEmpty(firstMatchElem)) {
         const {
           usdt: { domain: domainPrice, address: addressPrice },
           fio: { domain: fioDomainPrice, address: fioAddressPrice },
         } = prices;
         const retObj = {
           ...firstMatchElem,
-          costFio: parseFloat(fioAddressPrice) + parseFloat(fioDomainPrice),
-          costUsdc: parseFloat(addressPrice) + parseFloat(domainPrice),
+          costFio: fioAddressPrice + fioDomainPrice,
+          costUsdc: addressPrice + domainPrice,
           hasCustomDomain: true,
         };
         const retData = updCart.map(item =>
           item.id === firstMatchElem.id ? retObj : item,
         );
+
         recalculate(retData);
       }
     }
   }
 };
 
-export const totalCost = cart => {
+export const totalCost = (cart: CartItem[]) => {
   if (cart.length === 1 && cart.some(item => !item.costFio && !item.costUsdc))
     return { costFree: 'FREE' };
 
@@ -181,12 +217,12 @@ export const totalCost = cart => {
     !isEmpty(cart) &&
     cart
       .filter(item => item.costFio && item.costUsdc)
-      .reduce((acc, item) => {
-        if (!acc['costFio']) acc['costFio'] = 0;
-        if (!acc['costUsdc']) acc['costUsdc'] = 0;
+      .reduce<Record<string, number>>((acc, item) => {
+        if (!acc.costFio) acc.costFio = 0;
+        if (!acc.costUsdc) acc.costUsdc = 0;
         return {
-          costFio: acc['costFio'] + item.costFio,
-          costUsdc: acc['costUsdc'] + item.costUsdc,
+          costFio: acc.costFio + item.costFio,
+          costUsdc: acc.costUsdc + item.costUsdc,
         };
       }, {});
 
@@ -196,11 +232,20 @@ export const totalCost = cart => {
   };
 };
 
-export const isDomain = fioName => fioName.indexOf(FIO_ADDRESS_DELIMITER) < 0;
+export const isDomain = (fioName: string) =>
+  fioName.indexOf(FIO_ADDRESS_DELIMITER) < 0;
 
-export const transformResult = ({ result, cart, prices }) => {
-  const errItems = [],
-    regItems = [];
+export const transformResult = ({
+  result,
+  cart,
+  prices,
+}: {
+  result: RegistrationResult;
+  cart: CartItem[];
+  prices: Prices;
+}) => {
+  const errItems = [];
+  const regItems = [];
 
   const { registered, errors, partial } = result;
 
@@ -215,38 +260,42 @@ export const transformResult = ({ result, cart, prices }) => {
     for (const item of errors) {
       const { fioName, error, isFree, cartItemId } = item;
 
-      const retObj = {
+      const retObj: CartItem = {
         id: fioName,
+        domain: '',
       };
 
-      const partialIndex = partial && partial.indexOf(id => id === cartItemId);
+      const partialIndex = partial && partial.indexOf(cartItemId);
       if (!isDomain(fioName)) {
         const name = fioName.split('@');
         const addressName = name[0];
         const domainName = name[1];
 
-        retObj['address'] = addressName;
-        retObj['domain'] = domainName;
-        retObj['error'] = error;
+        retObj.address = addressName;
+        retObj.domain = domainName;
+        retObj.error = error;
 
         if (isFree) {
-          retObj['isFree'] = isFree;
+          retObj.isFree = isFree;
         } else {
           if (
-            cart.find(item => item.id === cartItemId && item.hasCustomDomain) &&
+            cart.find(
+              cartItem =>
+                cartItem.id === cartItemId && cartItem.hasCustomDomain,
+            ) &&
             partialIndex < 0
           ) {
-            retObj['costFio'] = addressCostFio + domainCostFio;
-            retObj['costUsdc'] = addressCostUsdc + domainCostUsdc;
+            retObj.costFio = addressCostFio + domainCostFio;
+            retObj.costUsdc = addressCostUsdc + domainCostUsdc;
           } else {
-            retObj['costFio'] = addressCostFio;
-            retObj['costUsdc'] = addressCostUsdc;
+            retObj.costFio = addressCostFio;
+            retObj.costUsdc = addressCostUsdc;
           }
         }
       } else {
-        retObj['domain'] = fioName;
-        retObj['costFio'] = domainCostFio;
-        retObj['costUsdc'] = domainCostUsdc;
+        retObj.domain = fioName;
+        retObj.costFio = domainCostFio;
+        retObj.costUsdc = domainCostUsdc;
       }
 
       errItems.push(retObj);
@@ -260,8 +309,9 @@ export const transformResult = ({ result, cart, prices }) => {
     for (const item of registered) {
       const { fioName, isFree, fee_collected } = item;
 
-      const retObj = {
+      const retObj: CartItem = {
         id: fioName,
+        domain: '',
       };
 
       if (!isDomain(fioName)) {
@@ -269,21 +319,21 @@ export const transformResult = ({ result, cart, prices }) => {
         const addressName = name[0];
         const domainName = name[1];
 
-        retObj['address'] = addressName;
-        retObj['domain'] = domainName;
+        retObj.address = addressName;
+        retObj.domain = domainName;
 
         if (isFree) {
-          retObj['isFree'] = isFree;
+          retObj.isFree = isFree;
         } else {
-          retObj['costFio'] = apis.fio.sufToAmount(fee_collected);
-          retObj['costUsdc'] =
+          retObj.costFio = apis.fio.sufToAmount(fee_collected);
+          retObj.costUsdc =
             (apis.fio.sufToAmount(fee_collected) * addressCostUsdc) /
             addressCostFio;
         }
       } else {
-        retObj['domain'] = fioName;
-        retObj['costFio'] = apis.fio.sufToAmount(fee_collected);
-        retObj['costUsdc'] =
+        retObj.domain = fioName;
+        retObj.costFio = apis.fio.sufToAmount(fee_collected);
+        retObj.costUsdc =
           (apis.fio.sufToAmount(fee_collected) * domainCostUsdc) /
           domainCostFio;
       }
@@ -301,4 +351,4 @@ export const transformResult = ({ result, cart, prices }) => {
   return { errItems, regItems, updatedCart };
 };
 
-export const priceToNumber = price => +parseFloat(price).toFixed(2);
+export const priceToNumber = (price: string) => +parseFloat(price).toFixed(2);

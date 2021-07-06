@@ -20,7 +20,6 @@ const Cart = props => {
   const {
     cartItems,
     deleteItem,
-    domains,
     userWallets,
     setWallet,
     hasLowBalance,
@@ -47,7 +46,6 @@ const Cart = props => {
       deleteItem,
       cartItems,
       recalculate,
-      domains,
     });
   };
 
