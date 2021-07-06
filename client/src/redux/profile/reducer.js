@@ -5,6 +5,7 @@ export default combineReducers({
   loading(state = false, action) {
     switch (action.type) {
       case actions.PROFILE_REQUEST:
+      case actions.NONCE_REQUEST:
       case actions.LOGIN_REQUEST:
       case actions.LOGOUT_REQUEST:
       case actions.SIGNUP_REQUEST:
@@ -17,6 +18,8 @@ export default combineReducers({
       case actions.LOGOUT_FAILURE:
       case actions.SIGNUP_SUCCESS:
       case actions.SIGNUP_FAILURE:
+      case actions.NONCE_SUCCESS:
+      case actions.NONCE_FAILURE:
         return false;
       default:
         return state;
@@ -83,6 +86,16 @@ export default combineReducers({
         return true;
       case actions.RESET_SUCCESS_STATE:
         return false;
+      default:
+        return state;
+    }
+  },
+  challenge(state = '', action) {
+    switch (action.type) {
+      case actions.NONCE_REQUEST:
+        return '';
+      case actions.NONCE_SUCCESS:
+        return action.data;
       default:
         return state;
     }
