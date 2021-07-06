@@ -59,7 +59,6 @@ export default class CreateAccountForm extends Component {
       usernameAvailableLoading: false,
       usernameIsAvailable: false,
       step: STEPS.EMAIL_PASSWORD,
-      accountId: null,
     };
   }
 
@@ -90,7 +89,7 @@ export default class CreateAccountForm extends Component {
       values: { email },
     } = this.form.getState();
 
-    this.props.login({ email, password: this.state.accountId });
+    this.props.nonce(email);
     this.props.history.push(
       (this.props.lastLocation && this.props.lastLocation.pathname) ||
         ROUTES.HOME,
@@ -221,7 +220,7 @@ export default class CreateAccountForm extends Component {
       case STEPS.CONFIRMATION: {
         this.setState({ step: STEPS.SUCCESS });
 
-        const { email, password, pin, confirmPin } = values;
+        const { email, password, pin } = values;
         this.setState({ loading: true });
         const { account, fioWallets, errors } = await createAccount(
           emailToUsername(email),
@@ -230,14 +229,10 @@ export default class CreateAccountForm extends Component {
         );
         this.setState({ loading: false });
         if (!Object.values(errors).length && account) {
-          this.setState({ accountId: account.id });
           await account.logout();
           return onSubmit({
             username: emailToUsername(email),
             email,
-            pin,
-            confirmPin,
-            password: account.id,
             fioWallets,
           });
         }

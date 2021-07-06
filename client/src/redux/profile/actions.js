@@ -1,3 +1,4 @@
+import { Ecc } from '@fioprotocol/fiojs';
 import { ROUTES } from '../../constants/routes';
 
 export const prefix = 'profile';
@@ -11,14 +12,26 @@ export const loadProfile = () => ({
   promise: api => api.auth.profile(),
 });
 
+export const NONCE_REQUEST = `${prefix}/NONCE_REQUEST`;
+export const NONCE_SUCCESS = `${prefix}/NONCE_SUCCESS`;
+export const NONCE_FAILURE = `${prefix}/NONCE_FAILURE`;
+
+export const nonce = (email, keys) => ({
+  types: [NONCE_REQUEST, NONCE_SUCCESS, NONCE_FAILURE],
+  promise: async api => {
+    const { nonce } = await api.auth.nonce(email);
+    const signature = Ecc.sign(nonce, Object.values(keys)[0].private);
+    return { email, nonce, signature };
+  },
+});
+
 export const LOGIN_REQUEST = `${prefix}/LOGIN_REQUEST`;
 export const LOGIN_SUCCESS = `${prefix}/LOGIN_SUCCESS`;
 export const LOGIN_FAILURE = `${prefix}/LOGIN_FAILURE`;
 
-export const login = ({ email, password, pin }, fioWallets = null) => ({
+export const login = ({ email, signature, challenge }) => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
-  promise: api => api.auth.login(email, password, pin),
-  fioWallets,
+  promise: api => api.auth.login(email, signature, challenge),
 });
 
 export const SIGNUP_REQUEST = `${prefix}/SIGNUP_REQUEST`;

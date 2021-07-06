@@ -3,7 +3,7 @@ import { createSelector, createStructuredSelector } from 'reselect';
 import { withLastLocation } from 'react-router-last-location';
 
 import { compose } from '../../utils';
-import { resetSuccessState, login } from '../../redux/profile/actions';
+import { resetSuccessState, nonce } from '../../redux/profile/actions';
 import { setAccount } from '../../redux/edge/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 import {
@@ -26,7 +26,7 @@ const actions = {
   resetSuccessState,
   showLoginModal,
   setAccount,
-  login,
+  nonce,
 };
 
 const reduxConnect = connect(selector, actions);
