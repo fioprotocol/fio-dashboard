@@ -24,24 +24,43 @@ const LoginForm = props => {
     onClose,
     getCachedUsers,
     loginFailure,
+    edgeLoginFailure,
   } = props;
   const [isForgotPass, toggleForgotPass] = useState(false);
   let currentForm = {};
   useEffect(getCachedUsers, []);
   useEffect(() => {
-    if (!isEmpty(currentForm) && !isEmpty(loginFailure)) {
+    if (!isEmpty(currentForm) && !isEmpty(edgeLoginFailure)) {
       const { mutators } = currentForm;
 
       mutators.setDataMutator('password', {
         error:
-          loginFailure.type === 'PasswordError' ||
-          loginFailure.type === 'UsernameError'
+          edgeLoginFailure.type === 'PasswordError' ||
+          edgeLoginFailure.type === 'UsernameError'
             ? 'Invalid Email Address or Password'
             : 'Server Error', // todo: set proper message text
       });
       mutators.setDataMutator('email', {
         error: true,
         hideError: true,
+      });
+    }
+  }, [edgeLoginFailure]);
+  useEffect(() => {
+    if (!isEmpty(currentForm) && !isEmpty(loginFailure)) {
+      const { mutators } = currentForm;
+
+      for (const field of Object.keys(loginFailure.fields)) {
+        mutators.setDataMutator(field, {
+          error: true,
+          hideError: true,
+        });
+      }
+      mutators.setDataMutator('password', {
+        error:
+          loginFailure.code === 'AUTHENTICATION_FAILED'
+            ? 'Authentication failed'
+            : 'Server error',
       });
     }
   }, [loginFailure]);
