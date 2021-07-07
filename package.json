@@ -78,7 +78,7 @@
     "body-parser": "^1.18.2",
     "bootstrap": "4.6.0",
     "bunyan": "^1.8.12",
-    "classnames": "2.2.6",
+    "classnames": "2.3.1",
     "connect-multiparty": "^2.1.0",
     "cors": "^2.8.4",
     "crypto-browserify": "^3.12.0",
