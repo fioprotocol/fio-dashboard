@@ -3,7 +3,6 @@ import { prefix } from './actions';
 import { emailToUsername } from '../../utils';
 
 export const loading = state => state[prefix].loading;
-export const challenge = state => state[prefix].challenge;
 export const user = state => state[prefix].user;
 export const role = state => state[prefix].user && state[prefix].user.role;
 export const isAdmin = state =>

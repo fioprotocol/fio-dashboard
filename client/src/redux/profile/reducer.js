@@ -90,14 +90,4 @@ export default combineReducers({
         return state;
     }
   },
-  challenge(state = '', action) {
-    switch (action.type) {
-      case actions.NONCE_REQUEST:
-        return '';
-      case actions.NONCE_SUCCESS:
-        return action.data;
-      default:
-        return state;
-    }
-  },
 });

@@ -1,6 +1,9 @@
 import { takeEvery } from 'redux-saga/effects';
-import { PROFILE_FAILURE } from '../profile/actions';
-import { LOGIN_FAILURE, CONFIRM_PIN_FAILURE } from '../edge/actions';
+import { PROFILE_FAILURE, LOGIN_FAILURE } from '../profile/actions';
+import {
+  LOGIN_FAILURE as LOGIN_EDGE_FAILURE,
+  CONFIRM_PIN_FAILURE,
+} from '../edge/actions';
 import { LIST_FAILURE as NOTIFICATIONS_LIST_FAILURE } from '../notifications/actions';
 import { notification } from 'antd';
 
@@ -15,6 +18,7 @@ export function* notify() {
       action.error &&
       action.type !== PROFILE_FAILURE &&
       action.type !== LOGIN_FAILURE &&
+      action.type !== LOGIN_EDGE_FAILURE &&
       action.type !== NOTIFICATIONS_LIST_FAILURE &&
       action.type !== CONFIRM_PIN_FAILURE
     )

@@ -23,7 +23,6 @@ import { setRedirectPath } from '../router/actions';
 
 import { hasRedirect } from '../router/selectors';
 import { fioWallets } from '../fio/selectors';
-import { account } from '../edge/selectors';
 import { ROUTES } from '../../constants/routes';
 
 export function* loginSuccess(history, api) {
