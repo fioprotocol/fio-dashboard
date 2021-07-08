@@ -1,3 +1,4 @@
+import { EdgeCurrencyWallet } from 'edge-core-js';
 import isEmpty from 'lodash/isEmpty';
 import apis from './api/index';
 import {
@@ -8,7 +9,7 @@ import {
   RegistrationResult,
 } from './types';
 
-const FIO_DAPP_USERNAME_DELIMITER = '_fio.dapp_';
+const FIO_DASH_USERNAME_DELIMITER = '.fio.dash.';
 
 export const FIO_ADDRESS_DELIMITER = '@';
 
@@ -30,21 +31,24 @@ export function emailToUsername(email: string) {
   if (email && email.indexOf('@') > 0) {
     const [name, domain] = email.split('@');
     // return name
-    return `${name}${FIO_DAPP_USERNAME_DELIMITER}${domain}`;
+    return `${name}${FIO_DASH_USERNAME_DELIMITER}${domain}`;
   }
 
   return '';
 }
 
-export function usernameToEmail(username: string) {
-  if (username && username.indexOf(FIO_DAPP_USERNAME_DELIMITER) > 0) {
-    const [name, domain] = username.split(FIO_DAPP_USERNAME_DELIMITER);
-    // return name
-    return `${name}@${domain}`;
+export const getWalletKeys = (
+  fioWallets: EdgeCurrencyWallet[],
+): { [walletId: string]: { private: string; public: string } } => {
+  const keys: { [walletId: string]: { private: string; public: string } } = {};
+  for (const fioWallet of fioWallets) {
+    keys[fioWallet.id] = {
+      private: fioWallet.keys.fioKey,
+      public: fioWallet.getDisplayPublicSeed(),
+    };
   }
-
-  return '';
-}
+  return keys;
+};
 
 export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));

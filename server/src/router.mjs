@@ -10,6 +10,7 @@ router.get('/auth/nonce', routes.auth.nonce);
 
 router.post('/actions/:hash', routes.actions.submit);
 
+router.get('/users/available/:email', routes.users.available);
 router.get('/users/me', checkAuth, routes.users.info);
 router.get('/users', checkAuth, routes.users.list);
 router.get('/users/:id', checkAuth, routes.users.show);

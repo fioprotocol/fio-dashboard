@@ -34,7 +34,7 @@ export class User extends Base {
           primaryKey: true,
         },
         email: { type: DT.STRING, unique: true },
-        username: DT.STRING,
+        username: { type: DT.STRING, unique: true },
         status: {
           type: DT.ENUM,
           values: Object.values(this.STATUS),

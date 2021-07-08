@@ -11,8 +11,12 @@ export default class Auth extends Base {
     });
   }
 
-  nonce(email) {
-    return this.apiClient.get('auth/nonce', { email });
+  available(email) {
+    return this.apiClient.get(`users/available/${email}`);
+  }
+
+  nonce(username) {
+    return this.apiClient.get('auth/nonce', { username });
   }
 
   signup(data) {

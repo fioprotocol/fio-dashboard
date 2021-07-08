@@ -1,15 +1,32 @@
 import crypto from 'crypto';
-import { Nonce } from '../../models';
+import { User, Nonce } from '../../models';
 import Base from '../Base';
+import X from '../Exception';
 
 export default class AuthNonce extends Base {
   static get validationRules() {
     return {
-      email: ['required', 'string'],
+      username: ['required', 'string'],
     };
   }
 
-  async execute({ email }) {
+  async execute({ username }) {
+    const user = await User.findOne({
+      where: {
+        username,
+      },
+    });
+
+    if (!user) {
+      throw new X({
+        code: 'AUTHENTICATION_FAILED',
+        fields: {
+          email: 'INVALID',
+        },
+      });
+    }
+    const { email } = user;
+
     const existingNonce = await Nonce.findOne({
       where: {
         email,

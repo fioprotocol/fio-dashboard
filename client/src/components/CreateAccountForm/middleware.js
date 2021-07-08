@@ -19,6 +19,21 @@ export const usernameAvailable = async username => {
   return result;
 };
 
+export const emailAvailable = async email => {
+  const result = {};
+  try {
+    const res = await apis.auth.available(email);
+
+    if (!res || res.error) {
+      result.error = 'Not available';
+    }
+  } catch (e) {
+    result.error = e.message || 'Not available';
+  }
+
+  return result;
+};
+
 export const checkPassword = async (password, passwordRepeat) => {
   const result = {};
   try {
@@ -64,13 +79,7 @@ export const createAccount = async (username, password, pin) => {
       DEFAULT_WALLET_OPTIONS,
     );
     await fioWallet.renameWallet(DEFAULT_WALLET_OPTIONS.name);
-    result.fioWallets = [
-      {
-        id: fioWallet.id,
-        name: fioWallet.name,
-        publicKey: fioWallet.getDisplayPublicSeed(),
-      },
-    ];
+    result.fioWallet = fioWallet;
   } catch (e) {
     console.log(e);
     result.errors = { email: e.message };
