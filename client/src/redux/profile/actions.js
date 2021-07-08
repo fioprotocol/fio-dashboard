@@ -16,10 +16,10 @@ export const NONCE_REQUEST = `${prefix}/NONCE_REQUEST`;
 export const NONCE_SUCCESS = `${prefix}/NONCE_SUCCESS`;
 export const NONCE_FAILURE = `${prefix}/NONCE_FAILURE`;
 
-export const nonce = (email, keys) => ({
+export const nonce = (username, keys) => ({
   types: [NONCE_REQUEST, NONCE_SUCCESS, NONCE_FAILURE],
   promise: async api => {
-    const { nonce } = await api.auth.nonce(email);
+    const { nonce, email } = await api.auth.nonce(username);
     const signature = Ecc.sign(nonce, Object.values(keys)[0].private);
     return { email, nonce, signature };
   },

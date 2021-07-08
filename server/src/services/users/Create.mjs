@@ -85,7 +85,7 @@ export default class UsersCreate extends Base {
   }
 
   static get paramsSecret() {
-    return ['data.email', 'data.fioWallets[]', 'data.username'];
+    return ['data.email', 'data.fioWallets', 'data.username'];
   }
 
   static get resultSecret() {

@@ -12,11 +12,12 @@ import { PIN_LENGTH } from '../../constants/form';
 
 import classes from './CreateAccountForm.module.scss';
 import {
+  emailAvailable,
   usernameAvailable,
   createAccount,
   checkUsernameAndPassword,
 } from './middleware';
-import { emailToUsername, setDataMutator } from '../../utils';
+import { emailToUsername, getWalletKeys, setDataMutator } from '../../utils';
 import Pin from './Pin';
 import EmailPassword, {
   validate as validateEmailPassword,
@@ -59,6 +60,7 @@ export default class CreateAccountForm extends Component {
       usernameAvailableLoading: false,
       usernameIsAvailable: false,
       step: STEPS.EMAIL_PASSWORD,
+      keys: {},
     };
   }
 
@@ -89,7 +91,7 @@ export default class CreateAccountForm extends Component {
       values: { email },
     } = this.form.getState();
 
-    this.props.nonce(email);
+    this.props.nonce(emailToUsername(email), this.state.keys);
     this.props.history.push(
       (this.props.lastLocation && this.props.lastLocation.pathname) ||
         ROUTES.HOME,
@@ -104,16 +106,19 @@ export default class CreateAccountForm extends Component {
       usernameAvailableLoading: true,
       usernameIsAvailable: false,
     });
-    const { error } = await usernameAvailable(emailToUsername(email));
+    const { error: emailError } = await emailAvailable(email);
+    const { error: usernameError } = await usernameAvailable(
+      emailToUsername(email),
+    );
     this.setState({
       usernameAvailableLoading: false,
-      usernameIsAvailable: !error,
+      usernameIsAvailable: !emailError && !usernameError,
     });
 
     this.form &&
       this.form.mutators &&
       this.form.mutators.setDataMutator('email', {
-        error: !!error && (
+        error: (!!emailError || !!usernameError) && (
           <span>
             This Email Address is already registered,{' '}
             <Link to="#" onClick={this.props.showLoginModal}>
@@ -222,11 +227,19 @@ export default class CreateAccountForm extends Component {
 
         const { email, password, pin } = values;
         this.setState({ loading: true });
-        const { account, fioWallets, errors } = await createAccount(
+        const { account, fioWallet, errors } = await createAccount(
           emailToUsername(email),
           password,
           pin,
         );
+        const fioWallets = [
+          {
+            id: fioWallet.id,
+            name: fioWallet.name,
+            publicKey: fioWallet.getDisplayPublicSeed(),
+          },
+        ];
+        this.setState({ keys: getWalletKeys([fioWallet]) });
         this.setState({ loading: false });
         if (!Object.values(errors).length && account) {
           await account.logout();
