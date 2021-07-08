@@ -28,7 +28,7 @@ const selector = createStructuredSelector({
 
 const actions = dispatch => ({
   showLoginModal: () => dispatch(showLoginModal()),
-  logout: history => dispatch(logout(history)),
+  logout: history => dispatch(logout({ history })),
 });
 
 export { MainHeader };

@@ -41,3 +41,17 @@ export type DeleteCartItem =
       cartItems?: CartItem[];
     }
   | string;
+
+export type FioWalletDoublet = {
+  id: string;
+  name: string;
+  publicKey: string;
+  balance?: number | null;
+};
+
+export type WalletKeysObj = {
+  [walletId: string]: {
+    private: string;
+    public: string;
+  };
+};

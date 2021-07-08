@@ -1,47 +1,52 @@
 import Base from './base';
+import { FioWalletDoublet } from '../types';
 
 export default class Auth extends Base {
   profile() {
     return this.apiClient.get('users/me');
   }
 
-  login(email, signature, challenge) {
+  login(email: string, signature: string, challenge: string) {
     return this.apiClient.post('auth', {
       data: { email, signature, challenge },
     });
   }
 
-  available(email) {
+  available(email: string) {
     return this.apiClient.get(`users/available/${email}`);
   }
 
-  nonce(username) {
+  nonce(username: string) {
     return this.apiClient.get('auth/nonce', { username });
   }
 
-  signup(data) {
+  signup(data: {
+    username: string;
+    email: string;
+    fioWallets: FioWalletDoublet[];
+  }) {
     return this.apiClient.post('users', { data });
   }
 
-  confirm(hash) {
+  confirm(hash: string) {
     return this.apiClient.post(`actions/${hash}`);
   }
 
-  resetPassword(email) {
+  resetPassword(email: string) {
     return this.apiClient.post('users/resetPassword', { data: { email } });
   }
 
-  setPassword(hash, password, confirmPassword) {
+  setPassword(hash: string, password: string, confirmPassword: string) {
     return this.apiClient.post(`actions/${hash}`, {
       data: { password, confirmPassword },
     });
   }
 
-  setRecovery(token) {
+  setRecovery(token: string) {
     return this.apiClient.post('users/setRecovery', { data: { token } });
   }
 
-  async logout() {
+  async logout(): Promise<null> {
     return null;
   }
 }

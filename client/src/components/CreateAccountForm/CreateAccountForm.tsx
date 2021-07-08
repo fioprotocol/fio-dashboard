@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Form } from 'react-final-form';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Form, FormRenderProps } from 'react-final-form';
+import { Link, RouterProps } from 'react-router-dom';
+import { WithLastLocationProps } from 'react-router-last-location';
 import classnames from 'classnames';
 
 import Wizard from './CreateAccountFormWizard';
@@ -25,6 +25,8 @@ import EmailPassword, {
 import Confirmation from './Confirmation';
 import Success from './Success';
 
+import { FioWalletDoublet, WalletKeysObj } from '../../types';
+
 const STEPS = {
   EMAIL_PASSWORD: 'EMAIL_PASSWORD',
   PIN: 'PIN',
@@ -41,14 +43,48 @@ const STEPS_ORDER = {
   [STEPS.SUCCESS]: 4,
 };
 
-export default class CreateAccountForm extends Component {
-  static propTypes = {
-    resetSuccessState: PropTypes.func.isRequired,
-    edgeAuthLoading: PropTypes.bool,
-    serverSignUpLoading: PropTypes.bool,
-  };
+type FormValues = {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  pin: string;
+  confirmPin: string;
+};
 
-  constructor(props) {
+type PasswordValidationState = {
+  [rule: string]: { isChecked?: boolean };
+};
+
+type State = {
+  passwordValidation: PasswordValidationState;
+  usernameAvailableLoading: boolean;
+  usernameIsAvailable: boolean;
+  step: string;
+  keys: WalletKeysObj;
+  loading: boolean;
+};
+
+type OwnProps = {
+  initialize: (params: { email: string }) => void;
+  resetSuccessState: () => void;
+  nonce: (username: string, keys: WalletKeysObj) => void;
+  showLoginModal: () => void;
+  onSubmit: (params: {
+    username: string;
+    email: string;
+    fioWallets: FioWalletDoublet[];
+  }) => void;
+  signupSuccess: boolean;
+  edgeAuthLoading: boolean;
+  serverSignUpLoading: boolean;
+};
+
+type Props = OwnProps & RouterProps & WithLastLocationProps;
+
+export default class CreateAccountForm extends React.Component<Props, State> {
+  form: any | null; // todo: FormApi is not exported
+
+  constructor(props: Props) {
     super(props);
     this.state = {
       passwordValidation: {
@@ -61,20 +97,23 @@ export default class CreateAccountForm extends Component {
       usernameIsAvailable: false,
       step: STEPS.EMAIL_PASSWORD,
       keys: {},
+      loading: false,
     };
   }
 
   componentDidMount() {
     const { location, replace } = this.props.history;
+    // @ts-ignore todo: why `query` is not in the Location type?
     if (!isEmpty(location.query) && location.query.email) {
       this.props.initialize({
+        // @ts-ignore
         email: location.query.email,
       });
       replace(ROUTES.CREATE_ACCOUNT);
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: Props, prevState: State) {
     if (!prevProps.signupSuccess && this.props.signupSuccess) {
       this.setState({ step: STEPS.SUCCESS });
     }
@@ -98,7 +137,7 @@ export default class CreateAccountForm extends Component {
     );
   };
 
-  isEmailExists = async e => {
+  isEmailExists = async (e: React.FocusEvent<HTMLInputElement>) => {
     const emailField = this.form.getFieldState('email');
     if (!emailField.valid) return emailField.blur();
     const email = e.target.value;
@@ -117,22 +156,27 @@ export default class CreateAccountForm extends Component {
 
     this.form &&
       this.form.mutators &&
-      this.form.mutators.setDataMutator('email', {
-        error: (!!emailError || !!usernameError) && (
-          <span>
-            This Email Address is already registered,{' '}
-            <Link to="#" onClick={this.props.showLoginModal}>
-              Sign-in
-            </Link>{' '}
-            instead
-          </span>
-        ),
-      });
+      this.form.mutators.setDataMutator(
+        'email',
+        {
+          // @ts-ignore
+          error: (!!emailError || !!usernameError) && (
+            <span>
+              This Email Address is already registered,{' '}
+              <Link to="#" onClick={this.props.showLoginModal}>
+                Sign-in
+              </Link>{' '}
+              instead
+            </span>
+          ),
+        },
+        {},
+      );
 
     return emailField.blur();
   };
 
-  validate = values => {
+  validate = (values: FormValues) => {
     const { step } = this.state;
     if (step === STEPS.EMAIL_PASSWORD) {
       return this.validateUser(values);
@@ -143,13 +187,13 @@ export default class CreateAccountForm extends Component {
     return {};
   };
 
-  validateUser = values => {
+  validateUser = (values: FormValues) => {
     const { passwordValidation } = this.state;
-    const passValid = {};
+    const passValid: { [rule: string]: boolean } = {};
 
     if (!values.password) {
       Object.keys(passwordValidation).forEach(
-        item => (passValid[item] = false),
+        (item: string) => (passValid[item] = false),
       );
     }
 
@@ -160,8 +204,8 @@ export default class CreateAccountForm extends Component {
     return errors;
   };
 
-  validateConfirmPin = values => {
-    const errors = {};
+  validateConfirmPin = (values: FormValues) => {
+    const errors: { [field: string]: string } = {};
     if (
       values.confirmPin &&
       values.confirmPin.length === PIN_LENGTH &&
@@ -172,10 +216,15 @@ export default class CreateAccountForm extends Component {
     return errors;
   };
 
-  passwordValidation = passValid => {
+  passwordValidation = (passValid: { [rule: string]: boolean }) => {
     const { passwordValidation } = this.state;
 
-    const retObj = {};
+    const retObj: PasswordValidationState = {
+      length: { isChecked: false },
+      lower: { isChecked: false },
+      upper: { isChecked: false },
+      number: { isChecked: false },
+    };
 
     Object.keys(passwordValidation).forEach(key => {
       retObj[key] = {};
@@ -191,7 +240,7 @@ export default class CreateAccountForm extends Component {
     });
   };
 
-  handleSubmit = async values => {
+  handleSubmit = async (values: FormValues) => {
     const { onSubmit } = this.props;
     const { step } = this.state;
 
@@ -232,16 +281,16 @@ export default class CreateAccountForm extends Component {
           password,
           pin,
         );
-        const fioWallets = [
-          {
-            id: fioWallet.id,
-            name: fioWallet.name,
-            publicKey: fioWallet.getDisplayPublicSeed(),
-          },
-        ];
-        this.setState({ keys: getWalletKeys([fioWallet]) });
         this.setState({ loading: false });
         if (!Object.values(errors).length && account) {
+          const fioWallets: FioWalletDoublet[] = [
+            {
+              id: fioWallet.id,
+              name: fioWallet.name,
+              publicKey: fioWallet.getDisplayPublicSeed(),
+            },
+          ];
+          this.setState({ keys: getWalletKeys([fioWallet]) });
           await account.logout();
           return onSubmit({
             username: emailToUsername(email),
@@ -276,7 +325,7 @@ export default class CreateAccountForm extends Component {
     }
   };
 
-  renderForm = formProps => {
+  renderForm = (formProps: FormRenderProps) => {
     const {
       handleSubmit,
       submitting,

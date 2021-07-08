@@ -4,7 +4,6 @@ import { withLastLocation } from 'react-router-last-location';
 
 import { compose } from '../../utils';
 import { resetSuccessState, nonce } from '../../redux/profile/actions';
-import { setAccount } from '../../redux/edge/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 import {
   successfullyRegistered,
@@ -25,7 +24,6 @@ const actions = {
   onSubmit: signup,
   resetSuccessState,
   showLoginModal,
-  setAccount,
   nonce,
 };
 
