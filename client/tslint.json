@@ -15,6 +15,7 @@
     "no-consecutive-blank-lines": true,
     "quotemark": [true, "single", "avoid-escape", "jsx-double"],
     "jsx-no-lambda": false,
+    "jsx-boolean-value": false,
     "interface-name": false,
     "no-empty-interface": false,
     "no-namespace": false,

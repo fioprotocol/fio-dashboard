@@ -7,6 +7,7 @@ import {
   Domain,
   Prices,
   RegistrationResult,
+  WalletKeysObj,
 } from './types';
 
 const FIO_DASH_USERNAME_DELIMITER = '.fio.dash.';
@@ -39,8 +40,8 @@ export function emailToUsername(email: string) {
 
 export const getWalletKeys = (
   fioWallets: EdgeCurrencyWallet[],
-): { [walletId: string]: { private: string; public: string } } => {
-  const keys: { [walletId: string]: { private: string; public: string } } = {};
+): WalletKeysObj => {
+  const keys: WalletKeysObj = {};
   for (const fioWallet of fioWallets) {
     keys[fioWallet.id] = {
       private: fioWallet.keys.fioKey,

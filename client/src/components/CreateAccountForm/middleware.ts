@@ -3,9 +3,12 @@ import {
   DEFAULT_WALLET_OPTIONS,
   FIO_WALLET_TYPE,
 } from '../../constants/common';
+import { EdgeAccount, EdgeCurrencyWallet } from 'edge-core-js';
 
-export const usernameAvailable = async username => {
-  const result = {};
+export const usernameAvailable = async (
+  username: string,
+): Promise<{ error?: string }> => {
+  const result: { error?: string } = {};
   try {
     const res = await apis.edge.usernameAvailable(username);
 
@@ -19,8 +22,10 @@ export const usernameAvailable = async username => {
   return result;
 };
 
-export const emailAvailable = async email => {
-  const result = {};
+export const emailAvailable = async (
+  email: string,
+): Promise<{ error?: string }> => {
+  const result: { error?: string } = {};
   try {
     const res = await apis.auth.available(email);
 
@@ -34,8 +39,11 @@ export const emailAvailable = async email => {
   return result;
 };
 
-export const checkPassword = async (password, passwordRepeat) => {
-  const result = {};
+export const checkPassword = async (
+  password: string,
+  passwordRepeat: string,
+): Promise<{ error?: string }> => {
+  const result: { error?: string } = {};
   try {
     const res = await apis.edge.checkPasswordRules(password, passwordRepeat);
 
@@ -50,11 +58,13 @@ export const checkPassword = async (password, passwordRepeat) => {
 };
 
 export const checkUsernameAndPassword = async (
-  username,
-  password,
-  passwordRepeat,
-) => {
-  const result = { errors: {} };
+  username: string,
+  password: string,
+  passwordRepeat: string,
+): Promise<{ errors: { email?: string; password?: string } }> => {
+  const result: { errors: { email?: string; password?: string } } = {
+    errors: {},
+  };
   const { error: usernameError } = await usernameAvailable(username);
   const { error: passwordError } = await checkPassword(
     password,
@@ -70,8 +80,17 @@ export const checkUsernameAndPassword = async (
   return result;
 };
 
-export const createAccount = async (username, password, pin) => {
-  const result = { errors: {} };
+type CreateAccountRes = {
+  errors: { email?: string };
+  account?: EdgeAccount;
+  fioWallet?: EdgeCurrencyWallet;
+};
+export const createAccount = async (
+  username: string,
+  password: string,
+  pin: string,
+): Promise<CreateAccountRes> => {
+  const result: CreateAccountRes = { errors: {} };
   try {
     result.account = await apis.edge.signup(username, password, pin);
     const fioWallet = await result.account.createCurrencyWallet(
