@@ -9,7 +9,9 @@ import {
   SIGNUP_SUCCESS,
   LOGOUT_SUCCESS,
   SET_RECOVERY_SUCCESS,
+  NONCE_SUCCESS,
   loadProfile,
+  login,
 } from './actions';
 
 import { closeRecoveryModal, closeLoginModal } from '../modal/actions';
@@ -20,13 +22,15 @@ import {
 import { setRedirectPath } from '../router/actions';
 
 import { hasRedirect } from '../router/selectors';
+import { fioWallets } from '../fio/selectors';
 import { ROUTES } from '../../constants/routes';
 
 export function* loginSuccess(history, api) {
   yield takeEvery(LOGIN_SUCCESS, function*(action) {
     const hasRedirectTo = yield select(hasRedirect);
+    const wallets = yield select(fioWallets);
     api.client.setToken(action.data.jwt);
-    if (action.fioWallets) yield put(setWallets(action.fioWallets));
+    if (wallets && wallets.length) yield put(setWallets(wallets));
     yield put(loadProfile());
     yield put(listNotifications());
     const currentLocation = history.location.pathname;
@@ -73,5 +77,18 @@ export function* logoutSuccess(history, api) {
 export function* setRecoverySuccess() {
   yield takeEvery(SET_RECOVERY_SUCCESS, function*() {
     yield put(closeRecoveryModal());
+  });
+}
+
+export function* nonceSuccess() {
+  yield takeEvery(NONCE_SUCCESS, function*(action) {
+    const { email, signature, nonce } = action.data;
+    yield put(
+      login({
+        email,
+        signature,
+        challenge: nonce,
+      }),
+    );
   });
 }

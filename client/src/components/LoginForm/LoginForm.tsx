@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-import { Form, Field } from 'react-final-form';
+import { Form, Field, FormRenderProps } from 'react-final-form';
 import { Link } from 'react-router-dom';
 import validator from 'email-validator';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -14,9 +14,25 @@ import FormHeader from '../FormHeader/FormHeader';
 
 import classes from './LoginForm.module.scss';
 import { ROUTES } from '../../constants/routes';
-import { emailToUsername, setDataMutator } from '../../utils';
+import { setDataMutator } from '../../utils';
 
-const LoginForm = props => {
+type FormValues = {
+  email: string;
+  password: string;
+};
+
+type OwnProps = {
+  show: boolean;
+  onSubmit: (params: { email: string; password: string }) => void;
+  edgeAuthLoading: boolean;
+  onClose: () => void;
+  getCachedUsers: () => void;
+  loginFailure: { fields?: { [fieldName: string]: any }; code?: string };
+  edgeLoginFailure: { type?: string };
+};
+type Props = OwnProps;
+
+const LoginForm = (props: Props) => {
   const {
     show,
     onSubmit,
@@ -24,18 +40,19 @@ const LoginForm = props => {
     onClose,
     getCachedUsers,
     loginFailure,
+    edgeLoginFailure,
   } = props;
   const [isForgotPass, toggleForgotPass] = useState(false);
-  let currentForm = {};
+  let currentForm: any = {}; // todo: FormApi is not exported
   useEffect(getCachedUsers, []);
   useEffect(() => {
-    if (!isEmpty(currentForm) && !isEmpty(loginFailure)) {
+    if (!isEmpty(currentForm) && !isEmpty(edgeLoginFailure)) {
       const { mutators } = currentForm;
 
       mutators.setDataMutator('password', {
         error:
-          loginFailure.type === 'PasswordError' ||
-          loginFailure.type === 'UsernameError'
+          edgeLoginFailure.type === 'PasswordError' ||
+          edgeLoginFailure.type === 'UsernameError'
             ? 'Invalid Email Address or Password'
             : 'Server Error', // todo: set proper message text
       });
@@ -44,12 +61,30 @@ const LoginForm = props => {
         hideError: true,
       });
     }
+  }, [edgeLoginFailure]);
+  useEffect(() => {
+    if (!isEmpty(currentForm) && !isEmpty(loginFailure)) {
+      const { mutators } = currentForm;
+
+      for (const field of Object.keys(loginFailure.fields)) {
+        mutators.setDataMutator(field, {
+          error: true,
+          hideError: true,
+        });
+      }
+      mutators.setDataMutator('password', {
+        error:
+          loginFailure.code === 'AUTHENTICATION_FAILED'
+            ? 'Authentication failed'
+            : 'Server error',
+      });
+    }
   }, [loginFailure]);
 
-  const handleSubmit = values => {
+  const handleSubmit = (values: FormValues) => {
     const { email, password } = values;
     onSubmit({
-      username: emailToUsername(email),
+      email,
       password,
     });
   };
@@ -68,7 +103,7 @@ const LoginForm = props => {
     }
   };
 
-  const onForgotPassHandler = e => {
+  const onForgotPassHandler = (e: React.MouseEvent) => {
     e.preventDefault();
     toggleForgotPass(true);
   };
@@ -105,11 +140,11 @@ const LoginForm = props => {
     </div>
   );
 
-  const renderFormItems = props => {
-    const { handleSubmit, form } = props;
+  const renderFormItems = (formRenderProps: FormRenderProps) => {
+    const { handleSubmit: login, form } = formRenderProps;
     currentForm = form;
     return (
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={login}>
         <FormHeader title="Sign In" />
         <Field
           name="email"
@@ -128,10 +163,10 @@ const LoginForm = props => {
         />
         <OnChange name="password">{handleChange}</OnChange>
         <Button
-          htmltype="submit"
+          type="submit"
           variant="primary"
           className="w-100"
-          onClick={handleSubmit}
+          onClick={login}
           disabled={edgeAuthLoading}
         >
           {edgeAuthLoading ? (
@@ -159,8 +194,10 @@ const LoginForm = props => {
         <Form
           onSubmit={handleSubmit}
           mutators={{ setDataMutator }}
-          validate={values => {
-            const errors = {};
+          validate={(
+            values: FormValues,
+          ): { email?: string; password?: string } => {
+            const errors: { email?: string; password?: string } = {};
 
             if (!values.email || !validator.validate(values.email)) {
               errors.email = 'Invalid Email Address';

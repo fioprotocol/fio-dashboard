@@ -1,14 +1,13 @@
 import Sequelize from 'sequelize';
-import crypto from 'crypto';
+import fiojs from '@fioprotocol/fiojs';
 
 import Base from './Base';
 import { Notification } from './Notification';
+import { Nonce } from './Nonce';
 import { FreeAddress } from './FreeAddress';
 import { Wallet } from './Wallet';
 
 const { DataTypes: DT, Op } = Sequelize;
-
-import config from '../config';
 
 export class User extends Base {
   static get ROLE() {
@@ -35,19 +34,7 @@ export class User extends Base {
           primaryKey: true,
         },
         email: { type: DT.STRING, unique: true },
-        username: DT.STRING,
-        password: {
-          type: DT.STRING,
-          set(value) {
-            this.setDataValue('password', User.generateHash(value));
-          },
-        },
-        pin: {
-          type: DT.STRING,
-          set(value) {
-            this.setDataValue('pin', User.generateHash(value));
-          },
-        },
+        username: { type: DT.STRING, unique: true },
         status: {
           type: DT.ENUM,
           values: Object.values(this.STATUS),
@@ -70,6 +57,7 @@ export class User extends Base {
   }
 
   static associate() {
+    this.hasMany(Nonce, { foreignKey: 'userId', sourceKey: 'id' });
     this.hasMany(Notification, { foreignKey: 'userId', sourceKey: 'id' });
     this.hasMany(Wallet, { foreignKey: 'userId', sourceKey: 'id', as: 'fioWallets' });
     this.hasMany(FreeAddress, {
@@ -102,19 +90,8 @@ export class User extends Base {
     return attributes.default;
   }
 
-  checkPassword(password) {
-    return this.get('password') === User.generateHash(password);
-  }
-
-  checkPin(pin) {
-    return this.get('pin') === User.generateHash(pin);
-  }
-
-  static generateHash(string) {
-    return crypto
-      .createHmac('sha256', config.secret)
-      .update(string)
-      .digest('hex');
+  static verify(challenge, publicKey, signature) {
+    return fiojs.Ecc.verify(signature, challenge, publicKey);
   }
 
   static findActive(id) {

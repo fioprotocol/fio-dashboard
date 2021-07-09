@@ -1,25 +1,39 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classes from './CreateAccountForm.module.scss';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import classes from './CreateAccountForm.module.scss';
 
-export default class Wizard extends React.Component {
+type State = {
+  pageIsActive: boolean;
+};
+
+type OwnProps = {
+  onNext?: (page: number) => void;
+  onPrev?: (page: number) => void;
+  activePage: number;
+  actionDisabled?: boolean;
+  loading?: boolean;
+  children: React.ReactNode[];
+};
+
+type PageProps = {
+  children: React.FunctionComponent;
+  bottomText?: string | React.ReactNode;
+  hideNext?: boolean;
+  hideBack?: boolean;
+};
+
+type Props = OwnProps;
+
+export default class Wizard extends React.Component<Props, State> {
+  static Page: React.FunctionComponent<any> = props => props.children;
   state = {
     pageIsActive: true,
   };
-  static propTypes = {
-    onNext: PropTypes.func,
-    onPrev: PropTypes.func,
-    activePage: PropTypes.number.isRequired,
-    actionDisabled: PropTypes.bool,
-    loading: PropTypes.bool,
-  };
-  static Page = ({ children }) => children;
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps: Props, prevState: State) {
     if (prevProps.activePage !== this.props.activePage) {
       // appear animation
       this.setState({ pageIsActive: false }, () =>
@@ -40,9 +54,13 @@ export default class Wizard extends React.Component {
     const { activePage, actionDisabled, loading, children } = this.props;
     const { pageIsActive } = this.state;
 
-    const page = React.Children.toArray(children)[activePage];
+    const page =
+      React.Children.toArray(children)[activePage] ||
+      React.Children.toArray(children)[0];
     const isLastPage = activePage === React.Children.count(children) - 1;
-    const { props: { bottomText, hideNext, hideBack } = {} } = page || {};
+    const {
+      props: { bottomText, hideNext, hideBack },
+    }: { props?: PageProps } = page;
 
     return (
       <>

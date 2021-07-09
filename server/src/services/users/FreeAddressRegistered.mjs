@@ -41,10 +41,10 @@ export default class FreeAddressRegistered extends Base {
   }
 
   static get paramsSecret() {
-    return ['data.email', 'data.password', 'data.confirmPassword'];
+    return [];
   }
 
   static get resultSecret() {
-    return ['data.email', 'data.location'];
+    return [];
   }
 }

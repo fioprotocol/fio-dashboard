@@ -1,10 +1,24 @@
 import { combineReducers } from 'redux';
 import * as actions from './actions';
+import { FioWalletDoublet } from '../../types';
+
+type User = {
+  email: string;
+  username: string;
+  fioWallets: FioWalletDoublet[];
+  freeAddresses: { name: string }[];
+  id: string;
+  role: string;
+  secretSetNotification: boolean;
+  status: string;
+  secretSet?: boolean;
+};
 
 export default combineReducers({
-  loading(state = false, action) {
+  loading(state: boolean = false, action) {
     switch (action.type) {
       case actions.PROFILE_REQUEST:
+      case actions.NONCE_REQUEST:
       case actions.LOGIN_REQUEST:
       case actions.LOGOUT_REQUEST:
       case actions.SIGNUP_REQUEST:
@@ -17,12 +31,14 @@ export default combineReducers({
       case actions.LOGOUT_FAILURE:
       case actions.SIGNUP_SUCCESS:
       case actions.SIGNUP_FAILURE:
+      case actions.NONCE_SUCCESS:
+      case actions.NONCE_FAILURE:
         return false;
       default:
         return state;
     }
   },
-  user(state = null, action) {
+  user(state: User | null = null, action) {
     switch (action.type) {
       case actions.PROFILE_SUCCESS:
         return action.data;
@@ -34,7 +50,7 @@ export default combineReducers({
         return state;
     }
   },
-  isConfirmed(state = false, action) {
+  isConfirmed(state: boolean = false, action) {
     switch (action.type) {
       case actions.CONFIRM_SUCCESS:
         return true;
@@ -42,7 +58,7 @@ export default combineReducers({
         return state;
     }
   },
-  isChangedPwd(state = false, action) {
+  isChangedPwd(state: boolean = false, action) {
     switch (action.type) {
       case actions.RESET_PASSWORD_REQUEST:
       case actions.RESET_PASSWORD_FAILURE:
@@ -53,7 +69,7 @@ export default combineReducers({
         return state;
     }
   },
-  isRecoveryRequested(state = false, action) {
+  isRecoveryRequested(state: boolean = false, action) {
     switch (action.type) {
       case actions.PASSWORD_RECOVERY_REQUEST:
       case actions.PASSWORD_RECOVERY_FAILURE:
@@ -66,7 +82,7 @@ export default combineReducers({
         return state;
     }
   },
-  error(state = null, action) {
+  error(state: any | null = null, action) {
     switch (action.type) {
       case actions.LOGIN_FAILURE:
       case actions.LOGOUT_FAILURE:
@@ -77,7 +93,7 @@ export default combineReducers({
         return state;
     }
   },
-  successfullyRegistered(state = false, action) {
+  successfullyRegistered(state: boolean = false, action) {
     switch (action.type) {
       case actions.SIGNUP_SUCCESS:
         return true;

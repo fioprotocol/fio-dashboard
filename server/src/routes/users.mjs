@@ -1,5 +1,6 @@
 import { makeServiceRunner } from '../tools';
 
+import UserAvailable from '../services/users/Available';
 import UsersCreate from '../services/users/Create';
 import UsersUpdate from '../services/users/Update';
 import UsersInfo from '../services/users/Info';
@@ -10,6 +11,7 @@ import UsersSetRecovery from '../services/users/SetRecovery';
 import UsersList from '../services/users/List';
 
 export default {
+  available: makeServiceRunner(UserAvailable, req => req.params),
   create: makeServiceRunner(UsersCreate, req => req.body),
   update: makeServiceRunner(UsersUpdate, req => req.body),
   info: makeServiceRunner(UsersInfo),

@@ -6,15 +6,16 @@ const router = express.Router();
 const checkAuth = routes.auth.check;
 
 router.post('/auth', routes.auth.create);
+router.get('/auth/nonce', routes.auth.nonce);
+router.get('/auth/username/:email', routes.auth.username);
 
 router.post('/actions/:hash', routes.actions.submit);
 
+router.get('/users/available/:email', routes.users.available);
 router.get('/users/me', checkAuth, routes.users.info);
 router.get('/users', checkAuth, routes.users.list);
 router.get('/users/:id', checkAuth, routes.users.show);
 router.post('/users', routes.users.create);
-router.post('/users/resetPassword', routes.users.resetPassword);
-router.post('/users/setRecovery', checkAuth, routes.users.setRecovery);
 router.put('/users', checkAuth, routes.users.update);
 
 router.get('/notifications', checkAuth, routes.notifications.list);
