@@ -1,0 +1,198 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+@import '../../assets/styles/fontMixins.scss';
+
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 80px;
+
+  .dataContainer {
+    max-width: 773px;
+
+    .tableContainer {
+      margin-top: 20px;
+      border-collapse: separate;
+      border-spacing: 0 20px;
+
+      th {
+        @include sf-pro-display-medium;
+        font-size: 0.8125rem;
+        white-space: nowrap;
+        padding-bottom: 0;
+      }
+
+      td {
+        background-color: $milk;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        font-size: 0.8125rem;
+        vertical-align: middle;
+      }
+
+      td:first-child {
+        border-top-left-radius: 15px; 
+        border-bottom-left-radius: 15px;
+        width: 30%;
+      }
+      td:last-child {
+        border-bottom-right-radius: 15px; 
+        border-top-right-radius: 15px; 
+      }
+
+      .nameContainer {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+
+        .name {
+          white-space: pre-wrap;
+          margin-bottom: 0;
+        }
+        
+        .infoIcon {
+          margin-left: 10px;
+          color: $blue;
+          cursor: pointer;
+        }
+      }
+
+      .warnIcon {
+        margin-left: 5px;
+        color: $simple-orange;
+        cursor: pointer;
+      }
+
+      .domainType {
+        color: $white;
+        background-color: $fountain-blue;
+        padding: 5px;
+        border-radius: 3px;
+        font-size: 0.625rem;
+        line-height: 0.625rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        &.public {
+          background-color: $irish-green;
+        }
+      }
+
+      .actionButtonsContainer {
+        display: flex;
+
+        .actionButton {
+          font-size: 0.875rem;
+          @include sf-pro-display-thin;
+          background-color: $violet;
+          border-color: $violet;
+          border-radius: 7px;
+          margin-right: 20px;
+          white-space: nowrap;
+
+          &:hover {
+            background-color: $clear-blue;
+            border-color: $clear-blue;
+          }
+        }
+
+        .settingsButton {
+          background-color: $manatee;
+          border-color: $manatee;
+          width: 36px;
+          font-size: 1.25rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &:hover {
+            background-color: $dove-gray;
+            border-color: $dove-gray;
+          }
+        }
+
+        .actionButton, .settingsButton {
+          height: 36px;
+          border-radius: 7px;
+          transition: color .15s ease-in-out,
+          background-color .15s ease-in-out,
+          border-color .15s ease-in-out,
+          box-shadow .15s ease-in-out;
+        }
+
+        .atIcon {
+          margin-right: 10px;
+        }
+      }
+    }
+
+    .subtitle {
+      @include proxima-nova-thin;
+      font-size: 0.875rem;
+    }
+  }
+
+  .actionBadge {
+    margin-top: 60px;
+    margin-left: 90px;
+    max-width: 335px;
+    width: 100%;
+
+    .badgeContainer {
+      border-radius: 15px;
+      padding: 30px;
+      color: $white;
+
+      .title {
+        color: $white;
+        font-size: 1.0625rem;
+        @include proxima-nova-semibold;
+      }
+
+      .text {
+        font-size: 0.875rem;
+        @include proxima-nova-thin;
+        margin-bottom: 0;
+      }
+      
+      .link {
+        margin-top: 1.25em;
+
+        .button {
+          background-color: transparent;
+          border-color: $white;
+          min-height: 40px;
+          border-radius: 7px;
+          font-size: 0.75rem;
+          padding-left: 22px;
+          padding-right: 22px;
+          margin-top: 1.25em;
+          @include sf-pro-display-medium;
+
+          &:hover {
+            background-color: $white;
+            color: $cyan;
+            border-color: $white;
+          }
+        }
+      }
+    }
+  }
+}
+
+@include sm {
+  .container {
+    margin: 0 20px;
+    flex-direction: column;
+    width: 100%;
+
+    .actionBadge {
+      margin: 30px 20px;
+    }
+  }
+}

@@ -83,4 +83,34 @@ export default class Fio {
 
     return { fio_addresses: [], fio_domains: [] };
   };
+
+  getPubAddressesForFioAddresses = async fioAddresses => {
+    const retResult = {};
+
+    //todo: change to getAllPublicAddresses after fioSDK update;
+    const cryptoCurrencies = ['BTC', 'ETH', 'BCH'];
+    for (const fioAddress of fioAddresses) {
+      const fioAddressRes = [];
+      for (const chainCode of cryptoCurrencies) {
+        try {
+          const {
+            public_address: publicAddress,
+          } = await this.publicFioSDK.getPublicAddress(
+            fioAddress,
+            chainCode,
+            chainCode,
+          );
+          fioAddressRes.push({
+            publicAddress,
+            chainCode,
+            tokenCode: chainCode,
+          });
+        } catch (e) {
+          this.logError(e);
+        }
+      }
+      retResult[fioAddress] = fioAddressRes;
+    }
+    return retResult;
+  };
 }

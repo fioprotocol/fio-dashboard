@@ -1,5 +1,10 @@
 @import '../../assets/styles/mediaQueriesMixings.scss';
 
+.container {
+  display: flex;
+  justify-content: center;
+}
+
 @include sm {
   .container {
     margin: 0 20px;
