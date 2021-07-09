@@ -19,9 +19,16 @@ export const LOGIN_REQUEST = `${prefix}/LOGIN_REQUEST`;
 export const LOGIN_SUCCESS = `${prefix}/LOGIN_SUCCESS`;
 export const LOGIN_FAILURE = `${prefix}/LOGIN_FAILURE`;
 
-export const login = ({ username, password, pin }) => ({
+export const login = ({ email, username, password, pin }) => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
   promise: async api => {
+    if (email && !username) {
+      try {
+        username = await api.auth.username(email);
+      } catch (e) {
+        username = '';
+      }
+    }
     const account = pin
       ? await api.edge.loginPIN(username, pin)
       : await api.edge.login(username, password);

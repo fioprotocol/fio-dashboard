@@ -14,7 +14,7 @@ import FormHeader from '../FormHeader/FormHeader';
 
 import classes from './LoginForm.module.scss';
 import { ROUTES } from '../../constants/routes';
-import { emailToUsername, setDataMutator } from '../../utils';
+import { setDataMutator } from '../../utils';
 
 type FormValues = {
   email: string;
@@ -23,7 +23,7 @@ type FormValues = {
 
 type OwnProps = {
   show: boolean;
-  onSubmit: (params: { username: string; password: string }) => void;
+  onSubmit: (params: { email: string; password: string }) => void;
   edgeAuthLoading: boolean;
   onClose: () => void;
   getCachedUsers: () => void;
@@ -84,7 +84,7 @@ const LoginForm = (props: Props) => {
   const handleSubmit = (values: FormValues) => {
     const { email, password } = values;
     onSubmit({
-      username: emailToUsername(email),
+      email,
       password,
     });
   };

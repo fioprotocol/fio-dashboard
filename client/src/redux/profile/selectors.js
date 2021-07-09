@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
 import { prefix } from './actions';
-import { emailToUsername } from '../../utils';
 
 export const loading = state => state[prefix].loading;
 export const user = state => state[prefix].user;
@@ -19,7 +18,4 @@ export const hasFreeAddress = createSelector(
   user,
   user => user && !!user.freeAddresses.length,
 );
-export const edgeUsername = createSelector(
-  user,
-  user => user && emailToUsername(user.email),
-);
+export const edgeUsername = createSelector(user, user => user && user.username);
