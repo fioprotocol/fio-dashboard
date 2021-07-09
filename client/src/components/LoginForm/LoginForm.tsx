@@ -43,7 +43,7 @@ const LoginForm = (props: Props) => {
     edgeLoginFailure,
   } = props;
   const [isForgotPass, toggleForgotPass] = useState(false);
-  let currentForm: any = {};
+  let currentForm: any = {}; // todo: FormApi is not exported
   useEffect(getCachedUsers, []);
   useEffect(() => {
     if (!isEmpty(currentForm) && !isEmpty(edgeLoginFailure)) {
