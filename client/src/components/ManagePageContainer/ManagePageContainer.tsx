@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Table } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classnames from 'classnames';
 
 import LayoutContainer from '../LayoutContainer/LayoutContainer';
 import { BADGE_TYPES } from '../Badge/Badge';
@@ -13,11 +14,9 @@ import icon from '../../assets/images/timelapse_white_24dp.svg'; // todo: remove
 import classNames from 'classnames';
 
 export type DataProps = {
-  fio_address?: string;
-  fio_domain?: string;
-
+  name: string;
   expiration: Date;
-  remaining_bundled_tx?: number;
+  remaining?: number;
   is_public?: number;
 };
 
@@ -27,6 +26,7 @@ type Props = {
   children?: React.ReactNode;
   pageName: PageName;
   data: DataProps[];
+  loading: boolean;
 };
 
 const isExpired = (expiration: Date) => {
@@ -38,7 +38,7 @@ const isExpired = (expiration: Date) => {
 };
 
 const ManagePageContainer: React.FC<Props> = props => {
-  const { pageName, data } = props;
+  const { pageName, data, loading } = props;
   const [showWarnBadge, toggleShowWarnBadge] = useState(false);
   const [showInfoBadge, toggleShowInfoBadge] = useState(false);
 
@@ -68,8 +68,8 @@ const ManagePageContainer: React.FC<Props> = props => {
     </>
   );
 
-  const renderFioAddress = (fio_address: string) => {
-    const address = fio_address && fio_address.split('@');
+  const renderFioAddress = (name: string) => {
+    const address = name && name.split('@');
     const addressName = address && address[0];
     const addressDomain = address && address[1];
     return (
@@ -132,76 +132,114 @@ const ManagePageContainer: React.FC<Props> = props => {
             show={showInfoBadge}
             onClose={() => toggleShowInfoBadge(false)}
           />
-          <Table
-            className={classes.tableContainer}
-            borderless={true}
-            hover={true}
-          >
-            <thead>
-              <tr>
-                {pageName === PAGE_NAME.ADDRESS && (
-                  <>
-                    <th>Address</th>
-                    <th>Bundled Transactions</th>
-                    <th>Expiration Date</th>
-                    <th>Actions</th>
-                  </>
-                )}
-                {pageName === PAGE_NAME.DOMAIN && (
-                  <>
-                    <th>Domain</th>
-                    <th>Status</th>
-                    <th>Expiration Date</th>
-                    <th>Actions</th>
-                  </>
-                )}
-              </tr>
-            </thead>
-            <tbody>
-              {data &&
-                data.map(dataItem => {
-                  const {
-                    fio_address,
-                    fio_domain,
-                    remaining_bundled_tx,
-                    expiration,
-                    is_public,
-                  } = dataItem;
-                  if (pageName === PAGE_NAME.ADDRESS) {
-                    return (
-                      <tr key={fio_address} className={classes.row}>
-                        <td>{renderFioAddress(fio_address)}</td>
-                        <td>{remaining_bundled_tx} Remaining</td>
-                        <td>{renderDate(expiration)}</td>
-                        <td>{renderActions()}</td>
-                      </tr>
-                    );
-                  } else if (pageName === PAGE_NAME.DOMAIN) {
-                    return (
-                      <tr key={fio_domain} className={classes.row}>
-                        <td>
-                          <span className="boldText">{fio_domain}</span>
-                        </td>
-                        <td>
-                          <div
-                            className={classNames(
-                              classes.domainType,
-                              is_public && classes.public,
-                            )}
-                          >
-                            {is_public
-                              ? DOMAIN_TYPE.PUBLIC
-                              : DOMAIN_TYPE.PRIVATE}
-                          </div>
-                        </td>
-                        <td>{renderDate(expiration)}</td>
-                        <td>{renderActions()}</td>
-                      </tr>
-                    );
-                  }
-                })}
-            </tbody>
-          </Table>
+          <div className={classes.tableContainer}>
+            {pageName === PAGE_NAME.ADDRESS && (
+              <>
+                <div
+                  className={classnames(
+                    classes.tableHeader,
+                    classes.firstHeaderCol,
+                  )}
+                >
+                  Address
+                </div>
+                <div className={classes.tableHeader}>Bundled Transactions</div>
+                <div className={classes.tableHeader}>Expiration Date</div>
+                <div className={classes.tableHeader}>Actions</div>
+              </>
+            )}
+            {pageName === PAGE_NAME.DOMAIN && (
+              <>
+                <div
+                  className={classnames(
+                    classes.tableHeader,
+                    classes.firstHeaderCol,
+                  )}
+                >
+                  Domain
+                </div>
+                <div className={classes.tableHeader}>Status</div>
+                <div className={classes.tableHeader}>Expiration Date</div>
+                <div className={classes.tableHeader}>Actions</div>
+              </>
+            )}
+            {data &&
+              data.map(dataItem => {
+                const { name, remaining, expiration, is_public } = dataItem;
+                if (pageName === PAGE_NAME.ADDRESS) {
+                  return (
+                    <React.Fragment key={name}>
+                      <div
+                        className={classnames(
+                          classes.tableCol,
+                          classes.firstCol,
+                        )}
+                      >
+                        {renderFioAddress(name)}
+                      </div>
+                      <div className={classes.tableCol}>
+                        <span className="boldText mr-2">{remaining || 0}</span>{' '}
+                        Remaining
+                      </div>
+                      <div className={classes.tableCol}>
+                        {renderDate(expiration)}
+                      </div>
+                      <div
+                        className={classnames(
+                          classes.tableCol,
+                          classes.lastCol,
+                        )}
+                      >
+                        {renderActions()}
+                      </div>
+                    </React.Fragment>
+                  );
+                } else if (pageName === PAGE_NAME.DOMAIN) {
+                  return (
+                    <React.Fragment key={name}>
+                      <div
+                        className={classnames(
+                          classes.tableCol,
+                          classes.firstCol,
+                        )}
+                      >
+                        <span className="boldText">{name}</span>
+                      </div>
+                      <div className={classes.tableCol}>
+                        <div
+                          className={classNames(
+                            classes.domainType,
+                            is_public && classes.public,
+                          )}
+                        >
+                          {is_public ? DOMAIN_TYPE.PUBLIC : DOMAIN_TYPE.PRIVATE}
+                        </div>
+                      </div>
+                      <div className={classes.tableCol}>
+                        {renderDate(expiration)}
+                      </div>
+                      <div
+                        className={classnames(
+                          classes.tableCol,
+                          classes.lastCol,
+                        )}
+                      >
+                        {renderActions()}
+                      </div>
+                    </React.Fragment>
+                  );
+                }
+              })}
+            {loading && (
+              <div className={classes.loader}>
+                <FontAwesomeIcon
+                  icon="spinner"
+                  spin={true}
+                  className={classes.loaderIcon}
+                />
+              </div>
+            )}
+          </div>
         </div>
       </LayoutContainer>
       <div className={classes.actionBadge}>

@@ -18,9 +18,15 @@ export default combineReducers({
   loading(state = false, action) {
     switch (action.type) {
       case actions.REFRESH_BALANCE_REQUEST:
+      case actions.GET_FIO_ADDRESSES_REQUEST:
+      case actions.GET_FIO_DOMAINS_REQUEST:
         return true;
       case actions.REFRESH_BALANCE_SUCCESS:
       case actions.REFRESH_BALANCE_FAILURE:
+      case actions.GET_FIO_ADDRESSES_SUCCESS:
+      case actions.GET_FIO_ADDRESSES_FAILURE:
+      case actions.GET_FIO_DOMAINS_SUCCESS:
+      case actions.GET_FIO_DOMAINS_FAILURE:
         return false;
       default:
         return state;
@@ -86,12 +92,14 @@ export default combineReducers({
   },
   fioAddresses(state = [], action) {
     switch (action.type) {
-      case actions.REFRESH_FIO_NAMES_SUCCESS: {
+      case actions.REFRESH_FIO_NAMES_SUCCESS:
+      case actions.GET_FIO_ADDRESSES_SUCCESS: {
         const fioAddresses = [...state];
         for (const item of action.data.fio_addresses) {
           const fioAddress = {
             name: item.fio_address,
             expiration: item.expiration,
+            remaining: item.remaining_bundled_tx,
           };
           const index = fioAddresses.findIndex(
             ({ name }) => name === fioAddress.name,
@@ -112,7 +120,8 @@ export default combineReducers({
   },
   fioDomains(state = [], action) {
     switch (action.type) {
-      case actions.REFRESH_FIO_NAMES_SUCCESS: {
+      case actions.REFRESH_FIO_NAMES_SUCCESS:
+      case actions.GET_FIO_DOMAINS_SUCCESS: {
         const fioDomains = [...state];
         for (const item of action.data.fio_domains) {
           const fioDomain = {
@@ -133,6 +142,22 @@ export default combineReducers({
       }
       case LOGOUT_SUCCESS:
         return [];
+      default:
+        return state;
+    }
+  },
+  getMoreAddresses(state = 0, action) {
+    switch (action.type) {
+      case actions.GET_FIO_ADDRESSES_SUCCESS:
+        return action.data.more;
+      default:
+        return state;
+    }
+  },
+  getMoreDomains(state = 0, action) {
+    switch (action.type) {
+      case actions.GET_FIO_DOMAINS_SUCCESS:
+        return action.data.more;
       default:
         return state;
     }
