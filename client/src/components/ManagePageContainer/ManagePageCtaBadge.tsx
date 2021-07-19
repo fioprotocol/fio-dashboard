@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import { CTA_BADGE } from './constants';
-import { PageName } from './ManagePageContainer';
+import { PageName } from './types';
 
 import classes from './ManagePageContainer.module.scss';
 
