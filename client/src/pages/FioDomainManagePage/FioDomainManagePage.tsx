@@ -1,31 +1,21 @@
-import React, { useEffect } from 'react';
-import isEmpty from 'lodash/isEmpty';
+import React from 'react';
 import ManagePageContainer, {
   DataProps,
+  FetchDataFn,
+  HasMore,
 } from '../../components/ManagePageContainer/ManagePageContainer';
 
 type Props = {
   children?: React.ReactNode;
   data: DataProps[];
-  getFioDomains: (publicKey: string, limit: number, offset: 0) => void;
+  fetchDataFn: FetchDataFn;
   fioWallets: any;
   loading: boolean;
+  hasMore: HasMore;
 };
 
-const FioDomainManagePage: React.FC<Props> = props => {
-  const { data, getFioDomains, fioWallets, loading } = props;
-
-  useEffect(() => {
-    if (!isEmpty(fioWallets)) {
-      for (const fioWallet of fioWallets) {
-        getFioDomains(fioWallet.publicKey, 25, 0);
-      }
-    }
-  }, [fioWallets]);
-
-  return (
-    <ManagePageContainer pageName="domain" data={data} loading={loading} />
-  );
-};
+const FioDomainManagePage: React.FC<Props> = props => (
+  <ManagePageContainer pageName="domain" {...props} />
+);
 
 export default FioDomainManagePage;

@@ -7,7 +7,7 @@ import { getFioAddresses } from '../../redux/fio/actions';
 import {
   fioAddresses,
   fioWallets,
-  getMoreAddresses,
+  hasMoreAddresses,
   loading,
 } from '../../redux/fio/selectors';
 
@@ -17,10 +17,10 @@ const reduxConnect = connect(
   createStructuredSelector({
     data: fioAddresses,
     fioWallets,
-    getMoreAddresses,
+    hasMore: hasMoreAddresses,
     loading,
   }),
-  { getFioAddresses },
+  { fetchDataFn: getFioAddresses },
 );
 
 export default compose(reduxConnect)(FioAddressManagePage);

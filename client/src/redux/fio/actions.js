@@ -55,17 +55,3 @@ export const getFioDomains = (publicKey, limit, offset) => ({
   promise: api => api.fio.getFioDomains(publicKey, limit, offset),
   publicKey,
 });
-
-// export const GET_FIO_DOMAINS_REQUEST = `${prefix}/GET_FIO_DOMAINS_REQUEST`;
-// export const GET_FIO_DOMAINS_SUCCESS = `${prefix}/GET_FIO_DOMAINS_SUCCESS`;
-// export const GET_FIO_DOMAINS_FAILURE = `${prefix}/GET_FIO_DOMAINS_FAILURE`;
-
-// export const getAllFioAddresses = fioDomains => ({
-//   types: [
-//     GET_FIO_DOMAINS_REQUEST,
-//     GET_FIO_DOMAINS_SUCCESS,
-//     GET_FIO_DOMAINS_FAILURE,
-//   ],
-//   promise: api => api.fio.getPubAddressesForFioAddresses(fioDomains),
-//   fioDomains,
-// });

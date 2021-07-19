@@ -146,18 +146,18 @@ export default combineReducers({
         return state;
     }
   },
-  getMoreAddresses(state = 0, action) {
+  hasMoreAddresses(state = {}, action) {
     switch (action.type) {
       case actions.GET_FIO_ADDRESSES_SUCCESS:
-        return action.data.more;
+        return { ...state, [action.publicKey]: action.data.more };
       default:
         return state;
     }
   },
-  getMoreDomains(state = 0, action) {
+  hasMoreDomains(state = {}, action) {
     switch (action.type) {
       case actions.GET_FIO_DOMAINS_SUCCESS:
-        return action.data.more;
+        return { ...state, [action.publicKey]: action.data.more };
       default:
         return state;
     }

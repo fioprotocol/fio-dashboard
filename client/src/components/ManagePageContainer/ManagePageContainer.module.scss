@@ -15,151 +15,153 @@
 
     .tableContainer {
       margin-top: 20px;
-      display: grid;
-      grid-template-columns: auto auto auto auto;
       max-height: 500px;
       overflow: scroll;
 
-      .tableHeader, .tableCol {
-        @include sf-pro-display-medium;
-        font-size: 0.8125rem;
-      }
-      .tableHeader {
-        position: sticky;
-        top: 0;
-        background-color: $white;
-        padding: 10px;
-      }
-      .firstHeaderCol {
-        padding-left: 15px;
-      }
-
-      .tableCol {
-        white-space: nowrap;
-        background-color: $milk;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        vertical-align: middle;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        padding: 10px;
-      }
-
-      .firstCol {
-        border-top-left-radius: 15px; 
-        border-bottom-left-radius: 15px;
-        padding-left: 15px;
-        padding-right: 20px;
-      }
-
-      .lastCol {
-        border-bottom-right-radius: 15px; 
-        border-top-right-radius: 15px;
-        padding-right: 10px;
-      }
-
-      .loader {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        font-size: 1.5rem;
-        color: $violet;
-        margin-top: 30px;
-        padding-bottom: 60px;
-        grid-column-start: 1;
-        grid-column-end: 5;
-      }
-
-      .nameContainer {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-
-        .name {
-          white-space: pre-wrap;
-          margin-bottom: 0;
-        }
+      .infiniteScroll {
+        display: grid;
+        grid-template-columns: auto auto auto auto;
         
-        .infoIcon {
-          margin-left: 10px;
-          color: $blue;
-          cursor: pointer;
+        .tableHeader, .tableCol {
+          @include sf-pro-display-medium;
+          font-size: 0.8125rem;
         }
-      }
-
-      .warnIcon {
-        margin-left: 5px;
-        color: $simple-orange;
-        cursor: pointer;
-      }
-
-      .domainType {
-        color: $white;
-        background-color: $fountain-blue;
-        padding: 5px;
-        border-radius: 3px;
-        font-size: 0.625rem;
-        line-height: 0.625rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        &.public {
-          background-color: $irish-green;
+        .tableHeader {
+          position: sticky;
+          top: 0;
+          background-color: $white;
+          padding: 10px;
         }
-      }
+        .firstHeaderCol {
+          padding-left: 15px;
+        }
 
-      .actionButtonsContainer {
-        display: flex;
-
-        .actionButton {
-          font-size: 0.875rem;
-          @include sf-pro-display-thin;
-          background-color: $violet;
-          border-color: $violet;
-          border-radius: 7px;
-          margin-right: 20px;
+        .tableCol {
           white-space: nowrap;
+          background-color: $milk;
+          margin-top: 10px;
+          margin-bottom: 10px;
+          vertical-align: middle;
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          padding: 10px;
+        }
 
-          &:hover {
-            background-color: $clear-blue;
-            border-color: $clear-blue;
+        .firstCol {
+          border-top-left-radius: 15px; 
+          border-bottom-left-radius: 15px;
+          padding-left: 15px;
+          padding-right: 20px;
+        }
+
+        .lastCol {
+          border-bottom-right-radius: 15px; 
+          border-top-right-radius: 15px;
+          padding-right: 10px;
+        }
+
+        .nameContainer {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+
+          .name {
+            white-space: pre-wrap;
+            margin-bottom: 0;
+          }
+          
+          .infoIcon {
+            margin-left: 10px;
+            color: $blue;
+            cursor: pointer;
           }
         }
 
-        .settingsButton {
-          background-color: $manatee;
-          border-color: $manatee;
-          width: 36px;
-          font-size: 1.25rem;
+        .warnIcon {
+          margin-left: 5px;
+          color: $simple-orange;
+          cursor: pointer;
+        }
+
+        .domainType {
+          color: $white;
+          background-color: $fountain-blue;
+          padding: 5px;
+          border-radius: 3px;
+          font-size: 0.625rem;
+          line-height: 0.625rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          &.public {
+            background-color: $irish-green;
+          }
+        }
+
+        .actionButtonsContainer {
+          display: flex;
+
+          .actionButton {
+            font-size: 0.875rem;
+            @include sf-pro-display-thin;
+            background-color: $violet;
+            border-color: $violet;
+            border-radius: 7px;
+            margin-right: 20px;
+            white-space: nowrap;
+
+            &:hover {
+              background-color: $clear-blue;
+              border-color: $clear-blue;
+            }
+          }
+
+          .settingsButton {
+            background-color: $manatee;
+            border-color: $manatee;
+            width: 36px;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &:hover {
+              background-color: $dove-gray;
+              border-color: $dove-gray;
+            }
+          }
+
+          .actionButton, .settingsButton {
+            height: 36px;
+            border-radius: 7px;
+            transition: color .15s ease-in-out,
+            background-color .15s ease-in-out,
+            border-color .15s ease-in-out,
+            box-shadow .15s ease-in-out;
+          }
+
+          .atIcon {
+            margin-right: 10px;
+          }
+        }
+      }
+      .loader {
+          position: relative;
           display: flex;
           align-items: center;
           justify-content: center;
-
-          &:hover {
-            background-color: $dove-gray;
-            border-color: $dove-gray;
-          }
+          width: 100%;
+          font-size: 1.5rem;
+          color: $violet;
+          margin-top: 30px;
+          padding-bottom: 60px;
+          grid-column-start: 1;
+          grid-column-end: 5;
         }
-
-        .actionButton, .settingsButton {
-          height: 36px;
-          border-radius: 7px;
-          transition: color .15s ease-in-out,
-          background-color .15s ease-in-out,
-          border-color .15s ease-in-out,
-          box-shadow .15s ease-in-out;
-        }
-
-        .atIcon {
-          margin-right: 10px;
-        }
-      }
     }
 
     .subtitle {

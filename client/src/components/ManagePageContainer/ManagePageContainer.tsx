@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import useInfiniteScroll from 'react-infinite-scroll-hook';
+import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
 import classnames from 'classnames';
 
 import LayoutContainer from '../LayoutContainer/LayoutContainer';
 import { BADGE_TYPES } from '../Badge/Badge';
 import NotificationBadge from '../NotificationBadge';
-import { BANNER_DATA, DOMAIN_TYPE, PAGE_NAME } from './constants';
+import { BANNER_DATA, DOMAIN_TYPE, PAGE_NAME, ITEMS_LIMIT } from './constants';
 import ManagePageCtaBadge from './ManagePageCtaBadge';
 
 import classes from './ManagePageContainer.module.scss';
@@ -21,12 +24,21 @@ export type DataProps = {
 };
 
 export type PageName = 'address' | 'domain';
+export type HasMore = { [key: string]: number };
+export type FetchDataFn = (
+  publicKey: string,
+  limit: number,
+  offset: number,
+) => void;
 
 type Props = {
   children?: React.ReactNode;
   pageName: PageName;
   data: DataProps[];
   loading: boolean;
+  fetchDataFn: FetchDataFn;
+  fioWallets: any;
+  hasMore: HasMore;
 };
 
 const isExpired = (expiration: Date) => {
@@ -38,9 +50,17 @@ const isExpired = (expiration: Date) => {
 };
 
 const ManagePageContainer: React.FC<Props> = props => {
-  const { pageName, data, loading } = props;
+  const { pageName, data, fioWallets, fetchDataFn, hasMore, loading } = props;
   const [showWarnBadge, toggleShowWarnBadge] = useState(false);
   const [showInfoBadge, toggleShowInfoBadge] = useState(false);
+  const [offset, changeOffset] = useState<HasMore>({});
+
+  const fioWalletsRef = useRef(fioWallets);
+  if (!isEqual(fioWallets, fioWalletsRef)) {
+    fioWalletsRef.current = fioWallets;
+  }
+
+  const hasMoreItems = Object.keys(hasMore).some(key => hasMore[key] > 0);
 
   const {
     title,
@@ -50,10 +70,44 @@ const ManagePageContainer: React.FC<Props> = props => {
     infoMessage,
   } = BANNER_DATA[pageName];
 
+  const fetchData = () => {
+    if (!isEmpty(fioWallets)) {
+      for (const fioWallet of fioWallets) {
+        const { publicKey } = fioWallet;
+        const currentOffset = offset[publicKey] || 0;
+        fetchDataFn(publicKey, Math.round(ITEMS_LIMIT), currentOffset);
+        !!hasMore[publicKey] &&
+          changeOffset({
+            ...offset,
+            [publicKey]: currentOffset + ITEMS_LIMIT,
+          });
+      }
+    }
+  };
+
   useEffect(() => {
     toggleShowWarnBadge(data.some(dataItem => isExpired(dataItem.expiration)));
-    toggleShowInfoBadge(true); // todo: set dependent on data
+    toggleShowInfoBadge(false); // todo: set dependent on data when move to get_pub_addresses
   }, []);
+
+  useEffect(() => {
+    if (!isEmpty(hasMore)) {
+      const offsetObj: HasMore = {};
+
+      Object.keys(hasMore).forEach(key => {
+        offsetObj[key] = 0;
+      });
+      changeOffset(offsetObj);
+    }
+    fetchData();
+  }, [fioWalletsRef.current]);
+
+  const [sentryRef] = useInfiniteScroll({
+    loading,
+    hasNextPage: hasMoreItems,
+    onLoadMore: fetchData,
+    rootMargin: '0px 0px 20px 0px',
+  });
 
   const renderDate = (expiration: Date) => (
     <>
@@ -110,6 +164,23 @@ const ManagePageContainer: React.FC<Props> = props => {
     </div>
   );
 
+  const renderScroll = (children: React.ReactNode) => {
+    return (
+      <>
+        {children}
+        {(loading || Object.keys(hasMore).some(key => hasMore[key] > 0)) && (
+          <div className={classes.loader} ref={sentryRef}>
+            <FontAwesomeIcon
+              icon="spinner"
+              spin={true}
+              className={classes.loaderIcon}
+            />
+          </div>
+        )}
+      </>
+    );
+  };
+
   return (
     <div className={classes.container}>
       <LayoutContainer title={title}>
@@ -133,111 +204,112 @@ const ManagePageContainer: React.FC<Props> = props => {
             onClose={() => toggleShowInfoBadge(false)}
           />
           <div className={classes.tableContainer}>
-            {pageName === PAGE_NAME.ADDRESS && (
-              <>
-                <div
-                  className={classnames(
-                    classes.tableHeader,
-                    classes.firstHeaderCol,
-                  )}
-                >
-                  Address
-                </div>
-                <div className={classes.tableHeader}>Bundled Transactions</div>
-                <div className={classes.tableHeader}>Expiration Date</div>
-                <div className={classes.tableHeader}>Actions</div>
-              </>
-            )}
-            {pageName === PAGE_NAME.DOMAIN && (
-              <>
-                <div
-                  className={classnames(
-                    classes.tableHeader,
-                    classes.firstHeaderCol,
-                  )}
-                >
-                  Domain
-                </div>
-                <div className={classes.tableHeader}>Status</div>
-                <div className={classes.tableHeader}>Expiration Date</div>
-                <div className={classes.tableHeader}>Actions</div>
-              </>
-            )}
-            {data &&
-              data.map(dataItem => {
-                const { name, remaining, expiration, is_public } = dataItem;
-                if (pageName === PAGE_NAME.ADDRESS) {
-                  return (
-                    <React.Fragment key={name}>
-                      <div
-                        className={classnames(
-                          classes.tableCol,
-                          classes.firstCol,
-                        )}
-                      >
-                        {renderFioAddress(name)}
-                      </div>
-                      <div className={classes.tableCol}>
-                        <span className="boldText mr-2">{remaining || 0}</span>{' '}
-                        Remaining
-                      </div>
-                      <div className={classes.tableCol}>
-                        {renderDate(expiration)}
-                      </div>
-                      <div
-                        className={classnames(
-                          classes.tableCol,
-                          classes.lastCol,
-                        )}
-                      >
-                        {renderActions()}
-                      </div>
-                    </React.Fragment>
-                  );
-                } else if (pageName === PAGE_NAME.DOMAIN) {
-                  return (
-                    <React.Fragment key={name}>
-                      <div
-                        className={classnames(
-                          classes.tableCol,
-                          classes.firstCol,
-                        )}
-                      >
-                        <span className="boldText">{name}</span>
-                      </div>
-                      <div className={classes.tableCol}>
-                        <div
-                          className={classNames(
-                            classes.domainType,
-                            is_public && classes.public,
-                          )}
-                        >
-                          {is_public ? DOMAIN_TYPE.PUBLIC : DOMAIN_TYPE.PRIVATE}
-                        </div>
-                      </div>
-                      <div className={classes.tableCol}>
-                        {renderDate(expiration)}
-                      </div>
-                      <div
-                        className={classnames(
-                          classes.tableCol,
-                          classes.lastCol,
-                        )}
-                      >
-                        {renderActions()}
-                      </div>
-                    </React.Fragment>
-                  );
-                }
-              })}
-            {loading && (
-              <div className={classes.loader}>
-                <FontAwesomeIcon
-                  icon="spinner"
-                  spin={true}
-                  className={classes.loaderIcon}
-                />
-              </div>
+            {renderScroll(
+              <div className={classes.infiniteScroll}>
+                {pageName === PAGE_NAME.ADDRESS && (
+                  <>
+                    <div
+                      className={classnames(
+                        classes.tableHeader,
+                        classes.firstHeaderCol,
+                      )}
+                    >
+                      Address
+                    </div>
+                    <div className={classes.tableHeader}>
+                      Bundled Transactions
+                    </div>
+                    <div className={classes.tableHeader}>Expiration Date</div>
+                    <div className={classes.tableHeader}>Actions</div>
+                  </>
+                )}
+                {pageName === PAGE_NAME.DOMAIN && (
+                  <>
+                    <div
+                      className={classnames(
+                        classes.tableHeader,
+                        classes.firstHeaderCol,
+                      )}
+                    >
+                      Domain
+                    </div>
+                    <div className={classes.tableHeader}>Status</div>
+                    <div className={classes.tableHeader}>Expiration Date</div>
+                    <div className={classes.tableHeader}>Actions</div>
+                  </>
+                )}
+                {data &&
+                  data.map(dataItem => {
+                    const { name, remaining, expiration, is_public } = dataItem;
+                    if (pageName === PAGE_NAME.ADDRESS) {
+                      return (
+                        <React.Fragment key={name}>
+                          <div
+                            className={classnames(
+                              classes.tableCol,
+                              classes.firstCol,
+                            )}
+                          >
+                            {renderFioAddress(name)}
+                          </div>
+                          <div className={classes.tableCol}>
+                            <span className="boldText mr-2">
+                              {remaining || 0}
+                            </span>{' '}
+                            Remaining
+                          </div>
+                          <div className={classes.tableCol}>
+                            {renderDate(expiration)}
+                          </div>
+                          <div
+                            className={classnames(
+                              classes.tableCol,
+                              classes.lastCol,
+                            )}
+                          >
+                            {renderActions()}
+                          </div>
+                        </React.Fragment>
+                      );
+                    } else if (pageName === PAGE_NAME.DOMAIN) {
+                      return (
+                        <React.Fragment key={name}>
+                          <div
+                            className={classnames(
+                              classes.tableCol,
+                              classes.firstCol,
+                            )}
+                          >
+                            <span className="boldText">{name}</span>
+                          </div>
+                          <div className={classes.tableCol}>
+                            <div
+                              className={classNames(
+                                classes.domainType,
+                                is_public && classes.public,
+                              )}
+                            >
+                              {is_public
+                                ? DOMAIN_TYPE.PUBLIC
+                                : DOMAIN_TYPE.PRIVATE}
+                            </div>
+                          </div>
+                          <div className={classes.tableCol}>
+                            {renderDate(expiration)}
+                          </div>
+                          <div
+                            className={classnames(
+                              classes.tableCol,
+                              classes.lastCol,
+                            )}
+                          >
+                            {renderActions()}
+                          </div>
+                        </React.Fragment>
+                      );
+                    }
+                  })}
+              </div>,
             )}
           </div>
         </div>

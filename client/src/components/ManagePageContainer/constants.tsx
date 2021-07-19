@@ -48,3 +48,5 @@ export const PAGE_NAME = {
   ADDRESS: 'address',
   DOMAIN: 'domain',
 };
+
+export const ITEMS_LIMIT = 25;

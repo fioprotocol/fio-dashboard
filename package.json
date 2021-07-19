@@ -110,6 +110,7 @@
     "react-dropdown": "1.9.2",
     "react-final-form": "6.5.2",
     "react-final-form-listeners": "1.0.3",
+    "react-infinite-scroll-hook": "4.0.1",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.2.2",
     "react-router-last-location": "2.0.1",

@@ -7,7 +7,7 @@ import { getFioDomains } from '../../redux/fio/actions';
 import {
   fioDomains,
   fioWallets,
-  getMoreDomains,
+  hasMoreDomains,
   loading,
 } from '../../redux/fio/selectors';
 
@@ -17,10 +17,10 @@ const reduxConnect = connect(
   createStructuredSelector({
     data: fioDomains,
     fioWallets,
-    getMoreDomains,
+    hasMore: hasMoreDomains,
     loading,
   }),
-  { getFioDomains },
+  { fetchDataFn: getFioDomains },
 );
 
 export default compose(reduxConnect)(FioDomainManagePage);
