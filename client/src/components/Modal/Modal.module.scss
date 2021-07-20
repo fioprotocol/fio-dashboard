@@ -11,9 +11,15 @@
   align-items: center;
   padding: 30px 20px 10px 20px;
   overflow: hidden;
+  color: $white;
 
   &.danger {
     background-color: $warn-red;
+  }
+
+  &.simple {
+    background-color: $milk;
+    color: $black;
   }
 }
 
@@ -29,24 +35,26 @@
     min-width: 100%;
     padding-bottom: 80px;
     border: none;
+    height: 100%;
+    overflow: scroll;
   }
   .dialog {
     margin: 0;
     width: 100%;
-    top: 100%;
-    transform: translateY(-100%) !important;
+    top: 0%;
+    transform: translateY(20%) !important;
     animation: slide-up 0.4s ease-in-out;
   }
 }
 
 @keyframes slide-up {
   from {
-    top: 200%;
+    top: 100%;
     transform: translateY(0) !important; 
   }
 
   to {
-    top: 100%;
-    transform: translateY(-100%) !important;
+    top: 0%;
+    transform: translateY(20%) !important;
   }
 }

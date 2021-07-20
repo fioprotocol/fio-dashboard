@@ -83,4 +83,66 @@ export default class Fio {
 
     return { fio_addresses: [], fio_domains: [] };
   };
+
+  getFioAddresses = async (publicKey, limit, offset) => {
+    this.setBaseUrl();
+    try {
+      const res = await this.publicFioSDK.getFioAddresses(
+        publicKey,
+        limit,
+        offset,
+      );
+      return res;
+    } catch (e) {
+      this.logError(e);
+    }
+
+    return { fio_addresses: [], more: 0 };
+  };
+
+  getFioDomains = async (publicKey, limit, offset) => {
+    this.setBaseUrl();
+    try {
+      const res = await this.publicFioSDK.getFioDomains(
+        publicKey,
+        limit,
+        offset,
+      );
+      return res;
+    } catch (e) {
+      this.logError(e);
+    }
+
+    return { fio_domains: [], more: 0 };
+  };
+
+  getPubAddressesForFioAddresses = async fioAddresses => {
+    const retResult = {};
+
+    //todo: change to getAllPublicAddresses after fioSDK update;
+    const cryptoCurrencies = ['BTC', 'ETH', 'BCH'];
+    for (const fioAddress of fioAddresses) {
+      const fioAddressRes = [];
+      for (const chainCode of cryptoCurrencies) {
+        try {
+          const {
+            public_address: publicAddress,
+          } = await this.publicFioSDK.getPublicAddress(
+            fioAddress,
+            chainCode,
+            chainCode,
+          );
+          fioAddressRes.push({
+            publicAddress,
+            chainCode,
+            tokenCode: chainCode,
+          });
+        } catch (e) {
+          this.logError(e);
+        }
+      }
+      retResult[fioAddress] = fioAddressRes;
+    }
+    return retResult;
+  };
 }

@@ -77,6 +77,7 @@ export default class Notifications extends Component {
           type={last.type}
           title={last.title}
           message={last.message}
+          show
         />
       </div>
     );

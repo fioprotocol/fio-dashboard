@@ -55,7 +55,7 @@ a {
 // custom modal styles
 
 .modal-header {
-  color: white;
+  color: inherit;
   border: none !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -101,7 +101,6 @@ a {
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
 }
 

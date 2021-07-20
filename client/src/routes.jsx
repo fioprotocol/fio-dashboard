@@ -8,7 +8,9 @@ import ConfirmEmail from './pages/ConfirmEmail';
 import AuthContainer from './components/AuthContainer';
 import PrivateRoute from './components/PrivateRoute';
 import FioAddressPage from './pages/FioAddressPage';
+import FioAddressManage from './pages/FioAddressManagePage';
 import FioDomainPage from './pages/FioDomainPage';
+import FioDomainManagePage from './pages/FioDomainManagePage';
 import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import PurchasePage from './pages/PurchasePage';
@@ -28,9 +30,15 @@ const Routes = () => (
           component={FioAddressPage}
           exact
         />
+        <Route path={ROUTES.FIO_ADDRESSES} component={FioAddressManage} exact />
         <Route
           path={ROUTES.FIO_DOMAINS_SELECTION}
           component={FioDomainPage}
+          exact
+        />
+        <Route
+          path={ROUTES.FIO_DOMAINS}
+          component={FioDomainManagePage}
           exact
         />
         <Route path={ROUTES.CART} component={CartPage} exact />

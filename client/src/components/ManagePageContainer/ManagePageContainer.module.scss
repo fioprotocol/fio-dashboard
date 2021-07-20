@@ -1,0 +1,107 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+@import '../../assets/styles/fontMixins.scss';
+
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 80px;
+
+  .dataContainer {
+    max-width: 773px;
+
+    .tableContainer {
+      margin-top: 20px;
+      max-height: 500px;
+      overflow: scroll;
+
+      .loader {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        font-size: 1.5rem;
+        color: $violet;
+        margin-top: 30px;
+        padding-bottom: 60px;
+        grid-column-start: 1;
+        grid-column-end: 5;
+      }
+    }
+
+    .subtitle {
+      @include proxima-nova-thin;
+      font-size: 0.875rem;
+    }
+  }
+
+  .actionBadge {
+    margin-top: 60px;
+    margin-left: 90px;
+    max-width: 335px;
+    width: 100%;
+
+    .badgeContainer {
+      border-radius: 15px;
+      padding: 30px;
+      color: $white;
+
+      .title {
+        color: $white;
+        font-size: 1.0625rem;
+        @include proxima-nova-semibold;
+      }
+
+      .text {
+        font-size: 0.875rem;
+        @include proxima-nova-thin;
+        margin-bottom: 0;
+      }
+      
+      .link {
+        margin-top: 1.25em;
+
+        .button {
+          background-color: transparent;
+          border-color: $white;
+          min-height: 40px;
+          border-radius: 7px;
+          font-size: 0.75rem;
+          padding-left: 22px;
+          padding-right: 22px;
+          margin-top: 1.25em;
+          @include sf-pro-display-medium;
+
+          &:hover {
+            background-color: $white;
+            color: $cyan;
+            border-color: $white;
+          }
+        }
+      }
+    }
+  }
+}
+
+@include sm {
+  .container {
+    margin: 0;
+    flex-direction: column;
+    width: 100%;
+
+    .actionBadge {
+      margin: 0 20px 30px;
+      width: auto;
+    }
+
+    .dataContainer {
+      .tableContainer {
+        max-height: 60vh;
+      }
+    }
+  }
+}
