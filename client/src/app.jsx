@@ -27,6 +27,9 @@ import {
   faSpinner,
   faChevronRight,
   faExclamationCircle,
+  faExclamationTriangle,
+  faLink,
+  faAt,
   faSearch,
   faPlusSquare,
   faTrash,
@@ -76,6 +79,9 @@ library.add(
   faTrash,
   faWallet,
   faPlusCircle,
+  faExclamationTriangle,
+  faLink,
+  faAt,
 );
 
 const store = configureStore(api, history);

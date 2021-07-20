@@ -19,15 +19,21 @@ export const BADGE_BG_COLOR = {
   [BADGE_TYPES.WARNING]: colors['simple-orange'],
   [BADGE_TYPES.ALERT]: colors['simple-red'],
   [BADGE_TYPES.ERROR]: colors['simple-red'],
-  [BADGE_TYPES.INFO]: colors['blue'],
+  [BADGE_TYPES.INFO]: colors.blue,
   [BADGE_TYPES.SUCCESS]: colors['irish-green'],
-  [BADGE_TYPES.REGULAR]: colors['cyan'],
+  [BADGE_TYPES.REGULAR]: colors.cyan,
   [BADGE_TYPES.SIMPLE]: colors['desert-storm'],
-  [BADGE_TYPES.WHITE]: colors['white'],
-  [BADGE_TYPES.BLACK]: colors['black'],
+  [BADGE_TYPES.WHITE]: colors.white,
+  [BADGE_TYPES.BLACK]: colors.black,
 };
 
-const Badge = props => {
+type Props = {
+  children: React.ReactNode;
+  type: string;
+  show?: boolean;
+};
+
+const Badge: React.FC<Props> = props => {
   const { children, type, show } = props;
 
   return (
