@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import classes from './Modal.module.scss';
 
 type Props = {
-  backdrop?: boolean;
+  backdrop?: boolean | string;
   children: React.ReactNode;
   closeButton: boolean;
   hideCloseButton?: boolean;
