@@ -50,3 +50,5 @@ export const PAGE_NAME = {
 };
 
 export const ITEMS_LIMIT = 25;
+
+export const EXPIRED_DAYS = 30;

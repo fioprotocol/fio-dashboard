@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { BANNER_DATA, DOMAIN_TYPE, PAGE_NAME } from './constants';
 import {
-  ComponentsType,
+  DeafultProps,
   BoolStateFunc,
   IsExpiredFunc,
   ItemComponentProps,
@@ -126,7 +126,7 @@ const renderActions = (pageName: string, isDesktop: boolean) => {
   );
 };
 
-export const DesktopComponents: React.FC<ComponentsType> = props => {
+export const DesktopComponents: React.FC<DeafultProps> = props => {
   const {
     data,
     isExpired,
@@ -218,7 +218,7 @@ export const DesktopComponents: React.FC<ComponentsType> = props => {
   );
 };
 
-export const MobileComponents: React.FC<ComponentsType> = props => {
+export const MobileComponents: React.FC<DeafultProps> = props => {
   const {
     data,
     isExpired,

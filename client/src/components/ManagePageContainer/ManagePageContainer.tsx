@@ -7,7 +7,7 @@ import { Redirect } from 'react-router-dom';
 
 import LayoutContainer from '../LayoutContainer/LayoutContainer';
 import Modal from '../Modal/Modal';
-import { BANNER_DATA, ITEMS_LIMIT } from './constants';
+import { BANNER_DATA, ITEMS_LIMIT, EXPIRED_DAYS } from './constants';
 import ManagePageCtaBadge from './ManagePageCtaBadge';
 import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
@@ -28,7 +28,8 @@ const isExpired = (expiration: Date): boolean => {
   const today = new Date();
   return (
     expiration &&
-    new Date(expiration) < new Date(today.setDate(today.getDate() + 30))
+    new Date(expiration) <
+      new Date(today.setDate(today.getDate() + EXPIRED_DAYS))
   );
 };
 

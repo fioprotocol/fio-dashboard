@@ -30,7 +30,7 @@ export type BoolStateFunc = Dispatch<SetStateAction<boolean>>;
 
 export type IsExpiredFunc = (expiration: Date) => boolean;
 
-export type ComponentsType = {
+export type DeafultProps = {
   data: DataProps[];
   isDesktop: boolean;
   pageName: PageName;
