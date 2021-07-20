@@ -28,7 +28,7 @@ const isExpired = (expiration: Date): boolean => {
   const today = new Date();
   return (
     expiration &&
-    new Date(expiration) < new Date(today.setDate(today.getDate() + 330))
+    new Date(expiration) < new Date(today.setDate(today.getDate() + 30))
   );
 };
 
