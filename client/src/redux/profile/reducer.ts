@@ -103,4 +103,15 @@ export default combineReducers({
         return state;
     }
   },
+  profileRefreshed(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.PROFILE_REQUEST:
+        return false;
+      case actions.PROFILE_SUCCESS:
+      case actions.PROFILE_FAILURE:
+        return true;
+      default:
+        return state;
+    }
+  },
 });
