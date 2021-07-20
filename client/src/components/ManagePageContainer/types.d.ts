@@ -1,8 +1,8 @@
 import { RouteComponentProps } from 'react-router-dom';
 
 export type DataProps = {
-  name: string;
-  expiration: Date;
+  name?: string;
+  expiration?: Date;
   remaining?: number;
   is_public?: number;
 };
@@ -33,9 +33,24 @@ export type IsExpiredFunc = (expiration: Date) => boolean;
 export type ComponentsType = {
   data: DataProps[];
   isDesktop: boolean;
-  pageName: string;
+  pageName: PageName;
   showInfoBadge: boolean;
   toggleShowInfoBadge: BoolStateFunc;
   toggleShowWarnBadge: BoolStateFunc;
   isExpired: IsExpiredFunc;
+  onClickItem?: (data: DataProps) => MouseEventHandler<HTMLDivElement>;
+};
+
+export type NotificationsProps = {
+  pageName: PageName;
+  showInfoBadge: boolean;
+  showWarnBadge: boolean;
+  toggleShowInfoBadge: BoolStateFunc;
+  toggleShowWarnBadge: BoolStateFunc;
+};
+
+export type ItemComponentProps = {
+  data: DataProps;
+  isExpired: IsExpiredFunc;
+  isDesktop: boolean;
 };

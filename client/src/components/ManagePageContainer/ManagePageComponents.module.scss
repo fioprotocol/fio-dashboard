@@ -42,23 +42,7 @@
     padding-right: 10px;
   }
 
-  .domainType {
-    color: $white;
-    background-color: $fountain-blue;
-    padding: 5px;
-    border-radius: 3px;
-    font-size: 0.625rem;
-    line-height: 0.625rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    &.public {
-      background-color: $irish-green;
-    }
-  }
-
-  .itemContainer {
+  .dataItemContainer {
     background-color: $milk;
     border-radius: 15px;
     display: flex;
@@ -74,69 +58,149 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    // justify-content: space-between;
-    // width: 100%;
 
     .name {
       white-space: pre-wrap;
       margin-bottom: 0;
     }
   }
-  .infoIcon {
-    margin-left: 10px;
-    color: $blue;
-    cursor: pointer;
+}
+
+.domainType {
+  color: $white;
+  background-color: $fountain-blue;
+  padding: 5px;
+  border-radius: 3px;
+  font-size: 0.825rem;
+  line-height: 0.825rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 25px;
+
+  &.public {
+    background-color: $irish-green;
   }
-  .warnIcon {
-    margin-left: 10px;
-    color: $simple-orange;
-    cursor: pointer;
+
+  @include lg {
+    margin-left: 0;
+    font-size: 0.625rem;
+    line-height: 0.625rem;
   }
+}
 
-  .actionButtonsContainer {
-    display: flex;
+.actionButtonsContainer {
+  display: flex;
 
-    .actionButton {
-      font-size: 0.875rem;
-      @include sf-pro-display-thin;
-      background-color: $violet;
-      border-color: $violet;
-      border-radius: 7px;
-      margin-right: 20px;
-      white-space: nowrap;
+  .actionButton {
+    font-size: 0.875rem;
+    @include sf-pro-display-thin;
+    background-color: $violet;
+    border-color: $violet;
+    border-radius: 7px;
+    margin-right: 20px;
+    white-space: nowrap;
 
-      &:hover {
-        background-color: $clear-blue;
-        border-color: $clear-blue;
-      }
+    &:hover {
+      background-color: $clear-blue;
+      border-color: $clear-blue;
     }
 
-    .settingsButton {
-      background-color: $manatee;
-      border-color: $manatee;
-      width: 36px;
-      font-size: 1.25rem;
+    @include sm {
+      width: 100%;
+      height: 45px !important;
       display: flex;
       align-items: center;
-      justify-content: center;
-
-      &:hover {
-        background-color: $dove-gray;
-        border-color: $dove-gray;
+      img, svg {
+        margin-right: 10px;
       }
     }
+  }
 
-    .actionButton, .settingsButton {
-      height: 36px;
-      border-radius: 7px;
-      transition: color .15s ease-in-out,
-      background-color .15s ease-in-out,
-      border-color .15s ease-in-out,
-      box-shadow .15s ease-in-out;
+  .settingsButton {
+    background-color: $manatee;
+    border-color: $manatee;
+    width: 36px;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background-color: $dove-gray;
+      border-color: $dove-gray;
     }
 
-    .atIcon {
-      margin-right: 10px;
+    @include sm {
+      height: 45px !important;
+      width: 45px !important
+    }
+  }
+
+  .actionButton, .settingsButton {
+    height: 36px;
+    border-radius: 7px;
+    transition: color .15s ease-in-out,
+    background-color .15s ease-in-out,
+    border-color .15s ease-in-out,
+    box-shadow .15s ease-in-out;
+  }
+
+  .atIcon {
+    margin-right: 10px;
+  }
+}
+
+.infoIcon {
+  margin-left: 10px;
+  color: $blue;
+  cursor: pointer;
+}
+.warnIcon {
+  margin-left: 10px;
+  color: $simple-orange;
+  cursor: pointer;
+}
+
+.itemContainer {
+  .title {
+    font-size: 1.25rem;
+    color: $gray-main;
+    margin-left: 20px;
+  }
+
+  .itemNameContainer {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: row;
+
+    .itemName {
+      font-size: 1rem;
+      white-space: pre-wrap;
+      margin-bottom: 0;
+      padding-left: 20px;
+    }
+  }
+
+  .badgeTitle, .badgeItem {
+    font-size: 0.875rem;
+    @include proxima-nova-semibold;
+  }
+  .badgeTitle {
+    color: $manatee;
+    margin: 0;
+  }
+  .badgeItem {
+    color: $black;
+  }
+
+  .itemActions {
+    margin-top: 30px;
+    .actionsTitle {
+      font-size: 1rem;
+      margin-left: 20px;
+      margin-bottom: 15px;
+      @include proxima-nova-semibold;
     }
   }
 }

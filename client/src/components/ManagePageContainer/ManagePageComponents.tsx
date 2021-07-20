@@ -3,11 +3,52 @@ import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { DOMAIN_TYPE, PAGE_NAME } from './constants';
-import { ComponentsType, BoolStateFunc, IsExpiredFunc } from './types';
+import { BANNER_DATA, DOMAIN_TYPE, PAGE_NAME } from './constants';
+import {
+  ComponentsType,
+  BoolStateFunc,
+  IsExpiredFunc,
+  ItemComponentProps,
+  NotificationsProps,
+} from './types';
+
+import Badge, { BADGE_TYPES } from '../Badge/Badge';
+import NotificationBadge from '../NotificationBadge';
+import { capitalizeFirstLetter } from '../../utils';
 
 import classes from './ManagePageComponents.module.scss';
 import icon from '../../assets/images/timelapse_white_24dp.svg'; // todo: remove after changing library to google material
+
+export const RenderNotifications: React.FC<NotificationsProps> = props => {
+  const {
+    showWarnBadge,
+    showInfoBadge,
+    toggleShowWarnBadge,
+    toggleShowInfoBadge,
+    pageName,
+  } = props;
+  const { warningTitle, warningMessage, infoTitle, infoMessage } = BANNER_DATA[
+    pageName
+  ];
+  return (
+    <>
+      <NotificationBadge
+        type={BADGE_TYPES.WARNING}
+        title={warningTitle}
+        message={warningMessage}
+        show={showWarnBadge}
+        onClose={() => toggleShowWarnBadge(false)}
+      />
+      <NotificationBadge
+        type={BADGE_TYPES.INFO}
+        title={infoTitle}
+        message={infoMessage}
+        show={showInfoBadge}
+        onClose={() => toggleShowInfoBadge(false)}
+      />
+    </>
+  );
+};
 
 const renderDate = (
   expiration: Date,
@@ -62,7 +103,7 @@ const renderFioAddress = (
 };
 
 // todo: set actions on buttons
-const renderActions = (pageName: string) => {
+const renderActions = (pageName: string, isDesktop: boolean) => {
   return (
     <div className={classes.actionButtonsContainer}>
       <Button className={classes.actionButton}>
@@ -75,7 +116,7 @@ const renderActions = (pageName: string) => {
       ) : (
         <Button className={classes.actionButton}>
           <FontAwesomeIcon icon="at" className={classes.atIcon} />
-          Register FIO Address
+          {isDesktop ? 'Register FIO Address' : 'Register Address'}
         </Button>
       )}
       <Button className={classes.settingsButton}>
@@ -143,7 +184,7 @@ export const DesktopComponents: React.FC<ComponentsType> = props => {
                   {renderDate(expiration, isExpired, toggleShowWarnBadge)}
                 </div>
                 <div className={classnames(classes.tableCol, classes.lastCol)}>
-                  {renderActions(pageName)}
+                  {renderActions(pageName, isDesktop)}
                 </div>
               </React.Fragment>
             );
@@ -167,7 +208,7 @@ export const DesktopComponents: React.FC<ComponentsType> = props => {
                   {renderDate(expiration, isExpired, toggleShowWarnBadge)}
                 </div>
                 <div className={classnames(classes.tableCol, classes.lastCol)}>
-                  {renderActions(pageName)}
+                  {renderActions(pageName, isDesktop)}
                 </div>
               </React.Fragment>
             );
@@ -186,6 +227,7 @@ export const MobileComponents: React.FC<ComponentsType> = props => {
     toggleShowInfoBadge,
     toggleShowWarnBadge,
     isDesktop,
+    onClickItem,
   } = props;
   return (
     <div className={classes.container}>
@@ -199,7 +241,11 @@ export const MobileComponents: React.FC<ComponentsType> = props => {
         data.map(dataItem => {
           const { name, expiration } = dataItem;
           return (
-            <div className={classes.itemContainer} key={name}>
+            <div
+              className={classes.dataItemContainer}
+              key={name}
+              onClick={() => onClickItem(dataItem)}
+            >
               {pageName === PAGE_NAME.ADDRESS ? (
                 renderFioAddress(
                   name,
@@ -220,6 +266,82 @@ export const MobileComponents: React.FC<ComponentsType> = props => {
             </div>
           );
         })}
+    </div>
+  );
+};
+
+export const RenderItemComponent: React.FC<ItemComponentProps &
+  NotificationsProps> = props => {
+  const {
+    data,
+    showWarnBadge,
+    showInfoBadge,
+    toggleShowWarnBadge,
+    toggleShowInfoBadge,
+    pageName,
+    isExpired,
+    isDesktop,
+  } = props;
+  const { name, remaining, expiration, is_public } = data || {};
+  return (
+    <div className={classes.itemContainer}>
+      <h4 className={classes.title}>
+        {capitalizeFirstLetter(pageName)} Details
+      </h4>
+      {RenderNotifications({
+        showWarnBadge,
+        showInfoBadge,
+        toggleShowWarnBadge,
+        toggleShowInfoBadge,
+        pageName,
+      })}
+      <div className={classes.itemNameContainer}>
+        <h4 className={classes.itemName}>
+          {pageName === PAGE_NAME.ADDRESS ? (
+            <span className="boldText">{name}</span>
+          ) : pageName === PAGE_NAME.DOMAIN ? (
+            <span className="boldText">{name}</span>
+          ) : null}
+        </h4>
+        {showInfoBadge && (
+          <FontAwesomeIcon
+            icon="exclamation-triangle"
+            className={classes.infoIcon}
+            onClick={() => toggleShowInfoBadge(true)}
+          />
+        )}
+      </div>
+      <Badge show={true} type={BADGE_TYPES.WHITE}>
+        <p className={classes.badgeTitle}>Expiration Date</p>
+        <p className={classes.badgeItem}>
+          {renderDate(expiration, isExpired, toggleShowWarnBadge)}
+        </p>
+      </Badge>
+      <Badge show={true} type={BADGE_TYPES.WHITE}>
+        {pageName === PAGE_NAME.ADDRESS && (
+          <>
+            <p className={classes.badgeTitle}>Bundle Transactions</p>
+            <p className={classes.badgeItem}>{remaining || 0}</p>
+          </>
+        )}
+        {pageName === PAGE_NAME.DOMAIN && (
+          <>
+            <p className={classes.badgeTitle}>Status</p>
+            <div
+              className={classnames(
+                classes.domainType,
+                is_public && classes.public,
+              )}
+            >
+              {is_public ? DOMAIN_TYPE.PUBLIC : DOMAIN_TYPE.PRIVATE}
+            </div>
+          </>
+        )}
+      </Badge>
+      <div className={classes.itemActions}>
+        <h4 className={classes.actionsTitle}>Actions</h4>
+        {renderActions(pageName, isDesktop)}
+      </div>
     </div>
   );
 };

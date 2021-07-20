@@ -11,9 +11,15 @@
   align-items: center;
   padding: 30px 20px 10px 20px;
   overflow: hidden;
+  color: $white;
 
   &.danger {
     background-color: $warn-red;
+  }
+
+  &.simple {
+    background-color: $milk;
+    color: $black;
   }
 }
 

@@ -6,25 +6,29 @@ import isEqual from 'lodash/isEqual';
 import { Redirect } from 'react-router-dom';
 
 import LayoutContainer from '../LayoutContainer/LayoutContainer';
-import { BADGE_TYPES } from '../Badge/Badge';
-import NotificationBadge from '../NotificationBadge';
+import Modal from '../Modal/Modal';
 import { BANNER_DATA, ITEMS_LIMIT } from './constants';
 import ManagePageCtaBadge from './ManagePageCtaBadge';
 import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
 import { ROUTES } from '../../constants/routes';
 
-import { DesktopComponents, MobileComponents } from './ManagePageComponents';
+import {
+  DesktopComponents,
+  MobileComponents,
+  RenderItemComponent,
+  RenderNotifications,
+} from './ManagePageComponents';
 
 import classes from './ManagePageContainer.module.scss';
 
-import { HasMore, ContainerProps, BoolStateFunc } from './types';
+import { HasMore, ContainerProps, BoolStateFunc, DataProps } from './types';
 
 const isExpired = (expiration: Date): boolean => {
   const today = new Date();
   return (
     expiration &&
-    new Date(expiration) < new Date(today.setDate(today.getDate() + 30))
+    new Date(expiration) < new Date(today.setDate(today.getDate() + 330))
   );
 };
 
@@ -41,6 +45,8 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
   const [showWarnBadge, toggleShowWarnBadge] = useState<BoolStateFunc>(false);
   const [showInfoBadge, toggleShowInfoBadge] = useState<BoolStateFunc>(false);
   const [offset, changeOffset] = useState<HasMore>({});
+  const [show, showModal] = useState(false);
+  const [currentAddress, setCurrentAddress] = useState<DataProps>({});
 
   const { screenType } = currentScreenType();
   const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
@@ -52,13 +58,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
 
   const hasMoreItems = Object.keys(hasMore).some(key => hasMore[key] > 0);
 
-  const {
-    title,
-    warningTitle,
-    warningMessage,
-    infoTitle,
-    infoMessage,
-  } = BANNER_DATA[pageName];
+  const { title } = BANNER_DATA[pageName];
 
   const fetchData = () => {
     if (!isEmpty(fioWallets)) {
@@ -101,6 +101,16 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     rootMargin: '0px 0px 20px 0px',
   });
 
+  const onClickItem = (dataItem: DataProps) => {
+    setCurrentAddress(dataItem);
+    showModal(true);
+  };
+
+  const onClose = () => {
+    showModal(false);
+    setCurrentAddress({});
+  };
+
   const renderScroll = (children: React.ReactNode) => {
     return (
       <>
@@ -126,6 +136,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     isExpired,
     toggleShowInfoBadge,
     toggleShowWarnBadge,
+    onClickItem,
   };
 
   if (!isAuthenticated) {
@@ -140,24 +151,14 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
             Manage your addresses from one location. More helper content could
             go here ..
           </p>
-          {isDesktop && (
-            <>
-              <NotificationBadge
-                type={BADGE_TYPES.WARNING}
-                title={warningTitle}
-                message={warningMessage}
-                show={showWarnBadge}
-                onClose={() => toggleShowWarnBadge(false)}
-              />
-              <NotificationBadge
-                type={BADGE_TYPES.INFO}
-                title={infoTitle}
-                message={infoMessage}
-                show={showInfoBadge}
-                onClose={() => toggleShowInfoBadge(false)}
-              />
-            </>
-          )}
+          {isDesktop &&
+            RenderNotifications({
+              showWarnBadge,
+              showInfoBadge,
+              toggleShowWarnBadge,
+              toggleShowInfoBadge,
+              pageName,
+            })}
           <div className={classes.tableContainer}>
             {isDesktop
               ? renderScroll(<DesktopComponents {...propsToComponents} />)
@@ -168,6 +169,19 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
       <div className={classes.actionBadge}>
         <ManagePageCtaBadge name={pageName} />
       </div>
+      <Modal
+        show={show}
+        onClose={onClose}
+        hideCloseButton={false}
+        closeButton={true}
+        isSimple={true}
+      >
+        <RenderItemComponent
+          {...propsToComponents}
+          data={currentAddress}
+          showWarnBadge={showWarnBadge}
+        />
+      </Modal>
     </div>
   );
 };

@@ -50,6 +50,10 @@ export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+export function capitalizeFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
 export const setDataMutator = (args: any[], state: any) => {
   const [name, data] = args;
   const field = state.fields[name];
