@@ -6,7 +6,7 @@ import { compose } from '../../utils';
 import { getFioDomains } from '../../redux/fio/actions';
 import { fioDomains, hasMoreDomains } from '../../redux/fio/selectors';
 import { fioWallets, loading } from '../../redux/fio/selectors';
-import { isAuthenticated } from '../../redux/profile/selectors';
+import { noProfileLoaded } from '../../redux/profile/selectors';
 
 import FioDomainManagePage from './FioDomainManagePage';
 
@@ -16,7 +16,7 @@ const reduxConnect = connect(
     fioWallets,
     hasMore: hasMoreDomains,
     loading,
-    isAuthenticated,
+    noProfileLoaded,
   }),
   { fetchDataFn: getFioDomains },
 );
