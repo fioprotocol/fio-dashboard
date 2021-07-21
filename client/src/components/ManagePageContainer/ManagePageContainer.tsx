@@ -140,9 +140,9 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     onClickItem,
   };
 
-  return noProfileLoaded ? (
-    <Redirect to={{ pathname: ROUTES.HOME }} />
-  ) : (
+  if (noProfileLoaded) return <Redirect to={{ pathname: ROUTES.HOME }} />;
+
+  return (
     <div className={classes.container}>
       <LayoutContainer title={title}>
         <div className={classes.dataContainer}>
