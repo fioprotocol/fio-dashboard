@@ -41,7 +41,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     fetchDataFn,
     hasMore,
     loading,
-    isProfileLoaded,
+    noProfileLoaded,
   } = props;
   const [showWarnBadge, toggleShowWarnBadge] = useState<BoolStateFunc>(false);
   const [showInfoBadge, toggleShowInfoBadge] = useState<BoolStateFunc>(false);
@@ -140,11 +140,9 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     onClickItem,
   };
 
-  if (!isProfileLoaded) {
-    return <Redirect to={{ pathname: ROUTES.HOME }} />;
-  }
-
-  return (
+  return noProfileLoaded ? (
+    <Redirect to={{ pathname: ROUTES.HOME }} />
+  ) : (
     <div className={classes.container}>
       <LayoutContainer title={title}>
         <div className={classes.dataContainer}>

@@ -6,7 +6,7 @@ import { compose } from '../../utils';
 import { getFioAddresses } from '../../redux/fio/actions';
 import { fioAddresses, hasMoreAddresses } from '../../redux/fio/selectors';
 import { fioWallets, loading } from '../../redux/fio/selectors';
-import { isProfileLoaded } from '../../redux/profile/selectors';
+import { noProfileLoaded } from '../../redux/profile/selectors';
 
 import FioAddressManagePage from './FioAddressManagePage';
 
@@ -16,7 +16,7 @@ const reduxConnect = connect(
     fioWallets,
     hasMore: hasMoreAddresses,
     loading,
-    isProfileLoaded,
+    noProfileLoaded,
   }),
   { fetchDataFn: getFioAddresses },
 );
