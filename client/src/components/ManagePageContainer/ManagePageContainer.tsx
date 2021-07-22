@@ -18,6 +18,7 @@ import {
   MobileComponents,
   RenderItemComponent,
   RenderNotifications,
+  RenderItemSettings,
 } from './ManagePageComponents';
 
 import classes from './ManagePageContainer.module.scss';
@@ -46,7 +47,8 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
   const [showWarnBadge, toggleShowWarnBadge] = useState<BoolStateFunc>(false);
   const [showInfoBadge, toggleShowInfoBadge] = useState<BoolStateFunc>(false);
   const [offset, changeOffset] = useState<HasMore>({});
-  const [show, showModal] = useState(false);
+  const [show, handleShowModal] = useState(false);
+  const [showSettings, handleShowSettings] = useState(false);
   const [currentAddress, setCurrentAddress] = useState<DataProps>({});
 
   const { screenType } = currentScreenType();
@@ -102,13 +104,18 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     rootMargin: '0px 0px 20px 0px',
   });
 
-  const onClickItem = (dataItem: DataProps) => {
+  const onClickItem = (dataItem: DataProps, isSettings?: boolean) => {
     setCurrentAddress(dataItem);
-    showModal(true);
+    if (isSettings) {
+      handleShowSettings(true);
+      handleShowModal(false);
+    } else {
+      handleShowModal(true);
+    }
   };
 
-  const onClose = () => {
-    showModal(false);
+  const onClose = (isSettings?: boolean) => {
+    isSettings ? handleShowSettings(false) : handleShowModal(false);
     setCurrentAddress({});
   };
 
@@ -179,6 +186,21 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
           {...propsToComponents}
           data={currentAddress}
           showWarnBadge={showWarnBadge}
+        />
+      </Modal>
+      <Modal
+        show={showSettings}
+        onClose={() => onClose(true)}
+        hideCloseButton={false}
+        closeButton={true}
+        isSimple={true}
+        isWide={isDesktop}
+        hasDefaultColor={true}
+      >
+        <RenderItemSettings
+          data={currentAddress}
+          pageName={pageName}
+          fioWallets={fioWallets}
         />
       </Modal>
     </div>

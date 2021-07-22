@@ -13,6 +13,8 @@ type Props = {
   onClose: () => void;
   show: boolean;
   title?: React.ReactNode | string;
+  isWide?: boolean;
+  hasDefaultColor?: boolean;
 };
 
 const ModalComponent: React.FC<Props> = props => {
@@ -26,6 +28,8 @@ const ModalComponent: React.FC<Props> = props => {
     onClose,
     show,
     title,
+    isWide,
+    hasDefaultColor,
   } = props;
   const handleClose = () => {
     onClose();
@@ -40,7 +44,11 @@ const ModalComponent: React.FC<Props> = props => {
         isDanger && classes.danger,
         isSimple && classes.simple,
       )}
-      dialogClassName={classes.dialog}
+      dialogClassName={classnames(
+        classes.dialog,
+        isWide && classes.isWide,
+        hasDefaultColor && classes.defaultColor,
+      )}
       backdrop={backdrop}
     >
       {!hideCloseButton && (

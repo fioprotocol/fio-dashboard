@@ -26,6 +26,17 @@
 .dialog {
   margin-top: 160px;
   width: 375px;
+
+  &.isWide {
+    max-width: 650px;
+    width: auto;
+  }
+
+  &.defaultColor {
+    span[aria-hidden=true] {
+      color: $black !important;
+    }
+  }
 }
 
 @include sm {

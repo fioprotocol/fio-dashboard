@@ -100,6 +100,7 @@ export default combineReducers({
             name: item.fio_address,
             expiration: item.expiration,
             remaining: item.remaining_bundled_tx,
+            publicKey: action.publicKey,
           };
           const index = fioAddresses.findIndex(
             ({ name }) => name === fioAddress.name,
@@ -128,6 +129,7 @@ export default combineReducers({
             name: item.fio_domain,
             expiration: item.expiration,
             isPublic: item.is_public,
+            publicKey: action.publicKey,
           };
           const index = fioDomains.findIndex(
             ({ name }) => name === fioDomain.name,

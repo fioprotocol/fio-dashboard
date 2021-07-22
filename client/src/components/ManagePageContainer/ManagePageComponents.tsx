@@ -2,6 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
 
 import { BANNER_DATA, DOMAIN_TYPE, PAGE_NAME } from './constants';
 import {
@@ -10,6 +11,8 @@ import {
   IsExpiredFunc,
   ItemComponentProps,
   NotificationsProps,
+  SettingsProps,
+  ActionButtonProps,
 } from './types';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
@@ -18,6 +21,7 @@ import { capitalizeFirstLetter } from '../../utils';
 
 import classes from './ManagePageComponents.module.scss';
 import icon from '../../assets/images/timelapse_white_24dp.svg'; // todo: remove after changing library to google material
+import { ROUTES } from '../../constants/routes';
 
 export const RenderNotifications: React.FC<NotificationsProps> = props => {
   const {
@@ -103,7 +107,8 @@ const renderFioAddress = (
 };
 
 // todo: set actions on buttons
-const renderActions = (pageName: string, isDesktop: boolean) => {
+const renderActions: React.FC<ActionButtonProps> = props => {
+  const { pageName, isDesktop, onClickItem, data } = props;
   return (
     <div className={classes.actionButtonsContainer}>
       <Button className={classes.actionButton}>
@@ -119,7 +124,10 @@ const renderActions = (pageName: string, isDesktop: boolean) => {
           {isDesktop ? 'Register FIO Address' : 'Register Address'}
         </Button>
       )}
-      <Button className={classes.settingsButton}>
+      <Button
+        className={classes.settingsButton}
+        onClick={() => onClickItem(data, true)}
+      >
         <FontAwesomeIcon icon="cog" className={classes.settingsIcon} />
       </Button>
     </div>
@@ -135,6 +143,7 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
     toggleShowInfoBadge,
     toggleShowWarnBadge,
     isDesktop,
+    onClickItem,
   } = props;
   return (
     <div className={classes.container}>
@@ -184,7 +193,12 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
                   {renderDate(expiration, isExpired, toggleShowWarnBadge)}
                 </div>
                 <div className={classnames(classes.tableCol, classes.lastCol)}>
-                  {renderActions(pageName, isDesktop)}
+                  {renderActions({
+                    pageName,
+                    isDesktop,
+                    onClickItem,
+                    data: dataItem,
+                  })}
                 </div>
               </React.Fragment>
             );
@@ -208,7 +222,12 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
                   {renderDate(expiration, isExpired, toggleShowWarnBadge)}
                 </div>
                 <div className={classnames(classes.tableCol, classes.lastCol)}>
-                  {renderActions(pageName, isDesktop)}
+                  {renderActions({
+                    pageName,
+                    isDesktop,
+                    onClickItem,
+                    data: dataItem,
+                  })}
                 </div>
               </React.Fragment>
             );
@@ -281,6 +300,7 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
     pageName,
     isExpired,
     isDesktop,
+    onClickItem,
   } = props;
   const { name, remaining, expiration, is_public } = data || {};
   return (
@@ -340,7 +360,77 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
       </Badge>
       <div className={classes.itemActions}>
         <h4 className={classes.actionsTitle}>Actions</h4>
-        {renderActions(pageName, isDesktop)}
+        {renderActions({
+          pageName,
+          isDesktop,
+          onClickItem,
+          data,
+        })}
+      </div>
+    </div>
+  );
+};
+
+export const RenderItemSettings: React.FC<SettingsProps> = props => {
+  const { data, pageName, fioWallets } = props;
+  const { publicKey, name } =
+    fioWallets.find(
+      (fioWallet: any) => fioWallet.publicKey === data.publicKey,
+    ) || {};
+
+  const isDomain = pageName === PAGE_NAME.DOMAIN;
+
+  return (
+    <div className={classes.settingsContainer}>
+      <h3 className={classes.title}>Advanced Settings</h3>
+      <h5 className={classes.subtitle}>
+        Domain {isDomain ? 'Access' : 'Ownership'}
+      </h5>
+      <Badge show={true} type={BADGE_TYPES.WHITE}>
+        <p className={classes.badgeTitle}>FIO Wallet</p>
+        <p className={classes.badgeItem}>{name}</p>
+      </Badge>
+      <Badge show={true} type={BADGE_TYPES.WHITE}>
+        <div className={classes.badgeContainer}>
+          <p className={classes.badgeTitle}>Public Key</p>
+          <p className={classes.badgeItem}>{publicKey}</p>
+        </div>
+      </Badge>
+      {isDomain && (
+        <div>
+          <h5 className={classes.actionTitle}>Domain Access</h5>
+          <p className={classes.text}>
+            If you would like your domain to be publicly giving users the
+            ability to register FIO addresses on it, please set the domain to
+            public.
+          </p>
+          <Link
+            to={ROUTES.FIO_DOMAIN_STATUS_CHANGE}
+            className={classes.buttonLink}
+          >
+            <Button className={classes.button}>Make Domain Public</Button>
+          </Link>
+        </div>
+      )}
+      <div>
+        <h5 className={classes.actionTitle}>
+          Transfer FIO {capitalizeFirstLetter(pageName)} Ownership
+        </h5>
+        <p className={classes.text}>
+          Transferring your FIO {capitalizeFirstLetter(pageName)} to a new Owner
+          is easy, Simply enter or paste the new owner public key, submit the
+          request and verify the transaction.
+        </p>
+        <Link
+          to={
+            isDomain
+              ? ROUTES.FIO_DOMAIN_OWNERSHIP
+              : ROUTES.FIO_ADDRESS_OWNERSHIP
+          }
+          className={classes.buttonLink}
+        >
+          <Button className={classes.button}>Start Transfer</Button>
+        </Link>
       </div>
     </div>
   );
