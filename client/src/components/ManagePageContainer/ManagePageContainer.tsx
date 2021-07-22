@@ -41,7 +41,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     fetchDataFn,
     hasMore,
     loading,
-    isAuthenticated,
+    noProfileLoaded,
   } = props;
   const [showWarnBadge, toggleShowWarnBadge] = useState<BoolStateFunc>(false);
   const [showInfoBadge, toggleShowInfoBadge] = useState<BoolStateFunc>(false);
@@ -140,9 +140,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     onClickItem,
   };
 
-  if (!isAuthenticated) {
-    return <Redirect to={{ pathname: ROUTES.HOME }} />;
-  }
+  if (noProfileLoaded) return <Redirect to={{ pathname: ROUTES.HOME }} />;
 
   return (
     <div className={classes.container}>

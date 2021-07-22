@@ -20,7 +20,7 @@ export interface ContainerProps extends RouteComponentProps {
   data: DataProps[];
   fioWallets: any;
   hasMore: HasMore;
-  isAuthenticated?: boolean;
+  noProfileLoaded?: boolean;
   loading: boolean;
   pageName: PageName;
   fetchDataFn: FetchDataFn;
