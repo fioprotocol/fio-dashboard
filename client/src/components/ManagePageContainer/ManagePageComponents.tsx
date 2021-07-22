@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
+import { FioWalletDoublet } from '../../types';
 
 import { BANNER_DATA, DOMAIN_TYPE, PAGE_NAME } from './constants';
 import {
@@ -108,7 +109,7 @@ const renderFioAddress = (
 
 // todo: set actions on buttons
 const renderActions: React.FC<ActionButtonProps> = props => {
-  const { pageName, isDesktop, onClickItem, data } = props;
+  const { pageName, isDesktop, onSettingsOpen, data } = props;
   return (
     <div className={classes.actionButtonsContainer}>
       <Button className={classes.actionButton}>
@@ -126,7 +127,7 @@ const renderActions: React.FC<ActionButtonProps> = props => {
       )}
       <Button
         className={classes.settingsButton}
-        onClick={() => onClickItem(data, true)}
+        onClick={() => onSettingsOpen(data)}
       >
         <FontAwesomeIcon icon="cog" className={classes.settingsIcon} />
       </Button>
@@ -143,7 +144,7 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
     toggleShowInfoBadge,
     toggleShowWarnBadge,
     isDesktop,
-    onClickItem,
+    onSettingsOpen,
   } = props;
   return (
     <div className={classes.container}>
@@ -196,7 +197,7 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
                   {renderActions({
                     pageName,
                     isDesktop,
-                    onClickItem,
+                    onSettingsOpen,
                     data: dataItem,
                   })}
                 </div>
@@ -225,7 +226,7 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
                   {renderActions({
                     pageName,
                     isDesktop,
-                    onClickItem,
+                    onSettingsOpen,
                     data: dataItem,
                   })}
                 </div>
@@ -246,7 +247,7 @@ export const MobileComponents: React.FC<DeafultProps> = props => {
     toggleShowInfoBadge,
     toggleShowWarnBadge,
     isDesktop,
-    onClickItem,
+    onItemModalOpen,
   } = props;
   return (
     <div className={classes.container}>
@@ -263,7 +264,7 @@ export const MobileComponents: React.FC<DeafultProps> = props => {
             <div
               className={classes.dataItemContainer}
               key={name}
-              onClick={() => onClickItem(dataItem)}
+              onClick={() => onItemModalOpen(dataItem)}
             >
               {pageName === PAGE_NAME.ADDRESS ? (
                 renderFioAddress(
@@ -300,7 +301,7 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
     pageName,
     isExpired,
     isDesktop,
-    onClickItem,
+    onSettingsOpen,
   } = props;
   const { name, remaining, expiration, is_public } = data || {};
   return (
@@ -363,7 +364,7 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
         {renderActions({
           pageName,
           isDesktop,
-          onClickItem,
+          onSettingsOpen,
           data,
         })}
       </div>
@@ -373,10 +374,10 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
 
 export const RenderItemSettings: React.FC<SettingsProps> = props => {
   const { data, pageName, fioWallets } = props;
-  const { publicKey, name } =
-    fioWallets.find(
-      (fioWallet: any) => fioWallet.publicKey === data.publicKey,
-    ) || {};
+  const { publicKey, name } = fioWallets.find(
+    (fioWallet: FioWalletDoublet) =>
+      fioWallet.publicKey === data.walletPublicKey,
+  );
 
   const isDomain = pageName === PAGE_NAME.DOMAIN;
 

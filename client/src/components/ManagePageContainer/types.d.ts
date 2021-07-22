@@ -7,7 +7,7 @@ export type DataProps = {
   expiration?: Date;
   remaining?: number;
   is_public?: number;
-  publicKey?: string;
+  walletPublicKey?: string;
 };
 
 export type PageName = 'address' | 'domain';
@@ -32,9 +32,8 @@ export interface ContainerProps extends RouteComponentProps {
 export type BoolStateFunc = Dispatch<SetStateAction<boolean>>;
 
 export type IsExpiredFunc = (expiration: Date) => boolean;
-type OnClickItemType = (
+type ModalOpenActionType = (
   data: DataProps,
-  isSettings?: boolean,
 ) => MouseEventHandler<HTMLDivElement>;
 
 export type DeafultProps = {
@@ -45,7 +44,8 @@ export type DeafultProps = {
   toggleShowInfoBadge: BoolStateFunc;
   toggleShowWarnBadge: BoolStateFunc;
   isExpired: IsExpiredFunc;
-  onClickItem?: OnClickItemType;
+  onItemModalOpen?: ModalOpenActionType;
+  onSettingsOpen?: ModalOpenActionType;
 };
 
 export type NotificationsProps = {
@@ -60,7 +60,7 @@ export type ItemComponentProps = {
   data: DataProps;
   isExpired: IsExpiredFunc;
   isDesktop: boolean;
-  onClickItem: OnClickItemType;
+  onSettingsOpen: ModalOpenActionType;
 };
 
 export type SettingsProps = {
@@ -72,6 +72,6 @@ export type SettingsProps = {
 export type ActionButtonProps = {
   pageName: PAGE_NAME;
   isDesktop: boolean;
-  onClickItem: OnClickItemType;
+  onSettingsOpen: ModalOpenActionType;
   data: DataProps;
 };

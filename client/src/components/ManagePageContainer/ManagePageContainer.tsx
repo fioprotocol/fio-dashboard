@@ -104,19 +104,20 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     rootMargin: '0px 0px 20px 0px',
   });
 
-  const onClickItem = (dataItem: DataProps, isSettings?: boolean) => {
+  const onItemModalOpen = (dataItem: DataProps) => {
     setCurrentAddress(dataItem);
-    if (isSettings) {
-      handleShowSettings(true);
-      handleShowModal(false);
-    } else {
-      handleShowModal(true);
-    }
+    handleShowModal(true);
   };
+  const onItemModalClose = () => handleShowModal(false);
 
-  const onClose = (isSettings?: boolean) => {
-    isSettings ? handleShowSettings(false) : handleShowModal(false);
-    setCurrentAddress({});
+  const onSettingsOpen = (dataItem: DataProps) => {
+    setCurrentAddress(dataItem);
+    handleShowModal(false);
+    handleShowSettings(true);
+  };
+  const onSettingsClose = () => {
+    !isDesktop && handleShowModal(true);
+    handleShowSettings(false);
   };
 
   const renderScroll = (children: React.ReactNode) => {
@@ -144,7 +145,8 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     isExpired,
     toggleShowInfoBadge,
     toggleShowWarnBadge,
-    onClickItem,
+    onItemModalOpen,
+    onSettingsOpen,
   };
 
   if (noProfileLoaded) return <Redirect to={{ pathname: ROUTES.HOME }} />;
@@ -177,7 +179,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
       </div>
       <Modal
         show={show}
-        onClose={onClose}
+        onClose={onItemModalClose}
         hideCloseButton={false}
         closeButton={true}
         isSimple={true}
@@ -190,7 +192,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
       </Modal>
       <Modal
         show={showSettings}
-        onClose={() => onClose(true)}
+        onClose={onSettingsClose}
         hideCloseButton={false}
         closeButton={true}
         isSimple={true}
