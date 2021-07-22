@@ -5,7 +5,7 @@
 .container {
   .tableHeader, .tableCol {
     @include sf-pro-display-medium;
-    font-size: 0.875rem;
+    font-size: 0.875em;
   }
   .tableHeader {
     position: sticky;
@@ -51,7 +51,7 @@
     align-items: center;
     padding: 15px;
     margin-bottom: 20px;
-    font-size: 0.875rem;
+    font-size: 0.875em;
   }
 
   .nameContainer {
@@ -62,7 +62,11 @@
     .name {
       white-space: pre-wrap;
       margin-bottom: 0;
+      word-break: break-all;
     }
+  }
+  .openIcon {
+    margin-left: 10px;
   }
 }
 
@@ -71,8 +75,8 @@
   background-color: $fountain-blue;
   padding: 5px;
   border-radius: 3px;
-  font-size: 0.825rem;
-  line-height: 0.825rem;
+  font-size: 0.825em;
+  line-height: 0.825em;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -84,8 +88,8 @@
 
   @include lg {
     margin-left: 0;
-    font-size: 0.625rem;
-    line-height: 0.625rem;
+    font-size: 0.625em;
+    line-height: 0.625em;
   }
 }
 
@@ -93,7 +97,7 @@
   display: flex;
 
   .actionButton {
-    font-size: 0.875rem;
+    font-size: 0.875em;
     @include sf-pro-display-thin;
     background-color: $violet;
     border-color: $violet;
@@ -121,7 +125,7 @@
     background-color: $manatee;
     border-color: $manatee;
     width: 36px;
-    font-size: 1.25rem;
+    font-size: 1.25em;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -164,7 +168,7 @@
 
 .itemContainer {
   .title {
-    font-size: 1.25rem;
+    font-size: 1.25em;
     color: $gray-main;
     margin-left: 20px;
   }
@@ -175,15 +179,16 @@
     flex-direction: row;
 
     .itemName {
-      font-size: 1rem;
+      font-size: 1em;
       white-space: pre-wrap;
+      word-break: break-all;
       margin-bottom: 0;
       padding-left: 20px;
     }
   }
 
   .badgeTitle, .badgeItem {
-    font-size: 0.875rem;
+    font-size: 0.875em;
     @include proxima-nova-semibold;
   }
   .badgeTitle {
@@ -197,10 +202,94 @@
   .itemActions {
     margin-top: 30px;
     .actionsTitle {
-      font-size: 1rem;
+      font-size: 1em;
       margin-left: 20px;
       margin-bottom: 15px;
       @include proxima-nova-semibold;
+    }
+  }
+}
+
+.settingsContainer {
+  width: 100%;
+  .title {
+    font-size: 1.875em;
+    @include proxima-nova-semibold;
+  }
+  .subtitle, .actionTitle {
+    font-size: 1em;
+    @include proxima-nova-semibold;
+    margin-top: 1.875em;
+  }
+
+  .subtitle {
+    margin-bottom: -15px;
+  }
+
+  .badgeContainer {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .badgeTitle, .badgeItem {
+    color: $black;
+    @include proxima-nova-semibold;
+    font-size: 0.875em;
+    margin-bottom: 0;
+  }
+
+  .badgeTitle {
+    margin-left: 0;
+    margin-right: 0;
+    white-space: nowrap;
+  }
+
+  .badgeItem {
+    margin-left: 15px;
+    word-break: break-all;
+  }
+
+  .text {
+    font-size: 0.875em;
+    @include proxima-nova-thin;
+  }
+
+  .buttonLink {
+    width: fit-content;
+    display: block;
+
+    .button {
+      display: flex;
+      align-items: center;
+      height: 54px;
+      padding: 20px;
+      border-radius: 7px;
+      font-size: 0.875em;
+      margin-bottom: 20px;
+      @include sf-pro-display-medium;
+    }
+  }
+}
+
+@include sm {
+  .settingsContainer {
+    .title {
+      font-size: 1.25em;
+    }
+
+    .badgeContainer {
+      flex-direction: column;
+
+      .badgeItem {
+        margin-left: 0;
+        margin-top: 1rem;
+      }
+    }
+
+    .buttonLink {
+      .button {
+        height: 36px;
+      }
     }
   }
 }
@@ -209,12 +298,13 @@
   .container {
     display: grid;
     grid-template-columns: auto auto auto auto;
+    width: fit-content;
 
     .tableHeader, .tableCol {
       padding: 10px;
     }
     .tableHeader {
-      font-size: 0.8125rem;
+      font-size: 0.8125em;
     }
 
     .nameContainer {
@@ -225,5 +315,8 @@
     .warnIcon {
       margin-left: 5px;
     }
+  }
+  .settingsContainer {
+    padding: 0 10px;
   }
 }

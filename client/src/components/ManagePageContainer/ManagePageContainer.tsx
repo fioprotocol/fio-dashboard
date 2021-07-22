@@ -18,6 +18,7 @@ import {
   MobileComponents,
   RenderItemComponent,
   RenderNotifications,
+  RenderItemSettings,
 } from './ManagePageComponents';
 
 import classes from './ManagePageContainer.module.scss';
@@ -46,7 +47,8 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
   const [showWarnBadge, toggleShowWarnBadge] = useState<BoolStateFunc>(false);
   const [showInfoBadge, toggleShowInfoBadge] = useState<BoolStateFunc>(false);
   const [offset, changeOffset] = useState<HasMore>({});
-  const [show, showModal] = useState(false);
+  const [show, handleShowModal] = useState(false);
+  const [showSettings, handleShowSettings] = useState(false);
   const [currentAddress, setCurrentAddress] = useState<DataProps>({});
 
   const { screenType } = currentScreenType();
@@ -102,14 +104,20 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     rootMargin: '0px 0px 20px 0px',
   });
 
-  const onClickItem = (dataItem: DataProps) => {
+  const onItemModalOpen = (dataItem: DataProps) => {
     setCurrentAddress(dataItem);
-    showModal(true);
+    handleShowModal(true);
   };
+  const onItemModalClose = () => handleShowModal(false);
 
-  const onClose = () => {
-    showModal(false);
-    setCurrentAddress({});
+  const onSettingsOpen = (dataItem: DataProps) => {
+    setCurrentAddress(dataItem);
+    handleShowModal(false);
+    handleShowSettings(true);
+  };
+  const onSettingsClose = () => {
+    !isDesktop && handleShowModal(true);
+    handleShowSettings(false);
   };
 
   const renderScroll = (children: React.ReactNode) => {
@@ -137,7 +145,8 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     isExpired,
     toggleShowInfoBadge,
     toggleShowWarnBadge,
-    onClickItem,
+    onItemModalOpen,
+    onSettingsOpen,
   };
 
   if (noProfileLoaded) return <Redirect to={{ pathname: ROUTES.HOME }} />;
@@ -170,7 +179,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
       </div>
       <Modal
         show={show}
-        onClose={onClose}
+        onClose={onItemModalClose}
         hideCloseButton={false}
         closeButton={true}
         isSimple={true}
@@ -179,6 +188,21 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
           {...propsToComponents}
           data={currentAddress}
           showWarnBadge={showWarnBadge}
+        />
+      </Modal>
+      <Modal
+        show={showSettings}
+        onClose={onSettingsClose}
+        hideCloseButton={false}
+        closeButton={true}
+        isSimple={true}
+        isWide={isDesktop}
+        hasDefaultColor={true}
+      >
+        <RenderItemSettings
+          data={currentAddress}
+          pageName={pageName}
+          fioWallets={fioWallets}
         />
       </Modal>
     </div>
