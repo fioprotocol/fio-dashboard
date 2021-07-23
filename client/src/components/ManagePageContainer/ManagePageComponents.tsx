@@ -183,7 +183,7 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
                 </div>
                 <div className={classes.tableCol}>
                   <p className={classes.remaining}>
-                    {remaining >= 0 ? remaining : '-'}
+                    {remaining || remaining === 0 ? remaining : '-'}
                   </p>
                 </div>
                 <div className={classes.tableCol}>
