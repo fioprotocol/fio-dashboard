@@ -7,7 +7,7 @@ import { Redirect } from 'react-router-dom';
 
 import LayoutContainer from '../LayoutContainer/LayoutContainer';
 import Modal from '../Modal/Modal';
-import { BANNER_DATA, ITEMS_LIMIT, EXPIRED_DAYS } from './constants';
+import { BANNER_DATA, ITEMS_LIMIT, EXPIRED_DAYS, PAGE_NAME } from './constants';
 import ManagePageCtaBadge from './ManagePageCtaBadge';
 import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
@@ -24,6 +24,7 @@ import {
 import classes from './ManagePageContainer.module.scss';
 
 import { HasMore, ContainerProps, BoolStateFunc, DataProps } from './types';
+import { capitalizeFirstLetter } from '../../utils';
 
 const isExpired = (expiration: Date): boolean => {
   const today = new Date();
@@ -156,8 +157,14 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
       <LayoutContainer title={title}>
         <div className={classes.dataContainer}>
           <p className={classes.subtitle}>
-            Manage your addresses from one location. More helper content could
-            go here ..
+            {pageName === PAGE_NAME.ADDRESS
+              ? `FIO ${capitalizeFirstLetter(
+                  pageName,
+                )}es owned by all your wallets.`
+              : pageName === PAGE_NAME.DOMAIN
+              ? `FIO ${capitalizeFirstLetter(pageName)}s owned by all your
+            wallets.`
+              : null}
           </p>
           {isDesktop &&
             RenderNotifications({
