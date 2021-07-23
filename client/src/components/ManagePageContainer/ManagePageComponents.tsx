@@ -81,14 +81,9 @@ const renderFioAddress = (
   toggleShowWarnBadge?: BoolStateFunc,
   isExpired?: IsExpiredFunc,
 ) => {
-  const address = name && name.split('@');
-  const addressName = address && address[0];
-  const addressDomain = address && address[1];
   return (
     <div className={classes.nameContainer}>
-      <p className={classes.name}>
-        <span className="boldText">{addressName}</span>@{addressDomain}
-      </p>
+      <p className={classes.name}>{name}</p>
       {showInfoBadge && (
         <FontAwesomeIcon
           icon="exclamation-triangle"
@@ -187,8 +182,7 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
                   )}
                 </div>
                 <div className={classes.tableCol}>
-                  <span className="boldText mr-2">{remaining || 0}</span>{' '}
-                  Remaining
+                  <p className={classes.remaining}>{remaining || 0}</p>
                 </div>
                 <div className={classes.tableCol}>
                   {renderDate(expiration, isExpired, toggleShowWarnBadge)}
@@ -207,7 +201,7 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
             return (
               <React.Fragment key={name}>
                 <div className={classnames(classes.tableCol, classes.firstCol)}>
-                  <span className="boldText">{name}</span>
+                  {name}
                 </div>
                 <div className={classes.tableCol}>
                   <div
