@@ -157,9 +157,14 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
       <LayoutContainer title={title}>
         <div className={classes.dataContainer}>
           <p className={classes.subtitle}>
-            FIO {capitalizeFirstLetter(pageName)}
-            {pageName === PAGE_NAME.ADDRESS ? 'es' : 's'} owned by all your
-            wallets.
+            {pageName === PAGE_NAME.ADDRESS
+              ? `FIO ${capitalizeFirstLetter(
+                  pageName,
+                )}es owned by all your wallets.`
+              : pageName === PAGE_NAME.DOMAIN
+              ? `FIO ${capitalizeFirstLetter(pageName)}s owned by all your
+            wallets.`
+              : null}
           </p>
           {isDesktop &&
             RenderNotifications({
