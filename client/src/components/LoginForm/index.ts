@@ -2,10 +2,18 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
-import { login, getCachedUsers } from '../../redux/edge/actions';
+import {
+  login,
+  getCachedUsers,
+  clearCachedUser,
+} from '../../redux/edge/actions';
 import { closeLoginModal as onClose } from '../../redux/modal/actions';
+import { resetLastAuthData } from '../../redux/profile/actions';
 import { showLogin as show } from '../../redux/modal/selectors';
-import { error as loginFailure } from '../../redux/profile/selectors';
+import {
+  error as loginFailure,
+  lastAuthData,
+} from '../../redux/profile/selectors';
 import {
   loading as edgeAuthLoading,
   cachedUsers,
@@ -21,11 +29,14 @@ const reduxConnect = connect(
     cachedUsers,
     edgeLoginFailure,
     loginFailure,
+    lastAuthData,
   }),
   {
     onSubmit: login,
     onClose,
     getCachedUsers,
+    clearCachedUser,
+    resetLastAuthData,
   },
 );
 

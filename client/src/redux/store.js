@@ -37,6 +37,9 @@ export default function configureStore(api, history) {
           cartItems: store.getState().cart.cartItems,
           date: store.getState().cart.date,
         },
+        profile: {
+          lastAuthData: store.getState().profile.lastAuthData,
+        },
       });
     }, 1000),
   );

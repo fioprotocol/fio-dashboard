@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import * as actions from './actions';
-import { FioWalletDoublet } from '../../types';
+import { FioWalletDoublet, LastAuthData } from '../../types';
 
 type User = {
   email: string;
@@ -99,6 +99,16 @@ export default combineReducers({
         return true;
       case actions.RESET_SUCCESS_STATE:
         return false;
+      default:
+        return state;
+    }
+  },
+  lastAuthData(state: LastAuthData = null, action) {
+    switch (action.type) {
+      case actions.PROFILE_SUCCESS:
+        return { email: action.data.email, username: action.data.username };
+      case actions.RESET_LAST_AUTH_DATA:
+        return null;
       default:
         return state;
     }

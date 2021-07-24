@@ -3,7 +3,14 @@ import classnames from 'classnames';
 import classes from './FormHeader.module.scss';
 
 const FormHeader = props => {
-  const { title, subtitle, isDoubleColor, header, isSubNarrow } = props;
+  const {
+    title,
+    titleBluePart = '',
+    subtitle,
+    isDoubleColor,
+    header,
+    isSubNarrow,
+  } = props;
 
   const firstWord = isDoubleColor && `${title}`.split(' ')[0];
   return (
@@ -22,6 +29,10 @@ const FormHeader = props => {
         data-highlightword={isDoubleColor && firstWord}
       >
         {title}
+        <span className={classnames(classes.baseColored, classes.colored)}>
+          {' '}
+          {titleBluePart}
+        </span>
       </h4>
       {subtitle && (
         <div

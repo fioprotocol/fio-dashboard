@@ -55,3 +55,8 @@ export type WalletKeysObj = {
     public: string;
   };
 };
+
+export type LastAuthData = {
+  email: string;
+  username: string;
+} | null;

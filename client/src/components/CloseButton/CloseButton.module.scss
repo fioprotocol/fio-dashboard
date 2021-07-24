@@ -33,4 +33,7 @@
   &:hover {
     transform: rotate(-90deg);
   }
+  &.white:before, &.white:after {
+    background-color: $white;
+  }
 }
