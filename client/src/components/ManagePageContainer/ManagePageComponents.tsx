@@ -370,6 +370,7 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
 
 export const RenderItemSettings: React.FC<SettingsProps> = props => {
   const { data, pageName, fioWallets } = props;
+  const { name: addressName } = data;
   const { publicKey, name } = fioWallets.find(
     (fioWallet: FioWalletDoublet) =>
       fioWallet.publicKey === data.walletPublicKey,
@@ -421,8 +422,8 @@ export const RenderItemSettings: React.FC<SettingsProps> = props => {
         <Link
           to={
             isDomain
-              ? ROUTES.FIO_DOMAIN_OWNERSHIP
-              : ROUTES.FIO_ADDRESS_OWNERSHIP
+              ? `${ROUTES.FIO_DOMAIN_OWNERSHIP}/${addressName}`
+              : `${ROUTES.FIO_ADDRESS_OWNERSHIP}/${addressName}`
           }
           className={classes.buttonLink}
         >

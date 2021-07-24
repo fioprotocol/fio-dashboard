@@ -60,3 +60,5 @@ export type LastAuthData = {
   email: string;
   username: string;
 } | null;
+
+export type PageNameType = 'address' | 'domain';

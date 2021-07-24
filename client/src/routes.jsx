@@ -15,6 +15,8 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import PurchasePage from './pages/PurchasePage';
 import ScrollToTop from './components/ScrollToTop';
+import FioAddressTransferPage from './pages/FioAddressTransferPage';
+import FioDomainTransferPage from './pages/FioDomainTransferPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -44,6 +46,17 @@ const Routes = () => (
         <Route path={ROUTES.CART} component={CartPage} exact />
         <Route path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
         <Route path={ROUTES.PURCHASE} component={PurchasePage} exact />
+        <Route
+          path={`${ROUTES.FIO_ADDRESS_OWNERSHIP}/:id`}
+          component={FioAddressTransferPage}
+          excat
+        />
+
+        <Route
+          path={`${ROUTES.FIO_DOMAIN_OWNERSHIP}/:id`}
+          component={FioDomainTransferPage}
+          excat
+        />
 
         <AuthContainer />
       </Switch>
