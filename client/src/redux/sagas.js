@@ -22,6 +22,6 @@ export default function* rootSaga(history, api) {
     listFailure(history),
     signupSuccess(history),
     setRecoverySuccess(),
-    notify(),
+    notify(history),
   ]);
 }

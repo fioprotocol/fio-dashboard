@@ -1,19 +1,18 @@
-import { takeEvery } from 'redux-saga/effects';
-import { PROFILE_FAILURE, LOGIN_FAILURE } from '../profile/actions';
+import { put, takeEvery } from 'redux-saga/effects';
+import { PROFILE_FAILURE, LOGIN_FAILURE, logout } from '../profile/actions';
 import {
   LOGIN_FAILURE as LOGIN_EDGE_FAILURE,
   CONFIRM_PIN_FAILURE,
 } from '../edge/actions';
 import { LIST_FAILURE as NOTIFICATIONS_LIST_FAILURE } from '../notifications/actions';
-import { notification } from 'antd';
 
 export const toString = obj =>
   Object.entries(obj)
     .map(([key, val]) => `${key}: ${val}`)
     .join(', ');
 
-export function* notify() {
-  yield takeEvery('*', function(action) {
+export function* notify(history) {
+  yield takeEvery('*', function*(action) {
     if (
       action.error &&
       action.type !== PROFILE_FAILURE &&
@@ -21,13 +20,17 @@ export function* notify() {
       action.type !== LOGIN_EDGE_FAILURE &&
       action.type !== NOTIFICATIONS_LIST_FAILURE &&
       action.type !== CONFIRM_PIN_FAILURE
-    )
-      notification.error(
-        {
-          message: action.error.code,
-          description: action.error.message || toString(action.error.fields),
-        },
-        7,
-      );
+    ) {
+      // todo: handle common errors
+    }
+
+    if (
+      action.error &&
+      action.error.code === 'PERMISSION_DENIED' &&
+      action.error.fields &&
+      action.error.fields.token === 'WRONG_TOKEN'
+    ) {
+      yield put(logout({ history }));
+    }
   });
 }

@@ -12,7 +12,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    
+
     .icon {
       color: $violet;
       width: 64px !important;
@@ -36,7 +36,7 @@
       margin-bottom: 40px;
     }
   }
-  
+
   .box {
     flex-shrink: 0;
     position: relative;
@@ -46,6 +46,24 @@
 
     &.show {
       left: -100%;
+    }
+  }
+
+  .exitPin {
+    color: $white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    padding-bottom: 20px;
+    @include proxima-nova-semibold;
+
+    &:hover {
+      color: $mercury;
+    }
+
+    .exitPinText {
+      padding-left: 15px;
     }
   }
 }

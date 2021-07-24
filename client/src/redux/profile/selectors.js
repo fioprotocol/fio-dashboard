@@ -12,6 +12,7 @@ export const isChangedPwd = state => state[prefix].isChangedPwd;
 export const isRecoveryRequested = state => state[prefix].isRecoveryRequested;
 export const successfullyRegistered = state =>
   state[prefix].successfullyRegistered;
+export const lastAuthData = state => state[prefix].lastAuthData;
 
 export const isAuthenticated = createSelector(user, user => !!user);
 export const profileRefreshed = state => state[prefix].profileRefreshed;

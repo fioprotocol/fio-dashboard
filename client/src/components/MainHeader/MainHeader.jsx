@@ -22,7 +22,6 @@ const MainHeader = props => {
     edgeAuthLoading,
     notifications,
     cartItems,
-    history,
   } = props;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
 
@@ -40,7 +39,7 @@ const MainHeader = props => {
 
   const logout = () => {
     closeMenu();
-    logoutFn(history);
+    logoutFn();
   };
 
   const renderSideMenu = children => {
