@@ -6,6 +6,15 @@ import { RouterProps } from 'react-router';
 
 export const prefix: string = 'profile';
 
+export const AUTH_CHECK_REQUEST = `${prefix}/AUTH_CHECK_REQUEST`;
+export const AUTH_CHECK_SUCCESS = `${prefix}/AUTH_CHECK_SUCCESS`;
+export const AUTH_CHECK_FAILURE = `${prefix}/AUTH_CHECK_FAILURE`;
+
+export const checkAuthToken = () => ({
+  types: [AUTH_CHECK_REQUEST, AUTH_CHECK_SUCCESS, AUTH_CHECK_FAILURE],
+  promise: (api: Api) => api.auth.profile(),
+});
+
 export const PROFILE_REQUEST = `${prefix}/PROFILE_REQUEST`;
 export const PROFILE_SUCCESS = `${prefix}/PROFILE_SUCCESS`;
 export const PROFILE_FAILURE = `${prefix}/PROFILE_FAILURE`;
