@@ -12,6 +12,7 @@ import {
   captchaResult,
   captchaResolving,
   prices,
+  isProcessing,
 } from '../../redux/registrations/selectors';
 import { fioWallets } from '../../redux/fio/selectors';
 
@@ -26,6 +27,7 @@ const selector = createStructuredSelector({
   captchaResolving,
   fioWallets,
   prices,
+  isProcessing,
 });
 
 const actions = {
