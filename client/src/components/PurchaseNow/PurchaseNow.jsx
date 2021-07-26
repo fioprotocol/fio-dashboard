@@ -5,7 +5,7 @@ import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
 import classes from './PurchaseNow.module.scss';
 import { executeRegistration } from './middleware';
-import { sleep } from '../../utils';
+import { sleep, waitForEdgeAccountStop } from '../../utils';
 
 export const PurchaseNow = props => {
   const {
@@ -18,6 +18,7 @@ export const PurchaseNow = props => {
     loadProfile,
     confirmingPin,
     captchaResolving,
+    isProcessing,
     onFinish,
     setProcessing,
     resetPinConfirm,
@@ -59,23 +60,34 @@ export const PurchaseNow = props => {
 
   // registration
   useEffect(async () => {
-    const { keys, error, action } = pinConfirmation;
+    const {
+      account: edgeAccount,
+      keys: walletKeys,
+      error: confirmationError,
+      action: confirmationAction,
+    } = pinConfirmation;
 
-    if (action !== CONFIRM_PIN_ACTIONS.PURCHASE) return;
-    if (keys && Object.keys(keys).length) resetPinConfirm();
-    if (keys && keys[currentWallet.id] && (isWaiting || !error)) {
+    if (confirmationAction !== CONFIRM_PIN_ACTIONS.PURCHASE) return;
+    if (
+      walletKeys &&
+      walletKeys[currentWallet.id] &&
+      !isProcessing &&
+      (isWaiting || !confirmationError)
+    ) {
       setProcessing(true);
+      await waitForEdgeAccountStop(edgeAccount);
       const results = await executeRegistration(
         cartItems,
-        keys[currentWallet.id],
+        walletKeys[currentWallet.id],
         prices.fioNative,
-        { pin: keys[currentWallet.id].public }, // todo: change to other verification method
+        { pin: walletKeys[currentWallet.id].public }, // todo: change to other verification method
       );
 
       onProcessingEnd(results);
     }
+    if (walletKeys && Object.keys(walletKeys).length) resetPinConfirm();
 
-    if (error) setWaiting(false);
+    if (confirmationError) setWaiting(false);
   }, [pinConfirmation]);
 
   useEffect(async () => {
