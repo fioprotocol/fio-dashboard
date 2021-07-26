@@ -48,6 +48,14 @@ export default class Edge {
     }
   }
 
+  clearCachedUser(username) {
+    try {
+      return this.edgeContext.deleteLocalAccount(username);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   login(username, password) {
     // returns EdgeAccount
     try {

@@ -26,6 +26,17 @@
 .dialog {
   margin-top: 160px;
   width: 375px;
+
+  &.isWide {
+    max-width: 650px;
+    width: auto;
+  }
+
+  &.defaultColor {
+    span[aria-hidden=true] {
+      color: $black !important;
+    }
+  }
 }
 
 @include sm {
@@ -35,26 +46,25 @@
     min-width: 100%;
     padding-bottom: 80px;
     border: none;
-    height: 100%;
-    overflow: scroll;
   }
   .dialog {
+    max-height: 80vh;
     margin: 0;
     width: 100%;
-    top: 0%;
-    transform: translateY(20%) !important;
+    top: 100%;
+    transform: translateY(-100%) !important;
     animation: slide-up 0.4s ease-in-out;
   }
 }
 
 @keyframes slide-up {
   from {
-    top: 100%;
+    top: 200%;
     transform: translateY(0) !important; 
   }
 
   to {
-    top: 0%;
-    transform: translateY(20%) !important;
+    top: 100%;
+    transform: translateY(-100%) !important;
   }
 }

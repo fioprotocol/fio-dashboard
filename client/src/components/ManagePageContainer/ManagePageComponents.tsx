@@ -2,6 +2,8 @@ import React from 'react';
 import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
+import { FioWalletDoublet } from '../../types';
 
 import { BANNER_DATA, DOMAIN_TYPE, PAGE_NAME } from './constants';
 import {
@@ -10,6 +12,8 @@ import {
   IsExpiredFunc,
   ItemComponentProps,
   NotificationsProps,
+  SettingsProps,
+  ActionButtonProps,
 } from './types';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
@@ -18,6 +22,7 @@ import { capitalizeFirstLetter } from '../../utils';
 
 import classes from './ManagePageComponents.module.scss';
 import icon from '../../assets/images/timelapse_white_24dp.svg'; // todo: remove after changing library to google material
+import { ROUTES } from '../../constants/routes';
 
 export const RenderNotifications: React.FC<NotificationsProps> = props => {
   const {
@@ -76,14 +81,9 @@ const renderFioAddress = (
   toggleShowWarnBadge?: BoolStateFunc,
   isExpired?: IsExpiredFunc,
 ) => {
-  const address = name && name.split('@');
-  const addressName = address && address[0];
-  const addressDomain = address && address[1];
   return (
     <div className={classes.nameContainer}>
-      <p className={classes.name}>
-        <span className="boldText">{addressName}</span>@{addressDomain}
-      </p>
+      <p className={classes.name}>{name}</p>
       {showInfoBadge && (
         <FontAwesomeIcon
           icon="exclamation-triangle"
@@ -103,7 +103,8 @@ const renderFioAddress = (
 };
 
 // todo: set actions on buttons
-const renderActions = (pageName: string, isDesktop: boolean) => {
+const renderActions: React.FC<ActionButtonProps> = props => {
+  const { pageName, isDesktop, onSettingsOpen, data } = props;
   return (
     <div className={classes.actionButtonsContainer}>
       <Button className={classes.actionButton}>
@@ -119,7 +120,10 @@ const renderActions = (pageName: string, isDesktop: boolean) => {
           {isDesktop ? 'Register FIO Address' : 'Register Address'}
         </Button>
       )}
-      <Button className={classes.settingsButton}>
+      <Button
+        className={classes.settingsButton}
+        onClick={() => onSettingsOpen(data)}
+      >
         <FontAwesomeIcon icon="cog" className={classes.settingsIcon} />
       </Button>
     </div>
@@ -135,6 +139,7 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
     toggleShowInfoBadge,
     toggleShowWarnBadge,
     isDesktop,
+    onSettingsOpen,
   } = props;
   return (
     <div className={classes.container}>
@@ -177,14 +182,20 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
                   )}
                 </div>
                 <div className={classes.tableCol}>
-                  <span className="boldText mr-2">{remaining || 0}</span>{' '}
-                  Remaining
+                  <p className={classes.remaining}>
+                    {remaining || remaining === 0 ? remaining : '-'}
+                  </p>
                 </div>
                 <div className={classes.tableCol}>
                   {renderDate(expiration, isExpired, toggleShowWarnBadge)}
                 </div>
                 <div className={classnames(classes.tableCol, classes.lastCol)}>
-                  {renderActions(pageName, isDesktop)}
+                  {renderActions({
+                    pageName,
+                    isDesktop,
+                    onSettingsOpen,
+                    data: dataItem,
+                  })}
                 </div>
               </React.Fragment>
             );
@@ -192,7 +203,7 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
             return (
               <React.Fragment key={name}>
                 <div className={classnames(classes.tableCol, classes.firstCol)}>
-                  <span className="boldText">{name}</span>
+                  {name}
                 </div>
                 <div className={classes.tableCol}>
                   <div
@@ -208,7 +219,12 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
                   {renderDate(expiration, isExpired, toggleShowWarnBadge)}
                 </div>
                 <div className={classnames(classes.tableCol, classes.lastCol)}>
-                  {renderActions(pageName, isDesktop)}
+                  {renderActions({
+                    pageName,
+                    isDesktop,
+                    onSettingsOpen,
+                    data: dataItem,
+                  })}
                 </div>
               </React.Fragment>
             );
@@ -227,7 +243,7 @@ export const MobileComponents: React.FC<DeafultProps> = props => {
     toggleShowInfoBadge,
     toggleShowWarnBadge,
     isDesktop,
-    onClickItem,
+    onItemModalOpen,
   } = props;
   return (
     <div className={classes.container}>
@@ -244,7 +260,7 @@ export const MobileComponents: React.FC<DeafultProps> = props => {
             <div
               className={classes.dataItemContainer}
               key={name}
-              onClick={() => onClickItem(dataItem)}
+              onClick={() => onItemModalOpen(dataItem)}
             >
               {pageName === PAGE_NAME.ADDRESS ? (
                 renderFioAddress(
@@ -281,6 +297,7 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
     pageName,
     isExpired,
     isDesktop,
+    onSettingsOpen,
   } = props;
   const { name, remaining, expiration, is_public } = data || {};
   return (
@@ -340,7 +357,77 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
       </Badge>
       <div className={classes.itemActions}>
         <h4 className={classes.actionsTitle}>Actions</h4>
-        {renderActions(pageName, isDesktop)}
+        {renderActions({
+          pageName,
+          isDesktop,
+          onSettingsOpen,
+          data,
+        })}
+      </div>
+    </div>
+  );
+};
+
+export const RenderItemSettings: React.FC<SettingsProps> = props => {
+  const { data, pageName, fioWallets } = props;
+  const { publicKey, name } = fioWallets.find(
+    (fioWallet: FioWalletDoublet) =>
+      fioWallet.publicKey === data.walletPublicKey,
+  );
+
+  const isDomain = pageName === PAGE_NAME.DOMAIN;
+
+  return (
+    <div className={classes.settingsContainer}>
+      <h3 className={classes.title}>Advanced Settings</h3>
+      <h5 className={classes.subtitle}>
+        Domain {isDomain ? 'Access' : 'Ownership'}
+      </h5>
+      <Badge show={true} type={BADGE_TYPES.WHITE}>
+        <p className={classes.badgeTitle}>FIO Wallet</p>
+        <p className={classes.badgeItem}>{name}</p>
+      </Badge>
+      <Badge show={true} type={BADGE_TYPES.WHITE}>
+        <div className={classes.badgeContainer}>
+          <p className={classes.badgeTitle}>Public Key</p>
+          <p className={classes.badgeItem}>{publicKey}</p>
+        </div>
+      </Badge>
+      {isDomain && (
+        <div>
+          <h5 className={classes.actionTitle}>Domain Access</h5>
+          <p className={classes.text}>
+            If you would like your domain to be publicly giving users the
+            ability to register FIO addresses on it, please set the domain to
+            public.
+          </p>
+          <Link
+            to={ROUTES.FIO_DOMAIN_STATUS_CHANGE}
+            className={classes.buttonLink}
+          >
+            <Button className={classes.button}>Make Domain Public</Button>
+          </Link>
+        </div>
+      )}
+      <div>
+        <h5 className={classes.actionTitle}>
+          Transfer FIO {capitalizeFirstLetter(pageName)} Ownership
+        </h5>
+        <p className={classes.text}>
+          Transferring your FIO {capitalizeFirstLetter(pageName)} to a new Owner
+          is easy, Simply enter or paste the new owner public key, submit the
+          request and verify the transaction.
+        </p>
+        <Link
+          to={
+            isDomain
+              ? ROUTES.FIO_DOMAIN_OWNERSHIP
+              : ROUTES.FIO_ADDRESS_OWNERSHIP
+          }
+          className={classes.buttonLink}
+        >
+          <Button className={classes.button}>Start Transfer</Button>
+        </Link>
       </div>
     </div>
   );

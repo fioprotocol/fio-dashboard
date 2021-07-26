@@ -7,7 +7,7 @@ import { Redirect } from 'react-router-dom';
 
 import LayoutContainer from '../LayoutContainer/LayoutContainer';
 import Modal from '../Modal/Modal';
-import { BANNER_DATA, ITEMS_LIMIT, EXPIRED_DAYS } from './constants';
+import { BANNER_DATA, ITEMS_LIMIT, EXPIRED_DAYS, PAGE_NAME } from './constants';
 import ManagePageCtaBadge from './ManagePageCtaBadge';
 import { currentScreenType } from '../../screenType';
 import { SCREEN_TYPE } from '../../constants/screen';
@@ -18,11 +18,13 @@ import {
   MobileComponents,
   RenderItemComponent,
   RenderNotifications,
+  RenderItemSettings,
 } from './ManagePageComponents';
 
 import classes from './ManagePageContainer.module.scss';
 
 import { HasMore, ContainerProps, BoolStateFunc, DataProps } from './types';
+import { capitalizeFirstLetter } from '../../utils';
 
 const isExpired = (expiration: Date): boolean => {
   const today = new Date();
@@ -46,7 +48,8 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
   const [showWarnBadge, toggleShowWarnBadge] = useState<BoolStateFunc>(false);
   const [showInfoBadge, toggleShowInfoBadge] = useState<BoolStateFunc>(false);
   const [offset, changeOffset] = useState<HasMore>({});
-  const [show, showModal] = useState(false);
+  const [show, handleShowModal] = useState(false);
+  const [showSettings, handleShowSettings] = useState(false);
   const [currentAddress, setCurrentAddress] = useState<DataProps>({});
 
   const { screenType } = currentScreenType();
@@ -102,14 +105,20 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     rootMargin: '0px 0px 20px 0px',
   });
 
-  const onClickItem = (dataItem: DataProps) => {
+  const onItemModalOpen = (dataItem: DataProps) => {
     setCurrentAddress(dataItem);
-    showModal(true);
+    handleShowModal(true);
   };
+  const onItemModalClose = () => handleShowModal(false);
 
-  const onClose = () => {
-    showModal(false);
-    setCurrentAddress({});
+  const onSettingsOpen = (dataItem: DataProps) => {
+    setCurrentAddress(dataItem);
+    handleShowModal(false);
+    handleShowSettings(true);
+  };
+  const onSettingsClose = () => {
+    !isDesktop && handleShowModal(true);
+    handleShowSettings(false);
   };
 
   const renderScroll = (children: React.ReactNode) => {
@@ -137,7 +146,8 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     isExpired,
     toggleShowInfoBadge,
     toggleShowWarnBadge,
-    onClickItem,
+    onItemModalOpen,
+    onSettingsOpen,
   };
 
   if (noProfileLoaded) return <Redirect to={{ pathname: ROUTES.HOME }} />;
@@ -147,8 +157,14 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
       <LayoutContainer title={title}>
         <div className={classes.dataContainer}>
           <p className={classes.subtitle}>
-            Manage your addresses from one location. More helper content could
-            go here ..
+            {pageName === PAGE_NAME.ADDRESS
+              ? `FIO ${capitalizeFirstLetter(
+                  pageName,
+                )}es owned by all your wallets.`
+              : pageName === PAGE_NAME.DOMAIN
+              ? `FIO ${capitalizeFirstLetter(pageName)}s owned by all your
+            wallets.`
+              : null}
           </p>
           {isDesktop &&
             RenderNotifications({
@@ -170,7 +186,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
       </div>
       <Modal
         show={show}
-        onClose={onClose}
+        onClose={onItemModalClose}
         hideCloseButton={false}
         closeButton={true}
         isSimple={true}
@@ -179,6 +195,21 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
           {...propsToComponents}
           data={currentAddress}
           showWarnBadge={showWarnBadge}
+        />
+      </Modal>
+      <Modal
+        show={showSettings}
+        onClose={onSettingsClose}
+        hideCloseButton={false}
+        closeButton={true}
+        isSimple={true}
+        isWide={isDesktop}
+        hasDefaultColor={true}
+      >
+        <RenderItemSettings
+          data={currentAddress}
+          pageName={pageName}
+          fioWallets={fioWallets}
         />
       </Modal>
     </div>

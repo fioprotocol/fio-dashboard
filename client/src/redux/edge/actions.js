@@ -187,3 +187,15 @@ export const resetPassword = ({ hash, password, confirmPassword }) => ({
   ],
   promise: api => api.edge.setPassword(hash, password, confirmPassword),
 });
+
+export const CLEAR_CACHED_USERS_REQUEST = `${prefix}/CLEAR_CACHED_USERS_REQUEST`;
+export const CLEAR_CACHED_USERS_SUCCESS = `${prefix}/CLEAR_CACHED_USERS_SUCCESS`;
+export const CLEAR_CACHED_USERS_FAILURE = `${prefix}/CLEAR_CACHED_USERS_FAILURE`;
+export const clearCachedUser = username => ({
+  types: [
+    CLEAR_CACHED_USERS_REQUEST,
+    CLEAR_CACHED_USERS_SUCCESS,
+    CLEAR_CACHED_USERS_FAILURE,
+  ],
+  promise: api => api.edge.clearCachedUser(username),
+});

@@ -128,3 +128,9 @@ export const resetPassword = ({
   ],
   promise: (api: Api) => api.auth.setPassword(hash, password, confirmPassword),
 });
+
+export const RESET_LAST_AUTH_DATA = `${prefix}/RESET_LAST_AUTH_DATA`;
+
+export const resetLastAuthData = () => ({
+  type: RESET_LAST_AUTH_DATA,
+});

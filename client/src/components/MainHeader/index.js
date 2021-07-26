@@ -2,8 +2,9 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 
-import { logout } from '../../redux/profile/actions';
+import { logout, resetLastAuthData } from '../../redux/profile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
+import { clearCachedUser } from '../../redux/edge/actions';
 import { pathname } from '../../redux/router/selectors';
 import {
   user,
@@ -26,9 +27,21 @@ const selector = createStructuredSelector({
   cartItems,
 });
 
-const actions = dispatch => ({
+const actions = (dispatch, ownProps) => ({
   showLoginModal: () => dispatch(showLoginModal()),
-  logout: history => dispatch(logout({ history })),
+  logout: () => {
+    const { history } = ownProps;
+    dispatch(logout({ history }));
+    dispatch(getState => {
+      try {
+        const { username } = getState(state => state.profile.lastAuthData);
+        dispatch(clearCachedUser(username));
+      } catch (e) {
+        //
+      }
+      return resetLastAuthData();
+    });
+  },
 });
 
 export { MainHeader };
