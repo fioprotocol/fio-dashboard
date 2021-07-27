@@ -6,8 +6,13 @@ import {
   SIGNUP_SUCCESS,
 } from '../profile/actions';
 import * as actions from './actions';
+import {
+  FioWalletDoublet,
+  FioAddressDoublet,
+  FioDomainDoublet,
+} from '../../types';
 
-export const emptyWallet = {
+export const emptyWallet: FioWalletDoublet = {
   id: '',
   name: '',
   publicKey: '',
@@ -15,7 +20,7 @@ export const emptyWallet = {
 };
 
 export default combineReducers({
-  loading(state = false, action) {
+  loading(state: boolean = false, action) {
     switch (action.type) {
       case actions.REFRESH_BALANCE_REQUEST:
       case actions.GET_FIO_ADDRESSES_REQUEST:
@@ -32,7 +37,29 @@ export default combineReducers({
         return state;
     }
   },
-  fioWallets(state = [], action) {
+  transferProcessing(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.TRANSFER_REQUEST:
+        return true;
+      case actions.TRANSFER_SUCCESS:
+      case actions.TRANSFER_FAILURE:
+        return false;
+      default:
+        return state;
+    }
+  },
+  setVisibilityProcessing(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.SET_VISIBILITY_REQUEST:
+        return true;
+      case actions.SET_VISIBILITY_SUCCESS:
+      case actions.SET_VISIBILITY_FAILURE:
+        return false;
+      default:
+        return state;
+    }
+  },
+  fioWallets(state: FioWalletDoublet[] = [], action) {
     switch (action.type) {
       case SIGNUP_SUCCESS: {
         const fioWallets = [...state];
@@ -90,7 +117,7 @@ export default combineReducers({
         return state;
     }
   },
-  fioAddresses(state = [], action) {
+  fioAddresses(state: FioAddressDoublet[] = [], action) {
     switch (action.type) {
       case actions.REFRESH_FIO_NAMES_SUCCESS:
       case actions.GET_FIO_ADDRESSES_SUCCESS: {
@@ -119,7 +146,7 @@ export default combineReducers({
         return state;
     }
   },
-  fioDomains(state = [], action) {
+  fioDomains(state: FioDomainDoublet[] = [], action) {
     switch (action.type) {
       case actions.REFRESH_FIO_NAMES_SUCCESS:
       case actions.GET_FIO_DOMAINS_SUCCESS: {
@@ -148,7 +175,7 @@ export default combineReducers({
         return state;
     }
   },
-  hasMoreAddresses(state = {}, action) {
+  hasMoreAddresses(state: { [publicKey: string]: number } = {}, action) {
     switch (action.type) {
       case actions.GET_FIO_ADDRESSES_SUCCESS:
         return { ...state, [action.publicKey]: action.data.more };
@@ -156,7 +183,7 @@ export default combineReducers({
         return state;
     }
   },
-  hasMoreDomains(state = {}, action) {
+  hasMoreDomains(state: { [publicKey: string]: number } = {}, action) {
     switch (action.type) {
       case actions.GET_FIO_DOMAINS_SUCCESS:
         return { ...state, [action.publicKey]: action.data.more };

@@ -49,6 +49,20 @@ export type FioWalletDoublet = {
   balance?: number | null;
 };
 
+export type FioAddressDoublet = {
+  name: string;
+  expiration: string;
+  remaining: number;
+  walletPublicKey: string;
+};
+
+export type FioDomainDoublet = {
+  name: string;
+  expiration: string;
+  isPublic: number;
+  walletPublicKey: string;
+};
+
 export type WalletKeysObj = {
   [walletId: string]: {
     private: string;
