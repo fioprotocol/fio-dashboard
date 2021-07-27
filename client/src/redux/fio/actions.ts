@@ -29,6 +29,19 @@ export const refreshFioNames = (publicKey: string) => ({
   publicKey,
 });
 
+export const GET_FEE_REQUEST = `${prefix}/GET_FEE_REQUEST`;
+export const GET_FEE_SUCCESS = `${prefix}/GET_FEE_SUCCESS`;
+export const GET_FEE_FAILURE = `${prefix}/GET_FEE_FAILURE`;
+
+export const getFee = (endpoint: string, fioAddress: string = '') => ({
+  types: [GET_FEE_REQUEST, GET_FEE_SUCCESS, GET_FEE_FAILURE],
+  promise: (api: Api) => {
+    api.fio.setBaseUrl();
+    return api.fio.publicFioSDK.getFee(endpoint, fioAddress);
+  },
+  endpoint
+});
+
 export const GET_FIO_ADDRESSES_REQUEST = `${prefix}/GET_FIO_ADDRESSES_REQUEST`;
 export const GET_FIO_ADDRESSES_SUCCESS = `${prefix}/GET_FIO_ADDRESSES_SUCCESS`;
 export const GET_FIO_ADDRESSES_FAILURE = `${prefix}/GET_FIO_ADDRESSES_FAILURE`;

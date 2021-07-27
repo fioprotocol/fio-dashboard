@@ -191,4 +191,23 @@ export default combineReducers({
         return state;
     }
   },
+  fees(state: { [endpoint: string]: number } = {}, action) {
+    switch (action.type) {
+      case actions.GET_FEE_SUCCESS:
+        return { ...state, [action.endpoint]: action.data.fee };
+      default:
+        return state;
+    }
+  },
+  feesLoading(state: { [endpoint: string]: boolean } = {}, action) {
+    switch (action.type) {
+      case actions.GET_FEE_REQUEST:
+        return { ...state, [action.endpoint]: true };
+      case actions.TRANSFER_SUCCESS:
+      case actions.TRANSFER_FAILURE:
+        return { ...state, [action.endpoint]: false };
+      default:
+        return state;
+    }
+  },
 });
