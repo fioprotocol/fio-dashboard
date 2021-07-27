@@ -66,7 +66,7 @@ export default class UsersCreate extends Base {
       message:
         "You're all set to start managing FIO Addresses, Domains, Requests as well as staying",
       userId: user.id,
-      pagesToShow: ['/'],
+      data: { pagesToShow: ['/'] },
     }).save();
 
     for (const { id, name, publicKey } of fioWallets) {
