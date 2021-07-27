@@ -1,7 +1,6 @@
-import { FIOSDK, fioConstants } from '@fioprotocol/fiosdk';
+import { FIOSDK } from '@fioprotocol/fiosdk';
 import {
   AvailabilityResponse,
-  FioFeeResponse,
   RegisterFioAddressResponse,
   RegisterFioDomainResponse,
   TransferFioAddressResponse,
@@ -71,12 +70,6 @@ export default class Fio {
     return this.publicFioSDK.isAvailable(fioName);
   };
 
-  registrationFee = async (forDomain = false): Promise<FioFeeResponse> => {
-    if (forDomain)
-      return this.publicFioSDK.getFee(fioConstants.endPoints.RegisterFioDomain);
-    return this.publicFioSDK.getFee(fioConstants.endPoints.registerFioAddress);
-  };
-
   register = async (
     fioName: string,
     fee: number,
@@ -114,11 +107,7 @@ export default class Fio {
     fee: number,
   ): Promise<SetFioDomainVisibilityResponse> => {
     this.validateAction();
-    return this.walletFioSDK.setFioDomainVisibility(
-      fioDomain,
-      isPublic,
-      fee,
-    );
+    return this.walletFioSDK.setFioDomainVisibility(fioDomain, isPublic, fee);
   };
 
   getBalance = async (publicKey: string): Promise<number> => {
