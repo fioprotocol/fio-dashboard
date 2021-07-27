@@ -1,4 +1,4 @@
-import { EdgeCurrencyWallet } from 'edge-core-js';
+import { EdgeAccount, EdgeCurrencyWallet } from 'edge-core-js';
 import isEmpty from 'lodash/isEmpty';
 import apis from './api/index';
 import {
@@ -361,3 +361,11 @@ export const transformResult = ({
 };
 
 export const priceToNumber = (price: string) => +parseFloat(price).toFixed(2);
+
+export const waitForEdgeAccountStop = async (edgeAccount: EdgeAccount) => {
+  try {
+    edgeAccount && edgeAccount.loggedIn && (await edgeAccount.logout());
+  } catch (e) {
+    //
+  }
+};

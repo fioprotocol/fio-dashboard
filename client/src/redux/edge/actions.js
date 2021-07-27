@@ -70,6 +70,7 @@ export const confirmPin = ({ username, pin }, { action, data }) => ({
             private: wallet.keys.fioKey,
             public: wallet.publicWalletInfo.keys.publicKey,
           };
+          await wallet.stopEngine();
         }
       }
     } catch (e) {

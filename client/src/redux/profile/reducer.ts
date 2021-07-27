@@ -38,6 +38,18 @@ export default combineReducers({
         return state;
     }
   },
+  tokenCheckResult(state: boolean | null = null, action) {
+    switch (action.type) {
+      case actions.AUTH_CHECK_REQUEST:
+        return null;
+      case actions.AUTH_CHECK_SUCCESS:
+        return !!action.data.id;
+      case actions.AUTH_CHECK_FAILURE:
+        return false;
+      default:
+        return state;
+    }
+  },
   user(state: User | null = null, action) {
     switch (action.type) {
       case actions.PROFILE_SUCCESS:

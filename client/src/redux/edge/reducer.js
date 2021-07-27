@@ -2,6 +2,8 @@ import { combineReducers } from 'redux';
 import { LOGOUT_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
 
+const PIN_CONFIRM_DEFAULT = {};
+
 export default combineReducers({
   loading(state = false, action) {
     switch (action.type) {
@@ -113,12 +115,18 @@ export default combineReducers({
         return state;
     }
   },
-  pinConfirmation(state = {}, action) {
+  pinConfirmation(state = PIN_CONFIRM_DEFAULT, action) {
     switch (action.type) {
       case actions.RESET_PIN_CONFIRM:
       case actions.CONFIRM_PIN_REQUEST: {
-        if (state.account) state.account.logout();
-        return {};
+        if (!Object.keys(state).length) return state;
+        if (state.account && state.account.loggedIn) state.account.logout();
+        delete state.account;
+        delete state.keys;
+        delete state.action;
+        delete state.data;
+        delete state.error;
+        return PIN_CONFIRM_DEFAULT;
       }
       case actions.CONFIRM_PIN_SUCCESS:
       case actions.CONFIRM_PIN_FAILURE: {
