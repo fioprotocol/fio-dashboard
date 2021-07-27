@@ -23,7 +23,8 @@
     "noUnusedLocals": true,
     "strictNullChecks": false,
     "typeRoots": [
-      "../../node_modules/@types"
+      "../../node_modules/@types",
+      "/src/index.d.ts"
     ]
   },
   "include": [
