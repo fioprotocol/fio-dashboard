@@ -11,6 +11,7 @@ import {
   PublicAddressResponse,
   SetFioDomainVisibilityResponse,
 } from '@fioprotocol/fiosdk/src/entities/responses';
+import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { Transactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
 import { isDomain } from '../utils';
 
@@ -108,6 +109,27 @@ export default class Fio {
   ): Promise<SetFioDomainVisibilityResponse> => {
     this.validateAction();
     return this.walletFioSDK.setFioDomainVisibility(fioDomain, isPublic, fee);
+  };
+
+  link = async (
+    fioAddress: string,
+    publicAddresses: PublicAddress[],
+    fee: number,
+    isConnection: boolean = true,
+  ): Promise<SetFioDomainVisibilityResponse> => {
+    this.validateAction();
+
+    return isConnection
+      ? await this.walletFioSDK.addPublicAddresses(
+          fioAddress,
+          publicAddresses,
+          fee,
+        )
+      : await this.walletFioSDK.removePublicAddresses(
+          fioAddress,
+          publicAddresses,
+          fee,
+        );
   };
 
   getBalance = async (publicKey: string): Promise<number> => {

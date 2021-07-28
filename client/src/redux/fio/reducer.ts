@@ -10,6 +10,7 @@ import {
   FioWalletDoublet,
   FioAddressDoublet,
   FioDomainDoublet,
+  LinkActionResult,
 } from '../../types';
 
 export const emptyWallet: FioWalletDoublet = {
@@ -17,6 +18,11 @@ export const emptyWallet: FioWalletDoublet = {
   name: '',
   publicKey: '',
   balance: null,
+};
+
+const defaultLinkState: LinkActionResult = {
+  connect: { updated: [], failed: [] },
+  disconnect: { updated: [], failed: [] },
 };
 
 export default combineReducers({
@@ -54,6 +60,17 @@ export default combineReducers({
         return true;
       case actions.SET_VISIBILITY_SUCCESS:
       case actions.SET_VISIBILITY_FAILURE:
+        return false;
+      default:
+        return state;
+    }
+  },
+  linkProcessing(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.LINK_TOKENS_REQUEST:
+        return true;
+      case actions.LINK_TOKENS_SUCCESS:
+      case actions.LINK_TOKENS_FAILURE:
         return false;
       default:
         return state;
@@ -206,6 +223,18 @@ export default combineReducers({
       case actions.TRANSFER_SUCCESS:
       case actions.TRANSFER_FAILURE:
         return { ...state, [action.endpoint]: false };
+      default:
+        return state;
+    }
+  },
+  linkResults(state: LinkActionResult = defaultLinkState, action) {
+    switch (action.type) {
+      case actions.LINK_TOKENS_REQUEST:
+        return defaultLinkState;
+      case actions.LINK_TOKENS_SUCCESS:
+        return action.data;
+      case actions.LINK_TOKENS_FAILURE:
+        return { ...defaultLinkState, error: action.data };
       default:
         return state;
     }

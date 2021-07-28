@@ -1,3 +1,5 @@
+import {PublicAddress} from "@fioprotocol/fiosdk/src/entities/PublicAddress";
+
 export type Domain = { domain: string; free?: boolean };
 
 export type CartItem = {
@@ -63,6 +65,12 @@ export type FioDomainDoublet = {
   walletPublicKey: string;
 };
 
+export type PublicAddressDoublet = {
+  publicAddress: string;
+  chainCode: string;
+  tokenCode: string;
+};
+
 export type WalletKeysObj = {
   [walletId: string]: {
     private: string;
@@ -83,4 +91,15 @@ export type FioNameItemProps = {
   remaining?: number;
   is_public?: number;
   walletPublicKey?: string;
+};
+
+export type LinkResult = {
+  updated: PublicAddressDoublet[],
+  failed: PublicAddressDoublet[],
+  error?: string | null,
+};
+
+export type LinkActionResult = {
+  connect: LinkResult,
+  disconnect: LinkResult,
 };
