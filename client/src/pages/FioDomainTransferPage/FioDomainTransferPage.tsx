@@ -8,11 +8,12 @@ import { FioNameItemProps } from '../../types';
 interface MatchParams {
   id: string;
 }
-interface Props extends RouteComponentProps<MatchParams> {
+type Props = {
   fioNameList: FioNameItemProps[];
-}
+};
 
-export const FioDomainTransferPage: React.FC<Props> = props => {
+export const FioDomainTransferPage: React.FC<Props &
+  RouteComponentProps<MatchParams>> = props => {
   const { fioNameList, match } = props;
   const { id: name } = match.params;
 
