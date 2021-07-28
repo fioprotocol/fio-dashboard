@@ -47,15 +47,15 @@ const Routes = () => (
           component={FioDomainManagePage}
           exact
         />
-        <Route path={ROUTES.CART} component={CartPage} exact />
-        <Route path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
-        <Route path={ROUTES.PURCHASE} component={PurchasePage} exact />
-        <Route
+        <PrivateRoute path={ROUTES.CART} component={CartPage} exact />
+        <PrivateRoute path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
+        <PrivateRoute path={ROUTES.PURCHASE} component={PurchasePage} exact />
+        <PrivateRoute
           path={`${ROUTES.FIO_ADDRESS_OWNERSHIP}/:id`}
           component={FioAddressTransferPage}
         />
 
-        <Route
+        <PrivateRoute
           path={`${ROUTES.FIO_DOMAIN_OWNERSHIP}/:id`}
           component={FioDomainTransferPage}
         />
