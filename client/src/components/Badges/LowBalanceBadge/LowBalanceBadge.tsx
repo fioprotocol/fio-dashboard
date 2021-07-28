@@ -7,12 +7,14 @@ import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 import classes from './LowBalanceBadge.module.scss';
 
 type Props = {
+  hasLowBalance: boolean;
   buttonText: string;
   messageText: string;
 };
 
 const LowBalanceBadge: React.FC<Props> = props => {
-  const { buttonText, messageText } = props;
+  const { buttonText, messageText, hasLowBalance } = props;
+  if (!hasLowBalance) return null;
   return (
     <Badge type={BADGE_TYPES.ERROR} show={true}>
       <div className={classes.errorContainer}>

@@ -93,7 +93,7 @@ export const AddressDomainTransferContainer: React.FC<ContainerProps &
             costUsdc={costUsdc}
             currentWallet={currentWallet}
           />
-          {hasLowBalance && <LowBalanceBadge {...LOW_BALANCE_TEXT} />}
+          <LowBalanceBadge {...LOW_BALANCE_TEXT} hasLowBalance={hasLowBalance} />
           <Button className={classes.button} disabled={hasLowBalance}>
             Transfer Now
           </Button>

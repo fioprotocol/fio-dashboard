@@ -117,7 +117,7 @@ const Cart = props => {
           </div>
         )}
       </div>
-      {hasLowBalance && <LowBalanceBadge {...lowBalanceText} />}
+      <LowBalanceBadge {...lowBalanceText} hasLowBalance={hasLowBalance} />
     </>
   );
 };
