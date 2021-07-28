@@ -1,4 +1,6 @@
+import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { Api } from '../../api';
+import { PublicAddressDoublet, LinkActionResult } from '../../types';
 export const prefix = 'fio';
 
 export const REFRESH_BALANCE_REQUEST = `${prefix}/REFRESH_BALANCE_REQUEST`;
@@ -39,7 +41,7 @@ export const getFee = (endpoint: string, fioAddress: string = '') => ({
     api.fio.setBaseUrl();
     return api.fio.publicFioSDK.getFee(endpoint, fioAddress);
   },
-  endpoint
+  endpoint,
 });
 
 export const GET_FIO_ADDRESSES_REQUEST = `${prefix}/GET_FIO_ADDRESSES_REQUEST`;
@@ -157,6 +159,153 @@ export const setDomainVisibility = ({
         fee,
       );
       return result;
+    } catch (e) {
+      api.fio.clearWalletFioSdk();
+      throw e;
+    }
+  },
+});
+
+export const LINK_TOKENS_REQUEST = `${prefix}/LINK_TOKENS_REQUEST`;
+export const LINK_TOKENS_SUCCESS = `${prefix}/LINK_TOKENS_SUCCESS`;
+export const LINK_TOKENS_FAILURE = `${prefix}/LINK_TOKENS_FAILURE`;
+
+export const linkTokens = ({
+  connectList,
+  disconnectList,
+  fioAddress,
+  fee,
+  keys,
+}: {
+  connectList: PublicAddressDoublet[];
+  disconnectList: PublicAddressDoublet[];
+  fioAddress: string;
+  fee: number;
+  keys: { public: string; private: string };
+}) => ({
+  types: [LINK_TOKENS_REQUEST, LINK_TOKENS_SUCCESS, LINK_TOKENS_FAILURE],
+  promise: async (api: Api): Promise<LinkActionResult> => {
+    api.fio.setWalletFioSdk(keys);
+    const updatePubAddresses = async (
+      publicAddresses: PublicAddressDoublet[],
+      isConnection: boolean = true,
+    ) => {
+      let updatedConnections: PublicAddressDoublet[] = [];
+      const iteration: { publicAddresses: PublicAddress[] } = {
+        publicAddresses: [],
+      };
+      const limitPerCall = 5;
+      for (const {
+        chainCode: cCode,
+        tokenCode: tCode,
+        publicAddress,
+      } of publicAddresses) {
+        const chainCode = cCode.toUpperCase();
+        const tokenCode = tCode.toUpperCase();
+
+        iteration.publicAddresses.push({
+          token_code: tokenCode,
+          chain_code: chainCode,
+          public_address: publicAddress,
+        });
+        if (iteration.publicAddresses.length === limitPerCall) {
+          try {
+            await api.fio.link(
+              fioAddress,
+              iteration.publicAddresses,
+              fee,
+              isConnection,
+            );
+            updatedConnections = [
+              ...updatedConnections,
+              ...iteration.publicAddresses.map(
+                ({
+                  token_code: tokenCode,
+                  chain_code: chainCode,
+                  public_address: publicAddress,
+                }) => ({ chainCode, tokenCode, publicAddress }),
+              ),
+            ];
+            iteration.publicAddresses = [];
+          } catch (e) {
+            return { updatedConnections, error: e };
+          }
+        }
+      }
+
+      if (iteration.publicAddresses.length) {
+        try {
+          await api.fio.link(
+            fioAddress,
+            iteration.publicAddresses,
+            fee,
+            isConnection,
+          );
+          updatedConnections = [
+            ...updatedConnections,
+            ...iteration.publicAddresses.map(
+              ({
+                token_code: tokenCode,
+                chain_code: chainCode,
+                public_address: publicAddress,
+              }) => ({ chainCode, tokenCode, publicAddress }),
+            ),
+          ];
+        } catch (e) {
+          return { updatedConnections, error: e };
+        }
+      }
+
+      return { updatedConnections };
+    };
+
+    try {
+      const {
+        updatedConnections,
+        error: connectionError,
+      } = await updatePubAddresses(connectList);
+      const {
+        updatedConnections: updatedDisconnections,
+        error: disconnectionError,
+      } = await updatePubAddresses(disconnectList, false);
+      api.fio.clearWalletFioSdk();
+
+      const connectionsFailed: PublicAddressDoublet[] = [];
+      const disconnectionsFailed: PublicAddressDoublet[] = [];
+
+      for (const connectItem of connectList) {
+        if (
+          updatedConnections.findIndex(
+            ({ publicAddress }) => publicAddress === connectItem.publicAddress,
+          ) < 0
+        ) {
+          connectionsFailed.push(connectItem);
+        }
+      }
+
+      for (const disconnectItem of disconnectList) {
+        if (
+          updatedDisconnections.findIndex(
+            ({ publicAddress }) =>
+              publicAddress === disconnectItem.publicAddress,
+          ) < 0
+        ) {
+          connectionsFailed.push(disconnectItem);
+        }
+      }
+
+      return {
+        connect: {
+          updated: updatedConnections,
+          failed: connectionsFailed,
+          error: connectionError,
+        },
+        disconnect: {
+          updated: updatedDisconnections,
+          failed: disconnectionsFailed,
+          error: disconnectionError,
+        },
+      };
     } catch (e) {
       api.fio.clearWalletFioSdk();
       throw e;
