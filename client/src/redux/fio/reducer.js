@@ -7,7 +7,7 @@ import {
 } from '../profile/actions';
 import * as actions from './actions';
 
-const emptyWallet = {
+export const emptyWallet = {
   id: '',
   name: '',
   publicKey: '',

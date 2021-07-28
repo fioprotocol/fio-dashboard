@@ -14,7 +14,6 @@ import { ROUTES } from '../../constants/routes';
 import { ADDRESS, DOMAIN } from '../../constants/common';
 
 import { ContainerProps } from './types';
-import { FioWalletDoublet } from '../../types';
 
 import colors from '../../assets/styles/colorsToJs.module.scss';
 import classes from './AddressDomainTransferContainer.module.scss';
@@ -34,29 +33,20 @@ const LOW_BALANCE_TEXT = {
 export const AddressDomainTransferContainer: React.FC<ContainerProps &
   InjectedFormProps<{}, ContainerProps>> = props => {
   const {
-    data,
+    walletPublicKey,
+    currentWallet,
     feePrice,
-    fioWallets,
     handleSubmit,
     name,
     pageName,
     refreshBalance,
   } = props;
 
-  const { walletPublicKey } =
-    (data && data.find(dataItem => dataItem.name === name)) || {};
-
   const { costFio, costUsdc } = feePrice;
 
   useEffect(() => {
     refreshBalance(walletPublicKey);
   }, []);
-
-  const currentWallet =
-    fioWallets &&
-    fioWallets.find(
-      (wallet: FioWalletDoublet) => wallet.publicKey === walletPublicKey,
-    );
 
   const capitalizedPageName = capitalizeFirstLetter(pageName);
   const title = `Transfer FIO ${capitalizedPageName} Ownership`;

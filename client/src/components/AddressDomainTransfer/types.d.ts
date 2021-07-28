@@ -4,13 +4,17 @@ import {
   AddressDomainItemProps,
 } from '../../types';
 
-export type ContainerProps = {
-  children?: React.ReactNode;
-  data: AddressDomainItemProps[];
-  feePrice: { costFio: number; costUsdc: number };
-  fioWallets: FioWalletDoublet[];
-  loading: boolean;
+export type ContainerOwnProps = {
+  fioNameList: AddressDomainItemProps[];
   name: string;
   pageName: PageNameType;
-  refreshBalance: (publicKey: string) => void;
 };
+
+export type ContainerProps = {
+  children?: React.ReactNode;
+  feePrice: { costFio: number; costUsdc: number };
+  walletPublicKey: string;
+  currentWallet: FioWalletDoublet;
+  loading: boolean;
+  refreshBalance: (publicKey: string) => void;
+} & ContainerOwnProps;

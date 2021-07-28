@@ -9,14 +9,18 @@ interface MatchParams {
   id: string;
 }
 interface Props extends RouteComponentProps<MatchParams> {
-  data: AddressDomainItemProps[];
+  fioNameList: AddressDomainItemProps[];
 }
 
 export const FioDomainTransferPage: React.FC<Props> = props => {
-  const { data, match } = props;
+  const { fioNameList, match } = props;
   const { id: name } = match.params;
 
   return (
-    <AddressDomainTransferContainer pageName="domain" data={data} name={name} />
+    <AddressDomainTransferContainer
+      pageName="domain"
+      fioNameList={fioNameList}
+      name={name}
+    />
   );
 };
