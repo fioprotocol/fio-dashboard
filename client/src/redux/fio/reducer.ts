@@ -220,8 +220,8 @@ export default combineReducers({
     switch (action.type) {
       case actions.GET_FEE_REQUEST:
         return { ...state, [action.endpoint]: true };
-      case actions.TRANSFER_SUCCESS:
-      case actions.TRANSFER_FAILURE:
+      case actions.GET_FEE_SUCCESS:
+      case actions.GET_FEE_FAILURE:
         return { ...state, [action.endpoint]: false };
       default:
         return state;
