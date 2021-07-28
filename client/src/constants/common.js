@@ -7,3 +7,6 @@ export const CONFIRM_PIN_ACTIONS = {
   RECOVERY: 'RECOVERY',
   PURCHASE: 'PURCHASE',
 };
+
+export const ADDRESS = 'address';
+export const DOMAIN = 'domain';

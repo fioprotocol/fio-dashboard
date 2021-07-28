@@ -1,3 +1,17 @@
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import { withRouter } from 'react-router-dom';
+
+import { compose } from '../../utils';
+
+import { fioDomains } from '../../redux/fio/selectors';
 import { FioDomainTransferPage } from './FioDomainTransferPage';
 
-export default FioDomainTransferPage;
+const reduxConnect = connect(
+  createStructuredSelector({
+    data: fioDomains,
+  }),
+  {},
+);
+
+export default withRouter(compose(reduxConnect)(FioDomainTransferPage));

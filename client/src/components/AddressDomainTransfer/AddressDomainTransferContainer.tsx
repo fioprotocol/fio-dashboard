@@ -1,7 +1,109 @@
-import React from 'react';
-import { ContainerProps } from './types';
+import React, { useEffect } from 'react';
+import { Field, InjectedFormProps } from 'redux-form';
+import { Button } from 'react-bootstrap';
 
-export const AddressDomainTransferContainer: React.FC<ContainerProps> = props => {
-  const { pageName } = props;
-  return <div>{pageName}</div>;
+import PseudoModalContainer from '../PseudoModalContainer';
+// import { INPUT_COLOR_SCHEMA } from '../Input/Input';
+import InputRedux from '../Input/InputRedux';
+import { BADGE_TYPES } from '../Badge/Badge';
+import PriceBadge from '../Badges/PriceBadge/PriceBadge';
+import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
+import InfoBadge from '../InfoBadge/InfoBadge';
+import { capitalizeFirstLetter } from '../../utils';
+import { ROUTES } from '../../constants/routes';
+import { ADDRESS, DOMAIN } from '../../constants/common';
+
+import { ContainerProps } from './types';
+import { FioWalletDoublet } from '../../types';
+
+import colors from '../../assets/styles/colorsToJs.module.scss';
+import classes from './AddressDomainTransferContainer.module.scss';
+
+const PLACEHOLDER = 'Enter FIO Address or FIO Public Key of New Onwer';
+const INFO_MESSAGE = {
+  address: 'Transferring a FIO Address will purge all linked wallets',
+  domain:
+    'Transferring a FIO Domain will not transfer ownership of FIO Addresses on that Domain',
+};
+
+export const AddressDomainTransferContainer: React.FC<ContainerProps &
+  InjectedFormProps<{}, ContainerProps>> = props => {
+  const {
+    data,
+    feePrice,
+    fioWallets,
+    handleSubmit,
+    name,
+    pageName,
+    refreshBalance,
+  } = props;
+
+  const { walletPublicKey } =
+    (data && data.find(dataItem => dataItem.name === name)) || {};
+
+  const { costFio, costUsdc } = feePrice;
+
+  useEffect(() => {
+    refreshBalance(walletPublicKey);
+  }, []);
+
+  const currentWallet =
+    fioWallets &&
+    fioWallets.find(
+      (wallet: FioWalletDoublet) => wallet.publicKey === walletPublicKey,
+    );
+
+  const capitalizedPageName = capitalizeFirstLetter(pageName);
+  const title = `Transfer FIO ${capitalizedPageName} Ownership`;
+  const link =
+    pageName === ADDRESS
+      ? ROUTES.FIO_ADDRESSES
+      : pageName === DOMAIN
+      ? ROUTES.FIO_DOMAINS
+      : null;
+  const inputColorSchema = {
+    backgroundColor: colors.white,
+    borderColor: colors.white,
+    color: colors['gray-main'],
+  };
+
+  return (
+    <PseudoModalContainer link={link} title={title}>
+      <div className={classes.container}>
+        <InfoBadge
+          message={INFO_MESSAGE[pageName]}
+          title="Important Information"
+          type={BADGE_TYPES.INFO}
+          show={true}
+        />
+        <p className={classes.name}>
+          {capitalizedPageName}: {name}
+        </p>
+        <p className={classes.label}>Transfer Information</p>
+        <form onSubmit={handleSubmit} className={classes.form}>
+          <Field
+            name={pageName}
+            type="text"
+            placeholder={PLACEHOLDER}
+            component={InputRedux}
+            colorSchema={inputColorSchema}
+            showCopyButton={true}
+          />
+          <p className={classes.label}>{capitalizedPageName} Transfer Cost</p>
+          <PriceBadge
+            costFio={costFio}
+            costUsdc={costUsdc}
+            title={`${capitalizedPageName} Transfer Fee`}
+            type={BADGE_TYPES.BLACK}
+          />
+          <PayWithBadge
+            costFio={costFio}
+            costUsdc={costUsdc}
+            currentWallet={currentWallet}
+          />
+          <Button className={classes.button}>Transfer Now</Button>
+        </form>
+      </div>
+    </PseudoModalContainer>
+  );
 };

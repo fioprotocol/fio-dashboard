@@ -32,13 +32,17 @@ const Routes = () => (
           component={FioAddressPage}
           exact
         />
-        <Route path={ROUTES.FIO_ADDRESSES} component={FioAddressManage} exact />
+        <PrivateRoute
+          path={ROUTES.FIO_ADDRESSES}
+          component={FioAddressManage}
+          exact
+        />
         <Route
           path={ROUTES.FIO_DOMAINS_SELECTION}
           component={FioDomainPage}
           exact
         />
-        <Route
+        <PrivateRoute
           path={ROUTES.FIO_DOMAINS}
           component={FioDomainManagePage}
           exact
@@ -49,13 +53,11 @@ const Routes = () => (
         <Route
           path={`${ROUTES.FIO_ADDRESS_OWNERSHIP}/:id`}
           component={FioAddressTransferPage}
-          excat
         />
 
         <Route
           path={`${ROUTES.FIO_DOMAIN_OWNERSHIP}/:id`}
           component={FioDomainTransferPage}
-          excat
         />
 
         <AuthContainer />

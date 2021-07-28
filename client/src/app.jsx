@@ -37,7 +37,10 @@ import {
   faPlusCircle,
 } from '@fortawesome/free-solid-svg-icons';
 
-import { faCircle as faRegularCircle } from '@fortawesome/free-regular-svg-icons';
+import {
+  faCircle as faRegularCircle,
+  faClipboard as faRegularClipboard,
+} from '@fortawesome/free-regular-svg-icons';
 
 import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -61,6 +64,7 @@ library.add(
   faCog,
   faBell,
   faCircle,
+  faRegularClipboard,
   faShoppingCart,
   faTimesCircle,
   faInfoCircle,

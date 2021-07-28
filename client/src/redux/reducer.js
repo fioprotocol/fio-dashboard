@@ -10,6 +10,7 @@ import modal from './modal/reducer';
 import notifications from './notifications/reducer';
 import registrations from './registrations/reducer';
 import cart from './cart/reducer';
+import reduxForm from './reduxForm/reducer';
 
 export default combineReducers({
   profile,
@@ -22,4 +23,5 @@ export default combineReducers({
   notifications,
   registrations,
   cart,
+  reduxForm,
 });

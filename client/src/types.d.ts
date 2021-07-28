@@ -62,3 +62,11 @@ export type LastAuthData = {
 } | null;
 
 export type PageNameType = 'address' | 'domain';
+
+export type AddressDomainItemProps = {
+  name?: string;
+  expiration?: Date;
+  remaining?: number;
+  is_public?: number;
+  walletPublicKey?: string;
+};

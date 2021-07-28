@@ -23,7 +23,8 @@ import {
 
 import classes from './ManagePageContainer.module.scss';
 
-import { HasMore, ContainerProps, BoolStateFunc, DataProps } from './types';
+import { HasMore, ContainerProps, BoolStateFunc } from './types';
+import { AddressDomainItemProps } from '../../types';
 import { capitalizeFirstLetter } from '../../utils';
 
 const isExpired = (expiration: Date): boolean => {
@@ -50,7 +51,9 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
   const [offset, changeOffset] = useState<HasMore>({});
   const [show, handleShowModal] = useState(false);
   const [showSettings, handleShowSettings] = useState(false);
-  const [currentAddress, setCurrentAddress] = useState<DataProps>({});
+  const [currentAddress, setCurrentAddress] = useState<AddressDomainItemProps>(
+    {},
+  );
 
   const { screenType } = currentScreenType();
   const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
@@ -105,13 +108,13 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     rootMargin: '0px 0px 20px 0px',
   });
 
-  const onItemModalOpen = (dataItem: DataProps) => {
+  const onItemModalOpen = (dataItem: AddressDomainItemProps) => {
     setCurrentAddress(dataItem);
     handleShowModal(true);
   };
   const onItemModalClose = () => handleShowModal(false);
 
-  const onSettingsOpen = (dataItem: DataProps) => {
+  const onSettingsOpen = (dataItem: AddressDomainItemProps) => {
     setCurrentAddress(dataItem);
     handleShowModal(false);
     handleShowSettings(true);

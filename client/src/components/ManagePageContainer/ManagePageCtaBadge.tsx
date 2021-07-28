@@ -3,13 +3,13 @@ import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 import { CTA_BADGE } from './constants';
-import { PageName } from './types';
+import { PageNameType } from '../../types';
 
 import classes from './ManagePageContainer.module.scss';
 
 type Props = {
   children?: React.ReactNode;
-  name: PageName;
+  name: PageNameType;
 };
 
 const ManagePageCtaBadge: React.FC<Props> = props => {

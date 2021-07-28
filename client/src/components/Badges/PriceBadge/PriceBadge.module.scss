@@ -1,0 +1,28 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.item {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  color: $black;
+
+  &.black {
+    color: $white;
+  }
+  .totalPrice {
+    margin: 0 1.875rem 0 auto;
+  }
+}
+
+@include sm {
+  .item {
+    flex-direction: column;
+
+    .totalPrice {
+      margin: 10px 0 0 0;
+    }
+  }
+}
