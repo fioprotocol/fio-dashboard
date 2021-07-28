@@ -8,8 +8,7 @@ import Footer from '../../components/Footer/Footer';
 import LoginForm from '../../components/LoginForm';
 import PinConfirmModal from '../../components/PinConfirmModal';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
-import { currentScreenType } from '../../screenType';
-import { SCREEN_TYPE } from '../../constants/screen';
+import { checkIfDesktop } from '../../screenType';
 import AutoLogout from '../../services/AutoLogout';
 import CartTimeout from '../../services/CartTimeout';
 
@@ -26,8 +25,7 @@ const MainLayout = props => {
     init,
   } = props;
 
-  const { screenType } = currentScreenType();
-  const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
+  const isDesktop = checkIfDesktop();
 
   useEffect(() => {
     init();

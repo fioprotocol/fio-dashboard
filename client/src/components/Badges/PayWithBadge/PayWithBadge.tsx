@@ -1,8 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import { currentScreenType } from '../../../screenType';
-import { SCREEN_TYPE } from '../../../constants/screen';
+import { checkIfDesktop } from '../../../screenType';
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 
 import { FioWalletDoublet } from '../../../types';
@@ -18,8 +17,7 @@ type Props = {
 
 const PayWithBadge: React.FC<Props> = props => {
   const { costFree, costFio, costUsdc, currentWallet } = props;
-  const { screenType } = currentScreenType();
-  const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
+  const isDesktop = checkIfDesktop();
 
   const renderWalletBalance = () => {
     const wallet = (currentWallet && currentWallet.balance) || 0;

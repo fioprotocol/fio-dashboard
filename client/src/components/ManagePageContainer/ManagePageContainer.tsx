@@ -9,8 +9,7 @@ import LayoutContainer from '../LayoutContainer/LayoutContainer';
 import Modal from '../Modal/Modal';
 import { BANNER_DATA, ITEMS_LIMIT, EXPIRED_DAYS, PAGE_NAME } from './constants';
 import ManagePageCtaBadge from './ManagePageCtaBadge';
-import { currentScreenType } from '../../screenType';
-import { SCREEN_TYPE } from '../../constants/screen';
+import { checkIfDesktop } from '../../screenType';
 import { ROUTES } from '../../constants/routes';
 
 import {
@@ -55,8 +54,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     {},
   );
 
-  const { screenType } = currentScreenType();
-  const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
+  const isDesktop = checkIfDesktop();
 
   const fioWalletsRef = useRef(fioWallets);
   if (!isEqual(fioWallets, fioWalletsRef)) {
