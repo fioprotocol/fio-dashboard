@@ -4,6 +4,7 @@ import AddressDomainTransferContainer from '../../components/AddressDomainTransf
 import { RouteComponentProps } from 'react-router-dom';
 
 import { FioNameItemProps } from '../../types';
+import { ADDRESS } from '../../constants/common';
 
 interface MatchParams {
   id: string;
@@ -20,7 +21,7 @@ export const FioAddressTransferPage: React.FC<Props &
 
   return (
     <AddressDomainTransferContainer
-      pageName="address"
+      pageName={ADDRESS}
       fioNameList={fioNameList}
       name={name}
     />
