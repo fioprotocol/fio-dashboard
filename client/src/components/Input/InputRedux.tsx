@@ -76,7 +76,7 @@ const InputRedux: React.FC<Props> = props => {
   };
 
   const hasError =
-    (error && (touched || modified || submitSucceeded) && !active) || // todo: remove !active to show red border on focused field. make debounce on create account user field
+    (error && (touched || modified || submitSucceeded) && !active) ||
     (submitError && !modifiedSinceLastSubmit);
 
   return (
