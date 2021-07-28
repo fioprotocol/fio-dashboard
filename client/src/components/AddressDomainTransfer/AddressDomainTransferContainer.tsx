@@ -9,14 +9,13 @@ import PriceBadge from '../Badges/PriceBadge/PriceBadge';
 import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
 import InfoBadge from '../InfoBadge/InfoBadge';
-import { ROUTES } from '../../constants/routes';
-import { ADDRESS, DOMAIN } from '../../constants/common';
 
 import { ContainerProps } from './types';
 
 import colors from '../../assets/styles/colorsToJs.module.scss';
 import classes from './AddressDomainTransferContainer.module.scss';
 import { fioNameLabels } from '../../constants/labels';
+import { getFioNameLinkByType } from '../../utils';
 
 const PLACEHOLDER = 'Enter FIO Address or FIO Public Key of New Onwer';
 const INFO_MESSAGE = {
@@ -50,12 +49,7 @@ export const AddressDomainTransferContainer: React.FC<ContainerProps &
 
   const fioNameLabel = fioNameLabels[pageName];
   const title = `Transfer FIO ${fioNameLabel} Ownership`;
-  const link =
-    pageName === ADDRESS
-      ? ROUTES.FIO_ADDRESSES
-      : pageName === DOMAIN
-      ? ROUTES.FIO_DOMAINS
-      : null;
+  const link = getFioNameLinkByType(pageName);
   const inputColorSchema = {
     backgroundColor: colors.white,
     borderColor: colors.white,

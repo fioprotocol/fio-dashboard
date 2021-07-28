@@ -9,6 +9,8 @@ import {
   RegistrationResult,
   WalletKeysObj,
 } from './types';
+import { ROUTES } from './constants/routes';
+import { ADDRESS, DOMAIN } from './constants/common';
 
 const FIO_DASH_USERNAME_DELIMITER = '.fio.dash.';
 
@@ -368,4 +370,12 @@ export const waitForEdgeAccountStop = async (edgeAccount: EdgeAccount) => {
   } catch (e) {
     //
   }
+};
+
+export const getFioNameLinkByType = (pageName: string) => {
+  const typeToLink: { [pageName: string]: string } = {
+    [ADDRESS]: ROUTES.FIO_ADDRESSES,
+    [DOMAIN]: ROUTES.FIO_DOMAINS,
+  };
+  return typeToLink[pageName] || null;
 };
