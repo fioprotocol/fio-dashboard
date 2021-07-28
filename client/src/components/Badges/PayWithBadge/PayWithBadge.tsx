@@ -19,6 +19,8 @@ const PayWithBadge: React.FC<Props> = props => {
   const { costFree, costFio, costUsdc, currentWallet } = props;
   const isDesktop = checkIfDesktop();
 
+  if (costFree) return null;
+
   const renderWalletBalance = () => {
     const wallet = (currentWallet && currentWallet.balance) || 0;
     let walletUsdc = 0;
@@ -31,30 +33,28 @@ const PayWithBadge: React.FC<Props> = props => {
 
   return (
     <>
-      {!isDesktop && !costFree && (
+      {!isDesktop && (
         <h6 className={classnames(classes.subtitle, classes.paymentTitle)}>
           Paying With
         </h6>
       )}
-      {!costFree && (
-        <Badge type={BADGE_TYPES.WHITE} show>
-          <div className={classes.item}>
-            {isDesktop && (
-              <span className={classnames('boldText', classes.title)}>
-                Paying With
-              </span>
-            )}
-            <div className={classes.wallet}>
-              <p className={classes.title}>
-                <span className="boldText">FIO Wallet</span>
-              </p>
-              <p className={classes.balance}>
-                (Available Balance {renderWalletBalance()})
-              </p>
-            </div>
+      <Badge type={BADGE_TYPES.WHITE} show>
+        <div className={classes.item}>
+          {isDesktop && (
+            <span className={classnames('boldText', classes.title)}>
+              Paying With
+            </span>
+          )}
+          <div className={classes.wallet}>
+            <p className={classes.title}>
+              <span className="boldText">FIO Wallet</span>
+            </p>
+            <p className={classes.balance}>
+              (Available Balance {renderWalletBalance()})
+            </p>
           </div>
-        </Badge>
-      )}
+        </div>
+      </Badge>
     </>
   );
 };
