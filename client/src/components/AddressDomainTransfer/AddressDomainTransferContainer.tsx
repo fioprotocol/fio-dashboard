@@ -3,11 +3,11 @@ import { Field, InjectedFormProps } from 'redux-form';
 import { Button } from 'react-bootstrap';
 
 import PseudoModalContainer from '../PseudoModalContainer';
-// import { INPUT_COLOR_SCHEMA } from '../Input/Input';
 import InputRedux from '../Input/InputRedux';
 import { BADGE_TYPES } from '../Badge/Badge';
 import PriceBadge from '../Badges/PriceBadge/PriceBadge';
 import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
+import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
 import InfoBadge from '../InfoBadge/InfoBadge';
 import { capitalizeFirstLetter } from '../../utils';
 import { ROUTES } from '../../constants/routes';
@@ -24,6 +24,11 @@ const INFO_MESSAGE = {
   address: 'Transferring a FIO Address will purge all linked wallets',
   domain:
     'Transferring a FIO Domain will not transfer ownership of FIO Addresses on that Domain',
+};
+const LOW_BALANCE_TEXT = {
+  buttonText: 'Where to Buy',
+  messageText:
+    'Unfortunately there is not enough FIO available to complete your purchase. Please purchase or deposit additional FIO',
 };
 
 export const AddressDomainTransferContainer: React.FC<ContainerProps &
@@ -67,6 +72,9 @@ export const AddressDomainTransferContainer: React.FC<ContainerProps &
     color: colors['gray-main'],
   };
 
+  const hasLowBalance =
+    currentWallet && feePrice && currentWallet.balance < feePrice.costFio;
+
   return (
     <PseudoModalContainer link={link} title={title}>
       <div className={classes.container}>
@@ -101,7 +109,10 @@ export const AddressDomainTransferContainer: React.FC<ContainerProps &
             costUsdc={costUsdc}
             currentWallet={currentWallet}
           />
-          <Button className={classes.button}>Transfer Now</Button>
+          {hasLowBalance && <LowBalanceBadge {...LOW_BALANCE_TEXT} />}
+          <Button className={classes.button} disabled={hasLowBalance}>
+            Transfer Now
+          </Button>
         </form>
       </div>
     </PseudoModalContainer>
