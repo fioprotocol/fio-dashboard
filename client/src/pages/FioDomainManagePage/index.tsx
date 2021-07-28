@@ -12,7 +12,7 @@ import FioDomainManagePage from './FioDomainManagePage';
 
 const reduxConnect = connect(
   createStructuredSelector({
-    data: fioDomains,
+    fioNameList: fioDomains,
     fioWallets,
     hasMore: hasMoreDomains,
     loading,

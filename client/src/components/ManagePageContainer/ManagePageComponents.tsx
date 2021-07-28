@@ -7,7 +7,7 @@ import { FioWalletDoublet } from '../../types';
 
 import { BANNER_DATA, DOMAIN_TYPE, PAGE_NAME } from './constants';
 import {
-  DeafultProps,
+  DefaultProps,
   BoolStateFunc,
   IsExpiredFunc,
   ItemComponentProps,
@@ -104,7 +104,7 @@ const renderFioAddress = (
 
 // todo: set actions on buttons
 const renderActions: React.FC<ActionButtonProps> = props => {
-  const { pageName, isDesktop, onSettingsOpen, data } = props;
+  const { pageName, isDesktop, onSettingsOpen, fioNameItem } = props;
   return (
     <div className={classes.actionButtonsContainer}>
       <Button className={classes.actionButton}>
@@ -122,7 +122,7 @@ const renderActions: React.FC<ActionButtonProps> = props => {
       )}
       <Button
         className={classes.settingsButton}
-        onClick={() => onSettingsOpen(data)}
+        onClick={() => onSettingsOpen(fioNameItem)}
       >
         <FontAwesomeIcon icon="cog" className={classes.settingsIcon} />
       </Button>
@@ -130,9 +130,9 @@ const renderActions: React.FC<ActionButtonProps> = props => {
   );
 };
 
-export const DesktopComponents: React.FC<DeafultProps> = props => {
+export const DesktopComponents: React.FC<DefaultProps> = props => {
   const {
-    data,
+    fioNameList,
     isExpired,
     pageName,
     showInfoBadge,
@@ -167,9 +167,9 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
           <div className={classes.tableHeader}>Actions</div>
         </>
       )}
-      {data &&
-        data.map(dataItem => {
-          const { name, remaining, expiration, is_public } = dataItem;
+      {fioNameList &&
+        fioNameList.map(fioNameItem => {
+          const { name, remaining, expiration, is_public } = fioNameItem;
           if (pageName === PAGE_NAME.ADDRESS) {
             return (
               <React.Fragment key={name}>
@@ -194,7 +194,7 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
                     pageName,
                     isDesktop,
                     onSettingsOpen,
-                    data: dataItem,
+                    fioNameItem,
                   })}
                 </div>
               </React.Fragment>
@@ -223,7 +223,7 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
                     pageName,
                     isDesktop,
                     onSettingsOpen,
-                    data: dataItem,
+                    fioNameItem,
                   })}
                 </div>
               </React.Fragment>
@@ -234,9 +234,9 @@ export const DesktopComponents: React.FC<DeafultProps> = props => {
   );
 };
 
-export const MobileComponents: React.FC<DeafultProps> = props => {
+export const MobileComponents: React.FC<DefaultProps> = props => {
   const {
-    data,
+    fioNameList,
     isExpired,
     pageName,
     showInfoBadge,
@@ -253,14 +253,14 @@ export const MobileComponents: React.FC<DeafultProps> = props => {
       {pageName === PAGE_NAME.DOMAIN && (
         <h5 className={classes.tableHeader}>Domains</h5>
       )}
-      {data &&
-        data.map(dataItem => {
-          const { name, expiration } = dataItem;
+      {fioNameList &&
+        fioNameList.map(fioNameItem => {
+          const { name, expiration } = fioNameItem;
           return (
             <div
               className={classes.dataItemContainer}
               key={name}
-              onClick={() => onItemModalOpen(dataItem)}
+              onClick={() => onItemModalOpen(fioNameItem)}
             >
               {pageName === PAGE_NAME.ADDRESS ? (
                 renderFioAddress(
@@ -289,7 +289,7 @@ export const MobileComponents: React.FC<DeafultProps> = props => {
 export const RenderItemComponent: React.FC<ItemComponentProps &
   NotificationsProps> = props => {
   const {
-    data,
+    fioNameItem,
     showWarnBadge,
     showInfoBadge,
     toggleShowWarnBadge,
@@ -299,7 +299,7 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
     isDesktop,
     onSettingsOpen,
   } = props;
-  const { name, remaining, expiration, is_public } = data || {};
+  const { name, remaining, expiration, is_public } = fioNameItem || {};
   return (
     <div className={classes.itemContainer}>
       <h4 className={classes.title}>{fioNameLabels[pageName]} Details</h4>
@@ -359,7 +359,7 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
           pageName,
           isDesktop,
           onSettingsOpen,
-          data,
+          fioNameItem,
         })}
       </div>
     </div>
@@ -367,11 +367,11 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
 };
 
 export const RenderItemSettings: React.FC<SettingsProps> = props => {
-  const { data, pageName, fioWallets } = props;
-  const { name: addressName } = data;
-  const { publicKey, name } = fioWallets.find(
+  const { fioNameItem, pageName, fioWallets } = props;
+  const { name: fioName } = fioNameItem;
+  const { publicKey, name: walletName } = fioWallets.find(
     (fioWallet: FioWalletDoublet) =>
-      fioWallet.publicKey === data.walletPublicKey,
+      fioWallet.publicKey === fioNameItem.walletPublicKey,
   );
 
   const isDomain = pageName === PAGE_NAME.DOMAIN;
@@ -384,7 +384,7 @@ export const RenderItemSettings: React.FC<SettingsProps> = props => {
       </h5>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <p className={classes.badgeTitle}>FIO Wallet</p>
-        <p className={classes.badgeItem}>{name}</p>
+        <p className={classes.badgeItem}>{walletName}</p>
       </Badge>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classes.badgeContainer}>
@@ -420,8 +420,8 @@ export const RenderItemSettings: React.FC<SettingsProps> = props => {
         <Link
           to={
             isDomain
-              ? `${ROUTES.FIO_DOMAIN_OWNERSHIP}/${addressName}`
-              : `${ROUTES.FIO_ADDRESS_OWNERSHIP}/${addressName}`
+              ? `${ROUTES.FIO_DOMAIN_OWNERSHIP}/${fioName}`
+              : `${ROUTES.FIO_ADDRESS_OWNERSHIP}/${fioName}`
           }
           className={classes.buttonLink}
         >

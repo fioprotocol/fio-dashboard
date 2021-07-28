@@ -9,7 +9,7 @@ import { FioDomainTransferPage } from './FioDomainTransferPage';
 
 const reduxConnect = connect(
   createStructuredSelector({
-    data: fioDomains,
+    fioNameList: fioDomains,
   }),
   {},
 );

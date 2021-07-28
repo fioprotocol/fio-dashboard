@@ -1,11 +1,11 @@
 import {
   FioWalletDoublet,
   PageNameType,
-  AddressDomainItemProps,
+  FioNameItemProps,
 } from '../../types';
 
 export type ContainerOwnProps = {
-  fioNameList: AddressDomainItemProps[];
+  fioNameList: FioNameItemProps[];
   name: string;
   pageName: PageNameType;
 };

@@ -1,10 +1,6 @@
 import { RouteComponentProps } from 'react-router-dom';
 import { PAGE_NAME } from './constants';
-import {
-  AddressDomainItemProps,
-  FioWalletDoublet,
-  PageNameType,
-} from '../../types';
+import { FioNameItemProps, FioWalletDoublet, PageNameType } from '../../types';
 
 export type HasMore = { [key: string]: number };
 export type FetchDataFn = (
@@ -15,7 +11,7 @@ export type FetchDataFn = (
 
 export interface ContainerProps extends RouteComponentProps {
   children?: React.ReactNode;
-  data: AddressDomainItemProps[];
+  fioNameList: FioNameItemProps[];
   fioWallets: FioWalletDoublet[];
   hasMore: HasMore;
   noProfileLoaded?: boolean;
@@ -28,11 +24,11 @@ export type BoolStateFunc = Dispatch<SetStateAction<boolean>>;
 
 export type IsExpiredFunc = (expiration: Date) => boolean;
 type ModalOpenActionType = (
-  data: AddressDomainItemProps,
+  data: FioNameItemProps,
 ) => MouseEventHandler<HTMLDivElement>;
 
-export type DeafultProps = {
-  data: AddressDomainItemProps[];
+export type DefaultProps = {
+  fioNameList: FioNameItemProps[];
   isDesktop: boolean;
   pageName: PageNameType;
   showInfoBadge: boolean;
@@ -52,14 +48,14 @@ export type NotificationsProps = {
 };
 
 export type ItemComponentProps = {
-  data: AddressDomainItemProps;
+  fioNameItem: FioNameItemProps;
   isExpired: IsExpiredFunc;
   isDesktop: boolean;
   onSettingsOpen: ModalOpenActionType;
 };
 
 export type SettingsProps = {
-  data: AddressDomainItemProps;
+  fioNameItem: FioNameItemProps;
   pageName: PageNameType;
   fioWallets: FioWalletDoublet[];
 };
@@ -68,5 +64,5 @@ export type ActionButtonProps = {
   pageName: PAGE_NAME;
   isDesktop: boolean;
   onSettingsOpen: ModalOpenActionType;
-  data: AddressDomainItemProps;
+  fioNameItem: FioNameItemProps;
 };

@@ -3,13 +3,13 @@ import AddressDomainTransferContainer from '../../components/AddressDomainTransf
 
 import { RouteComponentProps } from 'react-router-dom';
 
-import { AddressDomainItemProps } from '../../types';
+import { FioNameItemProps } from '../../types';
 
 interface MatchParams {
   id: string;
 }
 interface Props extends RouteComponentProps<MatchParams> {
-  fioNameList: AddressDomainItemProps[];
+  fioNameList: FioNameItemProps[];
 }
 
 export const FioDomainTransferPage: React.FC<Props> = props => {

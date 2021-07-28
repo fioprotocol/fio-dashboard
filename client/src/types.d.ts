@@ -63,7 +63,7 @@ export type LastAuthData = {
 
 export type PageNameType = 'address' | 'domain';
 
-export type AddressDomainItemProps = {
+export type FioNameItemProps = {
   name?: string;
   expiration?: Date;
   remaining?: number;

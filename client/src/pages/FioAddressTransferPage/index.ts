@@ -9,7 +9,7 @@ import { FioAddressTransferPage } from './FioAddressTransferPage';
 
 const reduxConnect = connect(
   createStructuredSelector({
-    data: fioAddresses,
+    fioNameList: fioAddresses,
   }),
   {},
 );

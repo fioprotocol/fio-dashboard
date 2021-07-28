@@ -23,7 +23,7 @@ import {
 import classes from './ManagePageContainer.module.scss';
 
 import { HasMore, ContainerProps, BoolStateFunc } from './types';
-import { AddressDomainItemProps } from '../../types';
+import { FioNameItemProps } from '../../types';
 import { fioNameLabels } from '../../constants/labels';
 
 const isExpired = (expiration: Date): boolean => {
@@ -38,7 +38,7 @@ const isExpired = (expiration: Date): boolean => {
 const ManagePageContainer: React.FC<ContainerProps> = props => {
   const {
     pageName,
-    data,
+    fioNameList,
     fioWallets,
     fetchDataFn,
     hasMore,
@@ -50,7 +50,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
   const [offset, changeOffset] = useState<HasMore>({});
   const [show, handleShowModal] = useState(false);
   const [showSettings, handleShowSettings] = useState(false);
-  const [currentAddress, setCurrentAddress] = useState<AddressDomainItemProps>(
+  const [currentAddress, setCurrentAddress] = useState<FioNameItemProps>(
     {},
   );
 
@@ -82,7 +82,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
 
   useEffect(() => {
     toggleShowWarnBadge(
-      data && data.some(dataItem => isExpired(dataItem.expiration)),
+      fioNameList && fioNameList.some(dataItem => isExpired(dataItem.expiration)),
     );
     toggleShowInfoBadge(false); // todo: set dependent on data when move to get_pub_addresses
   }, [fioWalletsRef.current]);
@@ -106,14 +106,14 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     rootMargin: '0px 0px 20px 0px',
   });
 
-  const onItemModalOpen = (dataItem: AddressDomainItemProps) => {
-    setCurrentAddress(dataItem);
+  const onItemModalOpen = (fioNameItem: FioNameItemProps) => {
+    setCurrentAddress(fioNameItem);
     handleShowModal(true);
   };
   const onItemModalClose = () => handleShowModal(false);
 
-  const onSettingsOpen = (dataItem: AddressDomainItemProps) => {
-    setCurrentAddress(dataItem);
+  const onSettingsOpen = (fioNameItem: FioNameItemProps) => {
+    setCurrentAddress(fioNameItem);
     handleShowModal(false);
     handleShowSettings(true);
   };
@@ -140,7 +140,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
   };
 
   const propsToComponents = {
-    data,
+    fioNameList,
     isDesktop,
     pageName,
     showInfoBadge,
@@ -191,7 +191,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
       >
         <RenderItemComponent
           {...propsToComponents}
-          data={currentAddress}
+          fioNameItem={currentAddress}
           showWarnBadge={showWarnBadge}
         />
       </Modal>
@@ -205,7 +205,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
         hasDefaultColor={true}
       >
         <RenderItemSettings
-          data={currentAddress}
+          fioNameItem={currentAddress}
           pageName={pageName}
           fioWallets={fioWallets}
         />

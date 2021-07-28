@@ -12,7 +12,7 @@ import FioAddressManagePage from './FioAddressManagePage';
 
 const reduxConnect = connect(
   createStructuredSelector({
-    data: fioAddresses,
+    fioNameList: fioAddresses,
     fioWallets,
     hasMore: hasMoreAddresses,
     loading,

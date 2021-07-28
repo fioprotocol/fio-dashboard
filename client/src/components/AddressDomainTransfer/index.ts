@@ -11,7 +11,7 @@ import { loading } from '../../redux/fio/selectors';
 
 import { AddressDomainTransferContainer } from './AddressDomainTransferContainer';
 import { emptyWallet } from '../../redux/fio/reducer';
-import { FioWalletDoublet, AddressDomainItemProps } from '../../types';
+import { FioWalletDoublet, FioNameItemProps } from '../../types';
 import { ContainerOwnProps } from './types';
 
 const formConnect = reduxForm({
@@ -32,7 +32,7 @@ const reduxConnect = connect(
       const selected =
         fioNameList &&
         fioNameList.find(
-          ({ name: itemName }: AddressDomainItemProps) => itemName === name,
+          ({ name: itemName }: FioNameItemProps) => itemName === name,
         );
       return selected.walletPublicKey || '';
     },
@@ -43,7 +43,7 @@ const reduxConnect = connect(
       const selected =
         fioNameList &&
         fioNameList.find(
-          ({ name: itemName }: AddressDomainItemProps) => itemName === name,
+          ({ name: itemName }: FioNameItemProps) => itemName === name,
         );
       const walletPublicKey = selected.walletPublicKey || '';
       const currentWallet: FioWalletDoublet =
