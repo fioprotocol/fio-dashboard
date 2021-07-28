@@ -25,7 +25,7 @@ import classes from './ManagePageContainer.module.scss';
 
 import { HasMore, ContainerProps, BoolStateFunc } from './types';
 import { AddressDomainItemProps } from '../../types';
-import { capitalizeFirstLetter } from '../../utils';
+import { fioNameLabels } from '../../constants/labels';
 
 const isExpired = (expiration: Date): boolean => {
   const today = new Date();
@@ -161,12 +161,9 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
         <div className={classes.dataContainer}>
           <p className={classes.subtitle}>
             {pageName === PAGE_NAME.ADDRESS
-              ? `FIO ${capitalizeFirstLetter(
-                  pageName,
-                )}es owned by all your wallets.`
+              ? `FIO ${fioNameLabels[pageName]}es owned by all your wallets.`
               : pageName === PAGE_NAME.DOMAIN
-              ? `FIO ${capitalizeFirstLetter(pageName)}s owned by all your
-            wallets.`
+              ? `FIO ${fioNameLabels[pageName]}s owned by all your wallets.`
               : null}
           </p>
           {isDesktop &&

@@ -18,11 +18,11 @@ import {
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import NotificationBadge from '../NotificationBadge';
-import { capitalizeFirstLetter } from '../../utils';
 
 import classes from './ManagePageComponents.module.scss';
 import icon from '../../assets/images/timelapse_white_24dp.svg'; // todo: remove after changing library to google material
 import { ROUTES } from '../../constants/routes';
+import { fioNameLabels } from '../../constants/labels';
 
 export const RenderNotifications: React.FC<NotificationsProps> = props => {
   const {
@@ -302,9 +302,7 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
   const { name, remaining, expiration, is_public } = data || {};
   return (
     <div className={classes.itemContainer}>
-      <h4 className={classes.title}>
-        {capitalizeFirstLetter(pageName)} Details
-      </h4>
+      <h4 className={classes.title}>{fioNameLabels[pageName]} Details</h4>
       {RenderNotifications({
         showWarnBadge,
         showInfoBadge,
@@ -412,11 +410,11 @@ export const RenderItemSettings: React.FC<SettingsProps> = props => {
       )}
       <div>
         <h5 className={classes.actionTitle}>
-          Transfer FIO {capitalizeFirstLetter(pageName)} Ownership
+          Transfer FIO {fioNameLabels[pageName]} Ownership
         </h5>
         <p className={classes.text}>
-          Transferring your FIO {capitalizeFirstLetter(pageName)} to a new Owner
-          is easy, Simply enter or paste the new owner public key, submit the
+          Transferring your FIO {fioNameLabels[pageName]} to a new Owner is
+          easy, Simply enter or paste the new owner public key, submit the
           request and verify the transaction.
         </p>
         <Link

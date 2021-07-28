@@ -9,7 +9,6 @@ import PriceBadge from '../Badges/PriceBadge/PriceBadge';
 import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
 import InfoBadge from '../InfoBadge/InfoBadge';
-import { capitalizeFirstLetter } from '../../utils';
 import { ROUTES } from '../../constants/routes';
 import { ADDRESS, DOMAIN } from '../../constants/common';
 
@@ -17,6 +16,7 @@ import { ContainerProps } from './types';
 
 import colors from '../../assets/styles/colorsToJs.module.scss';
 import classes from './AddressDomainTransferContainer.module.scss';
+import { fioNameLabels } from '../../constants/labels';
 
 const PLACEHOLDER = 'Enter FIO Address or FIO Public Key of New Onwer';
 const INFO_MESSAGE = {
@@ -48,8 +48,8 @@ export const AddressDomainTransferContainer: React.FC<ContainerProps &
     refreshBalance(walletPublicKey);
   }, []);
 
-  const capitalizedPageName = capitalizeFirstLetter(pageName);
-  const title = `Transfer FIO ${capitalizedPageName} Ownership`;
+  const fioNameLabel = fioNameLabels[pageName];
+  const title = `Transfer FIO ${fioNameLabel} Ownership`;
   const link =
     pageName === ADDRESS
       ? ROUTES.FIO_ADDRESSES
@@ -75,7 +75,7 @@ export const AddressDomainTransferContainer: React.FC<ContainerProps &
           show={true}
         />
         <p className={classes.name}>
-          {capitalizedPageName}: {name}
+          {fioNameLabel}: {name}
         </p>
         <p className={classes.label}>Transfer Information</p>
         <form onSubmit={handleSubmit} className={classes.form}>
@@ -87,11 +87,11 @@ export const AddressDomainTransferContainer: React.FC<ContainerProps &
             colorSchema={inputColorSchema}
             showCopyButton={true}
           />
-          <p className={classes.label}>{capitalizedPageName} Transfer Cost</p>
+          <p className={classes.label}>{fioNameLabel} Transfer Cost</p>
           <PriceBadge
             costFio={costFio}
             costUsdc={costUsdc}
-            title={`${capitalizedPageName} Transfer Fee`}
+            title={`${fioNameLabel} Transfer Fee`}
             type={BADGE_TYPES.BLACK}
           />
           <PayWithBadge
