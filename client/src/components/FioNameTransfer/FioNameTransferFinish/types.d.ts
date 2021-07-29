@@ -13,6 +13,7 @@ export type HistoryLocationStateProps = {
       };
       name: string;
       publicKey: string;
+      error?: string;
     };
   };
 };
