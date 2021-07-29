@@ -4,57 +4,52 @@ import classnames from 'classnames';
 
 import classes from './InputActionButtons.module.scss';
 
-type ClearInputProps = {
-  color?: string;
-  type: string;
+type DefaultProps = {
   onClick: () => void;
+  uiType?: string;
 };
 
-export const ClearInput: React.FC<ClearInputProps> = props => {
-  const { color, onClick, type } = props;
+type ClearInputProps = {
+  type: string;
+};
+
+export const ClearInput: React.FC<ClearInputProps & DefaultProps> = props => {
+  const { onClick, type, uiType } = props;
   return (
     <FontAwesomeIcon
       icon="times-circle"
       className={classnames(
         classes.inputIcon,
         type === 'password' && classes.doubleIcon,
+        uiType && classes[uiType],
       )}
-      style={color && { color: color }}
       onClick={onClick}
     />
   );
 };
 
 type ShowPasswordProps = {
-  color?: string;
-  onClick: () => void;
   showPass: boolean;
 };
 
-export const ShowPassword: React.FC<ShowPasswordProps> = props => {
-  const { color, onClick, showPass } = props;
+export const ShowPassword: React.FC<ShowPasswordProps &
+  DefaultProps> = props => {
+  const { onClick, showPass, uiType } = props;
   return (
     <FontAwesomeIcon
       icon={!showPass ? 'eye' : 'eye-slash'}
-      className={classes.inputIcon}
-      style={color && { color: color }}
+      className={classnames(classes.inputIcon, uiType && classes[uiType])}
       onClick={onClick}
     />
   );
 };
 
-type CopyButtonProps = {
-  color?: string;
-  onClick: () => void;
-};
-
-export const CopyButton: React.FC<CopyButtonProps> = props => {
-  const { color, onClick } = props;
+export const CopyButton: React.FC<DefaultProps> = props => {
+  const { onClick, uiType } = props;
   return (
     <FontAwesomeIcon
       icon={{ prefix: 'far', iconName: 'clipboard' }}
-      className={classes.inputIcon}
-      style={color && { color: color }}
+      className={classnames(classes.inputIcon, uiType && classes[uiType])}
       onClick={onClick}
     />
   );
