@@ -62,12 +62,12 @@ const Routes = () => (
         />
 
         <PrivateRoute
-          path={ROUTES.FIO_ADDRESS_TRANSFER_SUCCESS}
+          path={ROUTES.FIO_ADDRESS_TRANSFER_FINISH}
           component={FioAddressTransferFinishPage}
           excat
         />
         <PrivateRoute
-          path={ROUTES.FIO_DOMAIN_TRANSFER_SUCCESS}
+          path={ROUTES.FIO_DOMAIN_TRANSFER_FINISH}
           component={FioDomainTransferFinishPage}
           excat
         />
