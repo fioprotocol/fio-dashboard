@@ -15,6 +15,10 @@ import CartPage from './pages/CartPage';
 import CheckoutPage from './pages/CheckoutPage';
 import PurchasePage from './pages/PurchasePage';
 import ScrollToTop from './components/ScrollToTop';
+import FioAddressTransferPage from './pages/FioAddressTransferPage';
+import FioDomainTransferPage from './pages/FioDomainTransferPage';
+import FioAddressTransferSuccessPage from './pages/FioAddressTransferSuccessPage';
+import FioDomainTransferSuccessPage from './pages/FioDomainTransferSuccessPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -30,20 +34,43 @@ const Routes = () => (
           component={FioAddressPage}
           exact
         />
-        <Route path={ROUTES.FIO_ADDRESSES} component={FioAddressManage} exact />
+        <PrivateRoute
+          path={ROUTES.FIO_ADDRESSES}
+          component={FioAddressManage}
+          exact
+        />
         <Route
           path={ROUTES.FIO_DOMAINS_SELECTION}
           component={FioDomainPage}
           exact
         />
-        <Route
+        <PrivateRoute
           path={ROUTES.FIO_DOMAINS}
           component={FioDomainManagePage}
           exact
         />
-        <Route path={ROUTES.CART} component={CartPage} exact />
-        <Route path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
-        <Route path={ROUTES.PURCHASE} component={PurchasePage} exact />
+        <PrivateRoute path={ROUTES.CART} component={CartPage} exact />
+        <PrivateRoute path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
+        <PrivateRoute path={ROUTES.PURCHASE} component={PurchasePage} exact />
+        <PrivateRoute
+          path={`${ROUTES.FIO_ADDRESS_OWNERSHIP}/:id`}
+          component={FioAddressTransferPage}
+        />
+        <PrivateRoute
+          path={`${ROUTES.FIO_DOMAIN_OWNERSHIP}/:id`}
+          component={FioDomainTransferPage}
+        />
+
+        <PrivateRoute
+          path={ROUTES.FIO_ADDRESS_TRANSFER_SUCCESS}
+          component={FioAddressTransferSuccessPage}
+          excat
+        />
+        <PrivateRoute
+          path={ROUTES.FIO_DOMAIN_TRANSFER_SUCCESS}
+          component={FioDomainTransferSuccessPage}
+          excat
+        />
 
         <AuthContainer />
       </Switch>

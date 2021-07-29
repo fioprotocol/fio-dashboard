@@ -1,13 +1,27 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classnames from 'classnames';
 import CloseButton from '../CloseButton/CloseButton';
+import BackButton from '../common/BackButton/BackButton';
 
 import classes from './PseudoModalContainer.module.scss';
 
-const PseudoModalContainer = props => {
-  const { children, onClose, title, onBack } = props;
+type Props = {
+  children?: React.ReactNode;
+  hasAutoWidth?: boolean;
+  link?: string;
+  onClose?: () => void;
+  title: string;
+};
+
+const PseudoModalContainer: React.FC<Props> = props => {
+  const { children, hasAutoWidth, link, onClose, title } = props;
   return (
-    <div className={classes.container}>
+    <div
+      className={classnames(
+        classes.container,
+        hasAutoWidth && classes.autoWidth,
+      )}
+    >
       <div className={classes.actionContainer}>
         {onClose && (
           <div className={classes.withClose}>
@@ -15,13 +29,9 @@ const PseudoModalContainer = props => {
             <CloseButton handleClick={onClose} />
           </div>
         )}
-        {onBack && (
+        {link && (
           <div className={classes.withBack}>
-            <FontAwesomeIcon
-              icon="arrow-left"
-              className={classes.arrow}
-              onClick={onBack}
-            />
+            <BackButton link={link} />
             <h2 className={classes.title}>{title}</h2>
           </div>
         )}

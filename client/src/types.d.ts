@@ -60,3 +60,13 @@ export type LastAuthData = {
   email: string;
   username: string;
 } | null;
+
+export type PageNameType = 'address' | 'domain';
+
+export type FioNameItemProps = {
+  name?: string;
+  expiration?: Date;
+  remaining?: number;
+  is_public?: number;
+  walletPublicKey?: string;
+};

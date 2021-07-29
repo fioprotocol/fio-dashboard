@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import { Form, Field } from 'react-final-form';
 import classNames from 'classnames';
-import { Button } from 'react-bootstrap';
 import isEmpty from 'lodash/isEmpty';
 import classnames from 'classnames';
 
@@ -11,6 +10,7 @@ import CounterContainer from '../CounterContainer/CounterContainer';
 import CartItem from './CartItem';
 import WalletDropdown from './WalletDropdown';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
+import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
 import { ROUTES } from '../../constants/routes';
 import { deleteCartItem } from '../../utils';
 
@@ -47,6 +47,14 @@ const Cart = props => {
       cartItems,
       recalculate,
     });
+  };
+
+  const lowBalanceText = {
+    buttonText: 'Make Deposit',
+    messageText: `There are not
+            enough FIO tokens in this FIO Wallet to complete the purchase.
+            Needed: ${totalCartAmount.toFixed(2)} FIO, available in wallet:
+            ${walletBalance} FIO. Please add FIO tokens.`,
   };
 
   return (
@@ -109,36 +117,7 @@ const Cart = props => {
           </div>
         )}
       </div>
-      {hasLowBalance && (
-        <Badge type={BADGE_TYPES.ERROR} show>
-          <div className={classes.errorContainer}>
-            <div className={classes.textContainer}>
-              <FontAwesomeIcon
-                icon="exclamation-circle"
-                className={classes.icon}
-              />
-              <p className={classes.text}>
-                <span className="boldText">Low Balance!</span> - There are not
-                enough FIO tokens in this FIO Wallet to complete the purchase.
-                Needed: {totalCartAmount.toFixed(2)} FIO, available in wallet:{' '}
-                {walletBalance} FIO. Please add FIO tokens.
-              </p>
-            </div>
-            <Button
-              className={classes.button}
-              onClick={() => {
-                //todo: set action
-              }}
-            >
-              <FontAwesomeIcon
-                icon="plus-circle"
-                className={classes.buttonIcon}
-              />
-              <p className={classes.buttonText}>Make Deposit</p>
-            </Button>
-          </div>
-        </Badge>
-      )}
+      <LowBalanceBadge {...lowBalanceText} hasLowBalance={hasLowBalance} />
     </>
   );
 };

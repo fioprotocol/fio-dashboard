@@ -150,7 +150,17 @@ const Notifications = (props: Props) => {
         message={AVAILABLE_MESSAGE[type]}
       />
       {errors.map(error => {
-        if (typeof error !== 'string' && error.message) {
+        if (typeof error === 'string')
+          return (
+            <InfoBadge
+              type={BADGE_TYPES.ERROR}
+              title="Try Again!"
+              show={hasErrors}
+              message={error}
+              key={error}
+            />
+          );
+        if (typeof error !== 'string' && error.message)
           return (
             <InfoBadge
               type={error.showInfoError ? BADGE_TYPES.INFO : BADGE_TYPES.ERROR}
@@ -160,16 +170,7 @@ const Notifications = (props: Props) => {
               key={error.message}
             />
           );
-        }
-        return (
-          <InfoBadge
-            type={BADGE_TYPES.ERROR}
-            title="Try Again!"
-            show={hasErrors}
-            message={error}
-            key={error}
-          />
-        );
+        return null;
       })}
     </>
   );

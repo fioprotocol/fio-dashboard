@@ -5,7 +5,7 @@ import { ROUTES } from '../../constants/routes';
 
 export const PrivateRoute = ({
   component: Component,
-  isAuthenticated,
+  noProfileLoaded,
   loading,
   ...rest
 }) => {
@@ -24,16 +24,17 @@ export const PrivateRoute = ({
             />
           );
         }
-        return isAuthenticated ? (
-          <Component {...props} />
-        ) : (
-          <Redirect
-            to={{
-              pathname: ROUTES.HOME,
-              state: { from: props.location },
-            }}
-          />
-        );
+        if (noProfileLoaded)
+          return (
+            <Redirect
+              to={{
+                pathname: ROUTES.HOME,
+                state: { from: props.location },
+              }}
+            />
+          );
+
+        return <Component {...props} />;
       }}
     />
   );

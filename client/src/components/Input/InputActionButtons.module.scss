@@ -1,0 +1,18 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.inputIcon {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  width: 20px !important;
+  height: 20px;
+}
+
+.doubleIcon {
+  position: absolute;
+  right: 60px;
+}

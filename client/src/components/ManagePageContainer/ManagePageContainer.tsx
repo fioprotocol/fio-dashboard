@@ -9,8 +9,7 @@ import LayoutContainer from '../LayoutContainer/LayoutContainer';
 import Modal from '../Modal/Modal';
 import { BANNER_DATA, ITEMS_LIMIT, EXPIRED_DAYS, PAGE_NAME } from './constants';
 import ManagePageCtaBadge from './ManagePageCtaBadge';
-import { currentScreenType } from '../../screenType';
-import { SCREEN_TYPE } from '../../constants/screen';
+import { checkIfDesktop } from '../../screenType';
 import { ROUTES } from '../../constants/routes';
 
 import {
@@ -23,8 +22,9 @@ import {
 
 import classes from './ManagePageContainer.module.scss';
 
-import { HasMore, ContainerProps, BoolStateFunc, DataProps } from './types';
-import { capitalizeFirstLetter } from '../../utils';
+import { HasMore, ContainerProps, BoolStateFunc } from './types';
+import { FioNameItemProps } from '../../types';
+import { fioNameLabels } from '../../constants/labels';
 
 const isExpired = (expiration: Date): boolean => {
   const today = new Date();
@@ -38,7 +38,7 @@ const isExpired = (expiration: Date): boolean => {
 const ManagePageContainer: React.FC<ContainerProps> = props => {
   const {
     pageName,
-    data,
+    fioNameList,
     fioWallets,
     fetchDataFn,
     hasMore,
@@ -50,10 +50,11 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
   const [offset, changeOffset] = useState<HasMore>({});
   const [show, handleShowModal] = useState(false);
   const [showSettings, handleShowSettings] = useState(false);
-  const [currentAddress, setCurrentAddress] = useState<DataProps>({});
+  const [currentAddress, setCurrentAddress] = useState<FioNameItemProps>(
+    {},
+  );
 
-  const { screenType } = currentScreenType();
-  const isDesktop = screenType === SCREEN_TYPE.DESKTOP;
+  const isDesktop = checkIfDesktop();
 
   const fioWalletsRef = useRef(fioWallets);
   if (!isEqual(fioWallets, fioWalletsRef)) {
@@ -81,7 +82,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
 
   useEffect(() => {
     toggleShowWarnBadge(
-      data && data.some(dataItem => isExpired(dataItem.expiration)),
+      fioNameList && fioNameList.some(dataItem => isExpired(dataItem.expiration)),
     );
     toggleShowInfoBadge(false); // todo: set dependent on data when move to get_pub_addresses
   }, [fioWalletsRef.current]);
@@ -105,14 +106,14 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     rootMargin: '0px 0px 20px 0px',
   });
 
-  const onItemModalOpen = (dataItem: DataProps) => {
-    setCurrentAddress(dataItem);
+  const onItemModalOpen = (fioNameItem: FioNameItemProps) => {
+    setCurrentAddress(fioNameItem);
     handleShowModal(true);
   };
   const onItemModalClose = () => handleShowModal(false);
 
-  const onSettingsOpen = (dataItem: DataProps) => {
-    setCurrentAddress(dataItem);
+  const onSettingsOpen = (fioNameItem: FioNameItemProps) => {
+    setCurrentAddress(fioNameItem);
     handleShowModal(false);
     handleShowSettings(true);
   };
@@ -139,7 +140,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
   };
 
   const propsToComponents = {
-    data,
+    fioNameList,
     isDesktop,
     pageName,
     showInfoBadge,
@@ -158,12 +159,9 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
         <div className={classes.dataContainer}>
           <p className={classes.subtitle}>
             {pageName === PAGE_NAME.ADDRESS
-              ? `FIO ${capitalizeFirstLetter(
-                  pageName,
-                )}es owned by all your wallets.`
+              ? `FIO ${fioNameLabels[pageName]}es owned by all your wallets.`
               : pageName === PAGE_NAME.DOMAIN
-              ? `FIO ${capitalizeFirstLetter(pageName)}s owned by all your
-            wallets.`
+              ? `FIO ${fioNameLabels[pageName]}s owned by all your wallets.`
               : null}
           </p>
           {isDesktop &&
@@ -193,7 +191,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
       >
         <RenderItemComponent
           {...propsToComponents}
-          data={currentAddress}
+          fioNameItem={currentAddress}
           showWarnBadge={showWarnBadge}
         />
       </Modal>
@@ -207,7 +205,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
         hasDefaultColor={true}
       >
         <RenderItemSettings
-          data={currentAddress}
+          fioNameItem={currentAddress}
           pageName={pageName}
           fioWallets={fioWallets}
         />
