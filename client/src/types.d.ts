@@ -1,5 +1,3 @@
-import {PublicAddress} from "@fioprotocol/fiosdk/src/entities/PublicAddress";
-
 export type Domain = { domain: string; free?: boolean };
 
 export type CartItem = {
@@ -94,12 +92,12 @@ export type FioNameItemProps = {
 };
 
 export type LinkResult = {
-  updated: PublicAddressDoublet[],
-  failed: PublicAddressDoublet[],
-  error?: string | null,
+  updated: PublicAddressDoublet[];
+  failed: PublicAddressDoublet[];
+  error?: string | null;
 };
 
 export type LinkActionResult = {
-  connect: LinkResult,
-  disconnect: LinkResult,
+  connect: LinkResult;
+  disconnect: LinkResult;
 };
