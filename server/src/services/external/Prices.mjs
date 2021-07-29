@@ -19,9 +19,11 @@ export default class Prices extends Base {
         domain: null,
         address: null,
       },
+      usdtRoe: null,
     };
     try {
       const roe = await getROE();
+      pricing.usdtRoe = roe;
       const accountRegFee = await fioApi.registrationFee();
       const accountUsdt = convert(accountRegFee, roe);
       pricing.fioNative.address = accountRegFee;

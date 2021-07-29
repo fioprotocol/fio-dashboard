@@ -31,6 +31,8 @@ export default class Fio {
   sufToAmount = (suf: number): number => FIOSDK.SUFToAmount(suf);
 
   setBaseUrl = (): string => (Transactions.baseUrl = this.baseurl);
+  convert = (amount: number, roe: number): number =>
+    Math.round((amount / (FIOSDK.SUFUnit / 100)) * roe) / 100;
 
   checkWallet = (): void => {
     if (!this.walletFioSDK) throw new Error('No wallet set.');
