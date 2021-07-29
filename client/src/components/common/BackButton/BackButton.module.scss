@@ -1,0 +1,14 @@
+@import '../../../assets/styles/colors.scss';
+
+.arrow {
+  font-size: 1.125em;
+  transition: 0.2s ease-in-out;
+  transform: translateX(0);
+  color: $black;
+
+
+  &:hover {
+    cursor: pointer;
+    transform: translateX(-4px);
+  }
+}

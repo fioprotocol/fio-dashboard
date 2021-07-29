@@ -233,50 +233,6 @@
   }
 }
 
-.errorContainer {
-  display: flex;
-  align-items: flex-start;
-  flex-direction: row;
-
-  .textContainer {
-    display: flex;
-    flex-direction: row;
-    .icon {
-      font-size: 18px;
-    }
-    .text {
-      font-size: 0.925em;
-      margin-left: 0.625rem;
-      margin-right: 1.25rem;
-      margin-bottom: 0;
-    }
-  }
-
-  .button {
-    background-color: $dark;
-    border-radius: 7px;
-    height: 36px;
-    display: flex;
-    flex-direction: row;
-    border: none;
-    justify-items: center;
-    align-items: center;
-    align-self: center;
-    flex-shrink: 0;
-
-    .buttonIcon {
-      font-size: 1.25em;
-    }
-
-    .buttonText {
-      @include sf-pro-display-thin;
-      font-size: 0.8125em;
-      margin-bottom: 0;
-      margin-left: 0.625rem;
-    }
-  }
-}
-
 @include sm {
   .amountTitle {
     font-size: 1.25em;
@@ -320,15 +276,6 @@
       transform: translate(-50%, -50%);
       top: 50%;
       right: -10px;
-    }
-  }
-
-  .errorContainer {
-    flex-direction: column;
-
-    .button {
-      width: 100%;
-      margin-top: 1.25rem;
     }
   }
 }

@@ -23,6 +23,14 @@
         @include proxima-nova-bold;
       }
     }
+
+    .withBack {
+      .title {
+        margin-top: 1rem;
+        font-size: 1.375em;
+        @include proxima-nova-bold;
+      }
+    }
   }
 }
 
@@ -39,6 +47,15 @@
           font-size: 2.125em;
         }
       }
+      .withBack {
+        .title {
+          margin-top: 1.25rem;
+          font-size: 1.875em;
+        }
+      }
+    }
+    &.autoWidth {
+      width: fit-content;
     }
   }
 }

@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { SCREEN_TYPE } from './constants/screen';
 
+const MOBILE_THRESHOLD = 480;
+const TABLET_THRESHOLD = 1024;
+
 function getWindowSize() {
   const { innerWidth: width, innerHeight: height } = window;
   return {
@@ -27,12 +30,14 @@ export function useWindowSize() {
 export function currentScreenType() {
   const { width } = useWindowSize();
 
-  if (width <= 480) return { screenType: SCREEN_TYPE.MOBILE };
-  if (width > 480 && width < 1024) return { screenType: SCREEN_TYPE.TABLET };
+  if (width <= MOBILE_THRESHOLD) return { screenType: SCREEN_TYPE.MOBILE };
+  if (width > MOBILE_THRESHOLD && width < TABLET_THRESHOLD)
+    return { screenType: SCREEN_TYPE.TABLET };
   return { screenType: SCREEN_TYPE.DESKTOP };
 }
 
-export const isDesktop = () => {
-  const { screenType } = currentScreenType();
-  return screenType === SCREEN_TYPE.DESKTOP;
-};
+export function checkIfDesktop() {
+  const { width } = useWindowSize();
+
+  return width >= TABLET_THRESHOLD;
+}

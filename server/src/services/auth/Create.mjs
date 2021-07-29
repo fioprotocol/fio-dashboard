@@ -4,7 +4,7 @@ import { generate } from './authToken';
 
 import { User, Nonce, Wallet } from '../../models';
 
-const EXPIRATION_TIME = 1000 * 60 * 30;
+const EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 1 day
 
 export default class AuthCreate extends Base {
   static get validationRules() {

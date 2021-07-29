@@ -22,6 +22,8 @@ const ROUTES = {
   FIO_ADDRESS_OWNERSHIP: '/fio-address-ownership',
   FIO_DOMAIN_OWNERSHIP: '/fio-domain-ownership',
   FIO_DOMAIN_STATUS_CHANGE: '/fio-domain-status-change',
+  FIO_ADDRESS_TRANSFER_SUCCESS: '/fio-address-transfer-success',
+  FIO_DOMAIN_TRANSFER_SUCCESS: '/fio-domain-transfer-success',
 };
 
 export { ROUTES };

@@ -4,7 +4,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Badge from '../Badge/Badge';
 import classes from './InfoBadge.module.scss';
 
-const InfoBadge = props => {
+type Props = {
+  message: string;
+  show: boolean;
+  title: string;
+  type: string;
+};
+
+const InfoBadge: React.FC<Props> = props => {
   const { title, type, show, message } = props;
   return (
     <Badge type={type} show={show}>

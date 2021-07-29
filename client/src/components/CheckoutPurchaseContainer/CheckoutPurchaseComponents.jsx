@@ -4,37 +4,26 @@ import classnames from 'classnames';
 import isEmpty from 'lodash/isEmpty';
 
 import CartItem from '../Cart/CartItem';
+import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
+import PriceBadge from '../Badges/PriceBadge/PriceBadge';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { totalCost } from '../../utils';
 
 import classes from './CheckoutPurchaseContainer.module.scss';
 
-const RenderTotalBadge = ({ fio, usdc, costFree, customTitle, customType }) => (
-  <Badge type={customType || BADGE_TYPES.BLACK} show>
-    <div className={classnames(classes.item, classes.total)}>
-      <span className="boldText">{customTitle || 'Total Cost'}</span>
-      <p className={classes.totalPrice}>
-        <span className="boldText">
-          {fio && usdc ? `${fio} FIO / ${usdc} USDC` : costFree}
-        </span>
-      </p>
-    </div>
-  </Badge>
+const RenderTotalBadge = ({ costFio, costUsdc, costFree }) => (
+  <PriceBadge
+    costFio={costFio}
+    costFree={costFree}
+    costUsdc={costUsdc}
+    title="Total Cost"
+    type={BADGE_TYPES.BLACK}
+  />
 );
 
 export const RenderCheckout = props => {
-  const { cart, isDesktop, currentWallet } = props;
+  const { cart, currentWallet } = props;
   const { costFio, costUsdc, costFree } = totalCost(cart);
-
-  const walletBalance = (costFio, costUsdc) => {
-    const wallet = currentWallet.balance || 0;
-    let walletUsdc = 0;
-    if (wallet > 0) {
-      walletUsdc = (wallet * costUsdc) / costFio;
-    }
-    return `${wallet && wallet.toFixed(2)} FIO / ${walletUsdc &&
-      walletUsdc.toFixed(2)} USDC`;
-  };
 
   return (
     <>
@@ -45,31 +34,17 @@ export const RenderCheckout = props => {
       </div>
       <div className={classes.details}>
         <h6 className={classes.subtitle}>Payment Details</h6>
-        <RenderTotalBadge fio={costFio} usdc={costUsdc} costFree={costFree} />
-        {!isDesktop && !costFree && (
-          <h6 className={classnames(classes.subtitle, classes.paymentTitle)}>
-            Paying With
-          </h6>
-        )}
-        {!costFree && (
-          <Badge type={BADGE_TYPES.WHITE} show>
-            <div className={classes.item}>
-              {isDesktop && (
-                <span className={classnames('boldText', classes.title)}>
-                  Paying With
-                </span>
-              )}
-              <div className={classes.wallet}>
-                <p className={classes.title}>
-                  <span className="boldText">FIO Wallet</span>
-                </p>
-                <p className={classes.balance}>
-                  (Available Balance {walletBalance(costFio, costUsdc)})
-                </p>
-              </div>
-            </div>
-          </Badge>
-        )}
+        <RenderTotalBadge
+          costFio={costFio}
+          costUsdc={costUsdc}
+          costFree={costFree}
+        />
+        <PayWithBadge
+          costFree={costFree}
+          costFio={costFio}
+          costUsdc={costUsdc}
+          currentWallet={currentWallet}
+        />
       </div>
     </>
   );
@@ -90,8 +65,8 @@ export const RenderPurchase = props => {
     costFree: errFree,
   } = totalCost(errItems);
 
-  let customTitle = '',
-    customType = '',
+  let customTitle = 'Total Cost',
+    customType = BADGE_TYPES.BLACK,
     totalSubtitle = 'Payment Details';
 
   if (hasErrors) {
@@ -112,8 +87,8 @@ export const RenderPurchase = props => {
             <CartItem item={item} key={item.id} />
           ))}
           <RenderTotalBadge
-            fio={regCostFio}
-            usdc={regCostUsdc}
+            costFio={regCostFio}
+            costUsdc={regCostUsdc}
             costFree={regFree}
           />
         </div>
@@ -153,12 +128,12 @@ export const RenderPurchase = props => {
               <CartItem item={item} key={item.id} />
             ))}
             {!errFree && !allErrored && (
-              <RenderTotalBadge
-                fio={errCostFio}
-                usdc={errCostUsdc}
+              <PriceBadge
+                costFio={errCostFio}
+                costUsdc={errCostUsdc}
                 costFree={errFree}
-                customTitle={customTitle}
-                customType={customType}
+                title={customTitle}
+                type={customType}
               />
             )}
           </div>
