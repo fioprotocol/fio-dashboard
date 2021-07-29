@@ -17,6 +17,8 @@ import PurchasePage from './pages/PurchasePage';
 import ScrollToTop from './components/ScrollToTop';
 import FioAddressTransferPage from './pages/FioAddressTransferPage';
 import FioDomainTransferPage from './pages/FioDomainTransferPage';
+import FioAddressTransferSuccessPage from './pages/FioAddressTransferSuccessPage';
+import FioDomainTransferSuccessPage from './pages/FioDomainTransferSuccessPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -54,10 +56,20 @@ const Routes = () => (
           path={`${ROUTES.FIO_ADDRESS_OWNERSHIP}/:id`}
           component={FioAddressTransferPage}
         />
-
         <PrivateRoute
           path={`${ROUTES.FIO_DOMAIN_OWNERSHIP}/:id`}
           component={FioDomainTransferPage}
+        />
+
+        <PrivateRoute
+          path={ROUTES.FIO_ADDRESS_TRANSFER_SUCCESS}
+          component={FioAddressTransferSuccessPage}
+          excat
+        />
+        <PrivateRoute
+          path={ROUTES.FIO_DOMAIN_TRANSFER_SUCCESS}
+          component={FioDomainTransferSuccessPage}
+          excat
         />
 
         <AuthContainer />

@@ -54,5 +54,8 @@
         }
       }
     }
+    &.autoWidth {
+      width: fit-content;
+    }
   }
 }

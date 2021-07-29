@@ -1,11 +1,27 @@
-@import '../../assets/styles/colors.scss';
-@import '../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
-  .name {
+  .badgeContainer {
+    max-width: 500px;
+  }
+  .nameContainer {
+    display: grid;
+    grid-template-columns: 80px auto;
     font-size: 1em;
     margin-top: 20px;
     @include proxima-nova-semibold;
+    max-width: 500px;
+
+    @include sm {
+      grid-template-columns: auto;
+    }
+
+    .name {
+      word-break: break-all;
+      @include proxima-nova-semibold;
+    }
   }
 
   .label {

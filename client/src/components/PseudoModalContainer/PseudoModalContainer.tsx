@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import CloseButton from '../CloseButton/CloseButton';
 import BackButton from '../common/BackButton/BackButton';
 
@@ -6,15 +7,21 @@ import classes from './PseudoModalContainer.module.scss';
 
 type Props = {
   children?: React.ReactNode;
+  hasAutoWidth?: boolean;
   link?: string;
   onClose?: () => void;
   title: string;
 };
 
 const PseudoModalContainer: React.FC<Props> = props => {
-  const { children, link, onClose, title } = props;
+  const { children, hasAutoWidth, link, onClose, title } = props;
   return (
-    <div className={classes.container}>
+    <div
+      className={classnames(
+        classes.container,
+        hasAutoWidth && classes.autoWidth,
+      )}
+    >
       <div className={classes.actionContainer}>
         {onClose && (
           <div className={classes.withClose}>

@@ -2,16 +2,16 @@ import { connect } from 'react-redux';
 import { reduxForm } from 'redux-form';
 import { createStructuredSelector } from 'reselect';
 
-import { compose } from '../../utils';
+import { compose } from '../../../utils';
 
-import { refreshBalance } from '../../redux/fio/actions';
+import { refreshBalance } from '../../../redux/fio/actions';
 
-import { isProcessing } from '../../redux/registrations/selectors';
-import { loading } from '../../redux/fio/selectors';
+import { isProcessing } from '../../../redux/registrations/selectors';
+import { loading } from '../../../redux/fio/selectors';
 
-import { AddressDomainTransferContainer } from './AddressDomainTransferContainer';
-import { emptyWallet } from '../../redux/fio/reducer';
-import { FioWalletDoublet, FioNameItemProps } from '../../types';
+import { FioNameTransferContainer } from './FioNameTransferContainer';
+import { emptyWallet } from '../../../redux/fio/reducer';
+import { FioWalletDoublet, FioNameItemProps } from '../../../types';
 import { ContainerOwnProps } from './types';
 
 const formConnect = reduxForm({
@@ -34,7 +34,7 @@ const reduxConnect = connect(
         fioNameList.find(
           ({ name: itemName }: FioNameItemProps) => itemName === name,
         );
-      return selected.walletPublicKey || '';
+      return (selected && selected.walletPublicKey) || '';
     },
     currentWallet: (state: any, ownProps: ContainerOwnProps & any) => {
       // todo: fix ownProps type
@@ -45,7 +45,7 @@ const reduxConnect = connect(
         fioNameList.find(
           ({ name: itemName }: FioNameItemProps) => itemName === name,
         );
-      const walletPublicKey = selected.walletPublicKey || '';
+      const walletPublicKey = (selected && selected.walletPublicKey) || '';
       const currentWallet: FioWalletDoublet =
         fioWallets &&
         fioWallets.find(
@@ -57,7 +57,4 @@ const reduxConnect = connect(
   { refreshBalance },
 );
 
-export default compose(
-  reduxConnect,
-  formConnect,
-)(AddressDomainTransferContainer);
+export default compose(reduxConnect, formConnect)(FioNameTransferContainer);

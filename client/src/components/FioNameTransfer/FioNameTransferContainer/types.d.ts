@@ -1,13 +1,16 @@
+import { History } from 'history';
+
 import {
   FioWalletDoublet,
   PageNameType,
   FioNameItemProps,
-} from '../../types';
+} from '../../../types';
 
 export type ContainerOwnProps = {
   fioNameList: FioNameItemProps[];
   name: string;
   pageName: PageNameType;
+  history: History;
 };
 
 export type ContainerProps = {
