@@ -9,16 +9,16 @@ import PriceBadge from '../../Badges/PriceBadge/PriceBadge';
 import { fioNameLabels } from '../../../constants/labels';
 import { ROUTES } from '../../../constants/routes';
 
-import { FioTransferSuccessProps, HistoryLocationStateProps } from './types';
+import { FioTransferFinishProps, HistoryLocationStateProps } from './types';
 
-import classes from './FioNameTransferSuccess.module.scss';
+import classes from './FioNameTransferFinish.module.scss';
 
 const REDIRECT = {
   address: ROUTES.FIO_ADDRESSES,
   domain: ROUTES.FIO_DOMAINS,
 };
 
-const FioNameTransferSuccess: React.FC<FioTransferSuccessProps &
+const FioNameTransferSuccess: React.FC<FioTransferFinishProps &
   RouteComponentProps &
   HistoryLocationStateProps> = props => {
   const { history, location, pageName } = props;
