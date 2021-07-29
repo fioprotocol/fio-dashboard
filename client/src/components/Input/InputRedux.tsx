@@ -118,7 +118,14 @@ const InputRedux: React.FC<Props> = props => {
         )}
         {showCopyButton && (
           <CopyButton
-            onClick={() => console.log('click')} // todo: set action
+            onClick={async () => {
+              try {
+                const data = await navigator.clipboard.readText();
+                onChange(data);
+              } catch (e) {
+                console.error('Paste error: ', e);
+              }
+            }}
             uiType={uiType}
           />
         )}
