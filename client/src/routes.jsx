@@ -19,6 +19,8 @@ import FioAddressTransferPage from './pages/FioAddressTransferPage';
 import FioDomainTransferPage from './pages/FioDomainTransferPage';
 import FioAddressTransferSuccessPage from './pages/FioAddressTransferSuccessPage';
 import FioDomainTransferSuccessPage from './pages/FioDomainTransferSuccessPage';
+import FioDomainStatusChangePage from './pages/FioDomainStatusChangePage';
+import FioDomainStatusChangeFinishPage from './pages/FioDomainStatusChangeFinishPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -69,6 +71,17 @@ const Routes = () => (
         <PrivateRoute
           path={ROUTES.FIO_DOMAIN_TRANSFER_SUCCESS}
           component={FioDomainTransferSuccessPage}
+          excat
+        />
+
+        <PrivateRoute
+          path={ROUTES.FIO_DOMAIN_STATUS_CHANGE}
+          component={FioDomainStatusChangePage}
+          excat
+        />
+        <PrivateRoute
+          path={ROUTES.FIO_DOMAIN_STATUS_FINISH}
+          component={FioDomainStatusChangeFinishPage}
           excat
         />
 
