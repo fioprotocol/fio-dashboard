@@ -3,7 +3,7 @@ import { Field, InjectedFormProps } from 'redux-form';
 import { Button } from 'react-bootstrap';
 
 import PseudoModalContainer from '../../PseudoModalContainer';
-import InputRedux from '../../Input/InputRedux';
+import InputRedux, { INPUT_UI_STYLES } from '../../Input/InputRedux';
 import { BADGE_TYPES } from '../../Badge/Badge';
 import PriceBadge from '../../Badges/PriceBadge/PriceBadge';
 import PayWithBadge from '../../Badges/PayWithBadge/PayWithBadge';
@@ -13,7 +13,6 @@ import InfoBadge from '../../InfoBadge/InfoBadge';
 import { ROUTES } from '../../../constants/routes';
 import { ContainerProps } from './types';
 
-import colors from '../../../assets/styles/colorsToJs.module.scss';
 import classes from './FioNameTransferContainer.module.scss';
 import { fioNameLabels } from '../../../constants/labels';
 
@@ -59,11 +58,6 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
 
   const fioNameLabel = fioNameLabels[pageName];
   const title = `Transfer FIO ${fioNameLabel} Ownership`;
-  const inputColorSchema = {
-    backgroundColor: colors.white,
-    borderColor: colors.white,
-    color: colors['gray-main'],
-  };
 
   const hasLowBalance =
     currentWallet && feePrice && currentWallet.balance < feePrice.costFio;
@@ -105,8 +99,8 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
             type="text"
             placeholder={PLACEHOLDER}
             component={InputRedux}
-            colorSchema={inputColorSchema}
             showCopyButton={true}
+            uiType={INPUT_UI_STYLES.BLACK_WHITE}
           />
           <p className={classes.label}>{fioNameLabel} Transfer Cost</p>
           <PriceBadge
