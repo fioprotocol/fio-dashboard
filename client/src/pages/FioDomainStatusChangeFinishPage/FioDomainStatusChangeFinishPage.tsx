@@ -1,10 +1,9 @@
 import React from 'react';
 import FioDomainStatusChangeFinish from '../../components/FioDomainStatusChange/FioDomainStatusChangeFinish';
+import { ComponentProps } from '../../components/FioDomainStatusChange/FioDomainStatusChangeFinish/types';
 
-type Props = {};
-
-const FioDomainStatusChangeFinishPage: React.FC<Props> = props => {
-  return <FioDomainStatusChangeFinish />;
+const FioDomainStatusChangeFinishPage: React.FC<ComponentProps> = props => {
+  return <FioDomainStatusChangeFinish {...props} />;
 };
 
 export default FioDomainStatusChangeFinishPage;
