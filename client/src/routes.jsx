@@ -75,9 +75,8 @@ const Routes = () => (
         />
 
         <PrivateRoute
-          path={ROUTES.FIO_DOMAIN_STATUS_CHANGE}
+          path={`${ROUTES.FIO_DOMAIN_STATUS_CHANGE}/:id`}
           component={FioDomainStatusChangePage}
-          excat
         />
         <PrivateRoute
           path={ROUTES.FIO_DOMAIN_STATUS_FINISH}

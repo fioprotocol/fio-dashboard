@@ -169,7 +169,7 @@ export const DesktopComponents: React.FC<DefaultProps> = props => {
       )}
       {fioNameList &&
         fioNameList.map(fioNameItem => {
-          const { name, remaining, expiration, is_public } = fioNameItem;
+          const { name, remaining, expiration, isPublic } = fioNameItem;
           if (pageName === PAGE_NAME.ADDRESS) {
             return (
               <React.Fragment key={name}>
@@ -209,10 +209,10 @@ export const DesktopComponents: React.FC<DefaultProps> = props => {
                   <div
                     className={classnames(
                       classes.domainType,
-                      is_public && classes.public,
+                      isPublic && classes.public,
                     )}
                   >
-                    {is_public ? DOMAIN_TYPE.PUBLIC : DOMAIN_TYPE.PRIVATE}
+                    {isPublic ? DOMAIN_TYPE.PUBLIC : DOMAIN_TYPE.PRIVATE}
                   </div>
                 </div>
                 <div className={classes.tableCol}>
@@ -299,7 +299,7 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
     isDesktop,
     onSettingsOpen,
   } = props;
-  const { name, remaining, expiration, is_public } = fioNameItem || {};
+  const { name, remaining, expiration, isPublic } = fioNameItem || {};
   return (
     <div className={classes.itemContainer}>
       <h4 className={classes.title}>{fioNameLabels[pageName]} Details</h4>
@@ -345,10 +345,10 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
             <div
               className={classnames(
                 classes.domainType,
-                is_public && classes.public,
+                isPublic && classes.public,
               )}
             >
-              {is_public ? DOMAIN_TYPE.PUBLIC : DOMAIN_TYPE.PRIVATE}
+              {isPublic ? DOMAIN_TYPE.PUBLIC : DOMAIN_TYPE.PRIVATE}
             </div>
           </>
         )}
@@ -401,7 +401,7 @@ export const RenderItemSettings: React.FC<SettingsProps> = props => {
             public.
           </p>
           <Link
-            to={ROUTES.FIO_DOMAIN_STATUS_CHANGE}
+            to={`${ROUTES.FIO_DOMAIN_STATUS_CHANGE}/${fioName}`}
             className={classes.buttonLink}
           >
             <Button className={classes.button}>Make Domain Public</Button>

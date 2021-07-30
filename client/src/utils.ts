@@ -5,6 +5,7 @@ import {
   CartItem,
   DeleteCartItem,
   Domain,
+  FioNameItemProps,
   Prices,
   RegistrationResult,
   WalletKeysObj,
@@ -368,4 +369,20 @@ export const waitForEdgeAccountStop = async (edgeAccount: EdgeAccount) => {
   } catch (e) {
     //
   }
+};
+
+export const getElementListByFioName = ({
+  fioNameList,
+  name,
+}: {
+  fioNameList: FioNameItemProps[];
+  name: string;
+}) => {
+  return (
+    (fioNameList &&
+      fioNameList.find(
+        ({ name: itemName }: FioNameItemProps) => itemName === name,
+      )) ||
+    {}
+  );
 };
