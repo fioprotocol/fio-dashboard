@@ -24,6 +24,7 @@ type Props = {
   showCopyButton?: boolean;
   suffix?: string;
   type: string;
+  errorType?: string;
   uiType?: string;
 };
 
@@ -39,6 +40,7 @@ const InputRedux: React.FC<Props> = props => {
     showCopyButton,
     suffix = '',
     type,
+    errorType = '',
     uiType,
     ...rest
   } = props;
@@ -142,6 +144,7 @@ const InputRedux: React.FC<Props> = props => {
           error={error}
           hasError={hasError}
           submitError={submitError}
+          type={errorType}
         />
       )}
     </div>

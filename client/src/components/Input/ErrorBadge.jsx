@@ -1,10 +1,24 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import { BADGE_TYPES } from '../Badge/Badge';
+import InfoBadge from '../InfoBadge/InfoBadge';
 import classes from './Input.module.scss';
 
+export const ERROR_UI_TYPE = {
+  TEXT: 'TEXT',
+  BADGE: 'BADGE',
+};
+
 export const ErrorBadge = props => {
-  const { error, hasError, data, submitError, wrap = false } = props;
+  const {
+    error,
+    hasError,
+    data = {},
+    submitError,
+    wrap = false,
+    type = ERROR_UI_TYPE.TEXT,
+  } = props;
   const renderError = () => (
     <div
       className={classnames(
@@ -16,6 +30,17 @@ export const ErrorBadge = props => {
       {hasError && (error || data.error || submitError)}
     </div>
   );
+
+  if (type === ERROR_UI_TYPE.BADGE) {
+    return (
+      <InfoBadge
+        message={error}
+        show={hasError}
+        title="Try again!"
+        type={BADGE_TYPES.ERROR}
+      />
+    );
+  }
 
   if (wrap) {
     return <div className={classes.regInputWrapper}>{renderError()}</div>;
