@@ -1,3 +1,4 @@
+import { FormErrors } from 'redux-form';
 import { History } from 'history';
 
 import {
@@ -19,5 +20,13 @@ export type ContainerProps = {
   walletPublicKey: string;
   currentWallet: FioWalletDoublet;
   loading: boolean;
+  transferAddressValue: string;
   refreshBalance: (publicKey: string) => void;
+  transfer: (params: {
+    fioName: string;
+    newOwnerFioAddress?: string;
+    newOwnerKey?: string;
+    fee: number;
+    keys: { public: string; private: string };
+  }) => void;
 } & ContainerOwnProps;

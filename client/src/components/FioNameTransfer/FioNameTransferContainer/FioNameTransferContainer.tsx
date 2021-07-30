@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Field, InjectedFormProps } from 'redux-form';
 import { Button } from 'react-bootstrap';
+import debounce from 'lodash/debounce';
 
 import PseudoModalContainer from '../../PseudoModalContainer';
 import InputRedux, { INPUT_UI_STYLES } from '../../Input/InputRedux';
@@ -15,6 +16,7 @@ import { ContainerProps } from './types';
 
 import classes from './FioNameTransferContainer.module.scss';
 import { fioNameLabels } from '../../../constants/labels';
+import { ERROR_UI_TYPE } from '../../Input/ErrorBadge';
 
 const PLACEHOLDER = 'Enter FIO Address or FIO Public Key of New Onwer';
 const FIO_NAME_DATA = {
@@ -44,17 +46,41 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
     currentWallet,
     feePrice,
     history,
-    handleSubmit,
     name,
     pageName,
     refreshBalance,
+    transferAddressValue,
+    asyncValidate,
+    valid,
+    dirty,
+    asyncValidating,
   } = props;
 
   const { costFio, costUsdc } = feePrice;
+  const [formIsValid, setFormIsValid] = useState(false);
 
   useEffect(() => {
     refreshBalance(walletPublicKey);
   }, []);
+
+  useEffect(() => {
+    setFormIsValid(valid && !asyncValidating && dirty);
+  }, [asyncValidating]);
+
+  useEffect(() => {
+    setFormIsValid(false);
+  }, [transferAddressValue]);
+
+  const debouncedValidate = useCallback(
+    debounce(() => {
+      asyncValidate();
+    }, 500),
+    [],
+  );
+
+  const handleSubmit = () => {
+    //
+  };
 
   const fioNameLabel = fioNameLabels[pageName];
   const title = `Transfer FIO ${fioNameLabel} Ownership`;
@@ -93,12 +119,15 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
         <p className={classes.label}>Transfer Information</p>
         <form onSubmit={handleSubmit} className={classes.form}>
           <Field
-            name={pageName}
+            name="transferAddress"
             type="text"
             placeholder={PLACEHOLDER}
             component={InputRedux}
             showCopyButton={true}
             uiType={INPUT_UI_STYLES.BLACK_WHITE}
+            onChange={debouncedValidate}
+            errorType={ERROR_UI_TYPE.BADGE}
+            loading={asyncValidating}
           />
           <p className={classes.label}>{fioNameLabel} Transfer Cost</p>
           <PriceBadge
@@ -118,7 +147,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
           />
           <Button
             className={classes.button}
-            disabled={hasLowBalance}
+            disabled={hasLowBalance || !formIsValid}
             onClick={handleTransfer}
           >
             Transfer Now

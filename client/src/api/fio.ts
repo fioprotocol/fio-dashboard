@@ -31,6 +31,12 @@ export default class Fio {
   sufToAmount = (suf: number): number => FIOSDK.SUFToAmount(suf);
 
   setBaseUrl = (): string => (Transactions.baseUrl = this.baseurl);
+
+  isFioAddressValid = (value: string): boolean =>
+    FIOSDK.isFioAddressValid(value);
+  isFioPublicKeyValid = (value: string): boolean =>
+    FIOSDK.isFioPublicKeyValid(value);
+
   convert = (amount: number, roe: number): number =>
     Math.round((amount / (FIOSDK.SUFUnit / 100)) * roe) / 100;
 

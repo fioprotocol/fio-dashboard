@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
-import { reduxForm } from 'redux-form';
+import { reduxForm, formValueSelector } from 'redux-form';
 import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../../utils';
 
-import { refreshBalance } from '../../../redux/fio/actions';
+import { refreshBalance, transfer } from '../../../redux/fio/actions';
 
 import { isProcessing } from '../../../redux/registrations/selectors';
 import { loading } from '../../../redux/fio/selectors';
@@ -13,10 +13,13 @@ import { FioNameTransferContainer } from './FioNameTransferContainer';
 import { emptyWallet } from '../../../redux/fio/reducer';
 import { FioWalletDoublet, FioNameItemProps } from '../../../types';
 import { ContainerOwnProps } from './types';
+import { validate } from './validation';
 
 const formConnect = reduxForm({
   form: 'transfer',
   getFormState: state => state.reduxForm,
+  asyncValidate: validate,
+  asyncChangeFields: [],
 });
 
 const feePrice = () => ({ costFio: 45.0, costUsdc: 1.0 }); //todo: get real fee data
@@ -53,8 +56,16 @@ const reduxConnect = connect(
         );
       return currentWallet || emptyWallet;
     },
+    transferAddressValue: (state: any) =>
+      formValueSelector('transfer', (state: any) => state.reduxForm)(
+        state,
+        'transferAddress',
+      ),
   }),
-  { refreshBalance },
+  {
+    refreshBalance,
+    transfer,
+  },
 );
 
 export default compose(reduxConnect, formConnect)(FioNameTransferContainer);
