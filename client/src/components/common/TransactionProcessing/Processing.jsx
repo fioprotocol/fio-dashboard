@@ -1,8 +1,8 @@
 import React from 'react';
-import Modal from '../Modal/Modal';
+import Modal from '../../Modal/Modal';
 
-import logoAnimation from '../CreateAccountForm/logo-animation.json';
-import classes from './CheckoutPurchaseContainer.module.scss';
+import logoAnimation from '../../CreateAccountForm/logo-animation.json';
+import classes from '../../CheckoutPurchaseContainer/CheckoutPurchaseContainer.module.scss';
 
 const Processing = props => {
   return (
