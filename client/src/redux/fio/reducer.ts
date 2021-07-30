@@ -157,6 +157,7 @@ export default combineReducers({
         }
         return fioAddresses;
       }
+      case actions.TRANSFER_SUCCESS:
       case LOGOUT_SUCCESS:
         return [];
       default:
@@ -186,6 +187,7 @@ export default combineReducers({
         }
         return fioDomains;
       }
+      case actions.TRANSFER_SUCCESS:
       case LOGOUT_SUCCESS:
         return [];
       default:
@@ -212,6 +214,22 @@ export default combineReducers({
     switch (action.type) {
       case actions.GET_FEE_SUCCESS:
         return { ...state, [action.endpoint]: action.data.fee };
+      default:
+        return state;
+    }
+  },
+  transactionResult(state: { [actionName: string]: any } = {}, action) {
+    switch (action.type) {
+      case actions.TRANSFER_REQUEST:
+      case actions.SET_VISIBILITY_REQUEST:
+        return { ...state, [action.actionName]: null };
+      case actions.RESET_TRANSACTION_RESULT:
+        return { ...state, [action.data]: null };
+      case actions.SET_VISIBILITY_SUCCESS:
+      case actions.SET_VISIBILITY_FAILURE:
+      case actions.TRANSFER_SUCCESS:
+      case actions.TRANSFER_FAILURE:
+        return { ...state, [action.actionName]: action.data };
       default:
         return state;
     }

@@ -1,3 +1,5 @@
+import { EdgeAccount } from 'edge-core-js';
+
 export type Domain = { domain: string; free?: boolean };
 
 export type CartItem = {
@@ -100,4 +102,12 @@ export type LinkResult = {
 export type LinkActionResult = {
   connect: LinkResult;
   disconnect: LinkResult;
+};
+
+export type PinConfirmation = {
+  account?: EdgeAccount;
+  keys?: { [walletId: string]: { private: string; public: string } };
+  action?: string;
+  data?: any;
+  error?: string | Error;
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { RouteComponentProps } from 'react-router-dom';
 
@@ -22,7 +22,7 @@ const REDIRECT = {
 const FioNameTransferSuccess: React.FC<FioTransferResultsProps &
   RouteComponentProps &
   HistoryLocationStateProps> = props => {
-  const { history, location, pageName } = props;
+  const { history, location, pageName, resetTransactionResult } = props;
   const {
     state: {
       feeCollected: { costFio, costUsdc },
@@ -31,6 +31,13 @@ const FioNameTransferSuccess: React.FC<FioTransferResultsProps &
       error,
     },
   } = location;
+
+  useEffect(
+    () => () => {
+      resetTransactionResult();
+    },
+    [],
+  );
 
   const onCloseClick = () => {
     history.push(REDIRECT[pageName]);
