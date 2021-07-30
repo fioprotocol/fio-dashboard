@@ -93,6 +93,13 @@ export const getFioPubAddress = (fioAddress: string) => ({
   promise: (api: Api) => api.fio.getFioPublicAddress(fioAddress),
 });
 
+export const RESET_TRANSACTION_RESULT = `${prefix}/RESET_TRANSACTION_RESULT`;
+
+export const resetTransactionResult = (actionName: string) => ({
+  type: RESET_TRANSACTION_RESULT,
+  data: actionName,
+});
+
 export const TRANSFER_REQUEST = `${prefix}/TRANSFER_REQUEST`;
 export const TRANSFER_SUCCESS = `${prefix}/TRANSFER_SUCCESS`;
 export const TRANSFER_FAILURE = `${prefix}/TRANSFER_FAILURE`;
@@ -122,12 +129,14 @@ export const transfer = ({
     api.fio.setWalletFioSdk(keys);
     try {
       const result = await api.fio.transfer(fioName, newOwnerKey, fee);
-      return result;
+      api.fio.clearWalletFioSdk();
+      return { ...result, newOwnerKey };
     } catch (e) {
       api.fio.clearWalletFioSdk();
       throw e;
     }
   },
+  actionName: TRANSFER_REQUEST,
 });
 
 export const SET_VISIBILITY_REQUEST = `${prefix}/SET_VISIBILITY_REQUEST`;
@@ -158,12 +167,14 @@ export const setDomainVisibility = ({
         isPublic,
         fee,
       );
+      api.fio.clearWalletFioSdk();
       return result;
     } catch (e) {
       api.fio.clearWalletFioSdk();
       throw e;
     }
   },
+  actionName: SET_VISIBILITY_REQUEST,
 });
 
 export const LINK_TOKENS_REQUEST = `${prefix}/LINK_TOKENS_REQUEST`;
@@ -311,4 +322,5 @@ export const linkTokens = ({
       throw e;
     }
   },
+  actionName: LINK_TOKENS_REQUEST,
 });

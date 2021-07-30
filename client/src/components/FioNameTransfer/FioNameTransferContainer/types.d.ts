@@ -4,8 +4,22 @@ import {
   FioWalletDoublet,
   PageNameType,
   FioNameItemProps,
+  PinConfirmation,
 } from '../../../types';
-import {getPrices} from "../../../redux/registrations/actions";
+
+export type TransferParams = {
+  fioName: string;
+  newOwnerFioAddress?: string;
+  newOwnerKey?: string;
+  fee: number;
+  keys: { public: string; private: string };
+};
+
+export type FeePrice = {
+  nativeFio: number | null;
+  costFio: number | null;
+  costUsdc: number | null;
+};
 
 export type ContainerOwnProps = {
   fioNameList: FioNameItemProps[];
@@ -16,19 +30,18 @@ export type ContainerOwnProps = {
 
 export type ContainerProps = {
   children?: React.ReactNode;
-  feePrice: { costFio: number | null; costUsdc: number | null };
+  feePrice: FeePrice;
   walletPublicKey: string;
   currentWallet: FioWalletDoublet;
+  result: any;
   loading: boolean;
+  transferProcessing: boolean;
   transferAddressValue: string;
   refreshBalance: (publicKey: string) => void;
-  transfer: (params: {
-    fioName: string;
-    newOwnerFioAddress?: string;
-    newOwnerKey?: string;
-    fee: number;
-    keys: { public: string; private: string };
-  }) => void;
-  getFee: (fioName: string) => void;
+  transfer: (params: TransferParams) => void;
+  getFee: (isFioAddress: boolean) => void;
   getPrices: () => void;
+  showPinModal: (action: string) => void;
+  resetPinConfirm: () => void;
+  pinConfirmation: PinConfirmation;
 } & ContainerOwnProps;
