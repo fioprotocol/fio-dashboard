@@ -1,4 +1,3 @@
-import { FormErrors } from 'redux-form';
 import { History } from 'history';
 
 import {
@@ -6,6 +5,7 @@ import {
   PageNameType,
   FioNameItemProps,
 } from '../../../types';
+import {getPrices} from "../../../redux/registrations/actions";
 
 export type ContainerOwnProps = {
   fioNameList: FioNameItemProps[];
@@ -16,7 +16,7 @@ export type ContainerOwnProps = {
 
 export type ContainerProps = {
   children?: React.ReactNode;
-  feePrice: { costFio: number; costUsdc: number };
+  feePrice: { costFio: number | null; costUsdc: number | null };
   walletPublicKey: string;
   currentWallet: FioWalletDoublet;
   loading: boolean;
@@ -29,4 +29,6 @@ export type ContainerProps = {
     fee: number;
     keys: { public: string; private: string };
   }) => void;
+  getFee: (fioName: string) => void;
+  getPrices: () => void;
 } & ContainerOwnProps;

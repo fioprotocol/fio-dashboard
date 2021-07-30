@@ -49,6 +49,8 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
     name,
     pageName,
     refreshBalance,
+    getFee,
+    getPrices,
     transferAddressValue,
     asyncValidate,
     valid,
@@ -60,6 +62,8 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
   const [formIsValid, setFormIsValid] = useState(false);
 
   useEffect(() => {
+    getPrices();
+    getFee(name);
     refreshBalance(walletPublicKey);
   }, []);
 

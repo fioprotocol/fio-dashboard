@@ -13,6 +13,7 @@ import {
 } from '@fioprotocol/fiosdk/src/entities/responses';
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { Transactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
+import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { isDomain } from '../utils';
 
 type FIOSDK_LIB = typeof FIOSDK;
@@ -21,6 +22,9 @@ export default class Fio {
   baseurl: string = process.env.REACT_APP_FIO_BASE_URL;
   publicFioSDK: FIOSDK_LIB | null = null;
   walletFioSDK: FIOSDK_LIB | null = null;
+  actionEndPoints: { [actionName: string]: string } = {
+    ...EndPoint,
+  };
 
   constructor() {
     this.publicFioSDK = new FIOSDK('', '', this.baseurl, window.fetch);
@@ -28,7 +32,10 @@ export default class Fio {
 
   amountToSUF = (amount: number): number => FIOSDK.amountToSUF(amount);
 
-  sufToAmount = (suf: number): number => FIOSDK.SUFToAmount(suf);
+  sufToAmount = (suf?: number): number | null => {
+    if (!suf && suf !== 0) return null;
+    return FIOSDK.SUFToAmount(suf);
+  };
 
   setBaseUrl = (): string => (Transactions.baseUrl = this.baseurl);
 

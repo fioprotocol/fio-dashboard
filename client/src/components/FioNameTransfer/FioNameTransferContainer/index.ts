@@ -2,9 +2,11 @@ import { connect } from 'react-redux';
 import { reduxForm, formValueSelector } from 'redux-form';
 import { createStructuredSelector } from 'reselect';
 
+import apis from '../../../api';
 import { compose } from '../../../utils';
 
-import { refreshBalance, transfer } from '../../../redux/fio/actions';
+import { refreshBalance, transfer, getFee } from '../../../redux/fio/actions';
+import { getPrices } from '../../../redux/registrations/actions';
 
 import { isProcessing } from '../../../redux/registrations/selectors';
 import { loading } from '../../../redux/fio/selectors';
@@ -22,13 +24,29 @@ const formConnect = reduxForm({
   asyncChangeFields: [],
 });
 
-const feePrice = () => ({ costFio: 45.0, costUsdc: 1.0 }); //todo: get real fee data
-
 const reduxConnect = connect(
   createStructuredSelector({
-    feePrice,
     isProcessing,
     loading,
+    feePrice: (state: any) => {
+      const { fees } = state.fio;
+      const { prices } = state.registrations;
+      const fee: { costFio: number | null; costUsdc: number | null } = {
+        costFio: null,
+        costUsdc: null,
+      };
+      fee.costFio = apis.fio.sufToAmount(
+        fees[apis.fio.actionEndPoints.transferFioAddress],
+      );
+      if (fee.costFio && prices.usdtRoe) {
+        fee.costUsdc = apis.fio.convert(
+          fees[apis.fio.actionEndPoints.transferFioAddress],
+          prices.usdtRoe,
+        );
+      }
+
+      return fee;
+    },
     walletPublicKey: (state: any, ownProps: ContainerOwnProps & any) => {
       // todo: set types for state
       const { fioNameList, name } = ownProps;
@@ -65,6 +83,9 @@ const reduxConnect = connect(
   {
     refreshBalance,
     transfer,
+    getPrices,
+    getFee: (fioAddress: string) =>
+      getFee(apis.fio.actionEndPoints.transferFioAddress, fioAddress),
   },
 );
 
