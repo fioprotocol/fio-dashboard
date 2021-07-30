@@ -20,7 +20,7 @@ import { ERROR_UI_TYPE } from '../../Input/ErrorBadge';
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import { hasFioAddressDelimiter, waitForEdgeAccountStop } from '../../../utils';
 import { PinConfirmation } from '../../../types';
-import Processing from '../../CheckoutPurchaseContainer/Processing';
+import Processing from '../../common/TransactionProcessing';
 
 const PLACEHOLDER = 'Enter FIO Address or FIO Public Key of New Onwer';
 const FIO_NAME_DATA = {

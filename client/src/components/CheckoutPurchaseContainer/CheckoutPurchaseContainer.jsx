@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 import isEmpty from 'lodash/isEmpty';
 import PurchaseNow from '../PurchaseNow';
 import { ROUTES } from '../../constants/routes';
-import Processing from './Processing';
+import Processing from '../common/TransactionProcessing';
 
 import classes from './CheckoutPurchaseContainer.module.scss';
 
