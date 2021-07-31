@@ -12,7 +12,7 @@ import LowBalanceBadge from '../../Badges/LowBalanceBadge/LowBalanceBadge';
 import InfoBadge from '../../InfoBadge/InfoBadge';
 
 import { ROUTES } from '../../../constants/routes';
-import { ContainerProps, FeePrice, TransferParams } from './types';
+import { ContainerProps, TransferParams } from './types';
 
 import classes from './FioNameTransferContainer.module.scss';
 import { fioNameLabels } from '../../../constants/labels';
@@ -21,6 +21,7 @@ import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import { hasFioAddressDelimiter, waitForEdgeAccountStop } from '../../../utils';
 import { PinConfirmation } from '../../../types';
 import Processing from '../../common/TransactionProcessing';
+import { Redirect } from 'react-router-dom';
 
 const PLACEHOLDER = 'Enter FIO Address or FIO Public Key of New Onwer';
 const FIO_NAME_DATA = {
@@ -41,6 +42,10 @@ const LOW_BALANCE_TEXT = {
   buttonText: 'Where to Buy',
   messageText:
     'Unfortunately there is not enough FIO available to complete your purchase. Please purchase or deposit additional FIO',
+};
+const REDIRECT = {
+  address: ROUTES.FIO_ADDRESSES,
+  domain: ROUTES.FIO_DOMAINS,
 };
 
 export const FioNameTransferContainer: React.FC<ContainerProps &
@@ -165,6 +170,9 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
 
   const hasLowBalance =
     currentWallet && feePrice && currentWallet.balance < feePrice.costFio;
+
+  if (!walletPublicKey)
+    return <Redirect to={{ pathname: REDIRECT[pageName] }} />;
 
   return (
     <PseudoModalContainer link={FIO_NAME_DATA[pageName].backLink} title={title}>
