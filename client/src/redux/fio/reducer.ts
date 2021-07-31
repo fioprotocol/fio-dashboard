@@ -226,10 +226,14 @@ export default combineReducers({
       case actions.RESET_TRANSACTION_RESULT:
         return { ...state, [action.data]: null };
       case actions.SET_VISIBILITY_SUCCESS:
-      case actions.SET_VISIBILITY_FAILURE:
       case actions.TRANSFER_SUCCESS:
-      case actions.TRANSFER_FAILURE:
         return { ...state, [action.actionName]: action.data };
+      case actions.SET_VISIBILITY_FAILURE:
+      case actions.TRANSFER_FAILURE:
+        return {
+          ...state,
+          [action.actionName]: { error: action.error && action.error.message },
+        };
       default:
         return state;
     }

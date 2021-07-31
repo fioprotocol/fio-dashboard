@@ -86,18 +86,32 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
     setFormIsValid(false);
   }, [transferAddressValue]);
 
+  // Handle pin confirmation
   useEffect(() => {
     submit(pinConfirmation);
   }, [pinConfirmation]);
 
+  // Handle results
   useEffect(() => {
     if (!transferProcessing && processing) {
       setProcessing(false);
 
       resetPinConfirm();
-      if (result && result.feeCollected) {
-        onSuccess(result.feeCollected, result.newOwnerKey);
-      }
+
+      const results = {
+        feeCollected: result.feeCollected || feePrice,
+        name,
+        publicKey:
+          result.newOwnerKey ||
+          (hasFioAddressDelimiter(transferAddressValue)
+            ? ''
+            : transferAddressValue),
+        error: result.error,
+      };
+      history.push({
+        pathname: FIO_NAME_DATA[pageName].forwardLink,
+        state: results,
+      });
     }
   }, [transferProcessing, result]);
 
@@ -144,18 +158,6 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     showPinModal(CONFIRM_PIN_ACTIONS.TRANSFER);
-  };
-
-  const onSuccess = (feeCollected: FeePrice, newOwnerKey: string) => {
-    const results = {
-      feeCollected,
-      name,
-      publicKey: newOwnerKey,
-    };
-    history.push({
-      pathname: FIO_NAME_DATA[pageName].forwardLink,
-      state: results,
-    });
   };
 
   const fioNameLabel = fioNameLabels[pageName];

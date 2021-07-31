@@ -27,7 +27,7 @@ const FioNameTransferSuccess: React.FC<FioTransferResultsProps &
     state: {
       feeCollected: { costFio, costUsdc },
       name,
-      publicKey,
+      publicKey = '-',
       error,
     },
   } = location;
