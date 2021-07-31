@@ -36,6 +36,7 @@
 
 @include lg {
   .container {
+    max-width: 650px;
     width: 42%;
     padding: 1.875rem 1.875rem 3.125rem;
     margin: 6.25rem auto;
@@ -56,6 +57,7 @@
     }
     &.autoWidth {
       width: fit-content;
+      max-width: none;
     }
   }
 }

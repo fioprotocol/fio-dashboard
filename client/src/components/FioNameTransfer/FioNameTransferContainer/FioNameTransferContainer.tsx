@@ -81,14 +81,12 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
   return (
     <PseudoModalContainer link={FIO_NAME_DATA[pageName].backLink} title={title}>
       <div className={classes.container}>
-        <div className={classes.badgeContainer}>
-          <InfoBadge
-            message={FIO_NAME_DATA[pageName].infoMessage}
-            title="Important Information"
-            type={BADGE_TYPES.INFO}
-            show={true}
-          />
-        </div>
+        <InfoBadge
+          message={FIO_NAME_DATA[pageName].infoMessage}
+          title="Important Information"
+          type={BADGE_TYPES.INFO}
+          show={true}
+        />
         <p className={classes.nameContainer}>
           {fioNameLabel}: <span className={classes.name}>{name}</span>
         </p>
