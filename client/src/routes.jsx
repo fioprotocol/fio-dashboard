@@ -17,8 +17,8 @@ import PurchasePage from './pages/PurchasePage';
 import ScrollToTop from './components/ScrollToTop';
 import FioAddressTransferPage from './pages/FioAddressTransferPage';
 import FioDomainTransferPage from './pages/FioDomainTransferPage';
-import FioAddressTransferSuccessPage from './pages/FioAddressTransferSuccessPage';
-import FioDomainTransferSuccessPage from './pages/FioDomainTransferSuccessPage';
+import FioAddressTransferResultsPage from './pages/FioAddressTransferResultsPage';
+import FioDomainTransferResultsPage from './pages/FioDomainTransferResultsPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -63,12 +63,12 @@ const Routes = () => (
 
         <PrivateRoute
           path={ROUTES.FIO_ADDRESS_TRANSFER_SUCCESS}
-          component={FioAddressTransferSuccessPage}
+          component={FioAddressTransferResultsPage}
           excat
         />
         <PrivateRoute
           path={ROUTES.FIO_DOMAIN_TRANSFER_SUCCESS}
-          component={FioDomainTransferSuccessPage}
+          component={FioDomainTransferResultsPage}
           excat
         />
 

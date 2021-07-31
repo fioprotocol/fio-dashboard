@@ -11,14 +11,14 @@ import { ROUTES } from '../../../constants/routes';
 
 import { FioTransferSuccessProps, HistoryLocationStateProps } from './types';
 
-import classes from './FioNameTransferSuccess.module.scss';
+import classes from './FioNameTransferResults.module.scss';
 
 const REDIRECT = {
   address: ROUTES.FIO_ADDRESSES,
   domain: ROUTES.FIO_DOMAINS,
 };
 
-const FioNameTransferSuccess: React.FC<FioTransferSuccessProps &
+const FioNameTransferResults: React.FC<FioTransferSuccessProps &
   RouteComponentProps &
   HistoryLocationStateProps> = props => {
   const { history, location, pageName } = props;
@@ -71,4 +71,4 @@ const FioNameTransferSuccess: React.FC<FioTransferSuccessProps &
   );
 };
 
-export default FioNameTransferSuccess;
+export default FioNameTransferResults;
