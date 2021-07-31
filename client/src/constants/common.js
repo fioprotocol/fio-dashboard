@@ -12,3 +12,8 @@ export const CONFIRM_PIN_ACTIONS = {
 
 export const ADDRESS = 'address';
 export const DOMAIN = 'domain';
+
+export const DOMAIN_STATUS = {
+  PRIVATE: 'private',
+  PUBLIC: 'public',
+};
