@@ -1,7 +1,8 @@
 import { PageNameType } from '../../../types';
 
-export type FioTransferSuccessProps = {
+export type FioTransferResultsProps = {
   pageName: PageNameType;
+  resetTransactionResult: () => void;
 };
 
 export type HistoryLocationStateProps = {
@@ -13,6 +14,7 @@ export type HistoryLocationStateProps = {
       };
       name: string;
       publicKey: string;
+      error?: string;
     };
   };
 };

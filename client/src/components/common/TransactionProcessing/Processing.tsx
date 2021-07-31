@@ -1,12 +1,22 @@
 import React from 'react';
-import Modal from '../Modal/Modal';
+import Modal from '../../Modal/Modal';
 
-import logoAnimation from '../CreateAccountForm/logo-animation.json';
-import classes from './CheckoutPurchaseContainer.module.scss';
+import logoAnimation from '../../CreateAccountForm/logo-animation.json';
+import classes from '../../CheckoutPurchaseContainer/CheckoutPurchaseContainer.module.scss';
 
-const Processing = props => {
+type Props = {
+  isProcessing: boolean;
+};
+
+const Processing = (props: Props) => {
   return (
-    <Modal show={props.isProcessing} backdrop="static" hideCloseButton>
+    <Modal
+      show={props.isProcessing}
+      backdrop="static"
+      hideCloseButton
+      closeButton={null}
+      onClose={null}
+    >
       <div className={classes.processingContainer}>
         <div className={classes.logo}>
           <lottie-player

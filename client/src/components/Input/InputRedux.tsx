@@ -8,14 +8,12 @@ import { ClearInput, CopyButton, ShowPassword } from './InputActionButtons';
 
 import classes from './Input.module.scss';
 
-type ColorSchemaProps = {
-  backgroundColor?: string;
-  borderColor?: string;
-  color?: string;
+export const INPUT_UI_STYLES = {
+  BLACK_LIGHT: 'blackLight',
+  BLACK_WHITE: 'blackWhite',
 };
 
 type Props = {
-  colorSchema?: ColorSchemaProps;
   hideError?: boolean;
   input: any;
   loading?: boolean;
@@ -26,11 +24,12 @@ type Props = {
   showCopyButton?: boolean;
   suffix?: string;
   type: string;
+  errorType?: string;
+  uiType?: string;
 };
 
 const InputRedux: React.FC<Props> = props => {
   const {
-    colorSchema,
     hideError,
     input,
     loading,
@@ -41,6 +40,8 @@ const InputRedux: React.FC<Props> = props => {
     showCopyButton,
     suffix = '',
     type,
+    errorType = '',
+    uiType,
     ...rest
   } = props;
 
@@ -93,10 +94,10 @@ const InputRedux: React.FC<Props> = props => {
           className={classnames(
             classes.regInput,
             hasError && classes.error,
+            uiType && classes[uiType],
             suffix && classes.suffixSpace,
             type === 'password' && classes.doubleIconInput,
           )}
-          style={colorSchema}
           {...input}
           {...rest}
           onChange={e => {
@@ -108,23 +109,26 @@ const InputRedux: React.FC<Props> = props => {
           data-clear={clearInput || showCopyButton}
         />
         {(clearInput || onClose) && !loading && (
-          <ClearInput
-            onClick={onClearInputClick}
-            type={type}
-            color={colorSchema && colorSchema.color}
-          />
+          <ClearInput onClick={onClearInputClick} type={type} uiType={uiType} />
         )}
         {clearInput && type === 'password' && (
           <ShowPassword
             showPass={showPass}
             onClick={onShowPassClick}
-            color={colorSchema && colorSchema.color}
+            uiType={uiType}
           />
         )}
         {showCopyButton && (
           <CopyButton
-            onClick={() => console.log('click')} // todo: set action
-            color={colorSchema && colorSchema.color}
+            onClick={async () => {
+              try {
+                const data = await navigator.clipboard.readText();
+                onChange(data);
+              } catch (e) {
+                console.error('Paste error: ', e);
+              }
+            }}
+            uiType={uiType}
           />
         )}
         {loading && (
@@ -140,6 +144,7 @@ const InputRedux: React.FC<Props> = props => {
           error={error}
           hasError={hasError}
           submitError={submitError}
+          type={errorType}
         />
       )}
     </div>

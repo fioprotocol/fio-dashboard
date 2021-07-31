@@ -1,3 +1,5 @@
+import { EdgeAccount } from 'edge-core-js';
+
 export type Domain = { domain: string; free?: boolean };
 
 export type CartItem = {
@@ -49,6 +51,26 @@ export type FioWalletDoublet = {
   balance?: number | null;
 };
 
+export type FioAddressDoublet = {
+  name: string;
+  expiration: string;
+  remaining: number;
+  walletPublicKey: string;
+};
+
+export type FioDomainDoublet = {
+  name: string;
+  expiration: string;
+  isPublic: number;
+  walletPublicKey: string;
+};
+
+export type PublicAddressDoublet = {
+  publicAddress: string;
+  chainCode: string;
+  tokenCode: string;
+};
+
 export type WalletKeysObj = {
   [walletId: string]: {
     private: string;
@@ -69,4 +91,23 @@ export type FioNameItemProps = {
   remaining?: number;
   is_public?: number;
   walletPublicKey?: string;
+};
+
+export type LinkResult = {
+  updated: PublicAddressDoublet[];
+  failed: PublicAddressDoublet[];
+  error?: string | null;
+};
+
+export type LinkActionResult = {
+  connect: LinkResult;
+  disconnect: LinkResult;
+};
+
+export type PinConfirmation = {
+  account?: EdgeAccount;
+  keys?: { [walletId: string]: { private: string; public: string } };
+  action?: string;
+  data?: any;
+  error?: string | Error;
 };

@@ -6,6 +6,8 @@ export const FIO_WALLET_TYPE = 'wallet:fio';
 export const CONFIRM_PIN_ACTIONS = {
   RECOVERY: 'RECOVERY',
   PURCHASE: 'PURCHASE',
+  TRANSFER: 'TRANSFER',
+  SET_VISIBILITY: 'SET_VISIBILITY',
 };
 
 export const ADDRESS = 'address';

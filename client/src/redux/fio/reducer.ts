@@ -6,16 +6,27 @@ import {
   SIGNUP_SUCCESS,
 } from '../profile/actions';
 import * as actions from './actions';
+import {
+  FioWalletDoublet,
+  FioAddressDoublet,
+  FioDomainDoublet,
+  LinkActionResult,
+} from '../../types';
 
-export const emptyWallet = {
+export const emptyWallet: FioWalletDoublet = {
   id: '',
   name: '',
   publicKey: '',
   balance: null,
 };
 
+const defaultLinkState: LinkActionResult = {
+  connect: { updated: [], failed: [] },
+  disconnect: { updated: [], failed: [] },
+};
+
 export default combineReducers({
-  loading(state = false, action) {
+  loading(state: boolean = false, action) {
     switch (action.type) {
       case actions.REFRESH_BALANCE_REQUEST:
       case actions.GET_FIO_ADDRESSES_REQUEST:
@@ -32,7 +43,40 @@ export default combineReducers({
         return state;
     }
   },
-  fioWallets(state = [], action) {
+  transferProcessing(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.TRANSFER_REQUEST:
+        return true;
+      case actions.TRANSFER_SUCCESS:
+      case actions.TRANSFER_FAILURE:
+        return false;
+      default:
+        return state;
+    }
+  },
+  setVisibilityProcessing(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.SET_VISIBILITY_REQUEST:
+        return true;
+      case actions.SET_VISIBILITY_SUCCESS:
+      case actions.SET_VISIBILITY_FAILURE:
+        return false;
+      default:
+        return state;
+    }
+  },
+  linkProcessing(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.LINK_TOKENS_REQUEST:
+        return true;
+      case actions.LINK_TOKENS_SUCCESS:
+      case actions.LINK_TOKENS_FAILURE:
+        return false;
+      default:
+        return state;
+    }
+  },
+  fioWallets(state: FioWalletDoublet[] = [], action) {
     switch (action.type) {
       case SIGNUP_SUCCESS: {
         const fioWallets = [...state];
@@ -90,7 +134,7 @@ export default combineReducers({
         return state;
     }
   },
-  fioAddresses(state = [], action) {
+  fioAddresses(state: FioAddressDoublet[] = [], action) {
     switch (action.type) {
       case actions.REFRESH_FIO_NAMES_SUCCESS:
       case actions.GET_FIO_ADDRESSES_SUCCESS: {
@@ -113,13 +157,14 @@ export default combineReducers({
         }
         return fioAddresses;
       }
+      case actions.TRANSFER_SUCCESS:
       case LOGOUT_SUCCESS:
         return [];
       default:
         return state;
     }
   },
-  fioDomains(state = [], action) {
+  fioDomains(state: FioDomainDoublet[] = [], action) {
     switch (action.type) {
       case actions.REFRESH_FIO_NAMES_SUCCESS:
       case actions.GET_FIO_DOMAINS_SUCCESS: {
@@ -142,13 +187,14 @@ export default combineReducers({
         }
         return fioDomains;
       }
+      case actions.TRANSFER_SUCCESS:
       case LOGOUT_SUCCESS:
         return [];
       default:
         return state;
     }
   },
-  hasMoreAddresses(state = {}, action) {
+  hasMoreAddresses(state: { [publicKey: string]: number } = {}, action) {
     switch (action.type) {
       case actions.GET_FIO_ADDRESSES_SUCCESS:
         return { ...state, [action.publicKey]: action.data.more };
@@ -156,10 +202,61 @@ export default combineReducers({
         return state;
     }
   },
-  hasMoreDomains(state = {}, action) {
+  hasMoreDomains(state: { [publicKey: string]: number } = {}, action) {
     switch (action.type) {
       case actions.GET_FIO_DOMAINS_SUCCESS:
         return { ...state, [action.publicKey]: action.data.more };
+      default:
+        return state;
+    }
+  },
+  fees(state: { [endpoint: string]: number } = {}, action) {
+    switch (action.type) {
+      case actions.GET_FEE_SUCCESS:
+        return { ...state, [action.endpoint]: action.data.fee };
+      default:
+        return state;
+    }
+  },
+  transactionResult(state: { [actionName: string]: any } = {}, action) {
+    switch (action.type) {
+      case actions.TRANSFER_REQUEST:
+      case actions.SET_VISIBILITY_REQUEST:
+        return { ...state, [action.actionName]: null };
+      case actions.RESET_TRANSACTION_RESULT:
+        return { ...state, [action.data]: null };
+      case actions.SET_VISIBILITY_SUCCESS:
+      case actions.TRANSFER_SUCCESS:
+        return { ...state, [action.actionName]: action.data };
+      case actions.SET_VISIBILITY_FAILURE:
+      case actions.TRANSFER_FAILURE:
+        return {
+          ...state,
+          [action.actionName]: { error: action.error && action.error.message },
+        };
+      default:
+        return state;
+    }
+  },
+  feesLoading(state: { [endpoint: string]: boolean } = {}, action) {
+    switch (action.type) {
+      case actions.GET_FEE_REQUEST:
+        return { ...state, [action.endpoint]: true };
+      case actions.GET_FEE_SUCCESS:
+      case actions.GET_FEE_FAILURE:
+        return { ...state, [action.endpoint]: false };
+      default:
+        return state;
+    }
+  },
+  linkResults(state: LinkActionResult = defaultLinkState, action) {
+    switch (action.type) {
+      case actions.LINK_TOKENS_REQUEST:
+        return defaultLinkState;
+      case actions.LINK_TOKENS_SUCCESS:
+        return action.data;
+      case actions.LINK_TOKENS_FAILURE:
+        return { ...defaultLinkState, error: action.data };
       default:
         return state;
     }

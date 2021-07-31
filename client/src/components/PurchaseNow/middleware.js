@@ -90,7 +90,6 @@ export const executeRegistration = async (
   fees,
   verifyParams = {},
 ) => {
-  await sleep(3000); // todo: added for testnet env because edge fio plugin rewriting base url after pin confirmation. Need to figure out how to be sure that fio engine is killed or fix transaction global base url const in FIOSDK
   const result = { errors: [], registered: [], partial: [] };
   const registrations = makeRegistrationOrder([...items], fees);
   const registrationPromises = [];
