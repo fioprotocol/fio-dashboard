@@ -1,6 +1,6 @@
 import { PageNameType } from '../../../types';
 
-export type FioTransferSuccessProps = {
+export type FioTransferResultsProps = {
   pageName: PageNameType;
 };
 

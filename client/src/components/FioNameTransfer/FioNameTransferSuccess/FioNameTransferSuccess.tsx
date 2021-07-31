@@ -10,7 +10,7 @@ import InfoBadge from '../../InfoBadge/InfoBadge';
 import { fioNameLabels } from '../../../constants/labels';
 import { ROUTES } from '../../../constants/routes';
 
-import { FioTransferSuccessProps, HistoryLocationStateProps } from './types';
+import { FioTransferResultsProps, HistoryLocationStateProps } from './types';
 
 import classes from './FioNameTransferSuccess.module.scss';
 
@@ -19,7 +19,7 @@ const REDIRECT = {
   domain: ROUTES.FIO_DOMAINS,
 };
 
-const FioNameTransferSuccess: React.FC<FioTransferSuccessProps &
+const FioNameTransferSuccess: React.FC<FioTransferResultsProps &
   RouteComponentProps &
   HistoryLocationStateProps> = props => {
   const { history, location, pageName } = props;
