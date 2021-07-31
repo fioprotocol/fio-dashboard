@@ -24,6 +24,7 @@ const ROUTES = {
   FIO_DOMAIN_STATUS_CHANGE: '/fio-domain-status-change',
   FIO_ADDRESS_TRANSFER_RESULTS: '/fio-address-transfer-results',
   FIO_DOMAIN_TRANSFER_RESULTS: '/fio-domain-transfer-results',
+  FIO_DOMAIN_STATUS_CHANGE_RESULTS: '/fio-domain-status-results',
 };
 
 export { ROUTES };

@@ -89,7 +89,7 @@ export type FioNameItemProps = {
   name?: string;
   expiration?: Date;
   remaining?: number;
-  is_public?: number;
+  isPublic?: number;
   walletPublicKey?: string;
 };
 

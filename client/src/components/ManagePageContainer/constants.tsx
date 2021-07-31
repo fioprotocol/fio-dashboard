@@ -39,11 +39,6 @@ export const CTA_BADGE = {
   },
 };
 
-export const DOMAIN_TYPE = {
-  PRIVATE: 'PRIVATE',
-  PUBLIC: 'PUBLIC',
-};
-
 export const PAGE_NAME = {
   ADDRESS: 'address',
   DOMAIN: 'domain',

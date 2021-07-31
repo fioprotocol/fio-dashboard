@@ -1,0 +1,22 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  color: $white;
+  padding: 8px 15px;
+  border-radius: 7px;
+  font-size: 0.825em;
+  line-height: 0.825em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-transform: uppercase;
+  width: fit-content;
+
+  &.public {
+    background-color: $irish-green;
+  }
+  &.private {
+    background-color: $fountain-blue;
+  }
+}

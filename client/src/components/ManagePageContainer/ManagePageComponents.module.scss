@@ -192,6 +192,15 @@
       padding-left: 20px;
     }
   }
+  .domainStatus {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .domainStatusBadge {
+      margin-left: 20px;
+    }
+  }
 
   .badgeTitle, .badgeItem {
     font-size: 0.875em;
