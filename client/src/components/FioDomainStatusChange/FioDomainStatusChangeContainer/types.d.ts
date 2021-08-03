@@ -20,7 +20,7 @@ export type ContainerProps = {
   feePrice: FeePrice;
   walletPublicKey: string;
   currentWallet: FioWalletDoublet;
-  result: any;
+  result: { feeCollected?: number; error?: string };
   loading: boolean;
   setVisibilityProcessing: boolean;
   refreshBalance: (publicKey: string) => void;
