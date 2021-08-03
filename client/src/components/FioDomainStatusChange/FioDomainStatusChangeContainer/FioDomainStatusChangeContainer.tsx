@@ -146,7 +146,11 @@ const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
           currentWallet={currentWallet}
         />
         <LowBalanceBadge hasLowBalance={hasLowBalance} />
-        <Button className={classes.button} onClick={handleSubmit}>
+        <Button
+          className={classes.button}
+          onClick={handleSubmit}
+          disabled={processing || hasLowBalance}
+        >
           Change Status
         </Button>
       </div>
