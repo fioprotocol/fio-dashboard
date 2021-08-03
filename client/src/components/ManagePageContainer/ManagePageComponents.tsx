@@ -377,9 +377,7 @@ export const RenderItemSettings: React.FC<SettingsProps> = props => {
   return (
     <div className={classes.settingsContainer}>
       <h3 className={classes.title}>Advanced Settings</h3>
-      <h5 className={classes.subtitle}>
-        Domain {isDomain ? 'Access' : 'Ownership'}
-      </h5>
+      <h5 className={classes.subtitle}>{fioNameLabels[pageName]} Ownership</h5>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <p className={classes.badgeTitle}>FIO Wallet</p>
         <p className={classes.badgeItem}>{walletName}</p>
