@@ -205,7 +205,9 @@ export const DesktopComponents: React.FC<DefaultProps> = props => {
             return (
               <React.Fragment key={name}>
                 <div className={classnames(classes.tableCol, classes.firstCol)}>
-                  {name}
+                  <div className={classes.nameContainer}>
+                    <p className={classes.name}>{name}</p>
+                  </div>
                 </div>
                 <div className={classes.tableCol}>
                   <DomainStatusBadge
