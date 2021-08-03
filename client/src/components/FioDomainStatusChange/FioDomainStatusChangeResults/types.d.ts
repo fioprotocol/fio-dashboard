@@ -1,4 +1,5 @@
 import { History } from 'history';
+import { RouteComponentProps } from 'react-router-dom';
 
 export type HistoryLocationStateProps = {
   location: {
@@ -16,4 +17,6 @@ export type HistoryLocationStateProps = {
 
 export type ComponentProps = {
   history: History;
-} & HistoryLocationStateProps;
+  resetTransactionResult: () => void;
+} & HistoryLocationStateProps &
+  RouteComponentProps;

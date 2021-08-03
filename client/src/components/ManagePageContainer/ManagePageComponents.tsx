@@ -400,7 +400,9 @@ export const RenderItemSettings: React.FC<SettingsProps> = props => {
             to={`${ROUTES.FIO_DOMAIN_STATUS_CHANGE}/${fioName}`}
             className={classes.buttonLink}
           >
-            <Button className={classes.button}>Make Domain Public</Button>
+            <Button className={classes.button}>
+              Make Domain {fioNameItem.isPublic ? 'Private' : 'Public'}
+            </Button>
           </Link>
         </div>
       )}

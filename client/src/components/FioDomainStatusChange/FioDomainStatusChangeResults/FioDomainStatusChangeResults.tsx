@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { ROUTES } from '../../../constants/routes';
 import PseudoModalContainer from '../../PseudoModalContainer';
@@ -11,7 +11,7 @@ import { ComponentProps } from './types';
 import classes from './FioDomainStatusChangeResults.module.scss';
 
 const FioDomainStatusChangeResults: React.FC<ComponentProps> = props => {
-  const { history, location } = props;
+  const { history, location, resetTransactionResult } = props;
 
   const {
     state: {
@@ -21,6 +21,13 @@ const FioDomainStatusChangeResults: React.FC<ComponentProps> = props => {
       error,
     },
   } = location;
+
+  useEffect(
+    () => () => {
+      resetTransactionResult();
+    },
+    [],
+  );
 
   const onCloseClick = () => {
     history.push(ROUTES.FIO_DOMAINS);

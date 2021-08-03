@@ -1,29 +1,61 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { compose } from '../../../utils';
+import apis from '../../../api';
+import { compose, getElementByFioName, setFees } from '../../../utils';
 
-import { refreshBalance } from '../../../redux/fio/actions';
+import {
+  refreshBalance,
+  setDomainVisibility,
+  getFee,
+  SET_VISIBILITY_REQUEST,
+} from '../../../redux/fio/actions';
+import { getPrices } from '../../../redux/registrations/actions';
+import { resetPinConfirm } from '../../../redux/edge/actions';
+import { showPinModal } from '../../../redux/modal/actions';
 
-import { isProcessing } from '../../../redux/registrations/selectors';
-import { loading } from '../../../redux/fio/selectors';
+import { pinConfirmation, confirmingPin } from '../../../redux/edge/selectors';
+import {
+  loading,
+  currentWallet,
+  walletPublicKey,
+  setVisibilityProcessing,
+} from '../../../redux/fio/selectors';
 
-import { emptyWallet } from '../../../redux/fio/reducer';
-import { FioWalletDoublet } from '../../../types';
 import { ContainerOwnProps } from './types';
 
 import { DOMAIN_STATUS } from '../../../constants/common';
-import { getElementByFioName } from '../../../utils';
 
 import FioDomainStatusChangeContainer from './FioDomainStatusChangeContainer';
 
-const feePrice = () => ({ costFio: 45.0, costUsdc: 1.0 }); //todo: get real fee data
-
 const reduxConnect = connect(
   createStructuredSelector({
-    feePrice,
-    isProcessing,
     loading,
+    setVisibilityProcessing,
+    confirmingPin,
+    pinConfirmation,
+    result: (state: any) => {
+      const { transactionResult } = state.fio;
+      const result = transactionResult[SET_VISIBILITY_REQUEST];
+      if (result && result.fee_collected) {
+        const { prices } = state.registrations;
+        const feeCollected = result.fee_collected;
+        return {
+          feeCollected: {
+            nativeAmount: feeCollected,
+            costFio: apis.fio.sufToAmount(feeCollected),
+            costUsdc: apis.fio.convert(feeCollected, prices.usdtRoe),
+          },
+        };
+      }
+
+      return result;
+    },
+    feePrice: (state: any, ownProps: ContainerOwnProps & any) => {
+      const { fees } = state.fio;
+      const { prices } = state.registrations;
+      return setFees(fees[apis.fio.actionEndPoints.setFioDomainPublic], prices);
+    },
     domainStatus: (state: any, ownProps: ContainerOwnProps & any) => {
       // todo: set types for state & fix ownProps type
       const { fioNameList, name } = ownProps;
@@ -31,33 +63,17 @@ const reduxConnect = connect(
 
       return isPublic ? DOMAIN_STATUS.PUBLIC : DOMAIN_STATUS.PRIVATE;
     },
-    walletPublicKey: (state: any, ownProps: ContainerOwnProps & any) => {
-      // todo: set types for state & fix ownProps type
-      const { fioNameList, name } = ownProps;
-      const { walletPublicKey } = getElementByFioName({
-        fioNameList,
-        name,
-      });
-      return walletPublicKey || '';
-    },
-    currentWallet: (state: any, ownProps: ContainerOwnProps & any) => {
-      // todo: set types for state & fix ownProps type
-      const { fioWallets } = state.fio;
-      const { fioNameList, name } = ownProps;
-      const { walletPublicKey } = getElementByFioName({
-        fioNameList,
-        name,
-      });
-
-      const currentWallet: FioWalletDoublet =
-        fioWallets &&
-        fioWallets.find(
-          (wallet: FioWalletDoublet) => wallet.publicKey === walletPublicKey,
-        );
-      return currentWallet || emptyWallet;
-    },
+    walletPublicKey,
+    currentWallet,
   }),
-  { refreshBalance },
+  {
+    refreshBalance,
+    setDomainVisibility,
+    showPinModal,
+    resetPinConfirm,
+    getPrices,
+    getFee: () => getFee(apis.fio.actionEndPoints.setFioDomainPublic),
+  },
 );
 
 export default compose(reduxConnect)(FioDomainStatusChangeContainer);

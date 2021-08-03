@@ -3,7 +3,7 @@ import { reduxForm, formValueSelector } from 'redux-form';
 import { createStructuredSelector } from 'reselect';
 
 import apis from '../../../api';
-import { compose, hasFioAddressDelimiter } from '../../../utils';
+import { compose, setFees, hasFioAddressDelimiter } from '../../../utils';
 
 import {
   refreshBalance,
@@ -16,12 +16,15 @@ import { resetPinConfirm } from '../../../redux/edge/actions';
 import { showPinModal } from '../../../redux/modal/actions';
 
 import { pinConfirmation, confirmingPin } from '../../../redux/edge/selectors';
-import { loading, transferProcessing } from '../../../redux/fio/selectors';
+import {
+  loading,
+  transferProcessing,
+  currentWallet,
+  walletPublicKey,
+} from '../../../redux/fio/selectors';
 
 import { FioNameTransferContainer } from './FioNameTransferContainer';
-import { emptyWallet } from '../../../redux/fio/reducer';
-import { FioWalletDoublet, FioNameItemProps } from '../../../types';
-import { ContainerOwnProps, FeePrice } from './types';
+import { ContainerOwnProps } from './types';
 import { validate } from './validation';
 
 const formConnect = reduxForm({
@@ -61,46 +64,10 @@ const reduxConnect = connect(
       const feeEndPoint = hasFioAddressDelimiter(ownProps.name)
         ? apis.fio.actionEndPoints.transferFioAddress
         : apis.fio.actionEndPoints.transferFioDomain;
-      const fee: FeePrice = {
-        nativeFio: null,
-        costFio: null,
-        costUsdc: null,
-      };
-      fee.nativeFio = fees[feeEndPoint];
-      fee.costFio = apis.fio.sufToAmount(fee.nativeFio);
-      if (fee.nativeFio && prices.usdtRoe) {
-        fee.costUsdc = apis.fio.convert(fee.nativeFio, prices.usdtRoe);
-      }
-
-      return fee;
+      return setFees(fees[feeEndPoint], prices);
     },
-    walletPublicKey: (state: any, ownProps: ContainerOwnProps & any) => {
-      // todo: set types for state
-      const { fioNameList, name } = ownProps;
-      const selected =
-        fioNameList &&
-        fioNameList.find(
-          ({ name: itemName }: FioNameItemProps) => itemName === name,
-        );
-      return (selected && selected.walletPublicKey) || '';
-    },
-    currentWallet: (state: any, ownProps: ContainerOwnProps & any) => {
-      // todo: fix ownProps type
-      const { fioWallets } = state.fio;
-      const { fioNameList, name } = ownProps;
-      const selected =
-        fioNameList &&
-        fioNameList.find(
-          ({ name: itemName }: FioNameItemProps) => itemName === name,
-        );
-      const walletPublicKey = (selected && selected.walletPublicKey) || '';
-      const currentWallet: FioWalletDoublet =
-        fioWallets &&
-        fioWallets.find(
-          (wallet: FioWalletDoublet) => wallet.publicKey === walletPublicKey,
-        );
-      return currentWallet || emptyWallet;
-    },
+    walletPublicKey,
+    currentWallet,
     transferAddressValue: (state: any) =>
       formValueSelector('transfer', (state: any) => state.reduxForm)(
         state,
