@@ -5,6 +5,7 @@ import {
   PageNameType,
   FioNameItemProps,
   PinConfirmation,
+  FeePrice,
 } from '../../../types';
 
 export type TransferParams = {
@@ -13,12 +14,6 @@ export type TransferParams = {
   newOwnerKey?: string;
   fee: number;
   keys: { public: string; private: string };
-};
-
-export type FeePrice = {
-  nativeFio: number | null;
-  costFio: number | null;
-  costUsdc: number | null;
 };
 
 export type ContainerOwnProps = {

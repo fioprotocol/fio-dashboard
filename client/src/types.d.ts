@@ -19,6 +19,7 @@ export type Prices = {
   fio: { address: number; domain: number };
   fioNative: { address: number; domain: number };
   usdt: { address: number; domain: number };
+  usdtRoe: number;
 };
 
 export type RegistrationResult = {
@@ -111,3 +112,11 @@ export type PinConfirmation = {
   data?: any;
   error?: string | Error;
 };
+
+export type FeePrice = {
+  nativeFio: number | null;
+  costFio: number | null;
+  costUsdc: number | null;
+};
+
+export type DomainStatusType = 'private' | 'public';
