@@ -8,6 +8,8 @@ export const transferProcessing = (state: ReduxState) =>
   state[prefix].transferProcessing;
 export const setVisibilityProcessing = (state: ReduxState) =>
   state[prefix].setVisibilityProcessing;
+export const renewProcessing = (state: ReduxState) =>
+  state[prefix].renewProcessing;
 export const linkProcessing = (state: ReduxState) =>
   state[prefix].linkProcessing;
 export const fioWallets = (state: ReduxState) => state[prefix].fioWallets;

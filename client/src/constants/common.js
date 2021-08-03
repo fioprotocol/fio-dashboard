@@ -10,6 +10,7 @@ export const CONFIRM_PIN_ACTIONS = {
   PURCHASE: 'PURCHASE',
   TRANSFER: 'TRANSFER',
   SET_VISIBILITY: 'SET_VISIBILITY',
+  RENEW: 'RENEW',
 };
 
 export const ADDRESS = 'address';

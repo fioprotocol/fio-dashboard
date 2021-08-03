@@ -65,6 +65,17 @@ export default combineReducers({
         return state;
     }
   },
+  renewProcessing(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.RENEW_REQUEST:
+        return true;
+      case actions.RENEW_SUCCESS:
+      case actions.RENEW_FAILURE:
+        return false;
+      default:
+        return state;
+    }
+  },
   linkProcessing(state: boolean = false, action) {
     switch (action.type) {
       case actions.LINK_TOKENS_REQUEST:
@@ -158,6 +169,7 @@ export default combineReducers({
         return fioAddresses;
       }
       case actions.TRANSFER_SUCCESS:
+      case actions.RENEW_SUCCESS:
       case LOGOUT_SUCCESS:
         return [];
       default:
@@ -189,6 +201,7 @@ export default combineReducers({
       }
       case actions.TRANSFER_SUCCESS:
       case actions.SET_VISIBILITY_SUCCESS:
+      case actions.RENEW_SUCCESS:
       case LOGOUT_SUCCESS:
         return [];
       default:
@@ -222,14 +235,17 @@ export default combineReducers({
   transactionResult(state: { [actionName: string]: any } = {}, action) {
     switch (action.type) {
       case actions.TRANSFER_REQUEST:
+      case actions.RENEW_REQUEST:
       case actions.SET_VISIBILITY_REQUEST:
         return { ...state, [action.actionName]: null };
       case actions.RESET_TRANSACTION_RESULT:
         return { ...state, [action.data]: null };
       case actions.SET_VISIBILITY_SUCCESS:
       case actions.TRANSFER_SUCCESS:
+      case actions.RENEW_SUCCESS:
         return { ...state, [action.actionName]: action.data };
       case actions.SET_VISIBILITY_FAILURE:
+      case actions.RENEW_FAILURE:
       case actions.TRANSFER_FAILURE:
         return {
           ...state,

@@ -10,6 +10,7 @@ export type HistoryLocationStateProps = {
       };
       name: PageNameType;
       link: ROUTES.FIO_ADDRESSES | ROUTES.FIO_DOMAINS;
+      error?: string;
     };
   };
 };
