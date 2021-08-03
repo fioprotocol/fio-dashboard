@@ -105,9 +105,11 @@ export type LinkActionResult = {
   disconnect: LinkResult;
 };
 
+export type WalletKeys = { private: string; public: string };
+
 export type PinConfirmation = {
   account?: EdgeAccount;
-  keys?: { [walletId: string]: { private: string; public: string } };
+  keys?: { [walletId: string]: WalletKeys };
   action?: string;
   data?: any;
   error?: string | Error;

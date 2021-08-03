@@ -5,6 +5,8 @@ import {
   RegisterFioDomainResponse,
   TransferFioAddressResponse,
   TransferFioDomainResponse,
+  RenewFioAddressResponse,
+  RenewFioDomainResponse,
   FioNamesResponse,
   FioAddressesResponse,
   FioDomainsResponse,
@@ -115,6 +117,17 @@ export default class Fio {
       newOwnerKey,
       fee,
     );
+  };
+
+  renew = async (
+    fioName: string,
+    fee: number,
+  ): Promise<RenewFioAddressResponse | RenewFioDomainResponse> => {
+    this.validateAction();
+    if (isDomain(fioName)) {
+      return await this.walletFioSDK.renewFioDomain(fioName, fee);
+    }
+    return await this.walletFioSDK.renewFioAddress(fioName, fee);
   };
 
   setDomainVisibility = async (

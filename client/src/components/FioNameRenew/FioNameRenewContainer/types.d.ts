@@ -1,6 +1,12 @@
 import { History } from 'history';
 
-import { PageNameType } from '../../../types';
+import {
+  PageNameType,
+  WalletKeys,
+  FioNameItemProps,
+  FioWalletDoublet,
+  PinConfirmation,
+} from '../../../types';
 
 export type ContainerOwnProps = {
   fioNameList: FioNameItemProps[];
@@ -22,10 +28,9 @@ export type ContainerProps = {
   currentWallet: FioWalletDoublet;
   result: any;
   loading: boolean;
-  transferProcessing: boolean;
-  transferAddressValue: string;
+  renewProcessing: boolean;
   refreshBalance: (publicKey: string) => void;
-  transfer: (params: TransferParams) => void;
+  renew: (params: { fioName: string; fee: number; keys: WalletKeys }) => void;
   getFee: (isFioAddress: boolean) => void;
   getPrices: () => void;
   showPinModal: (action: string) => void;
