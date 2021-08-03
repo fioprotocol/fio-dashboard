@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import { FioWalletDoublet } from '../../types';
 
-import { BANNER_DATA, DOMAIN_TYPE, PAGE_NAME } from './constants';
+import { BANNER_DATA, PAGE_NAME } from './constants';
 import {
   DefaultProps,
   BoolStateFunc,
@@ -18,11 +18,13 @@ import {
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import NotificationBadge from '../NotificationBadge';
+import DomainStatusBadge from '../Badges/DomainStatusBadge/DomainStatusBadge';
 
 import classes from './ManagePageComponents.module.scss';
 import icon from '../../assets/images/timelapse_white_24dp.svg'; // todo: remove after changing library to google material
 import { ROUTES } from '../../constants/routes';
 import { fioNameLabels } from '../../constants/labels';
+import { DOMAIN_STATUS } from '../../constants/common';
 
 export const RenderNotifications: React.FC<NotificationsProps> = props => {
   const {
@@ -169,7 +171,7 @@ export const DesktopComponents: React.FC<DefaultProps> = props => {
       )}
       {fioNameList &&
         fioNameList.map(fioNameItem => {
-          const { name, remaining, expiration, is_public } = fioNameItem;
+          const { name, remaining, expiration, isPublic } = fioNameItem;
           if (pageName === PAGE_NAME.ADDRESS) {
             return (
               <React.Fragment key={name}>
@@ -206,14 +208,11 @@ export const DesktopComponents: React.FC<DefaultProps> = props => {
                   {name}
                 </div>
                 <div className={classes.tableCol}>
-                  <div
-                    className={classnames(
-                      classes.domainType,
-                      is_public && classes.public,
-                    )}
-                  >
-                    {is_public ? DOMAIN_TYPE.PUBLIC : DOMAIN_TYPE.PRIVATE}
-                  </div>
+                  <DomainStatusBadge
+                    status={
+                      isPublic ? DOMAIN_STATUS.PUBLIC : DOMAIN_STATUS.PRIVATE
+                    }
+                  />
                 </div>
                 <div className={classes.tableCol}>
                   {renderDate(expiration, isExpired, toggleShowWarnBadge)}
@@ -299,7 +298,7 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
     isDesktop,
     onSettingsOpen,
   } = props;
-  const { name, remaining, expiration, is_public } = fioNameItem || {};
+  const { name, remaining, expiration, isPublic } = fioNameItem || {};
   return (
     <div className={classes.itemContainer}>
       <h4 className={classes.title}>{fioNameLabels[pageName]} Details</h4>
@@ -340,17 +339,14 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
           </>
         )}
         {pageName === PAGE_NAME.DOMAIN && (
-          <>
+          <div className={classes.domainStatus}>
             <p className={classes.badgeTitle}>Status</p>
-            <div
-              className={classnames(
-                classes.domainType,
-                is_public && classes.public,
-              )}
-            >
-              {is_public ? DOMAIN_TYPE.PUBLIC : DOMAIN_TYPE.PRIVATE}
+            <div className={classes.domainStatusBadge}>
+              <DomainStatusBadge
+                status={isPublic ? DOMAIN_STATUS.PUBLIC : DOMAIN_STATUS.PRIVATE}
+              />
             </div>
-          </>
+          </div>
         )}
       </Badge>
       <div className={classes.itemActions}>
@@ -401,10 +397,12 @@ export const RenderItemSettings: React.FC<SettingsProps> = props => {
             public.
           </p>
           <Link
-            to={ROUTES.FIO_DOMAIN_STATUS_CHANGE}
+            to={`${ROUTES.FIO_DOMAIN_STATUS_CHANGE}/${fioName}`}
             className={classes.buttonLink}
           >
-            <Button className={classes.button}>Make Domain Public</Button>
+            <Button className={classes.button}>
+              Make Domain {fioNameItem.isPublic ? 'Private' : 'Public'}
+            </Button>
           </Link>
         </div>
       )}

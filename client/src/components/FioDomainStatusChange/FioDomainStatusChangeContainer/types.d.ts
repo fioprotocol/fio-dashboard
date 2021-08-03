@@ -2,39 +2,35 @@ import { History } from 'history';
 
 import {
   FioWalletDoublet,
-  PageNameType,
   FioNameItemProps,
+  DomainStatusType,
   PinConfirmation,
   FeePrice,
 } from '../../../types';
 
-export type TransferParams = {
-  fioName: string;
-  newOwnerFioAddress?: string;
-  newOwnerKey?: string;
-  fee: number;
-  keys: { public: string; private: string };
-};
-
 export type ContainerOwnProps = {
   fioNameList: FioNameItemProps[];
   name: string;
-  pageName: PageNameType;
   history: History;
 };
 
 export type ContainerProps = {
   children?: React.ReactNode;
+  domainStatus: DomainStatusType;
   feePrice: FeePrice;
   walletPublicKey: string;
   currentWallet: FioWalletDoublet;
-  result: { feeCollected?: number; error?: string; newOwnerKey?: string };
+  result: { feeCollected?: number; error?: string };
   loading: boolean;
-  transferProcessing: boolean;
-  transferAddressValue: string;
+  setVisibilityProcessing: boolean;
   refreshBalance: (publicKey: string) => void;
-  transfer: (params: TransferParams) => void;
-  getFee: (isFioAddress: boolean) => void;
+  setDomainVisibility: (params: {
+    fioDomain: string;
+    isPublic: boolean;
+    fee: number;
+    keys: { public: string; private: string };
+  }) => void;
+  getFee: () => void;
   getPrices: () => void;
   showPinModal: (action: string) => void;
   resetPinConfirm: () => void;

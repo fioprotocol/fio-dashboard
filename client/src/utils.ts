@@ -6,8 +6,10 @@ import {
   DeleteCartItem,
   Domain,
   Prices,
+  FioNameItemProps,
   RegistrationResult,
   WalletKeysObj,
+  FeePrice,
 } from './types';
 
 const FIO_DASH_USERNAME_DELIMITER = '.fio.dash.';
@@ -371,4 +373,35 @@ export const waitForEdgeAccountStop = async (edgeAccount: EdgeAccount) => {
   } catch (e) {
     //
   }
+};
+
+export const getElementByFioName = ({
+  fioNameList,
+  name,
+}: {
+  fioNameList: FioNameItemProps[];
+  name: string;
+}) => {
+  return (
+    (fioNameList &&
+      fioNameList.find(
+        ({ name: itemName }: FioNameItemProps) => itemName === name,
+      )) ||
+    {}
+  );
+};
+
+export const setFees = (nativeFee: number, prices: Prices) => {
+  const fee: FeePrice = {
+    nativeFio: null,
+    costFio: null,
+    costUsdc: null,
+  };
+  fee.nativeFio = nativeFee;
+  fee.costFio = apis.fio.sufToAmount(fee.nativeFio);
+  if (fee.nativeFio && prices.usdtRoe) {
+    fee.costUsdc = apis.fio.convert(fee.nativeFio, prices.usdtRoe);
+  }
+
+  return fee;
 };

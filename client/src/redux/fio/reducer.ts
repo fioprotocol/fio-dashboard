@@ -188,6 +188,7 @@ export default combineReducers({
         return fioDomains;
       }
       case actions.TRANSFER_SUCCESS:
+      case actions.SET_VISIBILITY_SUCCESS:
       case LOGOUT_SUCCESS:
         return [];
       default:
