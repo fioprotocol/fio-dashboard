@@ -1,6 +1,6 @@
 import apis from '../../api/index';
 import { toString } from '../../redux/notify/sagas';
-import { FIO_ADDRESS_DELIMITER, sleep } from '../../utils';
+import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
 const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 2000;
 const wait = () =>

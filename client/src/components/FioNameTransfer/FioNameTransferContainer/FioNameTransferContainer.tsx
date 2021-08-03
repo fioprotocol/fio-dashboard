@@ -38,16 +38,6 @@ const FIO_NAME_DATA = {
   },
 };
 
-const LOW_BALANCE_TEXT = {
-  buttonText: 'Where to Buy',
-  messageText:
-    'Unfortunately there is not enough FIO available to complete your purchase. Please purchase or deposit additional FIO',
-};
-const REDIRECT = {
-  address: ROUTES.FIO_ADDRESSES,
-  domain: ROUTES.FIO_DOMAINS,
-};
-
 export const FioNameTransferContainer: React.FC<ContainerProps &
   InjectedFormProps<{}, ContainerProps>> = props => {
   const {
@@ -172,7 +162,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
     currentWallet && feePrice && currentWallet.balance < feePrice.costFio;
 
   if (!walletPublicKey)
-    return <Redirect to={{ pathname: REDIRECT[pageName] }} />;
+    return <Redirect to={{ pathname: FIO_NAME_DATA[pageName].backLink }} />;
 
   return (
     <PseudoModalContainer link={FIO_NAME_DATA[pageName].backLink} title={title}>
@@ -211,10 +201,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
             costUsdc={costUsdc}
             currentWallet={currentWallet}
           />
-          <LowBalanceBadge
-            {...LOW_BALANCE_TEXT}
-            hasLowBalance={hasLowBalance}
-          />
+          <LowBalanceBadge hasLowBalance={hasLowBalance} />
           <Button
             type="submit"
             className={classes.button}

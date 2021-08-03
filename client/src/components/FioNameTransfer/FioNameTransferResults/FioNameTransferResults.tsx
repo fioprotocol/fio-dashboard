@@ -8,16 +8,11 @@ import PriceBadge from '../../Badges/PriceBadge/PriceBadge';
 import InfoBadge from '../../InfoBadge/InfoBadge';
 
 import { fioNameLabels } from '../../../constants/labels';
-import { ROUTES } from '../../../constants/routes';
+import { MANAGE_PAGE_REDIRECT } from '../../../constants/common';
 
 import { FioTransferResultsProps, HistoryLocationStateProps } from './types';
 
 import classes from './FioNameTransferResults.module.scss';
-
-const REDIRECT = {
-  address: ROUTES.FIO_ADDRESSES,
-  domain: ROUTES.FIO_DOMAINS,
-};
 
 const FioNameTransferResults: React.FC<FioTransferResultsProps &
   RouteComponentProps &
@@ -40,7 +35,7 @@ const FioNameTransferResults: React.FC<FioTransferResultsProps &
   );
 
   const onCloseClick = () => {
-    history.push(REDIRECT[pageName]);
+    history.push(MANAGE_PAGE_REDIRECT[pageName]);
   };
 
   const fioNameLabel = fioNameLabels[pageName];

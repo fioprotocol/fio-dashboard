@@ -6,14 +6,24 @@ import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 
 import classes from './LowBalanceBadge.module.scss';
 
+const DEFAULT_TEXT = {
+  buttonText: 'Where to Buy',
+  messageText:
+    'Unfortunately there is not enough FIO available to complete your purchase. Please purchase or deposit additional FIO',
+};
+
 type Props = {
   hasLowBalance: boolean;
-  buttonText: string;
-  messageText: string;
+  buttonText?: string;
+  messageText?: string;
 };
 
 const LowBalanceBadge: React.FC<Props> = props => {
-  const { buttonText, messageText, hasLowBalance } = props;
+  const {
+    buttonText = DEFAULT_TEXT.buttonText,
+    messageText = DEFAULT_TEXT.messageText,
+    hasLowBalance,
+  } = props;
   if (!hasLowBalance) return null;
   return (
     <Badge type={BADGE_TYPES.ERROR} show={true}>

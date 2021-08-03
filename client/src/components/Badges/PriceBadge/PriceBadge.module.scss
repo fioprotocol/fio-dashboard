@@ -12,8 +12,13 @@
   &.black {
     color: $white;
   }
+  .name {
+    word-break: break-all;
+    margin-right: 15px;
+  }
   .totalPrice {
     margin: 0 1.875rem 0 auto;
+    flex-shrink: 0;
   }
 }
 

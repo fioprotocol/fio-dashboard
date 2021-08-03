@@ -26,6 +26,11 @@ import { ROUTES } from '../../constants/routes';
 import { fioNameLabels } from '../../constants/labels';
 import { DOMAIN_STATUS } from '../../constants/common';
 
+const RENEW_LINKS = {
+  address: ROUTES.FIO_ADDRESS_RENEW,
+  domain: ROUTES.FIO_DOMAIN_RENEW,
+};
+
 export const RenderNotifications: React.FC<NotificationsProps> = props => {
   const {
     showWarnBadge,
@@ -107,11 +112,16 @@ const renderFioAddress = (
 // todo: set actions on buttons
 const renderActions: React.FC<ActionButtonProps> = props => {
   const { pageName, isDesktop, onSettingsOpen, fioNameItem } = props;
+  const { name } = fioNameItem;
+
   return (
     <div className={classes.actionButtonsContainer}>
-      <Button className={classes.actionButton}>
-        <img src={icon} alt="timelapse" /> Renew
-      </Button>
+      <Link to={`${RENEW_LINKS[pageName]}/${name}`}>
+        <Button className={classes.actionButton}>
+          <img src={icon} alt="timelapse" /> Renew
+        </Button>
+      </Link>
+
       {pageName === PAGE_NAME.ADDRESS ? (
         <Button className={classes.actionButton}>
           <FontAwesomeIcon icon="link" className={classes.linkIcon} /> Link
