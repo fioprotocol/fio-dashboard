@@ -27,6 +27,7 @@ import { ContainerOwnProps } from './types';
 import { DOMAIN_STATUS } from '../../../constants/common';
 
 import FioDomainStatusChangeContainer from './FioDomainStatusChangeContainer';
+import { ReduxState } from '../../../types';
 
 const reduxConnect = connect(
   createStructuredSelector({
@@ -34,7 +35,7 @@ const reduxConnect = connect(
     setVisibilityProcessing,
     confirmingPin,
     pinConfirmation,
-    result: (state: any) => {
+    result: (state: ReduxState) => {
       const { transactionResult } = state.fio;
       const result = transactionResult[SET_VISIBILITY_REQUEST];
       if (result && result.fee_collected) {
@@ -51,12 +52,12 @@ const reduxConnect = connect(
 
       return result;
     },
-    feePrice: (state: any, ownProps: ContainerOwnProps & any) => {
+    feePrice: (state: ReduxState, ownProps: ContainerOwnProps & any) => {
       const { fees } = state.fio;
       const { prices } = state.registrations;
       return setFees(fees[apis.fio.actionEndPoints.setFioDomainPublic], prices);
     },
-    domainStatus: (state: any, ownProps: ContainerOwnProps & any) => {
+    domainStatus: (state: ReduxState, ownProps: ContainerOwnProps & any) => {
       // todo: set types for state & fix ownProps type
       const { fioNameList, name } = ownProps;
       const { isPublic } = getElementByFioName({ fioNameList, name });
