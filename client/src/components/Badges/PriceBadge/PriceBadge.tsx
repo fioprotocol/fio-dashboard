@@ -21,7 +21,7 @@ const PriceBadge: React.FC<Props> = props => {
         <p className={classes.totalPrice}>
           <span className="boldText">
             {costFio && costUsdc
-              ? `${costFio} FIO / ${costUsdc} USDC`
+              ? `${costFio.toFixed(2)} FIO / ${costUsdc.toFixed(2)} USDC`
               : costFree}
           </span>
         </p>
