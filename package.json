@@ -8,7 +8,7 @@
     "client:build": "cd ./client && react-app-rewired --expose-gc --max-old-space-size=8192 build",
     "client:test": "cd ./client && CI=true react-app-rewired test --env=jsdom",
     "client:analyze": "cd ./client && source-map-explorer build/static/js/main.*",
-    "server:dev": "npm run migrate && nodemon -L --inspect --experimental-modules --watch server server/src/index.mjs",
+    "server:dev": "npm run migrate && nodemon -L --inspect --es-module-specifier-resolution=node --watch server server/src/index.mjs",
     "lint": "eslint ./server/src --ext js,jsx,mjs",
     "lint:fix": "eslint ./server/src ./client/src --ext js,jsx,mjs --fix",
     "server:prod": "npm run migrate && node --experimental-modules server/src/index.mjs",
