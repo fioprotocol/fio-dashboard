@@ -26,6 +26,11 @@ import { ROUTES } from '../../constants/routes';
 import { fioNameLabels } from '../../constants/labels';
 import { DOMAIN_STATUS } from '../../constants/common';
 
+const RENEW_LINKS = {
+  address: ROUTES.FIO_ADDRESS_RENEW,
+  domain: ROUTES.FIO_DOMAIN_RENEW,
+};
+
 export const RenderNotifications: React.FC<NotificationsProps> = props => {
   const {
     showWarnBadge,
@@ -107,11 +112,16 @@ const renderFioAddress = (
 // todo: set actions on buttons
 const renderActions: React.FC<ActionButtonProps> = props => {
   const { pageName, isDesktop, onSettingsOpen, fioNameItem } = props;
+  const { name } = fioNameItem;
+
   return (
     <div className={classes.actionButtonsContainer}>
-      <Button className={classes.actionButton}>
-        <img src={icon} alt="timelapse" /> Renew
-      </Button>
+      <Link to={`${RENEW_LINKS[pageName]}/${name}`}>
+        <Button className={classes.actionButton}>
+          <img src={icon} alt="timelapse" /> Renew
+        </Button>
+      </Link>
+
       {pageName === PAGE_NAME.ADDRESS ? (
         <Button className={classes.actionButton}>
           <FontAwesomeIcon icon="link" className={classes.linkIcon} /> Link
@@ -205,7 +215,9 @@ export const DesktopComponents: React.FC<DefaultProps> = props => {
             return (
               <React.Fragment key={name}>
                 <div className={classnames(classes.tableCol, classes.firstCol)}>
-                  {name}
+                  <div className={classes.nameContainer}>
+                    <p className={classes.name}>{name}</p>
+                  </div>
                 </div>
                 <div className={classes.tableCol}>
                   <DomainStatusBadge
@@ -375,9 +387,7 @@ export const RenderItemSettings: React.FC<SettingsProps> = props => {
   return (
     <div className={classes.settingsContainer}>
       <h3 className={classes.title}>Advanced Settings</h3>
-      <h5 className={classes.subtitle}>
-        Domain {isDomain ? 'Access' : 'Ownership'}
-      </h5>
+      <h5 className={classes.subtitle}>{fioNameLabels[pageName]} Ownership</h5>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <p className={classes.badgeTitle}>FIO Wallet</p>
         <p className={classes.badgeItem}>{walletName}</p>

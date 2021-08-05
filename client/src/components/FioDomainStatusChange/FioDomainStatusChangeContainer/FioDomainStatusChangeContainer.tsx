@@ -19,12 +19,6 @@ import { PinConfirmation } from '../../../types';
 import { Redirect } from 'react-router';
 import Processing from '../../common/TransactionProcessing';
 
-const LOW_BALANCE_TEXT = {
-  buttonText: 'Where to Buy',
-  messageText:
-    'Unfortunately there is not enough FIO available to complete your purchase. Please purchase or deposit additional FIO',
-};
-
 const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
   const {
     walletPublicKey,
@@ -151,8 +145,12 @@ const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
           costUsdc={costUsdc}
           currentWallet={currentWallet}
         />
-        <LowBalanceBadge hasLowBalance={hasLowBalance} {...LOW_BALANCE_TEXT} />
-        <Button className={classes.button} onClick={handleSubmit}>
+        <LowBalanceBadge hasLowBalance={hasLowBalance} />
+        <Button
+          className={classes.button}
+          onClick={handleSubmit}
+          disabled={processing || hasLowBalance}
+        >
           Change Status
         </Button>
       </div>

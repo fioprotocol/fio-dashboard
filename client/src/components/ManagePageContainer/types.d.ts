@@ -61,7 +61,7 @@ export type SettingsProps = {
 };
 
 export type ActionButtonProps = {
-  pageName: PAGE_NAME;
+  pageName: PageNameType;
   isDesktop: boolean;
   onSettingsOpen: ModalOpenActionType;
   fioNameItem: FioNameItemProps;
