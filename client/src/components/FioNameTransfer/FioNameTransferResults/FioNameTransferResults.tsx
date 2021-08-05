@@ -35,6 +35,7 @@ const FioNameTransferResults: React.FC<FioTransferResultsProps &
   );
 
   const onCloseClick = () => {
+    if (error) return history.goBack();
     history.push(MANAGE_PAGE_REDIRECT[pageName]);
   };
 
@@ -81,7 +82,7 @@ const FioNameTransferResults: React.FC<FioTransferResultsProps &
           </>
         )}
         <Button className={classes.button} onClick={onCloseClick}>
-          Close
+          {error ? 'Try Again' : 'Close'}
         </Button>
       </div>
     </PseudoModalContainer>

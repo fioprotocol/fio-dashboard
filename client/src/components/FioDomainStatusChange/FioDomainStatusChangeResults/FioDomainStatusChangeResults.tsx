@@ -30,6 +30,7 @@ const FioDomainStatusChangeResults: React.FC<ComponentProps> = props => {
   );
 
   const onCloseClick = () => {
+    if (error) return history.goBack();
     history.push(ROUTES.FIO_DOMAINS);
   };
 
@@ -80,7 +81,7 @@ const FioDomainStatusChangeResults: React.FC<ComponentProps> = props => {
           type={BADGE_TYPES.BLACK}
         />
         <Button onClick={onCloseClick} className={classes.button}>
-          Close
+          {error ? 'Try Again' : 'Close'}
         </Button>
       </div>
     </PseudoModalContainer>
