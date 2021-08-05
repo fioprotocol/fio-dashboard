@@ -28,6 +28,7 @@ const FioNameRenewResults: React.FC<{
   );
 
   const onCloseClick = () => {
+    if (error) return history.goBack();
     history.push(link);
   };
 
@@ -62,7 +63,7 @@ const FioNameRenewResults: React.FC<{
           </>
         )}
         <Button onClick={onCloseClick} className={classes.button}>
-          Close
+          {error ? 'Try Again' : 'Close'}
         </Button>
       </div>
     </PseudoModalContainer>
