@@ -29,8 +29,7 @@ import Results from '../common/TransactionResults';
 import { TRANSFER_REQUEST } from '../../redux/fio/actions';
 import { ResultsData } from '../common/TransactionResults/types';
 
-// todo: fix typo
-const PLACEHOLDER = 'Enter FIO Address or FIO Public Key of New Onwer';
+const PLACEHOLDER = 'Enter FIO Address or FIO Public Key of New Owner';
 const FIO_NAME_DATA = {
   address: {
     infoMessage: 'Transferring a FIO Address will purge all linked wallets',
