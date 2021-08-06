@@ -238,8 +238,9 @@ export const totalCost = (cart: CartItem[]) => {
       }, {});
 
   return {
-    costFio: (Number.isFinite(cost.costFio) && cost.costFio.toFixed(2)) || 0,
-    costUsdc: (Number.isFinite(cost.costUsdc) && cost.costUsdc.toFixed(2)) || 0,
+    costFio: (Number.isFinite(cost.costFio) && +cost.costFio.toFixed(2)) || 0,
+    costUsdc:
+      (Number.isFinite(cost.costUsdc) && +cost.costUsdc.toFixed(2)) || 0,
   };
 };
 
