@@ -220,7 +220,9 @@ export const deleteCartItem = ({
   }
 };
 
-export const totalCost = (cart: CartItem[]) => {
+export const totalCost = (
+  cart: CartItem[],
+): { costFio?: number; costUsdc?: number; costFree?: string } => {
   if (cart.length === 1 && cart.some(item => !item.costFio && !item.costUsdc))
     return { costFree: 'FREE' };
 
