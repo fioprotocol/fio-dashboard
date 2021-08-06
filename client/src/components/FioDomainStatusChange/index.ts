@@ -1,33 +1,33 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import apis from '../../../api';
-import { compose, getElementByFioName, setFees } from '../../../utils';
+import apis from '../../api';
+import { compose, getElementByFioName, setFees } from '../../utils';
 
 import {
   refreshBalance,
   setDomainVisibility,
   getFee,
   SET_VISIBILITY_REQUEST,
-} from '../../../redux/fio/actions';
-import { getPrices } from '../../../redux/registrations/actions';
-import { resetPinConfirm } from '../../../redux/edge/actions';
-import { showPinModal } from '../../../redux/modal/actions';
+} from '../../redux/fio/actions';
+import { getPrices } from '../../redux/registrations/actions';
+import { resetPinConfirm } from '../../redux/edge/actions';
+import { showPinModal } from '../../redux/modal/actions';
 
-import { pinConfirmation, confirmingPin } from '../../../redux/edge/selectors';
+import { pinConfirmation, confirmingPin } from '../../redux/edge/selectors';
 import {
   loading,
   currentWallet,
   walletPublicKey,
   setVisibilityProcessing,
-} from '../../../redux/fio/selectors';
+} from '../../redux/fio/selectors';
 
 import { ContainerOwnProps } from './types';
 
-import { DOMAIN_STATUS } from '../../../constants/common';
+import { DOMAIN_STATUS } from '../../constants/common';
 
 import FioDomainStatusChangeContainer from './FioDomainStatusChangeContainer';
-import { ReduxState } from '../../../types';
+import { ReduxState } from '../../types';
 
 const reduxConnect = connect(
   createStructuredSelector({
