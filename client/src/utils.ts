@@ -220,7 +220,9 @@ export const deleteCartItem = ({
   }
 };
 
-export const totalCost = (cart: CartItem[]) => {
+export const totalCost = (
+  cart: CartItem[],
+): { costFio?: number; costUsdc?: number; costFree?: string } => {
   if (cart.length === 1 && cart.some(item => !item.costFio && !item.costUsdc))
     return { costFree: 'FREE' };
 
@@ -238,8 +240,9 @@ export const totalCost = (cart: CartItem[]) => {
       }, {});
 
   return {
-    costFio: (Number.isFinite(cost.costFio) && cost.costFio.toFixed(2)) || 0,
-    costUsdc: (Number.isFinite(cost.costUsdc) && cost.costUsdc.toFixed(2)) || 0,
+    costFio: (Number.isFinite(cost.costFio) && +cost.costFio.toFixed(2)) || 0,
+    costUsdc:
+      (Number.isFinite(cost.costUsdc) && +cost.costUsdc.toFixed(2)) || 0,
   };
 };
 
