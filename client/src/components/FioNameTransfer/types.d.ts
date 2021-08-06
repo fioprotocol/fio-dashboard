@@ -6,7 +6,7 @@ import {
   FioNameItemProps,
   PinConfirmation,
   FeePrice,
-} from '../../../types';
+} from '../../types';
 
 export type TransferParams = {
   fioName: string;
@@ -28,7 +28,7 @@ export type ContainerProps = {
   feePrice: FeePrice;
   walletPublicKey: string;
   currentWallet: FioWalletDoublet;
-  result: { feeCollected?: number; error?: string; newOwnerKey?: string };
+  result: { feeCollected?: FeePrice; error?: string; newOwnerKey?: string };
   loading: boolean;
   transferProcessing: boolean;
   transferAddressValue: string;

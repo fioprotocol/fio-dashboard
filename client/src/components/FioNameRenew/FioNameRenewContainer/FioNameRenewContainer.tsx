@@ -8,7 +8,6 @@ import PriceBadge from '../../Badges/PriceBadge/PriceBadge';
 import PayWithBadge from '../../Badges/PayWithBadge/PayWithBadge';
 import LowBalanceBadge from '../../Badges/LowBalanceBadge/LowBalanceBadge';
 
-import { ROUTES } from '../../../constants/routes';
 import { MANAGE_PAGE_REDIRECT } from '../../../constants/common';
 
 import { ContainerProps } from './types';
@@ -19,6 +18,9 @@ import { hasFioAddressDelimiter, waitForEdgeAccountStop } from '../../../utils';
 import { PinConfirmation } from '../../../types';
 import Processing from '../../common/TransactionProcessing';
 import { Redirect } from 'react-router-dom';
+import Results from '../../common/TransactionResults';
+import { RENEW_REQUEST } from '../../../redux/fio/actions';
+import { ResultsData } from '../../common/TransactionResults/types';
 
 const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   const {
@@ -41,6 +43,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
 
   const { costFio, costUsdc } = feePrice;
   const [processing, setProcessing] = useState(false);
+  const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
   useEffect(() => {
     getPrices();
@@ -60,14 +63,10 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
 
       resetPinConfirm();
 
-      history.push({
-        pathname: ROUTES.FIO_NAME_RENEW_RESULTS,
-        state: {
-          feeCollected: result.feeCollected || feePrice,
-          name,
-          link: MANAGE_PAGE_REDIRECT[pageName],
-          error: result.error,
-        },
+      setResultsData({
+        feeCollected: result.feeCollected || feePrice,
+        name,
+        error: result.error,
       });
     }
   }, [renewProcessing, result]);
@@ -107,8 +106,28 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
     showPinModal(CONFIRM_PIN_ACTIONS.RENEW);
   };
 
+  const onResultsClose = () => {
+    history.push(MANAGE_PAGE_REDIRECT[pageName]);
+  };
+
+  const onResultsRetry = () => {
+    setResultsData(null);
+  };
+
   if (!walletPublicKey)
     return <Redirect to={{ pathname: MANAGE_PAGE_REDIRECT[pageName] }} />;
+
+  if (resultsData)
+    return (
+      <Results
+        results={resultsData}
+        title={resultsData.error ? 'Renewed Failed!' : 'Renewed!'}
+        actionName={RENEW_REQUEST}
+        pageName={pageName}
+        onClose={onResultsClose}
+        onRetry={onResultsRetry}
+      />
+    );
 
   return (
     <PseudoModalContainer
