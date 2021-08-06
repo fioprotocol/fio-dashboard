@@ -39,6 +39,8 @@ const PasswordRecoveryForm = props => {
   const [defaultValues, setDefaultValues] = useState({});
   const [errorMessage, setError] = useState('');
 
+  const { change, getState } = useForm();
+
   useEffect(getRecoveryQuestions, []);
   useEffect(async () => {
     if (
@@ -192,7 +194,6 @@ const PasswordRecoveryForm = props => {
     const {
       input: { name },
     } = props;
-    const { change, getState } = useForm();
 
     const { values } = getState() || {};
     const { recoveryQuestionOne, recoveryQuestionTwo } = values || {};

@@ -2,13 +2,13 @@ import React from 'react';
 import AddressFrom from '../AddressDomainForm';
 import AddressDomainBadge from '../AddressDomainBadge/AddressDomainBadge';
 import AddressDomainCart from '../AddressDomainCart';
-import { checkIfDesktop } from '../../screenType';
+import { useCheckIfDesktop } from '../../screenType';
 
 import DoubleCardContainer from '../DoubleCardContainer';
 
 const AddressDomainContainer = props => {
   const { title, type, formNameGet } = props;
-  const isDesktop = checkIfDesktop();
+  const isDesktop = useCheckIfDesktop();
   return (
     <DoubleCardContainer
       title={title}

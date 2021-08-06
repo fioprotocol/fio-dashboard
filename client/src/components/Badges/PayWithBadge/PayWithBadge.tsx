@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import { checkIfDesktop } from '../../../screenType';
+import { useCheckIfDesktop } from '../../../screenType';
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 
 import { FioWalletDoublet } from '../../../types';
@@ -17,7 +17,7 @@ type Props = {
 
 const PayWithBadge: React.FC<Props> = props => {
   const { costFree, costFio, costUsdc, currentWallet } = props;
-  const isDesktop = checkIfDesktop();
+  const isDesktop = useCheckIfDesktop();
 
   if (costFree) return null;
 
