@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 
-import { ROUTES } from '../../../constants/routes';
-import PseudoModalContainer from '../../PseudoModalContainer';
-import DomainStatusBadge from '../../Badges/DomainStatusBadge/DomainStatusBadge';
-import PriceBadge from '../../Badges/PriceBadge/PriceBadge';
-import PayWithBadge from '../../Badges/PayWithBadge/PayWithBadge';
-import LowBalanceBadge from '../../Badges/LowBalanceBadge/LowBalanceBadge';
+import { ROUTES } from '../../constants/routes';
+import PseudoModalContainer from '../PseudoModalContainer';
+import DomainStatusBadge from '../Badges/DomainStatusBadge/DomainStatusBadge';
+import PriceBadge from '../Badges/PriceBadge/PriceBadge';
+import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
+import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
 
-import { BADGE_TYPES } from '../../Badge/Badge';
+import { BADGE_TYPES } from '../Badge/Badge';
 
 import { ContainerProps } from './types';
-import { CONFIRM_PIN_ACTIONS, DOMAIN_STATUS } from '../../../constants/common';
+import { CONFIRM_PIN_ACTIONS, DOMAIN_STATUS } from '../../constants/common';
 
 import classes from './FioDomainStatusChangeContainer.module.scss';
-import { waitForEdgeAccountStop } from '../../../utils';
-import { PinConfirmation } from '../../../types';
+import { waitForEdgeAccountStop } from '../../utils';
+import { PinConfirmation } from '../../types';
 import { Redirect } from 'react-router';
-import Processing from '../../common/TransactionProcessing';
-import Results from '../../common/TransactionResults';
-import { SET_VISIBILITY_REQUEST } from '../../../redux/fio/actions';
-import { ResultsData } from '../../common/TransactionResults/types';
+import Processing from '../common/TransactionProcessing';
+import Results from '../common/TransactionResults';
+import { SET_VISIBILITY_REQUEST } from '../../redux/fio/actions';
+import { ResultsData } from '../common/TransactionResults/types';
 
 const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
   const {

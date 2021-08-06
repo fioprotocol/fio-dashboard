@@ -1,7 +1,7 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
-import FioNameRenewContainer from '../../components/FioNameRenew/FioNameRenewContainer';
+import FioNameRenewContainer from '../../components/FioNameRenew';
 import { FioNameItemProps } from '../../types';
 import { ADDRESS } from '../../constants/common';
 
