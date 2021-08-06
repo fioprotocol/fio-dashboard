@@ -18,6 +18,9 @@ import { waitForEdgeAccountStop } from '../../../utils';
 import { PinConfirmation } from '../../../types';
 import { Redirect } from 'react-router';
 import Processing from '../../common/TransactionProcessing';
+import Results from '../../common/TransactionResults';
+import { SET_VISIBILITY_REQUEST } from '../../../redux/fio/actions';
+import { ResultsData } from '../../common/TransactionResults/types';
 
 const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
   const {
@@ -43,6 +46,7 @@ const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
       : DOMAIN_STATUS.PRIVATE;
   const { costFio, costUsdc } = feePrice;
   const [processing, setProcessing] = useState(false);
+  const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
   useEffect(() => {
     getPrices();
@@ -62,15 +66,11 @@ const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
 
       resetPinConfirm();
 
-      const results = {
+      setResultsData({
         feeCollected: result.feeCollected || feePrice,
         name,
         changedStatus: statusToChange,
         error: result.error,
-      };
-      history.push({
-        pathname: ROUTES.FIO_DOMAIN_STATUS_CHANGE_RESULTS,
-        state: results,
       });
     }
   }, [setVisibilityProcessing, result]);
@@ -109,11 +109,34 @@ const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
     showPinModal(CONFIRM_PIN_ACTIONS.SET_VISIBILITY);
   };
 
+  const onResultsClose = () => {
+    history.push(ROUTES.FIO_DOMAINS);
+  };
+
+  const onResultsRetry = () => {
+    setResultsData(null);
+  };
+
   const hasLowBalance =
     currentWallet && feePrice && currentWallet.balance < feePrice.costFio;
 
   if (!walletPublicKey)
     return <Redirect to={{ pathname: ROUTES.FIO_DOMAINS }} />;
+
+  if (resultsData)
+    return (
+      <Results
+        results={resultsData}
+        title={
+          resultsData.error
+            ? 'Domain Status Change Failed!'
+            : 'Domain Status Changed!'
+        }
+        actionName={SET_VISIBILITY_REQUEST}
+        onClose={onResultsClose}
+        onRetry={onResultsRetry}
+      />
+    );
 
   return (
     <PseudoModalContainer

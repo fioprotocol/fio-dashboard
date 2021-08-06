@@ -3,26 +3,33 @@ import { Field, InjectedFormProps } from 'redux-form';
 import { Button } from 'react-bootstrap';
 import debounce from 'lodash/debounce';
 
-import PseudoModalContainer from '../../PseudoModalContainer';
-import InputRedux, { INPUT_UI_STYLES } from '../../Input/InputRedux';
-import { BADGE_TYPES } from '../../Badge/Badge';
-import PriceBadge from '../../Badges/PriceBadge/PriceBadge';
-import PayWithBadge from '../../Badges/PayWithBadge/PayWithBadge';
-import LowBalanceBadge from '../../Badges/LowBalanceBadge/LowBalanceBadge';
-import InfoBadge from '../../InfoBadge/InfoBadge';
+import PseudoModalContainer from '../PseudoModalContainer';
+import InputRedux, { INPUT_UI_STYLES } from '../Input/InputRedux';
+import { BADGE_TYPES } from '../Badge/Badge';
+import PriceBadge from '../Badges/PriceBadge/PriceBadge';
+import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
+import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
+import InfoBadge from '../InfoBadge/InfoBadge';
 
-import { ROUTES } from '../../../constants/routes';
+import { ROUTES } from '../../constants/routes';
 import { ContainerProps, TransferParams } from './types';
 
 import classes from './FioNameTransferContainer.module.scss';
-import { fioNameLabels } from '../../../constants/labels';
-import { ERROR_UI_TYPE } from '../../Input/ErrorBadge';
-import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
-import { hasFioAddressDelimiter, waitForEdgeAccountStop } from '../../../utils';
-import { PinConfirmation } from '../../../types';
-import Processing from '../../common/TransactionProcessing';
+import { fioNameLabels } from '../../constants/labels';
+import { ERROR_UI_TYPE } from '../Input/ErrorBadge';
+import {
+  CONFIRM_PIN_ACTIONS,
+  MANAGE_PAGE_REDIRECT,
+} from '../../constants/common';
+import { hasFioAddressDelimiter, waitForEdgeAccountStop } from '../../utils';
+import { PinConfirmation } from '../../types';
+import Processing from '../common/TransactionProcessing';
 import { Redirect } from 'react-router-dom';
+import Results from '../common/TransactionResults';
+import { TRANSFER_REQUEST } from '../../redux/fio/actions';
+import { ResultsData } from '../common/TransactionResults/types';
 
+// todo: fix typo
 const PLACEHOLDER = 'Enter FIO Address or FIO Public Key of New Onwer';
 const FIO_NAME_DATA = {
   address: {
@@ -51,7 +58,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
     refreshBalance,
     pinConfirmation,
     transfer,
-    result,
+    result: trxResult,
     getFee,
     getPrices,
     showPinModal,
@@ -66,6 +73,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
   const { costFio, costUsdc } = feePrice;
   const [formIsValid, setFormIsValid] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
   useEffect(() => {
     getPrices();
@@ -93,22 +101,18 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
 
       resetPinConfirm();
 
-      const results = {
-        feeCollected: result.feeCollected || feePrice,
+      setResultsData({
+        feeCollected: trxResult.feeCollected || feePrice,
         name,
         publicKey:
-          result.newOwnerKey ||
+          trxResult.newOwnerKey ||
           (hasFioAddressDelimiter(transferAddressValue)
             ? ''
             : transferAddressValue),
-        error: result.error,
-      };
-      history.push({
-        pathname: FIO_NAME_DATA[pageName].forwardLink,
-        state: results,
+        error: trxResult.error,
       });
     }
-  }, [transferProcessing, result]);
+  }, [transferProcessing, trxResult]);
 
   const submit = async (pinConfirmation: PinConfirmation) => {
     const {
@@ -155,6 +159,14 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
     showPinModal(CONFIRM_PIN_ACTIONS.TRANSFER);
   };
 
+  const onResultsClose = () => {
+    history.push(MANAGE_PAGE_REDIRECT[pageName]);
+  };
+
+  const onResultsRetry = () => {
+    setResultsData(null);
+  };
+
   const fioNameLabel = fioNameLabels[pageName];
   const title = `Transfer FIO ${fioNameLabel} Ownership`;
 
@@ -163,6 +175,22 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
 
   if (!walletPublicKey)
     return <Redirect to={{ pathname: FIO_NAME_DATA[pageName].backLink }} />;
+
+  if (resultsData)
+    return (
+      <Results
+        results={resultsData}
+        title={
+          resultsData.error
+            ? 'Ownership Transfer Failed!'
+            : 'Ownership Transferred!'
+        }
+        actionName={TRANSFER_REQUEST}
+        pageName={pageName}
+        onClose={onResultsClose}
+        onRetry={onResultsRetry}
+      />
+    );
 
   return (
     <PseudoModalContainer link={FIO_NAME_DATA[pageName].backLink} title={title}>

@@ -1,6 +1,6 @@
-@import '../../../assets/styles/colors.scss';
-@import '../../../assets/styles/fontMixins.scss';
-@import '../../../assets/styles/mediaQueriesMixings.scss';
+@import '../../assets/styles/colors';
+@import '../../assets/styles/fontMixins';
+@import '../../assets/styles/mediaQueriesMixings';
 
 .container {
   .nameContainer {
@@ -41,5 +41,5 @@
       margin-bottom: 0;
       border-radius: 12px;
     }
-  }  
+  }
 }
