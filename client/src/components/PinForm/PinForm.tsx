@@ -5,7 +5,7 @@ import { isEmpty } from 'lodash';
 import { Button } from 'react-bootstrap';
 import Input from '../Input/Input';
 
-import { checkIfDesktop } from '../../screenType';
+import { useCheckIfDesktop } from '../../screenType';
 import { PIN_LENGTH } from '../../constants/form';
 
 import { setDataMutator } from '../../utils';
@@ -26,7 +26,7 @@ type FormValues = {
 
 const PinForm = (props: Props) => {
   const { onSubmit, onReset, loading, error } = props;
-  const isDesktop = checkIfDesktop();
+  const isDesktop = useCheckIfDesktop();
 
   let currentForm: any = {}; // todo: FormApi is not exported
   useEffect(() => {

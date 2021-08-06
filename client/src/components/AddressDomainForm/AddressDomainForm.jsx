@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form } from 'react-final-form';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../../components/AddressDomainBadge/AddressDomainBadge';
-import { checkIfDesktop } from '../../screenType';
+import { useCheckIfDesktop } from '../../screenType';
 import Notifications from './Notifications.tsx';
 import FormContainer from './FormContainer';
 import debounce from 'lodash/debounce';
@@ -44,7 +44,7 @@ const AddressDomainForm = props => {
     ...fioDomains.map(({ name }) => name),
   ];
 
-  const isDesktop = checkIfDesktop();
+  const isDesktop = useCheckIfDesktop();
 
   useEffect(() => {
     getPrices();
