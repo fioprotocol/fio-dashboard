@@ -39,8 +39,6 @@ const PasswordRecoveryForm = props => {
   const [defaultValues, setDefaultValues] = useState({});
   const [errorMessage, setError] = useState('');
 
-  const { change, getState } = useForm();
-
   useEffect(getRecoveryQuestions, []);
   useEffect(async () => {
     if (
@@ -190,10 +188,11 @@ const PasswordRecoveryForm = props => {
     );
   };
 
-  const renderQuestionItem = props => {
+  const QuestionItem = props => {
     const {
       input: { name },
     } = props;
+    const { change, getState } = useForm();
 
     const { values } = getState() || {};
     const { recoveryQuestionOne, recoveryQuestionTwo } = values || {};
@@ -307,7 +306,7 @@ const PasswordRecoveryForm = props => {
               {questions.map(item => (
                 <Field
                   name={item}
-                  component={renderQuestionItem}
+                  component={QuestionItem}
                   key={`${item.question.replace(/ /, '')}${item.category}`}
                 />
               ))}
