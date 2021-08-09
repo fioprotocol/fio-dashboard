@@ -22,6 +22,7 @@ import FioDomainRenewPage from './pages/FioDomainRenewPage';
 import TokenListPage from './pages/LinkTokenPages/TokenListPage';
 import DeleteTokenPage from './pages/LinkTokenPages/DeleteTokenPage';
 import AddTokenPage from './pages/LinkTokenPages/AddTokenPage';
+import EditTokenPage from './pages/LinkTokenListPages/EditTokenPage';
 import SettingsPage from './pages/SettingsPage';
 import RefHomePage from './pages/RefHomePage';
 import RefSignNftPage from './pages/RefSignNftPage';
@@ -147,6 +148,10 @@ const Routes = () => (
         <PrivateRoute
           path={`${LIST_TOKEN_PARENT_ROUTE}${ROUTES.ADD_TOKEN}`}
           component={AddTokenPage}
+        />
+        <PrivateRoute
+          path={`${LIST_TOKEN_PARENT_ROUTE}/${ROUTES.EDIT_TOKEN}`}
+          component={EditTokenPage}
         />
 
         <PrivateRoute path={ROUTES.SETTINGS} component={SettingsPage} exact />
