@@ -59,8 +59,6 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   // Handle results
   useEffect(() => {
     if (!renewProcessing && processing) {
-      setProcessing(false);
-
       resetPinConfirm();
 
       setResultsData({
@@ -68,6 +66,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
         name,
         error: result.error,
       });
+      setProcessing(false);
     }
   }, [renewProcessing, result]);
 
@@ -114,9 +113,6 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
     setResultsData(null);
   };
 
-  if (!walletPublicKey)
-    return <Redirect to={{ pathname: MANAGE_PAGE_REDIRECT[pageName] }} />;
-
   if (resultsData)
     return (
       <Results
@@ -128,6 +124,9 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
         onRetry={onResultsRetry}
       />
     );
+
+  if (!walletPublicKey && !processing)
+    return <Redirect to={{ pathname: MANAGE_PAGE_REDIRECT[pageName] }} />;
 
   return (
     <PseudoModalContainer

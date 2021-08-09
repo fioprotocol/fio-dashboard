@@ -62,8 +62,6 @@ const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
   // Handle results
   useEffect(() => {
     if (!setVisibilityProcessing && processing) {
-      setProcessing(false);
-
       resetPinConfirm();
 
       setResultsData({
@@ -72,6 +70,7 @@ const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
         changedStatus: statusToChange,
         error: result.error,
       });
+      setProcessing(false);
     }
   }, [setVisibilityProcessing, result]);
 
@@ -120,9 +119,6 @@ const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
   const hasLowBalance =
     currentWallet && feePrice && currentWallet.balance < feePrice.costFio;
 
-  if (!walletPublicKey)
-    return <Redirect to={{ pathname: ROUTES.FIO_DOMAINS }} />;
-
   if (resultsData)
     return (
       <Results
@@ -137,6 +133,9 @@ const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
         onRetry={onResultsRetry}
       />
     );
+
+  if (!walletPublicKey && !processing)
+    return <Redirect to={{ pathname: ROUTES.FIO_DOMAINS }} />;
 
   return (
     <PseudoModalContainer

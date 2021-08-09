@@ -96,8 +96,6 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
   // Handle results
   useEffect(() => {
     if (!transferProcessing && processing) {
-      setProcessing(false);
-
       resetPinConfirm();
 
       setResultsData({
@@ -110,6 +108,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
             : transferAddressValue),
         error: trxResult.error,
       });
+      setProcessing(false);
     }
   }, [transferProcessing, trxResult]);
 
@@ -172,9 +171,6 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
   const hasLowBalance =
     currentWallet && feePrice && currentWallet.balance < feePrice.costFio;
 
-  if (!walletPublicKey)
-    return <Redirect to={{ pathname: FIO_NAME_DATA[pageName].backLink }} />;
-
   if (resultsData)
     return (
       <Results
@@ -190,6 +186,9 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
         onRetry={onResultsRetry}
       />
     );
+
+  if (!walletPublicKey && !processing)
+    return <Redirect to={{ pathname: FIO_NAME_DATA[pageName].backLink }} />;
 
   return (
     <PseudoModalContainer link={FIO_NAME_DATA[pageName].backLink} title={title}>
