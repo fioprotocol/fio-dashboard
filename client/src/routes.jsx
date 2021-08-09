@@ -24,8 +24,14 @@ import FioDomainStatusChangeResultsPage from './pages/FioDomainStatusChangeResul
 import FioAddressRenewPage from './pages/FioAddressRenewPage';
 import FioDomainRenewPage from './pages/FioDomainRenewPage';
 import FioNameRenewResultsPage from './pages/FioNameRenewResultsPage';
+import LinkTokenListPage from './pages/LinkTokenListPages/LinkTokenListPage';
+import LinkTokenPage from './pages/LinkTokenListPages/LinkTokenPage';
+import EditTokenPage from './pages/LinkTokenListPages/EditTokenPage';
+import DeleteTokenPage from './pages/LinkTokenListPages/DeleteTokenPage';
 
 import { ROUTES } from './constants/routes';
+
+const LIST_TOKEN_PARENT_ROUTE = `${ROUTES.LINK_TOKEN_LIST}/:id`;
 
 const Routes = () => (
   <MainLayout>
@@ -99,6 +105,23 @@ const Routes = () => (
           path={ROUTES.FIO_NAME_RENEW_RESULTS}
           component={FioNameRenewResultsPage}
           excat
+        />
+
+        <PrivateRoute
+          path={LIST_TOKEN_PARENT_ROUTE}
+          component={LinkTokenListPage}
+        />
+        <PrivateRoute
+          path={`${LIST_TOKEN_PARENT_ROUTE}/${ROUTES.LINK_TOKEN}`}
+          component={LinkTokenPage}
+        />
+        <PrivateRoute
+          path={`${LIST_TOKEN_PARENT_ROUTE}/${ROUTES.EDIT_TOKEN}`}
+          component={EditTokenPage}
+        />
+        <PrivateRoute
+          path={`${LIST_TOKEN_PARENT_ROUTE}/${ROUTES.DELETE_TOKEN}`}
+          component={DeleteTokenPage}
         />
 
         <AuthContainer />
