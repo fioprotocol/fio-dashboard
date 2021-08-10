@@ -12,6 +12,7 @@ import classes from './Results.module.scss';
 import TransferResults from './components/TransferResults';
 import RenewResults from './components/RenewResults';
 import SetVisibilityResults from './components/SetVisibilityResults';
+import { RENEW_REQUEST } from '../../../redux/fio/actions';
 
 const Results: React.FC<ResultsProps> = props => {
   const {
@@ -33,8 +34,16 @@ const Results: React.FC<ResultsProps> = props => {
     [],
   );
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
-    <PseudoModalContainer title={title} onClose={onClose} hasAutoWidth={true}>
+    <PseudoModalContainer
+      title={title}
+      onClose={onClose}
+      hasAutoWidth={actionName !== RENEW_REQUEST}
+    >
       <div className={classes.container}>
         {error && (
           <InfoBadge
