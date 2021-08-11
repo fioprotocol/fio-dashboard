@@ -10,12 +10,6 @@ export default class Edge {
 
   makeEdgeContext = async () => {
     try {
-      // const options = { // EdgeUiContextOptions
-      //   assetsPath: '/login-window/index.html',
-      //   vendorImageUrl: logo, // '../assets/images/logo.png'
-      //   vendorName: 'FIO'
-      // }
-
       if (this.edgeContext) return true;
 
       this.edgeContext = await makeEdgeContext({
