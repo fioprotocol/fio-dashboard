@@ -6,7 +6,7 @@
   "scripts": {
     "preinstall": "npm i github:barrysteyn/node-scrypt#fb60a8d3c158fe115a624b5ffa7480f3a24b03fb",
     "client:start": "cd ./client && react-app-rewired start",
-    "client:build": "cd ./client && react-app-rewired --expose-gc --max-old-space-size=8192 build",
+    "client:build": "cd ./client && react-app-rewired --expose-gc --max-old-space-size=3072 build",
     "client:test": "cd ./client && CI=true react-app-rewired test --env=jsdom",
     "client:analyze": "cd ./client && source-map-explorer build/static/js/main.*",
     "server:dev": "npm run migrate && nodemon -L --inspect --es-module-specifier-resolution=node --watch server server/src/index.mjs",
