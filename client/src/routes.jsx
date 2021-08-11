@@ -110,6 +110,7 @@ const Routes = () => (
         <PrivateRoute
           path={LIST_TOKEN_PARENT_ROUTE}
           component={LinkTokenListPage}
+          exact
         />
         <PrivateRoute
           path={`${LIST_TOKEN_PARENT_ROUTE}/${ROUTES.LINK_TOKEN}`}

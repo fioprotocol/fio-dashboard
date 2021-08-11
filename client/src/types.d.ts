@@ -86,12 +86,19 @@ export type LastAuthData = {
 
 export type PageNameType = 'address' | 'domain';
 
+export type FioNamePublicAddress = {
+  chainCode: string;
+  tokenCode: string;
+  publicAddress: string;
+};
+
 export type FioNameItemProps = {
   name?: string;
   expiration?: Date;
   remaining?: number;
   isPublic?: number;
   walletPublicKey?: string;
+  publicAddresses?: FioNamePublicAddress[];
 };
 
 export type LinkResult = {

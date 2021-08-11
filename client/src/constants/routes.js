@@ -29,9 +29,9 @@ const ROUTES = {
   FIO_DOMAIN_RENEW: '/fio-domain-renew',
   FIO_NAME_RENEW_RESULTS: '/fio-name-results',
   LINK_TOKEN_LIST: '/link-token-list',
-  LINK_TOKEN: '/link-token',
-  EDIT_TOKEN: '/edit-token',
-  DELETE_TOKEN: '/delete-token',
+  LINK_TOKEN: 'link-token',
+  EDIT_TOKEN: 'edit-token',
+  DELETE_TOKEN: 'delete-token',
 };
 
 export { ROUTES };
