@@ -2,7 +2,7 @@ import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
 import { FioNameItemProps } from '../../types';
-import FioDomainStatusChangeContainer from '../../components/FioDomainStatusChange/FioDomainStatusChangeContainer';
+import FioDomainStatusChangeContainer from '../../components/FioDomainStatusChange';
 
 type MatchParams = {
   id: string;

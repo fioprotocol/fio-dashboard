@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
-import { checkIfDesktop } from '../../screenType';
+import { useCheckIfDesktop } from '../../screenType';
 import CheckoutPurchaseContainer from '../../components/CheckoutPurchaseContainer';
 import { RenderCheckout } from '../../components/CheckoutPurchaseContainer/CheckoutPurchaseComponents';
 import '../../helpers/gt-sdk';
@@ -25,7 +25,7 @@ const CheckoutPage = props => {
     isProcessing,
   } = props;
 
-  const isDesktop = checkIfDesktop();
+  const isDesktop = useCheckIfDesktop();
 
   useEffect(() => {
     if (!isEmpty(fioWallets)) {

@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Button, Navbar, Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
-import { checkIfDesktop } from '../../screenType';
+import { useCheckIfDesktop } from '../../screenType';
 import Menu from '../Menu';
 import Navigation from '../Navigation/Navigation';
 
@@ -24,7 +24,7 @@ const MainHeader = props => {
   } = props;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
 
-  const isDesktop = checkIfDesktop();
+  const isDesktop = useCheckIfDesktop();
 
   const closeMenu = () => {
     toggleMenuOpen(false);

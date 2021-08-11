@@ -17,7 +17,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "preserve",
+    "jsx": "react",
     "sourceMap": true,
     "noErrorTruncation": true,
     "noUnusedLocals": true,
@@ -25,7 +25,8 @@
     "typeRoots": [
       "../../node_modules/@types",
       "/src/index.d.ts"
-    ]
+    ],
+    "noFallthroughCasesInSwitch": true
   },
   "include": [
     "src"

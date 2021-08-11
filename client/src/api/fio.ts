@@ -1,22 +1,20 @@
 import { FIOSDK } from '@fioprotocol/fiosdk';
-import {
-  AvailabilityResponse,
-  RegisterFioAddressResponse,
-  RegisterFioDomainResponse,
-  TransferFioAddressResponse,
-  TransferFioDomainResponse,
-  RenewFioAddressResponse,
-  RenewFioDomainResponse,
-  FioNamesResponse,
-  FioAddressesResponse,
-  FioDomainsResponse,
-  PublicAddressResponse,
-  SetFioDomainVisibilityResponse,
-} from '@fioprotocol/fiosdk/src/entities/responses';
+import { AvailabilityResponse } from '@fioprotocol/fiosdk/src/entities/AvailabilityResponse';
+import { FioNamesResponse } from '@fioprotocol/fiosdk/src/entities/FioNamesResponse';
+import { FioAddressesResponse } from '@fioprotocol/fiosdk/src/entities/FioAddressesResponse';
+import { FioDomainsResponse } from '@fioprotocol/fiosdk/src/entities/FioDomainsResponse';
+import { PublicAddressResponse } from '@fioprotocol/fiosdk/src/entities/PublicAddressResponse';
+import { SetFioDomainVisibilityResponse } from '@fioprotocol/fiosdk/src/entities/SetFioDomainVisibilityResponse';
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { Transactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
 import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { isDomain } from '../utils';
+
+interface TrxResponse {
+  status: string;
+  expiration: string;
+  fee_collected: number;
+}
 
 type FIOSDK_LIB = typeof FIOSDK;
 
@@ -88,10 +86,7 @@ export default class Fio {
     return this.publicFioSDK.isAvailable(fioName);
   };
 
-  register = async (
-    fioName: string,
-    fee: number,
-  ): Promise<RegisterFioAddressResponse | RegisterFioDomainResponse> => {
+  register = async (fioName: string, fee: number): Promise<TrxResponse> => {
     this.validateAction();
     if (isDomain(fioName)) {
       return await this.walletFioSDK.registerFioDomain(fioName, fee);
@@ -103,7 +98,7 @@ export default class Fio {
     fioName: string,
     newOwnerKey: string,
     fee: number,
-  ): Promise<TransferFioAddressResponse | TransferFioDomainResponse> => {
+  ): Promise<TrxResponse> => {
     this.validateAction();
     if (isDomain(fioName)) {
       return await this.walletFioSDK.transferFioDomain(
@@ -119,10 +114,7 @@ export default class Fio {
     );
   };
 
-  renew = async (
-    fioName: string,
-    fee: number,
-  ): Promise<RenewFioAddressResponse | RenewFioDomainResponse> => {
+  renew = async (fioName: string, fee: number): Promise<TrxResponse> => {
     this.validateAction();
     if (isDomain(fioName)) {
       return await this.walletFioSDK.renewFioDomain(fioName, fee);

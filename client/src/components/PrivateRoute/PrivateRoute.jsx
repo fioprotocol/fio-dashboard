@@ -1,5 +1,6 @@
+import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
-import { Spin } from 'antd';
 import { Route, Redirect } from 'react-router-dom';
 import { ROUTES } from '../../constants/routes';
 
@@ -15,8 +16,9 @@ export const PrivateRoute = ({
       render={props => {
         if (loading) {
           return (
-            <Spin
-              size="large"
+            <FontAwesomeIcon
+              icon={faSpinner}
+              spin
               style={{
                 position: 'absolute',
                 top: '50%',

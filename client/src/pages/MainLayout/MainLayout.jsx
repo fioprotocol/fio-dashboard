@@ -8,7 +8,7 @@ import Footer from '../../components/Footer/Footer';
 import LoginForm from '../../components/LoginForm';
 import PinConfirmModal from '../../components/PinConfirmModal';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
-import { checkIfDesktop } from '../../screenType';
+import { useCheckIfDesktop } from '../../screenType';
 import AutoLogout from '../../services/AutoLogout';
 import CartTimeout from '../../services/CartTimeout';
 
@@ -25,7 +25,7 @@ const MainLayout = props => {
     init,
   } = props;
 
-  const isDesktop = checkIfDesktop();
+  const isDesktop = useCheckIfDesktop();
 
   useEffect(() => {
     init();

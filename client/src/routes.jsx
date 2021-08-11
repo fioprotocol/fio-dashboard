@@ -17,13 +17,9 @@ import PurchasePage from './pages/PurchasePage';
 import ScrollToTop from './components/ScrollToTop';
 import FioAddressTransferPage from './pages/FioAddressTransferPage';
 import FioDomainTransferPage from './pages/FioDomainTransferPage';
-import FioAddressTransferResultsPage from './pages/FioAddressTransferResultsPage';
-import FioDomainTransferResultsPage from './pages/FioDomainTransferResultsPage';
 import FioDomainStatusChangePage from './pages/FioDomainStatusChangePage';
-import FioDomainStatusChangeResultsPage from './pages/FioDomainStatusChangeResultsPage';
 import FioAddressRenewPage from './pages/FioAddressRenewPage';
 import FioDomainRenewPage from './pages/FioDomainRenewPage';
-import FioNameRenewResultsPage from './pages/FioNameRenewResultsPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -67,24 +63,8 @@ const Routes = () => (
         />
 
         <PrivateRoute
-          path={ROUTES.FIO_ADDRESS_TRANSFER_RESULTS}
-          component={FioAddressTransferResultsPage}
-          excat
-        />
-        <PrivateRoute
-          path={ROUTES.FIO_DOMAIN_TRANSFER_RESULTS}
-          component={FioDomainTransferResultsPage}
-          excat
-        />
-
-        <PrivateRoute
           path={`${ROUTES.FIO_DOMAIN_STATUS_CHANGE}/:id`}
           component={FioDomainStatusChangePage}
-        />
-        <PrivateRoute
-          path={ROUTES.FIO_DOMAIN_STATUS_CHANGE_RESULTS}
-          component={FioDomainStatusChangeResultsPage}
-          excat
         />
 
         <PrivateRoute
@@ -94,11 +74,6 @@ const Routes = () => (
         <PrivateRoute
           path={`${ROUTES.FIO_DOMAIN_RENEW}/:id`}
           component={FioDomainRenewPage}
-        />
-        <PrivateRoute
-          path={ROUTES.FIO_NAME_RENEW_RESULTS}
-          component={FioNameRenewResultsPage}
-          excat
         />
 
         <AuthContainer />

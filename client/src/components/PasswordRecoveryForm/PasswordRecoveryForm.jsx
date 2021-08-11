@@ -188,7 +188,7 @@ const PasswordRecoveryForm = props => {
     );
   };
 
-  const renderQuestionItem = props => {
+  const QuestionItem = props => {
     const {
       input: { name },
     } = props;
@@ -306,7 +306,7 @@ const PasswordRecoveryForm = props => {
               {questions.map(item => (
                 <Field
                   name={item}
-                  component={renderQuestionItem}
+                  component={QuestionItem}
                   key={`${item.question.replace(/ /, '')}${item.category}`}
                 />
               ))}

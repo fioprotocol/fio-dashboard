@@ -89,16 +89,12 @@ export default class Edge {
 
   async checkPasswordRules(password, passwordRepeat) {
     // check password rules
-    try {
-      const check = await this.edgeContext.checkPasswordRules(password);
-      if (!check.passed) {
-        throw new Error('Password is not valid');
-      }
-      if (password !== passwordRepeat) {
-        throw new Error('Passwords is not match');
-      }
-    } catch (e) {
-      throw e;
+    const check = await this.edgeContext.checkPasswordRules(password);
+    if (!check.passed) {
+      throw new Error('Password is not valid');
+    }
+    if (password !== passwordRepeat) {
+      throw new Error('Passwords is not match');
     }
 
     return true;

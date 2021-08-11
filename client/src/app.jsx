@@ -42,7 +42,6 @@ import {
   faClipboard as faRegularClipboard,
 } from '@fortawesome/free-regular-svg-icons';
 
-import 'antd/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import api from './api';

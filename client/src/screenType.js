@@ -27,7 +27,7 @@ export function useWindowSize() {
   return windowSize;
 }
 
-export function currentScreenType() {
+export function useCurrentScreenType() {
   const { width } = useWindowSize();
 
   if (width <= MOBILE_THRESHOLD) return { screenType: SCREEN_TYPE.MOBILE };
@@ -36,7 +36,7 @@ export function currentScreenType() {
   return { screenType: SCREEN_TYPE.DESKTOP };
 }
 
-export function checkIfDesktop() {
+export function useCheckIfDesktop() {
   const { width } = useWindowSize();
 
   return width >= TABLET_THRESHOLD;
