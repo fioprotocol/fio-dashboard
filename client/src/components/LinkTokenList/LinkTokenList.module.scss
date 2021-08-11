@@ -1,0 +1,15 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.subTitle {
+  font-size: 0.875rem;
+  color: $dark-jungle-green;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  @include proxima-nova-semibold;
+
+  @include lg {
+    margin-top: 13px;
+  }
+}

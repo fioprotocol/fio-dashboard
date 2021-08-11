@@ -141,6 +141,12 @@ export type LastAuthData = {
 
 export type FioNameType = 'address' | 'domain';
 
+export type FioNamePublicAddress = {
+  chainCode: string;
+  tokenCode: string;
+  publicAddress: string;
+};
+
 export type FioNameItemProps = {
   name?: string;
   expiration?: Date;
