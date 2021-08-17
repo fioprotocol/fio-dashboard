@@ -6,7 +6,7 @@ import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 import { FioNamePublicAddress } from '../../../types';
 import { useCheckIfDesktop } from '../../../screenType';
 
-import classes from './ComponentsStyles.module.scss';
+import classes from './PublicAddress.module.scss';
 
 const PublicAddress: React.FC<FioNamePublicAddress> = props => {
   const { chainCode, publicAddress, tokenCode } = props;
