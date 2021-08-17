@@ -33,8 +33,9 @@ const INFO_MESSAGE = (
 
 type Props = { currentFioAddress: FioNameItemProps };
 
+// todo: set redirect if no currentFioAddress
 const ListToken: React.FC<Props & RouteComponentProps> = props => {
-  const [showBadge, toggleShowBadge] = useState(true);
+  const [showBadge, toggleShowBadge] = useState(true); // todo: display if only FIO linked
   const onClose = () => toggleShowBadge(false);
 
   const {

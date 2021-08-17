@@ -31,55 +31,24 @@
   }
 }
 
-.publicAddressContainer, .publicAddressMobileContainer {
-  color: $dark-jungle-green;
-  font-size: 0.9334rem;
-  p {
+.bundledContainer {
+  display: flex;
+  flex-direction: column;
+
+  .title {
+    margin-right: 30px;
+  }
+
+  .total {
     margin-bottom: 0;
   }
-}
 
-.publicAddressContainer {
-  display: grid;
-  grid-template-columns: 50px 150px auto;
-
-  .chainCode, .publicAddressItem {
-    @include proxima-nova-thin;
-  }
-}
-
-.publicAddressMobileContainer {
-  width: 100%;
-  overflow: hidden;
-  max-height: 20px;
-  transition: max-height 0.3s ease-in-out;
-
-  .visiblePart {
-    display: flex;
+  @include lg {
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
 
-    .icon {
-      transition: 0.3s ease-in-out;
-
-      &.open {
-        transform: rotate(180deg);
-      }
-    }
-  }
-
-  .pubAddress {
-    margin-top: 15px;
-    .title {
-      @include sf-pro-display-thin;
-    }
-    .publicAddressItem {
-      word-break: break-all;
-      @include proxima-nova-bold;
-    }
-  }
-  &.containerOpen {
-    max-height: 100px;
+    .title, .total {
+      margin-top: 0;
+      margin-bottom: 0;
+    } 
   }
 }
