@@ -7,6 +7,7 @@ import DomainStatusBadge from '../Badges/DomainStatusBadge/DomainStatusBadge';
 import PriceBadge from '../Badges/PriceBadge/PriceBadge';
 import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
+import InfoBadge from '../InfoBadge/InfoBadge';
 
 import { BADGE_TYPES } from '../Badge/Badge';
 
@@ -21,6 +22,13 @@ import Processing from '../common/TransactionProcessing';
 import Results from '../common/TransactionResults';
 import { SET_VISIBILITY_REQUEST } from '../../redux/fio/actions';
 import { ResultsData } from '../common/TransactionResults/types';
+
+const INFO_MESSAGE_TEXT = {
+  [DOMAIN_STATUS.PUBLIC]:
+    'making your domain public will allow anyone to register a FIO Address on that domain',
+  [DOMAIN_STATUS.PRIVATE]:
+    'making your domain private will only allow the owner of the domain to register FIO Addresses on it.',
+};
 
 const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
   const {
@@ -143,6 +151,12 @@ const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
       title="Change Domain Status"
     >
       <div className={classes.container}>
+        <InfoBadge
+          title="Important information"
+          show={true}
+          message={INFO_MESSAGE_TEXT[statusToChange]}
+          type={BADGE_TYPES.INFO}
+        />
         <div className={classes.nameContainer}>
           Domain: <span className={classes.name}>{name}</span>
         </div>
