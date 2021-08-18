@@ -121,7 +121,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     handleShowSettings(false);
   };
   const onClickSignature = (fioNameItem: FioNameItemProps) => {
-    //TODO: Go to Signature list
+    // TODO: Go to Signature list
     console.debug('Go to Signature list');
   };
   const renderScroll = (children: React.ReactNode) => {
