@@ -1,5 +1,4 @@
 import { RouteComponentProps } from 'react-router-dom';
-import { PAGE_NAME } from './constants';
 import { FioNameItemProps, FioWalletDoublet, PageNameType } from '../../types';
 
 export type HasMore = { [key: string]: number };
@@ -52,6 +51,10 @@ export type ItemComponentProps = {
   isExpired: IsExpiredFunc;
   isDesktop: boolean;
   onSettingsOpen: ModalOpenActionType;
+};
+
+export type FIOAddressActions = {
+  onClickSignature: (fioNameItem: FioNameItemProps) => void;
 };
 
 export type SettingsProps = {

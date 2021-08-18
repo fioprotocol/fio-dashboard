@@ -35,6 +35,7 @@ import {
   faPen,
   faCheckSquare,
   faCheck,
+  faSignature,
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
@@ -83,6 +84,7 @@ library.add(
   faCheckSquare,
   faRegularSquare,
   faCheck,
+  faSignature,
 );
 
 export default class App extends Component {

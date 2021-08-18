@@ -120,7 +120,9 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     !isDesktop && handleShowModal(true);
     handleShowSettings(false);
   };
-
+  const onClickSignature = (fioNameItem: FioNameItemProps) => {
+    console.debug('Go to Signature list');
+  };
   const renderScroll = (children: React.ReactNode) => {
     return (
       <>
@@ -148,6 +150,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     toggleShowWarnBadge,
     onItemModalOpen,
     onSettingsOpen,
+    onClickSignature,
   };
 
   if (noProfileLoaded) return <Redirect to={{ pathname: ROUTES.HOME }} />;

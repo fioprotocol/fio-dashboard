@@ -14,6 +14,7 @@ import {
   NotificationsProps,
   SettingsProps,
   ActionButtonProps,
+  FIOAddressActions,
 } from './types';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
@@ -110,8 +111,15 @@ const renderFioAddress = (
 };
 
 // todo: set actions on buttons
-const renderActions: React.FC<ActionButtonProps> = props => {
-  const { pageName, isDesktop, onSettingsOpen, fioNameItem } = props;
+const renderActions: React.FC<ActionButtonProps &
+  FIOAddressActions> = props => {
+  const {
+    pageName,
+    isDesktop,
+    onSettingsOpen,
+    fioNameItem,
+    onClickSignature,
+  } = props;
   const { name } = fioNameItem;
 
   return (
@@ -141,6 +149,13 @@ const renderActions: React.FC<ActionButtonProps> = props => {
         </Button>
       )}
       <Button
+        className={classes.actionButton}
+        onClick={() => onClickSignature(fioNameItem)}
+      >
+        <FontAwesomeIcon icon="signature" className={classes.atIcon} />
+        <span>NFT signature</span>
+      </Button>
+      <Button
         className={classes.settingsButton}
         onClick={() => onSettingsOpen(fioNameItem)}
       >
@@ -150,7 +165,8 @@ const renderActions: React.FC<ActionButtonProps> = props => {
   );
 };
 
-export const DesktopComponents: React.FC<DefaultProps> = props => {
+export const DesktopComponents: React.FC<DefaultProps &
+  FIOAddressActions> = props => {
   const {
     fioNameList,
     isExpired,
@@ -160,6 +176,7 @@ export const DesktopComponents: React.FC<DefaultProps> = props => {
     toggleShowWarnBadge,
     isDesktop,
     onSettingsOpen,
+    onClickSignature,
   } = props;
   return (
     <div className={classes.container}>
@@ -215,6 +232,7 @@ export const DesktopComponents: React.FC<DefaultProps> = props => {
                     isDesktop,
                     onSettingsOpen,
                     fioNameItem,
+                    onClickSignature,
                   })}
                 </div>
               </React.Fragment>
@@ -243,6 +261,7 @@ export const DesktopComponents: React.FC<DefaultProps> = props => {
                     isDesktop,
                     onSettingsOpen,
                     fioNameItem,
+                    onClickSignature,
                   })}
                 </div>
               </React.Fragment>
@@ -306,7 +325,8 @@ export const MobileComponents: React.FC<DefaultProps> = props => {
 };
 
 export const RenderItemComponent: React.FC<ItemComponentProps &
-  NotificationsProps> = props => {
+  NotificationsProps &
+  FIOAddressActions> = props => {
   const {
     fioNameItem,
     showWarnBadge,
@@ -317,6 +337,7 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
     isExpired,
     isDesktop,
     onSettingsOpen,
+    onClickSignature,
   } = props;
   const { name, remaining, expiration, isPublic } = fioNameItem || {};
   return (
@@ -376,6 +397,7 @@ export const RenderItemComponent: React.FC<ItemComponentProps &
           isDesktop,
           onSettingsOpen,
           fioNameItem,
+          onClickSignature,
         })}
       </div>
     </div>
