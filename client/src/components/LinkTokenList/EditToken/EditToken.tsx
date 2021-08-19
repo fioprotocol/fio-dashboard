@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
-import ActionContainer from '../Containers/ActionContainer';
+import ActionContainer, {
+  CONTAINER_NAMES,
+} from '../Containers/ActionContainer';
 import ConfirmContainer from '../Containers/ConfirmContainer';
 import PublicAddressEdit from '../Components/PublicAddressEdit';
 
@@ -70,11 +72,11 @@ const EditToken: React.FC<any> = props => {
 
   return !results ? (
     <ActionContainer
-      buttonName="Edit"
+      containerName={CONTAINER_NAMES.EDIT}
       name={name}
-      title="Edit Public Address(es)"
       bundleCost={bundleCost}
       remaining={remaining}
+      onActionButtonClick={() => {}} // todo: set action
     >
       <div className={classes.container}>
         <h5 className={classnames(classes.subTitle, classes.editSubtitle)}>
