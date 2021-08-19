@@ -82,3 +82,16 @@
   font-size: 15px;
   @include proxima-nova-regular;
 }
+
+.checkIcon {
+  color: $dark-jungle-green;
+  cursor: pointer;
+  font-size: 20px;
+  margin-left: 40px;
+  justify-self: flex-end;
+
+  &.inactiveIcon {
+    color: $manatee;
+    cursor: default;
+  }
+}

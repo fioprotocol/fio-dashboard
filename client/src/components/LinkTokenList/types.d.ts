@@ -21,3 +21,8 @@ export type BundledTransactionType = {
   bundles: number;
   remaining: number;
 };
+
+export type CheckedPublicAddressType = {
+  isChecked: boolean;
+  id: string;
+} & FioNamePublicAddress;

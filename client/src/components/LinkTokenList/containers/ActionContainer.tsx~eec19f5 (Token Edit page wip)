@@ -12,10 +12,11 @@ import classes from './ContainerStyle.module.scss';
 type Props = {
   bundleCost: number;
   children?: React.ReactNode;
-  buttonName: string;
+  containerName: string;
+  isDisabled?: boolean;
   name: string;
+  onActionButtonClick: () => void;
   remaining: number;
-  title: string;
 };
 
 const lowBalanceText = {
@@ -24,13 +25,42 @@ const lowBalanceText = {
     'Unfortunately there are not enough bundled transactions available to complete linking. Please renew your address now.',
 };
 
+export const CONTAINER_NAMES = {
+  DELETE: 'delete',
+  EDIT: 'edit',
+  LINK: 'link',
+};
+
+const CONTAINER_TYPES = {
+  [CONTAINER_NAMES.DELETE]: {
+    title: 'Delete Public Address(es)',
+    buttonText: 'Delete',
+  },
+  [CONTAINER_NAMES.EDIT]: {
+    title: 'Edit Public Address(es)',
+    buttonText: 'Edit',
+  },
+  [CONTAINER_NAMES.LINK]: {
+    title: 'Link your FIO Address',
+    buttonText: 'Link Now',
+  },
+};
+
 const ActionContainer: React.FC<Props> = props => {
-  const { bundleCost, buttonName, children, name, remaining, title } = props;
+  const {
+    bundleCost,
+    children,
+    containerName,
+    isDisabled,
+    name,
+    onActionButtonClick,
+    remaining,
+  } = props;
 
   const hasLowBalance = remaining - bundleCost < 0;
   return (
     <PseudoModalContainer
-      title={title}
+      title={CONTAINER_TYPES[containerName].title}
       link={`${ROUTES.LINK_TOKEN_LIST}/${name}`}
       hasAutoWidth={true}
     >
@@ -39,8 +69,12 @@ const ActionContainer: React.FC<Props> = props => {
         {children}
         <BundledTransactionBadge bundles={bundleCost} remaining={remaining} />
         <LowBalanceBadge hasLowBalance={hasLowBalance} {...lowBalanceText} />
-        <Button className={classes.actionButton} disabled={hasLowBalance}>
-          {buttonName}
+        <Button
+          className={classes.actionButton}
+          disabled={hasLowBalance || isDisabled}
+          onClick={onActionButtonClick}
+        >
+          {CONTAINER_TYPES[containerName].buttonText}
         </Button>
       </div>
     </PseudoModalContainer>
