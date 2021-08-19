@@ -137,6 +137,7 @@ export const transfer = ({
     }
   },
   actionName: TRANSFER_REQUEST,
+  fioName,
 });
 
 export const SET_VISIBILITY_REQUEST = `${prefix}/SET_VISIBILITY_REQUEST`;
@@ -175,6 +176,8 @@ export const setDomainVisibility = ({
     }
   },
   actionName: SET_VISIBILITY_REQUEST,
+  isPublic,
+  fioDomain,
 });
 
 export const RENEW_REQUEST = `${prefix}/RENEW_REQUEST`;
@@ -203,6 +206,7 @@ export const renew = ({
     }
   },
   actionName: RENEW_REQUEST,
+  fioName,
 });
 
 export const LINK_TOKENS_REQUEST = `${prefix}/LINK_TOKENS_REQUEST`;
