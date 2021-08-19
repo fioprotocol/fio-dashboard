@@ -168,8 +168,29 @@ export default combineReducers({
         }
         return fioAddresses;
       }
-      case actions.TRANSFER_SUCCESS:
-      case actions.RENEW_SUCCESS:
+      case actions.TRANSFER_SUCCESS: {
+        const fioAddresses = [...state];
+        const fioAddressIndex = fioAddresses.findIndex(
+          ({ name }) => name === action.fioName,
+        );
+        if (fioAddressIndex > -1) {
+          fioAddresses.splice(fioAddressIndex, 1);
+        }
+        return fioAddresses;
+      }
+      case actions.RENEW_SUCCESS: {
+        const fioAddresses = [...state];
+        const fioAddress = fioAddresses.find(
+          ({ name }) => name === action.fioName,
+        );
+
+        if (fioAddress != null) {
+          fioAddress.expiration = action.data.expiration;
+          return fioAddresses;
+        }
+
+        return state;
+      }
       case LOGOUT_SUCCESS:
         return [];
       default:
@@ -199,9 +220,35 @@ export default combineReducers({
         }
         return fioDomains;
       }
-      case actions.TRANSFER_SUCCESS:
-      case actions.SET_VISIBILITY_SUCCESS:
-      case actions.RENEW_SUCCESS:
+      case actions.SET_VISIBILITY_SUCCESS: {
+        const fioDomains = [...state];
+        const fioDomain = fioDomains.find(
+          ({ name }) => name === action.fioDomain,
+        );
+        fioDomain.isPublic = action.isPublic;
+        return fioDomains;
+      }
+      case actions.TRANSFER_SUCCESS: {
+        const fioDomains = [...state];
+        const fioDomainIndex = fioDomains.findIndex(
+          ({ name }) => name === action.fioName,
+        );
+        if (fioDomainIndex > -1) {
+          fioDomains.splice(fioDomainIndex, 1);
+        }
+        return fioDomains;
+      }
+      case actions.RENEW_SUCCESS: {
+        const fioDomains = [...state];
+        const fioDomain = fioDomains.find(
+          ({ name }) => name === action.fioDomain,
+        );
+        if (fioDomain != null) {
+          fioDomain.expiration = action.data.expiration;
+          return fioDomains;
+        }
+        return state;
+      }
       case LOGOUT_SUCCESS:
         return [];
       default:

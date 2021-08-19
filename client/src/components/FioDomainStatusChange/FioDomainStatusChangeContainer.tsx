@@ -75,7 +75,7 @@ const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
       setResultsData({
         feeCollected: result.feeCollected || feePrice,
         name,
-        changedStatus: statusToChange,
+        changedStatus: domainStatus,
         error: result.error,
       });
       setProcessing(false);
