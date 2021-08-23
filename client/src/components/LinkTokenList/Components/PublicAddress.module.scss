@@ -2,59 +2,6 @@
 @import '../../../assets/styles/fontMixins.scss';
 @import '../../../assets/styles/mediaQueriesMixings.scss';
 
-.publicAddressContainer, .publicAddressMobileContainer {
-  color: $dark-jungle-green;
-  font-size: 15px;
-  p {
-    margin-bottom: 0;
-  }
-}
-
-.publicAddressContainer {
-  display: grid;
-  grid-template-columns: 50px 150px auto;
-
-  .chainCode, .publicAddressItem {
-    @include proxima-nova-thin;
-  }
-}
-
-.publicAddressMobileContainer {
-  width: 100%;
-  overflow: hidden;
-  max-height: 20px;
-  transition: max-height 0.3s ease-in-out;
-
-  .visiblePart {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-
-    .icon {
-      transition: 0.3s ease-in-out;
-
-      &.open {
-        transform: rotate(180deg);
-      }
-    }
-  }
-
-  .pubAddress {
-    margin-top: 15px;
-    .title {
-      @include sf-pro-display-thin;
-    }
-    .publicAddressItem {
-      word-break: break-all;
-      @include proxima-nova-bold;
-    }
-  }
-  &.containerOpen {
-    max-height: 100px;
-  }
-}
-
 .badgeContainer {
   display: flex;
   flex-direction: row;
@@ -73,14 +20,6 @@
   &.editing {
     color: $clear-blue;
   }
-}
-
-.input {
-  border: none;
-  outline: none;
-  padding: 0;
-  font-size: 15px;
-  @include proxima-nova-regular;
 }
 
 .checkIcon {

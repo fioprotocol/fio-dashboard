@@ -72,6 +72,12 @@ export type PublicAddressDoublet = {
   tokenCode: string;
 };
 
+export type NFTTokenDoublet = {
+  publicAddress: string;
+  chainCode: string;
+  tokenId: number;
+};
+
 export type WalletKeysObj = {
   [walletId: string]: {
     private: string;
