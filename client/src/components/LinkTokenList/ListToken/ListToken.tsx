@@ -8,8 +8,10 @@ import NotificationBadge from '../../NotificationBadge';
 import { BADGE_TYPES } from '../../Badge/Badge';
 import { ROUTES } from '../../../constants/routes';
 import AddressName from '../Components/Address';
-import PublicAddress from '../Components/PublicAddress';
+import TokenBadge from '../../Badges/TokenBadge/TokenBadge';
+import TokenBadgeMobile from '../../Badges/TokenBadge/TokenBadgeMobile';
 
+import { useCheckIfDesktop } from '../../../screenType';
 import { FioNameItemProps } from '../../../types';
 
 import classes from './ListToken.module.scss';
@@ -42,6 +44,8 @@ const ListToken: React.FC<Props & RouteComponentProps> = props => {
     currentFioAddress: { name, publicAddresses },
     match: { url },
   } = props;
+
+  const isDesktop = useCheckIfDesktop();
 
   return (
     <PseudoModalContainer
@@ -84,9 +88,16 @@ const ListToken: React.FC<Props & RouteComponentProps> = props => {
         <h5 className={classes.subTitle}>Linked Tokens</h5>
         <div className={classes.publicAddresses}>
           {publicAddresses &&
-            publicAddresses.map(pubAddress => (
-              <PublicAddress {...pubAddress} key={pubAddress.publicAddress} />
-            ))}
+            publicAddresses.map(pubAddress =>
+              isDesktop ? (
+                <TokenBadge {...pubAddress} key={pubAddress.publicAddress} />
+              ) : (
+                <TokenBadgeMobile
+                  {...pubAddress}
+                  key={pubAddress.publicAddress}
+                />
+              ),
+            )}
         </div>
       </div>
     </PseudoModalContainer>

@@ -1,8 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
-
-import Badge, { BADGE_TYPES } from '../../Badge/Badge';
+import TokenBadge from '../../Badges/TokenBadge/TokenBadge';
 
 import { CheckedPublicAddressType } from '../types';
 
@@ -27,29 +26,24 @@ const PublicAddressDelete: React.FC<Props> = props => {
   const isInactive = hasLowBalance && !isChecked;
 
   const onClick = () => !isInactive && onCheckClick(id);
+  const actionButton = (
+    <FontAwesomeIcon
+      icon={isChecked ? 'check-square' : { prefix: 'far', iconName: 'square' }}
+      className={classnames(
+        classes.checkIcon,
+        isInactive && classes.inactiveIcon,
+      )}
+      onClick={onClick}
+    />
+  );
 
   return (
-    <Badge show={true} type={BADGE_TYPES.WHITE}>
-      <div className={classes.badgeContainer}>
-        <div className={classes.publicAddressContainer}>
-          <p className="boldText">{tokenCode}</p>
-          <p className={classes.chainCode}>
-            Chain Code: <span className="boldText">{chainCode}</span>
-          </p>
-          <p className={classes.publicAddressItem}>{publicAddress}</p>
-        </div>
-        <FontAwesomeIcon
-          icon={
-            isChecked ? 'check-square' : { prefix: 'far', iconName: 'square' }
-          }
-          className={classnames(
-            classes.checkIcon,
-            isInactive && classes.inactiveIcon,
-          )}
-          onClick={onClick}
-        />
-      </div>
-    </Badge>
+    <TokenBadge
+      chainCode={chainCode}
+      tokenCode={tokenCode}
+      publicAddress={publicAddress}
+      actionButton={actionButton}
+    />
   );
 };
 
