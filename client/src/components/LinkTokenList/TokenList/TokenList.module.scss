@@ -1,0 +1,77 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  width: 100%;
+  max-width: 830px;
+}
+
+.actionContainer {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .buttonsContainer {
+    display: flex;
+    flex-direction: row;
+    flex-flow: wrap;
+    justify-content: flex-start;
+
+    button {
+      margin-top: 20px;
+      height: 36px;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.8125rem;
+      line-height: 0;
+      border-radius: 7px;
+      padding: 0 12px;
+      @include sf-pro-display-thin;
+    }
+    .middleButton {
+      margin: 20px 20px 0;
+    }
+    .icon {
+      font-size: 1rem;
+      line-height: 0;
+      margin-right: 10px;
+    }
+  }
+}
+
+.publicAddresses {
+  margin-top: -10px;
+}
+
+@include lg {
+  .actionContainer {
+    flex-direction: row;
+    .buttonsContainer {
+      margin-top: 0;
+      justify-content: space-between;
+
+      button, .middleButton {
+        margin-top: 0;
+      }
+      .icon {
+        font-size: 1.25rem;
+      }
+    }
+  }
+}
+
+.subTitle {
+  font-size: 0.875rem;
+  color: $dark-jungle-green;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  @include proxima-nova-semibold;
+
+  @include lg {
+    margin-top: 13px;
+  }
+}

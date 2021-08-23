@@ -2,12 +2,18 @@
 @import '../../assets/styles/fontMixins.scss';
 @import '../../assets/styles/mediaQueriesMixings.scss';
 
+.textContainer {
+  margin: 0 auto 0 20px;
+  @include proxima-nova-thin;
+}
+
 .title {
   @include proxima-nova-bold;
 }
 
 .icon {
   font-size: 20px;
+  align-self: flex-start;
 }
 
 .arrow {
@@ -15,6 +21,7 @@
   margin: 0 30px;
   transition: 0.2s ease-in-out;
   transform: translateX(0);
+  align-self: flex-start;
 
   &:hover {
     transform: translateX(4px);
@@ -25,6 +32,7 @@
   font-size: 16px;
   transition: 0.3s ease-in-out;
   margin-left: auto;
+  align-self: flex-start;
   &:hover {
     transform: rotate(90deg);
   }
