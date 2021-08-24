@@ -1,0 +1,50 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.actionContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+
+  .button {
+    height: 36px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8125rem;
+    line-height: 0;
+    border-radius: 7px;
+    padding: 0 12px;
+    @include sf-pro-display-thin;
+
+    .icon {
+      font-size: 1rem;
+      line-height: 0;
+      margin-right: 10px;
+    }
+  }
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: $dark-jungle-green;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  @include proxima-nova-semibold;
+
+  @include lg {
+    margin-top: 13px;
+  }
+}
+
+.infoSubtitle {
+  color: $bright-turquoise;
+}
+
+.asterisk {
+  line-height: 1.25em;
+}
