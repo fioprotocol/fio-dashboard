@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
+import { Redirect } from 'react-router-dom';
 
 import PseudoModalContainer from '../../PseudoModalContainer';
 import NotificationBadge from '../../NotificationBadge';
@@ -35,7 +36,6 @@ const INFO_MESSAGE = (
 
 type Props = { currentFioAddress: FioNameItemProps };
 
-// todo: set redirect if no currentFioAddress
 const ListToken: React.FC<Props & RouteComponentProps> = props => {
   const [showBadge, toggleShowBadge] = useState(true); // todo: display if only FIO linked
   const onClose = () => toggleShowBadge(false);
@@ -46,6 +46,8 @@ const ListToken: React.FC<Props & RouteComponentProps> = props => {
   } = props;
 
   const isDesktop = useCheckIfDesktop();
+
+  if (!name) return <Redirect to={{ pathname: ROUTES.FIO_ADDRESSES }} />;
 
   return (
     <PseudoModalContainer
