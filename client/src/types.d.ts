@@ -98,7 +98,7 @@ export type FioNameItemProps = {
   remaining?: number;
   isPublic?: number;
   walletPublicKey?: string;
-  publicAddresses?: FioNamePublicAddress[];
+  publicAddresses?: PublicAddressDoublet[];
 };
 
 export type LinkResult = {

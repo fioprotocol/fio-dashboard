@@ -36,11 +36,13 @@ import {
   faWallet,
   faPlusCircle,
   faPen,
+  faCheckSquare,
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
   faCircle as faRegularCircle,
   faClipboard as faRegularClipboard,
+  faSquare as faRegularSquare,
 } from '@fortawesome/free-regular-svg-icons';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -87,6 +89,8 @@ library.add(
   faLink,
   faAt,
   faPen,
+  faCheckSquare,
+  faRegularSquare,
 );
 
 const store = configureStore(api, history);

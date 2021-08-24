@@ -21,6 +21,7 @@ import FioDomainStatusChangePage from './pages/FioDomainStatusChangePage';
 import FioAddressRenewPage from './pages/FioAddressRenewPage';
 import FioDomainRenewPage from './pages/FioDomainRenewPage';
 import TokenListPage from './pages/LinkTokenPages/TokenListPage';
+import DeleteTokenPage from './pages/LinkTokenPages/DeleteTokenPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -83,6 +84,10 @@ const Routes = () => (
           path={LIST_TOKEN_PARENT_ROUTE}
           component={TokenListPage}
           exact
+        />
+        <PrivateRoute
+          path={`${LIST_TOKEN_PARENT_ROUTE}/${ROUTES.DELETE_TOKEN}`}
+          component={DeleteTokenPage}
         />
 
         <AuthContainer />
