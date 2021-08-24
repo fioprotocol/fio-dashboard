@@ -1,0 +1,25 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.bundledContainer {
+  display: flex;
+  flex-direction: column;
+
+  .title {
+    margin-right: 30px;
+  }
+
+  .total {
+    margin-bottom: 0;
+  }
+
+  @include lg {
+    flex-direction: row;
+
+    .title, .total {
+      margin-top: 0;
+      margin-bottom: 0;
+    } 
+  }
+}
