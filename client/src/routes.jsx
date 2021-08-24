@@ -86,7 +86,7 @@ const Routes = () => (
           exact
         />
         <PrivateRoute
-          path={`${LIST_TOKEN_PARENT_ROUTE}/${ROUTES.DELETE_TOKEN}`}
+          path={`${LIST_TOKEN_PARENT_ROUTE}${ROUTES.DELETE_TOKEN}`}
           component={DeleteTokenPage}
         />
 

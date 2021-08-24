@@ -31,7 +31,7 @@ const ROUTES = {
   LINK_TOKEN_LIST: '/link-token-list',
   ADD_TOKEN: '/add-token',
   EDIT_TOKEN: '/edit-token',
-  DELETE_TOKEN: 'delete-token',
+  DELETE_TOKEN: '/delete-token',
 };
 
 export { ROUTES };
