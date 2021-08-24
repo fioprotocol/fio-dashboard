@@ -67,19 +67,19 @@ const ListToken: React.FC<Props & RouteComponentProps> = props => {
         <div className={classes.actionContainer}>
           <FioName name={name} />
           <div className={classes.buttonsContainer}>
-            <Link to={`${url}/${ROUTES.EDIT_TOKEN}`} className={classes.link}>
+            <Link to={`${url}${ROUTES.EDIT_TOKEN}`} className={classes.link}>
               <Button>
                 <FontAwesomeIcon icon="pen" className={classes.icon} />
                 Edit
               </Button>
             </Link>
-            <Link to={`${url}/${ROUTES.DELETE_TOKEN}`} className={classes.link}>
+            <Link to={`${url}${ROUTES.DELETE_TOKEN}`} className={classes.link}>
               <Button className={classes.middleButton}>
                 <FontAwesomeIcon icon="trash" className={classes.icon} />
                 Delete Link
               </Button>
             </Link>
-            <Link to={`${url}/${ROUTES.ADD_TOKEN}`} className={classes.link}>
+            <Link to={`${url}${ROUTES.ADD_TOKEN}`} className={classes.link}>
               <Button>
                 <FontAwesomeIcon icon="plus-circle" className={classes.icon} />
                 Add Link
