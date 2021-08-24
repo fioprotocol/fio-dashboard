@@ -26,6 +26,7 @@ type Props = {
   type: string;
   errorType?: string;
   uiType?: string;
+  upperCased?: boolean;
 };
 
 const InputRedux: React.FC<Props> = props => {
@@ -42,6 +43,7 @@ const InputRedux: React.FC<Props> = props => {
     type,
     errorType = '',
     uiType,
+    upperCased,
     ...rest
   } = props;
 
@@ -103,6 +105,7 @@ const InputRedux: React.FC<Props> = props => {
           onChange={e => {
             const currentValue = e.target.value;
             if (lowerCased) return onChange(currentValue.toLowerCase());
+            if (upperCased) return onChange(currentValue.toUpperCase());
             onChange(currentValue);
           }}
           type={showPass ? 'text' : type}

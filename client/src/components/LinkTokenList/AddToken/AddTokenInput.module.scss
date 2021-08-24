@@ -1,0 +1,37 @@
+@import '../../../assets/styles/colors.scss';
+
+.container {
+  width: 100%;
+  .fieldContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .codeInput {
+      min-width: 154px;
+      width: 154px;
+      margin-right: 15px;
+    }
+
+    .pubAddressInput {
+      min-width: 350px;
+    }
+
+    .closeIcon {
+      color: $dark-gray;
+      cursor: pointer;
+      transition: all 0.2s ease-in;
+      margin-top: -30px;
+      margin-left: 15px;
+      font-size: 1.25rem;
+      &:hover {
+        transform: rotate(90deg);
+      }
+    }
+  }
+  .errorContainer {
+    margin-top: -30px;  
+    margin-bottom: -15px;
+    color: $warn-red;
+  }
+}
