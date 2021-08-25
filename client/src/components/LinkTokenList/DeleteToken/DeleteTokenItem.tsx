@@ -23,26 +23,41 @@ const DeleteTokenItem: React.FC<Props> = props => {
     tokenCode,
   } = props;
 
-  const isInactive = hasLowBalance && !isChecked;
-
-  const onClick = () => !isInactive && onCheckClick(id);
-  const actionButton = (
-    <FontAwesomeIcon
-      icon={isChecked ? 'check-square' : { prefix: 'far', iconName: 'square' }}
-      className={classnames(
-        classes.checkIcon,
-        isInactive && classes.inactiveIcon,
-      )}
-      onClick={onClick}
-    />
-  );
+  const onClick = () => onCheckClick(id);
 
   return (
     <TokenBadge
       chainCode={chainCode}
       tokenCode={tokenCode}
       publicAddress={publicAddress}
-      actionButton={actionButton}
+      actionButton={
+        <DeleteTokenActionButton
+          isInactive={hasLowBalance && !isChecked}
+          isChecked={isChecked}
+          onClick={onClick}
+        />
+      }
+    />
+  );
+};
+
+type ActionProps = {
+  isChecked: boolean;
+  isInactive: boolean;
+  onClick: () => void;
+};
+const voidAction: () => void = () => null;
+
+const DeleteTokenActionButton: React.FC<ActionProps> = props => {
+  const { isChecked, isInactive, onClick } = props;
+  return (
+    <FontAwesomeIcon
+      icon={isChecked ? 'check-square' : { prefix: 'far', iconName: 'square' }}
+      className={classnames(
+        classes.checkIcon,
+        isInactive && classes.inactiveIcon,
+      )}
+      onClick={isInactive ? voidAction : onClick}
     />
   );
 };
