@@ -17,10 +17,11 @@ import classes from './DeleteToken.module.scss';
 type Props = {
   results?: any; // todo: set results types
   currentFioAddress: FioNameItemProps;
+  onSubmit: (params: any) => void;
 };
 
 const DeleteToken: React.FC<Props> = props => {
-  const { currentFioAddress, results } = props;
+  const { currentFioAddress, onSubmit, results } = props;
   const { name, publicAddresses, remaining = 0 } = currentFioAddress;
 
   const [pubAddressesArr, changePubAddresses] = useState<CheckedTokenType[]>(
@@ -28,6 +29,7 @@ const DeleteToken: React.FC<Props> = props => {
   );
   const [bundleCost, changeBundleCost] = useState(0);
   const [allChecked, toggleAllChecked] = useState(false);
+  const [resultsData, setResultsData] = useState<any | null>(null);
   const hasLowBalance = remaining - bundleCost < 0 || remaining === 0;
 
   const hasChecked = pubAddressesArr.some(pubAddress => pubAddress.isChecked);
@@ -49,6 +51,12 @@ const DeleteToken: React.FC<Props> = props => {
   useEffect(() => {
     toggleAllChecked(pubAddressesArr.every(pubAddress => pubAddress.isChecked));
   }, [pubAddressesArr]);
+
+  // Handle results
+  useEffect(() => {
+    // todo: set proper results
+    setResultsData(results);
+  }, [results]);
 
   const onCheckClick = (checkedId: string) => {
     changePubAddresses(
@@ -73,52 +81,47 @@ const DeleteToken: React.FC<Props> = props => {
     );
   };
 
+  const handleSubmit = () => {
+    // todo: pin confirm
+  };
+
+  // @ts-ignore
+  // eslint-disable-next-line no-unused-vars
   const handleResults = () => {
     // todo: call delete action here
 
     if (allChecked) {
       // todo: call remove_all_pub_addresses
-      const deleteObjData = {
-        fio_address: name,
-        // todo: remove mocked data
-        /* mocked data start */
-        max_fee: 0,
-        tpid: 'rewards@wallet',
-        actor: 'aftyershcu22',
-        /* mocked data end */
-      };
+      onSubmit({
+        fioAddress: name,
+        fee: 0,
+      });
     } else {
-      const publicAddressesToDelete = pubAddressesArr
-        .filter(pubAddress => pubAddress.isChecked)
-        .map(pubAddress => ({
-          chain_code: pubAddress.chainCode,
-          token_code: pubAddress.tokenCode,
-          public_address: pubAddress.publicAddress,
-        }));
-      const deleteObjData = {
-        fio_address: name,
-        public_addresses: publicAddressesToDelete,
-        // todo: remove mocked data
-        /* mocked data start */
-        max_fee: 0,
-        tpid: 'rewards@wallet',
-        actor: 'aftyershcu22',
-        /* mocked data end */
-      };
-      // todo: call remove_pub_address
+      onSubmit({
+        disconnectList: pubAddressesArr
+          .filter(pubAddress => pubAddress.isChecked)
+          .map(pubAddress => ({
+            chain_code: pubAddress.chainCode,
+            token_code: pubAddress.tokenCode,
+            public_address: pubAddress.publicAddress,
+          })),
+        fioAddress: name,
+        fee: 0,
+      });
     }
   };
 
   if (!name) return <Redirect to={{ pathname: ROUTES.FIO_ADDRESSES }} />;
 
-  return !results ? (
+  if (resultsData) return <ConfirmContainer />;
+  return (
     <ActionContainer
       containerName={CONTAINER_NAMES.DELETE}
       name={name}
       bundleCost={bundleCost}
       remaining={remaining}
       isDisabled={!hasChecked || remaining === 0}
-      onActionButtonClick={handleResults}
+      onActionButtonClick={handleSubmit}
     >
       <div className={classes.container}>
         <div className={classes.actionContainer}>
@@ -143,8 +146,6 @@ const DeleteToken: React.FC<Props> = props => {
           ))}
       </div>
     </ActionContainer>
-  ) : (
-    <ConfirmContainer></ConfirmContainer>
   );
 };
 
