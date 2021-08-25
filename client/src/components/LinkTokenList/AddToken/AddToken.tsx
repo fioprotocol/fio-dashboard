@@ -19,16 +19,12 @@ type Props = {
   results: any;
   addTokenValues: PublicAddressDoublet[];
   dispatch: any;
+  onSubmit: (params: any) => void;
 } & InjectedFormProps;
 
 const AddToken: React.FC<Props> = props => {
-  const {
-    currentFioAddress,
-    results,
-    handleSubmit,
-    addTokenValues = [],
-    dispatch,
-  } = props;
+  const { currentFioAddress, results, addTokenValues = [], dispatch } = props;
+  const [resultsData, setResultsData] = useState<any | null>(null);
 
   const hasEmtptyFields = !addTokenValues.every(
     item => item.chainCode && item.tokenCode && item.publicAddress,
@@ -44,7 +40,18 @@ const AddToken: React.FC<Props> = props => {
     addTokenValues.length,
   ]);
 
-  return !results ? (
+  const handleSubmit = () => {
+    // todo: pin confirm
+  };
+
+  // Handle results
+  useEffect(() => {
+    // todo: set proper results
+    setResultsData(results);
+  }, [results]);
+
+  if (resultsData) return <ConfirmContainer />;
+  return (
     <ActionContainer
       bundleCost={bundleCost}
       containerName={CONTAINER_NAMES.LINK}
@@ -71,8 +78,6 @@ const AddToken: React.FC<Props> = props => {
         </form>
       </div>
     </ActionContainer>
-  ) : (
-    <ConfirmContainer></ConfirmContainer>
   );
 };
 
