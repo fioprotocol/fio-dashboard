@@ -74,7 +74,7 @@ const AddToken: React.FC<Props> = props => {
           chain
         </h5>
         <form onSubmit={handleSubmit}>
-          <FieldArray name="token" component={AddTokenInput} key={0} />
+          <FieldArray name="token" component={AddTokenInput} />
         </form>
       </div>
     </ActionContainer>
