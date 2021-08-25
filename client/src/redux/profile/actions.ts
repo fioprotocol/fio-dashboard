@@ -143,3 +143,10 @@ export const RESET_LAST_AUTH_DATA = `${prefix}/RESET_LAST_AUTH_DATA`;
 export const resetLastAuthData = () => ({
   type: RESET_LAST_AUTH_DATA,
 });
+
+export const SECONDS_SINCE_LAST_ACTIVITY = `${prefix}/SECONDS_SINCE_LAST_ACTIVITY`;
+
+export const setLastActivity = (value: number) => ({
+  type: SECONDS_SINCE_LAST_ACTIVITY,
+  data: value,
+});
