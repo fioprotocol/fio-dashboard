@@ -2,15 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { RouterProps, withRouter } from 'react-router-dom';
-import { checkAuthToken, logout } from '../redux/profile/actions';
+import {
+  checkAuthToken,
+  setLastActivity,
+  logout,
+} from '../redux/profile/actions';
 
 import { compose } from '../utils';
-import { isAuthenticated, tokenCheckResult } from '../redux/profile/selectors';
+import {
+  isAuthenticated,
+  tokenCheckResult,
+  lastActivityDate,
+} from '../redux/profile/selectors';
 
 type Props = {
   tokenCheckResult: boolean;
+  lastActivityDate: number;
   isAuthenticated: boolean;
   checkAuthToken: () => void;
+  setLastActivity: (value: number) => void;
   logout: (routerProps: RouterProps) => void;
 };
 const TIMEOUT = 5000; // 5 sec
@@ -27,9 +37,11 @@ const ACTIVITY_EVENTS = [
 const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
   const {
     tokenCheckResult,
+    lastActivityDate,
     isAuthenticated,
     history,
     checkAuthToken,
+    setLastActivity,
     logout,
   } = props;
   const [timeoutId, setTimeoutId] = useState<ReturnType<
@@ -44,6 +56,13 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
       checkToken();
     }
     if (isAuthenticated && !intervalId) {
+      if (lastActivityDate) {
+        const now = new Date();
+        const lastActivity = new Date(lastActivityDate);
+        if (now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT) {
+          return logout({ history });
+        }
+      }
       activityWatcher();
     }
     if (!isAuthenticated && (timeoutId || intervalId)) {
@@ -95,6 +114,7 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
 
     const activity = () => {
       secondsSinceLastActivity = 0;
+      setLastActivity(new Date().getTime());
     };
 
     const newIntervalId: ReturnType<typeof setInterval> = setInterval(() => {
@@ -116,9 +136,11 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
 const reduxConnect = connect(
   createStructuredSelector({
     isAuthenticated,
+    lastActivityDate,
     tokenCheckResult,
   }),
   {
+    setLastActivity,
     checkAuthToken,
     logout,
   },

@@ -39,6 +39,7 @@ export default function configureStore(api, history) {
         },
         profile: {
           lastAuthData: store.getState().profile.lastAuthData,
+          lastActivityDate: store.getState().profile.lastActivityDate,
         },
       });
     }, 1000),
