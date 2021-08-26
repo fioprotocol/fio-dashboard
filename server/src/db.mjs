@@ -7,6 +7,7 @@ import { Notification } from './models/Notification';
 import { Nonce } from './models/Nonce';
 import { FreeAddress } from './models/FreeAddress';
 import { Wallet } from './models/Wallet';
+import { ReferrerProfile } from './models/ReferrerProfile';
 
 const sequelize = new Sequelize(config.postgres);
 
@@ -16,6 +17,7 @@ Notification.init(sequelize);
 Nonce.init(sequelize);
 FreeAddress.init(sequelize);
 Wallet.init(sequelize);
+ReferrerProfile.init(sequelize);
 
 const { models } = sequelize;
 

@@ -4,6 +4,7 @@ import actions from './actions';
 import notifications from './notifications';
 import external from './external';
 import account from './account';
+import refProfiles from './refProfiles';
 
 export default {
   users,
@@ -12,4 +13,5 @@ export default {
   notifications,
   external,
   account,
+  refProfiles,
 };
