@@ -12,3 +12,5 @@ export const confirmingPin = state => state[prefix].confirmingPin;
 export const usernameIsAvailable = state => state[prefix].usernameIsAvailable;
 export const usernameAvailableLoading = state =>
   state[prefix].usernameAvailableLoading;
+export const changePasswordResults = state =>
+  state[prefix].changePasswordResults;

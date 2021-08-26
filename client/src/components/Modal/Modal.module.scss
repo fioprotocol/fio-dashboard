@@ -21,6 +21,10 @@
     background-color: $milk;
     color: $black;
   }
+
+  &.success {
+    background-color: $green-teal;
+  }
 }
 
 .dialog {
