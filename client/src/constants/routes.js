@@ -32,6 +32,7 @@ const ROUTES = {
   ADD_TOKEN: '/add-token',
   EDIT_TOKEN: '/edit-token',
   DELETE_TOKEN: '/delete-token',
+  SETTINGS: '/settings',
 };
 
 export { ROUTES };
