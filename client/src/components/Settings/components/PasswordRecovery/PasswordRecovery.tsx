@@ -6,6 +6,7 @@ const ITEM_PROPS = {
   subtitle: 'Need to get password recovery language...',
   attentionText: 'Important information goes here...',
   buttonText: 'Set up Password Recovery',
+  modalTitle: 'Confirm Recovery Questions',
 };
 
 const ChangePassword = () => {
