@@ -50,6 +50,7 @@ const SecurityItem: React.FC<Props> = props => {
           onClose={onClose}
           closeButton={true}
           isSimple={true}
+          isWide={true}
         >
           {modalChildren}
         </Modal>
