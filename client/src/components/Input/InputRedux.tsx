@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
-import { ErrorBadge } from './ErrorBadge';
+import { ErrorBadge, COLOR_TYPE } from './ErrorBadge';
 import { ClearInput, CopyButton, ShowPassword } from './InputActionButtons';
 
 import classes from './Input.module.scss';
@@ -27,6 +27,7 @@ type Props = {
   errorType?: string;
   uiType?: string;
   upperCased?: boolean;
+  errorUIColor?: string;
 };
 
 const InputRedux: React.FC<Props> = props => {
@@ -44,6 +45,7 @@ const InputRedux: React.FC<Props> = props => {
     errorType = '',
     uiType,
     upperCased,
+    errorUIColor = COLOR_TYPE.WHITE,
     ...rest
   } = props;
 
@@ -148,6 +150,7 @@ const InputRedux: React.FC<Props> = props => {
           hasError={hasError}
           submitError={submitError}
           type={errorType}
+          color={errorUIColor}
         />
       )}
     </div>

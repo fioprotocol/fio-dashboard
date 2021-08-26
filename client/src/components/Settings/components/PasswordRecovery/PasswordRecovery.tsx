@@ -6,10 +6,11 @@ const ITEM_PROPS = {
   subtitle: 'Need to get password recovery language...',
   attentionText: 'Important information goes here...',
   buttonText: 'Set up Password Recovery',
+  modalTitle: 'Confirm Recovery Questions',
 };
 
-const ChangePassword = () => {
-  return <SecurityItem {...ITEM_PROPS} />;
+const PasswordRecovery = () => {
+  return <SecurityItem {...ITEM_PROPS} onClick={() => {}} />;
 };
 
-export default ChangePassword;
+export default PasswordRecovery;
