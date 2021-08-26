@@ -10,6 +10,7 @@ type Props = {
   hideCloseButton?: boolean;
   isDanger?: boolean;
   isSimple?: boolean;
+  isSuccess?: boolean;
   onClose: () => void;
   show: boolean;
   title?: React.ReactNode | string;
@@ -25,6 +26,7 @@ const ModalComponent: React.FC<Props> = props => {
     hideCloseButton,
     isDanger,
     isSimple,
+    isSuccess,
     onClose,
     show,
     title,
@@ -43,6 +45,7 @@ const ModalComponent: React.FC<Props> = props => {
         classes.modal,
         isDanger && classes.danger,
         isSimple && classes.simple,
+        isSuccess && classes.success,
       )}
       dialogClassName={classnames(
         classes.dialog,
