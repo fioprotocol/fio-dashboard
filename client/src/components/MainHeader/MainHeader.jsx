@@ -72,7 +72,8 @@ const MainHeader = props => {
         )}
         {isMenuOpen && <hr className={classes.horizontal} />}
         <Nav.Link
-          href="#"
+          as={Link}
+          to={ROUTES.SETTINGS}
           className={classnames(classes.navItem, 'text-white')}
           onClick={closeMenu}
         >
