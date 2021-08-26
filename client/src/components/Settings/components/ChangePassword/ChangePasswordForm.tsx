@@ -1,5 +1,5 @@
 import React from 'react';
-import { Field, reduxForm } from 'redux-form';
+import { Field, reduxForm, InjectedFormProps } from 'redux-form';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { compose } from '../../../../utils';
@@ -18,8 +18,7 @@ type Props = {
   loading: boolean;
 };
 
-// todo:: set props to component
-const ChangePasswordForm = (props: Props & any) => {
+const ChangePasswordForm = (props: Props & InjectedFormProps) => {
   const { handleSubmit, loading, valid } = props;
   return (
     <form onSubmit={handleSubmit}>
