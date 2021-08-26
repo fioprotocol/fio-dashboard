@@ -31,6 +31,6 @@ router.post('/reg/captcha/init', checkAuth, routes.external.initCaptcha);
 router.get('/account/wallets', checkAuth, routes.account.walletsList);
 router.post('/account/wallets', checkAuth, routes.account.setWallets);
 
-router.get('/ref-profile/:code', checkAuth, routes.refProfiles.info);
+router.get('/ref-profile/:code', routes.refProfiles.info);
 
 export default router;

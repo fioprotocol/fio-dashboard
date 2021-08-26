@@ -129,3 +129,15 @@ export type FeePrice = {
 };
 
 export type DomainStatusType = 'private' | 'public';
+
+export type RefProfile = {
+  code: string;
+  label: string;
+  title: string;
+  subTitle: string;
+  settings: {
+    domains: string[];
+    allowCustomDomain: boolean;
+    actions: string[];
+  };
+};

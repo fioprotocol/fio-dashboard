@@ -8,6 +8,7 @@ import Notifications from './notifications';
 import FioReg from './fio-reg';
 import Fio from './fio';
 import Account from './account';
+import RefProfile from './ref-profile';
 
 const apiClient = new ApiClient(config.apiPrefix);
 
@@ -30,6 +31,7 @@ export type Api = {
   fioReg: FioReg;
   fio: Fio;
   account: Account;
+  refProfile: RefProfile;
   client: ApiClient;
 };
 
@@ -41,5 +43,6 @@ export default {
   fioReg: new FioReg(apiClient),
   fio: new Fio(),
   account: new Account(apiClient),
+  refProfile: new RefProfile(apiClient),
   client: apiClient,
 };
