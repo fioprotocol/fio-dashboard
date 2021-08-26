@@ -1,12 +1,22 @@
-import { reduxForm } from 'redux-form';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+
+import { compose } from '../../../../utils';
+
+import { changePassword } from '../../../../redux/edge/actions';
+import {
+  changePasswordResults,
+  loading,
+} from '../../../../redux/edge/selectors';
 
 import ChangePassword from './ChangePassword';
-import validate from './validation';
 
-const formConnect = reduxForm({
-  form: 'changePassword',
-  getFormState: state => state.reduxForm,
-  validate,
-});
+const reduxConnect = connect(
+  createStructuredSelector({
+    results: changePasswordResults,
+    loading,
+  }),
+  { changePassword },
+);
 
-export default formConnect(ChangePassword);
+export default compose(reduxConnect)(ChangePassword);

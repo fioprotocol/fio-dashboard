@@ -8,10 +8,12 @@ const ITEM_PROPS = {
   modalTitle: 'Change PIN',
   modalSubtitle:
     'Enter a new 6 digit code used to do quick re-logins into your account.',
+  successModalTitle: 'PASSWORD CHANGED!',
+  successModalSubtitle: 'Your password has been successfully changed',
 };
 
-const ChangePassword = () => {
-  return <SecurityItem {...ITEM_PROPS} isPasswordPin={true} />;
+const ChangePin = () => {
+  return <SecurityItem {...ITEM_PROPS} isPasswordPin={true} onClick={() => {}} />;
 };
 
-export default ChangePassword;
+export default ChangePin;

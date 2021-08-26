@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 
 import classes from './SecurityItem.module.scss';
-import ModalUIComponent from '../ModalUIComponent';
 
 type Props = {
   attentionText?: string;
   buttonText: string;
   isPasswordPin?: boolean;
-  modalChildren?: React.ReactNode; // todo: make required after created items
-  modalTitle: string;
-  modalSubtitle?: string;
+  onClick: () => void;
+  children?: React.ReactNode;
   subtitle: string;
   title: string;
 };
@@ -21,16 +19,11 @@ const SecurityItem: React.FC<Props> = props => {
     attentionText,
     buttonText,
     isPasswordPin,
-    modalChildren,
-    modalTitle,
-    modalSubtitle,
+    onClick,
+    children,
     title,
     subtitle,
   } = props;
-  const [showModal, toggleShowModal] = useState(false);
-
-  const onClick = () => toggleShowModal(true);
-  const onClose = () => toggleShowModal(false);
 
   return (
     <>
@@ -48,16 +41,7 @@ const SecurityItem: React.FC<Props> = props => {
           {buttonText}
         </Button>
       </div>
-      {modalChildren && (
-        <ModalUIComponent
-          onClose={onClose}
-          showModal={showModal}
-          subtitle={modalSubtitle}
-          title={modalTitle}
-        >
-          {modalChildren}
-        </ModalUIComponent>
-      )}
+      {children}
     </>
   );
 };

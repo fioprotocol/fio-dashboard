@@ -120,6 +120,14 @@ export default class Edge {
     //
   }
 
+  changePassword(currentPassword, newPassword) {
+    // todo: set action to change password
+    const results = { status: 'OK' };
+    return new Promise((resolve, reject) =>
+      setTimeout(() => resolve(results), 1000),
+    );
+  }
+
   async logout() {
     //
   }
