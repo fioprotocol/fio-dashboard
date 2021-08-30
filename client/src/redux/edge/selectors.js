@@ -14,3 +14,4 @@ export const usernameAvailableLoading = state =>
   state[prefix].usernameAvailableLoading;
 export const changePasswordResults = state =>
   state[prefix].changePasswordResults;
+export const changePinResults = state => state[prefix].changePinResults;

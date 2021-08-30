@@ -11,6 +11,7 @@ export default combineReducers({
       case actions.LOGOUT_REQUEST:
       case actions.SIGNUP_REQUEST:
       case actions.CHANGE_PASSWORD_REQUEST:
+      case actions.CHANGE_PIN_REQUEST:
         return true;
       case actions.LOGIN_SUCCESS:
       case actions.LOGIN_FAILURE:
@@ -20,6 +21,8 @@ export default combineReducers({
       case actions.SIGNUP_FAILURE:
       case actions.CHANGE_PASSWORD_SUCCESS:
       case actions.CHANGE_PASSWORD_FAILURE:
+      case actions.CHANGE_PIN_SUCCESS:
+      case actions.CHANGE_PIN_FAILURE:
         return false;
       default:
         return state;
@@ -160,6 +163,19 @@ export default combineReducers({
       }
       case actions.CHANGE_PASSWORD_REQUEST:
       case actions.CHANGE_PASSWORD_FAILURE: {
+        return {};
+      }
+      default:
+        return state;
+    }
+  },
+  changePinResults(state = {}, action) {
+    switch (action.type) {
+      case actions.CHANGE_PIN_SUCCESS: {
+        return action.data;
+      }
+      case actions.CHANGE_PIN_REQUEST:
+      case actions.CHANGE_PIN_FAILURE: {
         return {};
       }
       default:

@@ -50,6 +50,7 @@ const ChangePassword: React.FC<Props> = props => {
       <ModalUIComponent
         onClose={onCloseModal}
         showModal={showModal}
+        isWide={true}
         subtitle={ITEM_PROPS.modalSubtitle}
         title={ITEM_PROPS.modalTitle}
       >
