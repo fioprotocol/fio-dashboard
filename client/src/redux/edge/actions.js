@@ -202,6 +202,15 @@ export const changePassword = ({ currentPassword, newPassword }) => ({
   promise: api => api.edge.changePassword(currentPassword, newPassword),
 });
 
+export const CHANGE_PIN_REQUEST = `${prefix}/CHANGE_PIN_REQUEST`;
+export const CHANGE_PIN_SUCCESS = `${prefix}/CHANGE_PIN_SUCCESS`;
+export const CHANGE_PIN_FAILURE = `${prefix}/CHANGE_PIN_FAILURE`;
+
+export const changePin = ({ pin, password }) => ({
+  types: [CHANGE_PIN_REQUEST, CHANGE_PIN_SUCCESS, CHANGE_PIN_FAILURE],
+  promise: api => api.edge.changePin(pin, password),
+});
+
 export const CLEAR_CACHED_USERS_REQUEST = `${prefix}/CLEAR_CACHED_USERS_REQUEST`;
 export const CLEAR_CACHED_USERS_SUCCESS = `${prefix}/CLEAR_CACHED_USERS_SUCCESS`;
 export const CLEAR_CACHED_USERS_FAILURE = `${prefix}/CLEAR_CACHED_USERS_FAILURE`;

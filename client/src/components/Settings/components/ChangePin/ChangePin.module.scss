@@ -1,0 +1,37 @@
+.formBox {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+
+  .box {
+    flex-shrink: 0;
+    position: relative;
+    width: 100%;
+    left: 0;
+    transition: all 0.4s ease;
+
+    &.show {
+      left: -100%;
+    }
+
+    .button:focus {
+      outline: none;
+    }
+
+    .button {
+      height: 54px;
+      border-radius: 7px;
+      align-self: center;
+      width: 100%;
+    }
+
+    .pinContainer {
+      margin-top: 20px;
+      margin-bottom: 40px;
+    }
+
+    .errorContainer {
+      margin-bottom: 30px;
+    }
+  }
+}
