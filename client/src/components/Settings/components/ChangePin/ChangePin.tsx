@@ -1,5 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import SecurityItem from '../SecurityItem/SecurityItem';
+import ModalUIComponent from '../ModalUIComponent';
+import SuccessModal from '../../../Modal/SuccessModal';
+import ChangePinForm from './ChangePinForm';
+import { ClickEventTypes } from './types';
 
 const ITEM_PROPS = {
   title: 'PIN',
@@ -8,12 +12,104 @@ const ITEM_PROPS = {
   modalTitle: 'Change PIN',
   modalSubtitle:
     'Enter a new 6 digit code used to do quick re-logins into your account.',
-  successModalTitle: 'PASSWORD CHANGED!',
-  successModalSubtitle: 'Your password has been successfully changed',
+  successModalTitle: 'PIN CHANGED!',
+  successModalSubtitle: 'Your PIN has been successfully changed',
 };
 
-const ChangePin = () => {
-  return <SecurityItem {...ITEM_PROPS} isPasswordPin={true} onClick={() => {}} />;
+const CONFIRM_MODAL_ITEM_PROPS = {
+  modalTitle: 'Confirm PIN Change',
+  modalSubtitle:
+    'Enter your password to confirm the change and update to your new PIN.',
+};
+
+type Props = {
+  results: any; // todo: set types for results
+  changePin: (values: { pin: string; password: string }) => void;
+  loading: boolean;
+};
+
+const ChangePin: React.FC<Props> = props => {
+  const { results, changePin, loading } = props;
+
+  const { error } = results;
+
+  const [showModal, toggleShowModal] = useState(false);
+  const [showSuccessModal, toggleSuccessModal] = useState(false);
+  const [isConfirmPage, changeConfirmPage] = useState(false);
+  const [pin, handlePinChange] = useState('');
+  const [password, handlePasswordChange] = useState('');
+
+  const onOpenModal = () => toggleShowModal(true);
+  const onCloseModal = () => {
+    changeConfirmPage(false);
+    toggleShowModal(false);
+  };
+
+  const onSuccessClose = () => toggleSuccessModal(false);
+
+  const handleSubmit = () => {
+    changePin({ pin, password });
+  };
+
+  const onNextClick = (e: ClickEventTypes) => {
+    e.target.blur();
+    changeConfirmPage(true);
+  };
+
+  const onBack = () => {
+    changeConfirmPage(false);
+  };
+
+  useEffect(() => {
+    if (results && results.status === 'OK') {
+      onCloseModal();
+      toggleSuccessModal(true);
+    }
+  }, [results]);
+
+  return (
+    <>
+      <SecurityItem
+        {...ITEM_PROPS}
+        isPasswordPin={true}
+        onClick={onOpenModal}
+      />
+      <ModalUIComponent
+        onClose={onCloseModal}
+        showModal={showModal}
+        hasOnBack={isConfirmPage}
+        onBack={onBack}
+        subtitle={
+          isConfirmPage
+            ? CONFIRM_MODAL_ITEM_PROPS.modalSubtitle
+            : ITEM_PROPS.modalSubtitle
+        }
+        title={
+          isConfirmPage
+            ? CONFIRM_MODAL_ITEM_PROPS.modalTitle
+            : ITEM_PROPS.modalTitle
+        }
+      >
+        <ChangePinForm
+          handlePinChange={handlePinChange}
+          handlePasswordChange={handlePasswordChange}
+          pin={pin}
+          password={password}
+          onSubmit={handleSubmit}
+          onNextClick={onNextClick}
+          loading={loading}
+          isConfirmPage={isConfirmPage}
+          error={error}
+        />
+      </ModalUIComponent>
+      <SuccessModal
+        title={ITEM_PROPS.successModalTitle}
+        subtitle={ITEM_PROPS.successModalSubtitle}
+        onClose={onSuccessClose}
+        showModal={showSuccessModal}
+      />
+    </>
+  );
 };
 
 export default ChangePin;

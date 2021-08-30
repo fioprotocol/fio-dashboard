@@ -128,6 +128,15 @@ export default class Edge {
     );
   }
 
+  changePin(pin, password) {
+    // todo: set action to change pin
+    // todo: create action to check password
+    const results = { status: 'OK' };
+    return new Promise((resolve, reject) =>
+      setTimeout(() => resolve(results), 1000),
+    );
+  }
+
   async logout() {
     //
   }
