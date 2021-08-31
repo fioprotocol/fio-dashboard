@@ -20,7 +20,7 @@ type Props = {
   pin?: string;
   handlePinChange: (value: string) => void;
   handlePasswordChange: (value: string) => void;
-  error?: string;
+  error?: boolean | string;
 };
 
 const ChangePinForm: React.FC<Props> = props => {
@@ -61,6 +61,8 @@ const ChangePinForm: React.FC<Props> = props => {
         <InputRedux
           type="password"
           meta={{ error }}
+          showErrorBorder={!!error}
+          hideError={true}
           input={{ value: password, onChange: handlePasswordChange }}
           lowerCased={false}
           showClearInput={true}

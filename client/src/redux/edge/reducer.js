@@ -175,7 +175,22 @@ export default combineReducers({
         return action.data;
       }
       case actions.CHANGE_PIN_REQUEST:
+      case actions.CHANGE_PIN_FAILURE:
+      case actions.CLEAR_CHANGE_PIN_RESULTS: {
+        return {};
+      }
+      default:
+        return state;
+    }
+  },
+  changePinError(state = {}, action) {
+    switch (action.type) {
       case actions.CHANGE_PIN_FAILURE: {
+        return action.error;
+      }
+      case actions.CHANGE_PIN_SUCCESS:
+      case actions.CHANGE_PIN_REQUEST:
+      case actions.CLEAR_CHANGE_PIN_ERROR: {
         return {};
       }
       default:

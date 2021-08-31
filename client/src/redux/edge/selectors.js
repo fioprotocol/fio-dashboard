@@ -15,3 +15,4 @@ export const usernameAvailableLoading = state =>
 export const changePasswordResults = state =>
   state[prefix].changePasswordResults;
 export const changePinResults = state => state[prefix].changePinResults;
+export const changePinError = state => state[prefix].changePinError;

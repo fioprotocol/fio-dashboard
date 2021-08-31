@@ -30,10 +30,6 @@ export default class Edge {
     return false;
   };
 
-  account() {
-    //
-  }
-
   getCachedUsers() {
     try {
       return this.edgeContext.listUsernames();
@@ -128,13 +124,22 @@ export default class Edge {
     );
   }
 
-  changePin(pin, password) {
-    // todo: set action to change pin
-    // todo: create action to check password
-    const results = { status: 'OK' };
-    return new Promise((resolve, reject) =>
-      setTimeout(() => resolve(results), 1000),
-    );
+  async changePin(pin, password, username) {
+    try {
+      const account = await this.login(username, password);
+      const results = {};
+      if (account) {
+        const changePinResult = await account.changePin({ pin });
+        if (changePinResult) {
+          results.status = 1;
+        }
+        await account.logout();
+      }
+      return results;
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
   }
 
   async logout() {
