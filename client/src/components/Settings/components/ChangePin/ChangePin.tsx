@@ -23,15 +23,35 @@ const CONFIRM_MODAL_ITEM_PROPS = {
 };
 
 type Props = {
-  results: any; // todo: set types for results
-  changePin: (values: { pin: string; password: string }) => void;
+  results: { status?: number };
+  changePin: (values: {
+    pin: string;
+    password: string;
+    username: string;
+  }) => void;
   loading: boolean;
+  username: string;
+  changePinError?: { type: string };
+  clearChangePinResults: () => void;
+  clearChangePinError: () => void;
 };
 
 const ChangePin: React.FC<Props> = props => {
-  const { results, changePin, loading } = props;
+  const {
+    results,
+    changePin,
+    loading,
+    username,
+    changePinError,
+    clearChangePinResults,
+    clearChangePinError,
+  } = props;
 
-  const { error } = results;
+  const { status } = results;
+  const error =
+    changePinError &&
+    changePinError.type === 'PasswordError' &&
+    'Invalid Password';
 
   const [showModal, toggleShowModal] = useState(false);
   const [showSuccessModal, toggleSuccessModal] = useState(false);
@@ -41,14 +61,20 @@ const ChangePin: React.FC<Props> = props => {
 
   const onOpenModal = () => toggleShowModal(true);
   const onCloseModal = () => {
+    handlePinChange('');
+    handlePasswordChange('');
     changeConfirmPage(false);
     toggleShowModal(false);
+    clearChangePinError();
   };
 
-  const onSuccessClose = () => toggleSuccessModal(false);
+  const onSuccessClose = () => {
+    toggleSuccessModal(false);
+    clearChangePinResults();
+  };
 
   const handleSubmit = () => {
-    changePin({ pin, password });
+    changePin({ pin, password, username });
   };
 
   const onNextClick = (e: ClickEventTypes) => {
@@ -58,14 +84,15 @@ const ChangePin: React.FC<Props> = props => {
 
   const onBack = () => {
     changeConfirmPage(false);
+    clearChangePinError();
   };
 
   useEffect(() => {
-    if (results && results.status === 'OK') {
+    if (status) {
       onCloseModal();
       toggleSuccessModal(true);
     }
-  }, [results]);
+  }, [status]);
 
   return (
     <>

@@ -28,6 +28,7 @@ type Props = {
   uiType?: string;
   upperCased?: boolean;
   errorUIColor?: string;
+  showErrorBorder?: boolean;
 };
 
 const InputRedux: React.FC<Props> = props => {
@@ -46,6 +47,7 @@ const InputRedux: React.FC<Props> = props => {
     uiType,
     upperCased,
     errorUIColor = COLOR_TYPE.WHITE,
+    showErrorBorder,
     ...rest
   } = props;
 
@@ -82,7 +84,8 @@ const InputRedux: React.FC<Props> = props => {
 
   const hasError =
     (error && (touched || modified || submitSucceeded) && !active) ||
-    (submitError && !modifiedSinceLastSubmit);
+    (submitError && !modifiedSinceLastSubmit) ||
+    showErrorBorder;
 
   return (
     <div className={classes.regInputWrapper}>
