@@ -4,17 +4,17 @@ import { VALIDATION_TITLES } from '../../../CreateAccountForm/EmailPassword';
 const validation = (values: FormValuesTypes) => {
   const errors: any = {}; // todo: set error types
 
-  const { confirmNewPassword, currentPassword, newPassword } = values;
+  const { confirmNewPassword, password, newPassword } = values;
 
   if (!confirmNewPassword) {
     errors.confirmNewPassword = 'Required';
   }
 
-  if (!currentPassword) {
-    errors.currentPassword = 'Required';
+  if (!password) {
+    errors.password = 'Required';
   }
 
-  if (currentPassword) {
+  if (password) {
     // todo: check if the value matches user's password
   }
 
