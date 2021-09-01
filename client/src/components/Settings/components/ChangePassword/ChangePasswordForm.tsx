@@ -5,8 +5,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { compose } from '../../../../utils';
 
 import InputRedux, { INPUT_UI_STYLES } from '../../../Input/InputRedux';
-import { COLOR_TYPE } from '../../../Input/ErrorBadge';
+import {
+  ErrorBadge,
+  COLOR_TYPE,
+  ERROR_UI_TYPE,
+} from '../../../Input/ErrorBadge';
 import validate from './validation';
+
+import classes from './ChangePassword.module.scss';
 
 const formConnect = reduxForm({
   form: 'changePassword',
@@ -16,20 +22,30 @@ const formConnect = reduxForm({
 
 type Props = {
   loading: boolean;
+  changePasswordError?: { type?: string; message?: string; name?: string };
 };
 
 const ChangePasswordForm = (props: Props & InjectedFormProps) => {
-  const { handleSubmit, loading, valid } = props;
+  const { handleSubmit, loading, valid, changePasswordError } = props;
+
+  const isCurrentPasswordError =
+    changePasswordError && changePasswordError.type === 'PasswordError';
+  const error = isCurrentPasswordError
+    ? 'Invalid Password'
+    : changePasswordError.message || changePasswordError.name;
+
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className={classes.form}>
       <Field
         type="password"
-        name="currentPassword"
+        name="password"
         component={InputRedux}
         showClearInput={true}
         placeholder="Enter Current Password"
         uiType={INPUT_UI_STYLES.BLACK_WHITE}
         errorUIColor={COLOR_TYPE.WARN}
+        showErrorBorder={isCurrentPasswordError}
+        hideError={isCurrentPasswordError}
       />
       <Field
         type="password"
@@ -49,11 +65,22 @@ const ChangePasswordForm = (props: Props & InjectedFormProps) => {
         uiType={INPUT_UI_STYLES.BLACK_WHITE}
         errorUIColor={COLOR_TYPE.WARN}
       />
+      {error && (
+        <div className={classes.errorContainer}>
+          <ErrorBadge
+            type={ERROR_UI_TYPE.BADGE}
+            hasError={error}
+            error={error}
+          />
+        </div>
+      )}
       <Button type="submit" disabled={loading || !valid}>
         {loading ? (
           <>
             <span>Saving</span> <FontAwesomeIcon icon="spinner" spin />
           </>
+        ) : error ? (
+          'Try Again'
         ) : (
           'Save'
         )}

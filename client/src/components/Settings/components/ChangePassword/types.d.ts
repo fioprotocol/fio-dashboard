@@ -1,6 +1,7 @@
 export type PasswordTypes = {
-  currentPassword: string;
+  password: string;
   newPassword: string;
+  username: string;
 };
 
 export type FormValuesTypes = {
