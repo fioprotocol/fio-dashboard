@@ -162,7 +162,22 @@ export default combineReducers({
         return action.data;
       }
       case actions.CHANGE_PASSWORD_REQUEST:
+      case actions.CHANGE_PASSWORD_FAILURE:
+      case actions.CLEAR_CHANGE_PASSWORD_RESULTS: {
+        return {};
+      }
+      default:
+        return state;
+    }
+  },
+  changePasswordError(state = {}, action) {
+    switch (action.type) {
       case actions.CHANGE_PASSWORD_FAILURE: {
+        return action.error;
+      }
+      case actions.CHANGE_PASSWORD_SUCCESS:
+      case actions.CHANGE_PASSWORD_REQUEST:
+      case actions.CLEAR_CHANGE_PASSWORD_ERROR: {
         return {};
       }
       default:

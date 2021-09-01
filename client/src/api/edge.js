@@ -116,12 +116,29 @@ export default class Edge {
     //
   }
 
-  changePassword(currentPassword, newPassword) {
-    // todo: set action to change password
-    const results = { status: 'OK' };
-    return new Promise((resolve, reject) =>
-      setTimeout(() => resolve(results), 1000),
-    );
+  async changePassword(password, newPassword, username) {
+    try {
+      const account = await this.login(username, password);
+      const results = {};
+      if (account) {
+        await account.changePassword(newPassword);
+
+        // change password method doesn't return anything, so to be sure that password was successfully changed we call checkPassword method
+        const isNewPasswordSet = await account.checkPassword(newPassword);
+
+        await account.logout();
+
+        if (isNewPasswordSet) {
+          results.status = 1;
+        } else {
+          throw new Error('New password not set');
+        }
+      }
+      return results;
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
   }
 
   async changePin(pin, password, username) {

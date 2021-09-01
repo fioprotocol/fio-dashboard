@@ -14,5 +14,6 @@ export const usernameAvailableLoading = state =>
   state[prefix].usernameAvailableLoading;
 export const changePasswordResults = state =>
   state[prefix].changePasswordResults;
+export const changePasswordError = state => state[prefix].changePasswordError;
 export const changePinResults = state => state[prefix].changePinResults;
 export const changePinError = state => state[prefix].changePinError;

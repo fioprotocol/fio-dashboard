@@ -20,30 +20,50 @@ type Props = {
   results: any; // todo: set types for results
   changePassword: (values: PasswordTypes) => void;
   loading: boolean;
+  changePasswordError: { type?: string };
+  clearChangePasswordResults: () => void;
+  clearChangePasswordError: () => void;
+  username: string;
 };
 
 const ChangePassword: React.FC<Props> = props => {
-  const { results, changePassword, loading } = props;
+  const {
+    results,
+    changePassword,
+    loading,
+    username,
+    changePasswordError,
+    clearChangePasswordResults,
+    clearChangePasswordError,
+  } = props;
+
+  const { status } = results;
 
   const [showModal, toggleShowModal] = useState(false);
   const [showSuccessModal, toggleSuccessModal] = useState(false);
 
   const onOpenModal = () => toggleShowModal(true);
-  const onCloseModal = () => toggleShowModal(false);
+  const onCloseModal = () => {
+    toggleShowModal(false);
+    clearChangePasswordError();
+  };
 
-  const onSuccessClose = () => toggleSuccessModal(false);
+  const onSuccessClose = () => {
+    toggleSuccessModal(false);
+    clearChangePasswordResults();
+  };
 
   const handleSubmit = (values: FormValuesTypes) => {
-    const { currentPassword, newPassword } = values;
-    changePassword({ currentPassword, newPassword });
+    const { password, newPassword } = values;
+    changePassword({ password, newPassword, username });
   };
 
   useEffect(() => {
-    if (results && results.status === 'OK') {
+    if (status) {
       onCloseModal();
       toggleSuccessModal(true);
     }
-  }, [results]);
+  }, [status]);
 
   return (
     <SecurityItem {...ITEM_PROPS} isPasswordPin={true} onClick={onOpenModal}>
@@ -54,7 +74,11 @@ const ChangePassword: React.FC<Props> = props => {
         subtitle={ITEM_PROPS.modalSubtitle}
         title={ITEM_PROPS.modalTitle}
       >
-        <ChangePasswordForm onSubmit={handleSubmit} loading={loading} />
+        <ChangePasswordForm
+          onSubmit={handleSubmit}
+          loading={loading}
+          changePasswordError={changePasswordError}
+        />
       </ModalUIComponent>
       <SuccessModal
         title={ITEM_PROPS.successModalTitle}
