@@ -7,6 +7,8 @@ import classes from './PurchaseNow.module.scss';
 import { executeRegistration } from './middleware';
 import { sleep, waitForEdgeAccountStop } from '../../utils';
 
+const MIN_WAIT_TIME = 3000;
+
 export const PurchaseNow = props => {
   const {
     cartItems,
@@ -33,8 +35,8 @@ export const PurchaseNow = props => {
   const waitFn = async (fn, results) => {
     const t1 = performance.now();
 
-    if (t1 - t0 < 3000) {
-      await sleep(3000 - (t1 - t0));
+    if (t1 - t0 < MIN_WAIT_TIME) {
+      await sleep(MIN_WAIT_TIME - (t1 - t0));
     }
     fn(results);
   };
