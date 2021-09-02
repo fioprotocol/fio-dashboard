@@ -65,12 +65,10 @@ const ChangePin: React.FC<Props> = props => {
     handlePasswordChange('');
     changeConfirmPage(false);
     toggleShowModal(false);
-    clearChangePinError();
   };
 
   const onSuccessClose = () => {
     toggleSuccessModal(false);
-    clearChangePinResults();
   };
 
   const handleSubmit = () => {
@@ -93,6 +91,11 @@ const ChangePin: React.FC<Props> = props => {
       toggleSuccessModal(true);
     }
   }, [status]);
+
+  const onUnmount = () => {
+    clearChangePinError();
+    clearChangePinResults();
+  };
 
   return (
     <>
@@ -127,6 +130,7 @@ const ChangePin: React.FC<Props> = props => {
           loading={loading}
           isConfirmPage={isConfirmPage}
           error={error}
+          onUnmount={onUnmount}
         />
       </ModalUIComponent>
       <SuccessModal
