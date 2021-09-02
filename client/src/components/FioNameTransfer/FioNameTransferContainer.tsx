@@ -1,7 +1,6 @@
-import React, { FormEvent, useCallback, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import { Field, InjectedFormProps } from 'redux-form';
 import { Button } from 'react-bootstrap';
-import debounce from 'lodash/debounce';
 
 import PseudoModalContainer from '../PseudoModalContainer';
 import InputRedux, { INPUT_UI_STYLES } from '../Input/InputRedux';
@@ -62,16 +61,17 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
     getPrices,
     showPinModal,
     resetPinConfirm,
-    transferAddressValue,
     asyncValidate,
+    transferAddressValue,
     valid,
     dirty,
     asyncValidating,
   } = props;
 
   const { costFio, costUsdc } = feePrice;
-  const [formIsValid, setFormIsValid] = useState(false);
+  const [formIsValid, setFormIsValid] = useState(true);
   const [processing, setProcessing] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
   useEffect(() => {
@@ -81,17 +81,29 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
   }, []);
 
   useEffect(() => {
-    setFormIsValid(valid && !asyncValidating && dirty);
+    if (valid && !asyncValidating && dirty && submitting) {
+      showPinModal(CONFIRM_PIN_ACTIONS.TRANSFER);
+    }
+    if (!asyncValidating && submitting) {
+      if (!valid) setSubmitting(false);
+      setFormIsValid(valid && dirty);
+    }
   }, [asyncValidating]);
 
   useEffect(() => {
-    setFormIsValid(false);
+    setFormIsValid(true);
   }, [transferAddressValue]);
 
   // Handle pin confirmation
   useEffect(() => {
     submit(pinConfirmation);
   }, [pinConfirmation]);
+
+  useEffect(() => {
+    if (!processing) {
+      setSubmitting(false);
+    }
+  }, [processing]);
 
   // Handle results
   useEffect(() => {
@@ -145,16 +157,10 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
     if (confirmationError) setProcessing(false);
   };
 
-  const debouncedValidate = useCallback(
-    debounce(() => {
-      asyncValidate();
-    }, 500),
-    [],
-  );
-
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    showPinModal(CONFIRM_PIN_ACTIONS.TRANSFER);
+    setSubmitting(true);
+    asyncValidate();
   };
 
   const onResultsClose = () => {
@@ -211,7 +217,6 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
             component={InputRedux}
             showCopyButton={true}
             uiType={INPUT_UI_STYLES.BLACK_WHITE}
-            onChange={debouncedValidate}
             errorType={ERROR_UI_TYPE.BADGE}
             loading={asyncValidating}
           />
@@ -231,7 +236,12 @@ export const FioNameTransferContainer: React.FC<ContainerProps &
           <Button
             type="submit"
             className={classes.button}
-            disabled={hasLowBalance || !formIsValid || processing}
+            disabled={
+              hasLowBalance ||
+              !formIsValid ||
+              processing ||
+              !transferAddressValue
+            }
           >
             Transfer Now
           </Button>

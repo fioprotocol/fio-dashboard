@@ -136,4 +136,14 @@ export default combineReducers({
         return state;
     }
   },
+  lastActivityDate(state: number = 0, action) {
+    switch (action.type) {
+      case actions.SECONDS_SINCE_LAST_ACTIVITY:
+        return action.data;
+      case actions.LOGOUT_SUCCESS:
+        return 0;
+      default:
+        return state;
+    }
+  },
 });

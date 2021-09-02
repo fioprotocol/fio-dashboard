@@ -1,0 +1,31 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.addressContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  font-size: 1.125rem;
+  color: $dark-jungle-green;
+  @include proxima-nova-bold;
+  @include sm {
+    .title, .name {
+      font-size: 1rem;
+    }
+  }
+
+  .title, .name {
+    margin-bottom: 0;
+    font-size: 1.125rem;
+  }
+
+  .title {
+    margin-right: 5px;
+  }
+
+  .name {
+    max-width: 400px;
+    word-break: break-all;
+  }
+}

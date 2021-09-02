@@ -10,6 +10,11 @@ export const ERROR_UI_TYPE = {
   BADGE: 'BADGE',
 };
 
+export const COLOR_TYPE = {
+  WHITE: 'white',
+  WARN: 'warn',
+};
+
 export const ErrorBadge = props => {
   const {
     error,
@@ -18,11 +23,13 @@ export const ErrorBadge = props => {
     submitError,
     wrap = false,
     type = ERROR_UI_TYPE.TEXT,
+    color = COLOR_TYPE.WHITE,
   } = props;
   const renderError = () => (
     <div
       className={classnames(
         classes.errorMessage,
+        classes[color],
         hasError && !data.showInfoError && classes.error,
       )}
     >

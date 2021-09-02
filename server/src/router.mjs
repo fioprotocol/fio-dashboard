@@ -17,6 +17,7 @@ router.get('/users', checkAuth, routes.users.list);
 router.get('/users/:id', checkAuth, routes.users.show);
 router.post('/users', routes.users.create);
 router.put('/users', checkAuth, routes.users.update);
+router.post('/users/setRecovery', checkAuth, routes.users.setRecovery);
 
 router.get('/notifications', checkAuth, routes.notifications.list);
 router.post('/notifications', checkAuth, routes.notifications.create);

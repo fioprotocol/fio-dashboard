@@ -20,8 +20,13 @@ import FioDomainTransferPage from './pages/FioDomainTransferPage';
 import FioDomainStatusChangePage from './pages/FioDomainStatusChangePage';
 import FioAddressRenewPage from './pages/FioAddressRenewPage';
 import FioDomainRenewPage from './pages/FioDomainRenewPage';
+import TokenListPage from './pages/LinkTokenPages/TokenListPage';
+import DeleteTokenPage from './pages/LinkTokenPages/DeleteTokenPage';
+import AddTokenPage from './pages/LinkTokenPages/AddTokenPage';
 
 import { ROUTES } from './constants/routes';
+
+const LIST_TOKEN_PARENT_ROUTE = `${ROUTES.LINK_TOKEN_LIST}/:id`;
 
 const Routes = () => (
   <MainLayout>
@@ -74,6 +79,20 @@ const Routes = () => (
         <PrivateRoute
           path={`${ROUTES.FIO_DOMAIN_RENEW}/:id`}
           component={FioDomainRenewPage}
+        />
+
+        <PrivateRoute
+          path={LIST_TOKEN_PARENT_ROUTE}
+          component={TokenListPage}
+          exact
+        />
+        <PrivateRoute
+          path={`${LIST_TOKEN_PARENT_ROUTE}${ROUTES.DELETE_TOKEN}`}
+          component={DeleteTokenPage}
+        />
+        <PrivateRoute
+          path={`${LIST_TOKEN_PARENT_ROUTE}${ROUTES.ADD_TOKEN}`}
+          component={AddTokenPage}
         />
 
         <AuthContainer />
