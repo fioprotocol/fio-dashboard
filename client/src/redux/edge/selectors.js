@@ -17,3 +17,5 @@ export const changePasswordResults = state =>
 export const changePasswordError = state => state[prefix].changePasswordError;
 export const changePinResults = state => state[prefix].changePinResults;
 export const changePinError = state => state[prefix].changePinError;
+export const changeRecoveryQuestions = state =>
+  state[prefix].changeRecoveryQuestions;

@@ -21,7 +21,7 @@ const MIN_VALID_LENGTH = 3;
 const PasswordRecoveryForm = props => {
   const {
     show,
-    onClose,
+    closeRecoveryModal,
     edgeAuthLoading,
     pinConfirmation,
     showPinConfirm,
@@ -30,7 +30,11 @@ const PasswordRecoveryForm = props => {
     onSubmit,
     showPinModal,
     resetPinConfirm,
+    changeRecoveryQuestions,
+    changeRecoveryQuestionsClose,
   } = props;
+
+  const isSettings = changeRecoveryQuestions; // todo: should be refactored on settings recovery password task
 
   const [isSkip, toggleSkip] = useState(false);
   const [isQuestions, toggleQuestions] = useState(false);
@@ -89,7 +93,7 @@ const PasswordRecoveryForm = props => {
 
   const closeSkip = () => {
     hideSkip();
-    onClose();
+    closeRecoveryModal();
     props.createNotification({
       action: ACTIONS.RECOVERY,
       type: BADGE_TYPES.ALERT,
@@ -109,6 +113,15 @@ const PasswordRecoveryForm = props => {
   const setQuestion = (change, value) => {
     change(questionNumber, value);
     hideQuestions();
+  };
+
+  const handleClose = () => {
+    if (isSettings) {
+      closeRecoveryModal();
+      changeRecoveryQuestionsClose();
+      return;
+    }
+    return isSkip ? closeSkip() : showSkip();
   };
 
   const validateForm = values => {
@@ -236,7 +249,7 @@ const PasswordRecoveryForm = props => {
             <FormHeader
               title="Setup Password Recovery"
               isDoubleColor
-              header="One Last Thing!"
+              header={!isSettings && 'One Last Thing!'}
               subtitle="Set up your password recovery, so you don’t loose your account forever."
             />
             <Field
@@ -288,9 +301,11 @@ const PasswordRecoveryForm = props => {
                 'NEXT'
               )}
             </Button>
-            <p className={classes.skipButton} onClick={showSkip}>
-              Skip
-            </p>
+            {!isSettings && (
+              <p className={classes.skipButton} onClick={showSkip}>
+                Skip
+              </p>
+            )}
           </div>
           <div className={classnames(classes.box, isQuestions && classes.show)}>
             <FormHeader
@@ -318,7 +333,7 @@ const PasswordRecoveryForm = props => {
   };
 
   const renderForm = () =>
-    isSkip ? (
+    isSkip && !isSettings ? (
       renderSkip()
     ) : (
       <Form
@@ -361,7 +376,7 @@ const PasswordRecoveryForm = props => {
     <ModalComponent
       show={show && !showPinConfirm}
       backdrop="static"
-      onClose={isSkip ? closeSkip : showSkip}
+      onClose={handleClose}
       isDanger={isSkip}
       closeButton={!isQuestions}
       title={
