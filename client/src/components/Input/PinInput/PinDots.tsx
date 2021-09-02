@@ -4,7 +4,7 @@ import classes from './PinInput.module.scss';
 import { PIN_LENGTH } from '../../../constants/form';
 
 type Props = {
-  error?: string | boolean;
+  error: boolean;
   value: string;
 };
 

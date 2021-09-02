@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 
@@ -20,7 +20,8 @@ type Props = {
   pin?: string;
   handlePinChange: (value: string) => void;
   handlePasswordChange: (value: string) => void;
-  error?: boolean | string;
+  error?: string;
+  onUnmount: () => void;
 };
 
 const ChangePinForm: React.FC<Props> = props => {
@@ -33,8 +34,13 @@ const ChangePinForm: React.FC<Props> = props => {
     password,
     handlePinChange,
     handlePasswordChange,
-    error,
+    error = '',
+    onUnmount,
   } = props;
+
+  useEffect(() => {
+    return () => onUnmount();
+  }, []);
 
   const isDisabled = !pin || pin.length < PIN_LENGTH;
 
@@ -47,6 +53,7 @@ const ChangePinForm: React.FC<Props> = props => {
             onChange={handlePinChange}
             name="pin"
             loading={loading}
+            error={error}
           />
         </div>
         <Button
@@ -90,7 +97,7 @@ const ChangePinForm: React.FC<Props> = props => {
           ) : error ? (
             'Try Again'
           ) : (
-            'Comfirm'
+            'Confirm'
           )}
         </Button>
       </div>
