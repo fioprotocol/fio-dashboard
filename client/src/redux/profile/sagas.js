@@ -8,13 +8,12 @@ import {
   PROFILE_SUCCESS,
   SIGNUP_SUCCESS,
   LOGOUT_SUCCESS,
-  SET_RECOVERY_SUCCESS,
   NONCE_SUCCESS,
   loadProfile,
   login,
 } from './actions';
 
-import { closeRecoveryModal, closeLoginModal } from '../modal/actions';
+import { closeLoginModal } from '../modal/actions';
 import {
   listNotifications,
   createNotification,
@@ -71,12 +70,6 @@ export function* signupSuccess() {
 export function* logoutSuccess(history, api) {
   yield takeEvery(LOGOUT_SUCCESS, function() {
     api.client.removeToken();
-  });
-}
-
-export function* setRecoverySuccess() {
-  yield takeEvery(SET_RECOVERY_SUCCESS, function*() {
-    yield put(closeRecoveryModal());
   });
 }
 

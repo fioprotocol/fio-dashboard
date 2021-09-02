@@ -28,6 +28,7 @@ const Input = props => {
     loading,
     suffix = '',
     lowerCased = false,
+    disabled,
     ...rest
   } = props;
   const {
@@ -130,6 +131,7 @@ const Input = props => {
             suffix && classes.suffixSpace,
             type === 'password' && classes.doubleIconInput,
           )}
+          disabled={disabled}
           {...input}
           {...rest}
           onChange={e => {
@@ -147,8 +149,10 @@ const Input = props => {
               classes.inputIcon,
               type === 'password' && classes.doubleIcon,
               isBW && classes.bw,
+              disabled && classes.disabled,
             )}
             onClick={() => {
+              if (disabled) return;
               clearInputFn();
               if (onClose) {
                 onClose(false);
@@ -159,8 +163,11 @@ const Input = props => {
         {clearInput && type === 'password' && (
           <FontAwesomeIcon
             icon={!showPass ? 'eye' : 'eye-slash'}
-            className={classes.inputIcon}
-            onClick={() => toggleShowPass(!showPass)}
+            className={classnames(
+              classes.inputIcon,
+              disabled && classes.disabled,
+            )}
+            onClick={() => !disabled && toggleShowPass(!showPass)}
           />
         )}
         {loading && (
