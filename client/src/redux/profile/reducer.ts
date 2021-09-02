@@ -1,5 +1,9 @@
 import { combineReducers } from 'redux';
 import * as actions from './actions';
+import {
+  CHANGE_RECOVERY_QUESTIONS_CLOSE,
+  CHANGE_RECOVERY_QUESTIONS_OPEN,
+} from '../edge/actions';
 import { FioWalletDoublet, LastAuthData } from '../../types';
 
 type User = {
@@ -142,6 +146,21 @@ export default combineReducers({
         return action.data;
       case actions.LOGOUT_SUCCESS:
         return 0;
+      default:
+        return state;
+    }
+  },
+  changeRecoveryQuestionsResults(state = {}, action) {
+    switch (action.type) {
+      case actions.SET_RECOVERY_SUCCESS: {
+        return { status: 1 };
+      }
+      case actions.SET_RECOVERY_REQUEST:
+      case actions.SET_RECOVERY_FAILURE:
+      case CHANGE_RECOVERY_QUESTIONS_CLOSE:
+      case CHANGE_RECOVERY_QUESTIONS_OPEN: {
+        return {};
+      }
       default:
         return state;
     }

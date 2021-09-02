@@ -19,5 +19,3 @@ export const changePinResults = state => state[prefix].changePinResults;
 export const changePinError = state => state[prefix].changePinError;
 export const changeRecoveryQuestions = state =>
   state[prefix].changeRecoveryQuestions;
-export const changeRecoveryQuestionsResults = state =>
-  state[prefix].changeRecoveryQuestionsResults;

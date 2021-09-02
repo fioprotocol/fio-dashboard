@@ -1,11 +1,6 @@
 import { combineReducers } from 'redux';
 import { LOGOUT_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
-import {
-  SET_RECOVERY_REQUEST,
-  SET_RECOVERY_SUCCESS,
-  SET_RECOVERY_FAILURE,
-} from '../profile/actions';
 
 const PIN_CONFIRM_DEFAULT = {};
 
@@ -224,21 +219,6 @@ export default combineReducers({
       }
       case actions.CHANGE_RECOVERY_QUESTIONS_CLOSE: {
         return false;
-      }
-      default:
-        return state;
-    }
-  },
-  changeRecoveryQuestionsResults(state = {}, action) {
-    switch (action.type) {
-      case SET_RECOVERY_SUCCESS: {
-        return { status: 1 };
-      }
-      case SET_RECOVERY_REQUEST:
-      case SET_RECOVERY_FAILURE:
-      case actions.CHANGE_RECOVERY_QUESTIONS_CLOSE:
-      case actions.CHANGE_RECOVERY_QUESTIONS_OPEN: {
-        return {};
       }
       default:
         return state;
