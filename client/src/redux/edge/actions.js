@@ -242,3 +242,13 @@ export const clearCachedUser = username => ({
   ],
   promise: api => api.edge.clearCachedUser(username),
 });
+
+export const CHANGE_RECOVERY_QUESTIONS_OPEN = `${prefix}/CHANGE_RECOVERY_QUESTIONS_OPEN`;
+export const changeRecoveryQuestionsOpen = () => ({
+  type: CHANGE_RECOVERY_QUESTIONS_OPEN,
+});
+
+export const CHANGE_RECOVERY_QUESTIONS_CLOSE = `${prefix}/CHANGE_RECOVERY_QUESTIONS_CLOSE`;
+export const changeRecoveryQuestionsClose = () => ({
+  type: CHANGE_RECOVERY_QUESTIONS_CLOSE,
+});
