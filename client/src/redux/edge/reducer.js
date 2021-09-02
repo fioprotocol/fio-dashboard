@@ -212,4 +212,16 @@ export default combineReducers({
         return state;
     }
   },
+  changeRecoveryQuestions(state = false, action) {
+    switch (action.type) {
+      case actions.CHANGE_RECOVERY_QUESTIONS_OPEN: {
+        return true;
+      }
+      case actions.CHANGE_RECOVERY_QUESTIONS_CLOSE: {
+        return false;
+      }
+      default:
+        return state;
+    }
+  },
 });
