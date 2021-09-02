@@ -16,6 +16,7 @@ import {
   confirmingPin,
   pinConfirmation,
   changeRecoveryQuestions,
+  changeRecoveryQuestionsResults,
 } from '../../redux/edge/selectors';
 import {
   showRecovery as show,
@@ -33,6 +34,7 @@ const reduxConnect = connect(
     showPinConfirm,
     pinConfirmation,
     changeRecoveryQuestions,
+    changeRecoveryQuestionsResults,
   }),
   {
     onSubmit: setRecoveryQuestions,
