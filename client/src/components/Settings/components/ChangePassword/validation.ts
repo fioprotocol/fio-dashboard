@@ -14,10 +14,6 @@ const validation = (values: FormValuesTypes) => {
     errors.password = 'Required';
   }
 
-  if (password) {
-    // todo: check if the value matches user's password
-  }
-
   if (!newPassword) {
     errors.newPassword = 'Required';
   }
