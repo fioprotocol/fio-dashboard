@@ -16,12 +16,12 @@ import {
   confirmingPin,
   pinConfirmation,
   changeRecoveryQuestions,
-  changeRecoveryQuestionsResults,
 } from '../../redux/edge/selectors';
 import {
   showRecovery as show,
   showPinConfirm,
 } from '../../redux/modal/selectors';
+import { changeRecoveryQuestionsResults } from '../../redux/profile/selectors';
 
 import PasswordRecoveryForm from './PasswordRecoveryForm';
 
