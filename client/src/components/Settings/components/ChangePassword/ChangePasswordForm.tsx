@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Field, reduxForm, InjectedFormProps } from 'redux-form';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -23,10 +23,24 @@ const formConnect = reduxForm({
 type Props = {
   loading: boolean;
   changePasswordError?: { type?: string; message?: string; name?: string };
+  onUnmount: () => void;
 };
 
 const ChangePasswordForm = (props: Props & InjectedFormProps) => {
-  const { handleSubmit, loading, valid, changePasswordError } = props;
+  const {
+    handleSubmit,
+    loading,
+    valid,
+    changePasswordError,
+    onUnmount,
+  } = props;
+
+  useEffect(
+    () => () => {
+      onUnmount();
+    },
+    [],
+  );
 
   const isCurrentPasswordError =
     changePasswordError && changePasswordError.type === 'PasswordError';

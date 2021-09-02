@@ -43,15 +43,9 @@ const ChangePassword: React.FC<Props> = props => {
   const [showSuccessModal, toggleSuccessModal] = useState(false);
 
   const onOpenModal = () => toggleShowModal(true);
-  const onCloseModal = () => {
-    toggleShowModal(false);
-    clearChangePasswordError();
-  };
+  const onCloseModal = () => toggleShowModal(false);
 
-  const onSuccessClose = () => {
-    toggleSuccessModal(false);
-    clearChangePasswordResults();
-  };
+  const onSuccessClose = () => toggleSuccessModal(false);
 
   const handleSubmit = (values: FormValuesTypes) => {
     const { password, newPassword } = values;
@@ -64,6 +58,11 @@ const ChangePassword: React.FC<Props> = props => {
       toggleSuccessModal(true);
     }
   }, [status]);
+
+  const onUnmount = () => {
+    clearChangePasswordError();
+    clearChangePasswordResults();
+  };
 
   return (
     <SecurityItem {...ITEM_PROPS} isPasswordPin={true} onClick={onOpenModal}>
@@ -78,6 +77,7 @@ const ChangePassword: React.FC<Props> = props => {
           onSubmit={handleSubmit}
           loading={loading}
           changePasswordError={changePasswordError}
+          onUnmount={onUnmount}
         />
       </ModalUIComponent>
       <SuccessModal
