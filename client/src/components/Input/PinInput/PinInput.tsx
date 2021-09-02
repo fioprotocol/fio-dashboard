@@ -8,7 +8,7 @@ import classes from './PinInput.module.scss';
 import PinDots from './PinDots';
 
 type Props = {
-  error?: string | boolean;
+  error: string;
   value: string;
   onBlur?: () => void;
   onChange?: (value: string) => void;
@@ -117,7 +117,7 @@ const PinInput: React.FC<Props> = props => {
           onBlur={handleBlur}
           ref={innerRef}
         />
-        <PinDots value={value} error={error} />
+        <PinDots value={value} error={!!error} />
         {!isDesktop && showKeyboard && isIOS && (
           <div className={classes.keyboardPlug} />
         )}
