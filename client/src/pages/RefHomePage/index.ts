@@ -5,7 +5,11 @@ import { withRouter } from 'react-router-dom';
 import { compose } from '../../utils';
 
 import { isAuthenticated } from '../../redux/profile/selectors';
-import { loading, data, refLinkError } from '../../redux/refProfile/selectors';
+import {
+  loading,
+  refProfileInfo,
+  refLinkError,
+} from '../../redux/refProfile/selectors';
 
 import { getInfo, setContainedParams } from '../../redux/refProfile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
@@ -16,7 +20,7 @@ const reduxConnect = connect(
   createStructuredSelector({
     isAuthenticated,
     loading,
-    refProfileInfo: data,
+    refProfileInfo,
     refLinkError,
   }),
   {

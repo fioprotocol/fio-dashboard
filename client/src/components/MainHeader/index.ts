@@ -14,8 +14,14 @@ import {
 import { loading as edgeAuthLoading } from '../../redux/edge/selectors';
 import { list as notifications } from '../../redux/notifications/selectors';
 import { cartItems } from '../../redux/cart/selectors';
+import {
+  refProfileInfo,
+  loading as refProfileLoading,
+} from '../../redux/refProfile/selectors';
 
 import MainHeader from './MainHeader';
+import { MainHeaderProps } from './types';
+import { ReduxState } from '../../types';
 
 const selector = createStructuredSelector({
   pathname,
@@ -25,16 +31,25 @@ const selector = createStructuredSelector({
   profileLoading,
   notifications,
   cartItems,
+  refProfileInfo,
+  refProfileLoading,
 });
 
-const actions = (dispatch, ownProps) => ({
+const actions = (
+  dispatch: (params: any) => void,
+  ownProps: MainHeaderProps,
+) => ({
   showLoginModal: () => dispatch(showLoginModal()),
   logout: () => {
     const { history } = ownProps;
+    // @ts-ignore
     dispatch(logout({ history }));
-    dispatch(getState => {
+    // @ts-ignore
+    dispatch((getState: (state: ReduxState) => any) => {
       try {
-        const { username } = getState(state => state.profile.lastAuthData);
+        const { username } = getState(
+          (state: ReduxState) => state.profile.lastAuthData,
+        );
         dispatch(clearCachedUser(username));
       } catch (e) {
         //
