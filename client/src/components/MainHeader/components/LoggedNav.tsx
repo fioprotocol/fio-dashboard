@@ -17,6 +17,7 @@ type LoggedNavProps = {
   toggleMenuOpen: (openState: boolean) => void;
   edgeAuthLoading: boolean;
   profileLoading: boolean;
+  isRefFlow: boolean;
   notifications: Notification[];
   logout: () => void;
   showLogin: () => void;
@@ -30,6 +31,7 @@ const LoggedNav = (props: LoggedNavProps) => {
     toggleMenuOpen,
     closeMenu,
     notifications,
+    isRefFlow,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
@@ -63,39 +65,45 @@ const LoggedNav = (props: LoggedNavProps) => {
         </div>
       </Nav.Link>
       <hr className={classnames(classes.vertical, 'mx-3')} />
-      <Nav.Link
-        href="#"
-        className={classnames(classes.navItem, 'text-white')}
-        onClick={closeMenu}
-      >
-        <div className={classnames(classes.notifWrapper, classes.bellshake)}>
-          <FontAwesomeIcon
-            icon="bell"
-            className={classnames(
-              classes.icon,
-              classes.notification,
-              'text-white',
-            )}
-          />
-          {!!notifications.length && (
-            <div className={classes.notifActiveWrapper}>
+      {isRefFlow ? null : (
+        <>
+          <Nav.Link
+            href="#"
+            className={classnames(classes.navItem, 'text-white')}
+            onClick={closeMenu}
+          >
+            <div
+              className={classnames(classes.notifWrapper, classes.bellshake)}
+            >
               <FontAwesomeIcon
-                icon="circle"
+                icon="bell"
                 className={classnames(
-                  classes.notifActive,
-                  'mr-2',
-                  'text-danger',
+                  classes.icon,
+                  classes.notification,
+                  'text-white',
                 )}
               />
+              {!!notifications.length && (
+                <div className={classes.notifActiveWrapper}>
+                  <FontAwesomeIcon
+                    icon="circle"
+                    className={classnames(
+                      classes.notifActive,
+                      'mr-2',
+                      'text-danger',
+                    )}
+                  />
+                </div>
+              )}
             </div>
+            {isDesktop && <div className="ml-3">Notifications</div>}
+          </Nav.Link>
+          {isDesktop ? (
+            <hr className={classnames(classes.vertical, 'mx-3')} />
+          ) : (
+            <div className="mx-3" />
           )}
-        </div>
-        {isDesktop && <div className="ml-3">Notifications</div>}
-      </Nav.Link>
-      {isDesktop ? (
-        <hr className={classnames(classes.vertical, 'mx-3')} />
-      ) : (
-        <div className="mx-3" />
+        </>
       )}
       {isDesktop ? (
         <LoggedActionButtons {...props} />
