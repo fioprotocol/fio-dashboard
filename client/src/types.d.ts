@@ -142,3 +142,17 @@ export type RefProfile = {
     img: string;
   };
 };
+
+type SignNFTQuery = {
+  chain_code: string;
+  contract_address: string;
+  token_id: string;
+  url: string;
+  hash: string;
+  metadata: string;
+};
+
+type RefQuery = {
+  action: string;
+  r: string;
+} & SignNFTQuery;
