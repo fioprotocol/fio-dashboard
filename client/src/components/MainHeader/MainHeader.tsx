@@ -13,7 +13,9 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     logout: logoutFn,
     isAuthenticated,
     refProfileLoading,
+    refProfileInfo,
   } = props;
+  const isRefFlow: boolean = refProfileInfo != null && !!refProfileInfo.code;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
 
   const closeMenu = () => {
@@ -50,6 +52,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
           logout={logout}
           closeMenu={closeMenu}
           showLogin={showLogin}
+          isRefFlow={isRefFlow}
           {...props}
         />
       ) : (
@@ -58,6 +61,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
           isMenuOpen={isMenuOpen}
           closeMenu={closeMenu}
           showLogin={showLogin}
+          isRefFlow={isRefFlow}
           {...props}
         />
       )}

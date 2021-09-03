@@ -164,6 +164,7 @@ export type RefProfile = {
     allowCustomDomain: boolean;
     actions: string[];
     img: string;
+    link: string;
   };
 };
 

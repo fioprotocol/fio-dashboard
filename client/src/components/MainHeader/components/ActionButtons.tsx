@@ -12,6 +12,7 @@ type ActionButtonsProps = {
   edgeAuthLoading: boolean;
   profileLoading: boolean;
   isMenuOpen: boolean;
+  isRefFlow: boolean;
   showLogin: () => void;
   closeMenu: () => void;
 };
@@ -27,6 +28,7 @@ export const ActionButtons = (props: ActionButtonsProps) => {
     profileLoading,
     isMenuOpen,
     closeMenu,
+    isRefFlow,
   } = props;
   return (
     <div
@@ -35,16 +37,18 @@ export const ActionButtons = (props: ActionButtonsProps) => {
         isMenuOpen && classes.isOpen,
       )}
     >
-      <Nav.Link as={Link} to={ROUTES.CREATE_ACCOUNT}>
-        <Button
-          variant="outline-primary"
-          className={classnames(classes.button, 'text-white', 'mr-3')}
-          size="lg"
-          onClick={closeMenu}
-        >
-          Create Account
-        </Button>
-      </Nav.Link>
+      {isRefFlow ? null : (
+        <Nav.Link as={Link} to={ROUTES.CREATE_ACCOUNT}>
+          <Button
+            variant="outline-primary"
+            className={classnames(classes.button, 'text-white', 'mr-3')}
+            size="lg"
+            onClick={closeMenu}
+          >
+            Create Account
+          </Button>
+        </Nav.Link>
+      )}
       <Nav.Link className="pr-0">
         <Button
           className={classes.button}
@@ -67,8 +71,35 @@ export const LoggedActionButtons = (props: LoggedActionButtonsProps) => {
     edgeAuthLoading,
     profileLoading,
     isMenuOpen,
+    isRefFlow,
     closeMenu,
   } = props;
+
+  if (isRefFlow) {
+    return (
+      <div
+        className={classnames(
+          classes.loggedActionButtons,
+          isMenuOpen && classes.isOpen,
+        )}
+      >
+        <Nav.Link href="#" className="pr-0">
+          <Button
+            className={classnames(classes.button, !isMenuOpen && 'ml-4')}
+            onClick={logout}
+            size="lg"
+            disabled={edgeAuthLoading}
+          >
+            Sign Out{' '}
+            {(edgeAuthLoading || profileLoading) && (
+              <FontAwesomeIcon icon="spinner" spin />
+            )}
+          </Button>
+        </Nav.Link>
+      </div>
+    );
+  }
+
   return (
     <div
       className={classnames(
