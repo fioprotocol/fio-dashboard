@@ -139,5 +139,6 @@ export type RefProfile = {
     domains: string[];
     allowCustomDomain: boolean;
     actions: string[];
+    img: string;
   };
 };

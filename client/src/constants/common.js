@@ -25,3 +25,7 @@ export const MANAGE_PAGE_REDIRECT = {
   address: ROUTES.FIO_ADDRESSES,
   domain: ROUTES.FIO_DOMAINS,
 };
+
+export const REF_ACTIONS = {
+  SIGNNFT: 'SIGNNFT',
+};

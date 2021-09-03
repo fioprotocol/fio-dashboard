@@ -17,7 +17,16 @@ export const getInfo = (code: string) => ({
 
 export const SET_CONTAINED_PARAMS = `${prefix}/SET_CONTAINED_PARAMS`;
 
-export const setContainedParams = (params: any) => ({
-  type: SET_CONTAINED_PARAMS,
-  data: params,
-});
+export const setContainedParams = (params: any) => {
+  if (params.metadata != null) {
+    try {
+      params.metadata = JSON.parse(decodeURI(params.metadata));
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  return {
+    type: SET_CONTAINED_PARAMS,
+    data: params,
+  };
+};
