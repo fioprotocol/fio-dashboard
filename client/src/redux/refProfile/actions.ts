@@ -1,4 +1,5 @@
 import { Api } from '../../api';
+import { validateRefActionQuery } from '../../util/ref';
 
 export const prefix = 'refProfile';
 
@@ -16,8 +17,17 @@ export const getInfo = (code: string) => ({
 });
 
 export const SET_CONTAINED_PARAMS = `${prefix}/SET_CONTAINED_PARAMS`;
+export const SET_CONTAINED_PARAMS_ERROR = `${prefix}/SET_CONTAINED_PARAMS_ERROR`;
 
 export const setContainedParams = (params: any) => {
+  try {
+    validateRefActionQuery(params);
+  } catch (e) {
+    return {
+      type: SET_CONTAINED_PARAMS_ERROR,
+      data: 'The referral link is invalid',
+    };
+  }
   if (params.metadata != null) {
     try {
       params.metadata = JSON.parse(decodeURI(params.metadata));

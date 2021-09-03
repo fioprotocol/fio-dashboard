@@ -34,4 +34,14 @@ export default combineReducers({
         return state;
     }
   },
+  refLinkError(state: string | null = null, action) {
+    switch (action.type) {
+      case actions.GET_REF_PROFILE_FAILURE:
+        return 'Referral link is invalid';
+      case actions.SET_CONTAINED_PARAMS_ERROR:
+        return action.data;
+      default:
+        return state;
+    }
+  },
 });

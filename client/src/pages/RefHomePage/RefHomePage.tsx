@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 
 import RefAddressWidget from '../../components/AddressWidget/RefAddressWidget';
 import FioAddressPage from '../FioAddressPage';
@@ -9,7 +9,6 @@ import { RefProfile, RefQuery } from '../../types';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import styles from '../../components/AuthContainer/AuthContainer.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { validateRefActionQuery } from '../../util/ref';
 
 type MatchParams = {
   refProfileCode: string;
@@ -27,6 +26,7 @@ type Props = {
   isAuthenticated: boolean;
   loading: boolean;
   refProfileInfo: RefProfile;
+  refLinkError: string | null;
   getInfo: (code: string) => void;
   setContainedParams: (params: any) => void;
   showLoginModal: () => void;
@@ -44,21 +44,13 @@ export const RefHomePage: React.FC<Props &
     },
     location: { query },
     getInfo,
+    refLinkError,
     setContainedParams,
     showLoginModal,
   } = props;
-  const [validationError, setQueryValidationError] = useState<string | null>(
-    null,
-  );
 
   useEffect(() => {
-    try {
-      validateRefActionQuery(refProfileCode, query);
-      getInfo(refProfileCode);
-    } catch (e) {
-      console.error(e);
-      setQueryValidationError('The referral link is invalid');
-    }
+    getInfo(refProfileCode);
   }, []);
   useEffect(() => {
     if (refProfileCode != null) {
@@ -66,11 +58,11 @@ export const RefHomePage: React.FC<Props &
     }
   }, [refProfileCode]);
 
-  if (validationError) {
+  if (refLinkError) {
     return (
       <div className={classnames.container}>
         <div className={classnames.validationErrorContainer}>
-          {validationError}
+          {refLinkError}
         </div>
       </div>
     );

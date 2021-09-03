@@ -1,8 +1,7 @@
 import { RefQuery } from '../types';
 import { REF_ACTIONS } from '../constants/common';
 
-export const validateRefActionQuery = (code: string, query: RefQuery) => {
-  if (!code) throw new Error('Ref code is required');
+export const validateRefActionQuery = (query: RefQuery) => {
   if (!query.action) throw new Error('Ref action is required');
   if (!query.r) throw new Error('Redirect url is required');
 
