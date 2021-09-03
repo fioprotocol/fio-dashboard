@@ -252,3 +252,16 @@ export const CHANGE_RECOVERY_QUESTIONS_CLOSE = `${prefix}/CHANGE_RECOVERY_QUESTI
 export const changeRecoveryQuestionsClose = () => ({
   type: CHANGE_RECOVERY_QUESTIONS_CLOSE,
 });
+
+export const CHECK_RECOVERY_QUESTIONS_REQUEST = `${prefix}/CHECK_RECOVERY_QUESTIONS_REQUEST`;
+export const CHECK_RECOVERY_QUESTIONS_SUCCESS = `${prefix}/CHECK_RECOVERY_QUESTIONS_SUCCESS`;
+export const CHECK_RECOVERY_QUESTIONS_FAILURE = `${prefix}/CHECK_RECOVERY_QUESTIONS_FAILURE`;
+
+export const checkRecoveryQuestions = username => ({
+  types: [
+    CHECK_RECOVERY_QUESTIONS_REQUEST,
+    CHECK_RECOVERY_QUESTIONS_SUCCESS,
+    CHECK_RECOVERY_QUESTIONS_FAILURE,
+  ],
+  promise: api => api.edge.checkRecoveryQuestions(username),
+});

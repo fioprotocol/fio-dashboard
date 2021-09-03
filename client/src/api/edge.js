@@ -162,4 +162,27 @@ export default class Edge {
   async logout() {
     //
   }
+
+  async checkRecoveryQuestions(username) {
+    if (this.edgeContext) {
+      return await this.edgeContext
+        .getRecovery2Key(username)
+        .then(res => res)
+        .catch(e => {
+          console.log(e);
+          return false;
+        });
+    }
+  }
+
+  async disableRecovery(username, pin) {
+    try {
+      const account = await this.loginPIN(username, pin);
+      await account.deleteRecovery();
+      await account.logout();
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
 }

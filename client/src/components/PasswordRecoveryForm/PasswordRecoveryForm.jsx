@@ -34,6 +34,8 @@ const PasswordRecoveryForm = props => {
     changeRecoveryQuestions,
     changeRecoveryQuestionsClose,
     changeRecoveryQuestionsResults,
+    checkRecoveryQuestions,
+    username,
   } = props;
 
   const isSettings = changeRecoveryQuestions; // todo: should be refactored on settings recovery password task
@@ -146,6 +148,7 @@ const PasswordRecoveryForm = props => {
     closeRecoveryModal();
     changeRecoveryQuestionsClose();
     toggleSuccessModal(false);
+    checkRecoveryQuestions(username);
   };
 
   const validateForm = values => {

@@ -10,6 +10,7 @@ import {
 } from '../../redux/edge/actions';
 import { createNotification } from '../../redux/notifications/actions';
 import { closeRecoveryModal, showPinModal } from '../../redux/modal/actions';
+import { checkRecoveryQuestions } from '../../redux/edge/actions';
 import {
   loading as edgeAuthLoading,
   recoveryQuestions,
@@ -35,6 +36,8 @@ const reduxConnect = connect(
     pinConfirmation,
     changeRecoveryQuestions,
     changeRecoveryQuestionsResults,
+    username: state =>
+      state.profile && state.profile.user && state.profile.user.username,
   }),
   {
     onSubmit: setRecoveryQuestions,
@@ -44,6 +47,7 @@ const reduxConnect = connect(
     showPinModal,
     resetPinConfirm,
     changeRecoveryQuestionsClose,
+    checkRecoveryQuestions,
   },
 );
 
