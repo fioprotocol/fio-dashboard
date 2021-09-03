@@ -5,7 +5,7 @@ import { FORM_NAMES } from '../../constants/form';
 
 import classes from './AddressWidget.module.scss';
 
-const AddressWidget = props => {
+const AddressWidget = () => {
   return (
     <div className={classes.container}>
       <h1 className={classes.title}>

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import AddressWidget from '../../components/AddressWidget';
+import RefAddressWidget from '../../components/AddressWidget/RefAddressWidget';
 import FioAddressPage from '../FioAddressPage';
 
 import classnames from './RefHomePage.module.scss';
@@ -14,18 +14,23 @@ type MatchParams = {
   refProfileCode: string;
 };
 
+// example url - /ref/uniqueone?action=SIGNNFT&chain_code=ETH&contract_address=FIO5CniznG2z6yVPc4as69si711R1HJMAAnC3Rxjd4kGri4Kp8D8P&token_id=ETH&url=ifg://dfs.sdfs/sdfs&hash=f83klsjlgsldkfjsdlf&metadata={"creator_url":"https://www.google.com.ua/"}
+
+type SignNFTQuery = {
+  chain_code: string;
+  contract_address: string;
+  token_id: string;
+  url: string;
+  hash: string;
+  metadata: string;
+};
+
 type Location = {
   location: {
     query: {
-      chain_code?: string;
-      contract_address?: string;
-      token_id?: string;
-      url?: string;
-      hash?: string;
-      metadata?: string;
-      creator_url?: string;
-      r?: string;
-    };
+      action: string;
+      r: string;
+    } & SignNFTQuery;
   };
 };
 
@@ -35,6 +40,7 @@ type Props = {
   refProfileInfo: RefProfile;
   getInfo: (code: string) => void;
   setContainedParams: (params: any) => void;
+  showLoginModal: () => void;
 };
 
 export const RefHomePage: React.FC<Props &
@@ -50,6 +56,7 @@ export const RefHomePage: React.FC<Props &
     location: { query },
     getInfo,
     setContainedParams,
+    showLoginModal,
   } = props;
 
   useEffect(() => {
@@ -72,7 +79,18 @@ export const RefHomePage: React.FC<Props &
   if (!isAuthenticated) {
     return (
       <div className={classnames.container}>
-        <AddressWidget />
+        <RefAddressWidget
+          logo={
+            <img
+              src={refProfileInfo.settings.img}
+              className={classnames.refImg}
+            />
+          }
+          title={refProfileInfo.title}
+          subTitle={refProfileInfo.subTitle}
+          action={query.action}
+          showLoginModal={showLoginModal}
+        />
       </div>
     );
   }
