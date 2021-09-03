@@ -6,6 +6,14 @@
   width: 100%;
 }
 
+.validationErrorContainer {
+  background: $footer-background;
+  color: white;
+  text-align: center;
+  padding: 9% 25px 0;
+  min-height: 75vh;
+}
+
 .refImg {
   max-width: 80px;
 }
