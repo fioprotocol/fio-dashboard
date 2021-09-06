@@ -7,7 +7,7 @@ import { currentFioAddress } from '../../../redux/fio/selectors';
 
 import { validate } from './validation';
 
-import { ReduxState } from '../../../types';
+import { ReduxState } from '../../../redux/init';
 
 import AddToken from './AddToken';
 

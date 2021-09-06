@@ -129,6 +129,3 @@ export type FeePrice = {
 };
 
 export type DomainStatusType = 'private' | 'public';
-
-// todo: set types for state
-export type ReduxState = any;
