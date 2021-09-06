@@ -1,7 +1,8 @@
 import { prefix } from './actions';
 import { emptyWallet } from './reducer';
 import { getElementByFioName } from '../../utils';
-import { FioNameItemProps, FioWalletDoublet, ReduxState } from '../../types';
+import { FioNameItemProps, FioWalletDoublet } from '../../types';
+import { ReduxState } from '../../redux/init';
 
 export const loading = (state: ReduxState) => state[prefix].loading;
 export const transferProcessing = (state: ReduxState) =>
