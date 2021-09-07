@@ -53,4 +53,8 @@ export default class Auth extends Base {
   async logout(): Promise<null> {
     return null;
   }
+
+  resendRecovery() {
+    return this.apiClient.post('users/resendRecovery');
+  }
 }

@@ -10,6 +10,7 @@ import {
 } from '../../redux/edge/actions';
 import { createNotification } from '../../redux/notifications/actions';
 import { closeRecoveryModal, showPinModal } from '../../redux/modal/actions';
+import { checkRecoveryQuestions } from '../../redux/edge/actions';
 import {
   loading as edgeAuthLoading,
   recoveryQuestions,
@@ -21,7 +22,7 @@ import {
   showRecovery as show,
   showPinConfirm,
 } from '../../redux/modal/selectors';
-import { changeRecoveryQuestionsResults } from '../../redux/profile/selectors';
+import { changeRecoveryQuestionsResults, edgeUsername } from '../../redux/profile/selectors';
 
 import PasswordRecoveryForm from './PasswordRecoveryForm';
 
@@ -35,6 +36,7 @@ const reduxConnect = connect(
     pinConfirmation,
     changeRecoveryQuestions,
     changeRecoveryQuestionsResults,
+    username: edgeUsername,
   }),
   {
     onSubmit: setRecoveryQuestions,
@@ -44,6 +46,7 @@ const reduxConnect = connect(
     showPinModal,
     resetPinConfirm,
     changeRecoveryQuestionsClose,
+    checkRecoveryQuestions,
   },
 );
 

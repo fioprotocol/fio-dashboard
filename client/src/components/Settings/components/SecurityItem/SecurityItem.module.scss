@@ -22,6 +22,8 @@
     padding: 7px 35px;
     margin-top: 4px;
     background-color: $violet;
+    min-width: 250px;
+    outline: none;
 
     &:hover {
       background-color: $clear-blue;
@@ -39,6 +41,17 @@
         max-width: none;
       }
     }
+
+    &.green {
+      background-color: $green-cyan;
+      border-color: $green-cyan;
+
+      &:hover {
+        background-color: $green-teal;
+        border-color: $green-teal;
+      }
+    }
+
     @include sm {
       width: 100%;
     }
