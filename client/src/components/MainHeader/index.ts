@@ -21,7 +21,7 @@ import {
 
 import MainHeader from './MainHeader';
 import { MainHeaderProps } from './types';
-import { ReduxState } from '../../types';
+import { ReduxState, AppDispatch } from '../../redux/init';
 
 const selector = createStructuredSelector({
   pathname,
@@ -35,16 +35,11 @@ const selector = createStructuredSelector({
   refProfileLoading,
 });
 
-const actions = (
-  dispatch: (params: any) => void,
-  ownProps: MainHeaderProps,
-) => ({
+const actions = (dispatch: AppDispatch, ownProps: MainHeaderProps) => ({
   showLoginModal: () => dispatch(showLoginModal()),
   logout: () => {
     const { history } = ownProps;
-    // @ts-ignore
     dispatch(logout({ history }));
-    // @ts-ignore
     dispatch((getState: (state: ReduxState) => any) => {
       try {
         const { username } = getState(
