@@ -17,7 +17,7 @@ import { CONFIRM_PIN_ACTIONS, DOMAIN_STATUS } from '../../constants/common';
 import classes from './FioDomainStatusChangeContainer.module.scss';
 import { waitForEdgeAccountStop } from '../../utils';
 import { PinConfirmation } from '../../types';
-import { Redirect } from 'react-router';
+import { Redirect } from 'react-router-dom';
 import Processing from '../common/TransactionProcessing';
 import Results from '../common/TransactionResults';
 import { SET_VISIBILITY_REQUEST } from '../../redux/fio/actions';
