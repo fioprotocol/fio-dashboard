@@ -13,4 +13,5 @@ const selector = createStructuredSelector({
   refProfileLoading,
 });
 
+// @ts-ignore // todo: change to useLocation in component, update react-router-redux/react-router-dom/react-redux, replace react-router-redux by connected-react-router
 export default withRouter(connect(selector)(Navigation));
