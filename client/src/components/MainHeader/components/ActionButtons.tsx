@@ -6,7 +6,7 @@ import classnames from 'classnames';
 
 import { ROUTES } from '../../../constants/routes';
 import classes from '../MainHeader.module.scss';
-import Navigation from '../../Navigation/Navigation';
+import Navigation from '../../Navigation';
 
 type ActionButtonsProps = {
   edgeAuthLoading: boolean;
@@ -83,9 +83,9 @@ export const LoggedActionButtons = (props: LoggedActionButtonsProps) => {
           isMenuOpen && classes.isOpen,
         )}
       >
-        <Nav.Link href="#" className="pr-0">
+        <Nav.Link href="#" className="pr-0 pl-0">
           <Button
-            className={classnames(classes.button, !isMenuOpen && 'ml-4')}
+            className={classnames(classes.button, !isMenuOpen && 'ml-3')}
             onClick={logout}
             size="lg"
             disabled={edgeAuthLoading}

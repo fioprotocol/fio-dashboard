@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import exact from 'prop-types-exact';
 import MainHeader from '../../components/MainHeader';
 import Notifications from '../../components/Notifications';
-import Navigation from '../../components/Navigation/Navigation';
+import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer/Footer';
 import LoginForm from '../../components/LoginForm';
 import PinConfirmModal from '../../components/PinConfirmModal';
