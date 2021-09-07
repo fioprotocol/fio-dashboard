@@ -22,7 +22,10 @@ import {
   showRecovery as show,
   showPinConfirm,
 } from '../../redux/modal/selectors';
-import { changeRecoveryQuestionsResults, edgeUsername } from '../../redux/profile/selectors';
+import {
+  changeRecoveryQuestionsResults,
+  edgeUsername,
+} from '../../redux/profile/selectors';
 
 import PasswordRecoveryForm from './PasswordRecoveryForm';
 
