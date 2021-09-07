@@ -1,0 +1,59 @@
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  margin-top: 30px;
+  .title {
+    font-size: 1.125em;
+    color: $gray-main;
+  }
+  .subtitle {
+    font-size: 0.875em;
+    color: $gray-main;
+  }
+  .attentionText {
+    font-size: 0.875em;
+    @include proxima-nova-semibold;
+  }
+  .button {
+    font-size: 0.875em;
+    border-radius: 7px;
+    padding: 7px 35px;
+    margin-top: 4px;
+    background-color: $violet;
+    min-width: 250px;
+    outline: none;
+
+    &:hover {
+      background-color: $clear-blue;
+      border-color: $clear-blue;
+    }
+
+    &.passwordPin {
+      max-width: 180px;
+      width: 90%;
+      box-sizing: content-box;
+      padding: 7px 0;
+
+      @include sm {
+        width: 100%;
+        max-width: none;
+      }
+    }
+
+    &.green {
+      background-color: $green-cyan;
+      border-color: $green-cyan;
+
+      &:hover {
+        background-color: $green-teal;
+        border-color: $green-teal;
+      }
+    }
+
+    @include sm {
+      width: 100%;
+    }
+  }
+}

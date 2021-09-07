@@ -28,3 +28,5 @@ export const hasFreeAddress = createSelector(
   user => user && !!user.freeAddresses.length,
 );
 export const edgeUsername = createSelector(user, user => user && user.username);
+export const changeRecoveryQuestionsResults = state =>
+  state[prefix].changeRecoveryQuestionsResults;

@@ -1,7 +1,12 @@
 import React from 'react';
 import classes from './LayoutContainer.module.scss';
 
-const LayoutContainer = props => {
+type Props = {
+  children?: React.ReactNode;
+  title: string;
+};
+
+const LayoutContainer: React.FC<Props> = props => {
   const { children, title } = props;
   return (
     <div className={classes.container}>

@@ -4,7 +4,6 @@ import {
   loginSuccess,
   signupSuccess,
   logoutSuccess,
-  setRecoverySuccess,
   profileSuccess,
   nonceSuccess,
 } from './profile/sagas';
@@ -21,7 +20,6 @@ export default function* rootSaga(history, api) {
     edgeLoginSuccess(),
     listFailure(history),
     signupSuccess(history),
-    setRecoverySuccess(),
     notify(history),
   ]);
 }

@@ -189,6 +189,48 @@ export const resetPassword = ({ hash, password, confirmPassword }) => ({
   promise: api => api.edge.setPassword(hash, password, confirmPassword),
 });
 
+export const CHANGE_PASSWORD_REQUEST = `${prefix}/CHANGE_PASSWORD_REQUEST`;
+export const CHANGE_PASSWORD_SUCCESS = `${prefix}/CHANGE_PASSWORD_SUCCESS`;
+export const CHANGE_PASSWORD_FAILURE = `${prefix}/CHANGE_PASSWORD_FAILURE`;
+
+export const changePassword = ({ password, newPassword, username }) => ({
+  types: [
+    CHANGE_PASSWORD_REQUEST,
+    CHANGE_PASSWORD_SUCCESS,
+    CHANGE_PASSWORD_FAILURE,
+  ],
+  promise: api => api.edge.changePassword(password, newPassword, username),
+});
+
+export const CLEAR_CHANGE_PASSWORD_RESULTS = `${prefix}/CLEAR_CHANGE_PASSWORD_RESULTS`;
+export const clearChangePasswordResults = () => ({
+  type: CLEAR_CHANGE_PASSWORD_RESULTS,
+});
+
+export const CLEAR_CHANGE_PASSWORD_ERROR = `${prefix}/CLEAR_CHANGE_PASSWORD_ERROR`;
+export const clearChangePasswordError = () => ({
+  type: CLEAR_CHANGE_PASSWORD_ERROR,
+});
+
+export const CHANGE_PIN_REQUEST = `${prefix}/CHANGE_PIN_REQUEST`;
+export const CHANGE_PIN_SUCCESS = `${prefix}/CHANGE_PIN_SUCCESS`;
+export const CHANGE_PIN_FAILURE = `${prefix}/CHANGE_PIN_FAILURE`;
+
+export const changePin = ({ pin, password, username }) => ({
+  types: [CHANGE_PIN_REQUEST, CHANGE_PIN_SUCCESS, CHANGE_PIN_FAILURE],
+  promise: api => api.edge.changePin(pin, password, username),
+});
+
+export const CLEAR_CHANGE_PIN_RESULTS = `${prefix}/CLEAR_CHANGE_PIN_RESULTS`;
+export const clearChangePinResults = () => ({
+  type: CLEAR_CHANGE_PIN_RESULTS,
+});
+
+export const CLEAR_CHANGE_PIN_ERROR = `${prefix}/CLEAR_CHANGE_PIN_ERROR`;
+export const clearChangePinError = () => ({
+  type: CLEAR_CHANGE_PIN_ERROR,
+});
+
 export const CLEAR_CACHED_USERS_REQUEST = `${prefix}/CLEAR_CACHED_USERS_REQUEST`;
 export const CLEAR_CACHED_USERS_SUCCESS = `${prefix}/CLEAR_CACHED_USERS_SUCCESS`;
 export const CLEAR_CACHED_USERS_FAILURE = `${prefix}/CLEAR_CACHED_USERS_FAILURE`;
@@ -199,4 +241,27 @@ export const clearCachedUser = username => ({
     CLEAR_CACHED_USERS_FAILURE,
   ],
   promise: api => api.edge.clearCachedUser(username),
+});
+
+export const CHANGE_RECOVERY_QUESTIONS_OPEN = `${prefix}/CHANGE_RECOVERY_QUESTIONS_OPEN`;
+export const changeRecoveryQuestionsOpen = () => ({
+  type: CHANGE_RECOVERY_QUESTIONS_OPEN,
+});
+
+export const CHANGE_RECOVERY_QUESTIONS_CLOSE = `${prefix}/CHANGE_RECOVERY_QUESTIONS_CLOSE`;
+export const changeRecoveryQuestionsClose = () => ({
+  type: CHANGE_RECOVERY_QUESTIONS_CLOSE,
+});
+
+export const CHECK_RECOVERY_QUESTIONS_REQUEST = `${prefix}/CHECK_RECOVERY_QUESTIONS_REQUEST`;
+export const CHECK_RECOVERY_QUESTIONS_SUCCESS = `${prefix}/CHECK_RECOVERY_QUESTIONS_SUCCESS`;
+export const CHECK_RECOVERY_QUESTIONS_FAILURE = `${prefix}/CHECK_RECOVERY_QUESTIONS_FAILURE`;
+
+export const checkRecoveryQuestions = username => ({
+  types: [
+    CHECK_RECOVERY_QUESTIONS_REQUEST,
+    CHECK_RECOVERY_QUESTIONS_SUCCESS,
+    CHECK_RECOVERY_QUESTIONS_FAILURE,
+  ],
+  promise: api => api.edge.checkRecoveryQuestions(username),
 });

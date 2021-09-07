@@ -1,0 +1,29 @@
+@import '../../../../assets/styles/colors.scss';
+
+.container {
+  max-width: 560px;
+  width: 100%;
+  padding: 0 10px;
+  color: $dark-jungle-green;
+
+  .title {
+   font-size: 1.625em;
+  }
+  .subtitle {
+    font-size: 0.875em;
+  }
+
+  button {
+    max-width: 335px;
+    border-radius: 7px;
+  }
+
+  .cancelButton {
+    background: none;
+    border: none;
+    outline: none;
+    color: $dark-jungle-green;
+    margin: 20px auto 30px;
+    display: block;
+  }
+}

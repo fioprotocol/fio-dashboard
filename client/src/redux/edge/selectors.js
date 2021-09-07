@@ -12,3 +12,12 @@ export const confirmingPin = state => state[prefix].confirmingPin;
 export const usernameIsAvailable = state => state[prefix].usernameIsAvailable;
 export const usernameAvailableLoading = state =>
   state[prefix].usernameAvailableLoading;
+export const changePasswordResults = state =>
+  state[prefix].changePasswordResults;
+export const changePasswordError = state => state[prefix].changePasswordError;
+export const changePinResults = state => state[prefix].changePinResults;
+export const changePinError = state => state[prefix].changePinError;
+export const changeRecoveryQuestions = state =>
+  state[prefix].changeRecoveryQuestions;
+
+export const hasRecoveryQuestions = state => state[prefix].hasRecoveryQuestions;

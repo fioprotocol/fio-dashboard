@@ -10,6 +10,8 @@ export default combineReducers({
       case actions.LOGIN_REQUEST:
       case actions.LOGOUT_REQUEST:
       case actions.SIGNUP_REQUEST:
+      case actions.CHANGE_PASSWORD_REQUEST:
+      case actions.CHANGE_PIN_REQUEST:
         return true;
       case actions.LOGIN_SUCCESS:
       case actions.LOGIN_FAILURE:
@@ -17,6 +19,10 @@ export default combineReducers({
       case actions.LOGOUT_FAILURE:
       case actions.SIGNUP_SUCCESS:
       case actions.SIGNUP_FAILURE:
+      case actions.CHANGE_PASSWORD_SUCCESS:
+      case actions.CHANGE_PASSWORD_FAILURE:
+      case actions.CHANGE_PIN_SUCCESS:
+      case actions.CHANGE_PIN_FAILURE:
         return false;
       default:
         return state;
@@ -144,6 +150,87 @@ export default combineReducers({
       }
       case actions.CONFIRM_PIN_SUCCESS:
       case actions.CONFIRM_PIN_FAILURE: {
+        return false;
+      }
+      default:
+        return state;
+    }
+  },
+  changePasswordResults(state = {}, action) {
+    switch (action.type) {
+      case actions.CHANGE_PASSWORD_SUCCESS: {
+        return action.data;
+      }
+      case actions.CHANGE_PASSWORD_REQUEST:
+      case actions.CHANGE_PASSWORD_FAILURE:
+      case actions.CLEAR_CHANGE_PASSWORD_RESULTS: {
+        return {};
+      }
+      default:
+        return state;
+    }
+  },
+  changePasswordError(state = {}, action) {
+    switch (action.type) {
+      case actions.CHANGE_PASSWORD_FAILURE: {
+        return action.error;
+      }
+      case actions.CHANGE_PASSWORD_SUCCESS:
+      case actions.CHANGE_PASSWORD_REQUEST:
+      case actions.CLEAR_CHANGE_PASSWORD_ERROR: {
+        return {};
+      }
+      default:
+        return state;
+    }
+  },
+  changePinResults(state = {}, action) {
+    switch (action.type) {
+      case actions.CHANGE_PIN_SUCCESS: {
+        return action.data;
+      }
+      case actions.CHANGE_PIN_REQUEST:
+      case actions.CHANGE_PIN_FAILURE:
+      case actions.CLEAR_CHANGE_PIN_RESULTS: {
+        return {};
+      }
+      default:
+        return state;
+    }
+  },
+  changePinError(state = {}, action) {
+    switch (action.type) {
+      case actions.CHANGE_PIN_FAILURE: {
+        return action.error;
+      }
+      case actions.CHANGE_PIN_SUCCESS:
+      case actions.CHANGE_PIN_REQUEST:
+      case actions.CLEAR_CHANGE_PIN_ERROR: {
+        return {};
+      }
+      default:
+        return state;
+    }
+  },
+  changeRecoveryQuestions(state = false, action) {
+    switch (action.type) {
+      case actions.CHANGE_RECOVERY_QUESTIONS_OPEN: {
+        return true;
+      }
+      case actions.CHANGE_RECOVERY_QUESTIONS_CLOSE: {
+        return false;
+      }
+      default:
+        return state;
+    }
+  },
+  hasRecoveryQuestions(state = false, action) {
+    switch (action.type) {
+      case actions.CHECK_RECOVERY_QUESTIONS_SUCCESS: {
+        return !!action.data;
+      }
+      case actions.CHECK_RECOVERY_QUESTIONS_REQUEST:
+      case actions.CHECK_RECOVERY_QUESTIONS_FAILURE: {
         return false;
       }
       default:

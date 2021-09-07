@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'react-router-redux';
-import createHistory from 'history/createBrowserHistory';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { LastLocationProvider } from 'react-router-last-location';
-
-import { addLocationQuery } from './helpers/routeParams';
 
 import {
   faEye,
@@ -37,6 +34,7 @@ import {
   faPlusCircle,
   faPen,
   faCheckSquare,
+  faCheck,
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
@@ -47,16 +45,9 @@ import {
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import api from './api';
-import configureStore from './redux/store';
+import { store, history } from './redux/init';
 
 import Routes from './routes';
-
-const history = createHistory();
-
-addLocationQuery(history);
-
-history.listen(() => addLocationQuery(history));
 
 library.add(
   faEye,
@@ -91,9 +82,8 @@ library.add(
   faPen,
   faCheckSquare,
   faRegularSquare,
+  faCheck,
 );
-
-const store = configureStore(api, history);
 
 export default class App extends Component {
   render() {

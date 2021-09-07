@@ -30,10 +30,6 @@ export default class Edge {
     return false;
   };
 
-  account() {
-    //
-  }
-
   getCachedUsers() {
     try {
       return this.edgeContext.listUsernames();
@@ -120,7 +116,73 @@ export default class Edge {
     //
   }
 
+  async changePassword(password, newPassword, username) {
+    try {
+      const account = await this.login(username, password);
+      const results = {};
+      if (account) {
+        await account.changePassword(newPassword);
+
+        // change password method doesn't return anything, so to be sure that password was successfully changed we call checkPassword method
+        const isNewPasswordSet = await account.checkPassword(newPassword);
+
+        await account.logout();
+
+        if (isNewPasswordSet) {
+          results.status = 1;
+        } else {
+          throw new Error('New password not set');
+        }
+      }
+      return results;
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  async changePin(pin, password, username) {
+    try {
+      const account = await this.login(username, password);
+      const results = {};
+      if (account) {
+        const changePinResult = await account.changePin({ pin });
+        if (changePinResult) {
+          results.status = 1;
+        }
+        await account.logout();
+      }
+      return results;
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
   async logout() {
     //
+  }
+
+  async checkRecoveryQuestions(username) {
+    if (this.edgeContext) {
+      return await this.edgeContext
+        .getRecovery2Key(username)
+        .then(res => res)
+        .catch(e => {
+          console.log(e);
+          return false;
+        });
+    }
+  }
+
+  async disableRecovery(username, pin) {
+    try {
+      const account = await this.loginPIN(username, pin);
+      await account.deleteRecovery();
+      await account.logout();
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
   }
 }

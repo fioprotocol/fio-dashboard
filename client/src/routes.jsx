@@ -23,6 +23,7 @@ import FioDomainRenewPage from './pages/FioDomainRenewPage';
 import TokenListPage from './pages/LinkTokenPages/TokenListPage';
 import DeleteTokenPage from './pages/LinkTokenPages/DeleteTokenPage';
 import AddTokenPage from './pages/LinkTokenPages/AddTokenPage';
+import SettingsPage from './pages/SettingsPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -94,6 +95,8 @@ const Routes = () => (
           path={`${LIST_TOKEN_PARENT_ROUTE}${ROUTES.ADD_TOKEN}`}
           component={AddTokenPage}
         />
+
+        <PrivateRoute path={ROUTES.SETTINGS} component={SettingsPage} exact />
 
         <AuthContainer />
       </Switch>

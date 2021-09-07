@@ -10,7 +10,7 @@ import Input from '../Input/Input';
 import classes from './CreateAccountForm.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const VALIDATION_TITLES = {
+export const VALIDATION_TITLES = {
   length: 'Must have at least 10 characters',
   lower: 'Must have at least 1 lower case letter',
   upper: 'Must have at least 1 upper case letter',

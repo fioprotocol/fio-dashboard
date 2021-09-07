@@ -1,0 +1,30 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.settingsContainer {
+  padding: 40px 30px 30px;
+  background-color: $light-gray;
+  border-radius: 7px;
+  display: flex;
+  flex-direction: column;
+  max-width: 860px;
+  margin: 0 auto;
+
+  .title {
+    @include proxima-nova-bold;
+  }
+  .passwordPinContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    div:first-child {
+      margin-right: 50px;
+      @include sm {
+        margin-right: 0;
+      }
+    }
+  }
+}

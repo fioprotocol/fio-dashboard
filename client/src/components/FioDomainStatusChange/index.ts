@@ -27,7 +27,7 @@ import { ContainerOwnProps } from './types';
 import { DOMAIN_STATUS } from '../../constants/common';
 
 import FioDomainStatusChangeContainer from './FioDomainStatusChangeContainer';
-import { ReduxState } from '../../types';
+import { ReduxState } from '../../redux/init';
 
 const reduxConnect = connect(
   createStructuredSelector({

@@ -13,6 +13,7 @@ import { BADGE_TYPES } from '../Badge/Badge';
 import ModalComponent from '../Modal/Modal';
 import FormHeader from '../FormHeader/FormHeader';
 import Input from '../Input/Input';
+import SuccessModal from '../Modal/SuccessModal';
 
 import classes from './PasswordRecoveryForm.module.scss';
 
@@ -21,7 +22,7 @@ const MIN_VALID_LENGTH = 3;
 const PasswordRecoveryForm = props => {
   const {
     show,
-    onClose,
+    closeRecoveryModal,
     edgeAuthLoading,
     pinConfirmation,
     showPinConfirm,
@@ -30,7 +31,15 @@ const PasswordRecoveryForm = props => {
     onSubmit,
     showPinModal,
     resetPinConfirm,
+    changeRecoveryQuestions,
+    changeRecoveryQuestionsClose,
+    changeRecoveryQuestionsResults,
+    checkRecoveryQuestions,
+    username,
   } = props;
+
+  const isSettings = changeRecoveryQuestions; // todo: should be refactored on settings recovery password task
+  const { status } = changeRecoveryQuestionsResults;
 
   const [isSkip, toggleSkip] = useState(false);
   const [isQuestions, toggleQuestions] = useState(false);
@@ -38,6 +47,7 @@ const PasswordRecoveryForm = props => {
   const [processing, setProcessing] = useState(false);
   const [defaultValues, setDefaultValues] = useState({});
   const [errorMessage, setError] = useState('');
+  const [showSuccessModal, toggleSuccessModal] = useState(false);
 
   useEffect(getRecoveryQuestions, []);
   useEffect(async () => {
@@ -52,10 +62,23 @@ const PasswordRecoveryForm = props => {
         new Event('submit', { cancelable: true, bubbles: true }),
       );
     }
+    if (processing && pinConfirmation && pinConfirmation.error) {
+      setProcessing(false);
+    }
   }, [pinConfirmation]);
+
   useEffect(() => {
-    setProcessing(showPinConfirm);
-  }, [showPinConfirm]);
+    if (status) {
+      if (isSettings) {
+        toggleSuccessModal(true);
+      } else {
+        closeRecoveryModal();
+        changeRecoveryQuestionsClose();
+      }
+      setProcessing(false);
+      setDefaultValues({});
+    }
+  }, [status]);
 
   const fieldValuesChanged = () => {
     setError('');
@@ -89,7 +112,7 @@ const PasswordRecoveryForm = props => {
 
   const closeSkip = () => {
     hideSkip();
-    onClose();
+    closeRecoveryModal();
     props.createNotification({
       action: ACTIONS.RECOVERY,
       type: BADGE_TYPES.ALERT,
@@ -109,6 +132,23 @@ const PasswordRecoveryForm = props => {
   const setQuestion = (change, value) => {
     change(questionNumber, value);
     hideQuestions();
+  };
+
+  const handleClose = () => {
+    if (processing) return;
+    if (isSettings) {
+      closeRecoveryModal();
+      changeRecoveryQuestionsClose();
+      return;
+    }
+    return isSkip ? closeSkip() : showSkip();
+  };
+
+  const onSuccessClose = () => {
+    closeRecoveryModal();
+    changeRecoveryQuestionsClose();
+    toggleSuccessModal(false);
+    checkRecoveryQuestions(username);
   };
 
   const validateForm = values => {
@@ -175,7 +215,10 @@ const PasswordRecoveryForm = props => {
     const { question } = value;
 
     return (
-      <div className={classes.header} onClick={() => showQuestions(name)}>
+      <div
+        className={classnames(classes.header, processing && classes.disabled)}
+        onClick={() => !processing && showQuestions(name)}
+      >
         <div className={classes.text}>
           {type === '1'
             ? question || 'Choose Recovery Question 1'
@@ -236,7 +279,7 @@ const PasswordRecoveryForm = props => {
             <FormHeader
               title="Setup Password Recovery"
               isDoubleColor
-              header="One Last Thing!"
+              header={!isSettings && 'One Last Thing!'}
               subtitle="Set up your password recovery, so you don’t loose your account forever."
             />
             <Field
@@ -288,9 +331,11 @@ const PasswordRecoveryForm = props => {
                 'NEXT'
               )}
             </Button>
-            <p className={classes.skipButton} onClick={showSkip}>
-              Skip
-            </p>
+            {!isSettings && (
+              <p className={classes.skipButton} onClick={showSkip}>
+                Skip
+              </p>
+            )}
           </div>
           <div className={classnames(classes.box, isQuestions && classes.show)}>
             <FormHeader
@@ -318,7 +363,7 @@ const PasswordRecoveryForm = props => {
   };
 
   const renderForm = () =>
-    isSkip ? (
+    isSkip && !isSettings ? (
       renderSkip()
     ) : (
       <Form
@@ -334,9 +379,7 @@ const PasswordRecoveryForm = props => {
               [recoveryQuestionOne.question, recoveryQuestionTwo.question],
               [recoveryAnswerOne, recoveryAnswerTwo],
             );
-            setDefaultValues({});
             onSubmit(token);
-            setProcessing(false);
           } catch (e) {
             console.error(e);
             setProcessing(false);
@@ -358,24 +401,36 @@ const PasswordRecoveryForm = props => {
     );
 
   return (
-    <ModalComponent
-      show={show && !showPinConfirm}
-      backdrop="static"
-      onClose={isSkip ? closeSkip : showSkip}
-      isDanger={isSkip}
-      closeButton={!isQuestions}
-      title={
-        (isQuestions || isSkip) && (
-          <FontAwesomeIcon
-            icon="arrow-left"
-            className={classes.arrow}
-            onClick={isQuestions ? hideQuestions : hideSkip}
-          />
-        )
-      }
-    >
-      {renderForm()}
-    </ModalComponent>
+    <>
+      {!showSuccessModal && (
+        <ModalComponent
+          show={show && !showPinConfirm}
+          backdrop="static"
+          onClose={handleClose}
+          isDanger={isSkip}
+          closeButton={!isQuestions}
+          title={
+            (isQuestions || isSkip) && (
+              <FontAwesomeIcon
+                icon="arrow-left"
+                className={classes.arrow}
+                onClick={isQuestions ? hideQuestions : hideSkip}
+              />
+            )
+          }
+        >
+          {renderForm()}
+        </ModalComponent>
+      )}
+      {isSettings && (
+        <SuccessModal
+          showModal={showSuccessModal}
+          title="Password Recovery Changed!"
+          subtitle="Your password recovery questions has been successfully changed"
+          onClose={onSuccessClose}
+        />
+      )}
+    </>
   );
 };
 
