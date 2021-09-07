@@ -6,7 +6,7 @@ import classes from './PasswordRecovery.module.scss';
 
 const ITEM_PROPS = {
   title: 'Password Recovery',
-  subtitle: 'Need to get password recovery language...',
+  subtitle: `Set up your password recovery, so you don't loose your account forever`,
   modalTitle: 'Confirm Recovery Questions',
 };
 

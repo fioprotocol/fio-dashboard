@@ -13,16 +13,15 @@ import {
   loading,
   changePinError,
 } from '../../../../redux/edge/selectors';
+import { edgeUsername } from '../../../../redux/profile/selectors';
 
 import ChangePin from './ChangePin';
-import { ReduxState } from '../../../../types';
 
 const reduxConnect = connect(
   createStructuredSelector({
     results: changePinResults,
     loading,
-    username: (state: ReduxState) =>
-      state.profile && state.profile.user && state.profile.user.username,
+    username: edgeUsername,
     changePinError,
   }),
   {

@@ -13,17 +13,16 @@ import {
   loading,
   changePasswordError,
 } from '../../../../redux/edge/selectors';
+import { edgeUsername } from '../../../../redux/profile/selectors';
 
 import ChangePassword from './ChangePassword';
-import { ReduxState } from '../../../../types';
 
 const reduxConnect = connect(
   createStructuredSelector({
     results: changePasswordResults,
     loading,
     changePasswordError,
-    username: (state: ReduxState) =>
-      state.profile && state.profile.user && state.profile.user.username,
+    username: edgeUsername,
   }),
   { changePassword, clearChangePasswordResults, clearChangePasswordError },
 );
