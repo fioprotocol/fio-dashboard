@@ -22,7 +22,7 @@ import {
   showRecovery as show,
   showPinConfirm,
 } from '../../redux/modal/selectors';
-import { changeRecoveryQuestionsResults } from '../../redux/profile/selectors';
+import { changeRecoveryQuestionsResults, edgeUsername } from '../../redux/profile/selectors';
 
 import PasswordRecoveryForm from './PasswordRecoveryForm';
 
@@ -36,8 +36,7 @@ const reduxConnect = connect(
     pinConfirmation,
     changeRecoveryQuestions,
     changeRecoveryQuestionsResults,
-    username: state =>
-      state.profile && state.profile.user && state.profile.user.username,
+    username: edgeUsername,
   }),
   {
     onSubmit: setRecoveryQuestions,

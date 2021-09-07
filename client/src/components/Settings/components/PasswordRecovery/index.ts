@@ -11,15 +11,14 @@ import {
 import { resendRecovery } from '../../../../redux/profile/actions';
 
 import { hasRecoveryQuestions } from '../../../../redux/edge/selectors';
+import { edgeUsername } from '../../../../redux/profile/selectors';
 
-import { ReduxState } from '../../../../types';
 import PasswordRecovery from './PasswordRecovery';
 
 const reduxConnect = connect(
   createStructuredSelector({
     hasRecoveryQuestions,
-    username: (state: ReduxState) =>
-      state.profile && state.profile.user && state.profile.user.username,
+    username: edgeUsername,
   }),
   {
     showRecoveryModal,
