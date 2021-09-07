@@ -107,6 +107,7 @@ export const LoggedActionButtons = (props: LoggedActionButtonsProps) => {
         isMenuOpen && classes.isOpen,
       )}
     >
+      {/* @ts-ignore */}
       {isMenuOpen && <Navigation isOnSide={isMenuOpen} closeMenu={closeMenu} />}
       {isMenuOpen && <hr className={classes.horizontal} />}
       <Nav.Link
