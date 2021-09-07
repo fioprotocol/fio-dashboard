@@ -1,5 +1,5 @@
 import { prefix } from './actions';
-import { ReduxState } from '../../types';
+import { ReduxState } from '../../redux/init';
 
 export const loading = (state: ReduxState) => state[prefix].loading;
 export const refProfileInfo = (state: ReduxState) => state[prefix].data;
