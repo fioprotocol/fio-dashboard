@@ -1,4 +1,4 @@
-const ROUTES = {
+const ROUTES: { [route: string]: string } = {
   HOME: '/',
   ADMIN: '/admin',
   ADMIN_USERS: '/admin/users',
