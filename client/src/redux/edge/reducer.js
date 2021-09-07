@@ -224,4 +224,17 @@ export default combineReducers({
         return state;
     }
   },
+  hasRecoveryQuestions(state = false, action) {
+    switch (action.type) {
+      case actions.CHECK_RECOVERY_QUESTIONS_SUCCESS: {
+        return !!action.data;
+      }
+      case actions.CHECK_RECOVERY_QUESTIONS_REQUEST:
+      case actions.CHECK_RECOVERY_QUESTIONS_FAILURE: {
+        return false;
+      }
+      default:
+        return state;
+    }
+  },
 });

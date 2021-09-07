@@ -6,7 +6,9 @@ import classes from './SecurityItem.module.scss';
 
 type Props = {
   attentionText?: string;
+  bottomChildren?: React.ReactNode;
   buttonText: string;
+  isGreen?: boolean;
   isPasswordPin?: boolean;
   onClick: () => void;
   children?: React.ReactNode;
@@ -17,7 +19,9 @@ type Props = {
 const SecurityItem: React.FC<Props> = props => {
   const {
     attentionText,
+    bottomChildren,
     buttonText,
+    isGreen,
     isPasswordPin,
     onClick,
     children,
@@ -35,11 +39,13 @@ const SecurityItem: React.FC<Props> = props => {
           className={classnames(
             classes.button,
             isPasswordPin && classes.passwordPin,
+            isGreen && classes.green,
           )}
           onClick={onClick}
         >
           {buttonText}
         </Button>
+        {bottomChildren}
       </div>
       {children}
     </>
