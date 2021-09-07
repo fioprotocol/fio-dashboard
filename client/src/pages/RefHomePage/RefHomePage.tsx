@@ -25,6 +25,7 @@ type Location = {
 type Props = {
   isAuthenticated: boolean;
   loading: boolean;
+  edgeAuthLoading: boolean;
   refProfileInfo: RefProfile;
   refLinkError: string | null;
   getInfo: (code: string) => void;
@@ -39,6 +40,7 @@ export const RefHomePage: React.FC<Props &
     refProfileInfo,
     isAuthenticated,
     loading,
+    edgeAuthLoading,
     match: {
       params: { refProfileCode },
     },
@@ -89,6 +91,7 @@ export const RefHomePage: React.FC<Props &
           title={refProfileInfo.title}
           subTitle={refProfileInfo.subTitle}
           action={query.action}
+          edgeAuthLoading={edgeAuthLoading}
           showLoginModal={showLoginModal}
         />
       </div>
