@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 
 import { compose } from '../../utils';
 
+import { loading as edgeAuthLoading } from '../../redux/edge/selectors';
 import { isAuthenticated } from '../../redux/profile/selectors';
 import {
   loading,
@@ -20,6 +21,7 @@ const reduxConnect = connect(
   createStructuredSelector({
     isAuthenticated,
     loading,
+    edgeAuthLoading,
     refProfileInfo,
     refLinkError,
   }),

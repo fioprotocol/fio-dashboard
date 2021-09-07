@@ -5,7 +5,7 @@ import { FORM_NAMES } from '../../constants/form';
 
 import classes from './AddressWidget.module.scss';
 import { REF_ACTIONS } from '../../constants/common';
-import { Link } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
 
 const ACTION_TEXT = {
   [REF_ACTIONS.SIGNNFT]:
@@ -16,10 +16,11 @@ const AddressWidget = (props: {
   logo: React.ReactNode;
   action: string;
   showLoginModal: () => void;
+  edgeAuthLoading: boolean;
   title?: string;
   subTitle?: string;
 }) => {
-  const { logo, subTitle, action, showLoginModal } = props;
+  const { logo, subTitle, action, edgeAuthLoading, showLoginModal } = props;
   return (
     <div className={classnames(classes.container, classes.refContainer)}>
       <div className="mb-5">{logo}</div>
@@ -31,13 +32,14 @@ const AddressWidget = (props: {
       <div className="d-flex justify-content-center">
         <p className={classes.signInCallToAction}>
           Already have a FIO account? Sign in now!{' '}
-          <Link
-            to="#"
-            onClick={showLoginModal}
+          <Button
             className="btn btn-primary ml-lg-5 ml-md-4 ml-sm-3 pt-2 pb-2"
+            size="lg"
+            onClick={showLoginModal}
+            disabled={edgeAuthLoading}
           >
             Sign in
-          </Link>
+          </Button>
         </p>
       </div>
     </div>
