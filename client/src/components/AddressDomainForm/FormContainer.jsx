@@ -106,7 +106,10 @@ const FormContainer = props => {
           }
         />
         {isHomepage ? (
-          <Link to={ROUTES.FIO_ADDRESSES_SELECTION} className={classes.link}>
+          <Link
+            to={ROUTES.FIO_ADDRESSES_SELECTION}
+            className={`${classes.link} d-flex justify-content-center`}
+          >
             <Button variant="primary" className={classes.submit}>
               {buttonText}
             </Button>
