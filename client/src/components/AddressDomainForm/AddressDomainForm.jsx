@@ -23,7 +23,6 @@ const AddressDomainForm = props => {
     getPrices,
     getDomains,
     fioWallets,
-    fioDomains,
     refreshFioNames,
     prices,
     cartItems,
@@ -39,10 +38,7 @@ const AddressDomainForm = props => {
   const [formErrors, changeFormErrors] = useState({});
   const [isValidating, toggleValidating] = useState(false);
 
-  const options = [
-    ...domains.map(({ domain }) => domain),
-    ...fioDomains.map(({ name }) => name),
-  ];
+  const options = [...domains.map(({ domain }) => domain)];
 
   const isDesktop = useCheckIfDesktop();
 
