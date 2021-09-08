@@ -24,9 +24,15 @@ const reduxConnect = connect(
     pricesLoading,
     prices,
     cartItems,
-    domains,
+    domains: state => {
+      const publicDomains = domains(state);
+      const userDomains = fioDomains(state);
+      return [
+        ...publicDomains,
+        ...userDomains.map(({ name }) => ({ domain: name })),
+      ];
+    },
     fioWallets,
-    fioDomains,
     formState: (state, ownProps) => {
       const { isHomepage, formNameGet } = ownProps;
       return !isHomepage ? getFormState(state, formNameGet) : {};
