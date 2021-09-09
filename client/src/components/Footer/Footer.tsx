@@ -6,10 +6,12 @@ import classnames from 'classnames';
 import { currentYear } from '../../utils';
 import classes from './Footer.module.scss';
 
-const Footer = () => {
+const Footer = (props: { homePageLink: string }) => {
+  const { homePageLink } = props;
+
   return (
     <section className={classes.footer}>
-      <Link to="/">
+      <Link to={homePageLink}>
         <div className={classes.logo} />
       </Link>
       <hr className={classes.divider} />

@@ -14,6 +14,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     isAuthenticated,
     refProfileLoading,
     refProfileInfo,
+    homePageLink,
   } = props;
   const isRefFlow: boolean = refProfileInfo != null && !!refProfileInfo.code;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
@@ -42,7 +43,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
 
   return (
     <div className={classnames(classes.header, isMenuOpen && classes.isOpen)}>
-      <Link to="/">
+      <Link to={homePageLink}>
         <div className={classes.logo} onClick={closeMenu} />
       </Link>
       {isAuthenticated ? (

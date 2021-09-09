@@ -17,6 +17,7 @@ import { cartItems } from '../../redux/cart/selectors';
 import {
   refProfileInfo,
   loading as refProfileLoading,
+  homePageLink,
 } from '../../redux/refProfile/selectors';
 
 import MainHeader from './MainHeader';
@@ -33,6 +34,7 @@ const selector = createStructuredSelector({
   cartItems,
   refProfileInfo,
   refProfileLoading,
+  homePageLink,
 });
 
 const actions = (dispatch: AppDispatch, ownProps: MainHeaderProps) => ({
