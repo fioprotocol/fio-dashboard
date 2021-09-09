@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import * as actions from './actions';
 
 import { RefProfile } from '../../types';
+import { REF_FLOW_STEPS } from '../../constants/common';
 
 export default combineReducers({
   loading(state = false, action) {
@@ -39,6 +40,14 @@ export default combineReducers({
       case actions.GET_REF_PROFILE_FAILURE:
         return 'Referral link is invalid';
       case actions.SET_CONTAINED_PARAMS_ERROR:
+        return action.data;
+      default:
+        return state;
+    }
+  },
+  step(state: string = REF_FLOW_STEPS.INIT, action) {
+    switch (action.type) {
+      case actions.SET_STEP:
         return action.data;
       default:
         return state;

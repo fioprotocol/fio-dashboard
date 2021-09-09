@@ -40,3 +40,9 @@ export const setContainedParams = (params: any) => {
     data: params,
   };
 };
+export const SET_STEP = `${prefix}/SET_STEP`;
+
+export const setStep = (step: string) => ({
+  type: SET_CONTAINED_PARAMS,
+  data: step,
+});
