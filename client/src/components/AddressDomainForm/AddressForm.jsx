@@ -23,6 +23,7 @@ const AddressForm = props => {
     debouncedOnChangeHandleField,
     isFree,
     formNameGet,
+    allowCustomDomains,
   } = props;
 
   const updateFormStateCurrent = (form, state) => {
@@ -88,6 +89,7 @@ const AddressForm = props => {
             name="domain"
             component={CustomDropdown}
             options={options}
+            allowCustomDomains={allowCustomDomains}
             toggle={() => {
               toggleShowCustomDomain(true);
             }}
