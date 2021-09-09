@@ -1,5 +1,5 @@
 import logger from '../../logger';
-import { FreeAddress, User } from '../../models/index';
+import { FreeAddress, ReferrerProfile, User } from '../../models/index';
 import Base from '../Base';
 import { FioRegApi } from '../../external/fio-reg';
 import { validate } from '../../external/captcha';
@@ -55,12 +55,28 @@ export default class Register extends Base {
     if (user.freeAddresses.length)
       throw new Error('Your account is already have a free address registered.');
 
+    let referralCode;
+    let apiToken;
+    if (this.context.referrerCode) {
+      try {
+        const refProfile = await ReferrerProfile.getItem({
+          code: this.context.referrerCode,
+        });
+        referralCode = refProfile.regRefCode;
+        apiToken = refProfile.regRefApiToken;
+      } catch (e) {
+        //
+      }
+    }
+
     let res;
 
     try {
       res = await FioRegApi.register({
         address,
         publicKey,
+        referralCode,
+        apiToken,
       });
     } catch (error) {
       let message = error.message;

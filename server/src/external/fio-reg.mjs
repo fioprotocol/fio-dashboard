@@ -27,10 +27,11 @@ class FioReg {
    * @param body.address
    * @param body.publicKey
    * @param body.referralCode
+   * @param body.apiToken
    * @returns {*}
    */
   register(body) {
-    body.apiToken = this.apiToken;
+    if (!body.apiToken) body.apiToken = this.apiToken;
     if (!body.referralCode) body.referralCode = this.defaultRef;
     return this._request({
       url: 'public-api/buy-address',
