@@ -46,13 +46,16 @@ export const login = ({
   email,
   signature,
   challenge,
+  referrerCode,
 }: {
   email: string;
   signature: string;
   challenge: string;
+  referrerCode?: string;
 }) => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
-  promise: (api: Api) => api.auth.login(email, signature, challenge),
+  promise: (api: Api) =>
+    api.auth.login(email, signature, challenge, referrerCode),
 });
 
 export const SIGNUP_REQUEST = `${prefix}/SIGNUP_REQUEST`;

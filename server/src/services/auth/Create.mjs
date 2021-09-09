@@ -16,13 +16,14 @@ export default class AuthCreate extends Base {
             email: ['required', 'trim', 'email', 'to_lc'],
             signature: ['string'],
             challenge: ['string'],
+            referrerCode: ['string'],
           },
         },
       ],
     };
   }
 
-  async execute({ data: { email, signature, challenge } }) {
+  async execute({ data: { email, signature, challenge, referrerCode } }) {
     const user = await User.findOneWhere({ email });
 
     if (!user) {
@@ -83,13 +84,16 @@ export default class AuthCreate extends Base {
     const now = new Date();
     return {
       data: {
-        jwt: generate({ id: user.id }, new Date(EXPIRATION_TIME + now.getTime())),
+        jwt: generate(
+          { id: user.id, referrerCode },
+          new Date(EXPIRATION_TIME + now.getTime()),
+        ),
       },
     };
   }
 
   static get paramsSecret() {
-    return ['data.email', 'data.pin'];
+    return ['data.email', 'data.pin', 'data.signature', 'data.challenge'];
   }
 
   static get resultSecret() {

@@ -22,6 +22,7 @@ export default class AuthCheck extends Base {
       return {
         id: user.id,
         role: user.role,
+        referrerCode: userData.referrerCode,
       };
     } catch (e) {
       throw new X({

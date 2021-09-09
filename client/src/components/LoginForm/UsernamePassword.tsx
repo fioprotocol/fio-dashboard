@@ -63,11 +63,13 @@ const UsernamePassword = (props: Props) => {
     if (!isEmpty(currentForm) && !isEmpty(loginFailure)) {
       const { mutators } = currentForm;
 
-      for (const field of Object.keys(loginFailure.fields)) {
-        mutators.setDataMutator(field, {
-          error: true,
-          hideError: true,
-        });
+      if (loginFailure.fields != null) {
+        for (const field of Object.keys(loginFailure.fields)) {
+          mutators.setDataMutator(field, {
+            error: true,
+            hideError: true,
+          });
+        }
       }
       mutators.setDataMutator('password', {
         error:

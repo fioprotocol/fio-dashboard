@@ -10,9 +10,14 @@ export default class Auth extends Base {
     return this.apiClient.get(`auth/username/${email}`);
   }
 
-  login(email: string, signature: string, challenge: string) {
+  login(
+    email: string,
+    signature: string,
+    challenge: string,
+    referrerCode?: string,
+  ) {
     return this.apiClient.post('auth', {
-      data: { email, signature, challenge },
+      data: { email, signature, challenge, referrerCode },
     });
   }
 
