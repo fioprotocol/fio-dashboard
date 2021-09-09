@@ -33,8 +33,6 @@ export function* loginSuccess(history, api) {
     if (wallets && wallets.length) yield put(setWallets(wallets));
     yield put(loadProfile());
     yield put(listNotifications());
-    const currentLocation = history.location.pathname;
-    if (currentLocation === '/') yield history.push(ROUTES.HOME);
     if (hasRedirectTo) {
       yield history.push(hasRedirectTo);
     }

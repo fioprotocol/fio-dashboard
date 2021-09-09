@@ -11,15 +11,18 @@ import styles from './AuthContainer.module.scss';
 export default class AuthContainer extends Component {
   static propTypes = {
     edgeContextSet: PropTypes.bool,
+    isRefFlow: PropTypes.bool,
     isAuthenticated: PropTypes.bool.isRequired,
     loading: PropTypes.bool.isRequired,
   };
 
   render() {
-    const { edgeContextSet, isAuthenticated, loading } = this.props;
+    const { edgeContextSet, isRefFlow, isAuthenticated, loading } = this.props;
     return (
       <div className={styles.container}>
-        {isAuthenticated && !loading && <Redirect to={ROUTES.HOME} />}
+        {isAuthenticated && !loading && (
+          <Redirect to={isRefFlow ? ROUTES.REF_PROFILE_HOME : ROUTES.HOME} />
+        )}
         {!edgeContextSet && (
           <FontAwesomeIcon icon={faSpinner} spin className={styles.spinner} />
         )}

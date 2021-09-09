@@ -11,6 +11,7 @@ import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
 import { useCheckIfDesktop } from '../../screenType';
 import AutoLogout from '../../services/AutoLogout';
 import CartTimeout from '../../services/CartTimeout';
+import RefFlow from '../../services/RefFlow';
 
 import classes from './MainLayout.module.scss';
 
@@ -44,6 +45,7 @@ const MainLayout = props => {
       <MainHeader />
       <CartTimeout />
       <AutoLogout />
+      <RefFlow />
       {isAuthenticated && isDesktop && <Navigation />}
       {(!isHomePage || isAuthenticated) && <Notifications />}
       <div className={`${classes.content} ${isHomePage && classes.home}`}>
