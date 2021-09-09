@@ -8,7 +8,13 @@ import 'react-dropdown/style.css';
 const CUSTOM_DOMAIN_VALUE = 'addCustomDomain';
 
 const CustomDropdown = props => {
-  const { toggle, input, options, initValue } = props;
+  const {
+    toggle,
+    input,
+    options,
+    initValue,
+    allowCustomDomains = false,
+  } = props;
   const { onChange } = input;
 
   const styledOptions = options
@@ -19,11 +25,13 @@ const CustomDropdown = props => {
     }))
     .sort((a, b) => a.value.localeCompare(b.value));
 
-  styledOptions.push({
-    value: CUSTOM_DOMAIN_VALUE,
-    label: 'Add Custom Domain',
-    className: [classes.optionButton],
-  });
+  if (allowCustomDomains) {
+    styledOptions.push({
+      value: CUSTOM_DOMAIN_VALUE,
+      label: 'Add Custom Domain',
+      className: [classes.optionButton],
+    });
+  }
 
   const onDropdownChange = value => {
     const { value: itemValue } = value || {};

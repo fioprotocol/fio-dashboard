@@ -18,3 +18,10 @@ export const captchaResult = state => state[prefix].captchaResult;
 export const captchaResolving = state => state[prefix].captchaResolving;
 export const registrationResult = state => state[prefix].registrationResult;
 export const isProcessing = state => state[prefix].isProcessing;
+export const allowCustomDomains = state => {
+  const refProfile = refProfileInfo(state);
+  if (refProfile != null && refProfile.code) {
+    return !!refProfile.settings.allowCustomDomain;
+  }
+  return true;
+};
