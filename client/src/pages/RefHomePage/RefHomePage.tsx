@@ -27,6 +27,7 @@ type Props = {
   loading: boolean;
   edgeAuthLoading: boolean;
   refProfileInfo: RefProfile;
+  refProfileQueryParams: RefQuery;
   refLinkError: string | null;
   getInfo: (code: string) => void;
   setContainedParams: (params: any) => void;
@@ -38,6 +39,7 @@ export const RefHomePage: React.FC<Props &
   Location> = props => {
   const {
     refProfileInfo,
+    refProfileQueryParams,
     isAuthenticated,
     loading,
     edgeAuthLoading,
@@ -90,7 +92,7 @@ export const RefHomePage: React.FC<Props &
           }
           title={refProfileInfo.title}
           subTitle={refProfileInfo.subTitle}
-          action={query.action}
+          action={refProfileQueryParams.action}
           edgeAuthLoading={edgeAuthLoading}
           showLoginModal={showLoginModal}
         />

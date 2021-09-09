@@ -4,7 +4,7 @@ import exact from 'prop-types-exact';
 import MainHeader from '../../components/MainHeader';
 import Notifications from '../../components/Notifications';
 import Navigation from '../../components/Navigation';
-import Footer from '../../components/Footer/Footer';
+import Footer from '../../components/Footer';
 import LoginForm from '../../components/LoginForm';
 import PinConfirmModal from '../../components/PinConfirmModal';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';

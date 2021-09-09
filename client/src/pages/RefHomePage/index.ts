@@ -9,6 +9,7 @@ import { isAuthenticated } from '../../redux/profile/selectors';
 import {
   loading,
   refProfileInfo,
+  refProfileQueryParams,
   refLinkError,
 } from '../../redux/refProfile/selectors';
 
@@ -23,6 +24,7 @@ const reduxConnect = connect(
     loading,
     edgeAuthLoading,
     refProfileInfo,
+    refProfileQueryParams,
     refLinkError,
   }),
   {
