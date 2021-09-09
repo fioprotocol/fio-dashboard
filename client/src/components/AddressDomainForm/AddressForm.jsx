@@ -60,7 +60,7 @@ const AddressForm = props => {
                 {' '}
                 - Address Cost will fluctuate based on market condition. In
                 addition, if you are already have a free public address, there
-                will be cost assosiated with another address
+                will be cost associated with another address
               </span>
             </>
           }
