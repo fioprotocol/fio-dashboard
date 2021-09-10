@@ -42,7 +42,6 @@ const ROUTES: { [route: string]: string } = {
 
   // Referrer Profile pages
   REF_PROFILE_HOME: '/ref/:refProfileCode',
-  REF_ADDRESS_SELECTION: '/ref/:refProfileCode/fio-addresses-selection',
 };
 
 export { ROUTES };
