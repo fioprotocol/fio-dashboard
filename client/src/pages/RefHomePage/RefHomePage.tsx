@@ -55,7 +55,7 @@ export const RefHomePage: React.FC<Props &
     getInfo(refProfileCode);
   }, []);
   useEffect(() => {
-    if (refProfileCode != null) {
+    if (refProfileCode != null && refProfileQueryParams == null) {
       setContainedParams(query);
     }
   }, [refProfileCode]);
