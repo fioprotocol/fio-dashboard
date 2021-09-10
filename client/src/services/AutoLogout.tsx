@@ -8,6 +8,7 @@ import {
   logout,
 } from '../redux/profile/actions';
 import { showLoginModal } from '../redux/modal/actions';
+import { setRedirectPath } from '../redux/router/actions';
 
 import { compose } from '../utils';
 import {
@@ -24,6 +25,7 @@ type Props = {
   setLastActivity: (value: number) => void;
   logout: (routerProps: RouterProps, redirect?: boolean) => void;
   showLoginModal: () => void;
+  setRedirectPath: (route: string) => void;
 };
 const TIMEOUT = 5000; // 5 sec
 const INACTIVITY_TIMEOUT = 1000 * 60 * 30; // 30 min
@@ -46,6 +48,7 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
     setLastActivity,
     logout,
     showLoginModal,
+    setRedirectPath,
   } = props;
   const [timeoutId, setTimeoutId] = useState<ReturnType<
     typeof setTimeout
@@ -110,6 +113,12 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
     ACTIVITY_EVENTS.forEach((eventName: string): void => {
       document.removeEventListener(eventName, listener, true);
     });
+    const {
+      history: {
+        location: { pathname },
+      },
+    } = props;
+    setRedirectPath(pathname);
     logout({ history }, false);
     showLoginModal();
   };
@@ -149,6 +158,7 @@ const reduxConnect = connect(
     checkAuthToken,
     logout,
     showLoginModal,
+    setRedirectPath,
   },
 );
 
