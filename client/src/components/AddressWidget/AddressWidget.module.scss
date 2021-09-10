@@ -24,6 +24,30 @@
     margin: 1% 0;
   }
 
+  .actionInfo {
+    margin: 35px 0 0;
+    @include sf-pro-display-thin;
+    font-size: 16px;
+    font-style: italic;
+    color: $manatee;
+    letter-spacing: 0.075em;
+  }
+
+  .signInCallToAction {
+    @include sf-pro-display-regular;
+    font-size: 14px;
+    padding: 20px 40px;
+    background-color: $badge-background;
+    border-radius: 10px;
+    max-width: 75%;
+    letter-spacing: 0.075em;
+
+    button {
+      font-size: 12px;
+      letter-spacing: 0.05em;
+    }
+  }
+
   .form {
     margin: 3% 0 0;
   }
@@ -39,6 +63,15 @@
 
     .subtitle {
       font-size: 16px;
+    }
+
+    .actionInfo {
+      font-size: 14px;
+    }
+
+    .signInCallToAction {
+      font-size: 12px;
+      max-width: 100%;
     }
 
     .bottom {
@@ -66,6 +99,10 @@
       line-height: 26px;
     }
 
+    .actionInfo {
+      font-size: 14px;
+    }
+
     .form {
       margin-top: 7%;
     }
@@ -73,5 +110,14 @@
     .bottom {
       height: 30px;
     }
+
+    .signInCallToAction {
+      font-size: 12px;
+      max-width: 100%;
+    }
   }
+}
+
+.refContainer {
+  min-height: 75vh;
 }

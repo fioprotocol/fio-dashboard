@@ -23,6 +23,7 @@ const AddressForm = props => {
     debouncedOnChangeHandleField,
     isFree,
     formNameGet,
+    allowCustomDomains,
   } = props;
 
   const updateFormStateCurrent = (form, state) => {
@@ -60,7 +61,7 @@ const AddressForm = props => {
                 {' '}
                 - Address Cost will fluctuate based on market condition. In
                 addition, if you are already have a free public address, there
-                will be cost assosiated with another address
+                will be cost associated with another address
               </span>
             </>
           }
@@ -88,6 +89,7 @@ const AddressForm = props => {
             name="domain"
             component={CustomDropdown}
             options={options}
+            allowCustomDomains={allowCustomDomains}
             toggle={() => {
               toggleShowCustomDomain(true);
             }}

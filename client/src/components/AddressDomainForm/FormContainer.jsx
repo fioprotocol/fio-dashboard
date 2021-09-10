@@ -100,13 +100,16 @@ const FormContainer = props => {
                 {' '}
                 - Address Cost will fluctuate based on market condition. In
                 addition, if you are already have a free public address, there
-                will be cost assosiated with another address
+                will be cost associated with another address
               </span>
             </>
           }
         />
         {isHomepage ? (
-          <Link to={ROUTES.FIO_ADDRESSES_SELECTION} className={classes.link}>
+          <Link
+            to={ROUTES.FIO_ADDRESSES_SELECTION}
+            className={`${classes.link} d-flex justify-content-center`}
+          >
             <Button variant="primary" className={classes.submit}>
               {buttonText}
             </Button>

@@ -2,12 +2,12 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import { ROUTES } from '../../constants/routes';
 
 export const PrivateRoute = ({
   component: Component,
   noProfileLoaded,
   loading,
+  homePageLink,
   ...rest
 }) => {
   return (
@@ -30,7 +30,7 @@ export const PrivateRoute = ({
           return (
             <Redirect
               to={{
-                pathname: ROUTES.HOME,
+                pathname: homePageLink,
                 state: { from: props.location },
               }}
             />

@@ -7,7 +7,7 @@ import { useCheckIfDesktop } from '../../screenType';
 import DoubleCardContainer from '../DoubleCardContainer';
 
 const AddressDomainContainer = props => {
-  const { title, type, formNameGet } = props;
+  const { title, type, formNameGet, allowCustomDomains } = props;
   const isDesktop = useCheckIfDesktop();
   return (
     <DoubleCardContainer
@@ -16,7 +16,7 @@ const AddressDomainContainer = props => {
         <>
           <AddressFrom formNameGet={formNameGet} type={type} />
           {!isDesktop && <AddressDomainCart />}
-          <AddressDomainBadge type={type} />
+          {allowCustomDomains && <AddressDomainBadge type={type} />}
         </>
       }
       smallCart={isDesktop && <AddressDomainCart />}

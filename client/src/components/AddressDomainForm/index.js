@@ -1,11 +1,6 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import {
-  loading as pricesLoading,
-  prices,
-  domains,
-} from '../../redux/registrations/selectors';
 import { updateFormState } from '../../redux/forms/actions';
 import { refreshFioNames } from '../../redux/fio/actions';
 import { addItem, deleteItem, recalculate } from '../../redux/cart/actions';
@@ -14,6 +9,12 @@ import { cartItems } from '../../redux/cart/selectors';
 import { getFormState } from '../../redux/forms/selectors';
 import { fioDomains, fioWallets } from '../../redux/fio/selectors';
 import { hasFreeAddress } from '../../redux/profile/selectors';
+import {
+  loading as pricesLoading,
+  prices,
+  domains,
+  allowCustomDomains,
+} from '../../redux/registrations/selectors';
 
 import { compose } from '../../utils';
 
@@ -24,14 +25,21 @@ const reduxConnect = connect(
     pricesLoading,
     prices,
     cartItems,
-    domains,
+    domains: state => {
+      const publicDomains = domains(state);
+      const userDomains = fioDomains(state);
+      return [
+        ...publicDomains,
+        ...userDomains.map(({ name }) => ({ domain: name })),
+      ];
+    },
     fioWallets,
-    fioDomains,
     formState: (state, ownProps) => {
       const { isHomepage, formNameGet } = ownProps;
       return !isHomepage ? getFormState(state, formNameGet) : {};
     },
     hasFreeAddress,
+    allowCustomDomains,
   }),
   {
     getPrices,

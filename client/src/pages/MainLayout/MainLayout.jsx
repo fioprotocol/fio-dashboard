@@ -3,14 +3,15 @@ import PropTypes from 'prop-types';
 import exact from 'prop-types-exact';
 import MainHeader from '../../components/MainHeader';
 import Notifications from '../../components/Notifications';
-import Navigation from '../../components/Navigation/Navigation';
-import Footer from '../../components/Footer/Footer';
+import Navigation from '../../components/Navigation';
+import Footer from '../../components/Footer';
 import LoginForm from '../../components/LoginForm';
 import PinConfirmModal from '../../components/PinConfirmModal';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
 import { useCheckIfDesktop } from '../../screenType';
 import AutoLogout from '../../services/AutoLogout';
 import CartTimeout from '../../services/CartTimeout';
+import RefFlow from '../../services/RefFlow';
 
 import classes from './MainLayout.module.scss';
 
@@ -44,6 +45,7 @@ const MainLayout = props => {
       <MainHeader />
       <CartTimeout />
       <AutoLogout />
+      <RefFlow />
       {isAuthenticated && isDesktop && <Navigation />}
       {(!isHomePage || isAuthenticated) && <Notifications />}
       <div className={`${classes.content} ${isHomePage && classes.home}`}>

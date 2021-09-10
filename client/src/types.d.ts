@@ -15,6 +15,18 @@ export type CartItem = {
   isFree?: boolean;
 };
 
+export type Notification = {
+  id: number;
+  type: string;
+  action: string;
+  title: string;
+  message: string;
+  seenDate: string;
+  closeDate: string;
+  createdAt: string;
+  pagesToShow: string[] | null;
+};
+
 export type Prices = {
   fio: { address: number; domain: number };
   fioNative: { address: number; domain: number };
@@ -129,3 +141,43 @@ export type FeePrice = {
 };
 
 export type DomainStatusType = 'private' | 'public';
+
+export type User = {
+  email: string;
+  username: string;
+  fioWallets: FioWalletDoublet[];
+  freeAddresses: { name: string }[];
+  id: string;
+  role: string;
+  secretSetNotification: boolean;
+  status: string;
+  secretSet?: boolean;
+};
+
+export type RefProfile = {
+  code: string;
+  label: string;
+  title: string;
+  subTitle: string;
+  settings: {
+    domains: string[];
+    allowCustomDomain: boolean;
+    actions: string[];
+    img: string;
+    link: string;
+  };
+};
+
+type SignNFTQuery = {
+  chain_code: string;
+  contract_address: string;
+  token_id: string;
+  url: string;
+  hash: string;
+  metadata: string;
+};
+
+type RefQuery = {
+  action: string;
+  r: string;
+} & SignNFTQuery;

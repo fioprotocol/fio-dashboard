@@ -4,19 +4,7 @@ import {
   CHANGE_RECOVERY_QUESTIONS_CLOSE,
   CHANGE_RECOVERY_QUESTIONS_OPEN,
 } from '../edge/actions';
-import { FioWalletDoublet, LastAuthData } from '../../types';
-
-type User = {
-  email: string;
-  username: string;
-  fioWallets: FioWalletDoublet[];
-  freeAddresses: { name: string }[];
-  id: string;
-  role: string;
-  secretSetNotification: boolean;
-  status: string;
-  secretSet?: boolean;
-};
+import { User, LastAuthData } from '../../types';
 
 export default combineReducers({
   loading(state: boolean = false, action) {

@@ -24,6 +24,7 @@ import TokenListPage from './pages/LinkTokenPages/TokenListPage';
 import DeleteTokenPage from './pages/LinkTokenPages/DeleteTokenPage';
 import AddTokenPage from './pages/LinkTokenPages/AddTokenPage';
 import SettingsPage from './pages/SettingsPage';
+import RefHomePage from './pages/RefHomePage';
 
 import { ROUTES } from './constants/routes';
 
@@ -34,6 +35,7 @@ const Routes = () => (
     <ScrollToTop>
       <Switch>
         <Route path={ROUTES.HOME} component={HomePage} exact />
+        <Route path={ROUTES.REF_PROFILE_HOME} component={RefHomePage} exact />
         <PrivateRoute path={ROUTES.ADMIN} component={AdminContainer} exact />
         <Route path={ROUTES.CONFIRM_EMAIL} component={ConfirmEmail} />
         <Route

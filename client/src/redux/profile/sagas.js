@@ -3,6 +3,7 @@ import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ACTIONS } from '../../components/Notifications/Notifications';
 import { setWallets } from '../account/actions';
 import { refreshBalance } from '../fio/actions';
+import { refProfileInfo } from '../refProfile/selectors';
 import {
   LOGIN_SUCCESS,
   PROFILE_SUCCESS,
@@ -32,8 +33,6 @@ export function* loginSuccess(history, api) {
     if (wallets && wallets.length) yield put(setWallets(wallets));
     yield put(loadProfile());
     yield put(listNotifications());
-    const currentLocation = history.location.pathname;
-    if (currentLocation === '/') yield history.push(ROUTES.HOME);
     if (hasRedirectTo) {
       yield history.push(hasRedirectTo);
     }
@@ -76,11 +75,14 @@ export function* logoutSuccess(history, api) {
 export function* nonceSuccess() {
   yield takeEvery(NONCE_SUCCESS, function*(action) {
     const { email, signature, nonce } = action.data;
+    const refProfile = yield select(refProfileInfo);
+
     yield put(
       login({
         email,
         signature,
         challenge: nonce,
+        referrerCode: refProfile != null ? refProfile.code : null,
       }),
     );
   });

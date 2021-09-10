@@ -46,13 +46,16 @@ export const login = ({
   email,
   signature,
   challenge,
+  referrerCode,
 }: {
   email: string;
   signature: string;
   challenge: string;
+  referrerCode?: string;
 }) => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
-  promise: (api: Api) => api.auth.login(email, signature, challenge),
+  promise: (api: Api) =>
+    api.auth.login(email, signature, challenge, referrerCode),
 });
 
 export const SIGNUP_REQUEST = `${prefix}/SIGNUP_REQUEST`;
@@ -78,11 +81,11 @@ export const LOGOUT_REQUEST = `${prefix}/LOGOUT_REQUEST`;
 export const LOGOUT_SUCCESS = `${prefix}/LOGOUT_SUCCESS`;
 export const LOGOUT_FAILURE = `${prefix}/LOGOUT_FAILURE`;
 
-export const logout = ({ history }: RouterProps) => ({
+export const logout = ({ history }: RouterProps, redirect: boolean = true) => ({
   types: [LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE],
   promise: async (api: Api) => {
     const res = await api.auth.logout();
-    history.push(ROUTES.HOME);
+    if (redirect) history.push(ROUTES.HOME);
     return res;
   },
 });
