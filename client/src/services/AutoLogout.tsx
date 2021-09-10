@@ -7,6 +7,7 @@ import {
   setLastActivity,
   logout,
 } from '../redux/profile/actions';
+import { showLoginModal } from '../redux/modal/actions';
 
 import { compose } from '../utils';
 import {
@@ -21,7 +22,8 @@ type Props = {
   isAuthenticated: boolean;
   checkAuthToken: () => void;
   setLastActivity: (value: number) => void;
-  logout: (routerProps: RouterProps) => void;
+  logout: (routerProps: RouterProps, redirect?: boolean) => void;
+  showLoginModal: () => void;
 };
 const TIMEOUT = 5000; // 5 sec
 const INACTIVITY_TIMEOUT = 1000 * 60 * 30; // 30 min
@@ -43,6 +45,7 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
     checkAuthToken,
     setLastActivity,
     logout,
+    showLoginModal,
   } = props;
   const [timeoutId, setTimeoutId] = useState<ReturnType<
     typeof setTimeout
@@ -60,7 +63,8 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
         const now = new Date();
         const lastActivity = new Date(lastActivityDate);
         if (now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT) {
-          return logout({ history });
+          logout({ history }, false);
+          return showLoginModal();
         }
       }
       activityWatcher();
@@ -106,7 +110,8 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
     ACTIVITY_EVENTS.forEach((eventName: string): void => {
       document.removeEventListener(eventName, listener, true);
     });
-    logout({ history });
+    logout({ history }, false);
+    showLoginModal();
   };
 
   const activityWatcher = () => {
@@ -143,6 +148,7 @@ const reduxConnect = connect(
     setLastActivity,
     checkAuthToken,
     logout,
+    showLoginModal,
   },
 );
 
