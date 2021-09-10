@@ -78,11 +78,11 @@ export const LOGOUT_REQUEST = `${prefix}/LOGOUT_REQUEST`;
 export const LOGOUT_SUCCESS = `${prefix}/LOGOUT_SUCCESS`;
 export const LOGOUT_FAILURE = `${prefix}/LOGOUT_FAILURE`;
 
-export const logout = ({ history }: RouterProps) => ({
+export const logout = ({ history }: RouterProps, redirect: boolean = true) => ({
   types: [LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE],
   promise: async (api: Api) => {
     const res = await api.auth.logout();
-    history.push(ROUTES.HOME);
+    if (redirect) history.push(ROUTES.HOME);
     return res;
   },
 });
