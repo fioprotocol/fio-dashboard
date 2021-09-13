@@ -12,10 +12,11 @@ import { RefProfile } from '../../types';
 const navItems: string[] = [
   LINKS.FIO_ADDRESSES,
   LINKS.FIO_DOMAINS,
-  LINKS.FIO_REQUESTS,
-  LINKS.FIO_WALLET,
-  LINKS.GOVERNANCE,
-  LINKS.PROTOCOL_UPDATES,
+  // comment links due to BD-2631 task
+  // LINKS.FIO_REQUESTS,
+  // LINKS.FIO_WALLET,
+  // LINKS.GOVERNANCE,
+  // LINKS.PROTOCOL_UPDATES,
 ];
 
 export const Navigation = (
