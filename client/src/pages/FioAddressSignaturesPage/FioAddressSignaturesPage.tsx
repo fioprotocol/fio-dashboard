@@ -4,6 +4,7 @@ import classes from './FioAddressSignaturesPage.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NFTSignature } from '../../redux/nftSignatures/types';
 import { v4 as uuidv4 } from 'uuid';
+import { ROUTES } from '../../constants/routes';
 
 type Props = {
   getSignaturesFromFioAddress: (fioAddress: string) => void;
@@ -11,8 +12,8 @@ type Props = {
   match: {
     params: { address: string };
   };
+  history: any;
   email: string;
-  onClickSignature: () => void;
 };
 
 const FioAddressSignaturesPage: React.FC<Props> = props => {
@@ -22,8 +23,8 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
     match: {
       params: { address },
     },
+    history,
     email,
-    onClickSignature,
   } = props;
   useEffect(() => {
     getSignaturesFromFioAddress(address);
@@ -46,7 +47,10 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
           Address: {email}
         </Col>
         <Col lg="2">
-          <Button className={classes.actionButton} onClick={onClickSignature}>
+          <Button
+            className={classes.actionButton}
+            onClick={() => history.push(ROUTES.FIO_ADDRESS_SIGN)}
+          >
             <FontAwesomeIcon icon="pen" className={classes.iconButton} />
             <span>Sign NFT</span>
           </Button>
