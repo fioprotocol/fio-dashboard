@@ -44,6 +44,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     hasMore,
     loading,
     noProfileLoaded,
+    history,
   } = props;
   const [showWarnBadge, toggleShowWarnBadge] = useState<BoolStateFunc>(false);
   const [showInfoBadge, toggleShowInfoBadge] = useState<BoolStateFunc>(false);
@@ -121,8 +122,11 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     handleShowSettings(false);
   };
   const onClickSignature = (fioNameItem: FioNameItemProps) => {
-    // TODO: Go to Signature list
-    console.debug('Go to Signature list');
+    const goTo = ROUTES.FIO_ADDRESS_SIGNATURES.replace(
+      ':address',
+      fioNameItem.walletPublicKey,
+    );
+    history.push(goTo);
   };
   const renderScroll = (children: React.ReactNode) => {
     return (
