@@ -33,17 +33,18 @@ const ROUTES: { [route: string]: string } = {
   FIO_ADDRESS_RENEW: '/fio-address-renew',
   FIO_DOMAIN_RENEW: '/fio-domain-renew',
   FIO_NAME_RENEW_RESULTS: '/fio-name-results',
+  FIO_ADDRESS_SIGNATURES: `/fio-address-signatures/:address`,
 
   LINK_TOKEN_LIST: '/link-token-list',
   ADD_TOKEN: '/add-token',
   EDIT_TOKEN: '/edit-token',
   DELETE_TOKEN: '/delete-token',
   SETTINGS: '/settings',
+  ACCOUNT_RECOVERY: '/account-recovery',
 
   // Referrer Profile pages
   REF_PROFILE_HOME: '/ref/:refProfileCode',
 
-  ACCOUNT_RECOVERY: '/account-recovery',
 };
 
 export { ROUTES };

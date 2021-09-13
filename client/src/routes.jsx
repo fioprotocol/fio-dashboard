@@ -28,6 +28,7 @@ import RefHomePage from './pages/RefHomePage';
 import AccountRecoveryPage from './pages/AccountRecoveryPage';
 
 import { ROUTES } from './constants/routes';
+import FioAddressSignaturesPage from './pages/FioAddressSignaturesPage';
 
 const LIST_TOKEN_PARENT_ROUTE = `${ROUTES.LINK_TOKEN_LIST}/:id`;
 
@@ -42,6 +43,11 @@ const Routes = () => (
         <Route
           path={ROUTES.FIO_ADDRESSES_SELECTION}
           component={FioAddressPage}
+          exact
+        />
+        <PrivateRoute
+          path={ROUTES.FIO_ADDRESS_SIGNATURES}
+          component={FioAddressSignaturesPage}
           exact
         />
         <PrivateRoute
