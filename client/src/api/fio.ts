@@ -9,6 +9,7 @@ import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { Transactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
 import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { isDomain } from '../utils';
+import { NFTSignature } from '../redux/nftSignatures/types';
 
 interface TrxResponse {
   status: string;
@@ -274,5 +275,68 @@ export default class Fio {
       retResult[fioAddress] = fioAddressRes;
     }
     return retResult;
+  };
+
+  getNFTsFioAddress = async (
+    fioAddress: string,
+    limit: number,
+    offset: number,
+  ): Promise<NFTSignature[]> => {
+    this.setBaseUrl();
+    if (this.isFioPublicKeyValid(fioAddress)) {
+      console.debug('key is ok');
+    }
+    // TODO: Replace mock data and make the call to get_nfts_fio_address
+    // https://github.com/fioprotocol/fips/blob/master/fip-0027.md#new-end-point-get_nfts_fio_address
+    // https://github.com/fioprotocol/fiosdk_typescript-examples/blob/main/get_nfts_fio_address.js
+    // try {
+    //   const res = await this.walletFioSDK.get_nfts_fio_address(
+    //     publicKey,
+    //     limit,
+    //     offset,
+    //   );
+    //   return res;
+    // } catch (e) {
+    //   this.logError(e);
+    // }
+    const pushResult = await fetch(
+      this.baseurl + 'chain/get_nfts_fio_address',
+      {
+        body: `{
+      "fio_address": "${fioAddress}",
+      "limit": 100,
+      "offset": 0
+    }`,
+        method: 'POST',
+      },
+    );
+    const json = await pushResult.json();
+    if (json.type) {
+      console.debug('Error: ', json);
+    } else if (json.error) {
+      console.debug('Error: ', json);
+    } else {
+      console.debug('NFT Signatures for: ', fioAddress);
+      console.debug('Result: ', json);
+    }
+    const mockNftSignatures = [
+      {
+        chainCode: 'BTC',
+        tokenId: '77',
+        contractAddress: fioAddress,
+      },
+      {
+        chainCode: 'BTC',
+        tokenId: '77',
+        contractAddress: fioAddress,
+      },
+      {
+        chainCode: 'BTC',
+        tokenId: '77',
+        contractAddress: fioAddress,
+      },
+    ];
+    // TODO: Undo mock data for call.
+    return mockNftSignatures;
   };
 }
