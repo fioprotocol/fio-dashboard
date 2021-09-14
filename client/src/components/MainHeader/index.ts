@@ -5,7 +5,7 @@ import { createStructuredSelector } from 'reselect';
 import { logout, resetLastAuthData } from '../../redux/profile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 import { clearCachedUser } from '../../redux/edge/actions';
-import { pathname } from '../../redux/router/selectors';
+import { pathname } from '../../redux/navigation/selectors';
 import {
   user,
   isAuthenticated,
