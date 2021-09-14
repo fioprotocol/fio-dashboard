@@ -121,7 +121,6 @@
     "react-scrollbars-custom": "4.0.25",
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
-    "redux-form": "8.3.7",
     "redux-saga": "^0.16.0",
     "rename-keys": "^2.0.1",
     "reselect": "^3.0.1",
