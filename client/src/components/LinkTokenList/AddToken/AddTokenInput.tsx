@@ -1,8 +1,8 @@
 import React from 'react';
-import InputRedux, { INPUT_UI_STYLES } from '../../Input/InputRedux';
+import { Field } from 'react-final-form';
+import Input, { INPUT_UI_STYLES } from '../../Input/Input';
 import { ErrorBadge, COLOR_TYPE } from '../../Input/ErrorBadge';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Field } from 'redux-form';
 
 import classes from './AddTokenInput.module.scss';
 
@@ -14,7 +14,18 @@ const AddTokenInput: React.FC<any> = props => {
     meta: { error },
   } = props;
   return fields.map((field: string, index: number) => {
-    const removeField = () => fields.remove(index);
+    const oneItem = fields.length === 1;
+    const fieldError = error[index];
+    let errMsg = '';
+    if (fieldError != null) {
+      if (typeof error == 'string') errMsg = fieldError;
+      if (typeof error == 'object')
+        errMsg = fieldError[Object.keys(fieldError)[0]];
+    }
+    const removeField = () => {
+      if (oneItem) return;
+      fields.remove(index);
+    };
     return (
       <div className={classes.container} key={field}>
         <div className={classes.fieldContainer}>
@@ -22,7 +33,7 @@ const AddTokenInput: React.FC<any> = props => {
             <Field
               name={`${field}.chainCode`}
               type="text"
-              component={InputRedux}
+              component={Input}
               placeholder="Enter Chain Code"
               hideError={true}
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
@@ -33,7 +44,7 @@ const AddTokenInput: React.FC<any> = props => {
             <Field
               name={`${field}.tokenCode`}
               type="text"
-              component={InputRedux}
+              component={Input}
               placeholder="Enter Token Code"
               hideError={true}
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
@@ -44,23 +55,30 @@ const AddTokenInput: React.FC<any> = props => {
             <Field
               name={`${field}.publicAddress`}
               type="text"
-              component={InputRedux}
+              component={Input}
               placeholder="Enter or Paste Public Address"
               hideError={true}
               showCopyButton={true}
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
             />
           </div>
-          <FontAwesomeIcon
-            icon="times-circle"
-            className={classes.closeIcon}
-            onClick={removeField}
-          />
+          {oneItem ? (
+            <FontAwesomeIcon
+              icon="times-circle"
+              className={`${classes.closeIcon} invisible`}
+            />
+          ) : (
+            <FontAwesomeIcon
+              icon="times-circle"
+              className={classes.closeIcon}
+              onClick={removeField}
+            />
+          )}
         </div>
-        {error && (
+        {errMsg && (
           <div className={classes.errorContainer}>
             <ErrorBadge
-              error={error}
+              error={errMsg}
               hasError={true}
               wrap={true}
               color={COLOR_TYPE.WARN}

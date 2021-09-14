@@ -36,6 +36,7 @@ const Input = props => {
     uiType,
     errorType = '',
     suffix = '',
+    upperCased = false,
     lowerCased = false,
     disabled,
     ...rest
@@ -147,6 +148,7 @@ const Input = props => {
           onChange={e => {
             const currentValue = e.target.value;
             if (lowerCased) return onChange(currentValue.toLowerCase());
+            if (upperCased) return onChange(currentValue.toUpperCase());
             onChange(currentValue);
           }}
           type={showPass ? 'text' : type}

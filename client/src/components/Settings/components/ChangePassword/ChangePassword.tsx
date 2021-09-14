@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import SecurityItem from '../SecurityItem/SecurityItem';
 import ModalUIComponent from '../ModalUIComponent';
 import SuccessModal from '../../../Modal/SuccessModal';
-// import ChangePasswordForm from './ChangePasswordFormO';
 import ChangePasswordForm from './ChangePasswordForm';
 
 import { PasswordTypes, FormValuesTypes } from './types';
