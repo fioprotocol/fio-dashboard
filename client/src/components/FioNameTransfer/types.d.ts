@@ -31,12 +31,20 @@ export type ContainerProps = {
   result: { feeCollected?: FeePrice; error?: string; newOwnerKey?: string };
   loading: boolean;
   transferProcessing: boolean;
-  transferAddressValue: string;
   refreshBalance: (publicKey: string) => void;
   transfer: (params: TransferParams) => void;
   getFee: (isFioAddress: boolean) => void;
   getPrices: () => void;
-  showPinModal: (action: string) => void;
+  showPinModal: (action: string, data: { transferAddress: string }) => void;
   resetPinConfirm: () => void;
   pinConfirmation: PinConfirmation;
 } & ContainerOwnProps;
+
+export type FormProps = {
+  name: string;
+  pageName: PageNameType;
+  feePrice: FeePrice;
+  currentWallet: FioWalletDoublet;
+  onSubmit: (value: string) => void;
+  processing: boolean;
+};
