@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { FieldArray, arrayPush, InjectedFormProps } from 'redux-form';
+import { Form } from 'react-final-form';
+import arrayMutators from 'final-form-arrays';
+import { FieldArray } from 'react-final-form-arrays';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
@@ -9,6 +11,7 @@ import ActionContainer, {
 } from '../containers/ActionContainer';
 import ConfirmContainer from '../containers/ConfirmContainer';
 import AddTokenInput from './AddTokenInput';
+import { validate } from './validation';
 
 import { FioNameItemProps, PublicAddressDoublet } from '../../../types';
 import classes from './AddToken.module.scss';
@@ -18,12 +21,41 @@ type Props = {
   currentFioAddress: FioNameItemProps;
   results: any;
   addTokenValues: PublicAddressDoublet[];
-  dispatch: any;
-  onSubmit: (params: any) => void;
-} & InjectedFormProps;
+};
+
+// todo: set proper types
+const AddTokenForm = (props: any) => {
+  const { changeBundleCost, push, values } = props;
+
+  const tokens = values != null && values.tokens != null ? values.tokens : [];
+
+  const addTokenRow = () => push('tokens');
+
+  useEffect(() => changeBundleCost(Math.ceil(tokens.length / 5)), [
+    tokens.length,
+  ]);
+  useEffect(() => addTokenRow(), []);
+
+  return (
+    <div className={classes.container}>
+      <div className={classes.actionContainer}>
+        <h5 className={classes.subtitle}>Address Linking Information</h5>
+        <Button className={classes.button} onClick={addTokenRow}>
+          <FontAwesomeIcon icon="plus-circle" className={classes.icon} />
+          Add Token
+        </Button>
+      </div>
+      <h5 className={classnames(classes.subtitle, classes.infoSubtitle)}>
+        <span className="boldText">Hint:</span> Type an{' '}
+        <span className={classes.asterisk}>*</span> to map all tokens on a chain
+      </h5>
+      <FieldArray name="tokens" component={AddTokenInput} />
+    </div>
+  );
+};
 
 const AddToken: React.FC<Props> = props => {
-  const { currentFioAddress, results, addTokenValues = [], dispatch } = props;
+  const { currentFioAddress, results, addTokenValues = [] } = props;
   const [resultsData, setResultsData] = useState<any | null>(null);
 
   const hasEmtptyFields = !addTokenValues.every(
@@ -33,14 +65,7 @@ const AddToken: React.FC<Props> = props => {
 
   const [bundleCost, changeBundleCost] = useState(0);
 
-  const addField = () => dispatch(arrayPush('addToken', 'token', {}));
-
-  useEffect(() => addField(), []);
-  useEffect(() => changeBundleCost(Math.ceil(addTokenValues.length / 5)), [
-    addTokenValues.length,
-  ]);
-
-  const handleSubmit = () => {
+  const onSubmit = () => {
     // todo: pin confirm
   };
 
@@ -60,23 +85,29 @@ const AddToken: React.FC<Props> = props => {
       remaining={remaining}
       isDisabled={hasEmtptyFields}
     >
-      <div className={classes.container}>
-        <div className={classes.actionContainer}>
-          <h5 className={classes.subtitle}>Address Linking Information</h5>
-          <Button className={classes.button} onClick={addField}>
-            <FontAwesomeIcon icon="plus-circle" className={classes.icon} />
-            Add Token
-          </Button>
-        </div>
-        <h5 className={classnames(classes.subtitle, classes.infoSubtitle)}>
-          <span className="boldText">Hint:</span> Type an{' '}
-          <span className={classes.asterisk}>*</span> to map all tokens on a
-          chain
-        </h5>
-        <form onSubmit={handleSubmit}>
-          <FieldArray name="token" component={AddTokenInput} />
-        </form>
-      </div>
+      <Form
+        onSubmit={onSubmit}
+        validate={validate}
+        mutators={{
+          ...arrayMutators,
+        }}
+      >
+        {({
+          handleSubmit,
+          form: {
+            mutators: { push },
+          },
+          values,
+        }) => (
+          <form onSubmit={handleSubmit}>
+            <AddTokenForm
+              values={values}
+              push={push}
+              changeBundleCost={changeBundleCost}
+            />
+          </form>
+        )}
+      </Form>
     </ActionContainer>
   );
 };
