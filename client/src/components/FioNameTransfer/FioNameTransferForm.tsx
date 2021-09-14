@@ -1,7 +1,8 @@
 import React, { FormEvent, useState } from 'react';
 import { Button } from 'react-bootstrap';
 
-import Input, { INPUT_UI_STYLES } from '../Input/InputRedux';
+import { INPUT_UI_STYLES } from '../Input/InputRedux';
+import { Field, FieldValue } from '../Input/Field';
 import { BADGE_TYPES } from '../Badge/Badge';
 import PriceBadge from '../Badges/PriceBadge/PriceBadge';
 import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
@@ -29,7 +30,6 @@ export const TransferForm = (props: FormProps) => {
   const [error, setError] = useState<string | null>(null);
   const [validating, setValidating] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(true);
-  const [touched, setTouched] = useState<boolean>(false);
 
   const { costFio, costUsdc } = feePrice;
   const fioNameLabel = fioNameLabels[pageName];
@@ -50,14 +50,11 @@ export const TransferForm = (props: FormProps) => {
     onSubmit(value);
   };
 
-  const onChange = async (value: string) => {
-    setValue(value);
+  const onChange = async (value: FieldValue) => {
+    setValue(`${value}`);
     if (error) {
       setError(null);
       setValid(true);
-    }
-    if (!touched) {
-      setTouched(true);
     }
   };
 
@@ -68,15 +65,13 @@ export const TransferForm = (props: FormProps) => {
       </p>
       <p className={classes.label}>Transfer Information</p>
       <form className={classes.form} onSubmit={handleSubmit}>
-        <Input
-          input={{
-            value,
-            onChange,
-            placeholder: PLACEHOLDER,
-            name: 'transferAddress',
-          }}
+        <Field
+          name="transferAddress"
+          value={value}
+          onChange={onChange}
+          placeholder={PLACEHOLDER}
+          error={error}
           lowerCased={false}
-          meta={{ error, touched }}
           type="text"
           showCopyButton={true}
           uiType={INPUT_UI_STYLES.BLACK_WHITE}

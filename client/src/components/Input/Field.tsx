@@ -27,6 +27,7 @@ export const Field = (props: FieldProps) => {
 
   const handlerChange = (value: FieldValue) => {
     onChange(value, name);
+    if (!touched) setTouched(true);
   };
 
   return (
