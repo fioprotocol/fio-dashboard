@@ -1,9 +1,8 @@
 import { connect } from 'react-redux';
-import { reduxForm, formValueSelector } from 'redux-form';
 import { createStructuredSelector } from 'reselect';
 
 import apis from '../../api';
-import { compose, setFees, hasFioAddressDelimiter } from '../../utils';
+import { setFees, hasFioAddressDelimiter } from '../../utils';
 
 import {
   refreshBalance,
@@ -25,14 +24,7 @@ import {
 
 import { FioNameTransferContainer } from './FioNameTransferContainer';
 import { ContainerOwnProps } from './types';
-import { validate } from './validation';
-
-const formConnect = reduxForm({
-  form: 'transfer',
-  getFormState: state => state.reduxForm,
-  asyncValidate: validate,
-  asyncChangeFields: [],
-});
+import { ReduxState } from '../../redux/init';
 
 const reduxConnect = connect(
   createStructuredSelector({
@@ -40,7 +32,7 @@ const reduxConnect = connect(
     transferProcessing,
     confirmingPin,
     pinConfirmation,
-    result: (state: any) => {
+    result: (state: ReduxState) => {
       const { transactionResult } = state.fio;
       const result = transactionResult[TRANSFER_REQUEST];
       if (result && result.fee_collected) {
@@ -58,7 +50,7 @@ const reduxConnect = connect(
 
       return result;
     },
-    feePrice: (state: any, ownProps: ContainerOwnProps & any) => {
+    feePrice: (state: ReduxState, ownProps: ContainerOwnProps & any) => {
       const { fees } = state.fio;
       const { prices } = state.registrations;
       const feeEndPoint = hasFioAddressDelimiter(ownProps.name)
@@ -68,11 +60,6 @@ const reduxConnect = connect(
     },
     walletPublicKey,
     currentWallet,
-    transferAddressValue: (state: any) =>
-      formValueSelector('transfer', (state: any) => state.reduxForm)(
-        state,
-        'transferAddress',
-      ),
   }),
   {
     refreshBalance,
@@ -89,4 +76,4 @@ const reduxConnect = connect(
   },
 );
 
-export default compose(reduxConnect, formConnect)(FioNameTransferContainer);
+export default reduxConnect(FioNameTransferContainer);
