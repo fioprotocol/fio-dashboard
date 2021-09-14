@@ -11,7 +11,6 @@ import notifications from './notifications/reducer';
 import registrations from './registrations/reducer';
 import cart from './cart/reducer';
 import refProfile from './refProfile/reducer';
-import reduxForm from './reduxForm/reducer';
 
 export default combineReducers({
   profile,
@@ -25,5 +24,4 @@ export default combineReducers({
   registrations,
   cart,
   refProfile,
-  reduxForm,
 });
