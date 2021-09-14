@@ -13,12 +13,15 @@ export const INPUT_UI_STYLES = {
   BLACK_WHITE: 'blackWhite',
 };
 
-type Props = {
-  hideError?: boolean;
+export type InputProps = {
   input: any;
-  loading?: boolean;
-  lowerCased: boolean;
   meta: any;
+};
+
+export type FieldProps = {
+  hideError?: boolean;
+  loading?: boolean;
+  lowerCased?: boolean;
   onClose?: (flag: boolean) => void;
   showClearInput?: boolean;
   showCopyButton?: boolean;
@@ -30,6 +33,8 @@ type Props = {
   errorUIColor?: string;
   showErrorBorder?: boolean;
 };
+
+type Props = InputProps & FieldProps;
 
 const InputRedux: React.FC<Props> = props => {
   const {
