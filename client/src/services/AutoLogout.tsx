@@ -8,7 +8,7 @@ import {
   logout,
 } from '../redux/profile/actions';
 import { showLoginModal } from '../redux/modal/actions';
-import { setRedirectPath } from '../redux/router/actions';
+import { setRedirectPath } from '../redux/navigation/actions';
 
 import { compose } from '../utils';
 import {
