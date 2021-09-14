@@ -5,5 +5,7 @@ export type PasswordTypes = {
 };
 
 export type FormValuesTypes = {
+  password: string;
+  newPassword: string;
   confirmNewPassword: string;
-} & PasswordTypes;
+};
