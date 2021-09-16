@@ -15,7 +15,7 @@ const AddTokenInput: React.FC<any> = props => {
   } = props;
   return fields.map((field: string, index: number) => {
     const oneItem = fields.length === 1;
-    const fieldError = error[index];
+    const fieldError = error != null ? error[index] : '';
     let errMsg = '';
     if (fieldError != null) {
       if (typeof error == 'string') errMsg = fieldError;
