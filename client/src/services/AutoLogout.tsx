@@ -38,6 +38,18 @@ const ACTIVITY_EVENTS = [
   'touchstart',
 ];
 
+let activityMethod: (() => {} | void) | null = null;
+
+const removeActivityListener = () => {
+  try {
+    ACTIVITY_EVENTS.forEach((eventName: string): void => {
+      document.removeEventListener(eventName, activityMethod, true);
+    });
+  } catch (e) {
+    //
+  }
+};
+
 const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
   const {
     tokenCheckResult,
@@ -116,12 +128,13 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
     intervalId && clearInterval(intervalId);
     setTimeoutId(null);
     setIntervalId(null);
+    if (activityMethod) {
+      removeActivityListener();
+    }
   };
 
-  const activityTimeout = (listener: () => void) => {
-    ACTIVITY_EVENTS.forEach((eventName: string): void => {
-      document.removeEventListener(eventName, listener, true);
-    });
+  const activityTimeout = () => {
+    removeActivityListener();
     const {
       history: {
         location: { pathname },
@@ -135,10 +148,10 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
   const activityWatcher = () => {
     let secondsSinceLastActivity = 0;
 
-    const activity = () => {
+    activityMethod = () => {
       console.info('===ACTIVITY===');
       if (secondsSinceLastActivity > INACTIVITY_TIMEOUT) {
-        return activityTimeout(activity);
+        return activityTimeout();
       }
       secondsSinceLastActivity = 0;
       setLocalLastActivity(new Date().getTime());
@@ -153,13 +166,13 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
       );
       if (secondsSinceLastActivity > INACTIVITY_TIMEOUT) {
         console.info('===TIMEOUTED===');
-        activityTimeout(activity);
+        activityTimeout();
       }
     }, TIMEOUT);
     setIntervalId(newIntervalId);
 
     ACTIVITY_EVENTS.forEach((eventName: string): void => {
-      document.addEventListener(eventName, activity, true);
+      document.addEventListener(eventName, activityMethod, true);
     });
   };
 
