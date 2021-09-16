@@ -39,6 +39,7 @@ const Input = props => {
     upperCased = false,
     lowerCased = false,
     disabled,
+    showErrorBorder,
     ...rest
   } = props;
   const {
@@ -67,7 +68,6 @@ const Input = props => {
       (touched || modified || submitSucceeded) &&
       !active) || // todo: remove !active to show red border on focused field. make debounce on create account user field
     (submitError && !modifiedSinceLastSubmit);
-
   useEffect(() => {
     toggleClearInput(value !== '');
   });
@@ -136,7 +136,7 @@ const Input = props => {
         <input
           className={classnames(
             classes.regInput,
-            hasError && classes.error,
+            (hasError || showErrorBorder) && classes.error,
             uiType && classes[uiType],
             isBW && classes.bw,
             suffix && classes.suffixSpace,

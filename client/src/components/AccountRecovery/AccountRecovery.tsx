@@ -16,15 +16,15 @@ const AccountRecovery: React.FC<AccountRecoveryTypes & RouterProps> = props => {
     showLoginModal,
     clearRecoveryResults,
   } = props;
-  const redirectHome = () => {
+  const onClose = () => {
     history.push(ROUTES.HOME);
+    clearRecoveryResults();
   };
 
   useEffect(() => {
     if (recoveryAccountResults.status) {
-      redirectHome();
+      onClose();
       showLoginModal();
-      clearRecoveryResults();
     }
   }, [recoveryAccountResults]);
 
@@ -33,10 +33,10 @@ const AccountRecovery: React.FC<AccountRecoveryTypes & RouterProps> = props => {
       <FormModalWrapper>
         <div className={classes.formContainer}>
           <div className={classes.closeButton}>
-            <CloseButton handleClick={redirectHome} isWhite={true} />
+            <CloseButton handleClick={onClose} isWhite={true} />
           </div>
           <h4 className={classes.title}>Recover Account</h4>
-          <AccountRecoveryForm {...props} cancelAction={redirectHome} />
+          <AccountRecoveryForm {...props} cancelAction={onClose} />
         </div>
       </FormModalWrapper>
     </div>
