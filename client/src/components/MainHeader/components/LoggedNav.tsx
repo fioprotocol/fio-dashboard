@@ -30,8 +30,9 @@ const LoggedNav = (props: LoggedNavProps) => {
     isMenuOpen,
     toggleMenuOpen,
     closeMenu,
-    notifications,
-    isRefFlow,
+    // commented due to BD-2631 task
+    // notifications,
+    // isRefFlow,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
@@ -64,8 +65,9 @@ const LoggedNav = (props: LoggedNavProps) => {
           )}
         </div>
       </Nav.Link>
-      <hr className={classnames(classes.vertical, 'mx-3')} />
-      {isRefFlow ? null : (
+      {/* Notifications commented due to BD-2631 task */}
+      {/* <hr className={classnames(classes.vertical, 'mx-3')} /> */}
+      {/* {isRefFlow ? null : (
         <>
           <Nav.Link
             href="#"
@@ -97,14 +99,14 @@ const LoggedNav = (props: LoggedNavProps) => {
               )}
             </div>
             {isDesktop && <div className="ml-3">Notifications</div>}
-          </Nav.Link>
-          {isDesktop ? (
-            <hr className={classnames(classes.vertical, 'mx-3')} />
-          ) : (
-            <div className="mx-3" />
-          )}
-        </>
+          </Nav.Link> */}
+      {isDesktop ? (
+        <hr className={classnames(classes.vertical, 'mx-3')} />
+      ) : (
+        <div className="mx-3" />
       )}
+      {/* </>
+      )} */}
       {isDesktop ? (
         <LoggedActionButtons {...props} />
       ) : (

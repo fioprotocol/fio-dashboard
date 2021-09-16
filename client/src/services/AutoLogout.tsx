@@ -28,7 +28,8 @@ type Props = {
   setRedirectPath: (route: string) => void;
 };
 const TIMEOUT = 5000; // 5 sec
-const INACTIVITY_TIMEOUT = 1000 * 60 * 30; // 30 min
+// const INACTIVITY_TIMEOUT = 1000 * 60 * 30; // 30 min
+const INACTIVITY_TIMEOUT = 1000 * 8; // 30 min
 
 const ACTIVITY_EVENTS = [
   'mousedown',
@@ -56,6 +57,9 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
   const [intervalId, setIntervalId] = useState<ReturnType<
     typeof setInterval
   > | null>(null);
+  const [localLastActivity, setLocalLastActivity] = useState<number>(
+    new Date().getTime(),
+  );
 
   useEffect(() => {
     if (isAuthenticated && !timeoutId) {
@@ -94,6 +98,12 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
     [],
   );
 
+  useEffect(() => {
+    if (localLastActivity - lastActivityDate > TIMEOUT) {
+      setLastActivity(localLastActivity);
+    }
+  }, [localLastActivity]);
+
   const checkToken = () => {
     const newTimeoutId: ReturnType<typeof setTimeout> = setTimeout(
       checkAuthToken,
@@ -127,14 +137,24 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
     let secondsSinceLastActivity = 0;
 
     const activity = () => {
+      console.info('===ACTIVITY===');
+      if (secondsSinceLastActivity > INACTIVITY_TIMEOUT) {
+        return activityTimeout(activity);
+      }
       secondsSinceLastActivity = 0;
-      setLastActivity(new Date().getTime());
+      setLocalLastActivity(new Date().getTime());
     };
 
     const newIntervalId: ReturnType<typeof setInterval> = setInterval(() => {
       secondsSinceLastActivity += TIMEOUT;
+      console.info(
+        '===secondsSinceLastActivity===',
+        secondsSinceLastActivity,
+        secondsSinceLastActivity > INACTIVITY_TIMEOUT,
+      );
       if (secondsSinceLastActivity > INACTIVITY_TIMEOUT) {
-        activityTimeout(activity);
+        console.info('===TIMEOUTED===');
+        // activityTimeout(activity);
       }
     }, TIMEOUT);
     setIntervalId(newIntervalId);
