@@ -1,11 +1,14 @@
 import React from 'react';
 import { Form, Field, FormRenderProps } from 'react-final-form';
 import { Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import Input from '../Input/Input';
 import validation from './validation';
 import classes from './AccountRecoveryForm.module.scss';
 import { FormValues } from './types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { ErrorBadge, ERROR_UI_TYPE } from '../Input/ErrorBadge';
 
 type Props = {
   cancelAction: () => void;
@@ -14,7 +17,12 @@ type Props = {
   questions: string[];
   username: string;
   token: string;
-  recoveryAccount: ({}) => void;
+  recoveryAccount: (params: {
+    token: string;
+    password: string;
+    username: string;
+    answers: string[];
+  }) => void;
   recoveryAccountResults: { status?: number; type?: string };
 };
 
@@ -26,8 +34,7 @@ const AccountRecoveryForm: React.FC<Props> = props => {
     questionsLoading,
     username,
     recoveryAccount,
-    // todo: uncomment after rebase
-    // recoveryAccountResults,
+    recoveryAccountResults,
     token,
   } = props;
   const questionItems = {
@@ -35,9 +42,9 @@ const AccountRecoveryForm: React.FC<Props> = props => {
     recoveryQuestionTwo: questions[1] || '',
   };
 
-  // todo: uncomment after rebase
-  // const answersError =
-  //   recoveryAccountResults.type === 'PasswordError' && 'Invalid Answers';
+  const answersError =
+    recoveryAccountResults.type === 'PasswordError' &&
+    'Some of the answers were incorrect. Please try again!';
 
   const onSubmit = (values: FormValues) => {
     const { password, recoveryAnswerOne, recoveryAnswerTwo } = values;
@@ -58,7 +65,7 @@ const AccountRecoveryForm: React.FC<Props> = props => {
     const isLoading = loading || questionsLoading;
     const disabledButton =
       isLoading ||
-      (!valid && Object.values(touched).some(touchedField => touchedField));
+      (!valid && Object.values(touched).every(touchedField => touchedField));
 
     return (
       <form onSubmit={handleSubmit} className={classes.form}>
@@ -81,7 +88,7 @@ const AccountRecoveryForm: React.FC<Props> = props => {
             name="recoveryAnswerOne"
             autoComplete="off"
             disabled={isLoading}
-            showErr
+            showErrorBorder={answersError}
           />
         </div>
         <div className={classes.questionItem}>
@@ -99,8 +106,18 @@ const AccountRecoveryForm: React.FC<Props> = props => {
             name="recoveryAnswerTwo"
             autoComplete="off"
             disabled={isLoading}
+            showErrorBorder={answersError}
           />
         </div>
+        {answersError && (
+          <div className={classes.error}>
+            <ErrorBadge
+              type={ERROR_UI_TYPE.BADGE}
+              error={answersError}
+              hasError={true}
+            />
+          </div>
+        )}
         <p className={classes.subtitle}>
           Please update your password in order to access the dashboard.
         </p>
@@ -124,7 +141,7 @@ const AccountRecoveryForm: React.FC<Props> = props => {
           className={classes.submitButton}
           disabled={disabledButton}
         >
-          Confirm
+          {answersError ? 'Try Again' : 'Confirm'}
           {isLoading && (
             <FontAwesomeIcon icon="spinner" spin className="ml-2" />
           )}

@@ -11,8 +11,8 @@ export type AccountRecoveryTypes = {
   questionsLoading: boolean;
   username: string;
   token: string;
-  recoveryAccount: ({}) => void;
-  recoveryAccountResults: { status?: number; error: any };
+  recoveryAccount: () => void;
+  recoveryAccountResults: { status?: number; error?: { type: string } };
   showLoginModal: () => void;
   clearRecoveryResults: () => void;
 };
