@@ -25,6 +25,7 @@ import DeleteTokenPage from './pages/LinkTokenPages/DeleteTokenPage';
 import AddTokenPage from './pages/LinkTokenPages/AddTokenPage';
 import SettingsPage from './pages/SettingsPage';
 import RefHomePage from './pages/RefHomePage';
+import AccountRecoveryPage from './pages/AccountRecoveryPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -99,6 +100,12 @@ const Routes = () => (
         />
 
         <PrivateRoute path={ROUTES.SETTINGS} component={SettingsPage} exact />
+
+        <Route
+          path={ROUTES.ACCOUNT_RECOVERY}
+          component={AccountRecoveryPage}
+          exact
+        />
 
         <AuthContainer />
       </Switch>

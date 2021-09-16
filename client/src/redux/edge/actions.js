@@ -265,3 +265,35 @@ export const checkRecoveryQuestions = username => ({
   ],
   promise: api => api.edge.checkRecoveryQuestions(username),
 });
+
+export const GET_USERS_RECOVERY_QUESTIONS_REQUEST = `${prefix}/GET_USERS_RECOVERY_QUESTIONS_REQUEST`;
+export const GET_USERS_RECOVERY_QUESTIONS_SUCCESS = `${prefix}/GET_USERS_RECOVERY_QUESTIONS_SUCCESS`;
+export const GET_USERS_RECOVERY_QUESTIONS_FAILURE = `${prefix}/GET_USERS_RECOVERY_QUESTIONS_FAILURE`;
+
+export const getUsersRecoveryQuestions = (token, username) => ({
+  types: [
+    GET_USERS_RECOVERY_QUESTIONS_REQUEST,
+    GET_USERS_RECOVERY_QUESTIONS_SUCCESS,
+    GET_USERS_RECOVERY_QUESTIONS_FAILURE,
+  ],
+  promise: api => api.edge.getUsersRecoveryQuestions(token, username),
+});
+
+export const RECOVERY_ACCOUNT_REQUEST = `${prefix}/RECOVERY_ACCOUNT_REQUEST`;
+export const RECOVERY_ACCOUNT_SUCCESS = `${prefix}/RECOVERY_ACCOUNT_SUCCESS`;
+export const RECOVERY_ACCOUNT_FAILURE = `${prefix}/RECOVERY_ACCOUNT_FAILURE`;
+
+export const recoveryAccount = ({ token, username, answers, password }) => ({
+  types: [
+    RECOVERY_ACCOUNT_REQUEST,
+    RECOVERY_ACCOUNT_SUCCESS,
+    RECOVERY_ACCOUNT_FAILURE,
+  ],
+  promise: api => api.edge.recoveryAccount(token, username, answers, password),
+});
+
+export const CLEAR_RECOVERY_RESULTS = `${prefix}/CLEAR_RECOVERY_RESULTS`;
+
+export const clearRecoveryResults = () => ({
+  type: CLEAR_RECOVERY_RESULTS,
+});

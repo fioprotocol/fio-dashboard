@@ -21,3 +21,8 @@ export const changeRecoveryQuestions = state =>
   state[prefix].changeRecoveryQuestions;
 
 export const hasRecoveryQuestions = state => state[prefix].hasRecoveryQuestions;
+export const questionsLoading = state => state[prefix].questionsLoading;
+export const usersRecoveryQuestions = state =>
+  state[prefix].usersRecoveryQuestions;
+export const recoveryAccountResults = state =>
+  state[prefix].recoveryAccountResults;
