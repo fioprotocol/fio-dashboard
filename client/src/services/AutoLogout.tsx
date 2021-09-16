@@ -28,7 +28,8 @@ type Props = {
   setRedirectPath: (route: string) => void;
 };
 const TIMEOUT = 5000; // 5 sec
-const INACTIVITY_TIMEOUT = 1000 * 60 * 30; // 30 min
+// const INACTIVITY_TIMEOUT = 1000 * 60 * 30; // 30 min
+const INACTIVITY_TIMEOUT = 1000 * 8; // 30 min
 
 const ACTIVITY_EVENTS = [
   'mousedown',
@@ -137,6 +138,9 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
 
     const activity = () => {
       console.info('===ACTIVITY===');
+      if (secondsSinceLastActivity > INACTIVITY_TIMEOUT) {
+        return activityTimeout(activity);
+      }
       secondsSinceLastActivity = 0;
       setLocalLastActivity(new Date().getTime());
     };
@@ -150,7 +154,7 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
       );
       if (secondsSinceLastActivity > INACTIVITY_TIMEOUT) {
         console.info('===TIMEOUTED===');
-        activityTimeout(activity);
+        // activityTimeout(activity);
       }
     }, TIMEOUT);
     setIntervalId(newIntervalId);
