@@ -136,13 +136,20 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
     let secondsSinceLastActivity = 0;
 
     const activity = () => {
+      console.info('===ACTIVITY===');
       secondsSinceLastActivity = 0;
       setLocalLastActivity(new Date().getTime());
     };
 
     const newIntervalId: ReturnType<typeof setInterval> = setInterval(() => {
       secondsSinceLastActivity += TIMEOUT;
+      console.info(
+        '===secondsSinceLastActivity===',
+        secondsSinceLastActivity,
+        secondsSinceLastActivity > INACTIVITY_TIMEOUT,
+      );
       if (secondsSinceLastActivity > INACTIVITY_TIMEOUT) {
+        console.info('===TIMEOUTED===');
         activityTimeout(activity);
       }
     }, TIMEOUT);
