@@ -7,9 +7,15 @@ import { ErrorBadge } from './ErrorBadge';
 
 import classes from './Input.module.scss';
 import { PIN_LENGTH } from '../../constants/form';
+import { CopyButton } from './InputActionButtons';
 
 export const INPUT_COLOR_SCHEMA = {
   BLACK_AND_WHITE: 'black_and_white',
+};
+
+export const INPUT_UI_STYLES = {
+  BLACK_LIGHT: 'blackLight',
+  BLACK_WHITE: 'blackWhite',
 };
 
 const regularInputWrapper = children => (
@@ -23,10 +29,14 @@ const Input = props => {
     colorSchema,
     onClose,
     hideError,
+    showCopyButton,
     isFree,
     tooltip,
     loading,
+    uiType,
+    errorType = '',
     suffix = '',
+    upperCased = false,
     lowerCased = false,
     disabled,
     ...rest
@@ -127,6 +137,7 @@ const Input = props => {
           className={classnames(
             classes.regInput,
             hasError && classes.error,
+            uiType && classes[uiType],
             isBW && classes.bw,
             suffix && classes.suffixSpace,
             type === 'password' && classes.doubleIconInput,
@@ -137,6 +148,7 @@ const Input = props => {
           onChange={e => {
             const currentValue = e.target.value;
             if (lowerCased) return onChange(currentValue.toLowerCase());
+            if (upperCased) return onChange(currentValue.toUpperCase());
             onChange(currentValue);
           }}
           type={showPass ? 'text' : type}
@@ -170,6 +182,19 @@ const Input = props => {
             onClick={() => !disabled && toggleShowPass(!showPass)}
           />
         )}
+        {showCopyButton && (
+          <CopyButton
+            onClick={async () => {
+              try {
+                const data = await navigator.clipboard.readText();
+                onChange(data);
+              } catch (e) {
+                console.error('Paste error: ', e);
+              }
+            }}
+            uiType={uiType}
+          />
+        )}
         {loading && (
           <FontAwesomeIcon
             icon={faSpinner}
@@ -183,6 +208,7 @@ const Input = props => {
           error={error}
           data={data}
           hasError={hasError}
+          type={errorType}
           submitError={submitError}
         />
       )}

@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
-import { Field, reduxForm, InjectedFormProps } from 'redux-form';
+import React, { FormEvent, useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { compose } from '../../../../utils';
 
-import InputRedux, { INPUT_UI_STYLES } from '../../../Input/InputRedux';
+import { INPUT_UI_STYLES } from '../../../Input/InputRedux';
+import { Field, FieldValue } from '../../../Input/Field';
 import {
   ErrorBadge,
   COLOR_TYPE,
@@ -13,27 +12,28 @@ import {
 import validate from './validation';
 
 import classes from './ChangePassword.module.scss';
-
-const formConnect = reduxForm({
-  form: 'changePassword',
-  getFormState: state => state.reduxForm,
-  validate,
-});
+import { FormValuesTypes } from './types';
 
 type Props = {
   loading: boolean;
   changePasswordError?: { type?: string; message?: string; name?: string };
   onUnmount: () => void;
+  onSubmit: (values: FormValuesTypes) => void;
 };
 
-const ChangePasswordForm = (props: Props & InjectedFormProps) => {
-  const {
-    handleSubmit,
-    loading,
-    valid,
-    changePasswordError,
-    onUnmount,
-  } = props;
+const ChangePasswordForm = (props: Props) => {
+  const { onSubmit, loading, changePasswordError, onUnmount } = props;
+  const [values, setValues] = useState<FormValuesTypes>({
+    password: '',
+    confirmNewPassword: '',
+    newPassword: '',
+  });
+  const [errors, setErrors] = useState<{
+    password?: string;
+    newPassword?: string;
+    confirmNewPassword?: string;
+  }>({});
+  const [valid, setValid] = useState<boolean>(false);
 
   useEffect(
     () => () => {
@@ -41,6 +41,22 @@ const ChangePasswordForm = (props: Props & InjectedFormProps) => {
     },
     [],
   );
+  useEffect(() => {
+    const errors = validate(values);
+    setErrors(errors);
+    if (Object.keys(errors).length) return setValid(false);
+    setValid(true);
+  }, [values]);
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    onSubmit(values);
+  };
+
+  const onChange = (value: FieldValue, name: string) => {
+    const newValues: FormValuesTypes = { ...values, [name]: `${value}` };
+    setValues(newValues);
+  };
 
   const isCurrentPasswordError =
     changePasswordError && changePasswordError.type === 'PasswordError';
@@ -53,7 +69,9 @@ const ChangePasswordForm = (props: Props & InjectedFormProps) => {
       <Field
         type="password"
         name="password"
-        component={InputRedux}
+        value={values.password}
+        error={errors.password}
+        onChange={onChange}
         showClearInput={true}
         placeholder="Enter Current Password"
         uiType={INPUT_UI_STYLES.BLACK_WHITE}
@@ -64,7 +82,9 @@ const ChangePasswordForm = (props: Props & InjectedFormProps) => {
       <Field
         type="password"
         name="newPassword"
-        component={InputRedux}
+        value={values.newPassword}
+        error={errors.newPassword}
+        onChange={onChange}
         showClearInput={true}
         placeholder="Enter New Password"
         uiType={INPUT_UI_STYLES.BLACK_WHITE}
@@ -73,7 +93,9 @@ const ChangePasswordForm = (props: Props & InjectedFormProps) => {
       <Field
         type="password"
         name="confirmNewPassword"
-        component={InputRedux}
+        value={values.confirmNewPassword}
+        error={errors.confirmNewPassword}
+        onChange={onChange}
         showClearInput={true}
         placeholder="Re-enter New Password"
         uiType={INPUT_UI_STYLES.BLACK_WHITE}
@@ -103,4 +125,4 @@ const ChangePasswordForm = (props: Props & InjectedFormProps) => {
   );
 };
 
-export default compose(formConnect)(ChangePasswordForm);
+export default ChangePasswordForm;
