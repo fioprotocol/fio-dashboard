@@ -56,6 +56,9 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
   const [intervalId, setIntervalId] = useState<ReturnType<
     typeof setInterval
   > | null>(null);
+  const [localLastActivity, setLocalLastActivity] = useState<number>(
+    new Date().getTime(),
+  );
 
   useEffect(() => {
     if (isAuthenticated && !timeoutId) {
@@ -94,6 +97,12 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
     [],
   );
 
+  useEffect(() => {
+    if (localLastActivity - lastActivityDate > TIMEOUT) {
+      setLastActivity(localLastActivity);
+    }
+  }, [localLastActivity]);
+
   const checkToken = () => {
     const newTimeoutId: ReturnType<typeof setTimeout> = setTimeout(
       checkAuthToken,
@@ -128,7 +137,7 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
 
     const activity = () => {
       secondsSinceLastActivity = 0;
-      setLastActivity(new Date().getTime());
+      setLocalLastActivity(new Date().getTime());
     };
 
     const newIntervalId: ReturnType<typeof setInterval> = setInterval(() => {
