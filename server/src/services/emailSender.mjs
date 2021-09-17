@@ -1,38 +1,13 @@
-import nodemailer from 'nodemailer';
-import sendmailTransport from 'nodemailer-sendmail-transport';
-import smtpTransport from 'nodemailer-smtp-transport';
-import stubTransport from 'nodemailer-stub-transport';
+import mailchimpProvider from '@mailchimp/mailchimp_transactional';
 import config from './../config';
 import logger from './../logger';
 
 class EmailSender {
   constructor() {
-    let transport;
-
-    switch (config.mail.transport) {
-      case 'SMTP':
-        transport = smtpTransport(config.mail.smtp);
-        break;
-
-      case 'SENDMAIL':
-        transport = sendmailTransport();
-        break;
-      default:
-        throw new Error('transport not fount');
-    }
-
-    const { TEST_MODE } = process.env;
-
-    if (TEST_MODE) {
-      transport = stubTransport();
-    }
-
-    const options = TEST_MODE ? { directory: '/tmp' } : config.mail.transport_options;
-
-    this.transport = nodemailer.createTransport(transport, options);
+    this.mailClient = mailchimpProvider(config.mail.mailchimpKey);
   }
 
-  async send(type, destinationUser, data) {
+  async send(type, email, data) {
     const sendData = {
       ...data,
       mainUrl: config.mainUrl,
@@ -40,30 +15,35 @@ class EmailSender {
     const template = await this.getTemplate(type, sendData);
 
     const mailOptions = {
-      from: config.mail.from,
-      to: destinationUser,
-      subject: template.subject,
-      html: template.body,
+      message: {
+        subject: template.subject,
+        html: template.body,
+        from_email: config.mail.from,
+        from_name: config.mail.fromName,
+        to: [
+          {
+            email,
+          },
+        ],
+        track_opens: false,
+        track_clicks: false,
+        auto_text: true,
+        view_content_link: false,
+      },
     };
 
     try {
-      const response = await this.transportSendMail(mailOptions);
+      const response = await this.sendMail(mailOptions);
 
-      return response.message;
+      return response[0];
     } catch (err) {
-      logger.error(err);
-      // todo: ask if we need to send emails
-      // throw err;
+      logger.error(err.message);
+      logger.error(err.toJSON());
     }
   }
 
-  transportSendMail(mailOptions) {
-    return new Promise((resolve, reject) => {
-      this.transport.sendMail(mailOptions, (err, result) => {
-        if (err) return reject(err);
-        resolve(result);
-      });
-    });
+  sendMail(mailOptions) {
+    return this.mailClient.messages.send(mailOptions);
   }
 
   async getTemplate(templateName, sendData) {
@@ -71,12 +51,12 @@ class EmailSender {
       case 'confirmEmail':
         return {
           subject: 'Confirm your email',
-          body: `To confirm your email click this link: <a href="${sendData.mainUrl}/confirmEmail/${sendData.hash}">Confirm email!</a>`,
+          body: `To confirm your email click this link: <a href="${sendData.mainUrl}confirmEmail/${sendData.hash}">Confirm email!</a>`,
         };
       case 'resetPassword':
         return {
           subject: 'Reset your password',
-          body: `To reset your password click this link: <a href="${sendData.mainUrl}/reset-password/${sendData.hash}">Reset password!</a>`,
+          body: `To reset your password click this link: <a href="${sendData.mainUrl}reset-password/${sendData.hash}">Reset password!</a>`,
         };
       case 'resetPasswordSuccess':
         return {

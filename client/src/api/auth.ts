@@ -59,7 +59,7 @@ export default class Auth extends Base {
     return null;
   }
 
-  resendRecovery() {
-    return this.apiClient.post('users/resendRecovery');
+  resendRecovery(token: string) {
+    return this.apiClient.post('users/resendRecovery', { data: { token } });
   }
 }

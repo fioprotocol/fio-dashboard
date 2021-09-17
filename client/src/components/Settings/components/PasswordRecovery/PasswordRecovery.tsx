@@ -23,7 +23,7 @@ type Props = {
   showRecoveryModal: () => void;
   changeRecoveryQuestionsOpen: () => void;
   username: string;
-  resendRecovery: () => void;
+  resendRecovery: (token: string) => void;
   hasRecoveryQuestions: boolean;
   checkRecoveryQuestions: (username: string) => void;
   disableRecoveryResults: { status?: number };
@@ -92,7 +92,7 @@ const PasswordRecovery: React.FC<Props> = props => {
   };
 
   const onResendClick = () => {
-    resendRecovery(); // todo: handle results, show success modal
+    resendRecovery(''); // todo: set token, handle results, show success modal
   };
 
   const onDisableClick = () => {

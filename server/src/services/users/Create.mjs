@@ -42,7 +42,7 @@ export default class UsersCreate extends Base {
     const user = new User({
       username,
       email,
-      status: User.STATUS.ACTIVE, // todo: should we set NEW and then activate via email?
+      status: User.STATUS.NEW,
     });
 
     await user.save();

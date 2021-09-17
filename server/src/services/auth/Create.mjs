@@ -1,4 +1,5 @@
 import Base from '../Base';
+import emailSender from '../emailSender';
 import X from '../Exception';
 import { generate } from './authToken';
 
@@ -82,6 +83,11 @@ export default class AuthCreate extends Base {
     }
 
     const now = new Date();
+
+    await emailSender.send('confirmEmail', email, {
+      hash: 'jhkjhk',
+    });
+
     return {
       data: {
         jwt: generate(

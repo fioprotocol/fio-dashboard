@@ -168,11 +168,11 @@ export const RESEND_RECOVERY_REQUEST = `${prefix}/RESEND_RECOVERY_REQUEST`;
 export const RESEND_RECOVERY_SUCCESS = `${prefix}/RESEND_RECOVERY_SUCCESS`;
 export const RESEND_RECOVERY_FAILURE = `${prefix}/RESEND_RECOVERY_FAILURE`;
 
-export const resendRecovery = () => ({
+export const resendRecovery = (token: string) => ({
   types: [
     RESEND_RECOVERY_REQUEST,
     RESEND_RECOVERY_SUCCESS,
     RESEND_RECOVERY_FAILURE,
   ],
-  promise: (api: Api) => api.auth.resendRecovery(),
+  promise: (api: Api) => api.auth.resendRecovery(token),
 });
