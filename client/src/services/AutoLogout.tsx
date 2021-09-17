@@ -111,6 +111,7 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
 
   useEffect(() => {
     if (localLastActivity - lastActivityDate > TIMEOUT) {
+      console.info('===ACTIVITY===');
       setLastActivity(localLastActivity);
     }
   }, [localLastActivity]);
@@ -146,23 +147,25 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
   };
 
   const activityWatcher = () => {
-    let secondsSinceLastActivity = 0;
+    let lastActivity = new Date().getTime();
 
     activityMethod = () => {
-      console.info('===ACTIVITY===');
+      const secondsSinceLastActivity = new Date().getTime() - lastActivity;
       if (secondsSinceLastActivity > INACTIVITY_TIMEOUT) {
         return activityTimeout();
       }
-      secondsSinceLastActivity = 0;
-      setLocalLastActivity(new Date().getTime());
+      lastActivity = new Date().getTime();
+      setLocalLastActivity(lastActivity);
     };
 
     const newIntervalId: ReturnType<typeof setInterval> = setInterval(() => {
-      secondsSinceLastActivity += TIMEOUT;
+      const secondsSinceLastActivity = new Date().getTime() - lastActivity;
       console.info(
         '===secondsSinceLastActivity===',
         secondsSinceLastActivity,
+        INACTIVITY_TIMEOUT,
         secondsSinceLastActivity > INACTIVITY_TIMEOUT,
+        new Date(),
       );
       if (secondsSinceLastActivity > INACTIVITY_TIMEOUT) {
         console.info('===TIMEOUTED===');
