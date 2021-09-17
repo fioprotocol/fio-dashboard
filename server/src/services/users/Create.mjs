@@ -56,6 +56,8 @@ export default class UsersCreate extends Base {
       },
     }).save();
 
+    await emailSender.send('createAccount', email);
+
     await emailSender.send('confirmEmail', email, {
       hash: action.hash,
     });

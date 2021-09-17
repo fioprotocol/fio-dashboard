@@ -48,10 +48,22 @@ class EmailSender {
 
   async getTemplate(templateName, sendData) {
     switch (templateName) {
+      case 'createAccount':
+        return {
+          subject: 'Welcome to FIO Dashboard.',
+          body: `Thank you for creating a FIO Dashboard account.
+
+Please remember that for your security FIO Dashboard Team does not have access to your password or your private keys. We cannot reset your password in case you forget it, like many website do. It is very important that you write down your password in a secure location.
+
+You should also set-up Password Recovery, which will require you to set-up two secret questions and answers and send an email to you to access Password Recovery in the future. If you forget the password, you will be asked to click a link in the Password Recovery email and answer the secret questions. If you do not have access to the email or do not remember the secret answers, FIO Dashboard Team will not be able to reset your password and you will not be able to access the FIO Dashboard.
+
+FIO Dashboard Team.
+`,
+        };
       case 'confirmEmail':
         return {
-          subject: 'Confirm your email',
-          body: `To confirm your email click this link: <a href="${sendData.mainUrl}confirmEmail/${sendData.hash}">Confirm email!</a>`,
+          subject: 'FIO Dashboard - please confirm your email',
+          body: `Please click the link below to confirm your email. <a href="${sendData.mainUrl}confirmEmail/${sendData.hash}">${sendData.mainUrl}confirmEmail/${sendData.hash}</a> FIO Dashboard Team.`,
         };
       case 'resetPassword':
         return {
