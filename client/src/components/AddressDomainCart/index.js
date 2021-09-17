@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 import { compose } from '../../utils';
 
 import { deleteItem, recalculate } from '../../redux/cart/actions';
-import { setRedirectPath } from '../../redux/router/actions';
+import { setRedirectPath } from '../../redux/navigation/actions';
 
 import { cartItems } from '../../redux/cart/selectors';
 import { hasFreeAddress, isAuthenticated } from '../../redux/profile/selectors';

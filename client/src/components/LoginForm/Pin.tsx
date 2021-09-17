@@ -78,7 +78,7 @@ const Pin = (props: Props) => {
             error={error}
           />
           <div className={classes.exitPin} onClick={exitPin}>
-            <CloseButton white />{' '}
+            <CloseButton isWhite />{' '}
             <span className={classes.exitPinText}>Exit PIN Sign In</span>
           </div>
         </div>

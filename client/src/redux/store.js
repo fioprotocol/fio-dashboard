@@ -1,5 +1,5 @@
 import { createStore, applyMiddleware, compose as simpleCompose } from 'redux';
-import { routerMiddleware } from 'react-router-redux';
+import { routerMiddleware } from 'connected-react-router';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import createSagaMiddleware from 'redux-saga';
 import throttle from 'lodash/throttle';
@@ -7,7 +7,7 @@ import { loadState, saveState } from '../localStorage';
 
 import apiMiddleware from './apiMiddleware';
 
-import reducer from './reducer';
+import createReducer from './reducer';
 import rootSaga from './sagas';
 
 export default function configureStore(api, history) {
@@ -19,7 +19,7 @@ export default function configureStore(api, history) {
   const persistedState = loadState();
 
   const store = createStore(
-    reducer,
+    createReducer(history),
     persistedState,
     compose(
       applyMiddleware(

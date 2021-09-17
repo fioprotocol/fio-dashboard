@@ -1,0 +1,55 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+
+.form {
+  margin-top: 15px;
+
+  .subtitle {
+    font-size: 0.875em;
+    @include proxima-nova-thin;
+    text-align: center;
+  }
+
+  .questionItem {
+    width: 100%;
+    .question {
+      font-size: 0.875em;
+      margin-bottom: 10px;
+      @include proxima-nova-semibold;
+
+      .icon {
+        width: 100%;
+        margin: 0 auto;
+      }
+    }
+  }
+
+  .error {
+    margin-top: -25px;
+    margin-bottom: 30px;
+    width: 100%;
+  }
+
+  .submitButton {
+    background-color: $violet;
+    border: $violet;
+    margin-bottom: 0;
+
+    &:hover {
+      background-color: $clear-blue;
+      border-color: $clear-blue;
+    }
+  }
+
+  .cancelButton {
+    border: none;
+    outline: none;
+    background: none;
+    width: fit-content;
+    height: fit-content;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    color: $white;
+    @include sf-pro-display-medium;
+  }
+}

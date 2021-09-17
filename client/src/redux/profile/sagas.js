@@ -19,9 +19,9 @@ import {
   listNotifications,
   createNotification,
 } from '../notifications/actions';
-import { setRedirectPath } from '../router/actions';
+import { setRedirectPath } from '../navigation/actions';
 
-import { hasRedirect } from '../router/selectors';
+import { hasRedirect } from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
 import { ROUTES } from '../../constants/routes';
 

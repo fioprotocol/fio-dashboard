@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { pathname } from '../../redux/router/selectors';
+import { pathname } from '../../redux/navigation/selectors';
 import { confirm } from '../../redux/profile/actions';
 import { isConfirmed } from '../../redux/profile/selectors';
 

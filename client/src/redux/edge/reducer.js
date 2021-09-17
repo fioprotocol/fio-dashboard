@@ -12,6 +12,7 @@ export default combineReducers({
       case actions.SIGNUP_REQUEST:
       case actions.CHANGE_PASSWORD_REQUEST:
       case actions.CHANGE_PIN_REQUEST:
+      case actions.RECOVERY_ACCOUNT_REQUEST:
         return true;
       case actions.LOGIN_SUCCESS:
       case actions.LOGIN_FAILURE:
@@ -23,6 +24,8 @@ export default combineReducers({
       case actions.CHANGE_PASSWORD_FAILURE:
       case actions.CHANGE_PIN_SUCCESS:
       case actions.CHANGE_PIN_FAILURE:
+      case actions.RECOVERY_ACCOUNT_SUCCESS:
+      case actions.RECOVERY_ACCOUNT_FAILURE:
         return false;
       default:
         return state;
@@ -232,6 +235,48 @@ export default combineReducers({
       case actions.CHECK_RECOVERY_QUESTIONS_REQUEST:
       case actions.CHECK_RECOVERY_QUESTIONS_FAILURE: {
         return false;
+      }
+      default:
+        return state;
+    }
+  },
+  usersRecoveryQuestions(state = [], action) {
+    switch (action.type) {
+      case actions.GET_USERS_RECOVERY_QUESTIONS_SUCCESS: {
+        return action.data;
+      }
+      case actions.GET_USERS_RECOVERY_QUESTIONS_REQUEST:
+      case actions.GET_USERS_RECOVERY_QUESTIONS_FAILURE: {
+        return [];
+      }
+      default:
+        return state;
+    }
+  },
+  questionsLoading(state = false, action) {
+    switch (action.type) {
+      case actions.GET_USERS_RECOVERY_QUESTIONS_REQUEST: {
+        return true;
+      }
+      case actions.GET_USERS_RECOVERY_QUESTIONS_SUCCESS:
+      case actions.GET_USERS_RECOVERY_QUESTIONS_FAILURE: {
+        return false;
+      }
+      default:
+        return state;
+    }
+  },
+  recoveryAccountResults(state = {}, action) {
+    switch (action.type) {
+      case actions.RECOVERY_ACCOUNT_SUCCESS: {
+        return action.data;
+      }
+      case actions.RECOVERY_ACCOUNT_REQUEST:
+      case actions.CLEAR_RECOVERY_RESULTS: {
+        return {};
+      }
+      case actions.RECOVERY_ACCOUNT_FAILURE: {
+        return action.error;
       }
       default:
         return state;

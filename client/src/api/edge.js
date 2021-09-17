@@ -185,4 +185,34 @@ export default class Edge {
       throw e;
     }
   }
+
+  async getUsersRecoveryQuestions(token, username) {
+    try {
+      return await this.edgeContext.fetchRecovery2Questions(token, username);
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  async loginWithRecovery(token, username, answers) {
+    try {
+      return this.edgeContext.loginWithRecovery2(token, username, answers);
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  async recoveryAccount(token, username, answers, password) {
+    try {
+      const account = await this.loginWithRecovery(token, username, answers);
+      await account.changePassword(password);
+      await account.logout();
+      return { status: 1 };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
 }
