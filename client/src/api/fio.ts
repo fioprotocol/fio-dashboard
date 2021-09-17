@@ -9,7 +9,8 @@ import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { Transactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
 import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { isDomain } from '../utils';
-import { NFTSignature } from '../redux/nftSignatures/types';
+import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
+import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 
 interface TrxResponse {
   status: string;
@@ -281,62 +282,53 @@ export default class Fio {
     fioAddress: string,
     limit: number,
     offset: number,
-  ): Promise<NFTSignature[]> => {
+  ): Promise<NftsResponse> => {
     this.setBaseUrl();
-    if (this.isFioPublicKeyValid(fioAddress)) {
-      console.debug('key is ok');
+    try {
+      return await this.walletFioSDK.genericAction(
+        'chain/get_nfts_fio_address',
+        {
+          action: 'addnft',
+          account: 'fio.address',
+          data: {
+            fio_address: fioAddress,
+            limit: 100,
+            offset: 0,
+          },
+        },
+      );
+    } catch (err) {
+      this.logError(err);
     }
-    // TODO: Replace mock data and make the call to get_nfts_fio_address
-    // https://github.com/fioprotocol/fips/blob/master/fip-0027.md#new-end-point-get_nfts_fio_address
-    // https://github.com/fioprotocol/fiosdk_typescript-examples/blob/main/get_nfts_fio_address.js
-    // try {
-    //   const res = await this.walletFioSDK.get_nfts_fio_address(
-    //     publicKey,
-    //     limit,
-    //     offset,
-    //   );
-    //   return res;
-    // } catch (e) {
-    //   this.logError(e);
-    // }
-    const pushResult = await fetch(
-      this.baseurl + 'chain/get_nfts_fio_address',
-      {
-        body: `{
-      "fio_address": "${fioAddress}",
-      "limit": 100,
-      "offset": 0
-    }`,
-        method: 'POST',
-      },
-    );
-    const json = await pushResult.json();
-    if (json.type) {
-      console.debug('Error: ', json);
-    } else if (json.error) {
-      console.debug('Error: ', json);
-    } else {
-      console.debug('NFT Signatures for: ', fioAddress);
-      console.debug('Result: ', json);
+    return {
+      nfts: [],
+      more: false,
+    };
+  };
+
+  singNFT = async (
+    fioAddress: string,
+    nftRequest: NftItem[],
+    max_fee: number,
+  ): Promise<NftsResponse> => {
+    this.setBaseUrl();
+    try {
+      return await this.walletFioSDK.genericAction('pushTransaction', {
+        action: 'addnft',
+        account: 'fio.address',
+        data: {
+          fio_address: fioAddress,
+          nfts: nftRequest,
+          max_fee: 100000000000,
+          tpid: '',
+        },
+      });
+    } catch (err) {
+      this.logError(err);
     }
-    const mockNftSignatures = [
-      {
-        chainCode: 'BTC',
-        tokenId: '77',
-        contractAddress: fioAddress,
-      },
-      {
-        chainCode: 'BTC',
-        tokenId: '77',
-        contractAddress: fioAddress,
-      },
-      {
-        chainCode: 'BTC',
-        tokenId: '77',
-        contractAddress: fioAddress,
-      },
-    ];
-    // TODO: Undo mock data for call.
-    return mockNftSignatures;
+    return {
+      nfts: [],
+      more: false,
+    };
   };
 }
