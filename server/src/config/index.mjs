@@ -17,17 +17,9 @@ export default {
   },
   mainUrl: process.env.BASE_URL,
   mail: {
-    adminEmail: 'admin@ezetech.com',
-    transport: 'SMTP',
-    smtp: 'smtps://ezetechmail@gmail.com:asdqwezxc01@smtp.gmail.com',
-    from: '',
-    transport_options: {
-      service: 'Gmail',
-      auth: {
-        user: '',
-        pass: '',
-      },
-    },
+    mailchimpKey: process.env.MAILCHIMP_KEY,
+    from: process.env.MAILCHIMP_FROM,
+    fromName: process.env.MAILCHIMP_FROM_NAME,
   },
   ...dbConfig,
 };
