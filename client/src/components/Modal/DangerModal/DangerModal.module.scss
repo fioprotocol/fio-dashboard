@@ -26,9 +26,10 @@
   width: 100%;
   margin-top: 40px;
   border-radius: 7px;
+  color: $white;
   @include proxima-nova-semibold;
 
-  &:hover {
+  &:hover:enabled {
     border: $content-background;
     background-color: $content-background;
   }
@@ -37,4 +38,8 @@
 .cancelButton {
   margin-top: 30px;
   margin-bottom: 20px;
+}
+
+.spinner {
+  margin-left: 10px;
 }
