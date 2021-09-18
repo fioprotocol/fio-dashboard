@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Modal from '../Modal';
 import CancelButton from '../../common/CancelButton/CancelButton';
@@ -14,6 +13,7 @@ type Props = {
   showCancel: boolean;
   title: string;
   subtitle?: string;
+  loading?: boolean;
 };
 
 const DangerModal: React.FC<Props> = props => {
@@ -25,15 +25,23 @@ const DangerModal: React.FC<Props> = props => {
     showCancel,
     subtitle,
     title,
+    loading,
   } = props;
   return (
     <Modal show={show} onClose={onClose} isDanger={true} closeButton={true}>
       <FontAwesomeIcon icon="ban" className={classes.icon} />
       <h4 className={classes.title}>{title}</h4>
       <p className={classes.subtitle}>{subtitle}</p>
-      <Button onClick={onActionButtonClick} className={classes.actionButton}>
+      <button
+        onClick={onActionButtonClick}
+        className={classes.actionButton}
+        disabled={loading}
+      >
         {buttonText}
-      </Button>
+        {loading && (
+          <FontAwesomeIcon icon="spinner" spin className={classes.spinner} />
+        )}
+      </button>
       {showCancel && (
         <div className={classes.cancelButton}>
           <CancelButton onClick={onClose} />
