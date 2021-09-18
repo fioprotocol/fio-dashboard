@@ -33,6 +33,11 @@
     border: $content-background;
     background-color: $content-background;
   }
+
+  &:disabled, &[disabled] {
+    border: $dark;
+    background-color: $dark;
+  }
 }
 
 .cancelButton {

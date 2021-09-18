@@ -180,6 +180,7 @@ export default class Edge {
       const account = await this.loginPIN(username, pin);
       await account.deleteRecovery();
       await account.logout();
+      return { status: 1 };
     } catch (e) {
       console.log(e);
       throw e;

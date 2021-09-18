@@ -77,7 +77,7 @@ export const confirmPin = ({ username, pin }, { action, data }) => ({
       console.log(e);
     }
 
-    return { account, keys, action, data };
+    return { account, keys, action, data, pin };
   },
 });
 export const RESET_PIN_CONFIRM = `${prefix}/RESET_PIN_CONFIRM`;
@@ -296,4 +296,22 @@ export const CLEAR_RECOVERY_RESULTS = `${prefix}/CLEAR_RECOVERY_RESULTS`;
 
 export const clearRecoveryResults = () => ({
   type: CLEAR_RECOVERY_RESULTS,
+});
+
+export const DISABLE_RECOVERY_PASSWORD_REQUEST = `${prefix}/DISABLE_RECOVERY_PASSWORD_REQUEST`;
+export const DISABLE_RECOVERY_PASSWORD_SUCCESS = `${prefix}/DISABLE_RECOVERY_PASSWORD_SUCCESS`;
+export const DISABLE_RECOVERY_PASSWORD_FAILURE = `${prefix}/DISABLE_RECOVERY_PASSWORD_FAILURE`;
+
+export const disableRecoveryPassword = ({ username, pin }) => ({
+  types: [
+    DISABLE_RECOVERY_PASSWORD_REQUEST,
+    DISABLE_RECOVERY_PASSWORD_SUCCESS,
+    DISABLE_RECOVERY_PASSWORD_FAILURE,
+  ],
+  promise: api => api.edge.disableRecovery(username, pin),
+});
+
+export const CLEAR_DISABLE_RECOVERY_PASSWORD_RESULTS = `${prefix}/CLEAR_DISABLE_RECOVERY_PASSWORD_RESULTS`;
+export const clearDisableRecoveryResults = () => ({
+  type: CLEAR_DISABLE_RECOVERY_PASSWORD_RESULTS,
 });

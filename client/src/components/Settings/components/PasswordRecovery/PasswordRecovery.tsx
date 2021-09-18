@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
+import isEmpty from 'lodash/isEmpty';
 import SecurityItem from '../SecurityItem/SecurityItem';
 import SuccessModal from '../../../Modal/SuccessModal';
 import DangerModal from '../../../Modal/DangerModal';
@@ -25,7 +26,13 @@ type Props = {
   resendRecovery: () => void;
   hasRecoveryQuestions: boolean;
   checkRecoveryQuestions: (username: string) => void;
-  disableQuestionsResult: { status?: number };
+  disableRecoveryResults: { status?: number };
+  showPinModal: (action: null, data: string) => void;
+  pinConfirmation: { pin: string; data?: string };
+  disableRecoveryPassword: (params: { username: string; pin: string }) => void;
+  resetPinConfirm: () => void;
+  loading: boolean;
+  clearDisableRecoveryResults: () => void;
 };
 
 const PasswordRecovery: React.FC<Props> = props => {
@@ -36,7 +43,13 @@ const PasswordRecovery: React.FC<Props> = props => {
     resendRecovery,
     hasRecoveryQuestions,
     username,
-    disableQuestionsResult,
+    disableRecoveryResults,
+    showPinModal,
+    pinConfirmation,
+    disableRecoveryPassword,
+    resetPinConfirm,
+    loading,
+    clearDisableRecoveryResults,
   } = props;
 
   const [showDisableModal, toggleDisableModal] = useState(false);
@@ -47,13 +60,27 @@ const PasswordRecovery: React.FC<Props> = props => {
   }, []);
 
   useEffect(() => {
-    if (disableQuestionsResult && disableQuestionsResult.status)
+    if (disableRecoveryResults.status) {
+      toggleDisableModal(false);
       toggleSuccessModal(true);
-  }, [disableQuestionsResult]);
+      checkRecoveryQuestions(username);
+    }
+  }, [disableRecoveryResults]);
+
+  useEffect(() => {
+    if (!isEmpty(pinConfirmation)) {
+      const { pin, data } = pinConfirmation;
+      if (data === ITEM_PROPS.title) {
+        toggleDisableModal(true);
+        disableRecoveryPassword({ username, pin });
+      }
+    }
+  }, [pinConfirmation]);
 
   const onClick = () => {
     if (hasRecoveryQuestions) {
       toggleDisableModal(true);
+      resetPinConfirm();
     } else {
       showRecoveryModal();
       changeRecoveryQuestionsOpen();
@@ -64,9 +91,17 @@ const PasswordRecovery: React.FC<Props> = props => {
     resendRecovery(); // todo: handle results, show success modal
   };
 
+  const onDisableClick = () => {
+    toggleDisableModal(false);
+    showPinModal(null, ITEM_PROPS.title);
+  };
+
   const onDisableClose = () => toggleDisableModal(false);
 
-  const onSuccessClose = () => toggleSuccessModal(false);
+  const onSuccessClose = () => {
+    clearDisableRecoveryResults();
+    toggleSuccessModal(false);
+  };
 
   const mainButtonText = hasRecoveryQuestions
     ? 'Disable Password Recovery'
@@ -89,11 +124,12 @@ const PasswordRecovery: React.FC<Props> = props => {
       <DangerModal
         show={showDisableModal}
         onClose={onDisableClose}
-        onActionButtonClick={() => {}}
+        onActionButtonClick={onDisableClick}
         buttonText={mainButtonText}
         showCancel={true}
         title={ITEM_PROPS.dangerTitle}
         subtitle={ITEM_PROPS.dangerSubtitle}
+        loading={loading}
       />
       <SuccessModal
         title={ITEM_PROPS.successModalTitle}

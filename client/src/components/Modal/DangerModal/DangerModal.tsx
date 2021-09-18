@@ -28,7 +28,7 @@ const DangerModal: React.FC<Props> = props => {
     loading,
   } = props;
   return (
-    <Modal show={show} onClose={onClose} isDanger={true} closeButton={true}>
+    <Modal show={show} onClose={onClose} isDanger={true} closeButton={!loading}>
       <FontAwesomeIcon icon="ban" className={classes.icon} />
       <h4 className={classes.title}>{title}</h4>
       <p className={classes.subtitle}>{subtitle}</p>
@@ -44,7 +44,7 @@ const DangerModal: React.FC<Props> = props => {
       </button>
       {showCancel && (
         <div className={classes.cancelButton}>
-          <CancelButton onClick={onClose} />
+          <CancelButton onClick={onClose} disabled={loading} />
         </div>
       )}
     </Modal>

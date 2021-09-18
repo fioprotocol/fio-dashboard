@@ -13,6 +13,7 @@ export default combineReducers({
       case actions.CHANGE_PASSWORD_REQUEST:
       case actions.CHANGE_PIN_REQUEST:
       case actions.RECOVERY_ACCOUNT_REQUEST:
+      case actions.DISABLE_RECOVERY_PASSWORD_REQUEST:
         return true;
       case actions.LOGIN_SUCCESS:
       case actions.LOGIN_FAILURE:
@@ -26,6 +27,8 @@ export default combineReducers({
       case actions.CHANGE_PIN_FAILURE:
       case actions.RECOVERY_ACCOUNT_SUCCESS:
       case actions.RECOVERY_ACCOUNT_FAILURE:
+      case actions.DISABLE_RECOVERY_PASSWORD_SUCCESS:
+      case actions.DISABLE_RECOVERY_PASSWORD_FAILURE:
         return false;
       default:
         return state;
@@ -276,6 +279,22 @@ export default combineReducers({
         return {};
       }
       case actions.RECOVERY_ACCOUNT_FAILURE: {
+        return action.error;
+      }
+      default:
+        return state;
+    }
+  },
+  disableRecoveryResults(state = {}, action) {
+    switch (action.type) {
+      case actions.DISABLE_RECOVERY_PASSWORD_SUCCESS: {
+        return action.data;
+      }
+      case actions.DISABLE_RECOVERY_PASSWORD_REQUEST:
+      case actions.CLEAR_DISABLE_RECOVERY_PASSWORD_RESULTS: {
+        return {};
+      }
+      case actions.DISABLE_RECOVERY_PASSWORD_FAILURE: {
         return action.error;
       }
       default:
