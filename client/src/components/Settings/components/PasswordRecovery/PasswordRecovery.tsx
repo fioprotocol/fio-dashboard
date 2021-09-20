@@ -77,13 +77,17 @@ const PasswordRecovery: React.FC<Props> = props => {
     }
   }, [pinConfirmation]);
 
+  const onChangeRecoveryQuestions = () => {
+    showRecoveryModal();
+    changeRecoveryQuestionsOpen();
+  };
+
   const onClick = () => {
     if (hasRecoveryQuestions) {
       toggleDisableModal(true);
       resetPinConfirm();
     } else {
-      showRecoveryModal();
-      changeRecoveryQuestionsOpen();
+      onChangeRecoveryQuestions();
     }
   };
 
@@ -107,10 +111,18 @@ const PasswordRecovery: React.FC<Props> = props => {
     ? 'Disable Password Recovery'
     : 'Setup Password Recovery';
 
-  const renderResendButton = (
-    <Button onClick={onResendClick} className={classes.resendButton}>
-      Resend Recovery Email
-    </Button>
+  const renderButtonGroup = ( // change recovery button commented because of no design
+    <>
+      {/* <Button
+        onClick={onChangeRecoveryQuestions}
+        className={classes.changeButton}
+      >
+        Change Recovery Questions
+      </Button> */}
+      <Button onClick={onResendClick} className={classes.resendButton}>
+        Resend Recovery Email
+      </Button>
+    </>
   );
 
   return (
@@ -119,7 +131,7 @@ const PasswordRecovery: React.FC<Props> = props => {
       buttonText={mainButtonText}
       isGreen={hasRecoveryQuestions}
       onClick={onClick}
-      bottomChildren={hasRecoveryQuestions && renderResendButton}
+      bottomChildren={hasRecoveryQuestions && renderButtonGroup}
     >
       <DangerModal
         show={showDisableModal}
