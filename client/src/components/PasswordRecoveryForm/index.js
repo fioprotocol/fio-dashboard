@@ -2,7 +2,10 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
-import { setRecoveryQuestions } from '../../redux/profile/actions';
+import {
+  setRecoveryQuestions,
+  resendRecovery,
+} from '../../redux/profile/actions';
 import {
   getRecoveryQuestions,
   resetPinConfirm,
@@ -50,6 +53,7 @@ const reduxConnect = connect(
     resetPinConfirm,
     changeRecoveryQuestionsClose,
     checkRecoveryQuestions,
+    resendRecovery,
   },
 );
 
