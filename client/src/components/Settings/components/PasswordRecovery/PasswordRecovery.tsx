@@ -28,8 +28,8 @@ type Props = {
   checkRecoveryQuestions: (username: string) => void;
   disableRecoveryResults: { status?: number };
   showPinModal: (action: null, data: string) => void;
-  pinConfirmation: { pin: string; data?: string };
-  disableRecoveryPassword: (params: { username: string; pin: string }) => void;
+  pinConfirmation: { account: {}; data?: string };
+  disableRecoveryPassword: (account: {}) => void;
   resetPinConfirm: () => void;
   loading: boolean;
   clearDisableRecoveryResults: () => void;
@@ -69,10 +69,10 @@ const PasswordRecovery: React.FC<Props> = props => {
 
   useEffect(() => {
     if (!isEmpty(pinConfirmation)) {
-      const { pin, data } = pinConfirmation;
+      const { account, data } = pinConfirmation;
       if (data === ITEM_PROPS.title) {
         toggleDisableModal(true);
-        disableRecoveryPassword({ username, pin });
+        disableRecoveryPassword(account);
       }
     }
   }, [pinConfirmation]);
