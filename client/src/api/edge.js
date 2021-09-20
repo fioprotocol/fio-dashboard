@@ -175,9 +175,8 @@ export default class Edge {
     }
   }
 
-  async disableRecovery(username, pin) {
+  async disableRecovery(account) {
     try {
-      const account = await this.loginPIN(username, pin);
       await account.deleteRecovery();
       await account.logout();
       return { status: 1 };
