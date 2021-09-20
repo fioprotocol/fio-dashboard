@@ -14,6 +14,7 @@ import ModalComponent from '../Modal/Modal';
 import FormHeader from '../FormHeader/FormHeader';
 import Input from '../Input/Input';
 import SuccessModal from '../Modal/SuccessModal';
+import SendLinkModal from './SendLinkModal';
 
 import classes from './PasswordRecoveryForm.module.scss';
 
@@ -36,9 +37,10 @@ const PasswordRecoveryForm = props => {
     changeRecoveryQuestionsResults,
     checkRecoveryQuestions,
     username,
+    resendRecovery,
   } = props;
 
-  const isSettings = changeRecoveryQuestions; // todo: should be refactored on settings recovery password task
+  const isSettings = changeRecoveryQuestions; // todo: should be refactored on settings recovery password design task
   const { status } = changeRecoveryQuestionsResults;
 
   const [isSkip, toggleSkip] = useState(false);
@@ -48,6 +50,7 @@ const PasswordRecoveryForm = props => {
   const [defaultValues, setDefaultValues] = useState({});
   const [errorMessage, setError] = useState('');
   const [showSuccessModal, toggleSuccessModal] = useState(false);
+  const [showSendEmailModal, toggleSendEmailModal] = useState(false);
 
   useEffect(getRecoveryQuestions, []);
   useEffect(async () => {
@@ -70,7 +73,7 @@ const PasswordRecoveryForm = props => {
   useEffect(() => {
     if (status) {
       if (isSettings) {
-        toggleSuccessModal(true);
+        toggleSendEmailModal(true);
       } else {
         closeRecoveryModal();
         changeRecoveryQuestionsClose();
@@ -142,6 +145,17 @@ const PasswordRecoveryForm = props => {
       return;
     }
     return isSkip ? closeSkip() : showSkip();
+  };
+
+  const onSendEmailClick = () => {
+    resendRecovery();
+    toggleSendEmailModal(false);
+    toggleSuccessModal(true); // todo: show success modal on resend recovery results
+  };
+
+  const onSendEmailModalClose = () => {
+    toggleSendEmailModal(false);
+    toggleSuccessModal(true);
   };
 
   const onSuccessClose = () => {
@@ -402,7 +416,7 @@ const PasswordRecoveryForm = props => {
 
   return (
     <>
-      {!showSuccessModal && (
+      {!showSuccessModal && !showSendEmailModal && (
         <ModalComponent
           show={show && !showPinConfirm}
           backdrop="static"
@@ -423,12 +437,19 @@ const PasswordRecoveryForm = props => {
         </ModalComponent>
       )}
       {isSettings && (
-        <SuccessModal
-          showModal={showSuccessModal}
-          title="Password Recovery Changed!"
-          subtitle="Your password recovery questions has been successfully changed"
-          onClose={onSuccessClose}
-        />
+        <>
+          <SendLinkModal
+            show={showSendEmailModal}
+            onClose={onSendEmailModalClose}
+            onClick={onSendEmailClick}
+          />
+          <SuccessModal
+            showModal={showSuccessModal}
+            title="Password Recovery Changed!"
+            subtitle="Your password recovery questions has been successfully changed"
+            onClose={onSuccessClose}
+          />
+        </>
       )}
     </>
   );
