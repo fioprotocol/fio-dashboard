@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
-import classes from './FioAddressSignaturesPage.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { NFTSignature } from '../../types';
+import { Link } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classes from './FioAddressSignaturesPage.module.scss';
+import { NFTSignature } from '../../types';
 import { ROUTES } from '../../constants/routes';
 
 type Props = {
@@ -12,7 +14,6 @@ type Props = {
   match: {
     params: { address: string };
   };
-  history: any;
   email: string;
 };
 
@@ -23,7 +24,6 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
     match: {
       params: { address },
     },
-    history,
     email,
   } = props;
   useEffect(() => {
@@ -47,13 +47,12 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
           Address: {email}
         </Col>
         <Col lg="2">
-          <Button
-            className={classes.actionButton}
-            onClick={() => history.push(ROUTES.FIO_ADDRESS_SIGN)}
-          >
-            <FontAwesomeIcon icon="pen" className={classes.iconButton} />
-            <span>Sign NFT</span>
-          </Button>
+          <Link to={ROUTES.FIO_ADDRESS_SIGN} className={classes.actionButton}>
+            <Button>
+              <FontAwesomeIcon icon="pen" className={classes.iconButton} /> Sign
+              NFT
+            </Button>
+          </Link>
         </Col>
       </Row>
       <Row>

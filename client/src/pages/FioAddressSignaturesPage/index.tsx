@@ -14,9 +14,6 @@ const reduxConnect = connect(
   }),
   {
     getSignaturesFromFioAddress,
-    onClickSignature: () => {
-      console.debug('Go to signature form');
-    },
   },
 );
 

@@ -44,7 +44,6 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     hasMore,
     loading,
     noProfileLoaded,
-    history,
   } = props;
   const [showWarnBadge, toggleShowWarnBadge] = useState<BoolStateFunc>(false);
   const [showInfoBadge, toggleShowInfoBadge] = useState<BoolStateFunc>(false);
@@ -121,11 +120,6 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     !isDesktop && handleShowModal(true);
     handleShowSettings(false);
   };
-  const onClickSignature = (fioNameItem: FioNameItemProps) => {
-    history.push(
-      ROUTES.FIO_ADDRESS_SIGNATURES.replace(':address', fioNameItem.name),
-    );
-  };
   const renderScroll = (children: React.ReactNode) => {
     return (
       <>
@@ -153,7 +147,6 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     toggleShowWarnBadge,
     onItemModalOpen,
     onSettingsOpen,
-    onClickSignature,
   };
 
   if (noProfileLoaded) return <Redirect to={{ pathname: ROUTES.HOME }} />;

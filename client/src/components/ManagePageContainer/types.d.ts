@@ -53,10 +53,6 @@ export type ItemComponentProps = {
   onSettingsOpen: ModalOpenActionType;
 };
 
-export type FIOAddressActions = {
-  onClickSignature: (fioNameItem: FioNameItemProps) => void;
-};
-
 export type SettingsProps = {
   fioNameItem: FioNameItemProps;
   pageName: PageNameType;
