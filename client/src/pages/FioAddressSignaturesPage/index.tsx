@@ -5,12 +5,10 @@ import FioAddressSignaturesPage from './FioAddressSignaturesPage';
 import { withRouter } from 'react-router-dom';
 import { getSignaturesFromFioAddress } from '../../redux/fio/actions';
 import { nftSignatures } from '../../redux/fio/selectors';
-import { email } from '../../redux/profile/selectors';
 
 const reduxConnect = connect(
   createStructuredSelector({
     nftSignatures,
-    email,
   }),
   {
     getSignaturesFromFioAddress,
