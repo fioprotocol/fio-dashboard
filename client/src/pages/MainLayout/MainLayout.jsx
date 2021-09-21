@@ -7,6 +7,7 @@ import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
 import LoginForm from '../../components/LoginForm';
 import PinConfirmModal from '../../components/PinConfirmModal';
+import GenericErrorModal from '../../components/Modal/GenericErrorModal';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
 import { useCheckIfDesktop } from '../../screenType';
 import AutoLogout from '../../services/AutoLogout';
@@ -55,6 +56,7 @@ const MainLayout = props => {
       {showLogin && edgeContextSet && loginFormModalRender()}
       {showRecovery && edgeContextSet && recoveryFormModalRender()}
       <PinConfirmModal />
+      <GenericErrorModal />
     </div>
   );
 };

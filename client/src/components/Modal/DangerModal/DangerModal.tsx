@@ -10,7 +10,7 @@ type Props = {
   onClose: () => void;
   onActionButtonClick: () => void;
   buttonText: string;
-  showCancel: boolean;
+  showCancel?: boolean;
   title: string;
   subtitle?: string;
   loading?: boolean;
