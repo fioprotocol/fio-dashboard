@@ -36,7 +36,6 @@ import {
   faCheckSquare,
   faCheck,
   faSignature,
-  faPen,
 } from '@fortawesome/free-solid-svg-icons';
 
 import {

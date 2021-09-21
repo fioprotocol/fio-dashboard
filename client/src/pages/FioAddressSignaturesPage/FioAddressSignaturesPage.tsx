@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import classes from './FioAddressSignaturesPage.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { NFTSignature } from '../../redux/nftSignatures/types';
+import { NFTSignature } from '../../types';
 import { v4 as uuidv4 } from 'uuid';
 import { ROUTES } from '../../constants/routes';
 
