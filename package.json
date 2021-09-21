@@ -98,6 +98,7 @@
     "final-form": "4.20.2",
     "final-form-arrays": "^3.0.2",
     "gt3-sdk": "^2.0.0",
+    "handlebars": "^4.7.7",
     "json-pointer": "^0.6.0",
     "jsonpath": "^1.0.0",
     "jsonwebtoken": "^8.1.1",
