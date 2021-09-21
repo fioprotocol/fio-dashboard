@@ -123,10 +123,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
   };
   const onClickSignature = (fioNameItem: FioNameItemProps) => {
     history.push(
-      ROUTES.FIO_ADDRESS_SIGNATURES.replace(
-        ':address',
-        fioNameItem.walletPublicKey,
-      ),
+      ROUTES.FIO_ADDRESS_SIGNATURES.replace(':address', fioNameItem.name),
     );
   };
   const renderScroll = (children: React.ReactNode) => {

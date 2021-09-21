@@ -365,16 +365,16 @@ export const FIO_SIGN_NFT_REQUEST = `${prefix}/FIO_SIGN_NFT_REQUEST`;
 export const FIO_SIGN_NFT_SUCCESS = `${prefix}/FIO_SIGN_NFT_SUCCESS`;
 export const FIO_SIGN_NFT_FAILURE = `${prefix}/FIO_SIGN_NFT_FAILURE`;
 
-export const getSignaturesFromFioAddress = (publicKey: string) => ({
+export const getSignaturesFromFioAddress = (fioAddress: string) => ({
   types: [
     FIO_SIGNATURE_ADDRESS_REQUEST,
     FIO_SIGNATURE_ADDRESS_SUCCESS,
     FIO_SIGNATURE_ADDRESS_FAILURE,
   ],
   promise: (api: Api) => {
-    return api.fio.getNFTsFioAddress(publicKey, 100, 0);
+    return api.fio.getNFTsFioAddress(fioAddress, 100, 0);
   },
-  publicKey,
+  fioAddress,
 });
 
 export const singNFT = (publicKey: string, nftRequest: NftItem[]) => ({
