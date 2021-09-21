@@ -25,6 +25,7 @@ export const transactionResult = (state: ReduxState) =>
 export const fees = (state: ReduxState) => state[prefix].fees;
 export const feesLoading = (state: ReduxState) => state[prefix].feesLoading;
 export const linkResults = (state: ReduxState) => state[prefix].linkResults;
+export const nftSignatures = (state: ReduxState) => state[prefix].nftList;
 
 export const currentWallet = (
   state: ReduxState,

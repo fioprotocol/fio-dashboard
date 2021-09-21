@@ -11,6 +11,7 @@ import {
   FioAddressDoublet,
   FioDomainDoublet,
   LinkActionResult,
+  NFTSignature,
 } from '../../types';
 
 export const emptyWallet: FioWalletDoublet = {
@@ -321,6 +322,14 @@ export default combineReducers({
         return action.data;
       case actions.LINK_TOKENS_FAILURE:
         return { ...defaultLinkState, error: action.data };
+      default:
+        return state;
+    }
+  },
+  nftList(state: NFTSignature[] = [], action) {
+    switch (action.type) {
+      case actions.FIO_SIGNATURE_ADDRESS_SUCCESS:
+        return [...action.data.nfts];
       default:
         return state;
     }
