@@ -48,4 +48,24 @@ export default combineReducers({
         return state;
     }
   },
+  showGenericError(state = false, action) {
+    switch (action.type) {
+      case actions.SHOW_GENERIC_ERROR_MODAL:
+        return true;
+      case actions.CLOSE_GENERIC_ERROR_MODAL:
+        return false;
+      default:
+        return state;
+    }
+  },
+  genericErrorData(state = {}, action) {
+    switch (action.type) {
+      case actions.SHOW_GENERIC_ERROR_MODAL:
+        return action.data;
+      case actions.CLOSE_GENERIC_ERROR_MODAL:
+        return {};
+      default:
+        return state;
+    }
+  },
 });
