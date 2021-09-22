@@ -250,7 +250,7 @@ export default class Fio {
       }[];
     } = {};
 
-    // todo: change to getAllPublicAddresses after fioSDK update;
+    // TODO: change to getAllPublicAddresses after fioSDK update;
     const cryptoCurrencies = ['BTC', 'ETH', 'BCH'];
     for (const fioAddress of fioAddresses) {
       const fioAddressRes = [];
@@ -284,21 +284,25 @@ export default class Fio {
     offset: number,
   ): Promise<NftsResponse> => {
     this.setBaseUrl();
-    try {
-      return await this.walletFioSDK.genericAction(
-        'chain/get_nfts_fio_address',
-        {
-          action: 'addnft',
-          account: 'fio.address',
-          data: {
-            fio_address: fioAddress,
-            limit: 100,
-            offset: 0,
-          },
-        },
-      );
-    } catch (err) {
-      this.logError(err);
+    const pushResult = await fetch(
+      this.baseurl + 'chain/get_nfts_fio_address',
+      {
+        body: `{
+          "fio_address": "${fioAddress}",
+          "limit": 100,
+          "offset": 0
+        }`,
+        method: 'POST',
+      },
+    );
+
+    const json = await pushResult.json();
+    if (json.type) {
+      this.logError(json);
+    } else if (json.error) {
+      this.logError(json);
+    } else {
+      return json;
     }
     return {
       nfts: [],
@@ -307,22 +311,22 @@ export default class Fio {
   };
 
   singNFT = async (
-    fioAddress: string,
-    nftRequest: NftItem[],
-    max_fee: number,
+    publicKey: string,
+    nfts: NftItem[],
   ): Promise<NftsResponse> => {
     this.setBaseUrl();
     try {
-      return await this.walletFioSDK.genericAction('pushTransaction', {
+      const result = await this.walletFioSDK.genericAction('pushTransaction', {
         action: 'addnft',
         account: 'fio.address',
         data: {
-          fio_address: fioAddress,
-          nfts: nftRequest,
+          fio_address: publicKey,
+          nfts,
           max_fee: 100000000000,
           tpid: '',
         },
       });
+      return result;
     } catch (err) {
       this.logError(err);
     }
