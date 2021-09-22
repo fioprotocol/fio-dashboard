@@ -97,7 +97,7 @@ class EmailSender {
           body: `Your account activated successfully. <a href="${sendData.mainUrl}">Go to site!</a>`,
         };
     }
-    return { subject: 'test', body: 'this is test email' };
+    throw new Error(`There is no email template with such name - ${templateName}`);
   }
 }
 
