@@ -81,21 +81,6 @@ class EmailSender {
           }),
           images: EmailTemplate.getInlineImages(templateName),
         };
-      case 'resetPassword':
-        return {
-          subject: 'Reset your password',
-          body: `To reset your password click this link: <a href="${sendData.mainUrl}reset-password/${sendData.hash}">Reset password!</a>`,
-        };
-      case 'resetPasswordSuccess':
-        return {
-          subject: 'Reset password success',
-          body: 'Your password changed successfully',
-        };
-      case 'accountActivated':
-        return {
-          subject: 'Account successfully activated',
-          body: `Your account activated successfully. <a href="${sendData.mainUrl}">Go to site!</a>`,
-        };
     }
     throw new Error(`There is no email template with such name - ${templateName}`);
   }

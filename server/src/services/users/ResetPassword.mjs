@@ -1,6 +1,5 @@
 import Base from '../Base';
 import X from '../Exception';
-import emailSender from '../emailSender';
 
 import { User, Action } from '../../models';
 
@@ -36,6 +35,7 @@ export default class UsersResetPassword extends Base {
       });
     }
 
+    // eslint-disable-next-line no-unused-vars
     const action = await new Action({
       type: 'resetPassword',
       hash: Action.generateHash(),
@@ -44,8 +44,6 @@ export default class UsersResetPassword extends Base {
         email: user.email,
       },
     }).save();
-
-    await emailSender.send('resetPassword', user.email, { hash: action.hash });
 
     return {};
   }
