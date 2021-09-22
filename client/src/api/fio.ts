@@ -311,7 +311,7 @@ export default class Fio {
   };
 
   singNFT = async (
-    publicKey: string,
+    fio_address: string,
     nfts: NftItem[],
   ): Promise<NftsResponse> => {
     this.setBaseUrl();
@@ -320,7 +320,7 @@ export default class Fio {
         action: 'addnft',
         account: 'fio.address',
         data: {
-          fio_address: publicKey,
+          fio_address,
           nfts,
           max_fee: 100000000000,
           tpid: '',
