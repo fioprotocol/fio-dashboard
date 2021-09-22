@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
-import * as actions from './actions';
+import * as actions from '../fio/actions';
 
 export default combineReducers({
   list(state: NftItem[] = [], action) {

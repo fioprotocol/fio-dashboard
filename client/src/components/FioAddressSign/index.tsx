@@ -1,18 +1,11 @@
 import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
 import { compose } from '../../utils';
 import FioAddressSign from './FioAddressSign';
 import { withRouter } from 'react-router-dom';
-import { singNFT } from '../../redux/nftSignatures/actions';
-import { email } from '../../redux/profile/selectors';
+import { singNFT } from '../../redux/fio/actions';
 
-const reduxConnect = connect(
-  createStructuredSelector({
-    email,
-  }),
-  {
-    singNFT,
-  },
-);
+const reduxConnect = connect(null, {
+  singNFT,
+});
 
 export default withRouter(compose(reduxConnect)(FioAddressSign));
