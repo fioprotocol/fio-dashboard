@@ -3,6 +3,8 @@ import EmailTemplate, { templates } from './../emails/emailTemplate';
 import config from './../config';
 import logger from './../logger';
 
+const EMAIL_SENT_STATUS = 'sent';
+
 class EmailSender {
   constructor() {
     this.mailClient = mailchimpProvider(config.mail.mailchimpKey);
@@ -14,6 +16,9 @@ class EmailSender {
       mainUrl: config.mainUrl,
     };
     const template = await this.getTemplate(type, sendData);
+    const emailTo = process.env.TEST_RECIEVER_EMAIL
+      ? process.env.TEST_RECIEVER_EMAIL
+      : email;
 
     const mailOptions = {
       message: {
@@ -23,9 +28,10 @@ class EmailSender {
         from_name: config.mail.fromName,
         to: [
           {
-            email,
+            email: emailTo,
           },
         ],
+        images: template.images,
         track_opens: false,
         track_clicks: false,
         auto_text: true,
@@ -35,6 +41,10 @@ class EmailSender {
 
     try {
       const response = await this.sendMail(mailOptions);
+
+      if (response[0] == null) throw new Error('Email send error');
+      if (response[0].status !== EMAIL_SENT_STATUS)
+        throw new Error(JSON.stringify(response[0]));
 
       return response[0];
     } catch (err) {
@@ -49,10 +59,11 @@ class EmailSender {
 
   async getTemplate(templateName, sendData) {
     switch (templateName) {
-      case 'createAccount':
+      case templates.createAccount:
         return {
           subject: 'Welcome to FIO Dashboard.',
           body: EmailTemplate.get(templates.createAccount, {}),
+          images: EmailTemplate.getInlineImages(templates.createAccount),
         };
       case 'confirmEmail':
         return {
