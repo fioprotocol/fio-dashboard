@@ -1,3 +1,4 @@
+import { templates } from '../../emails/emailTemplate';
 import Base from '../Base';
 import X from '../Exception';
 import emailSender from '../emailSender';
@@ -56,9 +57,9 @@ export default class UsersCreate extends Base {
       },
     }).save();
 
-    await emailSender.send('createAccount', email);
+    await emailSender.send(templates.createAccount, email);
 
-    await emailSender.send('confirmEmail', email, {
+    await emailSender.send(templates.confirmEmail, email, {
       hash: action.hash,
     });
 
