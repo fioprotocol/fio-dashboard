@@ -284,25 +284,10 @@ export default class Fio {
     offset: number,
   ): Promise<NftsResponse> => {
     this.setBaseUrl();
-    const pushResult = await fetch(
-      this.baseurl + 'chain/get_nfts_fio_address',
-      {
-        body: `{
-          "fio_address": "${fioAddress}",
-          "limit": 100,
-          "offset": 0
-        }`,
-        method: 'POST',
-      },
-    );
-
-    const json = await pushResult.json();
-    if (json.type) {
-      this.logError(json);
-    } else if (json.error) {
-      this.logError(json);
-    } else {
-      return json;
+    try {
+      return await this.publicFioSDK.getNfts({ fioAddress }, 100, 0);
+    } catch (e) {
+      this.logError(e);
     }
     return {
       nfts: [],
