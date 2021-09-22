@@ -62,13 +62,16 @@ class EmailSender {
       case templates.createAccount:
         return {
           subject: 'Welcome to FIO Dashboard.',
-          body: EmailTemplate.get(templates.createAccount, {}),
-          images: EmailTemplate.getInlineImages(templates.createAccount),
+          body: EmailTemplate.get(templateName, {}),
+          images: EmailTemplate.getInlineImages(templateName),
         };
-      case 'confirmEmail':
+      case templates.confirmEmail:
         return {
           subject: 'FIO Dashboard - please confirm your email',
-          body: `Please click the link below to confirm your email. <a href="${sendData.mainUrl}confirmEmail/${sendData.hash}">${sendData.mainUrl}confirmEmail/${sendData.hash}</a> FIO Dashboard Team.`,
+          body: EmailTemplate.get(templateName, {
+            link: `${sendData.mainUrl}confirmEmail/${sendData.hash}`,
+          }),
+          images: EmailTemplate.getInlineImages(templateName),
         };
       case 'resetPassword':
         return {
