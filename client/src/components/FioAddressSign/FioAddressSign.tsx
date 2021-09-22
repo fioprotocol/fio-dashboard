@@ -7,7 +7,6 @@ import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 
 type Props = {
   singNFT: (publicKey: string, nfts: NftItem[]) => void;
-  email: string;
   match: {
     params: { address: string };
   };
@@ -16,7 +15,6 @@ type Props = {
 const FioAddressSign: React.FC<Props> = props => {
   const {
     singNFT,
-    email,
     match: {
       params: { address },
     },
@@ -36,7 +34,9 @@ const FioAddressSign: React.FC<Props> = props => {
               </Row>
               <Row>
                 <Col className={classes.subTitleSection}>
-                  <div className={classes.fioAddress}>FIO Address {email}</div>
+                  <div className={classes.fioAddress}>
+                    FIO Address {address}
+                  </div>
                 </Col>
               </Row>
               <Row>
