@@ -73,6 +73,14 @@ class EmailSender {
           }),
           images: EmailTemplate.getInlineImages(templateName),
         };
+      case templates.passRecovery:
+        return {
+          subject: 'FIO Dashboard recovery link',
+          body: EmailTemplate.get(templateName, {
+            link: `${sendData.mainUrl}account-recovery?username=${sendData.username}&token=${sendData.token}`,
+          }),
+          images: EmailTemplate.getInlineImages(templateName),
+        };
       case 'resetPassword':
         return {
           subject: 'Reset your password',

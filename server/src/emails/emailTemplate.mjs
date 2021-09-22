@@ -7,6 +7,7 @@ const emailTemplatesPath = path.resolve('server/src/emails/');
 export const templates = {
   createAccount: 'createAccount',
   confirmEmail: 'confirmEmail',
+  passRecovery: 'passRecovery',
 };
 
 const FIO_LOGO_BASE64 =
