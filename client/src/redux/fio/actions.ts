@@ -377,10 +377,10 @@ export const getSignaturesFromFioAddress = (fioAddress: string) => ({
   fioAddress,
 });
 
-export const singNFT = (publicKey: string, nftRequest: NftItem[]) => ({
+export const singNFT = (fioAddress: string, nftRequest: NftItem[]) => ({
   types: [FIO_SIGN_NFT_REQUEST, FIO_SIGN_NFT_SUCCESS, FIO_SIGN_NFT_FAILURE],
   promise: (api: Api) => {
-    return api.fio.singNFT(publicKey, nftRequest);
+    return api.fio.singNFT(fioAddress, nftRequest);
   },
-  publicKey,
+  fioAddress,
 });
