@@ -39,14 +39,6 @@ export class Action extends Base {
     return user.update({ status: User.STATUS.ACTIVE });
   }
 
-  async resetPassword(externalData) {
-    const user = await User.findById(this.data.userId);
-
-    user.password = externalData.password;
-
-    return user.save();
-  }
-
   static generateHash() {
     return crypto.randomBytes(20).toString('hex');
   }

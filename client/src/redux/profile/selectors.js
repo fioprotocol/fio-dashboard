@@ -9,8 +9,6 @@ export const isAdmin = state =>
   state[prefix].user && state[prefix].user.role === 'ADMIN';
 export const error = state => state[prefix].error;
 export const isConfirmed = state => state[prefix].isConfirmed;
-export const isChangedPwd = state => state[prefix].isChangedPwd;
-export const isRecoveryRequested = state => state[prefix].isRecoveryRequested;
 export const successfullyRegistered = state =>
   state[prefix].successfullyRegistered;
 export const lastAuthData = state => state[prefix].lastAuthData;
