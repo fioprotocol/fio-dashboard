@@ -1,3 +1,4 @@
+import { templates } from '../../emails/emailTemplate';
 import Base from '../Base';
 import X from '../Exception';
 import emailSender from '../emailSender';
@@ -36,7 +37,10 @@ export default class UsersResendRecovery extends Base {
       });
     }
 
-    await emailSender.send('setRecovery', user.email, { token });
+    await emailSender.send(templates.passRecovery, user.email, {
+      username: user.username,
+      token,
+    });
 
     return { data: { success: true } };
   }
