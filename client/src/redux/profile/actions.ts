@@ -99,19 +99,6 @@ export const confirm = (hash: string) => ({
   promise: (api: Api) => api.auth.confirm(hash),
 });
 
-export const PASSWORD_RECOVERY_REQUEST = `${prefix}/PASSWORD_RECOVERY_REQUEST`;
-export const PASSWORD_RECOVERY_SUCCESS = `${prefix}/PASSWORD_RECOVERY_SUCCESS`;
-export const PASSWORD_RECOVERY_FAILURE = `${prefix}/PASSWORD_RECOVERY_FAILURE`;
-
-export const passwordRecovery = ({ email }: { email: string }) => ({
-  types: [
-    PASSWORD_RECOVERY_REQUEST,
-    PASSWORD_RECOVERY_SUCCESS,
-    PASSWORD_RECOVERY_FAILURE,
-  ],
-  promise: (api: Api) => api.auth.resetPassword(email),
-});
-
 export const SET_RECOVERY_REQUEST = `${prefix}/SET_RECOVERY_REQUEST`;
 export const SET_RECOVERY_SUCCESS = `${prefix}/SET_RECOVERY_SUCCESS`;
 export const SET_RECOVERY_FAILURE = `${prefix}/SET_RECOVERY_FAILURE`;
@@ -128,27 +115,6 @@ export const setRecoveryQuestions = (token: string) => ({
     }
     return results;
   },
-});
-
-export const RESET_PASSWORD_REQUEST = `${prefix}/RESET_PASSWORD_REQUEST`;
-export const RESET_PASSWORD_SUCCESS = `${prefix}/RESET_PASSWORD_SUCCESS`;
-export const RESET_PASSWORD_FAILURE = `${prefix}/RESET_PASSWORD_FAILURE`;
-
-export const resetPassword = ({
-  hash,
-  password,
-  confirmPassword,
-}: {
-  hash: string;
-  password: string;
-  confirmPassword: string;
-}) => ({
-  types: [
-    RESET_PASSWORD_REQUEST,
-    RESET_PASSWORD_SUCCESS,
-    RESET_PASSWORD_FAILURE,
-  ],
-  promise: (api: Api) => api.auth.setPassword(hash, password, confirmPassword),
 });
 
 export const RESET_LAST_AUTH_DATA = `${prefix}/RESET_LAST_AUTH_DATA`;

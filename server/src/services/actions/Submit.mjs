@@ -17,11 +17,6 @@ export default class ActionsSubmit extends Base {
     }
 
     const rulesRegistry = {
-      resetPassword: {
-        password: 'required',
-        confirmPassword: ['required', { equal_to_field: ['password'] }],
-      },
-
       confirmEmail: {},
     };
 
