@@ -11,6 +11,7 @@ export const CONFIRM_PIN_ACTIONS = {
   TRANSFER: 'TRANSFER',
   SET_VISIBILITY: 'SET_VISIBILITY',
   RENEW: 'RENEW',
+  SIGN_NFT: 'SIGN_NFT',
 };
 
 export const ADDRESS = 'address';

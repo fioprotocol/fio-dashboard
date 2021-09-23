@@ -59,5 +59,9 @@
       width: fit-content;
       max-width: none;
     }
+    &.fullWidth {
+      width: 100%;
+      max-width: 700px;
+    }
   }
 }

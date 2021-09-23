@@ -17,7 +17,7 @@ import { RENEW_REQUEST } from '../../../redux/fio/actions';
 const Results: React.FC<ResultsProps> = props => {
   const {
     results: {
-      feeCollected: { costFio, costUsdc },
+      feeCollected: { costFio, costUsdc } = { costFio: 0, costUsdc: 0 },
       error,
     },
     title,

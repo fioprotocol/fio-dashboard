@@ -33,7 +33,7 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
     <PseudoModalContainer
       title="NFT Signatures"
       link={ROUTES.FIO_ADDRESSES}
-      hasAutoWidth={true}
+      fullWidth={true}
     >
       <div className={classes.container}>
         <p className={classes.subTitleSection}>
@@ -44,7 +44,10 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
         <div className={classes.actionContainer}>
           <FioName name={address} />
           <div className={classes.buttonsContainer}>
-            <Link to={ROUTES.FIO_ADDRESS_SIGN} className={classes.link}>
+            <Link
+              to={`${ROUTES.FIO_ADDRESS_SIGN}`.replace(':address', address)}
+              className={classes.link}
+            >
               <Button>
                 <FontAwesomeIcon icon="pen" className={classes.icon} /> Sign NFT
               </Button>
