@@ -23,7 +23,7 @@ export type ContainerProps = {
   };
   loading: boolean;
   refreshBalance: (publicKey: string) => void;
-  getFee: () => void;
+  getFee: (fioAddress: string) => void;
   showPinModal: (action: string) => void;
   resetPinConfirm: () => void;
   pinConfirmation: PinConfirmation;

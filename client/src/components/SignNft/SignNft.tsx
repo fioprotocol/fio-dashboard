@@ -8,6 +8,7 @@ import { ROUTES } from '../../constants/routes';
 import PseudoModalContainer from '../PseudoModalContainer';
 import BundledTransactionBadge from '../Badges/BundledTransactionBadge/BundledTransactionBadge';
 import { ContainerProps } from './types';
+import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
 
 const SignNft: React.FC<ContainerProps> = props => {
   const {
@@ -22,7 +23,7 @@ const SignNft: React.FC<ContainerProps> = props => {
   const fioAddress = fioAddresses.find(({ name }) => name === address);
 
   useEffect(() => {
-    getFee();
+    getFee(address);
   }, []);
 
   useEffect(() => {
@@ -30,6 +31,8 @@ const SignNft: React.FC<ContainerProps> = props => {
   }, [fioAddress]);
 
   const bundleCost = 2;
+  const hasLowBalance =
+    fioAddress != null ? fioAddress.remaining < bundleCost : true;
 
   return (
     <PseudoModalContainer
@@ -135,9 +138,17 @@ const SignNft: React.FC<ContainerProps> = props => {
                 bundles={bundleCost}
                 remaining={fioAddress != null ? fioAddress.remaining : 0}
               />
+              <LowBalanceBadge
+                hasLowBalance={hasLowBalance}
+                messageText="Not enough bundles"
+              />
               <Row>
                 <Col className="text-center">
-                  <Button className={classes.actionButton} type="submit">
+                  <Button
+                    className={classes.actionButton}
+                    type="submit"
+                    disabled={hasLowBalance}
+                  >
                     <span>Sign NFT</span>
                   </Button>
                 </Col>

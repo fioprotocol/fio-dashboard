@@ -52,7 +52,8 @@ const reduxConnect = connect(
     refreshBalance,
     showPinModal,
     resetPinConfirm,
-    getFee: () => getFee(apis.fio.actionEndPoints.signNft),
+    getFee: (fioAddress: string) =>
+      getFee(apis.fio.actionEndPoints.signNft, fioAddress),
     singNFT,
   },
 );
