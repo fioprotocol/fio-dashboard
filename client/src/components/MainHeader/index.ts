@@ -13,6 +13,7 @@ import {
 } from '../../redux/profile/selectors';
 import { loading as edgeAuthLoading } from '../../redux/edge/selectors';
 import { list as notifications } from '../../redux/notifications/selectors';
+import { fioAddresses } from '../../redux/fio/selectors';
 import { cartItems } from '../../redux/cart/selectors';
 import {
   refProfileInfo,
@@ -35,6 +36,7 @@ const selector = createStructuredSelector({
   refProfileInfo,
   refProfileLoading,
   homePageLink,
+  fioAddresses,
 });
 
 const actions = (dispatch: AppDispatch, ownProps: MainHeaderProps) => ({
