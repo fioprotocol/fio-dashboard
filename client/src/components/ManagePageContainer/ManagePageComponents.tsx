@@ -126,29 +126,31 @@ const renderActions: React.FC<ActionButtonProps> = props => {
       </Link>
 
       {pageName === PAGE_NAME.ADDRESS ? (
-        <Link
-          to={`${ROUTES.LINK_TOKEN_LIST}/${name}`}
-          className={classes.actionButton}
-        >
-          <Button>
-            <FontAwesomeIcon icon="link" className={classes.linkIcon} /> Link
-          </Button>
-        </Link>
+        <>
+          <Link
+            to={`${ROUTES.LINK_TOKEN_LIST}/${name}`}
+            className={classes.actionButton}
+          >
+            <Button>
+              <FontAwesomeIcon icon="link" className={classes.linkIcon} /> Link
+            </Button>
+          </Link>
+          <Link
+            to={`${ROUTES.FIO_ADDRESS_SIGNATURES}`.replace(':address', name)}
+            className={classes.actionButton}
+          >
+            <Button>
+              <FontAwesomeIcon icon="signature" className={classes.atIcon} />{' '}
+              NFT signature
+            </Button>
+          </Link>
+        </>
       ) : (
         <Button className={classes.actionButton}>
           <FontAwesomeIcon icon="at" className={classes.atIcon} />
           {isDesktop ? 'Register FIO Address' : 'Register Address'}
         </Button>
       )}
-      <Link
-        to={`${ROUTES.FIO_ADDRESS_SIGNATURES}`.replace(':address', name)}
-        className={classes.actionButton}
-      >
-        <Button>
-          <FontAwesomeIcon icon="signature" className={classes.atIcon} /> NFT
-          signature
-        </Button>
-      </Link>
       <Button
         className={classes.settingsButton}
         onClick={() => onSettingsOpen(fioNameItem)}
