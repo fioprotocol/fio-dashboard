@@ -49,7 +49,11 @@ class EmailSender {
       return response[0];
     } catch (err) {
       logger.error(err.message);
-      logger.error(err.toJSON());
+      try {
+        logger.error(err.toJSON());
+      } catch (e) {
+        //
+      }
     }
   }
 
