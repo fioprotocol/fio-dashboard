@@ -1,6 +1,5 @@
 import { Ecc } from '@fioprotocol/fiojs';
 import { Api } from '../../api';
-import { ROUTES } from '../../constants/routes';
 import { FioWalletDoublet, WalletKeysObj } from '../../types';
 import { RouterProps } from 'react-router';
 import { sleep } from '../../utils';
@@ -81,11 +80,11 @@ export const LOGOUT_REQUEST = `${prefix}/LOGOUT_REQUEST`;
 export const LOGOUT_SUCCESS = `${prefix}/LOGOUT_SUCCESS`;
 export const LOGOUT_FAILURE = `${prefix}/LOGOUT_FAILURE`;
 
-export const logout = ({ history }: RouterProps, redirect: boolean = true) => ({
+export const logout = ({ history }: RouterProps, redirect: string = '') => ({
   types: [LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE],
   promise: async (api: Api) => {
     const res = await api.auth.logout();
-    if (redirect) history.push(ROUTES.HOME);
+    if (redirect) history.push(redirect);
     return res;
   },
 });

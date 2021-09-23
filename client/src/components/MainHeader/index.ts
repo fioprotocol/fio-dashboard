@@ -43,7 +43,7 @@ const actions = (dispatch: AppDispatch, ownProps: MainHeaderProps) => ({
   showLoginModal: () => dispatch(showLoginModal()),
   logout: () => {
     const { history } = ownProps;
-    dispatch(logout({ history }));
+    dispatch(logout({ history }, ownProps.homePageLink));
     dispatch((getState: (state: ReduxState) => any) => {
       try {
         const { username } = getState(

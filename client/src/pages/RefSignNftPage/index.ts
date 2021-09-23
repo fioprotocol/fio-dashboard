@@ -10,6 +10,7 @@ import {
   loading,
   refProfileInfo,
   refProfileQueryParams,
+  homePageLink,
 } from '../../redux/refProfile/selectors';
 
 import { RefSignNftPage } from './RefSignNftPage';
@@ -22,6 +23,7 @@ const reduxConnect = connect(
     refProfileInfo,
     refProfileQueryParams,
     fioAddresses,
+    homePageLink,
   }),
   null,
 );

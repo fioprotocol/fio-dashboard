@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { FioAddressDoublet, RefProfile, RefQuery } from '../../types';
-import { ROUTES } from '../../constants/routes';
 import SignNft from '../../components/SignNft';
 
 type MatchParams = {
@@ -16,14 +15,20 @@ type Props = {
   refProfileInfo: RefProfile;
   refProfileQueryParams: RefQuery;
   fioAddresses: FioAddressDoublet[];
+  homePageLink: string;
 };
 
 export const RefSignNftPage: React.FC<Props &
   RouteComponentProps<MatchParams>> = props => {
-  const { refProfileQueryParams, isAuthenticated, fioAddresses } = props;
+  const {
+    refProfileQueryParams,
+    isAuthenticated,
+    fioAddresses,
+    homePageLink,
+  } = props;
 
   if (!isAuthenticated || !fioAddresses.length) {
-    return <Redirect to={ROUTES.REF_HOME_PAGE} />;
+    return <Redirect to={homePageLink} />;
   }
 
   return (
