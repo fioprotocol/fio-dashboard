@@ -3,7 +3,7 @@ import { Button, Col, Container, Row } from 'react-bootstrap';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 import classes from './SignNft.module.scss';
 import { Field, Form, FormRenderProps } from 'react-final-form';
-import Input, { INPUT_COLOR_SCHEMA } from '../../components/Input/Input';
+import Input, { INPUT_UI_STYLES } from '../../components/Input/Input';
 
 type Props = {
   singNFT: (publicKey: string, nfts: NftItem[]) => void;
@@ -33,8 +33,11 @@ const SignNft: React.FC<Props> = props => {
               </Row>
               <Row>
                 <Col className={classes.subTitleSection}>
-                  <div className={classes.fioAddress}>
-                    FIO Address {address}
+                  <div
+                    className={`${classes.fioAddress} d-flex justify-content-start`}
+                  >
+                    <div>FIO Address</div>
+                    <div>{address}</div>
                   </div>
                 </Col>
               </Row>
@@ -44,7 +47,7 @@ const SignNft: React.FC<Props> = props => {
                     name="chain_code"
                     type="text"
                     placeholder="Enter chain code"
-                    colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
+                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
                     component={Input}
                     hideError="true"
                   />
@@ -54,7 +57,7 @@ const SignNft: React.FC<Props> = props => {
                     name="token_id"
                     type="text"
                     placeholder="Enter token ID"
-                    colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
+                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
                     component={Input}
                     hideError="true"
                   />
@@ -66,9 +69,10 @@ const SignNft: React.FC<Props> = props => {
                     name="contract_address"
                     type="text"
                     placeholder="Enter or paste contract address"
-                    colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
+                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
                     component={Input}
                     hideError="true"
+                    showCopyButton
                   />
                 </Col>
               </Row>
@@ -78,9 +82,10 @@ const SignNft: React.FC<Props> = props => {
                     name="url"
                     type="text"
                     placeholder="Enter or paste url"
-                    colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
+                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
                     component={Input}
                     hideError="true"
+                    showCopyButton
                   />
                 </Col>
               </Row>
@@ -90,9 +95,10 @@ const SignNft: React.FC<Props> = props => {
                     name="hash"
                     type="text"
                     placeholder="Enter or paste hash"
-                    colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
+                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
                     component={Input}
                     hideError="true"
+                    showCopyButton
                   />
                 </Col>
               </Row>
@@ -102,9 +108,10 @@ const SignNft: React.FC<Props> = props => {
                     name="metadata"
                     type="text"
                     placeholder="Enter or paste creator url"
-                    colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
+                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
                     component={Input}
                     hideError="true"
+                    showCopyButton
                   />
                 </Col>
               </Row>

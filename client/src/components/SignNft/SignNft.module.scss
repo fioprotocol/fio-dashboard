@@ -94,10 +94,14 @@
   font-weight: bold;
   background-color: #FFFFFF;
   color: #202020;
-  border-radius: 10px;
-  padding: 10px 20px;
+  border-radius: 7px;
+  padding: 15px 20px;
   margin-bottom: 30px;
   margin-top: 20px;
+
+  div {
+    width: 100%;
+  }
 }
 
 .listTitle{
