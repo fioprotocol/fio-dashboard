@@ -30,7 +30,7 @@ export const setContainedParams = (params: any) => {
   }
   if (params.metadata != null) {
     try {
-      params.metadata = JSON.parse(decodeURI(params.metadata));
+      params.metadata = decodeURI(params.metadata);
     } catch (e) {
       console.error(e);
     }

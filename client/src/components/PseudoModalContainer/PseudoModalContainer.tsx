@@ -37,6 +37,11 @@ const PseudoModalContainer: React.FC<Props> = props => {
             <h2 className={classes.title}>{title}</h2>
           </div>
         )}
+        {link == null && title && (
+          <div className={classes.singleTitle}>
+            <h2 className={classes.title}>{title}</h2>
+          </div>
+        )}
       </div>
       {children}
     </div>

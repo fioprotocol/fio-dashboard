@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { withRouter } from 'react-router-dom';
 
 import { compose } from '../../utils';
 import SignNft from './SignNft';
@@ -63,4 +62,4 @@ const reduxConnect = connect(
   },
 );
 
-export default withRouter(compose(reduxConnect)(SignNft));
+export default compose(reduxConnect)(SignNft);

@@ -408,3 +408,13 @@ export const setFees = (nativeFee: number, prices: Prices) => {
 
   return fee;
 };
+
+export const putParamsToUrl = (
+  route: string,
+  params: { [paramName: string]: string },
+) => {
+  return Object.keys(params).reduce(
+    (acc: string, key: string) => acc.replace(`:${key}`, params[key]),
+    `${route}`,
+  );
+};

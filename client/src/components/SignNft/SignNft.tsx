@@ -4,7 +4,6 @@ import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 import classes from './SignNft.module.scss';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import Input, { INPUT_UI_STYLES } from '../../components/Input/Input';
-import { ROUTES } from '../../constants/routes';
 import PseudoModalContainer from '../PseudoModalContainer';
 import BundledTransactionBadge from '../Badges/BundledTransactionBadge/BundledTransactionBadge';
 import { ContainerProps } from './types';
@@ -19,12 +18,12 @@ import Processing from '../common/TransactionProcessing';
 
 const SignNft: React.FC<ContainerProps> = props => {
   const {
+    backTo,
+    initialValues,
     singNFT,
     fioAddresses,
     fioWallets,
-    match: {
-      params: { address },
-    },
+    fioAddressName,
     refreshBalance,
     pinConfirmation,
     showPinModal,
@@ -33,12 +32,12 @@ const SignNft: React.FC<ContainerProps> = props => {
     getFee,
     result,
   } = props;
-  const fioAddress = fioAddresses.find(({ name }) => name === address);
+  const fioAddress = fioAddresses.find(({ name }) => name === fioAddressName);
   const [processing, setProcessing] = useState(false);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
   useEffect(() => {
-    getFee(address);
+    getFee(fioAddressName);
   }, []);
 
   useEffect(() => {
@@ -57,7 +56,7 @@ const SignNft: React.FC<ContainerProps> = props => {
 
       // TODO: set proper results
       setResultsData({
-        name: address,
+        name: fioAddressName,
         error: result.error,
       });
       setProcessing(false);
@@ -86,7 +85,7 @@ const SignNft: React.FC<ContainerProps> = props => {
       setProcessing(true);
       await waitForEdgeAccountStop(edgeAccount);
       const { data }: { data?: NftItem } = pinConfirmation;
-      singNFT(address, [{ ...data }], walletKeys[currentWallet.id]);
+      singNFT(fioAddressName, [{ ...data }], walletKeys[currentWallet.id]);
     }
 
     if (confirmationError) setProcessing(false);
@@ -116,10 +115,10 @@ const SignNft: React.FC<ContainerProps> = props => {
   return (
     <PseudoModalContainer
       title="Sign NFT"
-      link={`${ROUTES.FIO_ADDRESS_SIGNATURES}`.replace(':address', address)}
+      link={backTo || null}
       fullWidth={true}
     >
-      <Form onSubmit={onSubmit}>
+      <Form onSubmit={onSubmit} initialValues={initialValues}>
         {(props: FormRenderProps) => (
           <form onSubmit={props.handleSubmit}>
             <Container fluid className={classes.signSection}>
@@ -132,7 +131,7 @@ const SignNft: React.FC<ContainerProps> = props => {
                     className={`${classes.fioAddress} d-flex justify-content-start`}
                   >
                     <div>FIO Address</div>
-                    <div>{address}</div>
+                    <div>{fioAddressName}</div>
                   </div>
                 </Col>
               </Row>

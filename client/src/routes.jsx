@@ -25,6 +25,7 @@ import DeleteTokenPage from './pages/LinkTokenPages/DeleteTokenPage';
 import AddTokenPage from './pages/LinkTokenPages/AddTokenPage';
 import SettingsPage from './pages/SettingsPage';
 import RefHomePage from './pages/RefHomePage';
+import RefSignNftPage from './pages/RefSignNftPage';
 import AccountRecoveryPage from './pages/AccountRecoveryPage';
 
 import { ROUTES } from './constants/routes';
@@ -118,6 +119,8 @@ const Routes = () => (
           component={AccountRecoveryPage}
           exact
         />
+
+        <PrivateRoute path={ROUTES.REF_SIGN_NFT} component={RefSignNftPage} />
 
         <AuthContainer />
       </Switch>

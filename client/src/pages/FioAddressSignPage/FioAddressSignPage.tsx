@@ -1,10 +1,29 @@
 import React from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 import SignNft from '../../components/SignNft';
+import { putParamsToUrl } from '../../utils';
+import { ROUTES } from '../../constants/routes';
 
-const FioAddressSignPage: React.FC = () => {
+type MatchParams = {
+  address: string;
+};
+
+const FioAddressSignPage: React.FC<RouteComponentProps<
+  MatchParams
+>> = props => {
+  const {
+    match: {
+      params: { address },
+    },
+  } = props;
+
   return (
     <>
-      <SignNft />
+      <SignNft
+        initialValues={{ fioAddress: address }}
+        fioAddressName={address}
+        backTo={putParamsToUrl(ROUTES.FIO_ADDRESS_SIGNATURES, { address })}
+      />
     </>
   );
 };

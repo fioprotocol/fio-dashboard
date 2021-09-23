@@ -45,6 +45,7 @@ const ROUTES: { [route: string]: string } = {
 
   // Referrer Profile pages
   REF_PROFILE_HOME: '/ref/:refProfileCode',
+  REF_SIGN_NFT: '/ref/:refProfileCode/sign-nft',
 };
 
 export { ROUTES };
