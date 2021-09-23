@@ -43,6 +43,6 @@ export const setContainedParams = (params: any) => {
 export const SET_STEP = `${prefix}/SET_STEP`;
 
 export const setStep = (step: string) => ({
-  type: SET_CONTAINED_PARAMS,
+  type: SET_STEP,
   data: step,
 });

@@ -3,13 +3,14 @@ import { createStructuredSelector } from 'reselect';
 import { edgeContextInit } from '../../redux/edge/actions';
 import { isAuthenticated, loading } from '../../redux/profile/selectors';
 import { edgeContextSet } from '../../redux/edge/selectors';
-import { isRefFlow } from '../../redux/refProfile/selectors';
+import { isRefFlow, refProfileInfo } from '../../redux/refProfile/selectors';
 import AuthContainer from './AuthContainer';
 
 const selector = createStructuredSelector({
   edgeContextSet,
   isAuthenticated,
   isRefFlow,
+  refProfileInfo,
   loading,
 });
 

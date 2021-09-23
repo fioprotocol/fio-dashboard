@@ -1,4 +1,4 @@
-import { put, takeEvery } from 'redux-saga/effects';
+import { put, select, takeEvery } from 'redux-saga/effects';
 import { PROFILE_FAILURE, LOGIN_FAILURE, logout } from '../profile/actions';
 import {
   LOGIN_FAILURE as LOGIN_EDGE_FAILURE,
@@ -6,6 +6,7 @@ import {
 } from '../edge/actions';
 import { LIST_FAILURE as NOTIFICATIONS_LIST_FAILURE } from '../notifications/actions';
 import { showGenericErrorModal } from '../modal/actions';
+import { homePageLink as getHomePageLink } from '../refProfile/selectors';
 
 import { ErrorText } from './constants';
 import { ROUTES } from '../../constants/routes';
@@ -37,7 +38,8 @@ export function* notify(history) {
       action.error.fields &&
       action.error.fields.token === 'WRONG_TOKEN'
     ) {
-      yield put(logout({ history }));
+      const homePageLink = yield select(getHomePageLink);
+      yield put(logout({ history }, homePageLink));
     }
   });
 }

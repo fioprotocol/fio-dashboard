@@ -4,7 +4,11 @@ import { setStep } from './actions';
 import { LOGIN_SUCCESS, logout } from '../profile/actions';
 import { FIO_SIGN_NFT_SUCCESS } from '../fio/actions';
 import { SET_REGISTRATION_RESULTS } from '../registrations/actions';
-import { isRefFlow as getIsRefFlow, refProfileQueryParams } from './selectors';
+import {
+  isRefFlow as getIsRefFlow,
+  refProfileQueryParams,
+  homePageLink as getHomePageLink,
+} from './selectors';
 
 export function* refLoginSuccess() {
   yield takeEvery(LOGIN_SUCCESS, function*() {
@@ -33,7 +37,8 @@ export function* nftSignSuccess(history) {
       const { r } = yield select(refProfileQueryParams);
       const redirectUrl = `${r}?txId=${action.data.transactionId}`;
       yield put(setStep(REF_FLOW_STEPS.FINISH));
-      yield put(logout({ history }));
+      const homePageLink = yield select(getHomePageLink);
+      yield put(logout({ history }, homePageLink));
       window.location.replace(redirectUrl);
     }
   });
