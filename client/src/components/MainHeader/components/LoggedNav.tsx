@@ -10,7 +10,6 @@ import classes from '../MainHeader.module.scss';
 import { LoggedActionButtons } from './ActionButtons';
 import SideMenu from './SideMenu';
 import { CartItem, FioAddressDoublet, Notification } from '../../../types';
-import { isRefFlow } from '../../../redux/refProfile/selectors';
 
 type LoggedNavProps = {
   cartItems: CartItem[];
@@ -33,15 +32,13 @@ const LoggedNav = (props: LoggedNavProps) => {
     toggleMenuOpen,
     closeMenu,
     fioAddresses,
-    // commented due to BD-2631 task
-    // notifications,
-    // isRefFlow,
+    notifications,
+    isRefFlow,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
 
   const renderCart = () => {
-    console.log(fioAddresses);
     if (isRefFlow && fioAddresses.length) return null;
     return (
       <>
@@ -82,51 +79,55 @@ const LoggedNav = (props: LoggedNavProps) => {
     );
   };
 
+  // @ts-ignore
+  // eslint-disable-next-line no-unused-vars
+  const renderNotifications = () => {
+    return isRefFlow ? null : (
+      <>
+        <hr className={classnames(classes.vertical, 'mx-3')} />
+        <Nav.Link
+          href="#"
+          className={classnames(classes.navItem, 'text-white')}
+          onClick={closeMenu}
+        >
+          <div className={classnames(classes.notifWrapper, classes.bellshake)}>
+            <FontAwesomeIcon
+              icon="bell"
+              className={classnames(
+                classes.icon,
+                classes.notification,
+                'text-white',
+              )}
+            />
+            {!!notifications.length && (
+              <div className={classes.notifActiveWrapper}>
+                <FontAwesomeIcon
+                  icon="circle"
+                  className={classnames(
+                    classes.notifActive,
+                    'mr-2',
+                    'text-danger',
+                  )}
+                />
+              </div>
+            )}
+          </div>
+          {isDesktop && <div className="ml-3">Notifications</div>}
+        </Nav.Link>{' '}
+        {isDesktop ? (
+          <hr className={classnames(classes.vertical, 'mx-3')} />
+        ) : (
+          <div className="mx-3" />
+        )}
+      </>
+    );
+  };
+
   return (
     <Nav className="pr-0 align-items-center">
       {renderCart()}
       {/* Notifications commented due to BD-2631 task */}
-      {/* <hr className={classnames(classes.vertical, 'mx-3')} /> */}
-      {/* {isRefFlow ? null : (
-        <>
-          <Nav.Link
-            href="#"
-            className={classnames(classes.navItem, 'text-white')}
-            onClick={closeMenu}
-          >
-            <div
-              className={classnames(classes.notifWrapper, classes.bellshake)}
-            >
-              <FontAwesomeIcon
-                icon="bell"
-                className={classnames(
-                  classes.icon,
-                  classes.notification,
-                  'text-white',
-                )}
-              />
-              {!!notifications.length && (
-                <div className={classes.notifActiveWrapper}>
-                  <FontAwesomeIcon
-                    icon="circle"
-                    className={classnames(
-                      classes.notifActive,
-                      'mr-2',
-                      'text-danger',
-                    )}
-                  />
-                </div>
-              )}
-            </div>
-            {isDesktop && <div className="ml-3">Notifications</div>}
-          </Nav.Link> */}
-      {/*{isDesktop ? (*/}
-      {/*  <hr className={classnames(classes.vertical, 'mx-3')} />*/}
-      {/*) : (*/}
-      {/*  <div className="mx-3" />*/}
-      {/*)}*/}
-      {/* </>
-      )} */}
+      {/* {renderNotifications()} */}
       {isDesktop ? (
         <LoggedActionButtons {...props} />
       ) : (
