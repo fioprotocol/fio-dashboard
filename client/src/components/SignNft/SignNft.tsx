@@ -35,7 +35,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     <PseudoModalContainer
       title="Sign NFT"
       link={`${ROUTES.FIO_ADDRESS_SIGNATURES}`.replace(':address', address)}
-      hasAutoWidth={true}
+      fullWidth={true}
     >
       <Form onSubmit={(values: NftItem) => singNFT(address, [{ ...values }])}>
         {(props: FormRenderProps) => (
