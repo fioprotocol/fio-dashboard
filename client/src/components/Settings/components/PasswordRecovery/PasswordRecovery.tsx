@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from 'react-bootstrap';
 import isEmpty from 'lodash/isEmpty';
 import SecurityItem from '../SecurityItem/SecurityItem';
 import SuccessModal from '../../../Modal/SuccessModal';
 import DangerModal from '../../../Modal/DangerModal';
+import ResendEmail from './ResendEmail';
 
-import classes from './PasswordRecovery.module.scss';
+// import classes from './PasswordRecovery.module.scss'; // class for 'change recovery' button
 
 const ITEM_PROPS = {
   title: 'Password Recovery',
@@ -23,7 +23,7 @@ type Props = {
   showRecoveryModal: () => void;
   changeRecoveryQuestionsOpen: () => void;
   username: string;
-  resendRecovery: (token: string) => void;
+  resendRecovery: () => void;
   hasRecoveryQuestions: boolean;
   checkRecoveryQuestions: (username: string) => void;
   disableRecoveryResults: { status?: number };
@@ -91,10 +91,6 @@ const PasswordRecovery: React.FC<Props> = props => {
     }
   };
 
-  const onResendClick = () => {
-    resendRecovery(''); // todo: set token, handle results, show success modal
-  };
-
   const onDisableClick = () => {
     toggleDisableModal(false);
     showPinModal(null, ITEM_PROPS.title);
@@ -111,7 +107,7 @@ const PasswordRecovery: React.FC<Props> = props => {
     ? 'Disable Password Recovery'
     : 'Setup Password Recovery';
 
-  const renderButtonGroup = ( // change recovery button commented because of no design
+  const renderButtonGroup = ( // 'change recovery' button commented because of no design
     <>
       {/* <Button
         onClick={onChangeRecoveryQuestions}
@@ -119,9 +115,7 @@ const PasswordRecovery: React.FC<Props> = props => {
       >
         Change Recovery Questions
       </Button> */}
-      <Button onClick={onResendClick} className={classes.resendButton}>
-        Resend Recovery Email
-      </Button>
+      <ResendEmail resendAction={resendRecovery} loading={loading} />
     </>
   );
 
