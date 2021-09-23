@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 import classes from './SignNft.module.scss';
@@ -9,18 +9,33 @@ import PseudoModalContainer from '../PseudoModalContainer';
 import BundledTransactionBadge from '../Badges/BundledTransactionBadge/BundledTransactionBadge';
 import { ContainerProps } from './types';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
+import { PinConfirmation } from '../../types';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import { waitForEdgeAccountStop } from '../../utils';
+import Results from '../common/TransactionResults';
+import { FIO_SIGN_NFT_REQUEST } from '../../redux/fio/actions';
+import { ResultsData } from '../common/TransactionResults/types';
+import Processing from '../common/TransactionProcessing';
 
 const SignNft: React.FC<ContainerProps> = props => {
   const {
     singNFT,
     fioAddresses,
+    fioWallets,
     match: {
       params: { address },
     },
     refreshBalance,
+    pinConfirmation,
+    showPinModal,
+    resetPinConfirm,
+    signNftProcessing,
     getFee,
+    result,
   } = props;
   const fioAddress = fioAddresses.find(({ name }) => name === address);
+  const [processing, setProcessing] = useState(false);
+  const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
   useEffect(() => {
     getFee(address);
@@ -30,17 +45,81 @@ const SignNft: React.FC<ContainerProps> = props => {
     if (fioAddress != null) refreshBalance(fioAddress.walletPublicKey);
   }, [fioAddress]);
 
+  // Handle pin confirmation
+  useEffect(() => {
+    submit(pinConfirmation);
+  }, [pinConfirmation]);
+
+  // Handle results
+  useEffect(() => {
+    if (!signNftProcessing && processing) {
+      resetPinConfirm();
+
+      // TODO: set proper results
+      setResultsData({
+        name: address,
+        error: result.error,
+      });
+      setProcessing(false);
+    }
+  }, [signNftProcessing, result]);
+
+  const submit = async (pinConfirmation: PinConfirmation) => {
+    const {
+      account: edgeAccount,
+      keys: walletKeys,
+      error: confirmationError,
+      action: confirmationAction,
+    } = pinConfirmation;
+
+    if (confirmationAction !== CONFIRM_PIN_ACTIONS.SIGN_NFT) return;
+    const currentWallet = fioWallets.find(
+      ({ publicKey }) => publicKey === fioAddress.walletPublicKey,
+    );
+    if (
+      walletKeys &&
+      walletKeys[currentWallet.id] &&
+      !confirmationError &&
+      !signNftProcessing &&
+      !processing
+    ) {
+      setProcessing(true);
+      await waitForEdgeAccountStop(edgeAccount);
+      const { data }: { data?: NftItem } = pinConfirmation;
+      singNFT(address, [{ ...data }], walletKeys[currentWallet.id]);
+    }
+
+    if (confirmationError) setProcessing(false);
+  };
+
+  const onSubmit = (values: NftItem) => {
+    showPinModal(CONFIRM_PIN_ACTIONS.SIGN_NFT, values);
+  };
+
   const bundleCost = 2;
   const hasLowBalance =
     fioAddress != null ? fioAddress.remaining < bundleCost : true;
 
+  // TODO: show proper results
+  if (resultsData)
+    return (
+      <Results
+        results={resultsData}
+        title={resultsData.error ? 'Failed!' : 'Signed!'}
+        actionName={FIO_SIGN_NFT_REQUEST}
+        onClose={() => {}}
+        onRetry={() => {}}
+      />
+    );
+
+  // TODO: set validation
   return (
     <PseudoModalContainer
       title="Sign NFT"
       link={`${ROUTES.FIO_ADDRESS_SIGNATURES}`.replace(':address', address)}
       fullWidth={true}
     >
-      <Form onSubmit={(values: NftItem) => singNFT(address, [{ ...values }])}>
+      <Form onSubmit={onSubmit}>
         {(props: FormRenderProps) => (
           <form onSubmit={props.handleSubmit}>
             <Container fluid className={classes.signSection}>
@@ -147,7 +226,7 @@ const SignNft: React.FC<ContainerProps> = props => {
                   <Button
                     className={classes.actionButton}
                     type="submit"
-                    disabled={hasLowBalance}
+                    disabled={hasLowBalance || processing}
                   >
                     <span>Sign NFT</span>
                   </Button>
@@ -157,6 +236,7 @@ const SignNft: React.FC<ContainerProps> = props => {
           </form>
         )}
       </Form>
+      <Processing isProcessing={processing} />
     </PseudoModalContainer>
   );
 };

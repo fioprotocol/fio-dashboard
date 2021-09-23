@@ -302,23 +302,20 @@ export default class Fio {
   ): Promise<NftsResponse> => {
     this.setBaseUrl();
     try {
-      const result = await this.walletFioSDK.genericAction('pushTransaction', {
-        action: 'addnft',
-        account: 'fio.address',
-        data: {
+      const result = await this.walletFioSDK.pushTransaction(
+        'fio.address',
+        'addnft',
+        {
           fio_address: fioAddress,
           nfts,
           max_fee: 100000000000,
           tpid: '',
         },
-      });
+      );
       return result;
     } catch (err) {
       this.logError(err);
+      throw err;
     }
-    return {
-      nfts: [],
-      more: false,
-    };
   };
 }

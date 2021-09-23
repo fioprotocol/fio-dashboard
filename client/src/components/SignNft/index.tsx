@@ -5,7 +5,11 @@ import { withRouter } from 'react-router-dom';
 import { compose } from '../../utils';
 import SignNft from './SignNft';
 
-import { fioAddresses, fioWallets } from '../../redux/fio/selectors';
+import {
+  fioAddresses,
+  fioWallets,
+  signNftProcessing,
+} from '../../redux/fio/selectors';
 import { confirmingPin, pinConfirmation } from '../../redux/edge/selectors';
 import {
   refreshBalance,
@@ -25,6 +29,7 @@ const reduxConnect = connect(
     fioWallets,
     confirmingPin,
     pinConfirmation,
+    signNftProcessing,
     fee: (state: ReduxState) => {
       const { fees } = state.fio;
 

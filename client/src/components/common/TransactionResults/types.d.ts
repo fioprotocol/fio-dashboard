@@ -1,7 +1,7 @@
 import { PageNameType } from '../../../types';
 
 export type ResultsData = {
-  feeCollected: {
+  feeCollected?: {
     costFio: number;
     costUsdc: number;
   };

@@ -1,7 +1,11 @@
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 import { Api } from '../../api';
-import { PublicAddressDoublet, LinkActionResult } from '../../types';
+import {
+  PublicAddressDoublet,
+  LinkActionResult,
+  WalletKeys,
+} from '../../types';
 export const prefix = 'fio';
 
 export const REFRESH_BALANCE_REQUEST = `${prefix}/REFRESH_BALANCE_REQUEST`;
@@ -377,10 +381,23 @@ export const getSignaturesFromFioAddress = (fioAddress: string) => ({
   fioAddress,
 });
 
-export const singNFT = (fioAddress: string, nftRequest: NftItem[]) => ({
+export const singNFT = (
+  fioAddress: string,
+  nftRequest: NftItem[],
+  keys: WalletKeys,
+) => ({
   types: [FIO_SIGN_NFT_REQUEST, FIO_SIGN_NFT_SUCCESS, FIO_SIGN_NFT_FAILURE],
-  promise: (api: Api) => {
-    return api.fio.singNFT(fioAddress, nftRequest);
+  promise: async (api: Api) => {
+    api.fio.setWalletFioSdk(keys);
+    try {
+      const result = await api.fio.singNFT(fioAddress, nftRequest);
+      api.fio.clearWalletFioSdk();
+      return result;
+    } catch (e) {
+      api.fio.clearWalletFioSdk();
+      throw e;
+    }
   },
   fioAddress,
+  actionName: FIO_SIGN_NFT_REQUEST,
 });
