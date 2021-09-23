@@ -44,7 +44,10 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
         <div className={classes.actionContainer}>
           <FioName name={address} />
           <div className={classes.buttonsContainer}>
-            <Link to={ROUTES.FIO_ADDRESS_SIGN} className={classes.link}>
+            <Link
+              to={`${ROUTES.FIO_ADDRESS_SIGN}`.replace(':address', address)}
+              className={classes.link}
+            >
               <Button>
                 <FontAwesomeIcon icon="pen" className={classes.icon} /> Sign NFT
               </Button>

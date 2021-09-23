@@ -1,10 +1,10 @@
 import React from 'react';
-import FioAddressSign from '../../components/FioAddressSign';
+import SignNft from '../../components/SignNft';
 
 const FioAddressSignPage: React.FC = () => {
   return (
     <>
-      <FioAddressSign />
+      <SignNft />
     </>
   );
 };

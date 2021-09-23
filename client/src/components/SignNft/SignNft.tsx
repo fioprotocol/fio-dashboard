@@ -1,9 +1,9 @@
 import React from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
-import classes from './FioAddressSign.module.scss';
-import { Field, Form } from 'react-final-form';
-import Input, { INPUT_COLOR_SCHEMA } from '../../components/Input/Input';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
+import classes from './SignNft.module.scss';
+import { Field, Form, FormRenderProps } from 'react-final-form';
+import Input, { INPUT_COLOR_SCHEMA } from '../../components/Input/Input';
 
 type Props = {
   singNFT: (publicKey: string, nfts: NftItem[]) => void;
@@ -12,7 +12,7 @@ type Props = {
   };
 };
 
-const FioAddressSign: React.FC<Props> = props => {
+const SignNft: React.FC<Props> = props => {
   const {
     singNFT,
     match: {
@@ -22,8 +22,7 @@ const FioAddressSign: React.FC<Props> = props => {
   return (
     <>
       <Form onSubmit={(values: NftItem) => singNFT(address, [{ ...values }])}>
-        {/* tslint:disable-next-line:no-shadowed-variable */}
-        {props => (
+        {(props: FormRenderProps) => (
           <form onSubmit={props.handleSubmit}>
             <Container fluid className={classes.signSection}>
               <Row>
@@ -135,4 +134,4 @@ const FioAddressSign: React.FC<Props> = props => {
   );
 };
 
-export default FioAddressSign;
+export default SignNft;
