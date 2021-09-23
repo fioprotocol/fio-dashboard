@@ -1,34 +1,47 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 import classes from './SignNft.module.scss';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import Input, { INPUT_UI_STYLES } from '../../components/Input/Input';
+import { ROUTES } from '../../constants/routes';
+import PseudoModalContainer from '../PseudoModalContainer';
+import BundledTransactionBadge from '../Badges/BundledTransactionBadge/BundledTransactionBadge';
+import { ContainerProps } from './types';
 
-type Props = {
-  singNFT: (publicKey: string, nfts: NftItem[]) => void;
-  match: {
-    params: { address: string };
-  };
-};
-
-const SignNft: React.FC<Props> = props => {
+const SignNft: React.FC<ContainerProps> = props => {
   const {
     singNFT,
+    fioAddresses,
     match: {
       params: { address },
     },
+    refreshBalance,
+    getFee,
   } = props;
+  const fioAddress = fioAddresses.find(({ name }) => name === address);
+
+  useEffect(() => {
+    getFee();
+  }, []);
+
+  useEffect(() => {
+    if (fioAddress != null) refreshBalance(fioAddress.walletPublicKey);
+  }, [fioAddress]);
+
+  const bundleCost = 2;
+
   return (
-    <>
+    <PseudoModalContainer
+      title="Sign NFT"
+      link={`${ROUTES.FIO_ADDRESS_SIGNATURES}`.replace(':address', address)}
+      hasAutoWidth={true}
+    >
       <Form onSubmit={(values: NftItem) => singNFT(address, [{ ...values }])}>
         {(props: FormRenderProps) => (
           <form onSubmit={props.handleSubmit}>
             <Container fluid className={classes.signSection}>
-              <Row>
-                <Col className={classes.mainTitleSection}>Sign NFT</Col>
-              </Row>
-              <Row>
+              <Row className="mt-2">
                 <Col className={classes.subTitleSection}>Details</Col>
               </Row>
               <Row>
@@ -115,19 +128,15 @@ const SignNft: React.FC<Props> = props => {
                   />
                 </Col>
               </Row>
-              <Row>
+              <Row className="mb-n3">
                 <Col className={classes.subTitleSection}>Transaction cost</Col>
               </Row>
+              <BundledTransactionBadge
+                bundles={bundleCost}
+                remaining={fioAddress != null ? fioAddress.remaining : 0}
+              />
               <Row>
-                <Col>
-                  <div className={classes.transactionAmount}>
-                    Bundle Transaction 2 Bundles
-                    <span className={classes.bundleInfo}> (2 Remaining)</span>
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col lg={10}>
+                <Col className="text-center">
                   <Button className={classes.actionButton} type="submit">
                     <span>Sign NFT</span>
                   </Button>
@@ -137,7 +146,7 @@ const SignNft: React.FC<Props> = props => {
           </form>
         )}
       </Form>
-    </>
+    </PseudoModalContainer>
   );
 };
 
