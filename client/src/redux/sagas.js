@@ -10,7 +10,11 @@ import {
 import { edgeLoginSuccess } from './edge/sagas';
 import { listFailure } from './users/sagas';
 import { notify } from './notify/sagas';
-import { fioAddressRegisterSuccess, refLoginSuccess } from './refProfile/sagas';
+import {
+  fioAddressRegisterSuccess,
+  refLoginSuccess,
+  nftSignSuccess,
+} from './refProfile/sagas';
 import { clearGenericModalError } from './modal/sagas';
 
 export default function* rootSaga(history, api) {
@@ -26,5 +30,6 @@ export default function* rootSaga(history, api) {
     fioAddressRegisterSuccess(history),
     refLoginSuccess(),
     clearGenericModalError(),
+    nftSignSuccess(history),
   ]);
 }
