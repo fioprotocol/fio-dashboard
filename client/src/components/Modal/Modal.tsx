@@ -11,6 +11,7 @@ type Props = {
   isDanger?: boolean;
   isSimple?: boolean;
   isSuccess?: boolean;
+  isInfo?: boolean;
   onClose: () => void;
   show: boolean;
   title?: React.ReactNode | string;
@@ -27,6 +28,7 @@ const ModalComponent: React.FC<Props> = props => {
     isDanger,
     isSimple,
     isSuccess,
+    isInfo,
     onClose,
     show,
     title,
@@ -46,6 +48,7 @@ const ModalComponent: React.FC<Props> = props => {
         isDanger && classes.danger,
         isSimple && classes.simple,
         isSuccess && classes.success,
+        isInfo && classes.info,
       )}
       dialogClassName={classnames(
         classes.dialog,
