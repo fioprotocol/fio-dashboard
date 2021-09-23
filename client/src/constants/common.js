@@ -32,7 +32,7 @@ export const REF_ACTIONS = {
 };
 
 export const REF_ACTIONS_TO_ROUTES = {
-  [REF_ACTIONS.SIGNNFT]: ROUTES.SIGN_NFT,
+  [REF_ACTIONS.SIGNNFT]: ROUTES.REF_SIGN_NFT,
 };
 
 export const REF_FLOW_STEPS = {

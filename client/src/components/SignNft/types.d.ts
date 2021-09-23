@@ -3,11 +3,15 @@ import { History } from 'history';
 import {
   FioWalletDoublet,
   PinConfirmation,
-  FioAddressDoublet, WalletKeys,
+  FioAddressDoublet,
+  WalletKeys,
 } from '../../types';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 
 export type ContainerOwnProps = {
+  initialValues: NftItem;
+  fioAddressName: string;
+  backTo?: string;
   history: History;
 };
 

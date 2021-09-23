@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { RouterProps, withRouter } from 'react-router-dom';
 
-import { compose } from '../utils';
+import { compose, putParamsToUrl } from '../utils';
 import { isAuthenticated } from '../redux/profile/selectors';
 import { FioAddressDoublet, RefProfile, RefQuery } from '../types';
 import {
@@ -38,17 +38,23 @@ const RefFlow = (props: Props & RouterProps): React.FunctionComponent => {
     history,
   } = props;
 
+  const fioAddressesAmount = fioAddresses.length;
+
   useEffect(() => {
     if (
       isAuthenticated &&
       refProfileInfo != null &&
       refProfileInfo.code != null &&
-      fioAddresses.length
+      fioAddressesAmount > 0
     ) {
       // todo: should we set steps?
-      history.push(REF_ACTIONS_TO_ROUTES[refProfileQueryParams.action]);
+      history.push(
+        putParamsToUrl(REF_ACTIONS_TO_ROUTES[refProfileQueryParams.action], {
+          refProfileCode: refProfileInfo.code,
+        }),
+      );
     }
-  }, [refProfileInfo, isAuthenticated, fioAddresses]);
+  }, [refProfileInfo, isAuthenticated, fioAddressesAmount]);
 
   return null;
 };

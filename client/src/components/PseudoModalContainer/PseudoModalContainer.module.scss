@@ -31,6 +31,13 @@
         @include proxima-nova-bold;
       }
     }
+
+    .singleTitle {
+      .title {
+        font-size: 1.375em;
+        @include proxima-nova-bold;
+      }
+    }
   }
 }
 
@@ -51,6 +58,11 @@
       .withBack {
         .title {
           margin-top: 1.25rem;
+          font-size: 1.875em;
+        }
+      }
+      .singleTitle {
+        .title {
           font-size: 1.875em;
         }
       }
