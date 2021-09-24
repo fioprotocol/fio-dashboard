@@ -14,6 +14,7 @@ export default combineReducers({
       case actions.CHANGE_PIN_REQUEST:
       case actions.RECOVERY_ACCOUNT_REQUEST:
       case actions.DISABLE_RECOVERY_PASSWORD_REQUEST:
+      case actions.GET_RECOVERY_TOKEN_REQUEST:
         return true;
       case actions.LOGIN_SUCCESS:
       case actions.LOGIN_FAILURE:
@@ -29,6 +30,8 @@ export default combineReducers({
       case actions.RECOVERY_ACCOUNT_FAILURE:
       case actions.DISABLE_RECOVERY_PASSWORD_SUCCESS:
       case actions.DISABLE_RECOVERY_PASSWORD_FAILURE:
+      case actions.GET_RECOVERY_TOKEN_SUCCESS:
+      case actions.GET_RECOVERY_TOKEN_FAILURE:
         return false;
       default:
         return state;
@@ -296,6 +299,20 @@ export default combineReducers({
       }
       case actions.DISABLE_RECOVERY_PASSWORD_FAILURE: {
         return action.error;
+      }
+      default:
+        return state;
+    }
+  },
+  recoveryToken(state = '', action) {
+    switch (action.type) {
+      case actions.GET_RECOVERY_TOKEN_SUCCESS: {
+        return action.data;
+      }
+      case actions.GET_RECOVERY_TOKEN_REQUEST:
+      case actions.GET_RECOVERY_TOKEN_FAILURE:
+      case actions.CLEAR_RECOVERY_TOKEN: {
+        return '';
       }
       default:
         return state;

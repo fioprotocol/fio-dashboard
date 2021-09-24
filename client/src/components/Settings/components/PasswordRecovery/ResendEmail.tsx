@@ -1,17 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
+import isEmpty from 'lodash/isEmpty';
+import { EdgeAccount } from 'edge-core-js';
 import SendLinkModal from './SendLinkModal';
 import EmailModal from '../../../Modal/EmailModal';
 
 import classes from './PasswordRecovery.module.scss';
 
+const pinModalName = 'resendEmail';
+
 type Props = {
-  resendAction: () => void;
+  resendAction: (recoveryToken: string) => void;
   loading: boolean;
+  showPinModal: (action: null, data: string) => void;
+  pinConfirmation: { account: EdgeAccount; data?: string };
+  getRecoveryToken: (account: EdgeAccount) => void;
+  recoveryToken: string;
+  clearRecoveryToken: () => void;
+  resetPinConfirm: () => void;
+  clearResendRecoveryResults: () => void;
+  resendRecoveryResults: { success?: boolean };
+  resending: boolean;
 };
 
 const ResendEmail: React.FC<Props> = props => {
-  const { resendAction, loading } = props;
+  const {
+    loading,
+    showPinModal,
+    pinConfirmation,
+    getRecoveryToken,
+    recoveryToken,
+    clearRecoveryToken,
+    resetPinConfirm,
+    resendAction,
+    clearResendRecoveryResults,
+    resendRecoveryResults,
+    resending,
+  } = props;
   const [showSendEmailModal, toggleSendEmailModal] = useState(false);
   const [showSuccessModal, toggleSuccessModal] = useState(false);
 
@@ -20,9 +45,8 @@ const ResendEmail: React.FC<Props> = props => {
   };
 
   const onSendEmailClick = () => {
-    resendAction();
+    showPinModal(null, pinModalName);
     toggleSendEmailModal(false);
-    toggleSuccessModal(true);
   };
 
   const onSendEmailModalClose = () => {
@@ -30,8 +54,34 @@ const ResendEmail: React.FC<Props> = props => {
   };
 
   const onSuccessClose = () => {
+    clearRecoveryToken();
+    clearResendRecoveryResults();
     toggleSuccessModal(false);
   };
+
+  useEffect(() => {
+    if (!isEmpty(pinConfirmation)) {
+      const { account, data } = pinConfirmation;
+      if (data === pinModalName) {
+        getRecoveryToken(account);
+        toggleSendEmailModal(true);
+      }
+    }
+  }, [pinConfirmation]);
+
+  useEffect(() => {
+    if (recoveryToken != null && recoveryToken !== '') {
+      resetPinConfirm();
+      resendAction(recoveryToken);
+    }
+  }, [recoveryToken]);
+
+  useEffect(() => {
+    if (resendRecoveryResults.success) {
+      toggleSendEmailModal(false);
+      toggleSuccessModal(true);
+    }
+  }, [resendRecoveryResults]);
 
   return (
     <>
@@ -42,7 +92,7 @@ const ResendEmail: React.FC<Props> = props => {
         show={showSendEmailModal}
         onClose={onSendEmailModalClose}
         onClick={onSendEmailClick}
-        loading={loading}
+        loading={loading || resending}
       />
       <EmailModal
         show={showSuccessModal}

@@ -384,3 +384,21 @@ export const CLEAR_DISABLE_RECOVERY_PASSWORD_RESULTS = `${prefix}/CLEAR_DISABLE_
 export const clearDisableRecoveryResults = () => ({
   type: CLEAR_DISABLE_RECOVERY_PASSWORD_RESULTS,
 });
+
+export const GET_RECOVERY_TOKEN_REQUEST = `${prefix}/GET_RECOVERY_TOKEN_REQUEST`;
+export const GET_RECOVERY_TOKEN_SUCCESS = `${prefix}/GET_RECOVERY_TOKEN_SUCCESS`;
+export const GET_RECOVERY_TOKEN_FAILURE = `${prefix}/GET_RECOVERY_TOKEN_FAILURE`;
+
+export const getRecoveryToken = (account: EdgeAccount) => ({
+  types: [
+    GET_RECOVERY_TOKEN_REQUEST,
+    GET_RECOVERY_TOKEN_SUCCESS,
+    GET_RECOVERY_TOKEN_FAILURE,
+  ],
+  promise: (api: Api) => api.edge.getToken(account),
+});
+
+export const CLEAR_RECOVERY_TOKEN = `${prefix}/CLEAR_RECOVERY_TOKEN`;
+export const clearRecoveryToken = () => ({
+  type: CLEAR_RECOVERY_TOKEN,
+});

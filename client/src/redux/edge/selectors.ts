@@ -38,3 +38,4 @@ export const recoveryAccountResults = (state: ReduxState) =>
   state[prefix].recoveryAccountResults;
 export const disableRecoveryResults = (state: ReduxState) =>
   state[prefix].disableRecoveryResults;
+export const recoveryToken = (state: ReduxState) => state[prefix].recoveryToken;

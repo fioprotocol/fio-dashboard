@@ -141,3 +141,8 @@ export const resendRecovery = (token: string) => ({
   ],
   promise: (api: Api) => api.auth.resendRecovery(token),
 });
+
+export const CLEAR_RESEND_RECOVERY_RESULTS = `${prefix}/CLEAR_RESEND_RECOVERY_RESULTS`;
+export const clearResendRecoveryResults = () => ({
+  type: CLEAR_RESEND_RECOVERY_RESULTS,
+});

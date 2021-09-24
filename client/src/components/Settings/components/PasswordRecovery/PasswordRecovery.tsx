@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
+import { Button } from 'react-bootstrap';
+import { EdgeAccount } from 'edge-core-js';
+
 import SecurityItem from '../SecurityItem/SecurityItem';
 import SuccessModal from '../../../Modal/SuccessModal';
 import DangerModal from '../../../Modal/DangerModal';
 import ResendEmail from './ResendEmail';
 
-// import classes from './PasswordRecovery.module.scss'; // class for 'change recovery' button
+import classes from './PasswordRecovery.module.scss';
 
 const ITEM_PROPS = {
   title: 'Password Recovery',
@@ -28,11 +31,17 @@ type Props = {
   checkRecoveryQuestions: (username: string) => void;
   disableRecoveryResults: { status?: number };
   showPinModal: (action: null, data: string) => void;
-  pinConfirmation: { account: {}; data?: string };
+  pinConfirmation: { account: EdgeAccount; data?: string };
   disableRecoveryPassword: (account: {}) => void;
   resetPinConfirm: () => void;
   loading: boolean;
   clearDisableRecoveryResults: () => void;
+  recoveryToken: string;
+  getRecoveryToken: (account: EdgeAccount) => void;
+  clearRecoveryToken: () => void;
+  clearResendRecoveryResults: () => void;
+  resendRecoveryResults: { success?: boolean };
+  resending: boolean;
 };
 
 const PasswordRecovery: React.FC<Props> = props => {
@@ -50,6 +59,12 @@ const PasswordRecovery: React.FC<Props> = props => {
     resetPinConfirm,
     loading,
     clearDisableRecoveryResults,
+    recoveryToken,
+    getRecoveryToken,
+    clearRecoveryToken,
+    clearResendRecoveryResults,
+    resendRecoveryResults,
+    resending,
   } = props;
 
   const [showDisableModal, toggleDisableModal] = useState(false);
@@ -107,15 +122,32 @@ const PasswordRecovery: React.FC<Props> = props => {
     ? 'Disable Password Recovery'
     : 'Setup Password Recovery';
 
+  /* eslint-disable */
+  // @ts-ignore
+  const renderChangeRecoveryButton = () => (
+    <Button
+      onClick={onChangeRecoveryQuestions}
+      className={classes.changeButton}
+    >
+      Change Recovery Questions
+    </Button>
+  );
+
   const renderButtonGroup = ( // 'change recovery' button commented because of no design
     <>
-      {/* <Button
-        onClick={onChangeRecoveryQuestions}
-        className={classes.changeButton}
-      >
-        Change Recovery Questions
-      </Button> */}
-      <ResendEmail resendAction={resendRecovery} loading={loading} />
+      {/* {renderChangeRecoveryButton()} */}
+      <ResendEmail
+        resendAction={resendRecovery}
+        loading={loading}
+        pinConfirmation={pinConfirmation}
+        showPinModal={showPinModal}
+        clearRecoveryToken={clearRecoveryToken}
+        getRecoveryToken={getRecoveryToken}
+        resetPinConfirm={resetPinConfirm}
+        recoveryToken={recoveryToken}
+        resending={resending}
+        resendRecoveryResults={resendRecoveryResults}
+        clearResendRecoveryResults={clearResendRecoveryResults} />
     </>
   );
 
