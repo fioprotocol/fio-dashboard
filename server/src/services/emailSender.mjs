@@ -14,6 +14,7 @@ class EmailSender {
     const sendData = {
       ...data,
       mainUrl: config.mainUrl,
+      supportLink: config.supportLink,
     };
     const template = await this.getTemplate(type, sendData);
     const emailTo = process.env.TEST_RECIEVER_EMAIL
@@ -66,7 +67,7 @@ class EmailSender {
       case templates.createAccount:
         return {
           subject: 'Welcome to FIO Dashboard.',
-          body: EmailTemplate.get(templateName, {}),
+          body: EmailTemplate.get(templateName, sendData),
           images: EmailTemplate.getInlineImages(templateName),
         };
       case templates.confirmEmail:
@@ -74,6 +75,7 @@ class EmailSender {
           subject: 'FIO Dashboard - please confirm your email',
           body: EmailTemplate.get(templateName, {
             link: `${sendData.mainUrl}confirmEmail/${sendData.hash}`,
+            ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
         };
@@ -82,6 +84,7 @@ class EmailSender {
           subject: 'FIO Dashboard recovery link',
           body: EmailTemplate.get(templateName, {
             link: `${sendData.mainUrl}account-recovery?username=${sendData.username}&token=${sendData.token}`,
+            ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
         };
