@@ -37,13 +37,19 @@ export const closePinConfirmModal = () => ({
 
 export const SHOW_GENERIC_ERROR_MODAL = `${prefix}/SHOW_GENERIC_ERROR_MODAL`;
 
-export const showGenericErrorModal = (message, title) => ({
+export const showGenericErrorModal = (message, title, buttonText) => ({
   type: SHOW_GENERIC_ERROR_MODAL,
-  data: { message, title },
+  data: { message, title, buttonText },
 });
 
 export const CLOSE_GENERIC_ERROR_MODAL = `${prefix}/CLOSE_GENERIC_ERROR_MODAL`;
 
 export const closeGenericErrorModal = () => ({
   type: CLOSE_GENERIC_ERROR_MODAL,
+});
+
+export const CLEAR_GENERIC_ERROR_DATA = `${prefix}/CLEAR_GENERIC_ERROR_DATA`;
+
+export const clearGenericErrorData = () => ({
+  type: CLEAR_GENERIC_ERROR_DATA,
 });
