@@ -29,3 +29,7 @@ export const hasFreeAddress = createSelector(
 export const edgeUsername = createSelector(user, user => user && user.username);
 export const changeRecoveryQuestionsResults = state =>
   state[prefix].changeRecoveryQuestionsResults;
+
+export const resendRecoveryResults = state =>
+  state[prefix].resendRecoveryResults;
+export const resending = state => state[prefix].resending;
