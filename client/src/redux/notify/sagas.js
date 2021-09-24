@@ -5,6 +5,10 @@ import {
   CONFIRM_PIN_FAILURE,
 } from '../edge/actions';
 import { LIST_FAILURE as NOTIFICATIONS_LIST_FAILURE } from '../notifications/actions';
+import { showGenericErrorModal } from '../modal/actions';
+
+import { ErrorText } from './constants';
+import { ROUTES } from '../../constants/routes';
 
 export const toString = obj =>
   Object.entries(obj)
@@ -21,7 +25,10 @@ export function* notify(history) {
       action.type !== NOTIFICATIONS_LIST_FAILURE &&
       action.type !== CONFIRM_PIN_FAILURE
     ) {
-      // todo: handle common errors
+      const { message, title, buttonText } = ErrorText[action.type];
+
+      yield put(showGenericErrorModal(message, title, buttonText));
+      yield history.push(ROUTES.HOME);
     }
 
     if (

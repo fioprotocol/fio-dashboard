@@ -62,7 +62,7 @@ export default combineReducers({
     switch (action.type) {
       case actions.SHOW_GENERIC_ERROR_MODAL:
         return action.data;
-      case actions.CLOSE_GENERIC_ERROR_MODAL:
+      case actions.CLEAR_GENERIC_ERROR_DATA:
         return {};
       default:
         return state;

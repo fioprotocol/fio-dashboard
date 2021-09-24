@@ -11,6 +11,7 @@ import { edgeLoginSuccess } from './edge/sagas';
 import { listFailure } from './users/sagas';
 import { notify } from './notify/sagas';
 import { fioAddressRegisterSuccess, refLoginSuccess } from './refProfile/sagas';
+import { clearGenericModalError } from './modal/sagas';
 
 export default function* rootSaga(history, api) {
   yield all([
@@ -24,5 +25,6 @@ export default function* rootSaga(history, api) {
     notify(history),
     fioAddressRegisterSuccess(history),
     refLoginSuccess(),
+    clearGenericModalError(),
   ]);
 }
