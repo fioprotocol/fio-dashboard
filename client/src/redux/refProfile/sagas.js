@@ -31,7 +31,7 @@ export function* refActionSuccess() {
     const isRefFlow = yield select(getIsRefFlow);
     if (isRefFlow && action.data.status) {
       const { r } = yield select(refProfileQueryParams);
-      const redirectUrl = `${r}?txId=${action.data.transactionId}`;
+      const redirectUrl = `${r}?txId=${action.data.transaction_id}`;
       yield put(setStep(REF_FLOW_STEPS.FINISH));
       window.location.replace(redirectUrl);
     }

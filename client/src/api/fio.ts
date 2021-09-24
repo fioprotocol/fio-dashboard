@@ -13,7 +13,7 @@ import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 
 interface TrxResponse {
-  transactionId?: string;
+  transaction_id?: string;
   status: string;
   expiration?: string;
   fee_collected?: number;
