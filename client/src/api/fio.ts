@@ -13,9 +13,10 @@ import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 
 interface TrxResponse {
+  transactionId?: string;
   status: string;
-  expiration: string;
-  fee_collected: number;
+  expiration?: string;
+  fee_collected?: number;
 }
 
 type FIOSDK_LIB = typeof FIOSDK;
@@ -299,7 +300,7 @@ export default class Fio {
   singNFT = async (
     fioAddress: string,
     nfts: NftItem[],
-  ): Promise<NftsResponse> => {
+  ): Promise<TrxResponse> => {
     this.setBaseUrl();
     try {
       const result = await this.walletFioSDK.pushTransaction(
