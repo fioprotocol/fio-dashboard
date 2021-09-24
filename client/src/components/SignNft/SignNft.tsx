@@ -15,6 +15,7 @@ import Results from '../common/TransactionResults';
 import { FIO_SIGN_NFT_REQUEST } from '../../redux/fio/actions';
 import { ResultsData } from '../common/TransactionResults/types';
 import Processing from '../common/TransactionProcessing';
+import CustomDropdown from './CustomDropdown';
 
 const SignNft: React.FC<ContainerProps> = props => {
   const {
@@ -32,9 +33,14 @@ const SignNft: React.FC<ContainerProps> = props => {
     getFee,
     result,
   } = props;
-  const fioAddress = fioAddresses.find(({ name }) => name === fioAddressName);
   const [processing, setProcessing] = useState(false);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
+  const [selectedFioAddressName, setSelectedFioAddress] = useState<string>(
+    fioAddressName,
+  );
+  const fioAddress = fioAddresses.find(
+    ({ name }) => name === selectedFioAddressName,
+  );
 
   useEffect(() => {
     getFee(fioAddressName);
@@ -131,7 +137,11 @@ const SignNft: React.FC<ContainerProps> = props => {
                     className={`${classes.fioAddress} d-flex justify-content-start`}
                   >
                     <div>FIO Address</div>
-                    <div>{fioAddressName}</div>
+                    <CustomDropdown
+                      value={selectedFioAddressName}
+                      list={fioAddresses.map(({ name }) => name)}
+                      onChange={setSelectedFioAddress}
+                    />
                   </div>
                 </Col>
               </Row>

@@ -108,3 +108,41 @@
   margin-left: 30px;
   margin-bottom: 20px;
 }
+
+.dropdown {
+  width: 100%;
+
+  .dropdownArrow {
+    font-size: 13px;
+    float: right;
+  }
+}
+
+.control {
+  width: 100%;
+  padding: 0 10px;
+  background-color: transparent;
+  font-size: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 1001; // show over menu
+
+  &:hover {
+    box-shadow: none
+  }
+}
+
+.menu {
+  border-radius: 0 0 7px 7px;
+  border: none;
+  border-top: 1px solid $iron;
+  margin-top: 10px;
+  max-height: 250px;
+  font-size: 15px;
+  animation-name: expand;
+  animation-duration: 0.4s;
+}
