@@ -13,7 +13,7 @@ import { notify } from './notify/sagas';
 import {
   fioAddressRegisterSuccess,
   refLoginSuccess,
-  nftSignSuccess,
+  refActionSuccess,
 } from './refProfile/sagas';
 import { clearGenericModalError } from './modal/sagas';
 
@@ -30,6 +30,6 @@ export default function* rootSaga(history, api) {
     fioAddressRegisterSuccess(history),
     refLoginSuccess(),
     clearGenericModalError(),
-    nftSignSuccess(history),
+    refActionSuccess(),
   ]);
 }
