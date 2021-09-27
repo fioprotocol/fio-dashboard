@@ -12,13 +12,11 @@ import ManagePageCtaBadge from './ManagePageCtaBadge';
 import { useCheckIfDesktop } from '../../screenType';
 import { ROUTES } from '../../constants/routes';
 
-import {
-  DesktopComponents,
-  MobileComponents,
-  RenderItemComponent,
-  RenderNotifications,
-  RenderItemSettings,
-} from './ManagePageComponents';
+import Notifications from './ManagePageComponents/Notifications';
+import DesktopView from './ManagePageComponents/DesktopView';
+import ItemComponent from './ManagePageComponents/ItemComponent';
+import MobileView from './ManagePageComponents/MobileView';
+import SettingsItem from './ManagePageComponents/SettingsItem';
 
 import classes from './ManagePageContainer.module.scss';
 
@@ -162,18 +160,19 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
               ? `FIO ${fioNameLabels[pageName]}s owned by all your wallets.`
               : null}
           </p>
-          {isDesktop &&
-            RenderNotifications({
-              showWarnBadge,
-              showInfoBadge,
-              toggleShowWarnBadge,
-              toggleShowInfoBadge,
-              pageName,
-            })}
+          {isDesktop && (
+            <Notifications
+              showWarnBadge={showWarnBadge}
+              showInfoBadge={showInfoBadge}
+              toggleShowWarnBadge={toggleShowWarnBadge}
+              toggleShowInfoBadge={toggleShowInfoBadge}
+              pageName={pageName}
+            />
+          )}
           <div className={classes.tableContainer}>
             {isDesktop
-              ? renderScroll(<DesktopComponents {...propsToComponents} />)
-              : renderScroll(<MobileComponents {...propsToComponents} />)}
+              ? renderScroll(<DesktopView {...propsToComponents} />)
+              : renderScroll(<MobileView {...propsToComponents} />)}
           </div>
         </div>
       </LayoutContainer>
@@ -187,7 +186,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
         closeButton={true}
         isSimple={true}
       >
-        <RenderItemComponent
+        <ItemComponent
           {...propsToComponents}
           fioNameItem={currentAddress}
           showWarnBadge={showWarnBadge}
@@ -202,7 +201,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
         isWide={isDesktop}
         hasDefaultColor={true}
       >
-        <RenderItemSettings
+        <SettingsItem
           fioNameItem={currentAddress}
           pageName={pageName}
           fioWallets={fioWallets}
