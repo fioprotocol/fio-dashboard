@@ -1,0 +1,71 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+@import '../../../assets/styles/fontMixins.scss';
+
+.actionButtonsContainer {
+  display: flex;
+
+  .actionButton {
+    @include sf-pro-display-thin;
+    background-color: $violet;
+    border-color: $violet;
+    border-radius: 7px;
+    margin-right: 10px;
+    white-space: nowrap;
+
+    &:hover {
+      background-color: $clear-blue;
+      border-color: $clear-blue;
+    }
+    
+    & button {
+      font-size: 1em;
+      width: 100%;
+      height: 100%;
+      border-radius: 7px;
+    }
+
+    @include sm {
+      width: 100%;
+      height: 45px !important;
+      display: flex;
+      align-items: center;
+      img, svg {
+        margin-right: 10px;
+      }
+    }
+  }
+
+  .settingsButton {
+    background-color: $manatee;
+    border-color: $manatee;
+    width: 36px;
+    font-size: 1.25em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      background-color: $dove-gray;
+      border-color: $dove-gray;
+    }
+
+    @include sm {
+      height: 45px !important;
+      width: 45px !important
+    }
+  }
+
+  .actionButton, .settingsButton {
+    height: 36px;
+    border-radius: 7px;
+    transition: color .15s ease-in-out,
+    background-color .15s ease-in-out,
+    border-color .15s ease-in-out,
+    box-shadow .15s ease-in-out;
+  }
+
+  .atIcon {
+    margin-right: 10px;
+  }
+}
