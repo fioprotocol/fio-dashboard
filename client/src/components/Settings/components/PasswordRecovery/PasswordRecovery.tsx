@@ -26,7 +26,6 @@ type Props = {
   showRecoveryModal: () => void;
   changeRecoveryQuestionsOpen: () => void;
   username: string;
-  resendRecovery: () => void;
   hasRecoveryQuestions: boolean;
   checkRecoveryQuestions: (username: string) => void;
   disableRecoveryResults: { status?: number };
@@ -36,12 +35,6 @@ type Props = {
   resetPinConfirm: () => void;
   loading: boolean;
   clearDisableRecoveryResults: () => void;
-  recoveryToken: string;
-  getRecoveryToken: (account: EdgeAccount) => void;
-  clearRecoveryToken: () => void;
-  clearResendRecoveryResults: () => void;
-  resendRecoveryResults: { success?: boolean };
-  resending: boolean;
 };
 
 const PasswordRecovery: React.FC<Props> = props => {
@@ -49,7 +42,6 @@ const PasswordRecovery: React.FC<Props> = props => {
     showRecoveryModal,
     changeRecoveryQuestionsOpen,
     checkRecoveryQuestions,
-    resendRecovery,
     hasRecoveryQuestions,
     username,
     disableRecoveryResults,
@@ -59,12 +51,6 @@ const PasswordRecovery: React.FC<Props> = props => {
     resetPinConfirm,
     loading,
     clearDisableRecoveryResults,
-    recoveryToken,
-    getRecoveryToken,
-    clearRecoveryToken,
-    clearResendRecoveryResults,
-    resendRecoveryResults,
-    resending,
   } = props;
 
   const [showDisableModal, toggleDisableModal] = useState(false);
@@ -136,18 +122,7 @@ const PasswordRecovery: React.FC<Props> = props => {
   const renderButtonGroup = ( // 'change recovery' button commented because of no design
     <>
       {/* {renderChangeRecoveryButton()} */}
-      <ResendEmail
-        resendAction={resendRecovery}
-        loading={loading}
-        pinConfirmation={pinConfirmation}
-        showPinModal={showPinModal}
-        clearRecoveryToken={clearRecoveryToken}
-        getRecoveryToken={getRecoveryToken}
-        resetPinConfirm={resetPinConfirm}
-        recoveryToken={recoveryToken}
-        resending={resending}
-        resendRecoveryResults={resendRecoveryResults}
-        clearResendRecoveryResults={clearResendRecoveryResults} />
+      <ResendEmail />
     </>
   );
 

@@ -13,26 +13,15 @@ import {
   resetPinConfirm,
   disableRecoveryPassword,
   clearDisableRecoveryResults,
-  getRecoveryToken,
-  clearRecoveryToken,
 } from '../../../../redux/edge/actions';
-import {
-  resendRecovery,
-  clearResendRecoveryResults,
-} from '../../../../redux/profile/actions';
 
 import {
   hasRecoveryQuestions,
   pinConfirmation,
   disableRecoveryResults,
   loading,
-  recoveryToken,
 } from '../../../../redux/edge/selectors';
-import {
-  edgeUsername,
-  resendRecoveryResults,
-  resending,
-} from '../../../../redux/profile/selectors';
+import { edgeUsername } from '../../../../redux/profile/selectors';
 
 import PasswordRecovery from './PasswordRecovery';
 
@@ -43,22 +32,15 @@ const reduxConnect = connect(
     pinConfirmation,
     disableRecoveryResults,
     loading,
-    recoveryToken,
-    resendRecoveryResults,
-    resending,
   }),
   {
     showRecoveryModal,
     changeRecoveryQuestionsOpen,
-    resendRecovery,
     checkRecoveryQuestions,
     resetPinConfirm,
     showPinModal,
     disableRecoveryPassword,
     clearDisableRecoveryResults,
-    getRecoveryToken,
-    clearRecoveryToken,
-    clearResendRecoveryResults,
   },
 );
 

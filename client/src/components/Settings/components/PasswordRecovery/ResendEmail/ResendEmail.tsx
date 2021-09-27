@@ -2,40 +2,40 @@ import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import isEmpty from 'lodash/isEmpty';
 import { EdgeAccount } from 'edge-core-js';
-import SendLinkModal from './SendLinkModal';
-import EmailModal from '../../../Modal/EmailModal';
+import SendLinkModal from '../SendLinkModal';
+import EmailModal from '../../../../Modal/EmailModal';
 
-import classes from './PasswordRecovery.module.scss';
+import classes from '../PasswordRecovery.module.scss';
 
 const pinModalName = 'resendEmail';
 
 type Props = {
-  resendAction: (recoveryToken: string) => void;
-  loading: boolean;
-  showPinModal: (action: null, data: string) => void;
-  pinConfirmation: { account: EdgeAccount; data?: string };
-  getRecoveryToken: (account: EdgeAccount) => void;
-  recoveryToken: string;
   clearRecoveryToken: () => void;
-  resetPinConfirm: () => void;
   clearResendRecoveryResults: () => void;
+  getRecoveryToken: (account: EdgeAccount) => void;
+  loading: boolean;
+  pinConfirmation: { account: EdgeAccount; data?: string };
+  resendRecovery: (recoveryToken: string) => void;
+  recoveryToken: string;
+  resetPinConfirm: () => void;
   resendRecoveryResults: { success?: boolean };
   resending: boolean;
+  showPinModal: (action: null, data: string) => void;
 };
 
 const ResendEmail: React.FC<Props> = props => {
   const {
-    loading,
-    showPinModal,
-    pinConfirmation,
-    getRecoveryToken,
-    recoveryToken,
     clearRecoveryToken,
-    resetPinConfirm,
-    resendAction,
     clearResendRecoveryResults,
+    getRecoveryToken,
+    loading,
+    pinConfirmation,
+    recoveryToken,
+    resetPinConfirm,
+    resendRecovery,
     resendRecoveryResults,
     resending,
+    showPinModal,
   } = props;
   const [showSendEmailModal, toggleSendEmailModal] = useState(false);
   const [showSuccessModal, toggleSuccessModal] = useState(false);
@@ -72,7 +72,7 @@ const ResendEmail: React.FC<Props> = props => {
   useEffect(() => {
     if (recoveryToken != null && recoveryToken !== '') {
       resetPinConfirm();
-      resendAction(recoveryToken);
+      resendRecovery(recoveryToken);
     }
   }, [recoveryToken]);
 
