@@ -71,9 +71,13 @@ export default class AuthCreate extends Base {
     }
     await nonce.destroy();
 
-    // todo: what do we need to do when status is NEW?
     if (user.status !== User.STATUS.ACTIVE) {
-      //
+      throw new X({
+        code: 'NOT_ACTIVE_USER',
+        fields: {
+          status: 'NOT_ACTIVE_USER',
+        },
+      });
     }
 
     const now = new Date();

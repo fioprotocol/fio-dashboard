@@ -52,4 +52,8 @@ export default class Auth extends Base {
   resendRecovery(token: string) {
     return this.apiClient.post('users/resendRecovery', { data: { token } });
   }
+
+  resendConfirmEmail(token: string) {
+    return this.apiClient.post('users/resendConfirmEmail', { data: { token } });
+  }
 }

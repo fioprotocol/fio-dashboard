@@ -138,3 +138,16 @@ export const CLEAR_RESEND_RECOVERY_RESULTS = `${prefix}/CLEAR_RESEND_RECOVERY_RE
 export const clearResendRecoveryResults = () => ({
   type: CLEAR_RESEND_RECOVERY_RESULTS,
 });
+
+export const RESEND_CONFIRM_EMAIL_REQUEST = `${prefix}/RESEND_CONFIRM_EMAIL_REQUEST`;
+export const RESEND_CONFIRM_EMAIL_SUCCESS = `${prefix}/RESEND_CONFIRM_EMAIL_SUCCESS`;
+export const RESEND_CONFIRM_EMAIL_FAILURE = `${prefix}/RESEND_CONFIRM_EMAIL_FAILURE`;
+
+export const resendConfirmEmail = (token: string) => ({
+  types: [
+    RESEND_CONFIRM_EMAIL_REQUEST,
+    RESEND_CONFIRM_EMAIL_SUCCESS,
+    RESEND_CONFIRM_EMAIL_FAILURE,
+  ],
+  promise: (api: Api) => api.auth.resendConfirmEmail(token),
+});

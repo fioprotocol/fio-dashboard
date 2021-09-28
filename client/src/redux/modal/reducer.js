@@ -58,6 +58,16 @@ export default combineReducers({
         return state;
     }
   },
+  showEmailConfirmBlocker(state = false, action) {
+    switch (action.type) {
+      case actions.SHOW_EMAIL_CONFIRM_BLOCKER:
+        return true;
+      case actions.CLOSE_EMAIL_CONFIRM_BLOCKER:
+        return false;
+      default:
+        return state;
+    }
+  },
   genericErrorData(state = {}, action) {
     switch (action.type) {
       case actions.SHOW_GENERIC_ERROR_MODAL:

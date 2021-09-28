@@ -6,6 +6,7 @@ import Notifications from '../../components/Notifications';
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
 import LoginForm from '../../components/LoginForm';
+import EmailConfirmBlocker from '../../components/EmailConfirmBlocker';
 import PinConfirmModal from '../../components/PinConfirmModal';
 import GenericErrorModal from '../../components/Modal/GenericErrorModal';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
@@ -24,6 +25,7 @@ const MainLayout = props => {
     isAuthenticated,
     showLogin,
     showRecovery,
+    showEmailConfirmBlocker,
     init,
   } = props;
 
@@ -54,6 +56,7 @@ const MainLayout = props => {
       </div>
       <Footer />
       {showLogin && edgeContextSet && loginFormModalRender()}
+      {showEmailConfirmBlocker && <EmailConfirmBlocker />}
       {showRecovery && edgeContextSet && recoveryFormModalRender()}
       <PinConfirmModal />
       <GenericErrorModal />
@@ -68,6 +71,7 @@ MainLayout.propTypes = exact({
   loginSuccess: PropTypes.bool,
   showLogin: PropTypes.bool,
   showRecovery: PropTypes.bool,
+  showEmailConfirmBlocker: PropTypes.bool,
   edgeContextSet: PropTypes.bool,
 
   init: PropTypes.func.isRequired,
