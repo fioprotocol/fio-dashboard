@@ -30,6 +30,19 @@ export function currentYear() {
   return year === startYear ? year : `${startYear} - ${year}`;
 }
 
+export async function minWaitTimeFunction(
+  cb: () => Promise<any>,
+  minWaitTime = 1000,
+) {
+  const t0 = performance.now();
+  const results = await cb();
+  const t1 = performance.now();
+  if (t1 - t0 < minWaitTime) {
+    await sleep(minWaitTime - (t1 - t0));
+  }
+  return results;
+}
+
 export function emailToUsername(email: string) {
   if (email && email.indexOf('@') > 0) {
     const [name, domain] = email.split('@');

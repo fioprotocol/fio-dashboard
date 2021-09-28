@@ -127,4 +127,29 @@ export default combineReducers({
         return state;
     }
   },
+  resendRecoveryResults(state = {}, action) {
+    switch (action.type) {
+      case actions.RESEND_RECOVERY_SUCCESS: {
+        return action.data;
+      }
+      case actions.RESEND_RECOVERY_REQUEST:
+      case actions.RESEND_RECOVERY_FAILURE:
+      case actions.CLEAR_RESEND_RECOVERY_RESULTS: {
+        return {};
+      }
+      default:
+        return state;
+    }
+  },
+  resending(state = false, action) {
+    switch (action.type) {
+      case actions.RESEND_RECOVERY_REQUEST:
+        return true;
+      case actions.RESEND_RECOVERY_SUCCESS:
+      case actions.RESEND_RECOVERY_FAILURE:
+        return false;
+      default:
+        return state;
+    }
+  },
 });

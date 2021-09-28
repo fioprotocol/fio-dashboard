@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from 'react-bootstrap';
 import isEmpty from 'lodash/isEmpty';
+import { Button } from 'react-bootstrap';
+import { EdgeAccount } from 'edge-core-js';
+
 import SecurityItem from '../SecurityItem/SecurityItem';
 import SuccessModal from '../../../Modal/SuccessModal';
 import DangerModal from '../../../Modal/DangerModal';
+import ResendEmail from './ResendEmail';
+
+import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 
 import classes from './PasswordRecovery.module.scss';
 
@@ -23,12 +28,11 @@ type Props = {
   showRecoveryModal: () => void;
   changeRecoveryQuestionsOpen: () => void;
   username: string;
-  resendRecovery: (token: string) => void;
   hasRecoveryQuestions: boolean;
   checkRecoveryQuestions: (username: string) => void;
   disableRecoveryResults: { status?: number };
-  showPinModal: (action: null, data: string) => void;
-  pinConfirmation: { account: {}; data?: string };
+  showPinModal: (action: string) => void;
+  pinConfirmation: { account: EdgeAccount; action: string };
   disableRecoveryPassword: (account: {}) => void;
   resetPinConfirm: () => void;
   loading: boolean;
@@ -40,7 +44,6 @@ const PasswordRecovery: React.FC<Props> = props => {
     showRecoveryModal,
     changeRecoveryQuestionsOpen,
     checkRecoveryQuestions,
-    resendRecovery,
     hasRecoveryQuestions,
     username,
     disableRecoveryResults,
@@ -69,8 +72,8 @@ const PasswordRecovery: React.FC<Props> = props => {
 
   useEffect(() => {
     if (!isEmpty(pinConfirmation)) {
-      const { account, data } = pinConfirmation;
-      if (data === ITEM_PROPS.title) {
+      const { account, action } = pinConfirmation;
+      if (action === CONFIRM_PIN_ACTIONS.PASSWORD_RECOVERY) {
         toggleDisableModal(true);
         disableRecoveryPassword(account);
       }
@@ -91,13 +94,9 @@ const PasswordRecovery: React.FC<Props> = props => {
     }
   };
 
-  const onResendClick = () => {
-    resendRecovery(''); // todo: set token, handle results, show success modal
-  };
-
   const onDisableClick = () => {
     toggleDisableModal(false);
-    showPinModal(null, ITEM_PROPS.title);
+    showPinModal(CONFIRM_PIN_ACTIONS.PASSWORD_RECOVERY);
   };
 
   const onDisableClose = () => toggleDisableModal(false);
@@ -111,17 +110,21 @@ const PasswordRecovery: React.FC<Props> = props => {
     ? 'Disable Password Recovery'
     : 'Setup Password Recovery';
 
-  const renderButtonGroup = ( // change recovery button commented because of no design
+  /* eslint-disable */
+  // @ts-ignore
+  const renderChangeRecoveryButton = () => (
+    <Button
+      onClick={onChangeRecoveryQuestions}
+      className={classes.changeButton}
+    >
+      Change Recovery Questions
+    </Button>
+  );
+
+  const renderButtonGroup = ( // 'change recovery' button commented because of no design
     <>
-      {/* <Button
-        onClick={onChangeRecoveryQuestions}
-        className={classes.changeButton}
-      >
-        Change Recovery Questions
-      </Button> */}
-      <Button onClick={onResendClick} className={classes.resendButton}>
-        Resend Recovery Email
-      </Button>
+      {/* {renderChangeRecoveryButton()} */}
+      <ResendEmail />
     </>
   );
 

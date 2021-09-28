@@ -175,6 +175,15 @@ export default class Edge {
     }
   }
 
+  async getToken(username) {
+    try {
+      return await this.edgeContext.getRecovery2Key(username);
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
   async disableRecovery(account) {
     try {
       await account.deleteRecovery();

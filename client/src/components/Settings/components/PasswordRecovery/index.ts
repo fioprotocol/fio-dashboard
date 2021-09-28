@@ -14,7 +14,6 @@ import {
   disableRecoveryPassword,
   clearDisableRecoveryResults,
 } from '../../../../redux/edge/actions';
-import { resendRecovery } from '../../../../redux/profile/actions';
 
 import {
   hasRecoveryQuestions,
@@ -37,7 +36,6 @@ const reduxConnect = connect(
   {
     showRecoveryModal,
     changeRecoveryQuestionsOpen,
-    resendRecovery,
     checkRecoveryQuestions,
     resetPinConfirm,
     showPinModal,
