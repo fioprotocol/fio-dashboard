@@ -15,12 +15,14 @@ export default class Exception extends Error {
 
     this.code = data.code;
     this.message = data.message;
+    this.data = data.data;
   }
 
   toHash() {
     return {
       fields: this.fields,
       code: this.code,
+      data: this.data,
     };
   }
 }

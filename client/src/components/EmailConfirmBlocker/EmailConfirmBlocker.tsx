@@ -7,19 +7,23 @@ import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   showEmailConfirmBlocker: boolean;
+  loading: boolean;
+  emailConfirmBlockerToken: string;
   closeEmailConfirmBlocker: () => void;
-  resendConfirmEmail: () => void;
+  resendConfirmEmail: (token: string) => void;
 };
 
 const EmailConfirmBlocker: React.FC<Props> = props => {
   const {
+    emailConfirmBlockerToken,
+    loading,
     showEmailConfirmBlocker,
     closeEmailConfirmBlocker,
     resendConfirmEmail,
   } = props;
   const onSend = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    resendConfirmEmail();
+    resendConfirmEmail(emailConfirmBlockerToken);
   };
   return (
     <Modal
@@ -27,18 +31,24 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
       onClose={closeEmailConfirmBlocker}
       closeButton={true}
     >
-      <FontAwesomeIcon icon={faEnvelope} className={classes.icon} />
+      {loading ? (
+        <FontAwesomeIcon icon="spinner" spin className={classes.icon} />
+      ) : (
+        <FontAwesomeIcon icon={faEnvelope} className={classes.icon} />
+      )}
       <h4 className={classes.title}>Please Verify Your Email</h4>
       <p className={classes.subtitle}>
         Before you complete access to the FIO Dashboard you must verify your
         email address.
       </p>
-      <p className={classes.footer}>
-        Didn't get an email?{' '}
-        <a href="#" onClick={onSend} className={classes.sendLink}>
-          Send Again
-        </a>
-      </p>
+      {loading ? null : (
+        <p className={classes.footer}>
+          Didn't get an email?{' '}
+          <a href="#" onClick={onSend} className={classes.sendLink}>
+            Send Again
+          </a>
+        </p>
+      )}
     </Modal>
   );
 };

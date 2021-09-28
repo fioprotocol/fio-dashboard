@@ -8,6 +8,7 @@ import ShowInfo from '../services/users/Show';
 import FreeAddressRegistered from '../services/users/FreeAddressRegistered';
 import UsersSetRecovery from '../services/users/SetRecovery';
 import UsersResendRecovery from '../services/users/ResendRecovery';
+import UsersResendEmailConfirm from '../services/users/ResendEmailConfirm';
 import UsersList from '../services/users/List';
 
 export default {
@@ -17,6 +18,7 @@ export default {
   info: makeServiceRunner(UsersInfo),
   setRecovery: makeServiceRunner(UsersSetRecovery, req => req.body),
   resendRecovery: makeServiceRunner(UsersResendRecovery, req => req.body),
+  resendEmailConfirm: makeServiceRunner(UsersResendEmailConfirm, req => req.body),
   list: makeServiceRunner(UsersList),
   show: makeServiceRunner(ShowInfo, req => req.params),
   freeAddress: makeServiceRunner(FreeAddressRegistered, req => req.params),
