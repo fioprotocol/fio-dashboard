@@ -1,6 +1,6 @@
 import express from 'express';
 import routes from './routes';
-import createProxyMiddleware from 'http-proxy-middleware';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const router = express.Router();
 
