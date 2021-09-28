@@ -21,49 +21,65 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
   const { pageName, isDesktop, onSettingsOpen, fioNameItem } = props;
   const { name } = fioNameItem;
 
+  const renderRenew = () => (
+    <Link
+      to={`${RENEW_LINKS[pageName]}/${name}`}
+      className={classes.actionButton}
+    >
+      <Button>
+        <img src={icon} alt="timelapse" /> Renew
+      </Button>
+    </Link>
+  );
+
+  const renderSettings = () => (
+    <Button
+      className={classes.settingsButton}
+      onClick={() => onSettingsOpen(fioNameItem)}
+    >
+      <FontAwesomeIcon icon="cog" className={classes.settingsIcon} />
+    </Button>
+  );
+
   return (
     <div className={classes.actionButtonsContainer}>
-      <Link
-        to={`${RENEW_LINKS[pageName]}/${name}`}
-        className={classes.actionButton}
-      >
-        <Button>
-          <img src={icon} alt="timelapse" /> Renew
-        </Button>
-      </Link>
-
       {pageName === PAGE_NAME.ADDRESS ? (
         <>
-          <Link
-            to={`${ROUTES.LINK_TOKEN_LIST}/${name}`}
-            className={classes.actionButton}
-          >
-            <Button>
-              <FontAwesomeIcon icon="link" className={classes.linkIcon} /> Link
-            </Button>
-          </Link>
-          <Link
-            to={`${ROUTES.FIO_ADDRESS_SIGNATURES}`.replace(':address', name)}
-            className={classes.actionButton}
-          >
-            <Button>
-              <FontAwesomeIcon icon="signature" className={classes.atIcon} />{' '}
-              NFT signature
-            </Button>
-          </Link>
+          <div className={classes.row}>
+            {renderRenew()}
+            <Link
+              to={`${ROUTES.LINK_TOKEN_LIST}/${name}`}
+              className={classes.actionButton}
+            >
+              <Button>
+                <FontAwesomeIcon icon="link" className={classes.linkIcon} />{' '}
+                Link
+              </Button>
+            </Link>
+          </div>
+          <div className={classes.row}>
+            <Link
+              to={`${ROUTES.FIO_ADDRESS_SIGNATURES}`.replace(':address', name)}
+              className={classes.actionButton}
+            >
+              <Button>
+                <FontAwesomeIcon icon="signature" className={classes.atIcon} />{' '}
+                NFT signature
+              </Button>
+            </Link>
+            {renderSettings()}
+          </div>
         </>
       ) : (
-        <Button className={classes.actionButton}>
-          <FontAwesomeIcon icon="at" className={classes.atIcon} />
-          {isDesktop ? 'Register FIO Address' : 'Register Address'}
-        </Button>
+        <>
+          {renderRenew()}
+          <Button className={classes.actionButton}>
+            <FontAwesomeIcon icon="at" className={classes.atIcon} />
+            {isDesktop ? 'Register FIO Address' : 'Register Address'}
+          </Button>
+          {renderSettings()}
+        </>
       )}
-      <Button
-        className={classes.settingsButton}
-        onClick={() => onSettingsOpen(fioNameItem)}
-      >
-        <FontAwesomeIcon icon="cog" className={classes.settingsIcon} />
-      </Button>
     </div>
   );
 };

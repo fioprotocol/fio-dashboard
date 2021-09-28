@@ -5,45 +5,38 @@
 .container {
   position: relative;
   display: flex;
-  flex-direction: row;
-  max-width: 1200px;
+  margin: 0;
+  flex-direction: column;
   width: 100%;
-  margin: 0 80px;
 
-  .dataContainer {
-    max-width: 773px;
+  .tableContainer {
+    margin-top: 20px;
+    overflow-y: auto;
+    max-height: 60vh;
 
-    .tableContainer {
-      margin-top: 20px;
-      max-height: 500px;
-      overflow-y: auto;
-
-      .loader {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 100%;
-        font-size: 1.5rem;
-        color: $violet;
-        margin-top: 30px;
-        padding-bottom: 60px;
-        grid-column-start: 1;
-        grid-column-end: 5;
-      }
-    }
-
-    .subtitle {
-      @include proxima-nova-thin;
-      font-size: 0.875rem;
+    .loader {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      font-size: 1.5rem;
+      color: $violet;
+      margin-top: 30px;
+      padding-bottom: 60px;
+      grid-column-start: 1;
+      grid-column-end: 5;
     }
   }
 
+  .subtitle {
+    @include proxima-nova-thin;
+    font-size: 0.875rem;
+  }
+
   .actionBadge {
-    margin-top: 60px;
-    margin-left: 90px;
-    max-width: 335px;
-    width: 100%;
+    margin: 0 20px 30px;
+    width: auto;
 
     .badgeContainer {
       border-radius: 15px;
@@ -87,21 +80,34 @@
   }
 }
 
-@include sm {
+@include md {
   .container {
-    margin: 0;
-    flex-direction: column;
-    width: 100%;
+    padding: 30px 20px;
 
     .actionBadge {
-      margin: 0 20px 30px;
-      width: auto;
+      width: 100%;
+      max-width: 335px;
+      margin: 0 0 30px;
+    }
+  }
+}
+
+@include lg {
+  .container {
+    flex-direction: row;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 80px;
+
+    .actionBadge {
+      margin-top: 60px;
+      margin-left: 60px;
+      max-width: 335px;
+      width: 100%;
     }
 
-    .dataContainer {
-      .tableContainer {
-        max-height: 60vh;
-      }
+    .tableContainer {
+      max-height: 500px;
     }
   }
 }
