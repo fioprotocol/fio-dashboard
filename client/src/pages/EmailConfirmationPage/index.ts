@@ -6,7 +6,10 @@ import { compose } from '../../utils';
 
 import { confirmEmail } from '../../redux/profile/actions';
 
-import { loading, emailConfirmationResult } from '../../redux/profile/selectors';
+import {
+  loading,
+  emailConfirmationResult,
+} from '../../redux/profile/selectors';
 
 import EmailConfirmationPage from './EmailConfirmationPage';
 
