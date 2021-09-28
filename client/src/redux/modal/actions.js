@@ -5,7 +5,7 @@ export const CLOSE_LOGIN = `${prefix}/CLOSE_LOGIN`;
 
 export const showLoginModal = hasRedirect => ({
   type: SHOW_LOGIN,
-  data: hasRedirect || false,
+  data: hasRedirect || '',
 });
 
 export const closeLoginModal = () => ({

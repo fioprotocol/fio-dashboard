@@ -1,9 +1,8 @@
 import React from 'react';
-import Modal from '../Modal/Modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import classes from './EmailConfirmBlocker.module.scss';
-import { faEnvelope } from '@fortawesome/free-solid-svg-icons';
+import classes from '../EmailModal/EmailModal.module.scss';
+import EmailModal from '../EmailModal';
 
 type Props = {
   showEmailConfirmBlocker: boolean;
@@ -26,22 +25,18 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
     resendConfirmEmail(emailConfirmBlockerToken);
   };
   return (
-    <Modal
+    <EmailModal
       show={showEmailConfirmBlocker}
       onClose={closeEmailConfirmBlocker}
-      closeButton={true}
+      title="Please Verify Your Email"
+      subtitle="Before you complete access to the FIO Dashboard you must verify your
+        email address."
     >
       {loading ? (
-        <FontAwesomeIcon icon="spinner" spin className={classes.icon} />
+        <p className={classes.footer}>
+          <FontAwesomeIcon icon="spinner" spin />
+        </p>
       ) : (
-        <FontAwesomeIcon icon={faEnvelope} className={classes.icon} />
-      )}
-      <h4 className={classes.title}>Please Verify Your Email</h4>
-      <p className={classes.subtitle}>
-        Before you complete access to the FIO Dashboard you must verify your
-        email address.
-      </p>
-      {loading ? null : (
         <p className={classes.footer}>
           Didn't get an email?{' '}
           <a href="#" onClick={onSend} className={classes.sendLink}>
@@ -49,7 +44,7 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
           </a>
         </p>
       )}
-    </Modal>
+    </EmailModal>
   );
 };
 
