@@ -12,6 +12,8 @@ export default class Register extends Base {
         nested_object: {
           address: ['required', 'string'],
           publicKey: ['required', 'string'],
+          // todo: how we can set ref code not in the POST body (before it was set in context on login, but could be issues when user is already logged in)
+          refCode: ['string'],
           verifyParams: {
             nested_object: {
               pin: ['string'],
@@ -25,7 +27,7 @@ export default class Register extends Base {
     };
   }
 
-  async execute({ data: { address, publicKey, verifyParams } }) {
+  async execute({ data: { address, publicKey, verifyParams, refCode } }) {
     try {
       if (!verifyParams.pin && !verifyParams.geetest_challenge)
         throw new Error('Verification needed.');
@@ -57,10 +59,10 @@ export default class Register extends Base {
 
     let referralCode;
     let apiToken;
-    if (this.context.referrerCode) {
+    if (refCode) {
       try {
         const refProfile = await ReferrerProfile.getItem({
-          code: this.context.referrerCode,
+          code: refCode,
         });
         referralCode = refProfile.regRefCode;
         apiToken = refProfile.regRefApiToken;
