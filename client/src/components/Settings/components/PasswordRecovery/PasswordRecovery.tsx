@@ -8,6 +8,8 @@ import SuccessModal from '../../../Modal/SuccessModal';
 import DangerModal from '../../../Modal/DangerModal';
 import ResendEmail from './ResendEmail';
 
+import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
+
 import classes from './PasswordRecovery.module.scss';
 
 const ITEM_PROPS = {
@@ -29,8 +31,8 @@ type Props = {
   hasRecoveryQuestions: boolean;
   checkRecoveryQuestions: (username: string) => void;
   disableRecoveryResults: { status?: number };
-  showPinModal: (action: null, data: string) => void;
-  pinConfirmation: { account: EdgeAccount; data?: string };
+  showPinModal: (action: string) => void;
+  pinConfirmation: { account: EdgeAccount; action: string };
   disableRecoveryPassword: (account: {}) => void;
   resetPinConfirm: () => void;
   loading: boolean;
@@ -70,8 +72,8 @@ const PasswordRecovery: React.FC<Props> = props => {
 
   useEffect(() => {
     if (!isEmpty(pinConfirmation)) {
-      const { account, data } = pinConfirmation;
-      if (data === ITEM_PROPS.title) {
+      const { account, action } = pinConfirmation;
+      if (action === CONFIRM_PIN_ACTIONS.PASSWORD_RECOVERY) {
         toggleDisableModal(true);
         disableRecoveryPassword(account);
       }
@@ -94,7 +96,7 @@ const PasswordRecovery: React.FC<Props> = props => {
 
   const onDisableClick = () => {
     toggleDisableModal(false);
-    showPinModal(null, ITEM_PROPS.title);
+    showPinModal(CONFIRM_PIN_ACTIONS.PASSWORD_RECOVERY);
   };
 
   const onDisableClose = () => toggleDisableModal(false);
