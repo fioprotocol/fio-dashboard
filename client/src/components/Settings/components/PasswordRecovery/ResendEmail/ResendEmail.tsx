@@ -5,22 +5,22 @@ import { EdgeAccount } from 'edge-core-js';
 import SendLinkModal from '../SendLinkModal';
 import EmailModal from '../../../../Modal/EmailModal';
 
-import classes from '../PasswordRecovery.module.scss';
+import { CONFIRM_PIN_ACTIONS } from '../../../../../constants/common';
 
-const pinModalName = 'resendEmail';
+import classes from '../PasswordRecovery.module.scss';
 
 type Props = {
   clearRecoveryToken: () => void;
   clearResendRecoveryResults: () => void;
   getRecoveryToken: (account: EdgeAccount) => void;
   loading: boolean;
-  pinConfirmation: { account: EdgeAccount; data?: string };
+  pinConfirmation: { account: EdgeAccount; action: string };
   resendRecovery: (recoveryToken: string) => void;
   recoveryToken: string;
   resetPinConfirm: () => void;
   resendRecoveryResults: { success?: boolean };
   resending: boolean;
-  showPinModal: (action: null, data: string) => void;
+  showPinModal: (action: string) => void;
 };
 
 const ResendEmail: React.FC<Props> = props => {
@@ -45,7 +45,7 @@ const ResendEmail: React.FC<Props> = props => {
   };
 
   const onSendEmailClick = () => {
-    showPinModal(null, pinModalName);
+    showPinModal(CONFIRM_PIN_ACTIONS.RESEND_EMAIL);
     toggleSendEmailModal(false);
   };
 
@@ -61,8 +61,8 @@ const ResendEmail: React.FC<Props> = props => {
 
   useEffect(() => {
     if (!isEmpty(pinConfirmation)) {
-      const { account, data } = pinConfirmation;
-      if (data === pinModalName) {
+      const { account, action } = pinConfirmation;
+      if (action === CONFIRM_PIN_ACTIONS.RESEND_EMAIL) {
         getRecoveryToken(account);
         toggleSendEmailModal(true);
       }
