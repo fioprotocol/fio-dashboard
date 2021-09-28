@@ -53,3 +53,15 @@ export const CLEAR_GENERIC_ERROR_DATA = `${prefix}/CLEAR_GENERIC_ERROR_DATA`;
 export const clearGenericErrorData = () => ({
   type: CLEAR_GENERIC_ERROR_DATA,
 });
+
+export const SHOW_EMAIL_CONFIRM_BLOCKER = `${prefix}/SHOW_EMAIL_CONFIRM_BLOCKER`;
+export const CLOSE_EMAIL_CONFIRM_BLOCKER = `${prefix}/CLOSE_EMAIL_CONFIRM_BLOCKER`;
+
+export const showEmailConfirmBlocker = hasRedirect => ({
+  type: SHOW_EMAIL_CONFIRM_BLOCKER,
+  data: hasRedirect || false,
+});
+
+export const closeEmailConfirmBlocker = () => ({
+  type: CLOSE_EMAIL_CONFIRM_BLOCKER,
+});
