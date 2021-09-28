@@ -4,7 +4,6 @@ import { Route, Switch } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import AdminContainer from './components/AdminContainer';
 import MainLayout from './pages/MainLayout';
-import ConfirmEmail from './pages/ConfirmEmail';
 import AuthContainer from './components/AuthContainer';
 import PrivateRoute from './components/PrivateRoute';
 import FioAddressPage from './pages/FioAddressPage';
@@ -27,6 +26,7 @@ import SettingsPage from './pages/SettingsPage';
 import RefHomePage from './pages/RefHomePage';
 import RefSignNftPage from './pages/RefSignNftPage';
 import AccountRecoveryPage from './pages/AccountRecoveryPage';
+import EmailConfirmationPage from './pages/EmailConfirmationPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
 
@@ -43,7 +43,11 @@ const Routes = () => (
         <Route path={ROUTES.HOME} component={HomePage} exact />
         <Route path={ROUTES.REF_PROFILE_HOME} component={RefHomePage} exact />
         <PrivateRoute path={ROUTES.ADMIN} component={AdminContainer} exact />
-        <Route path={ROUTES.CONFIRM_EMAIL} component={ConfirmEmail} />
+        <Route
+          path={ROUTES.CONFIRM_EMAIL}
+          component={EmailConfirmationPage}
+          exact
+        />
         <Route
           path={ROUTES.FIO_ADDRESSES_SELECTION}
           component={FioAddressPage}

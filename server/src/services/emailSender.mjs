@@ -74,7 +74,7 @@ class EmailSender {
         return {
           subject: 'FIO Dashboard - please confirm your email',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}confirmEmail/${sendData.hash}`,
+            link: `${sendData.mainUrl}confirm-email/${sendData.hash}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
