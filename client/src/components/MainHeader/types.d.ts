@@ -1,6 +1,12 @@
 import { History } from 'history';
 
-import { User, CartItem, Notification, RefProfile } from '../../types';
+import {
+  User,
+  CartItem,
+  Notification,
+  RefProfile,
+  FioAddressDoublet,
+} from '../../types';
 import { RouteComponentProps } from 'react-router-dom';
 
 export interface MainHeaderProps extends RouteComponentProps {
@@ -17,4 +23,5 @@ export interface MainHeaderProps extends RouteComponentProps {
   cartItems: CartItem[];
   refProfileInfo: RefProfile;
   refProfileLoading: boolean;
+  fioAddresses: FioAddressDoublet[];
 }

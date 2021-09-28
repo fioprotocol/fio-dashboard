@@ -9,10 +9,13 @@ import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { Transactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
 import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { isDomain } from '../utils';
+import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
+import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 
 interface TrxResponse {
+  transaction_id?: string;
   status: string;
-  expiration: string;
+  expiration?: string;
   fee_collected: number;
 }
 
@@ -24,6 +27,7 @@ export default class Fio {
   walletFioSDK: FIOSDK_LIB | null = null;
   actionEndPoints: { [actionName: string]: string } = {
     ...EndPoint,
+    signNft: 'add_nft',
   };
 
   constructor() {
@@ -43,6 +47,9 @@ export default class Fio {
     FIOSDK.isFioAddressValid(value);
   isFioPublicKeyValid = (value: string): boolean =>
     FIOSDK.isFioPublicKeyValid(value);
+  isChainCodeValid = (value: string): boolean => FIOSDK.isChainCodeValid(value);
+  isPublicAddressValid = (value: string): boolean =>
+    FIOSDK.isPublicAddressValid(value);
 
   convert = (amount: number, roe: number): number =>
     Math.round((amount / (FIOSDK.SUFUnit / 100)) * roe) / 100;
@@ -248,7 +255,7 @@ export default class Fio {
       }[];
     } = {};
 
-    // todo: change to getAllPublicAddresses after fioSDK update;
+    // TODO: change to getAllPublicAddresses after fioSDK update;
     const cryptoCurrencies = ['BTC', 'ETH', 'BCH'];
     for (const fioAddress of fioAddresses) {
       const fioAddressRes = [];
@@ -274,5 +281,51 @@ export default class Fio {
       retResult[fioAddress] = fioAddressRes;
     }
     return retResult;
+  };
+
+  getNFTsFioAddress = async (
+    fioAddress: string,
+    limit: number,
+    offset: number,
+  ): Promise<NftsResponse> => {
+    this.setBaseUrl();
+    try {
+      return await this.publicFioSDK.getNfts({ fioAddress }, 100, 0);
+    } catch (e) {
+      this.logError(e);
+    }
+    return {
+      nfts: [],
+      more: false,
+    };
+  };
+
+  singNFT = async (
+    fioAddress: string,
+    nfts: NftItem[],
+  ): Promise<TrxResponse> => {
+    this.setBaseUrl();
+    try {
+      this.walletFioSDK.setSignedTrxReturnOption(true);
+      const preparedTrx = await this.walletFioSDK.pushTransaction(
+        'fio.address',
+        'addnft',
+        {
+          fio_address: fioAddress,
+          nfts,
+          max_fee: 100000000000,
+          tpid: '',
+        },
+      );
+      const result = await this.walletFioSDK.executePreparedTrx(
+        this.actionEndPoints.signNft,
+        preparedTrx,
+      );
+      this.walletFioSDK.setSignedTrxReturnOption(false);
+      return result;
+    } catch (err) {
+      this.logError(err);
+      throw err;
+    }
   };
 }

@@ -62,36 +62,10 @@ export default combineReducers({
         return state;
     }
   },
-  isChangedPwd(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.RESET_PASSWORD_REQUEST:
-      case actions.RESET_PASSWORD_FAILURE:
-        return false;
-      case actions.RESET_PASSWORD_SUCCESS:
-        return true;
-      default:
-        return state;
-    }
-  },
-  isRecoveryRequested(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.PASSWORD_RECOVERY_REQUEST:
-      case actions.PASSWORD_RECOVERY_FAILURE:
-        return false;
-      case actions.PASSWORD_RECOVERY_SUCCESS:
-        return true;
-      case actions.LOGOUT_SUCCESS:
-        return false;
-      default:
-        return state;
-    }
-  },
   error(state: any | null = null, action) {
     switch (action.type) {
       case actions.LOGIN_FAILURE:
       case actions.LOGOUT_FAILURE:
-      case actions.PASSWORD_RECOVERY_FAILURE:
-      case actions.RESET_PASSWORD_FAILURE:
         return action.error;
       default:
         return state;

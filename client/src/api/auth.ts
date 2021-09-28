@@ -41,16 +41,6 @@ export default class Auth extends Base {
     return this.apiClient.post(`actions/${hash}`);
   }
 
-  resetPassword(email: string) {
-    return this.apiClient.post('users/resetPassword', { data: { email } });
-  }
-
-  setPassword(hash: string, password: string, confirmPassword: string) {
-    return this.apiClient.post(`actions/${hash}`, {
-      data: { password, confirmPassword },
-    });
-  }
-
   setRecovery(token: string) {
     return this.apiClient.post('users/setRecovery', { data: { token } });
   }
@@ -59,7 +49,7 @@ export default class Auth extends Base {
     return null;
   }
 
-  resendRecovery() {
-    return this.apiClient.post('users/resendRecovery');
+  resendRecovery(token: string) {
+    return this.apiClient.post('users/resendRecovery', { data: { token } });
   }
 }

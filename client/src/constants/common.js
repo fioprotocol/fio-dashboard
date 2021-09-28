@@ -11,6 +11,7 @@ export const CONFIRM_PIN_ACTIONS = {
   TRANSFER: 'TRANSFER',
   SET_VISIBILITY: 'SET_VISIBILITY',
   RENEW: 'RENEW',
+  SIGN_NFT: 'SIGN_NFT',
 };
 
 export const ADDRESS = 'address';
@@ -31,7 +32,7 @@ export const REF_ACTIONS = {
 };
 
 export const REF_ACTIONS_TO_ROUTES = {
-  [REF_ACTIONS.SIGNNFT]: ROUTES.SIGN_NFT,
+  [REF_ACTIONS.SIGNNFT]: ROUTES.REF_SIGN_NFT,
 };
 
 export const REF_FLOW_STEPS = {

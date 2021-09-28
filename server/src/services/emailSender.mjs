@@ -1,95 +1,95 @@
-import nodemailer from 'nodemailer';
-import sendmailTransport from 'nodemailer-sendmail-transport';
-import smtpTransport from 'nodemailer-smtp-transport';
-import stubTransport from 'nodemailer-stub-transport';
+import mailchimpProvider from '@mailchimp/mailchimp_transactional';
+import EmailTemplate, { templates } from './../emails/emailTemplate';
 import config from './../config';
 import logger from './../logger';
 
+const EMAIL_SENT_STATUS = 'sent';
+
 class EmailSender {
   constructor() {
-    let transport;
-
-    switch (config.mail.transport) {
-      case 'SMTP':
-        transport = smtpTransport(config.mail.smtp);
-        break;
-
-      case 'SENDMAIL':
-        transport = sendmailTransport();
-        break;
-      default:
-        throw new Error('transport not fount');
-    }
-
-    const { TEST_MODE } = process.env;
-
-    if (TEST_MODE) {
-      transport = stubTransport();
-    }
-
-    const options = TEST_MODE ? { directory: '/tmp' } : config.mail.transport_options;
-
-    this.transport = nodemailer.createTransport(transport, options);
+    this.mailClient = mailchimpProvider(config.mail.mailchimpKey);
   }
 
-  async send(type, destinationUser, data) {
+  async send(type, email, data) {
     const sendData = {
       ...data,
       mainUrl: config.mainUrl,
+      supportLink: config.supportLink,
     };
     const template = await this.getTemplate(type, sendData);
+    const emailTo = process.env.TEST_RECIEVER_EMAIL
+      ? process.env.TEST_RECIEVER_EMAIL
+      : email;
 
     const mailOptions = {
-      from: config.mail.from,
-      to: destinationUser,
-      subject: template.subject,
-      html: template.body,
+      message: {
+        subject: template.subject,
+        html: template.body,
+        from_email: config.mail.from,
+        from_name: config.mail.fromName,
+        to: [
+          {
+            email: emailTo,
+          },
+        ],
+        images: template.images,
+        track_opens: false,
+        track_clicks: false,
+        auto_text: true,
+        view_content_link: false,
+      },
     };
 
     try {
-      const response = await this.transportSendMail(mailOptions);
+      const response = await this.sendMail(mailOptions);
 
-      return response.message;
+      if (response[0] == null) throw new Error('Email send error');
+      if (response[0].status !== EMAIL_SENT_STATUS)
+        throw new Error(JSON.stringify(response[0]));
+
+      return response[0];
     } catch (err) {
-      logger.error(err);
-      // todo: ask if we need to send emails
-      // throw err;
+      logger.error(err.message);
+      try {
+        logger.error(err.toJSON());
+      } catch (e) {
+        //
+      }
     }
   }
 
-  transportSendMail(mailOptions) {
-    return new Promise((resolve, reject) => {
-      this.transport.sendMail(mailOptions, (err, result) => {
-        if (err) return reject(err);
-        resolve(result);
-      });
-    });
+  sendMail(mailOptions) {
+    return this.mailClient.messages.send(mailOptions);
   }
 
   async getTemplate(templateName, sendData) {
     switch (templateName) {
-      case 'confirmEmail':
+      case templates.createAccount:
         return {
-          subject: 'Confirm your email',
-          body: `To confirm your email click this link: <a href="${sendData.mainUrl}/confirmEmail/${sendData.hash}">Confirm email!</a>`,
+          subject: 'Welcome to FIO Dashboard.',
+          body: EmailTemplate.get(templateName, sendData),
+          images: EmailTemplate.getInlineImages(templateName),
         };
-      case 'resetPassword':
+      case templates.confirmEmail:
         return {
-          subject: 'Reset your password',
-          body: `To reset your password click this link: <a href="${sendData.mainUrl}/reset-password/${sendData.hash}">Reset password!</a>`,
+          subject: 'FIO Dashboard - please confirm your email',
+          body: EmailTemplate.get(templateName, {
+            link: `${sendData.mainUrl}confirmEmail/${sendData.hash}`,
+            ...sendData,
+          }),
+          images: EmailTemplate.getInlineImages(templateName),
         };
-      case 'resetPasswordSuccess':
+      case templates.passRecovery:
         return {
-          subject: 'Reset password success',
-          body: 'Your password changed successfully',
-        };
-      case 'accountActivated':
-        return {
-          subject: 'Account successfully activated',
-          body: `Your account activated successfully. <a href="${sendData.mainUrl}">Go to site!</a>`,
+          subject: 'FIO Dashboard recovery link',
+          body: EmailTemplate.get(templateName, {
+            link: `${sendData.mainUrl}account-recovery?username=${sendData.username}&token=${sendData.token}`,
+            ...sendData,
+          }),
+          images: EmailTemplate.getInlineImages(templateName),
         };
     }
-    return { subject: 'test', body: 'this is test email' };
+    throw new Error(`There is no email template with such name - ${templateName}`);
   }
 }
 

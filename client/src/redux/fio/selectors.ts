@@ -11,6 +11,8 @@ export const setVisibilityProcessing = (state: ReduxState) =>
   state[prefix].setVisibilityProcessing;
 export const renewProcessing = (state: ReduxState) =>
   state[prefix].renewProcessing;
+export const signNftProcessing = (state: ReduxState) =>
+  state[prefix].signNftProcessing;
 export const linkProcessing = (state: ReduxState) =>
   state[prefix].linkProcessing;
 export const fioWallets = (state: ReduxState) => state[prefix].fioWallets;
@@ -25,6 +27,7 @@ export const transactionResult = (state: ReduxState) =>
 export const fees = (state: ReduxState) => state[prefix].fees;
 export const feesLoading = (state: ReduxState) => state[prefix].feesLoading;
 export const linkResults = (state: ReduxState) => state[prefix].linkResults;
+export const nftSignatures = (state: ReduxState) => state[prefix].nftList;
 
 export const currentWallet = (
   state: ReduxState,

@@ -23,7 +23,7 @@ type Props = {
   isAuthenticated: boolean;
   checkAuthToken: () => void;
   setLastActivity: (value: number) => void;
-  logout: (routerProps: RouterProps, redirect?: boolean) => void;
+  logout: (routerProps: RouterProps) => void;
   showLoginModal: () => void;
   setRedirectPath: (route: string) => void;
 };
@@ -81,7 +81,7 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
         const now = new Date();
         const lastActivity = new Date(lastActivityDate);
         if (now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT) {
-          logout({ history }, false);
+          logout({ history });
           return showLoginModal();
         }
       }
@@ -142,7 +142,7 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
       },
     } = props;
     setRedirectPath(pathname);
-    logout({ history }, false);
+    logout({ history });
     showLoginModal();
   };
 

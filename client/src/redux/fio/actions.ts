@@ -1,6 +1,11 @@
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
+import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 import { Api } from '../../api';
-import { PublicAddressDoublet, LinkActionResult } from '../../types';
+import {
+  PublicAddressDoublet,
+  LinkActionResult,
+  WalletKeys,
+} from '../../types';
 export const prefix = 'fio';
 
 export const REFRESH_BALANCE_REQUEST = `${prefix}/REFRESH_BALANCE_REQUEST`;
@@ -355,4 +360,44 @@ export const linkTokens = ({
     }
   },
   actionName: LINK_TOKENS_REQUEST,
+});
+
+export const FIO_SIGNATURE_ADDRESS_REQUEST = `${prefix}/FIO_SIGNATURE_ADDRESS_REQUEST`;
+export const FIO_SIGNATURE_ADDRESS_SUCCESS = `${prefix}/FIO_SIGNATURE_ADDRESS_SUCCESS`;
+export const FIO_SIGNATURE_ADDRESS_FAILURE = `${prefix}/FIO_SIGNATURE_ADDRESS_FAILURE`;
+export const FIO_SIGN_NFT_REQUEST = `${prefix}/FIO_SIGN_NFT_REQUEST`;
+export const FIO_SIGN_NFT_SUCCESS = `${prefix}/FIO_SIGN_NFT_SUCCESS`;
+export const FIO_SIGN_NFT_FAILURE = `${prefix}/FIO_SIGN_NFT_FAILURE`;
+
+export const getSignaturesFromFioAddress = (fioAddress: string) => ({
+  types: [
+    FIO_SIGNATURE_ADDRESS_REQUEST,
+    FIO_SIGNATURE_ADDRESS_SUCCESS,
+    FIO_SIGNATURE_ADDRESS_FAILURE,
+  ],
+  promise: (api: Api) => {
+    return api.fio.getNFTsFioAddress(fioAddress, 100, 0);
+  },
+  fioAddress,
+});
+
+export const singNFT = (
+  fioAddress: string,
+  nftRequest: NftItem[],
+  keys: WalletKeys,
+) => ({
+  types: [FIO_SIGN_NFT_REQUEST, FIO_SIGN_NFT_SUCCESS, FIO_SIGN_NFT_FAILURE],
+  promise: async (api: Api) => {
+    api.fio.setWalletFioSdk(keys);
+    try {
+      const result = await api.fio.singNFT(fioAddress, nftRequest);
+      api.fio.clearWalletFioSdk();
+      return result;
+    } catch (e) {
+      api.fio.clearWalletFioSdk();
+      throw e;
+    }
+  },
+  fioAddress,
+  actionName: FIO_SIGN_NFT_REQUEST,
 });

@@ -11,6 +11,7 @@ import {
   FioAddressDoublet,
   FioDomainDoublet,
   LinkActionResult,
+  NFTSignature,
 } from '../../types';
 
 export const emptyWallet: FioWalletDoublet = {
@@ -71,6 +72,17 @@ export default combineReducers({
         return true;
       case actions.RENEW_SUCCESS:
       case actions.RENEW_FAILURE:
+        return false;
+      default:
+        return state;
+    }
+  },
+  signNftProcessing(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.FIO_SIGN_NFT_REQUEST:
+        return true;
+      case actions.FIO_SIGN_NFT_FAILURE:
+      case actions.FIO_SIGN_NFT_SUCCESS:
         return false;
       default:
         return state;
@@ -284,16 +296,19 @@ export default combineReducers({
       case actions.TRANSFER_REQUEST:
       case actions.RENEW_REQUEST:
       case actions.SET_VISIBILITY_REQUEST:
+      case actions.FIO_SIGN_NFT_REQUEST:
         return { ...state, [action.actionName]: null };
       case actions.RESET_TRANSACTION_RESULT:
         return { ...state, [action.data]: null };
       case actions.SET_VISIBILITY_SUCCESS:
       case actions.TRANSFER_SUCCESS:
       case actions.RENEW_SUCCESS:
+      case actions.FIO_SIGN_NFT_SUCCESS:
         return { ...state, [action.actionName]: action.data };
       case actions.SET_VISIBILITY_FAILURE:
       case actions.RENEW_FAILURE:
       case actions.TRANSFER_FAILURE:
+      case actions.FIO_SIGN_NFT_FAILURE:
         return {
           ...state,
           [action.actionName]: { error: action.error && action.error.message },
@@ -321,6 +336,14 @@ export default combineReducers({
         return action.data;
       case actions.LINK_TOKENS_FAILURE:
         return { ...defaultLinkState, error: action.data };
+      default:
+        return state;
+    }
+  },
+  nftList(state: NFTSignature[] = [], action) {
+    switch (action.type) {
+      case actions.FIO_SIGNATURE_ADDRESS_SUCCESS:
+        return [...action.data.nfts];
       default:
         return state;
     }

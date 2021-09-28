@@ -25,9 +25,12 @@ import DeleteTokenPage from './pages/LinkTokenPages/DeleteTokenPage';
 import AddTokenPage from './pages/LinkTokenPages/AddTokenPage';
 import SettingsPage from './pages/SettingsPage';
 import RefHomePage from './pages/RefHomePage';
+import RefSignNftPage from './pages/RefSignNftPage';
 import AccountRecoveryPage from './pages/AccountRecoveryPage';
 
 import { ROUTES } from './constants/routes';
+import FioAddressSignaturesPage from './pages/FioAddressSignaturesPage';
+import FioAddressSignPage from './pages/FioAddressSignPage';
 
 const LIST_TOKEN_PARENT_ROUTE = `${ROUTES.LINK_TOKEN_LIST}/:id`;
 
@@ -42,6 +45,16 @@ const Routes = () => (
         <Route
           path={ROUTES.FIO_ADDRESSES_SELECTION}
           component={FioAddressPage}
+          exact
+        />
+        <PrivateRoute
+          path={ROUTES.FIO_ADDRESS_SIGNATURES}
+          component={FioAddressSignaturesPage}
+          exact
+        />
+        <PrivateRoute
+          path={ROUTES.FIO_ADDRESS_SIGN}
+          component={FioAddressSignPage}
           exact
         />
         <PrivateRoute
@@ -106,6 +119,8 @@ const Routes = () => (
           component={AccountRecoveryPage}
           exact
         />
+
+        <PrivateRoute path={ROUTES.REF_SIGN_NFT} component={RefSignNftPage} />
 
         <AuthContainer />
       </Switch>

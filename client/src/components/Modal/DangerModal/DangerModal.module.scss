@@ -1,0 +1,50 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+
+.icon {
+  margin-top: 30px;
+  font-size: 64px;
+}
+
+.title {
+  margin-top: 20px;
+  margin-bottom: 0;
+  @include proxima-nova-semibold;
+}
+
+.subtitle {
+  margin: 30px 30px 0;
+  font-size: 0.9375em;
+  text-align: center;
+  @include proxima-nova-thin;
+}
+
+.actionButton {
+  border: $onyx;
+  background-color: $onyx;
+  height: 54px;
+  width: 100%;
+  margin-top: 40px;
+  border-radius: 7px;
+  color: $white;
+  @include proxima-nova-semibold;
+
+  &:hover:enabled {
+    border: $content-background;
+    background-color: $content-background;
+  }
+
+  &:disabled, &[disabled] {
+    border: $dark;
+    background-color: $dark;
+  }
+}
+
+.cancelButton {
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.spinner {
+  margin-left: 10px;
+}

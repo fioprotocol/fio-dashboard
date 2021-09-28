@@ -120,7 +120,6 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     !isDesktop && handleShowModal(true);
     handleShowSettings(false);
   };
-
   const renderScroll = (children: React.ReactNode) => {
     return (
       <>
