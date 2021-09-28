@@ -175,9 +175,9 @@ export default class Edge {
     }
   }
 
-  async getToken(account) {
+  async getToken(username) {
     try {
-      return await this.edgeContext.getRecovery2Key(account.username);
+      return await this.edgeContext.getRecovery2Key(username);
     } catch (e) {
       console.log(e);
       throw e;

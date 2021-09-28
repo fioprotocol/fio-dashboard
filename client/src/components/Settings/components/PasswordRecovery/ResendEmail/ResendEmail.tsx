@@ -12,7 +12,7 @@ import classes from '../PasswordRecovery.module.scss';
 type Props = {
   clearRecoveryToken: () => void;
   clearResendRecoveryResults: () => void;
-  getRecoveryToken: (account: EdgeAccount) => void;
+  getRecoveryToken: (username: string) => void;
   loading: boolean;
   pinConfirmation: { account: EdgeAccount; action: string };
   resendRecovery: (recoveryToken: string) => void;
@@ -62,8 +62,10 @@ const ResendEmail: React.FC<Props> = props => {
   useEffect(() => {
     if (!isEmpty(pinConfirmation)) {
       const { account, action } = pinConfirmation;
+      const { logout, username } = account;
       if (action === CONFIRM_PIN_ACTIONS.RESEND_EMAIL) {
-        getRecoveryToken(account);
+        getRecoveryToken(username);
+        logout();
         toggleSendEmailModal(true);
       }
     }
