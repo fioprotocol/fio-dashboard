@@ -48,6 +48,7 @@ const ROUTES: { [route: string]: string } = {
   REF_SIGN_NFT: '/ref/:refProfileCode/sign-nft',
 
   PRIVACY_POLICY: '/privacy-policy',
+  TERMS_OF_SERVICE: '/terms-of-service',
 };
 
 export { ROUTES };

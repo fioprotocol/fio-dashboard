@@ -25,6 +25,13 @@ const Footer = (props: { homePageLink: string }) => {
           Privacy Policy
         </Nav.Link>
         <Nav.Link
+          to={ROUTES.TERMS_OF_SERVICE}
+          as={Link}
+          className={classnames(classes.navItem, 'text-white', 'p-0')}
+        >
+          Terms of Service
+        </Nav.Link>
+        <Nav.Link
           href="#"
           className={classnames(classes.navItem, 'text-white', 'p-0')}
         >
