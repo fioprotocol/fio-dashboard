@@ -372,12 +372,8 @@ export const disableRecoveryPassword = (account: string) => ({
     DISABLE_RECOVERY_PASSWORD_SUCCESS,
     DISABLE_RECOVERY_PASSWORD_FAILURE,
   ],
-  promise: async (api: Api) => {
-    const fn = api.edge.disableRecovery;
-    const params = account;
-    const results = minWaitTimeFunction(fn, params, 2000);
-    return results;
-  },
+  promise: (api: Api) =>
+    minWaitTimeFunction(() => api.edge.disableRecovery(account), 2000),
 });
 
 export const CLEAR_DISABLE_RECOVERY_PASSWORD_RESULTS = `${prefix}/CLEAR_DISABLE_RECOVERY_PASSWORD_RESULTS`;

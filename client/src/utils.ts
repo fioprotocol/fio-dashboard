@@ -31,12 +31,11 @@ export function currentYear() {
 }
 
 export async function minWaitTimeFunction(
-  fn: any,
-  params: any,
+  cb: () => Promise<any>,
   minWaitTime = 1000,
 ) {
   const t0 = performance.now();
-  const results = await fn(params);
+  const results = await cb();
   const t1 = performance.now();
   if (t1 - t0 < minWaitTime) {
     await sleep(minWaitTime - (t1 - t0));

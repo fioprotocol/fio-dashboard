@@ -2,7 +2,7 @@ import { Ecc } from '@fioprotocol/fiojs';
 import { Api } from '../../api';
 import { FioWalletDoublet, WalletKeysObj } from '../../types';
 import { RouterProps } from 'react-router';
-import { sleep } from '../../utils';
+import { minWaitTimeFunction } from '../../utils';
 
 export const prefix: string = 'profile';
 
@@ -104,16 +104,8 @@ export const SET_RECOVERY_FAILURE = `${prefix}/SET_RECOVERY_FAILURE`;
 
 export const setRecoveryQuestions = (token: string) => ({
   types: [SET_RECOVERY_REQUEST, SET_RECOVERY_SUCCESS, SET_RECOVERY_FAILURE],
-  promise: async (api: Api) => {
-    const minWaitTime = 4000;
-    const t0 = performance.now();
-    const results = await api.auth.setRecovery(token);
-    const t1 = performance.now();
-    if (t1 - t0 < minWaitTime) {
-      await sleep(minWaitTime - (t1 - t0));
-    }
-    return results;
-  },
+  promise: async (api: Api) =>
+    minWaitTimeFunction(() => api.auth.setRecovery(token), 4000),
 });
 
 export const RESET_LAST_AUTH_DATA = `${prefix}/RESET_LAST_AUTH_DATA`;
