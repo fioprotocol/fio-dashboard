@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classes from './FioAddressSignaturesPage.module.scss';
-import { NFTSignature } from '../../types';
 import { ROUTES } from '../../constants/routes';
 import FioName from '../../components/common/FioName/FioName';
 import FioAddressSignatureItem from './FioAddressSignatureItem';
 
 type Props = {
   getSignaturesFromFioAddress: (fioAddress: string) => void;
-  nftSignatures: NFTSignature[];
+  nftSignatures: NftItem[];
   match: {
     params: { address: string };
   };
@@ -29,6 +29,7 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
   useEffect(() => {
     getSignaturesFromFioAddress(address);
   }, [getSignaturesFromFioAddress]);
+
   return (
     <PseudoModalContainer
       title="NFT Signatures"
@@ -58,8 +59,13 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
 
         <div className={classes.list}>
           {nftSignatures &&
-            nftSignatures.map((item: NFTSignature) => (
-              <FioAddressSignatureItem {...item} />
+            nftSignatures.map((item: NftItem) => (
+              <FioAddressSignatureItem
+                key={`${item.chain_code}${item.token_id}${item.contract_address}`}
+                chainCode={item.chain_code}
+                tokenId={item.token_id}
+                contractAddress={item.contract_address}
+              />
             ))}
         </div>
       </div>
