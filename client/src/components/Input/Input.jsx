@@ -35,6 +35,7 @@ const Input = props => {
     loading,
     uiType,
     errorType = '',
+    errorColor = '',
     suffix = '',
     upperCased = false,
     lowerCased = false,
@@ -209,6 +210,7 @@ const Input = props => {
           data={data}
           hasError={hasError}
           type={errorType}
+          color={errorColor}
           submitError={submitError}
         />
       )}

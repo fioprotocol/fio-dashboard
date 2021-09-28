@@ -47,6 +47,9 @@ export default class Fio {
     FIOSDK.isFioAddressValid(value);
   isFioPublicKeyValid = (value: string): boolean =>
     FIOSDK.isFioPublicKeyValid(value);
+  isChainCodeValid = (value: string): boolean => FIOSDK.isChainCodeValid(value);
+  isPublicAddressValid = (value: string): boolean =>
+    FIOSDK.isPublicAddressValid(value);
 
   convert = (amount: number, roe: number): number =>
     Math.round((amount / (FIOSDK.SUFUnit / 100)) * roe) / 100;

@@ -16,6 +16,8 @@ import { FIO_SIGN_NFT_REQUEST } from '../../redux/fio/actions';
 import { ResultsData } from '../common/TransactionResults/types';
 import Processing from '../common/TransactionProcessing';
 import CustomDropdown from './CustomDropdown';
+import { validate } from './validation';
+import { COLOR_TYPE } from '../Input/ErrorBadge';
 
 const SignNft: React.FC<ContainerProps> = props => {
   const {
@@ -98,7 +100,14 @@ const SignNft: React.FC<ContainerProps> = props => {
   };
 
   const onSubmit = (values: NftItem) => {
-    showPinModal(CONFIRM_PIN_ACTIONS.SIGN_NFT, values);
+    showPinModal(CONFIRM_PIN_ACTIONS.SIGN_NFT, {
+      chain_code: values.chain_code,
+      contract_address: values.contract_address,
+      token_id: values.token_id || '',
+      url: values.url || '',
+      hash: values.hash || '',
+      metadata: values.metadata || '',
+    });
   };
 
   const bundleCost = 2;
@@ -117,14 +126,17 @@ const SignNft: React.FC<ContainerProps> = props => {
       />
     );
 
-  // TODO: set validation
   return (
     <PseudoModalContainer
       title="Sign NFT"
       link={backTo || null}
       fullWidth={true}
     >
-      <Form onSubmit={onSubmit} initialValues={initialValues}>
+      <Form
+        onSubmit={onSubmit}
+        validate={validate}
+        initialValues={initialValues}
+      >
         {(props: FormRenderProps) => (
           <form onSubmit={props.handleSubmit}>
             <Container fluid className={classes.signSection}>
@@ -152,8 +164,8 @@ const SignNft: React.FC<ContainerProps> = props => {
                     type="text"
                     placeholder="Enter chain code"
                     uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                    errorColor={COLOR_TYPE.WARN}
                     component={Input}
-                    hideError="true"
                   />
                 </Col>
                 <Col>
@@ -162,8 +174,8 @@ const SignNft: React.FC<ContainerProps> = props => {
                     type="text"
                     placeholder="Enter token ID"
                     uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                    errorColor={COLOR_TYPE.WARN}
                     component={Input}
-                    hideError="true"
                   />
                 </Col>
               </Row>
@@ -174,8 +186,8 @@ const SignNft: React.FC<ContainerProps> = props => {
                     type="text"
                     placeholder="Enter or paste contract address"
                     uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                    errorColor={COLOR_TYPE.WARN}
                     component={Input}
-                    hideError="true"
                     showCopyButton
                   />
                 </Col>
@@ -187,8 +199,8 @@ const SignNft: React.FC<ContainerProps> = props => {
                     type="text"
                     placeholder="Enter or paste url"
                     uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                    errorColor={COLOR_TYPE.WARN}
                     component={Input}
-                    hideError="true"
                     showCopyButton
                   />
                 </Col>
@@ -200,8 +212,8 @@ const SignNft: React.FC<ContainerProps> = props => {
                     type="text"
                     placeholder="Enter or paste hash"
                     uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                    errorColor={COLOR_TYPE.WARN}
                     component={Input}
-                    hideError="true"
                     showCopyButton
                   />
                 </Col>
@@ -213,8 +225,8 @@ const SignNft: React.FC<ContainerProps> = props => {
                     type="text"
                     placeholder="Enter or paste creator url"
                     uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                    errorColor={COLOR_TYPE.WARN}
                     component={Input}
-                    hideError="true"
                     showCopyButton
                   />
                 </Col>
