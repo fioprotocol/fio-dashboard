@@ -14,6 +14,7 @@ export default combineReducers({
       case actions.LOGIN_REQUEST:
       case actions.LOGOUT_REQUEST:
       case actions.SIGNUP_REQUEST:
+      case actions.RESEND_CONFIRM_EMAIL_REQUEST:
         return true;
       case actions.PROFILE_SUCCESS:
       case actions.PROFILE_FAILURE:
@@ -25,6 +26,8 @@ export default combineReducers({
       case actions.SIGNUP_FAILURE:
       case actions.NONCE_SUCCESS:
       case actions.NONCE_FAILURE:
+      case actions.RESEND_CONFIRM_EMAIL_SUCCESS:
+      case actions.RESEND_CONFIRM_EMAIL_FAILURE:
         return false;
       default:
         return state;

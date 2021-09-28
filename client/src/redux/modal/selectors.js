@@ -7,4 +7,6 @@ export const pinConfirmData = state => state[prefix].pinConfirmData;
 export const showGenericError = state => state[prefix].showGenericError;
 export const showEmailConfirmBlocker = state =>
   state[prefix].showEmailConfirmBlocker;
+export const emailConfirmBlockerToken = state =>
+  state[prefix].emailConfirmBlockerToken;
 export const genericErrorData = state => state[prefix].genericErrorData;

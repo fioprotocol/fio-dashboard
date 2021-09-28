@@ -36,7 +36,7 @@ export default class ActionsSubmit extends Base {
   }
 
   static get paramsSecret() {
-    return ['password', 'confirmPassword'];
+    return [];
   }
 
   static get resultSecret() {

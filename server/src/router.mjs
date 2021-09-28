@@ -20,6 +20,7 @@ router.post('/users', routes.users.create);
 router.put('/users', checkAuth, routes.users.update);
 router.post('/users/setRecovery', checkAuth, routes.users.setRecovery);
 router.post('/users/resendRecovery', checkAuth, routes.users.resendRecovery);
+router.post('/users/resendConfirmEmail', routes.users.resendEmailConfirm);
 
 router.get('/notifications', checkAuth, routes.notifications.list);
 router.post('/notifications', checkAuth, routes.notifications.create);

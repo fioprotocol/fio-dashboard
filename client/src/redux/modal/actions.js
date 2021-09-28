@@ -57,9 +57,9 @@ export const clearGenericErrorData = () => ({
 export const SHOW_EMAIL_CONFIRM_BLOCKER = `${prefix}/SHOW_EMAIL_CONFIRM_BLOCKER`;
 export const CLOSE_EMAIL_CONFIRM_BLOCKER = `${prefix}/CLOSE_EMAIL_CONFIRM_BLOCKER`;
 
-export const showEmailConfirmBlocker = hasRedirect => ({
+export const showEmailConfirmBlocker = token => ({
   type: SHOW_EMAIL_CONFIRM_BLOCKER,
-  data: hasRedirect || false,
+  data: token,
 });
 
 export const closeEmailConfirmBlocker = () => ({
