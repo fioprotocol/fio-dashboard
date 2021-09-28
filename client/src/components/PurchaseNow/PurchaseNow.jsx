@@ -27,6 +27,7 @@ export const PurchaseNow = props => {
     isRetry,
     fioWallets,
     prices,
+    refProfileInfo,
   } = props;
 
   const [isWaiting, setWaiting] = useState(false);
@@ -83,6 +84,7 @@ export const PurchaseNow = props => {
         walletKeys[currentWallet.id],
         prices.fioNative,
         { pin: walletKeys[currentWallet.id].public }, // todo: change to other verification method
+        refProfileInfo != null ? refProfileInfo.code : '',
       );
 
       onProcessingEnd(results);
@@ -104,6 +106,7 @@ export const PurchaseNow = props => {
         },
         prices.fioNative,
         verifyParams,
+        refProfileInfo != null ? refProfileInfo.code : '',
       );
 
       onProcessingEnd(results);

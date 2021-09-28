@@ -22,6 +22,7 @@ export const registerFree = async ({
   cartItemId,
   publicKey,
   verifyParams,
+  refCode = '',
 }) => {
   let result = { cartItemId, fioName, isFree: true };
 
@@ -30,6 +31,7 @@ export const registerFree = async ({
       address: fioName,
       publicKey,
       verifyParams,
+      refCode,
     });
     if (res.error) {
       result.error = res.error;
@@ -82,6 +84,7 @@ export const register = async ({ fioName, fee, cartItemId }) => {
  * @param fees.address
  * @param fees.domain
  * @param verifyParams
+ * @param refCode
  * @returns {Promise<{registered: [], errors: []}>}
  */
 export const executeRegistration = async (
@@ -89,6 +92,7 @@ export const executeRegistration = async (
   keys,
   fees,
   verifyParams = {},
+  refCode = '',
 ) => {
   const result = { errors: [], registered: [], partial: [] };
   const registrations = makeRegistrationOrder([...items], fees);
@@ -104,7 +108,7 @@ export const executeRegistration = async (
         continue;
       }
       registrationPromises.push(
-        makeRegistrationPromise(registration, keys, verifyParams),
+        makeRegistrationPromise(registration, keys, verifyParams, refCode),
       );
     }
 
@@ -117,7 +121,7 @@ export const executeRegistration = async (
     for (const registration of registrations) {
       if (!registration.depended) continue;
       dependedRegistrationPromises.push(
-        makeRegistrationPromise(registration, keys, verifyParams),
+        makeRegistrationPromise(registration, keys, verifyParams, refCode),
       );
     }
 
@@ -199,14 +203,21 @@ const makeRegistrationOrder = (cartItems, fees) => {
  * @param registration.fee
  * @param keys
  * @param verifyParams
+ * @param refCode
  * @returns {*}
  */
-const makeRegistrationPromise = (registration, keys, verifyParams) => {
+const makeRegistrationPromise = (
+  registration,
+  keys,
+  verifyParams,
+  refCode = '',
+) => {
   return registration.isFree
     ? registerFree({
         ...registration,
         publicKey: keys.public,
         verifyParams,
+        refCode,
       })
     : register(registration);
 };

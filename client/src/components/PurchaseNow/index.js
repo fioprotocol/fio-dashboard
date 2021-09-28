@@ -15,6 +15,7 @@ import {
   isProcessing,
 } from '../../redux/registrations/selectors';
 import { fioWallets } from '../../redux/fio/selectors';
+import { refProfileInfo } from '../../redux/refProfile/selectors';
 
 import { PurchaseNow } from './PurchaseNow';
 
@@ -28,6 +29,7 @@ const selector = createStructuredSelector({
   fioWallets,
   prices,
   isProcessing,
+  refProfileInfo,
 });
 
 const actions = {
