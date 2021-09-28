@@ -16,7 +16,7 @@ interface TrxResponse {
   transaction_id?: string;
   status: string;
   expiration?: string;
-  fee_collected?: number;
+  fee_collected: number;
 }
 
 type FIOSDK_LIB = typeof FIOSDK;
@@ -306,7 +306,8 @@ export default class Fio {
   ): Promise<TrxResponse> => {
     this.setBaseUrl();
     try {
-      const result = await this.walletFioSDK.pushTransaction(
+      this.walletFioSDK.setSignedTrxReturnOption(true);
+      const preparedTrx = await this.walletFioSDK.pushTransaction(
         'fio.address',
         'addnft',
         {
@@ -316,6 +317,11 @@ export default class Fio {
           tpid: '',
         },
       );
+      const result = await this.walletFioSDK.executePreparedTrx(
+        this.actionEndPoints.signNft,
+        preparedTrx,
+      );
+      this.walletFioSDK.setSignedTrxReturnOption(false);
       return result;
     } catch (err) {
       this.logError(err);
