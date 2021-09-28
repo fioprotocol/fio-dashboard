@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
 import classnames from 'classnames';
 
+import { ROUTES } from '../../constants/routes';
 import { currentYear } from '../../utils';
 import classes from './Footer.module.scss';
 
@@ -17,7 +18,8 @@ const Footer = (props: { homePageLink: string }) => {
       <hr className={classes.divider} />
       <Nav className="pr-0 align-items-center">
         <Nav.Link
-          href="#"
+          to={ROUTES.PRIVACY_POLICY}
+          as={Link}
           className={classnames(classes.navItem, 'text-white', 'p-0')}
         >
           Privacy Policy

@@ -27,6 +27,7 @@ import SettingsPage from './pages/SettingsPage';
 import RefHomePage from './pages/RefHomePage';
 import RefSignNftPage from './pages/RefSignNftPage';
 import AccountRecoveryPage from './pages/AccountRecoveryPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 
 import { ROUTES } from './constants/routes';
 import FioAddressSignaturesPage from './pages/FioAddressSignaturesPage';
@@ -121,6 +122,12 @@ const Routes = () => (
         />
 
         <PrivateRoute path={ROUTES.REF_SIGN_NFT} component={RefSignNftPage} />
+
+        <Route
+          path={ROUTES.PRIVACY_POLICY}
+          component={PrivacyPolicyPage}
+          exact
+        />
 
         <AuthContainer />
       </Switch>

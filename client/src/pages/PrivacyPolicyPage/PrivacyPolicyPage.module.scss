@@ -1,0 +1,10 @@
+@import '../../assets/styles/fontMixins.scss';
+
+.header {
+  margin-top: 30px;
+}
+
+.subheader {
+  @include proxima-nova-semibold;
+  margin-top: 20px;
+}
