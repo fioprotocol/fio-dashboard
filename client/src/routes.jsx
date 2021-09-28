@@ -28,6 +28,7 @@ import RefHomePage from './pages/RefHomePage';
 import RefSignNftPage from './pages/RefSignNftPage';
 import AccountRecoveryPage from './pages/AccountRecoveryPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/TermsOfServicePage';
 
 import { ROUTES } from './constants/routes';
 import FioAddressSignaturesPage from './pages/FioAddressSignaturesPage';
@@ -126,6 +127,12 @@ const Routes = () => (
         <Route
           path={ROUTES.PRIVACY_POLICY}
           component={PrivacyPolicyPage}
+          exact
+        />
+
+        <Route
+          path={ROUTES.TERMS_OF_SERVICE}
+          component={TermsOfServicePage}
           exact
         />
 
