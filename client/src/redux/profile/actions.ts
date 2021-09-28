@@ -89,15 +89,6 @@ export const logout = ({ history }: RouterProps, redirect: string = '') => ({
   },
 });
 
-export const CONFIRM_REQUEST = `${prefix}/CONFIRM_REQUEST`;
-export const CONFIRM_SUCCESS = `${prefix}/CONFIRM_SUCCESS`;
-export const CONFIRM_FAILURE = `${prefix}/CONFIRM_FAILURE`;
-
-export const confirm = (hash: string) => ({
-  types: [CONFIRM_REQUEST, CONFIRM_SUCCESS, CONFIRM_FAILURE],
-  promise: (api: Api) => api.auth.confirm(hash),
-});
-
 export const SET_RECOVERY_REQUEST = `${prefix}/SET_RECOVERY_REQUEST`;
 export const SET_RECOVERY_SUCCESS = `${prefix}/SET_RECOVERY_SUCCESS`;
 export const SET_RECOVERY_FAILURE = `${prefix}/SET_RECOVERY_FAILURE`;
@@ -150,4 +141,13 @@ export const resendConfirmEmail = (token: string) => ({
     RESEND_CONFIRM_EMAIL_FAILURE,
   ],
   promise: (api: Api) => api.auth.resendConfirmEmail(token),
+});
+
+export const CONFIRM_EMAIL_REQUEST = `${prefix}/CONFIRM_EMAIL_REQUEST`;
+export const CONFIRM_EMAIL_SUCCESS = `${prefix}/CONFIRM_EMAIL_SUCCESS`;
+export const CONFIRM_EMAIL_FAILURE = `${prefix}/CONFIRM_EMAIL_FAILURE`;
+
+export const confirmEmail = (hash: string) => ({
+  types: [CONFIRM_EMAIL_REQUEST, CONFIRM_EMAIL_SUCCESS, CONFIRM_EMAIL_FAILURE],
+  promise: (api: Api) => api.auth.confirm(hash),
 });

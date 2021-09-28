@@ -28,7 +28,7 @@ export default class UsersResendEmailConfirm extends Base {
       throw new X({
         code: 'INVALID_ACTION',
         fields: {
-          email: 'INVALID_ACTION',
+          token: 'INVALID',
         },
       });
 
@@ -40,7 +40,7 @@ export default class UsersResendEmailConfirm extends Base {
       throw new X({
         code: 'INVALID_ACTION',
         fields: {
-          email: 'INVALID_ACTION',
+          token: 'INVALID',
         },
       });
     }

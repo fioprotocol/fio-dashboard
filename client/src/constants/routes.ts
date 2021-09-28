@@ -4,7 +4,7 @@ const ROUTES: { [route: string]: string } = {
   ADMIN_USERS: '/admin/users',
   DASHBOARD: '/dashboard',
 
-  CONFIRM_EMAIL: '/confirmEmail/:hash',
+  CONFIRM_EMAIL: '/confirm-email/:hash',
   PROFILE: '/profile',
   RESET_PASSWORD: '/reset-password/:hash',
   PASSWORD_RECOVERY: '/password-recovery',
