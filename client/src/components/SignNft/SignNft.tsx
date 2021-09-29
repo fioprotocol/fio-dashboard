@@ -148,7 +148,7 @@ const SignNft: React.FC<ContainerProps> = props => {
                   <div
                     className={`${classes.fioAddress} d-flex justify-content-start`}
                   >
-                    <div>FIO Address</div>
+                    <div className={classes.fioAddressLabel}>FIO Address</div>
                     <CustomDropdown
                       value={selectedFioAddressName}
                       list={fioAddresses.map(({ name }) => name)}
@@ -163,6 +163,7 @@ const SignNft: React.FC<ContainerProps> = props => {
                     name="chain_code"
                     type="text"
                     placeholder="Enter chain code"
+                    prefixLabel="Chain Code"
                     uiType={INPUT_UI_STYLES.BLACK_WHITE}
                     errorColor={COLOR_TYPE.WARN}
                     component={Input}
@@ -173,6 +174,7 @@ const SignNft: React.FC<ContainerProps> = props => {
                     name="token_id"
                     type="text"
                     placeholder="Enter token ID"
+                    prefixLabel="Token ID"
                     uiType={INPUT_UI_STYLES.BLACK_WHITE}
                     errorColor={COLOR_TYPE.WARN}
                     component={Input}
@@ -185,6 +187,7 @@ const SignNft: React.FC<ContainerProps> = props => {
                     name="contract_address"
                     type="text"
                     placeholder="Enter or paste contract address"
+                    prefixLabel="Contract Address"
                     uiType={INPUT_UI_STYLES.BLACK_WHITE}
                     errorColor={COLOR_TYPE.WARN}
                     component={Input}
@@ -198,6 +201,7 @@ const SignNft: React.FC<ContainerProps> = props => {
                     name="url"
                     type="text"
                     placeholder="Enter or paste url"
+                    prefixLabel="URL"
                     uiType={INPUT_UI_STYLES.BLACK_WHITE}
                     errorColor={COLOR_TYPE.WARN}
                     component={Input}
@@ -211,6 +215,7 @@ const SignNft: React.FC<ContainerProps> = props => {
                     name="hash"
                     type="text"
                     placeholder="Enter or paste hash"
+                    prefixLabel="Hash"
                     uiType={INPUT_UI_STYLES.BLACK_WHITE}
                     errorColor={COLOR_TYPE.WARN}
                     component={Input}
@@ -224,6 +229,7 @@ const SignNft: React.FC<ContainerProps> = props => {
                     name="metadata"
                     type="text"
                     placeholder="Enter or paste creator url"
+                    prefixLabel="Metadata"
                     uiType={INPUT_UI_STYLES.BLACK_WHITE}
                     errorColor={COLOR_TYPE.WARN}
                     component={Input}
