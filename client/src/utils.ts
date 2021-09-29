@@ -34,12 +34,19 @@ export async function minWaitTimeFunction(
   cb: () => Promise<any>,
   minWaitTime = 1000,
 ) {
+  let results;
+  let error;
   const t0 = performance.now();
-  const results = await cb();
+  try {
+    results = await cb();
+  } catch (e) {
+    error = e;
+  }
   const t1 = performance.now();
   if (t1 - t0 < minWaitTime) {
     await sleep(minWaitTime - (t1 - t0));
   }
+  if (error != null) throw error;
   return results;
 }
 
