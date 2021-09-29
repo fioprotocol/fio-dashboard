@@ -247,7 +247,7 @@ const SignNft: React.FC<ContainerProps> = props => {
                   <Button
                     className={classes.actionButton}
                     type="submit"
-                    disabled={hasLowBalance || processing}
+                    disabled={hasLowBalance || processing || !props.valid}
                   >
                     <span>Sign NFT</span>
                   </Button>

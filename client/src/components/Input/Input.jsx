@@ -66,7 +66,7 @@ const Input = props => {
 
   const hasError =
     ((error || data.error) &&
-      (touched || modified || submitSucceeded) &&
+      (touched || modified || submitSucceeded || !!value) &&
       !active) || // todo: remove !active to show red border on focused field. make debounce on create account user field
     (submitError && !modifiedSinceLastSubmit);
   useEffect(() => {
