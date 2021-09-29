@@ -25,7 +25,7 @@ export type FieldProps = {
   onClose?: (flag: boolean) => void;
   showClearInput?: boolean;
   showCopyButton?: boolean;
-  suffix?: string;
+  prefix?: string;
   type: string;
   errorType?: string;
   uiType?: string;
@@ -46,7 +46,7 @@ const InputRedux: React.FC<Props> = props => {
     onClose,
     showClearInput,
     showCopyButton,
-    suffix = '',
+    prefix = '',
     type,
     errorType = '',
     uiType,
@@ -95,11 +95,11 @@ const InputRedux: React.FC<Props> = props => {
   return (
     <div className={classes.regInputWrapper}>
       <div className={classes.inputGroup}>
-        {suffix && (
+        {prefix && (
           <div
-            className={classnames(classes.suffix, hasError && classes.error)}
+            className={classnames(classes.prefix, hasError && classes.error)}
           >
-            {suffix}
+            {prefix}
           </div>
         )}
         <input
@@ -107,7 +107,7 @@ const InputRedux: React.FC<Props> = props => {
             classes.regInput,
             hasError && classes.error,
             uiType && classes[uiType],
-            suffix && classes.suffixSpace,
+            prefix && classes.prefixSpace,
             type === 'password' && classes.doubleIconInput,
           )}
           {...input}

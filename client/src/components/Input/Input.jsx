@@ -36,7 +36,7 @@ const Input = props => {
     uiType,
     errorType = '',
     errorColor = '',
-    suffix = '',
+    prefix = '',
     upperCased = false,
     lowerCased = false,
     disabled,
@@ -127,11 +127,11 @@ const Input = props => {
   const regularInput = (
     <>
       <div className={classes.inputGroup}>
-        {suffix && (
+        {prefix && (
           <div
-            className={classnames(classes.suffix, hasError && classes.error)}
+            className={classnames(classes.prefix, hasError && classes.error)}
           >
-            {suffix}
+            {prefix}
           </div>
         )}
         <input
@@ -140,7 +140,7 @@ const Input = props => {
             (hasError || showErrorBorder) && classes.error,
             uiType && classes[uiType],
             isBW && classes.bw,
-            suffix && classes.suffixSpace,
+            prefix && classes.prefixSpace,
             type === 'password' && classes.doubleIconInput,
           )}
           disabled={disabled}
