@@ -14,7 +14,7 @@ const PrivacyPolicyPage: React.FC = () => {
         <a href="https://fioprotocol.io/" target="_blank">
           fioprotocol.io
         </a>{' '}
-        website and the FIO Dashboard website located at
+        website and the FIO Dashboard website located at{' '}
         <a href="https://dashboard.fioprotocol.io/" target="_blank">
           dashboard.fioprotocol.io
         </a>{' '}
