@@ -9,8 +9,7 @@ import { showGenericErrorModal } from '../modal/actions';
 import { homePageLink as getHomePageLink } from '../refProfile/selectors';
 import { showGenericError as getShowGenericError } from '../modal/selectors';
 
-import { ErrorText } from './constants';
-import { ROUTES } from '../../constants/routes';
+import { ErrorData } from './constants';
 
 export const toString = obj =>
   Object.entries(obj)
@@ -30,11 +29,12 @@ export function* notify(history) {
       const genericErrorIsShowing = yield select(getShowGenericError);
 
       if (!genericErrorIsShowing) {
-        const { message, title, buttonText } = ErrorText[action.type] || {};
+        const { message, title, buttonText, redirect } =
+          ErrorData[action.type] || {};
 
         yield put(showGenericErrorModal(message, title, buttonText));
+        if (redirect) yield history.push(redirect);
       }
-      yield history.push(ROUTES.HOME);
     }
 
     if (
