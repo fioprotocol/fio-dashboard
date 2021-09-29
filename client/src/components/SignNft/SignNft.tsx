@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Col, Container, Row } from 'react-bootstrap';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
-import classes from './SignNft.module.scss';
-import { Field, Form, FormRenderProps } from 'react-final-form';
-import { OnChange } from 'react-final-form-listeners';
 
 import apis from '../../api/index';
-import Input, { INPUT_UI_STYLES } from '../../components/Input/Input';
 import PseudoModalContainer from '../PseudoModalContainer';
-import BundledTransactionBadge from '../Badges/BundledTransactionBadge/BundledTransactionBadge';
+import SignNFTForm from './SignNftForm';
 import { ContainerProps, NftFormValues } from './types';
-import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
 import { PinConfirmation } from '../../types';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { waitForEdgeAccountStop } from '../../utils';
@@ -18,11 +12,6 @@ import Results from '../common/TransactionResults';
 import { FIO_SIGN_NFT_REQUEST } from '../../redux/fio/actions';
 import { ResultsData } from '../common/TransactionResults/types';
 import Processing from '../common/TransactionProcessing';
-import CustomDropdown from './CustomDropdown';
-import { validate } from './validation';
-import { COLOR_TYPE } from '../Input/ErrorBadge';
-import { BADGE_TYPES } from '../Badge/Badge';
-import InfoBadge from '../InfoBadge/InfoBadge';
 
 const BUNDLE_COST = 2;
 
@@ -130,7 +119,7 @@ const SignNft: React.FC<ContainerProps> = props => {
       values.chain_code,
       values.contract_address,
     );
-    if (nftSigned) return;
+    if (nftSigned) return {};
     showPinModal(CONFIRM_PIN_ACTIONS.SIGN_NFT, {
       chain_code: values.chain_code,
       contract_address: values.contract_address,
@@ -139,10 +128,8 @@ const SignNft: React.FC<ContainerProps> = props => {
       hash: values.hash || '',
       metadata: { creator_url: values.creator_url || '' },
     });
+    return {};
   };
-
-  const hasLowBalance =
-    fioAddress != null ? fioAddress.remaining < BUNDLE_COST : true;
 
   // TODO: show proper results
   if (resultsData)
@@ -156,156 +143,29 @@ const SignNft: React.FC<ContainerProps> = props => {
       />
     );
 
+  const hasLowBalance =
+    fioAddress != null ? fioAddress.remaining < BUNDLE_COST : true;
+
+  const formProps = {
+    onSubmit,
+    initialValues,
+    fieldValuesChanged,
+    alreadySigned,
+    selectedFioAddressName,
+    fioAddresses,
+    setSelectedFioAddress,
+    bundleCost: BUNDLE_COST,
+    hasLowBalance,
+    processing,
+    fioAddress,
+  };
   return (
     <PseudoModalContainer
       title="Sign NFT"
       link={backTo || null}
       fullWidth={true}
     >
-      <Form
-        onSubmit={onSubmit}
-        validate={validate}
-        initialValues={initialValues}
-      >
-        {(props: FormRenderProps) => (
-          <form onSubmit={props.handleSubmit}>
-            <OnChange name="chain_code">{fieldValuesChanged}</OnChange>
-            <OnChange name="contract_address">{fieldValuesChanged}</OnChange>
-            <Container fluid className={classes.signSection}>
-              <InfoBadge
-                type={BADGE_TYPES.INFO}
-                show={alreadySigned}
-                title="Already Signed"
-                message="This NFT that you are attempting to sign, has already been signed"
-              />
-              <Row className="mt-4">
-                <Col className={classes.subTitleSection}>Details</Col>
-              </Row>
-              <Row>
-                <Col className={classes.subTitleSection}>
-                  <div
-                    className={`${classes.fioAddress} d-flex justify-content-start`}
-                  >
-                    <div className={classes.fioAddressLabel}>FIO Address</div>
-                    <CustomDropdown
-                      value={selectedFioAddressName}
-                      list={fioAddresses.map(({ name }) => name)}
-                      onChange={setSelectedFioAddress}
-                    />
-                  </div>
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Field
-                    name="chain_code"
-                    type="text"
-                    placeholder="Enter chain code"
-                    prefixLabel="Chain Code"
-                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                    errorColor={COLOR_TYPE.WARN}
-                    component={Input}
-                  />
-                </Col>
-                <Col>
-                  <Field
-                    name="token_id"
-                    type="text"
-                    placeholder="Enter token ID"
-                    prefixLabel="Token ID"
-                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                    errorColor={COLOR_TYPE.WARN}
-                    component={Input}
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Field
-                    name="contract_address"
-                    type="text"
-                    placeholder="Enter or paste contract address"
-                    prefixLabel="Contract Address"
-                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                    errorColor={COLOR_TYPE.WARN}
-                    component={Input}
-                    showCopyButton
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Field
-                    name="url"
-                    type="text"
-                    placeholder="Enter or paste url"
-                    prefixLabel="URL"
-                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                    errorColor={COLOR_TYPE.WARN}
-                    component={Input}
-                    showCopyButton
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Field
-                    name="hash"
-                    type="text"
-                    placeholder="Enter or paste hash"
-                    prefixLabel="Hash"
-                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                    errorColor={COLOR_TYPE.WARN}
-                    component={Input}
-                    showCopyButton
-                  />
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Field
-                    name="creator_url"
-                    type="text"
-                    placeholder="Enter or paste creator url"
-                    prefixLabel="Creator URL"
-                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                    errorColor={COLOR_TYPE.WARN}
-                    component={Input}
-                    showCopyButton
-                  />
-                </Col>
-              </Row>
-              <Row className="mb-n3">
-                <Col className={classes.subTitleSection}>Transaction cost</Col>
-              </Row>
-              <BundledTransactionBadge
-                bundles={BUNDLE_COST}
-                remaining={fioAddress != null ? fioAddress.remaining : 0}
-              />
-              <LowBalanceBadge
-                hasLowBalance={hasLowBalance}
-                messageText="Not enough bundles"
-              />
-              <Row>
-                <Col className="text-center">
-                  <Button
-                    className={classes.actionButton}
-                    type="submit"
-                    disabled={
-                      hasLowBalance ||
-                      processing ||
-                      !props.valid ||
-                      alreadySigned
-                    }
-                  >
-                    <span>Sign NFT</span>
-                  </Button>
-                </Col>
-              </Row>
-            </Container>
-          </form>
-        )}
-      </Form>
+      <SignNFTForm {...formProps} />
       <Processing isProcessing={processing} />
     </PseudoModalContainer>
   );

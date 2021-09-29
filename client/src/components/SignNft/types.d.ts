@@ -42,3 +42,17 @@ export type ContainerProps = {
   resetPinConfirm: () => void;
   pinConfirmation: PinConfirmation;
 } & ContainerOwnProps;
+
+export type SignNftFormProps = {
+  alreadySigned: boolean;
+  onSubmit: (values: NftFormValues) => Promise<any>;
+  initialValues: NftFormValues | null;
+  fieldValuesChanged: () => void;
+  selectedFioAddressName: string;
+  fioAddresses: FioAddressDoublet[];
+  fioAddress: FioAddressDoublet;
+  setSelectedFioAddress: (value: string) => void;
+  bundleCost: number;
+  hasLowBalance: boolean;
+  processing: boolean;
+};
