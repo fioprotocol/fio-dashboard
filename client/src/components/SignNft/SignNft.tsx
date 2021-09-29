@@ -3,6 +3,9 @@ import { Button, Col, Container, Row } from 'react-bootstrap';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 import classes from './SignNft.module.scss';
 import { Field, Form, FormRenderProps } from 'react-final-form';
+import { OnChange } from 'react-final-form-listeners';
+
+import apis from '../../api/index';
 import Input, { INPUT_UI_STYLES } from '../../components/Input/Input';
 import PseudoModalContainer from '../PseudoModalContainer';
 import BundledTransactionBadge from '../Badges/BundledTransactionBadge/BundledTransactionBadge';
@@ -18,6 +21,10 @@ import Processing from '../common/TransactionProcessing';
 import CustomDropdown from './CustomDropdown';
 import { validate } from './validation';
 import { COLOR_TYPE } from '../Input/ErrorBadge';
+import { BADGE_TYPES } from '../Badge/Badge';
+import InfoBadge from '../InfoBadge/InfoBadge';
+
+const BUNDLE_COST = 2;
 
 const SignNft: React.FC<ContainerProps> = props => {
   const {
@@ -37,15 +44,28 @@ const SignNft: React.FC<ContainerProps> = props => {
   } = props;
   const [processing, setProcessing] = useState(false);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
+  const [alreadySigned, setAlreadySigned] = useState<boolean>(false);
   const [selectedFioAddressName, setSelectedFioAddress] = useState<string>(
     fioAddressName,
   );
   const fioAddress = fioAddresses.find(
     ({ name }) => name === selectedFioAddressName,
   );
+  const checkNftSigned = async (chainCode: string, contractAddress: string) => {
+    const { nfts } = await apis.fio.checkNftSigned(chainCode, contractAddress);
+    setAlreadySigned(nfts.length > 0);
+    return nfts.length > 0;
+  };
 
   useEffect(() => {
     getFee(fioAddressName);
+    if (
+      initialValues != null &&
+      initialValues.chain_code &&
+      initialValues.contract_address
+    ) {
+      checkNftSigned(initialValues.chain_code, initialValues.contract_address);
+    }
   }, []);
 
   useEffect(() => {
@@ -70,6 +90,12 @@ const SignNft: React.FC<ContainerProps> = props => {
       setProcessing(false);
     }
   }, [signNftProcessing, result]);
+
+  const fieldValuesChanged = () => {
+    if (alreadySigned) {
+      setAlreadySigned(false);
+    }
+  };
 
   const submit = async (pinConfirmation: PinConfirmation) => {
     const {
@@ -99,7 +125,12 @@ const SignNft: React.FC<ContainerProps> = props => {
     if (confirmationError) setProcessing(false);
   };
 
-  const onSubmit = (values: NftFormValues) => {
+  const onSubmit = async (values: NftFormValues) => {
+    const nftSigned = await checkNftSigned(
+      values.chain_code,
+      values.contract_address,
+    );
+    if (nftSigned) return;
     showPinModal(CONFIRM_PIN_ACTIONS.SIGN_NFT, {
       chain_code: values.chain_code,
       contract_address: values.contract_address,
@@ -110,9 +141,8 @@ const SignNft: React.FC<ContainerProps> = props => {
     });
   };
 
-  const bundleCost = 2;
   const hasLowBalance =
-    fioAddress != null ? fioAddress.remaining < bundleCost : true;
+    fioAddress != null ? fioAddress.remaining < BUNDLE_COST : true;
 
   // TODO: show proper results
   if (resultsData)
@@ -139,8 +169,16 @@ const SignNft: React.FC<ContainerProps> = props => {
       >
         {(props: FormRenderProps) => (
           <form onSubmit={props.handleSubmit}>
+            <OnChange name="chain_code">{fieldValuesChanged}</OnChange>
+            <OnChange name="contract_address">{fieldValuesChanged}</OnChange>
             <Container fluid className={classes.signSection}>
-              <Row className="mt-2">
+              <InfoBadge
+                type={BADGE_TYPES.INFO}
+                show={alreadySigned}
+                title="Already Signed"
+                message="This NFT that you are attempting to sign, has already been signed"
+              />
+              <Row className="mt-4">
                 <Col className={classes.subTitleSection}>Details</Col>
               </Row>
               <Row>
@@ -241,7 +279,7 @@ const SignNft: React.FC<ContainerProps> = props => {
                 <Col className={classes.subTitleSection}>Transaction cost</Col>
               </Row>
               <BundledTransactionBadge
-                bundles={bundleCost}
+                bundles={BUNDLE_COST}
                 remaining={fioAddress != null ? fioAddress.remaining : 0}
               />
               <LowBalanceBadge
@@ -253,7 +291,12 @@ const SignNft: React.FC<ContainerProps> = props => {
                   <Button
                     className={classes.actionButton}
                     type="submit"
-                    disabled={hasLowBalance || processing || !props.valid}
+                    disabled={
+                      hasLowBalance ||
+                      processing ||
+                      !props.valid ||
+                      alreadySigned
+                    }
                   >
                     <span>Sign NFT</span>
                   </Button>

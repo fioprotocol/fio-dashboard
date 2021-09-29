@@ -285,12 +285,28 @@ export default class Fio {
 
   getNFTsFioAddress = async (
     fioAddress: string,
-    limit: number,
-    offset: number,
+    limit: number = 100,
+    offset: number = 0,
   ): Promise<NftsResponse> => {
     this.setBaseUrl();
     try {
-      return await this.publicFioSDK.getNfts({ fioAddress }, 100, 0);
+      return await this.publicFioSDK.getNfts({ fioAddress }, limit, offset);
+    } catch (e) {
+      this.logError(e);
+    }
+    return {
+      nfts: [],
+      more: false,
+    };
+  };
+
+  checkNftSigned = async (
+    chainCode: string,
+    contractAddress: string,
+  ): Promise<NftsResponse> => {
+    this.setBaseUrl();
+    try {
+      return await this.publicFioSDK.getNfts({ chainCode, contractAddress });
     } catch (e) {
       this.logError(e);
     }
