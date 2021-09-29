@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Redirect, RouteComponentProps } from 'react-router-dom';
-import { FioAddressDoublet, RefProfile, RefQuery } from '../../types';
+import { FioAddressDoublet, RefProfile, SignNFTParams } from '../../types';
 import SignNft from '../../components/SignNft';
 
 type MatchParams = {
@@ -13,7 +13,7 @@ type Props = {
   loading: boolean;
   edgeAuthLoading: boolean;
   refProfileInfo: RefProfile;
-  refProfileQueryParams: RefQuery;
+  refProfileQueryParams: SignNFTParams;
   fioAddresses: FioAddressDoublet[];
   homePageLink: string;
 };
@@ -33,7 +33,10 @@ export const RefSignNftPage: React.FC<Props &
 
   return (
     <SignNft
-      initialValues={refProfileQueryParams}
+      initialValues={{
+        ...refProfileQueryParams,
+        creator_url: refProfileQueryParams.metadata.creator_url,
+      }}
       fioAddressName={fioAddresses[0].name}
     />
   );

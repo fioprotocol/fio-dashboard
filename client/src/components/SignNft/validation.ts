@@ -1,4 +1,4 @@
-import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
+import { NftFormValues } from './types';
 import apis from '../../api';
 
 const TOKEN_ID_MAX_LENGTH = 64;
@@ -6,7 +6,7 @@ const URL_MAX_LENGTH = 128;
 const META_MAX_LENGTH = 64;
 const HASH_REGEX = /^[a-f0-9]{64}$/gi;
 
-export const validate = (values: NftItem) => {
+export const validate = (values: NftFormValues) => {
   const errors: any = {};
   if (!values.chain_code) {
     errors.chain_code = 'Required';
@@ -39,14 +39,12 @@ export const validate = (values: NftItem) => {
     errors.hash = 'Not valid hash';
   }
 
-  if (values.metadata != null) {
-    if (values.metadata.length > META_MAX_LENGTH) {
-      errors.metadata = 'Metadata is too long';
-    }
-    try {
-      JSON.parse(values.metadata);
-    } catch (e) {
-      errors.metadata = 'Not valid metadata json';
+  if (values.creator_url != null) {
+    if (
+      JSON.stringify({ creator_url: values.creator_url }).length >
+      META_MAX_LENGTH
+    ) {
+      errors.metadata = 'Creator URL is too long';
     }
   }
 

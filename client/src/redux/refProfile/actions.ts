@@ -30,11 +30,19 @@ export const setContainedParams = (params: any) => {
   }
   if (params.metadata != null) {
     try {
-      params.metadata = decodeURI(params.metadata);
+      params.metadata = JSON.parse(decodeURI(params.metadata));
     } catch (e) {
       console.error(e);
+      params.metadata = { creator_url: '' };
     }
+  } else {
+    params.metadata = { creator_url: '' };
   }
+
+  if (params.metadata.creator_url == null) {
+    params.metadata.creator_url = '';
+  }
+
   return {
     type: SET_CONTAINED_PARAMS,
     data: params,

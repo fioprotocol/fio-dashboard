@@ -6,7 +6,7 @@ import { Field, Form, FormRenderProps } from 'react-final-form';
 import Input, { INPUT_UI_STYLES } from '../../components/Input/Input';
 import PseudoModalContainer from '../PseudoModalContainer';
 import BundledTransactionBadge from '../Badges/BundledTransactionBadge/BundledTransactionBadge';
-import { ContainerProps } from './types';
+import { ContainerProps, NftFormValues } from './types';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
 import { PinConfirmation } from '../../types';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
@@ -99,14 +99,14 @@ const SignNft: React.FC<ContainerProps> = props => {
     if (confirmationError) setProcessing(false);
   };
 
-  const onSubmit = (values: NftItem) => {
+  const onSubmit = (values: NftFormValues) => {
     showPinModal(CONFIRM_PIN_ACTIONS.SIGN_NFT, {
       chain_code: values.chain_code,
       contract_address: values.contract_address,
       token_id: values.token_id || '',
       url: values.url || '',
       hash: values.hash || '',
-      metadata: values.metadata || '',
+      metadata: { creator_url: values.creator_url || '' },
     });
   };
 
@@ -226,10 +226,10 @@ const SignNft: React.FC<ContainerProps> = props => {
               <Row>
                 <Col>
                   <Field
-                    name="metadata"
+                    name="creator_url"
                     type="text"
                     placeholder="Enter or paste creator url"
-                    prefixLabel="Metadata"
+                    prefixLabel="Creator URL"
                     uiType={INPUT_UI_STYLES.BLACK_WHITE}
                     errorColor={COLOR_TYPE.WARN}
                     component={Input}
