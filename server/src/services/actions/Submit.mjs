@@ -3,6 +3,8 @@ import X from '../Exception';
 
 import { Action } from '../../models';
 
+const ACTION_EPX_TIME = 1000 * 60 * 60 * 24 * 30; // 1 month
+
 export default class ActionsSubmit extends Base {
   async validate(data) {
     const action = await Action.findOneWhere({ hash: data.hash });
@@ -12,6 +14,16 @@ export default class ActionsSubmit extends Base {
         code: 'NOT_FOUND',
         fields: {
           hash: 'INVALID',
+        },
+      });
+    }
+
+    if (new Date().getTime() - new Date(action.createdAt).getTime() > ACTION_EPX_TIME) {
+      await action.destroy({ force: true });
+      throw new X({
+        code: 'EXPIRED',
+        fields: {
+          hash: 'EXPIRED',
         },
       });
     }
@@ -36,7 +48,7 @@ export default class ActionsSubmit extends Base {
   }
 
   static get paramsSecret() {
-    return ['password', 'confirmPassword'];
+    return [];
   }
 
   static get resultSecret() {

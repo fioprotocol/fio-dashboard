@@ -7,7 +7,7 @@ import { OnChange } from 'react-final-form-listeners';
 
 import classes from './AddressDomainForm.module.scss';
 
-const suffix = '@';
+const prefix = '@';
 
 const AddressForm = props => {
   const {
@@ -82,7 +82,7 @@ const AddressForm = props => {
               toggleShowCustomDomain(false);
             }}
             hideError="true"
-            suffix={suffix}
+            prefix={prefix}
           />
         ) : (
           <Field

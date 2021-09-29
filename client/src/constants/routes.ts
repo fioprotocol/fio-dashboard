@@ -4,7 +4,7 @@ const ROUTES: { [route: string]: string } = {
   ADMIN_USERS: '/admin/users',
   DASHBOARD: '/dashboard',
 
-  CONFIRM_EMAIL: '/confirmEmail/:hash',
+  CONFIRM_EMAIL: '/confirm-email/:hash',
   PROFILE: '/profile',
   RESET_PASSWORD: '/reset-password/:hash',
   PASSWORD_RECOVERY: '/password-recovery',
@@ -46,6 +46,9 @@ const ROUTES: { [route: string]: string } = {
   // Referrer Profile pages
   REF_PROFILE_HOME: '/ref/:refProfileCode',
   REF_SIGN_NFT: '/ref/:refProfileCode/sign-nft',
+
+  PRIVACY_POLICY: '/privacy-policy',
+  TERMS_OF_SERVICE: '/terms-of-service',
 };
 
 export { ROUTES };

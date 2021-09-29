@@ -2,12 +2,21 @@ import React, { useEffect } from 'react';
 
 import AccountRecovery from '../../components/AccountRecovery';
 
-type Props = {
-  edgeContextSet: boolean;
-  getUsersRecoveryQuestions: (username: string) => void;
+type Location = {
+  location: {
+    query: {
+      username: string;
+      token: string;
+    };
+  };
 };
 
-const AccountRecoveryPage: React.FC<any & Props> = props => {
+type Props = {
+  edgeContextSet: boolean;
+  getUsersRecoveryQuestions: (token: string, username: string) => void;
+};
+
+const AccountRecoveryPage: React.FC<Location & Props> = props => {
   const { getUsersRecoveryQuestions, edgeContextSet, location } = props;
   const {
     query: { username: usernameProp, token: tokenProp },

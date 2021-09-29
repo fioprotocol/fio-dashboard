@@ -1,8 +1,9 @@
+import Sequelize from 'sequelize';
 import Base from '../Base';
 import X from '../Exception';
 import { generate } from './authToken';
 
-import { User, Nonce, Wallet } from '../../models';
+import { User, Nonce, Wallet, Action } from '../../models';
 
 const EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 1 day
 
@@ -24,7 +25,10 @@ export default class AuthCreate extends Base {
   }
 
   async execute({ data: { email, signature, challenge, referrerCode } }) {
-    const user = await User.findOneWhere({ email });
+    const user = await User.findOneWhere({
+      email,
+      status: { [Sequelize.Op.ne]: User.STATUS.BLOCKED },
+    });
 
     if (!user) {
       throw new X({
@@ -71,9 +75,30 @@ export default class AuthCreate extends Base {
     }
     await nonce.destroy();
 
-    // todo: what do we need to do when status is NEW?
-    if (user.status !== User.STATUS.ACTIVE) {
-      //
+    if (user.status === User.STATUS.NEW) {
+      let resendConfirmEmailAction = await Action.findOneWhere({
+        type: Action.TYPE.RESEND_EMAIL_CONFIRM,
+        data: { userId: user.id, email: user.email },
+      });
+      if (resendConfirmEmailAction)
+        await resendConfirmEmailAction.destroy({ force: true });
+      resendConfirmEmailAction = await new Action({
+        type: Action.TYPE.RESEND_EMAIL_CONFIRM,
+        hash: Action.generateHash(),
+        data: {
+          userId: user.id,
+          email: user.email,
+        },
+      }).save();
+      throw new X({
+        code: 'NOT_ACTIVE_USER',
+        fields: {
+          status: 'NOT_ACTIVE_USER',
+        },
+        data: {
+          token: resendConfirmEmailAction.hash,
+        },
+      });
     }
 
     const now = new Date();

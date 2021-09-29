@@ -8,7 +8,8 @@ export const email = state => state[prefix].user && state[prefix].user.email;
 export const isAdmin = state =>
   state[prefix].user && state[prefix].user.role === 'ADMIN';
 export const error = state => state[prefix].error;
-export const isConfirmed = state => state[prefix].isConfirmed;
+export const emailConfirmationResult = state =>
+  state[prefix].emailConfirmationResult;
 export const successfullyRegistered = state =>
   state[prefix].successfullyRegistered;
 export const lastAuthData = state => state[prefix].lastAuthData;

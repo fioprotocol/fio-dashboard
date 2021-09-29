@@ -14,6 +14,8 @@ export default combineReducers({
       case actions.LOGIN_REQUEST:
       case actions.LOGOUT_REQUEST:
       case actions.SIGNUP_REQUEST:
+      case actions.RESEND_CONFIRM_EMAIL_REQUEST:
+      case actions.CONFIRM_EMAIL_REQUEST:
         return true;
       case actions.PROFILE_SUCCESS:
       case actions.PROFILE_FAILURE:
@@ -25,6 +27,10 @@ export default combineReducers({
       case actions.SIGNUP_FAILURE:
       case actions.NONCE_SUCCESS:
       case actions.NONCE_FAILURE:
+      case actions.RESEND_CONFIRM_EMAIL_SUCCESS:
+      case actions.RESEND_CONFIRM_EMAIL_FAILURE:
+      case actions.CONFIRM_EMAIL_SUCCESS:
+      case actions.CONFIRM_EMAIL_FAILURE:
         return false;
       default:
         return state;
@@ -54,10 +60,15 @@ export default combineReducers({
         return state;
     }
   },
-  isConfirmed(state: boolean = false, action) {
+  emailConfirmationResult(
+    state: { success?: boolean; error?: string } = {},
+    action,
+  ) {
     switch (action.type) {
-      case actions.CONFIRM_SUCCESS:
-        return true;
+      case actions.CONFIRM_EMAIL_SUCCESS:
+        return { success: true };
+      case actions.CONFIRM_EMAIL_FAILURE:
+        return { success: false, error: action.error.code };
       default:
         return state;
     }

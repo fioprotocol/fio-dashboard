@@ -7,9 +7,9 @@ import {
 import { LIST_FAILURE as NOTIFICATIONS_LIST_FAILURE } from '../notifications/actions';
 import { showGenericErrorModal } from '../modal/actions';
 import { homePageLink as getHomePageLink } from '../refProfile/selectors';
+import { showGenericError as getShowGenericError } from '../modal/selectors';
 
-import { ErrorText } from './constants';
-import { ROUTES } from '../../constants/routes';
+import { ErrorData } from './constants';
 
 export const toString = obj =>
   Object.entries(obj)
@@ -26,10 +26,15 @@ export function* notify(history) {
       action.type !== NOTIFICATIONS_LIST_FAILURE &&
       action.type !== CONFIRM_PIN_FAILURE
     ) {
-      const { message, title, buttonText } = ErrorText[action.type];
+      const genericErrorIsShowing = yield select(getShowGenericError);
 
-      yield put(showGenericErrorModal(message, title, buttonText));
-      yield history.push(ROUTES.HOME);
+      if (!genericErrorIsShowing) {
+        const { message, title, buttonText, redirect } =
+          ErrorData[action.type] || {};
+
+        yield put(showGenericErrorModal(message, title, buttonText));
+        if (redirect) yield history.push(redirect);
+      }
     }
 
     if (

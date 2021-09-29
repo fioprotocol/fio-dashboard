@@ -5,7 +5,7 @@ export const CLOSE_LOGIN = `${prefix}/CLOSE_LOGIN`;
 
 export const showLoginModal = hasRedirect => ({
   type: SHOW_LOGIN,
-  data: hasRedirect || false,
+  data: hasRedirect || '',
 });
 
 export const closeLoginModal = () => ({
@@ -52,4 +52,16 @@ export const CLEAR_GENERIC_ERROR_DATA = `${prefix}/CLEAR_GENERIC_ERROR_DATA`;
 
 export const clearGenericErrorData = () => ({
   type: CLEAR_GENERIC_ERROR_DATA,
+});
+
+export const SHOW_EMAIL_CONFIRM_BLOCKER = `${prefix}/SHOW_EMAIL_CONFIRM_BLOCKER`;
+export const CLOSE_EMAIL_CONFIRM_BLOCKER = `${prefix}/CLOSE_EMAIL_CONFIRM_BLOCKER`;
+
+export const showEmailConfirmBlocker = token => ({
+  type: SHOW_EMAIL_CONFIRM_BLOCKER,
+  data: token,
+});
+
+export const closeEmailConfirmBlocker = () => ({
+  type: CLOSE_EMAIL_CONFIRM_BLOCKER,
 });
