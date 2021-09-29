@@ -3,8 +3,8 @@ import apis from '../../api';
 
 const TOKEN_ID_MAX_LENGTH = 64;
 const URL_MAX_LENGTH = 128;
-const HASH_MAX_LENGTH = 64;
 const META_MAX_LENGTH = 64;
+const HASH_REGEX = /^[a-f0-9]{64}$/gi;
 
 export const validate = (values: NftItem) => {
   const errors: any = {};
@@ -35,7 +35,7 @@ export const validate = (values: NftItem) => {
     errors.url = 'Not valid url';
   }
 
-  if (values.hash != null && values.hash.length > HASH_MAX_LENGTH) {
+  if (values.hash != null && !HASH_REGEX.test(values.hash)) {
     errors.hash = 'Not valid hash';
   }
 
