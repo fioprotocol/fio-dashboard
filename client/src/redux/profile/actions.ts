@@ -140,7 +140,8 @@ export const resendConfirmEmail = (token: string) => ({
     RESEND_CONFIRM_EMAIL_SUCCESS,
     RESEND_CONFIRM_EMAIL_FAILURE,
   ],
-  promise: (api: Api) => api.auth.resendConfirmEmail(token),
+  promise: (api: Api) =>
+    minWaitTimeFunction(() => api.auth.resendConfirmEmail(token)),
 });
 
 export const CONFIRM_EMAIL_REQUEST = `${prefix}/CONFIRM_EMAIL_REQUEST`;
