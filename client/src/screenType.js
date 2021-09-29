@@ -3,6 +3,7 @@ import { SCREEN_TYPE } from './constants/screen';
 
 const MOBILE_THRESHOLD = 480;
 const TABLET_THRESHOLD = 1024;
+const SMALL_DESKTOP_THRESHOLD = 1280;
 
 function getWindowSize() {
   const { innerWidth: width, innerHeight: height } = window;
@@ -40,4 +41,10 @@ export function useCheckIfDesktop() {
   const { width } = useWindowSize();
 
   return width >= TABLET_THRESHOLD;
+}
+
+export function useCheckIfSmallDesktop() {
+  const { width } = useWindowSize();
+
+  return width >= TABLET_THRESHOLD && width < SMALL_DESKTOP_THRESHOLD;
 }

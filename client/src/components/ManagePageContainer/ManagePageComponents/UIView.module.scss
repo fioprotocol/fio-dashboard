@@ -36,12 +36,17 @@
     padding-left: 15px;
     padding-right: 20px;
     @include sf-pro-display-regular;
+    min-width: 150px;
   }
 
   .lastCol {
     border-bottom-right-radius: 15px; 
     border-top-right-radius: 15px;
     padding-right: 10px;
+    display: block;
+    @include sm {
+      display: initial;
+    }
   }
 
   .dataItemContainer {
@@ -81,7 +86,6 @@
   .container {
     display: grid;
     grid-template-columns: auto auto auto auto;
-    width: fit-content;
 
     .tableHeader, .tableCol {
       padding: 10px;

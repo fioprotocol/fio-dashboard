@@ -49,7 +49,7 @@ const MobileView: React.FC<DefaultProps> = props => {
                   isExpired={isExpired}
                 />
               ) : pageName === PAGE_NAME.DOMAIN ? (
-                <span className="boldText">{name}</span>
+                name
               ) : null}
               <FontAwesomeIcon
                 icon="chevron-right"

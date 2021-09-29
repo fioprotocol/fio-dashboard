@@ -34,8 +34,8 @@ const DesktopView: React.FC<DefaultProps> = props => {
           >
             Address
           </div>
-          <div className={classes.tableHeader}>Bundled Transactions</div>
-          <div className={classes.tableHeader}>Expiration Date</div>
+          <div className={classes.tableHeader}>Bundles</div>
+          <div className={classes.tableHeader}>Exp. Date</div>
           <div className={classes.tableHeader}>Actions</div>
         </>
       )}
@@ -47,7 +47,7 @@ const DesktopView: React.FC<DefaultProps> = props => {
             Domain
           </div>
           <div className={classes.tableHeader}>Status</div>
-          <div className={classes.tableHeader}>Expiration Date</div>
+          <div className={classes.tableHeader}>Exp. Date</div>
           <div className={classes.tableHeader}>Actions</div>
         </>
       )}

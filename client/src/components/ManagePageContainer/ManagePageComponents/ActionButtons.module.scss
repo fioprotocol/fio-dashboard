@@ -5,6 +5,12 @@
 .actionButtonsContainer {
   display: flex;
   flex-flow: row wrap;
+  height: 100%;
+  align-items: center;
+
+  &.domainContainer {
+    flex-flow: unset;
+  }
 
   .actionButton {
     @include sf-pro-display-thin;
@@ -91,6 +97,25 @@
 
     .settingsButton {
       width: 36px;
+    }
+  }
+}
+
+@include sds {
+  .actionButtonsContainer {
+    .actionButton {
+      min-width: 36px;
+
+      img, svg {
+        margin-right: 0;
+      }
+
+      & > button {
+        display: flex;
+        align-items: center;
+        padding: 0;
+        justify-content: center;
+      }
     }
   }
 }
