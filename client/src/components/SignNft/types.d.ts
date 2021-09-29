@@ -1,15 +1,24 @@
 import { History } from 'history';
 
+import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 import {
   FioWalletDoublet,
   PinConfirmation,
   FioAddressDoublet,
   WalletKeys,
 } from '../../types';
-import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
+
+export type NftFormValues = {
+  chain_code: string;
+  contract_address: string;
+  token_id: string;
+  url: string;
+  hash: string;
+  creator_url: string;
+};
 
 export type ContainerOwnProps = {
-  initialValues: NftItem;
+  initialValues: NftFormValues;
   fioAddressName: string;
   backTo?: string;
   history: History;

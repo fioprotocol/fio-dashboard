@@ -177,6 +177,17 @@ type SignNFTQuery = {
   metadata: string;
 };
 
+type SignNFTParams = {
+  chain_code: string;
+  contract_address: string;
+  token_id: string;
+  url: string;
+  hash: string;
+  metadata: {
+    creator_url: string;
+  };
+};
+
 type RefQuery = {
   action: string;
   r: string;
