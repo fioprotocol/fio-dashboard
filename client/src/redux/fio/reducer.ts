@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 import { LOGIN_SUCCESS } from '../edge/actions';
 import {
   LOGOUT_SUCCESS,
@@ -11,7 +12,6 @@ import {
   FioAddressDoublet,
   FioDomainDoublet,
   LinkActionResult,
-  NFTSignature,
 } from '../../types';
 
 export const emptyWallet: FioWalletDoublet = {
@@ -340,7 +340,7 @@ export default combineReducers({
         return state;
     }
   },
-  nftList(state: NFTSignature[] = [], action) {
+  nftList(state: NftItem[] = [], action) {
     switch (action.type) {
       case actions.FIO_SIGNATURE_ADDRESS_SUCCESS:
         return [...action.data.nfts];
