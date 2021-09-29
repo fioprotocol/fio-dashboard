@@ -2,9 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classnames from 'classnames';
 
-import { PAGE_NAME } from '../constants';
+import { PAGE_NAME, BUTTONS_TITLE } from '../constants';
 import { ROUTES } from '../../../constants/routes';
+
+import { useCheckIfSmallDesktop } from '../../../screenType';
 
 import { ActionButtonProps } from '../types';
 
@@ -21,13 +24,16 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
   const { pageName, isDesktop, onSettingsOpen, fioNameItem } = props;
   const { name } = fioNameItem;
 
+  const isSmallDesktop = useCheckIfSmallDesktop();
+
   const renderRenew = () => (
     <Link
       to={`${RENEW_LINKS[pageName]}/${name}`}
       className={classes.actionButton}
     >
-      <Button>
-        <img src={icon} alt="timelapse" /> Renew
+      <Button title={isSmallDesktop ? BUTTONS_TITLE.renew : ''}>
+        <img src={icon} alt="timelapse" />
+        {!isSmallDesktop && BUTTONS_TITLE.renew}
       </Button>
     </Link>
   );
@@ -41,45 +47,52 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
     </Button>
   );
 
-  return (
+  return pageName === PAGE_NAME.ADDRESS ? (
     <div className={classes.actionButtonsContainer}>
-      {pageName === PAGE_NAME.ADDRESS ? (
-        <>
-          <div className={classes.row}>
-            {renderRenew()}
-            <Link
-              to={`${ROUTES.LINK_TOKEN_LIST}/${name}`}
-              className={classes.actionButton}
-            >
-              <Button>
-                <FontAwesomeIcon icon="link" className={classes.linkIcon} />{' '}
-                Link
-              </Button>
-            </Link>
-          </div>
-          <div className={classes.row}>
-            <Link
-              to={`${ROUTES.FIO_ADDRESS_SIGNATURES}`.replace(':address', name)}
-              className={classes.actionButton}
-            >
-              <Button>
-                <FontAwesomeIcon icon="signature" className={classes.atIcon} />{' '}
-                NFT signature
-              </Button>
-            </Link>
-            {renderSettings()}
-          </div>
-        </>
-      ) : (
-        <>
-          {renderRenew()}
-          <Button className={classes.actionButton}>
-            <FontAwesomeIcon icon="at" className={classes.atIcon} />
-            {isDesktop ? 'Register FIO Address' : 'Register Address'}
+      <div className={classes.row}>
+        {renderRenew()}
+        <Link
+          to={`${ROUTES.LINK_TOKEN_LIST}/${name}`}
+          className={classes.actionButton}
+        >
+          <Button title={isSmallDesktop ? BUTTONS_TITLE.link : ''}>
+            <FontAwesomeIcon icon="link" className={classes.linkIcon} />{' '}
+            {!isSmallDesktop && BUTTONS_TITLE.link}
           </Button>
-          {renderSettings()}
-        </>
+        </Link>
+      </div>
+      <div className={classes.row}>
+        <Link
+          to={`${ROUTES.FIO_ADDRESS_SIGNATURES}`.replace(':address', name)}
+          className={classes.actionButton}
+        >
+          <Button title={isSmallDesktop ? BUTTONS_TITLE.nft : ''}>
+            <FontAwesomeIcon icon="signature" className={classes.atIcon} />{' '}
+            {!isSmallDesktop && BUTTONS_TITLE.nft}
+          </Button>
+        </Link>
+        {renderSettings()}
+      </div>
+    </div>
+  ) : (
+    <div
+      className={classnames(
+        classes.actionButtonsContainer,
+        classes.domainContainer,
       )}
+    >
+      {renderRenew()}
+      <Link
+        to={ROUTES.FIO_ADDRESSES_SELECTION}
+        className={classes.actionButton}
+      >
+        <Button title={isSmallDesktop ? BUTTONS_TITLE.register : ''}>
+          <FontAwesomeIcon icon="at" className={classes.atIcon} />
+          {!isSmallDesktop &&
+            (isDesktop ? BUTTONS_TITLE.register : 'Register Address')}
+        </Button>
+      </Link>
+      {renderSettings()}
     </div>
   );
 };
