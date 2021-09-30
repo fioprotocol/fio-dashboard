@@ -13,6 +13,13 @@
   }
 }
 
+// Small desktop screen
+@mixin sds {
+  @media (min-width: #{$screen-desktop}) and (max-width: #{$screen-large-desktop}) {
+    @content;
+  }
+}
+
 // Large devices
 @mixin lg {
   @media (min-width: #{$screen-desktop}) {
