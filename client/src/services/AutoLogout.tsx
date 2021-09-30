@@ -29,6 +29,7 @@ type Props = {
 };
 const TIMEOUT = 5000; // 5 sec
 const INACTIVITY_TIMEOUT = 1000 * 60 * 30; // 30 min
+const DEBUG_MODE = !!process.env.REACT_APP_DEBUG_AUTOLOGOUT;
 
 const ACTIVITY_EVENTS = [
   'mousedown',
@@ -48,6 +49,11 @@ const removeActivityListener = () => {
   } catch (e) {
     //
   }
+};
+
+const logEvent = (...params: any[]) => {
+  if (!DEBUG_MODE) return;
+  console.info(...params);
 };
 
 const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
@@ -111,7 +117,7 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
 
   useEffect(() => {
     if (localLastActivity - lastActivityDate > TIMEOUT) {
-      console.info('===ACTIVITY===');
+      logEvent('===ACTIVITY===');
       setLastActivity(localLastActivity);
     }
   }, [localLastActivity]);
@@ -160,7 +166,7 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
 
     const newIntervalId: ReturnType<typeof setInterval> = setInterval(() => {
       const secondsSinceLastActivity = new Date().getTime() - lastActivity;
-      console.info(
+      logEvent(
         '===secondsSinceLastActivity===',
         secondsSinceLastActivity,
         INACTIVITY_TIMEOUT,
@@ -168,7 +174,7 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
         new Date(),
       );
       if (secondsSinceLastActivity > INACTIVITY_TIMEOUT) {
-        console.info('===TIMEOUTED===');
+        logEvent('===TIMEOUTED===');
         activityTimeout();
       }
     }, TIMEOUT);
