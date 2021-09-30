@@ -1,11 +1,17 @@
 @import '../../../assets/styles/colors.scss';
 @import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
+
+  &.isNft {
+    cursor: pointer;
+  }
 }
 
 .addressContainer, .addressMobileContainer, .nftContainer {
@@ -23,6 +29,25 @@
 
 .nftContainer {
   display: flex;
+  flex-wrap: wrap;
+
+  .contractAddress {
+    margin-top: 15px;
+    word-break: break-word;
+    flex-basis: 100%;
+  }
+
+  .subtitle {
+    &:first-of-type {
+      margin-right: 30px;
+    }
+  }
+}
+
+.actionIcon {
+  color: $dark-jungle-green;
+  margin-left: 25px;
+  cursor: pointer;
 }
 
 .addressMobileContainer {
@@ -30,6 +55,7 @@
   overflow: hidden;
   max-height: 20px;
   transition: max-height 0.3s ease-in-out;
+  cursor: pointer;
 
   .visiblePart {
     display: flex;
@@ -71,4 +97,20 @@ input {
   padding: 0;
   font-size: 15px;
   @include proxima-nova-regular;
+}
+
+@include lg {
+  .nftContainer {
+    display: grid;
+    grid-template-columns: 150px 200px auto;
+    flex-wrap: nowrap;
+
+    .contractAddress {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      flex-basis: auto;
+      margin-top: 0;
+    }
+  }
 }

@@ -1,18 +1,23 @@
 import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import isEmpty from 'lodash/isEmpty';
 
 import PseudoModalContainer from '../../components/PseudoModalContainer';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classes from './FioAddressSignaturesPage.module.scss';
-import { ROUTES } from '../../constants/routes';
 import FioName from '../../components/common/FioName/FioName';
-import FioAddressSignatureItem from './FioAddressSignatureItem';
+import NFTTokenBadge from '../../components/Badges/TokenBadge/NFTTokenBadge';
+
+import { ROUTES } from '../../constants/routes';
+
+import { NFTTokenDoublet } from '../../types';
+
+import classes from './FioAddressSignaturesPage.module.scss';
 
 type Props = {
   getSignaturesFromFioAddress: (fioAddress: string) => void;
-  nftSignatures: NftItem[];
+  nftSignatures: NFTTokenDoublet[];
+  loading: boolean;
   match: {
     params: { address: string };
   };
@@ -22,6 +27,7 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
   const {
     nftSignatures,
     getSignaturesFromFioAddress,
+    loading,
     match: {
       params: { address },
     },
@@ -38,8 +44,15 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
     >
       <div className={classes.container}>
         <p className={classes.subTitleSection}>
-          NFT signature information of all your signed done.
-          <a href="#"> More information...</a>
+          Introducing NFT Signatures. You can now sign your NFT with your FIO
+          Address to prevent forgeries.
+          <a
+            href="https://fioprotocol.atlassian.net/wiki/spaces/FC/pages/113606966/NFT+Digital+Signature"
+            target="_blank"
+          >
+            {' '}
+            More information...
+          </a>
         </p>
 
         <div className={classes.actionContainer}>
@@ -58,15 +71,30 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
         <h5 className={classes.subTitle}>Signed NFTs</h5>
 
         <div className={classes.list}>
-          {nftSignatures &&
-            nftSignatures.map((item: NftItem) => (
-              <FioAddressSignatureItem
-                key={`${item.chain_code}${item.token_id}${item.contract_address}`}
-                chainCode={item.chain_code}
-                tokenId={item.token_id}
-                contractAddress={item.contract_address}
+          {!isEmpty(nftSignatures) ? (
+            nftSignatures.map(item => (
+              <NFTTokenBadge
+                key={item.contractAddress}
+                chainCode={item.chainCode}
+                tokenId={item.tokenId}
+                contractAddress={item.contractAddress}
+                onClick={() => {}} // todo: set click action or if it is redirect - pass link instead
               />
-            ))}
+            ))
+          ) : loading ? (
+            <FontAwesomeIcon icon="spinner" spin className={classes.spinner} />
+          ) : (
+            <div className={classes.infoBadge}>
+              <FontAwesomeIcon
+                icon="exclamation-circle"
+                className={classes.infoIcon}
+              />
+              <h5 className={classes.infoTitle}>No Signatures</h5>
+              <p className={classes.infoText}>
+                You have no NFT signatures for this
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </PseudoModalContainer>
