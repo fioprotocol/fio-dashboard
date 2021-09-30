@@ -22,8 +22,6 @@ export default class AuthCheck extends Base {
       return {
         id: user.id,
         role: user.role,
-        // todo: we probably need to remove this.context.referrerCode
-        referrerCode: userData.referrerCode,
       };
     } catch (e) {
       throw new X({

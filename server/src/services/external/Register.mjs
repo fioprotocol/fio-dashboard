@@ -12,7 +12,6 @@ export default class Register extends Base {
         nested_object: {
           address: ['required', 'string'],
           publicKey: ['required', 'string'],
-          // todo: how we can set ref code not in the POST body (before it was set in context on login, but could be issues when user is already logged in)
           refCode: ['string'],
           verifyParams: {
             nested_object: {
