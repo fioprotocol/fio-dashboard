@@ -17,14 +17,13 @@ export default class AuthCreate extends Base {
             email: ['required', 'trim', 'email', 'to_lc'],
             signature: ['string'],
             challenge: ['string'],
-            referrerCode: ['string'],
           },
         },
       ],
     };
   }
 
-  async execute({ data: { email, signature, challenge, referrerCode } }) {
+  async execute({ data: { email, signature, challenge } }) {
     const user = await User.findOneWhere({
       email,
       status: { [Sequelize.Op.ne]: User.STATUS.BLOCKED },
@@ -105,10 +104,7 @@ export default class AuthCreate extends Base {
 
     return {
       data: {
-        jwt: generate(
-          { id: user.id, referrerCode },
-          new Date(EXPIRATION_TIME + now.getTime()),
-        ),
+        jwt: generate({ id: user.id }, new Date(EXPIRATION_TIME + now.getTime())),
       },
     };
   }

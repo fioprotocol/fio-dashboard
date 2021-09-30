@@ -3,7 +3,6 @@ import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ACTIONS } from '../../components/Notifications/Notifications';
 import { setWallets } from '../account/actions';
 import { refreshBalance } from '../fio/actions';
-import { refProfileInfo } from '../refProfile/selectors';
 import {
   LOGIN_SUCCESS,
   LOGIN_FAILURE,
@@ -96,14 +95,12 @@ export function* logoutSuccess(history, api) {
 export function* nonceSuccess() {
   yield takeEvery(NONCE_SUCCESS, function*(action) {
     const { email, signature, nonce } = action.data;
-    const refProfile = yield select(refProfileInfo);
 
     yield put(
       login({
         email,
         signature,
         challenge: nonce,
-        referrerCode: refProfile != null ? refProfile.code : null,
       }),
     );
   });
