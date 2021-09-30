@@ -36,6 +36,7 @@ export default class Register extends Base {
 
       if (verifyParams.pin) {
         // todo: other verification method not captcha
+        throw new Error('Verification needed.');
       }
     } catch (error) {
       return {
