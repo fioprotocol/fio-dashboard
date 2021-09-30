@@ -32,6 +32,7 @@ export default combineReducers({
       case actions.REFRESH_BALANCE_REQUEST:
       case actions.GET_FIO_ADDRESSES_REQUEST:
       case actions.GET_FIO_DOMAINS_REQUEST:
+      case actions.FIO_SIGNATURE_ADDRESS_REQUEST:
         return true;
       case actions.REFRESH_BALANCE_SUCCESS:
       case actions.REFRESH_BALANCE_FAILURE:
@@ -39,6 +40,8 @@ export default combineReducers({
       case actions.GET_FIO_ADDRESSES_FAILURE:
       case actions.GET_FIO_DOMAINS_SUCCESS:
       case actions.GET_FIO_DOMAINS_FAILURE:
+      case actions.FIO_SIGNATURE_ADDRESS_SUCCESS:
+      case actions.FIO_SIGNATURE_ADDRESS_FAILURE:
         return false;
       default:
         return state;

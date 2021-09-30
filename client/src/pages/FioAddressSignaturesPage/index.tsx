@@ -4,11 +4,12 @@ import { compose } from '../../utils';
 import FioAddressSignaturesPage from './FioAddressSignaturesPage';
 import { withRouter } from 'react-router-dom';
 import { getSignaturesFromFioAddress } from '../../redux/fio/actions';
-import { nftSignatures } from '../../redux/fio/selectors';
+import { nftSignatures, loading } from '../../redux/fio/selectors';
 
 const reduxConnect = connect(
   createStructuredSelector({
     nftSignatures,
+    loading,
   }),
   {
     getSignaturesFromFioAddress,

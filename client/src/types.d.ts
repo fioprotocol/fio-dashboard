@@ -85,9 +85,12 @@ export type PublicAddressDoublet = {
 };
 
 export type NFTTokenDoublet = {
-  publicAddress: string;
+  contractAddress: string;
   chainCode: string;
   tokenId: number;
+  url?: string;
+  hash?: string;
+  metadata?: string;
 };
 
 export type WalletKeysObj = {
