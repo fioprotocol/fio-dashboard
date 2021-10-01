@@ -12,6 +12,7 @@ import classes from './Results.module.scss';
 import TransferResults from './components/TransferResults';
 import RenewResults from './components/RenewResults';
 import SetVisibilityResults from './components/SetVisibilityResults';
+import SignResults from './components/SignResults';
 import { RENEW_REQUEST } from '../../../redux/fio/actions';
 
 const Results: React.FC<ResultsProps> = props => {
@@ -38,6 +39,21 @@ const Results: React.FC<ResultsProps> = props => {
     window.scrollTo(0, 0);
   }, []);
 
+  const totalCost = () => {
+    if (!costFio) return null;
+    return (
+      <>
+        <p className={classes.label}>Payment Details</p>
+        <PriceBadge
+          costFio={costFio}
+          costUsdc={costUsdc}
+          title="Total Cost"
+          type={BADGE_TYPES.BLACK}
+        />
+      </>
+    );
+  };
+
   return (
     <PseudoModalContainer
       title={title}
@@ -56,20 +72,20 @@ const Results: React.FC<ResultsProps> = props => {
         <TransferResults {...props} />
         <RenewResults {...props} />
         <SetVisibilityResults {...props} />
+        <SignResults {...props} />
         {!error && (
           <>
-            <p className={classes.label}>Payment Details</p>
-            <PriceBadge
-              costFio={costFio}
-              costUsdc={costUsdc}
-              title="Total Cost"
-              type={BADGE_TYPES.BLACK}
-            />
+            {totalCost()}
+            <Button className={classes.button} onClick={onClose}>
+              Close
+            </Button>
           </>
         )}
-        <Button className={classes.button} onClick={error ? onRetry : onClose}>
-          {error ? 'Try Again' : 'Close'}
-        </Button>
+        {error && onRetry != null ? (
+          <Button className={classes.button} onClick={onRetry}>
+            Try Again
+          </Button>
+        ) : null}
       </div>
     </PseudoModalContainer>
   );
