@@ -62,8 +62,8 @@ const ResendEmail: React.FC<Props> = props => {
   useEffect(() => {
     if (!isEmpty(pinConfirmation)) {
       const { account, action } = pinConfirmation;
-      const { logout, username } = account;
-      if (action === CONFIRM_PIN_ACTIONS.RESEND_EMAIL) {
+      if (action === CONFIRM_PIN_ACTIONS.RESEND_EMAIL && account) {
+        const { logout, username } = account;
         getRecoveryToken(username);
         logout();
         toggleSendEmailModal(true);
