@@ -126,7 +126,7 @@ const SignNft: React.FC<ContainerProps> = props => {
       token_id: values.token_id || '',
       url: values.url || '',
       hash: values.hash || '',
-      metadata: { creator_url: values.creator_url || '' },
+      metadata: JSON.stringify({ creator_url: values.creator_url || '' }),
     });
     return {};
   };
