@@ -3,8 +3,10 @@ import * as actions from './actions';
 import { CONFIRM_PIN_SUCCESS } from '../edge/actions';
 import { PROFILE_SUCCESS } from '../profile/actions';
 
+import { GenericErrorDataTypes, PinConfirmDataTypes } from './types';
+
 export default combineReducers({
-  showLogin(state = false, action) {
+  showLogin(state: boolean = false, action) {
     switch (action.type) {
       case actions.SHOW_LOGIN:
         return true;
@@ -14,7 +16,7 @@ export default combineReducers({
         return state;
     }
   },
-  showRecovery(state = false, action) {
+  showRecovery(state: boolean = false, action) {
     switch (action.type) {
       case actions.SHOW_RECOVERY_PASSWORD:
         return true;
@@ -26,7 +28,7 @@ export default combineReducers({
         return state;
     }
   },
-  showPinConfirm(state = false, action) {
+  showPinConfirm(state: boolean = false, action) {
     switch (action.type) {
       case actions.SHOW_PIN_CONFIRM:
         return true;
@@ -37,7 +39,7 @@ export default combineReducers({
         return state;
     }
   },
-  pinConfirmData(state = {}, action) {
+  pinConfirmData(state: PinConfirmDataTypes = {}, action) {
     switch (action.type) {
       case actions.SHOW_PIN_CONFIRM:
         return { action: action.data.confirmAction, data: action.data.data };
@@ -48,7 +50,7 @@ export default combineReducers({
         return state;
     }
   },
-  showGenericError(state = false, action) {
+  showGenericError(state: boolean = false, action) {
     switch (action.type) {
       case actions.SHOW_GENERIC_ERROR_MODAL:
         return true;
@@ -58,7 +60,7 @@ export default combineReducers({
         return state;
     }
   },
-  showEmailConfirmBlocker(state = false, action) {
+  showEmailConfirmBlocker(state: boolean = false, action) {
     switch (action.type) {
       case actions.SHOW_EMAIL_CONFIRM_BLOCKER:
         return true;
@@ -68,7 +70,7 @@ export default combineReducers({
         return state;
     }
   },
-  emailConfirmBlockerToken(state = '', action) {
+  emailConfirmBlockerToken(state: string = '', action) {
     switch (action.type) {
       case actions.SHOW_EMAIL_CONFIRM_BLOCKER:
         return action.data;
@@ -78,7 +80,7 @@ export default combineReducers({
         return state;
     }
   },
-  genericErrorData(state = {}, action) {
+  genericErrorData(state: GenericErrorDataTypes = {}, action) {
     switch (action.type) {
       case actions.SHOW_GENERIC_ERROR_MODAL:
         return action.data;
