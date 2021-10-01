@@ -29,7 +29,7 @@ import {
   EmailConfirmationStateData,
   FioWalletDoublet,
   RefProfile,
-  RefQuery,
+  RefQueryParams,
   WalletKeysObj,
 } from '../../types';
 
@@ -85,7 +85,7 @@ type OwnProps = {
   signupSuccess: boolean;
   isRefFlow: boolean;
   refProfileInfo: RefProfile | null;
-  refProfileQueryParams: RefQuery | null;
+  refProfileQueryParams: RefQueryParams | null;
   edgeAuthLoading: boolean;
   serverSignUpLoading: boolean;
   redirectLink: string;

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
-import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 
 import apis from '../../api/index';
 import PseudoModalContainer from '../PseudoModalContainer';
@@ -14,6 +13,8 @@ import { FIO_SIGN_NFT_REQUEST } from '../../redux/fio/actions';
 import { ResultsData } from '../common/TransactionResults/types';
 import Processing from '../common/TransactionProcessing';
 import { ROUTES } from '../../constants/routes';
+
+import { NFTTokenDoublet } from '../../types';
 
 const BUNDLE_COST = 2;
 
@@ -64,14 +65,14 @@ const SignNft: React.FC<ContainerProps> = props => {
     getFee(fioAddressName);
     if (
       initialValues != null &&
-      initialValues.chain_code &&
-      initialValues.contract_address &&
+      initialValues.chainCode &&
+      initialValues.contractAddress &&
       !isEdit
     ) {
       checkNftSigned(
-        initialValues.chain_code,
-        initialValues.contract_address,
-        initialValues.token_id,
+        initialValues.chainCode,
+        initialValues.contractAddress,
+        initialValues.tokenId,
       );
     }
   }, []);
@@ -87,14 +88,7 @@ const SignNft: React.FC<ContainerProps> = props => {
       resetPinConfirm();
 
       if (result != null && !result.error) {
-        const {
-          chain_code,
-          contract_address,
-          token_id,
-          url,
-          hash,
-          metadata,
-        } = result.other.nfts[0];
+        const { metadata, ...rest } = result.other.nfts[0];
         const creatorUrl = (() => {
           try {
             return JSON.parse(metadata).creator_url;
@@ -106,12 +100,8 @@ const SignNft: React.FC<ContainerProps> = props => {
         setResultsData({
           name: fioAddress.name,
           other: {
-            chainCode: chain_code,
-            contractAddress: contract_address,
-            tokenId: token_id,
-            url,
-            hash,
             creatorUrl,
+            ...rest,
           },
         });
 
@@ -149,7 +139,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     ) {
       setProcessing(true);
       await waitForEdgeAccountStop(edgeAccount);
-      const { data }: { data?: NftItem } = pinConfirmation;
+      const { data }: { data?: NFTTokenDoublet } = pinConfirmation;
       singNFT(fioAddress.name, [{ ...data }], walletKeys[currentWallet.id]);
     }
 
@@ -158,18 +148,18 @@ const SignNft: React.FC<ContainerProps> = props => {
 
   const onSubmit = async (values: NftFormValues) => {
     const nftSigned = await checkNftSigned(
-      values.chain_code,
-      values.contract_address,
-      values.token_id,
+      values.chainCode,
+      values.contractAddress,
+      values.tokenId,
     );
     if (nftSigned) return {};
     showPinModal(CONFIRM_PIN_ACTIONS.SIGN_NFT, {
-      chain_code: values.chain_code,
-      contract_address: values.contract_address,
-      token_id: values.token_id || '',
+      chainCode: values.chainCode,
+      contractAddress: values.contractAddress,
+      tokenId: values.tokenId || '',
       url: values.url || '',
       hash: values.hash || '',
-      metadata: JSON.stringify({ creator_url: values.creator_url || '' }),
+      metadata: JSON.stringify({ creator_url: values.creatorUrl || '' }),
     });
     return {};
   };

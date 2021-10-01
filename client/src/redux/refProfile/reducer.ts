@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import * as actions from './actions';
 import { CONFIRM_EMAIL_SUCCESS } from '../profile/actions';
 
-import { RefProfile, RefQuery } from '../../types';
+import { RefProfile, RefQueryParams } from '../../types';
 import { REF_FLOW_STEPS } from '../../constants/common';
 
 export default combineReducers({
@@ -28,7 +28,7 @@ export default combineReducers({
         return state;
     }
   },
-  params(state: RefQuery | null = null, action) {
+  params(state: RefQueryParams | null = null, action) {
     switch (action.type) {
       case actions.SET_CONTAINED_PARAMS:
         return action.data;
