@@ -1,5 +1,4 @@
 import { combineReducers } from 'redux';
-import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 import { LOGIN_SUCCESS } from '../edge/actions';
 import {
   LOGOUT_SUCCESS,
@@ -12,6 +11,7 @@ import {
   FioAddressDoublet,
   FioDomainDoublet,
   LinkActionResult,
+  NFTTokenDoublet,
 } from '../../types';
 
 export const emptyWallet: FioWalletDoublet = {
@@ -32,6 +32,7 @@ export default combineReducers({
       case actions.REFRESH_BALANCE_REQUEST:
       case actions.GET_FIO_ADDRESSES_REQUEST:
       case actions.GET_FIO_DOMAINS_REQUEST:
+      case actions.FIO_SIGNATURE_ADDRESS_REQUEST:
         return true;
       case actions.REFRESH_BALANCE_SUCCESS:
       case actions.REFRESH_BALANCE_FAILURE:
@@ -39,6 +40,8 @@ export default combineReducers({
       case actions.GET_FIO_ADDRESSES_FAILURE:
       case actions.GET_FIO_DOMAINS_SUCCESS:
       case actions.GET_FIO_DOMAINS_FAILURE:
+      case actions.FIO_SIGNATURE_ADDRESS_SUCCESS:
+      case actions.FIO_SIGNATURE_ADDRESS_FAILURE:
         return false;
       default:
         return state;
@@ -308,7 +311,6 @@ export default combineReducers({
       case actions.SET_VISIBILITY_FAILURE:
       case actions.RENEW_FAILURE:
       case actions.TRANSFER_FAILURE:
-      case actions.FIO_SIGN_NFT_FAILURE:
         return {
           ...state,
           [action.actionName]: { error: action.error && action.error.message },
@@ -340,10 +342,25 @@ export default combineReducers({
         return state;
     }
   },
-  nftList(state: NftItem[] = [], action) {
+  nftList(state: NFTTokenDoublet[] = [], action) {
     switch (action.type) {
-      case actions.FIO_SIGNATURE_ADDRESS_SUCCESS:
-        return [...action.data.nfts];
+      case actions.FIO_SIGNATURE_ADDRESS_SUCCESS: {
+        const nftList = [];
+        for (const item of action.data.nfts) {
+          const nftItem = {
+            contractAddress: item.contract_address,
+            chainCode: item.chain_code,
+            tokenId: item.token_id,
+            url: item.url,
+            hash: item.hash,
+            metadata: item.metadata,
+          };
+          nftList.push(nftItem);
+        }
+        return nftList;
+      }
+      case LOGOUT_SUCCESS:
+        return [];
       default:
         return state;
     }

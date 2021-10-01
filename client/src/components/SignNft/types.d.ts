@@ -28,7 +28,11 @@ export type ContainerProps = {
   fioAddresses: FioAddressDoublet[];
   fioWallets: FioWalletDoublet[];
   fee: number;
-  result: { feeCollected?: number; error?: string };
+  result: {
+    feeCollected?: number;
+    error?: string;
+    other?: { nfts: NftItem[] };
+  };
   singNFT: (publicKey: string, nfts: NftItem[], keys: WalletKeys) => void;
 
   match: {

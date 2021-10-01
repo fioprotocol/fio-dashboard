@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 
 import apis from '../../api/index';
@@ -7,11 +8,12 @@ import SignNFTForm from './SignNftForm';
 import { ContainerProps, NftFormValues } from './types';
 import { PinConfirmation } from '../../types';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
-import { waitForEdgeAccountStop } from '../../utils';
+import { putParamsToUrl, waitForEdgeAccountStop } from '../../utils';
 import Results from '../common/TransactionResults';
 import { FIO_SIGN_NFT_REQUEST } from '../../redux/fio/actions';
 import { ResultsData } from '../common/TransactionResults/types';
 import Processing from '../common/TransactionProcessing';
+import { ROUTES } from '../../constants/routes';
 
 const BUNDLE_COST = 2;
 
@@ -31,6 +33,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     getFee,
     result,
   } = props;
+  const history = useHistory();
   const [processing, setProcessing] = useState(false);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
   const [alreadySigned, setAlreadySigned] = useState<boolean>(false);
@@ -71,11 +74,14 @@ const SignNft: React.FC<ContainerProps> = props => {
     if (!signNftProcessing && processing) {
       resetPinConfirm();
 
-      // TODO: set proper results
-      setResultsData({
-        name: fioAddressName,
-        error: result.error,
-      });
+      if (!result.error)
+        setResultsData({
+          name: fioAddressName,
+          other: {
+            chainCode: result.other.nfts[0].chain_code,
+            contractAddress: result.other.nfts[0].contract_address,
+          },
+        });
       setProcessing(false);
     }
   }, [signNftProcessing, result]);
@@ -126,20 +132,26 @@ const SignNft: React.FC<ContainerProps> = props => {
       token_id: values.token_id || '',
       url: values.url || '',
       hash: values.hash || '',
-      metadata: { creator_url: values.creator_url || '' },
+      metadata: JSON.stringify({ creator_url: values.creator_url || '' }),
     });
     return {};
   };
 
-  // TODO: show proper results
+  const onResultsClose = () => {
+    history.push(
+      putParamsToUrl(ROUTES.FIO_ADDRESS_SIGNATURES, {
+        address: fioAddressName,
+      }),
+    );
+  };
+
   if (resultsData)
     return (
       <Results
         results={resultsData}
-        title={resultsData.error ? 'Failed!' : 'Signed!'}
+        title="Successfully signed!"
         actionName={FIO_SIGN_NFT_REQUEST}
-        onClose={() => {}}
-        onRetry={() => {}}
+        onClose={onResultsClose}
       />
     );
 
@@ -163,7 +175,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     <PseudoModalContainer
       title="Sign NFT"
       link={backTo || null}
-      fullWidth={true}
+      middleWidth={true}
     >
       <SignNFTForm {...formProps} />
       <Processing isProcessing={processing} />

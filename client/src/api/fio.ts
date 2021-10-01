@@ -17,6 +17,7 @@ interface TrxResponse {
   status: string;
   expiration?: string;
   fee_collected: number;
+  other?: any;
 }
 
 type FIOSDK_LIB = typeof FIOSDK;
@@ -285,8 +286,8 @@ export default class Fio {
 
   getNFTsFioAddress = async (
     fioAddress: string,
-    limit: number = 100,
-    offset: number = 0,
+    limit: number | null = null,
+    offset: number | null = null,
   ): Promise<NftsResponse> => {
     this.setBaseUrl();
     try {
@@ -338,7 +339,7 @@ export default class Fio {
         preparedTrx,
       );
       this.walletFioSDK.setSignedTrxReturnOption(false);
-      return result;
+      return { other: { nfts }, ...result };
     } catch (err) {
       this.logError(err);
       throw err;
