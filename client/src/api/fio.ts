@@ -285,8 +285,8 @@ export default class Fio {
 
   getNFTsFioAddress = async (
     fioAddress: string,
-    limit: number = 100,
-    offset: number = 0,
+    limit: number | null = null,
+    offset: number | null = null,
   ): Promise<NftsResponse> => {
     this.setBaseUrl();
     try {
