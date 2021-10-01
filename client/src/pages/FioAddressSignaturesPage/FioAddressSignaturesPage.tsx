@@ -49,6 +49,7 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
           <a
             href="https://fioprotocol.atlassian.net/wiki/spaces/FC/pages/113606966/NFT+Digital+Signature"
             target="_blank"
+            rel="noreferrer"
           >
             {' '}
             More information...
@@ -74,7 +75,7 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
           {!isEmpty(nftSignatures) ? (
             nftSignatures.map(item => (
               <NFTTokenBadge
-                key={item.contractAddress}
+                key={`${item.chainCode}-${item.tokenId}-${item.contractAddress}`}
                 chainCode={item.chainCode}
                 tokenId={item.tokenId}
                 contractAddress={item.contractAddress}
