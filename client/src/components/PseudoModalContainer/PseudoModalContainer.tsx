@@ -8,6 +8,7 @@ import classes from './PseudoModalContainer.module.scss';
 type Props = {
   children?: React.ReactNode;
   hasAutoWidth?: boolean;
+  middleWidth?: boolean;
   fullWidth?: boolean;
   link?: string;
   onClose?: () => void;
@@ -15,13 +16,22 @@ type Props = {
 };
 
 const PseudoModalContainer: React.FC<Props> = props => {
-  const { children, hasAutoWidth, fullWidth, link, onClose, title } = props;
+  const {
+    children,
+    hasAutoWidth,
+    fullWidth,
+    link,
+    onClose,
+    title,
+    middleWidth,
+  } = props;
   return (
     <div
       className={classnames(
         classes.container,
         hasAutoWidth && classes.autoWidth,
         fullWidth && classes.fullWidth,
+        middleWidth && classes.middleWidth,
       )}
     >
       <div className={classes.actionContainer}>
