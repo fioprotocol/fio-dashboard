@@ -163,7 +163,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     <PseudoModalContainer
       title="Sign NFT"
       link={backTo || null}
-      fullWidth={true}
+      middleWidth={true}
     >
       <SignNFTForm {...formProps} />
       <Processing isProcessing={processing} />
