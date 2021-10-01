@@ -376,7 +376,7 @@ export const getSignaturesFromFioAddress = (fioAddress: string) => ({
     FIO_SIGNATURE_ADDRESS_FAILURE,
   ],
   promise: (api: Api) => {
-    return api.fio.getNFTsFioAddress(fioAddress, 100, 0);
+    return api.fio.getNFTsFioAddress(fioAddress);
   },
   fioAddress,
 });
