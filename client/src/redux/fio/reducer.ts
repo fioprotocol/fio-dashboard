@@ -311,7 +311,6 @@ export default combineReducers({
       case actions.SET_VISIBILITY_FAILURE:
       case actions.RENEW_FAILURE:
       case actions.TRANSFER_FAILURE:
-      case actions.FIO_SIGN_NFT_FAILURE:
         return {
           ...state,
           [action.actionName]: { error: action.error && action.error.message },

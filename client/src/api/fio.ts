@@ -17,6 +17,7 @@ interface TrxResponse {
   status: string;
   expiration?: string;
   fee_collected: number;
+  other?: any;
 }
 
 type FIOSDK_LIB = typeof FIOSDK;
@@ -338,7 +339,7 @@ export default class Fio {
         preparedTrx,
       );
       this.walletFioSDK.setSignedTrxReturnOption(false);
-      return result;
+      return { other: { nfts }, ...result };
     } catch (err) {
       this.logError(err);
       throw err;
