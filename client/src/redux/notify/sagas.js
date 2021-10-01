@@ -1,10 +1,15 @@
-import { put, takeEvery } from 'redux-saga/effects';
+import { put, select, takeEvery } from 'redux-saga/effects';
 import { PROFILE_FAILURE, LOGIN_FAILURE, logout } from '../profile/actions';
 import {
   LOGIN_FAILURE as LOGIN_EDGE_FAILURE,
   CONFIRM_PIN_FAILURE,
 } from '../edge/actions';
 import { LIST_FAILURE as NOTIFICATIONS_LIST_FAILURE } from '../notifications/actions';
+import { showGenericErrorModal } from '../modal/actions';
+import { homePageLink as getHomePageLink } from '../refProfile/selectors';
+import { showGenericError as getShowGenericError } from '../modal/selectors';
+
+import { ErrorData } from './constants';
 
 export const toString = obj =>
   Object.entries(obj)
@@ -21,7 +26,15 @@ export function* notify(history) {
       action.type !== NOTIFICATIONS_LIST_FAILURE &&
       action.type !== CONFIRM_PIN_FAILURE
     ) {
-      // todo: handle common errors
+      const genericErrorIsShowing = yield select(getShowGenericError);
+
+      if (!genericErrorIsShowing) {
+        const { message, title, buttonText, redirect } =
+          ErrorData[action.type] || {};
+
+        yield put(showGenericErrorModal(message, title, buttonText));
+        if (redirect) yield history.push(redirect);
+      }
     }
 
     if (
@@ -30,7 +43,8 @@ export function* notify(history) {
       action.error.fields &&
       action.error.fields.token === 'WRONG_TOKEN'
     ) {
-      yield put(logout({ history }));
+      const homePageLink = yield select(getHomePageLink);
+      yield put(logout({ history }, homePageLink));
     }
   });
 }

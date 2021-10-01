@@ -1,5 +1,6 @@
 import express from 'express';
 import routes from './routes';
+import { createProxyMiddleware } from 'http-proxy-middleware';
 
 const router = express.Router();
 
@@ -18,6 +19,8 @@ router.get('/users/:id', checkAuth, routes.users.show);
 router.post('/users', routes.users.create);
 router.put('/users', checkAuth, routes.users.update);
 router.post('/users/setRecovery', checkAuth, routes.users.setRecovery);
+router.post('/users/resendRecovery', checkAuth, routes.users.resendRecovery);
+router.post('/users/resendConfirmEmail', routes.users.resendEmailConfirm);
 
 router.get('/notifications', checkAuth, routes.notifications.list);
 router.post('/notifications', checkAuth, routes.notifications.create);
@@ -32,5 +35,15 @@ router.get('/account/wallets', checkAuth, routes.account.walletsList);
 router.post('/account/wallets', checkAuth, routes.account.setWallets);
 
 router.get('/ref-profile/:code', routes.refProfiles.info);
+router.use(
+  '/fio-api/chain/:url',
+  createProxyMiddleware({
+    target: process.env.FIO_BASE_URL,
+    changeOrigin: true,
+    pathRewrite: {
+      [`^/api/v1/fio-api`]: '',
+    },
+  }),
+);
 
 export default router;

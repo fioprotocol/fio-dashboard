@@ -33,8 +33,16 @@ export const setContainedParams = (params: any) => {
       params.metadata = JSON.parse(decodeURI(params.metadata));
     } catch (e) {
       console.error(e);
+      params.metadata = { creator_url: '' };
     }
+  } else {
+    params.metadata = { creator_url: '' };
   }
+
+  if (params.metadata.creator_url == null) {
+    params.metadata.creator_url = '';
+  }
+
   return {
     type: SET_CONTAINED_PARAMS,
     data: params,
@@ -43,6 +51,6 @@ export const setContainedParams = (params: any) => {
 export const SET_STEP = `${prefix}/SET_STEP`;
 
 export const setStep = (step: string) => ({
-  type: SET_CONTAINED_PARAMS,
+  type: SET_STEP,
   data: step,
 });

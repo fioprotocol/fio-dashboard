@@ -1,3 +1,4 @@
+import { templates } from '../../emails/emailTemplate';
 import Base from '../Base';
 import X from '../Exception';
 import emailSender from '../emailSender';
@@ -42,7 +43,7 @@ export default class UsersCreate extends Base {
     const user = new User({
       username,
       email,
-      status: User.STATUS.ACTIVE, // todo: should we set NEW and then activate via email?
+      status: User.STATUS.NEW,
     });
 
     await user.save();
@@ -56,7 +57,9 @@ export default class UsersCreate extends Base {
       },
     }).save();
 
-    await emailSender.send('confirmEmail', email, {
+    await emailSender.send(templates.createAccount, email);
+
+    await emailSender.send(templates.confirmEmail, email, {
       hash: action.hash,
     });
 

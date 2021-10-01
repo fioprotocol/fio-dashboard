@@ -1,13 +1,14 @@
 import { PageNameType } from '../../../types';
 
 export type ResultsData = {
-  feeCollected: {
+  feeCollected?: {
     costFio: number;
     costUsdc: number;
   };
   name: string;
   publicKey?: string;
   changedStatus?: string;
+  other?: any;
   error?: string;
 };
 
@@ -17,6 +18,6 @@ export type ResultsProps = {
   actionName: string;
   results: ResultsData;
   onClose: () => void;
-  onRetry: () => void;
+  onRetry?: () => void;
   resetTransactionResult: (actionName: string) => void;
 };

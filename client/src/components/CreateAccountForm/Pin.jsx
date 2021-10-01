@@ -37,10 +37,10 @@ export default class Pin extends Component {
     return (
       <>
         <FormHeader
-          title="Enter PIN"
+          title="Create PIN"
           isDoubleColor
           header="Set 2 of 2"
-          subtitle="Enter a 6 digit PIN to use for sign in and transaction approvals"
+          subtitle="Create a 6 digit PIN to use for sign in and transaction approvals"
         />
         <Field
           name="pin"

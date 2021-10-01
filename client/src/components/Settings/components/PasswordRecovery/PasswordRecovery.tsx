@@ -1,6 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import isEmpty from 'lodash/isEmpty';
 import { Button } from 'react-bootstrap';
+import { EdgeAccount } from 'edge-core-js';
+
 import SecurityItem from '../SecurityItem/SecurityItem';
+import SuccessModal from '../../../Modal/SuccessModal';
+import DangerModal from '../../../Modal/DangerModal';
+import ResendEmail from './ResendEmail';
+
+import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 
 import classes from './PasswordRecovery.module.scss';
 
@@ -8,15 +16,27 @@ const ITEM_PROPS = {
   title: 'Password Recovery',
   subtitle: `Set up your password recovery, so you don't loose your account forever`,
   modalTitle: 'Confirm Recovery Questions',
+  dangerTitle: 'Are You Sure?',
+  dangerSubtitle:
+    'This is required to recover your account in addition to your username and recovery questions.',
+  successModalTitle: 'PASSWORD RECOVERY DISABLED',
+  successModalSubtitle:
+    'Your Password Recovery has been successfully disabled.',
 };
 
 type Props = {
   showRecoveryModal: () => void;
   changeRecoveryQuestionsOpen: () => void;
   username: string;
-  resendRecovery: () => void;
   hasRecoveryQuestions: boolean;
   checkRecoveryQuestions: (username: string) => void;
+  disableRecoveryResults: { status?: number };
+  showPinModal: (action: string) => void;
+  pinConfirmation: { account: EdgeAccount; action: string };
+  disableRecoveryPassword: (account: {}) => void;
+  resetPinConfirm: () => void;
+  loading: boolean;
+  clearDisableRecoveryResults: () => void;
 };
 
 const PasswordRecovery: React.FC<Props> = props => {
@@ -24,32 +44,88 @@ const PasswordRecovery: React.FC<Props> = props => {
     showRecoveryModal,
     changeRecoveryQuestionsOpen,
     checkRecoveryQuestions,
-    resendRecovery,
     hasRecoveryQuestions,
     username,
+    disableRecoveryResults,
+    showPinModal,
+    pinConfirmation,
+    disableRecoveryPassword,
+    resetPinConfirm,
+    loading,
+    clearDisableRecoveryResults,
   } = props;
+
+  const [showDisableModal, toggleDisableModal] = useState(false);
+  const [showSuccessModal, toggleSuccessModal] = useState(false);
 
   useEffect(() => {
     username && checkRecoveryQuestions(username);
   }, []);
 
-  const onClick = () => {
+  useEffect(() => {
+    if (disableRecoveryResults.status) {
+      toggleDisableModal(false);
+      toggleSuccessModal(true);
+      checkRecoveryQuestions(username);
+    }
+  }, [disableRecoveryResults]);
+
+  useEffect(() => {
+    if (!isEmpty(pinConfirmation)) {
+      const { account, action } = pinConfirmation;
+      if (action === CONFIRM_PIN_ACTIONS.PASSWORD_RECOVERY) {
+        toggleDisableModal(true);
+        disableRecoveryPassword(account);
+      }
+    }
+  }, [pinConfirmation]);
+
+  const onChangeRecoveryQuestions = () => {
     showRecoveryModal();
     changeRecoveryQuestionsOpen();
   };
 
-  const onResendClick = () => {
-    resendRecovery(); // todo: handle results, show success modal
+  const onClick = () => {
+    if (hasRecoveryQuestions) {
+      toggleDisableModal(true);
+      resetPinConfirm();
+    } else {
+      onChangeRecoveryQuestions();
+    }
+  };
+
+  const onDisableClick = () => {
+    toggleDisableModal(false);
+    showPinModal(CONFIRM_PIN_ACTIONS.PASSWORD_RECOVERY);
+  };
+
+  const onDisableClose = () => toggleDisableModal(false);
+
+  const onSuccessClose = () => {
+    clearDisableRecoveryResults();
+    toggleSuccessModal(false);
   };
 
   const mainButtonText = hasRecoveryQuestions
-    ? 'Re Set up Password Recovery'
-    : 'Set up Password Recovery';
+    ? 'Disable Password Recovery'
+    : 'Setup Password Recovery';
 
-  const renderResendButton = (
-    <Button onClick={onResendClick} className={classes.resendButton}>
-      Resend Recovery Email
+  /* eslint-disable */
+  // @ts-ignore
+  const renderChangeRecoveryButton = () => (
+    <Button
+      onClick={onChangeRecoveryQuestions}
+      className={classes.changeButton}
+    >
+      Change Recovery Questions
     </Button>
+  );
+
+  const renderButtonGroup = ( // 'change recovery' button commented because of no design
+    <>
+      {/* {renderChangeRecoveryButton()} */}
+      <ResendEmail />
+    </>
   );
 
   return (
@@ -58,8 +134,25 @@ const PasswordRecovery: React.FC<Props> = props => {
       buttonText={mainButtonText}
       isGreen={hasRecoveryQuestions}
       onClick={onClick}
-      bottomChildren={hasRecoveryQuestions && renderResendButton}
-    />
+      bottomChildren={hasRecoveryQuestions && renderButtonGroup}
+    >
+      <DangerModal
+        show={showDisableModal}
+        onClose={onDisableClose}
+        onActionButtonClick={onDisableClick}
+        buttonText={mainButtonText}
+        showCancel={true}
+        title={ITEM_PROPS.dangerTitle}
+        subtitle={ITEM_PROPS.dangerSubtitle}
+        loading={loading}
+      />
+      <SuccessModal
+        title={ITEM_PROPS.successModalTitle}
+        subtitle={ITEM_PROPS.successModalSubtitle}
+        onClose={onSuccessClose}
+        showModal={showSuccessModal}
+      />
+    </SecurityItem>
   );
 };
 

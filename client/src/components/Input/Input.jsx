@@ -35,7 +35,9 @@ const Input = props => {
     loading,
     uiType,
     errorType = '',
-    suffix = '',
+    errorColor = '',
+    prefix = '',
+    prefixLabel = '',
     upperCased = false,
     lowerCased = false,
     disabled,
@@ -65,7 +67,7 @@ const Input = props => {
 
   const hasError =
     ((error || data.error) &&
-      (touched || modified || submitSucceeded) &&
+      (touched || modified || submitSucceeded || !!value) &&
       !active) || // todo: remove !active to show red border on focused field. make debounce on create account user field
     (submitError && !modifiedSinceLastSubmit);
   useEffect(() => {
@@ -123,37 +125,58 @@ const Input = props => {
     onChange('');
   };
 
+  const renderPrefixLabel = () => {
+    if (!prefixLabel) return null;
+    if (active || !value) return null;
+
+    return (
+      <div
+        className={classnames(
+          classes.prefixLabel,
+          classes[`prefixLabel${uiType}`],
+        )}
+      >
+        {prefixLabel}
+      </div>
+    );
+  };
+
   const regularInput = (
     <>
       <div className={classes.inputGroup}>
-        {suffix && (
+        {prefix && (
           <div
-            className={classnames(classes.suffix, hasError && classes.error)}
+            className={classnames(classes.prefix, hasError && classes.error)}
           >
-            {suffix}
+            {prefix}
           </div>
         )}
-        <input
+        <div
           className={classnames(
             classes.regInput,
             (hasError || showErrorBorder) && classes.error,
             uiType && classes[uiType],
             isBW && classes.bw,
-            suffix && classes.suffixSpace,
+            prefix && classes.prefixSpace,
+            showCopyButton && classes.hasCopyButton,
             type === 'password' && classes.doubleIconInput,
           )}
-          disabled={disabled}
-          {...input}
-          {...rest}
-          onChange={e => {
-            const currentValue = e.target.value;
-            if (lowerCased) return onChange(currentValue.toLowerCase());
-            if (upperCased) return onChange(currentValue.toUpperCase());
-            onChange(currentValue);
-          }}
-          type={showPass ? 'text' : type}
-          data-clear={clearInput}
-        />
+        >
+          {renderPrefixLabel()}
+          <input
+            disabled={disabled}
+            {...input}
+            {...rest}
+            onChange={e => {
+              const currentValue = e.target.value;
+              if (lowerCased) return onChange(currentValue.toLowerCase());
+              if (upperCased) return onChange(currentValue.toUpperCase());
+              onChange(currentValue);
+            }}
+            type={showPass ? 'text' : type}
+            data-clear={clearInput}
+          />
+        </div>
         {(clearInput || onClose) && !loading && (
           <FontAwesomeIcon
             icon="times-circle"
@@ -209,6 +232,7 @@ const Input = props => {
           data={data}
           hasError={hasError}
           type={errorType}
+          color={errorColor}
           submitError={submitError}
         />
       )}

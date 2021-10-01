@@ -1,0 +1,134 @@
+@import "../../assets/styles/colors.scss";
+@import "../../assets/styles/mediaQueriesMixings.scss";
+@import "../../assets/styles/fontMixins.scss";
+
+.container {
+  width: 100%;
+  max-width: 830px;
+  display: flex;
+  flex-direction: column  ;
+}
+
+.actionContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .buttonsContainer {
+    display: flex;
+    flex-direction: row;
+    flex-flow: wrap;
+    justify-content: flex-start;
+
+    button {
+      margin-top: 20px;
+      height: 36px;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.8125em;
+      line-height: 0;
+      border-radius: 7px;
+      padding: 0 12px;
+      @include sf-pro-display-thin;
+    }
+    .middleButton {
+      margin: 20px 20px 0;
+    }
+    .icon {
+      font-size: 1em;
+      line-height: 0;
+      margin-right: 10px;
+    }
+  }
+}
+
+@include lg {
+  .actionContainer {
+    flex-direction: row;
+    align-items: center;
+
+    .buttonsContainer {
+      margin-top: 0;
+      justify-content: space-between;
+
+      button, .middleButton {
+        margin-top: 0;
+      }
+      .icon {
+        font-size: 1.25em;
+      }
+    }
+  }
+}
+
+.subTitle {
+  font-size: 0.875em;
+  color: $dark-jungle-green;
+  margin-top: 20px;
+  margin-bottom: 0;
+  @include proxima-nova-semibold;
+
+  @include lg {
+    margin-top: 13px;
+  }
+}
+
+.subTitleSection {
+  @include proxima-nova-thin;
+  font-size: 0.875em;
+}
+
+.signatureItem {
+  background-color: #ffffff;
+  margin-right: 30px;
+  margin-bottom: 30px;
+  border-radius: 10px;
+  padding: 13px 5px 10px 5px;
+}
+
+.signatureItemText {
+  margin: 0;
+}
+
+.signatureItemTextValue {
+  font-weight: bold;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+
+  .spinner {
+    margin-top: 50px;
+    font-size: 1.25em;
+    align-self: center;
+  }
+
+  .infoBadge {
+    margin-top: 30px;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: $bright-turquoise;
+    border-radius: 7px;
+    padding: 20px 50px;
+    color: $white;
+    max-width: 334px;
+    width: 100%;
+
+    .infoIcon {
+      font-size: 2em;
+    }
+    .infoTitle, .infoText {
+      margin-top: 10px;
+      margin-bottom: 0;
+    }
+    .infoText {
+      font-size: 0.75em;
+    }
+  }
+}

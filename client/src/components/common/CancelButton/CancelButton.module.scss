@@ -1,0 +1,14 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+
+.button {
+  border: none;
+  background: none;
+  outline: none;
+  color: $white;
+  @include proxima-nova-semibold;
+
+  &.thin {
+    @include proxima-nova-thin;
+  }
+}

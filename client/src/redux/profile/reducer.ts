@@ -14,6 +14,8 @@ export default combineReducers({
       case actions.LOGIN_REQUEST:
       case actions.LOGOUT_REQUEST:
       case actions.SIGNUP_REQUEST:
+      case actions.RESEND_CONFIRM_EMAIL_REQUEST:
+      case actions.CONFIRM_EMAIL_REQUEST:
         return true;
       case actions.PROFILE_SUCCESS:
       case actions.PROFILE_FAILURE:
@@ -25,6 +27,10 @@ export default combineReducers({
       case actions.SIGNUP_FAILURE:
       case actions.NONCE_SUCCESS:
       case actions.NONCE_FAILURE:
+      case actions.RESEND_CONFIRM_EMAIL_SUCCESS:
+      case actions.RESEND_CONFIRM_EMAIL_FAILURE:
+      case actions.CONFIRM_EMAIL_SUCCESS:
+      case actions.CONFIRM_EMAIL_FAILURE:
         return false;
       default:
         return state;
@@ -54,34 +60,15 @@ export default combineReducers({
         return state;
     }
   },
-  isConfirmed(state: boolean = false, action) {
+  emailConfirmationResult(
+    state: { success?: boolean; error?: string } = {},
+    action,
+  ) {
     switch (action.type) {
-      case actions.CONFIRM_SUCCESS:
-        return true;
-      default:
-        return state;
-    }
-  },
-  isChangedPwd(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.RESET_PASSWORD_REQUEST:
-      case actions.RESET_PASSWORD_FAILURE:
-        return false;
-      case actions.RESET_PASSWORD_SUCCESS:
-        return true;
-      default:
-        return state;
-    }
-  },
-  isRecoveryRequested(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.PASSWORD_RECOVERY_REQUEST:
-      case actions.PASSWORD_RECOVERY_FAILURE:
-        return false;
-      case actions.PASSWORD_RECOVERY_SUCCESS:
-        return true;
-      case actions.LOGOUT_SUCCESS:
-        return false;
+      case actions.CONFIRM_EMAIL_SUCCESS:
+        return { success: true };
+      case actions.CONFIRM_EMAIL_FAILURE:
+        return { success: false, error: action.error.code };
       default:
         return state;
     }
@@ -90,8 +77,6 @@ export default combineReducers({
     switch (action.type) {
       case actions.LOGIN_FAILURE:
       case actions.LOGOUT_FAILURE:
-      case actions.PASSWORD_RECOVERY_FAILURE:
-      case actions.RESET_PASSWORD_FAILURE:
         return action.error;
       default:
         return state;
@@ -149,6 +134,31 @@ export default combineReducers({
       case CHANGE_RECOVERY_QUESTIONS_OPEN: {
         return {};
       }
+      default:
+        return state;
+    }
+  },
+  resendRecoveryResults(state = {}, action) {
+    switch (action.type) {
+      case actions.RESEND_RECOVERY_SUCCESS: {
+        return action.data;
+      }
+      case actions.RESEND_RECOVERY_REQUEST:
+      case actions.RESEND_RECOVERY_FAILURE:
+      case actions.CLEAR_RESEND_RECOVERY_RESULTS: {
+        return {};
+      }
+      default:
+        return state;
+    }
+  },
+  resending(state = false, action) {
+    switch (action.type) {
+      case actions.RESEND_RECOVERY_REQUEST:
+        return true;
+      case actions.RESEND_RECOVERY_SUCCESS:
+      case actions.RESEND_RECOVERY_FAILURE:
+        return false;
       default:
         return state;
     }

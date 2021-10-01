@@ -48,4 +48,44 @@ export default combineReducers({
         return state;
     }
   },
+  showGenericError(state = false, action) {
+    switch (action.type) {
+      case actions.SHOW_GENERIC_ERROR_MODAL:
+        return true;
+      case actions.CLOSE_GENERIC_ERROR_MODAL:
+        return false;
+      default:
+        return state;
+    }
+  },
+  showEmailConfirmBlocker(state = false, action) {
+    switch (action.type) {
+      case actions.SHOW_EMAIL_CONFIRM_BLOCKER:
+        return true;
+      case actions.CLOSE_EMAIL_CONFIRM_BLOCKER:
+        return false;
+      default:
+        return state;
+    }
+  },
+  emailConfirmBlockerToken(state = '', action) {
+    switch (action.type) {
+      case actions.SHOW_EMAIL_CONFIRM_BLOCKER:
+        return action.data;
+      case actions.CLOSE_EMAIL_CONFIRM_BLOCKER:
+        return '';
+      default:
+        return state;
+    }
+  },
+  genericErrorData(state = {}, action) {
+    switch (action.type) {
+      case actions.SHOW_GENERIC_ERROR_MODAL:
+        return action.data;
+      case actions.CLEAR_GENERIC_ERROR_DATA:
+        return {};
+      default:
+        return state;
+    }
+  },
 });

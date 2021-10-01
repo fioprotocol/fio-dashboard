@@ -4,7 +4,6 @@ import { Route, Switch } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import AdminContainer from './components/AdminContainer';
 import MainLayout from './pages/MainLayout';
-import ConfirmEmail from './pages/ConfirmEmail';
 import AuthContainer from './components/AuthContainer';
 import PrivateRoute from './components/PrivateRoute';
 import FioAddressPage from './pages/FioAddressPage';
@@ -25,9 +24,15 @@ import DeleteTokenPage from './pages/LinkTokenPages/DeleteTokenPage';
 import AddTokenPage from './pages/LinkTokenPages/AddTokenPage';
 import SettingsPage from './pages/SettingsPage';
 import RefHomePage from './pages/RefHomePage';
+import RefSignNftPage from './pages/RefSignNftPage';
 import AccountRecoveryPage from './pages/AccountRecoveryPage';
+import EmailConfirmationPage from './pages/EmailConfirmationPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsOfServicePage from './pages/TermsOfServicePage';
 
 import { ROUTES } from './constants/routes';
+import FioAddressSignaturesPage from './pages/FioAddressSignaturesPage';
+import FioAddressSignPage from './pages/FioAddressSignPage';
 
 const LIST_TOKEN_PARENT_ROUTE = `${ROUTES.LINK_TOKEN_LIST}/:id`;
 
@@ -38,10 +43,24 @@ const Routes = () => (
         <Route path={ROUTES.HOME} component={HomePage} exact />
         <Route path={ROUTES.REF_PROFILE_HOME} component={RefHomePage} exact />
         <PrivateRoute path={ROUTES.ADMIN} component={AdminContainer} exact />
-        <Route path={ROUTES.CONFIRM_EMAIL} component={ConfirmEmail} />
+        <Route
+          path={ROUTES.CONFIRM_EMAIL}
+          component={EmailConfirmationPage}
+          exact
+        />
         <Route
           path={ROUTES.FIO_ADDRESSES_SELECTION}
           component={FioAddressPage}
+          exact
+        />
+        <PrivateRoute
+          path={ROUTES.FIO_ADDRESS_SIGNATURES}
+          component={FioAddressSignaturesPage}
+          exact
+        />
+        <PrivateRoute
+          path={ROUTES.FIO_ADDRESS_SIGN}
+          component={FioAddressSignPage}
           exact
         />
         <PrivateRoute
@@ -104,6 +123,20 @@ const Routes = () => (
         <Route
           path={ROUTES.ACCOUNT_RECOVERY}
           component={AccountRecoveryPage}
+          exact
+        />
+
+        <PrivateRoute path={ROUTES.REF_SIGN_NFT} component={RefSignNftPage} />
+
+        <Route
+          path={ROUTES.PRIVACY_POLICY}
+          component={PrivacyPolicyPage}
+          exact
+        />
+
+        <Route
+          path={ROUTES.TERMS_OF_SERVICE}
+          component={TermsOfServicePage}
           exact
         />
 

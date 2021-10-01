@@ -30,6 +30,26 @@ export function currentYear() {
   return year === startYear ? year : `${startYear} - ${year}`;
 }
 
+export async function minWaitTimeFunction(
+  cb: () => Promise<any>,
+  minWaitTime = 1000,
+) {
+  let results;
+  let error;
+  const t0 = performance.now();
+  try {
+    results = await cb();
+  } catch (e) {
+    error = e;
+  }
+  const t1 = performance.now();
+  if (t1 - t0 < minWaitTime) {
+    await sleep(minWaitTime - (t1 - t0));
+  }
+  if (error != null) throw error;
+  return results;
+}
+
 export function emailToUsername(email: string) {
   if (email && email.indexOf('@') > 0) {
     const [name, domain] = email.split('@');
@@ -407,4 +427,14 @@ export const setFees = (nativeFee: number, prices: Prices) => {
   }
 
   return fee;
+};
+
+export const putParamsToUrl = (
+  route: string,
+  params: { [paramName: string]: string },
+) => {
+  return Object.keys(params).reduce(
+    (acc: string, key: string) => acc.replace(`:${key}`, params[key]),
+    `${route}`,
+  );
 };

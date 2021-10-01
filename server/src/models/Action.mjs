@@ -11,6 +11,7 @@ export class Action extends Base {
     return {
       CONFIRM_EMAIL: 'confirmEmail',
       RESET_PASSWORD: 'resetPassword',
+      RESEND_EMAIL_CONFIRM: 'resendEmailConfirm',
     };
   }
 
@@ -19,7 +20,7 @@ export class Action extends Base {
       {
         id: { type: DT.BIGINT, primaryKey: true, autoIncrement: true },
         hash: { type: DT.STRING, allowNull: false, unique: true },
-        type: { type: DT.ENUM, values: Object.values(this.TYPE) },
+        type: { type: DT.STRING },
         data: { type: DT.JSON },
       },
       {
@@ -37,14 +38,6 @@ export class Action extends Base {
     const user = await User.findById(this.data.userId);
 
     return user.update({ status: User.STATUS.ACTIVE });
-  }
-
-  async resetPassword(externalData) {
-    const user = await User.findById(this.data.userId);
-
-    user.password = externalData.password;
-
-    return user.save();
   }
 
   static generateHash() {

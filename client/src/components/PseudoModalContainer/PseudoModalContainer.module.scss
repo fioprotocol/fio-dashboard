@@ -31,6 +31,13 @@
         @include proxima-nova-bold;
       }
     }
+
+    .singleTitle {
+      .title {
+        font-size: 1.375em;
+        @include proxima-nova-bold;
+      }
+    }
   }
 }
 
@@ -54,10 +61,23 @@
           font-size: 1.875em;
         }
       }
+      .singleTitle {
+        .title {
+          font-size: 1.875em;
+        }
+      }
     }
     &.autoWidth {
       width: fit-content;
       max-width: none;
+    }
+    &.fullWidth {
+      width: 100%;
+      max-width: 890px;
+    }
+    &.middleWidth {
+      width: 100%;
+      max-width: 595px;
     }
   }
 }

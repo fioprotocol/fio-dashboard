@@ -17,6 +17,7 @@ const defaultContextBuilder = req =>
     ...(req.user || {}),
     ipAddress: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
     userAgent: req.headers['user-agent'],
+    referer: req.headers.referer,
   });
 
 export async function runService(service, { context = {}, params = {} }) {

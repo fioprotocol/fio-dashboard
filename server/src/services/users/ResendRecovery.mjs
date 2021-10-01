@@ -1,28 +1,29 @@
+import { templates } from '../../emails/emailTemplate';
 import Base from '../Base';
 import X from '../Exception';
 import emailSender from '../emailSender';
 
-import { User, Action } from '../../models';
+import { User } from '../../models';
 
-export default class UsersResetPassword extends Base {
+export default class UsersResendRecovery extends Base {
   static get validationRules() {
     return {
       data: {
         nested_object: {
-          email: ['required', 'email'],
+          token: ['required', 'string'],
         },
       },
     };
   }
 
-  async execute({ data: { email } }) {
-    const user = await User.findOneWhere({ email });
+  async execute({ data: { token } }) {
+    const user = await User.findActive(this.context.id);
 
     if (!user) {
       throw new X({
         code: 'NOT_FOUND',
         fields: {
-          email: 'NOT_FOUND',
+          id: 'NOT_FOUND',
         },
       });
     }
@@ -36,22 +37,16 @@ export default class UsersResetPassword extends Base {
       });
     }
 
-    const action = await new Action({
-      type: 'resetPassword',
-      hash: Action.generateHash(),
-      data: {
-        userId: user.id,
-        email: user.email,
-      },
-    }).save();
+    await emailSender.send(templates.passRecovery, user.email, {
+      username: user.username,
+      token,
+    });
 
-    await emailSender.send('resetPassword', user.email, { hash: action.hash });
-
-    return {};
+    return { data: { success: true } };
   }
 
   static get paramsSecret() {
-    return ['data.email'];
+    return ['data.token'];
   }
 
   static get resultSecret() {

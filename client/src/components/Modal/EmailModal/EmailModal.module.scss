@@ -1,0 +1,62 @@
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/colors.scss';
+
+.container {
+  width: 100%;
+  max-width: 500px;
+  max-height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 50px 10px;
+  border-radius: 15px;
+  text-align: center;
+  background-color: $curious-blue;
+  padding: 20px;
+  color: $white;
+
+  a {
+    color: $white;
+    @include proxima-nova-bold;
+
+    &:hover {
+      color: $light-gray;
+    }
+  }
+}
+
+.icon {
+  font-size: 4em;
+  color: $white;
+  margin-top: 1.875rem;
+}
+
+.title {
+  margin-top: 1.25rem;
+  margin-bottom: 0;
+  @include proxima-nova-bold;
+}
+
+.subtitle {
+  margin: 0.9375rem 1.25rem 0;
+  font-size: 0.9375em;
+  text-align: center;
+  @include proxima-nova-thin;
+}
+
+.footer {
+  margin-top: 22px;
+  margin-bottom: 20px;
+  @include proxima-nova-thin;
+  text-align: center;
+  padding: 0 6px;
+}
+
+.sendLink {
+  @include proxima-nova-semibold;
+  color: $white;
+
+  &:hover {
+    color: $light-gray;
+  }
+}

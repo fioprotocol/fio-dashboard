@@ -1,9 +1,8 @@
 import { Ecc } from '@fioprotocol/fiojs';
 import { Api } from '../../api';
-import { ROUTES } from '../../constants/routes';
 import { FioWalletDoublet, WalletKeysObj } from '../../types';
 import { RouterProps } from 'react-router';
-import { sleep } from '../../utils';
+import { minWaitTimeFunction } from '../../utils';
 
 export const prefix: string = 'profile';
 
@@ -81,35 +80,13 @@ export const LOGOUT_REQUEST = `${prefix}/LOGOUT_REQUEST`;
 export const LOGOUT_SUCCESS = `${prefix}/LOGOUT_SUCCESS`;
 export const LOGOUT_FAILURE = `${prefix}/LOGOUT_FAILURE`;
 
-export const logout = ({ history }: RouterProps, redirect: boolean = true) => ({
+export const logout = ({ history }: RouterProps, redirect: string = '') => ({
   types: [LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE],
   promise: async (api: Api) => {
     const res = await api.auth.logout();
-    if (redirect) history.push(ROUTES.HOME);
+    if (redirect) history.push(redirect);
     return res;
   },
-});
-
-export const CONFIRM_REQUEST = `${prefix}/CONFIRM_REQUEST`;
-export const CONFIRM_SUCCESS = `${prefix}/CONFIRM_SUCCESS`;
-export const CONFIRM_FAILURE = `${prefix}/CONFIRM_FAILURE`;
-
-export const confirm = (hash: string) => ({
-  types: [CONFIRM_REQUEST, CONFIRM_SUCCESS, CONFIRM_FAILURE],
-  promise: (api: Api) => api.auth.confirm(hash),
-});
-
-export const PASSWORD_RECOVERY_REQUEST = `${prefix}/PASSWORD_RECOVERY_REQUEST`;
-export const PASSWORD_RECOVERY_SUCCESS = `${prefix}/PASSWORD_RECOVERY_SUCCESS`;
-export const PASSWORD_RECOVERY_FAILURE = `${prefix}/PASSWORD_RECOVERY_FAILURE`;
-
-export const passwordRecovery = ({ email }: { email: string }) => ({
-  types: [
-    PASSWORD_RECOVERY_REQUEST,
-    PASSWORD_RECOVERY_SUCCESS,
-    PASSWORD_RECOVERY_FAILURE,
-  ],
-  promise: (api: Api) => api.auth.resetPassword(email),
 });
 
 export const SET_RECOVERY_REQUEST = `${prefix}/SET_RECOVERY_REQUEST`;
@@ -118,37 +95,8 @@ export const SET_RECOVERY_FAILURE = `${prefix}/SET_RECOVERY_FAILURE`;
 
 export const setRecoveryQuestions = (token: string) => ({
   types: [SET_RECOVERY_REQUEST, SET_RECOVERY_SUCCESS, SET_RECOVERY_FAILURE],
-  promise: async (api: Api) => {
-    const minWaitTime = 4000;
-    const t0 = performance.now();
-    const results = await api.auth.setRecovery(token);
-    const t1 = performance.now();
-    if (t1 - t0 < minWaitTime) {
-      await sleep(minWaitTime - (t1 - t0));
-    }
-    return results;
-  },
-});
-
-export const RESET_PASSWORD_REQUEST = `${prefix}/RESET_PASSWORD_REQUEST`;
-export const RESET_PASSWORD_SUCCESS = `${prefix}/RESET_PASSWORD_SUCCESS`;
-export const RESET_PASSWORD_FAILURE = `${prefix}/RESET_PASSWORD_FAILURE`;
-
-export const resetPassword = ({
-  hash,
-  password,
-  confirmPassword,
-}: {
-  hash: string;
-  password: string;
-  confirmPassword: string;
-}) => ({
-  types: [
-    RESET_PASSWORD_REQUEST,
-    RESET_PASSWORD_SUCCESS,
-    RESET_PASSWORD_FAILURE,
-  ],
-  promise: (api: Api) => api.auth.setPassword(hash, password, confirmPassword),
+  promise: async (api: Api) =>
+    minWaitTimeFunction(() => api.auth.setRecovery(token), 4000),
 });
 
 export const RESET_LAST_AUTH_DATA = `${prefix}/RESET_LAST_AUTH_DATA`;
@@ -168,11 +116,39 @@ export const RESEND_RECOVERY_REQUEST = `${prefix}/RESEND_RECOVERY_REQUEST`;
 export const RESEND_RECOVERY_SUCCESS = `${prefix}/RESEND_RECOVERY_SUCCESS`;
 export const RESEND_RECOVERY_FAILURE = `${prefix}/RESEND_RECOVERY_FAILURE`;
 
-export const resendRecovery = () => ({
+export const resendRecovery = (token: string) => ({
   types: [
     RESEND_RECOVERY_REQUEST,
     RESEND_RECOVERY_SUCCESS,
     RESEND_RECOVERY_FAILURE,
   ],
-  promise: (api: Api) => api.auth.resendRecovery(),
+  promise: (api: Api) => api.auth.resendRecovery(token),
+});
+
+export const CLEAR_RESEND_RECOVERY_RESULTS = `${prefix}/CLEAR_RESEND_RECOVERY_RESULTS`;
+export const clearResendRecoveryResults = () => ({
+  type: CLEAR_RESEND_RECOVERY_RESULTS,
+});
+
+export const RESEND_CONFIRM_EMAIL_REQUEST = `${prefix}/RESEND_CONFIRM_EMAIL_REQUEST`;
+export const RESEND_CONFIRM_EMAIL_SUCCESS = `${prefix}/RESEND_CONFIRM_EMAIL_SUCCESS`;
+export const RESEND_CONFIRM_EMAIL_FAILURE = `${prefix}/RESEND_CONFIRM_EMAIL_FAILURE`;
+
+export const resendConfirmEmail = (token: string) => ({
+  types: [
+    RESEND_CONFIRM_EMAIL_REQUEST,
+    RESEND_CONFIRM_EMAIL_SUCCESS,
+    RESEND_CONFIRM_EMAIL_FAILURE,
+  ],
+  promise: (api: Api) =>
+    minWaitTimeFunction(() => api.auth.resendConfirmEmail(token)),
+});
+
+export const CONFIRM_EMAIL_REQUEST = `${prefix}/CONFIRM_EMAIL_REQUEST`;
+export const CONFIRM_EMAIL_SUCCESS = `${prefix}/CONFIRM_EMAIL_SUCCESS`;
+export const CONFIRM_EMAIL_FAILURE = `${prefix}/CONFIRM_EMAIL_FAILURE`;
+
+export const confirmEmail = (hash: string) => ({
+  types: [CONFIRM_EMAIL_REQUEST, CONFIRM_EMAIL_SUCCESS, CONFIRM_EMAIL_FAILURE],
+  promise: (api: Api) => api.auth.confirm(hash),
 });

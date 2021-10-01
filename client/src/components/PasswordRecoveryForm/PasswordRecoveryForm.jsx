@@ -38,9 +38,8 @@ const PasswordRecoveryForm = props => {
     username,
   } = props;
 
-  const isSettings = changeRecoveryQuestions; // todo: should be refactored on settings recovery password task
+  const isSettings = changeRecoveryQuestions; // todo: should be refactored on settings recovery password design task
   const { status } = changeRecoveryQuestionsResults;
-
   const [isSkip, toggleSkip] = useState(false);
   const [isQuestions, toggleQuestions] = useState(false);
   const [questionNumber, setQuestionNumber] = useState(null);
@@ -423,12 +422,14 @@ const PasswordRecoveryForm = props => {
         </ModalComponent>
       )}
       {isSettings && (
-        <SuccessModal
-          showModal={showSuccessModal}
-          title="Password Recovery Changed!"
-          subtitle="Your password recovery questions has been successfully changed"
-          onClose={onSuccessClose}
-        />
+        <>
+          <SuccessModal
+            showModal={showSuccessModal}
+            title="Password Recovery Setup!"
+            subtitle="Your password recovery questions has been successfully setup"
+            onClose={onSuccessClose}
+          />
+        </>
       )}
     </>
   );

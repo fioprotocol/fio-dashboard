@@ -1,9 +1,9 @@
 import Base from '../Base';
 import X from '../Exception';
-import emailSender from '../emailSender';
-import config from '../../config';
 
 import { Action } from '../../models';
+
+const ACTION_EPX_TIME = 1000 * 60 * 60 * 24 * 30; // 1 month
 
 export default class ActionsSubmit extends Base {
   async validate(data) {
@@ -18,12 +18,17 @@ export default class ActionsSubmit extends Base {
       });
     }
 
-    const rulesRegistry = {
-      resetPassword: {
-        password: 'required',
-        confirmPassword: ['required', { equal_to_field: ['password'] }],
-      },
+    if (new Date().getTime() - new Date(action.createdAt).getTime() > ACTION_EPX_TIME) {
+      await action.destroy({ force: true });
+      throw new X({
+        code: 'EXPIRED',
+        fields: {
+          hash: 'EXPIRED',
+        },
+      });
+    }
 
+    const rulesRegistry = {
       confirmEmail: {},
     };
 
@@ -39,19 +44,11 @@ export default class ActionsSubmit extends Base {
     await action.run(data);
     await action.destroy();
 
-    if (action.type === Action.TYPE.RESET_PASSWORD) {
-      await emailSender.send('resetPasswordSuccess', action.data.email);
-    } else if (action.type === Action.TYPE.CONFIRM_EMAIL) {
-      await emailSender.send('newUserRegistration', config.mail.adminEmail, {
-        email: action.data.email,
-      });
-    }
-
     return {};
   }
 
   static get paramsSecret() {
-    return ['password', 'confirmPassword'];
+    return [];
   }
 
   static get resultSecret() {

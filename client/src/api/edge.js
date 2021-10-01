@@ -175,11 +175,20 @@ export default class Edge {
     }
   }
 
-  async disableRecovery(username, pin) {
+  async getToken(username) {
     try {
-      const account = await this.loginPIN(username, pin);
+      return await this.edgeContext.getRecovery2Key(username);
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  async disableRecovery(account) {
+    try {
       await account.deleteRecovery();
       await account.logout();
+      return { status: 1 };
     } catch (e) {
       console.log(e);
       throw e;
