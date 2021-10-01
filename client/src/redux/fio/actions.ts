@@ -1,10 +1,10 @@
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
-import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 import { Api } from '../../api';
 import {
   PublicAddressDoublet,
   LinkActionResult,
   WalletKeys,
+  NFTTokenDoublet,
 } from '../../types';
 export const prefix = 'fio';
 
@@ -399,7 +399,7 @@ export const getSignaturesFromFioAddress = (fioAddress: string) => ({
 
 export const singNFT = (
   fioAddress: string,
-  nftRequest: NftItem[],
+  nftRequest: NFTTokenDoublet[],
   keys: WalletKeys,
 ) => ({
   types: [FIO_SIGN_NFT_REQUEST, FIO_SIGN_NFT_SUCCESS, FIO_SIGN_NFT_FAILURE],

@@ -7,7 +7,7 @@ import classes from '../EmailModal/EmailModal.module.scss';
 import {
   EmailConfirmationStateData,
   RefProfile,
-  RefQuery,
+  RefQueryParams,
 } from '../../../types';
 import { ROUTES } from '../../../constants/routes';
 
@@ -23,7 +23,7 @@ type Props = {
   ) => void;
   isRefFlow: boolean;
   refProfileInfo: RefProfile | null;
-  refProfileQueryParams: RefQuery | null;
+  refProfileQueryParams: RefQueryParams | null;
   redirectLink: string;
 };
 

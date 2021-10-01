@@ -4,7 +4,7 @@ import { createStructuredSelector } from 'reselect';
 import { RouterProps, withRouter } from 'react-router-dom';
 
 import { compose, putParamsToUrl } from '../utils';
-import { FioAddressDoublet, RefProfile, RefQuery, User } from '../types';
+import { FioAddressDoublet, RefProfile, RefQueryParams, User } from '../types';
 
 import { isAuthenticated, user } from '../redux/profile/selectors';
 import {
@@ -31,7 +31,7 @@ type Props = {
   user: User;
   loading: boolean;
   refProfileInfo: RefProfile;
-  refProfileQueryParams: RefQuery;
+  refProfileQueryParams: RefQueryParams;
   refStep: string;
   fioAddresses: FioAddressDoublet[];
   addressesFetched: { [publicKey: string]: boolean };

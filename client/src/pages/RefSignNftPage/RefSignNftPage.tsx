@@ -54,8 +54,8 @@ export const RefSignNftPage: React.FC<Props &
   return (
     <SignNft
       initialValues={{
+        creatorUrl: refProfileQueryParams.metadata.creatorUrl,
         ...refProfileQueryParams,
-        creator_url: refProfileQueryParams.metadata.creator_url,
       }}
       fioAddressName={fioAddresses[0].name}
     />
