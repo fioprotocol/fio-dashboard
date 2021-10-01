@@ -1,9 +1,11 @@
+import { PinDataType } from './types';
+
 export const prefix = 'modal';
 
 export const SHOW_LOGIN = `${prefix}/SHOW_LOGIN`;
 export const CLOSE_LOGIN = `${prefix}/CLOSE_LOGIN`;
 
-export const showLoginModal = hasRedirect => ({
+export const showLoginModal = (hasRedirect?: string) => ({
   type: SHOW_LOGIN,
   data: hasRedirect || '',
 });
@@ -26,7 +28,7 @@ export const closeRecoveryModal = () => ({
 export const SHOW_PIN_CONFIRM = `${prefix}/SHOW_PIN_CONFIRM`;
 export const CLOSE_PIN_CONFIRM = `${prefix}/CLOSE_PIN_CONFIRM`;
 
-export const showPinModal = (confirmAction, data) => ({
+export const showPinModal = (confirmAction: string, data: PinDataType) => ({
   type: SHOW_PIN_CONFIRM,
   data: { confirmAction, data },
 });
@@ -37,7 +39,11 @@ export const closePinConfirmModal = () => ({
 
 export const SHOW_GENERIC_ERROR_MODAL = `${prefix}/SHOW_GENERIC_ERROR_MODAL`;
 
-export const showGenericErrorModal = (message, title, buttonText) => ({
+export const showGenericErrorModal = (
+  message?: string,
+  title?: string,
+  buttonText?: string,
+) => ({
   type: SHOW_GENERIC_ERROR_MODAL,
   data: { message, title, buttonText },
 });
@@ -57,7 +63,7 @@ export const clearGenericErrorData = () => ({
 export const SHOW_EMAIL_CONFIRM_BLOCKER = `${prefix}/SHOW_EMAIL_CONFIRM_BLOCKER`;
 export const CLOSE_EMAIL_CONFIRM_BLOCKER = `${prefix}/CLOSE_EMAIL_CONFIRM_BLOCKER`;
 
-export const showEmailConfirmBlocker = token => ({
+export const showEmailConfirmBlocker = (token: string) => ({
   type: SHOW_EMAIL_CONFIRM_BLOCKER,
   data: token,
 });
