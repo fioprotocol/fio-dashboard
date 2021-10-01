@@ -195,9 +195,3 @@ type RefQuery = {
   action: string;
   r: string;
 } & SignNFTQuery;
-
-export type NFTSignature = {
-  chainCode: string;
-  tokenId: string;
-  contractAddress: string;
-};

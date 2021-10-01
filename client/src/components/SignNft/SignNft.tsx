@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 
 import apis from '../../api/index';
 import PseudoModalContainer from '../PseudoModalContainer';
@@ -12,6 +11,8 @@ import Results from '../common/TransactionResults';
 import { FIO_SIGN_NFT_REQUEST } from '../../redux/fio/actions';
 import { ResultsData } from '../common/TransactionResults/types';
 import Processing from '../common/TransactionProcessing';
+
+import { NFTTokenDoublet } from '../../types';
 
 const BUNDLE_COST = 2;
 
@@ -50,10 +51,10 @@ const SignNft: React.FC<ContainerProps> = props => {
     getFee(fioAddressName);
     if (
       initialValues != null &&
-      initialValues.chain_code &&
-      initialValues.contract_address
+      initialValues.chainCode &&
+      initialValues.contractAddress
     ) {
-      checkNftSigned(initialValues.chain_code, initialValues.contract_address);
+      checkNftSigned(initialValues.chainCode, initialValues.contractAddress);
     }
   }, []);
 
@@ -107,7 +108,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     ) {
       setProcessing(true);
       await waitForEdgeAccountStop(edgeAccount);
-      const { data }: { data?: NftItem } = pinConfirmation;
+      const { data }: { data?: NFTTokenDoublet } = pinConfirmation;
       singNFT(fioAddressName, [{ ...data }], walletKeys[currentWallet.id]);
     }
 
@@ -116,14 +117,14 @@ const SignNft: React.FC<ContainerProps> = props => {
 
   const onSubmit = async (values: NftFormValues) => {
     const nftSigned = await checkNftSigned(
-      values.chain_code,
-      values.contract_address,
+      values.chainCode,
+      values.contractAddress,
     );
     if (nftSigned) return {};
     showPinModal(CONFIRM_PIN_ACTIONS.SIGN_NFT, {
-      chain_code: values.chain_code,
-      contract_address: values.contract_address,
-      token_id: values.token_id || '',
+      chainCode: values.chainCode,
+      contractAddress: values.contractAddress,
+      tokenId: values.tokenId || '',
       url: values.url || '',
       hash: values.hash || '',
       metadata: JSON.stringify({ creator_url: values.creator_url || '' }),
