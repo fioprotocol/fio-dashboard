@@ -21,7 +21,6 @@ const AddressForm = props => {
     updateFormState,
     onChangeHandleField,
     debouncedOnChangeHandleField,
-    isFree,
     formNameGet,
     allowCustomDomains,
   } = props;
@@ -52,7 +51,6 @@ const AddressForm = props => {
           colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
           component={Input}
           hideError="true"
-          isFree={isFree}
           lowerCased
           tooltip={
             <>
