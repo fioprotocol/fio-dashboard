@@ -13,7 +13,7 @@ const RenewResults = (props: ResultsProps) => {
   const {
     results: {
       name,
-      feeCollected: { costFio, costUsdc },
+      feeCollected: { costFio, costUsdc } = { costFio: 0, costUsdc: 0 },
     },
   } = props;
   return (

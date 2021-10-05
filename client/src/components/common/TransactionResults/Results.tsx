@@ -13,7 +13,25 @@ import TransferResults from './components/TransferResults';
 import RenewResults from './components/RenewResults';
 import SetVisibilityResults from './components/SetVisibilityResults';
 import SignResults from './components/SignResults';
-import { RENEW_REQUEST } from '../../../redux/fio/actions';
+import { TRANSFER_REQUEST, RENEW_REQUEST } from '../../../redux/fio/actions';
+import { DEFAULT_FIO_TRX_ERR_MESSAGE } from '../../../constants/common';
+
+const ErrorMessages: {
+  [action: string]: { title?: string; message?: string };
+} = {
+  [TRANSFER_REQUEST]: {
+    title: 'Transfer error',
+    message: `${DEFAULT_FIO_TRX_ERR_MESSAGE}`
+      .replace('purchase', 'transfer')
+      .replace('registrations', 'transfer'),
+  },
+  [RENEW_REQUEST]: {
+    title: 'Renew error',
+    message: `${DEFAULT_FIO_TRX_ERR_MESSAGE}`
+      .replace('purchase', 'renew')
+      .replace('registrations', 'renewal'),
+  },
+};
 
 const Results: React.FC<ResultsProps> = props => {
   const {
@@ -54,6 +72,20 @@ const Results: React.FC<ResultsProps> = props => {
     );
   };
 
+  const errorBadge = () => {
+    if (!error) return null;
+    const { title = 'Error', message = DEFAULT_FIO_TRX_ERR_MESSAGE } =
+      ErrorMessages[actionName] != null ? ErrorMessages[actionName] : {};
+    return (
+      <InfoBadge
+        show={true}
+        type={BADGE_TYPES.ERROR}
+        title={title}
+        message={message}
+      />
+    );
+  };
+
   return (
     <PseudoModalContainer
       title={title}
@@ -61,14 +93,7 @@ const Results: React.FC<ResultsProps> = props => {
       hasAutoWidth={actionName !== RENEW_REQUEST}
     >
       <div className={classes.container}>
-        {error && (
-          <InfoBadge
-            show={true}
-            type={BADGE_TYPES.ERROR}
-            title="Error"
-            message={error}
-          />
-        )}
+        {errorBadge()}
         <TransferResults {...props} />
         <RenewResults {...props} />
         <SetVisibilityResults {...props} />

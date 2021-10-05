@@ -7,6 +7,7 @@ import CartItem from '../Cart/CartItem';
 import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
 import PriceBadge from '../Badges/PriceBadge/PriceBadge';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
+import { DEFAULT_FIO_TRX_ERR_MESSAGE } from '../../constants/common';
 import { totalCost } from '../../utils';
 
 import classes from './CheckoutPurchaseContainer.module.scss';
@@ -104,10 +105,8 @@ export const RenderPurchase = props => {
                 />
                 {allErrored ? (
                   <p className={classes.text}>
-                    <span className="boldText">Purchase failed!</span> - Your
-                    purchase has failed due to an error. Your funds remain in
-                    your account and your registrations did not complete. Please
-                    try again later.
+                    <span className="boldText">Purchase failed!</span> -{' '}
+                    {DEFAULT_FIO_TRX_ERR_MESSAGE}
                   </p>
                 ) : (
                   <p className={classes.text}>
