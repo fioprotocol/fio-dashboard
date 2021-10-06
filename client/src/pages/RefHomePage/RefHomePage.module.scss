@@ -1,6 +1,6 @@
 @import "../../assets/styles/colors";
 @import "../../assets/styles/fontMixins";
-@import '../../assets/styles/forms';
+@import "../../assets/styles/forms";
 
 .container {
   width: 100%;
@@ -16,4 +16,72 @@
 
 .refImg {
   max-width: 80px;
+}
+
+.spinnerContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  color: $white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2222;
+  font-size: 32px;
+  background-color: rgba(256, 256, 256, 0.9);
+}
+
+.fadeOut {
+  animation: fadeOut ease 0.8s;
+  -webkit-animation: fadeOut ease 0.8s;
+  -moz-animation: fadeOut ease 0.8s;
+  -o-animation: fadeOut ease 0.8s;
+  -ms-animation: fadeOut ease 0.8s;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@-moz-keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@-o-keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@-ms-keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
