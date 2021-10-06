@@ -74,7 +74,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     if (!signNftProcessing && processing) {
       resetPinConfirm();
 
-      if (!result.error)
+      if (result != null && !result.error)
         setResultsData({
           name: fioAddressName,
           other: {
