@@ -9,7 +9,13 @@ import { ROUTES } from '../../../constants/routes';
 import classes from '../MainHeader.module.scss';
 import { LoggedActionButtons } from './ActionButtons';
 import SideMenu from './SideMenu';
-import { CartItem, FioAddressDoublet, Notification } from '../../../types';
+import {
+  CartItem,
+  FioAddressDoublet,
+  Notification,
+  RefProfile,
+} from '../../../types';
+import SiteLink from './SiteLink';
 
 type LoggedNavProps = {
   cartItems: CartItem[];
@@ -18,6 +24,7 @@ type LoggedNavProps = {
   edgeAuthLoading: boolean;
   profileLoading: boolean;
   isRefFlow: boolean;
+  refProfileInfo: RefProfile;
   notifications: Notification[];
   fioAddresses: FioAddressDoublet[];
   logout: () => void;
@@ -124,18 +131,21 @@ const LoggedNav = (props: LoggedNavProps) => {
   };
 
   return (
-    <Nav className="pr-0 align-items-center">
-      {renderCart()}
-      {/* Notifications commented due to BD-2631 task */}
-      {/* {renderNotifications()} */}
-      {isDesktop ? (
-        <LoggedActionButtons {...props} />
-      ) : (
-        <SideMenu isMenuOpen={isMenuOpen} toggleMenuOpen={toggleMenuOpen}>
+    <div className={classes.loggedNavContainer}>
+      {isRefFlow ? <SiteLink {...props} /> : <div />}
+      <Nav className="pr-0 align-items-center">
+        {renderCart()}
+        {/* Notifications commented due to BD-2631 task */}
+        {/* {renderNotifications()} */}
+        {isDesktop ? (
           <LoggedActionButtons {...props} />
-        </SideMenu>
-      )}
-    </Nav>
+        ) : (
+          <SideMenu isMenuOpen={isMenuOpen} toggleMenuOpen={toggleMenuOpen}>
+            <LoggedActionButtons {...props} />
+          </SideMenu>
+        )}
+      </Nav>
+    </div>
   );
 };
 

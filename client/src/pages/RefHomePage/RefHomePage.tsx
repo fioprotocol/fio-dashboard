@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import RefAddressWidget from '../../components/AddressWidget/RefAddressWidget';
+import FioLoader from '../../components/common/FioLoader/FioLoader';
 import FioAddressPage from '../FioAddressPage';
 
 import classnames from './RefHomePage.module.scss';
 import { RouteComponentProps } from 'react-router-dom';
 import { RefProfile, RefQuery } from '../../types';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import styles from '../../components/AuthContainer/AuthContainer.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+const FADE_OUT_TIMEOUT = 780;
 
 type MatchParams = {
   refProfileCode: string;
@@ -50,6 +50,8 @@ export const RefHomePage: React.FC<Props &
     setContainedParams,
     showLoginModal,
   } = props;
+  const [hideLoader, setHideLoader] = useState(false);
+  const [refProfileIsLoaded, setRefProfileIsLoaded] = useState(false);
 
   useEffect(() => {
     getInfo(refProfileCode);
@@ -59,6 +61,20 @@ export const RefHomePage: React.FC<Props &
       setContainedParams(query);
     }
   }, [refProfileCode]);
+  useEffect(() => {
+    if (refProfileInfo != null) {
+      setHideLoader(true);
+    }
+  }, [refProfileInfo]);
+  useEffect(() => {
+    if (hideLoader) {
+      const tId = setTimeout(
+        () => setRefProfileIsLoaded(true),
+        FADE_OUT_TIMEOUT,
+      );
+      return () => clearTimeout(tId);
+    }
+  }, [hideLoader]);
 
   if (refLinkError) {
     return (
@@ -70,33 +86,49 @@ export const RefHomePage: React.FC<Props &
     );
   }
 
-  if (loading || refProfileInfo == null) {
-    return (
-      <div className={classnames.container}>
-        <FontAwesomeIcon icon={faSpinner} spin className={styles.spinner} />
-      </div>
-    );
-  }
+  const renderLoader = () => {
+    if (loading || !refProfileIsLoaded) {
+      return (
+        <div
+          className={`${classnames.spinnerContainer} ${
+            hideLoader ? classnames.fadeOut : ''
+          }`}
+        >
+          <FioLoader />
+        </div>
+      );
+    }
+  };
 
-  if (!isAuthenticated) {
-    return (
-      <div className={classnames.container}>
-        <RefAddressWidget
-          logo={
-            <img
-              src={refProfileInfo.settings.img}
-              className={classnames.refImg}
-            />
-          }
-          title={refProfileInfo.title}
-          subTitle={refProfileInfo.subTitle}
-          action={refProfileQueryParams.action}
-          edgeAuthLoading={edgeAuthLoading}
-          showLoginModal={showLoginModal}
-        />
-      </div>
-    );
-  }
+  const renderContent = () => {
+    if (refProfileInfo == null) return null;
+    if (!isAuthenticated) {
+      return (
+        <div className={classnames.container}>
+          <RefAddressWidget
+            logo={
+              <img
+                src={refProfileInfo.settings.img}
+                className={classnames.refImg}
+              />
+            }
+            title={refProfileInfo.title}
+            subTitle={refProfileInfo.subTitle}
+            action={refProfileQueryParams.action}
+            edgeAuthLoading={edgeAuthLoading}
+            showLoginModal={showLoginModal}
+          />
+        </div>
+      );
+    }
 
-  return <FioAddressPage />;
+    return <FioAddressPage />;
+  };
+
+  return (
+    <>
+      {renderLoader()}
+      {renderContent()}
+    </>
+  );
 };
