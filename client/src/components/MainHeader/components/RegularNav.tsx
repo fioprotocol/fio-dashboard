@@ -9,6 +9,7 @@ import { ROUTES } from '../../../constants/routes';
 import classes from '../MainHeader.module.scss';
 import { ActionButtons } from './ActionButtons';
 import SideMenu from './SideMenu';
+import SiteLink from './SiteLink';
 import { CartItem, RefProfile } from '../../../types';
 
 type RegularNavProps = {
@@ -79,37 +80,6 @@ const RegularNav = (props: RegularNavProps) => {
           )}
         </Nav>
       </Navbar>
-    </div>
-  );
-};
-
-const SiteLink = (props: RegularNavProps) => {
-  const { isRefFlow, refProfileInfo } = props;
-
-  let link = 'https://fioprotocol.io/';
-  let text = 'Go to fioprotocol.io';
-  let target = '_blank';
-
-  if (isRefFlow) {
-    link = refProfileInfo.settings.link;
-    text = `Return to ${refProfileInfo.label}`;
-    target = '_self';
-  }
-
-  return (
-    <div className={classes.link}>
-      <a
-        href={link}
-        target={target}
-        rel="noopener noreferrer"
-        className="text-white"
-      >
-        <FontAwesomeIcon
-          icon="arrow-left"
-          className={classnames(classes.arrow, 'mr-2', 'text-white')}
-        />
-        {text}
-      </a>
     </div>
   );
 };

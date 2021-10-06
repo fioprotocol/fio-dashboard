@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
+import FioName from '../../FioName/FioName';
 
 import { ResultsProps } from '../types';
 
@@ -12,24 +13,29 @@ const SignResults = (props: ResultsProps) => {
   const {
     results: {
       name,
-      other: { chainCode, contractAddress },
+      other: { chainCode, contractAddress, tokenId, url, hash, creatorUrl },
     },
   } = props;
+  const dashSign = ' - ';
+
   return (
     <>
-      <h5 className={classes.label}>Details</h5>
+      <FioName name={name} />
+      <h5 className={classes.label}>Signed NFT Details</h5>
       <div className={classes.badges}>
         <Badge show={true} type={BADGE_TYPES.WHITE}>
           <div className={classes.badgeContainer}>
-            <p className={classes.badgeItem}>FIO Address</p>
-            <p className={classes.badgeItemNext}>{name}</p>
+            <p className={classes.badgeItem}>Chain Code</p>
+            <p className={classes.badgeItemNext}>{chainCode}</p>
           </div>
         </Badge>
-        <div className={`${classes.statusBadge} ml-4`}>
+        <div className={classes.statusBadge}>
           <Badge show={true} type={BADGE_TYPES.WHITE}>
             <div className={classes.badgeContainer}>
-              <span className={classes.badgeItem}>Chain Code</span>
-              <span className={classes.badgeItemNext}>{chainCode}</span>
+              <span className={classes.badgeItem}>Token ID</span>
+              <span className={classes.badgeItemNext}>
+                {tokenId || dashSign}
+              </span>
             </div>
           </Badge>
         </div>
@@ -39,6 +45,32 @@ const SignResults = (props: ResultsProps) => {
           <div className={classes.badgeContainer}>
             <span className={classes.badgeItem}>Contract Address</span>
             <span className={classes.badgeItemNext}>{contractAddress}</span>
+          </div>
+        </Badge>
+      </div>
+      <div className={classes.badges}>
+        <Badge show={true} type={BADGE_TYPES.WHITE}>
+          <div className={classes.badgeContainer}>
+            <span className={classes.badgeItem}>URL</span>
+            <span className={classes.badgeItemNext}>{url || dashSign}</span>
+          </div>
+        </Badge>
+      </div>
+      <div className={classes.badges}>
+        <Badge show={true} type={BADGE_TYPES.WHITE}>
+          <div className={classes.badgeContainer}>
+            <span className={classes.badgeItem}>Hash</span>
+            <span className={classes.badgeItemNext}>{hash || dashSign}</span>
+          </div>
+        </Badge>
+      </div>
+      <div className={classes.badges}>
+        <Badge show={true} type={BADGE_TYPES.WHITE}>
+          <div className={classes.badgeContainer}>
+            <span className={classes.badgeItem}>Creator URL</span>
+            <span className={classes.badgeItemNext}>
+              {creatorUrl || dashSign}
+            </span>
           </div>
         </Badge>
       </div>

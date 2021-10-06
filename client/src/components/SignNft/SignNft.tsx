@@ -74,14 +74,35 @@ const SignNft: React.FC<ContainerProps> = props => {
     if (!signNftProcessing && processing) {
       resetPinConfirm();
 
-      if (!result.error)
+      if (result != null && !result.error) {
+        const {
+          chain_code,
+          contract_address,
+          token_id,
+          url,
+          hash,
+          metadata,
+        } = result.other.nfts[0];
+        const creatorUrl = (() => {
+          try {
+            return JSON.parse(metadata).creator_url;
+          } catch (err) {
+            return '';
+          }
+        })();
+
         setResultsData({
           name: fioAddressName,
           other: {
-            chainCode: result.other.nfts[0].chain_code,
-            contractAddress: result.other.nfts[0].contract_address,
+            chainCode: chain_code,
+            contractAddress: contract_address,
+            tokenId: token_id,
+            url,
+            hash,
+            creatorUrl,
           },
         });
+      }
       setProcessing(false);
     }
   }, [signNftProcessing, result]);
@@ -149,7 +170,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     return (
       <Results
         results={resultsData}
-        title="Successfully signed!"
+        title="Signed!"
         actionName={FIO_SIGN_NFT_REQUEST}
         onClose={onResultsClose}
       />

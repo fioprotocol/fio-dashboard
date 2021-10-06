@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from '../../Modal/Modal';
+import FioLoader from '../FioLoader/FioLoader';
 
-import logoAnimation from '../../CreateAccountForm/logo-animation.json';
 import classes from '../../CheckoutPurchaseContainer/CheckoutPurchaseContainer.module.scss';
 
 type Props = {
@@ -19,13 +19,7 @@ const Processing = (props: Props) => {
     >
       <div className={classes.processingContainer}>
         <div className={classes.logo}>
-          <lottie-player
-            id="logo-loading"
-            autoplay
-            loop
-            mode="normal"
-            src={JSON.stringify(logoAnimation)}
-          ></lottie-player>
+          <FioLoader />
         </div>
         <h4 className={classes.title}>Transaction Processing</h4>
         <p className={classes.subtitle}>

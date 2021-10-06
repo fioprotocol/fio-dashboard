@@ -13,7 +13,13 @@ import TransferResults from './components/TransferResults';
 import RenewResults from './components/RenewResults';
 import SetVisibilityResults from './components/SetVisibilityResults';
 import SignResults from './components/SignResults';
-import { TRANSFER_REQUEST, RENEW_REQUEST } from '../../../redux/fio/actions';
+
+import {
+  TRANSFER_REQUEST,
+  RENEW_REQUEST,
+  FIO_SIGN_NFT_REQUEST,
+} from '../../../redux/fio/actions';
+
 import { DEFAULT_FIO_TRX_ERR_MESSAGE } from '../../../constants/common';
 
 const ErrorMessages: {
@@ -90,7 +96,9 @@ const Results: React.FC<ResultsProps> = props => {
     <PseudoModalContainer
       title={title}
       onClose={onClose}
-      hasAutoWidth={actionName !== RENEW_REQUEST}
+      hasAutoWidth={
+        actionName !== RENEW_REQUEST && actionName !== FIO_SIGN_NFT_REQUEST
+      }
     >
       <div className={classes.container}>
         {errorBadge()}
