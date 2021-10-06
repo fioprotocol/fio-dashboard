@@ -12,7 +12,8 @@ import {
   FeePrice,
 } from './types';
 
-const FIO_DASH_USERNAME_DELIMITER = '.fio.dash.';
+const FIO_DASH_USERNAME_DELIMITER = `.fio.dash.${process.env
+  .REACT_APP_EDGE_ACC_DELIMITER || ''}`;
 
 export const FIO_ADDRESS_DELIMITER = '@';
 
