@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 
-import { Redirect, RouteComponentProps } from 'react-router-dom';
-import { FioAddressDoublet, RefProfile, SignNFTParams } from '../../types';
 import SignNft from '../../components/SignNft';
+import FioLoader from '../../components/common/FioLoader/FioLoader';
+
+import {
+  FioAddressDoublet,
+  FioWalletDoublet,
+  RefProfile,
+  SignNFTParams,
+} from '../../types';
 
 type MatchParams = {
   refProfileCode: string;
@@ -15,6 +22,8 @@ type Props = {
   refProfileInfo: RefProfile;
   refProfileQueryParams: SignNFTParams;
   fioAddresses: FioAddressDoublet[];
+  fioWallets: FioWalletDoublet[];
+  getFioAddresses: (publicKey: string) => void;
   homePageLink: string;
 };
 
@@ -24,11 +33,24 @@ export const RefSignNftPage: React.FC<Props &
     refProfileQueryParams,
     isAuthenticated,
     fioAddresses,
-    homePageLink,
+    fioWallets,
+    getFioAddresses,
   } = props;
 
+  useEffect(() => {
+    if (isAuthenticated && !fioAddresses.length && fioWallets.length) {
+      for (const fioWallet of fioWallets) {
+        getFioAddresses(fioWallet.publicKey);
+      }
+    }
+  }, [isAuthenticated, fioAddresses, fioWallets]);
+
   if (!isAuthenticated || !fioAddresses.length) {
-    return <Redirect to={homePageLink} />;
+    return (
+      <div className="d-flex justify-content-center align-items-center w-100 flex-grow-1">
+        <FioLoader />
+      </div>
+    );
   }
 
   return (

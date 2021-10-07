@@ -90,4 +90,14 @@ export default combineReducers({
         return state;
     }
   },
+  showFreeAddressAwaiter(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.SHOW_FREE_ADDRESS_AWAITER:
+        return true;
+      case actions.CLOSE_FREE_ADDRESS_AWAITER:
+        return false;
+      default:
+        return state;
+    }
+  },
 });

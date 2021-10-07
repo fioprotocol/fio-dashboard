@@ -45,6 +45,10 @@
       color: $black !important;
     }
   }
+
+  .smallText {
+    font-size: 14px;
+  }
 }
 
 @include sm {
@@ -68,7 +72,7 @@
 @keyframes slide-up {
   from {
     top: 200%;
-    transform: translateY(0) !important; 
+    transform: translateY(0) !important;
   }
 
   to {
