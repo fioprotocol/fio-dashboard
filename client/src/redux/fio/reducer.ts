@@ -365,4 +365,18 @@ export default combineReducers({
         return state;
     }
   },
+  addressesFetched(state: { [publicKey: string]: boolean } = {}, action) {
+    switch (action.type) {
+      case actions.REFRESH_FIO_NAMES_FAILURE:
+      case actions.REFRESH_FIO_NAMES_SUCCESS:
+      case actions.GET_FIO_ADDRESSES_SUCCESS:
+      case actions.GET_FIO_ADDRESSES_FAILURE: {
+        return { ...state, [action.publicKey]: true };
+      }
+      case LOGOUT_SUCCESS:
+        return {};
+      default:
+        return state;
+    }
+  },
 });

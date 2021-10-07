@@ -5,6 +5,7 @@ import {
   CONFIRM_PIN_FAILURE,
 } from '../edge/actions';
 import { LIST_FAILURE as NOTIFICATIONS_LIST_FAILURE } from '../notifications/actions';
+import { CAPTCHA_FAILURE } from '../registrations/actions';
 import { showGenericErrorModal } from '../modal/actions';
 import { homePageLink as getHomePageLink } from '../refProfile/selectors';
 import { showGenericError as getShowGenericError } from '../modal/selectors';
@@ -24,6 +25,7 @@ export function* notify(history) {
       action.type !== LOGIN_FAILURE &&
       action.type !== LOGIN_EDGE_FAILURE &&
       action.type !== NOTIFICATIONS_LIST_FAILURE &&
+      action.type !== CAPTCHA_FAILURE &&
       action.type !== CONFIRM_PIN_FAILURE
     ) {
       const genericErrorIsShowing = yield select(getShowGenericError);

@@ -14,7 +14,7 @@ import {
   refProfileQueryParams,
   refStep,
 } from '../redux/refProfile/selectors';
-import { fioAddresses } from '../redux/fio/selectors';
+import { fioAddresses, addressesFetched } from '../redux/fio/selectors';
 
 import { setContainedParams } from '../redux/refProfile/actions';
 import { toggleFreeAddressAwaiter } from '../redux/modal/actions';
@@ -34,6 +34,7 @@ type Props = {
   refProfileQueryParams: RefQuery;
   refStep: string;
   fioAddresses: FioAddressDoublet[];
+  addressesFetched: { [publicKey: string]: boolean };
   setContainedParams: (params: any) => void;
   toggleFreeAddressAwaiter: (show: boolean) => void;
 };
@@ -49,6 +50,7 @@ const RefFlow = (props: Props & RouterProps): React.FunctionComponent => {
     history: {
       location: { pathname },
     },
+    addressesFetched,
     toggleFreeAddressAwaiter,
   } = props;
 
@@ -75,13 +77,22 @@ const RefFlow = (props: Props & RouterProps): React.FunctionComponent => {
   }, [refProfileInfo, isAuthenticated, fioAddressesAmount, pathname]);
 
   useEffect(() => {
+    let allAddressesFetched = false;
+    for (const checked of Object.values(addressesFetched)) {
+      if (!checked) {
+        allAddressesFetched = false;
+        break;
+      }
+      allAddressesFetched = true;
+    }
     if (
       isAuthenticated &&
       refProfileInfo != null &&
       refProfileInfo.code != null &&
       fioAddressesAmount === 0 &&
       pathname !== ROUTES.PURCHASE &&
-      freeAddresses.length > 0
+      freeAddresses.length > 0 &&
+      allAddressesFetched
     ) {
       toggleFreeAddressAwaiter(true);
     }
@@ -91,6 +102,7 @@ const RefFlow = (props: Props & RouterProps): React.FunctionComponent => {
     fioAddressesAmount,
     pathname,
     freeAddresses,
+    addressesFetched,
   ]);
 
   return null;
@@ -107,6 +119,7 @@ const reduxConnect = connect(
     refLinkError,
     refStep,
     fioAddresses,
+    addressesFetched,
   }),
   {
     setContainedParams,
