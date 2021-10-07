@@ -304,10 +304,15 @@ export default class Fio {
   checkNftSigned = async (
     chainCode: string,
     contractAddress: string,
+    tokenId: string,
   ): Promise<NftsResponse> => {
     this.setBaseUrl();
     try {
-      return await this.publicFioSDK.getNfts({ chainCode, contractAddress });
+      return await this.publicFioSDK.getNfts({
+        chainCode,
+        contractAddress,
+        tokenId,
+      });
     } catch (e) {
       this.logError(e);
     }

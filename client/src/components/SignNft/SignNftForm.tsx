@@ -40,6 +40,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
         <form onSubmit={props.handleSubmit}>
           <OnChange name="chain_code">{fieldValuesChanged}</OnChange>
           <OnChange name="contract_address">{fieldValuesChanged}</OnChange>
+          <OnChange name="token_id">{fieldValuesChanged}</OnChange>
           <Container fluid className={classes.signSection}>
             {!isEdit ? (
               <>
