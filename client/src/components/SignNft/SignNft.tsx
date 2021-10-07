@@ -45,9 +45,17 @@ const SignNft: React.FC<ContainerProps> = props => {
   const fioAddress = fioAddresses.find(
     ({ name }) => name === selectedFioAddressName,
   );
-  const checkNftSigned = async (chainCode: string, contractAddress: string) => {
+  const checkNftSigned = async (
+    chainCode: string,
+    contractAddress: string,
+    tokenId: string = '',
+  ) => {
     if (isEdit) return;
-    const { nfts } = await apis.fio.checkNftSigned(chainCode, contractAddress);
+    const { nfts } = await apis.fio.checkNftSigned(
+      chainCode,
+      contractAddress,
+      tokenId,
+    );
     setAlreadySigned(nfts.length > 0);
     return nfts.length > 0;
   };
@@ -60,7 +68,11 @@ const SignNft: React.FC<ContainerProps> = props => {
       initialValues.contract_address &&
       !isEdit
     ) {
-      checkNftSigned(initialValues.chain_code, initialValues.contract_address);
+      checkNftSigned(
+        initialValues.chain_code,
+        initialValues.contract_address,
+        initialValues.token_id,
+      );
     }
   }, []);
 
@@ -148,6 +160,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     const nftSigned = await checkNftSigned(
       values.chain_code,
       values.contract_address,
+      values.token_id,
     );
     if (nftSigned) return {};
     showPinModal(CONFIRM_PIN_ACTIONS.SIGN_NFT, {
