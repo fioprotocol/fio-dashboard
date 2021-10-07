@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { RouteComponentProps } from 'react-router-dom';
+import { Redirect, RouteComponentProps } from 'react-router-dom';
 
 import SignNft from '../../components/SignNft';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
@@ -35,6 +35,7 @@ export const RefSignNftPage: React.FC<Props &
     fioAddresses,
     fioWallets,
     getFioAddresses,
+    homePageLink,
   } = props;
 
   useEffect(() => {
@@ -51,6 +52,10 @@ export const RefSignNftPage: React.FC<Props &
         <FioLoader />
       </div>
     );
+  }
+
+  if (refProfileQueryParams == null) {
+    return <Redirect to={homePageLink} />;
   }
 
   return (
