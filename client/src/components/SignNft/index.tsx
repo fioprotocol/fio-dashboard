@@ -11,10 +11,11 @@ import {
 } from '../../redux/fio/selectors';
 import { confirmingPin, pinConfirmation } from '../../redux/edge/selectors';
 import {
-  refreshBalance,
   singNFT,
   getFee,
   FIO_SIGN_NFT_REQUEST,
+  refreshFioNames,
+  getSignaturesFromFioAddress,
 } from '../../redux/fio/actions';
 import { showPinModal } from '../../redux/modal/actions';
 import { resetPinConfirm } from '../../redux/edge/actions';
@@ -53,12 +54,13 @@ const reduxConnect = connect(
     },
   }),
   {
-    refreshBalance,
     showPinModal,
     resetPinConfirm,
     getFee: (fioAddress: string) =>
       getFee(apis.fio.actionEndPoints.signNft, fioAddress),
     singNFT,
+    refreshFioNames,
+    getSignaturesFromFioAddress,
   },
 );
 

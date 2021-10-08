@@ -22,6 +22,8 @@ interface TrxResponse {
 
 type FIOSDK_LIB = typeof FIOSDK;
 
+const defaultFee = 800 * FIOSDK.SUFUnit;
+
 export default class Fio {
   baseurl: string = process.env.REACT_APP_FIO_BASE_URL;
   publicFioSDK: FIOSDK_LIB | null = null;
@@ -304,10 +306,15 @@ export default class Fio {
   checkNftSigned = async (
     chainCode: string,
     contractAddress: string,
+    tokenId: string,
   ): Promise<NftsResponse> => {
     this.setBaseUrl();
     try {
-      return await this.publicFioSDK.getNfts({ chainCode, contractAddress });
+      return await this.publicFioSDK.getNfts({
+        chainCode,
+        contractAddress,
+        tokenId,
+      });
     } catch (e) {
       this.logError(e);
     }
@@ -330,7 +337,7 @@ export default class Fio {
         {
           fio_address: fioAddress,
           nfts,
-          max_fee: 100000000000,
+          max_fee: defaultFee,
           tpid: '',
         },
       );

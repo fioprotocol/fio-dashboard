@@ -25,7 +25,12 @@ import EmailPassword, {
 import Confirmation from './Confirmation';
 import Success from './Success';
 
-import { FioWalletDoublet, WalletKeysObj } from '../../types';
+import {
+  FioWalletDoublet,
+  LastAuthData,
+  RefProfile,
+  WalletKeysObj,
+} from '../../types';
 
 const STEPS = {
   EMAIL_PASSWORD: 'EMAIL_PASSWORD',
@@ -73,10 +78,16 @@ type OwnProps = {
     username: string;
     email: string;
     fioWallets: FioWalletDoublet[];
+    refCode?: string;
   }) => void;
   signupSuccess: boolean;
+  isRefFlow: boolean;
+  refProfileInfo: RefProfile | null;
   edgeAuthLoading: boolean;
   serverSignUpLoading: boolean;
+  lastAuthData: LastAuthData;
+  resetLastAuthData: () => void;
+  clearCachedUser: (username: string) => void;
 };
 
 type Props = OwnProps & RouterProps & WithLastLocationProps;
@@ -241,7 +252,14 @@ export default class CreateAccountForm extends React.Component<Props, State> {
   };
 
   handleSubmit = async (values: FormValues) => {
-    const { onSubmit } = this.props;
+    const {
+      onSubmit,
+      isRefFlow,
+      refProfileInfo,
+      lastAuthData,
+      resetLastAuthData,
+      clearCachedUser,
+    } = this.props;
     const { step } = this.state;
 
     switch (step) {
@@ -276,6 +294,10 @@ export default class CreateAccountForm extends React.Component<Props, State> {
 
         const { email, password, pin } = values;
         this.setState({ loading: true });
+        if (lastAuthData != null && lastAuthData.username) {
+          resetLastAuthData();
+          clearCachedUser(lastAuthData.username);
+        }
         const { account, fioWallet, errors } = await createAccount(
           emailToUsername(email),
           password,
@@ -296,6 +318,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
             username: emailToUsername(email),
             email,
             fioWallets,
+            refCode: isRefFlow ? refProfileInfo.code : '',
           });
         }
         return errors;

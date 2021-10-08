@@ -22,6 +22,7 @@ export type ContainerOwnProps = {
   fioAddressName: string;
   backTo?: string;
   history: History;
+  isEdit?: boolean;
 };
 
 export type ContainerProps = {
@@ -40,11 +41,12 @@ export type ContainerProps = {
   };
   loading: boolean;
   signNftProcessing: boolean;
-  refreshBalance: (publicKey: string) => void;
   getFee: (fioAddress: string) => void;
   showPinModal: (action: string, data: any) => void;
   resetPinConfirm: () => void;
   pinConfirmation: PinConfirmation;
+  refreshFioNames: (publicKey: string) => void;
+  getSignaturesFromFioAddress: (fioAddress: string) => void;
 } & ContainerOwnProps;
 
 export type SignNftFormProps = {
@@ -59,4 +61,5 @@ export type SignNftFormProps = {
   bundleCost: number;
   hasLowBalance: boolean;
   processing: boolean;
+  isEdit?: boolean;
 };

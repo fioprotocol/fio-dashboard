@@ -71,3 +71,10 @@ export const showEmailConfirmBlocker = (token: string) => ({
 export const closeEmailConfirmBlocker = () => ({
   type: CLOSE_EMAIL_CONFIRM_BLOCKER,
 });
+
+export const SHOW_FREE_ADDRESS_AWAITER = `${prefix}/SHOW_FREE_ADDRESS_AWAITER`;
+export const CLOSE_FREE_ADDRESS_AWAITER = `${prefix}/CLOSE_FREE_ADDRESS_AWAITER`;
+
+export const toggleFreeAddressAwaiter = (show: boolean = false) => ({
+  type: show ? SHOW_FREE_ADDRESS_AWAITER : CLOSE_FREE_ADDRESS_AWAITER,
+});

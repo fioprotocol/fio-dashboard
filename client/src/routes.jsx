@@ -33,6 +33,7 @@ import TermsOfServicePage from './pages/TermsOfServicePage';
 import { ROUTES } from './constants/routes';
 import FioAddressSignaturesPage from './pages/FioAddressSignaturesPage';
 import FioAddressSignPage from './pages/FioAddressSignPage';
+import FioAddressNftPage from './pages/FioAddressNftPage';
 
 const LIST_TOKEN_PARENT_ROUTE = `${ROUTES.LINK_TOKEN_LIST}/:id`;
 
@@ -127,6 +128,11 @@ const Routes = () => (
         />
 
         <PrivateRoute path={ROUTES.REF_SIGN_NFT} component={RefSignNftPage} />
+
+        <PrivateRoute
+          path={ROUTES.FIO_ADDRESS_NFT_EDIT}
+          component={FioAddressNftPage}
+        />
 
         <Route
           path={ROUTES.PRIVACY_POLICY}

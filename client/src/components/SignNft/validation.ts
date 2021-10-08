@@ -35,7 +35,11 @@ export const validate = (values: NftFormValues) => {
     errors.url = 'Not valid url';
   }
 
-  if (values.hash != null && !HASH_REGEX.test(values.hash)) {
+  if (
+    values.hash != null &&
+    values.hash !== '' &&
+    !HASH_REGEX.test(values.hash)
+  ) {
     errors.hash = 'Not valid hash';
   }
 

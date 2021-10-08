@@ -18,6 +18,8 @@ export const linkProcessing = (state: ReduxState) =>
 export const fioWallets = (state: ReduxState) => state[prefix].fioWallets;
 export const fioAddresses = (state: ReduxState) => state[prefix].fioAddresses;
 export const fioDomains = (state: ReduxState) => state[prefix].fioDomains;
+export const addressesFetched = (state: ReduxState) =>
+  state[prefix].addressesFetched;
 export const hasMoreAddresses = (state: ReduxState) =>
   state[prefix].hasMoreAddresses;
 export const hasMoreDomains = (state: ReduxState) =>

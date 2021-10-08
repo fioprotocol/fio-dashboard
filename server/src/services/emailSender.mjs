@@ -70,15 +70,23 @@ class EmailSender {
           body: EmailTemplate.get(templateName, sendData),
           images: EmailTemplate.getInlineImages(templateName),
         };
-      case templates.confirmEmail:
+      case templates.confirmEmail: {
+        let link = `${sendData.mainUrl}confirm-email/${sendData.hash}`;
+
+        if (sendData.refCode) {
+          link = `${link}?refCode=${sendData.refCode}`;
+        }
+        delete sendData.refCode;
+
         return {
           subject: 'FIO Dashboard - please confirm your email',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}confirm-email/${sendData.hash}`,
+            link,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
         };
+      }
       case templates.passRecovery:
         return {
           subject: 'FIO Dashboard recovery link',
