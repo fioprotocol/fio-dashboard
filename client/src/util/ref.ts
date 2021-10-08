@@ -7,15 +7,7 @@ export const validateRefActionQuery = (query: RefQuery) => {
 
   switch (query.action) {
     case REF_ACTIONS.SIGNNFT: {
-      if (
-        query.chain_code &&
-        query.contract_address &&
-        query.hash &&
-        query.token_id &&
-        query.url &&
-        query.metadata
-      )
-        return true;
+      if (query.chain_code && query.contract_address) return true;
       throw new Error(`Invalid params for ${REF_ACTIONS.SIGNNFT} action`);
       break;
     }
