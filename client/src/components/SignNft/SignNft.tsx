@@ -25,13 +25,15 @@ const SignNft: React.FC<ContainerProps> = props => {
     fioAddresses,
     fioWallets,
     fioAddressName,
-    refreshBalance,
     pinConfirmation,
     showPinModal,
     resetPinConfirm,
     signNftProcessing,
     getFee,
     result,
+    isEdit,
+    refreshFioNames,
+    getSignaturesFromFioAddress,
   } = props;
   const history = useHistory();
   const [processing, setProcessing] = useState(false);
@@ -44,6 +46,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     ({ name }) => name === selectedFioAddressName,
   );
   const checkNftSigned = async (chainCode: string, contractAddress: string) => {
+    if (isEdit) return;
     const { nfts } = await apis.fio.checkNftSigned(chainCode, contractAddress);
     setAlreadySigned(nfts.length > 0);
     return nfts.length > 0;
@@ -54,15 +57,12 @@ const SignNft: React.FC<ContainerProps> = props => {
     if (
       initialValues != null &&
       initialValues.chain_code &&
-      initialValues.contract_address
+      initialValues.contract_address &&
+      !isEdit
     ) {
       checkNftSigned(initialValues.chain_code, initialValues.contract_address);
     }
   }, []);
-
-  useEffect(() => {
-    if (fioAddress != null) refreshBalance(fioAddress.walletPublicKey);
-  }, [fioAddress]);
 
   // Handle pin confirmation
   useEffect(() => {
@@ -102,6 +102,9 @@ const SignNft: React.FC<ContainerProps> = props => {
             creatorUrl,
           },
         });
+
+        refreshFioNames(fioAddress.walletPublicKey);
+        getSignaturesFromFioAddress(fioAddress.name);
       }
       setProcessing(false);
     }
@@ -166,7 +169,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     );
   };
 
-  if (resultsData)
+  if (resultsData && !isEdit)
     return (
       <Results
         results={resultsData}
@@ -191,10 +194,14 @@ const SignNft: React.FC<ContainerProps> = props => {
     hasLowBalance,
     processing,
     fioAddress,
+    isEdit,
   };
+
+  const title = isEdit ? 'Signed NFT' : 'Sign NFT';
+
   return (
     <PseudoModalContainer
-      title="Sign NFT"
+      title={title}
       link={backTo || null}
       middleWidth={true}
     >
