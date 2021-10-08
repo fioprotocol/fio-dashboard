@@ -33,6 +33,7 @@ export default class Auth extends Base {
     username: string;
     email: string;
     fioWallets: FioWalletDoublet[];
+    refCode?: string;
   }) {
     return this.apiClient.post('users', { data });
   }

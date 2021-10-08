@@ -24,13 +24,14 @@ export default class UsersCreate extends Base {
                 },
               },
             ],
+            refCode: ['string'],
           },
         },
       ],
     };
   }
 
-  async execute({ data: { username, email, fioWallets } }) {
+  async execute({ data: { username, email, fioWallets, refCode } }) {
     if (await User.findOneWhere({ email })) {
       throw new X({
         code: 'NOT_UNIQUE',
@@ -61,6 +62,7 @@ export default class UsersCreate extends Base {
 
     await emailSender.send(templates.confirmEmail, email, {
       hash: action.hash,
+      refCode,
     });
 
     await new Notification({
