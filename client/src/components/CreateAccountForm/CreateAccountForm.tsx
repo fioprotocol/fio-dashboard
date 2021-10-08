@@ -25,7 +25,7 @@ import EmailPassword, {
 import Confirmation from './Confirmation';
 import Success from './Success';
 
-import { FioWalletDoublet, WalletKeysObj } from '../../types';
+import { FioWalletDoublet, RefProfile, WalletKeysObj } from '../../types';
 
 const STEPS = {
   EMAIL_PASSWORD: 'EMAIL_PASSWORD',
@@ -73,8 +73,11 @@ type OwnProps = {
     username: string;
     email: string;
     fioWallets: FioWalletDoublet[];
+    refCode?: string;
   }) => void;
   signupSuccess: boolean;
+  isRefFlow: boolean;
+  refProfileInfo: RefProfile | null;
   edgeAuthLoading: boolean;
   serverSignUpLoading: boolean;
 };
@@ -241,7 +244,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
   };
 
   handleSubmit = async (values: FormValues) => {
-    const { onSubmit } = this.props;
+    const { onSubmit, isRefFlow, refProfileInfo } = this.props;
     const { step } = this.state;
 
     switch (step) {
@@ -296,6 +299,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
             username: emailToUsername(email),
             email,
             fioWallets,
+            refCode: isRefFlow ? refProfileInfo.code : '',
           });
         }
         return errors;

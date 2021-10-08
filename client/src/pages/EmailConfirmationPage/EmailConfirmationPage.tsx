@@ -9,6 +9,14 @@ type MatchParams = {
   hash: string;
 };
 
+type Location = {
+  location: {
+    query: {
+      refCode?: string;
+    };
+  };
+};
+
 type Props = {
   loading: boolean;
   emailConfirmationResult: { error?: string; success?: boolean };
@@ -17,7 +25,8 @@ type Props = {
 };
 
 const EmailConfirmationPage: React.FC<Props &
-  RouteComponentProps<MatchParams>> = props => {
+  RouteComponentProps<MatchParams> &
+  Location> = props => {
   const {
     loading,
     confirmEmail,
@@ -25,8 +34,11 @@ const EmailConfirmationPage: React.FC<Props &
     match: {
       params: { hash },
     },
+    location: { query },
     showLoginModal,
   } = props;
+  const hideSignIn =
+    query != null && query.refCode != null && query.refCode !== '';
 
   useEffect(() => {
     confirmEmail(hash);
@@ -47,17 +59,25 @@ const EmailConfirmationPage: React.FC<Props &
 
   if (emailConfirmationResult.success === false) return null;
 
+  const renderLoginSection = () => {
+    if (hideSignIn) return <p className="mt-3">Now you can close this tab</p>;
+
+    return (
+      <p className="mt-3">
+        Now you can to login!{' '}
+        <Link to="#" onClick={showLogin}>
+          Sign In
+        </Link>
+      </p>
+    );
+  };
+
   return (
     <div className={classes.container}>
       <div>
         <FontAwesomeIcon icon="envelope" className={classes.icon} />
         <h4 className={classes.title}>Your email is confirmed</h4>
-        <p className="mt-3">
-          Now you can to login!{' '}
-          <Link to="#" onClick={showLogin}>
-            Sign In
-          </Link>
-        </p>
+        {renderLoginSection()}
       </div>
     </div>
   );
