@@ -10,6 +10,7 @@ import Input, { INPUT_UI_STYLES } from '../Input/Input';
 import { COLOR_TYPE } from '../Input/ErrorBadge';
 import BundledTransactionBadge from '../Badges/BundledTransactionBadge/BundledTransactionBadge';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
+import FioName from '../common/FioName/FioName';
 
 import { validate } from './validation';
 
@@ -30,6 +31,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
     hasLowBalance,
     processing,
     fioAddress,
+    isEdit,
   } = props;
 
   return (
@@ -39,29 +41,42 @@ const SignNFTForm = (props: SignNftFormProps) => {
           <OnChange name="chain_code">{fieldValuesChanged}</OnChange>
           <OnChange name="contract_address">{fieldValuesChanged}</OnChange>
           <Container fluid className={classes.signSection}>
-            <InfoBadge
-              type={BADGE_TYPES.INFO}
-              show={alreadySigned}
-              title="Already Signed"
-              message="This NFT that you are attempting to sign, has already been signed"
-            />
-            <Row className="mt-4">
-              <Col className={classes.subTitleSection}>Details</Col>
-            </Row>
-            <Row>
-              <Col className={classes.subTitleSection}>
-                <div
-                  className={`${classes.fioAddress} d-flex justify-content-start`}
-                >
-                  <div className={classes.fioAddressLabel}>FIO Address</div>
-                  <CustomDropdown
-                    value={selectedFioAddressName}
-                    list={fioAddresses.map(({ name }) => name)}
-                    onChange={setSelectedFioAddress}
-                  />
-                </div>
-              </Col>
-            </Row>
+            {!isEdit ? (
+              <>
+                <InfoBadge
+                  type={BADGE_TYPES.INFO}
+                  show={alreadySigned}
+                  title="Already Signed"
+                  message="This NFT that you are attempting to sign, has already been signed"
+                />
+                <Row className="mt-4">
+                  <Col className={classes.subTitleSection}>Details</Col>
+                </Row>
+                <Row>
+                  <Col className={classes.subTitleSection}>
+                    <div
+                      className={`${classes.fioAddress} d-flex justify-content-start`}
+                    >
+                      <div className={classes.fioAddressLabel}>FIO Address</div>
+                      <CustomDropdown
+                        value={selectedFioAddressName}
+                        list={fioAddresses.map(({ name }) => name)}
+                        onChange={setSelectedFioAddress}
+                      />
+                    </div>
+                  </Col>
+                </Row>
+              </>
+            ) : (
+              <div className="mt-3 mb-4">
+                <FioName name={fioAddress.name} />
+                <Row className="mt-4">
+                  <Col className={classes.subTitleSection}>
+                    Signed NFT Details
+                  </Col>
+                </Row>
+              </div>
+            )}
             <Row>
               <Col>
                 <Field
@@ -72,6 +87,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
                   uiType={INPUT_UI_STYLES.BLACK_WHITE}
                   errorColor={COLOR_TYPE.WARN}
                   component={Input}
+                  disabled={isEdit}
                 />
               </Col>
               <Col>
@@ -83,6 +99,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
                   uiType={INPUT_UI_STYLES.BLACK_WHITE}
                   errorColor={COLOR_TYPE.WARN}
                   component={Input}
+                  disabled={isEdit}
                 />
               </Col>
             </Row>
@@ -96,7 +113,8 @@ const SignNFTForm = (props: SignNftFormProps) => {
                   uiType={INPUT_UI_STYLES.BLACK_WHITE}
                   errorColor={COLOR_TYPE.WARN}
                   component={Input}
-                  showCopyButton
+                  showCopyButton={!isEdit}
+                  disabled={isEdit}
                 />
               </Col>
             </Row>
@@ -163,10 +181,11 @@ const SignNFTForm = (props: SignNftFormProps) => {
                     processing ||
                     !props.valid ||
                     alreadySigned ||
-                    props.submitting
+                    props.submitting ||
+                    (isEdit && props.pristine)
                   }
                 >
-                  <span>Sign NFT</span>
+                  <span>{isEdit ? 'Update' : 'Sign NFT'}</span>
                 </Button>
               </Col>
             </Row>

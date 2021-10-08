@@ -33,8 +33,9 @@ const ROUTES: { [route: string]: string } = {
   FIO_ADDRESS_RENEW: '/fio-address-renew',
   FIO_DOMAIN_RENEW: '/fio-domain-renew',
   FIO_NAME_RENEW_RESULTS: '/fio-name-results',
-  FIO_ADDRESS_SIGNATURES: `/fio-address-signatures/:address`,
-  FIO_ADDRESS_SIGN: `/fio-address-sign/:address`,
+  FIO_ADDRESS_SIGNATURES: '/fio-address-signatures/:address',
+  FIO_ADDRESS_SIGN: '/fio-address-sign/:address',
+  FIO_ADDRESS_NFT_EDIT: '/fio-address-signatures/:address/edit/:id',
 
   LINK_TOKEN_LIST: '/link-token-list',
   ADD_TOKEN: '/add-token',
