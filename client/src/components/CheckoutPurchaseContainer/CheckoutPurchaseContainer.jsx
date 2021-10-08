@@ -17,12 +17,17 @@ const CheckoutPurchaseContainer = props => {
     history,
     children,
     registrationResult,
+    closeText,
+    onClose: parentOnClose,
   } = props;
 
   const hasErrors = !isEmpty(registrationResult.errors || []);
 
   const onClose = () => {
     setRegistration({});
+    if (parentOnClose) {
+      return parentOnClose();
+    }
     history.push(ROUTES.HOME);
   };
 
@@ -40,7 +45,7 @@ const CheckoutPurchaseContainer = props => {
         <PurchaseNow onFinish={onFinish} isRetry={isPurchase && hasErrors} />
       ) : (
         <Button onClick={onClose} className={classes.button}>
-          Close
+          {closeText ? closeText : 'Close'}
         </Button>
       )}
       <Processing isProcessing={isProcessing} />

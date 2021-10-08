@@ -10,6 +10,8 @@ import NFTTokenBadge from '../../components/Badges/TokenBadge/NFTTokenBadge';
 
 import { ROUTES } from '../../constants/routes';
 
+import { nftId } from '../../util/nft';
+
 import { NFTTokenDoublet } from '../../types';
 
 import classes from './FioAddressSignaturesPage.module.scss';
@@ -73,15 +75,20 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
 
         <div className={classes.list}>
           {!isEmpty(nftSignatures) ? (
-            nftSignatures.map(item => (
-              <NFTTokenBadge
-                key={`${item.chainCode}-${item.tokenId}-${item.contractAddress}`}
-                chainCode={item.chainCode}
-                tokenId={item.tokenId}
-                contractAddress={item.contractAddress}
-                onClick={() => {}} // todo: set click action or if it is redirect - pass link instead
-              />
-            ))
+            nftSignatures.map(item => {
+              const { chainCode, tokenId, contractAddress } = item;
+              const id = nftId(chainCode, tokenId, contractAddress);
+              return (
+                <NFTTokenBadge
+                  key={id}
+                  id={id}
+                  chainCode={chainCode}
+                  tokenId={tokenId}
+                  name={address}
+                  contractAddress={contractAddress}
+                />
+              );
+            })
           ) : loading ? (
             <FontAwesomeIcon icon="spinner" spin className={classes.spinner} />
           ) : (

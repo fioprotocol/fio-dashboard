@@ -1,20 +1,25 @@
 import React, { useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
+
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import CheckoutPurchaseContainer from '../../components/CheckoutPurchaseContainer';
 import { RenderPurchase } from '../../components/CheckoutPurchaseContainer/CheckoutPurchaseComponents';
+import { REF_ACTIONS_TO_ROUTES } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
-import { transformResult } from '../../utils';
+import { putParamsToUrl, transformResult } from '../../utils';
 
 const PurchasePage = props => {
   const {
     history,
     isAuthenticated,
+    isRefFlow,
     registrationResult,
     cartItems,
     prices,
     recalculate,
     domains,
+    refProfileQueryParams,
+    refProfileInfo,
   } = props;
 
   useEffect(() => {
@@ -42,12 +47,28 @@ const PurchasePage = props => {
   }, []);
 
   const onClose = () => {
+    if (
+      isRefFlow &&
+      refProfileQueryParams != null &&
+      refProfileQueryParams.action
+    ) {
+      return history.push(
+        putParamsToUrl(REF_ACTIONS_TO_ROUTES[refProfileQueryParams.action], {
+          refProfileCode: refProfileInfo.code,
+        }),
+      );
+    }
+
     history.push(ROUTES.HOME);
   };
 
   return (
     <PseudoModalContainer title={title} onClose={onClose}>
-      <CheckoutPurchaseContainer isPurchase>
+      <CheckoutPurchaseContainer
+        isPurchase
+        closeText={isRefFlow ? 'Continue' : null}
+        onClose={onClose}
+      >
         <RenderPurchase
           hasErrors={hasErrors}
           regItems={regItems}

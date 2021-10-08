@@ -3,9 +3,11 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 
+import { getFioAddresses } from '../../redux/fio/actions';
+
 import { loading as edgeAuthLoading } from '../../redux/edge/selectors';
 import { isAuthenticated } from '../../redux/profile/selectors';
-import { fioAddresses } from '../../redux/fio/selectors';
+import { fioAddresses, fioWallets } from '../../redux/fio/selectors';
 import {
   loading,
   refProfileInfo,
@@ -23,9 +25,12 @@ const reduxConnect = connect(
     refProfileInfo,
     refProfileQueryParams,
     fioAddresses,
+    fioWallets,
     homePageLink,
   }),
-  null,
+  {
+    getFioAddresses,
+  },
 );
 
 export default compose(reduxConnect)(RefSignNftPage);
