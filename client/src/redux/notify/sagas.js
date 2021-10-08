@@ -1,5 +1,10 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
-import { PROFILE_FAILURE, LOGIN_FAILURE, logout } from '../profile/actions';
+import {
+  PROFILE_FAILURE,
+  LOGIN_FAILURE,
+  AUTH_CHECK_FAILURE,
+  logout,
+} from '../profile/actions';
 import {
   LOGIN_FAILURE as LOGIN_EDGE_FAILURE,
   CONFIRM_PIN_FAILURE,
@@ -22,6 +27,7 @@ export function* notify(history) {
     if (
       action.error &&
       action.type !== PROFILE_FAILURE &&
+      action.type !== AUTH_CHECK_FAILURE &&
       action.type !== LOGIN_FAILURE &&
       action.type !== LOGIN_EDGE_FAILURE &&
       action.type !== NOTIFICATIONS_LIST_FAILURE &&
