@@ -47,20 +47,24 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
     </Button>
   );
 
+  // @ts-ignore todo: BD-2933
+  // eslint-disable-next-line no-unused-vars
+  const renderLink = () => (
+    <Link
+      to={`${ROUTES.LINK_TOKEN_LIST}/${name}`}
+      className={classes.actionButton}
+    >
+      <Button title={isSmallDesktop ? BUTTONS_TITLE.link : ''}>
+        <FontAwesomeIcon icon="link" className={classes.linkIcon} />{' '}
+        {!isSmallDesktop && BUTTONS_TITLE.link}
+      </Button>
+    </Link>
+  );
+
+  // todo: BD-2933 renderLink and renderRenew were temporary removed from address item
+
   return pageName === PAGE_NAME.ADDRESS ? (
     <div className={classes.actionButtonsContainer}>
-      <div className={classes.row}>
-        {renderRenew()}
-        <Link
-          to={`${ROUTES.LINK_TOKEN_LIST}/${name}`}
-          className={classes.actionButton}
-        >
-          <Button title={isSmallDesktop ? BUTTONS_TITLE.link : ''}>
-            <FontAwesomeIcon icon="link" className={classes.linkIcon} />{' '}
-            {!isSmallDesktop && BUTTONS_TITLE.link}
-          </Button>
-        </Link>
-      </div>
       <div className={classes.row}>
         <Link
           to={`${ROUTES.FIO_ADDRESS_SIGNATURES}`.replace(':address', name)}
