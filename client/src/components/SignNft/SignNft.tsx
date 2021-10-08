@@ -104,7 +104,7 @@ const SignNft: React.FC<ContainerProps> = props => {
         })();
 
         setResultsData({
-          name: fioAddressName,
+          name: fioAddress.name,
           other: {
             chainCode: chain_code,
             contractAddress: contract_address,
@@ -150,7 +150,7 @@ const SignNft: React.FC<ContainerProps> = props => {
       setProcessing(true);
       await waitForEdgeAccountStop(edgeAccount);
       const { data }: { data?: NftItem } = pinConfirmation;
-      singNFT(fioAddressName, [{ ...data }], walletKeys[currentWallet.id]);
+      singNFT(fioAddress.name, [{ ...data }], walletKeys[currentWallet.id]);
     }
 
     if (confirmationError) setProcessing(false);
@@ -177,7 +177,7 @@ const SignNft: React.FC<ContainerProps> = props => {
   const onResultsClose = () => {
     history.push(
       putParamsToUrl(ROUTES.FIO_ADDRESS_SIGNATURES, {
-        address: fioAddressName,
+        address: fioAddress.name,
       }),
     );
   };
