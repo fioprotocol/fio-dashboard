@@ -7,6 +7,7 @@ import isEmpty from 'lodash/isEmpty';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import FioName from '../../components/common/FioName/FioName';
 import NFTTokenBadge from '../../components/Badges/TokenBadge/NFTTokenBadge';
+import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 
 import { ROUTES } from '../../constants/routes';
 
@@ -92,15 +93,11 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
           ) : loading ? (
             <FontAwesomeIcon icon="spinner" spin className={classes.spinner} />
           ) : (
-            <div className={classes.infoBadge}>
-              <FontAwesomeIcon
-                icon="exclamation-circle"
-                className={classes.infoIcon}
+            <div className={classes.infoBadgeContainer}>
+              <InfoBadge
+                title="No Signatures"
+                message="You have no NFT signatures for this"
               />
-              <h5 className={classes.infoTitle}>No Signatures</h5>
-              <p className={classes.infoText}>
-                You have no NFT signatures for this
-              </p>
             </div>
           )}
         </div>
