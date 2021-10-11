@@ -85,7 +85,11 @@
 @include lg {
   .container {
     display: grid;
-    grid-template-columns: auto auto auto auto;
+    grid-template-columns: auto auto auto;
+
+    &.isDomain {
+      grid-template-columns: auto auto auto auto;
+    }
 
     .tableHeader, .tableCol {
       padding: 10px;

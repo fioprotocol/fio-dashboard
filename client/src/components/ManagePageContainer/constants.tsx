@@ -54,3 +54,23 @@ export const BUTTONS_TITLE = {
   nft: 'NFT signature',
   register: 'Register FIO Address',
 };
+
+export const SUBTITLE = {
+  [PAGE_NAME.ADDRESS]: 'FIO Addreses owned by all your wallets.',
+  [PAGE_NAME.DOMAIN]: 'FIO Domains owned by all your wallets.',
+};
+
+export const TABLE_HEADERS_LIST = {
+  [PAGE_NAME.ADDRESS]: ['Address', 'Bundles', 'Actions'],
+  [PAGE_NAME.DOMAIN]: ['Domain', 'Status', 'Exp. Date', 'Actions'],
+};
+
+export const FIO_OWNERSHIP = {
+  [PAGE_NAME.ADDRESS]: ROUTES.FIO_ADDRESS_OWNERSHIP,
+  [PAGE_NAME.DOMAIN]: ROUTES.FIO_DOMAIN_OWNERSHIP,
+};
+
+export const PLURAL_NAME = {
+  [PAGE_NAME.ADDRESS]: 'Addresses',
+  [PAGE_NAME.DOMAIN]: 'Domains',
+};
