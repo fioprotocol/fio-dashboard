@@ -4,7 +4,12 @@ import { ContainerProps } from '../../components/ManagePageContainer/types';
 import { ADDRESS } from '../../constants/common';
 
 const FioAddressManagePage: React.FC<ContainerProps> = props => (
-  <ManagePageContainer pageName={ADDRESS} {...props} />
+  <ManagePageContainer
+    pageName={ADDRESS}
+    {...props}
+    showBundles={true}
+    showFioAddressName={true}
+  />
 );
 
 export default FioAddressManagePage;

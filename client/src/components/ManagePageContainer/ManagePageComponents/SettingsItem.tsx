@@ -4,7 +4,7 @@ import { Button } from 'react-bootstrap';
 
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 
-import { PAGE_NAME } from '../constants';
+import { FIO_OWNERSHIP } from '../constants';
 import { fioNameLabels } from '../../../constants/labels';
 import { ROUTES } from '../../../constants/routes';
 
@@ -14,14 +14,12 @@ import { SettingsProps } from '../types';
 import classes from './SettingsItem.module.scss';
 
 const SettingsItem: React.FC<SettingsProps> = props => {
-  const { fioNameItem, pageName, fioWallets } = props;
+  const { fioNameItem, pageName, fioWallets, showStatus } = props;
   const { name: fioName } = fioNameItem;
   const { publicKey, name: walletName } = fioWallets.find(
     (fioWallet: FioWalletDoublet) =>
       fioWallet.publicKey === fioNameItem.walletPublicKey,
   );
-
-  const isDomain = pageName === PAGE_NAME.DOMAIN;
 
   return (
     <div className={classes.settingsContainer}>
@@ -37,7 +35,7 @@ const SettingsItem: React.FC<SettingsProps> = props => {
           <p className={classes.badgeItem}>{publicKey}</p>
         </div>
       </Badge>
-      {isDomain && (
+      {showStatus && (
         <div>
           <h5 className={classes.actionTitle}>Domain Access</h5>
           <p className={classes.text}>
@@ -65,11 +63,7 @@ const SettingsItem: React.FC<SettingsProps> = props => {
           request and verify the transaction.
         </p>
         <Link
-          to={
-            isDomain
-              ? `${ROUTES.FIO_DOMAIN_OWNERSHIP}/${fioName}`
-              : `${ROUTES.FIO_ADDRESS_OWNERSHIP}/${fioName}`
-          }
+          to={`${FIO_OWNERSHIP[pageName]}/${fioName}`}
           className={classes.buttonLink}
         >
           <Button className={classes.button}>Start Transfer</Button>
