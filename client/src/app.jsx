@@ -43,6 +43,7 @@ import {
   faCircle as faRegularCircle,
   faClipboard as faRegularClipboard,
   faSquare as faRegularSquare,
+  faCopy as faRegularCopy,
 } from '@fortawesome/free-regular-svg-icons';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -88,6 +89,7 @@ library.add(
   faSignature,
   faPen,
   faEnvelope,
+  faRegularCopy,
 );
 
 export default class App extends Component {
