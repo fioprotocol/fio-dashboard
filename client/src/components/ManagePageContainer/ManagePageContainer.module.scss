@@ -37,44 +37,44 @@
   .actionBadge {
     margin: 0 20px 30px;
     width: auto;
+  }
+}
 
-    .badgeContainer {
-      border-radius: 15px;
-      padding: 30px;
-      color: $white;
+.badgeContainer {
+  border-radius: 15px;
+  padding: 30px;
+  color: $white;
 
-      .title {
-        color: $white;
-        font-size: 1.0625rem;
-        @include proxima-nova-semibold;
-      }
+  .title {
+    color: $white;
+    font-size: 1.0625rem;
+    @include proxima-nova-semibold;
+  }
 
-      .text {
-        font-size: 0.875rem;
-        @include proxima-nova-thin;
-        margin-bottom: 0;
-      }
-      
-      .link {
-        margin-top: 1.25em;
+  .text {
+    font-size: 0.875rem;
+    @include proxima-nova-thin;
+    margin-bottom: 0;
+  }
+  
+  .link {
+    margin-top: 1.25em;
 
-        .button {
-          background-color: transparent;
-          border-color: $white;
-          min-height: 40px;
-          border-radius: 7px;
-          font-size: 0.75rem;
-          padding-left: 22px;
-          padding-right: 22px;
-          margin-top: 1.25em;
-          @include sf-pro-display-medium;
+    .button {
+      background-color: transparent;
+      border-color: $white;
+      min-height: 40px;
+      border-radius: 7px;
+      font-size: 0.75rem;
+      padding-left: 22px;
+      padding-right: 22px;
+      margin-top: 1.25em;
+      @include sf-pro-display-medium;
 
-          &:hover {
-            background-color: $white;
-            color: $cyan;
-            border-color: $white;
-          }
-        }
+      &:hover {
+        background-color: $white;
+        color: $cyan;
+        border-color: $white;
       }
     }
   }
