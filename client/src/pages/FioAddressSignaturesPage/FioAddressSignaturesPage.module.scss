@@ -106,29 +106,9 @@
     align-self: center;
   }
 
-  .infoBadge {
+  .infoBadgeContainer {
     margin-top: 30px;
-    align-self: center;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: $bright-turquoise;
-    border-radius: 7px;
-    padding: 20px 50px;
-    color: $white;
-    max-width: 334px;
-    width: 100%;
-
-    .infoIcon {
-      font-size: 2em;
-    }
-    .infoTitle, .infoText {
-      margin-top: 10px;
-      margin-bottom: 0;
-    }
-    .infoText {
-      font-size: 0.75em;
-    }
   }
 }
