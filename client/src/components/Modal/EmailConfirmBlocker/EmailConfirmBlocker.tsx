@@ -22,7 +22,7 @@ type Props = {
   isRefFlow: boolean;
   refProfileInfo: RefProfile | null;
   refProfileQueryParams: RefQuery | null;
-  hasRedirect: string;
+  redirectLink: string;
 };
 
 const EmailConfirmBlocker: React.FC<Props> = props => {
@@ -34,13 +34,13 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
     refProfileQueryParams,
     refProfileInfo,
     isRefFlow,
-    hasRedirect,
+    redirectLink,
     resendConfirmEmail,
   } = props;
   const onSend = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     let stateData: EmailConfirmationStateData = {
-      redirectRoute: hasRedirect,
+      redirectLink,
     };
     if (isRefFlow) {
       stateData = {

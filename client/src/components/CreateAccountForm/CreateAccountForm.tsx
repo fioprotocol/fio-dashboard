@@ -90,7 +90,7 @@ type OwnProps = {
   edgeAuthLoading: boolean;
   serverSignUpLoading: boolean;
   lastAuthData: LastAuthData;
-  hasRedirect: string;
+  redirectLink: string;
   resetLastAuthData: () => void;
   clearCachedUser: (username: string) => void;
 };
@@ -262,7 +262,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       isRefFlow,
       refProfileInfo,
       refProfileQueryParams,
-      hasRedirect,
+      redirectLink,
       lastAuthData,
       resetLastAuthData,
       clearCachedUser,
@@ -322,7 +322,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
           this.setState({ keys: getWalletKeys([fioWallet]) });
           await account.logout();
           let stateData: EmailConfirmationStateData = {
-            redirectRoute: hasRedirect,
+            redirectLink,
           };
           if (isRefFlow) {
             stateData = {
