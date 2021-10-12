@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { LastLocationProvider } from 'react-router-last-location';
+import TagManager from 'react-gtm-module';
 
 import {
   faEye,
@@ -90,6 +91,9 @@ library.add(
   faEnvelope,
 );
 
+TagManager.initialize({
+  gtmId: process.env.REACT_APP_GOOGLE_TAG_MANAGER_ID,
+});
 export default class App extends Component {
   render() {
     return (
