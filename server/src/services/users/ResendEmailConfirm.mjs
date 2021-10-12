@@ -13,12 +13,13 @@ export default class UsersResendEmailConfirm extends Base {
       data: {
         nested_object: {
           token: ['required', 'string'],
+          stateData: ['any_object'],
         },
       },
     };
   }
 
-  async execute({ data: { token } }) {
+  async execute({ data: { token, stateData } }) {
     const resendAction = await Action.findOneWhere({
       hash: token,
       type: Action.TYPE.RESEND_EMAIL_CONFIRM,
@@ -73,12 +74,15 @@ export default class UsersResendEmailConfirm extends Base {
       data: {
         userId: user.id,
         email: user.email,
+        state: stateData,
       },
     }).save();
 
-    await emailSender.send(templates.confirmEmail, user.email, {
-      hash: action.hash,
-    });
+    const emailData = { hash: action.hash };
+    if (stateData && stateData.refCode) {
+      emailData.refCode = stateData.refCode;
+    }
+    await emailSender.send(templates.confirmEmail, user.email, emailData);
 
     return { data: { success: true } };
   }

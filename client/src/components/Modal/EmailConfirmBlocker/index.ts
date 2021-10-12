@@ -9,6 +9,12 @@ import {
   emailConfirmBlockerToken,
 } from '../../../redux/modal/selectors';
 import { loading } from '../../../redux/profile/selectors';
+import {
+  isRefFlow,
+  refProfileInfo,
+  refProfileQueryParams,
+} from '../../../redux/refProfile/selectors';
+import { redirectLink } from '../../../redux/navigation/selectors';
 
 import EmailConfirmBlocker from './EmailConfirmBlocker';
 
@@ -16,6 +22,10 @@ const reduxConnect = connect(
   createStructuredSelector({
     showEmailConfirmBlocker,
     emailConfirmBlockerToken,
+    redirectLink,
+    isRefFlow,
+    refProfileInfo,
+    refProfileQueryParams,
     loading,
   }),
   {

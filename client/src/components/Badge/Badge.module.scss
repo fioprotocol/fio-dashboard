@@ -24,6 +24,37 @@
     margin: 30px 0 0;
     padding: 15px 20px;
   }
+
+  &.warning {
+    background-color: $simple-orange;
+  }
+  &.alert, &.error {
+    background-color: $simple-red;
+  }
+  &.info {
+    background-color: $blue;
+  }
+  &.success {
+    background-color: $irish-green;
+  }
+  &.regular {
+    background-color: $cyan;
+  }
+  &.simple {
+    background-color: $desert-storm;
+  }
+  &.white {
+    background-color: $white;
+  }
+  &.black{
+    background-color: $black;
+  }
+  &.bordered {
+    background-color: transparent;
+    border-radius: 8px;
+    border: 1px solid $gallery;
+    color: $dark-jungle-green;
+  }
 }
 
 @include sm {

@@ -1,35 +1,126 @@
-@import "../../assets/styles/colors";
-@import "../../assets/styles/fontMixins";
-@import '../../assets/styles/forms';
+@import '../../assets/styles/colors';
+@import '../../assets/styles/fontMixins';
+@import '../../assets/styles/mediaQueriesMixings.scss';
 
-.table {
-  flex: 1;
-  align-self: stretch;
-  padding: 15px;
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+  .actionBadgeContainer {
+    margin: 0 20px 30px;
+    width: auto;
+
+    & > div:nth-child(2) {
+      margin-top: 30px;
+    }
+  }
 }
 
-.inactive {
-  opacity: 0;
-  transition: all .3s ease-in-out;
-  display: inline;
+.subtitle {
+  font-size: 1.125em;
+  margin-bottom: 0;
 }
 
-:global {
-  .ant-table-row:hover {
-    :local {
-      .inactive {
-        opacity: 0.5;
+h5 {
+  &:nth-child(2) {
+    margin-top: 30px;
+  }
+}
 
-        &:hover {
-          opacity: 1;
-        }
+.spinner {
+  width: 100% !important;
+  font-size: 1.25em;
+}
+
+.infoBadgeContainer {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.badgeContainer {
+  margin-top: -10px;
+
+  .badgeItem {
+    display: grid;
+    grid-template-columns: auto 20px;
+    font-size: 1em;
+    width: 100%;
+
+    .listItem {
+      word-break: break-all;
+      margin-right: 20px;
+    }
+
+    .copyButton {
+      font-size: 24px;
+      cursor: pointer;
+      transition: 0.2s all;
+      &:active {
+        transform: scale(0.8);
+        /* Scaling button to 0.98 to its original size */
+        box-shadow: 3px 2px 22px 1px rgba(69, 136, 255, 1);
+        /* Lowering the shadow */
       }
     }
   }
 }
 
-.container {
-  width: 100%;
-  padding: 33px 0 33px 110px;
-  word-break: break-word;
+.addressesHeader {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 40px;
 }
+
+.actionButton {
+  width: 100%;
+  min-width: 144px;
+  background-color: $violet;
+  border-radius: 7px;
+  text-align: left;
+  flex-direction: row;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  @include sf-pro-display-thin;
+  font-size: 13px;
+}
+
+@include md {
+  .container {
+    padding: 30px 20px;
+
+    .actionBadgeContainer {
+      width: 100%;
+      max-width: 335px;
+      margin: 0 0 30px;
+    }
+  }
+}
+
+@include lg {
+  .container {
+    flex-direction: row;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 80px;
+
+    .actionBadgeContainer {
+      margin-top: 60px;
+      margin-left: 60px;
+      max-width: 285px;
+      width: 100%;
+    }
+  }
+
+  .badgeContainer {
+    .badgeItem {
+      grid-template-columns: 140px auto 20px;
+    }
+  } 
+}
+

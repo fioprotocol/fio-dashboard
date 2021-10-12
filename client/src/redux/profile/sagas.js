@@ -26,13 +26,13 @@ import {
 } from '../notifications/actions';
 import { setRedirectPath } from '../navigation/actions';
 
-import { hasRedirect } from '../navigation/selectors';
+import { redirectLink } from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
 import { ROUTES } from '../../constants/routes';
 
 export function* loginSuccess(history, api) {
   yield takeEvery(LOGIN_SUCCESS, function*(action) {
-    const hasRedirectTo = yield select(hasRedirect);
+    const hasRedirectTo = yield select(redirectLink);
     const wallets = yield select(fioWallets);
     api.client.setToken(action.data.jwt);
     if (wallets && wallets.length) yield put(setWallets(wallets));

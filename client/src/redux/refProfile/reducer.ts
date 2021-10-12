@@ -1,7 +1,8 @@
 import { combineReducers } from 'redux';
 import * as actions from './actions';
+import { CONFIRM_EMAIL_SUCCESS } from '../profile/actions';
 
-import { RefProfile } from '../../types';
+import { RefProfile, RefQuery } from '../../types';
 import { REF_FLOW_STEPS } from '../../constants/common';
 
 export default combineReducers({
@@ -27,10 +28,19 @@ export default combineReducers({
         return state;
     }
   },
-  params(state: any = null, action) {
+  params(state: RefQuery | null = null, action) {
     switch (action.type) {
       case actions.SET_CONTAINED_PARAMS:
         return action.data;
+      case CONFIRM_EMAIL_SUCCESS: {
+        if (
+          action.data.stateData != null &&
+          action.data.stateData.refProfileQueryParams != null
+        ) {
+          return action.data.stateData.refProfileQueryParams;
+        }
+        return state;
+      }
       default:
         return state;
     }

@@ -26,9 +26,11 @@ import Confirmation from './Confirmation';
 import Success from './Success';
 
 import {
+  EmailConfirmationStateData,
   FioWalletDoublet,
   LastAuthData,
   RefProfile,
+  RefQuery,
   WalletKeysObj,
 } from '../../types';
 
@@ -79,13 +81,16 @@ type OwnProps = {
     email: string;
     fioWallets: FioWalletDoublet[];
     refCode?: string;
+    stateData?: EmailConfirmationStateData;
   }) => void;
   signupSuccess: boolean;
   isRefFlow: boolean;
   refProfileInfo: RefProfile | null;
+  refProfileQueryParams: RefQuery | null;
   edgeAuthLoading: boolean;
   serverSignUpLoading: boolean;
   lastAuthData: LastAuthData;
+  redirectLink: string;
   resetLastAuthData: () => void;
   clearCachedUser: (username: string) => void;
 };
@@ -256,6 +261,8 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       onSubmit,
       isRefFlow,
       refProfileInfo,
+      refProfileQueryParams,
+      redirectLink,
       lastAuthData,
       resetLastAuthData,
       clearCachedUser,
@@ -314,11 +321,22 @@ export default class CreateAccountForm extends React.Component<Props, State> {
           ];
           this.setState({ keys: getWalletKeys([fioWallet]) });
           await account.logout();
+          let stateData: EmailConfirmationStateData = {
+            redirectLink,
+          };
+          if (isRefFlow) {
+            stateData = {
+              ...stateData,
+              refCode: refProfileInfo.code,
+              refProfileQueryParams,
+            };
+          }
           return onSubmit({
             username: emailToUsername(email),
             email,
             fioWallets,
             refCode: isRefFlow ? refProfileInfo.code : '',
+            stateData,
           });
         }
         return errors;

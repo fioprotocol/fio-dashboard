@@ -4,7 +4,12 @@ import { ContainerProps } from '../../components/ManagePageContainer/types';
 import { DOMAIN } from '../../constants/common';
 
 const FioDomainManagePage: React.FC<ContainerProps> = props => (
-  <ManagePageContainer pageName={DOMAIN} {...props} />
+  <ManagePageContainer
+    pageName={DOMAIN}
+    {...props}
+    showExpired={true}
+    showStatus={true}
+  />
 );
 
 export default FioDomainManagePage;
