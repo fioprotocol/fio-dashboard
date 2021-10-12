@@ -4,7 +4,7 @@ import apis from '../../api';
 const TOKEN_ID_MAX_LENGTH = 64;
 const URL_MAX_LENGTH = 128;
 const META_MAX_LENGTH = 64;
-const HASH_REGEX = /^[a-f0-9]{64}$/gi;
+const HASH_REGEX = /^[a-f0-9]{64}$/i;
 
 export const validate = (values: NftFormValues) => {
   const errors: any = {};
@@ -27,11 +27,19 @@ export const validate = (values: NftFormValues) => {
     }
   }
 
-  if (values.token_id != null && values.token_id.length > TOKEN_ID_MAX_LENGTH) {
+  if (
+    values.token_id != null &&
+    values.token_id !== '' &&
+    values.token_id.length > TOKEN_ID_MAX_LENGTH
+  ) {
     errors.token_id = 'Not valid token';
   }
 
-  if (values.url != null && values.url.length > URL_MAX_LENGTH) {
+  if (
+    values.url != null &&
+    values.url !== '' &&
+    values.url.length > URL_MAX_LENGTH
+  ) {
     errors.url = 'Not valid url';
   }
 
