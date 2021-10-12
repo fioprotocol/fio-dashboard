@@ -25,13 +25,14 @@ export default class UsersCreate extends Base {
               },
             ],
             refCode: ['string'],
+            stateData: ['any_object'],
           },
         },
       ],
     };
   }
 
-  async execute({ data: { username, email, fioWallets, refCode } }) {
+  async execute({ data: { username, email, fioWallets, refCode, stateData } }) {
     if (await User.findOneWhere({ email })) {
       throw new X({
         code: 'NOT_UNIQUE',
@@ -55,6 +56,7 @@ export default class UsersCreate extends Base {
       data: {
         userId: user.id,
         email: user.email,
+        state: stateData,
       },
     }).save();
 

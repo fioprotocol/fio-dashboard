@@ -1,5 +1,5 @@
 import Base from './base';
-import { FioWalletDoublet } from '../types';
+import { EmailConfirmationStateData, FioWalletDoublet } from '../types';
 
 export default class Auth extends Base {
   profile() {
@@ -54,7 +54,9 @@ export default class Auth extends Base {
     return this.apiClient.post('users/resendRecovery', { data: { token } });
   }
 
-  resendConfirmEmail(token: string) {
-    return this.apiClient.post('users/resendConfirmEmail', { data: { token } });
+  resendConfirmEmail(token: string, stateData: EmailConfirmationStateData) {
+    return this.apiClient.post('users/resendConfirmEmail', {
+      data: { token, stateData },
+    });
   }
 }

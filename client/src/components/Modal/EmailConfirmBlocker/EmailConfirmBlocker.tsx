@@ -4,12 +4,25 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classes from '../EmailModal/EmailModal.module.scss';
 import EmailModal from '../EmailModal';
 
+import {
+  EmailConfirmationStateData,
+  RefProfile,
+  RefQuery,
+} from '../../../types';
+
 type Props = {
   showEmailConfirmBlocker: boolean;
   loading: boolean;
   emailConfirmBlockerToken: string;
   closeEmailConfirmBlocker: () => void;
-  resendConfirmEmail: (token: string) => void;
+  resendConfirmEmail: (
+    token: string,
+    stateData: EmailConfirmationStateData,
+  ) => void;
+  isRefFlow: boolean;
+  refProfileInfo: RefProfile | null;
+  refProfileQueryParams: RefQuery | null;
+  hasRedirect: string;
 };
 
 const EmailConfirmBlocker: React.FC<Props> = props => {
@@ -18,11 +31,25 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
     loading,
     showEmailConfirmBlocker,
     closeEmailConfirmBlocker,
+    refProfileQueryParams,
+    refProfileInfo,
+    isRefFlow,
+    hasRedirect,
     resendConfirmEmail,
   } = props;
   const onSend = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    resendConfirmEmail(emailConfirmBlockerToken);
+    let stateData: EmailConfirmationStateData = {
+      redirectRoute: hasRedirect,
+    };
+    if (isRefFlow) {
+      stateData = {
+        ...stateData,
+        refCode: refProfileInfo.code,
+        refProfileQueryParams,
+      };
+    }
+    resendConfirmEmail(emailConfirmBlockerToken, stateData);
   };
   return (
     <EmailModal

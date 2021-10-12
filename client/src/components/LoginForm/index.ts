@@ -13,6 +13,7 @@ import { showLogin as show } from '../../redux/modal/selectors';
 import {
   error as loginFailure,
   lastAuthData,
+  emailConfirmationResult,
 } from '../../redux/profile/selectors';
 import {
   loading as edgeAuthLoading,
@@ -30,6 +31,7 @@ const reduxConnect = connect(
     edgeLoginFailure,
     loginFailure,
     lastAuthData,
+    emailConfirmationResult,
   }),
   {
     onSubmit: login,

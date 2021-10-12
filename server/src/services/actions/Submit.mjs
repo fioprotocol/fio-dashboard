@@ -44,7 +44,7 @@ export default class ActionsSubmit extends Base {
     await action.run(data);
     await action.destroy();
 
-    return {};
+    return { data: { stateData: action.data.state } };
   }
 
   static get paramsSecret() {

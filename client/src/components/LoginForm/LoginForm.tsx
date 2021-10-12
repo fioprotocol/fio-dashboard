@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import ModalComponent from '../Modal/Modal';
 import Pin from './Pin';
 import UsernamePassword from './UsernamePassword';
-import { LastAuthData } from '../../types';
+import { REF_ACTIONS } from '../../constants/common';
+import { EmailConfirmationStateData, LastAuthData } from '../../types';
 
 type FormValues = {
   email: string;
@@ -23,6 +24,14 @@ type Props = {
   edgeLoginFailure: { type?: string };
   cachedUsers: string[];
   lastAuthData: LastAuthData;
+  emailConfirmationResult: {
+    success: boolean;
+    stateData?: EmailConfirmationStateData;
+  };
+};
+
+const REF_SUBTITLES = {
+  [REF_ACTIONS.SIGNNFT]: 'Sign in to complete signing your NFT',
 };
 
 const LoginForm = (props: Props) => {
@@ -38,7 +47,22 @@ const LoginForm = (props: Props) => {
     resetLastAuthData,
     loginFailure,
     edgeLoginFailure,
+    emailConfirmationResult,
   } = props;
+  const isEmailVerification =
+    emailConfirmationResult != null && emailConfirmationResult.success;
+  const isRefFlow =
+    emailConfirmationResult != null &&
+    emailConfirmationResult.stateData != null &&
+    emailConfirmationResult.stateData.refProfileQueryParams != null;
+  let subtitle = '';
+  if (isRefFlow) {
+    subtitle =
+      REF_SUBTITLES[
+        emailConfirmationResult.stateData.refProfileQueryParams.action
+      ];
+  }
+
   const [isForgotPass, toggleForgotPass] = useState(false);
   const [usePinLogin, setUsePinLogin] = useState(false);
   useEffect(getCachedUsers, []);
@@ -92,6 +116,10 @@ const LoginForm = (props: Props) => {
           edgeLoginFailure={edgeLoginFailure}
           isForgotPass={isForgotPass}
           toggleForgotPass={toggleForgotPass}
+          headerIcon={isEmailVerification ? 'envelope' : null}
+          title={isEmailVerification ? 'Email Verified' : 'Sign In'}
+          subtitle={subtitle}
+          hideCreateAccount={isEmailVerification}
           onClose={onClose}
         />
       )}

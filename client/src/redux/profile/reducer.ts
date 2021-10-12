@@ -4,7 +4,7 @@ import {
   CHANGE_RECOVERY_QUESTIONS_CLOSE,
   CHANGE_RECOVERY_QUESTIONS_OPEN,
 } from '../edge/actions';
-import { User, LastAuthData } from '../../types';
+import { User, LastAuthData, EmailConfirmationStateData } from '../../types';
 
 export default combineReducers({
   loading(state: boolean = false, action) {
@@ -61,14 +61,21 @@ export default combineReducers({
     }
   },
   emailConfirmationResult(
-    state: { success?: boolean; error?: string } = {},
+    state: {
+      success?: boolean;
+      error?: string;
+      stateData?: EmailConfirmationStateData;
+    } = {},
     action,
   ) {
     switch (action.type) {
       case actions.CONFIRM_EMAIL_SUCCESS:
-        return { success: true };
+        return { success: true, stateData: action.data.stateData };
       case actions.CONFIRM_EMAIL_FAILURE:
         return { success: false, error: action.error.code };
+      case actions.LOGIN_SUCCESS:
+      case actions.LOGOUT_SUCCESS:
+        return {};
       default:
         return state;
     }
