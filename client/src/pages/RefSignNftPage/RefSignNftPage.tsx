@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 
 import SignNft from '../../components/SignNft';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
+
+import { useFioAddresses } from '../../util/hooks';
 
 import {
   FioAddressDoublet,
@@ -23,7 +25,6 @@ type Props = {
   refProfileQueryParams: SignNFTParams;
   fioAddresses: FioAddressDoublet[];
   fioWallets: FioWalletDoublet[];
-  getFioAddresses: (publicKey: string) => void;
   homePageLink: string;
 };
 
@@ -33,18 +34,10 @@ export const RefSignNftPage: React.FC<Props &
     refProfileQueryParams,
     isAuthenticated,
     fioAddresses,
-    fioWallets,
-    getFioAddresses,
     homePageLink,
   } = props;
 
-  useEffect(() => {
-    if (isAuthenticated && !fioAddresses.length && fioWallets.length) {
-      for (const fioWallet of fioWallets) {
-        getFioAddresses(fioWallet.publicKey);
-      }
-    }
-  }, [isAuthenticated, fioAddresses, fioWallets]);
+  useFioAddresses();
 
   if (!isAuthenticated || !fioAddresses.length) {
     return (
