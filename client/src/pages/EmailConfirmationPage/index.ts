@@ -5,6 +5,7 @@ import { withRouter } from 'react-router';
 import { compose } from '../../utils';
 
 import { confirmEmail } from '../../redux/profile/actions';
+import { getInfo } from '../../redux/refProfile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 
 import {
@@ -21,6 +22,7 @@ const reduxConnect = connect(
   }),
   {
     confirmEmail,
+    getInfo,
     showLoginModal,
   },
 );

@@ -17,6 +17,10 @@ export interface ContainerProps extends RouteComponentProps {
   loading: boolean;
   pageName: PageNameType;
   fetchDataFn: FetchDataFn;
+  showExpired?: boolean;
+  showBundles?: boolean;
+  showStatus?: boolean;
+  showFioAddressName?: boolean;
 }
 
 export type BoolStateFunc = Dispatch<SetStateAction<boolean>>;
@@ -36,6 +40,7 @@ export type DefaultProps = {
   isExpired: IsExpiredFunc;
   onItemModalOpen?: ModalOpenActionType;
   onSettingsOpen?: ModalOpenActionType;
+  showFioAddressName?: boolean;
 };
 
 export type NotificationsProps = {
@@ -51,12 +56,16 @@ export type ItemComponentProps = {
   isExpired: IsExpiredFunc;
   isDesktop: boolean;
   onSettingsOpen: ModalOpenActionType;
+  showExpired?: boolean;
+  showStatus?: boolean;
+  showBundles?: boolean;
 };
 
 export type SettingsProps = {
   fioNameItem: FioNameItemProps;
   pageName: PageNameType;
   fioWallets: FioWalletDoublet[];
+  showStatus?: boolean;
 };
 
 export type ActionButtonProps = {

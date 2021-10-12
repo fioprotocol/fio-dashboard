@@ -17,6 +17,7 @@ const Notifications: React.FC<NotificationsProps> = props => {
   const { warningTitle, warningMessage, infoTitle, infoMessage } = BANNER_DATA[
     pageName
   ];
+
   return (
     <>
       <NotificationBadge

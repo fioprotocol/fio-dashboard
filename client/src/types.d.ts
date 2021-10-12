@@ -180,7 +180,7 @@ type SignNFTQuery = {
   metadata: string;
 };
 
-type SignNFTParams = {
+export type SignNFTParams = {
   chain_code: string;
   contract_address: string;
   token_id: string;
@@ -191,7 +191,13 @@ type SignNFTParams = {
   };
 };
 
-type RefQuery = {
+export type RefQuery = {
   action: string;
   r: string;
 } & SignNFTQuery;
+
+export type EmailConfirmationStateData = {
+  redirectLink?: string;
+  refCode?: string;
+  refProfileQueryParams?: RefQuery;
+};

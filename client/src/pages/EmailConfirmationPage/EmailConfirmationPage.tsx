@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import classes from '../../components/Modal/EmailModal/EmailModal.module.scss';
 import { ROUTES } from '../../constants/routes';
+import { EmailConfirmationStateData } from '../../types';
 
 type MatchParams = {
   hash: string;
@@ -19,8 +20,13 @@ type Location = {
 
 type Props = {
   loading: boolean;
-  emailConfirmationResult: { error?: string; success?: boolean };
+  emailConfirmationResult: {
+    error?: string;
+    success?: boolean;
+    stateData: EmailConfirmationStateData;
+  };
   confirmEmail: (hash: string) => void;
+  getInfo: (refCode: string) => void;
   showLoginModal: (redirect: string) => void;
 };
 
@@ -36,16 +42,37 @@ const EmailConfirmationPage: React.FC<Props &
     },
     location: { query },
     showLoginModal,
+    getInfo,
   } = props;
-  const hideSignIn =
-    query != null && query.refCode != null && query.refCode !== '';
 
   useEffect(() => {
     confirmEmail(hash);
+    if (query != null && query.refCode != null && query.refCode !== '') {
+      getInfo(query.refCode);
+    }
   }, []);
 
+  useEffect(() => {
+    if (
+      emailConfirmationResult.success &&
+      emailConfirmationResult.stateData != null &&
+      emailConfirmationResult.stateData.refProfileQueryParams != null
+    ) {
+      showLoginModal(ROUTES.CHECKOUT);
+    }
+  }, [emailConfirmationResult]);
+
   const showLogin = () => {
-    showLoginModal(ROUTES.HOME);
+    let redirectLink = ROUTES.HOME;
+    if (
+      emailConfirmationResult &&
+      emailConfirmationResult.success &&
+      emailConfirmationResult.stateData != null &&
+      emailConfirmationResult.stateData.redirectLink
+    )
+      redirectLink = emailConfirmationResult.stateData.redirectLink;
+
+    showLoginModal(redirectLink);
   };
 
   if (loading || emailConfirmationResult.success == null)
@@ -60,8 +87,6 @@ const EmailConfirmationPage: React.FC<Props &
   if (emailConfirmationResult.success === false) return null;
 
   const renderLoginSection = () => {
-    if (hideSignIn) return <p className="mt-3">Now you can close this tab</p>;
-
     return (
       <p className="mt-3">
         Now you can to login!{' '}

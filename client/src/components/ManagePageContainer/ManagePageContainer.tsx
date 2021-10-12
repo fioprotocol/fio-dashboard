@@ -7,7 +7,7 @@ import { Redirect } from 'react-router-dom';
 
 import LayoutContainer from '../LayoutContainer/LayoutContainer';
 import Modal from '../Modal/Modal';
-import { BANNER_DATA, ITEMS_LIMIT, EXPIRED_DAYS, PAGE_NAME } from './constants';
+import { BANNER_DATA, ITEMS_LIMIT, EXPIRED_DAYS, SUBTITLE } from './constants';
 import ManagePageCtaBadge from './ManagePageCtaBadge';
 import { useCheckIfDesktop } from '../../screenType';
 import { ROUTES } from '../../constants/routes';
@@ -22,7 +22,6 @@ import classes from './ManagePageContainer.module.scss';
 
 import { HasMore, ContainerProps, BoolStateFunc } from './types';
 import { FioNameItemProps } from '../../types';
-import { fioNameLabels } from '../../constants/labels';
 
 const isExpired = (expiration: Date): boolean => {
   const today = new Date();
@@ -42,6 +41,10 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     hasMore,
     loading,
     noProfileLoaded,
+    showExpired,
+    showBundles,
+    showStatus,
+    showFioAddressName,
   } = props;
   const [showWarnBadge, toggleShowWarnBadge] = useState<BoolStateFunc>(false);
   const [showInfoBadge, toggleShowInfoBadge] = useState<BoolStateFunc>(false);
@@ -79,6 +82,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
   useEffect(() => {
     toggleShowWarnBadge(
       fioNameList &&
+        showExpired &&
         fioNameList.some(dataItem => isExpired(dataItem.expiration)),
     );
     toggleShowInfoBadge(false); // todo: set dependent on data when move to get_pub_addresses
@@ -145,6 +149,10 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     toggleShowWarnBadge,
     onItemModalOpen,
     onSettingsOpen,
+    showExpired,
+    showBundles,
+    showStatus,
+    showFioAddressName,
   };
 
   if (noProfileLoaded) return <Redirect to={{ pathname: ROUTES.HOME }} />;
@@ -153,13 +161,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     <div className={classes.container}>
       <LayoutContainer title={title}>
         <div className={classes.dataContainer}>
-          <p className={classes.subtitle}>
-            {pageName === PAGE_NAME.ADDRESS
-              ? `FIO ${fioNameLabels[pageName]}es owned by all your wallets.`
-              : pageName === PAGE_NAME.DOMAIN
-              ? `FIO ${fioNameLabels[pageName]}s owned by all your wallets.`
-              : null}
-          </p>
+          <p className={classes.subtitle}>{SUBTITLE[pageName]}</p>
           {isDesktop && (
             <Notifications
               showWarnBadge={showWarnBadge}
@@ -205,6 +207,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
           fioNameItem={currentAddress}
           pageName={pageName}
           fioWallets={fioWallets}
+          showStatus={showStatus}
         />
       </Modal>
     </div>
