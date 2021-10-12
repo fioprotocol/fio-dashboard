@@ -3,7 +3,6 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 
-import { getFioAddresses } from '../../redux/fio/actions';
 import { user } from '../../redux/profile/selectors';
 import { fioWallets, fioAddresses, loading } from '../../redux/fio/selectors';
 
@@ -16,7 +15,6 @@ const reduxConnect = connect(
     fioAddresses,
     loading,
   }),
-  { getFioAddresses },
 );
 
 export default compose(reduxConnect)(DashboardPage);

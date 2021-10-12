@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,6 +7,8 @@ import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import DashboardListItem from './DashboardListItem';
 import ManagePageCtaBadge from '../../components/ManagePageContainer/ManagePageCtaBadge';
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
+
+import { useFioAddresses } from '../../util/hooks';
 
 import { FioWalletDoublet, FioAddressDoublet } from '../../types';
 
@@ -17,17 +19,11 @@ type Props = {
   fioWallets: FioWalletDoublet[];
   fioAddresses: FioAddressDoublet[];
   loading: boolean;
-  getFioAddresses: (publicKey: string) => void;
 };
 
 const DashboardPage: React.FC<Props> = props => {
-  const { fioWallets, fioAddresses, getFioAddresses, loading } = props;
-
-  useEffect(() => {
-    if (fioWallets.length > 0) {
-      fioWallets.map(wallet => getFioAddresses(wallet.publicKey));
-    }
-  }, [fioWallets.length]);
+  const { fioWallets, fioAddresses, loading } = props;
+  useFioAddresses();
 
   return (
     <div className={classes.container}>
