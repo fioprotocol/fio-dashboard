@@ -23,7 +23,7 @@ import {
   refProfileInfo,
   refProfileQueryParams,
 } from '../../redux/refProfile/selectors';
-import { hasRedirect } from '../../redux/navigation/selectors';
+import { redirectLink } from '../../redux/navigation/selectors';
 
 import CreateAccountForm from './CreateAccountForm';
 
@@ -36,7 +36,7 @@ const selector = createStructuredSelector({
   refProfileQueryParams,
   signupSuccess,
   lastAuthData,
-  hasRedirect,
+  redirectLink,
 });
 
 const actions = {

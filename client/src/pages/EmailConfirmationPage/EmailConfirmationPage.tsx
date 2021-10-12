@@ -63,16 +63,16 @@ const EmailConfirmationPage: React.FC<Props &
   }, [emailConfirmationResult]);
 
   const showLogin = () => {
-    let redirectRoute = ROUTES.HOME;
+    let redirectLink = ROUTES.HOME;
     if (
       emailConfirmationResult &&
       emailConfirmationResult.success &&
       emailConfirmationResult.stateData != null &&
-      emailConfirmationResult.stateData.redirectRoute
+      emailConfirmationResult.stateData.redirectLink
     )
-      redirectRoute = emailConfirmationResult.stateData.redirectRoute;
+      redirectLink = emailConfirmationResult.stateData.redirectLink;
 
-    showLoginModal(redirectRoute);
+    showLoginModal(redirectLink);
   };
 
   if (loading || emailConfirmationResult.success == null)

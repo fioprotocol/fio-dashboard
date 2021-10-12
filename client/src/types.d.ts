@@ -197,7 +197,7 @@ export type RefQuery = {
 } & SignNFTQuery;
 
 export type EmailConfirmationStateData = {
-  redirectRoute?: string;
+  redirectLink?: string;
   refCode?: string;
   refProfileQueryParams?: RefQuery;
 };

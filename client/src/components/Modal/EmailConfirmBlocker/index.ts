@@ -14,7 +14,7 @@ import {
   refProfileInfo,
   refProfileQueryParams,
 } from '../../../redux/refProfile/selectors';
-import { hasRedirect } from '../../../redux/navigation/selectors';
+import { redirectLink } from '../../../redux/navigation/selectors';
 
 import EmailConfirmBlocker from './EmailConfirmBlocker';
 
@@ -22,7 +22,7 @@ const reduxConnect = connect(
   createStructuredSelector({
     showEmailConfirmBlocker,
     emailConfirmBlockerToken,
-    hasRedirect,
+    redirectLink,
     isRefFlow,
     refProfileInfo,
     refProfileQueryParams,
