@@ -56,7 +56,7 @@ export const validate = (values: NftFormValues) => {
       JSON.stringify({ creator_url: values.creator_url }).length >
       META_MAX_LENGTH
     ) {
-      errors.metadata = 'Creator URL is too long';
+      errors.creator_url = 'Creator URL is too long';
     }
   }
 
