@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import { isEmpty } from 'lodash';
 import { OnChange } from 'react-final-form-listeners';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 import Input from '../Input/Input';
 import FormHeader from '../FormHeader/FormHeader';
@@ -28,6 +29,10 @@ type OwnProps = {
   toggleForgotPass: (open: boolean) => void;
   loginFailure: { fields?: { [fieldName: string]: any }; code?: string };
   edgeLoginFailure: { type?: string };
+  title: string;
+  subtitle?: string;
+  headerIcon?: IconProp | null;
+  hideCreateAccount?: boolean;
 };
 type Props = OwnProps;
 
@@ -40,6 +45,10 @@ const UsernamePassword = (props: Props) => {
     loginFailure,
     edgeLoginFailure,
     toggleForgotPass,
+    title,
+    subtitle,
+    headerIcon,
+    hideCreateAccount,
   } = props;
   let currentForm: any = {}; // todo: FormApi is not exported
   useEffect(() => {
@@ -111,6 +120,29 @@ const UsernamePassword = (props: Props) => {
     toggleForgotPass(false);
   };
 
+  const renderIcon = () => {
+    if (!headerIcon) return null;
+
+    return (
+      <div className="mb-4">
+        <FontAwesomeIcon icon={headerIcon} className={classes.headerIcon} />
+      </div>
+    );
+  };
+
+  const renderCreateAccount = () => {
+    if (hideCreateAccount) return null;
+
+    return (
+      <p className="regular-text">
+        Don’t have an account?{' '}
+        <Link to={ROUTES.CREATE_ACCOUNT} onClick={onClose}>
+          Create Account
+        </Link>
+      </p>
+    );
+  };
+
   const renderForgotPass = () => (
     <div className={classes.forgotPass}>
       <FontAwesomeIcon icon="ban" className={classes.icon} />
@@ -144,7 +176,8 @@ const UsernamePassword = (props: Props) => {
     currentForm = form;
     return (
       <form onSubmit={login}>
-        <FormHeader title="Sign In" />
+        {renderIcon()}
+        <FormHeader title={title} subtitle={subtitle} />
         <Field
           name="email"
           type="text"
@@ -177,12 +210,7 @@ const UsernamePassword = (props: Props) => {
         <Link className="regular-text" to="" onClick={onForgotPassHandler}>
           Forgot your password?
         </Link>
-        <p className="regular-text">
-          Don’t have an account?{' '}
-          <Link to={ROUTES.CREATE_ACCOUNT} onClick={onClose}>
-            Create Account
-          </Link>
-        </p>
+        {renderCreateAccount()}
       </form>
     );
   };

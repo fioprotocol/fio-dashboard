@@ -1,6 +1,10 @@
 import { Ecc } from '@fioprotocol/fiojs';
 import { Api } from '../../api';
-import { FioWalletDoublet, WalletKeysObj } from '../../types';
+import {
+  EmailConfirmationStateData,
+  FioWalletDoublet,
+  WalletKeysObj,
+} from '../../types';
 import { RouterProps } from 'react-router';
 import { minWaitTimeFunction } from '../../utils';
 
@@ -67,6 +71,7 @@ export const signup = (data: {
   email: string;
   fioWallets: FioWalletDoublet[];
   refCode?: string;
+  stateData?: EmailConfirmationStateData;
 }) => ({
   types: [SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE],
   promise: (api: Api) => api.auth.signup(data),
@@ -135,14 +140,17 @@ export const RESEND_CONFIRM_EMAIL_REQUEST = `${prefix}/RESEND_CONFIRM_EMAIL_REQU
 export const RESEND_CONFIRM_EMAIL_SUCCESS = `${prefix}/RESEND_CONFIRM_EMAIL_SUCCESS`;
 export const RESEND_CONFIRM_EMAIL_FAILURE = `${prefix}/RESEND_CONFIRM_EMAIL_FAILURE`;
 
-export const resendConfirmEmail = (token: string) => ({
+export const resendConfirmEmail = (
+  token: string,
+  stateData: EmailConfirmationStateData,
+) => ({
   types: [
     RESEND_CONFIRM_EMAIL_REQUEST,
     RESEND_CONFIRM_EMAIL_SUCCESS,
     RESEND_CONFIRM_EMAIL_FAILURE,
   ],
   promise: (api: Api) =>
-    minWaitTimeFunction(() => api.auth.resendConfirmEmail(token)),
+    minWaitTimeFunction(() => api.auth.resendConfirmEmail(token, stateData)),
 });
 
 export const CONFIRM_EMAIL_REQUEST = `${prefix}/CONFIRM_EMAIL_REQUEST`;

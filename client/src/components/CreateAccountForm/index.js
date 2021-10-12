@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import { createSelector, createStructuredSelector } from 'reselect';
 import { withLastLocation } from 'react-router-last-location';
+import { withRouter } from 'react-router-dom';
 
 import { compose } from '../../utils';
 import {
@@ -17,9 +18,13 @@ import {
   loading as serverSignUpLoading,
   lastAuthData,
 } from '../../redux/profile/selectors';
-import { isRefFlow, refProfileInfo } from '../../redux/refProfile/selectors';
+import {
+  isRefFlow,
+  refProfileInfo,
+  refProfileQueryParams,
+} from '../../redux/refProfile/selectors';
+import { hasRedirect } from '../../redux/navigation/selectors';
 
-import { withRouter } from 'react-router-dom';
 import CreateAccountForm from './CreateAccountForm';
 
 const signupSuccess = createSelector(successfullyRegistered, f => f);
@@ -28,8 +33,10 @@ const selector = createStructuredSelector({
   serverSignUpLoading,
   isRefFlow,
   refProfileInfo,
+  refProfileQueryParams,
   signupSuccess,
   lastAuthData,
+  hasRedirect,
 });
 
 const actions = {
