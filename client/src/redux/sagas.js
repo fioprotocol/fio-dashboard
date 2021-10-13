@@ -6,7 +6,6 @@ import {
   logoutSuccess,
   profileSuccess,
   nonceSuccess,
-  resendConfirmEmailSuccess,
 } from './profile/sagas';
 import { edgeLoginSuccess } from './edge/sagas';
 import { listFailure } from './users/sagas';
@@ -33,7 +32,6 @@ export default function* rootSaga(history, api) {
     refLoginSuccess(),
     clearGenericModalError(),
     refActionSuccess(),
-    resendConfirmEmailSuccess(),
     fioAddressCheckRegisteredSuccess(),
   ]);
 }

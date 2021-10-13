@@ -9,12 +9,11 @@ import {
   SIGNUP_SUCCESS,
   LOGOUT_SUCCESS,
   NONCE_SUCCESS,
-  RESEND_CONFIRM_EMAIL_SUCCESS,
   loadProfile,
   login,
 } from './actions';
 
-import { closeEmailConfirmBlocker, closeLoginModal } from '../modal/actions';
+import { closeLoginModal } from '../modal/actions';
 import {
   listNotifications,
   createNotification,
@@ -38,12 +37,6 @@ export function* loginSuccess(history, api) {
     }
     yield put(closeLoginModal());
     yield put(setRedirectPath(null));
-  });
-}
-
-export function* resendConfirmEmailSuccess() {
-  yield takeEvery(RESEND_CONFIRM_EMAIL_SUCCESS, function*() {
-    yield put(closeEmailConfirmBlocker());
   });
 }
 
