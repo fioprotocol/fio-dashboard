@@ -60,18 +60,6 @@ export const clearGenericErrorData = () => ({
   type: CLEAR_GENERIC_ERROR_DATA,
 });
 
-export const SHOW_EMAIL_CONFIRM_BLOCKER = `${prefix}/SHOW_EMAIL_CONFIRM_BLOCKER`;
-export const CLOSE_EMAIL_CONFIRM_BLOCKER = `${prefix}/CLOSE_EMAIL_CONFIRM_BLOCKER`;
-
-export const showEmailConfirmBlocker = (token: string) => ({
-  type: SHOW_EMAIL_CONFIRM_BLOCKER,
-  data: token,
-});
-
-export const closeEmailConfirmBlocker = () => ({
-  type: CLOSE_EMAIL_CONFIRM_BLOCKER,
-});
-
 export const SHOW_FREE_ADDRESS_AWAITER = `${prefix}/SHOW_FREE_ADDRESS_AWAITER`;
 export const CLOSE_FREE_ADDRESS_AWAITER = `${prefix}/CLOSE_FREE_ADDRESS_AWAITER`;
 

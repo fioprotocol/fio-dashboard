@@ -70,7 +70,6 @@ MainLayout.propTypes = exact({
   loginSuccess: PropTypes.bool,
   showLogin: PropTypes.bool,
   showRecovery: PropTypes.bool,
-  showEmailConfirmBlocker: PropTypes.bool,
   edgeContextSet: PropTypes.bool,
 
   init: PropTypes.func.isRequired,
