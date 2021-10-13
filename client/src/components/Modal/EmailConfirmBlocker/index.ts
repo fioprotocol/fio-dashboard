@@ -6,6 +6,7 @@ import { resendConfirmEmail } from '../../../redux/profile/actions';
 import {
   loading,
   emailConfirmationToken,
+  emailConfirmationSent,
 } from '../../../redux/profile/selectors';
 import {
   isRefFlow,
@@ -19,6 +20,7 @@ import EmailConfirmBlocker from './EmailConfirmBlocker';
 const reduxConnect = connect(
   createStructuredSelector({
     emailConfirmationToken,
+    emailConfirmationSent,
     redirectLink,
     isRefFlow,
     refProfileInfo,
