@@ -4,8 +4,10 @@ import AddressDomainContainer from '../../components/AddressDomainContainer';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../../components/AddressDomainBadge/AddressDomainBadge';
 import { LINK_LABELS } from '../../constants/labels';
 import { FORM_NAMES } from '../../constants/form';
+import { useNonActiveUserRedirect } from '../../util/hooks';
 
 const FioAddressPage = () => {
+  useNonActiveUserRedirect();
   return (
     <AddressDomainContainer
       title={LINK_LABELS.FIO_ADDRESSES.toUpperCase()}

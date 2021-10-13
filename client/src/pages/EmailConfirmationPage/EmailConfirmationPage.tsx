@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import classes from '../../components/Modal/EmailModal/EmailModal.module.scss';
 import { ROUTES } from '../../constants/routes';
-import { EmailConfirmationStateData } from '../../types';
+import { CartItem, EmailConfirmationStateData } from '../../types';
 
 type MatchParams = {
   hash: string;
@@ -20,6 +20,8 @@ type Location = {
 
 type Props = {
   loading: boolean;
+  isAuthenticated: boolean;
+  cartItems: CartItem[];
   emailConfirmationResult: {
     error?: string;
     success?: boolean;
@@ -36,13 +38,16 @@ const EmailConfirmationPage: React.FC<Props &
   const {
     loading,
     confirmEmail,
+    isAuthenticated,
     emailConfirmationResult,
     match: {
       params: { hash },
     },
     location: { query },
+    history,
     showLoginModal,
     getInfo,
+    cartItems,
   } = props;
 
   useEffect(() => {
@@ -53,14 +58,30 @@ const EmailConfirmationPage: React.FC<Props &
   }, []);
 
   useEffect(() => {
-    if (
-      emailConfirmationResult.success &&
-      emailConfirmationResult.stateData != null &&
-      emailConfirmationResult.stateData.refProfileQueryParams != null
-    ) {
-      showLoginModal(ROUTES.CHECKOUT);
+    if (emailConfirmationResult.success) {
+      let redirectLink = ROUTES.HOME;
+      if (
+        emailConfirmationResult.stateData != null &&
+        emailConfirmationResult.stateData.refProfileQueryParams != null
+      )
+        redirectLink = ROUTES.CHECKOUT;
+
+      if (
+        emailConfirmationResult.stateData != null &&
+        emailConfirmationResult.stateData.redirectLink
+      )
+        redirectLink = emailConfirmationResult.stateData.redirectLink;
+
+      if (redirectLink === ROUTES.CHECKOUT && cartItems.length === 0)
+        redirectLink = ROUTES.CART;
+
+      if (isAuthenticated) {
+        history.replace(redirectLink);
+      } else {
+        showLoginModal(redirectLink);
+      }
     }
-  }, [emailConfirmationResult]);
+  }, [isAuthenticated, emailConfirmationResult]);
 
   const showLogin = () => {
     let redirectLink = ROUTES.HOME;

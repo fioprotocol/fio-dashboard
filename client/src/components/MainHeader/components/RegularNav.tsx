@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Navbar, Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
@@ -18,19 +18,17 @@ type RegularNavProps = {
   toggleMenuOpen: (openState: boolean) => void;
   edgeAuthLoading: boolean;
   profileLoading: boolean;
-  isRefFlow: boolean;
+  hideCart: boolean;
+  onlyAuth: boolean;
   refProfileInfo: RefProfile;
   showLogin: () => void;
   closeMenu: () => void;
 };
 
-const CONFIRM_EMAIL_BASE_PATH = `${ROUTES.CONFIRM_EMAIL}`.replace(':hash', '');
-
 const RegularNav = (props: RegularNavProps) => {
-  const { cartItems, isRefFlow } = props;
+  const { cartItems, hideCart } = props;
 
   const isDesktop = useCheckIfDesktop();
-  const location = useLocation();
 
   const renderActionButtons = () => {
     if (isDesktop) return <ActionButtons {...props} />;
@@ -42,18 +40,13 @@ const RegularNav = (props: RegularNavProps) => {
   };
 
   const renderNav = () => {
-    if (location.pathname.indexOf(CONFIRM_EMAIL_BASE_PATH) > -1) return null;
     return (
       <Nav className="mr-auto align-items-center">
-        {isRefFlow ? null : (
+        {hideCart ? null : (
           <Nav.Link
             className={classnames(classes.navItem, 'text-white')}
             as={Link}
-            to={
-              cartItems.length > 0
-                ? ROUTES.CART
-                : ROUTES.FIO_ADDRESSES_SELECTION
-            }
+            to={ROUTES.FIO_ADDRESSES_SELECTION}
           >
             <div className={classnames(classes.notifWrapper, classes.cartanim)}>
               <FontAwesomeIcon

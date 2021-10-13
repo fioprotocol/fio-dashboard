@@ -1,20 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from '../EmailModal/EmailModal.module.scss';
-import EmailModal from '../EmailModal';
 
 import {
   EmailConfirmationStateData,
   RefProfile,
   RefQuery,
 } from '../../../types';
+import { useHistory } from 'react-router';
+import { ROUTES } from '../../../constants/routes';
 
 type Props = {
-  showEmailConfirmBlocker: boolean;
   loading: boolean;
-  emailConfirmBlockerToken: string;
-  closeEmailConfirmBlocker: () => void;
+  isAuthenticated: boolean;
+  isActiveUser: boolean;
+  emailConfirmationToken: string;
+  emailConfirmationSent: boolean;
   resendConfirmEmail: (
     token: string,
     stateData: EmailConfirmationStateData,
@@ -27,16 +29,30 @@ type Props = {
 
 const EmailConfirmBlocker: React.FC<Props> = props => {
   const {
-    emailConfirmBlockerToken,
+    isAuthenticated,
+    isActiveUser,
+    emailConfirmationToken,
+    emailConfirmationSent,
     loading,
-    showEmailConfirmBlocker,
-    closeEmailConfirmBlocker,
     refProfileQueryParams,
     refProfileInfo,
     isRefFlow,
     redirectLink,
     resendConfirmEmail,
   } = props;
+
+  const history = useHistory();
+
+  useEffect(() => {
+    if (isAuthenticated && isActiveUser) {
+      history.replace(redirectLink);
+    }
+
+    if (!isAuthenticated) {
+      history.replace(ROUTES.HOME);
+    }
+  }, [isAuthenticated, isActiveUser]);
+
   const onSend = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     let stateData: EmailConfirmationStateData = {
@@ -49,29 +65,35 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
         refProfileQueryParams,
       };
     }
-    resendConfirmEmail(emailConfirmBlockerToken, stateData);
+    resendConfirmEmail(emailConfirmationToken, stateData);
   };
+
   return (
-    <EmailModal
-      show={showEmailConfirmBlocker}
-      onClose={closeEmailConfirmBlocker}
-      title="Please Verify Your Email"
-      subtitle="Before you complete access to the FIO Dashboard you must verify your
-        email address."
-    >
-      {loading ? (
-        <p className={classes.footer}>
-          <FontAwesomeIcon icon="spinner" spin />
+    <div className={classes.container}>
+      <div>
+        <FontAwesomeIcon icon="envelope" className={classes.icon} />
+        <h4 className={classes.title}>Please Verify Your Email</h4>
+        <p className={classes.subtitle}>
+          Before you complete access to the FIO Dashboard you must verify your
+          email address.
         </p>
-      ) : (
-        <p className={classes.footer}>
-          Didn't get an email?{' '}
-          <a href="#" onClick={onSend} className={classes.sendLink}>
-            Send Again
-          </a>
+        {loading ? (
+          <p className={classes.footer}>
+            <FontAwesomeIcon icon="spinner" spin />
+          </p>
+        ) : (
+          <p className={classes.footer}>
+            Didn't get an email?{' '}
+            <a href="#" onClick={onSend} className={classes.sendLink}>
+              Send Again
+            </a>
+          </p>
+        )}
+        <p className="mt-0 mb-0">
+          {emailConfirmationSent ? 'Email sent' : ''}&nbsp;
         </p>
-      )}
-    </EmailModal>
+      </div>
+    </div>
   );
 };
 

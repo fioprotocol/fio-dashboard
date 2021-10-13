@@ -9,12 +9,7 @@ import { ROUTES } from '../../../constants/routes';
 import classes from '../MainHeader.module.scss';
 import { LoggedActionButtons } from './ActionButtons';
 import SideMenu from './SideMenu';
-import {
-  CartItem,
-  FioAddressDoublet,
-  Notification,
-  RefProfile,
-} from '../../../types';
+import { CartItem, Notification, RefProfile } from '../../../types';
 import SiteLink from './SiteLink';
 
 type LoggedNavProps = {
@@ -23,10 +18,12 @@ type LoggedNavProps = {
   toggleMenuOpen: (openState: boolean) => void;
   edgeAuthLoading: boolean;
   profileLoading: boolean;
-  isRefFlow: boolean;
+  hideCart: boolean;
+  hideNotifications: boolean;
+  showSiteLink: boolean;
+  onlyAuth: boolean;
   refProfileInfo: RefProfile;
   notifications: Notification[];
-  fioAddresses: FioAddressDoublet[];
   logout: () => void;
   showLogin: () => void;
   closeMenu: () => void;
@@ -38,15 +35,16 @@ const LoggedNav = (props: LoggedNavProps) => {
     isMenuOpen,
     toggleMenuOpen,
     closeMenu,
-    fioAddresses,
     notifications,
-    isRefFlow,
+    hideCart,
+    hideNotifications,
+    showSiteLink,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
 
   const renderCart = () => {
-    if (isRefFlow && fioAddresses.length) return null;
+    if (hideCart) return null;
     return (
       <>
         <Nav.Link
@@ -89,7 +87,7 @@ const LoggedNav = (props: LoggedNavProps) => {
   // @ts-ignore
   // eslint-disable-next-line no-unused-vars
   const renderNotifications = () => {
-    return isRefFlow ? null : (
+    return hideNotifications ? null : (
       <>
         <hr className={classnames(classes.vertical, 'mx-3')} />
         <Nav.Link
@@ -132,7 +130,7 @@ const LoggedNav = (props: LoggedNavProps) => {
 
   return (
     <div className={classes.loggedNavContainer}>
-      {isRefFlow ? <SiteLink {...props} /> : <div />}
+      {showSiteLink ? <SiteLink {...props} /> : <div />}
       <Nav className="pr-0 align-items-center">
         {renderCart()}
         {/* Notifications commented due to BD-2631 task */}

@@ -9,10 +9,6 @@ export const pinConfirmData = (state: ReduxState) =>
   state[prefix].pinConfirmData;
 export const showGenericError = (state: ReduxState) =>
   state[prefix].showGenericError;
-export const showEmailConfirmBlocker = (state: ReduxState) =>
-  state[prefix].showEmailConfirmBlocker;
-export const emailConfirmBlockerToken = (state: ReduxState) =>
-  state[prefix].emailConfirmBlockerToken;
 export const genericErrorData = (state: ReduxState) =>
   state[prefix].genericErrorData;
 export const showFreeAddressAwaiter = (state: ReduxState) =>

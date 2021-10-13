@@ -2,10 +2,12 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
+import { ROUTES } from '../../constants/routes';
 
 export const PrivateRoute = ({
   component: Component,
   noProfileLoaded,
+  isActiveUser,
   loading,
   homePageLink,
   ...rest
@@ -35,6 +37,17 @@ export const PrivateRoute = ({
               }}
             />
           );
+
+        if (!isActiveUser) {
+          return (
+            <Redirect
+              to={{
+                pathname: ROUTES.USER_IS_NOT_ACTIVE,
+                state: { from: props.location },
+              }}
+            />
+          );
+        }
 
         return <Component {...props} />;
       }}
