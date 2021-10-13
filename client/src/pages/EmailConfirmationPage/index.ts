@@ -11,6 +11,7 @@ import { showLoginModal } from '../../redux/modal/actions';
 import {
   loading,
   emailConfirmationResult,
+  isAuthenticated,
 } from '../../redux/profile/selectors';
 
 import EmailConfirmationPage from './EmailConfirmationPage';
@@ -19,6 +20,7 @@ const reduxConnect = connect(
   createStructuredSelector({
     loading,
     emailConfirmationResult,
+    isAuthenticated,
   }),
   {
     confirmEmail,
