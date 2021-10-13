@@ -29,6 +29,7 @@ import AccountRecoveryPage from './pages/AccountRecoveryPage';
 import EmailConfirmationPage from './pages/EmailConfirmationPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
+import EmailConfirmGatePage from './pages/EmailConfirmGatePage';
 
 import { ROUTES } from './constants/routes';
 import FioAddressSignaturesPage from './pages/FioAddressSignaturesPage';
@@ -47,6 +48,11 @@ const Routes = () => (
         <Route
           path={ROUTES.CONFIRM_EMAIL}
           component={EmailConfirmationPage}
+          exact
+        />
+        <Route
+          path={ROUTES.USER_IS_NOT_ACTIVE}
+          component={EmailConfirmGatePage}
           exact
         />
         <Route

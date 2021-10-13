@@ -79,5 +79,8 @@
       width: 100%;
       max-width: 595px;
     }
+    &.info {
+      background-color: $blue-dark;
+    }
   }
 }

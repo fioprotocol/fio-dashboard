@@ -1,12 +1,11 @@
 import React from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
 import classnames from 'classnames';
 
 import { ROUTES } from '../../constants/routes';
 import { LINKS, LINK_LABELS } from '../../constants/labels';
 import classes from './Navigation.module.scss';
-import { EdgeAccount } from 'edge-core-js';
 import { RefProfile } from '../../types';
 
 const navItems: string[] = [
@@ -19,21 +18,21 @@ const navItems: string[] = [
   // LINKS.PROTOCOL_UPDATES,
 ];
 
-export const Navigation = (
-  props: {
-    account: EdgeAccount;
-    refProfileInfo: RefProfile | null;
-    refProfileLoading: boolean;
-    isOnSide?: boolean;
-    closeMenu?: () => void;
-  } & RouteComponentProps,
-) => {
-  const { isOnSide, refProfileInfo, refProfileLoading } = props;
+export const Navigation = (props: {
+  refProfileInfo: RefProfile | null;
+  refProfileLoading: boolean;
+  isActiveUser: boolean;
+  isOnSide?: boolean;
+  closeMenu?: () => void;
+}) => {
+  const { isOnSide, refProfileInfo, refProfileLoading, isActiveUser } = props;
+  const location = useLocation();
 
   if (!refProfileLoading && refProfileInfo != null) return null;
+  if (!isActiveUser) return null;
 
   const renderItems = () => {
-    const { isOnSide, location, closeMenu } = props;
+    const { isOnSide, closeMenu } = props;
     return navItems.map((item, i) => (
       <Nav.Item
         className={classnames(classes.sideItem, isOnSide && classes.isOnSide)}

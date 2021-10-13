@@ -4,9 +4,14 @@ import { createStructuredSelector } from 'reselect';
 import { withRouter } from 'react-router-dom';
 import { BADGE_TYPES } from '../components/Badge/Badge';
 import { ACTIONS } from '../components/Notifications/Notifications';
+import { REF_ACTIONS } from '../constants/common';
 import { ROUTES } from '../constants/routes';
 import { setCartDate, clear } from '../redux/cart/actions';
 import { addManual as createNotification } from '../redux/notifications/actions';
+import {
+  isRefFlow,
+  refProfileQueryParams,
+} from '../redux/refProfile/selectors';
 import { cartItems, cartDate } from '../redux/cart/selectors';
 import {
   isProcessing,
@@ -19,6 +24,11 @@ import { compose } from '../utils';
 const INTERVAL = 200;
 const CART_TIMEOUT = 1000 * 60 * 30; // 30 min
 const MIN = 1000 * 60;
+const MESSAGE = 'Your cart was emptied due to inactivity';
+const REF_MESSAGES = {
+  [REF_ACTIONS.SIGNNFT]:
+    'please add your FIO address again, and purchase in order to complete your NFT signing',
+};
 
 const CartTimeout = props => {
   const {
@@ -31,6 +41,8 @@ const CartTimeout = props => {
     captchaResolving,
     confirmingPin,
     history,
+    isRefFlow,
+    refProfileQueryParams,
   } = props;
   const [intervalId, setIntervalId] = useState(null);
   const [time, setTime] = useState('');
@@ -75,7 +87,9 @@ const CartTimeout = props => {
       type: BADGE_TYPES.WARNING,
       title: 'Cart was emptied',
       message:
-        'Your session has expired and your cart was emptied. Add your items again.',
+        isRefFlow && refProfileQueryParams != null
+          ? `${MESSAGE}, ${REF_MESSAGES[refProfileQueryParams.action]}.`
+          : `${MESSAGE}. Add your items again.`,
       pagesToShow: [
         ROUTES.CART,
         ROUTES.FIO_ADDRESSES_SELECTION,
@@ -135,6 +149,8 @@ const reduxConnect = connect(
     isRegistrationProcessing: isProcessing,
     captchaResolving,
     confirmingPin,
+    isRefFlow,
+    refProfileQueryParams,
   }),
   {
     clear,

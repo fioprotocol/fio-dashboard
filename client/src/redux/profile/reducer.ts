@@ -5,6 +5,7 @@ import {
   CHANGE_RECOVERY_QUESTIONS_OPEN,
 } from '../edge/actions';
 import { User, LastAuthData, EmailConfirmationStateData } from '../../types';
+import { USER_STATUSES } from '../../constants/common';
 
 export default combineReducers({
   loading(state: boolean = false, action) {
@@ -56,6 +57,12 @@ export default combineReducers({
         return { ...state, secretSet: true };
       case actions.LOGOUT_SUCCESS:
         return null;
+      case actions.CONFIRM_EMAIL_SUCCESS: {
+        if (state != null && state.email)
+          return { ...state, status: USER_STATUSES.ACTIVE };
+
+        return state;
+      }
       default:
         return state;
     }
@@ -166,6 +173,28 @@ export default combineReducers({
       case actions.RESEND_RECOVERY_SUCCESS:
       case actions.RESEND_RECOVERY_FAILURE:
         return false;
+      default:
+        return state;
+    }
+  },
+  emailConfirmationToken(state: string | null = null, action) {
+    switch (action.type) {
+      case actions.LOGIN_SUCCESS:
+        return action.data.emailConfirmationToken || null;
+      case actions.CONFIRM_EMAIL_SUCCESS:
+      case actions.LOGOUT_SUCCESS:
+        return null;
+      default:
+        return state;
+    }
+  },
+  emailConfirmationSent(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.RESEND_CONFIRM_EMAIL_REQUEST:
+      case actions.LOGOUT_SUCCESS:
+        return false;
+      case actions.RESEND_CONFIRM_EMAIL_SUCCESS:
+        return true;
       default:
         return state;
     }

@@ -6,18 +6,17 @@ import classes from '../MainHeader.module.scss';
 import { RefProfile } from '../../../types';
 
 type SiteLinkProps = {
-  isRefFlow: boolean;
   refProfileInfo: RefProfile;
 };
 
 const SiteLink = (props: SiteLinkProps) => {
-  const { isRefFlow, refProfileInfo } = props;
+  const { refProfileInfo } = props;
 
   let link = 'https://fioprotocol.io/';
   let text = 'Go to fioprotocol.io';
   let target = '_blank';
 
-  if (isRefFlow) {
+  if (refProfileInfo != null && refProfileInfo.code) {
     link = refProfileInfo.settings.link;
     text = `Return to ${refProfileInfo.label}`;
     target = '_self';

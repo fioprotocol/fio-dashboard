@@ -1,5 +1,3 @@
-import { History } from 'history';
-
 import {
   User,
   CartItem,
@@ -11,6 +9,7 @@ import { RouteComponentProps } from 'react-router-dom';
 
 export interface MainHeaderProps extends RouteComponentProps {
   isAuthenticated: boolean;
+  isActiveUser: boolean;
   pathname: string;
   homePageLink: string;
   user: User;
