@@ -11,5 +11,3 @@ export const showGenericError = (state: ReduxState) =>
   state[prefix].showGenericError;
 export const genericErrorData = (state: ReduxState) =>
   state[prefix].genericErrorData;
-export const showFreeAddressAwaiter = (state: ReduxState) =>
-  state[prefix].showFreeAddressAwaiter;
