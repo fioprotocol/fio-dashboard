@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from '../EmailModal/EmailModal.module.scss';
@@ -8,9 +8,13 @@ import {
   RefProfile,
   RefQuery,
 } from '../../../types';
+import { useHistory } from 'react-router';
+import { ROUTES } from '../../../constants/routes';
 
 type Props = {
   loading: boolean;
+  isAuthenticated: boolean;
+  isActiveUser: boolean;
   emailConfirmationToken: string;
   emailConfirmationSent: boolean;
   resendConfirmEmail: (
@@ -25,6 +29,8 @@ type Props = {
 
 const EmailConfirmBlocker: React.FC<Props> = props => {
   const {
+    isAuthenticated,
+    isActiveUser,
     emailConfirmationToken,
     emailConfirmationSent,
     loading,
@@ -34,6 +40,19 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
     redirectLink,
     resendConfirmEmail,
   } = props;
+
+  const history = useHistory();
+
+  useEffect(() => {
+    if (isAuthenticated && isActiveUser) {
+      history.replace(redirectLink);
+    }
+
+    if (!isAuthenticated) {
+      history.replace(ROUTES.HOME);
+    }
+  }, [isAuthenticated, isActiveUser]);
+
   const onSend = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     let stateData: EmailConfirmationStateData = {
@@ -48,6 +67,7 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
     }
     resendConfirmEmail(emailConfirmationToken, stateData);
   };
+
   return (
     <div className={classes.container}>
       <div>
