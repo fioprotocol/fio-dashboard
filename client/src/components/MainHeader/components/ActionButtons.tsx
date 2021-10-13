@@ -12,7 +12,7 @@ type ActionButtonsProps = {
   edgeAuthLoading: boolean;
   profileLoading: boolean;
   isMenuOpen: boolean;
-  isRefFlow: boolean;
+  onlyAuth: boolean;
   showLogin: () => void;
   closeMenu: () => void;
 };
@@ -28,7 +28,7 @@ export const ActionButtons = (props: ActionButtonsProps) => {
     profileLoading,
     isMenuOpen,
     closeMenu,
-    isRefFlow,
+    onlyAuth,
   } = props;
   return (
     <div
@@ -37,7 +37,7 @@ export const ActionButtons = (props: ActionButtonsProps) => {
         isMenuOpen && classes.isOpen,
       )}
     >
-      {isRefFlow ? null : (
+      {onlyAuth ? null : (
         <Nav.Link as={Link} to={ROUTES.CREATE_ACCOUNT}>
           <Button
             variant="outline-primary"
@@ -71,11 +71,11 @@ export const LoggedActionButtons = (props: LoggedActionButtonsProps) => {
     edgeAuthLoading,
     profileLoading,
     isMenuOpen,
-    isRefFlow,
+    onlyAuth,
     closeMenu,
   } = props;
 
-  if (isRefFlow) {
+  if (onlyAuth) {
     return (
       <div
         className={classnames(

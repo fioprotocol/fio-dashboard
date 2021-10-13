@@ -12,11 +12,14 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     showLoginModal,
     logout: logoutFn,
     isAuthenticated,
+    isActiveUser,
+    fioAddresses,
     refProfileLoading,
     refProfileInfo,
     homePageLink,
   } = props;
   const isRefFlow: boolean = refProfileInfo != null && !!refProfileInfo.code;
+  const isNotActiveUser: boolean = isAuthenticated && !isActiveUser;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
 
   const closeMenu = () => {
@@ -53,7 +56,10 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
           logout={logout}
           closeMenu={closeMenu}
           showLogin={showLogin}
-          isRefFlow={isRefFlow}
+          hideCart={(isRefFlow && !!fioAddresses.length) || isNotActiveUser}
+          hideNotifications={isRefFlow || isNotActiveUser}
+          onlyAuth={isRefFlow || isNotActiveUser}
+          showSiteLink={isRefFlow}
           {...props}
         />
       ) : (
@@ -62,7 +68,8 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
           isMenuOpen={isMenuOpen}
           closeMenu={closeMenu}
           showLogin={showLogin}
-          isRefFlow={isRefFlow}
+          onlyAuth={isRefFlow || isNotActiveUser}
+          hideCart={isRefFlow}
           {...props}
         />
       )}

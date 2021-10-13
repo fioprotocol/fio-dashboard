@@ -9,6 +9,7 @@ import { pathname } from '../../redux/navigation/selectors';
 import {
   user,
   isAuthenticated,
+  isActiveUser,
   loading as profileLoading,
 } from '../../redux/profile/selectors';
 import { loading as edgeAuthLoading } from '../../redux/edge/selectors';
@@ -29,6 +30,7 @@ const selector = createStructuredSelector({
   pathname,
   user,
   isAuthenticated,
+  isActiveUser,
   edgeAuthLoading,
   profileLoading,
   notifications,

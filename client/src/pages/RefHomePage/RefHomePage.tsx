@@ -7,6 +7,7 @@ import FioAddressPage from '../FioAddressPage';
 import classnames from './RefHomePage.module.scss';
 import { RouteComponentProps } from 'react-router-dom';
 import { RefProfile, RefQuery } from '../../types';
+import { useNonActiveUserRedirect } from '../../util/hooks';
 
 const FADE_OUT_TIMEOUT = 780;
 
@@ -50,6 +51,7 @@ export const RefHomePage: React.FC<Props &
     setContainedParams,
     showLoginModal,
   } = props;
+  useNonActiveUserRedirect();
   const [hideLoader, setHideLoader] = useState(false);
   const [refProfileIsLoaded, setRefProfileIsLoaded] = useState(false);
 
