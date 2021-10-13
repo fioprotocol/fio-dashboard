@@ -6,7 +6,6 @@ import Notifications from '../../components/Notifications';
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
 import LoginForm from '../../components/LoginForm';
-import FreeAddressAwaiter from '../../components/Modal/FreeAddressAwaiter';
 import PinConfirmModal from '../../components/PinConfirmModal';
 import GenericErrorModal from '../../components/Modal/GenericErrorModal';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
@@ -56,7 +55,6 @@ const MainLayout = props => {
       <Footer />
       {showLogin && edgeContextSet && loginFormModalRender()}
       {showRecovery && edgeContextSet && recoveryFormModalRender()}
-      <FreeAddressAwaiter />
       <PinConfirmModal />
       <GenericErrorModal />
     </div>
