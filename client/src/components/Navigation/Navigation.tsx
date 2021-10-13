@@ -6,7 +6,6 @@ import classnames from 'classnames';
 import { ROUTES } from '../../constants/routes';
 import { LINKS, LINK_LABELS } from '../../constants/labels';
 import classes from './Navigation.module.scss';
-import { EdgeAccount } from 'edge-core-js';
 import { RefProfile } from '../../types';
 
 const navItems: string[] = [
@@ -20,16 +19,17 @@ const navItems: string[] = [
 ];
 
 export const Navigation = (props: {
-  account: EdgeAccount;
   refProfileInfo: RefProfile | null;
   refProfileLoading: boolean;
+  isActiveUser: boolean;
   isOnSide?: boolean;
   closeMenu?: () => void;
 }) => {
-  const { isOnSide, refProfileInfo, refProfileLoading } = props;
+  const { isOnSide, refProfileInfo, refProfileLoading, isActiveUser } = props;
   const location = useLocation();
 
   if (!refProfileLoading && refProfileInfo != null) return null;
+  if (!isActiveUser) return null;
 
   const renderItems = () => {
     const { isOnSide, closeMenu } = props;
