@@ -74,6 +74,11 @@ export default class AuthCreate extends Base {
     }
     await nonce.destroy();
 
+    const now = new Date();
+    const responseData = {
+      jwt: generate({ id: user.id }, new Date(EXPIRATION_TIME + now.getTime())),
+    };
+
     if (user.status === User.STATUS.NEW) {
       let resendConfirmEmailAction = await Action.findOneWhere({
         type: Action.TYPE.RESEND_EMAIL_CONFIRM,
@@ -89,23 +94,12 @@ export default class AuthCreate extends Base {
           email: user.email,
         },
       }).save();
-      throw new X({
-        code: 'NOT_ACTIVE_USER',
-        fields: {
-          status: 'NOT_ACTIVE_USER',
-        },
-        data: {
-          token: resendConfirmEmailAction.hash,
-        },
-      });
+
+      responseData.emailConfirmationToken = resendConfirmEmailAction.hash;
     }
 
-    const now = new Date();
-
     return {
-      data: {
-        jwt: generate({ id: user.id }, new Date(EXPIRATION_TIME + now.getTime())),
-      },
+      data: responseData,
     };
   }
 
@@ -114,6 +108,6 @@ export default class AuthCreate extends Base {
   }
 
   static get resultSecret() {
-    return ['data.jwt'];
+    return ['data.jwt', 'data.emailConfirmationToken'];
   }
 }

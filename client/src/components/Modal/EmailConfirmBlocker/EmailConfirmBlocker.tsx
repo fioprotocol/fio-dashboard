@@ -2,7 +2,6 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from '../EmailModal/EmailModal.module.scss';
-import EmailModal from '../EmailModal';
 
 import {
   EmailConfirmationStateData,
@@ -11,10 +10,8 @@ import {
 } from '../../../types';
 
 type Props = {
-  showEmailConfirmBlocker: boolean;
   loading: boolean;
-  emailConfirmBlockerToken: string;
-  closeEmailConfirmBlocker: () => void;
+  emailConfirmationToken: string;
   resendConfirmEmail: (
     token: string,
     stateData: EmailConfirmationStateData,
@@ -27,10 +24,8 @@ type Props = {
 
 const EmailConfirmBlocker: React.FC<Props> = props => {
   const {
-    emailConfirmBlockerToken,
+    emailConfirmationToken,
     loading,
-    showEmailConfirmBlocker,
-    closeEmailConfirmBlocker,
     refProfileQueryParams,
     refProfileInfo,
     isRefFlow,
@@ -49,29 +44,31 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
         refProfileQueryParams,
       };
     }
-    resendConfirmEmail(emailConfirmBlockerToken, stateData);
+    resendConfirmEmail(emailConfirmationToken, stateData);
   };
   return (
-    <EmailModal
-      show={showEmailConfirmBlocker}
-      onClose={closeEmailConfirmBlocker}
-      title="Please Verify Your Email"
-      subtitle="Before you complete access to the FIO Dashboard you must verify your
-        email address."
-    >
-      {loading ? (
-        <p className={classes.footer}>
-          <FontAwesomeIcon icon="spinner" spin />
+    <div className={classes.container}>
+      <div>
+        <FontAwesomeIcon icon="envelope" className={classes.icon} />
+        <h4 className={classes.title}>Please Verify Your Email</h4>
+        <p className={classes.subtitle}>
+          Before you complete access to the FIO Dashboard you must verify your
+          email address.
         </p>
-      ) : (
-        <p className={classes.footer}>
-          Didn't get an email?{' '}
-          <a href="#" onClick={onSend} className={classes.sendLink}>
-            Send Again
-          </a>
-        </p>
-      )}
-    </EmailModal>
+        {loading ? (
+          <p className={classes.footer}>
+            <FontAwesomeIcon icon="spinner" spin />
+          </p>
+        ) : (
+          <p className={classes.footer}>
+            Didn't get an email?{' '}
+            <a href="#" onClick={onSend} className={classes.sendLink}>
+              Send Again
+            </a>
+          </p>
+        )}
+      </div>
+    </div>
   );
 };
 

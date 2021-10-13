@@ -1,5 +1,10 @@
 import { ROUTES } from './routes';
 
+export const USER_STATUSES = {
+  NEW: 'NEW',
+  ACTIVE: 'ACTIVE',
+};
+
 export const DEFAULT_WALLET_OPTIONS = {
   name: 'My FIO',
   fiatCurrencyCode: 'iso:USD',

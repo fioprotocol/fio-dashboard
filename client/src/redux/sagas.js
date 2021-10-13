@@ -2,7 +2,6 @@ import { all } from 'redux-saga/effects';
 
 import {
   loginSuccess,
-  loginFailure,
   signupSuccess,
   logoutSuccess,
   profileSuccess,
@@ -23,7 +22,6 @@ import { clearGenericModalError } from './modal/sagas';
 export default function* rootSaga(history, api) {
   yield all([
     loginSuccess(history, api),
-    loginFailure(),
     logoutSuccess(history, api),
     profileSuccess(),
     nonceSuccess(),

@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+import { USER_STATUSES } from '../../constants/common';
 import { prefix } from './actions';
 
 export const loading = state => state[prefix].loading;
@@ -15,6 +16,8 @@ export const successfullyRegistered = state =>
 export const lastAuthData = state => state[prefix].lastAuthData;
 export const tokenCheckResult = state => state[prefix].tokenCheckResult;
 export const lastActivityDate = state => state[prefix].lastActivityDate;
+export const emailConfirmationToken = state =>
+  state[prefix].emailConfirmationToken;
 
 export const isAuthenticated = createSelector(user, user => !!user);
 export const profileRefreshed = state => state[prefix].profileRefreshed;
@@ -22,6 +25,12 @@ export const noProfileLoaded = createSelector(
   isAuthenticated,
   profileRefreshed,
   (isAuthenticated, profileRefreshed) => !isAuthenticated && profileRefreshed,
+);
+export const isActiveUser = createSelector(
+  isAuthenticated,
+  user,
+  (isAuthenticated, user) =>
+    isAuthenticated && user.status === USER_STATUSES.ACTIVE,
 );
 export const hasFreeAddress = createSelector(
   user,

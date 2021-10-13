@@ -3,12 +3,10 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../../utils';
 import { resendConfirmEmail } from '../../../redux/profile/actions';
-import { closeEmailConfirmBlocker } from '../../../redux/modal/actions';
 import {
-  showEmailConfirmBlocker,
-  emailConfirmBlockerToken,
-} from '../../../redux/modal/selectors';
-import { loading } from '../../../redux/profile/selectors';
+  loading,
+  emailConfirmationToken,
+} from '../../../redux/profile/selectors';
 import {
   isRefFlow,
   refProfileInfo,
@@ -20,8 +18,7 @@ import EmailConfirmBlocker from './EmailConfirmBlocker';
 
 const reduxConnect = connect(
   createStructuredSelector({
-    showEmailConfirmBlocker,
-    emailConfirmBlockerToken,
+    emailConfirmationToken,
     redirectLink,
     isRefFlow,
     refProfileInfo,
@@ -29,7 +26,6 @@ const reduxConnect = connect(
     loading,
   }),
   {
-    closeEmailConfirmBlocker,
     resendConfirmEmail,
   },
 );

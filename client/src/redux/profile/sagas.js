@@ -5,7 +5,6 @@ import { setWallets } from '../account/actions';
 import { refreshBalance } from '../fio/actions';
 import {
   LOGIN_SUCCESS,
-  LOGIN_FAILURE,
   PROFILE_SUCCESS,
   SIGNUP_SUCCESS,
   LOGOUT_SUCCESS,
@@ -15,11 +14,7 @@ import {
   login,
 } from './actions';
 
-import {
-  showEmailConfirmBlocker,
-  closeEmailConfirmBlocker,
-  closeLoginModal,
-} from '../modal/actions';
+import { closeEmailConfirmBlocker, closeLoginModal } from '../modal/actions';
 import {
   listNotifications,
   createNotification,
@@ -43,15 +38,6 @@ export function* loginSuccess(history, api) {
     }
     yield put(closeLoginModal());
     yield put(setRedirectPath(null));
-  });
-}
-
-export function* loginFailure() {
-  yield takeEvery(LOGIN_FAILURE, function*(action) {
-    if (action.error != null && action.error.code === 'NOT_ACTIVE_USER') {
-      yield put(closeLoginModal());
-      yield put(showEmailConfirmBlocker(action.error.data.token));
-    }
   });
 }
 
