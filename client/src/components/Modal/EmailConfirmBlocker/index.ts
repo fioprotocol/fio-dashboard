@@ -7,6 +7,8 @@ import {
   loading,
   emailConfirmationToken,
   emailConfirmationSent,
+  isAuthenticated,
+  isActiveUser,
 } from '../../../redux/profile/selectors';
 import {
   isRefFlow,
@@ -19,6 +21,8 @@ import EmailConfirmBlocker from './EmailConfirmBlocker';
 
 const reduxConnect = connect(
   createStructuredSelector({
+    isAuthenticated,
+    isActiveUser,
     emailConfirmationToken,
     emailConfirmationSent,
     redirectLink,
