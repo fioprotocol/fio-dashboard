@@ -13,6 +13,7 @@ import {
   emailConfirmationResult,
   isAuthenticated,
 } from '../../redux/profile/selectors';
+import { cartItems } from '../../redux/cart/selectors';
 
 import EmailConfirmationPage from './EmailConfirmationPage';
 
@@ -21,6 +22,7 @@ const reduxConnect = connect(
     loading,
     emailConfirmationResult,
     isAuthenticated,
+    cartItems,
   }),
   {
     confirmEmail,

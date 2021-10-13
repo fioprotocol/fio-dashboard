@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import classes from '../../components/Modal/EmailModal/EmailModal.module.scss';
 import { ROUTES } from '../../constants/routes';
-import { EmailConfirmationStateData } from '../../types';
+import { CartItem, EmailConfirmationStateData } from '../../types';
 
 type MatchParams = {
   hash: string;
@@ -21,6 +21,7 @@ type Location = {
 type Props = {
   loading: boolean;
   isAuthenticated: boolean;
+  cartItems: CartItem[];
   emailConfirmationResult: {
     error?: string;
     success?: boolean;
@@ -46,6 +47,7 @@ const EmailConfirmationPage: React.FC<Props &
     history,
     showLoginModal,
     getInfo,
+    cartItems,
   } = props;
 
   useEffect(() => {
@@ -69,6 +71,9 @@ const EmailConfirmationPage: React.FC<Props &
         emailConfirmationResult.stateData.redirectLink
       )
         redirectLink = emailConfirmationResult.stateData.redirectLink;
+
+      if (redirectLink === ROUTES.CHECKOUT && cartItems.length === 0)
+        redirectLink = ROUTES.CART;
 
       if (isAuthenticated) {
         history.replace(redirectLink);
