@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 import { Navigation } from './Navigation';
 
@@ -13,5 +12,4 @@ const selector = createStructuredSelector({
   refProfileLoading,
 });
 
-// @ts-ignore // todo: change to useLocation in component, update react-router-redux/react-router-dom/react-redux, replace react-router-redux by connected-react-router
-export default withRouter(connect(selector)(Navigation));
+export default connect(selector)(Navigation);
