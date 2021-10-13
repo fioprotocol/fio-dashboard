@@ -12,6 +12,7 @@ import {
 type Props = {
   loading: boolean;
   emailConfirmationToken: string;
+  emailConfirmationSent: boolean;
   resendConfirmEmail: (
     token: string,
     stateData: EmailConfirmationStateData,
@@ -25,6 +26,7 @@ type Props = {
 const EmailConfirmBlocker: React.FC<Props> = props => {
   const {
     emailConfirmationToken,
+    emailConfirmationSent,
     loading,
     refProfileQueryParams,
     refProfileInfo,
@@ -67,6 +69,9 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
             </a>
           </p>
         )}
+        <p className="mt-0 mb-0">
+          {emailConfirmationSent ? 'Email sent' : ''}&nbsp;
+        </p>
       </div>
     </div>
   );

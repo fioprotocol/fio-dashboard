@@ -181,4 +181,15 @@ export default combineReducers({
         return state;
     }
   },
+  emailConfirmationSent(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.RESEND_CONFIRM_EMAIL_REQUEST:
+      case actions.LOGOUT_SUCCESS:
+        return false;
+      case actions.RESEND_CONFIRM_EMAIL_SUCCESS:
+        return true;
+      default:
+        return state;
+    }
+  },
 });

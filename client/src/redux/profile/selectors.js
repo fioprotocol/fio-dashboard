@@ -18,6 +18,8 @@ export const tokenCheckResult = state => state[prefix].tokenCheckResult;
 export const lastActivityDate = state => state[prefix].lastActivityDate;
 export const emailConfirmationToken = state =>
   state[prefix].emailConfirmationToken;
+export const emailConfirmationSent = state =>
+  state[prefix].emailConfirmationSent;
 
 export const isAuthenticated = createSelector(user, user => !!user);
 export const profileRefreshed = state => state[prefix].profileRefreshed;
