@@ -4,19 +4,12 @@ import { withLastLocation } from 'react-router-last-location';
 import { withRouter } from 'react-router-dom';
 
 import { compose } from '../../utils';
-import {
-  resetSuccessState,
-  nonce,
-  resetLastAuthData,
-  signup,
-} from '../../redux/profile/actions';
+import { resetSuccessState, nonce, signup } from '../../redux/profile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
-import { clearCachedUser } from '../../redux/edge/actions';
 
 import {
   successfullyRegistered,
   loading as serverSignUpLoading,
-  lastAuthData,
 } from '../../redux/profile/selectors';
 import {
   isRefFlow,
@@ -35,7 +28,6 @@ const selector = createStructuredSelector({
   refProfileInfo,
   refProfileQueryParams,
   signupSuccess,
-  lastAuthData,
   redirectLink,
 });
 
@@ -44,8 +36,6 @@ const actions = {
   resetSuccessState,
   showLoginModal,
   nonce,
-  resetLastAuthData,
-  clearCachedUser,
 };
 
 const reduxConnect = connect(selector, actions);
