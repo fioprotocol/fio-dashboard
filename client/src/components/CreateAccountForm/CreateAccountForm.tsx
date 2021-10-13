@@ -28,7 +28,6 @@ import Success from './Success';
 import {
   EmailConfirmationStateData,
   FioWalletDoublet,
-  LastAuthData,
   RefProfile,
   RefQuery,
   WalletKeysObj,
@@ -89,10 +88,7 @@ type OwnProps = {
   refProfileQueryParams: RefQuery | null;
   edgeAuthLoading: boolean;
   serverSignUpLoading: boolean;
-  lastAuthData: LastAuthData;
   redirectLink: string;
-  resetLastAuthData: () => void;
-  clearCachedUser: (username: string) => void;
 };
 
 type Props = OwnProps & RouterProps & WithLastLocationProps;
@@ -263,9 +259,6 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       refProfileInfo,
       refProfileQueryParams,
       redirectLink,
-      lastAuthData,
-      resetLastAuthData,
-      clearCachedUser,
     } = this.props;
     const { step } = this.state;
 
@@ -301,10 +294,6 @@ export default class CreateAccountForm extends React.Component<Props, State> {
 
         const { email, password, pin } = values;
         this.setState({ loading: true });
-        if (lastAuthData != null && lastAuthData.username) {
-          resetLastAuthData();
-          clearCachedUser(lastAuthData.username);
-        }
         const { account, fioWallet, errors } = await createAccount(
           emailToUsername(email),
           password,
