@@ -170,4 +170,15 @@ export default combineReducers({
         return state;
     }
   },
+  emailConfirmationToken(state: string | null = null, action) {
+    switch (action.type) {
+      case actions.LOGIN_SUCCESS:
+        return action.data.emailConfirmationToken || null;
+      case actions.CONFIRM_EMAIL_SUCCESS:
+      case actions.LOGOUT_SUCCESS:
+        return null;
+      default:
+        return state;
+    }
+  },
 });

@@ -1,11 +1,16 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 import { getFioAddresses } from '../redux/fio/actions';
 
 import { fioWallets } from '../redux/fio/selectors';
-import { isAuthenticated } from '../redux/profile/selectors';
+import {
+  isAuthenticated,
+  isActiveUser as isActiveUserSelector,
+} from '../redux/profile/selectors';
 
 import { FioWalletDoublet } from '../types';
+import { ROUTES } from '../constants/routes';
 
 export function useFioAddresses(limit = 0, offset = 0) {
   const dispatch = useDispatch();
@@ -18,4 +23,15 @@ export function useFioAddresses(limit = 0, offset = 0) {
       );
     }
   }, [fioWallets.length]);
+}
+
+export function useNonActiveUserRedirect() {
+  const isActiveUser = useSelector(isActiveUserSelector);
+  const isAuth = useSelector(isAuthenticated);
+  const history = useHistory();
+  useEffect(() => {
+    if (isAuth && !isActiveUser) {
+      history.push(ROUTES.USER_IS_NOT_ACTIVE);
+    }
+  }, [isAuth, isActiveUser]);
 }

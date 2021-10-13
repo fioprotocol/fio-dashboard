@@ -10,6 +10,7 @@ type Props = {
   hasAutoWidth?: boolean;
   fullWidth?: boolean;
   middleWidth?: boolean;
+  isInfo?: boolean;
   link?: string;
   onClose?: () => void;
   title: string;
@@ -24,6 +25,7 @@ const PseudoModalContainer: React.FC<Props> = props => {
     onClose,
     title,
     middleWidth,
+    isInfo,
   } = props;
   return (
     <div
@@ -32,6 +34,7 @@ const PseudoModalContainer: React.FC<Props> = props => {
         hasAutoWidth && classes.autoWidth,
         fullWidth && classes.fullWidth,
         middleWidth && classes.middleWidth,
+        isInfo && classes.info,
       )}
     >
       <div className={classes.actionContainer}>

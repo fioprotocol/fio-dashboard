@@ -9,6 +9,7 @@ const ROUTES: { [route: string]: string } = {
   RESET_PASSWORD: '/reset-password/:hash',
   PASSWORD_RECOVERY: '/password-recovery',
   CREATE_ACCOUNT: '/create-account',
+  USER_IS_NOT_ACTIVE: '/email-confirm-gate',
 
   FIO_ADDRESSES_SELECTION: '/fio-addresses-selection',
   FIO_DOMAINS_SELECTION: '/fio-domains-selection',
