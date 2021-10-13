@@ -29,7 +29,7 @@ const Badge: React.FC<Props> = props => {
       className={classnames(
         classes.badge,
         show && classes.show,
-        type && classes[type],
+        type && classes[type.toLowerCase()],
       )}
     >
       {children}

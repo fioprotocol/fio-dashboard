@@ -9,11 +9,11 @@ const { DataTypes: DT } = Sequelize;
 export class Notification extends Base {
   static get TYPE() {
     return {
-      WARNING: 'WARNING',
-      ALERT: 'ALERT',
-      ERROR: 'ERROR',
-      INFO: 'INFO',
-      SUCCESS: 'SUCCESS',
+      WARNING: 'warning',
+      ALERT: 'alert',
+      ERROR: 'error',
+      INFO: 'info',
+      SUCCESS: 'success',
     };
   }
   static get ACTION() {
