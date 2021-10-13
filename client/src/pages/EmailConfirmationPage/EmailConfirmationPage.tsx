@@ -20,6 +20,7 @@ type Location = {
 
 type Props = {
   loading: boolean;
+  isAuthenticated: boolean;
   emailConfirmationResult: {
     error?: string;
     success?: boolean;
@@ -36,11 +37,13 @@ const EmailConfirmationPage: React.FC<Props &
   const {
     loading,
     confirmEmail,
+    isAuthenticated,
     emailConfirmationResult,
     match: {
       params: { hash },
     },
     location: { query },
+    history,
     showLoginModal,
     getInfo,
   } = props;
@@ -53,14 +56,27 @@ const EmailConfirmationPage: React.FC<Props &
   }, []);
 
   useEffect(() => {
-    if (
-      emailConfirmationResult.success &&
-      emailConfirmationResult.stateData != null &&
-      emailConfirmationResult.stateData.refProfileQueryParams != null
-    ) {
-      showLoginModal(ROUTES.CHECKOUT);
+    if (emailConfirmationResult.success) {
+      let redirectLink = ROUTES.HOME;
+      if (
+        emailConfirmationResult.stateData != null &&
+        emailConfirmationResult.stateData.refProfileQueryParams != null
+      )
+        redirectLink = ROUTES.CHECKOUT;
+
+      if (
+        emailConfirmationResult.stateData != null &&
+        emailConfirmationResult.stateData.redirectLink
+      )
+        redirectLink = emailConfirmationResult.stateData.redirectLink;
+
+      if (isAuthenticated) {
+        history.replace(redirectLink);
+      } else {
+        showLoginModal(redirectLink);
+      }
     }
-  }, [emailConfirmationResult]);
+  }, [isAuthenticated, emailConfirmationResult]);
 
   const showLogin = () => {
     let redirectLink = ROUTES.HOME;
