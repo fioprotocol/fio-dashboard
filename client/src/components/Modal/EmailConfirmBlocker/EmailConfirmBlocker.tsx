@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from '../EmailModal/EmailModal.module.scss';
@@ -8,7 +9,6 @@ import {
   RefProfile,
   RefQuery,
 } from '../../../types';
-import { useHistory } from 'react-router';
 import { ROUTES } from '../../../constants/routes';
 
 type Props = {
@@ -45,7 +45,7 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
 
   useEffect(() => {
     if (isAuthenticated && isActiveUser) {
-      history.replace(redirectLink);
+      history.replace(redirectLink || ROUTES.HOME);
     }
 
     if (!isAuthenticated) {
