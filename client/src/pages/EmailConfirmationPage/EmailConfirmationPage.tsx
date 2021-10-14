@@ -4,7 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import classes from '../../components/Modal/EmailModal/EmailModal.module.scss';
 import { ROUTES } from '../../constants/routes';
-import { CartItem, EmailConfirmationStateData } from '../../types';
+import { ACTIONS } from '../../components/Notifications/Notifications';
+import { BADGE_TYPES } from '../../components/Badge/Badge';
+import {
+  NotificationParams,
+  CartItem,
+  EmailConfirmationStateData,
+} from '../../types';
 
 type MatchParams = {
   hash: string;
@@ -30,6 +36,7 @@ type Props = {
   confirmEmail: (hash: string) => void;
   getInfo: (refCode: string) => void;
   showLoginModal: (redirect: string) => void;
+  createNotification: (params: NotificationParams) => void;
 };
 
 const EmailConfirmationPage: React.FC<Props &
@@ -59,6 +66,20 @@ const EmailConfirmationPage: React.FC<Props &
 
   useEffect(() => {
     if (emailConfirmationResult.success) {
+      props.createNotification({
+        action: ACTIONS.EMAIL_CONFIRM,
+        type: BADGE_TYPES.INFO,
+        title: 'Account Confirmation',
+        message: 'Your email is confirmed',
+        pagesToShow: [
+          ROUTES.CART,
+          ROUTES.CHECKOUT,
+          ROUTES.FIO_ADDRESSES_SELECTION,
+          ROUTES.FIO_DOMAINS_SELECTION,
+          ROUTES.HOME,
+        ],
+      });
+
       let redirectLink = ROUTES.HOME;
       if (
         emailConfirmationResult.stateData != null &&

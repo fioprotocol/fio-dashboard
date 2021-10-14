@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize';
 import crypto from 'crypto';
 
-import { Notification, User } from './';
+import { User } from './';
 import Base from './Base';
 
 const { DataTypes: DT } = Sequelize;
@@ -36,22 +36,6 @@ export class Action extends Base {
 
   async confirmEmail() {
     const user = await User.findById(this.data.userId);
-
-    await new Notification({
-      type: Notification.TYPE.INFO,
-      title: 'Account Confirmation',
-      message: 'Your email is confirmed',
-      userId: user.id,
-      data: {
-        pagesToShow: [
-          '/',
-          '/cart',
-          '/checkout',
-          '/fio-addresses-selection',
-          '/fio-domains-selection',
-        ],
-      },
-    }).save();
 
     return user.update({ status: User.STATUS.ACTIVE });
   }

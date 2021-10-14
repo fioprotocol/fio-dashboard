@@ -24,6 +24,15 @@ export type Notification = {
   seenDate: string;
   closeDate: string;
   createdAt: string;
+  isManual?: boolean;
+  pagesToShow: string[] | null;
+};
+
+export type NotificationParams = {
+  type: string;
+  action: string;
+  title: string;
+  message: string;
   pagesToShow: string[] | null;
 };
 
