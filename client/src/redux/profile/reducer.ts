@@ -63,6 +63,16 @@ export default combineReducers({
 
         return state;
       }
+      case actions.AUTH_CHECK_SUCCESS: {
+        if (
+          !!action.data.id &&
+          state.email &&
+          state.status === USER_STATUSES.NEW
+        )
+          return { ...state, status: action.data.status };
+
+        return state;
+      }
       default:
         return state;
     }
