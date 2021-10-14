@@ -23,6 +23,7 @@ const MainLayout = props => {
     children,
     edgeContextSet,
     isAuthenticated,
+    isActiveUser,
     showLogin,
     showRecovery,
     init,
@@ -38,7 +39,8 @@ const MainLayout = props => {
   const recoveryFormModalRender = () =>
     showRecovery &&
     edgeContextSet &&
-    isAuthenticated && <PasswordRecoveryForm />;
+    isAuthenticated &&
+    isActiveUser && <PasswordRecoveryForm />;
 
   const isHomePage = pathname === '/';
 
