@@ -27,6 +27,7 @@ type Location = {
 type Props = {
   loading: boolean;
   isAuthenticated: boolean;
+  profileRefreshed: boolean;
   cartItems: CartItem[];
   emailConfirmationResult: {
     error?: string;
@@ -46,6 +47,7 @@ const EmailConfirmationPage: React.FC<Props &
     loading,
     confirmEmail,
     isAuthenticated,
+    profileRefreshed,
     emailConfirmationResult,
     match: {
       params: { hash },
@@ -58,11 +60,14 @@ const EmailConfirmationPage: React.FC<Props &
   } = props;
 
   useEffect(() => {
-    confirmEmail(hash);
     if (query != null && query.refCode != null && query.refCode !== '') {
       getInfo(query.refCode);
     }
   }, []);
+
+  useEffect(() => {
+    if (profileRefreshed) confirmEmail(hash);
+  }, [profileRefreshed]);
 
   useEffect(() => {
     if (emailConfirmationResult.success) {

@@ -13,6 +13,7 @@ import {
   loading,
   emailConfirmationResult,
   isAuthenticated,
+  profileRefreshed,
 } from '../../redux/profile/selectors';
 import { cartItems } from '../../redux/cart/selectors';
 
@@ -23,6 +24,7 @@ const reduxConnect = connect(
     loading,
     emailConfirmationResult,
     isAuthenticated,
+    profileRefreshed,
     cartItems,
   }),
   {

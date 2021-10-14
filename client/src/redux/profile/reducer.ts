@@ -66,6 +66,7 @@ export default combineReducers({
       case actions.AUTH_CHECK_SUCCESS: {
         if (
           !!action.data.id &&
+          state != null &&
           state.email &&
           state.status === USER_STATUSES.NEW
         )
