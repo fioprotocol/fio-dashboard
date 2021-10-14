@@ -59,10 +59,3 @@ export const CLEAR_GENERIC_ERROR_DATA = `${prefix}/CLEAR_GENERIC_ERROR_DATA`;
 export const clearGenericErrorData = () => ({
   type: CLEAR_GENERIC_ERROR_DATA,
 });
-
-export const SHOW_FREE_ADDRESS_AWAITER = `${prefix}/SHOW_FREE_ADDRESS_AWAITER`;
-export const CLOSE_FREE_ADDRESS_AWAITER = `${prefix}/CLOSE_FREE_ADDRESS_AWAITER`;
-
-export const toggleFreeAddressAwaiter = (show: boolean = false) => ({
-  type: show ? SHOW_FREE_ADDRESS_AWAITER : CLOSE_FREE_ADDRESS_AWAITER,
-});

@@ -24,6 +24,15 @@ export type Notification = {
   seenDate: string;
   closeDate: string;
   createdAt: string;
+  isManual?: boolean;
+  pagesToShow: string[] | null;
+};
+
+export type NotificationParams = {
+  type: string;
+  action: string;
+  title: string;
+  message: string;
   pagesToShow: string[] | null;
 };
 
@@ -181,13 +190,13 @@ type SignNFTQuery = {
 };
 
 export type SignNFTParams = {
-  chain_code: string;
-  contract_address: string;
-  token_id: string;
+  chainCode: string;
+  contractAddress: string;
+  tokenId: string;
   url: string;
   hash: string;
   metadata: {
-    creator_url: string;
+    creatorUrl: string;
   };
 };
 
@@ -196,8 +205,13 @@ export type RefQuery = {
   r: string;
 } & SignNFTQuery;
 
+export type RefQueryParams = {
+  action: string;
+  r: string;
+} & (SignNFTParams | {});
+
 export type EmailConfirmationStateData = {
   redirectLink?: string;
   refCode?: string;
-  refProfileQueryParams?: RefQuery;
+  refProfileQueryParams?: RefQueryParams;
 };

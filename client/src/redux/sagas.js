@@ -14,7 +14,6 @@ import {
   fioAddressRegisterSuccess,
   refLoginSuccess,
   refActionSuccess,
-  fioAddressCheckRegisteredSuccess,
 } from './refProfile/sagas';
 import { clearGenericModalError } from './modal/sagas';
 
@@ -32,6 +31,5 @@ export default function* rootSaga(history, api) {
     refLoginSuccess(),
     clearGenericModalError(),
     refActionSuccess(),
-    fioAddressCheckRegisteredSuccess(),
   ]);
 }

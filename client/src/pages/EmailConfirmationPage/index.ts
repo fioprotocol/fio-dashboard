@@ -7,11 +7,13 @@ import { compose } from '../../utils';
 import { confirmEmail } from '../../redux/profile/actions';
 import { getInfo } from '../../redux/refProfile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
+import { addManual as createNotification } from '../../redux/notifications/actions';
 
 import {
   loading,
   emailConfirmationResult,
   isAuthenticated,
+  profileRefreshed,
 } from '../../redux/profile/selectors';
 import { cartItems } from '../../redux/cart/selectors';
 
@@ -22,12 +24,14 @@ const reduxConnect = connect(
     loading,
     emailConfirmationResult,
     isAuthenticated,
+    profileRefreshed,
     cartItems,
   }),
   {
     confirmEmail,
     getInfo,
     showLoginModal,
+    createNotification,
   },
 );
 

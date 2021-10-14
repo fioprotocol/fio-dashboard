@@ -10,7 +10,8 @@ import { Transactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions'
 import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { isDomain } from '../utils';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
-import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
+
+import { NFTTokenDoublet } from '../types';
 
 interface TrxResponse {
   transaction_id?: string;
@@ -326,7 +327,7 @@ export default class Fio {
 
   singNFT = async (
     fioAddress: string,
-    nfts: NftItem[],
+    nfts: NFTTokenDoublet[],
   ): Promise<TrxResponse> => {
     this.setBaseUrl();
     try {
@@ -336,7 +337,14 @@ export default class Fio {
         'addnft',
         {
           fio_address: fioAddress,
-          nfts,
+          nfts: nfts.map(
+            ({ contractAddress, chainCode, tokenId, ...rest }) => ({
+              contract_address: contractAddress,
+              chain_code: chainCode,
+              token_id: tokenId,
+              ...rest,
+            }),
+          ),
           max_fee: defaultFee,
           tpid: '',
         },

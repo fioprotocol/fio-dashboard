@@ -20,14 +20,7 @@ const FioAddressNftPage: React.FC<Props> = props => {
     nft: { address, currentNft },
     fioAddresses,
   } = props;
-  const {
-    chainCode: chain_code,
-    tokenId: token_id,
-    contractAddress: contract_address,
-    url,
-    hash,
-    metadata,
-  } = currentNft || {};
+  const { metadata } = currentNft || {};
 
   const creatorUrl = (() => {
     try {
@@ -38,12 +31,8 @@ const FioAddressNftPage: React.FC<Props> = props => {
   })();
 
   const initialValues = {
-    chain_code,
-    token_id,
-    contract_address,
-    url,
-    hash,
-    creator_url: creatorUrl,
+    ...currentNft,
+    creatorUrl,
   };
 
   if (!currentNft || !address || isEmpty(fioAddresses))

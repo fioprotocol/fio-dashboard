@@ -30,11 +30,11 @@ import EmailConfirmationPage from './pages/EmailConfirmationPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
 import EmailConfirmGatePage from './pages/EmailConfirmGatePage';
-
-import { ROUTES } from './constants/routes';
 import FioAddressSignaturesPage from './pages/FioAddressSignaturesPage';
 import FioAddressSignPage from './pages/FioAddressSignPage';
 import FioAddressNftPage from './pages/FioAddressNftPage';
+
+import { ROUTES } from './constants/routes';
 
 const LIST_TOKEN_PARENT_ROUTE = `${ROUTES.LINK_TOKEN_LIST}/:id`;
 
