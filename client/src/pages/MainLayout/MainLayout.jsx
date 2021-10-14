@@ -67,6 +67,7 @@ MainLayout.propTypes = exact({
   children: PropTypes.element,
   pathname: PropTypes.string.isRequired,
   isAuthenticated: PropTypes.bool,
+  isActiveUser: PropTypes.bool,
   loginSuccess: PropTypes.bool,
   showLogin: PropTypes.bool,
   showRecovery: PropTypes.bool,
