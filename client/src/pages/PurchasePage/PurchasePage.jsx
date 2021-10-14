@@ -4,9 +4,13 @@ import isEmpty from 'lodash/isEmpty';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import CheckoutPurchaseContainer from '../../components/CheckoutPurchaseContainer';
 import { RenderPurchase } from '../../components/CheckoutPurchaseContainer/CheckoutPurchaseComponents';
-import { REF_ACTIONS_TO_ROUTES } from '../../constants/common';
+import { REF_ACTIONS, REF_ACTIONS_TO_ROUTES } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 import { putParamsToUrl, transformResult } from '../../utils';
+
+const CONTINUE_TEXT = {
+  [REF_ACTIONS.SIGNNFT]: 'Sign Your NFT',
+};
 
 const PurchasePage = props => {
   const {
@@ -66,7 +70,13 @@ const PurchasePage = props => {
     <PseudoModalContainer title={title} onClose={onClose}>
       <CheckoutPurchaseContainer
         isPurchase
-        closeText={isRefFlow ? 'Continue' : null}
+        closeText={
+          isRefFlow &&
+          refProfileQueryParams != null &&
+          refProfileQueryParams.action
+            ? CONTINUE_TEXT[refProfileQueryParams.action]
+            : null
+        }
         onClose={onClose}
       >
         <RenderPurchase

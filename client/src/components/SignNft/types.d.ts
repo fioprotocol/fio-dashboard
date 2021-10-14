@@ -1,20 +1,20 @@
 import { History } from 'history';
 
-import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 import {
   FioWalletDoublet,
   PinConfirmation,
   FioAddressDoublet,
   WalletKeys,
+  NFTTokenDoublet,
 } from '../../types';
 
 export type NftFormValues = {
-  chain_code: string;
-  contract_address: string;
-  token_id: string;
+  chainCode: string;
+  contractAddress: string;
+  tokenId: string;
   url: string;
   hash: string;
-  creator_url: string;
+  creatorUrl: string;
 };
 
 export type ContainerOwnProps = {
@@ -32,9 +32,13 @@ export type ContainerProps = {
   result: {
     feeCollected?: number;
     error?: string;
-    other?: { nfts: NftItem[] };
+    other?: { nfts: NFTTokenDoublet[] };
   };
-  singNFT: (publicKey: string, nfts: NftItem[], keys: WalletKeys) => void;
+  singNFT: (
+    publicKey: string,
+    nfts: NFTTokenDoublet[],
+    keys: WalletKeys,
+  ) => void;
 
   match: {
     params: { address: string };

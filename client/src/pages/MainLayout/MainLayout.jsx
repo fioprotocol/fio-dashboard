@@ -6,7 +6,6 @@ import Notifications from '../../components/Notifications';
 import Navigation from '../../components/Navigation';
 import Footer from '../../components/Footer';
 import LoginForm from '../../components/LoginForm';
-import FreeAddressAwaiter from '../../components/Modal/FreeAddressAwaiter';
 import PinConfirmModal from '../../components/PinConfirmModal';
 import GenericErrorModal from '../../components/Modal/GenericErrorModal';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
@@ -23,6 +22,7 @@ const MainLayout = props => {
     children,
     edgeContextSet,
     isAuthenticated,
+    isActiveUser,
     showLogin,
     showRecovery,
     init,
@@ -38,7 +38,8 @@ const MainLayout = props => {
   const recoveryFormModalRender = () =>
     showRecovery &&
     edgeContextSet &&
-    isAuthenticated && <PasswordRecoveryForm />;
+    isAuthenticated &&
+    isActiveUser && <PasswordRecoveryForm />;
 
   const isHomePage = pathname === '/';
 
@@ -56,7 +57,6 @@ const MainLayout = props => {
       <Footer />
       {showLogin && edgeContextSet && loginFormModalRender()}
       {showRecovery && edgeContextSet && recoveryFormModalRender()}
-      <FreeAddressAwaiter />
       <PinConfirmModal />
       <GenericErrorModal />
     </div>
@@ -67,6 +67,7 @@ MainLayout.propTypes = exact({
   children: PropTypes.element,
   pathname: PropTypes.string.isRequired,
   isAuthenticated: PropTypes.bool,
+  isActiveUser: PropTypes.bool,
   loginSuccess: PropTypes.bool,
   showLogin: PropTypes.bool,
   showRecovery: PropTypes.bool,

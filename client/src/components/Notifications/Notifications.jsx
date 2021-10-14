@@ -6,6 +6,7 @@ const RELOAD_TIME = 3000;
 export const ACTIONS = {
   RECOVERY: 'RECOVERY',
   CART_TIMEOUT: 'CART_TIMEOUT',
+  EMAIL_CONFIRM: 'EMAIL_CONFIRM',
 };
 
 export default class Notifications extends Component {

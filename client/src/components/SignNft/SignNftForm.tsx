@@ -38,9 +38,9 @@ const SignNFTForm = (props: SignNftFormProps) => {
     <Form onSubmit={onSubmit} validate={validate} initialValues={initialValues}>
       {(props: FormRenderProps) => (
         <form onSubmit={props.handleSubmit}>
-          <OnChange name="chain_code">{fieldValuesChanged}</OnChange>
-          <OnChange name="contract_address">{fieldValuesChanged}</OnChange>
-          <OnChange name="token_id">{fieldValuesChanged}</OnChange>
+          <OnChange name="chainCode">{fieldValuesChanged}</OnChange>
+          <OnChange name="contractAddress">{fieldValuesChanged}</OnChange>
+          <OnChange name="tokenId">{fieldValuesChanged}</OnChange>
           <Container fluid className={classes.signSection}>
             {!isEdit ? (
               <>
@@ -81,7 +81,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
             <Row>
               <Col>
                 <Field
-                  name="chain_code"
+                  name="chainCode"
                   type="text"
                   placeholder="Enter chain code"
                   prefixLabel="Chain Code"
@@ -93,7 +93,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
               </Col>
               <Col>
                 <Field
-                  name="token_id"
+                  name="tokenId"
                   type="text"
                   placeholder="Enter token ID"
                   prefixLabel="Token ID"
@@ -107,7 +107,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
             <Row>
               <Col>
                 <Field
-                  name="contract_address"
+                  name="contractAddress"
                   type="text"
                   placeholder="Enter or paste contract address"
                   prefixLabel="Contract Address"
@@ -150,7 +150,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
             <Row>
               <Col>
                 <Field
-                  name="creator_url"
+                  name="creatorUrl"
                   type="text"
                   placeholder="Enter or paste creator url"
                   prefixLabel="Creator URL"

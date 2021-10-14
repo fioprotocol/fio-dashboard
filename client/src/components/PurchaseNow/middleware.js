@@ -1,6 +1,7 @@
 import apis from '../../api/index';
 import { toString } from '../../redux/notify/sagas';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
+import { waitForAddressRegistered } from '../../util/fio';
 
 const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 2000;
 const wait = () =>
@@ -36,6 +37,7 @@ export const registerFree = async ({
     if (res.error) {
       result.error = res.error;
     } else {
+      await waitForAddressRegistered(fioName);
       result = { ...res, ...result };
     }
   } catch (e) {

@@ -8,31 +8,31 @@ const HASH_REGEX = /^[a-f0-9]{64}$/i;
 
 export const validate = (values: NftFormValues) => {
   const errors: any = {};
-  if (!values.chain_code) {
-    errors.chain_code = 'Required';
+  if (!values.chainCode) {
+    errors.chainCode = 'Required';
   } else {
     try {
-      apis.fio.isChainCodeValid(values.chain_code);
+      apis.fio.isChainCodeValid(values.chainCode);
     } catch (e) {
-      errors.chain_code = 'Not valid chain code';
+      errors.chainCode = 'Not valid chain code';
     }
   }
-  if (!values.contract_address) {
-    errors.contract_address = 'Required';
+  if (!values.contractAddress) {
+    errors.contractAddress = 'Required';
   } else {
     try {
-      apis.fio.isPublicAddressValid(values.contract_address);
+      apis.fio.isPublicAddressValid(values.contractAddress);
     } catch (e) {
-      errors.contract_address = 'Not valid address';
+      errors.contractAddress = 'Not valid address';
     }
   }
 
   if (
-    values.token_id != null &&
-    values.token_id !== '' &&
-    values.token_id.length > TOKEN_ID_MAX_LENGTH
+    values.tokenId != null &&
+    values.tokenId !== '' &&
+    values.tokenId.length > TOKEN_ID_MAX_LENGTH
   ) {
-    errors.token_id = 'Not valid token';
+    errors.tokenId = 'Not valid token';
   }
 
   if (
@@ -51,12 +51,12 @@ export const validate = (values: NftFormValues) => {
     errors.hash = 'Not valid hash';
   }
 
-  if (values.creator_url != null) {
+  if (values.creatorUrl != null) {
     if (
-      JSON.stringify({ creator_url: values.creator_url }).length >
+      JSON.stringify({ creator_url: values.creatorUrl }).length >
       META_MAX_LENGTH
     ) {
-      errors.creator_url = 'Creator URL is too long';
+      errors.creatorUrl = 'Creator URL is too long';
     }
   }
 

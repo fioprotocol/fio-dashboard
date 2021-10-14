@@ -6,7 +6,7 @@ import FioAddressPage from '../FioAddressPage';
 
 import classnames from './RefHomePage.module.scss';
 import { RouteComponentProps } from 'react-router-dom';
-import { RefProfile, RefQuery } from '../../types';
+import { RefProfile, RefQuery, RefQueryParams } from '../../types';
 import { useNonActiveUserRedirect } from '../../util/hooks';
 
 const FADE_OUT_TIMEOUT = 780;
@@ -26,7 +26,7 @@ type Props = {
   loading: boolean;
   edgeAuthLoading: boolean;
   refProfileInfo: RefProfile;
-  refProfileQueryParams: RefQuery;
+  refProfileQueryParams: RefQueryParams;
   refLinkError: string | null;
   getInfo: (code: string) => void;
   setContainedParams: (params: any) => void;

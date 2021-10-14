@@ -4,7 +4,7 @@ import { createStructuredSelector } from 'reselect';
 import { RouterProps, withRouter } from 'react-router-dom';
 
 import { compose, putParamsToUrl } from '../utils';
-import { FioAddressDoublet, RefProfile, RefQuery, User } from '../types';
+import { FioAddressDoublet, RefProfile, RefQueryParams, User } from '../types';
 
 import { isAuthenticated, user } from '../redux/profile/selectors';
 import {
@@ -14,10 +14,9 @@ import {
   refProfileQueryParams,
   refStep,
 } from '../redux/refProfile/selectors';
-import { fioAddresses, addressesFetched } from '../redux/fio/selectors';
+import { fioAddresses } from '../redux/fio/selectors';
 
 import { setContainedParams } from '../redux/refProfile/actions';
-import { toggleFreeAddressAwaiter } from '../redux/modal/actions';
 
 import { REF_ACTIONS_TO_ROUTES } from '../constants/common';
 import { ROUTES } from '../constants/routes';
@@ -31,12 +30,10 @@ type Props = {
   user: User;
   loading: boolean;
   refProfileInfo: RefProfile;
-  refProfileQueryParams: RefQuery;
+  refProfileQueryParams: RefQueryParams;
   refStep: string;
   fioAddresses: FioAddressDoublet[];
-  addressesFetched: { [publicKey: string]: boolean };
   setContainedParams: (params: any) => void;
-  toggleFreeAddressAwaiter: (show: boolean) => void;
 };
 
 const RefFlow = (props: Props & RouterProps): React.FunctionComponent => {
@@ -46,17 +43,12 @@ const RefFlow = (props: Props & RouterProps): React.FunctionComponent => {
     refProfileInfo,
     refProfileQueryParams,
     history,
-    user,
     history: {
       location: { pathname },
     },
-    addressesFetched,
-    toggleFreeAddressAwaiter,
   } = props;
 
   const fioAddressesAmount = fioAddresses.length;
-  const freeAddresses =
-    isAuthenticated && user.freeAddresses != null ? user.freeAddresses : [];
 
   useEffect(() => {
     if (
@@ -76,35 +68,6 @@ const RefFlow = (props: Props & RouterProps): React.FunctionComponent => {
     }
   }, [refProfileInfo, isAuthenticated, fioAddressesAmount, pathname]);
 
-  useEffect(() => {
-    let allAddressesFetched = false;
-    for (const checked of Object.values(addressesFetched)) {
-      if (!checked) {
-        allAddressesFetched = false;
-        break;
-      }
-      allAddressesFetched = true;
-    }
-    if (
-      isAuthenticated &&
-      refProfileInfo != null &&
-      refProfileInfo.code != null &&
-      fioAddressesAmount === 0 &&
-      pathname !== ROUTES.PURCHASE &&
-      freeAddresses.length > 0 &&
-      allAddressesFetched
-    ) {
-      toggleFreeAddressAwaiter(true);
-    }
-  }, [
-    refProfileInfo,
-    isAuthenticated,
-    fioAddressesAmount,
-    pathname,
-    freeAddresses,
-    addressesFetched,
-  ]);
-
   return null;
 };
 
@@ -119,11 +82,9 @@ const reduxConnect = connect(
     refLinkError,
     refStep,
     fioAddresses,
-    addressesFetched,
   }),
   {
     setContainedParams,
-    toggleFreeAddressAwaiter,
   },
 );
 
