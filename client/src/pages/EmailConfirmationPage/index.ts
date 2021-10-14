@@ -7,6 +7,7 @@ import { compose } from '../../utils';
 import { confirmEmail } from '../../redux/profile/actions';
 import { getInfo } from '../../redux/refProfile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
+import { addManual as createNotification } from '../../redux/notifications/actions';
 
 import {
   loading,
@@ -28,6 +29,7 @@ const reduxConnect = connect(
     confirmEmail,
     getInfo,
     showLoginModal,
+    createNotification,
   },
 );
 
