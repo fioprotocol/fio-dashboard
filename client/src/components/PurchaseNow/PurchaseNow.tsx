@@ -7,9 +7,13 @@ import classes from './PurchaseNow.module.scss';
 import { executeRegistration } from './middleware';
 import { sleep, waitForEdgeAccountStop } from '../../utils';
 
+import { PurchaseNowTypes } from './types';
+import { RegistrationResult } from '../../types';
+import { emptyWallet } from '../../redux/fio/reducer';
+
 const MIN_WAIT_TIME = 3000;
 
-export const PurchaseNow = props => {
+export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   const {
     cartItems,
     pinConfirmation,
@@ -33,7 +37,10 @@ export const PurchaseNow = props => {
   const [isWaiting, setWaiting] = useState(false);
   const t0 = performance.now();
 
-  const waitFn = async (fn, results) => {
+  const waitFn = async (
+    fn: (results: RegistrationResult) => void,
+    results: RegistrationResult,
+  ) => {
     const t1 = performance.now();
 
     if (t1 - t0 < MIN_WAIT_TIME) {
@@ -44,13 +51,13 @@ export const PurchaseNow = props => {
 
   const loading = confirmingPin || captchaResolving;
 
-  const currentWallet =
-    (paymentWalletPublicKey &&
-      fioWallets &&
-      fioWallets.find(item => item.publicKey === paymentWalletPublicKey)) ||
-    {};
+  const currentWallet = (paymentWalletPublicKey &&
+    fioWallets &&
+    fioWallets.find(item => item.publicKey === paymentWalletPublicKey)) || {
+    ...emptyWallet,
+  };
 
-  const onProcessingEnd = results => {
+  const onProcessingEnd = (results: RegistrationResult) => {
     for (const registered of results.registered) {
       if (registered.isFree) {
         loadProfile();
@@ -62,7 +69,7 @@ export const PurchaseNow = props => {
   };
 
   // registration
-  useEffect(async () => {
+  useEffect(() => {
     const {
       account: edgeAccount,
       keys: walletKeys,
@@ -70,13 +77,7 @@ export const PurchaseNow = props => {
       action: confirmationAction,
     } = pinConfirmation;
 
-    if (confirmationAction !== CONFIRM_PIN_ACTIONS.PURCHASE) return;
-    if (
-      walletKeys &&
-      walletKeys[currentWallet.edgeId] &&
-      !isProcessing &&
-      (isWaiting || !confirmationError)
-    ) {
+    async function execRegistration() {
       setProcessing(true);
       await waitForEdgeAccountStop(edgeAccount);
       const results = await executeRegistration(
@@ -89,20 +90,31 @@ export const PurchaseNow = props => {
 
       onProcessingEnd(results);
     }
+
+    if (confirmationAction !== CONFIRM_PIN_ACTIONS.PURCHASE) return;
+    if (
+      walletKeys &&
+      walletKeys[currentWallet.edgeId] &&
+      !isProcessing &&
+      (isWaiting || !confirmationError)
+    ) {
+      execRegistration();
+    }
     if (walletKeys && Object.keys(walletKeys).length) resetPinConfirm();
 
     if (confirmationError) setWaiting(false);
   }, [pinConfirmation]);
 
-  useEffect(async () => {
+  useEffect(() => {
     const { success, verifyParams } = captchaResult;
 
-    if (success && isWaiting) {
+    async function execRegistration() {
       setProcessing(true);
       const results = await executeRegistration(
         cartItems,
         {
           public: currentWallet.publicKey,
+          private: '',
         },
         prices.fioNative,
         verifyParams,
@@ -111,6 +123,8 @@ export const PurchaseNow = props => {
 
       onProcessingEnd(results);
     }
+
+    if (success && isWaiting) execRegistration();
 
     if (success === false) setWaiting(false);
   }, [captchaResult]);

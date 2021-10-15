@@ -15,6 +15,7 @@ export type CartItem = {
   error?: string;
   isFree?: boolean;
   errorType?: string;
+  isCustomDomain?: boolean;
 };
 
 export type Notification = {
@@ -45,20 +46,24 @@ export type Prices = {
   usdt: { address: number; domain: number };
 };
 
+export type RegistrationErrors = {
+  fioName: string;
+  error: string;
+  isFree?: boolean;
+  cartItemId: string;
+  errorType: string;
+};
+
+export type RegistrationRegistered = {
+  fioName: string;
+  isFree?: boolean;
+  fee_collected: number;
+  cartItemId: string;
+};
+
 export type RegistrationResult = {
-  errors: {
-    fioName: string;
-    error: string;
-    isFree?: boolean;
-    cartItemId: string;
-    errorType: string;
-  }[];
-  registered: {
-    fioName: string;
-    isFree?: boolean;
-    fee_collected: number;
-    cartItemId: string;
-  }[];
+  errors: RegistrationErrors[];
+  registered: RegistrationRegistered[];
   partial: string[];
 };
 

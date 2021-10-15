@@ -4,6 +4,13 @@ import { FIO_ADDRESS_DELIMITER } from '../../utils';
 import { waitForAddressRegistered } from '../../util/fio';
 
 import { ERROR_TYPES } from '../../constants/errors';
+import { RegistrationType } from './types';
+import {
+  CartItem,
+  RegistrationResult,
+  WalletKeys,
+  RegistrationRegistered,
+} from '../../types';
 
 const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 2000;
 const wait = () =>
@@ -11,23 +18,30 @@ const wait = () =>
     setTimeout(resolve, TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION),
   );
 
-/**
- *
- * @param registration
- * @param registration.fioName
- * @param registration.cartItemId
- * @param registration.publicKey
- * @param registration.verifyParams
- * @returns {Promise<{isFree: boolean, fioName: string}>}
- */
 export const registerFree = async ({
   fioName,
   cartItemId,
   publicKey,
   verifyParams,
   refCode = '',
+}: {
+  fioName: string;
+  cartItemId: string;
+  publicKey: string;
+  verifyParams: {};
+  refCode?: string;
 }) => {
-  let result = { cartItemId, fioName, isFree: true };
+  let result: {
+    cartItemId: string;
+    fioName: string;
+    isFree: boolean;
+    error?: string;
+    errorType?: string;
+  } = {
+    cartItemId,
+    fioName,
+    isFree: true,
+  };
 
   try {
     const res = await apis.fioReg.register({
@@ -50,16 +64,23 @@ export const registerFree = async ({
   return result;
 };
 
-/**
- *
- * @param item
- * @param item.fioName
- * @param item.cartItemId
- * @param item.fee
- * @returns {Promise<{cartItemId: string, fioName: string}>}
- */
-export const register = async ({ fioName, fee, cartItemId }) => {
-  let result = { cartItemId, fioName };
+export const register = async ({
+  fioName,
+  fee,
+  cartItemId,
+}: {
+  fioName: string;
+  fee: number;
+  cartItemId: string;
+  error?: string;
+  errorType?: string;
+}) => {
+  let result: {
+    cartItemId: string;
+    fioName: string;
+    error?: string;
+    errorType?: string;
+  } = { cartItemId, fioName };
   try {
     const res = await apis.fio.register(fioName, fee);
 
@@ -77,31 +98,18 @@ export const register = async ({ fioName, fee, cartItemId }) => {
   return result;
 };
 
-/**
- *
- * @param items[]
- * @param items[].id
- * @param items[].address
- * @param items[].domain
- * @param items[].costFio
- * @param items[].costUsdc
- * @param items[].hasCustomDomain
- * @param keys
- * @param fees
- * @param fees.address
- * @param fees.domain
- * @param verifyParams
- * @param refCode
- * @returns {Promise<{registered: [], errors: []}>}
- */
 export const executeRegistration = async (
-  items,
-  keys,
-  fees,
+  items: CartItem[],
+  keys: WalletKeys,
+  fees: { address: number; domain: number },
   verifyParams = {},
   refCode = '',
 ) => {
-  const result = { errors: [], registered: [], partial: [] };
+  const result: RegistrationResult = {
+    errors: [],
+    registered: [],
+    partial: [],
+  };
   const registrations = makeRegistrationOrder([...items], fees);
   const registrationPromises = [];
   const dependedRegistrationPromises = [];
@@ -144,26 +152,15 @@ export const executeRegistration = async (
   return result;
 };
 
-/**
- *
- * @param cartItems[]
- * @param cartItems[].id
- * @param cartItems[].address
- * @param cartItems[].domain
- * @param cartItems[].costFio
- * @param cartItems[].costUsdc
- * @param cartItems[].hasCustomDomain
- * @param fees
- * @param fees.address
- * @param fees.domain
- * @returns {{ cartItemId: string, fioName: string, isFree:boolean, fee?:number, depended?: { domain?:string }, isCustomDomain?: boolean }[]}
- */
-const makeRegistrationOrder = (cartItems, fees) => {
+const makeRegistrationOrder = (
+  cartItems: CartItem[],
+  fees: { address: number; domain: number },
+) => {
   const registrations = [];
   for (const cartItem of cartItems.sort(item =>
     item.hasCustomDomain ? -1 : 1,
   )) {
-    const registration = {
+    const registration: RegistrationType = {
       cartItemId: cartItem.id,
       fioName: cartItem.address
         ? `${cartItem.address}${FIO_ADDRESS_DELIMITER}${cartItem.domain}`
@@ -201,22 +198,10 @@ const makeRegistrationOrder = (cartItems, fees) => {
   return registrations;
 };
 
-/**
- *
- * @param registration
- * @param registration.cartItemId
- * @param registration.fioName
- * @param registration.isFree
- * @param registration.fee
- * @param keys
- * @param verifyParams
- * @param refCode
- * @returns {*}
- */
 const makeRegistrationPromise = (
-  registration,
-  keys,
-  verifyParams,
+  registration: RegistrationType,
+  keys: WalletKeys,
+  verifyParams = {},
   refCode = '',
 ) => {
   return registration.isFree
@@ -229,15 +214,16 @@ const makeRegistrationPromise = (
     : register(registration);
 };
 
-/**
- *
- * @param {Array<Object>} responses
- * @param {Object} result
- * @param {Array<Object>} result.errors
- * @param {Array<Object>} result.registered
- * @param {Array<string>} result.partial
- */
-const handleResponses = (responses, result) => {
+const handleResponses = (
+  responses: PromiseSettledResult<{
+    cartItemId: string;
+    fioName: string;
+    error?: string;
+    errorType?: string;
+  }>[] &
+    any,
+  result: RegistrationResult,
+) => {
   for (const response of responses) {
     const responseValue = response.value;
     const existingCartItemErrorIndex = result.errors.findIndex(
@@ -250,12 +236,12 @@ const handleResponses = (responses, result) => {
       if (existingCartItemErrorIndex > -1) {
         result.errors[existingCartItemErrorIndex] = {
           ...result.errors[existingCartItemErrorIndex],
-          ...response.value,
+          ...responseValue,
         };
         continue;
       }
       if (existingCartItemRegisteredIndex > -1) {
-        result.partial.push(response.value.cartItemId);
+        result.partial.push(responseValue.cartItemId);
       }
       result.errors.push(response.value);
     } else {
@@ -278,7 +264,10 @@ const handleResponses = (responses, result) => {
   }
 };
 
-const combineFee = (registered1, registered2) => {
+const combineFee = (
+  registered1: RegistrationRegistered,
+  registered2: RegistrationRegistered,
+) => {
   if (!registered1.fee_collected) return null;
 
   return registered1.fee_collected + registered2.fee_collected;
