@@ -14,6 +14,7 @@ export type CartItem = {
   showBadge?: boolean;
   error?: string;
   isFree?: boolean;
+  errorType?: string;
 };
 
 export type Notification = {
@@ -50,6 +51,7 @@ export type RegistrationResult = {
     error: string;
     isFree?: boolean;
     cartItemId: string;
+    errorType: string;
   }[];
   registered: {
     fioName: string;

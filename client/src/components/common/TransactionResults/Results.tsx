@@ -6,7 +6,7 @@ import { BADGE_TYPES } from '../../Badge/Badge';
 import PriceBadge from '../../Badges/PriceBadge/PriceBadge';
 import InfoBadge from '../../InfoBadge/InfoBadge';
 
-import { DEFAULT_FIO_TRX_ERR_MESSAGE } from '../../../constants/common';
+import { DEFAULT_FIO_TRX_ERR_MESSAGE } from '../../../constants/errors';
 
 import { ResultsContainerProps } from './types';
 
