@@ -7,7 +7,7 @@ import CartItem from '../Cart/CartItem';
 import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
 import PriceBadge from '../Badges/PriceBadge/PriceBadge';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
-import { DEFAULT_FIO_TRX_ERR_MESSAGE } from '../../constants/common';
+import { ERROR_MESSAGES, ERROR_TYPES } from '../../constants/errors';
 import { totalCost } from '../../utils';
 
 import classes from './CheckoutPurchaseContainer.module.scss';
@@ -106,7 +106,8 @@ export const RenderPurchase = props => {
                 {allErrored ? (
                   <p className={classes.text}>
                     <span className="boldText">Purchase failed!</span> -{' '}
-                    {DEFAULT_FIO_TRX_ERR_MESSAGE}
+                    {ERROR_MESSAGES[errItems[0].errorType] ||
+                      ERROR_MESSAGES[ERROR_TYPES.default]}
                   </p>
                 ) : (
                   <p className={classes.text}>

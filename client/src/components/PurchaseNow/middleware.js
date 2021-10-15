@@ -3,6 +3,8 @@ import { toString } from '../../redux/notify/sagas';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 import { waitForAddressRegistered } from '../../util/fio';
 
+import { ERROR_TYPES } from '../../constants/errors';
+
 const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 2000;
 const wait = () =>
   new Promise(resolve =>
@@ -36,12 +38,14 @@ export const registerFree = async ({
     });
     if (res.error) {
       result.error = res.error;
+      result.errorType = ERROR_TYPES.default;
     } else {
       await waitForAddressRegistered(fioName);
       result = { ...res, ...result };
     }
   } catch (e) {
     result.error = e.message || toString(e.fields);
+    result.errorType = e.errorType || ERROR_TYPES.default;
   }
   return result;
 };
@@ -67,6 +71,7 @@ export const register = async ({ fioName, fee, cartItemId }) => {
   } catch (e) {
     console.error(e.json);
     result.error = apis.fio.extractError(e.json) || e.message;
+    result.errorType = e.errorType || ERROR_TYPES.default;
   }
 
   return result;
