@@ -137,6 +137,10 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     this.props.resetSuccessState();
   }
 
+  openLogin = () => {
+    this.props.showLoginModal();
+  };
+
   onFinish = () => {
     const {
       values: { email },
@@ -175,7 +179,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
           error: (!!emailError || !!usernameError) && (
             <span>
               This Email Address is already registered,{' '}
-              <Link to="#" onClick={this.props.showLoginModal}>
+              <Link to="#" onClick={this.openLogin}>
                 Sign-in
               </Link>{' '}
               instead
@@ -399,7 +403,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
             bottomText={
               <p>
                 Already have an account?{' '}
-                <Link to="#" onClick={this.props.showLoginModal}>
+                <Link to="#" onClick={this.openLogin}>
                   Sign In
                 </Link>
               </p>
