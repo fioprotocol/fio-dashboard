@@ -21,6 +21,7 @@ const AddressWidget = (props: {
   subTitle?: string;
 }) => {
   const { logo, subTitle, action, edgeAuthLoading, showLoginModal } = props;
+  const openLogin = () => showLoginModal();
   return (
     <div className={classnames(classes.container, classes.refContainer)}>
       <div className="mb-5">{logo}</div>
@@ -35,7 +36,7 @@ const AddressWidget = (props: {
           <Button
             className="btn btn-primary ml-lg-5 ml-md-4 ml-sm-3 pt-2 pb-2"
             size="lg"
-            onClick={showLoginModal}
+            onClick={openLogin}
             disabled={edgeAuthLoading}
           >
             Sign in

@@ -6,8 +6,9 @@ export default combineReducers({
   redirectLink(state: string = '', action) {
     switch (action.type) {
       case actions.SET_REDIRECT_PATH:
-      case SHOW_LOGIN:
         return action.data;
+      case SHOW_LOGIN:
+        return action.data || state;
       default:
         return state;
     }
