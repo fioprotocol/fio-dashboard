@@ -18,7 +18,7 @@ const WalletDropdown = props => {
     (!isEmpty(sortedOptions) && sortedOptions[0]) || 'Wallet name';
 
   const styledOptions = sortedOptions.map(item => ({
-    value: item.id,
+    value: item.publicKey,
     label: item.name,
     className: [classes.optionItem],
   }));
@@ -33,14 +33,14 @@ const WalletDropdown = props => {
   useEffect(() => {
     if (initValue) {
       onChange(initValue);
-      setWallet(initValue.id);
+      setWallet(initValue.publicKey);
     }
   }, []);
 
   return (
     <Dropdown
       options={styledOptions}
-      value={initValue && initValue.id}
+      value={initValue && initValue.publicKey}
       onChange={onDropdownChange}
       className={classes.dropdown}
       controlClassName={classes.control}

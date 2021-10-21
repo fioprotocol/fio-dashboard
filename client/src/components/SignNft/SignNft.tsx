@@ -197,7 +197,7 @@ const SignNft: React.FC<ContainerProps> = props => {
         processing={processing}
         data={submitData}
         submitAction={submit}
-        fioWalletEdgeId={currentWallet.id || ''}
+        fioWalletEdgeId={currentWallet.edgeId || ''}
         edgeAccountLogoutBefore={true}
       />
       <PseudoModalContainer
