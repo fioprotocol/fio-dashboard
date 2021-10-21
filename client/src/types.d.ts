@@ -76,6 +76,15 @@ export type FioWalletDoublet = {
   from: string;
 };
 
+export type NewFioWalletDoublet = {
+  edgeId?: string;
+  name: string;
+  publicKey: string;
+  balance?: number | null;
+  from: string;
+  data?: any;
+};
+
 export type FioAddressDoublet = {
   name: string;
   expiration: string;

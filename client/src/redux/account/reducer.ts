@@ -2,7 +2,7 @@ import { combineReducers } from 'redux';
 import * as actions from './actions';
 
 export default combineReducers({
-  loading(state = false, action) {
+  loading(state: boolean = false, action) {
     switch (action.type) {
       case actions.SET_WALLETS_REQUEST:
       case actions.ADD_WALLET_REQUEST:
