@@ -118,7 +118,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
         processing={processing}
         data={submitData}
         submitAction={submit}
-        fioWalletEdgeId={fioWallet.id || ''}
+        fioWalletEdgeId={fioWallet.edgeId || ''}
         edgeAccountLogoutBefore={true}
       />
       <FioDomainStatusChangeForm

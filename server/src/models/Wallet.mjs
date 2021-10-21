@@ -48,12 +48,14 @@ export class Wallet extends Base {
     });
   }
 
-  static format({ publicKey, edgeId, name, data }) {
+  static format({ id, publicKey, edgeId, name, data, from }) {
     return {
-      id: edgeId,
+      id,
+      edgeId,
       publicKey,
       name,
       data,
+      from,
     };
   }
 }

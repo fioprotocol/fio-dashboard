@@ -20,7 +20,7 @@ export default combineReducers({
         return state;
     }
   },
-  paymentWalletId(state = '', action = {}) {
+  paymentWalletPublicKey(state = '', action = {}) {
     switch (action.type) {
       case actions.SET_WALLET_FOR_PAYMENT:
         return action.data;

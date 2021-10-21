@@ -14,7 +14,7 @@ export const PurchaseNow = props => {
     cartItems,
     pinConfirmation,
     captchaResult,
-    paymentWalletId,
+    paymentWalletPublicKey,
     showPinModal,
     checkCaptcha,
     loadProfile,
@@ -45,9 +45,9 @@ export const PurchaseNow = props => {
   const loading = confirmingPin || captchaResolving;
 
   const currentWallet =
-    (paymentWalletId &&
+    (paymentWalletPublicKey &&
       fioWallets &&
-      fioWallets.find(item => item.id === paymentWalletId)) ||
+      fioWallets.find(item => item.publicKey === paymentWalletPublicKey)) ||
     {};
 
   const onProcessingEnd = results => {
@@ -73,7 +73,7 @@ export const PurchaseNow = props => {
     if (confirmationAction !== CONFIRM_PIN_ACTIONS.PURCHASE) return;
     if (
       walletKeys &&
-      walletKeys[currentWallet.id] &&
+      walletKeys[currentWallet.edgeId] &&
       !isProcessing &&
       (isWaiting || !confirmationError)
     ) {
@@ -81,9 +81,9 @@ export const PurchaseNow = props => {
       await waitForEdgeAccountStop(edgeAccount);
       const results = await executeRegistration(
         cartItems,
-        walletKeys[currentWallet.id],
+        walletKeys[currentWallet.edgeId],
         prices.fioNative,
-        { pin: walletKeys[currentWallet.id].public }, // todo: change to other verification method
+        { pin: walletKeys[currentWallet.edgeId].public }, // todo: change to other verification method
         refProfileInfo != null ? refProfileInfo.code : '',
       );
 

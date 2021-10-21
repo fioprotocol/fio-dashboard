@@ -1,11 +1,12 @@
 import { combineReducers } from 'redux';
-import { LOGIN_SUCCESS } from '../edge/actions';
+import { LOGIN_SUCCESS as EDGE_LOGIN_SUCCESS } from '../edge/actions';
 import {
   LOGOUT_SUCCESS,
   PROFILE_SUCCESS,
   SIGNUP_SUCCESS,
 } from '../profile/actions';
 import * as actions from './actions';
+import { WALLET_CREATED_FROM } from '../../constants/common';
 import {
   FioWalletDoublet,
   FioAddressDoublet,
@@ -19,9 +20,11 @@ import { transformNft } from '../../util/fio';
 
 export const emptyWallet: FioWalletDoublet = {
   id: '',
+  edgeId: '',
   name: '',
   publicKey: '',
   balance: null,
+  from: WALLET_CREATED_FROM.EDGE,
 };
 
 const defaultLinkState: LinkActionResult = {
@@ -64,25 +67,24 @@ export default combineReducers({
   fioWallets(state: FioWalletDoublet[] = [], action) {
     switch (action.type) {
       case SIGNUP_SUCCESS: {
-        const fioWallets = [...state];
+        const fioWallets = [];
         for (const fioWallet of action.fioWallets) {
           fioWallets.push({
             ...emptyWallet,
-            id: fioWallet.id,
-            publicKey: fioWallet.publicKey,
-            name: fioWallet.name,
+            ...fioWallet,
           });
         }
         return fioWallets;
       }
-      case LOGIN_SUCCESS: {
-        const fioWallets = [...state];
+      case EDGE_LOGIN_SUCCESS: {
+        const fioWallets: FioWalletDoublet[] = [];
 
         for (const fioWallet of action.data.fioWallets) {
-          if (fioWallets.find(item => item.id === fioWallet.id)) continue;
+          if (fioWallets.find(item => item.publicKey === fioWallet.publicKey))
+            continue;
           fioWallets.push({
             ...emptyWallet,
-            id: fioWallet.id,
+            edgeId: fioWallet.id,
             publicKey: fioWallet.getDisplayPublicSeed(),
             name: fioWallet.name,
           });
@@ -90,16 +92,24 @@ export default combineReducers({
         return fioWallets;
       }
       case PROFILE_SUCCESS: {
-        const fioWallets = [...state];
+        const fioWallets: FioWalletDoublet[] = [];
+        const existingList = [...state];
 
         for (const fioWallet of action.data.fioWallets) {
-          if (fioWallets.find(item => item.id === fioWallet.id)) continue;
-          fioWallets.push({
-            ...emptyWallet,
-            id: fioWallet.id,
-            publicKey: fioWallet.publicKey,
-            name: fioWallet.name,
-          });
+          const existingWallet = existingList.find(
+            item => item.publicKey === fioWallet.publicKey,
+          );
+          fioWallets.push(
+            existingWallet
+              ? {
+                  ...existingWallet,
+                  ...fioWallet,
+                }
+              : {
+                  ...emptyWallet,
+                  ...fioWallet,
+                },
+          );
         }
         return fioWallets;
       }

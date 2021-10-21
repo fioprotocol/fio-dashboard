@@ -32,6 +32,7 @@ import {
   RefQueryParams,
   WalletKeysObj,
 } from '../../types';
+import { WALLET_CREATED_FROM } from '../../constants/common';
 
 const STEPS = {
   EMAIL_PASSWORD: 'EMAIL_PASSWORD',
@@ -307,9 +308,11 @@ export default class CreateAccountForm extends React.Component<Props, State> {
         if (!Object.values(errors).length && account) {
           const fioWallets: FioWalletDoublet[] = [
             {
-              id: fioWallet.id,
+              id: '',
+              edgeId: fioWallet.id,
               name: fioWallet.name,
               publicKey: fioWallet.getDisplayPublicSeed(),
+              from: WALLET_CREATED_FROM.EDGE,
             },
           ];
           this.setState({ keys: getWalletKeys([fioWallet]) });

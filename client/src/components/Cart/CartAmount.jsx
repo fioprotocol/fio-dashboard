@@ -12,7 +12,7 @@ const CartAmount = props => {
     cartItems,
     hasLowBalance,
     isFree,
-    paymentWalletId,
+    paymentWalletPublicKey,
     recalculateBalance,
   } = props;
 
@@ -38,7 +38,9 @@ const CartAmount = props => {
         className={classes.checkout}
         onClick={handleCheckout}
         disabled={
-          hasLowBalance || paymentWalletId === '' || cartItems.length === 0
+          hasLowBalance ||
+          paymentWalletPublicKey === '' ||
+          cartItems.length === 0
         }
       >
         <FontAwesomeIcon icon="wallet" className={classes.icon} />

@@ -69,9 +69,11 @@ export type DeleteCartItem =
 
 export type FioWalletDoublet = {
   id: string;
+  edgeId: string;
   name: string;
   publicKey: string;
   balance?: number | null;
+  from: string;
 };
 
 export type FioAddressDoublet = {

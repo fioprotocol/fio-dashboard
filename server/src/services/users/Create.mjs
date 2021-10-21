@@ -18,7 +18,7 @@ export default class UsersCreate extends Base {
               'required',
               {
                 list_of_objects: {
-                  id: 'string',
+                  edgeId: 'string',
                   name: 'string',
                   publicKey: 'string',
                 },
@@ -74,9 +74,9 @@ export default class UsersCreate extends Base {
       data: { pagesToShow: ['/'] },
     }).save();
 
-    for (const { id, name, publicKey } of fioWallets) {
+    for (const { edgeId, name, publicKey } of fioWallets) {
       const newWallet = new Wallet({
-        edgeId: id,
+        edgeId,
         name,
         publicKey,
         userId: user.id,
