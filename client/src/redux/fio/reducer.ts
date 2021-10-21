@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { LOGIN_SUCCESS as EDGE_LOGIN_SUCCESS } from '../edge/actions';
+import { ADD_WALLET_SUCCESS } from '../account/actions';
 import {
   LOGOUT_SUCCESS,
   PROFILE_SUCCESS,
@@ -122,6 +123,15 @@ export default combineReducers({
               }
             : fioWallet,
         );
+      }
+      case ADD_WALLET_SUCCESS: {
+        const fioWallets = [...state];
+        if (
+          !fioWallets.find(item => item.publicKey === action.data.publicKey)
+        ) {
+          fioWallets.push(action.data);
+        }
+        return fioWallets;
       }
       case LOGOUT_SUCCESS:
         return [];
