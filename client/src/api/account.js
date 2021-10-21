@@ -8,4 +8,8 @@ export default class Account extends Base {
   setWallets(fioWallets) {
     return this.apiClient.post('account/wallets', { data: fioWallets });
   }
+
+  addWallet(data) {
+    return this.apiClient.post('account/wallet', { data });
+  }
 }
