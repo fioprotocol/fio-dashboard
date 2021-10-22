@@ -1,19 +1,22 @@
+import { createSelector } from 'reselect';
 import { refProfileInfo } from '../refProfile/selectors';
 import { prefix } from './actions';
 
 export const loading = state => state[prefix].loading;
 export const prices = state => state[prefix].prices;
-export const domains = state => {
-  let publicDomains = state[prefix].domains;
-  const refProfile = refProfileInfo(state);
-  if (refProfile != null && refProfile.code) {
-    publicDomains = refProfile.settings.domains.map(refDomain => ({
-      domain: refDomain,
-      free: true,
-    }));
-  }
-  return publicDomains;
-};
+export const registrationDomains = state => state[prefix].domains;
+export const domains = createSelector(
+  registrationDomains,
+  refProfileInfo,
+  (domains, refProfileInfo) =>
+    refProfileInfo != null && refProfileInfo.code
+      ? refProfileInfo.settings.domains.map(refDomain => ({
+          domain: refDomain,
+          free: true,
+        }))
+      : domains,
+);
+
 export const captchaResult = state => state[prefix].captchaResult;
 export const captchaResolving = state => state[prefix].captchaResolving;
 export const registrationResult = state => state[prefix].registrationResult;
