@@ -4,7 +4,13 @@ import { createStructuredSelector } from 'reselect';
 import { RouterProps, withRouter } from 'react-router-dom';
 
 import { compose, putParamsToUrl } from '../utils';
-import { FioAddressDoublet, RefProfile, RefQueryParams, User } from '../types';
+import {
+  FioAddressDoublet,
+  FioWalletDoublet,
+  RefProfile,
+  RefQueryParams,
+  User,
+} from '../types';
 
 import { isAuthenticated, user } from '../redux/profile/selectors';
 import {
@@ -14,9 +20,10 @@ import {
   refProfileQueryParams,
   refStep,
 } from '../redux/refProfile/selectors';
-import { fioAddresses } from '../redux/fio/selectors';
+import { fioWallets, fioAddresses } from '../redux/fio/selectors';
 
 import { setContainedParams } from '../redux/refProfile/actions';
+import { refreshFioNames } from '../redux/fio/actions';
 
 import { REF_ACTIONS_TO_ROUTES } from '../constants/common';
 import { ROUTES } from '../constants/routes';
@@ -33,6 +40,8 @@ type Props = {
   refProfileQueryParams: RefQueryParams;
   refStep: string;
   fioAddresses: FioAddressDoublet[];
+  fioWallets: FioWalletDoublet[];
+  refreshFioNames: (publicKey: string) => void;
   setContainedParams: (params: any) => void;
 };
 
@@ -40,15 +49,29 @@ const RefFlow = (props: Props & RouterProps): React.FunctionComponent => {
   const {
     isAuthenticated,
     fioAddresses,
+    fioWallets,
     refProfileInfo,
     refProfileQueryParams,
     history,
     history: {
       location: { pathname },
     },
+    refreshFioNames,
   } = props;
 
   const fioAddressesAmount = fioAddresses.length;
+
+  useEffect(() => {
+    if (
+      isAuthenticated &&
+      refProfileInfo != null &&
+      refProfileInfo.code != null
+    ) {
+      for (const fioWallet of fioWallets) {
+        refreshFioNames(fioWallet.publicKey);
+      }
+    }
+  }, [isAuthenticated, refProfileInfo, fioWallets]);
 
   useEffect(() => {
     if (
@@ -82,8 +105,10 @@ const reduxConnect = connect(
     refLinkError,
     refStep,
     fioAddresses,
+    fioWallets,
   }),
   {
+    refreshFioNames,
     setContainedParams,
   },
 );
