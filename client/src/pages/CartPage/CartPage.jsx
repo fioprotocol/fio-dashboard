@@ -95,11 +95,11 @@ const CartPage = props => {
     }
   }, []);
 
-  useEffect(async () => {
+  useEffect(() => {
     if (!isAuthenticated) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
-    await handleFreeAddressCart({
+    handleFreeAddressCart({
       domains,
       recalculate,
       cartItems,
