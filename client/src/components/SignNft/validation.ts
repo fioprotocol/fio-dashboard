@@ -3,7 +3,7 @@ import apis from '../../api';
 
 const TOKEN_ID_MAX_LENGTH = 64;
 const URL_MAX_LENGTH = 128;
-const META_MAX_LENGTH = 64;
+const META_MAX_LENGTH = 128;
 const HASH_REGEX = /^[a-f0-9]{64}$/i;
 
 export const validate = (values: NftFormValues) => {
