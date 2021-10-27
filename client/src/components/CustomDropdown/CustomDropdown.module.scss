@@ -1,0 +1,79 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+
+.dropdown {
+  margin-bottom: 30px;
+  width: 100%;
+  min-width: 335px;
+
+  .icon {
+    font-size: 13px;
+    color: $gray-main;
+  }
+}
+
+.control {
+  width: 100%;
+  background-color: $light-gray;
+  border-radius: 7px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  line-height: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: none;
+  cursor: pointer;
+  padding-left: 20px;
+  padding-right: 20px;
+  position: relative;
+  z-index: 1001; //show over menu
+  @include sf-pro-display-medium;
+  box-shadow: 0 0 8px 0 rgba(0,0,0,0.37);
+}
+.placeholder {
+  color: $gray-main;
+}
+.menu {
+  border-radius: 0 0 7px 7px;
+  border: none;
+  box-shadow: 0 0 10px 0 rgba(0,0,0,0.53);
+  margin-top: -7px;
+  padding-top: 7px;
+  max-height: 250px;
+  animation-name: expand;
+  animation-duration: 0.4s;
+}
+
+.optionItem {
+  @include sf-pro-display-medium;
+  margin: 0 auto;
+  font-size: 13px;
+  color: $black;
+  text-align: left;
+  padding: 9px 20px 9px 20px;
+
+  &:after {
+    content: ' ';
+    position: absolute;
+    width: calc(100% - 20px);
+    left: 10px;
+    margin: -9px auto 0;
+    border-bottom: 1px solid $light;
+  }
+
+  &:last-child:after, &:first-child:after {
+    border: none;
+  }
+
+  &:hover {
+    color: $white;
+    background-color: $dark-gray;
+  }
+
+  &:hover:after {
+    border-color: $dark-gray;
+  }
+}
