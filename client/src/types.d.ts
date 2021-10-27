@@ -100,6 +100,7 @@ export type NFTTokenDoublet = {
   url?: string;
   hash?: string;
   metadata?: string;
+  fioAddress?: string;
 };
 
 export type WalletKeysObj = {

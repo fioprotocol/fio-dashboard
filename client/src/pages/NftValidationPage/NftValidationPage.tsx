@@ -1,58 +1,36 @@
 import React, { useState } from 'react';
+import isEmpty from 'lodash/isEmpty';
+
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 import NftValidationForm from '../../components/NftValidationComponents/NftValidationForm';
-import CustomDropdown from '../../components/NftValidationComponents/CustomDropdown';
-import ContractAddressField from '../../components/NftValidationComponents/ContractAddressField';
-import GenericNftValidationField, {
-  FIELDS_NAMES,
-} from '../../components/NftValidationComponents/GenericNftValidationField';
+import CustomDropdown from '../../components/CustomDropdown';
+
+import NftListResults from '../../components/NftValidationComponents/NftListResults';
+import { OPTIONS, optionsList } from './constant';
+
+import { NftValidationFormValues } from '../../components/NftValidationComponents/types';
+
+import { NFTTokenDoublet } from '../../types';
 
 import classes from './NftValidationPage.module.scss';
 
-const OPTIONS = [
-  {
-    id: 'contractAddress',
-    name: 'Contract Address',
-    renderField: <ContractAddressField />,
-  },
-  {
-    id: 'fioAddress',
-    name: 'FIO Address',
-    renderField: (
-      <GenericNftValidationField
-        fieldName={FIELDS_NAMES.FIO_ADDRESS}
-        isMaxField={true}
-      />
-    ),
-  },
-  {
-    id: 'hashMediaUrl',
-    name: 'Hash or Media URL',
-    renderField: (
-      <GenericNftValidationField
-        fieldName={FIELDS_NAMES.HASH_META}
-        isMaxField={true}
-      />
-    ),
-  },
-  { id: 'image', name: 'Image', renderField: <div>Image</div> }, // todo: set image upload hash method
-];
-
-type Props = { nftList: any[] };
+type Props = { nftSignatures: NFTTokenDoublet[] };
 
 const NftValidationPage: React.FC<Props> = props => {
-  const [activeOption, setActiveOption] = useState<{
-    id?: string;
-    name?: string;
-    renderField?: React.ReactNode;
-  }>({});
-  const { nftList } = props;
+  const [activeOption, setActiveOption] = useState<any>({}); // todo: set proper types
+  const [searchParams, setSearchParams] = useState({});
+  const { nftSignatures } = props;
 
   const onDropDownChange = (id: string) => {
-    setActiveOption(OPTIONS.find(optionItem => optionItem.id === id));
+    setActiveOption(OPTIONS[id]);
+    setSearchParams({});
   };
 
-  const onSubmit = () => {};
+  const onSubmit = (values: NftValidationFormValues) => {
+    setSearchParams(values);
+  };
+
+  const showInfoBadge = !isEmpty(searchParams) && nftSignatures.length === 0;
 
   return (
     <div className={classes.container}>
@@ -67,28 +45,30 @@ const NftValidationPage: React.FC<Props> = props => {
         How would you like to validate the NFT Signature?
       </p>
       <div className={classes.dropdownContainer}>
-        <CustomDropdown options={OPTIONS} onChange={onDropDownChange} />
+        <CustomDropdown
+          options={optionsList}
+          onChange={onDropDownChange}
+          placeholder="Select Your Validation Method"
+        />
       </div>
-      {activeOption.name && (
+      {activeOption && activeOption.name && (
         <div className={classes.formContainer}>
           <NftValidationForm activeOption={activeOption} onSubmit={onSubmit} />
         </div>
       )}
-
-      {nftList && nftList.length > 0 ? (
-        <div>
-          {nftList.map(nftItem => (
-            <div>{nftItem}</div>
-          ))}
-        </div>
-      ) : (
-        activeOption.name && (
+      <NftListResults
+        searchParams={searchParams}
+        activeOption={activeOption}
+        nftSignatures={nftSignatures}
+      />
+      {showInfoBadge && (
+        <div className={classes.badgeContainer}>
           <InfoBadge
             title="No NFT Signatures"
             message={`There are no NFT signatures for this ${activeOption.name}`}
             isOrange={true}
           />
-        )
+        </div>
       )}
     </div>
   );

@@ -5,15 +5,16 @@ import { Button } from 'react-bootstrap';
 import classes from './NftValidationForm.module.scss';
 
 type Props = {
-  activeOption: { id?: string; name?: string; renderField?: React.ReactNode };
+  activeOption: { id?: string; name?: string; field?: React.ReactNode };
 };
 
 const NftValidationForm: React.FC<Props & FormProps> = props => {
   const { onSubmit, activeOption } = props;
+
   const renderForm = ({ handleSubmit }: FormRenderProps) => {
     return (
       <form onSubmit={handleSubmit} className={classes.form}>
-        {activeOption && activeOption.renderField}
+        {activeOption && activeOption.field}
         <Button type="submit" className={classes.submitButton}>
           Validate NFT Signature
         </Button>

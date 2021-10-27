@@ -1,13 +1,23 @@
 @import '../../assets/styles/mediaQueriesMixings.scss';
 
-.submitButton {
-  max-width: 235px;
-  width: 100%;
-  height: 40px;
-  font-size: 0.8125em;
-  border-radius: 7px;
-  @include sm {
-    max-width: none;
+.form {
+  padding: 0 20px;
+
+  .submitButton {
+    max-width: 235px;
+    width: 100%;
+    height: 40px;
+    font-size: 0.8125em;
+    border-radius: 7px;
+    margin-bottom: 0;
+    @include sm {
+      max-width: none;
+    }
   }
 }
 
+@include lg {
+  .form {
+    padding: 0;
+  }
+}

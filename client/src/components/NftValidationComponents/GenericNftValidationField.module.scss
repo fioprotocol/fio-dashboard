@@ -3,6 +3,7 @@
 .contractAddressContainer {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 .smallField {
@@ -12,6 +13,8 @@
 .maxField {
   min-width: 295px;
   width: 100%;
+  max-width: 335px;
+  flex-shrink: 0;
 }
 
 

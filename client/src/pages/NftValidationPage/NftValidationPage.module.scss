@@ -10,6 +10,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 117px;
 
   .title {
     font-size: 4em;
@@ -40,6 +41,14 @@
   }
   .maxField {
     margin: 0 20px;
+  }
+  .formContainer {
+    width: 100%;
+    max-width: 969px;
+  }
+
+  .badgeContainer {
+    margin-top: 60px;
   }
 }
 

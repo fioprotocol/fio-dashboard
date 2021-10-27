@@ -1,0 +1,58 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+@import '../../../assets/styles/fontMixins.scss';
+
+.container {
+  cursor: pointer;
+
+  .badgeContainer {
+    color: $dark-jungle-green;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+
+    .resultsContainer {
+      display: flex;
+      flex-direction: column;
+
+      .titleContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-right: 15px;
+        margin-top: 20px;
+
+        &:first-of-type {
+          margin-top: 0;
+        }
+
+        .title {
+          margin-right: 10px;
+        }
+        .resultValue {
+          word-break: break-all;
+          text-align: left;
+          @include proxima-nova-bold;
+        }
+      }
+    }
+  }
+  .actionIcon {
+    margin-left: auto;
+  }
+}
+
+@include lg {
+  .container {
+    .badgeContainer {
+      .resultsContainer {
+        flex-direction: row;
+        .titleContainer {
+          flex-direction: row;
+          margin-top: 0;
+        }
+      }
+    }
+  }
+}
