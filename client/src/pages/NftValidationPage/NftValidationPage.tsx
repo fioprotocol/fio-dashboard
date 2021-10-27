@@ -14,12 +14,12 @@ import { NFTTokenDoublet } from '../../types';
 
 import classes from './NftValidationPage.module.scss';
 
-type Props = { nftSignatures: NFTTokenDoublet[] };
+type Props = { nftSignatures: NFTTokenDoublet[]; loading: boolean };
 
 const NftValidationPage: React.FC<Props> = props => {
   const [activeOption, setActiveOption] = useState<any>({}); // todo: set proper types
   const [searchParams, setSearchParams] = useState({});
-  const { nftSignatures } = props;
+  const { nftSignatures, loading } = props;
 
   const onDropDownChange = (id: string) => {
     setActiveOption(OPTIONS[id]);
@@ -53,7 +53,11 @@ const NftValidationPage: React.FC<Props> = props => {
       </div>
       {activeOption && activeOption.name && (
         <div className={classes.formContainer}>
-          <NftValidationForm activeOption={activeOption} onSubmit={onSubmit} />
+          <NftValidationForm
+            activeOption={activeOption}
+            onSubmit={onSubmit}
+            loading={loading}
+          />
         </div>
       )}
       <NftListResults

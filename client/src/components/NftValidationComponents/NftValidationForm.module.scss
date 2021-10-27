@@ -10,8 +10,15 @@
     font-size: 0.8125em;
     border-radius: 7px;
     margin-bottom: 0;
+    position: relative;
     @include sm {
       max-width: none;
+    }
+
+    .loader {
+      font-size: 1.2em;
+      position: absolute;
+      right: 25px;
     }
   }
 }

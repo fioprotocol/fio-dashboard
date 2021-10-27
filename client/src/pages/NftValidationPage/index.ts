@@ -3,12 +3,13 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 
-import { nftSignatures } from '../../redux/fio/selectors';
+import { nftSignatures, loading } from '../../redux/fio/selectors';
 import NftValidationPage from './NftValidationPage';
 
 const reduxConnect = connect(
   createStructuredSelector({
     nftSignatures,
+    loading,
   }),
   {},
 );
