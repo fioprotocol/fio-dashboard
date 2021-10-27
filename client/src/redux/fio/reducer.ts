@@ -354,12 +354,14 @@ export default combineReducers({
             url: item.url,
             hash: item.hash,
             metadata: item.metadata,
+            fioAddress: item.fio_address,
           };
           nftList.push(nftItem);
         }
         return nftList;
       }
       case LOGOUT_SUCCESS:
+      case actions.CLEAR_NFT_SIGNATURES:
         return [];
       default:
         return state;

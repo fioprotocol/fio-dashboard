@@ -399,6 +399,12 @@ export const getNFTSignatures = (searchParams: {
   searchParams,
 });
 
+export const CLEAR_NFT_SIGNATURES = `${prefix}/CLEAR_NFT_SIGNATURES`;
+
+export const clearNFTSignatures = () => ({
+  type: CLEAR_NFT_SIGNATURES,
+});
+
 export const singNFT = (
   fioAddress: string,
   nftRequest: NFTTokenDoublet[],

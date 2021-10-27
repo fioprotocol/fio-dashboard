@@ -3,6 +3,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 
+import { getNFTSignatures, clearNFTSignatures } from '../../redux/fio/actions';
 import { nftSignatures, loading } from '../../redux/fio/selectors';
 import NftValidationPage from './NftValidationPage';
 
@@ -11,7 +12,7 @@ const reduxConnect = connect(
     nftSignatures,
     loading,
   }),
-  {},
+  { getNFTSignatures, clearNFTSignatures },
 );
 
 export default compose(reduxConnect)(NftValidationPage);

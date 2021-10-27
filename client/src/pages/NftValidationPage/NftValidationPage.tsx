@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
 
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
@@ -14,23 +14,38 @@ import { NFTTokenDoublet } from '../../types';
 
 import classes from './NftValidationPage.module.scss';
 
-type Props = { nftSignatures: NFTTokenDoublet[]; loading: boolean };
+type Props = {
+  nftSignatures: NFTTokenDoublet[];
+  loading: boolean;
+  getNFTSignatures: (searchParams: any) => void;
+  clearNFTSignatures: () => void;
+};
 
 const NftValidationPage: React.FC<Props> = props => {
   const [activeOption, setActiveOption] = useState<any>({}); // todo: set proper types
   const [searchParams, setSearchParams] = useState({});
-  const { nftSignatures, loading } = props;
+  const {
+    nftSignatures,
+    loading,
+    getNFTSignatures,
+    clearNFTSignatures,
+  } = props;
+
+  useEffect(() => clearNFTSignatures(), []);
 
   const onDropDownChange = (id: string) => {
     setActiveOption(OPTIONS[id]);
     setSearchParams({});
+    clearNFTSignatures();
   };
 
   const onSubmit = (values: NftValidationFormValues) => {
     setSearchParams(values);
+    getNFTSignatures(values);
   };
 
-  const showInfoBadge = !isEmpty(searchParams) && nftSignatures.length === 0;
+  const showInfoBadge =
+    !isEmpty(searchParams) && nftSignatures.length === 0 && !loading;
 
   return (
     <div className={classes.container}>
