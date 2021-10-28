@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import isEmpty from 'lodash/isEmpty';
+import React, { useState } from 'react';
+import apis from '../../api/index';
 
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 import NftValidationForm from '../../components/NftValidationComponents/NftValidationForm';
@@ -7,45 +7,38 @@ import CustomDropdown from '../../components/CustomDropdown';
 
 import NftListResults from '../../components/NftValidationComponents/NftListResults';
 import { OPTIONS, optionsList } from './constant';
+import { transformNft } from '../../util/fio';
+import { minWaitTimeFunction } from '../../utils';
 
 import { NftValidationFormValues } from '../../components/NftValidationComponents/types';
 
-import { NFTTokenDoublet } from '../../types';
-
 import classes from './NftValidationPage.module.scss';
 
-type Props = {
-  nftSignatures: NFTTokenDoublet[];
-  loading: boolean;
-  getNFTSignatures: (searchParams: NftValidationFormValues) => void;
-  clearNFTSignatures: () => void;
-};
-
-const NftValidationPage: React.FC<Props> = props => {
-  const [activeOption, setActiveOption] = useState<any>({}); // todo: set proper types
-  const [searchParams, setSearchParams] = useState({});
-  const {
-    nftSignatures,
-    loading,
-    getNFTSignatures,
-    clearNFTSignatures,
-  } = props;
-
-  useEffect(() => clearNFTSignatures(), []);
+const NftValidationPage: React.FC = () => {
+  const [activeOption, setActiveOption] = useState(null);
+  const [searchParams, setSearchParams] = useState(null);
+  const [results, setResults] = useState(null);
+  const [loading, toggleLoading] = useState(false);
 
   const onDropDownChange = (id: string) => {
     setActiveOption(OPTIONS[id]);
-    setSearchParams({});
-    clearNFTSignatures();
+    setSearchParams(null);
+    setResults(null);
   };
 
-  const onSubmit = (values: NftValidationFormValues) => {
+  const onSubmit = async (values: NftValidationFormValues) => {
+    toggleLoading(true);
     setSearchParams(values);
-    getNFTSignatures(values);
+    const nftResults = await minWaitTimeFunction(
+      () => apis.fio.getNFTs(values),
+      2000,
+    );
+    if (nftResults) setResults(transformNft(nftResults.nfts));
+    toggleLoading(false);
   };
 
   const showInfoBadge =
-    !isEmpty(searchParams) && nftSignatures.length === 0 && !loading;
+    searchParams != null && results != null && results.length === 0 && !loading;
 
   return (
     <div className={classes.container}>
@@ -66,7 +59,7 @@ const NftValidationPage: React.FC<Props> = props => {
           placeholder="Select Your Validation Method"
         />
       </div>
-      {activeOption && activeOption.name && (
+      {activeOption != null && (
         <div className={classes.formContainer}>
           <NftValidationForm
             activeOption={activeOption}
@@ -78,7 +71,7 @@ const NftValidationPage: React.FC<Props> = props => {
       <NftListResults
         searchParams={searchParams}
         activeOption={activeOption}
-        nftSignatures={nftSignatures}
+        results={results}
       />
       {showInfoBadge && (
         <div className={classes.badgeContainer}>

@@ -1,5 +1,4 @@
 import React from 'react';
-import isEmpty from 'lodash/isEmpty';
 
 import { nftId } from '../../util/nft';
 import classes from './NftListResults.module.scss';
@@ -19,23 +18,23 @@ type Props = {
     ) => React.ReactNode;
   };
   searchParams: NftValidationFormValues;
-  nftSignatures: NFTTokenDoublet[];
+  results: NFTTokenDoublet[];
 };
 
 const NftListResults: React.FC<Props> = props => {
-  const { activeOption, searchParams, nftSignatures } = props;
-  if (!isEmpty(activeOption) && nftSignatures.length > 0)
+  const { activeOption, searchParams, results } = props;
+  if (activeOption != null && results != null && results.length > 0)
     return (
       <div className={classes.container}>
         <h3 className={classes.title}>NFT Signature Information</h3>
         <div className={classes.resultsContainer}>
           <h3 className={classes.resultsTitle}>Results</h3>
-          {activeOption && activeOption.resultsTitle(searchParams)}
-          {nftSignatures.map(item => (
+          {activeOption.resultsTitle(searchParams)}
+          {results.map(item => (
             <div
               key={nftId(item.chainCode, item.tokenId, item.contractAddress)}
             >
-              {activeOption && activeOption.resultsItem(item, searchParams)}
+              {activeOption.resultsItem(item, searchParams)}
             </div>
           ))}
         </div>

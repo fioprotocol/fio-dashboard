@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 import NftValidationItemModal from '../NftValidationItemModal';
-import { nftId } from '../../../util/nft';
 
+import { NFTTokenDoublet, CommonObjectProps } from '../../../types';
 import { NftValidationFormValues } from '../types';
+
 import classes from './GenericNftItemResult.module.scss';
 
 type Props = {
   titles: { name: string; id: string }[];
-  resultItem: any; // todo: set proper types
+  resultItem: NFTTokenDoublet;
   searchParams: NftValidationFormValues;
 };
 
@@ -26,21 +27,17 @@ const GenericNftItemResult: React.FC<Props> = props => {
         <Badge show={true} type={BADGE_TYPES.WHITE}>
           <div className={classes.badgeContainer}>
             <div className={classes.resultsContainer}>
-              {titles.map(title => (
-                <div
-                  className={classes.titleContainer}
-                  key={nftId(
-                    resultItem.chainCode,
-                    resultItem.tokenId,
-                    resultItem.contractAddress,
-                  )}
-                >
-                  <div className={classes.title}>{title.name}:</div>
-                  <div className={classes.resultValue}>
-                    {resultItem[title.id]}
+              {titles.map(title => {
+                const resultValue: CommonObjectProps = { ...resultItem };
+                return (
+                  <div className={classes.titleContainer} key={title.id}>
+                    <div className={classes.title}>{title.name}:</div>
+                    <div className={classes.resultValue}>
+                      {resultValue[title.id]}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             <FontAwesomeIcon
               icon="chevron-right"

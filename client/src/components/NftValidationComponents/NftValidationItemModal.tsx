@@ -6,25 +6,29 @@ import Modal from '../../components/Modal/Modal';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { TITLE_NAME } from '../../pages/NftValidationPage/constant';
 
+import { NFTTokenDoublet, CommonObjectProps } from '../../types';
+import { NftValidationFormValues } from './types';
+
 import classes from './NftValidationItemModal.module.scss';
 
 type Props = {
   show: boolean;
-  resultItem: any; // todo: set proper types
+  resultItem: NFTTokenDoublet;
   onClose: () => void;
-  searchParams: any; // todo: set proper types
+  searchParams: NftValidationFormValues;
 };
 
 const NftValidationItemModal: React.FC<Props> = props => {
   const { show, onClose, resultItem, searchParams } = props;
 
-  const searchParamObj = { ...searchParams };
+  const searchParamObj: CommonObjectProps =
+    (searchParams != null && { ...searchParams }) || {};
   delete searchParamObj.chainCode;
   delete searchParamObj.tokenId;
 
   const titleObj = Object.keys(searchParamObj)[0];
 
-  const resultItemToRender = { ...resultItem };
+  const resultItemToRender: CommonObjectProps = { ...resultItem };
   delete resultItemToRender[titleObj];
 
   const renderBadge = () => {

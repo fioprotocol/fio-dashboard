@@ -14,6 +14,8 @@ import {
   NFTTokenDoublet,
 } from '../../types';
 
+import { transformNft } from '../../util/fio';
+
 export const emptyWallet: FioWalletDoublet = {
   id: '',
   name: '',
@@ -345,20 +347,7 @@ export default combineReducers({
   nftList(state: NFTTokenDoublet[] = [], action) {
     switch (action.type) {
       case actions.FIO_SIGNATURE_SUCCESS: {
-        const nftList = [];
-        for (const item of action.data.nfts) {
-          const nftItem = {
-            fioAddress: item.fio_address,
-            contractAddress: item.contract_address,
-            chainCode: item.chain_code,
-            tokenId: item.token_id,
-            url: item.url,
-            hash: item.hash,
-            metadata: item.metadata,
-          };
-          nftList.push(nftItem);
-        }
-        return nftList;
+        return transformNft(action.data.nfts);
       }
       case LOGOUT_SUCCESS:
       case actions.CLEAR_NFT_SIGNATURES:

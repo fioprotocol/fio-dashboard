@@ -20,7 +20,7 @@
       margin-bottom: 0;
     }
     .searchParam {
-      margin-top: 12px;
+      margin-top: 5px;
       word-break: break-all;
       font-size: 1em;
       margin-bottom: 0;
@@ -72,6 +72,7 @@
 
 @include lg {
   .container {
+    padding: 0 20px;
     .itemContainer {
       .badgeContainer {
         .contentContainer {

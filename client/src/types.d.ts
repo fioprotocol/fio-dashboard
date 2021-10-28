@@ -1,4 +1,5 @@
 import { EdgeAccount } from 'edge-core-js';
+import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 
 export type Domain = { domain: string; free?: boolean };
 
@@ -102,6 +103,10 @@ export type NFTTokenDoublet = {
   metadata?: string;
   fioAddress?: string;
 };
+
+export type NftTokenResponse = {
+  fio_address?: string;
+} & NftItem;
 
 export type WalletKeysObj = {
   [walletId: string]: {
@@ -216,3 +221,5 @@ export type EmailConfirmationStateData = {
   refCode?: string;
   refProfileQueryParams?: RefQueryParams;
 };
+
+export type CommonObjectProps = { [key: string]: string };

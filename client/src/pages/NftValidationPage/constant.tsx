@@ -40,6 +40,7 @@ export const TITLE_NAME: { [key: string]: { id: string; name: string } } = {
 
 export const OPTIONS: {
   [key: string]: {
+    id: string;
     name: string;
     field: React.ReactNode;
     resultsTitle: (searchParams: NftValidationFormValues) => React.ReactNode;
@@ -50,7 +51,8 @@ export const OPTIONS: {
   };
 } = {
   contractAddress: {
-    name: 'Contract Address',
+    id: TITLE_NAME.contractAddress.id,
+    name: TITLE_NAME.contractAddress.name,
     field: <ContractAddressField />,
     resultsTitle: searchParams => (
       <ContractAddressTitle values={searchParams} />
@@ -64,7 +66,8 @@ export const OPTIONS: {
     ),
   },
   fioAddress: {
-    name: 'FIO Address',
+    id: TITLE_NAME.fioAddress.id,
+    name: TITLE_NAME.fioAddress.name,
     field: (
       <GenericNftValidationField
         fieldName={FIELDS_NAMES.FIO_ADDRESS}
@@ -86,7 +89,8 @@ export const OPTIONS: {
     ),
   },
   hash: {
-    name: 'Hash or Media URL',
+    id: TITLE_NAME.hash.id,
+    name: TITLE_NAME.hash.name,
     field: (
       <GenericNftValidationField
         fieldName={FIELDS_NAMES.HASH}
@@ -94,7 +98,7 @@ export const OPTIONS: {
       />
     ),
     resultsTitle: values => (
-      <GenericTitleComponent title="Hash / Media URL" value={values.hash} />
+      <GenericTitleComponent title="Hash" value={values.hash} />
     ),
     resultsItem: (resultItem, searchParams) => (
       <GenericNftItemResult
@@ -117,7 +121,7 @@ export const OPTIONS: {
   // }, // todo: set image upload hash method
 };
 
-export const optionsList = Object.keys(OPTIONS).map(key => ({
-  ...OPTIONS[key],
-  id: key,
+export const optionsList = Object.values(OPTIONS).map(({ id, name }) => ({
+  id,
+  name,
 }));
