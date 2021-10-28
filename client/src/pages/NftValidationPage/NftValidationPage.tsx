@@ -10,13 +10,18 @@ import { OPTIONS, optionsList } from './constant';
 import { transformNft } from '../../util/fio';
 import { minWaitTimeFunction } from '../../utils';
 
-import { NftValidationFormValues } from './components/types';
+import { NftValidationFormValues, ValidationOption } from './components/types';
 
 import classes from './NftValidationPage.module.scss';
 
 const NftValidationPage: React.FC = () => {
-  const [activeOption, setActiveOption] = useState(null);
-  const [searchParams, setSearchParams] = useState(null);
+  const [activeOption, setActiveOption] = useState<ValidationOption | null>(
+    null,
+  );
+  const [
+    searchParams,
+    setSearchParams,
+  ] = useState<NftValidationFormValues | null>(null);
   const [results, setResults] = useState(null);
   const [loading, toggleLoading] = useState(false);
 
@@ -28,6 +33,7 @@ const NftValidationPage: React.FC = () => {
 
   const onSubmit = async (values: NftValidationFormValues) => {
     toggleLoading(true);
+    setResults(null);
     setSearchParams(values);
     const nftResults = await minWaitTimeFunction(
       () => apis.fio.getNFTs(values),

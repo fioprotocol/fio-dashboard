@@ -74,7 +74,7 @@ const NftValidationItemModal: React.FC<Props> = props => {
           <Badge show={true} type={BADGE_TYPES.WHITE}>
             <div className={classes.contentContainer}>
               <h5 className={classes.contentTitle}>{title}</h5>
-              <p className={classes.contentValue}>{value}</p>
+              <p className={classes.contentValue}>{value || '-'}</p>
             </div>
           </Badge>
         </div>

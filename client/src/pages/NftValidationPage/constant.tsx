@@ -4,12 +4,13 @@ import ContractAddressField from './components/ContractAddressField';
 import GenericNftValidationField, {
   FIELDS_NAMES,
 } from './components/GenericNftValidationField';
-import ContractAddressTitle from './components/NftListTitle/ContractAddressTitle';
+import { renderContractAddressTitle } from './components/NftListTitle/ContractAddressTitle';
 import GenericTitleComponent from './components/NftListTitle/GenericTitleComponent';
-import GenericNftItemResult from './components/NftItemResult/GenericNftItemResult';
+import GenericNftItemResult, {
+  renderContractAddressItem,
+} from './components/NftItemResult/GenericNftItemResult';
 
-import { NftValidationFormValues } from './components/types';
-import { NFTTokenDoublet } from '../../types';
+import { RenderItem, RenderTitle, ValidationOption } from './components/types';
 
 export const TITLE_NAME: { [key: string]: { id: string; name: string } } = {
   contractAddress: {
@@ -38,32 +39,43 @@ export const TITLE_NAME: { [key: string]: { id: string; name: string } } = {
   },
 };
 
+const renderFioAddressTitle: RenderTitle = searchParams => (
+  <GenericTitleComponent title="FIO Address" value={searchParams.fioAddress} />
+);
+
+const renderFioAddressItem: RenderItem = (resultItem, searchParams) => (
+  <GenericNftItemResult
+    titles={[TITLE_NAME.chainCode, TITLE_NAME.tokenId]}
+    resultItem={resultItem}
+    searchParams={searchParams}
+  />
+);
+
+const renderHashTitle: RenderTitle = values => (
+  <GenericTitleComponent title="Hash" value={values.hash} />
+);
+
+const renderHashItem: RenderItem = (resultItem, searchParams) => (
+  <GenericNftItemResult
+    titles={[
+      TITLE_NAME.fioAddress,
+      TITLE_NAME.chainCode,
+      TITLE_NAME.contractAddress,
+    ]}
+    resultItem={resultItem}
+    searchParams={searchParams}
+  />
+);
+
 export const OPTIONS: {
-  [key: string]: {
-    id: string;
-    name: string;
-    field: React.ReactNode;
-    resultsTitle: (searchParams: NftValidationFormValues) => React.ReactNode;
-    resultsItem: (
-      resultitem: NFTTokenDoublet,
-      searchParams: NftValidationFormValues,
-    ) => React.ReactNode;
-  };
+  [key: string]: ValidationOption;
 } = {
   contractAddress: {
     id: TITLE_NAME.contractAddress.id,
     name: TITLE_NAME.contractAddress.name,
     field: <ContractAddressField />,
-    resultsTitle: searchParams => (
-      <ContractAddressTitle values={searchParams} />
-    ),
-    resultsItem: (resultItem, searchParams) => (
-      <GenericNftItemResult
-        titles={[TITLE_NAME.fioAddress]}
-        resultItem={resultItem}
-        searchParams={searchParams}
-      />
-    ),
+    resultsTitle: renderContractAddressTitle,
+    resultsItem: renderContractAddressItem,
   },
   fioAddress: {
     id: TITLE_NAME.fioAddress.id,
@@ -74,19 +86,8 @@ export const OPTIONS: {
         isMaxField={true}
       />
     ),
-    resultsTitle: searchParams => (
-      <GenericTitleComponent
-        title="FIO Address"
-        value={searchParams.fioAddress}
-      />
-    ),
-    resultsItem: (resultItem, searchParams) => (
-      <GenericNftItemResult
-        titles={[TITLE_NAME.chainCode, TITLE_NAME.tokenId]}
-        resultItem={resultItem}
-        searchParams={searchParams}
-      />
-    ),
+    resultsTitle: renderFioAddressTitle,
+    resultsItem: renderFioAddressItem,
   },
   hash: {
     id: TITLE_NAME.hash.id,
@@ -97,20 +98,8 @@ export const OPTIONS: {
         isMaxField={true}
       />
     ),
-    resultsTitle: values => (
-      <GenericTitleComponent title="Hash" value={values.hash} />
-    ),
-    resultsItem: (resultItem, searchParams) => (
-      <GenericNftItemResult
-        titles={[
-          TITLE_NAME.fioAddress,
-          TITLE_NAME.chainCode,
-          TITLE_NAME.contractAddress,
-        ]}
-        resultItem={resultItem}
-        searchParams={searchParams}
-      />
-    ),
+    resultsTitle: renderHashTitle,
+    resultsItem: renderHashItem,
   },
   //image: {
   //   id: 'image',

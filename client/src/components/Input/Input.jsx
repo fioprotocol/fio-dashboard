@@ -179,7 +179,7 @@ const Input = props => {
             data-clear={clearInput}
           />
         </div>
-        {(clearInput || onClose) && !loading && (
+        {(clearInput || onClose) && !disabled && !loading && (
           <FontAwesomeIcon
             icon="times-circle"
             className={classnames(

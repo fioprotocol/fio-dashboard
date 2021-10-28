@@ -4,9 +4,10 @@ import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import NftValidationItemModal from '../NftValidationItemModal';
 
 import { NFTTokenDoublet, CommonObjectProps } from '../../../../types';
-import { NftValidationFormValues } from '../types';
+import { NftValidationFormValues, RenderItem } from '../types';
 
 import classes from './GenericNftItemResult.module.scss';
+import { TITLE_NAME } from '../../constant';
 
 type Props = {
   titles: { name: string; id: string }[];
@@ -33,7 +34,7 @@ const GenericNftItemResult: React.FC<Props> = props => {
                   <div className={classes.titleContainer} key={title.id}>
                     <div className={classes.title}>{title.name}:</div>
                     <div className={classes.resultValue}>
-                      {resultValue[title.id]}
+                      {resultValue[title.id] || '-'}
                     </div>
                   </div>
                 );
@@ -57,3 +58,14 @@ const GenericNftItemResult: React.FC<Props> = props => {
 };
 
 export default GenericNftItemResult;
+
+export const renderContractAddressItem: RenderItem = (
+  resultItem,
+  searchParams,
+) => (
+  <GenericNftItemResult
+    titles={[TITLE_NAME.fioAddress]}
+    resultItem={resultItem}
+    searchParams={searchParams}
+  />
+);

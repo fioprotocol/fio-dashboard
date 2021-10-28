@@ -3,6 +3,7 @@ import GenericTitleComponent from './GenericTitleComponent';
 
 import { TITLE_NAME } from '../../constant';
 import classes from './ContractAddressTitle.module.scss';
+import { RenderTitle } from '../types';
 
 type Props = {
   values: { chainCode?: string; contractAddress?: string; tokenId?: string };
@@ -37,3 +38,7 @@ const ContractAddressTitle: React.FC<Props> = props => {
 };
 
 export default ContractAddressTitle;
+
+export const renderContractAddressTitle: RenderTitle = searchParams => (
+  <ContractAddressTitle values={searchParams} />
+);

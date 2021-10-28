@@ -11,7 +11,7 @@ const GenericTitleComponent: React.FC<Props> = props => {
   return (
     <div className={classes.container}>
       <h5 className={classes.title}>{title}:</h5>
-      <p className={classes.value}>{value}</p>
+      <p className={classes.value}>{value || '-'}</p>
     </div>
   );
 };

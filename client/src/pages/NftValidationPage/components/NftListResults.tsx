@@ -3,27 +3,23 @@ import React from 'react';
 import { nftId } from '../../../util/nft';
 import classes from './NftListResults.module.scss';
 
-import { NftValidationFormValues } from './types';
+import { NftValidationFormValues, ValidationOption } from './types';
 import { NFTTokenDoublet } from '../../../types';
 
 type Props = {
-  activeOption?: {
-    id: string;
-    name: string;
-    field: React.ReactNode;
-    resultsTitle: (searchParams: NftValidationFormValues) => React.ReactNode;
-    resultsItem: (
-      item: NFTTokenDoublet,
-      searchParams: NftValidationFormValues,
-    ) => React.ReactNode;
-  };
-  searchParams: NftValidationFormValues;
+  activeOption?: ValidationOption;
+  searchParams?: NftValidationFormValues;
   results: NFTTokenDoublet[];
 };
 
 const NftListResults: React.FC<Props> = props => {
   const { activeOption, searchParams, results } = props;
-  if (activeOption != null && results != null && results.length > 0)
+  if (
+    activeOption != null &&
+    searchParams != null &&
+    results != null &&
+    results.length > 0
+  )
     return (
       <div className={classes.container}>
         <h3 className={classes.title}>NFT Signature Information</h3>
