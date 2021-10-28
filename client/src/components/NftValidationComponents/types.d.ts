@@ -1,6 +1,7 @@
 export type NftValidationFormValues = {
   contractAddress?: string;
   tokenId?: string;
-  hashMeta?: string;
+  hash?: string;
   fioAddress?: string;
+  chainCode?: string;
 };

@@ -13,7 +13,10 @@ type Props = {
     name: string;
     field: React.ReactNode;
     resultsTitle: (searchParams: NftValidationFormValues) => React.ReactNode;
-    resultsItem: (item: NFTTokenDoublet) => React.ReactNode;
+    resultsItem: (
+      item: NFTTokenDoublet,
+      searchParams: NftValidationFormValues,
+    ) => React.ReactNode;
   };
   searchParams: NftValidationFormValues;
   nftSignatures: NFTTokenDoublet[];
@@ -32,7 +35,7 @@ const NftListResults: React.FC<Props> = props => {
             <div
               key={nftId(item.chainCode, item.tokenId, item.contractAddress)}
             >
-              {activeOption && activeOption.resultsItem(item)}
+              {activeOption && activeOption.resultsItem(item, searchParams)}
             </div>
           ))}
         </div>

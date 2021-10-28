@@ -348,13 +348,13 @@ export default combineReducers({
         const nftList = [];
         for (const item of action.data.nfts) {
           const nftItem = {
+            fioAddress: item.fio_address,
             contractAddress: item.contract_address,
             chainCode: item.chain_code,
             tokenId: item.token_id,
             url: item.url,
             hash: item.hash,
             metadata: item.metadata,
-            fioAddress: item.fio_address,
           };
           nftList.push(nftItem);
         }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Form, FormProps, FormRenderProps } from 'react-final-form';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,28 +10,35 @@ type Props = {
   loading: boolean;
 };
 
+const RenderForm: React.FC<Props & FormRenderProps> = props => {
+  const { handleSubmit, form, activeOption, loading } = props;
+  const { name, field } = activeOption || {};
+  useEffect(() => {
+    name && form.reset();
+  }, [name]);
+
+  return (
+    <form onSubmit={handleSubmit} className={classes.form}>
+      {field}
+      <Button type="submit" className={classes.submitButton} disabled={loading}>
+        Validate NFT Signature{' '}
+        {loading && (
+          <FontAwesomeIcon spin icon="spinner" className={classes.loader} />
+        )}
+      </Button>
+    </form>
+  );
+};
+
 const NftValidationForm: React.FC<Props & FormProps> = props => {
-  const { onSubmit, activeOption, loading } = props;
+  const { onSubmit } = props;
 
-  const renderForm = ({ handleSubmit }: FormRenderProps) => {
-    return (
-      <form onSubmit={handleSubmit} className={classes.form}>
-        {activeOption && activeOption.field}
-        <Button
-          type="submit"
-          className={classes.submitButton}
-          disabled={loading}
-        >
-          Validate NFT Signature{' '}
-          {loading && (
-            <FontAwesomeIcon spin icon="spinner" className={classes.loader} />
-          )}
-        </Button>
-      </form>
-    );
-  };
-
-  return <Form onSubmit={onSubmit}>{renderForm}</Form>;
+  return (
+    <Form
+      onSubmit={onSubmit}
+      render={formProps => <RenderForm {...props} {...formProps} />}
+    ></Form>
+  );
 };
 
 export default NftValidationForm;

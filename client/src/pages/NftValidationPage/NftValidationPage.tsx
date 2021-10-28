@@ -17,7 +17,7 @@ import classes from './NftValidationPage.module.scss';
 type Props = {
   nftSignatures: NFTTokenDoublet[];
   loading: boolean;
-  getNFTSignatures: (searchParams: any) => void;
+  getNFTSignatures: (searchParams: NftValidationFormValues) => void;
   clearNFTSignatures: () => void;
 };
 
