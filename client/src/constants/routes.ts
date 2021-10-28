@@ -44,6 +44,7 @@ const ROUTES: { [route: string]: string } = {
   DELETE_TOKEN: '/delete-token',
   SETTINGS: '/settings',
   ACCOUNT_RECOVERY: '/account-recovery',
+  NFT_VALIDATION: '/nft-validation',
 
   // Referrer Profile pages
   REF_PROFILE_HOME: '/ref/:refProfileCode',

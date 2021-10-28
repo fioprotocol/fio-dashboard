@@ -50,7 +50,7 @@ export type ContainerProps = {
   resetPinConfirm: () => void;
   pinConfirmation: PinConfirmation;
   refreshFioNames: (publicKey: string) => void;
-  getSignaturesFromFioAddress: (fioAddress: string) => void;
+  getNFTSignatures: (searchParams: { fioAddress: string }) => void;
 } & ContainerOwnProps;
 
 export type SignNftFormProps = {

@@ -14,6 +14,8 @@ import {
   NFTTokenDoublet,
 } from '../../types';
 
+import { transformNft } from '../../util/fio';
+
 export const emptyWallet: FioWalletDoublet = {
   id: '',
   name: '',
@@ -32,7 +34,7 @@ export default combineReducers({
       case actions.REFRESH_BALANCE_REQUEST:
       case actions.GET_FIO_ADDRESSES_REQUEST:
       case actions.GET_FIO_DOMAINS_REQUEST:
-      case actions.FIO_SIGNATURE_ADDRESS_REQUEST:
+      case actions.FIO_SIGNATURE_REQUEST:
         return true;
       case actions.REFRESH_BALANCE_SUCCESS:
       case actions.REFRESH_BALANCE_FAILURE:
@@ -40,8 +42,8 @@ export default combineReducers({
       case actions.GET_FIO_ADDRESSES_FAILURE:
       case actions.GET_FIO_DOMAINS_SUCCESS:
       case actions.GET_FIO_DOMAINS_FAILURE:
-      case actions.FIO_SIGNATURE_ADDRESS_SUCCESS:
-      case actions.FIO_SIGNATURE_ADDRESS_FAILURE:
+      case actions.FIO_SIGNATURE_SUCCESS:
+      case actions.FIO_SIGNATURE_FAILURE:
         return false;
       default:
         return state;
@@ -344,22 +346,11 @@ export default combineReducers({
   },
   nftList(state: NFTTokenDoublet[] = [], action) {
     switch (action.type) {
-      case actions.FIO_SIGNATURE_ADDRESS_SUCCESS: {
-        const nftList = [];
-        for (const item of action.data.nfts) {
-          const nftItem = {
-            contractAddress: item.contract_address,
-            chainCode: item.chain_code,
-            tokenId: item.token_id,
-            url: item.url,
-            hash: item.hash,
-            metadata: item.metadata,
-          };
-          nftList.push(nftItem);
-        }
-        return nftList;
+      case actions.FIO_SIGNATURE_SUCCESS: {
+        return transformNft(action.data.nfts);
       }
       case LOGOUT_SUCCESS:
+      case actions.CLEAR_NFT_SIGNATURES:
         return [];
       default:
         return state;

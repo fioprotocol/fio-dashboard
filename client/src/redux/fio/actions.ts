@@ -378,23 +378,31 @@ export const linkTokens = ({
   actionName: LINK_TOKENS_REQUEST,
 });
 
-export const FIO_SIGNATURE_ADDRESS_REQUEST = `${prefix}/FIO_SIGNATURE_ADDRESS_REQUEST`;
-export const FIO_SIGNATURE_ADDRESS_SUCCESS = `${prefix}/FIO_SIGNATURE_ADDRESS_SUCCESS`;
-export const FIO_SIGNATURE_ADDRESS_FAILURE = `${prefix}/FIO_SIGNATURE_ADDRESS_FAILURE`;
+export const FIO_SIGNATURE_REQUEST = `${prefix}/FIO_SIGNATURE_REQUEST`;
+export const FIO_SIGNATURE_SUCCESS = `${prefix}/FIO_SIGNATURE_SUCCESS`;
+export const FIO_SIGNATURE_FAILURE = `${prefix}/FIO_SIGNATURE_FAILURE`;
 export const FIO_SIGN_NFT_REQUEST = `${prefix}/FIO_SIGN_NFT_REQUEST`;
 export const FIO_SIGN_NFT_SUCCESS = `${prefix}/FIO_SIGN_NFT_SUCCESS`;
 export const FIO_SIGN_NFT_FAILURE = `${prefix}/FIO_SIGN_NFT_FAILURE`;
 
-export const getSignaturesFromFioAddress = (fioAddress: string) => ({
-  types: [
-    FIO_SIGNATURE_ADDRESS_REQUEST,
-    FIO_SIGNATURE_ADDRESS_SUCCESS,
-    FIO_SIGNATURE_ADDRESS_FAILURE,
-  ],
+export const getNFTSignatures = (searchParams: {
+  fioAddress?: string;
+  chainCode?: string;
+  hash?: string;
+  tokenId?: string;
+  contractAddress?: string;
+}) => ({
+  types: [FIO_SIGNATURE_REQUEST, FIO_SIGNATURE_SUCCESS, FIO_SIGNATURE_FAILURE],
   promise: (api: Api) => {
-    return api.fio.getNFTsFioAddress(fioAddress);
+    return api.fio.getNFTs(searchParams);
   },
-  fioAddress,
+  searchParams,
+});
+
+export const CLEAR_NFT_SIGNATURES = `${prefix}/CLEAR_NFT_SIGNATURES`;
+
+export const clearNFTSignatures = () => ({
+  type: CLEAR_NFT_SIGNATURES,
 });
 
 export const singNFT = (

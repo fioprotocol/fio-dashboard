@@ -42,6 +42,7 @@ const Input = props => {
     lowerCased = false,
     disabled,
     showErrorBorder,
+    isLowHeight,
     ...rest
   } = props;
   const {
@@ -160,6 +161,7 @@ const Input = props => {
             prefix && classes.prefixSpace,
             showCopyButton && classes.hasCopyButton,
             type === 'password' && classes.doubleIconInput,
+            isLowHeight && classes.lowHeight,
           )}
         >
           {renderPrefixLabel()}
@@ -177,7 +179,7 @@ const Input = props => {
             data-clear={clearInput}
           />
         </div>
-        {(clearInput || onClose) && !loading && (
+        {(clearInput || onClose) && !disabled && !loading && (
           <FontAwesomeIcon
             icon="times-circle"
             className={classnames(
@@ -185,6 +187,7 @@ const Input = props => {
               type === 'password' && classes.doubleIcon,
               isBW && classes.bw,
               disabled && classes.disabled,
+              uiType && classes[uiType],
             )}
             onClick={() => {
               if (disabled) return;
@@ -205,7 +208,7 @@ const Input = props => {
             onClick={() => !disabled && toggleShowPass(!showPass)}
           />
         )}
-        {showCopyButton && (
+        {showCopyButton && !value && (
           <CopyButton
             onClick={async () => {
               try {

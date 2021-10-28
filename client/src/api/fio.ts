@@ -287,14 +287,20 @@ export default class Fio {
     return retResult;
   };
 
-  getNFTsFioAddress = async (
-    fioAddress: string,
+  getNFTs = async (
+    searchParams: {
+      fioAddress?: string;
+      chainCode?: string;
+      hash?: string;
+      tokenId?: string;
+      contractAddress?: string;
+    },
     limit: number | null = null,
     offset: number | null = null,
   ): Promise<NftsResponse> => {
     this.setBaseUrl();
     try {
-      return await this.publicFioSDK.getNfts({ fioAddress }, limit, offset);
+      return await this.publicFioSDK.getNfts(searchParams, limit, offset);
     } catch (e) {
       this.logError(e);
     }
