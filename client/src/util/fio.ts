@@ -1,6 +1,8 @@
 import apis from '../api/index';
 import { sleep } from '../utils';
 
+import { NftTokenResponse } from '../types';
+
 export const waitForAddressRegistered = async (fioAddress: string) => {
   const CALL_INTERVAL = 3000; // 3 sec
   const WAIT_TIMEOUT = 60000; // 60 sec
@@ -23,4 +25,21 @@ export const waitForAddressRegistered = async (fioAddress: string) => {
   };
 
   return checkAddressIsRegistered();
+};
+
+export const transformNft = (nfts: NftTokenResponse[]) => {
+  const nftList = [];
+  for (const item of nfts) {
+    const nftItem = {
+      fioAddress: item.fio_address,
+      contractAddress: item.contract_address,
+      chainCode: item.chain_code,
+      tokenId: item.token_id,
+      url: item.url,
+      hash: item.hash,
+      metadata: item.metadata,
+    };
+    nftList.push(nftItem);
+  }
+  return nftList;
 };

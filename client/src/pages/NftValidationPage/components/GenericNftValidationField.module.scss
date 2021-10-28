@@ -1,0 +1,28 @@
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.contractAddressContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.smallField {
+  min-width: 235px;
+  width: 100%;
+}
+.maxField {
+  min-width: 295px;
+  width: 100%;
+  max-width: 335px;
+  flex-shrink: 0;
+}
+
+
+@include lg {
+  .contractAddressContainer {
+    flex-direction: row;
+  }
+  .maxField {
+    margin: 0 20px;
+  }
+}

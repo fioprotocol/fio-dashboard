@@ -1,0 +1,93 @@
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/colors.scss';
+
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  @include proxima-nova-bold;
+
+  .title {
+    font-size: 1.75em;
+  }
+  .subtitleContainer {
+    display: flex;
+    flex-direction: column;
+    .subtitle {
+      font-size: 1em;
+      margin-top: 20px;
+      margin-bottom: 0;
+    }
+    .searchParam {
+      margin-top: 5px;
+      word-break: break-all;
+      font-size: 1em;
+      margin-bottom: 0;
+    }
+  }
+  .itemContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+    .badgeContainer {
+      flex-basis: 100%;
+      .contentContainer {
+        color: $dark-jungle-green;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+
+        .contentTitle {
+          font-size: 1em;
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+        .contentValue {
+          font-size: 1em;
+          margin-top: 10px;
+          margin-bottom: 0;
+          margin-left: 0;
+          word-break: break-all;
+        }
+      }
+      &.isSmall {
+        flex-basis: 100%;
+      }
+    }
+
+  }
+
+  .button {
+    width: 100%;
+    max-width: 335px;
+    height: 54px;
+    border-radius: 7px;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    align-self: center;
+  }
+}
+
+@include lg {
+  .container {
+    padding: 0 20px;
+    .itemContainer {
+      .badgeContainer {
+        .contentContainer {
+          flex-direction: row;
+          align-items: center;
+          .contentValue {
+            margin-left: 30px;
+            margin-top: 0;
+          }
+        }
+        &.isSmall {
+          flex-basis: 47%;
+        }
+      }
+    }
+  }
+}
