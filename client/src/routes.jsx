@@ -33,6 +33,7 @@ import EmailConfirmGatePage from './pages/EmailConfirmGatePage';
 import FioAddressSignaturesPage from './pages/FioAddressSignaturesPage';
 import FioAddressSignPage from './pages/FioAddressSignPage';
 import FioAddressNftPage from './pages/FioAddressNftPage';
+import NftValidationPage from './pages/NftValidationPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -149,6 +150,12 @@ const Routes = () => (
         <Route
           path={ROUTES.TERMS_OF_SERVICE}
           component={TermsOfServicePage}
+          exact
+        />
+
+        <Route
+          path={ROUTES.NFT_VALIDATION}
+          component={NftValidationPage}
           exact
         />
 

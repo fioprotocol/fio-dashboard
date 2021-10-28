@@ -1,0 +1,67 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+@import '../../assets/styles/fontMixins.scss';
+
+.container {
+  background: $footer-background;
+  width: 100%;
+  text-align: center;
+  color: $white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 117px;
+
+  .title {
+    font-size: 4em;
+    color: $white;
+    margin-top: 7.125rem;
+    margin-bottom: 0;
+  }
+  .subtitle {
+    max-width: 795px;
+    width: 100%;
+    margin-top: 1.25rem;
+    margin-bottom: 0;
+    @include proxima-nova-thin;
+    text-align: center;
+  }
+  .cta {
+    margin-top: 1.875rem;
+    margin-bottom: 0;
+    font-size: 1.125em;
+    @include proxima-nova-semibold;
+  }
+  .dropdownContainer {
+    margin-top: 25px;
+  }
+  .maxField {
+    min-width: 335px;
+    width: 100%;
+  }
+  .maxField {
+    margin: 0 20px;
+  }
+  .formContainer {
+    width: 100%;
+    max-width: 969px;
+  }
+
+  .badgeContainer {
+    margin-top: 60px;
+  }
+}
+
+@include sm {
+  .container {
+    .title {
+      margin-top: 3.5rem;
+      font-size: 2.125em;
+    }
+    .subtitle {
+      font-size: 1em;
+      width: 90%;
+    }
+
+  }
+}

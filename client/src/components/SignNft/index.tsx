@@ -15,7 +15,7 @@ import {
   getFee,
   FIO_SIGN_NFT_REQUEST,
   refreshFioNames,
-  getSignaturesFromFioAddress,
+  getNFTSignatures,
 } from '../../redux/fio/actions';
 import { showPinModal } from '../../redux/modal/actions';
 import { resetPinConfirm } from '../../redux/edge/actions';
@@ -60,7 +60,7 @@ const reduxConnect = connect(
       getFee(apis.fio.actionEndPoints.signNft, fioAddress),
     singNFT,
     refreshFioNames,
-    getSignaturesFromFioAddress,
+    getNFTSignatures,
   },
 );
 

@@ -53,7 +53,7 @@
     width: 20px !important;
     height: 20px;
 
-    &.bw {
+    &.bw, &.blackWhite {
       color: $dark-gray;
     }
 
@@ -163,6 +163,10 @@
 
      &.error {
       border-color: $warn-red;
+    }
+
+    &.lowHeight {
+      height: 40px;
     }
 
     &.blackLight, &.blackWhite {

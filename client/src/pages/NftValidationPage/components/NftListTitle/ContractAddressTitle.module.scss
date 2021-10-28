@@ -1,0 +1,24 @@
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  &:first-child {
+    margin-left: 0;
+  }
+  .titleItem {
+    margin-left: 0px;
+  }
+}
+
+@include lg {
+  .container {
+    flex-direction: row;
+    .titleItem {
+      margin-left: 20px;
+      &:first-of-type {
+        margin-left: 0;
+      }
+    }
+  }
+}

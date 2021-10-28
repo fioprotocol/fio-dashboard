@@ -34,7 +34,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     result,
     isEdit,
     refreshFioNames,
-    getSignaturesFromFioAddress,
+    getNFTSignatures,
   } = props;
   const history = useHistory();
   const [processing, setProcessing] = useState(false);
@@ -106,7 +106,7 @@ const SignNft: React.FC<ContainerProps> = props => {
         });
 
         refreshFioNames(fioAddress.walletPublicKey);
-        getSignaturesFromFioAddress(fioAddress.name);
+        getNFTSignatures({ fioAddress: fioAddress.name });
       }
       setProcessing(false);
     }

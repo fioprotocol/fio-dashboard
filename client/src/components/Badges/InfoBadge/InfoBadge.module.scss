@@ -23,4 +23,7 @@
   .infoText {
     font-size: 0.75em;
   }
+  &.isOrange {
+    background-color: $bright-orange;
+  }
 }
