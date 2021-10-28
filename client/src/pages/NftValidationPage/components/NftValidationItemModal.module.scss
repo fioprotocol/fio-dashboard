@@ -1,6 +1,6 @@
-@import '../../assets/styles/mediaQueriesMixings.scss';
-@import '../../assets/styles/fontMixins.scss';
-@import '../../assets/styles/colors.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/colors.scss';
 
 .container {
   width: 100%;
@@ -50,6 +50,7 @@
           margin-top: 10px;
           margin-bottom: 0;
           margin-left: 0;
+          word-break: break-all;
         }
       }
       &.isSmall {

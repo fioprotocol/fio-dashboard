@@ -1,6 +1,6 @@
 import React from 'react';
 import { Field } from 'react-final-form';
-import Input, { INPUT_UI_STYLES } from '../Input/Input';
+import Input, { INPUT_UI_STYLES } from '../../../components/Input/Input';
 
 import classes from './GenericNftValidationField.module.scss';
 
@@ -14,7 +14,7 @@ export const FIELDS_NAMES = {
 
 const FIELDS_PLACEHOLDER = {
   [FIELDS_NAMES.FIO_ADDRESS]: 'Enter or Paste FIO Address',
-  [FIELDS_NAMES.HASH]: 'Enter or Paste Hash or Media URL',
+  [FIELDS_NAMES.HASH]: 'Enter or Paste Hash',
   [FIELDS_NAMES.CHAIN_CODE]: 'Enter or Paste Chain Code',
   [FIELDS_NAMES.CONTRACT_ADDRESS]: 'Enter or Paste Contract Address',
   [FIELDS_NAMES.TOKEN_ID]: 'Enter or Paste Token ID',

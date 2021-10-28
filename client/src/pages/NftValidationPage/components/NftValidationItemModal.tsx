@@ -2,11 +2,11 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 
-import Modal from '../../components/Modal/Modal';
-import Badge, { BADGE_TYPES } from '../Badge/Badge';
-import { TITLE_NAME } from '../../pages/NftValidationPage/constant';
+import Modal from '../../../components/Modal/Modal';
+import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
+import { TITLE_NAME } from '../constant';
 
-import { NFTTokenDoublet, CommonObjectProps } from '../../types';
+import { NFTTokenDoublet, CommonObjectProps } from '../../../types';
 import { NftValidationFormValues } from './types';
 
 import classes from './NftValidationItemModal.module.scss';

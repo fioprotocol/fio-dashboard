@@ -1,14 +1,14 @@
 import React from 'react';
 
-import ContractAddressField from '../../components/NftValidationComponents/ContractAddressField';
+import ContractAddressField from './components/ContractAddressField';
 import GenericNftValidationField, {
   FIELDS_NAMES,
-} from '../../components/NftValidationComponents/GenericNftValidationField';
-import ContractAddressTitle from '../../components/NftValidationComponents/NftListTitle/ContractAddressTitle';
-import GenericTitleComponent from '../../components/NftValidationComponents/NftListTitle/GenericTitleComponent';
-import GenericNftItemResult from '../../components/NftValidationComponents/NftItemResult/GenericNftItemResult';
+} from './components/GenericNftValidationField';
+import ContractAddressTitle from './components/NftListTitle/ContractAddressTitle';
+import GenericTitleComponent from './components/NftListTitle/GenericTitleComponent';
+import GenericNftItemResult from './components/NftItemResult/GenericNftItemResult';
 
-import { NftValidationFormValues } from '../../components/NftValidationComponents/types';
+import { NftValidationFormValues } from './components/types';
 import { NFTTokenDoublet } from '../../types';
 
 export const TITLE_NAME: { [key: string]: { id: string; name: string } } = {

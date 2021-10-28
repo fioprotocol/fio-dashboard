@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Badge, { BADGE_TYPES } from '../../Badge/Badge';
+import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import NftValidationItemModal from '../NftValidationItemModal';
 
-import { NFTTokenDoublet, CommonObjectProps } from '../../../types';
+import { NFTTokenDoublet, CommonObjectProps } from '../../../../types';
 import { NftValidationFormValues } from '../types';
 
 import classes from './GenericNftItemResult.module.scss';

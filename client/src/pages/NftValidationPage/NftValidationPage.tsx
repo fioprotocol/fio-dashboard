@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import apis from '../../api/index';
 
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
-import NftValidationForm from '../../components/NftValidationComponents/NftValidationForm';
+import NftValidationForm from './components/NftValidationForm';
 import CustomDropdown from '../../components/CustomDropdown';
 
-import NftListResults from '../../components/NftValidationComponents/NftListResults';
+import NftListResults from './components/NftListResults';
 import { OPTIONS, optionsList } from './constant';
 import { transformNft } from '../../util/fio';
 import { minWaitTimeFunction } from '../../utils';
 
-import { NftValidationFormValues } from '../../components/NftValidationComponents/types';
+import { NftValidationFormValues } from './components/types';
 
 import classes from './NftValidationPage.module.scss';
 

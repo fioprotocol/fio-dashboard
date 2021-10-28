@@ -1,7 +1,7 @@
 import React from 'react';
 import GenericTitleComponent from './GenericTitleComponent';
 
-import { TITLE_NAME } from '../../../pages/NftValidationPage/constant';
+import { TITLE_NAME } from '../../constant';
 import classes from './ContractAddressTitle.module.scss';
 
 type Props = {
