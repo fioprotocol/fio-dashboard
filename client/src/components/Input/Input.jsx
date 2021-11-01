@@ -43,6 +43,8 @@ const Input = props => {
     disabled,
     showErrorBorder,
     isLowHeight,
+    customChange,
+    previewUrl,
     ...rest
   } = props;
   const {
@@ -248,6 +250,28 @@ const Input = props => {
 
   if (type === 'password' && name !== 'pin') {
     return regularInputWrapper(regularInput);
+  }
+
+  if (type === 'file') {
+    return (
+      <div className={classes.fileContainer}>
+        <input
+          {...input}
+          {...rest}
+          onChange={customChange ? customChange : onChange}
+          type={type}
+          className={classes.fileInput}
+        />
+        {value && previewUrl ? (
+          <img className={classes.image} src={previewUrl} alt="preview" />
+        ) : (
+          <>
+            <FontAwesomeIcon icon="image" className={classes.icon} />
+            <p className={classes.text}>Drop Image Here</p>
+          </>
+        )}
+      </div>
+    );
   }
 
   if (name === 'pin' || name === 'confirmPin') {
