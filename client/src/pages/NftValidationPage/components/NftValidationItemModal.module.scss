@@ -25,6 +25,13 @@
       font-size: 1em;
       margin-bottom: 0;
     }
+    .image {
+      margin-top: 20px;
+      margin-bottom: 15px;
+      width: 100%;
+      display: block;
+      border-radius: 7px;
+    }
   }
   .itemContainer {
     display: flex;
@@ -74,6 +81,13 @@
 @include lg {
   .container {
     padding: 0 20px;
+    .subtitleContainer {
+      .image {
+        margin-bottom: 20px;
+        height: 132px;
+        width: fit-content;
+      }
+    }
     .itemContainer {
       .badgeContainer {
         .contentContainer {

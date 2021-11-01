@@ -5,12 +5,22 @@ import GenericNftValidationField, {
   FIELDS_NAMES,
 } from './components/GenericNftValidationField';
 import { renderContractAddressTitle } from './components/NftListTitle/ContractAddressTitle';
-import GenericTitleComponent from './components/NftListTitle/GenericTitleComponent';
-import GenericNftItemResult, {
+import {
+  renderFioAddressTitle,
+  renderHashTitle,
+  renderImageTitle,
+} from './components/NftListTitle/GenericTitleComponent';
+
+import {
   renderContractAddressItem,
+  renderFioAddressItem,
+  renderHashItem,
+  renderImageItem,
 } from './components/NftItemResult/GenericNftItemResult';
 
-import { RenderItem, RenderTitle, ValidationOption } from './components/types';
+import ImageField from './components/ImageField';
+
+import { ValidationOption } from './components/types';
 
 export const TITLE_NAME: { [key: string]: { id: string; name: string } } = {
   contractAddress: {
@@ -37,35 +47,19 @@ export const TITLE_NAME: { [key: string]: { id: string; name: string } } = {
     name: 'Hash',
     id: 'hash',
   },
+  image: {
+    name: 'Image',
+    id: 'image',
+  },
+  imageName: {
+    name: 'Image Name',
+    id: 'imageName',
+  },
+  imageUrl: {
+    name: 'Image URL',
+    id: 'imageUrl',
+  },
 };
-
-const renderFioAddressTitle: RenderTitle = searchParams => (
-  <GenericTitleComponent title="FIO Address" value={searchParams.fioAddress} />
-);
-
-const renderFioAddressItem: RenderItem = (resultItem, searchParams) => (
-  <GenericNftItemResult
-    titles={[TITLE_NAME.chainCode, TITLE_NAME.tokenId]}
-    resultItem={resultItem}
-    searchParams={searchParams}
-  />
-);
-
-const renderHashTitle: RenderTitle = values => (
-  <GenericTitleComponent title="Hash" value={values.hash} />
-);
-
-const renderHashItem: RenderItem = (resultItem, searchParams) => (
-  <GenericNftItemResult
-    titles={[
-      TITLE_NAME.fioAddress,
-      TITLE_NAME.chainCode,
-      TITLE_NAME.contractAddress,
-    ]}
-    resultItem={resultItem}
-    searchParams={searchParams}
-  />
-);
 
 export const OPTIONS: {
   [key: string]: ValidationOption;
@@ -101,13 +95,13 @@ export const OPTIONS: {
     resultsTitle: renderHashTitle,
     resultsItem: renderHashItem,
   },
-  //image: {
-  //   id: 'image',
-  //   name: 'Image',
-  //   field: <div>Image</div>,
-  //   resultsTitle: (values: any) => <div></div>,
-  //   resultsItem: (resultItem: NFTTokenDoublet) => <div></div>,
-  // }, // todo: set image upload hash method
+  image: {
+    id: TITLE_NAME.image.id,
+    name: TITLE_NAME.image.name,
+    field: <ImageField />,
+    resultsTitle: renderImageTitle,
+    resultsItem: renderImageItem,
+  },
 };
 
 export const optionsList = Object.values(OPTIONS).map(({ id, name }) => ({
