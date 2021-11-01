@@ -6,13 +6,14 @@ import NftValidationForm from './components/NftValidationForm';
 import CustomDropdown from '../../components/CustomDropdown';
 
 import NftListResults from './components/NftListResults';
-import { OPTIONS, optionsList } from './constant';
+import { OPTIONS, optionsList, TITLE_NAME } from './constant';
 import { transformNft } from '../../util/fio';
 import { minWaitTimeFunction } from '../../utils';
 
 import { NftValidationFormValues, ValidationOption } from './components/types';
 
 import classes from './NftValidationPage.module.scss';
+import { CommonObjectProps } from '../../types';
 
 const NftValidationPage: React.FC = () => {
   const [activeOption, setActiveOption] = useState<ValidationOption | null>(
@@ -31,12 +32,16 @@ const NftValidationPage: React.FC = () => {
     setResults(null);
   };
 
-  const onSubmit = async (values: NftValidationFormValues) => {
+  const onSubmit = async (values: CommonObjectProps) => {
     toggleLoading(true);
     setResults(null);
     setSearchParams(values);
+    const isImage = TITLE_NAME.image.id in values;
     const nftResults = await minWaitTimeFunction(
-      () => apis.fio.getNFTs(values),
+      () =>
+        apis.fio.getNFTs(
+          isImage ? { hash: values[TITLE_NAME.hash.id] } : values,
+        ),
       2000,
     );
     if (nftResults) setResults(transformNft(nftResults.nfts));

@@ -1,5 +1,5 @@
 import React from 'react';
-import { NFTTokenDoublet } from '../../../types';
+import { CommonObjectProps, NFTTokenDoublet } from '../../../types';
 
 export type NftValidationFormValues = {
   contractAddress?: string;
@@ -7,15 +7,16 @@ export type NftValidationFormValues = {
   hash?: string;
   fioAddress?: string;
   chainCode?: string;
+  image?: string;
+  imageUrl?: string;
+  imageName?: string;
 };
 
-export type RenderTitle = (
-  searchParams: NftValidationFormValues,
-) => React.ReactNode;
+export type RenderTitle = (searchParams: CommonObjectProps) => React.ReactNode;
 
 export type RenderItem = (
   resultItem: NFTTokenDoublet,
-  searchParams: NftValidationFormValues,
+  searchParams: CommonObjectProps,
 ) => React.ReactNode;
 
 export type ValidationOption = {

@@ -38,6 +38,10 @@ const validate = (
     if (!values.hash) errors.hash = 'Required';
   }
 
+  if (activeOption.id === OPTIONS.image.id) {
+    if (!values.image) errors.image = 'Required';
+  }
+
   return errors;
 };
 

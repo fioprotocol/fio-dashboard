@@ -1,4 +1,8 @@
 import React from 'react';
+
+import ImageTitle from './ImageTitle';
+import { TITLE_NAME } from '../../constant';
+import { RenderTitle } from '../types';
 import classes from './GenericTitleComponent.module.scss';
 
 type Props = {
@@ -17,3 +21,19 @@ const GenericTitleComponent: React.FC<Props> = props => {
 };
 
 export default GenericTitleComponent;
+
+export const renderFioAddressTitle: RenderTitle = searchParams => (
+  <GenericTitleComponent
+    title={TITLE_NAME.fioAddress.name}
+    value={searchParams[TITLE_NAME.fioAddress.id]}
+  />
+);
+
+export const renderHashTitle: RenderTitle = values => (
+  <GenericTitleComponent title={TITLE_NAME.hash.name} value={values.hash} />
+);
+
+export const renderImageTitle: RenderTitle = values => {
+  const { imageUrl, imageName } = values;
+  return <ImageTitle imageName={imageName} imageUrl={imageUrl} />;
+};
