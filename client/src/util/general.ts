@@ -48,3 +48,15 @@ export async function copyToClipboard(text: string) {
     console.error(e);
   }
 }
+
+export const getHash = async (itemToHash: File) => {
+  if (!(itemToHash instanceof Blob)) return;
+  const arrayBuffer = await itemToHash.arrayBuffer();
+  const msgUint8 = new Uint8Array(arrayBuffer);
+
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+  return hash;
+};
