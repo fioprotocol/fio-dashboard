@@ -7,7 +7,7 @@ import { NFTTokenDoublet } from '../../../../types';
 import { RenderItem, ResultTitleId } from '../types';
 
 import classes from './GenericNftItemResult.module.scss';
-import { NFT_ITEMS_TITLE_NAMES } from '../../constant';
+import { TITLE_NAME, NFT_ITEMS_TITLE_NAMES } from '../../constant';
 
 type Props = {
   titles: {
@@ -117,9 +117,9 @@ export const renderImageItem: RenderItem = (resultItem, searchParams) => (
       NFT_ITEMS_TITLE_NAMES.contractAddress,
     ]}
     resultItem={resultItem}
-    searchName={NFT_ITEMS_TITLE_NAMES.image.name}
-    searchValue={searchParams[NFT_ITEMS_TITLE_NAMES.imageName.id]}
-    activeItemField={NFT_ITEMS_TITLE_NAMES.hash.id}
-    imageUrl={searchParams[NFT_ITEMS_TITLE_NAMES.imageUrl.id]}
+    searchName={TITLE_NAME.image.name}
+    searchValue={searchParams[TITLE_NAME.imageName.id]}
+    activeItemField={TITLE_NAME.hash.id}
+    imageUrl={searchParams[TITLE_NAME.imageUrl.id]}
   />
 );
