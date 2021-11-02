@@ -5,14 +5,15 @@ import classnames from 'classnames';
 import Modal from '../../../components/Modal/Modal';
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import { TITLE_NAME } from '../constant';
+import { NFT_TOKEN_ITEM_PROPS_ORDER } from '../../../constants/common';
 
-import { CommonObjectProps } from '../../../types';
+import { NFTTokenDoublet } from '../../../types';
 
 import classes from './NftValidationItemModal.module.scss';
 
 type Props = {
   show: boolean;
-  resultItem: CommonObjectProps;
+  resultItem: NFTTokenDoublet;
   onClose: () => void;
   activeItemField: string;
   searchName: string;
@@ -36,9 +37,8 @@ const NftValidationItemModal: React.FC<Props> = props => {
       title: string;
       value: string;
       isSmall?: boolean;
-    }[] = Object.keys(resultItem)
-      .filter(key => key !== activeItemField)
-      .map(key => {
+    }[] = NFT_TOKEN_ITEM_PROPS_ORDER.filter(key => key !== activeItemField).map(
+      key => {
         const objValue = resultItem[key];
         if (key === 'metadata') {
           const creatorUrl = (() => {
@@ -58,10 +58,11 @@ const NftValidationItemModal: React.FC<Props> = props => {
           };
         }
         return {
-          title: TITLE_NAME[key].name,
+          title: TITLE_NAME[key].fieldName || TITLE_NAME[key].name,
           value: objValue,
         };
-      });
+      },
+    );
 
     return itemValues.map(item => {
       const { title, value, isSmall } = item;

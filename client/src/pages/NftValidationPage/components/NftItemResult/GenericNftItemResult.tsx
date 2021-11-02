@@ -3,14 +3,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import NftValidationItemModal from '../NftValidationItemModal';
 
-import { NFTTokenDoublet, CommonObjectProps } from '../../../../types';
-import { RenderItem } from '../types';
+import { NFTTokenDoublet } from '../../../../types';
+import { RenderItem, ResultTitleId } from '../types';
 
 import classes from './GenericNftItemResult.module.scss';
-import { TITLE_NAME } from '../../constant';
+import { NFT_ITEMS_TITLE_NAMES } from '../../constant';
 
 type Props = {
-  titles: { name: string; id: string }[];
+  titles: {
+    name: string;
+    id: ResultTitleId;
+  }[];
   resultItem: NFTTokenDoublet;
   activeItemField: string;
   searchName: string;
@@ -38,17 +41,14 @@ const GenericNftItemResult: React.FC<Props> = props => {
         <Badge show={true} type={BADGE_TYPES.WHITE}>
           <div className={classes.badgeContainer}>
             <div className={classes.resultsContainer}>
-              {titles.map(title => {
-                const resultValue: CommonObjectProps = { ...resultItem };
-                return (
-                  <div className={classes.titleContainer} key={title.id}>
-                    <div className={classes.title}>{title.name}:</div>
-                    <div className={classes.resultValue}>
-                      {resultValue[title.id] || '-'}
-                    </div>
+              {titles.map(title => (
+                <div className={classes.titleContainer} key={title.id}>
+                  <div className={classes.title}>{title.name}:</div>
+                  <div className={classes.resultValue}>
+                    {resultItem[title.id] || '-'}
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
             <FontAwesomeIcon
               icon="chevron-right"
@@ -77,49 +77,49 @@ export const renderContractAddressItem: RenderItem = (
   searchParams,
 ) => (
   <GenericNftItemResult
-    titles={[TITLE_NAME.fioAddress]}
+    titles={[NFT_ITEMS_TITLE_NAMES.fioAddress]}
     resultItem={resultItem}
-    searchName={TITLE_NAME.contractAddress.name}
-    searchValue={searchParams[TITLE_NAME.contractAddress.id]}
-    activeItemField={TITLE_NAME.contractAddress.id}
+    searchName={NFT_ITEMS_TITLE_NAMES.contractAddress.name}
+    searchValue={searchParams[NFT_ITEMS_TITLE_NAMES.contractAddress.id]}
+    activeItemField={NFT_ITEMS_TITLE_NAMES.contractAddress.id}
   />
 );
 
 export const renderFioAddressItem: RenderItem = (resultItem, searchParams) => (
   <GenericNftItemResult
-    titles={[TITLE_NAME.chainCode, TITLE_NAME.tokenId]}
+    titles={[NFT_ITEMS_TITLE_NAMES.chainCode, NFT_ITEMS_TITLE_NAMES.tokenId]}
     resultItem={resultItem}
-    searchName={TITLE_NAME.fioAddress.name}
-    searchValue={searchParams[TITLE_NAME.fioAddress.id]}
-    activeItemField={TITLE_NAME.fioAddress.id}
+    searchName={NFT_ITEMS_TITLE_NAMES.fioAddress.name}
+    searchValue={searchParams[NFT_ITEMS_TITLE_NAMES.fioAddress.id]}
+    activeItemField={NFT_ITEMS_TITLE_NAMES.fioAddress.id}
   />
 );
 
 export const renderHashItem: RenderItem = (resultItem, searchParams) => (
   <GenericNftItemResult
     titles={[
-      TITLE_NAME.fioAddress,
-      TITLE_NAME.chainCode,
-      TITLE_NAME.contractAddress,
+      NFT_ITEMS_TITLE_NAMES.fioAddress,
+      NFT_ITEMS_TITLE_NAMES.chainCode,
+      NFT_ITEMS_TITLE_NAMES.contractAddress,
     ]}
     resultItem={resultItem}
-    searchName={TITLE_NAME.hash.name}
-    searchValue={searchParams[TITLE_NAME.hash.id]}
-    activeItemField={TITLE_NAME.hash.id}
+    searchName={NFT_ITEMS_TITLE_NAMES.hash.name}
+    searchValue={searchParams[NFT_ITEMS_TITLE_NAMES.hash.id]}
+    activeItemField={NFT_ITEMS_TITLE_NAMES.hash.id}
   />
 );
 
 export const renderImageItem: RenderItem = (resultItem, searchParams) => (
   <GenericNftItemResult
     titles={[
-      TITLE_NAME.fioAddress,
-      TITLE_NAME.chainCode,
-      TITLE_NAME.contractAddress,
+      NFT_ITEMS_TITLE_NAMES.fioAddress,
+      NFT_ITEMS_TITLE_NAMES.chainCode,
+      NFT_ITEMS_TITLE_NAMES.contractAddress,
     ]}
     resultItem={resultItem}
-    searchName={TITLE_NAME.image.name}
-    searchValue={searchParams[TITLE_NAME.imageName.id]}
-    activeItemField={TITLE_NAME.hash.id}
-    imageUrl={searchParams[TITLE_NAME.imageUrl.id]}
+    searchName={NFT_ITEMS_TITLE_NAMES.image.name}
+    searchValue={searchParams[NFT_ITEMS_TITLE_NAMES.imageName.id]}
+    activeItemField={NFT_ITEMS_TITLE_NAMES.hash.id}
+    imageUrl={searchParams[NFT_ITEMS_TITLE_NAMES.imageUrl.id]}
   />
 );

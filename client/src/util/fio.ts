@@ -32,9 +32,9 @@ export const transformNft = (nfts: NftTokenResponse[]) => {
   for (const item of nfts) {
     const nftItem = {
       fioAddress: item.fio_address,
+      contractAddress: item.contract_address,
       chainCode: item.chain_code,
       tokenId: item.token_id,
-      contractAddress: item.contract_address,
       url: item.url,
       hash: item.hash,
       metadata: item.metadata,
