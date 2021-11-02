@@ -8,12 +8,13 @@ import CustomDropdown from '../../components/CustomDropdown';
 import NftListResults from './components/NftListResults';
 import { OPTIONS, optionsList, TITLE_NAME } from './constant';
 import { transformNft } from '../../util/fio';
+import { getHash } from '../../util/general';
 import { minWaitTimeFunction } from '../../utils';
+import { URL_REGEXP } from '../../constants/regExps';
 
 import { NftValidationFormValues, ValidationOption } from './components/types';
 
 import classes from './NftValidationPage.module.scss';
-import { CommonObjectProps } from '../../types';
 
 const NftValidationPage: React.FC = () => {
   const [activeOption, setActiveOption] = useState<ValidationOption | null>(
@@ -32,20 +33,37 @@ const NftValidationPage: React.FC = () => {
     setResults(null);
   };
 
-  const onSubmit = async (values: CommonObjectProps) => {
-    toggleLoading(true);
-    setResults(null);
-    setSearchParams(values);
-    const isImage = TITLE_NAME.image.id in values;
+  const getNfts = async (params: NftValidationFormValues) => {
     const nftResults = await minWaitTimeFunction(
-      () =>
-        apis.fio.getNFTs(
-          isImage ? { hash: values[TITLE_NAME.hash.id] } : values,
-        ),
+      () => apis.fio.getNFTs(params),
       2000,
     );
     if (nftResults) setResults(transformNft(nftResults.nfts));
     toggleLoading(false);
+  };
+
+  const onSubmit = async (values: NftValidationFormValues) => {
+    toggleLoading(true);
+    setResults(null);
+    setSearchParams(values);
+    let params = values;
+
+    const isImage = TITLE_NAME.image.id in values;
+    const { hash } = values;
+    if (isImage) params = { hash };
+
+    if (hash && URL_REGEXP.test(hash)) {
+      try {
+        const file = await fetch(hash)
+          .then(res => res.blob())
+          .then(blob => new File([blob], 'remoteFile', { type: 'image/png' }));
+        const hashFromFile = await getHash(file);
+        params = { hash: hashFromFile };
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    await getNfts(params);
   };
 
   const showInfoBadge =

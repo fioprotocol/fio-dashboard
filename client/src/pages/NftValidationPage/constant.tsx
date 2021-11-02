@@ -44,7 +44,7 @@ export const TITLE_NAME: { [key: string]: { id: string; name: string } } = {
     id: 'url',
   },
   hash: {
-    name: 'Hash',
+    name: 'Hash / Media URL',
     id: 'hash',
   },
   image: {
