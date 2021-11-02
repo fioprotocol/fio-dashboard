@@ -20,9 +20,15 @@ import {
 
 import ImageField from './components/ImageField';
 
-import { ValidationOption } from './components/types';
+import {
+  ValidationOption,
+  TitleNameId,
+  ResultTitleId,
+} from './components/types';
 
-export const TITLE_NAME: { [key: string]: { id: string; name: string } } = {
+export const NFT_ITEMS_TITLE_NAMES: {
+  [key: string]: { id: ResultTitleId; name: string; fieldName?: string };
+} = {
   contractAddress: {
     name: 'Contract Address',
     id: 'contractAddress',
@@ -45,8 +51,15 @@ export const TITLE_NAME: { [key: string]: { id: string; name: string } } = {
   },
   hash: {
     name: 'Hash / Media URL',
+    fieldName: 'Hash',
     id: 'hash',
   },
+};
+
+export const TITLE_NAME: {
+  [key: string]: { id: TitleNameId; name: string; fieldName?: string };
+} = {
+  ...NFT_ITEMS_TITLE_NAMES,
   image: {
     name: 'Image',
     id: 'image',

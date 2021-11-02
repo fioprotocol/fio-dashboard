@@ -223,3 +223,5 @@ export type EmailConfirmationStateData = {
 };
 
 export type CommonObjectProps = { [key: string]: string };
+
+export type NFTTokenItemProps = keyof NFTTokenDoublet;

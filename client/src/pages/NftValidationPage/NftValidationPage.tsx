@@ -56,7 +56,7 @@ const NftValidationPage: React.FC = () => {
       try {
         const file = await fetch(hash)
           .then(res => res.blob())
-          .then(blob => new File([blob], 'remoteFile', { type: 'image/png' }));
+          .then(blob => new File([blob], 'remoteFile', { type: 'image/*' }));
         const hashFromFile = await getHash(file);
         params = { hash: hashFromFile };
       } catch (e) {

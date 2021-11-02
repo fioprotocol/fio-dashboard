@@ -5,4 +5,4 @@ export const ADDRESS_REGEXP = /^[\w\d]*[\w\-\d]*[\w\d]$/;
 export const CHAIN_CODE_REGEXP = /^[A-Z0-9]+$/;
 export const TOKEN_CODE_REGEXP = /^[A-Z0-9]+$|^\*{1}$/;
 
-export const URL_REGEXP = /\b(https?:\/\/\S*\b)/g;
+export const URL_REGEXP = /\b(https?:\/\/\S*\b)/;
