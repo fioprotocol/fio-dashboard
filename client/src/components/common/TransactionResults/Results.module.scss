@@ -64,6 +64,9 @@
     }
     .badgeItemNext {
       margin-left: 1.25rem;
+      &.breakWord {
+        word-break: break-all;
+      }
     }
   }
 

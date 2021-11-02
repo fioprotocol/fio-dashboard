@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 
 import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
 import FioName from '../../FioName/FioName';
@@ -60,7 +61,11 @@ const SignResults = (props: ResultsProps) => {
         <Badge show={true} type={BADGE_TYPES.WHITE}>
           <div className={classes.badgeContainer}>
             <span className={classes.badgeItem}>Hash</span>
-            <span className={classes.badgeItemNext}>{hash || dashSign}</span>
+            <span
+              className={classnames(classes.badgeItemNext, classes.breakWord)}
+            >
+              {hash || dashSign}
+            </span>
           </div>
         </Badge>
       </div>
