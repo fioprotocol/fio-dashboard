@@ -1,5 +1,5 @@
 import React from 'react';
-import { NFTTokenDoublet } from '../../../types';
+import { NFTTokenDoublet, NFTTokenItemProps } from '../../../types';
 
 export type NftValidationFormValues = {
   contractAddress?: string;
@@ -7,6 +7,10 @@ export type NftValidationFormValues = {
   hash?: string;
   fioAddress?: string;
   chainCode?: string;
+  image?: string;
+  imageUrl?: string;
+  imageName?: string;
+  url?: string;
 };
 
 export type RenderTitle = (
@@ -25,3 +29,16 @@ export type ValidationOption = {
   resultsTitle: RenderTitle;
   resultsItem: RenderItem;
 };
+
+export type TitleNameId = keyof NftValidationFormValues;
+
+type ResultTitleIds = {
+  contractAddress?: string;
+  tokenId?: string;
+  hash?: string;
+  fioAddress?: string;
+  chainCode?: string;
+  url?: string;
+};
+
+export type ResultTitleId = keyof ResultTitleIds;

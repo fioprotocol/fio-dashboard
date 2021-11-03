@@ -43,6 +43,7 @@ const Input = props => {
     disabled,
     showErrorBorder,
     isLowHeight,
+    customChange,
     ...rest
   } = props;
   const {
@@ -63,6 +64,8 @@ const Input = props => {
   const [showPass, toggleShowPass] = useState(false);
   const [clearInput, toggleClearInput] = useState(value !== '');
   const [focused, setFocused] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState('');
+
   const onFocus = () => setFocused(true);
   const onBlur = () => setFocused(false);
 
@@ -250,6 +253,39 @@ const Input = props => {
     return regularInputWrapper(regularInput);
   }
 
+  if (type === 'file') {
+    return (
+      <div className={classes.fileContainer}>
+        <input
+          {...input}
+          {...rest}
+          onChange={e => {
+            const currentValue = e.target.value;
+            onChange(currentValue);
+
+            const file = e.target.files[0];
+
+            if (file) {
+              const fileUrl = window.URL.createObjectURL(file);
+              setPreviewUrl(fileUrl);
+              customChange && customChange(file, fileUrl);
+            }
+          }}
+          type={type}
+          className={classes.fileInput}
+        />
+        {value && previewUrl ? (
+          <img className={classes.image} src={previewUrl} alt="preview" />
+        ) : (
+          <>
+            <FontAwesomeIcon icon="image" className={classes.icon} />
+            <p className={classes.text}>Drop Image Here</p>
+          </>
+        )}
+      </div>
+    );
+  }
+
   if (name === 'pin' || name === 'confirmPin') {
     const positionNumber = value.length;
     const showError = error || data.error;
@@ -306,6 +342,8 @@ const Input = props => {
       </>
     );
   }
+
+  if (type === 'hidden') return null;
 
   return <input {...input} {...props} />;
 };

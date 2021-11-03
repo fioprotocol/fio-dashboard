@@ -1,0 +1,13 @@
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.image {
+  margin-bottom: 0;
+  width: 100%;
+  display: block;
+  border-radius: 7px;
+  @include lg {
+    margin-bottom: 20px;
+    height: 132px;
+    width: auto;
+  }
+}

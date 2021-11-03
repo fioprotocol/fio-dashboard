@@ -5,9 +5,9 @@ import classnames from 'classnames';
 import Modal from '../../../components/Modal/Modal';
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import { TITLE_NAME } from '../constant';
+import { NFT_TOKEN_ITEM_PROPS_ORDER } from '../../../constants/common';
 
-import { NFTTokenDoublet, CommonObjectProps } from '../../../types';
-import { NftValidationFormValues } from './types';
+import { NFTTokenDoublet } from '../../../types';
 
 import classes from './NftValidationItemModal.module.scss';
 
@@ -15,51 +15,54 @@ type Props = {
   show: boolean;
   resultItem: NFTTokenDoublet;
   onClose: () => void;
-  searchParams: NftValidationFormValues;
+  activeItemField: string;
+  searchName: string;
+  searchValue: string;
+  imageUrl?: string;
 };
 
 const NftValidationItemModal: React.FC<Props> = props => {
-  const { show, onClose, resultItem, searchParams } = props;
-
-  const searchParamObj: CommonObjectProps =
-    (searchParams != null && { ...searchParams }) || {};
-  delete searchParamObj.chainCode;
-  delete searchParamObj.tokenId;
-
-  const titleObj = Object.keys(searchParamObj)[0];
-
-  const resultItemToRender: CommonObjectProps = { ...resultItem };
-  delete resultItemToRender[titleObj];
+  const {
+    show,
+    onClose,
+    resultItem,
+    searchName,
+    searchValue,
+    activeItemField,
+    imageUrl,
+  } = props;
 
   const renderBadge = () => {
     const itemValues: {
       title: string;
       value: string;
       isSmall?: boolean;
-    }[] = Object.keys(resultItemToRender).map(key => {
-      const objValue = resultItemToRender[key];
-      if (key === 'metadata') {
-        const creatorUrl = (() => {
-          try {
-            return JSON.parse(objValue).creator_url;
-          } catch (err) {
-            return '';
-          }
-        })();
-        return { title: 'Creator URL', value: creatorUrl };
-      }
-      if (key === TITLE_NAME.chainCode.id || key === TITLE_NAME.tokenId.id) {
+    }[] = NFT_TOKEN_ITEM_PROPS_ORDER.filter(key => key !== activeItemField).map(
+      key => {
+        const objValue = resultItem[key];
+        if (key === 'metadata') {
+          const creatorUrl = (() => {
+            try {
+              return JSON.parse(objValue).creator_url;
+            } catch (err) {
+              return '';
+            }
+          })();
+          return { title: 'Creator URL', value: creatorUrl };
+        }
+        if (key === TITLE_NAME.chainCode.id || key === TITLE_NAME.tokenId.id) {
+          return {
+            title: TITLE_NAME[key].name,
+            value: objValue,
+            isSmall: true,
+          };
+        }
         return {
-          title: TITLE_NAME[key].name,
+          title: TITLE_NAME[key].fieldName || TITLE_NAME[key].name,
           value: objValue,
-          isSmall: true,
         };
-      }
-      return {
-        title: TITLE_NAME[key].name,
-        value: objValue,
-      };
-    });
+      },
+    );
 
     return itemValues.map(item => {
       const { title, value, isSmall } = item;
@@ -93,8 +96,15 @@ const NftValidationItemModal: React.FC<Props> = props => {
       <div className={classes.container}>
         <h3 className={classes.title}>NFT Signature Information</h3>
         <div className={classes.subtitleContainer}>
-          <h5 className={classes.subtitle}>{TITLE_NAME[titleObj].name}</h5>
-          <p className={classes.searchParam}>{searchParamObj[titleObj]}</p>
+          <h5 className={classes.subtitle}>{searchName}</h5>
+          {imageUrl && (
+            <img
+              src={imageUrl}
+              alt="Searched value"
+              className={classes.image}
+            />
+          )}
+          <p className={classes.searchParam}>{searchValue}</p>
         </div>
         <div className={classes.itemContainer}>{renderBadge()}</div>
         <Button onClick={onClose} className={classes.button}>

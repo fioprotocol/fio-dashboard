@@ -258,3 +258,36 @@
     left: 15px;
   }
 }
+
+.fileContainer {
+  background-color: $light-gray;
+  border-radius: 7px;
+  box-shadow: 0 0 8px 0 rgba(0,0,0,0.11);
+  color: $dark-jungle-green;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+
+  .fileInput {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+  .icon {
+    font-size: 40px;
+    margin-top: 30px;
+  }
+  .text {
+    font-size: 0.875em;
+    margin-top: 15px;
+    margin-bottom: 22px;
+  }
+  .image {
+    width: 100%;
+  }
+}
+
