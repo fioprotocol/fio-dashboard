@@ -24,6 +24,8 @@ import { redirectLink } from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
 import { ROUTES } from '../../constants/routes';
 
+import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
+
 export function* loginSuccess(history, api) {
   yield takeEvery(LOGIN_SUCCESS, function*(action) {
     const hasRedirectTo = yield select(redirectLink);
@@ -47,6 +49,7 @@ export function* profileSuccess() {
         yield put(
           createNotification({
             action: ACTIONS.RECOVERY,
+            contentType: NOTIFICATIONS_CONTENT_TYPE.RECOVERY_PASSWORD,
             type: BADGE_TYPES.ALERT,
             pagesToShow: [ROUTES.HOME],
           }),

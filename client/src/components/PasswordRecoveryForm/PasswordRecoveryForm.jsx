@@ -15,6 +15,8 @@ import FormHeader from '../FormHeader/FormHeader';
 import Input from '../Input/Input';
 import SuccessModal from '../Modal/SuccessModal';
 
+import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
+
 import classes from './PasswordRecoveryForm.module.scss';
 
 const MIN_VALID_LENGTH = 3;
@@ -114,6 +116,7 @@ const PasswordRecoveryForm = props => {
     closeRecoveryModal();
     props.createNotification({
       action: ACTIONS.RECOVERY,
+      contentType: NOTIFICATIONS_CONTENT_TYPE.RECOVERY_PASSWORD,
       type: BADGE_TYPES.ALERT,
       pagesToShow: [ROUTES.HOME],
     });

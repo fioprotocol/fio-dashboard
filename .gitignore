@@ -1,5 +1,6 @@
 .env
 /client/build/
+notification-content.json
 # Package managers:
 lerna-debug.log
 node_modules/
