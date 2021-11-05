@@ -31,9 +31,19 @@ export const noProfileLoaded = createSelector(
 export const isActiveUser = createSelector(
   isAuthenticated,
   user,
-  (isAuthenticated, user) =>
-    isAuthenticated && user.status === USER_STATUSES.ACTIVE,
+  profileRefreshed,
+  (isAuthenticated, user, profileRefreshed) =>
+    profileRefreshed && isAuthenticated && user.status === USER_STATUSES.ACTIVE,
 );
+
+export const isNotActiveUser = createSelector(
+  isAuthenticated,
+  user,
+  profileRefreshed,
+  (isAuthenticated, user, profileRefreshed) =>
+    profileRefreshed && isAuthenticated && user.status !== USER_STATUSES.ACTIVE,
+);
+
 export const hasFreeAddress = createSelector(
   user,
   user => user && !!user.freeAddresses.length,
