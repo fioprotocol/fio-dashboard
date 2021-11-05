@@ -69,9 +69,7 @@ export default class UsersCreate extends Base {
 
     await new Notification({
       type: Notification.TYPE.INFO,
-      title: 'Account Create',
-      message:
-        "You're all set to start managing FIO Addresses, Domains, Requests as well as staying",
+      contentType: Notification.CONTENT_TYPE.ACCOUNT_CREATE,
       userId: user.id,
       data: { pagesToShow: ['/'] },
     }).save();

@@ -7,6 +7,11 @@ import { ROUTES } from '../../constants/routes';
 import { ACTIONS } from '../../components/Notifications/Notifications';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import {
+  NOTIFICATIONS_CONTENT_TYPE,
+  NOTIFICATIONS_CONTENT,
+} from '../../constants/notifications';
+
+import {
   NotificationParams,
   CartItem,
   EmailConfirmationStateData,
@@ -74,8 +79,7 @@ const EmailConfirmationPage: React.FC<Props &
       props.createNotification({
         action: ACTIONS.EMAIL_CONFIRM,
         type: BADGE_TYPES.INFO,
-        title: 'Account Confirmation',
-        message: 'Your email is confirmed',
+        contentType: NOTIFICATIONS_CONTENT_TYPE.ACCOUNT_CONFIRMATION,
         pagesToShow: [
           ROUTES.CART,
           ROUTES.CHECKOUT,
@@ -148,7 +152,9 @@ const EmailConfirmationPage: React.FC<Props &
     <div className={classes.container}>
       <div>
         <FontAwesomeIcon icon="envelope" className={classes.icon} />
-        <h4 className={classes.title}>Your email is confirmed</h4>
+        <h4 className={classes.title}>
+          {NOTIFICATIONS_CONTENT.ACCOUNT_CONFIRMATION.message}
+        </h4>
         {renderLoginSection()}
       </div>
     </div>

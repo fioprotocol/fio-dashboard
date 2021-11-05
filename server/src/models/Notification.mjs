@@ -3,6 +3,7 @@ import Sequelize from 'sequelize';
 import Base from './Base';
 
 import { User } from './User';
+import getNotificationContent from '../notifications.mjs';
 
 const { DataTypes: DT } = Sequelize;
 
@@ -14,6 +15,13 @@ export class Notification extends Base {
       ERROR: 'error',
       INFO: 'info',
       SUCCESS: 'success',
+    };
+  }
+  static get CONTENT_TYPE() {
+    return {
+      RECOVERY_PASSWORD: 'RECOVERY_PASSWORD',
+      ACCOUNT_CONFIRMATION: 'ACCOUNT_CONFIRMATION',
+      ACCOUNT_CREATE: 'ACCOUNT_CREATE',
     };
   }
   static get ACTION() {
@@ -28,6 +36,7 @@ export class Notification extends Base {
         id: { type: DT.BIGINT, primaryKey: true, autoIncrement: true },
         type: { type: DT.STRING, allowNull: false },
         action: { type: DT.STRING, allowNull: true },
+        contentType: { type: DT.STRING, allowNull: true },
         title: { type: DT.STRING, allowNull: true },
         message: { type: DT.TEXT },
         seenDate: { type: DT.DATE, allowNull: true },
@@ -64,10 +73,18 @@ export class Notification extends Base {
     });
   }
 
+  static getDefaultContent(contentType, key) {
+    if (getNotificationContent()[contentType]) {
+      return getNotificationContent()[contentType][key];
+    }
+    return null;
+  }
+
   static format({
     id,
     type,
     action,
+    contentType,
     title,
     message,
     seenDate,
@@ -79,8 +96,9 @@ export class Notification extends Base {
       id,
       type,
       action,
-      title,
-      message,
+      contentType,
+      title: title || this.getDefaultContent(contentType, 'title'),
+      message: message || this.getDefaultContent(contentType, 'message'),
       seenDate,
       closeDate,
       createdAt,
