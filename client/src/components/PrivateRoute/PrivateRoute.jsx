@@ -7,7 +7,7 @@ import { ROUTES } from '../../constants/routes';
 export const PrivateRoute = ({
   component: Component,
   noProfileLoaded,
-  isActiveUser,
+  isNotActiveUser,
   loading,
   homePageLink,
   ...rest
@@ -38,7 +38,7 @@ export const PrivateRoute = ({
             />
           );
 
-        if (!isActiveUser) {
+        if (isNotActiveUser) {
           return (
             <Redirect
               to={{
