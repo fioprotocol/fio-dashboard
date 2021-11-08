@@ -10,7 +10,6 @@ import {
   getFee,
   RENEW_REQUEST,
 } from '../../redux/fio/actions';
-import { getPrices } from '../../redux/registrations/actions';
 import { resetPinConfirm } from '../../redux/edge/actions';
 import { showPinModal } from '../../redux/modal/actions';
 
@@ -65,7 +64,6 @@ const reduxConnect = connect(
     renew,
     showPinModal,
     resetPinConfirm,
-    getPrices,
     getFee: (isFioAddress: boolean) =>
       getFee(
         isFioAddress

@@ -2,11 +2,15 @@ import { combineReducers } from 'redux';
 import { LOGOUT_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
 
-const PRICES_DEFAULT = {
+import { Domain, Prices } from '../../types';
+
+const PRICES_DEFAULT: Prices = {
   fio: { address: 0, domain: 0 },
   fioNative: { address: 0, domain: 0 },
   usdt: { address: 0, domain: 0 },
+  usdtRoe: null,
 };
+
 export default combineReducers({
   loading(state = false, action) {
     switch (action.type) {
@@ -38,7 +42,23 @@ export default combineReducers({
         return state;
     }
   },
-  domains(state = [], action) {
+  roe(state: number | null = null, action) {
+    switch (action.type) {
+      case actions.PRICES_SUCCESS:
+        return action.data.pricing.usdtRoe;
+      default:
+        return state;
+    }
+  },
+  roeSetDate(state: Date = new Date(), action) {
+    switch (action.type) {
+      case actions.PRICES_SUCCESS:
+        return new Date();
+      default:
+        return state;
+    }
+  },
+  domains(state: Domain[] = [], action) {
     switch (action.type) {
       case actions.DOMAINS_SUCCESS:
         return action.data.domains;

@@ -34,7 +34,6 @@ export type ContainerProps = {
   refreshBalance: (publicKey: string) => void;
   transfer: (params: TransferParams) => void;
   getFee: (isFioAddress: boolean) => void;
-  getPrices: () => void;
   showPinModal: (action: string, data: { transferAddress: string }) => void;
   resetPinConfirm: () => void;
   pinConfirmation: PinConfirmation;

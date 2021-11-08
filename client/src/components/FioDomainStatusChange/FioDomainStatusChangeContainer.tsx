@@ -44,7 +44,6 @@ const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
     setDomainVisibility,
     result,
     getFee,
-    getPrices,
     showPinModal,
     resetPinConfirm,
   } = props;
@@ -57,7 +56,6 @@ const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
   useEffect(() => {
-    getPrices();
     getFee();
     refreshBalance(walletPublicKey);
   }, []);

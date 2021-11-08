@@ -10,7 +10,6 @@ import {
   getFee,
   SET_VISIBILITY_REQUEST,
 } from '../../redux/fio/actions';
-import { getPrices } from '../../redux/registrations/actions';
 import { resetPinConfirm } from '../../redux/edge/actions';
 import { showPinModal } from '../../redux/modal/actions';
 
@@ -72,7 +71,6 @@ const reduxConnect = connect(
     setDomainVisibility,
     showPinModal,
     resetPinConfirm,
-    getPrices,
     getFee: () => getFee(apis.fio.actionEndPoints.setFioDomainPublic),
   },
 );
