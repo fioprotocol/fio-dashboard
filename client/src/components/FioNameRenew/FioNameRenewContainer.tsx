@@ -36,7 +36,6 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
     renew,
     result,
     getFee,
-    getPrices,
     showPinModal,
     resetPinConfirm,
   } = props;
@@ -46,7 +45,6 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
   useEffect(() => {
-    getPrices();
     getFee(hasFioAddressDelimiter(name));
     refreshBalance(walletPublicKey);
   }, []);
