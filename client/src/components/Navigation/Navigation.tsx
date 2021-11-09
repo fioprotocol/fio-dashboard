@@ -21,15 +21,20 @@ const navItems: string[] = [
 export const Navigation = (props: {
   refProfileInfo: RefProfile | null;
   refProfileLoading: boolean;
-  isActiveUser: boolean;
+  isNotActiveUser: boolean;
   isOnSide?: boolean;
   closeMenu?: () => void;
 }) => {
-  const { isOnSide, refProfileInfo, refProfileLoading, isActiveUser } = props;
+  const {
+    isOnSide,
+    refProfileInfo,
+    refProfileLoading,
+    isNotActiveUser,
+  } = props;
   const location = useLocation();
 
   if (!refProfileLoading && refProfileInfo != null) return null;
-  if (!isActiveUser) return null;
+  if (isNotActiveUser) return null;
 
   const renderItems = () => {
     const { isOnSide, closeMenu } = props;

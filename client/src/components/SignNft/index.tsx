@@ -39,13 +39,13 @@ const reduxConnect = connect(
       const { transactionResult } = state.fio;
       const result = transactionResult[FIO_SIGN_NFT_REQUEST];
       if (result && result.fee_collected) {
-        const { prices } = state.registrations;
+        const { roe } = state.registrations;
         const feeCollected = result.fee_collected;
         return {
           feeCollected: {
             nativeAmount: feeCollected,
             costFio: apis.fio.sufToAmount(feeCollected),
-            costUsdc: apis.fio.convert(feeCollected, prices.usdtRoe),
+            costUsdc: apis.fio.convert(feeCollected, roe),
           },
         };
       }

@@ -2,7 +2,8 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 import apis from '../../api';
-import { compose, setFees, hasFioAddressDelimiter } from '../../utils';
+import { compose, hasFioAddressDelimiter } from '../../utils';
+import { setFees } from '../../util/prices';
 
 import {
   refreshBalance,
@@ -10,7 +11,6 @@ import {
   getFee,
   RENEW_REQUEST,
 } from '../../redux/fio/actions';
-import { getPrices } from '../../redux/registrations/actions';
 import { resetPinConfirm } from '../../redux/edge/actions';
 import { showPinModal } from '../../redux/modal/actions';
 
@@ -35,13 +35,13 @@ const reduxConnect = connect(
       const { transactionResult } = state.fio;
       const result = transactionResult[RENEW_REQUEST];
       if (result && result.fee_collected) {
-        const { prices } = state.registrations;
+        const { roe } = state.registrations;
         const feeCollected = result.fee_collected;
         return {
           feeCollected: {
             nativeAmount: feeCollected,
             costFio: apis.fio.sufToAmount(feeCollected),
-            costUsdc: apis.fio.convert(feeCollected, prices.usdtRoe),
+            costUsdc: apis.fio.convert(feeCollected, roe),
           },
         };
       }
@@ -50,12 +50,12 @@ const reduxConnect = connect(
     },
     feePrice: (state: any, ownProps: ContainerOwnProps & any) => {
       const { fees } = state.fio;
-      const { prices } = state.registrations;
+      const { prices, roe } = state.registrations;
 
       const feeEndPoint = hasFioAddressDelimiter(ownProps.name)
         ? apis.fio.actionEndPoints.renewFioAddress
         : apis.fio.actionEndPoints.renewFioDomain;
-      return setFees(fees[feeEndPoint], prices);
+      return setFees(fees[feeEndPoint], prices, roe);
     },
     walletPublicKey,
     currentWallet,
@@ -65,7 +65,6 @@ const reduxConnect = connect(
     renew,
     showPinModal,
     resetPinConfirm,
-    getPrices,
     getFee: (isFioAddress: boolean) =>
       getFee(
         isFioAddress

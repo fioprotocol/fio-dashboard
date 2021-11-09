@@ -50,7 +50,6 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
     transfer,
     result: trxResult,
     getFee,
-    getPrices,
     showPinModal,
     resetPinConfirm,
   } = props;
@@ -60,7 +59,6 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
   useEffect(() => {
-    getPrices();
     getFee(hasFioAddressDelimiter(name));
     refreshBalance(walletPublicKey);
   }, []);

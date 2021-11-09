@@ -4,7 +4,7 @@ import { createStructuredSelector } from 'reselect';
 import { updateFormState } from '../../redux/forms/actions';
 import { refreshFioNames } from '../../redux/fio/actions';
 import { addItem, deleteItem, recalculate } from '../../redux/cart/actions';
-import { getPrices, getDomains } from '../../redux/registrations/actions';
+import { getDomains } from '../../redux/registrations/actions';
 import { cartItems } from '../../redux/cart/selectors';
 import { getFormState } from '../../redux/forms/selectors';
 import { fioDomains, fioWallets } from '../../redux/fio/selectors';
@@ -42,7 +42,6 @@ const reduxConnect = connect(
     allowCustomDomains,
   }),
   {
-    getPrices,
     getDomains,
     refreshFioNames,
     updateFormState,

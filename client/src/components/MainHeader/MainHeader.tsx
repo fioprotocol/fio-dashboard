@@ -12,14 +12,13 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     showLoginModal,
     logout: logoutFn,
     isAuthenticated,
-    isActiveUser,
+    isNotActiveUser,
     fioAddresses,
     refProfileLoading,
     refProfileInfo,
     homePageLink,
   } = props;
   const isRefFlow: boolean = refProfileInfo != null && !!refProfileInfo.code;
-  const isNotActiveUser: boolean = isAuthenticated && !isActiveUser;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
 
   const closeMenu = () => {

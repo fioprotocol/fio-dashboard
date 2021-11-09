@@ -20,7 +20,6 @@ const AddressDomainForm = props => {
     isHomepage,
     formState,
     type,
-    getPrices,
     getDomains,
     fioWallets,
     refreshFioNames,
@@ -43,7 +42,6 @@ const AddressDomainForm = props => {
   const isDesktop = useCheckIfDesktop();
 
   useEffect(() => {
-    getPrices();
     getDomains();
   }, []);
 
