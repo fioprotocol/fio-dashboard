@@ -21,10 +21,11 @@ import { confirmingPin } from '../redux/edge/selectors';
 
 import { compose } from '../utils';
 
+import { NOTIFICATIONS_CONTENT } from '../constants/notifications';
+
 const INTERVAL = 200;
 const CART_TIMEOUT = 1000 * 60 * 30; // 30 min
 const MIN = 1000 * 60;
-const MESSAGE = 'Your cart was emptied due to inactivity';
 const REF_MESSAGES = {
   [REF_ACTIONS.SIGNNFT]:
     'please add your FIO address again, and purchase in order to complete your NFT signing',
@@ -85,11 +86,13 @@ const CartTimeout = props => {
     createNotification({
       action: ACTIONS.CART_TIMEOUT,
       type: BADGE_TYPES.WARNING,
-      title: 'Cart was emptied',
+      title: NOTIFICATIONS_CONTENT.CART_TIMEOUT.title,
       message:
         isRefFlow && refProfileQueryParams != null
-          ? `${MESSAGE}, ${REF_MESSAGES[refProfileQueryParams.action]}.`
-          : `${MESSAGE}. Add your items again.`,
+          ? `${NOTIFICATIONS_CONTENT.CART_TIMEOUT.message}, ${
+              REF_MESSAGES[refProfileQueryParams.action]
+            }.`
+          : `${NOTIFICATIONS_CONTENT.CART_TIMEOUT.message}. Add your items again.`,
       pagesToShow: [
         ROUTES.CART,
         ROUTES.FIO_ADDRESSES_SELECTION,

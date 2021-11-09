@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import NotificationBadge from '../NotificationBadge';
+import { getDefaultContent } from '../../constants/notifications';
 import classes from './Notifications.module.scss';
 
 const RELOAD_TIME = 3000;
@@ -76,8 +77,10 @@ export default class Notifications extends Component {
           onClose={this.onBadgeClose(last)}
           arrowAction={this.arrowAction(last)}
           type={last.type}
-          title={last.title}
-          message={last.message}
+          title={last.title || getDefaultContent(last.contentType, 'title')}
+          message={
+            last.message || getDefaultContent(last.contentType, 'message')
+          }
           show
         />
       </div>

@@ -32,9 +32,10 @@ export type Notification = {
 export type NotificationParams = {
   type: string;
   action: string;
-  title: string;
-  message: string;
+  title?: string;
+  message?: string;
   pagesToShow: string[] | null;
+  contentType: string;
 };
 
 export type Prices = {

@@ -11,6 +11,7 @@ export default class NotificationsCreate extends Base {
           nested_object: {
             type: 'string',
             action: 'string',
+            contentType: 'string',
             title: 'string',
             message: 'string',
             pagesToShow: { list_of: 'string' },
@@ -20,16 +21,13 @@ export default class NotificationsCreate extends Base {
     };
   }
 
-  async execute({ data: { type, action, title, message, pagesToShow = null } }) {
-    if (action && action === Notification.ACTION.RECOVERY) {
-      title = title || 'Password Recovery';
-      message =
-        message ||
-        'You have skipped setting up password recovery, Please make sure to complete this so you do not loose access';
-    }
+  async execute({
+    data: { type, action, title, message, pagesToShow = null, contentType },
+  }) {
     const existing = await Notification.getItem({
       type,
       action,
+      contentType,
       title,
       message,
       userId: this.context.id,
@@ -39,6 +37,7 @@ export default class NotificationsCreate extends Base {
     const notification = new Notification({
       type,
       action,
+      contentType,
       title,
       message,
       userId: this.context.id,
