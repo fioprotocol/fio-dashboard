@@ -13,6 +13,7 @@ import { useCheckIfDesktop } from '../../screenType';
 import AutoLogout from '../../services/AutoLogout';
 import CartTimeout from '../../services/CartTimeout';
 import RefFlow from '../../services/RefFlow';
+import Roe from '../../services/Roe';
 
 import classes from './MainLayout.module.scss';
 
@@ -49,6 +50,7 @@ const MainLayout = props => {
       <CartTimeout />
       <AutoLogout />
       <RefFlow />
+      <Roe />
       {isAuthenticated && isDesktop && <Navigation />}
       {(!isHomePage || isAuthenticated) && <Notifications />}
       <div className={`${classes.content} ${isHomePage && classes.home}`}>

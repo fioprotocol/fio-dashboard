@@ -6,10 +6,10 @@ import {
   refProfileInfo,
   loading as refProfileLoading,
 } from '../../redux/refProfile/selectors';
-import { isActiveUser } from '../../redux/profile/selectors';
+import { isNotActiveUser } from '../../redux/profile/selectors';
 
 const selector = createStructuredSelector({
-  isActiveUser,
+  isNotActiveUser,
   refProfileInfo,
   refProfileLoading,
 });

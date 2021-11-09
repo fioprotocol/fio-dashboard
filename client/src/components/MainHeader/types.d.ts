@@ -9,7 +9,7 @@ import { RouteComponentProps } from 'react-router-dom';
 
 export interface MainHeaderProps extends RouteComponentProps {
   isAuthenticated: boolean;
-  isActiveUser: boolean;
+  isNotActiveUser: boolean;
   pathname: string;
   homePageLink: string;
   user: User;

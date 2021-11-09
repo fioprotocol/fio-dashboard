@@ -42,7 +42,6 @@ export type Prices = {
   fio: { address: number; domain: number };
   fioNative: { address: number; domain: number };
   usdt: { address: number; domain: number };
-  usdtRoe: number;
 };
 
 export type RegistrationResult = {

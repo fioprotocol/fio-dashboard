@@ -31,7 +31,6 @@ export type ContainerProps = {
     keys: { public: string; private: string };
   }) => void;
   getFee: () => void;
-  getPrices: () => void;
   showPinModal: (action: string) => void;
   resetPinConfirm: () => void;
   pinConfirmation: PinConfirmation;
