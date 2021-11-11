@@ -2,19 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 
 import apis from '../../api/index';
+
 import PseudoModalContainer from '../PseudoModalContainer';
 import SignNFTForm from './SignNftForm';
-import { ContainerProps, NftFormValues } from './types';
-import { PinConfirmation } from '../../types';
+import Processing from '../common/TransactionProcessing';
+import SignResults from '../common/TransactionResults/components/SignResults';
+
+import { ROUTES } from '../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { putParamsToUrl, waitForEdgeAccountStop } from '../../utils';
-import Results from '../common/TransactionResults';
-import { FIO_SIGN_NFT_REQUEST } from '../../redux/fio/actions';
-import { ResultsData } from '../common/TransactionResults/types';
-import Processing from '../common/TransactionProcessing';
-import { ROUTES } from '../../constants/routes';
 
-import { NFTTokenDoublet } from '../../types';
+import { NFTTokenDoublet, PinConfirmation } from '../../types';
+
+import { ContainerProps, NftFormValues } from './types';
+import { ResultsData } from '../common/TransactionResults/types';
 
 const BUNDLE_COST = 2;
 
@@ -174,10 +175,9 @@ const SignNft: React.FC<ContainerProps> = props => {
 
   if (resultsData && !isEdit)
     return (
-      <Results
+      <SignResults
         results={resultsData}
         title="Signed!"
-        actionName={FIO_SIGN_NFT_REQUEST}
         onClose={onResultsClose}
       />
     );

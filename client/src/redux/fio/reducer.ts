@@ -296,27 +296,23 @@ export default combineReducers({
         return state;
     }
   },
-  transactionResult(state: { [actionName: string]: any } = {}, action) {
+  transactionResult(state = {}, action) {
     switch (action.type) {
       case actions.TRANSFER_REQUEST:
       case actions.RENEW_REQUEST:
       case actions.SET_VISIBILITY_REQUEST:
       case actions.FIO_SIGN_NFT_REQUEST:
-        return { ...state, [action.actionName]: null };
       case actions.RESET_TRANSACTION_RESULT:
-        return { ...state, [action.data]: null };
+        return {};
       case actions.SET_VISIBILITY_SUCCESS:
       case actions.TRANSFER_SUCCESS:
       case actions.RENEW_SUCCESS:
       case actions.FIO_SIGN_NFT_SUCCESS:
-        return { ...state, [action.actionName]: action.data };
+        return action.data;
       case actions.SET_VISIBILITY_FAILURE:
       case actions.RENEW_FAILURE:
       case actions.TRANSFER_FAILURE:
-        return {
-          ...state,
-          [action.actionName]: { error: action.error && action.error.message },
-        };
+        return { error: action.error && action.error.message };
       default:
         return state;
     }

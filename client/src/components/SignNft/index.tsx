@@ -13,7 +13,6 @@ import { confirmingPin, pinConfirmation } from '../../redux/edge/selectors';
 import {
   singNFT,
   getFee,
-  FIO_SIGN_NFT_REQUEST,
   refreshFioNames,
   getNFTSignatures,
 } from '../../redux/fio/actions';
@@ -36,8 +35,7 @@ const reduxConnect = connect(
       return fees[apis.fio.actionEndPoints.signNft];
     },
     result: (state: ReduxState) => {
-      const { transactionResult } = state.fio;
-      const result = transactionResult[FIO_SIGN_NFT_REQUEST];
+      const { transactionResult: result } = state.fio;
       if (result && result.fee_collected) {
         const { roe } = state.registrations;
         const feeCollected = result.fee_collected;
