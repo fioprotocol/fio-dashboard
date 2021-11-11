@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
 
 import { BADGE_TYPES } from '../Badge/Badge';
 import PseudoModalContainer from '../PseudoModalContainer';
@@ -7,20 +8,21 @@ import InfoBadge from '../InfoBadge/InfoBadge';
 import PriceBadge from '../Badges/PriceBadge/PriceBadge';
 import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
+import Processing from '../common/TransactionProcessing';
+import RenewResults from '../common/TransactionResults/components/RenewResults';
+import { ERROR_TYPES } from '../common/TransactionResults/Results';
 
-import { MANAGE_PAGE_REDIRECT } from '../../constants/common';
+import {
+  MANAGE_PAGE_REDIRECT,
+  CONFIRM_PIN_ACTIONS,
+} from '../../constants/common';
+import { hasFioAddressDelimiter, waitForEdgeAccountStop } from '../../utils';
 
 import { ContainerProps } from './types';
+import { PinConfirmation } from '../../types';
+import { ResultsData } from '../common/TransactionResults/types';
 
 import classes from './FioNameRenewContainer.module.scss';
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
-import { hasFioAddressDelimiter, waitForEdgeAccountStop } from '../../utils';
-import { PinConfirmation } from '../../types';
-import Processing from '../common/TransactionProcessing';
-import { Redirect } from 'react-router-dom';
-import Results from '../common/TransactionResults';
-import { RENEW_REQUEST } from '../../redux/fio/actions';
-import { ResultsData } from '../common/TransactionResults/types';
 
 const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   const {
@@ -113,13 +115,12 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
 
   if (resultsData)
     return (
-      <Results
+      <RenewResults
         results={resultsData}
         title={resultsData.error ? 'Renewed Failed!' : 'Renewed!'}
-        actionName={RENEW_REQUEST}
-        pageName={pageName}
         onClose={onResultsClose}
         onRetry={onResultsRetry}
+        errorType={ERROR_TYPES.RENEW_ERROR}
       />
     );
 

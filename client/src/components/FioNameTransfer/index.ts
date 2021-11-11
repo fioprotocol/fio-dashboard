@@ -5,12 +5,7 @@ import apis from '../../api';
 import { hasFioAddressDelimiter } from '../../utils';
 import { setFees } from '../../util/prices';
 
-import {
-  refreshBalance,
-  transfer,
-  getFee,
-  TRANSFER_REQUEST,
-} from '../../redux/fio/actions';
+import { refreshBalance, transfer, getFee } from '../../redux/fio/actions';
 import { resetPinConfirm } from '../../redux/edge/actions';
 import { showPinModal } from '../../redux/modal/actions';
 
@@ -33,8 +28,7 @@ const reduxConnect = connect(
     confirmingPin,
     pinConfirmation,
     result: (state: ReduxState) => {
-      const { transactionResult } = state.fio;
-      const result = transactionResult[TRANSFER_REQUEST];
+      const { transactionResult: result } = state.fio;
       if (result && result.fee_collected) {
         const { roe } = state.registrations;
         const feeCollected = result.fee_collected;

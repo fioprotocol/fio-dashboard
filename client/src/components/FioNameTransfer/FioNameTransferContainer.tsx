@@ -1,23 +1,24 @@
 import React, { useEffect, useState } from 'react';
+import { Redirect } from 'react-router-dom';
 
 import PseudoModalContainer from '../PseudoModalContainer';
 import { BADGE_TYPES } from '../Badge/Badge';
 import InfoBadge from '../InfoBadge/InfoBadge';
 import { TransferForm } from './FioNameTransferForm';
-import Results from '../common/TransactionResults';
+import Processing from '../common/TransactionProcessing';
+import TransferResults from '../common/TransactionResults/components/TransferResults';
+import { ERROR_TYPES } from '../common/TransactionResults/Results';
 
 import { ROUTES } from '../../constants/routes';
-import { ContainerProps, TransferParams } from './types';
 import { fioNameLabels } from '../../constants/labels';
 import {
   CONFIRM_PIN_ACTIONS,
   MANAGE_PAGE_REDIRECT,
 } from '../../constants/common';
 import { hasFioAddressDelimiter, waitForEdgeAccountStop } from '../../utils';
+
+import { ContainerProps, TransferParams } from './types';
 import { PinConfirmation } from '../../types';
-import Processing from '../common/TransactionProcessing';
-import { Redirect } from 'react-router-dom';
-import { TRANSFER_REQUEST } from '../../redux/fio/actions';
 import { ResultsData } from '../common/TransactionResults/types';
 
 import classes from './FioNameTransferContainer.module.scss';
@@ -143,17 +144,18 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
 
   if (resultsData)
     return (
-      <Results
+      <TransferResults
+        pageName={pageName}
         results={resultsData}
         title={
           resultsData.error
             ? 'Ownership Transfer Failed!'
             : 'Ownership Transferred!'
         }
-        actionName={TRANSFER_REQUEST}
-        pageName={pageName}
+        hasAutoWidth={true}
         onClose={onResultsClose}
         onRetry={onResultsRetry}
+        errorType={ERROR_TYPES.TRANSFER_ERROR}
       />
     );
 

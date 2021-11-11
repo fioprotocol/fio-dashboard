@@ -1,15 +1,14 @@
 import React from 'react';
 
+import Results from '../index';
 import { BADGE_TYPES } from '../../../Badge/Badge';
+import PriceBadge from '../../../Badges/PriceBadge/PriceBadge';
 
 import { ResultsProps } from '../types';
 
 import classes from '../Results.module.scss';
-import { RENEW_REQUEST } from '../../../../redux/fio/actions';
-import PriceBadge from '../../../Badges/PriceBadge/PriceBadge';
 
 const RenewResults = (props: ResultsProps) => {
-  if (props.actionName !== RENEW_REQUEST) return null;
   const {
     results: {
       name,
@@ -17,7 +16,7 @@ const RenewResults = (props: ResultsProps) => {
     },
   } = props;
   return (
-    <>
+    <Results {...props}>
       <h5 className={classes.label}>Renew Details</h5>
       <PriceBadge
         costFio={costFio}
@@ -25,7 +24,7 @@ const RenewResults = (props: ResultsProps) => {
         title={name}
         type={BADGE_TYPES.WHITE}
       />
-    </>
+    </Results>
   );
 };
 

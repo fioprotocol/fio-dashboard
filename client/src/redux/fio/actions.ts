@@ -116,9 +116,8 @@ export const getFioPubAddress = (fioAddress: string) => ({
 
 export const RESET_TRANSACTION_RESULT = `${prefix}/RESET_TRANSACTION_RESULT`;
 
-export const resetTransactionResult = (actionName: string) => ({
+export const resetTransactionResult = () => ({
   type: RESET_TRANSACTION_RESULT,
-  data: actionName,
 });
 
 export const TRANSFER_REQUEST = `${prefix}/TRANSFER_REQUEST`;

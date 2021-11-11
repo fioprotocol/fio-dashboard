@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
 
-import { ROUTES } from '../../constants/routes';
 import PseudoModalContainer from '../PseudoModalContainer';
 import DomainStatusBadge from '../Badges/DomainStatusBadge/DomainStatusBadge';
 import PriceBadge from '../Badges/PriceBadge/PriceBadge';
 import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
 import InfoBadge from '../InfoBadge/InfoBadge';
-
 import { BADGE_TYPES } from '../Badge/Badge';
+import Processing from '../common/TransactionProcessing';
+import SetVisibilityResults from '../common/TransactionResults/components/SetVisibilityResults';
 
-import { ContainerProps } from './types';
+import { waitForEdgeAccountStop } from '../../utils';
+
+import { ROUTES } from '../../constants/routes';
 import { CONFIRM_PIN_ACTIONS, DOMAIN_STATUS } from '../../constants/common';
 
-import classes from './FioDomainStatusChangeContainer.module.scss';
-import { waitForEdgeAccountStop } from '../../utils';
+import { ContainerProps } from './types';
 import { PinConfirmation } from '../../types';
-import { Redirect } from 'react-router-dom';
-import Processing from '../common/TransactionProcessing';
-import Results from '../common/TransactionResults';
-import { SET_VISIBILITY_REQUEST } from '../../redux/fio/actions';
 import { ResultsData } from '../common/TransactionResults/types';
+
+import classes from './FioDomainStatusChangeContainer.module.scss';
 
 const INFO_MESSAGE_TEXT = {
   [DOMAIN_STATUS.PUBLIC]:
@@ -127,14 +127,14 @@ const FioDomainStatusChangeContainer: React.FC<ContainerProps> = props => {
 
   if (resultsData)
     return (
-      <Results
+      <SetVisibilityResults
         results={resultsData}
         title={
           resultsData.error
             ? 'Domain Status Change Failed!'
             : 'Domain Status Changed!'
         }
-        actionName={SET_VISIBILITY_REQUEST}
+        hasAutoWidth={true}
         onClose={onResultsClose}
         onRetry={onResultsRetry}
       />

@@ -5,6 +5,5 @@ import { resetTransactionResult } from '../../../redux/fio/actions';
 import Results from './Results';
 
 export default connect(null, {
-  resetTransactionResult: (actionName: string) =>
-    resetTransactionResult(actionName),
+  resetTransactionResult,
 })(Results);
