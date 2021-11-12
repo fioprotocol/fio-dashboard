@@ -46,11 +46,11 @@ const reduxConnect = connect(
     },
     feePrice: (state: ReduxState, ownProps: ContainerOwnProps & any) => {
       const { fees } = state.fio;
-      const { prices, roe } = state.registrations;
+      const { roe } = state.registrations;
       const feeEndPoint = hasFioAddressDelimiter(ownProps.name)
         ? apis.fio.actionEndPoints.transferFioAddress
         : apis.fio.actionEndPoints.transferFioDomain;
-      return setFees(fees[feeEndPoint], prices, roe);
+      return setFees(fees[feeEndPoint], roe);
     },
     walletPublicKey,
     currentWallet,
