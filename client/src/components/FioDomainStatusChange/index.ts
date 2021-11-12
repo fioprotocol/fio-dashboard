@@ -52,12 +52,8 @@ const reduxConnect = connect(
     },
     feePrice: (state: ReduxState) => {
       const { fees } = state.fio;
-      const { prices, roe } = state.registrations;
-      return setFees(
-        fees[apis.fio.actionEndPoints.setFioDomainPublic],
-        prices,
-        roe,
-      );
+      const { roe } = state.registrations;
+      return setFees(fees[apis.fio.actionEndPoints.setFioDomainPublic], roe);
     },
     domainStatus: (state: ReduxState, ownProps: ContainerOwnProps & any) => {
       // todo: set types for state & fix ownProps type
