@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
-import classnames from 'classnames';
+
+import ActionButton from './ActionButton';
 
 import classes from '../styles/SecurityItem.module.scss';
 
@@ -9,7 +9,8 @@ type Props = {
   bottomChildren?: React.ReactNode;
   buttonText: string;
   isGreen?: boolean;
-  isPasswordPin?: boolean;
+  isBlue?: boolean;
+  isSmall?: boolean;
   onClick: () => void;
   children?: React.ReactNode;
   subtitle: string;
@@ -22,7 +23,8 @@ const SecurityItem: React.FC<Props> = props => {
     bottomChildren,
     buttonText,
     isGreen,
-    isPasswordPin,
+    isBlue,
+    isSmall,
     onClick,
     children,
     title,
@@ -35,16 +37,13 @@ const SecurityItem: React.FC<Props> = props => {
         <h5 className={classes.title}>{title}</h5>
         <p className={classes.subtitle}>{subtitle}</p>
         <p className={classes.attentionText}>{attentionText}</p>
-        <Button
-          className={classnames(
-            classes.button,
-            isPasswordPin && classes.passwordPin,
-            isGreen && classes.green,
-          )}
+        <ActionButton
+          title={buttonText}
           onClick={onClick}
-        >
-          {buttonText}
-        </Button>
+          isGreen={isGreen}
+          isBlue={isBlue}
+          isSmall={isSmall}
+        />
         {bottomChildren}
       </div>
       {children}
