@@ -1,17 +1,35 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { withRouter } from 'react-router-dom';
 
+import apis from '../../api';
 import { compose } from '../../utils';
 
-import { fioDomains } from '../../redux/fio/selectors';
+import { refreshBalance, getFee } from '../../redux/fio/actions';
+
+import { confirmingPin } from '../../redux/edge/selectors';
+import { roe } from '../../redux/registrations/selectors';
+import {
+  loading,
+  fioWalletForDomain,
+  selectedFioDomain,
+  fees,
+} from '../../redux/fio/selectors';
+
 import FioDomainStatusChangePage from './FioDomainStatusChangePage';
 
 const reduxConnect = connect(
   createStructuredSelector({
-    fioNameList: fioDomains,
+    loading,
+    confirmingPin,
+    roe,
+    fees,
+    selectedFioDomain,
+    fioWallet: fioWalletForDomain,
   }),
-  {},
+  {
+    refreshBalance,
+    getFee: () => getFee(apis.fio.actionEndPoints.setFioDomainPublic),
+  },
 );
 
-export default withRouter(compose(reduxConnect)(FioDomainStatusChangePage));
+export default compose(reduxConnect)(FioDomainStatusChangePage);

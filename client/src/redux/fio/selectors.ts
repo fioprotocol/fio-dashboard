@@ -1,3 +1,5 @@
+import { RouteComponentProps } from 'react-router-dom';
+import { createSelector } from 'reselect';
 import { prefix } from './actions';
 import { emptyWallet } from './reducer';
 import { getElementByFioName } from '../../utils';
@@ -7,8 +9,6 @@ import { ReduxState } from '../../redux/init';
 export const loading = (state: ReduxState) => state[prefix].loading;
 export const transferProcessing = (state: ReduxState) =>
   state[prefix].transferProcessing;
-export const setVisibilityProcessing = (state: ReduxState) =>
-  state[prefix].setVisibilityProcessing;
 export const renewProcessing = (state: ReduxState) =>
   state[prefix].renewProcessing;
 export const signNftProcessing = (state: ReduxState) =>
@@ -96,3 +96,32 @@ export const walletPublicKey = (
 
   return (selected && selected.walletPublicKey) || '';
 };
+
+export const selectedFioDomain = (
+  state: ReduxState,
+  ownProps: RouteComponentProps<{ id: string }> & any,
+) => {
+  const { fioDomains } = state.fio;
+  const {
+    match: {
+      params: { id: name },
+    },
+  } = ownProps;
+
+  return getElementByFioName({ fioNameList: fioDomains, name });
+};
+
+export const fioWalletForDomain = createSelector(
+  selectedFioDomain,
+  fioWallets,
+  (fioDomain, fioWallets) => {
+    const currentWallet: FioWalletDoublet =
+      fioWallets &&
+      fioWallets.find(
+        (wallet: FioWalletDoublet) =>
+          wallet.publicKey === fioDomain.walletPublicKey,
+      );
+
+    return currentWallet || emptyWallet;
+  },
+);
