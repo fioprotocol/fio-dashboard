@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from 'react-bootstrap';
 
 import EdgeConfirmAction from '../../../../components/EdgeConfirmAction';
 import SuccessModal from '../../../../components/Modal/SuccessModal';
 import DangerModal from '../../../../components/Modal/DangerModal';
 import ResendEmail from '../ResendEmail';
 import SecurityItem from '../SecurityItem';
+import ActionButton from '../ActionButton';
 
 import apis from '../../../../api';
 
@@ -113,12 +113,9 @@ const PasswordRecovery: React.FC<Props> = props => {
   /* eslint-disable */
   // @ts-ignore
   const renderChangeRecoveryButton = () => (
-    <Button
-      onClick={onChangeRecoveryQuestions}
-      className={classes.changeButton}
-    >
-      Change Recovery Questions
-    </Button>
+    <div className={classes.buttonContainer}>
+      <ActionButton onClick={onChangeRecoveryQuestions} title="Change Recovery Questions" />
+    </div>
   );
 
   const renderButtonGroup = ( // 'change recovery' button commented because of no design

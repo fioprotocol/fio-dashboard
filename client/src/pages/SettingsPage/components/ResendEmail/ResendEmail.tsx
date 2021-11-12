@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Button } from 'react-bootstrap';
 
 import EdgeConfirmAction from '../../../../components/EdgeConfirmAction';
 import SendLinkModal from '../SendLinkModal';
+import ActionButton from '../ActionButton';
 import EmailModal from '../../../../components/Modal/EmailModal';
 
 import apis from '../../../../api';
@@ -76,9 +76,13 @@ const ResendEmail: React.FC<Props> = props => {
         submitAction={submit}
         hideProcessing={true}
       />
-      <Button onClick={onResendClick} className={classes.resendButton}>
-        Resend Recovery Email
-      </Button>
+      <div className={classes.buttonContainer}>
+        <ActionButton
+          title="Resend Recovery Email"
+          onClick={onResendClick}
+          isBlue={true}
+        />
+      </div>
       <SendLinkModal
         show={showSendEmailModal && !genericErrorIsShowing}
         onClose={onSendEmailModalClose}

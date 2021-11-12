@@ -100,11 +100,7 @@ const ChangePin: React.FC<Props> = props => {
 
   return (
     <>
-      <SecurityItem
-        {...ITEM_PROPS}
-        isPasswordPin={true}
-        onClick={onOpenModal}
-      />
+      <SecurityItem {...ITEM_PROPS} isSmall={true} onClick={onOpenModal} />
       <ModalUIComponent
         onClose={onCloseModal}
         showModal={showModal}
