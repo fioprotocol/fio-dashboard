@@ -1,3 +1,19 @@
-import SettingsPage from '../../components/Settings';
+import SettingsPage from './SettingsPage';
 
-export default SettingsPage;
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+
+import { compose } from '../../utils';
+
+import { loading, edgeUsername, user } from '../../redux/profile/selectors';
+
+const reduxConnect = connect(
+  createStructuredSelector({
+    loading,
+    username: edgeUsername,
+    user,
+  }),
+  {},
+);
+
+export default compose(reduxConnect)(SettingsPage);

@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 
-import EdgeConfirmAction from '../../../EdgeConfirmAction';
-import SecurityItem from '../SecurityItem/SecurityItem';
-import SuccessModal from '../../../Modal/SuccessModal';
-import DangerModal from '../../../Modal/DangerModal';
-import ResendEmail from './ResendEmail';
+import EdgeConfirmAction from '../../../../components/EdgeConfirmAction';
+import SuccessModal from '../../../../components/Modal/SuccessModal';
+import DangerModal from '../../../../components/Modal/DangerModal';
+import ResendEmail from '../ResendEmail';
+import SecurityItem from '../SecurityItem';
 
 import apis from '../../../../api';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 import { minWaitTimeFunction } from '../../../../utils';
 
-import { SubmitActionParams } from '../../../EdgeConfirmAction/types';
+import { SubmitActionParams } from '../../../../components/EdgeConfirmAction/types';
 
-import classes from './PasswordRecovery.module.scss';
+import classes from '../../styles/PasswordRecovery.module.scss';
 
 const ITEM_PROPS = {
   title: 'Password Recovery',

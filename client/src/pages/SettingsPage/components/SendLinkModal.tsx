@@ -2,10 +2,10 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import Modal from '../../../Modal/Modal';
-import CancelButton from '../../../common/CancelButton/CancelButton';
+import Modal from '../../../components/Modal/Modal';
+import CancelButton from '../../../components/common/CancelButton/CancelButton';
 
-import classes from './SendLinkModal.module.scss';
+import classes from '../styles/SendLinkModal.module.scss';
 
 type Props = {
   show: boolean;

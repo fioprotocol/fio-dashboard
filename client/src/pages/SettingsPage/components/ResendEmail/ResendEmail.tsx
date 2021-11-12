@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 
+import EdgeConfirmAction from '../../../../components/EdgeConfirmAction';
 import SendLinkModal from '../SendLinkModal';
-import EmailModal from '../../../../Modal/EmailModal';
-import EdgeConfirmAction from '../../../../EdgeConfirmAction';
+import EmailModal from '../../../../components/Modal/EmailModal';
 
-import apis from '../../../../../api';
+import apis from '../../../../api';
 
-import { CONFIRM_PIN_ACTIONS } from '../../../../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 
-import { SubmitActionParams } from '../../../../EdgeConfirmAction/types';
+import { SubmitActionParams } from '../../../../components/EdgeConfirmAction/types';
 
-import classes from '../PasswordRecovery.module.scss';
+import classes from '../../styles/PasswordRecovery.module.scss';
 
 type Props = {
   loading: boolean;

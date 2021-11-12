@@ -1,5 +1,5 @@
 import { FormValuesTypes } from './types';
-import { VALIDATION_TITLES } from '../../../CreateAccountForm/EmailPassword';
+import { VALIDATION_TITLES } from '../../../../components/CreateAccountForm/EmailPassword';
 
 const validation = (values: FormValuesTypes) => {
   const errors: any = {}; // todo: set error types

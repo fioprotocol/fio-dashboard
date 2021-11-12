@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import SecurityItem from '../SecurityItem/SecurityItem';
+import SecurityItem from '../SecurityItem';
 import ModalUIComponent from '../ModalUIComponent';
-import SuccessModal from '../../../Modal/SuccessModal';
+import SuccessModal from '../../../../components/Modal/SuccessModal';
 import ChangePinForm from './ChangePinForm';
+
 import { ClickEventTypes } from './types';
 
 const ITEM_PROPS = {

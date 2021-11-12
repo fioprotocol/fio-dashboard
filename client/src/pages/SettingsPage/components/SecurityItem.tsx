@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 
-import classes from './SecurityItem.module.scss';
+import classes from '../styles/SecurityItem.module.scss';
 
 type Props = {
   attentionText?: string;

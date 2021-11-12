@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { compose } from '../../../../../utils';
+import { compose } from '../../../../utils';
 
-import { loading } from '../../../../../redux/edge/selectors';
-import { showGenericError } from '../../../../../redux/modal/selectors';
+import { loading } from '../../../../redux/edge/selectors';
+import { showGenericError } from '../../../../redux/modal/selectors';
 
 import ResendEmail from './ResendEmail';
 
