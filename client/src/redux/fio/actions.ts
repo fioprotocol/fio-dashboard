@@ -160,46 +160,6 @@ export const transfer = ({
   fioName,
 });
 
-export const SET_VISIBILITY_REQUEST = `${prefix}/SET_VISIBILITY_REQUEST`;
-export const SET_VISIBILITY_SUCCESS = `${prefix}/SET_VISIBILITY_SUCCESS`;
-export const SET_VISIBILITY_FAILURE = `${prefix}/SET_VISIBILITY_FAILURE`;
-
-export const setDomainVisibility = ({
-  fioDomain,
-  isPublic,
-  fee,
-  keys,
-}: {
-  fioDomain: string;
-  isPublic: boolean;
-  fee: number;
-  keys: { public: string; private: string };
-}) => ({
-  types: [
-    SET_VISIBILITY_REQUEST,
-    SET_VISIBILITY_SUCCESS,
-    SET_VISIBILITY_FAILURE,
-  ],
-  promise: async (api: Api) => {
-    api.fio.setWalletFioSdk(keys);
-    try {
-      const result = await api.fio.setDomainVisibility(
-        fioDomain,
-        isPublic,
-        fee,
-      );
-      api.fio.clearWalletFioSdk();
-      return result;
-    } catch (e) {
-      api.fio.clearWalletFioSdk();
-      throw e;
-    }
-  },
-  actionName: SET_VISIBILITY_REQUEST,
-  isPublic,
-  fioDomain,
-});
-
 export const RENEW_REQUEST = `${prefix}/RENEW_REQUEST`;
 export const RENEW_SUCCESS = `${prefix}/RENEW_SUCCESS`;
 export const RENEW_FAILURE = `${prefix}/RENEW_FAILURE`;

@@ -60,17 +60,6 @@ export default combineReducers({
         return state;
     }
   },
-  setVisibilityProcessing(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.SET_VISIBILITY_REQUEST:
-        return true;
-      case actions.SET_VISIBILITY_SUCCESS:
-      case actions.SET_VISIBILITY_FAILURE:
-        return false;
-      default:
-        return state;
-    }
-  },
   renewProcessing(state: boolean = false, action) {
     switch (action.type) {
       case actions.RENEW_REQUEST:
@@ -237,14 +226,6 @@ export default combineReducers({
         }
         return fioDomains;
       }
-      case actions.SET_VISIBILITY_SUCCESS: {
-        const fioDomains = [...state];
-        const fioDomain = fioDomains.find(
-          ({ name }) => name === action.fioDomain,
-        );
-        fioDomain.isPublic = action.isPublic;
-        return fioDomains;
-      }
       case actions.TRANSFER_SUCCESS: {
         const fioDomains = [...state];
         const fioDomainIndex = fioDomains.findIndex(
@@ -300,16 +281,13 @@ export default combineReducers({
     switch (action.type) {
       case actions.TRANSFER_REQUEST:
       case actions.RENEW_REQUEST:
-      case actions.SET_VISIBILITY_REQUEST:
       case actions.FIO_SIGN_NFT_REQUEST:
       case actions.RESET_TRANSACTION_RESULT:
         return {};
-      case actions.SET_VISIBILITY_SUCCESS:
       case actions.TRANSFER_SUCCESS:
       case actions.RENEW_SUCCESS:
       case actions.FIO_SIGN_NFT_SUCCESS:
         return action.data;
-      case actions.SET_VISIBILITY_FAILURE:
       case actions.RENEW_FAILURE:
       case actions.TRANSFER_FAILURE:
         return { error: action.error && action.error.message };

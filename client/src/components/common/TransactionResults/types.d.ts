@@ -1,8 +1,7 @@
+import { FeePrice } from '../../../types';
+
 export type ResultsData = {
-  feeCollected?: {
-    costFio: number;
-    costUsdc: number;
-  };
+  feeCollected?: FeePrice;
   name: string;
   publicKey?: string;
   changedStatus?: string;
