@@ -1,15 +1,16 @@
 import React from 'react';
-import LayoutContainer from '../LayoutContainer/LayoutContainer';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
+import InputRedux, { INPUT_UI_STYLES } from '../../components/Input/InputRedux';
 
 import ChangePassword from './components/ChangePassword';
 import ChangePin from './components/ChangePin';
 import PasswordRecovery from './components/PasswordRecovery';
 
-import classes from './Settings.module.scss';
-import InputRedux, { INPUT_UI_STYLES } from '../Input/InputRedux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classes from './styles/Settings.module.scss';
 
-const Settings = (props: { loading: boolean; user: { email: string } }) => {
+const SettingsPage = (props: { loading: boolean; user: { email: string } }) => {
   const { user, loading } = props;
   if (loading || user == null)
     return (
@@ -46,4 +47,4 @@ const Settings = (props: { loading: boolean; user: { email: string } }) => {
   );
 };
 
-export default Settings;
+export default SettingsPage;

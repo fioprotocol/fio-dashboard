@@ -2,17 +2,18 @@ import React, { FormEvent, useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { INPUT_UI_STYLES } from '../../../Input/InputRedux';
-import { Field, FieldValue } from '../../../Input/Field';
+import { INPUT_UI_STYLES } from '../../../../components/Input/InputRedux';
+import { Field, FieldValue } from '../../../../components/Input/Field';
 import {
   ErrorBadge,
   COLOR_TYPE,
   ERROR_UI_TYPE,
-} from '../../../Input/ErrorBadge';
+} from '../../../../components/Input/ErrorBadge';
 import validate from './validation';
 
-import classes from './ChangePassword.module.scss';
 import { FormValuesTypes } from './types';
+
+import classes from '../../styles/ChangePassword.module.scss';
 
 type Props = {
   loading: boolean;

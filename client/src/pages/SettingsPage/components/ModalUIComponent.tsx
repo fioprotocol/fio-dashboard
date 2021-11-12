@@ -1,6 +1,7 @@
 import React from 'react';
-import Modal from '../../../Modal/Modal';
-import classes from './ModalUIComponent.module.scss';
+import Modal from '../../../components/Modal/Modal';
+
+import classes from '../styles/ModalUIComponent.module.scss';
 
 type Props = {
   children: React.ReactNode;

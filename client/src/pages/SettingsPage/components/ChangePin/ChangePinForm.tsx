@@ -1,15 +1,22 @@
 import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import InputRedux, { INPUT_UI_STYLES } from '../../../Input/InputRedux';
-import PinInput from '../../../Input/PinInput/PinInput';
-import { ErrorBadge, ERROR_UI_TYPE } from '../../../Input/ErrorBadge';
 
-import classes from './ChangePin.module.scss';
-import { ClickEventTypes } from './types';
+import InputRedux, {
+  INPUT_UI_STYLES,
+} from '../../../../components/Input/InputRedux';
+import PinInput from '../../../../components/Input/PinInput/PinInput';
+import {
+  ErrorBadge,
+  ERROR_UI_TYPE,
+} from '../../../../components/Input/ErrorBadge';
+
 import { PIN_LENGTH } from '../../../../constants/form';
+
+import { ClickEventTypes } from './types';
+
+import classes from '../../styles/ChangePin.module.scss';
 
 type Props = {
   onNextClick: (event: ClickEventTypes) => void;
