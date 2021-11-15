@@ -118,24 +118,6 @@ export const setLastActivity = (value: number) => ({
   data: value,
 });
 
-export const RESEND_RECOVERY_REQUEST = `${prefix}/RESEND_RECOVERY_REQUEST`;
-export const RESEND_RECOVERY_SUCCESS = `${prefix}/RESEND_RECOVERY_SUCCESS`;
-export const RESEND_RECOVERY_FAILURE = `${prefix}/RESEND_RECOVERY_FAILURE`;
-
-export const resendRecovery = (token: string) => ({
-  types: [
-    RESEND_RECOVERY_REQUEST,
-    RESEND_RECOVERY_SUCCESS,
-    RESEND_RECOVERY_FAILURE,
-  ],
-  promise: (api: Api) => api.auth.resendRecovery(token),
-});
-
-export const CLEAR_RESEND_RECOVERY_RESULTS = `${prefix}/CLEAR_RESEND_RECOVERY_RESULTS`;
-export const clearResendRecoveryResults = () => ({
-  type: CLEAR_RESEND_RECOVERY_RESULTS,
-});
-
 export const RESEND_CONFIRM_EMAIL_REQUEST = `${prefix}/RESEND_CONFIRM_EMAIL_REQUEST`;
 export const RESEND_CONFIRM_EMAIL_SUCCESS = `${prefix}/RESEND_CONFIRM_EMAIL_SUCCESS`;
 export const RESEND_CONFIRM_EMAIL_FAILURE = `${prefix}/RESEND_CONFIRM_EMAIL_FAILURE`;
