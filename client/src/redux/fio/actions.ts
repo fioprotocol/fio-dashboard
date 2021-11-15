@@ -1,11 +1,6 @@
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { Api } from '../../api';
-import {
-  PublicAddressDoublet,
-  LinkActionResult,
-  WalletKeys,
-  NFTTokenDoublet,
-} from '../../types';
+import { PublicAddressDoublet, LinkActionResult } from '../../types';
 export const prefix = 'fio';
 
 export const REFRESH_BALANCE_REQUEST = `${prefix}/REFRESH_BALANCE_REQUEST`;
@@ -299,25 +294,4 @@ export const CLEAR_NFT_SIGNATURES = `${prefix}/CLEAR_NFT_SIGNATURES`;
 
 export const clearNFTSignatures = () => ({
   type: CLEAR_NFT_SIGNATURES,
-});
-
-export const singNFT = (
-  fioAddress: string,
-  nftRequest: NFTTokenDoublet[],
-  keys: WalletKeys,
-) => ({
-  types: [FIO_SIGN_NFT_REQUEST, FIO_SIGN_NFT_SUCCESS, FIO_SIGN_NFT_FAILURE],
-  promise: async (api: Api) => {
-    api.fio.setWalletFioSdk(keys);
-    try {
-      const result = await api.fio.singNFT(fioAddress, nftRequest);
-      api.fio.clearWalletFioSdk();
-      return result;
-    } catch (e) {
-      api.fio.clearWalletFioSdk();
-      throw e;
-    }
-  },
-  fioAddress,
-  actionName: FIO_SIGN_NFT_REQUEST,
 });

@@ -20,6 +20,7 @@ const FioAddressSignPage: React.FC<RouteComponentProps<
   return (
     <>
       <SignNft
+        addressSelectOff={true}
         fioAddressName={address}
         backTo={putParamsToUrl(ROUTES.FIO_ADDRESS_SIGNATURES, { address })}
       />

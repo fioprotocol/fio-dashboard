@@ -3,20 +3,20 @@ import { Field, Form, FormRenderProps } from 'react-final-form';
 import { OnChange } from 'react-final-form-listeners';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 
-import InfoBadge from '../InfoBadge/InfoBadge';
-import { BADGE_TYPES } from '../Badge/Badge';
-import CustomDropdown from './CustomDropdown';
-import Input, { INPUT_UI_STYLES } from '../Input/Input';
-import { COLOR_TYPE } from '../Input/ErrorBadge';
-import BundledTransactionBadge from '../Badges/BundledTransactionBadge/BundledTransactionBadge';
-import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
-import FioName from '../common/FioName/FioName';
+import InfoBadge from '../../../InfoBadge/InfoBadge';
+import { BADGE_TYPES } from '../../../Badge/Badge';
+import CustomDropdown from '../CustomDropdown';
+import Input, { INPUT_UI_STYLES } from '../../../Input/Input';
+import { COLOR_TYPE } from '../../../Input/ErrorBadge';
+import BundledTransactionBadge from '../../../Badges/BundledTransactionBadge/BundledTransactionBadge';
+import LowBalanceBadge from '../../../Badges/LowBalanceBadge/LowBalanceBadge';
+import FioName from '../../../common/FioName/FioName';
 
 import { validate } from './validation';
 
-import classes from './SignNft.module.scss';
+import classes from '../../SignNft.module.scss';
 
-import { SignNftFormProps } from './types';
+import { SignNftFormProps } from '../../types';
 
 const SignNFTForm = (props: SignNftFormProps) => {
   const {
@@ -32,6 +32,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
     processing,
     fioAddress,
     isEdit,
+    addressSelectOff,
   } = props;
 
   return (
@@ -42,7 +43,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
           <OnChange name="contractAddress">{fieldValuesChanged}</OnChange>
           <OnChange name="tokenId">{fieldValuesChanged}</OnChange>
           <Container fluid className={classes.signSection}>
-            {!isEdit ? (
+            {!isEdit && !addressSelectOff ? (
               <>
                 <InfoBadge
                   type={BADGE_TYPES.INFO}
