@@ -1,20 +1,20 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 
-import PseudoModalContainer from '../../components/PseudoModalContainer';
-import DomainStatusBadge from '../../components/Badges/DomainStatusBadge/DomainStatusBadge';
-import PriceBadge from '../../components/Badges/PriceBadge/PriceBadge';
-import PayWithBadge from '../../components/Badges/PayWithBadge/PayWithBadge';
-import LowBalanceBadge from '../../components/Badges/LowBalanceBadge/LowBalanceBadge';
-import InfoBadge from '../../components/InfoBadge/InfoBadge';
-import { BADGE_TYPES } from '../../components/Badge/Badge';
+import PseudoModalContainer from '../../../components/PseudoModalContainer';
+import DomainStatusBadge from '../../../components/Badges/DomainStatusBadge/DomainStatusBadge';
+import PriceBadge from '../../../components/Badges/PriceBadge/PriceBadge';
+import PayWithBadge from '../../../components/Badges/PayWithBadge/PayWithBadge';
+import LowBalanceBadge from '../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
+import InfoBadge from '../../../components/InfoBadge/InfoBadge';
+import { BADGE_TYPES } from '../../../components/Badge/Badge';
 
-import { ROUTES } from '../../constants/routes';
-import { DOMAIN_STATUS } from '../../constants/common';
+import { ROUTES } from '../../../constants/routes';
+import { DOMAIN_STATUS } from '../../../constants/common';
 
-import { FormProps } from './types';
+import { FormProps } from '../types';
 
-import classes from './FioDomainStatusChangePage.module.scss';
+import classes from '../FioDomainStatusChangePage.module.scss';
 
 const INFO_MESSAGE_TEXT = {
   [DOMAIN_STATUS.PUBLIC]:

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import FioDomainStatusChangeForm from './FioDomainStatusChangeForm';
+import FioDomainStatusChangeForm from './components/FioDomainStatusChangeForm';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import SetVisibilityResults from '../../components/common/TransactionResults/components/SetVisibilityResults';
 
