@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import isEmpty from 'lodash/isEmpty';
 import { Button } from 'react-bootstrap';
-import { EdgeAccount } from 'edge-core-js';
 
+import EdgeConfirmAction from '../../../EdgeConfirmAction';
 import SecurityItem from '../SecurityItem/SecurityItem';
 import SuccessModal from '../../../Modal/SuccessModal';
 import DangerModal from '../../../Modal/DangerModal';
 import ResendEmail from './ResendEmail';
 
+import apis from '../../../../api';
+
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
+import { minWaitTimeFunction } from '../../../../utils';
+
+import { SubmitActionParams } from '../../../EdgeConfirmAction/types';
 
 import classes from './PasswordRecovery.module.scss';
 
@@ -30,13 +34,8 @@ type Props = {
   username: string;
   hasRecoveryQuestions: boolean;
   checkRecoveryQuestions: (username: string) => void;
-  disableRecoveryResults: { status?: number };
-  showPinModal: (action: string) => void;
-  pinConfirmation: { account: EdgeAccount; action: string };
-  disableRecoveryPassword: (account: {}) => void;
-  resetPinConfirm: () => void;
   loading: boolean;
-  clearDisableRecoveryResults: () => void;
+  genericErrorIsShowing: boolean;
 };
 
 const PasswordRecovery: React.FC<Props> = props => {
@@ -46,15 +45,12 @@ const PasswordRecovery: React.FC<Props> = props => {
     checkRecoveryQuestions,
     hasRecoveryQuestions,
     username,
-    disableRecoveryResults,
-    showPinModal,
-    pinConfirmation,
-    disableRecoveryPassword,
-    resetPinConfirm,
     loading,
-    clearDisableRecoveryResults,
+    genericErrorIsShowing,
   } = props;
 
+  const [submitData, setSubmitData] = useState<boolean | null>(null);
+  const [processing, setProcessing] = useState(false);
   const [showDisableModal, toggleDisableModal] = useState(false);
   const [showSuccessModal, toggleSuccessModal] = useState(false);
 
@@ -62,23 +58,29 @@ const PasswordRecovery: React.FC<Props> = props => {
     username && checkRecoveryQuestions(username);
   }, []);
 
-  useEffect(() => {
+  const submit = async ({ edgeAccount }: SubmitActionParams) => {
+    toggleDisableModal(true);
+    return minWaitTimeFunction(
+      () => apis.edge.disableRecovery(edgeAccount),
+      2000,
+    );
+  };
+
+  const onSuccess = (disableRecoveryResults: { status?: number }) => {
     if (disableRecoveryResults.status) {
+      setProcessing(false);
       toggleDisableModal(false);
       toggleSuccessModal(true);
       checkRecoveryQuestions(username);
+    } else {
+      onCancel();
     }
-  }, [disableRecoveryResults]);
-
-  useEffect(() => {
-    if (!isEmpty(pinConfirmation)) {
-      const { account, action } = pinConfirmation;
-      if (action === CONFIRM_PIN_ACTIONS.PASSWORD_RECOVERY) {
-        toggleDisableModal(true);
-        disableRecoveryPassword(account);
-      }
-    }
-  }, [pinConfirmation]);
+  };
+  const onCancel = () => {
+    setSubmitData(null);
+    setProcessing(false);
+    toggleDisableModal(true);
+  };
 
   const onChangeRecoveryQuestions = () => {
     showRecoveryModal();
@@ -88,7 +90,6 @@ const PasswordRecovery: React.FC<Props> = props => {
   const onClick = () => {
     if (hasRecoveryQuestions) {
       toggleDisableModal(true);
-      resetPinConfirm();
     } else {
       onChangeRecoveryQuestions();
     }
@@ -96,13 +97,12 @@ const PasswordRecovery: React.FC<Props> = props => {
 
   const onDisableClick = () => {
     toggleDisableModal(false);
-    showPinModal(CONFIRM_PIN_ACTIONS.PASSWORD_RECOVERY);
+    setSubmitData(true);
   };
 
   const onDisableClose = () => toggleDisableModal(false);
 
   const onSuccessClose = () => {
-    clearDisableRecoveryResults();
     toggleSuccessModal(false);
   };
 
@@ -136,15 +136,25 @@ const PasswordRecovery: React.FC<Props> = props => {
       onClick={onClick}
       bottomChildren={hasRecoveryQuestions && renderButtonGroup}
     >
+      <EdgeConfirmAction
+        action={CONFIRM_PIN_ACTIONS.DISABLE_PASSWORD_RECOVERY}
+        setProcessing={setProcessing}
+        onSuccess={onSuccess}
+        onCancel={onCancel}
+        processing={processing}
+        hideProcessing={true}
+        data={submitData}
+        submitAction={submit}
+      />
       <DangerModal
-        show={showDisableModal}
+        show={showDisableModal && !genericErrorIsShowing}
         onClose={onDisableClose}
         onActionButtonClick={onDisableClick}
         buttonText={mainButtonText}
         showCancel={true}
         title={ITEM_PROPS.dangerTitle}
         subtitle={ITEM_PROPS.dangerSubtitle}
-        loading={loading}
+        loading={loading || processing}
       />
       <SuccessModal
         title={ITEM_PROPS.successModalTitle}
