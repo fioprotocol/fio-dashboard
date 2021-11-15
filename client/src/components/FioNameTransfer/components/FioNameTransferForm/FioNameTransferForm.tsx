@@ -1,25 +1,26 @@
 import React, { FormEvent, useState } from 'react';
 import { Button } from 'react-bootstrap';
 
-import { INPUT_UI_STYLES } from '../Input/InputRedux';
-import { Field, FieldValue } from '../Input/Field';
-import { BADGE_TYPES } from '../Badge/Badge';
-import PriceBadge from '../Badges/PriceBadge/PriceBadge';
-import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
-import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
+import { INPUT_UI_STYLES } from '../../../Input/InputRedux';
+import { Field, FieldValue } from '../../../Input/Field';
+import { BADGE_TYPES } from '../../../Badge/Badge';
+import PriceBadge from '../../../Badges/PriceBadge/PriceBadge';
+import PayWithBadge from '../../../Badges/PayWithBadge/PayWithBadge';
+import LowBalanceBadge from '../../../Badges/LowBalanceBadge/LowBalanceBadge';
+
 import { validate } from './validation';
 
-import { FormProps } from './types';
+import { FormProps } from '../../types';
 
-import classes from './FioNameTransferContainer.module.scss';
-import { fioNameLabels } from '../../constants/labels';
-import { ERROR_UI_TYPE } from '../Input/ErrorBadge';
+import classes from '../../FioNameTransferContainer.module.scss';
+import { fioNameLabels } from '../../../../constants/labels';
+import { ERROR_UI_TYPE } from '../../../Input/ErrorBadge';
 
 const PLACEHOLDER = 'Enter FIO Address or FIO Public Key of New Owner';
 
 export const TransferForm = (props: FormProps) => {
   const {
-    pageName,
+    fioNameType,
     name,
     feePrice,
     currentWallet,
@@ -32,7 +33,7 @@ export const TransferForm = (props: FormProps) => {
   const [valid, setValid] = useState<boolean>(true);
 
   const { costFio, costUsdc } = feePrice;
-  const fioNameLabel = fioNameLabels[pageName];
+  const fioNameLabel = fioNameLabels[fioNameType];
   const hasLowBalance =
     currentWallet && feePrice && currentWallet.balance < feePrice.costFio;
 

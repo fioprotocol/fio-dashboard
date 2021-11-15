@@ -120,7 +120,7 @@ export type LastAuthData = {
   username: string;
 } | null;
 
-export type PageNameType = 'address' | 'domain';
+export type FioNameType = 'address' | 'domain';
 
 export type FioNameItemProps = {
   name?: string;

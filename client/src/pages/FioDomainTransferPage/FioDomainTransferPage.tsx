@@ -21,7 +21,7 @@ export const FioDomainTransferPage: React.FC<Props &
 
   return (
     <FioNameTransferContainer
-      pageName={DOMAIN}
+      fioNameType={DOMAIN}
       fioNameList={fioNameList}
       name={name}
       history={history}
