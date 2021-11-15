@@ -142,6 +142,9 @@ export default combineReducers({
   },
   fioAddresses(state: FioAddressDoublet[] = [], action) {
     switch (action.type) {
+      case actions.RESET_FIO_NAMES: {
+        return [];
+      }
       case actions.REFRESH_FIO_NAMES_SUCCESS:
       case actions.GET_FIO_ADDRESSES_SUCCESS: {
         const fioAddresses = [...state];
@@ -184,6 +187,9 @@ export default combineReducers({
   },
   fioDomains(state: FioDomainDoublet[] = [], action) {
     switch (action.type) {
+      case actions.RESET_FIO_NAMES: {
+        return [];
+      }
       case actions.REFRESH_FIO_NAMES_SUCCESS:
       case actions.GET_FIO_DOMAINS_SUCCESS: {
         const fioDomains = [...state];

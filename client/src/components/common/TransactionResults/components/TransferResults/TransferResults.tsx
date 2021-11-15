@@ -1,22 +1,32 @@
 import React from 'react';
 
-import Results from '../index';
-import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
+import Results from '../../index';
+import Badge, { BADGE_TYPES } from '../../../../Badge/Badge';
 
-import { fioNameLabels } from '../../../../constants/labels';
+import { fioNameLabels } from '../../../../../constants/labels';
 
-import { ResultsProps } from '../types';
+import { ResultsProps } from '../../types';
 
-import classes from '../Results.module.scss';
+import classes from '../../Results.module.scss';
 
-const TransferResults = (props: ResultsProps) => {
+type TransferResultsProps = {
+  resetFioNames: () => void;
+};
+
+const TransferResults = (props: ResultsProps & TransferResultsProps) => {
   const {
     pageName,
     results: { name, publicKey },
+    resetFioNames,
   } = props;
   const fioNameLabel = fioNameLabels[pageName];
+  const onClose = () => {
+    resetFioNames();
+    props.onClose();
+  };
+
   return (
-    <Results {...props}>
+    <Results {...props} onClose={onClose}>
       <p className={classes.label}>Transfer Information</p>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classes.badgeContainer}>
