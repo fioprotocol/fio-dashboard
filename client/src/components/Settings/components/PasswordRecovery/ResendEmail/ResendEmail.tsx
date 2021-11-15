@@ -1,51 +1,58 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
-import isEmpty from 'lodash/isEmpty';
-import { EdgeAccount } from 'edge-core-js';
+
 import SendLinkModal from '../SendLinkModal';
 import EmailModal from '../../../../Modal/EmailModal';
+import EdgeConfirmAction from '../../../../EdgeConfirmAction';
+
+import apis from '../../../../../api';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../../../constants/common';
+
+import { SubmitActionParams } from '../../../../EdgeConfirmAction/types';
 
 import classes from '../PasswordRecovery.module.scss';
 
 type Props = {
-  clearRecoveryToken: () => void;
-  clearResendRecoveryResults: () => void;
-  getRecoveryToken: (username: string) => void;
   loading: boolean;
-  pinConfirmation: { account: EdgeAccount; action: string };
-  resendRecovery: (recoveryToken: string) => void;
-  recoveryToken: string;
-  resetPinConfirm: () => void;
-  resendRecoveryResults: { success?: boolean };
-  resending: boolean;
-  showPinModal: (action: string) => void;
+  genericErrorIsShowing: boolean;
 };
 
 const ResendEmail: React.FC<Props> = props => {
-  const {
-    clearRecoveryToken,
-    clearResendRecoveryResults,
-    getRecoveryToken,
-    loading,
-    pinConfirmation,
-    recoveryToken,
-    resetPinConfirm,
-    resendRecovery,
-    resendRecoveryResults,
-    resending,
-    showPinModal,
-  } = props;
+  const { loading, genericErrorIsShowing } = props;
+  const [submitData, setSubmitData] = useState<boolean | null>(null);
+  const [processing, setProcessing] = useState(false);
   const [showSendEmailModal, toggleSendEmailModal] = useState(false);
   const [showSuccessModal, toggleSuccessModal] = useState(false);
 
+  const submit = async ({ edgeAccount }: SubmitActionParams) => {
+    toggleSendEmailModal(true);
+    const token = await apis.edge.getToken(edgeAccount.username);
+    return apis.auth.resendRecovery(token);
+  };
+
+  const onCancel = () => {
+    setSubmitData(null);
+    setProcessing(false);
+    toggleSendEmailModal(true);
+  };
+  const onSuccess = (result: { success: boolean }) => {
+    if (result.success) {
+      setSubmitData(null);
+      setProcessing(false);
+
+      toggleSendEmailModal(false);
+      toggleSuccessModal(true);
+    } else {
+      onCancel();
+    }
+  };
   const onResendClick = () => {
     toggleSendEmailModal(true);
   };
 
   const onSendEmailClick = () => {
-    showPinModal(CONFIRM_PIN_ACTIONS.RESEND_EMAIL);
+    setSubmitData(true);
     toggleSendEmailModal(false);
   };
 
@@ -54,47 +61,29 @@ const ResendEmail: React.FC<Props> = props => {
   };
 
   const onSuccessClose = () => {
-    clearRecoveryToken();
-    clearResendRecoveryResults();
     toggleSuccessModal(false);
   };
 
-  useEffect(() => {
-    if (!isEmpty(pinConfirmation)) {
-      const { account, action } = pinConfirmation;
-      if (action === CONFIRM_PIN_ACTIONS.RESEND_EMAIL && account) {
-        const { logout, username } = account;
-        getRecoveryToken(username);
-        logout();
-        toggleSendEmailModal(true);
-      }
-    }
-  }, [pinConfirmation]);
-
-  useEffect(() => {
-    if (recoveryToken != null && recoveryToken !== '') {
-      resetPinConfirm();
-      resendRecovery(recoveryToken);
-    }
-  }, [recoveryToken]);
-
-  useEffect(() => {
-    if (resendRecoveryResults.success) {
-      toggleSendEmailModal(false);
-      toggleSuccessModal(true);
-    }
-  }, [resendRecoveryResults]);
-
   return (
     <>
+      <EdgeConfirmAction
+        action={CONFIRM_PIN_ACTIONS.RESEND_EMAIL}
+        setProcessing={setProcessing}
+        onSuccess={onSuccess}
+        onCancel={onCancel}
+        processing={processing}
+        data={submitData}
+        submitAction={submit}
+        hideProcessing={true}
+      />
       <Button onClick={onResendClick} className={classes.resendButton}>
         Resend Recovery Email
       </Button>
       <SendLinkModal
-        show={showSendEmailModal}
+        show={showSendEmailModal && !genericErrorIsShowing}
         onClose={onSendEmailModalClose}
         onClick={onSendEmailClick}
-        loading={loading || resending}
+        loading={loading || processing}
       />
       <EmailModal
         show={showSuccessModal}

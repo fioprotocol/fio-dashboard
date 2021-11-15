@@ -2,10 +2,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
-import {
-  setRecoveryQuestions,
-  resendRecovery,
-} from '../../redux/profile/actions';
+import { setRecoveryQuestions } from '../../redux/profile/actions';
 import {
   getRecoveryQuestions,
   changeRecoveryQuestionsClose,
@@ -46,7 +43,6 @@ const reduxConnect = connect(
     createNotification,
     changeRecoveryQuestionsClose,
     checkRecoveryQuestions,
-    resendRecovery,
   },
 );
 
