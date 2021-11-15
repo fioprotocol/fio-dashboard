@@ -1,5 +1,5 @@
-import { NftFormValues } from './types';
-import apis from '../../api';
+import { NftFormValues } from '../../types';
+import apis from '../../../../api';
 
 const TOKEN_ID_MAX_LENGTH = 64;
 const URL_MAX_LENGTH = 128;

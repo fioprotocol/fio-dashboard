@@ -49,17 +49,6 @@ export default combineReducers({
         return state;
     }
   },
-  signNftProcessing(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.FIO_SIGN_NFT_REQUEST:
-        return true;
-      case actions.FIO_SIGN_NFT_FAILURE:
-      case actions.FIO_SIGN_NFT_SUCCESS:
-        return false;
-      default:
-        return state;
-    }
-  },
   linkProcessing(state: boolean = false, action) {
     switch (action.type) {
       case actions.LINK_TOKENS_REQUEST:
@@ -219,11 +208,8 @@ export default combineReducers({
   },
   transactionResult(state = {}, action) {
     switch (action.type) {
-      case actions.FIO_SIGN_NFT_REQUEST:
       case actions.RESET_TRANSACTION_RESULT:
         return {};
-      case actions.FIO_SIGN_NFT_SUCCESS:
-        return action.data;
       default:
         return state;
     }

@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Dropdown from 'react-dropdown';
 
-import classes from './SignNft.module.scss';
+import classes from '../SignNft.module.scss';
 import 'react-dropdown/style.css';
 
 type Props = {
