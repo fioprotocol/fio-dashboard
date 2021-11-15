@@ -240,7 +240,11 @@ const Input = props => {
           <FontAwesomeIcon
             icon={faSpinner}
             spin
-            className={classnames(classes.inputIcon, classes.inputSpinnerIcon)}
+            className={classnames(
+              classes.inputIcon,
+              classes.inputSpinnerIcon,
+              uiType && classes[uiType],
+            )}
           />
         )}
       </div>
