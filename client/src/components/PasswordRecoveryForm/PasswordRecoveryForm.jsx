@@ -4,18 +4,19 @@ import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Scrollbar } from 'react-scrollbars-custom';
 import classnames from 'classnames';
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
-import { ROUTES } from '../../constants/routes';
-import { ErrorBadge } from '../Input/ErrorBadge';
 
-import { ACTIONS } from '../Notifications/Notifications';
-import { BADGE_TYPES } from '../Badge/Badge';
+import EdgeConfirmAction from '../EdgeConfirmAction';
+import { ErrorBadge } from '../Input/ErrorBadge';
 import ModalComponent from '../Modal/Modal';
 import FormHeader from '../FormHeader/FormHeader';
 import Input from '../Input/Input';
 import SuccessModal from '../Modal/SuccessModal';
 
+import { ACTIONS } from '../Notifications/Notifications';
+import { BADGE_TYPES } from '../Badge/Badge';
 import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import { ROUTES } from '../../constants/routes';
 
 import classes from './PasswordRecoveryForm.module.scss';
 
@@ -26,13 +27,10 @@ const PasswordRecoveryForm = props => {
     show,
     closeRecoveryModal,
     edgeAuthLoading,
-    pinConfirmation,
-    showPinConfirm,
     questions,
     getRecoveryQuestions,
-    onSubmit,
-    showPinModal,
-    resetPinConfirm,
+    showPinConfirm,
+    onSubmit: setProfileRecovery,
     changeRecoveryQuestions,
     changeRecoveryQuestionsClose,
     changeRecoveryQuestionsResults,
@@ -49,24 +47,9 @@ const PasswordRecoveryForm = props => {
   const [defaultValues, setDefaultValues] = useState({});
   const [errorMessage, setError] = useState('');
   const [showSuccessModal, toggleSuccessModal] = useState(false);
+  const [submitData, setSubmitData] = useState(null);
 
   useEffect(getRecoveryQuestions, []);
-  useEffect(async () => {
-    if (
-      processing &&
-      pinConfirmation &&
-      pinConfirmation.account &&
-      pinConfirmation.action === CONFIRM_PIN_ACTIONS.RECOVERY
-    ) {
-      const recoveryForm = document.getElementById('recovery-form');
-      recoveryForm.dispatchEvent(
-        new Event('submit', { cancelable: true, bubbles: true }),
-      );
-    }
-    if (processing && pinConfirmation && pinConfirmation.error) {
-      setProcessing(false);
-    }
-  }, [pinConfirmation]);
 
   useEffect(() => {
     if (status) {
@@ -85,22 +68,9 @@ const PasswordRecoveryForm = props => {
     setError('');
   };
 
-  const confirmPin = values => () => {
-    setProcessing(true);
-    const {
-      recoveryAnswerTwo,
-      recoveryAnswerOne,
-      recoveryQuestionTwo,
-      recoveryQuestionOne,
-    } = values;
-
+  const onSubmit = values => {
     setDefaultValues(values);
-    showPinModal(CONFIRM_PIN_ACTIONS.RECOVERY, {
-      recoveryAnswerTwo,
-      recoveryAnswerOne,
-      recoveryQuestionTwo,
-      recoveryQuestionOne,
-    });
+    setSubmitData(values);
   };
 
   const showSkip = () => {
@@ -144,6 +114,44 @@ const PasswordRecoveryForm = props => {
       return;
     }
     return isSkip ? closeSkip() : showSkip();
+  };
+
+  const submit = async ({ edgeAccount, data }) => {
+    const {
+      recoveryAnswerTwo,
+      recoveryAnswerOne,
+      recoveryQuestionTwo,
+      recoveryQuestionOne,
+    } = data;
+    try {
+      const token = await edgeAccount.changeRecovery(
+        [recoveryQuestionOne.question, recoveryQuestionTwo.question],
+        [recoveryAnswerOne, recoveryAnswerTwo],
+      );
+      setProfileRecovery(token);
+      return { status: 1 };
+    } catch (e) {
+      console.error(e);
+      setError('There was an issue setting recovery questions');
+      return {};
+      // todo: handle error for each field
+      // return {
+      //   recoveryAnswerTwo:
+      //     'There was an issue setting recovery questions',
+      // };
+    }
+  };
+
+  const onSuccess = results => {
+    if (results.status) {
+      setSubmitData(null);
+    } else {
+      onCancel();
+    }
+  };
+  const onCancel = () => {
+    setSubmitData(null);
+    setProcessing(false);
   };
 
   const onSuccessClose = () => {
@@ -324,7 +332,7 @@ const PasswordRecoveryForm = props => {
               htmltype="submit"
               variant="primary"
               className="w-100"
-              onClick={confirmPin(values)}
+              onClick={handleSubmit}
               disabled={edgeAuthLoading || !valid || processing}
             >
               {edgeAuthLoading || submitting || processing ? (
@@ -369,32 +377,7 @@ const PasswordRecoveryForm = props => {
       renderSkip()
     ) : (
       <Form
-        onSubmit={async values => {
-          const {
-            recoveryAnswerTwo,
-            recoveryAnswerOne,
-            recoveryQuestionTwo,
-            recoveryQuestionOne,
-          } = values;
-          try {
-            const token = await pinConfirmation.account.changeRecovery(
-              [recoveryQuestionOne.question, recoveryQuestionTwo.question],
-              [recoveryAnswerOne, recoveryAnswerTwo],
-            );
-            onSubmit(token);
-          } catch (e) {
-            console.error(e);
-            setProcessing(false);
-            setError('There was an issue setting recovery questions');
-            // todo: handle error for each field
-            // return {
-            //   recoveryAnswerTwo:
-            //     'There was an issue setting recovery questions',
-            // };
-          }
-          resetPinConfirm();
-          return {};
-        }}
+        onSubmit={onSubmit}
         initialValues={defaultValues}
         validate={validateForm}
       >
@@ -434,6 +417,16 @@ const PasswordRecoveryForm = props => {
           />
         </>
       )}
+      <EdgeConfirmAction
+        action={CONFIRM_PIN_ACTIONS.RECOVERY}
+        setProcessing={setProcessing}
+        onSuccess={onSuccess}
+        onCancel={onCancel}
+        processing={processing}
+        hideProcessing={true}
+        data={submitData}
+        submitAction={submit}
+      />
     </>
   );
 };
