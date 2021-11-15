@@ -206,14 +206,6 @@ export default combineReducers({
         return state;
     }
   },
-  transactionResult(state = {}, action) {
-    switch (action.type) {
-      case actions.RESET_TRANSACTION_RESULT:
-        return {};
-      default:
-        return state;
-    }
-  },
   feesLoading(state: { [endpoint: string]: boolean } = {}, action) {
     switch (action.type) {
       case actions.GET_FEE_REQUEST:

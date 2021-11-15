@@ -16,8 +16,6 @@ export const hasMoreAddresses = (state: ReduxState) =>
   state[prefix].hasMoreAddresses;
 export const hasMoreDomains = (state: ReduxState) =>
   state[prefix].hasMoreDomains;
-export const transactionResult = (state: ReduxState) =>
-  state[prefix].transactionResult;
 export const fees = (state: ReduxState) => state[prefix].fees;
 export const feesLoading = (state: ReduxState) => state[prefix].feesLoading;
 export const linkResults = (state: ReduxState) => state[prefix].linkResults;
