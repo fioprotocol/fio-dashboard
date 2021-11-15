@@ -21,5 +21,4 @@ export type ResultsProps = {
 
 export type ResultsContainerProps = ResultsProps & {
   children: React.ReactNode;
-  resetTransactionResult: () => void;
 };

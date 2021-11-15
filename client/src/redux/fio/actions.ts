@@ -115,12 +115,6 @@ export const getFioPubAddress = (fioAddress: string) => ({
   promise: (api: Api) => api.fio.getFioPublicAddress(fioAddress),
 });
 
-export const RESET_TRANSACTION_RESULT = `${prefix}/RESET_TRANSACTION_RESULT`;
-
-export const resetTransactionResult = () => ({
-  type: RESET_TRANSACTION_RESULT,
-});
-
 export const LINK_TOKENS_REQUEST = `${prefix}/LINK_TOKENS_REQUEST`;
 export const LINK_TOKENS_SUCCESS = `${prefix}/LINK_TOKENS_SUCCESS`;
 export const LINK_TOKENS_FAILURE = `${prefix}/LINK_TOKENS_FAILURE`;

@@ -43,18 +43,10 @@ const Results: React.FC<ResultsContainerProps> = props => {
     title,
     hasAutoWidth,
     errorType,
-    resetTransactionResult,
     onClose,
     onRetry,
     children,
   } = props;
-
-  useEffect(
-    () => () => {
-      resetTransactionResult();
-    },
-    [],
-  );
 
   useEffect(() => {
     window.scrollTo(0, 0);
