@@ -49,17 +49,6 @@ export default combineReducers({
         return state;
     }
   },
-  renewProcessing(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.RENEW_REQUEST:
-        return true;
-      case actions.RENEW_SUCCESS:
-      case actions.RENEW_FAILURE:
-        return false;
-      default:
-        return state;
-    }
-  },
   signNftProcessing(state: boolean = false, action) {
     switch (action.type) {
       case actions.FIO_SIGN_NFT_REQUEST:
@@ -166,19 +155,6 @@ export default combineReducers({
         }
         return fioAddresses;
       }
-      case actions.RENEW_SUCCESS: {
-        const fioAddresses = [...state];
-        const fioAddress = fioAddresses.find(
-          ({ name }) => name === action.fioName,
-        );
-
-        if (fioAddress != null) {
-          fioAddress.expiration = action.data.expiration;
-          return fioAddresses;
-        }
-
-        return state;
-      }
       case LOGOUT_SUCCESS:
         return [];
       default:
@@ -210,17 +186,6 @@ export default combineReducers({
           fioDomains[index] = fioDomain;
         }
         return fioDomains;
-      }
-      case actions.RENEW_SUCCESS: {
-        const fioDomains = [...state];
-        const fioDomain = fioDomains.find(
-          ({ name }) => name === action.fioDomain,
-        );
-        if (fioDomain != null) {
-          fioDomain.expiration = action.data.expiration;
-          return fioDomains;
-        }
-        return state;
       }
       case LOGOUT_SUCCESS:
         return [];
@@ -254,15 +219,11 @@ export default combineReducers({
   },
   transactionResult(state = {}, action) {
     switch (action.type) {
-      case actions.RENEW_REQUEST:
       case actions.FIO_SIGN_NFT_REQUEST:
       case actions.RESET_TRANSACTION_RESULT:
         return {};
-      case actions.RENEW_SUCCESS:
       case actions.FIO_SIGN_NFT_SUCCESS:
         return action.data;
-      case actions.RENEW_FAILURE:
-        return { error: action.error && action.error.message };
       default:
         return state;
     }

@@ -126,35 +126,6 @@ export const resetTransactionResult = () => ({
   type: RESET_TRANSACTION_RESULT,
 });
 
-export const RENEW_REQUEST = `${prefix}/RENEW_REQUEST`;
-export const RENEW_SUCCESS = `${prefix}/RENEW_SUCCESS`;
-export const RENEW_FAILURE = `${prefix}/RENEW_FAILURE`;
-
-export const renew = ({
-  fioName,
-  fee,
-  keys,
-}: {
-  fioName: string;
-  fee: number;
-  keys: { public: string; private: string };
-}) => ({
-  types: [RENEW_REQUEST, RENEW_SUCCESS, RENEW_FAILURE],
-  promise: async (api: Api) => {
-    api.fio.setWalletFioSdk(keys);
-    try {
-      const result = await api.fio.renew(fioName, fee);
-      api.fio.clearWalletFioSdk();
-      return result;
-    } catch (e) {
-      api.fio.clearWalletFioSdk();
-      throw e;
-    }
-  },
-  actionName: RENEW_REQUEST,
-  fioName,
-});
-
 export const LINK_TOKENS_REQUEST = `${prefix}/LINK_TOKENS_REQUEST`;
 export const LINK_TOKENS_SUCCESS = `${prefix}/LINK_TOKENS_SUCCESS`;
 export const LINK_TOKENS_FAILURE = `${prefix}/LINK_TOKENS_FAILURE`;

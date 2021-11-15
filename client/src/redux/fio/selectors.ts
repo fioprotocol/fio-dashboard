@@ -7,8 +7,6 @@ import { FioNameItemProps, FioWalletDoublet } from '../../types';
 import { ReduxState } from '../../redux/init';
 
 export const loading = (state: ReduxState) => state[prefix].loading;
-export const renewProcessing = (state: ReduxState) =>
-  state[prefix].renewProcessing;
 export const signNftProcessing = (state: ReduxState) =>
   state[prefix].signNftProcessing;
 export const linkProcessing = (state: ReduxState) =>
