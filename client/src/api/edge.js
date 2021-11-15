@@ -187,7 +187,6 @@ export default class Edge {
   async disableRecovery(account) {
     try {
       await account.deleteRecovery();
-      await account.logout();
       return { status: 1 };
     } catch (e) {
       console.log(e);
