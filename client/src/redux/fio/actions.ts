@@ -36,6 +36,12 @@ export const refreshFioNames = (publicKey: string) => ({
   publicKey,
 });
 
+export const RESET_FIO_NAMES = `${prefix}/RESET_FIO_NAMES`;
+
+export const resetFioNames = () => ({
+  type: RESET_FIO_NAMES,
+});
+
 export const IS_REGISTERED_REQUEST = `${prefix}/IS_REGISTERED_REQUEST`;
 export const IS_REGISTERED_SUCCESS = `${prefix}/IS_REGISTERED_SUCCESS`;
 export const IS_REGISTERED_FAILURE = `${prefix}/IS_REGISTERED_FAILURE`;
