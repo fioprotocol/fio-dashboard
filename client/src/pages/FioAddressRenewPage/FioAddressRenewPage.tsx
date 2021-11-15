@@ -20,7 +20,7 @@ const FioAddressRenewPage: React.FC<Props &
 
   return (
     <FioNameRenewContainer
-      pageName={ADDRESS}
+      fioNameType={ADDRESS}
       fioNameList={fioNameList}
       name={name}
       history={history}
