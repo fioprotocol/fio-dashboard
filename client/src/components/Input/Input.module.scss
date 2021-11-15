@@ -142,6 +142,10 @@
         color: inherit;
         @include proxima-nova-regular-it;
       }
+
+      &[data-clear='true'] {
+        padding-right: 35px;
+      }
     }
 
     &.prefixSpace {
@@ -151,11 +155,6 @@
     &.hasCopyButton {
       padding-right: 45px;
     }
-
-    &[data-clear='true'] {
-      padding-right: 45px;
-    }
-
 
     &.bw {
       background-color: $white;
