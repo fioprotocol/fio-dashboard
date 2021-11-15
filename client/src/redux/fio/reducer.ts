@@ -49,17 +49,6 @@ export default combineReducers({
         return state;
     }
   },
-  transferProcessing(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.TRANSFER_REQUEST:
-        return true;
-      case actions.TRANSFER_SUCCESS:
-      case actions.TRANSFER_FAILURE:
-        return false;
-      default:
-        return state;
-    }
-  },
   renewProcessing(state: boolean = false, action) {
     switch (action.type) {
       case actions.RENEW_REQUEST:
@@ -174,16 +163,6 @@ export default combineReducers({
         }
         return fioAddresses;
       }
-      case actions.TRANSFER_SUCCESS: {
-        const fioAddresses = [...state];
-        const fioAddressIndex = fioAddresses.findIndex(
-          ({ name }) => name === action.fioName,
-        );
-        if (fioAddressIndex > -1) {
-          fioAddresses.splice(fioAddressIndex, 1);
-        }
-        return fioAddresses;
-      }
       case actions.RENEW_SUCCESS: {
         const fioAddresses = [...state];
         const fioAddress = fioAddresses.find(
@@ -223,16 +202,6 @@ export default combineReducers({
             continue;
           }
           fioDomains[index] = fioDomain;
-        }
-        return fioDomains;
-      }
-      case actions.TRANSFER_SUCCESS: {
-        const fioDomains = [...state];
-        const fioDomainIndex = fioDomains.findIndex(
-          ({ name }) => name === action.fioName,
-        );
-        if (fioDomainIndex > -1) {
-          fioDomains.splice(fioDomainIndex, 1);
         }
         return fioDomains;
       }
@@ -279,17 +248,14 @@ export default combineReducers({
   },
   transactionResult(state = {}, action) {
     switch (action.type) {
-      case actions.TRANSFER_REQUEST:
       case actions.RENEW_REQUEST:
       case actions.FIO_SIGN_NFT_REQUEST:
       case actions.RESET_TRANSACTION_RESULT:
         return {};
-      case actions.TRANSFER_SUCCESS:
       case actions.RENEW_SUCCESS:
       case actions.FIO_SIGN_NFT_SUCCESS:
         return action.data;
       case actions.RENEW_FAILURE:
-      case actions.TRANSFER_FAILURE:
         return { error: action.error && action.error.message };
       default:
         return state;

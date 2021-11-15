@@ -1,7 +1,7 @@
 import { History } from 'history';
 
 import {
-  PageNameType,
+  FioNameType,
   WalletKeys,
   FioNameItemProps,
   FioWalletDoublet,
@@ -11,7 +11,7 @@ import {
 export type ContainerOwnProps = {
   fioNameList: FioNameItemProps[];
   name: string;
-  pageName: PageNameType;
+  pageName: FioNameType;
   history: History;
 };
 

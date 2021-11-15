@@ -7,8 +7,6 @@ import { FioNameItemProps, FioWalletDoublet } from '../../types';
 import { ReduxState } from '../../redux/init';
 
 export const loading = (state: ReduxState) => state[prefix].loading;
-export const transferProcessing = (state: ReduxState) =>
-  state[prefix].transferProcessing;
 export const renewProcessing = (state: ReduxState) =>
   state[prefix].renewProcessing;
 export const signNftProcessing = (state: ReduxState) =>
@@ -36,7 +34,6 @@ export const currentWallet = (
     name: string;
   } & any,
 ) => {
-  // todo: set types for state & fix ownProps type
   const { fioWallets } = state.fio;
   const { fioNameList, name } = ownProps;
 

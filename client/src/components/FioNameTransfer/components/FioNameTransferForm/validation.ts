@@ -1,4 +1,4 @@
-import apis from '../../api';
+import apis from '../../../../api';
 
 export const validate = async (values: { transferAddress: string }) => {
   let { transferAddress } = values;

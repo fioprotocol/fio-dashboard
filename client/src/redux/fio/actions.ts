@@ -120,46 +120,6 @@ export const resetTransactionResult = () => ({
   type: RESET_TRANSACTION_RESULT,
 });
 
-export const TRANSFER_REQUEST = `${prefix}/TRANSFER_REQUEST`;
-export const TRANSFER_SUCCESS = `${prefix}/TRANSFER_SUCCESS`;
-export const TRANSFER_FAILURE = `${prefix}/TRANSFER_FAILURE`;
-
-export const transfer = ({
-  fioName,
-  newOwnerFioAddress,
-  newOwnerKey,
-  fee,
-  keys,
-}: {
-  fioName: string;
-  newOwnerFioAddress?: string;
-  newOwnerKey?: string;
-  fee: number;
-  keys: { public: string; private: string };
-}) => ({
-  types: [TRANSFER_REQUEST, TRANSFER_SUCCESS, TRANSFER_FAILURE],
-  promise: async (api: Api) => {
-    if (!newOwnerKey) {
-      const {
-        public_address: publicAddress,
-      } = await api.fio.getFioPublicAddress(newOwnerFioAddress);
-      if (!publicAddress) throw new Error('Public address is invalid.');
-      newOwnerKey = publicAddress;
-    }
-    api.fio.setWalletFioSdk(keys);
-    try {
-      const result = await api.fio.transfer(fioName, newOwnerKey, fee);
-      api.fio.clearWalletFioSdk();
-      return { ...result, newOwnerKey };
-    } catch (e) {
-      api.fio.clearWalletFioSdk();
-      throw e;
-    }
-  },
-  actionName: TRANSFER_REQUEST,
-  fioName,
-});
-
 export const RENEW_REQUEST = `${prefix}/RENEW_REQUEST`;
 export const RENEW_SUCCESS = `${prefix}/RENEW_SUCCESS`;
 export const RENEW_FAILURE = `${prefix}/RENEW_FAILURE`;
