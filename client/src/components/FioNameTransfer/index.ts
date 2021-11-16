@@ -10,6 +10,9 @@ import { loading, currentWallet } from '../../redux/fio/selectors';
 import { roe } from '../../redux/registrations/selectors';
 
 import { FioNameTransferContainer } from './FioNameTransferContainer';
+
+import { DEFAULT_FEE_PRICES } from '../../util/prices';
+
 import { ContainerOwnProps } from './types';
 import { ReduxState } from '../../redux/init';
 
@@ -17,13 +20,15 @@ const reduxConnect = connect(
   createStructuredSelector({
     loading,
     roe,
-    fee: (state: ReduxState, ownProps: ContainerOwnProps & any) => {
+    feePrice: (state: ReduxState, ownProps: ContainerOwnProps & any) => {
       const { fees } = state.fio;
-      return fees[
-        hasFioAddressDelimiter(ownProps.name)
-          ? apis.fio.actionEndPoints.transferFioAddress
-          : apis.fio.actionEndPoints.transferFioDomain
-      ];
+      return (
+        fees[
+          hasFioAddressDelimiter(ownProps.name)
+            ? apis.fio.actionEndPoints.transferFioAddress
+            : apis.fio.actionEndPoints.transferFioDomain
+        ] || DEFAULT_FEE_PRICES
+      );
     },
     currentWallet,
   }),

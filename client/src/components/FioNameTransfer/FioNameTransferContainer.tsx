@@ -22,7 +22,6 @@ import { setFees } from '../../util/prices';
 import apis from '../../api';
 
 import { ContainerProps } from './types';
-import { FeePrice } from '../../types';
 import { SubmitActionParams } from '../EdgeConfirmAction/types';
 import { ResultsData } from '../common/TransactionResults/types';
 
@@ -45,7 +44,7 @@ const FIO_NAME_DATA = {
 export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   const {
     currentWallet,
-    fee,
+    feePrice,
     roe,
     history,
     name,
@@ -53,8 +52,6 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
     refreshBalance,
     getFee,
   } = props;
-
-  const feePrice: FeePrice = setFees(fee, roe);
 
   const [processing, setProcessing] = useState(false);
   const [submitting, setSubmitting] = useState(false);

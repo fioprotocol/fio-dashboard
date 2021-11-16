@@ -20,7 +20,7 @@ export type ContainerOwnProps = RouteComponentProps<MatchParams>;
 export type ContainerProps = {
   children?: React.ReactNode;
   selectedFioDomain: FioNameItemProps;
-  fees: { [endpoint: string]: number };
+  feePrice: FeePrice;
   roe: number | null;
   fioWallet: FioWalletDoublet;
   loading: boolean;

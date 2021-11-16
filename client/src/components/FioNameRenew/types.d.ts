@@ -1,6 +1,11 @@
 import { History } from 'history';
 
-import { FioNameType, FioNameItemProps, FioWalletDoublet } from '../../types';
+import {
+  FioNameType,
+  FioNameItemProps,
+  FioWalletDoublet,
+  FeePrice,
+} from '../../types';
 
 export type ContainerOwnProps = {
   fioNameList: FioNameItemProps[];
@@ -11,7 +16,7 @@ export type ContainerOwnProps = {
 
 export type ContainerProps = {
   children?: React.ReactNode;
-  fee: number;
+  feePrice: FeePrice;
   roe: number;
   currentWallet: FioWalletDoublet;
   loading: boolean;

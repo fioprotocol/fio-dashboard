@@ -31,7 +31,7 @@ import classes from './FioNameRenewContainer.module.scss';
 const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   const {
     currentWallet,
-    fee,
+    feePrice,
     roe,
     history,
     name,
@@ -40,7 +40,6 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
     getFee,
   } = props;
 
-  const feePrice = setFees(fee, roe);
   const { costFio, costUsdc } = feePrice;
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<{

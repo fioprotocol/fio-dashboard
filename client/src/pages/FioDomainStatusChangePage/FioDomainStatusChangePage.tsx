@@ -20,7 +20,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
     match,
     history,
     roe,
-    fees,
+    feePrice,
     fioWallet,
     selectedFioDomain,
     refreshBalance,
@@ -28,10 +28,6 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
   } = props;
   const { id: name } = match.params;
 
-  const feePrice = setFees(
-    fees[apis.fio.actionEndPoints.setFioDomainPublic] || 0,
-    roe,
-  );
   const domainStatus: string = selectedFioDomain.isPublic
     ? DOMAIN_STATUS.PUBLIC
     : DOMAIN_STATUS.PRIVATE;

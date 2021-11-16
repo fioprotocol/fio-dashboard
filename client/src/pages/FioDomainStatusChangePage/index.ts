@@ -12,17 +12,22 @@ import {
   loading,
   fioWalletForDomain,
   selectedFioDomain,
-  fees,
 } from '../../redux/fio/selectors';
 
 import FioDomainStatusChangePage from './FioDomainStatusChangePage';
+
+import { DEFAULT_FEE_PRICES } from '../../util/prices';
+
+import { ReduxState } from '../../redux/init';
 
 const reduxConnect = connect(
   createStructuredSelector({
     loading,
     confirmingPin,
     roe,
-    fees,
+    feePrice: (state: ReduxState) =>
+      state.fio.fees[apis.fio.actionEndPoints.setFioDomainPublic] ||
+      DEFAULT_FEE_PRICES,
     selectedFioDomain,
     fioWallet: fioWalletForDomain,
   }),

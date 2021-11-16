@@ -1,6 +1,6 @@
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { Api } from '../../api';
-import { PublicAddressDoublet, LinkActionResult } from '../../types';
+import { PublicAddressDoublet, LinkActionResult, FeePrice } from '../../types';
 export const prefix = 'fio';
 
 export const REFRESH_BALANCE_REQUEST = `${prefix}/REFRESH_BALANCE_REQUEST`;
@@ -56,6 +56,7 @@ export const isRegistered = (fioAddress: string) => ({
 export const GET_FEE_REQUEST = `${prefix}/GET_FEE_REQUEST`;
 export const GET_FEE_SUCCESS = `${prefix}/GET_FEE_SUCCESS`;
 export const GET_FEE_FAILURE = `${prefix}/GET_FEE_FAILURE`;
+export const SET_FEE = `${prefix}/SET_FEE`;
 
 export const getFee = (endpoint: string, fioAddress: string = '') => ({
   types: [GET_FEE_REQUEST, GET_FEE_SUCCESS, GET_FEE_FAILURE],
@@ -64,6 +65,11 @@ export const getFee = (endpoint: string, fioAddress: string = '') => ({
     return api.fio.publicFioSDK.getFee(endpoint, fioAddress);
   },
   endpoint,
+});
+
+export const setFees = (fees: { [endpoint: string]: FeePrice }) => ({
+  type: SET_FEE,
+  data: fees,
 });
 
 export const GET_FIO_ADDRESSES_REQUEST = `${prefix}/GET_FIO_ADDRESSES_REQUEST`;

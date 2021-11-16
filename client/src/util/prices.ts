@@ -15,3 +15,5 @@ export const setFees = (nativeFee: number, roe: number): FeePrice => {
 
   return fee;
 };
+
+export const DEFAULT_FEE_PRICES = setFees(0, 1);
