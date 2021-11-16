@@ -1,0 +1,17 @@
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  padding: 0;
+  width: 100%;
+  .title {
+    margin-top: 1.25rem;
+    font-size: 1.625em;
+    margin-bottom: 0;
+  }
+}
+
+@include lg {
+  .container {
+    padding: 0 10px;
+  }
+}

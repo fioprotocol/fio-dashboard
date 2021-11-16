@@ -1,0 +1,44 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+
+.form {
+  margin-top: 20px;
+
+  .checkboxContainer {
+    color: $dark-jungle-green;
+    width: 90%;
+
+    .checkboxContent {
+      margin-left: 30px;
+
+      .checkboxTitle {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-size: 1em;
+        @include proxima-nova-semibold;
+      }
+
+      .checkboxText {
+        margin-top: 5px;
+        font-size: 0.75em;
+        margin-bottom: 0;
+        @include proxima-nova-thin;
+      }
+    }
+  }
+
+  .button {
+    max-width: 335px;
+    width: 100%;
+    margin-top: 30px;
+    position: relative;
+    border-radius: 7px;
+
+    .loader {
+      margin-left: 1rem;
+      position: absolute;
+      right: 27%;
+      top: 35%;
+    }
+  }
+}

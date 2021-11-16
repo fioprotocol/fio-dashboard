@@ -7,7 +7,12 @@ import {
   SIGNUP_SUCCESS,
 } from '../profile/actions';
 import * as actions from './actions';
+
+import { transformNft } from '../../util/fio';
+
 import { WALLET_CREATED_FROM } from '../../constants/common';
+import { DEFAULT_BALANCES } from '../../util/prices';
+
 import {
   FioWalletDoublet,
   FioAddressDoublet,
@@ -15,9 +20,8 @@ import {
   LinkActionResult,
   NFTTokenDoublet,
   FeePrice,
+  WalletsBalances,
 } from '../../types';
-
-import { transformNft } from '../../util/fio';
 
 export const emptyWallet: FioWalletDoublet = {
   id: '',
@@ -25,6 +29,8 @@ export const emptyWallet: FioWalletDoublet = {
   name: '',
   publicKey: '',
   balance: null,
+  available: null,
+  locked: null,
   from: WALLET_CREATED_FROM.EDGE,
 };
 
@@ -61,6 +67,18 @@ export default combineReducers({
       case actions.LINK_TOKENS_SUCCESS:
       case actions.LINK_TOKENS_FAILURE:
         return false;
+      default:
+        return state;
+    }
+  },
+  fioWalletsBalances(
+    state: WalletsBalances = { total: DEFAULT_BALANCES, wallets: {} },
+    action,
+  ) {
+    switch (action.type) {
+      case actions.SET_BALANCES: {
+        return action.data;
+      }
       default:
         return state;
     }
@@ -115,21 +133,21 @@ export default combineReducers({
         return fioWallets;
       }
       case actions.REFRESH_BALANCE_SUCCESS: {
-        return state.map(fioWallet =>
-          fioWallet.publicKey === action.publicKey
-            ? {
-                ...fioWallet,
-                balance: action.data,
-              }
-            : fioWallet,
-        );
+        return state.map(fioWallet => {
+          if (fioWallet.publicKey === action.publicKey) {
+            fioWallet.balance = action.data.balance;
+            fioWallet.available = action.data.available;
+            fioWallet.locked = action.data.locked;
+          }
+          return fioWallet;
+        });
       }
       case ADD_WALLET_SUCCESS: {
         const fioWallets = [...state];
         if (
           !fioWallets.find(item => item.publicKey === action.data.publicKey)
         ) {
-          fioWallets.push(action.data);
+          fioWallets.push({ ...emptyWallet, ...action.data });
         }
         return fioWallets;
       }

@@ -201,7 +201,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
         closeButton={true}
         isSimple={true}
         isWide={isDesktop}
-        hasDefaultColor={true}
+        hasDefaultCloseColor={true}
       >
         <SettingsItem
           fioNameItem={currentAddress}

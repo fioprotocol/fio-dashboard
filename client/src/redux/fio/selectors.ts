@@ -17,6 +17,8 @@ export const hasMoreAddresses = (state: ReduxState) =>
 export const hasMoreDomains = (state: ReduxState) =>
   state[prefix].hasMoreDomains;
 export const fees = (state: ReduxState) => state[prefix].fees;
+export const fioWalletsBalances = (state: ReduxState) =>
+  state[prefix].fioWalletsBalances;
 export const feesLoading = (state: ReduxState) => state[prefix].feesLoading;
 export const linkResults = (state: ReduxState) => state[prefix].linkResults;
 export const nftSignatures = (state: ReduxState) => state[prefix].nftList;

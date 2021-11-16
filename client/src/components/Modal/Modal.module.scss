@@ -29,6 +29,9 @@
   &.info {
     background-color: $cyan-blue;
   }
+  &.blue {
+    background-color: $bright-turquoise;
+  }
 }
 
 .dialog {
@@ -40,7 +43,12 @@
     width: auto;
   }
 
-  &.defaultColor {
+  &.isMiddleWidth {
+    max-width: 560px;
+    width: auto;
+  }
+
+  &.defaultCloseColor {
     span[aria-hidden=true] {
       color: $black !important;
     }

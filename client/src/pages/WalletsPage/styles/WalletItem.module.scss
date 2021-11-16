@@ -1,0 +1,82 @@
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+@import '../../../assets/styles/colors.scss';
+
+
+.container {
+  margin-top: -10px;
+
+  .badgeItem {
+    font-size: 1em;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .walletName {
+      @include proxima-nova-semibold;
+      word-break: break-all;
+      margin-top: 0;
+      margin-bottom: 0;
+      margin-right: 20px;
+    }
+
+    .itemContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      .balanceContainer {
+        display: flex;
+        flex-direction: column;
+
+        .totalBalance {
+          margin-top: 0;
+          margin-bottom: 0;
+          margin-right: 20px;
+        }
+
+        .balanceValue {
+          margin-top: 0;
+          margin-bottom: 0;
+          @include proxima-nova-thin;
+        }
+      }
+
+      .listItem {
+        word-break: break-all;
+        margin-right: 20px;
+      }
+
+      .ledgerContainer {
+        margin-left: 0;
+        margin-top: 10px;
+      }
+    }
+    .detailsButton {
+      display: block;
+      font-size: 1em;
+      transition: 0.2s all;
+      margin-left: auto;
+      color: $dark-jungle-green;
+    }
+  }
+}
+
+@include lg {
+  .container {
+    .badgeItem {
+      .itemContainer {
+        flex-direction: row;
+        align-items: center;
+
+        .balanceContainer {
+          flex-direction: row;
+        }
+        .ledgerContainer {
+          margin: 0 15px 0 30px;
+        }
+      }
+    }
+  }
+}

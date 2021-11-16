@@ -31,7 +31,7 @@ const ModalUIComponent: React.FC<Props> = props => {
       closeButton={true}
       isSimple={true}
       isWide={isWide}
-      hasDefaultColor={true}
+      hasDefaultCloseColor={true}
     >
       <div className={classes.container}>
         <h4 className={classes.title}>{title}</h4>
