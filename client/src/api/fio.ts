@@ -163,16 +163,29 @@ export default class Fio {
         );
   };
 
-  getBalance = async (publicKey: string): Promise<number> => {
+  getBalance = async (
+    publicKey: string,
+  ): Promise<{ balance: number; available: number; locked: number }> => {
     this.setBaseUrl();
     try {
-      const { balance } = await this.publicFioSDK.getFioBalance(publicKey);
-      return FIOSDK.SUFToAmount(balance);
+      const { balance, available } = await this.publicFioSDK.getFioBalance(
+        publicKey,
+      );
+
+      return {
+        balance: FIOSDK.SUFToAmount(balance),
+        available: FIOSDK.SUFToAmount(available),
+        locked: 0,
+      };
     } catch (e) {
       this.logError(e);
     }
 
-    return 0;
+    return {
+      balance: 0,
+      available: 0,
+      locked: 0,
+    };
   };
 
   getFioNames = async (publicKey: string): Promise<FioNamesResponse> => {

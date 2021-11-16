@@ -12,6 +12,7 @@ import notifications from './notifications/reducer';
 import registrations from './registrations/reducer';
 import cart from './cart/reducer';
 import refProfile from './refProfile/reducer';
+import account from './account/reducer';
 
 const createReducer = history =>
   combineReducers({
@@ -27,6 +28,7 @@ const createReducer = history =>
     registrations,
     cart,
     refProfile,
+    account,
   });
 
 export default createReducer;

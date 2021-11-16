@@ -1,0 +1,78 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.actionBadgeContainer {
+  margin: 0 20px 30px;
+  width: auto;
+
+  .totalBadge {
+    background-color: $midnight;
+    border-radius: 12px;
+    padding: 30px;
+    color: $white;
+
+    .title {
+      font-size: 1.125em;
+      margin-top: 0;
+      margin-bottom: 0;
+      @include proxima-nova-semibold;
+    }
+
+    .totalFio {
+      font-size: 1.25em;
+      margin-top: 15px;
+      margin-bottom: 0;
+      @include proxima-nova-semibold;
+    }
+
+    .totalUsdc {
+      font-size: 1em;
+      margin-top: 5px;
+      margin-bottom: 0;
+      @include proxima-nova-thin;
+    }
+    .balanceContainer {
+      padding: 10px 20px;
+      background-color: $dark-blue-grey;
+      border-radius: 7px;
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: space-between;
+      margin-top: 15px;
+
+      .balanceTitle, .balanceValues {
+        @include sf-pro-display-medium;
+        font-size: 0.8125em;
+      }
+
+      .balanceTitle {
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-right: 30px;
+      }
+      .balanceValues {
+        font-size: 0.8125em;
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+    }
+  }
+}
+
+@include md {
+  .actionBadgeContainer {
+    width: 100%;
+    max-width: 335px;
+    margin: 0 0 30px;
+  }
+}
+
+@include lg {
+  .actionBadgeContainer {
+    margin-top: 60px;
+    margin-left: 0;
+    max-width: 355px;
+    width: 100%;
+  }
+}

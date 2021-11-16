@@ -11,6 +11,7 @@ import { RefProfile } from '../../types';
 const navItems: string[] = [
   LINKS.FIO_ADDRESSES,
   LINKS.FIO_DOMAINS,
+  LINKS.TOKENS,
   // comment links due to BD-2631 task
   // LINKS.FIO_REQUESTS,
   // LINKS.FIO_WALLET,

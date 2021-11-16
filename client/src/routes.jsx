@@ -34,6 +34,7 @@ import FioAddressSignaturesPage from './pages/FioAddressSignaturesPage';
 import FioAddressSignPage from './pages/FioAddressSignPage';
 import FioAddressNftPage from './pages/FioAddressNftPage';
 import NftValidationPage from './pages/NftValidationPage';
+import WalletsPage from './pages/WalletsPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -89,6 +90,7 @@ const Routes = () => (
         <PrivateRoute path={ROUTES.CART} component={CartPage} exact />
         <PrivateRoute path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
         <PrivateRoute path={ROUTES.PURCHASE} component={PurchasePage} exact />
+        <PrivateRoute path={ROUTES.TOKENS} component={WalletsPage} exact />
         <PrivateRoute
           path={`${ROUTES.FIO_ADDRESS_OWNERSHIP}/:id`}
           component={FioAddressTransferPage}

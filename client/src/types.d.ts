@@ -73,6 +73,8 @@ export type FioWalletDoublet = {
   name: string;
   publicKey: string;
   balance?: number | null;
+  available?: number | null;
+  locked?: number | null;
   from: string;
 };
 
@@ -80,7 +82,6 @@ export type NewFioWalletDoublet = {
   edgeId?: string;
   name: string;
   publicKey: string;
-  balance?: number | null;
   from: string;
   data?: any;
 };
@@ -167,6 +168,35 @@ export type FeePrice = {
   nativeFio: number | null;
   costFio: number | null;
   costUsdc: number | null;
+};
+
+export type FioBalanceRes = {
+  balance?: number;
+  available?: number;
+  locked?: number;
+}
+
+export type WalletBalances = {
+  total: {
+    nativeFio: number | null;
+    fio: string,
+    usdc: string,
+  },
+  available: {
+    nativeFio: number | null;
+    fio: string,
+    usdc: string,
+  },
+  locked: {
+    nativeFio: number | null;
+    fio: string,
+    usdc: string,
+  },
+}
+
+export type WalletsBalances = {
+  total: WalletBalances,
+  wallets: { [publicKey: string]: WalletBalances },
 };
 
 export type DomainStatusType = 'private' | 'public';

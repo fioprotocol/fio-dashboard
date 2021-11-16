@@ -14,6 +14,7 @@ export const LINKS: { [linkKey: string]: string } = {
   FIO_DOMAINS: 'FIO_DOMAINS',
   FIO_REQUESTS: 'FIO_REQUESTS',
   FIO_WALLET: 'FIO_WALLET',
+  TOKENS: 'TOKENS',
   GOVERNANCE: 'GOVERNANCE',
   PROTOCOL_UPDATES: 'PROTOCOL_UPDATES',
 };
@@ -32,6 +33,7 @@ export const LINK_LABELS: { [linkKey: string]: string } = {
   [LINKS.FIO_DOMAINS]: 'FIO Domains',
   [LINKS.FIO_REQUESTS]: 'FIO Requests',
   [LINKS.FIO_WALLET]: 'FIO Wallet',
+  [LINKS.TOKENS]: 'Tokens',
   [LINKS.GOVERNANCE]: 'Governance',
   [LINKS.PROTOCOL_UPDATES]: 'Protocol Updates',
 };

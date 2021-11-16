@@ -1,6 +1,11 @@
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { Api } from '../../api';
-import { PublicAddressDoublet, LinkActionResult, FeePrice } from '../../types';
+import {
+  PublicAddressDoublet,
+  LinkActionResult,
+  FeePrice,
+  WalletsBalances,
+} from '../../types';
 export const prefix = 'fio';
 
 export const REFRESH_BALANCE_REQUEST = `${prefix}/REFRESH_BALANCE_REQUEST`;
@@ -15,6 +20,12 @@ export const refreshBalance = (publicKey: string) => ({
   ],
   promise: (api: Api) => api.fio.getBalance(publicKey),
   publicKey,
+});
+export const SET_BALANCES = `${prefix}/SET_BALANCES`;
+
+export const setBalances = (balances: WalletsBalances) => ({
+  type: SET_BALANCES,
+  data: balances,
 });
 
 export const REFRESH_FIO_NAMES_REQUEST = `${prefix}/REFRESH_FIO_NAMES_REQUEST`;
