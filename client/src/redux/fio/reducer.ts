@@ -12,6 +12,7 @@ import {
   FioDomainDoublet,
   LinkActionResult,
   NFTTokenDoublet,
+  FeePrice,
 } from '../../types';
 
 import { transformNft } from '../../util/fio';
@@ -198,10 +199,10 @@ export default combineReducers({
         return state;
     }
   },
-  fees(state: { [endpoint: string]: number } = {}, action) {
+  fees(state: { [endpoint: string]: FeePrice } = {}, action) {
     switch (action.type) {
-      case actions.GET_FEE_SUCCESS:
-        return { ...state, [action.endpoint]: action.data.fee };
+      case actions.SET_FEE:
+        return { ...state, ...action.data };
       default:
         return state;
     }

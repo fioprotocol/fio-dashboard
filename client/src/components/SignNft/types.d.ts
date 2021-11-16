@@ -1,6 +1,6 @@
 import { History } from 'history';
 
-import { FioWalletDoublet, FioAddressDoublet } from '../../types';
+import { FioWalletDoublet, FioAddressDoublet, FeePrice } from '../../types';
 
 export type NftFormValues = {
   chainCode: string;
@@ -22,7 +22,7 @@ export type ContainerOwnProps = {
 export type ContainerProps = {
   fioAddresses: FioAddressDoublet[];
   fioWallets: FioWalletDoublet[];
-  fee: number;
+  feePrice: FeePrice;
 
   match: {
     params: { address: string };

@@ -12,16 +12,19 @@ import {
 } from '../../redux/fio/actions';
 
 import apis from '../../api';
+
+import { DEFAULT_FEE_PRICES } from '../../util/prices';
+
 import { ReduxState } from '../../redux/init';
 
 const reduxConnect = connect(
   createStructuredSelector({
     fioAddresses,
     fioWallets,
-    fee: (state: ReduxState) => {
+    feePrice: (state: ReduxState) => {
       const { fees } = state.fio;
 
-      return fees[apis.fio.actionEndPoints.signNft];
+      return fees[apis.fio.actionEndPoints.signNft] || DEFAULT_FEE_PRICES;
     },
   }),
   {

@@ -16,6 +16,7 @@ import {
   refActionSuccess,
 } from './refProfile/sagas';
 import { clearGenericModalError } from './modal/sagas';
+import { setFeesService } from './fio/sagas';
 
 export default function* rootSaga(history, api) {
   yield all([
@@ -31,5 +32,6 @@ export default function* rootSaga(history, api) {
     refLoginSuccess(),
     clearGenericModalError(),
     refActionSuccess(),
+    setFeesService(),
   ]);
 }

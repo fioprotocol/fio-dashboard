@@ -16,7 +16,7 @@ export type ContainerOwnProps = {
 
 export type ContainerProps = {
   children?: React.ReactNode;
-  fee: number | null;
+  feePrice: FeePrice;
   roe: number;
   currentWallet: FioWalletDoublet;
   loading: boolean;
