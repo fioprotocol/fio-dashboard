@@ -3,7 +3,10 @@ import { createStructuredSelector } from 'reselect';
 
 import { fioWallets } from '../../../../redux/fio/selectors';
 import { addWalletLoading } from '../../../../redux/account/selectors';
-import { showGenericError } from '../../../../redux/modal/selectors';
+import {
+  showGenericError,
+  showPinConfirm,
+} from '../../../../redux/modal/selectors';
 
 import { addWallet } from '../../../../redux/account/actions';
 
@@ -16,6 +19,7 @@ const reduxConnect = connect(
     fioWallets,
     genericErrorModalIsActive: showGenericError,
     addWalletLoading,
+    pinModalIsOpen: showPinConfirm,
   }),
   {
     addWallet,

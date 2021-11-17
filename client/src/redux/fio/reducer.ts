@@ -93,7 +93,9 @@ export default combineReducers({
             ...fioWallet,
           });
         }
-        return fioWallets;
+        return fioWallets.sort(({ id: id1 }, { id: id2 }) =>
+          id1 > id2 ? 1 : -1,
+        );
       }
       case EDGE_LOGIN_SUCCESS: {
         const fioWallets: FioWalletDoublet[] = [];
@@ -130,7 +132,9 @@ export default combineReducers({
                 },
           );
         }
-        return fioWallets;
+        return fioWallets.sort(({ id: id1 }, { id: id2 }) =>
+          id1 > id2 ? 1 : -1,
+        );
       }
       case actions.REFRESH_BALANCE_SUCCESS: {
         return state.map(fioWallet => {

@@ -45,6 +45,7 @@ export class Wallet extends Base {
   static list(where) {
     return this.findAll({
       where,
+      order: [['id', 'ASC']],
     });
   }
 
