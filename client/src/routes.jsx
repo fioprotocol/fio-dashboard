@@ -36,6 +36,7 @@ import FioAddressNftPage from './pages/FioAddressNftPage';
 import NftValidationPage from './pages/NftValidationPage';
 import WalletsPage from './pages/WalletsPage';
 import WalletPage from './pages/WalletPage';
+import SendPage from './pages/SendPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -131,6 +132,8 @@ const Routes = () => (
         />
 
         <PrivateRoute path={ROUTES.SETTINGS} component={SettingsPage} exact />
+
+        <PrivateRoute path={ROUTES.SEND} component={SendPage} exact />
 
         <Route
           path={ROUTES.ACCOUNT_RECOVERY}

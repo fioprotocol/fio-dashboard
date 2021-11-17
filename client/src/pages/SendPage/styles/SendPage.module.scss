@@ -1,0 +1,14 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.subtitle {
+  font-size: 1em;
+  margin-top: 12px;
+  margin-bottom: 0;
+  @include sf-pro-display-medium;
+
+  .subtitleThin {
+    @include sf-pro-display-thin;
+  }
+}

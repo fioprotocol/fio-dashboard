@@ -41,6 +41,18 @@
   }
 }
 
+.label {
+  font-size: 0.875em;
+  margin-bottom: 1em;
+  @include sf-pro-display-medium;
+  color: $white;
+  width: 100%;
+
+  &.blackLight, &.blackWhite {
+    color: $dark-jungle-green;
+  }
+}
+
 .inputGroup {
   position: relative;
 

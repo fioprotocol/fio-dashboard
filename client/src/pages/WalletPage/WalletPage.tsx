@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
@@ -10,6 +11,9 @@ import TotalBalanceBadge from '../WalletsPage/components/TotalBalanceBadge';
 import TransactionHistory from './components/TransactionHistory';
 
 import apis from '../../api';
+
+import { putParamsToUrl } from '../../utils';
+import { ROUTES } from '../../constants/routes';
 
 import { ContainerProps } from './types';
 
@@ -50,6 +54,16 @@ const WalletPage: React.FC<ContainerProps> = props => {
       ) : null}
       <LayoutContainer title={fioWallet.name}>
         <ActionButtonsContainer>
+          <Link
+            to={putParamsToUrl(ROUTES.SEND, {
+              publicKey: fioWallet.publicKey,
+            })}
+            className={classes.link}
+          >
+            <div>
+              <FontAwesomeIcon icon="arrow-up" />
+            </div>
+          </Link>
           <div onClick={onDetails}>
             <FontAwesomeIcon icon="qrcode" />
           </div>

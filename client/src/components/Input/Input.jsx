@@ -8,6 +8,7 @@ import { ErrorBadge } from './ErrorBadge';
 import classes from './Input.module.scss';
 import { PIN_LENGTH } from '../../constants/form';
 import { CopyButton } from './InputActionButtons';
+import CustomDropdown from '../CustomDropdown';
 
 export const INPUT_COLOR_SCHEMA = {
   BLACK_AND_WHITE: 'black_and_white',
@@ -44,6 +45,10 @@ const Input = props => {
     showErrorBorder,
     isLowHeight,
     customChange,
+    label,
+    options,
+    isBigHeight,
+    isSimple,
     ...rest
   } = props;
   const {
@@ -145,8 +150,15 @@ const Input = props => {
     );
   };
 
+  const renderLabel = () =>
+    label && (
+      <div className={classnames(classes.label, uiType && classes[uiType])}>
+        {label}
+      </div>
+    );
   const regularInput = (
     <>
+      {renderLabel()}
       <div className={classes.inputGroup}>
         {prefix && (
           <div
@@ -249,6 +261,10 @@ const Input = props => {
     return regularInputWrapper(regularInput);
   }
 
+  if (type === 'number') {
+    return regularInputWrapper(regularInput);
+  }
+
   if (type === 'password' && name !== 'pin') {
     return regularInputWrapper(regularInput);
   }
@@ -344,6 +360,22 @@ const Input = props => {
   }
 
   if (type === 'hidden') return null;
+
+  if (type === 'dropdown') {
+    return (
+      <>
+        {renderLabel()}
+        <CustomDropdown
+          options={options}
+          onChange={onChange}
+          {...input}
+          value={value}
+          isBigHeight={isBigHeight}
+          isSimple={isSimple}
+        />
+      </>
+    );
+  }
 
   return <input {...input} {...props} />;
 };
