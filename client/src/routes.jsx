@@ -37,6 +37,8 @@ import NftValidationPage from './pages/NftValidationPage';
 import WalletsPage from './pages/WalletsPage';
 import WalletPage from './pages/WalletPage';
 import SendPage from './pages/SendPage';
+import UpdateEmailConfirmGatePage from './pages/UpdateEmailConfirmGatePage';
+import UpdateEmailPage from './pages/UpdateEmailPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -55,8 +57,18 @@ const Routes = () => (
           exact
         />
         <Route
-          path={ROUTES.USER_IS_NOT_ACTIVE}
+          path={ROUTES.IS_NEW_USER}
           component={EmailConfirmGatePage}
+          exact
+        />
+        <Route
+          path={ROUTES.USER_IS_NEW_EMAIL_NOT_VERIFIED}
+          component={UpdateEmailConfirmGatePage}
+          exact
+        />
+        <Route
+          path={ROUTES.CONFIRM_UPDATED_EMAIL}
+          component={UpdateEmailPage}
           exact
         />
         <Route

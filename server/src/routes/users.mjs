@@ -10,6 +10,9 @@ import UsersSetRecovery from '../services/users/SetRecovery';
 import UsersResendRecovery from '../services/users/ResendRecovery';
 import UsersResendEmailConfirm from '../services/users/ResendEmailConfirm';
 import UsersList from '../services/users/List';
+import UsersUpdateEmailRequest from '../services/users/UpdateEmailRequest';
+import UsersUpdateEmail from '../services/users/UpdateEmail';
+import UsersUpdateEmailRevert from '../services/users/UpdateEmailRevert';
 
 export default {
   available: makeServiceRunner(UserAvailable, req => req.params),
@@ -22,4 +25,7 @@ export default {
   list: makeServiceRunner(UsersList),
   show: makeServiceRunner(ShowInfo, req => req.params),
   freeAddress: makeServiceRunner(FreeAddressRegistered, req => req.params),
+  updateEmailRequest: makeServiceRunner(UsersUpdateEmailRequest, req => req.body),
+  updateEmail: makeServiceRunner(UsersUpdateEmail, req => req.body),
+  updateEmailRevert: makeServiceRunner(UsersUpdateEmailRevert, req => req.body),
 };

@@ -13,17 +13,20 @@ import classes from '../../styles/ChangeEmail.module.scss';
 type Props = {
   user: User;
   loading: boolean;
+  updateEmailRequest: (oldEmail: string, newEmail: string) => void;
 };
 
 const ChangeEmail: React.FC<Props> = props => {
-  const { user, loading } = props;
+  const { user, loading, updateEmailRequest } = props;
   const [showModal, toggleModal] = useState(false);
 
   const onCloseModal = () => toggleModal(false);
   const onActionButtonClick = () => toggleModal(true);
 
-  const handleSubmit = (values: FormValuesProps) => {
-    console.log(values);
+  const handleSubmit = async (values: FormValuesProps) => {
+    const { email: oldEmail } = user;
+    const { email: newEmail } = values;
+    updateEmailRequest(oldEmail, newEmail);
   };
 
   return (
