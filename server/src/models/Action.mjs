@@ -41,6 +41,12 @@ export class Action extends Base {
     return user.update({ status: User.STATUS.ACTIVE });
   }
 
+  async updateEmail() {
+    const user = await User.findById(this.data.userId);
+
+    return user.update({ status: User.STATUS.ACTIVE, email: this.data.newEmail });
+  }
+
   static generateHash() {
     return crypto.randomBytes(20).toString('hex');
   }

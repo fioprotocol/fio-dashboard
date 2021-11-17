@@ -30,6 +30,7 @@ export default class ActionsSubmit extends Base {
 
     const rulesRegistry = {
       confirmEmail: {},
+      updateEmail: {},
     };
 
     return this.doValidation(data, {

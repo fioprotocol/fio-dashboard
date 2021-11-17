@@ -164,9 +164,9 @@ export const UPDATE_EMAIL_REVERT_FAILURE = `${prefix}/UPDATE_EMAIL_REVERT_FAILUR
 
 export const updateEmailRevert = () => ({
   types: [
-    UPDATE_EMAIL_REQ_REQUEST,
-    UPDATE_EMAIL_REQ_SUCCESS,
-    UPDATE_EMAIL_REQ_FAILURE,
+    UPDATE_EMAIL_REVERT_REQUEST,
+    UPDATE_EMAIL_REVERT_SUCCESS,
+    UPDATE_EMAIL_REVERT_FAILURE,
   ],
   promise: (api: Api) => api.auth.updateEmailRevert(),
 });
