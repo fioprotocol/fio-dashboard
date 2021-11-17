@@ -3,9 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import WalletDetailsModal from './components/WalletDetailsModal';
+import TransactionList from './components/TransactionList';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import ActionButtonsContainer from '../WalletsPage/components/ActionButtonsContainer';
 import TotalBalanceBadge from '../WalletsPage/components/TotalBalanceBadge';
+import TransactionHistory from './components/TransactionHistory';
+
+import apis from '../../api';
 
 import { ContainerProps } from './types';
 
@@ -25,6 +29,8 @@ const WalletPage: React.FC<ContainerProps> = props => {
   const onDetails = () => {
     setShowDetails(true);
   };
+
+  const actorName = fioWallet ? apis.fio.getActor(fioWallet.publicKey) : '';
 
   if (!fioWallet || !fioWallet.id)
     return (
@@ -50,9 +56,11 @@ const WalletPage: React.FC<ContainerProps> = props => {
         </ActionButtonsContainer>
 
         <p className={classes.subtitle}>Manage your FIO tokens</p>
+        <TransactionList fioWallet={fioWallet} />
       </LayoutContainer>
       <div className={classes.actionBadges}>
         <TotalBalanceBadge {...balance} />
+        <TransactionHistory actorName={actorName} />
       </div>
     </div>
   );

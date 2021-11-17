@@ -266,3 +266,14 @@ export type EmailConfirmationStateData = {
 export type CommonObjectProps = { [key: string]: string };
 
 export type NFTTokenItemProps = keyof NFTTokenDoublet;
+
+export type TransactionItem = {
+  txId: string;
+  currencyCode: string;
+  amount: string;
+  nativeAmount: string;
+  networkFee: string;
+  date: number;
+  blockHeight: number;
+  otherParams: any;
+};

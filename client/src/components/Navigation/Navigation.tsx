@@ -14,7 +14,6 @@ const navItems: string[] = [
   LINKS.TOKENS,
   // comment links due to BD-2631 task
   // LINKS.FIO_REQUESTS,
-  // LINKS.FIO_WALLET,
   // LINKS.GOVERNANCE,
   // LINKS.PROTOCOL_UPDATES,
 ];
