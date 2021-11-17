@@ -1,0 +1,95 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .ledgerContainer {
+    position: absolute;
+    top: -28px;
+  }
+  .title {
+    margin-top: 25px;
+    font-size: 1.875em;
+  }
+  .qrCode {
+    margin-top: 30px;
+    background-color: $white;
+    border-radius: 8px;
+    align-self: center;
+    padding: 13px 13px 7px 13px;
+  }
+  .publicAddressContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    color: $dark-jungle-green;
+
+    .title {
+      font-size: 1em;
+      flex-shrink: 0;
+      margin-right: 30px;
+      margin-top: 0;
+    }
+    .publicKey {
+      font-size: 1em;
+      word-break: break-all;
+      margin-top: 10px;
+    }
+  }
+  .actionButtons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    margin-bottom: 20px;
+
+    .iconContainer {
+      background-color: $gray-main;
+      border-color: $gray-main;
+      width: 50px;
+      height: 50px;
+      color: $white;
+      border-radius: 7px;
+      cursor: pointer;
+      margin-left: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:nth-child(1) {
+        margin-left: 0;
+      }
+
+      &:hover {
+        background-color: $dark-gray;
+        border-color: $dark-gray;
+      }
+
+      &:focus {
+        outline: none !important;
+        outline-offset: none !important;
+        box-shadow: none;
+      }
+
+      .icon {
+        font-size: 20px;
+      }
+    }
+  }
+}
+
+@include lg {
+  .container {
+    .publicAddressContainer {
+      flex-direction: row;
+      .publicKey {
+        margin-top: 0;
+      }
+    }
+  }
+}
