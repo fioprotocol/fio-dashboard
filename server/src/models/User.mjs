@@ -22,6 +22,7 @@ export class User extends Base {
       NEW: 'NEW',
       ACTIVE: 'ACTIVE',
       BLOCKED: 'BLOCKED',
+      IS_NEW_EMAIL_NOT_VERIFIED: 'IS_NEW_EMAIL_NOT_VERIFIED',
     };
   }
 

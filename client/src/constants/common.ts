@@ -4,6 +4,7 @@ import { NFTTokenItemProps } from '../types';
 export const USER_STATUSES = {
   NEW: 'NEW',
   ACTIVE: 'ACTIVE',
+  IS_NEW_EMAIL_NOT_VERIFIED: 'IS_NEW_EMAIL_NOT_VERIFIED',
 };
 
 export const DEFAULT_WALLET_OPTIONS = {

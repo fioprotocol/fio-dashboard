@@ -78,6 +78,11 @@ class EmailSender {
         }
         delete sendData.refCode;
 
+        if (sendData.updateEmail) {
+          link = `${sendData.mainUrl}confirm-updated-email/${sendData.hash}`;
+          delete sendData.updateEmail;
+        }
+
         return {
           subject: 'FIO Dashboard - please confirm your email',
           body: EmailTemplate.get(templateName, {

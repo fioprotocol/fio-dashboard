@@ -44,6 +44,24 @@ export const isNotActiveUser = createSelector(
     profileRefreshed && isAuthenticated && user.status !== USER_STATUSES.ACTIVE,
 );
 
+export const isNewEmailNotVerified = createSelector(
+  isAuthenticated,
+  user,
+  profileRefreshed,
+  (isAuthenticated, user, profileRefreshed) =>
+    profileRefreshed &&
+    isAuthenticated &&
+    user.status === USER_STATUSES.IS_NEW_EMAIL_NOT_VERIFIED,
+);
+
+export const isNewUser = createSelector(
+  isAuthenticated,
+  user,
+  profileRefreshed,
+  (isAuthenticated, user, profileRefreshed) =>
+    profileRefreshed && isAuthenticated && user.status === USER_STATUSES.NEW,
+);
+
 export const hasFreeAddress = createSelector(
   user,
   user => user && !!user.freeAddresses.length,

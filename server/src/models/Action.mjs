@@ -12,6 +12,7 @@ export class Action extends Base {
       CONFIRM_EMAIL: 'confirmEmail',
       RESET_PASSWORD: 'resetPassword',
       RESEND_EMAIL_CONFIRM: 'resendEmailConfirm',
+      UPDATE_EMAIL: 'updateEmail',
     };
   }
 

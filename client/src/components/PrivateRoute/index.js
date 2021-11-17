@@ -4,7 +4,8 @@ import PrivateRoute from './PrivateRoute';
 import {
   loading,
   noProfileLoaded,
-  isNotActiveUser,
+  isNewUser,
+  isNewEmailNotVerified,
 } from '../../redux/profile/selectors';
 import { homePageLink } from '../../redux/refProfile/selectors';
 
@@ -12,7 +13,8 @@ import { createStructuredSelector } from 'reselect';
 
 const selector = createStructuredSelector({
   noProfileLoaded,
-  isNotActiveUser,
+  isNewUser,
+  isNewEmailNotVerified,
   homePageLink,
   loading,
 });

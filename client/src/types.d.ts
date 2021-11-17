@@ -211,6 +211,7 @@ export type User = {
   secretSetNotification: boolean;
   status: string;
   secretSet?: boolean;
+  newEmail?: boolean;
 };
 
 export type RefProfile = {
