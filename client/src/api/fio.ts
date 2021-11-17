@@ -92,6 +92,9 @@ export default class Fio {
       : json.message;
   };
 
+  getActor = (publicKey: string): string =>
+    this.publicFioSDK.transactions.getActor(publicKey);
+
   availCheck = (fioName: string): Promise<AvailabilityResponse> => {
     this.setBaseUrl();
     return this.publicFioSDK.isAvailable(fioName);

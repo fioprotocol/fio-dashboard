@@ -1,0 +1,17 @@
+@import '../../../assets/styles/colors.scss';
+
+.container {
+  background-color: $white;
+  padding: 6px;
+  border-radius: 4px;
+
+  &.isBlack {
+    background-color: $tuna;
+  }
+  &.isBlue {
+    background-color: $butterfly-blue;
+  }
+  &.isGreen {
+    background-color: $irish-green;
+  }
+}
