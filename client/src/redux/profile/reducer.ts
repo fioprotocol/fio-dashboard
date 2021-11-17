@@ -77,14 +77,6 @@ export default combineReducers({
           return { ...state, status: USER_STATUSES.ACTIVE, updatedEmail: '' };
         return state;
       }
-      case actions.UPDATE_EMAIL_SUCCESS: {
-        if (state != null && state.status)
-          return {
-            ...state,
-            status: USER_STATUSES.ACTIVE,
-          };
-        return state;
-      }
       case actions.AUTH_CHECK_SUCCESS: {
         if (
           !!action.data.id &&

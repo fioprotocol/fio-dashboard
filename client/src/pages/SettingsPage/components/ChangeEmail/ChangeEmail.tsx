@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import ActionButton from '../ActionButton';
@@ -17,8 +17,9 @@ type Props = {
 };
 
 const ChangeEmail: React.FC<Props> = props => {
-  const { user, loading, updateEmailRequest } = props;
+  const { user, updateEmailRequest } = props;
   const [showModal, toggleModal] = useState(false);
+  const [loading, toggleLoading] = useState(false);
 
   const onCloseModal = () => toggleModal(false);
   const onActionButtonClick = () => toggleModal(true);
@@ -28,6 +29,8 @@ const ChangeEmail: React.FC<Props> = props => {
     const { email: newEmail } = values;
     updateEmailRequest(oldEmail, newEmail);
   };
+
+  useEffect(() => toggleLoading(false), []);
 
   return (
     <div>

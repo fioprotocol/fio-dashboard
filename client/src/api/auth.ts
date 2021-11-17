@@ -69,10 +69,4 @@ export default class Auth extends Base {
   updateEmailRevert() {
     return this.apiClient.post('users/update-email-revert');
   }
-
-  updateEmail(hash: string) {
-    return this.apiClient.post('users/update-email', {
-      data: { hash },
-    });
-  }
 }
