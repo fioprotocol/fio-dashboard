@@ -1,6 +1,5 @@
 import { EdgeAccount } from 'edge-core-js';
 
-import { DEFAULT_WALLET_OPTIONS } from '../../constants/common';
 import { Api } from '../../api';
 
 import { WalletKeys } from '../../types';
@@ -52,9 +51,7 @@ export const login = ({
       for (const walletId of account.activeWalletIds) {
         const wallet = await account.waitForCurrencyWallet(walletId);
 
-        // todo: investigate why wallet name changes
-        if (wallet.name === 'io.fioprotocol.app')
-          await wallet.renameWallet(DEFAULT_WALLET_OPTIONS.name);
+        // todo: investigate why wallet name changes to 'io.fioprotocol.app'
 
         if (wallet.currencyInfo.currencyCode === 'FIO') {
           fioWallets.push(wallet);

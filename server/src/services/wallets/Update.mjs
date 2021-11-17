@@ -26,8 +26,7 @@ export default class WalletsUpdate extends Base {
 
       const wallet = wallets.find(({ edgeId: itemEdgeId }) => edgeId === itemEdgeId);
       if (wallet) {
-        if (name !== wallet.name || publicKey !== wallet.publicKey)
-          await wallet.update({ name, publicKey });
+        if (publicKey !== wallet.publicKey) await wallet.update({ publicKey });
 
         continue;
       }

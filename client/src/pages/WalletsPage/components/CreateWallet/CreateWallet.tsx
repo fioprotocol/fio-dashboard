@@ -2,18 +2,20 @@ import React, { useEffect, useState } from 'react';
 
 import CreateWalletModal from '../CreateWalletModal';
 import CreateEdgeWallet from './CreateEdgeWallet';
+
+import {
+  WALLET_CREATED_FROM,
+  DEFAULT_WALLET_OPTIONS,
+} from '../../../../constants/common';
+
 import { CreateWalletValues } from '../../types';
 import { FioWalletDoublet, NewFioWalletDoublet } from '../../../../types';
-import { WALLET_CREATED_FROM } from '../../../../constants/common';
-
-import Processing from '../../../../components/common/TransactionProcessing';
-
-const DEFAULT_WALLET_NAME = 'My FIO Wallet';
 
 type Props = {
   show: boolean;
   genericErrorModalIsActive: boolean;
   addWalletLoading: boolean;
+  pinModalIsOpen: boolean;
   fioWallets: FioWalletDoublet[];
   onClose: () => void;
   onWalletCreated: () => void;
@@ -25,6 +27,7 @@ const CreateWallet: React.FC<Props> = props => {
     show,
     genericErrorModalIsActive,
     addWalletLoading,
+    pinModalIsOpen,
     onClose,
     addWallet,
     fioWallets,
@@ -42,7 +45,7 @@ const CreateWallet: React.FC<Props> = props => {
       const newWalletCount =
         fioWallets.filter(({ from }) => from === WALLET_CREATED_FROM.EDGE)
           .length + 1;
-      const defaultName = `${DEFAULT_WALLET_NAME} ${newWalletCount}`;
+      const defaultName = `${DEFAULT_WALLET_OPTIONS.name} ${newWalletCount}`;
 
       setCurrentValues({
         name: defaultName,
@@ -75,9 +78,14 @@ const CreateWallet: React.FC<Props> = props => {
     setProcessing(false);
   };
 
+  const onModalClose = () => {
+    if (!processing && !addWalletLoading) {
+      onClose();
+    }
+  };
+
   return (
     <>
-      <Processing isProcessing={processing || addWalletLoading} />
       {creationType === WALLET_CREATED_FROM.EDGE ? (
         <CreateEdgeWallet
           setProcessing={setProcessing}
@@ -89,15 +97,9 @@ const CreateWallet: React.FC<Props> = props => {
         />
       ) : null}
       <CreateWalletModal
-        show={
-          show &&
-          !creationType &&
-          !processing &&
-          !genericErrorModalIsActive &&
-          !addWalletLoading
-        }
-        onClose={onClose}
-        loading={processing}
+        show={show && !pinModalIsOpen && !genericErrorModalIsActive}
+        onClose={onModalClose}
+        loading={processing || addWalletLoading}
         onSubmit={onCreateSubmit}
         initialValues={currentValues}
       />

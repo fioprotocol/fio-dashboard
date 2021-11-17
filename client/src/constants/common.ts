@@ -7,7 +7,7 @@ export const USER_STATUSES = {
 };
 
 export const DEFAULT_WALLET_OPTIONS = {
-  name: 'My FIO',
+  name: 'My FIO Wallet',
   fiatCurrencyCode: 'iso:USD',
 };
 export const FIO_WALLET_TYPE = 'wallet:fio';
