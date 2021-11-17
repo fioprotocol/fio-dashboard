@@ -60,3 +60,20 @@ export const getHash = async (itemToHash: File) => {
 
   return hash;
 };
+
+const checkNativeShare = () => {
+  try {
+    return !!navigator.share;
+  } catch (e) {
+    return false;
+  }
+};
+
+export const nativeShareIsAvailable = checkNativeShare();
+export const shareData = (data: { url?: string; text?: string }) => {
+  try {
+    navigator.share(data);
+  } catch (e) {
+    //
+  }
+};
