@@ -32,6 +32,14 @@
   z-index: 1001; //show over menu
   @include sf-pro-display-medium;
   box-shadow: 0 0 8px 0 rgba(0,0,0,0.37);
+
+  &.isSimple {
+    background-color: $white;
+    box-shadow: none;
+  }
+  &.isBigHeight {
+    height: 54px;
+  }
 }
 .placeholder {
   color: $gray-main;

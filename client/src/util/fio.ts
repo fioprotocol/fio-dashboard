@@ -43,3 +43,29 @@ export const transformNft = (nfts: NftTokenResponse[]) => {
   }
   return nftList;
 };
+
+export const fioAddressToPubKey = async (
+  fioAddress: string,
+): Promise<string> => {
+  let isFioAddress = false;
+  let pubKey = '';
+  try {
+    apis.fio.isFioAddressValid(fioAddress);
+    isFioAddress = true;
+  } catch (e) {
+    //
+  }
+
+  if (isFioAddress) {
+    try {
+      const {
+        public_address: publicAddress,
+      } = await apis.fio.getFioPublicAddress(fioAddress);
+      pubKey = publicAddress;
+    } catch (e) {
+      //
+    }
+  }
+
+  return pubKey;
+};

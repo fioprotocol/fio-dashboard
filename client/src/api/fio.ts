@@ -13,7 +13,7 @@ import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 
 import { NFTTokenDoublet } from '../types';
 
-interface TrxResponse {
+export interface TrxResponse {
   transaction_id?: string;
   status: string;
   expiration?: string;
@@ -377,6 +377,49 @@ export default class Fio {
       );
       this.walletFioSDK.setSignedTrxReturnOption(false);
       return { other: { nfts }, ...result };
+    } catch (err) {
+      this.logError(err);
+      throw err;
+    }
+  };
+
+  getTransferTokensAction = (
+    publicKey: string,
+    amount: number,
+    fee: number,
+  ) => {
+    return {
+      account: 'fio.token',
+      name: 'trnsfiopubky',
+      data: {
+        payee_public_key: publicKey,
+        amount,
+        max_fee: fee,
+        tpid: '',
+      },
+    };
+  };
+
+  sendTokens = async (
+    publicKey: string,
+    amount: number,
+    fee: number,
+  ): Promise<TrxResponse> => {
+    this.setBaseUrl();
+    try {
+      this.walletFioSDK.setSignedTrxReturnOption(true);
+      const action = this.getTransferTokensAction(publicKey, amount, fee);
+      const preparedTrx = await this.walletFioSDK.pushTransaction(
+        action.account,
+        action.name,
+        action.data,
+      );
+      const result = await this.walletFioSDK.executePreparedTrx(
+        this.actionEndPoints.transferTokens,
+        preparedTrx,
+      );
+      this.walletFioSDK.setSignedTrxReturnOption(false);
+      return { ...result };
     } catch (err) {
       this.logError(err);
       throw err;

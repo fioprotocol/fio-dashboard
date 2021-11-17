@@ -1,18 +1,28 @@
 import React from 'react';
 import Dropdown from 'react-dropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classnames from 'classnames';
 
 import classes from './CustomDropdown.module.scss';
 
 type Props = {
   options: { id: string; name: string }[];
+  value?: string;
   placeholder?: string;
-  hasDefaultValue?: boolean;
+  isBigHeight?: boolean;
+  isSimple?: boolean;
   onChange: (id: string) => void;
 };
 
 const CustomDropdown: React.FC<Props> = props => {
-  const { options, onChange, placeholder, hasDefaultValue } = props;
+  const {
+    options,
+    onChange,
+    placeholder,
+    value,
+    isBigHeight,
+    isSimple,
+  } = props;
 
   const styledOptions = options.map(option => ({
     value: option.id,
@@ -28,11 +38,15 @@ const CustomDropdown: React.FC<Props> = props => {
   return (
     <Dropdown
       options={styledOptions}
-      value={hasDefaultValue ? styledOptions[0] : null}
+      value={value ? value : null}
       onChange={onDropdownChange}
       placeholder={placeholder}
       className={classes.dropdown}
-      controlClassName={classes.control}
+      controlClassName={classnames(
+        classes.control,
+        isSimple && classes.isSimple,
+        isBigHeight && classes.isBigHeight,
+      )}
       placeholderClassName={classes.placeholder}
       menuClassName={classes.menu}
       arrowClosed={

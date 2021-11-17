@@ -39,6 +39,8 @@ const ROUTES: { [route: string]: string } = {
   FIO_ADDRESS_SIGN: '/fio-address-sign/:address',
   FIO_ADDRESS_NFT_EDIT: '/fio-address-signatures/:address/edit/:id',
 
+  SEND: '/send/:publicKey',
+
   LINK_TOKEN_LIST: '/link-token-list',
   ADD_TOKEN: '/add-token',
   EDIT_TOKEN: '/edit-token',

@@ -47,6 +47,7 @@ const Results: React.FC<ResultsContainerProps> = props => {
     onRetry,
     children,
   } = props;
+  console.log(props);
 
   useEffect(() => {
     window.scrollTo(0, 0);

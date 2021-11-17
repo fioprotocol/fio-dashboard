@@ -29,6 +29,17 @@
     }
     .item {
       word-break: break-all;
+
+      &.isBlue {
+        color: $violet;
+      }
+    }
+
+    &.longTitle {
+      grid-template-columns: 130px auto;
+      .title {
+        white-space: normal;
+      }
     }
   }
 
