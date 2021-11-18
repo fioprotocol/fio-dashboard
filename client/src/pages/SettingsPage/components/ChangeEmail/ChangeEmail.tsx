@@ -4,15 +4,18 @@ import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import ActionButton from '../ActionButton';
 import ModalUIComponent from '../ModalUIComponent';
 import ChangeEmailForm from './ChangeEmailForm';
+import EdgeConfirmAction from '../../../../components/EdgeConfirmAction';
+
+import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 
 import { User } from '../../../../types';
 import { FormValuesProps } from './types';
+import { SubmitActionParams } from '../../../../components/EdgeConfirmAction/types';
 
 import classes from '../../styles/ChangeEmail.module.scss';
 
 type Props = {
   user: User;
-  loading: boolean;
   updateEmailRequest: (oldEmail: string, newEmail: string) => void;
 };
 
@@ -20,14 +23,42 @@ const ChangeEmail: React.FC<Props> = props => {
   const { user, updateEmailRequest } = props;
   const [showModal, toggleModal] = useState(false);
   const [loading, toggleLoading] = useState(false);
+  const [processing, setProcessing] = useState(false);
+  const [submitData, setSubmitData] = useState<{
+    newEmail: string;
+    oldEmail: string;
+  } | null>(null);
 
-  const onCloseModal = () => toggleModal(false);
+  const onCancel = () => {
+    toggleModal(true);
+    setSubmitData(null);
+    setProcessing(false);
+  };
+
+  const onSuccess = () => {
+    setProcessing(false);
+    setSubmitData(null);
+  };
+
+  const onCloseModal = () => {
+    toggleModal(false);
+    toggleLoading(false);
+  };
+
   const onActionButtonClick = () => toggleModal(true);
 
-  const handleSubmit = async (values: FormValuesProps) => {
+  const submit = async ({ data }: SubmitActionParams) => {
+    const { oldEmail, newEmail } = data;
+    updateEmailRequest(oldEmail, newEmail);
+  };
+
+  const onSubmit = (values: FormValuesProps) => {
     const { email: oldEmail } = user;
     const { email: newEmail } = values;
-    updateEmailRequest(oldEmail, newEmail);
+
+    setSubmitData({ oldEmail, newEmail });
+    toggleModal(false);
+    return {};
   };
 
   useEffect(() => toggleLoading(false), []);
@@ -51,8 +82,17 @@ const ChangeEmail: React.FC<Props> = props => {
           title="Update Email"
           subtitle="Your email address is used access your FIO dashboard and recover your account."
         >
-          <ChangeEmailForm onSubmit={handleSubmit} loading={loading} />
+          <ChangeEmailForm onSubmit={onSubmit} loading={loading} />
         </ModalUIComponent>
+        <EdgeConfirmAction
+          action={CONFIRM_PIN_ACTIONS.UPDATE_EMAIL}
+          setProcessing={setProcessing}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          processing={processing}
+          data={submitData}
+          submitAction={submit}
+        />
       </div>
     </div>
   );
