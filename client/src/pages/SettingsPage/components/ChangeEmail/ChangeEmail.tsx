@@ -8,6 +8,9 @@ import EdgeConfirmAction from '../../../../components/EdgeConfirmAction';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 
+import { emailAvailable } from '../../../../api/middleware/auth';
+import { minWaitTimeFunction } from '../../../../utils';
+
 import { User } from '../../../../types';
 import { FormValuesProps } from './types';
 import { SubmitActionParams } from '../../../../components/EdgeConfirmAction/types';
@@ -52,9 +55,16 @@ const ChangeEmail: React.FC<Props> = props => {
     updateEmailRequest(oldEmail, newEmail);
   };
 
-  const onSubmit = (values: FormValuesProps) => {
+  const onSubmit = async (values: FormValuesProps) => {
     const { email: oldEmail } = user;
     const { newEmail } = values;
+
+    const result = await minWaitTimeFunction(
+      () => emailAvailable(newEmail),
+      1000,
+    );
+    if (result.error)
+      return { newEmail: 'This Email Address is already registered' };
 
     setSubmitData({ oldEmail, newEmail });
     return {};
