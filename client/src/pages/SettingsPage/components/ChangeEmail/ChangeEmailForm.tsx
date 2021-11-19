@@ -15,13 +15,14 @@ type Props = {
   onSubmit: (values: FormValuesProps) => void;
   loading: boolean;
   error?: boolean;
+  initValue: string | null;
 };
 
 const ChangeEmailForm: React.FC<Props> = props => {
-  const { onSubmit, loading, error } = props;
+  const { onSubmit, loading, error, initValue } = props;
 
   const renderForm = (props: FormRenderProps<FormValuesProps>) => {
-    const { handleSubmit, validating, valid } = props;
+    const { handleSubmit, validating, valid, submitting } = props;
     return (
       <>
         <form onSubmit={handleSubmit}>
@@ -33,10 +34,11 @@ const ChangeEmailForm: React.FC<Props> = props => {
             errorColor={COLOR_TYPE.WARN}
             placeholder="Enter New Email Address"
             loading={validating}
+            disabled={submitting || loading}
           />
           <Button
             type="submit"
-            disabled={loading || !valid}
+            disabled={loading || !valid || validating}
             className={classes.submitButton}
           >
             {loading ? (
@@ -55,7 +57,15 @@ const ChangeEmailForm: React.FC<Props> = props => {
     );
   };
 
-  return <Form onSubmit={onSubmit} render={renderForm} validate={validation} />;
+  return (
+    <Form
+      onSubmit={onSubmit}
+      render={renderForm}
+      validate={validation}
+      keepDirtyOnReinitialize={true}
+      initialValues={{ email: initValue }}
+    />
+  );
 };
 
 export default ChangeEmailForm;

@@ -10,6 +10,7 @@ import {
   user,
   isActiveUser,
   noProfileLoaded,
+  isAuthenticated,
 } from '../../redux/profile/selectors';
 import { updateEmailRevert } from '../../redux/profile/actions';
 
@@ -18,6 +19,7 @@ const reduxConnect = connect(
     user,
     isActiveUser,
     noProfileLoaded,
+    isAuthenticated,
   }),
   { updateEmailRevert },
 );
