@@ -6,7 +6,7 @@ import { Action, User } from '../../models';
 export default class UsersUpdateEmailRevert extends Base {
   async execute() {
     const user = await User.findById(this.context.id, {
-      where: { status: User.STATUS.IS_NEW_EMAIL_NOT_VERIFIED },
+      where: { status: User.STATUS.NEW_EMAIL_NOT_VERIFIED },
     });
 
     if (!user) {

@@ -18,7 +18,7 @@ export default class UsersInfo extends Base {
     userObj.secretSetNotification = false;
     userObj.fioWallets = userObj.fioWallets.map(item => Wallet.format(item));
 
-    if (userObj.status === User.STATUS.IS_NEW_EMAIL_NOT_VERIFIED) {
+    if (userObj.status === User.STATUS.NEW_EMAIL_NOT_VERIFIED) {
       const action = await Action.findOneWhere({
         data: { userId: this.context.id },
         type: Action.TYPE.UPDATE_EMAIL,

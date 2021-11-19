@@ -43,7 +43,7 @@ export const PrivateRoute = ({
           return (
             <Redirect
               to={{
-                pathname: ROUTES.USER_IS_NEW_EMAIL_NOT_VERIFIED,
+                pathname: ROUTES.NEW_EMAIL_NOT_VERIFIED,
                 state: { from: props.location },
               }}
             />

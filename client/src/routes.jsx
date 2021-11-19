@@ -62,7 +62,7 @@ const Routes = () => (
           exact
         />
         <Route
-          path={ROUTES.USER_IS_NEW_EMAIL_NOT_VERIFIED}
+          path={ROUTES.NEW_EMAIL_NOT_VERIFIED}
           component={UpdateEmailConfirmGatePage}
           exact
         />

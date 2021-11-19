@@ -54,13 +54,12 @@ const ChangeEmail: React.FC<Props> = props => {
 
   const onSubmit = (values: FormValuesProps) => {
     const { email: oldEmail } = user;
-    const { email: newEmail } = values;
+    const { newEmail } = values;
 
     setSubmitData({ oldEmail, newEmail });
     return {};
   };
 
-  const initValue = submitData ? submitData.newEmail : '';
   return (
     <div>
       <div className={classes.badgeContainer}>
@@ -83,7 +82,7 @@ const ChangeEmail: React.FC<Props> = props => {
           <ChangeEmailForm
             onSubmit={onSubmit}
             loading={loading || processing}
-            initValue={initValue}
+            initialValues={submitData}
           />
         </ModalUIComponent>
         <EdgeConfirmAction
