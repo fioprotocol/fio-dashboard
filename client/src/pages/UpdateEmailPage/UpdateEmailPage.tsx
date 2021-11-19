@@ -29,7 +29,7 @@ type Props = {
     error?: string;
     success?: boolean;
   };
-  confirmEmail: (hash: string) => void;
+  updateEmail: (hash: string) => void;
   clearCachedUser: (username: string) => void;
   lastAuthData: LastAuthData;
   resetLastAuthData: () => void;
@@ -44,7 +44,7 @@ const UpdateEmailPage: React.FC<Props &
     loading,
     emailConfirmationResult,
     history,
-    confirmEmail,
+    updateEmail,
     match: {
       params: { hash },
     },
@@ -54,7 +54,7 @@ const UpdateEmailPage: React.FC<Props &
   } = props;
 
   useEffect(() => {
-    if (profileRefreshed) confirmEmail(hash);
+    if (profileRefreshed) updateEmail(hash);
   }, [profileRefreshed]);
 
   useEffect(() => {

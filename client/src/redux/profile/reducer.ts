@@ -17,6 +17,7 @@ export default combineReducers({
       case actions.SIGNUP_REQUEST:
       case actions.RESEND_CONFIRM_EMAIL_REQUEST:
       case actions.CONFIRM_EMAIL_REQUEST:
+      case actions.UPDATE_EMAIL_REQUEST:
         return true;
       case actions.PROFILE_SUCCESS:
       case actions.PROFILE_FAILURE:
@@ -32,6 +33,19 @@ export default combineReducers({
       case actions.RESEND_CONFIRM_EMAIL_FAILURE:
       case actions.CONFIRM_EMAIL_SUCCESS:
       case actions.CONFIRM_EMAIL_FAILURE:
+      case actions.UPDATE_EMAIL_SUCCESS:
+      case actions.UPDATE_EMAIL_FAILURE:
+        return false;
+      default:
+        return state;
+    }
+  },
+  updateEmailLoading(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.UPDATE_EMAIL_REQ_REQUEST:
+        return true;
+      case actions.UPDATE_EMAIL_REQ_SUCCESS:
+      case actions.UPDATE_EMAIL_REQ_FAILURE:
         return false;
       default:
         return state;
@@ -74,7 +88,17 @@ export default combineReducers({
       }
       case actions.UPDATE_EMAIL_REVERT_SUCCESS: {
         if (state != null && state.status)
-          return { ...state, status: USER_STATUSES.ACTIVE, updatedEmail: '' };
+          return { ...state, status: USER_STATUSES.ACTIVE, newEmail: '' };
+        return state;
+      }
+      case actions.UPDATE_EMAIL_SUCCESS: {
+        if (state != null && state.status)
+          return {
+            ...state,
+            status: USER_STATUSES.ACTIVE,
+            email: state.newEmail,
+            newEmail: '',
+          };
         return state;
       }
       case actions.AUTH_CHECK_SUCCESS: {
@@ -85,6 +109,22 @@ export default combineReducers({
           state.status === USER_STATUSES.NEW
         )
           return { ...state, status: action.data.status };
+
+        // redirects user to settings after updated email
+        if (
+          !!action.data.id &&
+          state != null &&
+          state.id === action.data.id &&
+          state.email &&
+          state.email !== action.data.email &&
+          state.status === USER_STATUSES.IS_NEW_EMAIL_NOT_VERIFIED
+        )
+          return {
+            ...state,
+            status: action.data.status,
+            email: action.data.email,
+            newEmail: '',
+          };
 
         return state;
       }
@@ -102,8 +142,10 @@ export default combineReducers({
   ) {
     switch (action.type) {
       case actions.CONFIRM_EMAIL_SUCCESS:
+      case actions.UPDATE_EMAIL_SUCCESS:
         return { success: true, stateData: action.data.stateData };
       case actions.CONFIRM_EMAIL_FAILURE:
+      case actions.UPDATE_EMAIL_FAILURE:
         return { success: false, error: action.error.code };
       case actions.LOGIN_SUCCESS:
       case actions.LOGOUT_SUCCESS:

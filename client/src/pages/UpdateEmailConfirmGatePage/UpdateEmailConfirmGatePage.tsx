@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
 
@@ -14,11 +14,29 @@ type Props = {
   user: User;
   noProfileLoaded: boolean;
   isActiveUser: boolean;
+  isAuthenticated: boolean;
 };
 
 const UpdateEmailConfirmGatePage: React.FC<Props &
   RouteComponentProps> = props => {
-  const { updateEmailRevert, user, noProfileLoaded, isActiveUser } = props;
+  const {
+    updateEmailRevert,
+    user,
+    noProfileLoaded,
+    isActiveUser,
+    isAuthenticated,
+    history,
+  } = props;
+
+  useEffect(() => {
+    if (isAuthenticated && isActiveUser) {
+      history.replace(ROUTES.SETTINGS);
+    }
+
+    if (!isAuthenticated) {
+      history.replace(ROUTES.HOME);
+    }
+  }, [isAuthenticated, isActiveUser]);
 
   if (noProfileLoaded)
     return (

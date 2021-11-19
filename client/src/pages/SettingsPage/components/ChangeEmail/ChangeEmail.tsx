@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import ActionButton from '../ActionButton';
@@ -17,12 +17,13 @@ import classes from '../../styles/ChangeEmail.module.scss';
 type Props = {
   user: User;
   updateEmailRequest: (oldEmail: string, newEmail: string) => void;
+  pinModalIsOpen: boolean;
+  loading: boolean;
 };
 
 const ChangeEmail: React.FC<Props> = props => {
-  const { user, updateEmailRequest } = props;
+  const { user, updateEmailRequest, pinModalIsOpen, loading } = props;
   const [showModal, toggleModal] = useState(false);
-  const [loading, toggleLoading] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<{
     newEmail: string;
@@ -30,22 +31,21 @@ const ChangeEmail: React.FC<Props> = props => {
   } | null>(null);
 
   const onCancel = () => {
-    toggleModal(true);
-    setSubmitData(null);
     setProcessing(false);
   };
 
   const onSuccess = () => {
     setProcessing(false);
-    setSubmitData(null);
   };
 
   const onCloseModal = () => {
-    toggleModal(false);
-    toggleLoading(false);
+    if (!processing && !loading) toggleModal(false);
   };
 
-  const onActionButtonClick = () => toggleModal(true);
+  const onActionButtonClick = () => {
+    toggleModal(true);
+    setSubmitData(null);
+  };
 
   const submit = async ({ data }: SubmitActionParams) => {
     const { oldEmail, newEmail } = data;
@@ -57,12 +57,10 @@ const ChangeEmail: React.FC<Props> = props => {
     const { email: newEmail } = values;
 
     setSubmitData({ oldEmail, newEmail });
-    toggleModal(false);
     return {};
   };
 
-  useEffect(() => toggleLoading(false), []);
-
+  const initValue = submitData ? submitData.newEmail : '';
   return (
     <div>
       <div className={classes.badgeContainer}>
@@ -77,12 +75,16 @@ const ChangeEmail: React.FC<Props> = props => {
         </div>
         <ModalUIComponent
           onClose={onCloseModal}
-          showModal={showModal}
+          showModal={showModal && !pinModalIsOpen}
           isWide={true}
           title="Update Email"
           subtitle="Your email address is used access your FIO dashboard and recover your account."
         >
-          <ChangeEmailForm onSubmit={onSubmit} loading={loading} />
+          <ChangeEmailForm
+            onSubmit={onSubmit}
+            loading={loading || processing}
+            initValue={initValue}
+          />
         </ModalUIComponent>
         <EdgeConfirmAction
           action={CONFIRM_PIN_ACTIONS.UPDATE_EMAIL}
@@ -92,6 +94,8 @@ const ChangeEmail: React.FC<Props> = props => {
           processing={processing}
           data={submitData}
           submitAction={submit}
+          edgeAccountLogoutBefore={true}
+          hideProcessing={true}
         />
       </div>
     </div>

@@ -4,7 +4,7 @@ import { withRouter } from 'react-router';
 
 import { compose } from '../../utils';
 
-import { confirmEmail, resetLastAuthData } from '../../redux/profile/actions';
+import { updateEmail, resetLastAuthData } from '../../redux/profile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 import { addManual as createNotification } from '../../redux/notifications/actions';
 import { clearCachedUser } from '../../redux/edge/actions';
@@ -28,7 +28,7 @@ const reduxConnect = connect(
     lastAuthData,
   }),
   {
-    confirmEmail,
+    updateEmail,
     showLoginModal,
     createNotification,
     clearCachedUser,
