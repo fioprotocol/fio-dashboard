@@ -22,7 +22,7 @@ const ChangeEmailForm: React.FC<Props> = props => {
   const { onSubmit, loading, error, initialValues } = props;
 
   const renderForm = (props: FormRenderProps<FormValuesProps>) => {
-    const { handleSubmit, validating, valid, submitting } = props;
+    const { handleSubmit, validating, hasValidationErrors, submitting } = props;
     return (
       <>
         <form onSubmit={handleSubmit}>
@@ -38,7 +38,7 @@ const ChangeEmailForm: React.FC<Props> = props => {
           />
           <Button
             type="submit"
-            disabled={loading || !valid || validating}
+            disabled={loading || hasValidationErrors || validating}
             className={classes.submitButton}
           >
             {loading ? (
