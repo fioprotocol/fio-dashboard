@@ -6,27 +6,30 @@ import { minWaitTimeFunction } from '../../../../utils';
 
 import { FormValuesProps } from './types';
 
-const isEmailExists = async (email: string) => {
-  const result = await minWaitTimeFunction(() => emailAvailable(email), 1000);
+const isEmailExists = async (newEmail: string) => {
+  const result = await minWaitTimeFunction(
+    () => emailAvailable(newEmail),
+    1000,
+  );
   if (!result.error) return {};
 
-  return { email: 'This Email Address is already registered' };
+  return { newEmail: 'This Email Address is already registered' };
 };
 
 const validation = async (values: FormValuesProps) => {
-  const errors: { email?: string } = {};
+  const errors: { newEmail?: string } = {};
 
-  const { email } = values;
+  const { newEmail } = values;
 
-  if (!email) {
-    errors.email = 'Required';
+  if (!newEmail) {
+    errors.newEmail = 'Required';
   }
 
-  if (email && !validator.validate(email)) {
-    errors.email = 'Invalid Email Address';
+  if (newEmail && !validator.validate(newEmail)) {
+    errors.newEmail = 'Invalid Email Address';
   }
 
-  return !isEmpty(errors) ? errors : isEmailExists(email);
+  return !isEmpty(errors) ? errors : isEmailExists(newEmail);
 };
 
 export default validation;

@@ -32,7 +32,7 @@ export default class UsersUpdateEmailRequest extends Base {
       });
     }
 
-    await user.update({ status: User.STATUS.IS_NEW_EMAIL_NOT_VERIFIED });
+    await user.update({ status: User.STATUS.NEW_EMAIL_NOT_VERIFIED });
 
     const action = await new Action({
       type: Action.TYPE.UPDATE_EMAIL,

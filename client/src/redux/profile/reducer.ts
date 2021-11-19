@@ -81,7 +81,7 @@ export default combineReducers({
         if (state != null && state.status)
           return {
             ...state,
-            status: USER_STATUSES.IS_NEW_EMAIL_NOT_VERIFIED,
+            status: USER_STATUSES.NEW_EMAIL_NOT_VERIFIED,
             newEmail: action.newEmail,
           };
         return state;
@@ -117,7 +117,7 @@ export default combineReducers({
           state.id === action.data.id &&
           state.email &&
           state.email !== action.data.email &&
-          state.status === USER_STATUSES.IS_NEW_EMAIL_NOT_VERIFIED
+          state.status === USER_STATUSES.NEW_EMAIL_NOT_VERIFIED
         )
           return {
             ...state,

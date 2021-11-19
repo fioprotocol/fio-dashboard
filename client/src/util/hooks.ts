@@ -33,7 +33,7 @@ export function useNonActiveUserRedirect() {
   const history = useHistory();
   useEffect(() => {
     if (isAuth && isNewEmailNotVerified) {
-      history.push(ROUTES.USER_IS_NEW_EMAIL_NOT_VERIFIED);
+      history.push(ROUTES.NEW_EMAIL_NOT_VERIFIED);
     }
     if (isAuth && isNewUser) {
       history.push(ROUTES.IS_NEW_USER);

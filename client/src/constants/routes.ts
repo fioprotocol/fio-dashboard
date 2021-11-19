@@ -10,7 +10,7 @@ const ROUTES: { [route: string]: string } = {
   PASSWORD_RECOVERY: '/password-recovery',
   CREATE_ACCOUNT: '/create-account',
   IS_NEW_USER: '/email-confirm-gate',
-  USER_IS_NEW_EMAIL_NOT_VERIFIED: '/update-email-confirm-gate',
+  NEW_EMAIL_NOT_VERIFIED: '/update-email-confirm-gate',
   CONFIRM_UPDATED_EMAIL: '/confirm-updated-email/:hash',
 
   FIO_ADDRESSES_SELECTION: '/fio-addresses-selection',

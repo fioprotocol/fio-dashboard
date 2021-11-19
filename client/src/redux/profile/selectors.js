@@ -51,7 +51,7 @@ export const isNewEmailNotVerified = createSelector(
   (isAuthenticated, user, profileRefreshed) =>
     profileRefreshed &&
     isAuthenticated &&
-    user.status === USER_STATUSES.IS_NEW_EMAIL_NOT_VERIFIED,
+    user.status === USER_STATUSES.NEW_EMAIL_NOT_VERIFIED,
 );
 
 export const isNewUser = createSelector(

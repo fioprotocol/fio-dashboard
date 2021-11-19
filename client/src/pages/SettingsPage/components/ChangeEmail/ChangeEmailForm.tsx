@@ -15,11 +15,11 @@ type Props = {
   onSubmit: (values: FormValuesProps) => void;
   loading: boolean;
   error?: boolean;
-  initValue: string | null;
+  initialValues: { newEmail: string } | null;
 };
 
 const ChangeEmailForm: React.FC<Props> = props => {
-  const { onSubmit, loading, error, initValue } = props;
+  const { onSubmit, loading, error, initialValues } = props;
 
   const renderForm = (props: FormRenderProps<FormValuesProps>) => {
     const { handleSubmit, validating, valid, submitting } = props;
@@ -28,7 +28,7 @@ const ChangeEmailForm: React.FC<Props> = props => {
         <form onSubmit={handleSubmit}>
           <Field
             type="text"
-            name="email"
+            name="newEmail"
             component={Input}
             uiType={INPUT_UI_STYLES.BLACK_WHITE}
             errorColor={COLOR_TYPE.WARN}
@@ -63,7 +63,7 @@ const ChangeEmailForm: React.FC<Props> = props => {
       render={renderForm}
       validate={validation}
       keepDirtyOnReinitialize={true}
-      initialValues={{ email: initValue }}
+      initialValues={initialValues}
     />
   );
 };

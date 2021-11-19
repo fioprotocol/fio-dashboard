@@ -1,3 +1,3 @@
 export type FormValuesProps = {
-  email: string;
+  newEmail: string;
 };
