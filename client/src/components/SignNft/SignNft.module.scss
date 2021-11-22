@@ -50,6 +50,16 @@
   max-width: 700px;
   width: 100%;
   padding: 0;
+
+  .chainContainer {
+    display: flex;
+    margin-right: -15px;
+    margin-left: -15px;
+
+    @include sm {
+      flex-direction: column;
+    }
+  }
 }
 
 .signatureItem {

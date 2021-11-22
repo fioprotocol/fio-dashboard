@@ -9,9 +9,15 @@ type Props = {
   options: { id: string; name: string }[];
   value?: string;
   placeholder?: string;
-  isBigHeight?: boolean;
-  isSimple?: boolean;
   onChange: (id: string) => void;
+  customValue?: { id: string; name: string };
+  toggleToCustom?: (flag: boolean) => void;
+  isShort?: boolean;
+  isWhite?: boolean;
+  hasAutoWidth?: boolean;
+  isSimple?: boolean;
+  isHigh?: boolean;
+  hasDefaultValue?: boolean;
 };
 
 const CustomDropdown: React.FC<Props> = props => {
@@ -20,8 +26,14 @@ const CustomDropdown: React.FC<Props> = props => {
     onChange,
     placeholder,
     value,
-    isBigHeight,
+    hasDefaultValue,
+    customValue,
+    toggleToCustom,
+    isShort,
+    isWhite,
+    hasAutoWidth,
     isSimple,
+    isHigh,
   } = props;
 
   const styledOptions = options.map(option => ({
@@ -29,23 +41,40 @@ const CustomDropdown: React.FC<Props> = props => {
     label: option.name,
     className: classes.optionItem,
   }));
+
+  if (customValue) {
+    styledOptions.push({
+      value: customValue.id,
+      label: customValue.name,
+      className: classes.optionButton,
+    });
+  }
+
   const onDropdownChange = (value: { value: string }) => {
     const { value: itemValue } = value || {};
-
+    if (customValue && itemValue === customValue.id) {
+      onChange('');
+      return toggleToCustom(true);
+    }
     onChange(itemValue);
   };
 
   return (
     <Dropdown
       options={styledOptions}
-      value={value ? value : null}
+      value={hasDefaultValue ? value : null}
       onChange={onDropdownChange}
       placeholder={placeholder}
-      className={classes.dropdown}
+      className={classnames(
+        classes.dropdown,
+        isShort && classes.isShort,
+        hasAutoWidth && classes.hasAutoWidth,
+      )}
       controlClassName={classnames(
         classes.control,
+        isWhite && classes.isWhite,
         isSimple && classes.isSimple,
-        isBigHeight && classes.isBigHeight,
+        isHigh && classes.isHigh,
       )}
       placeholderClassName={classes.placeholder}
       menuClassName={classes.menu}

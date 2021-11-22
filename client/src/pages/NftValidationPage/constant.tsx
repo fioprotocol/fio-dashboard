@@ -83,6 +83,7 @@ export const OPTIONS: {
     field: <ContractAddressField />,
     resultsTitle: renderContractAddressTitle,
     resultsItem: renderContractAddressItem,
+    hasWarningBadge: true,
   },
   fioAddress: {
     id: TITLE_NAME.fioAddress.id,
@@ -95,6 +96,7 @@ export const OPTIONS: {
     ),
     resultsTitle: renderFioAddressTitle,
     resultsItem: renderFioAddressItem,
+    showGroupResults: true,
   },
   hash: {
     id: TITLE_NAME.hash.id,
@@ -107,6 +109,7 @@ export const OPTIONS: {
     ),
     resultsTitle: renderHashTitle,
     resultsItem: renderHashItem,
+    showGroupResults: true,
   },
   image: {
     id: TITLE_NAME.image.id,
@@ -114,6 +117,7 @@ export const OPTIONS: {
     field: <ImageField />,
     resultsTitle: renderImageTitle,
     resultsItem: renderImageItem,
+    showGroupResults: true,
   },
 };
 
