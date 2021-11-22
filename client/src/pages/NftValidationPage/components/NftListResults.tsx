@@ -1,10 +1,11 @@
 import React from 'react';
 
 import { nftId } from '../../../util/nft';
-import classes from './NftListResults.module.scss';
 
 import { NftValidationFormValues, ValidationOption } from './types';
 import { NFTTokenDoublet } from '../../../types';
+
+import classes from '../styles/NftListResults.module.scss';
 
 type Props = {
   activeOption?: ValidationOption;

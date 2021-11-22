@@ -4,10 +4,11 @@ import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import apis from '../../../api';
-import { NftValidationFormValues, ValidationOption } from './types';
 import { OPTIONS } from '../constant';
 
-import classes from './NftValidationForm.module.scss';
+import { NftValidationFormValues, ValidationOption } from './types';
+
+import classes from '../styles/NftValidationForm.module.scss';
 
 type Props = {
   activeOption: ValidationOption;

@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
-import NftValidationItemModal from '../NftValidationItemModal';
+import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
+import NftValidationItemModal from './NftValidationItemModal';
 
-import { NFTTokenDoublet } from '../../../../types';
-import { RenderItem, ResultTitleId } from '../types';
+import { NFTTokenDoublet } from '../../../types';
+import { RenderItem, ResultTitleId } from './types';
 
-import classes from './GenericNftItemResult.module.scss';
-import { TITLE_NAME, NFT_ITEMS_TITLE_NAMES } from '../../constant';
+import classes from '../styles/GenericNftItemResult.module.scss';
+import { TITLE_NAME, NFT_ITEMS_TITLE_NAMES } from '../constant';
 
 type Props = {
   titles: {
