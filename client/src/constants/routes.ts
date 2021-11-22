@@ -20,6 +20,7 @@ const ROUTES: { [route: string]: string } = {
   FIO_REQUESTS: '/fio-requests',
   FIO_WALLET: '/fio-wallet/:publicKey',
   TOKENS: '/tokens',
+  IMPORT_WALLET: '/tokens/import',
 
   GOVERNANCE: '/governance',
   PROTOCOL_UPDATES: '/protocol-updates',

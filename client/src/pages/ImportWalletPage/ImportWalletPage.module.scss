@@ -1,0 +1,72 @@
+@import '../../assets/styles/colors';
+@import '../../assets/styles/fontMixins';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+
+}
+
+.cancelButton {
+  border: none;
+  outline: none;
+  background: none;
+  width: fit-content;
+  height: fit-content;
+  margin-top: 15px;
+  align-self: center;
+  @include sf-pro-display-medium;
+}
+
+.subtitle {
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+
+.description {
+  font-size: 0.875rem;
+  font-style: italic;
+  font-weight: bold;
+  @include sf-pro-display-bold;
+}
+
+.spinner {
+  width: 100% !important;
+  font-size: 1.25em;
+}
+
+.form {
+  margin-top: 20px;
+
+  .button {
+    max-width: 335px;
+    width: 100%;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    position: relative;
+    border-radius: 7px;
+
+    .loader {
+      margin-left: 1rem;
+      position: absolute;
+      right: 27%;
+      top: 35%;
+    }
+  }
+}
+
+
+@include md {
+  .container {
+    padding: 30px 20px;
+  }
+}
+
+@include lg {
+  .container {
+    max-width: 1200px;
+    width: 100%;
+  }
+}

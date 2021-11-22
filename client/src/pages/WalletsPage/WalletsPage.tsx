@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ContainerProps } from './types';
+import { Link } from 'react-router-dom';
+
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import WalletItem from './components/WalletItem';
 import CreateWallet from './components/CreateWallet';
@@ -9,6 +11,7 @@ import TotalBalanceBadge from './components/TotalBalanceBadge';
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 
 import classes from './styles/WalletsPage.module.scss';
+import { ROUTES } from '../../constants/routes';
 
 const WalletsPage: React.FC<ContainerProps> = props => {
   const { fioWallets, balance, roe, refreshBalance } = props;
@@ -39,6 +42,11 @@ const WalletsPage: React.FC<ContainerProps> = props => {
       />
       <LayoutContainer title="FIO Wallets">
         <ActionButtonsContainer>
+          <Link to={ROUTES.IMPORT_WALLET} className={classes.link}>
+            <div>
+              <FontAwesomeIcon icon="download" />
+            </div>
+          </Link>
           <div onClick={onAdd}>
             <FontAwesomeIcon icon="plus-circle" />
           </div>
