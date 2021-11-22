@@ -5,7 +5,7 @@ import Input from '../../../components/Input/Input';
 import { TITLE_NAME } from '../constant';
 import { getHash } from '../../../util/general';
 
-import classes from './ImageField.module.scss';
+import classes from '../styles/ImageField.module.scss';
 
 const ImageField: React.FC = () => {
   const form = useForm();
