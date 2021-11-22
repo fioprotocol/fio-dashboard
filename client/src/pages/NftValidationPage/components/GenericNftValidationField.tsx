@@ -2,7 +2,7 @@ import React from 'react';
 import { Field } from 'react-final-form';
 import Input, { INPUT_UI_STYLES } from '../../../components/Input/Input';
 
-import classes from './GenericNftValidationField.module.scss';
+import classes from '../styles/GenericNftValidationField.module.scss';
 
 export const FIELDS_NAMES = {
   FIO_ADDRESS: 'fioAddress',
