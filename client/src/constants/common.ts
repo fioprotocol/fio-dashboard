@@ -63,3 +63,19 @@ export const NFT_TOKEN_ITEM_PROPS_ORDER: NFTTokenItemProps[] = [
   'url',
   'metadata',
 ];
+
+export const NFT_CHAIN_CODE_LIST = [
+  'ADA',
+  'ALGO',
+  'BSC',
+  'DGB',
+  'EOS',
+  'ETH',
+  'FLOW',
+  'MATIC',
+  'SOL',
+  'XTZ',
+  'THETA',
+  'TRX',
+  'WAXP',
+];

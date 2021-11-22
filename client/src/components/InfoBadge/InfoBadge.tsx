@@ -16,7 +16,7 @@ const InfoBadge: React.FC<Props> = props => {
   return (
     <Badge type={type} show={show}>
       <FontAwesomeIcon icon="exclamation-circle" className={classes.icon} />
-      <p>
+      <p className={classes.textContainer}>
         <span className={classes.title}>{title}</span>
         <span>{title && ' - '}</span>
         {message}

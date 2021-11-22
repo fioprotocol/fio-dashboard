@@ -69,6 +69,12 @@ const NftValidationPage: React.FC = () => {
   const showInfoBadge =
     searchParams != null && results != null && results.length === 0 && !loading;
 
+  const showWarningBadge =
+    activeOption != null &&
+    results != null &&
+    activeOption.hasWarningBadge &&
+    results.length > 1;
+
   return (
     <div className={classes.container}>
       <h1 className={classes.title}>
@@ -101,6 +107,7 @@ const NftValidationPage: React.FC = () => {
         searchParams={searchParams}
         activeOption={activeOption}
         results={results}
+        showWarningBadge={showWarningBadge}
       />
       {showInfoBadge && (
         <div className={classes.badgeContainer}>

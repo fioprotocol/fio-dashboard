@@ -1,6 +1,7 @@
 import React from 'react';
 import Dropdown from 'react-dropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classnames from 'classnames';
 
 import classes from './CustomDropdown.module.scss';
 
@@ -9,19 +10,50 @@ type Props = {
   placeholder?: string;
   hasDefaultValue?: boolean;
   onChange: (id: string) => void;
+  customValue?: { id: string; name: string };
+  toggleToCustom?: (flag: boolean) => void;
+  isShort?: boolean;
+  isWhite?: boolean;
+  hasAutoWidth?: boolean;
+  isSimple?: boolean;
+  isHigh?: boolean;
 };
 
 const CustomDropdown: React.FC<Props> = props => {
-  const { options, onChange, placeholder, hasDefaultValue } = props;
+  const {
+    options,
+    onChange,
+    placeholder,
+    hasDefaultValue,
+    customValue,
+    toggleToCustom,
+    isShort,
+    isWhite,
+    hasAutoWidth,
+    isSimple,
+    isHigh,
+  } = props;
 
   const styledOptions = options.map(option => ({
     value: option.id,
     label: option.name,
     className: classes.optionItem,
   }));
+
+  if (customValue) {
+    styledOptions.push({
+      value: customValue.id,
+      label: customValue.name,
+      className: classes.optionButton,
+    });
+  }
+
   const onDropdownChange = (value: { value: string }) => {
     const { value: itemValue } = value || {};
-
+    if (customValue && itemValue === customValue.id) {
+      onChange('');
+      return toggleToCustom(true);
+    }
     onChange(itemValue);
   };
 
@@ -31,8 +63,17 @@ const CustomDropdown: React.FC<Props> = props => {
       value={hasDefaultValue ? styledOptions[0] : null}
       onChange={onDropdownChange}
       placeholder={placeholder}
-      className={classes.dropdown}
-      controlClassName={classes.control}
+      className={classnames(
+        classes.dropdown,
+        isShort && classes.isShort,
+        hasAutoWidth && classes.hasAutoWidth,
+      )}
+      controlClassName={classnames(
+        classes.control,
+        isWhite && classes.isWhite,
+        isSimple && classes.isSimple,
+        isHigh && classes.isHigh,
+      )}
       placeholderClassName={classes.placeholder}
       menuClassName={classes.menu}
       arrowClosed={

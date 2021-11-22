@@ -20,5 +20,12 @@
       text-align: left;
       margin-bottom: 15px;
     }
+
+    .groupedItem {
+      @include proxima-nova-bold;
+      text-align: left;
+      margin-bottom: -20px;
+      margin-top: 25px;
+    }
   }
 }
