@@ -6,6 +6,14 @@
   width: 100%;
   min-width: 335px;
 
+  &.isShort {
+    min-width: 275px;
+  }
+
+  &.hasAutoWidth {
+    min-width: auto;
+  }
+
   .icon {
     font-size: 13px;
     color: $gray-main;
@@ -29,9 +37,20 @@
   padding-left: 20px;
   padding-right: 20px;
   position: relative;
-  z-index: 1001; //show over menu
   @include sf-pro-display-medium;
   box-shadow: 0 0 8px 0 rgba(0,0,0,0.37);
+
+  &.isWhite {
+    background-color: $white;
+  }
+
+  &.isSimple {  
+    box-shadow: none;
+  }
+
+  &.isHigh {
+    height: 54px;
+  }
 }
 .placeholder {
   color: $gray-main;
@@ -75,5 +94,27 @@
 
   &:hover:after {
     border-color: $dark-gray;
+  }
+}
+
+.optionButton {
+  @include sf-pro-display-medium;
+  background-color: $dark-gray;
+  text-align: left;
+  color: $white;
+  height: 32px;
+  border-radius: 7px;
+  margin: 9px 10px 10px 10px;
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  border-bottom-right-radius: 7px !important; //rewrite default dropdown styles
+  border-bottom-left-radius: 7px !important; //rewrite default dropdown styles
+  box-shadow: 0 0 8px 0 rgba(0,0,0,0.11);
+  transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+
+  &:hover {
+    color: $white;
+    background-color: $black-meduim;
   }
 }

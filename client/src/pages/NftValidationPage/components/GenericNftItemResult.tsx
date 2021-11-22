@@ -87,7 +87,7 @@ export const renderContractAddressItem: RenderItem = (
 
 export const renderFioAddressItem: RenderItem = (resultItem, searchParams) => (
   <GenericNftItemResult
-    titles={[NFT_ITEMS_TITLE_NAMES.chainCode, NFT_ITEMS_TITLE_NAMES.tokenId]}
+    titles={[NFT_ITEMS_TITLE_NAMES.tokenId]}
     resultItem={resultItem}
     searchName={NFT_ITEMS_TITLE_NAMES.fioAddress.name}
     searchValue={searchParams[NFT_ITEMS_TITLE_NAMES.fioAddress.id]}
@@ -99,7 +99,6 @@ export const renderHashItem: RenderItem = (resultItem, searchParams) => (
   <GenericNftItemResult
     titles={[
       NFT_ITEMS_TITLE_NAMES.fioAddress,
-      NFT_ITEMS_TITLE_NAMES.chainCode,
       NFT_ITEMS_TITLE_NAMES.contractAddress,
     ]}
     resultItem={resultItem}
@@ -113,7 +112,6 @@ export const renderImageItem: RenderItem = (resultItem, searchParams) => (
   <GenericNftItemResult
     titles={[
       NFT_ITEMS_TITLE_NAMES.fioAddress,
-      NFT_ITEMS_TITLE_NAMES.chainCode,
       NFT_ITEMS_TITLE_NAMES.contractAddress,
     ]}
     resultItem={resultItem}
