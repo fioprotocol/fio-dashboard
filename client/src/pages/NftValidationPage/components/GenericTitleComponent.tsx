@@ -1,9 +1,9 @@
 import React from 'react';
 
 import ImageTitle from './ImageTitle';
-import { TITLE_NAME } from '../../constant';
-import { RenderTitle } from '../types';
-import classes from './GenericTitleComponent.module.scss';
+import { TITLE_NAME } from '../constant';
+import { RenderTitle } from './types';
+import classes from '../styles/GenericTitleComponent.module.scss';
 
 type Props = {
   title: string;

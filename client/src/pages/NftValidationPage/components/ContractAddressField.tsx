@@ -3,7 +3,7 @@ import GenericNftValidationField, {
   FIELDS_NAMES,
 } from './GenericNftValidationField';
 
-import classes from './GenericNftValidationField.module.scss';
+import classes from '../styles/GenericNftValidationField.module.scss';
 
 const ContractAddressField: React.FC = () => {
   return (

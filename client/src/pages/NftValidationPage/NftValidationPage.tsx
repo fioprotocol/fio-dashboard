@@ -14,7 +14,7 @@ import { URL_REGEXP } from '../../constants/regExps';
 
 import { NftValidationFormValues, ValidationOption } from './components/types';
 
-import classes from './NftValidationPage.module.scss';
+import classes from './styles/NftValidationPage.module.scss';
 
 const NftValidationPage: React.FC = () => {
   const [activeOption, setActiveOption] = useState<ValidationOption | null>(

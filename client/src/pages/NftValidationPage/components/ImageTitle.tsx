@@ -1,8 +1,8 @@
 import React from 'react';
 import GenericTitleComponent from './GenericTitleComponent';
-import { TITLE_NAME } from '../../constant';
+import { TITLE_NAME } from '../constant';
 
-import classes from './ImageTitle.module.scss';
+import classes from '../styles/ImageTitle.module.scss';
 
 type Props = {
   imageUrl: string;

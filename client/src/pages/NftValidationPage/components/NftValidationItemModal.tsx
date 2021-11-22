@@ -4,12 +4,13 @@ import classnames from 'classnames';
 
 import Modal from '../../../components/Modal/Modal';
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
+
 import { TITLE_NAME } from '../constant';
 import { NFT_TOKEN_ITEM_PROPS_ORDER } from '../../../constants/common';
 
 import { NFTTokenDoublet } from '../../../types';
 
-import classes from './NftValidationItemModal.module.scss';
+import classes from '../styles/NftValidationItemModal.module.scss';
 
 type Props = {
   show: boolean;
