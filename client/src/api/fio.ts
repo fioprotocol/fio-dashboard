@@ -55,6 +55,9 @@ export default class Fio {
   isPublicAddressValid = (value: string): boolean =>
     FIOSDK.isPublicAddressValid(value);
 
+  createPrivateKeyMnemonic = async (mnemonic: string): Promise<string> =>
+    FIOSDK.createPrivateKeyMnemonic(mnemonic);
+
   convert = (amount: number, roe: number): number =>
     Math.round((amount / (FIOSDK.SUFUnit / 100)) * roe) / 100;
 
