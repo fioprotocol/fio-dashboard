@@ -111,3 +111,11 @@ a {
 .doubleColor {
   color: $violet;
 }
+
+.Dropdown-root {
+  &.is-open {
+    .Dropdown-control {
+      z-index: 1001;
+    }
+  }
+}

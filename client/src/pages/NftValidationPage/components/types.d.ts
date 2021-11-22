@@ -28,6 +28,8 @@ export type ValidationOption = {
   field: React.ReactNode;
   resultsTitle: RenderTitle;
   resultsItem: RenderItem;
+  hasWarningBadge?: boolean;
+  showGroupResults?: boolean;
 };
 
 export type TitleNameId = keyof NftValidationFormValues;
