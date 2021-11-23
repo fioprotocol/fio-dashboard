@@ -13,7 +13,7 @@ import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 
 import { NFTTokenDoublet } from '../types';
 
-interface TrxResponse {
+export interface TrxResponse {
   transaction_id?: string;
   status: string;
   expiration?: string;
@@ -92,6 +92,9 @@ export default class Fio {
       : json.message;
   };
 
+  getActor = (publicKey: string): string =>
+    this.publicFioSDK.transactions.getActor(publicKey);
+
   availCheck = (fioName: string): Promise<AvailabilityResponse> => {
     this.setBaseUrl();
     return this.publicFioSDK.isAvailable(fioName);
@@ -163,16 +166,29 @@ export default class Fio {
         );
   };
 
-  getBalance = async (publicKey: string): Promise<number> => {
+  getBalance = async (
+    publicKey: string,
+  ): Promise<{ balance: number; available: number; locked: number }> => {
     this.setBaseUrl();
     try {
-      const { balance } = await this.publicFioSDK.getFioBalance(publicKey);
-      return FIOSDK.SUFToAmount(balance);
+      const { balance, available } = await this.publicFioSDK.getFioBalance(
+        publicKey,
+      );
+
+      return {
+        balance: FIOSDK.SUFToAmount(balance),
+        available: FIOSDK.SUFToAmount(available),
+        locked: 0,
+      };
     } catch (e) {
       this.logError(e);
     }
 
-    return 0;
+    return {
+      balance: 0,
+      available: 0,
+      locked: 0,
+    };
   };
 
   getFioNames = async (publicKey: string): Promise<FioNamesResponse> => {
@@ -361,6 +377,49 @@ export default class Fio {
       );
       this.walletFioSDK.setSignedTrxReturnOption(false);
       return { other: { nfts }, ...result };
+    } catch (err) {
+      this.logError(err);
+      throw err;
+    }
+  };
+
+  getTransferTokensAction = (
+    publicKey: string,
+    amount: number,
+    fee: number,
+  ) => {
+    return {
+      account: 'fio.token',
+      name: 'trnsfiopubky',
+      data: {
+        payee_public_key: publicKey,
+        amount,
+        max_fee: fee,
+        tpid: '',
+      },
+    };
+  };
+
+  sendTokens = async (
+    publicKey: string,
+    amount: number,
+    fee: number,
+  ): Promise<TrxResponse> => {
+    this.setBaseUrl();
+    try {
+      this.walletFioSDK.setSignedTrxReturnOption(true);
+      const action = this.getTransferTokensAction(publicKey, amount, fee);
+      const preparedTrx = await this.walletFioSDK.pushTransaction(
+        action.account,
+        action.name,
+        action.data,
+      );
+      const result = await this.walletFioSDK.executePreparedTrx(
+        this.actionEndPoints.transferTokens,
+        preparedTrx,
+      );
+      this.walletFioSDK.setSignedTrxReturnOption(false);
+      return { ...result };
     } catch (err) {
       this.logError(err);
       throw err;

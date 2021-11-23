@@ -1,26 +1,37 @@
 import { combineReducers } from 'redux';
-import { LOGIN_SUCCESS } from '../edge/actions';
+import { LOGIN_SUCCESS as EDGE_LOGIN_SUCCESS } from '../edge/actions';
+import { ADD_WALLET_SUCCESS } from '../account/actions';
 import {
   LOGOUT_SUCCESS,
   PROFILE_SUCCESS,
   SIGNUP_SUCCESS,
 } from '../profile/actions';
 import * as actions from './actions';
+
+import { transformNft } from '../../util/fio';
+
+import { WALLET_CREATED_FROM } from '../../constants/common';
+import { DEFAULT_BALANCES } from '../../util/prices';
+
 import {
   FioWalletDoublet,
   FioAddressDoublet,
   FioDomainDoublet,
   LinkActionResult,
   NFTTokenDoublet,
+  FeePrice,
+  WalletsBalances,
 } from '../../types';
-
-import { transformNft } from '../../util/fio';
 
 export const emptyWallet: FioWalletDoublet = {
   id: '',
+  edgeId: '',
   name: '',
   publicKey: '',
   balance: null,
+  available: null,
+  locked: null,
+  from: WALLET_CREATED_FROM.EDGE,
 };
 
 const defaultLinkState: LinkActionResult = {
@@ -49,50 +60,6 @@ export default combineReducers({
         return state;
     }
   },
-  transferProcessing(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.TRANSFER_REQUEST:
-        return true;
-      case actions.TRANSFER_SUCCESS:
-      case actions.TRANSFER_FAILURE:
-        return false;
-      default:
-        return state;
-    }
-  },
-  setVisibilityProcessing(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.SET_VISIBILITY_REQUEST:
-        return true;
-      case actions.SET_VISIBILITY_SUCCESS:
-      case actions.SET_VISIBILITY_FAILURE:
-        return false;
-      default:
-        return state;
-    }
-  },
-  renewProcessing(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.RENEW_REQUEST:
-        return true;
-      case actions.RENEW_SUCCESS:
-      case actions.RENEW_FAILURE:
-        return false;
-      default:
-        return state;
-    }
-  },
-  signNftProcessing(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.FIO_SIGN_NFT_REQUEST:
-        return true;
-      case actions.FIO_SIGN_NFT_FAILURE:
-      case actions.FIO_SIGN_NFT_SUCCESS:
-        return false;
-      default:
-        return state;
-    }
-  },
   linkProcessing(state: boolean = false, action) {
     switch (action.type) {
       case actions.LINK_TOKENS_REQUEST:
@@ -104,28 +71,41 @@ export default combineReducers({
         return state;
     }
   },
+  fioWalletsBalances(
+    state: WalletsBalances = { total: DEFAULT_BALANCES, wallets: {} },
+    action,
+  ) {
+    switch (action.type) {
+      case actions.SET_BALANCES: {
+        return action.data;
+      }
+      default:
+        return state;
+    }
+  },
   fioWallets(state: FioWalletDoublet[] = [], action) {
     switch (action.type) {
       case SIGNUP_SUCCESS: {
-        const fioWallets = [...state];
+        const fioWallets = [];
         for (const fioWallet of action.fioWallets) {
           fioWallets.push({
             ...emptyWallet,
-            id: fioWallet.id,
-            publicKey: fioWallet.publicKey,
-            name: fioWallet.name,
+            ...fioWallet,
           });
         }
-        return fioWallets;
+        return fioWallets.sort(({ id: id1 }, { id: id2 }) =>
+          id1 > id2 ? 1 : -1,
+        );
       }
-      case LOGIN_SUCCESS: {
-        const fioWallets = [...state];
+      case EDGE_LOGIN_SUCCESS: {
+        const fioWallets: FioWalletDoublet[] = [];
 
         for (const fioWallet of action.data.fioWallets) {
-          if (fioWallets.find(item => item.id === fioWallet.id)) continue;
+          if (fioWallets.find(item => item.publicKey === fioWallet.publicKey))
+            continue;
           fioWallets.push({
             ...emptyWallet,
-            id: fioWallet.id,
+            edgeId: fioWallet.id,
             publicKey: fioWallet.getDisplayPublicSeed(),
             name: fioWallet.name,
           });
@@ -133,28 +113,47 @@ export default combineReducers({
         return fioWallets;
       }
       case PROFILE_SUCCESS: {
-        const fioWallets = [...state];
+        const fioWallets: FioWalletDoublet[] = [];
+        const existingList = [...state];
 
         for (const fioWallet of action.data.fioWallets) {
-          if (fioWallets.find(item => item.id === fioWallet.id)) continue;
-          fioWallets.push({
-            ...emptyWallet,
-            id: fioWallet.id,
-            publicKey: fioWallet.publicKey,
-            name: fioWallet.name,
-          });
+          const existingWallet = existingList.find(
+            item => item.publicKey === fioWallet.publicKey,
+          );
+          fioWallets.push(
+            existingWallet
+              ? {
+                  ...existingWallet,
+                  ...fioWallet,
+                }
+              : {
+                  ...emptyWallet,
+                  ...fioWallet,
+                },
+          );
         }
-        return fioWallets;
+        return fioWallets.sort(({ id: id1 }, { id: id2 }) =>
+          id1 > id2 ? 1 : -1,
+        );
       }
       case actions.REFRESH_BALANCE_SUCCESS: {
-        return state.map(fioWallet =>
-          fioWallet.publicKey === action.publicKey
-            ? {
-                ...fioWallet,
-                balance: action.data,
-              }
-            : fioWallet,
-        );
+        return state.map(fioWallet => {
+          if (fioWallet.publicKey === action.publicKey) {
+            fioWallet.balance = action.data.balance;
+            fioWallet.available = action.data.available;
+            fioWallet.locked = action.data.locked;
+          }
+          return fioWallet;
+        });
+      }
+      case ADD_WALLET_SUCCESS: {
+        const fioWallets = [...state];
+        if (
+          !fioWallets.find(item => item.publicKey === action.data.publicKey)
+        ) {
+          fioWallets.push({ ...emptyWallet, ...action.data });
+        }
+        return fioWallets;
       }
       case LOGOUT_SUCCESS:
         return [];
@@ -164,6 +163,9 @@ export default combineReducers({
   },
   fioAddresses(state: FioAddressDoublet[] = [], action) {
     switch (action.type) {
+      case actions.RESET_FIO_NAMES: {
+        return [];
+      }
       case actions.REFRESH_FIO_NAMES_SUCCESS:
       case actions.GET_FIO_ADDRESSES_SUCCESS: {
         const fioAddresses = [...state];
@@ -185,29 +187,6 @@ export default combineReducers({
         }
         return fioAddresses;
       }
-      case actions.TRANSFER_SUCCESS: {
-        const fioAddresses = [...state];
-        const fioAddressIndex = fioAddresses.findIndex(
-          ({ name }) => name === action.fioName,
-        );
-        if (fioAddressIndex > -1) {
-          fioAddresses.splice(fioAddressIndex, 1);
-        }
-        return fioAddresses;
-      }
-      case actions.RENEW_SUCCESS: {
-        const fioAddresses = [...state];
-        const fioAddress = fioAddresses.find(
-          ({ name }) => name === action.fioName,
-        );
-
-        if (fioAddress != null) {
-          fioAddress.expiration = action.data.expiration;
-          return fioAddresses;
-        }
-
-        return state;
-      }
       case LOGOUT_SUCCESS:
         return [];
       default:
@@ -216,6 +195,9 @@ export default combineReducers({
   },
   fioDomains(state: FioDomainDoublet[] = [], action) {
     switch (action.type) {
+      case actions.RESET_FIO_NAMES: {
+        return [];
+      }
       case actions.REFRESH_FIO_NAMES_SUCCESS:
       case actions.GET_FIO_DOMAINS_SUCCESS: {
         const fioDomains = [...state];
@@ -236,35 +218,6 @@ export default combineReducers({
           fioDomains[index] = fioDomain;
         }
         return fioDomains;
-      }
-      case actions.SET_VISIBILITY_SUCCESS: {
-        const fioDomains = [...state];
-        const fioDomain = fioDomains.find(
-          ({ name }) => name === action.fioDomain,
-        );
-        fioDomain.isPublic = action.isPublic;
-        return fioDomains;
-      }
-      case actions.TRANSFER_SUCCESS: {
-        const fioDomains = [...state];
-        const fioDomainIndex = fioDomains.findIndex(
-          ({ name }) => name === action.fioName,
-        );
-        if (fioDomainIndex > -1) {
-          fioDomains.splice(fioDomainIndex, 1);
-        }
-        return fioDomains;
-      }
-      case actions.RENEW_SUCCESS: {
-        const fioDomains = [...state];
-        const fioDomain = fioDomains.find(
-          ({ name }) => name === action.fioDomain,
-        );
-        if (fioDomain != null) {
-          fioDomain.expiration = action.data.expiration;
-          return fioDomains;
-        }
-        return state;
       }
       case LOGOUT_SUCCESS:
         return [];
@@ -288,35 +241,10 @@ export default combineReducers({
         return state;
     }
   },
-  fees(state: { [endpoint: string]: number } = {}, action) {
+  fees(state: { [endpoint: string]: FeePrice } = {}, action) {
     switch (action.type) {
-      case actions.GET_FEE_SUCCESS:
-        return { ...state, [action.endpoint]: action.data.fee };
-      default:
-        return state;
-    }
-  },
-  transactionResult(state: { [actionName: string]: any } = {}, action) {
-    switch (action.type) {
-      case actions.TRANSFER_REQUEST:
-      case actions.RENEW_REQUEST:
-      case actions.SET_VISIBILITY_REQUEST:
-      case actions.FIO_SIGN_NFT_REQUEST:
-        return { ...state, [action.actionName]: null };
-      case actions.RESET_TRANSACTION_RESULT:
-        return { ...state, [action.data]: null };
-      case actions.SET_VISIBILITY_SUCCESS:
-      case actions.TRANSFER_SUCCESS:
-      case actions.RENEW_SUCCESS:
-      case actions.FIO_SIGN_NFT_SUCCESS:
-        return { ...state, [action.actionName]: action.data };
-      case actions.SET_VISIBILITY_FAILURE:
-      case actions.RENEW_FAILURE:
-      case actions.TRANSFER_FAILURE:
-        return {
-          ...state,
-          [action.actionName]: { error: action.error && action.error.message },
-        };
+      case actions.SET_FEE:
+        return { ...state, ...action.data };
       default:
         return state;
     }

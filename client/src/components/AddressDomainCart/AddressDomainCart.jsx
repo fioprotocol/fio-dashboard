@@ -17,6 +17,7 @@ const AddressDomainCart = props => {
     deleteItem,
     domains,
     history,
+    fioWallets,
     prices,
     recalculate,
     hasFreeAddress,
@@ -27,7 +28,9 @@ const AddressDomainCart = props => {
   const isCartEmpty = count === 0;
 
   const handleCheckout = () => {
-    const route = count === 1 ? ROUTES.CHECKOUT : ROUTES.CART;
+    const multipleWallets = fioWallets && fioWallets.length > 1;
+    const route =
+      count === 1 && !multipleWallets ? ROUTES.CHECKOUT : ROUTES.CART;
 
     if (!isAuthenticated) {
       setRedirectPath(route);

@@ -2,23 +2,17 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
-import {
-  setRecoveryQuestions,
-  resendRecovery,
-} from '../../redux/profile/actions';
+import { setRecoveryQuestions } from '../../redux/profile/actions';
 import {
   getRecoveryQuestions,
-  resetPinConfirm,
   changeRecoveryQuestionsClose,
 } from '../../redux/edge/actions';
 import { createNotification } from '../../redux/notifications/actions';
-import { closeRecoveryModal, showPinModal } from '../../redux/modal/actions';
+import { closeRecoveryModal } from '../../redux/modal/actions';
 import { checkRecoveryQuestions } from '../../redux/edge/actions';
 import {
   loading as edgeAuthLoading,
   recoveryQuestions,
-  confirmingPin,
-  pinConfirmation,
   changeRecoveryQuestions,
 } from '../../redux/edge/selectors';
 import {
@@ -36,10 +30,8 @@ const reduxConnect = connect(
   createStructuredSelector({
     edgeAuthLoading,
     show,
-    questions: recoveryQuestions,
-    confirmingPin,
     showPinConfirm,
-    pinConfirmation,
+    questions: recoveryQuestions,
     changeRecoveryQuestions,
     changeRecoveryQuestionsResults,
     username: edgeUsername,
@@ -49,11 +41,8 @@ const reduxConnect = connect(
     closeRecoveryModal,
     getRecoveryQuestions,
     createNotification,
-    showPinModal,
-    resetPinConfirm,
     changeRecoveryQuestionsClose,
     checkRecoveryQuestions,
-    resendRecovery,
   },
 );
 

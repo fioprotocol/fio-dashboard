@@ -12,6 +12,7 @@ export class Action extends Base {
       CONFIRM_EMAIL: 'confirmEmail',
       RESET_PASSWORD: 'resetPassword',
       RESEND_EMAIL_CONFIRM: 'resendEmailConfirm',
+      UPDATE_EMAIL: 'updateEmail',
     };
   }
 
@@ -38,6 +39,12 @@ export class Action extends Base {
     const user = await User.findById(this.data.userId);
 
     return user.update({ status: User.STATUS.ACTIVE });
+  }
+
+  async updateEmail() {
+    const user = await User.findById(this.data.userId);
+
+    return user.update({ status: User.STATUS.ACTIVE, email: this.data.newEmail });
   }
 
   static generateHash() {

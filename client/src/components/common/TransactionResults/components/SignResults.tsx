@@ -1,16 +1,15 @@
 import React from 'react';
 import classnames from 'classnames';
 
+import Results from '../index';
 import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
 import FioName from '../../FioName/FioName';
 
 import { ResultsProps } from '../types';
 
 import classes from '../Results.module.scss';
-import { FIO_SIGN_NFT_REQUEST } from '../../../../redux/fio/actions';
 
 const SignResults = (props: ResultsProps) => {
-  if (props.actionName !== FIO_SIGN_NFT_REQUEST) return null;
   const {
     results: {
       name,
@@ -20,7 +19,7 @@ const SignResults = (props: ResultsProps) => {
   const dashSign = ' - ';
 
   return (
-    <>
+    <Results {...props}>
       <FioName name={name} />
       <h5 className={classes.label}>Signed NFT Details</h5>
       <div className={classes.badges}>
@@ -79,7 +78,7 @@ const SignResults = (props: ResultsProps) => {
           </div>
         </Badge>
       </div>
-    </>
+    </Results>
   );
 };
 

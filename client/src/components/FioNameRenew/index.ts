@@ -3,68 +3,37 @@ import { createStructuredSelector } from 'reselect';
 
 import apis from '../../api';
 import { compose, hasFioAddressDelimiter } from '../../utils';
-import { setFees } from '../../util/prices';
 
-import {
-  refreshBalance,
-  renew,
-  getFee,
-  RENEW_REQUEST,
-} from '../../redux/fio/actions';
-import { resetPinConfirm } from '../../redux/edge/actions';
-import { showPinModal } from '../../redux/modal/actions';
+import { refreshBalance, getFee } from '../../redux/fio/actions';
 
-import { pinConfirmation, confirmingPin } from '../../redux/edge/selectors';
-import {
-  loading,
-  renewProcessing,
-  currentWallet,
-  walletPublicKey,
-} from '../../redux/fio/selectors';
+import { loading, currentWallet } from '../../redux/fio/selectors';
+import { roe } from '../../redux/registrations/selectors';
 
 import FioNameRenewContainer from './FioNameRenewContainer';
+
+import { DEFAULT_FEE_PRICES } from '../../util/prices';
+
 import { ContainerOwnProps } from './types';
+import { ReduxState } from '../../redux/init';
 
 const reduxConnect = connect(
   createStructuredSelector({
     loading,
-    renewProcessing,
-    confirmingPin,
-    pinConfirmation,
-    result: (state: any) => {
-      const { transactionResult } = state.fio;
-      const result = transactionResult[RENEW_REQUEST];
-      if (result && result.fee_collected) {
-        const { roe } = state.registrations;
-        const feeCollected = result.fee_collected;
-        return {
-          feeCollected: {
-            nativeAmount: feeCollected,
-            costFio: apis.fio.sufToAmount(feeCollected),
-            costUsdc: apis.fio.convert(feeCollected, roe),
-          },
-        };
-      }
-
-      return result;
-    },
-    feePrice: (state: any, ownProps: ContainerOwnProps & any) => {
+    feePrice: (state: ReduxState, ownProps: ContainerOwnProps & any) => {
       const { fees } = state.fio;
-      const { prices, roe } = state.registrations;
-
-      const feeEndPoint = hasFioAddressDelimiter(ownProps.name)
-        ? apis.fio.actionEndPoints.renewFioAddress
-        : apis.fio.actionEndPoints.renewFioDomain;
-      return setFees(fees[feeEndPoint], prices, roe);
+      return (
+        fees[
+          hasFioAddressDelimiter(ownProps.name)
+            ? apis.fio.actionEndPoints.renewFioAddress
+            : apis.fio.actionEndPoints.renewFioDomain
+        ] || DEFAULT_FEE_PRICES
+      );
     },
-    walletPublicKey,
+    roe,
     currentWallet,
   }),
   {
     refreshBalance,
-    renew,
-    showPinModal,
-    resetPinConfirm,
     getFee: (isFioAddress: boolean) =>
       getFee(
         isFioAddress

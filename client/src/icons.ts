@@ -3,6 +3,8 @@ import {
   faEyeSlash,
   faArrowLeft,
   faArrowRight,
+  faArrowUp,
+  faArrowDown,
   faCog,
   faBell,
   faCircle,
@@ -32,6 +34,10 @@ import {
   faSignature,
   faEnvelope,
   faImage,
+  faExchangeAlt,
+  faDownload,
+  faShareAlt,
+  faQrcode,
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
@@ -46,6 +52,8 @@ const icons = {
   faEyeSlash,
   faArrowLeft,
   faArrowRight,
+  faArrowUp,
+  faArrowDown,
   faCog,
   faBell,
   faCircle,
@@ -79,6 +87,10 @@ const icons = {
   faEnvelope,
   faRegularCopy,
   faImage,
+  faExchangeAlt,
+  faDownload,
+  faShareAlt,
+  faQrcode,
 };
 
 export default icons;

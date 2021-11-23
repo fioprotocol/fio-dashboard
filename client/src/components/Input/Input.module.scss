@@ -41,6 +41,18 @@
   }
 }
 
+.label {
+  font-size: 0.875em;
+  margin-bottom: 1em;
+  @include sf-pro-display-medium;
+  color: $white;
+  width: 100%;
+
+  &.blackLight, &.blackWhite {
+    color: $dark-jungle-green;
+  }
+}
+
 .inputGroup {
   position: relative;
 
@@ -130,6 +142,10 @@
         color: inherit;
         @include proxima-nova-regular-it;
       }
+
+      &[data-clear='true'] {
+        padding-right: 35px;
+      }
     }
 
     &.prefixSpace {
@@ -139,11 +155,6 @@
     &.hasCopyButton {
       padding-right: 45px;
     }
-
-    &[data-clear='true'] {
-      padding-right: 45px;
-    }
-
 
     &.bw {
       background-color: $white;

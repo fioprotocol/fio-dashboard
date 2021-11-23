@@ -3,6 +3,7 @@ export const NOTIFICATIONS_CONTENT_TYPE = {
   ACCOUNT_CONFIRMATION: 'ACCOUNT_CONFIRMATION',
   ACCOUNT_CREATE: 'ACCOUNT_CREATE',
   CART_TIMEOUT: 'CART_TIMEOUT',
+  UPDATE_EMAIL: 'UPDATE_EMAIL',
 };
 
 export const NOTIFICATIONS_CONTENT: {
@@ -24,6 +25,10 @@ export const NOTIFICATIONS_CONTENT: {
   [NOTIFICATIONS_CONTENT_TYPE.CART_TIMEOUT]: {
     title: 'Cart was emptied',
     message: 'Your cart was emptied due to inactivity',
+  },
+  [NOTIFICATIONS_CONTENT_TYPE.UPDATE_EMAIL]: {
+    title: 'Email was updated',
+    message: 'Your new email is confirmed',
   },
 };
 

@@ -3,8 +3,8 @@ import { Api } from '../../api';
 import {
   PublicAddressDoublet,
   LinkActionResult,
-  WalletKeys,
-  NFTTokenDoublet,
+  FeePrice,
+  WalletsBalances,
 } from '../../types';
 export const prefix = 'fio';
 
@@ -21,6 +21,12 @@ export const refreshBalance = (publicKey: string) => ({
   promise: (api: Api) => api.fio.getBalance(publicKey),
   publicKey,
 });
+export const SET_BALANCES = `${prefix}/SET_BALANCES`;
+
+export const setBalances = (balances: WalletsBalances) => ({
+  type: SET_BALANCES,
+  data: balances,
+});
 
 export const REFRESH_FIO_NAMES_REQUEST = `${prefix}/REFRESH_FIO_NAMES_REQUEST`;
 export const REFRESH_FIO_NAMES_SUCCESS = `${prefix}/REFRESH_FIO_NAMES_SUCCESS`;
@@ -34,6 +40,12 @@ export const refreshFioNames = (publicKey: string) => ({
   ],
   promise: (api: Api) => api.fio.getFioNames(publicKey),
   publicKey,
+});
+
+export const RESET_FIO_NAMES = `${prefix}/RESET_FIO_NAMES`;
+
+export const resetFioNames = () => ({
+  type: RESET_FIO_NAMES,
 });
 
 export const IS_REGISTERED_REQUEST = `${prefix}/IS_REGISTERED_REQUEST`;
@@ -55,6 +67,7 @@ export const isRegistered = (fioAddress: string) => ({
 export const GET_FEE_REQUEST = `${prefix}/GET_FEE_REQUEST`;
 export const GET_FEE_SUCCESS = `${prefix}/GET_FEE_SUCCESS`;
 export const GET_FEE_FAILURE = `${prefix}/GET_FEE_FAILURE`;
+export const SET_FEE = `${prefix}/SET_FEE`;
 
 export const getFee = (endpoint: string, fioAddress: string = '') => ({
   types: [GET_FEE_REQUEST, GET_FEE_SUCCESS, GET_FEE_FAILURE],
@@ -63,6 +76,11 @@ export const getFee = (endpoint: string, fioAddress: string = '') => ({
     return api.fio.publicFioSDK.getFee(endpoint, fioAddress);
   },
   endpoint,
+});
+
+export const setFees = (fees: { [endpoint: string]: FeePrice }) => ({
+  type: SET_FEE,
+  data: fees,
 });
 
 export const GET_FIO_ADDRESSES_REQUEST = `${prefix}/GET_FIO_ADDRESSES_REQUEST`;
@@ -112,122 +130,6 @@ export const getFioPubAddress = (fioAddress: string) => ({
     GET_FIO_PUBLIC_ADDRESS_FAILURE,
   ],
   promise: (api: Api) => api.fio.getFioPublicAddress(fioAddress),
-});
-
-export const RESET_TRANSACTION_RESULT = `${prefix}/RESET_TRANSACTION_RESULT`;
-
-export const resetTransactionResult = (actionName: string) => ({
-  type: RESET_TRANSACTION_RESULT,
-  data: actionName,
-});
-
-export const TRANSFER_REQUEST = `${prefix}/TRANSFER_REQUEST`;
-export const TRANSFER_SUCCESS = `${prefix}/TRANSFER_SUCCESS`;
-export const TRANSFER_FAILURE = `${prefix}/TRANSFER_FAILURE`;
-
-export const transfer = ({
-  fioName,
-  newOwnerFioAddress,
-  newOwnerKey,
-  fee,
-  keys,
-}: {
-  fioName: string;
-  newOwnerFioAddress?: string;
-  newOwnerKey?: string;
-  fee: number;
-  keys: { public: string; private: string };
-}) => ({
-  types: [TRANSFER_REQUEST, TRANSFER_SUCCESS, TRANSFER_FAILURE],
-  promise: async (api: Api) => {
-    if (!newOwnerKey) {
-      const {
-        public_address: publicAddress,
-      } = await api.fio.getFioPublicAddress(newOwnerFioAddress);
-      if (!publicAddress) throw new Error('Public address is invalid.');
-      newOwnerKey = publicAddress;
-    }
-    api.fio.setWalletFioSdk(keys);
-    try {
-      const result = await api.fio.transfer(fioName, newOwnerKey, fee);
-      api.fio.clearWalletFioSdk();
-      return { ...result, newOwnerKey };
-    } catch (e) {
-      api.fio.clearWalletFioSdk();
-      throw e;
-    }
-  },
-  actionName: TRANSFER_REQUEST,
-  fioName,
-});
-
-export const SET_VISIBILITY_REQUEST = `${prefix}/SET_VISIBILITY_REQUEST`;
-export const SET_VISIBILITY_SUCCESS = `${prefix}/SET_VISIBILITY_SUCCESS`;
-export const SET_VISIBILITY_FAILURE = `${prefix}/SET_VISIBILITY_FAILURE`;
-
-export const setDomainVisibility = ({
-  fioDomain,
-  isPublic,
-  fee,
-  keys,
-}: {
-  fioDomain: string;
-  isPublic: boolean;
-  fee: number;
-  keys: { public: string; private: string };
-}) => ({
-  types: [
-    SET_VISIBILITY_REQUEST,
-    SET_VISIBILITY_SUCCESS,
-    SET_VISIBILITY_FAILURE,
-  ],
-  promise: async (api: Api) => {
-    api.fio.setWalletFioSdk(keys);
-    try {
-      const result = await api.fio.setDomainVisibility(
-        fioDomain,
-        isPublic,
-        fee,
-      );
-      api.fio.clearWalletFioSdk();
-      return result;
-    } catch (e) {
-      api.fio.clearWalletFioSdk();
-      throw e;
-    }
-  },
-  actionName: SET_VISIBILITY_REQUEST,
-  isPublic,
-  fioDomain,
-});
-
-export const RENEW_REQUEST = `${prefix}/RENEW_REQUEST`;
-export const RENEW_SUCCESS = `${prefix}/RENEW_SUCCESS`;
-export const RENEW_FAILURE = `${prefix}/RENEW_FAILURE`;
-
-export const renew = ({
-  fioName,
-  fee,
-  keys,
-}: {
-  fioName: string;
-  fee: number;
-  keys: { public: string; private: string };
-}) => ({
-  types: [RENEW_REQUEST, RENEW_SUCCESS, RENEW_FAILURE],
-  promise: async (api: Api) => {
-    api.fio.setWalletFioSdk(keys);
-    try {
-      const result = await api.fio.renew(fioName, fee);
-      api.fio.clearWalletFioSdk();
-      return result;
-    } catch (e) {
-      api.fio.clearWalletFioSdk();
-      throw e;
-    }
-  },
-  actionName: RENEW_REQUEST,
-  fioName,
 });
 
 export const LINK_TOKENS_REQUEST = `${prefix}/LINK_TOKENS_REQUEST`;
@@ -403,25 +305,4 @@ export const CLEAR_NFT_SIGNATURES = `${prefix}/CLEAR_NFT_SIGNATURES`;
 
 export const clearNFTSignatures = () => ({
   type: CLEAR_NFT_SIGNATURES,
-});
-
-export const singNFT = (
-  fioAddress: string,
-  nftRequest: NFTTokenDoublet[],
-  keys: WalletKeys,
-) => ({
-  types: [FIO_SIGN_NFT_REQUEST, FIO_SIGN_NFT_SUCCESS, FIO_SIGN_NFT_FAILURE],
-  promise: async (api: Api) => {
-    api.fio.setWalletFioSdk(keys);
-    try {
-      const result = await api.fio.singNFT(fioAddress, nftRequest);
-      api.fio.clearWalletFioSdk();
-      return result;
-    } catch (e) {
-      api.fio.clearWalletFioSdk();
-      throw e;
-    }
-  },
-  fioAddress,
-  actionName: FIO_SIGN_NFT_REQUEST,
 });

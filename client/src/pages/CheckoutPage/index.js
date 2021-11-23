@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 import { compose } from '../../utils';
 import { refreshBalance } from '../../redux/fio/actions';
 import { fioWallets, loading } from '../../redux/fio/selectors';
-import { cartItems, paymentWalletId } from '../../redux/cart/selectors';
+import { cartItems, paymentWalletPublicKey } from '../../redux/cart/selectors';
 import { setRegistration } from '../../redux/registrations/actions';
 import { setWallet, recalculate } from '../../redux/cart/actions';
 
@@ -23,7 +23,7 @@ const reduxConnect = connect(
     loading,
     fioWallets,
     cartItems,
-    paymentWalletId,
+    paymentWalletPublicKey,
     isAuthenticated,
     prices,
     domains,

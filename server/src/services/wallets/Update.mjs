@@ -9,7 +9,7 @@ export default class WalletsUpdate extends Base {
         'required',
         {
           list_of_objects: {
-            id: 'string',
+            edgeId: 'string',
             name: 'string',
             publicKey: 'string',
           },
@@ -21,15 +21,18 @@ export default class WalletsUpdate extends Base {
   async execute({ data: fioWallets }) {
     const wallets = await Wallet.list({ userId: this.context.id });
 
-    for (const { id, name, publicKey } of fioWallets) {
-      const wallet = wallets.find(({ edgeId }) => edgeId === id);
+    for (const { edgeId, name, publicKey } of fioWallets) {
+      if (!edgeId) continue;
+
+      const wallet = wallets.find(({ edgeId: itemEdgeId }) => edgeId === itemEdgeId);
       if (wallet) {
-        await wallet.update({ name, publicKey });
+        if (publicKey !== wallet.publicKey) await wallet.update({ publicKey });
+
         continue;
       }
 
       const newWallet = new Wallet({
-        edgeId: id,
+        edgeId,
         name,
         publicKey,
         userId: this.context.id,

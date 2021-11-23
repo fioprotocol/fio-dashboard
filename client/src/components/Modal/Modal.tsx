@@ -16,7 +16,9 @@ type Props = {
   show: boolean;
   title?: React.ReactNode | string;
   isWide?: boolean;
-  hasDefaultColor?: boolean;
+  hasDefaultCloseColor?: boolean;
+  isMiddleWidth?: boolean;
+  isBlue?: boolean;
 };
 
 const ModalComponent: React.FC<Props> = props => {
@@ -33,7 +35,9 @@ const ModalComponent: React.FC<Props> = props => {
     show,
     title,
     isWide,
-    hasDefaultColor,
+    hasDefaultCloseColor,
+    isMiddleWidth,
+    isBlue,
   } = props;
   const handleClose = () => {
     onClose();
@@ -49,11 +53,13 @@ const ModalComponent: React.FC<Props> = props => {
         isSimple && classes.simple,
         isSuccess && classes.success,
         isInfo && classes.info,
+        isBlue && classes.blue,
       )}
       dialogClassName={classnames(
         classes.dialog,
         isWide && classes.isWide,
-        hasDefaultColor && classes.defaultColor,
+        isMiddleWidth && classes.isMiddleWidth,
+        hasDefaultCloseColor && classes.defaultCloseColor,
       )}
       backdrop={backdrop}
     >

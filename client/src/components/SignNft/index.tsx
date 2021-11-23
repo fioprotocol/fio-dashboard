@@ -4,61 +4,32 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from '../../utils';
 import SignNft from './SignNft';
 
+import { fioAddresses, fioWallets } from '../../redux/fio/selectors';
 import {
-  fioAddresses,
-  fioWallets,
-  signNftProcessing,
-} from '../../redux/fio/selectors';
-import { confirmingPin, pinConfirmation } from '../../redux/edge/selectors';
-import {
-  singNFT,
   getFee,
-  FIO_SIGN_NFT_REQUEST,
   refreshFioNames,
   getNFTSignatures,
 } from '../../redux/fio/actions';
-import { showPinModal } from '../../redux/modal/actions';
-import { resetPinConfirm } from '../../redux/edge/actions';
 
 import apis from '../../api';
+
+import { DEFAULT_FEE_PRICES } from '../../util/prices';
+
 import { ReduxState } from '../../redux/init';
 
 const reduxConnect = connect(
   createStructuredSelector({
     fioAddresses,
     fioWallets,
-    confirmingPin,
-    pinConfirmation,
-    signNftProcessing,
-    fee: (state: ReduxState) => {
+    feePrice: (state: ReduxState) => {
       const { fees } = state.fio;
 
-      return fees[apis.fio.actionEndPoints.signNft];
-    },
-    result: (state: ReduxState) => {
-      const { transactionResult } = state.fio;
-      const result = transactionResult[FIO_SIGN_NFT_REQUEST];
-      if (result && result.fee_collected) {
-        const { roe } = state.registrations;
-        const feeCollected = result.fee_collected;
-        return {
-          feeCollected: {
-            nativeAmount: feeCollected,
-            costFio: apis.fio.sufToAmount(feeCollected),
-            costUsdc: apis.fio.convert(feeCollected, roe),
-          },
-        };
-      }
-
-      return result;
+      return fees[apis.fio.actionEndPoints.signNft] || DEFAULT_FEE_PRICES;
     },
   }),
   {
-    showPinModal,
-    resetPinConfirm,
     getFee: (fioAddress: string) =>
       getFee(apis.fio.actionEndPoints.signNft, fioAddress),
-    singNFT,
     refreshFioNames,
     getNFTSignatures,
   },

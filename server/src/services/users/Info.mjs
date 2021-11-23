@@ -1,8 +1,6 @@
 import Base from '../Base';
 import X from '../Exception';
-
-import { User, Notification } from '../../models';
-
+import { User, Wallet, Notification, Action } from '../../models';
 export default class UsersInfo extends Base {
   async execute() {
     const user = await User.findActive(this.context.id);
@@ -18,11 +16,18 @@ export default class UsersInfo extends Base {
 
     const userObj = user.json();
     userObj.secretSetNotification = false;
-    userObj.fioWallets = userObj.fioWallets.map(({ edgeId, name, publicKey }) => ({
-      id: edgeId,
-      name,
-      publicKey,
-    }));
+    userObj.fioWallets = userObj.fioWallets.map(item => Wallet.format(item));
+
+    if (userObj.status === User.STATUS.NEW_EMAIL_NOT_VERIFIED) {
+      const action = await Action.findOneWhere({
+        data: { userId: this.context.id },
+        type: Action.TYPE.UPDATE_EMAIL,
+      });
+
+      if (action != null) {
+        userObj.newEmail = action.data.newEmail;
+      }
+    }
 
     if (!userObj.secretSet) {
       const secretSetNotification = await Notification.getItem({

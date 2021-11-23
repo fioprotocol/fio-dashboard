@@ -1,0 +1,16 @@
+import Base from './base';
+import { FioWalletDoublet, NewFioWalletDoublet } from '../types';
+
+export default class Account extends Base {
+  getWallets() {
+    return this.apiClient.get('account/wallets');
+  }
+
+  setWallets(fioWallets: FioWalletDoublet[]) {
+    return this.apiClient.post('account/wallets', { data: fioWallets });
+  }
+
+  addWallet(data: NewFioWalletDoublet) {
+    return this.apiClient.post('account/wallet', { data });
+  }
+}

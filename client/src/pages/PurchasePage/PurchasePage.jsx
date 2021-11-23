@@ -6,7 +6,8 @@ import CheckoutPurchaseContainer from '../../components/CheckoutPurchaseContaine
 import { RenderPurchase } from '../../components/CheckoutPurchaseContainer/CheckoutPurchaseComponents';
 import { REF_ACTIONS, REF_ACTIONS_TO_ROUTES } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
-import { putParamsToUrl, transformResult } from '../../utils';
+import { putParamsToUrl } from '../../utils';
+import { transformResult } from '../../util/fio';
 
 const CONTINUE_TEXT = {
   [REF_ACTIONS.SIGNNFT]: 'Sign Your NFT',

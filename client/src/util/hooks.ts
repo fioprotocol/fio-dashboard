@@ -6,7 +6,8 @@ import { getFioAddresses } from '../redux/fio/actions';
 import { fioWallets } from '../redux/fio/selectors';
 import {
   isAuthenticated,
-  isNotActiveUser as isNotActiveUserSelector,
+  isNewUser as isNewUserSelector,
+  isNewEmailNotVerified as isNewEmailNotVerifiedSelector,
 } from '../redux/profile/selectors';
 
 import { FioWalletDoublet } from '../types';
@@ -26,12 +27,16 @@ export function useFioAddresses(limit = 0, offset = 0) {
 }
 
 export function useNonActiveUserRedirect() {
-  const isNotActiveUser = useSelector(isNotActiveUserSelector);
+  const isNewUser = useSelector(isNewUserSelector);
+  const isNewEmailNotVerified = useSelector(isNewEmailNotVerifiedSelector);
   const isAuth = useSelector(isAuthenticated);
   const history = useHistory();
   useEffect(() => {
-    if (isAuth && isNotActiveUser) {
-      history.push(ROUTES.USER_IS_NOT_ACTIVE);
+    if (isAuth && isNewEmailNotVerified) {
+      history.push(ROUTES.NEW_EMAIL_NOT_VERIFIED);
     }
-  }, [isAuth, isNotActiveUser]);
+    if (isAuth && isNewUser) {
+      history.push(ROUTES.IS_NEW_USER);
+    }
+  }, [isAuth, isNewUser, isNewEmailNotVerified]);
 }

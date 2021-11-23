@@ -6,24 +6,24 @@ import classnames from 'classnames';
 
 import Wizard from './CreateAccountFormWizard';
 import FormModalWrapper from '../FormModalWrapper/FormModalWrapper';
-import { isEmpty } from '../../helpers/verifying';
-import { ROUTES } from '../../constants/routes';
-import { PIN_LENGTH } from '../../constants/form';
-
-import classes from './CreateAccountForm.module.scss';
-import {
-  emailAvailable,
-  usernameAvailable,
-  createAccount,
-  checkUsernameAndPassword,
-} from './middleware';
-import { emailToUsername, getWalletKeys, setDataMutator } from '../../utils';
 import Pin from './Pin';
 import EmailPassword, {
   validate as validateEmailPassword,
 } from './EmailPassword';
 import Confirmation from './Confirmation';
 import Success from './Success';
+
+import { ROUTES } from '../../constants/routes';
+import { PIN_LENGTH } from '../../constants/form';
+
+import { isEmpty } from '../../helpers/verifying';
+import {
+  usernameAvailable,
+  createAccount,
+  checkUsernameAndPassword,
+} from './middleware';
+import { emailToUsername, getWalletKeys, setDataMutator } from '../../utils';
+import { emailAvailable } from '../../api/middleware/auth';
 
 import {
   EmailConfirmationStateData,
@@ -32,6 +32,9 @@ import {
   RefQueryParams,
   WalletKeysObj,
 } from '../../types';
+import { WALLET_CREATED_FROM } from '../../constants/common';
+
+import classes from './CreateAccountForm.module.scss';
 
 const STEPS = {
   EMAIL_PASSWORD: 'EMAIL_PASSWORD',
@@ -307,9 +310,11 @@ export default class CreateAccountForm extends React.Component<Props, State> {
         if (!Object.values(errors).length && account) {
           const fioWallets: FioWalletDoublet[] = [
             {
-              id: fioWallet.id,
+              id: '',
+              edgeId: fioWallet.id,
               name: fioWallet.name,
               publicKey: fioWallet.getDisplayPublicSeed(),
+              from: WALLET_CREATED_FROM.EDGE,
             },
           ];
           this.setState({ keys: getWalletKeys([fioWallet]) });

@@ -7,7 +7,8 @@ import { ROUTES } from '../../constants/routes';
 export const PrivateRoute = ({
   component: Component,
   noProfileLoaded,
-  isNotActiveUser,
+  isNewUser,
+  isNewEmailNotVerified,
   loading,
   homePageLink,
   ...rest
@@ -38,11 +39,22 @@ export const PrivateRoute = ({
             />
           );
 
-        if (isNotActiveUser) {
+        if (isNewEmailNotVerified) {
           return (
             <Redirect
               to={{
-                pathname: ROUTES.USER_IS_NOT_ACTIVE,
+                pathname: ROUTES.NEW_EMAIL_NOT_VERIFIED,
+                state: { from: props.location },
+              }}
+            />
+          );
+        }
+
+        if (isNewUser) {
+          return (
+            <Redirect
+              to={{
+                pathname: ROUTES.IS_NEW_USER,
                 state: { from: props.location },
               }}
             />

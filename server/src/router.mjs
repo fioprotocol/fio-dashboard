@@ -21,6 +21,8 @@ router.put('/users', checkAuth, routes.users.update);
 router.post('/users/setRecovery', checkAuth, routes.users.setRecovery);
 router.post('/users/resendRecovery', checkAuth, routes.users.resendRecovery);
 router.post('/users/resendConfirmEmail', routes.users.resendEmailConfirm);
+router.post('/users/update-email-request', checkAuth, routes.users.updateEmailRequest);
+router.post('/users/update-email-revert', checkAuth, routes.users.updateEmailRevert);
 
 router.get('/notifications', checkAuth, routes.notifications.list);
 router.post('/notifications', checkAuth, routes.notifications.create);
@@ -33,6 +35,7 @@ router.post('/reg/captcha/init', checkAuth, routes.external.initCaptcha);
 
 router.get('/account/wallets', checkAuth, routes.account.walletsList);
 router.post('/account/wallets', checkAuth, routes.account.setWallets);
+router.post('/account/wallet', checkAuth, routes.account.addWallet);
 
 router.get('/ref-profile/:code', routes.refProfiles.info);
 router.use(

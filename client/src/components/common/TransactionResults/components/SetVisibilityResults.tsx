@@ -1,20 +1,19 @@
 import React from 'react';
 
+import Results from '../index';
 import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
+import DomainStatusBadge from '../../../Badges/DomainStatusBadge/DomainStatusBadge';
 
 import { ResultsProps } from '../types';
 
 import classes from '../Results.module.scss';
-import { SET_VISIBILITY_REQUEST } from '../../../../redux/fio/actions';
-import DomainStatusBadge from '../../../Badges/DomainStatusBadge/DomainStatusBadge';
 
 const SetVisibilityResults = (props: ResultsProps) => {
-  if (props.actionName !== SET_VISIBILITY_REQUEST) return null;
   const {
     results: { name, changedStatus },
   } = props;
   return (
-    <>
+    <Results {...props}>
       <h5 className={classes.label}>Status Change Information</h5>
       <div className={classes.badges}>
         <div className={classes.nameBadge}>
@@ -36,7 +35,7 @@ const SetVisibilityResults = (props: ResultsProps) => {
           </Badge>
         </div>
       </div>
-    </>
+    </Results>
   );
 };
 

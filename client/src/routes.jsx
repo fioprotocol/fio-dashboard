@@ -34,6 +34,11 @@ import FioAddressSignaturesPage from './pages/FioAddressSignaturesPage';
 import FioAddressSignPage from './pages/FioAddressSignPage';
 import FioAddressNftPage from './pages/FioAddressNftPage';
 import NftValidationPage from './pages/NftValidationPage';
+import WalletsPage from './pages/WalletsPage';
+import WalletPage from './pages/WalletPage';
+import SendPage from './pages/SendPage';
+import UpdateEmailConfirmGatePage from './pages/UpdateEmailConfirmGatePage';
+import UpdateEmailPage from './pages/UpdateEmailPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -52,8 +57,18 @@ const Routes = () => (
           exact
         />
         <Route
-          path={ROUTES.USER_IS_NOT_ACTIVE}
+          path={ROUTES.IS_NEW_USER}
           component={EmailConfirmGatePage}
+          exact
+        />
+        <Route
+          path={ROUTES.NEW_EMAIL_NOT_VERIFIED}
+          component={UpdateEmailConfirmGatePage}
+          exact
+        />
+        <Route
+          path={ROUTES.CONFIRM_UPDATED_EMAIL}
+          component={UpdateEmailPage}
           exact
         />
         <Route
@@ -89,6 +104,8 @@ const Routes = () => (
         <PrivateRoute path={ROUTES.CART} component={CartPage} exact />
         <PrivateRoute path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
         <PrivateRoute path={ROUTES.PURCHASE} component={PurchasePage} exact />
+        <PrivateRoute path={ROUTES.TOKENS} component={WalletsPage} exact />
+        <PrivateRoute path={ROUTES.FIO_WALLET} component={WalletPage} exact />
         <PrivateRoute
           path={`${ROUTES.FIO_ADDRESS_OWNERSHIP}/:id`}
           component={FioAddressTransferPage}
@@ -127,6 +144,8 @@ const Routes = () => (
         />
 
         <PrivateRoute path={ROUTES.SETTINGS} component={SettingsPage} exact />
+
+        <PrivateRoute path={ROUTES.SEND} component={SendPage} exact />
 
         <Route
           path={ROUTES.ACCOUNT_RECOVERY}

@@ -1,0 +1,88 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  background: $main-background;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 0;
+
+  .messageContainer {
+    width: 100%;
+    max-width: 375px;
+    background-color: $cyan-blue;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    color: $white;
+
+    .icon {
+      margin-top: 80px;
+      color: $white;
+      font-size: 4em;
+    }
+    .title {
+      margin-top: 20px;
+      margin-bottom: 0;
+      @include proxima-nova-bold;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      margin-bottom: 0;
+      max-width: 80%;
+      font-size: 0.9375em;
+      text-align: center;
+      @include proxima-nova-thin;
+    }
+
+    .email {
+      margin-top: 10px;
+      margin-bottom: 0;
+      max-width: 80%;
+      word-wrap: break-word;
+      text-align: center;
+      @include proxima-nova-bold;
+    }
+
+    .actionContainer {
+      margin-top: 30px;
+      margin-bottom: 40px;
+      display: flex;
+      flex-direction: row;
+
+      .text, .actionButton {
+        font-size: 0.9375em;
+      }
+
+      .text {
+        @include proxima-nova-thin;
+        margin-bottom: 0;
+      }
+
+      .actionButton {
+        border: none;
+        background: none;
+        outline: none;
+        margin-left: 5px;
+        color: $white;
+        @include proxima-nova-bold;
+      }
+    }
+  }
+}
+
+.loader {
+  align-self: center;
+}
+
+@include sm {
+  .container {
+    padding: 60px 20px;
+  }
+}

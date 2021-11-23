@@ -1,12 +1,6 @@
 import { History } from 'history';
 
-import {
-  FioWalletDoublet,
-  PinConfirmation,
-  FioAddressDoublet,
-  WalletKeys,
-  NFTTokenDoublet,
-} from '../../types';
+import { FioWalletDoublet, FioAddressDoublet, FeePrice } from '../../types';
 
 export type NftFormValues = {
   chainCode: string;
@@ -28,27 +22,14 @@ export type ContainerOwnProps = {
 export type ContainerProps = {
   fioAddresses: FioAddressDoublet[];
   fioWallets: FioWalletDoublet[];
-  fee: number;
-  result: {
-    feeCollected?: number;
-    error?: string;
-    other?: { nfts: NFTTokenDoublet[] };
-  };
-  singNFT: (
-    publicKey: string,
-    nfts: NFTTokenDoublet[],
-    keys: WalletKeys,
-  ) => void;
+  feePrice: FeePrice;
 
   match: {
     params: { address: string };
   };
   loading: boolean;
-  signNftProcessing: boolean;
+  addressSelectOff?: boolean;
   getFee: (fioAddress: string) => void;
-  showPinModal: (action: string, data: any) => void;
-  resetPinConfirm: () => void;
-  pinConfirmation: PinConfirmation;
   refreshFioNames: (publicKey: string) => void;
   getNFTSignatures: (searchParams: { fioAddress: string }) => void;
 } & ContainerOwnProps;
@@ -66,4 +47,5 @@ export type SignNftFormProps = {
   hasLowBalance: boolean;
   processing: boolean;
   isEdit?: boolean;
+  addressSelectOff?: boolean;
 };

@@ -1,10 +1,7 @@
-import { PageNameType } from '../../../types';
+import { FeePrice } from '../../../types';
 
 export type ResultsData = {
-  feeCollected?: {
-    costFio: number;
-    costUsdc: number;
-  };
+  feeCollected?: FeePrice;
   name: string;
   publicKey?: string;
   changedStatus?: string;
@@ -13,11 +10,15 @@ export type ResultsData = {
 };
 
 export type ResultsProps = {
-  pageName?: PageNameType;
   title: string;
-  actionName: string;
+  hasAutoWidth?: boolean;
+  pageName?: string;
+  errorType?: string;
   results: ResultsData;
   onClose: () => void;
   onRetry?: () => void;
-  resetTransactionResult: (actionName: string) => void;
+};
+
+export type ResultsContainerProps = ResultsProps & {
+  children: React.ReactNode;
 };

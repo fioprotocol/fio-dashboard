@@ -118,24 +118,6 @@ export const setLastActivity = (value: number) => ({
   data: value,
 });
 
-export const RESEND_RECOVERY_REQUEST = `${prefix}/RESEND_RECOVERY_REQUEST`;
-export const RESEND_RECOVERY_SUCCESS = `${prefix}/RESEND_RECOVERY_SUCCESS`;
-export const RESEND_RECOVERY_FAILURE = `${prefix}/RESEND_RECOVERY_FAILURE`;
-
-export const resendRecovery = (token: string) => ({
-  types: [
-    RESEND_RECOVERY_REQUEST,
-    RESEND_RECOVERY_SUCCESS,
-    RESEND_RECOVERY_FAILURE,
-  ],
-  promise: (api: Api) => api.auth.resendRecovery(token),
-});
-
-export const CLEAR_RESEND_RECOVERY_RESULTS = `${prefix}/CLEAR_RESEND_RECOVERY_RESULTS`;
-export const clearResendRecoveryResults = () => ({
-  type: CLEAR_RESEND_RECOVERY_RESULTS,
-});
-
 export const RESEND_CONFIRM_EMAIL_REQUEST = `${prefix}/RESEND_CONFIRM_EMAIL_REQUEST`;
 export const RESEND_CONFIRM_EMAIL_SUCCESS = `${prefix}/RESEND_CONFIRM_EMAIL_SUCCESS`;
 export const RESEND_CONFIRM_EMAIL_FAILURE = `${prefix}/RESEND_CONFIRM_EMAIL_FAILURE`;
@@ -159,5 +141,41 @@ export const CONFIRM_EMAIL_FAILURE = `${prefix}/CONFIRM_EMAIL_FAILURE`;
 
 export const confirmEmail = (hash: string) => ({
   types: [CONFIRM_EMAIL_REQUEST, CONFIRM_EMAIL_SUCCESS, CONFIRM_EMAIL_FAILURE],
+  promise: (api: Api) => api.auth.confirm(hash),
+});
+
+export const UPDATE_EMAIL_REQ_REQUEST = `${prefix}/UPDATE_EMAIL_REQ_REQUEST`;
+export const UPDATE_EMAIL_REQ_SUCCESS = `${prefix}/UPDATE_EMAIL_REQ_SUCCESS`;
+export const UPDATE_EMAIL_REQ_FAILURE = `${prefix}/UPDATE_EMAIL_REQ_FAILURE`;
+
+export const updateEmailRequest = (oldEmail: string, newEmail: string) => ({
+  types: [
+    UPDATE_EMAIL_REQ_REQUEST,
+    UPDATE_EMAIL_REQ_SUCCESS,
+    UPDATE_EMAIL_REQ_FAILURE,
+  ],
+  promise: (api: Api) => api.auth.updateEmailRequest(oldEmail, newEmail),
+  newEmail,
+});
+
+export const UPDATE_EMAIL_REVERT_REQUEST = `${prefix}/UPDATE_EMAIL_REVERT_REQUEST`;
+export const UPDATE_EMAIL_REVERT_SUCCESS = `${prefix}/UPDATE_EMAIL_REVERT_SUCCESS`;
+export const UPDATE_EMAIL_REVERT_FAILURE = `${prefix}/UPDATE_EMAIL_REVERT_FAILURE`;
+
+export const updateEmailRevert = () => ({
+  types: [
+    UPDATE_EMAIL_REVERT_REQUEST,
+    UPDATE_EMAIL_REVERT_SUCCESS,
+    UPDATE_EMAIL_REVERT_FAILURE,
+  ],
+  promise: (api: Api) => api.auth.updateEmailRevert(),
+});
+
+export const UPDATE_EMAIL_REQUEST = `${prefix}/UPDATE_EMAIL_REQUEST`;
+export const UPDATE_EMAIL_SUCCESS = `${prefix}/UPDATE_EMAIL_SUCCESS`;
+export const UPDATE_EMAIL_FAILURE = `${prefix}/UPDATE_EMAIL_FAILURE`;
+
+export const updateEmail = (hash: string) => ({
+  types: [UPDATE_EMAIL_REQUEST, UPDATE_EMAIL_SUCCESS, UPDATE_EMAIL_FAILURE],
   promise: (api: Api) => api.auth.confirm(hash),
 });

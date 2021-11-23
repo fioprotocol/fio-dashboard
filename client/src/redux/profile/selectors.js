@@ -44,6 +44,24 @@ export const isNotActiveUser = createSelector(
     profileRefreshed && isAuthenticated && user.status !== USER_STATUSES.ACTIVE,
 );
 
+export const isNewEmailNotVerified = createSelector(
+  isAuthenticated,
+  user,
+  profileRefreshed,
+  (isAuthenticated, user, profileRefreshed) =>
+    profileRefreshed &&
+    isAuthenticated &&
+    user.status === USER_STATUSES.NEW_EMAIL_NOT_VERIFIED,
+);
+
+export const isNewUser = createSelector(
+  isAuthenticated,
+  user,
+  profileRefreshed,
+  (isAuthenticated, user, profileRefreshed) =>
+    profileRefreshed && isAuthenticated && user.status === USER_STATUSES.NEW,
+);
+
 export const hasFreeAddress = createSelector(
   user,
   user => user && !!user.freeAddresses.length,
@@ -52,6 +70,4 @@ export const edgeUsername = createSelector(user, user => user && user.username);
 export const changeRecoveryQuestionsResults = state =>
   state[prefix].changeRecoveryQuestionsResults;
 
-export const resendRecoveryResults = state =>
-  state[prefix].resendRecoveryResults;
-export const resending = state => state[prefix].resending;
+export const updateEmailLoading = state => state[prefix].updateEmailLoading;

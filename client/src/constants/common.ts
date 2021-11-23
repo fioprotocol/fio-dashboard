@@ -4,10 +4,11 @@ import { NFTTokenItemProps } from '../types';
 export const USER_STATUSES = {
   NEW: 'NEW',
   ACTIVE: 'ACTIVE',
+  NEW_EMAIL_NOT_VERIFIED: 'NEW_EMAIL_NOT_VERIFIED',
 };
 
 export const DEFAULT_WALLET_OPTIONS = {
-  name: 'My FIO',
+  name: 'My FIO Wallet',
   fiatCurrencyCode: 'iso:USD',
 };
 export const FIO_WALLET_TYPE = 'wallet:fio';
@@ -19,7 +20,10 @@ export const CONFIRM_PIN_ACTIONS = {
   RENEW: 'RENEW',
   SIGN_NFT: 'SIGN_NFT',
   RESEND_EMAIL: 'RESEND_EMAIL',
-  PASSWORD_RECOVERY: 'PASSWORD_RECOVERY',
+  DISABLE_PASSWORD_RECOVERY: 'DISABLE_PASSWORD_RECOVERY',
+  CREATE_WALLET: 'CREATE_WALLET',
+  SEND: 'SEND',
+  UPDATE_EMAIL: 'UPDATE_EMAIL',
 };
 
 export const ADDRESS = 'address';
@@ -51,9 +55,6 @@ export const REF_FLOW_STEPS = {
   FINISH: 'FINISH',
 };
 
-export const DEFAULT_FIO_TRX_ERR_MESSAGE =
-  'Your purchase has failed due to an error. Your funds remain in your account and your registrations did not complete. Please try again later.';
-
 export const NFT_TOKEN_ITEM_PROPS_ORDER: NFTTokenItemProps[] = [
   'fioAddress',
   'chainCode',
@@ -63,3 +64,8 @@ export const NFT_TOKEN_ITEM_PROPS_ORDER: NFTTokenItemProps[] = [
   'url',
   'metadata',
 ];
+
+export const WALLET_CREATED_FROM = {
+  EDGE: 'EDGE',
+  LEDGER: 'LEDGER',
+};

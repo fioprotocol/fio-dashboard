@@ -6,32 +6,27 @@ import { BADGE_TYPES } from '../../Badge/Badge';
 import PriceBadge from '../../Badges/PriceBadge/PriceBadge';
 import InfoBadge from '../../InfoBadge/InfoBadge';
 
-import { ResultsProps } from './types';
+import { DEFAULT_FIO_TRX_ERR_MESSAGE } from '../../../constants/errors';
+
+import { ResultsContainerProps } from './types';
 
 import classes from './Results.module.scss';
-import TransferResults from './components/TransferResults';
-import RenewResults from './components/RenewResults';
-import SetVisibilityResults from './components/SetVisibilityResults';
-import SignResults from './components/SignResults';
 
-import {
-  TRANSFER_REQUEST,
-  RENEW_REQUEST,
-  FIO_SIGN_NFT_REQUEST,
-} from '../../../redux/fio/actions';
-
-import { DEFAULT_FIO_TRX_ERR_MESSAGE } from '../../../constants/common';
+export const ERROR_TYPES = {
+  TRANSFER_ERROR: 'TRANSFER_ERROR',
+  RENEW_ERROR: 'RENEW_ERROR',
+};
 
 const ErrorMessages: {
   [action: string]: { title?: string; message?: string };
 } = {
-  [TRANSFER_REQUEST]: {
+  [ERROR_TYPES.TRANSFER_ERROR]: {
     title: 'Transfer error',
     message: `${DEFAULT_FIO_TRX_ERR_MESSAGE}`
       .replace('purchase', 'transfer')
       .replace('registrations', 'transfer'),
   },
-  [RENEW_REQUEST]: {
+  [ERROR_TYPES.RENEW_ERROR]: {
     title: 'Renew error',
     message: `${DEFAULT_FIO_TRX_ERR_MESSAGE}`
       .replace('purchase', 'renew')
@@ -39,25 +34,20 @@ const ErrorMessages: {
   },
 };
 
-const Results: React.FC<ResultsProps> = props => {
+const Results: React.FC<ResultsContainerProps> = props => {
   const {
     results: {
       feeCollected: { costFio, costUsdc } = { costFio: 0, costUsdc: 0 },
       error,
     },
     title,
-    actionName,
-    resetTransactionResult,
+    hasAutoWidth,
+    errorType,
     onClose,
     onRetry,
+    children,
   } = props;
-
-  useEffect(
-    () => () => {
-      resetTransactionResult(actionName);
-    },
-    [],
-  );
+  console.log(props);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -81,7 +71,9 @@ const Results: React.FC<ResultsProps> = props => {
   const errorBadge = () => {
     if (!error) return null;
     const { title = 'Error', message = DEFAULT_FIO_TRX_ERR_MESSAGE } =
-      ErrorMessages[actionName] != null ? ErrorMessages[actionName] : {};
+      errorType && ErrorMessages[errorType] != null
+        ? ErrorMessages[errorType]
+        : {};
     return (
       <InfoBadge
         show={true}
@@ -96,16 +88,11 @@ const Results: React.FC<ResultsProps> = props => {
     <PseudoModalContainer
       title={title}
       onClose={onClose}
-      hasAutoWidth={
-        actionName !== RENEW_REQUEST && actionName !== FIO_SIGN_NFT_REQUEST
-      }
+      hasAutoWidth={hasAutoWidth}
     >
       <div className={classes.container}>
         {errorBadge()}
-        <TransferResults {...props} />
-        <RenewResults {...props} />
-        <SetVisibilityResults {...props} />
-        <SignResults {...props} />
+        {children}
         {!error && (
           <>
             {totalCost()}

@@ -3,69 +3,37 @@ import { createStructuredSelector } from 'reselect';
 
 import apis from '../../api';
 import { hasFioAddressDelimiter } from '../../utils';
-import { setFees } from '../../util/prices';
 
-import {
-  refreshBalance,
-  transfer,
-  getFee,
-  TRANSFER_REQUEST,
-} from '../../redux/fio/actions';
-import { resetPinConfirm } from '../../redux/edge/actions';
-import { showPinModal } from '../../redux/modal/actions';
+import { refreshBalance, getFee } from '../../redux/fio/actions';
 
-import { pinConfirmation, confirmingPin } from '../../redux/edge/selectors';
-import {
-  loading,
-  transferProcessing,
-  currentWallet,
-  walletPublicKey,
-} from '../../redux/fio/selectors';
+import { loading, currentWallet } from '../../redux/fio/selectors';
+import { roe } from '../../redux/registrations/selectors';
 
 import { FioNameTransferContainer } from './FioNameTransferContainer';
+
+import { DEFAULT_FEE_PRICES } from '../../util/prices';
+
 import { ContainerOwnProps } from './types';
 import { ReduxState } from '../../redux/init';
 
 const reduxConnect = connect(
   createStructuredSelector({
     loading,
-    transferProcessing,
-    confirmingPin,
-    pinConfirmation,
-    result: (state: ReduxState) => {
-      const { transactionResult } = state.fio;
-      const result = transactionResult[TRANSFER_REQUEST];
-      if (result && result.fee_collected) {
-        const { roe } = state.registrations;
-        const feeCollected = result.fee_collected;
-        return {
-          feeCollected: {
-            nativeAmount: feeCollected,
-            costFio: apis.fio.sufToAmount(feeCollected),
-            costUsdc: apis.fio.convert(feeCollected, roe),
-          },
-          newOwnerKey: result.newOwnerKey,
-        };
-      }
-
-      return result;
-    },
+    roe,
     feePrice: (state: ReduxState, ownProps: ContainerOwnProps & any) => {
       const { fees } = state.fio;
-      const { prices, roe } = state.registrations;
-      const feeEndPoint = hasFioAddressDelimiter(ownProps.name)
-        ? apis.fio.actionEndPoints.transferFioAddress
-        : apis.fio.actionEndPoints.transferFioDomain;
-      return setFees(fees[feeEndPoint], prices, roe);
+      return (
+        fees[
+          hasFioAddressDelimiter(ownProps.name)
+            ? apis.fio.actionEndPoints.transferFioAddress
+            : apis.fio.actionEndPoints.transferFioDomain
+        ] || DEFAULT_FEE_PRICES
+      );
     },
-    walletPublicKey,
     currentWallet,
   }),
   {
     refreshBalance,
-    transfer,
-    showPinModal,
-    resetPinConfirm,
     getFee: (isFioAddress: boolean) =>
       getFee(
         isFioAddress

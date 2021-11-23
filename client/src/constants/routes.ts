@@ -9,14 +9,17 @@ const ROUTES: { [route: string]: string } = {
   RESET_PASSWORD: '/reset-password/:hash',
   PASSWORD_RECOVERY: '/password-recovery',
   CREATE_ACCOUNT: '/create-account',
-  USER_IS_NOT_ACTIVE: '/email-confirm-gate',
+  IS_NEW_USER: '/email-confirm-gate',
+  NEW_EMAIL_NOT_VERIFIED: '/update-email-confirm-gate',
+  CONFIRM_UPDATED_EMAIL: '/confirm-updated-email/:hash',
 
   FIO_ADDRESSES_SELECTION: '/fio-addresses-selection',
   FIO_DOMAINS_SELECTION: '/fio-domains-selection',
   FIO_ADDRESSES: '/fio-addresses',
   FIO_DOMAINS: '/fio-domains',
   FIO_REQUESTS: '/fio-requests',
-  FIO_WALLET: '/fio-wallet',
+  FIO_WALLET: '/fio-wallet/:publicKey',
+  TOKENS: '/tokens',
 
   GOVERNANCE: '/governance',
   PROTOCOL_UPDATES: '/protocol-updates',
@@ -37,6 +40,8 @@ const ROUTES: { [route: string]: string } = {
   FIO_ADDRESS_SIGNATURES: '/fio-address-signatures/:address',
   FIO_ADDRESS_SIGN: '/fio-address-sign/:address',
   FIO_ADDRESS_NFT_EDIT: '/fio-address-signatures/:address/edit/:id',
+
+  SEND: '/send/:publicKey',
 
   LINK_TOKEN_LIST: '/link-token-list',
   ADD_TOKEN: '/add-token',

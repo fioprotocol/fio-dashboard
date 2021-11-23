@@ -1,9 +1,6 @@
 import { EdgeAccount } from 'edge-core-js';
 
-import { DEFAULT_WALLET_OPTIONS } from '../../constants/common';
 import { Api } from '../../api';
-
-import { minWaitTimeFunction } from '../../utils';
 
 import { WalletKeys } from '../../types';
 
@@ -54,9 +51,7 @@ export const login = ({
       for (const walletId of account.activeWalletIds) {
         const wallet = await account.waitForCurrencyWallet(walletId);
 
-        // todo: investigate why wallet name changes
-        if (wallet.name === 'io.fioprotocol.app')
-          await wallet.renameWallet(DEFAULT_WALLET_OPTIONS.name);
+        // todo: investigate why wallet name changes to 'io.fioprotocol.app'
 
         if (wallet.currencyInfo.currencyCode === 'FIO') {
           fioWallets.push(wallet);
@@ -360,41 +355,4 @@ export const CLEAR_RECOVERY_RESULTS = `${prefix}/CLEAR_RECOVERY_RESULTS`;
 
 export const clearRecoveryResults = () => ({
   type: CLEAR_RECOVERY_RESULTS,
-});
-
-export const DISABLE_RECOVERY_PASSWORD_REQUEST = `${prefix}/DISABLE_RECOVERY_PASSWORD_REQUEST`;
-export const DISABLE_RECOVERY_PASSWORD_SUCCESS = `${prefix}/DISABLE_RECOVERY_PASSWORD_SUCCESS`;
-export const DISABLE_RECOVERY_PASSWORD_FAILURE = `${prefix}/DISABLE_RECOVERY_PASSWORD_FAILURE`;
-
-export const disableRecoveryPassword = (account: string) => ({
-  types: [
-    DISABLE_RECOVERY_PASSWORD_REQUEST,
-    DISABLE_RECOVERY_PASSWORD_SUCCESS,
-    DISABLE_RECOVERY_PASSWORD_FAILURE,
-  ],
-  promise: (api: Api) =>
-    minWaitTimeFunction(() => api.edge.disableRecovery(account), 2000),
-});
-
-export const CLEAR_DISABLE_RECOVERY_PASSWORD_RESULTS = `${prefix}/CLEAR_DISABLE_RECOVERY_PASSWORD_RESULTS`;
-export const clearDisableRecoveryResults = () => ({
-  type: CLEAR_DISABLE_RECOVERY_PASSWORD_RESULTS,
-});
-
-export const GET_RECOVERY_TOKEN_REQUEST = `${prefix}/GET_RECOVERY_TOKEN_REQUEST`;
-export const GET_RECOVERY_TOKEN_SUCCESS = `${prefix}/GET_RECOVERY_TOKEN_SUCCESS`;
-export const GET_RECOVERY_TOKEN_FAILURE = `${prefix}/GET_RECOVERY_TOKEN_FAILURE`;
-
-export const getRecoveryToken = (username: string) => ({
-  types: [
-    GET_RECOVERY_TOKEN_REQUEST,
-    GET_RECOVERY_TOKEN_SUCCESS,
-    GET_RECOVERY_TOKEN_FAILURE,
-  ],
-  promise: (api: Api) => api.edge.getToken(username),
-});
-
-export const CLEAR_RECOVERY_TOKEN = `${prefix}/CLEAR_RECOVERY_TOKEN`;
-export const clearRecoveryToken = () => ({
-  type: CLEAR_RECOVERY_TOKEN,
 });

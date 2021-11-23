@@ -14,6 +14,8 @@ export type CartItem = {
   showBadge?: boolean;
   error?: string;
   isFree?: boolean;
+  errorType?: string;
+  isCustomDomain?: boolean;
 };
 
 export type Notification = {
@@ -44,19 +46,24 @@ export type Prices = {
   usdt: { address: number; domain: number };
 };
 
+export type RegistrationErrors = {
+  fioName: string;
+  error: string;
+  isFree?: boolean;
+  cartItemId: string;
+  errorType: string;
+};
+
+export type RegistrationRegistered = {
+  fioName: string;
+  isFree?: boolean;
+  fee_collected: number;
+  cartItemId: string;
+};
+
 export type RegistrationResult = {
-  errors: {
-    fioName: string;
-    error: string;
-    isFree?: boolean;
-    cartItemId: string;
-  }[];
-  registered: {
-    fioName: string;
-    isFree?: boolean;
-    fee_collected: number;
-    cartItemId: string;
-  }[];
+  errors: RegistrationErrors[];
+  registered: RegistrationRegistered[];
   partial: string[];
 };
 
@@ -69,9 +76,21 @@ export type DeleteCartItem =
 
 export type FioWalletDoublet = {
   id: string;
+  edgeId: string;
   name: string;
   publicKey: string;
   balance?: number | null;
+  available?: number | null;
+  locked?: number | null;
+  from: string;
+};
+
+export type NewFioWalletDoublet = {
+  edgeId?: string;
+  name: string;
+  publicKey: string;
+  from: string;
+  data?: any;
 };
 
 export type FioAddressDoublet = {
@@ -120,7 +139,7 @@ export type LastAuthData = {
   username: string;
 } | null;
 
-export type PageNameType = 'address' | 'domain';
+export type FioNameType = 'address' | 'domain';
 
 export type FioNameItemProps = {
   name?: string;
@@ -158,6 +177,35 @@ export type FeePrice = {
   costUsdc: number | null;
 };
 
+export type FioBalanceRes = {
+  balance?: number;
+  available?: number;
+  locked?: number;
+}
+
+export type WalletBalances = {
+  total: {
+    nativeFio: number | null;
+    fio: string,
+    usdc: string,
+  },
+  available: {
+    nativeFio: number | null;
+    fio: string,
+    usdc: string,
+  },
+  locked: {
+    nativeFio: number | null;
+    fio: string,
+    usdc: string,
+  },
+}
+
+export type WalletsBalances = {
+  total: WalletBalances,
+  wallets: { [publicKey: string]: WalletBalances },
+};
+
 export type DomainStatusType = 'private' | 'public';
 
 export type User = {
@@ -170,6 +218,7 @@ export type User = {
   secretSetNotification: boolean;
   status: string;
   secretSet?: boolean;
+  newEmail?: boolean;
 };
 
 export type RefProfile = {
@@ -225,3 +274,14 @@ export type EmailConfirmationStateData = {
 export type CommonObjectProps = { [key: string]: string };
 
 export type NFTTokenItemProps = keyof NFTTokenDoublet;
+
+export type TransactionItem = {
+  txId: string;
+  currencyCode: string;
+  amount: string;
+  nativeAmount: string;
+  networkFee: string;
+  date: number;
+  blockHeight: number;
+  otherParams: any;
+};

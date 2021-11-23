@@ -20,7 +20,7 @@ export const FioAddressTransferPage: React.FC<Props &
 
   return (
     <FioNameTransferContainer
-      pageName={ADDRESS}
+      fioNameType={ADDRESS}
       fioNameList={fioNameList}
       name={name}
       history={history}

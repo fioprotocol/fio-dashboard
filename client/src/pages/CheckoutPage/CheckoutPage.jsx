@@ -15,7 +15,7 @@ const CheckoutPage = props => {
     refreshBalance,
     cartItems,
     history,
-    paymentWalletId,
+    paymentWalletPublicKey,
     isAuthenticated,
     setWallet,
     domains,
@@ -35,15 +35,15 @@ const CheckoutPage = props => {
         }
       }
       if (!currentWallet && fioWallets.length === 1) {
-        setWallet(fioWallets[0].id);
+        setWallet(fioWallets[0].publicKey);
       }
     }
   }, []);
 
   const currentWallet =
-    paymentWalletId &&
+    paymentWalletPublicKey &&
     !isEmpty(fioWallets) &&
-    fioWallets.find(item => item.id === paymentWalletId);
+    fioWallets.find(item => item.publicKey === paymentWalletPublicKey);
 
   const isFree =
     !isEmpty(cartItems) &&

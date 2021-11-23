@@ -20,7 +20,7 @@ const FioDomainRenewPage: React.FC<Props &
 
   return (
     <FioNameRenewContainer
-      pageName={DOMAIN}
+      fioNameType={DOMAIN}
       fioNameList={fioNameList}
       name={name}
       history={history}

@@ -17,7 +17,7 @@ const CartPage = props => {
     domains,
     userWallets,
     setWallet,
-    paymentWalletId,
+    paymentWalletPublicKey,
     lastLocation,
     refreshBalance,
     isAuthenticated,
@@ -116,15 +116,15 @@ const CartPage = props => {
         }
       }
       if (walletCount === 1) {
-        setWallet(userWallets[0].id);
+        setWallet(userWallets[0].publicKey);
       }
     }
   }, []);
 
   const currentWallet =
-    paymentWalletId &&
+    paymentWalletPublicKey &&
     !isEmpty(userWallets) &&
-    userWallets.find(item => item.id === paymentWalletId);
+    userWallets.find(item => item.publicKey === paymentWalletPublicKey);
 
   const hasLowBalance =
     !isEmpty(currentWallet) &&

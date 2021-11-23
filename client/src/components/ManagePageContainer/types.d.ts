@@ -1,5 +1,5 @@
 import { RouteComponentProps } from 'react-router-dom';
-import { FioNameItemProps, FioWalletDoublet, PageNameType } from '../../types';
+import { FioNameItemProps, FioWalletDoublet, FioNameType } from '../../types';
 
 export type HasMore = { [key: string]: number };
 export type FetchDataFn = (
@@ -15,7 +15,7 @@ export interface ContainerProps extends RouteComponentProps {
   hasMore: HasMore;
   noProfileLoaded?: boolean;
   loading: boolean;
-  pageName: PageNameType;
+  pageName: FioNameType;
   fetchDataFn: FetchDataFn;
   showExpired?: boolean;
   showBundles?: boolean;
@@ -33,7 +33,7 @@ type ModalOpenActionType = (
 export type DefaultProps = {
   fioNameList: FioNameItemProps[];
   isDesktop: boolean;
-  pageName: PageNameType;
+  pageName: FioNameType;
   showInfoBadge: boolean;
   toggleShowInfoBadge: BoolStateFunc;
   toggleShowWarnBadge: BoolStateFunc;
@@ -44,7 +44,7 @@ export type DefaultProps = {
 };
 
 export type NotificationsProps = {
-  pageName: PageNameType;
+  pageName: FioNameType;
   showInfoBadge: boolean;
   showWarnBadge: boolean;
   toggleShowInfoBadge: BoolStateFunc;
@@ -63,13 +63,13 @@ export type ItemComponentProps = {
 
 export type SettingsProps = {
   fioNameItem: FioNameItemProps;
-  pageName: PageNameType;
+  pageName: FioNameType;
   fioWallets: FioWalletDoublet[];
   showStatus?: boolean;
 };
 
 export type ActionButtonProps = {
-  pageName: PageNameType;
+  pageName: FioNameType;
   isDesktop: boolean;
   onSettingsOpen: ModalOpenActionType;
   fioNameItem: FioNameItemProps;
