@@ -1,4 +1,4 @@
-import { testWalletName } from '../../../../constants/regExps';
+import { testWalletName } from '../../../../util/general';
 import { CreateWalletValues } from '../../types';
 
 export const validate = (values: CreateWalletValues) => {

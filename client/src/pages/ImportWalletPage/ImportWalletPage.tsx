@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import ImportWalletForm from './components/ImportWalletForm';
+import CancelConfirmModal from './components/CancelConfirmModal';
 
 import {
   CONFIRM_PIN_ACTIONS,
@@ -16,24 +17,44 @@ import { SubmitActionParams } from '../../components/EdgeConfirmAction/types';
 import { ContainerProps, ImportWalletValues } from './types';
 import { NewFioWalletDoublet } from '../../types';
 
+import { validate } from './validation';
+
 import classes from './ImportWalletPage.module.scss';
 
 const ImportWalletPage: React.FC<ContainerProps> = props => {
-  const { loading, history, addWallet } = props;
+  const {
+    addWalletLoading,
+    fioWallets,
+    history,
+    addWallet,
+    showGenericErrorModal,
+  } = props;
 
   const [processing, setProcessing] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   const [currentValues, setCurrentValues] = useState<ImportWalletValues | null>(
     null,
   );
+  const [importedPublicKey, setPublicKey] = useState<string | null>(null);
+
+  // redirect after successful import
+  useEffect(() => {
+    if (importedPublicKey && fioWallets.length && !addWalletLoading) {
+      const importedWallet = fioWallets.find(
+        ({ publicKey }) => publicKey === importedPublicKey,
+      );
+      if (importedWallet != null && importedWallet.id)
+        history.push(`${ROUTES.TOKENS}?imported=${importedPublicKey}`);
+    }
+  }, [fioWallets, addWalletLoading, importedPublicKey]);
 
   const importWallet = async ({ edgeAccount, data }: SubmitActionParams) => {
-    //
     const { privateSeed, name } = data;
+
     const newWallet = await edgeAccount.createCurrencyWallet(FIO_WALLET_TYPE, {
       ...DEFAULT_WALLET_OPTIONS,
       name,
       importText: privateSeed,
-      // keyOptions: { format: '' }
     });
 
     return {
@@ -44,20 +65,44 @@ const ImportWalletPage: React.FC<ContainerProps> = props => {
     };
   };
 
-  const onSubmit = (values: ImportWalletValues) => {
-    console.log(values);
-    // todo: make validation
+  const onSubmit = async (values: ImportWalletValues) => {
+    const errors = await validate(values);
+
+    if (errors != null) {
+      showGenericErrorModal(
+        errors.message,
+        'Something Went Wrong',
+        errors.tryAgain ? 'Try Again' : 'Close',
+      );
+
+      return {
+        privateSeed: errors.message,
+      };
+    }
+
+    setPublicKey(null);
     setCurrentValues(values);
+
+    return {};
   };
   const onSuccess = (walletData: NewFioWalletDoublet) => {
     setCurrentValues(null);
+    setProcessing(false);
+    setPublicKey(walletData.publicKey);
     addWallet(walletData);
   };
   const onPinCancel = () => {
     setCurrentValues(null);
+    setProcessing(false);
   };
   const onCancel = () => {
+    if (!addWalletLoading && !processing) setShowCancelConfirm(true);
+  };
+  const onConfirmCancel = () => {
     history.push(ROUTES.TOKENS);
+  };
+  const onCancelConfirmClose = () => {
+    setShowCancelConfirm(false);
   };
 
   return (
@@ -73,9 +118,14 @@ const ImportWalletPage: React.FC<ContainerProps> = props => {
         setProcessing={setProcessing}
         hideProcessing={true}
       />
+      <CancelConfirmModal
+        show={showCancelConfirm}
+        onClose={onCancelConfirmClose}
+        onConfirm={onConfirmCancel}
+      />
       <PseudoModalContainer
         title="Import FIO Wallet"
-        link={ROUTES.TOKENS}
+        onBack={onCancel}
         middleWidth={true}
       >
         <div className={classes.container}>
@@ -88,7 +138,7 @@ const ImportWalletPage: React.FC<ContainerProps> = props => {
             imported.
           </p>
           <ImportWalletForm
-            loading={loading || processing}
+            loading={addWalletLoading || processing}
             onSubmit={onSubmit}
           />
           <button

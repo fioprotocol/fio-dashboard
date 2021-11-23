@@ -42,7 +42,7 @@ const ImportWalletForm: React.FC<ImportWalletFormProps> = props => {
 
           <Button
             type="submit"
-            disabled={!props.valid || props.submitting || loading}
+            disabled={props.hasValidationErrors || props.submitting || loading}
             className={classes.button}
           >
             Import Wallet{' '}

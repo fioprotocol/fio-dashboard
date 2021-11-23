@@ -13,6 +13,7 @@ type Props = {
   isInfo?: boolean;
   link?: string;
   onClose?: () => void;
+  onBack?: () => void;
   title: string;
 };
 
@@ -23,6 +24,7 @@ const PseudoModalContainer: React.FC<Props> = props => {
     fullWidth,
     link,
     onClose,
+    onBack,
     title,
     middleWidth,
     isInfo,
@@ -44,13 +46,13 @@ const PseudoModalContainer: React.FC<Props> = props => {
             <CloseButton handleClick={onClose} />
           </div>
         )}
-        {link && (
+        {(link || onBack) && (
           <div className={classes.withBack}>
-            <BackButton link={link} />
+            <BackButton link={link || ''} onClick={onBack} />
             <h2 className={classes.title}>{title}</h2>
           </div>
         )}
-        {link == null && onClose == null && title && (
+        {link == null && onBack == null && onClose == null && title && (
           <div className={classes.singleTitle}>
             <h2 className={classes.title}>{title}</h2>
           </div>

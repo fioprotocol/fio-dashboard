@@ -1,7 +1,15 @@
 import { RouteComponentProps } from 'react-router-dom';
 import { FioWalletDoublet, WalletsBalances } from '../../types';
 
-export interface ContainerProps extends RouteComponentProps {
+type Location = {
+  location: {
+    query: {
+      imported?: string;
+    };
+  };
+};
+
+interface ComponentProps extends RouteComponentProps {
   children?: React.ReactNode;
   fioWallets: FioWalletDoublet[];
   noProfileLoaded?: boolean;
@@ -10,6 +18,8 @@ export interface ContainerProps extends RouteComponentProps {
   roe: number;
   balance: WalletsBalances;
 }
+
+export type Props = ComponentProps & Location;
 
 export type CreateWalletValues = {
   name: string;

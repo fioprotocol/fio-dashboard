@@ -1,3 +1,5 @@
+import { WALLET_NAME_REGEX } from '../constants/regExps';
+
 export async function copyToClipboard(text: string) {
   // mobile workaround because mobile devices don't have clipboard object in navigator
   function copyToMobileClipboard(str: string) {
@@ -76,4 +78,14 @@ export const shareData = (data: { url?: string; text?: string }) => {
   } catch (e) {
     //
   }
+};
+
+export const testWalletName = (name: string) => {
+  if (!WALLET_NAME_REGEX.test(name)) {
+    throw new Error(
+      'Name is not valid. Name should be from 1 to 32 symbols and contain only letters, digits, spaces, dashes or underscores',
+    );
+  }
+
+  return true;
 };
