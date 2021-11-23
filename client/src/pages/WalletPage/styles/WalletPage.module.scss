@@ -32,6 +32,13 @@
     width: 100%;
     margin: 0;
   }
+
+  .editIcon {
+    margin-left: 10px;
+    margin-bottom: 2px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
 }
 
 @include md {

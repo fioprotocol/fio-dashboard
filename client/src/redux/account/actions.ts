@@ -33,3 +33,19 @@ export const addWallet = ({
       data,
     }),
 });
+
+export const UPDATE_WALLET_NAME = `${prefix}/UPDATE_WALLET_NAME`;
+
+export const updateWalletName = ({
+  name,
+  publicKey,
+}: {
+  name: string;
+  publicKey: string;
+}) => ({
+  type: UPDATE_WALLET_NAME,
+  data: {
+    name,
+    publicKey,
+  },
+});

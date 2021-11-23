@@ -15,3 +15,13 @@ export interface ContainerProps extends ContainerOwnProps {
   refreshBalance: (publicKey: string) => void;
   balance: WalletBalances;
 }
+
+export type EditWalletNameValues = {
+  name: string;
+};
+
+export type EditWalletNameProps = {
+  loading: boolean;
+  initialValues?: EditWalletNameValues;
+  onSubmit: (values: EditWalletNameValues) => void;
+};

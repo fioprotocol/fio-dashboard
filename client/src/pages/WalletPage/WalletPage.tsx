@@ -9,6 +9,7 @@ import FioLoader from '../../components/common/FioLoader/FioLoader';
 import ActionButtonsContainer from '../WalletsPage/components/ActionButtonsContainer';
 import TotalBalanceBadge from '../WalletsPage/components/TotalBalanceBadge';
 import TransactionHistory from './components/TransactionHistory';
+import EditWalletName from './components/EditWalletName';
 
 import apis from '../../api';
 
@@ -23,15 +24,23 @@ const WalletPage: React.FC<ContainerProps> = props => {
   const { fioWallet, balance, refreshBalance } = props;
 
   const [showDetails, setShowDetails] = useState(false);
+  const [showWalletNameEdit, setShowWalletNameEdit] = useState(false);
 
   useEffect(() => {
     if (fioWallet && fioWallet.publicKey) refreshBalance(fioWallet.publicKey);
   }, [fioWallet]);
 
   const closeWalletDetails = () => setShowDetails(false);
+  const closeWalletNameEdit = () => setShowWalletNameEdit(false);
 
   const onDetails = () => {
     setShowDetails(true);
+  };
+  const onWalletEdit = () => {
+    setShowWalletNameEdit(true);
+  };
+  const onWalletUpdated = () => {
+    closeWalletNameEdit();
   };
 
   const actorName = fioWallet ? apis.fio.getActor(fioWallet.publicKey) : '';
@@ -43,6 +52,19 @@ const WalletPage: React.FC<ContainerProps> = props => {
       </div>
     );
 
+  const renderTitle = () => {
+    return (
+      <>
+        {fioWallet.name}
+        <FontAwesomeIcon
+          icon="pen"
+          onClick={onWalletEdit}
+          className={classes.editIcon}
+        />
+      </>
+    );
+  };
+
   return (
     <div className={classes.container}>
       {showDetails ? (
@@ -52,7 +74,15 @@ const WalletPage: React.FC<ContainerProps> = props => {
           onClose={closeWalletDetails}
         />
       ) : null}
-      <LayoutContainer title={fioWallet.name}>
+      {showWalletNameEdit ? (
+        <EditWalletName
+          show={showWalletNameEdit}
+          fioWallet={fioWallet}
+          onSuccess={onWalletUpdated}
+          onClose={closeWalletNameEdit}
+        />
+      ) : null}
+      <LayoutContainer title={renderTitle()} onTitleClick={onWalletEdit}>
         <ActionButtonsContainer>
           <Link
             to={putParamsToUrl(ROUTES.SEND, {

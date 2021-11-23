@@ -85,8 +85,11 @@
 
 @include lg {
   .container {
+    padding: 0 10px;
+
     .publicAddressContainer {
       flex-direction: row;
+
       .publicKey {
         margin-top: 0;
       }
