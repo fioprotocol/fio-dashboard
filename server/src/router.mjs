@@ -36,6 +36,7 @@ router.post('/reg/captcha/init', checkAuth, routes.external.initCaptcha);
 router.get('/account/wallets', checkAuth, routes.account.walletsList);
 router.post('/account/wallets', checkAuth, routes.account.setWallets);
 router.post('/account/wallet', checkAuth, routes.account.addWallet);
+router.post('/account/wallet/update/:publicKey', checkAuth, routes.account.editWallet);
 
 router.get('/ref-profile/:code', routes.refProfiles.info);
 router.use(

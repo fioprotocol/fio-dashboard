@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import { LOGIN_SUCCESS as EDGE_LOGIN_SUCCESS } from '../edge/actions';
-import { ADD_WALLET_SUCCESS } from '../account/actions';
+import { ADD_WALLET_SUCCESS, UPDATE_WALLET_NAME } from '../account/actions';
 import {
   LOGOUT_SUCCESS,
   PROFILE_SUCCESS,
@@ -155,6 +155,13 @@ export default combineReducers({
         }
         return fioWallets;
       }
+      case UPDATE_WALLET_NAME:
+        return state.map(fioWallet => {
+          if (fioWallet.publicKey === action.data.publicKey) {
+            fioWallet.name = action.data.name;
+          }
+          return fioWallet;
+        });
       case LOGOUT_SUCCESS:
         return [];
       default:
