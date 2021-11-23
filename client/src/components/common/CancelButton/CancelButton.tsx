@@ -7,17 +7,18 @@ type Props = {
   onClick: () => void;
   disabled?: boolean;
   isThin?: boolean;
+  text?: string;
 };
 
 const CancelButton: React.FC<Props> = props => {
-  const { onClick, disabled, isThin } = props;
+  const { onClick, disabled, isThin, text } = props;
   return (
     <button
       className={classnames(classes.button, isThin && classes.thin)}
       onClick={onClick}
       disabled={disabled}
     >
-      Cancel
+      {text || 'Cancel'}
     </button>
   );
 };

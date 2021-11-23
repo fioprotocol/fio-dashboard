@@ -12,6 +12,7 @@ import { isDomain } from '../utils';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 
 import { NFTTokenDoublet } from '../types';
+import apis from './index';
 
 export interface TrxResponse {
   transaction_id?: string;
@@ -55,8 +56,16 @@ export default class Fio {
   isPublicAddressValid = (value: string): boolean =>
     FIOSDK.isPublicAddressValid(value);
 
-  createPrivateKeyMnemonic = async (mnemonic: string): Promise<string> =>
-    FIOSDK.createPrivateKeyMnemonic(mnemonic);
+  createPrivateKeyMnemonic = async (mnemonic: string): Promise<string> => {
+    const { fioKey } = await FIOSDK.createPrivateKeyMnemonic(mnemonic);
+
+    return fioKey;
+  };
+  derivedPublicKey = (privateKey: string): string => {
+    const { publicKey } = FIOSDK.derivedPublicKey(privateKey);
+
+    return publicKey;
+  };
 
   convert = (amount: number, roe: number): number =>
     Math.round((amount / (FIOSDK.SUFUnit / 100)) * roe) / 100;
@@ -68,6 +77,22 @@ export default class Fio {
   validateAction = (): void => {
     this.checkWallet();
     this.setBaseUrl();
+  };
+
+  validatePublicKey = async (publicKey: string): Promise<boolean> => {
+    let isValid = false;
+    try {
+      apis.fio.isFioPublicKeyValid(publicKey);
+      await this.publicFioSDK.getFioBalance(publicKey);
+      isValid = true;
+    } catch (e) {
+      if (e.json && e.json.type !== 'invalid_input') {
+        isValid = true;
+      }
+      //
+    }
+
+    return isValid;
   };
 
   setWalletFioSdk = (keys: { public: string; private: string }): void =>

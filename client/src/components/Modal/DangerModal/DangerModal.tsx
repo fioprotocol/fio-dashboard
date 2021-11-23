@@ -13,6 +13,7 @@ type Props = {
   showCancel?: boolean;
   title: string;
   subtitle?: string;
+  cancelButtonText?: string;
   loading?: boolean;
 };
 
@@ -24,6 +25,7 @@ const DangerModal: React.FC<Props> = props => {
     show,
     showCancel,
     subtitle,
+    cancelButtonText,
     title,
     loading,
   } = props;
@@ -44,7 +46,11 @@ const DangerModal: React.FC<Props> = props => {
       </button>
       {showCancel && (
         <div className={classes.cancelButton}>
-          <CancelButton onClick={onClose} disabled={loading} />
+          <CancelButton
+            onClick={onClose}
+            disabled={loading}
+            text={cancelButtonText}
+          />
         </div>
       )}
     </Modal>

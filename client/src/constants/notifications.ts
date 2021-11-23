@@ -4,6 +4,7 @@ export const NOTIFICATIONS_CONTENT_TYPE = {
   ACCOUNT_CREATE: 'ACCOUNT_CREATE',
   CART_TIMEOUT: 'CART_TIMEOUT',
   UPDATE_EMAIL: 'UPDATE_EMAIL',
+  WALLET_IMPORTED: 'WALLET_IMPORTED',
 };
 
 export const NOTIFICATIONS_CONTENT: {
@@ -29,6 +30,10 @@ export const NOTIFICATIONS_CONTENT: {
   [NOTIFICATIONS_CONTENT_TYPE.UPDATE_EMAIL]: {
     title: 'Email was updated',
     message: 'Your new email is confirmed',
+  },
+  [NOTIFICATIONS_CONTENT_TYPE.WALLET_IMPORTED]: {
+    title: 'Wallet imported',
+    message: 'You have successfully imported your FIO wallet.',
   },
 };
 
