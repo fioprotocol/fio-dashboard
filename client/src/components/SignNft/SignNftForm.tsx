@@ -83,7 +83,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
               <Col>
                 <NftChainCodeField
                   hasAutoWidth={true}
-                  isSimple={true}
+                  noShadow={true}
                   isHigh={true}
                   errorColor={COLOR_TYPE.WARN}
                   disabled={isEdit}
