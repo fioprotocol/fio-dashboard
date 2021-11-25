@@ -4,19 +4,19 @@ import ContractAddressField from './components/ContractAddressField';
 import GenericNftValidationField, {
   FIELDS_NAMES,
 } from './components/GenericNftValidationField';
-import { renderContractAddressTitle } from './components/NftListTitle/ContractAddressTitle';
+import { renderContractAddressTitle } from './components/ContractAddressTitle';
 import {
   renderFioAddressTitle,
   renderHashTitle,
   renderImageTitle,
-} from './components/NftListTitle/GenericTitleComponent';
+} from './components/GenericTitleComponent';
 
 import {
   renderContractAddressItem,
   renderFioAddressItem,
   renderHashItem,
   renderImageItem,
-} from './components/NftItemResult/GenericNftItemResult';
+} from './components/GenericNftItemResult';
 
 import ImageField from './components/ImageField';
 
@@ -83,6 +83,7 @@ export const OPTIONS: {
     field: <ContractAddressField />,
     resultsTitle: renderContractAddressTitle,
     resultsItem: renderContractAddressItem,
+    hasWarningBadge: true,
   },
   fioAddress: {
     id: TITLE_NAME.fioAddress.id,
@@ -95,6 +96,7 @@ export const OPTIONS: {
     ),
     resultsTitle: renderFioAddressTitle,
     resultsItem: renderFioAddressItem,
+    showGroupResults: true,
   },
   hash: {
     id: TITLE_NAME.hash.id,
@@ -107,6 +109,7 @@ export const OPTIONS: {
     ),
     resultsTitle: renderHashTitle,
     resultsItem: renderHashItem,
+    showGroupResults: true,
   },
   image: {
     id: TITLE_NAME.image.id,
@@ -114,6 +117,7 @@ export const OPTIONS: {
     field: <ImageField />,
     resultsTitle: renderImageTitle,
     resultsItem: renderImageItem,
+    showGroupResults: true,
   },
 };
 

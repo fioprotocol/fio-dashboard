@@ -30,6 +30,13 @@
   margin-bottom: 0;
 }
 
+.link {
+  display: flex;
+  div {
+    margin-left: 0;
+  }
+}
+
 .spinner {
   width: 100% !important;
   font-size: 1.25em;

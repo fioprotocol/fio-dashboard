@@ -22,6 +22,7 @@ export const CONFIRM_PIN_ACTIONS = {
   RESEND_EMAIL: 'RESEND_EMAIL',
   DISABLE_PASSWORD_RECOVERY: 'DISABLE_PASSWORD_RECOVERY',
   CREATE_WALLET: 'CREATE_WALLET',
+  IMPORT_WALLET: 'IMPORT_WALLET',
   SEND: 'SEND',
   UPDATE_EMAIL: 'UPDATE_EMAIL',
 };
@@ -69,3 +70,19 @@ export const WALLET_CREATED_FROM = {
   EDGE: 'EDGE',
   LEDGER: 'LEDGER',
 };
+
+export const NFT_CHAIN_CODE_LIST = [
+  'ADA',
+  'ALGO',
+  'BSC',
+  'DGB',
+  'EOS',
+  'ETH',
+  'FLOW',
+  'MATIC',
+  'SOL',
+  'XTZ',
+  'THETA',
+  'TRX',
+  'WAXP',
+];

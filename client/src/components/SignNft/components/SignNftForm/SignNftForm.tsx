@@ -12,6 +12,8 @@ import BundledTransactionBadge from '../../../Badges/BundledTransactionBadge/Bun
 import LowBalanceBadge from '../../../Badges/LowBalanceBadge/LowBalanceBadge';
 import FioName from '../../../common/FioName/FioName';
 
+import NftChainCodeField from '../../../NftChainCodeField/NftChainCodeField';
+
 import { validate } from './validation';
 
 import classes from '../../SignNft.module.scss';
@@ -79,17 +81,15 @@ const SignNFTForm = (props: SignNftFormProps) => {
                 </Row>
               </div>
             )}
-            <Row>
+            <div className={classes.chainContainer}>
               <Col>
-                <Field
-                  name="chainCode"
-                  type="text"
-                  placeholder="Enter chain code"
-                  prefixLabel="Chain Code"
-                  uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                <NftChainCodeField
+                  hasAutoWidth={true}
+                  isSimple={true}
+                  isHigh={true}
                   errorColor={COLOR_TYPE.WARN}
-                  component={Input}
                   disabled={isEdit}
+                  prefixLabel="Chain Code"
                 />
               </Col>
               <Col>
@@ -104,7 +104,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
                   disabled={isEdit}
                 />
               </Col>
-            </Row>
+            </div>
             <Row>
               <Col>
                 <Field

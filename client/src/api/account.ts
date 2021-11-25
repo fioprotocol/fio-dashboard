@@ -13,4 +13,8 @@ export default class Account extends Base {
   addWallet(data: NewFioWalletDoublet) {
     return this.apiClient.post('account/wallet', { data });
   }
+
+  updateWallet(publicKey: string, data: { name: string; data?: any }) {
+    return this.apiClient.post(`account/wallet/update/${publicKey}`, { data });
+  }
 }
