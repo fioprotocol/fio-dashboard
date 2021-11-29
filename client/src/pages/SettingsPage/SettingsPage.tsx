@@ -7,6 +7,7 @@ import ChangePassword from './components/ChangePassword';
 import ChangePin from './components/ChangePin';
 import PasswordRecovery from './components/PasswordRecovery';
 import ChangeEmail from './components/ChangeEmail';
+import TwoFactorAuth from './components/TwoFactorAuth';
 
 import classes from './styles/Settings.module.scss';
 
@@ -33,6 +34,7 @@ const SettingsPage = (props: { loading: boolean; user: { email: string } }) => {
           <ChangePassword />
           <ChangePin />
         </div>
+        <TwoFactorAuth />
         <PasswordRecovery />
       </div>
     </LayoutContainer>
