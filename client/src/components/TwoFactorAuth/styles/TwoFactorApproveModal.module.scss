@@ -1,0 +1,122 @@
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/colors.scss';
+
+.approveContainer {
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .icon {
+    margin-top: 24px;
+    font-size: 3em;
+  }
+
+  .title {
+    margin-top: 20px;
+    @include proxima-nova-bold;
+  }
+
+  .subtitle {
+    font-size: 0.875em;
+    margin-bottom: 6px;
+    @include proxima-nova-thin;
+  }
+
+  .message {
+    color: $supernova;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 0;
+    max-width: 90%;
+    @include proxima-nova-semibold;
+  }
+
+  .infoContainer {
+    margin-top: 20px;
+    background-color: $content-background;
+    padding: 20px;
+    width: 100%;
+    border-radius: 14px;
+
+    .infoElement {
+      color: $white;
+      margin-top: 10px;
+      display: flex;
+      flex-direction: row;
+      align-content: center;
+
+      .title {
+        font-size: 0.75em;
+        margin-right: 20px;
+        margin-top: 0;
+        margin-bottom: 0;
+        line-height: 1;
+        @include proxima-nova-thin;
+      }
+
+      .value {
+        font-size: 0.75em;
+        margin-top: 0;
+        margin-bottom: 0;
+        line-height: 1;
+      }
+
+      &:first-of-type {
+        margin-top: 0;
+      }
+    }
+
+    .denied, .deniedValue {
+      font-size: 0.75em;
+      margin-bottom: 0;
+    }
+
+    .denied {
+      margin-top: 15px;
+      @include proxima-nova-thin;
+    }
+
+    .deniedValue {
+      margin-top: 3px;
+    }
+
+    .actionButton {
+      margin-top: 20px;
+      background-color: $green-teal;
+      border-color: $green-teal;
+      color: $white;
+      text-align: center;
+      font-size: 1em;
+      height: 45px;
+      border-radius: 7px;
+      width: 100%;
+      border: none;
+      @include proxima-nova-bold;
+
+      &:hover {
+        background-color: $green-cyan;
+        border-color: $green-cyan;
+      }
+    }
+  }
+  .cancelButton {
+    margin-top: 25px;
+    margin-bottom: 20px;
+    border: $onyx;
+    background-color: $onyx;
+    height: 54px;
+    width: 100%;
+    border-radius: 7px;
+    color: $white;
+    text-align: center;
+    border: none;
+    outline: none;
+    @include proxima-nova-bold;
+
+    &:hover {
+      border: $content-background;
+      background-color: $content-background;
+    }
+  }
+}
