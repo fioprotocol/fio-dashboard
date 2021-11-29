@@ -6,6 +6,8 @@
   background: none;
   outline: none;
   color: $white;
+  margin-bottom: 0;
+  height: fit-content;
   @include proxima-nova-semibold;
 
   &.thin {

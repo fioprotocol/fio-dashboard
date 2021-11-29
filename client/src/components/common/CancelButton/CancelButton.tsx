@@ -14,6 +14,7 @@ type Props = {
 
 const CancelButton: React.FC<Props> = props => {
   const { onClick, disabled, isBlack, withBottomMargin, isThin, text } = props;
+
   return (
     <button
       className={classnames(
