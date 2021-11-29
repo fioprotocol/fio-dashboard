@@ -15,6 +15,7 @@ type Props = {
   children?: React.ReactNode;
   subtitle: string;
   title: string;
+  loading?: boolean;
 };
 
 const SecurityItem: React.FC<Props> = props => {
@@ -29,6 +30,7 @@ const SecurityItem: React.FC<Props> = props => {
     children,
     title,
     subtitle,
+    loading,
   } = props;
 
   return (
@@ -43,6 +45,7 @@ const SecurityItem: React.FC<Props> = props => {
           isGreen={isGreen}
           isBlue={isBlue}
           isSmall={isSmall}
+          loading={loading}
         />
         {bottomChildren}
       </div>
