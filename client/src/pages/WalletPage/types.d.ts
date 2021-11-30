@@ -25,3 +25,8 @@ export type EditWalletNameProps = {
   initialValues?: EditWalletNameValues;
   onSubmit: (values: EditWalletNameValues) => void;
 };
+
+export type PasswordFormValues = {
+  password: string;
+  username: string;
+};
