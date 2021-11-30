@@ -2,6 +2,8 @@ import { EdgeAccount } from 'edge-core-js';
 
 import { Api } from '../../api';
 
+import { getWalletKeys } from '../../util/edge';
+
 import { WalletKeys } from '../../types';
 
 export const prefix = 'edge';
@@ -76,21 +78,7 @@ export const confirmPin = (
   promise: async (api: Api) => {
     const account = await api.edge.loginPIN(username, pin);
 
-    const keys: { [key: string]: WalletKeys } = {};
-    try {
-      for (const walletId of account.activeWalletIds) {
-        const wallet = await account.waitForCurrencyWallet(walletId);
-        if (wallet.currencyInfo.currencyCode === 'FIO') {
-          keys[walletId] = {
-            private: wallet.keys.fioKey,
-            public: wallet.publicWalletInfo.keys.publicKey,
-          };
-          await wallet.stopEngine();
-        }
-      }
-    } catch (e) {
-      console.log(e);
-    }
+    const keys: { [key: string]: WalletKeys } = await getWalletKeys(account);
 
     return { account, keys, action, data };
   },

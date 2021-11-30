@@ -11,4 +11,12 @@
   &.thin {
     @include proxima-nova-thin;
   }
+
+  &.black {
+    color: $gray-main;
+  }
+
+  &.bottomMargin {
+    margin-bottom: 20px;
+  }
 }

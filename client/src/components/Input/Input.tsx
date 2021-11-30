@@ -243,6 +243,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
             className={classnames(
               classes.inputIcon,
               disabled && classes.disabled,
+              uiType && classes[uiType],
             )}
             onClick={() => !disabled && toggleShowPass(!showPass)}
           />
