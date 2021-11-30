@@ -35,6 +35,8 @@ type Props = {
   lowerCased?: boolean;
   disabled?: boolean;
   showErrorBorder?: boolean;
+  isHigh?: boolean;
+  isSimple?: boolean;
   input: {
     'data-clear'?: boolean;
     value: string;
@@ -69,7 +71,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     customChange,
     label,
     options,
-    isBigHeight,
+    isHigh,
     isSimple,
     ...rest
   } = props;
@@ -396,7 +398,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
           onChange={onChange}
           {...input}
           value={value}
-          isBigHeight={isBigHeight}
+          isHigh={isHigh}
           isSimple={isSimple}
         />
       </>
