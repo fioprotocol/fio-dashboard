@@ -23,7 +23,9 @@ const RECORD_OBT_DATA_BUNDLE_COST = 2;
 const SendTokensForm: React.FC<SendTokensProps> = props => {
   const { loading, fioWallet, fioAddresses, fee, obtDataOn } = props;
 
-  const initialValues: { from?: string } = {};
+  const initialValues: { from?: string; fromPubKey: string } = {
+    fromPubKey: fioWallet.publicKey,
+  };
   if (fioAddresses.length) {
     initialValues.from = fioAddresses[0].name;
   }
@@ -58,7 +60,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
                   }))}
                   uiType={INPUT_UI_STYLES.BLACK_WHITE}
                   isSimple={true}
-                  isBigHeight={true}
+                  isHigh={true}
                 />
               ) : (
                 <Field
@@ -131,12 +133,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               />
             ) : null}
 
-            <Field
-              name="fromPubKey"
-              defaultValue={fioWallet.publicKey}
-              type="hidden"
-              component={Input}
-            />
+            <Field name="fromPubKey" type="hidden" component={Input} />
 
             <p className={classes.transactionTitle}>Transaction cost</p>
             <PriceBadge
