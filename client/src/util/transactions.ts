@@ -8,6 +8,10 @@ const HISTORY_NODE_ACTIONS = {
 const HISTORY_NODE_OFFSET = 20;
 const DEFAULT_CURRENCY_CODE = 'FIO';
 const highestTxHeight: { [publicKey: string]: number } = {};
+const HISTORY_TX_NAMES = {
+  TRANSFER_PUB_KEY: 'trnsfiopubky',
+  TRANSFER: 'transfer',
+};
 
 type FioHistoryNodeAction = {
   account_action_seq: number;
@@ -110,12 +114,15 @@ const processTransaction = (
   if (action.block_num <= highestTxHeight[publicKey]) {
     return action.block_num;
   }
-  if (trxName !== 'trnsfiopubky' && trxName !== 'transfer') {
+  if (
+    trxName !== HISTORY_TX_NAMES.TRANSFER_PUB_KEY &&
+    trxName !== HISTORY_TX_NAMES.TRANSFER
+  ) {
     return action.block_num;
   }
 
   // Transfer funds transaction
-  if (trxName === 'trnsfiopubky' && data.amount != null) {
+  if (trxName === HISTORY_TX_NAMES.TRANSFER_PUB_KEY && data.amount != null) {
     nativeAmount = data.amount.toString();
     const amount = `${apis.fio.sufToAmount(parseInt(nativeAmount, 10))}`;
     actorSender = data.actor;
@@ -170,7 +177,7 @@ const processTransaction = (
   }
 
   // Fee transaction
-  if (trxName === 'transfer' && data.quantity != null) {
+  if (trxName === HISTORY_TX_NAMES.TRANSFER && data.quantity != null) {
     const [amount] = data.quantity.split(' ');
     const fioAmount = apis.fio.amountToSUF(parseInt(amount, 10));
     if (data.to === actor) {

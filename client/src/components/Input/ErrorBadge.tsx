@@ -15,7 +15,17 @@ export const COLOR_TYPE = {
   WARN: 'warn',
 };
 
-export const ErrorBadge = props => {
+type Props = {
+  error?: string;
+  hasError: boolean;
+  data?: { [key: string]: any };
+  submitError?: boolean;
+  wrap?: boolean;
+  type?: string;
+  color?: string;
+};
+
+export const ErrorBadge: React.FC<Props> = props => {
   const {
     error,
     hasError,

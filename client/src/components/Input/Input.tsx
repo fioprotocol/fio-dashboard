@@ -2,7 +2,8 @@ import React, { useEffect, useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import classnames from 'classnames';
-import { useForm } from 'react-final-form';
+import { useForm, FieldRenderProps } from 'react-final-form';
+import { FormApi } from 'final-form';
 import { ErrorBadge } from './ErrorBadge';
 
 import classes from './Input.module.scss';
@@ -19,11 +20,36 @@ export const INPUT_UI_STYLES = {
   BLACK_WHITE: 'blackWhite',
 };
 
-const regularInputWrapper = children => (
-  <div className={classes.regInputWrapper}>{children}</div>
-);
+type Props = {
+  colorSchema?: string;
+  onClose?: (flag: boolean) => void;
+  hideError?: boolean;
+  showCopyButton?: boolean;
+  loading?: boolean;
+  uiType?: string;
+  errorType?: string;
+  errorColor?: string;
+  prefix?: string;
+  prefixLabel?: string;
+  upperCased?: boolean;
+  lowerCased?: boolean;
+  disabled?: boolean;
+  showErrorBorder?: boolean;
+  isHigh?: boolean;
+  isSimple?: boolean;
+  input: {
+    'data-clear'?: boolean;
+    value: string;
+  };
+};
 
-const Input = props => {
+type EventProps = {
+  nativeEvent?: {
+    inputType?: string;
+  };
+} & React.ChangeEvent<HTMLInputElement>;
+
+const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
   const {
     input,
     meta,
@@ -31,8 +57,6 @@ const Input = props => {
     onClose,
     hideError,
     showCopyButton,
-    isFree,
-    tooltip,
     loading,
     uiType,
     errorType = '',
@@ -47,7 +71,7 @@ const Input = props => {
     customChange,
     label,
     options,
-    isBigHeight,
+    isHigh,
     isSimple,
     ...rest
   } = props;
@@ -64,7 +88,7 @@ const Input = props => {
   const { type, value, name, onChange } = input;
   const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
   const form = useForm();
-  const innerRef = useRef();
+  const innerRef = useRef(null);
 
   const [showPass, toggleShowPass] = useState(false);
   const [clearInput, toggleClearInput] = useState(value !== '');
@@ -83,7 +107,7 @@ const Input = props => {
     toggleClearInput(value !== '');
   });
 
-  const handlePinChange = (e, currentForm) => {
+  const handlePinChange = (e: KeyboardEvent, currentForm: FormApi) => {
     if ((name === 'pin' || name === 'confirmPin') && currentForm) {
       const { key } = e;
       const { getState, change, submit } = currentForm;
@@ -108,7 +132,7 @@ const Input = props => {
     }
   };
 
-  const onKeyUp = e => handlePinChange(e, form);
+  const onKeyUp = (e: KeyboardEvent) => handlePinChange(e, form);
 
   useEffect(() => {
     document.addEventListener('keyup', onKeyUp);
@@ -157,7 +181,7 @@ const Input = props => {
       </div>
     );
   const regularInput = (
-    <>
+    <div className={classes.regInputWrapper}>
       {renderLabel()}
       <div className={classes.inputGroup}>
         {prefix && (
@@ -219,6 +243,7 @@ const Input = props => {
             className={classnames(
               classes.inputIcon,
               disabled && classes.disabled,
+              uiType && classes[uiType],
             )}
             onClick={() => !disabled && toggleShowPass(!showPass)}
           />
@@ -258,19 +283,19 @@ const Input = props => {
           submitError={submitError}
         />
       )}
-    </>
+    </div>
   );
 
   if (type === 'text') {
-    return regularInputWrapper(regularInput);
+    return regularInput;
   }
 
   if (type === 'number') {
-    return regularInputWrapper(regularInput);
+    return regularInput;
   }
 
   if (type === 'password' && name !== 'pin') {
-    return regularInputWrapper(regularInput);
+    return regularInput;
   }
 
   if (type === 'file') {
@@ -340,7 +365,7 @@ const Input = props => {
             {...input}
             className={classes.pinInput}
             id={name}
-            onChange={e => {
+            onChange={(e: EventProps) => {
               // fixes android backspace keyup event
               if (e.nativeEvent.inputType === 'deleteContentBackward') {
                 const currentValue = e.target.value;
@@ -374,7 +399,7 @@ const Input = props => {
           onChange={onChange}
           {...input}
           value={value}
-          isBigHeight={isBigHeight}
+          isHigh={isHigh}
           isSimple={isSimple}
         />
       </>

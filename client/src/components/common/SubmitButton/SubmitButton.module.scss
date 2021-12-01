@@ -1,0 +1,60 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.button {
+  position: relative;
+  font-size: 1em;
+  border-radius: 7px;
+  padding: 15px 35px;
+  margin-top: 4px;
+  background-color: $violet;
+  border-color: $violet;
+  border-style: none;
+  max-width: 335px;
+  width: 100%;
+  outline: none;
+  box-shadow: none;
+  color: $white;
+  align-self: center;
+
+  &:hover {
+    background-color: $clear-blue;
+    border-color: $clear-blue;
+  }
+
+  &.bottomMargin {
+    margin-bottom: 20px;
+  }
+
+  &.isGreen {
+    background-color: $green-cyan;
+    border-color: $green-cyan;
+
+    &:hover {
+      background-color: $green-teal;
+      border-color: $green-teal;
+    }
+  }
+
+  &.disabled {
+    cursor: not-allowed;
+    background-color: $violet;
+  }
+
+  &.loading {
+    cursor: progress;
+  }
+
+  .loader {
+    margin-left: 1rem;
+    position: absolute;
+    right: 27%;
+    top: 35%;
+  }
+}
+
+@include sm {
+  .button {
+    max-width: 100%;
+  }
+}

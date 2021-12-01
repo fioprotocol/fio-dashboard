@@ -86,7 +86,7 @@ const ChangePinForm: React.FC<Props> = props => {
           <div className={classes.errorContainer}>
             <ErrorBadge
               type={ERROR_UI_TYPE.BADGE}
-              hasError={error}
+              hasError={!!error}
               error={error}
             />
           </div>
