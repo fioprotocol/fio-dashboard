@@ -1,11 +1,14 @@
 import { combineReducers } from 'redux';
+import { EdgeAccount } from 'edge-core-js';
 import { LOGOUT_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
+
+import { PinConfirmation } from '../../types';
 
 const PIN_CONFIRM_DEFAULT = {};
 
 export default combineReducers({
-  loading(state = false, action) {
+  loading(state: boolean = false, action) {
     switch (action.type) {
       case actions.LOGIN_REQUEST:
       case actions.LOGOUT_REQUEST:
@@ -31,7 +34,7 @@ export default combineReducers({
         return state;
     }
   },
-  account(state = null, action) {
+  account(state: EdgeAccount | null = null, action) {
     switch (action.type) {
       case actions.LOGIN_SUCCESS:
       case actions.SET_ACCOUNT:
@@ -43,7 +46,7 @@ export default combineReducers({
         return state;
     }
   },
-  loginSuccess(state = false, action) {
+  loginSuccess(state: boolean = false, action) {
     switch (action.type) {
       case actions.LOGIN_SUCCESS: {
         return true;
@@ -54,7 +57,7 @@ export default combineReducers({
         return state;
     }
   },
-  loginFailure(state = {}, action) {
+  loginFailure(state: { type?: string } = {}, action) {
     switch (action.type) {
       case actions.LOGIN_FAILURE: {
         return action.error;
@@ -66,7 +69,7 @@ export default combineReducers({
         return state;
     }
   },
-  edgeContextSet(state = false, action) {
+  edgeContextSet(state: boolean = false, action) {
     switch (action.type) {
       case actions.EDGE_CONTEXT_INIT_SUCCESS: {
         return true;
@@ -75,7 +78,7 @@ export default combineReducers({
         return state;
     }
   },
-  cachedUsers(state = [], action) {
+  cachedUsers(state: string[] = [], action) {
     switch (action.type) {
       case actions.CACHED_USERS_REQUEST: {
         return [];
@@ -87,7 +90,10 @@ export default combineReducers({
         return state;
     }
   },
-  recoveryQuestions(state = [], action) {
+  recoveryQuestions(
+    state: { category: string; question: string }[] = [],
+    action,
+  ) {
     switch (action.type) {
       case actions.RECOVERY_QUEST_REQUEST: {
         return [];
@@ -99,7 +105,7 @@ export default combineReducers({
         return state;
     }
   },
-  usernameIsAvailable(state = false, action) {
+  usernameIsAvailable(state: boolean = false, action) {
     switch (action.type) {
       case actions.USERNAME_AVAIL_SUCCESS: {
         return action.data;
@@ -111,7 +117,7 @@ export default combineReducers({
         return state;
     }
   },
-  usernameAvailableLoading(state = false, action) {
+  usernameAvailableLoading(state: boolean = false, action) {
     switch (action.type) {
       case actions.USERNAME_AVAIL_FAILURE:
       case actions.USERNAME_AVAIL_SUCCESS: {
@@ -124,11 +130,15 @@ export default combineReducers({
         return state;
     }
   },
-  pinConfirmation(state = PIN_CONFIRM_DEFAULT, action) {
+  pinConfirmation(
+    state: PinConfirmation | string = PIN_CONFIRM_DEFAULT,
+    action,
+  ) {
     switch (action.type) {
       case actions.RESET_PIN_CONFIRM:
       case actions.CONFIRM_PIN_REQUEST: {
-        if (!Object.keys(state).length) return state;
+        if (typeof state === 'string') return state;
+
         if (state.account && state.account.loggedIn) state.account.logout();
         delete state.account;
         delete state.keys;
@@ -146,7 +156,7 @@ export default combineReducers({
         return state;
     }
   },
-  confirmingPin(state = false, action) {
+  confirmingPin(state: boolean = false, action) {
     switch (action.type) {
       case actions.CONFIRM_PIN_REQUEST: {
         return true;
@@ -159,7 +169,7 @@ export default combineReducers({
         return state;
     }
   },
-  changePasswordResults(state = {}, action) {
+  changePasswordResults(state: { status?: number } = {}, action) {
     switch (action.type) {
       case actions.CHANGE_PASSWORD_SUCCESS: {
         return action.data;
@@ -173,7 +183,10 @@ export default combineReducers({
         return state;
     }
   },
-  changePasswordError(state = {}, action) {
+  changePasswordError(
+    state: { type?: string; message?: string; name?: string } = {},
+    action,
+  ) {
     switch (action.type) {
       case actions.CHANGE_PASSWORD_FAILURE: {
         return action.error;
@@ -187,7 +200,7 @@ export default combineReducers({
         return state;
     }
   },
-  changePinResults(state = {}, action) {
+  changePinResults(state: { status?: number } = {}, action) {
     switch (action.type) {
       case actions.CHANGE_PIN_SUCCESS: {
         return action.data;
@@ -201,7 +214,7 @@ export default combineReducers({
         return state;
     }
   },
-  changePinError(state = {}, action) {
+  changePinError(state: { type?: string } = {}, action) {
     switch (action.type) {
       case actions.CHANGE_PIN_FAILURE: {
         return action.error;
@@ -215,7 +228,7 @@ export default combineReducers({
         return state;
     }
   },
-  changeRecoveryQuestions(state = false, action) {
+  changeRecoveryQuestions(state: boolean = false, action) {
     switch (action.type) {
       case actions.CHANGE_RECOVERY_QUESTIONS_OPEN: {
         return true;
@@ -227,7 +240,7 @@ export default combineReducers({
         return state;
     }
   },
-  hasRecoveryQuestions(state = false, action) {
+  hasRecoveryQuestions(state: boolean = false, action) {
     switch (action.type) {
       case actions.CHECK_RECOVERY_QUESTIONS_SUCCESS: {
         return !!action.data;
@@ -240,7 +253,7 @@ export default combineReducers({
         return state;
     }
   },
-  usersRecoveryQuestions(state = [], action) {
+  usersRecoveryQuestions(state: string[] = [], action) {
     switch (action.type) {
       case actions.GET_USERS_RECOVERY_QUESTIONS_SUCCESS: {
         return action.data;
@@ -253,7 +266,7 @@ export default combineReducers({
         return state;
     }
   },
-  questionsLoading(state = false, action) {
+  questionsLoading(state: boolean = false, action) {
     switch (action.type) {
       case actions.GET_USERS_RECOVERY_QUESTIONS_REQUEST: {
         return true;
@@ -266,7 +279,10 @@ export default combineReducers({
         return state;
     }
   },
-  recoveryAccountResults(state = {}, action) {
+  recoveryAccountResults(
+    state: { status?: number; type?: string } = {},
+    action,
+  ) {
     switch (action.type) {
       case actions.RECOVERY_ACCOUNT_SUCCESS: {
         return action.data;
