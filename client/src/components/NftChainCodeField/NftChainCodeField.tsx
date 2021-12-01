@@ -40,7 +40,7 @@ const NftChainCodeField: React.FC<Props> = props => {
       component={Input}
       onClose={closeCustom}
       upperCased={true}
-      placeholder="Custom domain"
+      placeholder="Custom chain code"
       uiType={INPUT_UI_STYLES.BLACK_WHITE}
       isLowHeight={!isHigh}
       errorColor={errorColor}
@@ -53,8 +53,8 @@ const NftChainCodeField: React.FC<Props> = props => {
       name="chainCode"
       component={ChainCodeCustomDropdown}
       options={NFT_CHAIN_CODE_LIST.map(chainCode => ({
-        id: chainCode,
-        name: chainCode,
+        id: chainCode.id,
+        name: `${chainCode.name} (${chainCode.id})`,
       }))}
       customValue={{ id: CUSTOM_CHAIN_CODE, name: 'Custom Chain Code' }}
       toggleToCustom={openCustom}
