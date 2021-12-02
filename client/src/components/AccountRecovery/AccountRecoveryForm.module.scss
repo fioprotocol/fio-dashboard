@@ -29,27 +29,4 @@
     margin-bottom: 30px;
     width: 100%;
   }
-
-  .submitButton {
-    background-color: $violet;
-    border: $violet;
-    margin-bottom: 0;
-
-    &:hover {
-      background-color: $clear-blue;
-      border-color: $clear-blue;
-    }
-  }
-
-  .cancelButton {
-    border: none;
-    outline: none;
-    background: none;
-    width: fit-content;
-    height: fit-content;
-    margin-top: 30px;
-    margin-bottom: 20px;
-    color: $white;
-    @include sf-pro-display-medium;
-  }
 }

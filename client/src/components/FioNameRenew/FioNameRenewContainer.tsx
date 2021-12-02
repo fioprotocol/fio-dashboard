@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 
 import PseudoModalContainer from '../PseudoModalContainer';
@@ -9,6 +8,7 @@ import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
 import RenewResults from '../common/TransactionResults/components/RenewResults';
 import EdgeConfirmAction from '../EdgeConfirmAction';
+import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 import {
   MANAGE_PAGE_REDIRECT,
@@ -149,13 +149,13 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
             currentWallet={currentWallet}
           />
           <LowBalanceBadge hasLowBalance={hasLowBalance} />
-          <Button
+          <SubmitButton
             onClick={onSubmit}
-            className={classes.button}
+            text="Renew Now"
             disabled={hasLowBalance || processing}
-          >
-            Renew Now
-          </Button>
+            loading={processing}
+            withTopMargin={true}
+          />
         </div>
       </PseudoModalContainer>
     </>

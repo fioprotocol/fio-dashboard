@@ -1,8 +1,7 @@
 import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
-import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 
@@ -28,16 +27,12 @@ const EditWalletNameForm: React.FC<EditWalletNameProps> = props => {
             disabled={loading}
           />
 
-          <Button
-            type="submit"
+          <SubmitButton
+            text="Update"
             disabled={!props.valid || props.submitting || loading}
-            className={classes.button}
-          >
-            Update{' '}
-            {loading && (
-              <FontAwesomeIcon icon="spinner" spin className={classes.loader} />
-            )}
-          </Button>
+            loading={loading}
+            withBottomMargin={true}
+          />
         </form>
       )}
     </Form>

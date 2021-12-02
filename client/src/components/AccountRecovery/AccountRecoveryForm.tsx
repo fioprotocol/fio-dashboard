@@ -1,14 +1,18 @@
 import React from 'react';
 import { Form, Field, FormRenderProps } from 'react-final-form';
-import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Input from '../Input/Input';
-import validation from './validation';
-import classes from './AccountRecoveryForm.module.scss';
-import { FormValues } from './types';
+import SubmitButton from '../common/SubmitButton/SubmitButton';
+import CancelButton from '../common/CancelButton/CancelButton';
 
 import { ErrorBadge, ERROR_UI_TYPE } from '../Input/ErrorBadge';
+
+import validation from './validation';
+
+import { FormValues } from './types';
+
+import classes from './AccountRecoveryForm.module.scss';
 
 type Props = {
   cancelAction: () => void;
@@ -136,23 +140,14 @@ const AccountRecoveryForm: React.FC<Props> = props => {
           placeholder="Confirm Password"
           autoComplete="new-password"
         />
-        <Button
-          type="submit"
-          className={classes.submitButton}
+
+        <SubmitButton
+          text={answersError ? 'Try Again' : 'Confirm'}
           disabled={disabledButton}
-        >
-          {answersError ? 'Try Again' : 'Confirm'}
-          {isLoading && (
-            <FontAwesomeIcon icon="spinner" spin className="ml-2" />
-          )}
-        </Button>
-        <button
-          type="button"
-          onClick={cancelAction}
-          className={classes.cancelButton}
-        >
-          Cancel
-        </button>
+          loading={isLoading}
+          withBottomMargin={true}
+        />
+        <CancelButton onClick={cancelAction} withBottomMargin={true} />
       </form>
     );
   };

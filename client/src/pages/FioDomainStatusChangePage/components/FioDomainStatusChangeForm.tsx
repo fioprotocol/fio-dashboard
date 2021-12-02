@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
 
 import PseudoModalContainer from '../../../components/PseudoModalContainer';
 import DomainStatusBadge from '../../../components/Badges/DomainStatusBadge/DomainStatusBadge';
@@ -7,8 +6,9 @@ import PriceBadge from '../../../components/Badges/PriceBadge/PriceBadge';
 import PayWithBadge from '../../../components/Badges/PayWithBadge/PayWithBadge';
 import LowBalanceBadge from '../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import InfoBadge from '../../../components/InfoBadge/InfoBadge';
-import { BADGE_TYPES } from '../../../components/Badge/Badge';
+import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
 
+import { BADGE_TYPES } from '../../../components/Badge/Badge';
 import { ROUTES } from '../../../constants/routes';
 import { DOMAIN_STATUS } from '../../../constants/common';
 
@@ -73,13 +73,13 @@ const FioDomainStatusChangeForm: React.FC<FormProps> = props => {
           currentWallet={fioWallet}
         />
         <LowBalanceBadge hasLowBalance={hasLowBalance} />
-        <Button
-          className={classes.button}
+        <SubmitButton
           onClick={handleSubmit}
+          text="Change Status"
           disabled={processing || hasLowBalance}
-        >
-          Change Status
-        </Button>
+          loading={processing}
+          withTopMargin={true}
+        />
       </div>
     </PseudoModalContainer>
   );

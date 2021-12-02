@@ -1,14 +1,15 @@
 import React, { FormEvent, useEffect, useState } from 'react';
-import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { INPUT_UI_STYLES } from '../../../../components/Input/InputRedux';
 import { Field, FieldValue } from '../../../../components/Input/Field';
+import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import {
   ErrorBadge,
   COLOR_TYPE,
   ERROR_UI_TYPE,
 } from '../../../../components/Input/ErrorBadge';
+
+import { INPUT_UI_STYLES } from '../../../../components/Input/InputRedux';
+
 import validate from './validation';
 
 import { FormValuesTypes } from './types';
@@ -111,17 +112,12 @@ const ChangePasswordForm = (props: Props) => {
           />
         </div>
       )}
-      <Button type="submit" disabled={loading || !valid}>
-        {loading ? (
-          <>
-            <span>Saving</span> <FontAwesomeIcon icon="spinner" spin />
-          </>
-        ) : error ? (
-          'Try Again'
-        ) : (
-          'Save'
-        )}
-      </Button>
+      <SubmitButton
+        text={loading ? 'Saving' : error ? 'Try Again' : 'Save'}
+        disabled={loading || !valid}
+        loading={loading}
+        withBottomMargin={true}
+      />
     </form>
   );
 };

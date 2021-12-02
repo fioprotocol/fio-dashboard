@@ -4,6 +4,7 @@ import PseudoModalContainer from '../../components/PseudoModalContainer';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import ImportWalletForm from './components/ImportWalletForm';
 import CancelConfirmModal from './components/CancelConfirmModal';
+import CancelButton from '../../components/common/CancelButton/CancelButton';
 
 import {
   CONFIRM_PIN_ACTIONS,
@@ -141,13 +142,7 @@ const ImportWalletPage: React.FC<ContainerProps> = props => {
             loading={addWalletLoading || processing}
             onSubmit={onSubmit}
           />
-          <button
-            type="button"
-            onClick={onCancel}
-            className={classes.cancelButton}
-          >
-            Cancel
-          </button>
+          <CancelButton onClick={onCancel} isBlack={true} />
         </div>
       </PseudoModalContainer>
     </>
