@@ -68,6 +68,7 @@ const PasswordRecovery: React.FC<Props> = props => {
 
   const onSuccess = (disableRecoveryResults: { status?: number }) => {
     if (disableRecoveryResults.status) {
+      setSubmitData(null);
       setProcessing(false);
       toggleDisableModal(false);
       toggleSuccessModal(true);
