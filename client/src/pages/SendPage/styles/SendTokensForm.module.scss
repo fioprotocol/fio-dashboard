@@ -10,14 +10,4 @@
     align-self: flex-start;
     @include sf-pro-display-medium;
   }
-
-  .button {
-    height: 54px;
-    border-radius: 7px;
-    margin-top: 30px;
-    margin-bottom: -20px;
-    font-size: 1em;
-    max-width: 335px;
-    @include sf-pro-display-medium;
-  }
 }

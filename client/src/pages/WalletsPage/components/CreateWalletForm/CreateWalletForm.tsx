@@ -1,14 +1,16 @@
 import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
-import { Button } from 'react-bootstrap';
 
-import { validate } from './validation';
-import { CreateWalletProps } from '../../types';
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
+import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 
+import { validate } from './validation';
+
+import { CreateWalletProps } from '../../types';
+
 import classes from '../../styles/CreateWalletForm.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const CreateWalletForm: React.FC<CreateWalletProps> = props => {
   const { loading, initialValues } = props;
@@ -30,16 +32,12 @@ const CreateWalletForm: React.FC<CreateWalletProps> = props => {
             disabled={loading}
           />
 
-          <Button
-            type="submit"
+          <SubmitButton
+            text="Create Wallet"
             disabled={!props.valid || props.submitting || loading}
-            className={classes.button}
-          >
-            Create Wallet{' '}
-            {loading && (
-              <FontAwesomeIcon icon="spinner" spin className={classes.loader} />
-            )}
-          </Button>
+            loading={loading}
+            withBottomMargin={true}
+          />
         </form>
       )}
     </Form>

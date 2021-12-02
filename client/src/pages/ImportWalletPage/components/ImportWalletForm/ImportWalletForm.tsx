@@ -1,9 +1,8 @@
 import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
-import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
+import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 
@@ -40,16 +39,12 @@ const ImportWalletForm: React.FC<ImportWalletFormProps> = props => {
             label="FIO Wallet Name"
           />
 
-          <Button
-            type="submit"
+          <SubmitButton
+            text="Import Wallet"
             disabled={props.hasValidationErrors || props.submitting || loading}
-            className={classes.button}
-          >
-            Import Wallet{' '}
-            {loading && (
-              <FontAwesomeIcon icon="spinner" spin className={classes.loader} />
-            )}
-          </Button>
+            loading={loading}
+            withBottomMargin={true}
+          />
         </form>
       )}
     </Form>

@@ -8,17 +8,6 @@
   width: 100%;
 }
 
-.cancelButton {
-  border: none;
-  outline: none;
-  background: none;
-  width: fit-content;
-  height: fit-content;
-  margin-top: 5px;
-  align-self: center;
-  @include sf-pro-display-medium;
-}
-
 .subtitle {
   margin-top: 20px;
   margin-bottom: 5px;
@@ -34,23 +23,6 @@
 .spinner {
   width: 100% !important;
   font-size: 1.25em;
-}
-
-.form {
-  .button {
-    max-width: 335px;
-    width: 100%;
-    margin-bottom: 15px;
-    position: relative;
-    border-radius: 7px;
-
-    .loader {
-      margin-left: 1rem;
-      position: absolute;
-      right: 27%;
-      top: 35%;
-    }
-  }
 }
 
 @include md {

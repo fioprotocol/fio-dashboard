@@ -1,18 +1,19 @@
 import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { OnChange } from 'react-final-form-listeners';
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 
 import InfoBadge from '../../../InfoBadge/InfoBadge';
-import { BADGE_TYPES } from '../../../Badge/Badge';
 import CustomDropdown from '../CustomDropdown';
 import Input, { INPUT_UI_STYLES } from '../../../Input/Input';
-import { COLOR_TYPE } from '../../../Input/ErrorBadge';
 import BundledTransactionBadge from '../../../Badges/BundledTransactionBadge/BundledTransactionBadge';
 import LowBalanceBadge from '../../../Badges/LowBalanceBadge/LowBalanceBadge';
 import FioName from '../../../common/FioName/FioName';
-
+import SubmitButton from '../../../common/SubmitButton/SubmitButton';
 import NftChainCodeField from '../../../NftChainCodeField/NftChainCodeField';
+
+import { BADGE_TYPES } from '../../../Badge/Badge';
+import { COLOR_TYPE } from '../../../Input/ErrorBadge';
 
 import { validate } from './validation';
 
@@ -175,9 +176,8 @@ const SignNFTForm = (props: SignNftFormProps) => {
             />
             <Row>
               <Col className="text-center">
-                <Button
-                  className={classes.actionButton}
-                  type="submit"
+                <SubmitButton
+                  text={isEdit ? 'Update' : 'Sign NFT'}
                   disabled={
                     hasLowBalance ||
                     processing ||
@@ -186,9 +186,9 @@ const SignNFTForm = (props: SignNftFormProps) => {
                     props.submitting ||
                     (isEdit && props.pristine)
                   }
-                >
-                  <span>{isEdit ? 'Update' : 'Sign NFT'}</span>
-                </Button>
+                  withTopMargin={true}
+                  loading={processing}
+                />
               </Col>
             </Row>
           </Container>

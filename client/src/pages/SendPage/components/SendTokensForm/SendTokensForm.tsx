@@ -1,7 +1,5 @@
 import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
-import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { validate } from './validation';
 import { SendTokensProps } from '../../types';
@@ -9,6 +7,7 @@ import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
 import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import PriceBadge from '../../../../components/Badges/PriceBadge/PriceBadge';
+import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 
 import { FioAddressDoublet } from '../../../../types';
 
@@ -157,17 +156,12 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               messageText="Not enough bundles"
             />
 
-            <Button
-              type="submit"
+            <SubmitButton
+              text="Send FIO Tokens"
               disabled={submitDisabled}
-              className={classes.button}
-            >
-              {loading ? (
-                <FontAwesomeIcon icon="spinner" spin />
-              ) : (
-                'Send FIO Tokens'
-              )}
-            </Button>
+              loading={loading}
+              withTopMargin={true}
+            />
           </form>
         );
       }}
