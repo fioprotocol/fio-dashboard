@@ -5,7 +5,8 @@ import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
 import classes from './PurchaseNow.module.scss';
 import { executeRegistration } from './middleware';
-import { sleep, waitForEdgeAccountStop } from '../../utils';
+import { sleep } from '../../utils';
+import { waitForEdgeAccountStop } from '../../util/edge';
 
 import { PurchaseNowTypes } from './types';
 import { RegistrationResult } from '../../types';

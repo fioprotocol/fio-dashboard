@@ -1,4 +1,4 @@
-import { EdgeAccount, EdgeCurrencyWallet } from 'edge-core-js';
+import { EdgeCurrencyWallet } from 'edge-core-js';
 import isEmpty from 'lodash/isEmpty';
 
 import {
@@ -271,15 +271,6 @@ export const hasFioAddressDelimiter = (value: string): boolean =>
   value.indexOf(FIO_ADDRESS_DELIMITER) > 0;
 
 export const priceToNumber = (price: string) => +parseFloat(price).toFixed(2);
-
-export const waitForEdgeAccountStop = async (edgeAccount: EdgeAccount) => {
-  try {
-    edgeAccount && edgeAccount.loggedIn && (await edgeAccount.logout());
-    await sleep(3000); // todo: added for testnet env because edge fio plugin rewriting base url after pin confirmation. Need to figure out how to be sure that fio engine is killed or fix transaction global base url const in FIOSDK
-  } catch (e) {
-    //
-  }
-};
 
 export const getElementByFioName = ({
   fioNameList,
