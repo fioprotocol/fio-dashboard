@@ -298,4 +298,36 @@ export default combineReducers({
         return state;
     }
   },
+  hasTwoFactorAuth(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.ENABLE_TWO_FACTOR_SUCCESS: {
+        return true;
+      }
+      case actions.DISABLE_TWO_FACTOR_SUCCESS:
+      case LOGOUT_SUCCESS: {
+        return false;
+      }
+      case actions.LOGIN_SUCCESS: {
+        return !!action.data.account.otpKey;
+      }
+      default:
+        return state;
+    }
+  },
+  twoFactorAuthLoading(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.ENABLE_TWO_FACTOR_REQUEST:
+      case actions.DISABLE_TWO_FACTOR_REQUEST: {
+        return true;
+      }
+      case actions.ENABLE_TWO_FACTOR_SUCCESS:
+      case actions.DISABLE_TWO_FACTOR_SUCCESS:
+      case actions.ENABLE_TWO_FACTOR_FAILURE:
+      case actions.DISABLE_TWO_FACTOR_FAILURE: {
+        return false;
+      }
+      default:
+        return state;
+    }
+  },
 });

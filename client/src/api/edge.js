@@ -223,4 +223,24 @@ export default class Edge {
       throw e;
     }
   }
+
+  async enableTwoFactorAuth(account) {
+    try {
+      await account.enableOtp();
+      return { status: 1 };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  async disableTwoFactorAuth(account) {
+    try {
+      await account.disableOtp();
+      return { status: 1 };
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
 }
