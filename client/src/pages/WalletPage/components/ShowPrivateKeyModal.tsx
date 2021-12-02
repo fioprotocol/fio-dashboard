@@ -11,9 +11,8 @@ import PasswordForm from './PasswordForm';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 
-import { getWalletKeys } from '../../../util/edge';
+import { getWalletKeys, waitForEdgeAccountStop } from '../../../util/edge';
 import { copyToClipboard } from '../../../util/general';
-import { waitForEdgeAccountStop } from '../../../utils';
 
 import apis from '../../../api';
 

@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 
 import Processing from '../../components/common/TransactionProcessing';
 
-import { waitForEdgeAccountStop } from '../../utils';
+import { waitForEdgeAccountStop } from '../../util/edge';
 
 import { PinConfirmation } from '../../types';
 import { Props } from './types';
