@@ -5,6 +5,8 @@ import {
 } from 'edge-core-js';
 import plugins from 'edge-currency-accountbased';
 
+import { HandleClearCachedUser } from './middleware/edge';
+
 export default class Edge {
   edgeContext;
 
@@ -38,9 +40,12 @@ export default class Edge {
     }
   }
 
-  clearCachedUser(username) {
+  clearCachedUser(username, force = false) {
     try {
-      return this.edgeContext.deleteLocalAccount(username);
+      return HandleClearCachedUser(
+        () => this.edgeContext.deleteLocalAccount(username),
+        force,
+      );
     } catch (e) {
       console.log(e);
     }

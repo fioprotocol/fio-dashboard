@@ -303,8 +303,7 @@ export default combineReducers({
       case actions.ENABLE_TWO_FACTOR_SUCCESS: {
         return true;
       }
-      case actions.DISABLE_TWO_FACTOR_SUCCESS:
-      case LOGOUT_SUCCESS: {
+      case actions.DISABLE_TWO_FACTOR_SUCCESS: {
         return false;
       }
       case actions.LOGIN_SUCCESS: {
