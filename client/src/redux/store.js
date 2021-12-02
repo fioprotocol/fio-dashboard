@@ -41,6 +41,9 @@ export default function configureStore(api, history) {
           lastAuthData: store.getState().profile.lastAuthData,
           lastActivityDate: store.getState().profile.lastActivityDate,
         },
+        edge: {
+          hasTwoFactorAuth: store.getState().edge.hasTwoFactorAuth,
+        },
       });
     }, 1000),
   );

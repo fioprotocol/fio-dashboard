@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { EdgeAccount } from 'edge-core-js';
 
 import SecurityItem from '../SecurityItem';
 import SuccessModal from '../../../../components/Modal/SuccessModal';
@@ -6,6 +7,8 @@ import DangerModal from '../../../../components/Modal/DangerModal';
 import EdgeConfirmAction from '../../../../components/EdgeConfirmAction';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
+
+import { SubmitActionParams } from '../../../../components/EdgeConfirmAction/types';
 
 const ITEM_PROPS = {
   title: '2 Factor Authentication',
@@ -28,21 +31,28 @@ type Props = {
   isTwoFAEnabled?: boolean;
   loading: boolean;
   genericErrorIsShowing: boolean;
+  hasTwoFactorAuth: boolean;
+  enableTwoFactorAuth: (account: EdgeAccount) => void;
+  disableTwoFactor: (account: EdgeAccount) => void;
 };
 
 const TwoFactorAuth: React.FC<Props> = props => {
-  const { loading, genericErrorIsShowing } = props;
+  const {
+    loading,
+    genericErrorIsShowing,
+    hasTwoFactorAuth,
+    enableTwoFactorAuth,
+    disableTwoFactor,
+  } = props;
 
   const [submitData, setSubmitData] = useState<boolean | null>(null);
   const [showDisableModal, toggleDisableModal] = useState(false);
   const [showSuccessModal, toggleSuccessModal] = useState(false);
   const [processing, setProcessing] = useState(false);
-  // todo: change to real data
-  const [hasTwoFactor, toggleTwoFactor] = useState(false);
 
-  const submitDisable = () => {
+  const submitDisable = async ({ edgeAccount }: SubmitActionParams) => {
     toggleDisableModal(true);
-    return true;
+    disableTwoFactor(edgeAccount);
   };
 
   const onSuccessDisable = () => {
@@ -54,11 +64,11 @@ const TwoFactorAuth: React.FC<Props> = props => {
   const onCancelDisable = () => {
     setSubmitData(null);
     setProcessing(false);
-    toggleDisableModal(true);
+    toggleDisableModal(false);
   };
 
-  const submitEnable = () => {
-    return true;
+  const submitEnable = async ({ edgeAccount }: SubmitActionParams) => {
+    enableTwoFactorAuth(edgeAccount);
   };
 
   const onSuccessEnable = () => {
@@ -78,21 +88,19 @@ const TwoFactorAuth: React.FC<Props> = props => {
   };
 
   const onSuccessClose = () => {
-    // remove on real usage data
-    hasTwoFactor ? toggleTwoFactor(false) : toggleTwoFactor(true);
     toggleSuccessModal(false);
   };
 
   const securityItemProps = {
-    onClick: () => setSubmitData(true),
     title: ITEM_PROPS.title,
     subtitle: ITEM_PROPS.subtitle,
     loading: loading || processing,
-    isGreen: hasTwoFactor,
+    isGreen: hasTwoFactorAuth,
 
     // set changeable props
     buttonText: 'Enable',
     attentionText: '',
+    onClick: () => setSubmitData(true),
   };
 
   const successModalProps = {
@@ -100,8 +108,8 @@ const TwoFactorAuth: React.FC<Props> = props => {
     showModal: showSuccessModal,
 
     // set changeable props
-    title: ITEM_PROPS.successEnableModalTitle,
-    subtitle: ITEM_PROPS.successEnableModalSubtitle,
+    title: ITEM_PROPS.successDisableModalTitle,
+    subtitle: ITEM_PROPS.successDisableModalSubtitle,
   };
 
   const edgeConfirmActionProps = {
@@ -128,14 +136,15 @@ const TwoFactorAuth: React.FC<Props> = props => {
     loading: loading || processing,
   };
 
-  if (hasTwoFactor) {
+  if (hasTwoFactorAuth) {
     // security props
     securityItemProps.buttonText = 'Disable';
     securityItemProps.attentionText = ITEM_PROPS.attentionText;
+    securityItemProps.onClick = () => toggleDisableModal(true);
 
     // success modal props
-    successModalProps.title = ITEM_PROPS.successDisableModalTitle;
-    successModalProps.subtitle = ITEM_PROPS.successDisableModalSubtitle;
+    successModalProps.title = ITEM_PROPS.successEnableModalTitle;
+    successModalProps.subtitle = ITEM_PROPS.successEnableModalSubtitle;
 
     // edge confirm action
     edgeConfirmActionProps.action = CONFIRM_PIN_ACTIONS.ENABLE_TWO_FACTOR;
