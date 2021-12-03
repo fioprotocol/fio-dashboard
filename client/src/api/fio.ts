@@ -12,7 +12,6 @@ import { isDomain } from '../utils';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 
 import { NFTTokenDoublet } from '../types';
-import apis from './index';
 
 export interface TrxResponse {
   transaction_id?: string;
@@ -82,7 +81,7 @@ export default class Fio {
   validatePublicKey = async (publicKey: string): Promise<boolean> => {
     let isValid = false;
     try {
-      apis.fio.isFioPublicKeyValid(publicKey);
+      this.isFioPublicKeyValid(publicKey);
       await this.publicFioSDK.getFioBalance(publicKey);
       isValid = true;
     } catch (e) {
