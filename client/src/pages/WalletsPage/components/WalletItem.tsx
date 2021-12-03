@@ -4,10 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import Amount from '../../../components/common/Amount';
+import LedgerBadge from '../../../components/Badges/LedgerBadge/LedgerBadge';
 
 import { useCheckIfDesktop } from '../../../screenType';
 
 import { ROUTES } from '../../../constants/routes';
+import { WALLET_CREATED_FROM } from '../../../constants/common';
+
 import { putParamsToUrl } from '../../../utils';
 import { useWalletBalances } from '../../../util/hooks';
 
@@ -47,6 +50,11 @@ const WalletItem: React.FC<Props> = props => {
                 <Amount value={walletBalancesTotal.usdc} /> USDC
               </p>
             </div>
+            {fioWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+              <div className={classes.ledgerContainer}>
+                <LedgerBadge />
+              </div>
+            ) : null}
           </div>
 
           <FontAwesomeIcon
