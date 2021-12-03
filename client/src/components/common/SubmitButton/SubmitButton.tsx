@@ -42,10 +42,9 @@ const SubmitButton: React.FC<Props> = props => {
         withBottomMargin && classes.bottomMargin,
       )}
     >
-      {text || 'Confirm'}{' '}
-      {loading && (
-        <FontAwesomeIcon icon="spinner" spin className={classes.loader} />
-      )}
+      <div />
+      <div>{text || 'Confirm'}</div>
+      <div>{loading && <FontAwesomeIcon icon="spinner" spin />}</div>
     </Button>
   );
 };
