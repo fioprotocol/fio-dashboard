@@ -7,10 +7,22 @@ type Props = {
   onClose: () => void;
   show: boolean;
   onActionClick: () => void;
+  activationDate: string;
 };
 
 const TwoFactorDangerModal: React.FC<Props> = props => {
-  const { onClose, show, onActionClick } = props;
+  const { onClose, show, onActionClick, activationDate } = props;
+
+  const activationDay = new Date(activationDate).toLocaleDateString([], {
+    year: 'numeric',
+    month: '2-digit',
+    day: 'numeric',
+  });
+  const activationTime = new Date(activationDate).toLocaleString([], {
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+  });
   return (
     <DangerModal
       onActionButtonClick={onActionClick}
@@ -34,9 +46,11 @@ const TwoFactorDangerModal: React.FC<Props> = props => {
       }
       footerContent={
         <div className={classes.footerContent}>
-          You can also wait until <span className="boldText">00/00/0000</span> @{' '}
-          <span className="boldText">00:00 PM</span> when this device will be
-          granted access to sign in with your username and password.
+          You can also wait until{' '}
+          <span className="boldText">{activationDay}</span> @{' '}
+          <span className="boldText">{activationTime.toUpperCase()}</span> when
+          this device will be granted access to sign in with your username and
+          password.
         </div>
       }
     />

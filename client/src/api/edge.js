@@ -51,10 +51,10 @@ export default class Edge {
     }
   }
 
-  login(username, password) {
+  login(username, password, options = {}) {
     // returns EdgeAccount
     try {
-      return this.edgeContext.loginWithPassword(username, password);
+      return this.edgeContext.loginWithPassword(username, password, options);
     } catch (e) {
       console.log(e);
       throw e;
