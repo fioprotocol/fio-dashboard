@@ -26,6 +26,7 @@ const WalletsPage: React.FC<Props> = props => {
 
   const [showCreateWallet, setShowCreateWallet] = useState<boolean>(false);
   const [showWalletImported, setShowWalletImported] = useState<boolean>(false);
+  const [showWalletCreated, setShowWalletCreated] = useState<boolean>(false);
 
   useEffect(() => {
     for (const { publicKey } of fioWallets) {
@@ -41,12 +42,14 @@ const WalletsPage: React.FC<Props> = props => {
 
   const closeCreateWallet = () => setShowCreateWallet(false);
   const closeImportedWallet = () => setShowWalletImported(false);
+  const closeCreatedWallet = () => setShowWalletCreated(false);
 
   const onAdd = () => {
     setShowCreateWallet(true);
   };
   const onWalletCreated = () => {
     setShowCreateWallet(false);
+    setShowWalletCreated(true);
   };
 
   return (
@@ -68,22 +71,34 @@ const WalletsPage: React.FC<Props> = props => {
           </div>
         </ActionButtonsContainer>
         <p className={classes.subtitle}>Manage your wallets</p>
-        {showWalletImported ? (
-          <NotificationBadge
-            type={BADGE_TYPES.SUCCESS}
-            show={showWalletImported}
-            onClose={closeImportedWallet}
-            message={
-              NOTIFICATIONS_CONTENT[NOTIFICATIONS_CONTENT_TYPE.WALLET_IMPORTED]
-                .message
-            }
-            title={
-              NOTIFICATIONS_CONTENT[NOTIFICATIONS_CONTENT_TYPE.WALLET_IMPORTED]
-                .title
-            }
-            iconName="check-circle"
-          />
-        ) : null}
+        <NotificationBadge
+          type={BADGE_TYPES.SUCCESS}
+          show={showWalletImported}
+          onClose={closeImportedWallet}
+          message={
+            NOTIFICATIONS_CONTENT[NOTIFICATIONS_CONTENT_TYPE.WALLET_IMPORTED]
+              .message
+          }
+          title={
+            NOTIFICATIONS_CONTENT[NOTIFICATIONS_CONTENT_TYPE.WALLET_IMPORTED]
+              .title
+          }
+          iconName="check-circle"
+        />
+        <NotificationBadge
+          type={BADGE_TYPES.SUCCESS}
+          show={showWalletCreated}
+          onClose={closeCreatedWallet}
+          message={
+            NOTIFICATIONS_CONTENT[NOTIFICATIONS_CONTENT_TYPE.WALLET_CREATED]
+              .message
+          }
+          title={
+            NOTIFICATIONS_CONTENT[NOTIFICATIONS_CONTENT_TYPE.WALLET_CREATED]
+              .title
+          }
+          iconName="check-circle"
+        />
         {fioWallets.length > 0 ? (
           fioWallets.map(wallet => (
             <WalletItem key={wallet.publicKey} fioWallet={wallet} roe={roe} />
