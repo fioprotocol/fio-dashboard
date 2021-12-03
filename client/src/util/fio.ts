@@ -1,12 +1,16 @@
+import { TextDecoder, TextEncoder } from 'text-encoding';
+import { Transactions as FioTransactionsProvider } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
+import { Api as ChainApi, Numeric as ChainNumeric } from '@fioprotocol/fiojs';
 
 import apis from '../api';
 import { sleep } from '../utils';
-import { FREE_ADDRESS_REGISTER_ERROR, ERROR_TYPES } from '../constants/errors';
-import { RegisterAddressError } from './errors';
+import { log } from '../util/general';
 
+import { FREE_ADDRESS_REGISTER_ERROR, ERROR_TYPES } from '../constants/errors';
 import { FIO_REQUEST_STATUS_TYPES } from '../constants/fio';
 import { CHAIN_CODES } from '../constants/common';
+import { RegisterAddressError } from './errors';
 
 import {
   NftTokenResponse,
@@ -15,6 +19,7 @@ import {
   PublicAddressDoublet,
   IncomePrices,
 } from '../types';
+import { RawTransaction } from '../api/fio';
 
 export const waitForAddressRegistered = async (
   fioAddress: string,
@@ -147,4 +152,43 @@ export const convertPrices = (prices: IncomePrices): { pricing: Prices } => {
     ),
   };
   return { pricing };
+};
+
+export const serializeTransaction = async (
+  tx: RawTransaction,
+): Promise<string> => {
+  try {
+    const abiProvider: any = {
+      getRawAbi: async (accountName: string) => {
+        const rawAbi = FioTransactionsProvider.abiMap.get(accountName);
+        if (!rawAbi) {
+          throw new Error(`Missing ABI for account ${accountName}`);
+        }
+        const abi = ChainNumeric.base64ToBinary(rawAbi.abi);
+        const binaryAbi: any = { accountName: rawAbi.account_name, abi };
+        return binaryAbi;
+      },
+    };
+    const chainApi = new ChainApi({
+      signatureProvider: null,
+      authorityProvider: null,
+      abiProvider,
+      chainId: null,
+      textDecoder: new TextDecoder(),
+      textEncoder: new TextEncoder(),
+    });
+    tx = {
+      ...tx,
+      context_free_actions: await chainApi.serializeActions(
+        tx.context_free_actions || [],
+      ),
+      actions: await chainApi.serializeActions(tx.actions),
+    };
+
+    return Buffer.from(chainApi.serializeTransaction(tx)).toString('hex');
+  } catch (e) {
+    log.error(e);
+  }
+
+  return '';
 };

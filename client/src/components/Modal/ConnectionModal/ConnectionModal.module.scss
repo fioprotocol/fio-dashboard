@@ -1,0 +1,57 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+
+.icon {
+  margin-top: 20px;
+  font-size: 40px;
+}
+
+.title, .transactionTitle {
+  margin-top: 30px;
+}
+
+.title {
+  font-size: 1.25em;
+}
+
+.transactionTitle {
+  text-align: center;
+  font-size: 1.5em;
+  margin-bottom: 0;
+  @include sf-pro-display-medium;
+}
+
+.text {
+  font-size: 0.75em;
+  margin-bottom: 0;
+}
+
+.transactionText {
+  font-size: 0.875em;
+  margin-top: 15px;
+  margin-bottom: 30px;
+  max-width: 290px;
+  @include sf-pro-display-medium;
+}
+
+.button {
+  border: $onyx;
+  background-color: $onyx;
+  height: 54px;
+  width: 100%;
+  margin-top: 20px;
+  border-radius: 7px;
+  color: $white;
+  margin-bottom: 10px;
+  @include proxima-nova-semibold;
+
+  &:hover:enabled {
+    border: $content-background;
+    background-color: $content-background;
+  }
+
+  &:disabled, &[disabled] {
+    border: $dark;
+    background-color: $dark;
+  }
+}

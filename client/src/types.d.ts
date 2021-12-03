@@ -131,6 +131,7 @@ export type FioWalletDoublet = {
   edgeId: string;
   name: string;
   publicKey: string;
+  data?: { device?: number; derivationIndex?: number };
   balance?: number | null;
   available?: number | null;
   locked?: number | null;

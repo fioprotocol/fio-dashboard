@@ -3,3 +3,5 @@ declare module '@fioprotocol/fiosdk/lib/transactions/Transactions';
 declare module '@fioprotocol/fiosdk/lib/entities/EndPoint';
 declare module 'edge-currency-accountbased';
 declare module 'crypto-browserify';
+declare module '@fioprotocol/fiojs';
+declare module 'ledgerjs-hw-app-fio';
