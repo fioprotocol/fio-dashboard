@@ -56,6 +56,9 @@ export const REF_FLOW_STEPS = {
   FINISH: 'FINISH',
 };
 
+export const DEFAULT_FIO_TRX_ERR_MESSAGE =
+  'Your purchase has failed due to an error. Your funds remain in your account and your registrations did not complete. Please try again later.';
+
 export const NFT_TOKEN_ITEM_PROPS_ORDER: NFTTokenItemProps[] = [
   'fioAddress',
   'chainCode',

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import CreateWalletModal from '../CreateWalletModal';
 import CreateEdgeWallet from './CreateEdgeWallet';
+import CreateLedgerWallet from './CreateLedgerWallet';
 
 import {
   WALLET_CREATED_FROM,
@@ -96,8 +97,22 @@ const CreateWallet: React.FC<Props> = props => {
           {...props}
         />
       ) : null}
+      {creationType === WALLET_CREATED_FROM.LEDGER ? (
+        <CreateLedgerWallet
+          setProcessing={setProcessing}
+          values={currentValues}
+          onWalletDataPrepared={onWalletDataPrepared}
+          onOptionCancel={onOptionCancel}
+          {...props}
+        />
+      ) : null}
       <CreateWalletModal
-        show={show && !pinModalIsOpen && !genericErrorModalIsActive}
+        show={
+          show &&
+          !pinModalIsOpen &&
+          !genericErrorModalIsActive &&
+          creationType !== WALLET_CREATED_FROM.LEDGER
+        }
         onClose={onModalClose}
         loading={processing || addWalletLoading}
         onSubmit={onCreateSubmit}

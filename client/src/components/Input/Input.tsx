@@ -406,6 +406,19 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     );
   }
 
+  if (type === 'checkbox')
+    return (
+      <label className={classes.checkboxContainer}>
+        <input {...props} {...input} />
+        <FontAwesomeIcon icon="check-square" className={classes.checked} />
+        <FontAwesomeIcon
+          icon={{ prefix: 'far', iconName: 'square' }}
+          className={classes.unchecked}
+        />
+        <p className={classes.label}>{label}</p>
+      </label>
+    );
+
   return <input {...input} {...props} />;
 };
 

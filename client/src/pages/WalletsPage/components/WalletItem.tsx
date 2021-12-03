@@ -3,11 +3,13 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
+import LedgerBadge from '../../../components/Badges/LedgerBadge/LedgerBadge';
 
 import apis from '../../../api';
 import { useCheckIfDesktop } from '../../../screenType';
 
 import { FioWalletDoublet } from '../../../types';
+import { WALLET_CREATED_FROM } from '../../../constants/common';
 import { ROUTES } from '../../../constants/routes';
 import { putParamsToUrl } from '../../../utils';
 
@@ -44,6 +46,11 @@ const WalletItem: React.FC<Props> = props => {
                   {usdc && usdc.toFixed(2)} USDC
                 </p>
               </div>
+              {fioWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+                <div className={classes.ledgerContainer}>
+                  <LedgerBadge />
+                </div>
+              ) : null}
             </div>
 
             <FontAwesomeIcon

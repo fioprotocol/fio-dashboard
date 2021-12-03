@@ -31,11 +31,27 @@ const CreateWalletForm: React.FC<CreateWalletProps> = props => {
             component={Input}
             disabled={loading}
           />
+          <div className={classes.checkboxContainer}>
+            <Field
+              name="ledger"
+              type="checkbox"
+              component={Input}
+              label="Use Ledger Hardware Wallet"
+            />
+            <div className={classes.checkboxContent}>
+              <p className={classes.checkboxText}>
+                Private keys for this wallet will be stored on your Ledger
+                Device. The device has to be already configured and backed up,
+                e.g you are using it with Ledger Live.
+              </p>
+            </div>
+          </div>
 
           <SubmitButton
             text="Create Wallet"
             disabled={!props.valid || props.submitting || loading}
             loading={loading}
+            withTopMargin={true}
             withBottomMargin={true}
           />
         </form>

@@ -21,9 +21,39 @@ export interface TrxResponse {
   other?: any;
 }
 
+export type RawTransaction = {
+  expiration: string;
+  ref_block_num: number;
+  ref_block_prefix: number;
+  max_net_usage_words?: number;
+  max_cpu_usage_ms?: number;
+  delay_sec?: number;
+  context_free_actions: any[];
+  actions: {
+    account: string;
+    name: string;
+    authorization: { actor: string; permission: string }[];
+    data: any;
+  }[];
+  transaction_extensions: any[];
+};
+
 type FIOSDK_LIB = typeof FIOSDK;
 
 const defaultFee = 800 * FIOSDK.SUFUnit;
+
+export type TrxData = {
+  trx: {
+    expiration: string;
+    ref_block_num: number;
+    ref_block_prefix: number;
+    context_free_actions: any[];
+    transaction_extensions: any[];
+  };
+  actor: string;
+  authorization: { actor: string; permission: string }[];
+  chainId: string;
+};
 
 export default class Fio {
   baseurl: string = process.env.REACT_APP_FIO_BASE_URL;
@@ -117,6 +147,30 @@ export default class Fio {
     return json && json.fields && json.fields[0]
       ? json.fields[0].error
       : json.message;
+  };
+
+  getDataForTx = async (publicKey: string): Promise<TrxData> => {
+    const actor = this.publicFioSDK.transactions.getActor(publicKey);
+    const chainInfo = await this.publicFioSDK.transactions.getChainInfo();
+    const blockInfo = await this.publicFioSDK.transactions.getBlock(chainInfo);
+
+    const expiration = new Date(chainInfo.head_block_time + 'Z');
+    expiration.setSeconds(expiration.getSeconds() + 180);
+    const expirationStr = expiration.toISOString();
+
+    return {
+      trx: {
+        expiration: expirationStr.substr(0, expirationStr.length - 1),
+        /* tslint:disable-next-line:no-bitwise */
+        ref_block_num: blockInfo.block_num & 0xffff,
+        ref_block_prefix: blockInfo.ref_block_prefix,
+        context_free_actions: [],
+        transaction_extensions: [],
+      },
+      actor,
+      authorization: [{ actor, permission: 'active' }],
+      chainId: chainInfo.chain_id,
+    };
   };
 
   getActor = (publicKey: string): string =>

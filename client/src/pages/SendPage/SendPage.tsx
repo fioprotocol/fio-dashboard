@@ -5,6 +5,7 @@ import PseudoModalContainer from '../../components/PseudoModalContainer';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import SendTokensForm from './components/SendTokensForm';
 import SendEdgeWallet from './components/SendEdgeWallet';
+import SendLedgerWallet from './components/SendLedgerWallet';
 import TokenTransferResults from '../../components/common/TransactionResults/components/TokenTransferResults';
 
 import { putParamsToUrl } from '../../utils';
@@ -132,6 +133,18 @@ const SendPage: React.FC<ContainerProps> = props => {
 
   return (
     <>
+      {fioWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+        <SendLedgerWallet
+          fioWallet={fioWallet}
+          fee={feePrice.nativeFio}
+          onCancel={onCancel}
+          onSuccess={onSuccess}
+          sendData={sendData}
+          processing={processing}
+          setProcessing={setProcessing}
+        />
+      ) : null}
+
       {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
         <SendEdgeWallet
           fioWallet={fioWallet}
