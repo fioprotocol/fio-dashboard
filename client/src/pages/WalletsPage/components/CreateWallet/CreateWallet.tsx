@@ -43,9 +43,7 @@ const CreateWallet: React.FC<Props> = props => {
 
   useEffect(() => {
     if (show) {
-      const newWalletCount =
-        fioWallets.filter(({ from }) => from === WALLET_CREATED_FROM.EDGE)
-          .length + 1;
+      const newWalletCount = fioWallets.length + 1;
       const defaultName = `${DEFAULT_WALLET_OPTIONS.name} ${newWalletCount}`;
 
       setCurrentValues({
