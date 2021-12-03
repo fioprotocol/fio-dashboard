@@ -3,6 +3,11 @@ import React, { useState, useEffect } from 'react';
 import ModalComponent from '../Modal/Modal';
 import Pin from './Pin';
 import UsernamePassword from './UsernamePassword';
+import TwoFactorDangerModal from './components/TwoFactorDangerModal';
+import TwoFactorCodeModal, {
+  BackupFormValues,
+} from './components/TwoFactorCodeModal';
+
 import { REF_ACTIONS } from '../../constants/common';
 import { EmailConfirmationStateData, LastAuthData } from '../../types';
 
@@ -21,7 +26,12 @@ type Props = {
   clearCachedUser: (username: string) => void;
   resetLastAuthData: () => void;
   loginFailure: { fields?: { [fieldName: string]: any }; code?: string };
-  edgeLoginFailure: { type?: string };
+  edgeLoginFailure: {
+    type?: string;
+    reason?: string;
+    voucherActivates?: string;
+    message?: string;
+  };
   cachedUsers: string[];
   lastAuthData: LastAuthData;
   emailConfirmationResult: {
@@ -65,6 +75,12 @@ const LoginForm = (props: Props) => {
 
   const [isForgotPass, toggleForgotPass] = useState(false);
   const [usePinLogin, setUsePinLogin] = useState(false);
+  const [showBlockModal, toggleBlockmodal] = useState(false);
+  const [showCodeModal, toggleCodeModal] = useState(false);
+  const [loginParams, setLoginParams] = useState(null);
+
+  const isOtpError = edgeLoginFailure && edgeLoginFailure.reason === 'otp';
+
   useEffect(getCachedUsers, []);
   useEffect(() => {
     if (lastAuthData && cachedUsers.indexOf(lastAuthData.username) > -1) {
@@ -74,13 +90,25 @@ const LoginForm = (props: Props) => {
     }
   }, [cachedUsers, lastAuthData]);
 
+  useEffect(() => {
+    if (isOtpError) {
+      !showCodeModal && toggleBlockmodal(true);
+    }
+  }, [edgeLoginFailure.reason]);
+
   const handleSubmit = (values: FormValues) => {
     const { email, password, pin } = values;
+    setLoginParams({ email, password });
     onSubmit({
       email,
       password,
       pin,
     });
+  };
+
+  const onCloseLogin = () => {
+    onClose();
+    setLoginParams(null);
   };
 
   const onForgotPassClose = () => {
@@ -92,38 +120,65 @@ const LoginForm = (props: Props) => {
     clearCachedUser(lastAuthData.username);
   };
 
+  const onCloseBlockModal = () => toggleBlockmodal(false);
+
+  const onOpenCodeModal = () => {
+    onCloseBlockModal();
+    toggleCodeModal(true);
+  };
+  const onCloseCodeModal = () => toggleCodeModal(false);
+
+  const submitBackupCode = (values: BackupFormValues) => {
+    onSubmit({ ...loginParams, options: { otpKey: values.backupCode } });
+  };
+
   return (
-    <ModalComponent
-      show={show}
-      backdrop="static"
-      onClose={isForgotPass ? onForgotPassClose : onClose}
-      closeButton
-    >
-      {usePinLogin && lastAuthData ? (
-        <Pin
-          email={lastAuthData.email}
-          onSubmit={handleSubmit}
-          edgeAuthLoading={edgeAuthLoading}
-          loginFailure={loginFailure}
-          edgeLoginFailure={edgeLoginFailure}
-          exitPin={exitPin}
-        />
-      ) : (
-        <UsernamePassword
-          onSubmit={handleSubmit}
-          edgeAuthLoading={edgeAuthLoading}
-          loginFailure={loginFailure}
-          edgeLoginFailure={edgeLoginFailure}
-          isForgotPass={isForgotPass}
-          toggleForgotPass={toggleForgotPass}
-          headerIcon={isEmailVerification ? 'envelope' : null}
-          title={isEmailVerification ? 'Email Verified' : 'Sign In'}
-          subtitle={subtitle}
-          hideCreateAccount={isEmailVerification}
-          onClose={onClose}
-        />
-      )}
-    </ModalComponent>
+    <>
+      <TwoFactorDangerModal
+        show={showBlockModal}
+        onClose={onCloseBlockModal}
+        onActionClick={onOpenCodeModal}
+        activationDate={edgeLoginFailure.voucherActivates}
+      />
+      <TwoFactorCodeModal
+        show={showCodeModal}
+        onClose={onCloseCodeModal}
+        onSubmit={submitBackupCode}
+        loading={edgeAuthLoading}
+        otpError={edgeLoginFailure.message}
+      />
+      <ModalComponent
+        show={show && !showBlockModal && !showCodeModal}
+        backdrop="static"
+        onClose={isForgotPass ? onForgotPassClose : onCloseLogin}
+        closeButton
+      >
+        {usePinLogin && lastAuthData ? (
+          <Pin
+            email={lastAuthData.email}
+            onSubmit={handleSubmit}
+            edgeAuthLoading={edgeAuthLoading}
+            loginFailure={loginFailure}
+            edgeLoginFailure={edgeLoginFailure}
+            exitPin={exitPin}
+          />
+        ) : (
+          <UsernamePassword
+            onSubmit={handleSubmit}
+            edgeAuthLoading={edgeAuthLoading}
+            loginFailure={loginFailure}
+            edgeLoginFailure={edgeLoginFailure}
+            isForgotPass={isForgotPass}
+            toggleForgotPass={toggleForgotPass}
+            headerIcon={isEmailVerification ? 'envelope' : null}
+            title={isEmailVerification ? 'Email Verified' : 'Sign In'}
+            subtitle={subtitle}
+            hideCreateAccount={isEmailVerification}
+            onClose={onCloseLogin}
+          />
+        )}
+      </ModalComponent>
+    </>
   );
 };
 

@@ -32,11 +32,13 @@ export const login = ({
   username,
   password,
   pin,
+  options,
 }: {
   email: string;
   username: string;
   password: string;
   pin: string;
+  options?: { otpKey?: string };
 }) => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
   promise: async (api: Api) => {
@@ -49,7 +51,7 @@ export const login = ({
     }
     const account = pin
       ? await api.edge.loginPIN(username, pin)
-      : await api.edge.login(username, password);
+      : await api.edge.login(username, password, options);
     const fioWallets = [];
     try {
       for (const walletId of account.activeWalletIds) {

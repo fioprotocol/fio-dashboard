@@ -1,14 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import Modal from '../../Modal/Modal';
+import Modal from '../Modal/Modal';
 
-import classes from '../styles/TwoFactorApproveModal.module.scss';
-
-type Props = {
-  show: boolean;
-  onClose: () => void;
-};
+import classes from './TwoFactorApproveModal.module.scss';
 
 const INFO_ELEMENTS = [
   {
@@ -25,10 +20,20 @@ const INFO_ELEMENTS = [
   },
 ];
 
-const TwoFactorApproveModal: React.FC<Props> = props => {
-  const { show, onClose } = props;
+type Props = {};
+
+const TwoFactorAuth: React.FC<Props> = props => {
+  const [showApprove, toggleApproveModal] = useState(false);
+
+  const onCloseApproveModal = () => toggleApproveModal(false);
+
   return (
-    <Modal show={show} onClose={onClose} closeButton={true} isInfo={true}>
+    <Modal
+      show={showApprove}
+      onClose={onCloseApproveModal}
+      closeButton={true}
+      isInfo={true}
+    >
       <div className={classes.approveContainer}>
         <FontAwesomeIcon icon="exclamation-triangle" className={classes.icon} />
         <h4 className={classes.title}>New Device Sign In</h4>
@@ -63,4 +68,4 @@ const TwoFactorApproveModal: React.FC<Props> = props => {
   );
 };
 
-export default TwoFactorApproveModal;
+export default TwoFactorAuth;

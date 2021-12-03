@@ -9,7 +9,7 @@ import LoginForm from '../../components/LoginForm';
 import PinConfirmModal from '../../components/PinConfirmModal';
 import GenericErrorModal from '../../components/Modal/GenericErrorModal';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
-import TwoFactorAuth from '../../components/TwoFactorAuth';
+import TwoFactorApproveModal from '../../components/TwoFactorApproveModal';
 import { useCheckIfDesktop } from '../../screenType';
 import AutoLogout from '../../services/AutoLogout';
 import CartTimeout from '../../services/CartTimeout';
@@ -62,7 +62,7 @@ const MainLayout = props => {
       {showRecovery && edgeContextSet && recoveryFormModalRender()}
       <PinConfirmModal />
       <GenericErrorModal />
-      <TwoFactorAuth />
+      <TwoFactorApproveModal />
     </div>
   );
 };

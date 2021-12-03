@@ -1,6 +1,6 @@
-import { FormValues } from './TwoFactorCodeModal';
+import { BackupFormValues } from './TwoFactorCodeModal';
 
-export const validate = async (values: FormValues) => {
+export const validate = async (values: BackupFormValues) => {
   const { backupCode } = values;
   const error: { backupCode?: string } = {};
 
