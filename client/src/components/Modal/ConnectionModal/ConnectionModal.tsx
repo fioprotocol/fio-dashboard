@@ -24,7 +24,9 @@ const ConnectionModal: React.FC<Props> = props => {
       <FontAwesomeIcon icon="exchange-alt" className={classes.icon} />
       <h4 className={classes.title}>Connect</h4>
       <p className={classes.text}>
-        {message ? message : 'Please connect your Ledger device and confirm'}
+        {message
+          ? message
+          : 'Please connect your Ledger device and open FIO App.'}
       </p>
       <Button className={classes.button} onClick={onClose}>
         Close
@@ -40,7 +42,7 @@ const ConnectionModal: React.FC<Props> = props => {
       <p className={classes.transactionText}>
         {message
           ? message
-          : 'Please connect your Ledger device and confirm your transactions.'}
+          : 'Please connect your Ledger device, open FIO App and confirm your transactions.'}
       </p>
     </>
   );
