@@ -41,8 +41,15 @@ const CreateWalletForm: React.FC<CreateWalletProps> = props => {
             <div className={classes.checkboxContent}>
               <p className={classes.checkboxText}>
                 Private keys for this wallet will be stored on your Ledger
-                Device. The device has to be already configured and backed up,
-                e.g you are using it with Ledger Live.
+                Device. Please make sure you have installed FIO App using{' '}
+                <a
+                  href="https://www.ledger.com/ledger-live"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Ledger Live
+                </a>{' '}
+                and have the app open before creating a new wallet.
               </p>
             </div>
           </div>
