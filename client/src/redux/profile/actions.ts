@@ -32,12 +32,16 @@ export const NONCE_REQUEST = `${prefix}/NONCE_REQUEST`;
 export const NONCE_SUCCESS = `${prefix}/NONCE_SUCCESS`;
 export const NONCE_FAILURE = `${prefix}/NONCE_FAILURE`;
 
-export const nonce = (username: string, keys: WalletKeysObj) => ({
+export const nonce = (
+  username: string,
+  keys: WalletKeysObj,
+  otpKey?: string,
+) => ({
   types: [NONCE_REQUEST, NONCE_SUCCESS, NONCE_FAILURE],
   promise: async (api: Api) => {
     const { nonce, email } = await api.auth.nonce(username);
     const signature: string = Ecc.sign(nonce, Object.values(keys)[0].private);
-    return { email, nonce, signature };
+    return { email, nonce, signature, otpKey };
   },
 });
 
@@ -50,15 +54,18 @@ export const login = ({
   signature,
   challenge,
   referrerCode,
+  otpKey,
 }: {
   email: string;
   signature: string;
   challenge: string;
   referrerCode?: string;
+  otpKey?: string;
 }) => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
   promise: (api: Api) =>
     api.auth.login(email, signature, challenge, referrerCode),
+  otpKey,
 });
 
 export const SIGNUP_REQUEST = `${prefix}/SIGNUP_REQUEST`;

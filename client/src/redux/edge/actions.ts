@@ -66,7 +66,7 @@ export const login = ({
     } catch (e) {
       console.log(e);
     }
-    return { account, fioWallets };
+    return { account, fioWallets, options };
   },
 });
 

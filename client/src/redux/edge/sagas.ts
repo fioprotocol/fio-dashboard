@@ -8,7 +8,7 @@ import { Action } from '../types';
 
 export function* edgeLoginSuccess() {
   yield takeEvery(LOGIN_SUCCESS, function*(action: Action) {
-    const { account, fioWallets } = action.data;
+    const { account, fioWallets, options } = action.data;
     const keys = getWalletKeys(fioWallets);
     for (const fioWallet of fioWallets) {
       // @ts-ignore todo: custom dispatch?
@@ -17,6 +17,6 @@ export function* edgeLoginSuccess() {
     // @ts-ignore
     yield put(logout(account));
     // @ts-ignore
-    yield put(nonce(account.username, keys));
+    yield put(nonce(account.username, keys, options && options.otpKey));
   });
 }

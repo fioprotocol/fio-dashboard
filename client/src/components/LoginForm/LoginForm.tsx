@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { osName, osVersion } from 'react-device-detect';
 
 import ModalComponent from '../Modal/Modal';
 import Pin from './Pin';
@@ -7,6 +8,8 @@ import TwoFactorDangerModal from './components/TwoFactorDangerModal';
 import TwoFactorCodeModal, {
   BackupFormValues,
 } from './components/TwoFactorCodeModal';
+
+import apis from '../../api';
 
 import { REF_ACTIONS } from '../../constants/common';
 import { EmailConfirmationStateData, LastAuthData } from '../../types';
@@ -31,6 +34,7 @@ type Props = {
     reason?: string;
     voucherActivates?: string;
     message?: string;
+    voucherId?: string;
   };
   cachedUsers: string[];
   lastAuthData: LastAuthData;
@@ -93,6 +97,14 @@ const LoginForm = (props: Props) => {
   useEffect(() => {
     if (isOtpError) {
       !showCodeModal && toggleBlockmodal(true);
+      const deviceDescription = `${osName} ${osVersion}`;
+      const voucherId = edgeLoginFailure.voucherId;
+
+      apis.newDeviceTwoFactor.create({
+        email: loginParams.email,
+        deviceDescription,
+        voucherId,
+      });
     }
   }, [edgeLoginFailure.reason]);
 

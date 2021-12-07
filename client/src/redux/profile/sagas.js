@@ -39,6 +39,9 @@ export function* loginSuccess(history, api) {
     }
     yield put(closeLoginModal());
     yield put(setRedirectPath(null));
+
+    // todo: pass voucherId to delete
+    if (action.otpKey) api.newDeviceTwoFactor.delete();
   });
 }
 
@@ -76,13 +79,14 @@ export function* logoutSuccess(history, api) {
 
 export function* nonceSuccess() {
   yield takeEvery(NONCE_SUCCESS, function*(action) {
-    const { email, signature, nonce } = action.data;
+    const { email, signature, nonce, otpKey } = action.data;
 
     yield put(
       login({
         email,
         signature,
         challenge: nonce,
+        otpKey,
       }),
     );
   });
