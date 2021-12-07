@@ -31,6 +31,12 @@ export class Wallet extends Base {
         tableName: 'wallets',
         paranoid: true,
         timestamps: false,
+        indexes: [
+          {
+            unique: true,
+            fields: ['publicKey', 'userId'],
+          },
+        ],
       },
     );
   }
