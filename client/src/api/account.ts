@@ -17,4 +17,8 @@ export default class Account extends Base {
   updateWallet(publicKey: string, data: { name: string; data?: any }) {
     return this.apiClient.post(`account/wallet/update/${publicKey}`, { data });
   }
+
+  validateWalletImport(publicKey: string) {
+    return this.apiClient.post(`account/wallet/import/validate/${publicKey}`);
+  }
 }

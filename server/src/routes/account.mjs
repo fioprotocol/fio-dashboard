@@ -4,6 +4,7 @@ import WalletsList from '../services/wallets/List';
 import WalletsUpdateList from '../services/wallets/UpdateList';
 import WalletsAdd from '../services/wallets/Add';
 import WalletsUpdate from '../services/wallets/Update';
+import WalletsImportValidate from '../services/wallets/ImportValidate';
 
 export default {
   walletsList: makeServiceRunner(WalletsList),
@@ -13,4 +14,5 @@ export default {
     ...req.params,
     ...req.body.data,
   })),
+  importValidateWallet: makeServiceRunner(WalletsImportValidate, req => req.params),
 };

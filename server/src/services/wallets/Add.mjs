@@ -22,7 +22,7 @@ export default class WalletsAdd extends Base {
   }
 
   async execute({ data: { name, edgeId, publicKey, from, data } }) {
-    if (await Wallet.findOneWhere({ publicKey })) {
+    if (await Wallet.findOneWhere({ userId: this.context.id, publicKey })) {
       throw new X({
         code: 'NOT_UNIQUE',
         fields: {

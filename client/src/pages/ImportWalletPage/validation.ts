@@ -18,6 +18,12 @@ export const VALIDATION_ERRORS = {
     message:
       'This is a valid FIO seed phrase or private key, but it is not associated to an active account on the FIO chain',
   },
+  uniqueKey: {
+    message: 'You already have this wallet in your account',
+  },
+  general: {
+    message: 'Please try again later',
+  },
 };
 
 export const validate = async (
@@ -49,6 +55,19 @@ export const validate = async (
 
   if (!(await apis.fio.validatePublicKey(publicKey))) {
     return VALIDATION_ERRORS.pubKey;
+  }
+
+  try {
+    await apis.account.validateWalletImport(publicKey);
+  } catch (e) {
+    if (e.data && e.data.name) {
+      const uniqueError = { ...VALIDATION_ERRORS.uniqueKey };
+      uniqueError.message = `${uniqueError.message} - (${e.data.name})`;
+      return uniqueError;
+    }
+
+    console.error(e);
+    return VALIDATION_ERRORS.general;
   }
 
   return null;
