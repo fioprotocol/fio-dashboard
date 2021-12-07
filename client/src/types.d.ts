@@ -219,6 +219,7 @@ export type User = {
   status: string;
   secretSet?: boolean;
   newEmail?: boolean;
+  newDeviceTwoFactor?: boolean;
 };
 
 export type RefProfile = {

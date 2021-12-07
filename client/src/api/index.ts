@@ -9,6 +9,7 @@ import FioReg from './fio-reg';
 import Fio from './fio';
 import Account from './account';
 import RefProfile from './ref-profile';
+import NewDeviceTwoFactor from './new-device-two-factor';
 
 const apiClient = new ApiClient(config.apiPrefix);
 
@@ -33,6 +34,7 @@ export type Api = {
   account: Account;
   refProfile: RefProfile;
   client: ApiClient;
+  newDeviceTwoFactor: NewDeviceTwoFactor;
 };
 
 export default {
@@ -45,4 +47,5 @@ export default {
   account: new Account(apiClient),
   refProfile: new RefProfile(apiClient),
   client: apiClient,
+  newDeviceTwoFactor: new NewDeviceTwoFactor(apiClient),
 };

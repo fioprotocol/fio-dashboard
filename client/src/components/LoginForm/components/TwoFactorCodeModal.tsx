@@ -86,7 +86,7 @@ const TwoFactorCodeModal: React.FC<Props> = props => {
             onClick={onClose}
             isBlack={true}
             isThin={true}
-            disabled={isDisabled}
+            disabled={loading}
           />
         </div>
       </form>
