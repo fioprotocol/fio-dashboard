@@ -29,13 +29,18 @@ const DashboardPage: React.FC<Props> = props => {
   return (
     <div className={classes.container}>
       <LayoutContainer title="Dashboard">
-        <h5 className={classes.subtitle}>FIO Wallets:</h5>
+        <div className={classes.listHeader}>
+          <h5 className={classes.subtitle}>FIO Wallets:</h5>
+          <Link to={ROUTES.TOKENS}>
+            <Button className={classes.actionButton}>Manage Wallets</Button>
+          </Link>
+        </div>
         {loading ? (
           <FontAwesomeIcon icon="spinner" spin className={classes.spinner} />
         ) : fioWallets.length > 0 ? (
           fioWallets.map(wallet => (
             <DashboardListItem
-              title="Wallet Public Key"
+              title={wallet.name}
               listItem={wallet.publicKey}
               key={wallet.publicKey}
             />
@@ -48,7 +53,7 @@ const DashboardPage: React.FC<Props> = props => {
             />
           </div>
         )}
-        <div className={classes.addressesHeader}>
+        <div className={classes.listHeader}>
           <h5 className={classes.subtitle}>FIO Addresses:</h5>
           <Link to={ROUTES.FIO_ADDRESSES}>
             <Button className={classes.actionButton}>Manage Addresses</Button>

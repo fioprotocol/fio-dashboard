@@ -67,7 +67,7 @@
   }
 }
 
-.addressesHeader {
+.listHeader {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
@@ -121,6 +121,6 @@
     .badgeItem {
       grid-template-columns: 140px auto 20px;
     }
-  } 
+  }
 }
 
