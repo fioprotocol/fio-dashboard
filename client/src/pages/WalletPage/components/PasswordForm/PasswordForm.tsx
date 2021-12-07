@@ -38,6 +38,7 @@ const PasswordForm: React.FC<{
           <SubmitButton
             disabled={props.hasValidationErrors || props.submitting || loading}
             loading={loading}
+            withBottomMargin={true}
           />
         </form>
       )}

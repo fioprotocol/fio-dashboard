@@ -1,9 +1,8 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Modal from '../../../components/Modal/Modal';
 import CancelButton from '../../../components/common/CancelButton/CancelButton';
+import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
 
 import classes from '../styles/SendLinkModal.module.scss';
 
@@ -26,20 +25,13 @@ const SendLinkModal: React.FC<Props> = props => {
         link sent to you via email. This is required to recover your account in
         addition to your username and recovery questions.
       </p>
-      <Button
+      <SubmitButton
         onClick={onClick}
-        className={classes.actionButton}
+        text={loading ? 'Sending...' : 'Send Email'}
         disabled={loading}
-      >
-        {loading ? (
-          <>
-            Sending...
-            <FontAwesomeIcon icon="spinner" spin className="ml-2" />
-          </>
-        ) : (
-          'Send Email'
-        )}
-      </Button>
+        loading={loading}
+        withTopMargin={true}
+      />
       <div className={classes.cancelButton}>
         <CancelButton onClick={onClose} isThin={true} />
       </div>

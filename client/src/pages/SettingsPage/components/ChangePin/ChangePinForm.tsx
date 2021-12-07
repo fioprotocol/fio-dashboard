@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
-import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import InputRedux, {
   INPUT_UI_STYLES,
 } from '../../../../components/Input/InputRedux';
 import PinInput from '../../../../components/Input/PinInput/PinInput';
+import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import {
   ErrorBadge,
   ERROR_UI_TYPE,
@@ -63,13 +62,8 @@ const ChangePinForm: React.FC<Props> = props => {
             error={error}
           />
         </div>
-        <Button
-          className={classes.button}
-          onClick={onNextClick}
-          disabled={isDisabled}
-        >
-          Next
-        </Button>
+
+        <SubmitButton onClick={onNextClick} text="Next" disabled={isDisabled} />
       </div>
       <div className={classnames(classes.box, isConfirmPage && classes.show)}>
         <InputRedux
@@ -91,22 +85,12 @@ const ChangePinForm: React.FC<Props> = props => {
             />
           </div>
         )}
-        <Button
+        <SubmitButton
           onClick={onSubmit}
+          text={loading ? 'Confirming' : error ? 'Try Again' : 'Confirm'}
           disabled={loading}
-          className={classes.button}
-        >
-          {loading ? (
-            <>
-              <span>Confirming </span>
-              <FontAwesomeIcon icon="spinner" spin />
-            </>
-          ) : error ? (
-            'Try Again'
-          ) : (
-            'Confirm'
-          )}
-        </Button>
+          loading={loading}
+        />
       </div>
     </div>
   );

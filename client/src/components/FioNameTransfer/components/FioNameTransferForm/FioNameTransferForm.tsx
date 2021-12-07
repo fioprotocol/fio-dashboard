@@ -1,20 +1,21 @@
 import React, { FormEvent, useState } from 'react';
-import { Button } from 'react-bootstrap';
 
-import { INPUT_UI_STYLES } from '../../../Input/InputRedux';
 import { Field, FieldValue } from '../../../Input/Field';
-import { BADGE_TYPES } from '../../../Badge/Badge';
 import PriceBadge from '../../../Badges/PriceBadge/PriceBadge';
 import PayWithBadge from '../../../Badges/PayWithBadge/PayWithBadge';
 import LowBalanceBadge from '../../../Badges/LowBalanceBadge/LowBalanceBadge';
+import SubmitButton from '../../../common/SubmitButton/SubmitButton';
 
 import { validate } from './validation';
+
+import { INPUT_UI_STYLES } from '../../../Input/InputRedux';
+import { fioNameLabels } from '../../../../constants/labels';
+import { ERROR_UI_TYPE } from '../../../Input/ErrorBadge';
+import { BADGE_TYPES } from '../../../Badge/Badge';
 
 import { FormProps } from '../../types';
 
 import classes from '../../FioNameTransferContainer.module.scss';
-import { fioNameLabels } from '../../../../constants/labels';
-import { ERROR_UI_TYPE } from '../../../Input/ErrorBadge';
 
 const PLACEHOLDER = 'Enter FIO Address or FIO Public Key of New Owner';
 
@@ -92,15 +93,13 @@ export const TransferForm = (props: FormProps) => {
           currentWallet={currentWallet}
         />
         <LowBalanceBadge hasLowBalance={hasLowBalance} />
-        <Button
-          type="submit"
-          className={classes.button}
+        <SubmitButton
+          text="Transfer Now"
           disabled={
             hasLowBalance || !valid || processing || !value || validating
           }
-        >
-          Transfer Now
-        </Button>
+          withTopMargin={true}
+        />
       </form>
     </>
   );

@@ -3,19 +3,30 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 
+import { ClickEventTypes } from '../../../pages/SettingsPage/components/ChangePin/types';
+
 import classes from './SubmitButton.module.scss';
 
 type Props = {
-  onClick?: () => void;
+  onClick?: (() => void) | ((event: ClickEventTypes) => void);
   disabled?: boolean;
   loading?: boolean;
   isGreen?: boolean;
   withBottomMargin?: boolean;
+  withTopMargin?: boolean;
   text?: string;
 };
 
 const SubmitButton: React.FC<Props> = props => {
-  const { onClick, disabled, loading, isGreen, withBottomMargin, text } = props;
+  const {
+    onClick,
+    disabled,
+    loading,
+    isGreen,
+    withTopMargin,
+    withBottomMargin,
+    text,
+  } = props;
 
   return (
     <Button
@@ -27,13 +38,13 @@ const SubmitButton: React.FC<Props> = props => {
         isGreen && classes.isGreen,
         disabled && classes.disabled,
         loading && classes.loading,
+        withTopMargin && classes.topMargin,
         withBottomMargin && classes.bottomMargin,
       )}
     >
-      {text || 'Confirm'}{' '}
-      {loading && (
-        <FontAwesomeIcon icon="spinner" spin className={classes.loader} />
-      )}
+      <div />
+      <div>{text || 'Confirm'}</div>
+      <div>{loading && <FontAwesomeIcon icon="spinner" spin />}</div>
     </Button>
   );
 };

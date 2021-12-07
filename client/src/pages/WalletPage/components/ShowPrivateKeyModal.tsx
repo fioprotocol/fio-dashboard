@@ -11,7 +11,7 @@ import PasswordForm from './PasswordForm';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 
-import { getWalletKeys } from '../../../util/edge';
+import { getWalletKeys, waitForEdgeAccountStop } from '../../../util/edge';
 import { copyToClipboard } from '../../../util/general';
 
 import apis from '../../../api';
@@ -57,6 +57,7 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
 
     try {
       const keys = await getWalletKeys(account);
+      await waitForEdgeAccountStop(account);
       if (keys[fioWallet.edgeId] != null && keys[fioWallet.edgeId].private) {
         setKey(keys[fioWallet.edgeId].private);
       }

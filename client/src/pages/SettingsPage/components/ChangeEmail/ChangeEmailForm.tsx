@@ -1,14 +1,13 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
 import { Field, Form, FormRenderProps } from 'react-final-form';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
+
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 
 import { FormValuesProps } from './types';
 
-import classes from '../../styles/ChangeEmail.module.scss';
 import validation from './validation';
 
 type Props = {
@@ -36,22 +35,13 @@ const ChangeEmailForm: React.FC<Props> = props => {
             loading={validating}
             disabled={submitting || loading}
           />
-          <Button
-            type="submit"
-            disabled={loading || hasValidationErrors || validating}
-            className={classes.submitButton}
-          >
-            {loading ? (
-              <>
-                <span>Updating </span>
-                <FontAwesomeIcon icon="spinner" spin className={classes.icon} />
-              </>
-            ) : error ? (
-              'Try Again'
-            ) : (
-              'Update'
-            )}
-          </Button>
+          <SubmitButton
+            text={loading ? 'Updating' : error ? 'Try Again' : 'Update'}
+            disabled={
+              loading || hasValidationErrors || validating || submitting
+            }
+            loading={loading || submitting}
+          />
         </form>
       </>
     );

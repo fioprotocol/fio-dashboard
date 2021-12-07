@@ -8,7 +8,7 @@ import { ClickEventTypes } from './types';
 
 const ITEM_PROPS = {
   title: 'PIN',
-  subtitle: 'Your PIN is a 4 digit code used to do quick re-logins.',
+  subtitle: 'Your PIN is a 6 digit code used to do quick re-logins.',
   buttonText: 'Change PIN',
   modalTitle: 'Change PIN',
   modalSubtitle:
