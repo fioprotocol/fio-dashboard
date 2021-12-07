@@ -55,4 +55,7 @@ router.use(
   }),
 );
 
+router.post('/new-device-two-factor', routes.newDeviceTwoFactor.create);
+router.delete('/new-device-two-factor', checkAuth, routes.newDeviceTwoFactor.delete);
+
 export default router;

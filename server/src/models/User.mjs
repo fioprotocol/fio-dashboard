@@ -6,6 +6,7 @@ import { Notification } from './Notification';
 import { Nonce } from './Nonce';
 import { FreeAddress } from './FreeAddress';
 import { Wallet } from './Wallet';
+import { NewDeviceTwoFactor } from './NewDeviceTwoFactor';
 
 const { DataTypes: DT, Op } = Sequelize;
 
@@ -66,6 +67,11 @@ export class User extends Base {
       sourceKey: 'id',
       as: 'freeAddresses',
     });
+    this.hasMany(NewDeviceTwoFactor, {
+      foreignKey: 'userId',
+      sourceKey: 'id',
+      as: 'newDeviceTwoFactor',
+    });
   }
 
   static attrs(type = 'default') {
@@ -81,6 +87,7 @@ export class User extends Base {
         'secretSet',
         'freeAddresses',
         'fioWallets',
+        'newDeviceTwoFactor',
       ],
     };
 
@@ -101,6 +108,11 @@ export class User extends Base {
       include: [
         { model: FreeAddress, as: 'freeAddresses' },
         { model: Wallet, as: 'fioWallets' },
+        {
+          model: NewDeviceTwoFactor,
+          as: 'newDeviceTwoFactor',
+          attributes: ['voucherId', 'deviceDescription'],
+        },
       ],
     });
   }

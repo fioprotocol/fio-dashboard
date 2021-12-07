@@ -8,4 +8,5 @@ export const {
   FreeAddress,
   Wallet,
   ReferrerProfile,
+  NewDeviceTwoFactor,
 } = db.models;
