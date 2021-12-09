@@ -219,7 +219,7 @@ export type User = {
   status: string;
   secretSet?: boolean;
   newEmail?: boolean;
-  newDeviceTwoFactor?: boolean;
+  newDeviceTwoFactor?: { voucherId: string; deviceDescription?: string }[];
 };
 
 export type RefProfile = {

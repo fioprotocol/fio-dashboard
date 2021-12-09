@@ -7,5 +7,6 @@ export type Action = {
     account: EdgeAccount;
     fioWallets: EdgeCurrencyWallet[];
     options?: { otpKey?: string };
+    voucherId?: string;
   };
 };

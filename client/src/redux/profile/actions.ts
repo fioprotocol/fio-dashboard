@@ -36,12 +36,13 @@ export const nonce = (
   username: string,
   keys: WalletKeysObj,
   otpKey?: string,
+  voucherId?: string,
 ) => ({
   types: [NONCE_REQUEST, NONCE_SUCCESS, NONCE_FAILURE],
   promise: async (api: Api) => {
     const { nonce, email } = await api.auth.nonce(username);
     const signature: string = Ecc.sign(nonce, Object.values(keys)[0].private);
-    return { email, nonce, signature, otpKey };
+    return { email, nonce, signature, otpKey, voucherId };
   },
 });
 
@@ -55,17 +56,20 @@ export const login = ({
   challenge,
   referrerCode,
   otpKey,
+  voucherId,
 }: {
   email: string;
   signature: string;
   challenge: string;
   referrerCode?: string;
   otpKey?: string;
+  voucherId?: string;
 }) => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
   promise: (api: Api) =>
     api.auth.login(email, signature, challenge, referrerCode),
   otpKey,
+  voucherId,
 });
 
 export const SIGNUP_REQUEST = `${prefix}/SIGNUP_REQUEST`;

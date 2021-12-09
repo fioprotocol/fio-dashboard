@@ -126,6 +126,16 @@ export default combineReducers({
             newEmail: '',
           };
 
+        if (
+          JSON.stringify(action.data.newDeviceTwoFactor) !==
+          JSON.stringify(state.newDeviceTwoFactor)
+        ) {
+          return {
+            ...state,
+            newDeviceTwoFactor: action.data.newDeviceTwoFactor,
+          };
+        }
+
         return state;
       }
       default:
