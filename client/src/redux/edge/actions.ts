@@ -4,8 +4,6 @@ import { Api } from '../../api';
 
 import { getWalletKeys } from '../../util/edge';
 
-import { minWaitTimeFunction } from '../../utils';
-
 import { WalletKeys } from '../../types';
 
 export const prefix = 'edge';
@@ -33,12 +31,14 @@ export const login = ({
   password,
   pin,
   options,
+  voucherId,
 }: {
   email: string;
   username: string;
   password: string;
   pin: string;
   options?: { otpKey?: string };
+  voucherId?: string;
 }) => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
   promise: async (api: Api) => {
@@ -66,7 +66,7 @@ export const login = ({
     } catch (e) {
       console.log(e);
     }
-    return { account, fioWallets, options };
+    return { account, fioWallets, options, voucherId };
   },
 });
 
@@ -349,30 +349,9 @@ export const clearRecoveryResults = () => ({
   type: CLEAR_RECOVERY_RESULTS,
 });
 
-export const ENABLE_TWO_FACTOR_REQUEST = `${prefix}/ENABLE_TWO_FACTOR_REQUEST`;
-export const ENABLE_TWO_FACTOR_SUCCESS = `${prefix}/ENABLE_TWO_FACTOR_SUCCESS`;
-export const ENABLE_TWO_FACTOR_FAILURE = `${prefix}/ENABLE_TWO_FACTOR_FAILURE`;
+export const TOGGLE_TWO_FACTOR_AUTH = `${prefix}/TOGGLE_TWO_FACTOR_AUTH`;
 
-export const enableTwoFactorAuth = (account: EdgeAccount) => ({
-  types: [
-    ENABLE_TWO_FACTOR_REQUEST,
-    ENABLE_TWO_FACTOR_SUCCESS,
-    ENABLE_TWO_FACTOR_FAILURE,
-  ],
-  promise: (api: Api) =>
-    minWaitTimeFunction(() => api.edge.enableTwoFactorAuth(account), 2000),
-});
-
-export const DISABLE_TWO_FACTOR_REQUEST = `${prefix}/DISABLE_TWO_FACTOR_REQUEST`;
-export const DISABLE_TWO_FACTOR_SUCCESS = `${prefix}/DISABLE_TWO_FACTOR_SUCCESS`;
-export const DISABLE_TWO_FACTOR_FAILURE = `${prefix}/DISABLE_TWO_FACTOR_FAILURE`;
-
-export const disableTwoFactor = (account: EdgeAccount) => ({
-  types: [
-    DISABLE_TWO_FACTOR_REQUEST,
-    DISABLE_TWO_FACTOR_SUCCESS,
-    DISABLE_TWO_FACTOR_FAILURE,
-  ],
-  promise: (api: Api) =>
-    minWaitTimeFunction(() => api.edge.disableTwoFactorAuth(account), 2000),
+export const toggleTwoFactorAuth = (enabled: boolean) => ({
+  type: TOGGLE_TWO_FACTOR_AUTH,
+  enabled,
 });
