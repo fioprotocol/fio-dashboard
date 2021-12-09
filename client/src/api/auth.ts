@@ -69,4 +69,24 @@ export default class Auth extends Base {
   updateEmailRevert() {
     return this.apiClient.post('users/update-email-revert');
   }
+
+  createNewDeviceRequest({
+    email,
+    voucherId,
+    deviceDescription,
+  }: {
+    email: string;
+    voucherId: string;
+    deviceDescription: string;
+  }) {
+    return this.apiClient.post('auth/new-device-two-factor', {
+      data: { email, voucherId, deviceDescription },
+    });
+  }
+
+  deleteNewDeviceRequest(voucherId: string) {
+    return this.apiClient.delete('auth/new-device-two-factor', {
+      voucherId,
+    });
+  }
 }
