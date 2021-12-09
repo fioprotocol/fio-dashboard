@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { osName, osVersion } from 'react-device-detect';
 
 import ModalComponent from '../Modal/Modal';
@@ -10,6 +10,8 @@ import TwoFactorCodeModal, {
 } from './components/TwoFactorCodeModal';
 
 import apis from '../../api';
+
+import { autoLogin } from '../../util/login';
 
 import { REF_ACTIONS } from '../../constants/common';
 import { EmailConfirmationStateData, LastAuthData } from '../../types';
@@ -83,7 +85,7 @@ const LoginForm = (props: Props) => {
   const [showCodeModal, toggleCodeModal] = useState(false);
   const [loginParams, setLoginParams] = useState(null);
 
-  const isOtpError = edgeLoginFailure && edgeLoginFailure.reason === 'otp';
+  const timerRef = useRef(null);
 
   useEffect(getCachedUsers, []);
   useEffect(() => {
@@ -95,16 +97,23 @@ const LoginForm = (props: Props) => {
   }, [cachedUsers, lastAuthData]);
 
   useEffect(() => {
+    return () => clearTimeout(timerRef.current);
+  }, []);
+
+  useEffect(() => {
+    const isOtpError = edgeLoginFailure && edgeLoginFailure.reason === 'otp';
+
     if (isOtpError) {
       !showCodeModal && toggleBlockmodal(true);
       const deviceDescription = `${osName} ${osVersion}`;
       const voucherId = edgeLoginFailure.voucherId;
 
-      apis.newDeviceTwoFactor.create({
+      apis.auth.createNewDeviceRequest({
         email: loginParams.email,
         deviceDescription,
         voucherId,
       });
+      autoLogin({ voucherId, timerRef, loginParams, login: onSubmit });
     }
   }, [edgeLoginFailure.reason]);
 
@@ -132,7 +141,10 @@ const LoginForm = (props: Props) => {
     clearCachedUser(lastAuthData.username);
   };
 
-  const onCloseBlockModal = () => toggleBlockmodal(false);
+  const onCloseBlockModal = () => {
+    toggleBlockmodal(false);
+    clearTimeout(timerRef.current);
+  };
 
   const onOpenCodeModal = () => {
     onCloseBlockModal();
@@ -141,7 +153,13 @@ const LoginForm = (props: Props) => {
   const onCloseCodeModal = () => toggleCodeModal(false);
 
   const submitBackupCode = (values: BackupFormValues) => {
-    onSubmit({ ...loginParams, options: { otpKey: values.backupCode } });
+    onSubmit({
+      ...loginParams,
+      options: {
+        otpKey: values.backupCode,
+      },
+      voucherId: edgeLoginFailure.voucherId,
+    });
   };
 
   return (

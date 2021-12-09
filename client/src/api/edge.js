@@ -100,6 +100,15 @@ export default class Edge {
     return this.edgeContext.createAccount(username, password, pin, {});
   }
 
+  async loginMessages() {
+    try {
+      return await this.edgeContext.fetchLoginMessages();
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  }
+
   usernameAvailable(username) {
     return this.edgeContext.usernameAvailable(username); // returns bool `available`
   }
@@ -234,7 +243,7 @@ export default class Edge {
       await account.enableOtp();
       return { status: 1 };
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     }
   }
@@ -244,7 +253,7 @@ export default class Edge {
       await account.disableOtp();
       return { status: 1 };
     } catch (e) {
-      console.log(e);
+      console.error(e);
       throw e;
     }
   }
