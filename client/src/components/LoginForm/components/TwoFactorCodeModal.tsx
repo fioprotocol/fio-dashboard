@@ -28,69 +28,72 @@ type Props = {
   otpError: string;
 };
 
+const RenderForm = (props: FormRenderProps<BackupFormValues> & Props) => {
+  const {
+    handleSubmit,
+    valid,
+    values,
+    submitting,
+    submitFailed,
+    submitSucceeded,
+    form: { mutators },
+    otpError,
+    loading,
+    onClose,
+  } = props;
+
+  useEffect(() => {
+    if (otpError && (submitFailed || submitSucceeded)) {
+      mutators.setDataMutator('backupCode', {
+        error: otpError,
+      });
+    }
+  }, [otpError, submitSucceeded, submitFailed]);
+
+  const handleError = () => {
+    mutators.setDataMutator('backupCode', {
+      error: null,
+    });
+  };
+
+  const isDisabled = loading || !valid || !values.backupCode;
+
+  return (
+    <form className={classes.form} onSubmit={handleSubmit}>
+      <OnChange name="backupCode">{handleError}</OnChange>
+      <Field
+        name="backupCode"
+        placeholder="Enter Backup Code"
+        lowerCased={false}
+        component={Input}
+        type="text"
+        showClearInput={true}
+        uiType={INPUT_UI_STYLES.BLACK_WHITE}
+        errorColor={COLOR_TYPE.WARN}
+        loading={loading}
+      />
+      <SubmitButton
+        text="Submit"
+        disabled={isDisabled}
+        loading={loading || submitting}
+      />
+      <div className={classes.cancelButton}>
+        <CancelButton
+          onClick={onClose}
+          isBlack={true}
+          isThin={true}
+          disabled={loading}
+        />
+      </div>
+    </form>
+  );
+};
+
 const TwoFactorCodeModal: React.FC<Props> = props => {
-  const { show, onClose, onSubmit, loading, otpError } = props;
+  const { show, onClose, onSubmit, loading } = props;
 
   const handleClose = () => {
     !loading && onClose();
-  };
-
-  const RenderForm = (props: FormRenderProps<BackupFormValues>) => {
-    const {
-      handleSubmit,
-      valid,
-      values,
-      submitting,
-      submitFailed,
-      submitSucceeded,
-      form: { mutators },
-    } = props;
-
-    useEffect(() => {
-      if (otpError && (submitFailed || submitSucceeded)) {
-        mutators.setDataMutator('backupCode', {
-          error: otpError,
-        });
-      }
-    }, [otpError, submitSucceeded, submitFailed]);
-
-    const handleError = () => {
-      mutators.setDataMutator('backupCode', {
-        error: null,
-      });
-    };
-
-    const isDisabled = loading || !valid || !values.backupCode;
-
-    return (
-      <form className={classes.form} onSubmit={handleSubmit}>
-        <OnChange name="backupCode">{handleError}</OnChange>
-        <Field
-          name="backupCode"
-          placeholder="Enter Backup Code"
-          lowerCased={false}
-          component={Input}
-          type="text"
-          showClearInput={true}
-          uiType={INPUT_UI_STYLES.BLACK_WHITE}
-          errorColor={COLOR_TYPE.WARN}
-          loading={loading}
-        />
-        <SubmitButton
-          text="Submit"
-          disabled={isDisabled}
-          loading={loading || submitting}
-        />
-        <div className={classes.cancelButton}>
-          <CancelButton
-            onClick={onClose}
-            isBlack={true}
-            isThin={true}
-            disabled={loading}
-          />
-        </div>
-      </form>
-    );
   };
 
   return (
@@ -116,7 +119,7 @@ const TwoFactorCodeModal: React.FC<Props> = props => {
           validate={validate}
           mutators={{ setDataMutator }}
         >
-          {RenderForm}
+          {formProps => <RenderForm {...formProps} {...props} />}
         </Form>
       </div>
     </Modal>

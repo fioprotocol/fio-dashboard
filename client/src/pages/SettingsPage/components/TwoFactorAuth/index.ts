@@ -3,29 +3,20 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../../../utils';
 
-import {
-  enableTwoFactorAuth,
-  disableTwoFactor,
-} from '../../../../redux/edge/actions';
+import { toggleTwoFactorAuth } from '../../../../redux/edge/actions';
+import { showGenericErrorModal } from '../../../../redux/modal/actions';
 
-import {
-  twoFactorAuthLoading,
-  hasTwoFactorAuth,
-} from '../../../../redux/edge/selectors';
+import { hasTwoFactorAuth } from '../../../../redux/edge/selectors';
 import { showGenericError } from '../../../../redux/modal/selectors';
 
 import TwoFactorAuth from './TwoFactorAuth';
 
 const reduxConnect = connect(
   createStructuredSelector({
-    loading: twoFactorAuthLoading,
     hasTwoFactorAuth,
     genericErrorIsShowing: showGenericError,
   }),
-  {
-    enableTwoFactorAuth,
-    disableTwoFactor,
-  },
+  { toggleTwoFactorAuth, showGenericErrorModal },
 );
 
 export default compose(reduxConnect)(TwoFactorAuth);

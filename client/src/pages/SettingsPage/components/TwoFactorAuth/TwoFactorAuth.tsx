@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { EdgeAccount } from 'edge-core-js';
 
 import SecurityItem from '../SecurityItem';
 import SuccessModal from '../../../../components/Modal/SuccessModal';
@@ -7,6 +6,9 @@ import DangerModal from '../../../../components/Modal/DangerModal';
 import EdgeConfirmAction from '../../../../components/EdgeConfirmAction';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
+
+import apis from '../../../../api';
+import { minWaitTimeFunction } from '../../../../utils';
 
 import { SubmitActionParams } from '../../../../components/EdgeConfirmAction/types';
 
@@ -27,32 +29,45 @@ const ITEM_PROPS = {
   successEnableModalSubtitle: 'Your 2FA has been successfully enabled.',
 };
 
+const MIN_WAIT_TIME = 2000;
+
 type Props = {
   isTwoFAEnabled?: boolean;
-  loading: boolean;
   genericErrorIsShowing: boolean;
   hasTwoFactorAuth: boolean;
-  enableTwoFactorAuth: (account: EdgeAccount) => void;
-  disableTwoFactor: (account: EdgeAccount) => void;
+  toggleTwoFactorAuth: (enabled: boolean) => void;
+  showGenericErrorModal: () => void;
 };
 
 const TwoFactorAuth: React.FC<Props> = props => {
   const {
-    loading,
     genericErrorIsShowing,
     hasTwoFactorAuth,
-    enableTwoFactorAuth,
-    disableTwoFactor,
+    toggleTwoFactorAuth,
+    showGenericErrorModal,
   } = props;
 
   const [submitData, setSubmitData] = useState<boolean | null>(null);
   const [showDisableModal, toggleDisableModal] = useState(false);
   const [showSuccessModal, toggleSuccessModal] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [loading, toggleLoading] = useState(false);
 
   const submitDisable = async ({ edgeAccount }: SubmitActionParams) => {
+    toggleLoading(true);
     toggleDisableModal(true);
-    disableTwoFactor(edgeAccount);
+    try {
+      await minWaitTimeFunction(
+        () => apis.edge.disableTwoFactorAuth(edgeAccount),
+        MIN_WAIT_TIME,
+      );
+      toggleTwoFactorAuth(false);
+      toggleLoading(false);
+    } catch (e) {
+      console.error(e);
+      showGenericErrorModal();
+      toggleLoading(false);
+    }
   };
 
   const onSuccessDisable = () => {
@@ -68,7 +83,19 @@ const TwoFactorAuth: React.FC<Props> = props => {
   };
 
   const submitEnable = async ({ edgeAccount }: SubmitActionParams) => {
-    enableTwoFactorAuth(edgeAccount);
+    toggleLoading(true);
+    try {
+      await minWaitTimeFunction(
+        () => apis.edge.enableTwoFactorAuth(edgeAccount),
+        MIN_WAIT_TIME,
+      );
+      toggleTwoFactorAuth(true);
+      toggleLoading(false);
+    } catch (e) {
+      console.error(e);
+      showGenericErrorModal();
+      toggleLoading(false);
+    }
   };
 
   const onSuccessEnable = () => {

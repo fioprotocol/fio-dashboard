@@ -300,30 +300,11 @@ export default combineReducers({
   },
   hasTwoFactorAuth(state: boolean = false, action) {
     switch (action.type) {
-      case actions.ENABLE_TWO_FACTOR_SUCCESS: {
-        return true;
-      }
-      case actions.DISABLE_TWO_FACTOR_SUCCESS: {
-        return false;
+      case actions.TOGGLE_TWO_FACTOR_AUTH: {
+        return action.enabled;
       }
       case actions.LOGIN_SUCCESS: {
         return !!action.data.account.otpKey;
-      }
-      default:
-        return state;
-    }
-  },
-  twoFactorAuthLoading(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.ENABLE_TWO_FACTOR_REQUEST:
-      case actions.DISABLE_TWO_FACTOR_REQUEST: {
-        return true;
-      }
-      case actions.ENABLE_TWO_FACTOR_SUCCESS:
-      case actions.DISABLE_TWO_FACTOR_SUCCESS:
-      case actions.ENABLE_TWO_FACTOR_FAILURE:
-      case actions.DISABLE_TWO_FACTOR_FAILURE: {
-        return false;
       }
       default:
         return state;
