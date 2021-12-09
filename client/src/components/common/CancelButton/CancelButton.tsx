@@ -25,6 +25,7 @@ const CancelButton: React.FC<Props> = props => {
       )}
       onClick={onClick}
       disabled={disabled}
+      type="button"
     >
       {text || 'Cancel'}
     </button>
