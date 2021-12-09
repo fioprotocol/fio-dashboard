@@ -94,6 +94,16 @@ const WalletPage: React.FC<ContainerProps> = props => {
               <FontAwesomeIcon icon="arrow-up" />
             </div>
           </Link>
+          <Link
+            to={putParamsToUrl(ROUTES.FIO_REQUEST, {
+              publicKey: fioWallet.publicKey,
+            })}
+            className={classes.link}
+          >
+            <div>
+              <FontAwesomeIcon icon="arrow-down" />
+            </div>
+          </Link>
           <div onClick={onDetails}>
             <FontAwesomeIcon icon="qrcode" />
           </div>

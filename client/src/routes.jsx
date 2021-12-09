@@ -38,6 +38,7 @@ import WalletsPage from './pages/WalletsPage';
 import WalletPage from './pages/WalletPage';
 import ImportWalletPage from './pages/ImportWalletPage';
 import SendPage from './pages/SendPage';
+import RequestPage from './pages/RequestPage';
 import UpdateEmailConfirmGatePage from './pages/UpdateEmailConfirmGatePage';
 import UpdateEmailPage from './pages/UpdateEmailPage';
 
@@ -152,6 +153,7 @@ const Routes = () => (
         <PrivateRoute path={ROUTES.SETTINGS} component={SettingsPage} exact />
 
         <PrivateRoute path={ROUTES.SEND} component={SendPage} exact />
+        <PrivateRoute path={ROUTES.FIO_REQUEST} component={RequestPage} exact />
 
         <Route
           path={ROUTES.ACCOUNT_RECOVERY}
