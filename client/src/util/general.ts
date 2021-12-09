@@ -89,3 +89,20 @@ export const testWalletName = (name: string) => {
 
   return true;
 };
+
+export const commonFormatTime = (date: string) => {
+  if (!date) return 'N/A';
+  const activationDay = (dateString: string) =>
+    new Date(dateString).toLocaleDateString([], {
+      year: 'numeric',
+      month: '2-digit',
+      day: 'numeric',
+    });
+  const activationTime = (dateString: string) =>
+    new Date(dateString).toLocaleString([], {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true,
+    });
+  return `${activationDay(date)} @ ${activationTime(date)}`;
+};

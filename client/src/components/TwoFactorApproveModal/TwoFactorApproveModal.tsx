@@ -1,30 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import Modal from '../Modal/Modal';
 import EdgeConfirmAction from '../EdgeConfirmAction';
+import ModalComponent from './components/ModalComponent';
+
+import apis from '../../api';
 
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
+import { PendingVoucher } from './types';
 import { User } from '../../types';
 import { SubmitActionParams } from '../EdgeConfirmAction/types';
 
-import classes from './TwoFactorApproveModal.module.scss';
-
-const INFO_ELEMENTS = [
-  {
-    title: 'Device',
-    value: '<Device>',
-  },
-  {
-    title: 'Location',
-    value: '<Location>',
-  },
-  {
-    title: 'Request on',
-    value: '00/00/0000 @ 00:00 PM',
-  },
-];
+export const CLICK_TYPE = {
+  GRANT_ACCESS: 'grantAccess',
+  DENY_ALL: 'denyAll',
+};
 
 type Props = {
   user: User;
@@ -32,15 +22,70 @@ type Props = {
 
 const TwoFactorAuth: React.FC<Props> = props => {
   const { user } = props;
+  const { newDeviceTwoFactor = [] } = user || {};
+
   const [showApprove, toggleApproveModal] = useState(false);
   const [processing, setProcessing] = useState(false);
-  const [submitData, setSubmitData] = useState<boolean | null>(null);
+  const [submitData, setSubmitData] = useState<{
+    voucherId?: string;
+    type: string;
+  } | null>(null);
+  const [newDevicesList, setNewDevicesList] = useState<PendingVoucher[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const getLoginMessages = async () => {
+    const res = await apis.edge.loginMessages();
+    if (res && user && user.username) {
+      const usersPendingVouchers: PendingVoucher[] =
+        res[user.username] && res[user.username].pendingVouchers;
+      if (!usersPendingVouchers) return;
+      const retArr = newDeviceTwoFactor.map(device => {
+        const pendingVouchers = usersPendingVouchers.find(
+          voucher => voucher.voucherId === device.voucherId,
+        );
+        const deviceData = { ...pendingVouchers };
+
+        if (pendingVouchers && pendingVouchers.deviceDescription) {
+          deviceData.deviceDescription = pendingVouchers.deviceDescription;
+        } else {
+          deviceData.deviceDescription = device.deviceDescription || 'N/A';
+        }
+
+        return deviceData;
+      });
+
+      setNewDevicesList(retArr);
+    }
+  };
 
   const onCloseApproveModal = () => toggleApproveModal(false);
 
-  const submit = async ({ edgeAccount }: SubmitActionParams) => {
-    // toggleDisableModal(true);
-    // disableTwoFactor(edgeAccount);
+  const submit = async ({ edgeAccount, data }: SubmitActionParams) => {
+    const { voucherId, type } = data;
+    try {
+      setLoading(true);
+      if (type === CLICK_TYPE.GRANT_ACCESS) {
+        await edgeAccount.approveVoucher(voucherId);
+        await apis.auth.deleteNewDeviceRequest(voucherId);
+        setNewDevicesList(
+          newDevicesList.filter(device => device.voucherId === voucherId),
+        );
+      }
+      if (type === CLICK_TYPE.DENY_ALL) {
+        const promises = newDevicesList.map(async device => [
+          await edgeAccount.rejectVoucher(device.voucherId),
+          await apis.auth.deleteNewDeviceRequest(device.voucherId),
+        ]);
+        try {
+          await Promise.all(promises);
+        } finally {
+          setNewDevicesList([]);
+        }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+    setLoading(false);
   };
 
   const onSuccess = () => {
@@ -52,17 +97,26 @@ const TwoFactorAuth: React.FC<Props> = props => {
     setProcessing(false);
   };
 
-  const { newDeviceTwoFactor } = user || {};
+  const onClick = (data: { voucherId?: string; type: string }) => {
+    setSubmitData(data);
+  };
 
   useEffect(() => {
-    if (newDeviceTwoFactor) {
+    if (newDeviceTwoFactor.length > 0) {
+      getLoginMessages();
       toggleApproveModal(true);
     }
 
-    if (!user) {
+    if (!user || newDeviceTwoFactor.length === 0) {
       toggleApproveModal(false);
     }
-  }, [newDeviceTwoFactor]);
+  }, [JSON.stringify(newDeviceTwoFactor)]);
+
+  useEffect(() => {
+    if (user) {
+      getLoginMessages();
+    }
+  }, []);
 
   return (
     <>
@@ -76,63 +130,13 @@ const TwoFactorAuth: React.FC<Props> = props => {
         setProcessing={setProcessing}
         hideProcessing={true}
       />
-      <Modal
-        show={showApprove && !submitData}
+      <ModalComponent
+        show={showApprove}
         onClose={onCloseApproveModal}
-        closeButton={true}
-        isInfo={true}
-        backdrop={true}
-      >
-        <div className={classes.approveContainer}>
-          <FontAwesomeIcon
-            icon="exclamation-triangle"
-            className={classes.icon}
-          />
-          <h4 className={classes.title}>New Device Sign In</h4>
-          <p className={classes.subtitle}>
-            A new device would like to sign in to you account.
-          </p>
-          <p className={classes.message}>
-            If you did not make this request, your password may have been stole
-            and you risk losing your funds.
-          </p>
-          <p className={classes.message}>
-            Please deny the request and change your password.
-          </p>
-          <div className={classes.infoContainer}>
-            {submitData ? (
-              <>
-                {INFO_ELEMENTS.map(infoElement => (
-                  <div className={classes.infoElement} key={infoElement.title}>
-                    <h5 className={classes.title}>{infoElement.title}</h5>
-                    <p className={classes.value}>{infoElement.value}</p>
-                  </div>
-                ))}
-                <h5 className={classes.denied}>
-                  Unless denied, access will be granted on
-                </h5>
-                <p className={classes.deniedValue}>00/00/0000 @ 00:00 PM</p>
-                <button className={classes.actionButton}>
-                  It was Me, Grant Access
-                </button>
-              </>
-            ) : (
-              <>
-                <div className={classes.infoElement}>
-                  Please Enter PIN to see details
-                </div>
-                <button
-                  className={classes.actionButton}
-                  onClick={() => setSubmitData(true)}
-                >
-                  Enter PIN
-                </button>
-              </>
-            )}
-          </div>
-          <button className={classes.cancelButton}>Not Me, Deny All</button>
-        </div>
-      </Modal>
+        onClick={onClick}
+        loading={loading}
+        newDevicesList={newDevicesList}
+      />
     </>
   );
 };
