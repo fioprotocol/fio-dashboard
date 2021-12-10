@@ -1,0 +1,36 @@
+@import '../../../../../assets/styles/colors.scss';
+@import '../../../../../assets/styles/fontMixins.scss';
+
+.container {
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 335px;
+
+  .title {
+    margin-bottom: -20px;
+    font-size: 0.875em;
+    @include proxima-nova-semibold;
+  }
+
+  .circle {
+    color: $dark-jungle-green;
+    font-size: 0.875em;
+    margin-left: 12px;
+
+    &:first-of-type {
+      margin-left: 0;
+    }
+  }
+
+  .backupCode {
+    color: $dark-jungle-green;
+    @include proxima-nova-semibold;
+  }
+
+  .showButton {
+    color: $dark-jungle-green;
+    margin-left: auto;
+    cursor: pointer;
+    font-size: 20px;
+  }
+}
