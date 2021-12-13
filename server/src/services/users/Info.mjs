@@ -1,6 +1,7 @@
 import Base from '../Base';
 import X from '../Exception';
-import { User, Wallet, Notification, Action } from '../../models';
+import { User, Wallet, Notification, Action, NewDeviceTwoFactor } from '../../models';
+
 export default class UsersInfo extends Base {
   async execute() {
     const user = await User.findActive(this.context.id);
@@ -35,6 +36,15 @@ export default class UsersInfo extends Base {
         userId: user.id,
       });
       userObj.secretSetNotification = !!secretSetNotification;
+    }
+
+    if (userObj.newDeviceTwoFactor.length > 0) {
+      const newDevicesValid = [];
+      for (const newDeviceItem of userObj.newDeviceTwoFactor) {
+        const isExpired = await NewDeviceTwoFactor.isExpired(newDeviceItem);
+        if (!isExpired) newDevicesValid.push(newDeviceItem);
+      }
+      userObj.newDeviceTwoFactor = newDevicesValid;
     }
 
     return {
