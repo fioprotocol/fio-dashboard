@@ -9,7 +9,7 @@ export type TwoFactorComponentProps = {
     showModal: boolean;
   };
   edgeConfirmActionProps: {
-    setProcessing: (flag: boolean) => void;
+    setProcessing: (isProcessing: boolean) => void;
     processing: boolean;
     hideProcessing: boolean;
   };
@@ -18,7 +18,7 @@ export type TwoFactorComponentProps = {
   processing: boolean;
   toggleTwoFactorAuth: (enabled: boolean) => void;
   showGenericErrorModal: () => void;
-  toggleLoading: (flag: boolean) => void;
-  setProcessing: (flag: boolean) => void;
-  toggleSuccessModal: (flag: boolean) => void;
+  toggleLoading: (isLoading: boolean) => void;
+  setProcessing: (isProcessing: boolean) => void;
+  toggleSuccessModal: (isOpen: boolean) => void;
 };
