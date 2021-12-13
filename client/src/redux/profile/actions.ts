@@ -8,6 +8,8 @@ import {
 import { RouterProps } from 'react-router';
 import { minWaitTimeFunction } from '../../utils';
 
+import { GetState } from '../init';
+
 export const prefix: string = 'profile';
 
 export const AUTH_CHECK_REQUEST = `${prefix}/AUTH_CHECK_REQUEST`;
@@ -116,10 +118,25 @@ export const setRecoveryQuestions = (token: string) => ({
     minWaitTimeFunction(() => api.auth.setRecovery(token), 4000),
 });
 
-export const RESET_LAST_AUTH_DATA = `${prefix}/RESET_LAST_AUTH_DATA`;
+export const RESET_LAST_AUTH_DATA_REQUEST = `${prefix}/RESET_LAST_AUTH_DATA_REQUEST`;
+export const RESET_LAST_AUTH_DATA_SUCCESS = `${prefix}/RESET_LAST_AUTH_DATA_SUCCESS`;
+export const RESET_LAST_AUTH_DATA_FAILURE = `${prefix}/RESET_LAST_AUTH_DATA_FAILURE`;
 
 export const resetLastAuthData = () => ({
-  type: RESET_LAST_AUTH_DATA,
+  types: [
+    RESET_LAST_AUTH_DATA_REQUEST,
+    RESET_LAST_AUTH_DATA_SUCCESS,
+    RESET_LAST_AUTH_DATA_FAILURE,
+  ],
+  promise: async (api: Api, getState: GetState) => {
+    const state = getState();
+    const username = state.profile.user.username;
+    const hasTwoFactorAuth = state.edge.hasTwoFactorAuth;
+
+    if (hasTwoFactorAuth) return;
+
+    return api.edge.clearCachedUser(username);
+  },
 });
 
 export const SECONDS_SINCE_LAST_ACTIVITY = `${prefix}/SECONDS_SINCE_LAST_ACTIVITY`;

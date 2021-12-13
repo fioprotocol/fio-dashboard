@@ -28,7 +28,6 @@ type Props = {
   edgeAuthLoading: boolean;
   onClose: () => void;
   getCachedUsers: () => void;
-  clearCachedUser: (username: string) => void;
   resetLastAuthData: () => void;
   loginFailure: { fields?: { [fieldName: string]: any }; code?: string };
   edgeLoginFailure: {
@@ -59,7 +58,6 @@ const LoginForm = (props: Props) => {
     cachedUsers,
     lastAuthData,
     getCachedUsers,
-    clearCachedUser,
     resetLastAuthData,
     loginFailure,
     edgeLoginFailure,
@@ -138,7 +136,6 @@ const LoginForm = (props: Props) => {
 
   const exitPin = () => {
     resetLastAuthData();
-    clearCachedUser(lastAuthData.username);
   };
 
   const onCloseBlockModal = () => {
