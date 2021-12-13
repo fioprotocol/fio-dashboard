@@ -111,7 +111,7 @@ export class User extends Base {
         {
           model: NewDeviceTwoFactor,
           as: 'newDeviceTwoFactor',
-          attributes: ['voucherId', 'deviceDescription'],
+          attributes: ['voucherId', 'deviceDescription', 'createdAt'],
         },
       ],
     });

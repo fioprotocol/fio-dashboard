@@ -6,6 +6,8 @@ import { User } from './User';
 
 const { DataTypes: DT } = Sequelize;
 
+const EXPIRED_NEW_DEVICE_DAYS = 7 * 24 * 60 * 60 * 1000; // 7 days
+
 export class NewDeviceTwoFactor extends Base {
   static init(sequelize) {
     super.init(
@@ -44,5 +46,17 @@ export class NewDeviceTwoFactor extends Base {
       deviceDescription,
       createdAt,
     };
+  }
+
+  static async isExpired(newDeviceItem) {
+    const expiredTime =
+      new Date(newDeviceItem.createdAt).getTime() + EXPIRED_NEW_DEVICE_DAYS;
+    if (expiredTime > new Date().getTime()) return false;
+
+    await this.destroy({
+      where: { voucherId: newDeviceItem.voucherId },
+      force: true,
+    });
+    return true;
   }
 }
