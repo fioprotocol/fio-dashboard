@@ -18,7 +18,7 @@ export type PurchaseNowTypes = {
   captchaResolving: boolean;
   isProcessing: boolean;
   onFinish: () => void;
-  setProcessing: (flag: boolean) => void;
+  setProcessing: (isProcessing: boolean) => void;
   resetPinConfirm: () => void;
   isRetry: boolean;
   fioWallets: FioWalletDoublet[];

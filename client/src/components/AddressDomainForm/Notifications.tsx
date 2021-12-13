@@ -47,9 +47,9 @@ type Props = {
   addItem: (data: CartItem) => void;
   deleteItem: (data: DeleteCartItem) => {};
   recalculate: (cartItems: CartItem[]) => {};
-  toggleShowAvailable: (flag: boolean) => boolean;
   showPrice: () => string;
   isDesktop: boolean;
+  toggleShowAvailable: (isAvailable: boolean) => boolean;
 };
 
 const Notifications = React.forwardRef<HTMLDivElement, Props>((props, ref) => {

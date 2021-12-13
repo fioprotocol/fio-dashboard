@@ -22,7 +22,7 @@ export type FieldProps = {
   hideError?: boolean;
   loading?: boolean;
   lowerCased?: boolean;
-  onClose?: (flag: boolean) => void;
+  onClose?: (isOpen: boolean) => void;
   showClearInput?: boolean;
   showCopyButton?: boolean;
   prefix?: string;

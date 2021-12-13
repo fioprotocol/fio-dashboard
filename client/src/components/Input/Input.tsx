@@ -22,7 +22,7 @@ export const INPUT_UI_STYLES = {
 
 type Props = {
   colorSchema?: string;
-  onClose?: (flag: boolean) => void;
+  onClose?: (isOpen: boolean) => void;
   hideError?: boolean;
   showCopyButton?: boolean;
   loading?: boolean;

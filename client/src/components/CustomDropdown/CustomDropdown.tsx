@@ -11,7 +11,7 @@ type Props = {
   placeholder?: string;
   onChange: (id: string) => void;
   customValue?: { id: string; name: string };
-  toggleToCustom?: (flag: boolean) => void;
+  toggleToCustom?: (isCustom: boolean) => void;
   isShort?: boolean;
   isWhite?: boolean;
   hasAutoWidth?: boolean;

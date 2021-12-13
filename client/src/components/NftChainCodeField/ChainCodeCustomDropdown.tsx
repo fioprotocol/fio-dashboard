@@ -5,7 +5,7 @@ import CustomDropdown from '../CustomDropdown';
 type Props = {
   options: { id: string; name: string };
   customValue: { id: string; name: string };
-  toggleToCustom: (flag: boolean) => void;
+  toggleToCustom: (isCustom: boolean) => void;
   hasAutoWidth?: boolean;
   isShort?: boolean;
   isSimple?: boolean;
