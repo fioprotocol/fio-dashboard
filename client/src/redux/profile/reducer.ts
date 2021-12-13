@@ -187,7 +187,7 @@ export default combineReducers({
     switch (action.type) {
       case actions.PROFILE_SUCCESS:
         return { email: action.data.email, username: action.data.username };
-      case actions.RESET_LAST_AUTH_DATA:
+      case actions.RESET_LAST_AUTH_DATA_SUCCESS:
         return null;
       default:
         return state;

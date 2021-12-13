@@ -31,7 +31,6 @@ type Props = {
     success?: boolean;
   };
   updateEmail: (hash: string) => void;
-  clearCachedUser: (username: string) => void;
   lastAuthData: LastAuthData;
   resetLastAuthData: () => void;
   updateEmailLoading: boolean;
@@ -50,7 +49,6 @@ const UpdateEmailPage: React.FC<Props &
     match: {
       params: { hash },
     },
-    clearCachedUser,
     lastAuthData,
     resetLastAuthData,
     updateEmailLoading,
@@ -73,7 +71,6 @@ const UpdateEmailPage: React.FC<Props &
         history.replace(ROUTES.SETTINGS);
       } else {
         if (lastAuthData) {
-          clearCachedUser(lastAuthData.username);
           resetLastAuthData();
         }
         showLoginModal(ROUTES.SETTINGS);
