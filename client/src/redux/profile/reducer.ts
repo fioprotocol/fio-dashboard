@@ -17,7 +17,6 @@ export default combineReducers({
       case actions.SIGNUP_REQUEST:
       case actions.RESEND_CONFIRM_EMAIL_REQUEST:
       case actions.CONFIRM_EMAIL_REQUEST:
-      case actions.UPDATE_EMAIL_REQUEST:
         return true;
       case actions.PROFILE_SUCCESS:
       case actions.PROFILE_FAILURE:
@@ -33,8 +32,6 @@ export default combineReducers({
       case actions.RESEND_CONFIRM_EMAIL_FAILURE:
       case actions.CONFIRM_EMAIL_SUCCESS:
       case actions.CONFIRM_EMAIL_FAILURE:
-      case actions.UPDATE_EMAIL_SUCCESS:
-      case actions.UPDATE_EMAIL_FAILURE:
         return false;
       default:
         return state;
@@ -43,9 +40,12 @@ export default combineReducers({
   updateEmailLoading(state: boolean = false, action) {
     switch (action.type) {
       case actions.UPDATE_EMAIL_REQ_REQUEST:
+      case actions.UPDATE_EMAIL_REQUEST:
         return true;
       case actions.UPDATE_EMAIL_REQ_SUCCESS:
       case actions.UPDATE_EMAIL_REQ_FAILURE:
+      case actions.UPDATE_EMAIL_SUCCESS:
+      case actions.UPDATE_EMAIL_FAILURE:
         return false;
       default:
         return state;

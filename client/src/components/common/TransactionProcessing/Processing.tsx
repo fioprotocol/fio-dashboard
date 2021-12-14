@@ -4,11 +4,19 @@ import FioLoader from '../FioLoader/FioLoader';
 
 import classes from '../../CheckoutPurchaseContainer/CheckoutPurchaseContainer.module.scss';
 
+const DEFAULT_TEXT = {
+  title: 'Transaction Processing',
+  message: 'Hang tight while we process your transaction',
+};
+
 type Props = {
   isProcessing: boolean;
+  title?: string;
+  message?: string;
 };
 
 const Processing = (props: Props) => {
+  const { title = DEFAULT_TEXT.title, message = DEFAULT_TEXT.message } = props;
   return (
     <Modal
       show={props.isProcessing}
@@ -21,10 +29,8 @@ const Processing = (props: Props) => {
         <div className={classes.logo}>
           <FioLoader />
         </div>
-        <h4 className={classes.title}>Transaction Processing</h4>
-        <p className={classes.subtitle}>
-          Hang tight while we process your transaction
-        </p>
+        <h4 className={classes.title}>{title}</h4>
+        <p className={classes.subtitle}>{message}</p>
       </div>
     </Modal>
   );

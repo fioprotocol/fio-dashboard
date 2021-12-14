@@ -177,5 +177,6 @@ export const UPDATE_EMAIL_FAILURE = `${prefix}/UPDATE_EMAIL_FAILURE`;
 
 export const updateEmail = (hash: string) => ({
   types: [UPDATE_EMAIL_REQUEST, UPDATE_EMAIL_SUCCESS, UPDATE_EMAIL_FAILURE],
-  promise: (api: Api) => api.auth.confirm(hash),
+  promise: (api: Api) =>
+    minWaitTimeFunction(() => api.auth.confirm(hash), 4000),
 });

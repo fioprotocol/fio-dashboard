@@ -15,6 +15,7 @@ import {
   isAuthenticated,
   profileRefreshed,
   lastAuthData,
+  updateEmailLoading,
 } from '../../redux/profile/selectors';
 
 import UpdateEmailPage from './UpdateEmailPage';
@@ -26,6 +27,7 @@ const reduxConnect = connect(
     isAuthenticated,
     profileRefreshed,
     lastAuthData,
+    updateEmailLoading,
   }),
   {
     updateEmail,
