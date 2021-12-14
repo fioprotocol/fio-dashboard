@@ -3,6 +3,7 @@ import {
   PROFILE_FAILURE,
   LOGIN_FAILURE,
   AUTH_CHECK_FAILURE,
+  UPDATE_EMAIL_FAILURE,
   logout,
 } from '../profile/actions';
 import {
@@ -37,8 +38,16 @@ export function* notify(history) {
       const genericErrorIsShowing = yield select(getShowGenericError);
 
       if (!genericErrorIsShowing) {
-        const { message, title, buttonText, redirect } =
-          ErrorData[action.type] || {};
+        const { title, redirect } = ErrorData[action.type] || {};
+        let { buttonText, message } = ErrorData[action.type] || {};
+
+        if (
+          action.type === UPDATE_EMAIL_FAILURE &&
+          action.error.code === 'NOT_FOUND'
+        )
+          message = 'Email has been already confirmed';
+
+        if (action.type === UPDATE_EMAIL_FAILURE) buttonText = 'Close';
 
         yield put(showGenericErrorModal(message, title, buttonText));
         if (redirect) yield history.push(redirect);
