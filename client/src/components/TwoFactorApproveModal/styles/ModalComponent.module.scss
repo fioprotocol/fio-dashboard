@@ -85,21 +85,7 @@
 
         .actionButton {
           margin-top: 20px;
-          background-color: $green-teal;
-          border-color: $green-teal;
-          color: $white;
-          text-align: center;
-          font-size: 1em;
-          height: 45px;
-          border-radius: 7px;
           width: 100%;
-          border: none;
-          @include proxima-nova-bold;
-
-          &:hover {
-            background-color: $green-cyan;
-            border-color: $green-cyan;
-          }
         }
         .voucher {
           font-size: 10px;
@@ -108,23 +94,9 @@
       }
   }
 
-  .cancelButton {
+   .cancelButton {
     margin-top: 25px;
     margin-bottom: 20px;
-    border: $onyx;
-    background-color: $onyx;
-    height: 54px;
     width: 100%;
-    border-radius: 7px;
-    color: $white;
-    text-align: center;
-    border: none;
-    outline: none;
-    @include proxima-nova-bold;
-
-    &:hover {
-      border: $content-background;
-      background-color: $content-background;
-    }
   }
 }
