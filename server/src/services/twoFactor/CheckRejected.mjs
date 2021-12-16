@@ -2,22 +2,19 @@ import Base from '../Base';
 
 import { NewDeviceTwoFactor } from '../../models';
 
-export default class NewDeviceTwoFactorDelete extends Base {
+export default class NewDeviceTwoFactorCheckRejected extends Base {
   static get validationRules() {
     return {
       voucherId: ['required', 'string'],
     };
   }
   async execute({ voucherId }) {
-    const newDeviceTwoFactor = await NewDeviceTwoFactor.getItem({
+    const rejectedVoucher = await NewDeviceTwoFactor.getItem({
       voucherId,
-      userId: this.context.id,
+      status: NewDeviceTwoFactor.STATUS.REJECTED,
     });
-    if (!newDeviceTwoFactor) return { data: { success: false, message: 'Not Found' } };
 
-    await newDeviceTwoFactor.destroy({ force: true });
-
-    return { data: { success: true } };
+    return { data: !!rejectedVoucher };
   }
 
   static get paramsSecret() {

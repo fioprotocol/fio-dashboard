@@ -74,7 +74,10 @@ const TwoFactorAuth: React.FC<Props> = props => {
       if (type === CLICK_TYPE.DENY_ALL) {
         const promises = newDevicesList.map(device => [
           edgeAccount.rejectVoucher(device.voucherId),
-          apis.auth.deleteNewDeviceRequest(device.voucherId),
+          apis.auth.updateNewDevice({
+            voucherId: device.voucherId,
+            status: NEW_DEVICE_REQUEST_STATUS.REJECTED,
+          }),
         ]);
         try {
           await Promise.all(promises);
