@@ -1,5 +1,6 @@
 @import '../../../assets/styles/colors.scss';
 @import '../../../assets/styles/mediaQueriesMixings.scss';
+@import '../../../assets/styles/fontMixins.scss';
 
 .button {
   position: relative;
@@ -54,13 +55,48 @@
     }
   }
 
+  &.isGreenTeal {
+    background-color: $green-teal;
+    border-color: $green-teal;
+
+    &:hover {
+      background-color: $green-cyan;
+      border-color: $green-cyan;
+    }
+  }
+
+  &.isBlack {
+    border: $onyx;
+    background-color: $onyx;
+
+    &:hover {
+      border: $content-background;
+      background-color: $content-background;
+    }
+  }
+
   &.disabled {
     cursor: not-allowed;
-    background-color: $violet;
   }
 
   &.loading {
     cursor: progress;
+  }
+
+  &.hasLowHeight {
+    height: 45px;
+    padding: 0;
+  }
+
+  &.hasBoldText {
+    @include proxima-nova-bold;
+  }
+
+  .loader {
+    margin-left: 1rem;
+    position: absolute;
+    right: 27%;
+    top: 35%;
   }
 }
 
