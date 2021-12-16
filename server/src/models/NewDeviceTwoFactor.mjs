@@ -9,6 +9,13 @@ const { DataTypes: DT } = Sequelize;
 const EXPIRED_NEW_DEVICE_DAYS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 export class NewDeviceTwoFactor extends Base {
+  static get STATUS() {
+    return {
+      REQUESTED: 'REQUESTED',
+      REJECTED: 'REJECTED',
+    };
+  }
+
   static init(sequelize) {
     super.init(
       {
@@ -16,6 +23,10 @@ export class NewDeviceTwoFactor extends Base {
         voucherId: { type: DT.STRING, allowNull: false },
         deviceDescription: { type: DT.STRING, allowNull: true },
         userId: { type: DT.UUID },
+        status: {
+          type: DT.STRING,
+          defaultValue: this.STATUS.REQUESTED,
+        },
       },
       {
         sequelize,
@@ -39,12 +50,13 @@ export class NewDeviceTwoFactor extends Base {
     });
   }
 
-  static format({ id, voucherId, deviceDescription, createdAt }) {
+  static format({ id, voucherId, deviceDescription, createdAt, status }) {
     return {
       id,
       voucherId,
       deviceDescription,
       createdAt,
+      status,
     };
   }
 

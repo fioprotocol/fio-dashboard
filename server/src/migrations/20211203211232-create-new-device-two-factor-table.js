@@ -20,6 +20,7 @@ module.exports = {
       },
       voucherId: { type: DT.STRING, unique: true },
       deviceDescription: { type: DT.STRING },
+      status: { type: DT.STRING },
       createdAt: { type: DT.DATE },
       updatedAt: { type: DT.DATE },
       deletedAt: { type: DT.DATE },

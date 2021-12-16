@@ -89,4 +89,30 @@ export default class Auth extends Base {
       voucherId,
     });
   }
+
+  updateNewDevice({
+    voucherId,
+    status,
+    deviceDescription,
+  }: {
+    voucherId: string;
+    status?: string;
+    deviceDescription?: string;
+  }) {
+    return this.apiClient.post(
+      `auth/new-device-two-factor/update/${voucherId}`,
+      {
+        data: {
+          status,
+          deviceDescription,
+        },
+      },
+    );
+  }
+
+  checkRejected(voucherId: string) {
+    return this.apiClient.get('/auth/new-device-two-factor/check-rejected', {
+      voucherId,
+    });
+  }
 }
