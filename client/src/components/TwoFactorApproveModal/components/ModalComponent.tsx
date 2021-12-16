@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Modal from '../../Modal/Modal';
 
-import { CLICK_TYPE } from '../TwoFactorApproveModal';
+import { ACTION_TYPE } from '../constants';
 
 import { commonFormatTime } from '../../../util/general';
 
@@ -31,7 +31,9 @@ const ModalComponent: React.FC<Props> = props => {
   return (
     <Modal
       show={show}
-      onClose={onClose}
+      onClose={() => {
+        onClick({ type: ACTION_TYPE.DENY_ALL });
+      }}
       closeButton={true}
       isInfo={true}
       backdrop={false}
@@ -72,28 +74,34 @@ const ModalComponent: React.FC<Props> = props => {
                 <p className={classes.deniedValue}>
                   {commonFormatTime(activates)}
                 </p>
-                <button
-                  className={classes.actionButton}
-                  onClick={() =>
-                    onClick({
-                      voucherId: device.voucherId,
-                      type: CLICK_TYPE.GRANT_ACCESS,
-                    })
-                  }
-                  disabled={loading}
-                >
-                  It was Me, Grant Access{' '}
-                </button>
+                <div className={classes.actionButton}>
+                  <SubmitButton
+                    text="It was Me, Grant Access"
+                    loading={currentLoading}
+                    disabled={isLoading}
+                    onClick={() =>
+                      onClick({
+                        voucherId,
+                        type: ACTION_TYPE.GRANT_ACCESS,
+                      })
+                    }
+                    isGreenTeal={true}
+                    hasLowHeight={true}
+                    hasBoldText={true}
+                  />
+                </div>
               </div>
             </div>
           );
         })}
-        <button
-          className={classes.cancelButton}
-          onClick={() => onClick({ type: CLICK_TYPE.DENY_ALL })}
-        >
-          Not Me, Deny All
-        </button>
+        <div className={classes.cancelButton}>
+          <SubmitButton
+            text="Not Me, Deny All"
+            disabled={isLoading}
+            onClick={() => onClick({ type: ACTION_TYPE.DENY_ALL })}
+            isBlack={true}
+          />
+        </div>
       </div>
     </Modal>
   );

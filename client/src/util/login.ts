@@ -2,32 +2,23 @@ import apis from '../api';
 
 const RETRY_LOGIN_TIME = 5000;
 
-type LoginProps = {
+type AutoLoginParams = {
+  email: string;
+  password: string;
   voucherId: string;
-  timerRef: any;
-  loginParams: {
-    email: string;
-    password: string;
-    voucherId?: string;
-    options?: { otpKey?: string };
-  };
-  login: (params: {
-    email: string;
-    password: string;
-    voucherId?: string;
-    options?: { otpKey?: string };
-  }) => void;
 };
 
-const handleAutoLogin = async ({
-  voucherId,
-  timerRef,
-  loginParams,
-  login,
-}: LoginProps) => {
-  const voucherCheck = async () => {
-    if (voucherId == null) return false;
+type AutoLoginProps = {
+  voucherId: string;
+  timerRef: any;
+  loginParams: AutoLoginParams;
+  login: (params: AutoLoginParams) => void;
+  onCloseBlockModal: () => void;
+};
 
+const handleAutoLogin = async (props: AutoLoginProps) => {
+  const { voucherId, loginParams, login, onCloseBlockModal } = props;
+  const voucherCheck = async () => {
     const messages = await apis.edge.loginMessages();
     for (const username of Object.keys(messages)) {
       const { pendingVouchers } = messages[username];
@@ -38,15 +29,20 @@ const handleAutoLogin = async ({
     return true;
   };
   const hasReadyVoucher = await voucherCheck();
+  const isRejected = await apis.auth.checkRejected(voucherId);
 
   if (hasReadyVoucher) {
+    onCloseBlockModal();
+
+    if (isRejected) return;
+
     login({ ...loginParams, voucherId });
     return;
   }
-  autoLogin({ voucherId, timerRef, loginParams, login });
+  autoLogin(props);
 };
 
-export const autoLogin = (params: LoginProps) => {
+export const autoLogin = (params: AutoLoginProps) => {
   const { timerRef } = params;
   timerRef.current = setTimeout(
     () => handleAutoLogin({ ...params }),
