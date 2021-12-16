@@ -48,9 +48,11 @@ type Props = {
   deleteItem: (data: DeleteCartItem) => {};
   recalculate: (cartItems: CartItem[]) => {};
   toggleShowAvailable: (flag: boolean) => boolean;
+  showPrice: () => string;
+  isDesktop: boolean;
 };
 
-const Notifications = (props: Props) => {
+const Notifications = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
   const {
     cartItems,
     currentCartItem,
@@ -64,10 +66,12 @@ const Notifications = (props: Props) => {
     prices,
     showAvailable,
     type,
+    isDesktop,
     addItem,
     deleteItem,
     recalculate,
     toggleShowAvailable,
+    showPrice,
   } = props;
   const { values, form } = formProps;
   const errors: (string | { message: string; showInfoError?: boolean })[] = [];
@@ -141,13 +145,15 @@ const Notifications = (props: Props) => {
     }
   };
 
+  const availableMessage = !isDesktop ? showPrice() : AVAILABLE_MESSAGE[type];
   const notifBadge = () => (
-    <>
+    <div ref={ref}>
       <InfoBadge
         type={BADGE_TYPES.SUCCESS}
         show={showAvailable}
         title="Available!"
-        message={AVAILABLE_MESSAGE[type]}
+        message={availableMessage}
+        hasBoldMessage={!isDesktop}
       />
       {errors.map(error => {
         if (typeof error === 'string')
@@ -172,7 +178,7 @@ const Notifications = (props: Props) => {
           );
         return null;
       })}
-    </>
+    </div>
   );
 
   return (
@@ -252,6 +258,6 @@ const Notifications = (props: Props) => {
       </Badge>
     </div>
   );
-};
+});
 
 export default Notifications;

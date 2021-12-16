@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Form } from 'react-final-form';
+import * as Scroll from 'react-scroll';
+
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../../components/AddressDomainBadge/AddressDomainBadge';
 import { useCheckIfDesktop } from '../../screenType';
 import Notifications from './Notifications.tsx';
@@ -37,6 +39,8 @@ const AddressDomainForm = props => {
   const [formErrors, changeFormErrors] = useState({});
   const [isValidating, toggleValidating] = useState(false);
 
+  const notificationRef = useRef(null);
+
   const options = [...domains.map(({ domain }) => domain)];
 
   const isDesktop = useCheckIfDesktop();
@@ -71,6 +75,15 @@ const AddressDomainForm = props => {
 
     if (isAddress) addressValidation(validationPropsToPass);
     if (isDomain) domainValidation(validationPropsToPass);
+
+    if (!isDesktop && showAvailable) {
+      const scroll = Scroll.animateScroll;
+      notificationRef &&
+        notificationRef.current &&
+        scroll.scrollTo(notificationRef.current.offsetTop + 20, {
+          duration: 600,
+        });
+    }
   };
 
   const handleChange = formProps => {
@@ -140,10 +153,10 @@ const AddressDomainForm = props => {
         ? 'FREE'
         : `${costFio.toFixed(2)} FIO (${costUsdc.toFixed(2)} USDC)`;
 
-      const cost = isDesktop ? 'Cost: ' : '';
+      const cost = `Cost: ${price}`;
       return isDomainPrice && !hasCustomDomain && hasCurrentDomain
         ? null
-        : cost + price;
+        : cost;
     };
 
     return [
@@ -166,6 +179,7 @@ const AddressDomainForm = props => {
         formState={formState}
         isFree={isFree}
         hasFreeAddress={hasFreeAddress}
+        isDesktop={isDesktop}
       />,
       !isHomepage && (
         <Notifications
@@ -181,6 +195,9 @@ const AddressDomainForm = props => {
           isDomain={isDomain}
           key="notifications"
           isFree={isFree}
+          isDesktop={isDesktop}
+          showPrice={showPrice}
+          ref={notificationRef}
         />
       ),
     ];
