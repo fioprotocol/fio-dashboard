@@ -47,7 +47,7 @@ const BackupCode: React.FC = () => {
     const circles = [];
     for (let i = 0; i < 8; i++) {
       circles.push(
-        <FontAwesomeIcon icon="circle" className={classes.circle} />,
+        <FontAwesomeIcon icon="circle" className={classes.circle} key={i} />,
       );
     }
     return circles;

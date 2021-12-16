@@ -76,6 +76,7 @@ const RenderForm = (props: FormRenderProps<BackupFormValues> & Props) => {
         text="Submit"
         disabled={isDisabled}
         loading={loading || submitting}
+        withBottomMargin={true}
       />
       <div className={classes.cancelButton}>
         <CancelButton

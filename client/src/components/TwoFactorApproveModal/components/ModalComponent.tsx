@@ -2,6 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Modal from '../../Modal/Modal';
+import SubmitButton from '../../common/SubmitButton/SubmitButton';
 
 import { ACTION_TYPE } from '../constants';
 
@@ -13,8 +14,7 @@ import classes from '../styles/ModalComponent.module.scss';
 
 type Props = {
   show: boolean;
-  onClose: () => void;
-  loading: boolean;
+  loading: { [key: string]: boolean };
   onClick: (type: { type: string; voucherId?: string }) => void;
   newDevicesList: PendingVoucher[];
 };
@@ -27,7 +27,9 @@ const InfoItem = ({ title, value }: { title: string; value: string }) => (
 );
 
 const ModalComponent: React.FC<Props> = props => {
-  const { show, onClose, newDevicesList, loading, onClick } = props;
+  const { show, newDevicesList, loading, onClick } = props;
+  const isLoading = Object.values(loading).some(loadItem => !!loadItem);
+
   return (
     <Modal
       show={show}
@@ -57,7 +59,10 @@ const ModalComponent: React.FC<Props> = props => {
             ipDescription,
             created,
             activates,
+            voucherId,
           } = device;
+          const currentLoading = loading[voucherId];
+
           return (
             <div key={device.created} className={classes.devicesContainer}>
               <div className={classes.infoContainer}>
