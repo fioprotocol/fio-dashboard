@@ -32,6 +32,16 @@ export function* loginSuccess(history, api) {
     const wallets = yield select(fioWallets);
     api.client.setToken(action.data.jwt);
     if (wallets && wallets.length) yield put(setWallets(wallets));
+    if ((action.otpKey && action.voucherId) || action.voucherId)
+      try {
+        // We have to wait delete voucher call from server to get updated profile then.
+        // Sagas doesn't wait. So in this case we have to write result into a constant.
+        //@ts-ignore
+        // eslint-disable-next-line no-unused-vars
+        const res = yield api.auth.deleteNewDeviceRequest(action.voucherId);
+      } catch (e) {
+        console.error(e);
+      }
     yield put(loadProfile());
     yield put(listNotifications());
     if (hasRedirectTo) {
@@ -39,8 +49,6 @@ export function* loginSuccess(history, api) {
     }
     yield put(closeLoginModal());
     yield put(setRedirectPath(null));
-    if (action.otpKey || action.voucherId)
-      api.auth.deleteNewDeviceRequest(action.voucherId);
   });
 }
 

@@ -79,9 +79,10 @@ const LoginForm = (props: Props) => {
 
   const [isForgotPass, toggleForgotPass] = useState(false);
   const [usePinLogin, setUsePinLogin] = useState(false);
-  const [showBlockModal, toggleBlockmodal] = useState(false);
+  const [showBlockModal, toggleBlockModal] = useState(false);
   const [showCodeModal, toggleCodeModal] = useState(false);
   const [loginParams, setLoginParams] = useState(null);
+  const [voucherDate, setVoucherDate] = useState<string | null>(null);
 
   const timerRef = useRef(null);
 
@@ -99,10 +100,15 @@ const LoginForm = (props: Props) => {
   }, []);
 
   useEffect(() => {
-    const isOtpError = edgeLoginFailure && edgeLoginFailure.reason === 'otp';
+    const isOtpError =
+      edgeLoginFailure &&
+      edgeLoginFailure.reason === 'otp' &&
+      edgeLoginFailure.voucherId &&
+      edgeLoginFailure.voucherActivates;
 
     if (isOtpError) {
-      !showCodeModal && toggleBlockmodal(true);
+      setVoucherDate(edgeLoginFailure.voucherActivates);
+      !showCodeModal && toggleBlockModal(true);
       const deviceDescription = `${osName} ${osVersion}`;
       const voucherId = edgeLoginFailure.voucherId;
 
@@ -111,7 +117,13 @@ const LoginForm = (props: Props) => {
         deviceDescription,
         voucherId,
       });
-      autoLogin({ voucherId, timerRef, loginParams, login: onSubmit });
+      autoLogin({
+        voucherId,
+        timerRef,
+        loginParams,
+        login: onSubmit,
+        onCloseBlockModal,
+      });
     }
   }, [edgeLoginFailure.reason]);
 
@@ -139,8 +151,9 @@ const LoginForm = (props: Props) => {
   };
 
   const onCloseBlockModal = () => {
-    toggleBlockmodal(false);
+    toggleBlockModal(false);
     clearTimeout(timerRef.current);
+    setVoucherDate(null);
   };
 
   const onOpenCodeModal = () => {
@@ -165,7 +178,7 @@ const LoginForm = (props: Props) => {
         show={showBlockModal}
         onClose={onCloseBlockModal}
         onActionClick={onOpenCodeModal}
-        activationDate={edgeLoginFailure.voucherActivates}
+        activationDate={voucherDate}
       />
       <TwoFactorCodeModal
         show={showCodeModal}
