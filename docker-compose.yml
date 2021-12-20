@@ -2,6 +2,7 @@ version: '3'
 
 services:
   api:
+    container_name: fio-dashboard-api
     build: .
     command: npm run server:dev
     volumes:
@@ -13,14 +14,15 @@ services:
     depends_on:
       - postgres
     environment:
-      - SQL_HOST=dapp_postgres_1
+      - SQL_HOST=fio-dashboard-postgres
 
   postgres:
+    container_name: fio-dashboard-postgres
     image: postgres:9.6.6-alpine
     restart: unless-stopped
     ports:
       - 5432:5432
     environment:
       POSTGRES_PASSWORD: ab1f6hh942sm
-      POSTGRES_USER: dapp_sql_user
-      POSTGRES_DB: dapp_db
+      POSTGRES_USER: fio_dash_sql_user
+      POSTGRES_DB: fio_dash_db
