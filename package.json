@@ -15,7 +15,7 @@
     "server:prod": "npm run migrate && node --es-module-specifier-resolution=node server/src/index.mjs",
     "migrate": "sequelize db:migrate",
     "tslint": "npx concurrently \"npm run tslint:client\"",
-    "tslint:client": "tslint -c client/tslint.json client/src/**/*.{ts,tsx} --format verbose",
+    "tslint:client": "tslint -c client/tslint.json client/**/*.{ts,tsx} --format verbose",
     "tslint:fix": "npx concurrently \"npm run tslint:client -- --fix\"",
     "test:api": "cross-env TEST_MODE=0 LOG_LEVEL=error babel-node --extensions .js,.mjs node_modules/.bin/_mocha --exit --timeout 60000 --reporter spec --ui qunit server/tests/api/*",
     "test": "npm run lint && npm run test:create.db && npm run test:api",
