@@ -46,10 +46,10 @@ export default class Edge {
     }
   }
 
-  login(username, password) {
+  login(username, password, options = {}) {
     // returns EdgeAccount
     try {
-      return this.edgeContext.loginWithPassword(username, password);
+      return this.edgeContext.loginWithPassword(username, password, options);
     } catch (e) {
       console.log(e);
       throw e;
@@ -93,6 +93,15 @@ export default class Edge {
   async signup(username, password, pin) {
     // create account
     return this.edgeContext.createAccount(username, password, pin, {});
+  }
+
+  async loginMessages() {
+    try {
+      return await this.edgeContext.fetchLoginMessages();
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
   }
 
   usernameAvailable(username) {
@@ -220,6 +229,26 @@ export default class Edge {
       return { status: 1 };
     } catch (e) {
       console.log(e);
+      throw e;
+    }
+  }
+
+  async enableTwoFactorAuth(account) {
+    try {
+      await account.enableOtp();
+      return { status: 1 };
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  }
+
+  async disableTwoFactorAuth(account) {
+    try {
+      await account.disableOtp();
+      return { status: 1 };
+    } catch (e) {
+      console.error(e);
       throw e;
     }
   }

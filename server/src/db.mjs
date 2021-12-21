@@ -8,6 +8,7 @@ import { Nonce } from './models/Nonce';
 import { FreeAddress } from './models/FreeAddress';
 import { Wallet } from './models/Wallet';
 import { ReferrerProfile } from './models/ReferrerProfile';
+import { NewDeviceTwoFactor } from './models/NewDeviceTwoFactor';
 
 const sequelize = new Sequelize(config.postgres);
 
@@ -18,6 +19,7 @@ Nonce.init(sequelize);
 FreeAddress.init(sequelize);
 Wallet.init(sequelize);
 ReferrerProfile.init(sequelize);
+NewDeviceTwoFactor.init(sequelize);
 
 const { models } = sequelize;
 

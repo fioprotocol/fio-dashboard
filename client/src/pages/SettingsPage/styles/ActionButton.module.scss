@@ -46,6 +46,10 @@
       max-width: none;
     }
   }
+  .loading {
+    margin-left: 15px;
+    font-size: 14px;
+  }
 }
 
 @include sm {

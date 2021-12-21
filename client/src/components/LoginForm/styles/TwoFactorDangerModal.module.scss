@@ -1,0 +1,11 @@
+@import '../../../assets/styles/fontMixins.scss';
+
+.footerContent {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  width: 100%;
+  max-width: 320px;
+  font-size: 0.9375em;
+  text-align: center;
+  @include proxima-nova-thin;
+}

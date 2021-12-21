@@ -4,6 +4,7 @@ import { Link, RouteComponentProps, Redirect } from 'react-router-dom';
 
 import { ACTIONS } from '../../components/Notifications/Notifications';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
+import Processing from '../../components/common/TransactionProcessing';
 
 import {
   NOTIFICATIONS_CONTENT_TYPE,
@@ -30,9 +31,9 @@ type Props = {
     success?: boolean;
   };
   updateEmail: (hash: string) => void;
-  clearCachedUser: (username: string) => void;
   lastAuthData: LastAuthData;
   resetLastAuthData: () => void;
+  updateEmailLoading: boolean;
 };
 
 const UpdateEmailPage: React.FC<Props &
@@ -48,9 +49,9 @@ const UpdateEmailPage: React.FC<Props &
     match: {
       params: { hash },
     },
-    clearCachedUser,
     lastAuthData,
     resetLastAuthData,
+    updateEmailLoading,
   } = props;
 
   useEffect(() => {
@@ -63,20 +64,13 @@ const UpdateEmailPage: React.FC<Props &
         action: ACTIONS.EMAIL_CONFIRM,
         type: BADGE_TYPES.INFO,
         contentType: NOTIFICATIONS_CONTENT_TYPE.UPDATE_EMAIL,
-        pagesToShow: [
-          ROUTES.CART,
-          ROUTES.CHECKOUT,
-          ROUTES.FIO_ADDRESSES_SELECTION,
-          ROUTES.FIO_DOMAINS_SELECTION,
-          ROUTES.HOME,
-        ],
+        pagesToShow: [ROUTES.HOME, ROUTES.SETTINGS],
       });
 
       if (isAuthenticated) {
         history.replace(ROUTES.SETTINGS);
       } else {
         if (lastAuthData) {
-          clearCachedUser(lastAuthData.username);
           resetLastAuthData();
         }
         showLoginModal(ROUTES.SETTINGS);
@@ -85,15 +79,6 @@ const UpdateEmailPage: React.FC<Props &
   }, [isAuthenticated, emailConfirmationResult]);
 
   const showLogin = () => showLoginModal(ROUTES.SETTINGS);
-
-  if (loading || emailConfirmationResult.success == null)
-    return (
-      <div className={classes.container}>
-        <div>
-          <FontAwesomeIcon icon="spinner" spin />
-        </div>
-      </div>
-    );
 
   if (emailConfirmationResult.success === false)
     return <Redirect to={ROUTES.HOME} />;
@@ -109,15 +94,26 @@ const UpdateEmailPage: React.FC<Props &
     );
   };
   return (
-    <div className={classes.container}>
-      <div>
-        <FontAwesomeIcon icon="envelope" className={classes.icon} />
-        <h4 className={classes.title}>
-          {NOTIFICATIONS_CONTENT.ACCOUNT_CONFIRMATION.message}
-        </h4>
-        {renderLoginSection()}
-      </div>
-    </div>
+    <>
+      {!loading && !updateEmailLoading && (
+        <div className={classes.container}>
+          <div>
+            <FontAwesomeIcon icon="envelope" className={classes.icon} />
+            <h4 className={classes.title}>
+              {NOTIFICATIONS_CONTENT.ACCOUNT_CONFIRMATION.message}
+            </h4>
+            {renderLoginSection()}
+          </div>
+        </div>
+      )}
+      <Processing
+        title="Confirming Email"
+        message="Hang tight while we are confirming your new email"
+        isProcessing={
+          updateEmailLoading || emailConfirmationResult.success == null
+        }
+      />
+    </>
   );
 };
 

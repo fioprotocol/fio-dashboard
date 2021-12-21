@@ -11,3 +11,7 @@
 .textContainer {
   text-align: left;
 }
+
+.boldMessage {
+  @include proxima-nova-bold;
+}

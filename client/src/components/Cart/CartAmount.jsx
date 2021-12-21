@@ -1,7 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'react-bootstrap';
-import colors from '../../assets/styles/colorsToJs.module.scss';
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 
 import { totalCost } from '../../utils';
@@ -23,7 +22,7 @@ const CartAmount = props => {
   const { costFio, costUsdc } = totalCost(cartItems);
 
   return (
-    <CartSmallContainer bgColor={colors.hint}>
+    <CartSmallContainer isHintColor={true} hasBigMargin={true}>
       <h3 className={classes.amountTitle}>Amount Due</h3>
       <h5 className={classes.amountSubtitle}>Total Due</h5>
       <div className={classes.total}>

@@ -36,3 +36,6 @@ export const usersRecoveryQuestions = (state: ReduxState) =>
   state[prefix].usersRecoveryQuestions;
 export const recoveryAccountResults = (state: ReduxState) =>
   state[prefix].recoveryAccountResults;
+
+export const hasTwoFactorAuth = (state: ReduxState) =>
+  state[prefix].hasTwoFactorAuth;

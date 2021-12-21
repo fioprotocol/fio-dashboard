@@ -43,6 +43,7 @@ const FormContainer = props => {
     hasFreeAddress,
     domains,
     isDomain,
+    isDesktop,
   } = props;
 
   const buttonText = `Get My FIO ${isDomain ? 'Domain' : 'Address'}`;
@@ -89,22 +90,24 @@ const FormContainer = props => {
             <DomainForm {...propsToForm} />
           )}
         </div>
-        <PriceBadge
-          showPrice={showPrice}
-          hasFreeAddress={hasFreeAddress}
-          domains={domains}
-          tooltip={
-            <>
-              <span className="boldText">Address Cost</span>
-              <span>
-                {' '}
-                - Address Cost will fluctuate based on market condition. In
-                addition, if you are already have a free public address, there
-                will be cost associated with another address
-              </span>
-            </>
-          }
-        />
+        {(isHomepage || isDesktop) && (
+          <PriceBadge
+            showPrice={showPrice}
+            hasFreeAddress={hasFreeAddress}
+            domains={domains}
+            tooltip={
+              <>
+                <span className="boldText">Address Cost</span>
+                <span>
+                  {' '}
+                  - Address Cost will fluctuate based on market condition. In
+                  addition, if you are already have a free public address, there
+                  will be cost associated with another address
+                </span>
+              </>
+            }
+          />
+        )}
         {isHomepage ? (
           <Link
             to={ROUTES.FIO_ADDRESSES_SELECTION}

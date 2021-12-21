@@ -9,6 +9,17 @@ const checkAuth = routes.auth.check;
 router.post('/auth', routes.auth.create);
 router.get('/auth/nonce', routes.auth.nonce);
 router.get('/auth/username/:email', routes.auth.username);
+router.post('/auth/new-device-two-factor', routes.newDeviceTwoFactor.create);
+router.post(
+  '/auth/new-device-two-factor/update/:voucherId',
+  checkAuth,
+  routes.newDeviceTwoFactor.update,
+);
+router.delete('/auth/new-device-two-factor', checkAuth, routes.newDeviceTwoFactor.delete);
+router.get(
+  '/auth/new-device-two-factor/check-rejected',
+  routes.newDeviceTwoFactor.checkRejected,
+);
 
 router.post('/actions/:hash', routes.actions.submit);
 

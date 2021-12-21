@@ -7,7 +7,6 @@ import { compose } from '../../utils';
 import { updateEmail, resetLastAuthData } from '../../redux/profile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 import { addManual as createNotification } from '../../redux/notifications/actions';
-import { clearCachedUser } from '../../redux/edge/actions';
 
 import {
   loading,
@@ -15,6 +14,7 @@ import {
   isAuthenticated,
   profileRefreshed,
   lastAuthData,
+  updateEmailLoading,
 } from '../../redux/profile/selectors';
 
 import UpdateEmailPage from './UpdateEmailPage';
@@ -26,12 +26,12 @@ const reduxConnect = connect(
     isAuthenticated,
     profileRefreshed,
     lastAuthData,
+    updateEmailLoading,
   }),
   {
     updateEmail,
     showLoginModal,
     createNotification,
-    clearCachedUser,
     resetLastAuthData,
   },
 );

@@ -1,0 +1,36 @@
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/colors.scss';
+
+.codeModalContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0 10px;
+
+  .title {
+    margin-top: 25px;
+    margin-bottom: 0;
+    font-size: 1.625em;
+    @include proxima-nova-bold;
+  }
+
+  .subtitle {
+    font-size: 0.875em;
+    margin-top: 16px;
+    @include proxima-nova-thin;
+  }
+
+  .message {
+    font-size: 0.875em;
+    @include proxima-nova-semibold;
+  }
+
+  .button {
+    max-width: 335px;
+    border-radius: 7px;
+  }
+
+  .cancelButton {
+    margin-bottom: 20px;
+  }
+}

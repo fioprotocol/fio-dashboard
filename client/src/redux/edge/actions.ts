@@ -30,11 +30,15 @@ export const login = ({
   username,
   password,
   pin,
+  options,
+  voucherId,
 }: {
   email: string;
   username: string;
   password: string;
   pin: string;
+  options?: { otpKey?: string };
+  voucherId?: string;
 }) => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
   promise: async (api: Api) => {
@@ -47,7 +51,7 @@ export const login = ({
     }
     const account = pin
       ? await api.edge.loginPIN(username, pin)
-      : await api.edge.login(username, password);
+      : await api.edge.login(username, password, options);
     const fioWallets = [];
     try {
       for (const walletId of account.activeWalletIds) {
@@ -62,7 +66,7 @@ export const login = ({
     } catch (e) {
       console.log(e);
     }
-    return { account, fioWallets };
+    return { account, fioWallets, options, voucherId };
   },
 });
 
@@ -343,4 +347,11 @@ export const CLEAR_RECOVERY_RESULTS = `${prefix}/CLEAR_RECOVERY_RESULTS`;
 
 export const clearRecoveryResults = () => ({
   type: CLEAR_RECOVERY_RESULTS,
+});
+
+export const TOGGLE_TWO_FACTOR_AUTH = `${prefix}/TOGGLE_TWO_FACTOR_AUTH`;
+
+export const toggleTwoFactorAuth = (enabled: boolean) => ({
+  type: TOGGLE_TWO_FACTOR_AUTH,
+  enabled,
 });

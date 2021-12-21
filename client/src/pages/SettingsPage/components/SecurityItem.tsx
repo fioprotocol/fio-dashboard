@@ -15,6 +15,8 @@ type Props = {
   children?: React.ReactNode;
   subtitle: string;
   title: string;
+  loading?: boolean;
+  additionalElements?: React.ReactNode;
 };
 
 const SecurityItem: React.FC<Props> = props => {
@@ -29,6 +31,8 @@ const SecurityItem: React.FC<Props> = props => {
     children,
     title,
     subtitle,
+    loading,
+    additionalElements,
   } = props;
 
   return (
@@ -37,12 +41,14 @@ const SecurityItem: React.FC<Props> = props => {
         <h5 className={classes.title}>{title}</h5>
         <p className={classes.subtitle}>{subtitle}</p>
         <p className={classes.attentionText}>{attentionText}</p>
+        <div className={classes.additional}>{additionalElements}</div>
         <ActionButton
           title={buttonText}
           onClick={onClick}
           isGreen={isGreen}
           isBlue={isBlue}
           isSmall={isSmall}
+          loading={loading}
         />
         {bottomChildren}
       </div>

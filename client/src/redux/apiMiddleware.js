@@ -12,7 +12,7 @@ export default function apiMiddleware(api) {
 
     next({ ...rest, type: REQUEST });
 
-    return promise(api).then(
+    return promise(api, getState).then(
       data => next({ ...rest, data, type: SUCCESS }),
       error => next({ ...rest, error, type: FAILURE }),
     );

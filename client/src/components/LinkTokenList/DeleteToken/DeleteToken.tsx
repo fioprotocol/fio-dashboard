@@ -71,12 +71,12 @@ const DeleteToken: React.FC<Props> = props => {
     );
   };
 
-  const allCheckedChange = (flag: boolean) => {
-    toggleAllChecked(flag);
+  const allCheckedChange = (isChecked: boolean) => {
+    toggleAllChecked(isChecked);
     changePubAddresses(
       pubAddressesArr.map(pubAddress => ({
         ...pubAddress,
-        isChecked: flag,
+        isChecked,
       })),
     );
   };

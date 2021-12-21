@@ -6,7 +6,6 @@ import { isEmpty } from 'lodash';
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import CounterContainer from '../CounterContainer/CounterContainer';
 import { ROUTES } from '../../constants/routes';
-import colors from '../../assets/styles/colorsToJs.module.scss';
 import { handleFreeAddressCart, deleteCartItem } from '../../utils';
 
 import classes from './AddressDomainCart.module.scss';
@@ -61,7 +60,7 @@ const AddressDomainCart = props => {
   }, [domains, hasFreeAddress]);
 
   return (
-    <CartSmallContainer bgColor={colors['aqua-haze']}>
+    <CartSmallContainer isAquaColor={true}>
       <div className={classes.header}>
         <CounterContainer isEmpty={isCartEmpty}>{count}</CounterContainer>
         <h5 className={classes.title}>Cart</h5>

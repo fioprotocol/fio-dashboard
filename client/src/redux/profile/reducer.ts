@@ -17,7 +17,6 @@ export default combineReducers({
       case actions.SIGNUP_REQUEST:
       case actions.RESEND_CONFIRM_EMAIL_REQUEST:
       case actions.CONFIRM_EMAIL_REQUEST:
-      case actions.UPDATE_EMAIL_REQUEST:
         return true;
       case actions.PROFILE_SUCCESS:
       case actions.PROFILE_FAILURE:
@@ -33,8 +32,6 @@ export default combineReducers({
       case actions.RESEND_CONFIRM_EMAIL_FAILURE:
       case actions.CONFIRM_EMAIL_SUCCESS:
       case actions.CONFIRM_EMAIL_FAILURE:
-      case actions.UPDATE_EMAIL_SUCCESS:
-      case actions.UPDATE_EMAIL_FAILURE:
         return false;
       default:
         return state;
@@ -43,9 +40,12 @@ export default combineReducers({
   updateEmailLoading(state: boolean = false, action) {
     switch (action.type) {
       case actions.UPDATE_EMAIL_REQ_REQUEST:
+      case actions.UPDATE_EMAIL_REQUEST:
         return true;
       case actions.UPDATE_EMAIL_REQ_SUCCESS:
       case actions.UPDATE_EMAIL_REQ_FAILURE:
+      case actions.UPDATE_EMAIL_SUCCESS:
+      case actions.UPDATE_EMAIL_FAILURE:
         return false;
       default:
         return state;
@@ -126,6 +126,16 @@ export default combineReducers({
             newEmail: '',
           };
 
+        if (
+          JSON.stringify(action.data.newDeviceTwoFactor) !==
+          JSON.stringify(state.newDeviceTwoFactor)
+        ) {
+          return {
+            ...state,
+            newDeviceTwoFactor: action.data.newDeviceTwoFactor,
+          };
+        }
+
         return state;
       }
       default:
@@ -177,7 +187,7 @@ export default combineReducers({
     switch (action.type) {
       case actions.PROFILE_SUCCESS:
         return { email: action.data.email, username: action.data.username };
-      case actions.RESET_LAST_AUTH_DATA:
+      case actions.RESET_LAST_AUTH_DATA_SUCCESS:
         return null;
       default:
         return state;

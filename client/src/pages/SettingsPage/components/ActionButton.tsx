@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from '../styles/ActionButton.module.scss';
 
@@ -10,10 +11,11 @@ type Props = {
   isGreen?: boolean;
   isBlue?: boolean;
   isSmall?: boolean;
+  loading?: boolean;
 };
 
 const ActionButton: React.FC<Props> = props => {
-  const { onClick, title, isGreen, isBlue, isSmall } = props;
+  const { onClick, title, isGreen, isBlue, isSmall, loading } = props;
   return (
     <Button
       onClick={onClick}
@@ -23,8 +25,12 @@ const ActionButton: React.FC<Props> = props => {
         isBlue && classes.isBlue,
         isSmall && classes.isSmall,
       )}
+      disabled={loading}
     >
       {title}
+      {loading && (
+        <FontAwesomeIcon icon="spinner" spin className={classes.loading} />
+      )}
     </Button>
   );
 };

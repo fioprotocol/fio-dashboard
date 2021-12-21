@@ -11,6 +11,8 @@ addLocationQuery(history);
 history.listen(() => addLocationQuery(history));
 export const store: Store<any> = configureStore(api, history);
 
+export type GetState = typeof store.getState;
+
 export type ReduxState = ReturnType<typeof store.getState>;
 export type AppDispatch =
   | typeof store.dispatch

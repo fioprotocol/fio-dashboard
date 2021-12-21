@@ -4,6 +4,8 @@
 
 .container {
   margin-top: 30px;
+  max-width: 500px;
+  
   .title {
     font-size: 1.125em;
     color: $gray-main;
@@ -15,6 +17,9 @@
   .attentionText {
     font-size: 0.875em;
     @include proxima-nova-semibold;
+  }
+  .additional {
+    margin-top: 20px;
   }
   .button {
     font-size: 0.875em;

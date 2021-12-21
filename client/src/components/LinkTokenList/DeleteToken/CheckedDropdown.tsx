@@ -11,7 +11,7 @@ export const DROPDOWN_OPTIONS = {
 };
 
 type Props = {
-  allCheckedChange: (flag: boolean) => void;
+  allCheckedChange: (isAllChecked: boolean) => void;
   allChecked: boolean;
   hasLowBalance: boolean;
 };

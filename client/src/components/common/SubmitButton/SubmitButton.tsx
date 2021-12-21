@@ -12,9 +12,14 @@ type Props = {
   disabled?: boolean;
   loading?: boolean;
   isGreen?: boolean;
+  isGreenTeal?: boolean;
+  isBlack?: boolean;
   withBottomMargin?: boolean;
   withTopMargin?: boolean;
   text?: string;
+  hasLowHeight?: boolean;
+  hasBoldText?: boolean;
+  isButtonType?: boolean;
 };
 
 const SubmitButton: React.FC<Props> = props => {
@@ -23,9 +28,13 @@ const SubmitButton: React.FC<Props> = props => {
     disabled,
     loading,
     isGreen,
+    isGreenTeal,
+    isBlack,
     withTopMargin,
     withBottomMargin,
     text,
+    hasLowHeight,
+    hasBoldText,
   } = props;
 
   return (
@@ -36,10 +45,14 @@ const SubmitButton: React.FC<Props> = props => {
       className={classnames(
         classes.button,
         isGreen && classes.isGreen,
+        isGreenTeal && classes.isGreenTeal,
+        isBlack && classes.isBlack,
         disabled && classes.disabled,
         loading && classes.loading,
         withTopMargin && classes.topMargin,
         withBottomMargin && classes.bottomMargin,
+        hasLowHeight && classes.hasLowHeight,
+        hasBoldText && classes.hasBoldText,
       )}
     >
       <div />

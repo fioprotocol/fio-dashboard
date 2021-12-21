@@ -12,9 +12,10 @@ type Props = {
   buttonText: string;
   showCancel?: boolean;
   title: string;
-  subtitle?: string;
+  subtitle?: string | React.ReactNode;
   cancelButtonText?: string;
   loading?: boolean;
+  footerContent?: React.ReactNode;
 };
 
 const DangerModal: React.FC<Props> = props => {
@@ -28,6 +29,7 @@ const DangerModal: React.FC<Props> = props => {
     cancelButtonText,
     title,
     loading,
+    footerContent,
   } = props;
   return (
     <Modal show={show} onClose={onClose} isDanger={true} closeButton={!loading}>
@@ -53,6 +55,7 @@ const DangerModal: React.FC<Props> = props => {
           />
         </div>
       )}
+      {footerContent}
     </Modal>
   );
 };
