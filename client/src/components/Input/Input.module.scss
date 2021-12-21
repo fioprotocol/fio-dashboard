@@ -302,3 +302,48 @@
   }
 }
 
+.checkboxContainer input[type="checkbox"], .checkboxContainer input[type="checkbox"] ~ .checked {
+  display: none;
+}
+
+.checkboxContainer input[type="checkbox"]:checked ~ .checked {
+  display: inline-block;
+}
+
+.checkboxContainer input[type="checkbox"]:checked ~ .unchecked {
+  display: none;
+}
+
+.checkboxContainer {
+  cursor: pointer;
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+
+  .unchecked, .checked {
+    font-size: 22.87px;
+
+    &.smallText {
+      font-size: 16px;
+    }
+  }
+
+  .label {
+    margin: 2px 0 0 10px;
+    font-size: 0.875em;
+    color: $dark-jungle-green;
+    @include proxima-nova-semibold;
+
+    &.blackWhite {
+      color: $white;
+    }
+
+    &.smallText {
+      font-size: 11px;
+    }
+
+    &.hasThinText {
+      @include proxima-nova-thin;
+    }
+  }
+}
