@@ -52,7 +52,7 @@ type Props = {
   toggleShowAvailable: (isAvailable: boolean) => boolean;
 };
 
-const Notifications = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
+const Notifications = (props: Props, ref: React.Ref<HTMLDivElement | null>) => {
   const {
     cartItems,
     currentCartItem,
@@ -258,6 +258,8 @@ const Notifications = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
       </Badge>
     </div>
   );
-});
+};
 
-export default Notifications;
+const NotificationsRef = React.forwardRef<HTMLDivElement, Props>(Notifications);
+
+export default NotificationsRef;
