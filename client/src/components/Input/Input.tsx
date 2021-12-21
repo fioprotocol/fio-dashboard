@@ -256,8 +256,8 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
           <CopyButton
             onClick={async () => {
               try {
-                const data = await navigator.clipboard.readText();
-                onChange(data);
+                const clipboardStr = await navigator.clipboard.readText();
+                onChange(clipboardStr);
               } catch (e) {
                 console.error('Paste error: ', e);
               }
@@ -350,7 +350,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
               i <= positionNumber && classes.dotFull,
               showError && classes.dotError,
             )}
-          ></div>,
+          />,
         );
       }
       return dots;

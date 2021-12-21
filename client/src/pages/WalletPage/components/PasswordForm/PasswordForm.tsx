@@ -21,8 +21,8 @@ const PasswordForm: React.FC<{
   const { loading, username, onSubmit } = props;
   return (
     <Form onSubmit={onSubmit} validate={validate} initialValues={{ username }}>
-      {(props: FormRenderProps) => (
-        <form onSubmit={props.handleSubmit} className={classes.form}>
+      {(formRenderProps: FormRenderProps) => (
+        <form onSubmit={formRenderProps.handleSubmit} className={classes.form}>
           <Field name="username" type="hidden" component={Input} />
           <Field
             label="Enter your password to access and display your private key"
@@ -36,7 +36,11 @@ const PasswordForm: React.FC<{
           />
 
           <SubmitButton
-            disabled={props.hasValidationErrors || props.submitting || loading}
+            disabled={
+              formRenderProps.hasValidationErrors ||
+              formRenderProps.submitting ||
+              loading
+            }
             loading={loading}
             withBottomMargin={true}
           />

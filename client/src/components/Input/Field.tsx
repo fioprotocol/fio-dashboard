@@ -25,8 +25,8 @@ export const Field = (props: FieldProps) => {
     setActive(false);
   };
 
-  const handlerChange = (value: FieldValue) => {
-    onChange(value, name);
+  const handleChange = (newValue: FieldValue) => {
+    onChange(newValue, name);
     if (!touched) setTouched(true);
   };
 
@@ -34,7 +34,7 @@ export const Field = (props: FieldProps) => {
     <Input
       input={{
         value,
-        onChange: handlerChange,
+        onChange: handleChange,
         placeholder,
         name,
         onFocus,

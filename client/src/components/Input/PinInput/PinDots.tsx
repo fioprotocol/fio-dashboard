@@ -23,7 +23,7 @@ const PinDots: React.FC<Props> = props => {
             i <= positionNumber && classes.dotFull,
             error && classes.dotError,
           )}
-        ></div>,
+        />,
       );
     }
     return dots;

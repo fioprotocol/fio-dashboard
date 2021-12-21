@@ -25,7 +25,7 @@ const TransactionItemRow = (trx: TransactionItem) => {
     copyToClipboard(txId);
   };
 
-  const isReceive = parseInt(nativeAmount) > 0;
+  const isReceive = parseInt(nativeAmount, 10) > 0;
 
   return (
     <div className={classes.badgeContainer}>

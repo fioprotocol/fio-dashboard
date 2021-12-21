@@ -18,8 +18,8 @@ const AddTokenInput: React.FC<any> = props => {
     const fieldError = error != null ? error[index] : '';
     let errMsg = '';
     if (fieldError != null) {
-      if (typeof error == 'string') errMsg = fieldError;
-      if (typeof error == 'object')
+      if (typeof error === 'string') errMsg = fieldError;
+      if (typeof error === 'object')
         errMsg = fieldError[Object.keys(fieldError)[0]];
     }
     const removeField = () => {
