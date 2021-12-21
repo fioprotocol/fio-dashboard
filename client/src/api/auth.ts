@@ -34,8 +34,11 @@ export default class Auth extends Base {
     email: string;
     fioWallets: FioWalletDoublet[];
     refCode?: string;
+    addEmailToPromoList: boolean;
   }) {
-    return this.apiClient.post('users', { data });
+    return this.apiClient.post('users', {
+      data: { ...data, addEmailToPromoList: data.addEmailToPromoList ? 1 : 0 },
+    });
   }
 
   confirm(hash: string) {
