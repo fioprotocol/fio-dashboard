@@ -2,6 +2,7 @@ import { templates } from '../../emails/emailTemplate';
 import Base from '../Base';
 import X from '../Exception';
 import emailSender from '../emailSender';
+import marketingMailchimp from '../../external/marketing-mailchimp';
 
 import { Action, User, Notification, Wallet } from '../../models';
 
@@ -26,13 +27,16 @@ export default class UsersCreate extends Base {
             ],
             refCode: ['string'],
             stateData: ['any_object'],
+            addEmailToPromoList: ['required', 'integer', { number_between: [0, 1] }],
           },
         },
       ],
     };
   }
 
-  async execute({ data: { username, email, fioWallets, refCode, stateData } }) {
+  async execute({
+    data: { username, email, fioWallets, refCode, stateData, addEmailToPromoList },
+  }) {
     if (await User.findOneWhere({ email })) {
       throw new X({
         code: 'NOT_UNIQUE',
@@ -59,6 +63,10 @@ export default class UsersCreate extends Base {
         state: stateData,
       },
     }).save();
+
+    if (addEmailToPromoList) {
+      await marketingMailchimp.addEmailToPromoList(email);
+    }
 
     await emailSender.send(templates.createAccount, email);
 

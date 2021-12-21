@@ -85,6 +85,7 @@ export const signup = (data: {
   fioWallets: FioWalletDoublet[];
   refCode?: string;
   stateData?: EmailConfirmationStateData;
+  addEmailToPromoList: boolean;
 }) => ({
   types: [SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE],
   promise: (api: Api) => api.auth.signup(data),

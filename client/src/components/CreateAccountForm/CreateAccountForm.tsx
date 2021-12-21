@@ -58,6 +58,7 @@ type FormValues = {
   confirmPassword: string;
   pin: string;
   confirmPin: string;
+  addEmailToPromoList: boolean;
 };
 
 type PasswordValidationState = {
@@ -84,6 +85,7 @@ type OwnProps = {
     fioWallets: FioWalletDoublet[];
     refCode?: string;
     stateData?: EmailConfirmationStateData;
+    addEmailToPromoList: boolean;
   }) => void;
   signupSuccess: boolean;
   isRefFlow: boolean;
@@ -299,7 +301,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       case STEPS.CONFIRMATION: {
         this.setState({ step: STEPS.SUCCESS });
 
-        const { email, password, pin } = values;
+        const { email, password, pin, addEmailToPromoList } = values;
         this.setState({ loading: true });
         const { account, fioWallet, errors } = await createAccount(
           emailToUsername(email),
@@ -335,6 +337,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
             fioWallets,
             refCode: isRefFlow ? refProfileInfo.code : '',
             stateData,
+            addEmailToPromoList,
           });
         }
         return errors;
