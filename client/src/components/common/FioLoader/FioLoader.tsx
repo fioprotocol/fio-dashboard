@@ -10,7 +10,7 @@ const FioLoader = () => {
       loop
       mode="normal"
       src={JSON.stringify(logoAnimation)}
-    ></lottie-player>
+    />
   );
 };
 

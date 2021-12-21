@@ -49,7 +49,7 @@ const FioAddressNftPage: React.FC<Props> = props => {
       initialValues={initialValues}
       fioAddressName={address}
       backTo={putParamsToUrl(ROUTES.FIO_ADDRESS_SIGNATURES, {
-        address: address,
+        address,
       })}
     />
   );

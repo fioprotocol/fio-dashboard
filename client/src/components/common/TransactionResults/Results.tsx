@@ -69,7 +69,10 @@ const Results: React.FC<ResultsContainerProps> = props => {
 
   const errorBadge = () => {
     if (!error) return null;
-    const { title = 'Error', message = DEFAULT_FIO_TRX_ERR_MESSAGE } =
+    const {
+      title: errorTitle = 'Error',
+      message = DEFAULT_FIO_TRX_ERR_MESSAGE,
+    } =
       errorType && ErrorMessages[errorType] != null
         ? ErrorMessages[errorType]
         : {};
@@ -77,7 +80,7 @@ const Results: React.FC<ResultsContainerProps> = props => {
       <InfoBadge
         show={true}
         type={BADGE_TYPES.ERROR}
-        title={title}
+        title={errorTitle}
         message={message}
       />
     );

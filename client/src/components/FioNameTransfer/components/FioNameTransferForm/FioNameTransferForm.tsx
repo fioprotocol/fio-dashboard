@@ -52,8 +52,8 @@ export const TransferForm = (props: FormProps) => {
     onSubmit(value);
   };
 
-  const onChange = async (value: FieldValue) => {
-    setValue(`${value}`);
+  const onChange = async (newValue: FieldValue) => {
+    setValue(`${newValue}`);
     if (error) {
       setError(null);
       setValid(true);

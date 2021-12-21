@@ -40,7 +40,7 @@ const NftListResults: React.FC<Props> = props => {
     const renderGroupedResult = () => {
       const groupedByChainCode = results.reduce(
         (acc: { [key: string]: NFTTokenDoublet[] }, obj) => {
-          const key = obj['chainCode'];
+          const key = obj.chainCode;
           if (!acc[key]) {
             acc[key] = [];
           }

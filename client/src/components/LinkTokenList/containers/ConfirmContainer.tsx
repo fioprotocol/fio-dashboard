@@ -1,7 +1,7 @@
 import React from 'react';
 
 const ConfirmContainer = () => {
-  return <div></div>;
+  return <div />;
 };
 
 export default ConfirmContainer;

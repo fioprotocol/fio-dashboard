@@ -44,9 +44,9 @@ const ChangePasswordForm = (props: Props) => {
     [],
   );
   useEffect(() => {
-    const errors = validate(values);
-    setErrors(errors);
-    if (Object.keys(errors).length) return setValid(false);
+    const validationErrors = validate(values);
+    setErrors(validationErrors);
+    if (Object.keys(validationErrors).length) return setValid(false);
     setValid(true);
   }, [values]);
 

@@ -15,8 +15,8 @@ const EditWalletNameForm: React.FC<EditWalletNameProps> = props => {
   const { loading, onSubmit, initialValues } = props;
   return (
     <Form onSubmit={onSubmit} validate={validate} initialValues={initialValues}>
-      {(props: FormRenderProps) => (
-        <form onSubmit={props.handleSubmit} className={classes.form}>
+      {(formRenderProps: FormRenderProps) => (
+        <form onSubmit={formRenderProps.handleSubmit} className={classes.form}>
           <Field
             name="name"
             type="text"
@@ -29,7 +29,9 @@ const EditWalletNameForm: React.FC<EditWalletNameProps> = props => {
 
           <SubmitButton
             text="Update"
-            disabled={!props.valid || props.submitting || loading}
+            disabled={
+              !formRenderProps.valid || formRenderProps.submitting || loading
+            }
             loading={loading}
             withBottomMargin={true}
           />

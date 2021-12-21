@@ -17,12 +17,12 @@ const SideMenu = (props: SideMenuProps) => {
         className={classnames(classes.menuIcon, isMenuOpen && classes.isOpen)}
         onClick={() => toggleMenuOpen(!isMenuOpen)}
       >
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
       </div>
       <Menu isOpen={isMenuOpen}>{children}</Menu>
     </>

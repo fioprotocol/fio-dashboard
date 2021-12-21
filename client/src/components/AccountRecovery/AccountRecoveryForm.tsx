@@ -64,8 +64,8 @@ const AccountRecoveryForm: React.FC<Props> = props => {
     recoveryAccount(params);
   };
 
-  const renderForm = (props: FormRenderProps) => {
-    const { handleSubmit, valid, touched } = props;
+  const renderForm = (formProps: FormRenderProps) => {
+    const { handleSubmit, valid, touched } = formProps;
     const isLoading = loading || questionsLoading;
     const disabledButton =
       isLoading ||

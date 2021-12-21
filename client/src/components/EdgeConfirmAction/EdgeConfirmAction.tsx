@@ -61,14 +61,14 @@ const EdgeConfirmAction: React.FC<Props> = props => {
   }, [pinConfirmation, pinModalIsOpen]);
 
   // Submit an action
-  const submit = async (pinConfirmation: PinConfirmation) => {
+  const submit = async (pinConfirmationResult: PinConfirmation) => {
     const {
       account: edgeAccount,
       error: confirmationError,
       action: confirmationAction,
       keys,
-      data,
-    } = pinConfirmation;
+      data: additionalData,
+    } = pinConfirmationResult;
 
     if (confirmationAction !== action) return;
     if (
@@ -82,7 +82,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
         const result = await submitAction({
           edgeAccount,
           keys: fioWalletEdgeId ? keys[fioWalletEdgeId] : null,
-          data,
+          data: additionalData,
         });
 
         if (!edgeAccountLogoutBefore) await waitForEdgeAccountStop(edgeAccount);

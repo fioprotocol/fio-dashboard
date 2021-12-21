@@ -20,8 +20,8 @@ const CreateWalletForm: React.FC<CreateWalletProps> = props => {
       validate={validate}
       initialValues={initialValues}
     >
-      {(props: FormRenderProps) => (
-        <form onSubmit={props.handleSubmit} className={classes.form}>
+      {(formRenderProps: FormRenderProps) => (
+        <form onSubmit={formRenderProps.handleSubmit} className={classes.form}>
           <Field
             name="name"
             type="text"
@@ -34,7 +34,9 @@ const CreateWalletForm: React.FC<CreateWalletProps> = props => {
 
           <SubmitButton
             text="Create Wallet"
-            disabled={!props.valid || props.submitting || loading}
+            disabled={
+              !formRenderProps.valid || formRenderProps.submitting || loading
+            }
             loading={loading}
             withBottomMargin={true}
           />

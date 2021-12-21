@@ -107,7 +107,7 @@ const SendPage: React.FC<ContainerProps> = props => {
       fioAddress1.name > fioAddress2.name ? 1 : -1,
     );
 
-  //@ts-ignore
+  // @ts-ignore
   // eslint-disable-next-line no-unused-vars
   const renderInfoBadge = () =>
     fioAddresses.length ? (
