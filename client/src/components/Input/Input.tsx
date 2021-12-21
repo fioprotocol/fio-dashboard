@@ -41,6 +41,8 @@ type Props = {
     'data-clear'?: boolean;
     value: string;
   };
+  hasSmallText?: boolean;
+  hasThinText?: boolean;
 };
 
 type EventProps = {
@@ -73,6 +75,8 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     options,
     isHigh,
     isSimple,
+    hasSmallText,
+    hasThinText,
     ...rest
   } = props;
   const {
@@ -405,6 +409,39 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
       </>
     );
   }
+
+  if (type === 'checkbox')
+    return (
+      <label className={classes.checkboxContainer}>
+        <input {...props} {...input} />
+        <FontAwesomeIcon
+          icon="check-square"
+          className={classnames(
+            classes.checked,
+            uiType && classes[uiType],
+            hasSmallText && classes.smallText,
+          )}
+        />
+        <FontAwesomeIcon
+          icon={{ prefix: 'far', iconName: 'square' }}
+          className={classnames(
+            classes.unchecked,
+            uiType && classes[uiType],
+            hasSmallText && classes.smallText,
+          )}
+        />
+        <p
+          className={classnames(
+            classes.label,
+            uiType && classes[uiType],
+            hasSmallText && classes.smallText,
+            hasThinText && classes.hasThinText,
+          )}
+        >
+          {label}
+        </p>
+      </label>
+    );
 
   return <input {...input} {...props} />;
 };
