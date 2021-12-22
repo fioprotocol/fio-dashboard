@@ -3,16 +3,16 @@ import { Redirect } from 'react-router-dom';
 
 import ActionContainer, {
   CONTAINER_NAMES,
-} from '../containers/ActionContainer';
-import ConfirmContainer from '../containers/ConfirmContainer';
+} from '../../components/LinkTokenList/ActionContainer';
+import ConfirmContainer from '../../components/LinkTokenList/ConfirmContainer';
 import CheckedDropdown from './CheckedDropdown';
 import DeleteTokenItem from './DeleteTokenItem';
-import { ROUTES } from '../../../constants/routes';
+import { ROUTES } from '../../constants/routes';
 
 import { CheckedTokenType } from './types';
-import { FioNameItemProps } from '../../../types';
+import { FioNameItemProps } from '../../types';
 
-import classes from './DeleteToken.module.scss';
+import classes from './styles/DeleteToken.module.scss';
 
 type Props = {
   results?: any; // todo: set results types
@@ -20,7 +20,7 @@ type Props = {
   onSubmit: (params: any) => void;
 };
 
-const DeleteToken: React.FC<Props> = props => {
+const DeleteTokenPage: React.FC<Props> = props => {
   const { currentFioAddress, onSubmit, results } = props;
   const { name, publicAddresses, remaining = 0 } = currentFioAddress;
 
@@ -149,4 +149,4 @@ const DeleteToken: React.FC<Props> = props => {
   );
 };
 
-export default DeleteToken;
+export default DeleteTokenPage;
