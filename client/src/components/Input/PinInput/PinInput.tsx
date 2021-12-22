@@ -15,7 +15,6 @@ type Props = {
   onFocus?: () => void;
   name: string;
   loading: boolean;
-  unfocusOnFinish?: boolean;
   submit?: () => void;
 };
 
@@ -26,18 +25,9 @@ type eventProps = {
 } & ChangeEvent<HTMLInputElement>;
 
 const PinInput: React.FC<Props> = props => {
-  const {
-    error,
-    onFocus,
-    onBlur,
-    name,
-    value,
-    onChange,
-    submit,
-    unfocusOnFinish,
-  } = props;
+  const { error, onFocus, onBlur, name, value, onChange, submit } = props;
 
-  const [showKeyboard, toggleShowKeyboard] = useState(false); //handle mobile keyboard
+  const [showKeyboard, toggleShowKeyboard] = useState(false); // handle mobile keyboard
 
   const innerRef = useRef(null);
   const valueRef = useRef(value);
@@ -68,7 +58,6 @@ const PinInput: React.FC<Props> = props => {
       const retValue = (pinValue && pinValue + key) || key;
 
       if (retValue && retValue.length > PIN_LENGTH) {
-        unfocusOnFinish && innerRef.current && innerRef.current.blur();
         submit && !error && submit();
         return;
       }

@@ -5,7 +5,7 @@ import validator from 'email-validator';
 import { OnFocus } from 'react-final-form-listeners';
 
 import FormHeader from '../FormHeader/FormHeader';
-import Input from '../Input/Input';
+import Input, { INPUT_UI_STYLES } from '../Input/Input';
 
 import classes from './CreateAccountForm.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -160,6 +160,16 @@ export default class EmailPassword extends Component {
           type="password"
           placeholder="Confirm Password"
           disabled={loading}
+        />
+        <Field
+          name="addEmailToPromoList"
+          component={Input}
+          type="checkbox"
+          label="Receive periodic updates and promotional emails from FIO"
+          uiType={INPUT_UI_STYLES.BLACK_WHITE}
+          hasSmallText={true}
+          defaultValue={true}
+          hasThinText={true}
         />
       </>
     );

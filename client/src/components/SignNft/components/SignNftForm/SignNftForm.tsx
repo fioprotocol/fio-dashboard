@@ -40,8 +40,8 @@ const SignNFTForm = (props: SignNftFormProps) => {
 
   return (
     <Form onSubmit={onSubmit} validate={validate} initialValues={initialValues}>
-      {(props: FormRenderProps) => (
-        <form onSubmit={props.handleSubmit}>
+      {(formRenderProps: FormRenderProps) => (
+        <form onSubmit={formRenderProps.handleSubmit}>
           <OnChange name="chainCode">{fieldValuesChanged}</OnChange>
           <OnChange name="contractAddress">{fieldValuesChanged}</OnChange>
           <OnChange name="tokenId">{fieldValuesChanged}</OnChange>
@@ -181,10 +181,10 @@ const SignNFTForm = (props: SignNftFormProps) => {
                   disabled={
                     hasLowBalance ||
                     processing ||
-                    !props.valid ||
+                    !formRenderProps.valid ||
                     alreadySigned ||
-                    props.submitting ||
-                    (isEdit && props.pristine)
+                    formRenderProps.submitting ||
+                    (isEdit && formRenderProps.pristine)
                   }
                   withTopMargin={true}
                   loading={processing}

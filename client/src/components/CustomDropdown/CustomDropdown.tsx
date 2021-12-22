@@ -50,8 +50,8 @@ const CustomDropdown: React.FC<Props> = props => {
     });
   }
 
-  const onDropdownChange = (value: { value: string }) => {
-    const { value: itemValue } = value || {};
+  const onDropdownChange = (option: { value: string }) => {
+    const { value: itemValue } = option || {};
     if (customValue && itemValue === customValue.id) {
       onChange('');
       return toggleToCustom(true);

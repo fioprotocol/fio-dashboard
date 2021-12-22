@@ -60,7 +60,8 @@ const NftValidationPage: React.FC = () => {
         const hashFromFile = await getHash(file);
         params = { hash: hashFromFile };
       } catch (e) {
-        console.log(e);
+        // @ts-ignore
+        console.error(e);
       }
     }
     await getNfts(params);

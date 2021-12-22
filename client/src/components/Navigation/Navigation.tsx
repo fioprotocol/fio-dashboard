@@ -37,7 +37,7 @@ export const Navigation = (props: {
   if (isNotActiveUser) return null;
 
   const renderItems = () => {
-    const { isOnSide, closeMenu } = props;
+    const { closeMenu } = props;
     return navItems.map((item, i) => (
       <Nav.Item
         className={classnames(classes.sideItem, isOnSide && classes.isOnSide)}

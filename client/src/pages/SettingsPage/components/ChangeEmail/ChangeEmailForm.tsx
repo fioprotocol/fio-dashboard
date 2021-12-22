@@ -20,8 +20,13 @@ type Props = {
 const ChangeEmailForm: React.FC<Props> = props => {
   const { onSubmit, loading, error, initialValues } = props;
 
-  const renderForm = (props: FormRenderProps<FormValuesProps>) => {
-    const { handleSubmit, validating, hasValidationErrors, submitting } = props;
+  const renderForm = (formRenderProps: FormRenderProps<FormValuesProps>) => {
+    const {
+      handleSubmit,
+      validating,
+      hasValidationErrors,
+      submitting,
+    } = formRenderProps;
     return (
       <>
         <form onSubmit={handleSubmit}>

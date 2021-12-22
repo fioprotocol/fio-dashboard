@@ -1,8 +1,8 @@
 import React from 'react';
 import classnames from 'classnames';
-import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+
+import SubmitButton from '../common/SubmitButton/SubmitButton';
 import classes from './CreateAccountForm.module.scss';
 
 type State = {
@@ -80,13 +80,13 @@ export default class Wizard extends React.Component<Props, State> {
           />
         )}
         {!isLastPage && !hideNext && (
-          <Button
-            type="submit"
-            className="w-100"
+          <SubmitButton
+            text="NEXT"
             disabled={loading || actionDisabled}
-          >
-            NEXT {loading && <FontAwesomeIcon icon={faSpinner} spin />}
-          </Button>
+            loading={loading}
+            withTopMargin={true}
+            withBottomMargin={true}
+          />
         )}
         {bottomText}
       </>

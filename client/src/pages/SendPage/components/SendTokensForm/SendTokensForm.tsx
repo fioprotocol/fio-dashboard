@@ -35,10 +35,10 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
       validate={validate}
       initialValues={initialValues}
     >
-      {(props: FormRenderProps) => {
+      {(formRenderProps: FormRenderProps) => {
         const {
           values: { from, amount },
-        } = props;
+        } = formRenderProps;
 
         const renderSender = () => {
           if (!obtDataOn) return null;
@@ -86,15 +86,18 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
             ? selectedAddress.remaining < RECORD_OBT_DATA_BUNDLE_COST
             : false;
         const submitDisabled =
-          !props.valid ||
-          props.submitting ||
+          !formRenderProps.valid ||
+          formRenderProps.submitting ||
           loading ||
           hasLowBalance ||
           notEnoughBundles ||
           !fee.nativeFio;
 
         return (
-          <form onSubmit={props.handleSubmit} className={classes.form}>
+          <form
+            onSubmit={formRenderProps.handleSubmit}
+            className={classes.form}
+          >
             {renderSender()}
             <Field
               name="to"

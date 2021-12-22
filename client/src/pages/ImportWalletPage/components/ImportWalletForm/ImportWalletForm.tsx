@@ -16,8 +16,8 @@ const ImportWalletForm: React.FC<ImportWalletFormProps> = props => {
   const { loading, onSubmit } = props;
   return (
     <Form onSubmit={onSubmit} validate={validate}>
-      {(props: FormRenderProps) => (
-        <form onSubmit={props.handleSubmit} className={classes.form}>
+      {(formRenewProps: FormRenderProps) => (
+        <form onSubmit={formRenewProps.handleSubmit} className={classes.form}>
           <Field
             name="privateSeed"
             type="text"
@@ -41,7 +41,11 @@ const ImportWalletForm: React.FC<ImportWalletFormProps> = props => {
 
           <SubmitButton
             text="Import Wallet"
-            disabled={props.hasValidationErrors || props.submitting || loading}
+            disabled={
+              formRenewProps.hasValidationErrors ||
+              formRenewProps.submitting ||
+              loading
+            }
             loading={loading}
             withBottomMargin={true}
           />

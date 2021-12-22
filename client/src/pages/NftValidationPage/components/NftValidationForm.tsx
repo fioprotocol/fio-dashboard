@@ -78,7 +78,7 @@ const NftValidationForm: React.FC<Props & FormProps> = props => {
       onSubmit={onSubmit}
       validate={values => validate(values, activeOption)}
       render={formProps => <RenderForm {...props} {...formProps} />}
-    ></Form>
+    />
   );
 };
 

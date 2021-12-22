@@ -21,6 +21,9 @@ export default {
     mailchimpKey: process.env.MAILCHIMP_KEY,
     from: process.env.MAILCHIMP_FROM,
     fromName: process.env.MAILCHIMP_FROM_NAME,
+    mailchimpMarketing: process.env.MAILCHIMP_MARKETING_KEY,
+    mailchimpListId: process.env.MAILCHIMP_LIST_ID,
+    mailchimpServerPrefix: process.env.MAILCHIMP_SERVER_PREFIX,
   },
   ...dbConfig,
 };

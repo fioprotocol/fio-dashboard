@@ -81,7 +81,7 @@ const AddToken: React.FC<Props> = props => {
       bundleCost={bundleCost}
       containerName={CONTAINER_NAMES.LINK}
       name={name}
-      onActionButtonClick={() => {}} // todo: set action
+      onActionButtonClick={() => null} // todo: set action
       remaining={remaining}
       isDisabled={hasEmtptyFields}
     >

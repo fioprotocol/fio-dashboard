@@ -27,13 +27,13 @@ const LowBalanceBadge: React.FC<Props> = props => {
   if (!hasLowBalance) return null;
 
   // todo: removed action button because there is no action on it
-  //@ts-ignore
+  // @ts-ignore
   // eslint-disable-next-line no-unused-vars
   const renderButton = () => (
     <Button
       className={classes.button}
       onClick={() => {
-        //todo: set action
+        // todo: set action
       }}
     >
       <FontAwesomeIcon icon="plus-circle" className={classes.buttonIcon} />

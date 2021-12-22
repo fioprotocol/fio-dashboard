@@ -93,7 +93,8 @@ const TwoFactorAuth: React.FC<Props> = props => {
         }
       }
     } catch (e) {
-      console.log(e);
+      // @ts-ignore
+      console.error(e);
     }
     setLoading(prevState => ({ ...prevState, [voucherId]: false }));
   };
