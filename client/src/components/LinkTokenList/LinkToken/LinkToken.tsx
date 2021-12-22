@@ -6,8 +6,8 @@ import classnames from 'classnames';
 
 import ActionContainer, {
   CONTAINER_NAMES,
-} from '../Containers/ActionContainer';
-import ConfirmContainer from '../Containers/ConfirmContainer';
+} from '../containers/ActionContainer';
+import ConfirmContainer from '../containers/ConfirmContainer';
 import LinkTokenInput from '../Components/LinkTokenInput';
 
 import classes from './LinkToken.module.scss';

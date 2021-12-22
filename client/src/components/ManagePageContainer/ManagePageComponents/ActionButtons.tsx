@@ -47,8 +47,6 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
     </Button>
   );
 
-  // @ts-ignore todo: BD-2933
-  // eslint-disable-next-line no-unused-vars
   const renderLink = () => (
     <Link
       to={`${ROUTES.LINK_TOKEN_LIST}/${name}`}
@@ -75,6 +73,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
             {!isSmallDesktop && BUTTONS_TITLE.nft}
           </Button>
         </Link>
+        {renderLink()}
         {renderSettings()}
       </div>
     </div>

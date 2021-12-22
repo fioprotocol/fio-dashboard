@@ -150,7 +150,7 @@ const Routes = () => (
           component={AddTokenPage}
         />
         <PrivateRoute
-          path={`${LIST_TOKEN_PARENT_ROUTE}/${ROUTES.EDIT_TOKEN}`}
+          path={`${LIST_TOKEN_PARENT_ROUTE}${ROUTES.EDIT_TOKEN}`}
           component={EditTokenPage}
         />
 

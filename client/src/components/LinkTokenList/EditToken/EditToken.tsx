@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import ActionContainer, {
   CONTAINER_NAMES,
-} from '../Containers/ActionContainer';
-import ConfirmContainer from '../Containers/ConfirmContainer';
+} from '../containers/ActionContainer';
+import ConfirmContainer from '../containers/ConfirmContainer';
 import PublicAddressEdit from '../Components/PublicAddressEdit';
 
 import classes from './EditToken.module.scss';
