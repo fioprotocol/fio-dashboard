@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { currentFioAddress } from '../../../redux/fio/selectors';
+import { currentFioAddress } from '../../redux/fio/selectors';
 
-import AddToken from './AddToken';
-import { compose } from '../../../utils';
+import AddTokenPage from './AddTokenPage';
+import { compose } from '../../utils';
 
 export default compose(
   connect(
@@ -13,4 +13,4 @@ export default compose(
     }),
     {},
   ),
-)(AddToken);
+)(AddTokenPage);

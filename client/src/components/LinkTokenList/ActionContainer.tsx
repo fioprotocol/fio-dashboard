@@ -1,13 +1,13 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 
-import FioName from '../../common/FioName/FioName';
-import BundledTransactionBadge from '../../Badges/BundledTransactionBadge/BundledTransactionBadge';
-import PseudoModalContainer from '../../PseudoModalContainer';
-import LowBalanceBadge from '../../Badges/LowBalanceBadge/LowBalanceBadge';
-import { ROUTES } from '../../../constants/routes';
+import FioName from '../common/FioName/FioName';
+import BundledTransactionBadge from '../Badges/BundledTransactionBadge/BundledTransactionBadge';
+import PseudoModalContainer from '../PseudoModalContainer';
+import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
+import { ROUTES } from '../../constants/routes';
 
-import classes from './ActionContainer.module.scss';
+import classes from './styles/ActionContainer.module.scss';
 
 type Props = {
   bundleCost: number;

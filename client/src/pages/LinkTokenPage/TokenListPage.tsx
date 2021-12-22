@@ -4,16 +4,16 @@ import { Link } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
 import { Redirect } from 'react-router-dom';
 
-import PseudoModalContainer from '../../PseudoModalContainer';
-import NotificationBadge from '../../NotificationBadge';
-import { BADGE_TYPES } from '../../Badge/Badge';
-import { ROUTES } from '../../../constants/routes';
-import FioName from '../../common/FioName/FioName';
-import TokenBadge from '../../Badges/TokenBadge/TokenBadge';
-import TokenBadgeMobile from '../../Badges/TokenBadge/TokenBadgeMobile';
+import PseudoModalContainer from '../../components/PseudoModalContainer';
+import NotificationBadge from '../../components/NotificationBadge';
+import { BADGE_TYPES } from '../../components/Badge/Badge';
+import { ROUTES } from '../../constants/routes';
+import FioName from '../../components/common/FioName/FioName';
+import TokenBadge from '../../components/Badges/TokenBadge/TokenBadge';
+import TokenBadgeMobile from '../../components/Badges/TokenBadge/TokenBadgeMobile';
 
-import { useCheckIfDesktop } from '../../../screenType';
-import { FioNameItemProps } from '../../../types';
+import { useCheckIfDesktop } from '../../screenType';
+import { FioNameItemProps } from '../../types';
 
 import classes from './TokenList.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

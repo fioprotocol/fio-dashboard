@@ -1,10 +1,7 @@
 import isEmpty from 'lodash/isEmpty';
-import {
-  CHAIN_CODE_REGEXP,
-  TOKEN_CODE_REGEXP,
-} from '../../../constants/regExps';
+import { CHAIN_CODE_REGEXP, TOKEN_CODE_REGEXP } from '../../constants/regExps';
 
-import { PublicAddressDoublet } from '../../../types';
+import { PublicAddressDoublet } from '../../types';
 
 type Props = {
   tokens: PublicAddressDoublet[];
