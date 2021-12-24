@@ -1,10 +1,12 @@
 import React from 'react';
-import { Button } from 'react-bootstrap';
 
 import FioName from '../common/FioName/FioName';
 import BundledTransactionBadge from '../Badges/BundledTransactionBadge/BundledTransactionBadge';
 import PseudoModalContainer from '../PseudoModalContainer';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
+
+import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
+
 import { ROUTES } from '../../constants/routes';
 
 import classes from './styles/ActionContainer.module.scss';
@@ -17,6 +19,7 @@ type Props = {
   name: string;
   onActionButtonClick: () => void;
   remaining: number;
+  loading: boolean;
 };
 
 const lowBalanceText = {
@@ -55,6 +58,7 @@ const ActionContainer: React.FC<Props> = props => {
     name,
     onActionButtonClick,
     remaining,
+    loading,
   } = props;
 
   const hasLowBalance = remaining - bundleCost < 0;
@@ -69,13 +73,13 @@ const ActionContainer: React.FC<Props> = props => {
         {children}
         <BundledTransactionBadge bundles={bundleCost} remaining={remaining} />
         <LowBalanceBadge hasLowBalance={hasLowBalance} {...lowBalanceText} />
-        <Button
-          className={classes.actionButton}
-          disabled={hasLowBalance || isDisabled}
+        <SubmitButton
+          disabled={hasLowBalance || isDisabled || loading}
+          loading={loading}
           onClick={onActionButtonClick}
-        >
-          {CONTAINER_TYPES[containerName].buttonText}
-        </Button>
+          text={CONTAINER_TYPES[containerName].buttonText}
+          withTopMargin={true}
+        />
       </div>
     </PseudoModalContainer>
   );
