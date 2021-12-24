@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router';
 import { Redirect } from 'react-router-dom';
+import classnames from 'classnames';
 
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import NotificationBadge from '../../components/NotificationBadge';
@@ -64,7 +65,9 @@ const ListToken: React.FC<Props & RouteComponentProps> = props => {
           title="What is Wallet Linking?"
           type={BADGE_TYPES.INFO}
         />
-        <div className={classes.actionContainer}>
+        <div
+          className={classnames(classes.actionContainer, classes.columnMobile)}
+        >
           <FioName name={name} />
           <div className={classes.buttonsContainer}>
             <Link to={`${url}${ROUTES.EDIT_TOKEN}`} className={classes.link}>
@@ -87,7 +90,9 @@ const ListToken: React.FC<Props & RouteComponentProps> = props => {
             </Link>
           </div>
         </div>
-        <h5 className={classes.subTitle}>Linked Tokens</h5>
+        <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
+          Linked Tokens
+        </h5>
         <div className={classes.publicAddresses}>
           {publicAddresses &&
             publicAddresses.map(pubAddress =>
