@@ -1,0 +1,15 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.editIcon {
+  color: $dark-jungle-green;
+  cursor: pointer;
+  margin-left: 40px;
+  justify-self: flex-end;
+  outline: none;
+
+  &.editing {
+    color: $clear-blue;
+  }
+}
