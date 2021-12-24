@@ -1,0 +1,105 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.actionContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 15px;
+  width: 100%;
+
+  &.columnMobile {
+    flex-direction: column;
+  }
+
+  .button {
+    height: 36px;
+    width: auto;
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8125rem;
+    line-height: 0;
+    border-radius: 7px;
+    padding: 0 12px;
+    @include sf-pro-display-thin;
+
+    .icon {
+      font-size: 1rem;
+      line-height: 0;
+      margin-right: 10px;
+    }
+  }
+
+  .buttonsContainer {
+    display: flex;
+    flex-direction: row;
+    flex-flow: wrap;
+    justify-content: flex-start;
+
+    button {
+      margin-top: 20px;
+      height: 36px;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.8125rem;
+      line-height: 0;
+      border-radius: 7px;
+      padding: 0 12px;
+      @include sf-pro-display-thin;
+    }
+    .middleButton {
+      margin: 20px 20px 0;
+    }
+    .icon {
+      font-size: 1rem;
+      line-height: 0;
+      margin-right: 10px;
+    }
+  }
+}
+
+.subtitle {
+  margin-bottom: 0;
+  font-size: 0.875rem;
+  color: $dark-jungle-green;
+  line-height: 0.875rem;
+  align-self: center;
+  @include proxima-nova-semibold;
+
+  &.hasMargin {
+    margin: 20px 0;
+  }
+}
+
+@include lg {
+  .actionContainer {
+    flex-direction: row;
+    align-items: center;
+
+    &.columnMobile {
+      flex-direction: row;
+    }
+
+    .buttonsContainer {
+      margin-top: 0;
+      justify-content: space-between;
+
+      button, .middleButton {
+        margin-top: 0;
+      }
+      .icon {
+        font-size: 1.25rem;
+      }
+    }
+  }
+  .subtitle {
+      align-self: inherit;
+
+  }
+}

@@ -47,9 +47,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
     </Button>
   );
 
-  // @ts-ignore todo: BD-2933
-  // eslint-disable-next-line no-unused-vars
-  const renderLink = () => (
+  const renderLinkToken = () => (
     <Link
       to={`${ROUTES.LINK_TOKEN_LIST}/${name}`}
       className={classes.actionButton}
@@ -61,7 +59,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
     </Link>
   );
 
-  // todo: BD-2933 renderLink and renderRenew were temporary removed from address item
+  // todo: BD-2933 renderRenew were temporary removed from address item
 
   return pageName === PAGE_NAME.ADDRESS ? (
     <div className={classes.actionButtonsContainer}>
@@ -75,6 +73,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
             {!isSmallDesktop && BUTTONS_TITLE.nft}
           </Button>
         </Link>
+        {renderLinkToken()}
         {renderSettings()}
       </div>
     </div>
