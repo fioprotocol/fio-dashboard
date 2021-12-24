@@ -1,11 +1,7 @@
 import isEmpty from 'lodash/isEmpty';
 import { CHAIN_CODE_REGEXP, TOKEN_CODE_REGEXP } from '../../constants/regExps';
 
-import { PublicAddressDoublet } from '../../types';
-
-type Props = {
-  tokens: PublicAddressDoublet[];
-};
+import { FormValues } from './types';
 
 type ArrayErrorsProps = {
   chainCode?: string;
@@ -13,7 +9,7 @@ type ArrayErrorsProps = {
   publicAddress?: string;
 }[];
 
-export const validate = (values: Props) => {
+export const validate = (values: FormValues) => {
   const errors: any = {}; // todo: set form redux props to errors
   if (!values.tokens || !values.tokens.length) {
     errors.tokens = 'Required';
