@@ -5,8 +5,8 @@ import ActionContainer, {
   CONTAINER_NAMES,
 } from '../../components/LinkTokenList/ActionContainer';
 import ConfirmContainer from '../../components/LinkTokenList/ConfirmContainer';
-import CheckedDropdown from './CheckedDropdown';
-import DeleteTokenItem from './DeleteTokenItem';
+import CheckedDropdown from './components/CheckedDropdown';
+import DeleteTokenItem from './components/DeleteTokenItem';
 import { ROUTES } from '../../constants/routes';
 
 import { CheckedTokenType } from './types';
@@ -18,10 +18,11 @@ type Props = {
   results?: any; // todo: set results types
   currentFioAddress: FioNameItemProps;
   onSubmit: (params: any) => void;
+  loading: boolean;
 };
 
 const DeleteTokenPage: React.FC<Props> = props => {
-  const { currentFioAddress, onSubmit, results } = props;
+  const { currentFioAddress, onSubmit, results, loading } = props;
   const { name, publicAddresses, remaining = 0 } = currentFioAddress;
 
   const [pubAddressesArr, changePubAddresses] = useState<CheckedTokenType[]>(
@@ -122,6 +123,7 @@ const DeleteTokenPage: React.FC<Props> = props => {
       remaining={remaining}
       isDisabled={!hasChecked || remaining === 0}
       onActionButtonClick={handleSubmit}
+      loading={loading}
     >
       <div className={classes.container}>
         <div className={classes.actionContainer}>
