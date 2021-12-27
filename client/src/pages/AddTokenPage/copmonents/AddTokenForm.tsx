@@ -53,7 +53,7 @@ const AddTokenForm: React.FC<FormProps> = props => {
         bundleCost={bundleCost}
         containerName={CONTAINER_NAMES.ADD}
         name={name}
-        onActionButtonClick={() => null} // todo: set action
+        onActionButtonClick={handleSubmit}
         remaining={remaining}
         isDisabled={!valid}
         loading={loading}
