@@ -51,7 +51,7 @@ const AddTokenForm: React.FC<FormProps> = props => {
     <form onSubmit={handleSubmit}>
       <ActionContainer
         bundleCost={bundleCost}
-        containerName={CONTAINER_NAMES.LINK}
+        containerName={CONTAINER_NAMES.ADD}
         name={name}
         onActionButtonClick={() => null} // todo: set action
         remaining={remaining}

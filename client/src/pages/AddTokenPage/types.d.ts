@@ -4,6 +4,7 @@ export type AddTokenProps = {
   currentFioAddress: FioNameItemProps;
   results: any;
   loading: boolean;
+  remaining: number;
 };
 
 export type FormValues = {
