@@ -5,6 +5,9 @@ import ActionContainer, {
 } from '../../components/LinkTokenList/ActionContainer';
 import ConfirmContainer from '../../components/LinkTokenList/ConfirmContainer';
 import PublicAddressEdit from './components/PublicAddressEdit';
+import EdgeConfirmAction from '../../components/EdgeConfirmAction';
+
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
 import classes from './styles/EditTokenPage.module.scss';
 
@@ -19,6 +22,8 @@ const EditTokenPage: React.FC<any> = props => {
   // @ts-ignore
   // eslint-disable-next-line no-unused-vars
   const [resultsData, setResultsData] = useState(null);
+  const [processing, setProcessing] = useState(false);
+  const [submitData, setSubmitData] = useState<boolean | null>(null);
 
   const hasLowBalance = remaining - bundleCost < 0;
   useEffect(() => {
@@ -61,6 +66,23 @@ const EditTokenPage: React.FC<any> = props => {
     updatePubAddressArr();
   };
 
+  const onSuccess = () => {
+    setProcessing(false);
+  };
+
+  const onCancel = () => {
+    setSubmitData(null);
+    setProcessing(false);
+  };
+
+  const submit = () => {
+    setSubmitData(null);
+  };
+
+  const onActionClick = () => {
+    setSubmitData(true);
+  };
+
   if (resultsData)
     return (
       <ConfirmContainer
@@ -73,29 +95,41 @@ const EditTokenPage: React.FC<any> = props => {
     );
 
   return (
-    <ActionContainer
-      containerName={CONTAINER_NAMES.EDIT}
-      name={name}
-      bundleCost={bundleCost}
-      remaining={remaining}
-      onActionButtonClick={() => null} // todo: set action
-      loading={loading}
-    >
-      <div className={classes.container}>
-        <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
-          Linked Tokens
-        </h5>
-      </div>
-      {pubAddressesArr &&
-        pubAddressesArr.map((pubAddress: any) => (
-          <PublicAddressEdit
-            {...pubAddress}
-            handleClick={handleEditTokenItem}
-            hasLowBalance={hasLowBalance}
-            key={pubAddress.id}
-          />
-        ))}
-    </ActionContainer>
+    <>
+      <EdgeConfirmAction
+        onSuccess={onSuccess}
+        onCancel={onCancel}
+        submitAction={submit}
+        data={submitData}
+        action={CONFIRM_PIN_ACTIONS.TOKEN_LIST}
+        processing={processing}
+        setProcessing={setProcessing}
+        hideProcessing={true}
+      />
+      <ActionContainer
+        containerName={CONTAINER_NAMES.EDIT}
+        name={name}
+        bundleCost={bundleCost}
+        remaining={remaining}
+        onActionButtonClick={onActionClick}
+        loading={loading}
+      >
+        <div className={classes.container}>
+          <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
+            Linked Tokens
+          </h5>
+        </div>
+        {pubAddressesArr &&
+          pubAddressesArr.map((pubAddress: any) => (
+            <PublicAddressEdit
+              {...pubAddress}
+              handleClick={handleEditTokenItem}
+              hasLowBalance={hasLowBalance}
+              key={pubAddress.id}
+            />
+          ))}
+      </ActionContainer>
+    </>
   );
 };
 
