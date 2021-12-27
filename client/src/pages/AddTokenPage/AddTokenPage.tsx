@@ -6,10 +6,12 @@ import ConfirmContainer from '../../components/LinkTokenList/ConfirmContainer';
 import AddTokenForm from './copmonents/AddTokenForm';
 import { validate } from './validation';
 
+import { CONTAINER_NAMES } from '../../components/LinkTokenList/ActionContainer';
+
 import { AddTokenProps } from './types';
 
 const AddToken: React.FC<AddTokenProps> = props => {
-  const { results } = props;
+  const { results, currentFioAddress, remaining, loading } = props;
   const [resultsData, setResultsData] = useState<any | null>(null);
 
   const onSubmit = () => {
@@ -22,7 +24,16 @@ const AddToken: React.FC<AddTokenProps> = props => {
     setResultsData(results);
   }, [results]);
 
-  if (resultsData) return <ConfirmContainer />;
+  if (resultsData)
+    return (
+      <ConfirmContainer
+        results={results}
+        containerName={CONTAINER_NAMES.ADD}
+        name={currentFioAddress.name}
+        remaining={remaining}
+        loading={loading}
+      />
+    );
   return (
     <Form
       onSubmit={onSubmit}

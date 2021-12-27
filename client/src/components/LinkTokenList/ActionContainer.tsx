@@ -31,7 +31,7 @@ const lowBalanceText = {
 export const CONTAINER_NAMES = {
   DELETE: 'delete',
   EDIT: 'edit',
-  LINK: 'link',
+  ADD: 'add',
 };
 
 const CONTAINER_TYPES = {
@@ -43,7 +43,7 @@ const CONTAINER_TYPES = {
     title: 'Edit Public Address(es)',
     buttonText: 'Edit',
   },
-  [CONTAINER_NAMES.LINK]: {
+  [CONTAINER_NAMES.ADD]: {
     title: 'Link your FIO Address',
     buttonText: 'Link Now',
   },

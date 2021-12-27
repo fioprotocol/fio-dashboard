@@ -22,7 +22,7 @@ type Props = {
 };
 
 const DeleteTokenPage: React.FC<Props> = props => {
-  const { currentFioAddress, onSubmit, results, loading } = props;
+  const { currentFioAddress, onSubmit, loading } = props;
   const { name, publicAddresses, remaining = 0 } = currentFioAddress;
 
   const [pubAddressesArr, changePubAddresses] = useState<CheckedTokenType[]>(
@@ -30,7 +30,10 @@ const DeleteTokenPage: React.FC<Props> = props => {
   );
   const [bundleCost, changeBundleCost] = useState(0);
   const [allChecked, toggleAllChecked] = useState(false);
+  // @ts-ignorea
+  // eslint-disable-next-line no-unused-vars
   const [resultsData, setResultsData] = useState<any | null>(null);
+
   const hasLowBalance = remaining - bundleCost < 0 || remaining === 0;
 
   const hasChecked = pubAddressesArr.some(pubAddress => pubAddress.isChecked);
@@ -54,10 +57,10 @@ const DeleteTokenPage: React.FC<Props> = props => {
   }, [pubAddressesArr]);
 
   // Handle results
-  useEffect(() => {
-    // todo: set proper results
-    setResultsData(results);
-  }, [results]);
+  // useEffect(() => {
+  //   // todo: set proper results
+  //   setResultsData(results);
+  // }, [results]);
 
   const onCheckClick = (checkedId: string) => {
     changePubAddresses(
@@ -114,7 +117,16 @@ const DeleteTokenPage: React.FC<Props> = props => {
 
   if (!name) return <Redirect to={{ pathname: ROUTES.FIO_ADDRESSES }} />;
 
-  if (resultsData) return <ConfirmContainer />;
+  if (resultsData)
+    return (
+      <ConfirmContainer
+        results={resultsData}
+        containerName={CONTAINER_NAMES.DELETE}
+        name={name}
+        remaining={remaining}
+        loading={loading}
+      />
+    );
   return (
     <ActionContainer
       containerName={CONTAINER_NAMES.DELETE}

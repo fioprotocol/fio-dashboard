@@ -10,11 +10,15 @@ import classes from './styles/EditTokenPage.module.scss';
 
 // todo: remove all any types
 const EditTokenPage: React.FC<any> = props => {
-  const { currentFioAddress, results, loading } = props;
+  const { currentFioAddress, loading } = props;
   const { name, publicAddresses, remaining } = currentFioAddress;
 
   const [pubAddressesArr, changePubAddresses] = useState([]);
   const [bundleCost, changeBundleCost] = useState(0);
+
+  // @ts-ignore
+  // eslint-disable-next-line no-unused-vars
+  const [resultsData, setResultsData] = useState(null);
 
   const hasLowBalance = remaining - bundleCost < 0;
   useEffect(() => {
@@ -57,7 +61,18 @@ const EditTokenPage: React.FC<any> = props => {
     updatePubAddressArr();
   };
 
-  return !results ? (
+  if (resultsData)
+    return (
+      <ConfirmContainer
+        results={resultsData}
+        containerName={CONTAINER_NAMES.EDIT}
+        name={name}
+        remaining={remaining}
+        loading={loading}
+      />
+    );
+
+  return (
     <ActionContainer
       containerName={CONTAINER_NAMES.EDIT}
       name={name}
@@ -81,8 +96,6 @@ const EditTokenPage: React.FC<any> = props => {
           />
         ))}
     </ActionContainer>
-  ) : (
-    <ConfirmContainer />
   );
 };
 
