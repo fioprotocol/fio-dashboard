@@ -4,6 +4,7 @@ import { FioNamesResponse } from '@fioprotocol/fiosdk/src/entities/FioNamesRespo
 import { FioAddressesResponse } from '@fioprotocol/fiosdk/src/entities/FioAddressesResponse';
 import { FioDomainsResponse } from '@fioprotocol/fiosdk/src/entities/FioDomainsResponse';
 import { PublicAddressResponse } from '@fioprotocol/fiosdk/src/entities/PublicAddressResponse';
+import { PublicAddressesResponse } from '@fioprotocol/fiosdk/src/entities/PublicAddressesResponse';
 import { SetFioDomainVisibilityResponse } from '@fioprotocol/fiosdk/src/entities/SetFioDomainVisibilityResponse';
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { Transactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
@@ -11,7 +12,7 @@ import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { isDomain } from '../utils';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 
-import { NFTTokenDoublet } from '../types';
+import { NFTTokenDoublet, WalletKeys } from '../types';
 
 export interface TrxResponse {
   transaction_id?: string;
@@ -285,51 +286,6 @@ export default class Fio {
     return { public_address: '' };
   };
 
-  getPubAddressesForFioAddresses = async (
-    fioAddresses: string[],
-  ): Promise<{
-    [fioAddress: string]: {
-      publicAddress: string;
-      chainCode: string;
-      tokenCode: string;
-    }[];
-  }> => {
-    const retResult: {
-      [fioAddress: string]: {
-        publicAddress: string;
-        chainCode: string;
-        tokenCode: string;
-      }[];
-    } = {};
-
-    // TODO: change to getAllPublicAddresses after fioSDK update;
-    const cryptoCurrencies = ['BTC', 'ETH', 'BCH'];
-    for (const fioAddress of fioAddresses) {
-      const fioAddressRes = [];
-      for (const chainCode of cryptoCurrencies) {
-        try {
-          this.setBaseUrl();
-          const {
-            public_address: publicAddress,
-          } = await this.publicFioSDK.getPublicAddress(
-            fioAddress,
-            chainCode,
-            chainCode,
-          );
-          fioAddressRes.push({
-            publicAddress,
-            chainCode,
-            tokenCode: chainCode,
-          });
-        } catch (e) {
-          this.logError(e);
-        }
-      }
-      retResult[fioAddress] = fioAddressRes;
-    }
-    return retResult;
-  };
-
   getNFTs = async (
     searchParams: {
       fioAddress?: string;
@@ -450,6 +406,38 @@ export default class Fio {
     } catch (err) {
       this.logError(err);
       throw err;
+    }
+  };
+
+  getPublicAddresses = async (
+    fioAddress: string,
+    limit: number | null = null,
+    offset: number | null = null,
+  ): Promise<PublicAddressesResponse> => {
+    this.setBaseUrl();
+    try {
+      return this.publicFioSDK.getPublicAddresses(fioAddress, limit, offset);
+    } catch (err) {
+      this.logError(err);
+      throw err;
+    }
+  };
+
+  executeAction = async (
+    keys: WalletKeys,
+    action: string,
+    params: any,
+  ): Promise<any> => {
+    this.setWalletFioSdk(keys);
+
+    if (!params.maxFee) params.maxFee = defaultFee;
+
+    try {
+      return await this.walletFioSDK.genericAction(action, params);
+    } catch (err) {
+      this.logError(err);
+    } finally {
+      this.clearWalletFioSdk();
     }
   };
 }
