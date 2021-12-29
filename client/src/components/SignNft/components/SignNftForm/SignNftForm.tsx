@@ -174,23 +174,19 @@ const SignNFTForm = (props: SignNftFormProps) => {
               hasLowBalance={hasLowBalance}
               messageText="Not enough bundles"
             />
-            <Row>
-              <Col className="text-center">
-                <SubmitButton
-                  text={isEdit ? 'Update' : 'Sign NFT'}
-                  disabled={
-                    hasLowBalance ||
-                    processing ||
-                    !formRenderProps.valid ||
-                    alreadySigned ||
-                    formRenderProps.submitting ||
-                    (isEdit && formRenderProps.pristine)
-                  }
-                  withTopMargin={true}
-                  loading={processing}
-                />
-              </Col>
-            </Row>
+            <SubmitButton
+              text={isEdit ? 'Update' : 'Sign NFT'}
+              disabled={
+                hasLowBalance ||
+                processing ||
+                !formRenderProps.valid ||
+                alreadySigned ||
+                formRenderProps.submitting ||
+                (isEdit && formRenderProps.pristine)
+              }
+              withTopMargin={true}
+              loading={processing}
+            />
           </Container>
         </form>
       )}
