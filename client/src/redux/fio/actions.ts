@@ -132,6 +132,24 @@ export const getFioPubAddress = (fioAddress: string) => ({
   promise: (api: Api) => api.fio.getFioPublicAddress(fioAddress),
 });
 
+export const GET_ALL_PUBLIC_ADDRESS_REQUEST = `${prefix}/GET_ALL_PUBLIC_ADDRESS_REQUEST`;
+export const GET_ALL_PUBLIC_ADDRESS_SUCCESS = `${prefix}/GET_ALL_PUBLIC_ADDRESS_SUCCESS`;
+export const GET_ALL_PUBLIC_ADDRESS_FAILURE = `${prefix}/GET_ALL_PUBLIC_ADDRESS_FAILURE`;
+
+export const getAllFioPubAddresses = (
+  fioAddress: string,
+  limit: number,
+  offset: number,
+) => ({
+  types: [
+    GET_ALL_PUBLIC_ADDRESS_REQUEST,
+    GET_ALL_PUBLIC_ADDRESS_SUCCESS,
+    GET_ALL_PUBLIC_ADDRESS_FAILURE,
+  ],
+  promise: (api: Api) => api.fio.getPublicAddresses(fioAddress, limit, offset),
+  fioAddress,
+});
+
 export const LINK_TOKENS_REQUEST = `${prefix}/LINK_TOKENS_REQUEST`;
 export const LINK_TOKENS_SUCCESS = `${prefix}/LINK_TOKENS_SUCCESS`;
 export const LINK_TOKENS_FAILURE = `${prefix}/LINK_TOKENS_FAILURE`;
@@ -305,4 +323,11 @@ export const CLEAR_NFT_SIGNATURES = `${prefix}/CLEAR_NFT_SIGNATURES`;
 
 export const clearNFTSignatures = () => ({
   type: CLEAR_NFT_SIGNATURES,
+});
+
+export const TOGGLE_TOKEN_LIST_INFO_BADGE = `${prefix}/TOGGLE_TOKEN_LIST_INFO_BADGE`;
+
+export const toggleTokenListInfoBadge = (enabled: boolean) => ({
+  type: TOGGLE_TOKEN_LIST_INFO_BADGE,
+  enabled,
 });

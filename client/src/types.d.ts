@@ -98,6 +98,8 @@ export type FioAddressDoublet = {
   expiration: string;
   remaining: number;
   walletPublicKey: string;
+  publicAddresses?: PublicAddressDoublet[];
+  more?: boolean;
 };
 
 export type FioDomainDoublet = {
@@ -148,6 +150,7 @@ export type FioNameItemProps = {
   isPublic?: number;
   walletPublicKey?: string;
   publicAddresses?: PublicAddressDoublet[];
+  more?: boolean;
 };
 
 export type LinkResult = {

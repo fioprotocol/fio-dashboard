@@ -1,4 +1,6 @@
 import { combineReducers } from 'redux';
+import isEqual from 'lodash/isEqual';
+
 import { LOGIN_SUCCESS as EDGE_LOGIN_SUCCESS } from '../edge/actions';
 import { ADD_WALLET_SUCCESS, UPDATE_WALLET_NAME } from '../account/actions';
 import {
@@ -46,6 +48,7 @@ export default combineReducers({
       case actions.GET_FIO_ADDRESSES_REQUEST:
       case actions.GET_FIO_DOMAINS_REQUEST:
       case actions.FIO_SIGNATURE_REQUEST:
+      case actions.GET_ALL_PUBLIC_ADDRESS_REQUEST:
         return true;
       case actions.REFRESH_BALANCE_SUCCESS:
       case actions.REFRESH_BALANCE_FAILURE:
@@ -55,6 +58,8 @@ export default combineReducers({
       case actions.GET_FIO_DOMAINS_FAILURE:
       case actions.FIO_SIGNATURE_SUCCESS:
       case actions.FIO_SIGNATURE_FAILURE:
+      case actions.GET_ALL_PUBLIC_ADDRESS_SUCCESS:
+      case actions.GET_ALL_PUBLIC_ADDRESS_FAILURE:
         return false;
       default:
         return state;
@@ -194,6 +199,37 @@ export default combineReducers({
         }
         return fioAddresses;
       }
+      case actions.GET_ALL_PUBLIC_ADDRESS_SUCCESS: {
+        const fioAddresses = [...state];
+        const currentFioAddress = fioAddresses.find(
+          fioAddress => fioAddress.name === action.fioAddress,
+        );
+        if (!currentFioAddress) return fioAddresses;
+        const { publicAddresses: currentPubAddress } = currentFioAddress;
+        const publicAddresses = currentPubAddress ? [...currentPubAddress] : [];
+        for (const item of action.data.public_addresses) {
+          const itemPublicAddress = {
+            chainCode: item.chain_code,
+            tokenCode: item.token_code,
+            publicAddress: item.public_address,
+          };
+          const index = publicAddresses.findIndex(publicAddress =>
+            isEqual(publicAddress, itemPublicAddress),
+          );
+          if (index < 0) {
+            publicAddresses.push(itemPublicAddress);
+            continue;
+          }
+          publicAddresses[index] = itemPublicAddress;
+        }
+        currentFioAddress.publicAddresses = publicAddresses;
+        currentFioAddress.more = action.data.more;
+        return fioAddresses.map(fioAddress => {
+          if (fioAddress.name === currentFioAddress.name)
+            return currentFioAddress;
+          return fioAddress;
+        });
+      }
       case LOGOUT_SUCCESS:
         return [];
       default:
@@ -287,6 +323,17 @@ export default combineReducers({
       case LOGOUT_SUCCESS:
       case actions.CLEAR_NFT_SIGNATURES:
         return [];
+      default:
+        return state;
+    }
+  },
+  showTokenListInfoBadge(state: boolean = true, action) {
+    switch (action.type) {
+      case actions.TOGGLE_TOKEN_LIST_INFO_BADGE: {
+        return action.enabled;
+      }
+      case LOGOUT_SUCCESS:
+        return true;
       default:
         return state;
     }
