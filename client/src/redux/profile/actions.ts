@@ -130,13 +130,11 @@ export const resetLastAuthData = () => ({
     RESET_LAST_AUTH_DATA_FAILURE,
   ],
   promise: async (api: Api, getState: GetState) => {
-    const state = getState();
-    const username = state.profile.user.username;
-    const hasTwoFactorAuth = state.edge.hasTwoFactorAuth;
+    const { profile, edge } = getState();
 
-    if (hasTwoFactorAuth) return;
+    if (!profile.lastAuthData || edge.hasTwoFactorAuth) return;
 
-    return api.edge.clearCachedUser(username);
+    return api.edge.clearCachedUser(profile.lastAuthData.username);
   },
 });
 
