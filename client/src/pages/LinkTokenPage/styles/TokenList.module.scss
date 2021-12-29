@@ -1,0 +1,15 @@
+@import '../../../components/LinkTokenList/styles/CommonLayout.module.scss';
+
+.container {
+  width: 100%;
+  max-width: 830px;
+}
+
+.publicAddresses {
+  margin-top: -10px;
+}
+
+.infoBadge {
+  display: flex;
+  justify-content: center;
+}

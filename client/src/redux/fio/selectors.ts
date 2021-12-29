@@ -46,24 +46,6 @@ export const currentWallet = (
 };
 
 export const currentFioAddress = (state: ReduxState, ownProps: any) => {
-  const publicAddresses = [
-    {
-      chainCode: 'FIO',
-      tokenCode: 'FIO',
-      publicAddress: 'FIO6cp3eJMhtAuQvzetCAqcUAyLBabHj8M8hJD5nA8T1p7FoXaTd2',
-    },
-    {
-      chainCode: 'ETH',
-      tokenCode: 'ETH',
-      publicAddress: 'ETHxab5801a7d398351b8be11c439e05c5b3259aec9b',
-    },
-    {
-      chainCode: 'BTC',
-      tokenCode: 'BTC',
-      publicAddress: 'BTCxab5801a7d398351b8be11c439e05c5b3259aec9b',
-    },
-  ]; // todo: remove on get real public addresses
-
   const { fioAddresses } = state.fio;
   const {
     match: {
@@ -71,11 +53,13 @@ export const currentFioAddress = (state: ReduxState, ownProps: any) => {
     },
   } = ownProps;
 
-  return {
-    ...getElementByFioName({ fioNameList: fioAddresses, name: id }),
-    publicAddresses,
-  };
+  return getElementByFioName({ fioNameList: fioAddresses, name: id });
 };
+
+export const currentFioPubAddresses = (state: ReduxState) =>
+  state[prefix].currentFioPubAddresses;
+export const showTokenListInfoBadge = (state: ReduxState) =>
+  state[prefix].showTokenListInfoBadge;
 
 export const walletPublicKey = (
   state: ReduxState,

@@ -1,52 +1,82 @@
-import React, { useState } from 'react';
-import { Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { RouteComponentProps } from 'react-router';
 import { Redirect } from 'react-router-dom';
 import classnames from 'classnames';
 
-import PseudoModalContainer from '../../components/PseudoModalContainer';
 import NotificationBadge from '../../components/NotificationBadge';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
+import PseudoModalContainer from '../../components/PseudoModalContainer';
+
 import { ROUTES } from '../../constants/routes';
 import FioName from '../../components/common/FioName/FioName';
-import TokenBadge from '../../components/Badges/TokenBadge/TokenBadge';
-import TokenBadgeMobile from '../../components/Badges/TokenBadge/TokenBadgeMobile';
 
-import { useCheckIfDesktop } from '../../screenType';
-import { FioNameItemProps } from '../../types';
+import PublicAddresses from './components/PublicAddresses';
+import InfoMessage from './components/InfoMessage';
+import ActionButtons from './components/ActionButtons';
 
-import classes from './TokenList.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ITEMS_LIMIT, FIO_CHAIN_CODE } from './constants';
 
-const INFO_MESSAGE = (
-  <>
-    <p className="mt-2">
-      When you link your FIO Address to a public address for a specific token
-      type, you allow others to easily send you that token to your FIO Address
-      without worrying about public addresses.
-    </p>
-    <p>
-      By default your FIO Address is not linked to any public address and can
-      only be used to send and receive FIO Requests. You can change the mapping
-      at any time. Just remember, once you link it anyone can see your public
-      address if they know your FIO Address.
-    </p>
-  </>
-);
+import { FioAddressDoublet } from '../../types';
 
-type Props = { currentFioAddress: FioNameItemProps };
+import classes from './styles/TokenList.module.scss';
+
+type Props = {
+  currentFioAddress: FioAddressDoublet;
+  showTokenListInfoBadge: boolean;
+  getAllFioPubAddresses: (
+    fioAddress: string,
+    limit?: number | null,
+    offset?: number | null,
+  ) => void;
+  toggleTokenListInfoBadge: (enabled: boolean) => void;
+  loading: boolean;
+};
 
 const ListToken: React.FC<Props & RouteComponentProps> = props => {
-  const [showBadge, toggleShowBadge] = useState(true); // todo: display if only FIO linked
-  const onClose = () => toggleShowBadge(false);
-
   const {
-    currentFioAddress: { name, publicAddresses },
+    currentFioAddress: { name, publicAddresses, more },
     match: { url },
+    loading,
+    showTokenListInfoBadge,
+    getAllFioPubAddresses,
+    toggleTokenListInfoBadge,
   } = props;
 
-  const isDesktop = useCheckIfDesktop();
+  const [offset, setOffset] = useState(0);
+  const [showBadge, toggleShowBadge] = useState(false);
+
+  const onClose = () => toggleTokenListInfoBadge(false);
+
+  const fetchPublicAddresses = (
+    limit?: number | null,
+    incOffset?: number | null,
+  ) => {
+    getAllFioPubAddresses(name, limit, incOffset);
+  };
+
+  useEffect(() => {
+    if (!name) return;
+    fetchPublicAddresses(ITEMS_LIMIT, offset);
+  }, []);
+
+  useEffect(() => {
+    if (more) {
+      const incOffset = offset + ITEMS_LIMIT;
+      fetchPublicAddresses(ITEMS_LIMIT, incOffset);
+      setOffset(incOffset);
+    }
+  }, [more]);
+
+  useEffect(() => {
+    // show info badge if only FIO linked
+    toggleShowBadge(
+      showTokenListInfoBadge &&
+        publicAddresses &&
+        publicAddresses.length === 1 &&
+        publicAddresses[0].chainCode.toLowerCase() ===
+          FIO_CHAIN_CODE.toLowerCase(),
+    );
+  }, [publicAddresses, showTokenListInfoBadge]);
 
   if (!name) return <Redirect to={{ pathname: ROUTES.FIO_ADDRESSES }} />;
 
@@ -58,7 +88,7 @@ const ListToken: React.FC<Props & RouteComponentProps> = props => {
     >
       <div className={classes.container}>
         <NotificationBadge
-          message={INFO_MESSAGE}
+          message={<InfoMessage />}
           noDash={true}
           onClose={onClose}
           show={showBadge}
@@ -69,43 +99,12 @@ const ListToken: React.FC<Props & RouteComponentProps> = props => {
           className={classnames(classes.actionContainer, classes.columnMobile)}
         >
           <FioName name={name} />
-          <div className={classes.buttonsContainer}>
-            <Link to={`${url}${ROUTES.EDIT_TOKEN}`} className={classes.link}>
-              <Button>
-                <FontAwesomeIcon icon="pen" className={classes.icon} />
-                Edit
-              </Button>
-            </Link>
-            <Link to={`${url}${ROUTES.DELETE_TOKEN}`} className={classes.link}>
-              <Button className={classes.middleButton}>
-                <FontAwesomeIcon icon="trash" className={classes.icon} />
-                Delete Link
-              </Button>
-            </Link>
-            <Link to={`${url}${ROUTES.ADD_TOKEN}`} className={classes.link}>
-              <Button>
-                <FontAwesomeIcon icon="plus-circle" className={classes.icon} />
-                Add Link
-              </Button>
-            </Link>
-          </div>
+          <ActionButtons url={url} />
         </div>
         <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
           Linked Tokens
         </h5>
-        <div className={classes.publicAddresses}>
-          {publicAddresses &&
-            publicAddresses.map(pubAddress =>
-              isDesktop ? (
-                <TokenBadge {...pubAddress} key={pubAddress.publicAddress} />
-              ) : (
-                <TokenBadgeMobile
-                  {...pubAddress}
-                  key={pubAddress.publicAddress}
-                />
-              ),
-            )}
-        </div>
+        <PublicAddresses publicAddresses={publicAddresses} loading={loading} />
       </div>
     </PseudoModalContainer>
   );
