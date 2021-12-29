@@ -1,18 +1,20 @@
 import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 
-import { validate } from './validation';
-import { SendTokensProps } from '../../types';
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
 import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import PriceBadge from '../../../../components/Badges/PriceBadge/PriceBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 
-import { FioAddressDoublet } from '../../../../types';
-
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
+
+import { validate } from './validation';
+import { hasFioAddressDelimiter } from '../../../../utils';
+
+import { SendTokensProps } from '../../types';
+import { FioAddressDoublet } from '../../../../types';
 
 import classes from '../../styles/SendTokensForm.module.scss';
 
@@ -37,7 +39,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
     >
       {(formRenderProps: FormRenderProps) => {
         const {
-          values: { from, amount },
+          values: { from, to, amount, memo },
         } = formRenderProps;
 
         const renderSender = () => {
@@ -60,6 +62,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
                   uiType={INPUT_UI_STYLES.BLACK_WHITE}
                   isSimple={true}
                   isHigh={true}
+                  hasDefaultValue={true}
                 />
               ) : (
                 <Field
@@ -80,6 +83,11 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
           ? fioAddresses.find(({ name }) => name === from)
           : null;
 
+        const showMemo =
+          selectedAddress != null &&
+          obtDataOn &&
+          to &&
+          hasFioAddressDelimiter(to);
         const hasLowBalance = fee.costFio + amount > fioWallet.available;
         const notEnoughBundles =
           selectedAddress != null
@@ -122,7 +130,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               label="Send Amount"
             />
 
-            {selectedAddress != null && obtDataOn ? (
+            {showMemo ? (
               <Field
                 name="memo"
                 type="text"
@@ -144,7 +152,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               costFio={fee.costFio}
               costUsdc={fee.costUsdc}
             />
-            {selectedAddress != null && obtDataOn ? (
+            {showMemo && memo ? (
               <BundledTransactionBadge
                 bundles={RECORD_OBT_DATA_BUNDLE_COST}
                 remaining={selectedAddress.remaining}
