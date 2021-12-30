@@ -195,3 +195,9 @@ export const transformResult = ({
 
   return { errItems, regItems, updatedCart };
 };
+
+export const genericTokenId = (
+  chainCode: string,
+  tokenId: string,
+  contractAddress: string,
+) => `${chainCode}-${tokenId}-${contractAddress}`;

@@ -3,7 +3,7 @@ import React from 'react';
 import { BADGE_TYPES } from '../../../components/Badge/Badge';
 import InfoBadge from '../../../components/InfoBadge/InfoBadge';
 
-import { nftId } from '../../../util/nft';
+import { genericTokenId } from '../../../util/fio';
 
 import { NftValidationFormValues, ValidationOption } from './types';
 import { NFTTokenDoublet } from '../../../types';
@@ -27,7 +27,7 @@ const NftListResults: React.FC<Props> = props => {
   ) {
     const renderResultItem = (resultItem: NFTTokenDoublet) => (
       <div
-        key={nftId(
+        key={genericTokenId(
           resultItem.chainCode,
           resultItem.tokenId,
           resultItem.contractAddress,

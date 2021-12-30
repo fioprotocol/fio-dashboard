@@ -8,7 +8,7 @@ import { fioAddresses } from '../../redux/fio/selectors';
 
 import { ReduxState } from '../../redux/init';
 
-import { nftId } from '../../util/nft';
+import { genericTokenId } from '../../util/fio';
 
 import { NFTTokenDoublet } from '../../types';
 
@@ -31,7 +31,7 @@ const reduxConnect = connect(
         address,
         currentNft: nftList.find(
           (nftItem: NFTTokenDoublet) =>
-            nftId(
+            genericTokenId(
               nftItem.chainCode,
               nftItem.tokenId,
               nftItem.contractAddress,

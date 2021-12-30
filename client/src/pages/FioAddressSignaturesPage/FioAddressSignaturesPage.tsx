@@ -11,7 +11,7 @@ import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 
 import { ROUTES } from '../../constants/routes';
 
-import { nftId } from '../../util/nft';
+import { genericTokenId } from '../../util/fio';
 
 import { NFTTokenDoublet } from '../../types';
 
@@ -78,7 +78,7 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
           {!isEmpty(nftSignatures) ? (
             nftSignatures.map(item => {
               const { chainCode, tokenId, contractAddress } = item;
-              const id = nftId(chainCode, tokenId, contractAddress);
+              const id = genericTokenId(chainCode, tokenId, contractAddress);
               return (
                 <NFTTokenBadge
                   key={id}
