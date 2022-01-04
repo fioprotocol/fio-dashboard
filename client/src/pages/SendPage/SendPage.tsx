@@ -107,8 +107,6 @@ const SendPage: React.FC<ContainerProps> = props => {
       fioAddress1.name > fioAddress2.name ? 1 : -1,
     );
 
-  // @ts-ignore
-  // eslint-disable-next-line no-unused-vars
   const renderInfoBadge = () =>
     fioAddresses.length ? (
       <InfoBadge
@@ -154,7 +152,7 @@ const SendPage: React.FC<ContainerProps> = props => {
           {fioWallet.name}
         </p>
 
-        {/* {renderInfoBadge()} */}
+        {renderInfoBadge()}
 
         <SendTokensForm
           fioWallet={fioWallet}
@@ -163,6 +161,7 @@ const SendPage: React.FC<ContainerProps> = props => {
           fioAddresses={walletFioAddresses}
           onSubmit={onSend}
           fee={feePrice}
+          obtDataOn={true}
         />
       </PseudoModalContainer>
     </>

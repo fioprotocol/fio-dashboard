@@ -5,6 +5,7 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 import apis from '../../../api';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
+import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 
 import { FioWalletDoublet } from '../../../types';
 import { SendTokensValues } from '../types';
@@ -34,6 +35,25 @@ const SendEdgeWallet: React.FC<Props> = props => {
   const send = async ({ keys, data }: SubmitActionParams) => {
     apis.fio.setWalletFioSdk(keys);
     const result = await apis.fio.sendTokens(data.to, data.amount, fee);
+    if (data.memo || data.receiverFioAddress) {
+      try {
+        await apis.fio.walletFioSDK.genericAction('recordObtData', {
+          payerFioAddress: data.from,
+          payeeFioAddress: data.receiverFioAddress,
+          payerTokenPublicAddress: keys.public,
+          payeeTokenPublicAddress: data.to,
+          amount: apis.fio.sufToAmount(data.amount),
+          chainCode: 'FIO',
+          tokenCode: 'FIO',
+          obtId: result.transaction_id,
+          payeeFioPublicKey: data.to,
+          memo: data.memo,
+          maxFee: DEFAULT_ACTION_FEE_AMOUNT,
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    }
     apis.fio.clearWalletFioSdk();
 
     return result;

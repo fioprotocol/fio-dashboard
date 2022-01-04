@@ -1,10 +1,11 @@
 import React from 'react';
 import { Field } from 'react-final-form';
-import Input, { INPUT_UI_STYLES } from '../../Input/Input';
-import { ErrorBadge, COLOR_TYPE } from '../../Input/ErrorBadge';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import classes from './AddTokenInput.module.scss';
+import Input, { INPUT_UI_STYLES } from '../../components/Input/Input';
+import { ErrorBadge, COLOR_TYPE } from '../../components/Input/ErrorBadge';
+
+import classes from './styles/AddTokenInput.module.scss';
 
 // todo: set props to component
 // todo: set input errors

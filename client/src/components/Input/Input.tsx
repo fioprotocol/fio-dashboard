@@ -402,6 +402,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
           options={options}
           onChange={onChange}
           {...input}
+          {...rest}
           value={value}
           isHigh={isHigh}
           isSimple={isSimple}

@@ -8,13 +8,13 @@ import classnames from 'classnames';
 
 import ActionContainer, {
   CONTAINER_NAMES,
-} from '../containers/ActionContainer';
-import ConfirmContainer from '../containers/ConfirmContainer';
+} from '../../components/LinkTokenList/ActionContainer';
+import ConfirmContainer from '../../components/LinkTokenList/ConfirmContainer';
 import AddTokenInput from './AddTokenInput';
 import { validate } from './validation';
 
-import { FioNameItemProps, PublicAddressDoublet } from '../../../types';
-import classes from './AddToken.module.scss';
+import { FioNameItemProps, PublicAddressDoublet } from '../../types';
+import classes from './styles/AddToken.module.scss';
 
 // todo: set types for results and dispatch
 type Props = {
