@@ -23,7 +23,7 @@ export interface TrxResponse {
 
 type FIOSDK_LIB = typeof FIOSDK;
 
-export const defaultFee = 800 * FIOSDK.SUFUnit;
+export const DEFAULT_ACTION_FEE_AMOUNT = 800 * FIOSDK.SUFUnit;
 
 export default class Fio {
   baseurl: string = process.env.REACT_APP_FIO_BASE_URL;
@@ -394,7 +394,7 @@ export default class Fio {
               ...rest,
             }),
           ),
-          max_fee: defaultFee,
+          max_fee: DEFAULT_ACTION_FEE_AMOUNT,
           tpid: '',
         },
       );
