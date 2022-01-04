@@ -62,6 +62,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
                   uiType={INPUT_UI_STYLES.BLACK_WHITE}
                   isSimple={true}
                   isHigh={true}
+                  isWhite={true}
                 />
               ) : (
                 <Field
