@@ -5,7 +5,7 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 import apis from '../../../api';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
-import { defaultFee } from '../../../api/fio';
+import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 
 import { FioWalletDoublet } from '../../../types';
 import { SendTokensValues } from '../types';
@@ -48,7 +48,7 @@ const SendEdgeWallet: React.FC<Props> = props => {
           obtId: result.transaction_id,
           payeeFioPublicKey: data.to,
           memo: data.memo,
-          maxFee: defaultFee,
+          maxFee: DEFAULT_ACTION_FEE_AMOUNT,
         });
       } catch (e) {
         console.error(e);
