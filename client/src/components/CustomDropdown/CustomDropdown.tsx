@@ -17,7 +17,6 @@ type Props = {
   hasAutoWidth?: boolean;
   isSimple?: boolean;
   isHigh?: boolean;
-  hasDefaultValue?: boolean;
 };
 
 const CustomDropdown: React.FC<Props> = props => {
@@ -26,7 +25,6 @@ const CustomDropdown: React.FC<Props> = props => {
     onChange,
     placeholder,
     value,
-    hasDefaultValue,
     customValue,
     toggleToCustom,
     isShort,
@@ -62,7 +60,7 @@ const CustomDropdown: React.FC<Props> = props => {
   return (
     <Dropdown
       options={styledOptions}
-      value={hasDefaultValue ? value : null}
+      value={value}
       onChange={onDropdownChange}
       placeholder={placeholder}
       className={classnames(
