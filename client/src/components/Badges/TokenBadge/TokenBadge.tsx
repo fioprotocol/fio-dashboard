@@ -1,7 +1,9 @@
 import React from 'react';
-import Badge, { BADGE_TYPES } from '../../Badge/Badge';
+import { useCheckIfDesktop } from '../../../screenType';
+import TokenBadgeDesktop from './TokenBadgeDesktop';
+import TokenBadgeMobile from './TokenBadgeMobile';
+
 import { PublicAddressDoublet } from '../../../types';
-import classes from './TokenBadge.module.scss';
 
 type Props = {
   actionButton?: React.ReactNode;
@@ -10,31 +12,12 @@ type Props = {
 } & PublicAddressDoublet;
 
 const TokenBadge: React.FC<Props> = props => {
-  const {
-    actionButton,
-    chainCode,
-    input,
-    tokenCode,
-    publicAddress,
-    showInput,
-  } = props;
-  return (
-    <Badge show={true} type={BADGE_TYPES.WHITE}>
-      <div className={classes.container}>
-        <div className={classes.addressContainer}>
-          <p className="boldText">{tokenCode}</p>
-          <p className={classes.subtitle}>
-            Chain Code: <span className="boldText">{chainCode}</span>
-          </p>
-          {showInput ? (
-            input
-          ) : (
-            <p className={classes.publicAddressItem}>{publicAddress}</p>
-          )}
-        </div>
-        {actionButton}
-      </div>
-    </Badge>
+  const isDesktop = useCheckIfDesktop();
+
+  return isDesktop ? (
+    <TokenBadgeDesktop {...props} />
+  ) : (
+    <TokenBadgeMobile {...props} />
   );
 };
 
