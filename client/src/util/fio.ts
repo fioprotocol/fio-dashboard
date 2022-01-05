@@ -1,4 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
+import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import apis from '../api/index';
 import { sleep, isDomain } from '../utils';
 import { FREE_ADDRESS_REGISTER_ERROR, ERROR_TYPES } from '../constants/errors';
@@ -9,6 +10,7 @@ import {
   CartItem,
   RegistrationResult,
   Prices,
+  PublicAddressDoublet,
 } from '../types';
 
 export const waitForAddressRegistered = async (fioAddress: string) => {
@@ -201,3 +203,25 @@ export const genericTokenId = (
   tokenId: string,
   contractAddress: string,
 ) => `${chainCode}-${tokenId}-${contractAddress}`;
+
+export const transformPublicAddresses = (
+  publicAddresses: PublicAddressDoublet[],
+): PublicAddress[] =>
+  publicAddresses.map(publicAddressObj => {
+    const { chainCode, tokenCode, publicAddress } = publicAddressObj;
+
+    return {
+      chain_code: chainCode,
+      token_code: tokenCode === '*' ? chainCode : tokenCode,
+      public_address: publicAddress,
+    };
+  });
+
+export const normalizePublicAddresses = (
+  publicAddresses: PublicAddressDoublet[],
+): PublicAddressDoublet[] =>
+  publicAddresses.map(({ chainCode, tokenCode, publicAddress }) => ({
+    chainCode,
+    tokenCode: tokenCode === '*' ? chainCode : tokenCode,
+    publicAddress,
+  }));
