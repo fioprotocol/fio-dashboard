@@ -6,13 +6,19 @@ import { FioDomainsResponse } from '@fioprotocol/fiosdk/src/entities/FioDomainsR
 import { PublicAddressResponse } from '@fioprotocol/fiosdk/src/entities/PublicAddressResponse';
 import { PublicAddressesResponse } from '@fioprotocol/fiosdk/src/entities/PublicAddressesResponse';
 import { SetFioDomainVisibilityResponse } from '@fioprotocol/fiosdk/src/entities/SetFioDomainVisibilityResponse';
-import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { Transactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
 import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { isDomain } from '../utils';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 
-import { NFTTokenDoublet, WalletKeys } from '../types';
+import { linkTokensAction } from './middleware/fio';
+
+import {
+  NFTTokenDoublet,
+  WalletKeys,
+  LinkActionResult,
+  PublicAddressDoublet,
+} from '../types';
 
 export interface TrxResponse {
   transaction_id?: string;
@@ -171,27 +177,6 @@ export default class Fio {
   ): Promise<SetFioDomainVisibilityResponse> => {
     this.validateAction();
     return this.walletFioSDK.setFioDomainVisibility(fioDomain, isPublic, fee);
-  };
-
-  link = async (
-    fioAddress: string,
-    publicAddresses: PublicAddress[],
-    fee: number,
-    isConnection: boolean = true,
-  ): Promise<SetFioDomainVisibilityResponse> => {
-    this.validateAction();
-
-    return isConnection
-      ? await this.walletFioSDK.addPublicAddresses(
-          fioAddress,
-          publicAddresses,
-          fee,
-        )
-      : await this.walletFioSDK.removePublicAddresses(
-          fioAddress,
-          publicAddresses,
-          fee,
-        );
   };
 
   getBalance = async (
@@ -440,4 +425,13 @@ export default class Fio {
       this.clearWalletFioSdk();
     }
   };
+
+  linkTokens = async (params: {
+    connectList?: PublicAddressDoublet[];
+    disconnectList?: PublicAddressDoublet[];
+    fioAddress: string;
+    fee?: number;
+    keys: WalletKeys;
+    disconnectAll?: boolean;
+  }): Promise<LinkActionResult> => await linkTokensAction(params);
 }
