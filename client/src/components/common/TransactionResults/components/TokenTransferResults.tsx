@@ -18,6 +18,9 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
       other: { to, from, amount, transaction_id, memo },
     },
     roe,
+    titleTo,
+    titleFrom,
+    titleAmount,
   } = props;
 
   const fioAmount = apis.fio.sufToAmount(amount);
@@ -30,20 +33,22 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
           <div
             className={classnames(classes.badgeContainer, classes.longTitle)}
           >
-            <p className={classes.title}>Sending FIO Address</p>
+            <p className={classes.title}>
+              {titleFrom || 'Sending FIO Address'}
+            </p>
             <p className={classes.item}>{from}</p>
           </div>
         </Badge>
       )}
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>Send to Address</p>
+          <p className={classes.title}>{titleTo || 'Send to Address'}</p>
           <p className={classes.item}>{to}</p>
         </div>
       </Badge>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>Amount Sent</p>
+          <p className={classes.title}>{titleAmount || 'Amount Sent'}</p>
           <p className={classes.item}>
             {fioAmount.toFixed(2)} FIO / {usdcAmount.toFixed(2)} USDC
           </p>

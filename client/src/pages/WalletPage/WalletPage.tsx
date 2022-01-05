@@ -85,10 +85,19 @@ const WalletPage: React.FC<ContainerProps> = props => {
       <LayoutContainer title={renderTitle()} onTitleClick={onWalletEdit}>
         <ActionButtonsContainer>
           <Link
+            to={putParamsToUrl(ROUTES.FIO_TOKENS_REQUEST, {
+              publicKey: fioWallet.publicKey,
+            })}
+            className={classes.firstLink}
+          >
+            <div>
+              <FontAwesomeIcon icon="arrow-down" />
+            </div>
+          </Link>
+          <Link
             to={putParamsToUrl(ROUTES.SEND, {
               publicKey: fioWallet.publicKey,
             })}
-            className={classes.link}
           >
             <div>
               <FontAwesomeIcon icon="arrow-up" />

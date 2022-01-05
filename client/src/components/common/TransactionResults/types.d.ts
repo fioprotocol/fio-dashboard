@@ -14,6 +14,9 @@ export type ResultsData = {
 
 export type ResultsProps = {
   title: string;
+  titleTo?: string;
+  titleFrom?: string;
+  titleAmount?: string;
   hasAutoWidth?: boolean;
   fullWidth?: boolean;
   bottomElement?: React.ReactNode;
