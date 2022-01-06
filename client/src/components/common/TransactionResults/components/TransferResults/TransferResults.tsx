@@ -7,7 +7,7 @@ import { fioNameLabels } from '../../../../../constants/labels';
 
 import { ResultsProps } from '../../types';
 
-import classes from '../../Results.module.scss';
+import classes from '../../styles/Results.module.scss';
 
 type TransferResultsProps = {
   resetFioNames: () => void;

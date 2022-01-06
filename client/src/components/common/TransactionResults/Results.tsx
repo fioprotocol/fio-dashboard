@@ -1,38 +1,18 @@
 import React, { useEffect } from 'react';
-import { Button } from 'react-bootstrap';
 
 import PseudoModalContainer from '../../PseudoModalContainer';
 import { BADGE_TYPES } from '../../Badge/Badge';
 import PriceBadge from '../../Badges/PriceBadge/PriceBadge';
 import InfoBadge from '../../InfoBadge/InfoBadge';
+import SubmitButton from '../SubmitButton/SubmitButton';
+
+import { ERROR_MESSAGES } from './constants';
 
 import { DEFAULT_FIO_TRX_ERR_MESSAGE } from '../../../constants/errors';
 
 import { ResultsContainerProps } from './types';
 
-import classes from './Results.module.scss';
-
-export const ERROR_TYPES = {
-  TRANSFER_ERROR: 'TRANSFER_ERROR',
-  RENEW_ERROR: 'RENEW_ERROR',
-};
-
-const ErrorMessages: {
-  [action: string]: { title?: string; message?: string };
-} = {
-  [ERROR_TYPES.TRANSFER_ERROR]: {
-    title: 'Transfer error',
-    message: `${DEFAULT_FIO_TRX_ERR_MESSAGE}`
-      .replace('purchase', 'transfer')
-      .replace('registrations', 'transfer'),
-  },
-  [ERROR_TYPES.RENEW_ERROR]: {
-    title: 'Renew error',
-    message: `${DEFAULT_FIO_TRX_ERR_MESSAGE}`
-      .replace('purchase', 'renew')
-      .replace('registrations', 'renewal'),
-  },
-};
+import classes from './styles/Results.module.scss';
 
 const Results: React.FC<ResultsContainerProps> = props => {
   const {
@@ -42,6 +22,8 @@ const Results: React.FC<ResultsContainerProps> = props => {
     },
     title,
     hasAutoWidth,
+    fullWidth,
+    bottomElement,
     errorType,
     onClose,
     onRetry,
@@ -73,8 +55,8 @@ const Results: React.FC<ResultsContainerProps> = props => {
       title: errorTitle = 'Error',
       message = DEFAULT_FIO_TRX_ERR_MESSAGE,
     } =
-      errorType && ErrorMessages[errorType] != null
-        ? ErrorMessages[errorType]
+      errorType && ERROR_MESSAGES[errorType] != null
+        ? ERROR_MESSAGES[errorType]
         : {};
     return (
       <InfoBadge
@@ -91,6 +73,7 @@ const Results: React.FC<ResultsContainerProps> = props => {
       title={title}
       onClose={onClose}
       hasAutoWidth={hasAutoWidth}
+      fullWidth={fullWidth}
     >
       <div className={classes.container}>
         {errorBadge()}
@@ -98,16 +81,17 @@ const Results: React.FC<ResultsContainerProps> = props => {
         {!error && (
           <>
             {totalCost()}
-            <Button className={classes.button} onClick={onClose}>
-              Close
-            </Button>
+            <SubmitButton onClick={onClose} text="Close" withTopMargin={true} />
           </>
         )}
         {error && onRetry != null ? (
-          <Button className={classes.button} onClick={onRetry}>
-            Try Again
-          </Button>
+          <SubmitButton
+            onClick={onRetry}
+            text="Try Again"
+            withTopMargin={true}
+          />
         ) : null}
+        {bottomElement}
       </div>
     </PseudoModalContainer>
   );

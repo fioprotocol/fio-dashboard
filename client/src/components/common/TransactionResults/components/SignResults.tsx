@@ -7,7 +7,7 @@ import FioName from '../../FioName/FioName';
 
 import { ResultsProps } from '../types';
 
-import classes from '../Results.module.scss';
+import classes from '../styles/Results.module.scss';
 
 const SignResults = (props: ResultsProps) => {
   const {
