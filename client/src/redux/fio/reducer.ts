@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import isEqual from 'lodash/isEqual';
+import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 
 import { LOGIN_SUCCESS as EDGE_LOGIN_SUCCESS } from '../edge/actions';
 import { ADD_WALLET_SUCCESS, UPDATE_WALLET_NAME } from '../account/actions';
@@ -10,19 +11,21 @@ import {
 } from '../profile/actions';
 import * as actions from './actions';
 
-import { transformNft } from '../../util/fio';
+import { transformNft, normalizePublicAddresses } from '../../util/fio';
 
 import { WALLET_CREATED_FROM } from '../../constants/common';
+import { FIO_CHAIN_CODE } from '../../constants/fio';
+
 import { DEFAULT_BALANCES } from '../../util/prices';
 
 import {
   FioWalletDoublet,
   FioAddressDoublet,
   FioDomainDoublet,
-  LinkActionResult,
   NFTTokenDoublet,
   FeePrice,
   WalletsBalances,
+  MappedPublicAddresses,
 } from '../../types';
 
 export const emptyWallet: FioWalletDoublet = {
@@ -34,11 +37,6 @@ export const emptyWallet: FioWalletDoublet = {
   available: null,
   locked: null,
   from: WALLET_CREATED_FROM.EDGE,
-};
-
-const defaultLinkState: LinkActionResult = {
-  connect: { updated: [], failed: [] },
-  disconnect: { updated: [], failed: [] },
 };
 
 export default combineReducers({
@@ -60,17 +58,6 @@ export default combineReducers({
       case actions.FIO_SIGNATURE_FAILURE:
       case actions.GET_ALL_PUBLIC_ADDRESS_SUCCESS:
       case actions.GET_ALL_PUBLIC_ADDRESS_FAILURE:
-        return false;
-      default:
-        return state;
-    }
-  },
-  linkProcessing(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.LINK_TOKENS_REQUEST:
-        return true;
-      case actions.LINK_TOKENS_SUCCESS:
-      case actions.LINK_TOKENS_FAILURE:
         return false;
       default:
         return state;
@@ -199,37 +186,6 @@ export default combineReducers({
         }
         return fioAddresses;
       }
-      case actions.GET_ALL_PUBLIC_ADDRESS_SUCCESS: {
-        const fioAddresses = [...state];
-        const currentFioAddress = fioAddresses.find(
-          fioAddress => fioAddress.name === action.fioAddress,
-        );
-        if (!currentFioAddress) return fioAddresses;
-        const { publicAddresses: currentPubAddress } = currentFioAddress;
-        const publicAddresses = currentPubAddress ? [...currentPubAddress] : [];
-        for (const item of action.data.public_addresses) {
-          const itemPublicAddress = {
-            chainCode: item.chain_code,
-            tokenCode: item.token_code,
-            publicAddress: item.public_address,
-          };
-          const index = publicAddresses.findIndex(publicAddress =>
-            isEqual(publicAddress, itemPublicAddress),
-          );
-          if (index < 0) {
-            publicAddresses.push(itemPublicAddress);
-            continue;
-          }
-          publicAddresses[index] = itemPublicAddress;
-        }
-        currentFioAddress.publicAddresses = publicAddresses;
-        currentFioAddress.more = action.data.more;
-        return fioAddresses.map(fioAddress => {
-          if (fioAddress.name === currentFioAddress.name)
-            return currentFioAddress;
-          return fioAddress;
-        });
-      }
       case LOGOUT_SUCCESS:
         return [];
       default:
@@ -284,6 +240,90 @@ export default combineReducers({
         return state;
     }
   },
+  mappedPublicAddresses(state: MappedPublicAddresses = {}, action) {
+    switch (action.type) {
+      case actions.GET_ALL_PUBLIC_ADDRESS_SUCCESS: {
+        const currentFioAddress = state[action.fioAddress];
+
+        const { publicAddresses: currentPubAddress } = currentFioAddress || {};
+        const publicAddresses = currentPubAddress ? [...currentPubAddress] : [];
+        for (const item of action.data.public_addresses.filter(
+          (pubAddress: PublicAddress) =>
+            pubAddress.chain_code.toUpperCase() !== FIO_CHAIN_CODE,
+        )) {
+          const itemPublicAddress = {
+            chainCode: item.chain_code,
+            tokenCode: item.token_code,
+            publicAddress: item.public_address,
+          };
+          const index = publicAddresses.findIndex(publicAddress =>
+            isEqual(publicAddress, itemPublicAddress),
+          );
+          if (index < 0) {
+            publicAddresses.push(itemPublicAddress);
+            continue;
+          }
+          publicAddresses[index] = itemPublicAddress;
+        }
+        return {
+          ...state,
+          [action.fioAddress]: {
+            publicAddresses,
+            more: action.data.more,
+          },
+        };
+      }
+      case actions.UPDATE_PUBLIC_ADDRESSES: {
+        const currentFioAddress = state[action.fioAddress];
+        if (!currentFioAddress) return state;
+
+        const { publicAddresses: currentPubAddress } = currentFioAddress || {};
+        const publicAddresses = currentPubAddress ? [...currentPubAddress] : [];
+
+        const {
+          addPublicAddresses,
+          deletePublicAddresses,
+        } = action.updPublicAddresses;
+
+        for (const itemPublicAddress of normalizePublicAddresses(
+          addPublicAddresses,
+        )) {
+          const index = publicAddresses.findIndex(publicAddress =>
+            isEqual(publicAddress, itemPublicAddress),
+          );
+          if (index < 0) {
+            publicAddresses.push(itemPublicAddress);
+            continue;
+          }
+          publicAddresses[index] = itemPublicAddress;
+        }
+
+        for (const itemPublicAddress of normalizePublicAddresses(
+          deletePublicAddresses,
+        )) {
+          const index = publicAddresses.findIndex(publicAddress =>
+            isEqual(publicAddress, itemPublicAddress),
+          );
+
+          if (index > -1) {
+            publicAddresses.splice(index, 1);
+            continue;
+          }
+          publicAddresses[index] = itemPublicAddress;
+        }
+
+        return {
+          ...state,
+          [action.fioAddress]: {
+            ...currentFioAddress,
+            publicAddresses,
+          },
+        };
+      }
+      default:
+        return state;
+    }
+  },
   fees(state: { [endpoint: string]: FeePrice } = {}, action) {
     switch (action.type) {
       case actions.SET_FEE:
@@ -299,18 +339,6 @@ export default combineReducers({
       case actions.GET_FEE_SUCCESS:
       case actions.GET_FEE_FAILURE:
         return { ...state, [action.endpoint]: false };
-      default:
-        return state;
-    }
-  },
-  linkResults(state: LinkActionResult = defaultLinkState, action) {
-    switch (action.type) {
-      case actions.LINK_TOKENS_REQUEST:
-        return defaultLinkState;
-      case actions.LINK_TOKENS_SUCCESS:
-        return action.data;
-      case actions.LINK_TOKENS_FAILURE:
-        return { ...defaultLinkState, error: action.data };
       default:
         return state;
     }

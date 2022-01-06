@@ -20,8 +20,9 @@ export const fees = (state: ReduxState) => state[prefix].fees;
 export const fioWalletsBalances = (state: ReduxState) =>
   state[prefix].fioWalletsBalances;
 export const feesLoading = (state: ReduxState) => state[prefix].feesLoading;
-export const linkResults = (state: ReduxState) => state[prefix].linkResults;
 export const nftSignatures = (state: ReduxState) => state[prefix].nftList;
+export const mappedPublicAddresses = (state: ReduxState) =>
+  state[prefix].mappedPublicAddresses;
 
 export const currentWallet = (
   state: ReduxState,
@@ -45,19 +46,41 @@ export const currentWallet = (
   return currentWallet || emptyWallet;
 };
 
-export const currentFioAddress = (state: ReduxState, ownProps: any) => {
-  const { fioAddresses } = state.fio;
-  const {
-    match: {
-      params: { id },
-    },
-  } = ownProps;
+export const currentFioAddress = createSelector(
+  [
+    fioWallets,
+    fioAddresses,
+    mappedPublicAddresses,
+    (state: ReduxState, ownProps: any) => ownProps.match.params.id,
+  ],
+  (fioWallets, fioAddresses, mappedPublicAddresses, id) => {
+    const currentAddress = getElementByFioName({
+      fioNameList: fioAddresses,
+      name: id,
+    });
 
-  return getElementByFioName({ fioNameList: fioAddresses, name: id });
-};
+    if (!currentAddress) return {};
 
-export const currentFioPubAddresses = (state: ReduxState) =>
-  state[prefix].currentFioPubAddresses;
+    const currentWallet: FioWalletDoublet =
+      fioWallets &&
+      fioWallets.find(
+        (wallet: FioWalletDoublet) =>
+          wallet.publicKey === currentAddress.walletPublicKey,
+      );
+
+    const { publicAddresses = [], more = false } = mappedPublicAddresses[id]
+      ? mappedPublicAddresses[id]
+      : {};
+
+    return {
+      ...currentAddress,
+      edgeWalletId: currentWallet && currentWallet.edgeId,
+      publicAddresses,
+      more,
+    };
+  },
+);
+
 export const showTokenListInfoBadge = (state: ReduxState) =>
   state[prefix].showTokenListInfoBadge;
 
