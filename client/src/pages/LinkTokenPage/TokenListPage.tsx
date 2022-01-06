@@ -14,67 +14,40 @@ import PublicAddresses from './components/PublicAddresses';
 import InfoMessage from './components/InfoMessage';
 import ActionButtons from './components/ActionButtons';
 
-import { ITEMS_LIMIT, FIO_CHAIN_CODE } from './constants';
+import { usePublicAddresses } from '../../util/hooks';
 
-import { FioAddressDoublet } from '../../types';
+import { FioAddressWithPubAddresses } from '../../types';
 
 import classes from './styles/TokenList.module.scss';
 
 type Props = {
-  currentFioAddress: FioAddressDoublet;
+  currentFioAddress: FioAddressWithPubAddresses;
   showTokenListInfoBadge: boolean;
-  getAllFioPubAddresses: (
-    fioAddress: string,
-    limit?: number | null,
-    offset?: number | null,
-  ) => void;
   toggleTokenListInfoBadge: (enabled: boolean) => void;
   loading: boolean;
 };
 
 const ListToken: React.FC<Props & RouteComponentProps> = props => {
   const {
-    currentFioAddress: { name, publicAddresses, more },
+    currentFioAddress: { name, publicAddresses },
     match: { url },
     loading,
     showTokenListInfoBadge,
-    getAllFioPubAddresses,
     toggleTokenListInfoBadge,
   } = props;
 
-  const [offset, setOffset] = useState(0);
+  usePublicAddresses(name);
+
   const [showBadge, toggleShowBadge] = useState(false);
 
   const onClose = () => toggleTokenListInfoBadge(false);
-
-  const fetchPublicAddresses = (
-    limit?: number | null,
-    incOffset?: number | null,
-  ) => {
-    getAllFioPubAddresses(name, limit, incOffset);
-  };
-
-  useEffect(() => {
-    if (!name) return;
-    fetchPublicAddresses(ITEMS_LIMIT, offset);
-  }, []);
-
-  useEffect(() => {
-    if (more) {
-      const incOffset = offset + ITEMS_LIMIT;
-      fetchPublicAddresses(ITEMS_LIMIT, incOffset);
-      setOffset(incOffset);
-    }
-  }, [more]);
 
   useEffect(() => {
     // show info badge if only FIO linked
     toggleShowBadge(
       showTokenListInfoBadge &&
-        publicAddresses &&
-        publicAddresses.length === 1 &&
-        publicAddresses[0].chainCode.toLowerCase() ===
-          FIO_CHAIN_CODE.toLowerCase(),
+        publicAddresses != null &&
+        publicAddresses.length === 0,
     );
   }, [publicAddresses, showTokenListInfoBadge]);
 
@@ -99,7 +72,7 @@ const ListToken: React.FC<Props & RouteComponentProps> = props => {
           className={classnames(classes.actionContainer, classes.columnMobile)}
         >
           <FioName name={name} />
-          <ActionButtons url={url} />
+          <ActionButtons url={url} isDisabled={publicAddresses.length === 0} />
         </div>
         <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
           Linked Tokens

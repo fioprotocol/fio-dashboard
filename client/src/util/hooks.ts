@@ -3,7 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { getFioAddresses, getAllFioPubAddresses } from '../redux/fio/actions';
 
-import { fioWallets, fioAddresses } from '../redux/fio/selectors';
+import {
+  fioWallets,
+  fioAddresses,
+  mappedPublicAddresses,
+} from '../redux/fio/selectors';
 import {
   isAuthenticated,
   isNewUser as isNewUserSelector,
@@ -50,10 +54,14 @@ export function usePublicAddresses(fioAddress: string, limit: number = 0) {
   const dispatch = useDispatch();
 
   const fioNameList = useSelector(fioAddresses);
-  const currentFioAddress = getElementByFioName({
-    fioNameList,
-    name: fioAddress,
-  });
+  const fioAddressToPubAddresses = useSelector(mappedPublicAddresses);
+  const currentFioAddress = {
+    ...getElementByFioName({
+      fioNameList,
+      name: fioAddress,
+    }),
+    ...fioAddressToPubAddresses[fioAddress],
+  };
 
   const fetchPublicAddresses = (incOffset: number = 0) =>
     dispatch(getAllFioPubAddresses(fioAddress, limit, incOffset));

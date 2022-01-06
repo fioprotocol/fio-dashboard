@@ -1,26 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import { Form } from 'react-final-form';
+import React, { useState } from 'react';
+import { Form, FormRenderProps } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 
-import ConfirmContainer from '../../components/LinkTokenList/ConfirmContainer';
 import AddTokenForm from './copmonents/AddTokenForm';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { validate } from './validation';
 
-import { CONTAINER_NAMES } from '../../components/LinkTokenList/ActionContainer';
+import { linkTokens } from '../../api/middleware/fio';
+import { minWaitTimeFunction } from '../../utils';
+
+import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import { TOKEN_LINK_MIN_WAIT_TIME } from '../../constants/fio';
 
 import { AddTokenProps, FormValues } from './types';
+import {
+  PublicAddressDoublet,
+  WalletKeys,
+  LinkActionResult,
+} from '../../types';
 
 const AddToken: React.FC<AddTokenProps> = props => {
-  const { results, currentFioAddress, remaining, loading } = props;
-  const [resultsData, setResultsData] = useState<any | null>(null);
+  const { currentFioAddress } = props;
+  const [resultsData, setResultsData] = useState<LinkActionResult | null>(null);
   const [processing, setProcessing] = useState(false);
-  const [submitData, setSubmitData] = useState<boolean | null>(null);
+  const [submitData, setSubmitData] = useState<
+    FormValues | PublicAddressDoublet[] | null
+  >(null);
+  const [bundleCost, changeBundleCost] = useState(0);
+
+  const {
+    remaining = 0,
+    name,
+    edgeWalletId = '',
+    walletPublicKey,
+  } = currentFioAddress;
 
   const onSubmit = (values: FormValues) => {
-    setSubmitData(true);
+    setSubmitData(values);
   };
 
   const onSuccess = () => {
@@ -32,26 +50,47 @@ const AddToken: React.FC<AddTokenProps> = props => {
     setProcessing(false);
   };
 
-  const submit = () => {
-    setSubmitData(null);
+  const submit = async ({
+    keys,
+    data,
+  }: {
+    keys: WalletKeys;
+    data: FormValues;
+  }) => {
+    const params: {
+      fioAddress: string;
+      connectList: PublicAddressDoublet[];
+      keys: WalletKeys;
+    } = {
+      fioAddress: name,
+      connectList: data.tokens,
+      keys,
+    };
+    try {
+      const actionResults = await minWaitTimeFunction(
+        () => linkTokens(params),
+        TOKEN_LINK_MIN_WAIT_TIME,
+      );
+      setResultsData(actionResults);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSubmitData(null);
+    }
   };
 
-  // Handle results
-  useEffect(() => {
-    // todo: set proper results
-    setResultsData(results);
-  }, [results]);
+  const onBack = (formProps: FormRenderProps<FormValues>) => {
+    const { form } = formProps;
+    form.reset();
+    form.mutators.push('tokens');
+    setResultsData(null);
+    changeBundleCost(0);
+  };
 
-  if (resultsData)
-    return (
-      <ConfirmContainer
-        results={results}
-        containerName={CONTAINER_NAMES.ADD}
-        name={currentFioAddress.name}
-        remaining={remaining}
-        loading={loading}
-      />
-    );
+  const onRetry = () => {
+    setSubmitData(resultsData.connect.failed);
+  };
+
   return (
     <>
       <EdgeConfirmAction
@@ -59,10 +98,10 @@ const AddToken: React.FC<AddTokenProps> = props => {
         onCancel={onCancel}
         submitAction={submit}
         data={submitData}
-        action={CONFIRM_PIN_ACTIONS.TOKEN_LIST}
+        action={CONFIRM_PIN_ACTIONS.ADD_TOKEN}
         processing={processing}
         setProcessing={setProcessing}
-        hideProcessing={true}
+        fioWalletEdgeId={edgeWalletId}
       />
       <Form
         onSubmit={onSubmit}
@@ -70,7 +109,20 @@ const AddToken: React.FC<AddTokenProps> = props => {
         mutators={{
           ...arrayMutators,
         }}
-        render={formProps => <AddTokenForm formProps={formProps} {...props} />}
+        render={formProps => (
+          <AddTokenForm
+            formProps={formProps}
+            containerName={CONTAINER_NAMES.ADD}
+            results={resultsData}
+            name={name}
+            remaining={remaining}
+            bundleCost={bundleCost}
+            changeBundleCost={changeBundleCost}
+            onBack={() => onBack(formProps)}
+            onRetry={onRetry}
+            walletPublicKey={walletPublicKey}
+          />
+        )}
       />
     </>
   );

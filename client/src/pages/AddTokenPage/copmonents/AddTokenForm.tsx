@@ -1,23 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { FormRenderProps } from 'react-final-form';
 import { FieldArray } from 'react-final-form-arrays';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import ActionContainer, {
-  CONTAINER_NAMES,
-} from '../../../components/LinkTokenList/ActionContainer';
+import ActionContainer from '../../../components/LinkTokenList/ActionContainer';
+
+import { ResultsProps } from '../../../components/common/TransactionResults/components/LinkTokenListResults/LinkTokenListResults';
+
+import { ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION } from '../../../constants/fio';
 
 import AddTokenInput from './AddTokenInput';
 
-import { FormValues, AddTokenProps } from '../types';
+import { FormValues } from '../types';
 
 import classes from '../styles/AddToken.module.scss';
 
 type FormProps = {
   formProps: FormRenderProps<FormValues>;
-} & AddTokenProps;
+  walletPublicKey: string;
+} & ResultsProps;
 
 const AddTokenForm: React.FC<FormProps> = props => {
   const {
@@ -26,37 +29,33 @@ const AddTokenForm: React.FC<FormProps> = props => {
       form: {
         mutators: { push },
       },
+      touched,
       values,
       valid,
     },
-    currentFioAddress,
-    loading,
+    changeBundleCost,
   } = props;
-
-  const { name, remaining = 0 } = currentFioAddress;
-
-  const [bundleCost, changeBundleCost] = useState(0);
 
   const tokens: FormValues['tokens'] =
     values != null && values.tokens != null ? values.tokens : [];
 
   const addTokenRow = () => push('tokens');
 
-  useEffect(() => changeBundleCost(Math.ceil(tokens.length / 5)), [
-    tokens.length,
-  ]);
+  useEffect(
+    () =>
+      changeBundleCost(
+        Math.ceil(tokens.length / ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION),
+      ),
+    [JSON.stringify(tokens)],
+  );
   useEffect(() => addTokenRow(), []);
 
   return (
     <form onSubmit={handleSubmit}>
       <ActionContainer
-        bundleCost={bundleCost}
-        containerName={CONTAINER_NAMES.ADD}
-        name={name}
         onActionButtonClick={handleSubmit}
-        remaining={remaining}
         isDisabled={!valid}
-        loading={loading}
+        {...props}
       >
         <div className={classes.actionContainer}>
           <h5 className={classes.subtitle}>Address Linking Information</h5>
@@ -70,7 +69,12 @@ const AddTokenForm: React.FC<FormProps> = props => {
           <span className={classes.asterisk}>*</span> to map all tokens on a
           chain
         </h5>
-        <FieldArray name="tokens" component={AddTokenInput} />
+        <FieldArray
+          name="tokens"
+          render={renderProps => (
+            <AddTokenInput {...renderProps} touched={touched} />
+          )} // workaround with passing custom props
+        />
       </ActionContainer>
     </form>
   );

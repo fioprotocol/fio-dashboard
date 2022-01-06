@@ -1,4 +1,4 @@
-import { PublicAddressDoublet } from '../../../types';
+import { PublicAddressDoublet } from '../../types';
 
 export type CheckedTokenType = {
   isChecked: boolean;

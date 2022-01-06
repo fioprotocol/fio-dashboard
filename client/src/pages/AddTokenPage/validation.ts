@@ -1,60 +1,71 @@
-import isEmpty from 'lodash/isEmpty';
 import { CHAIN_CODE_REGEXP, TOKEN_CODE_REGEXP } from '../../constants/regExps';
 
 import { FormValues } from './types';
 
-type ArrayErrorsProps = {
+type ErrorsProps = {
+  chainCode?: {
+    message: string;
+  };
+  tokenCode?: {
+    message: string;
+  };
+  publicAddress?: {
+    message: string;
+  };
+};
+
+type FieldProps = {
   chainCode?: string;
   tokenCode?: string;
   publicAddress?: string;
-}[];
+};
 
 export const validate = (values: FormValues) => {
-  const errors: any = {}; // todo: set form redux props to errors
-  if (!values.tokens || !values.tokens.length) {
+  const errors: {
+    tokens: ErrorsProps[] | string;
+  } = { tokens: [] };
+
+  if (!values.tokens) {
     errors.tokens = 'Required';
-  }
-  if (!values.tokens || isEmpty(values.tokens)) {
-    errors.tokens = 'Enter Chain Code, Token Code and Public Address please';
   } else {
-    const tokenArrayErrors: ArrayErrorsProps = [];
-    values.tokens.forEach((field: any, index: number) => {
-      const tokenErrors: {
-        chainCode?: string;
-        tokenCode?: string;
-        publicAddress?: string;
-      } = {};
+    const tokenArrayErrors: ErrorsProps[] = [];
+
+    values.tokens.forEach((field: FieldProps, index: number) => {
+      const tokenErrors: ErrorsProps = {};
       const { chainCode, tokenCode, publicAddress } = field || {};
+
       if (!chainCode) {
-        tokenErrors.chainCode = 'Required';
+        tokenErrors.chainCode = { message: 'Required' };
         tokenArrayErrors[index] = tokenErrors;
       }
       if (chainCode && !CHAIN_CODE_REGEXP.test(chainCode)) {
-        tokenErrors.chainCode = 'Wrong Chain Code';
+        tokenErrors.chainCode = { message: 'Wrong Chain Code' };
         tokenArrayErrors[index] = tokenErrors;
       }
 
       if (!tokenCode) {
-        tokenErrors.tokenCode = 'Required';
+        tokenErrors.tokenCode = { message: 'Required' };
         tokenArrayErrors[index] = tokenErrors;
       }
       if (tokenCode && !TOKEN_CODE_REGEXP.test(tokenCode)) {
-        tokenErrors.tokenCode = 'Wrong Token Code';
+        tokenErrors.tokenCode = { message: 'Wrong Token Code' };
         tokenArrayErrors[index] = tokenErrors;
       }
 
       if (!publicAddress) {
-        tokenErrors.publicAddress = 'Required';
+        tokenErrors.publicAddress = { message: 'Required' };
         tokenArrayErrors[index] = tokenErrors;
       }
       if (publicAddress && publicAddress.length >= 128) {
-        tokenErrors.publicAddress = 'Too long token';
+        tokenErrors.publicAddress = { message: 'Too long token' };
         tokenArrayErrors[index] = tokenErrors;
       }
     });
+
     if (tokenArrayErrors.length) {
       errors.tokens = tokenArrayErrors;
     }
   }
+
   return errors;
 };
