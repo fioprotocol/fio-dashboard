@@ -1,0 +1,34 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+
+  .nameContainer {
+    margin-top: 20px;
+  }
+
+  .subtitle {
+    margin-top: 20px;
+    margin-bottom: -10px;
+    font-size: 0.875em;
+    @include proxima-nova-bold;
+  }
+}
+
+.actionElement {
+  font-size: 0.875em;
+  align-self: center;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  @include sf-pro-display-medium;
+}
+
+@include lg {
+  .actionElement {
+    margin-bottom: -20px;
+  }
+}
