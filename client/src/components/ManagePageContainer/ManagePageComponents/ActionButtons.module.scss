@@ -74,7 +74,7 @@
     margin-top: 15px;
 
     & > a:nth-child(2) {
-      margin-right: 0;
+      margin-right: 10px;
     }
   }
 }
@@ -85,10 +85,6 @@
 
     .row {
       margin-top: 0;
-
-      & > a:nth-child(2) {
-        margin-right: 10px;
-      }
     }
 
     .actionButton, .settingsButton {
