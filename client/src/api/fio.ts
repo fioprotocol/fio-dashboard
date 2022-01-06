@@ -11,14 +11,7 @@ import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { isDomain } from '../utils';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 
-import { linkTokensAction } from './middleware/fio';
-
-import {
-  NFTTokenDoublet,
-  WalletKeys,
-  LinkActionResult,
-  PublicAddressDoublet,
-} from '../types';
+import { NFTTokenDoublet, WalletKeys } from '../types';
 
 export interface TrxResponse {
   transaction_id?: string;
@@ -425,13 +418,4 @@ export default class Fio {
       this.clearWalletFioSdk();
     }
   };
-
-  linkTokens = async (params: {
-    connectList?: PublicAddressDoublet[];
-    disconnectList?: PublicAddressDoublet[];
-    fioAddress: string;
-    fee?: number;
-    keys: WalletKeys;
-    disconnectAll?: boolean;
-  }): Promise<LinkActionResult> => await linkTokensAction(params);
 }

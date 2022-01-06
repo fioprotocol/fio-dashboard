@@ -1,66 +1,111 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
-import ActionContainer, {
-  CONTAINER_NAMES,
-} from '../../components/LinkTokenList/ActionContainer';
-import ConfirmContainer from '../../components/LinkTokenList/ConfirmContainer';
+import ActionContainer from '../../components/LinkTokenList/ActionContainer';
+import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import PublicAddressEdit from './components/PublicAddressEdit';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 
+import { linkTokens } from '../../api/middleware/fio';
+import { genericTokenId } from '../../util/fio';
+import { minWaitTimeFunction } from '../../utils';
+
+import {
+  ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
+  TOKEN_LINK_MIN_WAIT_TIME,
+} from '../../constants/fio';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+
+import {
+  LinkActionResult,
+  PublicAddressDoublet,
+  WalletKeys,
+  FioAddressWithPubAddresses,
+} from '../../types';
 
 import classes from './styles/EditTokenPage.module.scss';
 
-// todo: remove all any types
-const EditTokenPage: React.FC<any> = props => {
-  const { currentFioAddress, loading } = props;
-  const { name, publicAddresses, remaining } = currentFioAddress;
+type Props = {
+  currentFioAddress: FioAddressWithPubAddresses;
+};
 
-  const [pubAddressesArr, changePubAddresses] = useState([]);
+type EditTokenElement = {
+  chainCode: string;
+  tokenCode: string;
+  isEditing: boolean;
+  id: string;
+  publicAddress: string;
+  newPublicAddress: string;
+};
+
+const EditTokenPage: React.FC<Props> = props => {
+  const { currentFioAddress } = props;
+  const {
+    name,
+    publicAddresses,
+    remaining,
+    walletPublicKey,
+    edgeWalletId,
+  } = currentFioAddress;
+
+  const [pubAddressesArr, changePubAddresses] = useState<EditTokenElement[]>(
+    [],
+  );
   const [bundleCost, changeBundleCost] = useState(0);
-
-  // @ts-ignore
-  // eslint-disable-next-line no-unused-vars
-  const [resultsData, setResultsData] = useState(null);
+  const [resultsData, setResultsData] = useState<LinkActionResult | null>(null);
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<boolean | null>(null);
 
   const hasLowBalance = remaining - bundleCost < 0;
+  const hasEdited = pubAddressesArr.some(
+    pubAddress => pubAddress.newPublicAddress,
+  );
+
+  const pubAddressesToDefault = () => {
+    publicAddresses &&
+      changePubAddresses(
+        publicAddresses.map(pubAddress => ({
+          ...pubAddress,
+          isEditing: false,
+          newPublicAddress: '',
+          id: genericTokenId(
+            pubAddress.chainCode,
+            pubAddress.tokenCode,
+            pubAddress.publicAddress,
+          ),
+        })),
+      );
+  };
+
   useEffect(() => {
-    changePubAddresses(
-      publicAddresses.map((pubAddress: any) => ({
-        ...pubAddress,
-        isEditing: false,
-        id: pubAddress.publicAddress,
-      })),
-    );
+    pubAddressesToDefault();
   }, []);
 
   const handleEditTokenItem = (editedId: string, editedPubAddress: string) => {
     const currentAddress = pubAddressesArr.find(
-      (pubAddress: any) => pubAddress.id === editedId,
+      pubAddress => pubAddress.id === editedId,
     );
     if (!currentAddress) return;
-
     const { isEditing } = currentAddress;
-
     const updatePubAddressArr = () => {
-      const updatedArr = pubAddressesArr.map((pubAddress: any) =>
+      const updatedArr = pubAddressesArr.map(pubAddress =>
         pubAddress.id === editedId
           ? {
               ...pubAddress,
-              publicAddress: editedPubAddress,
+              newPublicAddress:
+                editedPubAddress === pubAddress.publicAddress
+                  ? ''
+                  : editedPubAddress,
               isEditing: !isEditing,
             }
           : { ...pubAddress, isEditing: false },
       );
-
       const editedCount = updatedArr.filter(
-        (pubAddress: any) =>
-          pubAddress.publicAddress !== pubAddress.id || pubAddress.isEditing,
+        pubAddress => pubAddress.newPublicAddress || pubAddress.isEditing,
       ).length;
 
-      changeBundleCost(Math.ceil(editedCount / 2));
+      changeBundleCost(
+        Math.ceil(editedCount / ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION),
+      );
       changePubAddresses(updatedArr);
     };
     updatePubAddressArr();
@@ -75,24 +120,54 @@ const EditTokenPage: React.FC<any> = props => {
     setProcessing(false);
   };
 
-  const submit = () => {
-    setSubmitData(null);
+  const submit = async ({ keys }: { keys: WalletKeys }) => {
+    const editedPubAddresses = pubAddressesArr.filter(
+      pubAddress => pubAddress.newPublicAddress,
+    );
+    const params: {
+      fioAddress: string;
+      connectList: PublicAddressDoublet[];
+      keys: WalletKeys;
+    } = {
+      fioAddress: currentFioAddress.name,
+      connectList: editedPubAddresses.map(pubAddress => ({
+        ...pubAddress,
+        publicAddress: pubAddress.newPublicAddress,
+      })),
+      keys,
+    };
+    try {
+      const actionResults = await minWaitTimeFunction(
+        () => linkTokens(params),
+        TOKEN_LINK_MIN_WAIT_TIME,
+      );
+      setResultsData({
+        ...actionResults,
+        disconnect: {
+          ...actionResults.disconnect,
+          updated: editedPubAddresses,
+        },
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSubmitData(null);
+    }
   };
 
   const onActionClick = () => {
     setSubmitData(true);
   };
 
-  if (resultsData)
-    return (
-      <ConfirmContainer
-        results={resultsData}
-        containerName={CONTAINER_NAMES.EDIT}
-        name={name}
-        remaining={remaining}
-        loading={loading}
-      />
-    );
+  const onBack = () => {
+    setResultsData(null);
+    changeBundleCost(0);
+    pubAddressesToDefault();
+  };
+
+  const onRetry = () => {
+    setSubmitData(true);
+  };
 
   return (
     <>
@@ -101,10 +176,10 @@ const EditTokenPage: React.FC<any> = props => {
         onCancel={onCancel}
         submitAction={submit}
         data={submitData}
-        action={CONFIRM_PIN_ACTIONS.TOKEN_LIST}
+        action={CONFIRM_PIN_ACTIONS.EDIT_TOKEN}
         processing={processing}
         setProcessing={setProcessing}
-        hideProcessing={true}
+        fioWalletEdgeId={edgeWalletId}
       />
       <ActionContainer
         containerName={CONTAINER_NAMES.EDIT}
@@ -112,7 +187,12 @@ const EditTokenPage: React.FC<any> = props => {
         bundleCost={bundleCost}
         remaining={remaining}
         onActionButtonClick={onActionClick}
-        loading={loading}
+        results={resultsData}
+        changeBundleCost={changeBundleCost}
+        onBack={onBack}
+        onRetry={onRetry}
+        walletPublicKey={walletPublicKey}
+        isDisabled={!hasEdited || hasLowBalance || remaining === 0}
       >
         <div className={classes.container}>
           <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
@@ -120,7 +200,7 @@ const EditTokenPage: React.FC<any> = props => {
           </h5>
         </div>
         {pubAddressesArr &&
-          pubAddressesArr.map((pubAddress: any) => (
+          pubAddressesArr.map(pubAddress => (
             <PublicAddressEdit
               {...pubAddress}
               handleClick={handleEditTokenItem}

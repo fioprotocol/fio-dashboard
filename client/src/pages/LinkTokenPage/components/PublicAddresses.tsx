@@ -2,10 +2,9 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import TokenBadge from '../../../components/Badges/TokenBadge/TokenBadge';
-import TokenBadgeMobile from '../../../components/Badges/TokenBadge/TokenBadgeMobile';
 import InfoBadge from '../../../components/Badges/InfoBadge/InfoBadge';
 
-import { useCheckIfDesktop } from '../../../screenType';
+import { genericTokenId } from '../../../util/fio';
 
 import { PublicAddressDoublet } from '../../../types';
 
@@ -19,12 +18,10 @@ type Props = {
 const PublicAddresses: React.FC<Props> = props => {
   const { publicAddresses, loading } = props;
 
-  const isDesktop = useCheckIfDesktop();
-
   if (loading)
     return <FontAwesomeIcon icon="spinner" spin className={classes.spinner} />;
 
-  if (!publicAddresses)
+  if (!publicAddresses || publicAddresses.length === 0)
     return (
       <div className={classes.infoBadge}>
         <InfoBadge
@@ -36,13 +33,14 @@ const PublicAddresses: React.FC<Props> = props => {
 
   return (
     <div className={classes.publicAddresses}>
-      {publicAddresses.map(pubAddress =>
-        isDesktop ? (
-          <TokenBadge {...pubAddress} key={pubAddress.publicAddress} />
-        ) : (
-          <TokenBadgeMobile {...pubAddress} key={pubAddress.publicAddress} />
-        ),
-      )}
+      {publicAddresses.map(pubAddress => {
+        const key = genericTokenId(
+          pubAddress.chainCode,
+          pubAddress.tokenCode,
+          pubAddress.publicAddress,
+        );
+        return <TokenBadge {...pubAddress} key={key} />;
+      })}
     </div>
   );
 };

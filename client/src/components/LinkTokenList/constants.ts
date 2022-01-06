@@ -20,7 +20,7 @@ export const CONTAINER_TYPES = {
 };
 
 export const LOW_BALANCE_TEXT = {
-  buttonText: 'Renew',
+  buttonText: 'Add more bundled transactions',
   messageText:
-    'Unfortunately there are not enough bundled transactions available to complete linking. Please renew your address now.',
+    'Unfortunately there are not enough bundled transactions available to complete linking. Please add more to your address now.',
 };

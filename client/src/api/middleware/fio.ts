@@ -15,7 +15,7 @@ import {
   WalletKeys,
 } from '../../types';
 
-export const linkTokensAction = async ({
+export const linkTokens = async ({
   connectList,
   disconnectList,
   fioAddress,

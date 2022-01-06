@@ -13,3 +13,8 @@ export const ERROR_MESSAGES = {
   [ERROR_TYPES.default]: DEFAULT_FIO_TRX_ERR_MESSAGE,
   [ERROR_TYPES.freeAddressIsNotRegistered]: FREE_ADDRESS_REGISTER_ERROR,
 };
+
+export const TOKEN_LINK_ERROR_MESSAGE =
+  'Some public addresses were not transfered due to an error.';
+export const TOKEN_LINK_PARTIAL_ERROR_MESSAGE =
+  'See below for public addresses which were transfered sucesfully and try again.';

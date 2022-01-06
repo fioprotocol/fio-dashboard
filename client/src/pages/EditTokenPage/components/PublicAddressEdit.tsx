@@ -4,6 +4,8 @@ import classnames from 'classnames';
 
 import TokenBadge from '../../../components/Badges/TokenBadge/TokenBadge';
 
+import { MAX_PUBLIC_ADDRESS_LENGTH } from '../../../constants/fio';
+
 import classes from '../styles/PublicAddressEdit.module.scss';
 
 type Props = {
@@ -11,7 +13,7 @@ type Props = {
   handleClick: (id: string, editedPubAddress: string) => void;
   hasLowBalance: boolean;
   id: string;
-  isEdited: boolean;
+  newPublicAddress: string;
   isEditing: boolean;
   publicAddress: string;
   tokenCode: string;
@@ -25,7 +27,7 @@ const PublicAddressEdit: React.FC<Props> = props => {
     hasLowBalance,
     handleClick,
     id,
-    isEdited,
+    newPublicAddress,
     isEditing,
     publicAddress,
     tokenCode,
@@ -55,9 +57,9 @@ const PublicAddressEdit: React.FC<Props> = props => {
       value={editedPubAddress}
       onChange={onInputChange}
       className={classes.input}
-      size={editedPubAddress.length * 1.2} // makes width of input almost the same as text
       autoFocus={true}
       onBlur={onEditClick}
+      maxLength={MAX_PUBLIC_ADDRESS_LENGTH}
     />
   );
 
@@ -66,7 +68,7 @@ const PublicAddressEdit: React.FC<Props> = props => {
       icon="pen"
       className={classnames(
         EDIT_ICON_CLASS,
-        (isEditing || isEdited) && classes.editing,
+        (isEditing || newPublicAddress) && classes.editing,
       )}
       onClick={onEditClick}
       tabIndex={0}
@@ -78,7 +80,7 @@ const PublicAddressEdit: React.FC<Props> = props => {
     <TokenBadge
       chainCode={chainCode}
       tokenCode={tokenCode}
-      publicAddress={publicAddress}
+      publicAddress={newPublicAddress ? newPublicAddress : publicAddress}
       input={inputComponent}
       actionButton={actionButton}
       showInput={isEditing}

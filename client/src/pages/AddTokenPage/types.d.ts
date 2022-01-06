@@ -1,10 +1,7 @@
-import { PublicAddressDoublet, FioNameItemProps } from '../../types';
+import { PublicAddressDoublet, FioAddressWithPubAddresses } from '../../types';
 
 export type AddTokenProps = {
-  currentFioAddress: FioNameItemProps;
-  results: any;
-  loading: boolean;
-  remaining: number;
+  currentFioAddress: FioAddressWithPubAddresses;
 };
 
 export type FormValues = {
