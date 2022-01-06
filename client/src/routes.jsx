@@ -19,7 +19,7 @@ import FioDomainTransferPage from './pages/FioDomainTransferPage';
 import FioDomainStatusChangePage from './pages/FioDomainStatusChangePage';
 import FioAddressRenewPage from './pages/FioAddressRenewPage';
 import FioDomainRenewPage from './pages/FioDomainRenewPage';
-import TokenListPage from './pages/LinkTokenPage';
+import TokenListPage from './pages/TokenListPage';
 import DeleteTokenPage from './pages/DeleteTokenPage';
 import AddTokenPage from './pages/AddTokenPage';
 import EditTokenPage from './pages/EditTokenPage';
