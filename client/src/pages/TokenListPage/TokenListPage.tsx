@@ -27,7 +27,7 @@ type Props = {
   loading: boolean;
 };
 
-const ListToken: React.FC<Props & RouteComponentProps> = props => {
+const TokenListPage: React.FC<Props & RouteComponentProps> = props => {
   const {
     currentFioAddress: { name, publicAddresses },
     match: { url },
@@ -83,4 +83,4 @@ const ListToken: React.FC<Props & RouteComponentProps> = props => {
   );
 };
 
-export default ListToken;
+export default TokenListPage;
