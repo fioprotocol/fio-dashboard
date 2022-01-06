@@ -40,26 +40,31 @@
     flex-flow: wrap;
     justify-content: flex-start;
 
-    button {
-      margin-top: 20px;
-      height: 36px;
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      font-size: 0.8125rem;
-      line-height: 0;
-      border-radius: 7px;
-      padding: 0 12px;
-      @include sf-pro-display-thin;
-    }
-    .middleButton {
-      margin: 20px 20px 0;
-    }
-    .icon {
-      font-size: 1rem;
-      line-height: 0;
-      margin-right: 10px;
+    .link {
+      &.disabled {
+        pointer-events: none;
+      }
+      button {
+        margin-top: 20px;
+        height: 36px;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        font-size: 0.8125rem;
+        line-height: 0;
+        border-radius: 7px;
+        padding: 0 12px;
+        @include sf-pro-display-thin;
+      }
+      .middleButton {
+        margin: 20px 20px 0;
+      }
+      .icon {
+        font-size: 1rem;
+        line-height: 0;
+        margin-right: 10px;
+      }
     }
   }
 }
@@ -99,7 +104,6 @@
     }
   }
   .subtitle {
-      align-self: inherit;
-
+    align-self: inherit;
   }
 }
