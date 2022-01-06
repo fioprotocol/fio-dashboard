@@ -1,6 +1,6 @@
-@import '../../../assets/styles/colors.scss';
-@import '../../../assets/styles/fontMixins.scss';
-@import '../../../assets/styles/mediaQueriesMixings.scss';
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
   display: flex;
@@ -81,15 +81,15 @@
     }
   }
 
-  .button {
-    width: 100%;
-    max-width: 335px;
-    height: 54px;
-    margin-top: 30px;
-    border-radius: 12px;
-    align-self: center;
-    @include sf-pro-display-medium;
-  }
+  // .button {
+  //   width: 100%;
+  //   max-width: 335px;
+  //   height: 54px;
+  //   margin-top: 30px;
+  //   border-radius: 12px;
+  //   align-self: center;
+  //   @include sf-pro-display-medium;
+  // }
 }
 
 @include sm {

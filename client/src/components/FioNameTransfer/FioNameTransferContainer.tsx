@@ -8,7 +8,7 @@ import { TransferForm } from './components/FioNameTransferForm/FioNameTransferFo
 import TransferResults from '../common/TransactionResults/components/TransferResults';
 
 import { BADGE_TYPES } from '../Badge/Badge';
-import { ERROR_TYPES } from '../common/TransactionResults/Results';
+import { ERROR_TYPES } from '../common/TransactionResults/constants';
 import { ROUTES } from '../../constants/routes';
 import { fioNameLabels } from '../../constants/labels';
 import {

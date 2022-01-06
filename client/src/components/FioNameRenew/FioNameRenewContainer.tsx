@@ -15,7 +15,7 @@ import {
   CONFIRM_PIN_ACTIONS,
 } from '../../constants/common';
 import { BADGE_TYPES } from '../Badge/Badge';
-import { ERROR_TYPES } from '../common/TransactionResults/Results';
+import { ERROR_TYPES } from '../common/TransactionResults/constants';
 
 import { setFees } from '../../util/prices';
 import { hasFioAddressDelimiter } from '../../utils';

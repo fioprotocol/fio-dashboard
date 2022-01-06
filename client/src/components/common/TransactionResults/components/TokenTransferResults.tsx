@@ -8,7 +8,7 @@ import apis from '../../../../api';
 
 import { ResultsProps } from '../types';
 
-import classes from '../Results.module.scss';
+import classes from '../styles/Results.module.scss';
 
 type TokenTransferResultsProps = ResultsProps & { roe: number };
 
