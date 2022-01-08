@@ -4,7 +4,6 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
 
-import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 
 import { FioWalletDoublet } from '../../../types';
@@ -47,7 +46,6 @@ const RequestTokensEdgeWallet: React.FC<Props> = props => {
     const params: RequestProps = {
       ...data,
       amount: apis.fio.sufToAmount(data.amount),
-      maxFee: DEFAULT_ACTION_FEE_AMOUNT,
     };
     return apis.fio.executeAction(keys, 'requestFunds', params);
   };

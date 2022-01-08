@@ -11,6 +11,8 @@ import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { isDomain } from '../utils';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 
+import { ACTIONS_TO_END_POINT_KEYS } from '../constants/fio';
+
 import { NFTTokenDoublet, WalletKeys } from '../types';
 
 export interface TrxResponse {
@@ -405,13 +407,18 @@ export default class Fio {
     keys: WalletKeys,
     action: string,
     params: any,
-  ): Promise<any> => {
+  ): Promise<TrxResponse> => {
     this.setWalletFioSdk(keys);
 
     if (!params.maxFee) params.maxFee = DEFAULT_ACTION_FEE_AMOUNT;
 
     try {
-      return await this.walletFioSDK.genericAction(action, params);
+      this.walletFioSDK.setSignedTrxReturnOption(true);
+      const preparedTrx = await this.walletFioSDK.genericAction(action, params);
+      return await this.walletFioSDK.executePreparedTrx(
+        this.actionEndPoints[ACTIONS_TO_END_POINT_KEYS[action]],
+        preparedTrx,
+      );
     } catch (err) {
       this.logError(err);
     } finally {
