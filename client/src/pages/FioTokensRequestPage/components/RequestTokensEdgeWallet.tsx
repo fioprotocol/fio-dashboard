@@ -5,6 +5,7 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 import apis from '../../../api';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
+import { ACTIONS } from '../../../constants/fio';
 
 import { FioWalletDoublet } from '../../../types';
 import { RequestTokensValues } from '../types';
@@ -47,7 +48,7 @@ const RequestTokensEdgeWallet: React.FC<Props> = props => {
       ...data,
       amount: apis.fio.sufToAmount(data.amount),
     };
-    return apis.fio.executeAction(keys, 'requestFunds', params);
+    return apis.fio.executeAction(keys, ACTIONS.requestFunds, params);
   };
 
   return (

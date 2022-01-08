@@ -15,8 +15,9 @@ import {
   CONFIRM_PIN_ACTIONS,
   MANAGE_PAGE_REDIRECT,
 } from '../../constants/common';
+import { ACTIONS } from '../../constants/fio';
 
-import { hasFioAddressDelimiter } from '../../utils';
+import { hasFioAddressDelimiter, isDomain } from '../../utils';
 import { setFees } from '../../util/prices';
 
 import apis from '../../api';
@@ -83,19 +84,22 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
       if (!publicAddress) throw new Error('Public address is invalid.');
       newOwnerKey = publicAddress;
     }
-    apis.fio.setWalletFioSdk(keys);
-    try {
-      const result = await apis.fio.transfer(
-        name,
-        newOwnerKey,
-        feePrice.nativeFio,
-      );
-      apis.fio.clearWalletFioSdk();
-      return { ...result, newOwnerKey };
-    } catch (e) {
-      apis.fio.clearWalletFioSdk();
-      throw e;
-    }
+    const result = await apis.fio.executeAction(
+      keys,
+      isDomain(name) ? ACTIONS.transferFioDomain : ACTIONS.transferFioAddress,
+      isDomain(name)
+        ? {
+            fioDomain: name,
+            newOwnerKey,
+            maxFee: feePrice.nativeFio,
+          }
+        : {
+            fioAddress: name,
+            newOwnerKey,
+            maxFee: feePrice.nativeFio,
+          },
+    );
+    return { ...result, newOwnerKey };
   };
 
   const onSubmit = (transferAddress: string) => {
