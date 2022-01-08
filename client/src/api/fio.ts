@@ -408,7 +408,7 @@ export default class Fio {
   ): Promise<any> => {
     this.setWalletFioSdk(keys);
 
-    if (!params.maxFee) params.maxFee = defaultFee;
+    if (!params.maxFee) params.maxFee = DEFAULT_ACTION_FEE_AMOUNT;
 
     try {
       return await this.walletFioSDK.genericAction(action, params);
