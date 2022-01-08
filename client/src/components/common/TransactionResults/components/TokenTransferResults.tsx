@@ -58,7 +58,13 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
           <p className={classes.title}>ID</p>
           <p className={classnames(classes.item, classes.isBlue)}>
-            {transaction_id}
+            <a
+              href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transaction_id}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {transaction_id}
+            </a>
           </p>
         </div>
       </Badge>
