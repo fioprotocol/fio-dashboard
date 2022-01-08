@@ -7,7 +7,10 @@ import {
   normalizePublicAddresses,
 } from '../../util/fio';
 
-import { ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION } from '../../constants/fio';
+import {
+  ACTIONS,
+  ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
+} from '../../constants/fio';
 
 import {
   LinkActionResult,
@@ -115,7 +118,7 @@ export const linkTokens = async ({
         error?: any;
       } = await updatePubAddresses(
         normalizePublicAddresses(connectList),
-        'addPublicAddresses',
+        ACTIONS.addPublicAddresses,
       );
 
       const connectionsFailed: PublicAddressDoublet[] = [];
@@ -144,7 +147,9 @@ export const linkTokens = async ({
         error?: any;
       } = await updatePubAddresses(
         normalizePublicAddresses(disconnectList),
-        disconnectAll ? 'removeAllPublicAddresses' : 'removePublicAddresses',
+        disconnectAll
+          ? ACTIONS.removeAllPublicAddresses
+          : ACTIONS.removePublicAddresses,
         true,
       );
 

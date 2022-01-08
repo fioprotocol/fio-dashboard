@@ -5,13 +5,12 @@ import { FioAddressesResponse } from '@fioprotocol/fiosdk/src/entities/FioAddres
 import { FioDomainsResponse } from '@fioprotocol/fiosdk/src/entities/FioDomainsResponse';
 import { PublicAddressResponse } from '@fioprotocol/fiosdk/src/entities/PublicAddressResponse';
 import { PublicAddressesResponse } from '@fioprotocol/fiosdk/src/entities/PublicAddressesResponse';
-import { SetFioDomainVisibilityResponse } from '@fioprotocol/fiosdk/src/entities/SetFioDomainVisibilityResponse';
 import { Transactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
 import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { isDomain } from '../utils';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 
-import { ACTIONS_TO_END_POINT_KEYS } from '../constants/fio';
+import { ACTIONS, ACTIONS_TO_END_POINT_KEYS } from '../constants/fio';
 
 import { NFTTokenDoublet, WalletKeys } from '../types';
 
@@ -33,7 +32,7 @@ export default class Fio {
   walletFioSDK: FIOSDK_LIB | null = null;
   actionEndPoints: { [actionName: string]: string } = {
     ...EndPoint,
-    signNft: 'add_nft',
+    [ACTIONS.pushTransaction]: 'push_transaction',
   };
 
   constructor() {
@@ -135,43 +134,6 @@ export default class Fio {
       return await this.walletFioSDK.registerFioDomain(fioName, fee);
     }
     return await this.walletFioSDK.registerFioAddress(fioName, fee);
-  };
-
-  transfer = async (
-    fioName: string,
-    newOwnerKey: string,
-    fee: number,
-  ): Promise<TrxResponse> => {
-    this.validateAction();
-    if (isDomain(fioName)) {
-      return await this.walletFioSDK.transferFioDomain(
-        fioName,
-        newOwnerKey,
-        fee,
-      );
-    }
-    return await this.walletFioSDK.transferFioAddress(
-      fioName,
-      newOwnerKey,
-      fee,
-    );
-  };
-
-  renew = async (fioName: string, fee: number): Promise<TrxResponse> => {
-    this.validateAction();
-    if (isDomain(fioName)) {
-      return await this.walletFioSDK.renewFioDomain(fioName, fee);
-    }
-    return await this.walletFioSDK.renewFioAddress(fioName, fee);
-  };
-
-  setDomainVisibility = async (
-    fioDomain: string,
-    isPublic: boolean,
-    fee: number,
-  ): Promise<SetFioDomainVisibilityResponse> => {
-    this.validateAction();
-    return this.walletFioSDK.setFioDomainVisibility(fioDomain, isPublic, fee);
   };
 
   getBalance = async (
@@ -310,42 +272,6 @@ export default class Fio {
     };
   };
 
-  singNFT = async (
-    fioAddress: string,
-    nfts: NFTTokenDoublet[],
-  ): Promise<TrxResponse> => {
-    this.setBaseUrl();
-    try {
-      this.walletFioSDK.setSignedTrxReturnOption(true);
-      const preparedTrx = await this.walletFioSDK.pushTransaction(
-        'fio.address',
-        'addnft',
-        {
-          fio_address: fioAddress,
-          nfts: nfts.map(
-            ({ contractAddress, chainCode, tokenId, ...rest }) => ({
-              contract_address: contractAddress,
-              chain_code: chainCode,
-              token_id: tokenId,
-              ...rest,
-            }),
-          ),
-          max_fee: DEFAULT_ACTION_FEE_AMOUNT,
-          tpid: '',
-        },
-      );
-      const result = await this.walletFioSDK.executePreparedTrx(
-        this.actionEndPoints.signNft,
-        preparedTrx,
-      );
-      this.walletFioSDK.setSignedTrxReturnOption(false);
-      return { other: { nfts }, ...result };
-    } catch (err) {
-      this.logError(err);
-      throw err;
-    }
-  };
-
   getTransferTokensAction = (
     publicKey: string,
     amount: number,
@@ -363,32 +289,6 @@ export default class Fio {
     };
   };
 
-  sendTokens = async (
-    publicKey: string,
-    amount: number,
-    fee: number,
-  ): Promise<TrxResponse> => {
-    this.setBaseUrl();
-    try {
-      this.walletFioSDK.setSignedTrxReturnOption(true);
-      const action = this.getTransferTokensAction(publicKey, amount, fee);
-      const preparedTrx = await this.walletFioSDK.pushTransaction(
-        action.account,
-        action.name,
-        action.data,
-      );
-      const result = await this.walletFioSDK.executePreparedTrx(
-        this.actionEndPoints.transferTokens,
-        preparedTrx,
-      );
-      this.walletFioSDK.setSignedTrxReturnOption(false);
-      return { ...result };
-    } catch (err) {
-      this.logError(err);
-      throw err;
-    }
-  };
-
   getPublicAddresses = async (
     fioAddress: string,
     limit: number | null = null,
@@ -403,11 +303,42 @@ export default class Fio {
     }
   };
 
+  singNFT = async (
+    keys: WalletKeys,
+    fioAddress: string,
+    nfts: NFTTokenDoublet[],
+  ): Promise<TrxResponse> => {
+    try {
+      const result = await this.executeAction(keys, ACTIONS.pushTransaction, {
+        action: 'addnft',
+        account: 'fio.address',
+        data: {
+          fio_address: fioAddress,
+          nfts: nfts.map(
+            ({ contractAddress, chainCode, tokenId, ...rest }) => ({
+              contract_address: contractAddress,
+              chain_code: chainCode,
+              token_id: tokenId,
+              ...rest,
+            }),
+          ),
+          max_fee: DEFAULT_ACTION_FEE_AMOUNT,
+          tpid: '',
+        },
+      });
+      return { other: { nfts }, ...result };
+    } catch (err) {
+      this.logError(err);
+      throw err;
+    }
+  };
+
   executeAction = async (
     keys: WalletKeys,
     action: string,
     params: any,
   ): Promise<TrxResponse> => {
+    let error;
     this.setWalletFioSdk(keys);
 
     if (!params.maxFee) params.maxFee = DEFAULT_ACTION_FEE_AMOUNT;
@@ -415,14 +346,18 @@ export default class Fio {
     try {
       this.walletFioSDK.setSignedTrxReturnOption(true);
       const preparedTrx = await this.walletFioSDK.genericAction(action, params);
+      this.validateAction();
       return await this.walletFioSDK.executePreparedTrx(
         this.actionEndPoints[ACTIONS_TO_END_POINT_KEYS[action]],
         preparedTrx,
       );
     } catch (err) {
       this.logError(err);
+      error = err;
     } finally {
       this.clearWalletFioSdk();
     }
+
+    if (error != null) throw error;
   };
 }
