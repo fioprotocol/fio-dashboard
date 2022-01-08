@@ -20,8 +20,9 @@ export const fees = (state: ReduxState) => state[prefix].fees;
 export const fioWalletsBalances = (state: ReduxState) =>
   state[prefix].fioWalletsBalances;
 export const feesLoading = (state: ReduxState) => state[prefix].feesLoading;
-export const linkResults = (state: ReduxState) => state[prefix].linkResults;
 export const nftSignatures = (state: ReduxState) => state[prefix].nftList;
+export const mappedPublicAddresses = (state: ReduxState) =>
+  state[prefix].mappedPublicAddresses;
 
 export const currentWallet = (
   state: ReduxState,
@@ -45,37 +46,43 @@ export const currentWallet = (
   return currentWallet || emptyWallet;
 };
 
-export const currentFioAddress = (state: ReduxState, ownProps: any) => {
-  const publicAddresses = [
-    {
-      chainCode: 'FIO',
-      tokenCode: 'FIO',
-      publicAddress: 'FIO6cp3eJMhtAuQvzetCAqcUAyLBabHj8M8hJD5nA8T1p7FoXaTd2',
-    },
-    {
-      chainCode: 'ETH',
-      tokenCode: 'ETH',
-      publicAddress: 'ETHxab5801a7d398351b8be11c439e05c5b3259aec9b',
-    },
-    {
-      chainCode: 'BTC',
-      tokenCode: 'BTC',
-      publicAddress: 'BTCxab5801a7d398351b8be11c439e05c5b3259aec9b',
-    },
-  ]; // todo: remove on get real public addresses
+export const currentFioAddress = createSelector(
+  [
+    fioWallets,
+    fioAddresses,
+    mappedPublicAddresses,
+    (state: ReduxState, ownProps: any) => ownProps.match.params.id,
+  ],
+  (fioWallets, fioAddresses, mappedPublicAddresses, id) => {
+    const currentAddress = getElementByFioName({
+      fioNameList: fioAddresses,
+      name: id,
+    });
 
-  const { fioAddresses } = state.fio;
-  const {
-    match: {
-      params: { id },
-    },
-  } = ownProps;
+    if (!currentAddress) return {};
 
-  return {
-    ...getElementByFioName({ fioNameList: fioAddresses, name: id }),
-    publicAddresses,
-  };
-};
+    const currentWallet: FioWalletDoublet =
+      fioWallets &&
+      fioWallets.find(
+        (wallet: FioWalletDoublet) =>
+          wallet.publicKey === currentAddress.walletPublicKey,
+      );
+
+    const { publicAddresses = [], more = false } = mappedPublicAddresses[id]
+      ? mappedPublicAddresses[id]
+      : {};
+
+    return {
+      ...currentAddress,
+      edgeWalletId: currentWallet && currentWallet.edgeId,
+      publicAddresses,
+      more,
+    };
+  },
+);
+
+export const showTokenListInfoBadge = (state: ReduxState) =>
+  state[prefix].showTokenListInfoBadge;
 
 export const walletPublicKey = (
   state: ReduxState,

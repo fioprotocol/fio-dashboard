@@ -6,7 +6,7 @@ import DomainStatusBadge from '../../../Badges/DomainStatusBadge/DomainStatusBad
 
 import { ResultsProps } from '../types';
 
-import classes from '../Results.module.scss';
+import classes from '../styles/Results.module.scss';
 
 const SetVisibilityResults = (props: ResultsProps) => {
   const {

@@ -2,11 +2,11 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import TokenBadge from '../../components/Badges/TokenBadge/TokenBadge';
+import TokenBadge from '../../../components/Badges/TokenBadge/TokenBadge';
 
-import { CheckedTokenType } from './types';
+import { CheckedTokenType } from '../types';
 
-import classes from './styles/DeleteToken.module.scss';
+import classes from '../styles/DeleteTokenItem.module.scss';
 
 type Props = {
   hasLowBalance: boolean;
@@ -26,20 +26,20 @@ const DeleteTokenItem: React.FC<Props> = props => {
 
   const onClick = () => onCheckClick(id);
 
-  return (
-    <TokenBadge
-      chainCode={chainCode}
-      tokenCode={tokenCode}
-      publicAddress={publicAddress}
-      actionButton={
-        <DeleteTokenActionButton
-          isInactive={hasLowBalance && !isChecked}
-          isChecked={isChecked}
-          onClick={onClick}
-        />
-      }
-    />
-  );
+  const tokenBadgeProps = {
+    chainCode,
+    tokenCode,
+    publicAddress,
+    actionButton: (
+      <DeleteTokenActionButton
+        isInactive={hasLowBalance && !isChecked}
+        isChecked={isChecked}
+        onClick={onClick}
+      />
+    ),
+  };
+
+  return <TokenBadge {...tokenBadgeProps} />;
 };
 
 type ActionProps = {

@@ -88,15 +88,7 @@ const SignNft: React.FC<ContainerProps> = props => {
   }, []);
 
   const submit = async ({ keys, data }: SubmitActionParams) => {
-    apis.fio.setWalletFioSdk(keys);
-    try {
-      const result = await apis.fio.singNFT(fioAddress.name, [{ ...data }]);
-      apis.fio.clearWalletFioSdk();
-      return result;
-    } catch (e) {
-      apis.fio.clearWalletFioSdk();
-      throw e;
-    }
+    return await apis.fio.singNFT(keys, fioAddress.name, [{ ...data }]);
   };
 
   const onSubmit = async (values: NftFormValues) => {

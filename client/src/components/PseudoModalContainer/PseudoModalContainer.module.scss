@@ -9,6 +9,7 @@
   position: relative;
   border-radius: 12px;
   width: 100%;
+  color: $dark-jungle-green;
 
   .actionContainer {
     .withClose {
@@ -20,6 +21,7 @@
       .title {
         margin-top: 1rem;
         font-size: 1.375em;
+        margin-bottom: 0;
         @include proxima-nova-bold;
       }
     }
@@ -27,7 +29,9 @@
     .withBack {
       .title {
         margin-top: 1rem;
+        margin-bottom: 0.5rem;
         font-size: 1.375em;
+        color: $dark-jungle-green;
         @include proxima-nova-bold;
       }
     }

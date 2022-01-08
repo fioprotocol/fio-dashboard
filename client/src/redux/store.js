@@ -44,6 +44,10 @@ export default function configureStore(api, history) {
         edge: {
           hasTwoFactorAuth: store.getState().edge.hasTwoFactorAuth,
         },
+        fio: {
+          // we should save showTokenListInfoBadge state during session
+          showTokenListInfoBadge: store.getState().fio.showTokenListInfoBadge,
+        },
       });
     }, 1000),
   );

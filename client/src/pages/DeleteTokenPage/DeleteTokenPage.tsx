@@ -1,47 +1,72 @@
 import React, { useEffect, useState } from 'react';
-import { Redirect } from 'react-router-dom';
 
-import ActionContainer, {
-  CONTAINER_NAMES,
-} from '../../components/LinkTokenList/ActionContainer';
-import ConfirmContainer from '../../components/LinkTokenList/ConfirmContainer';
-import CheckedDropdown from './CheckedDropdown';
-import DeleteTokenItem from './DeleteTokenItem';
-import { ROUTES } from '../../constants/routes';
+import ActionContainer from '../../components/LinkTokenList/ActionContainer';
+import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
+import CheckedDropdown from './components/CheckedDropdown';
+import DeleteTokenItem from './components/DeleteTokenItem';
+import EdgeConfirmAction from '../../components/EdgeConfirmAction';
+
+import { linkTokens } from '../../api/middleware/fio';
+import { genericTokenId } from '../../util/fio';
+import { minWaitTimeFunction } from '../../utils';
+
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import { TOKEN_LINK_MIN_WAIT_TIME } from '../../constants/fio';
 
 import { CheckedTokenType } from './types';
-import { FioNameItemProps } from '../../types';
+import {
+  WalletKeys,
+  PublicAddressDoublet,
+  LinkActionResult,
+  FioAddressWithPubAddresses,
+} from '../../types';
 
 import classes from './styles/DeleteToken.module.scss';
 
 type Props = {
-  results?: any; // todo: set results types
-  currentFioAddress: FioNameItemProps;
-  onSubmit: (params: any) => void;
+  currentFioAddress: FioAddressWithPubAddresses;
+  loading: boolean;
 };
 
 const DeleteTokenPage: React.FC<Props> = props => {
-  const { currentFioAddress, onSubmit, results } = props;
-  const { name, publicAddresses, remaining = 0 } = currentFioAddress;
+  const { currentFioAddress, loading } = props;
+  const {
+    remaining = 0,
+    name,
+    edgeWalletId = '',
+    walletPublicKey,
+    publicAddresses = [],
+  } = currentFioAddress;
 
   const [pubAddressesArr, changePubAddresses] = useState<CheckedTokenType[]>(
     [],
   );
   const [bundleCost, changeBundleCost] = useState(0);
   const [allChecked, toggleAllChecked] = useState(false);
-  const [resultsData, setResultsData] = useState<any | null>(null);
+  const [processing, setProcessing] = useState(false);
+  const [submitData, setSubmitData] = useState<boolean | null>(null);
+  const [resultsData, setResultsData] = useState<LinkActionResult | null>(null);
+
   const hasLowBalance = remaining - bundleCost < 0 || remaining === 0;
 
   const hasChecked = pubAddressesArr.some(pubAddress => pubAddress.isChecked);
 
-  useEffect(() => {
+  const pubAddressesToDefault = () =>
+    publicAddresses &&
     changePubAddresses(
       publicAddresses.map(pubAddress => ({
         ...pubAddress,
         isChecked: false,
-        id: pubAddress.publicAddress,
+        id: genericTokenId(
+          pubAddress.chainCode,
+          pubAddress.tokenCode,
+          pubAddress.publicAddress,
+        ),
       })),
     );
+
+  useEffect(() => {
+    pubAddressesToDefault();
   }, []);
 
   useEffect(() => {
@@ -50,13 +75,7 @@ const DeleteTokenPage: React.FC<Props> = props => {
 
   useEffect(() => {
     toggleAllChecked(pubAddressesArr.every(pubAddress => pubAddress.isChecked));
-  }, [pubAddressesArr]);
-
-  // Handle results
-  useEffect(() => {
-    // todo: set proper results
-    setResultsData(results);
-  }, [results]);
+  }, [JSON.stringify(pubAddressesArr)]);
 
   const onCheckClick = (checkedId: string) => {
     changePubAddresses(
@@ -81,71 +100,106 @@ const DeleteTokenPage: React.FC<Props> = props => {
     );
   };
 
-  const handleSubmit = () => {
-    // todo: pin confirm
+  const onSuccess = () => {
+    setProcessing(false);
   };
 
-  // @ts-ignore
-  // eslint-disable-next-line no-unused-vars
-  const handleResults = () => {
-    // todo: call delete action here
+  const onCancel = () => {
+    setSubmitData(null);
+    setProcessing(false);
+  };
 
-    if (allChecked) {
-      // todo: call remove_all_pub_addresses
-      onSubmit({
-        fioAddress: name,
-        fee: 0,
-      });
-    } else {
-      onSubmit({
-        disconnectList: pubAddressesArr
-          .filter(pubAddress => pubAddress.isChecked)
-          .map(pubAddress => ({
-            chain_code: pubAddress.chainCode,
-            token_code: pubAddress.tokenCode,
-            public_address: pubAddress.publicAddress,
-          })),
-        fioAddress: name,
-        fee: 0,
-      });
+  const submit = async ({ keys }: { keys: WalletKeys }) => {
+    const params: {
+      fioAddress: string;
+      disconnectList: PublicAddressDoublet[];
+      keys: WalletKeys;
+      disconnectAll: boolean;
+    } = {
+      fioAddress: currentFioAddress.name,
+      disconnectList: pubAddressesArr.filter(
+        pubAddress => pubAddress.isChecked,
+      ),
+      keys,
+      disconnectAll: allChecked,
+    };
+    try {
+      const actionResults = await minWaitTimeFunction(
+        () => linkTokens(params),
+        TOKEN_LINK_MIN_WAIT_TIME,
+      );
+      setResultsData(actionResults);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSubmitData(null);
     }
   };
 
-  if (!name) return <Redirect to={{ pathname: ROUTES.FIO_ADDRESSES }} />;
+  const onActionClick = () => {
+    setSubmitData(true);
+  };
 
-  if (resultsData) return <ConfirmContainer />;
+  const onBack = () => {
+    setResultsData(null);
+    changeBundleCost(0);
+    pubAddressesToDefault();
+  };
+
+  const onRetry = () => {
+    setSubmitData(true);
+  };
+
   return (
-    <ActionContainer
-      containerName={CONTAINER_NAMES.DELETE}
-      name={name}
-      bundleCost={bundleCost}
-      remaining={remaining}
-      isDisabled={!hasChecked || remaining === 0}
-      onActionButtonClick={handleSubmit}
-    >
-      <div className={classes.container}>
-        <div className={classes.actionContainer}>
-          <h5 className={classes.subtitle}>Linked Tokens</h5>
-          <div className={classes.selectContainer}>
-            <p className={classes.label}>Select</p>
-            <CheckedDropdown
-              allChecked={allChecked}
-              allCheckedChange={allCheckedChange}
-              hasLowBalance={hasLowBalance}
-            />
+    <>
+      <EdgeConfirmAction
+        onSuccess={onSuccess}
+        onCancel={onCancel}
+        submitAction={submit}
+        data={submitData}
+        action={CONFIRM_PIN_ACTIONS.DELETE_TOKEN}
+        processing={processing}
+        setProcessing={setProcessing}
+        fioWalletEdgeId={edgeWalletId}
+      />
+      <ActionContainer
+        containerName={CONTAINER_NAMES.DELETE}
+        name={name}
+        bundleCost={bundleCost}
+        remaining={remaining}
+        isDisabled={!hasChecked || remaining === 0}
+        onActionButtonClick={onActionClick}
+        loading={loading}
+        results={resultsData}
+        changeBundleCost={changeBundleCost}
+        onBack={onBack}
+        onRetry={onRetry}
+        walletPublicKey={walletPublicKey}
+      >
+        <div className={classes.container}>
+          <div className={classes.actionContainer}>
+            <h5 className={classes.subtitle}>Linked Tokens</h5>
+            <div className={classes.selectContainer}>
+              <p className={classes.label}>Select</p>
+              <CheckedDropdown
+                allChecked={allChecked}
+                allCheckedChange={allCheckedChange}
+                hasLowBalance={hasLowBalance}
+              />
+            </div>
           </div>
+          {pubAddressesArr &&
+            pubAddressesArr.map(pubAddress => (
+              <DeleteTokenItem
+                {...pubAddress}
+                onCheckClick={onCheckClick}
+                hasLowBalance={hasLowBalance}
+                key={pubAddress.id}
+              />
+            ))}
         </div>
-        {pubAddressesArr &&
-          pubAddressesArr.map(pubAddress => (
-            <DeleteTokenItem
-              {...pubAddress}
-              onCheckClick={onCheckClick}
-              hasLowBalance={hasLowBalance}
-              key={pubAddress.id}
-            />
-          ))}
-      </div>
-    </ActionContainer>
+      </ActionContainer>
+    </>
   );
 };
 

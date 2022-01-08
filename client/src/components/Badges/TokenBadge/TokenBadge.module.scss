@@ -23,8 +23,14 @@
 }
 
 .addressContainer {
+  width: 100%;
   display: grid;
   grid-template-columns: 50px 150px auto;
+  align-items: center;
+
+  .publicAddressItem {
+    word-break: break-all;
+  }
 }
 
 .nftContainer {
@@ -50,40 +56,50 @@
   cursor: pointer;
 }
 
-.addressMobileContainer {
-  width: 100%;
-  overflow: hidden;
-  max-height: 20px;
-  transition: max-height 0.3s ease-in-out;
-  cursor: pointer;
+.mobileContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 
-  .visiblePart {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+  .addressMobileContainer {
+    width: 100%;
+    overflow: hidden;
+    max-height: 20px;
+    transition: max-height 0.3s ease-in-out;
+    cursor: pointer;
 
-    .icon {
-      transition: 0.3s ease-in-out;
+    .visiblePart {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
 
-      &.open {
-        transform: rotate(180deg);
+      .icon {
+        transition: 0.3s ease-in-out;
+
+        &.open {
+          transform: rotate(180deg);
+        }
       }
     }
-  }
 
-  .pubAddress {
-    margin-top: 15px;
-    .title {
-      @include sf-pro-display-thin;
+    .pubAddress {
+      margin-top: 15px;
+      .title {
+        @include sf-pro-display-thin;
+      }
+      .publicAddressItem {
+        word-break: break-all;
+        @include proxima-nova-bold;
+      }
     }
-    .publicAddressItem {
-      word-break: break-all;
-      @include proxima-nova-bold;
+    &.containerOpen {
+      max-height: 100px;
     }
   }
-  &.containerOpen {
-    max-height: 100px;
+  .actionButton {
+    margin-top: 30px;
+    margin-left: -20px;
   }
 }
 

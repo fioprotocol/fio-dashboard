@@ -1,114 +1,130 @@
-import React, { useState, useEffect } from 'react';
-import { Form } from 'react-final-form';
+import React, { useState } from 'react';
+import { Form, FormRenderProps } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
-import { FieldArray } from 'react-final-form-arrays';
-import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classnames from 'classnames';
 
-import ActionContainer, {
-  CONTAINER_NAMES,
-} from '../../components/LinkTokenList/ActionContainer';
-import ConfirmContainer from '../../components/LinkTokenList/ConfirmContainer';
-import AddTokenInput from './AddTokenInput';
+import AddTokenForm from './copmonents/AddTokenForm';
+import EdgeConfirmAction from '../../components/EdgeConfirmAction';
+
 import { validate } from './validation';
 
-import { FioNameItemProps, PublicAddressDoublet } from '../../types';
-import classes from './styles/AddToken.module.scss';
+import { linkTokens } from '../../api/middleware/fio';
+import { minWaitTimeFunction } from '../../utils';
 
-// todo: set types for results and dispatch
-type Props = {
-  currentFioAddress: FioNameItemProps;
-  results: any;
-  addTokenValues: PublicAddressDoublet[];
-};
+import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import { TOKEN_LINK_MIN_WAIT_TIME } from '../../constants/fio';
 
-// todo: set proper types
-const AddTokenForm = (props: any) => {
-  const { changeBundleCost, push, values } = props;
+import { AddTokenProps, FormValues } from './types';
+import {
+  PublicAddressDoublet,
+  WalletKeys,
+  LinkActionResult,
+} from '../../types';
 
-  const tokens = values != null && values.tokens != null ? values.tokens : [];
-
-  const addTokenRow = () => push('tokens');
-
-  useEffect(() => changeBundleCost(Math.ceil(tokens.length / 5)), [
-    tokens.length,
-  ]);
-  useEffect(() => addTokenRow(), []);
-
-  return (
-    <div className={classes.container}>
-      <div className={classes.actionContainer}>
-        <h5 className={classes.subtitle}>Address Linking Information</h5>
-        <Button className={classes.button} onClick={addTokenRow}>
-          <FontAwesomeIcon icon="plus-circle" className={classes.icon} />
-          Add Token
-        </Button>
-      </div>
-      <h5 className={classnames(classes.subtitle, classes.infoSubtitle)}>
-        <span className="boldText">Hint:</span> Type an{' '}
-        <span className={classes.asterisk}>*</span> to map all tokens on a chain
-      </h5>
-      <FieldArray name="tokens" component={AddTokenInput} />
-    </div>
-  );
-};
-
-const AddToken: React.FC<Props> = props => {
-  const { currentFioAddress, results, addTokenValues = [] } = props;
-  const [resultsData, setResultsData] = useState<any | null>(null);
-
-  const hasEmtptyFields = !addTokenValues.every(
-    item => item.chainCode && item.tokenCode && item.publicAddress,
-  );
-  const { name, remaining = 0 } = currentFioAddress;
-
+const AddToken: React.FC<AddTokenProps> = props => {
+  const { currentFioAddress } = props;
+  const [resultsData, setResultsData] = useState<LinkActionResult | null>(null);
+  const [processing, setProcessing] = useState(false);
+  const [submitData, setSubmitData] = useState<
+    FormValues | PublicAddressDoublet[] | null
+  >(null);
   const [bundleCost, changeBundleCost] = useState(0);
 
-  const onSubmit = () => {
-    // todo: pin confirm
+  const {
+    remaining = 0,
+    name,
+    edgeWalletId = '',
+    walletPublicKey,
+  } = currentFioAddress;
+
+  const onSubmit = (values: FormValues) => {
+    setSubmitData(values);
   };
 
-  // Handle results
-  useEffect(() => {
-    // todo: set proper results
-    setResultsData(results);
-  }, [results]);
+  const onSuccess = () => {
+    setProcessing(false);
+  };
 
-  if (resultsData) return <ConfirmContainer />;
+  const onCancel = () => {
+    setSubmitData(null);
+    setProcessing(false);
+  };
+
+  const submit = async ({
+    keys,
+    data,
+  }: {
+    keys: WalletKeys;
+    data: FormValues;
+  }) => {
+    const params: {
+      fioAddress: string;
+      connectList: PublicAddressDoublet[];
+      keys: WalletKeys;
+    } = {
+      fioAddress: name,
+      connectList: data.tokens,
+      keys,
+    };
+    try {
+      const actionResults = await minWaitTimeFunction(
+        () => linkTokens(params),
+        TOKEN_LINK_MIN_WAIT_TIME,
+      );
+      setResultsData(actionResults);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSubmitData(null);
+    }
+  };
+
+  const onBack = (formProps: FormRenderProps<FormValues>) => {
+    const { form } = formProps;
+    form.reset();
+    form.mutators.push('tokens');
+    setResultsData(null);
+    changeBundleCost(0);
+  };
+
+  const onRetry = () => {
+    setSubmitData(resultsData.connect.failed);
+  };
+
   return (
-    <ActionContainer
-      bundleCost={bundleCost}
-      containerName={CONTAINER_NAMES.LINK}
-      name={name}
-      onActionButtonClick={() => null} // todo: set action
-      remaining={remaining}
-      isDisabled={hasEmtptyFields}
-    >
+    <>
+      <EdgeConfirmAction
+        onSuccess={onSuccess}
+        onCancel={onCancel}
+        submitAction={submit}
+        data={submitData}
+        action={CONFIRM_PIN_ACTIONS.ADD_TOKEN}
+        processing={processing}
+        setProcessing={setProcessing}
+        fioWalletEdgeId={edgeWalletId}
+      />
       <Form
         onSubmit={onSubmit}
         validate={validate}
         mutators={{
           ...arrayMutators,
         }}
-      >
-        {({
-          handleSubmit,
-          form: {
-            mutators: { push },
-          },
-          values,
-        }) => (
-          <form onSubmit={handleSubmit}>
-            <AddTokenForm
-              values={values}
-              push={push}
-              changeBundleCost={changeBundleCost}
-            />
-          </form>
+        render={formProps => (
+          <AddTokenForm
+            formProps={formProps}
+            containerName={CONTAINER_NAMES.ADD}
+            results={resultsData}
+            name={name}
+            remaining={remaining}
+            bundleCost={bundleCost}
+            changeBundleCost={changeBundleCost}
+            onBack={() => onBack(formProps)}
+            onRetry={onRetry}
+            walletPublicKey={walletPublicKey}
+          />
         )}
-      </Form>
-    </ActionContainer>
+      />
+    </>
   );
 };
 

@@ -3,7 +3,7 @@ import Dropdown from 'react-dropdown';
 import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import classes from './styles/DeleteToken.module.scss';
+import classes from '../styles/CheckedDropdown.module.scss';
 
 export const DROPDOWN_OPTIONS = {
   ALL: 'All',

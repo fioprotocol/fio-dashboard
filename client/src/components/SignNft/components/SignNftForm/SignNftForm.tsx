@@ -10,16 +10,18 @@ import BundledTransactionBadge from '../../../Badges/BundledTransactionBadge/Bun
 import LowBalanceBadge from '../../../Badges/LowBalanceBadge/LowBalanceBadge';
 import FioName from '../../../common/FioName/FioName';
 import SubmitButton from '../../../common/SubmitButton/SubmitButton';
-import NftChainCodeField from '../../../NftChainCodeField/NftChainCodeField';
+import ChainCodeField from '../../../ChainCodeField/ChainCodeField';
 
 import { BADGE_TYPES } from '../../../Badge/Badge';
 import { COLOR_TYPE } from '../../../Input/ErrorBadge';
 
 import { validate } from './validation';
 
-import classes from '../../SignNft.module.scss';
+import { NFT_CHAIN_CODE_LIST } from '../../../../constants/common';
 
 import { SignNftFormProps } from '../../types';
+
+import classes from '../../SignNft.module.scss';
 
 const SignNFTForm = (props: SignNftFormProps) => {
   const {
@@ -84,13 +86,14 @@ const SignNFTForm = (props: SignNftFormProps) => {
             )}
             <div className={classes.chainContainer}>
               <Col>
-                <NftChainCodeField
+                <ChainCodeField
                   hasAutoWidth={true}
                   isSimple={true}
                   isHigh={true}
                   errorColor={COLOR_TYPE.WARN}
                   disabled={isEdit}
                   prefixLabel="Chain Code"
+                  list={NFT_CHAIN_CODE_LIST}
                 />
               </Col>
               <Col>
@@ -174,23 +177,19 @@ const SignNFTForm = (props: SignNftFormProps) => {
               hasLowBalance={hasLowBalance}
               messageText="Not enough bundles"
             />
-            <Row>
-              <Col className="text-center">
-                <SubmitButton
-                  text={isEdit ? 'Update' : 'Sign NFT'}
-                  disabled={
-                    hasLowBalance ||
-                    processing ||
-                    !formRenderProps.valid ||
-                    alreadySigned ||
-                    formRenderProps.submitting ||
-                    (isEdit && formRenderProps.pristine)
-                  }
-                  withTopMargin={true}
-                  loading={processing}
-                />
-              </Col>
-            </Row>
+            <SubmitButton
+              text={isEdit ? 'Update' : 'Sign NFT'}
+              disabled={
+                hasLowBalance ||
+                processing ||
+                !formRenderProps.valid ||
+                alreadySigned ||
+                formRenderProps.submitting ||
+                (isEdit && formRenderProps.pristine)
+              }
+              withTopMargin={true}
+              loading={processing}
+            />
           </Container>
         </form>
       )}

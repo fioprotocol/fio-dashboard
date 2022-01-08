@@ -1,17 +1,25 @@
-import { FeePrice } from '../../../types';
+import React from 'react';
+import { FeePrice, PublicAddressDoublet } from '../../../types';
 
 export type ResultsData = {
   feeCollected?: FeePrice;
-  name: string;
+  name?: string;
   publicKey?: string;
   changedStatus?: string;
   other?: any;
   error?: string;
+  updated?: PublicAddressDoublet[];
+  failed?: PublicAddressDoublet[];
 };
 
 export type ResultsProps = {
   title: string;
+  titleTo?: string;
+  titleFrom?: string;
+  titleAmount?: string;
   hasAutoWidth?: boolean;
+  fullWidth?: boolean;
+  bottomElement?: React.ReactNode;
   pageName?: string;
   errorType?: string;
   results: ResultsData;

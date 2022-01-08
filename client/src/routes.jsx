@@ -19,9 +19,10 @@ import FioDomainTransferPage from './pages/FioDomainTransferPage';
 import FioDomainStatusChangePage from './pages/FioDomainStatusChangePage';
 import FioAddressRenewPage from './pages/FioAddressRenewPage';
 import FioDomainRenewPage from './pages/FioDomainRenewPage';
-import TokenListPage from './pages/LinkTokenPage';
+import TokenListPage from './pages/TokenListPage';
 import DeleteTokenPage from './pages/DeleteTokenPage';
 import AddTokenPage from './pages/AddTokenPage';
+import EditTokenPage from './pages/EditTokenPage';
 import SettingsPage from './pages/SettingsPage';
 import RefHomePage from './pages/RefHomePage';
 import RefSignNftPage from './pages/RefSignNftPage';
@@ -33,6 +34,7 @@ import EmailConfirmGatePage from './pages/EmailConfirmGatePage';
 import FioAddressSignaturesPage from './pages/FioAddressSignaturesPage';
 import FioAddressSignPage from './pages/FioAddressSignPage';
 import FioAddressNftPage from './pages/FioAddressNftPage';
+import FioTokensRequestPage from './pages/FioTokensRequestPage';
 import NftValidationPage from './pages/NftValidationPage';
 import WalletsPage from './pages/WalletsPage';
 import WalletPage from './pages/WalletPage';
@@ -148,10 +150,20 @@ const Routes = () => (
           path={`${LIST_TOKEN_PARENT_ROUTE}${ROUTES.ADD_TOKEN}`}
           component={AddTokenPage}
         />
+        <PrivateRoute
+          path={`${LIST_TOKEN_PARENT_ROUTE}${ROUTES.EDIT_TOKEN}`}
+          component={EditTokenPage}
+        />
 
         <PrivateRoute path={ROUTES.SETTINGS} component={SettingsPage} exact />
 
         <PrivateRoute path={ROUTES.SEND} component={SendPage} exact />
+
+        <PrivateRoute
+          path={ROUTES.FIO_TOKENS_REQUEST}
+          component={FioTokensRequestPage}
+          exact
+        />
 
         <Route
           path={ROUTES.ACCOUNT_RECOVERY}

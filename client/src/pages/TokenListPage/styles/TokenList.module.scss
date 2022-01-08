@@ -1,0 +1,22 @@
+@import '../../../components/LinkTokenList/styles/CommonLayout.module.scss';
+
+.container {
+  width: 100%;
+  max-width: 830px;
+  display: flex;
+  flex-direction: column;
+
+  .spinner {
+    align-self: center;
+    font-size: 1.5em;
+  }
+}
+
+.publicAddresses {
+  margin-top: -10px;
+}
+
+.infoBadge {
+  display: flex;
+  justify-content: center;
+}

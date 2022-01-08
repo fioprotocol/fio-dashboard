@@ -15,6 +15,7 @@
   }
 
   .icon {
+    margin-left: 20px;
     font-size: 13px;
     color: $gray-main;
   }
@@ -29,8 +30,6 @@
   align-items: center;
   font-size: 13px;
   line-height: 15px;
-  display: flex;
-  align-items: center;
   justify-content: space-between;
   border: none;
   cursor: pointer;
@@ -44,7 +43,7 @@
     background-color: $white;
   }
 
-  &.isSimple {  
+  &.isSimple {
     box-shadow: none;
   }
 

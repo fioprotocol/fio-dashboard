@@ -4,8 +4,6 @@ import { Field } from 'react-final-form';
 import ChainCodeCustomDropdown from './ChainCodeCustomDropdown';
 import Input, { INPUT_UI_STYLES } from '../Input/Input';
 
-import { NFT_CHAIN_CODE_LIST } from '../../constants/common';
-
 export const CUSTOM_CHAIN_CODE = 'customChainCode';
 
 type Props = {
@@ -16,9 +14,12 @@ type Props = {
   errorColor?: string;
   disabled?: boolean;
   prefixLabel?: string;
+  list: { id: string; name: string }[];
+  fieldName?: string;
+  hideError?: boolean;
 };
 
-const NftChainCodeField: React.FC<Props> = props => {
+const ChainCodeField: React.FC<Props> = props => {
   const {
     hasAutoWidth,
     isSimple,
@@ -27,6 +28,9 @@ const NftChainCodeField: React.FC<Props> = props => {
     errorColor,
     disabled,
     prefixLabel,
+    list,
+    fieldName = 'chainCode',
+    hideError,
   } = props;
   const [showCustom, toggleCustom] = useState(false);
 
@@ -36,7 +40,7 @@ const NftChainCodeField: React.FC<Props> = props => {
   return showCustom || disabled ? (
     <Field
       type="text"
-      name="chainCode"
+      name={fieldName}
       component={Input}
       onClose={closeCustom}
       upperCased={true}
@@ -46,13 +50,14 @@ const NftChainCodeField: React.FC<Props> = props => {
       errorColor={errorColor}
       disabled={disabled}
       prefixLabel={prefixLabel}
+      hideError={hideError}
     />
   ) : (
     <Field
       type="dropdown"
-      name="chainCode"
+      name={fieldName}
       component={ChainCodeCustomDropdown}
-      options={NFT_CHAIN_CODE_LIST.map(chainCode => ({
+      options={list.map(chainCode => ({
         id: chainCode.id,
         name: `${chainCode.name} (${chainCode.id})`,
       }))}
@@ -67,4 +72,4 @@ const NftChainCodeField: React.FC<Props> = props => {
   );
 };
 
-export default NftChainCodeField;
+export default ChainCodeField;

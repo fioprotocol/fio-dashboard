@@ -15,10 +15,11 @@ import {
   CONFIRM_PIN_ACTIONS,
 } from '../../constants/common';
 import { BADGE_TYPES } from '../Badge/Badge';
-import { ERROR_TYPES } from '../common/TransactionResults/Results';
+import { ERROR_TYPES } from '../common/TransactionResults/constants';
+import { ACTIONS } from '../../constants/fio';
 
 import { setFees } from '../../util/prices';
-import { hasFioAddressDelimiter } from '../../utils';
+import { hasFioAddressDelimiter, isDomain } from '../../utils';
 
 import { ContainerProps } from './types';
 import { ResultsData } from '../common/TransactionResults/types';
@@ -53,15 +54,14 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   }, []);
 
   const submit = async ({ keys }: SubmitActionParams) => {
-    apis.fio.setWalletFioSdk(keys);
-    try {
-      const result = await apis.fio.renew(name, feePrice.nativeFio);
-      apis.fio.clearWalletFioSdk();
-      return result;
-    } catch (e) {
-      apis.fio.clearWalletFioSdk();
-      throw e;
+    if (isDomain(name)) {
+      return await apis.fio.executeAction(keys, ACTIONS.renewFioDomain, {
+        fioDomain: name,
+        maxFee: feePrice.nativeFio,
+      });
     }
+
+    throw new Error("Can't renew fio address");
   };
 
   const hasLowBalance =

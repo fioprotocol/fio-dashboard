@@ -6,7 +6,7 @@ import PriceBadge from '../../../Badges/PriceBadge/PriceBadge';
 
 import { ResultsProps } from '../types';
 
-import classes from '../Results.module.scss';
+import classes from '../styles/Results.module.scss';
 
 const RenewResults = (props: ResultsProps) => {
   const {

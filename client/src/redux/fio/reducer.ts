@@ -1,4 +1,7 @@
 import { combineReducers } from 'redux';
+import isEqual from 'lodash/isEqual';
+import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
+
 import { LOGIN_SUCCESS as EDGE_LOGIN_SUCCESS } from '../edge/actions';
 import { ADD_WALLET_SUCCESS, UPDATE_WALLET_NAME } from '../account/actions';
 import {
@@ -8,19 +11,21 @@ import {
 } from '../profile/actions';
 import * as actions from './actions';
 
-import { transformNft } from '../../util/fio';
+import { transformNft, normalizePublicAddresses } from '../../util/fio';
 
 import { WALLET_CREATED_FROM } from '../../constants/common';
+import { FIO_CHAIN_CODE } from '../../constants/fio';
+
 import { DEFAULT_BALANCES } from '../../util/prices';
 
 import {
   FioWalletDoublet,
   FioAddressDoublet,
   FioDomainDoublet,
-  LinkActionResult,
   NFTTokenDoublet,
   FeePrice,
   WalletsBalances,
+  MappedPublicAddresses,
 } from '../../types';
 
 export const emptyWallet: FioWalletDoublet = {
@@ -34,11 +39,6 @@ export const emptyWallet: FioWalletDoublet = {
   from: WALLET_CREATED_FROM.EDGE,
 };
 
-const defaultLinkState: LinkActionResult = {
-  connect: { updated: [], failed: [] },
-  disconnect: { updated: [], failed: [] },
-};
-
 export default combineReducers({
   loading(state: boolean = false, action) {
     switch (action.type) {
@@ -46,6 +46,7 @@ export default combineReducers({
       case actions.GET_FIO_ADDRESSES_REQUEST:
       case actions.GET_FIO_DOMAINS_REQUEST:
       case actions.FIO_SIGNATURE_REQUEST:
+      case actions.GET_ALL_PUBLIC_ADDRESS_REQUEST:
         return true;
       case actions.REFRESH_BALANCE_SUCCESS:
       case actions.REFRESH_BALANCE_FAILURE:
@@ -55,17 +56,8 @@ export default combineReducers({
       case actions.GET_FIO_DOMAINS_FAILURE:
       case actions.FIO_SIGNATURE_SUCCESS:
       case actions.FIO_SIGNATURE_FAILURE:
-        return false;
-      default:
-        return state;
-    }
-  },
-  linkProcessing(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.LINK_TOKENS_REQUEST:
-        return true;
-      case actions.LINK_TOKENS_SUCCESS:
-      case actions.LINK_TOKENS_FAILURE:
+      case actions.GET_ALL_PUBLIC_ADDRESS_SUCCESS:
+      case actions.GET_ALL_PUBLIC_ADDRESS_FAILURE:
         return false;
       default:
         return state;
@@ -248,6 +240,90 @@ export default combineReducers({
         return state;
     }
   },
+  mappedPublicAddresses(state: MappedPublicAddresses = {}, action) {
+    switch (action.type) {
+      case actions.GET_ALL_PUBLIC_ADDRESS_SUCCESS: {
+        const currentFioAddress = state[action.fioAddress];
+
+        const { publicAddresses: currentPubAddress } = currentFioAddress || {};
+        const publicAddresses = currentPubAddress ? [...currentPubAddress] : [];
+        for (const item of action.data.public_addresses.filter(
+          (pubAddress: PublicAddress) =>
+            pubAddress.chain_code.toUpperCase() !== FIO_CHAIN_CODE,
+        )) {
+          const itemPublicAddress = {
+            chainCode: item.chain_code,
+            tokenCode: item.token_code,
+            publicAddress: item.public_address,
+          };
+          const index = publicAddresses.findIndex(publicAddress =>
+            isEqual(publicAddress, itemPublicAddress),
+          );
+          if (index < 0) {
+            publicAddresses.push(itemPublicAddress);
+            continue;
+          }
+          publicAddresses[index] = itemPublicAddress;
+        }
+        return {
+          ...state,
+          [action.fioAddress]: {
+            publicAddresses,
+            more: action.data.more,
+          },
+        };
+      }
+      case actions.UPDATE_PUBLIC_ADDRESSES: {
+        const currentFioAddress = state[action.fioAddress];
+        if (!currentFioAddress) return state;
+
+        const { publicAddresses: currentPubAddress } = currentFioAddress || {};
+        const publicAddresses = currentPubAddress ? [...currentPubAddress] : [];
+
+        const {
+          addPublicAddresses,
+          deletePublicAddresses,
+        } = action.updPublicAddresses;
+
+        for (const itemPublicAddress of normalizePublicAddresses(
+          addPublicAddresses,
+        )) {
+          const index = publicAddresses.findIndex(publicAddress =>
+            isEqual(publicAddress, itemPublicAddress),
+          );
+          if (index < 0) {
+            publicAddresses.push(itemPublicAddress);
+            continue;
+          }
+          publicAddresses[index] = itemPublicAddress;
+        }
+
+        for (const itemPublicAddress of normalizePublicAddresses(
+          deletePublicAddresses,
+        )) {
+          const index = publicAddresses.findIndex(publicAddress =>
+            isEqual(publicAddress, itemPublicAddress),
+          );
+
+          if (index > -1) {
+            publicAddresses.splice(index, 1);
+            continue;
+          }
+          publicAddresses[index] = itemPublicAddress;
+        }
+
+        return {
+          ...state,
+          [action.fioAddress]: {
+            ...currentFioAddress,
+            publicAddresses,
+          },
+        };
+      }
+      default:
+        return state;
+    }
+  },
   fees(state: { [endpoint: string]: FeePrice } = {}, action) {
     switch (action.type) {
       case actions.SET_FEE:
@@ -267,18 +343,6 @@ export default combineReducers({
         return state;
     }
   },
-  linkResults(state: LinkActionResult = defaultLinkState, action) {
-    switch (action.type) {
-      case actions.LINK_TOKENS_REQUEST:
-        return defaultLinkState;
-      case actions.LINK_TOKENS_SUCCESS:
-        return action.data;
-      case actions.LINK_TOKENS_FAILURE:
-        return { ...defaultLinkState, error: action.data };
-      default:
-        return state;
-    }
-  },
   nftList(state: NFTTokenDoublet[] = [], action) {
     switch (action.type) {
       case actions.FIO_SIGNATURE_SUCCESS: {
@@ -287,6 +351,17 @@ export default combineReducers({
       case LOGOUT_SUCCESS:
       case actions.CLEAR_NFT_SIGNATURES:
         return [];
+      default:
+        return state;
+    }
+  },
+  showTokenListInfoBadge(state: boolean = true, action) {
+    switch (action.type) {
+      case actions.TOGGLE_TOKEN_LIST_INFO_BADGE: {
+        return action.enabled;
+      }
+      case LOGOUT_SUCCESS:
+        return true;
       default:
         return state;
     }

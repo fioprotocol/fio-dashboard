@@ -100,6 +100,12 @@ export type FioAddressDoublet = {
   walletPublicKey: string;
 };
 
+export type FioAddressWithPubAddresses = FioAddressDoublet & {
+  edgeWalletId: string;
+  publicAddresses: PublicAddressDoublet[];
+  more: boolean;
+}
+
 export type FioDomainDoublet = {
   name: string;
   expiration: string;
@@ -147,7 +153,7 @@ export type FioNameItemProps = {
   remaining?: number;
   isPublic?: number;
   walletPublicKey?: string;
-  publicAddresses?: PublicAddressDoublet[];
+  edgeWalletId?: string;
 };
 
 export type LinkResult = {
@@ -286,3 +292,7 @@ export type TransactionItem = {
   blockHeight: number;
   otherParams: any;
 };
+
+export type MappedPublicAddresses = {
+  [fioAddress: string]: { publicAddresses: PublicAddressDoublet[]; more: boolean };
+}

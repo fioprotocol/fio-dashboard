@@ -7,6 +7,8 @@ import SetVisibilityResults from '../../components/common/TransactionResults/com
 
 import { CONFIRM_PIN_ACTIONS, DOMAIN_STATUS } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
+import { ACTIONS } from '../../constants/fio';
+
 import { setFees } from '../../util/prices';
 
 import apis from '../../api';
@@ -47,19 +49,11 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
 
   // Submit
   const submit = async ({ keys }: SubmitActionParams) => {
-    apis.fio.setWalletFioSdk(keys);
-    try {
-      const result = await apis.fio.setDomainVisibility(
-        name,
-        statusToChange === DOMAIN_STATUS.PUBLIC,
-        feePrice.nativeFio,
-      );
-      apis.fio.clearWalletFioSdk();
-      return result;
-    } catch (e) {
-      apis.fio.clearWalletFioSdk();
-      throw e;
-    }
+    return await apis.fio.executeAction(keys, ACTIONS.setFioDomainVisibility, {
+      fioDomain: name,
+      isPublic: statusToChange === DOMAIN_STATUS.PUBLIC,
+      maxFee: feePrice.nativeFio,
+    });
   };
 
   const onSubmit = () => {
@@ -76,7 +70,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
         ? setFees(result.fee_collected, roe)
         : feePrice,
       name,
-      changedStatus: domainStatus,
+      changedStatus: statusToChange,
     });
     setProcessing(false);
   };

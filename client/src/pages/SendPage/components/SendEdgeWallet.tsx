@@ -10,6 +10,7 @@ import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 import { FioWalletDoublet } from '../../../types';
 import { SendTokensValues } from '../types';
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
+import { ACTIONS, FIO_CHAIN_CODE } from '../../../constants/fio';
 
 type Props = {
   fioWallet: FioWalletDoublet;
@@ -33,18 +34,21 @@ const SendEdgeWallet: React.FC<Props> = props => {
   } = props;
 
   const send = async ({ keys, data }: SubmitActionParams) => {
-    apis.fio.setWalletFioSdk(keys);
-    const result = await apis.fio.sendTokens(data.to, data.amount, fee);
-    if (data.memo || data.receiverFioAddress) {
+    const result = await apis.fio.executeAction(keys, ACTIONS.transferTokens, {
+      payeeFioPublicKey: data.to,
+      amount: data.amount,
+      maxFee: fee,
+    });
+    if (data.memo) {
       try {
-        await apis.fio.walletFioSDK.genericAction('recordObtData', {
+        await apis.fio.executeAction(keys, ACTIONS.recordObtData, {
           payerFioAddress: data.from,
           payeeFioAddress: data.receiverFioAddress,
           payerTokenPublicAddress: keys.public,
           payeeTokenPublicAddress: data.to,
           amount: apis.fio.sufToAmount(data.amount),
-          chainCode: 'FIO',
-          tokenCode: 'FIO',
+          chainCode: FIO_CHAIN_CODE,
+          tokenCode: FIO_CHAIN_CODE,
           obtId: result.transaction_id,
           payeeFioPublicKey: data.to,
           memo: data.memo,
@@ -54,7 +58,6 @@ const SendEdgeWallet: React.FC<Props> = props => {
         console.error(e);
       }
     }
-    apis.fio.clearWalletFioSdk();
 
     return result;
   };
