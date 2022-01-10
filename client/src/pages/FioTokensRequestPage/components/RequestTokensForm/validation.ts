@@ -1,9 +1,9 @@
 import { Validators, ValidationSchema } from '@lemoncode/fonk';
 import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
-import { isNumber } from '@lemoncode/fonk-is-number-validator';
 import {
   fioAddressExistsValidator,
   matchFieldValidator,
+  isNumberValidator,
 } from '../../../../util/validators';
 
 const MAX_MEMO_SIZE = 20;
@@ -33,9 +33,7 @@ const validationSchema: ValidationSchema = {
         message: 'Required.',
       },
       {
-        // @ts-ignore
-        validator: isNumber.validator,
-        // customArgs: { strictTypes: true },
+        validator: isNumberValidator,
         message: 'Please enter valid amount.',
       },
     ],
