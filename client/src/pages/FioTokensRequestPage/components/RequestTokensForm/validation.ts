@@ -55,8 +55,11 @@ const onSubmitValidationSchema: ValidationSchema = {
     payerFioAddress: [
       {
         validator: fioAddressExistsValidator,
-        customArgs: { fieldIdToCompare: 'payeeTokenPublicAddress' },
-        message: 'Please enter valid FIO Crypto Handle.',
+        customArgs: {
+          fieldIdToCompare: 'payeeTokenPublicAddress',
+          sameWalletMessage: "Can't request to same wallet.",
+        },
+        message: 'Please enter valid FIO Address.',
       },
     ],
   },
