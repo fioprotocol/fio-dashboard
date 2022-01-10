@@ -34,7 +34,7 @@ const verifyAddress = async props => {
   if (address && domain) {
     const isAvail = await apis.fio.availCheck(`${address}@${domain}`);
     if (isAvail && isAvail.is_registered === 1) {
-      errors.address = 'This FIO Address is already registered.';
+      errors.address = 'This FIO Crypto Handle is already registered.';
     }
   }
 
@@ -73,7 +73,7 @@ export const addressValidation = async props => {
   }
 
   if (!address) {
-    errors.address = 'Address Field Should Be Filled';
+    errors.address = 'FIO Crypto Handle Field Should Be Filled';
   }
 
   if (!domain && !modified.domain) {
@@ -82,7 +82,7 @@ export const addressValidation = async props => {
 
   if (address && !ADDRESS_REGEXP.test(address)) {
     errors.address =
-      'Address only allows letters, numbers and dash in the middle';
+      'FIO Crypto Handle only allows letters, numbers and dash in the middle';
   }
 
   if (!domain && modified.domain) {
@@ -97,7 +97,7 @@ export const addressValidation = async props => {
   }
 
   if (address && domain && address.length + domain.length > 63) {
-    errors.address = 'Address should be less than 63 characters';
+    errors.address = 'FIO Crypto Handle should be less than 63 characters';
   }
 
   if (!isEmpty(errors)) {

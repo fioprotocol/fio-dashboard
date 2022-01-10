@@ -43,6 +43,6 @@ export const validate = async (values: { transferAddress: string }) => {
 
   throw {
     transferAddress:
-      'Unfortunately that FIO Address or FIO Public Key is incorrect',
+      'Unfortunately that FIO Crypto Handle or FIO Public Key is incorrect',
   };
 };

@@ -17,9 +17,9 @@ import classes from './AddressDomainForm.module.scss';
 
 const FORM_TYPES = {
   [ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS]: {
-    title: 'Create FIO Address',
+    title: 'Create FIO Crypto Handle',
     subtitle:
-      'Registering a FIO Address is fast and easy. Simply add a username and select a domain.',
+      'Registering a FIO Crypto Handle is fast and easy. Simply add a username and select a domain.',
   },
   [ADDRESS_DOMAIN_BADGE_TYPE.DOMAIN]: {
     title: 'Purchase a FIO Domain',
@@ -46,7 +46,7 @@ const FormContainer = props => {
     isDesktop,
   } = props;
 
-  const buttonText = `Get My FIO ${isDomain ? 'Domain' : 'Address'}`;
+  const buttonText = `Get My FIO ${isDomain ? 'Domain' : 'Crypto Handle'}`;
 
   useEffect(() => {
     if (!isHomepage && isAddress && !isEmpty(formState)) {
@@ -97,12 +97,12 @@ const FormContainer = props => {
             domains={domains}
             tooltip={
               <>
-                <span className="boldText">Address Cost</span>
+                <span className="boldText">FIO Crypto Handle Cost</span>
                 <span>
                   {' '}
-                  - Address Cost will fluctuate based on market condition. In
-                  addition, if you are already have a free public address, there
-                  will be cost associated with another address
+                  - FIO Crypto Handle Cost will fluctuate based on market
+                  condition. In addition, if you are already have a free public
+                  address, there will be cost associated with another address
                 </span>
               </>
             }

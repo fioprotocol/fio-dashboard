@@ -30,13 +30,14 @@ import classes from './FioNameTransferContainer.module.scss';
 
 const FIO_NAME_DATA = {
   address: {
-    infoMessage: 'Transferring a FIO Address will purge all linked wallets',
+    infoMessage:
+      'Transferring a FIO Crypto Handle will purge all linked wallets',
     backLink: ROUTES.FIO_ADDRESSES,
     forwardLink: ROUTES.FIO_ADDRESS_TRANSFER_RESULTS,
   },
   domain: {
     infoMessage:
-      'Transferring a FIO Domain will not transfer ownership of FIO Addresses on that Domain',
+      'Transferring a FIO Domain will not transfer ownership of FIO Crypto Handles on that Domain',
     backLink: ROUTES.FIO_DOMAINS,
     forwardLink: ROUTES.FIO_DOMAIN_TRANSFER_RESULTS,
   },
@@ -153,7 +154,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   if (!currentWallet.publicKey && !processing)
     return <Redirect to={{ pathname: FIO_NAME_DATA[fioNameType].backLink }} />;
 
-  const title = `Transfer FIO ${fioNameLabels[fioNameType]} Ownership`;
+  const title = `Transfer ${fioNameLabels[fioNameType]} Ownership`;
 
   return (
     <>

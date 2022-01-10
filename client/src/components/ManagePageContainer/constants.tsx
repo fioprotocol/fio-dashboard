@@ -3,20 +3,20 @@ import colors from '../../assets/styles/colorsToJs.module.scss';
 
 export const BANNER_DATA = {
   address: {
-    title: 'Manage My FIO Addresses',
-    warningTitle: 'Address Renewal',
+    title: 'Manage My FIO Crypto Handles',
+    warningTitle: 'FIO Crypto Handle Renewal',
     warningMessage:
-      'One or more FIO Addresses below has expired or is about to expire. Renew today to ensure you do not loose the address.',
+      'One or more FIO Crypto Handles below has expired or is about to expire. Renew today to ensure you do not loose the address.',
     infoTitle: 'Link to Your Crypto',
     infoMessage:
-      'One or more FIO Addresses below are not linked to other crypto currencies.',
+      'One or more FIO Crypto Handles below are not linked to other crypto currencies.',
   },
   domain: {
     title: 'Manage My FIO Domain',
     warningTitle: 'Domain Renewal',
     warningMessage:
       'One or more FIO Domain below has expired or is about to expire. Renew today to ensure you do not loose the domain.',
-    infoTitle: 'Address Registration',
+    infoTitle: 'FIO Crypto Handle Registration',
     infoMessage:
       'Select “Register Address” below to add an address to one of your domains.',
   },
@@ -25,16 +25,17 @@ export const BANNER_DATA = {
 export const CTA_BADGE = {
   address: {
     link: ROUTES.FIO_ADDRESSES_SELECTION,
-    button: 'Register FIO Address',
-    title: 'Need an Additional Address?',
-    text: 'Add an address to a custom domain.',
+    button: 'Register FIO Crypto Handle',
+    title: 'Need an Additional FIO Crypto Handle?',
+    text: 'Add a FIO Crypto Handle to a custom domain.',
     color: colors['main-background'],
   },
   domain: {
     link: ROUTES.FIO_DOMAINS_SELECTION,
     button: 'Register FIO Domain',
     title: 'Need another domain?',
-    text: 'Want to register an address or addresses with a custom domain?',
+    text:
+      'Want to register a FIO Crypto Handle or FIO Crypto Handles with a custom domain?',
     color: colors.cyan,
   },
 };
@@ -52,16 +53,16 @@ export const BUTTONS_TITLE = {
   renew: 'Renew',
   link: 'Link',
   nft: 'NFT signature',
-  register: 'Register FIO Address',
+  register: 'Register FIO Crypto Handle',
 };
 
 export const SUBTITLE = {
-  [PAGE_NAME.ADDRESS]: 'FIO Addreses owned by all your wallets.',
+  [PAGE_NAME.ADDRESS]: 'FIO Crypto Handle owned by all your wallets.',
   [PAGE_NAME.DOMAIN]: 'FIO Domains owned by all your wallets.',
 };
 
 export const TABLE_HEADERS_LIST = {
-  [PAGE_NAME.ADDRESS]: ['Address', 'Bundles', 'Actions'],
+  [PAGE_NAME.ADDRESS]: ['FIO Crypto Handles', 'Bundles', 'Actions'],
   [PAGE_NAME.DOMAIN]: ['Domain', 'Status', 'Exp. Date', 'Actions'],
 };
 
@@ -71,6 +72,6 @@ export const FIO_OWNERSHIP = {
 };
 
 export const PLURAL_NAME = {
-  [PAGE_NAME.ADDRESS]: 'Addresses',
+  [PAGE_NAME.ADDRESS]: 'FIO Crypto Handles',
   [PAGE_NAME.DOMAIN]: 'Domains',
 };

@@ -34,7 +34,7 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
             className={classnames(classes.badgeContainer, classes.longTitle)}
           >
             <p className={classes.title}>
-              {titleFrom || 'Sending FIO Address'}
+              {titleFrom || 'Sending FIO Crypto Handle'}
             </p>
             <p className={classes.item}>{from}</p>
           </div>
@@ -42,7 +42,9 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
       )}
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>{titleTo || 'Send to Address'}</p>
+          <p className={classes.title}>
+            {titleTo || 'Send to FIO Crypto Handle'}
+          </p>
           <p className={classes.item}>{to}</p>
         </div>
       </Badge>
