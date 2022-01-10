@@ -10,7 +10,6 @@ import { validate } from './validation';
 import { linkTokens } from '../../api/middleware/fio';
 import { minWaitTimeFunction } from '../../utils';
 
-import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { TOKEN_LINK_MIN_WAIT_TIME } from '../../constants/fio';
 
@@ -30,12 +29,7 @@ const AddToken: React.FC<AddTokenProps> = props => {
   >(null);
   const [bundleCost, changeBundleCost] = useState(0);
 
-  const {
-    remaining = 0,
-    name,
-    edgeWalletId = '',
-    walletPublicKey,
-  } = currentFioAddress;
+  const { name, edgeWalletId = '' } = currentFioAddress;
 
   const onSubmit = (values: FormValues) => {
     setSubmitData(values);
@@ -112,15 +106,12 @@ const AddToken: React.FC<AddTokenProps> = props => {
         render={formProps => (
           <AddTokenForm
             formProps={formProps}
-            containerName={CONTAINER_NAMES.ADD}
+            currentFioAddress={currentFioAddress}
             results={resultsData}
-            name={name}
-            remaining={remaining}
             bundleCost={bundleCost}
             changeBundleCost={changeBundleCost}
             onBack={() => onBack(formProps)}
             onRetry={onRetry}
-            walletPublicKey={walletPublicKey}
           />
         )}
       />

@@ -32,9 +32,7 @@ const DeleteTokenPage: React.FC<Props> = props => {
   const { currentFioAddress, loading } = props;
   const {
     remaining = 0,
-    name,
     edgeWalletId = '',
-    walletPublicKey,
     publicAddresses = [],
   } = currentFioAddress;
 
@@ -164,9 +162,8 @@ const DeleteTokenPage: React.FC<Props> = props => {
       />
       <ActionContainer
         containerName={CONTAINER_NAMES.DELETE}
-        name={name}
+        currentFioAddress={currentFioAddress}
         bundleCost={bundleCost}
-        remaining={remaining}
         isDisabled={!hasChecked || remaining === 0}
         onActionButtonClick={onActionClick}
         loading={loading}
@@ -174,7 +171,6 @@ const DeleteTokenPage: React.FC<Props> = props => {
         changeBundleCost={changeBundleCost}
         onBack={onBack}
         onRetry={onRetry}
-        walletPublicKey={walletPublicKey}
       >
         <div className={classes.container}>
           <div className={classes.actionContainer}>
