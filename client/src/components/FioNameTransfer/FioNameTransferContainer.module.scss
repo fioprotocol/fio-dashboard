@@ -5,7 +5,7 @@
 .container {
   .nameContainer {
     display: grid;
-    grid-template-columns: 80px auto;
+    grid-template-columns: 150px auto;
     font-size: 1em;
     margin-top: 20px;
     @include proxima-nova-semibold;
