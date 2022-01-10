@@ -32,6 +32,7 @@ export default class Fio {
   walletFioSDK: FIOSDK_LIB | null = null;
   actionEndPoints: { [actionName: string]: string } = {
     ...EndPoint,
+    [ACTIONS.addNft]: 'add_nft',
     [ACTIONS.pushTransaction]: 'push_transaction',
   };
 
