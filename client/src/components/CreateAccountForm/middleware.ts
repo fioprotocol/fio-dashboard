@@ -83,7 +83,7 @@ export const createAccount = async (
     await fioWallet.renameWallet(DEFAULT_WALLET_OPTIONS.name);
     result.fioWallet = fioWallet;
   } catch (e) {
-    console.log(e);
+    console.error(e);
     result.errors = { email: e.message };
   }
 

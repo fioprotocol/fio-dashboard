@@ -4,7 +4,11 @@ import { withLastLocation } from 'react-router-last-location';
 import { withRouter } from 'react-router-dom';
 
 import { compose } from '../../utils';
-import { resetSuccessState, nonce, signup } from '../../redux/profile/actions';
+import {
+  resetSuccessState,
+  makeNonce,
+  signup,
+} from '../../redux/profile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 
 import {
@@ -35,7 +39,7 @@ const actions = {
   onSubmit: signup,
   resetSuccessState,
   showLoginModal,
-  nonce,
+  makeNonce,
 };
 
 const reduxConnect = connect(selector, actions);
