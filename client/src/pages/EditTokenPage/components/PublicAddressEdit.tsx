@@ -56,7 +56,6 @@ const PublicAddressEdit: React.FC<Props> = props => {
       type="text"
       value={editedPubAddress}
       onChange={onInputChange}
-      className={classes.input}
       autoFocus={true}
       onBlur={onEditClick}
       maxLength={MAX_PUBLIC_ADDRESS_LENGTH}
