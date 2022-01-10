@@ -14,7 +14,7 @@ export const CONTAINER_TYPES = {
     buttonText: 'Edit',
   },
   [CONTAINER_NAMES.ADD]: {
-    title: 'Link your FIO Address',
+    title: 'Link your FIO Crypto Handle',
     buttonText: 'Link Now',
   },
 };

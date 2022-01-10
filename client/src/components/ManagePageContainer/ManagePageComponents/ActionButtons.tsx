@@ -92,7 +92,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
         <Button title={isSmallDesktop ? BUTTONS_TITLE.register : ''}>
           <FontAwesomeIcon icon="at" className={classes.atIcon} />
           {!isSmallDesktop &&
-            (isDesktop ? BUTTONS_TITLE.register : 'Register Address')}
+            (isDesktop ? BUTTONS_TITLE.register : 'Register FIO Crypto Handle')}
         </Button>
       </Link>
       {renderSettings()}

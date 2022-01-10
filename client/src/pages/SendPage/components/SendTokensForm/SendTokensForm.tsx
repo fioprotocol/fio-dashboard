@@ -52,9 +52,9 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
                 <Field
                   name="from"
                   type="dropdown"
-                  label="Your Sending FIO Address"
+                  label="Your Sending FIO Crypto Handle"
                   component={Input}
-                  placeholder="Select FIO Address"
+                  placeholder="Select FIO Crypto Handle"
                   options={fioAddresses.map(({ name }) => ({
                     id: name,
                     name,
@@ -72,7 +72,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
                   errorColor={COLOR_TYPE.WARN}
                   component={Input}
                   disabled={true}
-                  label="Your Sending FIO Address"
+                  label="Your Sending FIO Crypto Handle"
                 />
               )}
             </>
@@ -110,7 +110,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
             <Field
               name="to"
               type="text"
-              placeholder="FIO Address or Public Key"
+              placeholder="FIO Crypto Handle or Public Key"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={Input}

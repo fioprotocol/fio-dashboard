@@ -64,7 +64,9 @@ const SignNFTForm = (props: SignNftFormProps) => {
                     <div
                       className={`${classes.fioAddress} d-flex justify-content-start`}
                     >
-                      <div className={classes.fioAddressLabel}>FIO Address</div>
+                      <div className={classes.fioAddressLabel}>
+                        FIO Crypto Handle
+                      </div>
                       <CustomDropdown
                         value={selectedFioAddressName}
                         list={fioAddresses.map(({ name }) => name)}

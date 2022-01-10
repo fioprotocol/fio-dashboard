@@ -12,14 +12,14 @@ const AddressWidget = () => {
         <span className="boldText">Hi!</span> Get Your{' '}
         <span className={classes.newLine}>
           <span className={classnames(classes.coloredText, 'boldText')}>
-            FIO Address
+            FIO Crypto Handle
           </span>{' '}
           Now
         </span>
       </h1>
       <p className={classes.subtitle}>
-        Registering a FIO Address is fast and easy. Simply add a username and
-        select a domain.
+        Registering a FIO Crypto Handle is fast and easy. Simply add a username
+        and select a domain.
       </p>
       <div className={classes.form}>
         <AddressDomainForm isHomepage formName={FORM_NAMES.ADDRESS} />

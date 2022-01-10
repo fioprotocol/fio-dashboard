@@ -58,7 +58,9 @@ const AddTokenForm: React.FC<FormProps> = props => {
         {...props}
       >
         <div className={classes.actionContainer}>
-          <h5 className={classes.subtitle}>Address Linking Information</h5>
+          <h5 className={classes.subtitle}>
+            FIO Crypto Handle Linking Information
+          </h5>
           <Button className={classes.button} onClick={addTokenRow}>
             <FontAwesomeIcon icon="plus-circle" className={classes.icon} />
             Add Token

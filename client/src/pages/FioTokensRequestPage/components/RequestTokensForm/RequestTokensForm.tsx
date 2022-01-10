@@ -54,9 +54,9 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
                 <Field
                   name="payeeFioAddress"
                   type="dropdown"
-                  label="Your Requesting FIO Address"
+                  label="Your Requesting FIO Crypto Handle"
                   component={Input}
-                  placeholder="Select FIO Address"
+                  placeholder="Select FIO Crypto Handle"
                   options={fioAddresses.map(({ name }) => ({
                     id: name,
                     name,
@@ -74,7 +74,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
                   errorColor={COLOR_TYPE.WARN}
                   component={Input}
                   disabled={true}
-                  label="Your Requesting FIO Address"
+                  label="Your Requesting FIO Crypto Handle"
                 />
               )}
             </>
@@ -105,7 +105,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
             <Field
               name="payerFioAddress"
               type="text"
-              placeholder="FIO Address or Public Key"
+              placeholder="FIO Crypto Handle or Public Key"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={Input}

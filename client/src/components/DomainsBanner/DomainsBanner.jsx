@@ -11,7 +11,7 @@ const DomainsBanner = () => {
       <h5 className={classes.header}>FIO DOMAINS</h5>
       <h3 className={classes.title}>Looking for Something More Custom?</h3>
       <p className={classes.subtitle}>
-        Register a custom domain for your own unique address creation
+        Register a custom domain for your own unique FIO Crypto Handle creation
         opportunities.
       </p>
       <Button variant="primary" className={classes.button}>

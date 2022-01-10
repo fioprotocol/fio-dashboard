@@ -54,7 +54,7 @@ const DashboardPage: React.FC<Props> = props => {
           </div>
         )}
         <div className={classes.listHeader}>
-          <h5 className={classes.subtitle}>FIO Addresses:</h5>
+          <h5 className={classes.subtitle}>FIO Crypto Handles:</h5>
           <Link to={ROUTES.FIO_ADDRESSES}>
             <Button className={classes.actionButton}>Manage Addresses</Button>
           </Link>
@@ -64,7 +64,7 @@ const DashboardPage: React.FC<Props> = props => {
         ) : fioAddresses.length > 0 ? (
           fioAddresses.map(address => (
             <DashboardListItem
-              title="Address"
+              title="FIO Crypto Handle"
               listItem={address.name}
               key={address.name}
             />
@@ -72,8 +72,8 @@ const DashboardPage: React.FC<Props> = props => {
         ) : (
           <div className={classes.infoBadgeContainer}>
             <InfoBadge
-              title="No FIO Addresses"
-              message="You have no FIO Addresses for this account"
+              title="No FIO Crypto Handles"
+              message="You have no FIO Crypto Handles for this account"
             />
           </div>
         )}

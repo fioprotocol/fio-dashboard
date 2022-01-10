@@ -54,12 +54,12 @@ const AddressForm = props => {
           lowerCased
           tooltip={
             <>
-              <span className="boldText">Address Cost</span>
+              <span className="boldText">FIO Crypto Handle Cost</span>
               <span>
                 {' '}
-                - Address Cost will fluctuate based on market condition. In
-                addition, if you are already have a free public address, there
-                will be cost associated with another address
+                - FIO Crypto Handle Cost will fluctuate based on market
+                condition. In addition, if you are already have a free public
+                address, there will be cost associated with another address
               </span>
             </>
           }

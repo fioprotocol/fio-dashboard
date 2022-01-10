@@ -42,7 +42,7 @@ export const NFT_ITEMS_TITLE_NAMES: {
     id: 'tokenId',
   },
   fioAddress: {
-    name: 'FIO Address',
+    name: 'FIO Crypto Handle',
     id: 'fioAddress',
   },
   url: {

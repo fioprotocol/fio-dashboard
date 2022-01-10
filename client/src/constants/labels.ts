@@ -27,9 +27,9 @@ export const LINK_LABELS: { [linkKey: string]: string } = {
   [LINKS.PROFILE]: 'My profile',
   [LINKS.ABOUT_US]: 'About Us',
   [LINKS.CONTACT_US]: 'Contact Us',
-  [LINKS.FIO_ADDRESSES_SELECTION]: 'FIO Addresses Selection',
+  [LINKS.FIO_ADDRESSES_SELECTION]: 'FIO Crypto Handles Selection',
   [LINKS.FIO_DOMAINS_SELECTION]: 'FIO Domains Selection',
-  [LINKS.FIO_ADDRESSES]: 'FIO Addresses',
+  [LINKS.FIO_ADDRESSES]: 'FIO Crypto Handles',
   [LINKS.FIO_DOMAINS]: 'FIO Domains',
   [LINKS.FIO_REQUESTS]: 'FIO Requests',
   [LINKS.FIO_WALLET]: 'FIO Wallet',
@@ -39,6 +39,6 @@ export const LINK_LABELS: { [linkKey: string]: string } = {
 };
 
 export const fioNameLabels: { [fioNameType: string]: string } = {
-  [ADDRESS]: 'Address',
-  [DOMAIN]: 'Domain',
+  [ADDRESS]: 'FIO Crypto Handle',
+  [DOMAIN]: 'FIO Domain',
 };

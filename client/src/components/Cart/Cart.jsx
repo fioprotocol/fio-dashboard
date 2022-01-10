@@ -91,15 +91,15 @@ const Cart = props => {
             <FontAwesomeIcon icon="search" className={classes.ctaIcon} />
           </div>
           <p className={classNames(classes.ctaText, 'boldText')}>
-            Search for more FIO addresses?
+            Search for more FIO Crypto Handles?
           </p>
         </Link>
         {walletCount > 1 && (
           <div className={classes.walletContainer}>
             <h6 className={classes.title}>FIO Wallet Assignment</h6>
             <p className={classes.subtitle}>
-              Please choose which FIO wallet you would like these addresses
-              assigned to.
+              Please choose which FIO wallet you would like these FIO Crypto
+              Handles assigned to.
             </p>
             <Form
               onSubmit={() => {}}

@@ -52,8 +52,8 @@ const CartItem = props => {
               className={classes.infoIcon}
             />
             <p className={classes.infoText}>
-              <span className="boldText">Address Cost</span> - Your account
-              already has a free address associated with it.
+              <span className="boldText">FIO Crypto Handle Cost</span> - Your
+              account already has a free FIO Crypto Handle associated with it.
             </p>
           </div>
         </Badge>

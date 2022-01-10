@@ -112,8 +112,8 @@ const SendPage: React.FC<ContainerProps> = props => {
       <InfoBadge
         type={BADGE_TYPES.INFO}
         show={true}
-        title="Sending FIO Address"
-        message="You may use any of your FIO addresses associated with this wallet to send FIO Tokens"
+        title="Sending FIO Crypto Handle"
+        message="You may use any of your FIO Crypto Handles associated with this wallet to send FIO Tokens"
       />
     ) : null;
 
