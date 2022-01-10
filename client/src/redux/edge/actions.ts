@@ -64,7 +64,7 @@ export const login = ({
         }
       }
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
     return { account, fioWallets, options, voucherId };
   },

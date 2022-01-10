@@ -1,7 +1,7 @@
 import { put, takeEvery } from 'redux-saga/effects';
 import { getWalletKeys } from '../../utils';
 import { LOGIN_SUCCESS } from './actions';
-import { nonce } from '../profile/actions';
+import { makeNonce } from '../profile/actions';
 import { refreshBalance } from '../fio/actions';
 import { logout } from './actions';
 import { Action } from '../types';
@@ -19,7 +19,7 @@ export function* edgeLoginSuccess() {
 
     yield put(
       // @ts-ignore
-      nonce(account.username, keys, options && options.otpKey, voucherId),
+      makeNonce(account.username, keys, options && options.otpKey, voucherId),
     );
   });
 }

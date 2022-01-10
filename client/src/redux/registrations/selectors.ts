@@ -12,13 +12,13 @@ export const roeSetDate = (state: ReduxState) => state[prefix].roeSetDate;
 export const domains = createSelector(
   registrationDomains,
   refProfileInfo,
-  (domains, refProfileInfo) =>
+  (regDomainItems, refProfileInfo) =>
     refProfileInfo != null && refProfileInfo.code
       ? refProfileInfo.settings.domains.map((refDomain: string) => ({
           domain: refDomain,
           free: true,
         }))
-      : domains,
+      : regDomainItems,
 );
 
 export const captchaResult = (state: ReduxState) => state[prefix].captchaResult;

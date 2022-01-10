@@ -10,19 +10,14 @@ export const refProfileQueryParams = (state: ReduxState) =>
   state[prefix].params;
 export const refLinkError = (state: ReduxState) => state[prefix].refLinkError;
 export const refStep = (state: ReduxState) => state[prefix].step;
-export const homePageLink = createSelector(refProfileInfo, refProfileInfo =>
-  refProfileInfo != null &&
-  refProfileInfo.code != null &&
-  refProfileInfo.code !== ''
+export const homePageLink = createSelector(refProfileInfo, info =>
+  info != null && info.code != null && info.code !== ''
     ? putParamsToUrl(ROUTES.REF_PROFILE_HOME, {
-        refProfileCode: refProfileInfo.code,
+        refProfileCode: info.code,
       })
     : ROUTES.HOME,
 );
 export const isRefFlow = createSelector(
   refProfileInfo,
-  refProfileInfo =>
-    refProfileInfo != null &&
-    refProfileInfo.code != null &&
-    refProfileInfo.code !== '',
+  info => info != null && info.code != null && info.code !== '',
 );

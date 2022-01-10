@@ -65,6 +65,7 @@ export function* setFeesService() {
     const recalculatedFees: { [endpoint: string]: FeePrice } = {};
 
     for (const endpoint in fees) {
+      if (endpoint == null) continue;
       recalculatedFees[endpoint] = calculateFeeValues(
         fees[endpoint].nativeFio,
         usdtRoe,
@@ -106,6 +107,7 @@ export function* setBalancesService() {
     };
 
     for (const publicKey in walletsBalances.wallets) {
+      if (publicKey == null) continue;
       recalculatedBalances.wallets[publicKey] = calculateBalances(
         {
           balance: walletsBalances.wallets[publicKey].total.nativeFio,

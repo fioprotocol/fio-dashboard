@@ -10,7 +10,7 @@ import { minWaitTimeFunction } from '../../utils';
 
 import { GetState } from '../init';
 
-export const prefix: string = 'profile';
+export const prefix = 'profile';
 
 export const AUTH_CHECK_REQUEST = `${prefix}/AUTH_CHECK_REQUEST`;
 export const AUTH_CHECK_SUCCESS = `${prefix}/AUTH_CHECK_SUCCESS`;
@@ -34,7 +34,7 @@ export const NONCE_REQUEST = `${prefix}/NONCE_REQUEST`;
 export const NONCE_SUCCESS = `${prefix}/NONCE_SUCCESS`;
 export const NONCE_FAILURE = `${prefix}/NONCE_FAILURE`;
 
-export const nonce = (
+export const makeNonce = (
   username: string,
   keys: WalletKeysObj,
   otpKey?: string,
