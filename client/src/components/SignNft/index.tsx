@@ -14,6 +14,7 @@ import {
 import apis from '../../api';
 
 import { DEFAULT_FEE_PRICES } from '../../util/prices';
+import { ACTIONS } from '../../constants/fio';
 
 import { ReduxState } from '../../redux/init';
 
@@ -24,12 +25,14 @@ const reduxConnect = connect(
     feePrice: (state: ReduxState) => {
       const { fees } = state.fio;
 
-      return fees[apis.fio.actionEndPoints.signNft] || DEFAULT_FEE_PRICES;
+      return (
+        fees[apis.fio.actionEndPoints[ACTIONS.addNft]] || DEFAULT_FEE_PRICES
+      );
     },
   }),
   {
     getFee: (fioAddress: string) =>
-      getFee(apis.fio.actionEndPoints.signNft, fioAddress),
+      getFee(apis.fio.actionEndPoints[ACTIONS.addNft], fioAddress),
     refreshFioNames,
     getNFTSignatures,
   },
