@@ -115,13 +115,11 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
             {renderRequester()}
             <Field
               name="payerFioAddress"
-              isDebounce
               type="text"
               placeholder="FIO Crypto Handle or Public Key"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={TextInput}
-              validateFields={['payeeFioAddress']}
               showCopyButton={true}
               disabled={loading}
               loading={validating}
