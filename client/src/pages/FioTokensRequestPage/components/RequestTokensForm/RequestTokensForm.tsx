@@ -1,8 +1,8 @@
 import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 
-import { formValidation } from './validation';
-import { RequestTokensProps } from '../../types';
+import { formValidation, submitValidation } from './validation';
+import { RequestTokensProps, RequestTokensValues } from '../../types';
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
 import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
@@ -20,6 +20,13 @@ const NEW_FUND_REQUEST_BUNDLE_COST = 2;
 const RequestTokensForm: React.FC<RequestTokensProps> = props => {
   const { loading, fioWallet, fioAddresses } = props;
 
+  const handleSubmit = async (values: RequestTokensValues) => {
+    const validationResult = await submitValidation.validateForm(values);
+    if (validationResult) return validationResult;
+
+    return props.onSubmit(values);
+  };
+
   const initialValues: {
     payeeFioAddress?: string;
     payeeTokenPublicAddress: string;
@@ -36,7 +43,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
 
   return (
     <Form
-      onSubmit={props.onSubmit}
+      onSubmit={handleSubmit}
       validate={formValidation.validateForm}
       initialValues={initialValues}
     >
@@ -91,7 +98,9 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
             : false;
 
         const submitDisabled =
-          !formRenderProps.valid ||
+          formRenderProps.hasValidationErrors ||
+          (formRenderProps.hasSubmitErrors &&
+            !formRenderProps.modifiedSinceLastSubmit) ||
           formRenderProps.submitting ||
           loading ||
           notEnoughBundles;
