@@ -4,6 +4,7 @@ import { Field, Form, FormRenderProps } from 'react-final-form';
 import { formValidation, submitValidation } from './validation';
 import { RequestTokensProps, RequestTokensValues } from '../../types';
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
+import TextInput from '../../../../components/Input/TextInput';
 import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 
@@ -50,6 +51,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
       {(formRenderProps: FormRenderProps) => {
         const {
           values: { payeeFioAddress },
+          validating,
         } = formRenderProps;
 
         const renderRequester = () => {
@@ -113,13 +115,16 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
             {renderRequester()}
             <Field
               name="payerFioAddress"
+              isDebounce
               type="text"
               placeholder="FIO Crypto Handle or Public Key"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
-              component={Input}
+              component={TextInput}
+              validateFields={['payeeFioAddress']}
               showCopyButton={true}
               disabled={loading}
+              loading={validating}
               label="Request From"
             />
 
