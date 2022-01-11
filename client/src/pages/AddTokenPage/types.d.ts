@@ -3,7 +3,7 @@ import { FormRenderProps } from 'react-final-form';
 import { PublicAddressDoublet, FioAddressWithPubAddresses } from '../../types';
 
 export type AddTokenProps = {
-  currentFioAddress: FioAddressWithPubAddresses;
+  fioCryptoHandle: FioAddressWithPubAddresses;
 };
 
 export type FormValues = {

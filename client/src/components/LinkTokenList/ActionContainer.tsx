@@ -30,7 +30,7 @@ const ActionContainer: React.FC<Props> = props => {
     children,
     containerName,
     isDisabled,
-    currentFioAddress,
+    fioCryptoHandle,
     onActionButtonClick,
     loading,
     results,
@@ -39,7 +39,7 @@ const ActionContainer: React.FC<Props> = props => {
     onRetry,
   } = props;
 
-  const { name, remaining } = currentFioAddress;
+  const { name, remaining } = fioCryptoHandle;
 
   const hasLowBalance = remaining - bundleCost < 0;
 
@@ -48,7 +48,7 @@ const ActionContainer: React.FC<Props> = props => {
   if (results)
     return (
       <LinkTokenListResults
-        currentFioAddress={currentFioAddress}
+        fioCryptoHandle={fioCryptoHandle}
         results={results}
         containerName={containerName}
         bundleCost={bundleCost}

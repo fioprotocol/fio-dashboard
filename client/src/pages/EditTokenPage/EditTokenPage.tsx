@@ -25,7 +25,7 @@ import {
 import classes from './styles/EditTokenPage.module.scss';
 
 type Props = {
-  currentFioAddress: FioAddressWithPubAddresses;
+  fioCryptoHandle: FioAddressWithPubAddresses;
 };
 
 type EditTokenElement = {
@@ -39,7 +39,7 @@ type EditTokenElement = {
 
 const EditTokenPage: React.FC<Props> = props => {
   const {
-    currentFioAddress: {
+    fioCryptoHandle: {
       publicAddresses,
       remaining,
       edgeWalletId,
@@ -183,7 +183,7 @@ const EditTokenPage: React.FC<Props> = props => {
       />
       <ActionContainer
         containerName={CONTAINER_NAMES.EDIT}
-        currentFioAddress={props.currentFioAddress}
+        fioCryptoHandle={props.fioCryptoHandle}
         bundleCost={bundleCost}
         onActionButtonClick={onActionClick}
         results={resultsData}
