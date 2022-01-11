@@ -5,7 +5,7 @@ import arrayMutators from 'final-form-arrays';
 import AddTokenForm from './copmonents/AddTokenForm';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 
-import { validate } from './validation';
+import { validate as validation } from './validation';
 
 import { linkTokens } from '../../api/middleware/fio';
 import { minWaitTimeFunction } from '../../utils';
@@ -29,7 +29,7 @@ const AddToken: React.FC<AddTokenProps> = props => {
   >(null);
   const [bundleCost, changeBundleCost] = useState(0);
 
-  const { name, edgeWalletId = '' } = currentFioAddress;
+  const { name, edgeWalletId = '', publicAddresses } = currentFioAddress;
 
   const onSubmit = (values: FormValues) => {
     setSubmitData(values);
@@ -84,6 +84,8 @@ const AddToken: React.FC<AddTokenProps> = props => {
   const onRetry = () => {
     setSubmitData(resultsData.connect.failed);
   };
+
+  const validate = (values: FormValues) => validation(values, publicAddresses);
 
   return (
     <>
