@@ -153,7 +153,7 @@
   }
 }
 
-.addressContainer {
+.fioCryptoHandleContainer {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -161,7 +161,7 @@
   align-items: center;
   color: $dark-jungle-green;
 
-  .address {
+  .fioCryptoHandle {
     margin-bottom: 0;
     margin-right: 30px;
     word-break: break-word;
@@ -289,11 +289,11 @@
     }
   }
 
-  .addressContainer {
+  .fioCryptoHandleContainer {
     flex-wrap: wrap;
     justify-content: space-between;
 
-    .address, .price {
+    .fioCryptoHandle, .price {
       margin-bottom: 15px;
     }
 

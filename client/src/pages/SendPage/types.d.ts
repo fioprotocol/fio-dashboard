@@ -1,7 +1,7 @@
 import { RouteComponentProps } from 'react-router-dom';
 import {
   FeePrice,
-  FioAddressDoublet,
+  FioCryptoHandleDoublet,
   FioWalletDoublet,
   WalletBalances,
 } from '../../types';
@@ -14,14 +14,14 @@ export type SendTokensValues = {
   from?: string;
   fromPubKey: string;
   to: string;
-  receiverFioAddress?: string;
+  receiverFioCryptoHandle?: string;
   amount: number;
   memo?: string;
 };
 
 export type SendTokensProps = {
   fioWallet: FioWalletDoublet;
-  fioAddresses: FioAddressDoublet[];
+  fioCryptoHandles: FioCryptoHandleDoublet[];
   fee: FeePrice;
   balance: WalletBalances;
   loading: boolean;
@@ -35,7 +35,7 @@ export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
 
 export interface ContainerProps extends ContainerOwnProps {
   fioWallet: FioWalletDoublet;
-  fioAddresses: FioAddressDoublet[];
+  fioCryptoHandles: FioCryptoHandleDoublet[];
   loading: boolean;
   roe: number;
   feePrice: FeePrice;

@@ -19,7 +19,7 @@ import { ERROR_TYPES } from '../common/TransactionResults/constants';
 import { ACTIONS } from '../../constants/fio';
 
 import { setFees } from '../../util/prices';
-import { hasFioAddressDelimiter, isDomain } from '../../utils';
+import { hasFioCryptoHandleDelimiter, isDomain } from '../../utils';
 
 import { ContainerProps } from './types';
 import { ResultsData } from '../common/TransactionResults/types';
@@ -44,12 +44,12 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   const { costFio, costUsdc } = feePrice;
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<{
-    fioAddress: string;
+    fioCryptoHandle: string;
   } | null>(null);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
   useEffect(() => {
-    getFee(hasFioAddressDelimiter(name));
+    getFee(hasFioCryptoHandleDelimiter(name));
     refreshBalance(currentWallet.publicKey);
   }, []);
 
@@ -68,7 +68,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
     currentWallet && feePrice && currentWallet.balance < feePrice.costFio;
 
   const onSubmit = () => {
-    setSubmitData({ fioAddress: name });
+    setSubmitData({ fioCryptoHandle: name });
   };
   const onCancel = () => {
     setSubmitData(null);

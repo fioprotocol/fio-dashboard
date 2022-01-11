@@ -8,17 +8,17 @@ import { ROUTES } from '../../constants/routes';
 
 import { putParamsToUrl } from '../../utils';
 
-import { FioAddressDoublet, NFTTokenDoublet } from '../../types';
+import { FioCryptoHandleDoublet, NFTTokenDoublet } from '../../types';
 
 type Props = {
   nft: { address: string; currentNft: NFTTokenDoublet };
-  fioAddresses: FioAddressDoublet[];
+  fioCryptoHandles: FioCryptoHandleDoublet[];
 };
 
 const FioAddressNftPage: React.FC<Props> = props => {
   const {
     nft: { address, currentNft },
-    fioAddresses,
+    fioCryptoHandles,
   } = props;
   const { metadata } = currentNft || {};
 
@@ -35,7 +35,7 @@ const FioAddressNftPage: React.FC<Props> = props => {
     creatorUrl,
   };
 
-  if (!currentNft || !address || isEmpty(fioAddresses))
+  if (!currentNft || !address || isEmpty(fioCryptoHandles))
     return (
       <Redirect
         to={{
@@ -47,7 +47,7 @@ const FioAddressNftPage: React.FC<Props> = props => {
     <SignNft
       isEdit={true}
       initialValues={initialValues}
-      fioAddressName={address}
+      fioCryptoHandleName={address}
       backTo={putParamsToUrl(ROUTES.FIO_ADDRESS_SIGNATURES, {
         address,
       })}

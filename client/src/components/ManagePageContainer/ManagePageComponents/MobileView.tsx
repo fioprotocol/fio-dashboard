@@ -16,7 +16,7 @@ const MobileView: React.FC<DefaultProps> = props => {
     showInfoBadge,
     toggleShowInfoBadge,
     onItemModalOpen,
-    showFioAddressName,
+    showFioCryptoHandleName,
   } = props;
 
   return (
@@ -31,7 +31,7 @@ const MobileView: React.FC<DefaultProps> = props => {
               key={name}
               onClick={() => onItemModalOpen(fioNameItem)}
             >
-              {showFioAddressName ? (
+              {showFioCryptoHandleName ? (
                 <FioAddress
                   name={name}
                   showInfoBadge={showInfoBadge}

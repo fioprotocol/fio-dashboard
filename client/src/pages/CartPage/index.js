@@ -7,7 +7,10 @@ import { cartItems, paymentWalletPublicKey } from '../../redux/cart/selectors';
 import { deleteItem, recalculate, setWallet } from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
 
-import { hasFreeAddress, isAuthenticated } from '../../redux/profile/selectors';
+import {
+  hasFreeFioCryptoHandle,
+  isAuthenticated,
+} from '../../redux/profile/selectors';
 import { domains, prices } from '../../redux/registrations/selectors';
 import { fioWallets as userWallets } from '../../redux/fio/selectors';
 
@@ -21,7 +24,7 @@ const reduxConnect = connect(
     userWallets,
     paymentWalletPublicKey,
     isAuthenticated,
-    hasFreeAddress,
+    hasFreeFioCryptoHandle,
   }),
   {
     deleteItem,

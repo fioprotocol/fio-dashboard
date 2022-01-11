@@ -18,7 +18,7 @@ import { NFTTokenDoublet } from '../../types';
 import classes from './FioAddressSignaturesPage.module.scss';
 
 type Props = {
-  getNFTSignatures: (searchParams: { fioAddress: string }) => void;
+  getNFTSignatures: (searchParams: { fioCryptoHandle: string }) => void;
   nftSignatures: NFTTokenDoublet[];
   loading: boolean;
   match: {
@@ -36,7 +36,7 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
     },
   } = props;
   useEffect(() => {
-    getNFTSignatures({ fioAddress: address });
+    getNFTSignatures({ fioCryptoHandle: address });
   }, [getNFTSignatures]);
 
   return (

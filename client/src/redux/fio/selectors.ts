@@ -10,10 +10,11 @@ export const loading = (state: ReduxState) => state[prefix].loading;
 export const linkProcessing = (state: ReduxState) =>
   state[prefix].linkProcessing;
 export const fioWallets = (state: ReduxState) => state[prefix].fioWallets;
-export const fioAddresses = (state: ReduxState) => state[prefix].fioAddresses;
+export const fioCryptoHandles = (state: ReduxState) =>
+  state[prefix].fioCryptoHandles;
 export const fioDomains = (state: ReduxState) => state[prefix].fioDomains;
-export const hasMoreAddresses = (state: ReduxState) =>
-  state[prefix].hasMoreAddresses;
+export const hasMoreCryptoHandles = (state: ReduxState) =>
+  state[prefix].hasMoreCryptoHandles;
 export const hasMoreDomains = (state: ReduxState) =>
   state[prefix].hasMoreDomains;
 export const fees = (state: ReduxState) => state[prefix].fees;
@@ -47,17 +48,17 @@ export const currentWallet = (
   return wallet || emptyWallet;
 };
 
-export const currentFioAddress = createSelector(
+export const currentFioCryptoHandle = createSelector(
   [
     fioWallets,
-    fioAddresses,
+    fioCryptoHandles,
     mappedPublicAddresses,
     (state: ReduxState, ownProps: any) => ownProps.match.params.id,
   ],
   // tslint:disable-next-line:no-shadowed-variable
-  (fioWallets, fioAddresses, mappedPublicAddresses, id) => {
+  (fioWallets, fioCryptoHandles, mappedPublicAddresses, id) => {
     const currentAddress = getElementByFioName({
-      fioNameList: fioAddresses,
+      fioNameList: fioCryptoHandles,
       name: id,
     });
 

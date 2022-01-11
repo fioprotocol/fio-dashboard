@@ -6,7 +6,7 @@ import { isEmpty } from 'lodash';
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import CounterContainer from '../CounterContainer/CounterContainer';
 import { ROUTES } from '../../constants/routes';
-import { handleFreeAddressCart, deleteCartItem } from '../../utils';
+import { handleFreeFioCryptoHandlesCart, deleteCartItem } from '../../utils';
 
 import classes from './AddressDomainCart.module.scss';
 
@@ -19,7 +19,7 @@ const AddressDomainCart = props => {
     fioWallets,
     prices,
     recalculate,
-    hasFreeAddress,
+    hasFreeFioCryptoHandle,
     isAuthenticated,
     setRedirectPath,
   } = props;
@@ -49,15 +49,15 @@ const AddressDomainCart = props => {
   };
 
   useEffect(() => {
-    if (domains.length === 0 && hasFreeAddress === null) return;
-    handleFreeAddressCart({
+    if (domains.length === 0 && hasFreeFioCryptoHandle === null) return;
+    handleFreeFioCryptoHandlesCart({
       domains,
       recalculate,
       cartItems,
       prices,
-      hasFreeAddress,
+      hasFreeFioCryptoHandle,
     });
-  }, [domains, hasFreeAddress]);
+  }, [domains, hasFreeFioCryptoHandle]);
 
   return (
     <CartSmallContainer isAquaColor={true}>

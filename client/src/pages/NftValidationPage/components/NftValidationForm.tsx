@@ -24,14 +24,14 @@ const validate = (
     if (!values.chainCode) errors.chainCode = 'Required';
     if (!values.contractAddress) errors.contractAddress = 'Required';
   }
-  if (activeOption.id === OPTIONS.fioAddress.id) {
-    if (!values.fioAddress) {
-      errors.fioAddress = 'Required';
+  if (activeOption.id === OPTIONS.fioCryptoHandle.id) {
+    if (!values.fioCryptoHandle) {
+      errors.fioCryptoHandle = 'Required';
     } else {
       try {
-        apis.fio.isFioAddressValid(values.fioAddress);
+        apis.fio.isFioCryptoHandleValid(values.fioCryptoHandle);
       } catch (e) {
-        errors.fioAddress = 'FIO Crypto Handle is not valid';
+        errors.fioCryptoHandle = 'FIO Crypto Handle is not valid';
       }
     }
   }

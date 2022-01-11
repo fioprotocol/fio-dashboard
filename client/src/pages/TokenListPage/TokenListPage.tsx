@@ -16,12 +16,12 @@ import ActionButtons from './components/ActionButtons';
 
 import { usePublicAddresses } from '../../util/hooks';
 
-import { FioAddressWithPubAddresses } from '../../types';
+import { FioCryptoHandleWithPubAddresses } from '../../types';
 
 import classes from './styles/TokenList.module.scss';
 
 type Props = {
-  currentFioAddress: FioAddressWithPubAddresses;
+  currentFioCryptoHandle: FioCryptoHandleWithPubAddresses;
   showTokenListInfoBadge: boolean;
   toggleTokenListInfoBadge: (enabled: boolean) => void;
   loading: boolean;
@@ -29,7 +29,7 @@ type Props = {
 
 const TokenListPage: React.FC<Props & RouteComponentProps> = props => {
   const {
-    currentFioAddress: { name, publicAddresses },
+    currentFioCryptoHandle: { name, publicAddresses },
     match: { url },
     loading,
     showTokenListInfoBadge,

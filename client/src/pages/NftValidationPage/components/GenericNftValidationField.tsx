@@ -5,7 +5,7 @@ import Input, { INPUT_UI_STYLES } from '../../../components/Input/Input';
 import classes from '../styles/GenericNftValidationField.module.scss';
 
 export const FIELDS_NAMES = {
-  FIO_ADDRESS: 'fioAddress',
+  FIO_CRYPTO_HANDLE: 'fioCryptoHandle',
   HASH: 'hash',
   CHAIN_CODE: 'chainCode',
   CONTRACT_ADDRESS: 'contractAddress',
@@ -13,7 +13,7 @@ export const FIELDS_NAMES = {
 };
 
 const FIELDS_PLACEHOLDER = {
-  [FIELDS_NAMES.FIO_ADDRESS]: 'Enter or Paste FIO Crypto Handle',
+  [FIELDS_NAMES.FIO_CRYPTO_HANDLE]: 'Enter or Paste FIO Crypto Handle',
   [FIELDS_NAMES.HASH]: 'Enter or Paste Hash / Media URL',
   [FIELDS_NAMES.CHAIN_CODE]: 'Enter or Paste Chain Code',
   [FIELDS_NAMES.CONTRACT_ADDRESS]: 'Enter or Paste Contract Address',

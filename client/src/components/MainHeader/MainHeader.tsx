@@ -13,7 +13,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     logout: logoutFn,
     isAuthenticated,
     isNotActiveUser,
-    fioAddresses,
+    fioCryptoHandles,
     refProfileLoading,
     refProfileInfo,
     homePageLink,
@@ -55,7 +55,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
           logout={logout}
           closeMenu={closeMenu}
           showLogin={showLogin}
-          hideCart={(isRefFlow && !!fioAddresses.length) || isNotActiveUser}
+          hideCart={(isRefFlow && !!fioCryptoHandles.length) || isNotActiveUser}
           hideNotifications={isRefFlow || isNotActiveUser}
           onlyAuth={isRefFlow || isNotActiveUser}
           showSiteLink={isRefFlow}

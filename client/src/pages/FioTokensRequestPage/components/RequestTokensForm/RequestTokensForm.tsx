@@ -8,7 +8,7 @@ import TextInput from '../../../../components/Input/TextInput';
 import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 
-import { FioAddressDoublet } from '../../../../types';
+import { FioCryptoHandleDoublet } from '../../../../types';
 
 import { FIO_CHAIN_CODE } from '../../../../constants/fio';
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
@@ -19,7 +19,7 @@ import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBa
 const NEW_FUND_REQUEST_BUNDLE_COST = 2;
 
 const RequestTokensForm: React.FC<RequestTokensProps> = props => {
-  const { loading, fioWallet, fioAddresses } = props;
+  const { loading, fioWallet, fioCryptoHandles } = props;
 
   const handleSubmit = async (values: RequestTokensValues) => {
     const validationResult = await submitValidation.validateForm(values);
@@ -38,8 +38,8 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
     tokenCode: FIO_CHAIN_CODE,
     chainCode: FIO_CHAIN_CODE,
   };
-  if (fioAddresses.length) {
-    initialValues.payeeFioAddress = fioAddresses[0].name;
+  if (fioCryptoHandles.length) {
+    initialValues.payeeFioAddress = fioCryptoHandles[0].name;
   }
 
   return (
@@ -55,18 +55,18 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
         } = formRenderProps;
 
         const renderRequester = () => {
-          if (!fioAddresses.length) return null;
+          if (!fioCryptoHandles.length) return null;
 
           return (
             <>
-              {fioAddresses.length > 1 ? (
+              {fioCryptoHandles.length > 1 ? (
                 <Field
                   name="payeeFioAddress"
                   type="dropdown"
                   label="Your Requesting FIO Crypto Handle"
                   component={Input}
                   placeholder="Select FIO Crypto Handle"
-                  options={fioAddresses.map(({ name }) => ({
+                  options={fioCryptoHandles.map(({ name }) => ({
                     id: name,
                     name,
                   }))}
@@ -90,8 +90,8 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
           );
         };
 
-        const selectedAddress: FioAddressDoublet | null = payeeFioAddress
-          ? fioAddresses.find(({ name }) => name === payeeFioAddress)
+        const selectedAddress: FioCryptoHandleDoublet | null = payeeFioAddress
+          ? fioCryptoHandles.find(({ name }) => name === payeeFioAddress)
           : null;
 
         const notEnoughBundles =

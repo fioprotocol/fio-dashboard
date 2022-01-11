@@ -11,10 +11,10 @@ import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 
 import { validate } from './validation';
-import { hasFioAddressDelimiter } from '../../../../utils';
+import { hasFioCryptoHandleDelimiter } from '../../../../utils';
 
 import { SendTokensProps } from '../../types';
-import { FioAddressDoublet } from '../../../../types';
+import { FioCryptoHandleDoublet } from '../../../../types';
 
 import classes from '../../styles/SendTokensForm.module.scss';
 
@@ -22,13 +22,13 @@ import classes from '../../styles/SendTokensForm.module.scss';
 const RECORD_OBT_DATA_BUNDLE_COST = 2;
 
 const SendTokensForm: React.FC<SendTokensProps> = props => {
-  const { loading, fioWallet, fioAddresses, fee, obtDataOn } = props;
+  const { loading, fioWallet, fioCryptoHandles, fee, obtDataOn } = props;
 
   const initialValues: { from?: string; fromPubKey: string } = {
     fromPubKey: fioWallet.publicKey,
   };
-  if (fioAddresses.length) {
-    initialValues.from = fioAddresses[0].name;
+  if (fioCryptoHandles.length) {
+    initialValues.from = fioCryptoHandles[0].name;
   }
 
   return (
@@ -44,18 +44,18 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
 
         const renderSender = () => {
           if (!obtDataOn) return null;
-          if (!fioAddresses.length) return null;
+          if (!fioCryptoHandles.length) return null;
 
           return (
             <>
-              {fioAddresses.length > 1 ? (
+              {fioCryptoHandles.length > 1 ? (
                 <Field
                   name="from"
                   type="dropdown"
                   label="Your Sending FIO Crypto Handle"
                   component={Input}
                   placeholder="Select FIO Crypto Handle"
-                  options={fioAddresses.map(({ name }) => ({
+                  options={fioCryptoHandles.map(({ name }) => ({
                     id: name,
                     name,
                   }))}
@@ -79,15 +79,15 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
           );
         };
 
-        const selectedAddress: FioAddressDoublet | null = from
-          ? fioAddresses.find(({ name }) => name === from)
+        const selectedAddress: FioCryptoHandleDoublet | null = from
+          ? fioCryptoHandles.find(({ name }) => name === from)
           : null;
 
         const showMemo =
           selectedAddress != null &&
           obtDataOn &&
           to &&
-          hasFioAddressDelimiter(to);
+          hasFioCryptoHandleDelimiter(to);
         const hasLowBalance = fee.costFio + amount > fioWallet.available;
         const notEnoughBundles =
           selectedAddress != null

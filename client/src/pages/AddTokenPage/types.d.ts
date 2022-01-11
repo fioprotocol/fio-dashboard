@@ -1,9 +1,12 @@
 import { FormRenderProps } from 'react-final-form';
 
-import { PublicAddressDoublet, FioAddressWithPubAddresses } from '../../types';
+import {
+  PublicAddressDoublet,
+  FioCryptoHandleWithPubAddresses,
+} from '../../types';
 
 export type AddTokenProps = {
-  fioCryptoHandle: FioAddressWithPubAddresses;
+  fioCryptoHandle: FioCryptoHandleWithPubAddresses;
 };
 
 export type FormValues = {

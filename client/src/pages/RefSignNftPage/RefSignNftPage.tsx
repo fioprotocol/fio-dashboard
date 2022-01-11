@@ -4,10 +4,10 @@ import { Redirect, RouteComponentProps } from 'react-router-dom';
 import SignNft from '../../components/SignNft';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 
-import { useFioAddresses } from '../../util/hooks';
+import { useFioCryptoHandles } from '../../util/hooks';
 
 import {
-  FioAddressDoublet,
+  FioCryptoHandleDoublet,
   FioWalletDoublet,
   RefProfile,
   SignNFTParams,
@@ -23,7 +23,7 @@ type Props = {
   edgeAuthLoading: boolean;
   refProfileInfo: RefProfile;
   refProfileQueryParams: SignNFTParams;
-  fioAddresses: FioAddressDoublet[];
+  fioCryptoHandles: FioCryptoHandleDoublet[];
   fioWallets: FioWalletDoublet[];
   homePageLink: string;
 };
@@ -33,13 +33,13 @@ export const RefSignNftPage: React.FC<Props &
   const {
     refProfileQueryParams,
     isAuthenticated,
-    fioAddresses,
+    fioCryptoHandles,
     homePageLink,
   } = props;
 
-  useFioAddresses();
+  useFioCryptoHandles();
 
-  if (!isAuthenticated || !fioAddresses.length) {
+  if (!isAuthenticated || !fioCryptoHandles.length) {
     return (
       <div className="d-flex justify-content-center align-items-center w-100 flex-grow-1">
         <FioLoader />
@@ -57,7 +57,7 @@ export const RefSignNftPage: React.FC<Props &
         creatorUrl: refProfileQueryParams.metadata.creatorUrl,
         ...refProfileQueryParams,
       }}
-      fioAddressName={fioAddresses[0].name}
+      fioCryptoHandleName={fioCryptoHandles[0].name}
     />
   );
 };

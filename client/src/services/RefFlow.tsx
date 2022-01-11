@@ -5,7 +5,7 @@ import { RouterProps, withRouter } from 'react-router-dom';
 
 import { compose, putParamsToUrl } from '../utils';
 import {
-  FioAddressDoublet,
+  FioCryptoHandleDoublet,
   FioWalletDoublet,
   RefProfile,
   RefQueryParams,
@@ -20,7 +20,7 @@ import {
   refProfileQueryParams,
   refStep,
 } from '../redux/refProfile/selectors';
-import { fioWallets, fioAddresses } from '../redux/fio/selectors';
+import { fioWallets, fioCryptoHandles } from '../redux/fio/selectors';
 
 import { setContainedParams } from '../redux/refProfile/actions';
 import { refreshFioNames } from '../redux/fio/actions';
@@ -39,7 +39,7 @@ type Props = {
   refProfileInfo: RefProfile;
   refProfileQueryParams: RefQueryParams;
   refStep: string;
-  fioAddresses: FioAddressDoublet[];
+  fioCryptoHandles: FioCryptoHandleDoublet[];
   fioWallets: FioWalletDoublet[];
   refreshFioNames: (publicKey: string) => void;
   setContainedParams: (params: any) => void;
@@ -48,7 +48,7 @@ type Props = {
 const RefFlow = (props: Props & RouterProps): React.FunctionComponent => {
   const {
     isAuthenticated,
-    fioAddresses,
+    fioCryptoHandles,
     fioWallets,
     refProfileInfo,
     refProfileQueryParams,
@@ -59,7 +59,7 @@ const RefFlow = (props: Props & RouterProps): React.FunctionComponent => {
     refreshFioNames,
   } = props;
 
-  const fioAddressesAmount = fioAddresses.length;
+  const fioCryptoHandleAmount = fioCryptoHandles.length;
 
   useEffect(() => {
     if (
@@ -78,7 +78,7 @@ const RefFlow = (props: Props & RouterProps): React.FunctionComponent => {
       isAuthenticated &&
       refProfileInfo != null &&
       refProfileInfo.code != null &&
-      fioAddressesAmount > 0 &&
+      fioCryptoHandleAmount > 0 &&
       pathname !== ROUTES.PURCHASE &&
       ACTION_ROUTES.indexOf(pathname) < 0
     ) {
@@ -89,7 +89,7 @@ const RefFlow = (props: Props & RouterProps): React.FunctionComponent => {
         }),
       );
     }
-  }, [refProfileInfo, isAuthenticated, fioAddressesAmount, pathname]);
+  }, [refProfileInfo, isAuthenticated, fioCryptoHandleAmount, pathname]);
 
   return null;
 };
@@ -104,7 +104,7 @@ const reduxConnect = connect(
     refProfileQueryParams,
     refLinkError,
     refStep,
-    fioAddresses,
+    fioCryptoHandles,
     fioWallets,
   }),
   {

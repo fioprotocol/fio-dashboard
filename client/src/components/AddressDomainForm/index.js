@@ -8,7 +8,7 @@ import { getDomains } from '../../redux/registrations/actions';
 import { cartItems } from '../../redux/cart/selectors';
 import { getFormState } from '../../redux/forms/selectors';
 import { fioDomains, fioWallets } from '../../redux/fio/selectors';
-import { hasFreeAddress } from '../../redux/profile/selectors';
+import { hasFreeFioCryptoHandle } from '../../redux/profile/selectors';
 import {
   loading as pricesLoading,
   prices,
@@ -38,7 +38,7 @@ const reduxConnect = connect(
       const { isHomepage, formNameGet } = ownProps;
       return !isHomepage ? getFormState(state, formNameGet) : {};
     },
-    hasFreeAddress,
+    hasFreeFioCryptoHandle,
     allowCustomDomains,
   }),
   {

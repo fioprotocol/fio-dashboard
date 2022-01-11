@@ -20,7 +20,7 @@ import { DEFAULT_BALANCES } from '../../util/prices';
 
 import {
   FioWalletDoublet,
-  FioAddressDoublet,
+  FioCryptoHandleDoublet,
   FioDomainDoublet,
   NFTTokenDoublet,
   FeePrice,
@@ -160,31 +160,31 @@ export default combineReducers({
         return state;
     }
   },
-  fioAddresses(state: FioAddressDoublet[] = [], action) {
+  fioCryptoHandles(state: FioCryptoHandleDoublet[] = [], action) {
     switch (action.type) {
       case actions.RESET_FIO_NAMES: {
         return [];
       }
       case actions.REFRESH_FIO_NAMES_SUCCESS:
       case actions.GET_FIO_ADDRESSES_SUCCESS: {
-        const fioAddresses = [...state];
+        const fioCryptoHandles = [...state];
         for (const item of action.data.fio_addresses) {
-          const fioAddress = {
+          const fioCryptoHandle = {
             name: item.fio_address,
             expiration: item.expiration,
             remaining: item.remaining_bundled_tx,
             walletPublicKey: action.publicKey,
           };
-          const index = fioAddresses.findIndex(
-            ({ name }) => name === fioAddress.name,
+          const index = fioCryptoHandles.findIndex(
+            ({ name }) => name === fioCryptoHandle.name,
           );
           if (index < 0) {
-            fioAddresses.push(fioAddress);
+            fioCryptoHandles.push(fioCryptoHandle);
             continue;
           }
-          fioAddresses[index] = fioAddress;
+          fioCryptoHandles[index] = fioCryptoHandle;
         }
-        return fioAddresses;
+        return fioCryptoHandles;
       }
       case LOGOUT_SUCCESS:
         return [];
@@ -224,7 +224,7 @@ export default combineReducers({
         return state;
     }
   },
-  hasMoreAddresses(state: { [publicKey: string]: number } = {}, action) {
+  hasMoreCryptoHandles(state: { [publicKey: string]: number } = {}, action) {
     switch (action.type) {
       case actions.GET_FIO_ADDRESSES_SUCCESS:
         return { ...state, [action.publicKey]: action.data.more };
@@ -243,9 +243,10 @@ export default combineReducers({
   mappedPublicAddresses(state: MappedPublicAddresses = {}, action) {
     switch (action.type) {
       case actions.GET_ALL_PUBLIC_ADDRESS_SUCCESS: {
-        const currentFioAddress = state[action.fioAddress];
+        const currentFioCryptoHandle = state[action.fioCryptoHandle];
 
-        const { publicAddresses: currentPubAddress } = currentFioAddress || {};
+        const { publicAddresses: currentPubAddress } =
+          currentFioCryptoHandle || {};
         const publicAddresses = currentPubAddress ? [...currentPubAddress] : [];
         for (const item of action.data.public_addresses.filter(
           (pubAddress: PublicAddress) =>
@@ -267,17 +268,18 @@ export default combineReducers({
         }
         return {
           ...state,
-          [action.fioAddress]: {
+          [action.fioCryptoHandle]: {
             publicAddresses,
             more: action.data.more,
           },
         };
       }
       case actions.UPDATE_PUBLIC_ADDRESSES: {
-        const currentFioAddress = state[action.fioAddress];
-        if (!currentFioAddress) return state;
+        const currentFioCryptoHandle = state[action.fioCryptoHandle];
+        if (!currentFioCryptoHandle) return state;
 
-        const { publicAddresses: currentPubAddress } = currentFioAddress || {};
+        const { publicAddresses: currentPubAddress } =
+          currentFioCryptoHandle || {};
         const publicAddresses = currentPubAddress ? [...currentPubAddress] : [];
 
         const {
@@ -314,8 +316,8 @@ export default combineReducers({
 
         return {
           ...state,
-          [action.fioAddress]: {
-            ...currentFioAddress,
+          [action.fioCryptoHandle]: {
+            ...currentFioCryptoHandle,
             publicAddresses,
           },
         };

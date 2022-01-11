@@ -18,13 +18,13 @@ import {
   WalletKeys,
   PublicAddressDoublet,
   LinkActionResult,
-  FioAddressWithPubAddresses,
+  FioCryptoHandleWithPubAddresses,
 } from '../../types';
 
 import classes from './styles/DeleteToken.module.scss';
 
 type Props = {
-  fioCryptoHandle: FioAddressWithPubAddresses;
+  fioCryptoHandle: FioCryptoHandleWithPubAddresses;
   loading: boolean;
 };
 
@@ -109,12 +109,12 @@ const DeleteTokenPage: React.FC<Props> = props => {
 
   const submit = async ({ keys }: { keys: WalletKeys }) => {
     const params: {
-      fioAddress: string;
+      fioCryptoHandle: string;
       disconnectList: PublicAddressDoublet[];
       keys: WalletKeys;
       disconnectAll: boolean;
     } = {
-      fioAddress: fioCryptoHandle.name,
+      fioCryptoHandle: fioCryptoHandle.name,
       disconnectList: pubAddressesArr.filter(
         pubAddress => pubAddress.isChecked,
       ),

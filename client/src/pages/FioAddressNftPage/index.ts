@@ -4,7 +4,7 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from '../../utils';
 import FioAddressNftPage from './FioAddressNftPage';
 
-import { fioAddresses } from '../../redux/fio/selectors';
+import { fioCryptoHandles } from '../../redux/fio/selectors';
 
 import { ReduxState } from '../../redux/init';
 
@@ -39,7 +39,7 @@ const reduxConnect = connect(
         ),
       };
     },
-    fioAddresses,
+    fioCryptoHandles,
   }),
   {},
 );

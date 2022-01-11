@@ -72,9 +72,9 @@ const RenderBottomElement: React.FC<{
 );
 
 type Props = {
-  getFioAddresses: (publicKey: string) => void;
+  getFioCryptoHandles: (publicKey: string) => void;
   updatePublicAddresses: (
-    fioAddress: string,
+    fioCryptoHandle: string,
     updPublicAddresses: {
       addPublicAddresses: PublicAddressDoublet[];
       deletePublicAddresses: PublicAddressDoublet[];
@@ -91,7 +91,7 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
     changeBundleCost,
     onBack,
     onRetry,
-    getFioAddresses,
+    getFioCryptoHandles,
     updatePublicAddresses,
   } = props;
 
@@ -124,7 +124,7 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
 
   useEffect(() => {
     if (walletPublicKey) {
-      getFioAddresses(walletPublicKey);
+      getFioCryptoHandles(walletPublicKey);
       updatePublicAddresses(name, {
         addPublicAddresses: updateConnect,
         deletePublicAddresses: updateDisconnect,

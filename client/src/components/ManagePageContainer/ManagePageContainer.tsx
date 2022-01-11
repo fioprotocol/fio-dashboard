@@ -44,7 +44,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     showExpired,
     showBundles,
     showStatus,
-    showFioAddressName,
+    showFioCryptoHandleName,
   } = props;
   const [showWarnBadge, toggleShowWarnBadge] = useState<BoolStateFunc>(false);
   const [showInfoBadge, toggleShowInfoBadge] = useState<BoolStateFunc>(false);
@@ -152,7 +152,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     showExpired,
     showBundles,
     showStatus,
-    showFioAddressName,
+    showFioCryptoHandleName,
   };
 
   if (noProfileLoaded) return <Redirect to={{ pathname: ROUTES.HOME }} />;

@@ -22,10 +22,10 @@ const GenericTitleComponent: React.FC<Props> = props => {
 
 export default GenericTitleComponent;
 
-export const renderFioAddressTitle: RenderTitle = searchParams => (
+export const renderFioCryptoHandleTitle: RenderTitle = searchParams => (
   <GenericTitleComponent
-    title={TITLE_NAME.fioAddress.name}
-    value={searchParams[TITLE_NAME.fioAddress.id]}
+    title={TITLE_NAME.fioCryptoHandle.name}
+    value={searchParams[TITLE_NAME.fioCryptoHandle.id]}
   />
 );
 

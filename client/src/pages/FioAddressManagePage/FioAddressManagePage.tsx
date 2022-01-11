@@ -8,7 +8,7 @@ const FioAddressManagePage: React.FC<ContainerProps> = props => (
     pageName={ADDRESS}
     {...props}
     showBundles={true}
-    showFioAddressName={true}
+    showFioCryptoHandleName={true}
   />
 );
 

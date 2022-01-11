@@ -93,14 +93,14 @@ export type NewFioWalletDoublet = {
   data?: any;
 };
 
-export type FioAddressDoublet = {
+export type FioCryptoHandleDoublet = {
   name: string;
   expiration: string;
   remaining: number;
   walletPublicKey: string;
 };
 
-export type FioAddressWithPubAddresses = FioAddressDoublet & {
+export type FioCryptoHandleWithPubAddresses = FioCryptoHandleDoublet & {
   edgeWalletId: string;
   publicAddresses: PublicAddressDoublet[];
   more: boolean;
@@ -126,7 +126,7 @@ export type NFTTokenDoublet = {
   url?: string;
   hash?: string;
   metadata?: string;
-  fioAddress?: string;
+  fioCryptoHandle?: string;
 };
 
 export type NftTokenResponse = {
@@ -294,5 +294,5 @@ export type TransactionItem = {
 };
 
 export type MappedPublicAddresses = {
-  [fioAddress: string]: { publicAddresses: PublicAddressDoublet[]; more: boolean };
+  [fioCryptoHandle: string]: { publicAddresses: PublicAddressDoublet[]; more: boolean };
 }

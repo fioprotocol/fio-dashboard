@@ -19,13 +19,13 @@ import {
   LinkActionResult,
   PublicAddressDoublet,
   WalletKeys,
-  FioAddressWithPubAddresses,
+  FioCryptoHandleWithPubAddresses,
 } from '../../types';
 
 import classes from './styles/EditTokenPage.module.scss';
 
 type Props = {
-  fioCryptoHandle: FioAddressWithPubAddresses;
+  fioCryptoHandle: FioCryptoHandleWithPubAddresses;
 };
 
 type EditTokenElement = {
@@ -39,12 +39,7 @@ type EditTokenElement = {
 
 const EditTokenPage: React.FC<Props> = props => {
   const {
-    fioCryptoHandle: {
-      publicAddresses,
-      remaining,
-      edgeWalletId,
-      name: fioAddressName,
-    },
+    fioCryptoHandle: { publicAddresses, remaining, edgeWalletId, name },
   } = props;
 
   const [pubAddressesArr, changePubAddresses] = useState<EditTokenElement[]>(
@@ -125,11 +120,11 @@ const EditTokenPage: React.FC<Props> = props => {
       pubAddress => pubAddress.newPublicAddress,
     );
     const params: {
-      fioAddress: string;
+      fioCryptoHandle: string;
       connectList: PublicAddressDoublet[];
       keys: WalletKeys;
     } = {
-      fioAddress: fioAddressName,
+      fioCryptoHandle: name,
       connectList: editedPubAddresses.map(pubAddress => ({
         ...pubAddress,
         publicAddress: pubAddress.newPublicAddress,

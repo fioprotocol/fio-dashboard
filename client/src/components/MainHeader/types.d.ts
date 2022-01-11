@@ -3,7 +3,7 @@ import {
   CartItem,
   Notification,
   RefProfile,
-  FioAddressDoublet,
+  FioCryptoHandleDoublet,
 } from '../../types';
 import { RouteComponentProps } from 'react-router-dom';
 
@@ -22,5 +22,5 @@ export interface MainHeaderProps extends RouteComponentProps {
   cartItems: CartItem[];
   refProfileInfo: RefProfile;
   refProfileLoading: boolean;
-  fioAddresses: FioAddressDoublet[];
+  fioCryptoHandles: FioCryptoHandleDoublet[];
 }

@@ -5,7 +5,7 @@ import { compose } from '../../utils';
 
 import { toggleTokenListInfoBadge } from '../../redux/fio/actions';
 import {
-  currentFioAddress,
+  currentFioCryptoHandle,
   loading,
   showTokenListInfoBadge,
 } from '../../redux/fio/selectors';
@@ -14,7 +14,7 @@ import TokenListPage from './TokenListPage';
 
 const reduxConnect = connect(
   createStructuredSelector({
-    currentFioAddress,
+    currentFioCryptoHandle,
     showTokenListInfoBadge,
     loading,
   }),

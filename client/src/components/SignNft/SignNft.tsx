@@ -24,9 +24,9 @@ const SignNft: React.FC<ContainerProps> = props => {
   const {
     backTo,
     initialValues,
-    fioAddresses,
+    fioCryptoHandles,
     fioWallets,
-    fioAddressName,
+    fioCryptoHandleName,
     getFee,
     isEdit,
     addressSelectOff,
@@ -39,15 +39,15 @@ const SignNft: React.FC<ContainerProps> = props => {
   const [submitData, setSubmitData] = useState<NFTTokenDoublet | null>(null);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
   const [alreadySigned, setAlreadySigned] = useState<boolean>(false);
-  const [selectedFioAddressName, setSelectedFioAddress] = useState<string>(
-    fioAddressName,
-  );
+  const [selectedFioCryptoHandleName, setSelectedFioCryptoHandle] = useState<
+    string
+  >(fioCryptoHandleName);
 
-  const fioAddress = fioAddresses.find(
-    ({ name }) => name === selectedFioAddressName,
+  const fioCryptoHandle = fioCryptoHandles.find(
+    ({ name }) => name === selectedFioCryptoHandleName,
   );
   const currentWallet = fioWallets.find(
-    ({ publicKey }) => publicKey === fioAddress.walletPublicKey,
+    ({ publicKey }) => publicKey === fioCryptoHandle.walletPublicKey,
   );
 
   const checkNftSigned = async (
@@ -72,7 +72,7 @@ const SignNft: React.FC<ContainerProps> = props => {
   };
 
   useEffect(() => {
-    getFee(fioAddressName);
+    getFee(fioCryptoHandleName);
     if (
       initialValues != null &&
       initialValues.chainCode &&
@@ -88,7 +88,7 @@ const SignNft: React.FC<ContainerProps> = props => {
   }, []);
 
   const submit = async ({ keys, data }: SubmitActionParams) => {
-    return await apis.fio.singNFT(keys, fioAddress.name, [{ ...data }]);
+    return await apis.fio.singNFT(keys, fioCryptoHandle.name, [{ ...data }]);
   };
 
   const onSubmit = async (values: NftFormValues) => {
@@ -127,15 +127,15 @@ const SignNft: React.FC<ContainerProps> = props => {
       })();
 
       setResultsData({
-        name: fioAddress.name,
+        name: fioCryptoHandle.name,
         other: {
           creatorUrl,
           ...rest,
         },
       });
 
-      refreshFioNames(fioAddress.walletPublicKey);
-      getNFTSignatures({ fioAddress: fioAddress.name });
+      refreshFioNames(fioCryptoHandle.walletPublicKey);
+      getNFTSignatures({ fioCryptoHandle: fioCryptoHandle.name });
     }
     setProcessing(false);
     setSubmitData(null);
@@ -144,7 +144,7 @@ const SignNft: React.FC<ContainerProps> = props => {
   const onResultsClose = () => {
     history.push(
       putParamsToUrl(ROUTES.FIO_ADDRESS_SIGNATURES, {
-        address: fioAddress.name,
+        address: fioCryptoHandle.name,
       }),
     );
   };
@@ -159,20 +159,20 @@ const SignNft: React.FC<ContainerProps> = props => {
     );
 
   const hasLowBalance =
-    fioAddress != null ? fioAddress.remaining < BUNDLE_COST : true;
+    fioCryptoHandle != null ? fioCryptoHandle.remaining < BUNDLE_COST : true;
 
   const formProps = {
     onSubmit,
     initialValues,
     fieldValuesChanged,
     alreadySigned,
-    selectedFioAddressName,
-    fioAddresses,
-    setSelectedFioAddress,
+    selectedFioCryptoHandleName,
+    fioCryptoHandles,
+    setSelectedFioCryptoHandle,
     bundleCost: BUNDLE_COST,
     hasLowBalance,
     processing,
-    fioAddress,
+    fioCryptoHandle,
     isEdit,
     addressSelectOff,
   };
