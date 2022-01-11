@@ -8,7 +8,7 @@ import EditTokenPage from './EditTokenPage';
 
 const reduxConnect = connect(
   createStructuredSelector({
-    currentFioAddress,
+    fioCryptoHandle: currentFioAddress,
   }),
   {},
 );

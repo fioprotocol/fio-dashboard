@@ -21,7 +21,7 @@ import {
 } from '../../types';
 
 const AddToken: React.FC<AddTokenProps> = props => {
-  const { currentFioAddress } = props;
+  const { fioCryptoHandle } = props;
   const [resultsData, setResultsData] = useState<LinkActionResult | null>(null);
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<
@@ -29,7 +29,7 @@ const AddToken: React.FC<AddTokenProps> = props => {
   >(null);
   const [bundleCost, changeBundleCost] = useState(0);
 
-  const { name, edgeWalletId = '', publicAddresses } = currentFioAddress;
+  const { name, edgeWalletId = '', publicAddresses } = fioCryptoHandle;
 
   const onSubmit = (values: FormValues) => {
     setSubmitData(values);
@@ -108,7 +108,7 @@ const AddToken: React.FC<AddTokenProps> = props => {
         render={formProps => (
           <AddTokenForm
             formProps={formProps}
-            currentFioAddress={currentFioAddress}
+            fioCryptoHandle={fioCryptoHandle}
             results={resultsData}
             bundleCost={bundleCost}
             changeBundleCost={changeBundleCost}

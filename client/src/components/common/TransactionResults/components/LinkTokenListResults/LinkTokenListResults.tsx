@@ -84,7 +84,7 @@ type Props = {
 
 const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
   const {
-    currentFioAddress,
+    fioCryptoHandle,
     containerName,
     results,
     bundleCost,
@@ -95,7 +95,7 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
     updatePublicAddresses,
   } = props;
 
-  const { name, remaining, walletPublicKey } = currentFioAddress;
+  const { name, remaining, walletPublicKey } = fioCryptoHandle;
 
   const {
     connect: {

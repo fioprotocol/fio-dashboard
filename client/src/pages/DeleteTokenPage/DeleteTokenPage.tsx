@@ -24,17 +24,17 @@ import {
 import classes from './styles/DeleteToken.module.scss';
 
 type Props = {
-  currentFioAddress: FioAddressWithPubAddresses;
+  fioCryptoHandle: FioAddressWithPubAddresses;
   loading: boolean;
 };
 
 const DeleteTokenPage: React.FC<Props> = props => {
-  const { currentFioAddress, loading } = props;
+  const { fioCryptoHandle, loading } = props;
   const {
     remaining = 0,
     edgeWalletId = '',
     publicAddresses = [],
-  } = currentFioAddress;
+  } = fioCryptoHandle;
 
   const [pubAddressesArr, changePubAddresses] = useState<CheckedTokenType[]>(
     [],
@@ -114,7 +114,7 @@ const DeleteTokenPage: React.FC<Props> = props => {
       keys: WalletKeys;
       disconnectAll: boolean;
     } = {
-      fioAddress: currentFioAddress.name,
+      fioAddress: fioCryptoHandle.name,
       disconnectList: pubAddressesArr.filter(
         pubAddress => pubAddress.isChecked,
       ),
@@ -162,7 +162,7 @@ const DeleteTokenPage: React.FC<Props> = props => {
       />
       <ActionContainer
         containerName={CONTAINER_NAMES.DELETE}
-        currentFioAddress={currentFioAddress}
+        fioCryptoHandle={fioCryptoHandle}
         bundleCost={bundleCost}
         isDisabled={!hasChecked || remaining === 0}
         onActionButtonClick={onActionClick}

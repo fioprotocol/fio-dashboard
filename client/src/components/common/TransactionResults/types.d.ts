@@ -38,7 +38,7 @@ export type ResultsContainerProps = ResultsProps & {
 
 export type LinkTokenResultsProps = {
   containerName: string;
-  currentFioAddress: FioAddressWithPubAddresses;
+  fioCryptoHandle: FioAddressWithPubAddresses;
   results: LinkActionResult;
   bundleCost: number;
   changeBundleCost: (bundleCost: number) => void;
