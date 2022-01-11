@@ -9,7 +9,7 @@ import { compose } from '../../utils';
 export default compose(
   connect(
     createStructuredSelector({
-      currentFioAddress,
+      fioCryptoHandle: currentFioAddress,
     }),
     {},
   ),

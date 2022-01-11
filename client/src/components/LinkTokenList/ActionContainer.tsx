@@ -13,7 +13,7 @@ import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import { LOW_BALANCE_TEXT, CONTAINER_TYPES } from './constants';
 import { ROUTES } from '../../constants/routes';
 
-import { ResultsProps } from '../common/TransactionResults/components/LinkTokenListResults/LinkTokenListResults';
+import { LinkTokenResultsProps } from '../common/TransactionResults/types';
 
 import classes from './styles/ActionContainer.module.scss';
 
@@ -22,8 +22,7 @@ type Props = {
   isDisabled?: boolean;
   onActionButtonClick: () => void;
   loading?: boolean;
-  walletPublicKey: string;
-} & ResultsProps;
+} & LinkTokenResultsProps;
 
 const ActionContainer: React.FC<Props> = props => {
   const {
@@ -31,16 +30,16 @@ const ActionContainer: React.FC<Props> = props => {
     children,
     containerName,
     isDisabled,
-    name,
+    fioCryptoHandle,
     onActionButtonClick,
-    remaining,
     loading,
     results,
-    walletPublicKey,
     changeBundleCost,
     onBack,
     onRetry,
   } = props;
+
+  const { name, remaining } = fioCryptoHandle;
 
   const hasLowBalance = remaining - bundleCost < 0;
 
@@ -49,15 +48,13 @@ const ActionContainer: React.FC<Props> = props => {
   if (results)
     return (
       <LinkTokenListResults
+        fioCryptoHandle={fioCryptoHandle}
         results={results}
         containerName={containerName}
-        name={name}
-        remaining={remaining}
         bundleCost={bundleCost}
         changeBundleCost={changeBundleCost}
         onBack={onBack}
         onRetry={onRetry}
-        walletPublicKey={walletPublicKey}
       />
     );
 

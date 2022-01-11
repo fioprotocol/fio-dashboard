@@ -22,7 +22,7 @@ export const NOTIFICATIONS_CONTENT: {
   },
   [NOTIFICATIONS_CONTENT_TYPE.ACCOUNT_CREATE]: {
     title: 'Account Created',
-    message: "You're all set to start managing FIO Addresses and Domains.",
+    message: "You're all set to start managing FIO Crypto Handles and Domains.",
   },
   [NOTIFICATIONS_CONTENT_TYPE.CART_TIMEOUT]: {
     title: 'Cart was emptied',

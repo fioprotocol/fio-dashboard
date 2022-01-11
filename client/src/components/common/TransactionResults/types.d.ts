@@ -1,5 +1,10 @@
 import React from 'react';
-import { FeePrice, PublicAddressDoublet } from '../../../types';
+import {
+  FeePrice,
+  PublicAddressDoublet,
+  FioAddressWithPubAddresses,
+  LinkActionResult,
+} from '../../../types';
 
 export type ResultsData = {
   feeCollected?: FeePrice;
@@ -29,4 +34,14 @@ export type ResultsProps = {
 
 export type ResultsContainerProps = ResultsProps & {
   children: React.ReactNode;
+};
+
+export type LinkTokenResultsProps = {
+  containerName: string;
+  fioCryptoHandle: FioAddressWithPubAddresses;
+  results: LinkActionResult;
+  bundleCost: number;
+  changeBundleCost: (bundleCost: number) => void;
+  onBack: () => void;
+  onRetry: () => void;
 };

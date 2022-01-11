@@ -3,9 +3,10 @@ import apis from '../../api';
 
 interface FieldArgs {
   fieldIdToCompare?: string;
+  sameWalletMessage?: string;
 }
 
-const defaultMessage = 'Please enter valid FIO Address.';
+const defaultMessage = 'Please enter valid FIO Crypto Handle.';
 
 export const fioAddressExistsValidator: FieldValidationFunctionAsync<FieldArgs> = async ({
   value,
@@ -13,7 +14,7 @@ export const fioAddressExistsValidator: FieldValidationFunctionAsync<FieldArgs> 
   message = defaultMessage,
   customArgs,
 }) => {
-  const { fieldIdToCompare } = customArgs;
+  const { fieldIdToCompare, sameWalletMessage = 'Spend to self.' } = customArgs;
 
   let transferAddress = value;
 
@@ -23,7 +24,7 @@ export const fioAddressExistsValidator: FieldValidationFunctionAsync<FieldArgs> 
     message:
       typeof message === 'string'
         ? message
-        : message?.[0] || 'Fio address is not valid',
+        : message?.[0] || 'FIO Crypto Handle is not valid',
   };
 
   try {
@@ -53,7 +54,7 @@ export const fioAddressExistsValidator: FieldValidationFunctionAsync<FieldArgs> 
   if (fieldIdToCompare && transferAddress === values[fieldIdToCompare]) {
     return {
       ...validationResult,
-      message: 'Spend to self',
+      message: sameWalletMessage,
     };
   }
 

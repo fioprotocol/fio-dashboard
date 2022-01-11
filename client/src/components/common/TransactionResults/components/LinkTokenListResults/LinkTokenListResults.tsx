@@ -13,7 +13,9 @@ import { ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION } from '../../../../../constants/
 
 import { CONTAINER_NAMES } from '../../../../LinkTokenList/constants';
 
-import { LinkActionResult, PublicAddressDoublet } from '../../../../../types';
+import { LinkTokenResultsProps } from '../../types';
+
+import { PublicAddressDoublet } from '../../../../../types';
 
 import classes from '../../styles/LinkTokenListResults.module.scss';
 
@@ -69,19 +71,7 @@ const RenderBottomElement: React.FC<{
   </p>
 );
 
-export type ResultsProps = {
-  containerName: string;
-  results: LinkActionResult;
-  bundleCost: number;
-  remaining: number;
-  name: string;
-  changeBundleCost: (bundleCost: number) => void;
-  onBack: () => void;
-  onRetry: () => void;
-};
-
 type Props = {
-  walletPublicKey: string;
   getFioAddresses: (publicKey: string) => void;
   updatePublicAddresses: (
     fioAddress: string,
@@ -92,20 +82,20 @@ type Props = {
   ) => void;
 };
 
-const LinkTokenListResults: React.FC<ResultsProps & Props> = props => {
+const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
   const {
+    fioCryptoHandle,
     containerName,
     results,
     bundleCost,
-    remaining,
-    name,
-    walletPublicKey,
     changeBundleCost,
     onBack,
     onRetry,
     getFioAddresses,
     updatePublicAddresses,
   } = props;
+
+  const { name, remaining, walletPublicKey } = fioCryptoHandle;
 
   const {
     connect: {

@@ -61,7 +61,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
       });
     }
 
-    throw new Error("Can't renew fio address");
+    throw new Error("Can't renew FIO Crypto Handle");
   };
 
   const hasLowBalance =

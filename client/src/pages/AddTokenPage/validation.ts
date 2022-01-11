@@ -2,6 +2,8 @@ import { CHAIN_CODE_REGEXP, TOKEN_CODE_REGEXP } from '../../constants/regExps';
 
 import { FormValues } from './types';
 
+import { PublicAddressDoublet } from '../../types';
+
 type ErrorsProps = {
   chainCode?: {
     message: string;
@@ -20,7 +22,10 @@ type FieldProps = {
   publicAddress?: string;
 };
 
-export const validate = (values: FormValues) => {
+export const validate = (
+  values: FormValues,
+  publicAddresses: PublicAddressDoublet[],
+) => {
   const errors: {
     tokens: ErrorsProps[] | string;
   } = { tokens: [] };
@@ -50,6 +55,26 @@ export const validate = (values: FormValues) => {
       if (tokenCode && !TOKEN_CODE_REGEXP.test(tokenCode)) {
         tokenErrors.tokenCode = { message: 'Wrong Token Code' };
         tokenArrayErrors[index] = tokenErrors;
+      }
+
+      if (chainCode && tokenCode) {
+        if (
+          index >
+            values.tokens.findIndex(
+              token =>
+                token.chainCode === chainCode && token.tokenCode === tokenCode,
+            ) ||
+          publicAddresses.some(
+            publicAddress =>
+              publicAddress.chainCode === chainCode &&
+              publicAddress.tokenCode === tokenCode,
+          )
+        ) {
+          tokenErrors.tokenCode = {
+            message: 'This pair of Chain and Token Codes alreay exists',
+          };
+          tokenArrayErrors[index] = tokenErrors;
+        }
       }
 
       if (!publicAddress) {

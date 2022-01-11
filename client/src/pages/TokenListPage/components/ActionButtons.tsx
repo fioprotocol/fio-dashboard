@@ -1,8 +1,9 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classnames from 'classnames';
+
+import Link from '../../../components/Link/Link';
 
 import { ROUTES } from '../../../constants/routes';
 
@@ -15,11 +16,13 @@ type Props = {
 
 const ActionButtons: React.FC<Props> = props => {
   const { url, isDisabled } = props;
+
   return (
     <div className={classes.buttonsContainer}>
       <Link
+        isDisabled={isDisabled}
         to={`${url}${ROUTES.EDIT_TOKEN}`}
-        className={classnames(classes.link, isDisabled && classes.disabled)}
+        classname={classes.link}
       >
         <Button disabled={isDisabled}>
           <FontAwesomeIcon icon="pen" className={classes.icon} />
@@ -27,20 +30,21 @@ const ActionButtons: React.FC<Props> = props => {
         </Button>
       </Link>
       <Link
+        isDisabled={isDisabled}
         to={`${url}${ROUTES.DELETE_TOKEN}`}
-        className={classnames(classes.link, isDisabled && classes.disabled)}
+        classname={classes.link}
       >
         <Button className={classes.middleButton} disabled={isDisabled}>
           <FontAwesomeIcon icon="trash" className={classes.icon} />
           Delete Link
         </Button>
       </Link>
-      <Link to={`${url}${ROUTES.ADD_TOKEN}`} className={classes.link}>
+      <RouterLink to={`${url}${ROUTES.ADD_TOKEN}`} className={classes.link}>
         <Button>
           <FontAwesomeIcon icon="plus-circle" className={classes.icon} />
           Add Link
         </Button>
-      </Link>
+      </RouterLink>
     </div>
   );
 };

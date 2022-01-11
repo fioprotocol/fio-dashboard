@@ -40,8 +40,8 @@ const SettingsItem: React.FC<SettingsProps> = props => {
           <h5 className={classes.actionTitle}>Domain Access</h5>
           <p className={classes.text}>
             If you would like your domain to be publicly giving users the
-            ability to register FIO addresses on it, please set the domain to
-            public.
+            ability to register FIO Crypto Handles on it, please set the domain
+            to public.
           </p>
           <Link
             to={`${ROUTES.FIO_DOMAIN_STATUS_CHANGE}/${fioName}`}
@@ -55,12 +55,12 @@ const SettingsItem: React.FC<SettingsProps> = props => {
       )}
       <div>
         <h5 className={classes.actionTitle}>
-          Transfer FIO {fioNameLabels[pageName]} Ownership
+          Transfer {fioNameLabels[pageName]} Ownership
         </h5>
         <p className={classes.text}>
-          Transferring your FIO {fioNameLabels[pageName]} to a new Owner is
-          easy, Simply enter or paste the new owner public key, submit the
-          request and verify the transaction.
+          Transferring your {fioNameLabels[pageName]} to a new Owner is easy,
+          Simply enter or paste the new owner public key, submit the request and
+          verify the transaction.
         </p>
         <Link
           to={`${FIO_OWNERSHIP[pageName]}/${fioName}`}

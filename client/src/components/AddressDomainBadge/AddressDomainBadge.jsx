@@ -14,15 +14,15 @@ const content = {
   [ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS]: {
     link: ROUTES.FIO_DOMAINS_SELECTION,
     button: 'Purchase Domain',
-    title: 'Want to register an address with a custom domain?',
+    title: 'Want to register a FIO Crypto Handle with a custom domain?',
     text: '',
   },
   [ADDRESS_DOMAIN_BADGE_TYPE.DOMAIN]: {
     link: ROUTES.FIO_ADDRESSES_SELECTION,
-    button: 'Register an Address',
-    title: 'Need an Address?',
+    button: 'Register a FIO Crypto Handle',
+    title: 'Need a FIO Crypto Handle?',
     text:
-      'Get an address on a public domain or add an address to your custom domain.',
+      'Get a FIO Crypto Handle on a public domain or add a FIO Crypto Handle to your custom domain.',
   },
 };
 

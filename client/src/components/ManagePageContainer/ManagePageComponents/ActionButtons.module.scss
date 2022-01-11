@@ -9,7 +9,17 @@
   align-items: center;
 
   &.domainContainer {
-    flex-flow: unset;
+    .actionButton {
+      margin-right: 0;
+    }
+
+    .settingsButton {
+      width: 100%;
+    }
+
+    .actionButton, .settingsButton {
+      margin-top: 10px;
+    }
   }
 
   .actionButton {
@@ -82,6 +92,16 @@
 @include lg {
   .actionButtonsContainer {
     flex-flow: nowrap;
+
+    &.domainContainer {
+      .actionButton {
+        margin-right: 10px;
+      }
+
+      .actionButton, .settingsButton {
+        margin-top: 0;
+      }
+    }
 
     .row {
       margin-top: 0;

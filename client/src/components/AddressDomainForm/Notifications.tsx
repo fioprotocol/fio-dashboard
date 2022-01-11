@@ -15,7 +15,7 @@ import classes from './AddressDomainForm.module.scss';
 
 const AVAILABLE_MESSAGE = {
   [ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS]:
-    'The FIO address you requested is available',
+    'The FIO Crypto Handle you requested is available',
   [ADDRESS_DOMAIN_BADGE_TYPE.DOMAIN]:
     'The FIO domain you requested is available',
 };

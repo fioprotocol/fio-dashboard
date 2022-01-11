@@ -55,7 +55,7 @@ const TokenListPage: React.FC<Props & RouteComponentProps> = props => {
 
   return (
     <PseudoModalContainer
-      title="FIO Address Linking"
+      title="FIO Crypto Handle Linking"
       link={ROUTES.FIO_ADDRESSES}
       hasAutoWidth={true}
     >

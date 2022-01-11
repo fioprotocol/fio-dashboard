@@ -1,9 +1,10 @@
 import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 
-import { formValidation } from './validation';
-import { RequestTokensProps } from '../../types';
+import { formValidation, submitValidation } from './validation';
+import { RequestTokensProps, RequestTokensValues } from '../../types';
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
+import TextInput from '../../../../components/Input/TextInput';
 import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 
@@ -19,6 +20,13 @@ const NEW_FUND_REQUEST_BUNDLE_COST = 2;
 
 const RequestTokensForm: React.FC<RequestTokensProps> = props => {
   const { loading, fioWallet, fioAddresses } = props;
+
+  const handleSubmit = async (values: RequestTokensValues) => {
+    const validationResult = await submitValidation.validateForm(values);
+    if (validationResult) return validationResult;
+
+    return props.onSubmit(values);
+  };
 
   const initialValues: {
     payeeFioAddress?: string;
@@ -36,13 +44,14 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
 
   return (
     <Form
-      onSubmit={props.onSubmit}
+      onSubmit={handleSubmit}
       validate={formValidation.validateForm}
       initialValues={initialValues}
     >
       {(formRenderProps: FormRenderProps) => {
         const {
           values: { payeeFioAddress },
+          validating,
         } = formRenderProps;
 
         const renderRequester = () => {
@@ -54,9 +63,9 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
                 <Field
                   name="payeeFioAddress"
                   type="dropdown"
-                  label="Your Requesting FIO Address"
+                  label="Your Requesting FIO Crypto Handle"
                   component={Input}
-                  placeholder="Select FIO Address"
+                  placeholder="Select FIO Crypto Handle"
                   options={fioAddresses.map(({ name }) => ({
                     id: name,
                     name,
@@ -74,7 +83,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
                   errorColor={COLOR_TYPE.WARN}
                   component={Input}
                   disabled={true}
-                  label="Your Requesting FIO Address"
+                  label="Your Requesting FIO Crypto Handle"
                 />
               )}
             </>
@@ -91,7 +100,9 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
             : false;
 
         const submitDisabled =
-          !formRenderProps.valid ||
+          formRenderProps.hasValidationErrors ||
+          (formRenderProps.hasSubmitErrors &&
+            !formRenderProps.modifiedSinceLastSubmit) ||
           formRenderProps.submitting ||
           loading ||
           notEnoughBundles;
@@ -105,12 +116,13 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
             <Field
               name="payerFioAddress"
               type="text"
-              placeholder="FIO Address or Public Key"
+              placeholder="FIO Crypto Handle or Public Key"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
-              component={Input}
+              component={TextInput}
               showCopyButton={true}
               disabled={loading}
+              loading={validating}
               label="Request From"
             />
 

@@ -1,12 +1,13 @@
 import { Validators, ValidationSchema } from '@lemoncode/fonk';
 import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
-import { isNumber } from '@lemoncode/fonk-is-number-validator';
 import {
   fioAddressExistsValidator,
+  isFioAddressValidator,
   matchFieldValidator,
+  isNumberValidator,
 } from '../../../../util/validators';
 
-const MAX_MEMO_SIZE = 20;
+const MAX_MEMO_SIZE = 64;
 
 const validationSchema: ValidationSchema = {
   field: {
@@ -24,12 +25,11 @@ const validationSchema: ValidationSchema = {
       {
         validator: matchFieldValidator,
         customArgs: { fieldId: 'payeeFioAddress', isMatch: false },
-        message: 'Address cannot be same.',
+        message: 'FIO Crypto Handle cannot be same.',
       },
       {
-        validator: fioAddressExistsValidator,
-        customArgs: { fieldIdToCompare: 'payeeTokenPublicAddress' },
-        message: 'Please enter valid FIO Address.',
+        validator: isFioAddressValidator,
+        message: 'Please enter valid FIO Crypto Handle.',
       },
     ],
     amount: [
@@ -38,9 +38,7 @@ const validationSchema: ValidationSchema = {
         message: 'Required.',
       },
       {
-        // @ts-ignore
-        validator: isNumber.validator,
-        // customArgs: { strictTypes: true },
+        validator: isNumberValidator,
         message: 'Please enter valid amount.',
       },
     ],
@@ -51,10 +49,27 @@ const validationSchema: ValidationSchema = {
         validator: Validators.maxLength,
         customArgs: { length: MAX_MEMO_SIZE },
         message: 'Please enter valid memo, the max length is {{length}}',
-        // todo: Max length has to be computed on the total size of the encrypted data as for /new_funds_request
+      },
+    ],
+  },
+};
+
+const onSubmitValidationSchema: ValidationSchema = {
+  field: {
+    payerFioAddress: [
+      {
+        validator: fioAddressExistsValidator,
+        customArgs: {
+          fieldIdToCompare: 'payeeTokenPublicAddress',
+          sameWalletMessage: "Can't request to same wallet.",
+        },
+        message: 'Please enter valid FIO Crypto Handle.',
       },
     ],
   },
 };
 
 export const formValidation = createFinalFormValidation(validationSchema);
+export const submitValidation = createFinalFormValidation(
+  onSubmitValidationSchema,
+);

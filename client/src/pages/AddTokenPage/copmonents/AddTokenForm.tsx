@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { FormRenderProps } from 'react-final-form';
 import { FieldArray } from 'react-final-form-arrays';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,22 +6,16 @@ import classnames from 'classnames';
 
 import ActionContainer from '../../../components/LinkTokenList/ActionContainer';
 
-import { ResultsProps } from '../../../components/common/TransactionResults/components/LinkTokenListResults/LinkTokenListResults';
-
 import { ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION } from '../../../constants/fio';
+import { CONTAINER_NAMES } from '../../../components/LinkTokenList/constants';
 
 import AddTokenInput from './AddTokenInput';
 
-import { FormValues } from '../types';
+import { FormValues, AddTokenFormProps } from '../types';
 
 import classes from '../styles/AddToken.module.scss';
 
-type FormProps = {
-  formProps: FormRenderProps<FormValues>;
-  walletPublicKey: string;
-} & ResultsProps;
-
-const AddTokenForm: React.FC<FormProps> = props => {
+const AddTokenForm: React.FC<AddTokenFormProps> = props => {
   const {
     formProps: {
       handleSubmit,
@@ -55,10 +48,13 @@ const AddTokenForm: React.FC<FormProps> = props => {
       <ActionContainer
         onActionButtonClick={handleSubmit}
         isDisabled={!valid}
+        containerName={CONTAINER_NAMES.ADD}
         {...props}
       >
         <div className={classes.actionContainer}>
-          <h5 className={classes.subtitle}>Address Linking Information</h5>
+          <h5 className={classes.subtitle}>
+            FIO Crypto Handle Linking Information
+          </h5>
           <Button className={classes.button} onClick={addTokenRow}>
             <FontAwesomeIcon icon="plus-circle" className={classes.icon} />
             Add Token

@@ -5,12 +5,11 @@ import arrayMutators from 'final-form-arrays';
 import AddTokenForm from './copmonents/AddTokenForm';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 
-import { validate } from './validation';
+import { validate as validation } from './validation';
 
 import { linkTokens } from '../../api/middleware/fio';
 import { minWaitTimeFunction } from '../../utils';
 
-import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { TOKEN_LINK_MIN_WAIT_TIME } from '../../constants/fio';
 
@@ -22,7 +21,7 @@ import {
 } from '../../types';
 
 const AddToken: React.FC<AddTokenProps> = props => {
-  const { currentFioAddress } = props;
+  const { fioCryptoHandle } = props;
   const [resultsData, setResultsData] = useState<LinkActionResult | null>(null);
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<
@@ -30,12 +29,7 @@ const AddToken: React.FC<AddTokenProps> = props => {
   >(null);
   const [bundleCost, changeBundleCost] = useState(0);
 
-  const {
-    remaining = 0,
-    name,
-    edgeWalletId = '',
-    walletPublicKey,
-  } = currentFioAddress;
+  const { name, edgeWalletId = '', publicAddresses } = fioCryptoHandle;
 
   const onSubmit = (values: FormValues) => {
     setSubmitData(values);
@@ -91,6 +85,8 @@ const AddToken: React.FC<AddTokenProps> = props => {
     setSubmitData(resultsData.connect.failed);
   };
 
+  const validate = (values: FormValues) => validation(values, publicAddresses);
+
   return (
     <>
       <EdgeConfirmAction
@@ -112,15 +108,12 @@ const AddToken: React.FC<AddTokenProps> = props => {
         render={formProps => (
           <AddTokenForm
             formProps={formProps}
-            containerName={CONTAINER_NAMES.ADD}
+            fioCryptoHandle={fioCryptoHandle}
             results={resultsData}
-            name={name}
-            remaining={remaining}
             bundleCost={bundleCost}
             changeBundleCost={changeBundleCost}
             onBack={() => onBack(formProps)}
             onRetry={onRetry}
-            walletPublicKey={walletPublicKey}
           />
         )}
       />

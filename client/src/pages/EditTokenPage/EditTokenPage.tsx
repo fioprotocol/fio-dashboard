@@ -25,7 +25,7 @@ import {
 import classes from './styles/EditTokenPage.module.scss';
 
 type Props = {
-  currentFioAddress: FioAddressWithPubAddresses;
+  fioCryptoHandle: FioAddressWithPubAddresses;
 };
 
 type EditTokenElement = {
@@ -38,14 +38,14 @@ type EditTokenElement = {
 };
 
 const EditTokenPage: React.FC<Props> = props => {
-  const { currentFioAddress } = props;
   const {
-    name,
-    publicAddresses,
-    remaining,
-    walletPublicKey,
-    edgeWalletId,
-  } = currentFioAddress;
+    fioCryptoHandle: {
+      publicAddresses,
+      remaining,
+      edgeWalletId,
+      name: fioAddressName,
+    },
+  } = props;
 
   const [pubAddressesArr, changePubAddresses] = useState<EditTokenElement[]>(
     [],
@@ -129,7 +129,7 @@ const EditTokenPage: React.FC<Props> = props => {
       connectList: PublicAddressDoublet[];
       keys: WalletKeys;
     } = {
-      fioAddress: currentFioAddress.name,
+      fioAddress: fioAddressName,
       connectList: editedPubAddresses.map(pubAddress => ({
         ...pubAddress,
         publicAddress: pubAddress.newPublicAddress,
@@ -183,15 +183,13 @@ const EditTokenPage: React.FC<Props> = props => {
       />
       <ActionContainer
         containerName={CONTAINER_NAMES.EDIT}
-        name={name}
+        fioCryptoHandle={props.fioCryptoHandle}
         bundleCost={bundleCost}
-        remaining={remaining}
         onActionButtonClick={onActionClick}
         results={resultsData}
         changeBundleCost={changeBundleCost}
         onBack={onBack}
         onRetry={onRetry}
-        walletPublicKey={walletPublicKey}
         isDisabled={!hasEdited || hasLowBalance || remaining === 0}
       >
         <div className={classes.container}>

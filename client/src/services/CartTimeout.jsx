@@ -28,7 +28,7 @@ const CART_TIMEOUT = 1000 * 60 * 30; // 30 min
 const MIN = 1000 * 60;
 const REF_MESSAGES = {
   [REF_ACTIONS.SIGNNFT]:
-    'please add your FIO address again, and purchase in order to complete your NFT signing',
+    'please add your FIO Crypto Handle again, and purchase in order to complete your NFT signing',
 };
 
 const CartTimeout = props => {

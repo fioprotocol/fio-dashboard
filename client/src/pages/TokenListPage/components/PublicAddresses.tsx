@@ -26,7 +26,7 @@ const PublicAddresses: React.FC<Props> = props => {
       <div className={classes.infoBadge}>
         <InfoBadge
           title="No Linked Tokens"
-          message="You have no linked Public Addresses for this FIO Address"
+          message="You have no linked Public Addresses for this FIO Crypto Handle"
         />
       </div>
     );

@@ -83,7 +83,7 @@ const NftValidationPage: React.FC = () => {
       </h1>
       <h3 className={classes.subtitle}>
         You can easily validate a NFT signature through with NFT details, FIO
-        address, image or hash/media URL.
+        Crypto Handle, image or hash/media URL.
       </h3>
       <p className={classes.cta}>
         How would you like to validate the NFT Signature?

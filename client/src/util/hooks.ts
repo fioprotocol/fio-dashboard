@@ -3,11 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import { getFioAddresses, getAllFioPubAddresses } from '../redux/fio/actions';
 
-import {
-  fioWallets,
-  fioAddresses,
-  mappedPublicAddresses,
-} from '../redux/fio/selectors';
+import { fioWallets, mappedPublicAddresses } from '../redux/fio/selectors';
 import {
   isAuthenticated,
   isNewUser as isNewUserSelector,
@@ -15,8 +11,6 @@ import {
 } from '../redux/profile/selectors';
 
 import { ROUTES } from '../constants/routes';
-
-import { getElementByFioName } from '../utils';
 
 import { FioWalletDoublet } from '../types';
 
@@ -53,15 +47,10 @@ export function usePublicAddresses(fioAddress: string, limit: number = 0) {
 
   const dispatch = useDispatch();
 
-  const fioNameList = useSelector(fioAddresses);
   const fioAddressToPubAddresses = useSelector(mappedPublicAddresses);
-  const currentFioAddress = {
-    ...getElementByFioName({
-      fioNameList,
-      name: fioAddress,
-    }),
-    ...fioAddressToPubAddresses[fioAddress],
-  };
+  const hasMore =
+    fioAddressToPubAddresses[fioAddress] &&
+    fioAddressToPubAddresses[fioAddress].more;
 
   const fetchPublicAddresses = (incOffset: number = 0) =>
     dispatch(getAllFioPubAddresses(fioAddress, limit, incOffset));
@@ -72,10 +61,10 @@ export function usePublicAddresses(fioAddress: string, limit: number = 0) {
   }, []);
 
   useEffect(() => {
-    if (currentFioAddress.more) {
+    if (hasMore) {
       const incOffset = offset + limit;
       fetchPublicAddresses(incOffset);
       setOffset(incOffset);
     }
-  }, [JSON.stringify(currentFioAddress)]);
+  }, [hasMore]);
 }
