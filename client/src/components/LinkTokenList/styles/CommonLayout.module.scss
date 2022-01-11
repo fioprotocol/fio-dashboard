@@ -41,9 +41,6 @@
     justify-content: flex-start;
 
     .link {
-      &.disabled {
-        pointer-events: none;
-      }
       button {
         margin-top: 20px;
         height: 36px;
