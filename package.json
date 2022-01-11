@@ -115,6 +115,7 @@
     "qrcode.react": "^1.0.1",
     "react": "17.0.1",
     "react-bootstrap": "1.6.4",
+    "react-debounce-input": "^3.2.5",
     "react-dev-utils": "^5.0.0",
     "react-device-detect": "2.1.2",
     "react-dom": "17.0.1",
