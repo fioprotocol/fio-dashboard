@@ -23,6 +23,7 @@ export const ACTIONS = {
   transferFioDomain: 'transferFioDomain',
   pushTransaction: 'pushTransaction',
   addBundledTransactions: 'addBundledTransactions',
+  addNft: 'addNft',
   stakeFioTokens: 'stakeFioTokens',
   unStakeFioTokens: 'unStakeFioTokens',
 };

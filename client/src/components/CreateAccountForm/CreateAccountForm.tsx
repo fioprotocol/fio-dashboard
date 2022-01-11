@@ -77,7 +77,7 @@ type State = {
 type OwnProps = {
   initialize: (params: { email: string }) => void;
   resetSuccessState: () => void;
-  nonce: (username: string, keys: WalletKeysObj) => void;
+  makeNonce: (username: string, keys: WalletKeysObj) => void;
   showLoginModal: () => void;
   onSubmit: (params: {
     username: string;
@@ -151,7 +151,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       values: { email },
     } = this.form.getState();
 
-    this.props.nonce(emailToUsername(email), this.state.keys);
+    this.props.makeNonce(emailToUsername(email), this.state.keys);
     this.props.history.push(
       (this.props.lastLocation && this.props.lastLocation.pathname) ||
         ROUTES.HOME,

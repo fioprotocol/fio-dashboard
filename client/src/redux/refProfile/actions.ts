@@ -65,7 +65,10 @@ export const setContainedParams = (query: RefQuery) => {
       if (params.metadata.creatorUrl == null || !params.metadata.creatorUrl) {
         params.metadata.creatorUrl = '';
       }
+      break;
     }
+    default:
+    //
   }
 
   return {
