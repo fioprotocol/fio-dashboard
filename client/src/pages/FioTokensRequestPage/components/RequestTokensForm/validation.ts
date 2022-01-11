@@ -2,11 +2,12 @@ import { Validators, ValidationSchema } from '@lemoncode/fonk';
 import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
 import {
   fioAddressExistsValidator,
+  isFioAddressValidator,
   matchFieldValidator,
   isNumberValidator,
 } from '../../../../util/validators';
 
-const MAX_MEMO_SIZE = 20;
+const MAX_MEMO_SIZE = 64;
 
 const validationSchema: ValidationSchema = {
   field: {
@@ -26,6 +27,10 @@ const validationSchema: ValidationSchema = {
         customArgs: { fieldId: 'payeeFioAddress', isMatch: false },
         message: 'FIO Crypto Handle cannot be same.',
       },
+      {
+        validator: isFioAddressValidator,
+        message: 'Please enter valid FIO Crypto Handle.',
+      },
     ],
     amount: [
       {
@@ -44,7 +49,6 @@ const validationSchema: ValidationSchema = {
         validator: Validators.maxLength,
         customArgs: { length: MAX_MEMO_SIZE },
         message: 'Please enter valid memo, the max length is {{length}}',
-        // todo: Max length has to be computed on the total size of the encrypted data as for /new_funds_request
       },
     ],
   },
@@ -59,7 +63,7 @@ const onSubmitValidationSchema: ValidationSchema = {
           fieldIdToCompare: 'payeeTokenPublicAddress',
           sameWalletMessage: "Can't request to same wallet.",
         },
-        message: 'Please enter valid FIO Address.',
+        message: 'Please enter valid FIO Crypto Handle.',
       },
     ],
   },
