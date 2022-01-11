@@ -26,11 +26,6 @@ const validationSchema: ValidationSchema = {
         customArgs: { fieldId: 'payeeFioAddress', isMatch: false },
         message: 'FIO Crypto Handle cannot be same.',
       },
-      {
-        validator: fioAddressExistsValidator,
-        customArgs: { fieldIdToCompare: 'payeeTokenPublicAddress' },
-        message: 'Please enter valid FIO Crypto Handle.',
-      },
     ],
     amount: [
       {
@@ -57,4 +52,19 @@ const validationSchema: ValidationSchema = {
   },
 };
 
+const onSubmitValidationSchema: ValidationSchema = {
+  field: {
+    payerFioAddress: [
+      {
+        validator: fioAddressExistsValidator,
+        customArgs: { fieldIdToCompare: 'payeeTokenPublicAddress' },
+        message: 'Please enter valid FIO Crypto Handle.',
+      },
+    ],
+  },
+};
+
 export const formValidation = createFinalFormValidation(validationSchema);
+export const submitValidation = createFinalFormValidation(
+  onSubmitValidationSchema,
+);
