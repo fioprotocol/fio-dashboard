@@ -9,8 +9,6 @@
   padding: 15px;
   margin-top: 4px;
   margin-bottom: 0;
-  background-color: $violet;
-  border-color: $violet;
   border-style: none;
   max-width: 335px;
   width: 100%;
@@ -32,17 +30,22 @@
     justify-content: center;
   }
 
-  &:hover {
-    background-color: $clear-blue;
-    border-color: $clear-blue;
-  }
-
   &.topMargin {
     margin-top: 30px;
   }
 
   &.bottomMargin {
     margin-bottom: 20px;
+  }
+
+  &.defaultColor {
+    background-color: $violet;
+    border-color: $violet;
+
+    &:hover {
+      background-color: $clear-blue;
+      border-color: $clear-blue;
+    }
   }
 
   &.isGreen {
@@ -90,6 +93,10 @@
 
   &.hasBoldText {
     @include proxima-nova-bold;
+  }
+
+  &.hasSmallText {
+    font-size: 0.875em;
   }
 
   .loader {
