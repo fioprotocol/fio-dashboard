@@ -7,6 +7,15 @@
   flex-direction: row;
   overflow: hidden;
 
+  .forgotPasswordLink {
+    margin-bottom: 30px;
+  }
+
+  .createAccountLink, .forgotPasswordLink {
+    font-size: 15px;
+    @include proxima-nova-bold;
+  }
+
   .forgotPass {
     display: flex;
     flex-direction: column;
