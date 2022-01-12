@@ -22,7 +22,7 @@ const TwoFactorEnable: React.FC<TwoFactorComponentProps> = props => {
     edgeConfirmActionProps,
     loading,
     processing,
-    toggleTwoFactorAuth,
+    onSuccessClose,
     toggleLoading,
     setProcessing,
     toggleSuccessModal,
@@ -40,8 +40,9 @@ const TwoFactorEnable: React.FC<TwoFactorComponentProps> = props => {
 
   const enabledSuccessModalProps = {
     ...successModalProps,
-    title: ITEM_PROPS.successDisableModalTitle,
-    subtitle: ITEM_PROPS.successDisableModalSubtitle,
+    onClose: () => onSuccessClose(true),
+    title: ITEM_PROPS.successEnableModalTitle,
+    subtitle: ITEM_PROPS.successEnableModalSubtitle,
   };
 
   const submitAction = async ({ edgeAccount }: SubmitActionParams) => {
@@ -51,13 +52,12 @@ const TwoFactorEnable: React.FC<TwoFactorComponentProps> = props => {
         () => apis.edge.enableTwoFactorAuth(edgeAccount),
         MIN_WAIT_TIME,
       );
-      toggleTwoFactorAuth(true);
     } catch (e) {
       console.error(e);
-    } finally {
-      toggleLoading(false);
-      setSubmitData(null);
     }
+
+    toggleLoading(false);
+    setSubmitData(null);
   };
 
   const onSuccess = () => {
