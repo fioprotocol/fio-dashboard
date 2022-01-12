@@ -25,8 +25,10 @@ const TwoFactorAuth: React.FC<Props> = props => {
   const [processing, setProcessing] = useState(false);
 
   const [showSuccessModal, toggleSuccessModal] = useState(false);
-  const onSuccessClose = () => {
+
+  const onSuccessClose = (enabledTwoFactor: boolean) => {
     toggleSuccessModal(false);
+    toggleTwoFactorAuth(enabledTwoFactor);
   };
 
   const securityItemProps = {
@@ -36,7 +38,6 @@ const TwoFactorAuth: React.FC<Props> = props => {
   };
 
   const successModalProps = {
-    onClose: onSuccessClose,
     showModal: showSuccessModal,
   };
 
@@ -59,6 +60,7 @@ const TwoFactorAuth: React.FC<Props> = props => {
     toggleLoading,
     setProcessing,
     toggleSuccessModal,
+    onSuccessClose,
   };
 
   const renderSecurityItem = () =>
