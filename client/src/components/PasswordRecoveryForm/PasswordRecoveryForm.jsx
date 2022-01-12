@@ -205,9 +205,8 @@ const PasswordRecoveryForm = props => {
         title="Sure You Want to Skip"
         subtitle={
           <p className={classes.subtitle}>
-            If you choose to skip setting up you password recovery, and you
-            loose your sign in formation, you will be unable to restore your
-            account.
+            If you choose to skip setting up you password recovery, and you lose
+            your sign in formation, you will be unable to restore your account.
           </p>
         }
       />
@@ -290,7 +289,7 @@ const PasswordRecoveryForm = props => {
               title="Setup Password Recovery"
               isDoubleColor
               header={!isSettings && 'One Last Thing!'}
-              subtitle="Set up your password recovery, so you don’t loose your account forever."
+              subtitle="Set up your password recovery, so you don’t lose your account forever."
             />
             <Field
               name="recoveryQuestionOne"
