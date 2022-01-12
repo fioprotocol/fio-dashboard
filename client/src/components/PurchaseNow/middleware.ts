@@ -1,6 +1,6 @@
 import apis from '../../api/index';
 import { toString } from '../../redux/notify/sagas';
-import { FIO_ADDRESS_DELIMITER } from '../../utils';
+import { FIO_CRYPTO_HANDLE_DELIMITER } from '../../utils';
 import { waitForAddressRegistered } from '../../util/fio';
 
 import { ERROR_TYPES } from '../../constants/errors';
@@ -163,7 +163,7 @@ const makeRegistrationOrder = (
     const registration: RegistrationType = {
       cartItemId: cartItem.id,
       fioName: cartItem.address
-        ? `${cartItem.address}${FIO_ADDRESS_DELIMITER}${cartItem.domain}`
+        ? `${cartItem.address}${FIO_CRYPTO_HANDLE_DELIMITER}${cartItem.domain}`
         : cartItem.domain,
       isFree: !cartItem.costFio,
       fee: cartItem.address ? fees.address : fees.domain,

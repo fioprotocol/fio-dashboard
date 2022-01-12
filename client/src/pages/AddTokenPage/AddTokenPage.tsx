@@ -22,6 +22,7 @@ import {
 
 const AddToken: React.FC<AddTokenProps> = props => {
   const { fioCryptoHandle } = props;
+
   const [resultsData, setResultsData] = useState<LinkActionResult | null>(null);
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<
@@ -52,11 +53,11 @@ const AddToken: React.FC<AddTokenProps> = props => {
     data: FormValues;
   }) => {
     const params: {
-      fioAddress: string;
+      fioCryptoHandle: string;
       connectList: PublicAddressDoublet[];
       keys: WalletKeys;
     } = {
-      fioAddress: name,
+      fioCryptoHandle: name,
       connectList: data.tokens,
       keys,
     };

@@ -21,14 +21,14 @@ import {
 export const linkTokens = async ({
   connectList,
   disconnectList,
-  fioAddress,
+  fioCryptoHandle,
   fee,
   keys,
   disconnectAll,
 }: {
   connectList?: PublicAddressDoublet[];
   disconnectList?: PublicAddressDoublet[];
-  fioAddress: string;
+  fioCryptoHandle: string;
   fee?: number;
   keys: WalletKeys;
   disconnectAll?: boolean;
@@ -47,7 +47,7 @@ export const linkTokens = async ({
         fee?: number;
         publicAddresses?: PublicAddress[];
       } = {
-        fioAddress,
+        fioAddress: fioCryptoHandle,
         fee,
       };
 

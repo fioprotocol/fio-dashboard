@@ -9,7 +9,10 @@ import { cartItems, paymentWalletPublicKey } from '../../redux/cart/selectors';
 import { setRegistration } from '../../redux/registrations/actions';
 import { setWallet, recalculate } from '../../redux/cart/actions';
 
-import { isAuthenticated, hasFreeAddress } from '../../redux/profile/selectors';
+import {
+  isAuthenticated,
+  hasFreeFioCryptoHandle,
+} from '../../redux/profile/selectors';
 import {
   domains,
   prices,
@@ -27,7 +30,7 @@ const reduxConnect = connect(
     isAuthenticated,
     prices,
     domains,
-    hasFreeAddress,
+    hasFreeFioCryptoHandle,
     isProcessing,
   }),
   {

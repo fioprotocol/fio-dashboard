@@ -4,7 +4,7 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from '../../utils';
 import SignNft from './SignNft';
 
-import { fioAddresses, fioWallets } from '../../redux/fio/selectors';
+import { fioCryptoHandles, fioWallets } from '../../redux/fio/selectors';
 import {
   getFee,
   refreshFioNames,
@@ -20,7 +20,7 @@ import { ReduxState } from '../../redux/init';
 
 const reduxConnect = connect(
   createStructuredSelector({
-    fioAddresses,
+    fioCryptoHandles,
     fioWallets,
     feePrice: (state: ReduxState) => {
       const { fees } = state.fio;
@@ -31,8 +31,8 @@ const reduxConnect = connect(
     },
   }),
   {
-    getFee: (fioAddress: string) =>
-      getFee(apis.fio.actionEndPoints[ACTIONS.addNft], fioAddress),
+    getFee: (fioCryptoHandle: string) =>
+      getFee(apis.fio.actionEndPoints[ACTIONS.addNft], fioCryptoHandle),
     refreshFioNames,
     getNFTSignatures,
   },

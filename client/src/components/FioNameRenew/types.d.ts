@@ -21,5 +21,5 @@ export type ContainerProps = {
   currentWallet: FioWalletDoublet;
   loading: boolean;
   refreshBalance: (publicKey: string) => void;
-  getFee: (isFioAddress: boolean) => void;
+  getFee: (isFioCryptoHandle: boolean) => void;
 } & ContainerOwnProps;

@@ -6,14 +6,14 @@ import GenericNftValidationField, {
 } from './components/GenericNftValidationField';
 import { renderContractAddressTitle } from './components/ContractAddressTitle';
 import {
-  renderFioAddressTitle,
+  renderFioCryptoHandleTitle,
   renderHashTitle,
   renderImageTitle,
 } from './components/GenericTitleComponent';
 
 import {
   renderContractAddressItem,
-  renderFioAddressItem,
+  renderFioCryptoHandleItem,
   renderHashItem,
   renderImageItem,
 } from './components/GenericNftItemResult';
@@ -41,9 +41,9 @@ export const NFT_ITEMS_TITLE_NAMES: {
     name: 'Token ID',
     id: 'tokenId',
   },
-  fioAddress: {
+  fioCryptoHandle: {
     name: 'FIO Crypto Handle',
-    id: 'fioAddress',
+    id: 'fioCryptoHandle',
   },
   url: {
     name: 'URL',
@@ -85,17 +85,17 @@ export const OPTIONS: {
     resultsItem: renderContractAddressItem,
     hasWarningBadge: true,
   },
-  fioAddress: {
-    id: TITLE_NAME.fioAddress.id,
-    name: TITLE_NAME.fioAddress.name,
+  fioCryptoHandle: {
+    id: TITLE_NAME.fioCryptoHandle.id,
+    name: TITLE_NAME.fioCryptoHandle.name,
     field: (
       <GenericNftValidationField
-        fieldName={FIELDS_NAMES.FIO_ADDRESS}
+        fieldName={FIELDS_NAMES.FIO_CRYPTO_HANDLE}
         isMaxField={true}
       />
     ),
-    resultsTitle: renderFioAddressTitle,
-    resultsItem: renderFioAddressItem,
+    resultsTitle: renderFioCryptoHandleTitle,
+    resultsItem: renderFioCryptoHandleItem,
     showGroupResults: true,
   },
   hash: {

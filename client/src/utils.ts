@@ -13,7 +13,7 @@ import {
 const FIO_DASH_USERNAME_DELIMITER = `.fio.dash.${process.env
   .REACT_APP_EDGE_ACC_DELIMITER || ''}`;
 
-export const FIO_ADDRESS_DELIMITER = '@';
+export const FIO_CRYPTO_HANDLE_DELIMITER = '@';
 
 export function compose(...funcs: ((args?: any) => any)[]) {
   if (funcs.length === 1) {
@@ -172,19 +172,19 @@ export const cartHasFreeItem = (cartItems: CartItem[]) => {
   );
 };
 
-export const handleFreeAddressCart = ({
+export const handleFreeFioCryptoHandlesCart = ({
   recalculate,
   cartItems,
   prices,
-  hasFreeAddress,
+  hasFreeFioCryptoHandle,
 }: {
   recalculate: (cartItems: CartItem[]) => {};
   cartItems: CartItem[];
   prices: Prices;
-  hasFreeAddress: boolean;
+  hasFreeFioCryptoHandle: boolean;
 }) => {
   let retCart: CartItem[] = [];
-  if (hasFreeAddress) {
+  if (hasFreeFioCryptoHandle) {
     retCart = removeFreeCart({ cartItems, prices });
   } else if (!cartHasFreeItem(cartItems)) {
     retCart = setFreeCart({ cartItems });
@@ -266,9 +266,9 @@ export const totalCost = (
 };
 
 export const isDomain = (fioName: string) =>
-  fioName.indexOf(FIO_ADDRESS_DELIMITER) < 0;
-export const hasFioAddressDelimiter = (value: string): boolean =>
-  value.indexOf(FIO_ADDRESS_DELIMITER) > 0;
+  fioName.indexOf(FIO_CRYPTO_HANDLE_DELIMITER) < 0;
+export const hasFioCryptoHandleDelimiter = (value: string): boolean =>
+  value.indexOf(FIO_CRYPTO_HANDLE_DELIMITER) > 0;
 
 export const priceToNumber = (price: string) => +parseFloat(price).toFixed(2);
 

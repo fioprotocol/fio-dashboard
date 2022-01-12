@@ -11,7 +11,7 @@ import { edgeLoginSuccess } from './edge/sagas';
 import { listFailure } from './users/sagas';
 import { notify } from './notify/sagas';
 import {
-  fioAddressRegisterSuccess,
+  fioCryptoHandleRegisterSuccess,
   refLoginSuccess,
   refActionSuccess,
 } from './refProfile/sagas';
@@ -32,7 +32,7 @@ export default function* rootSaga(history, api) {
     listFailure(history),
     signupSuccess(history),
     notify(history),
-    fioAddressRegisterSuccess(history),
+    fioCryptoHandleRegisterSuccess(history),
     refLoginSuccess(),
     clearGenericModalError(),
     refActionSuccess(),

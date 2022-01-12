@@ -28,7 +28,7 @@ const AddressWidget = (props: {
       <p className={classes.subtitle}>{subTitle}</p>
       <p className={classes.actionInfo}>{ACTION_TEXT[action]}</p>
       <div className={classes.form}>
-        <AddressDomainForm isHomepage formName={FORM_NAMES.ADDRESS} />
+        <AddressDomainForm isHomepage formName={FORM_NAMES.FIO_CRYPTO_HANDLE} />
       </div>
       <div className="d-flex justify-content-center">
         <p className={classes.signInCallToAction}>

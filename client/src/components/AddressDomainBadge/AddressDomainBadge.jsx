@@ -6,12 +6,12 @@ import { ROUTES } from '../../constants/routes';
 import classes from './AddressDomainBadge.module.scss';
 
 export const ADDRESS_DOMAIN_BADGE_TYPE = {
-  ADDRESS: 'address',
+  FIO_CRYPTO_HANDLE: 'fioCryptoHandle',
   DOMAIN: 'domain',
 };
 
 const content = {
-  [ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS]: {
+  [ADDRESS_DOMAIN_BADGE_TYPE.FIO_CRYPTO_HANDLE]: {
     link: ROUTES.FIO_DOMAINS_SELECTION,
     button: 'Purchase Domain',
     title: 'Want to register a FIO Crypto Handle with a custom domain?',

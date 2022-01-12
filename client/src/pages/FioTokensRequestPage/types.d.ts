@@ -1,6 +1,6 @@
 import { RouteComponentProps } from 'react-router-dom';
 import {
-  FioAddressDoublet,
+  FioCryptoHandleDoublet,
   FioWalletDoublet,
   WalletBalances,
 } from '../../types';
@@ -21,7 +21,7 @@ export type RequestTokensValues = {
 
 export type RequestTokensProps = {
   fioWallet: FioWalletDoublet;
-  fioAddresses: FioAddressDoublet[];
+  fioCryptoHandles: FioCryptoHandleDoublet[];
   balance: WalletBalances;
   loading: boolean;
   onSubmit: (values: RequestTokensValues) => void;
@@ -33,7 +33,7 @@ export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
 
 export interface ContainerProps extends ContainerOwnProps {
   fioWallet: FioWalletDoublet;
-  fioAddresses: FioAddressDoublet[];
+  fioCryptoHandles: FioCryptoHandleDoublet[];
   loading: boolean;
   roe: number;
   balance: WalletBalances;

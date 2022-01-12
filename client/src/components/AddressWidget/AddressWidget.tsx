@@ -22,7 +22,7 @@ const AddressWidget = () => {
         and select a domain.
       </p>
       <div className={classes.form}>
-        <AddressDomainForm isHomepage formName={FORM_NAMES.ADDRESS} />
+        <AddressDomainForm isHomepage formName={FORM_NAMES.FIO_CRYPTO_HANDLE} />
       </div>
       <div className={classes.bottom} />
     </div>

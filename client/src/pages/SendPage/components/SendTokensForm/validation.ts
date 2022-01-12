@@ -7,15 +7,15 @@ export const validate = async (values: SendTokensValues) => {
     return { to: 'Receiver is required' };
   }
 
-  let isFioAddress = false;
+  let isFioCryptoHandle = false;
   try {
-    apis.fio.isFioAddressValid(transferToAddress);
-    isFioAddress = true;
+    apis.fio.isFioCryptoHandleValid(transferToAddress);
+    isFioCryptoHandle = true;
   } catch (e) {
     //
   }
 
-  if (isFioAddress) {
+  if (isFioCryptoHandle) {
     try {
       const {
         public_address: publicAddress,

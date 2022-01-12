@@ -8,10 +8,10 @@ import RequestTokensEdgeWallet from './components/RequestTokensEdgeWallet';
 import TokenTransferResults from '../../components/common/TransactionResults/components/TokenTransferResults';
 
 import { putParamsToUrl } from '../../utils';
-import { useFioAddresses } from '../../util/hooks';
+import { useFioCryptoHandles } from '../../util/hooks';
 
 import { ContainerProps, RequestTokensValues } from './types';
-import { FioAddressDoublet } from '../../types';
+import { FioCryptoHandleDoublet } from '../../types';
 import { TrxResponse } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 
@@ -26,7 +26,7 @@ import classes from './styles/RequestTokensPage.module.scss';
 const RequestPage: React.FC<ContainerProps> = props => {
   const {
     fioWallet,
-    fioAddresses,
+    fioCryptoHandles,
     balance,
     loading,
     roe,
@@ -40,7 +40,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
   );
   const [processing, setProcessing] = useState<boolean>(false);
 
-  useFioAddresses();
+  useFioCryptoHandles();
 
   useEffect(() => {
     setRequestData(null);
@@ -93,17 +93,20 @@ const RequestPage: React.FC<ContainerProps> = props => {
   const backTo = putParamsToUrl(ROUTES.FIO_WALLET, {
     publicKey: fioWallet.publicKey,
   });
-  const walletFioAddresses = fioAddresses
+  const walletFioCryptoHandles = fioCryptoHandles
     .filter(
-      ({ walletPublicKey }: FioAddressDoublet) =>
+      ({ walletPublicKey }: FioCryptoHandleDoublet) =>
         fioWallet.publicKey === walletPublicKey,
     )
-    .sort((fioAddress1: FioAddressDoublet, fioAddress2: FioAddressDoublet) =>
-      fioAddress1.name > fioAddress2.name ? 1 : -1,
+    .sort(
+      (
+        fioCryptoHandle1: FioCryptoHandleDoublet,
+        fioCryptoHandle2: FioCryptoHandleDoublet,
+      ) => (fioCryptoHandle1.name > fioCryptoHandle2.name ? 1 : -1),
     );
 
   const renderInfoBadge = () =>
-    fioAddresses.length ? (
+    fioCryptoHandles.length ? (
       <InfoBadge
         type={BADGE_TYPES.INFO}
         show={true}
@@ -154,7 +157,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
           fioWallet={fioWallet}
           balance={balance}
           loading={loading || processing}
-          fioAddresses={walletFioAddresses}
+          fioCryptoHandles={walletFioCryptoHandles}
           onSubmit={onRequest}
         />
       </PseudoModalContainer>

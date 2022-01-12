@@ -8,10 +8,10 @@ import SendEdgeWallet from './components/SendEdgeWallet';
 import TokenTransferResults from '../../components/common/TransactionResults/components/TokenTransferResults';
 
 import { putParamsToUrl } from '../../utils';
-import { fioAddressToPubKey } from '../../util/fio';
+import { fioCryptoHandleToPubKey } from '../../util/fio';
 
 import { ContainerProps, SendTokensValues } from './types';
-import { FioAddressDoublet } from '../../types';
+import { FioCryptoHandleDoublet } from '../../types';
 import { TrxResponse } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 
@@ -21,7 +21,7 @@ import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ROUTES } from '../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../constants/common';
 
-import { useFioAddresses } from '../../util/hooks';
+import { useFioCryptoHandles } from '../../util/hooks';
 
 import classes from './styles/SendPage.module.scss';
 import { setFees } from '../../util/prices';
@@ -29,7 +29,7 @@ import { setFees } from '../../util/prices';
 const SendPage: React.FC<ContainerProps> = props => {
   const {
     fioWallet,
-    fioAddresses,
+    fioCryptoHandles,
     balance,
     loading,
     feePrice,
@@ -43,7 +43,7 @@ const SendPage: React.FC<ContainerProps> = props => {
   const [sendData, setSendData] = useState<SendTokensValues | null>(null);
   const [processing, setProcessing] = useState<boolean>(false);
 
-  useFioAddresses();
+  useFioCryptoHandles();
 
   useEffect(() => {
     getFee();
@@ -56,9 +56,9 @@ const SendPage: React.FC<ContainerProps> = props => {
 
   const onSend = async (values: SendTokensValues) => {
     const newSendData = { ...values };
-    const pubKey = await fioAddressToPubKey(newSendData.to);
+    const pubKey = await fioCryptoHandleToPubKey(newSendData.to);
     if (pubKey) {
-      newSendData.receiverFioAddress = values.to;
+      newSendData.receiverFioCryptoHandle = values.to;
       newSendData.to = pubKey;
     }
     newSendData.amount = apis.fio.amountToSUF(newSendData.amount);
@@ -98,17 +98,20 @@ const SendPage: React.FC<ContainerProps> = props => {
   const backTo = putParamsToUrl(ROUTES.FIO_WALLET, {
     publicKey: fioWallet.publicKey,
   });
-  const walletFioAddresses = fioAddresses
+  const walletFioCryptoHandles = fioCryptoHandles
     .filter(
-      ({ walletPublicKey }: FioAddressDoublet) =>
+      ({ walletPublicKey }: FioCryptoHandleDoublet) =>
         fioWallet.publicKey === walletPublicKey,
     )
-    .sort((fioAddress1: FioAddressDoublet, fioAddress2: FioAddressDoublet) =>
-      fioAddress1.name > fioAddress2.name ? 1 : -1,
+    .sort(
+      (
+        fioCryptoHandle1: FioCryptoHandleDoublet,
+        fioCryptoHandle2: FioCryptoHandleDoublet,
+      ) => (fioCryptoHandle1.name > fioCryptoHandle2.name ? 1 : -1),
     );
 
   const renderInfoBadge = () =>
-    fioAddresses.length ? (
+    fioCryptoHandles.length ? (
       <InfoBadge
         type={BADGE_TYPES.INFO}
         show={true}
@@ -158,7 +161,7 @@ const SendPage: React.FC<ContainerProps> = props => {
           fioWallet={fioWallet}
           balance={balance}
           loading={loading || processing}
-          fioAddresses={walletFioAddresses}
+          fioCryptoHandles={walletFioCryptoHandles}
           onSubmit={onSend}
           fee={feePrice}
           obtDataOn={true}

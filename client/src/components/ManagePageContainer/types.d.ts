@@ -20,7 +20,7 @@ export interface ContainerProps extends RouteComponentProps {
   showExpired?: boolean;
   showBundles?: boolean;
   showStatus?: boolean;
-  showFioAddressName?: boolean;
+  showFioCryptoHandleName?: boolean;
 }
 
 export type BoolStateFunc = Dispatch<SetStateAction<boolean>>;
@@ -40,7 +40,7 @@ export type DefaultProps = {
   isExpired: IsExpiredFunc;
   onItemModalOpen?: ModalOpenActionType;
   onSettingsOpen?: ModalOpenActionType;
-  showFioAddressName?: boolean;
+  showFioCryptoHandleName?: boolean;
 };
 
 export type NotificationsProps = {

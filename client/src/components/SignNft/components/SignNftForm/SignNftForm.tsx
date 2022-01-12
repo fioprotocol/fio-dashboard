@@ -29,13 +29,13 @@ const SignNFTForm = (props: SignNftFormProps) => {
     initialValues,
     fieldValuesChanged,
     alreadySigned,
-    selectedFioAddressName,
-    fioAddresses,
-    setSelectedFioAddress,
+    selectedFioCryptoHandleName,
+    fioCryptoHandles,
+    setSelectedFioCryptoHandle,
     bundleCost,
     hasLowBalance,
     processing,
-    fioAddress,
+    fioCryptoHandle,
     isEdit,
     addressSelectOff,
   } = props;
@@ -62,15 +62,15 @@ const SignNFTForm = (props: SignNftFormProps) => {
                 <Row>
                   <Col className={classes.subTitleSection}>
                     <div
-                      className={`${classes.fioAddress} d-flex justify-content-start`}
+                      className={`${classes.fioCryptoHandle} d-flex justify-content-start`}
                     >
-                      <div className={classes.fioAddressLabel}>
+                      <div className={classes.fioCryptoHandleLabel}>
                         FIO Crypto Handle
                       </div>
                       <CustomDropdown
-                        value={selectedFioAddressName}
-                        list={fioAddresses.map(({ name }) => name)}
-                        onChange={setSelectedFioAddress}
+                        value={selectedFioCryptoHandleName}
+                        list={fioCryptoHandles.map(({ name }) => name)}
+                        onChange={setSelectedFioCryptoHandle}
                       />
                     </div>
                   </Col>
@@ -78,7 +78,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
               </>
             ) : (
               <div className="mt-3 mb-4">
-                <FioName name={fioAddress.name} />
+                <FioName name={fioCryptoHandle.name} />
                 <Row className="mt-4">
                   <Col className={classes.subTitleSection}>
                     Signed NFT Details
@@ -173,7 +173,9 @@ const SignNFTForm = (props: SignNftFormProps) => {
             </Row>
             <BundledTransactionBadge
               bundles={bundleCost}
-              remaining={fioAddress != null ? fioAddress.remaining : 0}
+              remaining={
+                fioCryptoHandle != null ? fioCryptoHandle.remaining : 0
+              }
             />
             <LowBalanceBadge
               hasLowBalance={hasLowBalance}

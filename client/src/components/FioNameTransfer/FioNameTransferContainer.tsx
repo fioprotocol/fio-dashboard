@@ -17,7 +17,7 @@ import {
 } from '../../constants/common';
 import { ACTIONS } from '../../constants/fio';
 
-import { hasFioAddressDelimiter, isDomain } from '../../utils';
+import { hasFioCryptoHandleDelimiter, isDomain } from '../../utils';
 import { setFees } from '../../util/prices';
 
 import apis from '../../api';
@@ -63,7 +63,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
   useEffect(() => {
-    getFee(hasFioAddressDelimiter(name));
+    getFee(hasFioCryptoHandleDelimiter(name));
     refreshBalance(currentWallet.publicKey);
   }, []);
 
@@ -75,7 +75,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
 
   const submit = async ({ keys, data }: SubmitActionParams) => {
     const { transferAddress } = data;
-    let newOwnerKey = hasFioAddressDelimiter(transferAddress)
+    let newOwnerKey = hasFioCryptoHandleDelimiter(transferAddress)
       ? ''
       : transferAddress;
     if (!newOwnerKey) {

@@ -7,7 +7,7 @@ import { getFee, refreshBalance } from '../../redux/fio/actions';
 
 import {
   loading,
-  fioAddresses,
+  fioCryptoHandles,
   fioWallets as fioWalletsSelector,
   fioWalletsBalances as fioWalletsBalancesSelector,
 } from '../../redux/fio/selectors';
@@ -35,7 +35,7 @@ const reduxConnect = connect(
           publicKey === ownProps.match.params.publicKey,
       );
     },
-    fioAddresses,
+    fioCryptoHandles,
     loading,
     roe,
     feePrice: (state: ReduxState) =>

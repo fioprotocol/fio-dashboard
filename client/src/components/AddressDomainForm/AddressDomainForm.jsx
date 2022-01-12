@@ -14,7 +14,7 @@ import {
   priceToNumber,
 } from '../../utils';
 
-import { addressValidation, domainValidation } from './validation';
+import { fioCryptoHandleValidation, domainValidation } from './validation';
 
 const AddressDomainForm = props => {
   const {
@@ -28,10 +28,10 @@ const AddressDomainForm = props => {
     prices,
     cartItems,
     recalculate,
-    hasFreeAddress,
+    hasFreeFioCryptoHandle,
   } = props;
 
-  const isAddress = type === ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS;
+  const isCryptoHandle = type === ADDRESS_DOMAIN_BADGE_TYPE.FIO_CRYPTO_HANDLE;
   const isDomain = type === ADDRESS_DOMAIN_BADGE_TYPE.DOMAIN;
 
   const [showCustomDomain, toggleShowCustomDomain] = useState(false);
@@ -59,7 +59,7 @@ const AddressDomainForm = props => {
     options,
     toggleShowAvailable,
     changeFormErrors,
-    isAddress,
+    isCryptoHandle,
     toggleValidating,
     cartItems,
     recalculate,
@@ -73,7 +73,7 @@ const AddressDomainForm = props => {
       ...validationProps,
     };
 
-    if (isAddress) addressValidation(validationPropsToPass);
+    if (isCryptoHandle) fioCryptoHandleValidation(validationPropsToPass);
     if (isDomain) domainValidation(validationPropsToPass);
 
     if (!isDesktop && showAvailable) {
@@ -91,7 +91,7 @@ const AddressDomainForm = props => {
       formProps,
       ...validationProps,
     };
-    if (isAddress) addressValidation(validationPropsToPass);
+    if (isCryptoHandle) fioCryptoHandleValidation(validationPropsToPass);
     if (isDomain) domainValidation(validationPropsToPass);
   };
 
@@ -123,7 +123,7 @@ const AddressDomainForm = props => {
     const isFree =
       (!hasCustomDomain &&
         !cartHasFreeItem(cartItems) &&
-        !hasFreeAddress &&
+        !hasFreeFioCryptoHandle &&
         isFreeDomain({ domains, domain })) ||
       (currentCartItem && !currentCartItem.costFio);
 
@@ -164,7 +164,7 @@ const AddressDomainForm = props => {
         formProps={formProps}
         {...props}
         options={options}
-        isAddress={isAddress}
+        isCryptoHandle={isCryptoHandle}
         isDomain={isDomain}
         hasCustomDomain={hasCustomDomain}
         showCustomDomain={showCustomDomain}
@@ -178,7 +178,7 @@ const AddressDomainForm = props => {
         isValidating={isValidating}
         formState={formState}
         isFree={isFree}
-        hasFreeAddress={hasFreeAddress}
+        hasFreeFioCryptoHandle={hasFreeFioCryptoHandle}
         isDesktop={isDesktop}
       />,
       !isHomepage && (
@@ -191,7 +191,7 @@ const AddressDomainForm = props => {
           currentCartItem={currentCartItem}
           showAvailable={showAvailable}
           toggleShowAvailable={toggleShowAvailable}
-          isAddress={isAddress}
+          isCryptoHandle={isCryptoHandle}
           isDomain={isDomain}
           key="notifications"
           isFree={isFree}

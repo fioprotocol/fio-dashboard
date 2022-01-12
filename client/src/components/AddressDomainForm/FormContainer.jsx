@@ -16,7 +16,7 @@ import DomainForm from './DomainForm';
 import classes from './AddressDomainForm.module.scss';
 
 const FORM_TYPES = {
-  [ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS]: {
+  [ADDRESS_DOMAIN_BADGE_TYPE.FIO_CRYPTO_HANDLE]: {
     title: 'Create FIO Crypto Handle',
     subtitle:
       'Registering a FIO Crypto Handle is fast and easy. Simply add a username and select a domain.',
@@ -33,14 +33,14 @@ const FormContainer = props => {
     isHomepage,
     formProps,
     type,
-    isAddress,
+    isFioCryptoHandle,
     isValidating,
     toggleShowAvailable,
     handleChange,
     formState,
     debouncedHandleChange,
     showPrice,
-    hasFreeAddress,
+    hasFreeFioCryptoHandle,
     domains,
     isDomain,
     isDesktop,
@@ -49,7 +49,7 @@ const FormContainer = props => {
   const buttonText = `Get My FIO ${isDomain ? 'Domain' : 'Crypto Handle'}`;
 
   useEffect(() => {
-    if (!isHomepage && isAddress && !isEmpty(formState)) {
+    if (!isHomepage && isFioCryptoHandle && !isEmpty(formState)) {
       const { handleSubmit } = formProps || {};
       handleSubmit();
     }
@@ -84,7 +84,7 @@ const FormContainer = props => {
         <div className={classes.selectionContainer}>
           {isHomepage ? (
             <AddressForm {...propsToForm} formName={FORM_NAMES.ADDRESS} />
-          ) : isAddress ? (
+          ) : isFioCryptoHandle ? (
             <AddressForm {...propsToForm} />
           ) : (
             <DomainForm {...propsToForm} />
@@ -93,7 +93,7 @@ const FormContainer = props => {
         {(isHomepage || isDesktop) && (
           <PriceBadge
             showPrice={showPrice}
-            hasFreeAddress={hasFreeAddress}
+            hasFreeFioCryptoHandle={hasFreeFioCryptoHandle}
             domains={domains}
             tooltip={
               <>

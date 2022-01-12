@@ -43,7 +43,7 @@ const SendEdgeWallet: React.FC<Props> = props => {
       try {
         await apis.fio.executeAction(keys, ACTIONS.recordObtData, {
           payerFioAddress: data.from,
-          payeeFioAddress: data.receiverFioAddress,
+          payeeFioAddress: data.receiverFioCryptoHandle,
           payerTokenPublicAddress: keys.public,
           payeeTokenPublicAddress: data.to,
           amount: apis.fio.sufToAmount(data.amount),

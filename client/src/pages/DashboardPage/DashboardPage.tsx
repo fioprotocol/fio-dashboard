@@ -8,22 +8,25 @@ import DashboardListItem from './DashboardListItem';
 import ManagePageCtaBadge from '../../components/ManagePageContainer/ManagePageCtaBadge';
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 
-import { useFioAddresses, useNonActiveUserRedirect } from '../../util/hooks';
+import {
+  useFioCryptoHandles,
+  useNonActiveUserRedirect,
+} from '../../util/hooks';
 
-import { FioWalletDoublet, FioAddressDoublet } from '../../types';
+import { FioWalletDoublet, FioCryptoHandleDoublet } from '../../types';
 
 import classes from './DashboardPage.module.scss';
 import { ROUTES } from '../../constants/routes';
 
 type Props = {
   fioWallets: FioWalletDoublet[];
-  fioAddresses: FioAddressDoublet[];
+  fioCryptoHandles: FioCryptoHandleDoublet[];
   loading: boolean;
 };
 
 const DashboardPage: React.FC<Props> = props => {
-  const { fioWallets, fioAddresses, loading } = props;
-  useFioAddresses();
+  const { fioWallets, fioCryptoHandles, loading } = props;
+  useFioCryptoHandles();
   useNonActiveUserRedirect();
 
   return (
@@ -61,12 +64,12 @@ const DashboardPage: React.FC<Props> = props => {
         </div>
         {loading ? (
           <FontAwesomeIcon icon="spinner" spin className={classes.spinner} />
-        ) : fioAddresses.length > 0 ? (
-          fioAddresses.map(address => (
+        ) : fioCryptoHandles.length > 0 ? (
+          fioCryptoHandles.map(fioCryptoHandle => (
             <DashboardListItem
               title="FIO Crypto Handle"
-              listItem={address.name}
-              key={address.name}
+              listItem={fioCryptoHandle.name}
+              key={fioCryptoHandle.name}
             />
           ))
         ) : (

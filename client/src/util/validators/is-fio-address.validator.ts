@@ -15,7 +15,7 @@ export const isFioAddressValidator: FieldValidationFunctionSync = ({
   };
 
   try {
-    apis.fio.isFioAddressValid(value);
+    apis.fio.isFioCryptoHandleValid(value);
     return {
       ...validationResult,
       succeeded: true,

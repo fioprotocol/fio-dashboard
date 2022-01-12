@@ -5,7 +5,7 @@ import { compose } from '../../utils';
 
 import { loading as edgeAuthLoading } from '../../redux/edge/selectors';
 import { isAuthenticated } from '../../redux/profile/selectors';
-import { fioAddresses } from '../../redux/fio/selectors';
+import { fioCryptoHandles } from '../../redux/fio/selectors';
 import {
   loading,
   refProfileInfo,
@@ -22,7 +22,7 @@ const reduxConnect = connect(
     edgeAuthLoading,
     refProfileInfo,
     refProfileQueryParams,
-    fioAddresses,
+    fioCryptoHandles,
     homePageLink,
   }),
 );

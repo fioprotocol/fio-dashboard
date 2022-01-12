@@ -13,14 +13,14 @@ import {
   PublicAddressDoublet,
 } from '../types';
 
-export const waitForAddressRegistered = async (fioAddress: string) => {
+export const waitForAddressRegistered = async (fioCryptoHandle: string) => {
   const CALL_INTERVAL = 3000; // 3 sec
   const WAIT_TIMEOUT = 60000; // 60 sec
   const startTime = new Date().getTime();
 
   const checkAddressIsRegistered: () => Promise<void> = async () => {
     try {
-      const { is_registered } = await apis.fio.availCheck(fioAddress);
+      const { is_registered } = await apis.fio.availCheck(fioCryptoHandle);
       if (is_registered) return;
     } catch (e) {
       //
@@ -42,7 +42,7 @@ export const transformNft = (nfts: NftTokenResponse[]) => {
   const nftList = [];
   for (const item of nfts) {
     const nftItem = {
-      fioAddress: item.fio_address,
+      fioCryptoHandle: item.fio_address,
       contractAddress: item.contract_address,
       chainCode: item.chain_code,
       tokenId: item.token_id,
@@ -55,23 +55,23 @@ export const transformNft = (nfts: NftTokenResponse[]) => {
   return nftList;
 };
 
-export const fioAddressToPubKey = async (
-  fioAddress: string,
+export const fioCryptoHandleToPubKey = async (
+  fioCryptoHandle: string,
 ): Promise<string> => {
-  let isFioAddress = false;
+  let isFioCryptoHandle = false;
   let pubKey = '';
   try {
-    apis.fio.isFioAddressValid(fioAddress);
-    isFioAddress = true;
+    apis.fio.isFioCryptoHandleValid(fioCryptoHandle);
+    isFioCryptoHandle = true;
   } catch (e) {
     //
   }
 
-  if (isFioAddress) {
+  if (isFioCryptoHandle) {
     try {
       const {
         public_address: publicAddress,
-      } = await apis.fio.getFioPublicAddress(fioAddress);
+      } = await apis.fio.getFioPublicAddress(fioCryptoHandle);
       pubKey = publicAddress;
     } catch (e) {
       //
@@ -114,10 +114,10 @@ export const transformResult = ({
       const partialIndex = partial && partial.indexOf(cartItemId);
       if (!isDomain(fioName)) {
         const name = fioName.split('@');
-        const addressName = name[0];
+        const fioCryptoHandleName = name[0];
         const domainName = name[1];
 
-        retObj.address = addressName;
+        retObj.address = fioCryptoHandleName;
         retObj.domain = domainName;
         retObj.error = error;
         retObj.errorType = errorType;
@@ -163,10 +163,10 @@ export const transformResult = ({
 
       if (!isDomain(fioName)) {
         const name = fioName.split('@');
-        const addressName = name[0];
+        const fioCryptoHandleName = name[0];
         const domainName = name[1];
 
-        retObj.address = addressName;
+        retObj.address = fioCryptoHandleName;
         retObj.domain = domainName;
 
         if (isFree) {

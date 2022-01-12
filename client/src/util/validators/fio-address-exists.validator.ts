@@ -8,7 +8,7 @@ interface FieldArgs {
 
 const defaultMessage = 'Please enter valid FIO Crypto Handle.';
 
-export const fioAddressExistsValidator: FieldValidationFunctionAsync<FieldArgs> = async ({
+export const fioCryptoHandleExistsValidator: FieldValidationFunctionAsync<FieldArgs> = async ({
   value,
   values,
   message = defaultMessage,
@@ -28,7 +28,7 @@ export const fioAddressExistsValidator: FieldValidationFunctionAsync<FieldArgs> 
   };
 
   try {
-    apis.fio.isFioAddressValid(value);
+    apis.fio.isFioCryptoHandleValid(value);
 
     const {
       public_address: publicAddress,

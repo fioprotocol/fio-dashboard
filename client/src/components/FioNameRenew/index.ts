@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 import apis from '../../api';
-import { compose, hasFioAddressDelimiter } from '../../utils';
+import { compose, hasFioCryptoHandleDelimiter } from '../../utils';
 
 import { refreshBalance, getFee } from '../../redux/fio/actions';
 
@@ -23,7 +23,7 @@ const reduxConnect = connect(
       const { fees } = state.fio;
       return (
         fees[
-          hasFioAddressDelimiter(ownProps.name)
+          hasFioCryptoHandleDelimiter(ownProps.name)
             ? apis.fio.actionEndPoints.renewFioAddress
             : apis.fio.actionEndPoints.renewFioDomain
         ] || DEFAULT_FEE_PRICES
@@ -34,9 +34,9 @@ const reduxConnect = connect(
   }),
   {
     refreshBalance,
-    getFee: (isFioAddress: boolean) =>
+    getFee: (isFioCryptoHandle: boolean) =>
       getFee(
-        isFioAddress
+        isFioCryptoHandle
           ? apis.fio.actionEndPoints.renewFioAddress
           : apis.fio.actionEndPoints.renewFioDomain,
       ),

@@ -62,7 +62,7 @@ export const isNewUser = createSelector(
     profileRefreshed && isAuthenticated && user.status === USER_STATUSES.NEW,
 );
 
-export const hasFreeAddress = createSelector(
+export const hasFreeFioCryptoHandle = createSelector(
   user,
   user => user && !!user.freeAddresses.length,
 );

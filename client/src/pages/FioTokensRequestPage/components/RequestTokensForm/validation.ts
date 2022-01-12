@@ -1,7 +1,7 @@
 import { Validators, ValidationSchema } from '@lemoncode/fonk';
 import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
 import {
-  fioAddressExistsValidator,
+  fioCryptoHandleExistsValidator,
   isFioAddressValidator,
   matchFieldValidator,
   isNumberValidator,
@@ -58,7 +58,7 @@ const onSubmitValidationSchema: ValidationSchema = {
   field: {
     payerFioAddress: [
       {
-        validator: fioAddressExistsValidator,
+        validator: fioCryptoHandleExistsValidator,
         customArgs: {
           fieldIdToCompare: 'payeeTokenPublicAddress',
           sameWalletMessage: "Can't request to same wallet.",

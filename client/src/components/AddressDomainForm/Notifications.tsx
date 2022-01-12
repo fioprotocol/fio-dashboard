@@ -14,7 +14,7 @@ import { CartItem, Domain, DeleteCartItem, Prices } from '../../types';
 import classes from './AddressDomainForm.module.scss';
 
 const AVAILABLE_MESSAGE = {
-  [ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS]:
+  [ADDRESS_DOMAIN_BADGE_TYPE.FIO_CRYPTO_HANDLE]:
     'The FIO Crypto Handle you requested is available',
   [ADDRESS_DOMAIN_BADGE_TYPE.DOMAIN]:
     'The FIO domain you requested is available',
@@ -37,7 +37,7 @@ type Props = {
   domains: Domain[];
   formErrors: FormError;
   formProps: FormProps;
-  isAddress: boolean;
+  isFioCryptoHandle: boolean;
   isDomain: boolean;
   isFree: boolean;
   hasCustomDomain: boolean;
@@ -59,7 +59,7 @@ const Notifications = (props: Props, ref: React.Ref<HTMLDivElement | null>) => {
     domains,
     formErrors,
     formProps,
-    isAddress,
+    isFioCryptoHandle,
     isDomain,
     isFree,
     hasCustomDomain,
@@ -100,9 +100,9 @@ const Notifications = (props: Props, ref: React.Ref<HTMLDivElement | null>) => {
   let costUsdc = 0;
   let costFio = 0;
 
-  if (!isFree && isAddress) {
-    costUsdc = isAddress ? addressPrice : domainPrice;
-    costFio = isAddress ? fioAddressPrice : fioDomainPrice;
+  if (!isFree && isFioCryptoHandle) {
+    costUsdc = isFioCryptoHandle ? addressPrice : domainPrice;
+    costFio = isFioCryptoHandle ? fioAddressPrice : fioDomainPrice;
   }
   if (hasCustomDomain) {
     costUsdc = costUsdc ? costUsdc + domainPrice : domainPrice;
@@ -187,12 +187,12 @@ const Notifications = (props: Props, ref: React.Ref<HTMLDivElement | null>) => {
       <Badge type={BADGE_TYPES.SIMPLE} show={showAvailable}>
         <div
           className={classnames(
-            classes.addressContainer,
+            classes.fioCryptoHandleContainer,
             !hasErrors && classes.showPrice,
           )}
         >
-          <p className={classes.address}>
-            {isAddress && (
+          <p className={classes.fioCryptoHandle}>
+            {isFioCryptoHandle && (
               <>
                 <span className={classes.name}>{address}</span>@
               </>

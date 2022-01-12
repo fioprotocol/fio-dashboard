@@ -52,7 +52,7 @@ const verifyAddress = async props => {
   toggleValidating(false);
 };
 
-export const addressValidation = async props => {
+export const fioCryptoHandleValidation = async props => {
   const { formProps, toggleShowAvailable, changeFormErrors } = props;
   const { mutators, getState } = formProps;
   const { values, modified, submitting } = getState();

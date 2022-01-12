@@ -6,7 +6,7 @@ import { ROUTES } from '../../constants/routes';
 import DoubleCardContainer from '../../components/DoubleCardContainer';
 import Cart from '../../components/Cart/Cart';
 import CartAmount from '../../components/Cart/CartAmount';
-import { handleFreeAddressCart, totalCost } from '../../utils';
+import { handleFreeFioCryptoHandlesCart, totalCost } from '../../utils';
 
 const CartPage = props => {
   const {
@@ -21,7 +21,7 @@ const CartPage = props => {
     lastLocation,
     refreshBalance,
     isAuthenticated,
-    hasFreeAddress,
+    hasFreeFioCryptoHandle,
   } = props;
 
   const [isPriceChanged, handlePriceChange] = useState(false);
@@ -99,14 +99,14 @@ const CartPage = props => {
     if (!isAuthenticated) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
-    handleFreeAddressCart({
+    handleFreeFioCryptoHandlesCart({
       domains,
       recalculate,
       cartItems,
       prices,
-      hasFreeAddress,
+      hasFreeFioCryptoHandle,
     });
-  }, [isAuthenticated, domains, hasFreeAddress]);
+  }, [isAuthenticated, domains, hasFreeFioCryptoHandle]);
 
   useEffect(() => {
     if (!isEmpty(userWallets)) {

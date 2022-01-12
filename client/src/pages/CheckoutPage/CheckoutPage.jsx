@@ -6,7 +6,7 @@ import CheckoutPurchaseContainer from '../../components/CheckoutPurchaseContaine
 import { RenderCheckout } from '../../components/CheckoutPurchaseContainer/CheckoutPurchaseComponents';
 import '../../helpers/gt-sdk';
 import { ROUTES } from '../../constants/routes';
-import { totalCost, handleFreeAddressCart } from '../../utils';
+import { totalCost, handleFreeFioCryptoHandlesCart } from '../../utils';
 
 const CheckoutPage = props => {
   const {
@@ -19,7 +19,7 @@ const CheckoutPage = props => {
     isAuthenticated,
     setWallet,
     domains,
-    hasFreeAddress,
+    hasFreeFioCryptoHandle,
     recalculate,
     prices,
     isProcessing,
@@ -48,7 +48,7 @@ const CheckoutPage = props => {
   const isFree =
     !isEmpty(cartItems) &&
     cartItems.length === 1 &&
-    !hasFreeAddress &&
+    !hasFreeFioCryptoHandle &&
     cartItems[0].allowFree;
 
   useEffect(() => {
@@ -72,14 +72,14 @@ const CheckoutPage = props => {
 
   useEffect(() => {
     !isProcessing &&
-      handleFreeAddressCart({
+      handleFreeFioCryptoHandlesCart({
         domains,
         recalculate,
         cartItems,
         prices,
-        hasFreeAddress,
+        hasFreeFioCryptoHandle,
       });
-  }, [domains, hasFreeAddress, prices]);
+  }, [domains, hasFreeFioCryptoHandle, prices]);
 
   const onClose = () => {
     history.push(ROUTES.CART);

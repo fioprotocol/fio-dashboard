@@ -15,7 +15,7 @@ export function* refLoginSuccess() {
   });
 }
 
-export function* fioAddressRegisterSuccess() {
+export function* fioCryptoHandleRegisterSuccess() {
   yield takeEvery(SET_REGISTRATION_RESULTS, function*(action) {
     const isRefFlow = yield select(getIsRefFlow);
     if (isRefFlow && action.data.success) {

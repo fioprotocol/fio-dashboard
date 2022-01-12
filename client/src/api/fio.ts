@@ -49,7 +49,7 @@ export default class Fio {
 
   setBaseUrl = (): string => (Transactions.baseUrl = this.baseurl);
 
-  isFioAddressValid = (value: string): boolean =>
+  isFioCryptoHandleValid = (value: string): boolean =>
     FIOSDK.isFioAddressValid(value);
   isFioPublicKeyValid = (value: string): boolean =>
     FIOSDK.isFioPublicKeyValid(value);
@@ -124,17 +124,20 @@ export default class Fio {
   getActor = (publicKey: string): string =>
     this.publicFioSDK.transactions.getActor(publicKey);
 
-  availCheck = (fioName: string): Promise<AvailabilityResponse> => {
+  availCheck = (fioCryptoHandle: string): Promise<AvailabilityResponse> => {
     this.setBaseUrl();
-    return this.publicFioSDK.isAvailable(fioName);
+    return this.publicFioSDK.isAvailable(fioCryptoHandle);
   };
 
-  register = async (fioName: string, fee: number): Promise<TrxResponse> => {
+  register = async (
+    fioCryptoHandle: string,
+    fee: number,
+  ): Promise<TrxResponse> => {
     this.validateAction();
-    if (isDomain(fioName)) {
-      return await this.walletFioSDK.registerFioDomain(fioName, fee);
+    if (isDomain(fioCryptoHandle)) {
+      return await this.walletFioSDK.registerFioDomain(fioCryptoHandle, fee);
     }
-    return await this.walletFioSDK.registerFioAddress(fioName, fee);
+    return await this.walletFioSDK.registerFioAddress(fioCryptoHandle, fee);
   };
 
   getBalance = async (
@@ -175,7 +178,7 @@ export default class Fio {
     return { fio_addresses: [], fio_domains: [] };
   };
 
-  getFioAddresses = async (
+  getFioCryptoHandles = async (
     publicKey: string,
     limit: number,
     offset: number,
@@ -216,11 +219,11 @@ export default class Fio {
   };
 
   getFioPublicAddress = async (
-    fioAddress: string,
+    fioCryptoHandle: string,
   ): Promise<PublicAddressResponse> => {
     this.setBaseUrl();
     try {
-      const res = await this.publicFioSDK.getFioPublicAddress(fioAddress);
+      const res = await this.publicFioSDK.getFioPublicAddress(fioCryptoHandle);
       return res;
     } catch (e) {
       this.logError(e);
@@ -231,7 +234,7 @@ export default class Fio {
 
   getNFTs = async (
     searchParams: {
-      fioAddress?: string;
+      fioCryptoHandle?: string;
       chainCode?: string;
       hash?: string;
       tokenId?: string;
@@ -240,9 +243,13 @@ export default class Fio {
     limit: number | null = null,
     offset: number | null = null,
   ): Promise<NftsResponse> => {
+    const searchNftParams = {
+      ...searchParams,
+      fioAddress: searchParams.fioCryptoHandle,
+    };
     this.setBaseUrl();
     try {
-      return await this.publicFioSDK.getNfts(searchParams, limit, offset);
+      return await this.publicFioSDK.getNfts(searchNftParams, limit, offset);
     } catch (e) {
       this.logError(e);
     }
@@ -291,13 +298,17 @@ export default class Fio {
   };
 
   getPublicAddresses = async (
-    fioAddress: string,
+    fioCryptoHandle: string,
     limit: number | null = null,
     offset: number | null = null,
   ): Promise<PublicAddressesResponse> => {
     this.setBaseUrl();
     try {
-      return this.publicFioSDK.getPublicAddresses(fioAddress, limit, offset);
+      return this.publicFioSDK.getPublicAddresses(
+        fioCryptoHandle,
+        limit,
+        offset,
+      );
     } catch (err) {
       this.logError(err);
       throw err;
@@ -306,7 +317,7 @@ export default class Fio {
 
   singNFT = async (
     keys: WalletKeys,
-    fioAddress: string,
+    fioCryptoHandle: string,
     nfts: NFTTokenDoublet[],
   ): Promise<TrxResponse> => {
     try {
@@ -314,7 +325,7 @@ export default class Fio {
         action: 'addnft',
         account: 'fio.address',
         data: {
-          fio_address: fioAddress,
+          fio_address: fioCryptoHandle,
           nfts: nfts.map(
             ({ contractAddress, chainCode, tokenId, ...rest }) => ({
               contract_address: contractAddress,

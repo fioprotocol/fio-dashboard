@@ -64,7 +64,7 @@ export const REF_FLOW_STEPS = {
 };
 
 export const NFT_TOKEN_ITEM_PROPS_ORDER: NFTTokenItemProps[] = [
-  'fioAddress',
+  'fioCryptoHandle',
   'chainCode',
   'tokenId',
   'contractAddress',

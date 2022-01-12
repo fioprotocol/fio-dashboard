@@ -5,7 +5,7 @@ export type NftValidationFormValues = {
   contractAddress?: string;
   tokenId?: string;
   hash?: string;
-  fioAddress?: string;
+  fioCryptoHandle?: string;
   chainCode?: string;
   image?: string;
   imageUrl?: string;
@@ -38,7 +38,7 @@ type ResultTitleIds = {
   contractAddress?: string;
   tokenId?: string;
   hash?: string;
-  fioAddress?: string;
+  fioCryptoHandle?: string;
   chainCode?: string;
   url?: string;
 };

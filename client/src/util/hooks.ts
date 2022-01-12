@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
-import { getFioAddresses, getAllFioPubAddresses } from '../redux/fio/actions';
+import {
+  getFioCryptoHandles,
+  getAllFioPubAddresses,
+} from '../redux/fio/actions';
 
 import { fioWallets, mappedPublicAddresses } from '../redux/fio/selectors';
+
 import {
   isAuthenticated,
   isNewUser as isNewUserSelector,
@@ -14,14 +18,14 @@ import { ROUTES } from '../constants/routes';
 
 import { FioWalletDoublet } from '../types';
 
-export function useFioAddresses(limit = 0, offset = 0) {
+export function useFioCryptoHandles(limit = 0, offset = 0) {
   const dispatch = useDispatch();
   const wallets = useSelector(fioWallets);
   const isAuth = useSelector(isAuthenticated);
   useEffect(() => {
     if (wallets.length > 0 && isAuth) {
       wallets.map((wallet: FioWalletDoublet) =>
-        dispatch(getFioAddresses(wallet.publicKey, limit, offset)),
+        dispatch(getFioCryptoHandles(wallet.publicKey, limit, offset)),
       );
     }
   }, [fioWallets.length]);
@@ -42,21 +46,21 @@ export function useNonActiveUserRedirect() {
   }, [isAuth, isNewUser, isNewEmailNotVerified]);
 }
 
-export function usePublicAddresses(fioAddress: string, limit: number = 0) {
+export function usePublicAddresses(fioCryptoHandle: string, limit: number = 0) {
   const [offset, setOffset] = useState(0);
 
   const dispatch = useDispatch();
 
   const fioAddressToPubAddresses = useSelector(mappedPublicAddresses);
   const hasMore =
-    fioAddressToPubAddresses[fioAddress] &&
-    fioAddressToPubAddresses[fioAddress].more;
+    fioAddressToPubAddresses[fioCryptoHandle] &&
+    fioAddressToPubAddresses[fioCryptoHandle].more;
 
   const fetchPublicAddresses = (incOffset: number = 0) =>
-    dispatch(getAllFioPubAddresses(fioAddress, limit, incOffset));
+    dispatch(getAllFioPubAddresses(fioCryptoHandle, limit, incOffset));
 
   useEffect(() => {
-    if (!fioAddress) return;
+    if (!fioCryptoHandle) return;
     fetchPublicAddresses();
   }, []);
 

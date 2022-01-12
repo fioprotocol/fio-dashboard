@@ -7,17 +7,17 @@ export const validate = async (values: { transferAddress: string }) => {
     throw { transferAddress: 'Required' };
   }
 
-  let isFioAddress = false;
+  let isFioCryptoHandle = false;
   let isValid = false;
 
   try {
-    apis.fio.isFioAddressValid(transferAddress);
-    isFioAddress = true;
+    apis.fio.isFioCryptoHandleValid(transferAddress);
+    isFioCryptoHandle = true;
   } catch (e) {
     //
   }
 
-  if (isFioAddress) {
+  if (isFioCryptoHandle) {
     try {
       const {
         public_address: publicAddress,

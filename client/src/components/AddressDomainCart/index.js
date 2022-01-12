@@ -8,7 +8,10 @@ import { deleteItem, recalculate } from '../../redux/cart/actions';
 import { setRedirectPath } from '../../redux/navigation/actions';
 
 import { cartItems } from '../../redux/cart/selectors';
-import { hasFreeAddress, isAuthenticated } from '../../redux/profile/selectors';
+import {
+  hasFreeFioCryptoHandle,
+  isAuthenticated,
+} from '../../redux/profile/selectors';
 import { domains, prices } from '../../redux/registrations/selectors';
 import { fioWallets } from '../../redux/fio/selectors';
 
@@ -19,7 +22,7 @@ const reduxConnect = connect(
     cartItems,
     domains,
     prices,
-    hasFreeAddress,
+    hasFreeFioCryptoHandle,
     isAuthenticated,
     fioWallets,
   }),
