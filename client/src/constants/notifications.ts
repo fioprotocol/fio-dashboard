@@ -14,7 +14,7 @@ export const NOTIFICATIONS_CONTENT: {
   [NOTIFICATIONS_CONTENT_TYPE.RECOVERY_PASSWORD]: {
     title: 'Password Recovery',
     message:
-      'You have skipped setting up password recovery, Please make sure to complete this so you do not loose access',
+      'You have skipped setting up password recovery, Please make sure to complete this so you do not lose access',
   },
   [NOTIFICATIONS_CONTENT_TYPE.ACCOUNT_CONFIRMATION]: {
     title: 'Account Confirmation',

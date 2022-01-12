@@ -22,7 +22,7 @@ module.exports = {
 
   down: async QI => {
     await QI.sequelize.query(
-      `update public.notifications set "title" = 'Password Recovery', message = 'You have skipped setting up password recovery, Please make sure to complete this so you do not loose access' where "contentType" = 'RECOVERY_PASSWORD'`,
+      `update public.notifications set "title" = 'Password Recovery', message = 'You have skipped setting up password recovery, Please make sure to complete this so you do not lose access' where "contentType" = 'RECOVERY_PASSWORD'`,
     );
     await QI.sequelize.query(
       `update public.notifications set "title" = 'Account Confirmation', message = 'Your email is confirmed' where "contentType" = 'ACCOUNT_CONFIRMATION'`,
