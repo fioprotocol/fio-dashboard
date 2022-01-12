@@ -65,9 +65,9 @@ export const validate = (
                 token.chainCode === chainCode && token.tokenCode === tokenCode,
             ) ||
           publicAddresses.some(
-            publicAddress =>
-              publicAddress.chainCode === chainCode &&
-              publicAddress.tokenCode === tokenCode,
+            pubAddressItem =>
+              pubAddressItem.chainCode === chainCode &&
+              pubAddressItem.tokenCode === tokenCode,
           )
         ) {
           tokenErrors.tokenCode = {
