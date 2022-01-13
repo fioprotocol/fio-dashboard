@@ -6,7 +6,7 @@ export const BANNER_DATA = {
     title: 'Manage My FIO Crypto Handles',
     warningTitle: 'FIO Crypto Handle Renewal',
     warningMessage:
-      'One or more FIO Crypto Handles below has expired or is about to expire. Renew today to ensure you do not loose the address.',
+      'One or more FIO Crypto Handles below has expired or is about to expire. Renew today to ensure you do not lose the address.',
     infoTitle: 'Link to Your Crypto',
     infoMessage:
       'One or more FIO Crypto Handles below are not linked to other crypto currencies.',
@@ -15,7 +15,7 @@ export const BANNER_DATA = {
     title: 'Manage My FIO Domain',
     warningTitle: 'Domain Renewal',
     warningMessage:
-      'One or more FIO Domain below has expired or is about to expire. Renew today to ensure you do not loose the domain.',
+      'One or more FIO Domain below has expired or is about to expire. Renew today to ensure you do not lose the domain.',
     infoTitle: 'FIO Crypto Handle Registration',
     infoMessage:
       'Select “Register Address” below to add an address to one of your domains.',

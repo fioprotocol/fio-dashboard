@@ -215,6 +215,7 @@ const LoginForm = (props: Props) => {
             subtitle={subtitle}
             hideCreateAccount={isEmailVerification}
             onClose={onCloseLogin}
+            initialValues={loginParams}
           />
         )}
       </ModalComponent>

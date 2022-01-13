@@ -20,6 +20,8 @@ type Props = {
   hasLowHeight?: boolean;
   hasBoldText?: boolean;
   isButtonType?: boolean;
+  hasSmallText?: boolean;
+  variant?: string;
 };
 
 const SubmitButton: React.FC<Props> = props => {
@@ -35,15 +37,19 @@ const SubmitButton: React.FC<Props> = props => {
     text,
     hasLowHeight,
     hasBoldText,
+    hasSmallText,
+    variant,
   } = props;
 
   return (
     <Button
       type={onClick != null ? 'button' : 'submit'}
+      variant={variant}
       disabled={disabled}
       onClick={onClick}
       className={classnames(
         classes.button,
+        !variant && classes.defaultColor,
         isGreen && classes.isGreen,
         isGreenTeal && classes.isGreenTeal,
         isBlack && classes.isBlack,
@@ -53,6 +59,7 @@ const SubmitButton: React.FC<Props> = props => {
         withBottomMargin && classes.bottomMargin,
         hasLowHeight && classes.hasLowHeight,
         hasBoldText && classes.hasBoldText,
+        hasSmallText && classes.hasSmallText,
       )}
     >
       <div />

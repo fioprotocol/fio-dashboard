@@ -24,7 +24,7 @@ const TwoFactorDisable: React.FC<TwoFactorComponentProps> = props => {
     genericErrorIsShowing,
     loading,
     processing,
-    toggleTwoFactorAuth,
+    onSuccessClose,
     showGenericErrorModal,
     toggleLoading,
     setProcessing,
@@ -45,8 +45,9 @@ const TwoFactorDisable: React.FC<TwoFactorComponentProps> = props => {
 
   const disabledSuccessModalProps = {
     ...successModalProps,
-    title: ITEM_PROPS.successEnableModalTitle,
-    subtitle: ITEM_PROPS.successEnableModalSubtitle,
+    onClose: () => onSuccessClose(false),
+    title: ITEM_PROPS.successDisableModalTitle,
+    subtitle: ITEM_PROPS.successDisableModalSubtitle,
   };
 
   const onDisableClose = () => toggleDisableModal(false);
@@ -75,14 +76,13 @@ const TwoFactorDisable: React.FC<TwoFactorComponentProps> = props => {
         () => apis.edge.disableTwoFactorAuth(edgeAccount),
         MIN_WAIT_TIME,
       );
-      toggleTwoFactorAuth(false);
     } catch (e) {
       console.error(e);
       showGenericErrorModal();
-    } finally {
-      toggleLoading(false);
-      setSubmitData(null);
     }
+
+    toggleLoading(false);
+    setSubmitData(null);
   };
 
   const dangerModalProps = {

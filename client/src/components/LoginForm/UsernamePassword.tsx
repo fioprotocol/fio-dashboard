@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { Form, Field, FormRenderProps } from 'react-final-form';
-import { Link } from 'react-router-dom';
+import { FormApi } from 'final-form';
 import validator from 'email-validator';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
@@ -9,6 +9,7 @@ import { isEmpty } from 'lodash';
 import { OnChange } from 'react-final-form-listeners';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
+import Link from '../Link/Link';
 import Input from '../Input/Input';
 import FormHeader from '../FormHeader/FormHeader';
 
@@ -33,6 +34,7 @@ type OwnProps = {
   subtitle?: string;
   headerIcon?: IconProp | null;
   hideCreateAccount?: boolean;
+  initialValues: { email: string; password: string };
 };
 type Props = OwnProps;
 
@@ -49,10 +51,13 @@ const UsernamePassword = (props: Props) => {
     subtitle,
     headerIcon,
     hideCreateAccount,
+    initialValues,
   } = props;
-  let currentForm: any = {}; // todo: FormApi is not exported
+
+  let currentForm: FormApi | null = null;
+
   useEffect(() => {
-    if (!isEmpty(currentForm) && !isEmpty(edgeLoginFailure)) {
+    if (currentForm && !isEmpty(edgeLoginFailure)) {
       const { mutators } = currentForm;
 
       mutators.setDataMutator('password', {
@@ -68,8 +73,9 @@ const UsernamePassword = (props: Props) => {
       });
     }
   }, [edgeLoginFailure]);
+
   useEffect(() => {
-    if (!isEmpty(currentForm) && !isEmpty(loginFailure)) {
+    if (currentForm && !isEmpty(loginFailure)) {
       const { mutators } = currentForm;
 
       if (loginFailure.fields != null) {
@@ -89,6 +95,25 @@ const UsernamePassword = (props: Props) => {
     }
   }, [loginFailure]);
 
+  useEffect(() => {
+    if (!isEmpty(initialValues)) {
+      resetFormErrors();
+    }
+  }, [JSON.stringify(initialValues)]);
+
+  const resetFormErrors = () => {
+    if (!currentForm) return;
+    const { mutators } = currentForm;
+
+    mutators.setDataMutator('password', {
+      error: null,
+    });
+    mutators.setDataMutator('email', {
+      error: null,
+      hideError: false,
+    });
+  };
+
   const handleSubmit = (values: FormValues) => {
     const { email, password } = values;
     onSubmit({
@@ -98,16 +123,8 @@ const UsernamePassword = (props: Props) => {
   };
 
   const handleChange = () => {
-    if (!isEmpty(currentForm) && !isEmpty(loginFailure)) {
-      const { mutators } = currentForm;
-
-      mutators.setDataMutator('password', {
-        error: null,
-      });
-      mutators.setDataMutator('email', {
-        error: null,
-        hideError: false,
-      });
+    if (!isEmpty(loginFailure) || !isEmpty(edgeLoginFailure)) {
+      resetFormErrors();
     }
   };
 
@@ -136,7 +153,12 @@ const UsernamePassword = (props: Props) => {
     return (
       <p className="regular-text">
         Don’t have an account?{' '}
-        <Link to={ROUTES.CREATE_ACCOUNT} onClick={onClose}>
+        <Link
+          classname={classes.createAccountLink}
+          to={ROUTES.CREATE_ACCOUNT}
+          onClick={onClose}
+          isDisabled={edgeAuthLoading}
+        >
           Create Account
         </Link>
       </p>
@@ -207,7 +229,12 @@ const UsernamePassword = (props: Props) => {
             'Sign In'
           )}
         </Button>
-        <Link className="regular-text" to="" onClick={onForgotPassHandler}>
+        <Link
+          classname={classes.forgotPasswordLink}
+          to=""
+          onClick={onForgotPassHandler}
+          isDisabled={edgeAuthLoading}
+        >
           Forgot your password?
         </Link>
         {renderCreateAccount()}
@@ -221,6 +248,7 @@ const UsernamePassword = (props: Props) => {
         <Form
           onSubmit={handleSubmit}
           mutators={{ setDataMutator }}
+          initialValues={initialValues}
           validate={(
             values: FormValues,
           ): { email?: string; password?: string } => {

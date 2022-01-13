@@ -1,6 +1,4 @@
 import React, { useEffect } from 'react';
-import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import { isEmpty } from 'lodash';
 
@@ -8,10 +6,12 @@ import { ROUTES } from '../../constants/routes';
 import Card from '../Card/Card';
 import PriceBadge from '../PriceBadge/PriceBadge';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../../components/AddressDomainBadge/AddressDomainBadge';
-import { FORM_NAMES } from '../../constants/form';
+import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 import AddressForm from './AddressForm';
 import DomainForm from './DomainForm';
+
+import { FORM_NAMES } from '../../constants/form';
 
 import classes from './AddressDomainForm.module.scss';
 
@@ -113,27 +113,23 @@ const FormContainer = props => {
             to={ROUTES.FIO_ADDRESSES_SELECTION}
             className={`${classes.link} d-flex justify-content-center`}
           >
-            <Button variant="primary" className={classes.submit}>
-              {buttonText}
-            </Button>
+            <SubmitButton
+              hasLowHeight={true}
+              text={buttonText}
+              hasSmallText={true}
+              variant="primary"
+            />
           </Link>
         ) : (
-          <Button
-            htmltype="submit"
-            className={classes.submit}
+          <SubmitButton
+            hasLowHeight={true}
+            text={buttonText}
             disabled={isValidating}
             onClick={handleSubmit}
+            hasSmallText={true}
             variant="primary"
-          >
-            {buttonText}
-            {isValidating && (
-              <FontAwesomeIcon
-                icon="spinner"
-                spin
-                className={classes.loaderIcon}
-              />
-            )}
-          </Button>
+            loading={isValidating}
+          />
         )}
       </form>
     );

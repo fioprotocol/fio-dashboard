@@ -5,7 +5,6 @@ export type TwoFactorComponentProps = {
     isGreen: boolean;
   };
   successModalProps: {
-    onClose: () => void;
     showModal: boolean;
   };
   edgeConfirmActionProps: {
@@ -16,9 +15,9 @@ export type TwoFactorComponentProps = {
   genericErrorIsShowing?: boolean;
   loading: boolean;
   processing: boolean;
-  toggleTwoFactorAuth: (enabled: boolean) => void;
   showGenericErrorModal: () => void;
   toggleLoading: (isLoading: boolean) => void;
   setProcessing: (isProcessing: boolean) => void;
   toggleSuccessModal: (isOpen: boolean) => void;
+  onSuccessClose: (enabledTwoFactor: boolean) => void;
 };

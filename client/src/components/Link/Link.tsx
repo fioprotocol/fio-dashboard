@@ -5,6 +5,7 @@ type Props = {
   isDisabled: boolean;
   classname?: string;
   to: string;
+  onClick?: (params?: any) => void;
 };
 
 const Link: React.FC<Props> = props => {

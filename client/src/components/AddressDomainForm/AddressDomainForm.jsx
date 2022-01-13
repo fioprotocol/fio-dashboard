@@ -16,6 +16,10 @@ import {
 
 import { addressValidation, domainValidation } from './validation';
 
+const TOP_OFFSET = 35;
+const SCROLL_DURATION = 600;
+const DEBOUNCE_TIMEOUT = 500;
+
 const AddressDomainForm = props => {
   const {
     domains,
@@ -76,12 +80,18 @@ const AddressDomainForm = props => {
     if (isAddress) addressValidation(validationPropsToPass);
     if (isDomain) domainValidation(validationPropsToPass);
 
-    if (!isDesktop && showAvailable) {
+    const registeredFields = form.getRegisteredFields();
+    const isValidForm = registeredFields.every(registeredField => {
+      const fieldState = form.getFieldState(registeredField);
+      return !fieldState.data.error;
+    });
+
+    if (!isDesktop && isValidForm) {
       const scroll = Scroll.animateScroll;
       notificationRef &&
         notificationRef.current &&
-        scroll.scrollTo(notificationRef.current.offsetTop + 20, {
-          duration: 600,
+        scroll.scrollTo(notificationRef.current.offsetTop + TOP_OFFSET, {
+          duration: SCROLL_DURATION,
         });
     }
   };
@@ -95,7 +105,7 @@ const AddressDomainForm = props => {
     if (isDomain) domainValidation(validationPropsToPass);
   };
 
-  const debouncedHandleChange = debounce(handleChange, 500);
+  const debouncedHandleChange = debounce(handleChange, DEBOUNCE_TIMEOUT);
 
   const renderItems = formProps => {
     const { values: { address, domain } = {} } = formProps || {};
