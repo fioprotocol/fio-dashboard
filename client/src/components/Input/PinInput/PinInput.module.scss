@@ -2,8 +2,12 @@
 
 .pin {
   width: 219px;
-  margin: 0 auto;
+  margin: 56px auto 70px;
   position: relative;
+
+  &.withoutMargin {
+    margin: 0 auto;
+  }
 
   .pinInput {
     opacity: 0;
@@ -61,4 +65,12 @@
 
 .keyboardPlug {
   height: 100px;
+}
+
+.highPlug {
+  height: 150px;
+}
+
+.extraHighPlug {
+  height: 250px;
 }

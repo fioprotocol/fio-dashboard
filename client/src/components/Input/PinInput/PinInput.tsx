@@ -1,40 +1,51 @@
-import React, { useEffect, useRef, useState, ChangeEvent } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { PIN_LENGTH } from '../../../constants/form';
-import { useCheckIfDesktop } from '../../../screenType';
-
-import classes from './PinInput.module.scss';
+import { isIOS } from 'react-device-detect';
 import PinDots from './PinDots';
 
-type Props = {
-  error: string;
-  value: string;
-  onBlur?: () => void;
-  onChange?: (value: string) => void;
-  onFocus?: () => void;
-  name: string;
-  loading: boolean;
-  submit?: () => void;
-};
+import { useCheckIfDesktop } from '../../../screenType';
 
-type eventProps = {
-  nativeEvent?: {
-    inputType?: string;
-  };
-} & ChangeEvent<HTMLInputElement>;
+import { PIN_LENGTH } from '../../../constants/form';
+import { IOS_KEYBOARD_PLUG_TYPE } from './constants';
 
-const PinInput: React.FC<Props> = props => {
-  const { error, onFocus, onBlur, name, value, onChange, submit } = props;
+import { PinInputProps, PinInputEventProps } from './types';
+
+import classes from './PinInput.module.scss';
+
+const PinInput: React.FC<PinInputProps> = props => {
+  const {
+    error,
+    name,
+    value,
+    withoutMargin,
+    form,
+    iosKeyboardPlugType,
+    onChange,
+    submit,
+    onFocus,
+    onBlur,
+    onReset,
+  } = props;
 
   const [showKeyboard, toggleShowKeyboard] = useState(false); // handle mobile keyboard
 
   const innerRef = useRef(null);
   const valueRef = useRef(value);
 
+  const isActiveElement = document.activeElement === innerRef.current;
+
   const setMyState = (data: string) => {
     valueRef.current = data;
     onChange(data);
+
+    if (error && data.length === PIN_LENGTH - 1) {
+      form &&
+        form.mutators.setDataMutator(name, {
+          error: false,
+        });
+      onReset();
+    }
   };
 
   useEffect(() => {
@@ -49,7 +60,11 @@ const PinInput: React.FC<Props> = props => {
     setMyState(value);
   }, [value]);
 
-  useEffect(() => innerRef.current && innerRef.current.focus(), []);
+  useEffect(() => {
+    if (innerRef && innerRef.current) {
+      innerRef.current && innerRef.current.focus();
+    }
+  }, [innerRef]);
 
   const onKeyUp = (e: KeyboardEvent) => {
     const { key } = e;
@@ -57,8 +72,12 @@ const PinInput: React.FC<Props> = props => {
       const pinValue = valueRef && valueRef.current;
       const retValue = (pinValue && pinValue + key) || key;
 
-      if (retValue && retValue.length > PIN_LENGTH) {
+      if (retValue.length > PIN_LENGTH) return;
+
+      if (retValue && retValue.length === PIN_LENGTH) {
+        onChange(retValue);
         submit && !error && submit();
+        !isDesktop && refInputBlur();
         return;
       }
       onChange(retValue);
@@ -69,8 +88,12 @@ const PinInput: React.FC<Props> = props => {
     innerRef.current && innerRef.current.focus();
   };
 
+  const refInputBlur = () => {
+    innerRef.current && innerRef.current.blur();
+    handleBlur();
+  };
+
   const isDesktop = useCheckIfDesktop();
-  const isIOS = /iPad|iPhone/i.test(window.navigator.appVersion);
 
   const handleBlur = () => {
     onBlur && onBlur();
@@ -85,7 +108,11 @@ const PinInput: React.FC<Props> = props => {
   return (
     <>
       <div
-        className={classnames(classes.pin, error && classes.error)}
+        className={classnames(
+          classes.pin,
+          error && classes.error,
+          withoutMargin && classes.withoutMargin,
+        )}
         onClick={onClick}
       >
         <input
@@ -95,7 +122,7 @@ const PinInput: React.FC<Props> = props => {
           autoComplete="off"
           className={classes.pinInput}
           id={name}
-          onChange={(e: eventProps) => {
+          onChange={(e: PinInputEventProps) => {
             // fixes android backspace keyup event
             if (e.nativeEvent.inputType === 'deleteContentBackward') {
               const currentValue = e.target.value;
@@ -107,8 +134,15 @@ const PinInput: React.FC<Props> = props => {
           ref={innerRef}
         />
         <PinDots value={value} error={!!error} />
-        {!isDesktop && showKeyboard && isIOS && (
-          <div className={classes.keyboardPlug} />
+        {!isDesktop && showKeyboard && isActiveElement && (
+          <div
+            className={classnames(
+              isIOS &&
+                (IOS_KEYBOARD_PLUG_TYPE[iosKeyboardPlugType]
+                  ? classes[iosKeyboardPlugType]
+                  : classes.keyboardPlug),
+            )}
+          />
         )}
       </div>
 
