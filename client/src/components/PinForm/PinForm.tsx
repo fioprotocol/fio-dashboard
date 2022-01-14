@@ -63,7 +63,7 @@ const PinForm: React.FC<Props> = props => {
   const handleSubmit = (values: FormValues) => {
     if (loading) return;
     const { pin } = values;
-    if (pin && pin.length !== PIN_LENGTH) return;
+    if (!pin || error || (pin && pin.length !== PIN_LENGTH)) return;
     onSubmit(pin);
   };
 
