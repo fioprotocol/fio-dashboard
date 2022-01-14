@@ -92,6 +92,9 @@ export const resetPinConfirm = () => ({
   type: RESET_PIN_CONFIRM,
 });
 
+export const RESET_LOGIN_FAILURE = `${prefix}/RESET_LOGIN_FAILURE`;
+export const resetLoginFailure = () => ({ type: RESET_LOGIN_FAILURE });
+
 export const SET_ACCOUNT = `${prefix}/SET_ACCOUNT`;
 
 export const setAccount = (account: EdgeAccount) => ({

@@ -64,6 +64,7 @@ export default combineReducers({
       }
       case actions.LOGIN_SUCCESS:
       case actions.LOGIN_REQUEST:
+      case actions.RESET_LOGIN_FAILURE:
         return {};
       default:
         return state;

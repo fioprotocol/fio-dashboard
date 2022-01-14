@@ -3,14 +3,16 @@ import { isEmpty } from 'lodash';
 
 import FormHeader from '../FormHeader/FormHeader';
 import CloseButton from '../CloseButton/CloseButton';
+import PinForm from '../PinForm';
+
+import { PIN_LENGTH } from '../../constants/form';
 
 import classes from './LoginForm.module.scss';
-import { PIN_LENGTH } from '../../constants/form';
-import PinForm from '../PinForm';
 
 type OwnProps = {
   onSubmit: (params: { email: string; pin: string }) => void;
   exitPin: () => void;
+  resetLoginFailure: () => void;
   edgeAuthLoading: boolean;
   loginFailure: { fields?: { [fieldName: string]: any }; code?: string };
   edgeLoginFailure: { type?: string };
@@ -20,12 +22,13 @@ type Props = OwnProps;
 
 const Pin = (props: Props) => {
   const {
-    onSubmit,
+    email,
     edgeAuthLoading,
     loginFailure,
     edgeLoginFailure,
     exitPin,
-    email,
+    resetLoginFailure,
+    onSubmit,
   } = props;
   const [error, setError] = useState({});
   useEffect(() => {
@@ -39,6 +42,7 @@ const Pin = (props: Props) => {
       });
     }
   }, [edgeLoginFailure]);
+
   useEffect(() => {
     if (!isEmpty(loginFailure)) {
       setError({
@@ -60,6 +64,7 @@ const Pin = (props: Props) => {
 
   const onReset = () => {
     setError({});
+    resetLoginFailure();
   };
 
   return (

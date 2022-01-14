@@ -5,10 +5,10 @@ import { isEmpty } from 'lodash';
 import { Button } from 'react-bootstrap';
 import Input from '../Input/Input';
 
-import { useCheckIfDesktop } from '../../screenType';
 import { PIN_LENGTH } from '../../constants/form';
 
 import { setDataMutator } from '../../utils';
+
 import classes from './PinForm.module.scss';
 
 type Props = {
@@ -26,7 +26,6 @@ type FormValues = {
 
 const PinForm = (props: Props) => {
   const { onSubmit, onReset, loading, error } = props;
-  const isDesktop = useCheckIfDesktop();
 
   let currentForm: any = {}; // todo: FormApi is not exported
   useEffect(() => {
@@ -48,6 +47,13 @@ const PinForm = (props: Props) => {
       }
     }
   }, [error]);
+
+  useEffect(
+    () => () => {
+      resetForm();
+    },
+    [],
+  );
 
   const handleSubmit = (values: FormValues) => {
     if (loading) return;
@@ -72,9 +78,7 @@ const PinForm = (props: Props) => {
   const renderForm = (formProps: FormRenderProps) => {
     const { handleSubmit: handleFormSubmit, form } = formProps;
     currentForm = form;
-    const { values, errors, active } = currentForm.getState();
-
-    const isAndroid = /Android/i.test(window.navigator.appVersion);
+    const { values, errors } = currentForm.getState();
 
     const fieldError = error || (errors && errors.pin);
     return (
@@ -85,14 +89,8 @@ const PinForm = (props: Props) => {
           disabled={loading}
           autoFocus
           autoComplete="off"
+          onReset={onReset}
         />
-        {!isDesktop && active && (
-          <div
-            className={
-              isAndroid ? classes.androidKeyboard : classes.keyboardPlug
-            }
-          />
-        )}
         {loading && (
           <FontAwesomeIcon icon="spinner" spin className={classes.icon} />
         )}

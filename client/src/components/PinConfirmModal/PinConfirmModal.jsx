@@ -1,11 +1,12 @@
 import React from 'react';
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+
 import FormHeader from '../FormHeader/FormHeader';
-
 import ModalComponent from '../Modal/Modal';
-import { PIN_LENGTH } from '../../constants/form';
-
 import PinForm from '../PinForm';
+
+import { PIN_LENGTH } from '../../constants/form';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+
 import classes from './PinConfirmModal.module.scss';
 
 const TITLES = {
@@ -45,6 +46,11 @@ const PinConfirmModal = props => {
     onClose();
   };
 
+  const onReset = () => {
+    if (!pinConfirmation.error) return;
+    resetPinConfirm();
+  };
+
   return (
     <ModalComponent
       show={showPinConfirm}
@@ -61,7 +67,7 @@ const PinConfirmModal = props => {
         />
         <PinForm
           onSubmit={handleSubmit}
-          onReset={resetPinConfirm}
+          onReset={onReset}
           loading={confirmingPin}
           error={pinConfirmation.error}
         />
