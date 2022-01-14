@@ -66,9 +66,13 @@
     min-width: 100%;
     padding-bottom: 80px;
     border: none;
+    
+    &.withoutPaggingBottom {
+      padding-bottom: 0;
+    }
   }
   .dialog {
-    max-height: 80vh;
+    max-height: 90vh;
     margin: 0;
     width: 100%;
     top: 100%;

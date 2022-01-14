@@ -11,6 +11,8 @@ import { setDataMutator } from '../../utils';
 
 import classes from './PinForm.module.scss';
 
+import { IosKeyBoardPlugProp } from '../Input/PinInput/types';
+
 type Props = {
   onSubmit: (pin: string) => void;
   onReset: () => void;
@@ -18,6 +20,7 @@ type Props = {
   error: {
     message?: string;
   };
+  iosKeyboardPlugType?: IosKeyBoardPlugProp;
 };
 
 type FormValues = {
@@ -25,7 +28,7 @@ type FormValues = {
 };
 
 const PinForm = (props: Props) => {
-  const { onSubmit, onReset, loading, error } = props;
+  const { onSubmit, onReset, loading, error, iosKeyboardPlugType } = props;
 
   let currentForm: any = {}; // todo: FormApi is not exported
   useEffect(() => {
@@ -82,7 +85,7 @@ const PinForm = (props: Props) => {
 
     const fieldError = error || (errors && errors.pin);
     return (
-      <form onSubmit={handleFormSubmit} className={classes.form}>
+      <form onSubmit={handleFormSubmit}>
         <Field
           name="pin"
           component={Input}
@@ -90,6 +93,7 @@ const PinForm = (props: Props) => {
           autoFocus
           autoComplete="off"
           onReset={onReset}
+          iosKeyboardPlugType={iosKeyboardPlugType}
         />
         {loading && (
           <FontAwesomeIcon icon="spinner" spin className={classes.icon} />

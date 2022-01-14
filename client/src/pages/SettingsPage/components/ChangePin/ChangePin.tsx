@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { isAndroid } from 'react-device-detect';
+
 import SecurityItem from '../SecurityItem';
 import ModalUIComponent from '../ModalUIComponent';
 import SuccessModal from '../../../../components/Modal/SuccessModal';
@@ -116,6 +118,7 @@ const ChangePin: React.FC<Props> = props => {
             ? CONFIRM_MODAL_ITEM_PROPS.modalTitle
             : ITEM_PROPS.modalTitle
         }
+        withoutPaggingBottom={isAndroid}
       >
         <ChangePinForm
           handlePinChange={handlePinChange}
