@@ -4,7 +4,7 @@ import { Field, Form, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
 import { isEmpty } from 'lodash';
 import { Button } from 'react-bootstrap';
-import Input from '../Input/Input';
+import PinInput from '../Input/PinInput/PinInput';
 
 import { PIN_LENGTH } from '../../constants/form';
 
@@ -90,7 +90,7 @@ const PinForm: React.FC<Props> = props => {
       <form onSubmit={handleFormSubmit}>
         <Field
           name={FIELD_NAME}
-          component={Input}
+          component={PinInput}
           disabled={loading}
           autoFocus
           autoComplete="off"

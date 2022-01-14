@@ -5,7 +5,7 @@ import { isSafari } from 'react-device-detect';
 import InputRedux, {
   INPUT_UI_STYLES,
 } from '../../../../components/Input/InputRedux';
-import PinInput from '../../../../components/Input/PinInput/PinInput';
+import Pin from '../../../../components/Input/PinInput/Pin';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import {
   ErrorBadge,
@@ -57,11 +57,10 @@ const ChangePinForm: React.FC<Props> = props => {
     <div className={classes.formBox}>
       <div className={classnames(classes.box, isConfirmPage && classes.show)}>
         <div className={classes.pinContainer}>
-          <PinInput
+          <Pin
             value={pin}
             onChange={handlePinChange}
             name="pin"
-            loading={loading}
             error={error}
             withoutMargin={true}
             iosKeyboardPlugType={
