@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import classnames from 'classnames';
-import { useForm, FieldRenderProps } from 'react-final-form';
+import { FieldRenderProps } from 'react-final-form';
 
 import { ErrorBadge } from './ErrorBadge';
 import { CopyButton } from './InputActionButtons';
 import CustomDropdown from '../CustomDropdown';
-import PinInput from './PinInput/PinInput';
 
 import classes from './Input.module.scss';
 
@@ -43,7 +42,6 @@ type Props = {
   };
   hasSmallText?: boolean;
   hasThinText?: boolean;
-  onReset?: () => void;
 };
 
 const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
@@ -72,7 +70,6 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     isSimple,
     hasSmallText,
     hasThinText,
-    onReset,
     ...rest
   } = props;
   const {
@@ -87,7 +84,6 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
   } = meta;
   const { type, value, name, onChange } = input;
   const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
-  const form = useForm();
 
   const [showPass, toggleShowPass] = useState(false);
   const [clearInput, toggleClearInput] = useState(value !== '');
@@ -276,23 +272,6 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
           </>
         )}
       </div>
-    );
-  }
-
-  if (name === 'pin' || name === 'confirmPin') {
-    return (
-      <PinInput
-        onChange={onChange}
-        error={error || data.error}
-        value={value}
-        name={name}
-        loading={loading}
-        submit={form.submit}
-        form={form}
-        onReset={onReset}
-        {...props}
-        {...input}
-      />
     );
   }
 

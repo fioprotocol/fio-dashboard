@@ -5,17 +5,19 @@ export type IosKeyBoardPlugProp = 'highPlug' | 'extraHighPlug' | 'emptyPlug';
 
 export type PinInputProps = {
   error: string;
+  name: string;
   value: string;
+  withoutMargin?: boolean;
+  iosKeyboardPlugType?: IosKeyBoardPlugProp;
+  form?: FormApi;
   onBlur?: () => void;
   onChange?: (value: string) => void;
   onFocus?: () => void;
-  name: string;
-  loading: boolean;
-  submit?: () => void;
-  withoutMargin?: boolean;
-  form?: FormApi;
-  iosKeyboardPlugType?: IosKeyBoardPlugProp;
   onReset?: () => void;
+  submit?: () => void;
+  input?: {
+    value: string;
+  };
 };
 
 export type PinInputEventProps = {
