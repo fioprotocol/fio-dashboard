@@ -4,7 +4,7 @@ import { Field, Form, FormRenderProps } from 'react-final-form';
 import { formValidation, submitValidation } from './validation';
 import { RequestTokensProps, RequestTokensValues } from '../../types';
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
-import TextInput from '../../../../components/Input/TextInput';
+import SelectModalInput from '../../../../components/Input/SelectModalInput';
 import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 
@@ -19,7 +19,7 @@ import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBa
 const NEW_FUND_REQUEST_BUNDLE_COST = 2;
 
 const RequestTokensForm: React.FC<RequestTokensProps> = props => {
-  const { loading, fioWallet, fioAddresses } = props;
+  const { loading, fioWallet, fioAddresses, contactsList } = props;
 
   const handleSubmit = async (values: RequestTokensValues) => {
     const validationResult = await submitValidation.validateForm(values);
@@ -116,10 +116,12 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
             <Field
               name="payerFioAddress"
               type="text"
-              placeholder="FIO Crypto Handle or Public Key"
+              placeholder="Enter or select FIO request Address"
+              modalPlaceholder="Enter or select FIO Crypto Handle or Public Key"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
-              component={TextInput}
+              component={SelectModalInput}
+              options={contactsList}
               showCopyButton={true}
               disabled={loading}
               loading={validating}

@@ -31,6 +31,13 @@
       align-items: center;
     }
 
+    &.visible {
+      visibility: visible;
+    }
+    &.hidden {
+      visibility: hidden;
+    }
+
     &.white {
       color: $white;
     }
@@ -67,6 +74,10 @@
 
     &.bw, &.blackWhite {
       color: $dark-gray;
+    }
+
+    &.medium {
+      height: 13px;
     }
 
     &.disabled {
@@ -344,6 +355,59 @@
 
     &.hasThinText {
       @include proxima-nova-thin;
+    }
+  }
+}
+
+.optionsContainer {
+  padding: 0 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .title {
+    font-size: 1.75em;
+    font-weight: 500;
+  }
+  .subtitle {
+    color: $dark-gray;
+    font-size: 1em;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .notFound {
+    text-align: center;
+    width: 100%;
+    padding: 15px;
+    color: $dove-gray;
+  }
+
+  .optionsList {
+    max-height: 225px;
+    overflow-y: auto;
+
+    .option {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      cursor: pointer;
+      background-color: $white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 7px;
+
+      .logo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 30px;
+        width: 30px;
+        border-radius: 50%;
+        background-color: $bright-violet;
+        margin-right: 20px;
+        color: $white;
+      }
     }
   }
 }

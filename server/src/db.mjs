@@ -9,6 +9,7 @@ import { FreeAddress } from './models/FreeAddress';
 import { Wallet } from './models/Wallet';
 import { ReferrerProfile } from './models/ReferrerProfile';
 import { NewDeviceTwoFactor } from './models/NewDeviceTwoFactor';
+import { Contact } from './models/Contact.mjs';
 
 const sequelize = new Sequelize(config.postgres);
 
@@ -20,6 +21,7 @@ FreeAddress.init(sequelize);
 Wallet.init(sequelize);
 ReferrerProfile.init(sequelize);
 NewDeviceTwoFactor.init(sequelize);
+Contact.init(sequelize);
 
 const { models } = sequelize;
 

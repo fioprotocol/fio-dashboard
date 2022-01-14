@@ -4,13 +4,18 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from '../../utils';
 
 import { refreshBalance } from '../../redux/fio/actions';
+import { createContact, getContactsList } from '../../redux/contacts/actions';
 
 import {
-  loading,
+  loading as fioWalletsLoading,
   fioAddresses,
   fioWallets as fioWalletsSelector,
   fioWalletsBalances as fioWalletsBalancesSelector,
 } from '../../redux/fio/selectors';
+import {
+  loading as contactsLoading,
+  list as contactsList,
+} from '../../redux/contacts/selectors';
 import { roe } from '../../redux/registrations/selectors';
 
 import FioTokensRequestPage from './FioTokensRequestPage';
@@ -34,7 +39,7 @@ const reduxConnect = connect(
       );
     },
     fioAddresses,
-    loading,
+    fioWalletsLoading,
     roe,
     balance: (state: ReduxState, ownProps: ContainerOwnProps | {}) => {
       const fioWallets = fioWalletsSelector(state);
@@ -51,9 +56,13 @@ const reduxConnect = connect(
 
       return fioWalletsBalances.wallets[fioWallet.publicKey];
     },
+    contactsList,
+    contactsLoading,
   }),
   {
     refreshBalance,
+    createContact,
+    getContactsList,
   },
 );
 

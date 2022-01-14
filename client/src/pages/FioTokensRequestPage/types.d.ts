@@ -24,6 +24,7 @@ export type RequestTokensProps = {
   fioAddresses: FioAddressDoublet[];
   balance: WalletBalances;
   loading: boolean;
+  contactsList: string[];
   onSubmit: (values: RequestTokensValues) => void;
 };
 
@@ -34,8 +35,12 @@ export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
 export interface ContainerProps extends ContainerOwnProps {
   fioWallet: FioWalletDoublet;
   fioAddresses: FioAddressDoublet[];
-  loading: boolean;
+  fioWalletsLoading: boolean;
   roe: number;
   balance: WalletBalances;
+  contactsList: string[];
+  contactsLoading: boolean;
   refreshBalance: (publicKey: string) => void;
+  getContactsList: () => void;
+  createContact: (name: string) => void;
 }

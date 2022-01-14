@@ -28,10 +28,14 @@ const RequestPage: React.FC<ContainerProps> = props => {
     fioWallet,
     fioAddresses,
     balance,
-    loading,
+    fioWalletsLoading,
     roe,
     history,
+    contactsList,
+    contactsLoading,
     refreshBalance,
+    createContact,
+    getContactsList,
   } = props;
 
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
@@ -40,10 +44,13 @@ const RequestPage: React.FC<ContainerProps> = props => {
   );
   const [processing, setProcessing] = useState<boolean>(false);
 
+  const loading = fioWalletsLoading || contactsLoading;
+
   useFioAddresses();
 
   useEffect(() => {
     setRequestData(null);
+    getContactsList();
   }, []);
 
   useEffect(() => {
@@ -136,6 +143,8 @@ const RequestPage: React.FC<ContainerProps> = props => {
           requestData={requestData}
           processing={processing}
           setProcessing={setProcessing}
+          createContact={createContact}
+          contactsList={contactsList}
         />
       ) : null}
       <PseudoModalContainer
@@ -156,6 +165,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
           loading={loading || processing}
           fioAddresses={walletFioAddresses}
           onSubmit={onRequest}
+          contactsList={contactsList}
         />
       </PseudoModalContainer>
     </>
