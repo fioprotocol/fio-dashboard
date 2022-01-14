@@ -6,8 +6,10 @@ import ModalComponent from '../Modal/Modal';
 import PinForm from '../PinForm';
 
 import { PIN_LENGTH } from '../../constants/form';
-import { IOS_KEYBOARD_PLUG_TYPE } from '../../components/Input/PinInput/constants';
+import { IOS_KEYBOARD_PLUG_TYPE } from '../Input/PinInput/constants';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+
+import { PinConfirmModalProps } from './types';
 
 import classes from './PinConfirmModal.module.scss';
 
@@ -16,7 +18,7 @@ const TITLES = {
   [CONFIRM_PIN_ACTIONS.PURCHASE]: 'Purchase',
 };
 
-const PinConfirmModal = props => {
+const PinConfirmModal: React.FC<PinConfirmModalProps> = props => {
   const {
     showPinConfirm,
     edgeContextSet,
@@ -30,7 +32,7 @@ const PinConfirmModal = props => {
   } = props;
   if (!showPinConfirm || !edgeContextSet) return null;
 
-  const handleSubmit = pin => {
+  const handleSubmit = (pin: string) => {
     if (confirmingPin) return;
     if (pin && pin.length !== PIN_LENGTH) return;
     onSubmit(

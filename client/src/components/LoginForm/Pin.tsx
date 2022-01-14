@@ -31,7 +31,7 @@ const Pin = (props: Props) => {
     resetLoginFailure,
     onSubmit,
   } = props;
-  const [error, setError] = useState({});
+  const [error, setError] = useState(null);
   useEffect(() => {
     if (!isEmpty(edgeLoginFailure)) {
       setError({
@@ -64,7 +64,7 @@ const Pin = (props: Props) => {
   };
 
   const onReset = () => {
-    setError({});
+    setError(null);
     resetLoginFailure();
   };
 

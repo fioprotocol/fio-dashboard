@@ -20,9 +20,7 @@ type Props = {
   onSubmit: (pin: string) => void;
   onReset: () => void;
   loading: boolean;
-  error: {
-    message?: string;
-  };
+  error?: Error | string;
   iosKeyboardPlugType?: IosKeyBoardPlugProp;
 };
 
@@ -39,7 +37,7 @@ const PinForm: React.FC<Props> = props => {
     if (currentForm) {
       const { mutators } = currentForm;
 
-      if (!isEmpty(error)) {
+      if (!isEmpty(error) && typeof error === 'object') {
         const pinErrorMessage = error.message;
 
         const retErrorMessage = /invalid password/gi.test(pinErrorMessage);
