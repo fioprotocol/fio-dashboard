@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, FormRenderProps } from 'react-final-form';
+import { FormApi } from 'final-form';
 import { Link, RouterProps } from 'react-router-dom';
 import { WithLastLocationProps } from 'react-router-last-location';
 import classnames from 'classnames';
@@ -99,7 +100,7 @@ type OwnProps = {
 type Props = OwnProps & RouterProps & WithLastLocationProps;
 
 export default class CreateAccountForm extends React.Component<Props, State> {
-  form: any | null; // todo: FormApi is not exported
+  form: FormApi | null;
 
   constructor(props: Props) {
     super(props);

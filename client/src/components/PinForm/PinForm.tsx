@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect } from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
+import { FormApi } from 'final-form';
 import { isEmpty } from 'lodash';
 import { Button } from 'react-bootstrap';
 import Input from '../Input/Input';
@@ -12,6 +13,8 @@ import { setDataMutator } from '../../utils';
 import classes from './PinForm.module.scss';
 
 import { IosKeyBoardPlugProp } from '../Input/PinInput/types';
+
+const FIELD_NAME = 'pin';
 
 type Props = {
   onSubmit: (pin: string) => void;
@@ -27,12 +30,13 @@ type FormValues = {
   pin: string;
 };
 
-const PinForm = (props: Props) => {
+const PinForm: React.FC<Props> = props => {
   const { onSubmit, onReset, loading, error, iosKeyboardPlugType } = props;
 
-  let currentForm: any = {}; // todo: FormApi is not exported
+  let currentForm: FormApi | null = null;
+
   useEffect(() => {
-    if (!isEmpty(currentForm)) {
+    if (currentForm) {
       const { mutators } = currentForm;
 
       if (!isEmpty(error)) {
@@ -40,11 +44,11 @@ const PinForm = (props: Props) => {
 
         const retErrorMessage = /invalid password/gi.test(pinErrorMessage);
 
-        mutators.setDataMutator('pin', {
+        mutators.setDataMutator(FIELD_NAME, {
           error: retErrorMessage ? 'Invalid PIN - Try Again' : error.message,
         });
       } else {
-        mutators.setDataMutator('pin', {
+        mutators.setDataMutator(FIELD_NAME, {
           error: false,
         });
       }
@@ -66,14 +70,14 @@ const PinForm = (props: Props) => {
   };
 
   const resetForm = () => {
-    if (!isEmpty(currentForm)) {
+    if (currentForm) {
       const { mutators, reset } = currentForm;
       reset();
-      mutators.setDataMutator('pin', {
+      mutators.setDataMutator(FIELD_NAME, {
         error: false,
       });
       onReset();
-      const currentInput = document.getElementById('pin');
+      const currentInput = document.getElementById(FIELD_NAME);
       currentInput && currentInput.focus();
     }
   };
@@ -87,7 +91,7 @@ const PinForm = (props: Props) => {
     return (
       <form onSubmit={handleFormSubmit}>
         <Field
-          name="pin"
+          name={FIELD_NAME}
           component={Input}
           disabled={loading}
           autoFocus
