@@ -1,10 +1,12 @@
 import React from 'react';
+import { isSafari, isAndroid } from 'react-device-detect';
 
 import FormHeader from '../FormHeader/FormHeader';
 import ModalComponent from '../Modal/Modal';
 import PinForm from '../PinForm';
 
 import { PIN_LENGTH } from '../../constants/form';
+import { IOS_KEYBOARD_PLUG_TYPE } from '../../components/Input/PinInput/constants';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
 import classes from './PinConfirmModal.module.scss';
@@ -57,6 +59,7 @@ const PinConfirmModal = props => {
       backdrop="static"
       onClose={handleClose}
       closeButton
+      withoutPaggingBottom={isAndroid}
     >
       <div className={classes.form}>
         <FormHeader
@@ -70,6 +73,11 @@ const PinConfirmModal = props => {
           onReset={onReset}
           loading={confirmingPin}
           error={pinConfirmation.error}
+          iosKeyboardPlugType={
+            isSafari
+              ? IOS_KEYBOARD_PLUG_TYPE.extraHighPlug
+              : IOS_KEYBOARD_PLUG_TYPE.highPlug
+          }
         />
       </div>
     </ModalComponent>

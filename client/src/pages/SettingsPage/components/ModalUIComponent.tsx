@@ -12,6 +12,7 @@ type Props = {
   hasOnBack?: boolean;
   onBack?: () => void;
   showModal: boolean;
+  withoutPaggingBottom?: boolean;
 };
 
 const ModalUIComponent: React.FC<Props> = props => {
@@ -23,6 +24,7 @@ const ModalUIComponent: React.FC<Props> = props => {
     onClose,
     showModal,
     hasOnBack,
+    withoutPaggingBottom,
     onBack,
   } = props;
   return (
@@ -33,6 +35,7 @@ const ModalUIComponent: React.FC<Props> = props => {
       isSimple={true}
       isWide={isWide}
       hasDefaultCloseColor={true}
+      withoutPaggingBottom={withoutPaggingBottom}
     >
       <div className={classes.container}>
         <h4 className={classes.title}>{title}</h4>

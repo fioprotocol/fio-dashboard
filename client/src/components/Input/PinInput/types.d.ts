@@ -1,7 +1,7 @@
 import { ChangeEvent } from 'react';
 import { FormApi } from 'final-form';
 
-export type IosKeyBoardPlugProp = 'highPlug' | 'extraHighPlug';
+export type IosKeyBoardPlugProp = 'highPlug' | 'extraHighPlug' | 'emptyPlug';
 
 export type PinInputProps = {
   error: string;

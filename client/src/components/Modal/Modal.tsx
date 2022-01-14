@@ -19,6 +19,7 @@ type Props = {
   hasDefaultCloseColor?: boolean;
   isMiddleWidth?: boolean;
   isBlue?: boolean;
+  withoutPaggingBottom?: boolean;
 };
 
 const ModalComponent: React.FC<Props> = props => {
@@ -38,6 +39,7 @@ const ModalComponent: React.FC<Props> = props => {
     hasDefaultCloseColor,
     isMiddleWidth,
     isBlue,
+    withoutPaggingBottom,
   } = props;
   const handleClose = () => {
     onClose();
@@ -54,6 +56,7 @@ const ModalComponent: React.FC<Props> = props => {
         isSuccess && classes.success,
         isInfo && classes.info,
         isBlue && classes.blue,
+        withoutPaggingBottom && classes.withoutPaggingBottom,
       )}
       dialogClassName={classnames(
         classes.dialog,

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import classnames from 'classnames';
+import { isSafari } from 'react-device-detect';
 
 import InputRedux, {
   INPUT_UI_STYLES,
@@ -12,6 +13,8 @@ import {
 } from '../../../../components/Input/ErrorBadge';
 
 import { PIN_LENGTH } from '../../../../constants/form';
+
+import { IOS_KEYBOARD_PLUG_TYPE } from '../../../../components/Input/PinInput/constants';
 
 import { ClickEventTypes } from './types';
 
@@ -60,6 +63,10 @@ const ChangePinForm: React.FC<Props> = props => {
             name="pin"
             loading={loading}
             error={error}
+            withoutMargin={true}
+            iosKeyboardPlugType={
+              isSafari ? IOS_KEYBOARD_PLUG_TYPE.highPlug : null
+            }
           />
         </div>
 

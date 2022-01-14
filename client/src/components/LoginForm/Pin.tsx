@@ -6,6 +6,7 @@ import CloseButton from '../CloseButton/CloseButton';
 import PinForm from '../PinForm';
 
 import { PIN_LENGTH } from '../../constants/form';
+import { IOS_KEYBOARD_PLUG_TYPE } from '../Input/PinInput/constants';
 
 import classes from './LoginForm.module.scss';
 
@@ -81,6 +82,11 @@ const Pin = (props: Props) => {
             onReset={onReset}
             loading={edgeAuthLoading}
             error={error}
+            iosKeyboardPlugType={
+              error
+                ? IOS_KEYBOARD_PLUG_TYPE.emptyPlug
+                : IOS_KEYBOARD_PLUG_TYPE.highPlug
+            }
           />
           <div className={classes.exitPin} onClick={exitPin}>
             <CloseButton isWhite />{' '}
