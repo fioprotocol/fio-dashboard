@@ -2,7 +2,11 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
-import { login, getCachedUsers } from '../../redux/edge/actions';
+import {
+  login,
+  getCachedUsers,
+  resetLoginFailure,
+} from '../../redux/edge/actions';
 import { closeLoginModal as onClose } from '../../redux/modal/actions';
 import { resetLastAuthData } from '../../redux/profile/actions';
 import { showLogin as show } from '../../redux/modal/selectors';
@@ -34,6 +38,7 @@ const reduxConnect = connect(
     onClose,
     getCachedUsers,
     resetLastAuthData,
+    resetLoginFailure,
   },
 );
 
