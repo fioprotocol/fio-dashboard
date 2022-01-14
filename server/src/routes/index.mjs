@@ -6,6 +6,7 @@ import external from './external';
 import account from './account';
 import refProfiles from './refProfiles';
 import newDeviceTwoFactor from './newDeviceTwoFactor';
+import contacts from './contacts';
 
 export default {
   users,
@@ -16,4 +17,5 @@ export default {
   account,
   refProfiles,
   newDeviceTwoFactor,
+  contacts,
 };

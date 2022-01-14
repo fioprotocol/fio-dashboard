@@ -9,4 +9,5 @@ export const {
   Wallet,
   ReferrerProfile,
   NewDeviceTwoFactor,
+  Contact,
 } = db.models;

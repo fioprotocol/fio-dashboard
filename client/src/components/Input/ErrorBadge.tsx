@@ -20,6 +20,7 @@ type Props = {
   hasError: boolean;
   data?: { [key: string]: any };
   submitError?: boolean;
+  useVisibility?: boolean;
   wrap?: boolean;
   type?: string;
   color?: string;
@@ -27,6 +28,7 @@ type Props = {
 
 export const ErrorBadge: React.FC<Props> = props => {
   const {
+    useVisibility = false,
     error,
     hasError,
     data = {},
@@ -40,11 +42,17 @@ export const ErrorBadge: React.FC<Props> = props => {
       className={classnames(
         classes.errorMessage,
         classes[color],
-        hasError && !data.showInfoError && classes.error,
+        (useVisibility || (hasError && !data.showInfoError)) && classes.error,
+        useVisibility && hasError && !data.showInfoError && classes.visible,
+        useVisibility && !hasError && classes.hidden,
       )}
     >
-      <FontAwesomeIcon icon="info-circle" className={classes.errorIcon} />
-      {hasError && (error || data.error || submitError)}
+      {(useVisibility || hasError) && (
+        <>
+          <FontAwesomeIcon icon="info-circle" className={classes.errorIcon} />
+          {error || data.error || submitError}
+        </>
+      )}
     </div>
   );
 
