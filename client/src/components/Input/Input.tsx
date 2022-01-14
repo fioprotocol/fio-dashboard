@@ -1,15 +1,15 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import classnames from 'classnames';
 import { useForm, FieldRenderProps } from 'react-final-form';
-import { FormApi } from 'final-form';
-import { ErrorBadge } from './ErrorBadge';
 
-import classes from './Input.module.scss';
-import { PIN_LENGTH } from '../../constants/form';
+import { ErrorBadge } from './ErrorBadge';
 import { CopyButton } from './InputActionButtons';
 import CustomDropdown from '../CustomDropdown';
+import PinInput from './PinInput/PinInput';
+
+import classes from './Input.module.scss';
 
 export const INPUT_COLOR_SCHEMA = {
   BLACK_AND_WHITE: 'black_and_white',
@@ -43,13 +43,8 @@ type Props = {
   };
   hasSmallText?: boolean;
   hasThinText?: boolean;
+  onReset?: () => void;
 };
-
-type EventProps = {
-  nativeEvent?: {
-    inputType?: string;
-  };
-} & React.ChangeEvent<HTMLInputElement>;
 
 const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
   const {
@@ -77,6 +72,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     isSimple,
     hasSmallText,
     hasThinText,
+    onReset,
     ...rest
   } = props;
   const {
@@ -92,15 +88,10 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
   const { type, value, name, onChange } = input;
   const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
   const form = useForm();
-  const innerRef = useRef(null);
 
   const [showPass, toggleShowPass] = useState(false);
   const [clearInput, toggleClearInput] = useState(value !== '');
-  const [focused, setFocused] = useState(false);
   const [previewUrl, setPreviewUrl] = useState('');
-
-  const onFocus = () => setFocused(true);
-  const onBlur = () => setFocused(false);
 
   const hasError =
     ((error || data.error) &&
@@ -110,53 +101,6 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
   useEffect(() => {
     toggleClearInput(value !== '');
   });
-
-  const handlePinChange = (e: KeyboardEvent, currentForm: FormApi) => {
-    if ((name === 'pin' || name === 'confirmPin') && currentForm) {
-      const { key } = e;
-      const { getState, change, submit } = currentForm;
-
-      const { values, visited } = getState();
-      const currentValue = values[name];
-      const isActiveField = Object.keys(visited)[0] === name;
-
-      if (isActiveField) {
-        if (/\d/.test(key)) {
-          const retValue = (currentValue && currentValue + key) || '';
-
-          if (retValue && retValue.length > PIN_LENGTH) return;
-
-          change(name, currentValue ? retValue : key);
-          if (currentValue && retValue.length === PIN_LENGTH) {
-            innerRef.current && innerRef.current.blur();
-            return !error && submit();
-          }
-        }
-      }
-    }
-  };
-
-  const onKeyUp = (e: KeyboardEvent) => handlePinChange(e, form);
-
-  useEffect(() => {
-    document.addEventListener('keyup', onKeyUp);
-
-    return () => {
-      document.removeEventListener('keyup', onKeyUp);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (name === 'pin' || name === 'confirmPin') {
-      innerRef.current && innerRef.current.focus();
-    }
-  }, []);
-
-  useEffect(() => {
-    if (name === 'pin' || name === 'confirmPin') {
-      focused ? form.focus(name) : form.blur(name);
-    }
-  }, [focused]);
 
   const clearInputFn = () => {
     onChange('');
@@ -336,59 +280,19 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
   }
 
   if (name === 'pin' || name === 'confirmPin') {
-    const positionNumber = value.length;
-    const showError = error || data.error;
-
-    const renderDots = () => {
-      const dots = [];
-      for (let i = 1; i < PIN_LENGTH + 1; i++) {
-        dots.push(
-          <div
-            key={i}
-            className={classnames(
-              classes.dotEmpty,
-              i <= positionNumber && classes.dotFull,
-              showError && classes.dotError,
-            )}
-          />,
-        );
-      }
-      return dots;
-    };
-
     return (
-      <>
-        <div
-          className={classnames(classes.pin, showError && classes.error)}
-          onClick={() => innerRef.current && innerRef.current.focus()}
-        >
-          <input
-            type="tel"
-            max={PIN_LENGTH}
-            {...props}
-            {...input}
-            className={classes.pinInput}
-            id={name}
-            onChange={(e: EventProps) => {
-              // fixes android backspace keyup event
-              if (e.nativeEvent.inputType === 'deleteContentBackward') {
-                const currentValue = e.target.value;
-                onChange(currentValue);
-              }
-            }}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            ref={innerRef}
-          />
-          <div className={classes.dotsContainer}>{renderDots()}</div>
-        </div>
-        {showError && (
-          <div className={classes.pinError}>
-            <FontAwesomeIcon icon="info-circle" className={classes.icon} />
-            {error || data.error}
-          </div>
-        )}
-      </>
+      <PinInput
+        onChange={onChange}
+        error={error || data.error}
+        value={value}
+        name={name}
+        loading={loading}
+        submit={form.submit}
+        form={form}
+        onReset={onReset}
+        {...props}
+        {...input}
+      />
     );
   }
 
