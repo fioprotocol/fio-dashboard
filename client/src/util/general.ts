@@ -106,3 +106,11 @@ export const commonFormatTime = (date: string) => {
     });
   return `${activationDay(date)} @ ${activationTime(date)}`;
 };
+
+export const getValueFromPaste = async () => {
+  if (!navigator.clipboard.readText) return;
+
+  const clipboardStr = await navigator.clipboard.readText();
+
+  return clipboardStr.trim();
+};

@@ -7,6 +7,7 @@ import { FieldRenderProps } from 'react-final-form';
 import { ErrorBadge } from './ErrorBadge';
 import { CopyButton } from './InputActionButtons';
 import CustomDropdown from '../CustomDropdown';
+import { getValueFromPaste } from '../../util/general';
 
 import classes from './Input.module.scss';
 
@@ -196,8 +197,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
           <CopyButton
             onClick={async () => {
               try {
-                const clipboardStr = await navigator.clipboard.readText();
-                onChange(clipboardStr);
+                onChange(await getValueFromPaste());
               } catch (e) {
                 console.error('Paste error: ', e);
               }
