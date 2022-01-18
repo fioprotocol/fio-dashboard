@@ -161,6 +161,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
 
         <RequestTokensForm
           fioWallet={fioWallet}
+          roe={roe}
           balance={balance}
           loading={loading || processing}
           fioAddresses={walletFioAddresses}

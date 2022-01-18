@@ -4,6 +4,8 @@ import { Field, Form, FormRenderProps } from 'react-final-form';
 import { formValidation, submitValidation } from './validation';
 import { RequestTokensProps, RequestTokensValues } from '../../types';
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
+import TextInput from '../../../../components/Input/TextInput';
+import AmountInput from '../../../../components/Input/AmountInput';
 import SelectModalInput from '../../../../components/Input/SelectModalInput';
 import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
@@ -19,7 +21,7 @@ import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBa
 const NEW_FUND_REQUEST_BUNDLE_COST = 2;
 
 const RequestTokensForm: React.FC<RequestTokensProps> = props => {
-  const { loading, fioWallet, fioAddresses, contactsList } = props;
+  const { loading, fioWallet, fioAddresses, roe, contactsList } = props;
 
   const handleSubmit = async (values: RequestTokensValues) => {
     const validationResult = await submitValidation.validateForm(values);
@@ -134,7 +136,8 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               placeholder="0.00"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
-              component={Input}
+              component={AmountInput}
+              roe={roe}
               disabled={loading}
               label="Request Amount"
             />
