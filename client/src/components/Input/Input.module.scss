@@ -63,6 +63,26 @@
 .inputGroup {
   position: relative;
 
+  .amountInput {
+    max-width: 50%;
+  }
+
+  .secondValue {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    color: $manatee;
+  }
+  .switchIcon {
+    margin: 0 4px;
+    color: $black;
+    transform: rotate(90deg);
+    cursor: pointer;
+  }
+
   .inputIcon {
     position: absolute;
     top: 50%;

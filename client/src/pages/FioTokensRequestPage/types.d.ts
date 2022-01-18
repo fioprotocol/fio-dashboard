@@ -24,6 +24,7 @@ export type RequestTokensProps = {
   fioAddresses: FioAddressDoublet[];
   balance: WalletBalances;
   loading: boolean;
+  roe: number;
   contactsList: string[];
   onSubmit: (values: RequestTokensValues) => void;
 };
