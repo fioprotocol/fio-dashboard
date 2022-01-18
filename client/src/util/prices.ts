@@ -10,7 +10,7 @@ export const setFees = (nativeFee: number, roe: number): FeePrice => {
   fee.nativeFio = nativeFee;
   fee.costFio = apis.fio.sufToAmount(fee.nativeFio);
   if (fee.nativeFio && roe) {
-    fee.costUsdc = apis.fio.convert(fee.nativeFio, roe);
+    fee.costUsdc = apis.fio.convertFioToUsdc(fee.nativeFio, roe);
   }
 
   return fee;
@@ -24,7 +24,7 @@ export const calculateBalances = (
     return {
       nativeFio: amount,
       fio: `${amount}`,
-      usdc: `${apis.fio.convert(apis.fio.amountToSUF(amount), roe)}`,
+      usdc: `${apis.fio.convertFioToUsdc(apis.fio.amountToSUF(amount), roe)}`,
     };
   };
 

@@ -24,7 +24,7 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
   } = props;
 
   const fioAmount = apis.fio.sufToAmount(amount);
-  const usdcAmount = apis.fio.convert(amount, roe);
+  const usdcAmount = apis.fio.convertFioToUsdc(amount, roe);
   return (
     <Results {...props}>
       <p className={classes.label}>Transfer Information</p>
