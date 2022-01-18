@@ -65,22 +65,51 @@
 
   .amountInput {
     max-width: 50%;
+    @media only screen and (max-width: 575px) {
+      max-width: 100%;
+    }
   }
 
-  .secondValue {
-    position: absolute;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
+  .exchangeIconItem {
+    height: 14px;
+  }
+
+  .exchangeTextItem {
+    font-size: 14px;
+    padding: 0 2px;
+  }
+
+  .exchangeValue {
     display: flex;
     align-items: center;
     color: $manatee;
+
+    @media only screen and (min-width: 576px) {
+      position: absolute;
+      top: 50%;
+      right: 20px;
+      transform: translateY(-50%);
+    }
+
+    @media only screen and (max-width: 575px) {
+      margin: 20px 0 0 0;
+      background-color: $white;
+      width: 100%;
+      padding: 16px;
+      box-sizing: border-box;
+      border-radius: 7px;
+    }
+
   }
+
   .switchIcon {
     margin: 0 4px;
     color: $black;
     transform: rotate(90deg);
     cursor: pointer;
+    @media only screen and (max-width: 575px) {
+      margin-left: auto;
+    }
   }
 
   .inputIcon {

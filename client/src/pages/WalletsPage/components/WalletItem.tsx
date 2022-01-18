@@ -22,7 +22,10 @@ const WalletItem: React.FC<Props> = props => {
   const { fioWallet, roe } = props;
   const isDesktop = useCheckIfDesktop();
 
-  const usdc = apis.fio.convert(apis.fio.amountToSUF(fioWallet.balance), roe);
+  const usdc = apis.fio.convertFioToUsdc(
+    apis.fio.amountToSUF(fioWallet.balance),
+    roe,
+  );
 
   return (
     <Link

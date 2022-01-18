@@ -11,10 +11,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { ErrorBadge } from './ErrorBadge';
 import apis from '../../api';
-
-export const INPUT_COLOR_SCHEMA = {
-  BLACK_AND_WHITE: 'black_and_white',
-};
+import { INPUT_COLOR_SCHEMA } from './TextInput';
 
 type Props = {
   colorSchema?: string;
@@ -39,6 +36,8 @@ type Props = {
   hasThinText?: boolean;
   debounceTimeout?: number;
   roe: number;
+  amountCurrencyCode?: string;
+  exchangeAmountCurrencyCode?: string;
 };
 
 const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
@@ -48,7 +47,6 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     debounceTimeout = 0,
     roe,
     colorSchema,
-    onClose,
     hideError,
     showCopyButton,
     loading,
@@ -61,6 +59,8 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     showErrorBorder,
     isLowHeight,
     label,
+    amountCurrencyCode = 'FIO',
+    exchangeAmountCurrencyCode = 'USDC',
     ...rest
   } = props;
   const {
@@ -74,38 +74,42 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     submitSucceeded,
   } = meta;
 
-  const relationFormula = (val: any) => {
-    let resultValue = Number(val);
-    if (!resultValue) return 0;
-    resultValue = isPrimaryExchange
-      ? apis.fio.amountToSUF(resultValue)
-      : apis.fio.sufToAmount(resultValue);
-    return apis.fio.convert(resultValue, roe, isPrimaryExchange);
+  const relationFormula = (val: string) => {
+    let valueToExchange = Number(val);
+    if (!valueToExchange) return 0;
+    valueToExchange = isPrimaryExchange
+      ? apis.fio.amountToSUF(valueToExchange)
+      : valueToExchange;
+    if (isPrimaryExchange)
+      return apis.fio.convertFioToUsdc(valueToExchange, roe);
+    return apis.fio.sufToAmount(
+      apis.fio.convertUsdcToFio(valueToExchange, roe),
+    );
   };
-
-  const firstExchangeLabel = 'FIO';
-  const secondExchangeLabel = 'USDC';
 
   const { type, value, onChange } = input;
   const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
 
   const [isPrimaryExchange, setIsPrimaryExchange] = useState(true);
   const [clearInput, toggleClearInput] = useState(value !== '');
-  const [secondValue, setSecondValue] = useState(0);
+  const [exchangedValue, exchangeValue] = useState(0);
 
   useEffect(() => {
-    setSecondValue(relationFormula(value));
+    exchangeValue(relationFormula(value));
   }, [value]);
 
   useEffect(() => {
-    onChange(secondValue);
+    onChange(exchangedValue);
   }, [isPrimaryExchange]);
 
   const hasError =
-    ((error || data.error) &&
+    !hideError &&
+    !data.hideError &&
+    (((error || data.error) &&
       (touched || modified || submitSucceeded || !!value) &&
       !active) ||
-    (submitError && !modifiedSinceLastSubmit);
+      (submitError && !modifiedSinceLastSubmit));
+
   useEffect(() => {
     toggleClearInput(value !== '');
   });
@@ -118,7 +122,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
           classes[`prefixLabel${uiType}`],
         )}
       >
-        {isPrimaryExchange ? firstExchangeLabel : secondExchangeLabel}
+        {isPrimaryExchange ? amountCurrencyCode : exchangeAmountCurrencyCode}
       </div>
     );
   };
@@ -163,7 +167,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
           />
         </div>
 
-        <div className={classnames(classes.secondValue)}>
+        <div className={classnames(classes.exchangeValue)}>
           {isPrimaryExchange && (
             <FontAwesomeIcon
               icon={faDollarSign}
@@ -171,12 +175,15 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
                 isBW && classes.bw,
                 disabled && classes.disabled,
                 uiType && classes[uiType],
+                uiType && classes.exchangeIconItem,
               )}
             />
           )}
-          <div className="px-1">{secondValue}</div>
-          <div className="px-1">
-            {!isPrimaryExchange ? firstExchangeLabel : secondExchangeLabel}
+          <div className={classes.exchangeTextItem}>{exchangedValue}</div>
+          <div className={classes.exchangeTextItem}>
+            {!isPrimaryExchange
+              ? amountCurrencyCode
+              : exchangeAmountCurrencyCode}
           </div>
           <FontAwesomeIcon
             icon={faExchangeAlt}
