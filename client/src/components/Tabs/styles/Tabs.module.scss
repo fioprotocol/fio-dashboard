@@ -1,0 +1,41 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+
+$tabMargin: 40px;
+
+.container {
+  border-bottom: 1px solid $light;
+  margin-bottom: 30px;
+
+  .tabItemContainer {
+    position: relative;
+
+    .tabItem {
+      font-size: 0.875em;
+      color: $dark-jungle-green;
+      padding: 0 0 9px 0;
+      margin-right: $tabMargin;
+      
+      &[aria-selected='true'] ~ .tabBorder {
+        position: absolute;
+        width: calc(100% - #{$tabMargin});
+        height: 10px;
+        background-color: $azure-radiance;
+        border-radius: 0 0px 10px 10px;
+      }
+    }
+  }
+}
+
+.tabContentContainer {
+  .tabContent {
+    width: 100%;
+  }
+}
+
+.active {
+  &[aria-selected='false'] {
+    opacity: 30%;
+    @include proxima-nova-regular;
+  }
+}
