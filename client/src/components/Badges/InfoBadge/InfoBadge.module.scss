@@ -1,4 +1,5 @@
 @import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
 
 .infoBadge {
   align-self: center;
@@ -12,6 +13,7 @@
   color: $white;
   max-width: 334px;
   width: 100%;
+  margin: 0 auto;
 
   .infoIcon {
     font-size: 2em;
@@ -19,10 +21,12 @@
   .infoTitle, .infoText {
     margin-top: 10px;
     margin-bottom: 0;
+    @include proxima-nova-semibold;
   }
   .infoText {
     font-size: 0.75em;
     text-align: center;
+    @include proxima-nova-thin;
   }
   &.isOrange {
     background-color: $bright-orange;
