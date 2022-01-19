@@ -30,3 +30,12 @@ export type PasswordFormValues = {
   password: string;
   username: string;
 };
+
+export type TransactionItemProps = {
+  from: string;
+  to: string;
+  date: string;
+  status?: string;
+  id: string;
+  transactionType: string;
+};
