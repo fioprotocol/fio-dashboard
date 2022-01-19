@@ -1,0 +1,31 @@
+@import '../../../assets/styles/colors.scss';
+
+.container {
+  margin-bottom: 25px;
+}
+
+.tabItem {
+  background-color: $azure-radiance;
+  border-radius: 7px;
+  color: $white;
+  font-size: 13px;
+  line-height: 13px;
+  padding: 10px 0;
+  margin-right: 20px;
+  width: 87px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: $white;
+    opacity: 70%;
+  }
+}
+
+.tabContent {
+  &[aria-hidden="false"] {
+    display: flex;
+    justify-content: center;
+  }
+}
