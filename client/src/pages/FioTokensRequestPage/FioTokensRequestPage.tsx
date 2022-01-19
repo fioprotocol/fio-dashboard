@@ -58,9 +58,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
   }, [fioWallet]);
 
   const onRequest = async (values: RequestTokensValues) => {
-    const newRequestData = { ...values };
-    newRequestData.amount = apis.fio.amountToSUF(newRequestData.amount);
-    setRequestData(newRequestData);
+    setRequestData(values);
   };
   const onCancel = () => {
     setRequestData(null);
@@ -74,6 +72,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
       publicKey: fioWallet.publicKey,
       other: {
         ...requestData,
+        amount: apis.fio.amountToSUF(requestData.amount),
         ...res,
         to: requestData.payerFioAddress,
         from: requestData.payeeFioAddress,

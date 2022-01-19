@@ -72,7 +72,7 @@ export default class Fio {
     Math.round((amount / (FIOSDK.SUFUnit / 100)) * roe) / 100;
 
   convertUsdcToFio = (amount: number, roe: number): number =>
-    this.amountToSUF(Math.round(amount / (roe / 100)) / 100);
+    Math.round(amount / (roe / 100)) / 100;
 
   checkWallet = (): void => {
     if (!this.walletFioSDK) throw new Error('No wallet set.');
