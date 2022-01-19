@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
-import { FieldRenderProps } from 'react-final-form';
+import { FieldRenderProps, useForm } from 'react-final-form';
 import classnames from 'classnames';
 import classes from './Input.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -19,8 +19,6 @@ type Props = {
   uiType?: string;
   errorType?: string;
   errorColor?: string;
-  upperCased?: boolean;
-  lowerCased?: boolean;
   disabled?: boolean;
   showErrorBorder?: boolean;
   isHigh?: boolean;
@@ -35,6 +33,7 @@ type Props = {
   roe: number;
   amountCurrencyCode?: string;
   exchangeAmountCurrencyCode?: string;
+  nativeAmountFieldName?: string;
 };
 
 const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
@@ -50,14 +49,13 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     uiType,
     errorType = '',
     errorColor = '',
-    upperCased = false,
-    lowerCased = false,
     disabled,
     showErrorBorder,
     isLowHeight,
     label,
     amountCurrencyCode = 'FIO',
     exchangeAmountCurrencyCode = 'USDC',
+    nativeAmountFieldName,
     ...rest
   } = props;
   const {
@@ -71,17 +69,18 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     submitSucceeded,
   } = meta;
 
-  const relationFormula = (val: string) => {
+  const { change } = useForm();
+
+  const relationFormula = (val: string, isReverse: boolean = false) => {
     let valueToExchange = Number(val);
-    if (!valueToExchange) return 0;
-    valueToExchange = isPrimaryExchange
+    if (!valueToExchange) return '0.00';
+    valueToExchange = !isReverse
       ? apis.fio.amountToSUF(valueToExchange)
       : valueToExchange;
-    if (isPrimaryExchange)
-      return apis.fio.convertFioToUsdc(valueToExchange, roe);
-    return apis.fio.sufToAmount(
-      apis.fio.convertUsdcToFio(valueToExchange, roe),
-    );
+    return (!isReverse
+      ? apis.fio.convertFioToUsdc(valueToExchange, roe)
+      : apis.fio.convertUsdcToFio(valueToExchange, roe)
+    ).toString();
   };
 
   const { type, value, onChange } = input;
@@ -89,15 +88,25 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
 
   const [isPrimaryExchange, setIsPrimaryExchange] = useState(true);
   const [clearInput, toggleClearInput] = useState(value !== '');
-  const [exchangedValue, exchangeValue] = useState(0);
+  const [exchangedValue, exchangeValue] = useState('0.00');
 
   useEffect(() => {
-    exchangeValue(relationFormula(value));
+    if (isPrimaryExchange) exchangeValue(relationFormula(value));
+    if (nativeAmountFieldName) {
+      change(
+        nativeAmountFieldName,
+        apis.fio.amountToSUF(Number(value)).toString(),
+      );
+    }
   }, [value]);
 
   useEffect(() => {
-    onChange(exchangedValue);
-  }, [isPrimaryExchange]);
+    if (!isPrimaryExchange) onChange(relationFormula(exchangedValue, true));
+  }, [exchangedValue]);
+
+  useEffect(() => {
+    toggleClearInput(value !== '');
+  });
 
   const hasError =
     !hideError &&
@@ -106,10 +115,6 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
       (touched || modified || submitSucceeded || !!value) &&
       !active) ||
       (submitError && !modifiedSinceLastSubmit));
-
-  useEffect(() => {
-    toggleClearInput(value !== '');
-  });
 
   const renderPrefixLabel = () => {
     return (
@@ -155,10 +160,11 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
             {...rest}
             onChange={e => {
               const currentValue = e.target.value;
-              if (lowerCased) return onChange(currentValue.toLowerCase());
-              if (upperCased) return onChange(currentValue.toUpperCase());
-              onChange(currentValue);
+              if (isPrimaryExchange) {
+                onChange(currentValue);
+              } else exchangeValue(currentValue);
             }}
+            value={isPrimaryExchange ? value : exchangedValue}
             type="number"
             data-clear={clearInput}
           />
@@ -176,7 +182,9 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
               )}
             />
           )}
-          <div className={classes.exchangeTextItem}>{exchangedValue}</div>
+          <div className={classes.exchangeTextItem}>
+            {isPrimaryExchange ? exchangedValue : value}
+          </div>
           <div className={classes.exchangeTextItem}>
             {!isPrimaryExchange
               ? amountCurrencyCode
@@ -194,7 +202,6 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
               setIsPrimaryExchange(!isPrimaryExchange);
             }}
             src={exchangeIcon}
-            alt="timelapse"
           />
         </div>
 
