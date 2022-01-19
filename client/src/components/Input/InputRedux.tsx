@@ -142,6 +142,7 @@ const InputRedux: React.FC<Props> = props => {
               }
             }}
             uiType={uiType}
+            disabled={!navigator.clipboard.readText}
           />
         )}
         {loading && (

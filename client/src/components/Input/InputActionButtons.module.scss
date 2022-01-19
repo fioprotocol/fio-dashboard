@@ -14,6 +14,11 @@
   &.blackLight, &.blackWhite {
     color: $dark-jungle-green;
   }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 .doubleIcon {

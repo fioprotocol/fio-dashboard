@@ -163,6 +163,7 @@ const SelectModal: React.FC<Props &
                     }
                   }}
                   uiType={uiType}
+                  disabled={!navigator.clipboard.readText}
                 />
               )}
             </div>

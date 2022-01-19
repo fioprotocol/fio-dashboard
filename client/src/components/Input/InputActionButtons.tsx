@@ -44,12 +44,20 @@ export const ShowPassword: React.FC<ShowPasswordProps &
   );
 };
 
-export const CopyButton: React.FC<DefaultProps> = props => {
-  const { onClick, uiType } = props;
+type CopyButtonProps = {
+  disabled: boolean;
+};
+
+export const CopyButton: React.FC<DefaultProps & CopyButtonProps> = props => {
+  const { onClick, uiType, disabled } = props;
   return (
     <FontAwesomeIcon
       icon={{ prefix: 'far', iconName: 'clipboard' }}
-      className={classnames(classes.inputIcon, uiType && classes[uiType])}
+      className={classnames(
+        classes.inputIcon,
+        uiType && classes[uiType],
+        disabled && classes.disabled,
+      )}
       onClick={onClick}
     />
   );

@@ -211,6 +211,7 @@ const TextInput: React.FC<Props & FieldRenderProps<Props>> = props => {
               }
             }}
             uiType={uiType}
+            disabled={!navigator.clipboard.readText}
           />
         )}
         {loading && (
