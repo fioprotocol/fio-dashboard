@@ -1,0 +1,123 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.loader {
+  margin-top: 30px;
+  padding-bottom: 60px;
+}
+
+.container {
+  width: 100%;
+
+  .badgeContainer {
+    margin-bottom: -10px;
+    width: 100%;
+
+    .badgeItem {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      position: relative;
+
+      .transactionTypeContainer {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: 110px;
+        margin-right: 30px;
+
+        .iconContainer {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 12px;
+          height: 12px;
+          .icon {
+            font-size: 16px;
+            color: $white;
+          }
+        }
+        .transactionType {
+          font-size: 1em;
+          margin: 0 0 0 15px;
+          text-transform: capitalize;
+          @include sf-pro-display-medium;
+        }
+      }
+
+      .date {
+        font-size: 1em;
+        margin-top: 15px;
+        @include sf-pro-display-medium;
+      }
+
+      .senderInfo {
+        margin: 15px 0 0 0;
+        max-width: 90%;
+        @include sf-pro-display-medium;
+
+        .senderAddress {
+          word-break: break-word;
+          @include sf-pro-display-thin;
+        }
+      }
+
+      .statusContainer {
+        margin: 0;
+        position: absolute;
+        right: 0;
+
+        .status {
+          color: $white;
+          text-transform: capitalize;
+          margin: 0 8px;
+        }
+      }
+
+      .iconArrow {
+        align-self: flex-end;
+        cursor: pointer;
+        transition: 0.2s ease-in-out;
+        transform: translateX(0);
+
+        &:hover {
+          transform: translateX(4px);
+        }
+      }
+    }
+  }
+}
+
+@include lg {
+  .container {
+    .badgeContainer {
+      .badgeItem {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+
+        .date {
+          margin-top: 0;
+          margin: 0 auto;
+        }
+
+        .senderInfo {
+          margin: 0 30px;
+          max-width: none;
+        }
+
+        .statusContainer {
+          position: static;
+          margin: 0 25px 0 auto;
+        }
+
+        .iconArrow {
+          align-self: center;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
