@@ -5,7 +5,7 @@ export default class Contacts extends Base {
     return this.apiClient.get('contacts');
   }
 
-  create(data) {
+  create(data: { name: string }) {
     return this.apiClient.post('contacts', { data });
   }
 }
