@@ -1,27 +1,26 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import useInfiniteScroll from 'react-infinite-scroll-hook';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import { Redirect } from 'react-router-dom';
 
 import LayoutContainer from '../LayoutContainer/LayoutContainer';
 import Modal from '../Modal/Modal';
-import { BANNER_DATA, ITEMS_LIMIT, EXPIRED_DAYS, SUBTITLE } from './constants';
 import ManagePageCtaBadge from './ManagePageCtaBadge';
-import { useCheckIfDesktop } from '../../screenType';
-import { ROUTES } from '../../constants/routes';
-
 import Notifications from './ManagePageComponents/Notifications';
 import DesktopView from './ManagePageComponents/DesktopView';
 import ItemComponent from './ManagePageComponents/ItemComponent';
 import MobileView from './ManagePageComponents/MobileView';
 import SettingsItem from './ManagePageComponents/SettingsItem';
+import InfiniteScroll from '../InfiniteScroll/InfiniteScroll';
 
-import classes from './ManagePageContainer.module.scss';
+import { BANNER_DATA, ITEMS_LIMIT, EXPIRED_DAYS, SUBTITLE } from './constants';
+import { useCheckIfDesktop } from '../../screenType';
+import { ROUTES } from '../../constants/routes';
 
 import { HasMore, ContainerProps, BoolStateFunc } from './types';
 import { FioNameItemProps } from '../../types';
+
+import classes from './ManagePageContainer.module.scss';
 
 const isExpired = (expiration: Date): boolean => {
   const today = new Date();
@@ -69,7 +68,11 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
       for (const fioWallet of fioWallets) {
         const { publicKey } = fioWallet;
         const currentOffset = offset[publicKey] || 0;
-        fetchDataFn(publicKey, Math.round(ITEMS_LIMIT), currentOffset);
+        fetchDataFn(
+          publicKey,
+          Math.round(ITEMS_LIMIT / fioWallets.length),
+          currentOffset,
+        );
         !!hasMore[publicKey] &&
           changeOffset({
             ...offset,
@@ -100,13 +103,6 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     fetchData();
   }, [fioWalletsRef.current]);
 
-  const [sentryRef] = useInfiniteScroll({
-    loading,
-    hasNextPage: hasMoreItems,
-    onLoadMore: fetchData,
-    rootMargin: '0px 0px 20px 0px',
-  });
-
   const onItemModalOpen = (fioNameItem: FioNameItemProps) => {
     setCurrentAddress(fioNameItem);
     handleShowModal(true);
@@ -121,22 +117,6 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
   const onSettingsClose = () => {
     !isDesktop && handleShowModal(true);
     handleShowSettings(false);
-  };
-  const renderScroll = (children: React.ReactNode) => {
-    return (
-      <>
-        {children}
-        {(loading || Object.keys(hasMore).some(key => hasMore[key] > 0)) && (
-          <div className={classes.loader} ref={sentryRef}>
-            <FontAwesomeIcon
-              icon="spinner"
-              spin={true}
-              className={classes.loaderIcon}
-            />
-          </div>
-        )}
-      </>
-    );
   };
 
   const propsToComponents = {
@@ -171,11 +151,17 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
               pageName={pageName}
             />
           )}
-          <div className={classes.tableContainer}>
-            {isDesktop
-              ? renderScroll(<DesktopView {...propsToComponents} />)
-              : renderScroll(<MobileView {...propsToComponents} />)}
-          </div>
+          <InfiniteScroll
+            loading={loading}
+            hasNextPage={hasMoreItems}
+            onLoadMore={fetchData}
+          >
+            {isDesktop ? (
+              <DesktopView {...propsToComponents} />
+            ) : (
+              <MobileView {...propsToComponents} />
+            )}
+          </InfiniteScroll>
         </div>
       </LayoutContainer>
       <div className={classes.actionBadge}>
