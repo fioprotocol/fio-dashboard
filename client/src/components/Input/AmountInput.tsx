@@ -4,14 +4,11 @@ import { FieldRenderProps } from 'react-final-form';
 import classnames from 'classnames';
 import classes from './Input.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faSpinner,
-  faDollarSign,
-  faExchangeAlt,
-} from '@fortawesome/free-solid-svg-icons';
+import { faSpinner, faDollarSign } from '@fortawesome/free-solid-svg-icons';
 import { ErrorBadge } from './ErrorBadge';
 import apis from '../../api';
 import { INPUT_COLOR_SCHEMA } from './TextInput';
+import exchangeIcon from '../../assets/images/exchange.svg';
 
 type Props = {
   colorSchema?: string;
@@ -185,8 +182,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
               ? amountCurrencyCode
               : exchangeAmountCurrencyCode}
           </div>
-          <FontAwesomeIcon
-            icon={faExchangeAlt}
+          <img
             className={classnames(
               classes.switchIcon,
               isBW && classes.bw,
@@ -197,6 +193,8 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
               if (disabled) return;
               setIsPrimaryExchange(!isPrimaryExchange);
             }}
+            src={exchangeIcon}
+            alt="timelapse"
           />
         </div>
 

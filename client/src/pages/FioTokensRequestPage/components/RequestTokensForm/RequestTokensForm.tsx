@@ -4,7 +4,6 @@ import { Field, Form, FormRenderProps } from 'react-final-form';
 import { formValidation, submitValidation } from './validation';
 import { RequestTokensProps, RequestTokensValues } from '../../types';
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
-import TextInput from '../../../../components/Input/TextInput';
 import AmountInput from '../../../../components/Input/AmountInput';
 import SelectModalInput from '../../../../components/Input/SelectModalInput';
 import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';

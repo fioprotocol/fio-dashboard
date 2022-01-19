@@ -104,8 +104,8 @@
 
   .switchIcon {
     margin: 0 4px;
+    height: 18px;
     color: $black;
-    transform: rotate(90deg);
     cursor: pointer;
     @media only screen and (max-width: 575px) {
       margin-left: auto;
