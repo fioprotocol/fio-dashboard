@@ -4,12 +4,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import WalletDetailsModal from './components/WalletDetailsModal';
-import TransactionList from './components/TransactionList';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import ActionButtonsContainer from '../WalletsPage/components/ActionButtonsContainer';
 import TotalBalanceBadge from '../WalletsPage/components/TotalBalanceBadge';
 import TransactionHistory from './components/TransactionHistory';
 import EditWalletName from './components/EditWalletName';
+import WalletTabs from './components/WalletTabs';
+import { BADGE_TYPES } from '../../components/Badge/Badge';
+import InfoBadge from '../../components/InfoBadge/InfoBadge';
 
 import apis from '../../api';
 
@@ -109,7 +111,16 @@ const WalletPage: React.FC<ContainerProps> = props => {
         </ActionButtonsContainer>
 
         <p className={classes.subtitle}>Manage your FIO tokens</p>
-        <TransactionList fioWallet={fioWallet} />
+        <InfoBadge
+          title="Transaction Display"
+          message="Only FIO Requests are displayed below. Please visit the Explorer to view you total transaction history."
+          show={true}
+          type={BADGE_TYPES.INFO}
+        />
+        <p className={classes.text}>
+          View your transactions by type as well as sent or received.
+        </p>
+        <WalletTabs fioWallet={fioWallet} />
       </LayoutContainer>
       <div className={classes.actionBadges}>
         <TotalBalanceBadge {...balance} />

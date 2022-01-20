@@ -7,9 +7,14 @@
   flex-direction: column;
   width: 100%;
 
-  .subtitle {
+  .subtitle, .text {
     font-size: 0.875rem;
     @include proxima-nova-thin;
+  }
+
+  .text {
+    margin-top: 20px;
+    margin-bottom: 15px;
   }
 
   .firstLink {

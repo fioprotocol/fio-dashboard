@@ -127,8 +127,10 @@ export default combineReducers({
           };
 
         if (
+          state != null &&
+          !!action.data.newDeviceTwoFactor &&
           JSON.stringify(action.data.newDeviceTwoFactor) !==
-          JSON.stringify(state.newDeviceTwoFactor)
+            JSON.stringify(state.newDeviceTwoFactor)
         ) {
           return {
             ...state,

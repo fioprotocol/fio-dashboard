@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { FieldRenderProps } from 'react-final-form';
 import classnames from 'classnames';
-import classes from './Input.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CopyButton } from './InputActionButtons';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { CopyButton } from './InputActionButtons';
 import { ErrorBadge } from './ErrorBadge';
+import { getValueFromPaste } from '../../util/general';
+
+import classes from './Input.module.scss';
 
 export const INPUT_COLOR_SCHEMA = {
   BLACK_AND_WHITE: 'black_and_white',
@@ -202,8 +205,7 @@ const TextInput: React.FC<Props & FieldRenderProps<Props>> = props => {
           <CopyButton
             onClick={async () => {
               try {
-                const clipboardStr = await navigator.clipboard.readText();
-                onChange(clipboardStr);
+                onChange(await getValueFromPaste());
               } catch (e) {
                 console.error('Paste error: ', e);
               }

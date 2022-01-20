@@ -66,4 +66,7 @@ router.use(
   }),
 );
 
+router.post('/contacts', checkAuth, routes.contacts.create);
+router.get('/contacts', checkAuth, routes.contacts.list);
+
 export default router;

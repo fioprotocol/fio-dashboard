@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Field } from 'react-final-form';
 
 import FormHeader from '../FormHeader/FormHeader';
-import Input from '../Input/Input';
+import PinInput from '../Input/PinInput/PinInput';
 
 import { Button } from 'react-bootstrap';
 
@@ -21,7 +21,7 @@ export default class Pin extends Component {
           />
           <Field
             name="confirmPin"
-            component={Input}
+            component={PinInput}
             disabled={loading}
             autoFocus
             autoComplete="off"
@@ -44,7 +44,7 @@ export default class Pin extends Component {
         />
         <Field
           name="pin"
-          component={Input}
+          component={PinInput}
           disabled={loading}
           autoFocus
           autoComplete="off"

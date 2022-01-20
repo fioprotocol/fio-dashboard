@@ -3,11 +3,6 @@
 @import '../../../assets/styles/fontMixins.scss';
 
 .container {
-  .infoBadge {
-    display: flex;
-    margin-top: 30px;
-    justify-content: center;
-  }
   .title {
     font-size: 1em;
     margin-top: 20px;
@@ -79,11 +74,16 @@
   }
 }
 
+.infoBadge, .loader {
+  margin-top: 30px;
+}
+
 @include lg {
+  .infoBadge, .loader {
+    margin-top: 60px;
+  }
+
   .container {
-    .infoBadge {
-      margin-top: 60px;
-    }
     .badgeContainer {
       .badgeItem {
         flex-direction: row;

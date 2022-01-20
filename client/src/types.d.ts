@@ -282,7 +282,7 @@ export type CommonObjectProps = { [key: string]: string };
 
 export type NFTTokenItemProps = keyof NFTTokenDoublet;
 
-export type TransactionItem = {
+export type TransactionItemProps = {
   txId: string;
   currencyCode: string;
   amount: string;

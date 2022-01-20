@@ -28,10 +28,14 @@ const RequestPage: React.FC<ContainerProps> = props => {
     fioWallet,
     fioAddresses,
     balance,
-    loading,
+    fioWalletsLoading,
     roe,
     history,
+    contactsList,
+    contactsLoading,
     refreshBalance,
+    createContact,
+    getContactsList,
   } = props;
 
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
@@ -40,10 +44,13 @@ const RequestPage: React.FC<ContainerProps> = props => {
   );
   const [processing, setProcessing] = useState<boolean>(false);
 
+  const loading = fioWalletsLoading || contactsLoading;
+
   useFioAddresses();
 
   useEffect(() => {
     setRequestData(null);
+    getContactsList();
   }, []);
 
   useEffect(() => {
@@ -51,9 +58,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
   }, [fioWallet]);
 
   const onRequest = async (values: RequestTokensValues) => {
-    const newRequestData = { ...values };
-    newRequestData.amount = apis.fio.amountToSUF(newRequestData.amount);
-    setRequestData(newRequestData);
+    setRequestData(values);
   };
   const onCancel = () => {
     setRequestData(null);
@@ -67,6 +72,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
       publicKey: fioWallet.publicKey,
       other: {
         ...requestData,
+        amount: apis.fio.amountToSUF(requestData.amount),
         ...res,
         to: requestData.payerFioAddress,
         from: requestData.payeeFioAddress,
@@ -136,6 +142,8 @@ const RequestPage: React.FC<ContainerProps> = props => {
           requestData={requestData}
           processing={processing}
           setProcessing={setProcessing}
+          createContact={createContact}
+          contactsList={contactsList}
         />
       ) : null}
       <PseudoModalContainer
@@ -152,10 +160,12 @@ const RequestPage: React.FC<ContainerProps> = props => {
 
         <RequestTokensForm
           fioWallet={fioWallet}
+          roe={roe}
           balance={balance}
           loading={loading || processing}
           fioAddresses={walletFioAddresses}
           onSubmit={onRequest}
+          contactsList={contactsList}
         />
       </PseudoModalContainer>
     </>

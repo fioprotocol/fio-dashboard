@@ -9,26 +9,6 @@
   flex-direction: column;
   width: 100%;
 
-  .tableContainer {
-    margin-top: 20px;
-    overflow-y: auto;
-    max-height: 60vh;
-
-    .loader {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      font-size: 1.5rem;
-      color: $violet;
-      margin-top: 30px;
-      padding-bottom: 60px;
-      grid-column-start: 1;
-      grid-column-end: 5;
-    }
-  }
-
   .subtitle {
     @include proxima-nova-thin;
     font-size: 0.875rem;

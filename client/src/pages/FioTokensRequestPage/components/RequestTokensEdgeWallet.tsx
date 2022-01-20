@@ -18,6 +18,8 @@ type Props = {
   setProcessing: (processing: boolean) => void;
   requestData: RequestTokensValues | null;
   processing: boolean;
+  createContact: (name: string) => void;
+  contactsList: string[];
 };
 
 type RequestProps = {
@@ -41,14 +43,25 @@ const RequestTokensEdgeWallet: React.FC<Props> = props => {
     onCancel,
     requestData,
     processing,
+    createContact,
+    contactsList,
   } = props;
 
   const send = async ({ keys, data }: SubmitActionParams) => {
     const params: RequestProps = {
       ...data,
-      amount: apis.fio.sufToAmount(data.amount),
     };
-    return apis.fio.executeAction(keys, ACTIONS.requestFunds, params);
+
+    const result = await apis.fio.executeAction(
+      keys,
+      ACTIONS.requestFunds,
+      params,
+    );
+
+    if (!contactsList.filter(c => c === params.payerFioAddress).length)
+      createContact(params.payerFioAddress);
+
+    return result;
   };
 
   return (

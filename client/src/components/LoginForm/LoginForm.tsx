@@ -29,6 +29,7 @@ type Props = {
   onClose: () => void;
   getCachedUsers: () => void;
   resetLastAuthData: () => void;
+  resetLoginFailure: () => void;
   loginFailure: { fields?: { [fieldName: string]: any }; code?: string };
   edgeLoginFailure: {
     type?: string;
@@ -59,6 +60,7 @@ const LoginForm = (props: Props) => {
     lastAuthData,
     getCachedUsers,
     resetLastAuthData,
+    resetLoginFailure,
     loginFailure,
     edgeLoginFailure,
     emailConfirmationResult,
@@ -201,6 +203,7 @@ const LoginForm = (props: Props) => {
             loginFailure={loginFailure}
             edgeLoginFailure={edgeLoginFailure}
             exitPin={exitPin}
+            resetLoginFailure={resetLoginFailure}
           />
         ) : (
           <UsernamePassword

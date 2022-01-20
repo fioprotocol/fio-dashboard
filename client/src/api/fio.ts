@@ -68,8 +68,11 @@ export default class Fio {
     return publicKey;
   };
 
-  convert = (amount: number, roe: number): number =>
+  convertFioToUsdc = (amount: number, roe: number): number =>
     Math.round((amount / (FIOSDK.SUFUnit / 100)) * roe) / 100;
+
+  convertUsdcToFio = (amount: number, roe: number): number =>
+    Math.round(amount / (roe / 100)) / 100;
 
   checkWallet = (): void => {
     if (!this.walletFioSDK) throw new Error('No wallet set.');
