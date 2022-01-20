@@ -4,31 +4,30 @@ import { FieldRenderProps, useForm } from 'react-final-form';
 import classnames from 'classnames';
 import classes from './Input.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner, faDollarSign } from '@fortawesome/free-solid-svg-icons';
+import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
 import { ErrorBadge } from './ErrorBadge';
 import apis from '../../api';
-import { INPUT_COLOR_SCHEMA } from './TextInput';
+import {
+  INPUT_COLOR_SCHEMA,
+  Label,
+  LoadingIcon,
+  PrefixLabel,
+} from './TextInput';
 import exchangeIcon from '../../assets/images/exchange.svg';
 
 type Props = {
   colorSchema?: string;
-  onClose?: (isOpen: boolean) => void;
   hideError?: boolean;
-  showCopyButton?: boolean;
   loading?: boolean;
   uiType?: string;
   errorType?: string;
   errorColor?: string;
   disabled?: boolean;
   showErrorBorder?: boolean;
-  isHigh?: boolean;
-  isSimple?: boolean;
   input: {
     'data-clear'?: boolean;
     value: string;
   };
-  hasSmallText?: boolean;
-  hasThinText?: boolean;
   debounceTimeout?: number;
   roe: number;
   amountCurrencyCode?: string;
@@ -44,7 +43,6 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     roe,
     colorSchema,
     hideError,
-    showCopyButton,
     loading,
     uiType,
     errorType = '',
@@ -71,6 +69,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
 
   const { change } = useForm();
 
+  // todo: extent formula to use currencyCode
   const relationFormula = (val: string, isReverse: boolean = false) => {
     let valueToExchange = Number(val);
     if (!valueToExchange) return '0.00';
@@ -83,7 +82,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     ).toString();
   };
 
-  const { type, value, onChange } = input;
+  const { value, onChange } = input;
   const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
 
   const [isPrimaryExchange, setIsPrimaryExchange] = useState(true);
@@ -116,29 +115,9 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
       !active) ||
       (submitError && !modifiedSinceLastSubmit));
 
-  const renderPrefixLabel = () => {
-    return (
-      <div
-        className={classnames(
-          classes.prefixLabel,
-          classes[`prefixLabel${uiType}`],
-        )}
-      >
-        {isPrimaryExchange ? amountCurrencyCode : exchangeAmountCurrencyCode}
-      </div>
-    );
-  };
-
-  const renderLabel = () =>
-    label && (
-      <div className={classnames(classes.label, uiType && classes[uiType])}>
-        {label}
-      </div>
-    );
-
   return (
     <div className={classes.regInputWrapper}>
-      {renderLabel()}
+      <Label label={label} uiType={uiType} />
       <div className={classes.inputGroup}>
         <div
           className={classnames(
@@ -146,12 +125,17 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
             (hasError || showErrorBorder) && classes.error,
             uiType && classes[uiType],
             isBW && classes.bw,
-            showCopyButton && classes.hasCopyButton,
-            type === 'password' && classes.doubleIconInput,
             isLowHeight && classes.lowHeight,
           )}
         >
-          {renderPrefixLabel()}
+          <PrefixLabel
+            label={
+              isPrimaryExchange
+                ? amountCurrencyCode
+                : exchangeAmountCurrencyCode
+            }
+            uiType={uiType}
+          />
           <DebounceInput
             className={classes.amountInput}
             inputRef={rest.ref}
@@ -205,28 +189,16 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
           />
         </div>
 
-        {loading && (
-          <FontAwesomeIcon
-            icon={faSpinner}
-            spin
-            className={classnames(
-              classes.inputIcon,
-              classes.inputSpinnerIcon,
-              uiType && classes[uiType],
-            )}
-          />
-        )}
+        <LoadingIcon isVisible={loading} uiType={uiType} />
       </div>
-      {!hideError && !data.hideError && (
-        <ErrorBadge
-          error={error}
-          data={data}
-          hasError={hasError}
-          type={errorType}
-          color={errorColor}
-          submitError={submitError}
-        />
-      )}
+      <ErrorBadge
+        error={error}
+        data={data}
+        hasError={!hideError && !data.hideError && hasError}
+        type={errorType}
+        color={errorColor}
+        submitError={submitError}
+      />
     </div>
   );
 };
