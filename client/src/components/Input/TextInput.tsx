@@ -15,7 +15,7 @@ export const INPUT_COLOR_SCHEMA = {
   BLACK_AND_WHITE: 'black_and_white',
 };
 
-type Props = {
+type TextInputProps = {
   colorSchema?: string;
   onClose?: (isOpen: boolean) => void;
   hideError?: boolean;
@@ -38,13 +38,163 @@ type Props = {
   };
   hasSmallText?: boolean;
   hasThinText?: boolean;
+  debounceTimeout?: number;
 };
 
-const TextInput: React.FC<Props & FieldRenderProps<Props>> = props => {
+type ClearButtonProps = {
+  isVisible: boolean;
+  uiType?: string;
+  isBW?: boolean;
+  disabled?: boolean;
+  inputType?: string;
+  onClear: () => void;
+  onClose?: (val: boolean) => void;
+};
+
+type LoadingIconProps = {
+  isVisible?: boolean;
+  uiType?: string;
+  isBW?: boolean;
+};
+
+type PrefixLabelProps = {
+  isVisible?: boolean;
+  uiType?: string;
+  label: string;
+};
+
+type PasswordIconProps = {
+  isVisible: boolean;
+  uiType?: string;
+  disabled?: boolean;
+  showPass?: boolean;
+  toggleShowPass?: (val: boolean) => void;
+};
+
+export const ClearButton: React.FC<ClearButtonProps> = ({
+  isVisible,
+  inputType,
+  uiType,
+  disabled,
+  isBW,
+  onClear,
+  onClose,
+}) => {
+  if (!isVisible) return null;
+
+  return (
+    <FontAwesomeIcon
+      icon="times-circle"
+      className={classnames(
+        classes.inputIcon,
+        inputType === 'password' && classes.doubleIcon,
+        isBW && classes.bw,
+        disabled && classes.disabled,
+        uiType && classes[uiType],
+      )}
+      onClick={() => {
+        if (disabled) return;
+        onClear();
+        if (onClose) {
+          onClose(false);
+        }
+      }}
+    />
+  );
+};
+
+export const LoadingIcon: React.FC<LoadingIconProps> = ({
+  isVisible,
+  uiType,
+}) => {
+  if (!isVisible) return null;
+
+  return (
+    <FontAwesomeIcon
+      icon={faSpinner}
+      spin
+      className={classnames(
+        classes.inputIcon,
+        classes.inputSpinnerIcon,
+        uiType && classes[uiType],
+      )}
+    />
+  );
+};
+
+export const PasswordIcon: React.FC<PasswordIconProps> = ({
+  isVisible,
+  uiType,
+  disabled,
+  showPass,
+  toggleShowPass,
+}) => {
+  if (!isVisible) return null;
+
+  return (
+    <FontAwesomeIcon
+      icon={!showPass ? 'eye' : 'eye-slash'}
+      className={classnames(
+        classes.inputIcon,
+        disabled && classes.disabled,
+        uiType && classes[uiType],
+      )}
+      onClick={() => !disabled && toggleShowPass(!showPass)}
+    />
+  );
+};
+
+export const Label: React.FC<{ label?: string; uiType?: string }> = ({
+  label,
+  uiType,
+}) => {
+  if (!label?.length) return null;
+
+  return (
+    <div className={classnames(classes.label, uiType && classes[uiType])}>
+      {label}
+    </div>
+  );
+};
+
+export const Prefix: React.FC<{ prefix?: string; hasError?: boolean }> = ({
+  prefix,
+  hasError,
+}) => {
+  if (!prefix?.length) return null;
+
+  return (
+    <div className={classnames(classes.prefix, hasError && classes.error)}>
+      {prefix}
+    </div>
+  );
+};
+
+export const PrefixLabel: React.FC<PrefixLabelProps> = ({
+  isVisible = true,
+  label,
+  uiType,
+}) => {
+  if (!isVisible || !label?.length) return null;
+
+  return (
+    <div
+      className={classnames(
+        classes.prefixLabel,
+        classes[`prefixLabel${uiType}`],
+      )}
+    >
+      {label}
+    </div>
+  );
+};
+
+export const TextInput: React.FC<TextInputProps &
+  FieldRenderProps<TextInputProps>> = props => {
   const {
     input,
     meta,
-    isDebounce = false,
+    debounceTimeout = 0,
     colorSchema,
     onClose,
     hideError,
@@ -78,55 +228,27 @@ const TextInput: React.FC<Props & FieldRenderProps<Props>> = props => {
   const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
 
   const [showPass, toggleShowPass] = useState(false);
-  const [clearInput, toggleClearInput] = useState(value !== '');
+  const [isInputHasValue, toggleIsInputHasValue] = useState(value !== '');
 
   const hasError =
     ((error || data.error) &&
       (touched || modified || submitSucceeded || !!value) &&
       !active) ||
     (submitError && !modifiedSinceLastSubmit);
+
   useEffect(() => {
-    toggleClearInput(value !== '');
+    toggleIsInputHasValue(value !== '');
   });
 
   const clearInputFn = () => {
     onChange('');
   };
 
-  const renderPrefixLabel = () => {
-    if (!prefixLabel) return null;
-    if (active || !value) return null;
-
-    return (
-      <div
-        className={classnames(
-          classes.prefixLabel,
-          classes[`prefixLabel${uiType}`],
-        )}
-      >
-        {prefixLabel}
-      </div>
-    );
-  };
-
-  const renderLabel = () =>
-    label && (
-      <div className={classnames(classes.label, uiType && classes[uiType])}>
-        {label}
-      </div>
-    );
-
   return (
     <div className={classes.regInputWrapper}>
-      {renderLabel()}
+      <Label label={label} uiType={uiType} />
       <div className={classes.inputGroup}>
-        {prefix && (
-          <div
-            className={classnames(classes.prefix, hasError && classes.error)}
-          >
-            {prefix}
-          </div>
-        )}
+        <Prefix prefix={prefix} hasError={hasError} />
         <div
           className={classnames(
             classes.regInput,
@@ -139,68 +261,41 @@ const TextInput: React.FC<Props & FieldRenderProps<Props>> = props => {
             isLowHeight && classes.lowHeight,
           )}
         >
-          {renderPrefixLabel()}
-          {isDebounce ? (
-            <DebounceInput
-              inputRef={rest.ref}
-              debounceTimeout={1000}
-              {...input}
-              {...rest}
-              onChange={e => {
-                const currentValue = e.target.value;
-                if (lowerCased) return onChange(currentValue.toLowerCase());
-                if (upperCased) return onChange(currentValue.toUpperCase());
-                onChange(currentValue);
-              }}
-              type={showPass ? 'text' : type}
-              data-clear={clearInput}
-            />
-          ) : (
-            <input
-              disabled={disabled}
-              {...input}
-              {...rest}
-              onChange={e => {
-                const currentValue = e.target.value;
-                if (lowerCased) return onChange(currentValue.toLowerCase());
-                if (upperCased) return onChange(currentValue.toUpperCase());
-                onChange(currentValue);
-              }}
-              type={showPass ? 'text' : type}
-              data-clear={clearInput}
-            />
-          )}
-        </div>
-        {(clearInput || onClose) && !disabled && !loading && (
-          <FontAwesomeIcon
-            icon="times-circle"
-            className={classnames(
-              classes.inputIcon,
-              type === 'password' && classes.doubleIcon,
-              isBW && classes.bw,
-              disabled && classes.disabled,
-              uiType && classes[uiType],
-            )}
-            onClick={() => {
-              if (disabled) return;
-              clearInputFn();
-              if (onClose) {
-                onClose(false);
-              }
+          <PrefixLabel
+            label={prefixLabel}
+            isVisible={!(active || !value)}
+            uiType={uiType}
+          />
+          <DebounceInput
+            inputRef={rest.ref}
+            debounceTimeout={debounceTimeout}
+            {...input}
+            {...rest}
+            onChange={e => {
+              const currentValue = e.target.value;
+              if (lowerCased) return onChange(currentValue.toLowerCase());
+              if (upperCased) return onChange(currentValue.toUpperCase());
+              onChange(currentValue);
             }}
+            type={showPass ? 'text' : type}
+            data-clear={isInputHasValue}
           />
-        )}
-        {clearInput && type === 'password' && (
-          <FontAwesomeIcon
-            icon={!showPass ? 'eye' : 'eye-slash'}
-            className={classnames(
-              classes.inputIcon,
-              disabled && classes.disabled,
-              uiType && classes[uiType],
-            )}
-            onClick={() => !disabled && toggleShowPass(!showPass)}
-          />
-        )}
+        </div>
+        <ClearButton
+          isVisible={(isInputHasValue || onClose) && !disabled && !loading}
+          onClear={clearInputFn}
+          onClose={onClose}
+          inputType={type}
+          isBW={isBW}
+          disabled={disabled}
+          uiType={uiType}
+        />
+        <PasswordIcon
+          isVisible={isInputHasValue && type === 'password'}
+          showPass={showPass}
+          toggleShowPass={toggleShowPass}
+          uiType={uiType}
+        />
         {showCopyButton && !value && (
           <CopyButton
             onClick={async () => {
@@ -213,28 +308,16 @@ const TextInput: React.FC<Props & FieldRenderProps<Props>> = props => {
             uiType={uiType}
           />
         )}
-        {loading && (
-          <FontAwesomeIcon
-            icon={faSpinner}
-            spin
-            className={classnames(
-              classes.inputIcon,
-              classes.inputSpinnerIcon,
-              uiType && classes[uiType],
-            )}
-          />
-        )}
+        <LoadingIcon isVisible={loading} uiType={uiType} />
       </div>
-      {!hideError && !data.hideError && (
-        <ErrorBadge
-          error={error}
-          data={data}
-          hasError={hasError}
-          type={errorType}
-          color={errorColor}
-          submitError={submitError}
-        />
-      )}
+      <ErrorBadge
+        error={error}
+        data={data}
+        hasError={!hideError && !data.hideError && hasError}
+        type={errorType}
+        color={errorColor}
+        submitError={submitError}
+      />
     </div>
   );
 };
