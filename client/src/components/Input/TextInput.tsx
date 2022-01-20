@@ -189,6 +189,27 @@ export const PrefixLabel: React.FC<PrefixLabelProps> = ({
   );
 };
 
+export const PrefixLabel: React.FC<PrefixLabelProps> = ({
+  isVisible = true,
+  label,
+  uiType,
+}) => {
+  return (
+    <>
+      {isVisible && label && (
+        <div
+          className={classnames(
+            classes.prefixLabel,
+            classes[`prefixLabel${uiType}`],
+          )}
+        >
+          {label}
+        </div>
+      )}
+    </>
+  );
+};
+
 export const TextInput: React.FC<TextInputProps &
   FieldRenderProps<TextInputProps>> = props => {
   const {

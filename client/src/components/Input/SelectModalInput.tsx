@@ -4,11 +4,17 @@ import { FieldRenderProps } from 'react-final-form';
 import classnames from 'classnames';
 import classes from './Input.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { ErrorBadge } from './ErrorBadge';
 import Modal from '../Modal/Modal';
 import { CopyButton } from './InputActionButtons';
-import { INPUT_COLOR_SCHEMA } from './TextInput';
+import {
+  ClearButton,
+  INPUT_COLOR_SCHEMA,
+  Label,
+  LoadingIcon,
+  PrefixLabel,
+} from './TextInput';
 
 type Props = {
   colorSchema?: string;
@@ -21,6 +27,7 @@ type Props = {
   errorColor?: string;
   prefixLabel?: string;
   modalPlaceholder?: string;
+  placeholder?: string;
   upperCased?: boolean;
   lowerCased?: boolean;
   disabled?: boolean;
@@ -45,7 +52,7 @@ type ModalProps = {
   optionsList?: string[];
   handleClose?: () => void;
   clearInputFn?: () => void;
-  clearInput?: boolean;
+  isInputHasValue?: boolean;
   isBW?: boolean;
   inputRef: MutableRefObject<HTMLInputElement>;
 };
@@ -76,9 +83,10 @@ const SelectModal: React.FC<Props &
     hasError,
     handleClose,
     clearInputFn,
-    clearInput,
+    isInputHasValue,
     isBW,
     inputRef,
+    placeholder,
     ...rest
   } = props;
 
@@ -106,7 +114,6 @@ const SelectModal: React.FC<Props &
                   uiType && classes[uiType],
                   isBW && classes.bw,
                   showCopyButton && classes.hasCopyButton,
-                  type === 'password' && classes.doubleIconInput,
                   isLowHeight && classes.lowHeight,
                 )}
               >
@@ -129,28 +136,20 @@ const SelectModal: React.FC<Props &
                   }}
                   type="text"
                   placeholder={modalPlaceholder || rest.placeholder}
-                  data-clear={clearInput}
+                  data-clear={isInputHasValue}
                 />
               </div>
-              {(clearInput || onClose) && !disabled && !loading && (
-                <FontAwesomeIcon
-                  icon="times-circle"
-                  className={classnames(
-                    classes.inputIcon,
-                    type === 'password' && classes.doubleIcon,
-                    isBW && classes.bw,
-                    disabled && classes.disabled,
-                    uiType && classes[uiType],
-                  )}
-                  onClick={() => {
-                    if (disabled) return;
-                    clearInputFn();
-                    if (onClose) {
-                      onClose(false);
-                    }
-                  }}
-                />
-              )}
+              <ClearButton
+                isVisible={
+                  (isInputHasValue || onClose) && !disabled && !loading
+                }
+                onClear={clearInputFn}
+                onClose={onClose}
+                inputType={type}
+                isBW={isBW}
+                disabled={disabled}
+                uiType={uiType}
+              />
               {showCopyButton && !value && (
                 <CopyButton
                   onClick={async () => {
@@ -186,7 +185,10 @@ const SelectModal: React.FC<Props &
                 <div
                   className={classes.option}
                   key={input.name + name}
-                  onClick={input.onChange.bind(null, name)}
+                  onClick={() => {
+                    input.onChange(name);
+                    handleClose();
+                  }}
                 >
                   <div className={classes.logo}>{name[0].toUpperCase()}</div>
                   <div>{name}</div>
@@ -217,7 +219,7 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     isLowHeight,
     label,
     options = [],
-    ...rest
+    placeholder,
   } = props;
   const {
     error,
@@ -230,14 +232,14 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     submitSucceeded,
   } = meta;
 
-  const { type, value, onChange } = input;
+  const { value, onChange } = input;
   const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
 
   const modalInputRef = useRef<HTMLInputElement>(null);
 
   const [showModal, toggleShowModal] = useState(false);
   const [optionsList, setOptionsList] = useState(options);
-  const [clearInput, toggleClearInput] = useState(value !== '');
+  const [isInputHasValue, toggleIsInputHasValue] = useState(value !== '');
 
   useEffect(() => {
     if (showModal) modalInputRef.current.focus();
@@ -253,6 +255,7 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
         }),
       );
   }, [value, options]);
+
   const handleCloseModal = () => {
     toggleShowModal(false);
   };
@@ -269,7 +272,7 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
       !active) ||
       (submitError && !modifiedSinceLastSubmit));
   useEffect(() => {
-    toggleClearInput(value !== '');
+    toggleIsInputHasValue(value !== '');
   });
 
   const clearInputFn = () => {
@@ -277,32 +280,9 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     modalInputRef.current.focus();
   };
 
-  const renderPrefixLabel = () => {
-    if (!prefixLabel) return null;
-    if (active || !value) return null;
-
-    return (
-      <div
-        className={classnames(
-          classes.prefixLabel,
-          classes[`prefixLabel${uiType}`],
-        )}
-      >
-        {prefixLabel}
-      </div>
-    );
-  };
-
-  const renderLabel = () =>
-    label && (
-      <div className={classnames(classes.label, uiType && classes[uiType])}>
-        {label}
-      </div>
-    );
-
   return (
     <div className={classes.regInputWrapper}>
-      {renderLabel()}
+      <Label label={label} uiType={uiType} />
       <div className={classes.inputGroup} onClick={handleOpenModal}>
         <div
           className={classnames(
@@ -311,12 +291,21 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
             uiType && classes[uiType],
             isBW && classes.bw,
             showCopyButton && classes.hasCopyButton,
-            type === 'password' && classes.doubleIconInput,
             isLowHeight && classes.lowHeight,
           )}
         >
-          {renderPrefixLabel()}
-          <input disabled={true} {...rest} value={input.value} type="text" />
+          <PrefixLabel
+            label={prefixLabel}
+            isVisible={!(active || !value)}
+            uiType={uiType}
+          />
+          <input
+            disabled={true}
+            value={input.value}
+            readOnly
+            type="text"
+            placeholder={placeholder}
+          />
         </div>
         {!loading && (
           <FontAwesomeIcon
@@ -328,17 +317,7 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
             )}
           />
         )}
-        {loading && (
-          <FontAwesomeIcon
-            icon={faSpinner}
-            spin
-            className={classnames(
-              classes.inputIcon,
-              classes.inputSpinnerIcon,
-              uiType && classes[uiType],
-            )}
-          />
-        )}
+        <LoadingIcon isVisible={loading} uiType={uiType} />
       </div>
       <ErrorBadge
         error={error}
@@ -356,7 +335,7 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
         inputRef={modalInputRef}
         handleClose={handleCloseModal}
         clearInputFn={clearInputFn}
-        clearInput={clearInput}
+        isInputHasValue={isInputHasValue}
         isBW={isBW}
         hasError={hasError}
       />
