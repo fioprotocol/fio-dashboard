@@ -1,5 +1,5 @@
 import apis from '../api';
-import { TransactionItem } from '../types';
+import { TransactionItemProps } from '../types';
 
 const HISTORY_NODE_URLS = [process.env.REACT_APP_HISTORY_NODE_URL];
 const HISTORY_NODE_ACTIONS = {
@@ -56,7 +56,7 @@ const getUTCDate = (dateString: string) => {
   );
 };
 
-const addTx = (newTx: TransactionItem, txList: TransactionItem[]) => {
+const addTx = (newTx: TransactionItemProps, txList: TransactionItemProps[]) => {
   const existingIndex = txList.findIndex(({ txId }) => txId === newTx.txId);
 
   if (existingIndex > -1) {
@@ -97,7 +97,7 @@ const processTransaction = (
   publicKey: string,
   action: FioHistoryNodeAction,
   actor: string,
-  transactions: TransactionItem[],
+  transactions: TransactionItemProps[],
 ): number => {
   const {
     act: { name: trxName, data },
@@ -142,7 +142,7 @@ const processTransaction = (
 
     // Check if fee transaction have already added
     if (index > -1) {
-      const existingTrx: TransactionItem = transactions[index];
+      const existingTrx: TransactionItemProps = transactions[index];
       otherParams = { ...existingTrx.otherParams };
       if (+nativeAmount > 0) {
         return action.block_num;
@@ -194,7 +194,7 @@ const processTransaction = (
 
     // Check if transfer transaction have already added
     if (index > -1) {
-      const existingTrx: TransactionItem = transactions[index];
+      const existingTrx: TransactionItemProps = transactions[index];
       otherParams = { ...existingTrx.otherParams };
       if (+existingTrx.nativeAmount > 0) {
         return action.block_num;
@@ -233,8 +233,8 @@ const processTransaction = (
 export const checkTransactions = async (
   publicKey: string,
   historyNodeIndex: number = 0,
-): Promise<TransactionItem[]> => {
-  const transactions: TransactionItem[] = [];
+): Promise<TransactionItemProps[]> => {
+  const transactions: TransactionItemProps[] = [];
   if (!HISTORY_NODE_URLS[historyNodeIndex]) return transactions;
 
   let newHighestTxHeight = highestTxHeight[publicKey]; // todo: ?
