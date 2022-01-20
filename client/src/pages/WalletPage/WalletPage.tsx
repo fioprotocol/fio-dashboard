@@ -120,7 +120,7 @@ const WalletPage: React.FC<ContainerProps> = props => {
         <p className={classes.text}>
           View your transactions by type as well as sent or received.
         </p>
-        <WalletTabs />
+        <WalletTabs fioWallet={fioWallet} />
       </LayoutContainer>
       <div className={classes.actionBadges}>
         <TotalBalanceBadge {...balance} />
