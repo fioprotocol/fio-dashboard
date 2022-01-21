@@ -17,6 +17,7 @@ type Props = {
   hasAutoWidth?: boolean;
   isSimple?: boolean;
   isHigh?: boolean;
+  isFormField?: boolean;
 };
 
 const CustomDropdown: React.FC<Props> = props => {
@@ -32,6 +33,7 @@ const CustomDropdown: React.FC<Props> = props => {
     hasAutoWidth,
     isSimple,
     isHigh,
+    isFormField,
   } = props;
 
   const styledOptions = options.map(option => ({
@@ -67,6 +69,7 @@ const CustomDropdown: React.FC<Props> = props => {
         classes.dropdown,
         isShort && classes.isShort,
         hasAutoWidth && classes.hasAutoWidth,
+        isFormField && classes.formField,
       )}
       controlClassName={classnames(
         classes.control,
