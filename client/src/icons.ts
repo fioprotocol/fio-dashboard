@@ -39,6 +39,7 @@ import {
   faShareAlt,
   faQrcode,
   faKey,
+  faDollarSign,
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
@@ -93,6 +94,7 @@ const icons = {
   faShareAlt,
   faQrcode,
   faKey,
+  faDollarSign,
 };
 
 export default icons;

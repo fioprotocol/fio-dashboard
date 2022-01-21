@@ -4,7 +4,6 @@ import { FieldRenderProps } from 'react-final-form';
 import classnames from 'classnames';
 import classes from './Input.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { ErrorBadge } from './ErrorBadge';
 import Modal from '../Modal/Modal';
 import { CopyButton } from './InputActionButtons';
@@ -304,7 +303,7 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
         </div>
         {!loading && (
           <FontAwesomeIcon
-            icon={faChevronRight}
+            icon="chevron-right"
             className={classnames(
               classes.inputIcon,
               uiType && classes[uiType],
