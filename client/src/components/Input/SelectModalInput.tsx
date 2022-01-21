@@ -8,13 +8,9 @@ import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { ErrorBadge } from './ErrorBadge';
 import Modal from '../Modal/Modal';
 import { CopyButton } from './InputActionButtons';
-import {
-  ClearButton,
-  INPUT_COLOR_SCHEMA,
-  Label,
-  LoadingIcon,
-  PrefixLabel,
-} from './TextInput';
+import { INPUT_COLOR_SCHEMA } from './TextInput';
+import { Label, LoadingIcon, PrefixLabel } from './StaticInputParts';
+import { ClearButton } from './InputActionButtons';
 
 type Props = {
   colorSchema?: string;
@@ -135,7 +131,7 @@ const SelectModal: React.FC<Props &
                     }
                   }}
                   type="text"
-                  placeholder={modalPlaceholder || rest.placeholder}
+                  placeholder={modalPlaceholder || placeholder}
                   data-clear={isInputHasValue}
                 />
               </div>
@@ -150,20 +146,19 @@ const SelectModal: React.FC<Props &
                 disabled={disabled}
                 uiType={uiType}
               />
-              {showCopyButton && !value && (
-                <CopyButton
-                  onClick={async () => {
-                    try {
-                      const clipboardStr = await navigator.clipboard.readText();
-                      onChange(clipboardStr);
-                      inputRef.current.focus();
-                    } catch (e) {
-                      console.error('Paste error: ', e);
-                    }
-                  }}
-                  uiType={uiType}
-                />
-              )}
+              <CopyButton
+                isVisible={showCopyButton && !value}
+                onClick={async () => {
+                  try {
+                    const clipboardStr = await navigator.clipboard.readText();
+                    onChange(clipboardStr);
+                    inputRef.current.focus();
+                  } catch (e) {
+                    console.error('Paste error: ', e);
+                  }
+                }}
+                uiType={uiType}
+              />
             </div>
             <ErrorBadge
               useVisibility

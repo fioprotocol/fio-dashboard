@@ -193,18 +193,17 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
             onClick={() => !disabled && toggleShowPass(!showPass)}
           />
         )}
-        {showCopyButton && !value && (
-          <CopyButton
-            onClick={async () => {
-              try {
-                onChange(await getValueFromPaste());
-              } catch (e) {
-                console.error('Paste error: ', e);
-              }
-            }}
-            uiType={uiType}
-          />
-        )}
+        <CopyButton
+          isVisible={showCopyButton && !value}
+          onClick={async () => {
+            try {
+              onChange(await getValueFromPaste());
+            } catch (e) {
+              console.error('Paste error: ', e);
+            }
+          }}
+          uiType={uiType}
+        />
         {loading && (
           <FontAwesomeIcon
             icon={faSpinner}

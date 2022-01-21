@@ -2,12 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { FieldRenderProps } from 'react-final-form';
 import classnames from 'classnames';
-import { faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { CopyButton } from './InputActionButtons';
+import {
+  CopyButton,
+  ClearButton,
+  ShowPasswordIcon,
+} from './InputActionButtons';
 import { ErrorBadge } from './ErrorBadge';
 import { getValueFromPaste } from '../../util/general';
+import { Label, LoadingIcon, PrefixLabel, Prefix } from './StaticInputParts';
 
 import classes from './Input.module.scss';
 
@@ -39,175 +42,6 @@ type TextInputProps = {
   hasSmallText?: boolean;
   hasThinText?: boolean;
   debounceTimeout?: number;
-};
-
-type ClearButtonProps = {
-  isVisible: boolean;
-  uiType?: string;
-  isBW?: boolean;
-  disabled?: boolean;
-  inputType?: string;
-  onClear: () => void;
-  onClose?: (val: boolean) => void;
-};
-
-type LoadingIconProps = {
-  isVisible?: boolean;
-  uiType?: string;
-  isBW?: boolean;
-};
-
-type PrefixLabelProps = {
-  isVisible?: boolean;
-  uiType?: string;
-  label: string;
-};
-
-type PasswordIconProps = {
-  isVisible: boolean;
-  uiType?: string;
-  disabled?: boolean;
-  showPass?: boolean;
-  toggleShowPass?: (val: boolean) => void;
-};
-
-export const ClearButton: React.FC<ClearButtonProps> = ({
-  isVisible,
-  inputType,
-  uiType,
-  disabled,
-  isBW,
-  onClear,
-  onClose,
-}) => {
-  if (!isVisible) return null;
-
-  return (
-    <FontAwesomeIcon
-      icon="times-circle"
-      className={classnames(
-        classes.inputIcon,
-        inputType === 'password' && classes.doubleIcon,
-        isBW && classes.bw,
-        disabled && classes.disabled,
-        uiType && classes[uiType],
-      )}
-      onClick={() => {
-        if (disabled) return;
-        onClear();
-        if (onClose) {
-          onClose(false);
-        }
-      }}
-    />
-  );
-};
-
-export const LoadingIcon: React.FC<LoadingIconProps> = ({
-  isVisible,
-  uiType,
-}) => {
-  if (!isVisible) return null;
-
-  return (
-    <FontAwesomeIcon
-      icon={faSpinner}
-      spin
-      className={classnames(
-        classes.inputIcon,
-        classes.inputSpinnerIcon,
-        uiType && classes[uiType],
-      )}
-    />
-  );
-};
-
-export const PasswordIcon: React.FC<PasswordIconProps> = ({
-  isVisible,
-  uiType,
-  disabled,
-  showPass,
-  toggleShowPass,
-}) => {
-  if (!isVisible) return null;
-
-  return (
-    <FontAwesomeIcon
-      icon={!showPass ? 'eye' : 'eye-slash'}
-      className={classnames(
-        classes.inputIcon,
-        disabled && classes.disabled,
-        uiType && classes[uiType],
-      )}
-      onClick={() => !disabled && toggleShowPass(!showPass)}
-    />
-  );
-};
-
-export const Label: React.FC<{ label?: string; uiType?: string }> = ({
-  label,
-  uiType,
-}) => {
-  if (!label?.length) return null;
-
-  return (
-    <div className={classnames(classes.label, uiType && classes[uiType])}>
-      {label}
-    </div>
-  );
-};
-
-export const Prefix: React.FC<{ prefix?: string; hasError?: boolean }> = ({
-  prefix,
-  hasError,
-}) => {
-  if (!prefix?.length) return null;
-
-  return (
-    <div className={classnames(classes.prefix, hasError && classes.error)}>
-      {prefix}
-    </div>
-  );
-};
-
-export const PrefixLabel: React.FC<PrefixLabelProps> = ({
-  isVisible = true,
-  label,
-  uiType,
-}) => {
-  if (!isVisible || !label?.length) return null;
-
-  return (
-    <div
-      className={classnames(
-        classes.prefixLabel,
-        classes[`prefixLabel${uiType}`],
-      )}
-    >
-      {label}
-    </div>
-  );
-};
-
-export const PrefixLabel: React.FC<PrefixLabelProps> = ({
-  isVisible = true,
-  label,
-  uiType,
-}) => {
-  return (
-    <>
-      {isVisible && label && (
-        <div
-          className={classnames(
-            classes.prefixLabel,
-            classes[`prefixLabel${uiType}`],
-          )}
-        >
-          {label}
-        </div>
-      )}
-    </>
-  );
 };
 
 export const TextInput: React.FC<TextInputProps &
@@ -311,24 +145,23 @@ export const TextInput: React.FC<TextInputProps &
           disabled={disabled}
           uiType={uiType}
         />
-        <PasswordIcon
+        <ShowPasswordIcon
           isVisible={isInputHasValue && type === 'password'}
           showPass={showPass}
           toggleShowPass={toggleShowPass}
           uiType={uiType}
         />
-        {showCopyButton && !value && (
-          <CopyButton
-            onClick={async () => {
-              try {
-                onChange(await getValueFromPaste());
-              } catch (e) {
-                console.error('Paste error: ', e);
-              }
-            }}
-            uiType={uiType}
-          />
-        )}
+        <CopyButton
+          isVisible={showCopyButton && !value}
+          onClick={async () => {
+            try {
+              onChange(await getValueFromPaste());
+            } catch (e) {
+              console.error('Paste error: ', e);
+            }
+          }}
+          uiType={uiType}
+        />
         <LoadingIcon isVisible={loading} uiType={uiType} />
       </div>
       <ErrorBadge

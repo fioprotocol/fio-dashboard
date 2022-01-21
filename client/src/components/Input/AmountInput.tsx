@@ -7,12 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
 import { ErrorBadge } from './ErrorBadge';
 import apis from '../../api';
-import {
-  INPUT_COLOR_SCHEMA,
-  Label,
-  LoadingIcon,
-  PrefixLabel,
-} from './TextInput';
+import { INPUT_COLOR_SCHEMA } from './TextInput';
+import { Label, LoadingIcon, PrefixLabel } from './StaticInputParts';
 import exchangeIcon from '../../assets/images/exchange.svg';
 
 type Props = {
