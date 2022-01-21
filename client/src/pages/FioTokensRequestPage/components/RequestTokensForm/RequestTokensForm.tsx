@@ -3,7 +3,10 @@ import { Field, Form, FormRenderProps } from 'react-final-form';
 
 import { formValidation, submitValidation } from './validation';
 import { RequestTokensProps, RequestTokensValues } from '../../types';
-import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
+import Dropdown from '../../../../components/Input/Dropdown';
+import TextInput, {
+  INPUT_UI_STYLES,
+} from '../../../../components/Input/TextInput';
 import AmountInput from '../../../../components/Input/AmountInput';
 import SelectModalInput from '../../../../components/Input/SelectModalInput';
 import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
@@ -63,9 +66,9 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               {fioAddresses.length > 1 ? (
                 <Field
                   name="payeeFioAddress"
-                  type="dropdown"
                   label="Your Requesting FIO Crypto Handle"
-                  component={Input}
+                  component={Dropdown}
+                  errorColor={COLOR_TYPE.WARN}
                   placeholder="Select FIO Crypto Handle"
                   options={fioAddresses.map(({ name }) => ({
                     id: name,
@@ -82,7 +85,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
                   type="text"
                   uiType={INPUT_UI_STYLES.BLACK_WHITE}
                   errorColor={COLOR_TYPE.WARN}
-                  component={Input}
+                  component={TextInput}
                   disabled={true}
                   label="Your Requesting FIO Crypto Handle"
                 />
@@ -147,7 +150,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
                 placeholder="Enter your message"
                 uiType={INPUT_UI_STYLES.BLACK_WHITE}
                 errorColor={COLOR_TYPE.WARN}
-                component={Input}
+                component={TextInput}
                 disabled={loading}
                 label="Memo"
               />

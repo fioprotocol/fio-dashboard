@@ -14,6 +14,11 @@ import { Label, LoadingIcon, PrefixLabel, Prefix } from './StaticInputParts';
 
 import classes from './Input.module.scss';
 
+export const INPUT_UI_STYLES = {
+  BLACK_LIGHT: 'blackLight',
+  BLACK_WHITE: 'blackWhite',
+};
+
 export const INPUT_COLOR_SCHEMA = {
   BLACK_AND_WHITE: 'black_and_white',
 };
@@ -80,6 +85,7 @@ export const TextInput: React.FC<TextInputProps &
   } = meta;
 
   const { type, value, onChange } = input;
+
   const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
 
   const [showPass, toggleShowPass] = useState(false);
@@ -98,6 +104,8 @@ export const TextInput: React.FC<TextInputProps &
   const clearInputFn = () => {
     onChange('');
   };
+
+  if (type === 'hidden') return null;
 
   return (
     <div className={classes.regInputWrapper}>
