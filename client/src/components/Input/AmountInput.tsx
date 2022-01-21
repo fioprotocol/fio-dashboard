@@ -4,7 +4,6 @@ import { FieldRenderProps, useForm } from 'react-final-form';
 import classnames from 'classnames';
 import classes from './Input.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
 import { ErrorBadge } from './ErrorBadge';
 import apis from '../../api';
 import { INPUT_COLOR_SCHEMA } from './TextInput';
@@ -153,7 +152,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
         <div className={classnames(classes.exchangeValue)}>
           {isPrimaryExchange && (
             <FontAwesomeIcon
-              icon={faDollarSign}
+              icon="dollar-sign"
               className={classnames(
                 isBW && classes.bw,
                 disabled && classes.disabled,
