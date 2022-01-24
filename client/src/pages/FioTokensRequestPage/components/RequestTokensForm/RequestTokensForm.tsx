@@ -156,7 +156,9 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
             <Field
               name="payerFioAddress"
               placeholder="Enter or select FIO request Address"
-              modalPlaceholder="Enter or select FIO Crypto Handle or Public Key"
+              modalPlaceholder="Enter or select FIO Crypto Handle"
+              title="Choose FIO Crypto Handle"
+              subTitle="Enter or select a FIO Crypto Handle to request tokens from"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={SelectModalInput}
