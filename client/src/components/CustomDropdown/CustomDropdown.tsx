@@ -13,10 +13,12 @@ type Props = {
   customValue?: { id: string; name: string };
   toggleToCustom?: (isCustom: boolean) => void;
   isShort?: boolean;
+  isWidthResponsive?: boolean;
   isWhite?: boolean;
   hasAutoWidth?: boolean;
   isSimple?: boolean;
   isHigh?: boolean;
+  isFormField?: boolean;
 };
 
 const CustomDropdown: React.FC<Props> = props => {
@@ -28,10 +30,12 @@ const CustomDropdown: React.FC<Props> = props => {
     customValue,
     toggleToCustom,
     isShort,
+    isWidthResponsive,
     isWhite,
     hasAutoWidth,
     isSimple,
     isHigh,
+    isFormField,
   } = props;
 
   const styledOptions = options.map(option => ({
@@ -66,7 +70,9 @@ const CustomDropdown: React.FC<Props> = props => {
       className={classnames(
         classes.dropdown,
         isShort && classes.isShort,
+        isWidthResponsive && classes.isWidthResponsive,
         hasAutoWidth && classes.hasAutoWidth,
+        isFormField && classes.formField,
       )}
       controlClassName={classnames(
         classes.control,

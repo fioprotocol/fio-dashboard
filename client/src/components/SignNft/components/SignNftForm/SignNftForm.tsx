@@ -121,7 +121,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
                   uiType={INPUT_UI_STYLES.BLACK_WHITE}
                   errorColor={COLOR_TYPE.WARN}
                   component={Input}
-                  showCopyButton={!isEdit}
+                  showPasteButton={!isEdit}
                   disabled={isEdit}
                 />
               </Col>
@@ -136,7 +136,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
                   uiType={INPUT_UI_STYLES.BLACK_WHITE}
                   errorColor={COLOR_TYPE.WARN}
                   component={Input}
-                  showCopyButton
+                  showPasteButton
                 />
               </Col>
             </Row>
@@ -150,7 +150,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
                   uiType={INPUT_UI_STYLES.BLACK_WHITE}
                   errorColor={COLOR_TYPE.WARN}
                   component={Input}
-                  showCopyButton
+                  showPasteButton
                 />
               </Col>
             </Row>
@@ -164,7 +164,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
                   uiType={INPUT_UI_STYLES.BLACK_WHITE}
                   errorColor={COLOR_TYPE.WARN}
                   component={Input}
-                  showCopyButton
+                  showPasteButton
                 />
               </Col>
             </Row>

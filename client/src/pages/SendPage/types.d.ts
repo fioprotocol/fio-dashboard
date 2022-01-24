@@ -15,17 +15,20 @@ export type SendTokensValues = {
   fromPubKey: string;
   to: string;
   receiverFioAddress?: string;
-  amount: number;
+  amount: string;
+  nativeAmount: string;
   memo?: string;
 };
 
 export type SendTokensProps = {
   fioWallet: FioWalletDoublet;
   fioAddresses: FioAddressDoublet[];
+  roe: number;
   fee: FeePrice;
   balance: WalletBalances;
   loading: boolean;
   obtDataOn?: boolean;
+  contactsList: string[];
   onSubmit: (values: SendTokensValues) => void;
 };
 
@@ -40,6 +43,10 @@ export interface ContainerProps extends ContainerOwnProps {
   roe: number;
   feePrice: FeePrice;
   balance: WalletBalances;
+  contactsList: string[];
+  contactsLoading: boolean;
   refreshBalance: (publicKey: string) => void;
   getFee: () => void;
+  getContactsList: () => void;
+  createContact: (name: string) => void;
 }

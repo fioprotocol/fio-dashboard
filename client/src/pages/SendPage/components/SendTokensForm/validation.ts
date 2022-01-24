@@ -1,50 +1,74 @@
-import { SendTokensValues } from '../../types';
-import apis from '../../../../api';
+import { Validators, ValidationSchema } from '@lemoncode/fonk';
+import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
 
-export const validate = async (values: SendTokensValues) => {
-  let transferToAddress = values.to;
-  if (!transferToAddress) {
-    return { to: 'Receiver is required' };
-  }
+import {
+  fioAddressExistsValidator,
+  isFioAddressValidator,
+  matchFieldValidator,
+  isNumberValidator,
+} from '../../../../util/validators';
 
-  let isFioAddress = false;
-  try {
-    apis.fio.isFioAddressValid(transferToAddress);
-    isFioAddress = true;
-  } catch (e) {
-    //
-  }
+import { MAX_MEMO_SIZE } from '../../../../constants/fio';
 
-  if (isFioAddress) {
-    try {
-      const {
-        public_address: publicAddress,
-      } = await apis.fio.getFioPublicAddress(transferToAddress);
-      transferToAddress = publicAddress;
-    } catch (e) {
-      //
-    }
-  }
-
-  try {
-    apis.fio.isFioPublicKeyValid(transferToAddress);
-    await apis.fio.publicFioSDK.getFioBalance(transferToAddress);
-  } catch (e) {
-    if (e.json && e.json.type === 'invalid_input') {
-      return { to: 'Receiver is not valid' };
-    }
-    if (!e.json) {
-      return { to: 'Receiver is not valid' };
-    }
-  }
-
-  if (transferToAddress === values.fromPubKey) {
-    return { to: 'Spend to self' };
-  }
-
-  if (!values.amount) {
-    return { amount: 'Amount is required' };
-  }
-
-  return {};
+const validationSchema: ValidationSchema = {
+  field: {
+    fromPubKey: [
+      {
+        validator: Validators.required,
+        message: 'Required.',
+      },
+    ],
+    to: [
+      {
+        validator: Validators.required,
+        message: 'Required.',
+      },
+      {
+        validator: matchFieldValidator,
+        customArgs: { fieldId: 'from', isMatch: false },
+        message: 'FIO Crypto Handle cannot be same.',
+      },
+      {
+        validator: isFioAddressValidator,
+        message: 'Please enter valid FIO Crypto Handle / Public Key.',
+      },
+    ],
+    amount: [
+      {
+        validator: Validators.required,
+        message: 'Required.',
+      },
+      {
+        validator: isNumberValidator,
+        message: 'Please enter valid amount.',
+      },
+    ],
+    memo: [
+      {
+        validator: Validators.maxLength,
+        customArgs: { length: MAX_MEMO_SIZE },
+        message: 'Please enter valid memo, the max length is {{length}}',
+      },
+    ],
+  },
 };
+
+const onSubmitValidationSchema: ValidationSchema = {
+  field: {
+    to: [
+      {
+        validator: fioAddressExistsValidator,
+        customArgs: {
+          fieldIdToCompare: 'fromPubKey',
+          sameWalletMessage: 'Spend to self.',
+        },
+        message: 'Please enter existing FIO Crypto Handle / Public Key.',
+      },
+    ],
+  },
+};
+
+export const formValidation = createFinalFormValidation(validationSchema);
+export const submitValidation = createFinalFormValidation(
+  onSubmitValidationSchema,
+);

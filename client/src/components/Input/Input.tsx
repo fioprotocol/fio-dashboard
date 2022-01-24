@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import { FieldRenderProps } from 'react-final-form';
 
 import { ErrorBadge } from './ErrorBadge';
-import { CopyButton } from './InputActionButtons';
+import { PasteButton } from './InputActionButtons';
 import CustomDropdown from '../CustomDropdown';
 import { getValueFromPaste } from '../../util/general';
 
@@ -24,7 +24,7 @@ type Props = {
   colorSchema?: string;
   onClose?: (isOpen: boolean) => void;
   hideError?: boolean;
-  showCopyButton?: boolean;
+  showPasteButton?: boolean;
   loading?: boolean;
   uiType?: string;
   errorType?: string;
@@ -52,7 +52,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     colorSchema,
     onClose,
     hideError,
-    showCopyButton,
+    showPasteButton,
     loading,
     uiType,
     errorType = '',
@@ -97,7 +97,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     (submitError && !modifiedSinceLastSubmit);
   useEffect(() => {
     toggleClearInput(value !== '');
-  });
+  }, [value]);
 
   const clearInputFn = () => {
     onChange('');
@@ -143,7 +143,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
             uiType && classes[uiType],
             isBW && classes.bw,
             prefix && classes.prefixSpace,
-            showCopyButton && classes.hasCopyButton,
+            showPasteButton && classes.hasPasteButton,
             type === 'password' && classes.doubleIconInput,
             isLowHeight && classes.lowHeight,
           )}
@@ -193,18 +193,17 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
             onClick={() => !disabled && toggleShowPass(!showPass)}
           />
         )}
-        {showCopyButton && !value && (
-          <CopyButton
-            onClick={async () => {
-              try {
-                onChange(await getValueFromPaste());
-              } catch (e) {
-                console.error('Paste error: ', e);
-              }
-            }}
-            uiType={uiType}
-          />
-        )}
+        <PasteButton
+          isVisible={showPasteButton && !value}
+          onClick={async () => {
+            try {
+              onChange(await getValueFromPaste());
+            } catch (e) {
+              console.error('Paste error: ', e);
+            }
+          }}
+          uiType={uiType}
+        />
         {loading && (
           <FontAwesomeIcon
             icon={faSpinner}

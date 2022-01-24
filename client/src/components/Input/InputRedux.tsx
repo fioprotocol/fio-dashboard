@@ -4,7 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 import { ErrorBadge, COLOR_TYPE } from './ErrorBadge';
-import { ClearInput, CopyButton, ShowPassword } from './InputActionButtons';
+import {
+  ClearButton,
+  PasteButton,
+  ShowPasswordIcon,
+} from './InputActionButtons';
+
+import { getValueFromPaste } from '../../util/general';
 
 import classes from './Input.module.scss';
 
@@ -24,7 +30,7 @@ export type FieldProps = {
   lowerCased?: boolean;
   onClose?: (isOpen: boolean) => void;
   showClearInput?: boolean;
-  showCopyButton?: boolean;
+  showPasteButton?: boolean;
   prefix?: string;
   type: string;
   errorType?: string;
@@ -45,7 +51,7 @@ const InputRedux: React.FC<Props> = props => {
     meta,
     onClose,
     showClearInput,
-    showCopyButton,
+    showPasteButton,
     prefix = '',
     type,
     errorType = '',
@@ -76,15 +82,10 @@ const InputRedux: React.FC<Props> = props => {
     if (showClearInput) {
       toggleClearInput(value !== '');
     }
-  });
+  }, [value, showClearInput]);
 
   const onClearInputClick = () => {
-    onClose && onClose(false);
     onChange('');
-  };
-
-  const onShowPassClick = () => {
-    toggleShowPass(!showPass);
   };
 
   const hasError =
@@ -119,31 +120,32 @@ const InputRedux: React.FC<Props> = props => {
             onChange(currentValue);
           }}
           type={showPass ? 'text' : type}
-          data-clear={clearInput || showCopyButton}
+          data-clear={clearInput || showPasteButton}
         />
-        {(clearInput || onClose) && !loading && (
-          <ClearInput onClick={onClearInputClick} type={type} uiType={uiType} />
-        )}
-        {clearInput && type === 'password' && (
-          <ShowPassword
-            showPass={showPass}
-            onClick={onShowPassClick}
-            uiType={uiType}
-          />
-        )}
-        {showCopyButton && (
-          <CopyButton
-            onClick={async () => {
-              try {
-                const data = await navigator.clipboard.readText();
-                onChange(data);
-              } catch (e) {
-                console.error('Paste error: ', e);
-              }
-            }}
-            uiType={uiType}
-          />
-        )}
+        <ClearButton
+          isVisible={(clearInput || onClose) && !loading}
+          onClear={onClearInputClick}
+          onClose={onClose}
+          inputType={type}
+          uiType={uiType}
+        />
+        <ShowPasswordIcon
+          isVisible={clearInput && type === 'password'}
+          showPass={showPass}
+          toggleShowPass={toggleShowPass}
+          uiType={uiType}
+        />
+        <PasteButton
+          isVisible={showPasteButton}
+          onClick={async () => {
+            try {
+              onChange(await getValueFromPaste());
+            } catch (e) {
+              console.error('Paste error: ', e);
+            }
+          }}
+          uiType={uiType}
+        />
         {loading && (
           <FontAwesomeIcon
             icon={faSpinner}

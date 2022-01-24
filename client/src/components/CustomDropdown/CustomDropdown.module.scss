@@ -10,8 +10,16 @@
     min-width: 275px;
   }
 
+  &.isWidthResponsive {
+    min-width: 0;
+  }
+
   &.hasAutoWidth {
     min-width: auto;
+  }
+
+  &.formField {
+    margin-bottom: 0;
   }
 
   .icon {

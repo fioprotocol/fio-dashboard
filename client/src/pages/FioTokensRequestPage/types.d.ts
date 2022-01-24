@@ -16,7 +16,7 @@ export type RequestTokensValues = {
   chainCode: string;
   tokenCode: string;
   payeeTokenPublicAddress: string;
-  amount: number;
+  amount: string;
   memo?: string;
 };
 
@@ -27,6 +27,7 @@ export type RequestTokensProps = {
   loading: boolean;
   roe: number;
   contactsList: string[];
+  isFio?: boolean;
   onSubmit: (values: RequestTokensValues) => void;
 };
 

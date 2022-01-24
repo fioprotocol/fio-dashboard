@@ -26,7 +26,7 @@ const ImportWalletForm: React.FC<ImportWalletFormProps> = props => {
             errorColor={COLOR_TYPE.WARN}
             component={Input}
             disabled={loading}
-            showCopyButton={true}
+            showPasteButton={true}
           />
           <Field
             name="name"

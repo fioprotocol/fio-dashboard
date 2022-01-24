@@ -18,6 +18,8 @@ type Props = {
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
   sendData: SendTokensValues | null;
+  contactsList: string[];
+  createContact: (name: string) => void;
   processing: boolean;
   fee: number;
 };
@@ -31,12 +33,14 @@ const SendEdgeWallet: React.FC<Props> = props => {
     sendData,
     fee,
     processing,
+    createContact,
+    contactsList,
   } = props;
 
   const send = async ({ keys, data }: SubmitActionParams) => {
     const result = await apis.fio.executeAction(keys, ACTIONS.transferTokens, {
       payeeFioPublicKey: data.to,
-      amount: data.amount,
+      amount: Number(data.nativeAmount),
       maxFee: fee,
     });
     if (data.memo) {
@@ -46,7 +50,7 @@ const SendEdgeWallet: React.FC<Props> = props => {
           payeeFioAddress: data.receiverFioAddress,
           payerTokenPublicAddress: keys.public,
           payeeTokenPublicAddress: data.to,
-          amount: apis.fio.sufToAmount(data.amount),
+          amount: Number(data.amount),
           chainCode: FIO_CHAIN_CODE,
           tokenCode: FIO_CHAIN_CODE,
           obtId: result.transaction_id,
@@ -58,6 +62,12 @@ const SendEdgeWallet: React.FC<Props> = props => {
         console.error(e);
       }
     }
+
+    if (
+      data.receiverFioAddress != null &&
+      !contactsList.filter(c => c === data.receiverFioAddress).length
+    )
+      createContact(data.receiverFioAddress);
 
     return result;
   };

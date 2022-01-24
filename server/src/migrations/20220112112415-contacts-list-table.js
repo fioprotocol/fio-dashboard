@@ -19,6 +19,8 @@ module.exports = {
         onDelete: 'cascade',
         allowNull: false,
       },
+      createdAt: { type: DT.DATE },
+      updatedAt: { type: DT.DATE },
     });
   },
 

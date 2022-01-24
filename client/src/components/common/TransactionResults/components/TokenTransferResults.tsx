@@ -15,7 +15,16 @@ type TokenTransferResultsProps = ResultsProps & { roe: number };
 const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
   const {
     results: {
-      other: { to, from, amount, transaction_id, memo },
+      other: {
+        to,
+        toFioAddress,
+        from,
+        fromFioAddress,
+        amount,
+        nativeAmount,
+        transaction_id,
+        memo,
+      },
     },
     roe,
     titleTo,
@@ -23,12 +32,22 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
     titleAmount,
   } = props;
 
-  const fioAmount = apis.fio.sufToAmount(amount);
-  const usdcAmount = apis.fio.convertFioToUsdc(amount, roe);
+  const fioAmount = Number(amount);
+  const usdcAmount = apis.fio.convertFioToUsdc(Number(nativeAmount), roe);
   return (
     <Results {...props}>
       <p className={classes.label}>Transfer Information</p>
-      {from && (
+      {from != null && (
+        <Badge show={true} type={BADGE_TYPES.WHITE}>
+          <div
+            className={classnames(classes.badgeContainer, classes.longTitle)}
+          >
+            <p className={classes.title}>Sending FIO Public Key</p>
+            <p className={classes.item}>{from}</p>
+          </div>
+        </Badge>
+      )}
+      {fromFioAddress != null && (
         <Badge show={true} type={BADGE_TYPES.WHITE}>
           <div
             className={classnames(classes.badgeContainer, classes.longTitle)}
@@ -36,18 +55,33 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
             <p className={classes.title}>
               {titleFrom || 'Sending FIO Crypto Handle'}
             </p>
-            <p className={classes.item}>{from}</p>
+            <p className={classes.item}>{fromFioAddress}</p>
           </div>
         </Badge>
       )}
-      <Badge show={true} type={BADGE_TYPES.WHITE}>
-        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>
-            {titleTo || 'Send to FIO Crypto Handle'}
-          </p>
-          <p className={classes.item}>{to}</p>
-        </div>
-      </Badge>
+      {to != null && (
+        <Badge show={true} type={BADGE_TYPES.WHITE}>
+          <div
+            className={classnames(classes.badgeContainer, classes.longTitle)}
+          >
+            <p className={classes.title}>Send to FIO Public Key</p>
+            <p className={classes.item}>{to}</p>
+          </div>
+        </Badge>
+      )}
+      {toFioAddress != null && (
+        <Badge show={true} type={BADGE_TYPES.WHITE}>
+          <div
+            className={classnames(classes.badgeContainer, classes.longTitle)}
+          >
+            <p className={classes.title}>
+              {titleTo || 'Send to FIO Crypto Handle'}
+            </p>
+            <p className={classes.item}>{toFioAddress}</p>
+          </div>
+        </Badge>
+      )}
+
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
           <p className={classes.title}>{titleAmount || 'Amount Sent'}</p>
