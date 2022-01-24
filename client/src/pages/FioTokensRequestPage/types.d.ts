@@ -27,6 +27,7 @@ export type RequestTokensProps = {
   loading: boolean;
   roe: number;
   contactsList: string[];
+  isFio?: boolean;
   onSubmit: (values: RequestTokensValues) => void;
 };
 

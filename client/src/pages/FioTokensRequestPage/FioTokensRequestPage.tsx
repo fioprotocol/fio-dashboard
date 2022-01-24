@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
-import RequestTokensForm from './components/RequestTokensForm';
+import RequestTabs from './components/RequestTabs';
 import RequestTokensEdgeWallet from './components/RequestTokensEdgeWallet';
 import TokenTransferResults from '../../components/common/TransactionResults/components/TokenTransferResults';
 
@@ -108,16 +108,6 @@ const RequestPage: React.FC<ContainerProps> = props => {
       fioAddress1.name > fioAddress2.name ? 1 : -1,
     );
 
-  const renderInfoBadge = () =>
-    fioAddresses.length ? (
-      <InfoBadge
-        type={BADGE_TYPES.INFO}
-        show={true}
-        title="Requesting FIO Crypto Handle "
-        message="You may use any of your FIO Crypto Handles associated with the wallet to create a FIO token request."
-      />
-    ) : null;
-
   if (resultsData)
     return (
       <TokenTransferResults
@@ -156,9 +146,16 @@ const RequestPage: React.FC<ContainerProps> = props => {
           {fioWallet.name}
         </p>
 
-        {renderInfoBadge()}
+        <div className="mb-4">
+          <InfoBadge
+            type={BADGE_TYPES.INFO}
+            show={true}
+            title="Requesting FIO Crypto Handle "
+            message="You may use any of your FIO Crypto Handles associated with the wallet to create a FIO token request."
+          />
+        </div>
 
-        <RequestTokensForm
+        <RequestTabs
           fioWallet={fioWallet}
           roe={roe}
           balance={balance}
