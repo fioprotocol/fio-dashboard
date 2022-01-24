@@ -35,7 +35,7 @@ $tabMargin: 40px;
 
 .active {
   &[aria-selected='false'] {
-    opacity: 30%;
+    opacity: 0.3;
     @include proxima-nova-regular;
   }
 }
