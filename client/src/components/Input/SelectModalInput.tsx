@@ -298,6 +298,7 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
             uiType={uiType}
           />
           <input
+            className={classes.selectModalInput}
             disabled={true}
             value={input.value}
             readOnly
