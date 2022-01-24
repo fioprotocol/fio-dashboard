@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { FieldRenderProps, useForm } from 'react-final-form';
 import classnames from 'classnames';
@@ -9,6 +9,8 @@ import apis from '../../api';
 import { INPUT_COLOR_SCHEMA } from './TextInput';
 import { Label, LoadingIcon, PrefixLabel } from './StaticInputParts';
 import exchangeIcon from '../../assets/images/exchange.svg';
+
+const EMPTY_VALUE = '0.00';
 
 type Props = {
   colorSchema?: string;
@@ -64,10 +66,13 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
 
   const { change } = useForm();
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const initRef = useRef(false);
+
   // todo: extent formula to use currencyCode
   const relationFormula = (val: string, isReverse: boolean = false) => {
     let valueToExchange = Number(val);
-    if (!valueToExchange) return '0.00';
+    if (!valueToExchange) return '';
     valueToExchange = !isReverse
       ? apis.fio.amountToSUF(valueToExchange)
       : valueToExchange;
@@ -82,7 +87,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
 
   const [isPrimaryExchange, setIsPrimaryExchange] = useState(true);
   const [clearInput, toggleClearInput] = useState(value !== '');
-  const [exchangedValue, exchangeValue] = useState('0.00');
+  const [exchangedValue, exchangeValue] = useState('');
 
   useEffect(() => {
     if (isPrimaryExchange) exchangeValue(relationFormula(value));
@@ -101,6 +106,14 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
   useEffect(() => {
     toggleClearInput(value !== '');
   });
+
+  useEffect(() => {
+    if (inputRef != null && inputRef.current != null && initRef.current) {
+      inputRef.current.focus();
+    }
+
+    if (!initRef.current) initRef.current = true;
+  }, [isPrimaryExchange, inputRef]);
 
   const hasError =
     !hideError &&
@@ -133,7 +146,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
           />
           <DebounceInput
             className={classes.amountInput}
-            inputRef={rest.ref}
+            inputRef={inputRef}
             debounceTimeout={debounceTimeout}
             {...input}
             {...rest}
@@ -162,7 +175,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
             />
           )}
           <div className={classes.exchangeTextItem}>
-            {isPrimaryExchange ? exchangedValue : value}
+            {(isPrimaryExchange ? exchangedValue : value) || EMPTY_VALUE}
           </div>
           <div className={classes.exchangeTextItem}>
             {!isPrimaryExchange
