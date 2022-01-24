@@ -7,6 +7,7 @@ import Dropdown from '../../../../components/Input/Dropdown';
 import TextInput, {
   INPUT_UI_STYLES,
 } from '../../../../components/Input/TextInput';
+import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import AmountInput from '../../../../components/Input/AmountInput';
 import SelectModalInput from '../../../../components/Input/SelectModalInput';
 import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
@@ -105,13 +106,17 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
             ? selectedAddress.remaining < NEW_FUND_REQUEST_BUNDLE_COST
             : false;
 
+        const noPayeeFioAddress =
+          fioAddresses != null && fioAddresses.length < 1 && !loading;
+
         const submitDisabled =
           formRenderProps.hasValidationErrors ||
           (formRenderProps.hasSubmitErrors &&
             !formRenderProps.modifiedSinceLastSubmit) ||
           formRenderProps.submitting ||
           loading ||
-          notEnoughBundles;
+          notEnoughBundles ||
+          noPayeeFioAddress;
 
         return (
           <form
@@ -194,31 +199,35 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               />
             )}
 
-            {selectedAddress != null ? (
-              <Field
-                name="memo"
-                type="text"
-                placeholder="Enter your message"
-                uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                errorColor={COLOR_TYPE.WARN}
-                component={TextInput}
-                disabled={loading}
-                label="Memo"
-              />
-            ) : null}
+            <Field
+              name="memo"
+              type="text"
+              placeholder="Enter your message"
+              uiType={INPUT_UI_STYLES.BLACK_WHITE}
+              errorColor={COLOR_TYPE.WARN}
+              component={TextInput}
+              disabled={loading}
+              label="Memo"
+            />
 
-            <p className={classes.transactionTitle}>Transaction cost</p>
             {selectedAddress != null ? (
-              <BundledTransactionBadge
-                bundles={NEW_FUND_REQUEST_BUNDLE_COST}
-                remaining={selectedAddress.remaining}
-              />
+              <>
+                <p className={classes.transactionTitle}>Transaction cost</p>
+                <BundledTransactionBadge
+                  bundles={NEW_FUND_REQUEST_BUNDLE_COST}
+                  remaining={selectedAddress.remaining}
+                />
+              </>
             ) : null}
 
             <LowBalanceBadge
               hasLowBalance={notEnoughBundles}
               messageText="Not enough bundles"
             />
+            <Badge show={noPayeeFioAddress} type={BADGE_TYPES.ERROR}>
+              You should have a FIO Crypto Handle in order to be able to sent
+              request
+            </Badge>
 
             <SubmitButton
               text="Send FIO Request"
