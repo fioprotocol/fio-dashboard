@@ -6,14 +6,15 @@ import BundledTransactionBadge from '../../../../components/Badges/BundledTransa
 import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import PriceBadge from '../../../../components/Badges/PriceBadge/PriceBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+import SelectModalInput from '../../../../components/Input/SelectModalInput';
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 
-import { validate } from './validation';
+import { submitValidation, formValidation } from './validation';
 import { hasFioAddressDelimiter } from '../../../../utils';
 
-import { SendTokensProps } from '../../types';
+import { SendTokensProps, SendTokensValues } from '../../types';
 import { FioAddressDoublet } from '../../../../types';
 
 import classes from '../../styles/SendTokensForm.module.scss';
@@ -22,7 +23,21 @@ import classes from '../../styles/SendTokensForm.module.scss';
 const RECORD_OBT_DATA_BUNDLE_COST = 2;
 
 const SendTokensForm: React.FC<SendTokensProps> = props => {
-  const { loading, fioWallet, fioAddresses, fee, obtDataOn } = props;
+  const {
+    loading,
+    fioWallet,
+    fioAddresses,
+    fee,
+    obtDataOn,
+    contactsList,
+  } = props;
+
+  const handleSubmit = async (values: SendTokensValues) => {
+    const validationResult = await submitValidation.validateForm(values);
+    if (validationResult) return validationResult;
+
+    return props.onSubmit(values);
+  };
 
   const initialValues: { from?: string; fromPubKey: string } = {
     fromPubKey: fioWallet.publicKey,
@@ -33,13 +48,14 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
 
   return (
     <Form
-      onSubmit={props.onSubmit}
-      validate={validate}
+      onSubmit={handleSubmit}
+      validate={formValidation.validateForm}
       initialValues={initialValues}
     >
       {(formRenderProps: FormRenderProps) => {
         const {
           values: { from, to, amount, memo },
+          validating,
         } = formRenderProps;
 
         const renderSender = () => {
@@ -94,7 +110,9 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
             ? selectedAddress.remaining < RECORD_OBT_DATA_BUNDLE_COST
             : false;
         const submitDisabled =
-          !formRenderProps.valid ||
+          formRenderProps.hasValidationErrors ||
+          (formRenderProps.hasSubmitErrors &&
+            !formRenderProps.modifiedSinceLastSubmit) ||
           formRenderProps.submitting ||
           loading ||
           hasLowBalance ||
@@ -107,15 +125,18 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
             className={classes.form}
           >
             {renderSender()}
+
             <Field
               name="to"
-              type="text"
               placeholder="FIO Crypto Handle or Public Key"
+              modalPlaceholder="Enter or select FIO Crypto Handle or Public Key"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
-              component={Input}
+              component={SelectModalInput}
+              options={contactsList}
               showCopyButton={true}
               disabled={loading}
+              loading={validating}
               label="Send to Address"
             />
 

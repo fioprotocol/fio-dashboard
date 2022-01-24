@@ -26,6 +26,7 @@ export type SendTokensProps = {
   balance: WalletBalances;
   loading: boolean;
   obtDataOn?: boolean;
+  contactsList: string[];
   onSubmit: (values: SendTokensValues) => void;
 };
 
@@ -40,6 +41,10 @@ export interface ContainerProps extends ContainerOwnProps {
   roe: number;
   feePrice: FeePrice;
   balance: WalletBalances;
+  contactsList: string[];
+  contactsLoading: boolean;
   refreshBalance: (publicKey: string) => void;
   getFee: () => void;
+  getContactsList: () => void;
+  createContact: (name: string) => void;
 }
