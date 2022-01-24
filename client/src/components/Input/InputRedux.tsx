@@ -82,7 +82,7 @@ const InputRedux: React.FC<Props> = props => {
     if (showClearInput) {
       toggleClearInput(value !== '');
     }
-  });
+  }, [value, showClearInput]);
 
   const onClearInputClick = () => {
     onChange('');

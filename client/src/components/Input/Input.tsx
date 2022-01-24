@@ -97,7 +97,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     (submitError && !modifiedSinceLastSubmit);
   useEffect(() => {
     toggleClearInput(value !== '');
-  });
+  }, [value]);
 
   const clearInputFn = () => {
     onChange('');
