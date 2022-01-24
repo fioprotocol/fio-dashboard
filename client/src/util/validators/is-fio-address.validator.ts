@@ -8,7 +8,7 @@ interface OnlyFioAddressFieldArgs {
 export const isFioAddressValidator: FieldValidationFunctionSync<OnlyFioAddressFieldArgs> = ({
   value,
   message,
-  customArgs,
+  customArgs = {},
 }) => {
   const { onlyFioAddress = false } = customArgs;
 
