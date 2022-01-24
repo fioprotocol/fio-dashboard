@@ -18,6 +18,8 @@ type Props = {
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
   sendData: SendTokensValues | null;
+  contactsList: string[];
+  createContact: (name: string) => void;
   processing: boolean;
   fee: number;
 };
@@ -31,6 +33,8 @@ const SendEdgeWallet: React.FC<Props> = props => {
     sendData,
     fee,
     processing,
+    createContact,
+    contactsList,
   } = props;
 
   const send = async ({ keys, data }: SubmitActionParams) => {
@@ -58,6 +62,12 @@ const SendEdgeWallet: React.FC<Props> = props => {
         console.error(e);
       }
     }
+
+    if (
+      data.receiverFioAddress != null &&
+      !contactsList.filter(c => c === data.receiverFioAddress).length
+    )
+      createContact(data.receiverFioAddress);
 
     return result;
   };

@@ -4,6 +4,7 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from '../../utils';
 
 import { getFee, refreshBalance } from '../../redux/fio/actions';
+import { createContact, getContactsList } from '../../redux/contacts/actions';
 
 import {
   loading,
@@ -12,6 +13,10 @@ import {
   fioWalletsBalances as fioWalletsBalancesSelector,
 } from '../../redux/fio/selectors';
 import { roe } from '../../redux/registrations/selectors';
+import {
+  list as contactsList,
+  loading as contactsLoading,
+} from '../../redux/contacts/selectors';
 
 import SendPage from './SendPage';
 
@@ -56,10 +61,14 @@ const reduxConnect = connect(
 
       return fioWalletsBalances.wallets[fioWallet.publicKey];
     },
+    contactsList,
+    contactsLoading,
   }),
   {
     refreshBalance,
     getFee: () => getFee(apis.fio.actionEndPoints.transferTokens),
+    createContact,
+    getContactsList,
   },
 );
 

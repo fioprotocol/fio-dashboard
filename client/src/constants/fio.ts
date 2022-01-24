@@ -6,6 +6,8 @@ export const MAX_PUBLIC_ADDRESS_LENGTH = 128;
 
 export const TOKEN_LINK_MIN_WAIT_TIME = 2000;
 
+export const MAX_MEMO_SIZE = 64;
+
 export const ACTIONS = {
   transferTokens: 'transferTokens',
   addPublicAddress: 'addPublicAddress',

@@ -7,7 +7,7 @@ import {
   isNumberValidator,
 } from '../../../../util/validators';
 
-const MAX_MEMO_SIZE = 64;
+import { MAX_MEMO_SIZE } from '../../../../constants/fio';
 
 const validationSchema: ValidationSchema = {
   field: {

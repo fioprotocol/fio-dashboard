@@ -35,8 +35,11 @@ const SendPage: React.FC<ContainerProps> = props => {
     feePrice,
     roe,
     history,
+    contactsList,
     refreshBalance,
     getFee,
+    createContact,
+    getContactsList,
   } = props;
 
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
@@ -48,6 +51,7 @@ const SendPage: React.FC<ContainerProps> = props => {
   useEffect(() => {
     getFee();
     setSendData(null);
+    getContactsList();
   }, []);
 
   useEffect(() => {
@@ -139,6 +143,8 @@ const SendPage: React.FC<ContainerProps> = props => {
           sendData={sendData}
           processing={processing}
           setProcessing={setProcessing}
+          createContact={createContact}
+          contactsList={contactsList}
         />
       ) : null}
 
@@ -162,6 +168,7 @@ const SendPage: React.FC<ContainerProps> = props => {
           onSubmit={onSend}
           fee={feePrice}
           obtDataOn={true}
+          contactsList={contactsList}
         />
       </PseudoModalContainer>
     </>
