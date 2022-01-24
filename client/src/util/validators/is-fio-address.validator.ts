@@ -1,10 +1,17 @@
 import { FieldValidationFunctionSync } from '@lemoncode/fonk';
 import apis from '../../api';
 
-export const isFioAddressValidator: FieldValidationFunctionSync = ({
+interface OnlyFioAddressFieldArgs {
+  onlyFioAddress?: boolean;
+}
+
+export const isFioAddressValidator: FieldValidationFunctionSync<OnlyFioAddressFieldArgs> = ({
   value,
   message,
+  customArgs,
 }) => {
+  const { onlyFioAddress = false } = customArgs;
+
   const validationResult = {
     type: 'IS_FIO_ADDRESS_VALID',
     succeeded: false,
@@ -25,15 +32,17 @@ export const isFioAddressValidator: FieldValidationFunctionSync = ({
     //
   }
 
-  try {
-    apis.fio.isFioPublicKeyValid(value);
-    return {
-      ...validationResult,
-      succeeded: true,
-      message: '',
-    };
-  } catch (e) {
-    //
+  if (!onlyFioAddress) {
+    try {
+      apis.fio.isFioPublicKeyValid(value);
+      return {
+        ...validationResult,
+        succeeded: true,
+        message: '',
+      };
+    } catch (e) {
+      //
+    }
   }
 
   return validationResult;
