@@ -167,17 +167,30 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               label="Request From"
             />
 
-            <Field
-              name="amount"
-              type="number"
-              placeholder="0.00"
-              uiType={INPUT_UI_STYLES.BLACK_WHITE}
-              errorColor={COLOR_TYPE.WARN}
-              component={AmountInput}
-              roe={roe}
-              disabled={loading}
-              label="Request Amount"
-            />
+            {isFio ? (
+              <Field
+                name="amount"
+                type="number"
+                placeholder="0.00"
+                uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+                component={AmountInput}
+                roe={roe}
+                disabled={loading}
+                label="Request Amount"
+              />
+            ) : (
+              <Field
+                name="amount"
+                type="number"
+                placeholder="0.00"
+                uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                errorColor={COLOR_TYPE.WARN}
+                component={TextInput}
+                disabled={loading}
+                label="Request Amount"
+              />
+            )}
 
             {selectedAddress != null ? (
               <Field
