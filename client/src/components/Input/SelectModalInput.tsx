@@ -72,7 +72,7 @@ const SelectModal: React.FC<Props &
     errorColor = '',
     title = 'Choose FIO Crypto Handle or Public Key',
     subTitle = 'Enter or select a FIO Crypto Handle or Public Key to send FIO tokens to',
-    footerTitle = 'Post FIO Crypto Handle or Public Keys',
+    footerTitle = 'Past FIO Crypto Handles',
     upperCased = false,
     lowerCased = false,
     disabled,
