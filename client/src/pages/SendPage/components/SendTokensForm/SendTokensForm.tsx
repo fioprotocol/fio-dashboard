@@ -8,6 +8,7 @@ import PriceBadge from '../../../../components/Badges/PriceBadge/PriceBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import SelectModalInput from '../../../../components/Input/SelectModalInput';
 import AmountInput from '../../../../components/Input/AmountInput';
+import Dropdown from '../../../../components/Input/Dropdown';
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
@@ -69,9 +70,9 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               {fioAddresses.length > 1 ? (
                 <Field
                   name="from"
-                  type="dropdown"
                   label="Your Sending FIO Crypto Handle"
-                  component={Input}
+                  component={Dropdown}
+                  errorColor={COLOR_TYPE.WARN}
                   placeholder="Select FIO Crypto Handle"
                   options={fioAddresses.map(({ name }) => ({
                     id: name,
