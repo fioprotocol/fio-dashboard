@@ -161,7 +161,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               errorColor={COLOR_TYPE.WARN}
               component={SelectModalInput}
               options={contactsList}
-              showCopyButton={true}
+              showPasteButton={true}
               disabled={loading}
               loading={validating}
               label="Request From"

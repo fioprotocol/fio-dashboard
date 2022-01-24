@@ -4,7 +4,7 @@ import { FieldRenderProps } from 'react-final-form';
 import classnames from 'classnames';
 
 import {
-  CopyButton,
+  PasteButton,
   ClearButton,
   ShowPasswordIcon,
 } from './InputActionButtons';
@@ -27,7 +27,7 @@ type TextInputProps = {
   colorSchema?: string;
   onClose?: (isOpen: boolean) => void;
   hideError?: boolean;
-  showCopyButton?: boolean;
+  showPasteButton?: boolean;
   loading?: boolean;
   uiType?: string;
   errorType?: string;
@@ -58,7 +58,7 @@ export const TextInput: React.FC<TextInputProps &
     colorSchema,
     onClose,
     hideError,
-    showCopyButton,
+    showPasteButton,
     loading,
     uiType,
     errorType = '',
@@ -119,7 +119,7 @@ export const TextInput: React.FC<TextInputProps &
             uiType && classes[uiType],
             isBW && classes.bw,
             prefix && classes.prefixSpace,
-            showCopyButton && classes.hasCopyButton,
+            showPasteButton && classes.hasPasteButton,
             type === 'password' && classes.doubleIconInput,
             isLowHeight && classes.lowHeight,
           )}
@@ -159,8 +159,8 @@ export const TextInput: React.FC<TextInputProps &
           toggleShowPass={toggleShowPass}
           uiType={uiType}
         />
-        <CopyButton
-          isVisible={showCopyButton && !value}
+        <PasteButton
+          isVisible={showPasteButton && !value}
           onClick={async () => {
             try {
               onChange(await getValueFromPaste());

@@ -75,7 +75,7 @@ export const TransferForm = (props: FormProps) => {
           error={error}
           lowerCased={false}
           type="text"
-          showCopyButton={true}
+          showPasteButton={true}
           uiType={INPUT_UI_STYLES.BLACK_WHITE}
           errorType={ERROR_UI_TYPE.BADGE}
           loading={validating}

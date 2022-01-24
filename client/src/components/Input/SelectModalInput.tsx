@@ -2,20 +2,25 @@ import React, { useEffect, useState, useRef, MutableRefObject } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { FieldRenderProps } from 'react-final-form';
 import classnames from 'classnames';
-import classes from './Input.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import { ErrorBadge } from './ErrorBadge';
 import Modal from '../Modal/Modal';
-import { CopyButton } from './InputActionButtons';
-import { INPUT_COLOR_SCHEMA } from './TextInput';
+import { PasteButton } from './InputActionButtons';
 import { Label, LoadingIcon, PrefixLabel } from './StaticInputParts';
 import { ClearButton } from './InputActionButtons';
+
+import { INPUT_COLOR_SCHEMA } from './TextInput';
+
+import { getValueFromPaste } from '../../util/general';
+
+import classes from './Input.module.scss';
 
 type Props = {
   colorSchema?: string;
   onClose?: (isOpen: boolean) => void;
   hideError?: boolean;
-  showCopyButton?: boolean;
+  showPasteButton?: boolean;
   loading?: boolean;
   uiType?: string;
   errorType?: string;
@@ -60,7 +65,7 @@ const SelectModal: React.FC<Props &
     meta,
     modalPlaceholder,
     onClose,
-    showCopyButton,
+    showPasteButton,
     loading,
     uiType,
     errorType = '',
@@ -108,7 +113,7 @@ const SelectModal: React.FC<Props &
                   (hasError || showErrorBorder) && classes.error,
                   uiType && classes[uiType],
                   isBW && classes.bw,
-                  showCopyButton && classes.hasCopyButton,
+                  showPasteButton && classes.hasPasteButton,
                   isLowHeight && classes.lowHeight,
                 )}
               >
@@ -145,12 +150,11 @@ const SelectModal: React.FC<Props &
                 disabled={disabled}
                 uiType={uiType}
               />
-              <CopyButton
-                isVisible={showCopyButton && !value}
+              <PasteButton
+                isVisible={showPasteButton && !value}
                 onClick={async () => {
                   try {
-                    const clipboardStr = await navigator.clipboard.readText();
-                    onChange(clipboardStr);
+                    onChange(await getValueFromPaste());
                     inputRef.current.focus();
                   } catch (e) {
                     console.error('Paste error: ', e);
@@ -203,7 +207,7 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     meta,
     colorSchema,
     hideError,
-    showCopyButton,
+    showPasteButton,
     loading,
     uiType,
     errorType = '',
@@ -284,7 +288,7 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
             (hasError || showErrorBorder) && !showModal && classes.error,
             uiType && classes[uiType],
             isBW && classes.bw,
-            showCopyButton && classes.hasCopyButton,
+            showPasteButton && classes.hasPasteButton,
             isLowHeight && classes.lowHeight,
           )}
         >

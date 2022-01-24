@@ -35,7 +35,7 @@ const GenericNftValidationField: React.FC<Props> = props => {
         placeholder={FIELDS_PLACEHOLDER[fieldName]}
         component={Input}
         uiType={INPUT_UI_STYLES.BLACK_WHITE}
-        showCopyButton={true}
+        showPasteButton={true}
         isLowHeight={true}
       />
     </div>

@@ -27,7 +27,7 @@ type DefaultProps = {
   uiType?: string;
 };
 
-export const CopyButton: React.FC<CopyButtonProps & DefaultProps> = ({
+export const PasteButton: React.FC<CopyButtonProps & DefaultProps> = ({
   onClick,
   uiType,
   isVisible,

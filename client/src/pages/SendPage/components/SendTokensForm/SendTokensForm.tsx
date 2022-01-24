@@ -138,7 +138,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               errorColor={COLOR_TYPE.WARN}
               component={SelectModalInput}
               options={contactsList}
-              showCopyButton={true}
+              showPasteButton={true}
               disabled={loading}
               loading={validating}
               label="Send to Address"
