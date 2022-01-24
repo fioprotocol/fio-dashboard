@@ -6,9 +6,11 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { ErrorBadge, COLOR_TYPE } from './ErrorBadge';
 import {
   ClearButton,
-  CopyButton,
+  PasteButton,
   ShowPasswordIcon,
 } from './InputActionButtons';
+
+import { getValueFromPaste } from '../../util/general';
 
 import classes from './Input.module.scss';
 
@@ -28,7 +30,7 @@ export type FieldProps = {
   lowerCased?: boolean;
   onClose?: (isOpen: boolean) => void;
   showClearInput?: boolean;
-  showCopyButton?: boolean;
+  showPasteButton?: boolean;
   prefix?: string;
   type: string;
   errorType?: string;
@@ -49,7 +51,7 @@ const InputRedux: React.FC<Props> = props => {
     meta,
     onClose,
     showClearInput,
-    showCopyButton,
+    showPasteButton,
     prefix = '',
     type,
     errorType = '',
@@ -118,7 +120,7 @@ const InputRedux: React.FC<Props> = props => {
             onChange(currentValue);
           }}
           type={showPass ? 'text' : type}
-          data-clear={clearInput || showCopyButton}
+          data-clear={clearInput || showPasteButton}
         />
         <ClearButton
           isVisible={(clearInput || onClose) && !loading}
@@ -133,12 +135,11 @@ const InputRedux: React.FC<Props> = props => {
           toggleShowPass={toggleShowPass}
           uiType={uiType}
         />
-        <CopyButton
-          isVisible={showCopyButton}
+        <PasteButton
+          isVisible={showPasteButton}
           onClick={async () => {
             try {
-              const data = await navigator.clipboard.readText();
-              onChange(data);
+              onChange(await getValueFromPaste());
             } catch (e) {
               console.error('Paste error: ', e);
             }

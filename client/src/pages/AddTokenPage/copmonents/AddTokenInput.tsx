@@ -89,7 +89,7 @@ const AddTokenInput: React.FC<FieldArrayRenderProps<FormValues, HTMLElement> &
                     component={Input}
                     placeholder="Enter or Paste Public Address"
                     hideError={true}
-                    showCopyButton={true}
+                    showPasteButton={true}
                     uiType={INPUT_UI_STYLES.BLACK_WHITE}
                   />
                 </div>
