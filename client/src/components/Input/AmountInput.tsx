@@ -105,7 +105,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
 
   useEffect(() => {
     toggleClearInput(value !== '');
-  });
+  }, [value]);
 
   useEffect(() => {
     if (inputRef != null && inputRef.current != null && initRef.current) {
