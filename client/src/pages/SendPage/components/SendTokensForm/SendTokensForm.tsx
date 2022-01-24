@@ -7,6 +7,7 @@ import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBa
 import PriceBadge from '../../../../components/Badges/PriceBadge/PriceBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import SelectModalInput from '../../../../components/Input/SelectModalInput';
+import AmountInput from '../../../../components/Input/AmountInput';
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
@@ -27,6 +28,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
     loading,
     fioWallet,
     fioAddresses,
+    roe,
     fee,
     obtDataOn,
     contactsList,
@@ -104,7 +106,8 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
           obtDataOn &&
           to &&
           hasFioAddressDelimiter(to);
-        const hasLowBalance = fee.costFio + amount > fioWallet.available;
+        const hasLowBalance =
+          fee.costFio + Number(amount) > fioWallet.available;
         const notEnoughBundles =
           selectedAddress != null
             ? selectedAddress.remaining < RECORD_OBT_DATA_BUNDLE_COST
@@ -142,11 +145,13 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
 
             <Field
               name="amount"
+              nativeAmountFieldName="nativeAmount"
               type="number"
               placeholder="0.00"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
-              component={Input}
+              component={AmountInput}
+              roe={roe}
               disabled={loading}
               label="Send Amount"
             />
@@ -181,7 +186,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
             ) : null}
             <LowBalanceBadge
               hasLowBalance={hasLowBalance}
-              messageText="Not enough Fio"
+              messageText={`Not enough Fio. Balance: ${fioWallet.available} FIO`}
             />
             <LowBalanceBadge
               hasLowBalance={notEnoughBundles}

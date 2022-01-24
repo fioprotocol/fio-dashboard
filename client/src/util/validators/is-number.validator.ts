@@ -4,7 +4,7 @@ export const isNumberValidator: FieldValidationFunctionSync = ({
   value,
   message,
 }) => {
-  const succeeded = !isNaN(value);
+  const succeeded = !isNaN(Number(`${value}`));
 
   const messageString = succeeded
     ? ''

@@ -72,10 +72,13 @@ const RequestPage: React.FC<ContainerProps> = props => {
       publicKey: fioWallet.publicKey,
       other: {
         ...requestData,
-        amount: apis.fio.amountToSUF(requestData.amount),
+        amount: requestData.amount,
+        nativeAmount: apis.fio
+          .amountToSUF(Number(requestData.amount))
+          .toString(),
         ...res,
-        to: requestData.payerFioAddress,
-        from: requestData.payeeFioAddress,
+        toFioAddress: requestData.payerFioAddress,
+        fromFioAddress: requestData.payeeFioAddress,
       },
     });
   };

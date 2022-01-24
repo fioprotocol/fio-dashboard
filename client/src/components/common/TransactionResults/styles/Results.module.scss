@@ -29,6 +29,7 @@
     }
     .item {
       word-break: break-all;
+      padding-left: 15px;
 
       &.isBlue {
         color: $violet;

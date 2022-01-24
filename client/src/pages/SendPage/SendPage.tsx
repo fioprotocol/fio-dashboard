@@ -15,8 +15,6 @@ import { FioAddressDoublet } from '../../types';
 import { TrxResponse } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 
-import apis from '../../api';
-
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ROUTES } from '../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../constants/common';
@@ -65,7 +63,6 @@ const SendPage: React.FC<ContainerProps> = props => {
       newSendData.receiverFioAddress = values.to;
       newSendData.to = pubKey;
     }
-    newSendData.amount = apis.fio.amountToSUF(newSendData.amount);
     setSendData(newSendData);
   };
   const onCancel = () => {
@@ -79,7 +76,13 @@ const SendPage: React.FC<ContainerProps> = props => {
       feeCollected: setFees(res.fee_collected, roe),
       name: fioWallet.publicKey,
       publicKey: fioWallet.publicKey,
-      other: { ...sendData, ...res },
+      other: {
+        ...sendData,
+        ...res,
+        toFioAddress: sendData.receiverFioAddress,
+        fromFioAddress: sendData.from,
+        from: sendData.fromPubKey,
+      },
     });
   };
 
@@ -112,7 +115,7 @@ const SendPage: React.FC<ContainerProps> = props => {
     );
 
   const renderInfoBadge = () =>
-    fioAddresses.length ? (
+    walletFioAddresses.length ? (
       <InfoBadge
         type={BADGE_TYPES.INFO}
         show={true}
@@ -166,6 +169,7 @@ const SendPage: React.FC<ContainerProps> = props => {
           loading={loading || processing}
           fioAddresses={walletFioAddresses}
           onSubmit={onSend}
+          roe={roe}
           fee={feePrice}
           obtDataOn={true}
           contactsList={contactsList}

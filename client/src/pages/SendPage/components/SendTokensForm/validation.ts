@@ -12,7 +12,7 @@ import { MAX_MEMO_SIZE } from '../../../../constants/fio';
 
 const validationSchema: ValidationSchema = {
   field: {
-    from: [
+    fromPubKey: [
       {
         validator: Validators.required,
         message: 'Required.',
