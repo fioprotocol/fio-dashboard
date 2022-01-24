@@ -16,7 +16,7 @@ export type RequestTokensValues = {
   chainCode: string;
   tokenCode: string;
   payeeTokenPublicAddress: string;
-  amount: number;
+  amount: string;
   memo?: string;
 };
 
