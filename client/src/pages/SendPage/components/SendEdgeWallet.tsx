@@ -40,7 +40,7 @@ const SendEdgeWallet: React.FC<Props> = props => {
   const send = async ({ keys, data }: SubmitActionParams) => {
     const result = await apis.fio.executeAction(keys, ACTIONS.transferTokens, {
       payeeFioPublicKey: data.to,
-      amount: data.amount,
+      amount: Number(data.nativeAmount),
       maxFee: fee,
     });
     if (data.memo) {
@@ -50,7 +50,7 @@ const SendEdgeWallet: React.FC<Props> = props => {
           payeeFioAddress: data.receiverFioAddress,
           payerTokenPublicAddress: keys.public,
           payeeTokenPublicAddress: data.to,
-          amount: apis.fio.sufToAmount(data.amount),
+          amount: Number(data.amount),
           chainCode: FIO_CHAIN_CODE,
           tokenCode: FIO_CHAIN_CODE,
           obtId: result.transaction_id,

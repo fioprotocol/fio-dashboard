@@ -15,13 +15,15 @@ export type SendTokensValues = {
   fromPubKey: string;
   to: string;
   receiverFioAddress?: string;
-  amount: number;
+  amount: string;
+  nativeAmount: string;
   memo?: string;
 };
 
 export type SendTokensProps = {
   fioWallet: FioWalletDoublet;
   fioAddresses: FioAddressDoublet[];
+  roe: number;
   fee: FeePrice;
   balance: WalletBalances;
   loading: boolean;
