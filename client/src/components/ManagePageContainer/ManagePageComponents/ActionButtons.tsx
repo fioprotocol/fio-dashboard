@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classnames from 'classnames';
 
 import { PAGE_NAME, BUTTONS_TITLE } from '../constants';
 import { ROUTES } from '../../../constants/routes';
@@ -15,11 +14,6 @@ import classes from './ActionButtons.module.scss';
 
 import icon from '../../../assets/images/timelapse_white_24dp.svg'; // todo: remove after changing library to google material
 
-const RENEW_LINKS = {
-  address: ROUTES.FIO_ADDRESS_RENEW,
-  domain: ROUTES.FIO_DOMAIN_RENEW,
-};
-
 const ActionButtons: React.FC<ActionButtonProps> = props => {
   const { pageName, isDesktop, onSettingsOpen, fioNameItem } = props;
   const { name } = fioNameItem;
@@ -28,12 +22,24 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
 
   const renderRenew = () => (
     <Link
-      to={`${RENEW_LINKS[pageName]}/${name}`}
+      to={`${ROUTES.FIO_DOMAIN_RENEW}/${name}`}
       className={classes.actionButton}
     >
       <Button title={isSmallDesktop ? BUTTONS_TITLE.renew : ''}>
         <img src={icon} alt="timelapse" />
         {!isSmallDesktop && BUTTONS_TITLE.renew}
+      </Button>
+    </Link>
+  );
+
+  const renderAddBundles = () => (
+    <Link
+      to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}/${name}`}
+      className={classes.actionButton}
+    >
+      <Button title={isSmallDesktop ? BUTTONS_TITLE.renew : ''}>
+        <FontAwesomeIcon icon="plus-square" className={classes.linkIcon} />
+        {!isSmallDesktop && BUTTONS_TITLE.addBundles}
       </Button>
     </Link>
   );
@@ -63,27 +69,21 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
 
   return pageName === PAGE_NAME.ADDRESS ? (
     <div className={classes.actionButtonsContainer}>
-      <div className={classes.row}>
-        <Link
-          to={`${ROUTES.FIO_ADDRESS_SIGNATURES}`.replace(':address', name)}
-          className={classes.actionButton}
-        >
-          <Button title={isSmallDesktop ? BUTTONS_TITLE.nft : ''}>
-            <FontAwesomeIcon icon="signature" className={classes.atIcon} />{' '}
-            {!isSmallDesktop && BUTTONS_TITLE.nft}
-          </Button>
-        </Link>
-        {renderLinkToken()}
-        {renderSettings()}
-      </div>
+      <Link
+        to={`${ROUTES.FIO_ADDRESS_SIGNATURES}`.replace(':address', name)}
+        className={classes.actionButton}
+      >
+        <Button title={isSmallDesktop ? BUTTONS_TITLE.nft : ''}>
+          <FontAwesomeIcon icon="signature" className={classes.atIcon} />{' '}
+          {!isSmallDesktop && BUTTONS_TITLE.nft}
+        </Button>
+      </Link>
+      {renderLinkToken()}
+      {renderAddBundles()}
+      {renderSettings()}
     </div>
   ) : (
-    <div
-      className={classnames(
-        classes.actionButtonsContainer,
-        classes.domainContainer,
-      )}
-    >
+    <div className={classes.actionButtonsContainer}>
       {renderRenew()}
       <Link
         to={ROUTES.FIO_ADDRESSES_SELECTION}

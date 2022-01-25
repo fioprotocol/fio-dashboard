@@ -8,26 +8,12 @@
   height: 100%;
   align-items: center;
 
-  &.domainContainer {
-    .actionButton {
-      margin-right: 0;
-    }
-
-    .settingsButton {
-      width: 100%;
-    }
-
-    .actionButton, .settingsButton {
-      margin-top: 10px;
-    }
-  }
-
   .actionButton {
     @include sf-pro-display-thin;
     background-color: $violet;
     border-color: $violet;
     border-radius: 7px;
-    margin-right: 10px;
+    margin-right: 0;
     white-space: nowrap;
     width: 100%;
     height: 45px;
@@ -41,7 +27,7 @@
       background-color: $clear-blue;
       border-color: $clear-blue;
     }
-    
+
     & button {
       font-size: 1em;
       width: 100%;
@@ -57,7 +43,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 45px;
+    width: 100%;
 
     &:hover {
       background-color: $dove-gray;
@@ -72,6 +58,7 @@
     border-color .15s ease-in-out,
     box-shadow .15s ease-in-out;
     height: 45px;
+    margin-top: 10px;
   }
 
   .atIcon {
@@ -93,14 +80,8 @@
   .actionButtonsContainer {
     flex-flow: nowrap;
 
-    &.domainContainer {
-      .actionButton {
-        margin-right: 10px;
-      }
-
-      .actionButton, .settingsButton {
-        margin-top: 0;
-      }
+    .actionButton {
+      margin-right: 10px;
     }
 
     .row {
@@ -109,6 +90,7 @@
 
     .actionButton, .settingsButton {
       height: 36px;
+      margin-top: 0;
     }
 
     .settingsButton {

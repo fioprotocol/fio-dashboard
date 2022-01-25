@@ -13,3 +13,13 @@
     @include proxima-nova-semibold;
   }
 }
+
+.detailsName {
+  color: $gray-main;
+  padding-right: 15px;
+  @include proxima-nova-semibold;
+}
+
+.detailsValue {
+  color: $gray-main;
+}

@@ -35,7 +35,7 @@ const ROUTES: { [route: string]: string } = {
   FIO_ADDRESS_TRANSFER_RESULTS: '/fio-crypto-handle-transfer-results',
   FIO_DOMAIN_TRANSFER_RESULTS: '/fio-domain-transfer-results',
   FIO_DOMAIN_STATUS_CHANGE_RESULTS: '/fio-domain-status-results',
-  FIO_ADDRESS_RENEW: '/fio-crypto-handle-renew',
+  FIO_ADDRESS_ADD_BUNDLES: '/add-bundles',
   FIO_DOMAIN_RENEW: '/fio-domain-renew',
   FIO_NAME_RENEW_RESULTS: '/fio-name-results',
   FIO_ADDRESS_SIGNATURES: '/nft-signatures/:address',

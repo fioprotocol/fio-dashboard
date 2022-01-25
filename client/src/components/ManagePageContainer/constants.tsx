@@ -50,6 +50,7 @@ export const ITEMS_LIMIT = 25;
 export const EXPIRED_DAYS = 30;
 
 export const BUTTONS_TITLE = {
+  addBundles: 'Add Bundles',
   renew: 'Renew',
   link: 'Link',
   nft: 'NFT signature',
