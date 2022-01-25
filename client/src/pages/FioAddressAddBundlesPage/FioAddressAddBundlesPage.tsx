@@ -25,14 +25,26 @@ import classes from '../../components/FioNameRenew/FioNameRenewContainer.module.
 type MatchParams = {
   id: string;
 };
+type LocationState = {
+  backUrl?: string;
+};
 
 const DEFAULT_BUNDLE_SET_VALUE = 1;
 const DEFAULT_BUNDLE_AMOUNT = 100;
 
 const FioAddressAddBundlesPage: React.FC<ContainerProps &
-  RouteComponentProps<MatchParams>> = props => {
-  const { fioAddresses, feePrice, roe, history, getFee, match } = props;
+  RouteComponentProps<MatchParams, {}, LocationState>> = props => {
+  const {
+    fioAddresses,
+    feePrice,
+    roe,
+    history,
+    getFee,
+    match,
+    location,
+  } = props;
   const { id: name } = match.params;
+  const { state: { backUrl = ROUTES.FIO_ADDRESSES } = {} } = location;
 
   const { currentWallet, settingWallet } = useFioWallet(fioAddresses, name);
   const { costFio, costUsdc } = feePrice;
@@ -68,7 +80,7 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
   };
 
   const onResultsClose = () => {
-    history.push(ROUTES.FIO_ADDRESSES);
+    history.goBack();
   };
 
   const onResultsRetry = () => {
@@ -125,10 +137,7 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
         />
       ) : null}
 
-      <PseudoModalContainer
-        title="Add bundled transactions"
-        link={ROUTES.FIO_ADDRESSES}
-      >
+      <PseudoModalContainer title="Add bundled transactions" link={backUrl}>
         <div className={classes.container}>
           <h5 className={classes.label}>Add Bundled Transactions Details</h5>
           {renderDetails()}

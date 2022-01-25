@@ -65,8 +65,6 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
     </Link>
   );
 
-  // todo: BD-2933 renderRenew were temporary removed from address item
-
   return pageName === PAGE_NAME.ADDRESS ? (
     <div className={classes.actionButtonsContainer}>
       <Link

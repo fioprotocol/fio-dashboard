@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, useHistory } from 'react-router-dom';
 
 import FioName from '../common/FioName/FioName';
 import BundledTransactionBadge from '../Badges/BundledTransactionBadge/BundledTransactionBadge';
@@ -39,8 +39,8 @@ const ActionContainer: React.FC<Props> = props => {
     onRetry,
   } = props;
 
+  const history = useHistory();
   const { name, remaining } = fioCryptoHandle;
-
   const hasLowBalance = remaining - bundleCost < 0;
 
   if (!name) return <Redirect to={{ pathname: ROUTES.FIO_ADDRESSES }} />;
@@ -58,6 +58,11 @@ const ActionContainer: React.FC<Props> = props => {
       />
     );
 
+  const onLowBalanceActionClick = () =>
+    history.push(`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}/${name}`, {
+      backUrl: `${ROUTES.LINK_TOKEN_LIST}/${name}`,
+    });
+
   return (
     <PseudoModalContainer
       title={CONTAINER_TYPES[containerName].title}
@@ -68,7 +73,11 @@ const ActionContainer: React.FC<Props> = props => {
         <FioName name={name} />
         {children}
         <BundledTransactionBadge bundles={bundleCost} remaining={remaining} />
-        <LowBalanceBadge hasLowBalance={hasLowBalance} {...LOW_BALANCE_TEXT} />
+        <LowBalanceBadge
+          onActionClick={onLowBalanceActionClick}
+          hasLowBalance={hasLowBalance}
+          {...LOW_BALANCE_TEXT}
+        />
         <SubmitButton
           disabled={hasLowBalance || isDisabled || loading}
           loading={loading}
