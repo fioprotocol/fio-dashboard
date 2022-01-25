@@ -31,6 +31,14 @@ export type PasswordFormValues = {
   username: string;
 };
 
+export type TransactionContentProps = {
+  payeePublicAddress: string;
+  amount: string;
+  chain: string;
+  memo: string;
+  txId?: string;
+};
+
 export type TransactionItemProps = {
   from: string;
   to: string;
@@ -38,4 +46,20 @@ export type TransactionItemProps = {
   status?: string;
   id: string;
   transactionType: string;
+  payer: string;
+  requestor: string;
+  type: string;
+  content?: TransactionContentProps;
 };
+
+export type TransactionItemKeysProps =
+  | 'amount'
+  | 'chain'
+  | 'date'
+  | 'from'
+  | 'memo'
+  | 'payer'
+  | 'requestor'
+  | 'to'
+  | 'type'
+  | 'txId';

@@ -5,6 +5,8 @@ import { sleep, isDomain } from '../utils';
 import { FREE_ADDRESS_REGISTER_ERROR, ERROR_TYPES } from '../constants/errors';
 import { RegisterAddressError } from '../util/errors';
 
+import { FIO_REQUEST_STATUS_TYPES } from '../constants/fio';
+
 import {
   NftTokenResponse,
   CartItem,
@@ -225,3 +227,9 @@ export const normalizePublicAddresses = (
     tokenCode: tokenCode === '*' ? chainCode : tokenCode,
     publicAddress,
   }));
+
+export const statusBadgeColours = (status: string) => ({
+  isBlue: FIO_REQUEST_STATUS_TYPES.PAID === status,
+  isOrange: FIO_REQUEST_STATUS_TYPES.REJECTED === status,
+  isRose: FIO_REQUEST_STATUS_TYPES.PENDING === status,
+});

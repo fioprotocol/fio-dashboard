@@ -49,3 +49,9 @@ export const ACTIONS_TO_END_POINT_KEYS = {
   [ACTIONS.unStakeFioTokens]: 'pushTransaction',
   [ACTIONS.addBundledTransactions]: 'addBundledTransactions',
 };
+
+export const FIO_REQUEST_STATUS_TYPES: { [key: string]: string } = {
+  REJECTED: 'rejected',
+  PAID: 'paid',
+  PENDING: 'pending',
+};

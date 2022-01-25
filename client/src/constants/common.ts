@@ -32,6 +32,7 @@ export const CONFIRM_PIN_ACTIONS = {
   ADD_TOKEN: 'ADD_TOKEN',
   DELETE_TOKEN: 'DELETE_TOKEN',
   EDIT_TOKEN: 'EDIT_TOKEN',
+  DETAILED_FIO_REQUEST: 'DETAILED_FIO_REQUEST',
 };
 
 export const ADDRESS = 'address';
@@ -93,3 +94,15 @@ export const NFT_CHAIN_CODE_LIST = [
   { id: 'TRX', name: 'TRON' },
   { id: 'WAX', name: 'WAXP' },
 ];
+
+export const CHAIN_CODES = {
+  FIO: 'FIO',
+  BTC: 'BTC',
+  ETH: 'ETH',
+};
+
+export const FIO_DATA_TRANSACTION_LINK = {
+  [CHAIN_CODES.FIO]: process.env.REACT_APP_FIO_BLOCKS_TX_URL,
+  [CHAIN_CODES.BTC]: 'https://blockchair.com/bitcoin/transaction/',
+  [CHAIN_CODES.ETH]: 'https://etherscan.io/tx/',
+};
