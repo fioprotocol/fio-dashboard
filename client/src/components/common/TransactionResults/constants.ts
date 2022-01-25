@@ -7,6 +7,7 @@ import {
 export const ERROR_TYPES = {
   TRANSFER_ERROR: 'TRANSFER_ERROR',
   RENEW_ERROR: 'RENEW_ERROR',
+  ADD_BUNDLES_ERROR: 'ADD_BUNDLES_ERROR',
   ADD_TOKEN_ERROR: 'ADD_TOKEN_ERROR',
   EDIT_TOKEN_ERROR: 'EDIT_TOKEN_ERROR',
   DELETE_TOKEN_ERROR: 'DELETE_TOKEN_ERROR',
@@ -32,6 +33,13 @@ export const ERROR_MESSAGES: {
     message: `${DEFAULT_FIO_TRX_ERR_MESSAGE}`
       .replace('purchase', 'renew')
       .replace('registrations', 'renewal'),
+  },
+  [ERROR_TYPES.ADD_BUNDLES_ERROR]: {
+    title: 'Add Bundled Transactions error',
+    message: `${DEFAULT_FIO_TRX_ERR_MESSAGE}`.replace(
+      ' and your registrations did not complete',
+      '',
+    ),
   },
   [ERROR_TYPES.ADD_TOKEN_ERROR]: {
     message: `${TOKEN_LINK_ERROR_MESSAGE}`.replace(

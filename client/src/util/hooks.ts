@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
-import { getFioAddresses, getAllFioPubAddresses } from '../redux/fio/actions';
+import {
+  getFioAddresses,
+  getAllFioPubAddresses,
+  refreshBalance,
+} from '../redux/fio/actions';
 
 import { fioWallets, mappedPublicAddresses } from '../redux/fio/selectors';
 import {
@@ -12,7 +16,9 @@ import {
 
 import { ROUTES } from '../constants/routes';
 
-import { FioWalletDoublet } from '../types';
+import { FioNameItemProps, FioWalletDoublet } from '../types';
+import { getElementByFioName } from '../utils';
+import { emptyWallet } from '../redux/fio/reducer';
 
 export function useFioAddresses(limit = 0, offset = 0) {
   const dispatch = useDispatch();
@@ -24,7 +30,40 @@ export function useFioAddresses(limit = 0, offset = 0) {
         dispatch(getFioAddresses(wallet.publicKey, limit, offset)),
       );
     }
-  }, [fioWallets.length]);
+  }, [wallets.length]);
+}
+
+export function useFioWallet(fioNameList: FioNameItemProps[], name: string) {
+  const dispatch = useDispatch();
+
+  const [publicKey, setPublicKey] = useState('');
+  const [settingWallet, setWalletSetting] = useState(true);
+
+  const wallets = useSelector(fioWallets);
+  const isAuth = useSelector(isAuthenticated);
+
+  useEffect(() => {
+    if (wallets.length > 0 && isAuth) {
+      const selected = getElementByFioName({ fioNameList, name });
+      setPublicKey((selected && selected.walletPublicKey) || '');
+    }
+  }, [wallets, fioNameList, name]);
+
+  useEffect(() => {
+    if (publicKey != null && publicKey) {
+      dispatch(refreshBalance(publicKey));
+      setWalletSetting(false);
+    }
+  }, [publicKey]);
+
+  // FioWalletDoublet
+  const wallet: FioWalletDoublet =
+    wallets &&
+    wallets.find(
+      (walletItem: FioWalletDoublet) => walletItem.publicKey === publicKey,
+    );
+
+  return { currentWallet: wallet || emptyWallet, settingWallet };
 }
 
 export function useNonActiveUserRedirect() {

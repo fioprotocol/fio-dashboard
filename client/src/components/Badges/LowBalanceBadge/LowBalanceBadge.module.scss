@@ -31,8 +31,7 @@
     justify-items: center;
     align-items: center;
     align-self: center;
-    width: 100%;
-    max-width: 145px;
+    width: auto;
     margin-bottom: 0;
 
     .buttonIcon {
@@ -44,6 +43,10 @@
       font-size: 0.8125em;
       margin-bottom: 0;
       margin-left: 0.625rem;
+    }
+
+    p {
+      white-space: nowrap;
     }
   }
 }
