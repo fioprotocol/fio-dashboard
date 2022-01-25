@@ -17,7 +17,7 @@ import ScrollToTop from './components/ScrollToTop';
 import FioAddressTransferPage from './pages/FioAddressTransferPage';
 import FioDomainTransferPage from './pages/FioDomainTransferPage';
 import FioDomainStatusChangePage from './pages/FioDomainStatusChangePage';
-import FioAddressRenewPage from './pages/FioAddressRenewPage';
+import FioAddressAddBundlesPage from './pages/FioAddressAddBundlesPage';
 import FioDomainRenewPage from './pages/FioDomainRenewPage';
 import TokenListPage from './pages/TokenListPage';
 import DeleteTokenPage from './pages/DeleteTokenPage';
@@ -129,8 +129,8 @@ const Routes = () => (
         />
 
         <PrivateRoute
-          path={`${ROUTES.FIO_ADDRESS_RENEW}/:id`}
-          component={FioAddressRenewPage}
+          path={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}/:id`}
+          component={FioAddressAddBundlesPage}
         />
         <PrivateRoute
           path={`${ROUTES.FIO_DOMAIN_RENEW}/:id`}
