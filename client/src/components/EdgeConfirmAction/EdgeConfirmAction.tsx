@@ -23,6 +23,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
     data,
     edgeAccountLogoutBefore,
     processing,
+    processingProps,
 
     setProcessing,
     submitAction,
@@ -100,7 +101,12 @@ const EdgeConfirmAction: React.FC<Props> = props => {
     }
   };
 
-  return <Processing isProcessing={processing && !hideProcessing} />;
+  return (
+    <Processing
+      isProcessing={processing && !hideProcessing}
+      {...processingProps}
+    />
+  );
 };
 
 export default EdgeConfirmActionContainer;
