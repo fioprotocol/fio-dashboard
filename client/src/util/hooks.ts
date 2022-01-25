@@ -30,7 +30,7 @@ export function useFioAddresses(limit = 0, offset = 0) {
         dispatch(getFioAddresses(wallet.publicKey, limit, offset)),
       );
     }
-  }, [fioWallets.length]);
+  }, [wallets.length]);
 }
 
 export function useFioWallet(fioNameList: FioNameItemProps[], name: string) {
