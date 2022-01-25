@@ -16,17 +16,23 @@ const mockedData = [
     from: 'test@test.com',
     to: 'test@fest.com',
     date: '2021-09-11T18:30:56',
-    id: 'test1',
+    id: 'test122',
     status: 'rejected',
     transactionType: 'sent',
+    payer: 'purse@alice',
+    requestor: 'test@fest.com',
+    type: 'payment',
   },
   {
     from: 'test@test.com',
     to: 'test@fest.com',
     date: '2022-01-11T22:30:00',
-    id: 'test',
+    id: 'test9Kis',
     status: 'paid',
     transactionType: 'received',
+    payer: 'purse@alice',
+    requestor: 'test@fest.com',
+    type: 'payment',
   },
 ];
 
@@ -36,6 +42,7 @@ const FioDataTab: React.FC<Props> = props => {
       transactionsList={mockedData}
       type={TRANSACTION_ITEM_TYPES.DATA}
       loading={false}
+      {...props}
     />
   );
 };

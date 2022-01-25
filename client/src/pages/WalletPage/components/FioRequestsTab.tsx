@@ -17,22 +17,24 @@ const FIO_REQUEST_TABS = [
   {
     eventKey: 'sent',
     title: 'Sent',
-    renderTab: () => (
+    renderTab: (props: Props) => (
       <TransactionItems
         transactionsList={mockedData}
         type={TRANSACTION_ITEM_TYPES.SENT}
         loading={false}
+        {...props}
       />
     ),
   },
   {
     eventKey: 'received',
     title: 'Received',
-    renderTab: () => (
+    renderTab: (props: Props) => (
       <TransactionItems
         transactionsList={mockedData}
         type={TRANSACTION_ITEM_TYPES.RECEIVED}
         loading={false}
+        {...props}
       />
     ),
   },
@@ -46,6 +48,9 @@ const mockedData = [
     id: 'test1',
     status: 'rejected',
     transactionType: 'sent',
+    payer: 'purse@alice',
+    requestor: 'test@fest.com',
+    type: 'payment',
   },
   {
     from: 'test@test.com',
@@ -54,6 +59,20 @@ const mockedData = [
     id: 'test',
     status: 'paid',
     transactionType: 'received',
+    payer: 'purse@alice',
+    requestor: 'test@fest.com',
+    type: 'payment',
+  },
+  {
+    from: 'test@test.com',
+    to: 'test@fest.com',
+    date: '2022-01-19T18:20:56',
+    id: 'test22',
+    status: 'pending',
+    transactionType: 'received',
+    payer: 'purse@alice',
+    requestor: 'test@fest.com',
+    type: 'payment',
   },
 ];
 
@@ -65,6 +84,7 @@ const FioRequestsTab: React.FC<Props> = props => {
         containerClass={classes.container}
         tabItemClass={classes.tabItem}
         tabContentClass={classes.tabContent}
+        tabProps={{ ...props }}
       />
     </TabsContainer>
   );
