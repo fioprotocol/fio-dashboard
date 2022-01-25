@@ -14,6 +14,10 @@ import {
   isNewEmailNotVerified as isNewEmailNotVerifiedSelector,
 } from '../redux/profile/selectors';
 
+import { roe } from '../redux/registrations/selectors';
+
+import apis from '../api';
+
 import { ROUTES } from '../constants/routes';
 
 import { FioNameItemProps, FioWalletDoublet } from '../types';
@@ -106,4 +110,21 @@ export function usePublicAddresses(fioAddress: string, limit: number = 0) {
       setOffset(incOffset);
     }
   }, [hasMore]);
+}
+
+export function useConvertFioToUsdc({
+  fioAmount,
+  nativeAmount,
+}: {
+  fioAmount?: number;
+  nativeAmount?: number;
+}) {
+  const roeAmount = useSelector(roe);
+
+  if (!fioAmount && !nativeAmount) return null;
+
+  const fioSuf =
+    nativeAmount != null ? nativeAmount : apis.fio.amountToSUF(fioAmount);
+
+  return apis.fio.convertFioToUsdc(fioSuf, roeAmount);
 }
