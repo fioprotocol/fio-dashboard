@@ -1,16 +1,24 @@
-import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useState } from 'react';
 
 import InfoBadge from '../../../components/Badges/InfoBadge/InfoBadge';
-import CommonBadge from '../../../components/Badges/CommonBadge/CommonBadge';
-import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
+
 import Loader from '../../../components/Loader/Loader';
+import TransactionDetailedModal from './TransactionDetailedModal';
+import TransactionDetailedTabs from './TransactionDetailedTabs';
+import FioDataDetails from './FioDataDetails';
+import FioTransactionItem from './FioTransactionItem';
+import DecryptContentEdge from './DecryptContentEdge';
 
-import { commonFormatTime } from '../../../util/general';
+import {
+  INFO_BADGE_CONTENT,
+  TRANSACTION_ITEM_TYPES,
+  FIO_REQUEST_FIELDS_LIST,
+} from '../constants';
 
-import { INFO_BADGE_CONTENT, CONTENT_TYPE, STATUS_TYPES } from '../constants';
+import { WALLET_CREATED_FROM } from '../../../constants/common';
 
 import { TransactionItemProps } from '../types';
+import { FioWalletDoublet } from '../../../types';
 
 import classes from '../styles/TransactionItems.module.scss';
 
@@ -18,24 +26,43 @@ type Props = {
   transactionsList: TransactionItemProps[];
   type: string;
   loading: boolean;
+  fioWallet: FioWalletDoublet;
 };
 
-const renderSenderInfo = ({
-  title,
-  senderAddress,
-}: {
-  title: string;
-  senderAddress: string;
-}) => {
-  return (
-    <p className={classes.senderInfo}>
-      {title}: <span className={classes.senderAddress}>{senderAddress}</span>
-    </p>
-  );
+type DetailedItemProps = {
+  transactionItem: TransactionItemProps;
+  type: string;
+};
+
+const FIO_REQUEST_DETAILED_COMPONENT = {
+  [TRANSACTION_ITEM_TYPES.SENT]: (props: DetailedItemProps) => (
+    <TransactionDetailedTabs
+      {...props}
+      requestFieldsList={FIO_REQUEST_FIELDS_LIST.SENT_LIST}
+    />
+  ),
+  [TRANSACTION_ITEM_TYPES.RECEIVED]: (props: DetailedItemProps) => (
+    <TransactionDetailedTabs
+      {...props}
+      requestFieldsList={FIO_REQUEST_FIELDS_LIST.RECEIVED_LIST}
+    />
+  ),
+  [TRANSACTION_ITEM_TYPES.DATA]: (props: DetailedItemProps) => (
+    <FioDataDetails {...props} />
+  ),
 };
 
 const TransactionItems: React.FC<Props> = props => {
-  const { transactionsList, type, loading } = props;
+  const { transactionsList, type, loading, fioWallet } = props;
+  const [showModal, toggleModal] = useState(false);
+  const [processing, setProcessing] = useState(false);
+  const [submitData, setSubmitData] = useState<TransactionItemProps | null>(
+    null,
+  );
+  const [
+    transactionDetailsItem,
+    setTxDetails,
+  ] = useState<TransactionItemProps | null>(null);
 
   if (loading)
     return (
@@ -52,65 +79,56 @@ const TransactionItems: React.FC<Props> = props => {
       />
     );
 
-  const onClick = (id: string) => {
-    // todo: set open modal info
+  const onClick = (transactionItem: TransactionItemProps) => {
+    setSubmitData(transactionItem);
+  };
+
+  const onCloseModal = () => {
+    toggleModal(false);
+    setSubmitData(null);
+  };
+
+  const onSuccess = (txData: any) => {
+    setProcessing(false);
+    setSubmitData(null);
+    setTxDetails(txData);
+    toggleModal(true);
+  };
+
+  const onCancel = () => {
+    setSubmitData(null);
+    setProcessing(false);
   };
 
   return (
     <div className={classes.container}>
-      {transactionsList.map(transactionItem => {
-        const { id, date, from, to, transactionType, status } = transactionItem;
-
-        const senderInfo = {
-          title: CONTENT_TYPE[transactionType].from
-            ? CONTENT_TYPE[transactionType].from
-            : CONTENT_TYPE[transactionType].to,
-          senderAddress: CONTENT_TYPE[transactionType].from ? from : to,
-        };
-
-        const statusProps = {
-          isBlue: STATUS_TYPES.PAID === status,
-          isOrange: STATUS_TYPES.REJECTED === status,
-          isRose: STATUS_TYPES.PENDING === status,
-        };
-
-        return (
-          <div className={classes.badgeContainer} key={id}>
-            <Badge type={BADGE_TYPES.BORDERED} show={true}>
-              <div className={classes.badgeItem}>
-                <div className={classes.transactionTypeContainer}>
-                  <CommonBadge
-                    isBlue={CONTENT_TYPE[transactionType].isBlue}
-                    isGreen={CONTENT_TYPE[transactionType].isGreen}
-                  >
-                    <div className={classes.iconContainer}>
-                      <FontAwesomeIcon
-                        icon={CONTENT_TYPE[transactionType].icon}
-                        className={classes.icon}
-                      />
-                    </div>
-                  </CommonBadge>
-                  <p className={classes.transactionType}>{transactionType}</p>
-                </div>
-                <div className={classes.date}>{commonFormatTime(date)}</div>
-                {renderSenderInfo(senderInfo)}
-                {status && (
-                  <div className={classes.statusContainer}>
-                    <CommonBadge {...statusProps}>
-                      <p className={classes.status}>{status}</p>
-                    </CommonBadge>
-                  </div>
-                )}
-                <FontAwesomeIcon
-                  icon="chevron-right"
-                  className={classes.iconArrow}
-                  onClick={() => onClick(id)}
-                />
-              </div>
-            </Badge>
-          </div>
-        );
-      })}
+      {transactionsList.map(transactionItem => (
+        <FioTransactionItem
+          transactionItem={transactionItem}
+          onClick={onClick}
+          key={transactionItem.id}
+        />
+      ))}
+      <TransactionDetailedModal
+        show={showModal}
+        onClose={onCloseModal}
+        status={transactionDetailsItem && transactionDetailsItem.status}
+      >
+        {FIO_REQUEST_DETAILED_COMPONENT[type]({
+          transactionItem: transactionDetailsItem,
+          type,
+        })}
+      </TransactionDetailedModal>
+      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
+        <DecryptContentEdge
+          fioWallet={fioWallet}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          processing={processing}
+          setProcessing={setProcessing}
+          submitData={submitData}
+        />
+      ) : null}
     </div>
   );
 };
