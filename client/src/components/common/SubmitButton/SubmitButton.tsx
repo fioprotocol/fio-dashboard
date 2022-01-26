@@ -16,7 +16,7 @@ type Props = {
   isBlack?: boolean;
   withBottomMargin?: boolean;
   withTopMargin?: boolean;
-  text?: string;
+  text?: string | React.ReactNode;
   hasLowHeight?: boolean;
   hasBoldText?: boolean;
   isButtonType?: boolean;
