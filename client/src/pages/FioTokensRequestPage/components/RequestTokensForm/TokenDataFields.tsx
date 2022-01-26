@@ -5,7 +5,7 @@ import TextInput, {
   INPUT_UI_STYLES,
 } from '../../../../components/Input/TextInput';
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import ChainCodeCustomDropdown from '../../../../components/ChainCodeField/ChainCodeCustomDropdown';
+import ChainCodeCustomDropdown from '../../../../components/Input/ChainCodeCustomDropdown';
 import { CUSTOM_CHAIN_CODE } from '../../../../components/ChainCodeField/ChainCodeField';
 import { CHAIN_CODE_LIST } from '../../../../constants/common';
 
