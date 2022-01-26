@@ -174,7 +174,7 @@ export type PinConfirmation = {
   keys?: { [walletId: string]: WalletKeys };
   action?: string;
   data?: any;
-  error?: string | Error;
+  error?: string | Error & { wait?: number; };
 };
 
 export type FeePrice = {
