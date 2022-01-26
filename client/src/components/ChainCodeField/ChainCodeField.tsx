@@ -68,6 +68,7 @@ const ChainCodeField: React.FC<Props> = props => {
       isSimple={isSimple}
       isShort={isShort}
       isHigh={isHigh}
+      isFormField={true}
     />
   );
 };
