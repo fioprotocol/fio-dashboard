@@ -1,9 +1,9 @@
 import React from 'react';
 import { FieldRenderProps } from 'react-final-form';
 import CustomDropdown from '../CustomDropdown';
-import { Label } from '../Input/StaticInputParts';
-import classes from '../Input/Input.module.scss';
-import { ErrorBadge } from '../Input/ErrorBadge';
+import { Label } from './StaticInputParts';
+import classes from './Input.module.scss';
+import { ErrorBadge } from './ErrorBadge';
 
 type Props = {
   options: { id: string; name: string }[];
