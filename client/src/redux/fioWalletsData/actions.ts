@@ -7,8 +7,10 @@ export const UPDATE_WALLET_DATA = `${prefix}/UPDATE_WALLET_DATA`;
 export const updateFioWalletsData = (
   data: FioWalletData,
   publicKey: string,
+  userId: string,
 ) => ({
   type: UPDATE_WALLET_DATA,
   publicKey,
+  userId,
   data,
 });
