@@ -296,3 +296,21 @@ export type TransactionItemProps = {
 export type MappedPublicAddresses = {
   [fioAddress: string]: { publicAddresses: PublicAddressDoublet[]; more: boolean };
 }
+
+export type FioRequestData = {
+  content: string;
+  fio_request_id: number;
+  payee_fio_address: string;
+  payee_fio_public_key: string;
+  payer_fio_address: string;
+  payer_fio_public_key: string;
+  status: string;
+  time_stamp: string;
+}
+
+export type FioWalletData = {
+  id: string;
+  receivedFioRequests: FioRequestData[];
+  sentFioRequests: FioRequestData[];
+  obtData: FioRequestData[];
+}
