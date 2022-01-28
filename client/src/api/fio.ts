@@ -30,6 +30,7 @@ export default class Fio {
   baseurl: string = process.env.REACT_APP_FIO_BASE_URL;
   publicFioSDK: FIOSDK_LIB | null = null;
   walletFioSDK: FIOSDK_LIB | null = null;
+  publicWalletFioSDK: FIOSDK_LIB | null = null;
   actionEndPoints: { [actionName: string]: string } = {
     ...EndPoint,
     [ACTIONS.addNft]: 'add_nft',
@@ -98,6 +99,14 @@ export default class Fio {
 
     return isValid;
   };
+
+  setPublicWalletFioSdk = (keys: { public: string }): void =>
+    (this.publicWalletFioSDK = new FIOSDK(
+      '',
+      keys.public,
+      this.baseurl,
+      window.fetch,
+    ));
 
   setWalletFioSdk = (keys: { public: string; private: string }): void =>
     (this.walletFioSDK = new FIOSDK(

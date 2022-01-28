@@ -28,6 +28,9 @@ export const ACTIONS = {
   addNft: 'addNft',
   stakeFioTokens: 'stakeFioTokens',
   unStakeFioTokens: 'unStakeFioTokens',
+  getReceivedFioRequests: 'getReceivedFioRequests',
+  getSentFioRequests: 'getSentFioRequests',
+  getObtData: 'getObtData',
 };
 
 export const ACTIONS_TO_END_POINT_KEYS = {
@@ -48,6 +51,9 @@ export const ACTIONS_TO_END_POINT_KEYS = {
   [ACTIONS.stakeFioTokens]: 'pushTransaction',
   [ACTIONS.unStakeFioTokens]: 'pushTransaction',
   [ACTIONS.addBundledTransactions]: 'addBundledTransactions',
+  [ACTIONS.getReceivedFioRequests]: 'getReceivedFioRequests',
+  [ACTIONS.getSentFioRequests]: 'getSentFioRequests',
+  [ACTIONS.getObtData]: 'getObtData',
 };
 
 export const FIO_REQUEST_STATUS_TYPES: { [key: string]: string } = {
