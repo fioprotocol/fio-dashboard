@@ -28,9 +28,6 @@ export const ACTIONS = {
   addNft: 'addNft',
   stakeFioTokens: 'stakeFioTokens',
   unStakeFioTokens: 'unStakeFioTokens',
-  getReceivedFioRequests: 'getReceivedFioRequests',
-  getSentFioRequests: 'getSentFioRequests',
-  getObtData: 'getObtData',
 };
 
 export const ACTIONS_TO_END_POINT_KEYS = {
@@ -51,15 +48,18 @@ export const ACTIONS_TO_END_POINT_KEYS = {
   [ACTIONS.stakeFioTokens]: 'pushTransaction',
   [ACTIONS.unStakeFioTokens]: 'pushTransaction',
   [ACTIONS.addBundledTransactions]: 'addBundledTransactions',
-  [ACTIONS.getReceivedFioRequests]: 'getReceivedFioRequests',
-  [ACTIONS.getSentFioRequests]: 'getSentFioRequests',
-  [ACTIONS.getObtData]: 'getObtData',
 };
 
 export const FIO_REQUEST_STATUS_TYPES: { [key: string]: string } = {
   REJECTED: 'rejected',
-  PAID: 'paid',
-  PENDING: 'pending',
+  PAID: 'sent_to_blockchain',
+  PENDING: 'requested',
+};
+
+export const FIO_REQUEST_STATUS_TITLE: { [key: string]: string } = {
+  rejected: 'REJECTED',
+  sent_to_blockchain: 'PAID',
+  requested: 'PENDING',
 };
 
 export const BUNDLES_TX_COUNT = {

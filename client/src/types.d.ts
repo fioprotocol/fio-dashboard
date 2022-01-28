@@ -297,6 +297,17 @@ export type MappedPublicAddresses = {
   [fioAddress: string]: { publicAddresses: PublicAddressDoublet[]; more: boolean };
 }
 
+export type CamelCasedFioRequestData = {
+  content: string;
+  fioRequestId: number;
+  payeeFioAddress: string;
+  payeeFioPublicKey: string;
+  payerFioAddress: string;
+  payerFioPublicKey: string;
+  status: string;
+  timeStamp: string;
+}
+
 export type FioRequestData = {
   content: string;
   fio_request_id: number;
@@ -310,7 +321,13 @@ export type FioRequestData = {
 
 export type FioWalletData = {
   id: string;
-  receivedFioRequests: FioRequestData[];
-  sentFioRequests: FioRequestData[];
-  obtData: FioRequestData[];
+  receivedFioRequests: CamelCasedFioRequestData[];
+  sentFioRequests: CamelCasedFioRequestData[];
+  obtData: CamelCasedFioRequestData[];
+}
+
+export type UsersFioWalletsData =  {
+  [userId: string]: {
+    [walletPublicKey: string]: FioWalletData
+  }
 }
