@@ -35,11 +35,8 @@ const RenderTime = (time: number) => {
 
   const seconds = time;
 
-  const formatTime = (timeToFormat: number) => (
-    <span className={classes.format}>
-      {timeToFormat < 10 ? `0${timeToFormat}` : timeToFormat}
-    </span>
-  );
+  const formatTime = (timeToFormat: number) =>
+    timeToFormat < 10 ? `0${timeToFormat}` : timeToFormat;
 
   const renderDays = () => {
     if (days <= 0) return '';
@@ -51,11 +48,19 @@ const RenderTime = (time: number) => {
     return <>{formatTime(hours)}:</>;
   };
 
+  const renderDigitalTimer = () => {
+    return (
+      <span className={classes.digital}>
+        {renderHours()}
+        {formatTime(minutes)}:{formatTime(seconds)}
+      </span>
+    );
+  };
+
   return (
     <>
       {renderDays()}
-      {renderHours()}
-      {formatTime(minutes)}:{formatTime(seconds)}
+      {renderDigitalTimer()}
     </>
   );
 };
