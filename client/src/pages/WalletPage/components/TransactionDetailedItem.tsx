@@ -1,14 +1,13 @@
 import React from 'react';
-import classnames from 'classnames';
 
-import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import TransactionActionButtons from './TransactionActionButtons';
-import FioTransactionItemContent from './FioTransactionItemContent';
+import TransactionFieldsList from './TransactionFieldsList';
 
-import { TRANSACTION_ITEM_TYPES, DETAILED_ITEM_FIELDS } from '../constants';
+import { TRANSACTION_ITEM_TYPES } from '../constants';
 import { FIO_REQUEST_STATUS_TYPES } from '../../../constants/fio';
 
 import { TransactionItemProps, TransactionItemKeysProps } from '../types';
+import { FioWalletDoublet } from '../../../types';
 
 import classes from '../styles/TransactionDetailedItem.module.scss';
 
@@ -16,54 +15,28 @@ type Props = {
   fieldsList: TransactionItemKeysProps[];
   transactionItem: TransactionItemProps;
   type: string;
+  fioWallet: FioWalletDoublet;
+  onCloseModal: () => void;
 };
 
 const TransactionDetailedItem: React.FC<Props> = props => {
-  const { fieldsList, transactionItem, type } = props;
+  const { fieldsList, transactionItem, type, fioWallet, onCloseModal } = props;
 
   if (!transactionItem) return null;
 
   return (
     <div className={classes.fieldsContainer}>
-      {fieldsList.map(field => {
-        const isShort =
-          field === DETAILED_ITEM_FIELDS.type ||
-          field === DETAILED_ITEM_FIELDS.date;
-
-        const value =
-          // todo: fix ts issues
-          // @ts-ignore
-          transactionItem[field] != null
-            ? // @ts-ignore
-              transactionItem[field]
-            : // @ts-ignore
-              transactionItem.content[field];
-
-        if (value == null) return null;
-
-        return (
-          <div
-            className={classnames(classes.container, isShort && classes.short)}
-            key={field}
-          >
-            <Badge show={true} type={BADGE_TYPES.WHITE}>
-              <div className={classes.badgeContainer}>
-                <p className={classes.title}>{field}</p>
-                <p className={classes.content}>
-                  <FioTransactionItemContent
-                    value={value}
-                    field={field}
-                    chain={transactionItem.content.chain}
-                  />
-                </p>
-              </div>
-            </Badge>
-          </div>
-        );
-      })}
+      <TransactionFieldsList
+        fieldsList={fieldsList}
+        transactionItem={transactionItem}
+      />
       {transactionItem.status === FIO_REQUEST_STATUS_TYPES.PENDING &&
         type === TRANSACTION_ITEM_TYPES.RECEIVED && (
-          <TransactionActionButtons fioRequest={transactionItem} />
+          <TransactionActionButtons
+            fioRequest={transactionItem}
+            fioWallet={fioWallet}
+            onCloseModal={onCloseModal}
+          />
         )}
     </div>
   );
