@@ -1,17 +1,13 @@
 import React from 'react';
+import classnames from 'classnames';
+
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 
-import { PublicAddressDoublet } from '../../../types';
+import { TokenBadgeProps } from './types';
 
 import classes from './TokenBadge.module.scss';
 
-type Props = {
-  actionButton?: React.ReactNode;
-  input?: React.ReactNode;
-  showInput?: boolean;
-} & PublicAddressDoublet;
-
-const TokenBadgeDesktop: React.FC<Props> = props => {
+const TokenBadgeDesktop: React.FC<TokenBadgeProps> = props => {
   const {
     actionButton,
     chainCode,
@@ -19,6 +15,7 @@ const TokenBadgeDesktop: React.FC<Props> = props => {
     tokenCode,
     publicAddress,
     showInput,
+    isBold,
   } = props;
 
   return (
@@ -32,7 +29,14 @@ const TokenBadgeDesktop: React.FC<Props> = props => {
           {showInput ? (
             input
           ) : (
-            <p className={classes.publicAddressItem}>{publicAddress}</p>
+            <p
+              className={classnames(
+                classes.publicAddressItem,
+                isBold && classes.bold,
+              )}
+            >
+              {publicAddress}
+            </p>
           )}
         </div>
         {actionButton}

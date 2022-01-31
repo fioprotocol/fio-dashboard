@@ -30,6 +30,10 @@
 
   .publicAddressItem {
     word-break: break-all;
+
+    &.bold {
+      @include proxima-nova-bold;
+    }
   }
 }
 
@@ -87,10 +91,6 @@
       margin-top: 15px;
       .title {
         @include sf-pro-display-thin;
-      }
-      .publicAddressItem {
-        word-break: break-all;
-        @include proxima-nova-bold;
       }
     }
     &.containerOpen {

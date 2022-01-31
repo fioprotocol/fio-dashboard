@@ -1,17 +1,12 @@
 import React from 'react';
+
 import { useCheckIfDesktop } from '../../../screenType';
 import TokenBadgeDesktop from './TokenBadgeDesktop';
 import TokenBadgeMobile from './TokenBadgeMobile';
 
-import { PublicAddressDoublet } from '../../../types';
+import { TokenBadgeProps } from './types';
 
-type Props = {
-  actionButton?: React.ReactNode;
-  input?: React.ReactNode;
-  showInput?: boolean;
-} & PublicAddressDoublet;
-
-const TokenBadge: React.FC<Props> = props => {
+const TokenBadge: React.FC<TokenBadgeProps> = props => {
   const isDesktop = useCheckIfDesktop();
 
   return isDesktop ? (
