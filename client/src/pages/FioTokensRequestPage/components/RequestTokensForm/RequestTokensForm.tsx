@@ -2,7 +2,6 @@ import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 
 import { formValidation, submitValidation } from './validation';
-import { RequestTokensProps, RequestTokensValues } from '../../types';
 import Dropdown from '../../../../components/Input/Dropdown';
 import TextInput, {
   INPUT_UI_STYLES,
@@ -13,16 +12,16 @@ import SelectModalInput from '../../../../components/Input/SelectModalInput';
 import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import TokenDataFields from './TokenDataFields';
-
-import { FioAddressDoublet } from '../../../../types';
-import { FIO_CHAIN_CODE } from '../../../../constants/fio';
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
+import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
+
+import { CHAIN_CODE_LIST } from '../../../../constants/common';
+import { FIO_CHAIN_CODE, BUNDLES_TX_COUNT } from '../../../../constants/fio';
+
+import { RequestTokensProps, RequestTokensValues } from '../../types';
+import { FioAddressDoublet } from '../../../../types';
 
 import classes from '../../styles/RequestTokensForm.module.scss';
-import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
-import { CHAIN_CODE_LIST } from '../../../../constants/common';
-
-const NEW_FUND_REQUEST_BUNDLE_COST = 2;
 
 const RequestTokensForm: React.FC<RequestTokensProps> = props => {
   const { loading, fioWallet, fioAddresses, roe, contactsList, isFio } = props;
@@ -109,7 +108,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
 
         const notEnoughBundles =
           selectedAddress != null
-            ? selectedAddress.remaining < NEW_FUND_REQUEST_BUNDLE_COST
+            ? selectedAddress.remaining < BUNDLES_TX_COUNT.NEW_FIO_REQUEST
             : false;
 
         const noPayeeFioAddress =
@@ -194,7 +193,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               <>
                 <p className={classes.transactionTitle}>Transaction cost</p>
                 <BundledTransactionBadge
-                  bundles={NEW_FUND_REQUEST_BUNDLE_COST}
+                  bundles={BUNDLES_TX_COUNT.NEW_FIO_REQUEST}
                   remaining={selectedAddress.remaining}
                 />
               </>

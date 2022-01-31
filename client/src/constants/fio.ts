@@ -55,3 +55,15 @@ export const FIO_REQUEST_STATUS_TYPES: { [key: string]: string } = {
   PAID: 'paid',
   PENDING: 'pending',
 };
+
+export const BUNDLES_TX_COUNT = {
+  ADD_PUBLIC_ADDRESS: 1,
+  REMOVE_PUBLIC_ADDRESS: 1,
+  REMOVE_ALL_PUBLIC_ADDRESSES: 1,
+  NEW_FIO_REQUEST: 2,
+  CANCEL_FIO_REQUEST: 1,
+  REJECT_FIO_REQUEST: 1,
+  RECORD_OBT_DATA: 2,
+  ADD_NFT: 2,
+  REMOVE_NFT: 1,
+};
