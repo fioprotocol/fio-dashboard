@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import RejectFioRequestResults from '../../components/common/TransactionResults/components/RejectFioRequestResults';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
-import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import TransactionFieldsList from '../WalletPage/components/TransactionFieldsList';
 import BundledTransactionBadge from '../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import LowBalanceBadge from '../../components/Badges/LowBalanceBadge/LowBalanceBadge';
+import RejectRequestEdge from './components/RejectRequestEdge';
 
 import { putParamsToUrl } from '../../utils';
+import { useFioAddresses } from '../../util/hooks';
 
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import { WALLET_CREATED_FROM } from '../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../constants/fio';
 import { FIO_REQUEST_FIELDS_LIST } from '../WalletPage/constants';
 import { ROUTES } from '../../constants/routes';
@@ -20,11 +21,6 @@ import { TransactionItemProps } from '../WalletPage/types';
 import { FioNameItemProps, FioWalletDoublet } from '../../types';
 
 import classes from './RejectFioRequestPage.module.scss';
-
-const PROCESSING_PROPS = {
-  title: 'Rejecting FIO Request',
-  message: 'Hang tight while we are rejecting FIO request',
-};
 
 type Location = {
   location: {
@@ -48,17 +44,16 @@ const RejectFioRequestPage: React.FC<Props &
       state: { fioRequest, fioWallet },
     },
     fioAddresses,
-    getFioAddresses,
     history,
   } = props;
 
+  useFioAddresses();
+
   const fioCryptoHandle =
     fioAddresses &&
-    fioAddresses.find(
-      fioAddress => fioAddress.walletPublicKey === fioWallet.publicKey,
-    );
+    fioAddresses.find(fioAddress => fioAddress.name === fioRequest.to);
 
-  const { remaining } = fioCryptoHandle || {};
+  const { remaining = 0 } = fioCryptoHandle || {};
 
   const [resultsData, setResultsData] = useState<
     | ({
@@ -68,15 +63,11 @@ const RejectFioRequestPage: React.FC<Props &
     | null
   >(null);
   const [processing, setProcessing] = useState(false);
-  const [submitData, setSubmitData] = useState(null);
+  const [submitData, setSubmitData] = useState<TransactionItemProps | null>(
+    null,
+  );
 
   const hasLowBalance = remaining - BUNDLES_TX_COUNT.REJECT_FIO_REQUEST < 0;
-
-  useEffect(() => {
-    if (fioWallet && fioWallet.publicKey) {
-      getFioAddresses(fioWallet.publicKey);
-    }
-  }, []);
 
   const onBack = () => {
     history.push(
@@ -89,7 +80,7 @@ const RejectFioRequestPage: React.FC<Props &
   };
 
   const onClick = () => {
-    setSubmitData(true);
+    setSubmitData(fioRequest);
   };
 
   const onSuccess = () => {
@@ -103,17 +94,17 @@ const RejectFioRequestPage: React.FC<Props &
     setProcessing(false);
   };
 
-  const rejectRequest = () => {
-    // todo: set reject action
-  };
-
   const onCloseResults = () => {
     history.push(
       putParamsToUrl(ROUTES.FIO_WALLET, {
         publicKey: fioWallet.publicKey,
-        fioRequestTab: fioRequest.transactionType,
       }),
+      { fioRequestTab: fioRequest.transactionType },
     );
+  };
+
+  const onResultsRetry = () => {
+    setResultsData(null);
   };
 
   if (resultsData)
@@ -122,6 +113,8 @@ const RejectFioRequestPage: React.FC<Props &
         title={resultsData.error ? 'Rejection Failed!' : 'Rejection Details!'}
         onClose={onCloseResults}
         results={resultsData}
+        onRetry={onResultsRetry}
+        middleWidth={true}
       />
     );
 
@@ -160,17 +153,16 @@ const RejectFioRequestPage: React.FC<Props &
           />
         </div>
       </PseudoModalContainer>
-      <EdgeConfirmAction
-        onSuccess={onSuccess}
-        onCancel={onCancel}
-        submitAction={rejectRequest}
-        data={submitData}
-        action={CONFIRM_PIN_ACTIONS.REJECT_FIO_REQUEST}
-        processing={processing}
-        setProcessing={setProcessing}
-        fioWalletEdgeId={(fioWallet && fioWallet.edgeId) || ''}
-        processingProps={PROCESSING_PROPS}
-      />
+      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
+        <RejectRequestEdge
+          processing={processing}
+          setProcessing={setProcessing}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          submitData={submitData}
+          fioWallet={fioWallet}
+        />
+      ) : null}
     </>
   );
 };
