@@ -43,10 +43,13 @@ const TokenBadgeMobile: React.FC<TokenBadgeProps> = props => {
           onClick={onClick}
         >
           <div className={classes.visiblePart}>
-            <p className="boldText">{tokenCode}</p>
-            <p className={classes.subtitle}>
-              Chain Code: <span className="boldText">{chainCode}</span>
-            </p>
+            <div className={classes.textVisiblePart}>
+              <p className="boldText">{tokenCode}</p>
+              <p className={classes.subtitle}>
+                Chain Code: <span className="boldText">{chainCode}</span>
+              </p>
+            </div>
+
             {actionButton ? (
               actionButton
             ) : (
