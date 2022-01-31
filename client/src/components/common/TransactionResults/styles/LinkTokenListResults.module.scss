@@ -11,10 +11,10 @@
   }
 
   .subtitle {
-    margin-top: 20px;
+    margin-top: 30px;
     margin-bottom: -10px;
     font-size: 0.875em;
-    @include proxima-nova-bold;
+    @include proxima-nova-semibold;
   }
 }
 

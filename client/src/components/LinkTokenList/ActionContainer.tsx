@@ -72,6 +72,7 @@ const ActionContainer: React.FC<Props> = props => {
       <div className={classes.actionContainer}>
         <FioName name={name} />
         {children}
+        <h5 className={classes.subtitle}>Bundled Transaction Details</h5>
         <BundledTransactionBadge bundles={bundleCost} remaining={remaining} />
         <LowBalanceBadge
           onActionClick={onLowBalanceActionClick}
