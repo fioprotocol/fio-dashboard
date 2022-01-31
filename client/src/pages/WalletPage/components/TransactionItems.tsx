@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import InfoBadge from '../../../components/Badges/InfoBadge/InfoBadge';
 
@@ -32,6 +33,16 @@ type Props = {
 type DetailedItemProps = {
   transactionItem: TransactionItemProps;
   type: string;
+  fioWallet: FioWalletDoublet;
+  onCloseModal: () => void;
+};
+
+type Location = {
+  location: {
+    state: {
+      transactionItem: TransactionItemProps;
+    };
+  };
 };
 
 const FIO_REQUEST_DETAILED_COMPONENT = {
@@ -52,8 +63,17 @@ const FIO_REQUEST_DETAILED_COMPONENT = {
   ),
 };
 
-const TransactionItems: React.FC<Props> = props => {
-  const { transactionsList, type, loading, fioWallet } = props;
+const TransactionItems: React.FC<Props &
+  RouteComponentProps &
+  Location> = props => {
+  const {
+    transactionsList,
+    type,
+    loading,
+    fioWallet,
+    location: { state },
+  } = props;
+
   const [showModal, toggleModal] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<TransactionItemProps | null>(
@@ -63,6 +83,18 @@ const TransactionItems: React.FC<Props> = props => {
     transactionDetailsItem,
     setTxDetails,
   ] = useState<TransactionItemProps | null>(null);
+  const { transactionItem } = state || {};
+
+  useEffect(() => {
+    if (transactionItem && transactionItem.transactionType === type) {
+      setTxDetails(transactionItem);
+      toggleModal(true);
+    }
+  }, [JSON.stringify(transactionItem)]);
+
+  useEffect(() => {
+    return () => setTxDetails(null);
+  }, []);
 
   if (loading)
     return (
@@ -79,8 +111,8 @@ const TransactionItems: React.FC<Props> = props => {
       />
     );
 
-  const onClick = (transactionItem: TransactionItemProps) => {
-    setSubmitData(transactionItem);
+  const onClick = (txItem: TransactionItemProps) => {
+    setSubmitData(txItem);
   };
 
   const onCloseModal = () => {
@@ -102,11 +134,11 @@ const TransactionItems: React.FC<Props> = props => {
 
   return (
     <div className={classes.container}>
-      {transactionsList.map(transactionItem => (
+      {transactionsList.map(txItem => (
         <FioTransactionItem
-          transactionItem={transactionItem}
+          transactionItem={txItem}
           onClick={onClick}
-          key={transactionItem.id}
+          key={txItem.id}
         />
       ))}
       <TransactionDetailedModal
@@ -117,6 +149,8 @@ const TransactionItems: React.FC<Props> = props => {
         {FIO_REQUEST_DETAILED_COMPONENT[type]({
           transactionItem: transactionDetailsItem,
           type,
+          fioWallet,
+          onCloseModal,
         })}
       </TransactionDetailedModal>
       {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
@@ -133,4 +167,4 @@ const TransactionItems: React.FC<Props> = props => {
   );
 };
 
-export default TransactionItems;
+export default withRouter(TransactionItems);

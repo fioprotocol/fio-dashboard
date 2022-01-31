@@ -9,12 +9,16 @@ import { FIO_REQUEST_STATUS_TYPES } from '../../../constants/fio';
 
 import { TransactionItemProps, TransactionItemKeysProps } from '../types';
 
+import { FioWalletDoublet } from '../../../types';
+
 import classes from '../styles/TransactionDetailedModal.module.scss';
 
 type Props = {
   transactionItem: TransactionItemProps;
   requestFieldsList: TransactionItemKeysProps[];
   type: string;
+  fioWallet: FioWalletDoublet;
+  onCloseModal: () => void;
 };
 
 const DetailedTabsList = [
