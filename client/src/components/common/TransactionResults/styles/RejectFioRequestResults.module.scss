@@ -1,0 +1,12 @@
+@import '../../../../assets/styles/fontMixins.scss';
+
+.subtitle {
+  font-size: 0.875em;
+  margin-top: 30px;
+  margin-bottom: -10px;
+  @include proxima-nova-bold;
+}
+
+.bundleContainer {
+  margin-top: 10px;
+}
