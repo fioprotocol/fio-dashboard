@@ -1,0 +1,26 @@
+@import '../../assets/styles/fontMixins.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+
+  .subtitle, .bundleSubtitle {
+    font-size: 0.875em;
+    @include proxima-nova-bold;
+  }
+
+  .subtitle {
+    margin-top: 15px;
+    margin-bottom: 0;
+  }
+
+  .bundleSubtitle {
+    margin-top: 30px;
+    margin-bottom: -15px;
+  }
+
+  .fieldsList {
+    margin-top: -15px;
+    margin-bottom: 15px;
+  }
+}
