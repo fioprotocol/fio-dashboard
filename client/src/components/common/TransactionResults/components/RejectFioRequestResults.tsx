@@ -15,6 +15,8 @@ type Props = {
   title: string;
   onClose: () => void;
   results: { error?: string; remaining: number } & TransactionItemProps;
+  onRetry: () => void;
+  middleWidth: boolean;
 };
 
 const RejectFioRequestResults: React.FC<Props> = props => {
