@@ -8,6 +8,7 @@ import EdgeConfirmAction from '../EdgeConfirmAction';
 
 import { ROUTES } from '../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import { BUNDLES_TX_COUNT } from '../../constants/fio';
 
 import { putParamsToUrl } from '../../utils';
 
@@ -17,8 +18,6 @@ import { NFTTokenDoublet } from '../../types';
 import { ContainerProps, NftFormValues } from './types';
 import { ResultsData } from '../common/TransactionResults/types';
 import { SubmitActionParams } from '../EdgeConfirmAction/types';
-
-const BUNDLE_COST = 2;
 
 const SignNft: React.FC<ContainerProps> = props => {
   const {
@@ -159,7 +158,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     );
 
   const hasLowBalance =
-    fioAddress != null ? fioAddress.remaining < BUNDLE_COST : true;
+    fioAddress != null ? fioAddress.remaining < BUNDLES_TX_COUNT.ADD_NFT : true;
 
   const formProps = {
     onSubmit,
@@ -169,7 +168,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     selectedFioAddressName,
     fioAddresses,
     setSelectedFioAddress,
-    bundleCost: BUNDLE_COST,
+    bundleCost: BUNDLES_TX_COUNT.ADD_NFT,
     hasLowBalance,
     processing,
     fioAddress,

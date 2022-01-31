@@ -11,7 +11,10 @@ import { genericTokenId } from '../../util/fio';
 import { minWaitTimeFunction } from '../../utils';
 
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
-import { TOKEN_LINK_MIN_WAIT_TIME } from '../../constants/fio';
+import {
+  TOKEN_LINK_MIN_WAIT_TIME,
+  BUNDLES_TX_COUNT,
+} from '../../constants/fio';
 
 import { CheckedTokenType } from './types';
 import {
@@ -68,7 +71,9 @@ const DeleteTokenPage: React.FC<Props> = props => {
   }, []);
 
   useEffect(() => {
-    hasChecked ? changeBundleCost(1) : changeBundleCost(0);
+    hasChecked
+      ? changeBundleCost(BUNDLES_TX_COUNT.REMOVE_PUBLIC_ADDRESS)
+      : changeBundleCost(0);
   }, [hasChecked]);
 
   useEffect(() => {
