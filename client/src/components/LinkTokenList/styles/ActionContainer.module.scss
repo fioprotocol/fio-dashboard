@@ -1,4 +1,13 @@
+@import '../../../assets/styles/fontMixins.scss';
+
 .actionContainer {
   display: flex;
   flex-direction: column;
+
+  .subtitle {
+    font-size: 0.875em;
+    margin-top: 30px;
+    margin-bottom: -15px;
+    @include proxima-nova-semibold;
+  }
 }
