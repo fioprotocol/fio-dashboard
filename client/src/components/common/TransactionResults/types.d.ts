@@ -24,6 +24,7 @@ export type ResultsProps = {
   titleAmount?: string;
   hasAutoWidth?: boolean;
   fullWidth?: boolean;
+  middleWidth?: boolean;
   bottomElement?: React.ReactNode;
   pageName?: string;
   errorType?: string;
