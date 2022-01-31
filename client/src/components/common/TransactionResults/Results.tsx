@@ -23,6 +23,7 @@ const Results: React.FC<ResultsContainerProps> = props => {
     title,
     hasAutoWidth,
     fullWidth,
+    middleWidth,
     bottomElement,
     errorType,
     onClose,
@@ -74,6 +75,7 @@ const Results: React.FC<ResultsContainerProps> = props => {
       onClose={onClose}
       hasAutoWidth={hasAutoWidth}
       fullWidth={fullWidth}
+      middleWidth={middleWidth}
     >
       <div className={classes.container}>
         {errorBadge()}
