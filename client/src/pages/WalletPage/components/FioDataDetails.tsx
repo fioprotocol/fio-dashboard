@@ -6,11 +6,15 @@ import { FIO_REQUEST_FIELDS_LIST } from '../constants';
 
 import { TransactionItemProps } from '../types';
 
+import { FioWalletDoublet } from '../../../types';
+
 import classes from '../styles/TransactionDetailedModal.module.scss';
 
 type Props = {
   transactionItem: TransactionItemProps;
   type: string;
+  fioWallet: FioWalletDoublet;
+  onCloseModal: () => void;
 };
 
 const FioDataDetails: React.FC<Props> = props => {
