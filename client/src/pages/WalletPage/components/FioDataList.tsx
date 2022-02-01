@@ -139,11 +139,13 @@ const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
     );
   };
 
+  const hasNextPage = visibleTransactionsCount < fioDataList.length;
+
   return (
     <div className={classes.container}>
       <InfiniteScroll
         loading={loading}
-        hasNextPage={visibleTransactionsCount < fioDataList.length}
+        hasNextPage={hasNextPage}
         isContentScrollable={
           fioDataList.length > MIN_VISIBLE_TRANSACTIONS_COUNT
         }
@@ -152,9 +154,7 @@ const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
         {fioDataList
           .slice(
             0,
-            visibleTransactionsCount > fioDataList.length
-              ? fioDataList.length
-              : visibleTransactionsCount,
+            !hasNextPage ? fioDataList.length : visibleTransactionsCount,
           )
           .map(trxItem => (
             <FioDataItem
