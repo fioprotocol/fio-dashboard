@@ -7,7 +7,11 @@ import {
   refreshBalance,
 } from '../redux/fio/actions';
 
-import { fioWallets, mappedPublicAddresses } from '../redux/fio/selectors';
+import {
+  fioWallets,
+  mappedPublicAddresses,
+  fioAddresses,
+} from '../redux/fio/selectors';
 import {
   isAuthenticated,
   isNewUser as isNewUserSelector,
@@ -20,21 +24,53 @@ import apis from '../api';
 
 import { ROUTES } from '../constants/routes';
 
-import { FioNameItemProps, FioWalletDoublet } from '../types';
+import {
+  FioNameItemProps,
+  FioWalletDoublet,
+  FioAddressDoublet,
+} from '../types';
 import { getElementByFioName } from '../utils';
 import { emptyWallet } from '../redux/fio/reducer';
 
-export function useFioAddresses(limit = 0, offset = 0) {
+export function useFioAddresses(
+  publicKey?: string,
+  limit = 0,
+  offset = 0,
+): FioAddressDoublet[] {
   const dispatch = useDispatch();
-  const wallets = useSelector(fioWallets);
   const isAuth = useSelector(isAuthenticated);
+  const wallets: FioWalletDoublet[] = useSelector(fioWallets);
+  const fioCryptoHandles: FioAddressDoublet[] = useSelector(fioAddresses);
+
+  const getFioCryptoHandles = (
+    walletPublicKey: string,
+    limitValue: number,
+    offsetValue: number,
+  ) => {
+    dispatch(getFioAddresses(walletPublicKey, limitValue, offsetValue));
+  };
+
   useEffect(() => {
-    if (wallets.length > 0 && isAuth) {
-      wallets.map((wallet: FioWalletDoublet) =>
-        dispatch(getFioAddresses(wallet.publicKey, limit, offset)),
+    if (publicKey && isAuth) {
+      getFioCryptoHandles(publicKey, limit, offset);
+    }
+  }, [publicKey, isAuth]);
+
+  useEffect(() => {
+    if (wallets.length > 0 && isAuth && !publicKey) {
+      wallets.map(wallet =>
+        getFioCryptoHandles(wallet.publicKey, limit, offset),
       );
     }
-  }, [wallets.length]);
+  }, [wallets.length, isAuth, publicKey]);
+
+  const retFioCryptoHandles = publicKey
+    ? fioCryptoHandles.filter(
+        fioCryptoHandle => fioCryptoHandle.walletPublicKey === publicKey,
+      )
+    : fioCryptoHandles;
+
+  return retFioCryptoHandles;
 }
 
 export function useFioWallet(fioNameList: FioNameItemProps[], name: string) {

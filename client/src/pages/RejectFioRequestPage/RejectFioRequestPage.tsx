@@ -18,7 +18,7 @@ import { FIO_REQUEST_FIELDS_LIST } from '../WalletPage/constants';
 import { ROUTES } from '../../constants/routes';
 
 import { TransactionItemProps } from '../WalletPage/types';
-import { FioNameItemProps, FioWalletDoublet } from '../../types';
+import { FioWalletDoublet } from '../../types';
 
 import classes from './RejectFioRequestPage.module.scss';
 
@@ -33,7 +33,6 @@ type Location = {
 
 type Props = {
   getFioAddresses: (publicKey: string) => void;
-  fioAddresses: FioNameItemProps[];
 };
 
 const RejectFioRequestPage: React.FC<Props &
@@ -43,15 +42,16 @@ const RejectFioRequestPage: React.FC<Props &
     location: {
       state: { fioRequest, fioWallet },
     },
-    fioAddresses,
     history,
   } = props;
 
-  useFioAddresses();
+  const walletFioCryptoHandles = useFioAddresses(fioWallet.publicKey);
 
   const fioCryptoHandle =
-    fioAddresses &&
-    fioAddresses.find(fioAddress => fioAddress.name === fioRequest.to);
+    walletFioCryptoHandles &&
+    walletFioCryptoHandles.find(
+      walletFioCryptoHandle => walletFioCryptoHandle.name === fioRequest.to,
+    );
 
   const { remaining = 0 } = fioCryptoHandle || {};
 

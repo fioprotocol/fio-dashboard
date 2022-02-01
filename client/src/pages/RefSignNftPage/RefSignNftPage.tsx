@@ -6,12 +6,7 @@ import FioLoader from '../../components/common/FioLoader/FioLoader';
 
 import { useFioAddresses } from '../../util/hooks';
 
-import {
-  FioAddressDoublet,
-  FioWalletDoublet,
-  RefProfile,
-  SignNFTParams,
-} from '../../types';
+import { FioWalletDoublet, RefProfile, SignNFTParams } from '../../types';
 
 type MatchParams = {
   refProfileCode: string;
@@ -23,21 +18,15 @@ type Props = {
   edgeAuthLoading: boolean;
   refProfileInfo: RefProfile;
   refProfileQueryParams: SignNFTParams;
-  fioAddresses: FioAddressDoublet[];
   fioWallets: FioWalletDoublet[];
   homePageLink: string;
 };
 
 export const RefSignNftPage: React.FC<Props &
   RouteComponentProps<MatchParams>> = props => {
-  const {
-    refProfileQueryParams,
-    isAuthenticated,
-    fioAddresses,
-    homePageLink,
-  } = props;
+  const { refProfileQueryParams, isAuthenticated, homePageLink } = props;
 
-  useFioAddresses();
+  const fioAddresses = useFioAddresses();
 
   if (!isAuthenticated || !fioAddresses.length) {
     return (
