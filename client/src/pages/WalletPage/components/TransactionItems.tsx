@@ -19,13 +19,15 @@ import {
 import { WALLET_CREATED_FROM } from '../../../constants/common';
 
 import { TransactionItemProps } from '../types';
-import { FioWalletDoublet } from '../../../types';
+import { FioRequestData, FioWalletDoublet } from '../../../types';
 
 import classes from '../styles/TransactionItems.module.scss';
+import InfiniteScroll from '../../../components/InfiniteScroll/InfiniteScroll';
 
 type Props = {
-  transactionsList: TransactionItemProps[];
+  transactionsList: FioRequestData[];
   type: string;
+  transactionType: string;
   loading: boolean;
   fioWallet: FioWalletDoublet;
 };
@@ -63,6 +65,8 @@ const FIO_REQUEST_DETAILED_COMPONENT = {
   ),
 };
 
+const MIN_VISIBLE_TRANSACTIONS_COUNT = 20;
+
 const TransactionItems: React.FC<Props &
   RouteComponentProps &
   Location> = props => {
@@ -71,14 +75,16 @@ const TransactionItems: React.FC<Props &
     type,
     loading,
     fioWallet,
+    transactionType,
     location: { state },
   } = props;
 
   const [showModal, toggleModal] = useState(false);
-  const [processing, setProcessing] = useState(false);
-  const [submitData, setSubmitData] = useState<TransactionItemProps | null>(
-    null,
+  const [visibleTransactionsCount, setVisibleTransactionsCount] = useState(
+    MIN_VISIBLE_TRANSACTIONS_COUNT,
   );
+  const [processing, setProcessing] = useState(false);
+  const [submitData, setSubmitData] = useState<FioRequestData | null>(null);
   const [
     transactionDetailsItem,
     setTxDetails,
@@ -103,7 +109,7 @@ const TransactionItems: React.FC<Props &
       </div>
     );
 
-  if (transactionsList.length === 0 && !loading)
+  if ((!transactionsList || transactionsList.length === 0) && !loading)
     return (
       <InfoBadge
         title={`No ${INFO_BADGE_CONTENT[type].title} Transactions`}
@@ -111,7 +117,7 @@ const TransactionItems: React.FC<Props &
       />
     );
 
-  const onClick = (txItem: TransactionItemProps) => {
+  const onClick = (txItem: FioRequestData) => {
     setSubmitData(txItem);
   };
 
@@ -132,15 +138,38 @@ const TransactionItems: React.FC<Props &
     setProcessing(false);
   };
 
+  const loadMore = () => {
+    setVisibleTransactionsCount(
+      visibleTransactionsCount + MIN_VISIBLE_TRANSACTIONS_COUNT,
+    );
+  };
+
   return (
     <div className={classes.container}>
-      {transactionsList.map(txItem => (
-        <FioTransactionItem
-          transactionItem={txItem}
-          onClick={onClick}
-          key={txItem.id}
-        />
-      ))}
+      <InfiniteScroll
+        loading={loading}
+        hasNextPage={visibleTransactionsCount < transactionsList.length}
+        isContentScrollable={
+          transactionsList.length > MIN_VISIBLE_TRANSACTIONS_COUNT
+        }
+        onLoadMore={loadMore}
+      >
+        {transactionsList
+          .slice(
+            0,
+            visibleTransactionsCount > transactionsList.length
+              ? transactionsList.length
+              : visibleTransactionsCount,
+          )
+          .map(trxItem => (
+            <FioTransactionItem
+              transactionItem={trxItem}
+              transactionType={transactionType}
+              onClick={onClick}
+              key={trxItem.fioRequestId}
+            />
+          ))}
+      </InfiniteScroll>
       <TransactionDetailedModal
         show={showModal}
         onClose={onCloseModal}

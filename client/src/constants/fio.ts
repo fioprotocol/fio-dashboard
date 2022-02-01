@@ -56,10 +56,10 @@ export const FIO_REQUEST_STATUS_TYPES: { [key: string]: string } = {
   PENDING: 'requested',
 };
 
-export const FIO_REQUEST_STATUS_TITLE: { [key: string]: string } = {
-  rejected: 'REJECTED',
-  sent_to_blockchain: 'PAID',
-  requested: 'PENDING',
+export const FIO_REQUEST_STATUS_TYPES_TITLES: { [key: string]: string } = {
+  [FIO_REQUEST_STATUS_TYPES.REJECTED]: 'REJECTED',
+  [FIO_REQUEST_STATUS_TYPES.PAID]: 'PAID',
+  [FIO_REQUEST_STATUS_TYPES.PENDING]: 'PENDING',
 };
 
 export const BUNDLES_TX_COUNT = {

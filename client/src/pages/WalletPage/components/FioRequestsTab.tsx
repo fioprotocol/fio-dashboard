@@ -7,12 +7,13 @@ import TransactionItems from './TransactionItems';
 
 import { TRANSACTION_ITEM_TYPES } from '../constants';
 
-import { FioWalletDoublet } from '../../../types';
+import { FioWalletData, FioWalletDoublet } from '../../../types';
 
 import classes from '../styles/FioRequestsTab.module.scss';
 
 type Props = {
   fioWallet: FioWalletDoublet;
+  walletData: FioWalletData;
 };
 
 type Location = {
@@ -29,7 +30,8 @@ const FIO_REQUEST_TABS = [
     title: 'Sent',
     renderTab: (props: Props) => (
       <TransactionItems
-        transactionsList={mockedData}
+        transactionsList={props.walletData.sentFioRequests}
+        transactionType="sent"
         type={TRANSACTION_ITEM_TYPES.SENT}
         loading={false}
         {...props}
@@ -41,48 +43,13 @@ const FIO_REQUEST_TABS = [
     title: 'Received',
     renderTab: (props: Props) => (
       <TransactionItems
-        transactionsList={mockedData}
+        transactionsList={props.walletData.receivedFioRequests}
+        transactionType="received"
         type={TRANSACTION_ITEM_TYPES.RECEIVED}
         loading={false}
         {...props}
       />
     ),
-  },
-];
-
-const mockedData = [
-  {
-    from: 'test@test.com',
-    to: 'test@fest.com',
-    date: '2022-01-19T18:20:56',
-    id: 'test1',
-    status: 'rejected',
-    transactionType: 'sent',
-    payer: 'purse@alice',
-    requestor: 'test@fest.com',
-    type: 'payment',
-  },
-  {
-    from: 'test@test.com',
-    to: 'test@fest.com',
-    date: '2022-01-19T18:20:56',
-    id: 'test',
-    status: 'paid',
-    transactionType: 'received',
-    payer: 'purse@alice',
-    requestor: 'test@fest.com',
-    type: 'payment',
-  },
-  {
-    from: 'test@test.com',
-    to: 'test@fest.com',
-    date: '2022-01-19T18:20:56',
-    id: 'test22',
-    status: 'pending',
-    transactionType: 'received',
-    payer: 'purse@alice',
-    requestor: 'test@fest.com',
-    type: 'payment',
   },
 ];
 

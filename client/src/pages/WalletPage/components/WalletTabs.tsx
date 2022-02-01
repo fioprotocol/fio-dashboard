@@ -6,10 +6,11 @@ import FioRequestsTab from './FioRequestsTab';
 import FioDataTab from './FioDataTab';
 import TransactionList from './TransactionList';
 
-import { FioWalletDoublet } from '../../../types';
+import { FioWalletData, FioWalletDoublet } from '../../../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
+  walletData: FioWalletData;
 };
 
 const WALLET_TABS_LIST = [
