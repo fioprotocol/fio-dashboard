@@ -2,20 +2,20 @@ import React from 'react';
 
 import TabsContainer from '../../../components/Tabs/TabsContainer';
 import Tabs from '../../../components/Tabs/Tabs';
-import TransactionDetailedItem from './TransactionDetailedItem';
+import FioDataDetailedItem from './FioDataDetailedItem';
 
 import { FIO_REQUEST_FIELDS_LIST } from '../constants';
 import { FIO_REQUEST_STATUS_TYPES } from '../../../constants/fio';
 
-import { TransactionItemProps, TransactionItemKeysProps } from '../types';
+import { FioDataItemProps, FioDataItemKeysProps } from '../types';
 
 import { FioWalletDoublet } from '../../../types';
 
-import classes from '../styles/TransactionDetailedModal.module.scss';
+import classes from '../styles/FioDataDetailedModal.module.scss';
 
 type Props = {
-  transactionItem: TransactionItemProps;
-  requestFieldsList: TransactionItemKeysProps[];
+  fioDataItem: FioDataItemProps;
+  requestFieldsList: FioDataItemKeysProps[];
   type: string;
   fioWallet: FioWalletDoublet;
   onCloseModal: () => void;
@@ -27,10 +27,7 @@ const DetailedTabsList = [
     title: 'Request Information',
     renderTab: (props: Props) => (
       <>
-        <TransactionDetailedItem
-          {...props}
-          fieldsList={props.requestFieldsList}
-        />
+        <FioDataDetailedItem {...props} fieldsList={props.requestFieldsList} />
       </>
     ),
   },
@@ -38,7 +35,7 @@ const DetailedTabsList = [
     eventKey: 'Payment information',
     title: 'Payment information',
     renderTab: (props: Props) => (
-      <TransactionDetailedItem
+      <FioDataDetailedItem
         {...props}
         fieldsList={FIO_REQUEST_FIELDS_LIST.PAYMENT_LIST}
       />
@@ -46,18 +43,15 @@ const DetailedTabsList = [
   },
 ];
 
-const TransactionDetailedTabs: React.FC<Props> = props => {
-  const { transactionItem } = props;
-  if (!transactionItem) return null;
+const FioDataDetailedTabs: React.FC<Props> = props => {
+  const { fioDataItem } = props;
+  if (!fioDataItem) return null;
 
-  if (transactionItem.status !== FIO_REQUEST_STATUS_TYPES.PAID)
+  if (fioDataItem.status !== FIO_REQUEST_STATUS_TYPES.PAID)
     return (
       <>
         <h5 className={classes.subtitle}>{DetailedTabsList[0].title}</h5>
-        <TransactionDetailedItem
-          {...props}
-          fieldsList={props.requestFieldsList}
-        />
+        <FioDataDetailedItem {...props} fieldsList={props.requestFieldsList} />
       </>
     );
 
@@ -74,4 +68,4 @@ const TransactionDetailedTabs: React.FC<Props> = props => {
   );
 };
 
-export default TransactionDetailedTabs;
+export default FioDataDetailedTabs;

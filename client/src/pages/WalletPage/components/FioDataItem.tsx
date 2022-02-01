@@ -10,13 +10,14 @@ import { commonFormatTime } from '../../../util/general';
 
 import { CONTENT_TYPE } from '../constants';
 
-import classes from '../styles/TransactionItems.module.scss';
 import { FioRequestData } from '../../../types';
 
+import classes from '../styles/FioDataItem.module.scss';
+
 type Props = {
-  transactionType: string;
-  transactionItem: FioRequestData;
-  onClick: (transactionItem: FioRequestData) => void;
+  fioDataItem: FioRequestData;
+  type: string;
+  onClick: (fioDataItem: FioRequestData) => void;
 };
 
 const renderSenderInfo = ({
@@ -33,43 +34,43 @@ const renderSenderInfo = ({
   );
 };
 
-const FioTransactionItem: React.FC<Props> = props => {
-  const { transactionItem, transactionType, onClick } = props;
+const FioDataItem: React.FC<Props> = props => {
+  const { fioDataItem, type, onClick } = props;
 
   const {
     timeStamp: date,
     payeeFioAddress: from,
     payerFioAddress: to,
     status,
-  } = transactionItem;
+  } = fioDataItem;
 
   const senderInfo = {
-    title: CONTENT_TYPE[transactionType].from
-      ? CONTENT_TYPE[transactionType].from
-      : CONTENT_TYPE[transactionType].to,
-    senderAddress: CONTENT_TYPE[transactionType].from ? from : to,
+    title: CONTENT_TYPE[type].from
+      ? CONTENT_TYPE[type].from
+      : CONTENT_TYPE[type].to,
+    senderAddress: CONTENT_TYPE[type].from ? from : to,
   };
 
   return (
     <div
       className={classes.badgeContainer}
-      onClick={() => onClick(transactionItem)}
+      onClick={() => onClick(fioDataItem)}
     >
       <Badge type={BADGE_TYPES.BORDERED} show={true}>
         <div className={classes.badgeItem}>
-          <div className={classes.transactionTypeContainer}>
+          <div className={classes.fioDataTypeContainer}>
             <CommonBadge
-              isBlue={CONTENT_TYPE[transactionType].isBlue}
-              isGreen={CONTENT_TYPE[transactionType].isGreen}
+              isBlue={CONTENT_TYPE[type].isBlue}
+              isGreen={CONTENT_TYPE[type].isGreen}
             >
               <div className={classes.iconContainer}>
                 <FontAwesomeIcon
-                  icon={CONTENT_TYPE[transactionType].icon}
+                  icon={CONTENT_TYPE[type].icon}
                   className={classes.icon}
                 />
               </div>
             </CommonBadge>
-            <p className={classes.transactionType}>{transactionType}</p>
+            <p className={classes.type}>{type}</p>
           </div>
           <div className={classes.date}>{commonFormatTime(date)}</div>
           {renderSenderInfo(senderInfo)}
@@ -85,4 +86,4 @@ const FioTransactionItem: React.FC<Props> = props => {
   );
 };
 
-export default FioTransactionItem;
+export default FioDataItem;

@@ -3,7 +3,7 @@ import React from 'react';
 import TabsContainer from '../../../components/Tabs/TabsContainer';
 import Tabs from '../../../components/Tabs/Tabs';
 import FioRequestsTab from './FioRequestsTab';
-import FioDataTab from './FioDataTab';
+import FioObtDataTab from './FioObtDataTab';
 import TransactionList from './TransactionList';
 
 import { FioWalletData, FioWalletDoublet } from '../../../types';
@@ -22,11 +22,11 @@ const WALLET_TABS_LIST = [
   {
     eventKey: 'fioData',
     title: 'Fio Data',
-    renderTab: (props: Props) => <FioDataTab {...props} />,
+    renderTab: (props: Props) => <FioObtDataTab {...props} />,
   },
   {
-    eventKey: 'fioTransactions',
-    title: 'Fio Transactions',
+    eventKey: 'transactions',
+    title: 'Transactions',
     renderTab: (props: Props) => <TransactionList {...props} />,
   },
 ];

@@ -3,9 +3,9 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import TabsContainer from '../../../components/Tabs/TabsContainer';
 import Tabs from '../../../components/Tabs/Tabs';
-import TransactionItems from './TransactionItems';
+import FioDataList from './FioDataList';
 
-import { TRANSACTION_ITEM_TYPES } from '../constants';
+import { FIO_DATA_TX_ITEM_TYPES } from '../constants';
 
 import { FioWalletData, FioWalletDoublet } from '../../../types';
 
@@ -26,26 +26,24 @@ type Location = {
 
 const FIO_REQUEST_TABS = [
   {
-    eventKey: TRANSACTION_ITEM_TYPES.SENT,
+    eventKey: FIO_DATA_TX_ITEM_TYPES.SENT,
     title: 'Sent',
     renderTab: (props: Props) => (
-      <TransactionItems
-        transactionsList={props.walletData.sentFioRequests}
-        transactionType="sent"
-        type={TRANSACTION_ITEM_TYPES.SENT}
+      <FioDataList
+        fioDataList={props.walletData.sentFioRequests}
+        type={FIO_DATA_TX_ITEM_TYPES.SENT}
         loading={false}
         {...props}
       />
     ),
   },
   {
-    eventKey: TRANSACTION_ITEM_TYPES.RECEIVED,
+    eventKey: FIO_DATA_TX_ITEM_TYPES.RECEIVED,
     title: 'Received',
     renderTab: (props: Props) => (
-      <TransactionItems
-        transactionsList={props.walletData.receivedFioRequests}
-        transactionType="received"
-        type={TRANSACTION_ITEM_TYPES.RECEIVED}
+      <FioDataList
+        fioDataList={props.walletData.receivedFioRequests}
+        type={FIO_DATA_TX_ITEM_TYPES.RECEIVED}
         loading={false}
         {...props}
       />

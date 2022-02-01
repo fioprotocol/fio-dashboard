@@ -34,7 +34,7 @@ export type PasswordFormValues = {
   username: string;
 };
 
-export type TransactionContentProps = {
+export type FioDataItemContentProps = {
   payeePublicAddress: string;
   amount: string;
   chain: string;
@@ -42,20 +42,19 @@ export type TransactionContentProps = {
   txId?: string;
 };
 
-export type TransactionItemProps = {
+export type FioDataItemProps = {
   from: string;
   to: string;
   date: string;
   status?: string;
   id: string;
-  transactionType: string;
   payer: string;
   requestor: string;
   type: string;
-  content?: TransactionContentProps;
+  content?: FioDataItemContentProps;
 };
 
-export type TransactionItemKeysProps =
+export type FioDataItemKeysProps =
   | 'amount'
   | 'chain'
   | 'date'

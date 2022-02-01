@@ -3,9 +3,9 @@
 
 .container {
   margin-top: 20px;
-  max-height: 60vh;
 
   &.scrollable {
+    max-height: 60vh;
     overflow-y: auto;
   }
 
@@ -26,6 +26,8 @@
 
 @include lg {
   .container {
-    max-height: 500px;
+    &.scrollable {
+      max-height: 500px;
+    }
   }
 }

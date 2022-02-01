@@ -7,21 +7,22 @@ import CancelButton from '../../../components/common/CancelButton/CancelButton';
 import { CHAIN_CODES } from '../../../constants/common';
 import { ROUTES } from '../../../constants/routes';
 
-import { TransactionItemProps } from '../types';
+import { FioDataItemProps } from '../types';
 
 import { FioWalletDoublet } from '../../../types';
 
-import classes from '../styles/TransactionActionButtons.module.scss';
+import classes from '../styles/FioDataDetailedActionButtons.module.scss';
 
 type Props = {
-  fioRequest: TransactionItemProps;
+  fioRequest: FioDataItemProps;
   fioWallet: FioWalletDoublet;
+  type: string;
   onCloseModal: () => void;
 };
 
-const TransactionActionButtons: React.FC<Props &
+const FioDataDetailedActionButtons: React.FC<Props &
   RouteComponentProps> = props => {
-  const { history, fioRequest, fioWallet, onCloseModal } = props;
+  const { history, fioRequest, fioWallet, type, onCloseModal } = props;
 
   const isFioChain = fioRequest.content.chain === CHAIN_CODES.FIO;
 
@@ -32,6 +33,7 @@ const TransactionActionButtons: React.FC<Props &
     history.push(ROUTES.REJECT_FIO_REQUEST, {
       fioRequest,
       fioWallet,
+      type,
     });
   };
 
@@ -54,4 +56,4 @@ const TransactionActionButtons: React.FC<Props &
   );
 };
 
-export default withRouter(TransactionActionButtons);
+export default withRouter(FioDataDetailedActionButtons);
