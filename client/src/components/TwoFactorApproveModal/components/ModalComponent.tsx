@@ -64,20 +64,23 @@ const ModalComponent: React.FC<Props> = props => {
           const currentLoading = loading[voucherId];
 
           return (
-            <div key={device.created} className={classes.devicesContainer}>
+            <div
+              key={device.created.getTime()}
+              className={classes.devicesContainer}
+            >
               <div className={classes.infoContainer}>
                 <InfoItem title="Device" value={deviceDescription} />
                 <InfoItem title="Location" value={ipDescription} />
                 <InfoItem
                   title="Request on"
-                  value={commonFormatTime(created)}
+                  value={commonFormatTime(new Date(created).toJSON())}
                 />
 
                 <h5 className={classes.denied}>
                   Unless denied, access will be granted on
                 </h5>
                 <p className={classes.deniedValue}>
-                  {commonFormatTime(activates)}
+                  {commonFormatTime(new Date(activates).toJSON())}
                 </p>
                 <div className={classes.actionButton}>
                   <SubmitButton
