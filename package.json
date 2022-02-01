@@ -98,7 +98,7 @@
     "dotenv": "4.0.0",
     "dotenv-expand": "4.2.0",
     "dotenv-safe": "^4.0.4",
-    "edge-core-js": "0.17.23",
+    "edge-core-js": "^0.18.14",
     "edge-currency-accountbased": "0.7.47",
     "email-validator": "2.0.4",
     "express": "^4.16.2",
