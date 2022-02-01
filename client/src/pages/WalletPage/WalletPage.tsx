@@ -23,7 +23,7 @@ import { ContainerProps } from './types';
 import classes from './styles/WalletPage.module.scss';
 
 const WalletPage: React.FC<ContainerProps> = props => {
-  const { fioWallet, balance, refreshBalance } = props;
+  const { fioWallet, balance, refreshBalance, fioWalletsData } = props;
 
   const [showDetails, setShowDetails] = useState(false);
   const [showWalletNameEdit, setShowWalletNameEdit] = useState(false);
@@ -120,7 +120,10 @@ const WalletPage: React.FC<ContainerProps> = props => {
         <p className={classes.text}>
           View your transactions by type as well as sent or received.
         </p>
-        <WalletTabs fioWallet={fioWallet} />
+        <WalletTabs
+          fioWallet={fioWallet}
+          walletData={fioWalletsData[fioWallet.publicKey]}
+        />
       </LayoutContainer>
       <div className={classes.actionBadges}>
         <TotalBalanceBadge {...balance} />

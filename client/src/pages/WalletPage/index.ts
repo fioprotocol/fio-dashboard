@@ -17,6 +17,8 @@ import { emptyWallet } from '../../redux/fio/reducer';
 import { DEFAULT_BALANCES } from '../../util/prices';
 
 import { ContainerOwnProps } from './types';
+import { fioWalletsData as fioWalletsDataSelector } from '../../redux/fioWalletsData/selectors';
+import { user as userSelector } from '../../redux/profile/selectors';
 
 const reduxConnect = connect(
   createStructuredSelector({
@@ -30,6 +32,12 @@ const reduxConnect = connect(
       );
     },
     loading,
+    fioWalletsData: (state: ReduxState, ownProps: ContainerOwnProps | {}) => {
+      const fioWalletsData = fioWalletsDataSelector(state);
+      const user = userSelector(state);
+
+      return user?.id ? fioWalletsData[user.id] : null;
+    },
     balance: (state: ReduxState, ownProps: ContainerOwnProps | {}) => {
       const fioWallets = fioWalletsSelector(state);
       const fioWalletsBalances = fioWalletsBalancesSelector(state);

@@ -10,13 +10,13 @@ import { commonFormatTime } from '../../../util/general';
 
 import { CONTENT_TYPE } from '../constants';
 
-import { TransactionItemProps } from '../types';
-
 import classes from '../styles/TransactionItems.module.scss';
+import { FioRequestData } from '../../../types';
 
 type Props = {
-  transactionItem: TransactionItemProps;
-  onClick: (transactionItem: TransactionItemProps) => void;
+  transactionType: string;
+  transactionItem: FioRequestData;
+  onClick: (transactionItem: FioRequestData) => void;
 };
 
 const renderSenderInfo = ({
@@ -34,9 +34,14 @@ const renderSenderInfo = ({
 };
 
 const FioTransactionItem: React.FC<Props> = props => {
-  const { transactionItem, onClick } = props;
+  const { transactionItem, transactionType, onClick } = props;
 
-  const { date, from, to, transactionType, status } = transactionItem;
+  const {
+    timeStamp: date,
+    payeeFioAddress: from,
+    payerFioAddress: to,
+    status,
+  } = transactionItem;
 
   const senderInfo = {
     title: CONTENT_TYPE[transactionType].from

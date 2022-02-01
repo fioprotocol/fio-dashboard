@@ -1,5 +1,5 @@
 import { RouteComponentProps } from 'react-router-dom';
-import { FioWalletDoublet, WalletBalances } from '../../types';
+import { FioWalletData, FioWalletDoublet, WalletBalances } from '../../types';
 
 type MatchProps = {
   publicKey: string;
@@ -14,6 +14,9 @@ export interface ContainerProps extends ContainerOwnProps {
   loading: boolean;
   refreshBalance: (publicKey: string) => void;
   balance: WalletBalances;
+  fioWalletsData: {
+    [publicKey: string]: FioWalletData;
+  };
 }
 
 export type EditWalletNameValues = {

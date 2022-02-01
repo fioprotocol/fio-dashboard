@@ -1,5 +1,6 @@
 import { EdgeAccount } from 'edge-core-js';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
+import { FIOSDK_LIB } from './api/fio';
 
 export type Domain = { domain: string; free?: boolean };
 
@@ -82,6 +83,7 @@ export type FioWalletDoublet = {
   balance?: number | null;
   available?: number | null;
   locked?: number | null;
+  publicWalletFioSdk?: FIOSDK_LIB | null;
   from: string;
 };
 
@@ -297,7 +299,7 @@ export type MappedPublicAddresses = {
   [fioAddress: string]: { publicAddresses: PublicAddressDoublet[]; more: boolean };
 }
 
-export type CamelCasedFioRequestData = {
+export type FioRequestData = {
   content: string;
   fioRequestId: number;
   payeeFioAddress: string;
@@ -308,7 +310,7 @@ export type CamelCasedFioRequestData = {
   timeStamp: string;
 }
 
-export type FioRequestData = {
+export type ResponseFioRequestData = {
   content: string;
   fio_request_id: number;
   payee_fio_address: string;
@@ -321,9 +323,9 @@ export type FioRequestData = {
 
 export type FioWalletData = {
   id: string;
-  receivedFioRequests: CamelCasedFioRequestData[];
-  sentFioRequests: CamelCasedFioRequestData[];
-  obtData: CamelCasedFioRequestData[];
+  receivedFioRequests: FioRequestData[];
+  sentFioRequests: FioRequestData[];
+  obtData: FioRequestData[];
 }
 
 export type UsersFioWalletsData =  {
