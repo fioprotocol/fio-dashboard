@@ -26,7 +26,6 @@ import classes from './styles/RequestTokensPage.module.scss';
 const RequestPage: React.FC<ContainerProps> = props => {
   const {
     fioWallet,
-    fioAddresses,
     balance,
     fioWalletsLoading,
     roe,
@@ -46,7 +45,11 @@ const RequestPage: React.FC<ContainerProps> = props => {
 
   const loading = fioWalletsLoading || contactsLoading;
 
-  useFioAddresses();
+  const walletFioAddresses = useFioAddresses(
+    fioWallet && fioWallet.publicKey,
+  ).sort((fioAddress1: FioAddressDoublet, fioAddress2: FioAddressDoublet) =>
+    fioAddress1.name > fioAddress2.name ? 1 : -1,
+  );
 
   useEffect(() => {
     setRequestData(null);
@@ -102,14 +105,6 @@ const RequestPage: React.FC<ContainerProps> = props => {
   const backTo = putParamsToUrl(ROUTES.FIO_WALLET, {
     publicKey: fioWallet.publicKey,
   });
-  const walletFioAddresses = fioAddresses
-    .filter(
-      ({ walletPublicKey }: FioAddressDoublet) =>
-        fioWallet.publicKey === walletPublicKey,
-    )
-    .sort((fioAddress1: FioAddressDoublet, fioAddress2: FioAddressDoublet) =>
-      fioAddress1.name > fioAddress2.name ? 1 : -1,
-    );
 
   if (resultsData)
     return (

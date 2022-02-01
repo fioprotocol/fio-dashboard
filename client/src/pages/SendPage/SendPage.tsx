@@ -27,7 +27,6 @@ import { setFees } from '../../util/prices';
 const SendPage: React.FC<ContainerProps> = props => {
   const {
     fioWallet,
-    fioAddresses,
     balance,
     loading,
     feePrice,
@@ -44,7 +43,11 @@ const SendPage: React.FC<ContainerProps> = props => {
   const [sendData, setSendData] = useState<SendTokensValues | null>(null);
   const [processing, setProcessing] = useState<boolean>(false);
 
-  useFioAddresses();
+  const walletFioAddresses = useFioAddresses(
+    fioWallet && fioWallet.publicKey,
+  ).sort((fioAddress1: FioAddressDoublet, fioAddress2: FioAddressDoublet) =>
+    fioAddress1.name > fioAddress2.name ? 1 : -1,
+  );
 
   useEffect(() => {
     getFee();
@@ -105,14 +108,6 @@ const SendPage: React.FC<ContainerProps> = props => {
   const backTo = putParamsToUrl(ROUTES.FIO_WALLET, {
     publicKey: fioWallet.publicKey,
   });
-  const walletFioAddresses = fioAddresses
-    .filter(
-      ({ walletPublicKey }: FioAddressDoublet) =>
-        fioWallet.publicKey === walletPublicKey,
-    )
-    .sort((fioAddress1: FioAddressDoublet, fioAddress2: FioAddressDoublet) =>
-      fioAddress1.name > fioAddress2.name ? 1 : -1,
-    );
 
   const renderInfoBadge = () =>
     walletFioAddresses.length ? (

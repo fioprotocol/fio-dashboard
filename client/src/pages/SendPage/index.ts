@@ -8,7 +8,6 @@ import { createContact, getContactsList } from '../../redux/contacts/actions';
 
 import {
   loading,
-  fioAddresses,
   fioWallets as fioWalletsSelector,
   fioWalletsBalances as fioWalletsBalancesSelector,
 } from '../../redux/fio/selectors';
@@ -40,7 +39,6 @@ const reduxConnect = connect(
           publicKey === ownProps.match.params.publicKey,
       );
     },
-    fioAddresses,
     loading,
     roe,
     feePrice: (state: ReduxState) =>
