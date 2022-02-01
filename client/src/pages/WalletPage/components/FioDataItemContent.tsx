@@ -10,15 +10,15 @@ import { CHAIN_CODES } from '../../../constants/common';
 
 import { FIO_DATA_TRANSACTION_LINK } from '../../../constants/common';
 
-import { TransactionItemKeysProps } from '../types';
+import { FioDataItemKeysProps } from '../types';
 
 type Props = {
   value: string;
-  field: TransactionItemKeysProps;
+  field: FioDataItemKeysProps;
   chain: string;
 };
 
-const FioTransactionItemContent: React.FC<Props> = props => {
+const FioDataItemContent: React.FC<Props> = props => {
   const { field, value, chain } = props;
 
   if (
@@ -53,4 +53,4 @@ const FioTransactionItemContent: React.FC<Props> = props => {
   return <>{value}</>;
 };
 
-export default FioTransactionItemContent;
+export default FioDataItemContent;

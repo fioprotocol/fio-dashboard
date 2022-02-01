@@ -2,19 +2,19 @@ import React from 'react';
 
 import Results from '../Results';
 import BundledTransactionBadge from '../../../Badges/BundledTransactionBadge/BundledTransactionBadge';
-import TransactionFieldsList from '../../../../pages/WalletPage/components/TransactionFieldsList';
+import FioDataFieldsList from '../../../../pages/WalletPage/components/FioDataFieldsList';
 
 import { FIO_REQUEST_FIELDS_LIST } from '../../../../pages/WalletPage/constants';
 import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
 
-import { TransactionItemProps } from '../../../../pages/WalletPage/types';
+import { FioDataItemProps } from '../../../../pages/WalletPage/types';
 
 import classes from '../styles/RejectFioRequestResults.module.scss';
 
 type Props = {
   title: string;
   onClose: () => void;
-  results: { error?: string; remaining: number } & TransactionItemProps;
+  results: { error?: string; remaining: number } & FioDataItemProps;
   onRetry: () => void;
   middleWidth: boolean;
 };
@@ -24,9 +24,9 @@ const RejectFioRequestResults: React.FC<Props> = props => {
   return (
     <Results {...props}>
       <h5 className={classes.subtitle}>Original Request Information</h5>
-      <TransactionFieldsList
+      <FioDataFieldsList
         fieldsList={FIO_REQUEST_FIELDS_LIST.REJECT_REQUEST_RESULTS_LIST}
-        transactionItem={results}
+        fioDataItem={results}
       />
       <div className={classes.bundleContainer}>
         <BundledTransactionBadge
