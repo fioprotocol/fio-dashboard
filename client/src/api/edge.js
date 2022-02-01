@@ -174,19 +174,22 @@ export default class Edge {
 
   async checkRecoveryQuestions(username) {
     if (this.edgeContext) {
-      return await this.edgeContext
-        .getRecovery2Key(username)
-        .then(res => res)
-        .catch(e => {
-          console.log(e);
-          return false;
-        });
+      try {
+        const token = await this.getToken(username);
+
+        return !!token;
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
 
   async getToken(username) {
     try {
-      return await this.edgeContext.getRecovery2Key(username);
+      const localUser = this.edgeContext.localUsers.find(
+        ({ username: localUsername }) => localUsername === username,
+      );
+      return localUser.recovery2Key;
     } catch (e) {
       console.log(e);
       throw e;
