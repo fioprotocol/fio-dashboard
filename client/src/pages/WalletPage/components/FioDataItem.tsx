@@ -16,7 +16,7 @@ import classes from '../styles/FioDataItem.module.scss';
 
 type Props = {
   fioDataItem: FioRequestData;
-  fioDataTxType: string;
+  type: string;
   onClick: (fioDataItem: FioRequestData) => void;
 };
 
@@ -35,7 +35,7 @@ const renderSenderInfo = ({
 };
 
 const FioDataItem: React.FC<Props> = props => {
-  const { fioDataItem, fioDataTxType, onClick } = props;
+  const { fioDataItem, type, onClick } = props;
 
   const {
     timeStamp: date,
@@ -45,10 +45,10 @@ const FioDataItem: React.FC<Props> = props => {
   } = fioDataItem;
 
   const senderInfo = {
-    title: CONTENT_TYPE[fioDataTxType].from
-      ? CONTENT_TYPE[fioDataTxType].from
-      : CONTENT_TYPE[fioDataTxType].to,
-    senderAddress: CONTENT_TYPE[fioDataTxType].from ? from : to,
+    title: CONTENT_TYPE[type].from
+      ? CONTENT_TYPE[type].from
+      : CONTENT_TYPE[type].to,
+    senderAddress: CONTENT_TYPE[type].from ? from : to,
   };
 
   return (
@@ -60,17 +60,17 @@ const FioDataItem: React.FC<Props> = props => {
         <div className={classes.badgeItem}>
           <div className={classes.fioDataTypeContainer}>
             <CommonBadge
-              isBlue={CONTENT_TYPE[fioDataTxType].isBlue}
-              isGreen={CONTENT_TYPE[fioDataTxType].isGreen}
+              isBlue={CONTENT_TYPE[type].isBlue}
+              isGreen={CONTENT_TYPE[type].isGreen}
             >
               <div className={classes.iconContainer}>
                 <FontAwesomeIcon
-                  icon={CONTENT_TYPE[fioDataTxType].icon}
+                  icon={CONTENT_TYPE[type].icon}
                   className={classes.icon}
                 />
               </div>
             </CommonBadge>
-            <p className={classes.fioDataTxType}>{fioDataTxType}</p>
+            <p className={classes.type}>{type}</p>
           </div>
           <div className={classes.date}>{commonFormatTime(date)}</div>
           {renderSenderInfo(senderInfo)}

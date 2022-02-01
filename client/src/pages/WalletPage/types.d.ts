@@ -48,7 +48,6 @@ export type FioDataItemProps = {
   date: string;
   status?: string;
   id: string;
-  fioDataTxType: string;
   payer: string;
   requestor: string;
   type: string;

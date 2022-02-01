@@ -32,6 +32,7 @@ const FioDataDetailedItem: React.FC<Props> = props => {
           <FioDataDetailedActionButtons
             fioRequest={fioDataItem}
             fioWallet={fioWallet}
+            type={type}
             onCloseModal={onCloseModal}
           />
         )}

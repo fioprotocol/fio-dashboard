@@ -16,12 +16,13 @@ import classes from '../styles/FioDataDetailedActionButtons.module.scss';
 type Props = {
   fioRequest: FioDataItemProps;
   fioWallet: FioWalletDoublet;
+  type: string;
   onCloseModal: () => void;
 };
 
 const FioDataDetailedActionButtons: React.FC<Props &
   RouteComponentProps> = props => {
-  const { history, fioRequest, fioWallet, onCloseModal } = props;
+  const { history, fioRequest, fioWallet, type, onCloseModal } = props;
 
   const isFioChain = fioRequest.content.chain === CHAIN_CODES.FIO;
 
@@ -32,6 +33,7 @@ const FioDataDetailedActionButtons: React.FC<Props &
     history.push(ROUTES.REJECT_FIO_REQUEST, {
       fioRequest,
       fioWallet,
+      type,
     });
   };
 
