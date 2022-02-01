@@ -99,7 +99,7 @@
     "dotenv-expand": "4.2.0",
     "dotenv-safe": "^4.0.4",
     "edge-core-js": "^0.18.14",
-    "edge-currency-accountbased": "0.7.47",
+    "edge-currency-accountbased": "github:fioprotocol/edge-currency-accountbased#0505be53a252e8de66c289a8e63896f123d25159",
     "email-validator": "2.0.4",
     "express": "^4.16.2",
     "final-form": "4.20.2",
