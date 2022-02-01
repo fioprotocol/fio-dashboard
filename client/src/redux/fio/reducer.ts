@@ -93,12 +93,17 @@ export default combineReducers({
         const fioWallets: FioWalletDoublet[] = [];
 
         for (const fioWallet of action.data.fioWallets) {
-          if (fioWallets.find(item => item.publicKey === fioWallet.publicKey))
+          if (
+            fioWallets.find(
+              item =>
+                item.publicKey === fioWallet.publicWalletInfo.keys.publicKey,
+            )
+          )
             continue;
           fioWallets.push({
             ...emptyWallet,
             edgeId: fioWallet.id,
-            publicKey: fioWallet.getDisplayPublicSeed(),
+            publicKey: fioWallet.publicWalletInfo.keys.publicKey,
             name: fioWallet.name,
           });
         }

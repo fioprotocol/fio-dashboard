@@ -66,7 +66,7 @@ export const getWalletKeys = (
   for (const fioWallet of fioWallets) {
     keys[fioWallet.id] = {
       private: fioWallet.keys.fioKey,
-      public: fioWallet.getDisplayPublicSeed(),
+      public: fioWallet.publicWalletInfo.keys.publicKey,
     };
   }
   return keys;

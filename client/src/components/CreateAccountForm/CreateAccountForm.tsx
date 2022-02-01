@@ -316,7 +316,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
               id: '',
               edgeId: fioWallet.id,
               name: fioWallet.name,
-              publicKey: fioWallet.getDisplayPublicSeed(),
+              publicKey: fioWallet.publicWalletInfo.keys.publicKey,
               from: WALLET_CREATED_FROM.EDGE,
             },
           ];

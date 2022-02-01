@@ -61,7 +61,7 @@ const ImportWalletPage: React.FC<ContainerProps> = props => {
     return {
       edgeId: newWallet.id,
       name,
-      publicKey: newWallet.getDisplayPublicSeed(),
+      publicKey: newWallet.publicWalletInfo.keys.publicKey,
       from: WALLET_CREATED_FROM.EDGE,
     };
   };

@@ -14,7 +14,7 @@ export const getWalletKeys = async (
           private: wallet.keys.fioKey,
           public: wallet.publicWalletInfo.keys.publicKey,
         };
-        await wallet.stopEngine();
+        // todo: there is no stopEngine anymore, do something instead of 'await wallet.stopEngine()';
       }
     }
   } catch (e) {
