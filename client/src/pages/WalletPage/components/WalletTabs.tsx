@@ -25,8 +25,8 @@ const WALLET_TABS_LIST = [
     renderTab: (props: Props) => <FioObtDataTab {...props} />,
   },
   {
-    eventKey: 'fioTransactions',
-    title: 'Fio Transactions',
+    eventKey: 'transactions',
+    title: 'Transactions',
     renderTab: (props: Props) => <TransactionList {...props} />,
   },
 ];
