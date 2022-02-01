@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { RouterProps, withRouter } from 'react-router-dom';
@@ -8,13 +8,14 @@ import { camelizeFioRequestsData, compose } from '../utils';
 import { fioWallets } from '../redux/fio/selectors';
 import { user } from '../redux/profile/selectors';
 import {
-  CamelCasedFioRequestData,
+  FioRequestData,
   FioWalletData,
   FioWalletDoublet,
   User,
 } from '../types';
 import apis from '../api';
 import { updateFioWalletsData } from '../redux/fioWalletsData/actions';
+import useInterval from '../util/hooks';
 
 type Props = {
   fioWallets: FioWalletDoublet[];
@@ -22,6 +23,7 @@ type Props = {
   updateFioWalletsData: (data: FioWalletData, publicKey: string) => void;
 };
 
+// todo: handle chunk case in promises
 const getWalletData = async (
   fioWallet: FioWalletDoublet,
   user: User,
@@ -31,17 +33,14 @@ const getWalletData = async (
     userId: string,
   ) => void,
 ) => {
-  const publicWalletFioSdk = apis.fio.createPublicWalletFioSdk({
-    public: fioWallet.publicKey,
-  });
-  let receivedFioRequests: CamelCasedFioRequestData[] | null = null;
-  let sentFioRequests: CamelCasedFioRequestData[] | null = null;
-  let obtData: CamelCasedFioRequestData[] | null = null;
+  let receivedFioRequests: FioRequestData[] | null = null;
+  let sentFioRequests: FioRequestData[] | null = null;
+  let obtData: FioRequestData[] | null = null;
 
   const promises = [];
 
   const getReceivedFioRequestsPromise = new Promise((resolve, reject) => {
-    return publicWalletFioSdk
+    return fioWallet.publicWalletFioSdk
       .getReceivedFioRequests(0, 0, true)
       .then((res: any) => {
         receivedFioRequests = camelizeFioRequestsData(
@@ -59,7 +58,7 @@ const getWalletData = async (
   promises.push(getReceivedFioRequestsPromise);
 
   const getSentFioRequestsPromise = new Promise((resolve, reject) => {
-    return publicWalletFioSdk
+    return fioWallet.publicWalletFioSdk
       .getSentFioRequests(0, 0, true)
       .then((res: any) => {
         sentFioRequests = camelizeFioRequestsData(
@@ -77,7 +76,7 @@ const getWalletData = async (
   promises.push(getSentFioRequestsPromise);
 
   const getObtDataPromise = new Promise((resolve, reject) => {
-    return publicWalletFioSdk
+    return fioWallet.publicWalletFioSdk
       .getObtData()
       .then((res: any) => {
         obtData = camelizeFioRequestsData(
@@ -106,20 +105,19 @@ const getWalletData = async (
   updateLocalFioWalletData(walletData, fioWallet.publicKey, user.id);
 };
 
-const TIMER_DELAY = 20000; // 20 sec
+const TIMER_DELAY = 5000; // 5 sec
 
 const WalletsDataFlow = (props: Props & RouterProps): React.FC => {
   const { fioWallets, user, updateFioWalletsData } = props;
 
-  const timerId = useRef(null);
-
   const [isLoading, setIsLoading] = useState(false);
+  const [wallets, setWallets] = useState([]);
 
-  const getWalletsData = async () => {
+  const getWalletsData = async (walletsState?: FioWalletDoublet[]) => {
     if (!isLoading) {
       setIsLoading(true);
       await Promise.all(
-        fioWallets.map(async wallet => {
+        (walletsState || wallets).map(async wallet => {
           await getWalletData(wallet, user, updateFioWalletsData);
           return;
         }),
@@ -129,17 +127,37 @@ const WalletsDataFlow = (props: Props & RouterProps): React.FC => {
   };
 
   useEffect(() => {
-    if (timerId.current) clearInterval(timerId.current);
-
     if (fioWallets?.length) {
-      getWalletsData();
-      timerId.current = setInterval(getWalletsData, TIMER_DELAY);
-    }
+      let newWalletsState;
+      if (fioWallets.length > wallets.length) {
+        const newWallets = fioWallets
+          .filter(fw => {
+            return !wallets.filter(w => w.publicKey === fw.publicKey).length;
+          })
+          .map(nw => ({
+            ...nw,
+            publicWalletFioSdk: apis.fio.createPublicWalletFioSdk({
+              public: nw.publicKey,
+            }),
+          }));
+        newWalletsState = [...wallets, ...newWallets];
+      }
 
-    return () => {
-      if (timerId.current) clearInterval(timerId.current);
-    };
+      if (fioWallets.length < wallets.length) {
+        newWalletsState = wallets.filter(w => {
+          return !!fioWallets.filter(fw => fw.publicKey === w.publicKey).length;
+        });
+      }
+
+      if (newWalletsState) setWallets(newWalletsState);
+
+      getWalletsData(newWalletsState);
+    }
   }, [fioWallets.length]);
+
+  useInterval(() => {
+    getWalletsData();
+  }, TIMER_DELAY);
 
   return null;
 };
