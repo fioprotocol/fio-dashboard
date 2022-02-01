@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import InfoBadge from '../../../components/Badges/InfoBadge/InfoBadge';
 import TransactionItem from './TransactionItem';
@@ -15,6 +15,7 @@ type Props = {
 };
 
 const MIN_VISIBLE_TRANSACTIONS_COUNT = 20;
+const MARGIN_BETWEEN_ITEMS = 10;
 
 const TransactionList: React.FC<Props> = props => {
   const { fioWallet } = props;
@@ -25,6 +26,13 @@ const TransactionList: React.FC<Props> = props => {
   const [visibleTransactionsCount, setVisibleTransactionsCount] = useState(
     MIN_VISIBLE_TRANSACTIONS_COUNT,
   );
+  const [height, setHeight] = useState(0);
+
+  const elementRef = useRef(null);
+
+  useEffect(() => {
+    setHeight(elementRef?.current?.clientHeight);
+  }, []);
 
   const getTransactions = async () => {
     setLoading(true);
@@ -75,6 +83,9 @@ const TransactionList: React.FC<Props> = props => {
           transactionList.length > MIN_VISIBLE_TRANSACTIONS_COUNT
         }
         onLoadMore={loadMore}
+        maxHeight={
+          (height + MARGIN_BETWEEN_ITEMS) * MIN_VISIBLE_TRANSACTIONS_COUNT
+        }
       >
         {transactionList
           .slice(
@@ -82,7 +93,9 @@ const TransactionList: React.FC<Props> = props => {
             !hasNextPage ? transactionList.length : visibleTransactionsCount,
           )
           .map(item => (
-            <TransactionItem key={item.txId} {...item} />
+            <div ref={elementRef} key={item.txId}>
+              <TransactionItem {...item} />
+            </div>
           ))}
       </InfiniteScroll>
     </div>

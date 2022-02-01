@@ -10,7 +10,10 @@ type Props = {
   hasNextPage: boolean;
   isContentScrollable: boolean;
   onLoadMore: () => void;
+  maxHeight?: number;
 };
+
+const MAX_HEIGHT = 500;
 
 const InfiniteScroll: React.FC<Props> = props => {
   const {
@@ -18,6 +21,7 @@ const InfiniteScroll: React.FC<Props> = props => {
     hasNextPage,
     isContentScrollable,
     children,
+    maxHeight,
     onLoadMore,
     ...rest
   } = props;
@@ -36,6 +40,7 @@ const InfiniteScroll: React.FC<Props> = props => {
         classes.container,
         isContentScrollable && classes.scrollable,
       )}
+      style={{ maxHeight: maxHeight || MAX_HEIGHT }}
     >
       {children}
       {(loading || hasNextPage) && (
