@@ -16,7 +16,7 @@ type OwnProps = {
   resetLoginFailure: () => void;
   edgeAuthLoading: boolean;
   loginFailure: { fields?: { [fieldName: string]: any }; code?: string };
-  edgeLoginFailure: { type?: string };
+  edgeLoginFailure: { type?: string; wait?: number };
   email: string;
 };
 type Props = OwnProps;
@@ -32,15 +32,17 @@ const Pin = (props: Props) => {
     onSubmit,
   } = props;
   const [error, setError] = useState(null);
+
   useEffect(() => {
     if (!isEmpty(edgeLoginFailure)) {
-      setError({
-        message:
-          edgeLoginFailure.type === 'PasswordError' ||
-          edgeLoginFailure.type === 'UsernameError'
-            ? 'Invalid Pin'
-            : 'Server Error', // todo: set proper message text
-      });
+      const messageText = (type: string) => {
+        if (type === 'PasswordError' || type === 'UsernameError') {
+          if (edgeLoginFailure.wait > 0) return 'Pin login has been blocked';
+          return 'Invalid Pin';
+        }
+        return 'Server Error';
+      };
+      setError({ message: messageText(edgeLoginFailure.type) });
     }
   }, [edgeLoginFailure]);
 
@@ -87,6 +89,7 @@ const Pin = (props: Props) => {
                 ? IOS_KEYBOARD_PLUG_TYPE.emptyPlug
                 : IOS_KEYBOARD_PLUG_TYPE.highPlug
             }
+            blockedTime={(edgeLoginFailure && edgeLoginFailure.wait) || 0}
           />
           <div className={classes.exitPin} onClick={exitPin}>
             <CloseButton isWhite />{' '}

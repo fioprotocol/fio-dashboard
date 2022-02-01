@@ -1,0 +1,25 @@
+@import '../../../assets/styles/fontMixins.scss';
+
+.container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 45px;
+
+  .statusBadge {
+    position: absolute;
+    top: -30px;
+  }
+
+  .title {
+    margin-top: 40px;
+    font-size: 1.875em;
+    text-align: left;
+  }
+
+  .subtitle {
+    font-size: 0.875em;
+    margin-bottom: -15px;
+    margin-top: 30px;
+    @include sf-pro-display-medium;
+  }
+}

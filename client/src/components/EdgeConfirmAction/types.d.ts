@@ -18,6 +18,7 @@ export type Props = {
   pinConfirmation: PinConfirmation;
   hideProcessing?: boolean;
   fioWalletEdgeId?: string;
+  processingProps?: { title?: string; message?: string };
 
   showPinModal: (action: string, data: PinDataType) => void;
   showGenericErrorModal: (message?: string) => void;

@@ -2,7 +2,6 @@ import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 
 import { formValidation, submitValidation } from './validation';
-import { RequestTokensProps, RequestTokensValues } from '../../types';
 import Dropdown from '../../../../components/Input/Dropdown';
 import TextInput, {
   INPUT_UI_STYLES,
@@ -12,18 +11,17 @@ import AmountInput from '../../../../components/Input/AmountInput';
 import SelectModalInput from '../../../../components/Input/SelectModalInput';
 import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
-
-import { FioAddressDoublet } from '../../../../types';
-
-import { FIO_CHAIN_CODE } from '../../../../constants/fio';
+import TokenDataFields from './TokenDataFields';
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-
-import classes from '../../styles/RequestTokensForm.module.scss';
 import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 
-const STATIC_TOKENS_LIST = [{ id: 'FIO', name: 'FIO' }];
-const STATIC_CHAIN_IDS_LIST = [{ id: FIO_CHAIN_CODE, name: FIO_CHAIN_CODE }];
-const NEW_FUND_REQUEST_BUNDLE_COST = 2;
+import { CHAIN_CODE_LIST } from '../../../../constants/common';
+import { FIO_CHAIN_CODE, BUNDLES_TX_COUNT } from '../../../../constants/fio';
+
+import { RequestTokensProps, RequestTokensValues } from '../../types';
+import { FioAddressDoublet } from '../../../../types';
+
+import classes from '../../styles/RequestTokensForm.module.scss';
 
 const RequestTokensForm: React.FC<RequestTokensProps> = props => {
   const { loading, fioWallet, fioAddresses, roe, contactsList, isFio } = props;
@@ -38,15 +36,22 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
   const initialValues: {
     payeeFioAddress?: string;
     payeeTokenPublicAddress: string;
-    tokenCode: string;
-    chainCode: string;
+    tokenCode: any;
+    chainCode: any;
   } = {
     payeeTokenPublicAddress: fioWallet.publicKey,
-    tokenCode: STATIC_TOKENS_LIST[0].name,
-    chainCode: STATIC_CHAIN_IDS_LIST[0].name,
+    chainCode: FIO_CHAIN_CODE,
+    tokenCode: FIO_CHAIN_CODE,
   };
   if (fioAddresses.length) {
     initialValues.payeeFioAddress = fioAddresses[0].name;
+  }
+
+  if (!isFio) {
+    initialValues.chainCode = CHAIN_CODE_LIST[0].id;
+    initialValues.tokenCode = CHAIN_CODE_LIST[0].tokens?.length
+      ? CHAIN_CODE_LIST[0].tokens[0].id
+      : CHAIN_CODE_LIST[0].id;
   }
 
   return (
@@ -57,7 +62,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
     >
       {(formRenderProps: FormRenderProps) => {
         const {
-          values: { payeeFioAddress },
+          values: { payeeFioAddress, chainCode, tokenCode },
           validating,
         } = formRenderProps;
 
@@ -103,7 +108,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
 
         const notEnoughBundles =
           selectedAddress != null
-            ? selectedAddress.remaining < NEW_FUND_REQUEST_BUNDLE_COST
+            ? selectedAddress.remaining < BUNDLES_TX_COUNT.NEW_FIO_REQUEST
             : false;
 
         const noPayeeFioAddress =
@@ -125,38 +130,11 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
           >
             {renderRequester()}
 
-            {!isFio && (
-              <div className="d-flex justify-content-between align-items-center w-100 flex-grow-1">
-                <div className="w-100 mr-2">
-                  <Field
-                    name="tokenCode"
-                    label="Token"
-                    component={Dropdown}
-                    placeholder="Select Token type"
-                    options={STATIC_TOKENS_LIST}
-                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                    isSimple={true}
-                    isWidthResponsive={true}
-                    isHigh={true}
-                    isWhite={true}
-                  />
-                </div>
-                <div className="w-100 ml-2">
-                  <Field
-                    name="chainCode"
-                    label="Chain Id"
-                    component={Dropdown}
-                    placeholder="Select Chain Id"
-                    options={STATIC_CHAIN_IDS_LIST}
-                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                    isSimple={true}
-                    isWidthResponsive={true}
-                    isHigh={true}
-                    isWhite={true}
-                  />
-                </div>
-              </div>
-            )}
+            <TokenDataFields
+              isVisible={!isFio}
+              chainCodeValue={chainCode}
+              chainCodeList={CHAIN_CODE_LIST}
+            />
 
             <Field
               name="payerFioAddress"
@@ -194,6 +172,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
                 uiType={INPUT_UI_STYLES.BLACK_WHITE}
                 errorColor={COLOR_TYPE.WARN}
                 component={TextInput}
+                prefixLabel={tokenCode}
                 disabled={loading}
                 label="Request Amount"
               />
@@ -214,7 +193,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               <>
                 <p className={classes.transactionTitle}>Transaction cost</p>
                 <BundledTransactionBadge
-                  bundles={NEW_FUND_REQUEST_BUNDLE_COST}
+                  bundles={BUNDLES_TX_COUNT.NEW_FIO_REQUEST}
                   remaining={selectedAddress.remaining}
                 />
               </>

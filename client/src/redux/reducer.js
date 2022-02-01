@@ -7,6 +7,7 @@ import navigation from './navigation/reducer';
 import users from './users/reducer';
 import edge from './edge/reducer';
 import fio from './fio/reducer';
+import fioWalletsData from './fioWalletsData/reducer';
 import modal from './modal/reducer';
 import notifications from './notifications/reducer';
 import contacts from './contacts/reducer';
@@ -24,6 +25,7 @@ const createReducer = history =>
     form,
     edge,
     fio,
+    fioWalletsData,
     modal,
     notifications,
     contacts,

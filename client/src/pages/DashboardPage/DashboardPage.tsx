@@ -10,20 +10,19 @@ import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 
 import { useFioAddresses, useNonActiveUserRedirect } from '../../util/hooks';
 
-import { FioWalletDoublet, FioAddressDoublet } from '../../types';
+import { FioWalletDoublet } from '../../types';
 
 import classes from './DashboardPage.module.scss';
 import { ROUTES } from '../../constants/routes';
 
 type Props = {
   fioWallets: FioWalletDoublet[];
-  fioAddresses: FioAddressDoublet[];
   loading: boolean;
 };
 
 const DashboardPage: React.FC<Props> = props => {
-  const { fioWallets, fioAddresses, loading } = props;
-  useFioAddresses();
+  const { fioWallets, loading } = props;
+  const fioAddresses = useFioAddresses();
   useNonActiveUserRedirect();
 
   return (

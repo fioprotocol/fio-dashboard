@@ -55,6 +55,8 @@ const PinConfirmModal: React.FC<PinConfirmModalProps> = props => {
     resetPinConfirm();
   };
 
+  const { error } = pinConfirmation;
+
   return (
     <ModalComponent
       show={showPinConfirm}
@@ -74,12 +76,13 @@ const PinConfirmModal: React.FC<PinConfirmModalProps> = props => {
           onSubmit={handleSubmit}
           onReset={onReset}
           loading={confirmingPin}
-          error={pinConfirmation.error}
+          error={error}
           iosKeyboardPlugType={
             isSafari
               ? IOS_KEYBOARD_PLUG_TYPE.extraHighPlug
               : IOS_KEYBOARD_PLUG_TYPE.highPlug
           }
+          blockedTime={error && typeof error !== 'string' && error.wait}
         />
       </div>
     </ModalComponent>

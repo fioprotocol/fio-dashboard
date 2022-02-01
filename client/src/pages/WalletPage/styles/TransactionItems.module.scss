@@ -14,6 +14,16 @@
     margin-bottom: -10px;
     width: 100%;
 
+    &:hover {
+      cursor: pointer;
+    
+      .badgeItem {
+        .iconArrow {
+          transform: translateX(4px);
+        }
+      }
+    } 
+
     .badgeItem {
       display: flex;
       flex-direction: column;
@@ -50,6 +60,7 @@
       .date {
         font-size: 1em;
         margin-top: 15px;
+        flex-shrink: 0;
         @include sf-pro-display-medium;
       }
 
@@ -68,12 +79,6 @@
         margin: 0;
         position: absolute;
         right: 0;
-
-        .status {
-          color: $white;
-          text-transform: capitalize;
-          margin: 0 8px;
-        }
       }
 
       .iconArrow {
@@ -81,10 +86,6 @@
         cursor: pointer;
         transition: 0.2s ease-in-out;
         transform: translateX(0);
-
-        &:hover {
-          transform: translateX(4px);
-        }
       }
     }
   }

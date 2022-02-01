@@ -37,7 +37,6 @@ export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
 
 export interface ContainerProps extends ContainerOwnProps {
   fioWallet: FioWalletDoublet;
-  fioAddresses: FioAddressDoublet[];
   fioWalletsLoading: boolean;
   roe: number;
   balance: WalletBalances;

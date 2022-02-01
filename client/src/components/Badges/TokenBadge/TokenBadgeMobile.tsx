@@ -3,16 +3,11 @@ import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
-import { PublicAddressDoublet } from '../../../types';
+import { TokenBadgeProps } from './types';
+
 import classes from './TokenBadge.module.scss';
 
-type Props = {
-  actionButton?: React.ReactNode;
-  input?: React.ReactNode;
-  showInput?: boolean;
-} & PublicAddressDoublet;
-
-const TokenBadgeMobile: React.FC<Props> = props => {
+const TokenBadgeMobile: React.FC<TokenBadgeProps> = props => {
   const {
     chainCode,
     publicAddress,
@@ -20,6 +15,7 @@ const TokenBadgeMobile: React.FC<Props> = props => {
     actionButton,
     input,
     showInput,
+    isBold,
   } = props;
 
   const [isOpen, toggleOpen] = useState(false);
@@ -47,10 +43,13 @@ const TokenBadgeMobile: React.FC<Props> = props => {
           onClick={onClick}
         >
           <div className={classes.visiblePart}>
-            <p className="boldText">{tokenCode}</p>
-            <p className={classes.subtitle}>
-              Chain Code: <span className="boldText">{chainCode}</span>
-            </p>
+            <div className={classes.textVisiblePart}>
+              <p className="boldText">{tokenCode}</p>
+              <p className={classes.subtitle}>
+                Chain Code: <span className="boldText">{chainCode}</span>
+              </p>
+            </div>
+
             {actionButton ? (
               actionButton
             ) : (
@@ -65,7 +64,14 @@ const TokenBadgeMobile: React.FC<Props> = props => {
             {showInput ? (
               input
             ) : (
-              <p className={classes.publicAddressItem}>{publicAddress}</p>
+              <p
+                className={classnames(
+                  classes.publicAddressItem,
+                  isBold && classes.bold,
+                )}
+              >
+                {publicAddress}
+              </p>
             )}
           </div>
         </div>

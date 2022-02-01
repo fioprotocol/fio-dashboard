@@ -22,7 +22,7 @@ export interface TrxResponse {
   other?: any;
 }
 
-type FIOSDK_LIB = typeof FIOSDK;
+export type FIOSDK_LIB = typeof FIOSDK;
 
 export const DEFAULT_ACTION_FEE_AMOUNT = 800 * FIOSDK.SUFUnit;
 
@@ -98,6 +98,9 @@ export default class Fio {
 
     return isValid;
   };
+
+  createPublicWalletFioSdk = (keys: { public: string }): FIOSDK_LIB =>
+    new FIOSDK('', keys.public, this.baseurl, window.fetch);
 
   setWalletFioSdk = (keys: { public: string; private: string }): void =>
     (this.walletFioSDK = new FIOSDK(

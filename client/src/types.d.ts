@@ -1,5 +1,6 @@
 import { EdgeAccount } from 'edge-core-js';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
+import { FIOSDK_LIB } from './api/fio';
 
 export type Domain = { domain: string; free?: boolean };
 
@@ -82,6 +83,7 @@ export type FioWalletDoublet = {
   balance?: number | null;
   available?: number | null;
   locked?: number | null;
+  publicWalletFioSdk?: FIOSDK_LIB | null;
   from: string;
 };
 
@@ -174,7 +176,7 @@ export type PinConfirmation = {
   keys?: { [walletId: string]: WalletKeys };
   action?: string;
   data?: any;
-  error?: string | Error;
+  error?: string | Error & { wait?: number; };
 };
 
 export type FeePrice = {
@@ -295,4 +297,39 @@ export type TransactionItemProps = {
 
 export type MappedPublicAddresses = {
   [fioAddress: string]: { publicAddresses: PublicAddressDoublet[]; more: boolean };
+}
+
+export type FioRequestData = {
+  content: string;
+  fioRequestId: number;
+  payeeFioAddress: string;
+  payeeFioPublicKey: string;
+  payerFioAddress: string;
+  payerFioPublicKey: string;
+  status: string;
+  timeStamp: string;
+}
+
+export type ResponseFioRequestData = {
+  content: string;
+  fio_request_id: number;
+  payee_fio_address: string;
+  payee_fio_public_key: string;
+  payer_fio_address: string;
+  payer_fio_public_key: string;
+  status: string;
+  time_stamp: string;
+}
+
+export type FioWalletData = {
+  id: string;
+  receivedFioRequests: FioRequestData[];
+  sentFioRequests: FioRequestData[];
+  obtData: FioRequestData[];
+}
+
+export type UsersFioWalletsData =  {
+  [userId: string]: {
+    [walletPublicKey: string]: FioWalletData
+  }
 }

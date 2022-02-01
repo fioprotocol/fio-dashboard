@@ -42,6 +42,7 @@ import ImportWalletPage from './pages/ImportWalletPage';
 import SendPage from './pages/SendPage';
 import UpdateEmailConfirmGatePage from './pages/UpdateEmailConfirmGatePage';
 import UpdateEmailPage from './pages/UpdateEmailPage';
+import RejectFioRequestPage from './pages/RejectFioRequestPage/RejectFioRequestPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -193,6 +194,12 @@ const Routes = () => (
         <Route
           path={ROUTES.NFT_VALIDATION}
           component={NftValidationPage}
+          exact
+        />
+
+        <PrivateRoute
+          path={ROUTES.REJECT_FIO_REQUEST}
+          component={RejectFioRequestPage}
           exact
         />
 

@@ -168,7 +168,13 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
 
         {error && renderTokens(failed, 'Errored Links')}
         {updated.length > 0 && (
-          <BundledTransactionBadge bundles={bundleCost} remaining={remaining} />
+          <>
+            <h5 className={classes.subtitle}>Bundled Transaction Details</h5>
+            <BundledTransactionBadge
+              bundles={bundleCost}
+              remaining={remaining}
+            />
+          </>
         )}
       </div>
     </Results>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Field } from 'react-final-form';
 
-import ChainCodeCustomDropdown from './ChainCodeCustomDropdown';
+import ChainCodeCustomDropdown from '../Input/ChainCodeCustomDropdown';
 import Input, { INPUT_UI_STYLES } from '../Input/Input';
 
 export const CUSTOM_CHAIN_CODE = 'customChainCode';
@@ -68,6 +68,7 @@ const ChainCodeField: React.FC<Props> = props => {
       isSimple={isSimple}
       isShort={isShort}
       isHigh={isHigh}
+      isFormField={true}
     />
   );
 };

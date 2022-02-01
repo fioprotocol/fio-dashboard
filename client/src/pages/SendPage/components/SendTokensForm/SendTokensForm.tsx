@@ -16,13 +16,12 @@ import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import { submitValidation, formValidation } from './validation';
 import { hasFioAddressDelimiter } from '../../../../utils';
 
+import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
+
 import { SendTokensProps, SendTokensValues } from '../../types';
 import { FioAddressDoublet } from '../../../../types';
 
 import classes from '../../styles/SendTokensForm.module.scss';
-
-// todo: get from api
-const RECORD_OBT_DATA_BUNDLE_COST = 2;
 
 const SendTokensForm: React.FC<SendTokensProps> = props => {
   const {
@@ -111,7 +110,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
           fee.costFio + Number(amount) > fioWallet.available;
         const notEnoughBundles =
           selectedAddress != null
-            ? selectedAddress.remaining < RECORD_OBT_DATA_BUNDLE_COST
+            ? selectedAddress.remaining < BUNDLES_TX_COUNT.RECORD_OBT_DATA
             : false;
         const submitDisabled =
           formRenderProps.hasValidationErrors ||
@@ -181,7 +180,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
             />
             {showMemo && memo ? (
               <BundledTransactionBadge
-                bundles={RECORD_OBT_DATA_BUNDLE_COST}
+                bundles={BUNDLES_TX_COUNT.RECORD_OBT_DATA}
                 remaining={selectedAddress.remaining}
               />
             ) : null}

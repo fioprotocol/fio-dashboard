@@ -1,5 +1,7 @@
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 
+import { TransactionItemKeysProps } from './types';
+
 export const TRANSACTION_ITEM_TYPES = {
   SENT: 'sent',
   RECEIVED: 'received',
@@ -44,8 +46,70 @@ export const CONTENT_TYPE: {
   },
 };
 
-export const STATUS_TYPES: { [key: string]: string } = {
-  REJECTED: 'rejected',
-  PAID: 'paid',
-  PENDING: 'pending',
+export const DETAILED_ITEM_FIELDS: {
+  [key: string]: TransactionItemKeysProps;
+} = {
+  amount: 'amount',
+  chain: 'chain',
+  date: 'date',
+  from: 'from',
+  memo: 'memo',
+  payer: 'payer',
+  requestor: 'requestor',
+  to: 'to',
+  type: 'type',
+  txId: 'txId',
+};
+
+export const FIO_REQUEST_FIELDS_LIST = {
+  SENT_LIST: [
+    DETAILED_ITEM_FIELDS.type,
+    DETAILED_ITEM_FIELDS.date,
+    DETAILED_ITEM_FIELDS.requestor,
+    DETAILED_ITEM_FIELDS.to,
+    DETAILED_ITEM_FIELDS.amount,
+    DETAILED_ITEM_FIELDS.chain,
+    DETAILED_ITEM_FIELDS.memo,
+  ],
+  RECEIVED_LIST: [
+    DETAILED_ITEM_FIELDS.type,
+    DETAILED_ITEM_FIELDS.date,
+    DETAILED_ITEM_FIELDS.from,
+    DETAILED_ITEM_FIELDS.amount,
+    DETAILED_ITEM_FIELDS.chain,
+    DETAILED_ITEM_FIELDS.memo,
+  ],
+  PAYMENT_LIST: [
+    DETAILED_ITEM_FIELDS.type,
+    DETAILED_ITEM_FIELDS.date,
+    DETAILED_ITEM_FIELDS.payer,
+    DETAILED_ITEM_FIELDS.to,
+    DETAILED_ITEM_FIELDS.amount,
+    DETAILED_ITEM_FIELDS.chain,
+    DETAILED_ITEM_FIELDS.txId,
+    DETAILED_ITEM_FIELDS.memo,
+  ],
+  DATA_LIST: [
+    DETAILED_ITEM_FIELDS.date,
+    DETAILED_ITEM_FIELDS.amount,
+    DETAILED_ITEM_FIELDS.from,
+    DETAILED_ITEM_FIELDS.to,
+    DETAILED_ITEM_FIELDS.chain,
+    DETAILED_ITEM_FIELDS.txId,
+    DETAILED_ITEM_FIELDS.memo,
+  ],
+  REJECT_REQUEST_LIST: [
+    DETAILED_ITEM_FIELDS.type,
+    DETAILED_ITEM_FIELDS.date,
+    DETAILED_ITEM_FIELDS.from,
+    DETAILED_ITEM_FIELDS.amount,
+    DETAILED_ITEM_FIELDS.chain,
+  ],
+  REJECT_REQUEST_RESULTS_LIST: [
+    DETAILED_ITEM_FIELDS.from,
+    DETAILED_ITEM_FIELDS.to,
+    DETAILED_ITEM_FIELDS.amount,
+    DETAILED_ITEM_FIELDS.chain,
+    DETAILED_ITEM_FIELDS.txId,
+  ],
 };

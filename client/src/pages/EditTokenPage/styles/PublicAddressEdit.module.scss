@@ -8,8 +8,15 @@
   margin-left: 40px;
   justify-self: flex-end;
   outline: none;
+  align-self: flex-start;
 
   &.editing {
     color: $clear-blue;
+  }
+}
+
+@include lg {
+  .editIcon {
+    align-self: center;
   }
 }

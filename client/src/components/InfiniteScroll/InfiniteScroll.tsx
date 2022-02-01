@@ -3,15 +3,24 @@ import useInfiniteScroll from 'react-infinite-scroll-hook';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from './InfiniteScroll.module.scss';
+import classnames from 'classnames';
 
 type Props = {
   loading: boolean;
   hasNextPage: boolean;
+  isContentScrollable: boolean;
   onLoadMore: () => void;
 };
 
 const InfiniteScroll: React.FC<Props> = props => {
-  const { loading, hasNextPage, children, onLoadMore, ...rest } = props;
+  const {
+    loading,
+    hasNextPage,
+    isContentScrollable,
+    children,
+    onLoadMore,
+    ...rest
+  } = props;
 
   const [sentryRef] = useInfiniteScroll({
     loading,
@@ -22,9 +31,14 @@ const InfiniteScroll: React.FC<Props> = props => {
   });
 
   return (
-    <div className={classes.container}>
+    <div
+      className={classnames(
+        classes.container,
+        isContentScrollable && classes.scrollable,
+      )}
+    >
       {children}
-      {loading && (
+      {(loading || hasNextPage) && (
         <div className={classes.loader} ref={sentryRef}>
           <FontAwesomeIcon
             icon="spinner"

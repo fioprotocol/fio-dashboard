@@ -8,7 +8,10 @@ import {
   Prices,
   FioNameItemProps,
   WalletKeysObj,
+  FioRequestData,
+  ResponseFioRequestData,
 } from './types';
+import camelCase from 'camelcase';
 
 const FIO_DASH_USERNAME_DELIMITER = `.fio.dash.${process.env
   .REACT_APP_EDGE_ACC_DELIMITER || ''}`;
@@ -296,4 +299,16 @@ export const putParamsToUrl = (
     (acc: string, key: string) => acc.replace(`:${key}`, params[key]),
     `${route}`,
   );
+};
+
+export const camelizeFioRequestsData = (data: ResponseFioRequestData[]) => {
+  const result: FioRequestData[] = [];
+  data.forEach((o: ResponseFioRequestData, i: number) => {
+    const resultItem: FioRequestData | any = {};
+    for (const [key, value] of Object.entries(o)) {
+      resultItem[camelCase(key)] = value;
+    }
+    result[i] = resultItem;
+  });
+  return result;
 };

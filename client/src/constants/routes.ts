@@ -53,6 +53,8 @@ const ROUTES: { [route: string]: string } = {
   ACCOUNT_RECOVERY: '/account-recovery',
   NFT_VALIDATION: '/nft-validation',
 
+  REJECT_FIO_REQUEST: '/reject-fio-request',
+
   // Referrer Profile pages
   REF_PROFILE_HOME: '/ref/:refProfileCode',
   REF_SIGN_NFT: '/ref/:refProfileCode/sign-nft',

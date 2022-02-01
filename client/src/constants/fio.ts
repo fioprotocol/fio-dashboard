@@ -49,3 +49,27 @@ export const ACTIONS_TO_END_POINT_KEYS = {
   [ACTIONS.unStakeFioTokens]: 'pushTransaction',
   [ACTIONS.addBundledTransactions]: 'addBundledTransactions',
 };
+
+export const FIO_REQUEST_STATUS_TYPES: { [key: string]: string } = {
+  REJECTED: 'rejected',
+  PAID: 'sent_to_blockchain',
+  PENDING: 'requested',
+};
+
+export const FIO_REQUEST_STATUS_TYPES_TITLES: { [key: string]: string } = {
+  [FIO_REQUEST_STATUS_TYPES.REJECTED]: 'REJECTED',
+  [FIO_REQUEST_STATUS_TYPES.PAID]: 'PAID',
+  [FIO_REQUEST_STATUS_TYPES.PENDING]: 'PENDING',
+};
+
+export const BUNDLES_TX_COUNT = {
+  ADD_PUBLIC_ADDRESS: 1,
+  REMOVE_PUBLIC_ADDRESS: 1,
+  REMOVE_ALL_PUBLIC_ADDRESSES: 1,
+  NEW_FIO_REQUEST: 2,
+  CANCEL_FIO_REQUEST: 1,
+  REJECT_FIO_REQUEST: 1,
+  RECORD_OBT_DATA: 2,
+  ADD_NFT: 2,
+  REMOVE_NFT: 1,
+};

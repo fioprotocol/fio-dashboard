@@ -1,18 +1,20 @@
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect } from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
 import { isEmpty } from 'lodash';
-import { Button } from 'react-bootstrap';
-import PinInput from '../Input/PinInput/PinInput';
 
-import { PIN_LENGTH } from '../../constants/form';
+import PinInput from '../Input/PinInput/PinInput';
+import Counter from '../Counter/Counter';
+import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 import { setDataMutator } from '../../utils';
-
-import classes from './PinForm.module.scss';
+import { PIN_LENGTH } from '../../constants/form';
+import { INVALID_PASSWORD } from '../../constants/regExps';
 
 import { IosKeyBoardPlugProp } from '../Input/PinInput/types';
+
+import classes from './PinForm.module.scss';
 
 const FIELD_NAME = 'pin';
 
@@ -20,8 +22,9 @@ type Props = {
   onSubmit: (pin: string) => void;
   onReset: () => void;
   loading: boolean;
-  error?: Error | string;
+  error?: string | (Error & { wait?: number });
   iosKeyboardPlugType?: IosKeyBoardPlugProp;
+  blockedTime?: number;
 };
 
 type FormValues = {
@@ -29,21 +32,33 @@ type FormValues = {
 };
 
 const PinForm: React.FC<Props> = props => {
-  const { onSubmit, onReset, loading, error, iosKeyboardPlugType } = props;
+  const {
+    onSubmit,
+    onReset,
+    loading,
+    error,
+    iosKeyboardPlugType,
+    blockedTime,
+  } = props;
 
   let currentForm: FormApi | null = null;
+  const [isDisabled, toggleDisabled] = useState(false);
 
   useEffect(() => {
     if (currentForm) {
       const { mutators } = currentForm;
 
       if (!isEmpty(error) && typeof error === 'object') {
-        const pinErrorMessage = error.message;
-
-        const retErrorMessage = /invalid password/gi.test(pinErrorMessage);
+        const errorMessage = (errMessage: string) => {
+          if (INVALID_PASSWORD.test(errMessage)) {
+            if (!blockedTime) return 'Invalid PIN - Try Again';
+            return 'Pin confirm has been blocked';
+          }
+          return errMessage;
+        };
 
         mutators.setDataMutator(FIELD_NAME, {
-          error: retErrorMessage ? 'Invalid PIN - Try Again' : error.message,
+          error: errorMessage(error.message),
         });
       } else {
         mutators.setDataMutator(FIELD_NAME, {
@@ -103,9 +118,23 @@ const PinForm: React.FC<Props> = props => {
         {!isEmpty(fieldError) &&
           values.pin &&
           values.pin.length === PIN_LENGTH && (
-            <Button className="w-100" onClick={resetForm}>
-              Try Again
-            </Button>
+            <SubmitButton
+              onClick={resetForm}
+              disabled={isDisabled}
+              withBottomMargin={true}
+              text={
+                <>
+                  <div className={classes.mainText}>
+                    Try Again&nbsp;
+                    <Counter
+                      initialTime={blockedTime}
+                      prefix="in"
+                      toggleDisabled={toggleDisabled}
+                    />
+                  </div>
+                </>
+              }
+            />
           )}
       </form>
     );

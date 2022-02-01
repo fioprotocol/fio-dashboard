@@ -49,8 +49,10 @@ type TextInputProps = {
   debounceTimeout?: number;
 };
 
-export const TextInput: React.FC<TextInputProps &
-  FieldRenderProps<TextInputProps>> = props => {
+export const TextInput = (
+  props: TextInputProps & FieldRenderProps<TextInputProps>,
+  ref: React.Ref<HTMLInputElement | null>,
+) => {
   const {
     input,
     meta,
@@ -99,7 +101,7 @@ export const TextInput: React.FC<TextInputProps &
 
   useEffect(() => {
     toggleIsInputHasValue(value !== '');
-  });
+  }, [value]);
 
   const clearInputFn = () => {
     onChange('');
@@ -130,7 +132,7 @@ export const TextInput: React.FC<TextInputProps &
             uiType={uiType}
           />
           <DebounceInput
-            inputRef={rest.ref}
+            inputRef={ref}
             debounceTimeout={debounceTimeout}
             {...input}
             {...rest}
@@ -142,6 +144,7 @@ export const TextInput: React.FC<TextInputProps &
             }}
             type={showPass ? 'text' : type}
             data-clear={isInputHasValue}
+            disabled={disabled}
           />
         </div>
         <ClearButton
@@ -184,4 +187,9 @@ export const TextInput: React.FC<TextInputProps &
   );
 };
 
-export default TextInput;
+const TextInputRef = React.forwardRef<
+  HTMLInputElement,
+  TextInputProps & FieldRenderProps<TextInputProps>
+>(TextInput);
+
+export default TextInputRef;

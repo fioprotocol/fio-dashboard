@@ -1,5 +1,5 @@
 import { RouteComponentProps } from 'react-router-dom';
-import { FioWalletDoublet, WalletBalances } from '../../types';
+import { FioWalletData, FioWalletDoublet, WalletBalances } from '../../types';
 
 type MatchProps = {
   publicKey: string;
@@ -14,6 +14,9 @@ export interface ContainerProps extends ContainerOwnProps {
   loading: boolean;
   refreshBalance: (publicKey: string) => void;
   balance: WalletBalances;
+  fioWalletsData: {
+    [publicKey: string]: FioWalletData;
+  };
 }
 
 export type EditWalletNameValues = {
@@ -31,6 +34,14 @@ export type PasswordFormValues = {
   username: string;
 };
 
+export type TransactionContentProps = {
+  payeePublicAddress: string;
+  amount: string;
+  chain: string;
+  memo: string;
+  txId?: string;
+};
+
 export type TransactionItemProps = {
   from: string;
   to: string;
@@ -38,4 +49,20 @@ export type TransactionItemProps = {
   status?: string;
   id: string;
   transactionType: string;
+  payer: string;
+  requestor: string;
+  type: string;
+  content?: TransactionContentProps;
 };
+
+export type TransactionItemKeysProps =
+  | 'amount'
+  | 'chain'
+  | 'date'
+  | 'from'
+  | 'memo'
+  | 'payer'
+  | 'requestor'
+  | 'to'
+  | 'type'
+  | 'txId';

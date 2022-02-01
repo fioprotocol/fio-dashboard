@@ -65,10 +65,7 @@ const PublicAddressEdit: React.FC<Props> = props => {
   const actionButton = (
     <FontAwesomeIcon
       icon="pen"
-      className={classnames(
-        EDIT_ICON_CLASS,
-        (isEditing || newPublicAddress) && classes.editing,
-      )}
+      className={classnames(EDIT_ICON_CLASS, isEditing && classes.editing)}
       onClick={onEditClick}
       tabIndex={0}
       id={id}
@@ -83,6 +80,7 @@ const PublicAddressEdit: React.FC<Props> = props => {
       input={inputComponent}
       actionButton={actionButton}
       showInput={isEditing}
+      isBold={!!newPublicAddress}
     />
   );
 };
