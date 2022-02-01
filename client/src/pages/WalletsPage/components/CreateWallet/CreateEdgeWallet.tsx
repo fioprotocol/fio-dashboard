@@ -44,7 +44,7 @@ const CreateEdgeWallet: React.FC<Props> = props => {
     return {
       edgeId: newFioWallet.id,
       name: newFioWallet.name,
-      publicKey: newFioWallet.getDisplayPublicSeed(),
+      publicKey: newFioWallet.publicWalletInfo.keys.publicKey,
       from: WALLET_CREATED_FROM.EDGE,
     };
   };
