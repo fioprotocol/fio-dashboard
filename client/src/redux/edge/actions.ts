@@ -172,49 +172,6 @@ export const logout = (account: EdgeAccount) => {
   };
 };
 
-export const CONFIRM_REQUEST = `${prefix}/CONFIRM_REQUEST`;
-export const CONFIRM_SUCCESS = `${prefix}/CONFIRM_SUCCESS`;
-export const CONFIRM_FAILURE = `${prefix}/CONFIRM_FAILURE`;
-
-export const confirm = (hash: string) => ({
-  types: [CONFIRM_REQUEST, CONFIRM_SUCCESS, CONFIRM_FAILURE],
-  promise: (api: Api) => api.edge.confirm(hash),
-});
-
-export const PASSWORD_RECOVERY_REQUEST = `${prefix}/PASSWORD_RECOVERY_REQUEST`;
-export const PASSWORD_RECOVERY_SUCCESS = `${prefix}/PASSWORD_RECOVERY_SUCCESS`;
-export const PASSWORD_RECOVERY_FAILURE = `${prefix}/PASSWORD_RECOVERY_FAILURE`;
-
-export const passwordRecovery = (email: string) => ({
-  types: [
-    PASSWORD_RECOVERY_REQUEST,
-    PASSWORD_RECOVERY_SUCCESS,
-    PASSWORD_RECOVERY_FAILURE,
-  ],
-  promise: (api: Api) => api.edge.resetPassword(email),
-});
-
-export const RESET_PASSWORD_REQUEST = `${prefix}/RESET_PASSWORD_REQUEST`;
-export const RESET_PASSWORD_SUCCESS = `${prefix}/RESET_PASSWORD_SUCCESS`;
-export const RESET_PASSWORD_FAILURE = `${prefix}/RESET_PASSWORD_FAILURE`;
-
-export const resetPassword = ({
-  hash,
-  password,
-  confirmPassword,
-}: {
-  hash: string;
-  password: string;
-  confirmPassword: string;
-}) => ({
-  types: [
-    RESET_PASSWORD_REQUEST,
-    RESET_PASSWORD_SUCCESS,
-    RESET_PASSWORD_FAILURE,
-  ],
-  promise: (api: Api) => api.edge.setPassword(hash, password, confirmPassword),
-});
-
 export const CHANGE_PASSWORD_REQUEST = `${prefix}/CHANGE_PASSWORD_REQUEST`;
 export const CHANGE_PASSWORD_SUCCESS = `${prefix}/CHANGE_PASSWORD_SUCCESS`;
 export const CHANGE_PASSWORD_FAILURE = `${prefix}/CHANGE_PASSWORD_FAILURE`;
