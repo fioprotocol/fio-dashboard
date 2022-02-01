@@ -1,23 +1,23 @@
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 
-import { TransactionItemKeysProps } from './types';
+import { FioDataItemKeysProps } from './types';
 
-export const TRANSACTION_ITEM_TYPES = {
+export const FIO_DATA_TX_ITEM_TYPES = {
   SENT: 'sent',
   RECEIVED: 'received',
   DATA: 'data',
 };
 
 export const INFO_BADGE_CONTENT = {
-  [TRANSACTION_ITEM_TYPES.SENT]: {
+  [FIO_DATA_TX_ITEM_TYPES.SENT]: {
     title: 'Sent',
     message: 'sent',
   },
-  [TRANSACTION_ITEM_TYPES.RECEIVED]: {
+  [FIO_DATA_TX_ITEM_TYPES.RECEIVED]: {
     title: 'Received',
     message: 'received',
   },
-  [TRANSACTION_ITEM_TYPES.DATA]: {
+  [FIO_DATA_TX_ITEM_TYPES.DATA]: {
     title: 'FIO Data',
     message: 'FIO data',
   },
@@ -32,13 +32,13 @@ export const CONTENT_TYPE: {
     from?: string;
   };
 } = {
-  [TRANSACTION_ITEM_TYPES.SENT]: {
+  [FIO_DATA_TX_ITEM_TYPES.SENT]: {
     icon: 'arrow-up',
     isGreen: true,
     isBlue: false,
     to: 'To',
   },
-  [TRANSACTION_ITEM_TYPES.RECEIVED]: {
+  [FIO_DATA_TX_ITEM_TYPES.RECEIVED]: {
     icon: 'arrow-down',
     isBlue: true,
     isGreen: false,
@@ -47,7 +47,7 @@ export const CONTENT_TYPE: {
 };
 
 export const DETAILED_ITEM_FIELDS: {
-  [key: string]: TransactionItemKeysProps;
+  [key: string]: FioDataItemKeysProps;
 } = {
   amount: 'amount',
   chain: 'chain',

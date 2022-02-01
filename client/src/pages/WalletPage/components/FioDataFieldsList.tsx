@@ -2,21 +2,21 @@ import React from 'react';
 import classnames from 'classnames';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
-import FioTransactionItemContent from './FioTransactionItemContent';
+import FioDataItemContent from './FioDataItemContent';
 
 import { DETAILED_ITEM_FIELDS } from '../constants';
 
-import { TransactionItemProps, TransactionItemKeysProps } from '../types';
+import { FioDataItemProps, FioDataItemKeysProps } from '../types';
 
-import classes from '../styles/TransactionFieldsList.module.scss';
+import classes from '../styles/FioDataFieldsList.module.scss';
 
 type Props = {
-  fieldsList: TransactionItemKeysProps[];
-  transactionItem: TransactionItemProps;
+  fieldsList: FioDataItemKeysProps[];
+  fioDataItem: FioDataItemProps;
 };
 
-const TransactionFieldsList: React.FC<Props> = props => {
-  const { fieldsList, transactionItem } = props;
+const FioDataFieldsList: React.FC<Props> = props => {
+  const { fieldsList, fioDataItem } = props;
   return (
     <div className={classes.fieldsContainer}>
       {fieldsList.map(field => {
@@ -25,11 +25,11 @@ const TransactionFieldsList: React.FC<Props> = props => {
           field === DETAILED_ITEM_FIELDS.date;
 
         const value = // @ts-ignore
-          transactionItem[field] != null
+          fioDataItem[field] != null
             ? // @ts-ignore
-              transactionItem[field]
+              fioDataItem[field]
             : // @ts-ignore
-              transactionItem.content[field];
+              fioDataItem.content[field];
 
         if (value == null) return null;
 
@@ -42,10 +42,10 @@ const TransactionFieldsList: React.FC<Props> = props => {
               <div className={classes.badgeContainer}>
                 <p className={classes.title}>{field}</p>
                 <p className={classes.content}>
-                  <FioTransactionItemContent
+                  <FioDataItemContent
                     value={value}
                     field={field}
-                    chain={transactionItem.content.chain}
+                    chain={fioDataItem.content.chain}
                   />
                 </p>
               </div>
@@ -57,4 +57,4 @@ const TransactionFieldsList: React.FC<Props> = props => {
   );
 };
 
-export default TransactionFieldsList;
+export default FioDataFieldsList;
