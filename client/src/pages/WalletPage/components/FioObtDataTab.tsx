@@ -15,7 +15,6 @@ const FioObtDataTab: React.FC<Props> = props => {
   return (
     <FioDataList
       fioDataList={props.walletData.obtData}
-      fioDataTxType={FIO_DATA_TX_ITEM_TYPES.SENT}
       type={FIO_DATA_TX_ITEM_TYPES.DATA}
       loading={false}
       {...props}

@@ -25,7 +25,6 @@ import classes from '../styles/FioDataItem.module.scss';
 type Props = {
   fioDataList: FioRequestData[];
   type: string;
-  fioDataTxType: string;
   loading: boolean;
   fioWallet: FioWalletDoublet;
 };
@@ -41,6 +40,7 @@ type Location = {
   location: {
     state: {
       fioDataItem: FioDataItemProps;
+      fioRequestTab: string;
     };
   };
 };
@@ -71,7 +71,6 @@ const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
     type,
     loading,
     fioWallet,
-    fioDataTxType,
     location: { state },
   } = props;
 
@@ -85,10 +84,10 @@ const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
     fioDataDetailsItem,
     setFioDataDetailsItem,
   ] = useState<FioDataItemProps | null>(null);
-  const { fioDataItem } = state || {};
+  const { fioDataItem, fioRequestTab } = state || {};
 
   useEffect(() => {
-    if (fioDataItem && fioDataItem.fioDataTxType === type) {
+    if (fioDataItem && fioRequestTab === type) {
       setFioDataDetailsItem(fioDataItem);
       toggleModal(true);
     }
@@ -160,7 +159,7 @@ const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
           .map(trxItem => (
             <FioDataItem
               fioDataItem={trxItem}
-              fioDataTxType={fioDataTxType}
+              type={type}
               onClick={onClick}
               key={trxItem.fioRequestId}
             />

@@ -27,6 +27,7 @@ type Location = {
     state: {
       fioRequest: FioDataItemProps;
       fioWallet: FioWalletDoublet;
+      type: string;
     };
   };
 };
@@ -40,7 +41,7 @@ const RejectFioRequestPage: React.FC<Props &
   Location> = props => {
   const {
     location: {
-      state: { fioRequest, fioWallet },
+      state: { fioRequest, fioWallet, type },
     },
     history,
   } = props;
@@ -72,7 +73,7 @@ const RejectFioRequestPage: React.FC<Props &
       putParamsToUrl(ROUTES.FIO_WALLET, { publicKey: fioWallet.publicKey }),
       {
         fioDataItem: fioRequest,
-        fioRequestTab: fioRequest.fioDataTxType,
+        fioRequestTab: type,
       },
     );
   };
@@ -97,7 +98,7 @@ const RejectFioRequestPage: React.FC<Props &
       putParamsToUrl(ROUTES.FIO_WALLET, {
         publicKey: fioWallet.publicKey,
       }),
-      { fioRequestTab: fioRequest.fioDataTxType },
+      { fioRequestTab: type },
     );
   };
 
