@@ -3,8 +3,11 @@
 
 .container {
   margin-top: 20px;
-  overflow-y: auto;
   max-height: 60vh;
+
+  &.scrollable {
+    overflow-y: auto;
+  }
 
   .loader {
     position: relative;
@@ -26,4 +29,3 @@
     max-height: 500px;
   }
 }
-  
