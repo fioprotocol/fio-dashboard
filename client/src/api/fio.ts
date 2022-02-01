@@ -22,7 +22,7 @@ export interface TrxResponse {
   other?: any;
 }
 
-type FIOSDK_LIB = typeof FIOSDK;
+export type FIOSDK_LIB = typeof FIOSDK;
 
 export const DEFAULT_ACTION_FEE_AMOUNT = 800 * FIOSDK.SUFUnit;
 
