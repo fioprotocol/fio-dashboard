@@ -3,36 +3,50 @@ import React from 'react';
 import FioDataDetailedActionButtons from './FioDataDetailedActionButtons';
 import FioDataFieldsList from './FioDataFieldsList';
 
-import { FIO_DATA_TX_ITEM_TYPES } from '../constants';
 import { FIO_REQUEST_STATUS_TYPES } from '../../../constants/fio';
+import { FIO_RECORD_TYPES } from '../../WalletPage/constants';
 
-import { FioDataItemProps, FioDataItemKeysProps } from '../types';
+import { FioRecordViewKeysProps, FioRecordViewDecrypted } from '../types';
 import { FioWalletDoublet } from '../../../types';
 
 import classes from '../styles/FioDataDetailedItem.module.scss';
 
 type Props = {
-  fieldsList: FioDataItemKeysProps[];
-  fioDataItem: FioDataItemProps;
-  type: string;
+  fieldsList: FioRecordViewKeysProps[];
+  fioRecordDecrypted: FioRecordViewDecrypted;
+  fioRecordType: string;
+  fioRecordDetailedType: string;
   fioWallet: FioWalletDoublet;
   onCloseModal: () => void;
 };
 
 const FioDataDetailedItem: React.FC<Props> = props => {
-  const { fieldsList, fioDataItem, type, fioWallet, onCloseModal } = props;
+  const {
+    fieldsList,
+    fioRecordDecrypted,
+    fioRecordType,
+    fioWallet,
+    fioRecordDetailedType,
+    onCloseModal,
+  } = props;
 
-  if (!fioDataItem) return null;
+  if (!fioRecordDecrypted) return null;
 
   return (
     <div className={classes.fieldsContainer}>
-      <FioDataFieldsList fieldsList={fieldsList} fioDataItem={fioDataItem} />
-      {fioDataItem.status === FIO_REQUEST_STATUS_TYPES.PENDING &&
-        type === FIO_DATA_TX_ITEM_TYPES.RECEIVED && (
+      <FioDataFieldsList
+        fieldsList={fieldsList}
+        fioRecordDecrypted={fioRecordDecrypted}
+        fioRecordDetailedType={fioRecordDetailedType}
+        fioRecordType={fioRecordType}
+      />
+      {fioRecordDecrypted.fioRecord.status ===
+        FIO_REQUEST_STATUS_TYPES.PENDING &&
+        fioRecordType === FIO_RECORD_TYPES.RECEIVED && (
           <FioDataDetailedActionButtons
-            fioRequest={fioDataItem}
+            fioRecordDecrypted={fioRecordDecrypted}
             fioWallet={fioWallet}
-            type={type}
+            fioRecordType={fioRecordType}
             onCloseModal={onCloseModal}
           />
         )}

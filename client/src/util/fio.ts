@@ -6,6 +6,7 @@ import { FREE_ADDRESS_REGISTER_ERROR, ERROR_TYPES } from '../constants/errors';
 import { RegisterAddressError } from '../util/errors';
 
 import { FIO_REQUEST_STATUS_TYPES } from '../constants/fio';
+import { CHAIN_CODES } from '../constants/common';
 
 import {
   NftTokenResponse,
@@ -233,3 +234,5 @@ export const statusBadgeColours = (status: string) => ({
   isOrange: FIO_REQUEST_STATUS_TYPES.REJECTED === status,
   isRose: FIO_REQUEST_STATUS_TYPES.PENDING === status,
 });
+
+export const isFioChain = (chain: string) => chain === CHAIN_CODES.FIO;

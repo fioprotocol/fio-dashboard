@@ -5,15 +5,18 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
-
-import { FioWalletDoublet } from '../../../types';
+import {
+  FioWalletDoublet,
+  FioRecord,
+  FioRecordDecrypted,
+} from '../../../types';
 
 type Props = {
-  submitData: any | null;
+  submitData: FioRecord | null;
   processing: boolean;
   fioWallet: FioWalletDoublet;
   setProcessing: (processing: boolean) => void;
-  onSuccess: (data: any) => void;
+  onSuccess: (data: FioRecordDecrypted) => void;
   onCancel: () => void;
 };
 
@@ -55,8 +58,9 @@ const decryptContent = ({ data }: SubmitActionParams) => {
   ];
 
   return {
-    ...data,
-    content: mockedData[Math.floor(Math.random() * mockedData.length)],
+    fioRecord: data,
+    fioDecryptedContent:
+      mockedData[Math.floor(Math.random() * mockedData.length)],
   };
 };
 

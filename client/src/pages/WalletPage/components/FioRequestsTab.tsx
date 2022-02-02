@@ -5,7 +5,7 @@ import TabsContainer from '../../../components/Tabs/TabsContainer';
 import Tabs from '../../../components/Tabs/Tabs';
 import FioDataList from './FioDataList';
 
-import { FIO_DATA_TX_ITEM_TYPES } from '../constants';
+import { FIO_RECORD_TYPES } from '../constants';
 
 import { FioWalletData, FioWalletDoublet } from '../../../types';
 
@@ -26,24 +26,24 @@ type Location = {
 
 const FIO_REQUEST_TABS = [
   {
-    eventKey: FIO_DATA_TX_ITEM_TYPES.SENT,
+    eventKey: FIO_RECORD_TYPES.SENT,
     title: 'Sent',
     renderTab: (props: Props) => (
       <FioDataList
         fioDataList={props.walletData.sentFioRequests}
-        type={FIO_DATA_TX_ITEM_TYPES.SENT}
+        fioRecordType={FIO_RECORD_TYPES.SENT}
         loading={false}
         {...props}
       />
     ),
   },
   {
-    eventKey: FIO_DATA_TX_ITEM_TYPES.RECEIVED,
+    eventKey: FIO_RECORD_TYPES.RECEIVED,
     title: 'Received',
     renderTab: (props: Props) => (
       <FioDataList
         fioDataList={props.walletData.receivedFioRequests}
-        type={FIO_DATA_TX_ITEM_TYPES.RECEIVED}
+        fioRecordType={FIO_RECORD_TYPES.RECEIVED}
         loading={false}
         {...props}
       />
