@@ -299,7 +299,16 @@ export type MappedPublicAddresses = {
   [fioAddress: string]: { publicAddresses: PublicAddressDoublet[]; more: boolean };
 }
 
-export type FioRequestData = {
+export type DecryptedFioRecordContent = {
+  payeePublicAddress: string;
+  amount: string;
+  chain: string;
+  memo: string;
+  txId?: string;
+}
+
+// FioRecord type represents FioRequest and FioObtData
+export type FioRecord = {
   content: string;
   fioRequestId: number;
   payeeFioAddress: string;
@@ -310,7 +319,12 @@ export type FioRequestData = {
   timeStamp: string;
 }
 
-export type ResponseFioRequestData = {
+export type FioRecordDecrypted = {
+  fioRecord: FioRecord;
+  fioDecryptedContent: DecryptedFioRecordContent;
+};
+
+export type ResponseFioRecord = {
   content: string;
   fio_request_id: number;
   payee_fio_address: string;
@@ -323,9 +337,9 @@ export type ResponseFioRequestData = {
 
 export type FioWalletData = {
   id: string;
-  receivedFioRequests: FioRequestData[];
-  sentFioRequests: FioRequestData[];
-  obtData: FioRequestData[];
+  receivedFioRequests: FioRecord[];
+  sentFioRequests: FioRecord[];
+  obtData: FioRecord[];
 }
 
 export type UsersFioWalletsData =  {

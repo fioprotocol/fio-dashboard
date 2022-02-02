@@ -8,10 +8,11 @@ import { camelizeFioRequestsData, compose } from '../utils';
 import { fioWallets } from '../redux/fio/selectors';
 import { user } from '../redux/profile/selectors';
 import {
-  FioRequestData,
+  FioRecord,
   FioWalletData,
   FioWalletDoublet,
   User,
+  ResponseFioRecord,
 } from '../types';
 import apis from '../api';
 import { updateFioWalletsData } from '../redux/fioWalletsData/actions';
@@ -33,9 +34,9 @@ const getWalletData = async (
     userId: string,
   ) => void,
 ) => {
-  let receivedFioRequests: FioRequestData[] | null = null;
-  let sentFioRequests: FioRequestData[] | null = null;
-  let obtData: FioRequestData[] | null = null;
+  let receivedFioRequests: FioRecord[] | null = null;
+  let sentFioRequests: FioRecord[] | null = null;
+  let obtData: FioRecord[] | null = null;
 
   const promises = [];
 
@@ -80,7 +81,13 @@ const getWalletData = async (
       .getObtData()
       .then((res: any) => {
         obtData = camelizeFioRequestsData(
-          res?.obt_data_records?.length ? res.obt_data_records.reverse() : [],
+          res?.obt_data_records?.length
+            ? res.obt_data_records.sort(
+                (a: ResponseFioRecord, b: ResponseFioRecord) =>
+                  new Date(b.time_stamp).getTime() -
+                  new Date(a.time_stamp).getTime(),
+              )
+            : [],
         );
         resolve();
       })

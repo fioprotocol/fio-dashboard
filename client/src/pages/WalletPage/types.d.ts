@@ -1,5 +1,10 @@
 import { RouteComponentProps } from 'react-router-dom';
-import { FioWalletData, FioWalletDoublet, WalletBalances } from '../../types';
+import {
+  FioWalletData,
+  FioWalletDoublet,
+  WalletBalances,
+  DecryptedFioRecordContent,
+} from '../../types';
 
 type MatchProps = {
   publicKey: string;
@@ -34,34 +39,27 @@ export type PasswordFormValues = {
   username: string;
 };
 
-export type FioDataItemContentProps = {
-  payeePublicAddress: string;
-  amount: string;
-  chain: string;
-  memo: string;
-  txId?: string;
-};
-
-export type FioDataItemProps = {
+export type FioRecordViewProps = {
   from: string;
   to: string;
   date: string;
   status?: string;
-  id: string;
-  payer: string;
-  requestor: string;
-  type: string;
-  content?: FioDataItemContentProps;
+  id: number;
+  content: string;
+  fioTxType: string;
 };
 
-export type FioDataItemKeysProps =
+export type FioRecordViewDecrypted = {
+  fioRecord: FioRecordViewProps;
+  fioDecryptedContent: DecryptedFioRecordContent;
+};
+
+export type FioRecordViewKeysProps =
   | 'amount'
   | 'chain'
   | 'date'
   | 'from'
   | 'memo'
-  | 'payer'
-  | 'requestor'
   | 'to'
   | 'type'
   | 'txId';

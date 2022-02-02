@@ -8,8 +8,8 @@ import {
   Prices,
   FioNameItemProps,
   WalletKeysObj,
-  FioRequestData,
-  ResponseFioRequestData,
+  FioRecord,
+  ResponseFioRecord,
 } from './types';
 import camelCase from 'camelcase';
 
@@ -301,10 +301,10 @@ export const putParamsToUrl = (
   );
 };
 
-export const camelizeFioRequestsData = (data: ResponseFioRequestData[]) => {
-  const result: FioRequestData[] = [];
-  data.forEach((o: ResponseFioRequestData, i: number) => {
-    const resultItem: FioRequestData | any = {};
+export const camelizeFioRequestsData = (data: ResponseFioRecord[]) => {
+  const result: FioRecord[] = [];
+  data.forEach((o: ResponseFioRecord, i: number) => {
+    const resultItem: FioRecord | any = {};
     for (const [key, value] of Object.entries(o)) {
       resultItem[camelCase(key)] = value;
     }
