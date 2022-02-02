@@ -1,5 +1,8 @@
 import { EdgeCurrencyWallet } from 'edge-core-js';
 import isEmpty from 'lodash/isEmpty';
+import { TextDecoder, TextEncoder } from 'text-encoding';
+import { Fio } from '@fioprotocol/fiojs';
+import mapKeys from 'lodash/mapKeys';
 
 import {
   CartItem,
@@ -10,6 +13,7 @@ import {
   WalletKeysObj,
   FioRecord,
   ResponseFioRecord,
+  WalletKeys,
 } from './types';
 import camelCase from 'camelcase';
 
@@ -311,4 +315,40 @@ export const camelizeFioRequestsData = (data: ResponseFioRecord[]) => {
     result[i] = resultItem;
   });
   return result;
+};
+
+export const camelizeObjKeys = (obj: any) => {
+  return mapKeys(obj, (val, key) => camelCase(key));
+};
+
+export const decryptFioRequestData = ({
+  data,
+  walletKeys,
+  contentType,
+}: {
+  data: {
+    content: string;
+    payerFioPublicKey: string;
+    payeeFioPublicKey: string;
+  };
+  walletKeys: WalletKeys;
+  contentType: string;
+}) => {
+  const { content, payerFioPublicKey, payeeFioPublicKey } = data;
+  const { private: privateWalletKey, public: publicWalletKey } = walletKeys;
+  const textDecoder = new TextDecoder();
+  const textEncoder = new TextEncoder();
+  const publicKey =
+    payerFioPublicKey === publicWalletKey
+      ? payeeFioPublicKey
+      : payerFioPublicKey;
+
+  const cipher = Fio.createSharedCipher({
+    privateKey: privateWalletKey,
+    publicKey,
+    textEncoder,
+    textDecoder,
+  });
+  const result = cipher.decrypt(contentType, content);
+  return camelizeObjKeys(result);
 };
