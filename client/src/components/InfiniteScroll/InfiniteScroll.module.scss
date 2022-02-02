@@ -4,11 +4,6 @@
 .container {
   margin-top: 20px;
 
-  &.scrollable {
-    max-height: 60vh;
-    overflow-y: auto;
-  }
-
   .loader {
     position: relative;
     display: flex;
@@ -21,13 +16,5 @@
     padding-bottom: 60px;
     grid-column-start: 1;
     grid-column-end: 5;
-  }
-}
-
-@include lg {
-  .container {
-    &.scrollable {
-      max-height: 500px;
-    }
   }
 }

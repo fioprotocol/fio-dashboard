@@ -157,9 +157,6 @@ const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
       <InfiniteScroll
         loading={loading}
         hasNextPage={hasNextPage}
-        isContentScrollable={
-          fioDataList.length > MIN_VISIBLE_TRANSACTIONS_COUNT
-        }
         onLoadMore={loadMore}
       >
         {fioDataList
