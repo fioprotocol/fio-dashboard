@@ -154,7 +154,6 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
           <InfiniteScroll
             loading={loading}
             hasNextPage={hasMoreItems}
-            isContentScrollable={true}
             onLoadMore={fetchData}
           >
             {isDesktop ? (
