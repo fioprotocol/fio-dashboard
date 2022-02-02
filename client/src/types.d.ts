@@ -324,6 +324,11 @@ export type FioRecordDecrypted = {
   fioDecryptedContent: DecryptedFioRecordContent;
 };
 
+export type FioDecryptedRecordData = {
+  itemData: FioRecordDecrypted;
+  paymentOtbData?: FioRecordDecrypted;
+};
+
 export type ResponseFioRecord = {
   content: string;
   fio_request_id: number;

@@ -19,6 +19,7 @@ import classes from '../styles/FioRecordDetailedModal.module.scss';
 
 type Props = {
   fioRecordDecrypted: FioRecordViewDecrypted;
+  fioRecordPaymentDataDecrypted?: FioRecordViewDecrypted;
   requestFieldsList: FioRecordViewKeysProps[];
   fioRecordType: string;
   fioWallet: FioWalletDoublet;
@@ -49,6 +50,7 @@ const DetailedTabsList = [
         fieldsList={FIO_REQUEST_FIELDS_LIST.PAYMENT_LIST}
         fioRecordType={FIO_RECORD_TYPES.DATA}
         fioRecordDetailedType={FIO_RECORD_DETAILED_TYPE.PAYMENT}
+        fioRecordDecrypted={props.fioRecordPaymentDataDecrypted}
       />
     ),
   },
