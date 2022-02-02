@@ -22,7 +22,7 @@ import { WALLET_CREATED_FROM } from '../../../constants/common';
 import {
   FioRecord,
   FioWalletDoublet,
-  FioRecordDecrypted,
+  FioDecryptedRecordData,
 } from '../../../types';
 import { FioRecordViewDecrypted } from '../types';
 
@@ -30,6 +30,7 @@ import classes from '../styles/FioRecordItem.module.scss';
 
 type Props = {
   fioDataList: FioRecord[];
+  paymentDataList?: FioRecord[];
   fioRecordType: string;
   loading: boolean;
   fioWallet: FioWalletDoublet;
@@ -37,6 +38,7 @@ type Props = {
 
 type DetailedItemProps = {
   fioRecordDecrypted: FioRecordViewDecrypted;
+  fioRecordPaymentDataDecrypted: FioRecordViewDecrypted;
   fioRecordType: string;
   fioWallet: FioWalletDoublet;
   onCloseModal: () => void;
@@ -79,6 +81,7 @@ const FioRecordsList: React.FC<Props &
     fioRecordType,
     loading,
     fioWallet,
+    paymentDataList,
     location: { state },
   } = props;
 
@@ -87,10 +90,18 @@ const FioRecordsList: React.FC<Props &
     MIN_VISIBLE_TRANSACTIONS_COUNT,
   );
   const [processing, setProcessing] = useState(false);
-  const [submitData, setSubmitData] = useState<FioRecord | null>(null);
+  const [submitData, setSubmitData] = useState<{
+    itemData: FioRecord;
+    paymentOtbData: FioRecord | null;
+    fioRecordType: string;
+  } | null>(null);
   const [
     fioRecordDetailedItem,
     setFioRecordDetailedItem,
+  ] = useState<FioRecordViewDecrypted | null>(null);
+  const [
+    fioRecordDetailedItemPaymentData,
+    setFioRecordDetailedItemPaymentData,
   ] = useState<FioRecordViewDecrypted | null>(null);
   const { fioRecordDecrypted, fioRequestTab } = state || {};
 
@@ -120,8 +131,16 @@ const FioRecordsList: React.FC<Props &
       />
     );
 
-  const onClick = (fioRecordItem: FioRecord) => {
-    setSubmitData(fioRecordItem);
+  const onItemClick = (fioRecordItem: FioRecord) => {
+    const paymentOtbData = paymentDataList?.filter(
+      pd => pd.fioRequestId === fioRecordItem.fioRequestId,
+    );
+
+    setSubmitData({
+      itemData: fioRecordItem,
+      paymentOtbData: paymentOtbData?.length ? paymentOtbData[0] : null,
+      fioRecordType,
+    });
   };
 
   const onCloseModal = () => {
@@ -129,14 +148,26 @@ const FioRecordsList: React.FC<Props &
     setSubmitData(null);
   };
 
-  const onSuccess = (fioRecordItemDecrypted: FioRecordDecrypted) => {
+  const onSuccess = (fioRecordItemDecrypted: FioDecryptedRecordData) => {
+    const { itemData, paymentOtbData } = fioRecordItemDecrypted;
     setProcessing(false);
     setSubmitData(null);
     const transformedFioRecordItem = transformFioRecord({
-      fioRecordItem: fioRecordItemDecrypted,
+      fioRecordItem: itemData,
       publicKey: fioWallet.publicKey,
       fioRecordType,
     });
+
+    if (paymentOtbData) {
+      setFioRecordDetailedItemPaymentData(
+        transformFioRecord({
+          fioRecordItem: paymentOtbData,
+          publicKey: fioWallet.publicKey,
+          fioRecordType,
+        }),
+      );
+    }
+
     setFioRecordDetailedItem(transformedFioRecordItem);
     toggleModal(true);
   };
@@ -171,7 +202,7 @@ const FioRecordsList: React.FC<Props &
               fioRecord={trxItem}
               fioRecordType={fioRecordType}
               publicKey={fioWallet.publicKey}
-              onClick={onClick}
+              onClick={onItemClick}
               key={trxItem.fioRequestId + trxItem.timeStamp}
             />
           ))}
@@ -179,10 +210,11 @@ const FioRecordsList: React.FC<Props &
       <FioRecordDetailedModal
         show={showModal}
         onClose={onCloseModal}
-        status={fioRecordDetailedItem && fioRecordDetailedItem.fioRecord.status}
+        status={fioRecordDetailedItem?.fioRecord.status}
       >
         {FIO_REQUEST_DETAILED_COMPONENT[fioRecordType]({
           fioRecordDecrypted: fioRecordDetailedItem,
+          fioRecordPaymentDataDecrypted: fioRecordDetailedItemPaymentData,
           fioRecordType,
           fioWallet,
           onCloseModal,

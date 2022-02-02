@@ -61,7 +61,7 @@ const FioRecordFieldsList: React.FC<Props> = props => {
 
           if (
             fioRecordType === FIO_RECORD_TYPES.DATA &&
-            field === FIO_RECORD_DETAILED_FIELDS.to &&
+            field === FIO_RECORD_DETAILED_FIELDS.from &&
             fioRecordDetailedType === FIO_RECORD_DETAILED_TYPE.PAYMENT
           )
             return 'payer';
