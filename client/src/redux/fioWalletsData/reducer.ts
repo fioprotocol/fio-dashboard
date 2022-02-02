@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import isEqual from 'lodash/isEqual';
 import { UsersFioWalletsData } from '../../types';
 import * as actions from './actions';
 
@@ -7,6 +8,9 @@ export default combineReducers({
     switch (action.type) {
       case actions.UPDATE_WALLET_DATA: {
         const userWalletState = state[action.userId] || {};
+
+        if (isEqual(userWalletState[action.publicKey], action.data))
+          return state;
 
         return {
           ...state,
