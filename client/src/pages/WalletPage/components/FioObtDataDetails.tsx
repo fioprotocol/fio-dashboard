@@ -1,6 +1,6 @@
 import React from 'react';
 
-import FioDataDetailedItem from './FioDataDetailedItem';
+import FioRecordDetailedItem from './FioRecordDetailedItem';
 
 import {
   FIO_REQUEST_FIELDS_LIST,
@@ -11,7 +11,7 @@ import { FioRecordViewDecrypted } from '../types';
 
 import { FioWalletDoublet } from '../../../types';
 
-import classes from '../styles/FioDataDetailedModal.module.scss';
+import classes from '../styles/FioRecordDetailedModal.module.scss';
 
 type Props = {
   fioRecordDecrypted: FioRecordViewDecrypted;
@@ -20,11 +20,11 @@ type Props = {
   onCloseModal: () => void;
 };
 
-const FioDataDetails: React.FC<Props> = props => {
+const FioObtDataDetails: React.FC<Props> = props => {
   return (
     <>
       <h5 className={classes.subtitle}>Request Information</h5>
-      <FioDataDetailedItem
+      <FioRecordDetailedItem
         fieldsList={FIO_REQUEST_FIELDS_LIST.DATA_LIST}
         fioRecordDetailedType={FIO_RECORD_DETAILED_TYPE.PAYMENT}
         {...props}
@@ -33,4 +33,4 @@ const FioDataDetails: React.FC<Props> = props => {
   );
 };
 
-export default FioDataDetails;
+export default FioObtDataDetails;

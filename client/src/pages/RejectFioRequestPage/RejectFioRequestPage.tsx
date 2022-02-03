@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import RejectFioRequestResults from '../../components/common/TransactionResults/components/RejectFioRequestResults';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
-import FioDataFieldsList from '../WalletPage/components/FioDataFieldsList';
+import FioRecordFieldsList from '../WalletPage/components/FioRecordFieldsList';
 import BundledTransactionBadge from '../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import LowBalanceBadge from '../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import RejectRequestEdge from './components/RejectRequestEdge';
@@ -136,7 +136,7 @@ const RejectFioRequestPage: React.FC<Props &
             You are rejecting the following request
           </h5>
           <div className={classes.fieldsList}>
-            <FioDataFieldsList
+            <FioRecordFieldsList
               fieldsList={FIO_REQUEST_FIELDS_LIST.REJECT_REQUEST_LIST}
               fioRecordDecrypted={fioRecordDecrypted}
               fioRecordDetailedType={FIO_RECORD_DETAILED_TYPE.REQUEST}

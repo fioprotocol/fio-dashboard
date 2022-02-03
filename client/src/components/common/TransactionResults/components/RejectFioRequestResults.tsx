@@ -2,7 +2,7 @@ import React from 'react';
 
 import Results from '../Results';
 import BundledTransactionBadge from '../../../Badges/BundledTransactionBadge/BundledTransactionBadge';
-import FioDataFieldsList from '../../../../pages/WalletPage/components/FioDataFieldsList';
+import FioRecordFieldsList from '../../../../pages/WalletPage/components/FioRecordFieldsList';
 
 import {
   FIO_REQUEST_FIELDS_LIST,
@@ -28,7 +28,7 @@ const RejectFioRequestResults: React.FC<Props> = props => {
   return (
     <Results {...props}>
       <h5 className={classes.subtitle}>Original Request Information</h5>
-      <FioDataFieldsList
+      <FioRecordFieldsList
         fieldsList={FIO_REQUEST_FIELDS_LIST.REJECT_REQUEST_RESULTS_LIST}
         fioRecordDecrypted={results}
         fioRecordDetailedType={FIO_RECORD_DETAILED_TYPE.RESULT}

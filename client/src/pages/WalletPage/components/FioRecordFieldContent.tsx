@@ -17,7 +17,7 @@ type Props = {
   chain: string;
 };
 
-const FioDataItemContent: React.FC<Props> = props => {
+const FioRecordFieldContent: React.FC<Props> = props => {
   const { field, value, chain } = props;
 
   if (
@@ -59,4 +59,4 @@ const FioDataItemContent: React.FC<Props> = props => {
   return <>{value}</>;
 };
 
-export default FioDataItemContent;
+export default FioRecordFieldContent;

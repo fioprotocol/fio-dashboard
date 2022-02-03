@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
-import FioDataItemContent from './FioDataItemContent';
+import FioRecordFieldContent from './FioRecordFieldContent';
 
 import {
   FIO_RECORD_DETAILED_FIELDS,
@@ -12,7 +12,7 @@ import {
 
 import { FioRecordViewDecrypted, FioRecordViewKeysProps } from '../types';
 
-import classes from '../styles/FioDataFieldsList.module.scss';
+import classes from '../styles/FioRecordFieldsList.module.scss';
 
 type Props = {
   fieldsList: FioRecordViewKeysProps[];
@@ -21,7 +21,7 @@ type Props = {
   fioRecordType: string;
 };
 
-const FioDataFieldsList: React.FC<Props> = props => {
+const FioRecordFieldsList: React.FC<Props> = props => {
   const {
     fieldsList,
     fioRecordDecrypted,
@@ -90,7 +90,7 @@ const FioDataFieldsList: React.FC<Props> = props => {
               <div className={classes.badgeContainer}>
                 <p className={classes.title}>{renderField()}</p>
                 <p className={classes.content}>
-                  <FioDataItemContent
+                  <FioRecordFieldContent
                     value={value()}
                     field={field}
                     chain={fioDecryptedContent.chain}
@@ -105,4 +105,4 @@ const FioDataFieldsList: React.FC<Props> = props => {
   );
 };
 
-export default FioDataFieldsList;
+export default FioRecordFieldsList;

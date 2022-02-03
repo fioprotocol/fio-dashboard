@@ -2,7 +2,7 @@ import React from 'react';
 
 import TabsContainer from '../../../components/Tabs/TabsContainer';
 import Tabs from '../../../components/Tabs/Tabs';
-import FioDataDetailedItem from './FioDataDetailedItem';
+import FioRecordDetailedItem from './FioRecordDetailedItem';
 
 import {
   FIO_REQUEST_FIELDS_LIST,
@@ -15,7 +15,7 @@ import { FioRecordViewDecrypted, FioRecordViewKeysProps } from '../types';
 
 import { FioWalletDoublet } from '../../../types';
 
-import classes from '../styles/FioDataDetailedModal.module.scss';
+import classes from '../styles/FioRecordDetailedModal.module.scss';
 
 type Props = {
   fioRecordDecrypted: FioRecordViewDecrypted;
@@ -31,7 +31,7 @@ const DetailedTabsList = [
     title: 'Request Information',
     renderTab: (props: Props) => (
       <>
-        <FioDataDetailedItem
+        <FioRecordDetailedItem
           {...props}
           fieldsList={props.requestFieldsList}
           fioRecordDetailedType={FIO_RECORD_DETAILED_TYPE.REQUEST}
@@ -44,7 +44,7 @@ const DetailedTabsList = [
     title: 'Payment information',
     renderTab: (props: Props) => (
       // todo: get content from obt_data with matching fio_request_id
-      <FioDataDetailedItem
+      <FioRecordDetailedItem
         {...props}
         fieldsList={FIO_REQUEST_FIELDS_LIST.PAYMENT_LIST}
         fioRecordType={FIO_RECORD_TYPES.DATA}
@@ -54,7 +54,7 @@ const DetailedTabsList = [
   },
 ];
 
-const FioDataDetailedTabs: React.FC<Props> = props => {
+const FioRecordDetailedTabs: React.FC<Props> = props => {
   const { fioRecordDecrypted } = props;
   if (!fioRecordDecrypted) return null;
 
@@ -62,7 +62,7 @@ const FioDataDetailedTabs: React.FC<Props> = props => {
     return (
       <>
         <h5 className={classes.subtitle}>{DetailedTabsList[0].title}</h5>
-        <FioDataDetailedItem
+        <FioRecordDetailedItem
           {...props}
           fieldsList={props.requestFieldsList}
           fioRecordDetailedType={FIO_RECORD_DETAILED_TYPE.REQUEST}
@@ -83,4 +83,4 @@ const FioDataDetailedTabs: React.FC<Props> = props => {
   );
 };
 
-export default FioDataDetailedTabs;
+export default FioRecordDetailedTabs;

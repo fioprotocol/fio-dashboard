@@ -3,7 +3,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import TabsContainer from '../../../components/Tabs/TabsContainer';
 import Tabs from '../../../components/Tabs/Tabs';
-import FioDataList from './FioDataList';
+import FioRecordsList from './FioRecordsList';
 
 import { FIO_RECORD_TYPES } from '../constants';
 
@@ -29,7 +29,7 @@ const FIO_REQUEST_TABS = [
     eventKey: FIO_RECORD_TYPES.SENT,
     title: 'Sent',
     renderTab: (props: Props) => (
-      <FioDataList
+      <FioRecordsList
         fioDataList={props.walletData.sentFioRequests}
         fioRecordType={FIO_RECORD_TYPES.SENT}
         loading={false}
@@ -41,7 +41,7 @@ const FIO_REQUEST_TABS = [
     eventKey: FIO_RECORD_TYPES.RECEIVED,
     title: 'Received',
     renderTab: (props: Props) => (
-      <FioDataList
+      <FioRecordsList
         fioDataList={props.walletData.receivedFioRequests}
         fioRecordType={FIO_RECORD_TYPES.RECEIVED}
         loading={false}
