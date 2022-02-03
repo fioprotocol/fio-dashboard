@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, WheelEvent } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { FieldRenderProps, useForm } from 'react-final-form';
 import classnames from 'classnames';
@@ -158,6 +158,9 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
             }}
             value={isPrimaryExchange ? value : exchangedValue}
             type="number"
+            onWheel={(event: WheelEvent<HTMLInputElement>) =>
+              event.currentTarget.blur()
+            }
             data-clear={clearInput}
           />
         </div>
