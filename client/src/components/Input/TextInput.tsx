@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, WheelEvent } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { FieldRenderProps } from 'react-final-form';
 import classnames from 'classnames';
@@ -141,6 +141,9 @@ export const TextInput = (
               if (lowerCased) return onChange(currentValue.toLowerCase());
               if (upperCased) return onChange(currentValue.toUpperCase());
               onChange(currentValue);
+            }}
+            onWheel={(event: WheelEvent<HTMLInputElement>) => {
+              if (type === 'number') event.currentTarget.blur();
             }}
             type={showPass ? 'text' : type}
             data-clear={isInputHasValue}
