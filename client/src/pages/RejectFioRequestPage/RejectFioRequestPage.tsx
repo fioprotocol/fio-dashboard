@@ -4,7 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import RejectFioRequestResults from '../../components/common/TransactionResults/components/RejectFioRequestResults';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
-import FioDataFieldsList from '../WalletPage/components/FioDataFieldsList';
+import FioRecordFieldsList from '../WalletPage/components/FioRecordFieldsList';
 import BundledTransactionBadge from '../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import LowBalanceBadge from '../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import RejectRequestEdge from './components/RejectRequestEdge';
@@ -14,10 +14,13 @@ import { useFioAddresses } from '../../util/hooks';
 
 import { WALLET_CREATED_FROM } from '../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../constants/fio';
-import { FIO_REQUEST_FIELDS_LIST } from '../WalletPage/constants';
+import {
+  FIO_REQUEST_FIELDS_LIST,
+  FIO_RECORD_DETAILED_TYPE,
+} from '../WalletPage/constants';
 import { ROUTES } from '../../constants/routes';
 
-import { FioDataItemProps } from '../WalletPage/types';
+import { FioRecordViewDecrypted } from '../WalletPage/types';
 import { FioWalletDoublet } from '../../types';
 
 import classes from './RejectFioRequestPage.module.scss';
@@ -25,9 +28,9 @@ import classes from './RejectFioRequestPage.module.scss';
 type Location = {
   location: {
     state: {
-      fioRequest: FioDataItemProps;
+      fioRecordDecrypted: FioRecordViewDecrypted;
       fioWallet: FioWalletDoublet;
-      type: string;
+      fioRecordType: string;
     };
   };
 };
@@ -41,7 +44,7 @@ const RejectFioRequestPage: React.FC<Props &
   Location> = props => {
   const {
     location: {
-      state: { fioRequest, fioWallet, type },
+      state: { fioRecordDecrypted, fioWallet, fioRecordType },
     },
     history,
   } = props;
@@ -51,7 +54,8 @@ const RejectFioRequestPage: React.FC<Props &
   const fioCryptoHandle =
     walletFioCryptoHandles &&
     walletFioCryptoHandles.find(
-      walletFioCryptoHandle => walletFioCryptoHandle.name === fioRequest.to,
+      walletFioCryptoHandle =>
+        walletFioCryptoHandle.name === fioRecordDecrypted.fioRecord.to,
     );
 
   const { remaining = 0 } = fioCryptoHandle || {};
@@ -60,11 +64,13 @@ const RejectFioRequestPage: React.FC<Props &
     | ({
         error?: string;
         remaining: number;
-      } & FioDataItemProps)
+      } & FioRecordViewDecrypted)
     | null
   >(null);
   const [processing, setProcessing] = useState(false);
-  const [submitData, setSubmitData] = useState<FioDataItemProps | null>(null);
+  const [submitData, setSubmitData] = useState<FioRecordViewDecrypted | null>(
+    null,
+  );
 
   const hasLowBalance = remaining - BUNDLES_TX_COUNT.REJECT_FIO_REQUEST < 0;
 
@@ -72,18 +78,18 @@ const RejectFioRequestPage: React.FC<Props &
     history.push(
       putParamsToUrl(ROUTES.FIO_WALLET, { publicKey: fioWallet.publicKey }),
       {
-        fioDataItem: fioRequest,
-        fioRequestTab: type,
+        fioRecordDecrypted,
+        fioRequestTab: fioRecordType,
       },
     );
   };
 
   const onClick = () => {
-    setSubmitData(fioRequest);
+    setSubmitData(fioRecordDecrypted);
   };
 
   const onSuccess = () => {
-    setResultsData({ ...fioRequest, remaining });
+    setResultsData({ ...fioRecordDecrypted, remaining });
     setSubmitData(null);
     setProcessing(false);
   };
@@ -98,7 +104,7 @@ const RejectFioRequestPage: React.FC<Props &
       putParamsToUrl(ROUTES.FIO_WALLET, {
         publicKey: fioWallet.publicKey,
       }),
-      { fioRequestTab: type },
+      { fioRequestTab: fioRecordType },
     );
   };
 
@@ -114,6 +120,7 @@ const RejectFioRequestPage: React.FC<Props &
         results={resultsData}
         onRetry={onResultsRetry}
         middleWidth={true}
+        fioRecordType={fioRecordType}
       />
     );
 
@@ -129,9 +136,11 @@ const RejectFioRequestPage: React.FC<Props &
             You are rejecting the following request
           </h5>
           <div className={classes.fieldsList}>
-            <FioDataFieldsList
+            <FioRecordFieldsList
               fieldsList={FIO_REQUEST_FIELDS_LIST.REJECT_REQUEST_LIST}
-              fioDataItem={fioRequest}
+              fioRecordDecrypted={fioRecordDecrypted}
+              fioRecordDetailedType={FIO_RECORD_DETAILED_TYPE.REQUEST}
+              fioRecordType={fioRecordType}
             />
           </div>
           <h5 className={classes.bundleSubtitle}>Transaction Cost</h5>

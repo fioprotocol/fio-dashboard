@@ -3,7 +3,7 @@ import React from 'react';
 import FioRequestStatusBadge from '../../../components/Badges/FioRequestStatusBadge/FioRequestStatusBadge';
 import Modal from '../../../components/Modal/Modal';
 
-import classes from '../styles/FioDataDetailedModal.module.scss';
+import classes from '../styles/FioRecordDetailedModal.module.scss';
 
 type Props = {
   status: string;
@@ -11,7 +11,7 @@ type Props = {
   onClose: () => void;
 };
 
-const FioDataDetailedModal: React.FC<Props> = props => {
+const FioRecordDetailedModal: React.FC<Props> = props => {
   const { children, show, onClose, status } = props;
 
   return (
@@ -34,4 +34,4 @@ const FioDataDetailedModal: React.FC<Props> = props => {
   );
 };
 
-export default FioDataDetailedModal;
+export default FioRecordDetailedModal;

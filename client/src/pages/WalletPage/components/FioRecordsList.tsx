@@ -4,34 +4,40 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import InfoBadge from '../../../components/Badges/InfoBadge/InfoBadge';
 import Loader from '../../../components/Loader/Loader';
 import InfiniteScroll from '../../../components/InfiniteScroll/InfiniteScroll';
-import FioDataDetailedModal from './FioDataDetailedModal';
-import FioDataDetailedTabs from './FioDataDetailedTabs';
+import FioRecordDetailedModal from './FioRecordDetailedModal';
+import FioRecordDetailedTabs from './FioRecordDetailedTabs';
 import FioObtDataDetails from './FioObtDataDetails';
-import FioDataItem from './FioDataItem';
+import FioRecordItem from './FioRecordItem';
 import DecryptContentEdge from './DecryptContentEdge';
+
+import { transformFioRecord } from '../util';
 
 import {
   INFO_BADGE_CONTENT,
-  FIO_DATA_TX_ITEM_TYPES,
   FIO_REQUEST_FIELDS_LIST,
+  FIO_RECORD_TYPES,
 } from '../constants';
 import { WALLET_CREATED_FROM } from '../../../constants/common';
 
-import { FioRequestData, FioWalletDoublet } from '../../../types';
-import { FioDataItemProps } from '../types';
+import {
+  FioRecord,
+  FioWalletDoublet,
+  FioRecordDecrypted,
+} from '../../../types';
+import { FioRecordViewDecrypted } from '../types';
 
-import classes from '../styles/FioDataItem.module.scss';
+import classes from '../styles/FioRecordItem.module.scss';
 
 type Props = {
-  fioDataList: FioRequestData[];
-  type: string;
+  fioDataList: FioRecord[];
+  fioRecordType: string;
   loading: boolean;
   fioWallet: FioWalletDoublet;
 };
 
 type DetailedItemProps = {
-  fioDataItem: FioDataItemProps;
-  type: string;
+  fioRecordDecrypted: FioRecordViewDecrypted;
+  fioRecordType: string;
   fioWallet: FioWalletDoublet;
   onCloseModal: () => void;
 };
@@ -39,36 +45,38 @@ type DetailedItemProps = {
 type Location = {
   location: {
     state: {
-      fioDataItem: FioDataItemProps;
+      fioRecordDecrypted: FioRecordViewDecrypted;
       fioRequestTab: string;
     };
   };
 };
 
 const FIO_REQUEST_DETAILED_COMPONENT = {
-  [FIO_DATA_TX_ITEM_TYPES.SENT]: (props: DetailedItemProps) => (
-    <FioDataDetailedTabs
+  [FIO_RECORD_TYPES.SENT]: (props: DetailedItemProps) => (
+    <FioRecordDetailedTabs
       {...props}
       requestFieldsList={FIO_REQUEST_FIELDS_LIST.SENT_LIST}
     />
   ),
-  [FIO_DATA_TX_ITEM_TYPES.RECEIVED]: (props: DetailedItemProps) => (
-    <FioDataDetailedTabs
+  [FIO_RECORD_TYPES.RECEIVED]: (props: DetailedItemProps) => (
+    <FioRecordDetailedTabs
       {...props}
       requestFieldsList={FIO_REQUEST_FIELDS_LIST.RECEIVED_LIST}
     />
   ),
-  [FIO_DATA_TX_ITEM_TYPES.DATA]: (props: DetailedItemProps) => (
+  [FIO_RECORD_TYPES.DATA]: (props: DetailedItemProps) => (
     <FioObtDataDetails {...props} />
   ),
 };
 
 const MIN_VISIBLE_TRANSACTIONS_COUNT = 20;
 
-const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
+const FioRecordsList: React.FC<Props &
+  RouteComponentProps &
+  Location> = props => {
   const {
     fioDataList,
-    type,
+    fioRecordType,
     loading,
     fioWallet,
     location: { state },
@@ -79,22 +87,22 @@ const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
     MIN_VISIBLE_TRANSACTIONS_COUNT,
   );
   const [processing, setProcessing] = useState(false);
-  const [submitData, setSubmitData] = useState<FioRequestData | null>(null);
+  const [submitData, setSubmitData] = useState<FioRecord | null>(null);
   const [
-    fioDataDetailsItem,
-    setFioDataDetailsItem,
-  ] = useState<FioDataItemProps | null>(null);
-  const { fioDataItem, fioRequestTab } = state || {};
+    fioRecordDetailedItem,
+    setFioRecordDetailedItem,
+  ] = useState<FioRecordViewDecrypted | null>(null);
+  const { fioRecordDecrypted, fioRequestTab } = state || {};
 
   useEffect(() => {
-    if (fioDataItem && fioRequestTab === type) {
-      setFioDataDetailsItem(fioDataItem);
+    if (fioRecordDecrypted && fioRequestTab === fioRecordType) {
+      setFioRecordDetailedItem(fioRecordDecrypted);
       toggleModal(true);
     }
-  }, [JSON.stringify(fioDataItem)]);
+  }, [JSON.stringify(fioRecordDecrypted)]);
 
   useEffect(() => {
-    return () => setFioDataDetailsItem(null);
+    return () => setFioRecordDetailedItem(null);
   }, []);
 
   if (loading)
@@ -107,13 +115,13 @@ const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
   if ((!fioDataList || fioDataList.length === 0) && !loading)
     return (
       <InfoBadge
-        title={`No ${INFO_BADGE_CONTENT[type].title} Transactions`}
-        message={`There are no ${INFO_BADGE_CONTENT[type].message} transactions for this wallet`}
+        title={`No ${INFO_BADGE_CONTENT[fioRecordType].title} Transactions`}
+        message={`There are no ${INFO_BADGE_CONTENT[fioRecordType].message} transactions for this wallet`}
       />
     );
 
-  const onClick = (txItem: FioRequestData) => {
-    setSubmitData(txItem);
+  const onClick = (fioRecordItem: FioRecord) => {
+    setSubmitData(fioRecordItem);
   };
 
   const onCloseModal = () => {
@@ -121,10 +129,15 @@ const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
     setSubmitData(null);
   };
 
-  const onSuccess = (txData: any) => {
+  const onSuccess = (fioRecordItemDecrypted: FioRecordDecrypted) => {
     setProcessing(false);
     setSubmitData(null);
-    setFioDataDetailsItem(txData);
+    const transformedFioRecordItem = transformFioRecord({
+      fioRecordItem: fioRecordItemDecrypted,
+      publicKey: fioWallet.publicKey,
+      fioRecordType,
+    });
+    setFioRecordDetailedItem(transformedFioRecordItem);
     toggleModal(true);
   };
 
@@ -146,9 +159,6 @@ const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
       <InfiniteScroll
         loading={loading}
         hasNextPage={hasNextPage}
-        isContentScrollable={
-          fioDataList.length > MIN_VISIBLE_TRANSACTIONS_COUNT
-        }
         onLoadMore={loadMore}
       >
         {fioDataList
@@ -157,26 +167,27 @@ const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
             !hasNextPage ? fioDataList.length : visibleTransactionsCount,
           )
           .map(trxItem => (
-            <FioDataItem
-              fioDataItem={trxItem}
-              type={type}
+            <FioRecordItem
+              fioRecord={trxItem}
+              fioRecordType={fioRecordType}
+              publicKey={fioWallet.publicKey}
               onClick={onClick}
-              key={trxItem.fioRequestId}
+              key={trxItem.fioRequestId + trxItem.timeStamp}
             />
           ))}
       </InfiniteScroll>
-      <FioDataDetailedModal
+      <FioRecordDetailedModal
         show={showModal}
         onClose={onCloseModal}
-        status={fioDataDetailsItem && fioDataDetailsItem.status}
+        status={fioRecordDetailedItem && fioRecordDetailedItem.fioRecord.status}
       >
-        {FIO_REQUEST_DETAILED_COMPONENT[type]({
-          fioDataItem: fioDataDetailsItem,
-          type,
+        {FIO_REQUEST_DETAILED_COMPONENT[fioRecordType]({
+          fioRecordDecrypted: fioRecordDetailedItem,
+          fioRecordType,
           fioWallet,
           onCloseModal,
         })}
-      </FioDataDetailedModal>
+      </FioRecordDetailedModal>
       {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
         <DecryptContentEdge
           fioWallet={fioWallet}
@@ -191,4 +202,4 @@ const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
   );
 };
 
-export default withRouter(FioDataList);
+export default withRouter(FioRecordsList);

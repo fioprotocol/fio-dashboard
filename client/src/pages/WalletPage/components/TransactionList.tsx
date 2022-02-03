@@ -79,9 +79,6 @@ const TransactionList: React.FC<Props> = props => {
       <InfiniteScroll
         loading={loading}
         hasNextPage={hasNextPage}
-        isContentScrollable={
-          transactionList.length > MIN_VISIBLE_TRANSACTIONS_COUNT
-        }
         onLoadMore={loadMore}
         maxHeight={
           (height + MARGIN_BETWEEN_ITEMS) * MIN_VISIBLE_TRANSACTIONS_COUNT

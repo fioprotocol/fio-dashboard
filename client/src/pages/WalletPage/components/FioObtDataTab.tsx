@@ -1,8 +1,8 @@
 import React from 'react';
 
-import FioDataList from './FioDataList';
+import FioRecordsList from './FioRecordsList';
 
-import { FIO_DATA_TX_ITEM_TYPES } from '../constants';
+import { FIO_RECORD_TYPES } from '../constants';
 
 import { FioWalletData, FioWalletDoublet } from '../../../types';
 
@@ -13,9 +13,9 @@ type Props = {
 
 const FioObtDataTab: React.FC<Props> = props => {
   return (
-    <FioDataList
+    <FioRecordsList
       fioDataList={props.walletData.obtData}
-      type={FIO_DATA_TX_ITEM_TYPES.DATA}
+      fioRecordType={FIO_RECORD_TYPES.DATA}
       loading={false}
       {...props}
     />

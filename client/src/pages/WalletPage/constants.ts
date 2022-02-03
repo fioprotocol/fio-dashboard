@@ -1,23 +1,29 @@
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 
-import { FioDataItemKeysProps } from './types';
+import { FioRecordViewKeysProps } from './types';
 
-export const FIO_DATA_TX_ITEM_TYPES = {
+export const FIO_RECORD_TYPES = {
   SENT: 'sent',
   RECEIVED: 'received',
   DATA: 'data',
 };
 
+export const FIO_RECORD_DETAILED_TYPE = {
+  REQUEST: 'Request',
+  PAYMENT: 'Payment',
+  RESULT: 'Result',
+};
+
 export const INFO_BADGE_CONTENT = {
-  [FIO_DATA_TX_ITEM_TYPES.SENT]: {
+  [FIO_RECORD_TYPES.SENT]: {
     title: 'Sent',
     message: 'sent',
   },
-  [FIO_DATA_TX_ITEM_TYPES.RECEIVED]: {
+  [FIO_RECORD_TYPES.RECEIVED]: {
     title: 'Received',
     message: 'received',
   },
-  [FIO_DATA_TX_ITEM_TYPES.DATA]: {
+  [FIO_RECORD_TYPES.DATA]: {
     title: 'FIO Data',
     message: 'FIO data',
   },
@@ -28,34 +34,34 @@ export const CONTENT_TYPE: {
     icon: IconName;
     isGreen: boolean;
     isBlue: boolean;
-    to?: string;
-    from?: string;
+    to: string;
+    from: string;
   };
 } = {
-  [FIO_DATA_TX_ITEM_TYPES.SENT]: {
+  [FIO_RECORD_TYPES.SENT]: {
     icon: 'arrow-up',
     isGreen: true,
     isBlue: false,
+    from: null,
     to: 'To',
   },
-  [FIO_DATA_TX_ITEM_TYPES.RECEIVED]: {
+  [FIO_RECORD_TYPES.RECEIVED]: {
     icon: 'arrow-down',
     isBlue: true,
     isGreen: false,
     from: 'From',
+    to: null,
   },
 };
 
-export const DETAILED_ITEM_FIELDS: {
-  [key: string]: FioDataItemKeysProps;
+export const FIO_RECORD_DETAILED_FIELDS: {
+  [key: string]: FioRecordViewKeysProps;
 } = {
   amount: 'amount',
   chain: 'chain',
   date: 'date',
   from: 'from',
   memo: 'memo',
-  payer: 'payer',
-  requestor: 'requestor',
   to: 'to',
   type: 'type',
   txId: 'txId',
@@ -63,53 +69,53 @@ export const DETAILED_ITEM_FIELDS: {
 
 export const FIO_REQUEST_FIELDS_LIST = {
   SENT_LIST: [
-    DETAILED_ITEM_FIELDS.type,
-    DETAILED_ITEM_FIELDS.date,
-    DETAILED_ITEM_FIELDS.requestor,
-    DETAILED_ITEM_FIELDS.to,
-    DETAILED_ITEM_FIELDS.amount,
-    DETAILED_ITEM_FIELDS.chain,
-    DETAILED_ITEM_FIELDS.memo,
+    FIO_RECORD_DETAILED_FIELDS.type,
+    FIO_RECORD_DETAILED_FIELDS.date,
+    FIO_RECORD_DETAILED_FIELDS.from,
+    FIO_RECORD_DETAILED_FIELDS.to,
+    FIO_RECORD_DETAILED_FIELDS.amount,
+    FIO_RECORD_DETAILED_FIELDS.chain,
+    FIO_RECORD_DETAILED_FIELDS.memo,
   ],
   RECEIVED_LIST: [
-    DETAILED_ITEM_FIELDS.type,
-    DETAILED_ITEM_FIELDS.date,
-    DETAILED_ITEM_FIELDS.from,
-    DETAILED_ITEM_FIELDS.amount,
-    DETAILED_ITEM_FIELDS.chain,
-    DETAILED_ITEM_FIELDS.memo,
+    FIO_RECORD_DETAILED_FIELDS.type,
+    FIO_RECORD_DETAILED_FIELDS.date,
+    FIO_RECORD_DETAILED_FIELDS.from,
+    FIO_RECORD_DETAILED_FIELDS.amount,
+    FIO_RECORD_DETAILED_FIELDS.chain,
+    FIO_RECORD_DETAILED_FIELDS.memo,
   ],
   PAYMENT_LIST: [
-    DETAILED_ITEM_FIELDS.type,
-    DETAILED_ITEM_FIELDS.date,
-    DETAILED_ITEM_FIELDS.payer,
-    DETAILED_ITEM_FIELDS.to,
-    DETAILED_ITEM_FIELDS.amount,
-    DETAILED_ITEM_FIELDS.chain,
-    DETAILED_ITEM_FIELDS.txId,
-    DETAILED_ITEM_FIELDS.memo,
+    FIO_RECORD_DETAILED_FIELDS.type,
+    FIO_RECORD_DETAILED_FIELDS.date,
+    FIO_RECORD_DETAILED_FIELDS.from,
+    FIO_RECORD_DETAILED_FIELDS.to,
+    FIO_RECORD_DETAILED_FIELDS.amount,
+    FIO_RECORD_DETAILED_FIELDS.chain,
+    FIO_RECORD_DETAILED_FIELDS.txId,
+    FIO_RECORD_DETAILED_FIELDS.memo,
   ],
   DATA_LIST: [
-    DETAILED_ITEM_FIELDS.date,
-    DETAILED_ITEM_FIELDS.amount,
-    DETAILED_ITEM_FIELDS.from,
-    DETAILED_ITEM_FIELDS.to,
-    DETAILED_ITEM_FIELDS.chain,
-    DETAILED_ITEM_FIELDS.txId,
-    DETAILED_ITEM_FIELDS.memo,
+    FIO_RECORD_DETAILED_FIELDS.date,
+    FIO_RECORD_DETAILED_FIELDS.amount,
+    FIO_RECORD_DETAILED_FIELDS.from,
+    FIO_RECORD_DETAILED_FIELDS.to,
+    FIO_RECORD_DETAILED_FIELDS.chain,
+    FIO_RECORD_DETAILED_FIELDS.txId,
+    FIO_RECORD_DETAILED_FIELDS.memo,
   ],
   REJECT_REQUEST_LIST: [
-    DETAILED_ITEM_FIELDS.type,
-    DETAILED_ITEM_FIELDS.date,
-    DETAILED_ITEM_FIELDS.from,
-    DETAILED_ITEM_FIELDS.amount,
-    DETAILED_ITEM_FIELDS.chain,
+    FIO_RECORD_DETAILED_FIELDS.type,
+    FIO_RECORD_DETAILED_FIELDS.date,
+    FIO_RECORD_DETAILED_FIELDS.from,
+    FIO_RECORD_DETAILED_FIELDS.amount,
+    FIO_RECORD_DETAILED_FIELDS.chain,
   ],
   REJECT_REQUEST_RESULTS_LIST: [
-    DETAILED_ITEM_FIELDS.from,
-    DETAILED_ITEM_FIELDS.to,
-    DETAILED_ITEM_FIELDS.amount,
-    DETAILED_ITEM_FIELDS.chain,
-    DETAILED_ITEM_FIELDS.txId,
+    FIO_RECORD_DETAILED_FIELDS.from,
+    FIO_RECORD_DETAILED_FIELDS.to,
+    FIO_RECORD_DETAILED_FIELDS.amount,
+    FIO_RECORD_DETAILED_FIELDS.chain,
+    FIO_RECORD_DETAILED_FIELDS.txId,
   ],
 };

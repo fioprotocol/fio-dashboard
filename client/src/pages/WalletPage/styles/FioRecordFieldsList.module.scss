@@ -16,7 +16,7 @@
 
       .title {
         text-transform: capitalize;
-        width: 100px;
+        margin-right: 30px;
         margin-bottom: 0;
       }
 
@@ -37,10 +37,10 @@
   
     .container {
       &.short {
-        flex-basis: 30%;
+        flex-basis: 35%;
 
         &:nth-of-type(2) {
-          flex-basis: 60%;
+          flex-basis: 61%;
         }
       }
       .badgeContainer {

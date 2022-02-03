@@ -7,33 +7,40 @@ import CancelButton from '../../../components/common/CancelButton/CancelButton';
 import { CHAIN_CODES } from '../../../constants/common';
 import { ROUTES } from '../../../constants/routes';
 
-import { FioDataItemProps } from '../types';
+import { FioRecordViewDecrypted } from '../types';
 
 import { FioWalletDoublet } from '../../../types';
 
-import classes from '../styles/FioDataDetailedActionButtons.module.scss';
+import classes from '../styles/FioRecordDetailedAcctionButtons.module.scss';
 
 type Props = {
-  fioRequest: FioDataItemProps;
+  fioRecordDecrypted: FioRecordViewDecrypted;
   fioWallet: FioWalletDoublet;
-  type: string;
+  fioRecordType: string;
   onCloseModal: () => void;
 };
 
-const FioDataDetailedActionButtons: React.FC<Props &
+const FioRecordDetailedAcctionButtons: React.FC<Props &
   RouteComponentProps> = props => {
-  const { history, fioRequest, fioWallet, type, onCloseModal } = props;
+  const {
+    history,
+    fioRecordDecrypted,
+    fioWallet,
+    fioRecordType,
+    onCloseModal,
+  } = props;
 
-  const isFioChain = fioRequest.content.chain === CHAIN_CODES.FIO;
+  const isFioChain =
+    fioRecordDecrypted?.fioDecryptedContent?.chain === CHAIN_CODES.FIO;
 
   const payButtonText = isFioChain ? 'Pay' : 'Enter Payment Details';
 
   const onRejectClick = () => {
     onCloseModal();
     history.push(ROUTES.REJECT_FIO_REQUEST, {
-      fioRequest,
+      fioRecordDecrypted,
       fioWallet,
-      type,
+      fioRecordType,
     });
   };
 
@@ -41,7 +48,7 @@ const FioDataDetailedActionButtons: React.FC<Props &
     // todo: set path to fio payment page
     const payLink = isFioChain ? '/' : '/';
 
-    history.push(payLink, { fioRequest });
+    history.push(payLink, { fioRecordDecrypted });
   };
 
   return (
@@ -56,4 +63,4 @@ const FioDataDetailedActionButtons: React.FC<Props &
   );
 };
 
-export default withRouter(FioDataDetailedActionButtons);
+export default withRouter(FioRecordDetailedAcctionButtons);

@@ -7,17 +7,19 @@ import CommonBadge from '../../../components/Badges/CommonBadge/CommonBadge';
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 
 import { commonFormatTime } from '../../../util/general';
+import { transformFioRecord } from '../util';
 
 import { CONTENT_TYPE } from '../constants';
 
-import { FioRequestData } from '../../../types';
+import { FioRecord } from '../../../types';
 
-import classes from '../styles/FioDataItem.module.scss';
+import classes from '../styles/FioRecordItem.module.scss';
 
 type Props = {
-  fioDataItem: FioRequestData;
-  type: string;
-  onClick: (fioDataItem: FioRequestData) => void;
+  fioRecord: FioRecord;
+  fioRecordType: string;
+  publicKey: string;
+  onClick: (fioRecord: FioRecord) => void;
 };
 
 const renderSenderInfo = ({
@@ -34,43 +36,41 @@ const renderSenderInfo = ({
   );
 };
 
-const FioDataItem: React.FC<Props> = props => {
-  const { fioDataItem, type, onClick } = props;
+const FioRecordItem: React.FC<Props> = props => {
+  const { fioRecord, onClick, fioRecordType, publicKey } = props;
 
   const {
-    timeStamp: date,
-    payeeFioAddress: from,
-    payerFioAddress: to,
-    status,
-  } = fioDataItem;
+    fioRecord: { fioTxType, from, to, status, date },
+  } = transformFioRecord({
+    fioRecordItem: { fioRecord, fioDecryptedContent: null },
+    fioRecordType,
+    publicKey,
+  });
 
   const senderInfo = {
-    title: CONTENT_TYPE[type].from
-      ? CONTENT_TYPE[type].from
-      : CONTENT_TYPE[type].to,
-    senderAddress: CONTENT_TYPE[type].from ? from : to,
+    title: CONTENT_TYPE[fioTxType].from
+      ? CONTENT_TYPE[fioTxType].from
+      : CONTENT_TYPE[fioTxType].to,
+    senderAddress: CONTENT_TYPE[fioTxType].from ? from : to,
   };
 
   return (
-    <div
-      className={classes.badgeContainer}
-      onClick={() => onClick(fioDataItem)}
-    >
+    <div className={classes.badgeContainer} onClick={() => onClick(fioRecord)}>
       <Badge type={BADGE_TYPES.BORDERED} show={true}>
         <div className={classes.badgeItem}>
           <div className={classes.fioDataTypeContainer}>
             <CommonBadge
-              isBlue={CONTENT_TYPE[type].isBlue}
-              isGreen={CONTENT_TYPE[type].isGreen}
+              isBlue={CONTENT_TYPE[fioTxType].isBlue}
+              isGreen={CONTENT_TYPE[fioTxType].isGreen}
             >
               <div className={classes.iconContainer}>
                 <FontAwesomeIcon
-                  icon={CONTENT_TYPE[type].icon}
+                  icon={CONTENT_TYPE[fioTxType].icon}
                   className={classes.icon}
                 />
               </div>
             </CommonBadge>
-            <p className={classes.type}>{type}</p>
+            <p className={classes.fioTxType}>{fioTxType}</p>
           </div>
           <div className={classes.date}>{commonFormatTime(date)}</div>
           {renderSenderInfo(senderInfo)}
@@ -86,4 +86,4 @@ const FioDataItem: React.FC<Props> = props => {
   );
 };
 
-export default FioDataItem;
+export default FioRecordItem;
