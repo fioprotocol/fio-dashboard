@@ -1,7 +1,7 @@
 import React from 'react';
 
-import FioDataDetailedActionButtons from './FioDataDetailedActionButtons';
-import FioDataFieldsList from './FioDataFieldsList';
+import FioRecordDetailedAcctionButtons from './FioRecordDetailedAcctionButtons';
+import FioRecordFieldsList from './FioRecordFieldsList';
 
 import { FIO_REQUEST_STATUS_TYPES } from '../../../constants/fio';
 import { FIO_RECORD_TYPES } from '../../WalletPage/constants';
@@ -9,7 +9,7 @@ import { FIO_RECORD_TYPES } from '../../WalletPage/constants';
 import { FioRecordViewKeysProps, FioRecordViewDecrypted } from '../types';
 import { FioWalletDoublet } from '../../../types';
 
-import classes from '../styles/FioDataDetailedItem.module.scss';
+import classes from '../styles/FioRecordDetailedItem.module.scss';
 
 type Props = {
   fieldsList: FioRecordViewKeysProps[];
@@ -20,7 +20,7 @@ type Props = {
   onCloseModal: () => void;
 };
 
-const FioDataDetailedItem: React.FC<Props> = props => {
+const FioRecordDetailedItem: React.FC<Props> = props => {
   const {
     fieldsList,
     fioRecordDecrypted,
@@ -34,7 +34,7 @@ const FioDataDetailedItem: React.FC<Props> = props => {
 
   return (
     <div className={classes.fieldsContainer}>
-      <FioDataFieldsList
+      <FioRecordFieldsList
         fieldsList={fieldsList}
         fioRecordDecrypted={fioRecordDecrypted}
         fioRecordDetailedType={fioRecordDetailedType}
@@ -43,7 +43,7 @@ const FioDataDetailedItem: React.FC<Props> = props => {
       {fioRecordDecrypted.fioRecord.status ===
         FIO_REQUEST_STATUS_TYPES.PENDING &&
         fioRecordType === FIO_RECORD_TYPES.RECEIVED && (
-          <FioDataDetailedActionButtons
+          <FioRecordDetailedAcctionButtons
             fioRecordDecrypted={fioRecordDecrypted}
             fioWallet={fioWallet}
             fioRecordType={fioRecordType}
@@ -54,4 +54,4 @@ const FioDataDetailedItem: React.FC<Props> = props => {
   );
 };
 
-export default FioDataDetailedItem;
+export default FioRecordDetailedItem;

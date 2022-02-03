@@ -13,7 +13,7 @@ import { CONTENT_TYPE } from '../constants';
 
 import { FioRecord } from '../../../types';
 
-import classes from '../styles/FioDataItem.module.scss';
+import classes from '../styles/FioRecordItem.module.scss';
 
 type Props = {
   fioRecord: FioRecord;
@@ -36,7 +36,7 @@ const renderSenderInfo = ({
   );
 };
 
-const FioDataItem: React.FC<Props> = props => {
+const FioRecordItem: React.FC<Props> = props => {
   const { fioRecord, onClick, fioRecordType, publicKey } = props;
 
   const {
@@ -86,4 +86,4 @@ const FioDataItem: React.FC<Props> = props => {
   );
 };
 
-export default FioDataItem;
+export default FioRecordItem;

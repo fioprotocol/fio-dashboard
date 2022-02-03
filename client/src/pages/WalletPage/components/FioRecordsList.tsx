@@ -4,10 +4,10 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import InfoBadge from '../../../components/Badges/InfoBadge/InfoBadge';
 import Loader from '../../../components/Loader/Loader';
 import InfiniteScroll from '../../../components/InfiniteScroll/InfiniteScroll';
-import FioDataDetailedModal from './FioDataDetailedModal';
-import FioDataDetailedTabs from './FioDataDetailedTabs';
+import FioRecordDetailedModal from './FioRecordDetailedModal';
+import FioRecordDetailedTabs from './FioRecordDetailedTabs';
 import FioObtDataDetails from './FioObtDataDetails';
-import FioDataItem from './FioDataItem';
+import FioRecordItem from './FioRecordItem';
 import DecryptContentEdge from './DecryptContentEdge';
 
 import { transformFioRecord } from '../util';
@@ -26,7 +26,7 @@ import {
 } from '../../../types';
 import { FioRecordViewDecrypted } from '../types';
 
-import classes from '../styles/FioDataItem.module.scss';
+import classes from '../styles/FioRecordItem.module.scss';
 
 type Props = {
   fioDataList: FioRecord[];
@@ -53,13 +53,13 @@ type Location = {
 
 const FIO_REQUEST_DETAILED_COMPONENT = {
   [FIO_RECORD_TYPES.SENT]: (props: DetailedItemProps) => (
-    <FioDataDetailedTabs
+    <FioRecordDetailedTabs
       {...props}
       requestFieldsList={FIO_REQUEST_FIELDS_LIST.SENT_LIST}
     />
   ),
   [FIO_RECORD_TYPES.RECEIVED]: (props: DetailedItemProps) => (
-    <FioDataDetailedTabs
+    <FioRecordDetailedTabs
       {...props}
       requestFieldsList={FIO_REQUEST_FIELDS_LIST.RECEIVED_LIST}
     />
@@ -71,7 +71,9 @@ const FIO_REQUEST_DETAILED_COMPONENT = {
 
 const MIN_VISIBLE_TRANSACTIONS_COUNT = 20;
 
-const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
+const FioRecordsList: React.FC<Props &
+  RouteComponentProps &
+  Location> = props => {
   const {
     fioDataList,
     fioRecordType,
@@ -165,7 +167,7 @@ const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
             !hasNextPage ? fioDataList.length : visibleTransactionsCount,
           )
           .map(trxItem => (
-            <FioDataItem
+            <FioRecordItem
               fioRecord={trxItem}
               fioRecordType={fioRecordType}
               publicKey={fioWallet.publicKey}
@@ -174,7 +176,7 @@ const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
             />
           ))}
       </InfiniteScroll>
-      <FioDataDetailedModal
+      <FioRecordDetailedModal
         show={showModal}
         onClose={onCloseModal}
         status={fioRecordDetailedItem && fioRecordDetailedItem.fioRecord.status}
@@ -185,7 +187,7 @@ const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
           fioWallet,
           onCloseModal,
         })}
-      </FioDataDetailedModal>
+      </FioRecordDetailedModal>
       {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
         <DecryptContentEdge
           fioWallet={fioWallet}
@@ -200,4 +202,4 @@ const FioDataList: React.FC<Props & RouteComponentProps & Location> = props => {
   );
 };
 
-export default withRouter(FioDataList);
+export default withRouter(FioRecordsList);

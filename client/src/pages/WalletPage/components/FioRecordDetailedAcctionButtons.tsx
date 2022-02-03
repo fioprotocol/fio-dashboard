@@ -11,7 +11,7 @@ import { FioRecordViewDecrypted } from '../types';
 
 import { FioWalletDoublet } from '../../../types';
 
-import classes from '../styles/FioDataDetailedActionButtons.module.scss';
+import classes from '../styles/FioRecordDetailedAcctionButtons.module.scss';
 
 type Props = {
   fioRecordDecrypted: FioRecordViewDecrypted;
@@ -20,7 +20,7 @@ type Props = {
   onCloseModal: () => void;
 };
 
-const FioDataDetailedActionButtons: React.FC<Props &
+const FioRecordDetailedAcctionButtons: React.FC<Props &
   RouteComponentProps> = props => {
   const {
     history,
@@ -63,4 +63,4 @@ const FioDataDetailedActionButtons: React.FC<Props &
   );
 };
 
-export default withRouter(FioDataDetailedActionButtons);
+export default withRouter(FioRecordDetailedAcctionButtons);
