@@ -148,6 +148,28 @@ export function usePublicAddresses(fioAddress: string, limit: number = 0) {
   }, [hasMore]);
 }
 
+export function usePubAddressesFromWallet(walletPublicKey: string) {
+  const dispatch = useDispatch();
+
+  const fioAddressToPubAddresses = useSelector(mappedPublicAddresses);
+  const fioCryptoHandles: FioAddressDoublet[] = useFioAddresses(
+    walletPublicKey,
+  );
+
+  const fetchPublicAddresses = (items: FioAddressDoublet[]) => {
+    for (const { name } of items) {
+      dispatch(getAllFioPubAddresses(name, 0, 0));
+    }
+  };
+
+  useEffect(() => {
+    if (fioCryptoHandles.length < 1) return;
+    fetchPublicAddresses(fioCryptoHandles);
+  }, [fioCryptoHandles.length]);
+
+  return fioAddressToPubAddresses;
+}
+
 export function useConvertFioToUsdc({
   fioAmount,
   nativeAmount,
