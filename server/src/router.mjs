@@ -69,4 +69,6 @@ router.use(
 router.post('/contacts', checkAuth, routes.contacts.create);
 router.get('/contacts', checkAuth, routes.contacts.list);
 
+router.get('/check-pub-address', checkAuth, routes.external.validatePubAddress);
+
 export default router;

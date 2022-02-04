@@ -58,6 +58,7 @@ const PublicKeyField: React.FC<Props> = props => {
       errorColor={COLOR_TYPE.WARN}
       component={TextInput}
       disabled={loading}
+      showPasteButton={true}
       label="Public Address (where funds will be sent)"
     />
   );
