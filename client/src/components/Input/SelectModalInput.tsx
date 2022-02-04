@@ -15,6 +15,7 @@ import { INPUT_COLOR_SCHEMA } from './TextInput';
 import { getValueFromPaste } from '../../util/general';
 
 import classes from './Input.module.scss';
+import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 type Props = {
   colorSchema?: string;
@@ -171,6 +172,14 @@ const SelectModal: React.FC<Props &
               type={errorType}
               color={errorColor}
               submitError={submitError}
+            />
+          </div>
+
+          <div className="d-flex justify-content-center align-items-center mt-0 mb-4">
+            <SubmitButton
+              text="Done"
+              onClick={handleClose}
+              disabled={value == null || value === ''}
             />
           </div>
 
