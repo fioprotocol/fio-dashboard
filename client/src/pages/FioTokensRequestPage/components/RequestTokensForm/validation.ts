@@ -5,6 +5,7 @@ import {
   isFioAddressValidator,
   matchFieldValidator,
   isNumberValidator,
+  isValidPubAddressValidator,
 } from '../../../../util/validators';
 
 import { MAX_MEMO_SIZE } from '../../../../constants/fio';
@@ -43,6 +44,12 @@ const validationSchema: ValidationSchema = {
         message: 'Please enter valid amount.',
       },
     ],
+    payeeTokenPublicAddress: [
+      {
+        validator: Validators.required,
+        message: 'Required.',
+      },
+    ],
     tokenCode: [Validators.required],
     chainCode: [Validators.required],
     memo: [
@@ -65,6 +72,13 @@ const onSubmitValidationSchema: ValidationSchema = {
           sameWalletMessage: "Can't request to same wallet.",
         },
         message: 'Please enter valid FIO Crypto Handle.',
+      },
+    ],
+    payeeTokenPublicAddress: [
+      {
+        validator: isValidPubAddressValidator,
+        customArgs: { chainCodeFieldId: 'chainCode' },
+        message: 'Please enter valid Public Address.',
       },
     ],
   },

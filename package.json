@@ -85,6 +85,7 @@
     "@types/react-final-form-listeners": "^1.0.0",
     "@types/uuid": "^8.3.1",
     "bip39": "^3.0.4",
+    "bitcoin-address-validation": "^2.2.1",
     "body-parser": "^1.18.2",
     "bootstrap": "4.6.0",
     "bunyan": "^1.8.12",
@@ -140,7 +141,8 @@
     "sequelize": "^4.33.4",
     "sequelize-cli": "^6.2.0",
     "stream-browserify": "^3.0.0",
-    "superagent": "^3.8.2"
+    "superagent": "^3.8.2",
+    "web3": "^1.7.0"
   },
   "proxy": "http://localhost:9000",
   "resolutions": {
