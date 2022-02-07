@@ -227,7 +227,7 @@ export type User = {
   status: string;
   secretSet?: boolean;
   newEmail?: boolean;
-  newDeviceTwoFactor?: { voucherId: string; deviceDescription?: string; status: strinig }[];
+  newDeviceTwoFactor?: { voucherId: string; deviceDescription?: string; status: string }[];
 };
 
 export type RefProfile = {
