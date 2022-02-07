@@ -100,6 +100,9 @@ const getWalletData = async (
   });
   promises.push(getObtDataPromise);
 
+  // todo: remove for production
+  apis.fio.setBaseUrl();
+
   await Promise.all(promises);
 
   const walletData = {
