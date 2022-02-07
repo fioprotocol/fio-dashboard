@@ -1,5 +1,6 @@
-export const isEmpty = target => {
+export const isEmpty = (target: any): boolean => {
   /* eslint-disable */
+  // @ts-ignore
   for (const key in target) {
     /* eslint-enable */
     return false;
@@ -8,8 +9,8 @@ export const isEmpty = target => {
   return true;
 };
 
-export const omit = (propsToOmit, target) => {
-  return Object.keys(target).reduce((acc, key) => {
+export const omit = (propsToOmit: string[], target: any): any => {
+  return Object.keys(target).reduce((acc: any, key: string) => {
     if (!propsToOmit.includes(key)) {
       acc[key] = target[key];
     }

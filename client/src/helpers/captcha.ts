@@ -1,5 +1,7 @@
-export const initCaptcha = data =>
+export const initCaptcha = (data: any) =>
   new Promise((resolve, reject) => {
+    if (window.initGeetest == null) reject('Geetest init error');
+
     window.initGeetest(
       {
         gt: data.gt,
@@ -10,7 +12,7 @@ export const initCaptcha = data =>
         product: 'bind',
         width: '400px',
       },
-      captchaObj => {
+      (captchaObj: any) => {
         captchaObj
           .onReady(() => {
             resolve(captchaObj);
@@ -22,7 +24,7 @@ export const initCaptcha = data =>
     );
   });
 
-export const verifyCaptcha = captchaObj =>
+export const verifyCaptcha = (captchaObj: any) =>
   new Promise((resolve, reject) => {
     captchaObj.verify();
     captchaObj.onSuccess(() => {
@@ -41,10 +43,10 @@ export const verifyCaptcha = captchaObj =>
       };
       resolve(captchaParams);
     });
-    captchaObj.onError(e => {
+    captchaObj.onError((e: Error) => {
       reject(e);
     });
-    captchaObj.onClose(e => {
+    captchaObj.onClose((e: Error) => {
       captchaObj.reset();
       reject(e);
     });
