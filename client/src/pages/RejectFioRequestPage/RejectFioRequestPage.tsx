@@ -118,9 +118,7 @@ const RejectFioRequestPage: React.FC<Props &
   if (resultsData)
     return (
       <RejectFioRequestResults
-        title={
-          resultsData.error != null ? 'Rejection Failed!' : 'Rejection Details!'
-        }
+        title={resultsData.error != null ? 'Rejection Failed!' : 'Rejected!'}
         onClose={onCloseResults}
         results={resultsData}
         onRetry={onResultsRetry}
