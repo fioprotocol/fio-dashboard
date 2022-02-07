@@ -1,4 +1,6 @@
+// @ts-nocheck
 /* eslint-disable */
+// @ts-ignore
 (function (window) {
     "use strict";
     if (typeof window === 'undefined') {

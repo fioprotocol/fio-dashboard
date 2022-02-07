@@ -1,7 +1,11 @@
-export const convertParamsToObject = url => {
+import { History } from 'history';
+
+export const convertParamsToObject = (
+  url: string,
+): { [paramKey: string]: any } => {
   if (url.length === 0) return {};
   const arr = url.slice(1).split(/&|=/);
-  const params = {};
+  const params: any = {};
 
   for (let i = 0; i < arr.length; i += 2) {
     const key = arr[i];
@@ -11,7 +15,7 @@ export const convertParamsToObject = url => {
   return params;
 };
 
-export const addLocationQuery = history => {
+export const addLocationQuery = (history: History) => {
   history.location = Object.assign(history.location, {
     query: convertParamsToObject(history.location.search),
   });

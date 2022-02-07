@@ -386,6 +386,16 @@ export type UsersFioWalletsData =  {
   }
 }
 
+type GeetestInitOptions = {
+  gt: any;
+  challenge: any;
+  offline: boolean;
+  new_captcha: boolean;
+  lang: string;
+  product: string;
+  width: string;
+}
+
 export type UsersWalletsTxHistory =  {
   [userId: string]: {
     [walletPublicKey: string]: FioWalletTxHistory
