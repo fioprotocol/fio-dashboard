@@ -1,15 +1,19 @@
-import superagent from 'superagent';
+import superagent, { SuperAgentRequest } from 'superagent';
 import config from '../config';
 
 export default class ApiClient {
-  constructor(prefix) {
+  prefix: string;
+  baseUrl: string;
+  token: string | null;
+
+  constructor(prefix: string) {
     if (!prefix) throw new Error('[apiPrefix] required');
     this.prefix = prefix;
     this.baseUrl = config.apiBaseUrl;
     this.token = window.localStorage.getItem('token') || null;
   }
 
-  setToken(token) {
+  setToken(token: string) {
     this.token = token;
     window.localStorage.setItem('token', token);
   }
@@ -19,28 +23,40 @@ export default class ApiClient {
     window.localStorage.removeItem('token');
   }
 
-  get(url, params = {}) {
+  get(url: string, params: any = {}) {
     return this._request({ url, method: 'get', params });
   }
 
-  post(url, body) {
+  post(url: string, body: any) {
     return this._request({ url, method: 'post', body });
   }
 
-  patch(url, body) {
+  patch(url: string, body: any) {
     return this._request({ url, method: 'patch', body });
   }
 
-  put(url, body) {
+  put(url: string, body: any) {
     return this._request({ url, method: 'put', body });
   }
 
-  delete(url, body) {
+  delete(url: string, body: any) {
     return this._request({ url, method: 'delete', body });
   }
 
-  _request({ url, method, params, body }) {
-    const req = superagent[method](`${this.baseUrl}${this.prefix}${url}`);
+  _request({
+    url,
+    method,
+    params,
+    body,
+  }: {
+    url: string;
+    method: 'get' | 'post' | 'patch' | 'put' | 'delete';
+    params?: any;
+    body?: any;
+  }) {
+    const req: SuperAgentRequest = superagent[method](
+      `${this.baseUrl}${this.prefix}${url}`,
+    );
 
     if (params) req.query(params);
     if (body) req.send(body);

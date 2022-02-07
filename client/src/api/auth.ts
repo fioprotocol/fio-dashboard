@@ -42,7 +42,7 @@ export default class Auth extends Base {
   }
 
   confirm(hash: string) {
-    return this.apiClient.post(`actions/${hash}`);
+    return this.apiClient.post(`actions/${hash}`, {});
   }
 
   setRecovery(token: string) {
@@ -70,7 +70,7 @@ export default class Auth extends Base {
   }
 
   updateEmailRevert() {
-    return this.apiClient.post('users/update-email-revert');
+    return this.apiClient.post('users/update-email-revert', {});
   }
 
   createNewDeviceRequest({
