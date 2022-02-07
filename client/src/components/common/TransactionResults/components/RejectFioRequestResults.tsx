@@ -18,6 +18,7 @@ type Props = {
   title: string;
   onClose: () => void;
   results: { error?: string; remaining: number } & FioRecordViewDecrypted;
+  errorType?: string;
   onRetry: () => void;
   middleWidth: boolean;
   fioRecordType: string;
@@ -37,7 +38,11 @@ const RejectFioRequestResults: React.FC<Props> = props => {
       <div className={classes.bundleContainer}>
         <BundledTransactionBadge
           bundles={BUNDLES_TX_COUNT.REJECT_FIO_REQUEST}
-          remaining={results.remaining - BUNDLES_TX_COUNT.REJECT_FIO_REQUEST}
+          remaining={
+            results.error != null
+              ? results.remaining
+              : results.remaining - BUNDLES_TX_COUNT.REJECT_FIO_REQUEST
+          }
         />
       </div>
     </Results>
