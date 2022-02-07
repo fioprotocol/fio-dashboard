@@ -57,7 +57,7 @@ const Routes = () => (
       <Switch>
         <Route path={ROUTES.HOME} component={HomePage} exact />
         <Route path={ROUTES.REF_PROFILE_HOME} component={RefHomePage} exact />
-        <PrivateRoute path={ROUTES.ADMIN} component={AdminContainer} exact />
+        <Route path={ROUTES.ADMIN} component={AdminContainer} exact />
         <Route
           path={ROUTES.CONFIRM_EMAIL}
           component={EmailConfirmationPage}

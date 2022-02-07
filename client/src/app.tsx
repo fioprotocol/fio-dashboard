@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Provider } from 'react-redux';
+import ReactDOM from 'react-dom';
 import { ConnectedRouter } from 'connected-react-router';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { LastLocationProvider } from 'react-router-last-location';
@@ -14,9 +15,11 @@ import Routes from './routes';
 
 library.add(icons);
 
-export default class App extends Component {
+class App extends Component<{}, {}> {
   render() {
     return (
+      // todo: store has Store<any> type, but provider wants Store<any, A>
+      // @ts-ignore
       <Provider store={store}>
         <ConnectedRouter history={history}>
           <LastLocationProvider>
@@ -27,3 +30,5 @@ export default class App extends Component {
     );
   }
 }
+
+ReactDOM.render(<App />, document.getElementById('root'));
