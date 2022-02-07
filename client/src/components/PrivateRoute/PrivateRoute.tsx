@@ -1,10 +1,24 @@
+import React from 'react';
+import {
+  Redirect,
+  Route,
+  RouteComponentProps,
+  RouteProps,
+} from 'react-router-dom';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
+
 import { ROUTES } from '../../constants/routes';
 
-export const PrivateRoute = ({
+type PrivateRouteProps = {
+  noProfileLoaded: boolean;
+  isNewUser: boolean;
+  isNewEmailNotVerified: boolean;
+  loading: boolean;
+  homePageLink: string;
+};
+
+export const PrivateRoute: React.FC<PrivateRouteProps & RouteProps> = ({
   component: Component,
   noProfileLoaded,
   isNewUser,
@@ -16,7 +30,7 @@ export const PrivateRoute = ({
   return (
     <Route
       {...rest}
-      render={props => {
+      render={(props: RouteComponentProps) => {
         if (loading) {
           return (
             <FontAwesomeIcon

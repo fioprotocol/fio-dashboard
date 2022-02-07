@@ -3,3 +3,6 @@ declare namespace JSX {
     'lottie-player': any;
   }
 }
+declare module '@fioprotocol/fiosdk';
+declare module '@fioprotocol/fiosdk/lib/transactions/Transactions';
+declare module '@fioprotocol/fiosdk/lib/entities/EndPoint';
