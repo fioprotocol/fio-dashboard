@@ -18,7 +18,7 @@ const reduxConnect = connect(
     loading,
     noProfileLoaded,
   }),
-  { fetchDataFn: getFioAddresses },
+  { getWalletAddresses: getFioAddresses },
 );
 
 export default compose(reduxConnect)(FioAddressManagePage);

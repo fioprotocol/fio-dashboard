@@ -18,7 +18,7 @@ const reduxConnect = connect(
     loading,
     noProfileLoaded,
   }),
-  { fetchDataFn: getFioDomains },
+  { getWalletAddresses: getFioDomains },
 );
 
 export default compose(reduxConnect)(FioDomainManagePage);
