@@ -2,7 +2,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import { FioNameItemProps, FioWalletDoublet, FioNameType } from '../../types';
 
 export type HasMore = { [key: string]: number };
-export type FetchDataFn = (
+type GetWalletAddresses = (
   publicKey: string,
   limit: number,
   offset: number,
@@ -16,7 +16,7 @@ export interface ContainerProps extends RouteComponentProps {
   noProfileLoaded?: boolean;
   loading: boolean;
   pageName: FioNameType;
-  fetchDataFn: FetchDataFn;
+  getWalletAddresses: GetWalletAddresses;
   showExpired?: boolean;
   showBundles?: boolean;
   showStatus?: boolean;

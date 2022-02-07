@@ -114,6 +114,10 @@ export const CHAIN_CODE_LIST = [
     name: 'Ethereum',
     tokens: [
       {
+        id: 'ETH',
+        name: 'Ethereum',
+      },
+      {
         id: 'REP',
         name: 'Augur',
       },

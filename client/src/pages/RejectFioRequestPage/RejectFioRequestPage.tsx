@@ -8,6 +8,7 @@ import FioRecordFieldsList from '../WalletPage/components/FioRecordFieldsList';
 import BundledTransactionBadge from '../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import LowBalanceBadge from '../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import RejectRequestEdge from './components/RejectRequestEdge';
+import { ERROR_TYPES } from '../../components/common/TransactionResults/constants';
 
 import { putParamsToUrl } from '../../utils';
 import { useFioAddresses } from '../../util/hooks';
@@ -88,8 +89,10 @@ const RejectFioRequestPage: React.FC<Props &
     setSubmitData(fioRecordDecrypted);
   };
 
-  const onSuccess = () => {
-    setResultsData({ ...fioRecordDecrypted, remaining });
+  const onSuccess = (
+    rejectResult: FioRecordViewDecrypted & { error?: string },
+  ) => {
+    setResultsData({ ...rejectResult, remaining });
     setSubmitData(null);
     setProcessing(false);
   };
@@ -115,12 +118,13 @@ const RejectFioRequestPage: React.FC<Props &
   if (resultsData)
     return (
       <RejectFioRequestResults
-        title={resultsData.error ? 'Rejection Failed!' : 'Rejection Details!'}
+        title={resultsData.error != null ? 'Rejection Failed!' : 'Rejected!'}
         onClose={onCloseResults}
         results={resultsData}
         onRetry={onResultsRetry}
         middleWidth={true}
         fioRecordType={fioRecordType}
+        errorType={ERROR_TYPES.REJECT_ERROR}
       />
     );
 

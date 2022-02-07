@@ -3,6 +3,7 @@ import React from 'react';
 import {
   FioAddressDoublet,
   FioWalletDoublet,
+  MappedPublicAddresses,
   WalletBalances,
 } from '../../types';
 
@@ -23,6 +24,7 @@ export type RequestTokensValues = {
 export type RequestTokensProps = {
   fioWallet: FioWalletDoublet;
   fioAddresses: FioAddressDoublet[];
+  pubAddressesMap: MappedPublicAddresses;
   balance: WalletBalances;
   loading: boolean;
   roe: number;

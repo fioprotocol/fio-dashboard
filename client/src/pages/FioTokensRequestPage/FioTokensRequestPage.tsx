@@ -8,10 +8,10 @@ import RequestTokensEdgeWallet from './components/RequestTokensEdgeWallet';
 import TokenTransferResults from '../../components/common/TransactionResults/components/TokenTransferResults';
 
 import { putParamsToUrl } from '../../utils';
-import { useFioAddresses } from '../../util/hooks';
+import { useFioAddresses, usePubAddressesFromWallet } from '../../util/hooks';
 
 import { ContainerProps, RequestTokensValues } from './types';
-import { FioAddressDoublet } from '../../types';
+import { FioAddressDoublet, MappedPublicAddresses } from '../../types';
 import { TrxResponse } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 
@@ -49,6 +49,10 @@ const RequestPage: React.FC<ContainerProps> = props => {
     fioWallet && fioWallet.publicKey,
   ).sort((fioAddress1: FioAddressDoublet, fioAddress2: FioAddressDoublet) =>
     fioAddress1.name > fioAddress2.name ? 1 : -1,
+  );
+
+  const pubAddressesMap: MappedPublicAddresses = usePubAddressesFromWallet(
+    fioWallet != null ? fioWallet.publicKey : '',
   );
 
   useEffect(() => {
@@ -159,6 +163,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
           balance={balance}
           loading={loading || processing}
           fioAddresses={walletFioAddresses}
+          pubAddressesMap={pubAddressesMap}
           onSubmit={onRequest}
           contactsList={contactsList}
         />

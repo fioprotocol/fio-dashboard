@@ -12,6 +12,7 @@ import SelectModalInput from '../../../../components/Input/SelectModalInput';
 import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import TokenDataFields from './TokenDataFields';
+import PublicKeyField from './PublicKeyField';
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 
@@ -24,7 +25,15 @@ import { FioAddressDoublet } from '../../../../types';
 import classes from '../../styles/RequestTokensForm.module.scss';
 
 const RequestTokensForm: React.FC<RequestTokensProps> = props => {
-  const { loading, fioWallet, fioAddresses, roe, contactsList, isFio } = props;
+  const {
+    loading,
+    fioWallet,
+    fioAddresses,
+    pubAddressesMap,
+    roe,
+    contactsList,
+    isFio,
+  } = props;
 
   const handleSubmit = async (values: RequestTokensValues) => {
     const validationResult = await submitValidation.validateForm(values);
@@ -39,19 +48,36 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
     tokenCode: any;
     chainCode: any;
   } = {
-    payeeTokenPublicAddress: fioWallet.publicKey,
+    payeeTokenPublicAddress: isFio ? fioWallet.publicKey : '',
     chainCode: FIO_CHAIN_CODE,
     tokenCode: FIO_CHAIN_CODE,
   };
-  if (fioAddresses.length) {
-    initialValues.payeeFioAddress = fioAddresses[0].name;
-  }
-
   if (!isFio) {
     initialValues.chainCode = CHAIN_CODE_LIST[0].id;
     initialValues.tokenCode = CHAIN_CODE_LIST[0].tokens?.length
       ? CHAIN_CODE_LIST[0].tokens[0].id
       : CHAIN_CODE_LIST[0].id;
+  }
+
+  if (fioAddresses.length) {
+    initialValues.payeeFioAddress = fioAddresses[0].name;
+    if (
+      !isFio &&
+      pubAddressesMap != null &&
+      pubAddressesMap[initialValues.payeeFioAddress] != null
+    ) {
+      const pubAddressItem = pubAddressesMap[
+        initialValues.payeeFioAddress
+      ].publicAddresses.find(
+        ({ chainCode, tokenCode }) =>
+          chainCode === initialValues.chainCode &&
+          tokenCode === initialValues.tokenCode,
+      );
+
+      if (pubAddressItem != null) {
+        initialValues.payeeTokenPublicAddress = pubAddressItem.publicAddress;
+      }
+    }
   }
 
   return (
@@ -135,6 +161,13 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               chainCodeValue={chainCode}
               chainCodeList={CHAIN_CODE_LIST}
             />
+
+            {!isFio && (
+              <PublicKeyField
+                loading={loading}
+                pubAddressesMap={pubAddressesMap}
+              />
+            )}
 
             <Field
               name="payerFioAddress"

@@ -18,7 +18,7 @@ import { useCheckIfDesktop } from '../../screenType';
 import { ROUTES } from '../../constants/routes';
 
 import { HasMore, ContainerProps, BoolStateFunc } from './types';
-import { FioNameItemProps } from '../../types';
+import { FioNameItemProps, FioWalletDoublet } from '../../types';
 
 import classes from './ManagePageContainer.module.scss';
 
@@ -36,7 +36,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     pageName,
     fioNameList,
     fioWallets,
-    fetchDataFn,
+    getWalletAddresses,
     hasMore,
     loading,
     noProfileLoaded,
@@ -51,6 +51,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
   const [show, handleShowModal] = useState(false);
   const [showSettings, handleShowSettings] = useState(false);
   const [currentAddress, setCurrentAddress] = useState<FioNameItemProps>({});
+  const [fetchWalletDataIteration, setFetchWalletDataIteration] = useState(0);
 
   const isDesktop = useCheckIfDesktop();
 
@@ -63,24 +64,54 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
 
   const { title } = BANNER_DATA[pageName];
 
-  const fetchData = () => {
+  // Get and handle Fio Crypto Handles or Fio Domains for one specific wallet (public key)
+  const handleWalletAddresses = (wallet: FioWalletDoublet, limit: number) => {
+    const { publicKey } = wallet;
+    const currentOffset = offset[publicKey] || 0;
+    getWalletAddresses(publicKey, limit, currentOffset);
+    !!hasMore[publicKey] &&
+      changeOffset({
+        ...offset,
+        [publicKey]: currentOffset + Math.round(limit),
+      });
+  };
+
+  // Get Fio Crypto Handles or Fio Domains from all wallets (public keys) on initial and lazy load
+  const getAllWalletsAddresses = () => {
     if (!isEmpty(fioWallets)) {
-      for (const fioWallet of fioWallets) {
-        const { publicKey } = fioWallet;
-        const currentOffset = offset[publicKey] || 0;
-        fetchDataFn(
-          publicKey,
-          Math.round(ITEMS_LIMIT / fioWallets.length),
-          currentOffset,
+      let wallets = fioWallets;
+      if (fetchWalletDataIteration > 0 && fioWallets.length > 1)
+        wallets = fioWallets.filter(
+          fioWallet => hasMore[fioWallet.publicKey] > 0,
         );
-        !!hasMore[publicKey] &&
-          changeOffset({
-            ...offset,
-            [publicKey]: currentOffset + ITEMS_LIMIT,
-          });
+      for (const wallet of wallets) {
+        handleWalletAddresses(wallet, Math.round(ITEMS_LIMIT / wallets.length));
       }
+      setFetchWalletDataIteration(fetchWalletDataIteration + 1);
     }
   };
+
+  // Handle loading more Fio Crypto Handles or Fio Domains on initial or lazy load if we have less loaded items than limit count
+  useEffect(() => {
+    if (
+      fetchWalletDataIteration > 0 &&
+      hasMoreItems &&
+      fioNameList.length % ITEMS_LIMIT !== 0 &&
+      fioNameList.length - ITEMS_LIMIT * fetchWalletDataIteration < 0
+    ) {
+      // Set loading more new limit count to rich the limit count for initial load or lazy load
+      const extraLimitCount = ITEMS_LIMIT - (fioNameList.length % ITEMS_LIMIT);
+      const hasMoreAddressesWallets = fioWallets.filter(
+        fioWallet => hasMore[fioWallet.publicKey] > 0,
+      );
+      for (const hasMoreWallet of hasMoreAddressesWallets) {
+        handleWalletAddresses(
+          hasMoreWallet,
+          Math.round(extraLimitCount / hasMoreAddressesWallets.length),
+        );
+      }
+    }
+  }, [fetchWalletDataIteration, fioNameList.length, hasMoreItems]);
 
   useEffect(() => {
     toggleShowWarnBadge(
@@ -100,8 +131,11 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
       });
       changeOffset(offsetObj);
     }
-    fetchData();
   }, [fioWalletsRef.current]);
+
+  useEffect(() => {
+    getAllWalletsAddresses();
+  }, []);
 
   const onItemModalOpen = (fioNameItem: FioNameItemProps) => {
     setCurrentAddress(fioNameItem);
@@ -154,7 +188,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
           <InfiniteScroll
             loading={loading}
             hasNextPage={hasMoreItems}
-            onLoadMore={fetchData}
+            onLoadMore={getAllWalletsAddresses}
           >
             {isDesktop ? (
               <DesktopView {...propsToComponents} />

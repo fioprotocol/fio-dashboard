@@ -1,9 +1,13 @@
 import React from 'react';
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
+import apis from '../../../api';
+
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
+import { ACTIONS } from '../../../constants/fio';
 
 import { FioWalletDoublet } from '../../../types';
+import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
 
 const PROCESSING_PROPS = {
   title: 'Rejecting FIO Request',
@@ -29,8 +33,18 @@ const RejectRequestEdge: React.FC<Props> = props => {
     onCancel,
   } = props;
 
-  const rejectRequest = () => {
-    // todo: set reject action
+  const rejectRequest = async ({ keys, data }: SubmitActionParams) => {
+    let error;
+    try {
+      await apis.fio.executeAction(keys, ACTIONS.rejectFundsRequest, {
+        fioRequestId: data.fioRecord.id,
+      });
+    } catch (err) {
+      console.error(err);
+      error = err;
+    }
+
+    return { ...data, error };
   };
 
   return (

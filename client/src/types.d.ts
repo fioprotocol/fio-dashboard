@@ -227,7 +227,7 @@ export type User = {
   status: string;
   secretSet?: boolean;
   newEmail?: boolean;
-  newDeviceTwoFactor?: { voucherId: string; deviceDescription?: string; status: strinig }[];
+  newDeviceTwoFactor?: { voucherId: string; deviceDescription?: string; status: string }[];
 };
 
 export type RefProfile = {
@@ -322,6 +322,11 @@ export type FioRecord = {
 export type FioRecordDecrypted = {
   fioRecord: FioRecord;
   fioDecryptedContent: DecryptedFioRecordContent;
+};
+
+export type FioDecryptedRecordData = {
+  itemData: FioRecordDecrypted;
+  paymentOtbData?: FioRecordDecrypted;
 };
 
 export type ResponseFioRecord = {
