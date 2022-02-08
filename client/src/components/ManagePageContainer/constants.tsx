@@ -55,6 +55,7 @@ export const BUTTONS_TITLE = {
   link: 'Link',
   nft: 'NFT signature',
   register: 'Register FIO Crypto Handle',
+  request: 'Request Funds',
 };
 
 export const SUBTITLE = {

@@ -8,6 +8,7 @@ import { PAGE_NAME, BUTTONS_TITLE } from '../constants';
 import { ROUTES } from '../../../constants/routes';
 
 import { useCheckIfSmallDesktop } from '../../../screenType';
+import { putParamsToUrl } from '../../../utils';
 
 import { ActionButtonProps } from '../types';
 
@@ -79,6 +80,23 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
     </Link>
   );
 
+  const renderFioRequest = () => (
+    <Link
+      to={{
+        pathname: putParamsToUrl(ROUTES.FIO_TOKENS_REQUEST, { publicKey: '' }),
+        state: {
+          payeeFioAddress: name,
+        },
+      }}
+      className={classes.actionButton}
+    >
+      <Button title={isSmallDesktop ? BUTTONS_TITLE.request : ''}>
+        <FontAwesomeIcon icon="arrow-down" className={classes.linkIcon} />
+        {!isSmallDesktop && BUTTONS_TITLE.request}
+      </Button>
+    </Link>
+  );
+
   return pageName === PAGE_NAME.ADDRESS ? (
     <div className={classes.actionButtonsContainer}>
       <Link
@@ -90,6 +108,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
           {!isSmallDesktop && BUTTONS_TITLE.nft}
         </Button>
       </Link>
+      {renderFioRequest()}
       {renderLinkToken()}
       {renderSettings()}
     </div>
