@@ -2,6 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 
 import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
+import InfoBadge from '../../../InfoBadge/InfoBadge';
 import Results from '../index';
 
 import apis from '../../../../api';
@@ -24,6 +25,8 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
         nativeAmount,
         transaction_id,
         memo,
+        obtError,
+        fioRequestId,
       },
     },
     roe,
@@ -36,6 +39,16 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
   const usdcAmount = apis.fio.convertFioToUsdc(Number(nativeAmount), roe);
   return (
     <Results {...props}>
+      <InfoBadge
+        show={!!obtError}
+        type={BADGE_TYPES.ERROR}
+        title="Error!"
+        message={
+          fioRequestId
+            ? 'Tokens have been sent but FIO Request record failed'
+            : 'Memo failed to send'
+        }
+      />
       <p className={classes.label}>Transfer Information</p>
       {from != null && (
         <Badge show={true} type={BADGE_TYPES.WHITE}>

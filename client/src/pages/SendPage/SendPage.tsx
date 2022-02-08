@@ -94,6 +94,7 @@ const SendPage: React.FC<ContainerProps> = props => {
         toFioAddress: sendData.to,
         fromFioAddress: sendData.from,
         from: sendData.fromPubKey,
+        fioRequestId: fioRecordDecrypted?.fioRecord.id,
       },
     });
   };

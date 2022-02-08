@@ -15,6 +15,8 @@ export type ResultsData = {
   error?: string;
   updated?: PublicAddressDoublet[];
   failed?: PublicAddressDoublet[];
+  obtError?: string;
+  fioRequestId?: number;
 };
 
 export type ResultsProps = {
