@@ -18,6 +18,7 @@ import { ResultsData } from '../../components/common/TransactionResults/types';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ROUTES } from '../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../constants/common';
+import { FIO_RECORD_TYPES } from '../WalletPage/constants';
 
 import { useFioAddresses } from '../../util/hooks';
 
@@ -33,6 +34,7 @@ const SendPage: React.FC<ContainerProps> = props => {
     roe,
     history,
     contactsList,
+    location: { state: { fioRecordDecrypted } = {} },
     refreshBalance,
     getFee,
     createContact,
@@ -61,11 +63,18 @@ const SendPage: React.FC<ContainerProps> = props => {
 
   const onSend = async (values: SendTokensValues) => {
     const newSendData = { ...values };
+
+    if (newSendData.toPubKey) return setSendData(newSendData);
+
     const pubKey = await fioAddressToPubKey(newSendData.to);
+
     if (pubKey) {
-      newSendData.receiverFioAddress = values.to;
-      newSendData.to = pubKey;
+      newSendData.toPubKey = pubKey;
+    } else {
+      newSendData.toPubKey = newSendData.to;
+      newSendData.to = '';
     }
+
     setSendData(newSendData);
   };
   const onCancel = () => {
@@ -82,7 +91,7 @@ const SendPage: React.FC<ContainerProps> = props => {
       other: {
         ...sendData,
         ...res,
-        toFioAddress: sendData.receiverFioAddress,
+        toFioAddress: sendData.to,
         fromFioAddress: sendData.from,
         from: sendData.fromPubKey,
       },
@@ -95,6 +104,9 @@ const SendPage: React.FC<ContainerProps> = props => {
   const onResultsClose = () => {
     history.push(
       putParamsToUrl(ROUTES.FIO_WALLET, { publicKey: fioWallet.publicKey }),
+      {
+        fioRequestTab: fioRecordDecrypted && FIO_RECORD_TYPES.RECEIVED,
+      },
     );
   };
 
@@ -105,9 +117,16 @@ const SendPage: React.FC<ContainerProps> = props => {
       </div>
     );
 
-  const backTo = putParamsToUrl(ROUTES.FIO_WALLET, {
-    publicKey: fioWallet.publicKey,
-  });
+  const onBack = () =>
+    history.push(
+      putParamsToUrl(ROUTES.FIO_WALLET, {
+        publicKey: fioWallet.publicKey,
+      }),
+      {
+        fioRequestTab: fioRecordDecrypted && FIO_RECORD_TYPES.RECEIVED,
+        fioRecordDecrypted,
+      },
+    );
 
   const renderInfoBadge = () =>
     walletFioAddresses.length ? (
@@ -148,7 +167,7 @@ const SendPage: React.FC<ContainerProps> = props => {
 
       <PseudoModalContainer
         title="Send FIO Tokens"
-        link={backTo || null}
+        onBack={onBack || null}
         middleWidth={true}
       >
         <p className={classes.subtitle}>
@@ -168,6 +187,7 @@ const SendPage: React.FC<ContainerProps> = props => {
           fee={feePrice}
           obtDataOn={true}
           contactsList={contactsList}
+          fioRecordDecrypted={fioRecordDecrypted}
         />
       </PseudoModalContainer>
     </>

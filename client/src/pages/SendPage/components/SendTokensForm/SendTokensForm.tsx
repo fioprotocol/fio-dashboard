@@ -32,6 +32,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
     fee,
     obtDataOn,
     contactsList,
+    fioRecordDecrypted,
   } = props;
 
   const handleSubmit = async (values: SendTokensValues) => {
@@ -41,8 +42,23 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
     return props.onSubmit(values);
   };
 
-  const initialValues: { from?: string; fromPubKey: string } = {
+  const initialValues: {
+    from?: string;
+    fromPubKey: string;
+    to?: string;
+    amount?: string;
+    memo?: string;
+    fioRequestId?: number;
+    toPubKey?: string;
+  } = {
+    // From and To replaces each other because we are sending To address from which we got request
     fromPubKey: fioWallet.publicKey,
+    toPubKey: fioRecordDecrypted?.fioDecryptedContent.payeePublicAddress,
+    from: fioRecordDecrypted?.fioRecord.to,
+    to: fioRecordDecrypted?.fioRecord.from,
+    fioRequestId: fioRecordDecrypted?.fioRecord.id,
+    amount: fioRecordDecrypted?.fioDecryptedContent.amount,
+    memo: fioRecordDecrypted?.fioDecryptedContent.memo,
   };
   if (fioAddresses.length) {
     initialValues.from = fioAddresses[0].name;
@@ -170,6 +186,9 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
             ) : null}
 
             <Field name="fromPubKey" type="hidden" component={Input} />
+            <Field name="toPubKey" type="hidden" component={Input} />
+
+            <Field name="fioRequestId" type="hidden" component={Input} />
 
             <p className={classes.transactionTitle}>Transaction cost</p>
             <PriceBadge

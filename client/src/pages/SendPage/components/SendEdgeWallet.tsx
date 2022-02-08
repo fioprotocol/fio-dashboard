@@ -39,35 +39,33 @@ const SendEdgeWallet: React.FC<Props> = props => {
 
   const send = async ({ keys, data }: SubmitActionParams) => {
     const result = await apis.fio.executeAction(keys, ACTIONS.transferTokens, {
-      payeeFioPublicKey: data.to,
+      payeeFioPublicKey: data.toPubKey,
       amount: Number(data.nativeAmount),
       maxFee: fee,
     });
-    if (data.memo) {
+    if (data.memo || data.fioRequestId) {
       try {
         await apis.fio.executeAction(keys, ACTIONS.recordObtData, {
           payerFioAddress: data.from,
-          payeeFioAddress: data.receiverFioAddress,
+          payeeFioAddress: data.to,
           payerTokenPublicAddress: keys.public,
-          payeeTokenPublicAddress: data.to,
+          payeeTokenPublicAddress: data.toPubKey,
           amount: Number(data.amount),
           chainCode: FIO_CHAIN_CODE,
           tokenCode: FIO_CHAIN_CODE,
           obtId: result.transaction_id,
-          payeeFioPublicKey: data.to,
+          payeeFioPublicKey: data.toPubKey,
           memo: data.memo,
           maxFee: DEFAULT_ACTION_FEE_AMOUNT,
+          fioRequestId: data.fioRequestId,
         });
       } catch (e) {
         console.error(e);
       }
     }
 
-    if (
-      data.receiverFioAddress != null &&
-      !contactsList.filter(c => c === data.receiverFioAddress).length
-    )
-      createContact(data.receiverFioAddress);
+    if (data.to != null && !contactsList.filter(c => c === data.to).length)
+      createContact(data.to);
 
     return result;
   };
