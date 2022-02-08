@@ -7,6 +7,8 @@ import CancelButton from '../../../components/common/CancelButton/CancelButton';
 import { CHAIN_CODES } from '../../../constants/common';
 import { ROUTES } from '../../../constants/routes';
 
+import { putParamsToUrl } from '../../../utils';
+
 import { FioRecordViewDecrypted } from '../types';
 
 import { FioWalletDoublet } from '../../../types';
@@ -45,8 +47,10 @@ const FioRecordDetailedAcctionButtons: React.FC<Props &
   };
 
   const onPayClick = () => {
-    // todo: set path to fio payment page
-    const payLink = isFioChain ? '/' : '/';
+    // todo: set path to other chain payment page
+    const payLink = isFioChain
+      ? putParamsToUrl(ROUTES.SEND, { publicKey: fioWallet.publicKey })
+      : '/';
 
     history.push(payLink, { fioRecordDecrypted });
   };
