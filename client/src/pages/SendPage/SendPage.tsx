@@ -39,6 +39,7 @@ const SendPage: React.FC<ContainerProps> = props => {
     getFee,
     createContact,
     getContactsList,
+    refreshWalletDataPublicKey,
   } = props;
 
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
@@ -97,6 +98,7 @@ const SendPage: React.FC<ContainerProps> = props => {
         fioRequestId: fioRecordDecrypted?.fioRecord.id,
       },
     });
+    refreshWalletDataPublicKey(fioWallet.publicKey);
   };
 
   const onResultsRetry = () => {

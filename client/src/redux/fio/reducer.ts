@@ -371,4 +371,13 @@ export default combineReducers({
         return state;
     }
   },
+  walletDataPublicKey(state: string = '', action) {
+    switch (action.type) {
+      case actions.REFRESH_WALLET_DATA_PUBLIC_KEY: {
+        return action.publicKey;
+      }
+      default:
+        return state;
+    }
+  },
 });

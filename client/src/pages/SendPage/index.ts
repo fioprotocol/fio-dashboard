@@ -3,7 +3,11 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 
-import { getFee, refreshBalance } from '../../redux/fio/actions';
+import {
+  getFee,
+  refreshBalance,
+  refreshWalletDataPublicKey,
+} from '../../redux/fio/actions';
 import { createContact, getContactsList } from '../../redux/contacts/actions';
 
 import {
@@ -67,6 +71,7 @@ const reduxConnect = connect(
     getFee: () => getFee(apis.fio.actionEndPoints.transferTokens),
     createContact,
     getContactsList,
+    refreshWalletDataPublicKey,
   },
 );
 
