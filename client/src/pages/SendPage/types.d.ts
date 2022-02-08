@@ -57,4 +57,5 @@ export interface ContainerProps extends ContainerOwnProps {
   getFee: () => void;
   getContactsList: () => void;
   createContact: (name: string) => void;
+  refreshWalletDataPublicKey: (publicKey: string) => void;
 }

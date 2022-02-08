@@ -5,7 +5,9 @@ import { RouterProps, withRouter } from 'react-router-dom';
 
 import { camelizeFioRequestsData, compose } from '../utils';
 
-import { fioWallets } from '../redux/fio/selectors';
+import { refreshWalletDataPublicKey } from '../redux/fio/actions';
+
+import { fioWallets, walletDataPublicKey } from '../redux/fio/selectors';
 import { user } from '../redux/profile/selectors';
 import {
   FioRecord,
@@ -21,7 +23,9 @@ import useInterval from '../util/hooks';
 type Props = {
   fioWallets: FioWalletDoublet[];
   user: User;
+  walletDataPublicKey: string;
   updateFioWalletsData: (data: FioWalletData, publicKey: string) => void;
+  refreshWalletDataPublicKey: (publicKey: string) => void;
 };
 
 // todo: handle chunk case in promises
@@ -115,7 +119,13 @@ const getWalletData = async (
 const TIMER_DELAY = 5000; // 5 sec
 
 const WalletsDataFlow = (props: Props & RouterProps): React.FC => {
-  const { fioWallets, user, updateFioWalletsData } = props;
+  const {
+    fioWallets,
+    user,
+    walletDataPublicKey,
+    updateFioWalletsData,
+    refreshWalletDataPublicKey,
+  } = props;
 
   const [isLoading, setIsLoading] = useState(false);
   const [wallets, setWallets] = useState([]);
@@ -129,6 +139,15 @@ const WalletsDataFlow = (props: Props & RouterProps): React.FC => {
           return;
         }),
       );
+      setIsLoading(false);
+    }
+  };
+
+  const getPublicKeyData = async (wallet: FioWalletDoublet) => {
+    if (!isLoading) {
+      setIsLoading(true);
+      await getWalletData(wallet, user, updateFioWalletsData);
+      refreshWalletDataPublicKey('');
       setIsLoading(false);
     }
   };
@@ -162,6 +181,17 @@ const WalletsDataFlow = (props: Props & RouterProps): React.FC => {
     }
   }, [fioWallets.length]);
 
+  useEffect(() => {
+    if (walletDataPublicKey) {
+      const wallet = wallets.find(
+        walletItem => walletItem.publicKey === walletDataPublicKey,
+      );
+
+      if (!wallet) return;
+      getPublicKeyData(wallet);
+    }
+  }, [walletDataPublicKey, JSON.stringify(wallets)]);
+
   useInterval(() => {
     getWalletsData();
   }, TIMER_DELAY);
@@ -173,9 +203,11 @@ const reduxConnect = connect(
   createStructuredSelector({
     fioWallets,
     user,
+    walletDataPublicKey,
   }),
   {
     updateFioWalletsData,
+    refreshWalletDataPublicKey,
   },
 );
 
