@@ -300,7 +300,8 @@ export const putParamsToUrl = (
   params: { [paramName: string]: string },
 ) => {
   return Object.keys(params).reduce(
-    (acc: string, key: string) => acc.replace(`:${key}`, params[key]),
+    (acc: string, key: string) =>
+      acc.replace(new RegExp(`:${key}[\?]?`, 'g'), params[key]),
     `${route}`,
   );
 };

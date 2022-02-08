@@ -7,37 +7,48 @@ import RequestTabs from './components/RequestTabs';
 import RequestTokensEdgeWallet from './components/RequestTokensEdgeWallet';
 import TokenTransferResults from '../../components/common/TransactionResults/components/TokenTransferResults';
 
-import { putParamsToUrl } from '../../utils';
 import { useFioAddresses, usePubAddressesFromWallet } from '../../util/hooks';
 
-import { ContainerProps, RequestTokensValues } from './types';
-import { FioAddressDoublet, MappedPublicAddresses } from '../../types';
+import {
+  ContainerProps,
+  RequestTokensInitialValues,
+  RequestTokensValues,
+} from './types';
+import {
+  FioAddressDoublet,
+  FioWalletDoublet,
+  MappedPublicAddresses,
+} from '../../types';
 import { TrxResponse } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 
 import apis from '../../api';
 
 import { BADGE_TYPES } from '../../components/Badge/Badge';
-import { ROUTES } from '../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../constants/common';
+import { FIO_CHAIN_CODE } from '../../constants/fio';
+import { emptyWallet } from '../../redux/fio/reducer';
 
 import classes from './styles/RequestTokensPage.module.scss';
 
 const RequestPage: React.FC<ContainerProps> = props => {
   const {
-    fioWallet,
-    balance,
+    fioWallets,
     fioWalletsLoading,
     roe,
     history,
     contactsList,
     contactsLoading,
-    refreshBalance,
+    location: { state: { payeeFioAddress } = {} },
+    match: {
+      params: { publicKey: publicKeyFromPath },
+    },
     createContact,
     getContactsList,
     refreshWalletDataPublicKey,
   } = props;
 
+  const [fioWallet, setFioWallet] = useState<FioWalletDoublet>(emptyWallet);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
   const [requestData, setRequestData] = useState<RequestTokensValues | null>(
     null,
@@ -46,15 +57,21 @@ const RequestPage: React.FC<ContainerProps> = props => {
 
   const loading = fioWalletsLoading || contactsLoading;
 
-  const walletFioAddresses = useFioAddresses(
-    fioWallet && fioWallet.publicKey,
+  const fioAddresses = useFioAddresses(
+    publicKeyFromPath,
   ).sort((fioAddress1: FioAddressDoublet, fioAddress2: FioAddressDoublet) =>
     fioAddress1.name > fioAddress2.name ? 1 : -1,
   );
-
+  // todo: move getting mapped addresses to form on fio address selection
   const pubAddressesMap: MappedPublicAddresses = usePubAddressesFromWallet(
-    fioWallet != null ? fioWallet.publicKey : '',
+    publicKeyFromPath,
   );
+  const initialValues: RequestTokensInitialValues = {
+    payeeFioAddress: payeeFioAddress || '',
+    chainCode: FIO_CHAIN_CODE,
+    tokenCode: FIO_CHAIN_CODE,
+    mapPubAddress: false,
+  };
 
   useEffect(() => {
     setRequestData(null);
@@ -62,10 +79,28 @@ const RequestPage: React.FC<ContainerProps> = props => {
   }, []);
 
   useEffect(() => {
-    if (fioWallet && fioWallet.publicKey) refreshBalance(fioWallet.publicKey);
-  }, [fioWallet]);
+    if (publicKeyFromPath != null) {
+      setFioWallet(
+        fioWallets.find(
+          ({ publicKey: walletPublicKey }) =>
+            walletPublicKey === publicKeyFromPath,
+        ) || emptyWallet,
+      );
+    }
+  }, [publicKeyFromPath]);
 
   const onRequest = async (values: RequestTokensValues) => {
+    if (publicKeyFromPath == null) {
+      const fioAddress = fioAddresses.find(
+        ({ name }) => name === values.payeeFioAddress,
+      );
+      setFioWallet(
+        fioWallets.find(
+          ({ publicKey: walletPublicKey }) =>
+            walletPublicKey === fioAddress.walletPublicKey,
+        ),
+      );
+    }
     setRequestData(values);
   };
   const onCancel = () => {
@@ -76,7 +111,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
     setRequestData(null);
     setProcessing(false);
     setResultsData({
-      name: fioWallet.publicKey,
+      name: fioWallet.name,
       publicKey: fioWallet.publicKey,
       other: {
         ...requestData,
@@ -95,22 +130,13 @@ const RequestPage: React.FC<ContainerProps> = props => {
   const onResultsRetry = () => {
     setResultsData(null);
   };
-  const onResultsClose = () => {
-    history.push(
-      putParamsToUrl(ROUTES.FIO_WALLET, { publicKey: fioWallet.publicKey }),
-    );
-  };
 
-  if (!fioWallet || !fioWallet.id)
+  if (publicKeyFromPath != null && (!fioWallet || !fioWallet.id))
     return (
       <div className="d-flex justify-content-center align-items-center w-100 flex-grow-1">
         <FioLoader />
       </div>
     );
-
-  const backTo = putParamsToUrl(ROUTES.FIO_WALLET, {
-    publicKey: fioWallet.publicKey,
-  });
 
   if (resultsData)
     return (
@@ -121,14 +147,15 @@ const RequestPage: React.FC<ContainerProps> = props => {
         titleFrom="Requesting FIO Crypto Handle"
         titleAmount="Amount Requested"
         roe={roe}
-        onClose={onResultsClose}
+        onClose={history.goBack}
         onRetry={onResultsRetry}
       />
     );
 
   return (
     <>
-      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
+      {fioWallet.publicKey != null &&
+      fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
         <RequestTokensEdgeWallet
           fioWallet={fioWallet}
           onCancel={onCancel}
@@ -142,13 +169,15 @@ const RequestPage: React.FC<ContainerProps> = props => {
       ) : null}
       <PseudoModalContainer
         title="Request FIO Tokens"
-        link={backTo || null}
+        onBack={history.goBack}
         middleWidth={true}
       >
-        <p className={classes.subtitle}>
-          <span className={classes.subtitleThin}>FIO Wallet Name:</span>{' '}
-          {fioWallet.name}
-        </p>
+        {publicKeyFromPath != null ? (
+          <p className={classes.subtitle}>
+            <span className={classes.subtitleThin}>FIO Wallet Name:</span>{' '}
+            {fioWallet.name}
+          </p>
+        ) : null}
 
         <div className="mb-4">
           <InfoBadge
@@ -160,11 +189,10 @@ const RequestPage: React.FC<ContainerProps> = props => {
         </div>
 
         <RequestTabs
-          fioWallet={fioWallet}
+          initialValues={initialValues}
           roe={roe}
-          balance={balance}
           loading={loading || processing}
-          fioAddresses={walletFioAddresses}
+          fioAddresses={fioAddresses}
           pubAddressesMap={pubAddressesMap}
           onSubmit={onRequest}
           contactsList={contactsList}
