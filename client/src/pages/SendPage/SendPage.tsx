@@ -10,7 +10,7 @@ import TokenTransferResults from '../../components/common/TransactionResults/com
 import { putParamsToUrl } from '../../utils';
 import { fioAddressToPubKey } from '../../util/fio';
 
-import { ContainerProps, SendTokensValues } from './types';
+import { ContainerProps, SendTokensValues, InitialValues } from './types';
 import { FioAddressDoublet } from '../../types';
 import { TrxResponse } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
@@ -141,6 +141,17 @@ const SendPage: React.FC<ContainerProps> = props => {
       />
     ) : null;
 
+  const initialValues: InitialValues = {
+    // From and To replaces each other because we are sending To address from which we got request
+    fromPubKey: fioWallet.publicKey,
+    toPubKey: fioRecordDecrypted?.fioDecryptedContent.payeePublicAddress,
+    from: fioRecordDecrypted?.fioRecord.to || walletFioAddresses[0]?.name,
+    to: fioRecordDecrypted?.fioRecord.from,
+    fioRequestId: fioRecordDecrypted?.fioRecord.id,
+    amount: fioRecordDecrypted?.fioDecryptedContent.amount,
+    memo: fioRecordDecrypted?.fioDecryptedContent.memo,
+  };
+
   if (resultsData)
     return (
       <TokenTransferResults
@@ -190,7 +201,7 @@ const SendPage: React.FC<ContainerProps> = props => {
           fee={feePrice}
           obtDataOn={true}
           contactsList={contactsList}
-          fioRecordDecrypted={fioRecordDecrypted}
+          initialValues={initialValues}
         />
       </PseudoModalContainer>
     </>

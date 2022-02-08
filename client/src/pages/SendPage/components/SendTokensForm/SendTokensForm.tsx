@@ -32,7 +32,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
     fee,
     obtDataOn,
     contactsList,
-    fioRecordDecrypted,
+    initialValues,
   } = props;
 
   const handleSubmit = async (values: SendTokensValues) => {
@@ -41,28 +41,6 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
 
     return props.onSubmit(values);
   };
-
-  const initialValues: {
-    from?: string;
-    fromPubKey: string;
-    to?: string;
-    amount?: string;
-    memo?: string;
-    fioRequestId?: number;
-    toPubKey?: string;
-  } = {
-    // From and To replaces each other because we are sending To address from which we got request
-    fromPubKey: fioWallet.publicKey,
-    toPubKey: fioRecordDecrypted?.fioDecryptedContent.payeePublicAddress,
-    from: fioRecordDecrypted?.fioRecord.to,
-    to: fioRecordDecrypted?.fioRecord.from,
-    fioRequestId: fioRecordDecrypted?.fioRecord.id,
-    amount: fioRecordDecrypted?.fioDecryptedContent.amount,
-    memo: fioRecordDecrypted?.fioDecryptedContent.memo,
-  };
-  if (fioAddresses.length) {
-    initialValues.from = fioAddresses[0].name;
-  }
 
   return (
     <Form
