@@ -23,6 +23,16 @@ export type SendTokensValues = {
   fioRequestId?: number;
 };
 
+export type InitialValues = {
+  from?: string;
+  fromPubKey: string;
+  to?: string;
+  amount?: string;
+  memo?: string;
+  fioRequestId?: number;
+  toPubKey?: string;
+};
+
 export type SendTokensProps = {
   fioWallet: FioWalletDoublet;
   fioAddresses: FioAddressDoublet[];
@@ -32,7 +42,7 @@ export type SendTokensProps = {
   loading: boolean;
   obtDataOn?: boolean;
   contactsList: string[];
-  fioRecordDecrypted: FioRecordViewDecrypted;
+  initialValues?: InitialValues;
   onSubmit: (values: SendTokensValues) => void;
 };
 
