@@ -43,6 +43,7 @@ const SendEdgeWallet: React.FC<Props> = props => {
       amount: Number(data.nativeAmount),
       maxFee: fee,
     });
+    let obtError = null;
     if (data.memo || data.fioRequestId) {
       try {
         await apis.fio.executeAction(keys, ACTIONS.recordObtData, {
@@ -61,13 +62,14 @@ const SendEdgeWallet: React.FC<Props> = props => {
         });
       } catch (e) {
         console.error(e);
+        obtError = e;
       }
     }
 
     if (data.to != null && !contactsList.filter(c => c === data.to).length)
       createContact(data.to);
 
-    return result;
+    return { ...result, obtError };
   };
 
   return (
