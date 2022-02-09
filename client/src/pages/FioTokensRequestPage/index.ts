@@ -3,7 +3,10 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 
-import { refreshBalance } from '../../redux/fio/actions';
+import {
+  refreshBalance,
+  refreshWalletDataPublicKey,
+} from '../../redux/fio/actions';
 import { createContact, getContactsList } from '../../redux/contacts/actions';
 
 import {
@@ -61,6 +64,7 @@ const reduxConnect = connect(
     refreshBalance,
     createContact,
     getContactsList,
+    refreshWalletDataPublicKey,
   },
 );
 

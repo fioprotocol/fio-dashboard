@@ -35,6 +35,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
     refreshBalance,
     createContact,
     getContactsList,
+    refreshWalletDataPublicKey,
   } = props;
 
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
@@ -88,6 +89,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
         fromFioAddress: requestData.payeeFioAddress,
       },
     });
+    refreshWalletDataPublicKey(fioWallet.publicKey);
   };
 
   const onResultsRetry = () => {
