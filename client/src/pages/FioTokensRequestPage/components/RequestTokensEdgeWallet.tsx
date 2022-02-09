@@ -4,8 +4,10 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
 
+import { linkTokens } from '../../../api/middleware/fio';
+
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
-import { ACTIONS } from '../../../constants/fio';
+import { ACTIONS, FIO_CHAIN_CODE } from '../../../constants/fio';
 
 import { FioWalletDoublet } from '../../../types';
 import { RequestTokensValues } from '../types';
@@ -58,11 +60,31 @@ const RequestTokensEdgeWallet: React.FC<Props> = props => {
       ACTIONS.requestFunds,
       params,
     );
+    let mapError;
+
+    if (data.mapPubAddress && data.chainCode !== FIO_CHAIN_CODE) {
+      try {
+        await linkTokens({
+          connectList: [
+            {
+              publicAddress: data.payeeTokenPublicAddress,
+              chainCode: data.chainCode,
+              tokenCode: data.tokenCode,
+            },
+          ],
+          keys,
+          fioAddress: data.payeeFioAddress,
+        });
+      } catch (e) {
+        console.error(e);
+        mapError = e;
+      }
+    }
 
     if (!contactsList.filter(c => c === params.payerFioAddress).length)
       createContact(params.payerFioAddress);
 
-    return result;
+    return { ...result, mapError, mapPubAddress: data.mapPubAddress };
   };
 
   return (
