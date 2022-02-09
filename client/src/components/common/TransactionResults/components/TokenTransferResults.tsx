@@ -11,7 +11,7 @@ import { ResultsProps } from '../types';
 
 import classes from '../styles/Results.module.scss';
 
-type TokenTransferResultsProps = ResultsProps & { roe: number };
+type TokenTransferResultsProps = ResultsProps & { roe: number; mapError?: any };
 
 const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
   const {
@@ -27,6 +27,9 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
         memo,
         obtError,
         fioRequestId,
+        mapError,
+        mapPubAddress,
+        payeeTokenPublicAddress,
       },
     },
     roe,
@@ -48,6 +51,12 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
             ? 'Tokens have been sent but FIO Request record failed'
             : 'Memo failed to send'
         }
+      />
+      <InfoBadge
+        show={mapError != null}
+        type={BADGE_TYPES.ERROR}
+        title="Error!"
+        message="FIO Request have been sent but address map failed"
       />
       <p className={classes.label}>Transfer Information</p>
       {from != null && (
@@ -127,6 +136,18 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
           </div>
         </Badge>
       )}
+
+      <InfoBadge
+        show={
+          mapPubAddress != null &&
+          mapPubAddress &&
+          mapError == null &&
+          payeeTokenPublicAddress != null
+        }
+        type={BADGE_TYPES.INFO}
+        title="Public address mapped!"
+        message={`'${payeeTokenPublicAddress}' was mapped to ${fromFioAddress}`}
+      />
     </Results>
   );
 };

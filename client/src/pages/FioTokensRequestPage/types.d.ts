@@ -30,6 +30,7 @@ export type RequestTokensInitialValues = {
   payeeTokenPublicAddress?: string;
   tokenCode?: string;
   chainCode?: string;
+  mapPubAddress?: boolean;
 };
 
 export type RequestTokensProps = {

@@ -84,9 +84,14 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
     >
       {(formRenderProps: FormRenderProps) => {
         const {
-          values: { payeeFioAddress, chainCode, tokenCode },
+          values: { payeeFioAddress, chainCode, tokenCode, mapPubAddress },
           validating,
         } = formRenderProps;
+
+        const transactionCost = mapPubAddress
+          ? BUNDLES_TX_COUNT.NEW_FIO_REQUEST +
+            BUNDLES_TX_COUNT.ADD_PUBLIC_ADDRESS
+          : BUNDLES_TX_COUNT.NEW_FIO_REQUEST;
 
         const renderRequester = () => {
           if (!fioAddresses.length) return null;
@@ -130,7 +135,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
 
         const notEnoughBundles =
           selectedAddress != null
-            ? selectedAddress.remaining < BUNDLES_TX_COUNT.NEW_FIO_REQUEST
+            ? selectedAddress.remaining < transactionCost
             : false;
 
         const noPayeeFioAddress =
@@ -222,7 +227,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               <>
                 <p className={classes.transactionTitle}>Transaction cost</p>
                 <BundledTransactionBadge
-                  bundles={BUNDLES_TX_COUNT.NEW_FIO_REQUEST}
+                  bundles={transactionCost}
                   remaining={selectedAddress.remaining}
                 />
               </>
