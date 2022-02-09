@@ -34,6 +34,11 @@
       height: 100%;
       border-radius: 7px;
     }
+
+    &.mobileView {
+      height: fit-content;
+      margin-top: 0;
+    }
   }
 
   .settingsButton {
