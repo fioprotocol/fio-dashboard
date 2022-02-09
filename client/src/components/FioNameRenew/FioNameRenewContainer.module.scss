@@ -15,6 +15,7 @@
 }
 
 .detailsName {
+  word-break: break-all;
   color: $gray-main;
   padding-right: 15px;
   @include proxima-nova-semibold;
