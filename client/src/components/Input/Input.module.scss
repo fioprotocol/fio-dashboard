@@ -60,6 +60,16 @@
   }
 }
 
+.labelSuffix {
+  font-size: 0.875em;
+  @include sf-pro-display-thin;
+  color: $gray-main;
+
+  &.blackLight, &.blackWhite {
+    color: $dark-jungle-green;
+  }
+}
+
 .inputGroup {
   position: relative;
 
