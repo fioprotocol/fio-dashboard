@@ -6,7 +6,7 @@ import DomainStatusBadge from '../../Badges/DomainStatusBadge/DomainStatusBadge'
 
 import Notifications from './Notifications';
 import DateComponent from './DateComponent';
-import ActionButtons from './ActionButtons';
+import ActionButtons, { RenderAddBundles } from './ActionButtons';
 
 import { DOMAIN_STATUS } from '../../../constants/common';
 import { fioNameLabels } from '../../../constants/labels';
@@ -67,8 +67,11 @@ const ItemComponent: React.FC<Props> = props => {
         </p>
       </Badge>
       <Badge show={showBundles} type={BADGE_TYPES.WHITE}>
-        <p className={classes.badgeTitle}>Bundle Transactions</p>
-        <p className={classes.badgeItem}>{remaining || 0}</p>
+        <div className="d-flex align-items-center w-100">
+          <p className={classes.badgeTitle}>Bundle Transactions</p>
+          <p className={classes.badgeItem}>{remaining || 0}</p>
+          <RenderAddBundles name={name} isMobileView={true} />
+        </div>
       </Badge>
       <Badge show={showStatus} type={BADGE_TYPES.WHITE}>
         <div className={classes.domainStatus}>

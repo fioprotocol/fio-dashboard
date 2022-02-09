@@ -97,6 +97,12 @@
     .tableHeader {
       font-size: 0.8125em;
     }
+    .tableCol {
+      .remaining {
+        width: 20px;
+        margin: 0 15px 0 0;
+      }
+    }
 
     .nameContainer {
       width: 100%;
