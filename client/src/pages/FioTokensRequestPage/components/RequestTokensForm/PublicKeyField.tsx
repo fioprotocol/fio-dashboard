@@ -8,6 +8,7 @@ import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 
 import { RequestTokensValues } from '../../types';
 import { MappedPublicAddresses } from '../../../../types';
+import { LabelSuffix } from '../../../../components/Input/StaticInputParts';
 
 type Props = {
   loading: boolean;
@@ -49,6 +50,16 @@ const PublicKeyField: React.FC<Props> = props => {
     }
   }, [chainCode, tokenCode, payeeFioAddress, pubAddressesMap]);
 
+  const label = (
+    <>
+      Public Address{' '}
+      <LabelSuffix
+        text="(where funds will be sent)"
+        uiType={INPUT_UI_STYLES.BLACK_WHITE}
+      />
+    </>
+  );
+
   return (
     <Field
       name={PUB_ADDRESS_FIELD_NAME}
@@ -59,7 +70,7 @@ const PublicKeyField: React.FC<Props> = props => {
       component={TextInput}
       disabled={loading}
       showPasteButton={true}
-      label="Public Address (where funds will be sent)"
+      label={label}
     />
   );
 };

@@ -53,16 +53,31 @@ export const PrefixLabel: React.FC<PrefixLabelProps> = ({
   );
 };
 
-export const Label: React.FC<{ label?: string; uiType?: string }> = ({
-  label,
-  uiType,
-}) => {
-  if (!label?.length) return null;
+export const Label: React.FC<{
+  label?: string | React.ReactNode;
+  uiType?: string;
+}> = ({ label, uiType }) => {
+  if (!label) return null;
 
   return (
     <div className={classnames(classes.label, uiType && classes[uiType])}>
       {label}
     </div>
+  );
+};
+
+export const LabelSuffix: React.FC<{
+  text?: string;
+  uiType?: string;
+}> = ({ text, uiType }) => {
+  if (!text) return null;
+
+  return (
+    <span
+      className={classnames(classes.labelSuffix, uiType && classes[uiType])}
+    >
+      {text}
+    </span>
   );
 };
 
