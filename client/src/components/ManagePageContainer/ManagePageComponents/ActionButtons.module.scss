@@ -84,9 +84,11 @@
 @include lg {
   .actionButtonsContainer {
     flex-flow: nowrap;
+    justify-content: space-between;
 
     .actionButton {
       margin-right: 10px;
+      width: fit-content;
     }
 
     .row {
@@ -108,6 +110,7 @@
   .actionButtonsContainer {
     .actionButton {
       min-width: 36px;
+      width: 100%;
 
       img, svg {
         margin-right: 0;
