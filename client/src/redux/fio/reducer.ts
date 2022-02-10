@@ -261,14 +261,19 @@ export default combineReducers({
             tokenCode: item.token_code,
             publicAddress: item.public_address,
           };
-          const index = publicAddresses.findIndex(publicAddress =>
-            isEqual(publicAddress, itemPublicAddress),
+
+          const index = publicAddresses.findIndex(
+            publicAddress =>
+              publicAddress.chainCode === itemPublicAddress.chainCode &&
+              publicAddress.tokenCode === itemPublicAddress.tokenCode,
           );
-          if (index < 0) {
-            publicAddresses.push(itemPublicAddress);
+
+          if (index > -1) {
+            publicAddresses[index] = itemPublicAddress;
             continue;
           }
-          publicAddresses[index] = itemPublicAddress;
+
+          publicAddresses.push(itemPublicAddress);
         }
         return {
           ...state,
