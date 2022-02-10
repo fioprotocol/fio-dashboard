@@ -84,7 +84,7 @@ const WalletPage: React.FC<ContainerProps> = props => {
           onClose={closeWalletNameEdit}
         />
       ) : null}
-      <LayoutContainer title={renderTitle()} onTitleClick={onWalletEdit}>
+      <LayoutContainer title={renderTitle()}>
         <ActionButtonsContainer>
           <Link
             to={putParamsToUrl(ROUTES.FIO_TOKENS_REQUEST, {
