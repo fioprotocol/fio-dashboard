@@ -82,11 +82,12 @@ const SendPage: React.FC<ContainerProps> = props => {
     setSendData(null);
     setProcessing(false);
   };
-  const onSuccess = (res: TrxResponse) => {
+  const onSuccess = (res: TrxResponse & { bundlesCollected?: number }) => {
     setSendData(null);
     setProcessing(false);
     setResultsData({
       feeCollected: setFees(res.fee_collected, roe),
+      bundlesCollected: res.bundlesCollected,
       name: fioWallet.publicKey,
       publicKey: fioWallet.publicKey,
       other: {

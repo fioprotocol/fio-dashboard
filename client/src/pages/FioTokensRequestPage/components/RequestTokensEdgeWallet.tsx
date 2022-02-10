@@ -7,7 +7,11 @@ import apis from '../../../api';
 import { linkTokens } from '../../../api/middleware/fio';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
-import { ACTIONS, FIO_CHAIN_CODE } from '../../../constants/fio';
+import {
+  ACTIONS,
+  BUNDLES_TX_COUNT,
+  FIO_CHAIN_CODE,
+} from '../../../constants/fio';
 
 import { FioWalletDoublet } from '../../../types';
 import { RequestTokensValues } from '../types';
@@ -61,6 +65,7 @@ const RequestTokensEdgeWallet: React.FC<Props> = props => {
       params,
     );
     let mapError;
+    let bundlesCollected = BUNDLES_TX_COUNT.NEW_FIO_REQUEST;
 
     if (data.mapPubAddress && data.chainCode !== FIO_CHAIN_CODE) {
       try {
@@ -75,6 +80,7 @@ const RequestTokensEdgeWallet: React.FC<Props> = props => {
           keys,
           fioAddress: data.payeeFioAddress,
         });
+        bundlesCollected += BUNDLES_TX_COUNT.ADD_PUBLIC_ADDRESS;
       } catch (e) {
         console.error(e);
         mapError = e;
@@ -84,7 +90,12 @@ const RequestTokensEdgeWallet: React.FC<Props> = props => {
     if (!contactsList.filter(c => c === params.payerFioAddress).length)
       createContact(params.payerFioAddress);
 
-    return { ...result, mapError, mapPubAddress: data.mapPubAddress };
+    return {
+      ...result,
+      bundlesCollected,
+      mapError,
+      mapPubAddress: data.mapPubAddress,
+    };
   };
 
   return (

@@ -5,6 +5,7 @@ import { BADGE_TYPES } from '../../Badge/Badge';
 import PriceBadge from '../../Badges/PriceBadge/PriceBadge';
 import InfoBadge from '../../InfoBadge/InfoBadge';
 import SubmitButton from '../SubmitButton/SubmitButton';
+import BundledTransactionBadge from '../../Badges/BundledTransactionBadge/BundledTransactionBadge';
 
 import { ERROR_MESSAGES } from './constants';
 
@@ -18,6 +19,7 @@ const Results: React.FC<ResultsContainerProps> = props => {
   const {
     results: {
       feeCollected: { costFio, costUsdc } = { costFio: 0, costUsdc: 0 },
+      bundlesCollected = 0,
       error,
     },
     title,
@@ -35,16 +37,31 @@ const Results: React.FC<ResultsContainerProps> = props => {
     window.scrollTo(0, 0);
   }, []);
 
+  const paymentDetailsTitle = () => {
+    if (!costFio && !bundlesCollected) return null;
+
+    return <p className={classes.label}>Payment Details</p>;
+  };
   const totalCost = () => {
     if (!costFio) return null;
     return (
+      <PriceBadge
+        costFio={costFio}
+        costUsdc={costUsdc}
+        title="Total Cost"
+        type={BADGE_TYPES.BLACK}
+      />
+    );
+  };
+
+  const totalBundlesCost = () => {
+    if (!bundlesCollected) return null;
+    return (
       <>
-        <p className={classes.label}>Payment Details</p>
-        <PriceBadge
-          costFio={costFio}
-          costUsdc={costUsdc}
-          title="Total Cost"
-          type={BADGE_TYPES.BLACK}
+        <BundledTransactionBadge
+          bundles={bundlesCollected}
+          remaining={0}
+          hideRemaining
         />
       </>
     );
@@ -82,7 +99,9 @@ const Results: React.FC<ResultsContainerProps> = props => {
         {children}
         {!error && (
           <>
+            {paymentDetailsTitle()}
             {totalCost()}
+            {totalBundlesCost()}
             <SubmitButton onClick={onClose} text="Close" withTopMargin={true} />
           </>
         )}
