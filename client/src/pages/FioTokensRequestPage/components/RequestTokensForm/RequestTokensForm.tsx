@@ -1,7 +1,7 @@
 import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
+import { OnChange } from 'react-final-form-listeners';
 
-import { formValidation, submitValidation } from './validation';
 import Dropdown from '../../../../components/Input/Dropdown';
 import TextInput, {
   INPUT_UI_STYLES,
@@ -14,6 +14,8 @@ import SubmitButton from '../../../../components/common/SubmitButton/SubmitButto
 import TokenDataFields from './TokenDataFields';
 import PublicKeyField from './PublicKeyField';
 import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
+
+import { formValidation, submitValidation } from './validation';
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { CHAIN_CODE_LIST } from '../../../../constants/common';
@@ -31,10 +33,11 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
     pubAddressesMap,
     roe,
     contactsList,
-    initialValues,
+    initialValues: parentInitialValues,
     isFio,
   } = props;
 
+  const initialValues = { ...parentInitialValues };
   const handleSubmit = async (values: RequestTokensValues) => {
     const validationResult = await submitValidation.validateForm(values);
     if (validationResult) return validationResult;
@@ -88,6 +91,19 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
           validating,
         } = formRenderProps;
 
+        const onPayeeFioAddressChange = (val: string) => {
+          if (!isFio) return;
+
+          const selectedFioAddress: FioAddressDoublet | null = val
+            ? fioAddresses.find(({ name }) => name === val)
+            : null;
+
+          if (selectedFioAddress != null)
+            formRenderProps.form.change(
+              'payeeTokenPublicAddress',
+              selectedFioAddress.walletPublicKey,
+            );
+        };
         const transactionCost = mapPubAddress
           ? BUNDLES_TX_COUNT.NEW_FIO_REQUEST +
             BUNDLES_TX_COUNT.ADD_PUBLIC_ADDRESS
@@ -155,6 +171,9 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
             onSubmit={formRenderProps.handleSubmit}
             className={classes.form}
           >
+            <OnChange name="payeeFioAddress">
+              {onPayeeFioAddressChange}
+            </OnChange>
             {renderRequester()}
 
             <TokenDataFields
