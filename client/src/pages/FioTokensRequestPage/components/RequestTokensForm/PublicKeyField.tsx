@@ -112,6 +112,13 @@ const PublicKeyField: React.FC<Props> = props => {
     )
       return null;
 
+    let mapText = 'Map this ';
+    if (
+      pubAddressItem != null &&
+      pubAddressItem.publicAddress !== payeeTokenPublicAddress
+    )
+      mapText = 'Override previous ';
+
     return (
       <div className="mt-n3 mb-3 pl-4 w-100">
         <Field
@@ -119,7 +126,7 @@ const PublicKeyField: React.FC<Props> = props => {
           type="checkbox"
           label={
             <>
-              Map this address to <b>{payeeFioAddress}</b>
+              {mapText}address to <b>{payeeFioAddress}</b>
             </>
           }
           disabled={loading}
