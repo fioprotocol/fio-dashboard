@@ -1,15 +1,15 @@
 import React from 'react';
 import classnames from 'classnames';
 
+import Results from '../index';
 import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
 import InfoBadge from '../../../InfoBadge/InfoBadge';
-import Results from '../index';
-
-import apis from '../../../../api';
+import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
 
 import { ResultsProps } from '../types';
 
 import classes from '../styles/Results.module.scss';
+import { FIO_CHAIN_CODE } from '../../../../constants/fio';
 
 type TokenTransferResultsProps = ResultsProps & { roe: number; mapError?: any };
 
@@ -23,6 +23,7 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
         fromFioAddress,
         amount,
         nativeAmount,
+        tokenCode,
         transaction_id,
         memo,
         obtError,
@@ -32,14 +33,22 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
         payeeTokenPublicAddress,
       },
     },
-    roe,
     titleTo,
     titleFrom,
     titleAmount,
   } = props;
 
   const fioAmount = Number(amount);
-  const usdcAmount = apis.fio.convertFioToUsdc(Number(nativeAmount), roe);
+  let displayAmount = `${fioAmount.toFixed(2)} ${tokenCode}`;
+  let displayUsdcAmount;
+  if (tokenCode === FIO_CHAIN_CODE || tokenCode == null) {
+    displayAmount = `${fioAmount.toFixed(2)} ${FIO_CHAIN_CODE}`;
+    displayUsdcAmount = (
+      <>
+        / <ConvertedAmount fioAmount={fioAmount} nativeAmount={nativeAmount} />
+      </>
+    );
+  }
   return (
     <Results {...props}>
       <InfoBadge
@@ -59,56 +68,40 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
         message="FIO Request have been sent but address map failed"
       />
       <p className={classes.label}>Transfer Information</p>
-      {from != null && (
-        <Badge show={true} type={BADGE_TYPES.WHITE}>
-          <div
-            className={classnames(classes.badgeContainer, classes.longTitle)}
-          >
-            <p className={classes.title}>Sending FIO Public Key</p>
-            <p className={classes.item}>{from}</p>
-          </div>
-        </Badge>
-      )}
-      {fromFioAddress != null && (
-        <Badge show={true} type={BADGE_TYPES.WHITE}>
-          <div
-            className={classnames(classes.badgeContainer, classes.longTitle)}
-          >
-            <p className={classes.title}>
-              {titleFrom || 'Sending FIO Crypto Handle'}
-            </p>
-            <p className={classes.item}>{fromFioAddress}</p>
-          </div>
-        </Badge>
-      )}
-      {to != null && (
-        <Badge show={true} type={BADGE_TYPES.WHITE}>
-          <div
-            className={classnames(classes.badgeContainer, classes.longTitle)}
-          >
-            <p className={classes.title}>Send to FIO Public Key</p>
-            <p className={classes.item}>{to}</p>
-          </div>
-        </Badge>
-      )}
-      {toFioAddress != null && (
-        <Badge show={true} type={BADGE_TYPES.WHITE}>
-          <div
-            className={classnames(classes.badgeContainer, classes.longTitle)}
-          >
-            <p className={classes.title}>
-              {titleTo || 'Send to FIO Crypto Handle'}
-            </p>
-            <p className={classes.item}>{toFioAddress}</p>
-          </div>
-        </Badge>
-      )}
+      <Badge show={!!from} type={BADGE_TYPES.WHITE}>
+        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
+          <p className={classes.title}>Sending FIO Public Key</p>
+          <p className={classes.item}>{from}</p>
+        </div>
+      </Badge>
+      <Badge show={!!fromFioAddress} type={BADGE_TYPES.WHITE}>
+        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
+          <p className={classes.title}>
+            {titleFrom || 'Sending FIO Crypto Handle'}
+          </p>
+          <p className={classes.item}>{fromFioAddress}</p>
+        </div>
+      </Badge>
+      <Badge show={!!to} type={BADGE_TYPES.WHITE}>
+        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
+          <p className={classes.title}>Send to FIO Public Key</p>
+          <p className={classes.item}>{to}</p>
+        </div>
+      </Badge>
+      <Badge show={!!toFioAddress} type={BADGE_TYPES.WHITE}>
+        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
+          <p className={classes.title}>
+            {titleTo || 'Send to FIO Crypto Handle'}
+          </p>
+          <p className={classes.item}>{toFioAddress}</p>
+        </div>
+      </Badge>
 
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
           <p className={classes.title}>{titleAmount || 'Amount Sent'}</p>
           <p className={classes.item}>
-            {fioAmount.toFixed(2)} FIO / {usdcAmount.toFixed(2)} USDC
+            {displayAmount} {displayUsdcAmount}
           </p>
         </div>
       </Badge>
@@ -126,23 +119,16 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
           </p>
         </div>
       </Badge>
-      {memo && (
-        <Badge show={true} type={BADGE_TYPES.WHITE}>
-          <div
-            className={classnames(classes.badgeContainer, classes.longTitle)}
-          >
-            <p className={classes.title}>Memo</p>
-            <p className={classes.item}>{memo}</p>
-          </div>
-        </Badge>
-      )}
+      <Badge show={!!memo} type={BADGE_TYPES.WHITE}>
+        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
+          <p className={classes.title}>Memo</p>
+          <p className={classes.item}>{memo}</p>
+        </div>
+      </Badge>
 
       <InfoBadge
         show={
-          mapPubAddress != null &&
-          mapPubAddress &&
-          mapError == null &&
-          payeeTokenPublicAddress != null
+          !!mapPubAddress && mapError == null && payeeTokenPublicAddress != null
         }
         type={BADGE_TYPES.INFO}
         title="Public address mapped!"
