@@ -10,7 +10,11 @@ import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 import { FioWalletDoublet } from '../../../types';
 import { SendTokensValues } from '../types';
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
-import { ACTIONS, FIO_CHAIN_CODE } from '../../../constants/fio';
+import {
+  ACTIONS,
+  BUNDLES_TX_COUNT,
+  FIO_CHAIN_CODE,
+} from '../../../constants/fio';
 
 type Props = {
   fioWallet: FioWalletDoublet;
@@ -44,6 +48,7 @@ const SendEdgeWallet: React.FC<Props> = props => {
       maxFee: fee,
     });
     let obtError = null;
+    let bundlesCollected = 0;
     if (data.memo || data.fioRequestId) {
       try {
         await apis.fio.executeAction(keys, ACTIONS.recordObtData, {
@@ -60,6 +65,7 @@ const SendEdgeWallet: React.FC<Props> = props => {
           maxFee: DEFAULT_ACTION_FEE_AMOUNT,
           fioRequestId: data.fioRequestId,
         });
+        bundlesCollected = BUNDLES_TX_COUNT.RECORD_OBT_DATA;
       } catch (e) {
         console.error(e);
         obtError = e;
@@ -69,7 +75,7 @@ const SendEdgeWallet: React.FC<Props> = props => {
     if (data.to != null && !contactsList.filter(c => c === data.to).length)
       createContact(data.to);
 
-    return { ...result, obtError };
+    return { ...result, obtError, bundlesCollected };
   };
 
   return (

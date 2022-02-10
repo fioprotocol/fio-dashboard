@@ -107,12 +107,13 @@ const RequestPage: React.FC<ContainerProps> = props => {
     setRequestData(null);
     setProcessing(false);
   };
-  const onSuccess = (res: TrxResponse) => {
+  const onSuccess = (res: TrxResponse & { bundlesCollected?: number }) => {
     setRequestData(null);
     setProcessing(false);
     setResultsData({
       name: fioWallet.name,
       publicKey: fioWallet.publicKey,
+      bundlesCollected: res.bundlesCollected,
       other: {
         ...requestData,
         amount: requestData.amount,

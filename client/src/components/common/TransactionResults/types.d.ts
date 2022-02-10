@@ -8,6 +8,7 @@ import {
 
 export type ResultsData = {
   feeCollected?: FeePrice;
+  bundlesCollected?: number;
   name?: string;
   publicKey?: string;
   changedStatus?: string;
