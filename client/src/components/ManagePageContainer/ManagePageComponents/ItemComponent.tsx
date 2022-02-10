@@ -68,7 +68,7 @@ const ItemComponent: React.FC<Props> = props => {
       </Badge>
       <Badge show={showBundles} type={BADGE_TYPES.WHITE}>
         <div className="d-flex align-items-center w-100">
-          <p className={classes.badgeTitle}>Bundle Transactions</p>
+          <p className={classes.badgeTitle}>Bundled Transactions</p>
           <p className={classes.badgeItem}>{remaining || 0}</p>
           <RenderAddBundles name={name} isMobileView={true} />
         </div>

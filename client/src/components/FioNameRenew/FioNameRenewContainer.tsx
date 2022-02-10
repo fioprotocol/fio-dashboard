@@ -125,7 +125,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
         <div className={classes.container}>
           <InfoBadge
             title="Renewal Information"
-            message="This renewal will add 365 days to expiration and 100 Bundle Transactions"
+            message="This renewal will add 365 days to expiration and 100 Bundled Transactions"
             show={true}
             type={BADGE_TYPES.INFO}
           />
