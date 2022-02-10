@@ -33,7 +33,7 @@ const SendPage: React.FC<ContainerProps> = props => {
     feePrice,
     roe,
     history,
-    contactsList,
+    contactsList = [],
     location: { state: { fioRecordDecrypted } = {} },
     refreshBalance,
     getFee,
@@ -92,6 +92,7 @@ const SendPage: React.FC<ContainerProps> = props => {
       other: {
         ...sendData,
         ...res,
+        to: sendData.toPubKey,
         toFioAddress: sendData.to,
         fromFioAddress: sendData.from,
         from: sendData.fromPubKey,
