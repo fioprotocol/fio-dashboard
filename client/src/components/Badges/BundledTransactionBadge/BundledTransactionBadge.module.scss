@@ -5,9 +5,12 @@
 .bundledContainer {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
 
   .title {
     margin-right: 30px;
+    margin-bottom: 0;
   }
 
   .total {
@@ -19,7 +22,6 @@
 
     .title, .total {
       margin-top: 0;
-      margin-bottom: 0;
-    } 
+    }
   }
 }
