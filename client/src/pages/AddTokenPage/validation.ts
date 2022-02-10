@@ -62,12 +62,13 @@ export const validate = (
           index >
             values.tokens.findIndex(
               token =>
-                token.chainCode === chainCode && token.tokenCode === tokenCode,
+                token.chainCode === chainCode &&
+                (token.tokenCode === tokenCode || token.tokenCode === '*'),
             ) ||
           publicAddresses.some(
             pubAddressItem =>
               pubAddressItem.chainCode === chainCode &&
-              pubAddressItem.tokenCode === tokenCode,
+              (pubAddressItem.tokenCode === tokenCode || tokenCode === '*'),
           )
         ) {
           tokenErrors.tokenCode = {
