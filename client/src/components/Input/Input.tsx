@@ -296,7 +296,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
   if (type === 'checkbox')
     return (
       <label className={classes.checkboxContainer}>
-        <input {...props} {...input} />
+        <input {...rest} {...input} />
         <FontAwesomeIcon
           icon="check-square"
           className={classnames(
