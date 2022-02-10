@@ -72,7 +72,7 @@ const SendEdgeWallet: React.FC<Props> = props => {
       }
     }
 
-    if (data.to != null && !contactsList.filter(c => c === data.to).length)
+    if (!!data.to && !contactsList.filter(c => c === data.to).length)
       createContact(data.to);
 
     return { ...result, obtError, bundlesCollected };
