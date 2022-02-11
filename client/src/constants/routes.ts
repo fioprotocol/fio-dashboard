@@ -44,7 +44,7 @@ const ROUTES: { [route: string]: string } = {
 
   SEND: '/send/:publicKey',
   FIO_TOKENS_REQUEST: '/new-request/:publicKey?',
-  PAYMENT_DETAILS: '/payment-details/:publicKey/:fioTransactionId',
+  PAYMENT_DETAILS: '/payment-details/:publicKey/:fioRequestId',
 
   LINK_TOKEN_LIST: '/link-token-list',
   ADD_TOKEN: '/add-token',

@@ -1,0 +1,32 @@
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/colors.scss';
+
+.form {
+  margin-top: 1em;
+  .transactionTitle {
+    font-size: 0.875em;
+    margin-bottom: -16px;
+    color: $dark-jungle-green;
+    align-self: flex-start;
+    @include sf-pro-display-medium;
+  }
+
+  .additionalInfo {
+    align-self: flex-start;
+    color: $dark-jungle-green;
+    font-size: 0.875em;
+    letter-spacing: 0.05em;
+
+
+    .paragraph{
+      margin-bottom: 1em;
+
+      &.bold {
+        font-weight: bold;
+      }
+      &.cursive {
+        font-style: italic;
+      }
+    }
+  }
+}
