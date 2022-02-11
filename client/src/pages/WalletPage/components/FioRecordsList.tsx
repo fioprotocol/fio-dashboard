@@ -163,7 +163,7 @@ const FioRecordsList: React.FC<Props &
         transformFioRecord({
           fioRecordItem: paymentOtbData,
           publicKey: fioWallet.publicKey,
-          fioRecordType,
+          fioRecordType: FIO_RECORD_TYPES.DATA,
         }),
       );
     }
