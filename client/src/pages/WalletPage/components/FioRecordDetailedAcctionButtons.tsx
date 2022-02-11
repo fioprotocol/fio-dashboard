@@ -22,7 +22,7 @@ type Props = {
   onCloseModal: () => void;
 };
 
-const FioRecordDetailedAcctionButtons: React.FC<Props &
+const FioRecordDetailedActionButtons: React.FC<Props &
   RouteComponentProps> = props => {
   const {
     history,
@@ -33,7 +33,7 @@ const FioRecordDetailedAcctionButtons: React.FC<Props &
   } = props;
 
   const isFioChain =
-    fioRecordDecrypted?.fioDecryptedContent?.chain === CHAIN_CODES.FIO;
+    fioRecordDecrypted?.fioDecryptedContent?.chainCode === CHAIN_CODES.FIO;
 
   const payButtonText = isFioChain ? 'Pay' : 'Enter Payment Details';
 
@@ -47,19 +47,40 @@ const FioRecordDetailedAcctionButtons: React.FC<Props &
   };
 
   const onPayClick = () => {
-    // todo: set path to other chain payment page
-    const payLink = isFioChain
-      ? putParamsToUrl(ROUTES.SEND, { publicKey: fioWallet.publicKey })
-      : '/';
+    const payLink = putParamsToUrl(ROUTES.SEND, {
+      publicKey: fioWallet.publicKey,
+    });
 
-    history.push(payLink, { fioRecordDecrypted });
+    history.push(payLink, {
+      fioWallet,
+      fioRecordDecrypted,
+    });
+  };
+
+  const onEnterPaymentDetails = () => {
+    const paymentDetailsLink = putParamsToUrl(ROUTES.PAYMENT_DETAILS, {
+      publicKey: fioWallet.publicKey,
+      fioRequestId: fioRecordDecrypted.fioRecord.id + '',
+    });
+
+    history.push(paymentDetailsLink, {
+      fioWallet,
+      fioRecordDecrypted,
+    });
   };
 
   return (
     <div className={classes.container}>
+      {isFioChain && (
+        <SubmitButton
+          text={payButtonText}
+          onClick={onPayClick}
+          withBottomMargin={true}
+        />
+      )}
       <SubmitButton
-        text={payButtonText}
-        onClick={onPayClick}
+        text="Enter Payment Details"
+        onClick={onEnterPaymentDetails}
         withBottomMargin={true}
       />
       <CancelButton text="Reject" onClick={onRejectClick} isBlue={true} />
@@ -67,4 +88,4 @@ const FioRecordDetailedAcctionButtons: React.FC<Props &
   );
 };
 
-export default withRouter(FioRecordDetailedAcctionButtons);
+export default withRouter(FioRecordDetailedActionButtons);
