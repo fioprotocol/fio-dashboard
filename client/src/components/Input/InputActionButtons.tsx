@@ -18,7 +18,12 @@ type ShowPasswordIconProps = {
   toggleShowPass: (val: boolean) => void;
 };
 
+type PasteButtonProps = {
+  onClick: () => void;
+};
+
 type CopyButtonProps = {
+  isSecondary?: boolean;
   onClick: () => void;
 };
 
@@ -27,7 +32,44 @@ type DefaultProps = {
   uiType?: string;
 };
 
-export const PasteButton: React.FC<CopyButtonProps & DefaultProps> = ({
+export const QrCodeButton: React.FC<PasteButtonProps & DefaultProps> = ({
+  onClick,
+  uiType,
+  isVisible = true,
+}) => {
+  if (!isVisible) return null;
+
+  return (
+    <FontAwesomeIcon
+      icon="qrcode"
+      className={classnames(classes.inputIcon, uiType && classes[uiType])}
+      onClick={onClick}
+    />
+  );
+};
+
+export const CopyButton: React.FC<CopyButtonProps & DefaultProps> = ({
+  onClick,
+  uiType,
+  isVisible,
+  isSecondary = false,
+}) => {
+  if (!isVisible) return null;
+
+  return (
+    <FontAwesomeIcon
+      icon={{ prefix: 'far', iconName: 'copy' }}
+      className={classnames(
+        classes.inputIcon,
+        isSecondary ? classes.doubleIcon : '',
+        uiType && classes[uiType],
+      )}
+      onClick={onClick}
+    />
+  );
+};
+
+export const PasteButton: React.FC<PasteButtonProps & DefaultProps> = ({
   onClick,
   uiType,
   isVisible,
