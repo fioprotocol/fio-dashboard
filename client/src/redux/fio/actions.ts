@@ -66,7 +66,6 @@ export const SET_FEE = `${prefix}/SET_FEE`;
 export const getFee = (endpoint: string, fioAddress: string = '') => ({
   types: [GET_FEE_REQUEST, GET_FEE_SUCCESS, GET_FEE_FAILURE],
   promise: (api: Api) => {
-    api.fio.setBaseUrl();
     return api.fio.publicFioSDK.getFee(endpoint, fioAddress);
   },
   endpoint,
