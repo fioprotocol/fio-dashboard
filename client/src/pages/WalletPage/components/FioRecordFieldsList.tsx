@@ -67,6 +67,7 @@ const FioRecordFieldsList: React.FC<Props> = props => {
             return 'payer';
 
           if (field === FIO_RECORD_DETAILED_FIELDS.txId) return 'ID';
+          if (field === FIO_RECORD_DETAILED_FIELDS.chainCode) return 'Chain';
 
           if (fioRecordDetailedType === FIO_RECORD_DETAILED_TYPE.RESULT) {
             if (field === FIO_RECORD_DETAILED_FIELDS.from)
@@ -93,7 +94,7 @@ const FioRecordFieldsList: React.FC<Props> = props => {
                   <FioRecordFieldContent
                     value={value()}
                     field={field}
-                    chain={fioDecryptedContent.chain}
+                    chain={fioDecryptedContent.chainCode}
                   />
                 </p>
               </div>
