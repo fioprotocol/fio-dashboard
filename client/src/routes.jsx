@@ -35,6 +35,7 @@ import FioAddressSignaturesPage from './pages/FioAddressSignaturesPage';
 import FioAddressSignPage from './pages/FioAddressSignPage';
 import FioAddressNftPage from './pages/FioAddressNftPage';
 import FioTokensRequestPage from './pages/FioTokensRequestPage';
+import TokensRequestPaymentPage from './pages/TokensRequestPaymentPage';
 import NftValidationPage from './pages/NftValidationPage';
 import WalletsPage from './pages/WalletsPage';
 import WalletPage from './pages/WalletPage';
@@ -163,6 +164,12 @@ const Routes = () => (
         <PrivateRoute
           path={ROUTES.FIO_TOKENS_REQUEST}
           component={FioTokensRequestPage}
+          exact
+        />
+
+        <PrivateRoute
+          path={ROUTES.PAYMENT_DETAILS}
+          component={TokensRequestPaymentPage}
           exact
         />
 

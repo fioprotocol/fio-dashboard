@@ -14,6 +14,7 @@ export const transformFioRecord = ({
 }): FioRecordViewDecrypted => {
   const {
     fioRecord: {
+      payeeFioPublicKey,
       content,
       fioRequestId,
       payeeFioAddress,
@@ -43,6 +44,7 @@ export const transformFioRecord = ({
     fioRecord: {
       from,
       to,
+      payeeFioPublicKey,
       date: timeStamp,
       status,
       id: fioRequestId,
