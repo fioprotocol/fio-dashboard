@@ -42,6 +42,7 @@ export type PasswordFormValues = {
 export type FioRecordViewProps = {
   from: string;
   to: string;
+  payeeFioPublicKey: string;
   date: string;
   status?: string;
   id: number;
@@ -56,7 +57,7 @@ export type FioRecordViewDecrypted = {
 
 export type FioRecordViewKeysProps =
   | 'amount'
-  | 'chain'
+  | 'chainCode'
   | 'date'
   | 'from'
   | 'memo'

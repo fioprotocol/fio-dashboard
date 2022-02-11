@@ -44,7 +44,6 @@ const DetailedTabsList = [
     eventKey: 'Payment information',
     title: 'Payment information',
     renderTab: (props: Props) => (
-      // todo: get content from obt_data with matching fio_request_id
       <FioRecordDetailedItem
         {...props}
         fieldsList={FIO_REQUEST_FIELDS_LIST.PAYMENT_LIST}
