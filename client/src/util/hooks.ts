@@ -148,7 +148,7 @@ export function usePublicAddresses(fioAddress: string, limit: number = 0) {
   }, [hasMore]);
 }
 
-export function usePubAddressesFromWallet(walletPublicKey: string) {
+export function usePubAddressesFromWallet(walletPublicKey?: string) {
   const dispatch = useDispatch();
 
   const fioAddressToPubAddresses = useSelector(mappedPublicAddresses);

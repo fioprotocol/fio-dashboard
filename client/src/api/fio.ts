@@ -5,7 +5,6 @@ import { FioAddressesResponse } from '@fioprotocol/fiosdk/src/entities/FioAddres
 import { FioDomainsResponse } from '@fioprotocol/fiosdk/src/entities/FioDomainsResponse';
 import { PublicAddressResponse } from '@fioprotocol/fiosdk/src/entities/PublicAddressResponse';
 import { PublicAddressesResponse } from '@fioprotocol/fiosdk/src/entities/PublicAddressesResponse';
-import { Transactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
 import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { isDomain } from '../utils';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
@@ -47,8 +46,6 @@ export default class Fio {
     return FIOSDK.SUFToAmount(suf);
   };
 
-  setBaseUrl = (): string => (Transactions.baseUrl = this.baseurl);
-
   isFioAddressValid = (value: string): boolean =>
     FIOSDK.isFioAddressValid(value);
   isFioPublicKeyValid = (value: string): boolean =>
@@ -80,7 +77,6 @@ export default class Fio {
 
   validateAction = (): void => {
     this.checkWallet();
-    this.setBaseUrl();
   };
 
   validatePublicKey = async (publicKey: string): Promise<boolean> => {
@@ -131,7 +127,6 @@ export default class Fio {
     this.publicFioSDK.transactions.getActor(publicKey);
 
   availCheck = (fioName: string): Promise<AvailabilityResponse> => {
-    this.setBaseUrl();
     return this.publicFioSDK.isAvailable(fioName);
   };
 
@@ -146,7 +141,6 @@ export default class Fio {
   getBalance = async (
     publicKey: string,
   ): Promise<{ balance: number; available: number; locked: number }> => {
-    this.setBaseUrl();
     try {
       const { balance, available } = await this.publicFioSDK.getFioBalance(
         publicKey,
@@ -169,7 +163,6 @@ export default class Fio {
   };
 
   getFioNames = async (publicKey: string): Promise<FioNamesResponse> => {
-    this.setBaseUrl();
     try {
       // do not return method to handle errors here
       const res = await this.publicFioSDK.getFioNames(publicKey);
@@ -186,7 +179,6 @@ export default class Fio {
     limit: number,
     offset: number,
   ): Promise<FioAddressesResponse & { more: number }> => {
-    this.setBaseUrl();
     try {
       const res = await this.publicFioSDK.getFioAddresses(
         publicKey,
@@ -206,7 +198,6 @@ export default class Fio {
     limit: number,
     offset: number,
   ): Promise<FioDomainsResponse & { more: number }> => {
-    this.setBaseUrl();
     try {
       const res = await this.publicFioSDK.getFioDomains(
         publicKey,
@@ -224,7 +215,6 @@ export default class Fio {
   getFioPublicAddress = async (
     fioAddress: string,
   ): Promise<PublicAddressResponse> => {
-    this.setBaseUrl();
     try {
       const res = await this.publicFioSDK.getFioPublicAddress(fioAddress);
       return res;
@@ -246,7 +236,6 @@ export default class Fio {
     limit: number | null = null,
     offset: number | null = null,
   ): Promise<NftsResponse> => {
-    this.setBaseUrl();
     try {
       return await this.publicFioSDK.getNfts(searchParams, limit, offset);
     } catch (e) {
@@ -263,7 +252,6 @@ export default class Fio {
     contractAddress: string,
     tokenId: string,
   ): Promise<NftsResponse> => {
-    this.setBaseUrl();
     try {
       return await this.publicFioSDK.getNfts({
         chainCode,
@@ -301,7 +289,6 @@ export default class Fio {
     limit: number | null = null,
     offset: number | null = null,
   ): Promise<PublicAddressesResponse> => {
-    this.setBaseUrl();
     try {
       return this.publicFioSDK.getPublicAddresses(fioAddress, limit, offset);
     } catch (err) {

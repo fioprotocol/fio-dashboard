@@ -302,9 +302,10 @@ export type MappedPublicAddresses = {
 export type DecryptedFioRecordContent = {
   payeePublicAddress: string;
   amount: string;
-  chain: string;
   memo: string;
   txId?: string;
+  chainCode: string;
+  tokenCode: string;
 }
 
 // FioRecord type represents FioRequest and FioObtData

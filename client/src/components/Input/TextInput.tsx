@@ -23,7 +23,7 @@ export const INPUT_COLOR_SCHEMA = {
   BLACK_AND_WHITE: 'black_and_white',
 };
 
-type TextInputProps = {
+export type TextInputProps = {
   colorSchema?: string;
   onClose?: (isOpen: boolean) => void;
   hideError?: boolean;

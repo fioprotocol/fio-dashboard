@@ -32,6 +32,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
     fee,
     obtDataOn,
     contactsList,
+    initialValues,
   } = props;
 
   const handleSubmit = async (values: SendTokensValues) => {
@@ -40,13 +41,6 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
 
     return props.onSubmit(values);
   };
-
-  const initialValues: { from?: string; fromPubKey: string } = {
-    fromPubKey: fioWallet.publicKey,
-  };
-  if (fioAddresses.length) {
-    initialValues.from = fioAddresses[0].name;
-  }
 
   return (
     <Form
@@ -170,6 +164,9 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
             ) : null}
 
             <Field name="fromPubKey" type="hidden" component={Input} />
+            <Field name="toPubKey" type="hidden" component={Input} />
+
+            <Field name="fioRequestId" type="hidden" component={Input} />
 
             <p className={classes.transactionTitle}>Transaction cost</p>
             <PriceBadge

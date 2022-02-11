@@ -58,6 +58,20 @@
   &.blackLight, &.blackWhite {
     color: $dark-jungle-green;
   }
+
+  b {
+    @include sf-pro-display-bold;
+  }
+}
+
+.labelSuffix {
+  font-size: 0.875em;
+  @include sf-pro-display-thin;
+  color: $gray-main;
+
+  &.blackLight, &.blackWhite {
+    color: $dark-jungle-green;
+  }
 }
 
 .inputGroup {
@@ -386,6 +400,11 @@
 
   .unchecked, .checked {
     font-size: 22.87px;
+    color: $dark-jungle-green;
+
+    &.blackWhite {
+      color: $white;
+    }
 
     &.smallText {
       font-size: 16px;
@@ -408,6 +427,10 @@
 
     &.hasThinText {
       @include proxima-nova-thin;
+    }
+
+    b {
+      @include sf-pro-display-regular;
     }
   }
 }

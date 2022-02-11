@@ -8,6 +8,7 @@ import {
 
 export type ResultsData = {
   feeCollected?: FeePrice;
+  bundlesCollected?: number;
   name?: string;
   publicKey?: string;
   changedStatus?: string;
@@ -15,6 +16,8 @@ export type ResultsData = {
   error?: string;
   updated?: PublicAddressDoublet[];
   failed?: PublicAddressDoublet[];
+  obtError?: string;
+  fioRequestId?: number;
 };
 
 export type ResultsProps = {

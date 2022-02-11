@@ -73,7 +73,7 @@ export const getWalletKeys = (
   for (const fioWallet of fioWallets) {
     keys[fioWallet.id] = {
       private: fioWallet.keys.fioKey,
-      public: fioWallet.getDisplayPublicSeed(),
+      public: fioWallet.publicWalletInfo.keys.publicKey,
     };
   }
   return keys;
@@ -300,7 +300,8 @@ export const putParamsToUrl = (
   params: { [paramName: string]: string },
 ) => {
   return Object.keys(params).reduce(
-    (acc: string, key: string) => acc.replace(`:${key}`, params[key]),
+    (acc: string, key: string) =>
+      acc.replace(new RegExp(`:${key}[\?]?`, 'g'), params[key]),
     `${route}`,
   );
 };

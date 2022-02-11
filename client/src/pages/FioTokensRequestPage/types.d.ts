@@ -4,11 +4,14 @@ import {
   FioAddressDoublet,
   FioWalletDoublet,
   MappedPublicAddresses,
-  WalletBalances,
 } from '../../types';
 
 type MatchProps = {
-  publicKey: string;
+  publicKey?: string;
+};
+
+type LocationState = {
+  payeeFioAddress: string;
 };
 
 export type RequestTokensValues = {
@@ -19,13 +22,21 @@ export type RequestTokensValues = {
   payeeTokenPublicAddress: string;
   amount: string;
   memo?: string;
+  mapPubAddress?: boolean;
+};
+
+export type RequestTokensInitialValues = {
+  payeeFioAddress?: string;
+  payeeTokenPublicAddress?: string;
+  tokenCode?: string;
+  chainCode?: string;
+  mapPubAddress?: boolean;
 };
 
 export type RequestTokensProps = {
-  fioWallet: FioWalletDoublet;
+  initialValues?: RequestTokensInitialValues;
   fioAddresses: FioAddressDoublet[];
   pubAddressesMap: MappedPublicAddresses;
-  balance: WalletBalances;
   loading: boolean;
   roe: number;
   contactsList: string[];
@@ -33,18 +44,18 @@ export type RequestTokensProps = {
   onSubmit: (values: RequestTokensValues) => void;
 };
 
-export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
+export interface ContainerOwnProps
+  extends RouteComponentProps<MatchProps, {}, LocationState> {
   children?: React.ReactNode;
 }
 
 export interface ContainerProps extends ContainerOwnProps {
-  fioWallet: FioWalletDoublet;
+  fioWallets: FioWalletDoublet[];
   fioWalletsLoading: boolean;
   roe: number;
-  balance: WalletBalances;
   contactsList: string[];
   contactsLoading: boolean;
-  refreshBalance: (publicKey: string) => void;
   getContactsList: () => void;
   createContact: (name: string) => void;
+  refreshWalletDataPublicKey: (publicKey: string) => void;
 }

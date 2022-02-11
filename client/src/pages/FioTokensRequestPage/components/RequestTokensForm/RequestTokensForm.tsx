@@ -1,7 +1,7 @@
 import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
+import { OnChange } from 'react-final-form-listeners';
 
-import { formValidation, submitValidation } from './validation';
 import Dropdown from '../../../../components/Input/Dropdown';
 import TextInput, {
   INPUT_UI_STYLES,
@@ -13,11 +13,13 @@ import BundledTransactionBadge from '../../../../components/Badges/BundledTransa
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import TokenDataFields from './TokenDataFields';
 import PublicKeyField from './PublicKeyField';
-import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 
+import { formValidation, submitValidation } from './validation';
+
+import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { CHAIN_CODE_LIST } from '../../../../constants/common';
-import { FIO_CHAIN_CODE, BUNDLES_TX_COUNT } from '../../../../constants/fio';
+import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
 
 import { RequestTokensProps, RequestTokensValues } from '../../types';
 import { FioAddressDoublet } from '../../../../types';
@@ -27,14 +29,15 @@ import classes from '../../styles/RequestTokensForm.module.scss';
 const RequestTokensForm: React.FC<RequestTokensProps> = props => {
   const {
     loading,
-    fioWallet,
     fioAddresses,
     pubAddressesMap,
     roe,
     contactsList,
+    initialValues: parentInitialValues,
     isFio,
   } = props;
 
+  const initialValues = { ...parentInitialValues };
   const handleSubmit = async (values: RequestTokensValues) => {
     const validationResult = await submitValidation.validateForm(values);
     if (validationResult) return validationResult;
@@ -42,16 +45,6 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
     return props.onSubmit(values);
   };
 
-  const initialValues: {
-    payeeFioAddress?: string;
-    payeeTokenPublicAddress: string;
-    tokenCode: any;
-    chainCode: any;
-  } = {
-    payeeTokenPublicAddress: isFio ? fioWallet.publicKey : '',
-    chainCode: FIO_CHAIN_CODE,
-    tokenCode: FIO_CHAIN_CODE,
-  };
   if (!isFio) {
     initialValues.chainCode = CHAIN_CODE_LIST[0].id;
     initialValues.tokenCode = CHAIN_CODE_LIST[0].tokens?.length
@@ -60,7 +53,13 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
   }
 
   if (fioAddresses.length) {
-    initialValues.payeeFioAddress = fioAddresses[0].name;
+    if (!initialValues.payeeFioAddress) {
+      initialValues.payeeFioAddress = fioAddresses[0].name;
+    }
+    initialValues.payeeTokenPublicAddress = isFio
+      ? fioAddresses[0].walletPublicKey
+      : '';
+
     if (
       !isFio &&
       pubAddressesMap != null &&
@@ -88,9 +87,27 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
     >
       {(formRenderProps: FormRenderProps) => {
         const {
-          values: { payeeFioAddress, chainCode, tokenCode },
+          values: { payeeFioAddress, chainCode, tokenCode, mapPubAddress },
           validating,
         } = formRenderProps;
+
+        const onPayeeFioAddressChange = (val: string) => {
+          if (!isFio) return;
+
+          const selectedFioAddress: FioAddressDoublet | null = val
+            ? fioAddresses.find(({ name }) => name === val)
+            : null;
+
+          if (selectedFioAddress != null)
+            formRenderProps.form.change(
+              'payeeTokenPublicAddress',
+              selectedFioAddress.walletPublicKey,
+            );
+        };
+        const transactionCost = mapPubAddress
+          ? BUNDLES_TX_COUNT.NEW_FIO_REQUEST +
+            BUNDLES_TX_COUNT.ADD_PUBLIC_ADDRESS
+          : BUNDLES_TX_COUNT.NEW_FIO_REQUEST;
 
         const renderRequester = () => {
           if (!fioAddresses.length) return null;
@@ -134,7 +151,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
 
         const notEnoughBundles =
           selectedAddress != null
-            ? selectedAddress.remaining < BUNDLES_TX_COUNT.NEW_FIO_REQUEST
+            ? selectedAddress.remaining < transactionCost
             : false;
 
         const noPayeeFioAddress =
@@ -154,6 +171,9 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
             onSubmit={formRenderProps.handleSubmit}
             className={classes.form}
           >
+            <OnChange name="payeeFioAddress">
+              {onPayeeFioAddressChange}
+            </OnChange>
             {renderRequester()}
 
             <TokenDataFields
@@ -226,7 +246,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               <>
                 <p className={classes.transactionTitle}>Transaction cost</p>
                 <BundledTransactionBadge
-                  bundles={BUNDLES_TX_COUNT.NEW_FIO_REQUEST}
+                  bundles={transactionCost}
                   remaining={selectedAddress.remaining}
                 />
               </>

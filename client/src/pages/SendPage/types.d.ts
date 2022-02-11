@@ -6,6 +6,8 @@ import {
   WalletBalances,
 } from '../../types';
 
+import { FioRecordViewDecrypted } from '../WalletPage/types';
+
 type MatchProps = {
   publicKey: string;
 };
@@ -14,10 +16,21 @@ export type SendTokensValues = {
   from?: string;
   fromPubKey: string;
   to: string;
-  receiverFioAddress?: string;
+  toPubKey?: string;
   amount: string;
   nativeAmount: string;
   memo?: string;
+  fioRequestId?: number;
+};
+
+export type InitialValues = {
+  from?: string;
+  fromPubKey: string;
+  to?: string;
+  amount?: string;
+  memo?: string;
+  fioRequestId?: number;
+  toPubKey?: string;
 };
 
 export type SendTokensProps = {
@@ -29,6 +42,7 @@ export type SendTokensProps = {
   loading: boolean;
   obtDataOn?: boolean;
   contactsList: string[];
+  initialValues?: InitialValues;
   onSubmit: (values: SendTokensValues) => void;
 };
 
@@ -44,8 +58,14 @@ export interface ContainerProps extends ContainerOwnProps {
   balance: WalletBalances;
   contactsList: string[];
   contactsLoading: boolean;
+  location: {
+    state?: {
+      fioRecordDecrypted: FioRecordViewDecrypted;
+    };
+  };
   refreshBalance: (publicKey: string) => void;
   getFee: () => void;
   getContactsList: () => void;
   createContact: (name: string) => void;
+  refreshWalletDataPublicKey: (publicKey: string) => void;
 }

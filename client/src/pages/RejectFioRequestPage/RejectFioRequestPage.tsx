@@ -18,6 +18,7 @@ import { BUNDLES_TX_COUNT } from '../../constants/fio';
 import {
   FIO_REQUEST_FIELDS_LIST,
   FIO_RECORD_DETAILED_TYPE,
+  FIO_RECORD_TYPES,
 } from '../WalletPage/constants';
 import { ROUTES } from '../../constants/routes';
 
@@ -37,7 +38,7 @@ type Location = {
 };
 
 type Props = {
-  getFioAddresses: (publicKey: string) => void;
+  refreshWalletDataPublicKey: (publicKey: string) => void;
 };
 
 const RejectFioRequestPage: React.FC<Props &
@@ -48,6 +49,7 @@ const RejectFioRequestPage: React.FC<Props &
       state: { fioRecordDecrypted, fioWallet, fioRecordType },
     },
     history,
+    refreshWalletDataPublicKey,
   } = props;
 
   const walletFioCryptoHandles = useFioAddresses(fioWallet.publicKey);
@@ -80,7 +82,7 @@ const RejectFioRequestPage: React.FC<Props &
       putParamsToUrl(ROUTES.FIO_WALLET, { publicKey: fioWallet.publicKey }),
       {
         fioRecordDecrypted,
-        fioRequestTab: fioRecordType,
+        fioRequestTab: FIO_RECORD_TYPES.RECEIVED,
       },
     );
   };
@@ -93,6 +95,7 @@ const RejectFioRequestPage: React.FC<Props &
     rejectResult: FioRecordViewDecrypted & { error?: string },
   ) => {
     setResultsData({ ...rejectResult, remaining });
+    !rejectResult.error && refreshWalletDataPublicKey(fioWallet.publicKey);
     setSubmitData(null);
     setProcessing(false);
   };
@@ -107,7 +110,7 @@ const RejectFioRequestPage: React.FC<Props &
       putParamsToUrl(ROUTES.FIO_WALLET, {
         publicKey: fioWallet.publicKey,
       }),
-      { fioRequestTab: fioRecordType },
+      { fioRequestTab: FIO_RECORD_TYPES.RECEIVED },
     );
   };
 

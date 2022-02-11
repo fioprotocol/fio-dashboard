@@ -66,7 +66,6 @@ export const SET_FEE = `${prefix}/SET_FEE`;
 export const getFee = (endpoint: string, fioAddress: string = '') => ({
   types: [GET_FEE_REQUEST, GET_FEE_SUCCESS, GET_FEE_FAILURE],
   promise: (api: Api) => {
-    api.fio.setBaseUrl();
     return api.fio.publicFioSDK.getFee(endpoint, fioAddress);
   },
   endpoint,
@@ -190,4 +189,11 @@ export const updatePublicAddresses = (
   type: UPDATE_PUBLIC_ADDRESSES,
   fioAddress,
   updPublicAddresses,
+});
+
+export const REFRESH_WALLET_DATA_PUBLIC_KEY = `${prefix}/REFRESH_WALLET_DATA_PUBLIC_KEY`;
+
+export const refreshWalletDataPublicKey = (publicKey: string) => ({
+  type: REFRESH_WALLET_DATA_PUBLIC_KEY,
+  publicKey,
 });

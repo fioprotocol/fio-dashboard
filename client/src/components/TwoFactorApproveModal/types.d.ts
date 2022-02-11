@@ -1,8 +1,8 @@
 export type PendingVoucher = {
   voucherId: string;
-  loginId: string;
+  loginId?: string;
   deviceDescription?: string;
   ipDescription: string;
-  created: string;
-  activates: string;
+  created: Date;
+  activates: Date;
 };

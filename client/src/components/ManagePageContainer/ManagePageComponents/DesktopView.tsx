@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 
 import DateComponent from './DateComponent';
-import ActionButtons from './ActionButtons';
+import ActionButtons, { RenderAddBundles } from './ActionButtons';
 import FioAddress from './FioAddress';
 
 import DomainStatusBadge from '../../Badges/DomainStatusBadge/DomainStatusBadge';
@@ -40,7 +40,12 @@ const DesktopView: React.FC<DefaultProps> = props => {
           />
         </div>
         <div className={classes.tableCol}>
-          {remaining || remaining === 0 ? remaining : '-'}
+          {remaining || remaining === 0 ? (
+            <span className={classes.remaining}>{remaining}</span>
+          ) : (
+            '-'
+          )}
+          <RenderAddBundles name={fioNameItem.name} />
         </div>
         <div className={classnames(classes.tableCol, classes.lastCol)}>
           <ActionButtons

@@ -10,7 +10,11 @@ import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 import { FioWalletDoublet } from '../../../types';
 import { SendTokensValues } from '../types';
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
-import { ACTIONS, FIO_CHAIN_CODE } from '../../../constants/fio';
+import {
+  ACTIONS,
+  BUNDLES_TX_COUNT,
+  FIO_CHAIN_CODE,
+} from '../../../constants/fio';
 
 type Props = {
   fioWallet: FioWalletDoublet;
@@ -39,37 +43,39 @@ const SendEdgeWallet: React.FC<Props> = props => {
 
   const send = async ({ keys, data }: SubmitActionParams) => {
     const result = await apis.fio.executeAction(keys, ACTIONS.transferTokens, {
-      payeeFioPublicKey: data.to,
+      payeeFioPublicKey: data.toPubKey,
       amount: Number(data.nativeAmount),
       maxFee: fee,
     });
-    if (data.memo) {
+    let obtError = null;
+    let bundlesCollected = 0;
+    if (data.memo || data.fioRequestId) {
       try {
         await apis.fio.executeAction(keys, ACTIONS.recordObtData, {
           payerFioAddress: data.from,
-          payeeFioAddress: data.receiverFioAddress,
+          payeeFioAddress: data.to,
           payerTokenPublicAddress: keys.public,
-          payeeTokenPublicAddress: data.to,
+          payeeTokenPublicAddress: data.toPubKey,
           amount: Number(data.amount),
           chainCode: FIO_CHAIN_CODE,
           tokenCode: FIO_CHAIN_CODE,
           obtId: result.transaction_id,
-          payeeFioPublicKey: data.to,
+          payeeFioPublicKey: data.toPubKey,
           memo: data.memo,
           maxFee: DEFAULT_ACTION_FEE_AMOUNT,
+          fioRequestId: data.fioRequestId,
         });
+        bundlesCollected = BUNDLES_TX_COUNT.RECORD_OBT_DATA;
       } catch (e) {
         console.error(e);
+        obtError = e;
       }
     }
 
-    if (
-      data.receiverFioAddress != null &&
-      !contactsList.filter(c => c === data.receiverFioAddress).length
-    )
-      createContact(data.receiverFioAddress);
+    if (!!data.to && !contactsList.filter(c => c === data.to).length)
+      createContact(data.to);
 
-    return result;
+    return { ...result, obtError, bundlesCollected };
   };
 
   return (

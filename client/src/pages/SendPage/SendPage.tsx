@@ -10,7 +10,7 @@ import TokenTransferResults from '../../components/common/TransactionResults/com
 import { putParamsToUrl } from '../../utils';
 import { fioAddressToPubKey } from '../../util/fio';
 
-import { ContainerProps, SendTokensValues } from './types';
+import { ContainerProps, SendTokensValues, InitialValues } from './types';
 import { FioAddressDoublet } from '../../types';
 import { TrxResponse } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
@@ -18,6 +18,7 @@ import { ResultsData } from '../../components/common/TransactionResults/types';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ROUTES } from '../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../constants/common';
+import { FIO_RECORD_TYPES } from '../WalletPage/constants';
 
 import { useFioAddresses } from '../../util/hooks';
 
@@ -32,11 +33,13 @@ const SendPage: React.FC<ContainerProps> = props => {
     feePrice,
     roe,
     history,
-    contactsList,
+    contactsList = [],
+    location: { state: { fioRecordDecrypted } = {} },
     refreshBalance,
     getFee,
     createContact,
     getContactsList,
+    refreshWalletDataPublicKey,
   } = props;
 
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
@@ -61,32 +64,43 @@ const SendPage: React.FC<ContainerProps> = props => {
 
   const onSend = async (values: SendTokensValues) => {
     const newSendData = { ...values };
+
+    if (newSendData.toPubKey) return setSendData(newSendData);
+
     const pubKey = await fioAddressToPubKey(newSendData.to);
+
     if (pubKey) {
-      newSendData.receiverFioAddress = values.to;
-      newSendData.to = pubKey;
+      newSendData.toPubKey = pubKey;
+    } else {
+      newSendData.toPubKey = newSendData.to;
+      newSendData.to = '';
     }
+
     setSendData(newSendData);
   };
   const onCancel = () => {
     setSendData(null);
     setProcessing(false);
   };
-  const onSuccess = (res: TrxResponse) => {
+  const onSuccess = (res: TrxResponse & { bundlesCollected?: number }) => {
     setSendData(null);
     setProcessing(false);
     setResultsData({
       feeCollected: setFees(res.fee_collected, roe),
+      bundlesCollected: res.bundlesCollected,
       name: fioWallet.publicKey,
       publicKey: fioWallet.publicKey,
       other: {
         ...sendData,
         ...res,
-        toFioAddress: sendData.receiverFioAddress,
+        to: sendData.toPubKey,
+        toFioAddress: sendData.to,
         fromFioAddress: sendData.from,
         from: sendData.fromPubKey,
+        fioRequestId: fioRecordDecrypted?.fioRecord.id,
       },
     });
+    refreshWalletDataPublicKey(fioWallet.publicKey);
   };
 
   const onResultsRetry = () => {
@@ -95,6 +109,9 @@ const SendPage: React.FC<ContainerProps> = props => {
   const onResultsClose = () => {
     history.push(
       putParamsToUrl(ROUTES.FIO_WALLET, { publicKey: fioWallet.publicKey }),
+      {
+        fioRequestTab: fioRecordDecrypted && FIO_RECORD_TYPES.RECEIVED,
+      },
     );
   };
 
@@ -105,9 +122,16 @@ const SendPage: React.FC<ContainerProps> = props => {
       </div>
     );
 
-  const backTo = putParamsToUrl(ROUTES.FIO_WALLET, {
-    publicKey: fioWallet.publicKey,
-  });
+  const onBack = () =>
+    history.push(
+      putParamsToUrl(ROUTES.FIO_WALLET, {
+        publicKey: fioWallet.publicKey,
+      }),
+      {
+        fioRequestTab: fioRecordDecrypted && FIO_RECORD_TYPES.RECEIVED,
+        fioRecordDecrypted,
+      },
+    );
 
   const renderInfoBadge = () =>
     walletFioAddresses.length ? (
@@ -118,6 +142,17 @@ const SendPage: React.FC<ContainerProps> = props => {
         message="You may use any of your FIO Crypto Handles associated with this wallet to send FIO Tokens"
       />
     ) : null;
+
+  const initialValues: InitialValues = {
+    // From and To replaces each other because we are sending To address from which we got request
+    fromPubKey: fioWallet.publicKey,
+    toPubKey: fioRecordDecrypted?.fioDecryptedContent.payeePublicAddress,
+    from: fioRecordDecrypted?.fioRecord.to || walletFioAddresses[0]?.name,
+    to: fioRecordDecrypted?.fioRecord.from,
+    fioRequestId: fioRecordDecrypted?.fioRecord.id,
+    amount: fioRecordDecrypted?.fioDecryptedContent.amount,
+    memo: fioRecordDecrypted?.fioDecryptedContent.memo,
+  };
 
   if (resultsData)
     return (
@@ -148,7 +183,7 @@ const SendPage: React.FC<ContainerProps> = props => {
 
       <PseudoModalContainer
         title="Send FIO Tokens"
-        link={backTo || null}
+        onBack={onBack || null}
         middleWidth={true}
       >
         <p className={classes.subtitle}>
@@ -168,6 +203,7 @@ const SendPage: React.FC<ContainerProps> = props => {
           fee={feePrice}
           obtDataOn={true}
           contactsList={contactsList}
+          initialValues={initialValues}
         />
       </PseudoModalContainer>
     </>
