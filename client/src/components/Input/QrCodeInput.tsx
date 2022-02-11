@@ -1,56 +1,28 @@
-import React, { useEffect, useState, WheelEvent } from 'react';
+import React, { useState, WheelEvent } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { FieldRenderProps } from 'react-final-form';
 import classnames from 'classnames';
 
-import {
-  PasteButton,
-  ClearButton,
-  ShowPasswordIcon,
-} from './InputActionButtons';
+import { CopyButton, QrCodeButton } from './InputActionButtons';
 import { ErrorBadge } from './ErrorBadge';
-import { getValueFromPaste } from '../../util/general';
+import { copyToClipboard } from '../../util/general';
 import { Label, LoadingIcon, PrefixLabel, Prefix } from './StaticInputParts';
+import { INPUT_COLOR_SCHEMA, TextInputProps } from './TextInput';
 
 import classes from './Input.module.scss';
 
-export const INPUT_UI_STYLES = {
-  BLACK_LIGHT: 'blackLight',
-  BLACK_WHITE: 'blackWhite',
+export type QrModalProps = {
+  isVisible: boolean;
+  inputValue: string;
+  handleClose: () => void;
 };
 
-export const INPUT_COLOR_SCHEMA = {
-  BLACK_AND_WHITE: 'black_and_white',
+type Props = TextInputProps & {
+  renderModalComponent: (props: QrModalProps) => HTMLDivElement;
 };
 
-export type TextInputProps = {
-  colorSchema?: string;
-  onClose?: (isOpen: boolean) => void;
-  hideError?: boolean;
-  showPasteButton?: boolean;
-  loading?: boolean;
-  uiType?: string;
-  errorType?: string;
-  errorColor?: string;
-  prefix?: string;
-  prefixLabel?: string;
-  upperCased?: boolean;
-  lowerCased?: boolean;
-  disabled?: boolean;
-  showErrorBorder?: boolean;
-  isHigh?: boolean;
-  isSimple?: boolean;
-  input: {
-    'data-clear'?: boolean;
-    value: string;
-  };
-  hasSmallText?: boolean;
-  hasThinText?: boolean;
-  debounceTimeout?: number;
-};
-
-export const TextInput = (
-  props: TextInputProps & FieldRenderProps<TextInputProps>,
+export const QrCodeInput = (
+  props: Props & FieldRenderProps<Props>,
   ref: React.Ref<HTMLInputElement | null>,
 ) => {
   const {
@@ -58,9 +30,8 @@ export const TextInput = (
     meta,
     debounceTimeout = 0,
     colorSchema,
-    onClose,
     hideError,
-    showPasteButton,
+    showCopyButton = true,
     loading,
     uiType,
     errorType = '',
@@ -69,9 +40,10 @@ export const TextInput = (
     prefixLabel = '',
     upperCased = false,
     lowerCased = false,
-    disabled,
+    disabled = true,
     showErrorBorder,
     isLowHeight,
+    renderModalComponent,
     label,
     ...rest
   } = props;
@@ -88,10 +60,9 @@ export const TextInput = (
 
   const { type, value, onChange } = input;
 
-  const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
+  const [isVisibleQrModal, setIsVisibleQrModal] = useState(false);
 
-  const [showPass, toggleShowPass] = useState(false);
-  const [isInputHasValue, toggleIsInputHasValue] = useState(value !== '');
+  const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
 
   const hasError =
     ((error || data.error) &&
@@ -99,18 +70,20 @@ export const TextInput = (
       !active) ||
     (submitError && !modifiedSinceLastSubmit);
 
-  useEffect(() => {
-    toggleIsInputHasValue(value !== '');
-  }, [value]);
+  const closeQr = () => setIsVisibleQrModal(false);
+  const showQr = () => setIsVisibleQrModal(true);
 
-  const clearInputFn = () => {
-    onChange('');
-  };
+  const handleCopy = () => copyToClipboard(value);
 
   if (type === 'hidden') return null;
 
   return (
     <div className={classes.regInputWrapper}>
+      {renderModalComponent({
+        inputValue: value,
+        isVisible: isVisibleQrModal,
+        handleClose: closeQr,
+      })}
       <Label label={label} uiType={uiType} />
       <div className={classes.inputGroup}>
         <Prefix prefix={prefix} hasError={hasError} />
@@ -121,7 +94,7 @@ export const TextInput = (
             uiType && classes[uiType],
             isBW && classes.bw,
             prefix && classes.prefixSpace,
-            showPasteButton && classes.hasPasteButton,
+            showCopyButton && classes.hasPasteButton,
             type === 'password' && classes.doubleIconInput,
             isLowHeight && classes.lowHeight,
           )}
@@ -145,38 +118,22 @@ export const TextInput = (
             onWheel={(event: WheelEvent<HTMLInputElement>) => {
               if (type === 'number') event.currentTarget.blur();
             }}
-            type={showPass ? 'text' : type}
-            data-clear={isInputHasValue}
+            type={type}
             disabled={disabled}
           />
         </div>
-        <ClearButton
-          isVisible={(isInputHasValue || onClose) && !disabled && !loading}
-          onClear={clearInputFn}
-          onClose={onClose}
-          inputType={type}
-          isBW={isBW}
-          disabled={disabled}
-          uiType={uiType}
-        />
-        <ShowPasswordIcon
-          isVisible={isInputHasValue && type === 'password'}
-          showPass={showPass}
-          toggleShowPass={toggleShowPass}
-          uiType={uiType}
-        />
-        <PasteButton
-          isVisible={showPasteButton && !value}
-          onClick={async () => {
-            try {
-              onChange(await getValueFromPaste());
-            } catch (e) {
-              console.error('Paste error: ', e);
-            }
-          }}
-          uiType={uiType}
-        />
         <LoadingIcon isVisible={loading} uiType={uiType} />
+        <CopyButton
+          isSecondary={true}
+          isVisible={showCopyButton && !!value}
+          onClick={handleCopy}
+          uiType={uiType}
+        />
+        <QrCodeButton
+          isVisible={showCopyButton && !!value}
+          onClick={showQr}
+          uiType={uiType}
+        />
       </div>
       <ErrorBadge
         error={error}
@@ -190,9 +147,9 @@ export const TextInput = (
   );
 };
 
-const TextInputRef = React.forwardRef<
+const QrCodeInputRef = React.forwardRef<
   HTMLInputElement,
-  TextInputProps & FieldRenderProps<TextInputProps>
->(TextInput);
+  Props & FieldRenderProps<Props>
+>(QrCodeInput);
 
-export default TextInputRef;
+export default QrCodeInputRef;
