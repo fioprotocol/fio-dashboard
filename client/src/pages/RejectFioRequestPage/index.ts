@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import { compose } from '../../utils';
 
-import { refreshWalletDataPublicKey } from '../../redux/fio/actions';
+import { refreshWalletDataPublicKey } from '../../redux/fioWalletsData/actions';
 
 import RejectFioRequestPage from './RejectFioRequestPage';
 

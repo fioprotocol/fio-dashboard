@@ -5,9 +5,8 @@ import { RouterProps, withRouter } from 'react-router-dom';
 
 import { camelizeFioRequestsData, compose } from '../utils';
 
-import { refreshWalletDataPublicKey } from '../redux/fio/actions';
-
-import { fioWallets, walletDataPublicKey } from '../redux/fio/selectors';
+import { fioWallets } from '../redux/fio/selectors';
+import { walletDataPublicKey } from '../redux/fioWalletsData/selectors';
 import { user } from '../redux/profile/selectors';
 import {
   FioRecord,
@@ -17,7 +16,10 @@ import {
   ResponseFioRecord,
 } from '../types';
 import apis from '../api';
-import { updateFioWalletsData } from '../redux/fioWalletsData/actions';
+import {
+  updateFioWalletsData,
+  refreshWalletDataPublicKey,
+} from '../redux/fioWalletsData/actions';
 import useInterval from '../util/hooks';
 
 type Props = {

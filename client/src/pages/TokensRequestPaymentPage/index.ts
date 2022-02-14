@@ -11,7 +11,7 @@ import {
 } from '../../redux/contacts/selectors';
 
 import PaymentDetailsPage from './PaymentDetailsPage';
-import { refreshWalletDataPublicKey } from '../../redux/fio/actions';
+import { refreshWalletDataPublicKey } from '../../redux/fioWalletsData/actions';
 
 const reduxConnect = connect(
   createStructuredSelector({
