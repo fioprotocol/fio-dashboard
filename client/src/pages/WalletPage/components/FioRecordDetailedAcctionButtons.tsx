@@ -35,8 +35,6 @@ const FioRecordDetailedActionButtons: React.FC<Props &
   const isFioChain =
     fioRecordDecrypted?.fioDecryptedContent?.chainCode === CHAIN_CODES.FIO;
 
-  const payButtonText = isFioChain ? 'Pay' : 'Enter Payment Details';
-
   const onRejectClick = () => {
     onCloseModal();
     history.push(ROUTES.REJECT_FIO_REQUEST, {
@@ -72,11 +70,7 @@ const FioRecordDetailedActionButtons: React.FC<Props &
   return (
     <div className={classes.container}>
       {isFioChain && (
-        <SubmitButton
-          text={payButtonText}
-          onClick={onPayClick}
-          withBottomMargin={true}
-        />
+        <SubmitButton text="Pay" onClick={onPayClick} withBottomMargin={true} />
       )}
       <SubmitButton
         text="Enter Payment Details"
