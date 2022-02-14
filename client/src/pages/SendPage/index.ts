@@ -3,11 +3,8 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 
-import {
-  getFee,
-  refreshBalance,
-  refreshWalletDataPublicKey,
-} from '../../redux/fio/actions';
+import { getFee, refreshBalance } from '../../redux/fio/actions';
+import { refreshWalletDataPublicKey } from '../../redux/fioWalletsData/actions';
 import { createContact, getContactsList } from '../../redux/contacts/actions';
 
 import {

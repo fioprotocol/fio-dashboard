@@ -14,3 +14,10 @@ export const updateFioWalletsData = (
   userId,
   data,
 });
+
+export const REFRESH_WALLET_DATA_PUBLIC_KEY = `${prefix}/REFRESH_WALLET_DATA_PUBLIC_KEY`;
+
+export const refreshWalletDataPublicKey = (publicKey: string) => ({
+  type: REFRESH_WALLET_DATA_PUBLIC_KEY,
+  publicKey,
+});
