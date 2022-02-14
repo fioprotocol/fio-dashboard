@@ -33,6 +33,7 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
     loading,
     createContact,
     getContactsList,
+    refreshWalletDataPublicKey,
   } = props;
 
   const [
@@ -91,7 +92,8 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
     setSendData(null);
     setProcessing(false);
   };
-  const onSuccess = (res: TxValues) => {
+  const onSuccess = (res: TxValues & { error?: string }) => {
+    !res.error && refreshWalletDataPublicKey(fioWallet.publicKey);
     setSendData(null);
     setProcessing(false);
     setResultsData({
