@@ -18,6 +18,7 @@ export type QrModalProps = {
 };
 
 type Props = TextInputProps & {
+  isBlue: boolean;
   renderModalComponent: (props: QrModalProps) => HTMLDivElement;
 };
 
@@ -44,6 +45,7 @@ export const QrCodeInput = (
     showErrorBorder,
     isLowHeight,
     renderModalComponent,
+    isBlue = true,
     label,
     ...rest
   } = props;
@@ -109,6 +111,7 @@ export const QrCodeInput = (
             debounceTimeout={debounceTimeout}
             {...input}
             {...rest}
+            className={classnames(isBlue && classes.blue)}
             onChange={e => {
               const currentValue = e.target.value;
               if (lowerCased) return onChange(currentValue.toLowerCase());

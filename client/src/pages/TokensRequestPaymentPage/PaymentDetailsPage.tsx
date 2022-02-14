@@ -104,7 +104,12 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
     setResultsData(null);
   };
   const onResultsClose = () => {
-    history.push(putParamsToUrl(ROUTES.FIO_WALLET, { publicKey }));
+    history.push(
+      putParamsToUrl(ROUTES.FIO_WALLET, {
+        publicKey,
+        fioRequestTab: FIO_RECORD_TYPES.RECEIVED,
+      }),
+    );
   };
 
   const onBack = () => {
@@ -126,7 +131,7 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
     ?.fioRecord?.to
     ? walletFioAddresses.find(
         ({ name }) => name === fioRecordDecrypted.fioRecord.to,
-      )
+      ) || null
     : null;
 
   if (
