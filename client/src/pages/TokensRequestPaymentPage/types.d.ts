@@ -69,6 +69,7 @@ export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
 }
 
 export interface ContainerProps extends ContainerOwnProps {
+  refreshWalletDataPublicKey: (publicKey: string) => void;
   loading: boolean;
   contactsList: string[];
   getContactsList: () => void;
