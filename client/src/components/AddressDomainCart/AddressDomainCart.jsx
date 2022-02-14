@@ -32,7 +32,7 @@ const AddressDomainCart = props => {
       count === 1 && !multipleWallets ? ROUTES.CHECKOUT : ROUTES.CART;
 
     if (!isAuthenticated) {
-      setRedirectPath(route);
+      setRedirectPath({ pathname: route });
       return history.push(ROUTES.CREATE_ACCOUNT);
     }
     history.push(route);

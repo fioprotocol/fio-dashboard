@@ -6,6 +6,7 @@ import classes from '../EmailModal/EmailModal.module.scss';
 
 import {
   EmailConfirmationStateData,
+  RedirectLinkData,
   RefProfile,
   RefQueryParams,
 } from '../../../types';
@@ -24,7 +25,7 @@ type Props = {
   isRefFlow: boolean;
   refProfileInfo: RefProfile | null;
   refProfileQueryParams: RefQueryParams | null;
-  redirectLink: string;
+  redirectLink: RedirectLinkData;
 };
 
 const EmailConfirmBlocker: React.FC<Props> = props => {
@@ -45,7 +46,7 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
 
   useEffect(() => {
     if (isAuthenticated && isActiveUser) {
-      history.replace(redirectLink || ROUTES.HOME);
+      history.replace(redirectLink.pathname || ROUTES.HOME, redirectLink.state);
     }
 
     if (!isAuthenticated) {
@@ -56,7 +57,7 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
   const onSend = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
     let stateData: EmailConfirmationStateData = {
-      redirectLink,
+      redirectLink: redirectLink.pathname,
     };
     if (isRefFlow) {
       stateData = {
