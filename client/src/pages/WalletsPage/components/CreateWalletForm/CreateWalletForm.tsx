@@ -6,7 +6,7 @@ import SubmitButton from '../../../../components/common/SubmitButton/SubmitButto
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 
-import { validate } from './validation';
+import { formValidation } from './validation';
 
 import { CreateWalletProps } from '../../types';
 
@@ -17,7 +17,7 @@ const CreateWalletForm: React.FC<CreateWalletProps> = props => {
   return (
     <Form
       onSubmit={props.onSubmit}
-      validate={validate}
+      validate={formValidation.validateForm}
       initialValues={initialValues}
     >
       {(formRenderProps: FormRenderProps) => (
