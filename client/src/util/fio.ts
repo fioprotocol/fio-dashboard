@@ -16,6 +16,7 @@ import {
   RegistrationResult,
   Prices,
   PublicAddressDoublet,
+  IncomePrices,
 } from '../types';
 
 export const waitForAddressRegistered = async (fioAddress: string) => {
@@ -240,3 +241,28 @@ export const statusBadgeColours = (status: string) => ({
 });
 
 export const isFioChain = (chain: string) => chain === CHAIN_CODES.FIO;
+
+export const convertPrices = (prices: IncomePrices): { pricing: Prices } => {
+  const pricing = {
+    ...prices.pricing,
+    fio: { address: 0, domain: 0 },
+    usdt: { address: 0, domain: 0 },
+  };
+
+  pricing.fio = {
+    address: apis.fio.sufToAmount(pricing.fioNative.address),
+    domain: apis.fio.sufToAmount(pricing.fioNative.domain),
+  };
+
+  pricing.usdt = {
+    address: apis.fio.convertFioToUsdc(
+      pricing.fioNative.address,
+      pricing.usdtRoe,
+    ),
+    domain: apis.fio.convertFioToUsdc(
+      pricing.fioNative.domain,
+      pricing.usdtRoe,
+    ),
+  };
+  return { pricing };
+};

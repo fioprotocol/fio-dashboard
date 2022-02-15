@@ -16,14 +16,6 @@ class Fio {
     );
     return fee;
   }
-
-  SUFToAmount(sufs) {
-    return FIOSDK.SUFToAmount(sufs);
-  }
 }
-
-export const convert = (fioAmount, roeValue) => {
-  return Math.round((fioAmount / (FIOSDK.SUFUnit / 100)) * roeValue) / 100;
-};
 
 export const fioApi = new Fio();
