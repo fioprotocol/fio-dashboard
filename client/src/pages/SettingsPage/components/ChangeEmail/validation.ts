@@ -1,21 +1,19 @@
-import validator from 'email-validator';
+import { ValidationSchema, Validators } from '@lemoncode/fonk';
+import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
 
-import { FormValuesProps } from './types';
-
-const validation = async (values: FormValuesProps) => {
-  const errors: { newEmail?: string } = {};
-
-  const { newEmail } = values;
-
-  if (!newEmail) {
-    errors.newEmail = 'Required';
-  }
-
-  if (newEmail && !validator.validate(newEmail)) {
-    errors.newEmail = 'Invalid Email Address';
-  }
-
-  return errors;
+const validationSchema: ValidationSchema = {
+  field: {
+    newEmail: [
+      {
+        validator: Validators.required,
+        message: 'Required.',
+      },
+      {
+        validator: Validators.email,
+        message: 'Invalid Email Address',
+      },
+    ],
+  },
 };
 
-export default validation;
+export const formValidation = createFinalFormValidation(validationSchema);
