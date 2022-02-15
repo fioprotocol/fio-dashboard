@@ -5,7 +5,7 @@ import SubmitButton from '../../../../components/common/SubmitButton/SubmitButto
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 
-import { validate } from './validation';
+import { formValidation } from './validation';
 
 import { EditWalletNameProps } from '../../types';
 
@@ -14,7 +14,11 @@ import classes from '../../../WalletsPage/styles/CreateWalletForm.module.scss';
 const EditWalletNameForm: React.FC<EditWalletNameProps> = props => {
   const { loading, onSubmit, initialValues } = props;
   return (
-    <Form onSubmit={onSubmit} validate={validate} initialValues={initialValues}>
+    <Form
+      onSubmit={onSubmit}
+      validate={formValidation.validateForm}
+      initialValues={initialValues}
+    >
       {(formRenderProps: FormRenderProps) => (
         <form onSubmit={formRenderProps.handleSubmit} className={classes.form}>
           <Field
