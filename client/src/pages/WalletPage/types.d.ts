@@ -4,6 +4,7 @@ import {
   FioWalletDoublet,
   WalletBalances,
   DecryptedFioRecordContent,
+  FioWalletTxHistory,
 } from '../../types';
 
 type MatchProps = {
@@ -21,6 +22,9 @@ export interface ContainerProps extends ContainerOwnProps {
   balance: WalletBalances;
   fioWalletsData: {
     [publicKey: string]: FioWalletData;
+  };
+  fioWalletsTxHistory: {
+    [publicKey: string]: FioWalletTxHistory;
   };
 }
 
