@@ -10,20 +10,27 @@ import TotalBalanceBadge from '../WalletsPage/components/TotalBalanceBadge';
 import TransactionHistory from './components/TransactionHistory';
 import EditWalletName from './components/EditWalletName';
 import WalletTabs from './components/WalletTabs';
-import { BADGE_TYPES } from '../../components/Badge/Badge';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 
 import apis from '../../api';
 
-import { putParamsToUrl } from '../../utils';
+import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ROUTES } from '../../constants/routes';
+
+import { putParamsToUrl } from '../../utils';
 
 import { ContainerProps } from './types';
 
 import classes from './styles/WalletPage.module.scss';
 
 const WalletPage: React.FC<ContainerProps> = props => {
-  const { fioWallet, balance, refreshBalance, fioWalletsData } = props;
+  const {
+    fioWallet,
+    balance,
+    refreshBalance,
+    fioWalletsData,
+    fioWalletsTxHistory,
+  } = props;
 
   const [showDetails, setShowDetails] = useState(false);
   const [showWalletNameEdit, setShowWalletNameEdit] = useState(false);
@@ -123,6 +130,7 @@ const WalletPage: React.FC<ContainerProps> = props => {
         <WalletTabs
           fioWallet={fioWallet}
           walletData={fioWalletsData[fioWallet.publicKey]}
+          walletTxHistory={fioWalletsTxHistory[fioWallet.publicKey]}
         />
       </LayoutContainer>
       <div className={classes.actionBadges}>

@@ -15,6 +15,7 @@ import AutoLogout from '../../services/AutoLogout';
 import CartTimeout from '../../services/CartTimeout';
 import RefFlow from '../../services/RefFlow';
 import Roe from '../../services/Roe';
+import TxHistoryService from '../../services/TxHistory';
 import WalletsDataFlow from '../../services/WalletsDataFlow';
 
 import classes from './MainLayout.module.scss';
@@ -54,6 +55,7 @@ const MainLayout = props => {
       <RefFlow />
       <Roe />
       {isAuthenticated && <WalletsDataFlow />}
+      {isAuthenticated && <TxHistoryService />}
       {isAuthenticated && isDesktop && <Navigation />}
       {(!isHomePage || isAuthenticated) && <Notifications />}
       <div className={`${classes.content} ${isHomePage && classes.home}`}>

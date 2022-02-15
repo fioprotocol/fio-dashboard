@@ -5,24 +5,27 @@ import TransactionItem from './TransactionItem';
 import Loader from '../../../components/Loader/Loader';
 import InfiniteScroll from '../../../components/InfiniteScroll/InfiniteScroll';
 
-import { checkTransactions } from '../../../util/transactions';
-import { FioWalletDoublet, TransactionItemProps } from '../../../types';
+import {
+  FioWalletDoublet,
+  FioWalletTxHistory,
+  TransactionItemProps,
+} from '../../../types';
 
 import classes from '../styles/TransactionList.module.scss';
 
 type Props = {
   fioWallet: FioWalletDoublet;
+  walletTxHistory: FioWalletTxHistory;
 };
 
 const MIN_VISIBLE_TRANSACTIONS_COUNT = 20;
 const MARGIN_BETWEEN_ITEMS = 10;
 
 const TransactionList: React.FC<Props> = props => {
-  const { fioWallet } = props;
-  const [loading, setLoading] = useState(false);
-  const [transactionList, setTransactionList] = useState<
-    TransactionItemProps[] | null
-  >(null);
+  const { walletTxHistory } = props;
+  const transactionList: TransactionItemProps[] = walletTxHistory
+    ? walletTxHistory.txs
+    : [];
   const [visibleTransactionsCount, setVisibleTransactionsCount] = useState(
     MIN_VISIBLE_TRANSACTIONS_COUNT,
   );
@@ -34,29 +37,14 @@ const TransactionList: React.FC<Props> = props => {
     setHeight(elementRef?.current?.clientHeight);
   }, []);
 
-  const getTransactions = async () => {
-    setLoading(true);
-    try {
-      const transactions = await checkTransactions(fioWallet.publicKey);
-      setTransactionList(transactions);
-    } catch (e) {
-      console.error(e);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    getTransactions();
-  }, []);
-
-  if (loading)
+  if (!transactionList)
     return (
       <div className={classes.loader}>
         <Loader />
       </div>
     );
 
-  if (!transactionList)
+  if (!transactionList || !transactionList.length)
     return (
       <div className={classes.infoBadge}>
         <InfoBadge
@@ -77,7 +65,7 @@ const TransactionList: React.FC<Props> = props => {
   return (
     <div className={classes.container}>
       <InfiniteScroll
-        loading={loading}
+        loading={false}
         hasNextPage={hasNextPage}
         onLoadMore={loadMore}
         maxHeight={
