@@ -1,7 +1,6 @@
 import { Validators, ValidationSchema } from '@lemoncode/fonk';
 import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
-
-import { WALLET_NAME_REGEX } from '../../../../constants/regExps';
+import { fioWalletNameValidator } from '../../../../util/validators';
 
 const validationSchema: ValidationSchema = {
   field: {
@@ -17,10 +16,7 @@ const validationSchema: ValidationSchema = {
         message: 'Required.',
       },
       {
-        validator: Validators.pattern,
-        customArgs: { pattern: WALLET_NAME_REGEX },
-        message:
-          'Name is not valid. Name should contain only letters, digits, spaces, dashes or underscores.',
+        validator: fioWalletNameValidator,
       },
     ],
   },
