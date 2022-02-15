@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { RouterProps, withRouter } from 'react-router-dom';
 
 import { camelizeFioRequestsData, compose } from '../utils';
 
@@ -120,7 +119,7 @@ const getWalletData = async (
 
 const TIMER_DELAY = 5000; // 5 sec
 
-const WalletsDataFlow = (props: Props & RouterProps): React.FC => {
+const WalletsDataFlow = (props: Props): React.FC => {
   const {
     fioWallets,
     user,
@@ -213,4 +212,4 @@ const reduxConnect = connect(
   },
 );
 
-export default withRouter(compose(reduxConnect)(WalletsDataFlow));
+export default compose(reduxConnect)(WalletsDataFlow);
