@@ -7,7 +7,6 @@ import { PublicAddressResponse } from '@fioprotocol/fiosdk/src/entities/PublicAd
 import { PublicAddressesResponse } from '@fioprotocol/fiosdk/src/entities/PublicAddressesResponse';
 import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
-import Big from 'big.js';
 
 import MathOp from '../util/math';
 
@@ -45,7 +44,25 @@ export default class Fio {
     this.publicFioSDK = new FIOSDK('', '', this.baseurl, window.fetch);
   }
 
-  amountToSUF = (amount: number): number => FIOSDK.amountToSUF(amount);
+  amountToSUF = (amount: number): number => {
+    if (!amount) return 0;
+    const floor = Math.floor(amount);
+    const tempResult = new MathOp(floor).mul(FIOSDK.SUFUnit).toNumber();
+
+    // get remainder
+    const remainder: number = new MathOp(amount)
+      .mod(1)
+      .round(9, 2)
+      .toNumber();
+
+    const remainderResult = new MathOp(remainder)
+      .mul(FIOSDK.SUFUnit)
+      .toNumber();
+    const floorRemainder = Math.floor(remainderResult);
+
+    // add integer and remainder
+    return new MathOp(tempResult).add(floorRemainder).toNumber();
+  };
 
   sufToAmount = (suf?: number): number | null => {
     if (!suf && suf !== 0) return null;
