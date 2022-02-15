@@ -62,7 +62,7 @@ const decryptContent = ({ data, keys }: SubmitActionParams) => {
       fioRecord: paymentOtbData,
       fioDecryptedContent: {
         ...paymentDecryptedContent,
-        txId: paymentDecryptedContent.obtId,
+        obtId: paymentDecryptedContent.obtId,
         chain: paymentDecryptedContent.chainCode,
         token: paymentDecryptedContent.tokenCode,
       },
@@ -74,7 +74,7 @@ const decryptContent = ({ data, keys }: SubmitActionParams) => {
       fioRecord: itemData,
       fioDecryptedContent: {
         ...decryptedContent,
-        txId: decryptedContent.obtId,
+        obtId: decryptedContent.obtId,
         chain: decryptedContent.chainCode,
         token: decryptedContent.tokenCode,
       },
