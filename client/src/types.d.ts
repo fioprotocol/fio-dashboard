@@ -48,6 +48,13 @@ export type Prices = {
   usdt: { address: number; domain: number };
 };
 
+export type IncomePrices = {
+  pricing: {
+    fioNative: { address: number; domain: number };
+    usdtRoe: number;
+  };
+};
+
 export type RegistrationErrors = {
   fioName: string;
   error: string;
