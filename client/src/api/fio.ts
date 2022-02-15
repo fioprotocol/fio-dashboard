@@ -6,8 +6,12 @@ import { FioDomainsResponse } from '@fioprotocol/fiosdk/src/entities/FioDomainsR
 import { PublicAddressResponse } from '@fioprotocol/fiosdk/src/entities/PublicAddressResponse';
 import { PublicAddressesResponse } from '@fioprotocol/fiosdk/src/entities/PublicAddressesResponse';
 import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
-import { isDomain } from '../utils';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
+import Big from 'big.js';
+
+import MathOp from '../util/math';
+
+import { isDomain } from '../utils';
 
 import { ACTIONS, ACTIONS_TO_END_POINT_KEYS } from '../constants/fio';
 
@@ -23,7 +27,9 @@ export interface TrxResponse {
 
 export type FIOSDK_LIB = typeof FIOSDK;
 
-export const DEFAULT_ACTION_FEE_AMOUNT = 800 * FIOSDK.SUFUnit;
+export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit)
+  .mul(800)
+  .toNumber();
 
 export default class Fio {
   baseurl: string = process.env.REACT_APP_FIO_BASE_URL;
@@ -65,11 +71,17 @@ export default class Fio {
     return publicKey;
   };
 
-  convertFioToUsdc = (amount: number, roe: number): number =>
-    Math.round((amount / (FIOSDK.SUFUnit / 100)) * roe) / 100;
+  convertFioToUsdc = (nativeAmount: number, roe: number): number =>
+    new MathOp(this.sufToAmount(nativeAmount))
+      .mul(roe)
+      .round(2, 1)
+      .toNumber();
 
   convertUsdcToFio = (amount: number, roe: number): number =>
-    Math.round(amount / (roe / 100)) / 100;
+    new MathOp(amount)
+      .div(roe)
+      .round(9, 2)
+      .toNumber();
 
   checkWallet = (): void => {
     if (!this.walletFioSDK) throw new Error('No wallet set.');

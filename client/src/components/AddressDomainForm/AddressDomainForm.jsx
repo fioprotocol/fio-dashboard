@@ -7,12 +7,8 @@ import { useCheckIfDesktop } from '../../screenType';
 import Notifications from './Notifications.tsx';
 import FormContainer from './FormContainer';
 import debounce from 'lodash/debounce';
-import {
-  setDataMutator,
-  cartHasFreeItem,
-  isFreeDomain,
-  priceToNumber,
-} from '../../utils';
+import { setDataMutator, cartHasFreeItem, isFreeDomain } from '../../utils';
+import MathOp from '../../util/math';
 
 import { addressValidation, domainValidation } from './validation';
 
@@ -147,16 +143,16 @@ const AddressDomainForm = props => {
       let costFio;
 
       if (!isFree && !isDomain) {
-        costUsdc = priceToNumber(usdcAddressPrice);
-        costFio = priceToNumber(fioAddressPrice);
+        costUsdc = usdcAddressPrice;
+        costFio = fioAddressPrice;
       }
       if (hasCustomDomain) {
         costUsdc = costUsdc
-          ? costUsdc + priceToNumber(usdcDomainPrice)
-          : priceToNumber(usdcDomainPrice);
+          ? new MathOp(costUsdc).add(usdcDomainPrice).toNumber()
+          : usdcDomainPrice;
         costFio = costFio
-          ? costFio + priceToNumber(fioDomainPrice)
-          : priceToNumber(fioDomainPrice);
+          ? new MathOp(costFio).add(fioDomainPrice).toNumber()
+          : fioDomainPrice;
       }
 
       const price = isFree

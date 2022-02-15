@@ -4,28 +4,24 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 
-import apis from '../../../api';
 import { useCheckIfDesktop } from '../../../screenType';
 
 import { FioWalletDoublet } from '../../../types';
 import { ROUTES } from '../../../constants/routes';
 import { putParamsToUrl } from '../../../utils';
+import { useConvertFioToUsdc } from '../../../util/hooks';
 
 import classes from '../styles/WalletItem.module.scss';
 
 type Props = {
   fioWallet: FioWalletDoublet;
-  roe: number;
 };
 
 const WalletItem: React.FC<Props> = props => {
-  const { fioWallet, roe } = props;
+  const { fioWallet } = props;
   const isDesktop = useCheckIfDesktop();
 
-  const usdc = apis.fio.convertFioToUsdc(
-    apis.fio.amountToSUF(fioWallet.balance),
-    roe,
-  );
+  const usdc = useConvertFioToUsdc({ fioAmount: fioWallet?.balance || 0 });
 
   return (
     <Link

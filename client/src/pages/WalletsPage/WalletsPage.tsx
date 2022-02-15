@@ -22,7 +22,7 @@ import { Props } from './types';
 import classes from './styles/WalletsPage.module.scss';
 
 const WalletsPage: React.FC<Props> = props => {
-  const { fioWallets, balance, roe, refreshBalance, location } = props;
+  const { fioWallets, balance, refreshBalance, location } = props;
 
   const [showCreateWallet, setShowCreateWallet] = useState<boolean>(false);
   const [showWalletImported, setShowWalletImported] = useState<boolean>(false);
@@ -101,7 +101,7 @@ const WalletsPage: React.FC<Props> = props => {
         />
         {fioWallets.length > 0 ? (
           fioWallets.map(wallet => (
-            <WalletItem key={wallet.publicKey} fioWallet={wallet} roe={roe} />
+            <WalletItem key={wallet.publicKey} fioWallet={wallet} />
           ))
         ) : (
           <div className={classes.infoBadge}>
