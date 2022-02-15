@@ -63,4 +63,4 @@ export type FioRecordViewKeysProps =
   | 'memo'
   | 'to'
   | 'type'
-  | 'txId';
+  | 'obtId';

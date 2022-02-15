@@ -66,7 +66,7 @@ const FioRecordFieldsList: React.FC<Props> = props => {
           )
             return 'payer';
 
-          if (field === FIO_RECORD_DETAILED_FIELDS.txId) return 'ID';
+          if (field === FIO_RECORD_DETAILED_FIELDS.obtId) return 'ID';
           if (field === FIO_RECORD_DETAILED_FIELDS.chainCode) return 'Chain';
 
           if (fioRecordDetailedType === FIO_RECORD_DETAILED_TYPE.RESULT) {

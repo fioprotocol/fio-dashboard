@@ -304,7 +304,7 @@ export type DecryptedFioRecordContent = {
   payeePublicAddress: string;
   amount: string;
   memo: string;
-  txId?: string;
+  obtId?: string;
   chainCode: string;
   tokenCode: string;
 }
