@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { useHistory } from 'react-router';
 
 import InfoBadge from '../../../components/Badges/InfoBadge/InfoBadge';
 import Loader from '../../../components/Loader/Loader';
@@ -73,18 +73,18 @@ const FIO_REQUEST_DETAILED_COMPONENT = {
 
 const MIN_VISIBLE_TRANSACTIONS_COUNT = 20;
 
-const FioRecordsList: React.FC<Props &
-  RouteComponentProps &
-  Location> = props => {
+const FioRecordsList: React.FC<Props> = props => {
   const {
     fioDataList,
     fioRecordType,
     loading,
     fioWallet,
     paymentDataList,
-    location: { state },
   } = props;
 
+  const {
+    location: { state },
+  }: Location = useHistory();
   const [showModal, toggleModal] = useState(false);
   const [visibleTransactionsCount, setVisibleTransactionsCount] = useState(
     MIN_VISIBLE_TRANSACTIONS_COUNT,
@@ -234,4 +234,4 @@ const FioRecordsList: React.FC<Props &
   );
 };
 
-export default withRouter(FioRecordsList);
+export default FioRecordsList;

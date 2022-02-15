@@ -32,7 +32,7 @@ const reduxConnect = connect(
       );
     },
     loading,
-    fioWalletsData: (state: ReduxState, ownProps: ContainerOwnProps | {}) => {
+    fioWalletsData: (state: ReduxState) => {
       const fioWalletsData = fioWalletsDataSelector(state);
       const user = userSelector(state);
 
