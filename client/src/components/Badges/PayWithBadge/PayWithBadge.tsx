@@ -1,5 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
+import Big from 'big.js';
 
 import { useCheckIfDesktop } from '../../../screenType';
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
@@ -25,7 +26,10 @@ const PayWithBadge: React.FC<Props> = props => {
     const wallet = (currentWallet && currentWallet.balance) || 0;
     let walletUsdc = 0;
     if (wallet > 0) {
-      walletUsdc = (wallet * costUsdc) / costFio;
+      walletUsdc = Big(wallet)
+        .times(costUsdc)
+        .div(costFio)
+        .toNumber();
     }
     return `${wallet && wallet.toFixed(2)} FIO / ${walletUsdc &&
       walletUsdc.toFixed(2)} USDC`;

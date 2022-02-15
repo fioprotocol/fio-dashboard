@@ -1,7 +1,9 @@
 import isEmpty from 'lodash/isEmpty';
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
-import apis from '../api/index';
+
+import apis from '../api';
 import { sleep, isDomain } from '../utils';
+import MathOp from '../util/math';
 import { FREE_ADDRESS_REGISTER_ERROR, ERROR_TYPES } from '../constants/errors';
 import { RegisterAddressError } from '../util/errors';
 
@@ -88,10 +90,12 @@ export const transformResult = ({
   result,
   cart,
   prices,
+  roe,
 }: {
   result: RegistrationResult;
   cart: CartItem[];
   prices: Prices;
+  roe: number;
 }) => {
   const errItems = [];
   const regItems = [];
@@ -135,8 +139,12 @@ export const transformResult = ({
             ) &&
             partialIndex < 0
           ) {
-            retObj.costFio = addressCostFio + domainCostFio;
-            retObj.costUsdc = addressCostUsdc + domainCostUsdc;
+            retObj.costFio = new MathOp(addressCostFio)
+              .add(domainCostFio)
+              .toNumber();
+            retObj.costUsdc = new MathOp(addressCostUsdc)
+              .add(domainCostUsdc)
+              .toNumber();
           } else {
             retObj.costFio = addressCostFio;
             retObj.costUsdc = addressCostUsdc;
@@ -176,16 +184,12 @@ export const transformResult = ({
           retObj.isFree = isFree;
         } else {
           retObj.costFio = apis.fio.sufToAmount(fee_collected);
-          retObj.costUsdc =
-            (apis.fio.sufToAmount(fee_collected) * addressCostUsdc) /
-            addressCostFio;
+          retObj.costUsdc = apis.fio.convertFioToUsdc(fee_collected, roe);
         }
       } else {
         retObj.domain = fioName;
         retObj.costFio = apis.fio.sufToAmount(fee_collected);
-        retObj.costUsdc =
-          (apis.fio.sufToAmount(fee_collected) * domainCostUsdc) /
-          domainCostFio;
+        retObj.costUsdc = apis.fio.convertFioToUsdc(fee_collected, roe);
       }
 
       regItems.push(retObj);

@@ -7,6 +7,7 @@ import DoubleCardContainer from '../../components/DoubleCardContainer';
 import Cart from '../../components/Cart/Cart';
 import CartAmount from '../../components/Cart/CartAmount';
 import { handleFreeAddressCart, totalCost } from '../../utils';
+import MathOp from '../../util/math';
 
 const CartPage = props => {
   const {
@@ -28,8 +29,7 @@ const CartPage = props => {
 
   const walletCount = userWallets.length;
 
-  const totalCartAmount =
-    (cartItems && parseFloat(totalCost(cartItems).costFio)) || 0;
+  const totalCartAmount = (cartItems && totalCost(cartItems).costFio) || 0;
 
   const isFree =
     !isEmpty(cartItems) &&
@@ -57,8 +57,12 @@ const CartPage = props => {
         }
 
         if (item.hasCustomDomain) {
-          retObj.costFio += fioDomainPrice;
-          retObj.costUsdc += usdcDomainPrice;
+          retObj.costFio = new MathOp(retObj.costFio)
+            .add(fioDomainPrice)
+            .toNumber();
+          retObj.costUsdc = new MathOp(retObj.costUsdc)
+            .add(usdcDomainPrice)
+            .toNumber();
         }
 
         return retObj;
@@ -69,9 +73,7 @@ const CartPage = props => {
       );
 
       if (updatedFree) return history.push(ROUTES.CHECKOUT);
-      const isEqualPrice =
-        +parseFloat(totalCartAmount).toFixed(2) ===
-        +parseFloat(updatedTotalPrice).toFixed(2);
+      const isEqualPrice = new MathOp(totalCartAmount).eq(updatedTotalPrice);
 
       handlePriceChange(!isEqualPrice);
 
