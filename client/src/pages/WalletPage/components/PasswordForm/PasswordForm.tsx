@@ -7,7 +7,7 @@ import SubmitButton from '../../../../components/common/SubmitButton/SubmitButto
 import { INPUT_UI_STYLES } from '../../../../components/Input/Input';
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 
-import { validate } from './validation';
+import { formValidation } from './validation';
 
 import { PasswordFormValues } from '../../types';
 
@@ -20,7 +20,11 @@ const PasswordForm: React.FC<{
 }> = props => {
   const { loading, username, onSubmit } = props;
   return (
-    <Form onSubmit={onSubmit} validate={validate} initialValues={{ username }}>
+    <Form
+      onSubmit={onSubmit}
+      validate={formValidation.validateForm}
+      initialValues={{ username }}
+    >
       {(formRenderProps: FormRenderProps) => (
         <form onSubmit={formRenderProps.handleSubmit} className={classes.form}>
           <Field name="username" type="hidden" component={Input} />
