@@ -1,6 +1,7 @@
 import { EdgeAccount } from 'edge-core-js';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 import { FIOSDK_LIB } from './api/fio';
+import { LocationState, Path } from 'history';
 
 export type Domain = { domain: string; free?: boolean };
 
@@ -303,7 +304,7 @@ export type DecryptedFioRecordContent = {
   payeePublicAddress: string;
   amount: string;
   memo: string;
-  txId?: string;
+  obtId?: string;
   chainCode: string;
   tokenCode: string;
 }
@@ -352,4 +353,9 @@ export type UsersFioWalletsData =  {
   [userId: string]: {
     [walletPublicKey: string]: FioWalletData
   }
+}
+
+export type RedirectLinkData = {
+  pathname: Path;
+  state?: LocationState;
 }

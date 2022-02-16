@@ -33,6 +33,7 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
     loading,
     createContact,
     getContactsList,
+    refreshWalletDataPublicKey,
   } = props;
 
   const [
@@ -91,7 +92,8 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
     setSendData(null);
     setProcessing(false);
   };
-  const onSuccess = (res: TxValues) => {
+  const onSuccess = (res: TxValues & { error?: string }) => {
+    !res.error && refreshWalletDataPublicKey(fioWallet.publicKey);
     setSendData(null);
     setProcessing(false);
     setResultsData({
@@ -104,7 +106,12 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
     setResultsData(null);
   };
   const onResultsClose = () => {
-    history.push(putParamsToUrl(ROUTES.FIO_WALLET, { publicKey }));
+    history.push(
+      putParamsToUrl(ROUTES.FIO_WALLET, {
+        publicKey,
+        fioRequestTab: FIO_RECORD_TYPES.RECEIVED,
+      }),
+    );
   };
 
   const onBack = () => {
@@ -126,7 +133,7 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
     ?.fioRecord?.to
     ? walletFioAddresses.find(
         ({ name }) => name === fioRecordDecrypted.fioRecord.to,
-      )
+      ) || null
     : null;
 
   if (

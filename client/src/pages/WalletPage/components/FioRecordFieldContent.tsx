@@ -21,7 +21,7 @@ const FioRecordFieldContent: React.FC<Props> = props => {
   const { field, value, chain } = props;
 
   if (
-    field === FIO_RECORD_DETAILED_FIELDS.txId &&
+    field === FIO_RECORD_DETAILED_FIELDS.obtId &&
     Object.keys(FIO_DATA_TRANSACTION_LINK).some(
       chainName => chainName === chain,
     )

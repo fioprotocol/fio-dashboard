@@ -45,7 +45,18 @@ export type TxValues = {
 };
 
 export type PaymentDetailsProps = {
-  initialValues: any;
+  initialValues: {
+    payerFioAddress: string;
+    payeeFioAddress: string;
+    payeeFioPublicKey: string;
+    payeePublicAddress: string;
+    memo: string;
+    amount: string;
+    chainCode: string;
+    tokenCode: string;
+    obtId: string;
+    fioRequestId: number;
+  };
   fioWallet: FioWalletDoublet;
   senderFioAddress: FioAddressDoublet;
   loading: boolean;
@@ -58,6 +69,7 @@ export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
 }
 
 export interface ContainerProps extends ContainerOwnProps {
+  refreshWalletDataPublicKey: (publicKey: string) => void;
   loading: boolean;
   contactsList: string[];
   getContactsList: () => void;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { useHistory } from 'react-router';
 
 import TabsContainer from '../../../components/Tabs/TabsContainer';
 import Tabs from '../../../components/Tabs/Tabs';
@@ -53,14 +53,9 @@ const FIO_REQUEST_TABS = [
   },
 ];
 
-const FioRequestsTab: React.FC<Props &
-  RouteComponentProps &
-  Location> = props => {
-  const {
-    location: { state },
-  } = props;
-
-  const { fioRequestTab } = state || {};
+const FioRequestsTab: React.FC<Props> = props => {
+  const { location }: Location = useHistory();
+  const { fioRequestTab } = location?.state || {};
 
   return (
     <TabsContainer
@@ -77,4 +72,4 @@ const FioRequestsTab: React.FC<Props &
   );
 };
 
-export default withRouter(FioRequestsTab);
+export default FioRequestsTab;

@@ -45,7 +45,7 @@ export function* loginSuccess(history, api) {
     yield put(loadProfile());
     yield put(listNotifications());
     if (hasRedirectTo) {
-      yield history.push(hasRedirectTo);
+      yield history.push(hasRedirectTo.pathname, hasRedirectTo.state);
     }
     yield put(closeLoginModal());
     yield put(setRedirectPath(null));

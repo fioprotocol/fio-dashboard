@@ -13,19 +13,23 @@
 
   .additionalInfo {
     align-self: flex-start;
-    color: $dark-jungle-green;
     font-size: 0.875em;
     letter-spacing: 0.05em;
-
+    color: $gray-main;
 
     .paragraph{
       margin-bottom: 1em;
+      @include sf-pro-display-medium;
 
-      &.bold {
-        font-weight: bold;
+      &.dark {
+        color: $dark-jungle-green;
       }
       &.cursive {
         font-style: italic;
+        @include proxima-nova-regular;
+      }
+      &.bold {
+        @include proxima-nova-semibold;
       }
     }
   }

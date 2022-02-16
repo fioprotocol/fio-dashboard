@@ -16,6 +16,7 @@ import {
   tokenCheckResult,
   lastActivityDate,
 } from '../redux/profile/selectors';
+import { RedirectLinkData } from '../types';
 
 type Props = {
   tokenCheckResult: boolean;
@@ -25,7 +26,7 @@ type Props = {
   setLastActivity: (value: number) => void;
   logout: (routerProps: RouterProps) => void;
   showLoginModal: () => void;
-  setRedirectPath: (route: string) => void;
+  setRedirectPath: (route: RedirectLinkData) => void;
 };
 const TIMEOUT = 5000; // 5 sec
 const INACTIVITY_TIMEOUT = 1000 * 60 * 30; // 30 min
@@ -144,10 +145,10 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
     removeActivityListener();
     const {
       history: {
-        location: { pathname },
+        location: { pathname, state },
       },
     } = props;
-    setRedirectPath(pathname);
+    setRedirectPath({ pathname, state });
     logout({ history });
     showLoginModal();
   };

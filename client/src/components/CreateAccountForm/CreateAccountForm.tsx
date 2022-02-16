@@ -29,6 +29,7 @@ import { emailAvailable } from '../../api/middleware/auth';
 import {
   EmailConfirmationStateData,
   FioWalletDoublet,
+  RedirectLinkData,
   RefProfile,
   RefQueryParams,
   WalletKeysObj,
@@ -94,7 +95,7 @@ type OwnProps = {
   refProfileQueryParams: RefQueryParams | null;
   edgeAuthLoading: boolean;
   serverSignUpLoading: boolean;
-  redirectLink: string;
+  redirectLink: RedirectLinkData;
 };
 
 type Props = OwnProps & RouterProps & WithLastLocationProps;
@@ -323,7 +324,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
           this.setState({ keys: getWalletKeys([fioWallet]) });
           await account.logout();
           let stateData: EmailConfirmationStateData = {
-            redirectLink,
+            redirectLink: redirectLink.pathname,
           };
           if (isRefFlow) {
             stateData = {

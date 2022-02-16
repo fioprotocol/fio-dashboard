@@ -37,7 +37,7 @@ const PaymentDetailsForm: React.FC<PaymentDetailsProps> = props => {
     >
       {(formRenderProps: FormRenderProps) => {
         const {
-          values: { memo, chainCode, tokenCode },
+          values: { chainCode, tokenCode },
         } = formRenderProps;
 
         const notEnoughBundles =
@@ -81,8 +81,9 @@ const PaymentDetailsForm: React.FC<PaymentDetailsProps> = props => {
                   <div
                     className={classnames(
                       classes.paragraph,
-                      classes.bold,
+                      classes.dark,
                       classes.cursive,
+                      classes.bold,
                     )}
                   >
                     Make sure you send tokens on the correct chain to avoid loss
@@ -90,7 +91,7 @@ const PaymentDetailsForm: React.FC<PaymentDetailsProps> = props => {
                   </div>
                 </>
               )}
-              <div className={classnames(classes.paragraph, classes.bold)}>
+              <div className={classnames(classes.paragraph, classes.dark)}>
                 {`Public Address Chain ID: ${chainCode}`}
               </div>
             </div>
@@ -134,7 +135,7 @@ const PaymentDetailsForm: React.FC<PaymentDetailsProps> = props => {
               label="Memo"
             />
             <p className={classes.transactionTitle}>Transaction information</p>
-            {memo ? (
+            {senderFioAddress ? (
               <BundledTransactionBadge
                 bundles={BUNDLES_TX_COUNT.RECORD_OBT_DATA}
                 remaining={senderFioAddress.remaining}

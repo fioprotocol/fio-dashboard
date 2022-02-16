@@ -8,6 +8,7 @@ import { ACTIONS } from '../../../constants/fio';
 
 import { FioWalletDoublet } from '../../../types';
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
+import { FioRecordViewDecrypted } from '../../WalletPage/types';
 
 const PROCESSING_PROPS = {
   title: 'Rejecting FIO Request',
@@ -15,11 +16,11 @@ const PROCESSING_PROPS = {
 };
 
 type Props = {
-  submitData: any | null;
+  submitData: FioRecordViewDecrypted | null;
   processing: boolean;
   fioWallet: FioWalletDoublet;
   setProcessing: (processing: boolean) => void;
-  onSuccess: (data: any) => void;
+  onSuccess: (data: FioRecordViewDecrypted & { error?: string }) => void;
   onCancel: () => void;
 };
 

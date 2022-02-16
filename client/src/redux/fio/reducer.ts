@@ -71,6 +71,9 @@ export default combineReducers({
       case actions.SET_BALANCES: {
         return action.data;
       }
+      case LOGOUT_SUCCESS: {
+        return { total: DEFAULT_BALANCES, wallets: {} };
+      }
       default:
         return state;
     }
@@ -233,6 +236,8 @@ export default combineReducers({
     switch (action.type) {
       case actions.GET_FIO_ADDRESSES_SUCCESS:
         return { ...state, [action.publicKey]: action.data.more };
+      case LOGOUT_SUCCESS:
+        return {};
       default:
         return state;
     }
@@ -241,6 +246,8 @@ export default combineReducers({
     switch (action.type) {
       case actions.GET_FIO_DOMAINS_SUCCESS:
         return { ...state, [action.publicKey]: action.data.more };
+      case LOGOUT_SUCCESS:
+        return {};
       default:
         return state;
     }
@@ -330,6 +337,8 @@ export default combineReducers({
           },
         };
       }
+      case LOGOUT_SUCCESS:
+        return {};
       default:
         return state;
     }
@@ -372,15 +381,6 @@ export default combineReducers({
       }
       case LOGOUT_SUCCESS:
         return true;
-      default:
-        return state;
-    }
-  },
-  walletDataPublicKey(state: string = '', action) {
-    switch (action.type) {
-      case actions.REFRESH_WALLET_DATA_PUBLIC_KEY: {
-        return action.publicKey;
-      }
       default:
         return state;
     }
