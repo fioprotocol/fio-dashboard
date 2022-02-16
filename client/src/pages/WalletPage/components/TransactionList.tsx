@@ -22,7 +22,7 @@ const MIN_VISIBLE_TRANSACTIONS_COUNT = 20;
 const MARGIN_BETWEEN_ITEMS = 10;
 
 const TransactionList: React.FC<Props> = props => {
-  const { walletTxHistory } = props;
+  const { walletTxHistory = { highestTxHeight: -1, txs: [] } } = props;
   const transactionList: TransactionItemProps[] = walletTxHistory
     ? walletTxHistory.txs
     : [];
@@ -37,7 +37,11 @@ const TransactionList: React.FC<Props> = props => {
     setHeight(elementRef?.current?.clientHeight);
   }, []);
 
-  if (!transactionList)
+  // when no history fetched yet
+  if (
+    typeof walletTxHistory.highestTxHeight === 'undefined' ||
+    walletTxHistory.highestTxHeight < 0
+  )
     return (
       <div className={classes.loader}>
         <Loader />

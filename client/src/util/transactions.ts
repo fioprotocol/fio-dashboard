@@ -235,9 +235,17 @@ export const checkTransactions = async (
       lastActionSeqNumber = lastActionObject.actions[0].account_action_seq;
     } else {
       // if no transactions at all
+      updateHistory(
+        {
+          highestTxHeight: 0,
+          txs: [],
+        },
+        publicKey,
+      );
       return [];
     }
   } catch (e) {
+    console.error('History request error. ', e);
     return checkTransactions(
       publicKey,
       currentHistory,
@@ -302,6 +310,7 @@ export const checkTransactions = async (
       }
       pos -= HISTORY_NODE_OFFSET;
     } catch (e) {
+      console.error('History request error. ', e);
       return checkTransactions(
         publicKey,
         currentHistory,
