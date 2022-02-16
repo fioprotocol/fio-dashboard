@@ -3,8 +3,7 @@ import Big from 'big.js';
 
 import logger from '../logger';
 
-// todo: Move to env
-const roeEndpoint = 'https://ascendex.com/api/pro/v1/';
+const roeEndpoint = process.env.FIO_ROE_URL || 'https://ascendex.com/api/pro/v1/';
 const minToUpdate = 15;
 const roe = {
   value: null,
