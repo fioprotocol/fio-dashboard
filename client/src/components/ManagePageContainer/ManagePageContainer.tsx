@@ -12,6 +12,7 @@ import ItemComponent from './ManagePageComponents/ItemComponent';
 import MobileView from './ManagePageComponents/MobileView';
 import SettingsItem from './ManagePageComponents/SettingsItem';
 import InfiniteScroll from '../InfiniteScroll/InfiniteScroll';
+import InfoBadge from '../Badges/InfoBadge/InfoBadge';
 
 import { BANNER_DATA, ITEMS_LIMIT, EXPIRED_DAYS, SUBTITLE } from './constants';
 import { useCheckIfDesktop } from '../../screenType';
@@ -21,6 +22,17 @@ import { HasMore, ContainerProps, BoolStateFunc } from './types';
 import { FioNameItemProps, FioWalletDoublet } from '../../types';
 
 import classes from './ManagePageContainer.module.scss';
+
+const INFO_BADGE_CONTENT = {
+  address: {
+    title: 'No FIO Crypto Handles',
+    message: 'There are no FIO Crypto Handles in all your wallets',
+  },
+  domain: {
+    title: 'No FIO Domains',
+    message: 'There are no FIO Domains in all your wallets',
+  },
+};
 
 const isExpired = (expiration: Date): boolean => {
   const today = new Date();
@@ -171,6 +183,18 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
 
   if (noProfileLoaded) return <Redirect to={{ pathname: ROUTES.HOME }} />;
 
+  const renderList = () => {
+    if ((!fioNameList || fioNameList.length === 0) && !loading)
+      return (
+        <InfoBadge
+          title={INFO_BADGE_CONTENT[pageName].title}
+          message={INFO_BADGE_CONTENT[pageName].message}
+        />
+      );
+    if (isDesktop) return <DesktopView {...propsToComponents} />;
+    return <MobileView {...propsToComponents} />;
+  };
+
   return (
     <div className={classes.container}>
       <LayoutContainer title={title}>
@@ -190,11 +214,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
             hasNextPage={hasMoreItems}
             onLoadMore={getAllWalletsAddresses}
           >
-            {isDesktop ? (
-              <DesktopView {...propsToComponents} />
-            ) : (
-              <MobileView {...propsToComponents} />
-            )}
+            {renderList()}
           </InfiniteScroll>
         </div>
       </LayoutContainer>
