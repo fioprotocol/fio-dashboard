@@ -15,7 +15,7 @@ import ChainCodeField from '../../../ChainCodeField/ChainCodeField';
 import { BADGE_TYPES } from '../../../Badge/Badge';
 import { COLOR_TYPE } from '../../../Input/ErrorBadge';
 
-import { validate } from './validation';
+import { formValidation } from './validation';
 
 import { NFT_CHAIN_CODE_LIST } from '../../../../constants/common';
 
@@ -41,7 +41,11 @@ const SignNFTForm = (props: SignNftFormProps) => {
   } = props;
 
   return (
-    <Form onSubmit={onSubmit} validate={validate} initialValues={initialValues}>
+    <Form
+      onSubmit={onSubmit}
+      validate={formValidation.validateForm}
+      initialValues={initialValues}
+    >
       {(formRenderProps: FormRenderProps) => (
         <form onSubmit={formRenderProps.handleSubmit}>
           <OnChange name="chainCode">{fieldValuesChanged}</OnChange>
