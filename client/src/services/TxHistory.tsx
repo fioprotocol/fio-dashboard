@@ -57,41 +57,36 @@ const TxHistory = (props: Props): React.FC => {
   const updateHistory = (history: FioWalletTxHistory, publicKey: string) =>
     updateWalletsTxHistory(history, publicKey, user.id);
 
-  const getWalletsData = async (walletsState?: FioWalletDoublet[]) => {
+  const fetchWalletTxHistory = async (wallet: FioWalletDoublet) => {
+    const currentHistory: FioWalletTxHistory = userFioWalletsTxHistory[
+      wallet.publicKey
+    ] ?? {
+      highestTxHeight: -1,
+      txs: [],
+    };
+    await checkTransactions(
+      wallet.publicKey,
+      { ...currentHistory },
+      updateHistory,
+    );
+  };
+
+  const fetchWalletsTxHistory = async (walletsState?: FioWalletDoublet[]) => {
     if (!isLoading) {
       setIsLoading(true);
       await Promise.all(
-        (walletsState || fioWallets).map(async wallet => {
-          const currentHistory: FioWalletTxHistory = userFioWalletsTxHistory[
-            wallet.publicKey
-          ] ?? {
-            highestTxHeight: 0,
-            txs: [],
-          };
-          await checkTransactions(
-            wallet.publicKey,
-            { ...currentHistory },
-            updateHistory,
-          );
-          return;
-        }),
+        (walletsState || fioWallets).map(async wallet =>
+          fetchWalletTxHistory(wallet),
+        ),
       );
       setIsLoading(false);
     }
   };
 
-  const getPublicKeyData = async (wallet: FioWalletDoublet) => {
+  const forceWalletHistoryFetch = async (wallet: FioWalletDoublet) => {
     if (!isLoading) {
       setIsLoading(true);
-      const currentHistory = userFioWalletsTxHistory[wallet.publicKey] ?? {
-        highestTxHeight: 0,
-        txs: [],
-      };
-      await checkTransactions(
-        wallet.publicKey,
-        { ...currentHistory },
-        updateHistory,
-      );
+      await fetchWalletTxHistory(wallet);
       refreshWalletDataPublicKey('');
       setIsLoading(false);
     }
@@ -104,7 +99,7 @@ const TxHistory = (props: Props): React.FC => {
       );
 
       if (!wallet) return;
-      getPublicKeyData(wallet);
+      forceWalletHistoryFetch(wallet);
     }
   }, [walletDataPublicKey, JSON.stringify(fioWallets)]);
 
@@ -115,7 +110,7 @@ const TxHistory = (props: Props): React.FC => {
   }, [user, fioWalletsTxHistory]);
 
   useInterval(() => {
-    getWalletsData();
+    fetchWalletsTxHistory();
   }, TIMER_DELAY);
 
   return null;
