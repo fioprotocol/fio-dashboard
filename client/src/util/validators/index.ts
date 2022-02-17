@@ -11,4 +11,5 @@ export * from './is-chain-code.validator';
 export * from './is-native-blockchain-public-address.validator';
 export * from './is-hash.validator';
 export * from './meta.validator';
+export * from './password-recovery-answer.validator';
 export * from './is-amount.validator';
