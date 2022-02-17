@@ -9,6 +9,7 @@ import {
   registrationResult,
   prices,
   domains,
+  roe,
 } from '../../redux/registrations/selectors';
 import { isAuthenticated } from '../../redux/profile/selectors';
 import { cartItems } from '../../redux/cart/selectors';
@@ -30,6 +31,7 @@ const reduxConnect = connect(
     isRefFlow,
     refProfileInfo,
     refProfileQueryParams,
+    roe,
   }),
   {
     recalculate,

@@ -67,11 +67,7 @@ const FioDomainStatusChangeForm: React.FC<FormProps> = props => {
           />
         </div>
 
-        <PayWithBadge
-          costFio={costFio}
-          costUsdc={costUsdc}
-          currentWallet={fioWallet}
-        />
+        <PayWithBadge currentWallet={fioWallet} />
         <LowBalanceBadge hasLowBalance={hasLowBalance} />
         <SubmitButton
           onClick={handleSubmit}
