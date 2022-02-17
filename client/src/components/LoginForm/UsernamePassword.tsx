@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { Form, Field, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
-import validator from 'email-validator';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import { isEmpty } from 'lodash';
@@ -16,6 +15,7 @@ import FormHeader from '../FormHeader/FormHeader';
 import classes from './LoginForm.module.scss';
 import { ROUTES } from '../../constants/routes';
 import { setDataMutator } from '../../utils';
+import { usernamePasswordValidation } from './components/validation';
 
 type FormValues = {
   email: string;
@@ -249,21 +249,7 @@ const UsernamePassword = (props: Props) => {
           onSubmit={handleSubmit}
           mutators={{ setDataMutator }}
           initialValues={initialValues}
-          validate={(
-            values: FormValues,
-          ): { email?: string; password?: string } => {
-            const errors: { email?: string; password?: string } = {};
-
-            if (!values.email || !validator.validate(values.email)) {
-              errors.email = 'Invalid Email Address';
-            }
-
-            if (!values.password) {
-              errors.password = 'Password Field Should Be Filled';
-            }
-
-            return errors;
-          }}
+          validate={usernamePasswordValidation.validateForm}
         >
           {renderFormItems}
         </Form>
