@@ -1,3 +1,4 @@
+const webpack = require('webpack')
 const path = require('path');
 
 module.exports = {
@@ -8,6 +9,27 @@ module.exports = {
         `src/widget-${process.env.REACT_APP_WIDGET}-index.ts`,
       );
     }
+
+    // https://github.com/facebook/create-react-app/blob/main/CHANGELOG.md
+    config.resolve.fallback = {
+      "assert": require.resolve('assert/'),
+      "buffer": require.resolve('buffer/'),
+      "stream": require.resolve("stream-browserify"),
+      "crypto": require.resolve("crypto-browserify"),
+      "url": require.resolve('url/'),
+      ...config.resolve.fallback
+    }
+    config.resolve.alias = {
+      process: 'process/browser',
+      ...config.resolve.alias
+    }
+    config.plugins = [
+      ...config.plugins,
+      new webpack.ProvidePlugin({
+        Buffer: ['buffer', 'Buffer'],
+        process: 'process/browser',
+      }),
+    ]
 
     return config;
   },

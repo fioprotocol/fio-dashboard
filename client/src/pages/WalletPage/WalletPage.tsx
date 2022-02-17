@@ -45,6 +45,7 @@ const WalletPage: React.FC<ContainerProps> = props => {
     },
   } = props;
 
+  console.log(balance);
   const [showDetails, setShowDetails] = useState(false);
   const [showWalletNameEdit, setShowWalletNameEdit] = useState(false);
   const [error, setError] = useState<string>('');
