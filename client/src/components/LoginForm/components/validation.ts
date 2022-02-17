@@ -1,7 +1,7 @@
 import { Validators, ValidationSchema } from '@lemoncode/fonk';
 import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
 
-const validationSchema: ValidationSchema = {
+const twoFactorCodeModalValidationSchema: ValidationSchema = {
   field: {
     backupCode: [
       {
@@ -12,4 +12,31 @@ const validationSchema: ValidationSchema = {
   },
 };
 
-export const formValidation = createFinalFormValidation(validationSchema);
+const usernamePasswordValidationSchema: ValidationSchema = {
+  field: {
+    email: [
+      {
+        validator: Validators.required,
+        message: 'Required.',
+      },
+      {
+        validator: Validators.email,
+        message: 'Invalid Email Address',
+      },
+    ],
+    password: [
+      {
+        validator: Validators.required,
+        message: 'Password Field Should Be Filled',
+      },
+    ],
+  },
+};
+
+export const twoFactorCodeModalValidation = createFinalFormValidation(
+  twoFactorCodeModalValidationSchema,
+);
+
+export const usernamePasswordValidation = createFinalFormValidation(
+  usernamePasswordValidationSchema,
+);
