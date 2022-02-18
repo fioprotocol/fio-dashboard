@@ -52,7 +52,7 @@ const RejectFioRequestPage: React.FC<Props &
     refreshWalletDataPublicKey,
   } = props;
 
-  const walletFioCryptoHandles = useFioAddresses(fioWallet.publicKey);
+  const [walletFioCryptoHandles] = useFioAddresses(fioWallet.publicKey);
 
   const fioCryptoHandle =
     walletFioCryptoHandles &&

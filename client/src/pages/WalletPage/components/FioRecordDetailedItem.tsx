@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 
-import FioRecordDetailedAcctionButtons from './FioRecordDetailedAcctionButtons';
+import FioRecordDetailedActionButtons from './FioRecordDetailedAcctionButtons';
 import FioRecordFieldsList from './FioRecordFieldsList';
+import InfoBadge from '../../../components/Badges/InfoBadge/InfoBadge';
 
 import { FIO_REQUEST_STATUS_TYPES } from '../../../constants/fio';
-import { FIO_RECORD_TYPES } from '../../WalletPage/constants';
+import { FIO_RECORD_TYPES } from '../constants';
+
+import { useFioAddresses } from '../../../util/hooks';
 
 import { FioRecordViewKeysProps, FioRecordViewDecrypted } from '../types';
-import { FioAddressDoublet, FioWalletDoublet } from '../../../types';
+import { FioWalletDoublet } from '../../../types';
 
 import classes from '../styles/FioRecordDetailedItem.module.scss';
-import { useFioAddresses } from '../../../util/hooks';
-import InfoBadge from '../../../components/Badges/InfoBadge/InfoBadge';
 
 type Props = {
   fieldsList: FioRecordViewKeysProps[];
@@ -32,17 +33,16 @@ const FioRecordDetailedItem: React.FC<Props> = props => {
     onCloseModal,
   } = props;
 
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [selectedAddress, setSelectedAddress] = useState(null);
 
-  const walletFioAddresses = useFioAddresses(
+  const [walletFioAddresses, isLoading] = useFioAddresses(
     fioWallet && fioWallet.publicKey,
-  ).sort((fioAddress1: FioAddressDoublet, fioAddress2: FioAddressDoublet) =>
-    fioAddress1.name > fioAddress2.name ? 1 : -1,
   );
 
   useEffect(() => {
-    if (fioRecordDecrypted?.fioRecord?.to) {
+    if (isLoading) setError(null);
+    if (!isLoading && fioRecordDecrypted?.fioRecord?.to) {
       const address = walletFioAddresses.find(
         ({ name }) => name === fioRecordDecrypted.fioRecord.to,
       );
@@ -53,7 +53,7 @@ const FioRecordDetailedItem: React.FC<Props> = props => {
           : null,
       );
     }
-  }, [fioRecordDecrypted, walletFioAddresses]);
+  }, [fioRecordDecrypted, walletFioAddresses, isLoading]);
 
   if (!fioRecordDecrypted) return null;
 
@@ -61,7 +61,7 @@ const FioRecordDetailedItem: React.FC<Props> = props => {
     !!selectedAddress &&
     fioRecordDecrypted.fioRecord.status === FIO_REQUEST_STATUS_TYPES.PENDING &&
     fioRecordType === FIO_RECORD_TYPES.RECEIVED && (
-      <FioRecordDetailedAcctionButtons
+      <FioRecordDetailedActionButtons
         fioRecordDecrypted={fioRecordDecrypted}
         fioWallet={fioWallet}
         fioRecordType={fioRecordType}
@@ -76,7 +76,8 @@ const FioRecordDetailedItem: React.FC<Props> = props => {
         fioRecordDetailedType={fioRecordDetailedType}
         fioRecordType={fioRecordType}
       />
-      {error &&
+      {!isLoading &&
+        error &&
         fioRecordDecrypted.fioRecord.status ===
           FIO_REQUEST_STATUS_TYPES.PENDING &&
         fioRecordType === FIO_RECORD_TYPES.RECEIVED &&
@@ -84,7 +85,7 @@ const FioRecordDetailedItem: React.FC<Props> = props => {
           <div className={classes.infoBadge}>
             <InfoBadge
               isOrange
-              message={error}
+              message={error || ''}
               title={`${fioRecordDecrypted.fioRecord.to}`}
             />
           </div>

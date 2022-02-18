@@ -7,6 +7,8 @@ import { FioNameItemProps, FioWalletDoublet } from '../../types';
 import { ReduxState } from '../../redux/init';
 
 export const loading = (state: ReduxState) => state[prefix].loading;
+export const walletsFioAddressesLoading = (state: ReduxState) =>
+  state[prefix].walletsFioAddressesLoading;
 export const linkProcessing = (state: ReduxState) =>
   state[prefix].linkProcessing;
 export const fioWallets = (state: ReduxState) => state[prefix].fioWallets;

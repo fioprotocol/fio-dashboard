@@ -124,10 +124,8 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
     );
   };
 
-  const walletFioAddresses = useFioAddresses(
+  const [walletFioAddresses] = useFioAddresses(
     fioWallet && fioWallet.publicKey,
-  ).sort((fioAddress1: FioAddressDoublet, fioAddress2: FioAddressDoublet) =>
-    fioAddress1.name > fioAddress2.name ? 1 : -1,
   );
   const selectedAddress: FioAddressDoublet | null = fioRecordDecrypted
     ?.fioRecord?.to
