@@ -87,11 +87,7 @@ export const TransferForm = (props: FormProps) => {
           title={`${fioNameLabel} Transfer Fee`}
           type={BADGE_TYPES.BLACK}
         />
-        <PayWithBadge
-          costFio={costFio}
-          costUsdc={costUsdc}
-          currentWallet={currentWallet}
-        />
+        <PayWithBadge currentWallet={currentWallet} />
         <LowBalanceBadge hasLowBalance={hasLowBalance} />
         <SubmitButton
           text="Transfer Now"

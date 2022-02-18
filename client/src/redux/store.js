@@ -50,6 +50,7 @@ export default function configureStore(api, history) {
         },
         fioWalletsData: {
           walletsData: store.getState().fioWalletsData.walletsData,
+          walletsTxHistory: store.getState().fioWalletsData.walletsTxHistory,
         },
       });
     }, 1000),

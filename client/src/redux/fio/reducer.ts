@@ -47,6 +47,7 @@ export default combineReducers({
       case actions.GET_FIO_DOMAINS_REQUEST:
       case actions.FIO_SIGNATURE_REQUEST:
       case actions.GET_ALL_PUBLIC_ADDRESS_REQUEST:
+      case actions.GET_WALLETS_FIO_ADDRESSES_REQUEST:
         return true;
       case actions.REFRESH_BALANCE_SUCCESS:
       case actions.REFRESH_BALANCE_FAILURE:
@@ -58,6 +59,19 @@ export default combineReducers({
       case actions.FIO_SIGNATURE_FAILURE:
       case actions.GET_ALL_PUBLIC_ADDRESS_SUCCESS:
       case actions.GET_ALL_PUBLIC_ADDRESS_FAILURE:
+      case actions.GET_WALLETS_FIO_ADDRESSES_SUCCESS:
+      case actions.GET_WALLETS_FIO_ADDRESSES_FAILURE:
+        return false;
+      default:
+        return state;
+    }
+  },
+  walletsFioAddressesLoading(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.GET_WALLETS_FIO_ADDRESSES_REQUEST:
+        return true;
+      case actions.GET_WALLETS_FIO_ADDRESSES_SUCCESS:
+      case actions.GET_WALLETS_FIO_ADDRESSES_FAILURE:
         return false;
       default:
         return state;
@@ -174,6 +188,7 @@ export default combineReducers({
         return [];
       }
       case actions.REFRESH_FIO_NAMES_SUCCESS:
+      case actions.GET_WALLETS_FIO_ADDRESSES_SUCCESS:
       case actions.GET_FIO_ADDRESSES_SUCCESS: {
         const fioAddresses = [...state];
         for (const item of action.data.fio_addresses) {
@@ -181,7 +196,7 @@ export default combineReducers({
             name: item.fio_address,
             expiration: item.expiration,
             remaining: item.remaining_bundled_tx,
-            walletPublicKey: action.publicKey,
+            walletPublicKey: item.publicKey || action.publicKey,
           };
           const index = fioAddresses.findIndex(
             ({ name }) => name === fioAddress.name,

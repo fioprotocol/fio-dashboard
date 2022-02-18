@@ -1,5 +1,8 @@
+import { FioAddresses } from '@fioprotocol/fiosdk/src/entities/FioAddresses';
 import { Api } from '../../api';
+
 import { PublicAddressDoublet, FeePrice, WalletsBalances } from '../../types';
+
 export const prefix = 'fio';
 
 export const REFRESH_BALANCE_REQUEST = `${prefix}/REFRESH_BALANCE_REQUEST`;
@@ -92,6 +95,35 @@ export const getFioAddresses = (
   ],
   promise: (api: Api) => api.fio.getFioAddresses(publicKey, limit, offset),
   publicKey,
+});
+
+export const GET_WALLETS_FIO_ADDRESSES_REQUEST = `${prefix}/GET_WALLETS_FIO_ADDRESSES_REQUEST`;
+export const GET_WALLETS_FIO_ADDRESSES_SUCCESS = `${prefix}/GET_WALLETS_FIO_ADDRESSES_SUCCESS`;
+export const GET_WALLETS_FIO_ADDRESSES_FAILURE = `${prefix}/GET_WALLETS_FIO_ADDRESSES_FAILURE`;
+
+export const getWalletsFioAddresses = (publicKeys: string[]) => ({
+  types: [
+    GET_WALLETS_FIO_ADDRESSES_REQUEST,
+    GET_WALLETS_FIO_ADDRESSES_SUCCESS,
+    GET_WALLETS_FIO_ADDRESSES_FAILURE,
+  ],
+  promise: async (api: Api) => {
+    let list: FioAddresses[] = [];
+    const responses = await Promise.allSettled(
+      publicKeys.map((publicKey: string) =>
+        api.fio
+          .getFioAddresses(publicKey, 0, 0)
+          .then(({ fio_addresses }) =>
+            fio_addresses.map(item => ({ ...item, publicKey })),
+          ),
+      ),
+    );
+    for (const response of responses) {
+      if (response.status === 'fulfilled') list = [...list, ...response.value];
+    }
+
+    return { fio_addresses: list };
+  },
 });
 
 export const GET_FIO_DOMAINS_REQUEST = `${prefix}/GET_FIO_DOMAINS_REQUEST`;

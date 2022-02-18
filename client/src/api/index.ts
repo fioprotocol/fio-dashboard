@@ -7,6 +7,7 @@ import Edge from './edge';
 import Notifications from './notifications';
 import FioReg from './fio-reg';
 import Fio from './fio';
+import FioHistory from './fio-history';
 import Account from './account';
 import RefProfile from './ref-profile';
 import Contacts from './contacts';
@@ -44,6 +45,7 @@ export default {
   notifications: new Notifications(apiClient),
   fioReg: new FioReg(apiClient),
   fio: new Fio(),
+  fioHistory: new FioHistory(),
   account: new Account(apiClient),
   refProfile: new RefProfile(apiClient),
   contacts: new Contacts(apiClient),

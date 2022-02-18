@@ -40,12 +40,7 @@ export const RenderCheckout = props => {
           costUsdc={costUsdc}
           costFree={costFree}
         />
-        <PayWithBadge
-          costFree={costFree}
-          costFio={costFio}
-          costUsdc={costUsdc}
-          currentWallet={currentWallet}
-        />
+        <PayWithBadge costFree={costFree} currentWallet={currentWallet} />
       </div>
     </>
   );

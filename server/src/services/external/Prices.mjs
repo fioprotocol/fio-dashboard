@@ -1,4 +1,4 @@
-import { convert, fioApi, FIOSDK } from '../../external/fio';
+import { fioApi } from '../../external/fio';
 import { getROE } from '../../external/roe';
 import logger from '../../logger';
 import Base from '../Base';
@@ -7,15 +7,7 @@ import { FioRegApi } from '../../external/fio-reg';
 export default class Prices extends Base {
   async execute() {
     const pricing = {
-      fio: {
-        domain: null,
-        address: null,
-      },
       fioNative: {
-        domain: null,
-        address: null,
-      },
-      usdt: {
         domain: null,
         address: null,
       },
@@ -24,16 +16,8 @@ export default class Prices extends Base {
     try {
       const roe = await getROE();
       pricing.usdtRoe = roe;
-      const accountRegFee = await fioApi.registrationFee();
-      const accountUsdt = convert(accountRegFee, roe);
-      pricing.fioNative.address = accountRegFee;
-      pricing.fio.address = FIOSDK.SUFToAmount(accountRegFee);
-      pricing.usdt.address = accountUsdt;
-      const domainRegFee = await fioApi.registrationFee(true);
-      const domainUsdt = convert(domainRegFee, roe);
-      pricing.fioNative.domain = domainRegFee;
-      pricing.fio.domain = FIOSDK.SUFToAmount(domainRegFee);
-      pricing.usdt.domain = domainUsdt;
+      pricing.fioNative.address = await fioApi.registrationFee();
+      pricing.fioNative.domain = await fioApi.registrationFee(true);
     } catch (e) {
       logger.error(`Get prices from reg site error: ${e}`);
     }

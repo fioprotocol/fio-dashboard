@@ -4,6 +4,8 @@ import { TextDecoder, TextEncoder } from 'text-encoding';
 import { Fio } from '@fioprotocol/fiojs';
 import mapKeys from 'lodash/mapKeys';
 
+import MathOp from './util/math';
+
 import {
   CartItem,
   DeleteCartItem,
@@ -232,8 +234,8 @@ export const deleteCartItem = ({
         } = prices;
         const retObj = {
           ...firstMatchElem,
-          costFio: fioAddressPrice + fioDomainPrice,
-          costUsdc: addressPrice + domainPrice,
+          costFio: new MathOp(fioAddressPrice).add(fioDomainPrice).toNumber(),
+          costUsdc: new MathOp(addressPrice).add(domainPrice).toNumber(),
           hasCustomDomain: true,
         };
         const retData = updCart.map(item =>
@@ -260,8 +262,8 @@ export const totalCost = (
         if (!acc.costFio) acc.costFio = 0;
         if (!acc.costUsdc) acc.costUsdc = 0;
         return {
-          costFio: acc.costFio + item.costFio,
-          costUsdc: acc.costUsdc + item.costUsdc,
+          costFio: new MathOp(acc.costFio).add(item.costFio).toNumber(),
+          costUsdc: new MathOp(acc.costUsdc).add(item.costUsdc).toNumber(),
         };
       }, {});
 

@@ -1,7 +1,9 @@
 import superagent from 'superagent';
+import Big from 'big.js';
+
 import logger from '../logger';
 
-const roeEndpoint = 'https://ascendex.com/api/pro/v1/';
+const roeEndpoint = process.env.FIO_ROE_URL || 'https://ascendex.com/api/pro/v1/';
 const minToUpdate = 15;
 const roe = {
   value: null,
@@ -22,9 +24,13 @@ export const getROE = async () => {
       if (data.length) {
         let sum = 0;
         for (const tradeItem of data) {
-          sum += parseFloat(tradeItem.p);
+          sum = Big(sum)
+            .plus(tradeItem.p)
+            .toNumber();
         }
-        const avgPrice = sum / data.length;
+        const avgPrice = Big(sum)
+          .div(data.length)
+          .toNumber();
         roe.value = avgPrice;
         roe.updatedAt = now;
         return avgPrice;

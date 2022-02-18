@@ -143,11 +143,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
             title="Total Cost"
             type={BADGE_TYPES.BLACK}
           />
-          <PayWithBadge
-            costFio={costFio}
-            costUsdc={costUsdc}
-            currentWallet={currentWallet}
-          />
+          <PayWithBadge currentWallet={currentWallet} />
           <LowBalanceBadge hasLowBalance={hasLowBalance} />
           <SubmitButton
             onClick={onSubmit}

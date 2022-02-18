@@ -25,6 +25,7 @@ const PurchasePage = props => {
     domains,
     refProfileQueryParams,
     refProfileInfo,
+    roe,
   } = props;
 
   useEffect(() => {
@@ -45,6 +46,7 @@ const PurchasePage = props => {
     prices,
     recalculate,
     domains,
+    roe,
   });
 
   useEffect(() => {

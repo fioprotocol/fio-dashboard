@@ -3,30 +3,30 @@ import classnames from 'classnames';
 
 import { useCheckIfDesktop } from '../../../screenType';
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
+import { useConvertFioToUsdc } from '../../../util/hooks';
 
 import { FioWalletDoublet } from '../../../types';
 
 import classes from './PayWithBadge.module.scss';
 
 type Props = {
-  costFio: number;
   costFree?: boolean;
-  costUsdc: number;
   currentWallet: FioWalletDoublet;
 };
 
 const PayWithBadge: React.FC<Props> = props => {
-  const { costFree, costFio, costUsdc, currentWallet } = props;
+  const { costFree, currentWallet } = props;
   const isDesktop = useCheckIfDesktop();
+
+  const walletUsdc = useConvertFioToUsdc({
+    fioAmount: currentWallet?.balance || 0,
+  });
 
   if (costFree) return null;
 
   const renderWalletBalance = () => {
     const wallet = (currentWallet && currentWallet.balance) || 0;
-    let walletUsdc = 0;
-    if (wallet > 0) {
-      walletUsdc = (wallet * costUsdc) / costFio;
-    }
+
     return `${wallet && wallet.toFixed(2)} FIO / ${walletUsdc &&
       walletUsdc.toFixed(2)} USDC`;
   };

@@ -1,3 +1,5 @@
+import MathOp from '../util/math';
+
 import { FeePrice, FioBalanceRes, WalletBalances } from '../types';
 import apis from '../api';
 
@@ -21,10 +23,11 @@ export const calculateBalances = (
   roe: number,
 ): WalletBalances => {
   const setValues = (amount: number | null) => {
+    const nativeFio = apis.fio.amountToSUF(amount);
     return {
-      nativeFio: amount,
+      nativeFio,
       fio: `${amount}`,
-      usdc: `${apis.fio.convertFioToUsdc(apis.fio.amountToSUF(amount), roe)}`,
+      usdc: `${apis.fio.convertFioToUsdc(nativeFio, roe)}`,
     };
   };
 
@@ -46,9 +49,15 @@ export const calculateTotalBalances = (
   };
   for (const publicKey in walletsBalances) {
     if (walletsBalances[publicKey] != null) {
-      total.balance += walletsBalances[publicKey].total.nativeFio;
-      total.available += walletsBalances[publicKey].available.nativeFio;
-      total.locked += walletsBalances[publicKey].locked.nativeFio;
+      total.balance = new MathOp(total.balance)
+        .add(walletsBalances[publicKey].total.fio)
+        .toNumber();
+      total.available = new MathOp(total.available)
+        .add(walletsBalances[publicKey].available.fio)
+        .toNumber();
+      total.locked = new MathOp(total.locked)
+        .add(walletsBalances[publicKey].locked.fio)
+        .toNumber();
     }
   }
   return calculateBalances(total, roe);

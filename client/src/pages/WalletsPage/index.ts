@@ -10,7 +10,6 @@ import {
   loading,
 } from '../../redux/fio/selectors';
 import { noProfileLoaded } from '../../redux/profile/selectors';
-import { roe } from '../../redux/registrations/selectors';
 
 import WalletsPage from './WalletsPage';
 
@@ -19,7 +18,6 @@ const reduxConnect = connect(
     fioWallets,
     loading,
     noProfileLoaded,
-    roe,
     balance: fioWalletsBalances,
   }),
   { refreshBalance },

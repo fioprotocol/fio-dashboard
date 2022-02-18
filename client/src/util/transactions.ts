@@ -1,13 +1,12 @@
 import apis from '../api';
-import { TransactionItemProps } from '../types';
 
-const HISTORY_NODE_URLS = [process.env.REACT_APP_HISTORY_NODE_URL];
-const HISTORY_NODE_ACTIONS = {
-  getActions: 'get_actions',
-};
+import { FIO_CHAIN_CODE } from '../constants/fio';
+
+import { getUTCDate } from './general';
+
+import { FioWalletTxHistory, TransactionItemProps } from '../types';
+
 const HISTORY_NODE_OFFSET = 20;
-const DEFAULT_CURRENCY_CODE = 'FIO';
-const highestTxHeight: { [publicKey: string]: number } = {};
 const HISTORY_TX_NAMES = {
   TRANSFER_PUB_KEY: 'trnsfiopubky',
   TRANSFER: 'transfer',
@@ -42,55 +41,22 @@ type FioHistoryNodeAction = {
   };
 };
 
-// Normalize date if not exists "Z" parameter
-const getUTCDate = (dateString: string) => {
-  const date = new Date(dateString);
-
-  return Date.UTC(
-    date.getFullYear(),
-    date.getMonth(),
-    date.getDate(),
-    date.getHours(),
-    date.getMinutes(),
-    date.getSeconds(),
-  );
-};
-
-const addTx = (newTx: TransactionItemProps, txList: TransactionItemProps[]) => {
+const updateTx = (
+  newTx: TransactionItemProps,
+  txList: TransactionItemProps[],
+): boolean => {
   const existingIndex = txList.findIndex(({ txId }) => txId === newTx.txId);
 
   if (existingIndex > -1) {
     txList[existingIndex].nativeAmount = newTx.nativeAmount;
     txList[existingIndex].networkFee = newTx.networkFee;
     txList[existingIndex].otherParams = newTx.otherParams;
-    return;
+    return true;
   }
 
   txList.push(newTx);
-};
 
-const requestHistory = async (
-  nodeIndex: number,
-  params: {
-    account_name: string;
-    pos: number;
-    offset: number;
-  },
-  uri: string,
-): Promise<any> => {
-  if (!HISTORY_NODE_URLS[nodeIndex]) return { error: { noNodeForIndex: true } };
-
-  const apiUrl = HISTORY_NODE_URLS[nodeIndex];
-  const result = await fetch(`${apiUrl}history/${uri || ''}`, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(params),
-  });
-
-  return result.json();
+  return false;
 };
 
 const processTransaction = (
@@ -98,7 +64,8 @@ const processTransaction = (
   action: FioHistoryNodeAction,
   actor: string,
   transactions: TransactionItemProps[],
-): number => {
+  highestTxHeight: number,
+): { blockNum: number; editedExisting: boolean } => {
   const {
     act: { name: trxName, data },
   } = action.action_trace;
@@ -109,16 +76,17 @@ const processTransaction = (
     isTransferProcessed?: boolean;
     isFeeProcessed?: boolean;
   } = {};
-  const currencyCode = DEFAULT_CURRENCY_CODE;
+  let editedExisting = false;
+  const currencyCode = FIO_CHAIN_CODE;
   const ourReceiveAddresses = [];
-  if (action.block_num <= highestTxHeight[publicKey]) {
-    return action.block_num;
+  if (action.block_num <= highestTxHeight) {
+    return { blockNum: action.block_num, editedExisting };
   }
   if (
     trxName !== HISTORY_TX_NAMES.TRANSFER_PUB_KEY &&
     trxName !== HISTORY_TX_NAMES.TRANSFER
   ) {
-    return action.block_num;
+    return { blockNum: action.block_num, editedExisting };
   }
 
   // Transfer funds transaction
@@ -145,10 +113,10 @@ const processTransaction = (
       const existingTrx: TransactionItemProps = transactions[index];
       otherParams = { ...existingTrx.otherParams };
       if (+nativeAmount > 0) {
-        return action.block_num;
+        return { blockNum: action.block_num, editedExisting };
       }
       if (otherParams.isTransferProcessed) {
-        return action.block_num;
+        return { blockNum: action.block_num, editedExisting };
       }
       if (otherParams.isFeeProcessed) {
         nativeAmount = `${+nativeAmount - +existingTrx.networkFee}`;
@@ -161,7 +129,7 @@ const processTransaction = (
     }
     otherParams.isTransferProcessed = true;
 
-    addTx(
+    editedExisting = updateTx(
       {
         txId: action.action_trace.trx_id,
         date: getUTCDate(action.block_time) / 1000,
@@ -179,7 +147,7 @@ const processTransaction = (
   // Fee transaction
   if (trxName === HISTORY_TX_NAMES.TRANSFER && data.quantity != null) {
     const [amount] = data.quantity.split(' ');
-    const fioAmount = apis.fio.amountToSUF(parseInt(amount, 10));
+    const fioAmount = apis.fio.amountToSUF(parseFloat(amount));
     if (data.to === actor) {
       nativeAmount = `${fioAmount}`;
     } else {
@@ -197,10 +165,10 @@ const processTransaction = (
       const existingTrx: TransactionItemProps = transactions[index];
       otherParams = { ...existingTrx.otherParams };
       if (+existingTrx.nativeAmount > 0) {
-        return action.block_num;
+        return { blockNum: action.block_num, editedExisting };
       }
       if (otherParams.isFeeProcessed) {
-        return action.block_num;
+        return { blockNum: action.block_num, editedExisting };
       }
       if (otherParams.isTransferProcessed) {
         nativeAmount = `${+existingTrx.nativeAmount - +networkFee}`;
@@ -212,7 +180,7 @@ const processTransaction = (
     }
 
     otherParams.isFeeProcessed = true;
-    addTx(
+    editedExisting = updateTx(
       {
         txId: action.action_trace.trx_id,
         date: getUTCDate(action.block_time) / 1000,
@@ -227,30 +195,35 @@ const processTransaction = (
     );
   }
 
-  return action.block_num;
+  return {
+    blockNum: action.block_num,
+    editedExisting,
+  };
 };
 
 export const checkTransactions = async (
   publicKey: string,
+  currentHistory: FioWalletTxHistory,
+  updateHistory: (history: FioWalletTxHistory, publicKey: string) => void,
   historyNodeIndex: number = 0,
 ): Promise<TransactionItemProps[]> => {
-  const transactions: TransactionItemProps[] = [];
-  if (!HISTORY_NODE_URLS[historyNodeIndex]) return transactions;
+  const transactions: TransactionItemProps[] = currentHistory.txs
+    ? [...currentHistory.txs]
+    : [];
 
-  let newHighestTxHeight = highestTxHeight[publicKey]; // todo: ?
+  let newHighestTxHeight = currentHistory.highestTxHeight || 0;
 
   let lastActionSeqNumber = 0;
   const actor = apis.fio.publicFioSDK.transactions.getActor(publicKey);
 
   try {
-    const lastActionObject: any = await requestHistory(
+    const lastActionObject: any = await apis.fioHistory.requestHistory(
       historyNodeIndex,
       {
         account_name: actor,
         pos: -1,
         offset: -1,
       },
-      HISTORY_NODE_ACTIONS.getActions,
     );
 
     if (lastActionObject.error && lastActionObject.error.noNodeForIndex) {
@@ -262,14 +235,28 @@ export const checkTransactions = async (
       lastActionSeqNumber = lastActionObject.actions[0].account_action_seq;
     } else {
       // if no transactions at all
+      updateHistory(
+        {
+          highestTxHeight: 0,
+          txs: [],
+        },
+        publicKey,
+      );
       return [];
     }
   } catch (e) {
-    return checkTransactions(publicKey, ++historyNodeIndex);
+    console.error('History request error. ', e);
+    return checkTransactions(
+      publicKey,
+      currentHistory,
+      updateHistory,
+      ++historyNodeIndex,
+    );
   }
 
   let pos = lastActionSeqNumber;
   let finish = false;
+  let listWasUpdated = false;
 
   while (!finish) {
     if (pos < 0) {
@@ -277,15 +264,11 @@ export const checkTransactions = async (
     }
     let actionsObject;
     try {
-      actionsObject = await requestHistory(
-        historyNodeIndex,
-        {
-          account_name: actor,
-          pos,
-          offset: -HISTORY_NODE_OFFSET + 1,
-        },
-        HISTORY_NODE_ACTIONS.getActions,
-      );
+      actionsObject = await apis.fioHistory.requestHistory(historyNodeIndex, {
+        account_name: actor,
+        pos,
+        offset: -HISTORY_NODE_OFFSET + 1,
+      });
       if (actionsObject.error && actionsObject.error.noNodeForIndex) {
         return [];
       }
@@ -301,18 +284,21 @@ export const checkTransactions = async (
       for (let i = actions.length - 1; i > -1; i--) {
         const action = actions[i];
 
-        const blockNum = processTransaction(
+        const { blockNum, editedExisting } = processTransaction(
           publicKey,
           action,
           actor,
           transactions,
+          currentHistory.highestTxHeight,
         );
+
+        if (editedExisting) listWasUpdated = true;
 
         if (blockNum > newHighestTxHeight) {
           newHighestTxHeight = blockNum;
         } else if (
           (blockNum === newHighestTxHeight && i === HISTORY_NODE_OFFSET - 1) ||
-          blockNum < highestTxHeight[publicKey]
+          blockNum < currentHistory.highestTxHeight
         ) {
           finish = true;
           break;
@@ -324,11 +310,24 @@ export const checkTransactions = async (
       }
       pos -= HISTORY_NODE_OFFSET;
     } catch (e) {
-      return checkTransactions(publicKey, ++historyNodeIndex);
+      console.error('History request error. ', e);
+      return checkTransactions(
+        publicKey,
+        currentHistory,
+        updateHistory,
+        ++historyNodeIndex,
+      );
     }
   }
-  if (newHighestTxHeight > highestTxHeight[publicKey]) {
-    highestTxHeight[publicKey] = newHighestTxHeight;
+  if (newHighestTxHeight > currentHistory.highestTxHeight || listWasUpdated) {
+    updateHistory(
+      {
+        highestTxHeight: newHighestTxHeight,
+        txs: transactions.sort((tx1, tx2) => (tx1.date < tx2.date ? 1 : -1)),
+      },
+      publicKey,
+    );
   }
+
   return transactions;
 };

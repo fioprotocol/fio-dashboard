@@ -11,7 +11,6 @@ import { putParamsToUrl } from '../../utils';
 import { fioAddressToPubKey } from '../../util/fio';
 
 import { ContainerProps, SendTokensValues, InitialValues } from './types';
-import { FioAddressDoublet } from '../../types';
 import { TrxResponse } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 
@@ -46,10 +45,8 @@ const SendPage: React.FC<ContainerProps> = props => {
   const [sendData, setSendData] = useState<SendTokensValues | null>(null);
   const [processing, setProcessing] = useState<boolean>(false);
 
-  const walletFioAddresses = useFioAddresses(
+  const [walletFioAddresses] = useFioAddresses(
     fioWallet && fioWallet.publicKey,
-  ).sort((fioAddress1: FioAddressDoublet, fioAddress2: FioAddressDoublet) =>
-    fioAddress1.name > fioAddress2.name ? 1 : -1,
   );
 
   useEffect(() => {

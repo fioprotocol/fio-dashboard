@@ -1,8 +1,11 @@
+import { convertPrices } from '../util/fio';
+
 import Base from './base';
 
 export default class FioReg extends Base {
-  prices() {
-    return this.apiClient.get('reg/prices');
+  async prices() {
+    const prices = await this.apiClient.get('reg/prices');
+    return convertPrices(prices);
   }
   domains() {
     return this.apiClient.get('reg/domains');

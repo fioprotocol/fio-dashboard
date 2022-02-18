@@ -9,6 +9,8 @@ import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { ADDRESS_DOMAIN_BADGE_TYPE } from '../AddressDomainBadge/AddressDomainBadge';
 import InfoBadge from '../InfoBadge/InfoBadge';
 import { deleteCartItem, isFreeDomain } from '../../utils';
+import MathOp from '../../util/math';
+
 import { CartItem, Domain, DeleteCartItem, Prices } from '../../types';
 
 import classes from './AddressDomainForm.module.scss';
@@ -105,8 +107,12 @@ const Notifications = (props: Props, ref: React.Ref<HTMLDivElement | null>) => {
     costFio = isAddress ? fioAddressPrice : fioDomainPrice;
   }
   if (hasCustomDomain) {
-    costUsdc = costUsdc ? costUsdc + domainPrice : domainPrice;
-    costFio = costFio ? costFio + fioDomainPrice : fioDomainPrice;
+    costUsdc = costUsdc
+      ? new MathOp(costUsdc).add(domainPrice).toNumber()
+      : domainPrice;
+    costFio = costFio
+      ? new MathOp(costFio).add(fioDomainPrice).toNumber()
+      : fioDomainPrice;
   }
   if (!isFree && currentCartItem) {
     costFio = currentCartItem.costFio;
@@ -132,8 +138,9 @@ const Notifications = (props: Props, ref: React.Ref<HTMLDivElement | null>) => {
     if (costFio && costFio > 0) data.costFio = costFio;
     if (costUsdc && costUsdc > 0) data.costUsdc = costUsdc;
     if (address && hasOnlyDomain) {
-      data.costFio += fioDomainPrice;
-      data.costUsdc += domainPrice;
+      data.costFio = new MathOp(data.costFio).add(fioDomainPrice).toNumber();
+      data.costUsdc = new MathOp(data.costFio).add(domainPrice).toNumber();
+
       recalculate([
         ...cartItems.filter(
           (item: CartItem) => item.domain !== domainName.toLowerCase(),
@@ -208,7 +215,7 @@ const Notifications = (props: Props, ref: React.Ref<HTMLDivElement | null>) => {
               'FREE'
             ) : (
               <>
-                {costFio && costFio.toFixed(2)}FIO{' '}
+                {costFio && costFio.toFixed(2)} FIO{' '}
                 {costUsdc && (
                   <span className={classes.usdcAmount}>
                     ({costUsdc.toFixed(2)} USDC)

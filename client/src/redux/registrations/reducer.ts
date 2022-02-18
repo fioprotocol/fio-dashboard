@@ -35,8 +35,11 @@ export default combineReducers({
   },
   prices(state = PRICES_DEFAULT, action) {
     switch (action.type) {
-      case actions.PRICES_SUCCESS:
-        return action.data.pricing;
+      case actions.PRICES_SUCCESS: {
+        const prices = { ...action.data.pricing };
+        delete prices.usdtRoe;
+        return prices;
+      }
       default:
         return state;
     }

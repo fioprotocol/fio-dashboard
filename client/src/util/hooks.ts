@@ -2,7 +2,7 @@ import { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 import {
-  getFioAddresses,
+  getWalletsFioAddresses,
   getAllFioPubAddresses,
   refreshBalance,
 } from '../redux/fio/actions';
@@ -11,6 +11,7 @@ import {
   fioWallets,
   mappedPublicAddresses,
   fioAddresses,
+  walletsFioAddressesLoading,
 } from '../redux/fio/selectors';
 import {
   isAuthenticated,
@@ -34,43 +35,35 @@ import { emptyWallet } from '../redux/fio/reducer';
 
 export function useFioAddresses(
   publicKey?: string,
-  limit = 0,
-  offset = 0,
-): FioAddressDoublet[] {
+): [FioAddressDoublet[], boolean] {
   const dispatch = useDispatch();
   const isAuth = useSelector(isAuthenticated);
   const wallets: FioWalletDoublet[] = useSelector(fioWallets);
   const fioCryptoHandles: FioAddressDoublet[] = useSelector(fioAddresses);
-
-  const getFioCryptoHandles = (
-    walletPublicKey: string,
-    limitValue: number,
-    offsetValue: number,
-  ) => {
-    dispatch(getFioAddresses(walletPublicKey, limitValue, offsetValue));
-  };
+  const isLoading: boolean = useSelector(walletsFioAddressesLoading);
 
   useEffect(() => {
     if (publicKey && isAuth) {
-      getFioCryptoHandles(publicKey, limit, offset);
+      dispatch(getWalletsFioAddresses([publicKey]));
     }
   }, [publicKey, isAuth]);
 
   useEffect(() => {
     if (wallets.length > 0 && isAuth && !publicKey) {
-      wallets.map(wallet =>
-        getFioCryptoHandles(wallet.publicKey, limit, offset),
-      );
+      dispatch(getWalletsFioAddresses(wallets.map(wallet => wallet.publicKey)));
     }
   }, [wallets.length, isAuth, publicKey]);
 
-  const retFioCryptoHandles = publicKey
+  const retFioCryptoHandles = (publicKey
     ? fioCryptoHandles.filter(
         fioCryptoHandle => fioCryptoHandle.walletPublicKey === publicKey,
       )
-    : fioCryptoHandles;
+    : fioCryptoHandles
+  ).sort((fioAddress1: FioAddressDoublet, fioAddress2: FioAddressDoublet) =>
+    fioAddress1.name > fioAddress2.name ? 1 : -1,
+  );
 
-  return retFioCryptoHandles;
+  return [retFioCryptoHandles, isLoading];
 }
 
 export function useFioWallet(fioNameList: FioNameItemProps[], name: string) {
@@ -152,9 +145,7 @@ export function usePubAddressesFromWallet(walletPublicKey?: string) {
   const dispatch = useDispatch();
 
   const fioAddressToPubAddresses = useSelector(mappedPublicAddresses);
-  const fioCryptoHandles: FioAddressDoublet[] = useFioAddresses(
-    walletPublicKey,
-  );
+  const [fioCryptoHandles] = useFioAddresses(walletPublicKey);
 
   const fetchPublicAddresses = (items: FioAddressDoublet[]) => {
     for (const { name } of items) {

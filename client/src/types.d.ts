@@ -48,6 +48,13 @@ export type Prices = {
   usdt: { address: number; domain: number };
 };
 
+export type IncomePrices = {
+  pricing: {
+    fioNative: { address: number; domain: number };
+    usdtRoe: number;
+  };
+};
+
 export type RegistrationErrors = {
   fioName: string;
   error: string;
@@ -349,9 +356,20 @@ export type FioWalletData = {
   obtData: FioRecord[];
 }
 
+export type FioWalletTxHistory = {
+  highestTxHeight: number,
+  txs: TransactionItemProps[],
+}
+
 export type UsersFioWalletsData =  {
   [userId: string]: {
     [walletPublicKey: string]: FioWalletData
+  }
+}
+
+export type UsersWalletsTxHistory =  {
+  [userId: string]: {
+    [walletPublicKey: string]: FioWalletTxHistory
   }
 }
 
