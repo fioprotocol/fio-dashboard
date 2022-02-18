@@ -14,11 +14,7 @@ import {
   RequestTokensInitialValues,
   RequestTokensValues,
 } from './types';
-import {
-  FioAddressDoublet,
-  FioWalletDoublet,
-  MappedPublicAddresses,
-} from '../../types';
+import { FioWalletDoublet, MappedPublicAddresses } from '../../types';
 import { TrxResponse } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 
@@ -57,11 +53,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
 
   const loading = fioWalletsLoading || contactsLoading;
 
-  const fioAddresses = useFioAddresses(
-    publicKeyFromPath,
-  ).sort((fioAddress1: FioAddressDoublet, fioAddress2: FioAddressDoublet) =>
-    fioAddress1.name > fioAddress2.name ? 1 : -1,
-  );
+  const [fioAddresses] = useFioAddresses(publicKeyFromPath);
   // todo: move getting mapped addresses to form on fio address selection
   const pubAddressesMap: MappedPublicAddresses = usePubAddressesFromWallet(
     publicKeyFromPath,
@@ -103,6 +95,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
     }
     setRequestData(values);
   };
+
   const onCancel = () => {
     setRequestData(null);
     setProcessing(false);

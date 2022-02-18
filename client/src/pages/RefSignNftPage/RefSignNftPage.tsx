@@ -26,7 +26,7 @@ export const RefSignNftPage: React.FC<Props &
   RouteComponentProps<MatchParams>> = props => {
   const { refProfileQueryParams, isAuthenticated, homePageLink } = props;
 
-  const fioAddresses = useFioAddresses();
+  const [fioAddresses] = useFioAddresses();
 
   if (!isAuthenticated || !fioAddresses.length) {
     return (

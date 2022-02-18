@@ -22,7 +22,7 @@ type Props = {
 
 const DashboardPage: React.FC<Props> = props => {
   const { fioWallets, loading } = props;
-  const fioAddresses = useFioAddresses();
+  const [fioAddresses] = useFioAddresses();
   useNonActiveUserRedirect();
 
   return (
