@@ -176,8 +176,8 @@ export default class Fio {
       );
 
       return {
-        balance: FIOSDK.SUFToAmount(balance),
-        available: FIOSDK.SUFToAmount(available),
+        balance,
+        available,
         locked: 0,
       };
     } catch (e) {

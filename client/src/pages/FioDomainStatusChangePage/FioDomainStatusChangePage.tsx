@@ -8,6 +8,7 @@ import SetVisibilityResults from '../../components/common/TransactionResults/com
 import { CONFIRM_PIN_ACTIONS, DOMAIN_STATUS } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 import { ACTIONS } from '../../constants/fio';
+import { useWalletBalances } from '../../util/hooks';
 
 import { setFees } from '../../util/prices';
 
@@ -41,6 +42,8 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
   const [submitData, setSubmitData] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
+
+  const { total: walletBalancesTotal } = useWalletBalances(fioWallet.publicKey);
 
   useEffect(() => {
     getFee();
@@ -82,7 +85,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
   };
 
   const hasLowBalance =
-    fioWallet && feePrice && fioWallet.balance < feePrice.costFio;
+    feePrice && walletBalancesTotal?.nativeFio < feePrice.costFio;
 
   if (resultsData)
     return (
@@ -117,12 +120,12 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
       />
       <FioDomainStatusChangeForm
         statusToChange={statusToChange}
-        fioWallet={fioWallet}
         feePrice={feePrice}
         name={name}
         hasLowBalance={hasLowBalance}
         processing={processing}
         handleSubmit={onSubmit}
+        walletBalancesTotal={walletBalancesTotal}
       />
     </>
   );

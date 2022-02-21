@@ -20,6 +20,7 @@ import { ACTIONS } from '../../constants/fio';
 
 import { setFees } from '../../util/prices';
 import { hasFioAddressDelimiter, isDomain } from '../../utils';
+import { useWalletBalances } from '../../util/hooks';
 
 import { ContainerProps } from './types';
 import { ResultsData } from '../common/TransactionResults/types';
@@ -48,6 +49,10 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   } | null>(null);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
+  const { total: walletBalancesTotal } = useWalletBalances(
+    currentWallet.publicKey,
+  );
+
   useEffect(() => {
     getFee(hasFioAddressDelimiter(name));
     refreshBalance(currentWallet.publicKey);
@@ -65,7 +70,9 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   };
 
   const hasLowBalance =
-    currentWallet && feePrice && currentWallet.balance < feePrice.costFio;
+    currentWallet &&
+    feePrice &&
+    walletBalancesTotal.nativeFio < feePrice.costFio;
 
   const onSubmit = () => {
     setSubmitData({ fioAddress: name });
@@ -143,7 +150,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
             title="Total Cost"
             type={BADGE_TYPES.BLACK}
           />
-          <PayWithBadge currentWallet={currentWallet} />
+          <PayWithBadge walletBalances={walletBalancesTotal} />
           <LowBalanceBadge hasLowBalance={hasLowBalance} />
           <SubmitButton
             onClick={onSubmit}

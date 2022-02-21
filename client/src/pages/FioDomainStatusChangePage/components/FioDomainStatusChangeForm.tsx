@@ -26,11 +26,11 @@ const INFO_MESSAGE_TEXT = {
 const FioDomainStatusChangeForm: React.FC<FormProps> = props => {
   const {
     statusToChange,
-    fioWallet,
     feePrice,
     name,
     hasLowBalance,
     processing,
+    walletBalancesTotal,
     handleSubmit,
   } = props;
 
@@ -67,7 +67,7 @@ const FioDomainStatusChangeForm: React.FC<FormProps> = props => {
           />
         </div>
 
-        <PayWithBadge currentWallet={fioWallet} />
+        <PayWithBadge walletBalances={walletBalancesTotal} />
         <LowBalanceBadge hasLowBalance={hasLowBalance} />
         <SubmitButton
           onClick={handleSubmit}

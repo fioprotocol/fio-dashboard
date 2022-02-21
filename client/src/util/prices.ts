@@ -22,12 +22,14 @@ export const calculateBalances = (
   { balance, available, locked }: FioBalanceRes,
   roe: number,
 ): WalletBalances => {
-  const setValues = (amount: number | null) => {
-    const nativeFio = apis.fio.amountToSUF(amount);
+  const setValues = (nativeFio: number | null) => {
+    const fioAmount = apis.fio.sufToAmount(nativeFio);
     return {
       nativeFio,
-      fio: `${amount}`,
-      usdc: `${apis.fio.convertFioToUsdc(nativeFio, roe)}`,
+      fio: `${fioAmount != null ? fioAmount.toFixed(2) : fioAmount}`,
+      usdc: `${
+        nativeFio != null ? apis.fio.convertFioToUsdc(nativeFio, roe) : 0
+      }`,
     };
   };
 
@@ -50,13 +52,13 @@ export const calculateTotalBalances = (
   for (const publicKey in walletsBalances) {
     if (walletsBalances[publicKey] != null) {
       total.balance = new MathOp(total.balance)
-        .add(walletsBalances[publicKey].total.fio)
+        .add(walletsBalances[publicKey].total.nativeFio)
         .toNumber();
       total.available = new MathOp(total.available)
-        .add(walletsBalances[publicKey].available.fio)
+        .add(walletsBalances[publicKey].available.nativeFio)
         .toNumber();
       total.locked = new MathOp(total.locked)
-        .add(walletsBalances[publicKey].locked.fio)
+        .add(walletsBalances[publicKey].locked.nativeFio)
         .toNumber();
     }
   }

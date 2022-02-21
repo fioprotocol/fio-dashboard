@@ -8,6 +8,7 @@ import Cart from '../../components/Cart/Cart';
 import CartAmount from '../../components/Cart/CartAmount';
 import { handleFreeAddressCart, totalCost } from '../../utils';
 import MathOp from '../../util/math';
+import { useWalletBalances } from '../../util/hooks';
 
 const CartPage = props => {
   const {
@@ -30,6 +31,10 @@ const CartPage = props => {
   const walletCount = userWallets.length;
 
   const totalCartAmount = (cartItems && totalCost(cartItems).costFio) || 0;
+
+  const { total: walletBalancesTotal } = useWalletBalances(
+    paymentWalletPublicKey,
+  );
 
   const isFree =
     !isEmpty(cartItems) &&
@@ -123,21 +128,15 @@ const CartPage = props => {
     }
   }, []);
 
-  const currentWallet =
-    paymentWalletPublicKey &&
-    !isEmpty(userWallets) &&
-    userWallets.find(item => item.publicKey === paymentWalletPublicKey);
-
   const hasLowBalance =
-    !isEmpty(currentWallet) &&
-    currentWallet.balance !== null &&
-    currentWallet.balance < totalCartAmount;
+    !isEmpty(walletBalancesTotal) &&
+    walletBalancesTotal.nativeFio < totalCartAmount;
 
   const additionalProps = {
     hasLowBalance,
     walletCount,
     setWallet,
-    selectedWallet: currentWallet,
+    walletBalancesTotal,
     isFree,
     totalCartAmount,
     isPriceChanged,

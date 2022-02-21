@@ -10,7 +10,7 @@ import AddBundlesEdgeWallet from './components/AddBundlesEdgeWallet';
 import Results from '../../components/common/TransactionResults';
 
 import { setFees } from '../../util/prices';
-import { useFioWallet } from '../../util/hooks';
+import { useFioWallet, useWalletBalances } from '../../util/hooks';
 
 import { WALLET_CREATED_FROM } from '../../constants/common';
 import { ERROR_TYPES } from '../../components/common/TransactionResults/constants';
@@ -56,8 +56,12 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
     getFee();
   }, []);
 
+  const { total: walletBalancesTotal } = useWalletBalances(
+    currentWallet.publicKey,
+  );
+
   const hasLowBalance =
-    currentWallet && feePrice && currentWallet.balance < feePrice.costFio;
+    feePrice && walletBalancesTotal.nativeFio < feePrice.costFio;
 
   const onSubmit = () => {
     setSubmitData({
@@ -148,7 +152,7 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
             title="Total Cost"
             type={BADGE_TYPES.BLACK}
           />
-          <PayWithBadge currentWallet={currentWallet} />
+          <PayWithBadge walletBalances={walletBalancesTotal} />
           <LowBalanceBadge hasLowBalance={hasLowBalance} />
           <SubmitButton
             onClick={onSubmit}
