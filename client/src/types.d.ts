@@ -199,22 +199,16 @@ export type FioBalanceRes = {
   locked?: number;
 }
 
+export type WalletBalancesItem = {
+  nativeFio: number | null;
+  fio: string;
+  usdc: string;
+}
+
 export type WalletBalances = {
-  total: {
-    nativeFio: number | null;
-    fio: string,
-    usdc: string,
-  },
-  available: {
-    nativeFio: number | null;
-    fio: string,
-    usdc: string,
-  },
-  locked: {
-    nativeFio: number | null;
-    fio: string,
-    usdc: string,
-  },
+  total: WalletBalancesItem,
+  available: WalletBalancesItem,
+  locked: WalletBalancesItem,
 }
 
 export type WalletsBalances = {

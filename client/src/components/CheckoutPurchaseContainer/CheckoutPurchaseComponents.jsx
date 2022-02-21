@@ -23,7 +23,7 @@ const RenderTotalBadge = ({ costFio, costUsdc, costFree }) => (
 );
 
 export const RenderCheckout = props => {
-  const { cart, currentWallet } = props;
+  const { cart, walletBalances } = props;
   const { costFio, costUsdc, costFree } = totalCost(cart);
 
   return (
@@ -40,7 +40,7 @@ export const RenderCheckout = props => {
           costUsdc={costUsdc}
           costFree={costFree}
         />
-        <PayWithBadge costFree={costFree} currentWallet={currentWallet} />
+        <PayWithBadge costFree={costFree} walletBalances={walletBalances} />
       </div>
     </>
   );

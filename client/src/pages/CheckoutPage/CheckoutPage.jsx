@@ -7,6 +7,7 @@ import { RenderCheckout } from '../../components/CheckoutPurchaseContainer/Check
 import '../../helpers/gt-sdk';
 import { ROUTES } from '../../constants/routes';
 import { totalCost, handleFreeAddressCart } from '../../utils';
+import { useWalletBalances } from '../../util/hooks';
 
 const CheckoutPage = props => {
   const {
@@ -34,22 +35,21 @@ const CheckoutPage = props => {
           refreshBalance(fioWallet.publicKey);
         }
       }
-      if (!currentWallet && fioWallets.length === 1) {
+      if (!paymentWalletPublicKey && fioWallets.length === 1) {
         setWallet(fioWallets[0].publicKey);
       }
     }
   }, []);
-
-  const currentWallet =
-    paymentWalletPublicKey &&
-    !isEmpty(fioWallets) &&
-    fioWallets.find(item => item.publicKey === paymentWalletPublicKey);
 
   const isFree =
     !isEmpty(cartItems) &&
     cartItems.length === 1 &&
     !hasFreeAddress &&
     cartItems[0].allowFree;
+
+  const { total: walletBalancesTotal } = useWalletBalances(
+    paymentWalletPublicKey,
+  );
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -60,15 +60,12 @@ const CheckoutPage = props => {
   useEffect(() => {
     if (
       !loading &&
-      !isEmpty(fioWallets) &&
       !isFree &&
-      currentWallet &&
-      currentWallet.balance !== null &&
-      currentWallet.balance < totalCost(cartItems).costFio
+      walletBalancesTotal.nativeFio < totalCost(cartItems).costFio
     ) {
       history.push(ROUTES.CART);
     }
-  }, [fioWallets]);
+  }, [walletBalancesTotal.nativeFio]);
 
   useEffect(() => {
     !isProcessing &&
@@ -91,7 +88,7 @@ const CheckoutPage = props => {
         <RenderCheckout
           cart={cartItems}
           isDesktop={isDesktop}
-          currentWallet={currentWallet}
+          walletBalances={walletBalancesTotal}
         />
       </CheckoutPurchaseContainer>
     </PseudoModalContainer>

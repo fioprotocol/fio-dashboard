@@ -9,7 +9,7 @@ import { useCheckIfDesktop } from '../../../screenType';
 import { FioWalletDoublet } from '../../../types';
 import { ROUTES } from '../../../constants/routes';
 import { putParamsToUrl } from '../../../utils';
-import { useConvertFioToUsdc } from '../../../util/hooks';
+import { useWalletBalances } from '../../../util/hooks';
 
 import classes from '../styles/WalletItem.module.scss';
 
@@ -21,7 +21,7 @@ const WalletItem: React.FC<Props> = props => {
   const { fioWallet } = props;
   const isDesktop = useCheckIfDesktop();
 
-  const usdc = useConvertFioToUsdc({ fioAmount: fioWallet?.balance || 0 });
+  const { total: walletBalancesTotal } = useWalletBalances(fioWallet.publicKey);
 
   return (
     <Link
@@ -39,8 +39,8 @@ const WalletItem: React.FC<Props> = props => {
               <div className={classes.balanceContainer}>
                 <p className={classes.totalBalance}>Total balance</p>
                 <p className={classes.balanceValue}>
-                  {fioWallet.balance && fioWallet.balance.toFixed(2)} FIO /{' '}
-                  {usdc && usdc.toFixed(2)} USDC
+                  {walletBalancesTotal.fio} FIO / {walletBalancesTotal.usdc}{' '}
+                  USDC
                 </p>
               </div>
             </div>

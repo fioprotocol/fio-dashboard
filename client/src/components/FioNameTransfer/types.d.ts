@@ -28,7 +28,7 @@ export type FormProps = {
   name: string;
   fioNameType: FioNameType;
   feePrice: FeePrice;
-  currentWallet: FioWalletDoublet;
+  publicKey: string;
   onSubmit: (value: string) => void;
   processing: boolean;
 };

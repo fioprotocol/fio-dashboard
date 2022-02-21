@@ -1,5 +1,10 @@
 import { RouteComponentProps } from 'react-router-dom';
-import { FioWalletDoublet, FeePrice, FioNameItemProps } from '../../types';
+import {
+  FioWalletDoublet,
+  FeePrice,
+  FioNameItemProps,
+  WalletBalancesItem,
+} from '../../types';
 
 type MatchParams = {
   id: string;
@@ -7,11 +12,11 @@ type MatchParams = {
 
 export type FormProps = {
   statusToChange: string;
-  fioWallet: FioWalletDoublet;
   feePrice: FeePrice;
   name: string;
   hasLowBalance: boolean;
   processing: boolean;
+  walletBalancesTotal: WalletBalancesItem;
   handleSubmit: () => void;
 };
 
