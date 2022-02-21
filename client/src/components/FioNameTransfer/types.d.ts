@@ -31,4 +31,5 @@ export type FormProps = {
   publicKey: string;
   onSubmit: (value: string) => void;
   processing: boolean;
+  roe: number;
 };

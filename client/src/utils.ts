@@ -18,6 +18,7 @@ import {
   WalletKeys,
 } from './types';
 import camelCase from 'camelcase';
+import { convertFioPrices } from './util/prices';
 
 const FIO_DASH_USERNAME_DELIMITER = `.fio.dash.${process.env
   .REACT_APP_EDGE_ACC_DELIMITER || ''}`;
@@ -114,8 +115,7 @@ export const setFreeCart = ({ cartItems }: { cartItems: CartItem[] }) => {
     item => item.address && item.domain && item.allowFree,
   );
   if (recalcElem) {
-    delete recalcElem.costFio;
-    delete recalcElem.costUsdc;
+    delete recalcElem.costNativeFio;
 
     const retCart = cartItems.map(item => {
       delete item.showBadge;
@@ -143,7 +143,7 @@ export const recalculateCart = ({
 
   const deletedElemCart = cartItems.filter(item => item.id !== id);
 
-  if (!deletedElement.costUsdc && !deletedElement.costFio) {
+  if (!deletedElement.costNativeFio) {
     const recCart = setFreeCart({ cartItems: deletedElemCart });
     data.cartItems = recCart;
   }
@@ -159,14 +159,12 @@ export const removeFreeCart = ({
   prices: Prices;
 }) => {
   const {
-    fio: { address: addressFio },
-    usdt: { address: addressUsdc },
+    nativeFio: { address: nativeFioAddressPrice },
   } = prices;
 
   const retCart = cartItems.map(item => {
-    if (!item.costFio && !item.costUsdc) {
-      item.costFio = addressFio;
-      item.costUsdc = addressUsdc;
+    if (!item.costNativeFio) {
+      item.costNativeFio = nativeFioAddressPrice;
       item.showBadge = true;
     }
     return item;
@@ -175,10 +173,7 @@ export const removeFreeCart = ({
 };
 
 export const cartHasFreeItem = (cartItems: CartItem[]) => {
-  return (
-    !isEmpty(cartItems) &&
-    cartItems.some(item => !item.costFio && !item.costUsdc)
-  );
+  return !isEmpty(cartItems) && cartItems.some(item => !item.costNativeFio);
 };
 
 export const handleFreeAddressCart = ({
@@ -207,12 +202,14 @@ export const deleteCartItem = ({
   deleteItem,
   cartItems,
   recalculate,
+  roe,
 }: {
   id?: string;
   prices?: Prices;
   deleteItem?: (data: DeleteCartItem | string) => {};
   cartItems?: CartItem[];
   recalculate?: (cartItems: CartItem[]) => {};
+  roe?: number;
 } = {}) => {
   const data = recalculateCart({ cartItems, id }) || id;
   deleteItem(data);
@@ -229,15 +226,23 @@ export const deleteCartItem = ({
         domain && updCart.find(item => item.domain === domain.toLowerCase());
       if (!isEmpty(firstMatchElem)) {
         const {
-          usdt: { domain: domainPrice, address: addressPrice },
-          fio: { domain: fioDomainPrice, address: fioAddressPrice },
+          nativeFio: {
+            address: nativeFioAddressPrice,
+            domain: nativeFioDomainPrice,
+          },
         } = prices;
         const retObj = {
           ...firstMatchElem,
-          costFio: new MathOp(fioAddressPrice).add(fioDomainPrice).toNumber(),
-          costUsdc: new MathOp(addressPrice).add(domainPrice).toNumber(),
+          costNativeFio: new MathOp(nativeFioAddressPrice)
+            .add(nativeFioDomainPrice)
+            .toNumber(),
           hasCustomDomain: true,
         };
+        const fioPrices = convertFioPrices(retObj.costNativeFio, roe);
+
+        retObj.costFio = fioPrices.fio;
+        retObj.costUsdc = fioPrices.usdc;
+
         const retData = updCart.map(item =>
           item.id === firstMatchElem.id ? retObj : item,
         );
@@ -250,27 +255,35 @@ export const deleteCartItem = ({
 
 export const totalCost = (
   cart: CartItem[],
-): { costFio?: number; costUsdc?: number; costFree?: string } => {
-  if (cart.length === 1 && cart.some(item => !item.costFio && !item.costUsdc))
+  roe: number,
+): {
+  costNativeFio?: number;
+  costFree?: string;
+  costFio?: string;
+  costUsdc?: string;
+} => {
+  if (cart.length === 1 && cart.some(item => !item.costNativeFio))
     return { costFree: 'FREE' };
 
-  const cost =
-    !isEmpty(cart) &&
-    cart
-      .filter(item => item.costFio && item.costUsdc)
-      .reduce<Record<string, number>>((acc, item) => {
-        if (!acc.costFio) acc.costFio = 0;
-        if (!acc.costUsdc) acc.costUsdc = 0;
-        return {
-          costFio: new MathOp(acc.costFio).add(item.costFio).toNumber(),
-          costUsdc: new MathOp(acc.costUsdc).add(item.costUsdc).toNumber(),
-        };
-      }, {});
+  const cost = isEmpty(cart)
+    ? { costNativeFio: 0 }
+    : cart
+        .filter(item => item.costNativeFio)
+        .reduce<Record<string, number>>((acc, item) => {
+          if (!acc.costNativeFio) acc.costNativeFio = 0;
+          return {
+            costNativeFio: new MathOp(acc.costNativeFio)
+              .add(item.costNativeFio)
+              .toNumber(),
+          };
+        }, {});
+
+  const fioPrices = convertFioPrices(cost.costNativeFio, roe);
 
   return {
-    costFio: (Number.isFinite(cost.costFio) && +cost.costFio.toFixed(2)) || 0,
-    costUsdc:
-      (Number.isFinite(cost.costUsdc) && +cost.costUsdc.toFixed(2)) || 0,
+    costNativeFio: cost.costNativeFio || 0,
+    costFio: fioPrices.fio || '0',
+    costUsdc: fioPrices.usdc || '0',
   };
 };
 

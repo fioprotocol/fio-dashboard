@@ -9,6 +9,9 @@ import CartAmount from '../../components/Cart/CartAmount';
 import { handleFreeAddressCart, totalCost } from '../../utils';
 import MathOp from '../../util/math';
 import { useWalletBalances } from '../../util/hooks';
+import { convertFioPrices } from '../../util/prices';
+
+import apis from '../../api';
 
 const CartPage = props => {
   const {
@@ -24,13 +27,18 @@ const CartPage = props => {
     refreshBalance,
     isAuthenticated,
     hasFreeAddress,
+    roe,
   } = props;
 
   const [isPriceChanged, handlePriceChange] = useState(false);
 
   const walletCount = userWallets.length;
 
-  const totalCartAmount = (cartItems && totalCost(cartItems).costFio) || 0;
+  const totalCartNativeAmount =
+    (cartItems && totalCost(cartItems, roe).costNativeFio) || 0;
+  const totalCartAmount = apis.fio
+    .sufToAmount(totalCartNativeAmount)
+    .toFixed(2);
 
   const { total: walletBalancesTotal } = useWalletBalances(
     paymentWalletPublicKey,
@@ -39,46 +47,48 @@ const CartPage = props => {
   const isFree =
     !isEmpty(cartItems) &&
     cartItems.length === 1 &&
-    cartItems.every(item => !item.costFio && !item.costUsdc);
+    cartItems.every(item => !item.costNativeFio);
 
   const {
-    usdt: { address: usdcAddressPrice, domain: usdcDomainPrice },
-    fio: { address: fioAddressPrice, domain: fioDomainPrice },
+    nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
   } = prices;
 
   const recalculateBalance = () => {
-    if (totalCartAmount > 0) {
+    if (totalCartNativeAmount > 0) {
       const updatedCartItems = cartItems.map(item => {
-        if (!item.costFio) return item;
+        if (!item.costNativeFio) return item;
 
         const retObj = { ...item };
 
         if (!item.address) {
-          retObj.costFio = fioDomainPrice;
-          retObj.costUsdc = usdcDomainPrice;
+          retObj.costNativeFio = nativeFioDomainPrice;
         } else {
-          retObj.costFio = fioAddressPrice;
-          retObj.costUsdc = usdcAddressPrice;
+          retObj.costNativeFio = nativeFioAddressPrice;
         }
 
         if (item.hasCustomDomain) {
-          retObj.costFio = new MathOp(retObj.costFio)
-            .add(fioDomainPrice)
-            .toNumber();
-          retObj.costUsdc = new MathOp(retObj.costUsdc)
-            .add(usdcDomainPrice)
+          retObj.costNativeFio = new MathOp(retObj.costNativeFio)
+            .add(nativeFioDomainPrice)
             .toNumber();
         }
+
+        const fioPrices = convertFioPrices(retObj.costNativeFio, roe);
+
+        retObj.costFio = fioPrices.fio;
+        retObj.costUsdc = fioPrices.usdc;
 
         return retObj;
       });
 
-      const { costFio: updatedTotalPrice, costFree: updatedFree } = totalCost(
-        updatedCartItems,
-      );
+      const {
+        costNativeFio: updatedTotalPrice,
+        costFree: updatedFree,
+      } = totalCost(updatedCartItems, roe);
 
       if (updatedFree) return history.push(ROUTES.CHECKOUT);
-      const isEqualPrice = new MathOp(totalCartAmount).eq(updatedTotalPrice);
+      const isEqualPrice = new MathOp(totalCartNativeAmount).eq(
+        updatedTotalPrice,
+      );
 
       handlePriceChange(!isEqualPrice);
 
@@ -130,7 +140,7 @@ const CartPage = props => {
 
   const hasLowBalance =
     !isEmpty(walletBalancesTotal) &&
-    walletBalancesTotal.nativeFio < totalCartAmount;
+    new MathOp(walletBalancesTotal.nativeFio).lt(totalCartNativeAmount);
 
   const additionalProps = {
     hasLowBalance,

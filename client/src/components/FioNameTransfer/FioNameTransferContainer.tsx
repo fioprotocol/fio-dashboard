@@ -18,7 +18,7 @@ import {
 import { ACTIONS } from '../../constants/fio';
 
 import { hasFioAddressDelimiter, isDomain } from '../../utils';
-import { setFees } from '../../util/prices';
+import { convertFioPrices } from '../../util/prices';
 
 import apis from '../../api';
 
@@ -121,7 +121,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   }) => {
     setSubmitData(null);
     setResultsData({
-      feeCollected: setFees(result.fee_collected, roe) || feePrice,
+      feeCollected: convertFioPrices(result.fee_collected, roe) || feePrice,
       name,
       publicKey: result.newOwnerKey || result.newOwnerFioAddress,
     });

@@ -22,6 +22,7 @@ const AddressDomainCart = props => {
     hasFreeAddress,
     isAuthenticated,
     setRedirectPath,
+    roe,
   } = props;
   const count = cartItems.length;
   const isCartEmpty = count === 0;
@@ -45,6 +46,7 @@ const AddressDomainCart = props => {
       deleteItem,
       cartItems,
       recalculate,
+      roe,
     });
   };
 
@@ -98,11 +100,10 @@ const AddressDomainCart = props => {
                   <p className={classes.itemPrice}>
                     Cost:{' '}
                     <span className="boldText">
-                      {!Number.isFinite(item.costFio) ||
-                      !Number.isFinite(item.costUsdc)
+                      {!Number.isFinite(item.costNativeFio)
                         ? 'FREE'
-                        : `${item.costFio.toFixed(2)} FIO
-                      (${item.costUsdc.toFixed(2)} USDC)`}
+                        : `${item.costFio} FIO
+                      (${item.costUsdc} USDC)`}
                     </span>{' '}
                     <span className={classes.thin}>- annually</span>
                   </p>

@@ -29,6 +29,7 @@ const Cart = props => {
     prices,
     recalculate,
     isPriceChanged,
+    roe,
   } = props;
   const count = cartItems.length;
   const isCartEmpty = count === 0;
@@ -43,6 +44,7 @@ const Cart = props => {
       deleteItem,
       cartItems,
       recalculate,
+      roe,
     });
   };
 
@@ -50,7 +52,7 @@ const Cart = props => {
     buttonText: 'Make Deposit',
     messageText: `There are not
             enough FIO tokens in this FIO Wallet to complete the purchase.
-            Needed: ${totalCartAmount.toFixed(2)} FIO, available in wallet:
+            Needed: ${totalCartAmount} FIO, available in wallet:
             ${walletBalance} FIO. Please add FIO tokens.`,
   };
 

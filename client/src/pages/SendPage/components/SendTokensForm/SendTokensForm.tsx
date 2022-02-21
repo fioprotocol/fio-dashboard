@@ -15,6 +15,10 @@ import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 
 import { submitValidation, formValidation } from './validation';
 import { hasFioAddressDelimiter } from '../../../../utils';
+import { useWalletBalances } from '../../../../util/hooks';
+import MathOp from '../../../../util/math';
+
+import apis from '../../../../api';
 
 import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
 
@@ -41,6 +45,8 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
 
     return props.onSubmit(values);
   };
+
+  const walletBalances = useWalletBalances(fioWallet.publicKey);
 
   return (
     <Form
@@ -100,8 +106,10 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
           obtDataOn &&
           to &&
           hasFioAddressDelimiter(to);
-        const hasLowBalance =
-          fee.costFio + Number(amount) > fioWallet.available;
+        const hasLowBalance = new MathOp(fee.nativeFio)
+          .add(apis.fio.amountToSUF(amount))
+          .gt(walletBalances.available.nativeFio);
+
         const notEnoughBundles =
           selectedAddress != null
             ? selectedAddress.remaining < BUNDLES_TX_COUNT.RECORD_OBT_DATA
@@ -172,8 +180,9 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
             <PriceBadge
               title="Transaction Fee"
               type={BADGE_TYPES.BLACK}
-              costFio={fee.costFio}
-              costUsdc={fee.costUsdc}
+              costNativeFio={fee.nativeFio}
+              costFio={fee.fio}
+              costUsdc={fee.usdc}
             />
             {showMemo && memo ? (
               <BundledTransactionBadge
@@ -183,7 +192,9 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
             ) : null}
             <LowBalanceBadge
               hasLowBalance={hasLowBalance}
-              messageText={`Not enough Fio. Balance: ${fioWallet.available} FIO`}
+              messageText={`Not enough Fio. Balance: ${apis.fio
+                .sufToAmount(fioWallet.available)
+                .toFixed(2)} FIO`}
             />
             <LowBalanceBadge
               hasLowBalance={notEnoughBundles}

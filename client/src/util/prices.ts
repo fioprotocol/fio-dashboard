@@ -1,44 +1,33 @@
 import MathOp from '../util/math';
-
-import { FeePrice, FioBalanceRes, WalletBalances } from '../types';
 import apis from '../api';
 
-export const setFees = (nativeFee: number, roe: number): FeePrice => {
-  const fee: FeePrice = {
-    nativeFio: null,
-    costFio: null,
-    costUsdc: null,
-  };
-  fee.nativeFio = nativeFee;
-  fee.costFio = apis.fio.sufToAmount(fee.nativeFio);
-  if (fee.nativeFio && roe) {
-    fee.costUsdc = apis.fio.convertFioToUsdc(fee.nativeFio, roe);
-  }
+import { FioBalanceRes, WalletBalances, WalletBalancesItem } from '../types';
 
-  return fee;
-};
+export function convertFioPrices(
+  nativeFio: number | null,
+  roe: number,
+): WalletBalancesItem {
+  const fioAmount = apis.fio.sufToAmount(nativeFio);
+
+  return {
+    nativeFio,
+    fio: `${fioAmount != null ? fioAmount.toFixed(2) : fioAmount}`,
+    usdc: `${
+      nativeFio != null && roe != null
+        ? apis.fio.convertFioToUsdc(nativeFio, roe)
+        : 0
+    }`,
+  };
+}
 
 export const calculateBalances = (
   { balance, available, locked }: FioBalanceRes,
   roe: number,
-): WalletBalances => {
-  const setValues = (nativeFio: number | null) => {
-    const fioAmount = apis.fio.sufToAmount(nativeFio);
-    return {
-      nativeFio,
-      fio: `${fioAmount != null ? fioAmount.toFixed(2) : fioAmount}`,
-      usdc: `${
-        nativeFio != null ? apis.fio.convertFioToUsdc(nativeFio, roe) : 0
-      }`,
-    };
-  };
-
-  return {
-    total: setValues(balance),
-    available: setValues(available),
-    locked: setValues(locked),
-  };
-};
+): WalletBalances => ({
+  total: convertFioPrices(balance, roe),
+  available: convertFioPrices(available, roe),
+  locked: convertFioPrices(locked, roe),
+});
 
 export const calculateTotalBalances = (
   walletsBalances: { [publicKey: string]: WalletBalances },
@@ -65,5 +54,5 @@ export const calculateTotalBalances = (
   return calculateBalances(total, roe);
 };
 
-export const DEFAULT_FEE_PRICES = setFees(0, 1);
+export const DEFAULT_FEE_PRICES = convertFioPrices(0, 1);
 export const DEFAULT_BALANCES = calculateBalances({}, 1);

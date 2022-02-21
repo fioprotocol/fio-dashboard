@@ -30,11 +30,11 @@ const FioDomainStatusChangeForm: React.FC<FormProps> = props => {
     name,
     hasLowBalance,
     processing,
-    walletBalancesTotal,
+    walletBalancesAvailable,
     handleSubmit,
   } = props;
 
-  const { costFio, costUsdc } = feePrice;
+  const { nativeFio: feeNativeFio, fio, usdc } = feePrice;
 
   return (
     <PseudoModalContainer
@@ -60,8 +60,9 @@ const FioDomainStatusChangeForm: React.FC<FormProps> = props => {
         <h5 className={classes.label}>Change Change Cost</h5>
         <div className={classes.badge}>
           <PriceBadge
-            costFio={costFio}
-            costUsdc={costUsdc}
+            costNativeFio={feeNativeFio}
+            costFio={fio}
+            costUsdc={usdc}
             type={BADGE_TYPES.BLACK}
             title="Status Change Fee"
           />
