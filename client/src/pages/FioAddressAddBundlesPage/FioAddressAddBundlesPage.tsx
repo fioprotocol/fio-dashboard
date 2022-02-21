@@ -9,8 +9,9 @@ import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import AddBundlesEdgeWallet from './components/AddBundlesEdgeWallet';
 import Results from '../../components/common/TransactionResults';
 
-import { setFees } from '../../util/prices';
+import { convertFioPrices } from '../../util/prices';
 import { useFioWallet, useWalletBalances } from '../../util/hooks';
+import MathOp from '../../util/math';
 
 import { WALLET_CREATED_FROM } from '../../constants/common';
 import { ERROR_TYPES } from '../../components/common/TransactionResults/constants';
@@ -47,7 +48,7 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
   const { state: { backUrl = ROUTES.FIO_ADDRESSES } = {} } = location;
 
   const { currentWallet, settingWallet } = useFioWallet(fioAddresses, name);
-  const { costFio, costUsdc } = feePrice;
+  const { nativeFio: feeNativeFio, fio, usdc } = feePrice;
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<AddBundlesValues | null>(null);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
@@ -61,13 +62,13 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
   );
 
   const hasLowBalance =
-    feePrice && walletBalancesTotal.nativeFio < feePrice.costFio;
+    feePrice && new MathOp(walletBalancesTotal.nativeFio).lt(feeNativeFio);
 
   const onSubmit = () => {
     setSubmitData({
       fioAddress: name,
       bundleSets: DEFAULT_BUNDLE_SET_VALUE,
-      maxFee: feePrice.nativeFio,
+      maxFee: feeNativeFio,
     });
   };
   const onCancel = () => {
@@ -76,7 +77,7 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
   };
   const onSuccess = async (result: { fee_collected: number }) => {
     setResultsData({
-      feeCollected: setFees(result.fee_collected, roe) || feePrice,
+      feeCollected: convertFioPrices(result.fee_collected, roe) || feePrice,
       name,
     });
     setSubmitData(null);
@@ -147,8 +148,9 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
           {renderDetails()}
           <h5 className={classes.label}>Payment Details</h5>
           <PriceBadge
-            costFio={costFio}
-            costUsdc={costUsdc}
+            costNativeFio={feeNativeFio}
+            costFio={fio}
+            costUsdc={usdc}
             title="Total Cost"
             type={BADGE_TYPES.BLACK}
           />

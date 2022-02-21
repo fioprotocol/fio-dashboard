@@ -1,18 +1,22 @@
 import React from 'react';
-import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 import classnames from 'classnames';
 
+import Badge, { BADGE_TYPES } from '../../Badge/Badge';
+
 import classes from './PriceBadge.module.scss';
+
 type Props = {
-  costFio: number;
+  costNativeFio: number;
   costFree?: string;
-  costUsdc: number;
+  costFio: string;
+  costUsdc: string;
   type: string;
   title: string;
 };
 
 const PriceBadge: React.FC<Props> = props => {
-  const { costFio, costFree, costUsdc, title, type } = props;
+  const { costNativeFio, costFree, title, type, costFio, costUsdc } = props;
+
   const isBlack = type === BADGE_TYPES.BLACK;
   return (
     <Badge type={type} show>
@@ -20,9 +24,7 @@ const PriceBadge: React.FC<Props> = props => {
         <span className={classnames(classes.name, 'boldText')}>{title}</span>
         <p className={classes.totalPrice}>
           <span className="boldText">
-            {costFio && costUsdc
-              ? `${costFio.toFixed(2)} FIO / ${costUsdc.toFixed(2)} USDC`
-              : costFree}
+            {costNativeFio ? `${costFio} FIO / ${costUsdc} USDC` : costFree}
           </span>
         </p>
       </div>

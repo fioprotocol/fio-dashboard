@@ -165,11 +165,11 @@ const makeRegistrationOrder = (
       fioName: cartItem.address
         ? `${cartItem.address}${FIO_ADDRESS_DELIMITER}${cartItem.domain}`
         : cartItem.domain,
-      isFree: !cartItem.costFio,
+      isFree: !cartItem.costNativeFio,
       fee: cartItem.address ? fees.address : fees.domain,
     };
 
-    if (!cartItem.costFio || !cartItem.address) {
+    if (!cartItem.costNativeFio || !cartItem.address) {
       registrations.push(registration);
       continue;
     }

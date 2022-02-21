@@ -8,7 +8,7 @@ import { deleteItem, recalculate, setWallet } from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
 
 import { hasFreeAddress, isAuthenticated } from '../../redux/profile/selectors';
-import { domains, prices } from '../../redux/registrations/selectors';
+import { domains, prices, roe } from '../../redux/registrations/selectors';
 import { fioWallets as userWallets } from '../../redux/fio/selectors';
 
 import CartPage from './CartPage';
@@ -22,6 +22,7 @@ const reduxConnect = connect(
     paymentWalletPublicKey,
     isAuthenticated,
     hasFreeAddress,
+    roe,
   }),
   {
     deleteItem,

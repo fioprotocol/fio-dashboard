@@ -9,7 +9,7 @@ import { setRedirectPath } from '../../redux/navigation/actions';
 
 import { cartItems } from '../../redux/cart/selectors';
 import { hasFreeAddress, isAuthenticated } from '../../redux/profile/selectors';
-import { domains, prices } from '../../redux/registrations/selectors';
+import { domains, prices, roe } from '../../redux/registrations/selectors';
 import { fioWallets } from '../../redux/fio/selectors';
 
 import AddressDomainCart from './AddressDomainCart';
@@ -22,6 +22,7 @@ const reduxConnect = connect(
     hasFreeAddress,
     isAuthenticated,
     fioWallets,
+    roe,
   }),
   {
     deleteItem,

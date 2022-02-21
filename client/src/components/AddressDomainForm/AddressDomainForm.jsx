@@ -9,6 +9,7 @@ import FormContainer from './FormContainer';
 import debounce from 'lodash/debounce';
 import { setDataMutator, cartHasFreeItem, isFreeDomain } from '../../utils';
 import MathOp from '../../util/math';
+import { convertFioPrices } from '../../util/prices';
 
 import { addressValidation, domainValidation } from './validation';
 
@@ -29,6 +30,7 @@ const AddressDomainForm = props => {
     cartItems,
     recalculate,
     hasFreeAddress,
+    roe,
   } = props;
 
   const isAddress = type === ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS;
@@ -131,33 +133,38 @@ const AddressDomainForm = props => {
         !cartHasFreeItem(cartItems) &&
         !hasFreeAddress &&
         isFreeDomain({ domains, domain })) ||
-      (currentCartItem && !currentCartItem.costFio);
+      (currentCartItem && !currentCartItem.costNativeFio);
 
     const showPrice = ({ isDomainPrice = null } = {}) => {
       const {
-        usdt: { address: usdcAddressPrice, domain: usdcDomainPrice },
-        fio: { address: fioAddressPrice, domain: fioDomainPrice },
+        nativeFio: {
+          address: nativeFioAddressPrice,
+          domain: nativeFioDomainPrice,
+        },
+        fio: { address: fioAddressPrice },
+        usdt: { address: usdcAddressPrice },
       } = prices;
 
-      let costUsdc;
+      let costNativeFio;
       let costFio;
+      let costUsdc;
 
       if (!isFree && !isDomain) {
+        costNativeFio = nativeFioAddressPrice;
+        costFio = fioAddressPrice.toFixed(2);
         costUsdc = usdcAddressPrice;
-        costFio = fioAddressPrice;
       }
       if (hasCustomDomain) {
-        costUsdc = costUsdc
-          ? new MathOp(costUsdc).add(usdcDomainPrice).toNumber()
-          : usdcDomainPrice;
-        costFio = costFio
-          ? new MathOp(costFio).add(fioDomainPrice).toNumber()
-          : fioDomainPrice;
+        costNativeFio =
+          costNativeFio != null
+            ? new MathOp(costNativeFio).add(nativeFioDomainPrice).toNumber()
+            : nativeFioDomainPrice;
+        const fioPrices = convertFioPrices(costNativeFio, roe);
+        costFio = fioPrices.fio;
+        costUsdc = fioPrices.usdc;
       }
 
-      const price = isFree
-        ? 'FREE'
-        : `${costFio.toFixed(2)} FIO (${costUsdc.toFixed(2)} USDC)`;
+      const price = isFree ? 'FREE' : `${costFio} FIO (${costUsdc} USDC)`;
 
       const cost = `Cost: ${price}`;
       return isDomainPrice && !hasCustomDomain && hasCurrentDomain

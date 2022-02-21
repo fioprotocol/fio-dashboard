@@ -8,6 +8,7 @@ import '../../helpers/gt-sdk';
 import { ROUTES } from '../../constants/routes';
 import { totalCost, handleFreeAddressCart } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
+import MathOp from '../../util/math';
 
 const CheckoutPage = props => {
   const {
@@ -24,6 +25,7 @@ const CheckoutPage = props => {
     recalculate,
     prices,
     isProcessing,
+    roe,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
@@ -36,7 +38,8 @@ const CheckoutPage = props => {
         }
       }
       if (!paymentWalletPublicKey && fioWallets.length === 1) {
-        setWallet(fioWallets[0].publicKey);
+        const sortedWallets = fioWallets.sort((a, b) => b.balance - a.balance);
+        setWallet(sortedWallets[0].publicKey);
       }
     }
   }, []);
@@ -61,11 +64,14 @@ const CheckoutPage = props => {
     if (
       !loading &&
       !isFree &&
-      walletBalancesTotal.nativeFio < totalCost(cartItems).costFio
+      paymentWalletPublicKey &&
+      new MathOp(walletBalancesAvailable.nativeFio).lt(
+        totalCost(cartItems, roe).costNativeFio,
+      )
     ) {
       history.push(ROUTES.CART);
     }
-  }, [walletBalancesTotal.nativeFio]);
+  }, [walletBalancesTotal.nativeFio, paymentWalletPublicKey, loading]);
 
   useEffect(() => {
     !isProcessing &&
@@ -89,6 +95,7 @@ const CheckoutPage = props => {
           cart={cartItems}
           isDesktop={isDesktop}
           walletBalances={walletBalancesTotal}
+          roe={roe}
         />
       </CheckoutPurchaseContainer>
     </PseudoModalContainer>

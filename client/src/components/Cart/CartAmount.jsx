@@ -4,6 +4,7 @@ import { Button } from 'react-bootstrap';
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 
 import { totalCost } from '../../utils';
+
 import classes from './Cart.module.scss';
 
 const CartAmount = props => {
@@ -13,13 +14,14 @@ const CartAmount = props => {
     isFree,
     paymentWalletPublicKey,
     recalculateBalance,
+    roe,
   } = props;
 
   const handleCheckout = () => {
     recalculateBalance();
   };
 
-  const { costFio, costUsdc } = totalCost(cartItems);
+  const { costFio, costUsdc } = totalCost(cartItems, roe);
 
   return (
     <CartSmallContainer isHintColor={true} hasBigMargin={true}>

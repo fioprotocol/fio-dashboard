@@ -9,8 +9,9 @@ import { CONFIRM_PIN_ACTIONS, DOMAIN_STATUS } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 import { ACTIONS } from '../../constants/fio';
 import { useWalletBalances } from '../../util/hooks';
+import MathOp from '../../util/math';
 
-import { setFees } from '../../util/prices';
+import { convertFioPrices } from '../../util/prices';
 
 import apis from '../../api';
 
@@ -70,7 +71,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
     setSubmitData(null);
     setResultsData({
       feeCollected: result.fee_collected
-        ? setFees(result.fee_collected, roe)
+        ? convertFioPrices(result.fee_collected, roe)
         : feePrice,
       name,
       changedStatus: statusToChange,
@@ -85,7 +86,8 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
   };
 
   const hasLowBalance =
-    feePrice && walletBalancesTotal?.nativeFio < feePrice.costFio;
+    feePrice &&
+    new MathOp(walletBalancesTotal.nativeFio).lt(feePrice.nativeFio);
 
   if (resultsData)
     return (
@@ -125,7 +127,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
         hasLowBalance={hasLowBalance}
         processing={processing}
         handleSubmit={onSubmit}
-        walletBalancesTotal={walletBalancesTotal}
+        walletBalancesAvailable={walletBalancesAvailable}
       />
     </>
   );

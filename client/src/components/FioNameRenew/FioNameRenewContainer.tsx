@@ -18,9 +18,10 @@ import { BADGE_TYPES } from '../Badge/Badge';
 import { ERROR_TYPES } from '../common/TransactionResults/constants';
 import { ACTIONS } from '../../constants/fio';
 
-import { setFees } from '../../util/prices';
+import { convertFioPrices } from '../../util/prices';
 import { hasFioAddressDelimiter, isDomain } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
+import MathOp from '../../util/math';
 
 import { ContainerProps } from './types';
 import { ResultsData } from '../common/TransactionResults/types';
@@ -42,7 +43,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
     getFee,
   } = props;
 
-  const { costFio, costUsdc } = feePrice;
+  const { nativeFio: feeNativeFio, fio, usdc } = feePrice;
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<{
     fioAddress: string;
@@ -62,7 +63,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
     if (isDomain(name)) {
       return await apis.fio.executeAction(keys, ACTIONS.renewFioDomain, {
         fioDomain: name,
-        maxFee: feePrice.nativeFio,
+        maxFee: feeNativeFio,
       });
     }
 
@@ -72,7 +73,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   const hasLowBalance =
     currentWallet &&
     feePrice &&
-    walletBalancesTotal.nativeFio < feePrice.costFio;
+    new MathOp(walletBalancesTotal.nativeFio).lt(feeNativeFio);
 
   const onSubmit = () => {
     setSubmitData({ fioAddress: name });
@@ -83,7 +84,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   };
   const onSuccess = async (result: { fee_collected: number }) => {
     setResultsData({
-      feeCollected: setFees(result.fee_collected, roe) || feePrice,
+      feeCollected: convertFioPrices(result.fee_collected, roe) || feePrice,
       name,
     });
     setSubmitData(null);
@@ -138,15 +139,17 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
           />
           <h5 className={classes.label}>Renew Details</h5>
           <PriceBadge
-            costFio={costFio}
-            costUsdc={costUsdc}
+            costNativeFio={feeNativeFio}
+            costFio={fio}
+            costUsdc={usdc}
             title={name}
             type={BADGE_TYPES.WHITE}
           />
           <h5 className={classes.label}>Payment Details</h5>
           <PriceBadge
-            costFio={costFio}
-            costUsdc={costUsdc}
+            costNativeFio={feeNativeFio}
+            costFio={fio}
+            costUsdc={usdc}
             title="Total Cost"
             type={BADGE_TYPES.BLACK}
           />

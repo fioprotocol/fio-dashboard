@@ -17,7 +17,7 @@ import {
 import { roe as roeSelector } from '../registrations/selectors';
 
 import {
-  setFees as calculateFeeValues,
+  convertFioPrices,
   calculateBalances,
   calculateTotalBalances,
   DEFAULT_BALANCES,
@@ -53,7 +53,7 @@ export function* setFeesService() {
     const fees = yield select(feesSelector);
     const roe = yield select(roeSelector);
 
-    fees[endpoint] = calculateFeeValues(fee, roe);
+    fees[endpoint] = convertFioPrices(fee, roe);
     // @ts-ignore
     yield put(setFees(fees));
   });
@@ -66,7 +66,7 @@ export function* setFeesService() {
 
     for (const endpoint in fees) {
       if (endpoint == null) continue;
-      recalculatedFees[endpoint] = calculateFeeValues(
+      recalculatedFees[endpoint] = convertFioPrices(
         fees[endpoint].nativeFio,
         usdtRoe,
       );

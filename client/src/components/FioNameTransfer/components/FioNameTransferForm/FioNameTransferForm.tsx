@@ -14,6 +14,7 @@ import { ERROR_UI_TYPE } from '../../../Input/ErrorBadge';
 import { BADGE_TYPES } from '../../../Badge/Badge';
 
 import { useWalletBalances } from '../../../../util/hooks';
+import MathOp from '../../../../util/math';
 
 import { FormProps } from '../../types';
 
@@ -37,10 +38,12 @@ export const TransferForm = (props: FormProps) => {
 
   const { total: walletBalancesTotal } = useWalletBalances(publicKey);
 
-  const { costFio, costUsdc } = feePrice;
+  const { nativeFio: feeNativeFio, fio, usdc } = feePrice;
   const fioNameLabel = fioNameLabels[fioNameType];
   const hasLowBalance =
-    publicKey && feePrice && walletBalancesTotal.nativeFio < feePrice.costFio;
+    publicKey &&
+    feePrice &&
+    new MathOp(walletBalancesTotal.nativeFio).lt(feeNativeFio);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -86,8 +89,9 @@ export const TransferForm = (props: FormProps) => {
         />
         <p className={classes.label}>{fioNameLabel} Transfer Cost</p>
         <PriceBadge
-          costFio={costFio}
-          costUsdc={costUsdc}
+          costNativeFio={feeNativeFio}
+          costFio={fio}
+          costUsdc={usdc}
           title={`${fioNameLabel} Transfer Fee`}
           type={BADGE_TYPES.BLACK}
         />

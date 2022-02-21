@@ -12,10 +12,11 @@ import { totalCost } from '../../utils';
 
 import classes from './CheckoutPurchaseContainer.module.scss';
 
-const RenderTotalBadge = ({ costFio, costUsdc, costFree }) => (
+const RenderTotalBadge = ({ costNativeFio, costFree, costFio, costUsdc }) => (
   <PriceBadge
-    costFio={costFio}
+    costNativeFio={costNativeFio}
     costFree={costFree}
+    costFio={costFio}
     costUsdc={costUsdc}
     title="Total Cost"
     type={BADGE_TYPES.BLACK}
@@ -23,8 +24,8 @@ const RenderTotalBadge = ({ costFio, costUsdc, costFree }) => (
 );
 
 export const RenderCheckout = props => {
-  const { cart, walletBalances } = props;
-  const { costFio, costUsdc, costFree } = totalCost(cart);
+  const { cart, walletBalances, roe } = props;
+  const { costNativeFio, costFree, costFio, costUsdc } = totalCost(cart, roe);
 
   return (
     <>
@@ -36,9 +37,10 @@ export const RenderCheckout = props => {
       <div className={classes.details}>
         <h6 className={classes.subtitle}>Payment Details</h6>
         <RenderTotalBadge
+          costNativeFio={costNativeFio}
+          costFree={costFree}
           costFio={costFio}
           costUsdc={costUsdc}
-          costFree={costFree}
         />
         <PayWithBadge costFree={costFree} walletBalances={walletBalances} />
       </div>
@@ -47,19 +49,21 @@ export const RenderCheckout = props => {
 };
 
 export const RenderPurchase = props => {
-  const { hasErrors, regItems, errItems } = props;
+  const { hasErrors, regItems, errItems, roe } = props;
 
   const {
+    costNativeFio: regCostNativeFio,
+    costFree: regFree,
     costFio: regCostFio,
     costUsdc: regCostUsdc,
-    costFree: regFree,
-  } = totalCost(regItems);
+  } = totalCost(regItems, roe);
 
   const {
+    costNativeFio: errCostNativeFio,
+    costFree: errFree,
     costFio: errCostFio,
     costUsdc: errCostUsdc,
-    costFree: errFree,
-  } = totalCost(errItems);
+  } = totalCost(errItems, roe);
 
   let customTitle = 'Total Cost',
     customType = BADGE_TYPES.BLACK,
@@ -83,9 +87,10 @@ export const RenderPurchase = props => {
             <CartItem item={item} key={item.id} />
           ))}
           <RenderTotalBadge
+            costNativeFio={regCostNativeFio}
+            costFree={regFree}
             costFio={regCostFio}
             costUsdc={regCostUsdc}
-            costFree={regFree}
           />
         </div>
       )}
@@ -124,11 +129,12 @@ export const RenderPurchase = props => {
             ))}
             {!errFree && !allErrored && (
               <PriceBadge
-                costFio={errCostFio}
-                costUsdc={errCostUsdc}
+                costNativeFio={errCostNativeFio}
                 costFree={errFree}
                 title={customTitle}
                 type={customType}
+                costFio={errCostFio}
+                costUsdc={errCostUsdc}
               />
             )}
           </div>
