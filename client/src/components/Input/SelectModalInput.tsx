@@ -290,7 +290,10 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
   return (
     <div className={classes.regInputWrapper}>
       <Label label={label} uiType={uiType} />
-      <div className={classes.inputGroup} onClick={handleOpenModal}>
+      <div
+        className={classnames(classes.inputGroup, classes.cursorPointer)}
+        onClick={handleOpenModal}
+      >
         <div
           className={classnames(
             classes.regInput,
