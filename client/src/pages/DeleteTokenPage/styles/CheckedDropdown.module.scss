@@ -60,7 +60,7 @@
     text-align: left;
     padding: 9px 20px 9px 20px;
 
-    &:after {
+    &:before {
       content: ' ';
       position: absolute;
       width: calc(100% - 20px);
@@ -69,7 +69,7 @@
       border-bottom: 1px solid $light;
     }
 
-    &:last-child:after {
+    &:last-child:before {
       border: none;
     }
 
@@ -78,7 +78,7 @@
       background-color: $dark-gray;
     }
 
-    &:hover:after {
+    &:hover:before {
       border-color: $dark-gray;
     }
 
