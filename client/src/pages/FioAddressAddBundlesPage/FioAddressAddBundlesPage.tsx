@@ -57,12 +57,12 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
     getFee();
   }, []);
 
-  const { total: walletBalancesTotal } = useWalletBalances(
+  const { available: walletBalancesAvailable } = useWalletBalances(
     currentWallet.publicKey,
   );
 
   const hasLowBalance =
-    feePrice && new MathOp(walletBalancesTotal.nativeFio).lt(feeNativeFio);
+    feePrice && new MathOp(walletBalancesAvailable.nativeFio).lt(feeNativeFio);
 
   const onSubmit = () => {
     setSubmitData({
@@ -154,7 +154,7 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
             title="Total Cost"
             type={BADGE_TYPES.BLACK}
           />
-          <PayWithBadge walletBalances={walletBalancesTotal} />
+          <PayWithBadge walletBalances={walletBalancesAvailable} />
           <LowBalanceBadge hasLowBalance={hasLowBalance} />
           <SubmitButton
             onClick={onSubmit}

@@ -50,7 +50,7 @@ const CheckoutPage = props => {
     !hasFreeAddress &&
     cartItems[0].allowFree;
 
-  const { total: walletBalancesTotal } = useWalletBalances(
+  const { available: walletBalancesAvailable } = useWalletBalances(
     paymentWalletPublicKey,
   );
 
@@ -71,7 +71,7 @@ const CheckoutPage = props => {
     ) {
       history.push(ROUTES.CART);
     }
-  }, [walletBalancesTotal.nativeFio, paymentWalletPublicKey, loading]);
+  }, [walletBalancesAvailable.nativeFio, paymentWalletPublicKey, loading]);
 
   useEffect(() => {
     !isProcessing &&
@@ -94,7 +94,7 @@ const CheckoutPage = props => {
         <RenderCheckout
           cart={cartItems}
           isDesktop={isDesktop}
-          walletBalances={walletBalancesTotal}
+          walletBalances={walletBalancesAvailable}
           roe={roe}
         />
       </CheckoutPurchaseContainer>

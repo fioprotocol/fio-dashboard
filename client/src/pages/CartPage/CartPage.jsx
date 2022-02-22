@@ -40,7 +40,7 @@ const CartPage = props => {
     .sufToAmount(totalCartNativeAmount)
     .toFixed(2);
 
-  const { total: walletBalancesTotal } = useWalletBalances(
+  const { available: walletBalancesAvailable } = useWalletBalances(
     paymentWalletPublicKey,
   );
 
@@ -139,14 +139,14 @@ const CartPage = props => {
   }, []);
 
   const hasLowBalance =
-    !isEmpty(walletBalancesTotal) &&
-    new MathOp(walletBalancesTotal.nativeFio).lt(totalCartNativeAmount);
+    !isEmpty(walletBalancesAvailable) &&
+    new MathOp(walletBalancesAvailable.nativeFio).lt(totalCartNativeAmount);
 
   const additionalProps = {
     hasLowBalance,
     walletCount,
     setWallet,
-    walletBalancesTotal,
+    walletBalancesAvailable,
     isFree,
     totalCartAmount,
     isPriceChanged,
