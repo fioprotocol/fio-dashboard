@@ -74,7 +74,7 @@ export const PasteButton: React.FC<PasteButtonProps & DefaultProps> = ({
   uiType,
   isVisible,
 }) => {
-  if (!isVisible) return null;
+  if (!navigator.clipboard.readText || !isVisible) return null;
 
   return (
     <FontAwesomeIcon
