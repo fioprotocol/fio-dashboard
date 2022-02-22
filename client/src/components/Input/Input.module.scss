@@ -79,6 +79,10 @@
   }
 }
 
+.cursorPointer {
+  cursor: pointer;
+}
+
 .inputGroup {
   position: relative;
 
@@ -90,7 +94,6 @@
   }
 
   .selectModalInput {
-    cursor: pointer;
     pointer-events: none;
   }
 
