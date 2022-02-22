@@ -36,14 +36,14 @@ export const TransferForm = (props: FormProps) => {
   const [validating, setValidating] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(true);
 
-  const { total: walletBalancesTotal } = useWalletBalances(publicKey);
+  const { available: walletBalancesAvailable } = useWalletBalances(publicKey);
 
   const { nativeFio: feeNativeFio, fio, usdc } = feePrice;
   const fioNameLabel = fioNameLabels[fioNameType];
   const hasLowBalance =
     publicKey &&
     feePrice &&
-    new MathOp(walletBalancesTotal.nativeFio).lt(feeNativeFio);
+    new MathOp(walletBalancesAvailable.nativeFio).lt(feeNativeFio);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -95,7 +95,7 @@ export const TransferForm = (props: FormProps) => {
           title={`${fioNameLabel} Transfer Fee`}
           type={BADGE_TYPES.BLACK}
         />
-        <PayWithBadge walletBalances={walletBalancesTotal} />
+        <PayWithBadge walletBalances={walletBalancesAvailable} />
         <LowBalanceBadge hasLowBalance={hasLowBalance} />
         <SubmitButton
           text="Transfer Now"

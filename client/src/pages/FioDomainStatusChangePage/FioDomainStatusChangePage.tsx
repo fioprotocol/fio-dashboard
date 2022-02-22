@@ -44,7 +44,9 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
   const [processing, setProcessing] = useState(false);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
-  const { total: walletBalancesTotal } = useWalletBalances(fioWallet.publicKey);
+  const { available: walletBalancesAvailable } = useWalletBalances(
+    fioWallet.publicKey,
+  );
 
   useEffect(() => {
     getFee();
@@ -87,7 +89,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
 
   const hasLowBalance =
     feePrice &&
-    new MathOp(walletBalancesTotal.nativeFio).lt(feePrice.nativeFio);
+    new MathOp(walletBalancesAvailable.nativeFio).lt(feePrice.nativeFio);
 
   if (resultsData)
     return (

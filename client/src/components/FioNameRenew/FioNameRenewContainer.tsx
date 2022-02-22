@@ -50,7 +50,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   } | null>(null);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
-  const { total: walletBalancesTotal } = useWalletBalances(
+  const { available: walletBalancesAvailable } = useWalletBalances(
     currentWallet.publicKey,
   );
 
@@ -73,7 +73,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   const hasLowBalance =
     currentWallet &&
     feePrice &&
-    new MathOp(walletBalancesTotal.nativeFio).lt(feeNativeFio);
+    new MathOp(walletBalancesAvailable.nativeFio).lt(feeNativeFio);
 
   const onSubmit = () => {
     setSubmitData({ fioAddress: name });
@@ -153,7 +153,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
             title="Total Cost"
             type={BADGE_TYPES.BLACK}
           />
-          <PayWithBadge walletBalances={walletBalancesTotal} />
+          <PayWithBadge walletBalances={walletBalancesAvailable} />
           <LowBalanceBadge hasLowBalance={hasLowBalance} />
           <SubmitButton
             onClick={onSubmit}
