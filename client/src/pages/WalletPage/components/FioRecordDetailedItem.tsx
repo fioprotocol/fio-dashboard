@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import FioRecordDetailedActionButtons from './FioRecordDetailedAcctionButtons';
+import FioRecordDetailedActionButtons from './FioRecordDetailedActionButtons';
 import FioRecordFieldsList from './FioRecordFieldsList';
 import InfoBadge from '../../../components/Badges/InfoBadge/InfoBadge';
 

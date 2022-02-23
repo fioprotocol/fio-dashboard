@@ -13,7 +13,7 @@ import { FioRecordViewDecrypted } from '../types';
 
 import { FioWalletDoublet } from '../../../types';
 
-import classes from '../styles/FioRecordDetailedAcctionButtons.module.scss';
+import classes from '../styles/FioRecordDetailedActionButtons.module.scss';
 
 type Props = {
   fioRecordDecrypted: FioRecordViewDecrypted;
