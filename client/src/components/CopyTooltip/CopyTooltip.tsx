@@ -12,7 +12,7 @@ type Props = {
   placement?: Placement;
 };
 
-const CopyToolltip: React.FC<Props> = props => {
+const CopyTooltip: React.FC<Props> = props => {
   const { children, placement } = props;
   const [copyText, changeText] = useState(TOOLTIP_TEXT.default);
 
@@ -35,4 +35,4 @@ const CopyToolltip: React.FC<Props> = props => {
   );
 };
 
-export default CopyToolltip;
+export default CopyTooltip;

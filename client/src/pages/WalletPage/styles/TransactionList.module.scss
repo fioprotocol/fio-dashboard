@@ -52,15 +52,49 @@
         }
       }
 
-      .date, .amount, .txId {
+      .date, .amount {
         font-size: 1em;
         margin-top: 15px;
         @include sf-pro-display-medium;
       }
 
-      .txId {
-        word-break: break-all;
-        cursor: pointer;
+      .txContainer {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        margin-top: 15px;
+      
+        .txId, .title {
+          font-size: 1em;
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+
+        .title {
+          margin-right: 5px;
+          @include sf-pro-display-medium;
+        }
+
+        .txId {
+          margin-right: 20px;
+          @include sf-pro-display-regular;
+        }
+
+        a, div {
+          display: flex;
+        }
+
+        .actionButton {
+          width: 30px;
+          height: 30px;
+          padding: 6px;
+          background-color: $gray-main;
+          color: $white;
+          margin-right: 10px;
+          border-radius: 4px;
+          cursor: pointer;
+        }
       }
 
       .amount {
@@ -89,17 +123,20 @@
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
+        display: grid;
+        grid-template-columns: 130px 180px 250px 100px;
 
-        .date, .amount, .txId {
+        .date, .amount, .txContainer {
           margin-top: 0;
-          margin-left: 30px;
         }
 
-        .txId {
-          width: 400px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+        .amount {
+          margin-left: auto;
+        }
+
+        .txContainer {
+          display: grid;
+          grid-template-columns: 25px 115px 35px 35px;
         }
       }
     }

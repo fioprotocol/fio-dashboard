@@ -98,6 +98,8 @@
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
+        display: grid;
+        grid-template-columns: 100px 180px 250px 100px 30px;
 
         .date {
           margin-top: 0;
@@ -111,12 +113,13 @@
 
         .statusContainer {
           position: static;
-          margin: 0 25px 0 auto;
+          margin: 0 0 0 auto;
         }
 
         .iconArrow {
           align-self: center;
           cursor: pointer;
+          margin-left: auto;
         }
       }
     }

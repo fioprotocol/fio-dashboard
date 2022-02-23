@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Results from '../../index';
+import Results from '../../';
 import Badge, { BADGE_TYPES } from '../../../../Badge/Badge';
 
 import { fioNameLabels } from '../../../../../constants/labels';

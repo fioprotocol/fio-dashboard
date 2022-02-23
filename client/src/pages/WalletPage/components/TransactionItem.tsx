@@ -3,10 +3,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import CommonBadge from '../../../components/Badges/CommonBadge/CommonBadge';
-import CopyToolltip from '../../../components/CopyTooltip';
+import CopyTooltip from '../../../components/CopyTooltip';
 
 import apis from '../../../api';
-import { copyToClipboard, commonFormatTime } from '../../../util/general';
+import {
+  copyToClipboard,
+  commonFormatTime,
+  truncateTextInMiddle,
+} from '../../../util/general';
 
 import { TransactionItemProps } from '../../../types';
 
@@ -15,7 +19,7 @@ import classes from '../styles/TransactionList.module.scss';
 const TransactionItem: React.FC<TransactionItemProps> = props => {
   const { txId, nativeAmount, date } = props;
 
-  const onClick = () => {
+  const onCopyClick = () => {
     copyToClipboard(txId);
   };
 
@@ -46,11 +50,28 @@ const TransactionItem: React.FC<TransactionItemProps> = props => {
           <div className={classes.date}>
             {commonFormatTime(new Date(date * 1000).toISOString())}
           </div>
-          <CopyToolltip placement="top">
-            <div className={classes.txId} onClick={onClick}>
-              {txId}
-            </div>
-          </CopyToolltip>
+          <div className={classes.txContainer}>
+            <p className={classes.title}>ID: </p>
+            <p className={classes.txId}>{truncateTextInMiddle(txId)}</p>
+            <CopyTooltip placement="top">
+              <FontAwesomeIcon
+                className={classes.actionButton}
+                icon={{ prefix: 'far', iconName: 'copy' }}
+                onClick={onCopyClick}
+              />
+            </CopyTooltip>
+            <a
+              href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${txId}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FontAwesomeIcon
+                className={classes.actionButton}
+                icon="external-link-square-alt"
+                onClick={onCopyClick}
+              />
+            </a>
+          </div>
           <div className={classes.amount}>
             {`${apis.fio.sufToAmount(parseInt(nativeAmount, 10)).toFixed(2)}`}{' '}
             <span className={classes.currencyCode}>FIO</span>

@@ -26,15 +26,15 @@ const INFO_MESSAGE_TEXT = {
 const FioDomainStatusChangeForm: React.FC<FormProps> = props => {
   const {
     statusToChange,
-    fioWallet,
     feePrice,
     name,
     hasLowBalance,
     processing,
+    walletBalancesAvailable,
     handleSubmit,
   } = props;
 
-  const { costFio, costUsdc } = feePrice;
+  const { nativeFio: feeNativeFio, fio, usdc } = feePrice;
 
   return (
     <PseudoModalContainer
@@ -60,14 +60,15 @@ const FioDomainStatusChangeForm: React.FC<FormProps> = props => {
         <h5 className={classes.label}>Change Change Cost</h5>
         <div className={classes.badge}>
           <PriceBadge
-            costFio={costFio}
-            costUsdc={costUsdc}
+            costNativeFio={feeNativeFio}
+            costFio={fio}
+            costUsdc={usdc}
             type={BADGE_TYPES.BLACK}
             title="Status Change Fee"
           />
         </div>
 
-        <PayWithBadge currentWallet={fioWallet} />
+        <PayWithBadge walletBalances={walletBalancesAvailable} />
         <LowBalanceBadge hasLowBalance={hasLowBalance} />
         <SubmitButton
           onClick={handleSubmit}

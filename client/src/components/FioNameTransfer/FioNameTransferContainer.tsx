@@ -18,7 +18,7 @@ import {
 import { ACTIONS } from '../../constants/fio';
 
 import { hasFioAddressDelimiter, isDomain } from '../../utils';
-import { setFees } from '../../util/prices';
+import { convertFioPrices } from '../../util/prices';
 
 import apis from '../../api';
 
@@ -62,9 +62,11 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   } | null>(null);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
+  const { publicKey, edgeId } = currentWallet;
+
   useEffect(() => {
     getFee(hasFioAddressDelimiter(name));
-    refreshBalance(currentWallet.publicKey);
+    refreshBalance(publicKey);
   }, []);
 
   useEffect(() => {
@@ -119,7 +121,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   }) => {
     setSubmitData(null);
     setResultsData({
-      feeCollected: setFees(result.fee_collected, roe) || feePrice,
+      feeCollected: convertFioPrices(result.fee_collected, roe) || feePrice,
       name,
       publicKey: result.newOwnerKey || result.newOwnerFioAddress,
     });
@@ -151,7 +153,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
       />
     );
 
-  if (!currentWallet.publicKey && !processing)
+  if (!publicKey && !processing)
     return <Redirect to={{ pathname: FIO_NAME_DATA[fioNameType].backLink }} />;
 
   const title = `Transfer ${fioNameLabels[fioNameType]} Ownership`;
@@ -166,7 +168,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
         processing={processing}
         data={submitData}
         submitAction={submit}
-        fioWalletEdgeId={currentWallet.edgeId || ''}
+        fioWalletEdgeId={edgeId || ''}
         edgeAccountLogoutBefore={true}
       />
       <PseudoModalContainer
@@ -185,6 +187,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
             onSubmit={onSubmit}
             processing={processing || submitting}
             feePrice={feePrice}
+            publicKey={publicKey}
           />
         </div>
       </PseudoModalContainer>

@@ -9,6 +9,7 @@ import { RegisterAddressError } from '../util/errors';
 
 import { FIO_REQUEST_STATUS_TYPES } from '../constants/fio';
 import { CHAIN_CODES } from '../constants/common';
+import { convertFioPrices } from './prices';
 
 import {
   NftTokenResponse,
@@ -106,8 +107,7 @@ export const transformResult = ({
   const updatedCart = [...cart];
 
   const {
-    fio: { address: addressCostFio, domain: domainCostFio },
-    usdt: { address: addressCostUsdc, domain: domainCostUsdc },
+    nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
   } = prices;
 
   if (!isEmpty(errors)) {
@@ -140,22 +140,21 @@ export const transformResult = ({
             ) &&
             partialIndex < 0
           ) {
-            retObj.costFio = new MathOp(addressCostFio)
-              .add(domainCostFio)
-              .toNumber();
-            retObj.costUsdc = new MathOp(addressCostUsdc)
-              .add(domainCostUsdc)
+            retObj.costNativeFio = new MathOp(nativeFioAddressPrice)
+              .add(nativeFioDomainPrice)
               .toNumber();
           } else {
-            retObj.costFio = addressCostFio;
-            retObj.costUsdc = addressCostUsdc;
+            retObj.costNativeFio = nativeFioAddressPrice;
           }
         }
       } else {
         retObj.domain = fioName;
-        retObj.costFio = domainCostFio;
-        retObj.costUsdc = domainCostUsdc;
+        retObj.costNativeFio = nativeFioDomainPrice;
       }
+
+      const fioPrices = convertFioPrices(retObj.costNativeFio, roe);
+      retObj.costFio = fioPrices.fio;
+      retObj.costUsdc = fioPrices.usdc;
 
       errItems.push(retObj);
       if (partialIndex > 0) {
@@ -184,14 +183,16 @@ export const transformResult = ({
         if (isFree) {
           retObj.isFree = isFree;
         } else {
-          retObj.costFio = apis.fio.sufToAmount(fee_collected);
-          retObj.costUsdc = apis.fio.convertFioToUsdc(fee_collected, roe);
+          retObj.costNativeFio = fee_collected;
         }
       } else {
         retObj.domain = fioName;
-        retObj.costFio = apis.fio.sufToAmount(fee_collected);
-        retObj.costUsdc = apis.fio.convertFioToUsdc(fee_collected, roe);
+        retObj.costNativeFio = fee_collected;
       }
+
+      const fioPrices = convertFioPrices(fee_collected, roe);
+      retObj.costFio = fioPrices.fio;
+      retObj.costUsdc = fioPrices.usdc;
 
       regItems.push(retObj);
 
@@ -250,17 +251,17 @@ export const convertPrices = (prices: IncomePrices): { pricing: Prices } => {
   };
 
   pricing.fio = {
-    address: apis.fio.sufToAmount(pricing.fioNative.address),
-    domain: apis.fio.sufToAmount(pricing.fioNative.domain),
+    address: apis.fio.sufToAmount(pricing.nativeFio.address),
+    domain: apis.fio.sufToAmount(pricing.nativeFio.domain),
   };
 
   pricing.usdt = {
     address: apis.fio.convertFioToUsdc(
-      pricing.fioNative.address,
+      pricing.nativeFio.address,
       pricing.usdtRoe,
     ),
     domain: apis.fio.convertFioToUsdc(
-      pricing.fioNative.domain,
+      pricing.nativeFio.domain,
       pricing.usdtRoe,
     ),
   };

@@ -22,7 +22,7 @@ import { FIO_RECORD_TYPES } from '../WalletPage/constants';
 import { useFioAddresses } from '../../util/hooks';
 
 import classes from './styles/SendPage.module.scss';
-import { setFees } from '../../util/prices';
+import { convertFioPrices } from '../../util/prices';
 
 const SendPage: React.FC<ContainerProps> = props => {
   const {
@@ -83,7 +83,7 @@ const SendPage: React.FC<ContainerProps> = props => {
     setSendData(null);
     setProcessing(false);
     setResultsData({
-      feeCollected: setFees(res.fee_collected, roe),
+      feeCollected: convertFioPrices(res.fee_collected, roe),
       bundlesCollected: res.bundlesCollected,
       name: fioWallet.publicKey,
       publicKey: fioWallet.publicKey,

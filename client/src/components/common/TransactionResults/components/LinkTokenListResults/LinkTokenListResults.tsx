@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
-import Results from '../../Results';
+import Results from '../../';
 import TokenBadge from '../../../../Badges/TokenBadge/TokenBadge';
 import FioName from '../../../FioName/FioName';
 import BundledTransactionBadge from '../../../../Badges/BundledTransactionBadge/BundledTransactionBadge';

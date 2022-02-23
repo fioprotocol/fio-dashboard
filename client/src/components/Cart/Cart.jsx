@@ -25,19 +25,17 @@ const Cart = props => {
     hasLowBalance,
     walletCount,
     totalCartAmount,
-    selectedWallet,
+    walletBalancesAvailable,
     prices,
     recalculate,
     isPriceChanged,
+    roe,
   } = props;
   const count = cartItems.length;
   const isCartEmpty = count === 0;
 
   const walletBalance =
-    (!isEmpty(selectedWallet) &&
-      selectedWallet.balance !== null &&
-      +parseFloat(selectedWallet.balance).toFixed(2)) ||
-    0;
+    (!isEmpty(walletBalancesAvailable) && walletBalancesAvailable.fio) || 0;
 
   const handleDeleteItem = id => {
     deleteCartItem({
@@ -46,6 +44,7 @@ const Cart = props => {
       deleteItem,
       cartItems,
       recalculate,
+      roe,
     });
   };
 
@@ -53,7 +52,7 @@ const Cart = props => {
     buttonText: 'Make Deposit',
     messageText: `There are not
             enough FIO tokens in this FIO Wallet to complete the purchase.
-            Needed: ${totalCartAmount.toFixed(2)} FIO, available in wallet:
+            Needed: ${totalCartAmount} FIO, available in wallet:
             ${walletBalance} FIO. Please add FIO tokens.`,
   };
 

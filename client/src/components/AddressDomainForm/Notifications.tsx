@@ -10,6 +10,7 @@ import { ADDRESS_DOMAIN_BADGE_TYPE } from '../AddressDomainBadge/AddressDomainBa
 import InfoBadge from '../InfoBadge/InfoBadge';
 import { deleteCartItem, isFreeDomain } from '../../utils';
 import MathOp from '../../util/math';
+import { convertFioPrices } from '../../util/prices';
 
 import { CartItem, Domain, DeleteCartItem, Prices } from '../../types';
 
@@ -52,6 +53,7 @@ type Props = {
   showPrice: () => string;
   isDesktop: boolean;
   toggleShowAvailable: (isAvailable: boolean) => boolean;
+  roe: number;
 };
 
 const Notifications = (props: Props, ref: React.Ref<HTMLDivElement | null>) => {
@@ -69,6 +71,7 @@ const Notifications = (props: Props, ref: React.Ref<HTMLDivElement | null>) => {
     showAvailable,
     type,
     isDesktop,
+    roe,
     addItem,
     deleteItem,
     recalculate,
@@ -88,8 +91,7 @@ const Notifications = (props: Props, ref: React.Ref<HTMLDivElement | null>) => {
 
   const { address, domain: domainName } = values || {};
   const {
-    usdt: { domain: domainPrice, address: addressPrice },
-    fio: { domain: fioDomainPrice, address: fioAddressPrice },
+    nativeFio: { address: natvieFioAddressPrice, domain: nativeFioDomainPrice },
   } = prices;
 
   const hasOnlyDomain =
@@ -99,25 +101,25 @@ const Notifications = (props: Props, ref: React.Ref<HTMLDivElement | null>) => {
         !item.address && item.domain === domainName.toLowerCase(),
     );
   const hasErrors = !isEmpty(errors);
-  let costUsdc = 0;
-  let costFio = 0;
+
+  let costNativeFio = 0;
 
   if (!isFree && isAddress) {
-    costUsdc = isAddress ? addressPrice : domainPrice;
-    costFio = isAddress ? fioAddressPrice : fioDomainPrice;
+    costNativeFio = isAddress ? natvieFioAddressPrice : nativeFioDomainPrice;
   }
   if (hasCustomDomain) {
-    costUsdc = costUsdc
-      ? new MathOp(costUsdc).add(domainPrice).toNumber()
-      : domainPrice;
-    costFio = costFio
-      ? new MathOp(costFio).add(fioDomainPrice).toNumber()
-      : fioDomainPrice;
+    costNativeFio = costNativeFio
+      ? new MathOp(costNativeFio).add(nativeFioDomainPrice).toNumber()
+      : nativeFioDomainPrice;
   }
   if (!isFree && currentCartItem) {
-    costFio = currentCartItem.costFio;
-    costUsdc = currentCartItem.costUsdc;
+    costNativeFio = currentCartItem.costNativeFio;
   }
+
+  const fioPrices = convertFioPrices(costNativeFio, roe);
+
+  const costFio = fioPrices.fio;
+  const costUsdc = fioPrices.usdc;
 
   const addItemToCart = () => {
     let id = '';
@@ -127,28 +129,35 @@ const Notifications = (props: Props, ref: React.Ref<HTMLDivElement | null>) => {
 
     id += domainName;
 
-    const data: CartItem = {
+    const newCartItem: CartItem = {
       ...values,
       id,
       allowFree: isFreeDomain({ domains, domain: domainName }),
     };
 
     if ((address && hasCustomDomain) || hasOnlyDomain)
-      data.hasCustomDomain = true;
-    if (costFio && costFio > 0) data.costFio = costFio;
-    if (costUsdc && costUsdc > 0) data.costUsdc = costUsdc;
+      newCartItem.hasCustomDomain = true;
+    if (costNativeFio && costNativeFio > 0)
+      newCartItem.costNativeFio = costNativeFio;
     if (address && hasOnlyDomain) {
-      data.costFio = new MathOp(data.costFio).add(fioDomainPrice).toNumber();
-      data.costUsdc = new MathOp(data.costFio).add(domainPrice).toNumber();
+      newCartItem.costNativeFio = new MathOp(newCartItem.costNativeFio)
+        .add(nativeFioDomainPrice)
+        .toNumber();
+      const recalcFioPrices = convertFioPrices(newCartItem.costNativeFio, roe);
+      newCartItem.costFio = recalcFioPrices.fio;
+      newCartItem.costUsdc = recalcFioPrices.usdc;
 
       recalculate([
         ...cartItems.filter(
           (item: CartItem) => item.domain !== domainName.toLowerCase(),
         ),
-        data,
+        newCartItem,
       ]);
     } else {
-      addItem(data);
+      const addItemFioPrices = convertFioPrices(newCartItem.costNativeFio, roe);
+      newCartItem.costFio = addItemFioPrices.fio;
+      newCartItem.costUsdc = addItemFioPrices.usdc;
+      addItem(newCartItem);
     }
   };
 
@@ -215,12 +224,8 @@ const Notifications = (props: Props, ref: React.Ref<HTMLDivElement | null>) => {
               'FREE'
             ) : (
               <>
-                {costFio && costFio.toFixed(2)} FIO{' '}
-                {costUsdc && (
-                  <span className={classes.usdcAmount}>
-                    ({costUsdc.toFixed(2)} USDC)
-                  </span>
-                )}
+                {costFio} FIO{' '}
+                <span className={classes.usdcAmount}>({costUsdc} USDC)</span>
               </>
             )}
           </p>
@@ -255,6 +260,7 @@ const Notifications = (props: Props, ref: React.Ref<HTMLDivElement | null>) => {
                     deleteItem,
                     cartItems,
                     recalculate,
+                    roe,
                   });
                   toggleShowAvailable(false);
                 }}
