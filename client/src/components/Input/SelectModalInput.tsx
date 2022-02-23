@@ -43,19 +43,23 @@ type Props = {
   hasThinText?: boolean;
   modalTitle?: string;
   modalSubTitle?: string;
+  handleConfirmValidate?: (
+    val: string,
+  ) => Promise<{
+    succeeded: boolean;
+    message: string;
+  }>;
 };
 
 type ModalProps = {
   show?: boolean;
-  hasError?: boolean;
   subTitle?: string;
   title?: string;
-  optionsList?: string[];
+  options?: string[];
   handleClose?: () => void;
-  clearInputFn?: () => void;
-  isInputHasValue?: boolean;
   isBW?: boolean;
   inputRef: MutableRefObject<HTMLInputElement>;
+  onHide?: () => void;
 };
 
 const SelectModal: React.FC<Props &
@@ -65,7 +69,7 @@ const SelectModal: React.FC<Props &
     input,
     meta,
     modalPlaceholder,
-    onClose,
+    handleConfirmValidate,
     showPasteButton,
     loading,
     uiType,
@@ -79,20 +83,66 @@ const SelectModal: React.FC<Props &
     disabled,
     showErrorBorder,
     isLowHeight,
-    optionsList = [],
+    options = [],
     show,
-    hasError,
-    handleClose,
-    clearInputFn,
-    isInputHasValue,
+    onHide,
     isBW,
     inputRef,
     placeholder,
     ...rest
   } = props;
 
-  const { type, value, onChange } = input;
-  const { error, data, submitError } = meta;
+  const { type, value = '', onChange } = input;
+  const { data } = meta;
+
+  const [inputValue, setInputValue] = useState(value);
+  const [optionsList, setOptionsList] = useState(options);
+  const [confirmError, setConfirmError] = useState(null);
+  const [isDirtyInputState, setIsDirtyInputState] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!inputValue) {
+      setOptionsList(options);
+    } else
+      setOptionsList(
+        options.filter((o: string) => {
+          return o.includes(inputValue);
+        }),
+      );
+  }, [inputValue, options]);
+
+  useEffect(() => {
+    if (inputValue !== value) setInputValue(value);
+  }, [value, show]);
+
+  const handleClose = () => {
+    if (isLoading) return;
+
+    onHide();
+    setConfirmError(null);
+    setIsDirtyInputState(false);
+  };
+
+  const handleConfirm = async () => {
+    if (handleConfirmValidate) {
+      setIsLoading(true);
+      const validationResult = await handleConfirmValidate(inputValue);
+      if (validationResult.succeeded) {
+        onChange(inputValue);
+        handleClose();
+      } else {
+        setConfirmError(validationResult.message);
+      }
+      setIsLoading(false);
+    } else {
+      onChange(inputValue);
+      handleClose();
+    }
+  };
+
+  const isInputHasValue = inputValue.length > 0;
+  const hasError = confirmError && isDirtyInputState;
 
   return (
     <Modal
@@ -123,16 +173,21 @@ const SelectModal: React.FC<Props &
                   debounceTimeout={0}
                   {...input}
                   {...rest}
+                  value={inputValue}
                   onChange={e => {
-                    const currentValue = e.target.value;
-                    if (lowerCased) return onChange(currentValue.toLowerCase());
-                    if (upperCased) return onChange(currentValue.toUpperCase());
-                    onChange(currentValue);
+                    const currentValue = e.target.value || '';
+                    if (lowerCased)
+                      return setInputValue(currentValue.toLowerCase());
+                    if (upperCased)
+                      return setInputValue(currentValue.toUpperCase());
+                    setInputValue(currentValue);
                   }}
                   onKeyDown={e => {
+                    setConfirmError(null);
+                    setIsDirtyInputState(true);
                     if (e.key === 'Enter') {
                       inputRef.current.blur();
-                      if (!error) handleClose();
+                      handleConfirm();
                     }
                   }}
                   type="text"
@@ -142,20 +197,22 @@ const SelectModal: React.FC<Props &
               </div>
               <ClearButton
                 isVisible={
-                  (isInputHasValue || onClose) && !disabled && !loading
+                  isInputHasValue && !disabled && !isLoading && !loading
                 }
-                onClear={clearInputFn}
-                onClose={onClose}
+                onClear={() => {
+                  setInputValue('');
+                  setConfirmError(null);
+                }}
                 inputType={type}
                 isBW={isBW}
                 disabled={disabled}
                 uiType={uiType}
               />
               <PasteButton
-                isVisible={showPasteButton && !value}
+                isVisible={showPasteButton && !inputValue}
                 onClick={async () => {
                   try {
-                    onChange(await getValueFromPaste());
+                    setInputValue(await getValueFromPaste());
                     inputRef.current.focus();
                   } catch (e) {
                     console.error('Paste error: ', e);
@@ -163,23 +220,23 @@ const SelectModal: React.FC<Props &
                 }}
                 uiType={uiType}
               />
+              <LoadingIcon isVisible={isLoading} uiType={uiType} />
             </div>
             <ErrorBadge
               useVisibility
-              error={error}
+              error={confirmError}
               data={data}
               hasError={hasError}
               type={errorType}
               color={errorColor}
-              submitError={submitError}
             />
           </div>
 
           <div className="d-flex justify-content-center align-items-center mt-0 mb-4">
             <SubmitButton
               text="Done"
-              onClick={handleClose}
-              disabled={value == null || value === ''}
+              onClick={handleConfirm}
+              disabled={inputValue === '' || confirmError || isLoading}
             />
           </div>
 
@@ -210,6 +267,7 @@ const SelectModal: React.FC<Props &
     </Modal>
   );
 };
+
 const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
   const {
     input,
@@ -227,6 +285,7 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     label,
     options = [],
     placeholder,
+    handleConfirmValidate,
   } = props;
   const {
     error,
@@ -239,29 +298,16 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     submitSucceeded,
   } = meta;
 
-  const { value, onChange } = input;
+  const { value } = input;
   const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
 
   const modalInputRef = useRef<HTMLInputElement>(null);
 
   const [showModal, toggleShowModal] = useState(false);
-  const [optionsList, setOptionsList] = useState(options);
-  const [isInputHasValue, toggleIsInputHasValue] = useState(value !== '');
 
   useEffect(() => {
     if (showModal) modalInputRef.current.focus();
   }, [showModal]);
-
-  useEffect(() => {
-    if (!value) {
-      setOptionsList(options);
-    } else
-      setOptionsList(
-        options.filter((o: string) => {
-          return o.includes(value);
-        }),
-      );
-  }, [value, options]);
 
   const handleCloseModal = () => {
     toggleShowModal(false);
@@ -278,14 +324,6 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
       (touched || modified || submitSucceeded || !!value) &&
       !active) ||
       (submitError && !modifiedSinceLastSubmit));
-  useEffect(() => {
-    toggleIsInputHasValue(value !== '');
-  });
-
-  const clearInputFn = () => {
-    onChange('');
-    modalInputRef.current.focus();
-  };
 
   return (
     <div className={classes.regInputWrapper}>
@@ -342,13 +380,11 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
       <SelectModal
         {...props}
         show={showModal}
-        optionsList={optionsList}
+        options={options}
         inputRef={modalInputRef}
-        handleClose={handleCloseModal}
-        clearInputFn={clearInputFn}
-        isInputHasValue={isInputHasValue}
+        onHide={handleCloseModal}
+        handleConfirmValidate={handleConfirmValidate}
         isBW={isBW}
-        hasError={hasError}
       />
     </div>
   );

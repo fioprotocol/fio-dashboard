@@ -14,8 +14,9 @@ import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 
 import { submitValidation, formValidation } from './validation';
-import { hasFioAddressDelimiter } from '../../../../utils';
+import { hasFioAddressDelimiter, minWaitTimeFunction } from '../../../../utils';
 import { useWalletBalances } from '../../../../util/hooks';
+import { fioAddressExistsValidator } from '../../../../util/validators';
 import MathOp from '../../../../util/math';
 
 import apis from '../../../../api';
@@ -57,6 +58,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
       {(formRenderProps: FormRenderProps) => {
         const {
           values: { from, to, amount, memo },
+          values,
           validating,
         } = formRenderProps;
 
@@ -143,6 +145,20 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               disabled={loading}
               loading={validating}
               label="Send to Address"
+              handleConfirmValidate={(value: string) =>
+                minWaitTimeFunction(
+                  () =>
+                    fioAddressExistsValidator({
+                      value,
+                      values,
+                      message: 'FIO Crypto Handle is not valid / not exist',
+                      customArgs: {
+                        fieldIdToCompare: 'fromPubKey',
+                      },
+                    }),
+                  500,
+                )
+              }
             />
 
             <Field
