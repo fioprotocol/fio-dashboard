@@ -324,7 +324,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
           this.setState({ keys: getWalletKeys([fioWallet]) });
           await account.logout();
           let stateData: EmailConfirmationStateData = {
-            redirectLink: redirectLink.pathname,
+            redirectLink: redirectLink ? redirectLink.pathname : '',
           };
           if (isRefFlow) {
             stateData = {
