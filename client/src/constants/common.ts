@@ -513,3 +513,5 @@ export const CHAIN_CODE_LIST = [
   { id: 'TRX', name: 'TRON' },
   { id: 'WAX', name: 'WAXP' },
 ];
+
+export const DEFAULT_TEXT_TRUNCATE_LENGTH = 5;
