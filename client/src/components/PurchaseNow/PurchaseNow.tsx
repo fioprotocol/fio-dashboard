@@ -84,7 +84,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
       const results = await executeRegistration(
         cartItems,
         walletKeys[currentWallet.edgeId],
-        prices.fioNative,
+        prices.nativeFio,
         { pin: walletKeys[currentWallet.edgeId].public }, // todo: change to other verification method
         refProfileInfo != null ? refProfileInfo.code : '',
       );
@@ -117,7 +117,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
           public: currentWallet.publicKey,
           private: '',
         },
-        prices.fioNative,
+        prices.nativeFio,
         verifyParams,
         refProfileInfo != null ? refProfileInfo.code : '',
       );
@@ -133,7 +133,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   const purchase = () => {
     setWaiting(true);
     for (const item of cartItems) {
-      if (item.costFio) {
+      if (item.costNativeFio) {
         return showPinModal(CONFIRM_PIN_ACTIONS.PURCHASE);
       }
     }

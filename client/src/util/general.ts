@@ -1,4 +1,5 @@
 import { WALLET_NAME_REGEX } from '../constants/regExps';
+import { DEFAULT_TEXT_TRUNCATE_LENGTH } from '../constants/common';
 
 export async function copyToClipboard(text: string) {
   // mobile workaround because mobile devices don't have clipboard object in navigator
@@ -127,4 +128,22 @@ export const getUTCDate = (dateString: string) => {
     date.getMinutes(),
     date.getSeconds(),
   );
+};
+
+export const truncateTextInMiddle = (
+  text: string,
+  startChar: number = DEFAULT_TEXT_TRUNCATE_LENGTH,
+  endChar: number = DEFAULT_TEXT_TRUNCATE_LENGTH,
+) => {
+  if (
+    text.length < startChar ||
+    text.length < endChar ||
+    (text.length - endChar < endChar + 1 &&
+      text.length - startChar < startChar + 1)
+  )
+    return text;
+  const start = text.substring(0, startChar);
+  const end = text.substring(text.length - endChar, text.length);
+
+  return start + '...' + end;
 };

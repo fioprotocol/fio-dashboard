@@ -18,7 +18,11 @@ import classes from './styles/Results.module.scss';
 const Results: React.FC<ResultsContainerProps> = props => {
   const {
     results: {
-      feeCollected: { costFio, costUsdc } = { costFio: 0, costUsdc: 0 },
+      feeCollected: { nativeFio, fio, usdc } = {
+        nativeFio: 0,
+        costFio: '0',
+        costUsdc: '0',
+      },
       bundlesCollected = 0,
       error,
     },
@@ -38,16 +42,17 @@ const Results: React.FC<ResultsContainerProps> = props => {
   }, []);
 
   const paymentDetailsTitle = () => {
-    if (!costFio && !bundlesCollected) return null;
+    if (!nativeFio && !bundlesCollected) return null;
 
     return <p className={classes.label}>Payment Details</p>;
   };
   const totalCost = () => {
-    if (!costFio) return null;
+    if (!nativeFio) return null;
     return (
       <PriceBadge
-        costFio={costFio}
-        costUsdc={costUsdc}
+        costNativeFio={nativeFio}
+        costFio={fio}
+        costUsdc={usdc}
         title="Total Cost"
         type={BADGE_TYPES.BLACK}
       />

@@ -14,6 +14,7 @@ import {
   domains,
   prices,
   isProcessing,
+  roe,
 } from '../../redux/registrations/selectors';
 
 import CheckoutPage from './CheckoutPage';
@@ -29,6 +30,7 @@ const reduxConnect = connect(
     domains,
     hasFreeAddress,
     isProcessing,
+    roe,
   }),
   {
     refreshBalance,

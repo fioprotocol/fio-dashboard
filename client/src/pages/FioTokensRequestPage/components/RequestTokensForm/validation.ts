@@ -9,6 +9,8 @@ import {
 } from '../../../../util/validators';
 
 import { MAX_MEMO_SIZE } from '../../../../constants/fio';
+const MAX_TOKEN_LENGTH = 10;
+const MAX_CHAIN_LENGTH = 10;
 
 const validationSchema: ValidationSchema = {
   field: {
@@ -50,8 +52,22 @@ const validationSchema: ValidationSchema = {
         message: 'Required.',
       },
     ],
-    tokenCode: [Validators.required],
-    chainCode: [Validators.required],
+    tokenCode: [
+      Validators.required,
+      {
+        validator: Validators.maxLength,
+        customArgs: { length: MAX_TOKEN_LENGTH },
+        message: 'Please enter valid token code, the max length is {{length}}',
+      },
+    ],
+    chainCode: [
+      Validators.required,
+      {
+        validator: Validators.maxLength,
+        customArgs: { length: MAX_CHAIN_LENGTH },
+        message: 'Please enter valid chain code, the max length is {{length}}',
+      },
+    ],
     memo: [
       {
         validator: Validators.maxLength,

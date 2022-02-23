@@ -13,6 +13,9 @@ import { fioNameLabels } from '../../../../constants/labels';
 import { ERROR_UI_TYPE } from '../../../Input/ErrorBadge';
 import { BADGE_TYPES } from '../../../Badge/Badge';
 
+import { useWalletBalances } from '../../../../util/hooks';
+import MathOp from '../../../../util/math';
+
 import { FormProps } from '../../types';
 
 import classes from '../../FioNameTransferContainer.module.scss';
@@ -24,7 +27,7 @@ export const TransferForm = (props: FormProps) => {
     fioNameType,
     name,
     feePrice,
-    currentWallet,
+    publicKey,
     onSubmit,
     processing,
   } = props;
@@ -33,10 +36,14 @@ export const TransferForm = (props: FormProps) => {
   const [validating, setValidating] = useState<boolean>(false);
   const [valid, setValid] = useState<boolean>(true);
 
-  const { costFio, costUsdc } = feePrice;
+  const { available: walletBalancesAvailable } = useWalletBalances(publicKey);
+
+  const { nativeFio: feeNativeFio, fio, usdc } = feePrice;
   const fioNameLabel = fioNameLabels[fioNameType];
   const hasLowBalance =
-    currentWallet && feePrice && currentWallet.balance < feePrice.costFio;
+    publicKey &&
+    feePrice &&
+    new MathOp(walletBalancesAvailable.nativeFio).lt(feeNativeFio);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -82,12 +89,13 @@ export const TransferForm = (props: FormProps) => {
         />
         <p className={classes.label}>{fioNameLabel} Transfer Cost</p>
         <PriceBadge
-          costFio={costFio}
-          costUsdc={costUsdc}
+          costNativeFio={feeNativeFio}
+          costFio={fio}
+          costUsdc={usdc}
           title={`${fioNameLabel} Transfer Fee`}
           type={BADGE_TYPES.BLACK}
         />
-        <PayWithBadge currentWallet={currentWallet} />
+        <PayWithBadge walletBalances={walletBalancesAvailable} />
         <LowBalanceBadge hasLowBalance={hasLowBalance} />
         <SubmitButton
           text="Transfer Now"

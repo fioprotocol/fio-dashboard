@@ -3,33 +3,21 @@ import classnames from 'classnames';
 
 import { useCheckIfDesktop } from '../../../screenType';
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
-import { useConvertFioToUsdc } from '../../../util/hooks';
 
-import { FioWalletDoublet } from '../../../types';
+import { WalletBalancesItem } from '../../../types';
 
 import classes from './PayWithBadge.module.scss';
 
 type Props = {
   costFree?: boolean;
-  currentWallet: FioWalletDoublet;
+  walletBalances: WalletBalancesItem;
 };
 
 const PayWithBadge: React.FC<Props> = props => {
-  const { costFree, currentWallet } = props;
+  const { costFree, walletBalances } = props;
   const isDesktop = useCheckIfDesktop();
 
-  const walletUsdc = useConvertFioToUsdc({
-    fioAmount: currentWallet?.balance || 0,
-  });
-
   if (costFree) return null;
-
-  const renderWalletBalance = () => {
-    const wallet = (currentWallet && currentWallet.balance) || 0;
-
-    return `${wallet && wallet.toFixed(2)} FIO / ${walletUsdc &&
-      walletUsdc.toFixed(2)} USDC`;
-  };
 
   return (
     <>
@@ -50,7 +38,8 @@ const PayWithBadge: React.FC<Props> = props => {
               <span className="boldText">FIO Wallet</span>
             </p>
             <p className={classes.balance}>
-              (Available Balance {renderWalletBalance()})
+              (Available Balance {walletBalances.fio} FIO /{' '}
+              {walletBalances.usdc} USDC)
             </p>
           </div>
         </div>

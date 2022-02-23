@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Results from '../Results';
+import Results from '../';
 import BundledTransactionBadge from '../../../Badges/BundledTransactionBadge/BundledTransactionBadge';
 import FioRecordFieldsList from '../../../../pages/WalletPage/components/FioRecordFieldsList';
 

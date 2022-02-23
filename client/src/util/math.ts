@@ -79,6 +79,24 @@ class MathOp {
     }
   }
 
+  gt(x: BigSource) {
+    try {
+      return Big(this.value).gt(x);
+    } catch (err) {
+      console.error(err);
+      return this.value > x;
+    }
+  }
+
+  lt(x: BigSource) {
+    try {
+      return Big(this.value).lt(x);
+    } catch (err) {
+      console.error(err);
+      return this.value < x;
+    }
+  }
+
   toNumber() {
     try {
       return Big(this.value).toNumber();

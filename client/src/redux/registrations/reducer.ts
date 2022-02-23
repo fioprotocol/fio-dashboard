@@ -6,7 +6,7 @@ import { Domain, Prices } from '../../types';
 
 const PRICES_DEFAULT: Prices = {
   fio: { address: 0, domain: 0 },
-  fioNative: { address: 0, domain: 0 },
+  nativeFio: { address: 0, domain: 0 },
   usdt: { address: 0, domain: 0 },
 };
 

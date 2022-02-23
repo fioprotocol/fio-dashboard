@@ -16,6 +16,8 @@ import PublicKeyField from './PublicKeyField';
 import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 
 import { formValidation, submitValidation } from './validation';
+import { minWaitTimeFunction } from '../../../../utils';
+import { fioAddressExistsValidator } from '../../../../util/validators';
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { CHAIN_CODE_LIST } from '../../../../constants/common';
@@ -89,6 +91,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
         const {
           values: { payeeFioAddress, chainCode, tokenCode, mapPubAddress },
           validating,
+          values,
         } = formRenderProps;
 
         const onPayeeFioAddressChange = (val: string) => {
@@ -203,6 +206,21 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               disabled={loading}
               loading={validating}
               label="Request From"
+              handleConfirmValidate={(value: string) =>
+                minWaitTimeFunction(
+                  () =>
+                    fioAddressExistsValidator({
+                      value,
+                      values,
+                      message: 'FIO Crypto Handle is not valid / not exist',
+                      customArgs: {
+                        fieldIdToCompare: 'payeeTokenPublicAddress',
+                        sameWalletMessage: "Can't request to same wallet",
+                      },
+                    }),
+                  500,
+                )
+              }
             />
 
             {isFio ? (

@@ -12,23 +12,25 @@ import {
   mappedPublicAddresses,
   fioAddresses,
   walletsFioAddressesLoading,
+  fioWalletsBalances,
 } from '../redux/fio/selectors';
 import {
   isAuthenticated,
   isNewUser as isNewUserSelector,
   isNewEmailNotVerified as isNewEmailNotVerifiedSelector,
 } from '../redux/profile/selectors';
-
 import { roe } from '../redux/registrations/selectors';
 
 import apis from '../api';
 
 import { ROUTES } from '../constants/routes';
+import { DEFAULT_BALANCES } from './prices';
 
 import {
   FioNameItemProps,
   FioWalletDoublet,
   FioAddressDoublet,
+  WalletBalances,
 } from '../types';
 import { getElementByFioName } from '../utils';
 import { emptyWallet } from '../redux/fio/reducer';
@@ -170,7 +172,7 @@ export function useConvertFioToUsdc({
 }) {
   const roeAmount = useSelector(roe);
 
-  if (!fioAmount && !nativeAmount) return null;
+  if (!fioAmount && !nativeAmount && !roeAmount) return null;
 
   const fioSuf =
     nativeAmount != null ? nativeAmount : apis.fio.amountToSUF(fioAmount);
@@ -201,3 +203,9 @@ export function useInterval(callback: () => void, delay: number | null) {
 }
 
 export default useInterval;
+
+export function useWalletBalances(publicKey: string): WalletBalances {
+  const walletsBalances = useSelector(fioWalletsBalances);
+
+  return walletsBalances.wallets[publicKey] || DEFAULT_BALANCES;
+}

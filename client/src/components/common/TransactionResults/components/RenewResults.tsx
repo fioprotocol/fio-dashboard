@@ -12,15 +12,20 @@ const RenewResults = (props: ResultsProps) => {
   const {
     results: {
       name,
-      feeCollected: { costFio, costUsdc } = { costFio: 0, costUsdc: 0 },
+      feeCollected: { nativeFio, fio, usdc } = {
+        native: 0,
+        costFio: '0',
+        costUsdc: '0',
+      },
     },
   } = props;
   return (
     <Results {...props}>
       <h5 className={classes.label}>Renew Details</h5>
       <PriceBadge
-        costFio={costFio}
-        costUsdc={costUsdc}
+        costNativeFio={nativeFio}
+        costFio={fio}
+        costUsdc={usdc}
         title={name}
         type={BADGE_TYPES.WHITE}
       />

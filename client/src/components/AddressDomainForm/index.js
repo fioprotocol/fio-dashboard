@@ -14,6 +14,7 @@ import {
   prices,
   domains,
   allowCustomDomains,
+  roe,
 } from '../../redux/registrations/selectors';
 
 import { compose } from '../../utils';
@@ -40,6 +41,7 @@ const reduxConnect = connect(
     },
     hasFreeAddress,
     allowCustomDomains,
+    roe,
   }),
   {
     getDomains,

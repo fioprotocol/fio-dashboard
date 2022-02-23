@@ -9,8 +9,9 @@ export type CartItem = {
   address?: string;
   domain: string;
   id: string;
-  costFio?: number;
-  costUsdc?: number;
+  costNativeFio?: number;
+  costFio?: string;
+  costUsdc?: string;
   hasCustomDomain?: boolean;
   allowFree?: boolean;
   showBadge?: boolean;
@@ -44,13 +45,13 @@ export type NotificationParams = {
 
 export type Prices = {
   fio: { address: number; domain: number };
-  fioNative: { address: number; domain: number };
+  nativeFio: { address: number; domain: number };
   usdt: { address: number; domain: number };
 };
 
 export type IncomePrices = {
   pricing: {
-    fioNative: { address: number; domain: number };
+    nativeFio: { address: number; domain: number };
     usdtRoe: number;
   };
 };
@@ -189,8 +190,8 @@ export type PinConfirmation = {
 
 export type FeePrice = {
   nativeFio: number | null;
-  costFio: number | null;
-  costUsdc: number | null;
+  fio: string;
+  usdc: string;
 };
 
 export type FioBalanceRes = {
@@ -199,22 +200,16 @@ export type FioBalanceRes = {
   locked?: number;
 }
 
+export type WalletBalancesItem = {
+  nativeFio: number | null;
+  fio: string;
+  usdc: string;
+}
+
 export type WalletBalances = {
-  total: {
-    nativeFio: number | null;
-    fio: string,
-    usdc: string,
-  },
-  available: {
-    nativeFio: number | null;
-    fio: string,
-    usdc: string,
-  },
-  locked: {
-    nativeFio: number | null;
-    fio: string,
-    usdc: string,
-  },
+  total: WalletBalancesItem,
+  available: WalletBalancesItem,
+  locked: WalletBalancesItem,
 }
 
 export type WalletsBalances = {

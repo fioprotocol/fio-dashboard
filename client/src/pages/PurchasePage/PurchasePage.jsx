@@ -86,6 +86,7 @@ const PurchasePage = props => {
           hasErrors={hasErrors}
           regItems={regItems}
           errItems={errItems}
+          roe={roe}
         />
       </CheckoutPurchaseContainer>
     </PseudoModalContainer>

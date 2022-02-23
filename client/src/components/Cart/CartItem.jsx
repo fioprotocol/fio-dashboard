@@ -3,10 +3,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
+
 import classes from './Cart.module.scss';
 
 const CartItem = props => {
   const { item, onDelete } = props;
+
   return (
     <>
       <Badge show type={BADGE_TYPES.WHITE}>
@@ -28,11 +30,9 @@ const CartItem = props => {
             )}
           >
             <span className="boldText">
-              {!item.costFio
+              {!item.costNativeFio
                 ? 'FREE'
-                : `${item.costFio.toFixed(2)} FIO (${item.costUsdc.toFixed(
-                    2,
-                  )} USDC)`}
+                : `${item.costFio} FIO (${item.costUsdc} USDC)`}
             </span>
           </p>
           {onDelete && (
