@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
-import { withLastLocation } from 'react-router-last-location';
+import { useLastLocation } from 'react-router-last-location';
 
-import { ROUTES } from '../../constants/routes';
 import DoubleCardContainer from '../../components/DoubleCardContainer';
 import Cart from '../../components/Cart/Cart';
 import CartAmount from '../../components/Cart/CartAmount';
-import { handleFreeAddressCart, totalCost } from '../../utils';
+
+import { ROUTES } from '../../constants/routes';
+
 import MathOp from '../../util/math';
+import { handleFreeAddressCart, totalCost } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
 import { convertFioPrices } from '../../util/prices';
 
@@ -23,13 +25,13 @@ const CartPage = props => {
     userWallets,
     setWallet,
     paymentWalletPublicKey,
-    lastLocation,
     refreshBalance,
     isAuthenticated,
     hasFreeAddress,
     roe,
   } = props;
 
+  const lastLocation = useLastLocation();
   const [isPriceChanged, handlePriceChange] = useState(false);
 
   const walletCount = userWallets.length;
@@ -163,4 +165,4 @@ const CartPage = props => {
   );
 };
 
-export default withLastLocation(CartPage);
+export default CartPage;
