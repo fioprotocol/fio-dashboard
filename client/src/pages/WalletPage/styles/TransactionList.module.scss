@@ -123,14 +123,20 @@
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
+        display: grid;
+        grid-template-columns: 130px 180px 250px 100px;
 
-        .date, .amount {
+        .date, .amount, .txContainer {
           margin-top: 0;
-          margin-left: 30px;
+        }
+
+        .amount {
+          margin-left: auto;
         }
 
         .txContainer {
-          margin-top: 0;
+          display: grid;
+          grid-template-columns: 25px 115px 35px 35px;
         }
       }
     }
