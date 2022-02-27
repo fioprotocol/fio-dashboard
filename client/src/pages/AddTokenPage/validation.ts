@@ -1,5 +1,7 @@
 import { CHAIN_CODE_REGEXP, TOKEN_CODE_REGEXP } from '../../constants/regExps';
 
+import { MAX_CHAIN_LENGTH, MAX_TOKEN_LENGTH } from '../../constants/fio';
+
 import { FormValues } from './types';
 
 import { PublicAddressDoublet } from '../../types';
@@ -47,6 +49,10 @@ export const validate = (
         tokenErrors.chainCode = { message: 'Wrong Chain Code' };
         tokenArrayErrors[index] = tokenErrors;
       }
+      if (chainCode?.length > MAX_CHAIN_LENGTH) {
+        tokenErrors.chainCode = { message: 'Chain Code is too long' };
+        tokenArrayErrors[index] = tokenErrors;
+      }
 
       if (!tokenCode) {
         tokenErrors.tokenCode = { message: 'Required' };
@@ -54,6 +60,10 @@ export const validate = (
       }
       if (tokenCode && !TOKEN_CODE_REGEXP.test(tokenCode)) {
         tokenErrors.tokenCode = { message: 'Wrong Token Code' };
+        tokenArrayErrors[index] = tokenErrors;
+      }
+      if (tokenCode?.length > MAX_TOKEN_LENGTH) {
+        tokenErrors.tokenCode = { message: 'Token Code is too long' };
         tokenArrayErrors[index] = tokenErrors;
       }
 

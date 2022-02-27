@@ -75,6 +75,7 @@ const ChainCodeCustomDropdown: React.FC<Props &
         isWhite={true}
         hasAutoWidth={hasAutoWidth}
         isHigh={isHigh}
+        hasError={hasError}
       />
       <div className={classes.regInputWrapper}>
         <ErrorBadge
