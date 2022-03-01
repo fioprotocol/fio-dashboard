@@ -9,7 +9,7 @@ export default combineReducers({
       case actions.SET_REDIRECT_PATH:
         return action.data;
       case SHOW_LOGIN:
-        return action.data || state;
+        return action.data ? { pathname: action.data } : state;
       default:
         return state;
     }
