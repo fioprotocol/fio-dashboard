@@ -159,7 +159,6 @@ export default combineReducers({
       case actions.CONFIRM_EMAIL_FAILURE:
       case actions.UPDATE_EMAIL_FAILURE:
         return { success: false, error: action.error.code };
-      case actions.LOGIN_SUCCESS:
       case actions.LOGOUT_SUCCESS:
         return {};
       default:

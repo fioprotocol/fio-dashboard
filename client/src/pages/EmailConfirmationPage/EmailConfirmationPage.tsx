@@ -71,8 +71,12 @@ const EmailConfirmationPage: React.FC<Props &
   }, []);
 
   useEffect(() => {
-    if (profileRefreshed) confirmEmail(hash);
-  }, [profileRefreshed]);
+    if (
+      profileRefreshed &&
+      typeof emailConfirmationResult.success === 'undefined'
+    )
+      confirmEmail(hash);
+  }, [profileRefreshed, emailConfirmationResult]);
 
   useEffect(() => {
     if (emailConfirmationResult.success) {
