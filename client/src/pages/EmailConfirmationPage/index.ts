@@ -4,7 +4,12 @@ import { withRouter } from 'react-router';
 
 import { compose } from '../../utils';
 
-import { confirmEmail } from '../../redux/profile/actions';
+import {
+  confirmEmail,
+  logout,
+  resetLastAuthData,
+  resetEmailConfirmationResult,
+} from '../../redux/profile/actions';
 import { getInfo } from '../../redux/refProfile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 import { addManual as createNotification } from '../../redux/notifications/actions';
@@ -14,6 +19,8 @@ import {
   emailConfirmationResult,
   isAuthenticated,
   profileRefreshed,
+  user,
+  lastAuthData,
 } from '../../redux/profile/selectors';
 import { cartItems } from '../../redux/cart/selectors';
 
@@ -26,12 +33,17 @@ const reduxConnect = connect(
     isAuthenticated,
     profileRefreshed,
     cartItems,
+    user,
+    lastAuthData,
   }),
   {
     confirmEmail,
     getInfo,
     showLoginModal,
+    logout,
+    resetLastAuthData,
     createNotification,
+    resetEmailConfirmationResult,
   },
 );
 

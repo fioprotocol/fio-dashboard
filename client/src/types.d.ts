@@ -283,6 +283,15 @@ export type EmailConfirmationStateData = {
   refProfileQueryParams?: RefQueryParams;
 };
 
+export type EmailConfirmationResult = {
+  email?: string;
+  newEmail?: string;
+  oldEmail?: string;
+  error?: string;
+  success?: boolean;
+  stateData?: EmailConfirmationStateData;
+};
+
 export type CommonObjectProps = { [key: string]: string };
 
 export type NFTTokenItemProps = keyof NFTTokenDoublet;

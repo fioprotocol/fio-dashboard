@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link, RouteComponentProps, Redirect } from 'react-router-dom';
+import { RouterProps } from 'react-router';
 
 import { ACTIONS } from '../../components/Notifications/Notifications';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
@@ -12,7 +13,12 @@ import {
 } from '../../constants/notifications';
 import { ROUTES } from '../../constants/routes';
 
-import { NotificationParams, LastAuthData } from '../../types';
+import {
+  NotificationParams,
+  LastAuthData,
+  EmailConfirmationResult,
+  User,
+} from '../../types';
 
 import classes from '../../components/Modal/EmailModal/EmailModal.module.scss';
 
@@ -26,14 +32,15 @@ type Props = {
   showLoginModal: (redirect: string) => void;
   loading: boolean;
   createNotification: (params: NotificationParams) => void;
-  emailConfirmationResult: {
-    error?: string;
-    success?: boolean;
-  };
+  emailConfirmationResult: EmailConfirmationResult;
   updateEmail: (hash: string) => void;
+  user: User;
   lastAuthData: LastAuthData;
   resetLastAuthData: () => void;
   updateEmailLoading: boolean;
+  logout: (routerProps: RouterProps) => void;
+  resetEmailConfirmationResult: () => void;
+  updateStateEmail: (email: string) => void;
 };
 
 const UpdateEmailPage: React.FC<Props &
@@ -49,34 +56,48 @@ const UpdateEmailPage: React.FC<Props &
     match: {
       params: { hash },
     },
+    user,
     lastAuthData,
+    logout,
     resetLastAuthData,
+    resetEmailConfirmationResult,
+    updateStateEmail,
     updateEmailLoading,
   } = props;
 
+  const handleResult = (result: EmailConfirmationResult) => {
+    props.createNotification({
+      action: ACTIONS.EMAIL_CONFIRM,
+      type: BADGE_TYPES.INFO,
+      contentType: NOTIFICATIONS_CONTENT_TYPE.UPDATE_EMAIL,
+      pagesToShow: [ROUTES.HOME, ROUTES.SETTINGS],
+    });
+
+    if (isAuthenticated && user.email === result.oldEmail) {
+      updateStateEmail(result.newEmail);
+      return history.replace(ROUTES.SETTINGS);
+    }
+
+    if (isAuthenticated) {
+      logout({ history });
+    }
+
+    if (lastAuthData) {
+      resetLastAuthData();
+    }
+    showLoginModal(ROUTES.SETTINGS);
+  };
+
+  useEffect(() => () => resetEmailConfirmationResult(), []);
   useEffect(() => {
     if (profileRefreshed) updateEmail(hash);
   }, [profileRefreshed]);
 
   useEffect(() => {
     if (emailConfirmationResult.success) {
-      props.createNotification({
-        action: ACTIONS.EMAIL_CONFIRM,
-        type: BADGE_TYPES.INFO,
-        contentType: NOTIFICATIONS_CONTENT_TYPE.UPDATE_EMAIL,
-        pagesToShow: [ROUTES.HOME, ROUTES.SETTINGS],
-      });
-
-      if (isAuthenticated) {
-        history.replace(ROUTES.SETTINGS);
-      } else {
-        if (lastAuthData) {
-          resetLastAuthData();
-        }
-        showLoginModal(ROUTES.SETTINGS);
-      }
+      handleResult(emailConfirmationResult);
     }
-  }, [isAuthenticated, emailConfirmationResult]);
+  }, [emailConfirmationResult]);
 
   const showLogin = () => showLoginModal(ROUTES.SETTINGS);
 

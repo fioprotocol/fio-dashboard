@@ -1,11 +1,13 @@
 import { combineReducers } from 'redux';
 import * as actions from './actions';
+
 import {
   CHANGE_RECOVERY_QUESTIONS_CLOSE,
   CHANGE_RECOVERY_QUESTIONS_OPEN,
 } from '../edge/actions';
-import { User, LastAuthData, EmailConfirmationStateData } from '../../types';
 import { USER_STATUSES } from '../../constants/common';
+
+import { User, LastAuthData, EmailConfirmationResult } from '../../types';
 
 export default combineReducers({
   loading(state: boolean = false, action) {
@@ -91,12 +93,12 @@ export default combineReducers({
           return { ...state, status: USER_STATUSES.ACTIVE, newEmail: '' };
         return state;
       }
-      case actions.UPDATE_EMAIL_SUCCESS: {
+      case actions.UPDATE_STATE_EMAIL: {
         if (state != null && state.status)
           return {
             ...state,
             status: USER_STATUSES.ACTIVE,
-            email: state.newEmail,
+            email: action.data.email,
             newEmail: '',
           };
         return state;
@@ -144,22 +146,15 @@ export default combineReducers({
         return state;
     }
   },
-  emailConfirmationResult(
-    state: {
-      success?: boolean;
-      error?: string;
-      stateData?: EmailConfirmationStateData;
-    } = {},
-    action,
-  ) {
+  emailConfirmationResult(state: EmailConfirmationResult = {}, action) {
     switch (action.type) {
       case actions.CONFIRM_EMAIL_SUCCESS:
       case actions.UPDATE_EMAIL_SUCCESS:
-        return { success: true, stateData: action.data.stateData };
+        return { success: true, ...action.data };
       case actions.CONFIRM_EMAIL_FAILURE:
       case actions.UPDATE_EMAIL_FAILURE:
         return { success: false, error: action.error.code };
-      case actions.LOGOUT_SUCCESS:
+      case actions.RESET_EMAIL_CONFIRMATION_RESULT:
         return {};
       default:
         return state;

@@ -185,6 +185,12 @@ export const updateEmailRequest = (oldEmail: string, newEmail: string) => ({
   newEmail,
 });
 
+export const RESET_EMAIL_CONFIRMATION_RESULT = `${prefix}/RESET_EMAIL_CONFIRMATION_RESULT`;
+
+export const resetEmailConfirmationResult = () => ({
+  type: RESET_EMAIL_CONFIRMATION_RESULT,
+});
+
 export const UPDATE_EMAIL_REVERT_REQUEST = `${prefix}/UPDATE_EMAIL_REVERT_REQUEST`;
 export const UPDATE_EMAIL_REVERT_SUCCESS = `${prefix}/UPDATE_EMAIL_REVERT_SUCCESS`;
 export const UPDATE_EMAIL_REVERT_FAILURE = `${prefix}/UPDATE_EMAIL_REVERT_FAILURE`;
@@ -206,4 +212,11 @@ export const updateEmail = (hash: string) => ({
   types: [UPDATE_EMAIL_REQUEST, UPDATE_EMAIL_SUCCESS, UPDATE_EMAIL_FAILURE],
   promise: (api: Api) =>
     minWaitTimeFunction(() => api.auth.confirm(hash), 4000),
+});
+
+export const UPDATE_STATE_EMAIL = `${prefix}/UPDATE_STATE_EMAIL`;
+
+export const updateStateEmail = (email: string) => ({
+  type: UPDATE_STATE_EMAIL,
+  data: { email },
 });
