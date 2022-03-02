@@ -1,8 +1,10 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import { useCheckIfDesktop } from '../../../screenType';
+import Amount from '../../common/Amount';
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
+
+import { useCheckIfDesktop } from '../../../screenType';
 
 import { WalletBalancesItem } from '../../../types';
 
@@ -38,8 +40,8 @@ const PayWithBadge: React.FC<Props> = props => {
               <span className="boldText">FIO Wallet</span>
             </p>
             <p className={classes.balance}>
-              (Available Balance {walletBalances.fio} FIO /{' '}
-              {walletBalances.usdc} USDC)
+              (Available Balance <Amount value={walletBalances.fio} /> FIO /{' '}
+              <Amount value={walletBalances.usdc} /> USDC)
             </p>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import CommonBadge from '../../../components/Badges/CommonBadge/CommonBadge';
 import CopyTooltip from '../../../components/CopyTooltip';
+import Amount from '../../../components/common/Amount';
 
 import apis from '../../../api';
 import {
@@ -73,7 +74,11 @@ const TransactionItem: React.FC<TransactionItemProps> = props => {
             </a>
           </div>
           <div className={classes.amount}>
-            {`${apis.fio.sufToAmount(parseInt(nativeAmount, 10)).toFixed(2)}`}{' '}
+            <Amount
+              value={apis.fio
+                .sufToAmount(parseInt(nativeAmount, 10))
+                .toFixed(2)}
+            />{' '}
             <span className={classes.currencyCode}>FIO</span>
           </div>
         </div>

@@ -1,14 +1,20 @@
 import React, { useEffect, useRef, useState, WheelEvent } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { FieldRenderProps, useForm } from 'react-final-form';
-import classnames from 'classnames';
-import classes from './Input.module.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { ErrorBadge } from './ErrorBadge';
+import classnames from 'classnames';
+
 import apis from '../../api';
-import { INPUT_COLOR_SCHEMA } from './TextInput';
+
+import { ErrorBadge } from './ErrorBadge';
 import { Label, LoadingIcon, PrefixLabel } from './StaticInputParts';
+import Amount from '../common/Amount';
+
+import { INPUT_COLOR_SCHEMA } from './TextInput';
+
 import exchangeIcon from '../../assets/images/exchange.svg';
+
+import classes from './Input.module.scss';
 
 const EMPTY_VALUE = '0.00';
 
@@ -178,7 +184,11 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
             />
           )}
           <div className={classes.exchangeTextItem}>
-            {(isPrimaryExchange ? exchangedValue : value) || EMPTY_VALUE}
+            <Amount
+              value={
+                (isPrimaryExchange ? exchangedValue : value) || EMPTY_VALUE
+              }
+            />
           </div>
           <div className={classes.exchangeTextItem}>
             {!isPrimaryExchange
