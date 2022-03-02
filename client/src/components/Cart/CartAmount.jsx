@@ -23,6 +23,10 @@ const CartAmount = props => {
 
   const { costFio, costUsdc } = totalCost(cartItems, roe);
 
+  const showAnnually = cartItems.length
+    ? cartItems.every(item => !item.address)
+    : false;
+
   return (
     <CartSmallContainer isHintColor={true} hasBigMargin={true}>
       <h3 className={classes.amountTitle}>Amount Due</h3>
@@ -31,7 +35,7 @@ const CartAmount = props => {
         <hr className={classes.divider} />
         <p className={classes.cost}>
           Cost: {isFree ? 'FREE' : `${costFio} FIO / ${costUsdc} USDC`}{' '}
-          <span className={classes.light}>(annually)</span>
+          {showAnnually && <span className={classes.light}>(annually)</span>}
         </p>
         <hr className={classes.divider} />
       </div>
