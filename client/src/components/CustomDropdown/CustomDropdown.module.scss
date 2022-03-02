@@ -58,6 +58,10 @@
   &.isHigh {
     height: 54px;
   }
+
+  &.hasError {
+    border: 1px solid $warn-red;
+  }
 }
 .placeholder {
   color: $gray-main;

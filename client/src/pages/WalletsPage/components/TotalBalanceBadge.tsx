@@ -1,7 +1,12 @@
 import React from 'react';
+
+import Amount from '../../../components/common/Amount';
+
 import { priceToNumber } from '../../../utils';
-import classes from '../styles/TotalBalanceBadge.module.scss';
+
 import { WalletBalances } from '../../../types';
+
+import classes from '../styles/TotalBalanceBadge.module.scss';
 
 type Props = WalletBalances;
 
@@ -11,7 +16,8 @@ const Balance = (props: { fio: string; usdc: string; title: string }) => {
     <div className={classes.balanceContainer}>
       <p className={classes.balanceTitle}>{title}</p>
       <p className={classes.balanceValues}>
-        {priceToNumber(fio)} FIO / {priceToNumber(usdc)} USDC
+        <Amount value={priceToNumber(fio)} /> FIO /{' '}
+        <Amount value={priceToNumber(usdc)} /> USDC
       </p>
     </div>
   );
@@ -24,8 +30,12 @@ const TotalBalanceBadge: React.FC<Props> = props => {
     <div className={classes.actionBadgeContainer}>
       <div className={classes.totalBadge}>
         <p className={classes.title}>Total FIO Wallets Balance</p>
-        <p className={classes.totalFio}>{priceToNumber(total.fio)} FIO</p>
-        <p className={classes.totalUsdc}>{priceToNumber(total.usdc)} USDC</p>
+        <p className={classes.totalFio}>
+          <Amount value={priceToNumber(total.fio)} /> FIO
+        </p>
+        <p className={classes.totalUsdc}>
+          <Amount value={priceToNumber(total.usdc)} /> USDC
+        </p>
         <Balance fio={available.fio} usdc={available.usdc} title="Available" />
         {locked.nativeFio ? (
           <Balance fio={locked.fio} usdc={locked.usdc} title="Locked" />

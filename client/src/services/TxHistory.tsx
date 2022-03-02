@@ -24,6 +24,7 @@ import {
   User,
   UsersWalletsTxHistory,
 } from '../types';
+import { refreshBalance } from '../redux/fio/actions';
 
 type Props = {
   fioWalletsTxHistory: UsersWalletsTxHistory;
@@ -36,6 +37,7 @@ type Props = {
     userId: string,
   ) => void;
   refreshWalletDataPublicKey: (publicKey: string) => void;
+  refreshBalance: (publicKey: string) => void;
 };
 
 const TIMER_DELAY = 5000; // 5 sec
@@ -48,14 +50,17 @@ const TxHistory = (props: Props): React.FC => {
     walletDataPublicKey,
     updateWalletsTxHistory,
     refreshWalletDataPublicKey,
+    refreshBalance,
   } = props;
 
   const [isLoading, setIsLoading] = useState(false);
   const [userFioWalletsTxHistory, setUserFioWalletsTxHistory] = useState<{
     [publicKey: string]: FioWalletTxHistory;
   }>(fioWalletsTxHistory[user.id]);
-  const updateHistory = (history: FioWalletTxHistory, publicKey: string) =>
+  const updateHistory = (history: FioWalletTxHistory, publicKey: string) => {
     updateWalletsTxHistory(history, publicKey, user.id);
+    refreshBalance(publicKey);
+  };
 
   const fetchWalletTxHistory = async (wallet: FioWalletDoublet) => {
     const currentHistory: FioWalletTxHistory = userFioWalletsTxHistory[
@@ -126,6 +131,7 @@ const reduxConnect = connect(
   {
     updateWalletsTxHistory,
     refreshWalletDataPublicKey,
+    refreshBalance,
   },
 );
 

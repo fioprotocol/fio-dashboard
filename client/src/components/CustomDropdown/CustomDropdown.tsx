@@ -19,6 +19,7 @@ type Props = {
   isSimple?: boolean;
   isHigh?: boolean;
   isFormField?: boolean;
+  hasError?: boolean;
 };
 
 const CustomDropdown: React.FC<Props> = props => {
@@ -36,6 +37,7 @@ const CustomDropdown: React.FC<Props> = props => {
     isSimple,
     isHigh,
     isFormField,
+    hasError,
   } = props;
 
   const styledOptions = options.map(option => ({
@@ -79,6 +81,7 @@ const CustomDropdown: React.FC<Props> = props => {
         isWhite && classes.isWhite,
         isSimple && classes.isSimple,
         isHigh && classes.isHigh,
+        hasError && classes.hasError,
       )}
       placeholderClassName={classes.placeholder}
       menuClassName={classes.menu}

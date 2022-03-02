@@ -4,7 +4,13 @@ import { withRouter } from 'react-router';
 
 import { compose } from '../../utils';
 
-import { updateEmail, resetLastAuthData } from '../../redux/profile/actions';
+import {
+  updateEmail,
+  resetLastAuthData,
+  logout,
+  resetEmailConfirmationResult,
+  updateStateEmail,
+} from '../../redux/profile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 import { addManual as createNotification } from '../../redux/notifications/actions';
 
@@ -13,6 +19,7 @@ import {
   emailConfirmationResult,
   isAuthenticated,
   profileRefreshed,
+  user,
   lastAuthData,
   updateEmailLoading,
 } from '../../redux/profile/selectors';
@@ -25,6 +32,7 @@ const reduxConnect = connect(
     emailConfirmationResult,
     isAuthenticated,
     profileRefreshed,
+    user,
     lastAuthData,
     updateEmailLoading,
   }),
@@ -33,6 +41,9 @@ const reduxConnect = connect(
     showLoginModal,
     createNotification,
     resetLastAuthData,
+    resetEmailConfirmationResult,
+    updateStateEmail,
+    logout,
   },
 );
 
