@@ -105,7 +105,9 @@ const AddressDomainCart = props => {
                         : `${item.costFio} FIO
                       (${item.costUsdc} USDC)`}
                     </span>{' '}
-                    <span className={classes.thin}>- annually</span>
+                    {item.address ? null : (
+                      <span className={classes.thin}>- annually</span>
+                    )}
                   </p>
                 </div>
 
