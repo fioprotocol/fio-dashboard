@@ -1,6 +1,45 @@
 import { isEmpty } from 'lodash';
+import { createHash } from 'crypto-browserify';
+import superagent from 'superagent';
+
 import apis from '../../api/index';
 import { ADDRESS_REGEXP } from '../../constants/regExps';
+
+const GET_TABLE_ROWS_URL = `${process.env.REACT_APP_FIO_BASE_URL}chain/get_table_rows`;
+
+// avail_check returns wrong information about availability of domains, temporary changed to use this
+const checkDomainIsRegistered = async domain => {
+  try {
+    const hash = createHash('sha1');
+    const bound =
+      '0x' +
+      hash
+        .update(domain)
+        .digest()
+        .slice(0, 16)
+        .reverse()
+        .toString('hex');
+    const response = await superagent.post(GET_TABLE_ROWS_URL).send({
+      code: 'fio.address',
+      scope: 'fio.address',
+      table: 'domains',
+      lower_bound: bound,
+      upper_bound: bound,
+      key_type: 'i128',
+      index_position: '4',
+      json: true,
+    });
+
+    const { rows } = response.body;
+    if (rows && rows.length) {
+      return !!rows[0].id;
+    }
+  } catch (e) {
+    console.log(e);
+  }
+
+  return false;
+};
 
 const verifyAddress = async props => {
   const {
@@ -17,9 +56,9 @@ const verifyAddress = async props => {
   const errors = {};
   toggleValidating(true);
   if (domain) {
-    const isAvail = await apis.fio.availCheck(domain);
+    const isRegistered = await checkDomainIsRegistered(domain);
 
-    if (isAvail && isAvail.is_registered === 1) {
+    if (isRegistered) {
       if (isAddress && options.every(option => option !== domain)) {
         errors.domain =
           'Unfortunately the domain name you have selected is not available. Please select an alternative.';
