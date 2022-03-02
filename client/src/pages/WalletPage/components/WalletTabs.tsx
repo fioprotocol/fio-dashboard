@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router';
 
 import TabsContainer from '../../../components/Tabs/TabsContainer';
 import Tabs from '../../../components/Tabs/Tabs';
@@ -16,6 +17,14 @@ type Props = {
   fioWallet: FioWalletDoublet;
   walletData: FioWalletData;
   walletTxHistory: FioWalletTxHistory;
+};
+
+type Location = {
+  location: {
+    state?: {
+      fioRequestTab: string;
+    };
+  };
 };
 
 const WALLET_TABS_LIST = [
@@ -37,8 +46,17 @@ const WALLET_TABS_LIST = [
 ];
 
 const WalletTabs: React.FC<Props> = props => {
+  const { location }: Location = useHistory();
+  const { fioRequestTab } = location?.state || {};
+
   return (
-    <TabsContainer defaultActiveKey={WALLET_TABS_LIST[0].eventKey}>
+    <TabsContainer
+      defaultActiveKey={
+        fioRequestTab
+          ? WALLET_TABS_LIST[0].eventKey
+          : WALLET_TABS_LIST[2].eventKey
+      }
+    >
       <Tabs list={WALLET_TABS_LIST} showTabBorder={true} tabProps={props} />
     </TabsContainer>
   );
