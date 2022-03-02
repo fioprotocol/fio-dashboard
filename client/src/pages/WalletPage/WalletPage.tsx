@@ -10,11 +10,9 @@ import TotalBalanceBadge from '../WalletsPage/components/TotalBalanceBadge';
 import TransactionHistory from './components/TransactionHistory';
 import EditWalletName from './components/EditWalletName';
 import WalletTabs from './components/WalletTabs';
-import InfoBadge from '../../components/InfoBadge/InfoBadge';
 
 import apis from '../../api';
 
-import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ROUTES } from '../../constants/routes';
 
 import { putParamsToUrl } from '../../utils';
@@ -118,12 +116,6 @@ const WalletPage: React.FC<ContainerProps> = props => {
         </ActionButtonsContainer>
 
         <p className={classes.subtitle}>Manage your FIO tokens</p>
-        <InfoBadge
-          title="Transaction Display"
-          message="Only FIO Requests are displayed below. Please visit the Explorer to view you total transaction history."
-          show={true}
-          type={BADGE_TYPES.INFO}
-        />
         <p className={classes.text}>
           View your transactions by type as well as sent or received.
         </p>
