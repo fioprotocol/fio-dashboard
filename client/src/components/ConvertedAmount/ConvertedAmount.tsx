@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Amount from '../common/Amount';
+
 import { useConvertFioToUsdc } from '../../util/hooks';
 
 type Props = {
@@ -10,11 +12,18 @@ type Props = {
 const ConvertedAmount: React.FC<Props> = props => {
   const { fioAmount, nativeAmount } = props;
 
-  const usdcPrice = useConvertFioToUsdc({ fioAmount, nativeAmount });
+  const usdcPrice = useConvertFioToUsdc({
+    fioAmount,
+    nativeAmount,
+  });
 
   if (!usdcPrice) return null;
 
-  return <span>$ {usdcPrice} USDC</span>;
+  return (
+    <span>
+      $ <Amount value={usdcPrice} /> USDC
+    </span>
+  );
 };
 
 export default ConvertedAmount;

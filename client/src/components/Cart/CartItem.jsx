@@ -2,6 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
+import Amount from '../common/Amount';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 
 import classes from './Cart.module.scss';
@@ -30,9 +31,14 @@ const CartItem = props => {
             )}
           >
             <span className="boldText">
-              {!item.costNativeFio
-                ? 'FREE'
-                : `${item.costFio} FIO (${item.costUsdc} USDC)`}
+              {!item.costNativeFio ? (
+                'FREE'
+              ) : (
+                <>
+                  <Amount value={item.costFio} /> FIO (
+                  <Amount value={item.costUsdc} /> USDC)
+                </>
+              )}
             </span>
           </p>
           {onDelete && (

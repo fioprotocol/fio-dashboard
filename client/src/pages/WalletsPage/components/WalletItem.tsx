@@ -3,13 +3,15 @@ import { useHistory } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
+import Amount from '../../../components/common/Amount';
 
 import { useCheckIfDesktop } from '../../../screenType';
 
-import { FioWalletDoublet } from '../../../types';
 import { ROUTES } from '../../../constants/routes';
 import { putParamsToUrl } from '../../../utils';
 import { useWalletBalances } from '../../../util/hooks';
+
+import { FioWalletDoublet } from '../../../types';
 
 import classes from '../styles/WalletItem.module.scss';
 
@@ -41,7 +43,8 @@ const WalletItem: React.FC<Props> = props => {
             <div className={classes.balanceContainer}>
               <p className={classes.totalBalance}>Total balance</p>
               <p className={classes.balanceValue}>
-                {walletBalancesTotal.fio} FIO / {walletBalancesTotal.usdc} USDC
+                <Amount value={walletBalancesTotal.fio} /> FIO /{' '}
+                <Amount value={walletBalancesTotal.usdc} /> USDC
               </p>
             </div>
           </div>
