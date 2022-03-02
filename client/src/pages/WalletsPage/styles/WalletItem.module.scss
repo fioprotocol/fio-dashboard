@@ -2,9 +2,9 @@
 @import '../../../assets/styles/mediaQueriesMixings.scss';
 @import '../../../assets/styles/colors.scss';
 
-
 .container {
   margin-top: -10px;
+  cursor: pointer;
 
   .badgeItem {
     font-size: 1em;
