@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Field, FormSpy } from 'react-final-form';
 
 import CustomDropdown from './CustomDropdown';
-import Input, { INPUT_COLOR_SCHEMA } from '../Input/Input';
+import Input, { INPUT_COLOR_SCHEMA, INPUT_UI_STYLES } from '../Input/Input';
 import { OnChange } from 'react-final-form-listeners';
 
 import classes from './AddressDomainForm.module.scss';
@@ -23,6 +23,7 @@ const AddressForm = props => {
     debouncedOnChangeHandleField,
     formNameGet,
     allowCustomDomains,
+    isValidating,
   } = props;
 
   const updateFormStateCurrent = (form, state) => {
@@ -49,9 +50,11 @@ const AddressForm = props => {
           type="text"
           placeholder="Find the perfect username .."
           colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
+          uiType={INPUT_UI_STYLES.BLACK_WHITE}
           component={Input}
           hideError="true"
           lowerCased
+          loading={isValidating}
           tooltip={
             <>
               <span className="boldText">FIO Crypto Handle Cost</span>
@@ -74,6 +77,7 @@ const AddressForm = props => {
             type="text"
             placeholder="Custom domain"
             colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
+            uiType={INPUT_UI_STYLES.BLACK_WHITE}
             component={Input}
             lowerCased
             onClose={() => {
@@ -81,6 +85,7 @@ const AddressForm = props => {
             }}
             hideError="true"
             prefix={prefix}
+            loading={isValidating}
           />
         ) : (
           <Field

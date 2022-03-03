@@ -2,11 +2,11 @@ import React from 'react';
 import { Field } from 'react-final-form';
 import { OnChange } from 'react-final-form-listeners';
 
-import Input, { INPUT_COLOR_SCHEMA } from '../Input/Input';
+import Input, { INPUT_COLOR_SCHEMA, INPUT_UI_STYLES } from '../Input/Input';
 import classes from './AddressDomainForm.module.scss';
 
 const DomainForm = props => {
-  const { debouncedOnChangeHandleField } = props;
+  const { debouncedOnChangeHandleField, isValidating } = props;
 
   return (
     <div className={classes.domainInput}>
@@ -15,9 +15,11 @@ const DomainForm = props => {
         type="text"
         placeholder="Domain name"
         colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
+        uiType={INPUT_UI_STYLES.BLACK_WHITE}
         component={Input}
         lowerCased
         hideError="true"
+        loading={isValidating}
       />
       <OnChange name="domain">{debouncedOnChangeHandleField}</OnChange>
     </div>
