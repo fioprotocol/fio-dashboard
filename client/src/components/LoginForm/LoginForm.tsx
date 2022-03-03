@@ -14,7 +14,7 @@ import apis from '../../api';
 import { autoLogin } from '../../util/login';
 
 import { REF_ACTIONS } from '../../constants/common';
-import { EmailConfirmationStateData, LastAuthData } from '../../types';
+import { EmailConfirmationResult, LastAuthData } from '../../types';
 
 type FormValues = {
   email: string;
@@ -40,10 +40,7 @@ type Props = {
   };
   cachedUsers: string[];
   lastAuthData: LastAuthData;
-  emailConfirmationResult: {
-    success: boolean;
-    stateData?: EmailConfirmationStateData;
-  };
+  emailConfirmationResult: EmailConfirmationResult;
 };
 
 const REF_SUBTITLES = {
@@ -96,6 +93,14 @@ const LoginForm = (props: Props) => {
       setUsePinLogin(false);
     }
   }, [cachedUsers, lastAuthData]);
+  useEffect(() => {
+    if (emailConfirmationResult && emailConfirmationResult.success) {
+      setLoginParams({
+        email:
+          emailConfirmationResult.email || emailConfirmationResult.newEmail,
+      });
+    }
+  }, [emailConfirmationResult]);
 
   useEffect(() => {
     return () => clearTimeout(timerRef.current);

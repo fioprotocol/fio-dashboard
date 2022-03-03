@@ -10,6 +10,7 @@ import { ResultsProps } from '../types';
 
 import classes from '../styles/Results.module.scss';
 import { FIO_CHAIN_CODE } from '../../../../constants/fio';
+import Amount from '../../Amount';
 
 type TokenTransferResultsProps = ResultsProps & { roe: number; mapError?: any };
 
@@ -39,10 +40,18 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
   } = props;
 
   const fioAmount = Number(amount);
-  let displayAmount = `${fioAmount.toFixed(2)} ${tokenCode}`;
+  let displayAmount = (
+    <>
+      <Amount value={fioAmount.toFixed(2)} /> {tokenCode}
+    </>
+  );
   let displayUsdcAmount;
   if (tokenCode === FIO_CHAIN_CODE || tokenCode == null) {
-    displayAmount = `${fioAmount.toFixed(2)} ${FIO_CHAIN_CODE}`;
+    displayAmount = (
+      <>
+        <Amount value={fioAmount.toFixed(2)} /> {FIO_CHAIN_CODE}
+      </>
+    );
     displayUsdcAmount = (
       <>
         / <ConvertedAmount fioAmount={fioAmount} nativeAmount={nativeAmount} />

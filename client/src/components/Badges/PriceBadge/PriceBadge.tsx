@@ -1,5 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
+import Amount from '../../common/Amount';
 
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 
@@ -24,7 +25,14 @@ const PriceBadge: React.FC<Props> = props => {
         <span className={classnames(classes.name, 'boldText')}>{title}</span>
         <p className={classes.totalPrice}>
           <span className="boldText">
-            {costNativeFio ? `${costFio} FIO / ${costUsdc} USDC` : costFree}
+            {costNativeFio ? (
+              <>
+                <Amount value={costFio} /> FIO / <Amount value={costUsdc} />{' '}
+                USDC
+              </>
+            ) : (
+              costFree
+            )}
           </span>
         </p>
       </div>

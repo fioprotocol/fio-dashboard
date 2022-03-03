@@ -34,7 +34,6 @@ const FormContainer = props => {
     formProps,
     type,
     isAddress,
-    isValidating,
     toggleShowAvailable,
     handleChange,
     formState,
@@ -108,7 +107,7 @@ const FormContainer = props => {
             }
           />
         )}
-        {isHomepage ? (
+        {isHomepage && (
           <Link
             to={ROUTES.FIO_ADDRESSES_SELECTION}
             className={`${classes.link} d-flex justify-content-center`}
@@ -120,16 +119,6 @@ const FormContainer = props => {
               variant="primary"
             />
           </Link>
-        ) : (
-          <SubmitButton
-            hasLowHeight={true}
-            text={buttonText}
-            disabled={isValidating}
-            onClick={handleSubmit}
-            hasSmallText={true}
-            variant="primary"
-            loading={isValidating}
-          />
         )}
       </form>
     );

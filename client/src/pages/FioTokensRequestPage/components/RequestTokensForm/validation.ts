@@ -8,9 +8,11 @@ import {
   isValidPubAddressValidator,
 } from '../../../../util/validators';
 
-import { MAX_MEMO_SIZE } from '../../../../constants/fio';
-const MAX_TOKEN_LENGTH = 10;
-const MAX_CHAIN_LENGTH = 10;
+import {
+  MAX_MEMO_SIZE,
+  MAX_CHAIN_LENGTH,
+  MAX_TOKEN_LENGTH,
+} from '../../../../constants/fio';
 
 const validationSchema: ValidationSchema = {
   field: {

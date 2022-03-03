@@ -1,6 +1,7 @@
 import React from 'react';
 
 import ConvertedAmount from '../../../components/ConvertedAmount/ConvertedAmount';
+import Amount from '../../../components/common/Amount';
 
 import { commonFormatTime } from '../../../util/general';
 import { priceToNumber } from '../../../utils';
@@ -44,7 +45,7 @@ const FioRecordFieldContent: React.FC<Props> = props => {
 
     return (
       <span>
-        {price} FIO (<ConvertedAmount fioAmount={price} />)
+        <Amount value={price} /> FIO (<ConvertedAmount fioAmount={price} />)
       </span>
     );
   }

@@ -21,7 +21,7 @@ export function convertFioPrices(
 }
 
 export const calculateBalances = (
-  { balance, available, locked }: FioBalanceRes,
+  { balance = 0, available = 0, locked = 0 }: FioBalanceRes,
   roe: number,
 ): WalletBalances => ({
   total: convertFioPrices(balance, roe),
