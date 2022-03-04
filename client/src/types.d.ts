@@ -210,6 +210,8 @@ export type WalletBalances = {
   total: WalletBalancesItem,
   available: WalletBalancesItem,
   locked: WalletBalancesItem,
+  rewards?: WalletBalancesItem,
+  staked?: WalletBalancesItem,
 }
 
 export type WalletsBalances = {
