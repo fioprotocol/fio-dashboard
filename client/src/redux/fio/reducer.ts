@@ -156,6 +156,8 @@ export default combineReducers({
             fioWallet.balance = action.data.balance;
             fioWallet.available = action.data.available;
             fioWallet.locked = action.data.locked;
+            fioWallet.staked = action.data.staked;
+            fioWallet.rewards = action.data.rewards;
           }
           return fioWallet;
         });

@@ -1,3 +1,5 @@
+import { US_LOCALE } from '../constants/common';
+
 export const createRangeString = target => {
   const separator = target.max ? ' - ' : '+';
   return `${target.min}${separator}${target.max || ''}`;
@@ -23,14 +25,13 @@ export const CURRENCY_OPTIONS = {
   minimumFractionDigits: 2,
   style: 'currency',
 };
-const locale = 'en-US';
 
 export const currencyString = (
   num,
   currency = 'USD',
   options = CURRENCY_OPTIONS,
 ) => {
-  return `${num.toLocaleString(locale, {
+  return `${num.toLocaleString(US_LOCALE, {
     ...options,
     currency,
   })}`;
