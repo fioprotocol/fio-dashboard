@@ -30,26 +30,31 @@ const TransactionItem: React.FC<TransactionItemProps> = props => {
     <div className={classes.badgeContainer}>
       <Badge type={BADGE_TYPES.BORDERED} show={true}>
         <div className={classes.badgeItem}>
-          <div className={classes.transactionTypeContainer}>
-            {isReceive ? (
-              <CommonBadge isBlue={true}>
-                <div className={classes.iconContainer}>
-                  <FontAwesomeIcon icon="arrow-down" className={classes.icon} />
-                </div>
-              </CommonBadge>
-            ) : (
-              <CommonBadge isGreen={true}>
-                <div className={classes.iconContainer}>
-                  <FontAwesomeIcon icon="arrow-up" className={classes.icon} />
-                </div>
-              </CommonBadge>
-            )}
-            <p className={classes.transactionType}>
-              {isReceive ? 'Received' : 'Sent'}
-            </p>
-          </div>
-          <div className={classes.date}>
-            {commonFormatTime(new Date(date * 1000).toISOString())}
+          <div className={classes.dateTypeContainer}>
+            <div className={classes.transactionTypeContainer}>
+              {isReceive ? (
+                <CommonBadge isBlue={true}>
+                  <div className={classes.iconContainer}>
+                    <FontAwesomeIcon
+                      icon="arrow-down"
+                      className={classes.icon}
+                    />
+                  </div>
+                </CommonBadge>
+              ) : (
+                <CommonBadge isGreen={true}>
+                  <div className={classes.iconContainer}>
+                    <FontAwesomeIcon icon="arrow-up" className={classes.icon} />
+                  </div>
+                </CommonBadge>
+              )}
+              <p className={classes.transactionType}>
+                {isReceive ? 'Received' : 'Sent'}
+              </p>
+            </div>
+            <div className={classes.date}>
+              {commonFormatTime(new Date(date * 1000).toISOString())}
+            </div>
           </div>
           <div className={classes.txContainer}>
             <p className={classes.title}>ID: </p>
