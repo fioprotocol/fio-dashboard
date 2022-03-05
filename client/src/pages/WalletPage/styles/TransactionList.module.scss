@@ -64,7 +64,7 @@
         align-items: center;
         justify-content: center;
         margin-top: 15px;
-      
+
         .txId, .title {
           font-size: 1em;
           margin-top: 0;
@@ -124,7 +124,7 @@
         align-items: center;
         justify-content: space-between;
         display: grid;
-        grid-template-columns: 130px 180px 250px 100px;
+        grid-template-columns: 200px 110px 110px;
 
         .date, .amount, .txContainer {
           margin-top: 0;
@@ -136,7 +136,60 @@
 
         .txContainer {
           display: grid;
+          grid-template-columns: 25px 50px 35px 35px;
+
+          .txId {
+            max-width: 50px;
+            margin-right: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+
+        .transactionType {
+          display: none;
+        }
+
+        .dateTypeContainer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+        }
+      }
+    }
+  }
+}
+
+@include xlg {
+  .container {
+    .badgeContainer {
+      .badgeItem {
+        grid-template-columns: 310px 250px 100px;
+
+        .transactionType {
+          display: block;
+        }
+
+        .txContainer {
           grid-template-columns: 25px 115px 35px 35px;
+
+          .txId {
+            max-width: none;
+            margin-right: 20px;
+            white-space: normal;
+            overflow: inherit;
+            text-overflow: inherit;
+          }
+        }
+
+        .amount {
+          display: block;
+          max-width: 100px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
       }
     }

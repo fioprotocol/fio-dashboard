@@ -31,10 +31,10 @@ const TotalBalanceBadge: React.FC<Props> = props => {
       <div className={classes.totalBadge}>
         <p className={classes.title}>Total FIO Wallets Balance</p>
         <p className={classes.totalFio}>
-          <Amount value={priceToNumber(total.fio)} /> FIO
+          <Amount value={total.fio} /> FIO
         </p>
         <p className={classes.totalUsdc}>
-          <Amount value={priceToNumber(total.usdc)} /> USDC
+          <Amount value={total.usdc} /> USDC
         </p>
         <Balance fio={available.fio} usdc={available.usdc} title="Available" />
         {locked.nativeFio ? (
