@@ -23,12 +23,17 @@ import {
   DEFAULT_BALANCES,
 } from '../../util/prices';
 
-import { FeePrice, FioWalletDoublet, WalletsBalances } from '../../types';
+import {
+  FeePrice,
+  FioBalanceRes,
+  FioWalletDoublet,
+  WalletsBalances,
+} from '../../types';
 
 type GetFeeAction = { data: { fee: number }; type: string; endpoint: string };
 type PricesAction = { data: { pricing: { usdtRoe: number } }; type: string };
 type RefreshBalanceAction = {
-  data: { balance: number; available: number; locked: number };
+  data: FioBalanceRes;
   type: string;
   publicKey: string;
 };
@@ -113,6 +118,9 @@ export function* setBalancesService() {
           balance: walletsBalances.wallets[publicKey].total.nativeFio,
           available: walletsBalances.wallets[publicKey].available.nativeFio,
           locked: walletsBalances.wallets[publicKey].locked.nativeFio,
+          staked: walletsBalances.wallets[publicKey].staked.nativeFio,
+          rewards: walletsBalances.wallets[publicKey].rewards.nativeFio,
+          unlockPeriods: [],
         },
         roe,
       );

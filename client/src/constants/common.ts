@@ -515,3 +515,5 @@ export const CHAIN_CODE_LIST = [
 ];
 
 export const DEFAULT_TEXT_TRUNCATE_LENGTH = 5;
+
+export const US_LOCALE = 'en-US';

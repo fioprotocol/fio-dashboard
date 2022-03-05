@@ -21,12 +21,25 @@ export function convertFioPrices(
 }
 
 export const calculateBalances = (
-  { balance = 0, available = 0, locked = 0 }: FioBalanceRes,
+  {
+    balance = 0,
+    available = 0,
+    locked = 0,
+    staked = 0,
+    rewards = 0,
+    unlockPeriods = [],
+  }: FioBalanceRes,
   roe: number,
 ): WalletBalances => ({
   total: convertFioPrices(balance, roe),
   available: convertFioPrices(available, roe),
+  staked: convertFioPrices(staked, roe),
   locked: convertFioPrices(locked, roe),
+  rewards: convertFioPrices(rewards, roe),
+  unlockPeriods: unlockPeriods.map(({ amount, date }) => ({
+    date: new Date(date),
+    ...convertFioPrices(amount, roe),
+  })),
 });
 
 export const calculateTotalBalances = (
@@ -37,6 +50,9 @@ export const calculateTotalBalances = (
     balance: 0,
     available: 0,
     locked: 0,
+    staked: 0,
+    rewards: 0,
+    unlockPeriods: [],
   };
   for (const publicKey in walletsBalances) {
     if (walletsBalances[publicKey] != null) {
@@ -49,6 +65,21 @@ export const calculateTotalBalances = (
       total.locked = new MathOp(total.locked)
         .add(walletsBalances[publicKey].locked.nativeFio)
         .toNumber();
+      total.staked = new MathOp(total.staked)
+        .add(walletsBalances[publicKey].staked.nativeFio)
+        .toNumber();
+      total.rewards = new MathOp(total.rewards)
+        .add(walletsBalances[publicKey].rewards.nativeFio)
+        .toNumber();
+      total.unlockPeriods = [
+        ...total.unlockPeriods,
+        ...walletsBalances[publicKey].unlockPeriods.map(
+          ({ nativeFio, date }) => ({
+            amount: nativeFio,
+            date: date.getTime(),
+          }),
+        ),
+      ];
     }
   }
   return calculateBalances(total, roe);
