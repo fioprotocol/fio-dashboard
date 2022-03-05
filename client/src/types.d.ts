@@ -92,6 +92,8 @@ export type FioWalletDoublet = {
   balance?: number | null;
   available?: number | null;
   locked?: number | null;
+  staked?: number | null;
+  rewards?: number | null;
   publicWalletFioSdk?: FIOSDK_LIB | null;
   from: string;
 };
@@ -198,6 +200,12 @@ export type FioBalanceRes = {
   balance?: number;
   available?: number;
   locked?: number;
+  staked?: number;
+  rewards?: number;
+  unlockPeriods?: {
+    amount: number;
+    date: number;
+  }[];
 }
 
 export type WalletBalancesItem = {
@@ -206,12 +214,17 @@ export type WalletBalancesItem = {
   usdc: string;
 }
 
+export type UnlockPeriod = {
+  date: Date | null;
+} & WalletBalancesItem
+
 export type WalletBalances = {
   total: WalletBalancesItem,
   available: WalletBalancesItem,
   locked: WalletBalancesItem,
   rewards?: WalletBalancesItem,
   staked?: WalletBalancesItem,
+  unlockPeriods?: UnlockPeriod[],
 }
 
 export type WalletsBalances = {

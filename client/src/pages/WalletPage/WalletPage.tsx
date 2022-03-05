@@ -126,7 +126,7 @@ const WalletPage: React.FC<ContainerProps> = props => {
         />
       </LayoutContainer>
       <div className={classes.actionBadges}>
-        <TotalBalanceBadge {...balance} />
+        <TotalBalanceBadge {...balance} publicKey={fioWallet.publicKey} />
         <TransactionHistory actorName={actorName} />
       </div>
     </div>

@@ -14,7 +14,7 @@ import { isDomain } from '../utils';
 
 import { ACTIONS, ACTIONS_TO_END_POINT_KEYS } from '../constants/fio';
 
-import { NFTTokenDoublet, WalletKeys } from '../types';
+import { FioBalanceRes, NFTTokenDoublet, WalletKeys } from '../types';
 
 export interface TrxResponse {
   transaction_id?: string;
@@ -167,28 +167,61 @@ export default class Fio {
     return await this.walletFioSDK.registerFioAddress(fioName, fee);
   };
 
-  getBalance = async (
-    publicKey: string,
-  ): Promise<{ balance: number; available: number; locked: number }> => {
+  getBalance = async (publicKey: string): Promise<FioBalanceRes> => {
+    let balances: FioBalanceRes = {
+      balance: 0,
+      available: 0,
+      staked: 0,
+      locked: 0,
+      rewards: 0,
+      unlockPeriods: [],
+    };
     try {
-      const { balance, available } = await this.publicFioSDK.getFioBalance(
-        publicKey,
-      );
-
-      return {
+      const {
         balance,
         available,
-        locked: 0,
+        staked,
+        srps,
+        roe,
+      } = await this.publicFioSDK.getFioBalance(publicKey);
+
+      balances = {
+        ...balances,
+        balance,
+        available,
+        staked,
+        rewards: new MathOp(srps)
+          .mul(roe)
+          .round(0, 2)
+          .sub(staked)
+          .toNumber(),
       };
     } catch (e) {
       this.logError(e);
     }
 
-    return {
-      balance: 0,
-      available: 0,
-      locked: 0,
-    };
+    try {
+      const {
+        remaining_lock_amount,
+        time_stamp,
+        unlock_periods,
+      } = await this.publicFioSDK.getLocks(publicKey);
+
+      balances = {
+        ...balances,
+        locked: remaining_lock_amount,
+        unlockPeriods: unlock_periods.map(
+          ({ amount, duration }: { amount: number; duration: number }) => ({
+            amount,
+            date: (time_stamp + duration) * 1000, // unlock date-time in ms
+          }),
+        ),
+      };
+    } catch (e) {
+      this.logError(e);
+    }
+
+    return balances;
   };
 
   getFioNames = async (publicKey: string): Promise<FioNamesResponse> => {
