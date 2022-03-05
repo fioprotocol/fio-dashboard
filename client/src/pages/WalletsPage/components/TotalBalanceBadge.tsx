@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 
@@ -7,14 +7,15 @@ import Amount from '../../../components/common/Amount';
 import Modal from '../../../components/Modal/Modal';
 
 import { ROUTES } from '../../../constants/routes';
+import { US_LOCALE } from '../../../constants/common';
 
 import { priceToNumber, putParamsToUrl } from '../../../utils';
 
-import { WalletBalances } from '../../../types';
+import { UnlockPeriod, WalletBalances } from '../../../types';
 
 import classes from '../styles/TotalBalanceBadge.module.scss';
 
-type Props = WalletBalances;
+type Props = WalletBalances & { publicKey?: string };
 
 const Balance = (props: {
   fio: string;
@@ -25,12 +26,17 @@ const Balance = (props: {
   const { fio, usdc, title, viewDetails } = props;
   return (
     <div className="container">
-      <div className={classnames(classes.balanceContainer, 'row flex')}>
+      <div
+        className={classnames(
+          classes.balanceContainer,
+          'row flex align-items-center',
+        )}
+      >
         <p className={classnames(classes.balanceTitle, 'col-sm-3')}>{title}</p>
         <p
           className={classnames(
             classes.balanceValues,
-            viewDetails ? 'col-sm-6' : 'col-sm-9',
+            viewDetails ? 'col-sm-6 mr-3' : 'col-sm-9',
           )}
         >
           <Amount value={priceToNumber(fio)} /> FIO /{' '}
@@ -53,20 +59,17 @@ const Balance = (props: {
   );
 };
 
-const LockedItemsList = ({
-  data,
-}: {
-  data: { fio: string; usdc: string; unlockDate: any }[];
-}) => {
+const LockedItemsList = ({ data }: { data: UnlockPeriod[] }) => {
   return (
     <div className={classnames(classes.itemsList)}>
       {data.map((o, i) => (
         <div
-          key={o.unlockDate}
+          key={o.date.getTime()}
           className={classnames(classes.itemContainer, 'row')}
         >
           <p className={classnames(classes.itemData, 'col-5')}>
-            {o.unlockDate}
+            {o.date.toLocaleDateString(US_LOCALE)} @{' '}
+            {o.date.toLocaleTimeString(US_LOCALE)}
           </p>
           <p className={classnames(classes.itemData, 'col-7')}>
             <Amount value={priceToNumber(o.fio)} /> FIO (&#36;
@@ -82,37 +85,16 @@ const TotalBalanceBadge: React.FC<Props> = props => {
   const {
     total,
     available,
-    // locked,
-    rewards = { fio: '0', usdc: '0', nativeFio: 0 },
-    staked = { fio: '0', usdc: '0', nativeFio: 0 },
+    locked,
+    rewards,
+    staked,
+    unlockPeriods,
+    publicKey,
   } = props;
-
-  // todo: use real data
-  const locked = { fio: '1200000000345', usdc: '10', nativeFio: 120000 };
-  const lockedList = [
-    { unlockDate: '01/00/0000 @ 00:00 AM', fio: '23', usdc: '7' },
-    { unlockDate: '02/00/0000 @ 00:00 AM', fio: '23', usdc: '7' },
-    { unlockDate: '03/00/0000 @ 00:00 AM', fio: '23', usdc: '7' },
-    { unlockDate: '04/00/0000 @ 00:00 AM', fio: '23', usdc: '7' },
-    { unlockDate: '05/00/0000 @ 00:00 AM', fio: '23', usdc: '7' },
-    { unlockDate: '06/00/0000 @ 00:00 AM', fio: '23', usdc: '7' },
-    { unlockDate: '07/00/0000 @ 00:00 AM', fio: '23', usdc: '7' },
-    { unlockDate: '08/00/0000 @ 00:00 AM', fio: '23', usdc: '7' },
-    { unlockDate: '09/00/0000 @ 00:00 AM', fio: '23', usdc: '7' },
-    { unlockDate: '10/00/0000 @ 00:00 AM', fio: '23', usdc: '7' },
-    { unlockDate: '11/00/0000 @ 00:00 AM', fio: '23', usdc: '7' },
-    { unlockDate: '12/00/0000 @ 00:00 AM', fio: '23', usdc: '7' },
-    { unlockDate: '13/00/0000 @ 00:00 AM', fio: '23', usdc: '7' },
-    { unlockDate: '14/00/0000 @ 00:00 AM', fio: '23', usdc: '7' },
-    { unlockDate: '15/00/0000 @ 00:00 AM', fio: '23', usdc: '7' },
-    { unlockDate: '16/00/0000 @ 00:00 AM', fio: '23', usdc: '7' },
-  ];
 
   const [showLockedTokensModalView, setShowLockedTokensModalView] = useState(
     false,
   );
-
-  const { publicKey } = useParams();
 
   const handleCloseModal = () => {
     setShowLockedTokensModalView(false);
@@ -128,7 +110,13 @@ const TotalBalanceBadge: React.FC<Props> = props => {
         <p className={classes.totalUsdc}>
           <Amount value={total.usdc} /> USDC
         </p>
-        <Balance fio={available.fio} usdc={available.usdc} title="Available" />
+        {locked.nativeFio ? (
+          <Balance
+            fio={available.fio}
+            usdc={available.usdc}
+            title="Available"
+          />
+        ) : null}
         {locked.nativeFio ? (
           <Balance
             fio={locked.fio}
@@ -172,6 +160,7 @@ const TotalBalanceBadge: React.FC<Props> = props => {
         onClose={handleCloseModal}
         isSimple={true}
         isWide={true}
+        hasDefaultCloseColor={true}
       >
         <div className={classes.modalContainer}>
           <h2 className={classes.title}>Locked FIO Tokens</h2>
@@ -184,7 +173,7 @@ const TotalBalanceBadge: React.FC<Props> = props => {
                 Amount
               </div>
             </div>
-            <LockedItemsList data={lockedList} />
+            <LockedItemsList data={unlockPeriods} />
           </div>
           <div className="d-flex justify-content-center">
             <Button className={classes.closeButton} onClick={handleCloseModal}>
