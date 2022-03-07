@@ -4,7 +4,8 @@
 
 .container {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
+  align-items: center;
   width: 100%;
 
   .subtitle, .text {
@@ -60,6 +61,7 @@
 @include lg {
   .container {
     flex-direction: row;
+    align-items: flex-start;
     max-width: 1200px;
     width: 100%;
     margin: 0 80px;
