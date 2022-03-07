@@ -88,6 +88,15 @@ class MathOp {
     }
   }
 
+  gte(x: BigSource) {
+    try {
+      return Big(this.value).gte(x);
+    } catch (err) {
+      console.error(err);
+      return this.value >= x;
+    }
+  }
+
   lt(x: BigSource) {
     try {
       return Big(this.value).lt(x);

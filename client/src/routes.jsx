@@ -41,6 +41,7 @@ import WalletsPage from './pages/WalletsPage';
 import WalletPage from './pages/WalletPage';
 import ImportWalletPage from './pages/ImportWalletPage';
 import SendPage from './pages/SendPage';
+import StakeTokensPage from './pages/StakeTokensPage';
 import UpdateEmailConfirmGatePage from './pages/UpdateEmailConfirmGatePage';
 import UpdateEmailPage from './pages/UpdateEmailPage';
 import RejectFioRequestPage from './pages/RejectFioRequestPage';
@@ -172,6 +173,9 @@ const Routes = () => (
           component={TokensRequestPaymentPage}
           exact
         />
+
+        <PrivateRoute path={ROUTES.STAKE} component={StakeTokensPage} exact />
+        <PrivateRoute path={ROUTES.UNSTAKE} component={SendPage} exact />
 
         <Route
           path={ROUTES.ACCOUNT_RECOVERY}

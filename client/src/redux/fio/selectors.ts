@@ -4,7 +4,7 @@ import { prefix } from './actions';
 import { emptyWallet } from './reducer';
 import { getElementByFioName } from '../../utils';
 import { FioNameItemProps, FioWalletDoublet } from '../../types';
-import { ReduxState } from '../../redux/init';
+import { ReduxState } from '../init';
 
 export const loading = (state: ReduxState) => state[prefix].loading;
 export const walletsFioAddressesLoading = (state: ReduxState) =>
