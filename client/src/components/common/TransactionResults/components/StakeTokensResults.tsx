@@ -39,7 +39,7 @@ const StakeTokensResults: React.FC<TokenTransferResultsProps> = props => {
 
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>{titleAmount || 'Amount Unstaked'}</p>
+          <p className={classes.title}>{titleAmount || 'Amount Staked'}</p>
           <p className={classes.item}>
             {displayAmount} {displayUsdcAmount}
           </p>

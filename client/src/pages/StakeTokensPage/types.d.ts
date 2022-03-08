@@ -6,8 +6,6 @@ import {
   WalletBalances,
 } from '../../types';
 
-import { FioRecordViewDecrypted } from '../WalletPage/types';
-
 type MatchProps = {
   publicKey: string;
 };
