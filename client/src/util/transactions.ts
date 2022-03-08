@@ -235,6 +235,8 @@ export const checkTransactions = async (
       lastActionSeqNumber = lastActionObject.actions[0].account_action_seq;
     } else {
       // if no transactions at all
+      if (currentHistory.highestTxHeight === 0) return [];
+
       updateHistory(
         {
           highestTxHeight: 0,

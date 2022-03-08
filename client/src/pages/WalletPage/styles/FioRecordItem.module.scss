@@ -16,13 +16,13 @@
 
     &:hover {
       cursor: pointer;
-    
+
       .badgeItem {
         .iconArrow {
           transform: translateX(4px);
         }
       }
-    } 
+    }
 
     .badgeItem {
       display: flex;
@@ -99,7 +99,7 @@
         align-items: center;
         justify-content: space-between;
         display: grid;
-        grid-template-columns: 100px 180px 250px 100px 30px;
+        grid-template-columns: 200px 190px 90px 50px;
 
         .date {
           margin-top: 0;
@@ -107,7 +107,7 @@
         }
 
         .senderInfo {
-          margin: 0 30px;
+          margin: 0 5px;
           max-width: none;
         }
 
@@ -120,6 +120,42 @@
           align-self: center;
           cursor: pointer;
           margin-left: auto;
+        }
+
+        .fioTxType {
+          display: none;
+        }
+
+        .dateTypeContainer {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+        }
+        .fioDataTypeContainer {
+          width: auto;
+          margin-right: 0;
+        }
+      }
+    }
+  }
+}
+
+@include xlg {
+  .container {
+    .badgeContainer {
+      .badgeItem {
+        grid-template-columns: 280px 250px 100px 30px;
+
+        .senderInfo {
+          margin: 0 30px;
+          max-width: none;
+        }
+        .fioTxType {
+          display: block;
+        }
+        .fioDataTypeContainer {
+          width: 110px;
         }
       }
     }
