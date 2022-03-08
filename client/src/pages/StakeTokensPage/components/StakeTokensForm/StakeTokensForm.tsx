@@ -31,7 +31,9 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
   const { loading, fioAddresses, fee, initialValues, balance } = props;
 
   const [walletAvailableAmount, setWalletAvailableAmount] = useState('0');
-  const [walletMaxAvailableAmount, setWalletMaxAvailableAmount] = useState(0);
+  const [walletMaxAvailableAmount, setWalletMaxAvailableAmount] = useState<
+    number | null
+  >(null);
 
   useEffect(() => {
     setWalletAvailableAmount(balance?.available?.fio || '0');
@@ -135,7 +137,8 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
 
         const hasLowBalance =
           walletMaxAvailableAmount === 0 ||
-          new MathOp(amount).gt(walletMaxAvailableAmount);
+          (walletMaxAvailableAmount &&
+            new MathOp(amount).gt(walletMaxAvailableAmount));
         const notEnoughBundles =
           selectedAddress != null
             ? selectedAddress.remaining < BUNDLES_TX_COUNT.STAKE
@@ -147,8 +150,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           formRenderProps.submitting ||
           loading ||
           hasLowBalance ||
-          (selectedAddress && notEnoughBundles) ||
-          !fee.nativeFio;
+          (selectedAddress && notEnoughBundles);
 
         return (
           <form
