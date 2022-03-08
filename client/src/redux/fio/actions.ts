@@ -1,7 +1,8 @@
 import { FioAddresses } from '@fioprotocol/fiosdk/src/entities/FioAddresses';
-import { Api } from '../../api';
+import apis, { Api } from '../../api';
 
 import { PublicAddressDoublet, FeePrice, WalletsBalances } from '../../types';
+import { DEFAULT_ACTION_FEE_AMOUNT } from '../../api/fio';
 
 export const prefix = 'fio';
 
@@ -69,6 +70,16 @@ export const SET_FEE = `${prefix}/SET_FEE`;
 export const getFee = (endpoint: string, fioAddress: string = '') => ({
   types: [GET_FEE_REQUEST, GET_FEE_SUCCESS, GET_FEE_FAILURE],
   promise: (api: Api) => {
+    // temporary solution for staking fee value
+    if (
+      [
+        apis.fio.actionEndPoints.stakeFioTokens,
+        apis.fio.actionEndPoints.unStakeFioTokens,
+      ].includes(endpoint)
+    ) {
+      return Promise.resolve({ fee: DEFAULT_ACTION_FEE_AMOUNT });
+    }
+
     return api.fio.publicFioSDK.getFee(endpoint, fioAddress);
   },
   endpoint,
