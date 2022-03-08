@@ -76,5 +76,6 @@ export const BUNDLES_TX_COUNT = {
   RECORD_OBT_DATA: 2,
   ADD_NFT: 2,
   REMOVE_NFT: 1,
-  STAKE: 2,
+  STAKE: 1,
+  UNSTAKE: 1,
 };

@@ -82,7 +82,7 @@ export const StakeAmountInput = (
 
   useEffect(() => {
     toggleIsInputHasValue(value !== '');
-    setIsMaxValue(new MathOp(value).gte(maxValue));
+    setIsMaxValue(new MathOp(value || 0).gte(maxValue || 0));
   }, [value, maxValue]);
 
   return (
@@ -124,7 +124,6 @@ export const StakeAmountInput = (
         </div>
       </div>
       <ErrorBadge
-        useVisibility
         error={error}
         data={data}
         hasError={!hideError && !data.hideError && hasError}

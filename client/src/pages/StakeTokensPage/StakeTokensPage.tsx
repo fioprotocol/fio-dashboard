@@ -85,7 +85,7 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
     );
   };
 
-  if (!fioWallet || !fioWallet.id)
+  if (!fioWallet || !fioWallet.id || fioWallet.balance === null)
     return (
       <div className="d-flex justify-content-center align-items-center w-100 flex-grow-1">
         <FioLoader />

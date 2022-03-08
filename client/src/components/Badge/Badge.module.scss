@@ -25,6 +25,10 @@
     padding: 15px 20px;
   }
 
+  &.hidden {
+    margin: 0 !important;
+  }
+
   &.warning {
     background-color: $simple-orange;
   }
