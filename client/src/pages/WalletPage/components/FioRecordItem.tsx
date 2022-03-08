@@ -58,21 +58,23 @@ const FioRecordItem: React.FC<Props> = props => {
     <div className={classes.badgeContainer} onClick={() => onClick(fioRecord)}>
       <Badge type={BADGE_TYPES.BORDERED} show={true}>
         <div className={classes.badgeItem}>
-          <div className={classes.fioDataTypeContainer}>
-            <CommonBadge
-              isBlue={CONTENT_TYPE[fioTxType].isBlue}
-              isGreen={CONTENT_TYPE[fioTxType].isGreen}
-            >
-              <div className={classes.iconContainer}>
-                <FontAwesomeIcon
-                  icon={CONTENT_TYPE[fioTxType].icon}
-                  className={classes.icon}
-                />
-              </div>
-            </CommonBadge>
-            <p className={classes.fioTxType}>{fioTxType}</p>
+          <div className={classes.dateTypeContainer}>
+            <div className={classes.fioDataTypeContainer}>
+              <CommonBadge
+                isBlue={CONTENT_TYPE[fioTxType].isBlue}
+                isGreen={CONTENT_TYPE[fioTxType].isGreen}
+              >
+                <div className={classes.iconContainer}>
+                  <FontAwesomeIcon
+                    icon={CONTENT_TYPE[fioTxType].icon}
+                    className={classes.icon}
+                  />
+                </div>
+              </CommonBadge>
+              <p className={classes.fioTxType}>{fioTxType}</p>
+            </div>
+            <div className={classes.date}>{commonFormatTime(date)}</div>
           </div>
-          <div className={classes.date}>{commonFormatTime(date)}</div>
           {renderSenderInfo(senderInfo)}
           {status && (
             <div className={classes.statusContainer}>

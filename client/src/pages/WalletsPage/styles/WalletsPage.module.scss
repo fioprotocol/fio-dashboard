@@ -75,6 +75,9 @@
   .container {
     padding: 30px 20px;
   }
+  .totalBalanceContainer {
+    margin-left: 20px;
+  }
 }
 
 @include lg {
@@ -82,13 +85,21 @@
     flex-direction: row;
     max-width: 1200px;
     width: 100%;
-    margin: 0 80px;
+    margin: 0 20px;
 
     .infoBadge {
       margin-top: 60px;
     }
   }
   .totalBalanceContainer {
-    margin-left: 60px;
+    width: 100%;
+    max-width: 365px;
+    margin: 0 20px;
+  }
+}
+
+@include xlg {
+  .container {
+    margin: 0 80px;
   }
 }

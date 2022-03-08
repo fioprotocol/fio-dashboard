@@ -27,6 +27,13 @@
   }
 }
 
+// Large devices
+@mixin xlg {
+  @media (min-width: #{$screen-large-desktop}) {
+    @content;
+  }
+}
+
 // Custom screensize
 @mixin rwd($screen) {
   @media (min-width: $screen+'px') {
