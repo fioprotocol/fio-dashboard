@@ -99,6 +99,11 @@
     font-size: 0.875em;
   }
 
+  &.isSecondary {
+    margin-top: 10px!important;
+    color: $dark-jungle-green;
+  }
+
   .loader {
     margin-left: 1rem;
     position: absolute;
