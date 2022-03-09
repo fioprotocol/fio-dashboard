@@ -14,10 +14,7 @@ import { Label } from '../../../../components/Input/StaticInputParts';
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import { ROUTES } from '../../../../constants/routes';
-import {
-  BUNDLES_TX_COUNT,
-  STAKE_MIN_VALUE_TO_SAVE,
-} from '../../../../constants/fio';
+import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
 
 import { formValidation } from './validation';
 import MathOp from '../../../../util/math';
@@ -42,11 +39,9 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
   useEffect(() => {
     setWalletMaxAvailableAmount(
       !fioAddresses.length
-        ? new MathOp(STAKE_MIN_VALUE_TO_SAVE).gt(walletAvailableAmount)
+        ? new MathOp(fee.nativeFio).gt(walletAvailableAmount)
           ? 0
-          : new MathOp(walletAvailableAmount)
-              .sub(STAKE_MIN_VALUE_TO_SAVE)
-              .toNumber()
+          : new MathOp(walletAvailableAmount).sub(fee.nativeFio).toNumber()
         : +walletAvailableAmount,
     );
   }, [walletAvailableAmount, fioAddresses]);
