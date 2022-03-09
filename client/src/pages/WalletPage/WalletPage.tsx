@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useHistory } from 'react-router';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import WalletDetailsModal from './components/WalletDetailsModal';
@@ -21,6 +22,14 @@ import { ContainerProps } from './types';
 
 import classes from './styles/WalletPage.module.scss';
 
+type Location = {
+  location: {
+    state: {
+      isOpenLockedList: boolean;
+    };
+  };
+};
+
 const WalletPage: React.FC<ContainerProps> = props => {
   const {
     fioWallet,
@@ -32,6 +41,10 @@ const WalletPage: React.FC<ContainerProps> = props => {
 
   const [showDetails, setShowDetails] = useState(false);
   const [showWalletNameEdit, setShowWalletNameEdit] = useState(false);
+
+  const { location }: Location = useHistory();
+
+  const { isOpenLockedList } = location.state || { isOpenLockedList: false };
 
   useEffect(() => {
     if (fioWallet && fioWallet.publicKey) refreshBalance(fioWallet.publicKey);
@@ -126,7 +139,11 @@ const WalletPage: React.FC<ContainerProps> = props => {
         />
       </LayoutContainer>
       <div className={classes.actionBadges}>
-        <TotalBalanceBadge {...balance} publicKey={fioWallet.publicKey} />
+        <TotalBalanceBadge
+          {...balance}
+          publicKey={fioWallet.publicKey}
+          isOpenLockedList={isOpenLockedList}
+        />
         <TransactionHistory actorName={actorName} />
       </div>
     </div>

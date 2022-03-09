@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
@@ -15,7 +15,10 @@ import { UnlockPeriod, WalletBalances } from '../../../types';
 
 import classes from '../styles/TotalBalanceBadge.module.scss';
 
-type Props = WalletBalances & { publicKey?: string };
+type Props = WalletBalances & {
+  publicKey?: string;
+  isOpenLockedList?: boolean;
+};
 
 const Balance = (props: {
   fio: string;
@@ -90,11 +93,16 @@ const TotalBalanceBadge: React.FC<Props> = props => {
     staked,
     unlockPeriods,
     publicKey,
+    isOpenLockedList,
   } = props;
 
   const [showLockedTokensModalView, setShowLockedTokensModalView] = useState(
     false,
   );
+
+  useEffect(() => {
+    setShowLockedTokensModalView(isOpenLockedList);
+  }, [isOpenLockedList]);
 
   const handleCloseModal = () => {
     setShowLockedTokensModalView(false);
