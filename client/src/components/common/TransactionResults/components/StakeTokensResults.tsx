@@ -13,12 +13,17 @@ import classes from '../styles/Results.module.scss';
 
 type TokenTransferResultsProps = ResultsProps;
 
-const StakeTokensResults: React.FC<TokenTransferResultsProps> = props => {
+const StakeTokensResults: React.FC<TokenTransferResultsProps & {
+  labelAmount?: string;
+  topElement?: React.ReactNode;
+}> = props => {
   const {
     results: {
       other: { amount, nativeAmount },
     },
-    titleAmount,
+    titleAmount = 'Amount Staked',
+    labelAmount = 'Staking Information',
+    topElement = null,
   } = props;
 
   const fioAmount = Number(amount);
@@ -35,11 +40,12 @@ const StakeTokensResults: React.FC<TokenTransferResultsProps> = props => {
 
   return (
     <Results {...props}>
-      <p className={classes.label}>Staking Information</p>
+      {topElement}
 
+      <p className={classes.label}>{labelAmount}</p>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>{titleAmount || 'Amount Staked'}</p>
+          <p className={classes.title}>{titleAmount}</p>
           <p className={classes.item}>
             {displayAmount} {displayUsdcAmount}
           </p>
