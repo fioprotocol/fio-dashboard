@@ -10,8 +10,6 @@ export const MAX_MEMO_SIZE = 64;
 export const MAX_TOKEN_LENGTH = 10;
 export const MAX_CHAIN_LENGTH = 10;
 
-export const STAKE_MIN_VALUE_TO_SAVE = 100;
-
 export const ACTIONS = {
   transferTokens: 'transferTokens',
   addPublicAddress: 'addPublicAddress',
