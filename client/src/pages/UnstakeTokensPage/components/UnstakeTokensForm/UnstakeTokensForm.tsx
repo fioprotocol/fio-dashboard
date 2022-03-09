@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { Link } from 'react-router-dom';
 
@@ -10,6 +10,7 @@ import Dropdown from '../../../../components/Input/Dropdown';
 import StakeAmountInput from '../../../../components/Input/StakeAmountInput';
 import InfoBadge from '../../../../components/InfoBadge/InfoBadge';
 import { Label } from '../../../../components/Input/StaticInputParts';
+import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
@@ -19,32 +20,16 @@ import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
 import { formValidation } from './validation';
 import MathOp from '../../../../util/math';
 
-import { StakeTokensProps, StakeTokensValues } from '../../types';
+import { UnstakeTokensProps, StakeTokensValues } from '../../types';
 import { FioAddressDoublet } from '../../../../types';
 
-import classes from '../../styles/StakeTokensForm.module.scss';
+import classes from '../../styles/UnstakeTokensForm.module.scss';
 
-const StakeTokensForm: React.FC<StakeTokensProps> = props => {
+const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
   const { loading, fioAddresses, fee, initialValues, balance } = props;
 
-  const [walletAvailableAmount, setWalletAvailableAmount] = useState('0');
-  const [walletMaxAvailableAmount, setWalletMaxAvailableAmount] = useState<
-    string | null
-  >(null);
-
-  useEffect(() => {
-    setWalletAvailableAmount(balance?.available?.fio || '0');
-  }, [balance]);
-
-  useEffect(() => {
-    setWalletMaxAvailableAmount(
-      !fioAddresses.length
-        ? new MathOp(fee.nativeFio).gt(walletAvailableAmount)
-          ? '0'
-          : new MathOp(walletAvailableAmount).sub(fee.nativeFio).toString()
-        : walletAvailableAmount,
-    );
-  }, [walletAvailableAmount, fioAddresses, fee]);
+  const walletStakedTokens = balance?.staked?.fio || '0';
+  const walletAvailableTokens = balance?.available?.fio || '0';
 
   const renderFioAddressInfoBadge = () => {
     if (fioAddresses.length) return null;
@@ -98,7 +83,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
               {fioAddresses.length > 1 ? (
                 <Field
                   name="fioAddress"
-                  label="FIO Crypto Handle for Staking"
+                  label="FIO Crypto Handle for Unstaking"
                   component={Dropdown}
                   errorColor={COLOR_TYPE.WARN}
                   placeholder="Select FIO Crypto Handle"
@@ -119,7 +104,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
                   errorColor={COLOR_TYPE.WARN}
                   component={Input}
                   disabled={true}
-                  label="FIO Crypto Handle for Staking"
+                  label="FIO Crypto Handle for Unstaking"
                 />
               )}
             </>
@@ -131,9 +116,8 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           : null;
 
         const hasLowBalance =
-          walletMaxAvailableAmount === '0' ||
-          (walletMaxAvailableAmount &&
-            new MathOp(amount).gt(walletMaxAvailableAmount));
+          (!selectedAddress && new MathOp(fee.fio).gt(walletAvailableTokens)) ||
+          new MathOp(amount).gt(walletStakedTokens);
         const notEnoughBundles =
           selectedAddress != null
             ? selectedAddress.remaining < BUNDLES_TX_COUNT.STAKE
@@ -154,10 +138,10 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           >
             <InfoBadge
               className={classes.infoBadge}
-              type={BADGE_TYPES.ERROR}
-              show={hasLowBalance}
-              title="Low Balance"
-              message="You do not have enough FIO to stake. Please add more FIO and try again"
+              type={BADGE_TYPES.INFO}
+              show={true}
+              title="Unstaking Reward Amount"
+              message="The rewards amount of FIO Tokens will be locked for 7 days before it can be transferred or staked again."
             />
 
             {renderFioAddressInfoBadge()}
@@ -165,24 +149,31 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
 
             <Field
               name="amount"
-              placeholder="Enter Stake Amount"
+              placeholder="Enter Amount to Unstake"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={StakeAmountInput}
               hasFioAddress={fioAddresses.length}
-              availableValue={walletAvailableAmount}
-              maxValue={walletMaxAvailableAmount}
+              availableValue={walletStakedTokens}
+              availableTitle="Available Staked FIO Balance"
+              label="Unstake Amount"
             />
 
             <p className={classes.transactionTitle}>Transaction cost</p>
             {!selectedAddress ? (
-              <PriceBadge
-                title="Fees"
-                type={BADGE_TYPES.BLACK}
-                costNativeFio={fee.nativeFio}
-                costFio={fee.fio}
-                costUsdc={fee.usdc}
-              />
+              <>
+                <LowBalanceBadge
+                  hasLowBalance={hasLowBalance}
+                  messageText="You do not have enough Fio in your available balance. Please select an address with available bundles or send more FIO to your wallet."
+                />
+                <PriceBadge
+                  title="Fees"
+                  type={BADGE_TYPES.BLACK}
+                  costNativeFio={fee.nativeFio}
+                  costFio={fee.fio}
+                  costUsdc={fee.usdc}
+                />
+              </>
             ) : (
               <>
                 <InfoBadge
@@ -206,7 +197,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
             )}
 
             <SubmitButton
-              text="Stake FIO Tokens"
+              text="Unstake FIO Tokens"
               disabled={submitDisabled}
               loading={loading}
               withTopMargin={true}
@@ -218,4 +209,4 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
   );
 };
 
-export default StakeTokensForm;
+export default UnstakeTokensForm;
