@@ -91,6 +91,10 @@
   font-size: 0.875em;;
   margin: 10px 20px;
   color: $black;
+
+  span {
+    color: $dark-jungle-green;
+  }
 }
 
 .inputGroup {

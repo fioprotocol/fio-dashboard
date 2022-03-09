@@ -31,7 +31,7 @@ export type StakeAmountInputProps = {
   availableTitle?: string;
   hasFioAddress: boolean;
   availableValue: string;
-  maxValue?: number;
+  maxValue?: string;
 };
 
 export const StakeAmountInput = (
@@ -42,7 +42,7 @@ export const StakeAmountInput = (
     input,
     meta,
     availableTitle = 'Available FIO Balance',
-    availableValue = 0,
+    availableValue = '0',
     maxValue = availableValue,
     hasFioAddress,
     colorSchema,
@@ -82,7 +82,7 @@ export const StakeAmountInput = (
 
   useEffect(() => {
     toggleIsInputHasValue(value !== '');
-    setIsMaxValue(new MathOp(value || 0).gte(maxValue || 0));
+    setIsMaxValue(new MathOp(value || 0).gte(maxValue));
   }, [value, maxValue]);
 
   return (
@@ -91,7 +91,7 @@ export const StakeAmountInput = (
       <InfoBadge
         className={classes.badge}
         type={BADGE_TYPES.INFO}
-        show={!hasFioAddress && isMaxValue && maxValue > 0}
+        show={!hasFioAddress && isMaxValue && new MathOp(maxValue).gt(0)}
         title="Max Amount"
         message="A small portion of FIO has been held in your available balance to ensure the transaction does not fail due to not having enough available FIO"
       />
@@ -120,7 +120,7 @@ export const StakeAmountInput = (
         </div>
 
         <div className={classes.maxButtonContainer}>
-          <Button onClick={() => onChange(maxValue + '')}>Max</Button>
+          <Button onClick={() => onChange(maxValue)}>Max</Button>
         </div>
       </div>
       <ErrorBadge
@@ -132,7 +132,7 @@ export const StakeAmountInput = (
         submitError={submitError}
       />
       <div className={classes.additionalSubInfo}>
-        {availableTitle + ': '}
+        <span>{availableTitle + ': '}</span>
         <b>{availableValue} FIO</b>
       </div>
     </div>
