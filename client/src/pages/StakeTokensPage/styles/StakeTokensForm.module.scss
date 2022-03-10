@@ -7,6 +7,11 @@
   .infoBadge {
     margin: 0 0 20px 0;
   }
+  .infoBadgeError {
+    a:hover {
+      color: $iron;
+    }
+  }
 
   .transactionTitle {
     font-size: 0.875em;

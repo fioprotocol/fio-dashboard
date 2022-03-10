@@ -23,7 +23,7 @@ import MathOp from '../../../../util/math';
 import { UnstakeTokensProps, StakeTokensValues } from '../../types';
 import { FioAddressDoublet } from '../../../../types';
 
-import classes from '../../styles/UnstakeTokensForm.module.scss';
+import classes from '../../../StakeTokensPage/styles/StakeTokensForm.module.scss';
 
 const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
   const { loading, fioAddresses, fee, initialValues, balance } = props;
@@ -75,7 +75,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
           values: { amount, fioAddress },
         } = formRenderProps;
 
-        const renderUser = () => {
+        const renderCryptoHandle = () => {
           if (!fioAddresses.length) return null;
 
           return (
@@ -120,7 +120,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
           new MathOp(amount).gt(walletStakedTokens);
         const notEnoughBundles =
           selectedAddress != null
-            ? selectedAddress.remaining < BUNDLES_TX_COUNT.STAKE
+            ? selectedAddress.remaining < BUNDLES_TX_COUNT.UNSTAKE
             : false;
         const submitDisabled =
           formRenderProps.hasValidationErrors ||
@@ -145,7 +145,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
             />
 
             {renderFioAddressInfoBadge()}
-            {renderUser()}
+            {renderCryptoHandle()}
 
             <Field
               name="amount"
@@ -177,6 +177,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
             ) : (
               <>
                 <InfoBadge
+                  className={classes.infoBadgeError}
                   type={BADGE_TYPES.ERROR}
                   show={notEnoughBundles}
                   title="No Bundles"
@@ -185,12 +186,17 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
                       You do not have any available bundles to use. Please
                       select an address with an available bundle balance, pay
                       the fee below or{' '}
-                      <Link to={ROUTES.HOME}>add more bundles</Link>.
+                      <Link
+                        to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}/${fioAddress}`}
+                      >
+                        add more bundles
+                      </Link>
+                      .
                     </>
                   }
                 />
                 <BundledTransactionBadge
-                  bundles={BUNDLES_TX_COUNT.STAKE}
+                  bundles={BUNDLES_TX_COUNT.UNSTAKE}
                   remaining={selectedAddress.remaining}
                 />
               </>
