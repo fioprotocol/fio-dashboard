@@ -232,7 +232,6 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
                 component={AmountInput}
                 disabled={loading}
                 label="Request Amount"
-                hasFioAddress={fioAddresses.length}
               />
             ) : (
               <Field
