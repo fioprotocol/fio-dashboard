@@ -12,25 +12,26 @@ import { putParamsToUrl } from '../../utils';
 import { convertFioPrices } from '../../util/prices';
 import { useFioAddresses } from '../../util/hooks';
 
-import { DEFAULT_ACTION_FEE_AMOUNT, TrxResponse } from '../../api/fio';
-
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { WALLET_CREATED_FROM } from '../../constants/common';
 
+import { TrxResponse } from '../../api/fio';
 import { ContainerProps, StakeTokensValues, InitialValues } from './types';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 
-import classes from './styles/UnstakeTokensPage.module.scss';
+import classes from '../StakeTokensPage/styles/StakeTokensPage.module.scss';
 
 const UnstakeTokensPage: React.FC<ContainerProps> = props => {
   const {
     fioWallet,
     balance,
     loading,
+    feePrice,
     roe,
     history,
     refreshBalance,
+    getFee,
     refreshWalletDataPublicKey,
   } = props;
 
@@ -46,6 +47,7 @@ const UnstakeTokensPage: React.FC<ContainerProps> = props => {
   );
 
   useEffect(() => {
+    getFee();
     setStakeTokensData(null);
   }, []);
 
@@ -143,6 +145,7 @@ const UnstakeTokensPage: React.FC<ContainerProps> = props => {
       {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
         <UnstakeTokensEdgeWallet
           fioWallet={fioWallet}
+          fee={feePrice.nativeFio}
           onCancel={onCancel}
           onSuccess={onSuccess}
           sendData={stakeTokensData}
@@ -166,7 +169,7 @@ const UnstakeTokensPage: React.FC<ContainerProps> = props => {
           loading={loading || processing}
           fioAddresses={walletFioAddresses}
           onSubmit={onStakeTokens}
-          fee={convertFioPrices(DEFAULT_ACTION_FEE_AMOUNT, roe)}
+          fee={feePrice}
           initialValues={initialValues}
         />
       </PseudoModalContainer>
