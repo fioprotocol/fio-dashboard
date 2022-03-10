@@ -48,7 +48,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           : new MathOp(walletAvailableAmount).sub(fee.nativeFio).toNumber(),
       );
     }
-  }, [walletAvailableAmount, fioAddresses, fee]);
+  }, [walletAvailableAmount, fioAddresses.length, fee]);
 
   const renderFioAddressInfoBadge = () => {
     if (fioAddresses.length) return null;
