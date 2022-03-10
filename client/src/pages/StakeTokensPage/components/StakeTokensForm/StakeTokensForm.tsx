@@ -7,7 +7,7 @@ import BundledTransactionBadge from '../../../../components/Badges/BundledTransa
 import PriceBadge from '../../../../components/Badges/PriceBadge/PriceBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import Dropdown from '../../../../components/Input/Dropdown';
-import StakeAmountInput from '../../../../components/Input/StakeAmountInput';
+import AmountInput from '../../../../components/Input/AmountInput';
 import InfoBadge from '../../../../components/InfoBadge/InfoBadge';
 import { Label } from '../../../../components/Input/StaticInputParts';
 
@@ -171,10 +171,11 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
 
             <Field
               name="amount"
+              label="FIO Stake Amount"
               placeholder="Enter Stake Amount"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
-              component={StakeAmountInput}
+              component={AmountInput}
               hasFioAddress={fioAddresses.length}
               availableValue={new MathOp(
                 apis.fio.sufToAmount(walletAvailableAmount),

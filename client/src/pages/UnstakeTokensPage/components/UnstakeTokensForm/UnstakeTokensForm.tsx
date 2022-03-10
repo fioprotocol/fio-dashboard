@@ -7,7 +7,7 @@ import BundledTransactionBadge from '../../../../components/Badges/BundledTransa
 import PriceBadge from '../../../../components/Badges/PriceBadge/PriceBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import Dropdown from '../../../../components/Input/Dropdown';
-import StakeAmountInput from '../../../../components/Input/StakeAmountInput';
+import AmountInput from '../../../../components/Input/AmountInput';
 import InfoBadge from '../../../../components/InfoBadge/InfoBadge';
 import { Label } from '../../../../components/Input/StaticInputParts';
 import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
@@ -158,7 +158,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
               placeholder="Enter Amount to Unstake"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
-              component={StakeAmountInput}
+              component={AmountInput}
               hasFioAddress={fioAddresses.length}
               availableValue={new MathOp(walletStakedTokens).toString()}
               availableTitle="Available Staked FIO Balance"
