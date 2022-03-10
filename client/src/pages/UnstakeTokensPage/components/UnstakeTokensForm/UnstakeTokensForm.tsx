@@ -20,6 +20,8 @@ import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
 import { formValidation } from './validation';
 import MathOp from '../../../../util/math';
 
+import apis from '../../../../api';
+
 import { UnstakeTokensProps, StakeTokensValues } from '../../types';
 import { FioAddressDoublet } from '../../../../types';
 
@@ -28,8 +30,10 @@ import classes from '../../../StakeTokensPage/styles/StakeTokensForm.module.scss
 const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
   const { loading, fioAddresses, fee, initialValues, balance } = props;
 
-  const walletStakedTokens = balance?.staked?.fio || '0';
-  const walletAvailableTokens = balance?.available?.fio || '0';
+  const walletStakedTokens = apis.fio.sufToAmount(
+    balance?.staked?.nativeFio || 0,
+  );
+  const walletAvailableTokens = balance?.available?.nativeFio || 0;
 
   const renderFioAddressInfoBadge = () => {
     if (fioAddresses.length) return null;
@@ -116,7 +120,9 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
           : null;
 
         const notEnoughStaked = new MathOp(amount).gt(walletStakedTokens);
-        const hasLowBalance = new MathOp(fee.fio).gt(walletAvailableTokens);
+        const hasLowBalance = new MathOp(fee.nativeFio).gt(
+          walletAvailableTokens,
+        );
         const notEnoughBundles =
           selectedAddress != null
             ? selectedAddress.remaining < BUNDLES_TX_COUNT.UNSTAKE
@@ -154,7 +160,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
               errorColor={COLOR_TYPE.WARN}
               component={StakeAmountInput}
               hasFioAddress={fioAddresses.length}
-              availableValue={walletStakedTokens}
+              availableValue={new MathOp(walletStakedTokens).toString()}
               availableTitle="Available Staked FIO Balance"
               label="Unstake Amount"
             />
