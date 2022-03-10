@@ -159,7 +159,6 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={AmountInput}
-              hasFioAddress={fioAddresses.length}
               availableValue={new MathOp(walletStakedTokens).toString()}
               availableTitle="Available Staked FIO Balance"
               label="Unstake Amount"
