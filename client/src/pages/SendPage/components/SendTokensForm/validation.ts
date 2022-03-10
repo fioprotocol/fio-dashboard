@@ -6,6 +6,7 @@ import {
   isFioAddressValidator,
   matchFieldValidator,
   isNumberValidator,
+  isAmountValidator,
 } from '../../../../util/validators';
 
 import { MAX_MEMO_SIZE } from '../../../../constants/fio';
@@ -41,6 +42,9 @@ const validationSchema: ValidationSchema = {
       {
         validator: isNumberValidator,
         message: 'Please enter valid amount.',
+      },
+      {
+        validator: isAmountValidator,
       },
     ],
     memo: [
