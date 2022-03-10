@@ -31,11 +31,11 @@ const Badge: React.FC<Props> = props => {
   return (
     <div
       className={classnames(
-        className,
         classes.badge,
         show && classes.show,
         !show && classes.hidden,
         type && classes[type.toLowerCase()],
+        className,
       )}
     >
       {children}
