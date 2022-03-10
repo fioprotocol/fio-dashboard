@@ -184,7 +184,6 @@ const RequestPage: React.FC<ContainerProps> = props => {
 
         <RequestTabs
           initialValues={initialValues}
-          roe={roe}
           loading={loading || processing}
           fioAddresses={fioAddresses}
           pubAddressesMap={pubAddressesMap}
