@@ -33,7 +33,6 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
     loading,
     fioWallet,
     fioAddresses,
-    roe,
     fee,
     obtDataOn,
     contactsList,
@@ -169,7 +168,6 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={AmountInput}
-              roe={roe}
               disabled={loading}
               label="Send Amount"
               hasFioAddress={fioAddresses.length}
