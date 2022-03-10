@@ -196,7 +196,6 @@ const SendPage: React.FC<ContainerProps> = props => {
           loading={loading || processing}
           fioAddresses={walletFioAddresses}
           onSubmit={onSend}
-          roe={roe}
           fee={feePrice}
           obtDataOn={true}
           contactsList={contactsList}
