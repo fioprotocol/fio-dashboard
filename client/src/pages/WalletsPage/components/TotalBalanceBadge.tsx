@@ -118,7 +118,7 @@ const TotalBalanceBadge: React.FC<Props> = props => {
         <p className={classes.totalUsdc}>
           <Amount value={total.usdc} /> USDC
         </p>
-        {locked.nativeFio ? (
+        {staked?.nativeFio || locked.nativeFio ? (
           <Balance
             fio={available.fio}
             usdc={available.usdc}
