@@ -5,11 +5,11 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 import apis from '../../../api';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
+import { ACTIONS, BUNDLES_TX_COUNT } from '../../../constants/fio';
 
 import { FioWalletDoublet } from '../../../types';
 import { StakeTokensValues } from '../types';
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
-import { ACTIONS } from '../../../constants/fio';
 
 type Props = {
   fioWallet: FioWalletDoublet;
@@ -18,6 +18,7 @@ type Props = {
   setProcessing: (processing: boolean) => void;
   sendData: StakeTokensValues | null;
   processing: boolean;
+  fee: number;
 };
 
 const UnstakeTokensEdgeWallet: React.FC<Props> = props => {
@@ -27,6 +28,7 @@ const UnstakeTokensEdgeWallet: React.FC<Props> = props => {
     onSuccess,
     onCancel,
     sendData,
+    fee,
     processing,
   } = props;
 
@@ -37,9 +39,14 @@ const UnstakeTokensEdgeWallet: React.FC<Props> = props => {
       {
         fioAddress: data.fioAddress,
         amount: apis.fio.amountToSUF(data.amount),
+        maxFee: fee,
+        technologyProviderId: process.env.REACT_APP_STAKING_TP_ID,
       },
     );
-    return { ...result };
+    return {
+      ...result,
+      bundlesCollected: result.fee_collected ? 0 : BUNDLES_TX_COUNT.UNSTAKE,
+    };
   };
 
   return (

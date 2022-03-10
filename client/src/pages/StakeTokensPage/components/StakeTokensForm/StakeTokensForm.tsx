@@ -90,7 +90,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           values: { amount, fioAddress },
         } = formRenderProps;
 
-        const renderUser = () => {
+        const renderCryptoHandle = () => {
           if (!fioAddresses.length) return null;
 
           return (
@@ -161,7 +161,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
             />
 
             {renderFioAddressInfoBadge()}
-            {renderUser()}
+            {renderCryptoHandle()}
 
             <Field
               name="amount"
@@ -186,6 +186,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
             ) : (
               <>
                 <InfoBadge
+                  className={classes.infoBadgeError}
                   type={BADGE_TYPES.ERROR}
                   show={notEnoughBundles}
                   title="No Bundles"
@@ -194,7 +195,12 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
                       You do not have any available bundles to use. Please
                       select an address with an available bundle balance, pay
                       the fee below or{' '}
-                      <Link to={ROUTES.HOME}>add more bundles</Link>.
+                      <Link
+                        to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}/${fioAddress}`}
+                      >
+                        add more bundles
+                      </Link>
+                      .
                     </>
                   }
                 />
