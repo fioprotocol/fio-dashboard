@@ -79,7 +79,7 @@ export const calculateTotalBalances = (
             date: date.getTime(),
           }),
         ),
-      ];
+      ].sort(({ date: dateA }, { date: dateB }) => (dateA > dateB ? 1 : -1));
     }
   }
   return calculateBalances(total, roe);
