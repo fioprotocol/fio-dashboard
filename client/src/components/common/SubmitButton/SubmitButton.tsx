@@ -22,7 +22,6 @@ type Props = {
   isButtonType?: boolean;
   hasSmallText?: boolean;
   variant?: string;
-  isSecondary?: boolean;
 };
 
 export const SubmitButton: React.FC<Props> = props => {
@@ -40,7 +39,6 @@ export const SubmitButton: React.FC<Props> = props => {
     hasBoldText,
     hasSmallText,
     variant,
-    isSecondary,
   } = props;
 
   return (
@@ -62,7 +60,6 @@ export const SubmitButton: React.FC<Props> = props => {
         hasLowHeight && classes.hasLowHeight,
         hasBoldText && classes.hasBoldText,
         hasSmallText && classes.hasSmallText,
-        isSecondary && classes.isSecondary,
       )}
     >
       <div />

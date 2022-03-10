@@ -5,8 +5,8 @@ import PseudoModalContainer from '../../components/PseudoModalContainer';
 import UnstakeTokensForm from './components/UnstakeTokensForm';
 import UnstakeTokensEdgeWallet from './components/UnstakeTokensEdgeWallet';
 import StakeTokensResults from '../../components/common/TransactionResults/components/StakeTokensResults';
-import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
+import CancelButton from '../../components/common/CancelButton/CancelButton';
 
 import { putParamsToUrl } from '../../utils';
 import { convertFioPrices } from '../../util/prices';
@@ -134,12 +134,12 @@ const UnstakeTokensPage: React.FC<ContainerProps> = props => {
           />
         }
         bottomElement={
-          <SubmitButton
+          <CancelButton
             onClick={onResultsClose.bind(null, true)}
+            isBlack={true}
+            disabled={loading}
+            withTopMargin={true}
             text="View Lock Status"
-            withTopMargin
-            variant="light"
-            isSecondary
           />
         }
       />
