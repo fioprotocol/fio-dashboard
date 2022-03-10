@@ -19,6 +19,8 @@ import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
 import { formValidation } from './validation';
 import MathOp from '../../../../util/math';
 
+import apis from '../../../../api';
+
 import { StakeTokensProps, StakeTokensValues } from '../../types';
 import { FioAddressDoublet } from '../../../../types';
 
@@ -27,23 +29,25 @@ import classes from '../../styles/StakeTokensForm.module.scss';
 const StakeTokensForm: React.FC<StakeTokensProps> = props => {
   const { loading, fioAddresses, fee, initialValues, balance } = props;
 
-  const [walletAvailableAmount, setWalletAvailableAmount] = useState('0');
+  const [walletAvailableAmount, setWalletAvailableAmount] = useState(0);
   const [walletMaxAvailableAmount, setWalletMaxAvailableAmount] = useState<
-    string | null
+    number | null
   >(null);
 
   useEffect(() => {
-    setWalletAvailableAmount(balance?.available?.fio || '0');
+    setWalletAvailableAmount(balance?.available?.nativeFio || 0);
   }, [balance]);
 
   useEffect(() => {
-    setWalletMaxAvailableAmount(
-      !fioAddresses.length
-        ? new MathOp(fee.nativeFio).gt(walletAvailableAmount)
-          ? '0'
-          : new MathOp(walletAvailableAmount).sub(fee.nativeFio).toString()
-        : walletAvailableAmount,
-    );
+    if (fioAddresses.length) {
+      setWalletMaxAvailableAmount(walletAvailableAmount);
+    } else {
+      setWalletMaxAvailableAmount(
+        new MathOp(fee.nativeFio).gt(walletAvailableAmount)
+          ? 0
+          : new MathOp(walletAvailableAmount).sub(fee.nativeFio).toNumber(),
+      );
+    }
   }, [walletAvailableAmount, fioAddresses, fee]);
 
   const renderFioAddressInfoBadge = () => {
@@ -131,9 +135,11 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           : null;
 
         const hasLowBalance =
-          walletMaxAvailableAmount === '0' ||
+          walletMaxAvailableAmount === 0 ||
           (walletMaxAvailableAmount &&
-            new MathOp(amount).gt(walletMaxAvailableAmount));
+            new MathOp(apis.fio.amountToSUF(amount)).gt(
+              walletMaxAvailableAmount,
+            ));
         const notEnoughBundles =
           selectedAddress != null
             ? selectedAddress.remaining < BUNDLES_TX_COUNT.STAKE
@@ -170,8 +176,16 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
               errorColor={COLOR_TYPE.WARN}
               component={StakeAmountInput}
               hasFioAddress={fioAddresses.length}
-              availableValue={walletAvailableAmount}
-              maxValue={walletMaxAvailableAmount}
+              availableValue={new MathOp(
+                apis.fio.sufToAmount(walletAvailableAmount),
+              ).toString()}
+              maxValue={
+                walletMaxAvailableAmount
+                  ? new MathOp(
+                      apis.fio.sufToAmount(walletMaxAvailableAmount),
+                    ).toString()
+                  : '0'
+              }
             />
 
             <p className={classes.transactionTitle}>Transaction cost</p>
