@@ -29,6 +29,9 @@ export type FIOSDK_LIB = typeof FIOSDK;
 export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit)
   .mul(800)
   .toNumber();
+export const DEFAULT_STAKING_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit)
+  .mul(5)
+  .toNumber();
 
 export default class Fio {
   baseurl: string = process.env.REACT_APP_FIO_BASE_URL;

@@ -175,7 +175,23 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
             />
 
             <p className={classes.transactionTitle}>Transaction cost</p>
-            {!selectedAddress ? (
+            <InfoBadge
+              className={classes.infoBadgeError}
+              type={BADGE_TYPES.ERROR}
+              show={notEnoughBundles}
+              title="No Bundles"
+              message={
+                <>
+                  You do not have any available bundles to use. Please select an
+                  address with an available bundle balance, pay the fee below or{' '}
+                  <Link to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}/${fioAddress}`}>
+                    add more bundles
+                  </Link>
+                  .
+                </>
+              }
+            />
+            {!selectedAddress || notEnoughBundles ? (
               <PriceBadge
                 title="Fees"
                 type={BADGE_TYPES.BLACK}
@@ -184,31 +200,10 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
                 costUsdc={fee.usdc}
               />
             ) : (
-              <>
-                <InfoBadge
-                  className={classes.infoBadgeError}
-                  type={BADGE_TYPES.ERROR}
-                  show={notEnoughBundles}
-                  title="No Bundles"
-                  message={
-                    <>
-                      You do not have any available bundles to use. Please
-                      select an address with an available bundle balance, pay
-                      the fee below or{' '}
-                      <Link
-                        to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}/${fioAddress}`}
-                      >
-                        add more bundles
-                      </Link>
-                      .
-                    </>
-                  }
-                />
-                <BundledTransactionBadge
-                  bundles={BUNDLES_TX_COUNT.STAKE}
-                  remaining={selectedAddress.remaining}
-                />
-              </>
+              <BundledTransactionBadge
+                bundles={BUNDLES_TX_COUNT.STAKE}
+                remaining={selectedAddress.remaining}
+              />
             )}
 
             <SubmitButton
