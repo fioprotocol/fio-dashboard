@@ -176,7 +176,6 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={AmountInput}
-              hasFioAddress={fioAddresses.length}
               availableValue={new MathOp(
                 apis.fio.sufToAmount(walletAvailableAmount),
               ).toString()}

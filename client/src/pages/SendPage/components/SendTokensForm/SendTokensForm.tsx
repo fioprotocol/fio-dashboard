@@ -170,7 +170,6 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               component={AmountInput}
               disabled={loading}
               label="Send Amount"
-              hasFioAddress={fioAddresses.length}
             />
 
             {showMemo ? (
