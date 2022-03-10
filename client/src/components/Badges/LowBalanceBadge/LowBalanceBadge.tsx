@@ -26,7 +26,6 @@ const LowBalanceBadge: React.FC<Props> = props => {
     onActionClick,
     hasLowBalance,
   } = props;
-  if (!hasLowBalance) return null;
 
   const renderButton = () => {
     if (onActionClick == null) return null;
@@ -39,7 +38,7 @@ const LowBalanceBadge: React.FC<Props> = props => {
   };
 
   return (
-    <Badge type={BADGE_TYPES.ERROR} show={true}>
+    <Badge type={BADGE_TYPES.ERROR} show={hasLowBalance}>
       <div className={classes.errorContainer}>
         <div className={classes.textContainer}>
           <FontAwesomeIcon icon="exclamation-circle" className={classes.icon} />
