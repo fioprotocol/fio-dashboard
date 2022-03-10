@@ -163,6 +163,12 @@ export function usePubAddressesFromWallet(walletPublicKey?: string) {
   return fioAddressToPubAddresses;
 }
 
+export function useRoe() {
+  const roeCoefficient = useSelector(roe);
+
+  return roeCoefficient || null;
+}
+
 export function useConvertFioToUsdc({
   fioAmount,
   nativeAmount,
