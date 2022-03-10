@@ -1,7 +1,10 @@
 import { Validators, ValidationSchema } from '@lemoncode/fonk';
 import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
 
-import { isNumberValidator } from '../../../../util/validators';
+import {
+  isNumberValidator,
+  isAmountValidator,
+} from '../../../../util/validators';
 
 const validationSchema: ValidationSchema = {
   field: {
@@ -13,6 +16,13 @@ const validationSchema: ValidationSchema = {
       {
         validator: isNumberValidator,
         message: 'Please enter valid amount.',
+      },
+      {
+        validator: isNumberValidator,
+        message: 'Please enter valid amount.',
+      },
+      {
+        validator: isAmountValidator,
       },
     ],
   },

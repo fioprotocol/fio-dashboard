@@ -106,6 +106,15 @@ class MathOp {
     }
   }
 
+  lte(x: BigSource) {
+    try {
+      return Big(this.value).lte(x);
+    } catch (err) {
+      console.error(err);
+      return this.value <= x;
+    }
+  }
+
   toNumber() {
     try {
       return Big(this.value).toNumber();
