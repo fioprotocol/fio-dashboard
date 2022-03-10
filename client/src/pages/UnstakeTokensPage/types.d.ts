@@ -39,7 +39,9 @@ export interface ContainerProps extends ContainerOwnProps {
   fioWallet: FioWalletDoublet;
   loading: boolean;
   roe: number;
+  feePrice: FeePrice;
   balance: WalletBalances;
   refreshBalance: (publicKey: string) => void;
+  getFee: () => void;
   refreshWalletDataPublicKey: (publicKey: string) => void;
 }
