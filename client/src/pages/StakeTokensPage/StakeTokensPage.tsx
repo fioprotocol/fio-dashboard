@@ -40,7 +40,7 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
   ] = useState<StakeTokensValues | null>(null);
   const [processing, setProcessing] = useState<boolean>(false);
 
-  const [walletFioAddresses] = useFioAddresses(
+  const [walletFioAddresses, isWalletFioAddressesLoading] = useFioAddresses(
     fioWallet && fioWallet.publicKey,
   );
 
@@ -85,7 +85,12 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
     );
   };
 
-  if (!fioWallet || !fioWallet.id || fioWallet.balance === null)
+  if (
+    !fioWallet ||
+    !fioWallet.id ||
+    fioWallet.balance === null ||
+    isWalletFioAddressesLoading
+  )
     return (
       <div className="d-flex justify-content-center align-items-center w-100 flex-grow-1">
         <FioLoader />
