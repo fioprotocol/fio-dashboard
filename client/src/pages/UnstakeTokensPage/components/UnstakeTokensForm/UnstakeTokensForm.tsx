@@ -115,9 +115,8 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
           ? fioAddresses.find(({ name }) => name === fioAddress)
           : null;
 
-        const hasLowBalance =
-          (!selectedAddress && new MathOp(fee.fio).gt(walletAvailableTokens)) ||
-          new MathOp(amount).gt(walletStakedTokens);
+        const notEnoughStaked = new MathOp(amount).gt(walletStakedTokens);
+        const hasLowBalance = new MathOp(fee.fio).gt(walletAvailableTokens);
         const notEnoughBundles =
           selectedAddress != null
             ? selectedAddress.remaining < BUNDLES_TX_COUNT.UNSTAKE
@@ -129,6 +128,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
           formRenderProps.submitting ||
           loading ||
           hasLowBalance ||
+          notEnoughStaked ||
           (selectedAddress && notEnoughBundles);
 
         return (
@@ -160,20 +160,17 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
             />
 
             <p className={classes.transactionTitle}>Transaction cost</p>
+
+            <LowBalanceBadge
+              hasLowBalance={notEnoughStaked}
+              messageText={`You can unstake only ${walletStakedTokens} FIO`}
+            />
+
             {!selectedAddress ? (
-              <>
-                <LowBalanceBadge
-                  hasLowBalance={hasLowBalance}
-                  messageText="You do not have enough Fio in your available balance. Please select an address with available bundles or send more FIO to your wallet."
-                />
-                <PriceBadge
-                  title="Fees"
-                  type={BADGE_TYPES.BLACK}
-                  costNativeFio={fee.nativeFio}
-                  costFio={fee.fio}
-                  costUsdc={fee.usdc}
-                />
-              </>
+              <LowBalanceBadge
+                hasLowBalance={hasLowBalance}
+                messageText="You do not have enough Fio in your available balance. Please select an address with available bundles or send more FIO to your wallet."
+              />
             ) : (
               <>
                 <InfoBadge
@@ -182,24 +179,42 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
                   show={notEnoughBundles}
                   title="No Bundles"
                   message={
-                    <>
-                      You do not have any available bundles to use. Please
-                      select an address with an available bundle balance, pay
-                      the fee below or{' '}
-                      <Link
-                        to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}/${fioAddress}`}
-                      >
-                        add more bundles
-                      </Link>
-                      .
-                    </>
+                    hasLowBalance ? (
+                      <>
+                        You do not have enough FIO in your available balance.
+                        Please select an address with available bundles or send
+                        more FIO to your wallet.
+                      </>
+                    ) : (
+                      <>
+                        You do not have any available bundles to use. Please
+                        select an address with an available bundle balance, pay
+                        the fee below or{' '}
+                        <Link
+                          to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}/${fioAddress}`}
+                        >
+                          add more bundles
+                        </Link>
+                        .
+                      </>
+                    )
                   }
                 />
-                <BundledTransactionBadge
-                  bundles={BUNDLES_TX_COUNT.UNSTAKE}
-                  remaining={selectedAddress.remaining}
-                />
               </>
+            )}
+            {!selectedAddress || notEnoughBundles ? (
+              <PriceBadge
+                title="Fees"
+                type={BADGE_TYPES.BLACK}
+                costNativeFio={fee.nativeFio}
+                costFio={fee.fio}
+                costUsdc={fee.usdc}
+              />
+            ) : (
+              <BundledTransactionBadge
+                bundles={BUNDLES_TX_COUNT.UNSTAKE}
+                remaining={selectedAddress.remaining}
+              />
             )}
 
             <SubmitButton
