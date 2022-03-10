@@ -172,6 +172,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               roe={roe}
               disabled={loading}
               label="Send Amount"
+              hasFioAddress={fioAddresses.length}
             />
 
             {showMemo ? (
