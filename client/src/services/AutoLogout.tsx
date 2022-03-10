@@ -15,6 +15,7 @@ import {
   isAuthenticated,
   tokenCheckResult,
   lastActivityDate,
+  profileRefreshed,
 } from '../redux/profile/selectors';
 import { RedirectLinkData } from '../types';
 
@@ -22,6 +23,7 @@ type Props = {
   tokenCheckResult: boolean;
   lastActivityDate: number;
   isAuthenticated: boolean;
+  profileRefreshed: boolean;
   checkAuthToken: () => void;
   setLastActivity: (value: number) => void;
   logout: (routerProps: RouterProps) => void;
@@ -62,6 +64,7 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
     tokenCheckResult,
     lastActivityDate,
     isAuthenticated,
+    profileRefreshed,
     history,
     checkAuthToken,
     setLastActivity,
@@ -117,11 +120,11 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
   );
 
   useEffect(() => {
-    if (localLastActivity - lastActivityDate > TIMEOUT) {
+    if (profileRefreshed && localLastActivity - lastActivityDate > TIMEOUT) {
       logEvent('===ACTIVITY===');
       setLastActivity(localLastActivity);
     }
-  }, [localLastActivity]);
+  }, [localLastActivity, profileRefreshed]);
 
   const checkToken = () => {
     const newTimeoutId: ReturnType<typeof setTimeout> = setTimeout(
@@ -194,6 +197,7 @@ const reduxConnect = connect(
     isAuthenticated,
     lastActivityDate,
     tokenCheckResult,
+    profileRefreshed,
   }),
   {
     setLastActivity,
