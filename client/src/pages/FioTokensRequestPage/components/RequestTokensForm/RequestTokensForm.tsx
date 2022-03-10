@@ -33,7 +33,6 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
     loading,
     fioAddresses,
     pubAddressesMap,
-    roe,
     contactsList,
     initialValues: parentInitialValues,
     isFio,
@@ -231,7 +230,6 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
                 uiType={INPUT_UI_STYLES.BLACK_WHITE}
                 errorColor={COLOR_TYPE.WARN}
                 component={AmountInput}
-                roe={roe}
                 disabled={loading}
                 label="Request Amount"
                 hasFioAddress={fioAddresses.length}

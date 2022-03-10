@@ -38,7 +38,6 @@ export type RequestTokensProps = {
   fioAddresses: FioAddressDoublet[];
   pubAddressesMap: MappedPublicAddresses;
   loading: boolean;
-  roe: number;
   contactsList: string[];
   isFio?: boolean;
   onSubmit: (values: RequestTokensValues) => void;
