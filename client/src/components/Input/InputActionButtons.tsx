@@ -69,10 +69,11 @@ export const CopyButton: React.FC<CopyButtonProps & DefaultProps> = ({
   );
 };
 
-export const PasteButton: React.FC<PasteButtonProps & DefaultProps> = ({
+export const PasteButton: React.FC<PasteButtonProps & DefaultProps & any> = ({
   onClick,
   uiType,
   isVisible,
+  ...rest
 }) => {
   if (!navigator.clipboard.readText || !isVisible) return null;
 
@@ -81,6 +82,7 @@ export const PasteButton: React.FC<PasteButtonProps & DefaultProps> = ({
       icon={{ prefix: 'far', iconName: 'clipboard' }}
       className={classnames(classes.inputIcon, uiType && classes[uiType])}
       onClick={onClick}
+      {...rest}
     />
   );
 };
