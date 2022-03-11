@@ -12,6 +12,8 @@ import { ErrorBadge } from './ErrorBadge';
 import { getValueFromPaste } from '../../util/general';
 import { Label, LoadingIcon, PrefixLabel, Prefix } from './StaticInputParts';
 
+import { useFieldElemActiveState } from '../../util/hooks';
+
 import classes from './Input.module.scss';
 
 export const INPUT_UI_STYLES = {
@@ -92,11 +94,17 @@ export const TextInput = (
 
   const [showPass, toggleShowPass] = useState(false);
   const [isInputHasValue, toggleIsInputHasValue] = useState(value !== '');
+  const [
+    fieldElemActive,
+    setFieldElemActive,
+    setFieldElemInactive,
+  ] = useFieldElemActiveState();
 
   const hasError =
     ((error || data.error) &&
       (touched || modified || submitSucceeded || !!value) &&
-      !active) ||
+      !active &&
+      !fieldElemActive) ||
     (submitError && !modifiedSinceLastSubmit);
 
   useEffect(() => {
@@ -174,6 +182,8 @@ export const TextInput = (
               console.error('Paste error: ', e);
             }
           }}
+          onMouseDown={setFieldElemActive}
+          onMouseUp={setFieldElemInactive}
           uiType={uiType}
         />
         <LoadingIcon isVisible={loading} uiType={uiType} />
