@@ -215,3 +215,12 @@ export function useWalletBalances(publicKey: string): WalletBalances {
 
   return walletsBalances.wallets[publicKey] || DEFAULT_BALANCES;
 }
+
+export function useFieldElemActiveState(): [boolean, () => void, () => void] {
+  const [fieldElemActive, setFieldElemActive] = useState(false);
+
+  const setActive = () => setFieldElemActive(true);
+  const setInactive = () => setFieldElemActive(false);
+
+  return [fieldElemActive, setActive, setInactive];
+}

@@ -10,7 +10,7 @@ import { Label, LoadingIcon, PrefixLabel } from './StaticInputParts';
 import Amount from '../common/Amount';
 import InfoBadge from '../InfoBadge/InfoBadge';
 
-import { useRoe } from '../../util/hooks';
+import { useFieldElemActiveState, useRoe } from '../../util/hooks';
 import MathOp from '../../util/math';
 
 import apis from '../../api';
@@ -106,6 +106,11 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
   const [clearInput, toggleClearInput] = useState(value !== '');
   const [exchangedValue, exchangeValue] = useState('');
   const [isMaxValue, setIsMaxValue] = useState(false);
+  const [
+    fieldElemActive,
+    setFieldElemActive,
+    setFieldElemInactive,
+  ] = useFieldElemActiveState();
 
   useEffect(() => {
     if (isPrimaryExchange) exchangeValue(relationFormula(value));
@@ -149,7 +154,8 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     !data.hideError &&
     (((error || data.error) &&
       (touched || modified || submitSucceeded || !!value) &&
-      !active) ||
+      !active &&
+      !fieldElemActive) ||
       (submitError && !modifiedSinceLastSubmit));
 
   return (
@@ -242,11 +248,17 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
               if (disabled) return;
               setIsPrimaryExchange(!isPrimaryExchange);
             }}
+            onMouseDown={setFieldElemActive}
+            onMouseUp={setFieldElemInactive}
             src={exchangeIcon}
           />
 
           {new MathOp(maxValue || 0).gt(0) && (
-            <div className={classes.maxButtonContainer}>
+            <div
+              className={classes.maxButtonContainer}
+              onMouseDown={setFieldElemActive}
+              onMouseUp={setFieldElemInactive}
+            >
               <Button onClick={setMaxAmount}>Max</Button>
             </div>
           )}
@@ -257,7 +269,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
       <ErrorBadge
         error={error}
         data={data}
-        hasError={!hideError && !data.hideError && hasError}
+        hasError={hasError}
         type={errorType}
         color={errorColor}
         submitError={submitError}
