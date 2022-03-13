@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import classnames from 'classnames';
 import AddressDomainForm from '../../components/AddressDomainForm';
 import { FORM_NAMES } from '../../constants/form';
 
 import classes from './AddressWidget.module.scss';
 
-const AddressWidget = () => {
+type Props = {
+  links: {
+    getCryptoHandle: string | ReactNode;
+  };
+};
+
+const AddressWidget = (props: Props) => {
   return (
     <div className={classes.container}>
       <h1 className={classes.title}>
@@ -22,7 +28,11 @@ const AddressWidget = () => {
         and select a domain.
       </p>
       <div className={classes.form}>
-        <AddressDomainForm isHomepage formName={FORM_NAMES.ADDRESS} />
+        <AddressDomainForm
+          isHomepage
+          formName={FORM_NAMES.ADDRESS}
+          {...props}
+        />
       </div>
       <div className={classes.bottom} />
     </div>
