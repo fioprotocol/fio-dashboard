@@ -43,6 +43,7 @@ const FormContainer = props => {
     domains,
     isDomain,
     isDesktop,
+    links = {},
   } = props;
 
   const buttonText = `Get My FIO ${isDomain ? 'Domain' : 'Crypto Handle'}`;
@@ -53,6 +54,41 @@ const FormContainer = props => {
       handleSubmit();
     }
   }, []);
+
+  const renderActionButton = () => {
+    if (!isHomepage) return null;
+    if (links && links.getCryptoHandle) {
+      return (
+        <a
+          href={links.getCryptoHandle}
+          className={`${classes.link} d-flex justify-content-center`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <SubmitButton
+            hasLowHeight={true}
+            text={buttonText}
+            hasSmallText={true}
+            variant="primary"
+          />
+        </a>
+      );
+    }
+
+    return (
+      <Link
+        to={ROUTES.FIO_ADDRESSES_SELECTION}
+        className={`${classes.link} d-flex justify-content-center`}
+      >
+        <SubmitButton
+          hasLowHeight={true}
+          text={buttonText}
+          hasSmallText={true}
+          variant="primary"
+        />
+      </Link>
+    );
+  };
 
   const renderFormBody = () => {
     const { handleSubmit, form } = formProps;
@@ -107,19 +143,7 @@ const FormContainer = props => {
             }
           />
         )}
-        {isHomepage && (
-          <Link
-            to={ROUTES.FIO_ADDRESSES_SELECTION}
-            className={`${classes.link} d-flex justify-content-center`}
-          >
-            <SubmitButton
-              hasLowHeight={true}
-              text={buttonText}
-              hasSmallText={true}
-              variant="primary"
-            />
-          </Link>
-        )}
+        {renderActionButton()}
       </form>
     );
   };
