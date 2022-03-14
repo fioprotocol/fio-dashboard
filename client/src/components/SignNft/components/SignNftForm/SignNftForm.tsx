@@ -10,10 +10,11 @@ import BundledTransactionBadge from '../../../Badges/BundledTransactionBadge/Bun
 import LowBalanceBadge from '../../../Badges/LowBalanceBadge/LowBalanceBadge';
 import FioName from '../../../common/FioName/FioName';
 import SubmitButton from '../../../common/SubmitButton/SubmitButton';
-import ChainCodeField from '../../../ChainCodeField/ChainCodeField';
 
 import { BADGE_TYPES } from '../../../Badge/Badge';
 import { COLOR_TYPE } from '../../../Input/ErrorBadge';
+
+import ChainCodeField from '../../../ChainCodeField/ChainCodeField';
 
 import { formValidation } from './validation';
 
@@ -94,12 +95,12 @@ const SignNFTForm = (props: SignNftFormProps) => {
               <Col>
                 <ChainCodeField
                   hasAutoWidth={true}
-                  isSimple={true}
+                  noShadow={true}
                   isHigh={true}
                   errorColor={COLOR_TYPE.WARN}
                   disabled={isEdit}
                   prefixLabel="Chain Code"
-                  list={NFT_CHAIN_CODE_LIST}
+                  optionsList={NFT_CHAIN_CODE_LIST}
                 />
               </Col>
               <Col>
