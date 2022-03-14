@@ -1,0 +1,157 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.dropdown {
+  color: $dark-jungle-green;
+
+  @include sm {
+    max-width: 375px;
+  }
+
+  &.isHigh {
+    & > div[class$="-control"] {
+      height: 54px;
+    }
+  }
+
+  &.noShadow {
+    & > div[class$="-control"] {
+      box-shadow: none;
+    }
+  }
+
+  &.hasError {
+    & > div[class$="-control"] {
+      border: 1px solid $warn-red;
+    }
+  }
+
+  &.isWidthResponsive {
+    & > div[class$="-control"] {
+      min-width: 0;
+    }
+  }
+
+  &.hasAutoWidth {
+    & > div[class$="-control"] {
+      min-width: auto;
+    }
+  }
+
+  &.withBottomMargin {
+    margin-bottom: 30px;
+  }
+
+  & > div[class$="-control"] {
+    height: 40px;
+    border-radius: 7px;
+    z-index: 2;
+    background-color: $white;
+    border-color: $white;
+    box-shadow: 0 0 8px 0 rgba(0,0,0,0.37);
+    cursor: text;
+
+    & > div {
+      &:first-child {
+        padding-left: 16px;
+        font-size: 0.875em;
+        @include proxima-nova-regular;
+      }
+    }
+
+    &.isSimple {  
+      box-shadow: none;
+    }
+
+    &.isHigh {
+      height: 54px;
+    }
+
+    .placeholder {
+      font-size: 14px;
+      text-align: left;
+      color: $dove-gray;
+      @include proxima-nova-regular-it;
+    }
+
+    .singleValue {
+      text-align: left;
+      font-size: 14px;
+      margin: 0;
+      color: $dark-jungle-green;
+    }
+
+    .prefixContainer {
+      .prefix {
+        font-size: 0.875rem;
+        padding-right: 20px;
+        @include proxima-nova-bold;
+      }
+    }
+
+    .clearIcon {
+      cursor: pointer;
+      color: $dark-gray;
+      font-size: 20px;
+    }
+
+    .toggleMenuIcon {
+      cursor: pointer;
+      font-size: 13px;
+      margin-right: 12px;
+    }
+  }
+
+  .menu {
+    margin-top: -7px;
+    border-radius: 0 0 7px 7px;
+
+    .menuList {
+      padding-top: 7px;
+      padding-bottom: 0;
+
+      .option {
+        @include sf-pro-display-medium;
+        font-size: 13px;
+        text-align: left;
+        padding: 9px 20px 9px 20px;
+        cursor: pointer;
+        background-color: $white;
+        color: $dark-gray;
+
+        &:before {
+          content: ' ';
+          position: absolute;
+          width: calc(100% - 20px);
+          left: 10px;
+          margin: -9px auto 0;
+          border-bottom: 1px solid $light;
+        }
+
+        &:first-child:before {
+          border: none;
+        }
+
+        &:last-child {
+          border-radius: 0 0 7px 7px;
+          border: none;
+        } 
+
+        &:hover, &.isSelected:hover {
+          color: $white;
+          background-color: $dark-gray;
+          padding-bottom: 10px;
+        }
+
+        &:hover:before, &.isSelected:hover:before {
+          border-color: $dark-gray;
+        }
+
+        &.isSelected {
+          background-color: $light-gray;
+        }
+      }
+    }
+  }
+}
