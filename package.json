@@ -138,6 +138,7 @@
     "react-router-last-location": "2.0.1",
     "react-scroll": "1.8.4",
     "react-scrollbars-custom": "4.0.25",
+    "react-select": "5.2.1",
     "redux": "^3.7.2",
     "redux-devtools-extension": "^2.13.2",
     "redux-saga": "^0.16.0",
