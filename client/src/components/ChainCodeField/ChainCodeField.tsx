@@ -1,74 +1,57 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Field } from 'react-final-form';
 
 import ChainCodeCustomDropdown from '../Input/ChainCodeCustomDropdown';
-import Input, { INPUT_UI_STYLES } from '../Input/Input';
 
 export const CUSTOM_CHAIN_CODE = 'customChainCode';
 
 type Props = {
   hasAutoWidth?: boolean;
-  isSimple?: boolean;
+  noShadow?: boolean;
   isShort?: boolean;
   isHigh?: boolean;
   errorColor?: string;
   disabled?: boolean;
   prefixLabel?: string;
-  list: { id: string; name: string }[];
-  fieldName?: string;
+  optionsList: { id: string; name: string }[];
+  label?: string;
   hideError?: boolean;
+  fieldName?: string;
 };
 
 const ChainCodeField: React.FC<Props> = props => {
   const {
     hasAutoWidth,
-    isSimple,
+    noShadow,
     isShort,
     isHigh,
-    errorColor,
-    disabled,
     prefixLabel,
-    list,
-    fieldName = 'chainCode',
+    disabled,
+    optionsList,
+    label,
+    errorColor,
     hideError,
+    fieldName = 'chainCode',
   } = props;
-  const [showCustom, toggleCustom] = useState(false);
 
-  const openCustom = () => toggleCustom(true);
-  const closeCustom = () => toggleCustom(false);
-
-  return showCustom || disabled ? (
-    <Field
-      type="text"
-      name={fieldName}
-      component={Input}
-      onClose={closeCustom}
-      upperCased={true}
-      placeholder="Custom chain code"
-      uiType={INPUT_UI_STYLES.BLACK_WHITE}
-      isLowHeight={!isHigh}
-      errorColor={errorColor}
-      disabled={disabled}
-      prefixLabel={prefixLabel}
-      hideError={hideError}
-    />
-  ) : (
+  return (
     <Field
       type="dropdown"
       name={fieldName}
       component={ChainCodeCustomDropdown}
-      options={list.map(chainCode => ({
-        id: chainCode.id,
-        name: `${chainCode.name} (${chainCode.id})`,
+      options={optionsList.map(chainCode => ({
+        value: chainCode.id,
+        label: `${chainCode.id} (${chainCode.name})`,
       }))}
-      customValue={{ id: CUSTOM_CHAIN_CODE, name: 'Custom Chain Code' }}
-      toggleToCustom={openCustom}
       placeholder="Type or Select Chain Code"
       hasAutoWidth={hasAutoWidth}
-      isSimple={isSimple}
+      noShadow={noShadow}
       isShort={isShort}
       isHigh={isHigh}
-      isFormField={true}
+      prefix={prefixLabel}
+      disabled={disabled}
+      label={label}
+      errorColor={errorColor}
       hideError={hideError}
     />
   );
