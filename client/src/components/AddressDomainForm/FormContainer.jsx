@@ -60,12 +60,13 @@ const FormContainer = props => {
     if (links && links.getCryptoHandle) {
       return (
         <a
-          href={links.getCryptoHandle}
           className={`${classes.link} d-flex justify-content-center`}
+          href={links.getCryptoHandle}
           target="_blank"
           rel="noreferrer"
         >
           <SubmitButton
+            isButtonType={true}
             hasLowHeight={true}
             text={buttonText}
             hasSmallText={true}

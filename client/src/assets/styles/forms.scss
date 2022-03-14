@@ -36,6 +36,14 @@
     .regular-text {
       font-size: 15px;
     }
+
+    input {
+      border: none;
+      outline: none;
+      padding: 0;
+      font-size: 15px;
+      @include proxima-nova-regular;
+    }
   }
 
   .blue-button {
