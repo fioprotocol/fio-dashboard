@@ -182,6 +182,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               isVisible={!isFio}
               chainCodeValue={chainCode}
               chainCodeList={CHAIN_CODE_LIST}
+              initialValues={initialValues}
             />
 
             {!isFio && (
