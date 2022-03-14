@@ -58,10 +58,14 @@ const FormContainer = props => {
   const renderActionButton = () => {
     if (!isHomepage) return null;
     if (links && links.getCryptoHandle) {
+      const { values } = formProps;
+      const link = `${links.getCryptoHandle}?address=${values.address ||
+        ''}&domain=${values.domain || ''}`;
+
       return (
         <a
           className={`${classes.link} d-flex justify-content-center`}
-          href={links.getCryptoHandle}
+          href={link}
           target="_blank"
           rel="noreferrer"
         >
