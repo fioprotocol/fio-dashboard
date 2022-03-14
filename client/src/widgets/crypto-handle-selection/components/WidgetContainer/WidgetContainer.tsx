@@ -9,7 +9,7 @@ const WidgetContainer = () => {
       <Roe />
       <AddressWidget
         links={{
-          getCryptoHandle: 'https://google.com',
+          getCryptoHandle: process.env.REACT_APP_CH_WIDGET_SITE_URL,
         }}
       />
     </>
