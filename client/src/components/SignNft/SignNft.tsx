@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+import { Redirect } from 'react-router-dom';
 
 import PseudoModalContainer from '../PseudoModalContainer';
 import SignNFTForm from './components/SignNftForm/SignNftForm';
@@ -177,6 +178,9 @@ const SignNft: React.FC<ContainerProps> = props => {
   };
 
   const title = isEdit ? 'Signed NFT' : 'Sign NFT';
+
+  if (!fioAddress || !currentWallet)
+    return <Redirect to={{ pathname: ROUTES.FIO_ADDRESSES }} />;
 
   return (
     <>
