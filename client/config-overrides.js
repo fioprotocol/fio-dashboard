@@ -7,7 +7,6 @@ module.exports = {
         __dirname,
         `src/widget-${process.env.REACT_APP_WIDGET}-index.ts`,
       );
-      return config;
     }
 
     return config;
