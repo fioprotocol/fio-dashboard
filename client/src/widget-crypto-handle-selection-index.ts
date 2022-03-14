@@ -1,5 +1,4 @@
 import './assets/styles/global.scss';
-import './assets/styles/forms.scss';
 import './widgets/crypto-handle-selection/widget';
 import * as serviceWorker from './service-worker';
 
