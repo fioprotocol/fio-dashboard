@@ -64,11 +64,11 @@ const AddTokenInput: React.FC<FieldArrayRenderProps<FormValues, HTMLElement> &
                 <div className={classes.chainCodeInput}>
                   <ChainCodeField
                     hasAutoWidth={true}
-                    isSimple={true}
                     isHigh={true}
-                    list={NFT_CHAIN_CODE_LIST}
+                    optionsList={NFT_CHAIN_CODE_LIST}
                     fieldName={`${field}.chainCode`}
                     hideError={true}
+                    noShadow={true}
                   />
                 </div>
                 <div className={classes.tokenCodeInput}>
