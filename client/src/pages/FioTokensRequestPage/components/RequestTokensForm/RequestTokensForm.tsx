@@ -246,6 +246,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
                 prefixLabel={tokenCode}
                 disabled={loading}
                 label="Request Amount"
+                step="any"
               />
             )}
 
