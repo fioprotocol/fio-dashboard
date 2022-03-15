@@ -168,6 +168,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
               event.currentTarget.blur()
             }
             data-clear={clearInput}
+            step="any"
           />
         </div>
 
