@@ -113,6 +113,7 @@ const PaymentDetailsForm: React.FC<PaymentDetailsProps> = props => {
               component={TextInput}
               disabled={loading}
               label="Send Amount"
+              step="any"
             />
             <Field
               name="obtId"
