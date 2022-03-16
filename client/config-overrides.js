@@ -12,22 +12,23 @@ module.exports = {
 
     // https://github.com/facebook/create-react-app/blob/main/CHANGELOG.md
     config.resolve.fallback = {
+      ...config.resolve.fallback,
       "assert": require.resolve('assert/'),
-      "buffer": require.resolve('buffer/'),
       "stream": require.resolve("stream-browserify"),
+      "buffer": require.resolve("buffer/"),
       "crypto": require.resolve("crypto-browserify"),
       "url": require.resolve('url/'),
-      ...config.resolve.fallback
     }
+    config.resolve.extensions = [...config.resolve.extensions, ".ts", ".js"]
     config.resolve.alias = {
+      ...config.resolve.alias,
       process: 'process/browser',
-      ...config.resolve.alias
     }
     config.plugins = [
       ...config.plugins,
       new webpack.ProvidePlugin({
-        Buffer: ['buffer', 'Buffer'],
-        process: 'process/browser',
+        process: "process/browser",
+        Buffer: ["buffer", "Buffer"],
       }),
     ]
 
