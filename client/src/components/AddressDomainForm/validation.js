@@ -71,9 +71,13 @@ const verifyAddress = async props => {
   }
 
   if (address && domain) {
-    const isAvail = await apis.fio.availCheck(`${address}@${domain}`);
-    if (isAvail && isAvail.is_registered === 1) {
-      errors.address = 'This FIO Crypto Handle is already registered.';
+    try {
+      const isAvail = await apis.fio.availCheck(`${address}@${domain}`);
+      if (isAvail && isAvail.is_registered === 1) {
+        errors.address = 'This FIO Crypto Handle is already registered.';
+      }
+    } catch (e) {
+      errors.address = 'Server error. Please try later.';
     }
   }
 
