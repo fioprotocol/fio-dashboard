@@ -2,7 +2,7 @@ import React from 'react';
 import { Field } from 'react-final-form';
 import { OnChange } from 'react-final-form-listeners';
 
-import Input, { INPUT_COLOR_SCHEMA, INPUT_UI_STYLES } from '../Input/Input';
+import Input, { INPUT_COLOR_SCHEMA, INPUT_UI_STYLES } from '../Input/TextInput';
 import classes from './AddressDomainForm.module.scss';
 
 const DomainForm = props => {
