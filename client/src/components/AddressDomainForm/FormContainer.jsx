@@ -4,29 +4,15 @@ import { isEmpty } from 'lodash';
 
 import { ROUTES } from '../../constants/routes';
 import Card from '../Card/Card';
-import PriceBadge from '../PriceBadge/PriceBadge';
-import { ADDRESS_DOMAIN_BADGE_TYPE } from '../../components/AddressDomainBadge/AddressDomainBadge';
+import PriceBadge from './PriceBadge';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 import AddressForm from './AddressForm';
 import DomainForm from './DomainForm';
 
-import { FORM_NAMES } from '../../constants/form';
+import { ADDRESS_FORM_CONTENT } from './constants';
 
 import classes from './AddressDomainForm.module.scss';
-
-const FORM_TYPES = {
-  [ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS]: {
-    title: 'Create FIO Crypto Handle',
-    subtitle:
-      'Registering a FIO Crypto Handle is fast and easy. Simply add a username and select a domain.',
-  },
-  [ADDRESS_DOMAIN_BADGE_TYPE.DOMAIN]: {
-    title: 'Purchase a FIO Domain',
-    subtitle:
-      'Purchase a FIO domain is fast and easy. Simply search for a domain to see availability',
-  },
-};
 
 const FormContainer = props => {
   const {
@@ -36,20 +22,22 @@ const FormContainer = props => {
     isAddress,
     toggleShowAvailable,
     handleChange,
-    formState,
     debouncedHandleChange,
-    showPrice,
     hasFreeAddress,
     domains,
     isDomain,
     isDesktop,
-    links = {},
+    links,
+    hasCustomDomain,
+    isFree,
+    roe,
+    prices,
   } = props;
 
   const buttonText = `Get My FIO ${isDomain ? 'Domain' : 'Crypto Handle'}`;
 
   useEffect(() => {
-    if (!isHomepage && isAddress && !isEmpty(formState)) {
+    if (!isHomepage && isAddress && !isEmpty(formProps)) {
       const { handleSubmit } = formProps || {};
       handleSubmit();
     }
@@ -57,10 +45,15 @@ const FormContainer = props => {
 
   const renderActionButton = () => {
     if (!isHomepage) return null;
+
+    const {
+      values: { address = '', domain = '' },
+    } = formProps;
+
+    const queryString = `?address=${address}&domain=${domain}`;
+
     if (links && links.getCryptoHandle) {
-      const { values } = formProps;
-      const link = `${links.getCryptoHandle}?address=${values.address ||
-        ''}&domain=${values.domain || ''}`;
+      const link = `${links.getCryptoHandle}${queryString}`;
 
       return (
         <a
@@ -82,7 +75,7 @@ const FormContainer = props => {
 
     return (
       <Link
-        to={ROUTES.FIO_ADDRESSES_SELECTION}
+        to={`${ROUTES.FIO_ADDRESSES_SELECTION}${queryString}`}
         className={`${classes.link} d-flex justify-content-center`}
       >
         <SubmitButton
@@ -122,9 +115,7 @@ const FormContainer = props => {
         id="addressForm"
       >
         <div className={classes.selectionContainer}>
-          {isHomepage ? (
-            <AddressForm {...propsToForm} formName={FORM_NAMES.ADDRESS} />
-          ) : isAddress ? (
+          {isAddress ? (
             <AddressForm {...propsToForm} />
           ) : (
             <DomainForm {...propsToForm} />
@@ -132,9 +123,13 @@ const FormContainer = props => {
         </div>
         {(isHomepage || isDesktop) && (
           <PriceBadge
-            showPrice={showPrice}
             hasFreeAddress={hasFreeAddress}
+            hasCustomDomain={hasCustomDomain}
+            isFree={isFree}
+            isDomain={isDomain}
             domains={domains}
+            roe={roe}
+            prices={prices}
             tooltip={
               <>
                 <span className="boldText">FIO Crypto Handle Cost</span>
@@ -157,8 +152,8 @@ const FormContainer = props => {
     renderFormBody()
   ) : (
     <Card
-      title={FORM_TYPES[type].title}
-      subtitle={FORM_TYPES[type].subtitle}
+      title={ADDRESS_FORM_CONTENT[type].title}
+      subtitle={ADDRESS_FORM_CONTENT[type].subtitle}
       key="form"
     >
       {renderFormBody()}
