@@ -1,14 +1,8 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { updateFormState } from '../../redux/forms/actions';
-import { refreshFioNames } from '../../redux/fio/actions';
-import { addItem, deleteItem, recalculate } from '../../redux/cart/actions';
 import { getDomains } from '../../redux/registrations/actions';
-import { cartItems } from '../../redux/cart/selectors';
-import { getFormState } from '../../redux/forms/selectors';
 import { fioDomains, fioWallets } from '../../redux/fio/selectors';
-import { hasFreeAddress } from '../../redux/profile/selectors';
 import {
   loading as pricesLoading,
   prices,
@@ -25,7 +19,6 @@ const reduxConnect = connect(
   createStructuredSelector({
     pricesLoading,
     prices,
-    cartItems,
     domains: state => {
       const publicDomains = domains(state);
       const userDomains = fioDomains(state);
@@ -35,21 +28,11 @@ const reduxConnect = connect(
       ];
     },
     fioWallets,
-    formState: (state, ownProps) => {
-      const { isHomepage, formNameGet } = ownProps;
-      return !isHomepage ? getFormState(state, formNameGet) : {};
-    },
-    hasFreeAddress,
     allowCustomDomains,
     roe,
   }),
   {
     getDomains,
-    refreshFioNames,
-    updateFormState,
-    addItem,
-    deleteItem,
-    recalculate,
   },
 );
 

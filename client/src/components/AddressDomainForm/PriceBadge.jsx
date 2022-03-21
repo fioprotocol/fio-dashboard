@@ -4,12 +4,24 @@ import classnames from 'classnames';
 import isEmpty from 'lodash/isEmpty';
 
 import TooltipComponent from '../Tooltip/Tooltip';
+import PriceComponent from './PriceComponent';
+
 import { isFreeDomain } from '../../utils';
 
-import classes from './PriceBadge.module.scss';
+import classes from './styles/PriceBadge.module.scss';
 
 const PriceBadge = props => {
-  const { showPrice, tooltip, hasFreeAddress, domains } = props;
+  const {
+    tooltip,
+    hasFreeAddress,
+    domains,
+    hasCustomDomain,
+    isFree,
+    isDomain,
+    roe,
+    prices,
+  } = props;
+
   const form = useForm();
   const { values } = form && form.getState();
   const hasError =
@@ -40,8 +52,6 @@ const PriceBadge = props => {
     values.domain &&
     isFreeDomain({ domains, domain: values.domain });
 
-  const renderPrice = showPrice();
-
   return (
     <div
       className={classnames(
@@ -52,7 +62,14 @@ const PriceBadge = props => {
       <div
         className={classnames(classes.badge, showBadge && classes.showBadge)}
       >
-        {renderPrice}
+        <PriceComponent
+          isFree={isFree}
+          isDomain={isDomain}
+          hasCustomDomain={hasCustomDomain}
+          hasCurrentDomain={hasCustomDomain}
+          roe={roe}
+          prices={prices}
+        />
       </div>
       {showTooltip && (
         <div className={classes.tooltip}>

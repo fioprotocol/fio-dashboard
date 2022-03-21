@@ -1,8 +1,11 @@
 import React, { useEffect } from 'react';
-import { Field, FormSpy } from 'react-final-form';
+import { Field } from 'react-final-form';
 
 import CustomDropdown from './CustomDropdown';
-import Input, { INPUT_COLOR_SCHEMA, INPUT_UI_STYLES } from '../Input/Input';
+import TextInput, {
+  INPUT_COLOR_SCHEMA,
+  INPUT_UI_STYLES,
+} from '../Input/TextInput';
 import { OnChange } from 'react-final-form-listeners';
 
 import classes from './AddressDomainForm.module.scss';
@@ -11,39 +14,25 @@ const prefix = '@';
 
 const AddressForm = props => {
   const {
-    isHomepage,
-    formName,
     hasCustomDomain,
     showCustomDomain,
     toggleShowCustomDomain,
     options,
     domain,
-    updateFormState,
     onChangeHandleField,
     debouncedOnChangeHandleField,
-    formNameGet,
     allowCustomDomains,
     isValidating,
   } = props;
 
-  const updateFormStateCurrent = (form, state) => {
-    updateFormState(form, state);
-  };
+  const isCustomDomain = hasCustomDomain || showCustomDomain;
 
-  useEffect(
-    () => () => !isHomepage && updateFormStateCurrent(formNameGet, {}),
-    [],
-  );
+  useEffect(() => {
+    if (isCustomDomain) toggleShowCustomDomain(true);
+  }, []);
 
   return (
     <>
-      {isHomepage && (
-        <FormSpy
-          onChange={state => {
-            setTimeout(() => updateFormStateCurrent(formName, state.values), 0); //stupid lib issue, fixed with hack from github issues
-          }}
-        />
-      )}
       <div className={classes.username}>
         <Field
           name="address"
@@ -51,7 +40,7 @@ const AddressForm = props => {
           placeholder="Find the perfect username .."
           colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
           uiType={INPUT_UI_STYLES.BLACK_WHITE}
-          component={Input}
+          component={TextInput}
           hideError="true"
           lowerCased
           loading={isValidating}
@@ -71,14 +60,14 @@ const AddressForm = props => {
       </div>
       <div className={classes.space}></div>
       <div className={classes.domainContainer}>
-        {hasCustomDomain || showCustomDomain ? (
+        {isCustomDomain ? (
           <Field
             name="domain"
             type="text"
             placeholder="Custom domain"
             colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
             uiType={INPUT_UI_STYLES.BLACK_WHITE}
-            component={Input}
+            component={TextInput}
             lowerCased
             onClose={() => {
               toggleShowCustomDomain(false);
