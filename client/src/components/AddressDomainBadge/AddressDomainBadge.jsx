@@ -3,21 +3,18 @@ import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { ROUTES } from '../../constants/routes';
+import { ADDRESS, DOMAIN } from '../../constants/common';
+
 import classes from './AddressDomainBadge.module.scss';
 
-export const ADDRESS_DOMAIN_BADGE_TYPE = {
-  ADDRESS: 'address',
-  DOMAIN: 'domain',
-};
-
 const content = {
-  [ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS]: {
+  [ADDRESS]: {
     link: ROUTES.FIO_DOMAINS_SELECTION,
     button: 'Purchase Domain',
     title: 'Want to register a FIO Crypto Handle with a custom domain?',
     text: '',
   },
-  [ADDRESS_DOMAIN_BADGE_TYPE.DOMAIN]: {
+  [DOMAIN]: {
     link: ROUTES.FIO_ADDRESSES_SELECTION,
     button: 'Register a FIO Crypto Handle',
     title: 'Need a FIO Crypto Handle?',

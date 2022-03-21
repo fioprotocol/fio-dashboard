@@ -59,7 +59,11 @@ const verifyAddress = async props => {
     const isRegistered = await checkDomainIsRegistered(domain);
 
     if (isRegistered) {
-      if (isAddress && options.every(option => option !== domain)) {
+      if (
+        isAddress &&
+        options.length > 0 &&
+        options.every(option => option !== domain)
+      ) {
         errors.domain =
           'Unfortunately the domain name you have selected is not available. Please select an alternative.';
       }
@@ -183,6 +187,7 @@ export const domainValidation = props => {
   }
   if (
     domain &&
+    options.length > 0 &&
     options.every(item => item !== domain) &&
     cartItems.some(item => item.domain === domain.toLowerCase())
   ) {

@@ -11,18 +11,15 @@ export default class HomePage extends Component {
   render() {
     const { isAuthenticated, isRefFlow, homePageLink } = this.props;
 
-    if (isRefFlow) {
-      return <Redirect to={homePageLink} />;
-    }
+    if (isRefFlow) return <Redirect to={homePageLink} />;
 
-    if (!isAuthenticated) {
+    if (!isAuthenticated)
       return (
         <div className={classnames.container}>
           <AddressWidget />
           <DomainsBanner />
         </div>
       );
-    }
 
     return <DashboardPage />;
   }

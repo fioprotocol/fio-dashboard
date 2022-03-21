@@ -1,15 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Form } from 'react-final-form';
 import * as Scroll from 'react-scroll';
-
-import { ADDRESS_DOMAIN_BADGE_TYPE } from '../../components/AddressDomainBadge/AddressDomainBadge';
-import { useCheckIfDesktop } from '../../screenType';
-import Notifications from './Notifications.tsx';
-import FormContainer from './FormContainer';
 import debounce from 'lodash/debounce';
-import { setDataMutator, cartHasFreeItem, isFreeDomain } from '../../utils';
-import MathOp from '../../util/math';
-import { convertFioPrices } from '../../util/prices';
+
+import FormItems from './FormItems';
+
+import { setDataMutator } from '../../utils';
+import { useCheckIfDesktop } from '../../screenType';
+
+import { ADDRESS, DOMAIN } from '../../constants/common';
 
 import { addressValidation, domainValidation } from './validation';
 
@@ -19,24 +18,23 @@ const DEBOUNCE_TIMEOUT = 500;
 
 const AddressDomainForm = props => {
   const {
-    domains,
+    domains = [],
     isHomepage,
-    formState,
     type,
     getDomains,
-    fioWallets,
-    refreshFioNames,
-    prices,
-    cartItems,
+    cartItems = [],
     recalculate,
     hasFreeAddress,
+    initialValues,
+    prices,
     roe,
+    allowCustomDomains,
+    links,
   } = props;
 
-  const isAddress = type === ADDRESS_DOMAIN_BADGE_TYPE.ADDRESS;
-  const isDomain = type === ADDRESS_DOMAIN_BADGE_TYPE.DOMAIN;
+  const isAddress = type === ADDRESS;
+  const isDomain = type === DOMAIN;
 
-  const [showCustomDomain, toggleShowCustomDomain] = useState(false);
   const [showAvailable, toggleShowAvailable] = useState(false);
   const [formErrors, changeFormErrors] = useState({});
   const [isValidating, toggleValidating] = useState(false);
@@ -50,12 +48,6 @@ const AddressDomainForm = props => {
   useEffect(() => {
     getDomains();
   }, []);
-
-  useEffect(() => {
-    for (const fioWallet of fioWallets) {
-      refreshFioNames(fioWallet.publicKey);
-    }
-  }, [fioWallets]);
 
   const validationProps = {
     options,
@@ -95,6 +87,8 @@ const AddressDomainForm = props => {
   };
 
   const handleChange = formProps => {
+    if (isHomepage) return;
+
     const validationPropsToPass = {
       formProps,
       ...validationProps,
@@ -105,125 +99,37 @@ const AddressDomainForm = props => {
 
   const debouncedHandleChange = debounce(handleChange, DEBOUNCE_TIMEOUT);
 
-  const renderItems = formProps => {
-    const { values: { address, domain } = {} } = formProps || {};
-
-    const currentCartItem = cartItems.find(item => {
-      if (!address) return item.domain === domain;
-      return item.address === address && item.domain === domain;
-    });
-
-    const hasCustomDomain =
-      (domain &&
-        options.every(option => option !== domain) &&
-        cartItems.every(item => item.domain !== domain)) ||
-      isDomain ||
-      (currentCartItem && currentCartItem.hasCustomDomain);
-
-    const hasCurrentDomain =
-      domain &&
-      cartItems.some(
-        item =>
-          item.domain === domain.toLowerCase() &&
-          item.id !== (currentCartItem && currentCartItem.id),
-      );
-
-    const isFree =
-      (!hasCustomDomain &&
-        !cartHasFreeItem(cartItems) &&
-        !hasFreeAddress &&
-        isFreeDomain({ domains, domain })) ||
-      (currentCartItem && !currentCartItem.costNativeFio);
-
-    const showPrice = ({ isDomainPrice = null } = {}) => {
-      const {
-        nativeFio: {
-          address: nativeFioAddressPrice,
-          domain: nativeFioDomainPrice,
-        },
-        fio: { address: fioAddressPrice },
-        usdt: { address: usdcAddressPrice },
-      } = prices;
-
-      let costNativeFio;
-      let costFio;
-      let costUsdc;
-
-      if (!isFree && !isDomain) {
-        costNativeFio = nativeFioAddressPrice;
-        costFio = fioAddressPrice.toFixed(2);
-        costUsdc = usdcAddressPrice;
-      }
-      if (hasCustomDomain) {
-        costNativeFio =
-          costNativeFio != null
-            ? new MathOp(costNativeFio).add(nativeFioDomainPrice).toNumber()
-            : nativeFioDomainPrice;
-        const fioPrices = convertFioPrices(costNativeFio, roe);
-        costFio = fioPrices.fio;
-        costUsdc = fioPrices.usdc;
-      }
-
-      const price = isFree ? 'FREE' : `${costFio} FIO (${costUsdc} USDC)`;
-
-      const cost = `Cost: ${price}`;
-      return isDomainPrice && !hasCustomDomain && hasCurrentDomain
-        ? null
-        : cost;
-    };
-
-    return [
-      <FormContainer
-        formProps={formProps}
-        {...props}
-        options={options}
-        isAddress={isAddress}
-        isDomain={isDomain}
-        hasCustomDomain={hasCustomDomain}
-        showCustomDomain={showCustomDomain}
-        toggleShowCustomDomain={toggleShowCustomDomain}
-        domain={domain}
-        key="form"
-        showPrice={showPrice}
-        handleChange={handleChange}
-        debouncedHandleChange={debouncedHandleChange}
-        toggleShowAvailable={toggleShowAvailable}
-        isValidating={isValidating}
-        formState={formState}
-        isFree={isFree}
-        hasFreeAddress={hasFreeAddress}
-        isDesktop={isDesktop}
-      />,
-      !isHomepage && (
-        <Notifications
-          formProps={formProps}
-          formErrors={formErrors}
-          {...props}
-          hasCustomDomain={hasCustomDomain}
-          showCustomDomain={showCustomDomain}
-          currentCartItem={currentCartItem}
-          showAvailable={showAvailable}
-          toggleShowAvailable={toggleShowAvailable}
-          isAddress={isAddress}
-          isDomain={isDomain}
-          key="notifications"
-          isFree={isFree}
-          isDesktop={isDesktop}
-          showPrice={showPrice}
-          ref={notificationRef}
-        />
-      ),
-    ];
-  };
-
   return (
     <Form
       onSubmit={handleSubmit}
       mutators={{ setDataMutator }}
-      initialValues={formState}
-    >
-      {renderItems}
-    </Form>
+      initialValues={initialValues}
+      render={formProps => (
+        <FormItems
+          debouncedHandleChange={debouncedHandleChange}
+          hasFreeAddress={hasFreeAddress}
+          showAvailable={showAvailable}
+          formErrors={formErrors}
+          isValidating={isValidating}
+          isDesktop={isDesktop}
+          handleChange={handleChange}
+          ref={notificationRef}
+          prices={prices}
+          type={type}
+          cartItems={cartItems}
+          formProps={formProps}
+          domains={domains}
+          isHomepage={isHomepage}
+          isAddress={isAddress}
+          isDomain={isDomain}
+          options={options}
+          toggleShowAvailable={toggleShowAvailable}
+          roe={roe}
+          allowCustomDomains={allowCustomDomains}
+          links={links}
+        />
+      )}
+    />
   );
 };
 
