@@ -41,6 +41,7 @@ export class Notification extends Base {
         message: { type: DT.TEXT },
         seenDate: { type: DT.DATE, allowNull: true },
         closeDate: { type: DT.DATE, allowNull: true },
+        emailDate: { type: DT.DATE, allowNull: true },
         data: { type: DT.JSON },
       },
       {
