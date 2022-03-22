@@ -93,6 +93,7 @@
     "bitcoin-address-validation": "^2.2.1",
     "body-parser": "^1.18.2",
     "bootstrap": "4.6.0",
+    "bree": "^8.0.2",
     "bunyan": "^1.8.12",
     "camelcase": "^6.3.0",
     "classnames": "2.3.1",
