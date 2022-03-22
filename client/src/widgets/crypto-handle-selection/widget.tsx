@@ -27,5 +27,5 @@ class AddressSelectionWidget extends Component<{}, {}> {
 
 ReactDOM.render(
   <AddressSelectionWidget />,
-  document.getElementById('fio-crypto-handle-selection'),
+  document.getElementById('crypto-handle-selection'),
 );
