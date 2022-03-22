@@ -1,4 +1,4 @@
-import { FormProps } from 'react-final-form';
+import { FormRenderProps, FormApi } from 'react-final-form';
 
 import {
   CartItem,
@@ -6,7 +6,9 @@ import {
   DeleteCartItem,
   Prices,
   FioNameType,
+  FioWalletDoublet,
 } from '../../types';
+import React from 'react';
 
 type Error =
   | {
@@ -26,27 +28,91 @@ type DefaultProps = {
   isDomain: boolean;
 };
 
-export type FormItemsProps = {
-  formProps: FormProps;
+export type FormValuesProps = {
+  address: string;
+  domain: string;
+};
+
+export type FormValidationErrorProps = {
+  address?: string;
+  domain?: string | { message?: string; showInfoError: boolean };
+};
+
+export type DefaultValidationProps = {
+  formProps: FormApi;
   cartItems: CartItem[];
   options: string[];
   isAddress: boolean;
+  toggleShowAvailable: (isAvailable: boolean) => void;
+  changeFormErrors: (errors: FormValidationErrorProps) => void;
+  toggleValidating: (isValidating: boolean) => void;
+};
+
+export type DomainValidationProps = {
+  cartItems: CartItem[];
+  options: string[];
+} & DefaultValidationProps;
+
+export type VerifyAddressProps = {
+  isAddress: boolean;
+  options: string[];
+  toggleValidating: (isValidating: boolean) => void;
+} & DefaultValidationProps;
+
+type DefaultFormContainerProps = {
+  formProps: FormRenderProps;
+  type: FioNameType;
+  isAddress: boolean;
+  hasFreeAddress: boolean;
   isHomepage: boolean;
   domains: Domain[];
-  hasFreeAddress: boolean;
-  showAvailable: boolean;
-  formErrors: FormError;
-  isValidating: boolean;
   isDesktop: boolean;
+  links: {
+    getCryptoHandle: string | React.ReactNode;
+  };
+  options: string[];
+  allowCustomDomains: boolean;
+  isValidating: boolean;
+  roe: number;
+  prices: Prices;
+  isDomain: boolean;
+  toggleShowAvailable: (isAvailable: boolean) => void;
+  handleChange: (formProps: FormApi) => void;
+  debouncedHandleChange: (formProps: FormApi) => void;
+};
+
+export type AddressDomainFormProps = {
+  domains: Domain[];
+  isHomepage: boolean;
+  type: FioNameType;
+  fioWallets: FioWalletDoublet[];
+  getDomains: () => void;
+  cartItems: CartItem[];
+  recalculate: () => void;
+  hasFreeAddress: boolean;
+  initialValues: FormValuesProps;
+  prices: Prices;
+  roe: number;
   allowCustomDomains: boolean;
   links: {
     getCryptoHandle: string | React.ReactNode;
   };
-  type: FioNameType;
-  debouncedHandleChange: () => void;
-  handleChange: (formProps: FormProps) => void;
-  toggleShowAvailable: (isAvaliable: boolean) => void;
-} & DefaultProps;
+  refreshFioNames: (publicKey: string) => void;
+};
+
+export type FormItemsProps = {
+  cartItems: CartItem[];
+  showAvailable: boolean;
+  formErrors: FormError;
+} & DefaultFormContainerProps;
+
+export type FormContainerProps = {
+  hasCustomDomain: boolean;
+  showCustomDomain: boolean;
+  domain: Domain;
+  isFree: boolean;
+  toggleShowCustomDomain: (showCustomDomain: boolean) => void;
+} & DefaultFormContainerProps;
 
 export type PriceComponent = {
   isDomainPrice?: null | boolean;
@@ -59,7 +125,7 @@ export type NotificationProps = {
   currentCartItem: CartItem | undefined;
   domains: Domain[];
   formErrors: FormError;
-  formProps: FormProps;
+  formProps: FormRenderProps;
   isAddress: boolean;
   type: FioNameType;
   hasCurrentDomain: boolean;
@@ -73,7 +139,7 @@ export type NotificationActionProps = {
   domains: Domain[];
   isAddress: boolean;
   currentCartItem: CartItem;
-  values: { address: string; domain: string };
+  values: FormValuesProps;
   showAvailable: boolean;
   hasErrors: boolean;
   hasCustomDomain: boolean;
@@ -89,5 +155,27 @@ export type NotificationInfoProps = {
   type: FioNameType;
   showAvailable: boolean;
   hasErrors: boolean;
+  hasCustomDomain: boolean;
+} & DefaultProps;
+
+export type DefaultFormProps = {
+  isValidating: boolean;
+  debouncedOnChangeHandleField: (formProps: FormApi) => void;
+};
+
+export type AddressFormProps = {
+  hasCustomDomain: boolean;
+  showCustomDomain: boolean;
+  options: string[];
+  domain: Domain;
+  allowCustomDomains: boolean;
+  toggleShowCustomDomain: (showCustomDomain: boolean) => void;
+  onChangeHandleField: () => void;
+} & DefaultFormProps;
+
+export type PriceBadgeProps = {
+  tooltip: string | React.RactNode;
+  hasFreeAddress: boolean;
+  domains: Domains[];
   hasCustomDomain: boolean;
 } & DefaultProps;

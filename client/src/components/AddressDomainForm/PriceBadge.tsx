@@ -8,9 +8,11 @@ import PriceComponent from './PriceComponent';
 
 import { isFreeDomain } from '../../utils';
 
+import { PriceBadgeProps } from './types';
+
 import classes from './styles/PriceBadge.module.scss';
 
-const PriceBadge = props => {
+const PriceBadge: React.FC<PriceBadgeProps> = props => {
   const {
     tooltip,
     hasFreeAddress,
