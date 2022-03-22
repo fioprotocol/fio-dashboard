@@ -12,17 +12,16 @@ import DomainForm from './DomainForm';
 
 import { ADDRESS_FORM_CONTENT } from './constants';
 
+import { FormContainerProps } from './types';
+
 import classes from './AddressDomainForm.module.scss';
 
-const FormContainer = props => {
+const FormContainer: React.FC<FormContainerProps> = props => {
   const {
     isHomepage,
     formProps,
     type,
     isAddress,
-    toggleShowAvailable,
-    handleChange,
-    debouncedHandleChange,
     hasFreeAddress,
     domains,
     isDomain,
@@ -32,14 +31,25 @@ const FormContainer = props => {
     isFree,
     roe,
     prices,
+    showCustomDomain,
+    options,
+    domain,
+    allowCustomDomains,
+    isValidating,
+    toggleShowCustomDomain,
+    toggleShowAvailable,
+    handleChange,
+    debouncedHandleChange,
   } = props;
 
   const buttonText = `Get My FIO ${isDomain ? 'Domain' : 'Crypto Handle'}`;
 
   useEffect(() => {
     if (!isHomepage && isAddress && !isEmpty(formProps)) {
-      const { handleSubmit } = formProps || {};
-      handleSubmit();
+      const { handleSubmit, values } = formProps || {};
+      if (!isEmpty(values)) {
+        handleSubmit();
+      }
     }
   }, []);
 
@@ -47,10 +57,10 @@ const FormContainer = props => {
     if (!isHomepage) return null;
 
     const {
-      values: { address = '', domain = '' },
+      values: { address = '', domain: domainValue = '' },
     } = formProps;
 
-    const queryString = `?address=${address}&domain=${domain}`;
+    const queryString = `?address=${address}&domain=${domainValue}`;
 
     if (links && links.getCryptoHandle) {
       const link = `${links.getCryptoHandle}${queryString}`;
@@ -102,7 +112,13 @@ const FormContainer = props => {
     };
 
     const propsToForm = {
-      ...props,
+      hasCustomDomain,
+      showCustomDomain,
+      options,
+      domain,
+      allowCustomDomains,
+      isValidating,
+      toggleShowCustomDomain,
       onChangeHandleField,
       debouncedOnChangeHandleField,
     };

@@ -8,7 +8,7 @@ import { ADDRESS } from '../../constants/common';
 import classes from './AddressWidget.module.scss';
 
 type Props = {
-  links: {
+  links?: {
     getCryptoHandle: string | ReactNode;
   };
 };
