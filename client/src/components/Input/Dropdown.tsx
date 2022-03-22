@@ -19,6 +19,7 @@ type DropdownProps = {
     'data-clear'?: boolean;
     value: string;
   };
+  toggleToCustom?: (isCustom: boolean) => void;
 };
 
 const Dropdown = ({

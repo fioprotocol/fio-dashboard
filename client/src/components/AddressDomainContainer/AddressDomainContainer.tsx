@@ -1,20 +1,37 @@
 import React from 'react';
-import { withRouter } from 'react-router';
+import { withRouter, RouteComponentProps } from 'react-router';
 
-import AddressDomainForm from '../AddressDomainForm';
+import AddressDomainFrom from '../AddressDomainForm';
 import AddressDomainBadge from '../AddressDomainBadge/AddressDomainBadge';
 import AddressDomainCart from '../AddressDomainCart';
 import { useCheckIfDesktop } from '../../screenType';
 
 import DoubleCardContainer from '../DoubleCardContainer';
 
-const AddressDomainContainer = props => {
+import { FioNameType, CartItem } from '../../types';
+
+type Props = {
+  title: string;
+  type: FioNameType;
+  allowCustomDomains: boolean;
+  cartItems: CartItem[];
+  hasFreeAddress: boolean;
+};
+
+type LocationQuery = {
+  location: {
+    query: string;
+  };
+};
+
+const AddressDomainContainer: React.FC<Props &
+  LocationQuery &
+  RouteComponentProps> = props => {
   const {
     title,
     type,
     allowCustomDomains,
     location: { query },
-    history,
     cartItems,
     hasFreeAddress,
   } = props;
@@ -26,10 +43,9 @@ const AddressDomainContainer = props => {
       title={title}
       bigCart={
         <>
-          <AddressDomainForm
+          <AddressDomainFrom
             type={type}
             initialValues={query}
-            history={history}
             cartItems={cartItems}
             hasFreeAddress={hasFreeAddress}
           />

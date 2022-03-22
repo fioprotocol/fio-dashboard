@@ -1,28 +1,34 @@
 import React, { useEffect } from 'react';
 import { Field } from 'react-final-form';
+import { OnChange } from 'react-final-form-listeners';
 
-import CustomDropdown from './CustomDropdown';
 import TextInput, {
   INPUT_COLOR_SCHEMA,
   INPUT_UI_STYLES,
 } from '../Input/TextInput';
-import { OnChange } from 'react-final-form-listeners';
+import Dropdown from '../Input/Dropdown';
+
+import { AddressFormProps } from './types';
 
 import classes from './AddressDomainForm.module.scss';
 
 const prefix = '@';
+const CUSTOM_DROPDOWN_VALUE = {
+  id: 'addCustomDomain',
+  name: 'Add Custom Domain',
+};
 
-const AddressForm = props => {
+const AddressForm: React.FC<AddressFormProps> = props => {
   const {
     hasCustomDomain,
     showCustomDomain,
-    toggleShowCustomDomain,
     options,
     domain,
-    onChangeHandleField,
-    debouncedOnChangeHandleField,
     allowCustomDomains,
     isValidating,
+    onChangeHandleField,
+    debouncedOnChangeHandleField,
+    toggleShowCustomDomain,
   } = props;
 
   const isCustomDomain = hasCustomDomain || showCustomDomain;
@@ -58,7 +64,7 @@ const AddressForm = props => {
         />
         <OnChange name="address">{debouncedOnChangeHandleField}</OnChange>
       </div>
-      <div className={classes.space}></div>
+      <div className={classes.space} />
       <div className={classes.domainContainer}>
         {isCustomDomain ? (
           <Field
@@ -79,13 +85,20 @@ const AddressForm = props => {
         ) : (
           <Field
             name="domain"
-            component={CustomDropdown}
-            options={options}
-            allowCustomDomains={allowCustomDomains}
-            toggle={() => {
+            component={Dropdown}
+            options={options
+              .sort((a, b) => a.localeCompare(b))
+              .map(option => ({ id: option, name: option }))}
+            customValue={allowCustomDomains ? CUSTOM_DROPDOWN_VALUE : {}}
+            toggleToCustom={() => {
               toggleShowCustomDomain(true);
             }}
             initValue={domain}
+            isVoilet={true}
+            isWhitePlaceholder={true}
+            isWhiteIcon={true}
+            noMinWidth={true}
+            placeholder="Select Domain"
           />
         )}
         <OnChange name="domain">
