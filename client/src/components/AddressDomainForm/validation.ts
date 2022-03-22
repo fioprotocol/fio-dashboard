@@ -5,10 +5,12 @@ import superagent from 'superagent';
 import apis from '../../api/index';
 import { ADDRESS_REGEXP } from '../../constants/regExps';
 
+import { DefaultValidationProps, FormValidationErrorProps } from './types';
+
 const GET_TABLE_ROWS_URL = `${process.env.REACT_APP_FIO_BASE_URL}chain/get_table_rows`;
 
 // avail_check returns wrong information about availability of domains, temporary changed to use this
-const checkDomainIsRegistered = async domain => {
+const checkDomainIsRegistered = async (domain: string) => {
   try {
     const hash = createHash('sha1');
     const bound =
@@ -35,25 +37,25 @@ const checkDomainIsRegistered = async domain => {
       return !!rows[0].id;
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 
   return false;
 };
 
-const verifyAddress = async props => {
+const verifyAddress = async (props: DefaultValidationProps) => {
   const {
     formProps,
-    toggleShowAvailable,
     options,
-    changeFormErrors,
     isAddress,
+    toggleShowAvailable,
+    changeFormErrors,
     toggleValidating,
   } = props;
   const { mutators } = formProps;
   const { domain, address } = formProps.getState().values;
 
-  const errors = {};
+  const errors: FormValidationErrorProps = {};
   toggleValidating(true);
   if (domain) {
     const isRegistered = await checkDomainIsRegistered(domain);
@@ -95,11 +97,11 @@ const verifyAddress = async props => {
   toggleValidating(false);
 };
 
-export const addressValidation = async props => {
+export const addressValidation = async (props: DefaultValidationProps) => {
   const { formProps, toggleShowAvailable, changeFormErrors } = props;
   const { mutators, getState } = formProps;
   const { values, modified, submitting } = getState();
-  const errors = {};
+  const errors: FormValidationErrorProps = {};
   const { address, domain } = values || {};
 
   if ((!address || !domain) && !submitting) {
@@ -160,7 +162,7 @@ export const addressValidation = async props => {
   }
 };
 
-export const domainValidation = props => {
+export const domainValidation = (props: DefaultValidationProps) => {
   const {
     formProps,
     toggleShowAvailable,
@@ -168,7 +170,7 @@ export const domainValidation = props => {
     cartItems,
     options,
   } = props;
-  const errors = {};
+  const errors: FormValidationErrorProps = {};
   const { mutators, getState } = formProps;
   const { domain } = getState().values || {};
 
@@ -191,10 +193,10 @@ export const domainValidation = props => {
     options.every(item => item !== domain) &&
     cartItems.some(item => item.domain === domain.toLowerCase())
   ) {
-    errors.domain = {};
-    errors.domain.message = 'This domain has already been added to your cart';
-
-    errors.domain.showInfoError = true;
+    errors.domain = {
+      message: 'This domain has already been added to your cart',
+      showInfoError: true,
+    };
   }
 
   if (!isEmpty(errors)) {

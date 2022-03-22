@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Form } from 'react-final-form';
+import { FormApi } from 'final-form';
 import * as Scroll from 'react-scroll';
 import debounce from 'lodash/debounce';
 
@@ -12,24 +13,28 @@ import { ADDRESS, DOMAIN } from '../../constants/common';
 
 import { addressValidation, domainValidation } from './validation';
 
+import { AddressDomainFormProps, FormValuesProps } from './types';
+
 const TOP_OFFSET = 35;
 const SCROLL_DURATION = 600;
 const DEBOUNCE_TIMEOUT = 500;
 
-const AddressDomainForm = props => {
+const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
   const {
     domains = [],
     isHomepage,
     type,
-    getDomains,
     cartItems = [],
-    recalculate,
     hasFreeAddress,
     initialValues,
     prices,
     roe,
     allowCustomDomains,
     links,
+    fioWallets,
+    getDomains,
+    recalculate,
+    refreshFioNames,
   } = props;
 
   const isAddress = type === ADDRESS;
@@ -49,17 +54,26 @@ const AddressDomainForm = props => {
     getDomains();
   }, []);
 
+  useEffect(() => {
+    for (const fioWallet of fioWallets) {
+      refreshFioNames(fioWallet.publicKey);
+    }
+  }, [fioWallets]);
+
   const validationProps = {
     options,
-    toggleShowAvailable,
-    changeFormErrors,
     isAddress,
-    toggleValidating,
     cartItems,
     recalculate,
+    toggleShowAvailable,
+    changeFormErrors,
+    toggleValidating,
   };
 
-  const handleSubmit = (values, form) => {
+  const handleSubmit = (
+    values: Record<string, any>,
+    form: FormApi<Record<string, any>, FormValuesProps>,
+  ) => {
     if (isHomepage) return;
 
     const validationPropsToPass = {
@@ -86,11 +100,11 @@ const AddressDomainForm = props => {
     }
   };
 
-  const handleChange = formProps => {
+  const handleChange = (formApi: FormApi) => {
     if (isHomepage) return;
 
     const validationPropsToPass = {
-      formProps,
+      formProps: formApi,
       ...validationProps,
     };
     if (isAddress) addressValidation(validationPropsToPass);

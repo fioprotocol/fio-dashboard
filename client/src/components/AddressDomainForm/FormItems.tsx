@@ -72,7 +72,6 @@ const FormItems = (
         toggleShowAvailable={toggleShowAvailable}
         isFree={isFree}
         hasFreeAddress={hasFreeAddress}
-        hasCurrentDomain={hasCurrentDomain}
       />
       {!isHomepage && (
         <Notifications

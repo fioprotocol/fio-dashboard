@@ -5,6 +5,8 @@ import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { ROUTES } from '../../constants/routes';
 import { ADDRESS, DOMAIN } from '../../constants/common';
 
+import { FioNameType } from '../../types';
+
 import classes from './AddressDomainBadge.module.scss';
 
 const content = {
@@ -23,7 +25,11 @@ const content = {
   },
 };
 
-const AddressDomainBadge = props => {
+type Props = {
+  type: FioNameType;
+};
+
+const AddressDomainBadge: React.FC<Props> = props => {
   const { type } = props;
 
   return (
