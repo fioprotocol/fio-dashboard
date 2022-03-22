@@ -11,6 +11,7 @@
     "client:analyze": "cd ./client && source-map-explorer build/static/js/main.*",
     "server:dev": "npm run migrate && nodemon -L --inspect --es-module-specifier-resolution=node --watch server server/src/index.mjs",
     "widget:as:start": "REACT_APP_WIDGET=crypto-handle-selection npm run client:start",
+    "widget:as:build": "REACT_APP_WIDGET=crypto-handle-selection npm run client:build && source ./bin/build-widget.sh",
     "lint": "eslint ./server/src --ext js,jsx,mjs",
     "lint:fix": "eslint ./server/src ./client/src --ext js,jsx,mjs --fix",
     "server:prod": "npm run migrate && node --es-module-specifier-resolution=node server/src/index.mjs",
