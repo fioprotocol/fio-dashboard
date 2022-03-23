@@ -15,6 +15,7 @@
     "lint": "eslint ./server/src ./client/src --ext js,jsx,mjs,ts,tsx",
     "lint:fix": "eslint ./server/src ./client/src --ext js,jsx,mjs,ts,tsx --fix",
     "server:prod": "npm run migrate && node --es-module-specifier-resolution=node server/src/index.mjs",
+    "scheduler": "node --es-module-specifier-resolution=node server/src/scheduler.mjs",
     "migrate": "sequelize db:migrate",
     "test:api": "cross-env TEST_MODE=0 LOG_LEVEL=error babel-node --extensions .js,.mjs node_modules/.bin/_mocha --exit --timeout 60000 --reporter spec --ui qunit server/tests/api/*",
     "test": "npm run lint && npm run test:create.db && npm run test:api",
