@@ -28,13 +28,15 @@ if (parentPort)
     limit: NOTIFICATION_LIMIT_PER_JOB,
   });
 
+  parentPort.postMessage(`Process notifications - ${notifications.length}`);
   const handleNotification = async notification => {
     if (isCancelled) return false;
+
+    parentPort.postMessage(`Processing notification id - ${notification.id}`);
 
     try {
       const { data } = notification;
 
-      // todo: check if notification processing is in progress
       if (!data.emailTemplate) return false;
 
       let emailSent = false;
@@ -51,6 +53,7 @@ if (parentPort)
       if (emailSent) {
         notification.emailDate = new Date();
         await notification.save();
+        parentPort.postMessage(`Notification processed, email sent - ${notification.id}`);
       }
     } catch (e) {
       logger.error(`NOTIFICATION PROCESSING ERROR`, e);
