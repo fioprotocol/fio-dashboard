@@ -69,12 +69,17 @@ export const Label: React.FC<{
 export const LabelSuffix: React.FC<{
   text?: string;
   uiType?: string;
-}> = ({ text, uiType }) => {
+  withBottomMargin?: boolean;
+}> = ({ text, uiType, withBottomMargin }) => {
   if (!text) return null;
 
   return (
     <span
-      className={classnames(classes.labelSuffix, uiType && classes[uiType])}
+      className={classnames(
+        classes.labelSuffix,
+        uiType && classes[uiType],
+        withBottomMargin && classes.withBottomMargin,
+      )}
     >
       {text}
     </span>

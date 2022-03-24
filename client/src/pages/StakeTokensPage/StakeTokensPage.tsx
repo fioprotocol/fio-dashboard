@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import shuffle from 'lodash/shuffle';
 
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
@@ -9,6 +10,8 @@ import StakeTokensResults from '../../components/common/TransactionResults/compo
 import { putParamsToUrl } from '../../utils';
 import { convertFioPrices } from '../../util/prices';
 import { useFioAddresses } from '../../util/hooks';
+
+import apis from '../../api';
 
 import { TrxResponse } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
@@ -39,14 +42,21 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
     setStakeTokensData,
   ] = useState<StakeTokensValues | null>(null);
   const [processing, setProcessing] = useState<boolean>(false);
+  const [proxyList, setProxyList] = useState([]);
 
   const [walletFioAddresses, isWalletFioAddressesLoading] = useFioAddresses(
     fioWallet && fioWallet.publicKey,
   );
 
+  const getProxyList = async () => {
+    const proxies = await apis.fio.getProxies();
+    setProxyList(shuffle(proxies));
+  };
+
   useEffect(() => {
     getFee();
     setStakeTokensData(null);
+    getProxyList();
   }, []);
 
   useEffect(() => {
@@ -107,6 +117,7 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
   const initialValues: InitialValues = {
     publicKey: fioWallet.publicKey,
     fioAddress: walletFioAddresses[0]?.name,
+    proxy: proxyList[0],
   };
 
   if (resultsData)
@@ -152,6 +163,7 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
           onSubmit={onStakeTokens}
           fee={feePrice}
           initialValues={initialValues}
+          proxyList={proxyList}
         />
       </PseudoModalContainer>
     </>
