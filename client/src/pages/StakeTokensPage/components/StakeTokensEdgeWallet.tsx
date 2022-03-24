@@ -37,7 +37,7 @@ const StakeTokensEdgeWallet: React.FC<Props> = props => {
       amount: apis.fio.amountToSUF(data.amount),
       fioAddress: data.fioAddress,
       maxFee: fee,
-      technologyProviderId: process.env.REACT_APP_STAKING_TP_ID,
+      technologyProviderId: data.proxy,
     });
     return {
       ...result,

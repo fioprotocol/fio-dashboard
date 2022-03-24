@@ -40,7 +40,6 @@ const UnstakeTokensEdgeWallet: React.FC<Props> = props => {
         fioAddress: data.fioAddress,
         amount: apis.fio.amountToSUF(data.amount),
         maxFee: fee,
-        technologyProviderId: process.env.REACT_APP_STAKING_TP_ID,
       },
     );
     return {

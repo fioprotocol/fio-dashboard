@@ -20,4 +20,8 @@
     align-self: flex-start;
     @include sf-pro-display-medium;
   }
+
+  .marginPlug {
+    margin-top: -10px;
+  }
 }
