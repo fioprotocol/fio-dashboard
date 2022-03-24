@@ -4,10 +4,9 @@ import superagent from 'superagent';
 
 import apis from '../../api/index';
 import { ADDRESS_REGEXP } from '../../constants/regExps';
+import { GET_TABLE_ROWS_URL } from '../../constants/fio';
 
 import { DefaultValidationProps, FormValidationErrorProps } from './types';
-
-const GET_TABLE_ROWS_URL = `${process.env.REACT_APP_FIO_BASE_URL}chain/get_table_rows`;
 
 // avail_check returns wrong information about availability of domains, temporary changed to use this
 const checkDomainIsRegistered = async (domain: string) => {

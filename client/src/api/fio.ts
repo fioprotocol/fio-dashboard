@@ -1,4 +1,6 @@
 import { FIOSDK } from '@fioprotocol/fiosdk';
+import superagent from 'superagent';
+
 import { AvailabilityResponse } from '@fioprotocol/fiosdk/src/entities/AvailabilityResponse';
 import { FioNamesResponse } from '@fioprotocol/fiosdk/src/entities/FioNamesResponse';
 import { FioAddressesResponse } from '@fioprotocol/fiosdk/src/entities/FioAddressesResponse';
@@ -12,9 +14,13 @@ import MathOp from '../util/math';
 
 import { isDomain } from '../utils';
 
-import { ACTIONS, ACTIONS_TO_END_POINT_KEYS } from '../constants/fio';
+import {
+  ACTIONS,
+  ACTIONS_TO_END_POINT_KEYS,
+  GET_TABLE_ROWS_URL,
+} from '../constants/fio';
 
-import { FioBalanceRes, NFTTokenDoublet, WalletKeys } from '../types';
+import { FioBalanceRes, NFTTokenDoublet, WalletKeys, Proxy } from '../types';
 
 export interface TrxResponse {
   transaction_id?: string;
@@ -418,5 +424,32 @@ export default class Fio {
     }
 
     if (error != null) throw error;
+  };
+
+  getProxies = async () => {
+    let proxies;
+    try {
+      const response = await superagent.post(GET_TABLE_ROWS_URL).send({
+        json: true,
+        code: 'eosio',
+        scope: 'eosio',
+        table: 'voters',
+        limit: 2000,
+        lower_bound: 0,
+        reverse: true,
+      });
+
+      const { rows }: { rows: Proxy[] } = response.body;
+
+      const rowsProxies = rows
+        .filter(row => row.is_proxy && row.fioaddress)
+        .map(row => row.fioaddress);
+
+      proxies = rowsProxies;
+    } catch (err) {
+      this.logError(err);
+    }
+
+    return proxies || [`${process.env.REACT_APP_FIO_DEFAULT_PROXY}`];
   };
 }

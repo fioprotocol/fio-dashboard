@@ -77,3 +77,5 @@ export const BUNDLES_TX_COUNT = {
   STAKE: 1,
   UNSTAKE: 1,
 };
+
+export const GET_TABLE_ROWS_URL = `${process.env.REACT_APP_FIO_BASE_URL}chain/get_table_rows`;

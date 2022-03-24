@@ -27,7 +27,14 @@ import { FioAddressDoublet } from '../../../../types';
 import classes from '../../styles/StakeTokensForm.module.scss';
 
 const StakeTokensForm: React.FC<StakeTokensProps> = props => {
-  const { loading, fioAddresses, fee, initialValues, balance } = props;
+  const {
+    loading,
+    fioAddresses,
+    fee,
+    initialValues,
+    balance,
+    proxyList,
+  } = props;
 
   const [walletAvailableAmount, setWalletAvailableAmount] = useState(0);
   const [walletMaxAvailableAmount, setWalletMaxAvailableAmount] = useState<
@@ -186,6 +193,26 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
                     ).toString()
                   : '0'
               }
+            />
+
+            <div className={classes.marginPlug} />
+            <Field
+              name="proxy"
+              label="Proxy/Vote Your Tokens"
+              description="In order to stake your FIO tokens, you must proxy/vote your
+            tokens. Please select a proxy below, or your tokens will be
+            auto-proxed on your behalf."
+              component={Dropdown}
+              errorColor={COLOR_TYPE.WARN}
+              placeholder="Select a Proxy"
+              options={proxyList.map(proxyItem => ({
+                id: proxyItem,
+                name: proxyItem,
+              }))}
+              uiType={INPUT_UI_STYLES.BLACK_WHITE}
+              isSimple={true}
+              isHigh={true}
+              isWhite={true}
             />
 
             <p className={classes.transactionTitle}>Transaction cost</p>
