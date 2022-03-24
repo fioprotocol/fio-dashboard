@@ -396,3 +396,8 @@ export type RedirectLinkData = {
   pathname: Path;
   state?: LocationState;
 }
+
+export type Proxy = {
+  is_proxy: number;
+  fioaddress: string;
+}

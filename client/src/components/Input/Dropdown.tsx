@@ -1,8 +1,10 @@
-import CustomDropdown from '../CustomDropdown';
 import React from 'react';
-import { Label } from './StaticInputParts';
-import { ErrorBadge } from './ErrorBadge';
 import { FieldRenderProps } from 'react-final-form';
+
+import { Label, LabelSuffix } from './StaticInputParts';
+import { ErrorBadge } from './ErrorBadge';
+import CustomDropdown from '../CustomDropdown';
+
 import classes from './Input.module.scss';
 
 type DropdownProps = {
@@ -19,6 +21,7 @@ type DropdownProps = {
     'data-clear'?: boolean;
     value: string;
   };
+  description?: string;
   toggleToCustom?: (isCustom: boolean) => void;
 };
 
@@ -33,6 +36,7 @@ const Dropdown = ({
   errorType = '',
   errorColor = '',
   hideError,
+  description,
   ...rest
 }: DropdownProps & FieldRenderProps<DropdownProps>) => {
   const {
@@ -57,6 +61,7 @@ const Dropdown = ({
   return (
     <>
       <Label label={label} uiType={uiType} />
+      <LabelSuffix text={description} uiType={uiType} withBottomMargin={true} />
       <CustomDropdown
         options={options}
         onChange={onChange}

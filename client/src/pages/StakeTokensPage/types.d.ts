@@ -15,11 +15,13 @@ export type StakeTokensValues = {
   fioAddress?: string;
   amount: string;
   nativeAmount: string;
+  proxy: string;
 };
 
 export type InitialValues = {
   fioAddress?: string;
   publicKey: string;
+  proxy: string;
 };
 
 export type StakeTokensProps = {
@@ -28,6 +30,7 @@ export type StakeTokensProps = {
   balance: WalletBalances;
   loading: boolean;
   initialValues?: InitialValues;
+  proxyList: string[];
   onSubmit: (values: StakeTokensValues) => void;
 };
 
