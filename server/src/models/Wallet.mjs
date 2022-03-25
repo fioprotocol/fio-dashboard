@@ -50,6 +50,7 @@ export class Wallet extends Base {
     this.hasOne(PublicWalletData, {
       foreignKey: 'walletId',
       sourceKey: 'id',
+      as: 'publicWalletData',
     });
   }
 
