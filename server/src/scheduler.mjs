@@ -16,6 +16,13 @@ const bree = new Bree({
       timeout: 0,
       closeWorkerAfterMs: 60 * 1000, // 1 min
     },
+    {
+      path: path.join(JOBS_PATH, 'wallet-data.mjs'),
+      name: 'wallet-data',
+      interval: '1m',
+      timeout: 0,
+      closeWorkerAfterMs: 5 * 60 * 1000, // 5 min
+    },
   ],
   workerMessageHandler: (name, message) => {
     logger.info('JOB MESSAGE === ', name, message);
