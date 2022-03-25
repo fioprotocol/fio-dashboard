@@ -10,6 +10,9 @@ class Fio {
     this.publicFioSDK = new FIOSDK('', '', process.env.FIO_BASE_URL, fetch);
   }
 
+  getWalletSdkInstance(publicKey) {
+    return new FIOSDK('', publicKey, process.env.FIO_BASE_URL, fetch);
+  }
   async registrationFee(forDomain = false) {
     const { fee } = await this.publicFioSDK.getFee(
       forDomain ? EndPoint.registerFioDomain : EndPoint.registerFioAddress,
