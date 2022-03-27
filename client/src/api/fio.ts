@@ -35,9 +35,10 @@ export type FIOSDK_LIB = typeof FIOSDK;
 export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit)
   .mul(800)
   .toNumber();
-export const DEFAULT_STAKING_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit)
-  .mul(5)
-  .toNumber();
+export const ENDPOINT_FEE_HASH: { [endpoint: string]: string } = {
+  [EndPoint.stakeFioTokens]: '0x83c48bde1205347001e4ddd44c571f78',
+  [EndPoint.unStakeFioTokens]: '0x85248efc2886d68989b010f21cb2f480',
+};
 
 export default class Fio {
   baseurl: string = process.env.REACT_APP_FIO_BASE_URL;
@@ -174,6 +175,30 @@ export default class Fio {
       return await this.walletFioSDK.registerFioDomain(fioName, fee);
     }
     return await this.walletFioSDK.registerFioAddress(fioName, fee);
+  };
+
+  getTableRows = async (params: {
+    code: string;
+    scope: string;
+    table: string;
+    lower_bound: string;
+    upper_bound?: string;
+    key_type?: string;
+    index_position?: string;
+    json?: boolean;
+    reverse?: boolean;
+    limit?: number;
+  }) => {
+    try {
+      const response = await superagent.post(GET_TABLE_ROWS_URL).send(params);
+
+      const { rows }: { rows: any[] } = response.body;
+
+      return rows;
+    } catch (err) {
+      this.logError(err);
+      throw err;
+    }
   };
 
   getBalance = async (publicKey: string): Promise<FioBalanceRes> => {
@@ -429,27 +454,44 @@ export default class Fio {
   getProxies = async () => {
     let proxies;
     try {
-      const response = await superagent.post(GET_TABLE_ROWS_URL).send({
-        json: true,
+      const rows: Proxy[] = await this.getTableRows({
         code: 'eosio',
         scope: 'eosio',
         table: 'voters',
         limit: 2000,
-        lower_bound: 0,
+        lower_bound: '0',
         reverse: true,
+        json: true,
       });
-
-      const { rows }: { rows: Proxy[] } = response.body;
 
       const rowsProxies = rows
         .filter(row => row.is_proxy && row.fioaddress)
         .map(row => row.fioaddress);
 
-      proxies = rowsProxies;
+      proxies = [...rowsProxies];
     } catch (err) {
       this.logError(err);
     }
 
     return proxies || [`${process.env.REACT_APP_FIO_DEFAULT_PROXY}`];
+  };
+
+  getFeeFromTable = async (feeHash: string): Promise<{ fee: number }> => {
+    const resultRows: {
+      end_point: string;
+      end_point_hash: string;
+      suf_amount: number;
+    }[] = await this.getTableRows({
+      code: 'fio.fee',
+      scope: 'fio.fee',
+      table: 'fiofees',
+      lower_bound: feeHash,
+      upper_bound: feeHash,
+      key_type: 'i128',
+      index_position: '2',
+      json: true,
+    });
+
+    return { fee: resultRows[0].suf_amount };
   };
 }
