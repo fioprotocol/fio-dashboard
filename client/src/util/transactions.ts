@@ -2,6 +2,7 @@ import apis from '../api';
 
 import { FIO_CHAIN_CODE } from '../constants/fio';
 
+import MathOp from './math';
 import { getUTCDate } from './general';
 
 import { FioWalletTxHistory, TransactionItemProps } from '../types';
@@ -75,6 +76,7 @@ const processTransaction = (
   let otherParams: {
     isTransferProcessed?: boolean;
     isFeeProcessed?: boolean;
+    feeActors?: string[];
   } = {};
   let editedExisting = false;
   const currencyCode = FIO_CHAIN_CODE;
@@ -148,6 +150,7 @@ const processTransaction = (
   if (trxName === HISTORY_TX_NAMES.TRANSFER && data.quantity != null) {
     const [amount] = data.quantity.split(' ');
     const fioAmount = apis.fio.amountToSUF(parseFloat(amount));
+    otherParams.feeActors = [data.to];
     if (data.to === actor) {
       nativeAmount = `${fioAmount}`;
     } else {
@@ -164,11 +167,31 @@ const processTransaction = (
     if (index > -1) {
       const existingTrx: TransactionItemProps = transactions[index];
       otherParams = { ...existingTrx.otherParams };
-      if (+existingTrx.nativeAmount > 0) {
+      if (
+        +existingTrx.nativeAmount > 0 &&
+        otherParams.feeActors.includes(data.to)
+      ) {
         return { blockNum: action.block_num, editedExisting };
       }
       if (otherParams.isFeeProcessed) {
-        return { blockNum: action.block_num, editedExisting };
+        if (!otherParams.feeActors.includes(data.to)) {
+          otherParams.feeActors.push(data.to);
+
+          if (data.to === actor) {
+            nativeAmount = new MathOp(existingTrx.nativeAmount)
+              .add(fioAmount)
+              .toString();
+          } else {
+            nativeAmount = new MathOp(existingTrx.nativeAmount)
+              .sub(fioAmount)
+              .toString();
+            networkFee = new MathOp(existingTrx.networkFee)
+              .add(fioAmount)
+              .toString();
+          }
+        } else {
+          return { blockNum: action.block_num, editedExisting };
+        }
       }
       if (otherParams.isTransferProcessed) {
         nativeAmount = `${+existingTrx.nativeAmount - +networkFee}`;
