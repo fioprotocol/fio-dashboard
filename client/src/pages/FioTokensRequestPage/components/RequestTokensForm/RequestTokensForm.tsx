@@ -203,6 +203,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               component={SelectModalInput}
               options={contactsList}
               showPasteButton={true}
+              lowerCased={true}
               disabled={loading}
               loading={validating}
               label="Request From"

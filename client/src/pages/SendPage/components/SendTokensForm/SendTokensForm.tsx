@@ -144,6 +144,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               disabled={loading}
               loading={validating}
               label="Send to Address"
+              lowerCased={true}
               handleConfirmValidate={(value: string) =>
                 minWaitTimeFunction(
                   () =>
