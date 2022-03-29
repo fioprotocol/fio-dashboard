@@ -1,9 +1,12 @@
 import path from 'path';
+import dotenv from 'dotenv-safe';
 import Bree from 'bree';
 
 import logger from './logger';
 
 const JOBS_PATH = path.resolve('server/src/jobs');
+
+dotenv.load();
 
 const bree = new Bree({
   root: false,
@@ -11,15 +14,14 @@ const bree = new Bree({
     {
       path: path.join(JOBS_PATH, 'emails.mjs'),
       name: 'emails',
-      // interval: '1m',
-      interval: '15s',
-      timeout: 0,
+      interval: process.env.EMAILS_JOB_INTERVAL,
+      timeout: '30s',
       closeWorkerAfterMs: 60 * 1000, // 1 min
     },
     {
       path: path.join(JOBS_PATH, 'wallet-data.mjs'),
       name: 'wallet-data',
-      interval: '1m',
+      interval: process.env.WALLET_DATA_JOB_INTERVAL,
       timeout: 0,
       closeWorkerAfterMs: 5 * 60 * 1000, // 5 min
     },
@@ -29,7 +31,6 @@ const bree = new Bree({
   },
 });
 
-// start all jobs (this is the equivalent of reloading a crontab):
 bree.start();
 
 bree.on('worker created', name => {
