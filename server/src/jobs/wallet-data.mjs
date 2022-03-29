@@ -46,6 +46,9 @@ const returnDayRange = timePeriod => {
 
 const checkRequests = async wallet => {
   const walletSdk = fioApi.getWalletSdkInstance(wallet.publicKey);
+  const {
+    publicWalletData: { meta },
+  } = wallet;
 
   let sentRequests = [];
   let receivedRequests = [];
@@ -57,7 +60,6 @@ const checkRequests = async wallet => {
         requests: { sent },
       },
     } = wallet;
-    // todo: save last offset and query from it
     const requestsResponse = await walletSdk.getSentFioRequests(0, 0, true);
 
     sentRequests = requestsResponse.requests;
@@ -101,19 +103,26 @@ const checkRequests = async wallet => {
     const {
       publicWalletData: {
         requests: { received },
+        meta: { receivedRequestsOffset },
       },
     } = wallet;
-    // todo: save last offset and query from it
-    const requestsResponse = await walletSdk.getReceivedFioRequests(0, 0, true);
+    const requestsResponse = await walletSdk.getReceivedFioRequests(
+      0,
+      receivedRequestsOffset,
+      true,
+    );
     receivedRequests = requestsResponse.requests;
 
     if (!received.length && receivedRequests.length) {
       changed = true;
+      meta.receivedRequestsOffset = receivedRequests.length - 1;
       received.push(...receivedRequests);
     }
 
-    if (received.length < receivedRequests.length) {
+    if (received.length && receivedRequests.length) {
       changed = true;
+
+      meta.receivedRequestsOffset = receivedRequestsOffset + receivedRequests.length;
 
       for (const fetchedItem of receivedRequests) {
         const existed = received.find(
@@ -142,7 +151,10 @@ const checkRequests = async wallet => {
 
   if (changed) {
     await PublicWalletData.update(
-      { requests: { sent: sentRequests, received: receivedRequests } },
+      {
+        requests: { sent: sentRequests, received: receivedRequests },
+        meta,
+      },
       { where: { id: wallet.publicWalletData.id } },
     );
   }
@@ -195,13 +207,11 @@ const checkFioNames = async wallet => {
     if (!cryptoHandles.length && fio_addresses.length) {
       changed = true;
       cryptoHandles.push(...fio_addresses);
-      // todo: do we need to send notifications on init state after feature release?
     }
 
     if (!domains.length && fio_domains.length) {
       changed = true;
       domains.push(...fio_domains);
-      // todo: do we need to send notifications on init state after feature release?
     }
 
     for (const cryptoHandle of cryptoHandles) {
@@ -320,6 +330,7 @@ const checkFioNames = async wallet => {
         obtData: [],
         cryptoHandles: [],
         domains: [],
+        meta: { receivedRequestsOffset: 0 },
       });
       wallet.publicWalletData.id = newItem.id;
     }
