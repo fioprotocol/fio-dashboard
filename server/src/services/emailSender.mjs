@@ -57,6 +57,8 @@ class EmailSender {
       } catch (e) {
         //
       }
+
+      return false;
     }
   }
 
