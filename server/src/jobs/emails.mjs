@@ -42,10 +42,13 @@ if (parentPort)
       let emailSent = false;
       try {
         const user = await User.findActive(notification.userId);
-        await emailSender.send(templates[data.emailTemplate], user.email, data.emailData);
+        const emailResult = await emailSender.send(
+          templates[data.emailTemplate],
+          user.email,
+          data.emailData,
+        );
 
-        // todo: check email result
-        emailSent = true;
+        emailSent = !!emailResult;
       } catch (e) {
         logger.error(`EMAIL SEND ERROR`, e);
       }
