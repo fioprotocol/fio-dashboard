@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import NftValidationItemModal from './NftValidationItemModal';
 
@@ -17,7 +18,7 @@ type Props = {
   resultItem: NFTTokenDoublet;
   activeItemField: string;
   searchName: string;
-  searchValue: string;
+  searchValue?: string;
   imageUrl?: string;
 };
 

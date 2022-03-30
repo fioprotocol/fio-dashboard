@@ -1,5 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
+
 import Menu from '../../Menu';
 
 import classes from '../MainHeader.module.scss';

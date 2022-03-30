@@ -1,4 +1,5 @@
 import { FieldValidationFunctionSync } from '@lemoncode/fonk';
+
 import { WALLET_NAME_REGEX } from '../../constants/regExps';
 
 export const fioWalletNameValidator: FieldValidationFunctionSync = ({

@@ -15,11 +15,9 @@ import Routes from './routes';
 
 library.add(icons);
 
-class App extends Component<{}, {}> {
+class App extends Component {
   render() {
     return (
-      // todo: store has Store<any> type, but provider wants Store<any, A>
-      // @ts-ignore
       <Provider store={store}>
         <ConnectedRouter history={history}>
           <LastLocationProvider>

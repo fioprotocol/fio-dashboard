@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import apis from '../../api/index';
 
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
@@ -15,6 +16,7 @@ import { URL_REGEXP } from '../../constants/regExps';
 import { NftValidationFormValues, ValidationOption } from './components/types';
 
 import classes from './styles/NftValidationPage.module.scss';
+import { NFTTokenDoublet } from '../../types';
 
 const NftValidationPage: React.FC = () => {
   const [activeOption, setActiveOption] = useState<ValidationOption | null>(
@@ -24,7 +26,7 @@ const NftValidationPage: React.FC = () => {
     searchParams,
     setSearchParams,
   ] = useState<NftValidationFormValues | null>(null);
-  const [results, setResults] = useState(null);
+  const [results, setResults] = useState<NFTTokenDoublet[] | null>(null);
   const [loading, toggleLoading] = useState(false);
 
   const onDropDownChange = (id: string) => {
@@ -60,7 +62,6 @@ const NftValidationPage: React.FC = () => {
         const hashFromFile = await getHash(file);
         params = { hash: hashFromFile };
       } catch (e) {
-        // @ts-ignore
         console.error(e);
       }
     }
@@ -114,7 +115,8 @@ const NftValidationPage: React.FC = () => {
         <div className={classes.badgeContainer}>
           <InfoBadge
             title="No NFT Signatures"
-            message={`There are no NFT signatures for this ${activeOption.name}`}
+            message={`There are no NFT signatures for this ${activeOption?.name ||
+              ''}`}
             isOrange={true}
           />
         </div>

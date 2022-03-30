@@ -1,7 +1,7 @@
-import ChangeEmail from './ChangeEmail';
-
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+
+import ChangeEmail from './ChangeEmail';
 
 import { compose } from '../../../../utils';
 

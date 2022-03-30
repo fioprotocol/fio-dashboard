@@ -4,10 +4,10 @@ import apis from '../api';
 import { FioBalanceRes, WalletBalances, WalletBalancesItem } from '../types';
 
 export function convertFioPrices(
-  nativeFio: number | null,
+  nativeFio: number | null | undefined,
   roe: number,
 ): WalletBalancesItem {
-  const fioAmount = apis.fio.sufToAmount(nativeFio);
+  const fioAmount = apis.fio.sufToAmount(nativeFio || 0);
 
   return {
     nativeFio,
@@ -37,7 +37,7 @@ export const calculateBalances = (
   locked: convertFioPrices(locked, roe),
   rewards: convertFioPrices(rewards, roe),
   unlockPeriods: unlockPeriods.map(({ amount, date }) => ({
-    date: new Date(date),
+    date: date ? new Date(date) : null,
     ...convertFioPrices(amount, roe),
   })),
 });
@@ -72,16 +72,19 @@ export const calculateTotalBalances = (
         .add(walletsBalances[publicKey].rewards.nativeFio)
         .toNumber();
       total.unlockPeriods = [
-        ...total.unlockPeriods,
-        ...walletsBalances[publicKey].unlockPeriods.map(
+        ...(total.unlockPeriods || []),
+        ...(walletsBalances[publicKey].unlockPeriods?.map(
           ({ nativeFio, date }) => ({
             amount: nativeFio,
             date: date.getTime(),
           }),
-        ),
-      ].sort(({ date: dateA }, { date: dateB }) => (dateA > dateB ? 1 : -1));
+        ) || []),
+      ].sort(({ date: dateA }, { date: dateB }) =>
+        dateA && dateB && dateA > dateB ? 1 : -1,
+      );
     }
   }
+
   return calculateBalances(total, roe);
 };
 

@@ -8,9 +8,9 @@ import { refreshWalletDataPublicKey } from '../../redux/fioWalletsData/actions';
 import { createContact, getContactsList } from '../../redux/contacts/actions';
 
 import {
-  loading,
   fioWallets as fioWalletsSelector,
   fioWalletsBalances as fioWalletsBalancesSelector,
+  loading,
 } from '../../redux/fio/selectors';
 import { roe } from '../../redux/registrations/selectors';
 import {

@@ -25,7 +25,7 @@ type Props = {
   contactsList: string[];
   createContact: (name: string) => void;
   processing: boolean;
-  fee: number;
+  fee?: number | null;
 };
 
 const SendEdgeWallet: React.FC<Props> = props => {

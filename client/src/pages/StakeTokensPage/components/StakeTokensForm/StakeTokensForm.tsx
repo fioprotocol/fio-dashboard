@@ -18,11 +18,11 @@ import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
 
 import { formValidation } from './validation';
 import MathOp from '../../../../util/math';
+import { FioAddressDoublet } from '../../../../types';
 
 import apis from '../../../../api';
 
 import { StakeTokensProps, StakeTokensValues } from '../../types';
-import { FioAddressDoublet } from '../../../../types';
 
 import classes from '../../styles/StakeTokensForm.module.scss';
 
@@ -50,9 +50,11 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
       setWalletMaxAvailableAmount(walletAvailableAmount);
     } else {
       setWalletMaxAvailableAmount(
-        new MathOp(fee.nativeFio).gt(walletAvailableAmount)
+        new MathOp(fee.nativeFio || 0).gt(walletAvailableAmount)
           ? 0
-          : new MathOp(walletAvailableAmount).sub(fee.nativeFio).toNumber(),
+          : new MathOp(walletAvailableAmount)
+              .sub(fee.nativeFio || 0)
+              .toNumber(),
       );
     }
   }, [walletAvailableAmount, fioAddresses.length, fee]);
@@ -137,13 +139,13 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           );
         };
 
-        const selectedAddress: FioAddressDoublet | null = fioAddress
+        const selectedAddress: FioAddressDoublet | undefined | null = fioAddress
           ? fioAddresses.find(({ name }) => name === fioAddress)
           : null;
 
         const hasLowBalance =
           walletMaxAvailableAmount === 0 ||
-          (walletMaxAvailableAmount &&
+          (!!walletMaxAvailableAmount &&
             new MathOp(apis.fio.amountToSUF(amount)).gt(
               walletMaxAvailableAmount,
             ));
@@ -158,7 +160,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           formRenderProps.submitting ||
           loading ||
           hasLowBalance ||
-          (selectedAddress && notEnoughBundles);
+          (!!selectedAddress && notEnoughBundles);
 
         return (
           <form

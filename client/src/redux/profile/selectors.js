@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+
 import { USER_STATUSES } from '../../constants/common';
 import { prefix } from './actions';
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal } from 'react-bootstrap';
 import classnames from 'classnames';
+
 import classes from './Modal.module.scss';
 
 type Props = {
@@ -12,7 +13,7 @@ type Props = {
   isSimple?: boolean;
   isSuccess?: boolean;
   isInfo?: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   show: boolean;
   title?: React.ReactNode | string;
   isWide?: boolean;
@@ -42,6 +43,7 @@ const ModalComponent: React.FC<Props> = props => {
     withoutPaggingBottom,
   } = props;
   const handleClose = () => {
+    if (!onClose) return;
     onClose();
   };
 

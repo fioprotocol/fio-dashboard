@@ -3,6 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 import { TextDecoder, TextEncoder } from 'text-encoding';
 import { Fio } from '@fioprotocol/fiojs';
 import mapKeys from 'lodash/mapKeys';
+import camelCase from 'camelcase';
 
 import MathOp from './util/math';
 
@@ -17,7 +18,6 @@ import {
   ResponseFioRecord,
   WalletKeys,
 } from './types';
-import camelCase from 'camelcase';
 import { convertFioPrices } from './util/prices';
 
 const FIO_DASH_USERNAME_DELIMITER = `.fio.dash.${process.env
@@ -107,7 +107,7 @@ export const isFreeDomain = ({
   domain: string;
 }): boolean => {
   const domainFromList = domains.find(item => item.domain === domain);
-  return domainFromList && domainFromList.free;
+  return !!domainFromList?.free;
 };
 
 export const setFreeCart = ({ cartItems }: { cartItems: CartItem[] }) => {
@@ -230,7 +230,7 @@ export const deleteCartItem = ({
             address: nativeFioAddressPrice,
             domain: nativeFioDomainPrice,
           },
-        } = prices;
+        } = prices || { nativeFio: {} };
         const retObj = {
           ...firstMatchElem,
           costNativeFio: new MathOp(nativeFioAddressPrice)
@@ -273,7 +273,7 @@ export const totalCost = (
           if (!acc.costNativeFio) acc.costNativeFio = 0;
           return {
             costNativeFio: new MathOp(acc.costNativeFio)
-              .add(item.costNativeFio)
+              .add(item.costNativeFio || 0)
               .toNumber(),
           };
         }, {});

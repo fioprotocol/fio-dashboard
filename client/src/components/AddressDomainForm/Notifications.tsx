@@ -8,7 +8,7 @@ import { NotificationProps } from './types';
 
 const Notifications = (
   props: NotificationProps,
-  innerRef: React.Ref<HTMLDivElement | null>,
+  innerRef?: React.Ref<HTMLDivElement>,
 ) => {
   const {
     cartItems,

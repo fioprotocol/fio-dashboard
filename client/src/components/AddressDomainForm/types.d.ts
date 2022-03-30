@@ -1,5 +1,7 @@
 import { FormRenderProps, FormApi } from 'react-final-form';
 
+import React from 'react';
+
 import {
   CartItem,
   Domain,
@@ -8,7 +10,6 @@ import {
   FioNameType,
   FioWalletDoublet,
 } from '../../types';
-import React from 'react';
 
 type Error =
   | {
@@ -176,6 +177,6 @@ export type AddressFormProps = {
 export type PriceBadgeProps = {
   tooltip: string | React.RactNode;
   hasFreeAddress: boolean;
-  domains: Domains[];
+  domains: Domain[];
   hasCustomDomain: boolean;
 } & DefaultProps;

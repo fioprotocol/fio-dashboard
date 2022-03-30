@@ -53,7 +53,7 @@ export type TextInputProps = {
 
 export const TextInput = (
   props: TextInputProps & FieldRenderProps<TextInputProps>,
-  ref: React.Ref<HTMLInputElement | null>,
+  ref?: React.Ref<HTMLInputElement>,
 ) => {
   const {
     input,
@@ -62,7 +62,7 @@ export const TextInput = (
     colorSchema,
     onClose,
     hideError,
-    showPasteButton,
+    showPasteButton = false,
     loading,
     uiType,
     errorType = '',
@@ -101,7 +101,7 @@ export const TextInput = (
   ] = useFieldElemActiveState();
 
   const hasError =
-    ((error || data.error) &&
+    ((error || data?.error) &&
       (touched || modified || submitSucceeded || !!value) &&
       !active &&
       !fieldElemActive) ||
@@ -159,7 +159,7 @@ export const TextInput = (
           />
         </div>
         <ClearButton
-          isVisible={(isInputHasValue || onClose) && !disabled && !loading}
+          isVisible={(isInputHasValue || !!onClose) && !disabled && !loading}
           onClear={clearInputFn}
           onClose={onClose}
           inputType={type}
@@ -191,7 +191,7 @@ export const TextInput = (
       <ErrorBadge
         error={error}
         data={data}
-        hasError={!hideError && !data.hideError && hasError}
+        hasError={!hideError && !data?.hideError && hasError}
         type={errorType}
         color={errorColor}
         submitError={submitError}

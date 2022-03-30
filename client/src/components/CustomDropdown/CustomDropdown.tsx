@@ -67,7 +67,7 @@ const CustomDropdown: React.FC<Props> = props => {
     const { value: itemValue } = option || {};
     if (customValue && itemValue === customValue.id) {
       onChange('');
-      return toggleToCustom(true);
+      return toggleToCustom && toggleToCustom(true);
     }
     onChange(itemValue);
   };

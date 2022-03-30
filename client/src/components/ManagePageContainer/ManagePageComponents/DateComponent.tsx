@@ -8,7 +8,7 @@ import { BoolStateFunc, IsExpiredFunc } from '../types';
 import classes from './DateComponent.module.scss';
 
 type Props = {
-  expiration: Date;
+  expiration?: Date;
   isExpired: IsExpiredFunc;
   toggleShowWarnBadge: BoolStateFunc;
 };
@@ -18,7 +18,7 @@ const DateComponent: React.FC<Props> = props => {
   return (
     <>
       {expiration && new Date(expiration).toLocaleDateString(US_LOCALE)}{' '}
-      {isExpired(expiration) && (
+      {expiration && isExpired(expiration) && (
         <FontAwesomeIcon
           icon="exclamation-triangle"
           className={classes.warnIcon}

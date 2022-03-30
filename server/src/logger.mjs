@@ -1,5 +1,7 @@
 import util from 'util';
+
 import bunyan from 'bunyan';
+
 import Exception from './services/Exception';
 
 const inspect = data => util.inspect(data, { showHidden: false, depth: null });

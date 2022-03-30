@@ -60,7 +60,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   }, []);
 
   const submit = async ({ keys }: SubmitActionParams) => {
-    if (isDomain(name)) {
+    if (isDomain(name) && keys) {
       return await apis.fio.executeAction(keys, ACTIONS.renewFioDomain, {
         fioDomain: name,
         maxFee: feeNativeFio,
@@ -73,7 +73,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   const hasLowBalance =
     currentWallet &&
     feePrice &&
-    new MathOp(walletBalancesAvailable.nativeFio).lt(feeNativeFio);
+    new MathOp(walletBalancesAvailable.nativeFio || 0).lt(feeNativeFio || 0);
 
   const onSubmit = () => {
     setSubmitData({ fioAddress: name });

@@ -1,4 +1,5 @@
 import { RouteComponentProps } from 'react-router-dom';
+
 import { FeePrice, FioNameItemProps } from '../../types';
 
 type MatchProps = {
@@ -8,10 +9,10 @@ type MatchProps = {
 export type AddBundlesValues = {
   fioAddress: string;
   bundleSets: number;
-  maxFee?: number;
+  maxFee?: number | null;
 };
 
-export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {}
+export type ContainerOwnProps = RouteComponentProps<MatchProps>;
 
 export interface ContainerProps extends ContainerOwnProps {
   fioAddresses: FioNameItemProps[];

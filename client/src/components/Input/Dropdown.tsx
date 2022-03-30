@@ -50,10 +50,10 @@ const Dropdown = ({
     submitSucceeded,
   } = meta;
 
-  const { value, onChange } = input;
+  const { value } = input;
 
   const hasError =
-    ((error || data.error) &&
+    ((error || data?.error) &&
       (touched || modified || submitSucceeded || !!value) &&
       !active) ||
     (submitError && !modifiedSinceLastSubmit);
@@ -64,7 +64,6 @@ const Dropdown = ({
       <LabelSuffix text={description} uiType={uiType} withBottomMargin={true} />
       <CustomDropdown
         options={options}
-        onChange={onChange}
         {...input}
         {...rest}
         value={value}
@@ -76,7 +75,7 @@ const Dropdown = ({
         <ErrorBadge
           error={error}
           data={data}
-          hasError={!hideError && !data.hideError && hasError}
+          hasError={!hideError && !data?.hideError && hasError}
           type={errorType}
           color={errorColor}
           submitError={submitError}

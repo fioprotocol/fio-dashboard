@@ -19,7 +19,7 @@ type Props = {
   newDevicesList: PendingVoucher[];
 };
 
-const InfoItem = ({ title, value }: { title: string; value: string }) => (
+const InfoItem = ({ title, value }: { title: string; value?: string }) => (
   <div className={classes.infoElement}>
     <h5 className={classes.title}>{title}</h5>
     <p className={classes.value}>{value || 'N/A'}</p>

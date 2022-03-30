@@ -61,7 +61,7 @@ const TwoFactorAuth: React.FC<Props> = props => {
           {},
         ),
       );
-      setNewDevicesList(retArr);
+      setNewDevicesList(retArr as PendingVoucher[]);
     }
   };
 
@@ -93,7 +93,6 @@ const TwoFactorAuth: React.FC<Props> = props => {
         }
       }
     } catch (e) {
-      // @ts-ignore
       console.error(e);
     }
     setLoading(prevState => ({ ...prevState, [voucherId]: false }));

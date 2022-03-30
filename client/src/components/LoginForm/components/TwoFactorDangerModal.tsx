@@ -1,4 +1,5 @@
 import React from 'react';
+
 import DangerModal from '../../Modal/DangerModal';
 
 import classes from '../styles/TwoFactorDangerModal.module.scss';
@@ -7,22 +8,26 @@ type Props = {
   onClose: () => void;
   show: boolean;
   onActionClick: () => void;
-  activationDate: string;
+  activationDate?: string | null;
 };
 
 const TwoFactorDangerModal: React.FC<Props> = props => {
   const { onClose, show, onActionClick, activationDate } = props;
 
-  const activationDay = new Date(activationDate).toLocaleDateString([], {
-    year: 'numeric',
-    month: '2-digit',
-    day: 'numeric',
-  });
-  const activationTime = new Date(activationDate).toLocaleString([], {
-    hour: 'numeric',
-    minute: 'numeric',
-    hour12: true,
-  });
+  const activationDay = activationDate
+    ? new Date(activationDate).toLocaleDateString([], {
+        year: 'numeric',
+        month: '2-digit',
+        day: 'numeric',
+      })
+    : '';
+  const activationTime = activationDate
+    ? new Date(activationDate).toLocaleString([], {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true,
+      })
+    : '';
   return (
     <DangerModal
       onActionButtonClick={onActionClick}

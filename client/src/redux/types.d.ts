@@ -1,5 +1,6 @@
-import { LOGIN_SUCCESS } from './edge/actions';
 import { EdgeAccount, EdgeCurrencyWallet } from 'edge-core-js';
+
+import { LOGIN_SUCCESS } from './edge/actions';
 
 export type Action = {
   type: LOGIN_SUCCESS;

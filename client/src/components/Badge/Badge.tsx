@@ -1,5 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
+
 import classes from './Badge.module.scss';
 
 export const BADGE_TYPES = {

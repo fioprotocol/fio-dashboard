@@ -1,7 +1,7 @@
-import SettingsPage from './SettingsPage';
-
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+
+import SettingsPage from './SettingsPage';
 
 import { compose } from '../../utils';
 

@@ -1,4 +1,5 @@
 import { Store } from 'redux';
+
 import configureStore from './store';
 import api, { Api } from '../api';
 

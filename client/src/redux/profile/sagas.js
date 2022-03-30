@@ -1,4 +1,5 @@
 import { put, takeEvery, select } from 'redux-saga/effects';
+
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ACTIONS } from '../../components/Notifications/Notifications';
 import { setWallets } from '../account/actions';

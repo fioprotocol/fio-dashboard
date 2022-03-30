@@ -1,5 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
+
 import CloseButton from '../CloseButton/CloseButton';
 import BackButton from '../common/BackButton/BackButton';
 
