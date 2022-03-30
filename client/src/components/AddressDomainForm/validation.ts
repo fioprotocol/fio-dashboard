@@ -1,46 +1,9 @@
 import { isEmpty } from 'lodash';
-import { createHash } from 'crypto-browserify';
-import superagent from 'superagent';
 
 import apis from '../../api/index';
 import { ADDRESS_REGEXP } from '../../constants/regExps';
-import { GET_TABLE_ROWS_URL } from '../../constants/fio';
 
 import { DefaultValidationProps, FormValidationErrorProps } from './types';
-
-// avail_check returns wrong information about availability of domains, temporary changed to use this
-const checkDomainIsRegistered = async (domain: string) => {
-  try {
-    const hash = createHash('sha1');
-    const bound =
-      '0x' +
-      hash
-        .update(domain)
-        .digest()
-        .slice(0, 16)
-        .reverse()
-        .toString('hex');
-    const response = await superagent.post(GET_TABLE_ROWS_URL).send({
-      code: 'fio.address',
-      scope: 'fio.address',
-      table: 'domains',
-      lower_bound: bound,
-      upper_bound: bound,
-      key_type: 'i128',
-      index_position: '4',
-      json: true,
-    });
-
-    const { rows } = response.body;
-    if (rows && rows.length) {
-      return !!rows[0].id;
-    }
-  } catch (e) {
-    console.error(e);
-  }
-
-  return false;
-};
 
 const verifyAddress = async (props: DefaultValidationProps) => {
   const {
@@ -57,7 +20,8 @@ const verifyAddress = async (props: DefaultValidationProps) => {
   const errors: FormValidationErrorProps = {};
   toggleValidating(true);
   if (domain) {
-    const isRegistered = await checkDomainIsRegistered(domain);
+    // avail_check returns wrong information about availability of domains, temporary changed to use this
+    const isRegistered = await apis.fio.availCheckTableRows(domain);
 
     if (isRegistered) {
       if (
@@ -77,8 +41,10 @@ const verifyAddress = async (props: DefaultValidationProps) => {
 
   if (address && domain) {
     try {
-      const isAvail = await apis.fio.availCheck(`${address}@${domain}`);
-      if (isAvail && isAvail.is_registered === 1) {
+      const isAvail = await apis.fio.availCheckTableRows(
+        `${address}@${domain}`,
+      );
+      if (isAvail) {
         errors.address = 'This FIO Crypto Handle is already registered.';
       }
     } catch (e) {
