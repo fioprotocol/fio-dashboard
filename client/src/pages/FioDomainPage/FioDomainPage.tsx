@@ -1,4 +1,5 @@
 import React from 'react';
+
 import AddressDomainContainer from '../../components/AddressDomainContainer';
 
 import { LINK_LABELS } from '../../constants/labels';

@@ -82,7 +82,7 @@ const PinConfirmModal: React.FC<PinConfirmModalProps> = props => {
               ? IOS_KEYBOARD_PLUG_TYPE.extraHighPlug
               : IOS_KEYBOARD_PLUG_TYPE.highPlug
           }
-          blockedTime={error && typeof error !== 'string' && error.wait}
+          blockedTime={(error && typeof error !== 'string' && error.wait) || 0}
         />
       </div>
     </ModalComponent>

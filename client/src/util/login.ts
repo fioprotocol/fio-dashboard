@@ -2,10 +2,10 @@ import apis from '../api';
 
 const RETRY_LOGIN_TIME = 5000;
 
-type AutoLoginParams = {
-  email: string;
-  password: string;
-  voucherId: string;
+export type AutoLoginParams = {
+  email?: string;
+  password?: string;
+  voucherId?: string;
 };
 
 type AutoLoginProps = {

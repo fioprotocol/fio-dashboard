@@ -24,7 +24,7 @@ const FioAddressNftPage: React.FC<Props> = props => {
 
   const creatorUrl = (() => {
     try {
-      return JSON.parse(metadata).creator_url;
+      return JSON.parse(metadata || '').creator_url;
     } catch (err) {
       return '';
     }

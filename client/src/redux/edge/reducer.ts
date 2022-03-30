@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { EdgeAccount } from 'edge-core-js';
+
 import { LOGOUT_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
 

@@ -9,7 +9,7 @@ type Props = {
 };
 
 const Link: React.FC<Props> = props => {
-  const { children, isDisabled, classname = null, ...rest } = props;
+  const { children, isDisabled, classname = '', ...rest } = props;
   return (
     <span className={classname}>
       {isDisabled ? children : <RouterLink {...rest}>{children}</RouterLink>}

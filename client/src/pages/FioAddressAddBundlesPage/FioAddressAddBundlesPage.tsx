@@ -62,7 +62,8 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
   );
 
   const hasLowBalance =
-    feePrice && new MathOp(walletBalancesAvailable.nativeFio).lt(feeNativeFio);
+    feePrice &&
+    new MathOp(walletBalancesAvailable.nativeFio || 0).lt(feeNativeFio || 0);
 
   const onSubmit = () => {
     setSubmitData({

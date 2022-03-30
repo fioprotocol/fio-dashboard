@@ -9,8 +9,10 @@ const META_MAX_LENGTH = 128;
 export const metaValidator: FieldValidationFunctionSync<MetaFieldArgs> = ({
   value,
   message,
-  customArgs: { title = 'meta' },
+  customArgs,
 }) => {
+  const { title = 'meta' } = customArgs || {};
+
   const succeeded =
     JSON.stringify({ [title]: value }).length <= META_MAX_LENGTH;
 

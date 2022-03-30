@@ -51,7 +51,7 @@ const InputRedux: React.FC<Props> = props => {
     meta,
     onClose,
     showClearInput,
-    showPasteButton,
+    showPasteButton = false,
     prefix = '',
     type,
     errorType = '',
@@ -123,14 +123,14 @@ const InputRedux: React.FC<Props> = props => {
           data-clear={clearInput || showPasteButton}
         />
         <ClearButton
-          isVisible={(clearInput || onClose) && !loading}
+          isVisible={!!(clearInput || onClose) && !loading}
           onClear={onClearInputClick}
           onClose={onClose}
           inputType={type}
           uiType={uiType}
         />
         <ShowPasswordIcon
-          isVisible={clearInput && type === 'password'}
+          isVisible={!!clearInput && type === 'password'}
           showPass={showPass}
           toggleShowPass={toggleShowPass}
           uiType={uiType}

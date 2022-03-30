@@ -3,7 +3,7 @@ import Big, { BigSource, RoundingMode } from 'big.js';
 class MathOp {
   value: BigSource;
 
-  constructor(x?: BigSource) {
+  constructor(x: BigSource) {
     this.value = !isNaN(+x) ? x : 0;
   }
 
@@ -120,6 +120,7 @@ class MathOp {
       return Big(this.value).toNumber();
     } catch (err) {
       console.error(err);
+      return +this.value;
     }
   }
 
@@ -128,6 +129,7 @@ class MathOp {
       return Big(this.value).toString();
     } catch (err) {
       console.error(err);
+      return '-';
     }
   }
 

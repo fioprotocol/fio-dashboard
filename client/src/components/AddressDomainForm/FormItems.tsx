@@ -9,7 +9,7 @@ import { FormItemsProps } from './types';
 
 const FormItems = (
   props: FormItemsProps,
-  innerRef: React.Ref<HTMLDivElement | null>,
+  innerRef: React.Ref<HTMLDivElement>,
 ) => {
   const {
     formProps,
@@ -55,7 +55,7 @@ const FormItems = (
       !cartHasFreeItem(cartItems) &&
       !hasFreeAddress &&
       isFreeDomain({ domains, domain })) ||
-    (currentCartItem && !currentCartItem.costNativeFio);
+    (!!currentCartItem && !currentCartItem.costNativeFio);
 
   return (
     <>

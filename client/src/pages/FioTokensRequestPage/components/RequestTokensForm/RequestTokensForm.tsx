@@ -96,7 +96,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
         const onPayeeFioAddressChange = (val: string) => {
           if (!isFio) return;
 
-          const selectedFioAddress: FioAddressDoublet | null = val
+          const selectedFioAddress: FioAddressDoublet | undefined | null = val
             ? fioAddresses.find(({ name }) => name === val)
             : null;
 
@@ -147,7 +147,10 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
           );
         };
 
-        const selectedAddress: FioAddressDoublet | null = payeeFioAddress
+        const selectedAddress:
+          | FioAddressDoublet
+          | undefined
+          | null = payeeFioAddress
           ? fioAddresses.find(({ name }) => name === payeeFioAddress)
           : null;
 

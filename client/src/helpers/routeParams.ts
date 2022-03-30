@@ -5,7 +5,7 @@ export const convertParamsToObject = (
 ): { [paramKey: string]: any } => {
   if (url.length === 0) return {};
   const arr = url.slice(1).split(/&|=/);
-  const params: any = {};
+  const params: { [name: string]: string } = {};
 
   for (let i = 0; i < arr.length; i += 2) {
     const key = arr[i];

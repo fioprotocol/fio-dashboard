@@ -80,9 +80,9 @@ const TransactionItem: React.FC<TransactionItemProps> = props => {
           </div>
           <div className={classes.amount}>
             <Amount
-              value={apis.fio
-                .sufToAmount(parseInt(nativeAmount, 10))
-                .toFixed(2)}
+              value={(
+                apis.fio.sufToAmount(parseInt(nativeAmount, 10)) || 0
+              ).toFixed(2)}
             />{' '}
             <span className={classes.currencyCode}>FIO</span>
           </div>

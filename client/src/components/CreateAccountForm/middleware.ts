@@ -1,9 +1,10 @@
+import { EdgeAccount, EdgeCurrencyWallet } from 'edge-core-js';
+
 import apis from '../../api/index';
 import {
   DEFAULT_WALLET_OPTIONS,
   FIO_WALLET_TYPE,
 } from '../../constants/common';
-import { EdgeAccount, EdgeCurrencyWallet } from 'edge-core-js';
 
 export const usernameAvailable = async (
   username: string,

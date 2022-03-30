@@ -11,16 +11,22 @@ import {
   EdgeLoginMessages,
 } from 'edge-core-js/lib/types';
 
+const NO_EDGE_CONTEXT_MESSAGE = 'Edge Context is not initialised';
+
 export default class Edge {
-  edgeContext: EdgeContext;
+  edgeContext: EdgeContext | null;
+
+  validateEdgeContext = () => {
+    if (!this.edgeContext) throw new Error(NO_EDGE_CONTEXT_MESSAGE);
+  };
 
   makeEdgeContext = async () => {
     try {
       if (this.edgeContext) return true;
 
       this.edgeContext = await makeEdgeContext({
-        apiKey: process.env.REACT_APP_EDGE_LOGIN_API_KEY,
-        appId: process.env.REACT_APP_EDGE_LOGIN_API_ID,
+        apiKey: process.env.REACT_APP_EDGE_LOGIN_API_KEY || '',
+        appId: process.env.REACT_APP_EDGE_LOGIN_API_ID || '',
         hideKeys: false,
         plugins: { fio: true },
       });
@@ -38,6 +44,7 @@ export default class Edge {
 
   getCachedUsers() {
     try {
+      this.validateEdgeContext();
       return this.edgeContext.listUsernames();
     } catch (e) {
       console.error(e);
@@ -46,6 +53,7 @@ export default class Edge {
 
   clearCachedUser(username: string) {
     try {
+      this.validateEdgeContext();
       return this.edgeContext.deleteLocalAccount(username);
     } catch (e) {
       console.error(e);
@@ -59,6 +67,7 @@ export default class Edge {
   ): Promise<EdgeAccount> {
     // returns EdgeAccount
     try {
+      this.validateEdgeContext();
       return this.edgeContext.loginWithPassword(username, password, options);
     } catch (e) {
       console.error(e);
@@ -74,6 +83,7 @@ export default class Edge {
 
   async loginPIN(username: string, pin: string): Promise<EdgeAccount> {
     try {
+      this.validateEdgeContext();
       const account: EdgeAccount = await this.edgeContext.loginWithPIN(
         username,
         pin,
@@ -92,8 +102,8 @@ export default class Edge {
 
   async checkPasswordRules(password: string, passwordRepeat: string) {
     // check password rules
-    const check = await this.edgeContext.checkPasswordRules(password);
-    if (!check.passed) {
+    const check = await this.edgeContext?.checkPasswordRules(password);
+    if (!check?.passed) {
       throw new Error('Password is not valid');
     }
     if (password !== passwordRepeat) {
@@ -109,11 +119,18 @@ export default class Edge {
     pin: string,
   ): Promise<EdgeAccount> {
     // create account
-    return this.edgeContext.createAccount(username, password, pin, {});
+    try {
+      this.validateEdgeContext();
+      return this.edgeContext.createAccount(username, password, pin, {});
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
   }
 
   async loginMessages(): Promise<EdgeLoginMessages> {
     try {
+      this.validateEdgeContext();
       return await this.edgeContext.fetchLoginMessages();
     } catch (e) {
       console.error(e);
@@ -122,12 +139,24 @@ export default class Edge {
   }
 
   usernameAvailable(username: string): Promise<boolean> {
-    return this.edgeContext.usernameAvailable(username); // returns bool `available`
+    try {
+      this.validateEdgeContext();
+      return this.edgeContext.usernameAvailable(username); // returns bool `available`
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
   }
 
   async getRecoveryQuestions() {
-    const results = await this.edgeContext.listRecoveryQuestionChoices();
-    return results.filter((result: any) => result.category === 'recovery2');
+    try {
+      this.validateEdgeContext();
+      const results = await this.edgeContext.listRecoveryQuestionChoices();
+      return results.filter((result: any) => result.category === 'recovery2');
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
   }
 
   async changePassword(
@@ -181,23 +210,25 @@ export default class Edge {
     }
   }
 
-  async checkRecoveryQuestions(username: string): Promise<boolean> {
-    if (this.edgeContext) {
-      try {
-        const token = await this.getToken(username);
-
-        return !!token;
-      } catch (e) {
-        console.error(e);
-      }
+  async checkRecoveryQuestions(username: string): Promise<boolean | undefined> {
+    try {
+      this.validateEdgeContext();
+      const token = await this.getToken(username);
+      return !!token;
+    } catch (e) {
+      console.error(e);
+      // todo: check is `throw e` needed here
     }
   }
 
   async getToken(username: string): Promise<string> {
     try {
+      this.validateEdgeContext();
       const localUser = this.edgeContext.localUsers.find(
-        ({ username: localUsername }) => localUsername === username,
+        ({ username: localUsername }: { username: string }) =>
+          localUsername === username,
       );
+      if (!localUser?.recovery2Key) throw new Error('No recovery key found');
       return localUser.recovery2Key;
     } catch (e) {
       console.error(e);
@@ -220,6 +251,7 @@ export default class Edge {
     username: string,
   ): Promise<string[]> {
     try {
+      this.validateEdgeContext();
       return await this.edgeContext.fetchRecovery2Questions(token, username);
     } catch (e) {
       console.error(e);
@@ -233,6 +265,7 @@ export default class Edge {
     answers: string[],
   ): Promise<EdgeAccount> {
     try {
+      this.validateEdgeContext();
       return this.edgeContext.loginWithRecovery2(token, username, answers);
     } catch (e) {
       console.error(e);
@@ -248,6 +281,7 @@ export default class Edge {
   ): Promise<{ status: number }> {
     try {
       const account = await this.loginWithRecovery(token, username, answers);
+      if (!account) throw new Error('No account found');
       await account.changePassword(password);
       await account.logout();
       return { status: 1 };

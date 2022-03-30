@@ -79,12 +79,12 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   useEffect(() => {
     const {
       account: edgeAccount,
-      keys: walletKeys,
+      keys: walletKeys = {},
       error: confirmationError,
       action: confirmationAction,
     } = pinConfirmation;
 
-    async function execRegistration() {
+    async function execRegistration(): Promise<void> {
       setProcessing(true);
       await waitForEdgeAccountStop(edgeAccount);
       let nonce = '';

@@ -8,7 +8,7 @@ type FieldProps = OtherProps & {
   onChange: (value: FieldValue, name?: string) => void;
   name: string;
   placeholder: string;
-  error?: string;
+  error: string | null;
 };
 
 export const Field = (props: FieldProps) => {

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+
 import { SCREEN_TYPE } from './constants/screen';
 
 const MOBILE_THRESHOLD = 480;

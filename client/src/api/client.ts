@@ -1,4 +1,5 @@
 import superagent, { SuperAgentRequest } from 'superagent';
+
 import config from '../config';
 
 export default class ApiClient {
@@ -9,7 +10,7 @@ export default class ApiClient {
   constructor(prefix: string) {
     if (!prefix) throw new Error('[apiPrefix] required');
     this.prefix = prefix;
-    this.baseUrl = config.apiBaseUrl;
+    this.baseUrl = config.apiBaseUrl || '';
     this.token = window.localStorage.getItem('token') || null;
   }
 

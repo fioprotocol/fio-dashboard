@@ -34,7 +34,7 @@ type OwnProps = {
   subtitle?: string;
   headerIcon?: IconProp | null;
   hideCreateAccount?: boolean;
-  initialValues: { email: string; password: string };
+  initialValues: { email?: string; password?: string };
 };
 type Props = OwnProps;
 

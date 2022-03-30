@@ -24,7 +24,7 @@ type Props = {
   ) => void;
   isRefFlow: boolean;
   refProfileInfo: RefProfile | null;
-  refProfileQueryParams: RefQueryParams | null;
+  refProfileQueryParams?: RefQueryParams | null;
   redirectLink: RedirectLinkData;
 };
 
@@ -63,7 +63,7 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
     if (isRefFlow) {
       stateData = {
         ...stateData,
-        refCode: refProfileInfo.code,
+        refCode: refProfileInfo?.code,
         refProfileQueryParams,
       };
     }

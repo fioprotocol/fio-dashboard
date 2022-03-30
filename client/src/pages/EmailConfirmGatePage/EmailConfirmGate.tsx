@@ -1,4 +1,5 @@
 import React from 'react';
+
 import EmailConfirmBlocker from '../../components/Modal/EmailConfirmBlocker';
 
 import classes from '../../components/AuthContainer/AuthContainer.module.scss';

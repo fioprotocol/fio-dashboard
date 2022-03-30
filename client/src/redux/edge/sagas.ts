@@ -1,4 +1,5 @@
 import { put, takeEvery } from 'redux-saga/effects';
+
 import { getWalletKeys } from '../../utils';
 import { LOGIN_SUCCESS } from './actions';
 import { makeNonce } from '../profile/actions';

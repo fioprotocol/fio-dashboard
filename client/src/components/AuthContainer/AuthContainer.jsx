@@ -3,6 +3,7 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
+
 import CreateAccount from '../../pages/CreateAccountPage';
 import { ROUTES } from '../../constants/routes';
 import { putParamsToUrl } from '../../utils';

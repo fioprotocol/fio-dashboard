@@ -7,9 +7,9 @@ import { getFee, refreshBalance } from '../../redux/fio/actions';
 import { refreshWalletDataPublicKey } from '../../redux/fioWalletsData/actions';
 
 import {
-  loading,
   fioWallets as fioWalletsSelector,
   fioWalletsBalances as fioWalletsBalancesSelector,
+  loading,
 } from '../../redux/fio/selectors';
 import { roe } from '../../redux/registrations/selectors';
 

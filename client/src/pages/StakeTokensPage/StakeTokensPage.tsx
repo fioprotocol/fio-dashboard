@@ -42,7 +42,7 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
     setStakeTokensData,
   ] = useState<StakeTokensValues | null>(null);
   const [processing, setProcessing] = useState<boolean>(false);
-  const [proxyList, setProxyList] = useState([]);
+  const [proxyList, setProxyList] = useState<string[]>([]);
 
   const [walletFioAddresses, isWalletFioAddressesLoading] = useFioAddresses(
     fioWallet && fioWallet.publicKey,

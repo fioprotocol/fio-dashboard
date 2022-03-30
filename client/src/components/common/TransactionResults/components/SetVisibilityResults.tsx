@@ -29,7 +29,7 @@ const SetVisibilityResults = (props: ResultsProps) => {
             <div className={classes.badgeContainer}>
               <p className={classes.badgeItem}>New Status</p>
               <div className={classes.badgeItemNext}>
-                <DomainStatusBadge status={changedStatus} />
+                <DomainStatusBadge status={changedStatus || ''} />
               </div>
             </div>
           </Badge>

@@ -1,5 +1,6 @@
 import Web3 from 'web3';
 import { validate } from 'bitcoin-address-validation';
+
 import logger from '../../logger';
 import Base from '../Base';
 

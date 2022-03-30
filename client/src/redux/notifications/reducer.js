@@ -1,9 +1,10 @@
 import { combineReducers } from 'redux';
+
 import { LOGOUT_SUCCESS, SET_RECOVERY_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
 
 export default combineReducers({
-  loading(state = false, action) {
+  loading(state: boolean = false, action) {
     switch (action.type) {
       case actions.LIST_REQUEST:
         return true;

@@ -20,8 +20,8 @@ const Results: React.FC<ResultsContainerProps> = props => {
     results: {
       feeCollected: { nativeFio, fio, usdc } = {
         nativeFio: 0,
-        costFio: '0',
-        costUsdc: '0',
+        fio: '0',
+        usdc: '0',
       },
       bundlesCollected = 0,
       error,

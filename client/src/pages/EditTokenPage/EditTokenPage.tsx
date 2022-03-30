@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
+
 import ActionContainer from '../../components/LinkTokenList/ActionContainer';
 import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import PublicAddressEdit from './components/PublicAddressEdit';

@@ -1,5 +1,6 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+
 import SignNft from '../../components/SignNft';
 import { putParamsToUrl } from '../../utils';
 import { ROUTES } from '../../constants/routes';

@@ -29,12 +29,12 @@ const TransactionList: React.FC<Props> = props => {
   const [visibleTransactionsCount, setVisibleTransactionsCount] = useState(
     MIN_VISIBLE_TRANSACTIONS_COUNT,
   );
-  const [height, setHeight] = useState(0);
+  const [height, setHeight] = useState<number>(0);
 
-  const elementRef = useRef(null);
+  const elementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setHeight(elementRef?.current?.clientHeight);
+    setHeight(elementRef?.current?.clientHeight || 0);
   }, []);
 
   // when no history fetched yet

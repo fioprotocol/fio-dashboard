@@ -1,5 +1,6 @@
 import { RouteComponentProps } from 'react-router-dom';
 import { createSelector } from 'reselect';
+
 import { prefix } from './actions';
 import { emptyWallet } from './reducer';
 import { getElementByFioName } from '../../utils';
