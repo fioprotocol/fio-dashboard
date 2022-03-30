@@ -18,7 +18,7 @@ type Props = {
   onClose: () => void;
   activeItemField: string;
   searchName: string;
-  searchValue: string;
+  searchValue?: string;
   imageUrl?: string;
 };
 
@@ -44,7 +44,7 @@ const NftValidationItemModal: React.FC<Props> = props => {
         if (key === 'metadata') {
           const creatorUrl = (() => {
             try {
-              return JSON.parse(objValue).creator_url;
+              return JSON.parse(objValue || '').creator_url;
             } catch (err) {
               return '';
             }

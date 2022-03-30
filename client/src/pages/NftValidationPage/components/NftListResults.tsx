@@ -11,14 +11,19 @@ import { NFTTokenDoublet } from '../../../types';
 import classes from '../styles/NftListResults.module.scss';
 
 type Props = {
-  activeOption?: ValidationOption;
-  searchParams?: NftValidationFormValues;
-  results: NFTTokenDoublet[];
+  activeOption?: ValidationOption | null;
+  searchParams?: NftValidationFormValues | null;
+  results: NFTTokenDoublet[] | null;
   showWarningBadge?: boolean;
 };
 
 const NftListResults: React.FC<Props> = props => {
-  const { activeOption, searchParams, results, showWarningBadge } = props;
+  const {
+    activeOption,
+    searchParams,
+    results,
+    showWarningBadge = false,
+  } = props;
   if (
     activeOption != null &&
     searchParams != null &&

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Props as OptionProps } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { FieldRenderProps } from 'react-final-form';
@@ -37,7 +37,8 @@ const EditableSelect: React.FC<FieldRenderProps<EditableProps>> = props => {
 
   const refOptions = useRef(options).current;
 
-  const selectRef = useRef(null);
+  // todo: fix any
+  const selectRef = useRef<any>(null);
 
   const { onChange, value } = input;
 

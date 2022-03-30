@@ -1,7 +1,8 @@
 import React from 'react';
-import FioNameTransferContainer from '../../components/FioNameTransfer';
 
 import { RouteComponentProps } from 'react-router-dom';
+
+import FioNameTransferContainer from '../../components/FioNameTransfer';
 
 import { FioNameItemProps } from '../../types';
 import { DOMAIN } from '../../constants/common';

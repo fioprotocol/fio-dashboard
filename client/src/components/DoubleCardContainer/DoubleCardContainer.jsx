@@ -1,4 +1,5 @@
 import React from 'react';
+
 import LayoutContainer from '../LayoutContainer/LayoutContainer';
 
 import classes from './DoubleCardContainer.module.scss';

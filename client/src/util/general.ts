@@ -10,7 +10,7 @@ export async function copyToClipboard(text: string) {
     el.setAttribute('readonly', '');
     document.body.appendChild(el);
 
-    if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+    if (/ipad|ipod|iphone/i.exec(navigator.userAgent)) {
       // save current contentEditable/readOnly status
       const editable = el.contentEditable;
       const readOnly = el.readOnly;
@@ -26,8 +26,8 @@ export async function copyToClipboard(text: string) {
 
       // select the range
       const selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(range);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
       el.setSelectionRange(0, 999999);
 
       // restore contentEditable/readOnly to original state

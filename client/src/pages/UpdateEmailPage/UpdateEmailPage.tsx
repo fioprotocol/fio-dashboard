@@ -73,7 +73,7 @@ const UpdateEmailPage: React.FC<Props &
       pagesToShow: [ROUTES.HOME, ROUTES.SETTINGS],
     });
 
-    if (isAuthenticated && user.email === result.oldEmail) {
+    if (isAuthenticated && user.email === result.oldEmail && result.newEmail) {
       updateStateEmail(result.newEmail);
       return history.replace(ROUTES.SETTINGS);
     }

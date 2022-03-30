@@ -1,8 +1,6 @@
 export const isEmpty = (target: any): boolean => {
-  /* eslint-disable */
-  // @ts-ignore
+  // @ts-ignore // works as expected
   for (const key in target) {
-    /* eslint-enable */
     return false;
   }
 

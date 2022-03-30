@@ -1,5 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import Modal from '../Modal';
 import CancelButton from '../../common/CancelButton/CancelButton';
 

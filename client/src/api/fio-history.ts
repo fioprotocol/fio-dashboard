@@ -1,5 +1,5 @@
 export default class FioHistory {
-  historyNodeUrls: string[] = [process.env.REACT_APP_HISTORY_NODE_URL];
+  historyNodeUrls: string[] = [process.env.REACT_APP_HISTORY_NODE_URL || ''];
   historyNodeActions = {
     getActions: 'get_actions',
   };

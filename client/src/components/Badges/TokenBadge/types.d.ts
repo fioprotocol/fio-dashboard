@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { PublicAddressDoublet } from '../../../types';
 
 export type TokenBadgeProps = {

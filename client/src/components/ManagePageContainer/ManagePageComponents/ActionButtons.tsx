@@ -43,7 +43,7 @@ export const RenderAddBundles: React.FC<{
 
 const ActionButtons: React.FC<ActionButtonProps> = props => {
   const { pageName, isDesktop, onSettingsOpen, fioNameItem } = props;
-  const { name } = fioNameItem;
+  const { name = '' } = fioNameItem;
 
   const isSmallDesktop = useCheckIfSmallDesktop();
 
@@ -62,7 +62,9 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
   const renderSettings = () => (
     <Button
       className={classes.settingsButton}
-      onClick={() => onSettingsOpen(fioNameItem)}
+      onClick={() => {
+        onSettingsOpen && onSettingsOpen(fioNameItem);
+      }}
     >
       <FontAwesomeIcon icon="cog" className={classes.settingsIcon} />
     </Button>

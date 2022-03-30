@@ -1,5 +1,6 @@
 import React from 'react';
-import { NFTTokenDoublet, NFTTokenItemProps } from '../../../types';
+
+import { NFTTokenDoublet } from '../../../types';
 
 export type NftValidationFormValues = {
   contractAddress?: string;

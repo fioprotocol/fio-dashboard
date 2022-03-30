@@ -42,7 +42,7 @@ export const ENDPOINT_FEE_HASH: { [endpoint: string]: string } = {
 };
 
 export default class Fio {
-  baseurl: string = process.env.REACT_APP_FIO_BASE_URL;
+  baseurl: string = process.env.REACT_APP_FIO_BASE_URL || '';
   publicFioSDK: FIOSDK_LIB | null = null;
   walletFioSDK: FIOSDK_LIB | null = null;
   actionEndPoints: { [actionName: string]: string } = {
@@ -66,7 +66,7 @@ export default class Fio {
       .round(9, 2)
       .toNumber();
 
-    const remainderResult = new MathOp(remainder)
+    const remainderResult: number = new MathOp(remainder)
       .mul(FIOSDK.SUFUnit)
       .toNumber();
     const floorRemainder = Math.floor(remainderResult);
@@ -75,8 +75,7 @@ export default class Fio {
     return new MathOp(tempResult).add(floorRemainder).toNumber();
   };
 
-  sufToAmount = (suf?: number): number | null => {
-    if (!suf && suf !== 0) return null;
+  sufToAmount = (suf: number): number => {
     return FIOSDK.SUFToAmount(suf);
   };
 
@@ -158,9 +157,7 @@ export default class Fio {
   }): string => {
     if (!json) return '';
 
-    return json && json.fields && json.fields[0]
-      ? json.fields[0].error
-      : json.message;
+    return json.fields?.length ? json.fields[0].error : json.message || 'error';
   };
 
   getActor = (publicKey: string): string =>
@@ -468,7 +465,6 @@ export default class Fio {
     action: string,
     params: any,
   ): Promise<TrxResponse> => {
-    let error;
     this.setWalletFioSdk(keys);
 
     if (!params.maxFee) params.maxFee = DEFAULT_ACTION_FEE_AMOUNT;
@@ -477,18 +473,17 @@ export default class Fio {
       this.walletFioSDK.setSignedTrxReturnOption(true);
       const preparedTrx = await this.walletFioSDK.genericAction(action, params);
       this.validateAction();
-      return await this.walletFioSDK.executePreparedTrx(
+      const result = await this.walletFioSDK.executePreparedTrx(
         this.actionEndPoints[ACTIONS_TO_END_POINT_KEYS[action]],
         preparedTrx,
       );
+      this.clearWalletFioSdk();
+      return result;
     } catch (err) {
       this.logError(err);
-      error = err;
-    } finally {
       this.clearWalletFioSdk();
+      throw err;
     }
-
-    if (error != null) throw error;
   };
 
   getProxies = async () => {

@@ -1,4 +1,5 @@
 import { FieldValidationFunctionSync } from '@lemoncode/fonk';
+
 import apis from '../../api';
 
 export const isChainCodeValidator: FieldValidationFunctionSync = ({

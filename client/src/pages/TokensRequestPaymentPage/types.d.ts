@@ -1,4 +1,6 @@
+import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+
 import { FeePrice, FioAddressDoublet, FioWalletDoublet } from '../../types';
 
 type MatchProps = {
@@ -18,6 +20,19 @@ export type PaymentDetailsValues = {
   memo?: string;
   fioRequestId: number;
   payeePublicAddress: string;
+};
+
+export type PaymentDetailsInitialValues = {
+  payerFioAddress: string;
+  payeeFioAddress: string;
+  payeeFioPublicKey: string;
+  payeePublicAddress: string;
+  memo: string;
+  amount: string;
+  chainCode: string;
+  tokenCode: string;
+  obtId: string;
+  fioRequestId: number;
 };
 
 export type PaymentDetailsResultValues = {
@@ -45,20 +60,9 @@ export type TxValues = {
 };
 
 export type PaymentDetailsProps = {
-  initialValues: {
-    payerFioAddress: string;
-    payeeFioAddress: string;
-    payeeFioPublicKey: string;
-    payeePublicAddress: string;
-    memo: string;
-    amount: string;
-    chainCode: string;
-    tokenCode: string;
-    obtId: string;
-    fioRequestId: number;
-  };
+  initialValues: PaymentDetailsInitialValues;
   fioWallet: FioWalletDoublet;
-  senderFioAddress: FioAddressDoublet;
+  senderFioAddress: FioAddressDoublet | null;
   loading: boolean;
   obtDataOn?: boolean;
   onSubmit: (values: PaymentDetailsValues) => void;

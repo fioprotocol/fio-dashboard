@@ -1,6 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
+
 import Badge from '../Badge/Badge';
 import classes from './NotificationBadge.module.scss';
 

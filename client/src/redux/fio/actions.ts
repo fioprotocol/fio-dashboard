@@ -1,4 +1,5 @@
 import { FioAddresses } from '@fioprotocol/fiosdk/src/entities/FioAddresses';
+
 import apis, { Api } from '../../api';
 
 import { ENDPOINT_FEE_HASH } from '../../api/fio';

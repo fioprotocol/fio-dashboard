@@ -1,5 +1,6 @@
 import { createStore, applyMiddleware, compose as simpleCompose } from 'redux';
-import { composeWithDevTools } from 'redux-devtools-extension';
+import { composeWithDevTools } from '@redux-devtools/extension';
+
 import createSagaMiddleware from 'redux-saga';
 
 import apiMiddleware from '../../../redux/apiMiddleware';
@@ -17,7 +18,7 @@ export default function configureStore(api: Api) {
 
   const store = createStore(
     createReducer(),
-    // @ts-ignore // todo: @redux-devtools/extension
+    // @ts-ignore todo: Check Api type used for widgets
     compose(applyMiddleware(apiMiddleware(api), sagaMiddleware)),
   );
 

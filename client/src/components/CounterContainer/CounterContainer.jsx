@@ -1,5 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
+
 import classes from './CounterContainer.module.scss';
 
 const CounterContainer = props => {

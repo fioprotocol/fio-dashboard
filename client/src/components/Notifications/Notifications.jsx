@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+
 import NotificationBadge from '../NotificationBadge';
 import { getDefaultContent } from '../../constants/notifications';
 import classes from './Notifications.module.scss';

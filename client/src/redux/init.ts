@@ -1,7 +1,9 @@
 import { Store } from 'redux';
+
+import createHistory from 'history/createBrowserHistory';
+
 import configureStore from './store';
 import api, { Api } from '../api';
-import createHistory from 'history/createBrowserHistory';
 import { addLocationQuery } from '../helpers/routeParams';
 
 export const history = createHistory();

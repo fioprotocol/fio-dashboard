@@ -1,6 +1,7 @@
 import { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
+
 import {
   getWalletsFioAddresses,
   getAllFioPubAddresses,
@@ -178,10 +179,12 @@ export function useConvertFioToUsdc({
 }) {
   const roeAmount = useSelector(roe);
 
-  if (!fioAmount && !nativeAmount && !roeAmount) return null;
+  if ((!fioAmount && !nativeAmount) || !roeAmount) return null;
 
   const fioSuf =
-    nativeAmount != null ? nativeAmount : apis.fio.amountToSUF(fioAmount);
+    nativeAmount !== null && nativeAmount !== undefined
+      ? nativeAmount
+      : apis.fio.amountToSUF(fioAmount);
 
   return apis.fio.convertFioToUsdc(fioSuf, roeAmount);
 }

@@ -45,7 +45,9 @@ type Props = {
   setContainedParams: (params: any) => void;
 };
 
-const RefFlow = (props: Props & RouterProps): React.FunctionComponent => {
+const RefFlow = (
+  props: Props & RouterProps,
+): React.FunctionComponent | null => {
   const {
     isAuthenticated,
     fioAddresses,

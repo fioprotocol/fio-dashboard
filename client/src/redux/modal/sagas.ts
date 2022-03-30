@@ -1,4 +1,5 @@
 import { put, takeEvery } from 'redux-saga/effects';
+
 import { CLOSE_GENERIC_ERROR_MODAL, clearGenericErrorData } from './actions';
 import { sleep } from '../../utils';
 

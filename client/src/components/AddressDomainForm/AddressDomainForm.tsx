@@ -44,7 +44,7 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
   const [formErrors, changeFormErrors] = useState({});
   const [isValidating, toggleValidating] = useState(false);
 
-  const notificationRef = useRef(null);
+  const notificationRef = useRef<HTMLDivElement | null>(null);
 
   const options = [...domains.map(({ domain }) => domain)];
 
@@ -87,7 +87,7 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
     const registeredFields = form.getRegisteredFields();
     const isValidForm = registeredFields.every(registeredField => {
       const fieldState = form.getFieldState(registeredField);
-      return !fieldState.data.error;
+      return !fieldState?.data?.error;
     });
 
     if (!isDesktop && isValidForm) {

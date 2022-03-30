@@ -16,10 +16,11 @@ import classes from './SettingsItem.module.scss';
 const SettingsItem: React.FC<SettingsProps> = props => {
   const { fioNameItem, pageName, fioWallets, showStatus } = props;
   const { name: fioName } = fioNameItem;
-  const { publicKey, name: walletName } = fioWallets.find(
-    (fioWallet: FioWalletDoublet) =>
-      fioWallet.publicKey === fioNameItem.walletPublicKey,
-  );
+  const { publicKey, name: walletName } =
+    fioWallets.find(
+      (fioWallet: FioWalletDoublet) =>
+        fioWallet.publicKey === fioNameItem.walletPublicKey,
+    ) || {};
 
   return (
     <div className={classes.settingsContainer}>

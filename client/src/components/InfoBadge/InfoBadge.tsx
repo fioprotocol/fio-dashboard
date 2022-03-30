@@ -19,10 +19,10 @@ const InfoBadge: React.FC<InfoBadgeProps> = props => {
       <FontAwesomeIcon icon="exclamation-circle" className={classes.icon} />
       <p className={classes.textContainer}>
         <span className={classes.title}>{title}</span>
-        <span className={hasBoldMessage ? classes.boldMessage : null}>
+        <span className={hasBoldMessage ? classes.boldMessage : ''}>
           {title && ' - '}
         </span>
-        <span className={hasBoldMessage ? classes.boldMessage : null}>
+        <span className={hasBoldMessage ? classes.boldMessage : ''}>
           {message}
         </span>
       </p>

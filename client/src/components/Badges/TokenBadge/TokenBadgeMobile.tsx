@@ -24,7 +24,7 @@ const TokenBadgeMobile: React.FC<TokenBadgeProps> = props => {
     if (actionButton) {
       toggleOpen(false);
     } else {
-      toggleOpen(showInput);
+      toggleOpen(!!showInput);
     }
   }, [showInput, actionButton]);
 

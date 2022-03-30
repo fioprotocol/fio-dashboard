@@ -10,13 +10,13 @@ import { FIO_RECORD_TYPES } from '../constants';
 import { useFioAddresses } from '../../../util/hooks';
 
 import { FioRecordViewKeysProps, FioRecordViewDecrypted } from '../types';
-import { FioWalletDoublet } from '../../../types';
+import { FioAddressDoublet, FioWalletDoublet } from '../../../types';
 
 import classes from '../styles/FioRecordDetailedItem.module.scss';
 
 type Props = {
   fieldsList: FioRecordViewKeysProps[];
-  fioRecordDecrypted: FioRecordViewDecrypted;
+  fioRecordDecrypted?: FioRecordViewDecrypted | null;
   fioRecordType: string;
   fioRecordDetailedType: string;
   fioWallet: FioWalletDoublet;
@@ -34,7 +34,10 @@ const FioRecordDetailedItem: React.FC<Props> = props => {
   } = props;
 
   const [error, setError] = useState<string | null>(null);
-  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [
+    selectedAddress,
+    setSelectedAddress,
+  ] = useState<FioAddressDoublet | null>(null);
 
   const [walletFioAddresses, isLoading] = useFioAddresses(
     fioWallet && fioWallet.publicKey,

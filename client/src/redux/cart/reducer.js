@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+
 import * as actions from './actions';
 import { LOGOUT_SUCCESS } from '../profile/actions';
 

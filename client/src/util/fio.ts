@@ -5,7 +5,7 @@ import apis from '../api';
 import { sleep, isDomain } from '../utils';
 import MathOp from '../util/math';
 import { FREE_ADDRESS_REGISTER_ERROR, ERROR_TYPES } from '../constants/errors';
-import { RegisterAddressError } from '../util/errors';
+import { RegisterAddressError } from './errors';
 
 import { FIO_REQUEST_STATUS_TYPES } from '../constants/fio';
 import { CHAIN_CODES } from '../constants/common';
@@ -251,8 +251,8 @@ export const convertPrices = (prices: IncomePrices): { pricing: Prices } => {
   };
 
   pricing.fio = {
-    address: apis.fio.sufToAmount(pricing.nativeFio.address),
-    domain: apis.fio.sufToAmount(pricing.nativeFio.domain),
+    address: apis.fio.sufToAmount(pricing.nativeFio.address) || 0,
+    domain: apis.fio.sufToAmount(pricing.nativeFio.domain) || 0,
   };
 
   pricing.usdt = {

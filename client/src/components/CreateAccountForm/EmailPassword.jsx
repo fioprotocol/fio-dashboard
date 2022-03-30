@@ -4,11 +4,12 @@ import classnames from 'classnames';
 import validator from 'email-validator';
 import { OnFocus } from 'react-final-form-listeners';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import FormHeader from '../FormHeader/FormHeader';
 import Input, { INPUT_UI_STYLES } from '../Input/Input';
 
 import classes from './CreateAccountForm.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const VALIDATION_TITLES = {
   length: 'Must have at least 10 characters',

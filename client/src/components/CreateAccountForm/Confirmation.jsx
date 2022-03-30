@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { Button, Col, Row } from 'react-bootstrap';
+
 import FormHeader from '../FormHeader/FormHeader';
 
 import classes from './CreateAccountForm.module.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Col, Row } from 'react-bootstrap';
 
 export default class Confirmation extends Component {
   constructor() {

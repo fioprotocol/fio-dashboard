@@ -55,7 +55,8 @@ const ChangePasswordForm = (props: Props) => {
     onSubmit(values);
   };
 
-  const onChange = (value: FieldValue, name: string) => {
+  const onChange = (value: FieldValue, name?: string) => {
+    if (!name) return;
     const newValues: FormValuesTypes = { ...values, [name]: `${value}` };
     setValues(newValues);
   };
@@ -64,7 +65,7 @@ const ChangePasswordForm = (props: Props) => {
     changePasswordError && changePasswordError.type === 'PasswordError';
   const error = isCurrentPasswordError
     ? 'Invalid Password'
-    : changePasswordError.message || changePasswordError.name;
+    : changePasswordError?.message || changePasswordError?.name;
 
   return (
     <form onSubmit={handleSubmit} className={classes.form}>
@@ -72,7 +73,7 @@ const ChangePasswordForm = (props: Props) => {
         type="password"
         name="password"
         value={values.password}
-        error={errors.password}
+        error={errors.password || null}
         onChange={onChange}
         showClearInput={true}
         placeholder="Enter Current Password"
@@ -85,7 +86,7 @@ const ChangePasswordForm = (props: Props) => {
         type="password"
         name="newPassword"
         value={values.newPassword}
-        error={errors.newPassword}
+        error={errors.newPassword || null}
         onChange={onChange}
         showClearInput={true}
         placeholder="Enter New Password"
@@ -96,7 +97,7 @@ const ChangePasswordForm = (props: Props) => {
         type="password"
         name="confirmNewPassword"
         value={values.confirmNewPassword}
-        error={errors.confirmNewPassword}
+        error={errors.confirmNewPassword || null}
         onChange={onChange}
         showClearInput={true}
         placeholder="Re-enter New Password"

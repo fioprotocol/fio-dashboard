@@ -1,6 +1,8 @@
 import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 
+import classnames from 'classnames';
+
 import TextInput, {
   INPUT_UI_STYLES,
 } from '../../../../components/Input/TextInput';
@@ -19,7 +21,6 @@ import { PaymentDetailsProps, PaymentDetailsValues } from '../../types';
 import classes from '../../styles/PaymentDetailsForm.module.scss';
 import QrCodeInput from '../../../../components/Input/QrCodeInput';
 import QrModal from './QrModal';
-import classnames from 'classnames';
 import { isFioChain } from '../../../../util/fio';
 
 const PaymentDetailsForm: React.FC<PaymentDetailsProps> = props => {

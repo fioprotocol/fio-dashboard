@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import exact from 'prop-types-exact';
+
 import MainHeader from '../../components/MainHeader';
 import Notifications from '../../components/Notifications';
 import Navigation from '../../components/Navigation';

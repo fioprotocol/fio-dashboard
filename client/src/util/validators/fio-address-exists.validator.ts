@@ -1,4 +1,5 @@
 import { FieldValidationFunctionAsync } from '@lemoncode/fonk';
+
 import apis from '../../api';
 
 interface FieldArgs {
@@ -15,7 +16,8 @@ export const fioAddressExistsValidator: FieldValidationFunctionAsync<FieldArgs> 
   message = defaultMessage,
   customArgs = {},
 }) => {
-  const { fieldIdToCompare, sameWalletMessage = 'Spend to self.' } = customArgs;
+  const { fieldIdToCompare, sameWalletMessage = 'Spend to self.' } =
+    customArgs || {};
 
   if (!value)
     return {

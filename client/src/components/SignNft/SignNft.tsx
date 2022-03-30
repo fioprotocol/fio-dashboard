@@ -8,7 +8,10 @@ import SignResults from '../common/TransactionResults/components/SignResults';
 import EdgeConfirmAction from '../EdgeConfirmAction';
 
 import { ROUTES } from '../../constants/routes';
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import {
+  CONFIRM_PIN_ACTIONS,
+  NO_CRYPTO_KEYS_ERROR_MESSAGE,
+} from '../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../constants/fio';
 
 import { putParamsToUrl } from '../../utils';
@@ -47,7 +50,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     ({ name }) => name === selectedFioAddressName,
   );
   const currentWallet = fioWallets.find(
-    ({ publicKey }) => publicKey === fioAddress.walletPublicKey,
+    ({ publicKey }) => publicKey === fioAddress?.walletPublicKey,
   );
 
   const checkNftSigned = async (
@@ -88,7 +91,8 @@ const SignNft: React.FC<ContainerProps> = props => {
   }, []);
 
   const submit = async ({ keys, data }: SubmitActionParams) => {
-    return await apis.fio.singNFT(keys, fioAddress.name, [{ ...data }]);
+    if (!keys) return console.error(NO_CRYPTO_KEYS_ERROR_MESSAGE);
+    return await apis.fio.singNFT(keys, fioAddress?.name || '', [{ ...data }]);
   };
 
   const onSubmit = async (values: NftFormValues) => {
@@ -120,33 +124,36 @@ const SignNft: React.FC<ContainerProps> = props => {
       const { metadata, ...rest } = result.other.nfts[0];
       const creatorUrl = (() => {
         try {
-          return JSON.parse(metadata).creator_url;
+          return JSON.parse(metadata || '').creator_url;
         } catch (err) {
           return '';
         }
       })();
 
       setResultsData({
-        name: fioAddress.name,
+        name: fioAddress?.name,
         other: {
           creatorUrl,
           ...rest,
         },
       });
 
-      refreshFioNames(fioAddress.walletPublicKey);
-      getNFTSignatures({ fioAddress: fioAddress.name });
+      fioAddress?.walletPublicKey &&
+        refreshFioNames(fioAddress.walletPublicKey);
+      fioAddress?.name && getNFTSignatures({ fioAddress: fioAddress.name });
     }
     setProcessing(false);
     setSubmitData(null);
   };
 
   const onResultsClose = () => {
-    history.push(
-      putParamsToUrl(ROUTES.FIO_ADDRESS_SIGNATURES, {
-        address: fioAddress.name,
-      }),
-    );
+    if (fioAddress?.name) {
+      history.push(
+        putParamsToUrl(ROUTES.FIO_ADDRESS_SIGNATURES, {
+          address: fioAddress?.name,
+        }),
+      );
+    }
   };
 
   if (resultsData && !isEdit)
@@ -192,14 +199,10 @@ const SignNft: React.FC<ContainerProps> = props => {
         processing={processing}
         data={submitData}
         submitAction={submit}
-        fioWalletEdgeId={currentWallet.edgeId || ''}
+        fioWalletEdgeId={currentWallet?.edgeId || ''}
         edgeAccountLogoutBefore={true}
       />
-      <PseudoModalContainer
-        title={title}
-        link={backTo || null}
-        middleWidth={true}
-      >
+      <PseudoModalContainer title={title} link={backTo} middleWidth={true}>
         <SignNFTForm {...formProps} />
       </PseudoModalContainer>
     </>

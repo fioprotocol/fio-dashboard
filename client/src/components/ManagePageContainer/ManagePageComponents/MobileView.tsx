@@ -24,12 +24,12 @@ const MobileView: React.FC<DefaultProps> = props => {
       <h5 className={classes.tableHeader}>{PLURAL_NAME[pageName]}</h5>
       {fioNameList &&
         fioNameList.map(fioNameItem => {
-          const { name } = fioNameItem;
+          const { name = '' } = fioNameItem;
           return (
             <div
               className={classes.dataItemContainer}
               key={name}
-              onClick={() => onItemModalOpen(fioNameItem)}
+              onClick={() => onItemModalOpen && onItemModalOpen(fioNameItem)}
             >
               {showFioAddressName ? (
                 <FioAddress

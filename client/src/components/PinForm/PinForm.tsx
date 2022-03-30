@@ -16,13 +16,13 @@ import { IosKeyBoardPlugProp } from '../Input/PinInput/types';
 
 import classes from './PinForm.module.scss';
 
-const FIELD_NAME = 'pin';
+export const FIELD_NAME = 'pin';
 
 type Props = {
   onSubmit: (pin: string) => void;
   onReset: () => void;
   loading: boolean;
-  error?: string | (Error & { wait?: number });
+  error?: string | (Error & { wait?: number }) | null;
   iosKeyboardPlugType?: IosKeyBoardPlugProp;
   blockedTime?: number;
 };
@@ -38,7 +38,7 @@ const PinForm: React.FC<Props> = props => {
     loading,
     error,
     iosKeyboardPlugType,
-    blockedTime,
+    blockedTime = 0,
   } = props;
 
   let currentForm: FormApi | null = null;
@@ -48,7 +48,7 @@ const PinForm: React.FC<Props> = props => {
     if (currentForm) {
       const { mutators } = currentForm;
 
-      if (!isEmpty(error) && typeof error === 'object') {
+      if (error && !isEmpty(error) && typeof error === 'object') {
         const errorMessage = (errMessage: string) => {
           if (INVALID_PASSWORD.test(errMessage)) {
             if (!blockedTime) return 'Invalid PIN - Try Again';
