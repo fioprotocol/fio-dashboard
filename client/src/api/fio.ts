@@ -1,4 +1,5 @@
 import { FIOSDK } from '@fioprotocol/fiosdk';
+import { createHash } from 'crypto-browserify';
 import superagent from 'superagent';
 
 import { AvailabilityResponse } from '@fioprotocol/fiosdk/src/entities/AvailabilityResponse';
@@ -164,6 +165,45 @@ export default class Fio {
 
   getActor = (publicKey: string): string =>
     this.publicFioSDK.transactions.getActor(publicKey);
+
+  availCheckTableRows = async (fioName: string): Promise<boolean> => {
+    const hash = createHash('sha1');
+    const bound =
+      '0x' +
+      hash
+        .update(fioName)
+        .digest()
+        .slice(0, 16)
+        .reverse()
+        .toString('hex');
+
+    const params = {
+      code: 'fio.address',
+      scope: 'fio.address',
+      table: 'fionames',
+      lower_bound: bound,
+      upper_bound: bound,
+      key_type: 'i128',
+      index_position: '5',
+      json: true,
+    };
+    if (isDomain(fioName)) {
+      params.table = 'domains';
+      params.index_position = '4';
+    }
+
+    try {
+      const rows = await this.getTableRows(params);
+
+      if (rows && rows.length) {
+        return !!rows[0].id;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    return false;
+  };
 
   availCheck = (fioName: string): Promise<AvailabilityResponse> => {
     return this.publicFioSDK.isAvailable(fioName);
