@@ -213,7 +213,6 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
                     fioAddressExistsValidator({
                       value,
                       values,
-                      message: 'FIO Crypto Handle is not valid / not exist',
                       customArgs: {
                         fieldIdToCompare: 'payeeTokenPublicAddress',
                         sameWalletMessage: "Can't request to same wallet",

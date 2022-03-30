@@ -59,14 +59,17 @@ const validationSchema: ValidationSchema = {
 
 const onSubmitValidationSchema: ValidationSchema = {
   field: {
+    from: [
+      {
+        validator: fioAddressExistsValidator,
+      },
+    ],
     to: [
       {
         validator: fioAddressExistsValidator,
         customArgs: {
           fieldIdToCompare: 'fromPubKey',
-          sameWalletMessage: 'Spend to self.',
         },
-        message: 'Please enter existing FIO Crypto Handle / Public Key.',
       },
     ],
   },

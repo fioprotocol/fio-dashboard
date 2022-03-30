@@ -151,6 +151,7 @@ const SelectModal: React.FC<Props &
       onClose={handleClose}
       isSimple={true}
       isWide={true}
+      hasDefaultCloseColor={true}
     >
       <div className={classes.optionsContainer}>
         <h3 className={classes.title}>{title}</h3>
