@@ -1,7 +1,11 @@
-export default function apiMiddleware(api) {
+import { Middleware } from 'redux';
+
+import { Api } from '../api';
+
+export default function apiMiddleware(api: Api): Middleware {
   return ({ dispatch, getState }) => next => action => {
     if (typeof action === 'function') {
-      return dispatch(action(selector => selector(getState())));
+      return dispatch(action((selector: any) => selector(getState())));
     }
 
     const { promise, types, ...rest } = action;
@@ -13,8 +17,8 @@ export default function apiMiddleware(api) {
     next({ ...rest, type: REQUEST });
 
     return promise(api, getState).then(
-      data => next({ ...rest, data, type: SUCCESS }),
-      error => next({ ...rest, error, type: FAILURE }),
+      (data: any) => next({ ...rest, data, type: SUCCESS }),
+      (error: any) => next({ ...rest, error, type: FAILURE }),
     );
   };
 }
