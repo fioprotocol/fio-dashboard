@@ -47,22 +47,6 @@ export const resetFioNames = () => ({
   type: RESET_FIO_NAMES,
 });
 
-export const IS_REGISTERED_REQUEST = `${prefix}/IS_REGISTERED_REQUEST`;
-export const IS_REGISTERED_SUCCESS = `${prefix}/IS_REGISTERED_SUCCESS`;
-export const IS_REGISTERED_FAILURE = `${prefix}/IS_REGISTERED_FAILURE`;
-
-export const isRegistered = (fioAddress: string) => ({
-  types: [IS_REGISTERED_REQUEST, IS_REGISTERED_SUCCESS, IS_REGISTERED_FAILURE],
-  promise: async (api: Api) => {
-    try {
-      const { is_registered } = await api.fio.availCheck(fioAddress);
-      return !!is_registered;
-    } catch (e) {
-      return false;
-    }
-  },
-});
-
 export const GET_FEE_REQUEST = `${prefix}/GET_FEE_REQUEST`;
 export const GET_FEE_SUCCESS = `${prefix}/GET_FEE_SUCCESS`;
 export const GET_FEE_FAILURE = `${prefix}/GET_FEE_FAILURE`;
