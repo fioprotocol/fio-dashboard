@@ -1,3 +1,13 @@
+import { US_LOCALE } from '../constants/common';
+
+export const createRangeString = (target: {
+  max?: string;
+  min: string;
+}): string => {
+  const separator = target.max ? ' - ' : '+';
+  return `${target.min}${separator}${target.max || ''}`;
+};
+
 export const prepateDate = (dateString: string): string => {
   const date = new Date(dateString);
   const year = date.getFullYear();
@@ -20,14 +30,13 @@ export const CURRENCY_OPTIONS = {
   minimumFractionDigits: 2,
   style: 'currency',
 };
-const locale = 'en-US';
 
 export const currencyString = (
   num: number,
-  currency: string = 'USD',
+  currency = 'USD',
   options: { minimumFractionDigits: number; style: string } = CURRENCY_OPTIONS,
 ): string => {
-  return `${num.toLocaleString(locale, {
+  return `${num.toLocaleString(US_LOCALE, {
     ...options,
     currency,
   })}`;
