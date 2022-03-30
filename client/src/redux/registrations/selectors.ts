@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+
 import { refProfileInfo } from '../refProfile/selectors';
 import { prefix } from './actions';
 

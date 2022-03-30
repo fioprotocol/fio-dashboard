@@ -75,12 +75,12 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
     if (!loading) onClose();
   };
 
-  const onCopy = () => {
-    copyToClipboard(key);
-  };
-
   const renderKey = () => {
-    if (key != null)
+    if (key != null) {
+      const onCopy = () => {
+        copyToClipboard(key);
+      };
+
       return (
         <>
           <div className={classes.privateKeyLabel}>
@@ -104,6 +104,7 @@ const ShowPrivateKeyModal: React.FC<Props> = props => {
           </div>
         </>
       );
+    }
 
     return null;
   };

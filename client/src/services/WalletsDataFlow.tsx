@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
+import { ReceivedFioRequestsResponse } from '@fioprotocol/fiosdk/src/entities/ReceivedFioRequestsResponse';
+import { SentFioRequestResponse } from '@fioprotocol/fiosdk/src/entities/SentFioRequestsResponse';
+import { GetObtDataResponse } from '@fioprotocol/fiosdk/src/entities/GetObtDataResponse';
+
 import { camelizeFioRequestsData, compose } from '../utils';
 
 import { fioWallets } from '../redux/fio/selectors';
@@ -9,8 +13,8 @@ import { walletDataPublicKey } from '../redux/fioWalletsData/selectors';
 import { user } from '../redux/profile/selectors';
 import {
   FioRecord,
-  FioWalletData,
   FioWalletDoublet,
+  FioWalletData,
   User,
   ResponseFioRecord,
 } from '../types';
@@ -48,17 +52,17 @@ const getWalletData = async (
   const getReceivedFioRequestsPromise = new Promise((resolve, reject) => {
     return fioWallet.publicWalletFioSdk
       .getReceivedFioRequests(0, 0, true)
-      .then((res: any) => {
+      .then((res: ReceivedFioRequestsResponse) => {
         receivedFioRequests = camelizeFioRequestsData(
           res?.requests?.length ? res.requests.reverse() : [],
         );
-        resolve();
+        resolve(null);
       })
       .catch((e: any) => {
         if (!(e.json?.message === 'No FIO Requests')) {
           reject(e);
         }
-        resolve();
+        resolve(null);
       });
   });
   promises.push(getReceivedFioRequestsPromise);
@@ -66,17 +70,17 @@ const getWalletData = async (
   const getSentFioRequestsPromise = new Promise((resolve, reject) => {
     return fioWallet.publicWalletFioSdk
       .getSentFioRequests(0, 0, true)
-      .then((res: any) => {
+      .then((res: SentFioRequestResponse) => {
         sentFioRequests = camelizeFioRequestsData(
           res?.requests?.length ? res.requests.reverse() : [],
         );
-        resolve();
+        resolve(null);
       })
       .catch((e: any) => {
         if (!(e.json?.message === 'No FIO Requests')) {
           reject(e);
         }
-        resolve();
+        resolve(null);
       });
   });
   promises.push(getSentFioRequestsPromise);
@@ -84,7 +88,7 @@ const getWalletData = async (
   const getObtDataPromise = new Promise((resolve, reject) => {
     return fioWallet.publicWalletFioSdk
       .getObtData()
-      .then((res: any) => {
+      .then((res: GetObtDataResponse) => {
         obtData = camelizeFioRequestsData(
           res?.obt_data_records?.length
             ? res.obt_data_records.sort(
@@ -94,13 +98,13 @@ const getWalletData = async (
               )
             : [],
         );
-        resolve();
+        resolve(null);
       })
       .catch((e: any) => {
         if (!(e.json?.message === 'No FIO Requests')) {
           reject(e);
         }
-        resolve();
+        resolve(null);
       });
   });
   promises.push(getObtDataPromise);
@@ -119,7 +123,7 @@ const getWalletData = async (
 
 const TIMER_DELAY = 5000; // 5 sec
 
-const WalletsDataFlow = (props: Props): React.FC => {
+const WalletsDataFlow = (props: Props): React.FC | null => {
   const {
     fioWallets,
     user,
@@ -128,8 +132,8 @@ const WalletsDataFlow = (props: Props): React.FC => {
     refreshWalletDataPublicKey,
   } = props;
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [wallets, setWallets] = useState([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [wallets, setWallets] = useState<FioWalletDoublet[]>([]);
 
   const getWalletsData = async (walletsState?: FioWalletDoublet[]) => {
     if (!isLoading) {

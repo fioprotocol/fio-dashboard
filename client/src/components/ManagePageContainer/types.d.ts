@@ -1,4 +1,6 @@
+import React, { Dispatch, SetStateAction, MouseEventHandler } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+
 import { FioNameItemProps, FioWalletDoublet, FioNameType } from '../../types';
 
 export type HasMore = { [key: string]: number };
@@ -28,7 +30,7 @@ export type BoolStateFunc = Dispatch<SetStateAction<boolean>>;
 export type IsExpiredFunc = (expiration: Date) => boolean;
 type ModalOpenActionType = (
   data: FioNameItemProps,
-) => MouseEventHandler<HTMLDivElement>;
+) => MouseEventHandler<HTMLDivElement> | void;
 
 export type DefaultProps = {
   fioNameList: FioNameItemProps[];
@@ -71,6 +73,6 @@ export type SettingsProps = {
 export type ActionButtonProps = {
   pageName: FioNameType;
   isDesktop: boolean;
-  onSettingsOpen: ModalOpenActionType;
+  onSettingsOpen?: ModalOpenActionType;
   fioNameItem: FioNameItemProps;
 };

@@ -1,8 +1,10 @@
-import Sequelize from 'sequelize';
 import crypto from 'crypto';
 
-import { User } from './';
+import Sequelize from 'sequelize';
+
 import Base from './Base';
+
+import { User } from './';
 
 const { DataTypes: DT } = Sequelize;
 

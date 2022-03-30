@@ -1,6 +1,8 @@
 import { ValidationSchema, Validators } from '@lemoncode/fonk';
-import { passwordRecoveryAnswerValidator } from '../../util/validators';
+
 import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
+
+import { passwordRecoveryAnswerValidator } from '../../util/validators';
 
 const validationSchema: ValidationSchema = {
   field: {

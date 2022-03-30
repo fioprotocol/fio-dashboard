@@ -46,7 +46,7 @@ const ChainCodeCustomDropdown: React.FC<Props &
   } = meta;
 
   const hasError =
-    (((error || data.error) &&
+    (((error || data?.error) &&
       (touched || modified || submitSucceeded || !!value) &&
       !active) ||
       (submitError && !modifiedSinceLastSubmit)) &&
@@ -60,7 +60,7 @@ const ChainCodeCustomDropdown: React.FC<Props &
         <ErrorBadge
           error={error}
           data={data}
-          hasError={!hideError && !data.hideError && hasError}
+          hasError={!hideError && !data?.hideError && hasError}
           type={errorType}
           color={errorColor}
           submitError={submitError}

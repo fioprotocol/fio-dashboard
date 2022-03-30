@@ -8,6 +8,7 @@ type Props = {
 
 const FioName: React.FC<Props> = props => {
   const { name } = props;
+
   return (
     <div className={classes.addressContainer}>
       <h5 className={classes.title}>FIO Crypto Handle:</h5>

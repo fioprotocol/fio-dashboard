@@ -1,4 +1,5 @@
 import { EdgeAccount } from 'edge-core-js';
+
 import { PinConfirmation, WalletKeys } from '../../types';
 import { PinDataType } from '../../redux/modal/types';
 

@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware, compose as simpleCompose } from 'redux';
 import { routerMiddleware } from 'connected-react-router';
-import { composeWithDevTools } from 'redux-devtools-extension'; // todo: update lib to @redux-devtools/extension
+import { composeWithDevTools } from '@redux-devtools/extension';
 import createSagaMiddleware from 'redux-saga';
 import throttle from 'lodash/throttle';
 import { History } from 'history';
@@ -26,7 +26,6 @@ export default function configureStore(api: Api, history: History) {
     createReducer(history),
     persistedState,
     compose(
-      // @ts-ignore // todo: @redux-devtools/extension
       applyMiddleware(
         apiMiddleware(api),
         routerMiddleware(history),

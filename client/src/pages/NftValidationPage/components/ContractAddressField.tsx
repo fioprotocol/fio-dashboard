@@ -1,4 +1,5 @@
 import React from 'react';
+
 import GenericNftValidationField, {
   FIELDS_NAMES,
 } from './GenericNftValidationField';

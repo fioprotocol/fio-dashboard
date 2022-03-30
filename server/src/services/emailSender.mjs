@@ -1,4 +1,5 @@
 import mailchimpProvider from '@mailchimp/mailchimp_transactional';
+
 import EmailTemplate, { templates } from './../emails/emailTemplate';
 import config from './../config';
 import logger from './../logger';

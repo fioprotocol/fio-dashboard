@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import isEqual from 'lodash/isEqual';
+
 import { UsersFioWalletsData, UsersWalletsTxHistory } from '../../types';
 import * as actions from './actions';
 

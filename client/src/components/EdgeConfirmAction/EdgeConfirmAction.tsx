@@ -82,7 +82,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
       try {
         const result = await submitAction({
           edgeAccount,
-          keys: fioWalletEdgeId ? keys[fioWalletEdgeId] : null,
+          keys: fioWalletEdgeId ? keys && keys[fioWalletEdgeId] : null,
           data: additionalData,
         });
 

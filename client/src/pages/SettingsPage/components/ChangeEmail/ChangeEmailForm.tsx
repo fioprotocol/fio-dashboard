@@ -58,7 +58,7 @@ const ChangeEmailForm: React.FC<Props> = props => {
       render={renderForm}
       validate={formValidation.validateForm}
       keepDirtyOnReinitialize={true}
-      initialValues={initialValues}
+      initialValues={initialValues || undefined}
     />
   );
 };

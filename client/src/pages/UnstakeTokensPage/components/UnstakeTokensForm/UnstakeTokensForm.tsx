@@ -115,12 +115,12 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
           );
         };
 
-        const selectedAddress: FioAddressDoublet | null = fioAddress
+        const selectedAddress: FioAddressDoublet | undefined | null = fioAddress
           ? fioAddresses.find(({ name }) => name === fioAddress)
           : null;
 
         const notEnoughStaked = new MathOp(amount).gt(walletStakedTokens);
-        const hasLowBalance = new MathOp(fee.nativeFio).gt(
+        const hasLowBalance = new MathOp(fee.nativeFio || 0).gt(
           walletAvailableTokens,
         );
         const notEnoughBundles =
@@ -135,7 +135,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
           loading ||
           hasLowBalance ||
           notEnoughStaked ||
-          (selectedAddress && notEnoughBundles);
+          (!!selectedAddress && notEnoughBundles);
 
         return (
           <form

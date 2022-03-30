@@ -151,8 +151,8 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
 
   const hasError =
     !hideError &&
-    !data.hideError &&
-    (((error || data.error) &&
+    !data?.hideError &&
+    (((error || data?.error) &&
       (touched || modified || submitSucceeded || !!value) &&
       !active &&
       !fieldElemActive) ||

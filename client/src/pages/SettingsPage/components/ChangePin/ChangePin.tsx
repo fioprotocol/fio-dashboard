@@ -52,14 +52,15 @@ const ChangePin: React.FC<Props> = props => {
 
   const { status } = results;
   const error =
-    changePinError &&
-    changePinError.type === 'PasswordError' &&
-    'Invalid Password';
+    (changePinError &&
+      changePinError.type === 'PasswordError' &&
+      'Invalid Password') ||
+    undefined;
 
   const [showModal, toggleShowModal] = useState(false);
   const [showSuccessModal, toggleSuccessModal] = useState(false);
   const [isConfirmPage, changeConfirmPage] = useState(false);
-  const [pin, handlePinChange] = useState('');
+  const [pin, handlePinChange] = useState<string>('');
   const [password, handlePasswordChange] = useState('');
 
   const onOpenModal = () => toggleShowModal(true);

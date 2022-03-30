@@ -81,7 +81,7 @@ const AddToken: React.FC<AddTokenProps> = props => {
     changeBundleCost(0);
   };
 
-  const onRetry = () => {
+  const onRetry = (resultsData: LinkActionResult) => {
     setSubmitData(resultsData.connect.failed);
   };
 

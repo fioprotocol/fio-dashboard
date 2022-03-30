@@ -6,7 +6,7 @@ import Modal from '../../../components/Modal/Modal';
 import classes from '../styles/FioRecordDetailedModal.module.scss';
 
 type Props = {
-  status: string;
+  status?: string;
   show: boolean;
   onClose: () => void;
 };

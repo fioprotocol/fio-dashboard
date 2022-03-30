@@ -1,3 +1,5 @@
+import { RouteComponentProps } from 'react-router-dom';
+
 import {
   User,
   CartItem,
@@ -5,7 +7,6 @@ import {
   RefProfile,
   FioAddressDoublet,
 } from '../../types';
-import { RouteComponentProps } from 'react-router-dom';
 
 export interface MainHeaderProps extends RouteComponentProps {
   isAuthenticated: boolean;

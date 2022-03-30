@@ -10,7 +10,7 @@ import { NotificationInfoProps } from './types';
 
 const NotificationInfoBadge = (
   props: NotificationInfoProps,
-  innerRef: React.Ref<HTMLDivElement | null>,
+  innerRef: React.Ref<HTMLDivElement>,
 ) => {
   const {
     showAvailable,

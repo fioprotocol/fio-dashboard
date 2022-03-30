@@ -98,7 +98,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
           );
         };
 
-        const selectedAddress: FioAddressDoublet | null = from
+        const selectedAddress: FioAddressDoublet | undefined | null = from
           ? fioAddresses.find(({ name }) => name === from)
           : null;
 
@@ -107,9 +107,9 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
           obtDataOn &&
           to &&
           hasFioAddressDelimiter(to);
-        const hasLowBalance = new MathOp(fee.nativeFio)
+        const hasLowBalance = new MathOp(fee.nativeFio || 0)
           .add(apis.fio.amountToSUF(amount))
-          .gt(walletBalances.available.nativeFio);
+          .gt(walletBalances.available.nativeFio || 0);
 
         const notEnoughBundles =
           selectedAddress != null

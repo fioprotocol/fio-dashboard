@@ -11,14 +11,15 @@ import classes from '../styles/Results.module.scss';
 const RenewResults = (props: ResultsProps) => {
   const {
     results: {
-      name,
+      name = '',
       feeCollected: { nativeFio, fio, usdc } = {
-        native: 0,
-        costFio: '0',
-        costUsdc: '0',
+        nativeFio: 0,
+        fio: '0',
+        usdc: '0',
       },
     },
   } = props;
+
   return (
     <Results {...props}>
       <h5 className={classes.label}>Renew Details</h5>

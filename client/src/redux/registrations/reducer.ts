@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+
 import { LOGOUT_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
 
@@ -11,7 +12,7 @@ const PRICES_DEFAULT: Prices = {
 };
 
 export default combineReducers({
-  loading(state = false, action) {
+  loading(state: boolean = false, action) {
     switch (action.type) {
       case actions.PRICES_REQUEST:
       case actions.DOMAINS_REQUEST:

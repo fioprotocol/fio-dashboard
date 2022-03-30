@@ -62,17 +62,19 @@ const Balance = (props: {
   );
 };
 
-const LockedItemsList = ({ data }: { data: UnlockPeriod[] }) => {
+const LockedItemsList = ({ data }: { data?: UnlockPeriod[] }) => {
+  if (!data) return null;
+
   return (
     <div className={classnames(classes.itemsList)}>
       {data.map((o, i) => (
         <div
-          key={o.date.getTime()}
+          key={o.date?.getTime()}
           className={classnames(classes.itemContainer, 'row')}
         >
           <p className={classnames(classes.itemData, 'col-5')}>
-            {o.date.toLocaleDateString(US_LOCALE)} @{' '}
-            {o.date.toLocaleTimeString(US_LOCALE)}
+            {o.date?.toLocaleDateString(US_LOCALE)} @{' '}
+            {o.date?.toLocaleTimeString(US_LOCALE)}
           </p>
           <p className={classnames(classes.itemData, 'col-7')}>
             <Amount value={priceToNumber(o.fio)} /> FIO (&#36;
@@ -101,7 +103,7 @@ const TotalBalanceBadge: React.FC<Props> = props => {
   );
 
   useEffect(() => {
-    setShowLockedTokensModalView(isOpenLockedList);
+    setShowLockedTokensModalView(!!isOpenLockedList);
   }, [isOpenLockedList]);
 
   const handleCloseModal = () => {

@@ -25,7 +25,7 @@ type Props = {
   onClose: () => void;
   onSubmit: (values: BackupFormValues) => void;
   loading: boolean;
-  otpError: string;
+  otpError?: string;
 };
 
 const RenderForm = (props: FormRenderProps<BackupFormValues> & Props) => {

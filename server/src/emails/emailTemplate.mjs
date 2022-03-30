@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+
 import handlebars from 'handlebars';
 
 const emailTemplatesPath = path.resolve('server/src/emails/');

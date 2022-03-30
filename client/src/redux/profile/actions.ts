@@ -1,11 +1,13 @@
 import { Ecc } from '@fioprotocol/fiojs';
+
+import { RouterProps } from 'react-router';
+
 import { Api } from '../../api';
 import {
   EmailConfirmationStateData,
   FioWalletDoublet,
   WalletKeysObj,
 } from '../../types';
-import { RouterProps } from 'react-router';
 import { minWaitTimeFunction } from '../../utils';
 
 import { GetState } from '../init';

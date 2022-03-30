@@ -1,11 +1,13 @@
 import { ValidationSchema, Validators } from '@lemoncode/fonk';
+
+import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
+
 import {
   isChainCodeValidator,
   isHashValidator,
   isNativeBlockchainPublicAddressValidator,
   metaValidator,
 } from '../../../../util/validators';
-import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
 
 const TOKEN_ID_MAX_LENGTH = 64;
 const URL_MAX_LENGTH = 128;

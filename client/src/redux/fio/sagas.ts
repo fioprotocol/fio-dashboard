@@ -55,7 +55,9 @@ export function* setFeesService() {
       endpoint,
       data: { fee },
     } = action;
+    // @ts-ignore todo: fix for all generators in the file
     const fees = yield select(feesSelector);
+    // @ts-ignore
     const roe = yield select(roeSelector);
 
     fees[endpoint] = convertFioPrices(fee, roe);
@@ -66,6 +68,7 @@ export function* setFeesService() {
     const {
       pricing: { usdtRoe },
     } = action.data;
+    // @ts-ignore
     const fees = yield select(feesSelector);
     const recalculatedFees: { [endpoint: string]: FeePrice } = {};
 
@@ -86,7 +89,9 @@ export function* setBalancesService() {
     action: RefreshBalanceAction,
   ) {
     const { publicKey, data } = action;
+    // @ts-ignore
     const walletsBalances = yield select(balancesSelector);
+    // @ts-ignore
     const roe = yield select(roeSelector);
 
     const recalculatedBalances = { ...walletsBalances };
@@ -104,6 +109,7 @@ export function* setBalancesService() {
     const {
       pricing: { usdtRoe: roe },
     } = action.data;
+    // @ts-ignore
     const walletsBalances = yield select(balancesSelector);
 
     const recalculatedBalances: WalletsBalances = {

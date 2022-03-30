@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
+
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import { useCheckIfDesktop } from '../../screenType';
 import CheckoutPurchaseContainer from '../../components/CheckoutPurchaseContainer';

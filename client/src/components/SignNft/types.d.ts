@@ -37,11 +37,11 @@ export type ContainerProps = {
 export type SignNftFormProps = {
   alreadySigned: boolean;
   onSubmit: (values: NftFormValues) => Promise<any>;
-  initialValues: NftFormValues | null;
+  initialValues?: NftFormValues;
   fieldValuesChanged: () => void;
   selectedFioAddressName: string;
   fioAddresses: FioAddressDoublet[];
-  fioAddress: FioAddressDoublet;
+  fioAddress?: FioAddressDoublet;
   setSelectedFioAddress: (value: string) => void;
   bundleCost: number;
   hasLowBalance: boolean;

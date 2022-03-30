@@ -83,7 +83,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
               </>
             ) : (
               <div className="mt-3 mb-4">
-                <FioName name={fioAddress.name} />
+                <FioName name={fioAddress?.name} />
                 <Row>
                   <Col className={classes.subTitleSection}>
                     Signed NFT Details

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Field } from 'react-final-form';
 
+import { Button } from 'react-bootstrap';
+
 import FormHeader from '../FormHeader/FormHeader';
 import PinInput from '../Input/PinInput/PinInput';
-
-import { Button } from 'react-bootstrap';
 
 export default class Pin extends Component {
   render() {

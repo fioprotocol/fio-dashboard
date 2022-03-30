@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Field, useForm } from 'react-final-form';
+
 import TextInput, {
   INPUT_UI_STYLES,
 } from '../../../../components/Input/TextInput';
@@ -29,7 +30,9 @@ const TokenDataFields: React.FC<Props> = props => {
 
   const { change, resetFieldState } = useForm();
 
-  const [tokensCodesList, setTokensCodesList] = useState(null);
+  const [tokensCodesList, setTokensCodesList] = useState<
+    { id: string; name: string }[] | null
+  >(null);
   const [isCustomChainCode, toggleIsCustomChainCode] = useState(false);
 
   const resetFieldValue = (fieldName: string) => {
@@ -72,7 +75,7 @@ const TokenDataFields: React.FC<Props> = props => {
           component={ChainCodeCustomDropdown}
           toggleToCustom={toggleIsCustomChainCode}
           placeholder="Type or Select Chain Code"
-          options={chainCodeList.map(chainCode => ({
+          options={chainCodeList?.map(chainCode => ({
             value: chainCode.id,
             label: `${chainCode.id} (${chainCode.name})`,
           }))}

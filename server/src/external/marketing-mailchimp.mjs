@@ -1,5 +1,6 @@
-import mailchimpMarketing from '@mailchimp/mailchimp_marketing';
 import crypto from 'crypto';
+
+import mailchimpMarketing from '@mailchimp/mailchimp_marketing';
 
 import logger from '../logger';
 import config from '../config';

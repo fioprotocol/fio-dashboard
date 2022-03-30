@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { withRouter } from 'react-router-dom';
+
 import { BADGE_TYPES } from '../components/Badge/Badge';
 import { ACTIONS } from '../components/Notifications/Notifications';
 import { REF_ACTIONS } from '../constants/common';

@@ -58,7 +58,7 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
       ? new MathOp(costNativeFio).add(nativeFioDomainPrice).toNumber()
       : nativeFioDomainPrice;
   }
-  if (!isFree && currentCartItem) {
+  if (!isFree && currentCartItem?.costNativeFio) {
     costNativeFio = currentCartItem.costNativeFio;
   }
 
@@ -86,7 +86,7 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
     if (costNativeFio && costNativeFio > 0)
       newCartItem.costNativeFio = costNativeFio;
     if (address && hasOnlyDomain) {
-      newCartItem.costNativeFio = new MathOp(newCartItem.costNativeFio)
+      newCartItem.costNativeFio = new MathOp(newCartItem.costNativeFio || 0)
         .add(nativeFioDomainPrice)
         .toNumber();
       const recalcFioPrices = convertFioPrices(newCartItem.costNativeFio, roe);

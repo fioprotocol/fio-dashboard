@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {
   FeePrice,
   PublicAddressDoublet,
@@ -13,7 +14,7 @@ export type ResultsData = {
   publicKey?: string;
   changedStatus?: string;
   other?: any;
-  error?: string;
+  error?: string | null;
   updated?: PublicAddressDoublet[];
   failed?: PublicAddressDoublet[];
   obtError?: string;
@@ -48,5 +49,5 @@ export type LinkTokenResultsProps = {
   bundleCost: number;
   changeBundleCost: (bundleCost: number) => void;
   onBack: () => void;
-  onRetry: () => void;
+  onRetry: (results: LinkActionResult) => void;
 };

@@ -19,7 +19,7 @@ const TransferResults = (props: ResultsProps & TransferResultsProps) => {
     results: { name, publicKey },
     resetFioNames,
   } = props;
-  const fioNameLabel = fioNameLabels[pageName];
+  const fioNameLabel = fioNameLabels[pageName || ''];
   const onClose = () => {
     resetFioNames();
     props.onClose();
