@@ -1,0 +1,6 @@
+{
+  "include": [
+    // Add file here if getting: "The file does not match your project config" error while running lint.
+    "./src/index.d.ts"
+  ]
+}
