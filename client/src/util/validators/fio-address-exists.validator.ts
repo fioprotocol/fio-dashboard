@@ -6,13 +6,14 @@ interface FieldArgs {
   sameWalletMessage?: string;
 }
 
-const defaultMessage = 'Please enter valid FIO Crypto Handle.';
+const defaultMessage =
+  'FIO Crypto Handle is not valid / not exist / domain expired';
 
 export const fioAddressExistsValidator: FieldValidationFunctionAsync<FieldArgs> = async ({
   value,
   values,
   message = defaultMessage,
-  customArgs,
+  customArgs = {},
 }) => {
   const { fieldIdToCompare, sameWalletMessage = 'Spend to self.' } = customArgs;
 
