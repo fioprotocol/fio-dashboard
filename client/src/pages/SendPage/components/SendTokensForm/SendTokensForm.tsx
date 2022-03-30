@@ -151,7 +151,6 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
                     fioAddressExistsValidator({
                       value,
                       values,
-                      message: 'FIO Crypto Handle is not valid / not exist',
                       customArgs: {
                         fieldIdToCompare: 'fromPubKey',
                       },
@@ -219,7 +218,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
             <SubmitButton
               text="Send FIO Tokens"
               disabled={submitDisabled}
-              loading={loading}
+              loading={loading || formRenderProps.submitting}
               withTopMargin={true}
             />
           </form>
