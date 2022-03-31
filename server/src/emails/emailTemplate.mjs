@@ -8,6 +8,12 @@ export const templates = {
   createAccount: 'createAccount',
   confirmEmail: 'confirmEmail',
   passRecovery: 'passRecovery',
+  approveFioRequest: 'approveFioRequest',
+  rejectFioRequest: 'rejectFioRequest',
+  newFioRequest: 'newFioRequest',
+  balanceChange: 'balanceChange',
+  expiringDomains: 'expiringDomains',
+  lowBundleCount: 'lowBundleCount',
 };
 
 const FIO_LOGO_BASE64 =
