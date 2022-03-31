@@ -1,6 +1,6 @@
-import { FormRenderProps, FormApi } from 'react-final-form';
-
 import React from 'react';
+import { FormApi } from 'final-form';
+import { FormRenderProps } from 'react-final-form';
 
 import {
   CartItem,

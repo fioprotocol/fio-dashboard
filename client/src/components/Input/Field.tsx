@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import Input, { FieldProps as OtherProps } from '../Input/InputRedux';
 

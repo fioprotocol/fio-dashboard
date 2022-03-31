@@ -81,7 +81,9 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
       ...validationProps,
     };
 
+    // @ts-ignore
     if (isAddress) addressValidation(validationPropsToPass);
+    // @ts-ignore
     if (isDomain) domainValidation(validationPropsToPass);
 
     const registeredFields = form.getRegisteredFields();

@@ -1,4 +1,4 @@
-import React, { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 
 import { Field, FieldValue } from '../../../../components/Input/Field';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
