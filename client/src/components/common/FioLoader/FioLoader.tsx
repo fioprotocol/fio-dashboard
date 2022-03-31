@@ -1,5 +1,3 @@
-import React from 'react';
-
 import logoAnimation from '../../CreateAccountForm/logo-animation.json';
 
 const FioLoader = () => {

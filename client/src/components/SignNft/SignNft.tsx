@@ -8,10 +8,7 @@ import SignResults from '../common/TransactionResults/components/SignResults';
 import EdgeConfirmAction from '../EdgeConfirmAction';
 
 import { ROUTES } from '../../constants/routes';
-import {
-  CONFIRM_PIN_ACTIONS,
-  NO_CRYPTO_KEYS_ERROR_MESSAGE,
-} from '../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../constants/fio';
 
 import { putParamsToUrl } from '../../utils';
@@ -91,7 +88,6 @@ const SignNft: React.FC<ContainerProps> = props => {
   }, []);
 
   const submit = async ({ keys, data }: SubmitActionParams) => {
-    if (!keys) return console.error(NO_CRYPTO_KEYS_ERROR_MESSAGE);
     return await apis.fio.singNFT(keys, fioAddress?.name || '', [{ ...data }]);
   };
 

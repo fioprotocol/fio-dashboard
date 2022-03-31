@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react';
+import { FormEvent, useState } from 'react';
 
 import { Field, FieldValue } from '../../../Input/Field';
 import PriceBadge from '../../../Badges/PriceBadge/PriceBadge';

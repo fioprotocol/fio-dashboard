@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Results from '../index';
 import { BADGE_TYPES } from '../../../Badge/Badge';
 import PriceBadge from '../../../Badges/PriceBadge/PriceBadge';

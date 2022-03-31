@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import * as actions from './actions';
 
 export default combineReducers({
-  loading(state: boolean = false, action) {
+  loading(state = false, action) {
     switch (action.type) {
       case actions.LIST_REQUEST:
         return true;
