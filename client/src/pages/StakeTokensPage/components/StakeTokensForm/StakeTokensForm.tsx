@@ -18,11 +18,11 @@ import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
 
 import { formValidation } from './validation';
 import MathOp from '../../../../util/math';
-import { FioAddressDoublet } from '../../../../types';
 
 import apis from '../../../../api';
 
 import { StakeTokensProps, StakeTokensValues } from '../../types';
+import { FioAddressDoublet } from '../../../../types';
 
 import classes from '../../styles/StakeTokensForm.module.scss';
 
@@ -59,9 +59,44 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
     }
   }, [walletAvailableAmount, fioAddresses.length, fee]);
 
+  // temporary added while fio stake api can't allow accounts without crypto handles
+  const renderFioAddressWarningBadge = () => {
+    if (fioAddresses.length) return null;
+
+    return (
+      <>
+        <Label
+          label="FIO Crypto Handle for Staking"
+          uiType={INPUT_UI_STYLES.BLACK_WHITE}
+        />
+        <InfoBadge
+          className={classes.infoBadge}
+          type={BADGE_TYPES.WARNING}
+          show={true}
+          title="No Crypto Handle"
+          message={
+            <>
+              You do not have a crypto handle associated with this wallet. You
+              are not able to stake without any.
+              <br />
+              <br />
+              <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>
+                Get Fio Crypto Handle
+              </Link>
+            </>
+          }
+        />
+      </>
+    );
+  };
+
   const renderFioAddressInfoBadge = () => {
     if (fioAddresses.length) return null;
 
+    return renderFioAddressWarningBadge();
+
+    // temporary added while fio stake api can't allow accounts without crypto handles
+    // eslint-disable-next-line no-unreachable
     return (
       <>
         <Label
@@ -75,12 +110,14 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           title="No Address"
           message={
             <>
-              You do not have an address associated with this wallet. You will
-              need to pay a fee to stake your tokens.
+              You do not have a crypto handle associated with this wallet. You
+              will need to pay a fee to stake your tokens.
               <br />
               <br />
               Want to use a bundle transaction instead of paying fee?{' '}
-              <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>Get Fio Address</Link>
+              <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>
+                Get Fio Crypto Handle
+              </Link>
             </>
           }
         />
@@ -160,7 +197,8 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           formRenderProps.submitting ||
           loading ||
           hasLowBalance ||
-          (!!selectedAddress && notEnoughBundles);
+          (!!selectedAddress && notEnoughBundles) ||
+          !fioAddresses.length; // temporary added while fio stake api can't allow accounts without crypto handles
 
         return (
           <form
@@ -248,6 +286,15 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
                 remaining={selectedAddress.remaining}
               />
             )}
+
+            {/*temporary added while fio stake api can't allow accounts without crypto handles*/}
+            <InfoBadge
+              className={classes.infoBadgeError}
+              type={BADGE_TYPES.ERROR}
+              show={!fioAddresses.length}
+              title="No Crypto Handle"
+              message={<>You are not able to stake without crypto handles.</>}
+            />
 
             <SubmitButton
               text="Stake FIO Tokens"
