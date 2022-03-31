@@ -75,7 +75,6 @@ export const PrivateRoute: React.FC<PrivateRouteProps & RouteProps> = ({
           );
         }
 
-        // @ts-ignore
         return <Component {...props} />;
       }}
     />

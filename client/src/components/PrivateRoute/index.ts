@@ -1,5 +1,4 @@
 import { connect } from 'react-redux';
-// import { withRouter } from 'react-router';
 import { createStructuredSelector } from 'reselect';
 
 import PrivateRoute from './PrivateRoute';
@@ -27,5 +26,4 @@ const reduxConnect = connect(
   { pure: false },
 );
 
-// export default withRouter(compose(reduxConnect)(PrivateRoute));
 export default compose(reduxConnect)(PrivateRoute);
