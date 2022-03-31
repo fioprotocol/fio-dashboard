@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { osName, osVersion } from 'react-device-detect';
 
 import ModalComponent from '../Modal/Modal';

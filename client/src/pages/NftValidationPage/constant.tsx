@@ -1,5 +1,3 @@
-import React from 'react';
-
 import ContractAddressField from './components/ContractAddressField';
 import GenericNftValidationField, {
   FIELDS_NAMES,

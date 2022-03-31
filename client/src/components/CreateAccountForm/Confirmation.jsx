@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import classnames from 'classnames';
-
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import { Button, Col, Row } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classnames from 'classnames';
 
 import FormHeader from '../FormHeader/FormHeader';
 

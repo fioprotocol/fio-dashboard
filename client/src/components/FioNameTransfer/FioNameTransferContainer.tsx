@@ -14,7 +14,6 @@ import { fioNameLabels } from '../../constants/labels';
 import {
   CONFIRM_PIN_ACTIONS,
   MANAGE_PAGE_REDIRECT,
-  NO_CRYPTO_KEYS_ERROR_MESSAGE,
 } from '../../constants/common';
 import { ACTIONS } from '../../constants/fio';
 
@@ -77,8 +76,6 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   }, [processing]);
 
   const submit = async ({ keys, data }: SubmitActionParams) => {
-    if (!keys) return console.error(NO_CRYPTO_KEYS_ERROR_MESSAGE);
-
     const { transferAddress } = data;
     let newOwnerKey = hasFioAddressDelimiter(transferAddress)
       ? ''

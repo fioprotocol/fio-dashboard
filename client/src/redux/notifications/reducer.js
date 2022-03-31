@@ -4,7 +4,7 @@ import { LOGOUT_SUCCESS, SET_RECOVERY_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
 
 export default combineReducers({
-  loading(state: boolean = false, action) {
+  loading(state = false, action) {
     switch (action.type) {
       case actions.LIST_REQUEST:
         return true;

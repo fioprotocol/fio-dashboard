@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Results from '../index';
 import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
 import DomainStatusBadge from '../../../Badges/DomainStatusBadge/DomainStatusBadge';
