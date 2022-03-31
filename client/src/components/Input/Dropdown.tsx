@@ -1,4 +1,3 @@
-import React from 'react';
 import { FieldRenderProps } from 'react-final-form';
 
 import { Label, LabelSuffix } from './StaticInputParts';

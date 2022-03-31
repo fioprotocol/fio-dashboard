@@ -1,5 +1,3 @@
-import React from 'react';
-
 import AddressWidget from '../../../../components/AddressWidget';
 import Roe from '../../../../services/Roe';
 

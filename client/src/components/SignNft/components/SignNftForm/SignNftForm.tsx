@@ -1,4 +1,3 @@
-import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { OnChange } from 'react-final-form-listeners';
 import { Col, Container, Row } from 'react-bootstrap';

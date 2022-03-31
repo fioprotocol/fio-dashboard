@@ -2,13 +2,11 @@ import QRCode from 'qrcode.react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import React from 'react';
-
-import classes from '../../../WalletPage/styles/WalletDetailsModal.module.scss';
 import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import CopyTooltip from '../../../../components/CopyTooltip';
-
 import Modal from '../../../../components/Modal/Modal';
+
+import classes from '../../../WalletPage/styles/WalletDetailsModal.module.scss';
 
 import {
   copyToClipboard,

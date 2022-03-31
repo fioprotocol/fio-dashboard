@@ -60,7 +60,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   }, []);
 
   const submit = async ({ keys }: SubmitActionParams) => {
-    if (isDomain(name) && keys) {
+    if (isDomain(name)) {
       return await apis.fio.executeAction(keys, ACTIONS.renewFioDomain, {
         fioDomain: name,
         maxFee: feeNativeFio,

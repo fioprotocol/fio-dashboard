@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { isEmpty } from 'lodash';
 
 import FormHeader from '../FormHeader/FormHeader';
