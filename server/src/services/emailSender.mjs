@@ -161,7 +161,7 @@ class EmailSender {
        *
        * @param date example 24/03/2022 @ 5:46 pm
        * @param fioBalanceChange example +120 FIO ($120.00 USDC)
-       * @param newFioBalance exmaple +220 FIO ($220.00 USDC)
+       * @param newFioBalance example +220 FIO ($220.00 USDC)
        * @param wallet example FIO82i9X4UpBC8yKRs1F59cbZomFEnryYipHNZXq921EppJheZzK6
        */
       case templates.balanceChange:
