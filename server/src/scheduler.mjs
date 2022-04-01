@@ -15,7 +15,7 @@ const bree = new Bree({
       path: path.join(JOBS_PATH, 'emails.mjs'),
       name: 'emails',
       interval: process.env.EMAILS_JOB_INTERVAL,
-      timeout: '30s',
+      timeout: process.env.EMAILS_JOB_TIMEOUT,
       closeWorkerAfterMs: 60 * 1000, // 1 min
     },
     {
