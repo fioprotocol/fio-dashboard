@@ -3,7 +3,9 @@ import { parentPort } from 'worker_threads';
 
 import '../db';
 import { fioApi } from '../external/fio.mjs';
+import { getROE } from '../external/roe.mjs';
 import { User, Wallet, PublicWalletData, Notification } from '../models/index.mjs';
+import MathOp from '../services/math.mjs';
 
 import logger from '../logger.mjs';
 
@@ -86,10 +88,11 @@ const checkRequests = async wallet => {
           userId: wallet.User.id,
           data: {
             pagesToShow: ['/'],
-            emailTemplate: '',
             emailData: {
-              request: fetchedItem,
-              date: new Date(),
+              requestingFioCryptoHandle: fetchedItem.payee_fio_address,
+              requestSentTo: fetchedItem.payer_fio_address,
+              wallet: wallet.publicKey,
+              date: new Date(fetchedItem.time_stamp),
             },
           },
         });
@@ -135,10 +138,11 @@ const checkRequests = async wallet => {
             userId: wallet.User.id,
             data: {
               pagesToShow: ['/'],
-              emailTemplate: '',
               emailData: {
-                request: fetchedItem,
-                date: new Date(),
+                requestor: fetchedItem.payee_fio_address,
+                to: fetchedItem.payer_fio_address,
+                wallet: wallet.publicKey,
+                date: new Date(fetchedItem.time_stamp),
               },
             },
           });
@@ -170,17 +174,27 @@ const checkBalance = async wallet => {
       await PublicWalletData.update({ balance }, { where: { id: publicWalletData.id } });
     }
 
-    if (Number(publicWalletData.balance) !== balance) {
+    if (!new MathOp(publicWalletData.balance).eq(balance)) {
+      const roe = await getROE();
+      const fioNativeChangeBalance = new MathOp(balance)
+        .div(publicWalletData.balance)
+        .toNumber();
+      const usdcChangeBalance = fioApi.convertFioToUsdc(fioNativeChangeBalance, roe);
+      const usdcBalance = fioApi.convertFioToUsdc(balance, roe);
+      const sign = new MathOp(fioNativeChangeBalance).gt(0) ? '+' : '-';
+
       await Notification.create({
         type: Notification.TYPE.INFO,
         contentType: Notification.CONTENT_TYPE.BALANCE_CHANGED,
         userId: wallet.User.id,
         data: {
           pagesToShow: ['/'],
-          emailTemplate: '',
           emailData: {
-            balanceChange: balance - Number(publicWalletData.balance),
-            newBalance: balance,
+            fioBalanceChange: `${sign}${fioApi.sufToAmount(
+              new MathOp(fioNativeChangeBalance).abs().toNumber(),
+            )} FIO ($${usdcChangeBalance} USDC)`,
+            newFioBalance: `${fioApi.sufToAmount(balance)} FIO ($${usdcBalance} USDC)`,
+            wallet: wallet.publicKey,
             date: new Date(),
           },
         },
@@ -232,10 +246,9 @@ const checkFioNames = async wallet => {
             userId: wallet.User.id,
             data: {
               pagesToShow: ['/'],
-              emailTemplate: '',
               emailData: {
-                cryptoHandle: { ...fetched },
-                date: new Date(),
+                name: fetched.fio_address,
+                bundles: fetched.remaining_bundled_tx,
               },
             },
           });
@@ -264,7 +277,8 @@ const checkFioNames = async wallet => {
           userId: wallet.User.id,
           data: {
             emailData: {
-              domain: { fio_domain: domain.fio_domain, expiration: domain.expiration },
+              name: domain.fio_domain,
+              date: new Date(domain.expiration),
               domainExpPeriod,
             },
           },
@@ -276,11 +290,10 @@ const checkFioNames = async wallet => {
             userId: wallet.User.id,
             data: {
               pagesToShow: ['/'],
-              emailTemplate: '',
               emailData: {
-                domain: { ...domain },
+                name: domain.fio_domain,
+                date: new Date(domain.expiration),
                 domainExpPeriod,
-                date: new Date(),
               },
             },
           });
