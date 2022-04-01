@@ -33,17 +33,29 @@ if (parentPort)
         [Sequelize.Op.is]: null,
       },
     },
+    include: [
+      { model: User, where: { status: User.STATUS.ACTIVE }, attributes: ['id', 'email'] },
+    ],
     limit: NOTIFICATION_LIMIT_PER_JOB,
+    raw: true,
+    nest: true,
   });
 
   parentPort.postMessage(`Process notifications - ${notifications.length}`);
-  const handleNotification = async notification => {
+
+  const handleNotifications = async notifications => {
     if (isCancelled) return false;
 
-    parentPort.postMessage(`Processing notification id - ${notification.id}`);
+    parentPort.postMessage(
+      `Processing notifications id - ${notifications.map(n => n.id)}`,
+    );
 
     try {
-      const { data } = notification;
+      const {
+        data,
+        contentType,
+        User: { email },
+      } = notifications[0];
 
       if (!data.emailData || !Object.keys(data.emailData).length) return false;
 
@@ -51,23 +63,22 @@ if (parentPort)
       try {
         let emailData = data.emailData;
 
-        if (notification.contentType === Notification.CONTENT_TYPE.LOW_BUNDLE_TX) {
+        if (contentType === Notification.CONTENT_TYPE.LOW_BUNDLE_TX) {
           emailData = {
-            fioCryptoHandles: [data.emailData],
+            fioCryptoHandles: notifications.map(n => n.data.emailData),
           };
         }
 
-        if (notification.contentType === Notification.CONTENT_TYPE.DOMAIN_EXPIRE) {
+        if (contentType === Notification.CONTENT_TYPE.DOMAIN_EXPIRE) {
           emailData = {
-            domains: [data.emailData],
-            expiringStatus: data.emailData.expiringStatus,
+            domains: notifications.map(n => n.data.emailData),
+            expiringStatus: data.emailData.domainExpPeriod,
           };
         }
-        
-        const user = await User.findActive(notification.userId);
+
         const emailResult = await emailSender.send(
-          CONTENT_TYPE_EMAIL_TEMPLATE_MAP[notification.contentType],
-          user.email,
+          CONTENT_TYPE_EMAIL_TEMPLATE_MAP[contentType],
+          email,
           emailData,
         );
 
@@ -77,9 +88,13 @@ if (parentPort)
       }
 
       if (emailSent) {
-        notification.emailDate = new Date();
-        await notification.save();
-        parentPort.postMessage(`Notification processed, email sent - ${notification.id}`);
+        await Notification.update(
+          { emailDate: new Date() },
+          { where: { id: { [Sequelize.Op.in]: notifications.map(n => n.id) } } },
+        );
+        parentPort.postMessage(
+          `Notification processed, email sent - ${notifications.map(n => n.id)}`,
+        );
       }
     } catch (e) {
       logger.error(`NOTIFICATION PROCESSING ERROR`, e);
@@ -88,7 +103,43 @@ if (parentPort)
     return true;
   };
 
-  const methods = notifications.map(notification => handleNotification(notification));
+  const notificationGroups = notifications.reduce((acc, notification) => {
+    if (!notification.data || !notification.data.emailData) return acc;
+
+    const firstSimilar = notifications.find(searchingItem => {
+      if (
+        notification.userId !== searchingItem.userId ||
+        notification.contentType !== searchingItem.contentType ||
+        !searchingItem.data ||
+        !searchingItem.data.emailData
+      )
+        return false;
+
+      const {
+        data: { emailData },
+      } = searchingItem;
+
+      // join domains into one notification email
+      if (
+        notification.contentType === Notification.CONTENT_TYPE.DOMAIN_EXPIRE &&
+        emailData.domainExpPeriod === notification.data.emailData.domainExpPeriod &&
+        emailData.name !== notification.data.emailData.name
+      )
+        return true;
+
+      return false;
+    });
+
+    if (firstSimilar && acc[firstSimilar.id]) {
+      acc[firstSimilar.id] = [...acc[firstSimilar.id], notification];
+    } else acc[notification.id] = [notification];
+
+    return acc;
+  }, {});
+
+  const methods = Object.values(notificationGroups).map(sortedNotifications =>
+    handleNotifications(sortedNotifications),
+  );
 
   await Promise.allSettled(methods);
 
