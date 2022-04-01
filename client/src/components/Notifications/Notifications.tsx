@@ -47,6 +47,12 @@ export default class Notifications extends Component<
       )
         continue;
       if (notification.closeDate) continue;
+      if (
+        !notification.title &&
+        !getDefaultContent(notification.contentType, 'title')
+      )
+        continue;
+
       return notification;
     }
     return null;
