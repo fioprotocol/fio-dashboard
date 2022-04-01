@@ -8,6 +8,14 @@ import { User, Notification } from '../models/index.mjs';
 import { templates } from '../emails/emailTemplate.mjs';
 
 const NOTIFICATION_LIMIT_PER_JOB = 100;
+const CONTENT_TYPE_EMAIL_TEMPLATE_MAP = {
+  [Notification.CONTENT_TYPE.NEW_FIO_REQUEST]: templates.newFioRequest,
+  [Notification.CONTENT_TYPE.FIO_REQUEST_APPROVED]: templates.approveFioRequest,
+  [Notification.CONTENT_TYPE.FIO_REQUEST_REJECTED]: templates.rejectFioRequest,
+  [Notification.CONTENT_TYPE.BALANCE_CHANGED]: templates.balanceChange,
+  [Notification.CONTENT_TYPE.DOMAIN_EXPIRE]: templates.expiringDomains,
+  [Notification.CONTENT_TYPE.LOW_BUNDLE_TX]: templates.lowBundleCount,
+};
 
 // store boolean if the job is cancelled
 let isCancelled = false;
@@ -37,15 +45,30 @@ if (parentPort)
     try {
       const { data } = notification;
 
-      if (!data.emailTemplate) return false;
+      if (!data.emailData || !Object.keys(data.emailData).length) return false;
 
       let emailSent = false;
       try {
+        let emailData = data.emailData;
+
+        if (notification.contentType === Notification.CONTENT_TYPE.LOW_BUNDLE_TX) {
+          emailData = {
+            fioCryptoHandles: [data.emailData],
+          };
+        }
+
+        if (notification.contentType === Notification.CONTENT_TYPE.DOMAIN_EXPIRE) {
+          emailData = {
+            domains: [data.emailData],
+            expiringStatus: data.emailData.expiringStatus,
+          };
+        }
+        
         const user = await User.findActive(notification.userId);
         const emailResult = await emailSender.send(
-          templates[data.emailTemplate],
+          CONTENT_TYPE_EMAIL_TEMPLATE_MAP[notification.contentType],
           user.email,
-          data.emailData,
+          emailData,
         );
 
         emailSent = !!emailResult;
