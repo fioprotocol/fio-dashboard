@@ -177,8 +177,8 @@ class EmailSender {
       /**
        *
        * @param domains[]
-       * @param name example 'tester@test'
-       * @param date example 24/03/2022 @ 5:46 pm
+       * @param domains.name example 'tester@test'
+       * @param domains.date example 24/03/2022 @ 5:46 pm
        * @param expiringStatus example EXPIRED_90
        */
       case templates.expiringDomains:
@@ -198,8 +198,8 @@ class EmailSender {
       /**
        *
        * @param fioCryptoHandles[]
-       * @param name example 'tester@test'
-       * @param bundles example 24
+       * @param fioCryptoHandles.name example 'tester@test'
+       * @param fioCryptoHandles.bundles example 24
        */
       case templates.lowBundleCount:
         return {
