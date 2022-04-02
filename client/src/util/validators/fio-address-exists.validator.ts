@@ -17,10 +17,17 @@ export const fioAddressExistsValidator: FieldValidationFunctionAsync<FieldArgs> 
 }) => {
   const { fieldIdToCompare, sameWalletMessage = 'Spend to self.' } = customArgs;
 
+  if (!value)
+    return {
+      type: 'FIO_CRYPTO_HANDLE_EXISTS',
+      succeeded: true,
+      message: '',
+    };
+
   let transferAddress = value;
 
   const validationResult = {
-    type: 'FIO_USER_EXISTS',
+    type: 'FIO_CRYPTO_HANDLE_EXISTS',
     succeeded: false,
     message:
       typeof message === 'string'
