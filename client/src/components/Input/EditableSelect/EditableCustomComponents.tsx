@@ -7,12 +7,13 @@ import classes from '../styles/EditableSelect.module.scss';
 export const Input = (
   props: {
     hasValue: boolean;
-    selectProps: { prefix?: string; inputValue: string; isDisabled: boolean };
+    selectProps: { inputValue: string; isDisabled: boolean };
   } & any,
+  prefix?: string,
 ) => {
   const {
     hasValue,
-    selectProps: { prefix, inputValue, isDisabled },
+    selectProps: { inputValue, isDisabled },
   } = props;
 
   if (!inputValue && isDisabled) return null;
@@ -86,13 +87,10 @@ export const DropdownIndicator = (
 export const SingleValue = (
   singleValueProps: {
     children: string;
-    selectProps: { prefix?: string };
   } & any,
+  prefix?: string,
 ) => {
-  const {
-    children,
-    selectProps: { prefix },
-  } = singleValueProps;
+  const { children } = singleValueProps;
   return (
     <div className={classes.prefixContainer}>
       <components.SingleValue
