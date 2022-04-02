@@ -196,7 +196,7 @@ export default class Fio {
         return !!rows[0].id;
       }
     } catch (e) {
-      console.error(e);
+      this.logError(e);
     }
 
     return false;
@@ -296,15 +296,14 @@ export default class Fio {
   };
 
   getFioNames = async (publicKey: string): Promise<FioNamesResponse> => {
+    let res: FioNamesResponse = { fio_addresses: [], fio_domains: [] };
     try {
-      // do not return method to handle errors here
-      const res = await this.publicFioSDK.getFioNames(publicKey);
-      return res;
+      res = await this.publicFioSDK.getFioNames(publicKey);
     } catch (e) {
       this.logError(e);
     }
 
-    return { fio_addresses: [], fio_domains: [] };
+    return res;
   };
 
   getFioAddresses = async (
@@ -312,18 +311,17 @@ export default class Fio {
     limit: number,
     offset: number,
   ): Promise<FioAddressesResponse & { more: number }> => {
+    let res: FioAddressesResponse & { more: number } = {
+      fio_addresses: [],
+      more: 0,
+    };
     try {
-      const res = await this.publicFioSDK.getFioAddresses(
-        publicKey,
-        limit,
-        offset,
-      );
-      return res;
+      res = await this.publicFioSDK.getFioAddresses(publicKey, limit, offset);
     } catch (e) {
       this.logError(e);
     }
 
-    return { fio_addresses: [], more: 0 };
+    return res;
   };
 
   getFioDomains = async (
@@ -331,31 +329,30 @@ export default class Fio {
     limit: number,
     offset: number,
   ): Promise<FioDomainsResponse & { more: number }> => {
+    let res: FioDomainsResponse & { more: number } = {
+      fio_domains: [],
+      more: 0,
+    };
     try {
-      const res = await this.publicFioSDK.getFioDomains(
-        publicKey,
-        limit,
-        offset,
-      );
-      return res;
+      res = await this.publicFioSDK.getFioDomains(publicKey, limit, offset);
     } catch (e) {
       this.logError(e);
     }
 
-    return { fio_domains: [], more: 0 };
+    return res;
   };
 
   getFioPublicAddress = async (
     fioAddress: string,
   ): Promise<PublicAddressResponse> => {
+    let res: PublicAddressResponse = { public_address: '' };
     try {
-      const res = await this.publicFioSDK.getFioPublicAddress(fioAddress);
-      return res;
+      res = await this.publicFioSDK.getFioPublicAddress(fioAddress);
     } catch (e) {
       this.logError(e);
     }
 
-    return { public_address: '' };
+    return res;
   };
 
   getNFTs = async (

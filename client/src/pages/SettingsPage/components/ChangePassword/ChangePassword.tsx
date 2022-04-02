@@ -18,7 +18,7 @@ const ITEM_PROPS = {
 };
 
 type Props = {
-  results: any; // todo: set types for results
+  results: { status?: number };
   changePassword: (values: PasswordTypes) => void;
   loading: boolean;
   changePasswordError: { type?: string };

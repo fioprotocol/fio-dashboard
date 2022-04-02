@@ -16,11 +16,15 @@ const NO_EDGE_CONTEXT_MESSAGE = 'Edge Context is not initialised';
 export default class Edge {
   edgeContext: EdgeContext | null;
 
+  logError = (e: Error | string) => {
+    console.error(e);
+  };
+
   validateEdgeContext = () => {
     if (!this.edgeContext) throw new Error(NO_EDGE_CONTEXT_MESSAGE);
   };
 
-  makeEdgeContext = async () => {
+  makeEdgeContext = async (): Promise<boolean> => {
     try {
       if (this.edgeContext) return true;
 
@@ -36,27 +40,27 @@ export default class Edge {
       lockEdgeCorePlugins();
       return true;
     } catch (e) {
-      console.error(e);
+      this.logError(e);
     }
 
     return false;
   };
 
-  getCachedUsers() {
+  getCachedUsers(): Promise<string[]> {
     try {
       this.validateEdgeContext();
       return this.edgeContext.listUsernames();
     } catch (e) {
-      console.error(e);
+      this.logError(e);
     }
   }
 
-  clearCachedUser(username: string) {
+  clearCachedUser(username: string): Promise<void> {
     try {
       this.validateEdgeContext();
       return this.edgeContext.deleteLocalAccount(username);
     } catch (e) {
-      console.error(e);
+      this.logError(e);
     }
   }
 
@@ -70,7 +74,7 @@ export default class Edge {
       this.validateEdgeContext();
       return this.edgeContext.loginWithPassword(username, password, options);
     } catch (e) {
-      console.error(e);
+      this.logError(e);
       throw e;
       // todo:
       // if (error.wait > 0) {
@@ -90,7 +94,7 @@ export default class Edge {
       );
       return account;
     } catch (e) {
-      console.error(e);
+      this.logError(e);
       throw e;
       // if (error.wait > 0) {
       //   const currentWaitSpan = error.wait
@@ -100,9 +104,10 @@ export default class Edge {
     }
   }
 
-  async checkPasswordRules(password: string, passwordRepeat: string) {
+  checkPasswordRules(password: string, passwordRepeat: string): boolean {
+    this.validateEdgeContext();
     // check password rules
-    const check = await this.edgeContext?.checkPasswordRules(password);
+    const check = this.edgeContext.checkPasswordRules(password);
     if (!check?.passed) {
       throw new Error('Password is not valid');
     }
@@ -123,7 +128,7 @@ export default class Edge {
       this.validateEdgeContext();
       return this.edgeContext.createAccount(username, password, pin, {});
     } catch (e) {
-      console.error(e);
+      this.logError(e);
       throw e;
     }
   }
@@ -133,7 +138,7 @@ export default class Edge {
       this.validateEdgeContext();
       return await this.edgeContext.fetchLoginMessages();
     } catch (e) {
-      console.error(e);
+      this.logError(e);
       throw e;
     }
   }
@@ -143,18 +148,23 @@ export default class Edge {
       this.validateEdgeContext();
       return this.edgeContext.usernameAvailable(username); // returns bool `available`
     } catch (e) {
-      console.error(e);
+      this.logError(e);
       throw e;
     }
   }
 
-  async getRecoveryQuestions() {
+  async getRecoveryQuestions(): Promise<
+    { category: string; question: string }[]
+  > {
     try {
       this.validateEdgeContext();
       const results = await this.edgeContext.listRecoveryQuestionChoices();
-      return results.filter((result: any) => result.category === 'recovery2');
+      return results.filter(
+        (result: { category: string; question: string }) =>
+          result.category === 'recovery2',
+      );
     } catch (e) {
-      console.error(e);
+      this.logError(e);
       throw e;
     }
   }
@@ -178,12 +188,12 @@ export default class Edge {
         if (isNewPasswordSet) {
           results.status = 1;
         } else {
-          throw new Error('New password not set');
+          results.status = 0;
         }
       }
       return results;
     } catch (e) {
-      console.error(e);
+      this.logError(e);
       throw e;
     }
   }
@@ -205,7 +215,7 @@ export default class Edge {
       }
       return results;
     } catch (e) {
-      console.error(e);
+      this.logError(e);
       throw e;
     }
   }
@@ -216,7 +226,7 @@ export default class Edge {
       const token = await this.getToken(username);
       return !!token;
     } catch (e) {
-      console.error(e);
+      this.logError(e);
       // todo: check is `throw e` needed here
     }
   }
@@ -228,12 +238,13 @@ export default class Edge {
         ({ username: localUsername }: { username: string }) =>
           localUsername === username,
       );
-      if (!localUser?.recovery2Key) throw new Error('No recovery key found');
-      return localUser.recovery2Key;
+      if (localUser?.recovery2Key) return localUser.recovery2Key;
     } catch (e) {
-      console.error(e);
+      this.logError(e);
       throw e;
     }
+
+    throw new Error('No recovery key found');
   }
 
   async disableRecovery(account: EdgeAccount): Promise<{ status: number }> {
@@ -241,7 +252,7 @@ export default class Edge {
       await account.deleteRecovery();
       return { status: 1 };
     } catch (e) {
-      console.error(e);
+      this.logError(e);
       throw e;
     }
   }
@@ -254,7 +265,7 @@ export default class Edge {
       this.validateEdgeContext();
       return await this.edgeContext.fetchRecovery2Questions(token, username);
     } catch (e) {
-      console.error(e);
+      this.logError(e);
       throw e;
     }
   }
@@ -268,7 +279,7 @@ export default class Edge {
       this.validateEdgeContext();
       return this.edgeContext.loginWithRecovery2(token, username, answers);
     } catch (e) {
-      console.error(e);
+      this.logError(e);
       throw e;
     }
   }
@@ -281,14 +292,17 @@ export default class Edge {
   ): Promise<{ status: number }> {
     try {
       const account = await this.loginWithRecovery(token, username, answers);
-      if (!account) throw new Error('No account found');
-      await account.changePassword(password);
-      await account.logout();
-      return { status: 1 };
+      if (account) {
+        await account.changePassword(password);
+        await account.logout();
+        return { status: 1 };
+      }
     } catch (e) {
-      console.error(e);
+      this.logError(e);
       throw e;
     }
+
+    throw new Error('No account found');
   }
 
   async enableTwoFactorAuth(account: EdgeAccount): Promise<{ status: number }> {
@@ -296,7 +310,7 @@ export default class Edge {
       await account.enableOtp();
       return { status: 1 };
     } catch (e) {
-      console.error(e);
+      this.logError(e);
       throw e;
     }
   }
@@ -308,7 +322,7 @@ export default class Edge {
       await account.disableOtp();
       return { status: 1 };
     } catch (e) {
-      console.error(e);
+      this.logError(e);
       throw e;
     }
   }
