@@ -1,10 +1,17 @@
 import Base from './base';
 
+import {
+  FioRegCaptchaResponse,
+  FioRegDomainsResponse,
+  FioRegPricesResponse,
+  FioRegRegisterResponse,
+} from './responses';
+
 export default class FioReg extends Base {
-  prices() {
+  prices(): Promise<FioRegPricesResponse> {
     return this.apiClient.get('reg/prices');
   }
-  domains() {
+  domains(): Promise<FioRegDomainsResponse> {
     return this.apiClient.get('reg/domains');
   }
   register(data: {
@@ -17,10 +24,10 @@ export default class FioReg extends Base {
       geetest_validate?: string;
       geetest_seccode?: string;
     };
-  }) {
+  }): Promise<FioRegRegisterResponse> {
     return this.apiClient.post('reg/register', { data });
   }
-  initCaptcha() {
+  initCaptcha(): Promise<FioRegCaptchaResponse> {
     return this.apiClient.post('reg/captcha/init', {});
   }
 }
