@@ -5,41 +5,16 @@ import { FIO_CHAIN_CODE } from '../constants/fio';
 import MathOp from './math';
 import { getUTCDate } from './general';
 
-import { FioWalletTxHistory, TransactionItemProps } from '../types';
+import {
+  FioHistoryNodeAction,
+  FioWalletTxHistory,
+  TransactionItemProps,
+} from '../types';
 
 const HISTORY_NODE_OFFSET = 20;
 const HISTORY_TX_NAMES = {
   TRANSFER_PUB_KEY: 'trnsfiopubky',
   TRANSFER: 'transfer',
-};
-
-type FioHistoryNodeAction = {
-  account_action_seq: number;
-  block_num: number;
-  block_time: string;
-  action_trace: {
-    receiver: string;
-    act: {
-      account: string;
-      name: string;
-      data: {
-        payee_public_key?: string;
-        amount?: number;
-        max_fee?: number;
-        actor?: string;
-        tpid?: string;
-        quantity?: string;
-        memo?: string;
-        to?: string;
-        from?: string;
-      };
-      hex_data: string;
-    };
-    trx_id: string;
-    block_num: number;
-    block_time: string;
-    producer_block_id: string;
-  };
 };
 
 const updateTx = (

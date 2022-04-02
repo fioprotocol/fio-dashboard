@@ -22,9 +22,7 @@ export default class ImportValidate extends Base {
       });
     }
 
-    return {
-      valid: true,
-    };
+    return { data: { valid: true } };
   }
 
   static get paramsSecret() {

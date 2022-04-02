@@ -115,7 +115,7 @@ export const linkTokens = async ({
         error: connectionError,
       }: {
         updatedConnections: PublicAddressDoublet[];
-        error?: any;
+        error?: string | null;
       } = await updatePubAddresses(
         normalizePublicAddresses(connectList),
         ACTIONS.addPublicAddresses,
@@ -144,7 +144,7 @@ export const linkTokens = async ({
         error: disconnectionError,
       }: {
         updatedConnections: PublicAddressDoublet[];
-        error?: any;
+        error?: string | null;
       } = await updatePubAddresses(
         normalizePublicAddresses(disconnectList),
         disconnectAll
