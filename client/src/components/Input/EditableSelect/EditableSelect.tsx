@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Props as OptionProps } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
+import Select from 'react-select/base';
 import { FieldRenderProps } from 'react-final-form';
 import classnames from 'classnames';
 
@@ -37,8 +38,10 @@ const EditableSelect: React.FC<FieldRenderProps<EditableProps>> = props => {
 
   const refOptions = useRef(options).current;
 
-  // todo: fix any
-  const selectRef = useRef<any>(null);
+  const selectRef = useRef<Select<{
+    value: EditableProps;
+    label: EditableProps;
+  }> | null>(null);
 
   const { onChange, value } = input;
 
@@ -91,10 +94,6 @@ const EditableSelect: React.FC<FieldRenderProps<EditableProps>> = props => {
     setInputValue(newValue ? newValue.value.toString() : '');
   };
 
-  const onFocus = () => {
-    value && selectRef?.current?.select?.inputRef.select();
-  };
-
   const formatCreate = (createdValue: string) => (
     <span> Set: {createdValue}</span>
   );
@@ -105,7 +104,6 @@ const EditableSelect: React.FC<FieldRenderProps<EditableProps>> = props => {
       isClearable={true}
       isDisabled={disabled}
       onChange={handleChange}
-      onFocus={onFocus}
       onInputChange={handleInputChange}
       options={refOptions}
       formatCreateLabel={formatCreate}
@@ -114,19 +112,17 @@ const EditableSelect: React.FC<FieldRenderProps<EditableProps>> = props => {
       placeholder={placeholder}
       openMenuOnFocus={true}
       openMenuOnClick={true}
-      // todo: set custom prefix prop to components props
-      // @ts-ignore
-      prefix={prefix}
       components={{
         IndicatorSeparator: CustomComponents.IndicatorSeparator,
         Menu: CustomComponents.Menu,
         MenuList: CustomComponents.MenuList,
         Option: CustomComponents.Option,
         Placeholder: CustomComponents.Placeholder,
-        SingleValue: CustomComponents.SingleValue,
+        SingleValue: singleValueProps =>
+          CustomComponents.SingleValue(singleValueProps, prefix),
         ClearIndicator: CustomComponents.ClearIndicator,
         DropdownIndicator: CustomComponents.DropdownIndicator,
-        Input: CustomComponents.Input,
+        Input: inputProps => CustomComponents.Input(inputProps, prefix),
       }}
       className={classnames(
         classes.dropdown,
