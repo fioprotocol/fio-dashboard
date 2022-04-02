@@ -29,7 +29,7 @@ export const checkPassword = async (
 ): Promise<{ error?: string }> => {
   const result: { error?: string } = {};
   try {
-    const res = await apis.edge.checkPasswordRules(password, passwordRepeat);
+    const res = apis.edge.checkPasswordRules(password, passwordRepeat);
 
     if (!res) {
       result.error = 'Password is invalid';
