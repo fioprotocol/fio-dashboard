@@ -3,7 +3,7 @@ import { composeWithDevTools } from '@redux-devtools/extension';
 
 import createSagaMiddleware from 'redux-saga';
 
-import apiMiddleware from '../../../redux/apiMiddleware';
+import apiMiddleware from '../apiMiddleware';
 
 import createReducer from './reducer';
 import rootSaga from './sagas';
@@ -18,7 +18,6 @@ export default function configureStore(api: Api) {
 
   const store = createStore(
     createReducer(),
-    // @ts-ignore todo: Check Api type used for widgets
     compose(applyMiddleware(apiMiddleware(api), sagaMiddleware)),
   );
 
