@@ -4,13 +4,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import classes from './Tooltip.module.scss';
 
-const TooltipComponent = props => {
-  const { children } = props;
+type Props = {
+  id: string;
+  children: React.ReactNode | React.ReactNode[];
+};
+
+const TooltipComponent: React.FC<Props> = (props: Props) => {
+  const { id, children } = props;
 
   return (
     <OverlayTrigger
       placement="bottom-start"
-      overlay={<Tooltip className={classes.tooltip}>{children}</Tooltip>}
+      overlay={
+        <Tooltip id={id} className={classes.tooltip}>
+          {children}
+        </Tooltip>
+      }
     >
       <FontAwesomeIcon icon="info-circle" className={classes.icon} />
     </OverlayTrigger>

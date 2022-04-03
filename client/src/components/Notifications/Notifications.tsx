@@ -1,7 +1,13 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
+import { RouterProps } from 'react-router-dom';
 
 import NotificationBadge from '../NotificationBadge';
+
 import { getDefaultContent } from '../../constants/notifications';
+
+import { Notification } from '../../types';
+import { NotificationsContainer } from './types';
+
 import classes from './Notifications.module.scss';
 
 const RELOAD_TIME = 3000;
@@ -11,7 +17,11 @@ export const ACTIONS = {
   EMAIL_CONFIRM: 'EMAIL_CONFIRM',
 };
 
-export default class Notifications extends Component {
+export default class Notifications extends Component<
+  NotificationsContainer & RouterProps
+> {
+  notificationsInterval: ReturnType<typeof setInterval> | null;
+
   componentDidMount() {
     this.notificationsInterval = setInterval(
       this.reloadNotifications,
@@ -23,7 +33,7 @@ export default class Notifications extends Component {
     this.notificationsInterval && clearInterval(this.notificationsInterval);
   }
 
-  getLatest = () => {
+  getLatest = (): Notification => {
     const { list } = this.props;
     const {
       history: {
@@ -50,7 +60,7 @@ export default class Notifications extends Component {
     }
   };
 
-  onBadgeClose = last => () => {
+  onBadgeClose = (last: Notification) => () => {
     const { update, removeManual } = this.props;
     if (last.isManual) {
       removeManual({ id: last.id, closeDate: new Date() });
@@ -59,7 +69,7 @@ export default class Notifications extends Component {
     }
   };
 
-  arrowAction = last => {
+  arrowAction = (last: Notification) => {
     const { showRecoveryModal } = this.props;
     if (!last) return null;
     if (!last.action) return null;

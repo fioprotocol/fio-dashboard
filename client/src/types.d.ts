@@ -32,6 +32,7 @@ export type Notification = {
   seenDate: string;
   closeDate: string;
   createdAt: string;
+  contentType: string;
   isManual?: boolean;
   pagesToShow: string[] | null;
 };
