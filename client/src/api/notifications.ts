@@ -19,8 +19,8 @@ export default class Notifications extends Base {
     type: string;
     action: string;
     contentType: string;
-    title: string;
-    message: string;
+    title?: string;
+    message?: string;
     pagesToShow: string[];
   }): Promise<NotificationsCreateResponse> {
     return this.apiClient.post('notifications', { data });

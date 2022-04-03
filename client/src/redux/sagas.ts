@@ -1,3 +1,4 @@
+import { History } from 'history';
 import { all } from 'redux-saga/effects';
 
 import {
@@ -22,7 +23,9 @@ import {
   setBalancesService,
 } from './fio/sagas';
 
-export default function* rootSaga(history, api) {
+import { Api } from '../api';
+
+export default function* rootSaga(history: History, api: Api) {
   yield all([
     loginSuccess(history, api),
     logoutSuccess(history, api),
@@ -30,9 +33,9 @@ export default function* rootSaga(history, api) {
     nonceSuccess(),
     edgeLoginSuccess(),
     listFailure(history),
-    signupSuccess(history),
+    signupSuccess(),
     notify(history),
-    fioAddressRegisterSuccess(history),
+    fioAddressRegisterSuccess(),
     refLoginSuccess(),
     clearGenericModalError(),
     refActionSuccess(),

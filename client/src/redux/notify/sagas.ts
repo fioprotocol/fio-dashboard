@@ -1,3 +1,4 @@
+import { History } from 'history';
 import { put, select, takeEvery } from 'redux-saga/effects';
 
 import {
@@ -20,13 +21,15 @@ import { showGenericError as getShowGenericError } from '../modal/selectors';
 
 import { ErrorData } from './constants';
 
-export const toString = obj =>
+import { Action } from '../types';
+
+export const toString = (obj: object) =>
   Object.entries(obj)
     .map(([key, val]) => `${key}: ${val}`)
     .join(', ');
 
-export function* notify(history) {
-  yield takeEvery('*', function*(action) {
+export function* notify(history: History) {
+  yield takeEvery('*', function*(action: Action) {
     if (
       action.error &&
       action.type !== PROFILE_FAILURE &&
@@ -38,7 +41,7 @@ export function* notify(history) {
       action.type !== CONFIRM_PIN_FAILURE &&
       action.type !== GET_ALL_PUBLIC_ADDRESS_FAILURE
     ) {
-      const genericErrorIsShowing = yield select(getShowGenericError);
+      const genericErrorIsShowing: boolean = yield select(getShowGenericError);
 
       if (!genericErrorIsShowing) {
         const { title, redirect } = ErrorData[action.type] || {};
@@ -63,7 +66,10 @@ export function* notify(history) {
       action.error.fields &&
       action.error.fields.token === 'WRONG_TOKEN'
     ) {
-      const homePageLink = yield select(getHomePageLink);
+      const homePageLink: ReturnType<typeof getHomePageLink> = yield select(
+        getHomePageLink,
+      );
+      // @ts-ignore
       yield put(logout({ history }, homePageLink));
     }
   });

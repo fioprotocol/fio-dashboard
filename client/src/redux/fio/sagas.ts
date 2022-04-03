@@ -23,15 +23,9 @@ import {
   DEFAULT_BALANCES,
 } from '../../util/prices';
 
-import {
-  FeePrice,
-  FioBalanceRes,
-  FioWalletDoublet,
-  WalletsBalances,
-} from '../../types';
+import { FeePrice, FioBalanceRes, WalletsBalances } from '../../types';
+import { Action } from '../types';
 
-type GetFeeAction = { data: { fee: number }; type: string; endpoint: string };
-type PricesAction = { data: { pricing: { usdtRoe: number } }; type: string };
 type RefreshBalanceAction = {
   data: FioBalanceRes;
   type: string;
@@ -39,37 +33,29 @@ type RefreshBalanceAction = {
 };
 
 export function* addFioWalletSuccess() {
-  yield takeEvery(ADD_WALLET_SUCCESS, function*(action: {
-    type: string;
-    data: FioWalletDoublet;
-  }) {
+  yield takeEvery(ADD_WALLET_SUCCESS, function*(action: Action) {
     const { publicKey } = action.data;
-    // @ts-ignore
-    yield put(refreshBalance(publicKey));
+    yield put<Action>(refreshBalance(publicKey));
   });
 }
 
 export function* setFeesService() {
-  yield takeEvery(GET_FEE_SUCCESS, function*(action: GetFeeAction) {
+  yield takeEvery(GET_FEE_SUCCESS, function*(action: Action) {
     const {
       endpoint,
       data: { fee },
     } = action;
-    // @ts-ignore todo: fix for all generators in the file
-    const fees = yield select(feesSelector);
-    // @ts-ignore
-    const roe = yield select(roeSelector);
+    const fees: { [endpoint: string]: FeePrice } = yield select(feesSelector);
+    const roe: number = yield select(roeSelector);
 
     fees[endpoint] = convertFioPrices(fee, roe);
-    // @ts-ignore
     yield put(setFees(fees));
   });
-  yield takeEvery(PRICES_SUCCESS, function*(action: PricesAction) {
+  yield takeEvery(PRICES_SUCCESS, function*(action: Action) {
     const {
       pricing: { usdtRoe },
     } = action.data;
-    // @ts-ignore
-    const fees = yield select(feesSelector);
+    const fees: { [endpoint: string]: FeePrice } = yield select(feesSelector);
     const recalculatedFees: { [endpoint: string]: FeePrice } = {};
 
     for (const endpoint in fees) {
@@ -79,7 +65,7 @@ export function* setFeesService() {
         usdtRoe,
       );
     }
-    // @ts-ignore
+
     yield put(setFees(recalculatedFees));
   });
 }
@@ -89,10 +75,10 @@ export function* setBalancesService() {
     action: RefreshBalanceAction,
   ) {
     const { publicKey, data } = action;
-    // @ts-ignore
-    const walletsBalances = yield select(balancesSelector);
-    // @ts-ignore
-    const roe = yield select(roeSelector);
+
+    const walletsBalances: WalletsBalances = yield select(balancesSelector);
+
+    const roe: number = yield select(roeSelector);
 
     const recalculatedBalances = { ...walletsBalances };
     recalculatedBalances.wallets[publicKey] = calculateBalances(data, roe);
@@ -102,15 +88,14 @@ export function* setBalancesService() {
       roe,
     );
 
-    // @ts-ignore
     yield put(setBalances(recalculatedBalances));
   });
-  yield takeEvery(PRICES_SUCCESS, function*(action: PricesAction) {
+  yield takeEvery(PRICES_SUCCESS, function*(action: Action) {
     const {
       pricing: { usdtRoe: roe },
     } = action.data;
-    // @ts-ignore
-    const walletsBalances = yield select(balancesSelector);
+
+    const walletsBalances: WalletsBalances = yield select(balancesSelector);
 
     const recalculatedBalances: WalletsBalances = {
       total: DEFAULT_BALANCES,
@@ -136,7 +121,6 @@ export function* setBalancesService() {
       roe,
     );
 
-    // @ts-ignore
     yield put(setBalances(recalculatedBalances));
   });
 }
