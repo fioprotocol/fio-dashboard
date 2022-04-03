@@ -40,7 +40,7 @@ export type FormValidationErrorProps = {
 };
 
 export type DefaultValidationProps = {
-  formProps: FormApi;
+  formProps: FormApi<FormValuesProps, FormValuesProps>;
   cartItems: CartItem[];
   options: string[];
   isAddress: boolean;
@@ -61,7 +61,7 @@ export type VerifyAddressProps = {
 } & DefaultValidationProps;
 
 type DefaultFormContainerProps = {
-  formProps: FormRenderProps;
+  formProps: FormRenderProps<FormValuesProps, FormValuesProps>;
   type: FioNameType;
   isAddress: boolean;
   hasFreeAddress: boolean;
@@ -78,8 +78,10 @@ type DefaultFormContainerProps = {
   prices: Prices;
   isDomain: boolean;
   toggleShowAvailable: (isAvailable: boolean) => void;
-  handleChange: (formProps: FormApi) => void;
-  debouncedHandleChange: (formProps: FormApi) => void;
+  handleChange: (formProps: FormApi<FormValuesProps, FormValuesProps>) => void;
+  debouncedHandleChange: (
+    formProps: FormApi<FormValuesProps, FormValuesProps>,
+  ) => void;
 };
 
 export type AddressDomainFormProps = {
@@ -110,7 +112,7 @@ export type FormItemsProps = {
 export type FormContainerProps = {
   hasCustomDomain: boolean;
   showCustomDomain: boolean;
-  domain: Domain;
+  domain: string;
   isFree: boolean;
   toggleShowCustomDomain: (showCustomDomain: boolean) => void;
 } & DefaultFormContainerProps;
@@ -126,7 +128,7 @@ export type NotificationProps = {
   currentCartItem: CartItem | undefined;
   domains: Domain[];
   formErrors: FormError;
-  formProps: FormRenderProps;
+  formProps: FormRenderProps<FormValuesProps, FormValuesProps>;
   isAddress: boolean;
   type: FioNameType;
   hasCurrentDomain: boolean;
@@ -168,7 +170,7 @@ export type AddressFormProps = {
   hasCustomDomain: boolean;
   showCustomDomain: boolean;
   options: string[];
-  domain: Domain;
+  domain: string;
   allowCustomDomains: boolean;
   toggleShowCustomDomain: (showCustomDomain: boolean) => void;
   onChangeHandleField: () => void;
