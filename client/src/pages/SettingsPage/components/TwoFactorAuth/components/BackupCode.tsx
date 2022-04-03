@@ -4,6 +4,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Badge, { BADGE_TYPES } from '../../../../../components/Badge/Badge';
 import EdgeConfirmAction from '../../../../../components/EdgeConfirmAction';
 
+import { log } from '../../../../../util/general';
+
 import { CONFIRM_PIN_ACTIONS } from '../../../../../constants/common';
 
 import { SubmitActionParams } from '../../../../../components/EdgeConfirmAction/types';
@@ -39,7 +41,7 @@ const BackupCode: React.FC = () => {
       setBackupCode(edgeAccount.otpKey);
       toggleShow(true);
     } catch (e) {
-      console.error(e);
+      log.error(e);
     }
   };
 

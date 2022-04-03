@@ -5,6 +5,7 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 import apis from '../../../api';
 
 import { linkTokens } from '../../../api/middleware/fio';
+import { log } from '../../../util/general';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import {
@@ -82,7 +83,7 @@ const RequestTokensEdgeWallet: React.FC<Props> = props => {
         });
         bundlesCollected += BUNDLES_TX_COUNT.ADD_PUBLIC_ADDRESS;
       } catch (e) {
-        console.error(e);
+        log.error(e);
         mapError = e;
       }
     }

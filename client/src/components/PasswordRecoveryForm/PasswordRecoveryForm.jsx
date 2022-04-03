@@ -19,6 +19,7 @@ import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 
 import { formValidation } from './validation';
+import { log } from '../../util/general';
 
 import classes from './PasswordRecoveryForm.module.scss';
 
@@ -131,7 +132,7 @@ const PasswordRecoveryForm = props => {
       setProfileRecovery(token);
       return { status: 1 };
     } catch (e) {
-      console.error(e);
+      log.error(e);
       setError('There was an issue setting recovery questions');
       return {};
       // todo: handle error for each field
