@@ -6,6 +6,7 @@ import {
   transformPublicAddresses,
   normalizePublicAddresses,
 } from '../../util/fio';
+import { log } from '../../util/general';
 
 import {
   ACTIONS,
@@ -173,7 +174,7 @@ export const linkTokens = async ({
 
     return retResults;
   } catch (e) {
-    console.error(e);
+    log.error(e);
     throw e;
   }
 };

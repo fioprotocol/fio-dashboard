@@ -9,7 +9,7 @@ import CustomDropdown from '../../components/CustomDropdown';
 import NftListResults from './components/NftListResults';
 import { OPTIONS, optionsList, TITLE_NAME } from './constant';
 import { transformNft } from '../../util/fio';
-import { getHash } from '../../util/general';
+import { getHash, log } from '../../util/general';
 import { minWaitTimeFunction } from '../../utils';
 import { URL_REGEXP } from '../../constants/regExps';
 
@@ -62,7 +62,7 @@ const NftValidationPage: React.FC = () => {
         const hashFromFile = await getHash(file);
         params = { hash: hashFromFile };
       } catch (e) {
-        console.error(e);
+        log.error(e);
       }
     }
     await getNfts(params);

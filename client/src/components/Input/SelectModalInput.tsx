@@ -12,7 +12,7 @@ import { ClearButton } from './InputActionButtons';
 
 import { INPUT_COLOR_SCHEMA } from './TextInput';
 
-import { getValueFromPaste } from '../../util/general';
+import { getValueFromPaste, log } from '../../util/general';
 
 import classes from './Input.module.scss';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
@@ -216,7 +216,7 @@ const SelectModal: React.FC<Props &
                     setInputValue((await getValueFromPaste()) || '');
                     inputRef.current?.focus();
                   } catch (e) {
-                    console.error('Paste error: ', e);
+                    log.error('Paste error: ', e);
                   }
                 }}
                 uiType={uiType}

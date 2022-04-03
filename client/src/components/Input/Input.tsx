@@ -7,7 +7,7 @@ import { FieldRenderProps } from 'react-final-form';
 import { ErrorBadge } from './ErrorBadge';
 import { PasteButton } from './InputActionButtons';
 import CustomDropdown from '../CustomDropdown';
-import { getValueFromPaste } from '../../util/general';
+import { getValueFromPaste, log } from '../../util/general';
 
 import classes from './Input.module.scss';
 
@@ -199,7 +199,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
             try {
               onChange(await getValueFromPaste());
             } catch (e) {
-              console.error('Paste error: ', e);
+              log.error('Paste error: ', e);
             }
           }}
           uiType={uiType}
