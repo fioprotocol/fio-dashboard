@@ -2,6 +2,9 @@ import { put, takeEvery, select } from 'redux-saga/effects';
 
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ACTIONS } from '../../components/Notifications/Notifications';
+
+import { log } from '../../util/general';
+
 import { setWallets } from '../account/actions';
 import { refreshBalance } from '../fio/actions';
 import {
@@ -41,7 +44,7 @@ export function* loginSuccess(history, api) {
         // eslint-disable-next-line no-unused-vars
         const res = yield api.auth.deleteNewDeviceRequest(action.voucherId);
       } catch (e) {
-        console.error(e);
+        log.error(e);
       }
     yield put(loadProfile());
     yield put(listNotifications());
@@ -66,7 +69,7 @@ export function* profileSuccess() {
           }),
         );
     } catch (e) {
-      console.error(e);
+      log.error(e);
     }
 
     for (const fioWallet of action.data.fioWallets) {

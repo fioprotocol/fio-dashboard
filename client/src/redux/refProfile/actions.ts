@@ -1,7 +1,11 @@
 import { Api } from '../../api';
+
 import { validateRefActionQuery } from '../../util/ref';
-import { RefQuery, RefQueryParams } from '../../types';
+import { log } from '../../util/general';
+
 import { REF_ACTIONS } from '../../constants/common';
+
+import { RefQuery, RefQueryParams } from '../../types';
 
 export const prefix = 'refProfile';
 
@@ -58,7 +62,7 @@ export const setContainedParams = (query: RefQuery) => {
             ...rest,
           };
         } catch (e) {
-          console.error(e);
+          log.error(e);
         }
       }
 

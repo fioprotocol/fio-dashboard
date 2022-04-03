@@ -1,6 +1,8 @@
 import { EdgeAccount, EdgeCurrencyWallet } from 'edge-core-js';
 
 import apis from '../../api/index';
+import { log } from '../../util/general';
+
 import {
   DEFAULT_WALLET_OPTIONS,
   FIO_WALLET_TYPE,
@@ -84,7 +86,7 @@ export const createAccount = async (
     await fioWallet.renameWallet(DEFAULT_WALLET_OPTIONS.name);
     result.fioWallet = fioWallet;
   } catch (e) {
-    console.error(e);
+    log.error(e);
     result.errors = { email: e.message };
   }
 

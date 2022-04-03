@@ -1,7 +1,9 @@
 import { EdgeAccount } from 'edge-core-js';
 
-import { WalletKeys } from '../types';
 import { sleep } from '../utils';
+import { log } from './general';
+
+import { WalletKeys } from '../types';
 
 export const getWalletKeys = async (
   account: EdgeAccount,
@@ -19,7 +21,7 @@ export const getWalletKeys = async (
       }
     }
   } catch (e) {
-    console.error(e);
+    log.error(e);
   }
 
   return keys;

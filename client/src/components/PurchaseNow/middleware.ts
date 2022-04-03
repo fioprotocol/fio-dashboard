@@ -2,6 +2,7 @@ import apis from '../../api/index';
 import { toString } from '../../redux/notify/sagas';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 import { waitForAddressRegistered } from '../../util/fio';
+import { log } from '../../util/general';
 
 import { ERROR_TYPES } from '../../constants/errors';
 import { RegistrationType } from './types';
@@ -90,7 +91,7 @@ export const register = async ({
 
     result = { ...result, ...res };
   } catch (e) {
-    console.error(e.json);
+    log.error(e.json);
     result.error = apis.fio.extractError(e.json) || e.message;
     result.errorType = e.errorType || ERROR_TYPES.default;
   }
