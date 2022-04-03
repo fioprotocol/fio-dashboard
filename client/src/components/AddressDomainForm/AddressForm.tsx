@@ -23,7 +23,6 @@ const AddressForm: React.FC<AddressFormProps> = props => {
     hasCustomDomain,
     showCustomDomain,
     options,
-    domain,
     allowCustomDomains,
     isValidating,
     onChangeHandleField,
@@ -93,12 +92,12 @@ const AddressForm: React.FC<AddressFormProps> = props => {
             toggleToCustom={() => {
               toggleShowCustomDomain(true);
             }}
-            initValue={domain}
             isVoilet={true}
             isWhitePlaceholder={true}
             isWhiteIcon={true}
             noMinWidth={true}
             placeholder="Select Domain"
+            hideError={true}
           />
         )}
         <OnChange name="domain">

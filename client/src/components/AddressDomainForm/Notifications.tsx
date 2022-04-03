@@ -4,7 +4,7 @@ import isEmpty from 'lodash/isEmpty';
 import NotificationInfoBadge from './NotificationInfoBadge';
 import NotificationActionBadge from './NotificationActionBadge';
 
-import { NotificationProps } from './types';
+import { FormValuesProps, NotificationProps } from './types';
 
 const Notifications = (
   props: NotificationProps,
@@ -31,8 +31,8 @@ const Notifications = (
   const { values, form } = formProps;
   const errors: (string | { message: string; showInfoError?: boolean })[] = [];
   !isEmpty(formErrors) &&
-    Object.keys(formErrors).forEach(key => {
-      const fieldState = form.getFieldState(key);
+    Object.keys(formErrors).forEach((key: string) => {
+      const fieldState = form.getFieldState(key as keyof FormValuesProps);
       const { touched, modified, submitSucceeded } = fieldState || {};
       if (touched || modified || submitSucceeded) {
         errors.push(formErrors[key]);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Form } from 'react-final-form';
+import { Form, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
 import * as Scroll from 'react-scroll';
 import debounce from 'lodash/debounce';
@@ -52,13 +52,13 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
 
   useEffect(() => {
     getDomains();
-  }, []);
+  }, [getDomains]);
 
   useEffect(() => {
     for (const fioWallet of fioWallets) {
       refreshFioNames(fioWallet.publicKey);
     }
-  }, [fioWallets]);
+  }, [fioWallets, refreshFioNames]);
 
   const validationProps = {
     options,
@@ -71,8 +71,8 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
   };
 
   const handleSubmit = (
-    values: Record<string, any>,
-    form: FormApi<Record<string, any>, FormValuesProps>,
+    values: FormValuesProps,
+    form: FormApi<FormValuesProps, FormValuesProps>,
   ) => {
     if (isHomepage) return;
 
@@ -81,14 +81,14 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
       ...validationProps,
     };
 
-    // @ts-ignore
     if (isAddress) addressValidation(validationPropsToPass);
-    // @ts-ignore
     if (isDomain) domainValidation(validationPropsToPass);
 
     const registeredFields = form.getRegisteredFields();
-    const isValidForm = registeredFields.every(registeredField => {
-      const fieldState = form.getFieldState(registeredField);
+    const isValidForm = registeredFields.every((registeredField: string) => {
+      const fieldState = form.getFieldState(
+        registeredField as keyof FormValuesProps,
+      );
       return !fieldState?.data?.error;
     });
 
@@ -102,7 +102,7 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
     }
   };
 
-  const handleChange = (formApi: FormApi) => {
+  const handleChange = (formApi: FormApi<FormValuesProps, FormValuesProps>) => {
     if (isHomepage) return;
 
     const validationPropsToPass = {
@@ -120,7 +120,9 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
       onSubmit={handleSubmit}
       mutators={{ setDataMutator }}
       initialValues={initialValues}
-      render={formProps => (
+      render={(
+        formProps: FormRenderProps<FormValuesProps, FormValuesProps>,
+      ) => (
         <FormItems
           debouncedHandleChange={debouncedHandleChange}
           hasFreeAddress={hasFreeAddress}
