@@ -1,18 +1,18 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { FormApi } from 'final-form';
 import { isEmpty } from 'lodash';
 
-import { ROUTES } from '../../constants/routes';
 import Card from '../Card/Card';
 import PriceBadge from './PriceBadge';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
-
 import AddressForm from './AddressForm';
 import DomainForm from './DomainForm';
 
+import { ROUTES } from '../../constants/routes';
 import { ADDRESS_FORM_CONTENT } from './constants';
 
-import { FormContainerProps } from './types';
+import { FormContainerProps, FormValuesProps } from './types';
 
 import classes from './AddressDomainForm.module.scss';
 
@@ -103,12 +103,12 @@ const FormContainer: React.FC<FormContainerProps> = props => {
 
     const onChangeHandleField = () => {
       toggleShowAvailable(false);
-      handleChange(form);
+      handleChange(form as FormApi<FormValuesProps, FormValuesProps>);
     };
 
     const debouncedOnChangeHandleField = () => {
       toggleShowAvailable(false);
-      debouncedHandleChange(form);
+      debouncedHandleChange(form as FormApi<FormValuesProps, FormValuesProps>);
     };
 
     const propsToForm = {
