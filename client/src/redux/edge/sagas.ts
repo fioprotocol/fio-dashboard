@@ -12,15 +12,12 @@ export function* edgeLoginSuccess() {
     const { account, fioWallets, options, voucherId } = action.data;
     const keys = getWalletKeys(fioWallets);
     for (const fioWallet of fioWallets) {
-      // @ts-ignore todo: custom dispatch?
-      yield put(refreshBalance(keys[fioWallet.id].public));
+      yield put<Action>(refreshBalance(keys[fioWallet.id].public));
     }
-    // @ts-ignore
-    yield put(logout(account));
+    yield put<Action>(logout(account));
 
-    yield put(
-      // @ts-ignore
-      makeNonce(account.username, keys, options && options.otpKey, voucherId),
-    );
+    yield put<
+      Action
+    >(makeNonce(account.username, keys, options && options.otpKey, voucherId));
   });
 }

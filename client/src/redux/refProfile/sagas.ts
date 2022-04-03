@@ -7,9 +7,11 @@ import { FIO_SIGN_NFT_SUCCESS } from '../fio/actions';
 import { SET_REGISTRATION_RESULTS } from '../registrations/actions';
 import { isRefFlow as getIsRefFlow, refProfileQueryParams } from './selectors';
 
+import { Action } from '../types';
+
 export function* refLoginSuccess() {
   yield takeEvery(LOGIN_SUCCESS, function*() {
-    const isRefFlow = yield select(getIsRefFlow);
+    const isRefFlow: boolean = yield select(getIsRefFlow);
     if (isRefFlow) {
       yield put(setStep(REF_FLOW_STEPS.REGISTRATION));
     }
@@ -17,8 +19,8 @@ export function* refLoginSuccess() {
 }
 
 export function* fioAddressRegisterSuccess() {
-  yield takeEvery(SET_REGISTRATION_RESULTS, function*(action) {
-    const isRefFlow = yield select(getIsRefFlow);
+  yield takeEvery(SET_REGISTRATION_RESULTS, function*(action: Action) {
+    const isRefFlow: boolean = yield select(getIsRefFlow);
     if (isRefFlow && action.data.success) {
       yield put(setStep(REF_FLOW_STEPS.ACTION));
     }
@@ -26,8 +28,8 @@ export function* fioAddressRegisterSuccess() {
 }
 
 export function* refActionSuccess() {
-  yield takeEvery(FIO_SIGN_NFT_SUCCESS, function*(action) {
-    const isRefFlow = yield select(getIsRefFlow);
+  yield takeEvery(FIO_SIGN_NFT_SUCCESS, function*(action: Action) {
+    const isRefFlow: boolean = yield select(getIsRefFlow);
     if (isRefFlow && action.data.status) {
       const { r } = yield select(refProfileQueryParams);
       const redirectUrl = `${r}?txId=${action.data.transaction_id}`;
