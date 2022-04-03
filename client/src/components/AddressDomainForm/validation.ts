@@ -15,7 +15,10 @@ const verifyAddress = async (props: DefaultValidationProps) => {
     toggleValidating,
   } = props;
   const { mutators } = formProps;
-  const { domain, address } = formProps.getState().values;
+  const {
+    domain,
+    address,
+  }: { domain: string; address: string } = formProps.getState().values;
 
   const errors: FormValidationErrorProps = {};
   toggleValidating(true);
