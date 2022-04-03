@@ -3,8 +3,10 @@ import { combineReducers } from 'redux';
 import * as actions from './actions';
 import { LOGOUT_SUCCESS } from '../profile/actions';
 
+import { CartItem } from '../../types';
+
 export default combineReducers({
-  cartItems(state = [], action = {}) {
+  cartItems(state: CartItem[] = [], action = {}) {
     switch (action.type) {
       case actions.ADD_ITEM:
         return [...state, action.data];
@@ -21,7 +23,7 @@ export default combineReducers({
         return state;
     }
   },
-  paymentWalletPublicKey(state = '', action = {}) {
+  paymentWalletPublicKey(state: string = '', action = {}) {
     switch (action.type) {
       case actions.SET_WALLET_FOR_PAYMENT:
         return action.data;
@@ -33,7 +35,7 @@ export default combineReducers({
         return state;
     }
   },
-  date(state = null, action = {}) {
+  date(state: number | null = null, action = {}) {
     switch (action.type) {
       case actions.SET_CART_DATE:
         return action.data;

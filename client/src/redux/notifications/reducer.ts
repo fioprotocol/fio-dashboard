@@ -3,8 +3,10 @@ import { combineReducers } from 'redux';
 import { LOGOUT_SUCCESS, SET_RECOVERY_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
 
+import { Notification } from '../../types';
+
 export default combineReducers({
-  loading(state = false, action) {
+  loading(state: boolean = false, action) {
     switch (action.type) {
       case actions.LIST_REQUEST:
         return true;
@@ -15,7 +17,7 @@ export default combineReducers({
         return state;
     }
   },
-  list(state = [], action) {
+  list(state: Notification[] = [], action) {
     switch (action.type) {
       case actions.LIST_SUCCESS:
         return [

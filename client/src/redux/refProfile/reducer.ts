@@ -3,8 +3,9 @@ import { combineReducers } from 'redux';
 import * as actions from './actions';
 import { CONFIRM_EMAIL_SUCCESS } from '../profile/actions';
 
-import { RefProfile, RefQueryParams } from '../../types';
 import { REF_FLOW_STEPS } from '../../constants/common';
+
+import { RefProfile, RefQueryParams } from '../../types';
 
 export default combineReducers({
   loading(state: boolean = false, action) {

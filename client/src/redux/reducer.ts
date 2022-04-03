@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
 import { connectRouter } from 'connected-react-router';
+import { History } from 'history';
 
 import profile from './profile/reducer';
-import form from './forms/reducer';
 import navigation from './navigation/reducer';
 import users from './users/reducer';
 import edge from './edge/reducer';
@@ -16,13 +16,12 @@ import cart from './cart/reducer';
 import refProfile from './refProfile/reducer';
 import account from './account/reducer';
 
-const createReducer = history =>
+const createReducer = (history: History) =>
   combineReducers({
     router: connectRouter(history),
     profile,
     navigation,
     users,
-    form,
     edge,
     fio,
     fioWalletsData,
