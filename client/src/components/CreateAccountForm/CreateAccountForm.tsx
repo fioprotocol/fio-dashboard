@@ -122,7 +122,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     this.form = null;
   }
 
-  componentDidMount() {
+  componentDidMount(): void {
     const { location, replace } = this.props.history;
     // @ts-ignore todo: why `query` is not in the Location type?
     if (!isEmpty(location.query) && location.query.email) {
@@ -134,13 +134,13 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     }
   }
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(prevProps: Props, prevState: State): void {
     if (!prevProps.signupSuccess && this.props.signupSuccess) {
       this.setState({ step: STEPS.SUCCESS });
     }
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     this.form?.reset();
     this.form = null;
     this.props.resetSuccessState();

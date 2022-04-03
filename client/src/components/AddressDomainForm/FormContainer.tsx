@@ -60,10 +60,10 @@ const FormContainer: React.FC<FormContainerProps> = props => {
       values: { address = '', domain: domainValue = '' },
     } = formProps;
 
-    const queryString = `?address=${address}&domain=${domainValue}`;
+    const queryString: string = `?address=${address}&domain=${domainValue}`;
 
     if (links && links.getCryptoHandle) {
-      const link = `${links.getCryptoHandle}${queryString}`;
+      const link = links.getCryptoHandle.toString() + queryString;
 
       return (
         <a
