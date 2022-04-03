@@ -6,9 +6,20 @@ import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 
 import { totalCost } from '../../utils';
 
+import { CartItem as CartItemType } from '../../types';
+
 import classes from './Cart.module.scss';
 
-const CartAmount = props => {
+type Props = {
+  cartItems: CartItemType[];
+  isFree: boolean;
+  paymentWalletPublicKey: string;
+  recalculateBalance: () => void;
+  hasLowBalance: boolean;
+  roe: number;
+};
+
+const CartAmount: React.FC<Props> = (props: Props) => {
   const {
     cartItems,
     hasLowBalance,

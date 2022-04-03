@@ -18,11 +18,11 @@ const selector = createStructuredSelector({
   user,
 });
 
-const actions = dispatch => ({
-  update: data => dispatch(updateNotification(data)),
-  listNotifications: () => dispatch(listNotifications()),
-  removeManual: data => dispatch(removeManual(data)),
-  showRecoveryModal: () => dispatch(showRecoveryModal()),
-});
-
-export default withRouter(connect(selector, actions)(Notifications));
+export default withRouter(
+  connect(selector, {
+    update: updateNotification,
+    listNotifications,
+    removeManual,
+    showRecoveryModal,
+  })(Notifications),
+);

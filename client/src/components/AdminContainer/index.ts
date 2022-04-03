@@ -2,8 +2,9 @@ import { connect } from 'react-redux';
 
 import { createStructuredSelector } from 'reselect';
 
-import AdminContainer from './AdminContainer';
 import { isAdmin } from '../../redux/profile/selectors';
+
+import AdminContainer from './AdminContainer';
 
 const selector = createStructuredSelector({
   isAdmin,
