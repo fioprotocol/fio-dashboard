@@ -12,6 +12,7 @@ import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 
 import MathOp from '../util/math';
+import { log } from '../util/general';
 
 import { isDomain } from '../utils';
 
@@ -147,8 +148,8 @@ export default class Fio {
 
   clearWalletFioSdk = (): null => (this.walletFioSDK = null);
 
-  logError = (e: { errorCode: number }) => {
-    if (e.errorCode !== 404) console.error(e);
+  logError = (e: { errorCode: number; message: string }) => {
+    if (e.errorCode !== 404) log.error(e.message);
   };
 
   extractError = (json: {

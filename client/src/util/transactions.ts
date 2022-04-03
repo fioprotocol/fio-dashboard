@@ -3,7 +3,7 @@ import apis from '../api';
 import { FIO_CHAIN_CODE } from '../constants/fio';
 
 import MathOp from './math';
-import { getUTCDate } from './general';
+import { getUTCDate, log } from './general';
 
 import {
   FioHistoryNodeAction,
@@ -99,7 +99,7 @@ const processTransaction = (
         nativeAmount = `${+nativeAmount - +existingTrx.networkFee}`;
         networkFee = existingTrx.networkFee;
       } else {
-        console.error(
+        log.error(
           'processTransaction error - existing spend transaction should have isTransferProcessed or isFeeProcessed set',
         );
       }
@@ -171,7 +171,7 @@ const processTransaction = (
       if (otherParams.isTransferProcessed) {
         nativeAmount = `${+existingTrx.nativeAmount - +networkFee}`;
       } else {
-        console.error(
+        log.error(
           'processTransaction error - existing spend transaction should have isTransferProcessed or isFeeProcessed set',
         );
       }
@@ -245,7 +245,7 @@ export const checkTransactions = async (
       return [];
     }
   } catch (e) {
-    console.error('History request error. ', e);
+    log.error('History request error. ', e);
     return checkTransactions(
       publicKey,
       currentHistory,
@@ -310,7 +310,7 @@ export const checkTransactions = async (
       }
       pos -= HISTORY_NODE_OFFSET;
     } catch (e) {
-      console.error('History request error. ', e);
+      log.error('History request error. ', e);
       return checkTransactions(
         publicKey,
         currentHistory,

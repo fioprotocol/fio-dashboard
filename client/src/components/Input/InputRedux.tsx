@@ -10,7 +10,7 @@ import {
   ShowPasswordIcon,
 } from './InputActionButtons';
 
-import { getValueFromPaste } from '../../util/general';
+import { getValueFromPaste, log } from '../../util/general';
 
 import classes from './Input.module.scss';
 
@@ -141,7 +141,7 @@ const InputRedux: React.FC<Props> = props => {
             try {
               onChange(await getValueFromPaste());
             } catch (e) {
-              console.error('Paste error: ', e);
+              log.error('Paste error: ', e);
             }
           }}
           uiType={uiType}

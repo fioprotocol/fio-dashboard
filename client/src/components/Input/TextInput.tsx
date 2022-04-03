@@ -8,10 +8,10 @@ import {
   ClearButton,
   ShowPasswordIcon,
 } from './InputActionButtons';
-import { ErrorBadge } from './ErrorBadge';
-import { getValueFromPaste } from '../../util/general';
 import { Label, LoadingIcon, PrefixLabel, Prefix } from './StaticInputParts';
+import { ErrorBadge } from './ErrorBadge';
 
+import { getValueFromPaste, log } from '../../util/general';
 import { useFieldElemActiveState } from '../../util/hooks';
 
 import classes from './Input.module.scss';
@@ -179,7 +179,7 @@ export const TextInput = (
             try {
               onChange(await getValueFromPaste());
             } catch (e) {
-              console.error('Paste error: ', e);
+              log.error('Paste error: ', e);
             }
           }}
           onMouseDown={setFieldElemActive}

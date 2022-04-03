@@ -1,5 +1,12 @@
 import { DEFAULT_TEXT_TRUNCATE_LENGTH } from '../constants/common';
 
+export const log = {
+  error: (e: Error | string, e2?: Error | string): void => {
+    if (!e2) console.error(e);
+    if (e2) console.error(e, e2);
+  },
+};
+
 export async function copyToClipboard(text: string) {
   // mobile workaround because mobile devices don't have clipboard object in navigator
   function copyToMobileClipboard(str: string) {
@@ -47,7 +54,7 @@ export async function copyToClipboard(text: string) {
     if (!isMobileDevice) return await navigator.clipboard.writeText(text);
     return await copyToMobileClipboard(text);
   } catch (e) {
-    console.error(e);
+    log.error(e);
   }
 }
 

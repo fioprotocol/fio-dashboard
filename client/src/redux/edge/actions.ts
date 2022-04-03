@@ -3,6 +3,7 @@ import { EdgeAccount } from 'edge-core-js';
 import { Api } from '../../api';
 
 import { getWalletKeys } from '../../util/edge';
+import { log } from '../../util/general';
 
 import { WalletKeys } from '../../types';
 
@@ -64,7 +65,7 @@ export const login = ({
         }
       }
     } catch (e) {
-      console.error(e);
+      log.error(e);
     }
     return { account, fioWallets, options, voucherId };
   },

@@ -11,13 +11,15 @@ import {
   EdgeLoginMessages,
 } from 'edge-core-js/lib/types';
 
+import { log } from '../util/general';
+
 const NO_EDGE_CONTEXT_MESSAGE = 'Edge Context is not initialised';
 
 export default class Edge {
   edgeContext: EdgeContext | null;
 
   logError = (e: Error | string) => {
-    console.error(e);
+    log.error(e);
   };
 
   validateEdgeContext = () => {

@@ -1,5 +1,7 @@
 import Big, { BigSource, RoundingMode } from 'big.js';
 
+import { log } from './general';
+
 class MathOp {
   value: BigSource;
 
@@ -11,7 +13,7 @@ class MathOp {
     try {
       this.value = Big(this.value).plus(x);
     } catch (err) {
-      console.error(err);
+      log.error(err);
     }
     return this;
   }
@@ -20,7 +22,7 @@ class MathOp {
     try {
       this.value = Big(this.value).minus(x);
     } catch (err) {
-      console.error(err);
+      log.error(err);
     }
     return this;
   }
@@ -29,7 +31,7 @@ class MathOp {
     try {
       this.value = Big(this.value).times(x);
     } catch (err) {
-      console.error(err);
+      log.error(err);
     }
     return this;
   }
@@ -38,7 +40,7 @@ class MathOp {
     try {
       this.value = Big(this.value).div(x);
     } catch (err) {
-      console.error(err);
+      log.error(err);
     }
     return this;
   }
@@ -47,7 +49,7 @@ class MathOp {
     try {
       this.value = args.reduce((sum, current) => Big(sum).plus(current), 0);
     } catch (err) {
-      console.error(err);
+      log.error(err);
     }
     return this;
   }
@@ -56,7 +58,7 @@ class MathOp {
     try {
       this.value = Big(this.value).mod(modDigit);
     } catch (err) {
-      console.error(err);
+      log.error(err);
     }
     return this;
   }
@@ -65,7 +67,7 @@ class MathOp {
     try {
       this.value = Big(this.value).round(decimalPlaces, roundingMode);
     } catch (err) {
-      console.error(err);
+      log.error(err);
     }
     return this;
   }
@@ -74,7 +76,7 @@ class MathOp {
     try {
       return Big(this.value).eq(x);
     } catch (err) {
-      console.error(err);
+      log.error(err);
       return this.value === x;
     }
   }
@@ -83,7 +85,7 @@ class MathOp {
     try {
       return Big(this.value).gt(x);
     } catch (err) {
-      console.error(err);
+      log.error(err);
       return this.value > x;
     }
   }
@@ -92,7 +94,7 @@ class MathOp {
     try {
       return Big(this.value).gte(x);
     } catch (err) {
-      console.error(err);
+      log.error(err);
       return this.value >= x;
     }
   }
@@ -101,7 +103,7 @@ class MathOp {
     try {
       return Big(this.value).lt(x);
     } catch (err) {
-      console.error(err);
+      log.error(err);
       return this.value < x;
     }
   }
@@ -110,7 +112,7 @@ class MathOp {
     try {
       return Big(this.value).lte(x);
     } catch (err) {
-      console.error(err);
+      log.error(err);
       return this.value <= x;
     }
   }
@@ -119,7 +121,7 @@ class MathOp {
     try {
       return Big(this.value).toNumber();
     } catch (err) {
-      console.error(err);
+      log.error(err);
       return +this.value;
     }
   }
@@ -128,7 +130,7 @@ class MathOp {
     try {
       return Big(this.value).toString();
     } catch (err) {
-      console.error(err);
+      log.error(err);
       return '-';
     }
   }
@@ -137,7 +139,7 @@ class MathOp {
     try {
       return Big(this.value).toFixed(toFixedDigit);
     } catch (err) {
-      console.error(err);
+      log.error(err);
       return this.value;
     }
   }

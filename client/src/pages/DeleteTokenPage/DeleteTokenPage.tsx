@@ -9,6 +9,7 @@ import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import { linkTokens } from '../../api/middleware/fio';
 import { genericTokenId } from '../../util/fio';
 import { minWaitTimeFunction } from '../../utils';
+import { log } from '../../util/general';
 
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import {
@@ -133,7 +134,7 @@ const DeleteTokenPage: React.FC<Props> = props => {
       );
       setResultsData(actionResults);
     } catch (err) {
-      console.error(err);
+      log.error(err);
     } finally {
       setSubmitData(null);
     }
