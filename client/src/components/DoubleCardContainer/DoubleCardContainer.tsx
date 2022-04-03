@@ -4,7 +4,13 @@ import LayoutContainer from '../LayoutContainer/LayoutContainer';
 
 import classes from './DoubleCardContainer.module.scss';
 
-const DoubleCardContainer = props => {
+type Props = {
+  title: string;
+  bigCart?: React.ReactNode;
+  smallCart?: React.ReactNode;
+};
+
+const DoubleCardContainer: React.FC<Props> = (props: Props) => {
   const { title, bigCart, smallCart } = props;
   return (
     <LayoutContainer title={title}>

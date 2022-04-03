@@ -75,7 +75,7 @@ const PriceBadge: React.FC<PriceBadgeProps> = props => {
       </div>
       {showTooltip && (
         <div className={classes.tooltip}>
-          <TooltipComponent>{tooltip}</TooltipComponent>
+          <TooltipComponent id={values.domain}>{tooltip}</TooltipComponent>
         </div>
       )}
     </div>

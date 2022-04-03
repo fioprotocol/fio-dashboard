@@ -5,7 +5,7 @@ import { Button } from 'react-bootstrap';
 import { ROUTES } from '../../constants/routes';
 import classes from './DomainsBanner.module.scss';
 
-const DomainsBanner = () => {
+const DomainsBanner: React.FC = () => {
   return (
     <div className={classes.domainContainer}>
       <h5 className={classes.header}>FIO DOMAINS</h5>
