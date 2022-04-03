@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import classnames from 'classnames';
 
 import AddressDomainForm from '../../components/AddressDomainForm';
@@ -13,7 +13,7 @@ type Props = {
   };
 };
 
-const AddressWidget = (props: Props) => {
+const AddressWidget: React.FC<Props> = (props: Props) => {
   return (
     <div className={classes.container}>
       <h1 className={classes.title}>

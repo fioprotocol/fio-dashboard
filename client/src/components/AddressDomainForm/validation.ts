@@ -63,7 +63,9 @@ const verifyAddress = async (props: DefaultValidationProps) => {
   toggleValidating(false);
 };
 
-export const addressValidation = async (props: DefaultValidationProps) => {
+export const addressValidation = async (
+  props: DefaultValidationProps,
+): Promise<void> => {
   const { formProps, toggleShowAvailable, changeFormErrors } = props;
   const { mutators, getState } = formProps;
   const { values, modified, submitting } = getState();
@@ -128,7 +130,7 @@ export const addressValidation = async (props: DefaultValidationProps) => {
   }
 };
 
-export const domainValidation = (props: DefaultValidationProps) => {
+export const domainValidation = (props: DefaultValidationProps): void => {
   const {
     formProps,
     toggleShowAvailable,
