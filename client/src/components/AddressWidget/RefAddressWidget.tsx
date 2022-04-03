@@ -13,14 +13,16 @@ const ACTION_TEXT = {
     'All you have to do is add a username, select a domain and sign the NFT',
 };
 
-const AddressWidget = (props: {
+type Props = {
   logo: React.ReactNode;
   action: string;
   showLoginModal: () => void;
   edgeAuthLoading: boolean;
   title?: string;
   subTitle?: string;
-}) => {
+};
+
+const AddressWidget: React.FC<Props> = (props: Props) => {
   const { logo, subTitle, action, edgeAuthLoading, showLoginModal } = props;
 
   const openLogin = () => showLoginModal();

@@ -1,8 +1,6 @@
-import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import { Form, Field } from 'react-final-form';
-import classNames from 'classnames';
 import isEmpty from 'lodash/isEmpty';
 import classnames from 'classnames';
 
@@ -89,7 +87,7 @@ const Cart = props => {
           <div className={classes.ctaIconContainer}>
             <FontAwesomeIcon icon="search" className={classes.ctaIcon} />
           </div>
-          <p className={classNames(classes.ctaText, 'boldText')}>
+          <p className={classnames(classes.ctaText, 'boldText')}>
             Search for more FIO Crypto Handles?
           </p>
         </Link>
