@@ -1,3 +1,4 @@
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 import { Form, Field } from 'react-final-form';
@@ -9,12 +10,37 @@ import CartItem from './CartItem';
 import WalletDropdown from './WalletDropdown';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
-import { ROUTES } from '../../constants/routes';
+
 import { deleteCartItem } from '../../utils';
+
+import { ROUTES } from '../../constants/routes';
+
+import {
+  FioWalletDoublet,
+  Prices,
+  WalletBalancesItem,
+  CartItem as CartItemType,
+  DeleteCartItem,
+} from '../../types';
 
 import classes from './Cart.module.scss';
 
-const Cart = props => {
+type Props = {
+  cartItems: CartItemType[];
+  deleteItem?: (data: DeleteCartItem | string) => {};
+  userWallets: FioWalletDoublet[];
+  setWallet: (publicKey: string) => void;
+  hasLowBalance: boolean;
+  walletCount: number;
+  totalCartAmount: number;
+  walletBalancesAvailable: WalletBalancesItem;
+  prices: Prices;
+  recalculate?: (cartItems: CartItemType[]) => {};
+  isPriceChanged: boolean;
+  roe: number;
+};
+
+const Cart: React.FC<Props> = (props: Props) => {
   const {
     cartItems,
     deleteItem,
@@ -35,7 +61,7 @@ const Cart = props => {
   const walletBalance =
     (!isEmpty(walletBalancesAvailable) && walletBalancesAvailable.fio) || 0;
 
-  const handleDeleteItem = id => {
+  const handleDeleteItem = (id: string) => {
     deleteCartItem({
       id,
       prices,
@@ -99,7 +125,7 @@ const Cart = props => {
               Handles assigned to.
             </p>
             <Form
-              onSubmit={() => {}}
+              onSubmit={() => null}
               render={() => (
                 <form>
                   <Field

@@ -3,7 +3,16 @@ import classnames from 'classnames';
 
 import classes from './FormHeader.module.scss';
 
-const FormHeader = props => {
+type Props = {
+  title: string;
+  titleBluePart?: string;
+  subtitle: string | React.ReactNode;
+  isDoubleColor?: boolean;
+  header?: string;
+  isSubNarrow?: boolean;
+};
+
+const FormHeader: React.FC<Props> = (props: Props) => {
   const {
     title,
     titleBluePart = '',

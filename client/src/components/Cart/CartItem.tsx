@@ -5,9 +5,16 @@ import classnames from 'classnames';
 import Amount from '../common/Amount';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 
+import { CartItem as CartItemType } from '../../types';
+
 import classes from './Cart.module.scss';
 
-const CartItem = props => {
+type Props = {
+  item: CartItemType;
+  onDelete: (id: string) => void;
+};
+
+const CartItem: React.FC<Props> = (props: Props) => {
   const { item, onDelete } = props;
 
   return (

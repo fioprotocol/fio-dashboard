@@ -3,7 +3,12 @@ import classnames from 'classnames';
 
 import classes from './Menu.module.scss';
 
-const Menu = props => {
+type Props = {
+  children: React.ReactNode | React.ReactNode[];
+  isOpen?: boolean;
+};
+
+const Menu: React.FC<Props> = (props: Props) => {
   const { children, isOpen } = props;
   return (
     <div className={classnames(classes.container, isOpen && classes.isOpen)}>

@@ -1,8 +1,16 @@
+import React from 'react';
 import classnames from 'classnames';
 
 import classes from './CartSmallContainer.module.scss';
 
-const CartSmallContainer = props => {
+type Props = {
+  children: React.ReactNode | React.ReactNode[];
+  isAquaColor?: boolean;
+  isHintColor?: boolean;
+  hasBigMargin?: boolean;
+};
+
+const CartSmallContainer: React.FC<Props> = (props: Props) => {
   const { children, isAquaColor, isHintColor, hasBigMargin } = props;
   return (
     <div
