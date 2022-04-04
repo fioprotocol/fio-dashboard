@@ -14,7 +14,11 @@ import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 
 import { submitValidation, formValidation } from './validation';
-import { hasFioAddressDelimiter, minWaitTimeFunction } from '../../../../utils';
+import {
+  FIO_ADDRESS_DELIMITER,
+  hasFioAddressDelimiter,
+  minWaitTimeFunction,
+} from '../../../../utils';
 import { useWalletBalances } from '../../../../util/hooks';
 import { fioAddressExistsValidator } from '../../../../util/validators';
 import MathOp from '../../../../util/math';
@@ -27,6 +31,12 @@ import { SendTokensProps, SendTokensValues } from '../../types';
 import { FioAddressDoublet } from '../../../../types';
 
 import classes from '../../styles/SendTokensForm.module.scss';
+
+const formatReceiverValue = (value: string) => {
+  if (value.indexOf(FIO_ADDRESS_DELIMITER) > 0) return value.toLowerCase();
+
+  return value;
+};
 
 const SendTokensForm: React.FC<SendTokensProps> = props => {
   const {
@@ -144,7 +154,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               disabled={loading}
               loading={validating}
               label="Send to Address"
-              lowerCased={true}
+              onChangeFormat={formatReceiverValue}
               handleConfirmValidate={(value: string) =>
                 minWaitTimeFunction(
                   () =>
