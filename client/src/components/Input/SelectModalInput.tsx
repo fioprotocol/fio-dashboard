@@ -43,6 +43,7 @@ type Props = {
   hasThinText?: boolean;
   modalTitle?: string;
   modalSubTitle?: string;
+  onChangeFormat?: (val: string) => string;
   handleConfirmValidate?: (
     val: string,
   ) => Promise<{
@@ -69,6 +70,7 @@ const SelectModal: React.FC<Props &
     input,
     meta,
     modalPlaceholder,
+    onChangeFormat,
     handleConfirmValidate,
     showPasteButton = false,
     loading,
@@ -107,7 +109,7 @@ const SelectModal: React.FC<Props &
     } else
       setOptionsList(
         options.filter((o: string) => {
-          return o.includes(inputValue);
+          return o.includes(inputValue.toLowerCase());
         }),
       );
   }, [inputValue, options]);
@@ -177,6 +179,9 @@ const SelectModal: React.FC<Props &
                   value={inputValue}
                   onChange={e => {
                     const currentValue = e.target.value || '';
+                    if (onChangeFormat) {
+                      return setInputValue(onChangeFormat(currentValue));
+                    }
                     if (lowerCased)
                       return setInputValue(currentValue.toLowerCase());
                     if (upperCased)
