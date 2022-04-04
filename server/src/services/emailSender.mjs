@@ -3,7 +3,10 @@ import mailchimpProvider from '@mailchimp/mailchimp_transactional';
 import EmailTemplate, { templates } from './../emails/emailTemplate';
 import config from './../config';
 import logger from './../logger';
-import { EXPIRING_DOMAINS_EMAIL_SUBJECTS } from '../config/constants';
+import {
+  EXPIRING_DOMAINS_EMAIL_SUBJECTS,
+  EXPIRING_DOMAINS_EMAIL_TITLE,
+} from '../config/constants';
 
 const EMAIL_SENT_STATUS = 'sent';
 
@@ -190,6 +193,8 @@ class EmailSender {
                 ? `${sendData.mainUrl}fio-domain-renew/${sendData.domains[0].name}`
                 : `${sendData.mainUrl}fio-domains`
             }`,
+            title: EXPIRING_DOMAINS_EMAIL_SUBJECTS[sendData.expiringStatus],
+            mainTitle: EXPIRING_DOMAINS_EMAIL_TITLE[sendData.expiringStatus],
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
