@@ -1,5 +1,6 @@
-import Sequelize from 'sequelize';
 import { parentPort } from 'worker_threads';
+
+import Sequelize from 'sequelize';
 
 import '../db';
 import { fioApi } from '../external/fio.mjs';
