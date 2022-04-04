@@ -60,7 +60,7 @@ if (parentPort)
 
       if (!data.emailData || !Object.keys(data.emailData).length) return false;
 
-      let emailSent = false;
+      let sentEmailId = null;
       try {
         let emailData = data.emailData;
 
@@ -83,16 +83,18 @@ if (parentPort)
           emailData,
         );
 
-        emailSent = !!emailResult;
+        sentEmailId = emailResult ? emailResult._id : null;
       } catch (e) {
         logger.error(`EMAIL SEND ERROR`, e);
       }
 
-      if (emailSent) {
-        await Notification.update(
-          { emailDate: new Date() },
-          { where: { id: { [Sequelize.Op.in]: notifications.map(n => n.id) } } },
-        );
+      if (sentEmailId) {
+        for (const notification of notifications) {
+          await Notification.update(
+            { emailDate: new Date(), data: { ...notification.data, sentEmailId } },
+            { where: { id: notification.id } },
+          );
+        }
         parentPort.postMessage(
           `Notification processed, email sent - ${notifications.map(n => n.id)}`,
         );
