@@ -6,7 +6,7 @@
   .container {
     margin-bottom: -15px;
     flex-basis: 100%;
-  
+
     .badgeContainer {
       color: $dark-jungle-green;
       display: flex;
@@ -35,7 +35,7 @@
     flex-direction: row;
     flex-flow: wrap;
     justify-content: space-between;
-  
+
     .container {
       &.short {
         flex-basis: 35%;
