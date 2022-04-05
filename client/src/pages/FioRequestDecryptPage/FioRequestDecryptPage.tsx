@@ -7,25 +7,27 @@ import DecryptContentEdge from '../WalletPage/components/DecryptContentEdge';
 import FioRequest from './components/FioRequest';
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
+import FioRequestStatusBadge from '../../components/Badges/FioRequestStatusBadge/FioRequestStatusBadge';
 
 import { putParamsToUrl } from '../../utils';
 import { transformFioRecord } from '../WalletPage/util';
 import { isFioChain } from '../../util/fio';
-import { useFioAddresses } from '../../util/hooks';
 
 import { ROUTES } from '../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../constants/common';
 import { FIO_RECORD_TYPES } from '../WalletPage/constants';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
-
-import { ContainerProps } from './types';
-import { FioDecryptedRecordData, FioRecord } from '../../types';
-
-import classes from '../StakeTokensPage/styles/StakeTokensPage.module.scss';
 import {
   FIO_REQUEST_STATUS_TYPES,
   FIO_REQUEST_STATUS_TYPES_TITLES,
 } from '../../constants/fio';
+
+import { ContainerProps } from './types';
+import { FioDecryptedRecordData, FioRecord } from '../../types';
+import { FioRecordViewDecrypted } from '../WalletPage/types';
+
+import detailsModalClasses from '../WalletPage/styles/FioRecordDetailedModal.module.scss';
+import classes from '../WalletPage/styles/WalletPage.module.scss';
 
 const FioRequestDecryptPage: React.FC<ContainerProps> = (
   props: ContainerProps,
@@ -49,13 +51,19 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
   const [initDecrypt, setInitDecrypt] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [fioRequest, setFioRequest] = useState<FioRecord | null>(null);
+  const [paymentOtbData, setPaymentData] = useState<FioRecord | null>(null);
+  const [
+    fioRequestDecrypted,
+    setFioRequestDecrypted,
+  ] = useState<FioRecordViewDecrypted | null>(null);
+  const [
+    fioPaymentDataDecrypted,
+    setPaymentDataDecrypted,
+  ] = useState<FioRecordViewDecrypted | null>(null);
   const [fioRecordType, setFioRecordType] = useState<string | null>(null);
   const [processing, setProcessing] = useState<boolean>(false);
 
   // todo: check if fio address from request is in wallet addresses
-  const [, isWalletFioAddressesLoading] = useFioAddresses(
-    fioWallet && fioWallet.publicKey,
-  );
 
   useEffect(() => {
     setDecryptData(null);
@@ -63,7 +71,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
 
   useEffect(() => {
     if (fioRequestId && fioWalletsData && publicKey && !fioRequest) {
-      const { receivedFioRequests, sentFioRequests } = fioWalletsData[
+      const { receivedFioRequests, sentFioRequests, obtData } = fioWalletsData[
         publicKey
       ];
       const receivedRequest = receivedFioRequests.find(
@@ -85,6 +93,13 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
         (item: FioRecord) => item.fioRequestId === fioRequestId,
       );
       if (sentRequest) {
+        if (sentRequest.status === FIO_REQUEST_STATUS_TYPES.PAID) {
+          setPaymentData(
+            obtData.find(
+              (item: FioRecord) => item.fioRequestId === fioRequestId,
+            ),
+          );
+        }
         setFioRequest(sentRequest);
         setFioRecordType(FIO_RECORD_TYPES.SENT);
         return;
@@ -125,7 +140,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
       setInitDecrypt(true);
       setDecryptData({
         itemData: fioRequest,
-        paymentOtbData: null,
+        paymentOtbData,
         fioRecordType,
       });
     }
@@ -136,6 +151,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
     fioRecordType,
     submitData,
     initDecrypt,
+    paymentOtbData,
   ]);
 
   const onCancel = () => {
@@ -143,13 +159,30 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
     setProcessing(false);
   };
   const onSuccess = (fioRecordItemDecrypted: FioDecryptedRecordData) => {
-    const { itemData } = fioRecordItemDecrypted;
+    const {
+      itemData,
+      paymentOtbData: decryptedPaymentData,
+    } = fioRecordItemDecrypted;
     setProcessing(false);
     const fioRecordDecrypted = transformFioRecord({
       fioRecordItem: itemData,
       publicKey: fioWallet.publicKey,
       fioRecordType,
     });
+
+    if (fioRecordType === FIO_RECORD_TYPES.SENT) {
+      setFioRequestDecrypted(fioRecordDecrypted);
+      !!decryptedPaymentData &&
+        setPaymentDataDecrypted(
+          transformFioRecord({
+            fioRecordItem: decryptedPaymentData,
+            publicKey: fioWallet.publicKey,
+            fioRecordType,
+          }),
+        );
+      setDecryptData(null);
+      return;
+    }
 
     if (isFioChain(fioRecordDecrypted.fioDecryptedContent.chainCode)) {
       history.push(
@@ -183,8 +216,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
     !fioWallet.id ||
     fioWallet.balance === null ||
     fioWalletsData === null ||
-    fioRequest === null ||
-    isWalletFioAddressesLoading
+    fioRequest === null
   )
     return (
       <div className="d-flex justify-content-center align-items-center w-100 flex-grow-1">
@@ -200,7 +232,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
     );
 
   return (
-    <>
+    <div className={classes.container}>
       {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
         <DecryptContentEdge
           fioWallet={fioWallet}
@@ -217,15 +249,20 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
         onBack={onBack || null}
         middleWidth={true}
       >
+        <div className={detailsModalClasses.statusBadgeRight}>
+          <FioRequestStatusBadge status={fioRequest.status} />
+        </div>
         <p className={classes.subtitle}>
           <span className={classes.subtitleThin}>FIO Wallet Name:</span>{' '}
           {fioWallet.name}
         </p>
 
         <FioRequest
-          fioRecordDetailedItem={null}
+          fioRecordDecrypted={fioRequestDecrypted}
+          fioRecordPaymentDataDecrypted={fioPaymentDataDecrypted}
           fioRecordType={fioRecordType}
           fioRequest={fioRequest}
+          fioWallet={fioWallet}
         />
 
         <InfoBadge
@@ -235,22 +272,24 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
           type={BADGE_TYPES.ERROR}
         />
 
-        <div className="d-flex justify-content-center mt-4">
-          <SubmitButton
-            text="Decrypt"
-            withTopMargin={true}
-            disabled={!!error}
-            onClick={() =>
-              setDecryptData({
-                itemData: fioRequest,
-                paymentOtbData: null,
-                fioRecordType,
-              })
-            }
-          />
-        </div>
+        {!fioRequestDecrypted ? (
+          <div className="d-flex justify-content-center mt-4">
+            <SubmitButton
+              text="Decrypt"
+              withTopMargin={true}
+              disabled={!!error}
+              onClick={() =>
+                setDecryptData({
+                  itemData: fioRequest,
+                  paymentOtbData: null,
+                  fioRecordType,
+                })
+              }
+            />
+          </div>
+        ) : null}
       </PseudoModalContainer>
-    </>
+    </div>
   );
 };
 
