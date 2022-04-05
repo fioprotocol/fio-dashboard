@@ -37,7 +37,7 @@ const postMessage = message => {
 };
 
 const logFioError = e => {
-  if (e.errorCode !== 404) logger.error(e);
+  if (e && e.errorCode !== 404) logger.error(e);
 };
 
 const returnDayRange = timePeriod => {
@@ -75,7 +75,7 @@ const checkRequests = async wallet => {
     for (const request of sent) {
       const fetchedItem = sentRequests.find(
         fetchedRequest =>
-          fetchedRequest.fio_request_id === request.fio_request_id &&
+          Number(fetchedRequest.fio_request_id) === Number(request.fio_request_id) &&
           fetchedRequest.status !== request.status,
       );
       if (fetchedItem) {
@@ -93,6 +93,7 @@ const checkRequests = async wallet => {
               requestingFioCryptoHandle: fetchedItem.payee_fio_address,
               requestSentTo: fetchedItem.payer_fio_address,
               wallet: wallet.publicKey,
+              fioRequestId: fetchedItem.fio_request_id,
               date: new Date(fetchedItem.time_stamp),
             },
           },
@@ -107,9 +108,10 @@ const checkRequests = async wallet => {
     const {
       publicWalletData: {
         requests: { received },
-        meta: { receivedRequestsOffset },
+        meta: { receivedRequestsOffset } = { receivedRequestsOffset: 0 },
       },
     } = wallet;
+
     const requestsResponse = await walletSdk.getReceivedFioRequests(
       0,
       receivedRequestsOffset,
@@ -119,7 +121,7 @@ const checkRequests = async wallet => {
 
     if (!received.length && receivedRequests.length) {
       changed = true;
-      meta.receivedRequestsOffset = receivedRequests.length - 1;
+      meta.receivedRequestsOffset = receivedRequests.length;
       received.push(...receivedRequests);
     }
 
@@ -130,7 +132,8 @@ const checkRequests = async wallet => {
 
       for (const fetchedItem of receivedRequests) {
         const existed = received.find(
-          request => fetchedItem.fio_request_id === request.fio_request_id,
+          request =>
+            Number(fetchedItem.fio_request_id) === Number(request.fio_request_id),
         );
         if (!existed) {
           await Notification.create({
@@ -143,6 +146,7 @@ const checkRequests = async wallet => {
                 requestor: fetchedItem.payee_fio_address,
                 to: fetchedItem.payer_fio_address,
                 wallet: wallet.publicKey,
+                fioRequestId: fetchedItem.fio_request_id,
                 date: new Date(fetchedItem.time_stamp),
               },
             },
@@ -167,7 +171,15 @@ const checkRequests = async wallet => {
 
 const checkBalance = async wallet => {
   try {
-    const { balance } = await fioApi.publicFioSDK.getFioBalance(wallet.publicKey);
+    let balance = 0;
+    try {
+      const balanceResponse = await fioApi.publicFioSDK.getFioBalance(wallet.publicKey);
+      balance = balanceResponse.balance;
+    } catch (e) {
+      logFioError(e);
+      // other error (when 404 the balance is 0)
+      if (e.errorCode !== 404) balance = wallet.publicWalletData.balance;
+    }
     const { publicWalletData } = wallet;
 
     if (publicWalletData.balance === null) {
@@ -178,9 +190,12 @@ const checkBalance = async wallet => {
     if (!new MathOp(publicWalletData.balance).eq(balance)) {
       const roe = await getROE();
       const fioNativeChangeBalance = new MathOp(balance)
-        .div(publicWalletData.balance)
+        .sub(publicWalletData.balance)
         .toNumber();
-      const usdcChangeBalance = fioApi.convertFioToUsdc(fioNativeChangeBalance, roe);
+      const usdcChangeBalance = fioApi.convertFioToUsdc(
+        new MathOp(fioNativeChangeBalance).abs().toNumber(),
+        roe,
+      );
       const usdcBalance = fioApi.convertFioToUsdc(balance, roe);
       const sign = new MathOp(fioNativeChangeBalance).gt(0) ? '+' : '-';
 
@@ -231,16 +246,14 @@ const checkFioNames = async wallet => {
 
     for (const cryptoHandle of cryptoHandles) {
       const fetched = fio_addresses.find(
-        item =>
-          item.fio_address === cryptoHandle.fio_address &&
-          item.remaining_bundled_tx !== cryptoHandle.remaining_bundled_tx,
+        item => item.fio_address === cryptoHandle.fio_address,
       );
       if (fetched) {
-        changed = true;
         if (
           fetched.remaining_bundled_tx < LOW_BUNDLES_THRESHOLD &&
           cryptoHandle.remaining_bundled_tx >= LOW_BUNDLES_THRESHOLD
         ) {
+          changed = true;
           await Notification.create({
             type: Notification.TYPE.INFO,
             contentType: Notification.CONTENT_TYPE.LOW_BUNDLE_TX,
@@ -254,17 +267,24 @@ const checkFioNames = async wallet => {
             },
           });
         }
+      } else {
+        changed = true;
       }
     }
 
     for (const domain of domains) {
       const fetchedDomain = fio_domains.find(
-        item =>
-          item.fio_domain === domain.fio_domain && item.expiration !== domain.expiration,
+        item => item.fio_domain === domain.fio_domain,
       );
-      if (fetchedDomain) {
+
+      if (fetchedDomain && fetchedDomain.expiration !== domain.expiration) {
         changed = true;
         domain.expiration = fetchedDomain.expiration;
+      }
+
+      if (!fetchedDomain) {
+        changed = true;
+        continue;
       }
 
       const timePeriod = new Date(domain.expiration).getTime() - new Date().getTime();
