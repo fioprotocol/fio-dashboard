@@ -1,15 +1,16 @@
 import React from 'react';
 
-import FioRecordFieldsList from '../../WalletPage/components/FioRecordFieldsList';
+import FioRecordDetailedTabs from '../../WalletPage/components/FioRecordDetailedTabs';
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 
+import { commonFormatTime } from '../../../util/general';
+
 import {
-  FIO_RECORD_DETAILED_TYPE,
   FIO_RECORD_TYPES,
   FIO_REQUEST_FIELDS_LIST,
 } from '../../WalletPage/constants';
 
-import { FioRecord } from '../../../types';
+import { FioRecord, FioWalletDoublet } from '../../../types';
 import { FioRecordViewDecrypted } from '../../WalletPage/types';
 
 import recordsClasses from '../../WalletPage/styles/FioRecordFieldsList.module.scss';
@@ -21,12 +22,20 @@ const FIO_REQUEST_FIELDS_LIST_BY_TYPE = {
 
 type Props = {
   fioRecordType: string;
-  fioRecordDetailedItem?: FioRecordViewDecrypted | null;
+  fioRecordDecrypted?: FioRecordViewDecrypted | null;
+  fioRecordPaymentDataDecrypted?: FioRecordViewDecrypted | null;
   fioRequest: FioRecord;
+  fioWallet: FioWalletDoublet;
 };
 
 const FioRequest: React.FC<Props> = (props: Props) => {
-  const { fioRecordDetailedItem, fioRecordType, fioRequest } = props;
+  const {
+    fioRecordDecrypted,
+    fioRecordType,
+    fioRecordPaymentDataDecrypted,
+    fioRequest,
+    fioWallet,
+  } = props;
 
   const renderField = (field: string, value: string) => (
     <div className={recordsClasses.container} key={field}>
@@ -40,12 +49,12 @@ const FioRequest: React.FC<Props> = (props: Props) => {
   );
 
   const renderFields = () => {
-    if (fioRecordType === FIO_RECORD_TYPES.SENT)
+    if (fioRecordType === FIO_RECORD_TYPES.SENT && !fioRecordDecrypted)
       return (
         <div className={recordsClasses.fieldsContainer}>
           {renderField('Requesting FIO Address', fioRequest.payeeFioAddress)}
           {renderField('Request sent to', fioRequest.payerFioAddress)}
-          {renderField('Date / Time', fioRequest.timeStamp)}
+          {renderField('Date / Time', commonFormatTime(fioRequest.timeStamp))}
         </div>
       );
     if (fioRecordType === FIO_RECORD_TYPES.RECEIVED)
@@ -53,23 +62,26 @@ const FioRequest: React.FC<Props> = (props: Props) => {
         <>
           {renderField('Requestor', fioRequest.payeeFioAddress)}
           {renderField('To', fioRequest.payerFioAddress)}
-          {renderField('Date / Time', fioRequest.timeStamp)}
+          {renderField('Date / Time', commonFormatTime(fioRequest.timeStamp))}
         </>
       );
+
+    return null;
   };
 
   return (
     <>
-      {fioRecordDetailedItem ? (
-        <FioRecordFieldsList
-          fioRecordDecrypted={fioRecordDetailedItem}
+      <div className={recordsClasses.fieldsContainer}>{renderFields()}</div>
+      {fioRecordDecrypted ? (
+        <FioRecordDetailedTabs
+          fioRecordDecrypted={fioRecordDecrypted}
+          fioRecordPaymentDataDecrypted={fioRecordPaymentDataDecrypted}
           fioRecordType={fioRecordType}
-          fieldsList={FIO_REQUEST_FIELDS_LIST_BY_TYPE[fioRecordType]}
-          fioRecordDetailedType={FIO_RECORD_DETAILED_TYPE.REQUEST}
+          requestFieldsList={FIO_REQUEST_FIELDS_LIST_BY_TYPE[fioRecordType]}
+          fioWallet={fioWallet}
+          onCloseModal={() => null}
         />
-      ) : (
-        <div className={recordsClasses.fieldsContainer}>{renderFields()}</div>
-      )}
+      ) : null}
     </>
   );
 };
