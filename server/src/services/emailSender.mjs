@@ -114,13 +114,14 @@ class EmailSender {
        * @param date example 24/03/2022 @ 5:46 pm
        * @param requestingFioCryptoHandle example 'test@test'
        * @param requestSentTo example 'test@test'
+       * @param fioRequestId example '24456'
        * @param wallet example FIO82i9X4UpBC8yKRs1F59cbZomFEnryYipHNZXq921EppJheZzK6
        */
       case templates.approveFioRequest:
         return {
           subject: 'Your FIO request has been approved',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}fio-wallet/${sendData.wallet}`,
+            link: `${sendData.mainUrl}fio-wallet/${sendData.wallet}/fio-request/${sendData.fioRequestId}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
@@ -131,13 +132,14 @@ class EmailSender {
        * @param date example 24/03/2022 @ 5:46 pm
        * @param requestingFioCryptoHandle example 'test@test'
        * @param requestSentTo example 'test@test'
+       * @param fioRequestId example '24456'
        * @param wallet example FIO82i9X4UpBC8yKRs1F59cbZomFEnryYipHNZXq921EppJheZzK6
        */
       case templates.rejectFioRequest:
         return {
           subject: 'Your FIO request has been rejected',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}fio-wallet/${sendData.wallet}`,
+            link: `${sendData.mainUrl}fio-wallet/${sendData.wallet}/fio-request/${sendData.fioRequestId}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
@@ -148,13 +150,14 @@ class EmailSender {
        * @param date example 24/03/2022 @ 5:46 pm
        * @param requestor example 'test@test'
        * @param to example 'test@test'
+       * @param fioRequestId example '24456'
        * @param wallet example FIO82i9X4UpBC8yKRs1F59cbZomFEnryYipHNZXq921EppJheZzK6
        */
       case templates.newFioRequest:
         return {
           subject: 'You have received a new FIO request',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}fio-wallet/${sendData.wallet}`,
+            link: `${sendData.mainUrl}fio-wallet/${sendData.wallet}/fio-request/${sendData.fioRequestId}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
