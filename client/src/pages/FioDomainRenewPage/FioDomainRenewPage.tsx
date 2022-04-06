@@ -1,9 +1,12 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
+import FioNamesInitWrapper from '../../components/FioNamesInitWrapper';
 import FioNameRenewContainer from '../../components/FioNameRenew';
-import { FioNameItemProps } from '../../types';
+
 import { DOMAIN } from '../../constants/common';
+
+import { FioNameItemProps } from '../../types';
 
 type MatchParams = {
   id: string;
@@ -19,12 +22,14 @@ const FioDomainRenewPage: React.FC<Props &
   const { id: name } = match.params;
 
   return (
-    <FioNameRenewContainer
-      fioNameType={DOMAIN}
-      fioNameList={fioNameList}
-      name={name}
-      history={history}
-    />
+    <FioNamesInitWrapper>
+      <FioNameRenewContainer
+        fioNameType={DOMAIN}
+        fioNameList={fioNameList}
+        name={name}
+        history={history}
+      />
+    </FioNamesInitWrapper>
   );
 };
 
