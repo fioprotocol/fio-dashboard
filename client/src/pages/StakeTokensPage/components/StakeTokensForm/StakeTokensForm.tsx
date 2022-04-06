@@ -76,8 +76,8 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           title="No Crypto Handle"
           message={
             <>
-              You do not have a crypto handle associated with this wallet. You
-              are not able to stake without any.
+              You do not have a crypto handle associated with this wallet.
+              Please get one and try again
               <br />
               <br />
               <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>
