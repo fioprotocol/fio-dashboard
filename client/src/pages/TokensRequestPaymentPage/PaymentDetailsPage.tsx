@@ -158,12 +158,7 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
       />
     );
 
-  if (!walletFioAddresses?.length)
-    return (
-      <div className="d-flex justify-content-center align-items-center w-100 flex-grow-1">
-        <FioLoader />
-      </div>
-    );
+  if (!walletFioAddresses?.length) return <FioLoader wrap={true} />;
 
   if (resultsData)
     return (

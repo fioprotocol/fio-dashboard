@@ -112,12 +112,7 @@ const SendPage: React.FC<ContainerProps> = props => {
     );
   };
 
-  if (!fioWallet || !fioWallet.id)
-    return (
-      <div className="d-flex justify-content-center align-items-center w-100 flex-grow-1">
-        <FioLoader />
-      </div>
-    );
+  if (!fioWallet || !fioWallet.id) return <FioLoader wrap={true} />;
 
   const onBack = () =>
     history.push(
