@@ -218,11 +218,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
     fioWalletsData === null ||
     fioRequest === null
   )
-    return (
-      <div className="d-flex justify-content-center align-items-center w-100 flex-grow-1">
-        <FioLoader />
-      </div>
-    );
+    return <FioLoader wrap={true} />;
 
   const onBack = () =>
     history.push(

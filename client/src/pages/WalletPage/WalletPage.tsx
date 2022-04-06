@@ -65,12 +65,7 @@ const WalletPage: React.FC<ContainerProps> = props => {
 
   const actorName = fioWallet ? apis.fio.getActor(fioWallet.publicKey) : '';
 
-  if (!fioWallet || !fioWallet.id)
-    return (
-      <div className="d-flex justify-content-center align-items-center w-100 flex-grow-1">
-        <FioLoader />
-      </div>
-    );
+  if (!fioWallet || !fioWallet.id) return <FioLoader wrap={true} />;
 
   const renderTitle = () => {
     return (
