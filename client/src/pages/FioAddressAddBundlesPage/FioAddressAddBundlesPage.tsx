@@ -8,6 +8,9 @@ import LowBalanceBadge from '../../components/Badges/LowBalanceBadge/LowBalanceB
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import AddBundlesEdgeWallet from './components/AddBundlesEdgeWallet';
 import Results from '../../components/common/TransactionResults';
+import FioLoader from '../../components/common/FioLoader/FioLoader';
+import FioNamesInitWrapper from '../../components/FioNamesInitWrapper';
+import Badge, { BADGE_TYPES } from '../../components/Badge/Badge';
 
 import { convertFioPrices } from '../../util/prices';
 import { useFioWallet, useWalletBalances } from '../../util/hooks';
@@ -15,7 +18,6 @@ import MathOp from '../../util/math';
 
 import { WALLET_CREATED_FROM } from '../../constants/common';
 import { ERROR_TYPES } from '../../components/common/TransactionResults/constants';
-import Badge, { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ROUTES } from '../../constants/routes';
 
 import { ResultsData } from '../../components/common/TransactionResults/types';
@@ -124,6 +126,9 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
       </Results>
     );
 
+  if (!currentWallet || currentWallet.balance === null)
+    return <FioLoader wrap={true} />;
+
   if (
     (!currentWallet.publicKey && !settingWallet && !processing) ||
     fioAddresses.length < 1
@@ -170,4 +175,13 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
   );
 };
 
-export default FioAddressAddBundlesPage;
+const FioAddressAddBundlesPageWrapper: React.FC<ContainerProps &
+  RouteComponentProps<MatchParams, {}, LocationState>> = props => {
+  return (
+    <FioNamesInitWrapper>
+      <FioAddressAddBundlesPage {...props} />
+    </FioNamesInitWrapper>
+  );
+};
+
+export default FioAddressAddBundlesPageWrapper;
