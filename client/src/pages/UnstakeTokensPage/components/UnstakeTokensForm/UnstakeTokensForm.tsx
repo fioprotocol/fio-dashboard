@@ -53,6 +53,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
           message={
             <>
               You do not have a crypto handle associated with this wallet.
+              Please get one and try again
               <br />
               <br />
               <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>
