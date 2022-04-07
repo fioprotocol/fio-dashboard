@@ -25,14 +25,17 @@ import {
 } from '../notifications/actions';
 import { setRedirectPath } from '../navigation/actions';
 
-import { redirectLink } from '../navigation/selectors';
+import {
+  locationState as locationStateSelector,
+  redirectLink,
+} from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
 import { ROUTES } from '../../constants/routes';
 
 import { Api } from '../../api';
 
 import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
-import { FioWalletDoublet } from '../../types';
+import { FioWalletDoublet, PrivateRedirectLocationState } from '../../types';
 import { Action } from '../types';
 
 export function* loginSuccess(history: History, api: Api) {
@@ -55,9 +58,22 @@ export function* loginSuccess(history: History, api: Api) {
       }
     yield put<Action>(loadProfile());
     yield put<Action>(listNotifications());
+
+    const locationState: PrivateRedirectLocationState = yield select(
+      locationStateSelector,
+    );
+    if (
+      !hasRedirectTo &&
+      locationState &&
+      locationState.from &&
+      locationState.from.pathname
+    ) {
+      yield history.push(locationState.from.pathname);
+    }
     if (hasRedirectTo) {
       yield history.push(hasRedirectTo.pathname, hasRedirectTo.state);
     }
+
     yield put(closeLoginModal());
     yield put(setRedirectPath(null));
   });
