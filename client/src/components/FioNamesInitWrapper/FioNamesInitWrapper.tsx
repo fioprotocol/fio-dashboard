@@ -12,9 +12,11 @@ const FioNamesInitWrapper: React.FC<Props> = (props: Props) => {
     fioDomains,
     fioWallets,
     refreshFioNames,
+    fioNamesInitRefreshed,
   } = props;
 
   const [initFetched, setInitFetched] = useState<boolean>(false);
+  const [initRefreshed, setInitRefreshed] = useState<boolean>(false);
 
   useEffect(() => {
     if (
@@ -39,7 +41,29 @@ const FioNamesInitWrapper: React.FC<Props> = (props: Props) => {
     refreshFioNames,
   ]);
 
-  if (!profileRefreshed || !initFetched) return <FioLoader wrap={true} />;
+  useEffect(() => {
+    if (
+      profileRefreshed &&
+      initFetched &&
+      !initRefreshed &&
+      fioWallets.length
+    ) {
+      let allRefreshed = true;
+      for (const fioWallet of fioWallets) {
+        if (!fioNamesInitRefreshed[fioWallet.publicKey]) allRefreshed = false;
+      }
+      allRefreshed && setInitRefreshed(true);
+    }
+  }, [
+    profileRefreshed,
+    initFetched,
+    initRefreshed,
+    fioWallets,
+    fioNamesInitRefreshed,
+  ]);
+
+  if (!profileRefreshed || !initFetched || !initRefreshed)
+    return <FioLoader wrap={true} />;
 
   return children;
 };

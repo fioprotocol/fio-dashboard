@@ -26,6 +26,8 @@ export const feesLoading = (state: ReduxState) => state[prefix].feesLoading;
 export const nftSignatures = (state: ReduxState) => state[prefix].nftList;
 export const mappedPublicAddresses = (state: ReduxState) =>
   state[prefix].mappedPublicAddresses;
+export const fioNamesInitRefreshed = (state: ReduxState) =>
+  state[prefix].fioNamesInitRefreshed;
 
 export const currentWallet = (
   state: ReduxState,

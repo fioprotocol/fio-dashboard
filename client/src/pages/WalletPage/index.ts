@@ -9,6 +9,7 @@ import {
   fioWalletsBalances as fioWalletsBalancesSelector,
   loading,
 } from '../../redux/fio/selectors';
+import { profileRefreshed } from '../../redux/profile/selectors';
 
 import WalletPage from './WalletPage';
 import { ReduxState } from '../../redux/init';
@@ -35,6 +36,7 @@ const reduxConnect = connect(
       );
     },
     loading,
+    profileRefreshed,
     fioWalletsData: (state: ReduxState) => {
       const fioWalletsData = fioWalletsDataSelector(state);
       const user = userSelector(state);

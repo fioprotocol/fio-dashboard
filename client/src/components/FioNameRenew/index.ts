@@ -6,7 +6,7 @@ import { compose, hasFioAddressDelimiter } from '../../utils';
 
 import { refreshBalance, getFee } from '../../redux/fio/actions';
 
-import { loading, currentWallet } from '../../redux/fio/selectors';
+import { loading, currentWallet, fioDomains } from '../../redux/fio/selectors';
 import { roe } from '../../redux/registrations/selectors';
 
 import FioNameRenewContainer from './FioNameRenewContainer';
@@ -31,6 +31,7 @@ const reduxConnect = connect(
     },
     roe,
     currentWallet,
+    fioDomains,
   }),
   {
     refreshBalance,
