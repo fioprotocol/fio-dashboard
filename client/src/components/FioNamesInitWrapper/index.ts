@@ -11,6 +11,7 @@ import {
   fioWallets,
   fioAddresses,
   fioDomains,
+  fioNamesInitRefreshed,
 } from '../../redux/fio/selectors';
 
 import FioNamesInitWrapper from './FioNamesInitWrapper';
@@ -22,6 +23,7 @@ const reduxConnect = connect(
     fioWallets,
     fioAddresses,
     fioDomains,
+    fioNamesInitRefreshed,
   }),
   {
     refreshFioNames,

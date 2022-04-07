@@ -12,6 +12,7 @@ import SubmitButton from '../common/SubmitButton/SubmitButton';
 import FioLoader from '../common/FioLoader/FioLoader';
 
 import {
+  DOMAIN,
   MANAGE_PAGE_REDIRECT,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
@@ -35,6 +36,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
     roe,
     history,
     name,
+    fioDomains,
     fioNameType,
     refreshBalance,
     getFee,
@@ -46,15 +48,27 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
     name: string;
   } | null>(null);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
+  const [error, setError] = useState<string>('');
 
   const { available: walletBalancesAvailable } = useWalletBalances(
     currentWallet.publicKey,
   );
 
   useEffect(() => {
-    getFee(hasFioAddressDelimiter(name));
-    refreshBalance(currentWallet.publicKey);
-  }, []);
+    if (name && currentWallet && currentWallet.publicKey) {
+      getFee(hasFioAddressDelimiter(name));
+      refreshBalance(currentWallet.publicKey);
+    }
+  }, [name, currentWallet, refreshBalance, getFee]);
+
+  useEffect(() => {
+    fioNameType === DOMAIN &&
+      setError(
+        !fioDomains.find(({ name: fioDomainName }) => fioDomainName === name)
+          ? `Fio Domain (${name}) is not available`
+          : '',
+      );
+  }, [name, fioDomains, fioNameType]);
 
   const hasLowBalance =
     currentWallet &&
@@ -94,6 +108,21 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
         onRetry={onResultsRetry}
         errorType={ERROR_TYPES.RENEW_ERROR}
       />
+    );
+
+  if (error)
+    return (
+      <PseudoModalContainer
+        title="Renew Now"
+        link={MANAGE_PAGE_REDIRECT[fioNameType]}
+      >
+        <InfoBadge
+          message={error}
+          show={!!error}
+          title="Error"
+          type={BADGE_TYPES.ERROR}
+        />
+      </PseudoModalContainer>
     );
 
   if (!currentWallet || currentWallet.balance === null)

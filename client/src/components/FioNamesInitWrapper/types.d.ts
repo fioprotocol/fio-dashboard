@@ -14,4 +14,5 @@ export type Props = {
   fioDomains: FioDomainDoublet[];
   refreshFioNames: (publicKey: string) => void;
   loading: boolean;
+  fioNamesInitRefreshed: { [publicKey: string]: boolean };
 };

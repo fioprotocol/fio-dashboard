@@ -11,10 +11,12 @@ import TotalBalanceBadge from '../WalletsPage/components/TotalBalanceBadge';
 import TransactionHistory from './components/TransactionHistory';
 import EditWalletName from './components/EditWalletName';
 import WalletTabs from './components/WalletTabs';
+import InfoBadge from '../../components/InfoBadge/InfoBadge';
 
 import apis from '../../api';
 
 import { ROUTES } from '../../constants/routes';
+import { BADGE_TYPES } from '../../components/Badge/Badge';
 
 import { putParamsToUrl } from '../../utils';
 
@@ -34,13 +36,18 @@ const WalletPage: React.FC<ContainerProps> = props => {
   const {
     fioWallet,
     balance,
+    profileRefreshed,
     refreshBalance,
     fioWalletsData,
     fioWalletsTxHistory,
+    match: {
+      params: { publicKey },
+    },
   } = props;
 
   const [showDetails, setShowDetails] = useState(false);
   const [showWalletNameEdit, setShowWalletNameEdit] = useState(false);
+  const [error, setError] = useState<string>('');
 
   const { location }: Location = useHistory();
 
@@ -48,7 +55,12 @@ const WalletPage: React.FC<ContainerProps> = props => {
 
   useEffect(() => {
     if (fioWallet && fioWallet.publicKey) refreshBalance(fioWallet.publicKey);
-  }, [fioWallet]);
+  }, [fioWallet, refreshBalance]);
+
+  useEffect(() => {
+    if (publicKey && profileRefreshed && !fioWallet)
+      setError(`Fio Wallet (${publicKey}) is not available`);
+  }, [publicKey, fioWallet, profileRefreshed]);
 
   const closeWalletDetails = () => setShowDetails(false);
   const closeWalletNameEdit = () => setShowWalletNameEdit(false);
@@ -65,6 +77,19 @@ const WalletPage: React.FC<ContainerProps> = props => {
 
   const actorName = fioWallet ? apis.fio.getActor(fioWallet.publicKey) : '';
 
+  if (error)
+    return (
+      <div className={classes.container}>
+        <LayoutContainer title="Wallet">
+          <InfoBadge
+            message={error}
+            show={!!error}
+            title="Error"
+            type={BADGE_TYPES.ERROR}
+          />
+        </LayoutContainer>
+      </div>
+    );
   if (!fioWallet || !fioWallet.id) return <FioLoader wrap={true} />;
 
   const renderTitle = () => {
