@@ -13,9 +13,10 @@ export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
 }
 
 export interface ContainerProps extends ContainerOwnProps {
-  fioWallet: FioWalletDoublet;
+  fioWallets: FioWalletDoublet[];
   loading: boolean;
   roe: number;
   fioWalletsData: { [publicKey: string]: FioWalletData };
   refreshBalance: (publicKey: string) => void;
+  refreshWalletDataPublicKey: (publicKey: string) => void;
 }

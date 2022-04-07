@@ -22,9 +22,14 @@ import {
   FIO_REQUEST_STATUS_TYPES,
   FIO_REQUEST_STATUS_TYPES_TITLES,
 } from '../../constants/fio';
+import { emptyWallet } from '../../redux/fio/reducer';
 
 import { ContainerProps } from './types';
-import { FioDecryptedRecordData, FioRecord } from '../../types';
+import {
+  FioDecryptedRecordData,
+  FioRecord,
+  FioWalletDoublet,
+} from '../../types';
 import { FioRecordViewDecrypted } from '../WalletPage/types';
 
 import detailsModalClasses from '../WalletPage/styles/FioRecordDetailedModal.module.scss';
@@ -34,15 +39,20 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
   props: ContainerProps,
 ) => {
   const {
-    fioWallet,
+    fioWallets,
     fioWalletsData,
     history,
     match: {
       params: { publicKey, id },
     },
     refreshBalance,
+    refreshWalletDataPublicKey,
   } = props;
 
+  const fioWallet =
+    fioWallets.find(
+      (walletItem: FioWalletDoublet) => publicKey === walletItem.publicKey,
+    ) || emptyWallet;
   const fioRequestId = Number(id);
   const [submitData, setDecryptData] = useState<{
     itemData: FioRecord;
@@ -127,10 +137,11 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
   useEffect(() => {
     if (fioWallet && fioWallet.publicKey) {
       refreshBalance(fioWallet.publicKey);
+      refreshWalletDataPublicKey(fioWallet.publicKey);
     } else {
       setError(`You don't have a wallet with such public key - ${publicKey}`);
     }
-  }, [publicKey, fioWallet, refreshBalance]);
+  }, [publicKey, fioWallet, refreshBalance, refreshWalletDataPublicKey]);
 
   useEffect(() => {
     if (
@@ -236,7 +247,6 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
   if (
     !fioWallet ||
     !fioWallet.id ||
-    fioWallet.balance === null ||
     fioWalletsData === null ||
     fioRequest === null
   )
