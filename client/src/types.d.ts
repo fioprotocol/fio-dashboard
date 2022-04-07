@@ -417,6 +417,8 @@ export type RedirectLinkData = {
   state?: LocationState;
 };
 
+export type PrivateRedirectLocationState = { from?: { pathname?: string } };
+
 export type Proxy = {
   is_proxy: number;
   fioaddress: string;

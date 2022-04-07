@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
@@ -12,8 +12,10 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
   const {
     showLoginModal,
     logout: logoutFn,
+    profileRefreshed,
     isAuthenticated,
     isNotActiveUser,
+    locationState,
     fioAddresses,
     refProfileLoading,
     refProfileInfo,
@@ -35,6 +37,18 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     closeMenu();
     logoutFn();
   };
+
+  useEffect(() => {
+    if (
+      profileRefreshed &&
+      !isAuthenticated &&
+      locationState &&
+      locationState.from &&
+      locationState.from.pathname
+    ) {
+      showLogin();
+    }
+  }, [locationState, showLogin, isAuthenticated, profileRefreshed]);
 
   if (refProfileLoading) {
     return (
