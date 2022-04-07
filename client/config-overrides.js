@@ -17,7 +17,7 @@ module.exports = {
         __dirname,
         `public/widget-${process.env.REACT_APP_WIDGET}-index.html`,
       );
-      paths.publicUrlOrPath = process.env.WIDGET_PUBLIC_URL;
+      paths.publicUrlOrPath = `${process.env.WIDGET_PUBLIC_URL}/${process.env.REACT_APP_WIDGET}/`;
       paths.appBuild = path.resolve(
         __dirname,
         `build/${process.env.REACT_APP_WIDGET}`,

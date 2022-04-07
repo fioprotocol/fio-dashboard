@@ -60,15 +60,14 @@ How to create embed widget? That's super easy.
 - Create entry points for widget.
 - Create a `html` file with `REACT_APP_WIDGET` id in `public` folder for your widget.
 - Create `run` and `build` npm script in `package.json` file.
-- Run script should be like `"REACT_APP_WIDGET=${REACT_APP_WIDGET} npm run client:start"`.
-- Build script should be like `"REACT_APP_WIDGET=${REACT_APP_WIDGET} npm run client:build && source ./bin/build-widget.sh"`.
+- Run script should be like `"export REACT_APP_WIDGET=${REACT_APP_WIDGET} && npm run client:start"`.
+- Build script should be like `"export REACT_APP_WIDGET=${REACT_APP_WIDGET} && npm run client:build && source ./bin/build-widget.sh"`.
 
 Before build:
 - install jq package `https://stedolan.github.io/jq/`
 
 How to build embed widget?
-- Set `WIDGET_PUBLIC_URL` and `REACT_APP_WIDGET` NODE env vars.
-- Set `WIDGET_PUBLIC_URL` in `client/.env` file. If you want to test it locally set full path to widget's build folder.
+- Set `WIDGET_PUBLIC_URL` in `client/.env` file. If you want to test it locally set full path to build folder.
 
 How to use embed widget?
 - Copy files from `client/build/${YOUR_WIDGET_NAME_FOLDER}` to your host server.
