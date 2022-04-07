@@ -1,5 +1,7 @@
 #!/bin/bash
 
+[ ! -f ./client/.env ] || export $(grep -v '^#' ./client/.env | xargs)
+
 PATH_TO_WIDGET_BUILD=./client/build/${REACT_APP_WIDGET}
 SCRIPT_FILE_NAME=${REACT_APP_WIDGET}.js
 WIDGET_EXAMPLE=widget.html
@@ -16,7 +18,7 @@ touch ${PATH_TO_WIDGET_BUILD}/${WIDGET_EXAMPLE}
 cat > ${PATH_TO_WIDGET_BUILD}/${WIDGET_EXAMPLE}<< EOF
 
 <div id="${REACT_APP_WIDGET}"></div>
-<script type="text/javascript" src="${WIDGET_PUBLIC_URL}${SCRIPT_FILE_NAME}"></script>
+<script type="text/javascript" src="${WIDGET_PUBLIC_URL}/${REACT_APP_WIDGET}/${SCRIPT_FILE_NAME}"></script>
 
 EOF
 

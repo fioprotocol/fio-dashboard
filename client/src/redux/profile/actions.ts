@@ -11,6 +11,7 @@ import {
 import { minWaitTimeFunction } from '../../utils';
 
 import { GetState } from '../init';
+import { ROUTES } from '../../constants/routes';
 
 export const prefix = 'profile';
 
@@ -106,7 +107,8 @@ export const logout = ({ history }: RouterProps, redirect: string = '') => ({
   types: [LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE],
   promise: async (api: Api) => {
     const res = await api.auth.logout();
-    if (redirect) history.push(redirect);
+    if (redirect) history.push(redirect, {});
+    if (!redirect) history.replace(ROUTES.HOME, {});
     return res;
   },
 });

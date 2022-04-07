@@ -6,12 +6,15 @@ import {
   Notification,
   RefProfile,
   FioAddressDoublet,
+  PrivateRedirectLocationState,
 } from '../../types';
 
 export interface MainHeaderProps extends RouteComponentProps {
+  profileRefreshed: boolean;
   isAuthenticated: boolean;
   isNotActiveUser: boolean;
   pathname: string;
+  locationState?: PrivateRedirectLocationState;
   homePageLink: string;
   user: User;
   edgeContextSet: boolean;
