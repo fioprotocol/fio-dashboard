@@ -1,10 +1,11 @@
 import { RouteComponentProps } from 'react-router-dom';
 import { createSelector } from 'reselect';
+
 import { prefix } from './actions';
 import { emptyWallet } from './reducer';
 import { getElementByFioName } from '../../utils';
 import { FioNameItemProps, FioWalletDoublet } from '../../types';
-import { ReduxState } from '../../redux/init';
+import { ReduxState } from '../init';
 
 export const loading = (state: ReduxState) => state[prefix].loading;
 export const walletsFioAddressesLoading = (state: ReduxState) =>
@@ -25,6 +26,8 @@ export const feesLoading = (state: ReduxState) => state[prefix].feesLoading;
 export const nftSignatures = (state: ReduxState) => state[prefix].nftList;
 export const mappedPublicAddresses = (state: ReduxState) =>
   state[prefix].mappedPublicAddresses;
+export const fioNamesInitRefreshed = (state: ReduxState) =>
+  state[prefix].fioNamesInitRefreshed;
 
 export const currentWallet = (
   state: ReduxState,

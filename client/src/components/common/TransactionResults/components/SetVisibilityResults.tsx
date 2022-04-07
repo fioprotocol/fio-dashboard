@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Results from '../index';
 import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
 import DomainStatusBadge from '../../../Badges/DomainStatusBadge/DomainStatusBadge';
@@ -29,7 +27,7 @@ const SetVisibilityResults = (props: ResultsProps) => {
             <div className={classes.badgeContainer}>
               <p className={classes.badgeItem}>New Status</p>
               <div className={classes.badgeItemNext}>
-                <DomainStatusBadge status={changedStatus} />
+                <DomainStatusBadge status={changedStatus || ''} />
               </div>
             </div>
           </Badge>

@@ -1,5 +1,6 @@
-import { RouteComponentProps } from 'react-router-dom';
 import React from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+
 import {
   FioAddressDoublet,
   FioWalletDoublet,
@@ -38,7 +39,6 @@ export type RequestTokensProps = {
   fioAddresses: FioAddressDoublet[];
   pubAddressesMap: MappedPublicAddresses;
   loading: boolean;
-  roe: number;
   contactsList: string[];
   isFio?: boolean;
   onSubmit: (values: RequestTokensValues) => void;
@@ -57,5 +57,5 @@ export interface ContainerProps extends ContainerOwnProps {
   contactsLoading: boolean;
   getContactsList: () => void;
   createContact: (name: string) => void;
-  refreshWalletDataPublicKey: (publicKey: string) => void;
+  refreshWalletDataPublicKey: (publicKey?: string) => void;
 }

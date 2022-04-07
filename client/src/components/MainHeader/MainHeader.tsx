@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+
 import classes from './MainHeader.module.scss';
 import { MainHeaderProps } from './types';
 import RegularNav from './components/RegularNav';
@@ -52,7 +53,6 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
         <LoggedNav
           isMenuOpen={isMenuOpen}
           toggleMenuOpen={toggleMenuOpen}
-          logout={logout}
           closeMenu={closeMenu}
           showLogin={showLogin}
           hideCart={(isRefFlow && !!fioAddresses.length) || isNotActiveUser}
@@ -60,6 +60,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
           onlyAuth={isRefFlow || isNotActiveUser}
           showSiteLink={isRefFlow}
           {...props}
+          logout={logout}
         />
       ) : (
         <RegularNav

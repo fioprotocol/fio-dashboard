@@ -7,7 +7,7 @@ import { FieldRenderProps } from 'react-final-form';
 import { ErrorBadge } from './ErrorBadge';
 import { PasteButton } from './InputActionButtons';
 import CustomDropdown from '../CustomDropdown';
-import { getValueFromPaste } from '../../util/general';
+import { getValueFromPaste, log } from '../../util/general';
 
 import classes from './Input.module.scss';
 
@@ -52,7 +52,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     colorSchema,
     onClose,
     hideError,
-    showPasteButton,
+    showPasteButton = false,
     loading,
     uiType,
     errorType = '',
@@ -91,7 +91,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
   const [previewUrl, setPreviewUrl] = useState('');
 
   const hasError =
-    ((error || data.error) &&
+    ((error || data?.error) &&
       (touched || modified || submitSucceeded || !!value) &&
       !active) || // todo: remove !active to show red border on focused field. make debounce on create account user field
     (submitError && !modifiedSinceLastSubmit);
@@ -199,7 +199,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
             try {
               onChange(await getValueFromPaste());
             } catch (e) {
-              console.error('Paste error: ', e);
+              log.error('Paste error: ', e);
             }
           }}
           uiType={uiType}
@@ -216,7 +216,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
           />
         )}
       </div>
-      {!hideError && !data.hideError && (
+      {!hideError && !data?.hideError && (
         <ErrorBadge
           error={error}
           data={data}
@@ -251,7 +251,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
             const currentValue = e.target.value;
             onChange(currentValue);
 
-            const file = e.target.files[0];
+            const file = e.target.files?.length && e.target.files[0];
 
             if (file) {
               const fileUrl = window.URL.createObjectURL(file);
@@ -282,7 +282,6 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
         {renderLabel()}
         <CustomDropdown
           options={options}
-          onChange={onChange}
           {...input}
           {...rest}
           value={value}

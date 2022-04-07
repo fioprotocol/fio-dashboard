@@ -110,15 +110,19 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
     },
   } = results;
 
-  const updated = updateConnect.length > 0 ? updateConnect : updateDisconnect;
-  const failed = failedConnect.length > 0 ? failedConnect : failedDisconnect;
+  const updated =
+    (updateConnect?.length || 0) > 0 ? updateConnect : updateDisconnect;
+  const failed =
+    (failedConnect?.length || 0) > 0 ? failedConnect : failedDisconnect;
   const error = errorConnect || errorDisconnect;
 
   useEffect(() => {
-    if (failed.length > 0 && updated.length > 0)
+    if ((failed?.length || 0) > 0 && (updated?.length || 0) > 0)
       changeBundleCost(
         bundleCost -
-          Math.ceil(failed.length / ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION),
+          Math.ceil(
+            (failed?.length || 0) / ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
+          ),
       );
   }, [JSON.stringify(failed)]);
 
@@ -126,13 +130,14 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
     if (walletPublicKey) {
       getFioAddresses(walletPublicKey);
       updatePublicAddresses(name, {
-        addPublicAddresses: updateConnect,
-        deletePublicAddresses: updateDisconnect,
+        addPublicAddresses: updateConnect || [],
+        deletePublicAddresses: updateDisconnect || [],
       });
     }
   }, [JSON.stringify(results)]);
 
-  const isPartialErrored = updated.length > 0 && failed.length > 0;
+  const isPartialErrored =
+    (updated?.length || 0) > 0 && (failed?.length || 0) > 0;
 
   const title =
     isPartialErrored || !error
@@ -146,6 +151,7 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
   const history = useHistory();
 
   const onClose = () => history.push(`${ROUTES.LINK_TOKEN_LIST}/${name}`);
+  const handleOnRetry = () => onRetry(results);
 
   return (
     <Results
@@ -155,7 +161,7 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
         <RenderBottomElement onClick={onBack} containerName={containerName} />
       }
       onClose={onClose}
-      onRetry={onRetry}
+      onRetry={handleOnRetry}
       results={{ updated, failed, error }}
       errorType={errorType}
     >
@@ -166,8 +172,8 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
         {updated &&
           renderTokens(updated, CONTAINER_TYPES[containerName].subtitle)}
 
-        {error && renderTokens(failed, 'Errored Links')}
-        {updated.length > 0 && (
+        {error && failed?.length && renderTokens(failed, 'Errored Links')}
+        {(updated?.length || 0) > 0 && (
           <>
             <h5 className={classes.subtitle}>Bundled Transaction Details</h5>
             <BundledTransactionBadge

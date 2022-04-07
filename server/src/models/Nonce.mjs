@@ -1,5 +1,7 @@
 import crypto from 'crypto';
+
 import Sequelize from 'sequelize';
+
 import config from '../config/index';
 
 import Base from './Base';

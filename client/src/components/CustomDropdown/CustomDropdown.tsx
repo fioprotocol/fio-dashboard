@@ -3,6 +3,7 @@ import Dropdown from 'react-dropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
+import 'react-dropdown/style.css';
 import classes from './CustomDropdown.module.scss';
 
 type Props = {
@@ -15,11 +16,15 @@ type Props = {
   isShort?: boolean;
   isWidthResponsive?: boolean;
   isWhite?: boolean;
+  isVoilet?: boolean;
+  isWhitePlaceholder?: boolean;
+  isWhiteIcon?: boolean;
   hasAutoWidth?: boolean;
   isSimple?: boolean;
   isHigh?: boolean;
   isFormField?: boolean;
   hasError?: boolean;
+  noMinWidth?: boolean;
 };
 
 const CustomDropdown: React.FC<Props> = props => {
@@ -33,11 +38,15 @@ const CustomDropdown: React.FC<Props> = props => {
     isShort,
     isWidthResponsive,
     isWhite,
+    isVoilet,
+    isWhitePlaceholder,
+    isWhiteIcon,
     hasAutoWidth,
     isSimple,
     isHigh,
     isFormField,
     hasError,
+    noMinWidth,
   } = props;
 
   const styledOptions = options.map(option => ({
@@ -58,7 +67,7 @@ const CustomDropdown: React.FC<Props> = props => {
     const { value: itemValue } = option || {};
     if (customValue && itemValue === customValue.id) {
       onChange('');
-      return toggleToCustom(true);
+      return toggleToCustom && toggleToCustom(true);
     }
     onChange(itemValue);
   };
@@ -75,20 +84,39 @@ const CustomDropdown: React.FC<Props> = props => {
         isWidthResponsive && classes.isWidthResponsive,
         hasAutoWidth && classes.hasAutoWidth,
         isFormField && classes.formField,
+        noMinWidth && classes.noMinWidth,
       )}
       controlClassName={classnames(
         classes.control,
         isWhite && classes.isWhite,
+        isVoilet && classes.isVoilet,
         isSimple && classes.isSimple,
         isHigh && classes.isHigh,
         hasError && classes.hasError,
       )}
-      placeholderClassName={classes.placeholder}
+      placeholderClassName={classnames(
+        classes.placeholder,
+        isWhitePlaceholder && classes.isWhitePlaceholder,
+      )}
       menuClassName={classes.menu}
       arrowClosed={
-        <FontAwesomeIcon icon="chevron-down" className={classes.icon} />
+        <FontAwesomeIcon
+          icon="chevron-down"
+          className={classnames(
+            classes.icon,
+            isWhiteIcon && classes.isWhiteIcon,
+          )}
+        />
       }
-      arrowOpen={<FontAwesomeIcon icon="chevron-up" className={classes.icon} />}
+      arrowOpen={
+        <FontAwesomeIcon
+          icon="chevron-up"
+          className={classnames(
+            classes.icon,
+            isWhiteIcon && classes.isWhiteIcon,
+          )}
+        />
+      }
     />
   );
 };

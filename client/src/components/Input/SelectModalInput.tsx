@@ -12,7 +12,7 @@ import { ClearButton } from './InputActionButtons';
 
 import { INPUT_COLOR_SCHEMA } from './TextInput';
 
-import { getValueFromPaste } from '../../util/general';
+import { getValueFromPaste, log } from '../../util/general';
 
 import classes from './Input.module.scss';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
@@ -43,6 +43,7 @@ type Props = {
   hasThinText?: boolean;
   modalTitle?: string;
   modalSubTitle?: string;
+  onChangeFormat?: (val: string) => string;
   handleConfirmValidate?: (
     val: string,
   ) => Promise<{
@@ -58,7 +59,7 @@ type ModalProps = {
   options?: string[];
   handleClose?: () => void;
   isBW?: boolean;
-  inputRef: MutableRefObject<HTMLInputElement>;
+  inputRef: MutableRefObject<HTMLInputElement | null>;
   onHide?: () => void;
 };
 
@@ -69,8 +70,9 @@ const SelectModal: React.FC<Props &
     input,
     meta,
     modalPlaceholder,
+    onChangeFormat,
     handleConfirmValidate,
-    showPasteButton,
+    showPasteButton = false,
     loading,
     uiType,
     errorType = '',
@@ -84,7 +86,7 @@ const SelectModal: React.FC<Props &
     showErrorBorder,
     isLowHeight,
     options = [],
-    show,
+    show = false,
     onHide,
     isBW,
     inputRef,
@@ -97,7 +99,7 @@ const SelectModal: React.FC<Props &
 
   const [inputValue, setInputValue] = useState(value);
   const [optionsList, setOptionsList] = useState(options);
-  const [confirmError, setConfirmError] = useState(null);
+  const [confirmError, setConfirmError] = useState<string | null>(null);
   const [isDirtyInputState, setIsDirtyInputState] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -107,7 +109,7 @@ const SelectModal: React.FC<Props &
     } else
       setOptionsList(
         options.filter((o: string) => {
-          return o.includes(inputValue);
+          return o.includes(inputValue.toLowerCase());
         }),
       );
   }, [inputValue, options]);
@@ -119,7 +121,7 @@ const SelectModal: React.FC<Props &
   const handleClose = () => {
     if (isLoading) return;
 
-    onHide();
+    onHide && onHide();
     setConfirmError(null);
     setIsDirtyInputState(false);
   };
@@ -142,7 +144,7 @@ const SelectModal: React.FC<Props &
   };
 
   const isInputHasValue = inputValue.length > 0;
-  const hasError = confirmError && isDirtyInputState;
+  const hasError = !!(confirmError && isDirtyInputState);
 
   return (
     <Modal
@@ -151,6 +153,7 @@ const SelectModal: React.FC<Props &
       onClose={handleClose}
       isSimple={true}
       isWide={true}
+      hasDefaultCloseColor={true}
     >
       <div className={classes.optionsContainer}>
         <h3 className={classes.title}>{title}</h3>
@@ -176,6 +179,9 @@ const SelectModal: React.FC<Props &
                   value={inputValue}
                   onChange={e => {
                     const currentValue = e.target.value || '';
+                    if (onChangeFormat) {
+                      return setInputValue(onChangeFormat(currentValue));
+                    }
                     if (lowerCased)
                       return setInputValue(currentValue.toLowerCase());
                     if (upperCased)
@@ -186,7 +192,7 @@ const SelectModal: React.FC<Props &
                     setConfirmError(null);
                     setIsDirtyInputState(true);
                     if (e.key === 'Enter') {
-                      inputRef.current.blur();
+                      inputRef.current?.blur();
                       handleConfirm();
                     }
                   }}
@@ -212,10 +218,10 @@ const SelectModal: React.FC<Props &
                 isVisible={showPasteButton && !inputValue}
                 onClick={async () => {
                   try {
-                    setInputValue(await getValueFromPaste());
-                    inputRef.current.focus();
+                    setInputValue((await getValueFromPaste()) || '');
+                    inputRef.current?.focus();
                   } catch (e) {
-                    console.error('Paste error: ', e);
+                    log.error('Paste error: ', e);
                   }
                 }}
                 uiType={uiType}
@@ -236,7 +242,7 @@ const SelectModal: React.FC<Props &
             <SubmitButton
               text="Done"
               onClick={handleConfirm}
-              disabled={inputValue === '' || confirmError || isLoading}
+              disabled={inputValue === '' || !!confirmError || isLoading}
             />
           </div>
 
@@ -306,7 +312,7 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
   const [showModal, toggleShowModal] = useState(false);
 
   useEffect(() => {
-    if (showModal) modalInputRef.current.focus();
+    if (showModal) modalInputRef.current?.focus();
   }, [showModal]);
 
   const handleCloseModal = () => {
@@ -319,8 +325,8 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
 
   const hasError =
     !hideError &&
-    !data.hideError &&
-    (((error || data.error) &&
+    !data?.hideError &&
+    (((error || data?.error) &&
       (touched || modified || submitSucceeded || !!value) &&
       !active) ||
       (submitError && !modifiedSinceLastSubmit));

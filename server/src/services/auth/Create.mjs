@@ -1,4 +1,5 @@
 import Sequelize from 'sequelize';
+
 import Base from '../Base';
 import X from '../Exception';
 import { generate } from './authToken';

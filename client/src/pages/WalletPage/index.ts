@@ -5,10 +5,11 @@ import { compose } from '../../utils';
 
 import { refreshBalance } from '../../redux/fio/actions';
 import {
-  loading,
   fioWallets as fioWalletsSelector,
   fioWalletsBalances as fioWalletsBalancesSelector,
+  loading,
 } from '../../redux/fio/selectors';
+import { profileRefreshed } from '../../redux/profile/selectors';
 
 import WalletPage from './WalletPage';
 import { ReduxState } from '../../redux/init';
@@ -17,8 +18,10 @@ import { emptyWallet } from '../../redux/fio/reducer';
 import { DEFAULT_BALANCES } from '../../util/prices';
 
 import { ContainerOwnProps } from './types';
-import { fioWalletsData as fioWalletsDataSelector } from '../../redux/fioWalletsData/selectors';
-import { fioWalletsTxHistory as fioWalletsTxHistorySelector } from '../../redux/fioWalletsData/selectors';
+import {
+  fioWalletsData as fioWalletsDataSelector,
+  fioWalletsTxHistory as fioWalletsTxHistorySelector,
+} from '../../redux/fioWalletsData/selectors';
 import { user as userSelector } from '../../redux/profile/selectors';
 
 const reduxConnect = connect(
@@ -33,6 +36,7 @@ const reduxConnect = connect(
       );
     },
     loading,
+    profileRefreshed,
     fioWalletsData: (state: ReduxState) => {
       const fioWalletsData = fioWalletsDataSelector(state);
       const user = userSelector(state);

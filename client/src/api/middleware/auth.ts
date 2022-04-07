@@ -7,7 +7,7 @@ export const emailAvailable = async (
   try {
     const res = await apis.auth.available(email);
 
-    if (!res || res.error) {
+    if (!res) {
       result.error = 'Not available';
     }
   } catch (e) {

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 
 import classes from './BundledTransactionBadge.module.scss';

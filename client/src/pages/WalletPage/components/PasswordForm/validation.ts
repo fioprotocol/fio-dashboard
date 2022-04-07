@@ -1,7 +1,15 @@
-import { PasswordFormValues } from '../../types';
+import { Validators, ValidationSchema } from '@lemoncode/fonk';
+import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
 
-export const validate = (values: PasswordFormValues) => {
-  if (!values.password) return { password: 'Required' };
-
-  return {};
+const validationSchema: ValidationSchema = {
+  field: {
+    password: [
+      {
+        validator: Validators.required,
+        message: 'Password is required.',
+      },
+    ],
+  },
 };
+
+export const formValidation = createFinalFormValidation(validationSchema);

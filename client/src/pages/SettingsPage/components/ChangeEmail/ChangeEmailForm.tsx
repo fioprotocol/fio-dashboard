@@ -8,7 +8,7 @@ import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 
 import { FormValuesProps } from './types';
 
-import validation from './validation';
+import { formValidation } from './validation';
 
 type Props = {
   onSubmit: (values: FormValuesProps) => void;
@@ -56,9 +56,9 @@ const ChangeEmailForm: React.FC<Props> = props => {
     <Form
       onSubmit={onSubmit}
       render={renderForm}
-      validate={validation}
+      validate={formValidation.validateForm}
       keepDirtyOnReinitialize={true}
-      initialValues={initialValues}
+      initialValues={initialValues || undefined}
     />
   );
 };

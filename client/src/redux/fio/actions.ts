@@ -1,5 +1,8 @@
 import { FioAddresses } from '@fioprotocol/fiosdk/src/entities/FioAddresses';
-import { Api } from '../../api';
+
+import apis, { Api } from '../../api';
+
+import { ENDPOINT_FEE_HASH } from '../../api/fio';
 
 import { PublicAddressDoublet, FeePrice, WalletsBalances } from '../../types';
 
@@ -45,22 +48,6 @@ export const resetFioNames = () => ({
   type: RESET_FIO_NAMES,
 });
 
-export const IS_REGISTERED_REQUEST = `${prefix}/IS_REGISTERED_REQUEST`;
-export const IS_REGISTERED_SUCCESS = `${prefix}/IS_REGISTERED_SUCCESS`;
-export const IS_REGISTERED_FAILURE = `${prefix}/IS_REGISTERED_FAILURE`;
-
-export const isRegistered = (fioAddress: string) => ({
-  types: [IS_REGISTERED_REQUEST, IS_REGISTERED_SUCCESS, IS_REGISTERED_FAILURE],
-  promise: async (api: Api) => {
-    try {
-      const { is_registered } = await api.fio.availCheck(fioAddress);
-      return !!is_registered;
-    } catch (e) {
-      return false;
-    }
-  },
-});
-
 export const GET_FEE_REQUEST = `${prefix}/GET_FEE_REQUEST`;
 export const GET_FEE_SUCCESS = `${prefix}/GET_FEE_SUCCESS`;
 export const GET_FEE_FAILURE = `${prefix}/GET_FEE_FAILURE`;
@@ -69,6 +56,16 @@ export const SET_FEE = `${prefix}/SET_FEE`;
 export const getFee = (endpoint: string, fioAddress: string = '') => ({
   types: [GET_FEE_REQUEST, GET_FEE_SUCCESS, GET_FEE_FAILURE],
   promise: (api: Api) => {
+    // temporary solution for staking fee value
+    if (
+      [
+        apis.fio.actionEndPoints.stakeFioTokens,
+        apis.fio.actionEndPoints.unStakeFioTokens,
+      ].includes(endpoint)
+    ) {
+      return api.fio.getFeeFromTable(ENDPOINT_FEE_HASH[endpoint]);
+    }
+
     return api.fio.publicFioSDK.getFee(endpoint, fioAddress);
   },
   endpoint,

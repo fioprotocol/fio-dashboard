@@ -32,7 +32,7 @@ const ItemComponent: React.FC<Props> = props => {
     showStatus,
     showBundles,
   } = props;
-  const { name, remaining, expiration, isPublic } = fioNameItem || {};
+  const { name = '', remaining, expiration, isPublic } = fioNameItem || {};
 
   return (
     <div className={classes.itemContainer}>

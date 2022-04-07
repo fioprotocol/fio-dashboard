@@ -9,6 +9,7 @@ import { validate as validation } from './validation';
 
 import { linkTokens } from '../../api/middleware/fio';
 import { minWaitTimeFunction } from '../../utils';
+import { log } from '../../util/general';
 
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { TOKEN_LINK_MIN_WAIT_TIME } from '../../constants/fio';
@@ -67,7 +68,7 @@ const AddToken: React.FC<AddTokenProps> = props => {
       );
       setResultsData(actionResults);
     } catch (err) {
-      console.error(err);
+      log.error(err);
     } finally {
       setSubmitData(null);
     }
@@ -81,7 +82,7 @@ const AddToken: React.FC<AddTokenProps> = props => {
     changeBundleCost(0);
   };
 
-  const onRetry = () => {
+  const onRetry = (resultsData: LinkActionResult) => {
     setSubmitData(resultsData.connect.failed);
   };
 

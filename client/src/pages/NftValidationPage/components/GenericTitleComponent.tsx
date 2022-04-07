@@ -7,7 +7,7 @@ import classes from '../styles/GenericTitleComponent.module.scss';
 
 type Props = {
   title: string;
-  value: string;
+  value?: string;
 };
 
 const GenericTitleComponent: React.FC<Props> = props => {

@@ -1,7 +1,8 @@
-import Sequelize from 'sequelize';
 import crypto from 'crypto';
 
-import { User } from './';
+import Sequelize from 'sequelize';
+
+import { User } from './User.mjs';
 import Base from './Base';
 
 const { DataTypes: DT } = Sequelize;

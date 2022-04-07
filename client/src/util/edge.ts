@@ -1,6 +1,9 @@
 import { EdgeAccount } from 'edge-core-js';
-import { WalletKeys } from '../types';
+
 import { sleep } from '../utils';
+import { log } from './general';
+
+import { WalletKeys } from '../types';
 
 export const getWalletKeys = async (
   account: EdgeAccount,
@@ -18,15 +21,15 @@ export const getWalletKeys = async (
       }
     }
   } catch (e) {
-    console.error(e);
+    log.error(e);
   }
 
   return keys;
 };
 
-export const waitForEdgeAccountStop = async (edgeAccount: EdgeAccount) => {
+export const waitForEdgeAccountStop = async (edgeAccount?: EdgeAccount) => {
   try {
-    edgeAccount && edgeAccount.loggedIn && (await edgeAccount.logout());
+    edgeAccount?.loggedIn && (await edgeAccount.logout());
     await sleep(3000); // todo: added for testnet env because edge fio plugin rewriting base url after pin confirmation. Need to figure out how to be sure that fio engine is killed or fix transaction global base url const in FIOSDK
   } catch (e) {
     //

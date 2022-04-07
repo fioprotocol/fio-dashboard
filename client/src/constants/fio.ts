@@ -74,4 +74,8 @@ export const BUNDLES_TX_COUNT = {
   RECORD_OBT_DATA: 2,
   ADD_NFT: 2,
   REMOVE_NFT: 1,
+  STAKE: 1,
+  UNSTAKE: 1,
 };
+
+export const GET_TABLE_ROWS_URL = `${process.env.REACT_APP_FIO_BASE_URL}chain/get_table_rows`;

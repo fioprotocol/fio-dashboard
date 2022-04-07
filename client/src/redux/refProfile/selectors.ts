@@ -1,4 +1,5 @@
 import { createSelector } from 'reselect';
+
 import { prefix } from './actions';
 import { ReduxState } from '../../redux/init';
 import { ROUTES } from '../../constants/routes';

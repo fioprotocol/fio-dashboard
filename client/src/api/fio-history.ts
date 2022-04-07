@@ -1,5 +1,7 @@
+import { FioHistoryNodeAction } from '../types';
+
 export default class FioHistory {
-  historyNodeUrls: string[] = [process.env.REACT_APP_HISTORY_NODE_URL];
+  historyNodeUrls: string[] = [process.env.REACT_APP_HISTORY_NODE_URL || ''];
   historyNodeActions = {
     getActions: 'get_actions',
   };
@@ -11,7 +13,10 @@ export default class FioHistory {
       offset: number;
     },
     uri: string = this.historyNodeActions.getActions,
-  ): Promise<any> {
+  ): Promise<{
+    actions?: FioHistoryNodeAction[];
+    error?: { noNodeForIndex: boolean };
+  }> {
     if (!this.historyNodeUrls[nodeIndex])
       return { error: { noNodeForIndex: true } };
 

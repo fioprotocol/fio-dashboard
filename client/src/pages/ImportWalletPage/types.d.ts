@@ -1,4 +1,6 @@
+import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+
 import { FioWalletDoublet, NewFioWalletDoublet } from '../../types';
 
 export interface ContainerProps extends RouteComponentProps {

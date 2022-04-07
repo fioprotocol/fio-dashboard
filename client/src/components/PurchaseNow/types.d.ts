@@ -4,9 +4,11 @@ import {
   PinConfirmation,
   Prices,
   RefProfile,
+  User,
 } from '../../types';
 
 export type PurchaseNowTypes = {
+  user: User;
   cartItems: CartItem[];
   pinConfirmation: PinConfirmation;
   captchaResult: { success: boolean; verifyParams: {} };

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "dist",
     "target": "es5",
     "lib": [
       "dom",
@@ -12,21 +13,22 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
     "module": "esnext",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react",
     "sourceMap": true,
-    "noErrorTruncation": true,
     "noUnusedLocals": true,
+    "useUnknownInCatchVariables": false,
     "strictNullChecks": false,
+    "noErrorTruncation": true,
     "typeRoots": [
       "../../node_modules/@types",
       "/src/index.d.ts"
     ],
-    "noFallthroughCasesInSwitch": true
+    "jsx": "react-jsx"
   },
   "include": [
     "src"

@@ -156,6 +156,8 @@ export default combineReducers({
             fioWallet.balance = action.data.balance;
             fioWallet.available = action.data.available;
             fioWallet.locked = action.data.locked;
+            fioWallet.staked = action.data.staked;
+            fioWallet.rewards = action.data.rewards;
           }
           return fioWallet;
         });
@@ -396,6 +398,18 @@ export default combineReducers({
       }
       case LOGOUT_SUCCESS:
         return true;
+      default:
+        return state;
+    }
+  },
+  fioNamesInitRefreshed(state: { [publicKey: string]: boolean } = {}, action) {
+    switch (action.type) {
+      case actions.REFRESH_FIO_NAMES_SUCCESS:
+      case actions.REFRESH_FIO_NAMES_FAILURE: {
+        return { ...state, [action.publicKey]: true };
+      }
+      case LOGOUT_SUCCESS:
+        return {};
       default:
         return state;
     }

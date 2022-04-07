@@ -24,7 +24,7 @@ type Props = {
   variant?: string;
 };
 
-const SubmitButton: React.FC<Props> = props => {
+export const SubmitButton: React.FC<Props> = props => {
   const {
     onClick,
     disabled,
@@ -39,11 +39,12 @@ const SubmitButton: React.FC<Props> = props => {
     hasBoldText,
     hasSmallText,
     variant,
+    isButtonType,
   } = props;
 
   return (
     <Button
-      type={onClick != null ? 'button' : 'submit'}
+      type={onClick != null || isButtonType ? 'button' : 'submit'}
       variant={variant}
       disabled={disabled}
       onClick={onClick}

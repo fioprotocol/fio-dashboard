@@ -6,6 +6,7 @@ import {
   transformPublicAddresses,
   normalizePublicAddresses,
 } from '../../util/fio';
+import { log } from '../../util/general';
 
 import {
   ACTIONS,
@@ -115,7 +116,7 @@ export const linkTokens = async ({
         error: connectionError,
       }: {
         updatedConnections: PublicAddressDoublet[];
-        error?: any;
+        error?: string | null;
       } = await updatePubAddresses(
         normalizePublicAddresses(connectList),
         ACTIONS.addPublicAddresses,
@@ -144,7 +145,7 @@ export const linkTokens = async ({
         error: disconnectionError,
       }: {
         updatedConnections: PublicAddressDoublet[];
-        error?: any;
+        error?: string | null;
       } = await updatePubAddresses(
         normalizePublicAddresses(disconnectList),
         disconnectAll
@@ -173,7 +174,7 @@ export const linkTokens = async ({
 
     return retResults;
   } catch (e) {
-    console.error(e);
+    log.error(e);
     throw e;
   }
 };

@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+
 import handlebars from 'handlebars';
 
 const emailTemplatesPath = path.resolve('server/src/emails/');
@@ -8,6 +9,12 @@ export const templates = {
   createAccount: 'createAccount',
   confirmEmail: 'confirmEmail',
   passRecovery: 'passRecovery',
+  approveFioRequest: 'approveFioRequest',
+  rejectFioRequest: 'rejectFioRequest',
+  newFioRequest: 'newFioRequest',
+  balanceChange: 'balanceChange',
+  expiringDomains: 'expiringDomains',
+  lowBundleCount: 'lowBundleCount',
 };
 
 const FIO_LOGO_BASE64 =

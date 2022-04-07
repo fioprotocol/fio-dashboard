@@ -38,7 +38,7 @@ export type Api = {
   client: ApiClient;
 };
 
-export default {
+const apis = {
   auth: new Auth(apiClient),
   users: new Users(apiClient),
   edge: new Edge(),
@@ -51,3 +51,5 @@ export default {
   contacts: new Contacts(apiClient),
   client: apiClient,
 };
+
+export default apis;

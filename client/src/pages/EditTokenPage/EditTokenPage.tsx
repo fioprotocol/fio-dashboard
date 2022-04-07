@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
+
 import ActionContainer from '../../components/LinkTokenList/ActionContainer';
 import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import PublicAddressEdit from './components/PublicAddressEdit';
@@ -8,6 +9,7 @@ import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import { linkTokens } from '../../api/middleware/fio';
 import { genericTokenId } from '../../util/fio';
 import { minWaitTimeFunction } from '../../utils';
+import { log } from '../../util/general';
 
 import {
   ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
@@ -149,7 +151,7 @@ const EditTokenPage: React.FC<Props> = props => {
         },
       });
     } catch (err) {
-      console.error(err);
+      log.error(err);
     } finally {
       setSubmitData(null);
     }

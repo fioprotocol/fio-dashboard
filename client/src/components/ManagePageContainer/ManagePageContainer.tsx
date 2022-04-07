@@ -18,7 +18,7 @@ import { BANNER_DATA, ITEMS_LIMIT, EXPIRED_DAYS, SUBTITLE } from './constants';
 import { useCheckIfDesktop } from '../../screenType';
 import { ROUTES } from '../../constants/routes';
 
-import { HasMore, ContainerProps, BoolStateFunc } from './types';
+import { HasMore, ContainerProps } from './types';
 import { FioNameItemProps, FioWalletDoublet } from '../../types';
 
 import classes from './ManagePageContainer.module.scss';
@@ -57,8 +57,8 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     showStatus,
     showFioAddressName,
   } = props;
-  const [showWarnBadge, toggleShowWarnBadge] = useState<BoolStateFunc>(false);
-  const [showInfoBadge, toggleShowInfoBadge] = useState<BoolStateFunc>(false);
+  const [showWarnBadge, toggleShowWarnBadge] = useState<boolean>(false);
+  const [showInfoBadge, toggleShowInfoBadge] = useState<boolean>(false);
   const [offset, changeOffset] = useState<HasMore>({});
   const [show, handleShowModal] = useState(false);
   const [showSettings, handleShowSettings] = useState(false);
@@ -127,9 +127,11 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
 
   useEffect(() => {
     toggleShowWarnBadge(
-      fioNameList &&
-        showExpired &&
-        fioNameList.some(dataItem => isExpired(dataItem.expiration)),
+      !!fioNameList &&
+        !!showExpired &&
+        fioNameList.some(
+          dataItem => dataItem.expiration && isExpired(dataItem.expiration),
+        ),
     );
     toggleShowInfoBadge(false); // todo: set dependent on data when move to get_pub_addresses
   }, [fioWalletsRef.current]);
