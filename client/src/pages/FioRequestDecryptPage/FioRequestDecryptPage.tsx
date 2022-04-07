@@ -8,6 +8,7 @@ import FioRequest from './components/FioRequest';
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import FioRequestStatusBadge from '../../components/Badges/FioRequestStatusBadge/FioRequestStatusBadge';
+import FioNamesInitWrapper from '../../components/FioNamesInitWrapper';
 
 import { putParamsToUrl } from '../../utils';
 import { transformFioRecord } from '../WalletPage/util';
@@ -71,9 +72,8 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
 
   useEffect(() => {
     if (fioRequestId && fioWalletsData && publicKey && !fioRequest) {
-      const { receivedFioRequests, sentFioRequests, obtData } = fioWalletsData[
-        publicKey
-      ];
+      const { receivedFioRequests = [], sentFioRequests = [], obtData = [] } =
+        fioWalletsData[publicKey] || {};
       const receivedRequest = receivedFioRequests.find(
         (item: FioRecord) => item.fioRequestId === fioRequestId,
       );
@@ -125,8 +125,12 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
   }, [fioWalletsData, fioRequest, fioRequestId, publicKey]);
 
   useEffect(() => {
-    if (fioWallet && fioWallet.publicKey) refreshBalance(fioWallet.publicKey);
-  }, [fioWallet]);
+    if (fioWallet && fioWallet.publicKey) {
+      refreshBalance(fioWallet.publicKey);
+    } else {
+      setError(`You don't have a wallet with such public key - ${publicKey}`);
+    }
+  }, [publicKey, fioWallet, refreshBalance]);
 
   useEffect(() => {
     if (
@@ -211,6 +215,24 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
   if (!publicKey || !fioRequestId)
     return <Redirect to={{ pathname: ROUTES.TOKENS }} />;
 
+  if (error)
+    return (
+      <div className={classes.container}>
+        <PseudoModalContainer
+          title="Fio Request"
+          onBack={null}
+          middleWidth={true}
+        >
+          <InfoBadge
+            message={error}
+            show={!!error}
+            title="Error"
+            type={BADGE_TYPES.ERROR}
+          />
+        </PseudoModalContainer>
+      </div>
+    );
+
   if (
     !fioWallet ||
     !fioWallet.id ||
@@ -261,13 +283,6 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
           fioWallet={fioWallet}
         />
 
-        <InfoBadge
-          message={error}
-          show={!!error}
-          title="Error"
-          type={BADGE_TYPES.ERROR}
-        />
-
         {!fioRequestDecrypted ? (
           <div className="d-flex justify-content-center mt-4">
             <SubmitButton
@@ -289,4 +304,12 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
   );
 };
 
-export default FioRequestDecryptPage;
+const FioRequestDecryptPageWrapper: React.FC<ContainerProps> = (
+  props: ContainerProps,
+) => (
+  <FioNamesInitWrapper>
+    <FioRequestDecryptPage {...props} />
+  </FioNamesInitWrapper>
+);
+
+export default FioRequestDecryptPageWrapper;
