@@ -402,4 +402,16 @@ export default combineReducers({
         return state;
     }
   },
+  fioNamesInitRefreshed(state: { [publicKey: string]: boolean } = {}, action) {
+    switch (action.type) {
+      case actions.REFRESH_FIO_NAMES_SUCCESS:
+      case actions.REFRESH_FIO_NAMES_FAILURE: {
+        return { ...state, [action.publicKey]: true };
+      }
+      case LOGOUT_SUCCESS:
+        return {};
+      default:
+        return state;
+    }
+  },
 });
