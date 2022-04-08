@@ -45,7 +45,7 @@ export const calculateBalances = (
 export const calculateTotalBalances = (
   walletsBalances: { [publicKey: string]: WalletBalances },
   roe: number,
-) => {
+): WalletBalances => {
   const total: FioBalanceRes = {
     balance: 0,
     available: 0,

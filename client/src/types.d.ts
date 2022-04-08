@@ -456,3 +456,8 @@ export type FioHistoryNodeAction = {
     producer_block_id: string;
   };
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Unknown = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyObject = any;
