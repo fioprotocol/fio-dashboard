@@ -9,7 +9,7 @@ class MathOp {
     this.value = !isNaN(+x) ? x : 0;
   }
 
-  add(x: BigSource) {
+  add(x: BigSource): MathOp {
     try {
       this.value = Big(this.value).plus(x);
     } catch (err) {
@@ -18,7 +18,7 @@ class MathOp {
     return this;
   }
 
-  sub(x: BigSource) {
+  sub(x: BigSource): MathOp {
     try {
       this.value = Big(this.value).minus(x);
     } catch (err) {
@@ -27,7 +27,7 @@ class MathOp {
     return this;
   }
 
-  mul(x: BigSource) {
+  mul(x: BigSource): MathOp {
     try {
       this.value = Big(this.value).times(x);
     } catch (err) {
@@ -36,7 +36,7 @@ class MathOp {
     return this;
   }
 
-  div(x: BigSource) {
+  div(x: BigSource): MathOp {
     try {
       this.value = Big(this.value).div(x);
     } catch (err) {
@@ -45,7 +45,7 @@ class MathOp {
     return this;
   }
 
-  sum(...args: BigSource[]) {
+  sum(...args: BigSource[]): MathOp {
     try {
       this.value = args.reduce((sum, current) => Big(sum).plus(current), 0);
     } catch (err) {
@@ -54,7 +54,7 @@ class MathOp {
     return this;
   }
 
-  mod(modDigit: number) {
+  mod(modDigit: number): MathOp {
     try {
       this.value = Big(this.value).mod(modDigit);
     } catch (err) {
@@ -63,7 +63,7 @@ class MathOp {
     return this;
   }
 
-  round(decimalPlaces?: number, roundingMode?: RoundingMode) {
+  round(decimalPlaces?: number, roundingMode?: RoundingMode): MathOp {
     try {
       this.value = Big(this.value).round(decimalPlaces, roundingMode);
     } catch (err) {
@@ -72,7 +72,7 @@ class MathOp {
     return this;
   }
 
-  eq(x: BigSource) {
+  eq(x: BigSource): boolean {
     try {
       return Big(this.value).eq(x);
     } catch (err) {
@@ -81,7 +81,7 @@ class MathOp {
     }
   }
 
-  gt(x: BigSource) {
+  gt(x: BigSource): boolean {
     try {
       return Big(this.value).gt(x);
     } catch (err) {
@@ -90,7 +90,7 @@ class MathOp {
     }
   }
 
-  gte(x: BigSource) {
+  gte(x: BigSource): boolean {
     try {
       return Big(this.value).gte(x);
     } catch (err) {
@@ -99,7 +99,7 @@ class MathOp {
     }
   }
 
-  lt(x: BigSource) {
+  lt(x: BigSource): boolean {
     try {
       return Big(this.value).lt(x);
     } catch (err) {
@@ -108,7 +108,7 @@ class MathOp {
     }
   }
 
-  lte(x: BigSource) {
+  lte(x: BigSource): boolean {
     try {
       return Big(this.value).lte(x);
     } catch (err) {
@@ -117,7 +117,7 @@ class MathOp {
     }
   }
 
-  toNumber() {
+  toNumber(): number {
     try {
       return Big(this.value).toNumber();
     } catch (err) {
@@ -126,7 +126,7 @@ class MathOp {
     }
   }
 
-  toString() {
+  toString(): string {
     try {
       return Big(this.value).toString();
     } catch (err) {
@@ -135,12 +135,12 @@ class MathOp {
     }
   }
 
-  toFixed(toFixedDigit: number) {
+  toFixed(toFixedDigit: number): string {
     try {
       return Big(this.value).toFixed(toFixedDigit);
     } catch (err) {
       log.error(err);
-      return this.value;
+      return this.value.toString();
     }
   }
 }

@@ -18,6 +18,8 @@ import {
   WalletKeys,
   EdgeWalletsKeys,
   DecryptedFioRecordContent,
+  Unknown,
+  AnyObject,
 } from './types';
 import { convertFioPrices } from './util/prices';
 
@@ -26,6 +28,8 @@ const FIO_DASH_USERNAME_DELIMITER = `.fio.dash.${process.env
 
 export const FIO_ADDRESS_DELIMITER = '@';
 
+// todo
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function compose(...funcs: ((args?: any) => any)[]): any {
   if (funcs.length === 1) {
     return funcs[0];
@@ -41,9 +45,9 @@ export function currentYear(): string {
 }
 
 export async function minWaitTimeFunction(
-  cb: () => Promise<any>,
+  cb: () => Promise<Unknown>,
   minWaitTime = 1000,
-): Promise<any> {
+): Promise<Unknown> {
   let results;
   let error;
   const t0 = performance.now();
@@ -91,7 +95,10 @@ export function capitalizeFirstLetter(string: string): string {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export const setDataMutator = (args: any[], state: any): void => {
+export const setDataMutator = (
+  args: [string, object],
+  state: { fields: { [fieldName: string]: { data: object } } },
+): void => {
   const [name, data] = args;
   const field = state.fields[name];
 
@@ -319,7 +326,7 @@ export const putParamsToUrl = (
 ): string => {
   return Object.keys(params).reduce(
     (acc: string, key: string) =>
-      acc.replace(new RegExp(`:${key}[\?]?`, 'g'), params[key]),
+      acc.replace(new RegExp(`:${key}[?]?`, 'g'), params[key]),
     `${route}`,
   );
 };
@@ -351,7 +358,7 @@ export const camelizeFioRequestsData = (
   return result;
 };
 
-export const camelizeObjKeys = (obj: {}): any => {
+export const camelizeObjKeys = (obj: {}): AnyObject => {
   return mapKeys(obj, (val, key) => camelCase(key));
 };
 

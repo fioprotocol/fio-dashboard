@@ -215,14 +215,14 @@ export const checkTransactions = async (
   const actor = apis.fio.publicFioSDK.transactions.getActor(publicKey);
 
   try {
-    const lastActionObject: any = await apis.fioHistory.requestHistory(
-      historyNodeIndex,
-      {
-        account_name: actor,
-        pos: -1,
-        offset: -1,
-      },
-    );
+    const lastActionObject: {
+      actions?: FioHistoryNodeAction[];
+      error?: { noNodeForIndex: boolean };
+    } = await apis.fioHistory.requestHistory(historyNodeIndex, {
+      account_name: actor,
+      pos: -1,
+      offset: -1,
+    });
 
     if (lastActionObject.error && lastActionObject.error.noNodeForIndex) {
       // no more history nodes left
