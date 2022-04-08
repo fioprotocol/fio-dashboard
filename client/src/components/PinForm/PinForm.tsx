@@ -12,8 +12,6 @@ import { setDataMutator } from '../../utils';
 import { PIN_LENGTH } from '../../constants/form';
 import { INVALID_PASSWORD } from '../../constants/regExps';
 
-import { IosKeyBoardPlugProp } from '../Input/PinInput/types';
-
 import classes from './PinForm.module.scss';
 
 export const FIELD_NAME = 'pin';
@@ -23,7 +21,6 @@ type Props = {
   onReset: () => void;
   loading: boolean;
   error?: string | (Error & { wait?: number }) | null;
-  iosKeyboardPlugType?: IosKeyBoardPlugProp;
   blockedTime?: number;
 };
 
@@ -32,14 +29,7 @@ type FormValues = {
 };
 
 const PinForm: React.FC<Props> = props => {
-  const {
-    onSubmit,
-    onReset,
-    loading,
-    error,
-    iosKeyboardPlugType,
-    blockedTime = 0,
-  } = props;
+  const { onSubmit, onReset, loading, error, blockedTime = 0 } = props;
 
   let currentForm: FormApi | null = null;
   const [isDisabled, toggleDisabled] = useState(false);
@@ -110,7 +100,6 @@ const PinForm: React.FC<Props> = props => {
           autoFocus
           autoComplete="off"
           onReset={onReset}
-          iosKeyboardPlugType={iosKeyboardPlugType}
         />
         {loading && (
           <FontAwesomeIcon icon="spinner" spin className={classes.icon} />

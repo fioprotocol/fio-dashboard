@@ -7,7 +7,6 @@ import PinForm from '../PinForm';
 import { FIELD_NAME } from '../PinForm/PinForm';
 
 import { PIN_LENGTH } from '../../constants/form';
-import { IOS_KEYBOARD_PLUG_TYPE } from '../Input/PinInput/constants';
 
 import classes from './LoginForm.module.scss';
 
@@ -92,11 +91,6 @@ const Pin: React.FC<Props> = props => {
             onReset={onReset}
             loading={edgeAuthLoading}
             error={error}
-            iosKeyboardPlugType={
-              error
-                ? IOS_KEYBOARD_PLUG_TYPE.emptyPlug
-                : IOS_KEYBOARD_PLUG_TYPE.highPlug
-            }
             blockedTime={(edgeLoginFailure && edgeLoginFailure.wait) || 0}
           />
           <div className={classes.exitPin} onClick={exitPin}>

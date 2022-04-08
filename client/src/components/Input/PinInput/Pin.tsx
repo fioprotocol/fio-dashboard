@@ -1,18 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { isIOS } from 'react-device-detect';
 
 import PinDots from './PinDots';
-
-import { useCheckIfDesktop } from '../../../screenType';
+import NumericKeyboard from './NumericKeyboard';
 
 import { PIN_LENGTH } from '../../../constants/form';
-import { IOS_KEYBOARD_PLUG_TYPE } from './constants';
 
-import { PinInputProps, PinInputEventProps } from './types';
+import { PinInputProps } from './types';
 
-import classes from './PinInput.module.scss';
+import classes from '../styles/PinInput.module.scss';
 
 const PinInput: React.FC<PinInputProps> = props => {
   const {
@@ -20,21 +17,14 @@ const PinInput: React.FC<PinInputProps> = props => {
     name,
     value,
     withoutMargin,
-    iosKeyboardPlugType,
     form,
-    onBlur,
     onChange,
-    onFocus,
     onReset,
     submit,
   } = props;
 
-  const [showKeyboard, toggleShowKeyboard] = useState(false); // handle mobile keyboard
-
   const innerRef = useRef<HTMLInputElement>(null);
   const valueRef = useRef<string | undefined>(value);
-
-  const isActiveElement = document.activeElement === innerRef.current;
 
   const setMyState = (data: string) => {
     valueRef.current = data;
@@ -67,43 +57,29 @@ const PinInput: React.FC<PinInputProps> = props => {
     }
   }, [innerRef]);
 
+  const handleKeyChange = (key: string) => {
+    const pinValue = valueRef && valueRef.current;
+
+    if (/backspace/i.test(key)) {
+      pinValue && onChange(pinValue.slice(0, -1));
+      return;
+    }
+
+    const retValue = (pinValue && pinValue + key) || key;
+
+    if (retValue.length > PIN_LENGTH) return;
+
+    if (retValue && retValue.length === PIN_LENGTH) {
+      onChange(retValue);
+      submit && !error && submit();
+      return;
+    }
+    onChange(retValue);
+  };
+
   const onKeyUp = (e: KeyboardEvent) => {
     const { key } = e;
-    if (/\d/.test(key)) {
-      const pinValue = valueRef && valueRef.current;
-      const retValue = (pinValue && pinValue + key) || key;
-
-      if (retValue.length > PIN_LENGTH) return;
-
-      if (retValue && retValue.length === PIN_LENGTH) {
-        onChange(retValue);
-        submit && !error && submit();
-        !isDesktop && refInputBlur();
-        return;
-      }
-      onChange(retValue);
-    }
-  };
-
-  const onClick = () => {
-    innerRef.current && innerRef.current.focus();
-  };
-
-  const refInputBlur = () => {
-    innerRef.current && innerRef.current.blur();
-    handleBlur();
-  };
-
-  const isDesktop = useCheckIfDesktop();
-
-  const handleBlur = () => {
-    onBlur && onBlur();
-    toggleShowKeyboard(false);
-  };
-
-  const handleFocus = () => {
-    onFocus && onFocus();
-    toggleShowKeyboard(true);
+    if (/\d|backspace/i.test(key)) handleKeyChange(key);
   };
 
   return (
@@ -114,38 +90,17 @@ const PinInput: React.FC<PinInputProps> = props => {
           error && classes.error,
           withoutMargin && classes.withoutMargin,
         )}
-        onClick={onClick}
       >
         <input
-          type="tel"
+          inputMode="none" // hide mobile keyboard
           max={PIN_LENGTH}
-          value={value}
           autoComplete="off"
           className={classes.pinInput}
           id={name}
-          onChange={(e: PinInputEventProps) => {
-            // fixes android backspace keyup event
-            if (e.nativeEvent.inputType === 'deleteContentBackward') {
-              const currentValue = e.target.value;
-              onChange(currentValue);
-            }
-          }}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
           ref={innerRef}
         />
         <PinDots value={value} error={!!error} />
-        {!isDesktop && showKeyboard && isActiveElement && (
-          <div
-            className={classnames(
-              isIOS &&
-                iosKeyboardPlugType &&
-                (IOS_KEYBOARD_PLUG_TYPE[iosKeyboardPlugType]
-                  ? classes[iosKeyboardPlugType]
-                  : classes.keyboardPlug),
-            )}
-          />
-        )}
+        <NumericKeyboard onChange={handleKeyChange} value={value} />
       </div>
 
       {error && (
