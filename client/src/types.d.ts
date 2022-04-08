@@ -457,6 +457,8 @@ export type FioHistoryNodeAction = {
   };
 };
 
+export type FioApiError = Error & { json?: { message?: string } };
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Unknown = any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

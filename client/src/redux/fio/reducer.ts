@@ -184,6 +184,44 @@ export default combineReducers({
         return state;
     }
   },
+  fioWalletsIdKeys(state: { id: string; publicKey: string }[] = [], action) {
+    switch (action.type) {
+      case SIGNUP_SUCCESS: {
+        const fioWallets = [];
+        for (const { id, publicKey } of action.fioWallets) {
+          fioWallets.push({
+            id,
+            publicKey,
+          });
+        }
+        return fioWallets;
+      }
+      case PROFILE_SUCCESS: {
+        return action.data.fioWallets.map(
+          ({ id, publicKey }: FioWalletDoublet) => ({
+            id,
+            publicKey,
+          }),
+        );
+      }
+      case ADD_WALLET_SUCCESS: {
+        const fioWallets = [...state];
+        if (
+          !fioWallets.find(item => item.publicKey === action.data.publicKey)
+        ) {
+          fioWallets.push({
+            id: action.data.id,
+            publicKey: action.data.publicKey,
+          });
+        }
+        return fioWallets;
+      }
+      case LOGOUT_SUCCESS:
+        return [];
+      default:
+        return state;
+    }
+  },
   fioAddresses(state: FioAddressDoublet[] = [], action) {
     switch (action.type) {
       case actions.RESET_FIO_NAMES: {

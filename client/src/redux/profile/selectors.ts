@@ -29,6 +29,7 @@ export const emailConfirmationSent = (state: ReduxState) =>
   state[prefix].emailConfirmationSent;
 
 export const isAuthenticated = createSelector(user, user => !!user);
+export const userId = createSelector(user, user => (user ? user.id : null));
 export const profileRefreshed = (state: ReduxState) =>
   state[prefix].profileRefreshed;
 export const noProfileLoaded = createSelector(

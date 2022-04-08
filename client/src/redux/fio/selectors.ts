@@ -13,6 +13,8 @@ export const walletsFioAddressesLoading = (state: ReduxState) =>
 export const linkProcessing = (state: ReduxState) =>
   state[prefix].linkProcessing;
 export const fioWallets = (state: ReduxState) => state[prefix].fioWallets;
+export const fioWalletsIdKeys = (state: ReduxState) =>
+  state[prefix].fioWalletsIdKeys;
 export const fioAddresses = (state: ReduxState) => state[prefix].fioAddresses;
 export const fioDomains = (state: ReduxState) => state[prefix].fioDomains;
 export const hasMoreAddresses = (state: ReduxState) =>
