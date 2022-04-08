@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import isEmpty from 'lodash/isEmpty';
+
 import PurchaseNow from '../PurchaseNow';
 import { ROUTES } from '../../constants/routes';
 import Processing from '../common/TransactionProcessing';

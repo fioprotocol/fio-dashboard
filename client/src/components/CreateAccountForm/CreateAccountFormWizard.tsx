@@ -11,7 +11,7 @@ type State = {
 
 type OwnProps = {
   onNext?: (page: number) => void;
-  onPrev?: (page: number) => void;
+  onPrev: (page: number) => void;
   activePage: number;
   actionDisabled?: boolean;
   loading?: boolean;
@@ -60,7 +60,7 @@ export default class Wizard extends React.Component<Props, State> {
     const isLastPage = activePage === React.Children.count(children) - 1;
     const {
       props: { bottomText, hideNext, hideBack },
-    }: { props?: PageProps } = page;
+    } = page as { props: PageProps };
 
     return (
       <>

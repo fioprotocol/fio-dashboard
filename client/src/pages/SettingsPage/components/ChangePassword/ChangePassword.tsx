@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+
 import SecurityItem from '../SecurityItem';
 import ModalUIComponent from '../ModalUIComponent';
 import SuccessModal from '../../../../components/Modal/SuccessModal';
@@ -17,7 +18,7 @@ const ITEM_PROPS = {
 };
 
 type Props = {
-  results: any; // todo: set types for results
+  results: { status?: number };
   changePassword: (values: PasswordTypes) => void;
   loading: boolean;
   changePasswordError: { type?: string };

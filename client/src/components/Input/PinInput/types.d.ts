@@ -8,10 +8,10 @@ export type PinInputProps = {
   name: string;
   value: string;
   withoutMargin?: boolean;
-  iosKeyboardPlugType?: IosKeyBoardPlugProp;
+  iosKeyboardPlugType?: IosKeyBoardPlugProp | null;
   form?: FormApi;
   onBlur?: () => void;
-  onChange?: (value: string) => void;
+  onChange: (value: string) => void;
   onFocus?: () => void;
   onReset?: () => void;
   submit?: () => void;

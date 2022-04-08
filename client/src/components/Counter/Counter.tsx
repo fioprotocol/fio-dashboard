@@ -12,7 +12,7 @@ type Props = {
 const countTime = (
   time: number,
   setTime: (time: number) => void,
-  timerRef: { current: ReturnType<typeof setTimeout> },
+  timerRef: { current: ReturnType<typeof setTimeout> | null },
 ) => {
   const decrementTime = time - 1;
   timerRef.current = setTimeout(() => {
@@ -69,14 +69,16 @@ const Counter: React.FC<Props> = props => {
   const { initialTime = 0, prefix, toggleDisabled, classname } = props;
   const initialTimeNumber = parseInt(initialTime.toFixed(0), 10);
 
-  const timerRef = useRef(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [time, setTime] = useState(initialTimeNumber);
   const timeIsOver = time === 0;
 
   useEffect(() => {
     countTime(initialTimeNumber, setTime, timerRef);
-    return () => clearTimeout(timerRef.current);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, []);
 
   useEffect(() => {

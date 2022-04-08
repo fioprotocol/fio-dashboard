@@ -1,4 +1,5 @@
 import React from 'react';
+
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 
 const TermsOfServicePage: React.FC = () => {

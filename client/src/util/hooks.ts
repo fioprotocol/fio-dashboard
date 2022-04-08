@@ -1,6 +1,7 @@
 import { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
+
 import {
   getWalletsFioAddresses,
   getAllFioPubAddresses,
@@ -163,6 +164,12 @@ export function usePubAddressesFromWallet(walletPublicKey?: string) {
   return fioAddressToPubAddresses;
 }
 
+export function useRoe() {
+  const roeCoefficient = useSelector(roe);
+
+  return roeCoefficient || null;
+}
+
 export function useConvertFioToUsdc({
   fioAmount,
   nativeAmount,
@@ -172,10 +179,12 @@ export function useConvertFioToUsdc({
 }) {
   const roeAmount = useSelector(roe);
 
-  if (!fioAmount && !nativeAmount && !roeAmount) return null;
+  if ((!fioAmount && !nativeAmount) || !roeAmount) return null;
 
   const fioSuf =
-    nativeAmount != null ? nativeAmount : apis.fio.amountToSUF(fioAmount);
+    nativeAmount !== null && nativeAmount !== undefined
+      ? nativeAmount
+      : apis.fio.amountToSUF(fioAmount);
 
   return apis.fio.convertFioToUsdc(fioSuf, roeAmount);
 }
@@ -208,4 +217,13 @@ export function useWalletBalances(publicKey: string): WalletBalances {
   const walletsBalances = useSelector(fioWalletsBalances);
 
   return walletsBalances.wallets[publicKey] || DEFAULT_BALANCES;
+}
+
+export function useFieldElemActiveState(): [boolean, () => void, () => void] {
+  const [fieldElemActive, setFieldElemActive] = useState(false);
+
+  const setActive = () => setFieldElemActive(true);
+  const setInactive = () => setFieldElemActive(false);
+
+  return [fieldElemActive, setActive, setInactive];
 }

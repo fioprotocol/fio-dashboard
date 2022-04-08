@@ -1,21 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import { Ecc } from '@fioprotocol/fiojs';
 
-import classes from './PurchaseNow.module.scss';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import { emptyWallet } from '../../redux/fio/reducer';
+
+import api from '../../api';
+
 import { executeRegistration } from './middleware';
 import { sleep } from '../../utils';
 import { waitForEdgeAccountStop } from '../../util/edge';
 
 import { PurchaseNowTypes } from './types';
 import { RegistrationResult } from '../../types';
-import { emptyWallet } from '../../redux/fio/reducer';
+
+import classes from './PurchaseNow.module.scss';
 
 const MIN_WAIT_TIME = 3000;
 
 export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   const {
+    user,
     cartItems,
     pinConfirmation,
     captchaResult,
@@ -73,19 +79,32 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   useEffect(() => {
     const {
       account: edgeAccount,
-      keys: walletKeys,
+      keys: walletKeys = {},
       error: confirmationError,
       action: confirmationAction,
     } = pinConfirmation;
 
-    async function execRegistration() {
+    async function execRegistration(): Promise<void> {
       setProcessing(true);
       await waitForEdgeAccountStop(edgeAccount);
+      let nonce = '';
+      try {
+        const response = await api.auth.nonce(user.username);
+        nonce = response.nonce;
+      } catch (e) {
+        //
+      }
       const results = await executeRegistration(
         cartItems,
         walletKeys[currentWallet.edgeId],
         prices.nativeFio,
-        { pin: walletKeys[currentWallet.edgeId].public }, // todo: change to other verification method
+        {
+          walletSignature: Ecc.sign(
+            nonce,
+            walletKeys[currentWallet.edgeId].private,
+          ),
+          walletChallenge: nonce,
+        },
         refProfileInfo != null ? refProfileInfo.code : '',
       );
 

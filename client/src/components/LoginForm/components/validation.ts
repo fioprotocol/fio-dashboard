@@ -1,12 +1,42 @@
-import { BackupFormValues } from './TwoFactorCodeModal';
+import { Validators, ValidationSchema } from '@lemoncode/fonk';
+import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
 
-export const validate = async (values: BackupFormValues) => {
-  const { backupCode } = values;
-  const error: { backupCode?: string } = {};
-
-  if (!backupCode) {
-    error.backupCode = 'Required';
-  }
-
-  return error;
+const twoFactorCodeModalValidationSchema: ValidationSchema = {
+  field: {
+    backupCode: [
+      {
+        validator: Validators.required,
+        message: 'Required.',
+      },
+    ],
+  },
 };
+
+const usernamePasswordValidationSchema: ValidationSchema = {
+  field: {
+    email: [
+      {
+        validator: Validators.required,
+        message: 'Required.',
+      },
+      {
+        validator: Validators.email,
+        message: 'Invalid Email Address',
+      },
+    ],
+    password: [
+      {
+        validator: Validators.required,
+        message: 'Password Field Should Be Filled',
+      },
+    ],
+  },
+};
+
+export const twoFactorCodeModalValidation = createFinalFormValidation(
+  twoFactorCodeModalValidationSchema,
+);
+
+export const usernamePasswordValidation = createFinalFormValidation(
+  usernamePasswordValidationSchema,
+);

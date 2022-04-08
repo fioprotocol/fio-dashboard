@@ -10,7 +10,7 @@ import CancelButton from '../../common/CancelButton/CancelButton';
 
 import Modal from '../../Modal/Modal';
 
-import { validate } from './validation';
+import { twoFactorCodeModalValidation } from './validation';
 
 import { setDataMutator } from '../../../utils';
 
@@ -25,7 +25,7 @@ type Props = {
   onClose: () => void;
   onSubmit: (values: BackupFormValues) => void;
   loading: boolean;
-  otpError: string;
+  otpError?: string;
 };
 
 const RenderForm = (props: FormRenderProps<BackupFormValues> & Props) => {
@@ -117,7 +117,7 @@ const TwoFactorCodeModal: React.FC<Props> = props => {
         </p>
         <Form
           onSubmit={onSubmit}
-          validate={validate}
+          validate={twoFactorCodeModalValidation.validateForm}
           mutators={{ setDataMutator }}
         >
           {formProps => <RenderForm {...formProps} {...props} />}

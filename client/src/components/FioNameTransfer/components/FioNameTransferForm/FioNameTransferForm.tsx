@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react';
+import { FormEvent, useState } from 'react';
 
 import { Field, FieldValue } from '../../../Input/Field';
 import PriceBadge from '../../../Badges/PriceBadge/PriceBadge';
@@ -26,6 +26,7 @@ export const TransferForm = (props: FormProps) => {
   const {
     fioNameType,
     name,
+    walletName,
     feePrice,
     publicKey,
     onSubmit,
@@ -41,9 +42,9 @@ export const TransferForm = (props: FormProps) => {
   const { nativeFio: feeNativeFio, fio, usdc } = feePrice;
   const fioNameLabel = fioNameLabels[fioNameType];
   const hasLowBalance =
-    publicKey &&
+    !!publicKey &&
     feePrice &&
-    new MathOp(walletBalancesAvailable.nativeFio).lt(feeNativeFio);
+    new MathOp(walletBalancesAvailable.nativeFio || 0).lt(feeNativeFio || 0);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -95,7 +96,10 @@ export const TransferForm = (props: FormProps) => {
           title={`${fioNameLabel} Transfer Fee`}
           type={BADGE_TYPES.BLACK}
         />
-        <PayWithBadge walletBalances={walletBalancesAvailable} />
+        <PayWithBadge
+          walletBalances={walletBalancesAvailable}
+          walletName={walletName}
+        />
         <LowBalanceBadge hasLowBalance={hasLowBalance} />
         <SubmitButton
           text="Transfer Now"

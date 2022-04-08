@@ -4,6 +4,8 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
 
+import { log } from '../../../util/general';
+
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
 
@@ -25,7 +27,7 @@ type Props = {
   contactsList: string[];
   createContact: (name: string) => void;
   processing: boolean;
-  fee: number;
+  fee?: number | null;
 };
 
 const SendEdgeWallet: React.FC<Props> = props => {
@@ -67,7 +69,7 @@ const SendEdgeWallet: React.FC<Props> = props => {
         });
         bundlesCollected = BUNDLES_TX_COUNT.RECORD_OBT_DATA;
       } catch (e) {
-        console.error(e);
+        log.error(e);
         obtError = e;
       }
     }

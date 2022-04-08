@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { RouterProps, withRouter } from 'react-router-dom';
+
 import {
   checkAuthToken,
   setLastActivity,
@@ -47,7 +48,11 @@ let activityMethod: (() => {} | void) | null = null;
 const removeActivityListener = () => {
   try {
     ACTIVITY_EVENTS.forEach((eventName: string): void => {
-      document.removeEventListener(eventName, activityMethod, true);
+      document.removeEventListener(
+        eventName,
+        activityMethod as EventListenerOrEventListenerObject,
+        true,
+      );
     });
   } catch (e) {
     //
@@ -59,7 +64,9 @@ const logEvent = (...params: any[]) => {
   console.info(...params);
 };
 
-const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
+const AutoLogout = (
+  props: Props & RouterProps,
+): React.FunctionComponent | null => {
   const {
     tokenCheckResult,
     lastActivityDate,
@@ -185,7 +192,11 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
     setIntervalId(newIntervalId);
 
     ACTIVITY_EVENTS.forEach((eventName: string): void => {
-      document.addEventListener(eventName, activityMethod, true);
+      document.addEventListener(
+        eventName,
+        activityMethod as EventListenerOrEventListenerObject,
+        true,
+      );
     });
   };
 

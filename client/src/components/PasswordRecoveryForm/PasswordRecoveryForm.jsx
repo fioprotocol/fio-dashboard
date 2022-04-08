@@ -18,9 +18,10 @@ import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 
-import classes from './PasswordRecoveryForm.module.scss';
+import { formValidation } from './validation';
+import { log } from '../../util/general';
 
-const MIN_VALID_LENGTH = 3;
+import classes from './PasswordRecoveryForm.module.scss';
 
 const PasswordRecoveryForm = props => {
   const {
@@ -131,7 +132,7 @@ const PasswordRecoveryForm = props => {
       setProfileRecovery(token);
       return { status: 1 };
     } catch (e) {
-      console.error(e);
+      log.error(e);
       setError('There was an issue setting recovery questions');
       return {};
       // todo: handle error for each field
@@ -159,43 +160,6 @@ const PasswordRecoveryForm = props => {
     changeRecoveryQuestionsClose();
     toggleSuccessModal(false);
     checkRecoveryQuestions(username);
-  };
-
-  const validateForm = values => {
-    const errors = {};
-
-    const {
-      recoveryQuestionOne,
-      recoveryQuestionTwo,
-      recoveryAnswerOne,
-      recoveryAnswerTwo,
-    } = values;
-
-    const { length: lengthOne } = recoveryAnswerOne || {};
-    const { length: lengthTwo } = recoveryAnswerTwo || {};
-
-    if (!recoveryQuestionOne) {
-      errors.recoveryQuestionOne = 'Please Select Question';
-    }
-    if (!recoveryQuestionTwo) {
-      errors.recoveryQuestionTwo = 'Please Select Question';
-    }
-
-    if (!recoveryAnswerOne) {
-      errors.recoveryAnswerOne = 'Answer Field Should be Filled';
-    }
-    if (lengthOne < MIN_VALID_LENGTH) {
-      errors.recoveryAnswerOne = `Must have at least 3 characters`;
-    }
-
-    if (!recoveryAnswerTwo) {
-      errors.recoveryAnswerTwo = 'Answer Field Should be Filled';
-    }
-    if (lengthTwo < MIN_VALID_LENGTH) {
-      errors.recoveryAnswerTwo = `Must have at least 3 characters`;
-    }
-
-    return errors;
   };
 
   const renderSkip = () => (
@@ -378,7 +342,7 @@ const PasswordRecoveryForm = props => {
       <Form
         onSubmit={onSubmit}
         initialValues={defaultValues}
-        validate={validateForm}
+        validate={formValidation.validateForm}
       >
         {renderFormItems}
       </Form>

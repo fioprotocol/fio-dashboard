@@ -4,11 +4,12 @@ import { createStructuredSelector } from 'reselect';
 
 import { logout, resetLastAuthData } from '../../redux/profile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
-import { pathname } from '../../redux/navigation/selectors';
+import { pathname, locationState } from '../../redux/navigation/selectors';
 import {
   user,
   isAuthenticated,
   isNotActiveUser,
+  profileRefreshed,
   loading as profileLoading,
 } from '../../redux/profile/selectors';
 import { loading as edgeAuthLoading } from '../../redux/edge/selectors';
@@ -29,6 +30,7 @@ const selector = createStructuredSelector({
   pathname,
   user,
   isAuthenticated,
+  profileRefreshed,
   isNotActiveUser,
   edgeAuthLoading,
   profileLoading,
@@ -38,6 +40,7 @@ const selector = createStructuredSelector({
   refProfileLoading,
   homePageLink,
   fioAddresses,
+  locationState,
 });
 
 const actions = (dispatch: AppDispatch, ownProps: MainHeaderProps) => ({

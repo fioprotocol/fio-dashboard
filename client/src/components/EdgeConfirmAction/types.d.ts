@@ -1,5 +1,6 @@
 import { EdgeAccount } from 'edge-core-js';
-import { PinConfirmation, WalletKeys } from '../../types';
+
+import { EdgeWalletsKeys, PinConfirmation, WalletKeys } from '../../types';
 import { PinDataType } from '../../redux/modal/types';
 
 export type SubmitActionParams = {
@@ -16,6 +17,7 @@ export type Props = {
   data: any | null;
   processing: boolean;
   pinConfirmation: PinConfirmation;
+  confirmPinKeys?: EdgeWalletsKeys | null;
   hideProcessing?: boolean;
   fioWalletEdgeId?: string;
   processingProps?: { title?: string; message?: string };
@@ -27,4 +29,5 @@ export type Props = {
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
   resetPinConfirm: () => void;
+  setConfirmPinKeys: (keys: null) => void;
 };

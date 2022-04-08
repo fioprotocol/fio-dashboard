@@ -26,9 +26,11 @@ const renderSenderInfo = ({
   title,
   senderAddress,
 }: {
-  title: string;
+  title: string | null;
   senderAddress: string;
 }) => {
+  if (!title) return null;
+
   return (
     <p className={classes.senderInfo}>
       {title}: <span className={classes.senderAddress}>{senderAddress}</span>

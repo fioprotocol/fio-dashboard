@@ -3,11 +3,13 @@
 .contractAddressContainer {
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 100%;
 }
 
 .smallField {
   min-width: 235px;
+  max-width: 335px;
   width: 100%;
 }
 .maxField {
@@ -21,6 +23,7 @@
 @include lg {
   .contractAddressContainer {
     flex-direction: row;
+    align-items: baseline;
   }
   .maxField {
     margin: 0 20px;

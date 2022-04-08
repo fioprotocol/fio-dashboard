@@ -1,4 +1,5 @@
 import React from 'react';
+
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 
 import classes from './PrivacyPolicyPage.module.scss';
@@ -11,11 +12,15 @@ const PrivacyPolicyPage: React.FC = () => {
         This Privacy Policy (together with our Terms of Use and any other
         documents referred to in it) applies to the FIO Protocol Website located
         at{' '}
-        <a href="https://fioprotocol.io/" target="_blank">
+        <a href="https://fioprotocol.io/" target="_blank" rel="noreferrer">
           fioprotocol.io
         </a>{' '}
         website and the FIO Dashboard website located at{' '}
-        <a href="https://dashboard.fioprotocol.io/" target="_blank">
+        <a
+          href="https://dashboard.fioprotocol.io/"
+          target="_blank"
+          rel="noreferrer"
+        >
           dashboard.fioprotocol.io
         </a>{' '}
         (collectively the “Service”) and sets out the basis on which any

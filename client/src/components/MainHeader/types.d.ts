@@ -1,16 +1,20 @@
+import { RouteComponentProps } from 'react-router-dom';
+
 import {
   User,
   CartItem,
   Notification,
   RefProfile,
   FioAddressDoublet,
+  PrivateRedirectLocationState,
 } from '../../types';
-import { RouteComponentProps } from 'react-router-dom';
 
 export interface MainHeaderProps extends RouteComponentProps {
+  profileRefreshed: boolean;
   isAuthenticated: boolean;
   isNotActiveUser: boolean;
   pathname: string;
+  locationState?: PrivateRedirectLocationState;
   homePageLink: string;
   user: User;
   edgeContextSet: boolean;

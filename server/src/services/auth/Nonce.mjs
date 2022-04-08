@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+
 import { User, Nonce } from '../../models';
 import Base from '../Base';
 import X from '../Exception';

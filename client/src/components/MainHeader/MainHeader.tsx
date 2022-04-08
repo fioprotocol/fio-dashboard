@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+
 import classes from './MainHeader.module.scss';
 import { MainHeaderProps } from './types';
 import RegularNav from './components/RegularNav';
@@ -11,8 +12,10 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
   const {
     showLoginModal,
     logout: logoutFn,
+    profileRefreshed,
     isAuthenticated,
     isNotActiveUser,
+    locationState,
     fioAddresses,
     refProfileLoading,
     refProfileInfo,
@@ -35,6 +38,18 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     logoutFn();
   };
 
+  useEffect(() => {
+    if (
+      profileRefreshed &&
+      !isAuthenticated &&
+      locationState &&
+      locationState.from &&
+      locationState.from.pathname
+    ) {
+      showLogin();
+    }
+  }, [locationState, showLogin, isAuthenticated, profileRefreshed]);
+
   if (refProfileLoading) {
     return (
       <div className={classnames(classes.header)}>
@@ -52,7 +67,6 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
         <LoggedNav
           isMenuOpen={isMenuOpen}
           toggleMenuOpen={toggleMenuOpen}
-          logout={logout}
           closeMenu={closeMenu}
           showLogin={showLogin}
           hideCart={(isRefFlow && !!fioAddresses.length) || isNotActiveUser}
@@ -60,6 +74,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
           onlyAuth={isRefFlow || isNotActiveUser}
           showSiteLink={isRefFlow}
           {...props}
+          logout={logout}
         />
       ) : (
         <RegularNav

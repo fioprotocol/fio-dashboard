@@ -6,6 +6,7 @@ import {
   isFioAddressValidator,
   matchFieldValidator,
   isNumberValidator,
+  isAmountValidator,
 } from '../../../../util/validators';
 
 import { MAX_MEMO_SIZE } from '../../../../constants/fio';
@@ -42,6 +43,9 @@ const validationSchema: ValidationSchema = {
         validator: isNumberValidator,
         message: 'Please enter valid amount.',
       },
+      {
+        validator: isAmountValidator,
+      },
     ],
     memo: [
       {
@@ -55,14 +59,17 @@ const validationSchema: ValidationSchema = {
 
 const onSubmitValidationSchema: ValidationSchema = {
   field: {
+    from: [
+      {
+        validator: fioAddressExistsValidator,
+      },
+    ],
     to: [
       {
         validator: fioAddressExistsValidator,
         customArgs: {
           fieldIdToCompare: 'fromPubKey',
-          sameWalletMessage: 'Spend to self.',
         },
-        message: 'Please enter existing FIO Crypto Handle / Public Key.',
       },
     ],
   },

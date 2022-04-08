@@ -1,4 +1,5 @@
 import React from 'react';
+
 import classes from './FormModalWrapper.module.scss';
 
 type Props = {

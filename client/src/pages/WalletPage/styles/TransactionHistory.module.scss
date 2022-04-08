@@ -28,7 +28,7 @@
       width: 100%;
       margin-top: 20px;
       border-radius: 7px;
-      min-height: 54px;
+      padding: 0;
       @include sf-pro-display-medium;
       & a {
         width: 100%;
@@ -37,6 +37,7 @@
         justify-content: center;
         align-items: center;
         color: $white;
+        min-height: 52px;
       }
     }
   }

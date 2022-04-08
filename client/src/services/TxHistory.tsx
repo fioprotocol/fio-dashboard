@@ -42,7 +42,7 @@ type Props = {
 
 const TIMER_DELAY = 5000; // 5 sec
 
-const TxHistory = (props: Props): React.FC => {
+const TxHistory = (props: Props): React.FC | null => {
   const {
     fioWalletsTxHistory,
     fioWallets,

@@ -6,7 +6,7 @@ import SubmitButton from '../../../../components/common/SubmitButton/SubmitButto
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 
-import { validate } from './validation';
+import { formValidation } from './validation';
 
 import { ImportWalletFormProps } from '../../types';
 
@@ -15,7 +15,7 @@ import classes from '../../ImportWalletPage.module.scss';
 const ImportWalletForm: React.FC<ImportWalletFormProps> = props => {
   const { loading, onSubmit } = props;
   return (
-    <Form onSubmit={onSubmit} validate={validate}>
+    <Form onSubmit={onSubmit} validate={formValidation.validateForm}>
       {(formRenewProps: FormRenderProps) => (
         <form onSubmit={formRenewProps.handleSubmit} className={classes.form}>
           <Field

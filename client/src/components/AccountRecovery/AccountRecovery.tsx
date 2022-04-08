@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { RouterProps } from 'react-router';
+
 import FormModalWrapper from '../FormModalWrapper/FormModalWrapper';
 import { ROUTES } from '../../constants/routes';
 import CloseButton from '../CloseButton/CloseButton';
@@ -16,17 +17,17 @@ const AccountRecovery: React.FC<AccountRecoveryTypes & RouterProps> = props => {
     showLoginModal,
     clearRecoveryResults,
   } = props;
-  const onClose = () => {
+  const onClose = useCallback(() => {
     history.push(ROUTES.HOME);
     clearRecoveryResults();
-  };
+  }, [clearRecoveryResults, history]);
 
   useEffect(() => {
     if (recoveryAccountResults.status) {
       onClose();
       showLoginModal();
     }
-  }, [recoveryAccountResults]);
+  }, [onClose, recoveryAccountResults, showLoginModal]);
 
   return (
     <div className={classes.container}>

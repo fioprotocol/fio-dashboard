@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { RouterProps, withRouter } from 'react-router-dom';
 
 import { compose } from '../utils';
 
@@ -17,7 +16,7 @@ type Props = {
 
 const ROE_UPDATE_TIMEOUT = 1000 * 60 * 30; // 30 min
 
-const Roe = (props: Props & RouterProps): React.FC => {
+const Roe = (props: Props): null => {
   const { roe, roeSetDate, getPrices } = props;
 
   useEffect(() => {
@@ -47,4 +46,4 @@ const reduxConnect = connect(
   },
 );
 
-export default withRouter(compose(reduxConnect)(Roe));
+export default compose(reduxConnect)(Roe);

@@ -2,6 +2,8 @@ import { validateMnemonic } from 'bip39';
 
 import apis from '../../api';
 
+import { log } from '../../util/general';
+
 import { ImportWalletValues } from './types';
 
 export const VALIDATION_ERRORS = {
@@ -66,7 +68,7 @@ export const validate = async (
       return uniqueError;
     }
 
-    console.error(e);
+    log.error(e);
     return VALIDATION_ERRORS.general;
   }
 

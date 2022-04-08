@@ -1,4 +1,3 @@
-import React from 'react';
 import classnames from 'classnames';
 
 import Results from '../index';
@@ -20,7 +19,7 @@ const SignResults = (props: ResultsProps) => {
 
   return (
     <Results {...props}>
-      <FioName name={name} />
+      <FioName name={name || ''} />
       <h5 className={classes.label}>Signed NFT Details</h5>
       <div className={classes.badges}>
         <Badge show={true} type={BADGE_TYPES.WHITE}>

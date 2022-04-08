@@ -13,6 +13,7 @@ import {
   ContainerProps,
   PaymentDetailsResultValues,
   PaymentDetailsValues,
+  PaymentDetailsInitialValues,
   TxValues,
 } from './types';
 
@@ -43,9 +44,15 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
 
   const [sendData, setSendData] = useState<PaymentDetailsValues | null>(null);
   const [processing, setProcessing] = useState<boolean>(false);
-  const [initialValues, setInitialValues] = useState(null);
+  const [
+    initialValues,
+    setInitialValues,
+  ] = useState<PaymentDetailsInitialValues | null>(null);
 
-  const { fioRequestId, publicKey } = useParams();
+  const {
+    fioRequestId,
+    publicKey,
+  }: { fioRequestId?: string; publicKey?: string } = useParams();
   const location: {
     state: {
       fioWallet: FioWalletDoublet;
@@ -134,6 +141,8 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
       ) || null
     : null;
 
+  if (!publicKey || !fioRequestId) return <Redirect to={ROUTES.FIO_WALLETS} />;
+
   if (
     !location?.state?.fioWallet?.id ||
     !location?.state?.fioRecordDecrypted ||
@@ -141,16 +150,15 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
   )
     return (
       <Redirect
-        to={{ pathname: putParamsToUrl(ROUTES.FIO_WALLET, { publicKey }) }}
+        to={{
+          pathname: putParamsToUrl(ROUTES.FIO_WALLET, {
+            publicKey,
+          }),
+        }}
       />
     );
 
-  if (!walletFioAddresses?.length)
-    return (
-      <div className="d-flex justify-content-center align-items-center w-100 flex-grow-1">
-        <FioLoader />
-      </div>
-    );
+  if (!walletFioAddresses?.length) return <FioLoader wrap={true} />;
 
   if (resultsData)
     return (

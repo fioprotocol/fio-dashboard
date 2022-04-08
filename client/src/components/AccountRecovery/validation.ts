@@ -1,45 +1,64 @@
-import { FormValues } from './types';
+import { Validators, ValidationSchema } from '@lemoncode/fonk';
+import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
+
+import {
+  matchFieldValidator,
+  hasLowercaseLetterValidator,
+  hasUppercaseLetterValidator,
+  hasNumberCharValidator,
+} from '../../util/validators';
+
 import { VALIDATION_TITLES } from '../CreateAccountForm/EmailPassword';
 
-const validation = (values: FormValues) => {
-  const errors: FormValues = {};
-
-  const {
-    recoveryAnswerOne,
-    recoveryAnswerTwo,
-    password,
-    confirmPassword,
-  } = values;
-
-  if (!recoveryAnswerOne) errors.recoveryAnswerOne = 'Answer Required';
-  if (!recoveryAnswerTwo) errors.recoveryAnswerTwo = 'Answer Required';
-  if (!password) errors.password = 'Password Required';
-  if (!confirmPassword)
-    errors.confirmPassword = 'Confirmation Password Required';
-
-  if (password && confirmPassword && password !== confirmPassword) {
-    errors.confirmPassword = 'Passwords do not match';
-  }
-
-  if (password) {
-    if (password.length < 10) {
-      errors.password = VALIDATION_TITLES.length;
-    }
-
-    if (password.search(/^(?=.*[a-z])/) < 0) {
-      errors.password = VALIDATION_TITLES.lower;
-    }
-
-    if (password.search(/^(?=.*[A-Z])/) < 0) {
-      errors.password = VALIDATION_TITLES.upper;
-    }
-
-    if (password.search(/^(?=.*\d)/) < 0) {
-      errors.password = VALIDATION_TITLES.number;
-    }
-  }
-
-  return errors;
+const validationSchema: ValidationSchema = {
+  field: {
+    password: [
+      {
+        validator: Validators.required,
+        message: 'Password is required.',
+      },
+      {
+        validator: Validators.minLength,
+        customArgs: { length: 10 },
+        message: VALIDATION_TITLES.length,
+      },
+      {
+        validator: hasLowercaseLetterValidator,
+        message: VALIDATION_TITLES.lower,
+      },
+      {
+        validator: hasUppercaseLetterValidator,
+        message: VALIDATION_TITLES.upper,
+      },
+      {
+        validator: hasNumberCharValidator,
+        message: VALIDATION_TITLES.number,
+      },
+    ],
+    confirmPassword: [
+      {
+        validator: Validators.required,
+        message: 'Confirmation password is required.',
+      },
+      {
+        validator: matchFieldValidator,
+        customArgs: { fieldId: 'password' },
+        message: 'Passwords do not match.',
+      },
+    ],
+    recoveryAnswerOne: [
+      {
+        validator: Validators.required,
+        message: 'Answer Required.',
+      },
+    ],
+    recoveryAnswerTwo: [
+      {
+        validator: Validators.required,
+        message: 'Answer Required.',
+      },
+    ],
+  },
 };
 
-export default validation;
+export const formValidation = createFinalFormValidation(validationSchema);

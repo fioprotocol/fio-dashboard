@@ -1,4 +1,5 @@
 import React from 'react';
+
 import GenericTitleComponent from './GenericTitleComponent';
 
 import { TITLE_NAME } from '../constant';

@@ -11,7 +11,7 @@ const PinInput: React.FC<PinInputProps &
 
   const { error, data } = meta;
 
-  const pinError = error || data.error || null;
+  const pinError = error || data?.error || null;
 
   const form = useForm();
 

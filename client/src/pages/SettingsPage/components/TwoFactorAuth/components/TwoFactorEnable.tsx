@@ -8,6 +8,7 @@ import { CONFIRM_PIN_ACTIONS } from '../../../../../constants/common';
 
 import apis from '../../../../../api';
 import { minWaitTimeFunction } from '../../../../../utils';
+import { log } from '../../../../../util/general';
 
 import { SubmitActionParams } from '../../../../../components/EdgeConfirmAction/types';
 
@@ -53,7 +54,7 @@ const TwoFactorEnable: React.FC<TwoFactorComponentProps> = props => {
         MIN_WAIT_TIME,
       );
     } catch (e) {
-      console.error(e);
+      log.error(e);
     }
 
     toggleLoading(false);

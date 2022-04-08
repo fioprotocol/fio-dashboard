@@ -8,7 +8,7 @@ import CancelButton from '../common/CancelButton/CancelButton';
 
 import { ErrorBadge, ERROR_UI_TYPE } from '../Input/ErrorBadge';
 
-import validation from './validation';
+import { formValidation } from './validation';
 
 import { FormValues } from './types';
 
@@ -51,7 +51,11 @@ const AccountRecoveryForm: React.FC<Props> = props => {
     'Some of the answers were incorrect. Please try again!';
 
   const onSubmit = (values: FormValues) => {
-    const { password, recoveryAnswerOne, recoveryAnswerTwo } = values;
+    const {
+      password = '',
+      recoveryAnswerOne = '',
+      recoveryAnswerTwo = '',
+    } = values;
     const answers = [recoveryAnswerOne, recoveryAnswerTwo];
 
     const params = {
@@ -69,7 +73,9 @@ const AccountRecoveryForm: React.FC<Props> = props => {
     const isLoading = loading || questionsLoading;
     const disabledButton =
       isLoading ||
-      (!valid && Object.values(touched).every(touchedField => touchedField));
+      (!valid &&
+        touched &&
+        Object.values(touched).every(touchedField => touchedField));
 
     return (
       <form onSubmit={handleSubmit} className={classes.form}>
@@ -151,7 +157,13 @@ const AccountRecoveryForm: React.FC<Props> = props => {
       </form>
     );
   };
-  return <Form onSubmit={onSubmit} render={renderForm} validate={validation} />;
+  return (
+    <Form
+      onSubmit={onSubmit}
+      render={renderForm}
+      validate={formValidation.validateForm}
+    />
+  );
 };
 
 export default AccountRecoveryForm;

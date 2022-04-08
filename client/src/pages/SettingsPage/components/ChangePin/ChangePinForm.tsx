@@ -26,7 +26,7 @@ type Props = {
   onSubmit: () => void;
   loading: boolean;
   password?: string;
-  pin?: string;
+  pin: string;
   handlePinChange: (value: string) => void;
   handlePasswordChange: (value: string) => void;
   error?: string;
@@ -39,7 +39,7 @@ const ChangePinForm: React.FC<Props> = props => {
     onSubmit,
     isConfirmPage,
     loading,
-    pin,
+    pin = '',
     password,
     handlePinChange,
     handlePasswordChange,

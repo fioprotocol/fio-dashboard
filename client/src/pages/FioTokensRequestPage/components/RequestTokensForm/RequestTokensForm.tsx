@@ -33,7 +33,6 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
     loading,
     fioAddresses,
     pubAddressesMap,
-    roe,
     contactsList,
     initialValues: parentInitialValues,
     isFio,
@@ -97,7 +96,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
         const onPayeeFioAddressChange = (val: string) => {
           if (!isFio) return;
 
-          const selectedFioAddress: FioAddressDoublet | null = val
+          const selectedFioAddress: FioAddressDoublet | undefined | null = val
             ? fioAddresses.find(({ name }) => name === val)
             : null;
 
@@ -148,7 +147,10 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
           );
         };
 
-        const selectedAddress: FioAddressDoublet | null = payeeFioAddress
+        const selectedAddress:
+          | FioAddressDoublet
+          | undefined
+          | null = payeeFioAddress
           ? fioAddresses.find(({ name }) => name === payeeFioAddress)
           : null;
 
@@ -183,6 +185,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               isVisible={!isFio}
               chainCodeValue={chainCode}
               chainCodeList={CHAIN_CODE_LIST}
+              initialValues={initialValues}
             />
 
             {!isFio && (
@@ -203,6 +206,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               component={SelectModalInput}
               options={contactsList}
               showPasteButton={true}
+              lowerCased={true}
               disabled={loading}
               loading={validating}
               label="Request From"
@@ -212,7 +216,6 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
                     fioAddressExistsValidator({
                       value,
                       values,
-                      message: 'FIO Crypto Handle is not valid / not exist',
                       customArgs: {
                         fieldIdToCompare: 'payeeTokenPublicAddress',
                         sameWalletMessage: "Can't request to same wallet",
@@ -231,7 +234,6 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
                 uiType={INPUT_UI_STYLES.BLACK_WHITE}
                 errorColor={COLOR_TYPE.WARN}
                 component={AmountInput}
-                roe={roe}
                 disabled={loading}
                 label="Request Amount"
               />

@@ -1,0 +1,31 @@
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/colors.scss';
+
+.form {
+  margin-top: 1em;
+
+  .infoBadge {
+    margin: 0 0 20px 0;
+
+    a:hover {
+      color: $iron;
+    }
+  }
+  .infoBadgeError {
+    a:hover {
+      color: $iron;
+    }
+  }
+
+  .transactionTitle {
+    font-size: 0.875em;
+    margin-bottom: -16px;
+    color: $dark-jungle-green;
+    align-self: flex-start;
+    @include sf-pro-display-medium;
+  }
+
+  .marginPlug {
+    margin-top: -10px;
+  }
+}

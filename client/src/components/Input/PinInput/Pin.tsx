@@ -31,8 +31,8 @@ const PinInput: React.FC<PinInputProps> = props => {
 
   const [showKeyboard, toggleShowKeyboard] = useState(false); // handle mobile keyboard
 
-  const innerRef = useRef(null);
-  const valueRef = useRef(value);
+  const innerRef = useRef<HTMLInputElement>(null);
+  const valueRef = useRef<string | undefined>(value);
 
   const isActiveElement = document.activeElement === innerRef.current;
 
@@ -40,12 +40,12 @@ const PinInput: React.FC<PinInputProps> = props => {
     valueRef.current = data;
     onChange(data);
 
-    if (error && data.length === PIN_LENGTH - 1) {
+    if (error && data?.length === PIN_LENGTH - 1) {
       form &&
         form.mutators.setDataMutator(name, {
           error: false,
         });
-      onReset();
+      onReset && onReset();
     }
   };
 
@@ -139,6 +139,7 @@ const PinInput: React.FC<PinInputProps> = props => {
           <div
             className={classnames(
               isIOS &&
+                iosKeyboardPlugType &&
                 (IOS_KEYBOARD_PLUG_TYPE[iosKeyboardPlugType]
                   ? classes[iosKeyboardPlugType]
                   : classes.keyboardPlug),

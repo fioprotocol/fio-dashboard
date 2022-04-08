@@ -90,10 +90,10 @@ const SendPage: React.FC<ContainerProps> = props => {
       other: {
         ...sendData,
         ...res,
-        to: sendData.toPubKey,
-        toFioAddress: sendData.to,
-        fromFioAddress: sendData.from,
-        from: sendData.fromPubKey,
+        to: sendData?.toPubKey,
+        toFioAddress: sendData?.to,
+        fromFioAddress: sendData?.from,
+        from: sendData?.fromPubKey,
         fioRequestId: fioRecordDecrypted?.fioRecord.id,
       },
     });
@@ -112,12 +112,7 @@ const SendPage: React.FC<ContainerProps> = props => {
     );
   };
 
-  if (!fioWallet || !fioWallet.id)
-    return (
-      <div className="d-flex justify-content-center align-items-center w-100 flex-grow-1">
-        <FioLoader />
-      </div>
-    );
+  if (!fioWallet || !fioWallet.id) return <FioLoader wrap={true} />;
 
   const onBack = () =>
     history.push(
@@ -143,12 +138,12 @@ const SendPage: React.FC<ContainerProps> = props => {
   const initialValues: InitialValues = {
     // From and To replaces each other because we are sending To address from which we got request
     fromPubKey: fioWallet.publicKey,
-    toPubKey: fioRecordDecrypted?.fioDecryptedContent.payeePublicAddress,
+    toPubKey: fioRecordDecrypted?.fioDecryptedContent?.payeePublicAddress,
     from: fioRecordDecrypted?.fioRecord.to || walletFioAddresses[0]?.name,
     to: fioRecordDecrypted?.fioRecord.from,
     fioRequestId: fioRecordDecrypted?.fioRecord.id,
-    amount: fioRecordDecrypted?.fioDecryptedContent.amount,
-    memo: fioRecordDecrypted?.fioDecryptedContent.memo,
+    amount: fioRecordDecrypted?.fioDecryptedContent?.amount,
+    memo: fioRecordDecrypted?.fioDecryptedContent?.memo,
   };
 
   if (resultsData)
@@ -196,7 +191,6 @@ const SendPage: React.FC<ContainerProps> = props => {
           loading={loading || processing}
           fioAddresses={walletFioAddresses}
           onSubmit={onSend}
-          roe={roe}
           fee={feePrice}
           obtDataOn={true}
           contactsList={contactsList}

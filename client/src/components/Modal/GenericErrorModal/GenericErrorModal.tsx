@@ -1,4 +1,5 @@
 import React from 'react';
+
 import DangerModal from '../DangerModal';
 
 type Props = {
@@ -13,7 +14,7 @@ const GenericErrorModal: React.FC<Props> = props => {
     message = "We've experienced something unexpected.",
     title = 'Something Went Wrong',
     buttonText = 'Try Again',
-  } = genericErrorData;
+  } = genericErrorData || {};
   return (
     <DangerModal
       title={title}

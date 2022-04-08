@@ -1,16 +1,18 @@
 import React from 'react';
+
 import GenericTitleComponent from './GenericTitleComponent';
 import { TITLE_NAME } from '../constant';
 
 import classes from '../styles/ImageTitle.module.scss';
 
 type Props = {
-  imageUrl: string;
-  imageName: string;
+  imageUrl?: string;
+  imageName?: string;
 };
 
 const ImageTitle: React.FC<Props> = props => {
   const { imageUrl, imageName } = props;
+
   return (
     <>
       <div>

@@ -4,7 +4,8 @@
     "prettier"
   ],
   "plugins": [
-    "prettier"
+    "prettier",
+    "import"
   ],
   "rules": {
     "prettier/prettier": [
@@ -22,7 +23,24 @@
       "error",
       "always-multiline"
     ],
-    "no-console": "error"
+    "no-console": "error",
+    "import/order": ["error", {
+      "alphabetize": {
+        "order": "ignore",
+        "caseInsensitive": true
+      },
+      "newlines-between": "always-and-inside-groups",
+      "groups": [
+        "builtin",
+        "external",
+        "internal",
+        [
+          "sibling", "parent"
+        ],
+        "index",
+        "object",
+        "type"
+      ]}]
   },
   "env": {
     "es6": true,

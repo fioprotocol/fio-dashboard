@@ -8,9 +8,11 @@ import {
   ClearButton,
   ShowPasswordIcon,
 } from './InputActionButtons';
-import { ErrorBadge } from './ErrorBadge';
-import { getValueFromPaste } from '../../util/general';
 import { Label, LoadingIcon, PrefixLabel, Prefix } from './StaticInputParts';
+import { ErrorBadge } from './ErrorBadge';
+
+import { getValueFromPaste, log } from '../../util/general';
+import { useFieldElemActiveState } from '../../util/hooks';
 
 import classes from './Input.module.scss';
 
@@ -51,7 +53,7 @@ export type TextInputProps = {
 
 export const TextInput = (
   props: TextInputProps & FieldRenderProps<TextInputProps>,
-  ref: React.Ref<HTMLInputElement | null>,
+  ref?: React.Ref<HTMLInputElement>,
 ) => {
   const {
     input,
@@ -60,7 +62,7 @@ export const TextInput = (
     colorSchema,
     onClose,
     hideError,
-    showPasteButton,
+    showPasteButton = false,
     loading,
     uiType,
     errorType = '',
@@ -92,11 +94,17 @@ export const TextInput = (
 
   const [showPass, toggleShowPass] = useState(false);
   const [isInputHasValue, toggleIsInputHasValue] = useState(value !== '');
+  const [
+    fieldElemActive,
+    setFieldElemActive,
+    setFieldElemInactive,
+  ] = useFieldElemActiveState();
 
   const hasError =
-    ((error || data.error) &&
+    ((error || data?.error) &&
       (touched || modified || submitSucceeded || !!value) &&
-      !active) ||
+      !active &&
+      !fieldElemActive) ||
     (submitError && !modifiedSinceLastSubmit);
 
   useEffect(() => {
@@ -151,7 +159,7 @@ export const TextInput = (
           />
         </div>
         <ClearButton
-          isVisible={(isInputHasValue || onClose) && !disabled && !loading}
+          isVisible={(isInputHasValue || !!onClose) && !disabled && !loading}
           onClear={clearInputFn}
           onClose={onClose}
           inputType={type}
@@ -171,9 +179,11 @@ export const TextInput = (
             try {
               onChange(await getValueFromPaste());
             } catch (e) {
-              console.error('Paste error: ', e);
+              log.error('Paste error: ', e);
             }
           }}
+          onMouseDown={setFieldElemActive}
+          onMouseUp={setFieldElemInactive}
           uiType={uiType}
         />
         <LoadingIcon isVisible={loading} uiType={uiType} />
@@ -181,7 +191,7 @@ export const TextInput = (
       <ErrorBadge
         error={error}
         data={data}
-        hasError={!hideError && !data.hideError && hasError}
+        hasError={!hideError && !data?.hideError && hasError}
         type={errorType}
         color={errorColor}
         submitError={submitError}

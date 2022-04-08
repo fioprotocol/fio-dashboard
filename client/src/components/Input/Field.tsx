@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import Input, { FieldProps as OtherProps } from '../Input/InputRedux';
 
@@ -8,7 +8,7 @@ type FieldProps = OtherProps & {
   onChange: (value: FieldValue, name?: string) => void;
   name: string;
   placeholder: string;
-  error?: string;
+  error: string | null;
 };
 
 export const Field = (props: FieldProps) => {

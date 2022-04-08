@@ -1,4 +1,3 @@
-import React from 'react';
 import Modal from '../../Modal/Modal';
 import FioLoader from '../FioLoader/FioLoader';
 
@@ -22,8 +21,7 @@ const Processing = (props: Props) => {
       show={props.isProcessing}
       backdrop="static"
       hideCloseButton
-      closeButton={null}
-      onClose={null}
+      closeButton={false}
     >
       <div className={classes.processingContainer}>
         <div className={classes.logo}>

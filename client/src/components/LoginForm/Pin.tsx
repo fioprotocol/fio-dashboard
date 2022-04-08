@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { isEmpty } from 'lodash';
 
 import FormHeader from '../FormHeader/FormHeader';
 import CloseButton from '../CloseButton/CloseButton';
 import PinForm from '../PinForm';
+import { FIELD_NAME } from '../PinForm/PinForm';
 
 import { PIN_LENGTH } from '../../constants/form';
 import { IOS_KEYBOARD_PLUG_TYPE } from '../Input/PinInput/constants';
@@ -31,24 +32,29 @@ const Pin = (props: Props) => {
     resetLoginFailure,
     onSubmit,
   } = props;
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     if (!isEmpty(edgeLoginFailure)) {
-      const messageText = (type: string) => {
+      const messageText = (type?: string) => {
         if (type === 'PasswordError' || type === 'UsernameError') {
-          if (edgeLoginFailure.wait > 0) return 'Pin login has been blocked';
+          if (edgeLoginFailure.wait && edgeLoginFailure.wait > 0)
+            return 'Pin login has been blocked';
           return 'Invalid Pin';
         }
         return 'Server Error';
       };
-      setError({ message: messageText(edgeLoginFailure.type) });
+      setError({
+        name: FIELD_NAME,
+        message: messageText(edgeLoginFailure.type),
+      });
     }
   }, [edgeLoginFailure]);
 
   useEffect(() => {
     if (!isEmpty(loginFailure)) {
       setError({
+        name: FIELD_NAME,
         message:
           loginFailure.code === 'AUTHENTICATION_FAILED'
             ? 'Authentication failed'

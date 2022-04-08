@@ -11,7 +11,7 @@ export const matchFieldValidator: FieldValidationFunctionSync<MatchFieldArgs> = 
   message,
   customArgs,
 }) => {
-  const { fieldId, isMatch = true } = customArgs;
+  const { fieldId = '', isMatch = true } = customArgs || {};
 
   const succeeded = isMatch
     ? value === values[fieldId]

@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+
 import * as actions from './actions';
 
 import {
@@ -160,7 +161,14 @@ export default combineReducers({
         return state;
     }
   },
-  error(state: any | null = null, action) {
+  error(
+    state: {
+      fields?: { [fieldName: string]: any };
+      code?: string;
+      message?: string;
+    } | null = null,
+    action,
+  ) {
     switch (action.type) {
       case actions.LOGIN_FAILURE:
       case actions.LOGOUT_FAILURE:
@@ -210,7 +218,7 @@ export default combineReducers({
         return state;
     }
   },
-  changeRecoveryQuestionsResults(state = {}, action) {
+  changeRecoveryQuestionsResults(state: { status?: number } = {}, action) {
     switch (action.type) {
       case actions.SET_RECOVERY_SUCCESS: {
         return { status: 1 };

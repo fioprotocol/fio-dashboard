@@ -2,9 +2,10 @@ import { EdgeAccount } from 'edge-core-js';
 
 import { Api } from '../../api';
 
-import { getWalletKeys } from '../../util/edge';
+import { waitWalletKeys } from '../../util/edge';
+import { log } from '../../util/general';
 
-import { WalletKeys } from '../../types';
+import { EdgeWalletsKeys } from '../../types';
 
 export const prefix = 'edge';
 
@@ -64,7 +65,7 @@ export const login = ({
         }
       }
     } catch (e) {
-      console.error(e);
+      log.error(e);
     }
     return { account, fioWallets, options, voucherId };
   },
@@ -82,7 +83,7 @@ export const confirmPin = (
   promise: async (api: Api) => {
     const account = await api.edge.loginPIN(username, pin);
 
-    const keys: { [key: string]: WalletKeys } = await getWalletKeys(account);
+    const keys: EdgeWalletsKeys = await waitWalletKeys(account);
 
     return { account, keys, action, data };
   },
@@ -314,4 +315,10 @@ export const TOGGLE_TWO_FACTOR_AUTH = `${prefix}/TOGGLE_TWO_FACTOR_AUTH`;
 export const toggleTwoFactorAuth = (enabled: boolean) => ({
   type: TOGGLE_TWO_FACTOR_AUTH,
   enabled,
+});
+
+export const SET_CONFIRM_PIN_KEYS = `${prefix}/SET_CONFIRM_PIN_KEYS`;
+export const setConfirmPinKeys = (keys: EdgeWalletsKeys | null) => ({
+  type: SET_CONFIRM_PIN_KEYS,
+  data: keys,
 });
