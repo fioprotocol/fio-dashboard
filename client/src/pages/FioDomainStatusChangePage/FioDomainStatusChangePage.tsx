@@ -133,6 +133,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
         hasLowBalance={hasLowBalance}
         processing={processing}
         handleSubmit={onSubmit}
+        walletName={fioWallet.name}
         walletBalancesAvailable={walletBalancesAvailable}
       />
     </>

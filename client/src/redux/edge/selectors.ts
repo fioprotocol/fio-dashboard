@@ -12,6 +12,8 @@ export const recoveryQuestions = (state: ReduxState) =>
   state[prefix].recoveryQuestions;
 export const pinConfirmation = (state: ReduxState) =>
   state[prefix].pinConfirmation;
+export const confirmPinKeys = (state: ReduxState) =>
+  state[prefix].confirmPinKeys;
 export const confirmingPin = (state: ReduxState) => state[prefix].confirmingPin;
 export const usernameIsAvailable = (state: ReduxState) =>
   state[prefix].usernameIsAvailable;

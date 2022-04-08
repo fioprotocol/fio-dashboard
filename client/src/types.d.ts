@@ -184,10 +184,11 @@ export type LinkActionResult = {
 };
 
 export type WalletKeys = { private: string; public: string };
+export type EdgeWalletsKeys = { [edgeWalletId: string]: WalletKeys };
 
 export type PinConfirmation = {
   account?: EdgeAccount;
-  keys?: { [walletId: string]: WalletKeys };
+  keys?: EdgeWalletsKeys;
   action?: string;
   data?: any;
   error?: string | (Error & { wait?: number });
@@ -417,7 +418,10 @@ export type RedirectLinkData = {
   state?: LocationState;
 };
 
-export type PrivateRedirectLocationState = { from?: { pathname?: string } };
+export type PrivateRedirectLocationState = {
+  from?: { pathname?: string };
+  options?: { setKeysForAction?: boolean };
+};
 
 export type Proxy = {
   is_proxy: number;

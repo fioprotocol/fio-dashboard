@@ -13,10 +13,10 @@ import {
   Domain,
   Prices,
   FioNameItemProps,
-  WalletKeysObj,
   FioRecord,
   ResponseFioRecord,
   WalletKeys,
+  EdgeWalletsKeys,
 } from './types';
 import { convertFioPrices } from './util/prices';
 
@@ -71,8 +71,8 @@ export function emailToUsername(email: string) {
 
 export const getWalletKeys = (
   fioWallets: EdgeCurrencyWallet[],
-): WalletKeysObj => {
-  const keys: WalletKeysObj = {};
+): EdgeWalletsKeys => {
+  const keys: EdgeWalletsKeys = {};
   for (const fioWallet of fioWallets) {
     keys[fioWallet.id] = {
       private: fioWallet.keys.fioKey,

@@ -184,6 +184,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
           />
           <TransferForm
             {...props}
+            walletName={currentWallet ? currentWallet.name : ''}
             onSubmit={onSubmit}
             processing={processing || submitting}
             feePrice={feePrice}
