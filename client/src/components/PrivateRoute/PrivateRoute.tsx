@@ -18,13 +18,22 @@ type PrivateRouteProps = {
   homePageLink: string;
 };
 
-export const PrivateRoute: React.FC<PrivateRouteProps & RouteProps> = ({
+type OwnProps = {
+  redirectOptions?: {
+    setKeysForAction?: boolean;
+  };
+};
+
+export const PrivateRoute: React.FC<PrivateRouteProps &
+  RouteProps &
+  OwnProps> = ({
   component: Component,
   noProfileLoaded,
   isNewUser,
   isNewEmailNotVerified,
   loading,
   homePageLink,
+  redirectOptions,
   ...rest
 }) => {
   return (
@@ -48,7 +57,7 @@ export const PrivateRoute: React.FC<PrivateRouteProps & RouteProps> = ({
             <Redirect
               to={{
                 pathname: homePageLink,
-                state: { from: props.location },
+                state: { from: props.location, options: redirectOptions },
               }}
             />
           );

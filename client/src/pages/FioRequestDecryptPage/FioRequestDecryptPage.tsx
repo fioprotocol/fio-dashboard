@@ -47,6 +47,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
     },
     refreshBalance,
     refreshWalletDataPublicKey,
+    setConfirmPinKeys,
   } = props;
 
   const fioWallet =
@@ -78,7 +79,8 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
 
   useEffect(() => {
     setDecryptData(null);
-  }, []);
+    return () => setConfirmPinKeys(null);
+  }, [setDecryptData, setConfirmPinKeys]);
 
   useEffect(() => {
     if (fioRequestId && fioWalletsData && publicKey && !fioRequest) {

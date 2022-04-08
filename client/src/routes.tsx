@@ -166,6 +166,7 @@ const Routes = () => (
         <PrivateRoute
           path={ROUTES.FIO_REQUEST_DECRYPT}
           component={FioRequestDecryptPage}
+          redirectOptions={{ setKeysForAction: true }}
           exact
         />
 

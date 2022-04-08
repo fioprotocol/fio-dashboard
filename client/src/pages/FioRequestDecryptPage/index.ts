@@ -4,6 +4,7 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from '../../utils';
 
 import { refreshBalance } from '../../redux/fio/actions';
+import { setConfirmPinKeys } from '../../redux/edge/actions';
 import { refreshWalletDataPublicKey } from '../../redux/fioWalletsData/actions';
 
 import { loading, fioWallets } from '../../redux/fio/selectors';
@@ -30,6 +31,7 @@ const reduxConnect = connect(
   {
     refreshBalance,
     refreshWalletDataPublicKey,
+    setConfirmPinKeys,
   },
 );
 

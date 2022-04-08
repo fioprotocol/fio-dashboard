@@ -19,4 +19,5 @@ export interface ContainerProps extends ContainerOwnProps {
   fioWalletsData: { [publicKey: string]: FioWalletData };
   refreshBalance: (publicKey: string) => void;
   refreshWalletDataPublicKey: (publicKey: string) => void;
+  setConfirmPinKeys: (keys: null) => void;
 }
