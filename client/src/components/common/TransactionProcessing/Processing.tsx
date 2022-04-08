@@ -15,10 +15,14 @@ type Props = {
 };
 
 const Processing = (props: Props) => {
-  const { title = DEFAULT_TEXT.title, message = DEFAULT_TEXT.message } = props;
+  const {
+    isProcessing,
+    title = DEFAULT_TEXT.title,
+    message = DEFAULT_TEXT.message,
+  } = props;
   return (
     <Modal
-      show={props.isProcessing}
+      show={isProcessing}
       backdrop="static"
       hideCloseButton
       closeButton={false}
