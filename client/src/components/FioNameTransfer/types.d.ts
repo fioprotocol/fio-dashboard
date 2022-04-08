@@ -27,6 +27,7 @@ export type ContainerProps = {
 
 export type FormProps = {
   name: string;
+  walletName?: string;
   fioNameType: FioNameType;
   feePrice: FeePrice;
   publicKey: string;

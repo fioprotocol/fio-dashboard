@@ -51,6 +51,9 @@ const CheckoutPage = props => {
     !hasFreeAddress &&
     cartItems[0].allowFree;
 
+  const paymentWallet = fioWallets.find(
+    ({ publicKey }) => publicKey === paymentWalletPublicKey,
+  );
   const { available: walletBalancesAvailable } = useWalletBalances(
     paymentWalletPublicKey,
   );
@@ -96,6 +99,7 @@ const CheckoutPage = props => {
           cart={cartItems}
           isDesktop={isDesktop}
           walletBalances={walletBalancesAvailable}
+          walletName={paymentWallet ? paymentWallet.name : ''}
           roe={roe}
         />
       </CheckoutPurchaseContainer>
