@@ -19,7 +19,7 @@ type OwnProps = {
 };
 
 type PageProps = {
-  children: React.FunctionComponent;
+  children: React.ReactElement;
   bottomText?: string | React.ReactNode;
   hideNext?: boolean;
   hideBack?: boolean;
@@ -28,7 +28,7 @@ type PageProps = {
 type Props = OwnProps;
 
 export default class Wizard extends React.Component<Props, State> {
-  static Page: React.FunctionComponent<any> = props => props.children;
+  static Page: React.FC<PageProps> = (props: PageProps) => props.children;
   state = {
     pageIsActive: true,
   };

@@ -1,9 +1,12 @@
 import { createSelector } from 'reselect';
 
 import { refProfileInfo } from '../refProfile/selectors';
+import { fioDomains } from '../fio/selectors';
+
 import { prefix } from './actions';
 
 import { ReduxState } from '../init';
+import { FioDomainDoublet } from '../../types';
 
 export const loading = (state: ReduxState) => state[prefix].loading;
 export const prices = (state: ReduxState) => state[prefix].prices;
@@ -20,6 +23,14 @@ export const domains = createSelector(
           free: true,
         }))
       : regDomainItems,
+);
+export const allDomains = createSelector(
+  domains,
+  fioDomains,
+  (publicDomains, userDomains) => [
+    ...publicDomains,
+    ...userDomains.map(({ name }: FioDomainDoublet) => ({ domain: name })),
+  ],
 );
 
 export const captchaResult = (state: ReduxState) => state[prefix].captchaResult;
