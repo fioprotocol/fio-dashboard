@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
-import { Link, RouterProps } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { WithLastLocationProps } from 'react-router-last-location';
 import classnames from 'classnames';
 
@@ -67,6 +67,14 @@ type PasswordValidationState = {
   [rule: string]: { isChecked?: boolean };
 };
 
+type Location = {
+  location: {
+    query?: {
+      email?: string;
+    };
+  };
+};
+
 type State = {
   passwordValidation: PasswordValidationState;
   usernameAvailableLoading: boolean;
@@ -98,7 +106,7 @@ type OwnProps = {
   redirectLink: RedirectLinkData;
 };
 
-type Props = OwnProps & RouterProps & WithLastLocationProps;
+type Props = OwnProps & RouteComponentProps & WithLastLocationProps & Location;
 
 export default class CreateAccountForm extends React.Component<Props, State> {
   form: FormApi | null;
@@ -123,11 +131,12 @@ export default class CreateAccountForm extends React.Component<Props, State> {
   }
 
   componentDidMount(): void {
-    const { location, replace } = this.props.history;
-    // @ts-ignore todo: why `query` is not in the Location type?
+    const {
+      history: { replace },
+      location,
+    } = this.props;
     if (!isEmpty(location.query) && location.query.email) {
       this.props.initialize({
-        // @ts-ignore
         email: location.query.email,
       });
       replace(ROUTES.CREATE_ACCOUNT);
@@ -451,7 +460,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     );
   };
 
-  render() {
+  render(): React.ReactElement {
     return (
       <FormModalWrapper>
         <Form
