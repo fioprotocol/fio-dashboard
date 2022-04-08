@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import Processing from '../../components/common/TransactionProcessing';
 
@@ -24,6 +24,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
     edgeAccountLogoutBefore,
     processing,
     processingProps,
+    confirmPinKeys,
 
     setProcessing,
     submitAction,
@@ -32,34 +33,11 @@ const EdgeConfirmAction: React.FC<Props> = props => {
     showPinModal,
     showGenericErrorModal,
     resetPinConfirm,
+    setConfirmPinKeys,
   } = props;
 
   const init = useRef(false);
-
-  useEffect(() => () => resetPinConfirm(), []);
-
-  useEffect(() => {
-    if (data != null) showPinModal(action, data);
-  }, [data]);
-
-  // Handle pin confirmation
-  useEffect(() => {
-    if (
-      pinConfirmation != null &&
-      pinConfirmation.action &&
-      pinConfirmation.action === action
-    ) {
-      submit(pinConfirmation);
-      return;
-    }
-    if ((!pinConfirmation || !pinConfirmation.action) && !pinModalIsOpen) {
-      if (init.current) {
-        onCancel();
-        return;
-      }
-      init.current = true;
-    }
-  }, [pinConfirmation, pinModalIsOpen]);
+  const [initLaunch, setInitLaunch] = useState<boolean>(false);
 
   // Submit an action
   const submit = async (pinConfirmationResult: PinConfirmation) => {
@@ -89,6 +67,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
         if (!edgeAccountLogoutBefore) await waitForEdgeAccountStop(edgeAccount);
 
         onSuccess(result);
+        setConfirmPinKeys(null);
       } catch (e) {
         showGenericErrorModal();
         onCancel();
@@ -100,6 +79,44 @@ const EdgeConfirmAction: React.FC<Props> = props => {
       await waitForEdgeAccountStop(edgeAccount);
     }
   };
+
+  useEffect(() => () => resetPinConfirm(), []);
+
+  // Show pin modal
+  useEffect(() => {
+    if (data != null && !confirmPinKeys) showPinModal(action, data);
+  }, [data, action, confirmPinKeys, showPinModal]);
+
+  // Handle confirmPinKeys is set
+  useEffect(() => {
+    if (!initLaunch && data != null && confirmPinKeys) {
+      setInitLaunch(true);
+      submit({
+        keys: confirmPinKeys,
+        action,
+        data,
+      });
+    }
+  }, [data, action, confirmPinKeys, initLaunch, submit]);
+
+  // Handle pin confirmation
+  useEffect(() => {
+    if (
+      pinConfirmation != null &&
+      pinConfirmation.action &&
+      pinConfirmation.action === action
+    ) {
+      submit(pinConfirmation);
+      return;
+    }
+    if ((!pinConfirmation || !pinConfirmation.action) && !pinModalIsOpen) {
+      if (init.current) {
+        onCancel();
+        return;
+      }
+      init.current = true;
+    }
+  }, [pinConfirmation, pinModalIsOpen]);
 
   return (
     <Processing

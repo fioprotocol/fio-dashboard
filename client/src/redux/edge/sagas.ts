@@ -1,11 +1,16 @@
-import { put, takeEvery } from 'redux-saga/effects';
+import { put, select, takeEvery } from 'redux-saga/effects';
 
-import { getWalletKeys } from '../../utils';
-import { LOGIN_SUCCESS } from './actions';
+import { LOGIN_SUCCESS, setConfirmPinKeys } from './actions';
 import { makeNonce } from '../profile/actions';
 import { refreshBalance } from '../fio/actions';
 import { logout } from './actions';
+
+import { locationState as locationStateSelector } from '../navigation/selectors';
+
+import { getWalletKeys } from '../../utils';
+
 import { Action } from '../types';
+import { PrivateRedirectLocationState } from '../../types';
 
 export function* edgeLoginSuccess() {
   yield takeEvery(LOGIN_SUCCESS, function*(action: Action) {
@@ -15,6 +20,17 @@ export function* edgeLoginSuccess() {
       yield put<Action>(refreshBalance(keys[fioWallet.id].public));
     }
     yield put<Action>(logout(account));
+
+    const locationState: PrivateRedirectLocationState = yield select(
+      locationStateSelector,
+    );
+    if (
+      locationState &&
+      locationState.options &&
+      locationState.options.setKeysForAction
+    ) {
+      yield put<Action>(setConfirmPinKeys(keys));
+    }
 
     yield put<
       Action

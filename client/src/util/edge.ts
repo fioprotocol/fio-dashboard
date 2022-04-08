@@ -3,12 +3,12 @@ import { EdgeAccount } from 'edge-core-js';
 import { sleep } from '../utils';
 import { log } from './general';
 
-import { WalletKeys } from '../types';
+import { EdgeWalletsKeys } from '../types';
 
-export const getWalletKeys = async (
+export const waitWalletKeys = async (
   account: EdgeAccount,
-): Promise<{ [key: string]: WalletKeys }> => {
-  const keys: { [key: string]: WalletKeys } = {};
+): Promise<EdgeWalletsKeys> => {
+  const keys: EdgeWalletsKeys = {};
   try {
     for (const walletId of account.activeWalletIds) {
       const wallet = await account.waitForCurrencyWallet(walletId);
