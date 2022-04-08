@@ -33,7 +33,7 @@ export default class Wizard extends React.Component<Props, State> {
     pageIsActive: true,
   };
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(prevProps: Props, prevState: State): void {
     if (prevProps.activePage !== this.props.activePage) {
       // appear animation
       this.setState({ pageIsActive: false }, () =>
@@ -50,7 +50,7 @@ export default class Wizard extends React.Component<Props, State> {
 
   previous = () => this.props.onPrev(Math.max(this.props.activePage - 1, 0));
 
-  render() {
+  render(): React.ReactElement {
     const { activePage, actionDisabled, loading, children } = this.props;
     const { pageIsActive } = this.state;
 
