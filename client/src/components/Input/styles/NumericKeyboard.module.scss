@@ -1,0 +1,70 @@
+@import '../../../assets/styles/colors.scss';
+
+.container {
+  margin-top: 30px;
+  margin-bottom: 36px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  column-gap: 10px;
+  row-gap: 10px;
+
+  .numKey {
+    width: 66px;
+    height: 46px;
+    padding: 10px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid $violet;
+    border-radius: 7px;
+    color: $violet;
+    cursor: pointer;
+    user-select: none;
+
+    &.hide {
+      visibility: hidden;
+    }
+
+    &:active {
+      background-color: $clear-blue;
+      color: $white;
+    }
+
+    &:after {
+      content: "";
+      display: block;
+      position: absolute;
+      border-radius: 7px;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transition: all 0.5s;
+      box-shadow: 0 0 10px 20px $violet;
+    }
+    
+    &:active:after {
+      box-shadow: 0 0 0 0 $violet;
+      position: absolute;
+      border-radius: 7px;
+      left: 0;
+      top: 0;
+      opacity: 1;
+      transition: 0s;
+    }
+  }
+}
+
+// don't use hover on mobile devices
+@media not all and (pointer: coarse) {
+  .container {
+    .numKey {
+      &:hover {
+        background-color: $clear-blue;
+        color: $white;
+      }
+    }
+  }
+}
