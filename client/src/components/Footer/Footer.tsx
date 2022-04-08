@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
 import classnames from 'classnames';
@@ -6,7 +7,9 @@ import { ROUTES } from '../../constants/routes';
 import { currentYear } from '../../utils';
 import classes from './Footer.module.scss';
 
-const Footer = (props: { homePageLink: string }) => {
+const Footer: React.FC<{ homePageLink: string }> = (props: {
+  homePageLink: string;
+}) => {
   const { homePageLink } = props;
 
   return (

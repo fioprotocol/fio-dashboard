@@ -5,8 +5,11 @@ import FioNamesInitWrapper from '../../components/FioNamesInitWrapper';
 import FioNameRenewContainer from '../../components/FioNameRenew';
 
 import { DOMAIN } from '../../constants/common';
+import { DEFAULT_FEE_PRICES } from '../../util/prices';
 
-import { FioNameItemProps } from '../../types';
+import apis from '../../api';
+
+import { FeePrice, FioNameItemProps } from '../../types';
 
 type MatchParams = {
   id: string;
@@ -14,11 +17,12 @@ type MatchParams = {
 
 type Props = {
   fioNameList: FioNameItemProps[];
+  fees: { [endpoint: string]: FeePrice };
 };
 
 const FioDomainRenewPage: React.FC<Props &
   RouteComponentProps<MatchParams>> = props => {
-  const { fioNameList, match, history } = props;
+  const { fioNameList, match, history, fees } = props;
   const { id: name } = match.params;
 
   return (
@@ -27,6 +31,9 @@ const FioDomainRenewPage: React.FC<Props &
         fioNameType={DOMAIN}
         fioNameList={fioNameList}
         name={name}
+        feePrice={
+          fees[apis.fio.actionEndPoints.renewFioDomain] || DEFAULT_FEE_PRICES
+        }
         history={history}
       />
     </FioNamesInitWrapper>

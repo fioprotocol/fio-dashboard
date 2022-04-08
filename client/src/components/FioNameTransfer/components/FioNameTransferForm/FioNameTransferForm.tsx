@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 
 import { Field, FieldValue } from '../../../Input/Field';
 import PriceBadge from '../../../Badges/PriceBadge/PriceBadge';
@@ -22,7 +22,7 @@ import classes from '../../FioNameTransferContainer.module.scss';
 
 const PLACEHOLDER = 'Enter FIO Crypto Handle or FIO Public Key of New Owner';
 
-export const TransferForm = (props: FormProps) => {
+export const TransferForm: React.FC<FormProps> = (props: FormProps) => {
   const {
     fioNameType,
     name,
@@ -54,14 +54,14 @@ export const TransferForm = (props: FormProps) => {
     } catch (e) {
       setValidating(false);
       setValid(false);
-      return setError(e.transferAddress);
+      return setError(e.message);
     }
     setValidating(false);
     onSubmit(value);
   };
 
   const onChange = async (newValue: FieldValue) => {
-    setValue(`${newValue}`);
+    setValue(`${newValue.toString()}`);
     if (error) {
       setError(null);
       setValid(true);
