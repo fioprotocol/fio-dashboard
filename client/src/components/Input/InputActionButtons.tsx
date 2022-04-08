@@ -80,7 +80,7 @@ export const PasteButton: React.FC<PasteButtonProps &
   isVisible,
   ...rest
 }) => {
-  if (!navigator.clipboard.readText || !isVisible) return null;
+  if (!navigator.clipboard?.readText || !isVisible) return null;
 
   return (
     <FontAwesomeIcon
