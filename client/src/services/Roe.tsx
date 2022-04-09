@@ -23,7 +23,7 @@ const Roe = (props: Props): null => {
     if (roe == null) {
       getPrices();
     }
-  }, [roe]);
+  }, [roe, getPrices]);
 
   if (
     roe != null &&
