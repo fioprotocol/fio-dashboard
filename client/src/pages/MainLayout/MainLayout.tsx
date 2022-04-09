@@ -1,6 +1,4 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import exact from 'prop-types-exact';
+import React from 'react';
 
 import MainHeader from '../../components/MainHeader';
 import Notifications from '../../components/Notifications';
@@ -19,9 +17,24 @@ import Roe from '../../services/Roe';
 import TxHistoryService from '../../services/TxHistory';
 import WalletsDataFlow from '../../services/WalletsDataFlow';
 
+import useEffectOnce from '../../hooks/general';
+
 import classes from './MainLayout.module.scss';
 
-const MainLayout = props => {
+type Props = {
+  children: React.ReactNode | React.ReactNode[];
+  pathname: string;
+  isAuthenticated: boolean;
+  isActiveUser: boolean;
+  loginSuccess: boolean;
+  showLogin: boolean;
+  showRecovery: boolean;
+  edgeContextSet: boolean;
+  init: () => void;
+  showRecoveryModal: () => void;
+};
+
+const MainLayout: React.FC<Props> = (props: Props) => {
   const {
     pathname,
     children,
@@ -35,9 +48,9 @@ const MainLayout = props => {
 
   const isDesktop = useCheckIfDesktop();
 
-  useEffect(() => {
+  useEffectOnce(() => {
     init();
-  }, []);
+  }, [init]);
 
   const loginFormModalRender = () => showLogin && <LoginForm />;
   const recoveryFormModalRender = () =>
@@ -71,19 +84,5 @@ const MainLayout = props => {
     </div>
   );
 };
-
-MainLayout.propTypes = exact({
-  children: PropTypes.element,
-  pathname: PropTypes.string.isRequired,
-  isAuthenticated: PropTypes.bool,
-  isActiveUser: PropTypes.bool,
-  loginSuccess: PropTypes.bool,
-  showLogin: PropTypes.bool,
-  showRecovery: PropTypes.bool,
-  edgeContextSet: PropTypes.bool,
-
-  init: PropTypes.func.isRequired,
-  showRecoveryModal: PropTypes.func.isRequired,
-});
 
 export default MainLayout;

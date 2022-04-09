@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import classes from './MainHeader.module.scss';
-import { MainHeaderProps } from './types';
 import RegularNav from './components/RegularNav';
 import LoggedNav from './components/LoggedNav';
 
-const MainHeader: React.FC<MainHeaderProps> = props => {
+import classes from './MainHeader.module.scss';
+
+import { MainHeaderProps } from './types';
+
+const MainHeader: React.FC<MainHeaderProps> = (props: MainHeaderProps) => {
   const {
     showLoginModal,
     logout: logoutFn,

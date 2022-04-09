@@ -1,5 +1,3 @@
-import { RouteComponentProps } from 'react-router-dom';
-
 import {
   User,
   CartItem,
@@ -9,7 +7,7 @@ import {
   PrivateRedirectLocationState,
 } from '../../types';
 
-export interface MainHeaderProps extends RouteComponentProps {
+export type MainHeaderProps = {
   profileRefreshed: boolean;
   isAuthenticated: boolean;
   isNotActiveUser: boolean;
@@ -27,4 +25,4 @@ export interface MainHeaderProps extends RouteComponentProps {
   refProfileInfo: RefProfile;
   refProfileLoading: boolean;
   fioAddresses: FioAddressDoublet[];
-}
+};
