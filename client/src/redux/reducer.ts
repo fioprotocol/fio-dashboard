@@ -4,7 +4,6 @@ import { History } from 'history';
 
 import profile from './profile/reducer';
 import navigation from './navigation/reducer';
-import users from './users/reducer';
 import edge from './edge/reducer';
 import fio from './fio/reducer';
 import fioWalletsData from './fioWalletsData/reducer';
@@ -21,7 +20,6 @@ const createReducer = (history: History) =>
     router: connectRouter(history),
     profile,
     navigation,
-    users,
     edge,
     fio,
     fioWalletsData,
