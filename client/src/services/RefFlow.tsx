@@ -8,6 +8,7 @@ import {
   FioAddressDoublet,
   FioWalletDoublet,
   RefProfile,
+  RefQuery,
   RefQueryParams,
   User,
 } from '../types';
@@ -42,7 +43,7 @@ type Props = {
   fioAddresses: FioAddressDoublet[];
   fioWallets: FioWalletDoublet[];
   refreshFioNames: (publicKey: string) => void;
-  setContainedParams: (params: any) => void;
+  setContainedParams: (params: RefQuery) => void;
 };
 
 const RefFlow = (
@@ -62,6 +63,8 @@ const RefFlow = (
   } = props;
 
   const fioAddressesAmount = fioAddresses.length;
+  const fioWalletsAmount = fioWallets.length;
+  const refAction = refProfileQueryParams ? refProfileQueryParams.action : '';
 
   useEffect(() => {
     if (
@@ -73,7 +76,8 @@ const RefFlow = (
         refreshFioNames(fioWallet.publicKey);
       }
     }
-  }, [isAuthenticated, refProfileInfo, fioWallets]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, refProfileInfo, fioWalletsAmount, refreshFioNames]);
 
   useEffect(() => {
     if (
@@ -86,12 +90,19 @@ const RefFlow = (
     ) {
       // todo: should we set steps?
       history.push(
-        putParamsToUrl(REF_ACTIONS_TO_ROUTES[refProfileQueryParams.action], {
+        putParamsToUrl(REF_ACTIONS_TO_ROUTES[refAction], {
           refProfileCode: refProfileInfo.code,
         }),
       );
     }
-  }, [refProfileInfo, isAuthenticated, fioAddressesAmount, pathname]);
+  }, [
+    refProfileInfo,
+    isAuthenticated,
+    fioAddressesAmount,
+    pathname,
+    history,
+    refAction,
+  ]);
 
   return null;
 };
