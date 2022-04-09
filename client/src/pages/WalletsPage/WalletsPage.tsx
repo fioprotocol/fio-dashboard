@@ -17,6 +17,8 @@ import {
   NOTIFICATIONS_CONTENT_TYPE,
 } from '../../constants/notifications';
 
+import useEffectOnce from '../../hooks/general';
+
 import { Props } from './types';
 
 import classes from './styles/WalletsPage.module.scss';
@@ -28,11 +30,11 @@ const WalletsPage: React.FC<Props> = props => {
   const [showWalletImported, setShowWalletImported] = useState<boolean>(false);
   const [showWalletCreated, setShowWalletCreated] = useState<boolean>(false);
 
-  useEffect(() => {
+  useEffectOnce(() => {
     for (const { publicKey } of fioWallets) {
       refreshBalance(publicKey);
     }
-  }, []);
+  }, [fioWallets, refreshBalance]);
 
   useEffect(() => {
     if (location.query && location.query.imported) {

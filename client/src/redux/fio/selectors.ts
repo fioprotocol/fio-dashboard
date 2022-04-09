@@ -5,7 +5,6 @@ import { prefix } from './actions';
 import { emptyWallet } from './reducer';
 import { getElementByFioName } from '../../utils';
 import {
-  AnyObject,
   FeePrice,
   FioAddressDoublet,
   FioDomainDoublet,
@@ -13,6 +12,7 @@ import {
   FioWalletDoublet,
   MappedPublicAddresses,
   NFTTokenDoublet,
+  OwnPropsAny,
   WalletsBalances,
 } from '../../types';
 import { ReduxState } from '../init';
@@ -59,7 +59,7 @@ export const currentWallet = (
   ownProps: {
     fioNameList: FioNameItemProps[];
     name: string;
-  } & AnyObject, // todo: set proper ownProps types
+  } & OwnPropsAny,
 ): FioWalletDoublet => {
   const { fioWallets: wallets } = state.fio;
   const { fioNameList, name } = ownProps;
@@ -82,7 +82,10 @@ export const currentFioAddress = createSelector(
     fioWallets,
     fioAddresses,
     mappedPublicAddresses,
-    (state: ReduxState, ownProps: AnyObject) => ownProps.match.params.id, // todo: set proper ownProps types
+    (
+      state: ReduxState,
+      ownProps: RouteComponentProps<{ id: string }> & OwnPropsAny,
+    ) => ownProps.match.params.id,
   ],
   // tslint:disable-next-line:no-shadowed-variable
   (fioWallets, fioAddresses, mappedPublicAddresses, id) => {
@@ -118,7 +121,7 @@ export const walletPublicKey = (
   ownProps: {
     fioNameList: FioNameItemProps[];
     name: string;
-  } & AnyObject, // todo: set proper ownProps types
+  } & OwnPropsAny,
 ): string => {
   const { fioNameList, name } = ownProps;
   const selected = getElementByFioName({ fioNameList, name });
@@ -128,7 +131,7 @@ export const walletPublicKey = (
 
 export const selectedFioDomain = (
   state: ReduxState,
-  ownProps: RouteComponentProps<{ id: string }> & AnyObject, // todo: set proper ownProps types
+  ownProps: RouteComponentProps<{ id: string }> & OwnPropsAny,
 ): FioNameItemProps => {
   const { fioDomains: fioNameList } = state.fio;
   const {

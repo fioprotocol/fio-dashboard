@@ -1,3 +1,5 @@
+import React from 'react';
+
 import Results from '../../';
 import Badge, { BADGE_TYPES } from '../../../../Badge/Badge';
 
@@ -11,7 +13,9 @@ type TransferResultsProps = {
   resetFioNames: () => void;
 };
 
-const TransferResults = (props: ResultsProps & TransferResultsProps) => {
+const TransferResults: React.FC<ResultsProps & TransferResultsProps> = (
+  props: ResultsProps & TransferResultsProps,
+) => {
   const {
     pageName,
     results: { name, publicKey },

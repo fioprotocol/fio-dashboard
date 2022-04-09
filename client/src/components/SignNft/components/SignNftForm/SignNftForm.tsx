@@ -1,3 +1,4 @@
+import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { OnChange } from 'react-final-form-listeners';
 import { Col, Container, Row } from 'react-bootstrap';
@@ -23,7 +24,7 @@ import { SignNftFormProps } from '../../types';
 
 import classes from '../../SignNft.module.scss';
 
-const SignNFTForm = (props: SignNftFormProps) => {
+const SignNFTForm: React.FC<SignNftFormProps> = (props: SignNftFormProps) => {
   const {
     onSubmit,
     initialValues,

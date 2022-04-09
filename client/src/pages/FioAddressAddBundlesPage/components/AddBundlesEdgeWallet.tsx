@@ -13,7 +13,7 @@ import { ACTIONS } from '../../../constants/fio';
 
 type Props = {
   fioWallet: FioWalletDoublet;
-  onSuccess: (data: any) => void;
+  onSuccess: (data: { fee_collected: number }) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
   sendData: AddBundlesValues | null;

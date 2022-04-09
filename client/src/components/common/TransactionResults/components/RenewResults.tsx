@@ -1,3 +1,5 @@
+import React from 'react';
+
 import Results from '../index';
 import { BADGE_TYPES } from '../../../Badge/Badge';
 import PriceBadge from '../../../Badges/PriceBadge/PriceBadge';
@@ -6,7 +8,7 @@ import { ResultsProps } from '../types';
 
 import classes from '../styles/Results.module.scss';
 
-const RenewResults = (props: ResultsProps) => {
+const RenewResults: React.FC<ResultsProps> = (props: ResultsProps) => {
   const {
     results: {
       name = '',

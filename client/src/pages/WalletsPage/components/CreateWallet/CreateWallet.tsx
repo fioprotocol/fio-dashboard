@@ -33,6 +33,11 @@ const CreateWallet: React.FC<Props> = props => {
     fioWallets,
     onWalletCreated,
   } = props;
+
+  const edgeWalletsAmount = fioWallets.filter(
+    ({ from }) => from === WALLET_CREATED_FROM.EDGE,
+  ).length;
+
   const [creationType, setCreationType] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [currentValues, setCurrentValues] = useState<CreateWalletValues>({
@@ -42,9 +47,7 @@ const CreateWallet: React.FC<Props> = props => {
 
   useEffect(() => {
     if (show) {
-      const newWalletCount =
-        fioWallets.filter(({ from }) => from === WALLET_CREATED_FROM.EDGE)
-          .length + 1;
+      const newWalletCount = edgeWalletsAmount + 1;
       const defaultName = `${DEFAULT_WALLET_OPTIONS.name} ${newWalletCount}`;
 
       setCurrentValues({
@@ -52,14 +55,14 @@ const CreateWallet: React.FC<Props> = props => {
         ledger: false,
       });
     }
-  }, [show]);
+  }, [show, edgeWalletsAmount]);
 
   useEffect(() => {
     if (processing && !addWalletLoading) {
       onWalletCreated();
       setProcessing(false);
     }
-  }, [addWalletLoading]);
+  }, [addWalletLoading, processing, onWalletCreated]);
 
   const onCreateSubmit = (values: CreateWalletValues) => {
     setCurrentValues(values);

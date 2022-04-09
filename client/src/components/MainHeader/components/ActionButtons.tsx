@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -20,7 +21,9 @@ type LoggedActionButtonsProps = ActionButtonsProps & {
   logout: () => void;
 };
 
-export const ActionButtons = (props: ActionButtonsProps) => {
+export const ActionButtons: React.FC<ActionButtonsProps> = (
+  props: ActionButtonsProps,
+) => {
   const {
     showLogin,
     edgeAuthLoading,
@@ -64,7 +67,9 @@ export const ActionButtons = (props: ActionButtonsProps) => {
     </div>
   );
 };
-export const LoggedActionButtons = (props: LoggedActionButtonsProps) => {
+export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = (
+  props: LoggedActionButtonsProps,
+) => {
   const {
     logout,
     edgeAuthLoading,

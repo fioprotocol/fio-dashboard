@@ -1,6 +1,7 @@
 import { ReduxState } from './redux/init';
+import { AnyObject } from './types';
 
-export const loadState = () => {
+export const loadState = (): AnyObject | undefined => {
   try {
     const serializedState = localStorage.getItem('state');
     if (serializedState === null) {
@@ -12,7 +13,7 @@ export const loadState = () => {
   }
 };
 
-export const saveState = (state: ReduxState) => {
+export const saveState = (state: ReduxState): void => {
   try {
     const serializedState = JSON.stringify(state);
     localStorage.setItem('state', serializedState);

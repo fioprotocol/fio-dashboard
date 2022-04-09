@@ -7,14 +7,14 @@ import apis from '../../../api';
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 
 import { FioWalletDoublet } from '../../../types';
-import { PaymentDetailsValues } from '../types';
+import { PaymentDetailsValues, TxValues } from '../types';
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
 import { ACTIONS } from '../../../constants/fio';
 import { camelizeObjKeys } from '../../../utils';
 
 type Props = {
   fioWallet: FioWalletDoublet;
-  onSuccess: (data: any) => void;
+  onSuccess: (data: TxValues & { error?: string }) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
   sendData: PaymentDetailsValues | null;

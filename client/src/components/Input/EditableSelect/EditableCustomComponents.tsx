@@ -1,14 +1,20 @@
+import React from 'react';
 import { components } from 'react-select';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
 import classes from '../styles/EditableSelect.module.scss';
 
-export const Input = (
-  props: {
-    hasValue: boolean;
-    selectProps: { inputValue: string; isDisabled: boolean };
-  } & any,
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type EditableCustomComponentsTypes = any; // todo: set proper types
+
+type InputProps = {
+  hasValue: boolean;
+  selectProps: { inputValue: string; isDisabled: boolean };
+} & EditableCustomComponentsTypes;
+
+export const Input: React.FC<InputProps> = (
+  props: InputProps,
   prefix?: string,
 ) => {
   const {
@@ -36,28 +42,34 @@ export const Input = (
   );
 };
 
-export const Menu = (menuProps: any) => (
-  <components.Menu {...menuProps} className={classes.menu} />
-);
+export const Menu: React.FC<EditableCustomComponentsTypes> = (
+  menuProps: EditableCustomComponentsTypes,
+) => <components.Menu {...menuProps} className={classes.menu} />;
 
-export const MenuList = (menuListprops: any) => (
-  <components.MenuList {...menuListprops} className={classes.menuList} />
-);
+export const MenuList: React.FC<EditableCustomComponentsTypes> = (
+  menuListprops: EditableCustomComponentsTypes,
+) => <components.MenuList {...menuListprops} className={classes.menuList} />;
 
-export const Placeholder = (placeholderProps: any) => (
+export const Placeholder: React.FC<EditableCustomComponentsTypes> = (
+  placeholderProps: EditableCustomComponentsTypes,
+) => (
   <components.Placeholder
     {...placeholderProps}
     className={classes.placeholder}
   />
 );
 
-export const ClearIndicator = (clearIndicatorProps: any) => (
+export const ClearIndicator: React.FC<EditableCustomComponentsTypes> = (
+  clearIndicatorProps: EditableCustomComponentsTypes,
+) => (
   <components.ClearIndicator {...clearIndicatorProps}>
     <FontAwesomeIcon icon="times-circle" className={classes.clearIcon} />
   </components.ClearIndicator>
 );
 
-export const Option = (optionProps: any) => {
+export const Option: React.FC<EditableCustomComponentsTypes> = (
+  optionProps: EditableCustomComponentsTypes,
+) => {
   const { isSelected } = optionProps;
 
   return (
@@ -68,8 +80,11 @@ export const Option = (optionProps: any) => {
   );
 };
 
-export const DropdownIndicator = (
-  dropdownProps: { selectProps: { menuIsOpen: boolean } } & any,
+type DropdownIndicatorProps = {
+  selectProps: { menuIsOpen: boolean };
+} & EditableCustomComponentsTypes;
+export const DropdownIndicator: React.FC<DropdownIndicatorProps> = (
+  dropdownProps: DropdownIndicatorProps,
 ) => {
   const {
     selectProps: { menuIsOpen },
@@ -84,10 +99,12 @@ export const DropdownIndicator = (
   );
 };
 
-export const SingleValue = (
-  singleValueProps: {
-    children: string;
-  } & any,
+type SingleValueProps = {
+  children: string;
+} & EditableCustomComponentsTypes;
+
+export const SingleValue: React.FC<SingleValueProps> = (
+  singleValueProps: SingleValueProps,
   prefix?: string,
 ) => {
   const { children } = singleValueProps;
@@ -110,4 +127,4 @@ export const SingleValue = (
   );
 };
 
-export const IndicatorSeparator = () => <></>;
+export const IndicatorSeparator: React.FC = () => <></>;

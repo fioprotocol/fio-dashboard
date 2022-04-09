@@ -1,3 +1,4 @@
+import React from 'react';
 import QRCode from 'qrcode.react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -15,7 +16,7 @@ import {
 } from '../../../../util/general';
 import { QrModalProps } from '../../../../components/Input/QrCodeInput';
 
-const QrModal = (props: QrModalProps) => {
+const QrModal: React.FC<QrModalProps> = (props: QrModalProps) => {
   const { isVisible, inputValue, handleClose } = props;
 
   const onShare = () =>

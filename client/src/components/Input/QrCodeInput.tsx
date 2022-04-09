@@ -22,7 +22,10 @@ type Props = TextInputProps & {
   renderModalComponent: (props: QrModalProps) => HTMLDivElement;
 };
 
-export const QrCodeInput = (
+export const QrCodeInput: React.ForwardRefRenderFunction<
+  HTMLInputElement,
+  Props & FieldRenderProps<Props>
+> = (
   props: Props & FieldRenderProps<Props>,
   ref?: React.Ref<HTMLInputElement>,
 ) => {

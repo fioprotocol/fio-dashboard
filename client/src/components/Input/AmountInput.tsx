@@ -251,6 +251,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
             onMouseDown={setFieldElemActive}
             onMouseUp={setFieldElemInactive}
             src={exchangeIcon}
+            alt=""
           />
 
           {new MathOp(maxValue || 0).gt(0) && (

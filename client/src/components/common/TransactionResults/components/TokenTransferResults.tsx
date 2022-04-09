@@ -12,7 +12,10 @@ import classes from '../styles/Results.module.scss';
 import { FIO_CHAIN_CODE } from '../../../../constants/fio';
 import Amount from '../../Amount';
 
-type TokenTransferResultsProps = ResultsProps & { roe: number; mapError?: any };
+type TokenTransferResultsProps = ResultsProps & {
+  roe: number;
+  mapError?: boolean;
+};
 
 const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
   const {
@@ -119,7 +122,9 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
           <p className={classes.title}>ID</p>
           <p className={classnames(classes.item, classes.isBlue)}>
             <a
-              href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transaction_id}`}
+              href={`${
+                process.env.REACT_APP_FIO_BLOCKS_TX_URL
+              }${transaction_id as string}`}
               target="_blank"
               rel="noreferrer"
             >
@@ -141,7 +146,7 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
         }
         type={BADGE_TYPES.INFO}
         title="Public address mapped!"
-        message={`'${payeeTokenPublicAddress}' was mapped to ${fromFioAddress}`}
+        message={`'${payeeTokenPublicAddress as string}' was mapped to ${fromFioAddress as string}`}
       />
     </Results>
   );
