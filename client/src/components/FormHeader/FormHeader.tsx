@@ -8,7 +8,7 @@ type Props = {
   titleBluePart?: string;
   subtitle: string | React.ReactNode;
   isDoubleColor?: boolean;
-  header?: string;
+  header?: string | React.ReactElement;
   isSubNarrow?: boolean;
 };
 
