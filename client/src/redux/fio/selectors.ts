@@ -4,40 +4,63 @@ import { createSelector } from 'reselect';
 import { prefix } from './actions';
 import { emptyWallet } from './reducer';
 import { getElementByFioName } from '../../utils';
-import { FioNameItemProps, FioWalletDoublet } from '../../types';
+import {
+  AnyObject,
+  FeePrice,
+  FioAddressDoublet,
+  FioDomainDoublet,
+  FioNameItemProps,
+  FioWalletDoublet,
+  MappedPublicAddresses,
+  NFTTokenDoublet,
+  WalletsBalances,
+} from '../../types';
 import { ReduxState } from '../init';
 
-export const loading = (state: ReduxState) => state[prefix].loading;
-export const walletsFioAddressesLoading = (state: ReduxState) =>
+export const loading = (state: ReduxState): boolean => state[prefix].loading;
+export const walletsFioAddressesLoading = (state: ReduxState): boolean =>
   state[prefix].walletsFioAddressesLoading;
-export const linkProcessing = (state: ReduxState) =>
+export const linkProcessing = (state: ReduxState): boolean =>
   state[prefix].linkProcessing;
-export const fioWallets = (state: ReduxState) => state[prefix].fioWallets;
-export const fioWalletsIdKeys = (state: ReduxState) =>
-  state[prefix].fioWalletsIdKeys;
-export const fioAddresses = (state: ReduxState) => state[prefix].fioAddresses;
-export const fioDomains = (state: ReduxState) => state[prefix].fioDomains;
-export const hasMoreAddresses = (state: ReduxState) =>
-  state[prefix].hasMoreAddresses;
-export const hasMoreDomains = (state: ReduxState) =>
-  state[prefix].hasMoreDomains;
-export const fees = (state: ReduxState) => state[prefix].fees;
-export const fioWalletsBalances = (state: ReduxState) =>
+export const fioWallets = (state: ReduxState): FioWalletDoublet[] =>
+  state[prefix].fioWallets;
+export const fioWalletsIdKeys = (
+  state: ReduxState,
+): { id: string; publicKey: string }[] => state[prefix].fioWalletsIdKeys;
+export const fioAddresses = (state: ReduxState): FioAddressDoublet[] =>
+  state[prefix].fioAddresses;
+export const fioDomains = (state: ReduxState): FioDomainDoublet[] =>
+  state[prefix].fioDomains;
+export const hasMoreAddresses = (
+  state: ReduxState,
+): { [publicKey: string]: number } => state[prefix].hasMoreAddresses;
+export const hasMoreDomains = (
+  state: ReduxState,
+): { [publicKey: string]: number } => state[prefix].hasMoreDomains;
+export const fees = (state: ReduxState): { [endpoint: string]: FeePrice } =>
+  state[prefix].fees;
+export const fioWalletsBalances = (state: ReduxState): WalletsBalances =>
   state[prefix].fioWalletsBalances;
-export const feesLoading = (state: ReduxState) => state[prefix].feesLoading;
-export const nftSignatures = (state: ReduxState) => state[prefix].nftList;
-export const mappedPublicAddresses = (state: ReduxState) =>
-  state[prefix].mappedPublicAddresses;
-export const fioNamesInitRefreshed = (state: ReduxState) =>
+export const feesLoading = (
+  state: ReduxState,
+): { [endpoint: string]: boolean } => state[prefix].feesLoading;
+export const nftSignatures = (state: ReduxState): NFTTokenDoublet[] =>
+  state[prefix].nftList;
+export const mappedPublicAddresses = (
+  state: ReduxState,
+): MappedPublicAddresses => state[prefix].mappedPublicAddresses;
+export const fioNamesInitRefreshed = (state: ReduxState): boolean =>
   state[prefix].fioNamesInitRefreshed;
+export const showTokenListInfoBadge = (state: ReduxState): boolean =>
+  state[prefix].showTokenListInfoBadge;
 
 export const currentWallet = (
   state: ReduxState,
   ownProps: {
     fioNameList: FioNameItemProps[];
     name: string;
-  } & any,
-) => {
+  } & AnyObject, // todo: set proper ownProps types
+): FioWalletDoublet => {
   const { fioWallets: wallets } = state.fio;
   const { fioNameList, name } = ownProps;
 
@@ -59,12 +82,12 @@ export const currentFioAddress = createSelector(
     fioWallets,
     fioAddresses,
     mappedPublicAddresses,
-    (state: ReduxState, ownProps: any) => ownProps.match.params.id,
+    (state: ReduxState, ownProps: AnyObject) => ownProps.match.params.id, // todo: set proper ownProps types
   ],
   // tslint:disable-next-line:no-shadowed-variable
   (fioWallets, fioAddresses, mappedPublicAddresses, id) => {
     const currentAddress = getElementByFioName({
-      fioNameList: fioAddresses,
+      fioNameList: (fioAddresses as unknown) as FioNameItemProps[],
       name: id,
     });
 
@@ -90,16 +113,13 @@ export const currentFioAddress = createSelector(
   },
 );
 
-export const showTokenListInfoBadge = (state: ReduxState) =>
-  state[prefix].showTokenListInfoBadge;
-
 export const walletPublicKey = (
   state: ReduxState,
   ownProps: {
     fioNameList: FioNameItemProps[];
     name: string;
-  } & any,
-) => {
+  } & AnyObject, // todo: set proper ownProps types
+): string => {
   const { fioNameList, name } = ownProps;
   const selected = getElementByFioName({ fioNameList, name });
 
@@ -108,8 +128,8 @@ export const walletPublicKey = (
 
 export const selectedFioDomain = (
   state: ReduxState,
-  ownProps: RouteComponentProps<{ id: string }> & any,
-) => {
+  ownProps: RouteComponentProps<{ id: string }> & AnyObject, // todo: set proper ownProps types
+): FioNameItemProps => {
   const { fioDomains: fioNameList } = state.fio;
   const {
     match: {

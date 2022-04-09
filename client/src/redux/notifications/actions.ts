@@ -1,4 +1,5 @@
 import { Api } from '../../api';
+import { CommonAction, CommonPromiseAction } from '../types';
 
 export const prefix = 'notifications';
 
@@ -10,7 +11,7 @@ export const listNotifications = (query?: {
   type: string;
   contentType: string;
   createdAt: string;
-}) => ({
+}): CommonPromiseAction => ({
   types: [LIST_REQUEST, LIST_SUCCESS, LIST_FAILURE],
   promise: (api: Api) => api.notifications.list(query),
 });
@@ -26,7 +27,7 @@ export const createNotification = (data: {
   title?: string;
   message?: string;
   pagesToShow: string[];
-}) => ({
+}): CommonPromiseAction => ({
   types: [CREATE_REQUEST, CREATE_SUCCESS, CREATE_FAILURE],
   promise: (api: Api) => api.notifications.create(data),
 });
@@ -41,7 +42,7 @@ export const updateNotification = ({
 }: {
   id: number;
   closeDate: string;
-}) => ({
+}): CommonPromiseAction => ({
   types: [UPDATE_REQUEST, UPDATE_SUCCESS, UPDATE_FAILURE],
   promise: (api: Api) => api.notifications.update({ id, closeDate }),
   id,
@@ -57,7 +58,7 @@ export const addManual = (data: {
   title?: string;
   message?: string;
   pagesToShow: string[];
-}) => ({
+}): CommonAction => ({
   type: MANUAL_CREATE,
   data: {
     ...data,
@@ -67,7 +68,10 @@ export const addManual = (data: {
   },
 });
 
-export const removeManual = (data: { id: number; closeDate: string }) => ({
+export const removeManual = (data: {
+  id: number;
+  closeDate: string;
+}): CommonAction => ({
   type: MANUAL_REMOVE,
   data,
 });

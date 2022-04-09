@@ -6,6 +6,7 @@ import { log } from '../../util/general';
 import { REF_ACTIONS } from '../../constants/common';
 
 import { RefQuery, RefQueryParams } from '../../types';
+import { CommonAction, CommonPromiseAction } from '../types';
 
 export const prefix = 'refProfile';
 
@@ -13,7 +14,7 @@ export const GET_REF_PROFILE_REQUEST = `${prefix}/GET_REF_PROFILE_REQUEST`;
 export const GET_REF_PROFILE_SUCCESS = `${prefix}/GET_REF_PROFILE_SUCCESS`;
 export const GET_REF_PROFILE_FAILURE = `${prefix}/GET_REF_PROFILE_FAILURE`;
 
-export const getInfo = (code: string) => ({
+export const getInfo = (code: string): CommonPromiseAction => ({
   types: [
     GET_REF_PROFILE_REQUEST,
     GET_REF_PROFILE_SUCCESS,
@@ -25,7 +26,7 @@ export const getInfo = (code: string) => ({
 export const SET_CONTAINED_PARAMS = `${prefix}/SET_CONTAINED_PARAMS`;
 export const SET_CONTAINED_PARAMS_ERROR = `${prefix}/SET_CONTAINED_PARAMS_ERROR`;
 
-export const setContainedParams = (query: RefQuery) => {
+export const setContainedParams = (query: RefQuery): CommonAction => {
   try {
     validateRefActionQuery(query);
   } catch (e) {
@@ -80,9 +81,10 @@ export const setContainedParams = (query: RefQuery) => {
     data: params,
   };
 };
+
 export const SET_STEP = `${prefix}/SET_STEP`;
 
-export const setStep = (step: string) => ({
+export const setStep = (step: string): CommonAction => ({
   type: SET_STEP,
   data: step,
 });

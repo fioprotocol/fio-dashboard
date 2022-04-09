@@ -3,7 +3,6 @@ import { all } from 'redux-saga/effects';
 
 import {
   loginSuccess,
-  signupSuccess,
   logoutSuccess,
   profileSuccess,
   nonceSuccess,
@@ -24,6 +23,7 @@ import {
 
 import { Api } from '../api';
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export default function* rootSaga(history: History, api: Api) {
   yield all([
     loginSuccess(history, api),
@@ -31,7 +31,6 @@ export default function* rootSaga(history: History, api: Api) {
     profileSuccess(),
     nonceSuccess(),
     edgeLoginSuccess(),
-    signupSuccess(),
     notify(history),
     fioAddressRegisterSuccess(),
     refLoginSuccess(),

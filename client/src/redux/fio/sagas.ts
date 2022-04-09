@@ -32,14 +32,14 @@ type RefreshBalanceAction = {
   publicKey: string;
 };
 
-export function* addFioWalletSuccess() {
+export function* addFioWalletSuccess(): Generator {
   yield takeEvery(ADD_WALLET_SUCCESS, function*(action: Action) {
     const { publicKey } = action.data;
     yield put<Action>(refreshBalance(publicKey));
   });
 }
 
-export function* setFeesService() {
+export function* setFeesService(): Generator {
   yield takeEvery(GET_FEE_SUCCESS, function*(action: Action) {
     const {
       endpoint,
@@ -70,7 +70,7 @@ export function* setFeesService() {
   });
 }
 
-export function* setBalancesService() {
+export function* setBalancesService(): Generator {
   yield takeEvery(REFRESH_BALANCE_SUCCESS, function*(
     action: RefreshBalanceAction,
   ) {

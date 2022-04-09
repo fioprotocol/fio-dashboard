@@ -5,6 +5,7 @@ import apis, { Api } from '../../api';
 import { ENDPOINT_FEE_HASH } from '../../api/fio';
 
 import { PublicAddressDoublet, FeePrice, WalletsBalances } from '../../types';
+import { CommonAction, CommonPromiseAction } from '../types';
 
 export const prefix = 'fio';
 
@@ -12,7 +13,7 @@ export const REFRESH_BALANCE_REQUEST = `${prefix}/REFRESH_BALANCE_REQUEST`;
 export const REFRESH_BALANCE_SUCCESS = `${prefix}/REFRESH_BALANCE_SUCCESS`;
 export const REFRESH_BALANCE_FAILURE = `${prefix}/REFRESH_BALANCE_FAILURE`;
 
-export const refreshBalance = (publicKey: string) => ({
+export const refreshBalance = (publicKey: string): CommonPromiseAction => ({
   types: [
     REFRESH_BALANCE_REQUEST,
     REFRESH_BALANCE_SUCCESS,
@@ -23,7 +24,7 @@ export const refreshBalance = (publicKey: string) => ({
 });
 export const SET_BALANCES = `${prefix}/SET_BALANCES`;
 
-export const setBalances = (balances: WalletsBalances) => ({
+export const setBalances = (balances: WalletsBalances): CommonAction => ({
   type: SET_BALANCES,
   data: balances,
 });
@@ -32,7 +33,7 @@ export const REFRESH_FIO_NAMES_REQUEST = `${prefix}/REFRESH_FIO_NAMES_REQUEST`;
 export const REFRESH_FIO_NAMES_SUCCESS = `${prefix}/REFRESH_FIO_NAMES_SUCCESS`;
 export const REFRESH_FIO_NAMES_FAILURE = `${prefix}/REFRESH_FIO_NAMES_FAILURE`;
 
-export const refreshFioNames = (publicKey: string) => ({
+export const refreshFioNames = (publicKey: string): CommonPromiseAction => ({
   types: [
     REFRESH_FIO_NAMES_REQUEST,
     REFRESH_FIO_NAMES_SUCCESS,
@@ -44,7 +45,7 @@ export const refreshFioNames = (publicKey: string) => ({
 
 export const RESET_FIO_NAMES = `${prefix}/RESET_FIO_NAMES`;
 
-export const resetFioNames = () => ({
+export const resetFioNames = (): CommonAction => ({
   type: RESET_FIO_NAMES,
 });
 
@@ -53,7 +54,10 @@ export const GET_FEE_SUCCESS = `${prefix}/GET_FEE_SUCCESS`;
 export const GET_FEE_FAILURE = `${prefix}/GET_FEE_FAILURE`;
 export const SET_FEE = `${prefix}/SET_FEE`;
 
-export const getFee = (endpoint: string, fioAddress: string = '') => ({
+export const getFee = (
+  endpoint: string,
+  fioAddress: string = '',
+): CommonPromiseAction => ({
   types: [GET_FEE_REQUEST, GET_FEE_SUCCESS, GET_FEE_FAILURE],
   promise: (api: Api) => {
     // temporary solution for staking fee value
@@ -71,7 +75,9 @@ export const getFee = (endpoint: string, fioAddress: string = '') => ({
   endpoint,
 });
 
-export const setFees = (fees: { [endpoint: string]: FeePrice }) => ({
+export const setFees = (fees: {
+  [endpoint: string]: FeePrice;
+}): CommonAction => ({
   type: SET_FEE,
   data: fees,
 });
@@ -84,7 +90,7 @@ export const getFioAddresses = (
   publicKey: string,
   limit: number,
   offset: number,
-) => ({
+): CommonPromiseAction => ({
   types: [
     GET_FIO_ADDRESSES_REQUEST,
     GET_FIO_ADDRESSES_SUCCESS,
@@ -98,7 +104,9 @@ export const GET_WALLETS_FIO_ADDRESSES_REQUEST = `${prefix}/GET_WALLETS_FIO_ADDR
 export const GET_WALLETS_FIO_ADDRESSES_SUCCESS = `${prefix}/GET_WALLETS_FIO_ADDRESSES_SUCCESS`;
 export const GET_WALLETS_FIO_ADDRESSES_FAILURE = `${prefix}/GET_WALLETS_FIO_ADDRESSES_FAILURE`;
 
-export const getWalletsFioAddresses = (publicKeys: string[]) => ({
+export const getWalletsFioAddresses = (
+  publicKeys: string[],
+): CommonPromiseAction => ({
   types: [
     GET_WALLETS_FIO_ADDRESSES_REQUEST,
     GET_WALLETS_FIO_ADDRESSES_SUCCESS,
@@ -131,7 +139,7 @@ export const getFioDomains = (
   publicKey: string,
   limit: number,
   offset: number,
-) => ({
+): CommonPromiseAction => ({
   types: [
     GET_FIO_DOMAINS_REQUEST,
     GET_FIO_DOMAINS_SUCCESS,
@@ -145,7 +153,7 @@ export const GET_FIO_PUBLIC_ADDRESS_REQUEST = `${prefix}/GET_FIO_PUBLIC_ADDRESS_
 export const GET_FIO_PUBLIC_ADDRESS_SUCCESS = `${prefix}/GET_FIO_PUBLIC_ADDRESS_SUCCESS`;
 export const GET_FIO_PUBLIC_ADDRESS_FAILURE = `${prefix}/GET_FIO_PUBLIC_ADDRESS_FAILURE`;
 
-export const getFioPubAddress = (fioAddress: string) => ({
+export const getFioPubAddress = (fioAddress: string): CommonPromiseAction => ({
   types: [
     GET_FIO_PUBLIC_ADDRESS_REQUEST,
     GET_FIO_PUBLIC_ADDRESS_SUCCESS,
@@ -162,7 +170,7 @@ export const getAllFioPubAddresses = (
   fioAddress: string,
   limit: number,
   offset: number,
-) => ({
+): CommonPromiseAction => ({
   types: [
     GET_ALL_PUBLIC_ADDRESS_REQUEST,
     GET_ALL_PUBLIC_ADDRESS_SUCCESS,
@@ -185,7 +193,7 @@ export const getNFTSignatures = (searchParams: {
   hash?: string;
   tokenId?: string;
   contractAddress?: string;
-}) => ({
+}): CommonPromiseAction => ({
   types: [FIO_SIGNATURE_REQUEST, FIO_SIGNATURE_SUCCESS, FIO_SIGNATURE_FAILURE],
   promise: (api: Api) => {
     return api.fio.getNFTs(searchParams);
@@ -195,13 +203,13 @@ export const getNFTSignatures = (searchParams: {
 
 export const CLEAR_NFT_SIGNATURES = `${prefix}/CLEAR_NFT_SIGNATURES`;
 
-export const clearNFTSignatures = () => ({
+export const clearNFTSignatures = (): CommonAction => ({
   type: CLEAR_NFT_SIGNATURES,
 });
 
 export const TOGGLE_TOKEN_LIST_INFO_BADGE = `${prefix}/TOGGLE_TOKEN_LIST_INFO_BADGE`;
 
-export const toggleTokenListInfoBadge = (enabled: boolean) => ({
+export const toggleTokenListInfoBadge = (enabled: boolean): CommonAction => ({
   type: TOGGLE_TOKEN_LIST_INFO_BADGE,
   enabled,
 });
@@ -214,7 +222,7 @@ export const updatePublicAddresses = (
     addPublicAddresses: PublicAddressDoublet[];
     deletePublicAddresses: PublicAddressDoublet[];
   },
-) => ({
+): CommonAction => ({
   type: UPDATE_PUBLIC_ADDRESSES,
   fioAddress,
   updPublicAddresses,

@@ -12,7 +12,7 @@ import { getWalletKeys } from '../../utils';
 import { Action } from '../types';
 import { PrivateRedirectLocationState } from '../../types';
 
-export function* edgeLoginSuccess() {
+export function* edgeLoginSuccess(): Generator {
   yield takeEvery(LOGIN_SUCCESS, function*(action: Action) {
     const { account, fioWallets, options, voucherId } = action.data;
     const keys = getWalletKeys(fioWallets);

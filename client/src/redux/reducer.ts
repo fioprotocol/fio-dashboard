@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import { combineReducers, Reducer } from 'redux';
 import { connectRouter } from 'connected-react-router';
 import { History } from 'history';
 
@@ -15,7 +15,7 @@ import cart from './cart/reducer';
 import refProfile from './refProfile/reducer';
 import account from './account/reducer';
 
-const createReducer = (history: History) =>
+const createReducer = (history: History): Reducer =>
   combineReducers({
     router: connectRouter(history),
     profile,
