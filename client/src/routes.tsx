@@ -1,3 +1,4 @@
+import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
@@ -51,7 +52,7 @@ import { ROUTES } from './constants/routes';
 
 const LIST_TOKEN_PARENT_ROUTE = `${ROUTES.LINK_TOKEN_LIST}/:id`;
 
-const Routes = () => (
+const Routes = (): React.ReactElement => (
   <MainLayout>
     <ScrollToTop>
       <Switch>
