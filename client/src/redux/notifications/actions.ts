@@ -50,7 +50,14 @@ export const updateNotification = ({
 export const MANUAL_CREATE = `${prefix}/MANUAL_CREATE`;
 export const MANUAL_REMOVE = `${prefix}/MANUAL_REMOVE`;
 
-export const addManual = (data: Notification) => ({
+export const addManual = (data: {
+  type: string;
+  action: string;
+  contentType?: string;
+  title?: string;
+  message?: string;
+  pagesToShow: string[];
+}) => ({
   type: MANUAL_CREATE,
   data: {
     ...data,
