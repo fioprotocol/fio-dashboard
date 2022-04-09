@@ -13,7 +13,7 @@ import { useFioAddresses } from '../../util/hooks';
 
 import apis from '../../api';
 
-import { TrxResponse } from '../../api/fio';
+import { TrxResponsePaidBundles } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 
 import { ROUTES } from '../../constants/routes';
@@ -70,7 +70,7 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
     setStakeTokensData(null);
     setProcessing(false);
   };
-  const onSuccess = (res: TrxResponse & { bundlesCollected?: number }) => {
+  const onSuccess = (res: TrxResponsePaidBundles) => {
     setStakeTokensData(null);
     setProcessing(false);
     setResultsData({

@@ -3,19 +3,23 @@ import { Button } from 'react-bootstrap';
 import { Form, Field, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classnames from 'classnames';
 import { isEmpty } from 'lodash';
 import { OnChange } from 'react-final-form-listeners';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import classnames from 'classnames';
 
 import Link from '../Link/Link';
 import Input from '../Input/Input';
 import FormHeader from '../FormHeader/FormHeader';
 
-import classes from './LoginForm.module.scss';
-import { ROUTES } from '../../constants/routes';
-import { setDataMutator } from '../../utils';
 import { usernamePasswordValidation } from './components/validation';
+import { setDataMutator } from '../../utils';
+
+import { ROUTES } from '../../constants/routes';
+
+import classes from './LoginForm.module.scss';
+
+import { LoginFailure } from '../../types';
 
 type FormValues = {
   email: string;
@@ -28,7 +32,7 @@ type OwnProps = {
   edgeAuthLoading: boolean;
   onClose: () => void;
   toggleForgotPass: (open: boolean) => void;
-  loginFailure: { fields?: { [fieldName: string]: any }; code?: string };
+  loginFailure: LoginFailure;
   edgeLoginFailure: { type?: string };
   title: string;
   subtitle?: string;
@@ -38,7 +42,7 @@ type OwnProps = {
 };
 type Props = OwnProps;
 
-const UsernamePassword = (props: Props) => {
+const UsernamePassword: React.FC<Props> = (props: Props) => {
   const {
     isForgotPass,
     onSubmit,

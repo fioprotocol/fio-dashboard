@@ -16,7 +16,7 @@ import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { WALLET_CREATED_FROM } from '../../constants/common';
 
-import { TrxResponse } from '../../api/fio';
+import { TrxResponsePaidBundles } from '../../api/fio';
 import { ContainerProps, StakeTokensValues, InitialValues } from './types';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 
@@ -62,7 +62,7 @@ const UnstakeTokensPage: React.FC<ContainerProps> = props => {
     setStakeTokensData(null);
     setProcessing(false);
   };
-  const onSuccess = (res: TrxResponse & { bundlesCollected?: number }) => {
+  const onSuccess = (res: TrxResponsePaidBundles) => {
     setStakeTokensData(null);
     setProcessing(false);
     setResultsData({

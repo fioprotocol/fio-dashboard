@@ -1,4 +1,22 @@
-export const initCaptcha = (data: any) =>
+import { FioRegCaptchaResponse } from '../api/responses';
+
+type VerifyParams = {
+  geetest_challenge: string;
+  geetest_validate: string;
+  geetest_seccode: string;
+};
+
+type CaptchaObj = {
+  verify: () => void;
+  reset: () => void;
+  getValidate: () => VerifyParams | null;
+  onSuccess: (cb: () => void) => void;
+  onReady: (cb: () => void) => void;
+  onError: (cb: (e: Error) => void) => void;
+  onClose: (cb: (e: Error) => void) => void;
+};
+
+export const initCaptcha = (data: FioRegCaptchaResponse): Promise<CaptchaObj> =>
   new Promise((resolve, reject) => {
     if (window.initGeetest == null) reject('Geetest init error');
 
@@ -12,19 +30,20 @@ export const initCaptcha = (data: any) =>
         product: 'bind',
         width: '400px',
       },
-      (captchaObj: any) => {
-        captchaObj
-          .onReady(() => {
-            resolve(captchaObj);
-          })
-          .onError(() => {
-            reject();
-          });
+      (captchaObj: CaptchaObj) => {
+        captchaObj.onReady(() => {
+          resolve(captchaObj);
+        });
+        captchaObj.onError(() => {
+          reject();
+        });
       },
     );
   });
 
-export const verifyCaptcha = (captchaObj: any) =>
+export const verifyCaptcha = (
+  captchaObj: CaptchaObj,
+): Promise<{ success: boolean; verifyParams: VerifyParams }> =>
   new Promise((resolve, reject) => {
     captchaObj.verify();
     captchaObj.onSuccess(() => {

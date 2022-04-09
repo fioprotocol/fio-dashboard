@@ -1,3 +1,4 @@
+import React from 'react';
 import { FieldRenderProps } from 'react-final-form';
 
 import { Label, LabelSuffix } from './StaticInputParts';
@@ -24,7 +25,7 @@ type DropdownProps = {
   toggleToCustom?: (isCustom: boolean) => void;
 };
 
-const Dropdown = ({
+const Dropdown: React.FC<DropdownProps & FieldRenderProps<DropdownProps>> = ({
   input,
   meta,
   uiType,

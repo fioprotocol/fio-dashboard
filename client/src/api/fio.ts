@@ -22,15 +22,25 @@ import {
   GET_TABLE_ROWS_URL,
 } from '../constants/fio';
 
-import { FioBalanceRes, NFTTokenDoublet, WalletKeys, Proxy } from '../types';
+import {
+  FioBalanceRes,
+  NFTTokenDoublet,
+  WalletKeys,
+  Proxy,
+  AnyObject,
+} from '../types';
 
 export interface TrxResponse {
   transaction_id?: string;
   status: string;
   expiration?: string;
   fee_collected: number;
-  other?: any;
+  other?: AnyObject;
 }
+
+export type TrxResponsePaidBundles = TrxResponse & {
+  bundlesCollected?: number;
+};
 
 export type FIOSDK_LIB = typeof FIOSDK;
 
@@ -230,7 +240,7 @@ export default class Fio {
     try {
       const response = await superagent.post(GET_TABLE_ROWS_URL).send(params);
 
-      const { rows }: { rows: any[] } = response.body;
+      const { rows }: { rows: AnyObject[] } = response.body;
 
       return rows;
     } catch (err) {
@@ -461,7 +471,7 @@ export default class Fio {
   executeAction = async (
     keys: WalletKeys,
     action: string,
-    params: any,
+    params: AnyObject,
   ): Promise<TrxResponse> => {
     this.setWalletFioSdk(keys);
 

@@ -1,10 +1,12 @@
 import { useEffect, useRef } from 'react';
 
+import { AnyType } from '../types';
+
 export function useEffectOnce(
   callback: () => void,
-  dependencyArray: any[],
+  dependencyArray: AnyType[],
   caseExpression: boolean = true,
-) {
+): void {
   const mount = useRef(false);
 
   useEffect(() => {
@@ -12,6 +14,7 @@ export function useEffectOnce(
       callback();
       mount.current = true;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [caseExpression, callback, ...dependencyArray]);
 }
 

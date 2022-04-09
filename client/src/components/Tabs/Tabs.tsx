@@ -5,6 +5,7 @@ import classnames from 'classnames';
 import classes from './styles/Tabs.module.scss';
 
 import { TabItemProps } from './types';
+import { AnyObject } from '../../types';
 
 type Props = {
   list: TabItemProps[];
@@ -13,7 +14,7 @@ type Props = {
   tabItemClass?: string;
   tabContentClass?: string;
   showTabBorder?: boolean;
-  tabProps?: any;
+  tabProps?: AnyObject;
 };
 
 const Tabs: React.FC<Props> = props => {

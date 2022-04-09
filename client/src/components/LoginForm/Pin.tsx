@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { isEmpty } from 'lodash';
 
 import FormHeader from '../FormHeader/FormHeader';
@@ -11,18 +11,20 @@ import { IOS_KEYBOARD_PLUG_TYPE } from '../Input/PinInput/constants';
 
 import classes from './LoginForm.module.scss';
 
+import { LoginFailure } from '../../types';
+
 type OwnProps = {
   onSubmit: (params: { email: string; pin: string }) => void;
   exitPin: () => void;
   resetLoginFailure: () => void;
   edgeAuthLoading: boolean;
-  loginFailure: { fields?: { [fieldName: string]: any }; code?: string };
+  loginFailure: LoginFailure;
   edgeLoginFailure: { type?: string; wait?: number };
   email: string;
 };
 type Props = OwnProps;
 
-const Pin = (props: Props) => {
+const Pin: React.FC<Props> = (props: Props) => {
   const {
     email,
     edgeAuthLoading,

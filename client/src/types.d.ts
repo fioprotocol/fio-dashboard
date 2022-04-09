@@ -5,6 +5,15 @@ import { LocationState, Path } from 'history';
 
 import { FIOSDK_LIB } from './api/fio';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Unknown = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyObject = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyType = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type OwnPropsAny = any; // todo: fix usages for ownProps
+
 export type Domain = { domain: string; free?: boolean };
 
 export type CartItem = {
@@ -461,9 +470,7 @@ export type FioApiError = Error & { json?: { message?: string } };
 
 export type StatusResponse = { status?: number };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Unknown = any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyObject = any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyType = any;
+export type LoginFailure = {
+  fields?: { [fieldName: string]: AnyType };
+  code?: string;
+};

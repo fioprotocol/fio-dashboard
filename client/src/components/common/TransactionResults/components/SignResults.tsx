@@ -1,3 +1,4 @@
+import React from 'react';
 import classnames from 'classnames';
 
 import Results from '../index';
@@ -8,7 +9,7 @@ import { ResultsProps } from '../types';
 
 import classes from '../styles/Results.module.scss';
 
-const SignResults = (props: ResultsProps) => {
+const SignResults: React.FC<ResultsProps> = (props: ResultsProps) => {
   const {
     results: {
       name,

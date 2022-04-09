@@ -14,14 +14,25 @@ import { getValueFromPaste, log } from '../../util/general';
 
 import classes from './Input.module.scss';
 
+import { FieldValue } from './Field';
+import { AnyObject } from '../../types';
+
 export const INPUT_UI_STYLES = {
   BLACK_LIGHT: 'blackLight',
   BLACK_WHITE: 'blackWhite',
 };
 
 export type InputProps = {
-  input: any;
-  meta: any;
+  input: { value: FieldValue; onChange: (val: FieldValue) => void } & AnyObject;
+  meta: {
+    error: string;
+    touched?: boolean;
+    active?: boolean;
+    modified?: boolean;
+    submitError?: boolean;
+    modifiedSinceLastSubmit?: boolean;
+    submitSucceeded?: boolean;
+  };
 };
 
 export type FieldProps = {
