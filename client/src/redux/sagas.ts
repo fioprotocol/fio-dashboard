@@ -9,7 +9,6 @@ import {
   nonceSuccess,
 } from './profile/sagas';
 import { edgeLoginSuccess } from './edge/sagas';
-import { listFailure } from './users/sagas';
 import { notify } from './notify/sagas';
 import {
   fioAddressRegisterSuccess,
@@ -32,7 +31,6 @@ export default function* rootSaga(history: History, api: Api) {
     profileSuccess(),
     nonceSuccess(),
     edgeLoginSuccess(),
-    listFailure(history),
     signupSuccess(),
     notify(history),
     fioAddressRegisterSuccess(),
