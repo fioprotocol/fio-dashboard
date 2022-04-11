@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -26,18 +26,52 @@ const PinInput: React.FC<PinInputProps> = props => {
   const innerRef = useRef<HTMLInputElement>(null);
   const valueRef = useRef<string | undefined>(value);
 
-  const setMyState = (data: string) => {
-    valueRef.current = data;
-    onChange(data);
+  const setMyState = useCallback(
+    (data: string) => {
+      valueRef.current = data;
+      onChange(data);
 
-    if (error && data?.length === PIN_LENGTH - 1) {
-      form &&
-        form.mutators.setDataMutator(name, {
-          error: false,
-        });
-      onReset && onReset();
-    }
-  };
+      if (error && data?.length === PIN_LENGTH - 1) {
+        form &&
+          form.mutators.setDataMutator(name, {
+            error: false,
+          });
+        onReset && onReset();
+      }
+    },
+    [error, form, name, onChange, onReset],
+  );
+
+  const handleKeyChange = useCallback(
+    (key: string) => {
+      const pinValue = valueRef && valueRef.current;
+
+      if (/backspace/i.test(key)) {
+        pinValue && onChange(pinValue.slice(0, -1));
+        return;
+      }
+
+      const retValue = (pinValue && pinValue + key) || key;
+
+      if (retValue.length > PIN_LENGTH) return;
+
+      if (retValue && retValue.length === PIN_LENGTH) {
+        onChange(retValue);
+        submit && !error && submit();
+        return;
+      }
+      onChange(retValue);
+    },
+    [error, onChange, submit],
+  );
+
+  const onKeyUp = useCallback(
+    (e: KeyboardEvent) => {
+      const { key } = e;
+      if (/\d|backspace/i.test(key)) handleKeyChange(key);
+    },
+    [handleKeyChange],
+  );
 
   useEffect(() => {
     document.addEventListener('keyup', onKeyUp);
@@ -45,42 +79,17 @@ const PinInput: React.FC<PinInputProps> = props => {
     return () => {
       document.removeEventListener('keyup', onKeyUp);
     };
-  }, []);
+  }, [onKeyUp]);
 
   useEffect(() => {
     setMyState(value);
-  }, [value]);
+  }, [value, setMyState]);
 
   useEffect(() => {
     if (innerRef && innerRef.current) {
       innerRef.current && innerRef.current.focus();
     }
   }, [innerRef]);
-
-  const handleKeyChange = (key: string) => {
-    const pinValue = valueRef && valueRef.current;
-
-    if (/backspace/i.test(key)) {
-      pinValue && onChange(pinValue.slice(0, -1));
-      return;
-    }
-
-    const retValue = (pinValue && pinValue + key) || key;
-
-    if (retValue.length > PIN_LENGTH) return;
-
-    if (retValue && retValue.length === PIN_LENGTH) {
-      onChange(retValue);
-      submit && !error && submit();
-      return;
-    }
-    onChange(retValue);
-  };
-
-  const onKeyUp = (e: KeyboardEvent) => {
-    const { key } = e;
-    if (/\d|backspace/i.test(key)) handleKeyChange(key);
-  };
 
   return (
     <>
