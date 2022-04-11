@@ -7,12 +7,28 @@ import CartItem from '../Cart/CartItem';
 import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
 import PriceBadge from '../Badges/PriceBadge/PriceBadge';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
-import { ERROR_MESSAGES, ERROR_TYPES } from '../../constants/errors';
+
 import { totalCost } from '../../utils';
+
+import { ERROR_MESSAGES, ERROR_TYPES } from '../../constants/errors';
+
+import { CartItem as CartItemType, WalletBalancesItem } from '../../types';
 
 import classes from './CheckoutPurchaseContainer.module.scss';
 
-const RenderTotalBadge = ({ costNativeFio, costFree, costFio, costUsdc }) => (
+type RenderTotalBadgeProps = {
+  costNativeFio: number;
+  costFree: string;
+  costFio: string;
+  costUsdc: string;
+};
+
+const RenderTotalBadge: React.FC<RenderTotalBadgeProps> = ({
+  costNativeFio,
+  costFree,
+  costFio,
+  costUsdc,
+}) => (
   <PriceBadge
     costNativeFio={costNativeFio}
     costFree={costFree}
@@ -23,7 +39,14 @@ const RenderTotalBadge = ({ costNativeFio, costFree, costFio, costUsdc }) => (
   />
 );
 
-export const RenderCheckout = props => {
+type RenderCheckoutProps = {
+  cart: CartItemType[];
+  walletBalances: WalletBalancesItem;
+  walletName: string;
+  roe: number | null;
+};
+
+export const RenderCheckout: React.FC<RenderCheckoutProps> = props => {
   const { cart, walletBalances, walletName, roe } = props;
   const { costNativeFio, costFree, costFio, costUsdc } = totalCost(cart, roe);
 
@@ -43,7 +66,7 @@ export const RenderCheckout = props => {
           costUsdc={costUsdc}
         />
         <PayWithBadge
-          costFree={costFree}
+          costFree={!!costFree}
           walletBalances={walletBalances}
           walletName={walletName}
         />
@@ -52,7 +75,14 @@ export const RenderCheckout = props => {
   );
 };
 
-export const RenderPurchase = props => {
+type RenderPurchaseProps = {
+  hasErrors: boolean;
+  regItems: CartItemType[];
+  errItems: CartItemType[];
+  roe: number | null;
+};
+
+export const RenderPurchase: React.FC<RenderPurchaseProps> = props => {
   const { hasErrors, regItems, errItems, roe } = props;
 
   const {

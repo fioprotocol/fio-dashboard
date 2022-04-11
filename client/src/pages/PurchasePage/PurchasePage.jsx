@@ -80,6 +80,7 @@ const PurchasePage = props => {
             ? CONTINUE_TEXT[refProfileQueryParams.action]
             : null
         }
+        history={history}
         onClose={onClose}
       >
         <RenderPurchase

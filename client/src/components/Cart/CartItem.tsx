@@ -11,7 +11,7 @@ import classes from './Cart.module.scss';
 
 type Props = {
   item: CartItemType;
-  onDelete: (id: string) => void;
+  onDelete?: (id: string) => void;
 };
 
 const CartItem: React.FC<Props> = props => {
