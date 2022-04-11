@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
+import { History } from 'history';
 import { useLastLocation } from 'react-router-last-location';
 
 import DoubleCardContainer from '../../components/DoubleCardContainer';
@@ -15,13 +16,37 @@ import { convertFioPrices } from '../../util/prices';
 
 import apis from '../../api';
 
-const CartPage = props => {
+import {
+  CartItem,
+  DeleteCartItem,
+  Domain,
+  FioWalletDoublet,
+  Prices,
+} from '../../types';
+import useEffectOnce from '../../hooks/general';
+
+type Props = {
+  cartItems: CartItem[];
+  history: History;
+  prices: Prices;
+  domains: Domain[];
+  userWallets: FioWalletDoublet[];
+  paymentWalletPublicKey: string;
+  isAuthenticated: boolean;
+  hasFreeAddress: boolean;
+  roe: number | null;
+  setWallet: (publicKey: string) => void;
+  refreshBalance: (publicKey: string) => void;
+  recalculate: (cartItems: CartItem[]) => {};
+  deleteItem: (params: DeleteCartItem) => {};
+};
+
+const CartPage: React.FC<Props> = props => {
   const {
     cartItems,
     history,
     recalculate,
     prices,
-    domains,
     userWallets,
     setWallet,
     paymentWalletPublicKey,
@@ -32,9 +57,11 @@ const CartPage = props => {
   } = props;
 
   const lastLocation = useLastLocation();
+  const walletJson = JSON.stringify(userWallets);
   const [isPriceChanged, handlePriceChange] = useState(false);
 
   const walletCount = userWallets.length;
+  const lastLocationPathname = lastLocation?.pathname || '';
 
   const totalCartNativeAmount =
     (cartItems && totalCost(cartItems, roe).costNativeFio) || 0;
@@ -102,43 +129,43 @@ const CartPage = props => {
     }
   };
 
-  useEffect(() => {
+  useEffectOnce(() => {
     if (
       !isEmpty(cartItems) &&
       cartItems.length === 1 &&
-      userWallets.length === 1 &&
+      walletCount === 1 &&
       lastLocation.pathname ===
         (ROUTES.FIO_ADDRESSES_SELECTION || ROUTES.FIO_DOMAINS_SELECTION)
     ) {
       history.push(ROUTES.CHECKOUT);
     }
-  }, []);
+  }, [cartItems, history, lastLocationPathname, walletCount]);
 
   useEffect(() => {
     if (!isAuthenticated) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
     handleFreeAddressCart({
-      domains,
       recalculate,
       cartItems,
       prices,
       hasFreeAddress,
     });
-  }, [isAuthenticated, domains, hasFreeAddress]);
+  }, [isAuthenticated, hasFreeAddress]);
 
-  useEffect(() => {
-    if (!isEmpty(userWallets)) {
-      for (const fioWallet of userWallets) {
+  useEffectOnce(() => {
+    const wallets = JSON.parse(walletJson);
+    if (!isEmpty(wallets)) {
+      for (const fioWallet of wallets) {
         if (fioWallet.publicKey) {
           refreshBalance(fioWallet.publicKey);
         }
       }
-      if (walletCount === 1) {
-        setWallet(userWallets[0].publicKey);
+      if (wallets.length === 1) {
+        setWallet(wallets[0].publicKey);
       }
     }
-  }, []);
+  }, [walletJson, refreshBalance, setWallet]);
 
   const hasLowBalance =
     !isEmpty(walletBalancesAvailable) &&
@@ -158,7 +185,6 @@ const CartPage = props => {
   return (
     <DoubleCardContainer
       title="Your Cart"
-      secondTitle="Amount Due"
       bigCart={<Cart {...props} {...additionalProps} />}
       smallCart={<CartAmount {...props} {...additionalProps} />}
     />
