@@ -5,11 +5,22 @@ import classnames from 'classnames';
 
 import FormHeader from '../FormHeader/FormHeader';
 
+import { FormValues } from './types';
+
 import classes from './CreateAccountForm.module.scss';
 
-export default class Confirmation extends Component {
-  constructor() {
-    super();
+type Props = {
+  data: FormValues;
+  errors: { [fieldName: string]: string };
+};
+
+type LocalState = {
+  isOpen: boolean;
+};
+
+export default class Confirmation extends Component<Props, LocalState> {
+  constructor(props: Props) {
+    super(props);
     this.state = {
       isOpen: false,
     };
@@ -19,7 +30,7 @@ export default class Confirmation extends Component {
     this.setState({ isOpen: !this.state.isOpen });
   };
 
-  render() {
+  render(): React.ReactElement {
     const { data } = this.props;
     const { isOpen } = this.state;
 

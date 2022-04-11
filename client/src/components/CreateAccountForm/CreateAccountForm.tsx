@@ -1,23 +1,23 @@
 import React from 'react';
 import { Form, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { WithLastLocationProps } from 'react-router-last-location';
 import classnames from 'classnames';
 
 import Wizard from './CreateAccountFormWizard';
 import FormModalWrapper from '../FormModalWrapper/FormModalWrapper';
 import Pin from './Pin';
-import EmailPassword, {
-  validate as validateEmailPassword,
-} from './EmailPassword';
 import Confirmation from './Confirmation';
 import Success from './Success';
 
 import { ROUTES } from '../../constants/routes';
 import { PIN_LENGTH } from '../../constants/form';
+import { WALLET_CREATED_FROM } from '../../constants/common';
 
-import { isEmpty } from '../../helpers/verifying';
+import EmailPassword, {
+  validate as validateEmailPassword,
+} from './EmailPassword';
 import {
   usernameAvailable,
   createAccount,
@@ -34,7 +34,7 @@ import {
   RefQueryParams,
   WalletKeysObj,
 } from '../../types';
-import { WALLET_CREATED_FROM } from '../../constants/common';
+import { FormValues, PasswordValidationState } from './types';
 
 import classes from './CreateAccountForm.module.scss';
 
@@ -52,19 +52,6 @@ const STEPS_ORDER = {
   [STEPS.PIN_CONFIRM]: 2,
   [STEPS.CONFIRMATION]: 3,
   [STEPS.SUCCESS]: 4,
-};
-
-type FormValues = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-  pin: string;
-  confirmPin: string;
-  addEmailToPromoList: boolean;
-};
-
-type PasswordValidationState = {
-  [rule: string]: { isChecked?: boolean };
 };
 
 type Location = {
@@ -85,7 +72,6 @@ type State = {
 };
 
 type OwnProps = {
-  initialize: (params: { email: string }) => void;
   resetSuccessState: () => void;
   makeNonce: (username: string, keys: WalletKeysObj) => void;
   showLoginModal: () => void;
@@ -106,10 +92,10 @@ type OwnProps = {
   redirectLink: RedirectLinkData;
 };
 
-type Props = OwnProps & RouteComponentProps & WithLastLocationProps & Location;
+type Props = OwnProps & WithLastLocationProps & Location;
 
 export default class CreateAccountForm extends React.Component<Props, State> {
-  form: FormApi | null;
+  form: FormApi<FormValues> | null;
 
   constructor(props: Props) {
     super(props);
@@ -128,19 +114,6 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     };
 
     this.form = null;
-  }
-
-  componentDidMount(): void {
-    const {
-      history: { replace },
-      location,
-    } = this.props;
-    if (!isEmpty(location.query) && location.query.email) {
-      this.props.initialize({
-        email: location.query.email,
-      });
-      replace(ROUTES.CREATE_ACCOUNT);
-    }
   }
 
   componentDidUpdate(prevProps: Props, prevState: State): void {
@@ -263,8 +236,8 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     };
 
     Object.keys(passwordValidation).forEach(key => {
-      retObj[key] = {};
-      retObj[key].isChecked = passValid[key];
+      retObj[key as keyof PasswordValidationState] = {};
+      retObj[key as keyof PasswordValidationState].isChecked = passValid[key];
     });
 
     if (JSON.stringify(retObj) === JSON.stringify(passwordValidation)) return;
@@ -382,7 +355,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     }
   };
 
-  renderForm = (formProps: FormRenderProps) => {
+  renderForm = (formProps: FormRenderProps<FormValues>) => {
     const {
       handleSubmit,
       submitting,
@@ -444,7 +417,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
           </Wizard.Page>
           <Wizard.Page hideNext>
             <Pin
-              isConfirm
+              isConfirm={true}
               error={errors?.confirmPin}
               startOver={this.onPrevStep}
             />
