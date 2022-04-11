@@ -8,7 +8,7 @@ type Props = {
   isEmpty?: boolean;
 };
 
-const CounterContainer: React.FC<Props> = (props: Props) => {
+const CounterContainer: React.FC<Props> = props => {
   const { children, isEmpty } = props;
 
   return (

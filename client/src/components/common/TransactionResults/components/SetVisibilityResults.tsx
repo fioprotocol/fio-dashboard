@@ -8,7 +8,7 @@ import { ResultsProps } from '../types';
 
 import classes from '../styles/Results.module.scss';
 
-const SetVisibilityResults: React.FC<ResultsProps> = (props: ResultsProps) => {
+const SetVisibilityResults: React.FC<ResultsProps> = props => {
   const {
     results: { name, changedStatus },
   } = props;

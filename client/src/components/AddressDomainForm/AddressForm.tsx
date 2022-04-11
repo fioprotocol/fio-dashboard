@@ -18,7 +18,7 @@ const CUSTOM_DROPDOWN_VALUE = {
   name: 'Add Custom Domain',
 };
 
-const AddressForm: React.FC<AddressFormProps> = (props: AddressFormProps) => {
+const AddressForm: React.FC<AddressFormProps> = props => {
   const {
     hasCustomDomain,
     showCustomDomain,

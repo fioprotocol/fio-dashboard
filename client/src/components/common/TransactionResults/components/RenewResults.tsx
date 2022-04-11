@@ -8,7 +8,7 @@ import { ResultsProps } from '../types';
 
 import classes from '../styles/Results.module.scss';
 
-const RenewResults: React.FC<ResultsProps> = (props: ResultsProps) => {
+const RenewResults: React.FC<ResultsProps> = props => {
   const {
     results: {
       name = '',

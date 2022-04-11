@@ -12,7 +12,7 @@ type Props = {
   isSubNarrow?: boolean;
 };
 
-const FormHeader: React.FC<Props> = (props: Props) => {
+const FormHeader: React.FC<Props> = props => {
   const {
     title,
     titleBluePart = '',

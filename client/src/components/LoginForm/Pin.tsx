@@ -24,7 +24,7 @@ type OwnProps = {
 };
 type Props = OwnProps;
 
-const Pin: React.FC<Props> = (props: Props) => {
+const Pin: React.FC<Props> = props => {
   const {
     email,
     edgeAuthLoading,

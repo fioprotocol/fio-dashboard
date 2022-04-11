@@ -9,7 +9,7 @@ import { ResultsProps } from '../types';
 
 import classes from '../styles/Results.module.scss';
 
-const SignResults: React.FC<ResultsProps> = (props: ResultsProps) => {
+const SignResults: React.FC<ResultsProps> = props => {
   const {
     results: {
       name,

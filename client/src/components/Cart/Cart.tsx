@@ -40,7 +40,7 @@ type Props = {
   roe: number;
 };
 
-const Cart: React.FC<Props> = (props: Props) => {
+const Cart: React.FC<Props> = props => {
   const {
     cartItems,
     deleteItem,

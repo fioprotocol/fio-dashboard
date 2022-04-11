@@ -10,7 +10,7 @@ import classes from './MainHeader.module.scss';
 
 import { MainHeaderProps } from './types';
 
-const MainHeader: React.FC<MainHeaderProps> = (props: MainHeaderProps) => {
+const MainHeader: React.FC<MainHeaderProps> = props => {
   const {
     showLoginModal,
     logout: logoutFn,
