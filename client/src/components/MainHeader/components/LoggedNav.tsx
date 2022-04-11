@@ -30,7 +30,7 @@ type LoggedNavProps = {
   closeMenu: () => void;
 };
 
-const LoggedNav: React.FC<LoggedNavProps> = (props: LoggedNavProps) => {
+const LoggedNav: React.FC<LoggedNavProps> = props => {
   const {
     cartItems,
     isMenuOpen,

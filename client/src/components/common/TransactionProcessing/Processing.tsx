@@ -16,7 +16,7 @@ type Props = {
   message?: string;
 };
 
-const Processing: React.FC<Props> = (props: Props) => {
+const Processing: React.FC<Props> = props => {
   const {
     isProcessing,
     title = DEFAULT_TEXT.title,

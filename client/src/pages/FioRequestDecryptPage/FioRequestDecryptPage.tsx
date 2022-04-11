@@ -35,9 +35,7 @@ import { FioRecordViewDecrypted } from '../WalletPage/types';
 import detailsModalClasses from '../WalletPage/styles/FioRecordDetailedModal.module.scss';
 import classes from '../WalletPage/styles/WalletPage.module.scss';
 
-const FioRequestDecryptPage: React.FC<ContainerProps> = (
-  props: ContainerProps,
-) => {
+const FioRequestDecryptPage: React.FC<ContainerProps> = props => {
   const {
     fioWallets,
     fioWalletsData,
@@ -316,9 +314,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = (
   );
 };
 
-const FioRequestDecryptPageWrapper: React.FC<ContainerProps> = (
-  props: ContainerProps,
-) => (
+const FioRequestDecryptPageWrapper: React.FC<ContainerProps> = props => (
   <FioNamesInitWrapper>
     <FioRequestDecryptPage {...props} />
   </FioNamesInitWrapper>

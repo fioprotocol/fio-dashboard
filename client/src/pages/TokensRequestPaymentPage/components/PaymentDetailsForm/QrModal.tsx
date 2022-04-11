@@ -16,7 +16,7 @@ import {
 } from '../../../../util/general';
 import { QrModalProps } from '../../../../components/Input/QrCodeInput';
 
-const QrModal: React.FC<QrModalProps> = (props: QrModalProps) => {
+const QrModal: React.FC<QrModalProps> = props => {
   const { isVisible, inputValue, handleClose } = props;
 
   const onShare = () =>

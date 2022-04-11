@@ -42,7 +42,7 @@ type OwnProps = {
 };
 type Props = OwnProps;
 
-const UsernamePassword: React.FC<Props> = (props: Props) => {
+const UsernamePassword: React.FC<Props> = props => {
   const {
     isForgotPass,
     onSubmit,

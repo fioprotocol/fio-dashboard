@@ -12,7 +12,7 @@ import TwoFactorAuth from './components/TwoFactorAuth';
 import classes from './styles/Settings.module.scss';
 
 type Props = { loading: boolean; user: { email: string } };
-const SettingsPage: React.FC<Props> = (props: Props) => {
+const SettingsPage: React.FC<Props> = props => {
   const { user, loading } = props;
   if (loading || user == null)
     return (

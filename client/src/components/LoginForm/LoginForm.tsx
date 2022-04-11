@@ -55,7 +55,7 @@ const REF_SUBTITLES = {
   [REF_ACTIONS.SIGNNFT]: 'Sign in to complete signing your NFT',
 };
 
-const LoginForm: React.FC<Props> = (props: Props) => {
+const LoginForm: React.FC<Props> = props => {
   const {
     show,
     onSubmit,

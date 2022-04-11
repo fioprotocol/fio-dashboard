@@ -13,9 +13,8 @@ type TransferResultsProps = {
   resetFioNames: () => void;
 };
 
-const TransferResults: React.FC<ResultsProps & TransferResultsProps> = (
-  props: ResultsProps & TransferResultsProps,
-) => {
+const TransferResults: React.FC<ResultsProps &
+  TransferResultsProps> = props => {
   const {
     pageName,
     results: { name, publicKey },

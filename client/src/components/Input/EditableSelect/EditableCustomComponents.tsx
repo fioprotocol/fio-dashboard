@@ -42,34 +42,28 @@ export const Input: React.FC<InputProps> = (
   );
 };
 
-export const Menu: React.FC<EditableCustomComponentsTypes> = (
-  menuProps: EditableCustomComponentsTypes,
-) => <components.Menu {...menuProps} className={classes.menu} />;
+export const Menu: React.FC<EditableCustomComponentsTypes> = menuProps => (
+  <components.Menu {...menuProps} className={classes.menu} />
+);
 
-export const MenuList: React.FC<EditableCustomComponentsTypes> = (
-  menuListprops: EditableCustomComponentsTypes,
-) => <components.MenuList {...menuListprops} className={classes.menuList} />;
+export const MenuList: React.FC<EditableCustomComponentsTypes> = menuListProps => (
+  <components.MenuList {...menuListProps} className={classes.menuList} />
+);
 
-export const Placeholder: React.FC<EditableCustomComponentsTypes> = (
-  placeholderProps: EditableCustomComponentsTypes,
-) => (
+export const Placeholder: React.FC<EditableCustomComponentsTypes> = placeholderProps => (
   <components.Placeholder
     {...placeholderProps}
     className={classes.placeholder}
   />
 );
 
-export const ClearIndicator: React.FC<EditableCustomComponentsTypes> = (
-  clearIndicatorProps: EditableCustomComponentsTypes,
-) => (
+export const ClearIndicator: React.FC<EditableCustomComponentsTypes> = clearIndicatorProps => (
   <components.ClearIndicator {...clearIndicatorProps}>
     <FontAwesomeIcon icon="times-circle" className={classes.clearIcon} />
   </components.ClearIndicator>
 );
 
-export const Option: React.FC<EditableCustomComponentsTypes> = (
-  optionProps: EditableCustomComponentsTypes,
-) => {
+export const Option: React.FC<EditableCustomComponentsTypes> = optionProps => {
   const { isSelected } = optionProps;
 
   return (
@@ -83,9 +77,7 @@ export const Option: React.FC<EditableCustomComponentsTypes> = (
 type DropdownIndicatorProps = {
   selectProps: { menuIsOpen: boolean };
 } & EditableCustomComponentsTypes;
-export const DropdownIndicator: React.FC<DropdownIndicatorProps> = (
-  dropdownProps: DropdownIndicatorProps,
-) => {
+export const DropdownIndicator: React.FC<DropdownIndicatorProps> = dropdownProps => {
   const {
     selectProps: { menuIsOpen },
   } = dropdownProps;

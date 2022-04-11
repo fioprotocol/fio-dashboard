@@ -26,7 +26,7 @@ type Props = {
   closeMenu?: () => void;
 };
 
-export const Navigation: React.FC<Props> = (props: Props) => {
+export const Navigation: React.FC<Props> = props => {
   const {
     isOnSide,
     refProfileInfo,

@@ -26,7 +26,7 @@ type RegularNavProps = {
   closeMenu: () => void;
 };
 
-const RegularNav: React.FC<RegularNavProps> = (props: RegularNavProps) => {
+const RegularNav: React.FC<RegularNavProps> = props => {
   const { cartItems, hideCart } = props;
 
   const isDesktop = useCheckIfDesktop();

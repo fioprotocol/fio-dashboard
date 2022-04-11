@@ -23,7 +23,7 @@ type Props = {
   onSubmit: (values: FormValuesTypes) => void;
 };
 
-const ChangePasswordForm: React.FC<Props> = (props: Props) => {
+const ChangePasswordForm: React.FC<Props> = props => {
   const { onSubmit, loading, changePasswordError, onUnmount } = props;
   const [values, setValues] = useState<FormValuesTypes>({
     password: '',

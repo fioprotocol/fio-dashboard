@@ -60,7 +60,7 @@ type Props = {
   setCartDate: (dateTime: number) => void;
 } & RouteComponentProps;
 
-const CartTimeout: React.FC<Props> = (props: Props) => {
+const CartTimeout: React.FC<Props> = props => {
   const {
     cartItems,
     cartDate,

@@ -34,7 +34,7 @@ type Props = {
   showRecoveryModal: () => void;
 };
 
-const MainLayout: React.FC<Props> = (props: Props) => {
+const MainLayout: React.FC<Props> = props => {
   const {
     pathname,
     children,

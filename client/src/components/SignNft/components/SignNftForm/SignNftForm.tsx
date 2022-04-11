@@ -24,7 +24,7 @@ import { SignNftFormProps } from '../../types';
 
 import classes from '../../SignNft.module.scss';
 
-const SignNFTForm: React.FC<SignNftFormProps> = (props: SignNftFormProps) => {
+const SignNFTForm: React.FC<SignNftFormProps> = props => {
   const {
     onSubmit,
     initialValues,

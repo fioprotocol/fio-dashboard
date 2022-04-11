@@ -6,7 +6,7 @@ type Props = {
   wrap?: boolean;
 };
 
-const FioLoader: React.FC<Props> = (props: Props) => {
+const FioLoader: React.FC<Props> = props => {
   const renderLoader = () => (
     <lottie-player
       id="logo-loading"

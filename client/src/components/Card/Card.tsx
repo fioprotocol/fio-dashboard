@@ -8,7 +8,7 @@ type Props = {
   subtitle: string;
 };
 
-const Card: React.FC<Props> = (props: Props) => {
+const Card: React.FC<Props> = props => {
   const { children, title, subtitle } = props;
 
   return (

@@ -14,7 +14,7 @@ type Props = {
   onDelete: (id: string) => void;
 };
 
-const CartItem: React.FC<Props> = (props: Props) => {
+const CartItem: React.FC<Props> = props => {
   const { item, onDelete } = props;
 
   return (

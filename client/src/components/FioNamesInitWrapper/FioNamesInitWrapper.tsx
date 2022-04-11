@@ -4,7 +4,7 @@ import FioLoader from '../common/FioLoader/FioLoader';
 
 import { Props } from './types';
 
-const FioNamesInitWrapper: React.FC<Props> = (props: Props) => {
+const FioNamesInitWrapper: React.FC<Props> = props => {
   const {
     children,
     profileRefreshed,

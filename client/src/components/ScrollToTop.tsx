@@ -5,7 +5,7 @@ type Props = {
   children: React.ReactElement;
 };
 
-const ScrollToTop: React.FC<Props> = (props: Props) => {
+const ScrollToTop: React.FC<Props> = props => {
   const { children } = props;
   const { pathname } = useLocation();
 

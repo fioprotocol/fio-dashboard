@@ -28,7 +28,7 @@ type PageProps = {
 type Props = OwnProps;
 
 export default class Wizard extends React.Component<Props, State> {
-  static Page: React.FC<PageProps> = (props: PageProps) => props.children;
+  static Page: React.FC<PageProps> = props => props.children;
   state = {
     pageIsActive: true,
   };
