@@ -1,21 +1,45 @@
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { isEmpty } from 'lodash';
+import { useHistory } from 'react-router-dom';
 
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import CounterContainer from '../CounterContainer/CounterContainer';
+
 import { ROUTES } from '../../constants/routes';
+
 import { handleFreeAddressCart, deleteCartItem } from '../../utils';
+
+import {
+  CartItem,
+  DeleteCartItem,
+  Domain,
+  FioWalletDoublet,
+  Prices,
+  RedirectLinkData,
+} from '../../types';
 
 import classes from './AddressDomainCart.module.scss';
 
-const AddressDomainCart = props => {
+type Props = {
+  cartItems: CartItem[];
+  domains: Domain[];
+  fioWallets: FioWalletDoublet[];
+  prices: Prices;
+  hasFreeAddress: boolean;
+  isAuthenticated: boolean;
+  roe: number | null;
+  recalculate: (cartItems: CartItem[]) => void;
+  deleteItem: (params: DeleteCartItem) => void;
+  setRedirectPath: (redirectPath: RedirectLinkData) => void;
+};
+
+const AddressDomainCart: React.FC<Props> = props => {
   const {
     cartItems,
     deleteItem,
     domains,
-    history,
     fioWallets,
     prices,
     recalculate,
@@ -25,7 +49,11 @@ const AddressDomainCart = props => {
     roe,
   } = props;
   const count = cartItems.length;
+  const domainsAmount = domains.length;
   const isCartEmpty = count === 0;
+  const cartItemsJson = JSON.stringify(cartItems);
+
+  const history = useHistory();
 
   const handleCheckout = () => {
     const multipleWallets = fioWallets && fioWallets.length > 1;
@@ -39,27 +67,26 @@ const AddressDomainCart = props => {
     history.push(route);
   };
 
-  const handleDeleteItem = id => {
+  const handleDeleteItem = (id: string) => {
     deleteCartItem({
       id,
       prices,
-      deleteItem,
       cartItems,
-      recalculate,
       roe,
+      deleteItem,
+      recalculate,
     });
   };
 
   useEffect(() => {
-    if (domains.length === 0 && hasFreeAddress === null) return;
+    if (domainsAmount === 0 && hasFreeAddress === null) return;
     handleFreeAddressCart({
-      domains,
-      recalculate,
-      cartItems,
+      cartItems: JSON.parse(cartItemsJson),
       prices,
       hasFreeAddress,
+      recalculate,
     });
-  }, [domains, hasFreeAddress]);
+  }, [cartItemsJson, domainsAmount, hasFreeAddress, prices, recalculate]);
 
   return (
     <CartSmallContainer isAquaColor={true}>
