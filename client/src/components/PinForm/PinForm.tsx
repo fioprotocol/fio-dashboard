@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
@@ -34,6 +34,19 @@ const PinForm: React.FC<Props> = props => {
   let currentForm: FormApi | null = null;
   const [isDisabled, toggleDisabled] = useState(false);
 
+  const resetForm = useCallback(() => {
+    if (currentForm) {
+      const { mutators, reset } = currentForm;
+      reset();
+      mutators.setDataMutator(FIELD_NAME, {
+        error: false,
+      });
+      onReset();
+      const currentInput = document.getElementById(FIELD_NAME);
+      currentInput && currentInput.focus();
+    }
+  }, [currentForm, onReset]);
+
   useEffect(() => {
     if (currentForm) {
       const { mutators } = currentForm;
@@ -56,13 +69,13 @@ const PinForm: React.FC<Props> = props => {
         });
       }
     }
-  }, [error]);
+  }, [blockedTime, currentForm, error]);
 
   useEffect(
     () => () => {
       resetForm();
     },
-    [],
+    [resetForm],
   );
 
   const handleSubmit = (values: FormValues) => {
@@ -70,19 +83,6 @@ const PinForm: React.FC<Props> = props => {
     const { pin } = values;
     if (!pin || error || (pin && pin.length !== PIN_LENGTH)) return;
     onSubmit(pin);
-  };
-
-  const resetForm = () => {
-    if (currentForm) {
-      const { mutators, reset } = currentForm;
-      reset();
-      mutators.setDataMutator(FIELD_NAME, {
-        error: false,
-      });
-      onReset();
-      const currentInput = document.getElementById(FIELD_NAME);
-      currentInput && currentInput.focus();
-    }
   };
 
   const renderForm = (formProps: FormRenderProps) => {
