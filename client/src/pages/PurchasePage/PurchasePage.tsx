@@ -1,19 +1,45 @@
 import React, { useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
+import { RouteComponentProps } from 'react-router-dom';
 
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import CheckoutPurchaseContainer from '../../components/CheckoutPurchaseContainer';
 import { RenderPurchase } from '../../components/CheckoutPurchaseContainer/CheckoutPurchaseComponents';
+
 import { REF_ACTIONS, REF_ACTIONS_TO_ROUTES } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
+
 import { putParamsToUrl } from '../../utils';
 import { transformResult } from '../../util/fio';
+import useEffectOnce from '../../hooks/general';
+
+import {
+  CartItem,
+  Domain,
+  Prices,
+  RefProfile,
+  RefQueryParams,
+  RegistrationResult,
+} from '../../types';
 
 const CONTINUE_TEXT = {
   [REF_ACTIONS.SIGNNFT]: 'Sign Your NFT',
 };
 
-const PurchasePage = props => {
+type Props = {
+  isAuthenticated: boolean;
+  isRefFlow: boolean;
+  registrationResult: RegistrationResult;
+  cartItems: CartItem[];
+  prices: Prices;
+  domains: Domain[];
+  refProfileQueryParams: RefQueryParams;
+  refProfileInfo: RefProfile;
+  roe: number | null;
+  recalculate: (cartItems: CartItem[]) => void;
+};
+
+const PurchasePage: React.FC<Props & RouteComponentProps> = props => {
   const {
     history,
     isAuthenticated,
@@ -21,17 +47,17 @@ const PurchasePage = props => {
     registrationResult,
     cartItems,
     prices,
-    recalculate,
-    domains,
     refProfileQueryParams,
     refProfileInfo,
     roe,
+    recalculate,
   } = props;
 
   useEffect(() => {
     if (!isAuthenticated) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated]);
 
   const { registered, errors } = registrationResult || {};
@@ -44,14 +70,12 @@ const PurchasePage = props => {
     result: registrationResult,
     cart: cartItems,
     prices,
-    recalculate,
-    domains,
     roe,
   });
 
-  useEffect(() => {
+  useEffectOnce(() => {
     recalculate(updatedCart);
-  }, []);
+  }, [recalculate, updatedCart]);
 
   const onClose = () => {
     if (
