@@ -55,6 +55,7 @@
 .sendLink {
   @include proxima-nova-semibold;
   color: $white;
+  cursor: pointer;
 
   &:hover {
     color: $light-gray;
