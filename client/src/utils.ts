@@ -191,7 +191,7 @@ export const handleFreeAddressCart = ({
   prices,
   hasFreeAddress,
 }: {
-  recalculate: (cartItems: CartItem[]) => {};
+  recalculate: (cartItems: CartItem[]) => void;
   cartItems: CartItem[];
   prices: Prices;
   hasFreeAddress: boolean;
@@ -215,9 +215,9 @@ export const deleteCartItem = ({
 }: {
   id?: string;
   prices?: Prices;
-  deleteItem?: (data: DeleteCartItem | string) => {};
+  deleteItem?: (data: DeleteCartItem | string) => void;
   cartItems?: CartItem[];
-  recalculate?: (cartItems: CartItem[]) => {};
+  recalculate?: (cartItems: CartItem[]) => void;
   roe?: number;
 } = {}): void => {
   const data = recalculateCart({ cartItems, id }) || id;
