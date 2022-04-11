@@ -6,7 +6,9 @@ const MOBILE_THRESHOLD = 480;
 const TABLET_THRESHOLD = 1024;
 const SMALL_DESKTOP_THRESHOLD = 1280;
 
-function getWindowSize(): { width: number; height: number } {
+type WindowSize = { width: number; height: number };
+
+function getWindowSize(): WindowSize {
   const { innerWidth: width, innerHeight: height } = window;
   return {
     width,
@@ -14,11 +16,8 @@ function getWindowSize(): { width: number; height: number } {
   };
 }
 
-export function useWindowSize(): { width: number; height: number } {
-  const [windowSize, setWindowSize] = useState<{
-    width: number;
-    height: number;
-  }>(getWindowSize());
+export function useWindowSize(): WindowSize {
+  const [windowSize, setWindowSize] = useState<WindowSize>(getWindowSize());
 
   useEffect(() => {
     function handleResize() {
