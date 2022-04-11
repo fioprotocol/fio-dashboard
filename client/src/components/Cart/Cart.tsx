@@ -27,12 +27,12 @@ import classes from './Cart.module.scss';
 
 type Props = {
   cartItems: CartItemType[];
-  deleteItem?: (data: DeleteCartItem | string) => {};
+  deleteItem?: (data: DeleteCartItem) => {};
   userWallets: FioWalletDoublet[];
   setWallet: (publicKey: string) => void;
   hasLowBalance: boolean;
   walletCount: number;
-  totalCartAmount: number;
+  totalCartAmount: string;
   walletBalancesAvailable: WalletBalancesItem;
   prices: Prices;
   recalculate?: (cartItems: CartItemType[]) => {};
