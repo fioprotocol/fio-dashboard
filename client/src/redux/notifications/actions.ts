@@ -1,5 +1,6 @@
 import { Api } from '../../api';
 import { CommonAction, CommonPromiseAction } from '../types';
+import { NotificationParams } from '../../types';
 
 export const prefix = 'notifications';
 
@@ -20,14 +21,9 @@ export const CREATE_REQUEST = `${prefix}/CREATE_REQUEST`;
 export const CREATE_SUCCESS = `${prefix}/CREATE_SUCCESS`;
 export const CREATE_FAILURE = `${prefix}/CREATE_FAILURE`;
 
-export const createNotification = (data: {
-  type: string;
-  action: string;
-  contentType: string;
-  title?: string;
-  message?: string;
-  pagesToShow: string[];
-}): CommonPromiseAction => ({
+export const createNotification = (
+  data: NotificationParams,
+): CommonPromiseAction => ({
   types: [CREATE_REQUEST, CREATE_SUCCESS, CREATE_FAILURE],
   promise: (api: Api) => api.notifications.create(data),
 });
