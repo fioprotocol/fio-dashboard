@@ -1,5 +1,17 @@
 import { FioRegCaptchaResponse } from '../api/responses';
 
+// @ts-ignore
+// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
+type GeetestInitOptions = {
+  gt?: string;
+  challenge?: string;
+  offline: boolean;
+  new_captcha: boolean;
+  lang: string;
+  product: string;
+  width: string;
+};
+
 type VerifyParams = {
   geetest_challenge: string;
   geetest_validate: string;
