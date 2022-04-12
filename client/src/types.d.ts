@@ -5,6 +5,15 @@ import { LocationState, Path } from 'history';
 
 import { FIOSDK_LIB } from './api/fio';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Unknown = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyObject = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyType = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type OwnPropsAny = any; // todo: fix usages for ownProps
+
 export type Domain = { domain: string; free?: boolean };
 
 export type CartItem = {
@@ -106,7 +115,7 @@ export type NewFioWalletDoublet = {
   name: string;
   publicKey: string;
   from: string;
-  data?: any;
+  data?: { derivationIndex?: number; device?: number } & AnyObject;
 };
 
 export type FioAddressDoublet = {
@@ -190,7 +199,7 @@ export type PinConfirmation = {
   account?: EdgeAccount;
   keys?: EdgeWalletsKeys;
   action?: string;
-  data?: any;
+  data?: AnyObject;
   error?: string | (Error & { wait?: number });
 };
 
@@ -327,7 +336,11 @@ export type TransactionItemProps = {
   networkFee: string;
   date: number;
   blockHeight: number;
-  otherParams: any;
+  otherParams: {
+    isTransferProcessed?: boolean;
+    isFeeProcessed?: boolean;
+    feeActors?: string[];
+  } & AnyObject;
 };
 
 export type MappedPublicAddresses = {
@@ -397,16 +410,6 @@ export type UsersFioWalletsData = {
   };
 };
 
-type GeetestInitOptions = {
-  gt: any;
-  challenge: any;
-  offline: boolean;
-  new_captcha: boolean;
-  lang: string;
-  product: string;
-  width: string;
-};
-
 export type UsersWalletsTxHistory = {
   [userId: string]: {
     [walletPublicKey: string]: FioWalletTxHistory;
@@ -455,4 +458,13 @@ export type FioHistoryNodeAction = {
     block_time: string;
     producer_block_id: string;
   };
+};
+
+export type FioApiError = Error & { json?: { message?: string } };
+
+export type StatusResponse = { status?: number };
+
+export type LoginFailure = {
+  fields?: { [fieldName: string]: AnyType };
+  code?: string;
 };

@@ -11,6 +11,7 @@ import {
   RegistrationResult,
   WalletKeys,
   RegistrationRegistered,
+  AnyObject,
 } from '../../types';
 
 const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 2000;
@@ -31,7 +32,13 @@ export const registerFree = async ({
   publicKey: string;
   verifyParams: {};
   refCode?: string;
-}) => {
+}): Promise<{
+  cartItemId: string;
+  fioName: string;
+  isFree: boolean;
+  error?: string;
+  errorType?: string;
+}> => {
   let result: {
     cartItemId: string;
     fioName: string;
@@ -75,7 +82,12 @@ export const register = async ({
   cartItemId: string;
   error?: string;
   errorType?: string;
-}) => {
+}): Promise<{
+  cartItemId: string;
+  fioName: string;
+  error?: string;
+  errorType?: string;
+}> => {
   let result: {
     cartItemId: string;
     fioName: string;
@@ -105,7 +117,7 @@ export const executeRegistration = async (
   fees: { address: number; domain: number },
   verifyParams = {},
   refCode = '',
-) => {
+): Promise<RegistrationResult> => {
   const result: RegistrationResult = {
     errors: [],
     registered: [],
@@ -156,7 +168,14 @@ export const executeRegistration = async (
 const makeRegistrationOrder = (
   cartItems: CartItem[],
   fees: { address: number; domain: number },
-) => {
+): {
+  cartItemId: string;
+  fioName: string;
+  fee: number;
+  isFree: boolean;
+  isCustomDomain?: boolean;
+  depended?: { domain: string };
+}[] => {
   const registrations = [];
   for (const cartItem of cartItems.sort(item =>
     item.hasCustomDomain ? -1 : 1,
@@ -221,8 +240,9 @@ const handleResponses = (
     fioName: string;
     error?: string;
     errorType?: string;
+    fee_collected?: number;
   }>[] &
-    any,
+    AnyObject, // todo: check this ts issue, for status === 'rejected' there is no value
   result: RegistrationResult,
 ) => {
   for (const response of responses) {

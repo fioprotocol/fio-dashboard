@@ -19,7 +19,7 @@ type Props = {
   loading: boolean;
 };
 
-const AuthContainer: React.FC<Props> = (props: Props) => {
+const AuthContainer: React.FC<Props> = props => {
   const {
     edgeContextSet,
     isRefFlow,

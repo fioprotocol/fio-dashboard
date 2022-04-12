@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import Input, { FieldProps as OtherProps } from '../Input/InputRedux';
 
@@ -11,7 +11,7 @@ type FieldProps = OtherProps & {
   error: string | null;
 };
 
-export const Field = (props: FieldProps) => {
+export const Field: React.FC<FieldProps> = props => {
   const { value, onChange, error, name, placeholder, ...rest } = props;
   const [active, setActive] = useState<boolean>(false);
   const [touched, setTouched] = useState<boolean>(false);

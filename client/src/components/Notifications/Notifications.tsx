@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { RouterProps } from 'react-router-dom';
 
 import NotificationBadge from '../NotificationBadge';
@@ -22,14 +22,14 @@ export default class Notifications extends Component<
 > {
   notificationsInterval: ReturnType<typeof setInterval> | null;
 
-  componentDidMount() {
+  componentDidMount(): void {
     this.notificationsInterval = setInterval(
       this.reloadNotifications,
       RELOAD_TIME,
     );
   }
 
-  componentWillUnmount() {
+  componentWillUnmount(): void {
     this.notificationsInterval && clearInterval(this.notificationsInterval);
   }
 
@@ -58,7 +58,7 @@ export default class Notifications extends Component<
     return null;
   };
 
-  reloadNotifications = () => {
+  reloadNotifications = (): void => {
     const { user, listNotifications } = this.props;
 
     if (user) {
@@ -84,7 +84,7 @@ export default class Notifications extends Component<
     return null;
   };
 
-  render() {
+  render(): React.ReactElement {
     const last = this.getLatest();
     if (!last) return null;
 

@@ -51,7 +51,10 @@ export type TextInputProps = {
   debounceTimeout?: number;
 };
 
-export const TextInput = (
+export const TextInput: React.ForwardRefRenderFunction<
+  HTMLInputElement,
+  TextInputProps & FieldRenderProps<TextInputProps>
+> = (
   props: TextInputProps & FieldRenderProps<TextInputProps>,
   ref?: React.Ref<HTMLInputElement>,
 ) => {

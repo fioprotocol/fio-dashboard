@@ -9,20 +9,6 @@ type Props = {
   toggleDisabled?: (disabled: boolean) => void;
 };
 
-const countTime = (
-  time: number,
-  setTime: (time: number) => void,
-  timerRef: { current: ReturnType<typeof setTimeout> | null },
-) => {
-  const decrementTime = time - 1;
-  timerRef.current = setTimeout(() => {
-    if (decrementTime >= 0) {
-      setTime(decrementTime);
-      countTime(decrementTime, setTime, timerRef);
-    }
-  }, 1000);
-};
-
 const RenderTime = (time: number) => {
   const days = Math.floor(time / (3600 * 24));
   time -= days * 3600 * 24;
@@ -75,17 +61,22 @@ const Counter: React.FC<Props> = props => {
   const timeIsOver = time === 0;
 
   useEffect(() => {
-    countTime(initialTimeNumber, setTime, timerRef);
+    const decrementTime = time - 1;
+    timerRef.current = setTimeout(() => {
+      if (decrementTime >= 0) {
+        setTime(decrementTime);
+      }
+    }, 1000);
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, []);
+  }, [initialTimeNumber, time, setTime]);
 
   useEffect(() => {
     if (toggleDisabled) {
       toggleDisabled(!timeIsOver);
     }
-  }, [timeIsOver]);
+  }, [timeIsOver, toggleDisabled]);
 
   if (timeIsOver) return null;
 

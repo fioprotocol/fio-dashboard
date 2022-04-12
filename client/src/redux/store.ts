@@ -1,4 +1,9 @@
-import { createStore, applyMiddleware, compose as simpleCompose } from 'redux';
+import {
+  createStore,
+  applyMiddleware,
+  compose as simpleCompose,
+  Store,
+} from 'redux';
 import { routerMiddleware } from 'connected-react-router';
 import { composeWithDevTools } from '@redux-devtools/extension';
 import createSagaMiddleware from 'redux-saga';
@@ -14,7 +19,7 @@ import rootSaga from './sagas';
 
 import { Api } from '../api';
 
-export default function configureStore(api: Api, history: History) {
+export default function configureStore(api: Api, history: History): Store {
   const compose =
     process.env.NODE_ENV === 'production' ? simpleCompose : composeWithDevTools;
 

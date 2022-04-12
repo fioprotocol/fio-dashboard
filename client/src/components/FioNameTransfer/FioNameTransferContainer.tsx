@@ -67,7 +67,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   useEffect(() => {
     getFee(hasFioAddressDelimiter(name));
     refreshBalance(publicKey);
-  }, []);
+  }, [name, publicKey, refreshBalance, getFee]);
 
   useEffect(() => {
     if (!processing) {

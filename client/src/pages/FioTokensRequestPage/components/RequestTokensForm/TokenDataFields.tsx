@@ -18,7 +18,7 @@ type Props = {
     name: string;
     tokens?: { id: string; name: string }[];
   }[];
-  chainCodeValue?: any;
+  chainCodeValue?: string;
   initialValues: { chainCode?: string; tokenCode?: string };
 };
 

@@ -4,33 +4,53 @@ import { USER_STATUSES } from '../../constants/common';
 import { prefix } from './actions';
 
 import { ReduxState } from '../init';
+import {
+  AnyType,
+  EmailConfirmationResult,
+  LastAuthData,
+  User,
+} from '../../types';
 
-export const loading = (state: ReduxState) => state[prefix].loading;
-export const user = (state: ReduxState) => state[prefix].user;
-export const role = (state: ReduxState) =>
+export const loading = (state: ReduxState): boolean => state[prefix].loading;
+export const user = (state: ReduxState): User | null => state[prefix].user;
+export const role = (state: ReduxState): string | null =>
   state[prefix].user && state[prefix].user.role;
-export const email = (state: ReduxState) =>
+export const email = (state: ReduxState): string | null =>
   state[prefix].user && state[prefix].user.email;
-export const isAdmin = (state: ReduxState) =>
+export const isAdmin = (state: ReduxState): boolean =>
   state[prefix].user && state[prefix].user.role === 'ADMIN';
-export const error = (state: ReduxState) => state[prefix].error;
-export const emailConfirmationResult = (state: ReduxState) =>
-  state[prefix].emailConfirmationResult;
-export const successfullyRegistered = (state: ReduxState) =>
+export const error = (
+  state: ReduxState,
+): {
+  fields?: { [fieldName: string]: AnyType };
+  code?: string;
+  message?: string;
+} | null => state[prefix].error;
+export const emailConfirmationResult = (
+  state: ReduxState,
+): EmailConfirmationResult => state[prefix].emailConfirmationResult;
+export const successfullyRegistered = (state: ReduxState): boolean =>
   state[prefix].successfullyRegistered;
-export const lastAuthData = (state: ReduxState) => state[prefix].lastAuthData;
-export const tokenCheckResult = (state: ReduxState) =>
+export const lastAuthData = (state: ReduxState): LastAuthData =>
+  state[prefix].lastAuthData;
+export const tokenCheckResult = (state: ReduxState): boolean | null =>
   state[prefix].tokenCheckResult;
-export const lastActivityDate = (state: ReduxState) =>
+export const lastActivityDate = (state: ReduxState): number =>
   state[prefix].lastActivityDate;
-export const emailConfirmationToken = (state: ReduxState) =>
+export const emailConfirmationToken = (state: ReduxState): string | null =>
   state[prefix].emailConfirmationToken;
-export const emailConfirmationSent = (state: ReduxState) =>
+export const emailConfirmationSent = (state: ReduxState): boolean =>
   state[prefix].emailConfirmationSent;
+export const profileRefreshed = (state: ReduxState): boolean =>
+  state[prefix].profileRefreshed;
+export const changeRecoveryQuestionsResults = (
+  state: ReduxState,
+): { status?: number } => state[prefix].changeRecoveryQuestionsResults;
+export const updateEmailLoading = (state: ReduxState): boolean =>
+  state[prefix].updateEmailLoading;
 
 export const isAuthenticated = createSelector(user, user => !!user);
-export const profileRefreshed = (state: ReduxState) =>
-  state[prefix].profileRefreshed;
+export const userId = createSelector(user, user => (user ? user.id : null));
 export const noProfileLoaded = createSelector(
   isAuthenticated,
   profileRefreshed,
@@ -75,8 +95,3 @@ export const hasFreeAddress = createSelector(
   user => user && !!user.freeAddresses.length,
 );
 export const edgeUsername = createSelector(user, user => user && user.username);
-export const changeRecoveryQuestionsResults = (state: ReduxState) =>
-  state[prefix].changeRecoveryQuestionsResults;
-
-export const updateEmailLoading = (state: ReduxState) =>
-  state[prefix].updateEmailLoading;

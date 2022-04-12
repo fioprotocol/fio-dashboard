@@ -2,9 +2,13 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import { BADGE_TYPES } from '../Badge/Badge';
 import InfoBadge from '../InfoBadge/InfoBadge';
+
+import { BADGE_TYPES } from '../Badge/Badge';
+
 import classes from './Input.module.scss';
+
+import { AnyType } from '../../types';
 
 export const ERROR_UI_TYPE = {
   TEXT: 'TEXT',
@@ -19,7 +23,7 @@ export const COLOR_TYPE = {
 type Props = {
   error?: string | null;
   hasError: boolean;
-  data?: { [key: string]: any };
+  data?: { [key: string]: AnyType };
   submitError?: boolean;
   useVisibility?: boolean;
   wrap?: boolean;

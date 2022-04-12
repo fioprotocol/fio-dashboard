@@ -8,11 +8,11 @@ type Props = {
   titleBluePart?: string;
   subtitle: string | React.ReactNode;
   isDoubleColor?: boolean;
-  header?: string;
+  header?: string | React.ReactElement;
   isSubNarrow?: boolean;
 };
 
-const FormHeader: React.FC<Props> = (props: Props) => {
+const FormHeader: React.FC<Props> = props => {
   const {
     title,
     titleBluePart = '',

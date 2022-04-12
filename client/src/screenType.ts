@@ -6,7 +6,9 @@ const MOBILE_THRESHOLD = 480;
 const TABLET_THRESHOLD = 1024;
 const SMALL_DESKTOP_THRESHOLD = 1280;
 
-function getWindowSize() {
+type WindowSize = { width: number; height: number };
+
+function getWindowSize(): WindowSize {
   const { innerWidth: width, innerHeight: height } = window;
   return {
     width,
@@ -14,8 +16,8 @@ function getWindowSize() {
   };
 }
 
-export function useWindowSize() {
-  const [windowSize, setWindowSize] = useState(getWindowSize());
+export function useWindowSize(): WindowSize {
+  const [windowSize, setWindowSize] = useState<WindowSize>(getWindowSize());
 
   useEffect(() => {
     function handleResize() {
@@ -29,7 +31,7 @@ export function useWindowSize() {
   return windowSize;
 }
 
-export function useCurrentScreenType() {
+export function useCurrentScreenType(): { screenType: string } {
   const { width } = useWindowSize();
 
   if (width <= MOBILE_THRESHOLD) return { screenType: SCREEN_TYPE.MOBILE };
@@ -38,13 +40,13 @@ export function useCurrentScreenType() {
   return { screenType: SCREEN_TYPE.DESKTOP };
 }
 
-export function useCheckIfDesktop() {
+export function useCheckIfDesktop(): boolean {
   const { width } = useWindowSize();
 
   return width >= TABLET_THRESHOLD;
 }
 
-export function useCheckIfSmallDesktop() {
+export function useCheckIfSmallDesktop(): boolean {
   const { width } = useWindowSize();
 
   return width >= TABLET_THRESHOLD && width < SMALL_DESKTOP_THRESHOLD;

@@ -1,5 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Field, useForm, FormSpy } from 'react-final-form';
+import React, { useState } from 'react';
+import {
+  Form,
+  Field,
+  useForm,
+  FormSpy,
+  FieldRenderProps,
+  FormRenderProps,
+} from 'react-final-form';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Scrollbar } from 'react-scrollbars-custom';
@@ -20,40 +27,69 @@ import { ROUTES } from '../../constants/routes';
 
 import { formValidation } from './validation';
 import { log } from '../../util/general';
+import useEffectOnce from '../../hooks/general';
 
 import classes from './PasswordRecoveryForm.module.scss';
+import { NotificationParams, StatusResponse } from '../../types';
+import { SubmitActionParams } from '../EdgeConfirmAction/types';
 
-const PasswordRecoveryForm = props => {
+const SCROLL_BAR_STYLES = { height: '350px', marginBottom: '30px' };
+
+type FormValues = {
+  recoveryAnswerTwo: string;
+  recoveryAnswerOne: string;
+  recoveryQuestionTwo: string;
+  recoveryQuestionOne: string;
+};
+
+type Props = {
+  show: boolean;
+  edgeAuthLoading: boolean;
+  username: string | null;
+  questions: { category: string; question: string }[];
+  showPinConfirm: boolean;
+  changeRecoveryQuestions: boolean;
+  changeRecoveryQuestionsResults: { status?: number };
+  onSubmit: (token: string) => void;
+  changeRecoveryQuestionsClose: () => void;
+  getRecoveryQuestions: () => void;
+  closeRecoveryModal: () => void;
+  checkRecoveryQuestions: (username: string) => void;
+  createNotification: (params: NotificationParams) => void;
+};
+
+const PasswordRecoveryForm: React.FC<Props> = props => {
   const {
     show,
     closeRecoveryModal,
     edgeAuthLoading,
     questions,
-    getRecoveryQuestions,
-    showPinConfirm,
-    onSubmit: setProfileRecovery,
-    changeRecoveryQuestions,
-    changeRecoveryQuestionsClose,
-    changeRecoveryQuestionsResults,
-    checkRecoveryQuestions,
     username,
+    showPinConfirm,
+    changeRecoveryQuestions,
+    changeRecoveryQuestionsResults,
+    getRecoveryQuestions,
+    onSubmit: setProfileRecovery,
+    changeRecoveryQuestionsClose,
+    checkRecoveryQuestions,
+    createNotification,
   } = props;
 
   const isSettings = changeRecoveryQuestions; // todo: should be refactored on settings recovery password design task
-  const { status } = changeRecoveryQuestionsResults;
+  const status = !!changeRecoveryQuestionsResults.status;
   const [isSkip, toggleSkip] = useState(false);
   const [isQuestions, toggleQuestions] = useState(false);
   const [questionNumber, setQuestionNumber] = useState(null);
   const [processing, setProcessing] = useState(false);
-  const [defaultValues, setDefaultValues] = useState({});
+  const [defaultValues, setDefaultValues] = useState<Partial<FormValues>>({});
   const [errorMessage, setError] = useState('');
   const [showSuccessModal, toggleSuccessModal] = useState(false);
-  const [submitData, setSubmitData] = useState(null);
+  const [submitData, setSubmitData] = useState<FormValues | null>(null);
 
-  useEffect(getRecoveryQuestions, []);
+  useEffectOnce(getRecoveryQuestions, [getRecoveryQuestions]);
 
-  useEffect(() => {
-    if (status) {
+  useEffectOnce(
+    () => {
       if (isSettings) {
         toggleSuccessModal(true);
       } else {
@@ -62,14 +98,16 @@ const PasswordRecoveryForm = props => {
       }
       setProcessing(false);
       setDefaultValues({});
-    }
-  }, [status]);
+    },
+    [isSettings, changeRecoveryQuestionsClose, closeRecoveryModal],
+    status,
+  );
 
   const fieldValuesChanged = () => {
     setError('');
   };
 
-  const onSubmit = values => {
+  const onSubmit = (values: FormValues) => {
     setDefaultValues(values);
     setSubmitData(values);
   };
@@ -85,7 +123,7 @@ const PasswordRecoveryForm = props => {
   const closeSkip = () => {
     hideSkip();
     closeRecoveryModal();
-    props.createNotification({
+    createNotification({
       action: ACTIONS.RECOVERY,
       contentType: NOTIFICATIONS_CONTENT_TYPE.RECOVERY_PASSWORD,
       type: BADGE_TYPES.ALERT,
@@ -93,7 +131,7 @@ const PasswordRecoveryForm = props => {
     });
   };
 
-  const showQuestions = name => {
+  const showQuestions = (name: string) => {
     setQuestionNumber(name);
     toggleQuestions(true);
   };
@@ -102,7 +140,10 @@ const PasswordRecoveryForm = props => {
     toggleQuestions(false);
   };
 
-  const setQuestion = (change, value) => {
+  const setQuestion = (
+    change: (field: string, val: string) => void,
+    value: string,
+  ) => {
     change(questionNumber, value);
     hideQuestions();
   };
@@ -117,7 +158,7 @@ const PasswordRecoveryForm = props => {
     return isSkip ? closeSkip() : showSkip();
   };
 
-  const submit = async ({ edgeAccount, data }) => {
+  const submit = async ({ edgeAccount, data }: SubmitActionParams) => {
     const {
       recoveryAnswerTwo,
       recoveryAnswerOne,
@@ -126,7 +167,7 @@ const PasswordRecoveryForm = props => {
     } = data;
     try {
       const token = await edgeAccount.changeRecovery(
-        [recoveryQuestionOne.question, recoveryQuestionTwo.question],
+        [recoveryQuestionOne, recoveryQuestionTwo],
         [recoveryAnswerOne, recoveryAnswerTwo],
       );
       setProfileRecovery(token);
@@ -143,7 +184,7 @@ const PasswordRecoveryForm = props => {
     }
   };
 
-  const onSuccess = results => {
+  const onSuccess = (results: StatusResponse) => {
     if (results.status) {
       setSubmitData(null);
     } else {
@@ -180,12 +221,12 @@ const PasswordRecoveryForm = props => {
     </div>
   );
 
-  const renderQuestionType = props => {
+  const renderQuestionType = (
+    fieldRenderProps: FieldRenderProps<FormValues>,
+  ) => {
     const {
       input: { type, value, name },
-    } = props;
-
-    const { question } = value;
+    } = fieldRenderProps;
 
     return (
       <div
@@ -194,9 +235,9 @@ const PasswordRecoveryForm = props => {
       >
         <div className={classes.text}>
           {type === '1'
-            ? question || 'Choose Recovery Question 1'
+            ? value || 'Choose Recovery Question 1'
             : type === '2'
-            ? question || 'Choose Recovery Question 2'
+            ? value || 'Choose Recovery Question 2'
             : null}
         </div>
         <FontAwesomeIcon icon="chevron-right" className={classes.icon} />
@@ -204,23 +245,17 @@ const PasswordRecoveryForm = props => {
     );
   };
 
-  const QuestionItem = props => {
-    const {
-      input: { name },
-    } = props;
+  const QuestionItem = ({ question }: { question: string }) => {
     const { change, getState } = useForm();
 
     const { values } = getState() || {};
     const { recoveryQuestionOne, recoveryQuestionTwo } = values || {};
-    const { question: questionOne } = recoveryQuestionOne || {};
-    const { question: questionTwo } = recoveryQuestionTwo || {};
-    const { question } = name || {};
 
     let isSelected = false;
-    if (question === questionOne) {
+    if (question === recoveryQuestionOne) {
       isSelected = true;
     }
-    if (question === questionTwo) {
+    if (question === recoveryQuestionTwo) {
       isSelected = true;
     }
 
@@ -230,16 +265,16 @@ const PasswordRecoveryForm = props => {
           classes.question,
           isSelected && classes.isSelected,
         )}
-        key={name}
-        onClick={() => !isSelected && setQuestion(change, name)}
+        key={question}
+        onClick={() => !isSelected && setQuestion(change, question)}
       >
         {question}
       </div>
     );
   };
 
-  const renderFormItems = props => {
-    const { handleSubmit, valid, submitting, values } = props;
+  const renderFormItems = (formRenderProps: FormRenderProps<FormValues>) => {
+    const { handleSubmit, valid, submitting, values } = formRenderProps;
 
     return (
       <form onSubmit={handleSubmit} id="recovery-form">
@@ -292,7 +327,7 @@ const PasswordRecoveryForm = props => {
               <ErrorBadge error={errorMessage} hasError={true} data={{}} wrap />
             )}
             <Button
-              htmltype="submit"
+              type="submit"
               variant="primary"
               className="w-100"
               onClick={handleSubmit}
@@ -317,15 +352,14 @@ const PasswordRecoveryForm = props => {
               subtitle="Choose Recovery Question"
             />
             <Scrollbar
-              style={{ height: '350px', marginBottom: '30px' }}
+              style={SCROLL_BAR_STYLES}
               thumbYProps={{ className: classes.scrollThumbY }}
               trackYProps={{ className: classes.scrollTrackY }}
             >
               {questions.map(item => (
-                <Field
-                  name={item}
-                  component={QuestionItem}
+                <QuestionItem
                   key={`${item.question.replace(/ /, '')}${item.category}`}
+                  question={item.question}
                 />
               ))}
             </Scrollbar>

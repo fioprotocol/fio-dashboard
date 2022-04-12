@@ -4,7 +4,7 @@ import { EdgeAccount } from 'edge-core-js';
 import { LOGOUT_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
 
-import { EdgeWalletsKeys, PinConfirmation } from '../../types';
+import { EdgeWalletsKeys, PinConfirmation, StatusResponse } from '../../types';
 
 const PIN_CONFIRM_DEFAULT = {};
 
@@ -171,7 +171,7 @@ export default combineReducers({
         return state;
     }
   },
-  changePasswordResults(state: { status?: number } = {}, action) {
+  changePasswordResults(state: StatusResponse = {}, action) {
     switch (action.type) {
       case actions.CHANGE_PASSWORD_SUCCESS: {
         return action.data;
@@ -202,7 +202,7 @@ export default combineReducers({
         return state;
     }
   },
-  changePinResults(state: { status?: number } = {}, action) {
+  changePinResults(state: StatusResponse = {}, action) {
     switch (action.type) {
       case actions.CHANGE_PIN_SUCCESS: {
         return action.data;

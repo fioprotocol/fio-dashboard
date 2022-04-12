@@ -2,7 +2,7 @@
 
 .pin {
   width: 219px;
-  margin: 56px auto 70px;
+  margin: 15px auto 0;
   position: relative;
 
   &.withoutMargin {
@@ -61,20 +61,4 @@
     height: 20px;
     left: 15px;
   }
-}
-
-.keyboardPlug {
-  height: 100px;
-}
-
-.highPlug {
-  height: 150px;
-}
-
-.extraHighPlug {
-  height: 250px;
-}
-
-.emptyPlug {
-  height: 0;
 }

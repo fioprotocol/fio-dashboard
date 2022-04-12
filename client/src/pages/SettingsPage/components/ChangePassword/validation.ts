@@ -1,8 +1,14 @@
 import { FormValuesTypes } from './types';
 import { VALIDATION_TITLES } from '../../../../components/CreateAccountForm/EmailPassword';
 
-const validation = (values: FormValuesTypes) => {
-  const errors: any = {}; // todo: set error types
+type validationErrors = {
+  confirmNewPassword?: string;
+  password?: string;
+  newPassword?: string;
+};
+
+const validation = (values: FormValuesTypes): validationErrors => {
+  const errors: validationErrors = {};
 
   const { confirmNewPassword, password, newPassword } = values;
 

@@ -40,8 +40,14 @@ const PublicAddressEdit: React.FC<Props> = props => {
     changeEditedPubAddress(value);
   };
 
-  const onEditClick = (e: any) => {
+  const onEditClick = () => {
+    if (hasLowBalance) return;
+    handleClick(id, editedPubAddress);
+  };
+
+  const onInputBlur = (e: React.FocusEvent<HTMLElement>) => {
     const focusedElement = e.relatedTarget;
+
     const isCurrentAddress =
       focusedElement &&
       focusedElement.classList.contains(EDIT_ICON_CLASS) &&
@@ -57,7 +63,7 @@ const PublicAddressEdit: React.FC<Props> = props => {
       value={editedPubAddress}
       onChange={onInputChange}
       autoFocus={true}
-      onBlur={onEditClick}
+      onBlur={onInputBlur}
       maxLength={MAX_PUBLIC_ADDRESS_LENGTH}
     />
   );

@@ -11,6 +11,8 @@ import { showLogin, showRecovery } from '../../redux/modal/selectors';
 
 import MainLayout from './MainLayout';
 
+import { AppDispatch } from '../../redux/init';
+
 const selector = createStructuredSelector({
   pathname,
   isAuthenticated,
@@ -21,7 +23,7 @@ const selector = createStructuredSelector({
   edgeContextSet,
 });
 
-const actions = dispatch => ({
+const actions = (dispatch: AppDispatch) => ({
   init: () => {
     dispatch(loadProfile());
     dispatch(edgeContextInit());

@@ -10,10 +10,11 @@ import { ACTIONS, BUNDLES_TX_COUNT } from '../../../constants/fio';
 import { FioWalletDoublet } from '../../../types';
 import { StakeTokensValues } from '../types';
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
+import { TrxResponsePaidBundles } from '../../../api/fio';
 
 type Props = {
   fioWallet: FioWalletDoublet;
-  onSuccess: (data: any) => void;
+  onSuccess: (data: TrxResponsePaidBundles) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
   sendData: StakeTokensValues | null;

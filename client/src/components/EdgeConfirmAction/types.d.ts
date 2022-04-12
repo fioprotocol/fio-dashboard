@@ -1,12 +1,17 @@
 import { EdgeAccount } from 'edge-core-js';
 
-import { EdgeWalletsKeys, PinConfirmation, WalletKeys } from '../../types';
+import {
+  AnyObject,
+  EdgeWalletsKeys,
+  PinConfirmation,
+  WalletKeys,
+} from '../../types';
 import { PinDataType } from '../../redux/modal/types';
 
 export type SubmitActionParams = {
   edgeAccount?: EdgeAccount;
   keys?: WalletKeys | null;
-  data?: any;
+  data?: AnyObject;
 };
 
 export type Props = {

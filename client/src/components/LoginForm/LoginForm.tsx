@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { osName, osVersion } from 'react-device-detect';
 
 import ModalComponent from '../Modal/Modal';
@@ -14,7 +14,11 @@ import apis from '../../api';
 import { autoLogin, AutoLoginParams } from '../../util/login';
 
 import { REF_ACTIONS } from '../../constants/common';
-import { EmailConfirmationResult, LastAuthData } from '../../types';
+import {
+  EmailConfirmationResult,
+  LastAuthData,
+  LoginFailure,
+} from '../../types';
 
 type FormValues = {
   email?: string;
@@ -34,7 +38,7 @@ type Props = {
   getCachedUsers: () => void;
   resetLastAuthData: () => void;
   resetLoginFailure: () => void;
-  loginFailure: { fields?: { [fieldName: string]: any }; code?: string };
+  loginFailure: LoginFailure;
   edgeLoginFailure: {
     type?: string;
     reason?: string;
@@ -51,7 +55,7 @@ const REF_SUBTITLES = {
   [REF_ACTIONS.SIGNNFT]: 'Sign in to complete signing your NFT',
 };
 
-const LoginForm = (props: Props) => {
+const LoginForm: React.FC<Props> = props => {
   const {
     show,
     onSubmit,

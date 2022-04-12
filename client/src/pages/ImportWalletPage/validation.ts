@@ -63,8 +63,11 @@ export const validate = async (
     await apis.account.validateWalletImport(publicKey);
   } catch (e) {
     if (e.data && e.data.name) {
+      const {
+        data: { name },
+      } = e;
       const uniqueError = { ...VALIDATION_ERRORS.uniqueKey };
-      uniqueError.message = `${uniqueError.message} - (${e.data.name})`;
+      uniqueError.message = `${uniqueError.message} - (${name as string})`;
       return uniqueError;
     }
 

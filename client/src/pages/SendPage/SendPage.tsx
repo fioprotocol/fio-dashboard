@@ -11,7 +11,7 @@ import { putParamsToUrl } from '../../utils';
 import { fioAddressToPubKey } from '../../util/fio';
 
 import { ContainerProps, SendTokensValues, InitialValues } from './types';
-import { TrxResponse } from '../../api/fio';
+import { TrxResponsePaidBundles } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 
 import { BADGE_TYPES } from '../../components/Badge/Badge';
@@ -79,7 +79,7 @@ const SendPage: React.FC<ContainerProps> = props => {
     setSendData(null);
     setProcessing(false);
   };
-  const onSuccess = (res: TrxResponse & { bundlesCollected?: number }) => {
+  const onSuccess = (res: TrxResponsePaidBundles) => {
     setSendData(null);
     setProcessing(false);
     setResultsData({

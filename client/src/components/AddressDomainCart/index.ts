@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { withRouter } from 'react-router-dom';
 
 import { compose } from '../../utils';
 
@@ -31,4 +30,4 @@ const reduxConnect = connect(
   },
 );
 
-export default withRouter(compose(reduxConnect)(AddressDomainCart));
+export default compose(reduxConnect)(AddressDomainCart);

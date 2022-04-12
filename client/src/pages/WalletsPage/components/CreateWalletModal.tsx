@@ -12,7 +12,7 @@ type Props = {
   loading: boolean;
   initialValues: CreateWalletValues;
   onClose: () => void;
-  onSubmit: (values: any) => void;
+  onSubmit: (values: CreateWalletValues) => void;
 };
 
 const CreateWalletModal: React.FC<Props> = props => {

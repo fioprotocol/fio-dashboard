@@ -9,7 +9,7 @@ type Props = {
   children: React.ReactNode | React.ReactNode[];
 };
 
-const TooltipComponent: React.FC<Props> = (props: Props) => {
+const TooltipComponent: React.FC<Props> = props => {
   const { id, children } = props;
 
   return (

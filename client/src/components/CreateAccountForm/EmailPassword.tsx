@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
 import { Field } from 'react-final-form';
-import classnames from 'classnames';
 import validator from 'email-validator';
 import { OnFocus } from 'react-final-form-listeners';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classnames from 'classnames';
 
 import FormHeader from '../FormHeader/FormHeader';
 import Input, { INPUT_UI_STYLES } from '../Input/Input';
+
+import {
+  FormValues,
+  PasswordValidation,
+  PasswordValidationState,
+  ValidationErrors,
+} from './types';
 
 import classes from './CreateAccountForm.module.scss';
 
@@ -18,8 +24,11 @@ export const VALIDATION_TITLES = {
   number: 'Must have at least 1 number',
 };
 
-export const validate = (values, passValid) => {
-  const errors = {};
+export const validate = (
+  values: FormValues,
+  passValid: PasswordValidation,
+): ValidationErrors => {
+  const errors: ValidationErrors = {};
   if (!values.email || !validator.validate(values.email)) {
     errors.email = 'Invalid Email Address';
   }
@@ -76,9 +85,22 @@ export const validate = (values, passValid) => {
   return errors;
 };
 
-export default class EmailPassword extends Component {
-  constructor(props) {
-    super();
+type Props = {
+  usernameAvailableLoading: boolean;
+  loading: boolean;
+  passwordValidation: PasswordValidationState;
+  onEmailBlur: (e: React.FocusEvent<HTMLInputElement>) => Promise<void | null>;
+};
+
+type LocalState = {
+  passwordValidation: PasswordValidationState;
+  usernameAvailableLoading: boolean;
+  showValidationRules: boolean;
+};
+
+export default class EmailPassword extends Component<Props, LocalState> {
+  constructor(props: Props) {
+    super(props);
     this.state = {
       passwordValidation: {
         length: { isChecked: false },
@@ -87,7 +109,6 @@ export default class EmailPassword extends Component {
         number: { isChecked: false },
       },
       usernameAvailableLoading: props.usernameAvailableLoading,
-      usernameError: null,
       showValidationRules: false,
     };
   }
@@ -108,7 +129,7 @@ export default class EmailPassword extends Component {
       >
         {Object.keys(passwordValidation).map(key => (
           <div
-            key={VALIDATION_TITLES[key]}
+            key={VALIDATION_TITLES[key as keyof PasswordValidationState]}
             className={classes.validationWrapper}
           >
             <FontAwesomeIcon
@@ -116,17 +137,20 @@ export default class EmailPassword extends Component {
               className={classnames(
                 classes.icon,
                 classes.checkedIcon,
-                passwordValidation[key].isChecked && classes.checked,
+                passwordValidation[key as keyof PasswordValidationState]
+                  .isChecked && classes.checked,
               )}
             />
-            <p className={classes.textWrapper}>{VALIDATION_TITLES[key]}</p>
+            <p className={classes.textWrapper}>
+              {VALIDATION_TITLES[key as keyof PasswordValidationState]}
+            </p>
           </div>
         ))}
       </div>
     );
   };
 
-  render() {
+  render(): React.ReactElement {
     const { onEmailBlur, loading, usernameAvailableLoading } = this.props;
 
     return (
@@ -164,6 +188,7 @@ export default class EmailPassword extends Component {
         />
         <Field
           name="addEmailToPromoList"
+          // @ts-ignore // todo: fix type issue:  SupportedInputs | React.ComponentType<FieldRenderProps<boolean, HTMLElement>>
           component={Input}
           type="checkbox"
           label="Receive periodic updates and promotional emails from FIO"

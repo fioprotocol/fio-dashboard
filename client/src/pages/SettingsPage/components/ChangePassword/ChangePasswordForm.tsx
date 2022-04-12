@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 
 import { Field, FieldValue } from '../../../../components/Input/Field';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
@@ -23,7 +23,7 @@ type Props = {
   onSubmit: (values: FormValuesTypes) => void;
 };
 
-const ChangePasswordForm = (props: Props) => {
+const ChangePasswordForm: React.FC<Props> = props => {
   const { onSubmit, loading, changePasswordError, onUnmount } = props;
   const [values, setValues] = useState<FormValuesTypes>({
     password: '',
@@ -57,7 +57,10 @@ const ChangePasswordForm = (props: Props) => {
 
   const onChange = (value: FieldValue, name?: string) => {
     if (!name) return;
-    const newValues: FormValuesTypes = { ...values, [name]: `${value}` };
+    const newValues: FormValuesTypes = {
+      ...values,
+      [name]: `${value as string}`,
+    };
     setValues(newValues);
   };
 

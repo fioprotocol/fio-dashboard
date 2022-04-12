@@ -8,7 +8,12 @@ import {
 } from '../edge/actions';
 import { USER_STATUSES } from '../../constants/common';
 
-import { User, LastAuthData, EmailConfirmationResult } from '../../types';
+import {
+  User,
+  LastAuthData,
+  EmailConfirmationResult,
+  AnyType,
+} from '../../types';
 
 export default combineReducers({
   loading(state: boolean = false, action) {
@@ -163,7 +168,7 @@ export default combineReducers({
   },
   error(
     state: {
-      fields?: { [fieldName: string]: any };
+      fields?: { [fieldName: string]: AnyType };
       code?: string;
       message?: string;
     } | null = null,

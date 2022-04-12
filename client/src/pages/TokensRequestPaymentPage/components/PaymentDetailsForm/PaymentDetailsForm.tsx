@@ -93,7 +93,7 @@ const PaymentDetailsForm: React.FC<PaymentDetailsProps> = props => {
                 </>
               )}
               <div className={classnames(classes.paragraph, classes.dark)}>
-                {`Public Address Chain ID: ${chainCode}`}
+                {`Public Address Chain ID: ${(chainCode as string) || ''}`}
               </div>
             </div>
 

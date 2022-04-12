@@ -1,3 +1,4 @@
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Dropdown from 'react-dropdown';
 
@@ -10,7 +11,7 @@ type Props = {
   onChange: (value: string) => void;
 };
 
-const CustomDropdown = (props: Props) => {
+const CustomDropdown: React.FC<Props> = props => {
   const { value, list, onChange } = props;
 
   if (list.length === 1) return <div>{list[0]}</div>;

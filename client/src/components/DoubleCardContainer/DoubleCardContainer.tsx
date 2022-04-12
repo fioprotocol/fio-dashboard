@@ -10,7 +10,7 @@ type Props = {
   smallCart?: React.ReactNode;
 };
 
-const DoubleCardContainer: React.FC<Props> = (props: Props) => {
+const DoubleCardContainer: React.FC<Props> = props => {
   const { title, bigCart, smallCart } = props;
   return (
     <LayoutContainer title={title}>
