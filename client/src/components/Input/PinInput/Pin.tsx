@@ -7,19 +7,18 @@ import NumericKeyboard from './NumericKeyboard';
 
 import { PIN_LENGTH } from '../../../constants/form';
 
-import { PinInputProps } from './types';
+import { PinProps } from './types';
 
 import classes from '../styles/PinInput.module.scss';
 
-const PinInput: React.FC<PinInputProps> = props => {
+const PinInput: React.FC<PinProps> = props => {
   const {
     error,
     name,
     value,
     withoutMargin,
-    form,
+    resetError,
     onChange,
-    onReset,
     submit,
   } = props;
 
@@ -31,15 +30,11 @@ const PinInput: React.FC<PinInputProps> = props => {
       valueRef.current = data;
       onChange(data);
 
-      if (error && data?.length === PIN_LENGTH - 1) {
-        form &&
-          form.mutators.setDataMutator(name, {
-            error: false,
-          });
-        onReset && onReset();
+      if (resetError && error && data?.length === PIN_LENGTH - 1) {
+        resetError();
       }
     },
-    [error, form, name, onChange, onReset],
+    [error, onChange, resetError],
   );
 
   const handleKeyChange = useCallback(
@@ -62,7 +57,7 @@ const PinInput: React.FC<PinInputProps> = props => {
       }
       onChange(retValue);
     },
-    [error, onChange, submit],
+    [error, onChange, submit], // todo: onChange changes every render - investigate
   );
 
   const onKeyUp = useCallback(
