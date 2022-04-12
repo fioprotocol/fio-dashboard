@@ -25,7 +25,7 @@ jobs:
             - fio-dapp-{{ .Environment.CIRCLE_BRANCH }}-{{ checksum "package.json" }}
       - run:
           name: Install packages if no cached
-          command: test -d node_modules || npm install
+          command: test -d node_modules || npm i --legacy-peer-deps
       - save_cache:
           key: fio-dapp-{{ .Environment.CIRCLE_BRANCH }}-{{ checksum "package.json" }}
           paths:
@@ -36,7 +36,7 @@ jobs:
           command: "CI= npm run client:build" #|
           #  node --max-old-space-size=<< pipeline.parameters.npmmemory >>
           #  $(which npm) run client:build
-             
+
       - run:
           name: Install packages required for deploy
           command: sudo apt-get update && sudo apt-get install -y gettext-base rsync
