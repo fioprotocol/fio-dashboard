@@ -1,21 +1,28 @@
 import { ChangeEvent } from 'react';
 import { FormApi } from 'final-form';
 
-export type PinInputProps = {
+import { CommonObjectProps } from '../../../types';
+
+type DefaultPinProps = {
   error: string;
   name: string;
   value: string;
   withoutMargin?: boolean;
-  form?: FormApi;
-  onBlur?: () => void;
+  submit?: () => Promise<CommonObjectProps>;
   onChange: (value: string) => void;
-  onFocus?: () => void;
+};
+
+export type PinInputProps = {
+  form?: FormApi;
   onReset?: () => void;
-  submit?: () => void;
   input?: {
     value: string;
   };
-};
+} & DefaultPinProps;
+
+export type PinProps = {
+  resetError?: () => void;
+} & DefaultPinProps;
 
 export type PinInputEventProps = {
   nativeEvent?: {

@@ -7,7 +7,7 @@ import { PinInputProps } from './types';
 
 const PinInput: React.FC<PinInputProps &
   FieldRenderProps<PinInputProps>> = props => {
-  const { meta, input } = props;
+  const { meta, input, name, onReset } = props;
 
   const { error, data } = meta;
 
@@ -15,12 +15,20 @@ const PinInput: React.FC<PinInputProps &
 
   const form = useForm();
 
+  const resetError = () => {
+    form &&
+      form.mutators.setDataMutator(name, {
+        error: false,
+      });
+    onReset && onReset();
+  };
+
   return (
     <Pin
       {...input}
       {...props}
       error={pinError}
-      form={form}
+      resetError={resetError}
       submit={form.submit}
     />
   );
