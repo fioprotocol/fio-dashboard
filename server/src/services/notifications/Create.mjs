@@ -22,7 +22,7 @@ export default class NotificationsCreate extends Base {
   }
 
   async execute({
-    data: { type, action, title, message, pagesToShow = null, contentType },
+    data: { type, action, title = null, message = null, pagesToShow = null, contentType },
   }) {
     const existing = await Notification.getItem({
       type,
