@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -29,7 +30,7 @@ type LoggedNavProps = {
   closeMenu: () => void;
 };
 
-const LoggedNav = (props: LoggedNavProps) => {
+const LoggedNav: React.FC<LoggedNavProps> = props => {
   const {
     cartItems,
     isMenuOpen,
@@ -85,7 +86,7 @@ const LoggedNav = (props: LoggedNavProps) => {
   };
 
   // @ts-ignore
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
   const renderNotifications = () => {
     return hideNotifications ? null : (
       <>

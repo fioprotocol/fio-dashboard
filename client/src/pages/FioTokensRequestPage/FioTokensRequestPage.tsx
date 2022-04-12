@@ -15,7 +15,7 @@ import {
   RequestTokensValues,
 } from './types';
 import { FioWalletDoublet, MappedPublicAddresses } from '../../types';
-import { TrxResponse } from '../../api/fio';
+import { TrxResponsePaidBundles } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 
 import apis from '../../api';
@@ -102,7 +102,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
     setRequestData(null);
     setProcessing(false);
   };
-  const onSuccess = (res: TrxResponse & { bundlesCollected?: number }) => {
+  const onSuccess = (res: TrxResponsePaidBundles) => {
     setRequestData(null);
     setProcessing(false);
     setResultsData({
@@ -127,6 +127,10 @@ const RequestPage: React.FC<ContainerProps> = props => {
     setResultsData(null);
   };
 
+  const onBack = () => {
+    history.goBack();
+  };
+
   if (publicKeyFromPath != null && (!fioWallet || !fioWallet.id))
     return <FioLoader wrap={true} />;
 
@@ -139,7 +143,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
         titleFrom="Requesting FIO Crypto Handle"
         titleAmount="Amount Requested"
         roe={roe}
-        onClose={history.goBack}
+        onClose={onBack}
         onRetry={onResultsRetry}
       />
     );
@@ -161,7 +165,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
       ) : null}
       <PseudoModalContainer
         title="Request FIO Tokens"
-        onBack={history.goBack}
+        onBack={onBack}
         middleWidth={true}
       >
         {publicKeyFromPath != null ? (

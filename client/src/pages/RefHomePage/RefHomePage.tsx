@@ -30,7 +30,7 @@ type Props = {
   refProfileQueryParams: RefQueryParams;
   refLinkError: string | null;
   getInfo: (code: string) => void;
-  setContainedParams: (params: any) => void;
+  setContainedParams: (params: RefQuery) => void;
   showLoginModal: () => void;
 };
 
@@ -113,6 +113,7 @@ export const RefHomePage: React.FC<Props &
               <img
                 src={refProfileInfo.settings.img}
                 className={classnames.refImg}
+                alt=""
               />
             }
             title={refProfileInfo.title}

@@ -22,19 +22,22 @@ import {
 } from '../redux/profile/selectors';
 import { roe } from '../redux/registrations/selectors';
 
+import { getElementByFioName } from '../utils';
+import useEffectOnce from '../hooks/general';
+
 import apis from '../api';
 
 import { ROUTES } from '../constants/routes';
 import { DEFAULT_BALANCES } from './prices';
+import { emptyWallet } from '../redux/fio/reducer';
 
 import {
   FioNameItemProps,
   FioWalletDoublet,
   FioAddressDoublet,
   WalletBalances,
+  MappedPublicAddresses,
 } from '../types';
-import { getElementByFioName } from '../utils';
-import { emptyWallet } from '../redux/fio/reducer';
 
 export function useFioAddresses(
   publicKey?: string,
@@ -69,7 +72,10 @@ export function useFioAddresses(
   return [retFioCryptoHandles, isLoading];
 }
 
-export function useFioWallet(fioNameList: FioNameItemProps[], name: string) {
+export function useFioWallet(
+  fioNameList: FioNameItemProps[],
+  name: string,
+): { currentWallet: FioWalletDoublet; settingWallet: boolean } {
   const dispatch = useDispatch();
 
   const [publicKey, setPublicKey] = useState('');
@@ -102,7 +108,7 @@ export function useFioWallet(fioNameList: FioNameItemProps[], name: string) {
   return { currentWallet: wallet || emptyWallet, settingWallet };
 }
 
-export function useNonActiveUserRedirect() {
+export function useNonActiveUserRedirect(): void {
   const isNewUser = useSelector(isNewUserSelector);
   const isNewEmailNotVerified = useSelector(isNewEmailNotVerifiedSelector);
   const isAuth = useSelector(isAuthenticated);
@@ -117,7 +123,10 @@ export function useNonActiveUserRedirect() {
   }, [isAuth, isNewUser, isNewEmailNotVerified]);
 }
 
-export function usePublicAddresses(fioAddress: string, limit: number = 0) {
+export function usePublicAddresses(
+  fioAddress: string,
+  limit: number = 0,
+): void {
   const [offset, setOffset] = useState(0);
 
   const dispatch = useDispatch();
@@ -130,10 +139,10 @@ export function usePublicAddresses(fioAddress: string, limit: number = 0) {
   const fetchPublicAddresses = (incOffset: number = 0) =>
     dispatch(getAllFioPubAddresses(fioAddress, limit, incOffset));
 
-  useEffect(() => {
+  useEffectOnce(() => {
     if (!fioAddress) return;
     fetchPublicAddresses();
-  }, []);
+  }, [fioAddress, fetchPublicAddresses]);
 
   useEffect(() => {
     if (hasMore) {
@@ -144,7 +153,9 @@ export function usePublicAddresses(fioAddress: string, limit: number = 0) {
   }, [hasMore]);
 }
 
-export function usePubAddressesFromWallet(walletPublicKey?: string) {
+export function usePubAddressesFromWallet(
+  walletPublicKey?: string,
+): MappedPublicAddresses {
   const dispatch = useDispatch();
 
   const fioAddressToPubAddresses = useSelector(mappedPublicAddresses);
@@ -164,7 +175,7 @@ export function usePubAddressesFromWallet(walletPublicKey?: string) {
   return fioAddressToPubAddresses;
 }
 
-export function useRoe() {
+export function useRoe(): number | null {
   const roeCoefficient = useSelector(roe);
 
   return roeCoefficient || null;
@@ -176,7 +187,7 @@ export function useConvertFioToUsdc({
 }: {
   fioAmount?: number;
   nativeAmount?: number;
-}) {
+}): number | null {
   const roeAmount = useSelector(roe);
 
   if ((!fioAmount && !nativeAmount) || !roeAmount) return null;
@@ -189,7 +200,7 @@ export function useConvertFioToUsdc({
   return apis.fio.convertFioToUsdc(fioSuf, roeAmount);
 }
 
-export function useInterval(callback: () => void, delay: number | null) {
+export function useInterval(callback: () => void, delay: number | null): void {
   const savedCallback = useRef(callback);
 
   // Remember the latest callback if it changes.

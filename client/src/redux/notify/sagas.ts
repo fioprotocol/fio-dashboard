@@ -23,12 +23,12 @@ import { ErrorData } from './constants';
 
 import { Action } from '../types';
 
-export const toString = (obj: object) =>
+export const toString = (obj: object): string =>
   Object.entries(obj)
-    .map(([key, val]) => `${key}: ${val}`)
+    .map(([key, val]) => `${key}: ${val as string}`)
     .join(', ');
 
-export function* notify(history: History) {
+export function* notify(history: History): Generator {
   yield takeEvery('*', function*(action: Action) {
     if (
       action.error &&
@@ -56,7 +56,7 @@ export function* notify(history: History) {
         if (action.type === UPDATE_EMAIL_FAILURE) buttonText = 'Close';
 
         yield put(showGenericErrorModal(message, title, buttonText));
-        if (redirect) yield history.push(redirect);
+        if (redirect) history.push(redirect);
       }
     }
 
@@ -69,8 +69,7 @@ export function* notify(history: History) {
       const homePageLink: ReturnType<typeof getHomePageLink> = yield select(
         getHomePageLink,
       );
-      // @ts-ignore
-      yield put(logout({ history }, homePageLink));
+      yield put<Action>(logout({ history }, homePageLink));
     }
   });
 }

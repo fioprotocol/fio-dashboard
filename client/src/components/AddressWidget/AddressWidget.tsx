@@ -13,7 +13,7 @@ type Props = {
   };
 };
 
-const AddressWidget: React.FC<Props> = (props: Props) => {
+const AddressWidget: React.FC<Props> = props => {
   return (
     <div className={classes.container}>
       <h1 className={classes.title}>

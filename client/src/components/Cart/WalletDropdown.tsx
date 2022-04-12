@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FieldRenderProps } from 'react-final-form';
 import Dropdown from 'react-dropdown';
 import isEmpty from 'lodash/isEmpty';
+
+import useEffectOnce from '../../hooks/general';
 
 import { FioWalletDoublet } from '../../types';
 
@@ -41,12 +43,12 @@ const WalletDropdown: React.FC<Props & FieldRenderProps<Props>> = (
     setWallet(itemValue);
   };
 
-  useEffect(() => {
+  useEffectOnce(() => {
     if (initValue) {
       onChange(initValue);
       setWallet(initValue);
     }
-  }, []);
+  }, [initValue, onChange, setWallet]);
 
   return (
     <Dropdown

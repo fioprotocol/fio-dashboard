@@ -1,3 +1,4 @@
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
@@ -8,7 +9,7 @@ type SiteLinkProps = {
   refProfileInfo: RefProfile;
 };
 
-const SiteLink = (props: SiteLinkProps) => {
+const SiteLink: React.FC<SiteLinkProps> = props => {
   const { refProfileInfo } = props;
 
   let link = 'https://fioprotocol.io/';

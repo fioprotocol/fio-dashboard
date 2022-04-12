@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { withRouter } from 'react-router-dom';
 
 import { compose } from '../../utils';
 import { refreshBalance } from '../../redux/fio/actions';
@@ -40,4 +39,4 @@ const reduxConnect = connect(
   },
 );
 
-export default withRouter(compose(reduxConnect)(CheckoutPage));
+export default compose(reduxConnect)(CheckoutPage);

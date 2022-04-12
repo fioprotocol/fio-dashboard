@@ -23,8 +23,10 @@ import {
 } from '../../redux/refProfile/selectors';
 
 import MainHeader from './MainHeader';
+
 import { MainHeaderProps } from './types';
 import { AppDispatch } from '../../redux/init';
+import { OwnPropsAny } from '../../types';
 
 const selector = createStructuredSelector({
   pathname,
@@ -43,7 +45,10 @@ const selector = createStructuredSelector({
   locationState,
 });
 
-const actions = (dispatch: AppDispatch, ownProps: MainHeaderProps) => ({
+const actions = (
+  dispatch: AppDispatch,
+  ownProps: MainHeaderProps & OwnPropsAny,
+) => ({
   showLoginModal: () => dispatch(showLoginModal()),
   logout: () => {
     const { history } = ownProps;
@@ -51,7 +56,5 @@ const actions = (dispatch: AppDispatch, ownProps: MainHeaderProps) => ({
     dispatch(resetLastAuthData());
   },
 });
-
-export { MainHeader };
 
 export default withRouter(connect(selector, actions)(MainHeader));

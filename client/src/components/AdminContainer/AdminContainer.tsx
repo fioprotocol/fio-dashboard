@@ -7,7 +7,7 @@ type Props = {
   isAdmin: boolean;
 };
 
-const AdminContainer: React.FC<Props> = (props: Props) => {
+const AdminContainer: React.FC<Props> = props => {
   if (!props.isAdmin) {
     return <Redirect to={{ pathname: ROUTES.HOME }} />;
   }

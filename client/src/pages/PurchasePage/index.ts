@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { withRouter } from 'react-router-dom';
 
 import { compose } from '../../utils';
 import { recalculate } from '../../redux/cart/actions';
@@ -38,4 +37,4 @@ const reduxConnect = connect(
   },
 );
 
-export default withRouter(compose(reduxConnect)(PurchasePage));
+export default compose(reduxConnect)(PurchasePage);

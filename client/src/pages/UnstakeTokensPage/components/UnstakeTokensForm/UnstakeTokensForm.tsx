@@ -233,7 +233,9 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
                         select an address with an available bundle balance, pay
                         the fee below or{' '}
                         <Link
-                          to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}/${fioAddress}`}
+                          to={`${
+                            ROUTES.FIO_ADDRESS_ADD_BUNDLES
+                          }/${fioAddress as string}`}
                         >
                           add more bundles
                         </Link>

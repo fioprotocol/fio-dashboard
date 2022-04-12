@@ -10,7 +10,7 @@ type SideMenuProps = {
   isMenuOpen: boolean;
   toggleMenuOpen: (openState: boolean) => void;
 };
-const SideMenu = (props: SideMenuProps) => {
+const SideMenu: React.FC<SideMenuProps> = props => {
   const { children, isMenuOpen, toggleMenuOpen } = props;
   return (
     <>

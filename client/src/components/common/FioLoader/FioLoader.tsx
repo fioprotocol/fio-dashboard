@@ -1,10 +1,12 @@
+import React from 'react';
+
 import logoAnimation from '../../CreateAccountForm/logo-animation.json';
 
 type Props = {
   wrap?: boolean;
 };
 
-const FioLoader = (props: Props) => {
+const FioLoader: React.FC<Props> = props => {
   const renderLoader = () => (
     <lottie-player
       id="logo-loading"

@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -25,7 +26,7 @@ type RegularNavProps = {
   closeMenu: () => void;
 };
 
-const RegularNav = (props: RegularNavProps) => {
+const RegularNav: React.FC<RegularNavProps> = props => {
   const { cartItems, hideCart } = props;
 
   const isDesktop = useCheckIfDesktop();

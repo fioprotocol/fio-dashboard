@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Field } from 'react-final-form';
 import { OnChange } from 'react-final-form-listeners';
 
@@ -18,7 +18,7 @@ const CUSTOM_DROPDOWN_VALUE = {
   name: 'Add Custom Domain',
 };
 
-const AddressForm: React.FC<AddressFormProps> = (props: AddressFormProps) => {
+const AddressForm: React.FC<AddressFormProps> = props => {
   const {
     hasCustomDomain,
     showCustomDomain,
@@ -31,10 +31,6 @@ const AddressForm: React.FC<AddressFormProps> = (props: AddressFormProps) => {
   } = props;
 
   const isCustomDomain = hasCustomDomain || showCustomDomain;
-
-  useEffect(() => {
-    if (isCustomDomain) toggleShowCustomDomain(true);
-  }, []);
 
   return (
     <>

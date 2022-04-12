@@ -9,13 +9,18 @@ import logoAnimation from './logo-animation.json';
 
 const MIN_WAIT_TIME = 3000;
 
-export default class Success extends Component {
-  t0 = null;
-  componentDidMount() {
+type Props = {
+  signupSuccess: boolean;
+  onFinish: () => void;
+};
+
+export default class Success extends Component<Props> {
+  t0: number | null = null;
+  componentDidMount(): void {
     this.t0 = performance.now();
   }
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
+  componentDidUpdate(prevProps: Props): void {
     if (!prevProps.signupSuccess && this.props.signupSuccess) {
       this.handleComplete();
     }
@@ -29,7 +34,7 @@ export default class Success extends Component {
     this.props.onFinish();
   };
 
-  render() {
+  render(): React.ReactElement {
     return (
       <FormHeader
         header={

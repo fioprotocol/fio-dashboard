@@ -86,9 +86,9 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
         ) : (
           <p className={classes.footer}>
             Didn't get an email?{' '}
-            <a href="#" onClick={onSend} className={classes.sendLink}>
+            <span onClick={onSend} className={classes.sendLink}>
               Send Again
-            </a>
+            </span>
           </p>
         )}
         <p className="mt-0 mb-0">

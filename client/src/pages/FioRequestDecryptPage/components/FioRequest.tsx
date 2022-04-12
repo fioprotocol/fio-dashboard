@@ -28,7 +28,7 @@ type Props = {
   fioWallet: FioWalletDoublet;
 };
 
-const FioRequest: React.FC<Props> = (props: Props) => {
+const FioRequest: React.FC<Props> = props => {
   const {
     fioRecordDecrypted,
     fioRecordType,

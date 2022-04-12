@@ -10,7 +10,7 @@ type Props = {
   hasBigMargin?: boolean;
 };
 
-const CartSmallContainer: React.FC<Props> = (props: Props) => {
+const CartSmallContainer: React.FC<Props> = props => {
   const { children, isAquaColor, isHintColor, hasBigMargin } = props;
   return (
     <div

@@ -22,7 +22,7 @@ type Props = {
   subTitle?: string;
 };
 
-const AddressWidget: React.FC<Props> = (props: Props) => {
+const AddressWidget: React.FC<Props> = props => {
   const { logo, subTitle, action, edgeAuthLoading, showLoginModal } = props;
 
   const openLogin = () => showLoginModal();

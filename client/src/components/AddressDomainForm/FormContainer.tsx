@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { FormApi } from 'final-form';
 import { isEmpty } from 'lodash';
@@ -11,6 +11,8 @@ import DomainForm from './DomainForm';
 
 import { ROUTES } from '../../constants/routes';
 import { ADDRESS_FORM_CONTENT } from './constants';
+
+import useEffectOnce from '../../hooks/general';
 
 import { FormContainerProps, FormValuesProps } from './types';
 
@@ -44,14 +46,14 @@ const FormContainer: React.FC<FormContainerProps> = props => {
 
   const buttonText = `Get My FIO ${isDomain ? 'Domain' : 'Crypto Handle'}`;
 
-  useEffect(() => {
+  useEffectOnce(() => {
     if (!isHomepage && isAddress && !isEmpty(formProps)) {
       const { handleSubmit, values } = formProps || {};
       if (!isEmpty(values)) {
         handleSubmit();
       }
     }
-  }, []);
+  }, [isHomepage, isAddress, formProps]);
 
   const renderActionButton = () => {
     if (!isHomepage) return null;
@@ -125,7 +127,9 @@ const FormContainer: React.FC<FormContainerProps> = props => {
 
     return (
       <form
-        onSubmit={handleSubmit}
+        onSubmit={() => {
+          handleSubmit();
+        }}
         className={classes.form}
         key="form"
         id="addressForm"

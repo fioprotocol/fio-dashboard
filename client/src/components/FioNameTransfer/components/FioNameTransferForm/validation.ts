@@ -1,10 +1,12 @@
 import apis from '../../../../api';
 
-export const validate = async (values: { transferAddress: string }) => {
+export const validate = async (values: {
+  transferAddress: string;
+}): Promise<boolean> => {
   let { transferAddress } = values;
 
   if (!transferAddress) {
-    throw { transferAddress: 'Required' };
+    throw new Error('Required');
   }
 
   let isFioAddress = false;
@@ -41,8 +43,7 @@ export const validate = async (values: { transferAddress: string }) => {
 
   if (isValid) return true;
 
-  throw {
-    transferAddress:
-      'Unfortunately that FIO Crypto Handle or FIO Public Key is incorrect',
-  };
+  throw new Error(
+    'Unfortunately that FIO Crypto Handle or FIO Public Key is incorrect',
+  );
 };

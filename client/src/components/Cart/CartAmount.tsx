@@ -19,7 +19,7 @@ type Props = {
   roe: number;
 };
 
-const CartAmount: React.FC<Props> = (props: Props) => {
+const CartAmount: React.FC<Props> = props => {
   const {
     cartItems,
     hasLowBalance,

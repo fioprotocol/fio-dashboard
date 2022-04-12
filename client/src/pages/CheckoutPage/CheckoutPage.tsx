@@ -1,17 +1,38 @@
 import React, { useEffect } from 'react';
 import isEmpty from 'lodash/isEmpty';
+import { History } from 'history';
 
 import PseudoModalContainer from '../../components/PseudoModalContainer';
-import { useCheckIfDesktop } from '../../screenType';
 import CheckoutPurchaseContainer from '../../components/CheckoutPurchaseContainer';
 import { RenderCheckout } from '../../components/CheckoutPurchaseContainer/CheckoutPurchaseComponents';
-import '../../helpers/gt-sdk';
+
 import { ROUTES } from '../../constants/routes';
+
+import '../../helpers/gt-sdk';
 import { totalCost, handleFreeAddressCart } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
 import MathOp from '../../util/math';
 
-const CheckoutPage = props => {
+import { CartItem, Domain, FioWalletDoublet, Prices } from '../../types';
+
+type Props = {
+  loading: boolean;
+  fioWallets: FioWalletDoublet[];
+  cartItems: CartItem[];
+  history: History;
+  paymentWalletPublicKey: string;
+  isAuthenticated: boolean;
+  domains: Domain[];
+  hasFreeAddress: boolean;
+  prices: Prices;
+  isProcessing: boolean;
+  roe: number | null;
+  setWallet: (publicKey: string) => void;
+  refreshBalance: (publicKey: string) => void;
+  recalculate: (cartItems: CartItem[]) => void;
+};
+
+const CheckoutPage: React.FC<Props> = props => {
   const {
     loading,
     fioWallets,
@@ -21,15 +42,12 @@ const CheckoutPage = props => {
     paymentWalletPublicKey,
     isAuthenticated,
     setWallet,
-    domains,
     hasFreeAddress,
     recalculate,
     prices,
     isProcessing,
     roe,
   } = props;
-
-  const isDesktop = useCheckIfDesktop();
 
   useEffect(() => {
     if (!isEmpty(fioWallets)) {
@@ -80,13 +98,12 @@ const CheckoutPage = props => {
   useEffect(() => {
     !isProcessing &&
       handleFreeAddressCart({
-        domains,
         recalculate,
         cartItems,
         prices,
         hasFreeAddress,
       });
-  }, [domains, hasFreeAddress, prices]);
+  }, [hasFreeAddress, prices]);
 
   const onClose = () => {
     history.push(ROUTES.CART);
@@ -97,7 +114,6 @@ const CheckoutPage = props => {
       <CheckoutPurchaseContainer isCheckout>
         <RenderCheckout
           cart={cartItems}
-          isDesktop={isDesktop}
           walletBalances={walletBalancesAvailable}
           walletName={paymentWallet ? paymentWallet.name : ''}
           roe={roe}

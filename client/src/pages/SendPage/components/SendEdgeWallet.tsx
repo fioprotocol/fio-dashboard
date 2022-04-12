@@ -7,7 +7,10 @@ import apis from '../../../api';
 import { log } from '../../../util/general';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
-import { DEFAULT_ACTION_FEE_AMOUNT } from '../../../api/fio';
+import {
+  DEFAULT_ACTION_FEE_AMOUNT,
+  TrxResponsePaidBundles,
+} from '../../../api/fio';
 
 import { FioWalletDoublet } from '../../../types';
 import { SendTokensValues } from '../types';
@@ -20,7 +23,7 @@ import {
 
 type Props = {
   fioWallet: FioWalletDoublet;
-  onSuccess: (data: any) => void;
+  onSuccess: (data: TrxResponsePaidBundles) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
   sendData: SendTokensValues | null;

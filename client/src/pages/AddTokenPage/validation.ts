@@ -27,7 +27,9 @@ type FieldProps = {
 export const validate = (
   values: FormValues,
   publicAddresses: PublicAddressDoublet[],
-) => {
+): {
+  tokens: ErrorsProps[] | string;
+} => {
   const errors: {
     tokens: ErrorsProps[] | string;
   } = { tokens: [] };

@@ -1,11 +1,13 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
+import { AnyObject } from '../../types';
+
 type Props = {
   isDisabled: boolean;
   classname?: string;
   to: string;
-  onClick?: (params?: any) => void;
+  onClick?: (params?: AnyObject) => void;
 };
 
 const Link: React.FC<Props> = props => {

@@ -11,7 +11,6 @@ import { refreshBalance } from '../fio/actions';
 import {
   LOGIN_SUCCESS,
   PROFILE_SUCCESS,
-  SIGNUP_SUCCESS,
   LOGOUT_SUCCESS,
   NONCE_SUCCESS,
   loadProfile,
@@ -37,8 +36,9 @@ import { Api } from '../../api';
 import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
 import { FioWalletDoublet, PrivateRedirectLocationState } from '../../types';
 import { Action } from '../types';
+import { AuthDeleteNewDeviceRequestResponse } from '../../api/responses';
 
-export function* loginSuccess(history: History, api: Api) {
+export function* loginSuccess(history: History, api: Api): Generator {
   yield takeEvery(LOGIN_SUCCESS, function*(action: Action) {
     const hasRedirectTo: { pathname: string; state: object } = yield select(
       redirectLink,
@@ -51,8 +51,10 @@ export function* loginSuccess(history: History, api: Api) {
         // We have to wait delete voucher call from server to get updated profile then.
         // Sagas doesn't wait. So in this case we have to write result into a constant.
         // @ts-ignore
-        // eslint-disable-next-line no-unused-vars
-        const res = yield api.auth.deleteNewDeviceRequest(action.voucherId);
+        // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
+        const res: AuthDeleteNewDeviceRequestResponse = yield api.auth.deleteNewDeviceRequest(
+          action.voucherId,
+        );
       } catch (e) {
         log.error(e);
       }
@@ -68,10 +70,10 @@ export function* loginSuccess(history: History, api: Api) {
       locationState.from &&
       locationState.from.pathname
     ) {
-      yield history.push(locationState.from.pathname);
+      history.push(locationState.from.pathname);
     }
     if (hasRedirectTo) {
-      yield history.push(hasRedirectTo.pathname, hasRedirectTo.state);
+      history.push(hasRedirectTo.pathname, hasRedirectTo.state);
     }
 
     yield put(closeLoginModal());
@@ -79,7 +81,7 @@ export function* loginSuccess(history: History, api: Api) {
   });
 }
 
-export function* profileSuccess() {
+export function* profileSuccess(): Generator {
   yield takeEvery(PROFILE_SUCCESS, function*(action: Action) {
     try {
       if (!action.data.secretSet && action.data.secretSetNotification)
@@ -101,17 +103,13 @@ export function* profileSuccess() {
   });
 }
 
-export function* signupSuccess() {
-  yield takeEvery(SIGNUP_SUCCESS, function*() {});
-}
-
-export function* logoutSuccess(history: History, api: Api) {
+export function* logoutSuccess(history: History, api: Api): Generator {
   yield takeEvery(LOGOUT_SUCCESS, function() {
     api.client.removeToken();
   });
 }
 
-export function* nonceSuccess() {
+export function* nonceSuccess(): Generator {
   yield takeEvery(NONCE_SUCCESS, function*(action: Action) {
     const { email, signature, nonce, otpKey, voucherId } = action.data;
 

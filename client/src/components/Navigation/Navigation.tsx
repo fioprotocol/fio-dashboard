@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
 import classnames from 'classnames';
@@ -17,13 +18,15 @@ const navItems: string[] = [
   // LINKS.PROTOCOL_UPDATES,
 ];
 
-export const Navigation = (props: {
+type Props = {
   refProfileInfo: RefProfile | null;
   refProfileLoading: boolean;
   isNotActiveUser: boolean;
   isOnSide?: boolean;
   closeMenu?: () => void;
-}) => {
+};
+
+export const Navigation: React.FC<Props> = props => {
   const {
     isOnSide,
     refProfileInfo,

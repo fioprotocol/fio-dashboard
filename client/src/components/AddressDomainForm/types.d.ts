@@ -49,17 +49,6 @@ export type DefaultValidationProps = {
   toggleValidating: (isValidating: boolean) => void;
 };
 
-export type DomainValidationProps = {
-  cartItems: CartItem[];
-  options: string[];
-} & DefaultValidationProps;
-
-export type VerifyAddressProps = {
-  isAddress: boolean;
-  options: string[];
-  toggleValidating: (isValidating: boolean) => void;
-} & DefaultValidationProps;
-
 type DefaultFormContainerProps = {
   formProps: FormRenderProps<FormValuesProps, FormValuesProps>;
   type: FioNameType;
@@ -116,12 +105,6 @@ export type FormContainerProps = {
   isFree: boolean;
   toggleShowCustomDomain: (showCustomDomain: boolean) => void;
 } & DefaultFormContainerProps;
-
-export type PriceComponent = {
-  isDomainPrice?: null | boolean;
-  hasCurrentDomain: boolean;
-  hasCustomDomain: boolean;
-} & DefaultProps;
 
 export type NotificationProps = {
   cartItems: CartItem[];

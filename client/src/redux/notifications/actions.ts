@@ -1,4 +1,6 @@
 import { Api } from '../../api';
+import { CommonAction, CommonPromiseAction } from '../types';
+import { NotificationParams } from '../../types';
 
 export const prefix = 'notifications';
 
@@ -10,7 +12,7 @@ export const listNotifications = (query?: {
   type: string;
   contentType: string;
   createdAt: string;
-}) => ({
+}): CommonPromiseAction => ({
   types: [LIST_REQUEST, LIST_SUCCESS, LIST_FAILURE],
   promise: (api: Api) => api.notifications.list(query),
 });
@@ -19,14 +21,9 @@ export const CREATE_REQUEST = `${prefix}/CREATE_REQUEST`;
 export const CREATE_SUCCESS = `${prefix}/CREATE_SUCCESS`;
 export const CREATE_FAILURE = `${prefix}/CREATE_FAILURE`;
 
-export const createNotification = (data: {
-  type: string;
-  action: string;
-  contentType: string;
-  title?: string;
-  message?: string;
-  pagesToShow: string[];
-}) => ({
+export const createNotification = (
+  data: NotificationParams,
+): CommonPromiseAction => ({
   types: [CREATE_REQUEST, CREATE_SUCCESS, CREATE_FAILURE],
   promise: (api: Api) => api.notifications.create(data),
 });
@@ -41,7 +38,7 @@ export const updateNotification = ({
 }: {
   id: number;
   closeDate: string;
-}) => ({
+}): CommonPromiseAction => ({
   types: [UPDATE_REQUEST, UPDATE_SUCCESS, UPDATE_FAILURE],
   promise: (api: Api) => api.notifications.update({ id, closeDate }),
   id,
@@ -50,7 +47,14 @@ export const updateNotification = ({
 export const MANUAL_CREATE = `${prefix}/MANUAL_CREATE`;
 export const MANUAL_REMOVE = `${prefix}/MANUAL_REMOVE`;
 
-export const addManual = (data: Notification) => ({
+export const addManual = (data: {
+  type: string;
+  action: string;
+  contentType?: string;
+  title?: string;
+  message?: string;
+  pagesToShow: string[];
+}): CommonAction => ({
   type: MANUAL_CREATE,
   data: {
     ...data,
@@ -60,7 +64,10 @@ export const addManual = (data: Notification) => ({
   },
 });
 
-export const removeManual = (data: { id: number; closeDate: string }) => ({
+export const removeManual = (data: {
+  id: number;
+  closeDate: string;
+}): CommonAction => ({
   type: MANUAL_REMOVE,
   data,
 });

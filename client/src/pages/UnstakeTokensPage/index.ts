@@ -22,11 +22,14 @@ import apis from '../../api';
 
 import { ReduxState } from '../../redux/init';
 import { ContainerOwnProps } from './types';
-import { FioWalletDoublet } from '../../types';
+import { FioWalletDoublet, OwnPropsAny } from '../../types';
 
 const reduxConnect = connect(
   createStructuredSelector({
-    fioWallet: (state: ReduxState, ownProps: ContainerOwnProps | {}) => {
+    fioWallet: (
+      state: ReduxState,
+      ownProps: ContainerOwnProps & OwnPropsAny,
+    ) => {
       const { fioWallets } = state.fio;
       if (!('match' in ownProps)) return emptyWallet;
 
@@ -40,7 +43,7 @@ const reduxConnect = connect(
     feePrice: (state: ReduxState) =>
       state.fio.fees[apis.fio.actionEndPoints.unStakeFioTokens] ||
       DEFAULT_FEE_PRICES,
-    balance: (state: ReduxState, ownProps: ContainerOwnProps | {}) => {
+    balance: (state: ReduxState, ownProps: ContainerOwnProps & OwnPropsAny) => {
       const fioWallets = fioWalletsSelector(state);
       const fioWalletsBalances = fioWalletsBalancesSelector(state);
       if (!('match' in ownProps)) return DEFAULT_BALANCES;

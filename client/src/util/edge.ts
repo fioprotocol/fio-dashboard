@@ -27,7 +27,9 @@ export const waitWalletKeys = async (
   return keys;
 };
 
-export const waitForEdgeAccountStop = async (edgeAccount?: EdgeAccount) => {
+export const waitForEdgeAccountStop = async (
+  edgeAccount?: EdgeAccount,
+): Promise<void> => {
   try {
     edgeAccount?.loggedIn && (await edgeAccount.logout());
     await sleep(3000); // todo: added for testnet env because edge fio plugin rewriting base url after pin confirmation. Need to figure out how to be sure that fio engine is killed or fix transaction global base url const in FIOSDK

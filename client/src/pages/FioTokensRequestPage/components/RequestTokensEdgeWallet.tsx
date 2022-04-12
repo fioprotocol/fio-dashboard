@@ -17,10 +17,11 @@ import {
 import { FioWalletDoublet } from '../../../types';
 import { RequestTokensValues } from '../types';
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
+import { TrxResponsePaidBundles } from '../../../api/fio';
 
 type Props = {
   fioWallet: FioWalletDoublet;
-  onSuccess: (data: any) => void;
+  onSuccess: (data: TrxResponsePaidBundles) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
   requestData: RequestTokensValues | null;
