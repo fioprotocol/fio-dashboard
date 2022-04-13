@@ -1,3 +1,5 @@
+import { ChangeEvent } from 'react';
+
 import { DEFAULT_TEXT_TRUNCATE_LENGTH } from '../constants/common';
 
 export const log = {
@@ -143,4 +145,19 @@ export const truncateTextInMiddle = (
   const end = text.substring(text.length - endChar, text.length);
 
   return start + '...' + end;
+};
+
+export const transformInputValues = ({
+  e,
+  transformedValue,
+  onChange,
+}: {
+  e: ChangeEvent<HTMLInputElement>;
+  transformedValue: string;
+  onChange: (value: string) => void;
+}) => {
+  const startPos = e.target.selectionStart;
+  const endPos = e.target.selectionEnd;
+  onChange(transformedValue);
+  setTimeout(() => e.target.setSelectionRange(startPos, endPos), 0);
 };
