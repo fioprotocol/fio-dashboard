@@ -32,7 +32,7 @@ for SERVER in ${SERVERS_IP}; do
 	rsync -e "ssh -o StrictHostKeyChecking=no -p ${SERVER_PORT}" --rsync-path="sudo rsync" -vcrlpogz --super --delete --chown="${RUN_USER}:${RUN_USER}" --exclude-from="./bin/.rsyncingnore-client" ./client/build/ ${SERVER_USER}@${SERVER}:${WORK_DIR}/client
 	rsync -e "ssh -o StrictHostKeyChecking=no -p ${SERVER_PORT}" --rsync-path="sudo rsync" -vcrlpogz --super --delete --chown="${RUN_USER}:${RUN_USER}" --exclude-from="./bin/.rsyncingnore-server" ./ ${SERVER_USER}@${SERVER}:${WORK_DIR}
 	echo -e "${YELLOW}\n**************************Post copy processing*************************${NC}"
-	ssh ${SERVER_USER}@${SERVER} -o StrictHostKeyChecking=no -p ${SERVER_PORT} "sudo su - ${RUN_USER} -c \"cd ${WORK_DIR} && npm install --production && pm2 startOrRestart ./pm2.json && pm2 save\""
+	ssh ${SERVER_USER}@${SERVER} -o StrictHostKeyChecking=no -p ${SERVER_PORT} "sudo su - ${RUN_USER} -c \"cd ${WORK_DIR} && npm i --legacy-peer-deps --production && pm2 startOrRestart ./pm2.json && pm2 save\""
 	echo -e "${YELLOW}\n**************************Finish***************************************${NC}"
 	echo -e "${YELLOW}\n***********************************************************************${NC}"
 done
