@@ -1,4 +1,4 @@
-import React, { useEffect, useState, WheelEvent } from 'react';
+import React, { ChangeEvent, useEffect, useState, WheelEvent } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { FieldRenderProps } from 'react-final-form';
 import classnames from 'classnames';
@@ -11,7 +11,11 @@ import {
 import { Label, LoadingIcon, PrefixLabel, Prefix } from './StaticInputParts';
 import { ErrorBadge } from './ErrorBadge';
 
-import { getValueFromPaste, log } from '../../util/general';
+import {
+  getValueFromPaste,
+  log,
+  transformInputValues,
+} from '../../util/general';
 import { useFieldElemActiveState } from '../../util/hooks';
 
 import classes from './Input.module.scss';
@@ -118,6 +122,30 @@ export const TextInput: React.ForwardRefRenderFunction<
     onChange('');
   };
 
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const currentValue = e.target.value;
+
+    if (lowerCased) {
+      const transformedValue = currentValue.toLowerCase();
+      transformInputValues({
+        e,
+        transformedValue,
+        onChange,
+      });
+      return;
+    }
+    if (upperCased) {
+      const transformedValue = currentValue.toUpperCase();
+      transformInputValues({
+        e,
+        transformedValue,
+        onChange,
+      });
+      return;
+    }
+    onChange(currentValue);
+  };
+
   if (type === 'hidden') return null;
 
   return (
@@ -147,12 +175,7 @@ export const TextInput: React.ForwardRefRenderFunction<
             debounceTimeout={debounceTimeout}
             {...input}
             {...rest}
-            onChange={e => {
-              const currentValue = e.target.value;
-              if (lowerCased) return onChange(currentValue.toLowerCase());
-              if (upperCased) return onChange(currentValue.toUpperCase());
-              onChange(currentValue);
-            }}
+            onChange={handleInputChange}
             onWheel={(event: WheelEvent<HTMLInputElement>) => {
               if (type === 'number') event.currentTarget.blur();
             }}
