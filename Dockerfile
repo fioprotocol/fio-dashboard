@@ -1,9 +1,9 @@
-FROM node:14.17.4
+FROM node:16.14.2
 
 WORKDIR /usr/app
 
 COPY package.json /usr/app/
-RUN npm install
+RUN npm i --legacy-peer-deps
 
 COPY . .
 
