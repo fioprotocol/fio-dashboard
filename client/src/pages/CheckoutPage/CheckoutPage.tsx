@@ -111,7 +111,7 @@ const CheckoutPage: React.FC<Props> = props => {
 
   return (
     <PseudoModalContainer title="Make Purchase" onClose={onClose}>
-      <CheckoutPurchaseContainer isCheckout>
+      <CheckoutPurchaseContainer isCheckout history={history}>
         <RenderCheckout
           cart={cartItems}
           walletBalances={walletBalancesAvailable}

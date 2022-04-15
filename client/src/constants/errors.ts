@@ -4,7 +4,7 @@ export const ERROR_TYPES = {
 };
 
 export const FREE_ADDRESS_REGISTER_ERROR =
-  'FIO Crypto Handle is not registered. Try again and if this error occurs again please contact support.';
+  'The crypto handle has been registered but is in a pending status. If your new crypto handle does not show up under FIO Crypto Handles please contact support.';
 
 export const DEFAULT_FIO_TRX_ERR_MESSAGE =
   'Your purchase has failed due to an error. Your funds remain in your account and your registrations did not complete. Please try again later.';
