@@ -75,7 +75,7 @@ const PinForm: React.FC<Props> = props => {
     () => () => {
       resetForm();
     },
-    [resetForm],
+    [],
   );
 
   const handleSubmit = (values: FormValues) => {
