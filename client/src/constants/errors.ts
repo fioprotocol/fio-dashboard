@@ -15,6 +15,6 @@ export const ERROR_MESSAGES = {
 };
 
 export const TOKEN_LINK_ERROR_MESSAGE =
-  'Some public addresses were not transfered due to an error.';
+  'Some public addresses were not transferred due to an error.';
 export const TOKEN_LINK_PARTIAL_ERROR_MESSAGE =
-  'See below for public addresses which were transfered sucesfully and try again.';
+  'See below for public addresses which were transferred successfully and try again.';
