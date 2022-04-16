@@ -85,8 +85,9 @@ const AddressDomainCart: React.FC<Props> = props => {
       prices,
       hasFreeAddress,
       recalculate,
+      roe,
     });
-  }, [cartItemsJson, domainsAmount, hasFreeAddress, prices, recalculate]);
+  }, [cartItemsJson, domainsAmount, hasFreeAddress, prices, recalculate, roe]);
 
   return (
     <CartSmallContainer isAquaColor={true}>
