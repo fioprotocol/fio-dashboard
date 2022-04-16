@@ -102,8 +102,9 @@ const CheckoutPage: React.FC<Props> = props => {
         cartItems,
         prices,
         hasFreeAddress,
+        roe,
       });
-  }, [hasFreeAddress, prices]);
+  }, [hasFreeAddress, prices, roe]);
 
   const onClose = () => {
     history.push(ROUTES.CART);

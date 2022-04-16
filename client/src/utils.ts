@@ -128,6 +128,8 @@ export const setFreeCart = ({
   );
   if (recalcElem) {
     delete recalcElem.costNativeFio;
+    recalcElem.costFio = '0.00';
+    recalcElem.costUsdc = '0';
 
     return cartItems.map(item => {
       delete item.showBadge;
@@ -164,9 +166,11 @@ export const recalculateCart = ({
 export const removeFreeCart = ({
   cartItems,
   prices,
+  roe,
 }: {
   cartItems: CartItem[];
   prices: Prices;
+  roe: number;
 }): CartItem[] => {
   const {
     nativeFio: { address: nativeFioAddressPrice },
@@ -177,6 +181,11 @@ export const removeFreeCart = ({
       item.costNativeFio = nativeFioAddressPrice;
       item.showBadge = true;
     }
+
+    const fioPrices = convertFioPrices(item.costNativeFio || 0, roe);
+    item.costFio = fioPrices.fio;
+    item.costUsdc = fioPrices.usdc;
+
     return item;
   });
 };
@@ -190,15 +199,17 @@ export const handleFreeAddressCart = ({
   cartItems,
   prices,
   hasFreeAddress,
+  roe,
 }: {
   recalculate: (cartItems: CartItem[]) => void;
   cartItems: CartItem[];
   prices: Prices;
   hasFreeAddress: boolean;
+  roe: number;
 }): void => {
   let retCart: CartItem[] = [];
   if (hasFreeAddress) {
-    retCart = removeFreeCart({ cartItems, prices });
+    retCart = removeFreeCart({ cartItems, prices, roe });
   } else if (!cartHasFreeItem(cartItems)) {
     retCart = setFreeCart({ cartItems });
   }
