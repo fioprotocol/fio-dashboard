@@ -442,6 +442,10 @@ export default combineReducers({
   },
   fioNamesInitRefreshed(state: { [publicKey: string]: boolean } = {}, action) {
     switch (action.type) {
+      case actions.GET_FIO_ADDRESSES_SUCCESS:
+      case actions.GET_FIO_ADDRESSES_FAILURE:
+      case actions.GET_FIO_DOMAINS_SUCCESS:
+      case actions.GET_FIO_DOMAINS_FAILURE:
       case actions.REFRESH_FIO_NAMES_SUCCESS:
       case actions.REFRESH_FIO_NAMES_FAILURE: {
         return { ...state, [action.publicKey]: true };
