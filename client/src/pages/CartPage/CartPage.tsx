@@ -150,8 +150,9 @@ const CartPage: React.FC<Props> = props => {
       cartItems,
       prices,
       hasFreeAddress,
+      roe,
     });
-  }, [isAuthenticated, hasFreeAddress]);
+  }, [isAuthenticated, hasFreeAddress, roe]);
 
   useEffectOnce(() => {
     const wallets = JSON.parse(walletJson);
