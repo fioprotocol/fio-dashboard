@@ -102,8 +102,9 @@ const CheckoutPage: React.FC<Props> = props => {
         cartItems,
         prices,
         hasFreeAddress,
+        roe,
       });
-  }, [hasFreeAddress, prices]);
+  }, [hasFreeAddress, prices, roe]);
 
   const onClose = () => {
     history.push(ROUTES.CART);
@@ -111,7 +112,7 @@ const CheckoutPage: React.FC<Props> = props => {
 
   return (
     <PseudoModalContainer title="Make Purchase" onClose={onClose}>
-      <CheckoutPurchaseContainer isCheckout>
+      <CheckoutPurchaseContainer isCheckout history={history}>
         <RenderCheckout
           cart={cartItems}
           walletBalances={walletBalancesAvailable}

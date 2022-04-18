@@ -123,7 +123,10 @@ export const transformResult = ({
       };
 
       const partialIndex = partial && partial.indexOf(cartItemId);
-      if (!isDomain(fioName)) {
+      if (isDomain(fioName)) {
+        retObj.domain = fioName;
+        retObj.costNativeFio = nativeFioDomainPrice;
+      } else {
         const name = fioName.split('@');
         const addressName = name[0];
         const domainName = name[1];
@@ -135,6 +138,12 @@ export const transformResult = ({
 
         if (isFree) {
           retObj.isFree = isFree;
+          if (errorType === ERROR_TYPES.freeAddressIsNotRegistered) {
+            updatedCart.splice(
+              cart.findIndex(({ id }) => cartItemId === id),
+              1,
+            );
+          }
         } else {
           if (
             cart.find(
@@ -150,9 +159,6 @@ export const transformResult = ({
             retObj.costNativeFio = nativeFioAddressPrice;
           }
         }
-      } else {
-        retObj.domain = fioName;
-        retObj.costNativeFio = nativeFioDomainPrice;
       }
 
       const fioPrices = convertFioPrices(retObj.costNativeFio, roe);
