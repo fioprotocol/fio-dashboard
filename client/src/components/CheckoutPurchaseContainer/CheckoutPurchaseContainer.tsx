@@ -7,6 +7,7 @@ import PurchaseNow from '../PurchaseNow';
 import Processing from '../common/TransactionProcessing';
 
 import { ROUTES } from '../../constants/routes';
+import { ERROR_TYPES } from '../../constants/errors';
 
 import { RegistrationResult } from '../../types';
 
@@ -39,7 +40,14 @@ const CheckoutPurchaseContainer: React.FC<Props> = props => {
     onClose: parentOnClose,
   } = props;
 
-  const hasErrors = !isEmpty(registrationResult.errors || []);
+  const errors = registrationResult.errors || [];
+  const isRetry =
+    isPurchase &&
+    !isEmpty(
+      errors.filter(
+        ({ errorType }) => errorType !== ERROR_TYPES.freeAddressIsNotRegistered,
+      ),
+    );
 
   const onClose = () => {
     setRegistration({
@@ -63,8 +71,8 @@ const CheckoutPurchaseContainer: React.FC<Props> = props => {
   return (
     <div className={classes.container}>
       {children}
-      {isCheckout || (isPurchase && hasErrors) ? (
-        <PurchaseNow onFinish={onFinish} isRetry={isPurchase && hasErrors} />
+      {isCheckout || isRetry ? (
+        <PurchaseNow onFinish={onFinish} isRetry={isRetry} />
       ) : (
         <Button onClick={onClose} className={classes.button}>
           {closeText ? closeText : 'Close'}
