@@ -123,6 +123,8 @@ export const TextInput: React.ForwardRefRenderFunction<
   };
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e?.type !== 'change') return;
+
     const currentValue = e.target.value;
 
     if (lowerCased) {
