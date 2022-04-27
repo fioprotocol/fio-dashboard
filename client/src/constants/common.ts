@@ -34,6 +34,8 @@ export const CONFIRM_PIN_ACTIONS = {
   EDIT_TOKEN: 'EDIT_TOKEN',
   DETAILED_FIO_REQUEST: 'DETAILED_FIO_REQUEST',
   REJECT_FIO_REQUEST: 'REJECT_FIO_REQUEST',
+  STAKE: 'STAKE',
+  UNSTAKE: 'UNSTAKE',
 };
 
 export const ADDRESS = 'address';
@@ -515,3 +517,5 @@ export const CHAIN_CODE_LIST = [
 ];
 
 export const DEFAULT_TEXT_TRUNCATE_LENGTH = 5;
+
+export const US_LOCALE = 'en-US';

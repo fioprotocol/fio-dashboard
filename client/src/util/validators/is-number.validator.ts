@@ -3,6 +3,9 @@ import { FieldValidationFunctionSync } from '@lemoncode/fonk';
 export const isNumberValidator: FieldValidationFunctionSync = ({
   value,
   message,
+}: {
+  value: string | number;
+  message?: string | string[];
 }) => {
   const succeeded = !isNaN(Number(`${value}`));
 

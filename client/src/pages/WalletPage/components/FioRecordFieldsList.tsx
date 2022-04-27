@@ -71,9 +71,9 @@ const FioRecordFieldsList: React.FC<Props> = props => {
 
           if (fioRecordDetailedType === FIO_RECORD_DETAILED_TYPE.RESULT) {
             if (field === FIO_RECORD_DETAILED_FIELDS.from)
-              return 'Requesting FIO Address';
+              return 'Requesting FIO Crypto Handle';
             if (field === FIO_RECORD_DETAILED_FIELDS.to)
-              return 'Request sent to FIO Address';
+              return 'Request sent to FIO Crypto Handle';
             if (field === FIO_RECORD_DETAILED_FIELDS.amount)
               return 'Amount Requested';
             return field;

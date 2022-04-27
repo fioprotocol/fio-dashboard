@@ -1,4 +1,7 @@
 import { FIOSDK } from '@fioprotocol/fiosdk';
+import { createHash } from 'crypto-browserify';
+import superagent from 'superagent';
+
 import { AvailabilityResponse } from '@fioprotocol/fiosdk/src/entities/AvailabilityResponse';
 import { FioNamesResponse } from '@fioprotocol/fiosdk/src/entities/FioNamesResponse';
 import { FioAddressesResponse } from '@fioprotocol/fiosdk/src/entities/FioAddressesResponse';
@@ -9,29 +12,48 @@ import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 
 import MathOp from '../util/math';
+import { log } from '../util/general';
 
 import { isDomain } from '../utils';
 
-import { ACTIONS, ACTIONS_TO_END_POINT_KEYS } from '../constants/fio';
+import {
+  ACTIONS,
+  ACTIONS_TO_END_POINT_KEYS,
+  GET_TABLE_ROWS_URL,
+} from '../constants/fio';
 
-import { NFTTokenDoublet, WalletKeys } from '../types';
+import {
+  FioBalanceRes,
+  NFTTokenDoublet,
+  WalletKeys,
+  Proxy,
+  AnyObject,
+} from '../types';
 
 export interface TrxResponse {
   transaction_id?: string;
   status: string;
   expiration?: string;
   fee_collected: number;
-  other?: any;
+  other?: AnyObject;
 }
+
+export type TrxResponsePaidBundles = TrxResponse & {
+  bundlesCollected?: number;
+};
 
 export type FIOSDK_LIB = typeof FIOSDK;
 
 export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit)
   .mul(800)
   .toNumber();
+export const ENDPOINT_FEE_HASH: { [endpoint: string]: string } = {
+  [EndPoint.stakeFioTokens]: '0x83c48bde1205347001e4ddd44c571f78',
+  [EndPoint.unStakeFioTokens]: '0x85248efc2886d68989b010f21cb2f480',
+};
 
 export default class Fio {
-  baseurl: string = process.env.REACT_APP_FIO_BASE_URL;
+  baseurl: string = process.env.REACT_APP_FIO_BASE_URL || '';
   publicFioSDK: FIOSDK_LIB | null = null;
   walletFioSDK: FIOSDK_LIB | null = null;
   actionEndPoints: { [actionName: string]: string } = {
@@ -55,7 +77,7 @@ export default class Fio {
       .round(9, 2)
       .toNumber();
 
-    const remainderResult = new MathOp(remainder)
+    const remainderResult: number = new MathOp(remainder)
       .mul(FIOSDK.SUFUnit)
       .toNumber();
     const floorRemainder = Math.floor(remainderResult);
@@ -64,8 +86,7 @@ export default class Fio {
     return new MathOp(tempResult).add(floorRemainder).toNumber();
   };
 
-  sufToAmount = (suf?: number): number | null => {
-    if (!suf && suf !== 0) return null;
+  sufToAmount = (suf: number): number => {
     return FIOSDK.SUFToAmount(suf);
   };
 
@@ -137,8 +158,8 @@ export default class Fio {
 
   clearWalletFioSdk = (): null => (this.walletFioSDK = null);
 
-  logError = (e: { errorCode: number }) => {
-    if (e.errorCode !== 404) console.error(e);
+  logError = (e: { errorCode: number; message: string }) => {
+    if (e.errorCode !== 404) log.error(e.message);
   };
 
   extractError = (json: {
@@ -147,13 +168,50 @@ export default class Fio {
   }): string => {
     if (!json) return '';
 
-    return json && json.fields && json.fields[0]
-      ? json.fields[0].error
-      : json.message;
+    return json.fields?.length ? json.fields[0].error : json.message || 'error';
   };
 
   getActor = (publicKey: string): string =>
     this.publicFioSDK.transactions.getActor(publicKey);
+
+  availCheckTableRows = async (fioName: string): Promise<boolean> => {
+    const hash = createHash('sha1');
+    const bound =
+      '0x' +
+      hash
+        .update(fioName)
+        .digest()
+        .slice(0, 16)
+        .reverse()
+        .toString('hex');
+
+    const params = {
+      code: 'fio.address',
+      scope: 'fio.address',
+      table: 'fionames',
+      lower_bound: bound,
+      upper_bound: bound,
+      key_type: 'i128',
+      index_position: '5',
+      json: true,
+    };
+    if (isDomain(fioName)) {
+      params.table = 'domains';
+      params.index_position = '4';
+    }
+
+    try {
+      const rows = await this.getTableRows(params);
+
+      if (rows && rows.length) {
+        return !!rows[0].id;
+      }
+    } catch (e) {
+      this.logError(e);
+    }
+
+    return false;
+  };
 
   availCheck = (fioName: string): Promise<AvailabilityResponse> => {
     return this.publicFioSDK.isAvailable(fioName);
@@ -167,40 +225,96 @@ export default class Fio {
     return await this.walletFioSDK.registerFioAddress(fioName, fee);
   };
 
-  getBalance = async (
-    publicKey: string,
-  ): Promise<{ balance: number; available: number; locked: number }> => {
+  getTableRows = async (params: {
+    code: string;
+    scope: string;
+    table: string;
+    lower_bound: string;
+    upper_bound?: string;
+    key_type?: string;
+    index_position?: string;
+    json?: boolean;
+    reverse?: boolean;
+    limit?: number;
+  }) => {
     try {
-      const { balance, available } = await this.publicFioSDK.getFioBalance(
-        publicKey,
-      );
+      const response = await superagent.post(GET_TABLE_ROWS_URL).send(params);
 
-      return {
+      const { rows }: { rows: AnyObject[] } = response.body;
+
+      return rows;
+    } catch (err) {
+      this.logError(err);
+      throw err;
+    }
+  };
+
+  getBalance = async (publicKey: string): Promise<FioBalanceRes> => {
+    let balances: FioBalanceRes = {
+      balance: 0,
+      available: 0,
+      staked: 0,
+      locked: 0,
+      rewards: 0,
+      unlockPeriods: [],
+    };
+    try {
+      const {
         balance,
         available,
-        locked: 0,
+        staked,
+        srps,
+        roe,
+      } = await this.publicFioSDK.getFioBalance(publicKey);
+
+      balances = {
+        ...balances,
+        balance,
+        available,
+        staked,
+        rewards: new MathOp(srps)
+          .mul(roe)
+          .round(0, 2)
+          .sub(staked)
+          .toNumber(),
       };
     } catch (e) {
       this.logError(e);
     }
 
-    return {
-      balance: 0,
-      available: 0,
-      locked: 0,
-    };
-  };
-
-  getFioNames = async (publicKey: string): Promise<FioNamesResponse> => {
     try {
-      // do not return method to handle errors here
-      const res = await this.publicFioSDK.getFioNames(publicKey);
-      return res;
+      const {
+        remaining_lock_amount,
+        time_stamp,
+        unlock_periods,
+      } = await this.publicFioSDK.getLocks(publicKey);
+
+      balances = {
+        ...balances,
+        locked: remaining_lock_amount,
+        unlockPeriods: unlock_periods.map(
+          ({ amount, duration }: { amount: number; duration: number }) => ({
+            amount,
+            date: (time_stamp + duration) * 1000, // unlock date-time in ms
+          }),
+        ),
+      };
     } catch (e) {
       this.logError(e);
     }
 
-    return { fio_addresses: [], fio_domains: [] };
+    return balances;
+  };
+
+  getFioNames = async (publicKey: string): Promise<FioNamesResponse> => {
+    let res: FioNamesResponse = { fio_addresses: [], fio_domains: [] };
+    try {
+      res = await this.publicFioSDK.getFioNames(publicKey);
+    } catch (e) {
+      this.logError(e);
+    }
+
+    return res;
   };
 
   getFioAddresses = async (
@@ -208,18 +322,17 @@ export default class Fio {
     limit: number,
     offset: number,
   ): Promise<FioAddressesResponse & { more: number }> => {
+    let res: FioAddressesResponse & { more: number } = {
+      fio_addresses: [],
+      more: 0,
+    };
     try {
-      const res = await this.publicFioSDK.getFioAddresses(
-        publicKey,
-        limit,
-        offset,
-      );
-      return res;
+      res = await this.publicFioSDK.getFioAddresses(publicKey, limit, offset);
     } catch (e) {
       this.logError(e);
     }
 
-    return { fio_addresses: [], more: 0 };
+    return res;
   };
 
   getFioDomains = async (
@@ -227,31 +340,30 @@ export default class Fio {
     limit: number,
     offset: number,
   ): Promise<FioDomainsResponse & { more: number }> => {
+    let res: FioDomainsResponse & { more: number } = {
+      fio_domains: [],
+      more: 0,
+    };
     try {
-      const res = await this.publicFioSDK.getFioDomains(
-        publicKey,
-        limit,
-        offset,
-      );
-      return res;
+      res = await this.publicFioSDK.getFioDomains(publicKey, limit, offset);
     } catch (e) {
       this.logError(e);
     }
 
-    return { fio_domains: [], more: 0 };
+    return res;
   };
 
   getFioPublicAddress = async (
     fioAddress: string,
   ): Promise<PublicAddressResponse> => {
+    let res: PublicAddressResponse = { public_address: '' };
     try {
-      const res = await this.publicFioSDK.getFioPublicAddress(fioAddress);
-      return res;
+      res = await this.publicFioSDK.getFioPublicAddress(fioAddress);
     } catch (e) {
       this.logError(e);
     }
 
-    return { public_address: '' };
+    return res;
   };
 
   getNFTs = async (
@@ -359,9 +471,8 @@ export default class Fio {
   executeAction = async (
     keys: WalletKeys,
     action: string,
-    params: any,
+    params: AnyObject,
   ): Promise<TrxResponse> => {
-    let error;
     this.setWalletFioSdk(keys);
 
     if (!params.maxFee) params.maxFee = DEFAULT_ACTION_FEE_AMOUNT;
@@ -370,17 +481,60 @@ export default class Fio {
       this.walletFioSDK.setSignedTrxReturnOption(true);
       const preparedTrx = await this.walletFioSDK.genericAction(action, params);
       this.validateAction();
-      return await this.walletFioSDK.executePreparedTrx(
+      const result = await this.walletFioSDK.executePreparedTrx(
         this.actionEndPoints[ACTIONS_TO_END_POINT_KEYS[action]],
         preparedTrx,
       );
+      this.clearWalletFioSdk();
+      return result;
     } catch (err) {
       this.logError(err);
-      error = err;
-    } finally {
       this.clearWalletFioSdk();
+      throw err;
+    }
+  };
+
+  getProxies = async () => {
+    let proxies;
+    try {
+      const rows: Proxy[] = await this.getTableRows({
+        code: 'eosio',
+        scope: 'eosio',
+        table: 'voters',
+        limit: 2000,
+        lower_bound: '0',
+        reverse: true,
+        json: true,
+      });
+
+      const rowsProxies = rows
+        .filter(row => row.is_proxy && row.fioaddress)
+        .map(row => row.fioaddress);
+
+      proxies = [...rowsProxies];
+    } catch (err) {
+      this.logError(err);
     }
 
-    if (error != null) throw error;
+    return proxies || [`${process.env.REACT_APP_FIO_DEFAULT_PROXY}`];
+  };
+
+  getFeeFromTable = async (feeHash: string): Promise<{ fee: number }> => {
+    const resultRows: {
+      end_point: string;
+      end_point_hash: string;
+      suf_amount: number;
+    }[] = await this.getTableRows({
+      code: 'fio.fee',
+      scope: 'fio.fee',
+      table: 'fiofees',
+      lower_bound: feeHash,
+      upper_bound: feeHash,
+      key_type: 'i128',
+      index_position: '2',
+      json: true,
+    });
+
+    return { fee: resultRows[0].suf_amount };
   };
 }

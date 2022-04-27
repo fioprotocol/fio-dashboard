@@ -1,11 +1,13 @@
 import { Validators, ValidationSchema } from '@lemoncode/fonk';
 import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
+
 import {
   fioAddressExistsValidator,
   isFioAddressValidator,
   matchFieldValidator,
   isNumberValidator,
   isValidPubAddressValidator,
+  isAmountValidator,
 } from '../../../../util/validators';
 
 import {
@@ -47,6 +49,10 @@ const validationSchema: ValidationSchema = {
         validator: isNumberValidator,
         message: 'Please enter valid amount.',
       },
+      {
+        validator: isAmountValidator,
+        customArgs: { chainCodeFieldId: 'chainCode' },
+      },
     ],
     payeeTokenPublicAddress: [
       {
@@ -82,6 +88,11 @@ const validationSchema: ValidationSchema = {
 
 const onSubmitValidationSchema: ValidationSchema = {
   field: {
+    payeeFioAddress: [
+      {
+        validator: fioAddressExistsValidator,
+      },
+    ],
     payerFioAddress: [
       {
         validator: fioAddressExistsValidator,
@@ -89,7 +100,6 @@ const onSubmitValidationSchema: ValidationSchema = {
           fieldIdToCompare: 'payeeTokenPublicAddress',
           sameWalletMessage: "Can't request to same wallet.",
         },
-        message: 'Please enter valid FIO Crypto Handle.',
       },
     ],
     payeeTokenPublicAddress: [

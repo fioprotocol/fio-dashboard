@@ -1,77 +1,47 @@
 @import './colors';
 @import './fontMixins';
 
-:global {
-  form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    color: white;
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  width: 100%;
+  height: fit-content;
+  position: relative;
+
+  button {
     width: 100%;
-    height: fit-content;
-    position: relative;
-
-    button {
-      width: 100%;
-      height: 54px;
-      font-weight: bold !important;
-      @include proxima-nova-bold;
-    }
-
-    & button, a, p, h1, h2, h3, h4, h5 {
-      margin-bottom: 30px;
-    }
-
-    & a {
-      color: inherit;
-      font-weight: bold !important;
-      @include proxima-nova-bold;
-    }
-
-    & p {
-      @include proxima-nova-thin;
-    }
-
-    .regular-text {
-      font-size: 15px;
-    }
+    height: 54px;
+    font-weight: bold !important;
+    @include proxima-nova-bold;
   }
 
-  .blue-button {
-    height: 67px;
-    width: 100%;
-    margin-top: 38px;
-
-      background: $curious-blue;
-      color: $white;
-      border-radius: 3.79px;
-      border: none;
-      font-size: 26.86px;
-      &:hover, &:focus {
-        background: $curious-blue;
-        border-color: $curious-blue;
-        color: $white;
-      }
+  & button, a, p, h1, h2, h3, h4, h5 {
+    margin-bottom: 30px;
   }
 
-  .auth-controls {
-    @include helvetica-neue;
+  & a {
+    color: inherit;
+    font-weight: bold !important;
+    @include proxima-nova-bold;
+  }
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
+  & p {
+    @include proxima-nova-thin;
+  }
 
-    & > button {
-      @extend .blue-button;
+  .regular-text {
+    font-size: 15px;
+  }
 
-      @media only screen and (max-width: 1280px) {
-        font-size: 12px;
-        height: 30px;
-        margin-top: 15px;
-      }
-    }
+  input {
+    border: none;
+    outline: none;
+    padding: 0;
+    font-size: 15px;
+    @include proxima-nova-regular;
   }
 }
 
@@ -89,57 +59,6 @@
     @media only screen and (max-width: 1280px) {
       height: 30px;
       padding-left: 10px;
-    }
-  }
-
-  :global {
-    .ant-form-item-control-wrapper:first-of-type > .ant-form-item-control > .ant-form-item-children > .ant-row.ant-form-item {
-      margin-bottom: 0;
-      margin-top: 10px;
-
-      @media only screen and (max-width: 1280px) {
-        margin-top: 0;
-      }
-    }
-
-    .ant-form-item-label {
-      @include helvetica-neue-medium;
-      font-size: 16px;
-      line-height: 19.2px;
-      letter-spacing: 1px;
-      text-align: left;
-      color: $black;
-
-      label {
-        white-space: normal;
-        text-transform: uppercase;
-        font-size: 16px;
-        &:after {
-          display: none;
-        }
-
-        @media only screen and (max-width: 1280px) {
-          font-size: 12px;
-          line-height: 13px;
-          letter-spacing: 0;
-        }
-      }
-    }
-
-    .ant-form-item-control {
-      line-height: 1;
-
-      .ant-input {
-        padding-right: 0;
-        margin-top: 10px;
-
-        @media only screen and (max-width: 1280px) {
-          font-size: 11px;
-        }
-      }
-      &.has-success .ant-form-item-children:after {
-        display: none;
-      }
     }
   }
 }

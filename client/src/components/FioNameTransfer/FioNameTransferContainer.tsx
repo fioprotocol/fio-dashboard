@@ -67,7 +67,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   useEffect(() => {
     getFee(hasFioAddressDelimiter(name));
     refreshBalance(publicKey);
-  }, []);
+  }, [name, publicKey, refreshBalance, getFee]);
 
   useEffect(() => {
     if (!processing) {
@@ -184,6 +184,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
           />
           <TransferForm
             {...props}
+            walletName={currentWallet ? currentWallet.name : ''}
             onSubmit={onSubmit}
             processing={processing || submitting}
             feePrice={feePrice}

@@ -13,10 +13,11 @@ import classes from './PayWithBadge.module.scss';
 type Props = {
   costFree?: boolean;
   walletBalances: WalletBalancesItem;
+  walletName?: string;
 };
 
 const PayWithBadge: React.FC<Props> = props => {
-  const { costFree, walletBalances } = props;
+  const { costFree, walletBalances, walletName } = props;
   const isDesktop = useCheckIfDesktop();
 
   if (costFree) return null;
@@ -37,7 +38,7 @@ const PayWithBadge: React.FC<Props> = props => {
           )}
           <div className={classes.wallet}>
             <p className={classes.title}>
-              <span className="boldText">FIO Wallet</span>
+              <span className="boldText">{walletName || `FIO Wallet`}</span>
             </p>
             <p className={classes.balance}>
               (Available Balance <Amount value={walletBalances.fio} /> FIO /{' '}

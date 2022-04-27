@@ -3,6 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 import { TextDecoder, TextEncoder } from 'text-encoding';
 import { Fio } from '@fioprotocol/fiojs';
 import mapKeys from 'lodash/mapKeys';
+import camelCase from 'camelcase';
 
 import MathOp from './util/math';
 
@@ -12,12 +13,14 @@ import {
   Domain,
   Prices,
   FioNameItemProps,
-  WalletKeysObj,
   FioRecord,
   ResponseFioRecord,
   WalletKeys,
+  EdgeWalletsKeys,
+  DecryptedFioRecordContent,
+  Unknown,
+  AnyObject,
 } from './types';
-import camelCase from 'camelcase';
 import { convertFioPrices } from './util/prices';
 
 const FIO_DASH_USERNAME_DELIMITER = `.fio.dash.${process.env
@@ -25,7 +28,9 @@ const FIO_DASH_USERNAME_DELIMITER = `.fio.dash.${process.env
 
 export const FIO_ADDRESS_DELIMITER = '@';
 
-export function compose(...funcs: ((args?: any) => any)[]) {
+// todo
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function compose(...funcs: ((args?: any) => any)[]): any {
   if (funcs.length === 1) {
     return funcs[0];
   }
@@ -33,16 +38,16 @@ export function compose(...funcs: ((args?: any) => any)[]) {
   return funcs.reduce((a, b) => (...args) => a(b(...args)));
 }
 
-export function currentYear() {
+export function currentYear(): string {
   const year = new Date().getFullYear();
   const startYear = 2021;
-  return year === startYear ? year : `${startYear} - ${year}`;
+  return year === startYear ? `${year}` : `${startYear} - ${year}`;
 }
 
 export async function minWaitTimeFunction(
-  cb: () => Promise<any>,
+  cb: () => Promise<Unknown>,
   minWaitTime = 1000,
-) {
+): Promise<Unknown> {
   let results;
   let error;
   const t0 = performance.now();
@@ -59,7 +64,7 @@ export async function minWaitTimeFunction(
   return results;
 }
 
-export function emailToUsername(email: string) {
+export function emailToUsername(email: string): string {
   if (email && email.indexOf('@') > 0) {
     const [name, domain] = email.split('@');
     // return name
@@ -71,8 +76,8 @@ export function emailToUsername(email: string) {
 
 export const getWalletKeys = (
   fioWallets: EdgeCurrencyWallet[],
-): WalletKeysObj => {
-  const keys: WalletKeysObj = {};
+): EdgeWalletsKeys => {
+  const keys: EdgeWalletsKeys = {};
   for (const fioWallet of fioWallets) {
     keys[fioWallet.id] = {
       private: fioWallet.keys.fioKey,
@@ -82,15 +87,18 @@ export const getWalletKeys = (
   return keys;
 };
 
-export function sleep(ms: number) {
+export function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function capitalizeFirstLetter(string: string) {
+export function capitalizeFirstLetter(string: string): string {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-export const setDataMutator = (args: any[], state: any) => {
+export const setDataMutator = (
+  args: [string, object],
+  state: { fields: { [fieldName: string]: { data: object } } },
+): void => {
   const [name, data] = args;
   const field = state.fields[name];
 
@@ -107,21 +115,26 @@ export const isFreeDomain = ({
   domain: string;
 }): boolean => {
   const domainFromList = domains.find(item => item.domain === domain);
-  return domainFromList && domainFromList.free;
+  return !!domainFromList?.free;
 };
 
-export const setFreeCart = ({ cartItems }: { cartItems: CartItem[] }) => {
+export const setFreeCart = ({
+  cartItems,
+}: {
+  cartItems: CartItem[];
+}): CartItem[] => {
   const recalcElem = cartItems.find(
     item => item.address && item.domain && item.allowFree,
   );
   if (recalcElem) {
     delete recalcElem.costNativeFio;
+    recalcElem.costFio = '0.00';
+    recalcElem.costUsdc = '0';
 
-    const retCart = cartItems.map(item => {
+    return cartItems.map(item => {
       delete item.showBadge;
       return item.id === recalcElem.id ? recalcElem : item;
     });
-    return retCart;
   } else {
     return cartItems;
   }
@@ -133,7 +146,7 @@ export const recalculateCart = ({
 }: {
   cartItems: CartItem[];
   id: string;
-}) => {
+}): { id: string; cartItems?: CartItem[] } => {
   const deletedElement = cartItems.find(item => item.id === id);
   if (!deletedElement) return;
 
@@ -144,8 +157,7 @@ export const recalculateCart = ({
   const deletedElemCart = cartItems.filter(item => item.id !== id);
 
   if (!deletedElement.costNativeFio) {
-    const recCart = setFreeCart({ cartItems: deletedElemCart });
-    data.cartItems = recCart;
+    data.cartItems = setFreeCart({ cartItems: deletedElemCart });
   }
 
   return data;
@@ -154,25 +166,31 @@ export const recalculateCart = ({
 export const removeFreeCart = ({
   cartItems,
   prices,
+  roe,
 }: {
   cartItems: CartItem[];
   prices: Prices;
-}) => {
+  roe: number;
+}): CartItem[] => {
   const {
     nativeFio: { address: nativeFioAddressPrice },
   } = prices;
 
-  const retCart = cartItems.map(item => {
+  return cartItems.map(item => {
     if (!item.costNativeFio) {
       item.costNativeFio = nativeFioAddressPrice;
       item.showBadge = true;
     }
+
+    const fioPrices = convertFioPrices(item.costNativeFio || 0, roe);
+    item.costFio = fioPrices.fio;
+    item.costUsdc = fioPrices.usdc;
+
     return item;
   });
-  return retCart;
 };
 
-export const cartHasFreeItem = (cartItems: CartItem[]) => {
+export const cartHasFreeItem = (cartItems: CartItem[]): boolean => {
   return !isEmpty(cartItems) && cartItems.some(item => !item.costNativeFio);
 };
 
@@ -181,15 +199,17 @@ export const handleFreeAddressCart = ({
   cartItems,
   prices,
   hasFreeAddress,
+  roe,
 }: {
-  recalculate: (cartItems: CartItem[]) => {};
+  recalculate: (cartItems: CartItem[]) => void;
   cartItems: CartItem[];
   prices: Prices;
   hasFreeAddress: boolean;
-}) => {
+  roe: number;
+}): void => {
   let retCart: CartItem[] = [];
   if (hasFreeAddress) {
-    retCart = removeFreeCart({ cartItems, prices });
+    retCart = removeFreeCart({ cartItems, prices, roe });
   } else if (!cartHasFreeItem(cartItems)) {
     retCart = setFreeCart({ cartItems });
   }
@@ -206,11 +226,11 @@ export const deleteCartItem = ({
 }: {
   id?: string;
   prices?: Prices;
-  deleteItem?: (data: DeleteCartItem | string) => {};
+  deleteItem?: (data: DeleteCartItem | string) => void;
   cartItems?: CartItem[];
-  recalculate?: (cartItems: CartItem[]) => {};
+  recalculate?: (cartItems: CartItem[]) => void;
   roe?: number;
-} = {}) => {
+} = {}): void => {
   const data = recalculateCart({ cartItems, id }) || id;
   deleteItem(data);
 
@@ -230,7 +250,7 @@ export const deleteCartItem = ({
             address: nativeFioAddressPrice,
             domain: nativeFioDomainPrice,
           },
-        } = prices;
+        } = prices || { nativeFio: {} };
         const retObj = {
           ...firstMatchElem,
           costNativeFio: new MathOp(nativeFioAddressPrice)
@@ -273,7 +293,7 @@ export const totalCost = (
           if (!acc.costNativeFio) acc.costNativeFio = 0;
           return {
             costNativeFio: new MathOp(acc.costNativeFio)
-              .add(item.costNativeFio)
+              .add(item.costNativeFio || 0)
               .toNumber(),
           };
         }, {});
@@ -287,12 +307,13 @@ export const totalCost = (
   };
 };
 
-export const isDomain = (fioName: string) =>
+export const isDomain = (fioName: string): boolean =>
   fioName.indexOf(FIO_ADDRESS_DELIMITER) < 0;
 export const hasFioAddressDelimiter = (value: string): boolean =>
   value.indexOf(FIO_ADDRESS_DELIMITER) > 0;
 
-export const priceToNumber = (price: string) => +parseFloat(price).toFixed(2);
+export const priceToNumber = (price: string): number =>
+  +parseFloat(price).toFixed(2);
 
 export const getElementByFioName = ({
   fioNameList,
@@ -300,7 +321,7 @@ export const getElementByFioName = ({
 }: {
   fioNameList: FioNameItemProps[];
   name: string;
-}) => {
+}): FioNameItemProps => {
   return (
     (fioNameList &&
       fioNameList.find(
@@ -313,27 +334,42 @@ export const getElementByFioName = ({
 export const putParamsToUrl = (
   route: string,
   params: { [paramName: string]: string },
-) => {
+): string => {
   return Object.keys(params).reduce(
     (acc: string, key: string) =>
-      acc.replace(new RegExp(`:${key}[\?]?`, 'g'), params[key]),
+      acc.replace(new RegExp(`:${key}[?]?`, 'g'), params[key]),
     `${route}`,
   );
 };
 
-export const camelizeFioRequestsData = (data: ResponseFioRecord[]) => {
+export const camelizeFioRequestsData = (
+  data: ResponseFioRecord[],
+): FioRecord[] => {
   const result: FioRecord[] = [];
   data.forEach((o: ResponseFioRecord, i: number) => {
-    const resultItem: FioRecord | any = {};
+    const resultItem: FioRecord = {
+      content: '',
+      fioRequestId: 0,
+      payeeFioAddress: '',
+      payeeFioPublicKey: '',
+      payerFioAddress: '',
+      payerFioPublicKey: '',
+      status: '',
+      timeStamp: '',
+    };
     for (const [key, value] of Object.entries(o)) {
-      resultItem[camelCase(key)] = value;
+      const itemKey: keyof FioRecord = camelCase(key) as keyof FioRecord;
+      if (resultItem[itemKey] !== undefined) {
+        // @ts-ignore // todo
+        resultItem[itemKey] = value;
+      }
     }
-    result[i] = resultItem;
+    if (resultItem.status) result[i] = resultItem;
   });
   return result;
 };
 
-export const camelizeObjKeys = (obj: any) => {
+export const camelizeObjKeys = (obj: {}): AnyObject => {
   return mapKeys(obj, (val, key) => camelCase(key));
 };
 
@@ -349,7 +385,7 @@ export const decryptFioRequestData = ({
   };
   walletKeys: WalletKeys;
   contentType: string;
-}) => {
+}): DecryptedFioRecordContent => {
   const { content, payerFioPublicKey, payeeFioPublicKey } = data;
   const { private: privateWalletKey, public: publicWalletKey } = walletKeys;
   const textDecoder = new TextDecoder();
@@ -366,5 +402,6 @@ export const decryptFioRequestData = ({
     textDecoder,
   });
   const result = cipher.decrypt(contentType, content);
+
   return camelizeObjKeys(result);
 };

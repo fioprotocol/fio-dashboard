@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import { RouteComponentProps } from 'react-router-dom';
 
 import { compose } from '../../utils';
 import FioAddressNftPage from './FioAddressNftPage';
@@ -10,13 +11,14 @@ import { ReduxState } from '../../redux/init';
 
 import { genericTokenId } from '../../util/fio';
 
-import { NFTTokenDoublet } from '../../types';
+import { NFTTokenDoublet, OwnPropsAny } from '../../types';
 
 const reduxConnect = connect(
   createStructuredSelector({
     nft: (
       state: ReduxState,
-      ownProps: { match: { params: { address: string; id: string } } } & any,
+      ownProps: RouteComponentProps<{ address: string; id: string }> &
+        OwnPropsAny,
     ) => {
       const {
         fio: { nftList },

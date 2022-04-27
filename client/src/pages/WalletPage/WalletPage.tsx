@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useHistory } from 'react-router';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import WalletDetailsModal from './components/WalletDetailsModal';
@@ -10,10 +11,12 @@ import TotalBalanceBadge from '../WalletsPage/components/TotalBalanceBadge';
 import TransactionHistory from './components/TransactionHistory';
 import EditWalletName from './components/EditWalletName';
 import WalletTabs from './components/WalletTabs';
+import InfoBadge from '../../components/InfoBadge/InfoBadge';
 
 import apis from '../../api';
 
 import { ROUTES } from '../../constants/routes';
+import { BADGE_TYPES } from '../../components/Badge/Badge';
 
 import { putParamsToUrl } from '../../utils';
 
@@ -21,21 +24,43 @@ import { ContainerProps } from './types';
 
 import classes from './styles/WalletPage.module.scss';
 
+type Location = {
+  location: {
+    state: {
+      isOpenLockedList: boolean;
+    };
+  };
+};
+
 const WalletPage: React.FC<ContainerProps> = props => {
   const {
     fioWallet,
     balance,
+    profileRefreshed,
     refreshBalance,
     fioWalletsData,
     fioWalletsTxHistory,
+    match: {
+      params: { publicKey },
+    },
   } = props;
 
   const [showDetails, setShowDetails] = useState(false);
   const [showWalletNameEdit, setShowWalletNameEdit] = useState(false);
+  const [error, setError] = useState<string>('');
+
+  const { location }: Location = useHistory();
+
+  const { isOpenLockedList } = location.state || { isOpenLockedList: false };
 
   useEffect(() => {
     if (fioWallet && fioWallet.publicKey) refreshBalance(fioWallet.publicKey);
-  }, [fioWallet]);
+  }, [fioWallet, refreshBalance]);
+
+  useEffect(() => {
+    if (publicKey && profileRefreshed && !fioWallet)
+      setError(`Fio Wallet (${publicKey}) is not available`);
+  }, [publicKey, fioWallet, profileRefreshed]);
 
   const closeWalletDetails = () => setShowDetails(false);
   const closeWalletNameEdit = () => setShowWalletNameEdit(false);
@@ -52,12 +77,20 @@ const WalletPage: React.FC<ContainerProps> = props => {
 
   const actorName = fioWallet ? apis.fio.getActor(fioWallet.publicKey) : '';
 
-  if (!fioWallet || !fioWallet.id)
+  if (error)
     return (
-      <div className="d-flex justify-content-center align-items-center w-100 flex-grow-1">
-        <FioLoader />
+      <div className={classes.container}>
+        <LayoutContainer title="Wallet">
+          <InfoBadge
+            message={error}
+            show={!!error}
+            title="Error"
+            type={BADGE_TYPES.ERROR}
+          />
+        </LayoutContainer>
       </div>
     );
+  if (!fioWallet || !fioWallet.id) return <FioLoader wrap={true} />;
 
   const renderTitle = () => {
     return (
@@ -126,7 +159,11 @@ const WalletPage: React.FC<ContainerProps> = props => {
         />
       </LayoutContainer>
       <div className={classes.actionBadges}>
-        <TotalBalanceBadge {...balance} />
+        <TotalBalanceBadge
+          {...balance}
+          publicKey={fioWallet.publicKey}
+          isOpenLockedList={isOpenLockedList}
+        />
         <TransactionHistory actorName={actorName} />
       </div>
     </div>

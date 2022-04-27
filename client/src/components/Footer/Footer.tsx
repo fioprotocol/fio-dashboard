@@ -7,7 +7,7 @@ import { ROUTES } from '../../constants/routes';
 import { currentYear } from '../../utils';
 import classes from './Footer.module.scss';
 
-const Footer = (props: { homePageLink: string }) => {
+const Footer: React.FC<{ homePageLink: string }> = props => {
   const { homePageLink } = props;
 
   return (

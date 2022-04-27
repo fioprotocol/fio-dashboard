@@ -1,3 +1,4 @@
+import React from 'react';
 import { History } from 'history';
 
 import {
@@ -18,6 +19,7 @@ export type ContainerProps = {
   children?: React.ReactNode;
   feePrice: FeePrice;
   roe: number;
+  fioDomains: FioWalletDoublet[];
   currentWallet: FioWalletDoublet;
   loading: boolean;
   refreshBalance: (publicKey: string) => void;

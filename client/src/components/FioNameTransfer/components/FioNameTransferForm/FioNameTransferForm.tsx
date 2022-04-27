@@ -22,10 +22,11 @@ import classes from '../../FioNameTransferContainer.module.scss';
 
 const PLACEHOLDER = 'Enter FIO Crypto Handle or FIO Public Key of New Owner';
 
-export const TransferForm = (props: FormProps) => {
+export const TransferForm: React.FC<FormProps> = props => {
   const {
     fioNameType,
     name,
+    walletName,
     feePrice,
     publicKey,
     onSubmit,
@@ -41,9 +42,9 @@ export const TransferForm = (props: FormProps) => {
   const { nativeFio: feeNativeFio, fio, usdc } = feePrice;
   const fioNameLabel = fioNameLabels[fioNameType];
   const hasLowBalance =
-    publicKey &&
+    !!publicKey &&
     feePrice &&
-    new MathOp(walletBalancesAvailable.nativeFio).lt(feeNativeFio);
+    new MathOp(walletBalancesAvailable.nativeFio || 0).lt(feeNativeFio || 0);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -53,14 +54,14 @@ export const TransferForm = (props: FormProps) => {
     } catch (e) {
       setValidating(false);
       setValid(false);
-      return setError(e.transferAddress);
+      return setError(e.message);
     }
     setValidating(false);
     onSubmit(value);
   };
 
   const onChange = async (newValue: FieldValue) => {
-    setValue(`${newValue}`);
+    setValue(`${newValue.toString()}`);
     if (error) {
       setError(null);
       setValid(true);
@@ -95,7 +96,10 @@ export const TransferForm = (props: FormProps) => {
           title={`${fioNameLabel} Transfer Fee`}
           type={BADGE_TYPES.BLACK}
         />
-        <PayWithBadge walletBalances={walletBalancesAvailable} />
+        <PayWithBadge
+          walletBalances={walletBalancesAvailable}
+          walletName={walletName}
+        />
         <LowBalanceBadge hasLowBalance={hasLowBalance} />
         <SubmitButton
           text="Transfer Now"

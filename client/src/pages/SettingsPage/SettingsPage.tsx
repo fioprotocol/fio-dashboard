@@ -11,7 +11,8 @@ import TwoFactorAuth from './components/TwoFactorAuth';
 
 import classes from './styles/Settings.module.scss';
 
-const SettingsPage = (props: { loading: boolean; user: { email: string } }) => {
+type Props = { loading: boolean; user: { email: string } };
+const SettingsPage: React.FC<Props> = props => {
   const { user, loading } = props;
   if (loading || user == null)
     return (

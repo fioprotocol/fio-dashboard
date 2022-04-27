@@ -22,9 +22,12 @@ type Props = TextInputProps & {
   renderModalComponent: (props: QrModalProps) => HTMLDivElement;
 };
 
-export const QrCodeInput = (
+export const QrCodeInput: React.ForwardRefRenderFunction<
+  HTMLInputElement,
+  Props & FieldRenderProps<Props>
+> = (
   props: Props & FieldRenderProps<Props>,
-  ref: React.Ref<HTMLInputElement | null>,
+  ref?: React.Ref<HTMLInputElement>,
 ) => {
   const {
     input,
@@ -67,7 +70,7 @@ export const QrCodeInput = (
   const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
 
   const hasError =
-    ((error || data.error) &&
+    ((error || data?.error) &&
       (touched || modified || submitSucceeded || !!value) &&
       !active) ||
     (submitError && !modifiedSinceLastSubmit);
@@ -141,7 +144,7 @@ export const QrCodeInput = (
       <ErrorBadge
         error={error}
         data={data}
-        hasError={!hideError && !data.hideError && hasError}
+        hasError={!hideError && !data?.hideError && hasError}
         type={errorType}
         color={errorColor}
         submitError={submitError}

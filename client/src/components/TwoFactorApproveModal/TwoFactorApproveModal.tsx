@@ -8,6 +8,7 @@ import apis from '../../api';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
 import { minWaitTimeFunction } from '../../utils';
+import { log } from '../../util/general';
 
 import { ACTION_TYPE, NEW_DEVICE_REQUEST_STATUS } from './constants';
 
@@ -61,7 +62,7 @@ const TwoFactorAuth: React.FC<Props> = props => {
           {},
         ),
       );
-      setNewDevicesList(retArr);
+      setNewDevicesList(retArr as PendingVoucher[]);
     }
   };
 
@@ -93,8 +94,7 @@ const TwoFactorAuth: React.FC<Props> = props => {
         }
       }
     } catch (e) {
-      // @ts-ignore
-      console.error(e);
+      log.error(e);
     }
     setLoading(prevState => ({ ...prevState, [voucherId]: false }));
   };

@@ -5,7 +5,7 @@ import apis from '../api';
 import { sleep, isDomain } from '../utils';
 import MathOp from '../util/math';
 import { FREE_ADDRESS_REGISTER_ERROR, ERROR_TYPES } from '../constants/errors';
-import { RegisterAddressError } from '../util/errors';
+import { RegisterAddressError } from './errors';
 
 import { FIO_REQUEST_STATUS_TYPES } from '../constants/fio';
 import { CHAIN_CODES } from '../constants/common';
@@ -13,6 +13,7 @@ import { convertFioPrices } from './prices';
 
 import {
   NftTokenResponse,
+  NFTTokenDoublet,
   CartItem,
   RegistrationResult,
   Prices,
@@ -20,7 +21,9 @@ import {
   IncomePrices,
 } from '../types';
 
-export const waitForAddressRegistered = async (fioAddress: string) => {
+export const waitForAddressRegistered = async (
+  fioAddress: string,
+): Promise<void> => {
   const CALL_INTERVAL = 3000; // 3 sec
   const WAIT_TIMEOUT = 60000; // 60 sec
   const startTime = new Date().getTime();
@@ -45,7 +48,7 @@ export const waitForAddressRegistered = async (fioAddress: string) => {
   return checkAddressIsRegistered();
 };
 
-export const transformNft = (nfts: NftTokenResponse[]) => {
+export const transformNft = (nfts: NftTokenResponse[]): NFTTokenDoublet[] => {
   const nftList = [];
   for (const item of nfts) {
     const nftItem = {
@@ -98,7 +101,7 @@ export const transformResult = ({
   cart: CartItem[];
   prices: Prices;
   roe: number;
-}) => {
+}): { errItems: CartItem[]; regItems: CartItem[]; updatedCart: CartItem[] } => {
   const errItems = [];
   const regItems = [];
 
@@ -120,7 +123,10 @@ export const transformResult = ({
       };
 
       const partialIndex = partial && partial.indexOf(cartItemId);
-      if (!isDomain(fioName)) {
+      if (isDomain(fioName)) {
+        retObj.domain = fioName;
+        retObj.costNativeFio = nativeFioDomainPrice;
+      } else {
         const name = fioName.split('@');
         const addressName = name[0];
         const domainName = name[1];
@@ -132,6 +138,12 @@ export const transformResult = ({
 
         if (isFree) {
           retObj.isFree = isFree;
+          if (errorType === ERROR_TYPES.freeAddressIsNotRegistered) {
+            updatedCart.splice(
+              cart.findIndex(({ id }) => cartItemId === id),
+              1,
+            );
+          }
         } else {
           if (
             cart.find(
@@ -147,9 +159,6 @@ export const transformResult = ({
             retObj.costNativeFio = nativeFioAddressPrice;
           }
         }
-      } else {
-        retObj.domain = fioName;
-        retObj.costNativeFio = nativeFioDomainPrice;
       }
 
       const fioPrices = convertFioPrices(retObj.costNativeFio, roe);
@@ -211,7 +220,7 @@ export const genericTokenId = (
   chainCode: string,
   tokenId: string,
   contractAddress: string,
-) => `${chainCode}-${tokenId}-${contractAddress}`;
+): string => `${chainCode}-${tokenId}-${contractAddress}`;
 
 export const transformPublicAddresses = (
   publicAddresses: PublicAddressDoublet[],
@@ -235,13 +244,15 @@ export const normalizePublicAddresses = (
     publicAddress,
   }));
 
-export const statusBadgeColours = (status: string) => ({
+export const statusBadgeColours = (
+  status: string,
+): { isBlue: boolean; isOrange: boolean; isRose: boolean } => ({
   isBlue: FIO_REQUEST_STATUS_TYPES.PAID === status,
   isOrange: FIO_REQUEST_STATUS_TYPES.REJECTED === status,
   isRose: FIO_REQUEST_STATUS_TYPES.PENDING === status,
 });
 
-export const isFioChain = (chain: string) => chain === CHAIN_CODES.FIO;
+export const isFioChain = (chain: string): boolean => chain === CHAIN_CODES.FIO;
 
 export const convertPrices = (prices: IncomePrices): { pricing: Prices } => {
   const pricing = {
@@ -251,8 +262,8 @@ export const convertPrices = (prices: IncomePrices): { pricing: Prices } => {
   };
 
   pricing.fio = {
-    address: apis.fio.sufToAmount(pricing.nativeFio.address),
-    domain: apis.fio.sufToAmount(pricing.nativeFio.domain),
+    address: apis.fio.sufToAmount(pricing.nativeFio.address) || 0,
+    domain: apis.fio.sufToAmount(pricing.nativeFio.domain) || 0,
   };
 
   pricing.usdt = {

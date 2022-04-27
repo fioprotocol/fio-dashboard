@@ -1,4 +1,5 @@
 import { FieldValidationFunctionAsync } from '@lemoncode/fonk';
+
 import apis from '../../api';
 import { CHAIN_CODES } from '../../constants/common';
 
@@ -14,9 +15,9 @@ export const isValidPubAddressValidator: FieldValidationFunctionAsync<FieldArgs>
   message = defaultMessage,
   customArgs,
 }) => {
-  const { chainCodeFieldId } = customArgs;
+  const { chainCodeFieldId } = customArgs || {};
 
-  const chainCode = values[chainCodeFieldId];
+  const chainCode = chainCodeFieldId ? values[chainCodeFieldId] : null;
   const validationResult = {
     type: 'PUB_ADDRESS_NOT_VALID',
     succeeded: false,

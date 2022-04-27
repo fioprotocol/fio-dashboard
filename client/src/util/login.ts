@@ -1,16 +1,18 @@
+import { MutableRefObject } from 'react';
+
 import apis from '../api';
 
 const RETRY_LOGIN_TIME = 5000;
 
-type AutoLoginParams = {
-  email: string;
-  password: string;
-  voucherId: string;
+export type AutoLoginParams = {
+  email?: string;
+  password?: string;
+  voucherId?: string;
 };
 
 type AutoLoginProps = {
   voucherId: string;
-  timerRef: any;
+  timerRef: MutableRefObject<ReturnType<typeof setTimeout>>;
   loginParams: AutoLoginParams;
   login: (params: AutoLoginParams) => void;
   onCloseBlockModal: () => void;
@@ -42,10 +44,9 @@ const handleAutoLogin = async (props: AutoLoginProps) => {
   autoLogin(props);
 };
 
-export const autoLogin = (params: AutoLoginProps) => {
+export const autoLogin = (params: AutoLoginProps): void => {
   const { timerRef } = params;
-  timerRef.current = setTimeout(
-    () => handleAutoLogin({ ...params }),
-    RETRY_LOGIN_TIME,
-  );
+  timerRef.current = setTimeout(() => {
+    handleAutoLogin({ ...params });
+  }, RETRY_LOGIN_TIME);
 };

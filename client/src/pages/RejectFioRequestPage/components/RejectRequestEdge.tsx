@@ -1,7 +1,10 @@
 import React from 'react';
+
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
+
+import { log } from '../../../util/general';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import { ACTIONS } from '../../../constants/fio';
@@ -41,7 +44,7 @@ const RejectRequestEdge: React.FC<Props> = props => {
         fioRequestId: data.fioRecord.id,
       });
     } catch (err) {
-      console.error(err);
+      log.error(err);
       error = err;
     }
 

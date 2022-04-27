@@ -1,7 +1,10 @@
 import { Validators, ValidationSchema } from '@lemoncode/fonk';
 import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
 
-import { isNumberValidator } from '../../../../util/validators';
+import {
+  isAmountValidator,
+  isNumberValidator,
+} from '../../../../util/validators';
 
 import { MAX_MEMO_SIZE } from '../../../../constants/fio';
 
@@ -20,6 +23,10 @@ const validationSchema: ValidationSchema = {
       {
         validator: isNumberValidator,
         message: 'Please enter valid amount.',
+      },
+      {
+        validator: isAmountValidator,
+        customArgs: { chainCodeFieldId: 'chainCode' },
       },
     ],
     obtId: [

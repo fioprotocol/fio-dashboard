@@ -9,7 +9,7 @@ type SiteLinkProps = {
   refProfileInfo: RefProfile;
 };
 
-const SiteLink = (props: SiteLinkProps) => {
+const SiteLink: React.FC<SiteLinkProps> = props => {
   const { refProfileInfo } = props;
 
   let link = 'https://fioprotocol.io/';

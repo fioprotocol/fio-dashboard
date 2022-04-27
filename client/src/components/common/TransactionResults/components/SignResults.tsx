@@ -9,7 +9,7 @@ import { ResultsProps } from '../types';
 
 import classes from '../styles/Results.module.scss';
 
-const SignResults = (props: ResultsProps) => {
+const SignResults: React.FC<ResultsProps> = props => {
   const {
     results: {
       name,
@@ -20,7 +20,7 @@ const SignResults = (props: ResultsProps) => {
 
   return (
     <Results {...props}>
-      <FioName name={name} />
+      <FioName name={name || ''} />
       <h5 className={classes.label}>Signed NFT Details</h5>
       <div className={classes.badges}>
         <Badge show={true} type={BADGE_TYPES.WHITE}>

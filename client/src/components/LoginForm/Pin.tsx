@@ -4,24 +4,26 @@ import { isEmpty } from 'lodash';
 import FormHeader from '../FormHeader/FormHeader';
 import CloseButton from '../CloseButton/CloseButton';
 import PinForm from '../PinForm';
+import { FIELD_NAME } from '../PinForm/PinForm';
 
 import { PIN_LENGTH } from '../../constants/form';
-import { IOS_KEYBOARD_PLUG_TYPE } from '../Input/PinInput/constants';
 
 import classes from './LoginForm.module.scss';
+
+import { LoginFailure } from '../../types';
 
 type OwnProps = {
   onSubmit: (params: { email: string; pin: string }) => void;
   exitPin: () => void;
   resetLoginFailure: () => void;
   edgeAuthLoading: boolean;
-  loginFailure: { fields?: { [fieldName: string]: any }; code?: string };
+  loginFailure: LoginFailure;
   edgeLoginFailure: { type?: string; wait?: number };
   email: string;
 };
 type Props = OwnProps;
 
-const Pin = (props: Props) => {
+const Pin: React.FC<Props> = props => {
   const {
     email,
     edgeAuthLoading,
@@ -31,24 +33,29 @@ const Pin = (props: Props) => {
     resetLoginFailure,
     onSubmit,
   } = props;
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     if (!isEmpty(edgeLoginFailure)) {
-      const messageText = (type: string) => {
+      const messageText = (type?: string) => {
         if (type === 'PasswordError' || type === 'UsernameError') {
-          if (edgeLoginFailure.wait > 0) return 'Pin login has been blocked';
+          if (edgeLoginFailure.wait && edgeLoginFailure.wait > 0)
+            return 'Pin login has been blocked';
           return 'Invalid Pin';
         }
         return 'Server Error';
       };
-      setError({ message: messageText(edgeLoginFailure.type) });
+      setError({
+        name: FIELD_NAME,
+        message: messageText(edgeLoginFailure.type),
+      });
     }
   }, [edgeLoginFailure]);
 
   useEffect(() => {
     if (!isEmpty(loginFailure)) {
       setError({
+        name: FIELD_NAME,
         message:
           loginFailure.code === 'AUTHENTICATION_FAILED'
             ? 'Authentication failed'
@@ -84,11 +91,6 @@ const Pin = (props: Props) => {
             onReset={onReset}
             loading={edgeAuthLoading}
             error={error}
-            iosKeyboardPlugType={
-              error
-                ? IOS_KEYBOARD_PLUG_TYPE.emptyPlug
-                : IOS_KEYBOARD_PLUG_TYPE.highPlug
-            }
             blockedTime={(edgeLoginFailure && edgeLoginFailure.wait) || 0}
           />
           <div className={classes.exitPin} onClick={exitPin}>

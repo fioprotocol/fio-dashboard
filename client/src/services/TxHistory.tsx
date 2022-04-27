@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
@@ -40,9 +40,9 @@ type Props = {
   refreshBalance: (publicKey: string) => void;
 };
 
-const TIMER_DELAY = 5000; // 5 sec
+const TIMER_DELAY = 8000; // 8 sec
 
-const TxHistory = (props: Props): React.FC => {
+const TxHistory = (props: Props): React.FC | null => {
   const {
     fioWalletsTxHistory,
     fioWallets,
@@ -57,56 +57,62 @@ const TxHistory = (props: Props): React.FC => {
   const [userFioWalletsTxHistory, setUserFioWalletsTxHistory] = useState<{
     [publicKey: string]: FioWalletTxHistory;
   }>(fioWalletsTxHistory[user.id]);
-  const updateHistory = (history: FioWalletTxHistory, publicKey: string) => {
-    updateWalletsTxHistory(history, publicKey, user.id);
-    refreshBalance(publicKey);
-  };
+  const updateHistory = useCallback(
+    (history: FioWalletTxHistory, publicKey: string) => {
+      updateWalletsTxHistory(history, publicKey, user.id);
+      refreshBalance(publicKey);
+    },
+    [refreshBalance, updateWalletsTxHistory, user.id],
+  );
 
-  const fetchWalletTxHistory = async (wallet: FioWalletDoublet) => {
-    const currentHistory: FioWalletTxHistory = userFioWalletsTxHistory[
-      wallet.publicKey
-    ] ?? {
-      highestTxHeight: -1,
-      txs: [],
-    };
-    await checkTransactions(
-      wallet.publicKey,
-      { ...currentHistory },
-      updateHistory,
-    );
-  };
+  const fetchWalletTxHistory = useCallback(
+    async (walletPublicKey: string) => {
+      const currentHistory: FioWalletTxHistory = userFioWalletsTxHistory[
+        walletPublicKey
+      ] ?? {
+        highestTxHeight: -1,
+        txs: [],
+      };
+      await checkTransactions(
+        walletPublicKey,
+        { ...currentHistory },
+        updateHistory,
+      );
+    },
+    [updateHistory, userFioWalletsTxHistory],
+  );
 
-  const fetchWalletsTxHistory = async (walletsState?: FioWalletDoublet[]) => {
+  const fetchWalletsTxHistory = async (): Promise<void> => {
     if (!isLoading) {
       setIsLoading(true);
       await Promise.all(
-        (walletsState || fioWallets).map(async wallet =>
-          fetchWalletTxHistory(wallet),
-        ),
+        fioWallets.map(async wallet => fetchWalletTxHistory(wallet.publicKey)),
       );
       setIsLoading(false);
     }
   };
 
-  const forceWalletHistoryFetch = async (wallet: FioWalletDoublet) => {
-    if (!isLoading) {
-      setIsLoading(true);
-      await fetchWalletTxHistory(wallet);
-      refreshWalletDataPublicKey('');
-      setIsLoading(false);
-    }
-  };
+  const forceWalletHistoryFetch = useCallback(
+    async (walletPublicKey: string): Promise<void> => {
+      if (!isLoading) {
+        setIsLoading(true);
+        await fetchWalletTxHistory(walletPublicKey);
+        setIsLoading(false);
+      }
+    },
+    [isLoading, fetchWalletTxHistory],
+  );
 
   useEffect(() => {
     if (walletDataPublicKey) {
-      const wallet = fioWallets.find(
-        walletItem => walletItem.publicKey === walletDataPublicKey,
-      );
-
-      if (!wallet) return;
-      forceWalletHistoryFetch(wallet);
+      refreshWalletDataPublicKey('');
+      forceWalletHistoryFetch(walletDataPublicKey);
     }
-  }, [walletDataPublicKey, JSON.stringify(fioWallets)]);
+  }, [
+    walletDataPublicKey,
+    forceWalletHistoryFetch,
+    refreshWalletDataPublicKey,
+  ]);
 
   useEffect(() => {
     if (user && user.id) {

@@ -1,5 +1,8 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  FontAwesomeIcon,
+  FontAwesomeIconProps,
+} from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
 import classes from './InputActionButtons.module.scss';
@@ -69,18 +72,22 @@ export const CopyButton: React.FC<CopyButtonProps & DefaultProps> = ({
   );
 };
 
-export const PasteButton: React.FC<PasteButtonProps & DefaultProps> = ({
+export const PasteButton: React.FC<PasteButtonProps &
+  DefaultProps &
+  Partial<FontAwesomeIconProps>> = ({
   onClick,
   uiType,
   isVisible,
+  ...rest
 }) => {
-  if (!navigator.clipboard.readText || !isVisible) return null;
+  if (!navigator.clipboard?.readText || !isVisible) return null;
 
   return (
     <FontAwesomeIcon
       icon={{ prefix: 'far', iconName: 'clipboard' }}
       className={classnames(classes.inputIcon, uiType && classes[uiType])}
       onClick={onClick}
+      {...rest}
     />
   );
 };

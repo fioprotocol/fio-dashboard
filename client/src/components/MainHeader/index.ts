@@ -4,11 +4,12 @@ import { createStructuredSelector } from 'reselect';
 
 import { logout, resetLastAuthData } from '../../redux/profile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
-import { pathname } from '../../redux/navigation/selectors';
+import { pathname, locationState } from '../../redux/navigation/selectors';
 import {
   user,
   isAuthenticated,
   isNotActiveUser,
+  profileRefreshed,
   loading as profileLoading,
 } from '../../redux/profile/selectors';
 import { loading as edgeAuthLoading } from '../../redux/edge/selectors';
@@ -22,13 +23,16 @@ import {
 } from '../../redux/refProfile/selectors';
 
 import MainHeader from './MainHeader';
+
 import { MainHeaderProps } from './types';
 import { AppDispatch } from '../../redux/init';
+import { OwnPropsAny } from '../../types';
 
 const selector = createStructuredSelector({
   pathname,
   user,
   isAuthenticated,
+  profileRefreshed,
   isNotActiveUser,
   edgeAuthLoading,
   profileLoading,
@@ -38,9 +42,13 @@ const selector = createStructuredSelector({
   refProfileLoading,
   homePageLink,
   fioAddresses,
+  locationState,
 });
 
-const actions = (dispatch: AppDispatch, ownProps: MainHeaderProps) => ({
+const actions = (
+  dispatch: AppDispatch,
+  ownProps: MainHeaderProps & OwnPropsAny,
+) => ({
   showLoginModal: () => dispatch(showLoginModal()),
   logout: () => {
     const { history } = ownProps;
@@ -48,7 +56,5 @@ const actions = (dispatch: AppDispatch, ownProps: MainHeaderProps) => ({
     dispatch(resetLastAuthData());
   },
 });
-
-export { MainHeader };
 
 export default withRouter(connect(selector, actions)(MainHeader));

@@ -1,4 +1,6 @@
+import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+
 import {
   FioWalletDoublet,
   FeePrice,
@@ -17,6 +19,7 @@ export type FormProps = {
   hasLowBalance: boolean;
   processing: boolean;
   walletBalancesAvailable: WalletBalancesItem;
+  walletName?: string;
   handleSubmit: () => void;
 };
 

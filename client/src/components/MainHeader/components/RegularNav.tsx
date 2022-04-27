@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Navbar, Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+
 import { useCheckIfDesktop } from '../../../screenType';
 
 import { ROUTES } from '../../../constants/routes';
@@ -25,7 +26,7 @@ type RegularNavProps = {
   closeMenu: () => void;
 };
 
-const RegularNav = (props: RegularNavProps) => {
+const RegularNav: React.FC<RegularNavProps> = props => {
   const { cartItems, hideCart } = props;
 
   const isDesktop = useCheckIfDesktop();

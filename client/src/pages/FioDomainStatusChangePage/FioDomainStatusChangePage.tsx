@@ -50,7 +50,8 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
 
   useEffect(() => {
     getFee();
-    refreshBalance(selectedFioDomain.walletPublicKey);
+    selectedFioDomain.walletPublicKey &&
+      refreshBalance(selectedFioDomain.walletPublicKey);
   }, []);
 
   // Submit
@@ -72,9 +73,10 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
   const onSuccess = (result: { fee_collected: number }) => {
     setSubmitData(null);
     setResultsData({
-      feeCollected: result.fee_collected
-        ? convertFioPrices(result.fee_collected, roe)
-        : feePrice,
+      feeCollected:
+        result.fee_collected && roe
+          ? convertFioPrices(result.fee_collected, roe)
+          : feePrice,
       name,
       changedStatus: statusToChange,
     });
@@ -89,7 +91,9 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
 
   const hasLowBalance =
     feePrice &&
-    new MathOp(walletBalancesAvailable.nativeFio).lt(feePrice.nativeFio);
+    new MathOp(walletBalancesAvailable.nativeFio || 0).lt(
+      feePrice.nativeFio || 0,
+    );
 
   if (resultsData)
     return (
@@ -129,6 +133,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
         hasLowBalance={hasLowBalance}
         processing={processing}
         handleSubmit={onSubmit}
+        walletName={fioWallet.name}
         walletBalancesAvailable={walletBalancesAvailable}
       />
     </>

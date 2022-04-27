@@ -7,27 +7,25 @@ import PriceBadge from '../Badges/PriceBadge/PriceBadge';
 import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
 import RenewResults from '../common/TransactionResults/components/RenewResults';
-import EdgeConfirmAction from '../EdgeConfirmAction';
+import RenewEdgeWallet from './components/RenewEdgeWallet';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
+import FioLoader from '../common/FioLoader/FioLoader';
 
 import {
+  DOMAIN,
   MANAGE_PAGE_REDIRECT,
-  CONFIRM_PIN_ACTIONS,
+  WALLET_CREATED_FROM,
 } from '../../constants/common';
 import { BADGE_TYPES } from '../Badge/Badge';
 import { ERROR_TYPES } from '../common/TransactionResults/constants';
-import { ACTIONS } from '../../constants/fio';
 
 import { convertFioPrices } from '../../util/prices';
-import { hasFioAddressDelimiter, isDomain } from '../../utils';
+import { hasFioAddressDelimiter } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
 import MathOp from '../../util/math';
 
 import { ContainerProps } from './types';
 import { ResultsData } from '../common/TransactionResults/types';
-import { SubmitActionParams } from '../EdgeConfirmAction/types';
-
-import apis from '../../api';
 
 import classes from './FioNameRenewContainer.module.scss';
 
@@ -38,6 +36,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
     roe,
     history,
     name,
+    fioDomains,
     fioNameType,
     refreshBalance,
     getFee,
@@ -46,37 +45,38 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   const { nativeFio: feeNativeFio, fio, usdc } = feePrice;
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<{
-    fioAddress: string;
+    name: string;
   } | null>(null);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
+  const [error, setError] = useState<string>('');
 
   const { available: walletBalancesAvailable } = useWalletBalances(
     currentWallet.publicKey,
   );
 
   useEffect(() => {
-    getFee(hasFioAddressDelimiter(name));
-    refreshBalance(currentWallet.publicKey);
-  }, []);
-
-  const submit = async ({ keys }: SubmitActionParams) => {
-    if (isDomain(name)) {
-      return await apis.fio.executeAction(keys, ACTIONS.renewFioDomain, {
-        fioDomain: name,
-        maxFee: feeNativeFio,
-      });
+    if (name && currentWallet && currentWallet.publicKey) {
+      getFee(hasFioAddressDelimiter(name));
+      refreshBalance(currentWallet.publicKey);
     }
+  }, [name, currentWallet, refreshBalance, getFee]);
 
-    throw new Error("Can't renew FIO Crypto Handle");
-  };
+  useEffect(() => {
+    fioNameType === DOMAIN &&
+      setError(
+        !fioDomains.find(({ name: fioDomainName }) => fioDomainName === name)
+          ? `Fio Domain (${name}) is not available`
+          : '',
+      );
+  }, [name, fioDomains, fioNameType]);
 
   const hasLowBalance =
     currentWallet &&
     feePrice &&
-    new MathOp(walletBalancesAvailable.nativeFio).lt(feeNativeFio);
+    new MathOp(walletBalancesAvailable.nativeFio || 0).lt(feeNativeFio || 0);
 
   const onSubmit = () => {
-    setSubmitData({ fioAddress: name });
+    setSubmitData({ name });
   };
   const onCancel = () => {
     setSubmitData(null);
@@ -110,22 +110,40 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
       />
     );
 
+  if (error)
+    return (
+      <PseudoModalContainer
+        title="Renew Now"
+        link={MANAGE_PAGE_REDIRECT[fioNameType]}
+      >
+        <InfoBadge
+          message={error}
+          show={!!error}
+          title="Error"
+          type={BADGE_TYPES.ERROR}
+        />
+      </PseudoModalContainer>
+    );
+
+  if (!currentWallet || currentWallet.balance === null)
+    return <FioLoader wrap={true} />;
+
   if (!currentWallet.publicKey && !processing)
     return <Redirect to={{ pathname: MANAGE_PAGE_REDIRECT[fioNameType] }} />;
 
   return (
     <>
-      <EdgeConfirmAction
-        action={CONFIRM_PIN_ACTIONS.RENEW}
-        setProcessing={setProcessing}
-        onSuccess={onSuccess}
-        onCancel={onCancel}
-        processing={processing}
-        data={submitData}
-        submitAction={submit}
-        fioWalletEdgeId={currentWallet.edgeId || ''}
-        edgeAccountLogoutBefore={true}
-      />
+      {currentWallet.from === WALLET_CREATED_FROM.EDGE ? (
+        <RenewEdgeWallet
+          fioWallet={currentWallet}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          setProcessing={setProcessing}
+          renewData={submitData}
+          processing={processing}
+          fee={feeNativeFio}
+        />
+      ) : null}
       <PseudoModalContainer
         title="Renew Now"
         link={MANAGE_PAGE_REDIRECT[fioNameType]}
@@ -133,7 +151,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
         <div className={classes.container}>
           <InfoBadge
             title="Renewal Information"
-            message="This renewal will add 365 days to expiration and 100 Bundled Transactions"
+            message="This renewal will add 365 days to expiration"
             show={true}
             type={BADGE_TYPES.INFO}
           />
@@ -153,7 +171,10 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
             title="Total Cost"
             type={BADGE_TYPES.BLACK}
           />
-          <PayWithBadge walletBalances={walletBalancesAvailable} />
+          <PayWithBadge
+            walletBalances={walletBalancesAvailable}
+            walletName={currentWallet.name}
+          />
           <LowBalanceBadge hasLowBalance={hasLowBalance} />
           <SubmitButton
             onClick={onSubmit}

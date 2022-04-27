@@ -2,16 +2,118 @@
 @import '../../../assets/styles/fontMixins.scss';
 @import '../../../assets/styles/mediaQueriesMixings.scss';
 
+.modalContainer {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px;
+
+  .title {
+    font-size: 1.75rem;
+    @include proxima-nova-semibold;
+    font-weight: 500;
+    line-height: 1.2;
+    text-align: left;
+    margin-bottom: 20px;
+    margin-left: 20px;
+  }
+
+  .subtitleContainer {
+    padding: 10px 5px;
+    margin-right: 15px;
+    margin-left: 0;
+
+    .subtitle {
+      font-size: 0.875em;
+      margin-bottom: 5px;
+      @include proxima-nova-semibold;
+    }
+  }
+
+  .itemsList {
+    max-height: 450px;
+    overflow-y: auto;
+    padding: 0;
+    margin: 0;
+
+    .itemContainer {
+      border-radius: 12px;
+      background-color: $white;
+      padding: 15px 5px;
+      margin-bottom: 15px;
+      margin-right: 15px;
+      margin-left: 0;
+
+      .itemData {
+        font-size: 0.875em;
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  .closeButton {
+    width: 240px;
+    height: 54px;
+    border-radius: 7px;
+    @include proxima-nova-bold;
+    margin-top: 20px;
+    background-color: $azure-radiance;
+    color: white;
+    border-color: $azure-radiance;
+  }
+}
+
 .actionBadgeContainer {
   margin: 0 0 30px;
   width: auto;
 
+  .link {
+    background-color: $azure-radiance;
+    border-radius: 7px;
+    color: $white;
+    font-size: 13px;
+    line-height: 13px;
+    padding: 10px 0;
+    width: 122px;
+    max-width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    &:hover {
+      background-color: $butterfly-blue;
+    }
+
+    &.secondary {
+      background-color: $cyan;
+
+      &:hover {
+        background-color: $dark-blue-grey;
+      }
+    }
+
+    &.detailsButton {
+      width: 50px;
+      height: 25px;
+
+      &:focus {
+        outline: none !important;
+        box-shadow: none!important;
+      }
+    }
+  }
+
   .totalBadge {
     background-color: $midnight;
     border-radius: 12px;
-    padding: 30px;
+    padding: 25px;
     color: $white;
     width: 100%;
+
+    .actionButtons {
+      margin-top: 15px;
+      display: flex;
+      justify-content: space-between;
+    }
 
     .title {
       font-size: 1.125em;
@@ -34,12 +136,9 @@
       @include proxima-nova-thin;
     }
     .balanceContainer {
-      padding: 10px 20px;
+      padding: 10px;
       background-color: $dark-blue-grey;
       border-radius: 7px;
-      display: flex;
-      flex-flow: row wrap;
-      justify-content: space-between;
       margin-top: 15px;
 
       .balanceTitle, .balanceValues {
@@ -51,12 +150,12 @@
       .balanceTitle {
         margin-top: 0;
         margin-bottom: 0;
-        margin-right: 30px;
       }
       .balanceValues {
         font-size: 0.75em;
         margin-top: 0;
         margin-bottom: 0;
+        flex: 1; width: auto;
       }
     }
   }

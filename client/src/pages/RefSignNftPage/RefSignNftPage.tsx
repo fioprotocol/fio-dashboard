@@ -29,11 +29,7 @@ export const RefSignNftPage: React.FC<Props &
   const [fioAddresses] = useFioAddresses();
 
   if (!isAuthenticated || !fioAddresses.length) {
-    return (
-      <div className="d-flex justify-content-center align-items-center w-100 flex-grow-1">
-        <FioLoader />
-      </div>
-    );
+    return <FioLoader wrap={true} />;
   }
 
   if (refProfileQueryParams == null) {

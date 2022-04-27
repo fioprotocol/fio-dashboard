@@ -41,10 +41,13 @@ const ROUTES: { [route: string]: string } = {
   FIO_ADDRESS_SIGNATURES: '/nft-signatures/:address',
   FIO_ADDRESS_SIGN: '/sign-nft/:address',
   FIO_ADDRESS_NFT_EDIT: '/nft-signatures/:address/edit/:id',
+  FIO_REQUEST_DECRYPT: '/fio-wallet/:publicKey/fio-request/:id',
 
   SEND: '/send/:publicKey',
   FIO_TOKENS_REQUEST: '/new-request/:publicKey?',
   PAYMENT_DETAILS: '/payment-details/:publicKey/:fioRequestId',
+  STAKE: '/stake/:publicKey',
+  UNSTAKE: '/unstake/:publicKey',
 
   LINK_TOKEN_LIST: '/link-token-list',
   ADD_TOKEN: '/add-token',

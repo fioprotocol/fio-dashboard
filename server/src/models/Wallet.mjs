@@ -3,6 +3,7 @@ import Sequelize from 'sequelize';
 import Base from './Base';
 
 import { User } from './User';
+import { PublicWalletData } from './PublicWalletData';
 
 const { DataTypes: DT } = Sequelize;
 import { WALLET_CREATED_FROM } from '../config/constants';
@@ -45,6 +46,11 @@ export class Wallet extends Base {
     this.belongsTo(User, {
       foreignKey: 'userId',
       targetKey: 'id',
+    });
+    this.hasOne(PublicWalletData, {
+      foreignKey: 'walletId',
+      sourceKey: 'id',
+      as: 'publicWalletData',
     });
   }
 

@@ -4,10 +4,10 @@ import apis from '../api';
 import { FioBalanceRes, WalletBalances, WalletBalancesItem } from '../types';
 
 export function convertFioPrices(
-  nativeFio: number | null,
+  nativeFio: number | null | undefined,
   roe: number,
 ): WalletBalancesItem {
-  const fioAmount = apis.fio.sufToAmount(nativeFio);
+  const fioAmount = apis.fio.sufToAmount(nativeFio || 0);
 
   return {
     nativeFio,
@@ -21,22 +21,38 @@ export function convertFioPrices(
 }
 
 export const calculateBalances = (
-  { balance = 0, available = 0, locked = 0 }: FioBalanceRes,
+  {
+    balance = 0,
+    available = 0,
+    locked = 0,
+    staked = 0,
+    rewards = 0,
+    unlockPeriods = [],
+  }: FioBalanceRes,
   roe: number,
 ): WalletBalances => ({
   total: convertFioPrices(balance, roe),
   available: convertFioPrices(available, roe),
+  staked: convertFioPrices(staked, roe),
   locked: convertFioPrices(locked, roe),
+  rewards: convertFioPrices(rewards, roe),
+  unlockPeriods: unlockPeriods.map(({ amount, date }) => ({
+    date: date ? new Date(date) : null,
+    ...convertFioPrices(amount, roe),
+  })),
 });
 
 export const calculateTotalBalances = (
   walletsBalances: { [publicKey: string]: WalletBalances },
   roe: number,
-) => {
+): WalletBalances => {
   const total: FioBalanceRes = {
     balance: 0,
     available: 0,
     locked: 0,
+    staked: 0,
+    rewards: 0,
+    unlockPeriods: [],
   };
   for (const publicKey in walletsBalances) {
     if (walletsBalances[publicKey] != null) {
@@ -49,8 +65,26 @@ export const calculateTotalBalances = (
       total.locked = new MathOp(total.locked)
         .add(walletsBalances[publicKey].locked.nativeFio)
         .toNumber();
+      total.staked = new MathOp(total.staked)
+        .add(walletsBalances[publicKey].staked.nativeFio)
+        .toNumber();
+      total.rewards = new MathOp(total.rewards)
+        .add(walletsBalances[publicKey].rewards.nativeFio)
+        .toNumber();
+      total.unlockPeriods = [
+        ...(total.unlockPeriods || []),
+        ...(walletsBalances[publicKey].unlockPeriods?.map(
+          ({ nativeFio, date }) => ({
+            amount: nativeFio,
+            date: date.getTime(),
+          }),
+        ) || []),
+      ].sort(({ date: dateA }, { date: dateB }) =>
+        dateA && dateB && dateA > dateB ? 1 : -1,
+      );
     }
   }
+
   return calculateBalances(total, roe);
 };
 

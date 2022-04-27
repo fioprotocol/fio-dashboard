@@ -10,12 +10,13 @@ import BundledTransactionBadge from '../../../Badges/BundledTransactionBadge/Bun
 import LowBalanceBadge from '../../../Badges/LowBalanceBadge/LowBalanceBadge';
 import FioName from '../../../common/FioName/FioName';
 import SubmitButton from '../../../common/SubmitButton/SubmitButton';
-import ChainCodeField from '../../../ChainCodeField/ChainCodeField';
 
 import { BADGE_TYPES } from '../../../Badge/Badge';
 import { COLOR_TYPE } from '../../../Input/ErrorBadge';
 
-import { validate } from './validation';
+import ChainCodeField from '../../../ChainCodeField/ChainCodeField';
+
+import { formValidation } from './validation';
 
 import { NFT_CHAIN_CODE_LIST } from '../../../../constants/common';
 
@@ -23,7 +24,7 @@ import { SignNftFormProps } from '../../types';
 
 import classes from '../../SignNft.module.scss';
 
-const SignNFTForm = (props: SignNftFormProps) => {
+const SignNFTForm: React.FC<SignNftFormProps> = props => {
   const {
     onSubmit,
     initialValues,
@@ -41,7 +42,11 @@ const SignNFTForm = (props: SignNftFormProps) => {
   } = props;
 
   return (
-    <Form onSubmit={onSubmit} validate={validate} initialValues={initialValues}>
+    <Form
+      onSubmit={onSubmit}
+      validate={formValidation.validateForm}
+      initialValues={initialValues}
+    >
       {(formRenderProps: FormRenderProps) => (
         <form onSubmit={formRenderProps.handleSubmit}>
           <OnChange name="chainCode">{fieldValuesChanged}</OnChange>
@@ -78,7 +83,7 @@ const SignNFTForm = (props: SignNftFormProps) => {
               </>
             ) : (
               <div className="mt-3 mb-4">
-                <FioName name={fioAddress.name} />
+                <FioName name={fioAddress?.name} />
                 <Row>
                   <Col className={classes.subTitleSection}>
                     Signed NFT Details
@@ -90,12 +95,12 @@ const SignNFTForm = (props: SignNftFormProps) => {
               <Col>
                 <ChainCodeField
                   hasAutoWidth={true}
-                  isSimple={true}
+                  noShadow={true}
                   isHigh={true}
                   errorColor={COLOR_TYPE.WARN}
                   disabled={isEdit}
                   prefixLabel="Chain Code"
-                  list={NFT_CHAIN_CODE_LIST}
+                  optionsList={NFT_CHAIN_CODE_LIST}
                 />
               </Col>
               <Col>

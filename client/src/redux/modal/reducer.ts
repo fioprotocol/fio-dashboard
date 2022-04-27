@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+
 import * as actions from './actions';
 import { CONFIRM_PIN_SUCCESS } from '../edge/actions';
 import { PROFILE_SUCCESS } from '../profile/actions';

@@ -5,6 +5,7 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 import apis from '../../../api';
 
 import { linkTokens } from '../../../api/middleware/fio';
+import { log } from '../../../util/general';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import {
@@ -16,10 +17,11 @@ import {
 import { FioWalletDoublet } from '../../../types';
 import { RequestTokensValues } from '../types';
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
+import { TrxResponsePaidBundles } from '../../../api/fio';
 
 type Props = {
   fioWallet: FioWalletDoublet;
-  onSuccess: (data: any) => void;
+  onSuccess: (data: TrxResponsePaidBundles) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
   requestData: RequestTokensValues | null;
@@ -82,7 +84,7 @@ const RequestTokensEdgeWallet: React.FC<Props> = props => {
         });
         bundlesCollected += BUNDLES_TX_COUNT.ADD_PUBLIC_ADDRESS;
       } catch (e) {
-        console.error(e);
+        log.error(e);
         mapError = e;
       }
     }

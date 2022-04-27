@@ -1,9 +1,10 @@
 import { combineReducers } from 'redux';
 import { EdgeAccount } from 'edge-core-js';
+
 import { LOGOUT_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
 
-import { PinConfirmation } from '../../types';
+import { EdgeWalletsKeys, PinConfirmation, StatusResponse } from '../../types';
 
 const PIN_CONFIRM_DEFAULT = {};
 
@@ -170,7 +171,7 @@ export default combineReducers({
         return state;
     }
   },
-  changePasswordResults(state: { status?: number } = {}, action) {
+  changePasswordResults(state: StatusResponse = {}, action) {
     switch (action.type) {
       case actions.CHANGE_PASSWORD_SUCCESS: {
         return action.data;
@@ -201,7 +202,7 @@ export default combineReducers({
         return state;
     }
   },
-  changePinResults(state: { status?: number } = {}, action) {
+  changePinResults(state: StatusResponse = {}, action) {
     switch (action.type) {
       case actions.CHANGE_PIN_SUCCESS: {
         return action.data;
@@ -306,6 +307,18 @@ export default combineReducers({
       }
       case actions.LOGIN_SUCCESS: {
         return !!action.data.account.otpKey;
+      }
+      default:
+        return state;
+    }
+  },
+  confirmPinKeys(state: EdgeWalletsKeys | null = null, action) {
+    switch (action.type) {
+      case actions.SET_CONFIRM_PIN_KEYS: {
+        return action.data;
+      }
+      case LOGOUT_SUCCESS: {
+        return null;
       }
       default:
         return state;

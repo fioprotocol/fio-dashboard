@@ -2,43 +2,19 @@ import apis from '../api';
 
 import { FIO_CHAIN_CODE } from '../constants/fio';
 
-import { getUTCDate } from './general';
+import MathOp from './math';
+import { getUTCDate, log } from './general';
 
-import { FioWalletTxHistory, TransactionItemProps } from '../types';
+import {
+  FioHistoryNodeAction,
+  FioWalletTxHistory,
+  TransactionItemProps,
+} from '../types';
 
 const HISTORY_NODE_OFFSET = 20;
 const HISTORY_TX_NAMES = {
   TRANSFER_PUB_KEY: 'trnsfiopubky',
   TRANSFER: 'transfer',
-};
-
-type FioHistoryNodeAction = {
-  account_action_seq: number;
-  block_num: number;
-  block_time: string;
-  action_trace: {
-    receiver: string;
-    act: {
-      account: string;
-      name: string;
-      data: {
-        payee_public_key?: string;
-        amount?: number;
-        max_fee?: number;
-        actor?: string;
-        tpid?: string;
-        quantity?: string;
-        memo?: string;
-        to?: string;
-        from?: string;
-      };
-      hex_data: string;
-    };
-    trx_id: string;
-    block_num: number;
-    block_time: string;
-    producer_block_id: string;
-  };
 };
 
 const updateTx = (
@@ -75,6 +51,7 @@ const processTransaction = (
   let otherParams: {
     isTransferProcessed?: boolean;
     isFeeProcessed?: boolean;
+    feeActors?: string[];
   } = {};
   let editedExisting = false;
   const currencyCode = FIO_CHAIN_CODE;
@@ -122,7 +99,7 @@ const processTransaction = (
         nativeAmount = `${+nativeAmount - +existingTrx.networkFee}`;
         networkFee = existingTrx.networkFee;
       } else {
-        console.error(
+        log.error(
           'processTransaction error - existing spend transaction should have isTransferProcessed or isFeeProcessed set',
         );
       }
@@ -148,6 +125,7 @@ const processTransaction = (
   if (trxName === HISTORY_TX_NAMES.TRANSFER && data.quantity != null) {
     const [amount] = data.quantity.split(' ');
     const fioAmount = apis.fio.amountToSUF(parseFloat(amount));
+    otherParams.feeActors = [data.to];
     if (data.to === actor) {
       nativeAmount = `${fioAmount}`;
     } else {
@@ -164,16 +142,36 @@ const processTransaction = (
     if (index > -1) {
       const existingTrx: TransactionItemProps = transactions[index];
       otherParams = { ...existingTrx.otherParams };
-      if (+existingTrx.nativeAmount > 0) {
+      if (
+        +existingTrx.nativeAmount > 0 &&
+        otherParams.feeActors.includes(data.to)
+      ) {
         return { blockNum: action.block_num, editedExisting };
       }
       if (otherParams.isFeeProcessed) {
-        return { blockNum: action.block_num, editedExisting };
+        if (!otherParams.feeActors.includes(data.to)) {
+          otherParams.feeActors.push(data.to);
+
+          if (data.to === actor) {
+            nativeAmount = new MathOp(existingTrx.nativeAmount)
+              .add(fioAmount)
+              .toString();
+          } else {
+            nativeAmount = new MathOp(existingTrx.nativeAmount)
+              .sub(fioAmount)
+              .toString();
+            networkFee = new MathOp(existingTrx.networkFee)
+              .add(fioAmount)
+              .toString();
+          }
+        } else {
+          return { blockNum: action.block_num, editedExisting };
+        }
       }
       if (otherParams.isTransferProcessed) {
         nativeAmount = `${+existingTrx.nativeAmount - +networkFee}`;
       } else {
-        console.error(
+        log.error(
           'processTransaction error - existing spend transaction should have isTransferProcessed or isFeeProcessed set',
         );
       }
@@ -217,14 +215,14 @@ export const checkTransactions = async (
   const actor = apis.fio.publicFioSDK.transactions.getActor(publicKey);
 
   try {
-    const lastActionObject: any = await apis.fioHistory.requestHistory(
-      historyNodeIndex,
-      {
-        account_name: actor,
-        pos: -1,
-        offset: -1,
-      },
-    );
+    const lastActionObject: {
+      actions?: FioHistoryNodeAction[];
+      error?: { noNodeForIndex: boolean };
+    } = await apis.fioHistory.requestHistory(historyNodeIndex, {
+      account_name: actor,
+      pos: -1,
+      offset: -1,
+    });
 
     if (lastActionObject.error && lastActionObject.error.noNodeForIndex) {
       // no more history nodes left
@@ -247,7 +245,7 @@ export const checkTransactions = async (
       return [];
     }
   } catch (e) {
-    console.error('History request error. ', e);
+    log.error('History request error. ', e);
     return checkTransactions(
       publicKey,
       currentHistory,
@@ -312,7 +310,7 @@ export const checkTransactions = async (
       }
       pos -= HISTORY_NODE_OFFSET;
     } catch (e) {
-      console.error('History request error. ', e);
+      log.error('History request error. ', e);
       return checkTransactions(
         publicKey,
         currentHistory,

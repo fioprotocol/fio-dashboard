@@ -1,9 +1,14 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
-import { BADGE_TYPES } from '../Badge/Badge';
+
 import InfoBadge from '../InfoBadge/InfoBadge';
+
+import { BADGE_TYPES } from '../Badge/Badge';
+
 import classes from './Input.module.scss';
+
+import { AnyType } from '../../types';
 
 export const ERROR_UI_TYPE = {
   TEXT: 'TEXT',
@@ -16,9 +21,9 @@ export const COLOR_TYPE = {
 };
 
 type Props = {
-  error?: string;
+  error?: string | null;
   hasError: boolean;
-  data?: { [key: string]: any };
+  data?: { [key: string]: AnyType };
   submitError?: boolean;
   useVisibility?: boolean;
   wrap?: boolean;
@@ -37,6 +42,9 @@ export const ErrorBadge: React.FC<Props> = props => {
     type = ERROR_UI_TYPE.TEXT,
     color = COLOR_TYPE.WHITE,
   } = props;
+
+  const message = error || data.error || submitError;
+
   const renderError = () => (
     <div
       className={classnames(
@@ -50,7 +58,7 @@ export const ErrorBadge: React.FC<Props> = props => {
       {(useVisibility || hasError) && (
         <>
           <FontAwesomeIcon icon="info-circle" className={classes.errorIcon} />
-          {error || data.error || submitError}
+          {message}
         </>
       )}
     </div>
@@ -59,7 +67,7 @@ export const ErrorBadge: React.FC<Props> = props => {
   if (type === ERROR_UI_TYPE.BADGE) {
     return (
       <InfoBadge
-        message={error}
+        message={message}
         show={hasError}
         title="Try again!"
         type={BADGE_TYPES.ERROR}

@@ -1,11 +1,12 @@
 import React from 'react';
 import classnames from 'classnames';
-import classes from './PinInput.module.scss';
+
+import classes from '../styles/PinInput.module.scss';
 import { PIN_LENGTH } from '../../../constants/form';
 
 type Props = {
   error: boolean;
-  value: string;
+  value?: string;
 };
 
 const PinDots: React.FC<Props> = props => {

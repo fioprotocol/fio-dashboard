@@ -15,7 +15,7 @@ import { FormValues } from '../types';
 import classes from '../styles/AddTokenInput.module.scss';
 
 type Props = {
-  touched: { [key: string]: boolean };
+  touched?: { [key: string]: boolean };
 };
 
 const AddTokenInput: React.FC<FieldArrayRenderProps<FormValues, HTMLElement> &
@@ -41,7 +41,8 @@ const AddTokenInput: React.FC<FieldArrayRenderProps<FormValues, HTMLElement> &
           if (typeof error === 'string') errMessage = fieldError;
           if (typeof error === 'object') {
             Object.keys(fieldError).forEach(key => {
-              fieldError[key].touched = touched[`tokens[${index}].${key}`];
+              fieldError[key].touched =
+                !!touched && touched[`tokens[${index}].${key}`];
               fieldErrorsArr.push(fieldError[key]);
             });
             const { message = '' } =
@@ -64,11 +65,11 @@ const AddTokenInput: React.FC<FieldArrayRenderProps<FormValues, HTMLElement> &
                 <div className={classes.chainCodeInput}>
                   <ChainCodeField
                     hasAutoWidth={true}
-                    isSimple={true}
                     isHigh={true}
-                    list={NFT_CHAIN_CODE_LIST}
+                    optionsList={NFT_CHAIN_CODE_LIST}
                     fieldName={`${field}.chainCode`}
                     hideError={true}
+                    noShadow={true}
                   />
                 </div>
                 <div className={classes.tokenCodeInput}>

@@ -9,6 +9,10 @@
   margin-bottom: 30px;
   overflow: hidden;
 
+  .badge {
+    margin: 0 0 20px 0;
+  }
+
   .errorMessage {
     max-height: 0;
     font-size: 12px;
@@ -77,10 +81,24 @@
   &.blackLight, &.blackWhite {
     color: $dark-jungle-green;
   }
+
+  &.withBottomMargin {
+    margin-bottom: 15px;
+  }
 }
 
 .cursorPointer {
   cursor: pointer;
+}
+
+.additionalSubInfo {
+  font-size: 0.875em;;
+  margin: 10px 20px;
+  color: $black;
+
+  span {
+    color: $dark-jungle-green;
+  }
 }
 
 .inputGroup {
@@ -90,6 +108,27 @@
     max-width: 45%;
     @media only screen and (max-width: 575px) {
       max-width: 100%;
+    }
+  }
+
+  .maxButtonContainer {
+    align-items: center;
+    margin-left: 5px;
+    cursor: pointer;
+    width: 40px !important;
+    height: 35px!important;
+
+    button {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      font-size: 14px;
+
+      &:focus {
+        outline: none !important;
+        box-shadow: none!important;
+      }
     }
   }
 

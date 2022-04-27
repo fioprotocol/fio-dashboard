@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
+import { RouteComponentProps } from 'react-router-dom';
+
 import RefAddressWidget from '../../components/AddressWidget/RefAddressWidget';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import FioAddressPage from '../FioAddressPage';
 
 import classnames from './RefHomePage.module.scss';
-import { RouteComponentProps } from 'react-router-dom';
 import { RefProfile, RefQuery, RefQueryParams } from '../../types';
 import { useNonActiveUserRedirect } from '../../util/hooks';
 
@@ -29,7 +30,7 @@ type Props = {
   refProfileQueryParams: RefQueryParams;
   refLinkError: string | null;
   getInfo: (code: string) => void;
-  setContainedParams: (params: any) => void;
+  setContainedParams: (params: RefQuery) => void;
   showLoginModal: () => void;
 };
 
@@ -112,6 +113,7 @@ export const RefHomePage: React.FC<Props &
               <img
                 src={refProfileInfo.settings.img}
                 className={classnames.refImg}
+                alt=""
               />
             }
             title={refProfileInfo.title}

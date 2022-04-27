@@ -2,9 +2,11 @@ import { EdgeAccount } from 'edge-core-js';
 
 import { Api } from '../../api';
 
-import { getWalletKeys } from '../../util/edge';
+import { waitWalletKeys } from '../../util/edge';
+import { log } from '../../util/general';
 
-import { WalletKeys } from '../../types';
+import { AnyObject, EdgeWalletsKeys } from '../../types';
+import { CommonAction, CommonPromiseAction } from '../types';
 
 export const prefix = 'edge';
 
@@ -12,7 +14,7 @@ export const EDGE_CONTEXT_INIT_REQUEST = `${prefix}/EDGE_CONTEXT_INIT_REQUEST`;
 export const EDGE_CONTEXT_INIT_SUCCESS = `${prefix}/EDGE_CONTEXT_INIT_SUCCESS`;
 export const EDGE_CONTEXT_INIT_FAILURE = `${prefix}/EDGE_CONTEXT_INIT_FAILURE`;
 
-export const edgeContextInit = () => ({
+export const edgeContextInit = (): CommonPromiseAction => ({
   types: [
     EDGE_CONTEXT_INIT_REQUEST,
     EDGE_CONTEXT_INIT_SUCCESS,
@@ -39,7 +41,7 @@ export const login = ({
   pin: string;
   options?: { otpKey?: string };
   voucherId?: string;
-}) => ({
+}): CommonPromiseAction => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
   promise: async (api: Api) => {
     if (email && !username) {
@@ -64,7 +66,7 @@ export const login = ({
         }
       }
     } catch (e) {
-      console.error(e);
+      log.error(e);
     }
     return { account, fioWallets, options, voucherId };
   },
@@ -76,28 +78,30 @@ export const CONFIRM_PIN_FAILURE = `${prefix}/CONFIRM_PIN_FAILURE`;
 
 export const confirmPin = (
   { username, pin }: { username: string; pin: string },
-  { action, data }: { action: string; data: any },
-) => ({
+  { action, data }: { action: string; data: AnyObject },
+): CommonPromiseAction => ({
   types: [CONFIRM_PIN_REQUEST, CONFIRM_PIN_SUCCESS, CONFIRM_PIN_FAILURE],
   promise: async (api: Api) => {
     const account = await api.edge.loginPIN(username, pin);
 
-    const keys: { [key: string]: WalletKeys } = await getWalletKeys(account);
+    const keys: EdgeWalletsKeys = await waitWalletKeys(account);
 
     return { account, keys, action, data };
   },
 });
 export const RESET_PIN_CONFIRM = `${prefix}/RESET_PIN_CONFIRM`;
-export const resetPinConfirm = () => ({
+export const resetPinConfirm = (): CommonAction => ({
   type: RESET_PIN_CONFIRM,
 });
 
 export const RESET_LOGIN_FAILURE = `${prefix}/RESET_LOGIN_FAILURE`;
-export const resetLoginFailure = () => ({ type: RESET_LOGIN_FAILURE });
+export const resetLoginFailure = (): CommonAction => ({
+  type: RESET_LOGIN_FAILURE,
+});
 
 export const SET_ACCOUNT = `${prefix}/SET_ACCOUNT`;
 
-export const setAccount = (account: EdgeAccount) => ({
+export const setAccount = (account: EdgeAccount): CommonAction => ({
   type: SET_ACCOUNT,
   data: account,
 });
@@ -114,7 +118,7 @@ export const signup = ({
   username: string;
   password: string;
   pin: string;
-}) => ({
+}): CommonPromiseAction => ({
   types: [SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE],
   promise: (api: Api) => api.edge.signup(username, password, pin),
 });
@@ -123,7 +127,7 @@ export const CACHED_USERS_REQUEST = `${prefix}/CACHED_USERS_REQUEST`;
 export const CACHED_USERS_SUCCESS = `${prefix}/CACHED_USERS_SUCCESS`;
 export const CACHED_USERS_FAILURE = `${prefix}/CACHED_USERS_FAILURE`;
 
-export const getCachedUsers = () => ({
+export const getCachedUsers = (): CommonPromiseAction => ({
   types: [CACHED_USERS_REQUEST, CACHED_USERS_SUCCESS, CACHED_USERS_FAILURE],
   promise: (api: Api) => api.edge.getCachedUsers(),
 });
@@ -132,7 +136,7 @@ export const RECOVERY_QUEST_REQUEST = `${prefix}/RECOVERY_QUEST_REQUEST`;
 export const RECOVERY_QUEST_SUCCESS = `${prefix}/RECOVERY_QUEST_SUCCESS`;
 export const RECOVERY_QUEST_FAILURE = `${prefix}/RECOVERY_QUEST_FAILURE`;
 
-export const getRecoveryQuestions = () => ({
+export const getRecoveryQuestions = (): CommonPromiseAction => ({
   types: [
     RECOVERY_QUEST_REQUEST,
     RECOVERY_QUEST_SUCCESS,
@@ -145,7 +149,7 @@ export const USERNAME_AVAIL_REQUEST = `${prefix}/USERNAME_AVAIL_REQUEST`;
 export const USERNAME_AVAIL_SUCCESS = `${prefix}/USERNAME_AVAIL_SUCCESS`;
 export const USERNAME_AVAIL_FAILURE = `${prefix}/USERNAME_AVAIL_FAILURE`;
 
-export const usernameAvailable = (username: string) => ({
+export const usernameAvailable = (username: string): CommonPromiseAction => ({
   types: [
     USERNAME_AVAIL_REQUEST,
     USERNAME_AVAIL_SUCCESS,
@@ -156,7 +160,7 @@ export const usernameAvailable = (username: string) => ({
 
 // todo: check if it need
 export const RESET_SUCCESS_STATE = `${prefix}/RESET_SUCCESS_STATE`;
-export const resetSuccessState = () => ({
+export const resetSuccessState = (): CommonAction => ({
   type: RESET_SUCCESS_STATE,
 });
 
@@ -164,7 +168,9 @@ export const LOGOUT_REQUEST = `${prefix}/LOGOUT_REQUEST`;
 export const LOGOUT_SUCCESS = `${prefix}/LOGOUT_SUCCESS`;
 export const LOGOUT_FAILURE = `${prefix}/LOGOUT_FAILURE`;
 
-export const logout = (account: EdgeAccount) => {
+export const logout = (
+  account: EdgeAccount,
+): CommonPromiseAction | CommonAction => {
   if (!account) return { type: LOGOUT_FAILURE };
   return {
     types: [LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE],
@@ -184,7 +190,7 @@ export const changePassword = ({
   password: string;
   newPassword: string;
   username: string;
-}) => ({
+}): CommonPromiseAction => ({
   types: [
     CHANGE_PASSWORD_REQUEST,
     CHANGE_PASSWORD_SUCCESS,
@@ -195,12 +201,12 @@ export const changePassword = ({
 });
 
 export const CLEAR_CHANGE_PASSWORD_RESULTS = `${prefix}/CLEAR_CHANGE_PASSWORD_RESULTS`;
-export const clearChangePasswordResults = () => ({
+export const clearChangePasswordResults = (): CommonAction => ({
   type: CLEAR_CHANGE_PASSWORD_RESULTS,
 });
 
 export const CLEAR_CHANGE_PASSWORD_ERROR = `${prefix}/CLEAR_CHANGE_PASSWORD_ERROR`;
-export const clearChangePasswordError = () => ({
+export const clearChangePasswordError = (): CommonAction => ({
   type: CLEAR_CHANGE_PASSWORD_ERROR,
 });
 
@@ -216,25 +222,25 @@ export const changePin = ({
   pin: string;
   password: string;
   username: string;
-}) => ({
+}): CommonPromiseAction => ({
   types: [CHANGE_PIN_REQUEST, CHANGE_PIN_SUCCESS, CHANGE_PIN_FAILURE],
   promise: (api: Api) => api.edge.changePin(pin, password, username),
 });
 
 export const CLEAR_CHANGE_PIN_RESULTS = `${prefix}/CLEAR_CHANGE_PIN_RESULTS`;
-export const clearChangePinResults = () => ({
+export const clearChangePinResults = (): CommonAction => ({
   type: CLEAR_CHANGE_PIN_RESULTS,
 });
 
 export const CLEAR_CHANGE_PIN_ERROR = `${prefix}/CLEAR_CHANGE_PIN_ERROR`;
-export const clearChangePinError = () => ({
+export const clearChangePinError = (): CommonAction => ({
   type: CLEAR_CHANGE_PIN_ERROR,
 });
 
 export const CLEAR_CACHED_USERS_REQUEST = `${prefix}/CLEAR_CACHED_USERS_REQUEST`;
 export const CLEAR_CACHED_USERS_SUCCESS = `${prefix}/CLEAR_CACHED_USERS_SUCCESS`;
 export const CLEAR_CACHED_USERS_FAILURE = `${prefix}/CLEAR_CACHED_USERS_FAILURE`;
-export const clearCachedUser = (username: string) => ({
+export const clearCachedUser = (username: string): CommonPromiseAction => ({
   types: [
     CLEAR_CACHED_USERS_REQUEST,
     CLEAR_CACHED_USERS_SUCCESS,
@@ -244,12 +250,12 @@ export const clearCachedUser = (username: string) => ({
 });
 
 export const CHANGE_RECOVERY_QUESTIONS_OPEN = `${prefix}/CHANGE_RECOVERY_QUESTIONS_OPEN`;
-export const changeRecoveryQuestionsOpen = () => ({
+export const changeRecoveryQuestionsOpen = (): CommonAction => ({
   type: CHANGE_RECOVERY_QUESTIONS_OPEN,
 });
 
 export const CHANGE_RECOVERY_QUESTIONS_CLOSE = `${prefix}/CHANGE_RECOVERY_QUESTIONS_CLOSE`;
-export const changeRecoveryQuestionsClose = () => ({
+export const changeRecoveryQuestionsClose = (): CommonAction => ({
   type: CHANGE_RECOVERY_QUESTIONS_CLOSE,
 });
 
@@ -257,7 +263,9 @@ export const CHECK_RECOVERY_QUESTIONS_REQUEST = `${prefix}/CHECK_RECOVERY_QUESTI
 export const CHECK_RECOVERY_QUESTIONS_SUCCESS = `${prefix}/CHECK_RECOVERY_QUESTIONS_SUCCESS`;
 export const CHECK_RECOVERY_QUESTIONS_FAILURE = `${prefix}/CHECK_RECOVERY_QUESTIONS_FAILURE`;
 
-export const checkRecoveryQuestions = (username: string) => ({
+export const checkRecoveryQuestions = (
+  username: string,
+): CommonPromiseAction => ({
   types: [
     CHECK_RECOVERY_QUESTIONS_REQUEST,
     CHECK_RECOVERY_QUESTIONS_SUCCESS,
@@ -270,7 +278,10 @@ export const GET_USERS_RECOVERY_QUESTIONS_REQUEST = `${prefix}/GET_USERS_RECOVER
 export const GET_USERS_RECOVERY_QUESTIONS_SUCCESS = `${prefix}/GET_USERS_RECOVERY_QUESTIONS_SUCCESS`;
 export const GET_USERS_RECOVERY_QUESTIONS_FAILURE = `${prefix}/GET_USERS_RECOVERY_QUESTIONS_FAILURE`;
 
-export const getUsersRecoveryQuestions = (token: string, username: string) => ({
+export const getUsersRecoveryQuestions = (
+  token: string,
+  username: string,
+): CommonPromiseAction => ({
   types: [
     GET_USERS_RECOVERY_QUESTIONS_REQUEST,
     GET_USERS_RECOVERY_QUESTIONS_SUCCESS,
@@ -293,7 +304,7 @@ export const recoveryAccount = ({
   username: string;
   answers: string[];
   password: string;
-}) => ({
+}): CommonPromiseAction => ({
   types: [
     RECOVERY_ACCOUNT_REQUEST,
     RECOVERY_ACCOUNT_SUCCESS,
@@ -305,13 +316,21 @@ export const recoveryAccount = ({
 
 export const CLEAR_RECOVERY_RESULTS = `${prefix}/CLEAR_RECOVERY_RESULTS`;
 
-export const clearRecoveryResults = () => ({
+export const clearRecoveryResults = (): CommonAction => ({
   type: CLEAR_RECOVERY_RESULTS,
 });
 
 export const TOGGLE_TWO_FACTOR_AUTH = `${prefix}/TOGGLE_TWO_FACTOR_AUTH`;
 
-export const toggleTwoFactorAuth = (enabled: boolean) => ({
+export const toggleTwoFactorAuth = (enabled: boolean): CommonAction => ({
   type: TOGGLE_TWO_FACTOR_AUTH,
   enabled,
+});
+
+export const SET_CONFIRM_PIN_KEYS = `${prefix}/SET_CONFIRM_PIN_KEYS`;
+export const setConfirmPinKeys = (
+  keys: EdgeWalletsKeys | null,
+): CommonAction => ({
+  type: SET_CONFIRM_PIN_KEYS,
+  data: keys,
 });

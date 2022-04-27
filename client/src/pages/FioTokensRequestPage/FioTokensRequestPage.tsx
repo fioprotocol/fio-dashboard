@@ -15,7 +15,7 @@ import {
   RequestTokensValues,
 } from './types';
 import { FioWalletDoublet, MappedPublicAddresses } from '../../types';
-import { TrxResponse } from '../../api/fio';
+import { TrxResponsePaidBundles } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 
 import apis from '../../api';
@@ -44,7 +44,9 @@ const RequestPage: React.FC<ContainerProps> = props => {
     refreshWalletDataPublicKey,
   } = props;
 
-  const [fioWallet, setFioWallet] = useState<FioWalletDoublet>(emptyWallet);
+  const [fioWallet, setFioWallet] = useState<FioWalletDoublet | undefined>(
+    emptyWallet,
+  );
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
   const [requestData, setRequestData] = useState<RequestTokensValues | null>(
     null,
@@ -89,7 +91,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
       setFioWallet(
         fioWallets.find(
           ({ publicKey: walletPublicKey }) =>
-            walletPublicKey === fioAddress.walletPublicKey,
+            walletPublicKey === fioAddress?.walletPublicKey,
         ),
       );
     }
@@ -100,37 +102,37 @@ const RequestPage: React.FC<ContainerProps> = props => {
     setRequestData(null);
     setProcessing(false);
   };
-  const onSuccess = (res: TrxResponse & { bundlesCollected?: number }) => {
+  const onSuccess = (res: TrxResponsePaidBundles) => {
     setRequestData(null);
     setProcessing(false);
     setResultsData({
-      name: fioWallet.name,
-      publicKey: fioWallet.publicKey,
+      name: fioWallet?.name,
+      publicKey: fioWallet?.publicKey,
       bundlesCollected: res.bundlesCollected,
       other: {
         ...requestData,
-        amount: requestData.amount,
+        amount: requestData?.amount,
         nativeAmount: apis.fio
-          .amountToSUF(Number(requestData.amount))
+          .amountToSUF(Number(requestData?.amount))
           .toString(),
         ...res,
-        toFioAddress: requestData.payerFioAddress,
-        fromFioAddress: requestData.payeeFioAddress,
+        toFioAddress: requestData?.payerFioAddress,
+        fromFioAddress: requestData?.payeeFioAddress,
       },
     });
-    refreshWalletDataPublicKey(fioWallet.publicKey);
+    refreshWalletDataPublicKey(fioWallet?.publicKey);
   };
 
   const onResultsRetry = () => {
     setResultsData(null);
   };
 
+  const onBack = () => {
+    history.goBack();
+  };
+
   if (publicKeyFromPath != null && (!fioWallet || !fioWallet.id))
-    return (
-      <div className="d-flex justify-content-center align-items-center w-100 flex-grow-1">
-        <FioLoader />
-      </div>
-    );
+    return <FioLoader wrap={true} />;
 
   if (resultsData)
     return (
@@ -141,14 +143,14 @@ const RequestPage: React.FC<ContainerProps> = props => {
         titleFrom="Requesting FIO Crypto Handle"
         titleAmount="Amount Requested"
         roe={roe}
-        onClose={history.goBack}
+        onClose={onBack}
         onRetry={onResultsRetry}
       />
     );
 
   return (
     <>
-      {fioWallet.publicKey != null &&
+      {fioWallet?.publicKey != null &&
       fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
         <RequestTokensEdgeWallet
           fioWallet={fioWallet}
@@ -163,13 +165,13 @@ const RequestPage: React.FC<ContainerProps> = props => {
       ) : null}
       <PseudoModalContainer
         title="Request FIO Tokens"
-        onBack={history.goBack}
+        onBack={onBack}
         middleWidth={true}
       >
         {publicKeyFromPath != null ? (
           <p className={classes.subtitle}>
             <span className={classes.subtitleThin}>FIO Wallet Name:</span>{' '}
-            {fioWallet.name}
+            {fioWallet?.name}
           </p>
         ) : null}
 
@@ -184,7 +186,6 @@ const RequestPage: React.FC<ContainerProps> = props => {
 
         <RequestTabs
           initialValues={initialValues}
-          roe={roe}
           loading={loading || processing}
           fioAddresses={fioAddresses}
           pubAddressesMap={pubAddressesMap}

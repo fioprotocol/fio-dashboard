@@ -1,23 +1,23 @@
 import React from 'react';
 import { Form, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
-import { Link, RouterProps } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { WithLastLocationProps } from 'react-router-last-location';
 import classnames from 'classnames';
 
 import Wizard from './CreateAccountFormWizard';
 import FormModalWrapper from '../FormModalWrapper/FormModalWrapper';
 import Pin from './Pin';
-import EmailPassword, {
-  validate as validateEmailPassword,
-} from './EmailPassword';
 import Confirmation from './Confirmation';
 import Success from './Success';
 
 import { ROUTES } from '../../constants/routes';
 import { PIN_LENGTH } from '../../constants/form';
+import { WALLET_CREATED_FROM } from '../../constants/common';
 
-import { isEmpty } from '../../helpers/verifying';
+import EmailPassword, {
+  validate as validateEmailPassword,
+} from './EmailPassword';
 import {
   usernameAvailable,
   createAccount,
@@ -34,7 +34,7 @@ import {
   RefQueryParams,
   WalletKeysObj,
 } from '../../types';
-import { WALLET_CREATED_FROM } from '../../constants/common';
+import { FormValues, PasswordValidationState } from './types';
 
 import classes from './CreateAccountForm.module.scss';
 
@@ -54,17 +54,12 @@ const STEPS_ORDER = {
   [STEPS.SUCCESS]: 4,
 };
 
-type FormValues = {
-  email: string;
-  password: string;
-  confirmPassword: string;
-  pin: string;
-  confirmPin: string;
-  addEmailToPromoList: boolean;
-};
-
-type PasswordValidationState = {
-  [rule: string]: { isChecked?: boolean };
+type Location = {
+  location: {
+    query?: {
+      email?: string;
+    };
+  };
 };
 
 type State = {
@@ -77,7 +72,6 @@ type State = {
 };
 
 type OwnProps = {
-  initialize: (params: { email: string }) => void;
   resetSuccessState: () => void;
   makeNonce: (username: string, keys: WalletKeysObj) => void;
   showLoginModal: () => void;
@@ -98,10 +92,10 @@ type OwnProps = {
   redirectLink: RedirectLinkData;
 };
 
-type Props = OwnProps & RouterProps & WithLastLocationProps;
+type Props = OwnProps & WithLastLocationProps & Location;
 
 export default class CreateAccountForm extends React.Component<Props, State> {
-  form: FormApi | null;
+  form: FormApi<FormValues> | null;
 
   constructor(props: Props) {
     super(props);
@@ -118,28 +112,18 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       keys: {},
       loading: false,
     };
+
+    this.form = null;
   }
 
-  componentDidMount() {
-    const { location, replace } = this.props.history;
-    // @ts-ignore todo: why `query` is not in the Location type?
-    if (!isEmpty(location.query) && location.query.email) {
-      this.props.initialize({
-        // @ts-ignore
-        email: location.query.email,
-      });
-      replace(ROUTES.CREATE_ACCOUNT);
-    }
-  }
-
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(prevProps: Props, prevState: State): void {
     if (!prevProps.signupSuccess && this.props.signupSuccess) {
       this.setState({ step: STEPS.SUCCESS });
     }
   }
 
-  componentWillUnmount() {
-    this.form.reset();
+  componentWillUnmount(): void {
+    this.form?.reset();
     this.form = null;
     this.props.resetSuccessState();
   }
@@ -151,7 +135,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
   onFinish = () => {
     const {
       values: { email },
-    } = this.form.getState();
+    } = this.form ? this.form.getState() : { values: { email: undefined } };
 
     this.props.makeNonce(emailToUsername(email), this.state.keys);
     this.props.history.push(
@@ -161,8 +145,10 @@ export default class CreateAccountForm extends React.Component<Props, State> {
   };
 
   isEmailExists = async (e: React.FocusEvent<HTMLInputElement>) => {
+    if (!this.form) return null;
+
     const emailField = this.form.getFieldState('email');
-    if (!emailField.valid) return emailField.blur();
+    if (!emailField?.valid) return emailField?.blur();
     const email = e.target.value;
     this.setState({
       usernameAvailableLoading: true,
@@ -196,7 +182,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
         {},
       );
 
-    return emailField.blur();
+    return emailField?.blur();
   };
 
   validate = (values: FormValues) => {
@@ -250,8 +236,8 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     };
 
     Object.keys(passwordValidation).forEach(key => {
-      retObj[key] = {};
-      retObj[key].isChecked = passValid[key];
+      retObj[key as keyof PasswordValidationState] = {};
+      retObj[key as keyof PasswordValidationState].isChecked = passValid[key];
     });
 
     if (JSON.stringify(retObj) === JSON.stringify(passwordValidation)) return;
@@ -311,12 +297,12 @@ export default class CreateAccountForm extends React.Component<Props, State> {
           pin,
         );
         this.setState({ loading: false });
-        if (!Object.values(errors).length && account) {
+        if (!Object.values(errors).length && account && fioWallet) {
           const fioWallets: FioWalletDoublet[] = [
             {
               id: '',
               edgeId: fioWallet.id,
-              name: fioWallet.name,
+              name: fioWallet.name || '',
               publicKey: fioWallet.publicWalletInfo.keys.publicKey,
               from: WALLET_CREATED_FROM.EDGE,
             },
@@ -329,15 +315,15 @@ export default class CreateAccountForm extends React.Component<Props, State> {
           if (isRefFlow) {
             stateData = {
               ...stateData,
-              refCode: refProfileInfo.code,
-              refProfileQueryParams,
+              refCode: refProfileInfo?.code,
+              refProfileQueryParams: refProfileQueryParams || undefined,
             };
           }
           return onSubmit({
             username: emailToUsername(email),
             email,
             fioWallets,
-            refCode: isRefFlow ? refProfileInfo.code : '',
+            refCode: isRefFlow ? refProfileInfo?.code : '',
             stateData,
             addEmailToPromoList,
           });
@@ -353,14 +339,14 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     const { step } = this.state;
     switch (step) {
       case STEPS.PIN: {
-        this.form.change('pin', '');
+        this.form?.change('pin', '');
         this.setState({ step: STEPS.EMAIL_PASSWORD });
         break;
       }
       case STEPS.PIN_CONFIRM:
       case STEPS.CONFIRMATION: {
-        this.form.change('pin', '');
-        this.form.change('confirmPin', '');
+        this.form?.change('pin', '');
+        this.form?.change('confirmPin', '');
         this.setState({ step: STEPS.PIN });
         break;
       }
@@ -369,7 +355,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     }
   };
 
-  renderForm = (formProps: FormRenderProps) => {
+  renderForm = (formProps: FormRenderProps<FormValues>) => {
     const {
       handleSubmit,
       submitting,
@@ -431,8 +417,8 @@ export default class CreateAccountForm extends React.Component<Props, State> {
           </Wizard.Page>
           <Wizard.Page hideNext>
             <Pin
-              isConfirm
-              error={errors.confirmPin}
+              isConfirm={true}
+              error={errors?.confirmPin}
               startOver={this.onPrevStep}
             />
           </Wizard.Page>
@@ -447,7 +433,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     );
   };
 
-  render() {
+  render(): React.ReactElement {
     return (
       <FormModalWrapper>
         <Form

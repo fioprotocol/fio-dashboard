@@ -6,6 +6,10 @@
   width: 100%;
   min-width: 335px;
 
+  &.noMinWidth {
+    min-width: auto;
+  }
+
   &.isShort {
     min-width: 275px;
   }
@@ -26,6 +30,10 @@
     margin-left: 20px;
     font-size: 13px;
     color: $gray-main;
+
+    &.isWhiteIcon {
+      color: $white;
+    }
   }
 }
 
@@ -51,6 +59,10 @@
     background-color: $white;
   }
 
+  &.isVoilet {
+    background-color: $bright-violet;
+  }
+
   &.isSimple {
     box-shadow: none;
   }
@@ -63,8 +75,13 @@
     border: 1px solid $warn-red;
   }
 }
+
 .placeholder {
   color: $gray-main;
+
+  &.isWhitePlaceholder {
+    color: $white;
+  }
 }
 .menu {
   border-radius: 0 0 7px 7px;

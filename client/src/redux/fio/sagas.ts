@@ -23,45 +23,39 @@ import {
   DEFAULT_BALANCES,
 } from '../../util/prices';
 
-import { FeePrice, FioWalletDoublet, WalletsBalances } from '../../types';
+import { FeePrice, FioBalanceRes, WalletsBalances } from '../../types';
+import { Action } from '../types';
 
-type GetFeeAction = { data: { fee: number }; type: string; endpoint: string };
-type PricesAction = { data: { pricing: { usdtRoe: number } }; type: string };
 type RefreshBalanceAction = {
-  data: { balance: number; available: number; locked: number };
+  data: FioBalanceRes;
   type: string;
   publicKey: string;
 };
 
-export function* addFioWalletSuccess() {
-  yield takeEvery(ADD_WALLET_SUCCESS, function*(action: {
-    type: string;
-    data: FioWalletDoublet;
-  }) {
+export function* addFioWalletSuccess(): Generator {
+  yield takeEvery(ADD_WALLET_SUCCESS, function*(action: Action) {
     const { publicKey } = action.data;
-    // @ts-ignore
-    yield put(refreshBalance(publicKey));
+    yield put<Action>(refreshBalance(publicKey));
   });
 }
 
-export function* setFeesService() {
-  yield takeEvery(GET_FEE_SUCCESS, function*(action: GetFeeAction) {
+export function* setFeesService(): Generator {
+  yield takeEvery(GET_FEE_SUCCESS, function*(action: Action) {
     const {
       endpoint,
       data: { fee },
     } = action;
-    const fees = yield select(feesSelector);
-    const roe = yield select(roeSelector);
+    const fees: { [endpoint: string]: FeePrice } = yield select(feesSelector);
+    const roe: number = yield select(roeSelector);
 
     fees[endpoint] = convertFioPrices(fee, roe);
-    // @ts-ignore
     yield put(setFees(fees));
   });
-  yield takeEvery(PRICES_SUCCESS, function*(action: PricesAction) {
+  yield takeEvery(PRICES_SUCCESS, function*(action: Action) {
     const {
       pricing: { usdtRoe },
     } = action.data;
-    const fees = yield select(feesSelector);
+    const fees: { [endpoint: string]: FeePrice } = yield select(feesSelector);
     const recalculatedFees: { [endpoint: string]: FeePrice } = {};
 
     for (const endpoint in fees) {
@@ -71,18 +65,20 @@ export function* setFeesService() {
         usdtRoe,
       );
     }
-    // @ts-ignore
+
     yield put(setFees(recalculatedFees));
   });
 }
 
-export function* setBalancesService() {
+export function* setBalancesService(): Generator {
   yield takeEvery(REFRESH_BALANCE_SUCCESS, function*(
     action: RefreshBalanceAction,
   ) {
     const { publicKey, data } = action;
-    const walletsBalances = yield select(balancesSelector);
-    const roe = yield select(roeSelector);
+
+    const walletsBalances: WalletsBalances = yield select(balancesSelector);
+
+    const roe: number = yield select(roeSelector);
 
     const recalculatedBalances = { ...walletsBalances };
     recalculatedBalances.wallets[publicKey] = calculateBalances(data, roe);
@@ -92,14 +88,14 @@ export function* setBalancesService() {
       roe,
     );
 
-    // @ts-ignore
     yield put(setBalances(recalculatedBalances));
   });
-  yield takeEvery(PRICES_SUCCESS, function*(action: PricesAction) {
+  yield takeEvery(PRICES_SUCCESS, function*(action: Action) {
     const {
       pricing: { usdtRoe: roe },
     } = action.data;
-    const walletsBalances = yield select(balancesSelector);
+
+    const walletsBalances: WalletsBalances = yield select(balancesSelector);
 
     const recalculatedBalances: WalletsBalances = {
       total: DEFAULT_BALANCES,
@@ -113,6 +109,9 @@ export function* setBalancesService() {
           balance: walletsBalances.wallets[publicKey].total.nativeFio,
           available: walletsBalances.wallets[publicKey].available.nativeFio,
           locked: walletsBalances.wallets[publicKey].locked.nativeFio,
+          staked: walletsBalances.wallets[publicKey].staked.nativeFio,
+          rewards: walletsBalances.wallets[publicKey].rewards.nativeFio,
+          unlockPeriods: [],
         },
         roe,
       );
@@ -122,7 +121,6 @@ export function* setBalancesService() {
       roe,
     );
 
-    // @ts-ignore
     yield put(setBalances(recalculatedBalances));
   });
 }

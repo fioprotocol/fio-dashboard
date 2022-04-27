@@ -22,6 +22,12 @@ export class Notification extends Base {
       RECOVERY_PASSWORD: 'RECOVERY_PASSWORD',
       ACCOUNT_CONFIRMATION: 'ACCOUNT_CONFIRMATION',
       ACCOUNT_CREATE: 'ACCOUNT_CREATE',
+      BALANCE_CHANGED: 'BALANCE_CHANGED',
+      NEW_FIO_REQUEST: 'NEW_FIO_REQUEST',
+      FIO_REQUEST_REJECTED: 'FIO_REQUEST_REJECTED',
+      FIO_REQUEST_APPROVED: 'FIO_REQUEST_APPROVED',
+      DOMAIN_EXPIRE: 'DOMAIN_EXPIRE',
+      LOW_BUNDLE_TX: 'LOW_BUNDLE_TX',
     };
   }
   static get ACTION() {
@@ -41,6 +47,7 @@ export class Notification extends Base {
         message: { type: DT.TEXT },
         seenDate: { type: DT.DATE, allowNull: true },
         closeDate: { type: DT.DATE, allowNull: true },
+        emailDate: { type: DT.DATE, allowNull: true },
         data: { type: DT.JSON },
       },
       {

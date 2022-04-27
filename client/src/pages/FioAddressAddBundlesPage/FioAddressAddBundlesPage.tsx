@@ -8,6 +8,10 @@ import LowBalanceBadge from '../../components/Badges/LowBalanceBadge/LowBalanceB
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import AddBundlesEdgeWallet from './components/AddBundlesEdgeWallet';
 import Results from '../../components/common/TransactionResults';
+import FioLoader from '../../components/common/FioLoader/FioLoader';
+import InfoBadge from '../../components/InfoBadge/InfoBadge';
+import FioNamesInitWrapper from '../../components/FioNamesInitWrapper';
+import Badge, { BADGE_TYPES } from '../../components/Badge/Badge';
 
 import { convertFioPrices } from '../../util/prices';
 import { useFioWallet, useWalletBalances } from '../../util/hooks';
@@ -15,7 +19,6 @@ import MathOp from '../../util/math';
 
 import { WALLET_CREATED_FROM } from '../../constants/common';
 import { ERROR_TYPES } from '../../components/common/TransactionResults/constants';
-import Badge, { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ROUTES } from '../../constants/routes';
 
 import { ResultsData } from '../../components/common/TransactionResults/types';
@@ -52,17 +55,29 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<AddBundlesValues | null>(null);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     getFee();
-  }, []);
+  }, [getFee]);
+
+  useEffect(() => {
+    setError(
+      !fioAddresses.find(
+        ({ name: fioCryptoHandleName }) => fioCryptoHandleName === name,
+      )
+        ? `Fio Crypto Handle (${name}) is not available`
+        : '',
+    );
+  }, [name, fioAddresses]);
 
   const { available: walletBalancesAvailable } = useWalletBalances(
     currentWallet.publicKey,
   );
 
   const hasLowBalance =
-    feePrice && new MathOp(walletBalancesAvailable.nativeFio).lt(feeNativeFio);
+    feePrice &&
+    new MathOp(walletBalancesAvailable.nativeFio || 0).lt(feeNativeFio || 0);
 
   const onSubmit = () => {
     setSubmitData({
@@ -123,6 +138,21 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
       </Results>
     );
 
+  if (error)
+    return (
+      <PseudoModalContainer title="Add bundled transactions" link={backUrl}>
+        <InfoBadge
+          message={error}
+          show={!!error}
+          title="Error"
+          type={BADGE_TYPES.ERROR}
+        />
+      </PseudoModalContainer>
+    );
+
+  if (!currentWallet || currentWallet.balance === null)
+    return <FioLoader wrap={true} />;
+
   if (
     (!currentWallet.publicKey && !settingWallet && !processing) ||
     fioAddresses.length < 1
@@ -154,7 +184,10 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
             title="Total Cost"
             type={BADGE_TYPES.BLACK}
           />
-          <PayWithBadge walletBalances={walletBalancesAvailable} />
+          <PayWithBadge
+            walletBalances={walletBalancesAvailable}
+            walletName={currentWallet.name}
+          />
           <LowBalanceBadge hasLowBalance={hasLowBalance} />
           <SubmitButton
             onClick={onSubmit}
@@ -169,4 +202,13 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
   );
 };
 
-export default FioAddressAddBundlesPage;
+const FioAddressAddBundlesPageWrapper: React.FC<ContainerProps &
+  RouteComponentProps<MatchParams, {}, LocationState>> = props => {
+  return (
+    <FioNamesInitWrapper>
+      <FioAddressAddBundlesPage {...props} />
+    </FioNamesInitWrapper>
+  );
+};
+
+export default FioAddressAddBundlesPageWrapper;

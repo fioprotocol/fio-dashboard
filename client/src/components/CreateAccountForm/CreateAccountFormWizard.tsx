@@ -11,7 +11,7 @@ type State = {
 
 type OwnProps = {
   onNext?: (page: number) => void;
-  onPrev?: (page: number) => void;
+  onPrev: (page: number) => void;
   activePage: number;
   actionDisabled?: boolean;
   loading?: boolean;
@@ -19,7 +19,7 @@ type OwnProps = {
 };
 
 type PageProps = {
-  children: React.FunctionComponent;
+  children: React.ReactElement;
   bottomText?: string | React.ReactNode;
   hideNext?: boolean;
   hideBack?: boolean;
@@ -28,12 +28,12 @@ type PageProps = {
 type Props = OwnProps;
 
 export default class Wizard extends React.Component<Props, State> {
-  static Page: React.FunctionComponent<any> = props => props.children;
+  static Page: React.FC<PageProps> = props => props.children;
   state = {
     pageIsActive: true,
   };
 
-  componentDidUpdate(prevProps: Props, prevState: State) {
+  componentDidUpdate(prevProps: Props, prevState: State): void {
     if (prevProps.activePage !== this.props.activePage) {
       // appear animation
       this.setState({ pageIsActive: false }, () =>
@@ -50,7 +50,7 @@ export default class Wizard extends React.Component<Props, State> {
 
   previous = () => this.props.onPrev(Math.max(this.props.activePage - 1, 0));
 
-  render() {
+  render(): React.ReactElement {
     const { activePage, actionDisabled, loading, children } = this.props;
     const { pageIsActive } = this.state;
 
@@ -60,7 +60,7 @@ export default class Wizard extends React.Component<Props, State> {
     const isLastPage = activePage === React.Children.count(children) - 1;
     const {
       props: { bottomText, hideNext, hideBack },
-    }: { props?: PageProps } = page;
+    } = page as { props: PageProps };
 
     return (
       <>

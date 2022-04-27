@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
@@ -12,18 +12,15 @@ import { setDataMutator } from '../../utils';
 import { PIN_LENGTH } from '../../constants/form';
 import { INVALID_PASSWORD } from '../../constants/regExps';
 
-import { IosKeyBoardPlugProp } from '../Input/PinInput/types';
-
 import classes from './PinForm.module.scss';
 
-const FIELD_NAME = 'pin';
+export const FIELD_NAME = 'pin';
 
 type Props = {
   onSubmit: (pin: string) => void;
   onReset: () => void;
   loading: boolean;
-  error?: string | (Error & { wait?: number });
-  iosKeyboardPlugType?: IosKeyBoardPlugProp;
+  error?: string | (Error & { wait?: number }) | null;
   blockedTime?: number;
 };
 
@@ -32,23 +29,29 @@ type FormValues = {
 };
 
 const PinForm: React.FC<Props> = props => {
-  const {
-    onSubmit,
-    onReset,
-    loading,
-    error,
-    iosKeyboardPlugType,
-    blockedTime,
-  } = props;
+  const { onSubmit, onReset, loading, error, blockedTime = 0 } = props;
 
   let currentForm: FormApi | null = null;
   const [isDisabled, toggleDisabled] = useState(false);
+
+  const resetForm = useCallback(() => {
+    if (currentForm) {
+      const { mutators, reset } = currentForm;
+      reset();
+      mutators.setDataMutator(FIELD_NAME, {
+        error: false,
+      });
+      onReset();
+      const currentInput = document.getElementById(FIELD_NAME);
+      currentInput && currentInput.focus();
+    }
+  }, [currentForm, onReset]);
 
   useEffect(() => {
     if (currentForm) {
       const { mutators } = currentForm;
 
-      if (!isEmpty(error) && typeof error === 'object') {
+      if (error && !isEmpty(error) && typeof error === 'object') {
         const errorMessage = (errMessage: string) => {
           if (INVALID_PASSWORD.test(errMessage)) {
             if (!blockedTime) return 'Invalid PIN - Try Again';
@@ -66,7 +69,7 @@ const PinForm: React.FC<Props> = props => {
         });
       }
     }
-  }, [error]);
+  }, [blockedTime, currentForm, error]);
 
   useEffect(
     () => () => {
@@ -80,19 +83,6 @@ const PinForm: React.FC<Props> = props => {
     const { pin } = values;
     if (!pin || error || (pin && pin.length !== PIN_LENGTH)) return;
     onSubmit(pin);
-  };
-
-  const resetForm = () => {
-    if (currentForm) {
-      const { mutators, reset } = currentForm;
-      reset();
-      mutators.setDataMutator(FIELD_NAME, {
-        error: false,
-      });
-      onReset();
-      const currentInput = document.getElementById(FIELD_NAME);
-      currentInput && currentInput.focus();
-    }
   };
 
   const renderForm = (formProps: FormRenderProps) => {
@@ -110,7 +100,6 @@ const PinForm: React.FC<Props> = props => {
           autoFocus
           autoComplete="off"
           onReset={onReset}
-          iosKeyboardPlugType={iosKeyboardPlugType}
         />
         {loading && (
           <FontAwesomeIcon icon="spinner" spin className={classes.icon} />

@@ -11,15 +11,23 @@ import TwoFactorCodeModal, {
 
 import apis from '../../api';
 
-import { autoLogin } from '../../util/login';
+import { autoLogin, AutoLoginParams } from '../../util/login';
 
 import { REF_ACTIONS } from '../../constants/common';
-import { EmailConfirmationResult, LastAuthData } from '../../types';
+import {
+  EmailConfirmationResult,
+  LastAuthData,
+  LoginFailure,
+} from '../../types';
 
 type FormValues = {
-  email: string;
+  email?: string;
   password?: string;
   pin?: string;
+  options?: {
+    otpKey: string;
+  };
+  voucherId?: string;
 };
 
 type Props = {
@@ -30,7 +38,7 @@ type Props = {
   getCachedUsers: () => void;
   resetLastAuthData: () => void;
   resetLoginFailure: () => void;
-  loginFailure: { fields?: { [fieldName: string]: any }; code?: string };
+  loginFailure: LoginFailure;
   edgeLoginFailure: {
     type?: string;
     reason?: string;
@@ -47,7 +55,7 @@ const REF_SUBTITLES = {
   [REF_ACTIONS.SIGNNFT]: 'Sign in to complete signing your NFT',
 };
 
-const LoginForm = (props: Props) => {
+const LoginForm: React.FC<Props> = props => {
   const {
     show,
     onSubmit,
@@ -62,14 +70,13 @@ const LoginForm = (props: Props) => {
     edgeLoginFailure,
     emailConfirmationResult,
   } = props;
-  const isEmailVerification =
-    emailConfirmationResult != null && emailConfirmationResult.success;
-  const isRefFlow =
-    emailConfirmationResult != null &&
-    emailConfirmationResult.stateData != null &&
-    emailConfirmationResult.stateData.refProfileQueryParams != null;
+  const isEmailVerification = !!emailConfirmationResult?.success;
+  const isRefFlow = !!emailConfirmationResult?.stateData?.refProfileQueryParams;
   let subtitle = '';
-  if (isRefFlow) {
+  if (
+    isRefFlow &&
+    emailConfirmationResult.stateData?.refProfileQueryParams?.action
+  ) {
     subtitle =
       REF_SUBTITLES[
         emailConfirmationResult.stateData.refProfileQueryParams.action
@@ -80,7 +87,7 @@ const LoginForm = (props: Props) => {
   const [usePinLogin, setUsePinLogin] = useState(false);
   const [showBlockModal, toggleBlockModal] = useState(false);
   const [showCodeModal, toggleCodeModal] = useState(false);
-  const [loginParams, setLoginParams] = useState(null);
+  const [loginParams, setLoginParams] = useState<AutoLoginParams | null>(null);
   const [voucherDate, setVoucherDate] = useState<string | null>(null);
 
   const timerRef = useRef(null);
@@ -103,7 +110,9 @@ const LoginForm = (props: Props) => {
   }, [emailConfirmationResult]);
 
   useEffect(() => {
-    return () => clearTimeout(timerRef.current);
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
   }, []);
 
   useEffect(() => {
@@ -114,23 +123,25 @@ const LoginForm = (props: Props) => {
       edgeLoginFailure.voucherActivates;
 
     if (isOtpError) {
-      setVoucherDate(edgeLoginFailure.voucherActivates);
+      setVoucherDate(edgeLoginFailure.voucherActivates || null);
       !showCodeModal && toggleBlockModal(true);
       const deviceDescription = `${osName} ${osVersion}`;
       const voucherId = edgeLoginFailure.voucherId;
 
-      apis.auth.createNewDeviceRequest({
-        email: loginParams.email,
-        deviceDescription,
-        voucherId,
-      });
-      autoLogin({
-        voucherId,
-        timerRef,
-        loginParams,
-        login: onSubmit,
-        onCloseBlockModal,
-      });
+      if (voucherId && loginParams?.email) {
+        apis.auth.createNewDeviceRequest({
+          email: loginParams.email,
+          deviceDescription,
+          voucherId,
+        });
+        autoLogin({
+          voucherId,
+          timerRef,
+          loginParams,
+          login: onSubmit,
+          onCloseBlockModal,
+        });
+      }
     }
   }, [edgeLoginFailure.reason]);
 
@@ -159,7 +170,7 @@ const LoginForm = (props: Props) => {
 
   const onCloseBlockModal = () => {
     toggleBlockModal(false);
-    clearTimeout(timerRef.current);
+    timerRef.current && clearTimeout(timerRef.current);
     setVoucherDate(null);
   };
 
@@ -223,7 +234,7 @@ const LoginForm = (props: Props) => {
             subtitle={subtitle}
             hideCreateAccount={isEmailVerification}
             onClose={onCloseLogin}
-            initialValues={loginParams}
+            initialValues={loginParams || {}}
           />
         )}
       </ModalComponent>

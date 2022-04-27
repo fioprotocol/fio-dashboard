@@ -1,18 +1,20 @@
-import { testWalletName } from '../../../../util/general';
-import { CreateWalletValues } from '../../types';
+import { Validators, ValidationSchema } from '@lemoncode/fonk';
+import { createFinalFormValidation } from '@lemoncode/fonk-final-form';
 
-export const validate = (values: CreateWalletValues) => {
-  if (!values.name) {
-    return { name: 'Name is required' };
-  }
+import { fioWalletNameValidator } from '../../../../util/validators';
 
-  try {
-    testWalletName(values.name);
-  } catch (e) {
-    return {
-      name: e.message,
-    };
-  }
-
-  return {};
+const validationSchema: ValidationSchema = {
+  field: {
+    name: [
+      {
+        validator: Validators.required,
+        message: 'Required.',
+      },
+      {
+        validator: fioWalletNameValidator,
+      },
+    ],
+  },
 };
+
+export const formValidation = createFinalFormValidation(validationSchema);

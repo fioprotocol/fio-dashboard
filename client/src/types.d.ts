@@ -1,7 +1,18 @@
 import { EdgeAccount } from 'edge-core-js';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
-import { FIOSDK_LIB } from './api/fio';
+
 import { LocationState, Path } from 'history';
+
+import { FIOSDK_LIB } from './api/fio';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Unknown = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyObject = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyType = any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type OwnPropsAny = any; // todo: fix usages for ownProps
 
 export type Domain = { domain: string; free?: boolean };
 
@@ -30,6 +41,7 @@ export type Notification = {
   seenDate: string;
   closeDate: string;
   createdAt: string;
+  contentType: string;
   isManual?: boolean;
   pagesToShow: string[] | null;
 };
@@ -92,6 +104,8 @@ export type FioWalletDoublet = {
   balance?: number | null;
   available?: number | null;
   locked?: number | null;
+  staked?: number | null;
+  rewards?: number | null;
   publicWalletFioSdk?: FIOSDK_LIB | null;
   from: string;
 };
@@ -101,7 +115,7 @@ export type NewFioWalletDoublet = {
   name: string;
   publicKey: string;
   from: string;
-  data?: any;
+  data?: { derivationIndex?: number; device?: number } & AnyObject;
 };
 
 export type FioAddressDoublet = {
@@ -115,7 +129,7 @@ export type FioAddressWithPubAddresses = FioAddressDoublet & {
   edgeWalletId: string;
   publicAddresses: PublicAddressDoublet[];
   more: boolean;
-}
+};
 
 export type FioDomainDoublet = {
   name: string;
@@ -179,13 +193,14 @@ export type LinkActionResult = {
 };
 
 export type WalletKeys = { private: string; public: string };
+export type EdgeWalletsKeys = { [edgeWalletId: string]: WalletKeys };
 
 export type PinConfirmation = {
   account?: EdgeAccount;
-  keys?: { [walletId: string]: WalletKeys };
+  keys?: EdgeWalletsKeys;
   action?: string;
-  data?: any;
-  error?: string | Error & { wait?: number; };
+  data?: AnyObject;
+  error?: string | (Error & { wait?: number });
 };
 
 export type FeePrice = {
@@ -198,23 +213,36 @@ export type FioBalanceRes = {
   balance?: number;
   available?: number;
   locked?: number;
-}
+  staked?: number;
+  rewards?: number;
+  unlockPeriods?: {
+    amount: number;
+    date: number;
+  }[];
+};
 
 export type WalletBalancesItem = {
   nativeFio: number | null;
   fio: string;
   usdc: string;
-}
+};
+
+export type UnlockPeriod = {
+  date: Date | null;
+} & WalletBalancesItem;
 
 export type WalletBalances = {
-  total: WalletBalancesItem,
-  available: WalletBalancesItem,
-  locked: WalletBalancesItem,
-}
+  total: WalletBalancesItem;
+  available: WalletBalancesItem;
+  locked: WalletBalancesItem;
+  rewards?: WalletBalancesItem;
+  staked?: WalletBalancesItem;
+  unlockPeriods?: UnlockPeriod[];
+};
 
 export type WalletsBalances = {
-  total: WalletBalances,
-  wallets: { [publicKey: string]: WalletBalances },
+  total: WalletBalances;
+  wallets: { [publicKey: string]: WalletBalances };
 };
 
 export type DomainStatusType = 'private' | 'public';
@@ -230,7 +258,11 @@ export type User = {
   status: string;
   secretSet?: boolean;
   newEmail?: boolean;
-  newDeviceTwoFactor?: { voucherId: string; deviceDescription?: string; status: string }[];
+  newDeviceTwoFactor?: {
+    voucherId: string;
+    deviceDescription?: string;
+    status: string;
+  }[];
 };
 
 export type RefProfile = {
@@ -280,7 +312,7 @@ export type RefQueryParams = {
 export type EmailConfirmationStateData = {
   redirectLink?: string;
   refCode?: string;
-  refProfileQueryParams?: RefQueryParams;
+  refProfileQueryParams?: RefQueryParams | null;
 };
 
 export type EmailConfirmationResult = {
@@ -304,12 +336,19 @@ export type TransactionItemProps = {
   networkFee: string;
   date: number;
   blockHeight: number;
-  otherParams: any;
+  otherParams: {
+    isTransferProcessed?: boolean;
+    isFeeProcessed?: boolean;
+    feeActors?: string[];
+  } & AnyObject;
 };
 
 export type MappedPublicAddresses = {
-  [fioAddress: string]: { publicAddresses: PublicAddressDoublet[]; more: boolean };
-}
+  [fioAddress: string]: {
+    publicAddresses: PublicAddressDoublet[];
+    more: boolean;
+  };
+};
 
 export type DecryptedFioRecordContent = {
   payeePublicAddress: string;
@@ -318,7 +357,7 @@ export type DecryptedFioRecordContent = {
   obtId?: string;
   chainCode: string;
   tokenCode: string;
-}
+};
 
 // FioRecord type represents FioRequest and FioObtData
 export type FioRecord = {
@@ -330,7 +369,7 @@ export type FioRecord = {
   payerFioPublicKey: string;
   status: string;
   timeStamp: string;
-}
+};
 
 export type FioRecordDecrypted = {
   fioRecord: FioRecord;
@@ -351,33 +390,81 @@ export type ResponseFioRecord = {
   payer_fio_public_key: string;
   status: string;
   time_stamp: string;
-}
+};
 
 export type FioWalletData = {
   id: string;
   receivedFioRequests: FioRecord[];
   sentFioRequests: FioRecord[];
   obtData: FioRecord[];
-}
+};
 
 export type FioWalletTxHistory = {
-  highestTxHeight: number,
-  txs: TransactionItemProps[],
-}
+  highestTxHeight: number;
+  txs: TransactionItemProps[];
+};
 
-export type UsersFioWalletsData =  {
+export type UsersFioWalletsData = {
   [userId: string]: {
-    [walletPublicKey: string]: FioWalletData
-  }
-}
+    [walletPublicKey: string]: FioWalletData;
+  };
+};
 
-export type UsersWalletsTxHistory =  {
+export type UsersWalletsTxHistory = {
   [userId: string]: {
-    [walletPublicKey: string]: FioWalletTxHistory
-  }
-}
+    [walletPublicKey: string]: FioWalletTxHistory;
+  };
+};
 
 export type RedirectLinkData = {
   pathname: Path;
   state?: LocationState;
-}
+};
+
+export type PrivateRedirectLocationState = {
+  from?: { pathname?: string };
+  options?: { setKeysForAction?: boolean };
+};
+
+export type Proxy = {
+  is_proxy: number;
+  fioaddress: string;
+};
+
+export type FioHistoryNodeAction = {
+  account_action_seq: number;
+  block_num: number;
+  block_time: string;
+  action_trace: {
+    receiver: string;
+    act: {
+      account: string;
+      name: string;
+      data: {
+        payee_public_key?: string;
+        amount?: number;
+        max_fee?: number;
+        actor?: string;
+        tpid?: string;
+        quantity?: string;
+        memo?: string;
+        to?: string;
+        from?: string;
+      };
+      hex_data: string;
+    };
+    trx_id: string;
+    block_num: number;
+    block_time: string;
+    producer_block_id: string;
+  };
+};
+
+export type FioApiError = Error & { json?: { message?: string } };
+
+export type StatusResponse = { status?: number };
+
+export type LoginFailure = {
+  fields?: { [fieldName: string]: AnyType };
+  code?: string;
+};

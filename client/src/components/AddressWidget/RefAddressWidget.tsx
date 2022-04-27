@@ -1,26 +1,30 @@
 import React from 'react';
 import classnames from 'classnames';
+import { Button } from 'react-bootstrap';
+
 import AddressDomainForm from '../../components/AddressDomainForm';
-import { FORM_NAMES } from '../../constants/form';
+
+import { REF_ACTIONS, ADDRESS } from '../../constants/common';
 
 import classes from './AddressWidget.module.scss';
-import { REF_ACTIONS } from '../../constants/common';
-import { Button } from 'react-bootstrap';
 
 const ACTION_TEXT = {
   [REF_ACTIONS.SIGNNFT]:
     'All you have to do is add a username, select a domain and sign the NFT',
 };
 
-const AddressWidget = (props: {
+type Props = {
   logo: React.ReactNode;
   action: string;
   showLoginModal: () => void;
   edgeAuthLoading: boolean;
   title?: string;
   subTitle?: string;
-}) => {
+};
+
+const AddressWidget: React.FC<Props> = props => {
   const { logo, subTitle, action, edgeAuthLoading, showLoginModal } = props;
+
   const openLogin = () => showLoginModal();
   return (
     <div className={classnames(classes.container, classes.refContainer)}>
@@ -28,7 +32,7 @@ const AddressWidget = (props: {
       <p className={classes.subtitle}>{subTitle}</p>
       <p className={classes.actionInfo}>{ACTION_TEXT[action]}</p>
       <div className={classes.form}>
-        <AddressDomainForm isHomepage formName={FORM_NAMES.ADDRESS} />
+        <AddressDomainForm isHomepage={true} type={ADDRESS} />
       </div>
       <div className="d-flex justify-content-center">
         <p className={classes.signInCallToAction}>

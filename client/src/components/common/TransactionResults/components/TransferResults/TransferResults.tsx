@@ -13,13 +13,14 @@ type TransferResultsProps = {
   resetFioNames: () => void;
 };
 
-const TransferResults = (props: ResultsProps & TransferResultsProps) => {
+const TransferResults: React.FC<ResultsProps &
+  TransferResultsProps> = props => {
   const {
     pageName,
     results: { name, publicKey },
     resetFioNames,
   } = props;
-  const fioNameLabel = fioNameLabels[pageName];
+  const fioNameLabel = fioNameLabels[pageName || ''];
   const onClose = () => {
     resetFioNames();
     props.onClose();

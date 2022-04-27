@@ -29,7 +29,7 @@ const DesktopView: React.FC<DefaultProps> = props => {
   const isAddress = pageName === PAGE_NAME.ADDRESS;
 
   const renderAddress = (fioNameItem: FioNameItemProps) => {
-    const { name, remaining } = fioNameItem;
+    const { name = '', remaining } = fioNameItem;
     return (
       <React.Fragment key={name}>
         <div className={classnames(classes.tableCol, classes.firstCol)}>
@@ -45,7 +45,7 @@ const DesktopView: React.FC<DefaultProps> = props => {
           ) : (
             '-'
           )}
-          <RenderAddBundles name={fioNameItem.name} />
+          <RenderAddBundles name={fioNameItem.name || ''} />
         </div>
         <div className={classnames(classes.tableCol, classes.lastCol)}>
           <ActionButtons

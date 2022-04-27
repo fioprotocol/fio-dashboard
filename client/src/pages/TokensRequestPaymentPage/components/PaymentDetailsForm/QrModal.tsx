@@ -1,11 +1,14 @@
-import classes from '../../../WalletPage/styles/WalletDetailsModal.module.scss';
+import React from 'react';
 import QRCode from 'qrcode.react';
-import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
-import CopyTooltip from '../../../../components/CopyTooltip';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
+import CopyTooltip from '../../../../components/CopyTooltip';
 import Modal from '../../../../components/Modal/Modal';
-import React from 'react';
+
+import classes from '../../../WalletPage/styles/WalletDetailsModal.module.scss';
+
 import {
   copyToClipboard,
   nativeShareIsAvailable,
@@ -13,7 +16,7 @@ import {
 } from '../../../../util/general';
 import { QrModalProps } from '../../../../components/Input/QrCodeInput';
 
-const QrModal = (props: QrModalProps) => {
+const QrModal: React.FC<QrModalProps> = props => {
   const { isVisible, inputValue, handleClose } = props;
 
   const onShare = () =>

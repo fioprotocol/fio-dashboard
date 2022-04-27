@@ -1,76 +1,51 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import classnames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { isIOS } from 'react-device-detect';
 
 import PinDots from './PinDots';
-
-import { useCheckIfDesktop } from '../../../screenType';
+import NumericKeyboard from './NumericKeyboard';
 
 import { PIN_LENGTH } from '../../../constants/form';
-import { IOS_KEYBOARD_PLUG_TYPE } from './constants';
 
-import { PinInputProps, PinInputEventProps } from './types';
+import { PinProps } from './types';
 
-import classes from './PinInput.module.scss';
+import classes from '../styles/PinInput.module.scss';
 
-const PinInput: React.FC<PinInputProps> = props => {
+const PinInput: React.FC<PinProps> = props => {
   const {
     error,
     name,
     value,
     withoutMargin,
-    iosKeyboardPlugType,
-    form,
-    onBlur,
+    resetError,
     onChange,
-    onFocus,
-    onReset,
     submit,
   } = props;
 
-  const [showKeyboard, toggleShowKeyboard] = useState(false); // handle mobile keyboard
+  const innerRef = useRef<HTMLInputElement>(null);
+  const valueRef = useRef<string | undefined>(value);
 
-  const innerRef = useRef(null);
-  const valueRef = useRef(value);
+  const setMyState = useCallback(
+    (data: string) => {
+      valueRef.current = data;
+      onChange(data);
 
-  const isActiveElement = document.activeElement === innerRef.current;
+      if (resetError && error && data?.length === PIN_LENGTH - 1) {
+        resetError();
+      }
+    },
+    [error, onChange, resetError],
+  );
 
-  const setMyState = (data: string) => {
-    valueRef.current = data;
-    onChange(data);
-
-    if (error && data.length === PIN_LENGTH - 1) {
-      form &&
-        form.mutators.setDataMutator(name, {
-          error: false,
-        });
-      onReset();
-    }
-  };
-
-  useEffect(() => {
-    document.addEventListener('keyup', onKeyUp);
-
-    return () => {
-      document.removeEventListener('keyup', onKeyUp);
-    };
-  }, []);
-
-  useEffect(() => {
-    setMyState(value);
-  }, [value]);
-
-  useEffect(() => {
-    if (innerRef && innerRef.current) {
-      innerRef.current && innerRef.current.focus();
-    }
-  }, [innerRef]);
-
-  const onKeyUp = (e: KeyboardEvent) => {
-    const { key } = e;
-    if (/\d/.test(key)) {
+  const handleKeyChange = useCallback(
+    (key: string) => {
       const pinValue = valueRef && valueRef.current;
+
+      if (/backspace/i.test(key)) {
+        pinValue && onChange(pinValue.slice(0, -1));
+        return;
+      }
+
       const retValue = (pinValue && pinValue + key) || key;
 
       if (retValue.length > PIN_LENGTH) return;
@@ -78,33 +53,38 @@ const PinInput: React.FC<PinInputProps> = props => {
       if (retValue && retValue.length === PIN_LENGTH) {
         onChange(retValue);
         submit && !error && submit();
-        !isDesktop && refInputBlur();
         return;
       }
       onChange(retValue);
+    },
+    [error, onChange, submit], // todo: onChange changes every render - investigate
+  );
+
+  const onKeyUp = useCallback(
+    (e: KeyboardEvent) => {
+      const { key } = e;
+      if (/\d|backspace/i.test(key)) handleKeyChange(key);
+    },
+    [handleKeyChange],
+  );
+
+  useEffect(() => {
+    document.addEventListener('keyup', onKeyUp);
+
+    return () => {
+      document.removeEventListener('keyup', onKeyUp);
+    };
+  }, [onKeyUp]);
+
+  useEffect(() => {
+    setMyState(value);
+  }, [value, setMyState]);
+
+  useEffect(() => {
+    if (innerRef && innerRef.current) {
+      innerRef.current && innerRef.current.focus();
     }
-  };
-
-  const onClick = () => {
-    innerRef.current && innerRef.current.focus();
-  };
-
-  const refInputBlur = () => {
-    innerRef.current && innerRef.current.blur();
-    handleBlur();
-  };
-
-  const isDesktop = useCheckIfDesktop();
-
-  const handleBlur = () => {
-    onBlur && onBlur();
-    toggleShowKeyboard(false);
-  };
-
-  const handleFocus = () => {
-    onFocus && onFocus();
-    toggleShowKeyboard(true);
-  };
+  }, [innerRef]);
 
   return (
     <>
@@ -114,37 +94,17 @@ const PinInput: React.FC<PinInputProps> = props => {
           error && classes.error,
           withoutMargin && classes.withoutMargin,
         )}
-        onClick={onClick}
       >
         <input
-          type="tel"
+          inputMode="none" // hide mobile keyboard
           max={PIN_LENGTH}
-          value={value}
           autoComplete="off"
           className={classes.pinInput}
           id={name}
-          onChange={(e: PinInputEventProps) => {
-            // fixes android backspace keyup event
-            if (e.nativeEvent.inputType === 'deleteContentBackward') {
-              const currentValue = e.target.value;
-              onChange(currentValue);
-            }
-          }}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
           ref={innerRef}
         />
         <PinDots value={value} error={!!error} />
-        {!isDesktop && showKeyboard && isActiveElement && (
-          <div
-            className={classnames(
-              isIOS &&
-                (IOS_KEYBOARD_PLUG_TYPE[iosKeyboardPlugType]
-                  ? classes[iosKeyboardPlugType]
-                  : classes.keyboardPlug),
-            )}
-          />
-        )}
+        <NumericKeyboard onChange={handleKeyChange} value={value} />
       </div>
 
       {error && (

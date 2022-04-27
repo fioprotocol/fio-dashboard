@@ -2,6 +2,8 @@ import { validateMnemonic } from 'bip39';
 
 import apis from '../../api';
 
+import { log } from '../../util/general';
+
 import { ImportWalletValues } from './types';
 
 export const VALIDATION_ERRORS = {
@@ -61,12 +63,15 @@ export const validate = async (
     await apis.account.validateWalletImport(publicKey);
   } catch (e) {
     if (e.data && e.data.name) {
+      const {
+        data: { name },
+      } = e;
       const uniqueError = { ...VALIDATION_ERRORS.uniqueKey };
-      uniqueError.message = `${uniqueError.message} - (${e.data.name})`;
+      uniqueError.message = `${uniqueError.message} - (${name as string})`;
       return uniqueError;
     }
 
-    console.error(e);
+    log.error(e);
     return VALIDATION_ERRORS.general;
   }
 

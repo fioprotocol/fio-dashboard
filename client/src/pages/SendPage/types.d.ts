@@ -1,4 +1,6 @@
+import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+
 import {
   FeePrice,
   FioAddressDoublet,
@@ -36,7 +38,6 @@ export type InitialValues = {
 export type SendTokensProps = {
   fioWallet: FioWalletDoublet;
   fioAddresses: FioAddressDoublet[];
-  roe: number;
   fee: FeePrice;
   balance: WalletBalances;
   loading: boolean;

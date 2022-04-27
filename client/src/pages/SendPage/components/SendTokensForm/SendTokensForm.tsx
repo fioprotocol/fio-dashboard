@@ -14,7 +14,11 @@ import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 
 import { submitValidation, formValidation } from './validation';
-import { hasFioAddressDelimiter, minWaitTimeFunction } from '../../../../utils';
+import {
+  FIO_ADDRESS_DELIMITER,
+  hasFioAddressDelimiter,
+  minWaitTimeFunction,
+} from '../../../../utils';
 import { useWalletBalances } from '../../../../util/hooks';
 import { fioAddressExistsValidator } from '../../../../util/validators';
 import MathOp from '../../../../util/math';
@@ -28,12 +32,17 @@ import { FioAddressDoublet } from '../../../../types';
 
 import classes from '../../styles/SendTokensForm.module.scss';
 
+const formatReceiverValue = (value: string) => {
+  if (value.indexOf(FIO_ADDRESS_DELIMITER) > 0) return value.toLowerCase();
+
+  return value;
+};
+
 const SendTokensForm: React.FC<SendTokensProps> = props => {
   const {
     loading,
     fioWallet,
     fioAddresses,
-    roe,
     fee,
     obtDataOn,
     contactsList,
@@ -99,7 +108,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
           );
         };
 
-        const selectedAddress: FioAddressDoublet | null = from
+        const selectedAddress: FioAddressDoublet | undefined | null = from
           ? fioAddresses.find(({ name }) => name === from)
           : null;
 
@@ -108,9 +117,9 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
           obtDataOn &&
           to &&
           hasFioAddressDelimiter(to);
-        const hasLowBalance = new MathOp(fee.nativeFio)
+        const hasLowBalance = new MathOp(fee.nativeFio || 0)
           .add(apis.fio.amountToSUF(amount))
-          .gt(walletBalances.available.nativeFio);
+          .gt(walletBalances.available.nativeFio || 0);
 
         const notEnoughBundles =
           selectedAddress != null
@@ -145,13 +154,13 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               disabled={loading}
               loading={validating}
               label="Send to Address"
+              onChangeFormat={formatReceiverValue}
               handleConfirmValidate={(value: string) =>
                 minWaitTimeFunction(
                   () =>
                     fioAddressExistsValidator({
                       value,
                       values,
-                      message: 'FIO Crypto Handle is not valid / not exist',
                       customArgs: {
                         fieldIdToCompare: 'fromPubKey',
                       },
@@ -169,7 +178,6 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={AmountInput}
-              roe={roe}
               disabled={loading}
               label="Send Amount"
             />
@@ -220,7 +228,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
             <SubmitButton
               text="Send FIO Tokens"
               disabled={submitDisabled}
-              loading={loading}
+              loading={loading || formRenderProps.submitting}
               withTopMargin={true}
             />
           </form>

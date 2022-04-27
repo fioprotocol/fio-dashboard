@@ -1,4 +1,5 @@
 import React from 'react';
+
 import Modal from '../../Modal/Modal';
 import FioLoader from '../FioLoader/FioLoader';
 
@@ -15,15 +16,18 @@ type Props = {
   message?: string;
 };
 
-const Processing = (props: Props) => {
-  const { title = DEFAULT_TEXT.title, message = DEFAULT_TEXT.message } = props;
+const Processing: React.FC<Props> = props => {
+  const {
+    isProcessing,
+    title = DEFAULT_TEXT.title,
+    message = DEFAULT_TEXT.message,
+  } = props;
   return (
     <Modal
-      show={props.isProcessing}
+      show={isProcessing}
       backdrop="static"
       hideCloseButton
-      closeButton={null}
-      onClose={null}
+      closeButton={false}
     >
       <div className={classes.processingContainer}>
         <div className={classes.logo}>

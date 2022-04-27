@@ -1,5 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
+
 import Menu from '../../Menu';
 
 import classes from '../MainHeader.module.scss';
@@ -9,7 +10,7 @@ type SideMenuProps = {
   isMenuOpen: boolean;
   toggleMenuOpen: (openState: boolean) => void;
 };
-const SideMenu = (props: SideMenuProps) => {
+const SideMenu: React.FC<SideMenuProps> = props => {
   const { children, isMenuOpen, toggleMenuOpen } = props;
   return (
     <>

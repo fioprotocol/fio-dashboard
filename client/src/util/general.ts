@@ -1,9 +1,19 @@
-import { WALLET_NAME_REGEX } from '../constants/regExps';
+import { ChangeEvent } from 'react';
+
 import { DEFAULT_TEXT_TRUNCATE_LENGTH } from '../constants/common';
 
-export async function copyToClipboard(text: string) {
+export const log = {
+  error: (e: Error | string, e2?: Error | string): void => {
+    // eslint-disable-next-line no-console
+    if (!e2) console.error(e);
+    // eslint-disable-next-line no-console
+    if (e2) console.error(e, e2);
+  },
+};
+
+export async function copyToClipboard(text: string): Promise<void> {
   // mobile workaround because mobile devices don't have clipboard object in navigator
-  function copyToMobileClipboard(str: string) {
+  function copyToMobileClipboard(str: string): void {
     const el = document.createElement('textarea');
     el.value = str;
     // @ts-ignore
@@ -11,7 +21,7 @@ export async function copyToClipboard(text: string) {
     el.setAttribute('readonly', '');
     document.body.appendChild(el);
 
-    if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+    if (/ipad|ipod|iphone/i.exec(navigator.userAgent)) {
       // save current contentEditable/readOnly status
       const editable = el.contentEditable;
       const readOnly = el.readOnly;
@@ -27,8 +37,8 @@ export async function copyToClipboard(text: string) {
 
       // select the range
       const selection = window.getSelection();
-      selection.removeAllRanges();
-      selection.addRange(range);
+      selection?.removeAllRanges();
+      selection?.addRange(range);
       el.setSelectionRange(0, 999999);
 
       // restore contentEditable/readOnly to original state
@@ -46,25 +56,24 @@ export async function copyToClipboard(text: string) {
       window.navigator.appVersion,
     );
     if (!isMobileDevice) return await navigator.clipboard.writeText(text);
-    return await copyToMobileClipboard(text);
+
+    return copyToMobileClipboard(text);
   } catch (e) {
-    console.error(e);
+    log.error(e);
   }
 }
 
-export const getHash = async (itemToHash: File) => {
+export const getHash = async (itemToHash: File): Promise<string> => {
   if (!(itemToHash instanceof Blob)) return;
   const arrayBuffer = await itemToHash.arrayBuffer();
   const msgUint8 = new Uint8Array(arrayBuffer);
 
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
   const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-  return hash;
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 };
 
-const checkNativeShare = () => {
+const checkNativeShare = (): boolean => {
   try {
     return !!navigator.share;
   } catch (e) {
@@ -73,7 +82,7 @@ const checkNativeShare = () => {
 };
 
 export const nativeShareIsAvailable = checkNativeShare();
-export const shareData = (data: { url?: string; text?: string }) => {
+export const shareData = (data: { url?: string; text?: string }): void => {
   try {
     navigator.share(data);
   } catch (e) {
@@ -81,17 +90,7 @@ export const shareData = (data: { url?: string; text?: string }) => {
   }
 };
 
-export const testWalletName = (name: string) => {
-  if (!WALLET_NAME_REGEX.test(name)) {
-    throw new Error(
-      'Name is not valid. Name should be from 1 to 32 symbols and contain only letters, digits, spaces, dashes or underscores',
-    );
-  }
-
-  return true;
-};
-
-export const commonFormatTime = (date: string) => {
+export const commonFormatTime = (date: string): string => {
   if (!date) return 'N/A';
   const activationDay = (dateString: string) =>
     new Date(dateString).toLocaleDateString([], {
@@ -108,7 +107,7 @@ export const commonFormatTime = (date: string) => {
   return `${activationDay(date)} @ ${activationTime(date)}`;
 };
 
-export const getValueFromPaste = async () => {
+export const getValueFromPaste = async (): Promise<string | undefined> => {
   if (!navigator.clipboard.readText) return;
 
   const clipboardStr = await navigator.clipboard.readText();
@@ -117,7 +116,7 @@ export const getValueFromPaste = async () => {
 };
 
 // Normalize date if not exists "Z" parameter
-export const getUTCDate = (dateString: string) => {
+export const getUTCDate = (dateString: string): number => {
   const date = new Date(dateString);
 
   return Date.UTC(
@@ -134,7 +133,7 @@ export const truncateTextInMiddle = (
   text: string,
   startChar: number = DEFAULT_TEXT_TRUNCATE_LENGTH,
   endChar: number = DEFAULT_TEXT_TRUNCATE_LENGTH,
-) => {
+): string => {
   if (
     text.length < startChar ||
     text.length < endChar ||
@@ -146,4 +145,19 @@ export const truncateTextInMiddle = (
   const end = text.substring(text.length - endChar, text.length);
 
   return start + '...' + end;
+};
+
+export const transformInputValues = ({
+  e,
+  transformedValue,
+  onChange,
+}: {
+  e: ChangeEvent<HTMLInputElement>;
+  transformedValue: string;
+  onChange: (value: string) => void;
+}) => {
+  const startPos = e.target.selectionStart;
+  const endPos = e.target.selectionEnd;
+  onChange(transformedValue);
+  setTimeout(() => e.target.setSelectionRange(startPos, endPos), 0);
 };

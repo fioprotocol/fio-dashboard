@@ -1,7 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useMemo,
+  useCallback,
+} from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { RouterProps, withRouter } from 'react-router-dom';
+
 import {
   checkAuthToken,
   setLastActivity,
@@ -9,15 +16,17 @@ import {
 } from '../redux/profile/actions';
 import { showLoginModal } from '../redux/modal/actions';
 import { setRedirectPath } from '../redux/navigation/actions';
-
-import { compose } from '../utils';
 import {
   isAuthenticated,
   tokenCheckResult,
   lastActivityDate,
   profileRefreshed,
 } from '../redux/profile/selectors';
-import { RedirectLinkData } from '../types';
+
+import { compose } from '../utils';
+
+import { RedirectLinkData, Unknown } from '../types';
+import useEffectOnce from '../hooks/general';
 
 type Props = {
   tokenCheckResult: boolean;
@@ -47,114 +56,68 @@ let activityMethod: (() => {} | void) | null = null;
 const removeActivityListener = () => {
   try {
     ACTIVITY_EVENTS.forEach((eventName: string): void => {
-      document.removeEventListener(eventName, activityMethod, true);
+      document.removeEventListener(
+        eventName,
+        activityMethod as EventListenerOrEventListenerObject,
+        true,
+      );
     });
   } catch (e) {
     //
   }
 };
 
-const logEvent = (...params: any[]) => {
+const logEvent = (...params: Unknown[]) => {
   if (!DEBUG_MODE) return;
+  // eslint-disable-next-line no-console
   console.info(...params);
 };
 
-const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
+const AutoLogout = (
+  props: Props & RouterProps,
+): React.FunctionComponent | null => {
   const {
     tokenCheckResult,
     lastActivityDate,
     isAuthenticated,
     profileRefreshed,
     history,
+    history: {
+      location: { pathname, state },
+    },
     checkAuthToken,
     setLastActivity,
     logout,
     showLoginModal,
     setRedirectPath,
   } = props;
-  const [timeoutId, setTimeoutId] = useState<ReturnType<
-    typeof setTimeout
-  > | null>(null);
-  const [intervalId, setIntervalId] = useState<ReturnType<
-    typeof setInterval
-  > | null>(null);
+
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const initLoad = useMemo(
+    () => profileRefreshed && isAuthenticated && !!lastActivityDate,
+    [profileRefreshed, isAuthenticated, lastActivityDate],
+  );
   const [localLastActivity, setLocalLastActivity] = useState<number>(
     new Date().getTime(),
   );
 
-  useEffect(() => {
-    if (isAuthenticated && !timeoutId) {
-      checkToken();
-    }
-    if (isAuthenticated && !intervalId) {
-      if (lastActivityDate) {
-        const now = new Date();
-        const lastActivity = new Date(lastActivityDate);
-        if (now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT) {
-          logout({ history });
-          return showLoginModal();
-        }
-      }
-      activityWatcher();
-    }
-    if (!isAuthenticated && (timeoutId || intervalId)) {
-      clearChecksTimeout();
-    }
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    if (tokenCheckResult === null) return;
-    if (tokenCheckResult) {
-      checkToken();
-    } else {
-      clearChecksTimeout();
-    }
-  }, [tokenCheckResult]);
-
-  useEffect(
-    () => () => {
-      timeoutId && clearTimeout(timeoutId);
-      intervalId && clearInterval(intervalId);
-    },
-    [],
-  );
-
-  useEffect(() => {
-    if (profileRefreshed && localLastActivity - lastActivityDate > TIMEOUT) {
-      logEvent('===ACTIVITY===');
-      setLastActivity(localLastActivity);
-    }
-  }, [localLastActivity, profileRefreshed]);
-
-  const checkToken = () => {
-    const newTimeoutId: ReturnType<typeof setTimeout> = setTimeout(
-      checkAuthToken,
-      TIMEOUT,
-    );
-    setTimeoutId(newTimeoutId);
-  };
-
   const clearChecksTimeout = () => {
-    timeoutId && clearTimeout(timeoutId);
-    intervalId && clearInterval(intervalId);
-    setTimeoutId(null);
-    setIntervalId(null);
+    timeoutRef.current && clearTimeout(timeoutRef.current);
+    intervalRef.current && clearInterval(intervalRef.current);
+    timeoutRef.current = null;
+    intervalRef.current = null;
     if (activityMethod) {
       removeActivityListener();
     }
   };
 
-  const activityTimeout = () => {
+  const activityTimeout = useCallback(() => {
     removeActivityListener();
-    const {
-      history: {
-        location: { pathname, state },
-      },
-    } = props;
     setRedirectPath({ pathname, state });
     logout({ history });
     showLoginModal();
-  };
+  }, [history, pathname, state, logout, setRedirectPath, showLoginModal]);
 
   const activityWatcher = () => {
     let lastActivity = new Date().getTime();
@@ -168,7 +131,7 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
       setLocalLastActivity(lastActivity);
     };
 
-    const newIntervalId: ReturnType<typeof setInterval> = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       const secondsSinceLastActivity = new Date().getTime() - lastActivity;
       logEvent(
         '===secondsSinceLastActivity===',
@@ -182,12 +145,74 @@ const AutoLogout = (props: Props & RouterProps): React.FunctionComponent => {
         activityTimeout();
       }
     }, TIMEOUT);
-    setIntervalId(newIntervalId);
 
     ACTIVITY_EVENTS.forEach((eventName: string): void => {
-      document.addEventListener(eventName, activityMethod, true);
+      document.addEventListener(
+        eventName,
+        activityMethod as EventListenerOrEventListenerObject,
+        true,
+      );
     });
   };
+
+  const checkToken = useCallback(() => {
+    timeoutRef.current = setTimeout(checkAuthToken, TIMEOUT);
+  }, [checkAuthToken]);
+
+  useEffect(
+    () => () => {
+      timeoutRef.current && clearTimeout(timeoutRef.current);
+      intervalRef.current && clearInterval(intervalRef.current);
+      timeoutRef.current = null;
+      intervalRef.current = null;
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (isAuthenticated && !timeoutRef.current) {
+      checkToken();
+    }
+    if (isAuthenticated && !intervalRef.current) {
+      activityWatcher();
+    }
+    if (!isAuthenticated && (timeoutRef.current || intervalRef.current)) {
+      clearChecksTimeout();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checkToken, isAuthenticated]);
+
+  // Auto-logout when page loaded
+  useEffectOnce(
+    () => {
+      const now = new Date();
+      const lastActivity = new Date(lastActivityDate);
+      if (now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT) {
+        logout({ history });
+        return showLoginModal();
+      }
+    },
+    [lastActivityDate, history, logout, showLoginModal],
+    initLoad,
+  );
+
+  useEffect(() => {
+    if (tokenCheckResult === null) return;
+    if (tokenCheckResult) {
+      checkToken();
+    } else {
+      clearChecksTimeout();
+      activityTimeout();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tokenCheckResult, checkToken]);
+
+  useEffect(() => {
+    if (profileRefreshed && localLastActivity - lastActivityDate > TIMEOUT) {
+      logEvent('===ACTIVITY===');
+      setLastActivity(localLastActivity);
+    }
+  }, [lastActivityDate, localLastActivity, profileRefreshed, setLastActivity]);
 
   return null;
 };

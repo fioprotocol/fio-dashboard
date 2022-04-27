@@ -2,7 +2,6 @@ import config from '../config';
 import ApiClient from './client';
 
 import Auth from './auth';
-import Users from './users';
 import Edge from './edge';
 import Notifications from './notifications';
 import FioReg from './fio-reg';
@@ -27,7 +26,6 @@ window.fetch = (uri: RequestInfo, opts: RequestInit = {}) => {
 
 export type Api = {
   auth: Auth;
-  users: Users;
   edge: Edge;
   notifications: Notifications;
   fioReg: FioReg;
@@ -38,9 +36,8 @@ export type Api = {
   client: ApiClient;
 };
 
-export default {
+const apis = {
   auth: new Auth(apiClient),
-  users: new Users(apiClient),
   edge: new Edge(),
   notifications: new Notifications(apiClient),
   fioReg: new FioReg(apiClient),
@@ -51,3 +48,5 @@ export default {
   contacts: new Contacts(apiClient),
   client: apiClient,
 };
+
+export default apis;

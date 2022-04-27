@@ -1,4 +1,4 @@
-import React, { useEffect, useState, WheelEvent } from 'react';
+import React, { ChangeEvent, useEffect, useState, WheelEvent } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { FieldRenderProps } from 'react-final-form';
 import classnames from 'classnames';
@@ -8,9 +8,15 @@ import {
   ClearButton,
   ShowPasswordIcon,
 } from './InputActionButtons';
-import { ErrorBadge } from './ErrorBadge';
-import { getValueFromPaste } from '../../util/general';
 import { Label, LoadingIcon, PrefixLabel, Prefix } from './StaticInputParts';
+import { ErrorBadge } from './ErrorBadge';
+
+import {
+  getValueFromPaste,
+  log,
+  transformInputValues,
+} from '../../util/general';
+import { useFieldElemActiveState } from '../../util/hooks';
 
 import classes from './Input.module.scss';
 
@@ -49,9 +55,12 @@ export type TextInputProps = {
   debounceTimeout?: number;
 };
 
-export const TextInput = (
+export const TextInput: React.ForwardRefRenderFunction<
+  HTMLInputElement,
+  TextInputProps & FieldRenderProps<TextInputProps>
+> = (
   props: TextInputProps & FieldRenderProps<TextInputProps>,
-  ref: React.Ref<HTMLInputElement | null>,
+  ref?: React.Ref<HTMLInputElement>,
 ) => {
   const {
     input,
@@ -60,7 +69,7 @@ export const TextInput = (
     colorSchema,
     onClose,
     hideError,
-    showPasteButton,
+    showPasteButton = false,
     loading,
     uiType,
     errorType = '',
@@ -92,11 +101,17 @@ export const TextInput = (
 
   const [showPass, toggleShowPass] = useState(false);
   const [isInputHasValue, toggleIsInputHasValue] = useState(value !== '');
+  const [
+    fieldElemActive,
+    setFieldElemActive,
+    setFieldElemInactive,
+  ] = useFieldElemActiveState();
 
   const hasError =
-    ((error || data.error) &&
+    ((error || data?.error) &&
       (touched || modified || submitSucceeded || !!value) &&
-      !active) ||
+      !active &&
+      !fieldElemActive) ||
     (submitError && !modifiedSinceLastSubmit);
 
   useEffect(() => {
@@ -105,6 +120,32 @@ export const TextInput = (
 
   const clearInputFn = () => {
     onChange('');
+  };
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e?.type !== 'change') return;
+
+    const currentValue = e.target.value;
+
+    if (lowerCased) {
+      const transformedValue = currentValue.toLowerCase();
+      transformInputValues({
+        e,
+        transformedValue,
+        onChange,
+      });
+      return;
+    }
+    if (upperCased) {
+      const transformedValue = currentValue.toUpperCase();
+      transformInputValues({
+        e,
+        transformedValue,
+        onChange,
+      });
+      return;
+    }
+    onChange(currentValue);
   };
 
   if (type === 'hidden') return null;
@@ -136,12 +177,7 @@ export const TextInput = (
             debounceTimeout={debounceTimeout}
             {...input}
             {...rest}
-            onChange={e => {
-              const currentValue = e.target.value;
-              if (lowerCased) return onChange(currentValue.toLowerCase());
-              if (upperCased) return onChange(currentValue.toUpperCase());
-              onChange(currentValue);
-            }}
+            onChange={handleInputChange}
             onWheel={(event: WheelEvent<HTMLInputElement>) => {
               if (type === 'number') event.currentTarget.blur();
             }}
@@ -151,7 +187,7 @@ export const TextInput = (
           />
         </div>
         <ClearButton
-          isVisible={(isInputHasValue || onClose) && !disabled && !loading}
+          isVisible={(isInputHasValue || !!onClose) && !disabled && !loading}
           onClear={clearInputFn}
           onClose={onClose}
           inputType={type}
@@ -171,9 +207,11 @@ export const TextInput = (
             try {
               onChange(await getValueFromPaste());
             } catch (e) {
-              console.error('Paste error: ', e);
+              log.error('Paste error: ', e);
             }
           }}
+          onMouseDown={setFieldElemActive}
+          onMouseUp={setFieldElemInactive}
           uiType={uiType}
         />
         <LoadingIcon isVisible={loading} uiType={uiType} />
@@ -181,7 +219,7 @@ export const TextInput = (
       <ErrorBadge
         error={error}
         data={data}
-        hasError={!hideError && !data.hideError && hasError}
+        hasError={!hideError && !data?.hideError && hasError}
         type={errorType}
         color={errorColor}
         submitError={submitError}

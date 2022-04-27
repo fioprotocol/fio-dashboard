@@ -4,12 +4,14 @@ import { withRouter } from 'react-router-dom';
 
 import { compose } from '../../utils';
 
-import { fioAddresses } from '../../redux/fio/selectors';
+import { fioAddresses, fees } from '../../redux/fio/selectors';
+
 import { FioAddressTransferPage } from './FioAddressTransferPage';
 
 const reduxConnect = connect(
   createStructuredSelector({
     fioNameList: fioAddresses,
+    fees,
   }),
   {},
 );

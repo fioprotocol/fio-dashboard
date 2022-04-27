@@ -1,16 +1,22 @@
 import React, { useEffect, useRef, useState, WheelEvent } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { FieldRenderProps, useForm } from 'react-final-form';
+import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
-
-import apis from '../../api';
 
 import { ErrorBadge } from './ErrorBadge';
 import { Label, LoadingIcon, PrefixLabel } from './StaticInputParts';
 import Amount from '../common/Amount';
+import InfoBadge from '../InfoBadge/InfoBadge';
+
+import { useFieldElemActiveState, useRoe } from '../../util/hooks';
+import MathOp from '../../util/math';
+
+import apis from '../../api';
 
 import { INPUT_COLOR_SCHEMA } from './TextInput';
+import { BADGE_TYPES } from '../Badge/Badge';
 
 import exchangeIcon from '../../assets/images/exchange.svg';
 
@@ -32,18 +38,22 @@ type Props = {
     value: string;
   };
   debounceTimeout?: number;
-  roe: number;
   amountCurrencyCode?: string;
   exchangeAmountCurrencyCode?: string;
   nativeAmountFieldName?: string;
+  availableTitle?: string;
+  availableValue?: string;
+  maxValue?: string;
 };
 
 const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
   const {
     input,
     meta,
+    availableTitle = 'Available FIO Balance',
+    availableValue = '0',
+    maxValue = availableValue,
     debounceTimeout = 0,
-    roe,
     colorSchema,
     hideError,
     loading,
@@ -72,6 +82,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
 
   const { change } = useForm();
 
+  const roe = useRoe();
   const inputRef = useRef<HTMLInputElement>(null);
   const initRef = useRef(false);
 
@@ -94,6 +105,12 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
   const [isPrimaryExchange, setIsPrimaryExchange] = useState(true);
   const [clearInput, toggleClearInput] = useState(value !== '');
   const [exchangedValue, exchangeValue] = useState('');
+  const [isMaxValue, setIsMaxValue] = useState(false);
+  const [
+    fieldElemActive,
+    setFieldElemActive,
+    setFieldElemInactive,
+  ] = useFieldElemActiveState();
 
   useEffect(() => {
     if (isPrimaryExchange) exchangeValue(relationFormula(value));
@@ -111,7 +128,8 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
 
   useEffect(() => {
     toggleClearInput(value !== '');
-  }, [value]);
+    setIsMaxValue(new MathOp(value || 0).gte(maxValue));
+  }, [value, maxValue]);
 
   useEffect(() => {
     if (inputRef != null && inputRef.current != null && initRef.current) {
@@ -121,17 +139,40 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     if (!initRef.current) initRef.current = true;
   }, [isPrimaryExchange, inputRef]);
 
+  const setMaxAmount = () => {
+    if (isPrimaryExchange) {
+      onChange(maxValue);
+    } else {
+      exchangeValue(relationFormula(maxValue));
+      // workaround for exchange formula inaccuracy by changing value directly after useEffect
+      requestAnimationFrame(() => onChange(maxValue));
+    }
+  };
+
   const hasError =
     !hideError &&
-    !data.hideError &&
-    (((error || data.error) &&
+    !data?.hideError &&
+    (((error || data?.error) &&
       (touched || modified || submitSucceeded || !!value) &&
-      !active) ||
+      !active &&
+      !fieldElemActive) ||
       (submitError && !modifiedSinceLastSubmit));
 
   return (
     <div className={classes.regInputWrapper}>
       <Label label={label} uiType={uiType} />
+      <InfoBadge
+        className={classes.badge}
+        type={BADGE_TYPES.INFO}
+        show={
+          isMaxValue &&
+          new MathOp(maxValue).gt(0) &&
+          new MathOp(maxValue).lt(availableValue)
+        }
+        title="Max Amount"
+        message="A small portion of FIO has been held in your available balance to ensure the transaction does not fail due to not having enough available FIO"
+      />
+
       <div className={classes.inputGroup}>
         <div
           className={classnames(
@@ -168,6 +209,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
               event.currentTarget.blur()
             }
             data-clear={clearInput}
+            step="any"
           />
         </div>
 
@@ -206,8 +248,21 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
               if (disabled) return;
               setIsPrimaryExchange(!isPrimaryExchange);
             }}
+            onMouseDown={setFieldElemActive}
+            onMouseUp={setFieldElemInactive}
             src={exchangeIcon}
+            alt=""
           />
+
+          {new MathOp(maxValue || 0).gt(0) && (
+            <div
+              className={classes.maxButtonContainer}
+              onMouseDown={setFieldElemActive}
+              onMouseUp={setFieldElemInactive}
+            >
+              <Button onClick={setMaxAmount}>Max</Button>
+            </div>
+          )}
         </div>
 
         <LoadingIcon isVisible={loading} uiType={uiType} />
@@ -215,11 +270,17 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
       <ErrorBadge
         error={error}
         data={data}
-        hasError={!hideError && !data.hideError && hasError}
+        hasError={hasError}
         type={errorType}
         color={errorColor}
         submitError={submitError}
       />
+      {new MathOp(availableValue || 0).gt(0) && (
+        <div className={classes.additionalSubInfo}>
+          <span>{availableTitle + ': '}</span>
+          <b>{availableValue} FIO</b>
+        </div>
+      )}
     </div>
   );
 };

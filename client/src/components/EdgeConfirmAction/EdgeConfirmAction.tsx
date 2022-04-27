@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useCallback, useState } from 'react';
 
 import Processing from '../../components/common/TransactionProcessing';
 
@@ -24,6 +24,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
     edgeAccountLogoutBefore,
     processing,
     processingProps,
+    confirmPinKeys,
 
     setProcessing,
     submitAction,
@@ -32,74 +33,116 @@ const EdgeConfirmAction: React.FC<Props> = props => {
     showPinModal,
     showGenericErrorModal,
     resetPinConfirm,
+    setConfirmPinKeys,
   } = props;
 
   const init = useRef(false);
+  const [initLaunch, setInitLaunch] = useState<boolean>(false);
 
-  useEffect(() => () => resetPinConfirm(), []);
+  // Submit an action
+  const submit = useCallback(
+    async (pinConfirmationResult: PinConfirmation) => {
+      const {
+        account: edgeAccount,
+        error: confirmationError,
+        action: confirmationAction,
+        keys,
+        data: additionalData,
+      } = pinConfirmationResult;
 
+      if (confirmationAction !== action) return;
+      if (
+        !confirmationError &&
+        !processing &&
+        (fioWalletEdgeId ? keys && keys[fioWalletEdgeId] : true)
+      ) {
+        setProcessing(true);
+        if (edgeAccountLogoutBefore) await waitForEdgeAccountStop(edgeAccount);
+        try {
+          const result = await submitAction({
+            edgeAccount,
+            keys: fioWalletEdgeId ? keys && keys[fioWalletEdgeId] : null,
+            data: additionalData,
+          });
+
+          if (!edgeAccountLogoutBefore)
+            await waitForEdgeAccountStop(edgeAccount);
+
+          onSuccess(result);
+          setConfirmPinKeys(null);
+        } catch (e) {
+          showGenericErrorModal();
+          onCancel();
+        }
+      }
+
+      if (!confirmationError) resetPinConfirm();
+      if (edgeAccount != null) {
+        await waitForEdgeAccountStop(edgeAccount);
+      }
+    },
+    [
+      action,
+      edgeAccountLogoutBefore,
+      fioWalletEdgeId,
+      processing,
+      onCancel,
+      onSuccess,
+      resetPinConfirm,
+      setConfirmPinKeys,
+      setProcessing,
+      showGenericErrorModal,
+      submitAction,
+    ],
+  );
+
+  useEffect(() => () => resetPinConfirm(), [resetPinConfirm]);
+
+  // Show pin modal
   useEffect(() => {
-    if (data != null) showPinModal(action, data);
-  }, [data]);
+    if (data != null && !confirmPinKeys) showPinModal(action, data);
+  }, [data, action, confirmPinKeys, showPinModal]);
+
+  // Handle confirmPinKeys is set
+  useEffect(() => {
+    if (!initLaunch && data != null && confirmPinKeys && !processing) {
+      setInitLaunch(true);
+      submit({
+        keys: confirmPinKeys,
+        action,
+        data,
+      });
+    }
+  }, [data, action, confirmPinKeys, initLaunch, submit, processing]);
 
   // Handle pin confirmation
   useEffect(() => {
     if (
       pinConfirmation != null &&
       pinConfirmation.action &&
-      pinConfirmation.action === action
+      pinConfirmation.action === action &&
+      !processing &&
+      !initLaunch
     ) {
+      setInitLaunch(true);
       submit(pinConfirmation);
-      return;
     }
-    if ((!pinConfirmation || !pinConfirmation.action) && !pinModalIsOpen) {
+  }, [pinConfirmation, action, processing, submit, initLaunch]);
+
+  // Handle pin modal closed
+  useEffect(() => {
+    if (
+      (!pinConfirmation || !pinConfirmation.action) &&
+      !pinModalIsOpen &&
+      !processing
+    ) {
       if (init.current) {
         onCancel();
         return;
       }
       init.current = true;
     }
-  }, [pinConfirmation, pinModalIsOpen]);
-
-  // Submit an action
-  const submit = async (pinConfirmationResult: PinConfirmation) => {
-    const {
-      account: edgeAccount,
-      error: confirmationError,
-      action: confirmationAction,
-      keys,
-      data: additionalData,
-    } = pinConfirmationResult;
-
-    if (confirmationAction !== action) return;
-    if (
-      !confirmationError &&
-      !processing &&
-      (fioWalletEdgeId ? keys && keys[fioWalletEdgeId] : true)
-    ) {
-      setProcessing(true);
-      if (edgeAccountLogoutBefore) await waitForEdgeAccountStop(edgeAccount);
-      try {
-        const result = await submitAction({
-          edgeAccount,
-          keys: fioWalletEdgeId ? keys[fioWalletEdgeId] : null,
-          data: additionalData,
-        });
-
-        if (!edgeAccountLogoutBefore) await waitForEdgeAccountStop(edgeAccount);
-
-        onSuccess(result);
-      } catch (e) {
-        showGenericErrorModal();
-        onCancel();
-      }
-    }
-
-    if (!confirmationError) resetPinConfirm();
-    if (edgeAccount != null) {
-      await waitForEdgeAccountStop(edgeAccount);
-    }
-  };
+  }, [pinConfirmation, pinModalIsOpen, onCancel, processing]);
 
   return (
     <Processing

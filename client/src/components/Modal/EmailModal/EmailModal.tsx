@@ -1,5 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 import Modal from '../Modal';
 
 import classes from './EmailModal.module.scss';

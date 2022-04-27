@@ -1,4 +1,5 @@
 import { FieldValidationFunctionAsync } from '@lemoncode/fonk';
+
 import apis from '../../api';
 
 interface FieldArgs {
@@ -6,20 +7,29 @@ interface FieldArgs {
   sameWalletMessage?: string;
 }
 
-const defaultMessage = 'Please enter valid FIO Crypto Handle.';
+const defaultMessage =
+  'FIO Crypto Handle is not valid / not exist / domain expired';
 
 export const fioAddressExistsValidator: FieldValidationFunctionAsync<FieldArgs> = async ({
   value,
   values,
   message = defaultMessage,
-  customArgs,
+  customArgs = {},
 }) => {
-  const { fieldIdToCompare, sameWalletMessage = 'Spend to self.' } = customArgs;
+  const { fieldIdToCompare, sameWalletMessage = 'Spend to self.' } =
+    customArgs || {};
+
+  if (!value)
+    return {
+      type: 'FIO_CRYPTO_HANDLE_EXISTS',
+      succeeded: true,
+      message: '',
+    };
 
   let transferAddress = value;
 
   const validationResult = {
-    type: 'FIO_USER_EXISTS',
+    type: 'FIO_CRYPTO_HANDLE_EXISTS',
     succeeded: false,
     message:
       typeof message === 'string'

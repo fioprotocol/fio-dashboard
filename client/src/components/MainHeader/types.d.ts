@@ -4,13 +4,15 @@ import {
   Notification,
   RefProfile,
   FioAddressDoublet,
+  PrivateRedirectLocationState,
 } from '../../types';
-import { RouteComponentProps } from 'react-router-dom';
 
-export interface MainHeaderProps extends RouteComponentProps {
+export type MainHeaderProps = {
+  profileRefreshed: boolean;
   isAuthenticated: boolean;
   isNotActiveUser: boolean;
   pathname: string;
+  locationState?: PrivateRedirectLocationState;
   homePageLink: string;
   user: User;
   edgeContextSet: boolean;
@@ -23,4 +25,4 @@ export interface MainHeaderProps extends RouteComponentProps {
   refProfileInfo: RefProfile;
   refProfileLoading: boolean;
   fioAddresses: FioAddressDoublet[];
-}
+};

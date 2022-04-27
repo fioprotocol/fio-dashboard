@@ -8,6 +8,7 @@ type Props = {
   disabled?: boolean;
   isBlack?: boolean;
   isBlue?: boolean;
+  withTopMargin?: boolean;
   withBottomMargin?: boolean;
   isThin?: boolean;
   text?: string;
@@ -19,6 +20,7 @@ const CancelButton: React.FC<Props> = props => {
     disabled,
     isBlack,
     isBlue,
+    withTopMargin,
     withBottomMargin,
     isThin,
     text,
@@ -31,6 +33,7 @@ const CancelButton: React.FC<Props> = props => {
         isThin && classes.thin,
         isBlack && classes.black,
         isBlue && classes.blue,
+        withTopMargin && classes.topMargin,
         withBottomMargin && classes.bottomMargin,
       )}
       onClick={onClick}

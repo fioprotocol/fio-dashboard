@@ -39,8 +39,8 @@ export const CONTENT_TYPE: {
     icon: IconName;
     isGreen: boolean;
     isBlue: boolean;
-    to: string;
-    from: string;
+    to: string | null;
+    from: string | null;
   };
 } = {
   [FIO_RECORD_TYPES.SENT]: {

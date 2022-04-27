@@ -1,9 +1,12 @@
+import { EdgeAccount, EdgeCurrencyWallet } from 'edge-core-js';
+
 import apis from '../../api/index';
+import { log } from '../../util/general';
+
 import {
   DEFAULT_WALLET_OPTIONS,
   FIO_WALLET_TYPE,
 } from '../../constants/common';
-import { EdgeAccount, EdgeCurrencyWallet } from 'edge-core-js';
 
 export const usernameAvailable = async (
   username: string,
@@ -28,7 +31,7 @@ export const checkPassword = async (
 ): Promise<{ error?: string }> => {
   const result: { error?: string } = {};
   try {
-    const res = await apis.edge.checkPasswordRules(password, passwordRepeat);
+    const res = apis.edge.checkPasswordRules(password, passwordRepeat);
 
     if (!res) {
       result.error = 'Password is invalid';
@@ -83,7 +86,7 @@ export const createAccount = async (
     await fioWallet.renameWallet(DEFAULT_WALLET_OPTIONS.name);
     result.fioWallet = fioWallet;
   } catch (e) {
-    console.error(e);
+    log.error(e);
     result.errors = { email: e.message };
   }
 

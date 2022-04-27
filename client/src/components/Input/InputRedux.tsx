@@ -10,9 +10,12 @@ import {
   ShowPasswordIcon,
 } from './InputActionButtons';
 
-import { getValueFromPaste } from '../../util/general';
+import { getValueFromPaste, log } from '../../util/general';
 
 import classes from './Input.module.scss';
+
+import { FieldValue } from './Field';
+import { AnyObject } from '../../types';
 
 export const INPUT_UI_STYLES = {
   BLACK_LIGHT: 'blackLight',
@@ -20,8 +23,16 @@ export const INPUT_UI_STYLES = {
 };
 
 export type InputProps = {
-  input: any;
-  meta: any;
+  input: { value: FieldValue; onChange: (val: FieldValue) => void } & AnyObject;
+  meta: {
+    error: string;
+    touched?: boolean;
+    active?: boolean;
+    modified?: boolean;
+    submitError?: boolean;
+    modifiedSinceLastSubmit?: boolean;
+    submitSucceeded?: boolean;
+  };
 };
 
 export type FieldProps = {
@@ -51,7 +62,7 @@ const InputRedux: React.FC<Props> = props => {
     meta,
     onClose,
     showClearInput,
-    showPasteButton,
+    showPasteButton = false,
     prefix = '',
     type,
     errorType = '',
@@ -123,14 +134,14 @@ const InputRedux: React.FC<Props> = props => {
           data-clear={clearInput || showPasteButton}
         />
         <ClearButton
-          isVisible={(clearInput || onClose) && !loading}
+          isVisible={!!(clearInput || onClose) && !loading}
           onClear={onClearInputClick}
           onClose={onClose}
           inputType={type}
           uiType={uiType}
         />
         <ShowPasswordIcon
-          isVisible={clearInput && type === 'password'}
+          isVisible={!!clearInput && type === 'password'}
           showPass={showPass}
           toggleShowPass={toggleShowPass}
           uiType={uiType}
@@ -141,7 +152,7 @@ const InputRedux: React.FC<Props> = props => {
             try {
               onChange(await getValueFromPaste());
             } catch (e) {
-              console.error('Paste error: ', e);
+              log.error('Paste error: ', e);
             }
           }}
           uiType={uiType}

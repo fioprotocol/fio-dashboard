@@ -27,7 +27,9 @@ type FieldProps = {
 export const validate = (
   values: FormValues,
   publicAddresses: PublicAddressDoublet[],
-) => {
+): {
+  tokens: ErrorsProps[] | string;
+} => {
   const errors: {
     tokens: ErrorsProps[] | string;
   } = { tokens: [] };
@@ -49,7 +51,7 @@ export const validate = (
         tokenErrors.chainCode = { message: 'Wrong Chain Code' };
         tokenArrayErrors[index] = tokenErrors;
       }
-      if (chainCode?.length > MAX_CHAIN_LENGTH) {
+      if ((chainCode?.length || 0) > MAX_CHAIN_LENGTH) {
         tokenErrors.chainCode = { message: 'Chain Code is too long' };
         tokenArrayErrors[index] = tokenErrors;
       }
@@ -62,7 +64,7 @@ export const validate = (
         tokenErrors.tokenCode = { message: 'Wrong Token Code' };
         tokenArrayErrors[index] = tokenErrors;
       }
-      if (tokenCode?.length > MAX_TOKEN_LENGTH) {
+      if ((tokenCode?.length || 0) > MAX_TOKEN_LENGTH) {
         tokenErrors.tokenCode = { message: 'Token Code is too long' };
         tokenArrayErrors[index] = tokenErrors;
       }

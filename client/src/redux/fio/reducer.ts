@@ -156,6 +156,8 @@ export default combineReducers({
             fioWallet.balance = action.data.balance;
             fioWallet.available = action.data.available;
             fioWallet.locked = action.data.locked;
+            fioWallet.staked = action.data.staked;
+            fioWallet.rewards = action.data.rewards;
           }
           return fioWallet;
         });
@@ -176,6 +178,44 @@ export default combineReducers({
           }
           return fioWallet;
         });
+      case LOGOUT_SUCCESS:
+        return [];
+      default:
+        return state;
+    }
+  },
+  fioWalletsIdKeys(state: { id: string; publicKey: string }[] = [], action) {
+    switch (action.type) {
+      case SIGNUP_SUCCESS: {
+        const fioWallets = [];
+        for (const { id, publicKey } of action.fioWallets) {
+          fioWallets.push({
+            id,
+            publicKey,
+          });
+        }
+        return fioWallets;
+      }
+      case PROFILE_SUCCESS: {
+        return action.data.fioWallets.map(
+          ({ id, publicKey }: FioWalletDoublet) => ({
+            id,
+            publicKey,
+          }),
+        );
+      }
+      case ADD_WALLET_SUCCESS: {
+        const fioWallets = [...state];
+        if (
+          !fioWallets.find(item => item.publicKey === action.data.publicKey)
+        ) {
+          fioWallets.push({
+            id: action.data.id,
+            publicKey: action.data.publicKey,
+          });
+        }
+        return fioWallets;
+      }
       case LOGOUT_SUCCESS:
         return [];
       default:
@@ -396,6 +436,22 @@ export default combineReducers({
       }
       case LOGOUT_SUCCESS:
         return true;
+      default:
+        return state;
+    }
+  },
+  fioNamesInitRefreshed(state: { [publicKey: string]: boolean } = {}, action) {
+    switch (action.type) {
+      case actions.GET_FIO_ADDRESSES_SUCCESS:
+      case actions.GET_FIO_ADDRESSES_FAILURE:
+      case actions.GET_FIO_DOMAINS_SUCCESS:
+      case actions.GET_FIO_DOMAINS_FAILURE:
+      case actions.REFRESH_FIO_NAMES_SUCCESS:
+      case actions.REFRESH_FIO_NAMES_FAILURE: {
+        return { ...state, [action.publicKey]: true };
+      }
+      case LOGOUT_SUCCESS:
+        return {};
       default:
         return state;
     }

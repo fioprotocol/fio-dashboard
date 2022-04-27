@@ -1,28 +1,28 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import Badge from '../Badge/Badge';
+import Badge, { CommonBadgeProps } from '../Badge/Badge';
 import classes from './InfoBadge.module.scss';
 
-type Props = {
-  message: string;
+export type InfoBadgeProps = {
+  message: string | ReactElement;
   show: boolean;
   title: string;
   type: string;
   hasBoldMessage?: boolean;
-};
+} & CommonBadgeProps;
 
-const InfoBadge: React.FC<Props> = props => {
-  const { title, type, show, message, hasBoldMessage } = props;
+const InfoBadge: React.FC<InfoBadgeProps> = props => {
+  const { title, type, show, message, hasBoldMessage, ...rest } = props;
   return (
-    <Badge type={type} show={show}>
+    <Badge type={type} show={show} {...rest}>
       <FontAwesomeIcon icon="exclamation-circle" className={classes.icon} />
       <p className={classes.textContainer}>
         <span className={classes.title}>{title}</span>
-        <span className={hasBoldMessage ? classes.boldMessage : null}>
+        <span className={hasBoldMessage ? classes.boldMessage : ''}>
           {title && ' - '}
         </span>
-        <span className={hasBoldMessage ? classes.boldMessage : null}>
+        <span className={hasBoldMessage ? classes.boldMessage : ''}>
           {message}
         </span>
       </p>

@@ -21,7 +21,7 @@ type LoggedActionButtonsProps = ActionButtonsProps & {
   logout: () => void;
 };
 
-export const ActionButtons = (props: ActionButtonsProps) => {
+export const ActionButtons: React.FC<ActionButtonsProps> = props => {
   const {
     showLogin,
     edgeAuthLoading,
@@ -65,7 +65,7 @@ export const ActionButtons = (props: ActionButtonsProps) => {
     </div>
   );
 };
-export const LoggedActionButtons = (props: LoggedActionButtonsProps) => {
+export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => {
   const {
     logout,
     edgeAuthLoading,
