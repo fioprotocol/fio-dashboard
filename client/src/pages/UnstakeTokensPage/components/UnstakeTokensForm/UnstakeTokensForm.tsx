@@ -156,13 +156,13 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
           : null;
 
         const notEnoughStaked = new MathOp(amount).gt(walletStakedTokens);
-        const hasLowBalance = new MathOp(fee.nativeFio || 0).gt(
-          walletAvailableTokens,
-        );
         const notEnoughBundles =
           selectedAddress != null
             ? selectedAddress.remaining < BUNDLES_TX_COUNT.UNSTAKE
             : false;
+        const hasLowBalance =
+          (!selectedAddress || notEnoughBundles) &&
+          new MathOp(fee.nativeFio || 0).gt(walletAvailableTokens);
         const submitDisabled =
           formRenderProps.hasValidationErrors ||
           (formRenderProps.hasSubmitErrors &&
