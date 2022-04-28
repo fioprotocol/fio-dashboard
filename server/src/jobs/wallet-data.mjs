@@ -36,7 +36,8 @@ const postMessage = message => {
   if (parentPort) parentPort.postMessage(message);
 };
 
-const logFioError = e => {
+const logFioError = (e, wallet) => {
+  if (wallet && wallet.id) postMessage(`Process wallet error - id: ${wallet.id}`);
   if (e && e.errorCode !== 404) logger.error(e);
 };
 
@@ -101,7 +102,7 @@ const checkRequests = async wallet => {
       }
     }
   } catch (e) {
-    logFioError(e);
+    logFioError(e, wallet);
   }
 
   try {
@@ -155,7 +156,7 @@ const checkRequests = async wallet => {
       }
     }
   } catch (e) {
-    logFioError(e);
+    logFioError(e, wallet);
   }
 
   if (changed) {
@@ -176,7 +177,7 @@ const checkBalance = async wallet => {
       const balanceResponse = await fioApi.publicFioSDK.getFioBalance(wallet.publicKey);
       balance = balanceResponse.balance;
     } catch (e) {
-      logFioError(e);
+      logFioError(e, wallet);
       // other error (when 404 the balance is 0)
       if (e.errorCode !== 404) balance = wallet.publicWalletData.balance;
     }
@@ -219,7 +220,7 @@ const checkBalance = async wallet => {
       await PublicWalletData.update({ balance }, { where: { id: publicWalletData.id } });
     }
   } catch (e) {
-    logFioError(e);
+    logFioError(e, wallet);
   }
 };
 
@@ -331,7 +332,7 @@ const checkFioNames = async wallet => {
       );
     }
   } catch (e) {
-    logFioError(e);
+    logFioError(e, wallet);
   }
 };
 
