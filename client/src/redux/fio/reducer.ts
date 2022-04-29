@@ -11,7 +11,7 @@ import {
 } from '../profile/actions';
 import * as actions from './actions';
 
-import { transformNft, normalizePublicAddresses } from '../../util/fio';
+import { normalizePublicAddresses, transformNft } from '../../util/fio';
 
 import { WALLET_CREATED_FROM } from '../../constants/common';
 import { FIO_CHAIN_CODE } from '../../constants/fio';
@@ -19,13 +19,13 @@ import { FIO_CHAIN_CODE } from '../../constants/fio';
 import { DEFAULT_BALANCES } from '../../util/prices';
 
 import {
-  FioWalletDoublet,
+  FeePrice,
   FioAddressDoublet,
   FioDomainDoublet,
-  NFTTokenDoublet,
-  FeePrice,
-  WalletsBalances,
+  FioWalletDoublet,
   MappedPublicAddresses,
+  NFTTokenDoublet,
+  WalletsBalances,
 } from '../../types';
 
 export const emptyWallet: FioWalletDoublet = {
@@ -394,6 +394,25 @@ export default combineReducers({
       }
       case LOGOUT_SUCCESS:
         return {};
+      default:
+        return state;
+    }
+  },
+  oracleFeesLoading(state: { [endpoint: string]: boolean } = {}, action) {
+    switch (action.type) {
+      case actions.GET_ORACLE_FEES_REQUEST:
+        return { ...state, [action.endpoint]: true };
+      case actions.GET_ORACLE_FEES_SUCCESS:
+      case actions.GET_ORACLE_FEES_FAILURE:
+        return { ...state, [action.endpoint]: false };
+      default:
+        return state;
+    }
+  },
+  oracleFees(state: { [endpoint: string]: FeePrice } = {}, action) {
+    switch (action.type) {
+      case actions.SET_ORACLE_FEES:
+        return { ...state, ...action.data };
       default:
         return state;
     }
