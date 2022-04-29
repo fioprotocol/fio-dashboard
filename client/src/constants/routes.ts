@@ -48,6 +48,7 @@ const ROUTES: { [route: string]: string } = {
   PAYMENT_DETAILS: '/payment-details/:publicKey/:fioRequestId',
   STAKE: '/stake/:publicKey',
   UNSTAKE: '/unstake/:publicKey',
+  WRAP: '/wrap/:publicKey',
 
   LINK_TOKEN_LIST: '/link-token-list',
   ADD_TOKEN: '/add-token',
