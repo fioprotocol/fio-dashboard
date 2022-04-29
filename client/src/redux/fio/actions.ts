@@ -4,7 +4,12 @@ import apis, { Api } from '../../api';
 
 import { ENDPOINT_FEE_HASH } from '../../api/fio';
 
-import { PublicAddressDoublet, FeePrice, WalletsBalances } from '../../types';
+import {
+  FeePrice,
+  OracleFees,
+  PublicAddressDoublet,
+  WalletsBalances,
+} from '../../types';
 import { CommonAction, CommonPromiseAction } from '../types';
 
 export const prefix = 'fio';
@@ -47,6 +52,25 @@ export const RESET_FIO_NAMES = `${prefix}/RESET_FIO_NAMES`;
 
 export const resetFioNames = (): CommonAction => ({
   type: RESET_FIO_NAMES,
+});
+
+export const GET_ORACLE_FEES_REQUEST = `${prefix}/GET_ORACLE_FEES_REQUEST`;
+export const GET_ORACLE_FEES_SUCCESS = `${prefix}/GET_ORACLE_FEES_SUCCESS`;
+export const GET_ORACLE_FEES_FAILURE = `${prefix}/GET_ORACLE_FEES_FAILURE`;
+export const SET_ORACLE_FEES = `${prefix}/SET_ORACLE_FEES`;
+
+export const getOracleFees = (): CommonPromiseAction => ({
+  types: [
+    GET_ORACLE_FEES_REQUEST,
+    GET_ORACLE_FEES_SUCCESS,
+    GET_ORACLE_FEES_FAILURE,
+  ],
+  promise: (api: Api) => api.fio.publicFioSDK.getOracleFees(),
+});
+
+export const setOracleFees = (fees: OracleFees): CommonAction => ({
+  type: SET_ORACLE_FEES,
+  data: fees,
 });
 
 export const GET_FEE_REQUEST = `${prefix}/GET_FEE_REQUEST`;
