@@ -264,6 +264,10 @@ const CookieNoticePage = React.lazy(() =>
   import(/* webpackChunkName: 'cookieNoticePage' */ './pages/CookieNoticePage'),
 );
 
+const WrapPage = React.lazy(() =>
+  import(/* webpackChunkName: 'WrapPage' */ './pages/WrapPage'),
+);
+
 const Routes = (): React.ReactElement => (
   <MainLayout>
     <ScrollToTop>
@@ -477,6 +481,8 @@ const Routes = (): React.ReactElement => (
           <PrivateRoute path={ROUTES.SETTINGS} component={SettingsPage} exact />
 
           <PrivateRoute path={ROUTES.SEND} component={SendPage} exact />
+
+          <PrivateRoute path={ROUTES.WRAP} component={WrapPage} exact />
 
           <PrivateRoute
             path={ROUTES.FIO_REQUEST}
