@@ -248,6 +248,11 @@ export type FeePrice = {
   usdc: string;
 };
 
+export type OracleFees = {
+  wrap_fio_tokens: FeePrice;
+  wrap_fio_domain: FeePrice;
+};
+
 export type FioBalanceRes = {
   balance?: number;
   available?: number;

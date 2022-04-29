@@ -2,6 +2,10 @@
 @import '../../../../assets/styles/fontMixins.scss';
 @import '../../../../assets/styles/mediaQueriesMixings.scss';
 
+.white {
+  color: $white;
+}
+
 .container {
   display: flex;
   flex-direction: column;
