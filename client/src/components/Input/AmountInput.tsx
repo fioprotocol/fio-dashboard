@@ -44,6 +44,7 @@ type Props = {
   availableTitle?: string;
   availableValue?: string;
   maxValue?: string;
+  showMaxInfoBadge?: string;
 };
 
 const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
@@ -53,6 +54,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     availableTitle = 'Available FIO Balance',
     availableValue = '0',
     maxValue = availableValue,
+    showMaxInfoBadge = true,
     debounceTimeout = 0,
     colorSchema,
     hideError,
@@ -165,6 +167,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
         className={classes.badge}
         type={BADGE_TYPES.INFO}
         show={
+          showMaxInfoBadge &&
           isMaxValue &&
           new MathOp(maxValue).gt(0) &&
           new MathOp(maxValue).lt(availableValue)

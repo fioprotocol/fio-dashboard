@@ -2,9 +2,9 @@ import React from 'react';
 
 import {
   FeePrice,
-  PublicAddressDoublet,
   FioAddressWithPubAddresses,
   LinkActionResult,
+  PublicAddressDoublet,
 } from '../../../types';
 
 export type ResultsData = {
@@ -36,6 +36,7 @@ export type ResultsProps = {
   roe?: number;
   onClose: () => void;
   onRetry?: () => void;
+  isPaymentDetailsVisible?: boolean;
 };
 
 export type ResultsContainerProps = ResultsProps & {
