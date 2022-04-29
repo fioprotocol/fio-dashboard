@@ -36,6 +36,8 @@ export const CONFIRM_PIN_ACTIONS = {
   REJECT_FIO_REQUEST: 'REJECT_FIO_REQUEST',
   STAKE: 'STAKE',
   UNSTAKE: 'UNSTAKE',
+  WRAP: 'WRAP',
+  UNWRAP: 'UNWRAP',
 };
 
 export const ADDRESS = 'address';

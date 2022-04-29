@@ -1,7 +1,7 @@
 import { FIOSDK } from '@fioprotocol/fiosdk';
+import { Constants as sdkConstants } from '@fioprotocol/fiosdk/lib/utils/constants';
 import { createHash } from 'crypto-browserify';
 import superagent from 'superagent';
-
 import { AvailabilityResponse } from '@fioprotocol/fiosdk/src/entities/AvailabilityResponse';
 import { FioNamesResponse } from '@fioprotocol/fiosdk/src/entities/FioNamesResponse';
 import { FioAddressesResponse } from '@fioprotocol/fiosdk/src/entities/FioAddressesResponse';
@@ -20,14 +20,15 @@ import {
   ACTIONS,
   ACTIONS_TO_END_POINT_KEYS,
   GET_TABLE_ROWS_URL,
+  TRANSACTION_ACTION_NAMES,
 } from '../constants/fio';
 
 import {
+  AnyObject,
   FioBalanceRes,
   NFTTokenDoublet,
-  WalletKeys,
   Proxy,
-  AnyObject,
+  WalletKeys,
 } from '../types';
 
 export interface TrxResponse {
@@ -35,6 +36,7 @@ export interface TrxResponse {
   status: string;
   expiration?: string;
   fee_collected: number;
+  oracle_fee_collected?: number;
   other?: AnyObject;
 }
 
@@ -461,8 +463,8 @@ export default class Fio {
   ): Promise<TrxResponse> => {
     try {
       const result = await this.executeAction(keys, ACTIONS.pushTransaction, {
-        action: 'addnft',
-        account: 'fio.address',
+        action: TRANSACTION_ACTION_NAMES.addNft,
+        account: sdkConstants.defaultAccount,
         data: {
           fio_address: fioAddress,
           nfts: nfts.map(
