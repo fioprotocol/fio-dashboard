@@ -89,4 +89,5 @@ export const calculateTotalBalances = (
 };
 
 export const DEFAULT_FEE_PRICES = convertFioPrices(0, 1);
+export const DEFAULT_ORACLE_FEE_PRICES = convertFioPrices(0, 1);
 export const DEFAULT_BALANCES = calculateBalances({}, 1);
