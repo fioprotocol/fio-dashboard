@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -117,6 +117,15 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
           <div onClick={onDetails}>
             <FontAwesomeIcon icon="qrcode" />
           </div>
+          <Link
+            to={putParamsToUrl(ROUTES.WRAP, {
+              publicKey: fioWallet.publicKey,
+            })}
+          >
+            <div>
+              <FontAwesomeIcon icon="infinity" />
+            </div>
+          </Link>
         </ActionButtonsContainer>
       </Title>
     );

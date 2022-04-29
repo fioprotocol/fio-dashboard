@@ -50,6 +50,7 @@ import UpdateEmailPage from './pages/UpdateEmailPage';
 import RejectFioRequestPage from './pages/RejectFioRequestPage';
 import EmailConfirmationResultPage from './pages/EmailConfirmationResultsPage';
 import NotFoundPage from './pages/NotFoundPage';
+import WrapPage from './pages/WrapPage';
 
 import AdminPrivateRoute from './components/AdminPrivateRoute';
 import AdminOrdersPage from './pages/AdminOrdersPage';
@@ -180,6 +181,8 @@ const Routes = (): React.ReactElement => (
         <PrivateRoute path={ROUTES.SETTINGS} component={SettingsPage} exact />
 
         <PrivateRoute path={ROUTES.SEND} component={SendPage} exact />
+
+        <PrivateRoute path={ROUTES.WRAP} component={WrapPage} exact />
 
         <PrivateRoute
           path={ROUTES.FIO_REQUEST}
