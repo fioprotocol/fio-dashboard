@@ -12,6 +12,7 @@ import logger from '../logger.mjs';
 
 import { DOMAIN_EXP_PERIOD } from '../config/constants.js';
 
+const CHUNKS_LIMIT = 40;
 const LOW_BUNDLES_THRESHOLD = 25;
 const DAYS_30 = 1000 * 60 * 60 * 24 * 30;
 const DOMAIN_EXP_TABLE = {
@@ -37,8 +38,11 @@ const postMessage = message => {
 };
 
 const logFioError = (e, wallet) => {
-  if (wallet && wallet.id) postMessage(`Process wallet error - id: ${wallet.id}`);
-  if (e && e.errorCode !== 404) logger.error(e);
+  if (e && e.errorCode !== 404) {
+    if (wallet && wallet.id)
+      postMessage(`Process wallet error - id: ${wallet.id} - error - ${e.message}`);
+    logger.error(e);
+  }
 };
 
 const returnDayRange = timePeriod => {
@@ -385,7 +389,20 @@ const checkFioNames = async wallet => {
 
   const methods = wallets.map(wallet => processWallet(wallet));
 
-  await Promise.allSettled(methods);
+  let chunks = [];
+  for (const method of methods) {
+    chunks.push(method);
+    if (chunks.length === CHUNKS_LIMIT) {
+      postMessage(`Process chunk - ${chunks.length}`);
+      await Promise.allSettled(chunks);
+      chunks = [];
+    }
+  }
+
+  if (chunks.length) {
+    postMessage(`Process chunk - ${chunks.length}`);
+    await Promise.allSettled(chunks);
+  }
 
   process.exit(0);
 })();
