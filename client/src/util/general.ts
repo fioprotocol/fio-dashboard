@@ -3,11 +3,42 @@ import { ChangeEvent } from 'react';
 import { DEFAULT_TEXT_TRUNCATE_LENGTH } from '../constants/common';
 
 export const log = {
-  error: (e: Error | string, e2?: Error | string): void => {
+  error: (e: Error | string, ...rest: Array<Error | string>): void => {
+    const style = 'color:red';
     // eslint-disable-next-line no-console
-    if (!e2) console.error(e);
+    if (!rest.length) console.error(e);
+    if (rest.length) {
+      if (typeof e === 'string') {
+        // eslint-disable-next-line no-console
+        console.log('%c' + e + ': ', style);
+        // eslint-disable-next-line no-console
+      } else console.error(e);
+      rest.forEach(v => {
+        if (typeof v === 'string') {
+          // eslint-disable-next-line no-console
+          console.log('%c' + v, style);
+          // eslint-disable-next-line no-console
+        } else console.error(v);
+      });
+    }
+  },
+  info: (t: unknown, ...rest: Array<unknown>): void => {
+    const style = 'color:green';
     // eslint-disable-next-line no-console
-    if (e2) console.error(e, e2);
+    if (!rest.length) {
+      // eslint-disable-next-line no-console
+      console.log('%cLog info: ', style);
+      // eslint-disable-next-line no-console
+      console.log(t);
+    }
+    if (rest.length) {
+      // eslint-disable-next-line no-console
+      console.log('%c' + t + ': ', style);
+      rest.forEach(v => {
+        // eslint-disable-next-line no-console
+        console.log(v);
+      });
+    }
   },
 };
 
