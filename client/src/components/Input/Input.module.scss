@@ -132,6 +132,14 @@
     }
   }
 
+  .connectWalletButton {
+    width: 70px !important;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
   .selectModalInput {
     pointer-events: none;
   }
