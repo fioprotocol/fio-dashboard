@@ -4,12 +4,13 @@ import { FieldRenderProps } from 'react-final-form';
 import classnames from 'classnames';
 
 import {
-  PasteButton,
   ClearButton,
+  PasteButton,
   ShowPasswordIcon,
 } from './InputActionButtons';
-import { Label, LoadingIcon, PrefixLabel, Prefix } from './StaticInputParts';
+import { Label, LoadingIcon, Prefix, PrefixLabel } from './StaticInputParts';
 import { ErrorBadge } from './ErrorBadge';
+import ConnectWalletButton from '../ConnectWalletButton/ConnectWalletButton';
 
 import {
   getValueFromPaste,
@@ -33,6 +34,7 @@ export type TextInputProps = {
   colorSchema?: string;
   onClose?: (isOpen: boolean) => void;
   hideError?: boolean;
+  showConnectWalletButton?: boolean;
   showPasteButton?: boolean;
   loading?: boolean;
   uiType?: string;
@@ -82,6 +84,7 @@ export const TextInput: React.ForwardRefRenderFunction<
     showErrorBorder,
     isLowHeight,
     label,
+    showConnectWalletButton,
     ...rest
   } = props;
   const {
@@ -184,6 +187,11 @@ export const TextInput: React.ForwardRefRenderFunction<
             disabled={disabled}
           />
         </div>
+        <ConnectWalletButton
+          isVisible={showConnectWalletButton}
+          handleAddressChange={input.onChange}
+          inputValue={value}
+        />
         <ClearButton
           isVisible={(isInputHasValue || !!onClose) && !disabled && !loading}
           onClear={clearInputFn}
@@ -211,6 +219,7 @@ export const TextInput: React.ForwardRefRenderFunction<
           onMouseDown={setFieldElemActive}
           onMouseUp={setFieldElemInactive}
           uiType={uiType}
+          isBigDoubleIcon={showConnectWalletButton}
         />
         <LoadingIcon isVisible={loading} uiType={uiType} />
       </div>
