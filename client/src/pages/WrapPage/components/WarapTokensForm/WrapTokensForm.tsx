@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 
-import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
+import TextInput, {
+  INPUT_UI_STYLES,
+} from '../../../../components/Input/TextInput';
 import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import PriceBadge from '../../../../components/Badges/PriceBadge/PriceBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
@@ -101,7 +103,8 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
               type="text"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
-              component={Input}
+              component={TextInput}
+              showConnectWalletButton
               showPasteButton
               placeholder="Paste Public Address or Connect a Wallet"
               label="Public Address"
