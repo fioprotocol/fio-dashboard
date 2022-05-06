@@ -119,6 +119,7 @@
     "edge-core-js": "0.19.31",
     "edge-currency-accountbased": "github:fioprotocol/edge-currency-accountbased#0505be53a252e8de66c289a8e63896f123d25159",
     "email-validator": "2.0.4",
+    "ethers": "5.6.4",
     "export-to-csv": "0.2.1",
     "express": "4.18.2",
     "final-form": "4.20.7",
@@ -172,6 +173,7 @@
     "stripe": "9.16.0",
     "superagent": "7.1.5",
     "web3": "1.8.0",
+    "web3modal": "1.9.7",
     "ws": "8.11.0"
   },
   "proxy": "http://localhost:9000",
