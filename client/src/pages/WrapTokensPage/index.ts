@@ -9,7 +9,7 @@ import { refreshWalletDataPublicKey } from '../../redux/fioWalletsData/actions';
 import { loading } from '../../redux/fio/selectors';
 import { roe } from '../../redux/registrations/selectors';
 
-import WrapPage from './WrapPage';
+import WrapTokensPage from './WrapTokensPage';
 
 import { emptyWallet } from '../../redux/fio/reducer';
 import {
@@ -54,4 +54,4 @@ const reduxConnect = connect(
   },
 );
 
-export default compose(reduxConnect)(WrapPage);
+export default compose(reduxConnect)(WrapTokensPage);
