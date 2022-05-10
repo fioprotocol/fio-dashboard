@@ -92,7 +92,8 @@ const ROUTES: { [route: string]: string } = {
   PAYMENT_DETAILS_CONFIRMATION: '/payment-details-confirmation',
   STAKE: '/stake', // ?publicKey=
   UNSTAKE: '/unstake', // ?publicKey=
-  WRAP: '/wrap/:publicKey',
+  WRAP_TOKENS: '/wrap-tokens/:publicKey',
+  WRAP_DOMAIN: '/wrap-domain/:id',
 
   LINK_TOKEN_LIST: '/link-token-list', // ?fioCryptoHandle=
   ADD_TOKEN: '/link-token-list/add-token', // ?fioCryptoHandle=
