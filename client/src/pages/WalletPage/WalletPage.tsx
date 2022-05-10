@@ -147,7 +147,7 @@ const WalletPage: React.FC<ContainerProps> = props => {
             <FontAwesomeIcon icon="qrcode" />
           </div>
           <Link
-            to={putParamsToUrl(ROUTES.WRAP, {
+            to={putParamsToUrl(ROUTES.WRAP_TOKENS, {
               publicKey: fioWallet.publicKey,
             })}
           >

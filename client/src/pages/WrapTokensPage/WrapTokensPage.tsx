@@ -4,8 +4,8 @@ import classNames from 'classnames';
 
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
-import WrapTokensForm from './components/WarapTokensForm';
-import WrapEdgeWallet from './components/WrapEdgeWallet';
+import WrapTokensForm from './components/WrapTokensForm';
+import WrapTokensEdgeWallet from './components/WrapTokensEdgeWallet';
 import WrapTokenResults from '../../components/common/TransactionResults/components/WrapTokenResults';
 
 import { putParamsToUrl } from '../../utils';
@@ -24,7 +24,7 @@ import {
   WrapTokensValues,
 } from './types';
 
-import classes from './styles/WrapPage.module.scss';
+import classes from './styles/WrapTokensPage.module.scss';
 
 const NETWORK_TYPES = [
   {
@@ -33,7 +33,7 @@ const NETWORK_TYPES = [
   },
 ];
 
-const WrapPage: React.FC<ContainerProps> = props => {
+const WrapTokensPage: React.FC<ContainerProps> = props => {
   const {
     fioWallet,
     loading,
@@ -138,7 +138,7 @@ const WrapPage: React.FC<ContainerProps> = props => {
   return (
     <>
       {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
-        <WrapEdgeWallet
+        <WrapTokensEdgeWallet
           fioWallet={fioWallet}
           fee={feePrice.nativeFio}
           oracleFee={oracleFeePrice.nativeFio}
@@ -189,4 +189,4 @@ const WrapPage: React.FC<ContainerProps> = props => {
   );
 };
 
-export default WrapPage;
+export default WrapTokensPage;
