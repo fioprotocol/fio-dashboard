@@ -4,6 +4,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import {
   FeePrice,
   FioAddressDoublet,
+  FioNameItemProps,
   FioWalletDoublet,
   WalletBalances,
 } from '../../types';
@@ -13,7 +14,7 @@ type MatchProps = {
 };
 
 export type ResultsData = {
-  amount: string;
+  name: string;
   chainCode: string;
   publicAddress: string;
   feeCollectedAmount: number;
@@ -22,19 +23,20 @@ export type ResultsData = {
   error?: string | null;
 };
 
-export type WrapTokensValues = {
+export type WrapDomainValues = {
+  name: string;
   tpid: string;
   chainCode: string;
-  amount: string;
   publicAddress: string;
 };
 
 export type InitialValues = {
   tpid: string;
   chainCode: string;
+  name: string;
 };
 
-export type WrapTokensFormProps = {
+export type WrapDomainFormProps = {
   fioWallet: FioWalletDoublet;
   fioAddresses: FioAddressDoublet[];
   fee: FeePrice;
@@ -42,9 +44,8 @@ export type WrapTokensFormProps = {
   roe?: number;
   balance: WalletBalances;
   loading: boolean;
-  obtDataOn?: boolean;
   initialValues?: InitialValues;
-  onSubmit: (values: WrapTokensValues) => void;
+  onSubmit: (values: WrapDomainValues) => void;
 };
 
 export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
@@ -52,9 +53,10 @@ export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
 }
 
 export interface ContainerProps extends ContainerOwnProps {
-  fioWallet: FioWalletDoublet;
+  currentWallet: FioWalletDoublet;
   loading: boolean;
   roe: number;
+  name: string;
   feePrice: FeePrice;
   oracleFeePrice: FeePrice;
   refreshBalance: (publicKey: string) => void;
@@ -62,3 +64,12 @@ export interface ContainerProps extends ContainerOwnProps {
   getOracleFees: () => void;
   refreshWalletDataPublicKey: (publicKey: string) => void;
 }
+
+export type MatchParams = {
+  id: string;
+};
+
+export type Props = {
+  fioNameList: FioNameItemProps[];
+  fees: { [endpoint: string]: FeePrice };
+};

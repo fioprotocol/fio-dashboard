@@ -4,7 +4,7 @@ import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import { PAGE_NAME, BUTTONS_TITLE } from '../constants';
+import { BUTTONS_TITLE, PAGE_NAME } from '../constants';
 import { ROUTES } from '../../../constants/routes';
 
 import { useCheckIfSmallDesktop } from '../../../screenType';
@@ -14,6 +14,7 @@ import { ActionButtonProps } from '../types';
 import classes from './ActionButtons.module.scss';
 
 import icon from '../../../assets/images/timelapse_white_24dp.svg'; // todo: remove after changing library to google material
+import infinityIcon from '../../../assets/images/infinity_white.svg';
 
 export const RenderAddBundles: React.FC<{
   name: string;
@@ -57,6 +58,18 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
       <Button title={isSmallDesktop ? BUTTONS_TITLE.renew : ''}>
         <img src={icon} alt="timelapse" />
         {!isSmallDesktop && BUTTONS_TITLE.renew}
+      </Button>
+    </Link>
+  );
+
+  const renderWrap = () => (
+    <Link
+      to={ROUTES.WRAP_DOMAIN.replace(':id', name)}
+      className={classes.actionButton}
+    >
+      <Button title={isSmallDesktop ? BUTTONS_TITLE.wrap : ''}>
+        <img src={infinityIcon} alt="infinity" />
+        {!isSmallDesktop && BUTTONS_TITLE.wrap}
       </Button>
     </Link>
   );
@@ -122,6 +135,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
   ) : (
     <div className={classes.actionButtonsContainer}>
       {renderRenew()}
+      {renderWrap()}
       <Link
         to={ROUTES.FIO_ADDRESSES_SELECTION}
         className={classes.actionButton}
