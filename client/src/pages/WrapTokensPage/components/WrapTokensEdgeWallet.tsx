@@ -27,7 +27,7 @@ type Props = {
   oracleFee?: number | null;
 };
 
-const WrapEdgeWallet: React.FC<Props> = props => {
+const WrapTokensEdgeWallet: React.FC<Props> = props => {
   const {
     fioWallet,
     setProcessing,
@@ -57,7 +57,7 @@ const WrapEdgeWallet: React.FC<Props> = props => {
 
   return (
     <EdgeConfirmAction
-      action={CONFIRM_PIN_ACTIONS.WRAP}
+      action={CONFIRM_PIN_ACTIONS.WRAP_TOKENS}
       setProcessing={setProcessing}
       onSuccess={onSuccess}
       onCancel={onCancel}
@@ -70,4 +70,4 @@ const WrapEdgeWallet: React.FC<Props> = props => {
   );
 };
 
-export default WrapEdgeWallet;
+export default WrapTokensEdgeWallet;

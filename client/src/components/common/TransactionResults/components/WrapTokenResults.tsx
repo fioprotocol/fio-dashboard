@@ -8,10 +8,21 @@ import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
 import Amount from '../../Amount';
 
 import { FIO_CHAIN_CODE } from '../../../../constants/fio';
-import { ResultsData } from '../../../../pages/WrapPage/types';
 import { ResultsProps } from '../types';
 
 import classes from '../styles/Results.module.scss';
+
+type ResultsData = {
+  amount?: string;
+  name?: string;
+  chainCode: string;
+  block_num?: number;
+  publicAddress: string;
+  feeCollectedAmount: number;
+  nativeFeeCollectedAmount: number;
+  other?: any;
+  error?: string | null;
+};
 
 type WrapTokenResultsProps = {
   roe: number;
@@ -21,6 +32,7 @@ type WrapTokenResultsProps = {
 const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
   const {
     results: {
+      name,
       chainCode,
       publicAddress,
       feeCollectedAmount,
@@ -66,9 +78,10 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
         title="Submitted"
         message={
           <>
-            Your FIO tokens have been submitted for wrapping. Completion time
-            for this transaction can vary and your tokens will not be
-            immediately available in your wallet. <br /> Please check the{' '}
+            Your FIO {name ? 'domain' : 'tokens'} has been submitted for
+            wrapping. Completion time for this transaction can vary and your{' '}
+            {name ? 'domain' : 'tokens'} will not be immediately available in
+            your wallet. <br /> Please check the{' '}
             <a
               href={`${
                 process.env.REACT_APP_FIO_BLOCKS_TX_URL
@@ -95,15 +108,25 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
           <p className={classes.item}>{publicAddress}</p>
         </div>
       </Badge>
-
-      <Badge show={true} type={BADGE_TYPES.WHITE}>
+      <Badge show={!!name} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>Fio Wrapped</p>
-          <p className={classes.item}>
-            {displayAmount} {displayUsdcAmount}
-          </p>
+          <p className={classes.title}>Domain Wrapped</p>
+          <p className={classes.item}>{name}</p>
         </div>
       </Badge>
+
+      {amount && (
+        <Badge show={true} type={BADGE_TYPES.WHITE}>
+          <div
+            className={classnames(classes.badgeContainer, classes.longTitle)}
+          >
+            <p className={classes.title}>Fio Wrapped</p>
+            <p className={classes.item}>
+              {displayAmount} {displayUsdcAmount}
+            </p>
+          </div>
+        </Badge>
+      )}
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
           <p className={classes.title}>Fees</p>
