@@ -172,7 +172,7 @@ class EmailSender {
        */
       case templates.balanceChange:
         return {
-          subject: 'You FIO balance has changed',
+          subject: 'Your FIO balance has changed',
           body: EmailTemplate.get(templateName, {
             link: `${sendData.mainUrl}fio-wallet/${sendData.wallet}`,
             ...sendData,
