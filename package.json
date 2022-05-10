@@ -75,7 +75,7 @@
   },
   "dependencies": {
     "@fioprotocol/fiojs": "^1.0.1",
-    "@fioprotocol/fiosdk": "github:fioprotocol/fiosdk_typescript#3d999f12bc5096a1ce89132fff3719915e9009c6",
+    "@fioprotocol/fiosdk": "github:fioprotocol/fiosdk_typescript#d24b45f0f3b81c04f87849345433bb6dad9492b0",
     "@fortawesome/fontawesome-svg-core": "1.2.34",
     "@fortawesome/free-regular-svg-icons": "5.15.2",
     "@fortawesome/free-solid-svg-icons": "5.15.2",
@@ -106,6 +106,7 @@
     "edge-core-js": "^0.18.14",
     "edge-currency-accountbased": "github:fioprotocol/edge-currency-accountbased#0505be53a252e8de66c289a8e63896f123d25159",
     "email-validator": "2.0.4",
+    "ethers": "^5.6.4",
     "express": "^4.16.2",
     "final-form": "4.20.2",
     "final-form-arrays": "^3.0.2",
@@ -147,7 +148,8 @@
     "sequelize-cli": "^6.2.0",
     "stream-browserify": "^3.0.0",
     "superagent": "^7.0.2",
-    "web3": "^1.7.0"
+    "web3": "^1.7.0",
+    "web3modal": "^1.9.7"
   },
   "proxy": "http://localhost:9000",
   "resolutions": {

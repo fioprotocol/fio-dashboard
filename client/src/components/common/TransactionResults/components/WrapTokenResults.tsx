@@ -1,0 +1,135 @@
+import React from 'react';
+import classnames from 'classnames';
+
+import Results from '../index';
+import Badge, { BADGE_TYPES } from '../../../Badge/Badge';
+import InfoBadge from '../../../InfoBadge/InfoBadge';
+import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
+import Amount from '../../Amount';
+
+import { FIO_CHAIN_CODE } from '../../../../constants/fio';
+import { ResultsData } from '../../../../pages/WrapPage/types';
+import { ResultsProps } from '../types';
+
+import classes from '../styles/Results.module.scss';
+
+type WrapTokenResultsProps = {
+  roe: number;
+  results: ResultsData;
+} & ResultsProps;
+
+const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
+  const {
+    results: {
+      chainCode,
+      publicAddress,
+      feeCollectedAmount,
+      nativeFeeCollectedAmount,
+      amount,
+      other: { transaction_id },
+    },
+  } = props;
+
+  const fioAmount = Number(amount);
+
+  const displayAmount = (
+    <>
+      <Amount value={fioAmount.toFixed(2)} /> {FIO_CHAIN_CODE}
+    </>
+  );
+  const displayUsdcAmount = (
+    <>
+      / <ConvertedAmount fioAmount={fioAmount} />
+    </>
+  );
+
+  const displayFeesAmount = (
+    <>
+      <Amount value={feeCollectedAmount.toFixed(2)} /> {FIO_CHAIN_CODE}
+    </>
+  );
+  const displayUsdcFeesAmount = (
+    <>
+      /{' '}
+      <ConvertedAmount
+        fioAmount={feeCollectedAmount}
+        nativeAmount={nativeFeeCollectedAmount}
+      />
+    </>
+  );
+
+  return (
+    <Results {...props} isPaymentDetailsVisible={false}>
+      <InfoBadge
+        show={true}
+        type={BADGE_TYPES.INFO}
+        title="Submitted"
+        message={
+          <>
+            Your FIO tokens have been submitted for wrapping. Completion time
+            for this transaction can vary and your tokens will not be
+            immediately available in your wallet. <br /> Please check the{' '}
+            <a
+              href={`${
+                process.env.REACT_APP_FIO_BLOCKS_TX_URL
+              }${transaction_id as string}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <b className={classes.white}>status page</b>
+            </a>{' '}
+            for transaction progress.
+          </>
+        }
+      />
+      <p className={classes.label}>Transaction Details</p>
+      <Badge show={!!chainCode} type={BADGE_TYPES.WHITE}>
+        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
+          <p className={classes.title}>Wrap Chain</p>
+          <p className={classes.item}>{chainCode}</p>
+        </div>
+      </Badge>
+      <Badge show={!!publicAddress} type={BADGE_TYPES.WHITE}>
+        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
+          <p className={classes.title}>Public Address</p>
+          <p className={classes.item}>{publicAddress}</p>
+        </div>
+      </Badge>
+
+      <Badge show={true} type={BADGE_TYPES.WHITE}>
+        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
+          <p className={classes.title}>Fio Wrapped</p>
+          <p className={classes.item}>
+            {displayAmount} {displayUsdcAmount}
+          </p>
+        </div>
+      </Badge>
+      <Badge show={true} type={BADGE_TYPES.WHITE}>
+        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
+          <p className={classes.title}>Fees</p>
+          <p className={classes.item}>
+            {displayFeesAmount} {displayUsdcFeesAmount}
+          </p>
+        </div>
+      </Badge>
+      <Badge show={true} type={BADGE_TYPES.WHITE}>
+        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
+          <p className={classes.title}>ID</p>
+          <p className={classnames(classes.item, classes.isBlue)}>
+            <a
+              href={`${
+                process.env.REACT_APP_FIO_BLOCKS_TX_URL
+              }${transaction_id as string}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {transaction_id}
+            </a>
+          </p>
+        </div>
+      </Badge>
+    </Results>
+  );
+};
+
+export default WrapTokenResults;

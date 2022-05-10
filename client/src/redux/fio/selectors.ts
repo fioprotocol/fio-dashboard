@@ -39,11 +39,17 @@ export const hasMoreDomains = (
 ): { [publicKey: string]: number } => state[prefix].hasMoreDomains;
 export const fees = (state: ReduxState): { [endpoint: string]: FeePrice } =>
   state[prefix].fees;
+export const oracleFees = (
+  state: ReduxState,
+): { [endpoint: string]: FeePrice } => state[prefix].oracleFees;
 export const fioWalletsBalances = (state: ReduxState): WalletsBalances =>
   state[prefix].fioWalletsBalances;
 export const feesLoading = (
   state: ReduxState,
 ): { [endpoint: string]: boolean } => state[prefix].feesLoading;
+export const oracleFeesLoading = (
+  state: ReduxState,
+): { [endpoint: string]: boolean } => state[prefix].oracleFeesLoading;
 export const nftSignatures = (state: ReduxState): NFTTokenDoublet[] =>
   state[prefix].nftList;
 export const mappedPublicAddresses = (
