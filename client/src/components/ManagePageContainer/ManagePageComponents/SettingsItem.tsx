@@ -9,6 +9,7 @@ import { FIO_OWNERSHIP, SETTING_LINK } from '../constants';
 import { fioNameLabels } from '../../../constants/labels';
 import { ROUTES } from '../../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
+import { putParamsToUrl } from '../../../utils';
 
 import { FioWalletDoublet } from '../../../types';
 import { SettingsProps } from '../types';
@@ -73,6 +74,22 @@ const SettingsItem: React.FC<SettingsProps> = props => {
           className={classes.buttonLink}
         >
           <Button className={classes.button}>Start Transfer</Button>
+        </Link>
+      </div>
+      <div>
+        <h5 className={classes.actionTitle}>FIO Domain Wrapping</h5>
+        <p className={classes.text}>
+          Wrapping your FIO domain allows you to transport your domain to
+          another network chain. Simply paste a public address or connect a
+          wallet and initiate wrapping.
+        </p>
+        <Link
+          to={putParamsToUrl(ROUTES.WRAP_DOMAIN, {
+            id: fioName,
+          })}
+          className={classes.buttonLink}
+        >
+          <Button className={classes.button}>Start Wrapping</Button>
         </Link>
       </div>
     </div>

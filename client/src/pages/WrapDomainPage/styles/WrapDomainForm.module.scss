@@ -11,3 +11,14 @@
     @include sf-pro-display-medium;
   }
 }
+
+.additionalSubInfo {
+  width: 100%;
+  font-size: 0.875em;;
+  margin: 10px 20px 10px 40px;
+  color: $black;
+
+  span {
+    color: $dark-jungle-green;
+  }
+}
