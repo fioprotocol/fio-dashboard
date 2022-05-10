@@ -52,6 +52,7 @@ export const EXPIRED_DAYS = 30;
 export const BUTTONS_TITLE = {
   addBundles: 'Add',
   renew: 'Renew',
+  wrap: 'Wrap',
   link: 'Link',
   nft: 'NFT signature',
   register: 'Register FIO Crypto Handle',
