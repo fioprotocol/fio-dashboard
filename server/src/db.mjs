@@ -12,6 +12,13 @@ import { ReferrerProfile } from './models/ReferrerProfile';
 import { NewDeviceTwoFactor } from './models/NewDeviceTwoFactor';
 import { Contact } from './models/Contact.mjs';
 import { PublicWalletData } from './models/PublicWalletData.mjs';
+import { Order } from './models/Order.mjs';
+import { OrderItem } from './models/OrderItem.mjs';
+import { OrderItemStatus } from './models/OrderItemStatus.mjs';
+import { BlockchainTransaction } from './models/BlockchainTransaction.mjs';
+import { BlockchainTransactionEventLog } from './models/BlockchainTransactionEventLog.mjs';
+import { Payment } from './models/Payment.mjs';
+import { PaymentEventLog } from './models/PaymentEventLog.mjs';
 
 const sequelize = new Sequelize(config.postgres);
 
@@ -25,6 +32,13 @@ ReferrerProfile.init(sequelize);
 NewDeviceTwoFactor.init(sequelize);
 Contact.init(sequelize);
 PublicWalletData.init(sequelize);
+Order.init(sequelize);
+OrderItem.init(sequelize);
+OrderItemStatus.init(sequelize);
+BlockchainTransaction.init(sequelize);
+BlockchainTransactionEventLog.init(sequelize);
+Payment.init(sequelize);
+PaymentEventLog.init(sequelize);
 
 const { models } = sequelize;
 
