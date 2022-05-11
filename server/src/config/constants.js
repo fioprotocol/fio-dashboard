@@ -25,9 +25,32 @@ const EXPIRING_DOMAINS_EMAIL_TITLE = {
   [DOMAIN_EXP_PERIOD.EXPIRED]: 'FIO Domain(s) has been burned',
 };
 
+const FIO_ACTIONS = {
+  transferTokens: 'transferTokens',
+  addPublicAddress: 'addPublicAddress',
+  addPublicAddresses: 'addPublicAddresses',
+  removeAllPublicAddresses: 'removeAllPublicAddresses',
+  removePublicAddresses: 'removePublicAddresses',
+  setFioDomainVisibility: 'setFioDomainVisibility',
+  rejectFundsRequest: 'rejectFundsRequest',
+  requestFunds: 'requestFunds',
+  recordObtData: 'recordObtData',
+  registerFioAddress: 'registerFioAddress',
+  registerFioDomain: 'registerFioDomain',
+  renewFioDomain: 'renewFioDomain',
+  transferFioAddress: 'transferFioAddress',
+  transferFioDomain: 'transferFioDomain',
+  pushTransaction: 'pushTransaction',
+  addBundledTransactions: 'addBundledTransactions',
+  addNft: 'addNft',
+  stakeFioTokens: 'stakeFioTokens',
+  unStakeFioTokens: 'unStakeFioTokens',
+};
+
 module.exports = {
   WALLET_CREATED_FROM,
   DOMAIN_EXP_PERIOD,
   EXPIRING_DOMAINS_EMAIL_SUBJECTS,
   EXPIRING_DOMAINS_EMAIL_TITLE,
+  FIO_ACTIONS,
 };
