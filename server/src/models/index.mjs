@@ -11,4 +11,11 @@ export const {
   NewDeviceTwoFactor,
   Contact,
   PublicWalletData,
+  BlockchainTransaction,
+  BlockchainTransactionEventLog,
+  OrderItemStatus,
+  Order,
+  OrderItem,
+  Payment,
+  PaymentEventLog,
 } = db.models;
