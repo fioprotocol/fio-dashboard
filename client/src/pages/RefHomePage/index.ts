@@ -13,7 +13,7 @@ import {
   refLinkError,
 } from '../../redux/refProfile/selectors';
 
-import { getInfo, setContainedParams } from '../../redux/refProfile/actions';
+import { setContainedParams } from '../../redux/refProfile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 
 import { RefHomePage } from './RefHomePage';
@@ -28,7 +28,6 @@ const reduxConnect = connect(
     refLinkError,
   }),
   {
-    getInfo,
     setContainedParams,
     showLoginModal,
   },

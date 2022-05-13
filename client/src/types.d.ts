@@ -263,6 +263,7 @@ export type User = {
     deviceDescription?: string;
     status: string;
   }[];
+  refProfile: { code?: string } | null;
 };
 
 export type RefProfile = {
