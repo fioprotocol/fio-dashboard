@@ -10,20 +10,24 @@ export default class RefProfileInfo extends Base {
     };
   }
   async execute({ code }) {
-    const refProfile = await ReferrerProfile.getItem({ code });
+    if (code != null && code !== 'null') {
+      const refProfile = await ReferrerProfile.getItem({ code });
 
-    if (!refProfile) {
-      throw new X({
-        code: 'NOT_FOUND',
-        fields: {
+      if (!refProfile) {
+        throw new X({
           code: 'NOT_FOUND',
-        },
-      });
-    }
+          fields: {
+            code: 'NOT_FOUND',
+          },
+        });
+      }
 
-    return {
-      data: ReferrerProfile.format(refProfile.get({ plain: true })),
-    };
+      return {
+        data: ReferrerProfile.format(refProfile.get({ plain: true })),
+      };
+    } else {
+      return { data: null };
+    }
   }
 
   static get paramsSecret() {

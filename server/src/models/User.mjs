@@ -7,6 +7,7 @@ import { Nonce } from './Nonce';
 import { FreeAddress } from './FreeAddress';
 import { Wallet } from './Wallet';
 import { NewDeviceTwoFactor } from './NewDeviceTwoFactor';
+import { ReferrerProfile } from './ReferrerProfile';
 
 const { DataTypes: DT, Op } = Sequelize;
 
@@ -50,6 +51,7 @@ export class User extends Base {
         avatar: DT.STRING,
         location: DT.STRING,
         secretSet: DT.BOOLEAN,
+        refProfileId: { type: DT.BIGINT, allowNull: true },
       },
       {
         sequelize,
@@ -72,6 +74,11 @@ export class User extends Base {
       sourceKey: 'id',
       as: 'newDeviceTwoFactor',
     });
+    this.belongsTo(ReferrerProfile, {
+      foreignKey: 'refProfileId',
+      targetKey: 'id',
+      as: 'refProfile',
+    });
   }
 
   static attrs(type = 'default') {
@@ -88,6 +95,7 @@ export class User extends Base {
         'freeAddresses',
         'fioWallets',
         'newDeviceTwoFactor',
+        'refProfile',
       ],
     };
 
@@ -113,6 +121,7 @@ export class User extends Base {
           as: 'newDeviceTwoFactor',
           attributes: ['voucherId', 'deviceDescription', 'createdAt', 'status'],
         },
+        { model: ReferrerProfile, as: 'refProfile', attributes: ['code'] },
       ],
     });
   }

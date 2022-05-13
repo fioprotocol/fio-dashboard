@@ -1,5 +1,6 @@
 import React from 'react';
-import { Redirect, RouteComponentProps } from 'react-router-dom';
+// import { Redirect, RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
 
 import AddressWidget from '../../components/AddressWidget';
 import DomainsBanner from '../../components/DomainsBanner/DomainsBanner';
@@ -14,9 +15,11 @@ type Props = {
 };
 
 const HomePage: React.FC<Props & RouteComponentProps> = props => {
-  const { isAuthenticated, isRefFlow, homePageLink } = props;
+  // const { isAuthenticated, isRefFlow, homePageLink } = props;
+  const { isAuthenticated } = props;
 
-  if (isRefFlow) return <Redirect to={homePageLink} />;
+  // todo: handle redirect on contained flow
+  // if (isRefFlow) return <Redirect to={homePageLink} />;
 
   if (!isAuthenticated)
     return (

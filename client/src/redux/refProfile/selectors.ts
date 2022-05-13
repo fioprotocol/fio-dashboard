@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 import { prefix } from './actions';
 import { ROUTES } from '../../constants/routes';
 
-import { putParamsToUrl } from '../../utils';
+// import { putParamsToUrl } from '../../utils';
 
 import { ReduxState } from '../../redux/init';
 import { RefProfile, RefQueryParams } from '../../types';
@@ -17,12 +17,16 @@ export const refProfileQueryParams = (
 export const refLinkError = (state: ReduxState): string | null =>
   state[prefix].refLinkError;
 export const refStep = (state: ReduxState): string => state[prefix].step;
-export const homePageLink = createSelector(refProfileInfo, info =>
-  info != null && info.code != null && info.code !== ''
-    ? putParamsToUrl(ROUTES.REF_PROFILE_HOME, {
-        refProfileCode: info.code,
-      })
-    : ROUTES.HOME,
+export const homePageLink = createSelector(
+  refProfileInfo,
+  info => ROUTES.HOME,
+  // todo: handle redirect on contained flow
+
+  // info != null && info.code != null && info.code !== ''
+  //   ? putParamsToUrl(ROUTES.HOME, {
+  //       refProfileCode: info.code,
+  //     })
+  //   : ROUTES.HOME,
 );
 export const isRefFlow = createSelector(
   refProfileInfo,
