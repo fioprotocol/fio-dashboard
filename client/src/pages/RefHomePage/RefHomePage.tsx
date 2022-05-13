@@ -29,7 +29,6 @@ type Props = {
   refProfileInfo: RefProfile;
   refProfileQueryParams: RefQueryParams;
   refLinkError: string | null;
-  getInfo: (code: string) => void;
   setContainedParams: (params: RefQuery) => void;
   showLoginModal: () => void;
 };
@@ -47,7 +46,6 @@ export const RefHomePage: React.FC<Props &
       params: { refProfileCode },
     },
     location: { query },
-    getInfo,
     refLinkError,
     setContainedParams,
     showLoginModal,
@@ -56,9 +54,6 @@ export const RefHomePage: React.FC<Props &
   const [hideLoader, setHideLoader] = useState(false);
   const [refProfileIsLoaded, setRefProfileIsLoaded] = useState(false);
 
-  useEffect(() => {
-    getInfo(refProfileCode);
-  }, []);
   useEffect(() => {
     if (refProfileCode != null && refProfileQueryParams == null) {
       setContainedParams(query);

@@ -64,6 +64,7 @@ export default class ApiClient {
     if (params) req.query(params);
     if (body) req.send(body);
     if (this.token) req.set('Authorization', `Bearer ${this.token}`);
+    // todo pass refcode to request
 
     return req.then(
       (res: {

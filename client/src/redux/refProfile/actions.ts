@@ -14,7 +14,7 @@ export const GET_REF_PROFILE_REQUEST = `${prefix}/GET_REF_PROFILE_REQUEST`;
 export const GET_REF_PROFILE_SUCCESS = `${prefix}/GET_REF_PROFILE_SUCCESS`;
 export const GET_REF_PROFILE_FAILURE = `${prefix}/GET_REF_PROFILE_FAILURE`;
 
-export const getInfo = (code: string): CommonPromiseAction => ({
+export const getInfo = (code: string | null): CommonPromiseAction => ({
   types: [
     GET_REF_PROFILE_REQUEST,
     GET_REF_PROFILE_SUCCESS,
