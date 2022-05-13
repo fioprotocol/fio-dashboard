@@ -95,6 +95,29 @@ export class OrderItem extends Base {
     });
   }
 
+  // todo: one of the usage is to get amount of crypto handle registrations by fio domains to check if there is no limit reached
+  static async amount(action, refProfileId, statuses, paramsWhere) {
+    const statusesWhere =
+      statuses.length > 1
+        ? ` (${statuses.map(status => `ois."txStatus" = ${status}`).join(' OR ')}) `
+        : ` ois."txStatus" = ${statuses[0]} `;
+    const refProfileWhere =
+      refProfileId === null
+        ? 'o."refProfileId" IS NULL'
+        : `o."refProfileId" = ${refProfileId}`;
+
+    const [orderItemAmount] = await Sequelize.query(`
+      SELECT count(oi.id) "orderItemAmount" FROM "order-items" oi 
+        JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
+        JOIN "orders" o ON o.id = oi."orderId"
+      WHERE oi.action = ${action} 
+        AND ${statusesWhere} 
+        AND ${refProfileWhere}
+        AND ${paramsWhere}
+      `);
+    return orderItemAmount;
+  }
+
   static format({ id }) {
     return {
       id,
