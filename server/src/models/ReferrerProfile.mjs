@@ -2,6 +2,8 @@ import Sequelize from 'sequelize';
 
 import Base from './Base';
 
+import { User } from './User';
+
 const { DataTypes: DT } = Sequelize;
 
 export class ReferrerProfile extends Base {
@@ -30,6 +32,14 @@ export class ReferrerProfile extends Base {
         paranoid: true,
       },
     );
+  }
+
+  static associate() {
+    this.hasMany(User, {
+      foreignKey: 'refProfileId',
+      sourceKey: 'id',
+      as: 'refProfile',
+    });
   }
 
   static getItem(where) {

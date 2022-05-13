@@ -5,7 +5,7 @@ import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
 import CreateAccount from '../../pages/CreateAccountPage';
 import { ROUTES } from '../../constants/routes';
-import { putParamsToUrl } from '../../utils';
+// import { putParamsToUrl } from '../../utils';
 
 import { RefProfile } from '../../types';
 
@@ -22,8 +22,8 @@ type Props = {
 const AuthContainer: React.FC<Props> = props => {
   const {
     edgeContextSet,
-    isRefFlow,
-    refProfileInfo,
+    // isRefFlow,
+    // refProfileInfo,
     isAuthenticated,
     loading,
   } = props;
@@ -31,13 +31,14 @@ const AuthContainer: React.FC<Props> = props => {
     <div className={styles.container}>
       {isAuthenticated && !loading && (
         <Redirect
-          to={
-            isRefFlow
-              ? putParamsToUrl(ROUTES.REF_PROFILE_HOME, {
-                  refProfileCode: refProfileInfo.code,
-                })
-              : ROUTES.HOME
-          }
+          to={ROUTES.HOME}
+          // todo: handle redirect on contained flow
+          //   isRefFlow
+          //     ? putParamsToUrl(ROUTES.REF_PROFILE_HOME, {
+          //         refProfileCode: refProfileInfo.code,
+          //       })
+          //     : ROUTES.HOME
+          // }
         />
       )}
       {!edgeContextSet && (

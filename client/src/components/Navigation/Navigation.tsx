@@ -29,13 +29,14 @@ type Props = {
 export const Navigation: React.FC<Props> = props => {
   const {
     isOnSide,
-    refProfileInfo,
-    refProfileLoading,
+    // refProfileInfo,
+    // refProfileLoading,
     isNotActiveUser,
   } = props;
   const location = useLocation();
 
-  if (!refProfileLoading && refProfileInfo != null) return null;
+  // todo: handle navigation on contained flow
+  // if (!refProfileLoading && refProfileInfo != null) return null;
   if (isNotActiveUser) return null;
 
   const renderItems = () => {
