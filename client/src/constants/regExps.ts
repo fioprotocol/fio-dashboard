@@ -10,3 +10,5 @@ export const URL_REGEXP = /\b(https?:\/\/\S*\b)/;
 export const WALLET_NAME_REGEX = /^[a-zA-Z0-9\s\-_]{1,32}$/i;
 
 export const INVALID_PASSWORD = /invalid password/gi;
+
+export const IS_REFERRAL_PROFILE_PATH = /^\/ref\/[a-zA-Z0-9-_]+$/;

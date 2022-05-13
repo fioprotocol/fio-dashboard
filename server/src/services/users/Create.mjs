@@ -4,7 +4,7 @@ import X from '../Exception';
 import emailSender from '../emailSender';
 import marketingMailchimp from '../../external/marketing-mailchimp';
 
-import { Action, User, Notification, Wallet } from '../../models';
+import { Action, User, Notification, ReferrerProfile, Wallet } from '../../models';
 
 export default class UsersCreate extends Base {
   static get validationRules() {
@@ -46,10 +46,17 @@ export default class UsersCreate extends Base {
       });
     }
 
+    const refProfile = await ReferrerProfile.findOneWhere({
+      code: refCode,
+    });
+
+    const refProfileId = refProfile ? refProfile.id : null;
+
     const user = new User({
       username,
       email,
       status: User.STATUS.NEW,
+      refProfileId,
     });
 
     await user.save();
