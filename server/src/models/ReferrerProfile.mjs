@@ -48,7 +48,7 @@ export class ReferrerProfile extends Base {
     });
   }
 
-  static format({ id, code, regRefCode, label, title, subTitle, settings }) {
+  static format({ id, code, regRefCode, label, title, subTitle, settings, tpid }) {
     return {
       id,
       code,
@@ -57,6 +57,7 @@ export class ReferrerProfile extends Base {
       title,
       subTitle,
       settings,
+      tpid,
     };
   }
 }

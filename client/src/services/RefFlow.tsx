@@ -4,18 +4,11 @@ import { createStructuredSelector } from 'reselect';
 import { RouterProps, withRouter } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
+import apis from '../api';
+
 // import { compose, putParamsToUrl } from '../utils';
 import { compose } from '../utils';
 import { setCookies } from '../util/cookies';
-
-import {
-  FioAddressDoublet,
-  FioWalletDoublet,
-  RefProfile,
-  RefQuery,
-  RefQueryParams,
-  User,
-} from '../types';
 
 import { isAuthenticated, user } from '../redux/profile/selectors';
 import {
@@ -39,6 +32,15 @@ import {
 } from '../constants/cookies';
 
 import { IS_REFERRAL_PROFILE_PATH } from '../constants/regExps';
+
+import {
+  FioAddressDoublet,
+  FioWalletDoublet,
+  RefProfile,
+  RefQuery,
+  RefQueryParams,
+  User,
+} from '../types';
 
 // example url - /ref/uniqueone?action=SIGNNFT&chain_code=ETH&contract_address=FIO5CniznG2z6yVPc4as69si711R1HJMAAnC3Rxjd4kGri4Kp8D8P&token_id=ETH&url=ifg://dfs.sdfs/sdfs&hash=f83klsjlgsldkfjsdlf&metadata={"creator_url":"https://www.google.com.ua/"}&r=https://www.google.com.ua/
 
@@ -159,6 +161,10 @@ const RefFlow = (
       });
     }
   }, [isAuthenticated, user?.refProfile?.code, getInfo]);
+
+  useEffect(() => {
+    apis.fio.setTpid(refProfileInfo?.tpid || '');
+  }, [refProfileInfo?.tpid]);
 
   return null;
 };
