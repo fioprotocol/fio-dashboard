@@ -278,6 +278,7 @@ export type RefProfile = {
     img: string;
     link: string;
   };
+  tpid: string;
 };
 
 type SignNFTQuery = {

@@ -61,10 +61,23 @@ export default class Fio {
     [ACTIONS.addNft]: 'add_nft',
     [ACTIONS.pushTransaction]: 'push_transaction',
   };
+  tpid: string | null = null;
 
   constructor() {
-    this.publicFioSDK = new FIOSDK('', '', this.baseurl, window.fetch);
+    this.publicFioSDK = new FIOSDK(
+      '',
+      '',
+      this.baseurl,
+      window.fetch,
+      '',
+      this.tpid,
+    );
   }
+
+  setTpid = (tpid: string | null): void => {
+    this.tpid = tpid;
+    this.publicFioSDK.technologyProviderId = tpid;
+  };
 
   amountToSUF = (amount: number): number => {
     if (!amount) return 0;
@@ -145,8 +158,9 @@ export default class Fio {
     return isValid;
   };
 
+  // todo: check if we need to update tpid for public wallet FIOSDK in other place
   createPublicWalletFioSdk = (keys: { public: string }): FIOSDK_LIB =>
-    new FIOSDK('', keys.public, this.baseurl, window.fetch);
+    new FIOSDK('', keys.public, this.baseurl, window.fetch, '', this.tpid);
 
   setWalletFioSdk = (keys: { public: string; private: string }): void =>
     (this.walletFioSDK = new FIOSDK(
@@ -154,6 +168,8 @@ export default class Fio {
       keys.public,
       this.baseurl,
       window.fetch,
+      '',
+      this.tpid,
     ));
 
   clearWalletFioSdk = (): null => (this.walletFioSDK = null);
