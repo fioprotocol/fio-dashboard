@@ -61,10 +61,22 @@ export default class Fio {
     [ACTIONS.addNft]: 'add_nft',
     [ACTIONS.pushTransaction]: 'push_transaction',
   };
+  tpid: string = '';
 
   constructor() {
-    this.publicFioSDK = new FIOSDK('', '', this.baseurl, window.fetch);
+    this.publicFioSDK = new FIOSDK(
+      '',
+      '',
+      this.baseurl,
+      window.fetch,
+      '',
+      this.tpid,
+    );
   }
+
+  setTpid = (tpid: string | null): void => {
+    this.tpid = tpid;
+  };
 
   amountToSUF = (amount: number): number => {
     if (!amount) return 0;
@@ -154,6 +166,8 @@ export default class Fio {
       keys.public,
       this.baseurl,
       window.fetch,
+      '',
+      this.tpid,
     ));
 
   clearWalletFioSdk = (): null => (this.walletFioSDK = null);
