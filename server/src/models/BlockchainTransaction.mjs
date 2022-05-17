@@ -120,6 +120,45 @@ export class BlockchainTransaction extends Base {
     });
   }
 
+  static checkIrreversibility() {
+    return this.query(`
+      SELECT oi.id,
+             oi.address,
+             oi.domain,
+             o."publicKey",
+             o."userId",
+             bt.expiration,
+             bt."blockTime",
+             bt.id AS "btId"
+      FROM "order-items" oi
+        INNER JOIN "blockchain-transactions" bt ON oi.id = bt."orderItemId"
+        JOIN "orders" o ON oi."orderId" = o.id
+      WHERE bt.status = ${this.STATUS.PENDING}
+      LIMIT 100
+   `);
+  }
+
+  static expireRetry() {
+    const RETRIES_LIMIT = 3;
+    return this.query(`
+    WITH r as (
+             -- get retry counts
+             SELECT count(*) AS retries, rbt.id AS "blockchainTransactionId"
+             FROM "blockchain-transactions" rbt
+             WHERE rbt.status = ${this.STATUS.RETRY_PROCESSED}
+             GROUP BY rbt."orderItemId", rbt.id
+         )
+    SELECT bt.id, bt.action, bt.data FROM "blockchain-transactions" bt
+      INNER JOIN r ON r."blockchainTransactionId" = bt.id
+    WHERE r.retries < ${RETRIES_LIMIT}
+      AND ${this.STATUS.EXPIRE} = (
+        SELECT status FROM "blockchain-transactions" 
+        WHERE "orderItemId" = bt."orderItemId" 
+        ORDER BY id DESC LIMIT 1
+      )
+   `);
+  }
+
   static format({ id }) {
     return {
       id,
