@@ -42,7 +42,6 @@ export type WrapTokensFormProps = {
   roe?: number;
   balance: WalletBalances;
   loading: boolean;
-  obtDataOn?: boolean;
   initialValues?: InitialValues;
   onSubmit: (values: WrapTokensValues) => void;
 };

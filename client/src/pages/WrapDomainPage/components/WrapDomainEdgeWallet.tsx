@@ -13,7 +13,7 @@ import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 import { TrxResponse } from '../../../api/fio';
 
 import { FioWalletDoublet } from '../../../types';
-import { WrapTokensValues } from '../types';
+import { WrapDomainValues } from '../types';
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
 
 type Props = {
@@ -21,13 +21,13 @@ type Props = {
   onSuccess: (data: TrxResponse) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  wrapData: WrapTokensValues | null;
+  wrapData: WrapDomainValues | null;
   processing: boolean;
   fee?: number | null;
   oracleFee?: number | null;
 };
 
-const WrapEdgeWallet: React.FC<Props> = props => {
+const WrapDomainEdgeWallet: React.FC<Props> = props => {
   const {
     fioWallet,
     setProcessing,
@@ -39,12 +39,12 @@ const WrapEdgeWallet: React.FC<Props> = props => {
     processing,
   } = props;
 
-  const send = async ({ keys, data }: SubmitActionParams) => {
+  const wrap = async ({ keys, data }: SubmitActionParams) => {
     const result = await apis.fio.executeAction(keys, ACTIONS.pushTransaction, {
-      action: TRANSACTION_ACTION_NAMES[ACTIONS.wrapFioTokens],
-      account: TRANSACTION_ACCOUNT_NAMES[ACTIONS.wrapFioTokens],
+      action: TRANSACTION_ACTION_NAMES[ACTIONS.wrapFioDomain],
+      account: TRANSACTION_ACCOUNT_NAMES[ACTIONS.wrapFioDomain],
       data: {
-        amount: apis.fio.amountToSUF(data.amount),
+        fio_domain: data.name,
         chain_code: data.chainCode,
         public_address: data.publicAddress,
         max_oracle_fee: oracleFee,
@@ -57,17 +57,17 @@ const WrapEdgeWallet: React.FC<Props> = props => {
 
   return (
     <EdgeConfirmAction
-      action={CONFIRM_PIN_ACTIONS.WRAP}
+      action={CONFIRM_PIN_ACTIONS.WRAP_DOMAIN}
       setProcessing={setProcessing}
       onSuccess={onSuccess}
       onCancel={onCancel}
       processing={processing}
       data={wrapData}
-      submitAction={send}
+      submitAction={wrap}
       fioWalletEdgeId={fioWallet.edgeId || ''}
       edgeAccountLogoutBefore={true}
     />
   );
 };
 
-export default WrapEdgeWallet;
+export default WrapDomainEdgeWallet;

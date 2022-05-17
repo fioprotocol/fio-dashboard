@@ -1,41 +1,40 @@
 import React, { useState } from 'react';
-
 import classNames from 'classnames';
 
-import FioLoader from '../../components/common/FioLoader/FioLoader';
-import PseudoModalContainer from '../../components/PseudoModalContainer';
-import WrapTokensForm from './components/WarapTokensForm';
-import WrapEdgeWallet from './components/WrapEdgeWallet';
-import WrapTokenResults from '../../components/common/TransactionResults/components/WrapTokenResults';
+import FioLoader from '../../../../components/common/FioLoader/FioLoader';
+import PseudoModalContainer from '../../../../components/PseudoModalContainer';
+import WrapDomainForm from '../WarapDomainForm';
+import WrapDomainEdgeWallet from '../WrapDomainEdgeWallet';
+import WrapTokenResults from '../../../../components/common/TransactionResults/components/WrapTokenResults';
 
-import { putParamsToUrl } from '../../utils';
-import { useFioAddresses, useWalletBalances } from '../../util/hooks';
-import useEffectOnce from '../../hooks/general';
-import MathOp from '../../util/math';
+import { useFioAddresses, useWalletBalances } from '../../../../util/hooks';
+import useEffectOnce from '../../../../hooks/general';
+import MathOp from '../../../../util/math';
 
-import { ROUTES } from '../../constants/routes';
-import { WALLET_CREATED_FROM } from '../../constants/common';
+import { ROUTES } from '../../../../constants/routes';
+import { WALLET_CREATED_FROM } from '../../../../constants/common';
 
-import { TrxResponsePaidBundles } from '../../api/fio';
+import { TrxResponsePaidBundles } from '../../../../api/fio';
 import {
   ContainerProps,
   InitialValues,
   ResultsData,
-  WrapTokensValues,
-} from './types';
+  WrapDomainValues,
+} from '../../types';
 
-import classes from './styles/WrapPage.module.scss';
+import classes from '../../styles/WrapDomainPage.module.scss';
 
 const NETWORK_TYPES = [
   {
-    name: 'Ethereum Network',
-    id: 'ETH',
+    name: 'Polygon Network',
+    chain_code: 'POLY',
   },
 ];
 
-const WrapPage: React.FC<ContainerProps> = props => {
+const WrapDomainContainer: React.FC<ContainerProps> = props => {
   const {
-    fioWallet,
+    currentWallet,
+    name: domainName,
     loading,
     feePrice,
     oracleFeePrice,
@@ -48,14 +47,12 @@ const WrapPage: React.FC<ContainerProps> = props => {
   } = props;
 
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
-  const [sendData, setSendData] = useState<WrapTokensValues | null>(null);
+  const [sendData, setSendData] = useState<WrapDomainValues | null>(null);
   const [processing, setProcessing] = useState<boolean>(false);
 
-  const [walletFioAddresses] = useFioAddresses(
-    fioWallet && fioWallet.publicKey,
-  );
+  const [walletFioAddresses] = useFioAddresses(currentWallet?.publicKey);
 
-  const balance = useWalletBalances(fioWallet?.publicKey);
+  const balance = useWalletBalances(currentWallet?.publicKey);
 
   useEffectOnce(() => {
     getFee();
@@ -65,13 +62,13 @@ const WrapPage: React.FC<ContainerProps> = props => {
 
   useEffectOnce(
     () => {
-      refreshBalance(fioWallet.publicKey);
+      refreshBalance(currentWallet.publicKey);
     },
-    [refreshBalance, fioWallet],
-    !!fioWallet?.publicKey && !!refreshBalance,
+    [refreshBalance, currentWallet],
+    !!currentWallet?.publicKey && !!refreshBalance,
   );
 
-  const onSend = async (values: WrapTokensValues) => {
+  const onSend = async (values: WrapDomainValues) => {
     setSendData({ ...values });
   };
   const onCancel = () => {
@@ -82,7 +79,7 @@ const WrapPage: React.FC<ContainerProps> = props => {
     setSendData(null);
     setProcessing(false);
     setResultsData({
-      amount: sendData.amount,
+      name: sendData.name,
       chainCode: sendData.chainCode,
       publicAddress: sendData.publicAddress,
       feeCollectedAmount: new MathOp(oracleFeePrice.fio)
@@ -96,30 +93,24 @@ const WrapPage: React.FC<ContainerProps> = props => {
         ...res,
       },
     });
-    refreshWalletDataPublicKey(fioWallet.publicKey);
+    refreshWalletDataPublicKey(currentWallet.publicKey);
   };
 
   const onResultsRetry = () => {
     setResultsData(null);
   };
   const onResultsClose = () => {
-    history.push(
-      putParamsToUrl(ROUTES.FIO_WALLET, { publicKey: fioWallet.publicKey }),
-    );
+    history.push(ROUTES.FIO_DOMAINS);
   };
 
-  if (!fioWallet || !fioWallet.id) return <FioLoader wrap={true} />;
+  if (!currentWallet || !currentWallet.id) return <FioLoader wrap={true} />;
 
-  const onBack = () =>
-    history.push(
-      putParamsToUrl(ROUTES.FIO_WALLET, {
-        publicKey: fioWallet.publicKey,
-      }),
-    );
+  const onBack = () => history.push(ROUTES.FIO_DOMAINS);
 
   const initialValues: InitialValues = {
     tpid: walletFioAddresses[0]?.name,
-    chainCode: NETWORK_TYPES[0].id,
+    chainCode: NETWORK_TYPES[0].chain_code,
+    name: domainName,
   };
 
   if (resultsData)
@@ -127,7 +118,7 @@ const WrapPage: React.FC<ContainerProps> = props => {
       <WrapTokenResults
         results={resultsData}
         title={
-          resultsData.error ? 'FIO Tokens not Wrapped' : 'FIO Tokens Wrapped'
+          resultsData.error ? 'FIO Domain not Wrapped' : 'FIO Domain Wrapped'
         }
         roe={roe}
         onClose={onResultsClose}
@@ -137,11 +128,11 @@ const WrapPage: React.FC<ContainerProps> = props => {
 
   return (
     <>
-      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
-        <WrapEdgeWallet
-          fioWallet={fioWallet}
+      {currentWallet.from === WALLET_CREATED_FROM.EDGE ? (
+        <WrapDomainEdgeWallet
+          fioWallet={currentWallet}
           fee={feePrice.nativeFio}
-          oracleFee={oracleFeePrice.nativeFio}
+          oracleFee={oracleFeePrice?.nativeFio}
           onCancel={onCancel}
           onSuccess={onSuccess}
           wrapData={sendData}
@@ -151,17 +142,17 @@ const WrapPage: React.FC<ContainerProps> = props => {
       ) : null}
 
       <PseudoModalContainer
-        title="Wrap FIO Tokens"
+        title="Wrap FIO Domain"
         onBack={onBack || null}
         middleWidth={true}
       >
         <p className={classes.subtitle}>
-          <span className={classes.subtitleThin}>FIO Wallet Name:</span>{' '}
-          {fioWallet.name}
+          <span className={classes.subtitleThin}>FIO Domain Name:</span>{' '}
+          {domainName}
         </p>
         <p className={classes.subtitle}>
           <span className={classes.subtitleThin}>
-            FIO Tokens are wrapped on the
+            FIO domains are wrapped on the
           </span>{' '}
           {NETWORK_TYPES[0].name}
         </p>
@@ -169,12 +160,12 @@ const WrapPage: React.FC<ContainerProps> = props => {
           <span className={classNames(classes.subtitleThin, classes.textSmall)}>
             Simply paste your public address or connect a wallet, enter the
             amount of FIO and complete your transaction to receive your wrapped
-            FIO tokens
+            FIO domain
           </span>{' '}
         </p>
 
-        <WrapTokensForm
-          fioWallet={fioWallet}
+        <WrapDomainForm
+          fioWallet={currentWallet}
           balance={balance}
           loading={loading || processing}
           fioAddresses={walletFioAddresses}
@@ -189,4 +180,4 @@ const WrapPage: React.FC<ContainerProps> = props => {
   );
 };
 
-export default WrapPage;
+export default WrapDomainContainer;
