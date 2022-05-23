@@ -8,6 +8,7 @@ export const {
   FreeAddress,
   Wallet,
   ReferrerProfile,
+  FioAccountProfile,
   NewDeviceTwoFactor,
   Contact,
   PublicWalletData,
