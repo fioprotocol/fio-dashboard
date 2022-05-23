@@ -4,12 +4,12 @@ import { Button } from 'react-bootstrap';
 
 import AddressDomainForm from '../../components/AddressDomainForm';
 
-import { REF_ACTIONS, ADDRESS } from '../../constants/common';
+import { CONTAINED_FLOW_ACTIONS, ADDRESS } from '../../constants/common';
 
 import classes from './AddressWidget.module.scss';
 
 const ACTION_TEXT = {
-  [REF_ACTIONS.SIGNNFT]:
+  [CONTAINED_FLOW_ACTIONS.SIGNNFT]:
     'All you have to do is add a username, select a domain and sign the NFT',
 };
 

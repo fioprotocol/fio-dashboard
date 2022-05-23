@@ -10,9 +10,8 @@ import { compose } from '../utils';
 import { setCookies } from '../util/cookies';
 
 import { isAuthenticated, user } from '../redux/profile/selectors';
-import { loading, refProfileInfo } from '../redux/refProfile/selectors';
-import { containedFlowQueryParams } from '../redux/containedFlow/selectors';
-import { fioWallets, fioAddresses } from '../redux/fio/selectors';
+import { refProfileInfo } from '../redux/refProfile/selectors';
+import { fioWallets } from '../redux/fio/selectors';
 
 import { getInfo } from '../redux/refProfile/actions';
 import { refreshFioNames } from '../redux/fio/actions';
@@ -25,31 +24,18 @@ import {
 
 import { IS_REFERRAL_PROFILE_PATH } from '../constants/regExps';
 
-import {
-  FioAddressDoublet,
-  FioWalletDoublet,
-  RefProfile,
-  ContainedFlowQuery,
-  ContainedFlowQueryParams,
-  User,
-} from '../types';
+import { FioWalletDoublet, RefProfile, User } from '../types';
 
 type Props = {
   isAuthenticated: boolean;
   user: User;
-  loading: boolean;
   refProfileInfo: RefProfile;
-  containedFlowQueryParams: ContainedFlowQueryParams;
-  fioAddresses: FioAddressDoublet[];
   fioWallets: FioWalletDoublet[];
   refreshFioNames: (publicKey: string) => void;
-  setContainedParams: (params: ContainedFlowQuery) => void;
   getInfo: (refProfileCode: string | null) => void;
 };
 
-const RefFlow = (
-  props: Props & RouterProps,
-): React.FunctionComponent | null => {
+const Ref = (props: Props & RouterProps): React.FunctionComponent | null => {
   const {
     isAuthenticated,
     fioWallets,
@@ -131,10 +117,7 @@ const reduxConnect = connect(
   createStructuredSelector({
     isAuthenticated,
     user,
-    loading,
     refProfileInfo,
-    containedFlowQueryParams,
-    fioAddresses,
     fioWallets,
   }),
   {
@@ -143,4 +126,4 @@ const reduxConnect = connect(
   },
 );
 
-export default withRouter(compose(reduxConnect)(RefFlow));
+export default withRouter(compose(reduxConnect)(Ref));

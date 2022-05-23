@@ -14,12 +14,12 @@ import {
   successfullyRegistered,
   loading as serverSignUpLoading,
 } from '../../redux/profile/selectors';
-import {
-  isRefFlow,
-  refProfileInfo,
-  refProfileQueryParams,
-} from '../../redux/refProfile/selectors';
+import { isRefSet, refProfileInfo } from '../../redux/refProfile/selectors';
 import { redirectLink } from '../../redux/navigation/selectors';
+import {
+  isContainedFlow,
+  containedFlowQueryParams,
+} from '../../redux/containedFlow/selectors';
 
 import CreateAccountForm from './CreateAccountForm';
 
@@ -27,11 +27,12 @@ const signupSuccess = createSelector(successfullyRegistered, f => f);
 
 const selector = createStructuredSelector({
   serverSignUpLoading,
-  isRefFlow,
+  isRefSet,
   refProfileInfo,
-  refProfileQueryParams,
+  containedFlowQueryParams,
   signupSuccess,
   redirectLink,
+  isContainedFlow,
 });
 
 const actions = {

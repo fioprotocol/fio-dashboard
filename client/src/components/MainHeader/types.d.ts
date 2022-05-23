@@ -25,4 +25,5 @@ export type MainHeaderProps = {
   refProfileInfo: RefProfile;
   refProfileLoading: boolean;
   fioAddresses: FioAddressDoublet[];
+  isContainedFlow: boolean;
 };

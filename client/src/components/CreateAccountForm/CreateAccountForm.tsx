@@ -31,7 +31,7 @@ import {
   FioWalletDoublet,
   RedirectLinkData,
   RefProfile,
-  RefQueryParams,
+  ContainedFlowQueryParams,
   WalletKeysObj,
 } from '../../types';
 import { FormValues, PasswordValidationState } from './types';
@@ -84,9 +84,10 @@ type OwnProps = {
     addEmailToPromoList: boolean;
   }) => void;
   signupSuccess: boolean;
-  isRefFlow: boolean;
+  isRefSet: boolean;
+  isContainedFlow: boolean;
   refProfileInfo: RefProfile | null;
-  refProfileQueryParams: RefQueryParams | null;
+  containedFlowQueryParams: ContainedFlowQueryParams | null;
   edgeAuthLoading: boolean;
   serverSignUpLoading: boolean;
   redirectLink: RedirectLinkData;
@@ -252,10 +253,11 @@ export default class CreateAccountForm extends React.Component<Props, State> {
   handleSubmit = async (values: FormValues) => {
     const {
       onSubmit,
-      isRefFlow,
+      isRefSet,
       refProfileInfo,
-      refProfileQueryParams,
+      containedFlowQueryParams,
       redirectLink,
+      isContainedFlow,
     } = this.props;
     const { step } = this.state;
 
@@ -312,18 +314,23 @@ export default class CreateAccountForm extends React.Component<Props, State> {
           let stateData: EmailConfirmationStateData = {
             redirectLink: redirectLink ? redirectLink.pathname : '',
           };
-          if (isRefFlow) {
+          if (isRefSet) {
             stateData = {
               ...stateData,
               refCode: refProfileInfo?.code,
-              refProfileQueryParams: refProfileQueryParams || undefined,
+            };
+          }
+          if (isContainedFlow) {
+            stateData = {
+              ...stateData,
+              containedFlowQueryParams: containedFlowQueryParams || undefined,
             };
           }
           return onSubmit({
             username: emailToUsername(email),
             email,
             fioWallets,
-            refCode: isRefFlow ? refProfileInfo?.code : '',
+            refCode: isRefSet ? refProfileInfo?.code : '',
             stateData,
             addEmailToPromoList,
           });
