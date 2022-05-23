@@ -301,12 +301,12 @@ export type SignNFTParams = {
   };
 };
 
-export type RefQuery = {
+export type ContainedFlowQuery = {
   action: string;
   r: string;
 } & SignNFTQuery;
 
-export type RefQueryParams = {
+export type ContainedFlowQueryParams = {
   action: string;
   r: string;
 } & (SignNFTParams | {});
@@ -314,7 +314,7 @@ export type RefQueryParams = {
 export type EmailConfirmationStateData = {
   redirectLink?: string;
   refCode?: string;
-  refProfileQueryParams?: RefQueryParams | null;
+  containedFlowQueryParams?: ContainedFlowQueryParams | null;
 };
 
 export type EmailConfirmationResult = {

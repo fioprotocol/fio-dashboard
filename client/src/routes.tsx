@@ -196,7 +196,10 @@ const Routes = (): React.ReactElement => (
           exact
         />
 
-        <PrivateRoute path={ROUTES.REF_SIGN_NFT} component={RefSignNftPage} />
+        <PrivateRoute
+          path={ROUTES.CONTAINED_FLOW_SIGN_NFT}
+          component={RefSignNftPage}
+        />
 
         <PrivateRoute
           path={ROUTES.FIO_ADDRESS_NFT_EDIT}
