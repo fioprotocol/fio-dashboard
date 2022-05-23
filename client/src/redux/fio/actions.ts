@@ -227,3 +227,12 @@ export const updatePublicAddresses = (
   fioAddress,
   updPublicAddresses,
 });
+
+export const FIO_EXECUTE_ACTION_SUCCESS = `${prefix}/FIO_EXECUTE_ACTION_SUCCESS`;
+
+export const fioExecutedAction = (data: {
+  executeActionType: string;
+}): CommonAction => ({
+  type: FIO_EXECUTE_ACTION_SUCCESS,
+  data,
+});

@@ -35,4 +35,5 @@ export type Props = {
   setProcessing: (processing: boolean) => void;
   resetPinConfirm: () => void;
   setConfirmPinKeys: (keys: null) => void;
+  fioExecutedAction: (data: { executeActionType: string } & any) => void;
 };

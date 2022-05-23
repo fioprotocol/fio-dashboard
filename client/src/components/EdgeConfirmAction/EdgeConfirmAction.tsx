@@ -34,6 +34,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
     showGenericErrorModal,
     resetPinConfirm,
     setConfirmPinKeys,
+    fioExecutedAction,
   } = props;
 
   const init = useRef(false);
@@ -69,6 +70,12 @@ const EdgeConfirmAction: React.FC<Props> = props => {
             await waitForEdgeAccountStop(edgeAccount);
 
           onSuccess(result);
+
+          fioExecutedAction({
+            ...result,
+            executeActionType: action,
+          });
+
           setConfirmPinKeys(null);
         } catch (e) {
           showGenericErrorModal();
@@ -93,6 +100,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
       setProcessing,
       showGenericErrorModal,
       submitAction,
+      fioExecutedAction,
     ],
   );
 
