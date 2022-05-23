@@ -13,7 +13,7 @@ import apis from '../../api';
 
 import { autoLogin, AutoLoginParams } from '../../util/login';
 
-import { REF_ACTIONS } from '../../constants/common';
+import { CONTAINED_FLOW_ACTIONS } from '../../constants/common';
 import {
   EmailConfirmationResult,
   LastAuthData,
@@ -51,8 +51,8 @@ type Props = {
   emailConfirmationResult: EmailConfirmationResult;
 };
 
-const REF_SUBTITLES = {
-  [REF_ACTIONS.SIGNNFT]: 'Sign in to complete signing your NFT',
+const CONTAINED_SUBTITLES = {
+  [CONTAINED_FLOW_ACTIONS.SIGNNFT]: 'Sign in to complete signing your NFT',
 };
 
 const LoginForm: React.FC<Props> = props => {
@@ -71,15 +71,16 @@ const LoginForm: React.FC<Props> = props => {
     emailConfirmationResult,
   } = props;
   const isEmailVerification = !!emailConfirmationResult?.success;
-  const isRefFlow = !!emailConfirmationResult?.stateData?.refProfileQueryParams;
+  const isContainedFlow = !!emailConfirmationResult?.stateData
+    ?.containedFlowQueryParams;
   let subtitle = '';
   if (
-    isRefFlow &&
-    emailConfirmationResult.stateData?.refProfileQueryParams?.action
+    isContainedFlow &&
+    emailConfirmationResult.stateData?.containedFlowQueryParams?.action
   ) {
     subtitle =
-      REF_SUBTITLES[
-        emailConfirmationResult.stateData.refProfileQueryParams.action
+      CONTAINED_SUBTITLES[
+        emailConfirmationResult.stateData.containedFlowQueryParams.action
       ];
   }
 

@@ -6,7 +6,6 @@ import classnames from 'classnames';
 import { ROUTES } from '../../constants/routes';
 import { LINKS, LINK_LABELS } from '../../constants/labels';
 import classes from './Navigation.module.scss';
-import { RefProfile } from '../../types';
 
 const navItems: string[] = [
   LINKS.FIO_ADDRESSES,
@@ -19,24 +18,17 @@ const navItems: string[] = [
 ];
 
 type Props = {
-  refProfileInfo: RefProfile | null;
-  refProfileLoading: boolean;
   isNotActiveUser: boolean;
+  isContainedFlow: boolean;
   isOnSide?: boolean;
   closeMenu?: () => void;
 };
 
-export const Navigation: React.FC<Props> = props => {
-  const {
-    isOnSide,
-    // refProfileInfo,
-    // refProfileLoading,
-    isNotActiveUser,
-  } = props;
+export const Navigation: React.FC<Props> | null = props => {
+  const { isOnSide, isNotActiveUser, isContainedFlow } = props;
   const location = useLocation();
 
-  // todo: handle navigation on contained flow
-  // if (!refProfileLoading && refProfileInfo != null) return null;
+  if (isContainedFlow) return null;
   if (isNotActiveUser) return null;
 
   const renderItems = () => {

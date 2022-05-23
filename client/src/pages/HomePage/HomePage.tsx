@@ -1,5 +1,4 @@
 import React from 'react';
-// import { Redirect, RouteComponentProps } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router-dom';
 
 import AddressWidget from '../../components/AddressWidget';

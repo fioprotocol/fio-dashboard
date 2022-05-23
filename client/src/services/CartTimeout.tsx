@@ -11,16 +11,16 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 import { BADGE_TYPES } from '../components/Badge/Badge';
 import { ACTIONS } from '../components/Notifications/Notifications';
-import { REF_ACTIONS } from '../constants/common';
+import { CONTAINED_FLOW_ACTIONS } from '../constants/common';
 import { ROUTES } from '../constants/routes';
 import { NOTIFICATIONS_CONTENT } from '../constants/notifications';
 
 import { setCartDate, clear } from '../redux/cart/actions';
 import { addManual as createNotification } from '../redux/notifications/actions';
 import {
-  isRefFlow,
-  refProfileQueryParams,
-} from '../redux/refProfile/selectors';
+  isContainedFlow,
+  containedFlowQueryParams,
+} from '../redux/containedFlow/selectors';
 import { cartItems, cartDate } from '../redux/cart/selectors';
 import {
   isProcessing,
@@ -31,13 +31,13 @@ import { confirmingPin } from '../redux/edge/selectors';
 import { compose } from '../utils';
 import useEffectOnce from '../hooks/general';
 
-import { CartItem, RefQueryParams } from '../types';
+import { CartItem, ContainedFlowQueryParams } from '../types';
 
 const INTERVAL = 200;
 const CART_TIMEOUT = 1000 * 60 * 30; // 30 min
 const MIN = 1000 * 60;
-const REF_MESSAGES = {
-  [REF_ACTIONS.SIGNNFT]:
+const CONTAINED_FLOW_MESSAGES = {
+  [CONTAINED_FLOW_ACTIONS.SIGNNFT]:
     'please add your FIO Crypto Handle again, and purchase in order to complete your NFT signing',
 };
 
@@ -47,8 +47,8 @@ type Props = {
   isRegistrationProcessing: boolean;
   captchaResolving: boolean;
   confirmingPin: boolean;
-  isRefFlow: boolean;
-  refProfileQueryParams: RefQueryParams;
+  isContainedFlow: boolean;
+  containedFlowQueryParams: ContainedFlowQueryParams;
   clear: () => void;
   createNotification: (data: {
     type: string;
@@ -71,11 +71,13 @@ const CartTimeout: React.FC<Props> = props => {
     captchaResolving,
     confirmingPin,
     history,
-    isRefFlow,
-    refProfileQueryParams,
+    isContainedFlow,
+    containedFlowQueryParams,
   } = props;
 
-  const refAction = refProfileQueryParams ? refProfileQueryParams.action : '';
+  const containedFlowAction = containedFlowQueryParams
+    ? containedFlowQueryParams.action
+    : '';
   const cartItemsAmount = cartItems.length;
 
   const allowClear = useMemo(
@@ -107,8 +109,8 @@ const CartTimeout: React.FC<Props> = props => {
       type: BADGE_TYPES.WARNING,
       title: NOTIFICATIONS_CONTENT.CART_TIMEOUT.title,
       message:
-        isRefFlow && refAction != null
-          ? `${NOTIFICATIONS_CONTENT.CART_TIMEOUT.message}, ${REF_MESSAGES[refAction]}.`
+        isContainedFlow && containedFlowAction != null
+          ? `${NOTIFICATIONS_CONTENT.CART_TIMEOUT.message}, ${CONTAINED_FLOW_MESSAGES[containedFlowAction]}.`
           : `${NOTIFICATIONS_CONTENT.CART_TIMEOUT.message}. Add your items again.`,
       pagesToShow: [
         ROUTES.CART,
@@ -117,7 +119,13 @@ const CartTimeout: React.FC<Props> = props => {
         ROUTES.HOME,
       ],
     });
-  }, [clearCartTimeout, history, isRefFlow, refAction, createNotification]);
+  }, [
+    clearCartTimeout,
+    history,
+    isContainedFlow,
+    containedFlowAction,
+    createNotification,
+  ]);
 
   const createInterval = useCallback(
     (countDownDate: number | null = null): void => {
@@ -200,8 +208,8 @@ const reduxConnect = connect(
     isRegistrationProcessing: isProcessing,
     captchaResolving,
     confirmingPin,
-    isRefFlow,
-    refProfileQueryParams,
+    isContainedFlow,
+    containedFlowQueryParams,
   }),
   {
     clear,

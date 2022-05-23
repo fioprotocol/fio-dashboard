@@ -7,7 +7,11 @@ import FioLoader from '../../components/common/FioLoader/FioLoader';
 import FioAddressPage from '../FioAddressPage';
 
 import classnames from './RefHomePage.module.scss';
-import { RefProfile, RefQuery, RefQueryParams } from '../../types';
+import {
+  RefProfile,
+  ContainedFlowQuery,
+  ContainedFlowQueryParams,
+} from '../../types';
 import { useNonActiveUserRedirect } from '../../util/hooks';
 
 const FADE_OUT_TIMEOUT = 780;
@@ -18,7 +22,7 @@ type MatchParams = {
 
 type Location = {
   location: {
-    query: RefQuery;
+    query: ContainedFlowQuery;
   };
 };
 
@@ -27,9 +31,8 @@ type Props = {
   loading: boolean;
   edgeAuthLoading: boolean;
   refProfileInfo: RefProfile;
-  refProfileQueryParams: RefQueryParams;
+  containedFlowQueryParams: ContainedFlowQueryParams;
   refLinkError: string | null;
-  setContainedParams: (params: RefQuery) => void;
   showLoginModal: () => void;
 };
 
@@ -38,27 +41,17 @@ export const RefHomePage: React.FC<Props &
   Location> = props => {
   const {
     refProfileInfo,
-    refProfileQueryParams,
+    containedFlowQueryParams,
     isAuthenticated,
     loading,
     edgeAuthLoading,
-    match: {
-      params: { refProfileCode },
-    },
-    location: { query },
     refLinkError,
-    setContainedParams,
     showLoginModal,
   } = props;
   useNonActiveUserRedirect();
   const [hideLoader, setHideLoader] = useState(false);
   const [refProfileIsLoaded, setRefProfileIsLoaded] = useState(false);
 
-  useEffect(() => {
-    if (refProfileCode != null && refProfileQueryParams == null) {
-      setContainedParams(query);
-    }
-  }, [refProfileCode]);
   useEffect(() => {
     if (refProfileInfo != null) {
       setHideLoader(true);
@@ -113,7 +106,7 @@ export const RefHomePage: React.FC<Props &
             }
             title={refProfileInfo.title}
             subTitle={refProfileInfo.subTitle}
-            action={refProfileQueryParams.action}
+            action={containedFlowQueryParams?.action}
             edgeAuthLoading={edgeAuthLoading}
             showLoginModal={showLoginModal}
           />

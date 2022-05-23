@@ -9,11 +9,10 @@ import { isAuthenticated } from '../../redux/profile/selectors';
 import {
   loading,
   refProfileInfo,
-  refProfileQueryParams,
   refLinkError,
 } from '../../redux/refProfile/selectors';
+import { containedFlowQueryParams } from '../../redux/containedFlow/selectors';
 
-import { setContainedParams } from '../../redux/refProfile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 
 import { RefHomePage } from './RefHomePage';
@@ -24,11 +23,10 @@ const reduxConnect = connect(
     loading,
     edgeAuthLoading,
     refProfileInfo,
-    refProfileQueryParams,
+    containedFlowQueryParams,
     refLinkError,
   }),
   {
-    setContainedParams,
     showLoginModal,
   },
 );
