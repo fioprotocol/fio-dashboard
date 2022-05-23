@@ -14,6 +14,7 @@ import registrations from './registrations/reducer';
 import cart from './cart/reducer';
 import refProfile from './refProfile/reducer';
 import account from './account/reducer';
+import containedFlow from './containedFlow/reducer';
 
 const createReducer = (history: History): Reducer =>
   combineReducers({
@@ -30,6 +31,7 @@ const createReducer = (history: History): Reducer =>
     cart,
     refProfile,
     account,
+    containedFlow,
   });
 
 export default createReducer;
