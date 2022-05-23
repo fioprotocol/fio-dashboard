@@ -4,6 +4,7 @@ import { FIO_ACTIONS } from '../config/constants.js';
 
 import Base from './Base';
 import { Order } from './Order';
+import { Payment } from './Payment';
 import { BlockchainTransaction } from './BlockchainTransaction';
 import { OrderItemStatus } from './OrderItemStatus';
 
@@ -116,6 +117,35 @@ export class OrderItem extends Base {
         AND ${paramsWhere}
       `);
     return orderItemAmount;
+  }
+
+  // Used to get order items needed to process
+  // Common status is READY or RETRY
+  static async getActionRequired(status = BlockchainTransaction.STATUS.READY) {
+    const [actions] = await Sequelize.query(`
+        SELECT 
+          oi.id, 
+          oi.address, 
+          oi.domain, 
+          oi.action, 
+          oi.params, 
+          o."publicKey", 
+          rp.label, 
+          rp.tpid
+          -- fap.actor,
+          -- fap.permission
+        FROM "order-items" oi
+          INNER JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
+          INNER JOIN orders o ON o.id = oi."orderId"
+          LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
+          -- LEFT JOIN "fio-account-profiles" fap.id = rp."fioAccountProfileId"
+        WHERE ois.status = ${Payment.STATUS.COMPLETED} 
+          AND ois.status = ${status}
+        ORDER BY oi.id
+        LIMIT 100
+      `);
+
+    return actions;
   }
 
   static format({ id }) {
