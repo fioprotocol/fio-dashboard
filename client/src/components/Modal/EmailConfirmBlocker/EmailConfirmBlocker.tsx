@@ -8,7 +8,7 @@ import {
   EmailConfirmationStateData,
   RedirectLinkData,
   RefProfile,
-  RefQueryParams,
+  ContainedFlowQueryParams,
 } from '../../../types';
 import { ROUTES } from '../../../constants/routes';
 
@@ -22,9 +22,9 @@ type Props = {
     token: string,
     stateData: EmailConfirmationStateData,
   ) => void;
-  isRefFlow: boolean;
+  isContainedFlow: boolean;
   refProfileInfo: RefProfile | null;
-  refProfileQueryParams?: RefQueryParams | null;
+  containedFlowQueryParams?: ContainedFlowQueryParams | null;
   redirectLink: RedirectLinkData;
 };
 
@@ -35,9 +35,9 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
     emailConfirmationToken,
     emailConfirmationSent,
     loading,
-    refProfileQueryParams,
+    containedFlowQueryParams,
     refProfileInfo,
-    isRefFlow,
+    isContainedFlow,
     redirectLink,
     resendConfirmEmail,
   } = props;
@@ -60,11 +60,11 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
     let stateData: EmailConfirmationStateData = {
       redirectLink: redirectLink ? redirectLink.pathname : '',
     };
-    if (isRefFlow) {
+    if (isContainedFlow) {
       stateData = {
         ...stateData,
         refCode: refProfileInfo?.code,
-        refProfileQueryParams,
+        containedFlowQueryParams,
       };
     }
     resendConfirmEmail(emailConfirmationToken, stateData);

@@ -21,6 +21,7 @@ import {
   loading as refProfileLoading,
   homePageLink,
 } from '../../redux/refProfile/selectors';
+import { isContainedFlow } from '../../redux/containedFlow/selectors';
 
 import MainHeader from './MainHeader';
 
@@ -43,6 +44,7 @@ const selector = createStructuredSelector({
   homePageLink,
   fioAddresses,
   locationState,
+  isContainedFlow,
 });
 
 const actions = (

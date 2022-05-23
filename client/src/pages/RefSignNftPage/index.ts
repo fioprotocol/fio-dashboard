@@ -3,25 +3,16 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 
-import { loading as edgeAuthLoading } from '../../redux/edge/selectors';
 import { isAuthenticated } from '../../redux/profile/selectors';
-import {
-  loading,
-  refProfileInfo,
-  refProfileQueryParams,
-  homePageLink,
-} from '../../redux/refProfile/selectors';
+
+import { containedFlowQueryParams } from '../../redux/containedFlow/selectors';
 
 import { RefSignNftPage } from './RefSignNftPage';
 
 const reduxConnect = connect(
   createStructuredSelector({
     isAuthenticated,
-    loading,
-    edgeAuthLoading,
-    refProfileInfo,
-    refProfileQueryParams,
-    homePageLink,
+    containedFlowQueryParams,
   }),
 );
 

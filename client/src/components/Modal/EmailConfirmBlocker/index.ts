@@ -10,12 +10,13 @@ import {
   isAuthenticated,
   isActiveUser,
 } from '../../../redux/profile/selectors';
-import {
-  isRefFlow,
-  refProfileInfo,
-  refProfileQueryParams,
-} from '../../../redux/refProfile/selectors';
+import { refProfileInfo } from '../../../redux/refProfile/selectors';
 import { redirectLink } from '../../../redux/navigation/selectors';
+
+import {
+  isContainedFlow,
+  containedFlowQueryParams,
+} from '../../../redux/containedFlow/selectors';
 
 import EmailConfirmBlocker from './EmailConfirmBlocker';
 
@@ -26,9 +27,9 @@ const reduxConnect = connect(
     emailConfirmationToken,
     emailConfirmationSent,
     redirectLink,
-    isRefFlow,
+    isContainedFlow,
     refProfileInfo,
-    refProfileQueryParams,
+    containedFlowQueryParams,
     loading,
   }),
   {
