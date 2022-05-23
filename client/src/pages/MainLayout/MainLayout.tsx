@@ -16,6 +16,7 @@ import RefFlow from '../../services/RefFlow';
 import Roe from '../../services/Roe';
 import TxHistoryService from '../../services/TxHistory';
 import WalletsDataFlow from '../../services/WalletsDataFlow';
+import ContainedFlow from '../../services/ContainedFlow';
 
 import useEffectOnce from '../../hooks/general';
 
@@ -30,6 +31,7 @@ type Props = {
   showLogin: boolean;
   showRecovery: boolean;
   edgeContextSet: boolean;
+  containedFlowLinkError: string | null;
   init: () => void;
   showRecoveryModal: () => void;
 };
@@ -43,6 +45,7 @@ const MainLayout: React.FC<Props> = props => {
     isActiveUser,
     showLogin,
     showRecovery,
+    containedFlowLinkError,
     init,
   } = props;
 
@@ -68,12 +71,21 @@ const MainLayout: React.FC<Props> = props => {
       <AutoLogout />
       <RefFlow />
       <Roe />
+      <ContainedFlow />
       {isAuthenticated && <WalletsDataFlow />}
       {isAuthenticated && <TxHistoryService />}
       {isAuthenticated && isDesktop && <Navigation />}
       {(!isHomePage || isAuthenticated) && <Notifications />}
       <div className={`${classes.content} ${isHomePage && classes.home}`}>
-        {children}
+        {containedFlowLinkError ? (
+          <div className={classes.container}>
+            <div className={classes.validationErrorContainer}>
+              {containedFlowLinkError}
+            </div>
+          </div>
+        ) : (
+          children
+        )}
       </div>
       <Footer />
       {showLogin && edgeContextSet && loginFormModalRender()}
