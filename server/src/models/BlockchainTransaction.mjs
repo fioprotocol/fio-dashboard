@@ -25,6 +25,9 @@ export class BlockchainTransaction extends Base {
       EXPIRE: 'EXPIRE',
     };
   }
+
+  // For each orderItemId should be maximum one record with status READY/PENDING/SUCCESS/RETRY,
+  // could be several records with status RETRY_PROCESSED for one orderItemId
   static get STATUS() {
     return {
       READY: 1,
