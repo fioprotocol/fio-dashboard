@@ -1,8 +1,8 @@
 import Sequelize from 'sequelize';
 
 import Base from './Base';
-
 import { User } from './User';
+import { FioAccountProfile } from './FioAccountProfile';
 
 const { DataTypes: DT } = Sequelize;
 
@@ -24,7 +24,35 @@ export class ReferrerProfile extends Base {
         title: { type: DT.STRING, allowNull: true },
         subTitle: { type: DT.STRING, allowNull: true },
         tpid: { type: DT.STRING, allowNull: true },
-        settings: { type: DT.JSON }, // { domains, allowCustomDomain, actions }
+        settings: { type: DT.JSON },
+        // Possible settings keys:
+        // settings: {
+        //   domains: ['refprofile'],
+        //   allowCustomDomain: false,
+        //   actions: [{ name: 'SIGNNFT', title: '', subTitle: '' }],
+        //   img: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA3A/wD/A...',
+        //   link: 'https://www.ref.profile/',
+        //   simpleRegLogo: '/ref/logos/simple-reg-ref-profile-log.png',
+        //   cryptoHandleSalePrice: 1.22,
+        //   cryptoHandleSaleRoeActive: false,
+        //   domainSalePrice: 33,
+        //   domainSaleRoeActive: true,
+        //   auto_bundles: false,
+        // },
+        simpleRegEnabled: { type: DT.BOOLEAN, defaultValue: false },
+        simpleRegIpWhitelist: {
+          type: DT.TEXT,
+          allowNull: false,
+          defaultValue: '',
+        },
+        apiWebhook: {
+          type: DT.STRING,
+          allowNull: true,
+        },
+        apiToken: {
+          type: DT.STRING,
+          allowNull: true,
+        },
       },
       {
         sequelize,
@@ -39,6 +67,10 @@ export class ReferrerProfile extends Base {
       foreignKey: 'refProfileId',
       sourceKey: 'id',
       as: 'refProfile',
+    });
+    this.belongsTo(FioAccountProfile, {
+      foreignKey: 'fioAccountProfileId',
+      targetKey: 'id',
     });
   }
 
