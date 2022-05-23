@@ -61,7 +61,9 @@ const ROUTES: { [route: string]: string } = {
 
   // Referrer Profile pages
   REF_PROFILE_HOME: '/ref/:refProfileCode',
-  REF_SIGN_NFT: '/ref/:refProfileCode/sign-nft',
+
+  // Contained Flow pages
+  CONTAINED_FLOW_SIGN_NFT: '/sign-nft',
 
   PRIVACY_POLICY: '/privacy-policy',
   TERMS_OF_SERVICE: '/terms-of-service',
