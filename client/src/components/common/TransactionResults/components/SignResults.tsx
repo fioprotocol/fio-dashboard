@@ -44,7 +44,11 @@ const SignResults: React.FC<ResultsProps> = props => {
         <Badge show={true} type={BADGE_TYPES.WHITE}>
           <div className={classes.badgeContainer}>
             <span className={classes.badgeItem}>Contract Address</span>
-            <span className={classes.badgeItemNext}>{contractAddress}</span>
+            <span
+              className={classnames(classes.badgeItemNext, classes.breakWord)}
+            >
+              {contractAddress}
+            </span>
           </div>
         </Badge>
       </div>
@@ -52,7 +56,11 @@ const SignResults: React.FC<ResultsProps> = props => {
         <Badge show={true} type={BADGE_TYPES.WHITE}>
           <div className={classes.badgeContainer}>
             <span className={classes.badgeItem}>URL</span>
-            <span className={classes.badgeItemNext}>{url || dashSign}</span>
+            <span
+              className={classnames(classes.badgeItemNext, classes.breakWord)}
+            >
+              {url || dashSign}
+            </span>
           </div>
         </Badge>
       </div>
