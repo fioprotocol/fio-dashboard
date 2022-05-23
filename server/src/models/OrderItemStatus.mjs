@@ -8,6 +8,8 @@ import { OrderItem } from './OrderItem.mjs';
 
 const { DataTypes: DT } = Sequelize;
 
+// This is helper table to reduce query time,
+// it is storing current status state of order items based on payments and blockchain-transactions table statuses
 export class OrderItemStatus extends Base {
   static init(sequelize) {
     super.init(
