@@ -9,7 +9,7 @@ import { RenderPurchase } from '../../components/CheckoutPurchaseContainer/Check
 import {
   CONTAINED_FLOW_ACTIONS,
   CONTAINED_FLOW_ACTIONS_TO_ROUTES,
-} from '../../constants/common';
+} from '../../constants/containedFlow';
 import { ROUTES } from '../../constants/routes';
 
 import { transformResult } from '../../util/fio';

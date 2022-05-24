@@ -4,14 +4,10 @@ import { Button } from 'react-bootstrap';
 
 import AddressDomainForm from '../../components/AddressDomainForm';
 
-import { CONTAINED_FLOW_ACTIONS, ADDRESS } from '../../constants/common';
+import { CONTAINED_FLOW_ACTION_TEXT } from '../../constants/containedFlow';
+import { ADDRESS } from '../../constants/common';
 
 import classes from './AddressWidget.module.scss';
-
-const ACTION_TEXT = {
-  [CONTAINED_FLOW_ACTIONS.SIGNNFT]:
-    'All you have to do is add a username, select a domain and sign the NFT',
-};
 
 type Props = {
   logo: React.ReactNode;
@@ -30,7 +26,7 @@ const AddressWidget: React.FC<Props> = props => {
     <div className={classnames(classes.container, classes.refContainer)}>
       <div className="mb-5">{logo}</div>
       <p className={classes.subtitle}>{subTitle}</p>
-      <p className={classes.actionInfo}>{ACTION_TEXT[action]}</p>
+      <p className={classes.actionInfo}>{CONTAINED_FLOW_ACTION_TEXT[action]}</p>
       <div className={classes.form}>
         <AddressDomainForm isHomepage={true} type={ADDRESS} />
       </div>

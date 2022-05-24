@@ -7,7 +7,7 @@ import { useHistory } from 'react-router';
 import { compose } from '../utils';
 import { useContainedFlowActionCondition } from '../hooks/containedFlow';
 
-import { CONTAINED_FLOW_ACTIONS_TO_ROUTES } from '../constants/common';
+import { CONTAINED_FLOW_ACTIONS_TO_ROUTES } from '../constants/containedFlow';
 
 import { setContainedParams } from '../redux/containedFlow/actions';
 import { containedFlowQueryParams } from '../redux/containedFlow/selectors';

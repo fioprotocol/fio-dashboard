@@ -1,5 +1,5 @@
 import { ContainedFlowQuery } from '../types';
-import { CONTAINED_FLOW_ACTIONS } from '../constants/common';
+import { CONTAINED_FLOW_ACTIONS } from '../constants/containedFlow';
 
 export const validateContainedFlowActionQuery = (
   query: ContainedFlowQuery,

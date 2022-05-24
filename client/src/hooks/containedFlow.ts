@@ -8,7 +8,7 @@ import { fioAddresses } from '../redux/fio/selectors';
 import {
   CONTAINED_FLOW_ACTIONS,
   CONTAINED_FLOW_ACTIONS_TO_ROUTES,
-} from '../constants/common';
+} from '../constants/containedFlow';
 import { ROUTES } from '../constants/routes';
 
 export const useContainedFlowActionCondition = (
