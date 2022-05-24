@@ -12,7 +12,10 @@ import useEffectOnce from '../../../../hooks/general';
 import MathOp from '../../../../util/math';
 
 import { ROUTES } from '../../../../constants/routes';
-import { WALLET_CREATED_FROM } from '../../../../constants/common';
+import {
+  DOMAIN_WRAP_NETWORKS_LIST,
+  WALLET_CREATED_FROM,
+} from '../../../../constants/common';
 
 import { TrxResponsePaidBundles } from '../../../../api/fio';
 import {
@@ -24,12 +27,9 @@ import {
 
 import classes from '../../styles/WrapDomainPage.module.scss';
 
-const NETWORK_TYPES = [
-  {
-    name: 'Polygon Network',
-    chain_code: 'POLY',
-  },
-];
+const POLYGON_NETWORK_DATA = DOMAIN_WRAP_NETWORKS_LIST.find(
+  o => o.chain_code === 'POLY',
+);
 
 const WrapDomainContainer: React.FC<ContainerProps> = props => {
   const {
@@ -109,7 +109,8 @@ const WrapDomainContainer: React.FC<ContainerProps> = props => {
 
   const initialValues: InitialValues = {
     tpid: walletFioAddresses[0]?.name,
-    chainCode: NETWORK_TYPES[0].chain_code,
+    // todo: add validation for POLYGON network on backend, like for 'ETH'
+    chainCode: POLYGON_NETWORK_DATA.chain_code,
     name: domainName,
   };
 
@@ -154,7 +155,7 @@ const WrapDomainContainer: React.FC<ContainerProps> = props => {
           <span className={classes.subtitleThin}>
             FIO domains are wrapped on the
           </span>{' '}
-          {NETWORK_TYPES[0].name}
+          {POLYGON_NETWORK_DATA.name} network
         </p>
         <p className={classes.subtitle}>
           <span className={classNames(classes.subtitleThin, classes.textSmall)}>
