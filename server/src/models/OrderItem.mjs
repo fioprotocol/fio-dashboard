@@ -6,6 +6,7 @@ import Base from './Base';
 import { Order } from './Order';
 import { Payment } from './Payment';
 import { BlockchainTransaction } from './BlockchainTransaction';
+import { BlockchainTransactionEventLog } from './BlockchainTransactionEventLog';
 import { OrderItemStatus } from './OrderItemStatus';
 
 const { DataTypes: DT } = Sequelize;
@@ -130,15 +131,16 @@ export class OrderItem extends Base {
           oi.action, 
           oi.params, 
           o."publicKey", 
+          ois."blockchainTransactionId",
           rp.label, 
           rp.tpid
-          -- fap.actor,
-          -- fap.permission
+          fap.actor,
+          fap.permission
         FROM "order-items" oi
           INNER JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
           INNER JOIN orders o ON o.id = oi."orderId"
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
-          -- LEFT JOIN "fio-account-profiles" fap.id = rp."fioAccountProfileId"
+          LEFT JOIN "fio-account-profiles" fap.id = rp."fioAccountProfileId"
         WHERE ois.status = ${Payment.STATUS.COMPLETED} 
           AND ois.status = ${status}
         ORDER BY oi.id
@@ -146,6 +148,50 @@ export class OrderItem extends Base {
       `);
 
     return actions;
+  }
+
+  static async setPending(tx, orderItemId, blockchainTransactionId) {
+    return Sequelize.sequelize.transaction(async t => {
+      await BlockchainTransaction.update(
+        {
+          // expiration: expiration + 'Z',
+          txId: tx.transaction_id,
+          blockNum: tx.block_num,
+          blockTime: tx.block_time + 'Z',
+          status: BlockchainTransaction.STATUS.PENDING,
+        },
+        {
+          where: {
+            id: blockchainTransactionId,
+            orderItemId,
+            status: BlockchainTransaction.STATUS.READY,
+          },
+          transaction: t,
+        },
+      );
+
+      await BlockchainTransactionEventLog.create(
+        {
+          status: BlockchainTransaction.STATUS.PENDING,
+          blockchainTransactionId,
+        },
+        { transaction: t },
+      );
+
+      await OrderItemStatus.update(
+        {
+          status: BlockchainTransaction.STATUS.PENDING,
+        },
+        {
+          where: {
+            orderItemId,
+            blockchainTransactionId,
+            status: BlockchainTransaction.STATUS.READY,
+          },
+          transaction: t,
+        },
+      );
+    });
   }
 
   static format({ id }) {
