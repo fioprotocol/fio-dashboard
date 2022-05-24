@@ -7,6 +7,12 @@
   color: white;
   text-align: center;
   padding: 9% 25px 0;
+  width: 100%;
+  
+  .logoImg {
+    max-width: 380px;
+    max-height: 115px;
+  }
 
   .title {
     color: white;
@@ -33,21 +39,6 @@
     letter-spacing: 0.075em;
   }
 
-  .signInCallToAction {
-    @include sf-pro-display-regular;
-    font-size: 14px;
-    padding: 20px 40px;
-    background-color: $badge-background;
-    border-radius: 10px;
-    max-width: 75%;
-    letter-spacing: 0.075em;
-
-    button {
-      font-size: 12px;
-      letter-spacing: 0.05em;
-    }
-  }
-
   .form {
     margin: 3% 0 0;
   }
@@ -67,11 +58,6 @@
 
     .actionInfo {
       font-size: 14px;
-    }
-
-    .signInCallToAction {
-      font-size: 12px;
-      max-width: 100%;
     }
 
     .bottom {
@@ -110,14 +96,13 @@
     .bottom {
       height: 30px;
     }
-
-    .signInCallToAction {
-      font-size: 12px;
-      max-width: 100%;
-    }
   }
 }
 
 .refContainer {
+  min-height: 75vh;
+}
+
+.hasMinHeight {
   min-height: 75vh;
 }

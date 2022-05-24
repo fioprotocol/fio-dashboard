@@ -13,7 +13,7 @@ import apis from '../../api';
 
 import { autoLogin, AutoLoginParams } from '../../util/login';
 
-import { CONTAINED_FLOW_SUBTITLES } from '../../constants/containedFlow';
+import { CONTAINED_FLOW_LOGIN_SUBTITLES } from '../../constants/containedFlow';
 import {
   EmailConfirmationResult,
   LastAuthData,
@@ -75,7 +75,7 @@ const LoginForm: React.FC<Props> = props => {
     emailConfirmationResult.stateData?.containedFlowQueryParams?.action
   ) {
     subtitle =
-      CONTAINED_FLOW_SUBTITLES[
+      CONTAINED_FLOW_LOGIN_SUBTITLES[
         emailConfirmationResult.stateData.containedFlowQueryParams.action
       ];
   }

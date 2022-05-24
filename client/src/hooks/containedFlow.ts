@@ -11,8 +11,10 @@ import {
 } from '../constants/containedFlow';
 import { ROUTES } from '../constants/routes';
 
+import { compareContainedFlowAction } from '../util/containedFlow';
+
 export const useContainedFlowActionCondition = (
-  actionFlowType: string,
+  containedFlowAction: string,
 ): boolean => {
   const fioAddressesAmount = useSelector(fioAddresses).length;
   const isAuth = useSelector(isAuthenticated);
@@ -22,7 +24,12 @@ export const useContainedFlowActionCondition = (
   const ACTION_ROUTES_LIST = Object.values(CONTAINED_FLOW_ACTIONS_TO_ROUTES);
 
   useEffect(() => {
-    if (actionFlowType === CONTAINED_FLOW_ACTIONS.SIGNNFT) {
+    if (
+      compareContainedFlowAction(
+        containedFlowAction,
+        CONTAINED_FLOW_ACTIONS.SIGNNFT,
+      )
+    ) {
       updateActionCondition(
         isAuth &&
           fioAddressesAmount > 0 &&
@@ -31,7 +38,7 @@ export const useContainedFlowActionCondition = (
       );
     }
   }, [
-    actionFlowType,
+    containedFlowAction,
     isAuth,
     fioAddressesAmount,
     pathname,
