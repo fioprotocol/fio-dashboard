@@ -14,6 +14,10 @@
   &.blackLight, &.blackWhite {
     color: $dark-jungle-green;
   }
+
+  &.lightBlack, .whiteBlack {
+    color: $white;
+  }
 }
 
 .doubleIcon {
