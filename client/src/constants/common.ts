@@ -86,6 +86,13 @@ export const NFT_CHAIN_CODE_LIST = [
   { id: 'WAX', name: 'WAXP' },
 ];
 
+export const DOMAIN_WRAP_NETWORKS_LIST = [
+  {
+    name: 'Polygon',
+    chain_code: 'POLY',
+  },
+];
+
 export const CHAIN_CODES = {
   FIO: 'FIO',
   BTC: 'BTC',
