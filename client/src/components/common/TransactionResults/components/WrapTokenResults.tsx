@@ -9,6 +9,7 @@ import Amount from '../../Amount';
 
 import { FIO_CHAIN_CODE } from '../../../../constants/fio';
 import { ResultsProps } from '../types';
+import { AnyType } from '../../../../types';
 
 import classes from '../styles/Results.module.scss';
 
@@ -20,7 +21,7 @@ type ResultsData = {
   publicAddress: string;
   feeCollectedAmount: number;
   nativeFeeCollectedAmount: number;
-  other?: any;
+  other?: { transaction_id?: string } & AnyType;
   error?: string | null;
 };
 
@@ -83,9 +84,7 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
             {name ? 'domain' : 'tokens'} will not be immediately available in
             your wallet. <br /> Please check the{' '}
             <a
-              href={`${
-                process.env.REACT_APP_FIO_BLOCKS_TX_URL
-              }${transaction_id as string}`}
+              href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transaction_id}`}
               target="_blank"
               rel="noreferrer"
             >
@@ -140,9 +139,7 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
           <p className={classes.title}>ID</p>
           <p className={classnames(classes.item, classes.isBlue)}>
             <a
-              href={`${
-                process.env.REACT_APP_FIO_BLOCKS_TX_URL
-              }${transaction_id as string}`}
+              href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transaction_id}`}
               target="_blank"
               rel="noreferrer"
             >
