@@ -3,7 +3,7 @@ import { put, takeEvery, select } from 'redux-saga/effects';
 import {
   CONTAINED_FLOW_STEPS,
   CONTAINED_FLOW_ACTIONS,
-} from '../../constants/common';
+} from '../../constants/containedFlow';
 import { setStep } from './actions';
 import { LOGIN_SUCCESS } from '../profile/actions';
 

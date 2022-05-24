@@ -1,7 +1,7 @@
 import { validateContainedFlowActionQuery } from '../../util/containedFlow';
 import { log } from '../../util/general';
 
-import { CONTAINED_FLOW_ACTIONS } from '../../constants/common';
+import { CONTAINED_FLOW_ACTIONS } from '../../constants/containedFlow';
 
 import { ContainedFlowQuery, ContainedFlowQueryParams } from '../../types';
 import { CommonAction } from '../types';
