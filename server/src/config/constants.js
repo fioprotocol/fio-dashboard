@@ -47,10 +47,34 @@ const FIO_ACTIONS = {
   unStakeFioTokens: 'unStakeFioTokens',
 };
 
+const FIO_ACTIONS_TO_END_POINT_KEYS = {
+  [FIO_ACTIONS.requestFunds]: 'newFundsRequest',
+  [FIO_ACTIONS.registerFioAddress]: 'registerFioAddress',
+  [FIO_ACTIONS.registerFioDomain]: 'registerFioDomain',
+  [FIO_ACTIONS.renewFioDomain]: 'renewFioDomain',
+  [FIO_ACTIONS.addPublicAddresses]: 'addPubAddress',
+  [FIO_ACTIONS.removeAllPublicAddresses]: 'removeAllPubAddresses',
+  [FIO_ACTIONS.removePublicAddresses]: 'removePubAddress',
+  [FIO_ACTIONS.setFioDomainVisibility]: 'setFioDomainPublic',
+  [FIO_ACTIONS.rejectFundsRequest]: 'rejectFundsRequest',
+  [FIO_ACTIONS.recordObtData]: 'recordObtData',
+  [FIO_ACTIONS.transferTokens]: 'transferTokens',
+  [FIO_ACTIONS.pushTransaction]: 'pushTransaction',
+  [FIO_ACTIONS.transferFioAddress]: 'transferFioAddress',
+  [FIO_ACTIONS.transferFioDomain]: 'transferFioDomain',
+  [FIO_ACTIONS.stakeFioTokens]: 'pushTransaction',
+  [FIO_ACTIONS.unStakeFioTokens]: 'pushTransaction',
+  [FIO_ACTIONS.addBundledTransactions]: 'addBundledTransactions',
+};
+
+const FIO_ADDRESS_DELIMITER = '@';
+
 module.exports = {
   WALLET_CREATED_FROM,
   DOMAIN_EXP_PERIOD,
   EXPIRING_DOMAINS_EMAIL_SUBJECTS,
   EXPIRING_DOMAINS_EMAIL_TITLE,
   FIO_ACTIONS,
+  FIO_ACTIONS_TO_END_POINT_KEYS,
+  FIO_ADDRESS_DELIMITER,
 };
