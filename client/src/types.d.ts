@@ -5,6 +5,8 @@ import { LocationState, Path } from 'history';
 
 import { FIOSDK_LIB } from './api/fio';
 
+import { CONTAINED_FLOW_ACTIONS } from './constants/containedFlow';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Unknown = any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,6 +17,8 @@ export type AnyType = any;
 export type OwnPropsAny = any; // todo: fix usages for ownProps
 
 export type Domain = { domain: string; free?: boolean };
+
+type ContainedFlowActionSettingsKey = keyof typeof CONTAINED_FLOW_ACTIONS;
 
 export type CartItem = {
   address?: string;
@@ -274,7 +278,14 @@ export type RefProfile = {
   settings: {
     domains: string[];
     allowCustomDomain: boolean;
-    actions: string[];
+    actions: Record<
+      ContainedFlowActionSettingsKey,
+      {
+        subtitle: string;
+        title: string;
+      }
+    >;
+
     img: string;
     link: string;
   };
@@ -302,12 +313,12 @@ export type SignNFTParams = {
 };
 
 export type ContainedFlowQuery = {
-  action: string;
+  action: ContainedFlowActionSettingsKey;
   r: string;
 } & SignNFTQuery;
 
 export type ContainedFlowQueryParams = {
-  action: string;
+  action: ContainedFlowActionSettingsKey;
   r: string;
 } & (SignNFTParams | {});
 

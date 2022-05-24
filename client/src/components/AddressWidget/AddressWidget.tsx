@@ -2,6 +2,12 @@ import React, { ReactNode } from 'react';
 import classnames from 'classnames';
 
 import AddressDomainForm from '../../components/AddressDomainForm';
+import SignInWidget from '../SignInWidget';
+
+import TitleComponent from './components/TitleComponent';
+import SubtitleComponent from './components/SubtitleComponent';
+import ActionTextComponent from './components/ActionTextComponent';
+import PlugComponent from './components/PlugComponent';
 
 import { ADDRESS } from '../../constants/common';
 
@@ -11,28 +17,41 @@ type Props = {
   links?: {
     getCryptoHandle: string | ReactNode;
   };
+  logoSrc?: string;
+  title?: string | ReactNode;
+  subtitle?: string;
+  actionText?: string;
+  hasMinHeight?: boolean;
+  showSignInWidget?: boolean;
+  hideBottomPlug?: boolean;
 };
 
 const AddressWidget: React.FC<Props> = props => {
+  const {
+    logoSrc,
+    title,
+    subtitle,
+    actionText,
+    hasMinHeight,
+    showSignInWidget,
+    hideBottomPlug,
+  } = props;
+
   return (
-    <div className={classes.container}>
-      <h1 className={classes.title}>
-        <span className="boldText">Hi!</span> Get Your{' '}
-        <span className={classes.newLine}>
-          <span className={classnames(classes.coloredText, 'boldText')}>
-            FIO Crypto Handle
-          </span>{' '}
-          Now
-        </span>
-      </h1>
-      <p className={classes.subtitle}>
-        Registering a FIO Crypto Handle is fast and easy. Simply add a username
-        and select a domain.
-      </p>
+    <div
+      className={classnames(
+        classes.container,
+        hasMinHeight && classes.hasMinHeight,
+      )}
+    >
+      <TitleComponent logoSrc={logoSrc} title={title} />
+      <SubtitleComponent subtitle={subtitle} />
+      <ActionTextComponent actionText={actionText} />
       <div className={classes.form}>
         <AddressDomainForm isHomepage={true} type={ADDRESS} {...props} />
       </div>
-      <div className={classes.bottom} />
+      <SignInWidget show={showSignInWidget} />
+      <PlugComponent show={!hideBottomPlug} />
     </div>
   );
 };

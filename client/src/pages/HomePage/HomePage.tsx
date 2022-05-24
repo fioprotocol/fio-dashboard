@@ -5,28 +5,45 @@ import AddressWidget from '../../components/AddressWidget';
 import DomainsBanner from '../../components/DomainsBanner/DomainsBanner';
 import DashboardPage from '../DashboardPage';
 
+import { handleHomePageContent } from '../../util/homePage';
+
+import { RefProfile, ContainedFlowQueryParams } from '../../types';
+
 import classnames from './HomePage.module.scss';
 
 type Props = {
   isAuthenticated: boolean;
-  isRefFlow: boolean;
+  isContainedFlow: boolean;
   homePageLink: string;
+  refProfileInfo: RefProfile;
+  containedFlowQueryParams: ContainedFlowQueryParams;
 };
 
 const HomePage: React.FC<Props & RouteComponentProps> = props => {
-  // const { isAuthenticated, isRefFlow, homePageLink } = props;
-  const { isAuthenticated } = props;
+  const {
+    isAuthenticated,
+    isContainedFlow,
+    refProfileInfo,
+    containedFlowQueryParams,
+    // homePageLink,
+  } = props;
 
-  // todo: handle redirect on contained flow
-  // if (isRefFlow) return <Redirect to={homePageLink} />;
+  const addressWidgetContent = handleHomePageContent({
+    isContainedFlow,
+    containedFlowQueryParams,
+    refProfileInfo,
+  });
 
-  if (!isAuthenticated)
+  if (isContainedFlow) return <AddressWidget {...addressWidgetContent} />;
+
+  if (!isAuthenticated) {
     return (
       <div className={classnames.container}>
-        <AddressWidget />
+        <AddressWidget {...addressWidgetContent} />
         <DomainsBanner />
       </div>
     );
+  }
 
   return <DashboardPage />;
 };

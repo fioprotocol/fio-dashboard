@@ -5,14 +5,21 @@ import { withRouter } from 'react-router-dom';
 import { compose } from '../../utils';
 
 import { isAuthenticated } from '../../redux/profile/selectors';
-import { isRefFlow, homePageLink } from '../../redux/refProfile/selectors';
+import {
+  isContainedFlow,
+  containedFlowQueryParams,
+} from '../../redux/containedFlow/selectors';
+import { refProfileInfo } from '../../redux/refProfile/selectors';
+import { homePageLink } from '../../redux/refProfile/selectors';
 
 import HomePage from './HomePage';
 
 const reduxConnect = connect(
   createStructuredSelector({
     isAuthenticated,
-    isRefFlow,
+    isContainedFlow,
+    refProfileInfo,
+    containedFlowQueryParams,
     homePageLink,
   }),
   {},
