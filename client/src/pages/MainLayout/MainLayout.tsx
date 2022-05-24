@@ -12,7 +12,7 @@ import TwoFactorApproveModal from '../../components/TwoFactorApproveModal';
 import { useCheckIfDesktop } from '../../screenType';
 import AutoLogout from '../../services/AutoLogout';
 import CartTimeout from '../../services/CartTimeout';
-import RefFlow from '../../services/RefFlow';
+import Ref from '../../services/Ref';
 import Roe from '../../services/Roe';
 import TxHistoryService from '../../services/TxHistory';
 import WalletsDataFlow from '../../services/WalletsDataFlow';
@@ -69,7 +69,7 @@ const MainLayout: React.FC<Props> = props => {
       <MainHeader />
       <CartTimeout />
       <AutoLogout />
-      <RefFlow />
+      <Ref />
       <Roe />
       <ContainedFlow />
       {isAuthenticated && <WalletsDataFlow />}
