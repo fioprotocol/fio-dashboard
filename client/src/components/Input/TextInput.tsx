@@ -20,6 +20,7 @@ import {
 import { useFieldElemActiveState } from '../../util/hooks';
 
 import classes from './Input.module.scss';
+import metamaskIcon from '../../assets/images/metamask.svg';
 
 export const INPUT_UI_STYLES = {
   BLACK_LIGHT: 'blackLight',
@@ -35,6 +36,7 @@ export type TextInputProps = {
   onClose?: (isOpen: boolean) => void;
   hideError?: boolean;
   showConnectWalletButton?: boolean;
+  connectWalletModalText?: string;
   showPasteButton?: boolean;
   loading?: boolean;
   uiType?: string;
@@ -85,6 +87,7 @@ export const TextInput: React.ForwardRefRenderFunction<
     isLowHeight,
     label,
     showConnectWalletButton,
+    connectWalletModalText,
     ...rest
   } = props;
   const {
@@ -103,6 +106,9 @@ export const TextInput: React.ForwardRefRenderFunction<
   const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
 
   const [showPass, toggleShowPass] = useState(false);
+
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
+
   const [isInputHasValue, toggleIsInputHasValue] = useState(value !== '');
   const [
     fieldElemActive,
@@ -168,6 +174,7 @@ export const TextInput: React.ForwardRefRenderFunction<
             showPasteButton && classes.hasPasteButton,
             type === 'password' && classes.doubleIconInput,
             isLowHeight && classes.lowHeight,
+            isWalletConnected ? classes.dark : '',
           )}
         >
           <PrefixLabel
@@ -175,6 +182,16 @@ export const TextInput: React.ForwardRefRenderFunction<
             isVisible={!(active || !value)}
             uiType={uiType}
           />
+          {isWalletConnected ? (
+            <>
+              <img
+                src={metamaskIcon}
+                className={classes.connectedWalletIcon}
+                alt="metamask"
+              />
+              <div className={classes.fullCircle} />
+            </>
+          ) : null}
           <DebounceInput
             inputRef={ref}
             debounceTimeout={debounceTimeout}
@@ -186,13 +203,16 @@ export const TextInput: React.ForwardRefRenderFunction<
             }}
             type={showPass ? 'text' : type}
             data-clear={isInputHasValue}
-            disabled={disabled}
+            disabled={disabled || isWalletConnected}
+            className={isWalletConnected ? classes.dark : ''}
           />
         </div>
         <ConnectWalletButton
           isVisible={showConnectWalletButton}
           handleAddressChange={input.onChange}
           inputValue={value}
+          setIsWalletConnected={setIsWalletConnected}
+          description={connectWalletModalText}
         />
         <ClearButton
           isVisible={(isInputHasValue || !!onClose) && !disabled && !loading}
@@ -200,8 +220,9 @@ export const TextInput: React.ForwardRefRenderFunction<
           onClose={onClose}
           inputType={type}
           isBW={isBW}
+          isBigDoubleIcon={showConnectWalletButton && !isWalletConnected}
           disabled={disabled}
-          uiType={uiType}
+          uiType={isWalletConnected ? 'whiteBlack' : uiType}
         />
         <ShowPasswordIcon
           isVisible={isInputHasValue && type === 'password'}
