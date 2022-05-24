@@ -14,7 +14,7 @@ import { ActionButtonProps } from '../types';
 import classes from './ActionButtons.module.scss';
 
 import icon from '../../../assets/images/timelapse_white_24dp.svg'; // todo: remove after changing library to google material
-import infinityIcon from '../../../assets/images/infinity_white.svg';
+import wrapIcon from '../../../assets/images/wrap.svg';
 
 export const RenderAddBundles: React.FC<{
   name: string;
@@ -68,7 +68,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
       className={classes.actionButton}
     >
       <Button title={isSmallDesktop ? BUTTONS_TITLE.wrap : ''}>
-        <img src={infinityIcon} alt="infinity" />
+        <img src={wrapIcon} alt="wrap" />
         {!isSmallDesktop && BUTTONS_TITLE.wrap}
       </Button>
     </Link>
