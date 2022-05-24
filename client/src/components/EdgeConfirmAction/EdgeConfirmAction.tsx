@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useCallback, useState } from 'react';
 import Processing from '../../components/common/TransactionProcessing';
 
 import { waitForEdgeAccountStop } from '../../util/edge';
+import { removeExtraCharactersFromString } from '../../util/general';
 
 import { PinConfirmation } from '../../types';
 import { Props } from './types';
@@ -73,7 +74,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
 
           fioExecutedAction({
             ...result,
-            executeActionType: action,
+            executeActionType: removeExtraCharactersFromString(action),
           });
 
           setConfirmPinKeys(null);

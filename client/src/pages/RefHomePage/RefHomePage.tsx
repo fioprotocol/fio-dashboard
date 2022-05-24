@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react';
 
 import { RouteComponentProps } from 'react-router-dom';
 
-import RefAddressWidget from '../../components/AddressWidget/RefAddressWidget';
+import AddressWidget from '../../components/AddressWidget';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import FioAddressPage from '../FioAddressPage';
+
+import { CONTAINED_FLOW_ACTION_TEXT } from '../../constants/containedFlow';
 
 import classnames from './RefHomePage.module.scss';
 import {
@@ -29,11 +31,9 @@ type Location = {
 type Props = {
   isAuthenticated: boolean;
   loading: boolean;
-  edgeAuthLoading: boolean;
   refProfileInfo: RefProfile;
   containedFlowQueryParams: ContainedFlowQueryParams;
   refLinkError: string | null;
-  showLoginModal: () => void;
 };
 
 export const RefHomePage: React.FC<Props &
@@ -44,9 +44,7 @@ export const RefHomePage: React.FC<Props &
     containedFlowQueryParams,
     isAuthenticated,
     loading,
-    edgeAuthLoading,
     refLinkError,
-    showLoginModal,
   } = props;
   useNonActiveUserRedirect();
   const [hideLoader, setHideLoader] = useState(false);
@@ -96,19 +94,15 @@ export const RefHomePage: React.FC<Props &
     if (!isAuthenticated) {
       return (
         <div className={classnames.container}>
-          <RefAddressWidget
-            logo={
-              <img
-                src={refProfileInfo.settings.img}
-                className={classnames.refImg}
-                alt=""
-              />
-            }
+          <AddressWidget
+            logoSrc={refProfileInfo.settings.img}
             title={refProfileInfo.title}
-            subTitle={refProfileInfo.subTitle}
-            action={containedFlowQueryParams?.action}
-            edgeAuthLoading={edgeAuthLoading}
-            showLoginModal={showLoginModal}
+            subtitle={refProfileInfo.subTitle}
+            actionText={
+              CONTAINED_FLOW_ACTION_TEXT[containedFlowQueryParams?.action]
+            }
+            showSignInWidget={true}
+            hideBottomPlug={true}
           />
         </div>
       );
