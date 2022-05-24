@@ -19,7 +19,7 @@ export type ResultsData = {
   publicAddress: string;
   feeCollectedAmount: number;
   nativeFeeCollectedAmount: number;
-  other?: any;
+  other?: { transaction_id?: string };
   error?: string | null;
 };
 
