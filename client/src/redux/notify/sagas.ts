@@ -16,10 +16,10 @@ import { LIST_FAILURE as NOTIFICATIONS_LIST_FAILURE } from '../notifications/act
 import { CAPTCHA_FAILURE } from '../registrations/actions';
 import { GET_ALL_PUBLIC_ADDRESS_FAILURE } from '../fio/actions';
 import { showGenericErrorModal } from '../modal/actions';
-import { homePageLink as getHomePageLink } from '../refProfile/selectors';
 import { showGenericError as getShowGenericError } from '../modal/selectors';
 
 import { ErrorData } from './constants';
+import { ROUTES } from '../../constants/routes';
 
 import { Action } from '../types';
 
@@ -66,10 +66,7 @@ export function* notify(history: History): Generator {
       action.error.fields &&
       action.error.fields.token === 'WRONG_TOKEN'
     ) {
-      const homePageLink: ReturnType<typeof getHomePageLink> = yield select(
-        getHomePageLink,
-      );
-      yield put<Action>(logout({ history }, homePageLink));
+      yield put<Action>(logout({ history }, ROUTES.HOME));
     }
   });
 }

@@ -19,9 +19,10 @@ import { cartItems } from '../../redux/cart/selectors';
 import {
   refProfileInfo,
   loading as refProfileLoading,
-  homePageLink,
 } from '../../redux/refProfile/selectors';
 import { isContainedFlow } from '../../redux/containedFlow/selectors';
+
+import { ROUTES } from '../../constants/routes';
 
 import MainHeader from './MainHeader';
 
@@ -41,7 +42,6 @@ const selector = createStructuredSelector({
   cartItems,
   refProfileInfo,
   refProfileLoading,
-  homePageLink,
   fioAddresses,
   locationState,
   isContainedFlow,
@@ -54,7 +54,7 @@ const actions = (
   showLoginModal: () => dispatch(showLoginModal()),
   logout: () => {
     const { history } = ownProps;
-    dispatch(logout({ history }, ownProps.homePageLink));
+    dispatch(logout({ history }, ROUTES.HOME));
     dispatch(resetLastAuthData());
   },
 });

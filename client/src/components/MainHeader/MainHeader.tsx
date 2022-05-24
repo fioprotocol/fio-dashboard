@@ -6,6 +6,8 @@ import classnames from 'classnames';
 import RegularNav from './components/RegularNav';
 import LoggedNav from './components/LoggedNav';
 
+import { ROUTES } from '../../constants/routes';
+
 import classes from './MainHeader.module.scss';
 
 import { MainHeaderProps } from './types';
@@ -20,7 +22,6 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     locationState,
     fioAddresses,
     refProfileLoading,
-    homePageLink,
     isContainedFlow,
   } = props;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
@@ -61,7 +62,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
 
   return (
     <div className={classnames(classes.header, isMenuOpen && classes.isOpen)}>
-      <Link to={homePageLink}>
+      <Link to={ROUTES.HOME}>
         <div className={classes.logo} onClick={closeMenu} />
       </Link>
       {isAuthenticated ? (
