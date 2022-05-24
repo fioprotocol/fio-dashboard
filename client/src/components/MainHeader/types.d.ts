@@ -13,7 +13,6 @@ export type MainHeaderProps = {
   isNotActiveUser: boolean;
   pathname: string;
   locationState?: PrivateRedirectLocationState;
-  homePageLink: string;
   user: User;
   edgeContextSet: boolean;
   profileLoading: boolean;
