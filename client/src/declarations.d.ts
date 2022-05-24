@@ -6,6 +6,7 @@ declare namespace JSX {
 
 interface Window {
   initGeetest?: any;
+  ethereum?: any;
 }
 
 declare module '@fioprotocol/fiosdk';
