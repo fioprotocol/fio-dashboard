@@ -104,8 +104,13 @@ export function* profileSuccess(): Generator {
 }
 
 export function* logoutSuccess(history: History, api: Api): Generator {
-  yield takeEvery(LOGOUT_SUCCESS, function() {
+  yield takeEvery(LOGOUT_SUCCESS, function(action: Action) {
     api.client.removeToken();
+
+    const { redirect } = action;
+
+    if (redirect) history.push(redirect, {});
+    if (!redirect) history.replace(ROUTES.HOME, {});
   });
 }
 
