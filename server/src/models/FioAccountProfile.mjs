@@ -49,6 +49,12 @@ export class FioAccountProfile extends Base {
     });
   }
 
+  static getDefault() {
+    return this.getItem({
+      where: { isDefault: true },
+    });
+  }
+
   static format({ id, name, actor, permission, isDefault }) {
     return {
       id,
