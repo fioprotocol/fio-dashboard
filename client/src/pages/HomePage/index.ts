@@ -10,7 +10,6 @@ import {
   containedFlowQueryParams,
 } from '../../redux/containedFlow/selectors';
 import { refProfileInfo } from '../../redux/refProfile/selectors';
-import { homePageLink } from '../../redux/refProfile/selectors';
 
 import HomePage from './HomePage';
 
@@ -20,7 +19,6 @@ const reduxConnect = connect(
     isContainedFlow,
     refProfileInfo,
     containedFlowQueryParams,
-    homePageLink,
   }),
   {},
 );

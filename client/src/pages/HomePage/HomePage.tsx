@@ -14,7 +14,6 @@ import classnames from './HomePage.module.scss';
 type Props = {
   isAuthenticated: boolean;
   isContainedFlow: boolean;
-  homePageLink: string;
   refProfileInfo: RefProfile;
   containedFlowQueryParams: ContainedFlowQueryParams;
 };
@@ -25,7 +24,6 @@ const HomePage: React.FC<Props & RouteComponentProps> = props => {
     isContainedFlow,
     refProfileInfo,
     containedFlowQueryParams,
-    // homePageLink,
   } = props;
 
   const addressWidgetContent = handleHomePageContent({
