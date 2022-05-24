@@ -13,7 +13,7 @@ import apis from '../../api';
 
 import { autoLogin, AutoLoginParams } from '../../util/login';
 
-import { CONTAINED_FLOW_ACTIONS } from '../../constants/common';
+import { CONTAINED_FLOW_SUBTITLES } from '../../constants/containedFlow';
 import {
   EmailConfirmationResult,
   LastAuthData,
@@ -51,10 +51,6 @@ type Props = {
   emailConfirmationResult: EmailConfirmationResult;
 };
 
-const CONTAINED_SUBTITLES = {
-  [CONTAINED_FLOW_ACTIONS.SIGNNFT]: 'Sign in to complete signing your NFT',
-};
-
 const LoginForm: React.FC<Props> = props => {
   const {
     show,
@@ -79,7 +75,7 @@ const LoginForm: React.FC<Props> = props => {
     emailConfirmationResult.stateData?.containedFlowQueryParams?.action
   ) {
     subtitle =
-      CONTAINED_SUBTITLES[
+      CONTAINED_FLOW_SUBTITLES[
         emailConfirmationResult.stateData.containedFlowQueryParams.action
       ];
   }

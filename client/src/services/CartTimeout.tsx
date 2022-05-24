@@ -11,7 +11,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 
 import { BADGE_TYPES } from '../components/Badge/Badge';
 import { ACTIONS } from '../components/Notifications/Notifications';
-import { CONTAINED_FLOW_ACTIONS } from '../constants/common';
+import { CONTAINED_FLOW_NOTIFICATION_MESSAGES } from '../constants/containedFlow';
 import { ROUTES } from '../constants/routes';
 import { NOTIFICATIONS_CONTENT } from '../constants/notifications';
 
@@ -36,10 +36,6 @@ import { CartItem, ContainedFlowQueryParams } from '../types';
 const INTERVAL = 200;
 const CART_TIMEOUT = 1000 * 60 * 30; // 30 min
 const MIN = 1000 * 60;
-const CONTAINED_FLOW_MESSAGES = {
-  [CONTAINED_FLOW_ACTIONS.SIGNNFT]:
-    'please add your FIO Crypto Handle again, and purchase in order to complete your NFT signing',
-};
 
 type Props = {
   cartItems: CartItem[];
@@ -110,7 +106,7 @@ const CartTimeout: React.FC<Props> = props => {
       title: NOTIFICATIONS_CONTENT.CART_TIMEOUT.title,
       message:
         isContainedFlow && containedFlowAction != null
-          ? `${NOTIFICATIONS_CONTENT.CART_TIMEOUT.message}, ${CONTAINED_FLOW_MESSAGES[containedFlowAction]}.`
+          ? `${NOTIFICATIONS_CONTENT.CART_TIMEOUT.message}, ${CONTAINED_FLOW_NOTIFICATION_MESSAGES[containedFlowAction]}.`
           : `${NOTIFICATIONS_CONTENT.CART_TIMEOUT.message}. Add your items again.`,
       pagesToShow: [
         ROUTES.CART,

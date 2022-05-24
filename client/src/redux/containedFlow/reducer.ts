@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import * as actions from './actions';
 import { CONFIRM_EMAIL_SUCCESS } from '../profile/actions';
 
-import { CONTAINED_FLOW_STEPS } from '../../constants/common';
+import { CONTAINED_FLOW_STEPS } from '../../constants/containedFlow';
 
 import { ContainedFlowQueryParams } from '../../types';
 
