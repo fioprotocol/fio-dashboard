@@ -86,6 +86,7 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
               errorColor={COLOR_TYPE.WARN}
               component={TextInput}
               showConnectWalletButton
+              connectWalletModalText="Please connect your wallet in order to wrap and receive your wrapped FIO domain."
               showPasteButton
               placeholder="Paste Public Address or Connect a Wallet"
               label="Public Address"

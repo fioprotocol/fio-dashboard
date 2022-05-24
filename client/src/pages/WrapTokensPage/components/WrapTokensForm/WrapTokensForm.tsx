@@ -105,6 +105,7 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
               errorColor={COLOR_TYPE.WARN}
               component={TextInput}
               showConnectWalletButton
+              connectWalletModalText="Please connect your wallet in order to wrap and receive your FIO tokens."
               showPasteButton
               placeholder="Paste Public Address or Connect a Wallet"
               label="Public Address"
