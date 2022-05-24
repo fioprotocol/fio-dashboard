@@ -1,93 +1,101 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import Web3Modal from 'web3modal';
-import { providers } from 'ethers';
+import { ethers } from 'ethers';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 import { Web3Provider } from '@ethersproject/providers/src.ts/web3-provider';
 
-import { log } from '../../util/general';
+import ModalComponent from '../Modal/Modal';
+import DangerModal from '../Modal/DangerModal';
 
+import { log } from '../../util/general';
 import { AnyObject } from '../../types';
 
 import classes from './../Input/Input.module.scss';
 
+import metamaskIcon from '../../assets/images/metamask.svg';
+
 type Props = {
   isVisible?: boolean;
   handleAddressChange?: (address: string) => void;
+  setIsWalletConnected?: (value: boolean) => void;
   inputValue?: string;
+  description?: string;
 };
-
-const providerOptions = {
-  // other providers could be added here
-};
-
-const web3Modal = new Web3Modal({
-  network: 'mainnet',
-  cacheProvider: false,
-  disableInjectedProvider: false,
-  theme: 'dark',
-  providerOptions,
-});
 
 const ConnectWalletButton: React.FC<Props> = props => {
-  const { handleAddressChange, inputValue, isVisible } = props;
+  const {
+    handleAddressChange,
+    inputValue,
+    isVisible,
+    setIsWalletConnected,
+    description = 'Please connect your Polygon wallet with the wFio domain that you would like to unwrap to the FIO network.',
+  } = props;
 
+  // todo: add types from "@metamask/providers" module and check why it breaks "edge-currency-accountbased" types declaration
   const [provider, setProvider] = useState<AnyObject>(null);
-  const [web3Provider, setWeb3Provider] = useState<Web3Provider | null>(null);
+  const [web3Provider, setWeb3Provider] = useState<Web3Provider>(null);
+
   const [address, setAddress] = useState<string | null>(null);
-  // will be useful for future more than one token chain case
-  // const [chainId, setChainId] = useState(null);
   const [error, setError] = useState<Error | null>(null);
+  const [
+    showBrowserExtensionErrorModal,
+    setShowBrowserExtensionErrorModal,
+  ] = useState<boolean>(false);
   const [isFormInputFilled, setIsFormInputFilled] = useState<boolean>(false);
+  const [
+    showSelectProviderModalVisible,
+    setShowSelectProviderModalVisible,
+  ] = useState<boolean>(false);
+
+  useEffect(() => {
+    setProvider(new ethers.providers.Web3Provider(window.ethereum));
+  }, []);
 
   const connectWallet = useCallback(async () => {
-    try {
-      // This is the initial `provider` that is returned when
-      // using web3Modal to connect. Can be MetaMask or WalletConnect.
-      const provider = await web3Modal.connect();
+    if (!window.ethereum) {
+      setShowBrowserExtensionErrorModal(true);
+      log.error('!window.ethereum');
+      return;
+    }
 
-      // We plug the initial `provider` into ethers.js and get back
-      // a Web3Provider. This will add on methods from ethers.js and
-      // event listeners such as `.on()` will be different.
-      const web3Provider = new providers.Web3Provider(provider);
+    const provider = window.ethereum;
+    const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+
+    try {
+      await provider.request({
+        method: 'eth_requestAccounts',
+      });
 
       const signer = web3Provider.getSigner();
       const address = await signer.getAddress();
 
-      // will be useful for future more than one token chain case
-      // const network = await web3Provider.getNetwork();
-      // setChainId(network.chainId);
-
-      setProvider(provider);
+      setProvider(window.ethereum);
       setWeb3Provider(web3Provider);
       setAddress(address);
+
+      setShowSelectProviderModalVisible(false);
+      setIsWalletConnected(true);
     } catch (error) {
       setError(error);
     }
-  }, []);
+  }, [setIsWalletConnected]);
 
-  const handleDisconnect = async (provider: AnyObject) => {
-    await web3Modal.clearCachedProvider();
+  const handleDisconnect = async (
+    provider: AnyObject,
+    setIsWalletConnectedStateInInput: (val?: boolean) => void,
+  ) => {
     if (provider?.disconnect && typeof provider.disconnect === 'function') {
       await provider.disconnect();
     }
     setProvider(null);
-    setWeb3Provider(null);
     setAddress(null);
-    // will be useful for future more than one token chain case
-    // setChainId(null);
     setError(null);
+    setIsWalletConnectedStateInInput(false);
   };
-  const disconnectWallet = useCallback(async () => {
-    return handleDisconnect(provider);
-  }, [provider]);
 
-  // Auto connect to the cached provider
-  useEffect(() => {
-    if (web3Modal.cachedProvider) {
-      connectWallet();
-    }
-  }, [connectWallet]);
+  const disconnectWallet = useCallback(async () => {
+    return handleDisconnect(provider, setIsWalletConnected);
+  }, [provider, setIsWalletConnected]);
 
   // update value in the form state
   useEffect(() => {
@@ -120,9 +128,9 @@ const ConnectWalletButton: React.FC<Props> = props => {
         window.location.reload();
       };
 
-      const handleDisconnect = (error: { code: number; message: string }) => {
+      const disconnect = (error: { code: number; message: string }) => {
         log.info('disconnect', error);
-        handleDisconnect(provider);
+        handleDisconnect(provider, setIsWalletConnected);
       };
 
       provider.on('accountsChanged', handleAccountsChanged);
@@ -133,11 +141,11 @@ const ConnectWalletButton: React.FC<Props> = props => {
         if (provider.removeListener) {
           provider.removeListener('accountsChanged', handleAccountsChanged);
           provider.removeListener('chainChanged', handleChainChanged);
-          provider.removeListener('disconnect', handleDisconnect);
+          provider.removeListener('disconnect', disconnect);
         }
       };
     }
-  }, [provider]);
+  }, [provider, setIsWalletConnected]);
 
   useEffect(() => {
     error && log.error('wallet connection error: ', error);
@@ -146,18 +154,51 @@ const ConnectWalletButton: React.FC<Props> = props => {
   if (!isVisible) return null;
 
   return (
-    <>
-      {web3Provider || inputValue ? null : (
+    <div className={classes.connectWallet}>
+      <DangerModal
+        show={showBrowserExtensionErrorModal}
+        title="Please add MetaMask extension in your browser first."
+        onClose={() => setShowBrowserExtensionErrorModal(false)}
+        buttonText="Close"
+        onActionButtonClick={() => setShowBrowserExtensionErrorModal(false)}
+      />
+      <ModalComponent
+        show={showSelectProviderModalVisible}
+        onClose={() => setShowSelectProviderModalVisible(false)}
+        closeButton={true}
+        isSimple={true}
+        isWide={true}
+      >
+        <div className={classes.connectWalletModal}>
+          <h2>Please Connect Your Wallet</h2>
+          <p className="pt-2">{description}</p>
+          <button
+            onClick={connectWallet}
+            className={classes.connectWalletProviderTypeButton}
+          >
+            <div>MetaMask</div>
+            <img
+              src={metamaskIcon}
+              className={classes.providerIcon}
+              alt="metamask"
+            />
+          </button>
+        </div>
+      </ModalComponent>
+
+      {inputValue === address && web3Provider ? null : (
         <div
           className={classnames(
             classes.maxButtonContainer,
             classes.connectWalletButton,
           )}
         >
-          <Button onClick={connectWallet}>Connect</Button>
+          <Button onClick={() => setShowSelectProviderModalVisible(true)}>
+            Connect
+          </Button>
         </div>
       )}
-    </>
+    </div>
   );
 };
 

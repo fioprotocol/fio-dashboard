@@ -173,7 +173,6 @@
     "stripe": "9.16.0",
     "superagent": "7.1.5",
     "web3": "1.8.0",
-    "web3modal": "1.9.7",
     "ws": "8.11.0"
   },
   "proxy": "http://localhost:9000",
