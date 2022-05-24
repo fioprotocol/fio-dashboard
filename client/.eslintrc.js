@@ -78,7 +78,12 @@ module.exports = {
     "@typescript-eslint/unbound-method": "warn",
     "@typescript-eslint/no-empty-function": "warn",
     "@typescript-eslint/prefer-regexp-exec": "warn",
-    "@typescript-eslint/no-misused-promises": "warn",
+    "@typescript-eslint/no-misused-promises": [
+      "warn",
+      {
+        "checksVoidReturn": false
+      }
+    ],
     "@typescript-eslint/no-unsafe-argument": "off",
     "import/order": ["error", {
       alphabetize: {
