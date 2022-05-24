@@ -222,7 +222,17 @@ class EmailSender {
           }),
           images: EmailTemplate.getInlineImages(templateName),
         };
+
+      case templates.fallbackFundsEmail:
+        return {
+          subject: 'Reg Site insufficient funds',
+          body: `
+<p>Registration site got insufficient funds error when registering <b>${sendData.fioName}</b> on profile <b>${sendData.refProfileName}</b> using account <i>${sendData.authorization.actor}</i> and permission <i>${sendData.authorization.permission}</i>.</p>
+<p>You will receive this email once every 24 hrs or until issue is resolved.</p>`,
+          text: `Registration site got insufficient funds error when registering ${sendData.fioName} on profile ${sendData.refProfileName} using account ${sendData.authorization.actor} and permission ${sendData.authorization.permission}. You will receive this email once every 24 hrs or until issue is resolved.`,
+        };
     }
+
     throw new Error(`There is no email template with such name - ${templateName}`);
   }
 }

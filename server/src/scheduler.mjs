@@ -26,6 +26,13 @@ const bree = new Bree({
       timeout: 0,
       closeWorkerAfterMs: 5 * 60 * 1000, // 5 min
     },
+    {
+      path: path.join(JOBS_PATH, 'orders.mjs'),
+      name: 'orders',
+      interval: process.env.ORDERS_JOB_INTERVAL,
+      timeout: 0,
+      closeWorkerAfterMs: 5 * 60 * 1000, // 5 min
+    },
   ],
   workerMessageHandler: (name, message) => {
     logger.info('JOB MESSAGE === ', name, message);
