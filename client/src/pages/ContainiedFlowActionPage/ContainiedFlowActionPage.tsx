@@ -11,14 +11,14 @@ import { CONTAINED_FLOW_ACTIONS } from '../../constants/containedFlow';
 
 import { ContainedFlowQueryParams } from '../../types';
 
-import classes from './RefSignNftPage.module.scss';
+import classes from './ContainiedFlowActionPage.module.scss';
 
 type Props = {
   isAuthenticated: boolean;
   containedFlowQueryParams: ContainedFlowQueryParams;
 };
 
-export const RefSignNftPage: React.FC<Props> = props => {
+export const ContainiedFlowActionPage: React.FC<Props> = props => {
   const { containedFlowQueryParams, isAuthenticated } = props;
 
   const [fioAddresses] = useFioAddresses();
