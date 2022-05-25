@@ -7,7 +7,7 @@ import { isAuthenticated } from '../../redux/profile/selectors';
 
 import { containedFlowQueryParams } from '../../redux/containedFlow/selectors';
 
-import { RefSignNftPage } from './RefSignNftPage';
+import { ContainiedFlowActionPage } from './ContainiedFlowActionPage';
 
 const reduxConnect = connect(
   createStructuredSelector({
@@ -16,4 +16,4 @@ const reduxConnect = connect(
   }),
 );
 
-export default compose(reduxConnect)(RefSignNftPage);
+export default compose(reduxConnect)(ContainiedFlowActionPage);
