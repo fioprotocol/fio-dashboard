@@ -13,13 +13,10 @@ type InputProps = {
   selectProps: { inputValue: string; isDisabled: boolean };
 } & EditableCustomComponentsTypes;
 
-export const Input: React.FC<InputProps> = (
-  props: InputProps,
-  prefix?: string,
-) => {
+export const Input: React.FC<InputProps> = (props: InputProps) => {
   const {
     hasValue,
-    selectProps: { inputValue, isDisabled },
+    selectProps: { prefix, inputValue, isDisabled },
   } = props;
 
   if (!inputValue && isDisabled) return null;
@@ -88,34 +85,6 @@ export const DropdownIndicator: React.FC<DropdownIndicatorProps> = dropdownProps
         className={classes.toggleMenuIcon}
       />
     </components.DropdownIndicator>
-  );
-};
-
-type SingleValueProps = {
-  children: string;
-} & EditableCustomComponentsTypes;
-
-export const SingleValue: React.FC<SingleValueProps> = (
-  singleValueProps: SingleValueProps,
-  prefix?: string,
-) => {
-  const { children } = singleValueProps;
-  return (
-    <div className={classes.prefixContainer}>
-      <components.SingleValue
-        {...singleValueProps}
-        className={classes.singleValue}
-      >
-        {prefix ? (
-          <>
-            <span className={classes.prefix}>{prefix}</span>
-            {children}
-          </>
-        ) : (
-          children
-        )}
-      </components.SingleValue>
-    </div>
   );
 };
 
