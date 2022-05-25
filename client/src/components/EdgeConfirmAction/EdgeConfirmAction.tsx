@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useCallback, useState } from 'react';
 import Processing from '../../components/common/TransactionProcessing';
 
 import { waitForEdgeAccountStop } from '../../util/edge';
+import { removeExtraCharactersFromString } from '../../util/general';
 
 import { PinConfirmation } from '../../types';
 import { Props } from './types';
@@ -34,6 +35,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
     showGenericErrorModal,
     resetPinConfirm,
     setConfirmPinKeys,
+    fioActionExecuted,
   } = props;
 
   const init = useRef(false);
@@ -69,6 +71,10 @@ const EdgeConfirmAction: React.FC<Props> = props => {
             await waitForEdgeAccountStop(edgeAccount);
 
           onSuccess(result);
+          fioActionExecuted({
+            ...result,
+            executeActionType: removeExtraCharactersFromString(action),
+          });
           setConfirmPinKeys(null);
         } catch (e) {
           showGenericErrorModal();
@@ -93,6 +99,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
       setProcessing,
       showGenericErrorModal,
       submitAction,
+      fioActionExecuted,
     ],
   );
 
