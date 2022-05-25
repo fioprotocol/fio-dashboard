@@ -7,12 +7,15 @@ import FioLoader from '../../components/common/FioLoader/FioLoader';
 import { useFioAddresses } from '../../util/hooks';
 
 import { ROUTES } from '../../constants/routes';
+import { CONTAINED_FLOW_ACTIONS } from '../../constants/containedFlow';
 
-import { SignNFTParams } from '../../types';
+import { ContainedFlowQueryParams } from '../../types';
+
+import classes from './RefSignNftPage.module.scss';
 
 type Props = {
   isAuthenticated: boolean;
-  containedFlowQueryParams: SignNFTParams;
+  containedFlowQueryParams: ContainedFlowQueryParams;
 };
 
 export const RefSignNftPage: React.FC<Props> = props => {
@@ -28,13 +31,25 @@ export const RefSignNftPage: React.FC<Props> = props => {
     return <Redirect to={ROUTES.HOME} />;
   }
 
-  return (
-    <SignNft
-      initialValues={{
-        creatorUrl: containedFlowQueryParams.metadata.creatorUrl,
-        ...containedFlowQueryParams,
-      }}
-      fioAddressName={fioAddresses[0].name}
-    />
-  );
+  switch (containedFlowQueryParams.action) {
+    case CONTAINED_FLOW_ACTIONS.SIGNNFT: {
+      return (
+        <SignNft
+          initialValues={{
+            creatorUrl: containedFlowQueryParams.metadata.creatorUrl,
+            ...containedFlowQueryParams,
+          }}
+          fioAddressName={fioAddresses[0].name}
+        />
+      );
+    }
+    default:
+      return (
+        <div className={classes.container}>
+          <div className={classes.validationErrorContainer}>
+            Wrong action page. Close the page and open link again.
+          </div>
+        </div>
+      );
+  }
 };
