@@ -5,6 +5,7 @@ import { compose } from '../../utils';
 
 import { showPinModal, showGenericErrorModal } from '../../redux/modal/actions';
 import { resetPinConfirm, setConfirmPinKeys } from '../../redux/edge/actions';
+import { fioActionExecuted } from '../../redux/fio/actions';
 
 import { showPinConfirm } from '../../redux/modal/selectors';
 import {
@@ -22,7 +23,13 @@ const reduxConnect = connect(
     pinModalIsOpen: showPinConfirm,
     confirmPinKeys,
   }),
-  { showPinModal, resetPinConfirm, showGenericErrorModal, setConfirmPinKeys },
+  {
+    showPinModal,
+    resetPinConfirm,
+    showGenericErrorModal,
+    setConfirmPinKeys,
+    fioActionExecuted,
+  },
 );
 
 export default compose(reduxConnect)(EdgeConfirmAction);

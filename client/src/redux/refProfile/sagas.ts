@@ -1,9 +1,9 @@
 import { put, takeEvery, select } from 'redux-saga/effects';
 
-import { REF_FLOW_STEPS } from '../../constants/common';
+import { REF_FLOW_STEPS, REF_ACTIONS } from '../../constants/common';
 import { setStep } from './actions';
 import { LOGIN_SUCCESS } from '../profile/actions';
-import { FIO_SIGN_NFT_SUCCESS } from '../fio/actions';
+import { FIO_ACTION_EXECUTE_SUCCESS } from '../fio/actions';
 import { SET_REGISTRATION_RESULTS } from '../registrations/actions';
 import { isRefFlow as getIsRefFlow, refProfileQueryParams } from './selectors';
 
@@ -29,9 +29,13 @@ export function* fioAddressRegisterSuccess(): Generator {
 }
 
 export function* refActionSuccess(): Generator {
-  yield takeEvery(FIO_SIGN_NFT_SUCCESS, function*(action: Action) {
+  yield takeEvery(FIO_ACTION_EXECUTE_SUCCESS, function*(action: Action) {
     const isRefFlow: boolean = yield select(getIsRefFlow);
-    if (isRefFlow && action.data.status) {
+    if (
+      isRefFlow &&
+      action.data.status &&
+      action.data.executeActionType === REF_ACTIONS.SIGNNFT
+    ) {
       const { r }: RefQueryParams = yield select(refProfileQueryParams);
       const redirectUrl = `${r}?txId=${action.data.transaction_id as string}`;
       yield put(setStep(REF_FLOW_STEPS.FINISH));
