@@ -2,6 +2,7 @@ import { EdgeAccount } from 'edge-core-js';
 
 import {
   AnyObject,
+  AnyType,
   EdgeWalletsKeys,
   PinConfirmation,
   WalletKeys,
@@ -19,7 +20,7 @@ export type Props = {
   confirmingPin: boolean;
   pinModalIsOpen: boolean;
   edgeAccountLogoutBefore: boolean;
-  data: any | null;
+  data: AnyType | null;
   processing: boolean;
   pinConfirmation: PinConfirmation;
   confirmPinKeys?: EdgeWalletsKeys | null;
@@ -29,10 +30,11 @@ export type Props = {
 
   showPinModal: (action: string, data: PinDataType) => void;
   showGenericErrorModal: (message?: string) => void;
-  submitAction: (params: SubmitActionParams) => Promise<any>;
-  onSuccess: (data: any) => void;
+  submitAction: (params: SubmitActionParams) => Promise<AnyType>;
+  onSuccess: (data: AnyType) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
   resetPinConfirm: () => void;
   setConfirmPinKeys: (keys: null) => void;
+  fioActionExecuted: (data: { executeActionType: string } & AnyType) => void;
 };
