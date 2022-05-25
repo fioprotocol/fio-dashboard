@@ -320,7 +320,7 @@ export type ContainedFlowQuery = {
 export type ContainedFlowQueryParams = {
   action: ContainedFlowActionSettingsKey;
   r: string;
-} & (SignNFTParams | {});
+} & Partial<SignNFTParams>; // could be (SignNFTParams | RenewDomainActionParams | AnyOtherActionParams )
 
 export type EmailConfirmationStateData = {
   redirectLink?: string;
