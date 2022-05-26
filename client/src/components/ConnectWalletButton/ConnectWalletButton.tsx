@@ -6,6 +6,7 @@ import { Web3Provider } from '@ethersproject/providers/src.ts/web3-provider';
 
 import ModalComponent from '../Modal/Modal';
 import DangerModal from '../Modal/DangerModal';
+import { LoadingIcon } from '../Input/StaticInputParts';
 
 import { log } from '../../util/general';
 import { AnyObject } from '../../types';
@@ -18,9 +19,14 @@ type Props = {
   isVisible?: boolean;
   handleAddressChange?: (address: string) => void;
   setIsWalletConnected?: (value: boolean) => void;
+  isWalletConnected?: boolean;
   inputValue?: string;
   description?: string;
 };
+
+type ConnectionError = ({ code: number; message: string } & Error) | null;
+
+const OPENED_METAMASK_WINDOW_ERROR_CODE = -32002;
 
 const ConnectWalletButton: React.FC<Props> = props => {
   const {
@@ -28,6 +34,7 @@ const ConnectWalletButton: React.FC<Props> = props => {
     inputValue,
     isVisible,
     setIsWalletConnected,
+    isWalletConnected,
     description = 'Please connect your Polygon wallet with the wFio domain that you would like to unwrap to the FIO network.',
   } = props;
 
@@ -36,7 +43,7 @@ const ConnectWalletButton: React.FC<Props> = props => {
   const [web3Provider, setWeb3Provider] = useState<Web3Provider>(null);
 
   const [address, setAddress] = useState<string | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<ConnectionError>(null);
   const [
     showBrowserExtensionErrorModal,
     setShowBrowserExtensionErrorModal,
@@ -46,19 +53,20 @@ const ConnectWalletButton: React.FC<Props> = props => {
     showSelectProviderModalVisible,
     setShowSelectProviderModalVisible,
   ] = useState<boolean>(false);
-
-  useEffect(() => {
-    setProvider(new ethers.providers.Web3Provider(window.ethereum));
-  }, []);
+  const [showProviderLoadingIcon, setShowProviderLoadingIcon] = useState(false);
 
   const connectWallet = useCallback(async () => {
-    if (!window.ethereum) {
+    setShowProviderLoadingIcon(true);
+
+    const provider = window.ethereum;
+
+    if (!provider) {
       setShowBrowserExtensionErrorModal(true);
       log.error('!window.ethereum');
+      setShowProviderLoadingIcon(false);
       return;
     }
 
-    const provider = window.ethereum;
     const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
 
     try {
@@ -69,11 +77,11 @@ const ConnectWalletButton: React.FC<Props> = props => {
       const signer = web3Provider.getSigner();
       const address = await signer.getAddress();
 
-      setProvider(window.ethereum);
+      setProvider(provider);
       setWeb3Provider(web3Provider);
       setAddress(address);
 
-      setShowSelectProviderModalVisible(false);
+      closeSelectProviderModal();
       setIsWalletConnected(true);
     } catch (error) {
       setError(error);
@@ -81,8 +89,9 @@ const ConnectWalletButton: React.FC<Props> = props => {
   }, [setIsWalletConnected]);
 
   const handleDisconnect = async (
-    provider: AnyObject,
     setIsWalletConnectedStateInInput: (val?: boolean) => void,
+    handleAddressChangeInForm: (address: string) => void,
+    provider?: AnyObject,
   ) => {
     if (provider?.disconnect && typeof provider.disconnect === 'function') {
       await provider.disconnect();
@@ -91,11 +100,22 @@ const ConnectWalletButton: React.FC<Props> = props => {
     setAddress(null);
     setError(null);
     setIsWalletConnectedStateInInput(false);
+    setIsFormInputFilled(false);
+    handleAddressChangeInForm(null);
   };
 
   const disconnectWallet = useCallback(async () => {
-    return handleDisconnect(provider, setIsWalletConnected);
-  }, [provider, setIsWalletConnected]);
+    return handleDisconnect(
+      setIsWalletConnected,
+      handleAddressChange,
+      provider,
+    );
+  }, [provider, setIsWalletConnected, handleAddressChange]);
+
+  const closeSelectProviderModal = () => {
+    setShowProviderLoadingIcon(false);
+    setShowSelectProviderModalVisible(false);
+  };
 
   // update value in the form state
   useEffect(() => {
@@ -112,15 +132,27 @@ const ConnectWalletButton: React.FC<Props> = props => {
     // disconnect when clear button is pressed
     if (!inputValue && address && isFormInputFilled) {
       disconnectWallet();
-      setIsFormInputFilled(false);
     }
   }, [inputValue, address, disconnectWallet, isFormInputFilled]);
 
   useEffect(() => {
     if (provider?.on) {
+      const disconnect = (error?: ConnectionError) => {
+        if (error) log.info('disconnect', error);
+        handleDisconnect(setIsWalletConnected, handleAddressChange, provider);
+      };
+
       const handleAccountsChanged = (accounts: string[]) => {
         log.info('accountsChanged', accounts);
-        setAddress(accounts[0]);
+        if (accounts.length) {
+          setAddress(accounts[0]);
+          if (error?.code === OPENED_METAMASK_WINDOW_ERROR_CODE) setError(null);
+        } else {
+          // clear form value when user manually disconnects all addresses by metamask interface
+          // (not the same as 'disconnect' event)
+          // todo: check why this event dont works after MetaMask password entered case (long inactivity)
+          disconnect();
+        }
       };
 
       // https://docs.ethers.io/v5/concepts/best-practices/#best-practices--network-changes
@@ -128,14 +160,9 @@ const ConnectWalletButton: React.FC<Props> = props => {
         window.location.reload();
       };
 
-      const disconnect = (error: { code: number; message: string }) => {
-        log.info('disconnect', error);
-        handleDisconnect(provider, setIsWalletConnected);
-      };
-
       provider.on('accountsChanged', handleAccountsChanged);
       provider.on('chainChanged', handleChainChanged);
-      provider.on('disconnect', handleDisconnect);
+      provider.on('disconnect', disconnect);
 
       return () => {
         if (provider.removeListener) {
@@ -145,11 +172,13 @@ const ConnectWalletButton: React.FC<Props> = props => {
         }
       };
     }
-  }, [provider, setIsWalletConnected]);
+  }, [handleAddressChange, provider, setIsWalletConnected, error]);
 
   useEffect(() => {
     error && log.error('wallet connection error: ', error);
-  }, [error]);
+    if (error?.code === OPENED_METAMASK_WINDOW_ERROR_CODE && isWalletConnected)
+      setError(null);
+  }, [error, isWalletConnected]);
 
   if (!isVisible) return null;
 
@@ -157,14 +186,21 @@ const ConnectWalletButton: React.FC<Props> = props => {
     <div className={classes.connectWallet}>
       <DangerModal
         show={showBrowserExtensionErrorModal}
-        title="Please add MetaMask extension in your browser first."
+        title="Please add MetaMask extension in your browser first. Or refresh the page if it has just been installed."
         onClose={() => setShowBrowserExtensionErrorModal(false)}
         buttonText="Close"
         onActionButtonClick={() => setShowBrowserExtensionErrorModal(false)}
       />
+      <DangerModal
+        show={error?.code === OPENED_METAMASK_WINDOW_ERROR_CODE}
+        title="MetaMask window is already opened for this site. Please check your browser windows first."
+        onClose={() => setError(null)}
+        buttonText="Close"
+        onActionButtonClick={() => setError(null)}
+      />
       <ModalComponent
         show={showSelectProviderModalVisible}
-        onClose={() => setShowSelectProviderModalVisible(false)}
+        onClose={closeSelectProviderModal}
         closeButton={true}
         isSimple={true}
         isWide={true}
@@ -177,11 +213,14 @@ const ConnectWalletButton: React.FC<Props> = props => {
             className={classes.connectWalletProviderTypeButton}
           >
             <div>MetaMask</div>
-            <img
-              src={metamaskIcon}
-              className={classes.providerIcon}
-              alt="metamask"
-            />
+            <div className="d-flex justify-content-center align-items-center">
+              <LoadingIcon isVisible={showProviderLoadingIcon} />
+              <img
+                src={metamaskIcon}
+                className={classes.providerIcon}
+                alt="metamask"
+              />
+            </div>
           </button>
         </div>
       </ModalComponent>
