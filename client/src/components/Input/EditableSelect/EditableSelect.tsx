@@ -1,13 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Props as OptionProps } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import Select from 'react-select/base';
-import { FieldRenderProps } from 'react-final-form';
+import { FieldInputProps, FieldMetaState } from 'react-final-form';
 import classnames from 'classnames';
 
 import * as CustomComponents from './EditableCustomComponents';
 
+import { useEffectOnce } from '../../../hooks/general';
+
 import classes from '../styles/EditableSelect.module.scss';
+
+type OptionProps = { value: string; label: string };
 
 export type EditableProps = {
   options: OptionProps[];
@@ -16,11 +19,13 @@ export type EditableProps = {
   noShadow?: boolean;
   disabled?: boolean;
   hasError?: boolean;
+  placeholder?: string;
+  input: FieldInputProps<string>;
+  meta: FieldMetaState<string>;
   toggleToCustom?: (isCustom: boolean) => void;
-  initialValues?: string;
 };
 
-const EditableSelect: React.FC<FieldRenderProps<EditableProps>> = props => {
+const EditableSelect: React.FC<EditableProps> = props => {
   const {
     options,
     input,
@@ -31,33 +36,30 @@ const EditableSelect: React.FC<FieldRenderProps<EditableProps>> = props => {
     disabled,
     hasError,
     toggleToCustom,
-    initialValues,
+    meta,
   } = props;
 
-  const [inputValue, setInputValue] = useState('');
-
-  const refOptions = useRef(options).current;
-
-  const selectRef = useRef<Select<{
-    value: EditableProps;
-    label: EditableProps;
-  }> | null>(null);
-
   const { onChange, value } = input;
+  const { initial: initialValue } = meta;
+
+  const [inputValue, setInputValue] = useState<string>('');
+
+  const refOptions: OptionProps[] = useRef(options).current;
+
+  const selectRef = useRef<Select<OptionProps> | null>(null);
 
   useEffect(() => {
     toggleToCustom &&
       toggleToCustom(
         !refOptions.find((opt: OptionProps) => opt.value === value),
       );
-  }, [value]);
+  }, [value, toggleToCustom, refOptions]);
 
-  useEffect(() => {
-    if (initialValues != null) {
-      onChange(initialValues);
-      setInputValue(initialValues);
+  useEffectOnce(() => {
+    if (initialValue != null) {
+      setInputValue(initialValue);
     }
-  }, [initialValues]);
+  }, [initialValue, onChange]);
 
   const handleBlur = () => {
     const currentValue = inputValue ? inputValue.trim() : '';
@@ -86,10 +88,7 @@ const EditableSelect: React.FC<FieldRenderProps<EditableProps>> = props => {
     }
   };
 
-  const handleChange = (newValue: {
-    value: EditableProps;
-    label: EditableProps;
-  }) => {
+  const handleChange = (newValue: OptionProps) => {
     onChange(newValue ? newValue.value : null);
     setInputValue(newValue ? newValue.value.toString() : '');
   };
@@ -118,11 +117,10 @@ const EditableSelect: React.FC<FieldRenderProps<EditableProps>> = props => {
         MenuList: CustomComponents.MenuList,
         Option: CustomComponents.Option,
         Placeholder: CustomComponents.Placeholder,
-        SingleValue: singleValueProps =>
-          CustomComponents.SingleValue(singleValueProps, prefix),
+        SingleValue: () => null, // no need this component to avoid double render, we use Input component for that
         ClearIndicator: CustomComponents.ClearIndicator,
         DropdownIndicator: CustomComponents.DropdownIndicator,
-        Input: inputProps => CustomComponents.Input(inputProps, prefix),
+        Input: CustomComponents.Input,
       }}
       className={classnames(
         classes.dropdown,
@@ -130,6 +128,8 @@ const EditableSelect: React.FC<FieldRenderProps<EditableProps>> = props => {
         noShadow && classes.noShadow,
         hasError && classes.hasError,
       )}
+      // custom property
+      prefix={prefix}
     />
   );
 };

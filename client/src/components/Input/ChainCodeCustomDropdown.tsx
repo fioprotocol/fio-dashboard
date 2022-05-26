@@ -10,7 +10,6 @@ import { EditableProps } from './EditableSelect/EditableSelect';
 import classes from './Input.module.scss';
 
 type Props = {
-  customValue: { id: string; name: string };
   label?: string;
   uiType?: string;
   input: {
@@ -19,11 +18,10 @@ type Props = {
   errorType?: string;
   errorColor?: string;
   hideError?: boolean;
-  placeholder?: string;
 } & EditableProps;
 
 const ChainCodeCustomDropdown: React.FC<Props &
-  FieldRenderProps<Props>> = props => {
+  FieldRenderProps<string>> = props => {
   const {
     input,
     meta,
@@ -32,6 +30,13 @@ const ChainCodeCustomDropdown: React.FC<Props &
     errorType = '',
     errorColor = '',
     hideError,
+    options,
+    placeholder,
+    prefix,
+    isHigh,
+    noShadow,
+    disabled,
+    toggleToCustom,
   } = props;
   const { value } = input;
   const {
@@ -52,10 +57,23 @@ const ChainCodeCustomDropdown: React.FC<Props &
       (submitError && !modifiedSinceLastSubmit)) &&
     !hideError;
 
+  const editableSelectProps: EditableProps = {
+    options,
+    input,
+    placeholder,
+    prefix,
+    isHigh,
+    noShadow,
+    disabled,
+    hasError,
+    toggleToCustom,
+    meta,
+  };
+
   return (
     <>
       <Label label={label} uiType={uiType} />
-      <EditableSelect {...props} hasError={hasError} />
+      <EditableSelect {...editableSelectProps} />
       <div className={classes.regInputWrapper}>
         <ErrorBadge
           error={error}
