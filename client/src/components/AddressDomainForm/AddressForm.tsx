@@ -84,7 +84,7 @@ const AddressForm: React.FC<AddressFormProps> = props => {
             options={options
               .sort((a, b) => a.localeCompare(b))
               .map(option => ({ id: option, name: option }))}
-            customValue={allowCustomDomains ? CUSTOM_DROPDOWN_VALUE : {}}
+            customValue={allowCustomDomains && CUSTOM_DROPDOWN_VALUE}
             toggleToCustom={() => {
               toggleShowCustomDomain(true);
             }}
