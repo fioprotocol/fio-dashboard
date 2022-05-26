@@ -212,6 +212,7 @@ export const TextInput: React.ForwardRefRenderFunction<
           handleAddressChange={input.onChange}
           inputValue={value}
           setIsWalletConnected={setIsWalletConnected}
+          isWalletConnected={isWalletConnected}
           description={connectWalletModalText}
         />
         <ClearButton
