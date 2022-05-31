@@ -26,8 +26,9 @@ const PriceBadge: React.FC<PriceBadgeProps> = props => {
 
   const form = useForm();
   const { values } = form && form.getState();
+  const isEmptyValues = () => !values?.address && !values.domain;
   const hasError =
-    !isEmpty(values) &&
+    !isEmptyValues() &&
     Object.keys(values).some(key => {
       const {
         error,
@@ -46,7 +47,7 @@ const PriceBadge: React.FC<PriceBadgeProps> = props => {
       return hasFieldError;
     });
 
-  const showBadge = !isEmpty(values) && !hasError;
+  const showBadge = !isEmptyValues() && !hasError;
   const showTooltip =
     tooltip &&
     hasFreeAddress &&
