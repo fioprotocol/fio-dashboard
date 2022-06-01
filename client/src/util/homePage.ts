@@ -24,6 +24,7 @@ export const handleHomePageContent = ({
   let title = null;
   let subtitle = null;
   let logoSrc = null;
+  let actionText = null;
   const actionName = removeExtraCharactersFromString(
     containedFlowQueryParams?.action,
   );
@@ -44,6 +45,11 @@ export const handleHomePageContent = ({
       subtitle =
         actions[actionName as ContainedFlowActionSettingsKey].subtitle ||
         CONTAINED_FLOW_SUBTITLES[actionName];
+      actionText = actions[actionName as ContainedFlowActionSettingsKey]
+        ?.hideActionText
+        ? null
+        : actions[actionName as ContainedFlowActionSettingsKey]?.actionText ||
+          CONTAINED_FLOW_ACTION_TEXT[actionName];
     } else {
       title = refTitle;
       subtitle = subTitle;
@@ -53,13 +59,14 @@ export const handleHomePageContent = ({
   if (isContainedFlow && !refProfileInfo) {
     title = CONTAINED_FLOW_TITLES[actionName];
     subtitle = CONTAINED_FLOW_SUBTITLES[actionName];
+    actionText = CONTAINED_FLOW_ACTION_TEXT[actionName];
   }
 
   return {
     logoSrc,
     title,
     subtitle,
-    actionText: CONTAINED_FLOW_ACTION_TEXT[actionName],
+    actionText,
     hasMinHeight: isContainedFlow,
     showSignInWidget: isContainedFlow,
     hideBottomPlug: isContainedFlow,
