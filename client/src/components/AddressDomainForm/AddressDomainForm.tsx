@@ -76,6 +76,16 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
   ) => {
     if (isHomepage) return;
 
+    const registeredFields = form.getRegisteredFields();
+
+    const fieldsState = registeredFields.map((registeredField: string) =>
+      form.getFieldState(registeredField as keyof FormValuesProps),
+    );
+
+    const isEmptyForm = fieldsState.every(fieldState => !fieldState?.value);
+
+    if (isEmptyForm) return;
+
     const validationPropsToPass = {
       formProps: form,
       ...validationProps,
@@ -84,13 +94,9 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
     if (isAddress) addressValidation(validationPropsToPass);
     if (isDomain) domainValidation(validationPropsToPass);
 
-    const registeredFields = form.getRegisteredFields();
-    const isValidForm = registeredFields.every((registeredField: string) => {
-      const fieldState = form.getFieldState(
-        registeredField as keyof FormValuesProps,
-      );
-      return !fieldState?.data?.error;
-    });
+    const isValidForm = fieldsState.every(
+      fieldState => !fieldState?.data?.error,
+    );
 
     if (!isDesktop && isValidForm) {
       const scroll = Scroll.animateScroll;

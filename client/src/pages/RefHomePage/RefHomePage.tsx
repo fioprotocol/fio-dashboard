@@ -6,7 +6,7 @@ import AddressWidget from '../../components/AddressWidget';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import FioAddressPage from '../FioAddressPage';
 
-import { CONTAINED_FLOW_ACTION_TEXT } from '../../constants/containedFlow';
+import { handleHomePageContent } from '../../util/homePage';
 
 import classnames from './RefHomePage.module.scss';
 import {
@@ -34,6 +34,7 @@ type Props = {
   refProfileInfo: RefProfile;
   containedFlowQueryParams: ContainedFlowQueryParams;
   refLinkError: string | null;
+  isContainedFlow: boolean;
 };
 
 export const RefHomePage: React.FC<Props &
@@ -45,6 +46,7 @@ export const RefHomePage: React.FC<Props &
     isAuthenticated,
     loading,
     refLinkError,
+    isContainedFlow,
   } = props;
   useNonActiveUserRedirect();
   const [hideLoader, setHideLoader] = useState(false);
@@ -92,15 +94,15 @@ export const RefHomePage: React.FC<Props &
   const renderContent = () => {
     if (refProfileInfo == null) return null;
     if (!isAuthenticated) {
+      const addressWidgetContent = handleHomePageContent({
+        isContainedFlow,
+        containedFlowQueryParams,
+        refProfileInfo,
+      });
       return (
         <div className={classnames.container}>
           <AddressWidget
-            logoSrc={refProfileInfo.settings.img}
-            title={refProfileInfo.title}
-            subtitle={refProfileInfo.subTitle}
-            actionText={
-              CONTAINED_FLOW_ACTION_TEXT[containedFlowQueryParams?.action]
-            }
+            {...addressWidgetContent}
             showSignInWidget={true}
             hideBottomPlug={true}
           />

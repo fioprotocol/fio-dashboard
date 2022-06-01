@@ -162,5 +162,6 @@ export const transformInputValues = ({
   setTimeout(() => e.target.setSelectionRange(startPos, endPos), 0);
 };
 
-export const removeExtraCharactersFromString = (str: string): string =>
-  str.replaceAll(/[^A-Za-z0-9]/g, '');
+export const removeExtraCharactersFromString = (
+  str: string | null,
+): string | null => (str != null ? str.replaceAll(/[^A-Za-z0-9]/g, '') : null);
