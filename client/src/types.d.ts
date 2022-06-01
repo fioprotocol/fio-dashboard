@@ -281,8 +281,10 @@ export type RefProfile = {
     actions: Record<
       ContainedFlowActionSettingsKey,
       {
-        subtitle: string;
-        title: string;
+        subtitle?: string;
+        title?: string;
+        hideActionText?: boolean;
+        actionText?: string;
       }
     >;
 
