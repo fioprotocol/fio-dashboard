@@ -178,7 +178,9 @@ const checkBalance = async wallet => {
   try {
     let balance = 0;
     try {
-      const balanceResponse = await fioApi.publicFioSDK.getFioBalance(wallet.publicKey);
+      const balanceResponse = await fioApi
+        .getPublicFioSDK()
+        .getFioBalance(wallet.publicKey);
       balance = balanceResponse.balance;
     } catch (e) {
       logFioError(e, wallet);
@@ -233,9 +235,9 @@ const checkFioNames = async wallet => {
     const {
       publicWalletData: { cryptoHandles, domains },
     } = wallet;
-    const { fio_addresses, fio_domains } = await fioApi.publicFioSDK.getFioNames(
-      wallet.publicKey,
-    );
+    const { fio_addresses, fio_domains } = await fioApi
+      .getPublicFioSDK()
+      .getFioNames(wallet.publicKey);
 
     let changed = false;
 
@@ -341,6 +343,8 @@ const checkFioNames = async wallet => {
 };
 
 (async () => {
+  await fioApi.getRawAbi();
+
   const wallets = await Wallet.findAll({
     include: [
       {
