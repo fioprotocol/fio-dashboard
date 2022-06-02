@@ -76,7 +76,7 @@
   },
   "dependencies": {
     "@fioprotocol/fiojs": "^1.0.1",
-    "@fioprotocol/fiosdk": "github:fioprotocol/fiosdk_typescript#3d999f12bc5096a1ce89132fff3719915e9009c6",
+    "@fioprotocol/fiosdk": "1.7.0",
     "@fortawesome/fontawesome-svg-core": "1.2.34",
     "@fortawesome/free-regular-svg-icons": "5.15.2",
     "@fortawesome/free-solid-svg-icons": "5.15.2",
