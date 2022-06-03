@@ -48,4 +48,5 @@ export type SignNftFormProps = {
   processing: boolean;
   isEdit?: boolean;
   addressSelectOff?: boolean;
+  currentWallet: FioWalletDoublet;
 };

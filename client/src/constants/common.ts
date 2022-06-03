@@ -51,22 +51,6 @@ export const MANAGE_PAGE_REDIRECT = {
   domain: ROUTES.FIO_DOMAINS,
 };
 
-export const REF_ACTIONS = {
-  SIGNNFT: 'SIGNNFT',
-};
-
-export const REF_ACTIONS_TO_ROUTES = {
-  [REF_ACTIONS.SIGNNFT]: ROUTES.REF_SIGN_NFT,
-};
-
-export const REF_FLOW_STEPS = {
-  INIT: 'INIT',
-  CREATE_ACCOUNT: 'CREATE_ACCOUNT',
-  REGISTRATION: 'REGISTRATION',
-  ACTION: 'ACTION',
-  FINISH: 'FINISH',
-};
-
 export const NFT_TOKEN_ITEM_PROPS_ORDER: NFTTokenItemProps[] = [
   'fioAddress',
   'chainCode',

@@ -4,17 +4,16 @@ import { withRouter } from 'react-router-dom';
 
 import { compose } from '../../utils';
 
-import { loading as edgeAuthLoading } from '../../redux/edge/selectors';
 import { isAuthenticated } from '../../redux/profile/selectors';
 import {
   loading,
   refProfileInfo,
-  refProfileQueryParams,
   refLinkError,
 } from '../../redux/refProfile/selectors';
-
-import { getInfo, setContainedParams } from '../../redux/refProfile/actions';
-import { showLoginModal } from '../../redux/modal/actions';
+import {
+  containedFlowQueryParams,
+  isContainedFlow,
+} from '../../redux/containedFlow/selectors';
 
 import { RefHomePage } from './RefHomePage';
 
@@ -22,16 +21,12 @@ const reduxConnect = connect(
   createStructuredSelector({
     isAuthenticated,
     loading,
-    edgeAuthLoading,
     refProfileInfo,
-    refProfileQueryParams,
+    containedFlowQueryParams,
     refLinkError,
+    isContainedFlow,
   }),
-  {
-    getInfo,
-    setContainedParams,
-    showLoginModal,
-  },
+  {},
 );
 
 export default withRouter(compose(reduxConnect)(RefHomePage));

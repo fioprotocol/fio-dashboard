@@ -11,7 +11,6 @@ import {
 import { minWaitTimeFunction } from '../../utils';
 
 import { GetState } from '../init';
-import { ROUTES } from '../../constants/routes';
 import { CommonAction, CommonPromiseAction } from '../types';
 
 export const prefix = 'profile';
@@ -109,12 +108,8 @@ export const logout = (
   redirect: string = '',
 ): CommonPromiseAction => ({
   types: [LOGOUT_REQUEST, LOGOUT_SUCCESS, LOGOUT_FAILURE],
-  promise: async (api: Api) => {
-    const res = await api.auth.logout();
-    if (redirect) history.push(redirect, {});
-    if (!redirect) history.replace(ROUTES.HOME, {});
-    return res;
-  },
+  promise: (api: Api) => api.auth.logout(),
+  redirect,
 });
 
 export const SET_RECOVERY_REQUEST = `${prefix}/SET_RECOVERY_REQUEST`;

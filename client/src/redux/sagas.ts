@@ -11,9 +11,9 @@ import { edgeLoginSuccess } from './edge/sagas';
 import { notify } from './notify/sagas';
 import {
   fioAddressRegisterSuccess,
-  refLoginSuccess,
-  refActionSuccess,
-} from './refProfile/sagas';
+  containedFlowLoginSuccess,
+  containedFlowActionSuccess,
+} from './containedFlow/sagas';
 import { clearGenericModalError } from './modal/sagas';
 import {
   addFioWalletSuccess,
@@ -33,9 +33,9 @@ export default function* rootSaga(history: History, api: Api) {
     edgeLoginSuccess(),
     notify(history),
     fioAddressRegisterSuccess(),
-    refLoginSuccess(),
+    containedFlowLoginSuccess(),
     clearGenericModalError(),
-    refActionSuccess(),
+    containedFlowActionSuccess(),
     setFeesService(),
     addFioWalletSuccess(),
     setBalancesService(),

@@ -39,7 +39,10 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
     fioAddress,
     isEdit,
     addressSelectOff,
+    currentWallet,
   } = props;
+
+  const hasFioCryptoHandleError = !fioAddress || !currentWallet;
 
   return (
     <Form
@@ -60,6 +63,23 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
                   show={alreadySigned}
                   title="Already Signed"
                   message="This NFT that you are attempting to sign, has already been signed"
+                />
+                <InfoBadge
+                  type={BADGE_TYPES.WARNING}
+                  show={hasFioCryptoHandleError}
+                  title="FIO Crypto Handle Error"
+                  message={
+                    <>
+                      <div>One of the issues could cause the error:</div>
+                      <div>
+                        - FIO Crypto Handle or wallet public key is missing.
+                      </div>
+                      <div>
+                        - FIO Crypto Handle and wallet public key missmatch.
+                        Please choose another FIO Crypto Handle.
+                      </div>
+                    </>
+                  }
                 />
                 <Row className="mt-4">
                   <Col className={classes.subTitleSection}>Details</Col>
@@ -192,7 +212,8 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
                 !formRenderProps.valid ||
                 alreadySigned ||
                 formRenderProps.submitting ||
-                (isEdit && formRenderProps.pristine)
+                (isEdit && formRenderProps.pristine) ||
+                hasFioCryptoHandleError
               }
               withTopMargin={true}
               loading={processing}

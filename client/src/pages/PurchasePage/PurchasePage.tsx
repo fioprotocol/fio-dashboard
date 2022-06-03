@@ -6,10 +6,12 @@ import PseudoModalContainer from '../../components/PseudoModalContainer';
 import CheckoutPurchaseContainer from '../../components/CheckoutPurchaseContainer';
 import { RenderPurchase } from '../../components/CheckoutPurchaseContainer/CheckoutPurchaseComponents';
 
-import { REF_ACTIONS, REF_ACTIONS_TO_ROUTES } from '../../constants/common';
+import {
+  CONTAINED_FLOW_ACTIONS,
+  CONTAINED_FLOW_ACTIONS_TO_ROUTES,
+} from '../../constants/containedFlow';
 import { ROUTES } from '../../constants/routes';
 
-import { putParamsToUrl } from '../../utils';
 import { transformResult } from '../../util/fio';
 import useEffectOnce from '../../hooks/general';
 
@@ -17,24 +19,21 @@ import {
   CartItem,
   Domain,
   Prices,
-  RefProfile,
-  RefQueryParams,
+  ContainedFlowQueryParams,
   RegistrationResult,
 } from '../../types';
 
 const CONTINUE_TEXT = {
-  [REF_ACTIONS.SIGNNFT]: 'Sign Your NFT',
+  [CONTAINED_FLOW_ACTIONS.SIGNNFT]: 'Sign Your NFT',
 };
 
 type Props = {
   isAuthenticated: boolean;
-  isRefFlow: boolean;
   registrationResult: RegistrationResult;
   cartItems: CartItem[];
   prices: Prices;
   domains: Domain[];
-  refProfileQueryParams: RefQueryParams;
-  refProfileInfo: RefProfile;
+  containedFlowQueryParams: ContainedFlowQueryParams;
   roe: number | null;
   recalculate: (cartItems: CartItem[]) => void;
 };
@@ -43,12 +42,10 @@ const PurchasePage: React.FC<Props & RouteComponentProps> = props => {
   const {
     history,
     isAuthenticated,
-    isRefFlow,
     registrationResult,
     cartItems,
     prices,
-    refProfileQueryParams,
-    refProfileInfo,
+    containedFlowQueryParams,
     roe,
     recalculate,
   } = props;
@@ -78,15 +75,9 @@ const PurchasePage: React.FC<Props & RouteComponentProps> = props => {
   }, [recalculate, updatedCart]);
 
   const onClose = () => {
-    if (
-      isRefFlow &&
-      refProfileQueryParams != null &&
-      refProfileQueryParams.action
-    ) {
+    if (containedFlowQueryParams != null && containedFlowQueryParams.action) {
       return history.push(
-        putParamsToUrl(REF_ACTIONS_TO_ROUTES[refProfileQueryParams.action], {
-          refProfileCode: refProfileInfo.code,
-        }),
+        CONTAINED_FLOW_ACTIONS_TO_ROUTES[containedFlowQueryParams.action],
       );
     }
 
@@ -98,10 +89,8 @@ const PurchasePage: React.FC<Props & RouteComponentProps> = props => {
       <CheckoutPurchaseContainer
         isPurchase
         closeText={
-          isRefFlow &&
-          refProfileQueryParams != null &&
-          refProfileQueryParams.action
-            ? CONTINUE_TEXT[refProfileQueryParams.action]
+          containedFlowQueryParams != null && containedFlowQueryParams.action
+            ? CONTINUE_TEXT[containedFlowQueryParams.action]
             : null
         }
         history={history}

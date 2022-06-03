@@ -3,16 +3,12 @@ import { createStructuredSelector } from 'reselect';
 
 import { Navigation } from './Navigation';
 
-import {
-  refProfileInfo,
-  loading as refProfileLoading,
-} from '../../redux/refProfile/selectors';
+import { isContainedFlow } from '../../redux/containedFlow/selectors';
 import { isNotActiveUser } from '../../redux/profile/selectors';
 
 const selector = createStructuredSelector({
   isNotActiveUser,
-  refProfileInfo,
-  refProfileLoading,
+  isContainedFlow,
 });
 
 export default connect(selector)(Navigation);

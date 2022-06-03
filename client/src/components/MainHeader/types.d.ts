@@ -13,7 +13,6 @@ export type MainHeaderProps = {
   isNotActiveUser: boolean;
   pathname: string;
   locationState?: PrivateRedirectLocationState;
-  homePageLink: string;
   user: User;
   edgeContextSet: boolean;
   profileLoading: boolean;
@@ -25,4 +24,5 @@ export type MainHeaderProps = {
   refProfileInfo: RefProfile;
   refProfileLoading: boolean;
   fioAddresses: FioAddressDoublet[];
+  isContainedFlow: boolean;
 };

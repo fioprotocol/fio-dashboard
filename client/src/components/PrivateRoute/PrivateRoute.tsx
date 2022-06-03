@@ -15,7 +15,6 @@ type PrivateRouteProps = {
   isNewUser: boolean;
   isNewEmailNotVerified: boolean;
   loading: boolean;
-  homePageLink: string;
 };
 
 type OwnProps = {
@@ -32,7 +31,6 @@ export const PrivateRoute: React.FC<PrivateRouteProps &
   isNewUser,
   isNewEmailNotVerified,
   loading,
-  homePageLink,
   redirectOptions,
   ...rest
 }) => {
@@ -56,7 +54,7 @@ export const PrivateRoute: React.FC<PrivateRouteProps &
           return (
             <Redirect
               to={{
-                pathname: homePageLink,
+                pathname: ROUTES.HOME,
                 state: { from: props.location, options: redirectOptions },
               }}
             />

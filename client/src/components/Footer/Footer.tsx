@@ -7,12 +7,10 @@ import { ROUTES } from '../../constants/routes';
 import { currentYear } from '../../utils';
 import classes from './Footer.module.scss';
 
-const Footer: React.FC<{ homePageLink: string }> = props => {
-  const { homePageLink } = props;
-
+const Footer: React.FC = props => {
   return (
     <section className={classes.footer}>
-      <Link to={homePageLink}>
+      <Link to={ROUTES.HOME}>
         <div className={classes.logo} />
       </Link>
       <hr className={classes.divider} />

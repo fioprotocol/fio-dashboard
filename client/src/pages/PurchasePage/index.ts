@@ -12,11 +12,7 @@ import {
 } from '../../redux/registrations/selectors';
 import { isAuthenticated } from '../../redux/profile/selectors';
 import { cartItems } from '../../redux/cart/selectors';
-import {
-  isRefFlow,
-  refProfileInfo,
-  refProfileQueryParams,
-} from '../../redux/refProfile/selectors';
+import { containedFlowQueryParams } from '../../redux/containedFlow/selectors';
 
 import PurchasePage from './PurchasePage';
 
@@ -27,9 +23,7 @@ const reduxConnect = connect(
     cartItems,
     prices,
     domains,
-    isRefFlow,
-    refProfileInfo,
-    refProfileQueryParams,
+    containedFlowQueryParams,
     roe,
   }),
   {
