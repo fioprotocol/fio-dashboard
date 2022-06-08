@@ -1,11 +1,11 @@
 import Base from '../Base';
 import X from '../Exception';
 
-import { User } from '../../models';
+import { AdminUser, User } from '../../models';
 
 export default class UsersShow extends Base {
   static get requiredPermissions() {
-    return [User.ROLE.ADMIN];
+    return [AdminUser.ROLE.ADMIN];
   }
 
   static get validationRules() {
