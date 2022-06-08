@@ -95,6 +95,7 @@ const FioRecordFieldsList: React.FC<Props> = props => {
                     value={value()}
                     field={field}
                     chain={fioDecryptedContent.chainCode}
+                    token={fioDecryptedContent.tokenCode}
                   />
                 </p>
               </div>
