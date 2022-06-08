@@ -2,9 +2,9 @@ import Base from '../Base';
 import X from '../Exception';
 import { verify } from './authToken';
 
-import { User } from '../../models';
+import { AdminUser } from '../../models';
 
-export default class AuthCheck extends Base {
+export default class AuthAdminCheck extends Base {
   static get validationRules() {
     return {
       token: ['required', 'token'],
@@ -15,12 +15,13 @@ export default class AuthCheck extends Base {
     try {
       const userData = await verify(token);
 
-      const user = await User.findActive(userData.id);
+      const adminUser = await AdminUser.findActive(userData.id);
 
-      if (!user) throw new Error('NOT_VALID_USER');
+      if (!adminUser) throw new Error('NOT_VALID_USER');
 
       return {
-        id: user.id,
+        adminId: adminUser.id,
+        role: adminUser.role,
       };
     } catch (e) {
       throw new X({

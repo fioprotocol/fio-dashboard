@@ -21,6 +21,7 @@ import { BlockchainTransactionEventLog } from './models/BlockchainTransactionEve
 import { Payment } from './models/Payment.mjs';
 import { PaymentEventLog } from './models/PaymentEventLog.mjs';
 import { Var } from './models/Var.mjs';
+import { AdminUser } from './models/AdminUser.mjs';
 
 const sequelize = new Sequelize(config.postgres);
 
@@ -43,6 +44,7 @@ BlockchainTransactionEventLog.init(sequelize);
 Payment.init(sequelize);
 PaymentEventLog.init(sequelize);
 Var.init(sequelize);
+AdminUser.init(sequelize);
 
 const { models } = sequelize;
 
