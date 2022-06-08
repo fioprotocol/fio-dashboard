@@ -1,10 +1,10 @@
 import Base from '../Base';
 
-import { User } from '../../models';
+import { AdminUser, User } from '../../models';
 
 export default class UsersList extends Base {
   static get requiredPermissions() {
-    return [User.ROLE.ADMIN];
+    return [AdminUser.ROLE.ADMIN];
   }
 
   async execute() {
