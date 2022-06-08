@@ -7,6 +7,7 @@ import routes from './routes';
 const router = express.Router();
 
 const checkAuth = routes.auth.check;
+const checkAdminAuth = routes.auth.checkAdminAuth;
 
 router.post('/auth', routes.auth.create);
 router.get('/auth/nonce', routes.auth.nonce);
@@ -22,6 +23,7 @@ router.get(
   '/auth/new-device-two-factor/check-rejected',
   routes.newDeviceTwoFactor.checkRejected,
 );
+router.post('/admin-auth', routes.auth.adminCreate);
 
 router.post('/actions/:hash', routes.actions.submit);
 
@@ -36,6 +38,12 @@ router.post('/users/resendRecovery', checkAuth, routes.users.resendRecovery);
 router.post('/users/resendConfirmEmail', routes.users.resendEmailConfirm);
 router.post('/users/update-email-request', checkAuth, routes.users.updateEmailRequest);
 router.post('/users/update-email-revert', checkAuth, routes.users.updateEmailRevert);
+
+router.get('/admin-users/me', checkAdminAuth, routes.adminUsers.info);
+router.get('/admin-users', checkAdminAuth, routes.adminUsers.list);
+router.get('/admin-users/:id', checkAdminAuth, routes.adminUsers.show);
+router.put('/admin-users', checkAdminAuth, routes.adminUsers.update);
+router.delete('/admin-users', checkAdminAuth, routes.adminUsers.remove);
 
 router.get('/notifications', checkAuth, routes.notifications.list);
 router.post('/notifications', checkAuth, routes.notifications.create);
