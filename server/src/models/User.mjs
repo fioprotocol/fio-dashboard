@@ -9,23 +9,13 @@ import { Wallet } from './Wallet';
 import { NewDeviceTwoFactor } from './NewDeviceTwoFactor';
 import { ReferrerProfile } from './ReferrerProfile';
 
+import { USER_STATUS } from '../config/constants';
+
 const { DataTypes: DT, Op } = Sequelize;
 
 export class User extends Base {
-  static get ROLE() {
-    return {
-      USER: 'USER',
-      ADMIN: 'ADMIN',
-    };
-  }
-
   static get STATUS() {
-    return {
-      NEW: 'NEW',
-      ACTIVE: 'ACTIVE',
-      BLOCKED: 'BLOCKED',
-      NEW_EMAIL_NOT_VERIFIED: 'NEW_EMAIL_NOT_VERIFIED',
-    };
+    return USER_STATUS;
   }
 
   static init(sequelize) {
@@ -42,11 +32,6 @@ export class User extends Base {
           type: DT.ENUM,
           values: Object.values(this.STATUS),
           defaultValue: this.STATUS.NEW,
-        },
-        role: {
-          type: DT.ENUM,
-          values: Object.values(this.ROLE),
-          defaultValue: this.ROLE.USER,
         },
         avatar: DT.STRING,
         location: DT.STRING,
@@ -88,7 +73,6 @@ export class User extends Base {
         'username',
         'email',
         'status',
-        'role',
         'avatar',
         'location',
         'secretSet',
@@ -127,14 +111,10 @@ export class User extends Base {
   }
 
   static info(id) {
-    return this.findById(id, {
-      where: { role: { [Op.ne]: this.ROLE.ADMIN } },
-    });
+    return this.findById(id);
   }
 
   static list() {
-    return this.findAll({
-      where: { role: { [Op.ne]: this.ROLE.ADMIN } },
-    });
+    return this.findAll();
   }
 }
