@@ -70,3 +70,13 @@ const ROUTES: { [route: string]: string } = {
 };
 
 export { ROUTES };
+
+export const TOKENS_TAB_ROUTES: string[] = [
+  ROUTES.TOKENS,
+  ROUTES.FIO_WALLET,
+  ROUTES.SEND,
+  ROUTES.FIO_TOKENS_REQUEST,
+  ROUTES.PAYMENT_DETAILS,
+  ROUTES.STAKE,
+  ROUTES.UNSTAKE,
+];
