@@ -1,7 +1,10 @@
 import jp from 'jsonpath';
+import bcrypt from 'bcrypt';
 
 import logger from './logger';
 import Exception from './services/Exception';
+
+const SALT_ROUND = 10;
 
 const cleanup = (data, paths, callback, replacer = () => '<secret>') =>
   Array.isArray(paths)
@@ -15,6 +18,7 @@ const defaultParamsBuilder = () => ({});
 const defaultContextBuilder = req =>
   cloneDeep({
     ...(req.user || {}),
+    ...(req.adminUser || {}),
     ipAddress: getIpAddress(req),
     userAgent: req.headers['user-agent'],
     referer: req.headers.referer,
@@ -157,4 +161,30 @@ function getIpAddress(req) {
   }
 
   return ipAddress;
+}
+
+export function generateHash(string, salt = SALT_ROUND) {
+  return bcrypt.hashSync(string, salt);
+}
+
+export function compareHashString(string, hash) {
+  return bcrypt.compareSync(string, hash);
+}
+
+export async function authCheck(req, res, next, model, isAdmin) {
+  const promise = runService(model, {
+    params: { token: req.header('Authorization') },
+  });
+
+  try {
+    if (isAdmin) {
+      req.adminUser = await promise;
+    } else {
+      req.user = await promise;
+    }
+
+    return next();
+  } catch (e) {
+    return renderPromiseAsJson(req, res, promise, { token: '<secret>' });
+  }
 }
