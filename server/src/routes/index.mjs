@@ -9,6 +9,7 @@ import newDeviceTwoFactor from './newDeviceTwoFactor';
 import contacts from './contacts';
 import orders from './orders';
 import payments from './payments';
+import adminUsers from './adminUsers';
 
 export default {
   users,
@@ -22,4 +23,5 @@ export default {
   contacts,
   orders,
   payments,
+  adminUsers,
 };
