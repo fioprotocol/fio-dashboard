@@ -26,7 +26,7 @@ type Props = {
 };
 
 const isActiveTab = (location: Location, navItem: string) => {
-  if (ROUTES[navItem] === ROUTES.TOKENS) {
+  if (ROUTES[navItem] === ROUTES.TOKENS && location?.pathname !== ROUTES.HOME) {
     const regexp = new RegExp(location?.pathname.split('/')[1]); //get first part of path /fio-wallet/ /send/ /stake/ etc
     return TOKENS_TAB_ROUTES.some(path => regexp.test(path));
   }
