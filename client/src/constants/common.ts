@@ -7,6 +7,11 @@ export const USER_STATUSES = {
   NEW_EMAIL_NOT_VERIFIED: 'NEW_EMAIL_NOT_VERIFIED',
 };
 
+export const ADMIN_USER_ROLES = {
+  ADMIN: 'ADMIN',
+  SUPER_ADMIN: 'SUPER_ADMIN',
+};
+
 export const DEFAULT_WALLET_OPTIONS = {
   name: 'My FIO Wallet',
   fiatCurrencyCode: 'iso:USD',

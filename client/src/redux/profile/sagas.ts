@@ -13,6 +13,8 @@ import {
   PROFILE_SUCCESS,
   LOGOUT_SUCCESS,
   NONCE_SUCCESS,
+  ADMIN_LOGIN_SUCCESS,
+  loadAdminProfile,
   loadProfile,
   login,
   CONFIRM_EMAIL_SUCCESS,
@@ -47,6 +49,7 @@ export function* loginSuccess(history: History, api: Api): Generator {
       redirectLink,
     );
     const wallets: FioWalletDoublet[] = yield select(fioWallets);
+    api.client.removeAdminToken();
     api.client.setToken(action.data.jwt);
     if (wallets && wallets.length) yield put<Action>(setWallets(wallets));
     if ((action.otpKey && action.voucherId) || action.voucherId)
@@ -112,6 +115,7 @@ export function* profileSuccess(): Generator {
 export function* logoutSuccess(history: History, api: Api): Generator {
   yield takeEvery(LOGOUT_SUCCESS, function(action: Action) {
     api.client.removeToken();
+    api.client.removeAdminToken();
 
     const { redirect } = action;
 
@@ -139,5 +143,14 @@ export function* nonceSuccess(): Generator {
 export function* confirmEmailSuccess(history: History): Generator {
   yield takeEvery(CONFIRM_EMAIL_SUCCESS, function*() {
     yield history.push(ROUTES.CONFIRM_EMAIL_RESULT);
+  });
+}
+
+export function* adminLoginSuccess(api: Api): Generator {
+  yield takeEvery(ADMIN_LOGIN_SUCCESS, function*(action: Action) {
+    api.client.removeToken();
+    api.client.setAdminToken(action.data.jwt);
+
+    yield put<Action>(loadAdminProfile());
   });
 }
