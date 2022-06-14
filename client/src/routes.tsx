@@ -2,7 +2,6 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
-import AdminContainer from './components/AdminContainer';
 import MainLayout from './pages/MainLayout';
 import AuthContainer from './components/AuthContainer';
 import PrivateRoute from './components/PrivateRoute';
@@ -48,6 +47,8 @@ import UpdateEmailPage from './pages/UpdateEmailPage';
 import RejectFioRequestPage from './pages/RejectFioRequestPage';
 import EmailConfirmationResultPage from './pages/EmailConfirmationResultsPage';
 
+import AdminPage from './pages/AdminPage';
+
 import { ROUTES } from './constants/routes';
 
 const LIST_TOKEN_PARENT_ROUTE = `${ROUTES.LINK_TOKEN_LIST}/:id`;
@@ -58,7 +59,7 @@ const Routes = (): React.ReactElement => (
       <Switch>
         <Route path={ROUTES.HOME} component={HomePage} exact />
         <Route path={ROUTES.REF_PROFILE_HOME} component={RefHomePage} exact />
-        <Route path={ROUTES.ADMIN} component={AdminContainer} exact />
+        <Route path={ROUTES.ADMIN_HOME} component={AdminPage} exact />
         <Route
           path={ROUTES.CONFIRM_EMAIL}
           component={EmailConfirmationPage}
