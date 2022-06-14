@@ -6,6 +6,7 @@ import {
   LOGIN_FAILURE,
   AUTH_CHECK_FAILURE,
   UPDATE_EMAIL_FAILURE,
+  ADMIN_PROFILE_FAILURE,
   logout,
 } from '../profile/actions';
 import {
@@ -34,6 +35,7 @@ export function* notify(history: History): Generator {
       action.error &&
       action.type !== PROFILE_FAILURE &&
       action.type !== AUTH_CHECK_FAILURE &&
+      action.type !== ADMIN_PROFILE_FAILURE &&
       action.type !== LOGIN_FAILURE &&
       action.type !== LOGIN_EDGE_FAILURE &&
       action.type !== NOTIFICATIONS_LIST_FAILURE &&
@@ -66,6 +68,8 @@ export function* notify(history: History): Generator {
       action.error.fields &&
       action.error.fields.token === 'WRONG_TOKEN'
     ) {
+      if (action.type === ADMIN_PROFILE_FAILURE)
+        yield put<Action>(logout({ history }, ROUTES.ADMIN_HOME));
       yield put<Action>(logout({ history }, ROUTES.HOME));
     }
   });

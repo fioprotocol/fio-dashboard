@@ -503,3 +503,9 @@ export type FioActionExecuted = {
   executeActionType: string;
   result: ResultsData | RegistrationResult;
 };
+
+export type AdminUser = {
+  email: string;
+  status: string;
+  role: string;
+};

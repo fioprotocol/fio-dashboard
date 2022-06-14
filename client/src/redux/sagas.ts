@@ -7,6 +7,7 @@ import {
   profileSuccess,
   nonceSuccess,
   confirmEmailSuccess,
+  adminLoginSuccess,
 } from './profile/sagas';
 import { edgeLoginSuccess } from './edge/sagas';
 import { notify } from './notify/sagas';
@@ -43,5 +44,6 @@ export default function* rootSaga(history: History, api: Api) {
     setBalancesService(),
     confirmEmailSuccess(history),
     purchaseResultsClose(history),
+    adminLoginSuccess(api),
   ]);
 }

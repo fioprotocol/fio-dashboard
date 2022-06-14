@@ -226,3 +226,27 @@ export const updateStateEmail = (email: string): CommonAction => ({
   type: UPDATE_STATE_EMAIL,
   data: { email },
 });
+
+export const ADMIN_LOGIN_REQUEST = `${prefix}/ADMIN_LOGIN_REQUEST`;
+export const ADMIN_LOGIN_SUCCESS = `${prefix}/ADMIN_LOGIN_SUCCESS`;
+export const ADMIN_LOGIN_FAILURE = `${prefix}/ADMIN_LOGIN_FAILURE`;
+
+export const adminLogin = ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}): CommonPromiseAction => ({
+  types: [ADMIN_LOGIN_REQUEST, ADMIN_LOGIN_SUCCESS, ADMIN_LOGIN_FAILURE],
+  promise: (api: Api) => api.auth.adminLogin(email, password),
+});
+
+export const ADMIN_PROFILE_REQUEST = `${prefix}/ADMIN_PROFILE_REQUEST`;
+export const ADMIN_PROFILE_SUCCESS = `${prefix}/ADMIN_PROFILE_SUCCESS`;
+export const ADMIN_PROFILE_FAILURE = `${prefix}/ADMIN_PROFILE_FAILURE`;
+
+export const loadAdminProfile = (): CommonPromiseAction => ({
+  types: [ADMIN_PROFILE_REQUEST, ADMIN_PROFILE_SUCCESS, ADMIN_PROFILE_FAILURE],
+  promise: (api: Api) => api.auth.adminProfile(),
+});
