@@ -1,6 +1,6 @@
 import { createSelector } from 'reselect';
 
-import { USER_STATUSES } from '../../constants/common';
+import { USER_STATUSES, ADMIN_USER_ROLES } from '../../constants/common';
 import { prefix } from './actions';
 
 import { ReduxState } from '../init';
@@ -9,16 +9,30 @@ import {
   EmailConfirmationResult,
   LastAuthData,
   User,
+  AdminUser,
 } from '../../types';
 
 export const loading = (state: ReduxState): boolean => state[prefix].loading;
 export const user = (state: ReduxState): User | null => state[prefix].user;
-export const role = (state: ReduxState): string | null =>
-  state[prefix].user && state[prefix].user.role;
+export const adminUser = (state: ReduxState): AdminUser | null =>
+  state[prefix].adminUser;
+export const adminRole = createSelector(
+  adminUser,
+  adminUser => adminUser && adminUser.role,
+);
 export const email = (state: ReduxState): string | null =>
   state[prefix].user && state[prefix].user.email;
-export const isAdmin = (state: ReduxState): boolean =>
-  state[prefix].user && state[prefix].user.role === 'ADMIN';
+export const isAdmin = createSelector(
+  adminRole,
+  adminRole => adminRole === ADMIN_USER_ROLES.ADMIN,
+);
+export const isSuperAdmin = createSelector(
+  adminRole,
+  adminRole => adminRole === ADMIN_USER_ROLES.SUPER_ADMIN,
+);
+
+export const isAdminUserType = (state: ReduxState): boolean =>
+  state[prefix].isAdmin && state[prefix].isSuperAdmin;
 export const error = (
   state: ReduxState,
 ): {
@@ -50,6 +64,10 @@ export const updateEmailLoading = (state: ReduxState): boolean =>
   state[prefix].updateEmailLoading;
 
 export const isAuthenticated = createSelector(user, user => !!user);
+export const isAdminAuthenticated = createSelector(
+  adminUser,
+  adminUser => !!adminUser,
+);
 export const userId = createSelector(user, user => (user ? user.id : null));
 export const noProfileLoaded = createSelector(
   isAuthenticated,
@@ -70,6 +88,16 @@ export const isNotActiveUser = createSelector(
   profileRefreshed,
   (isAuthenticated, user, profileRefreshed) =>
     profileRefreshed && isAuthenticated && user.status !== USER_STATUSES.ACTIVE,
+);
+
+export const isNotActiveAdminUser = createSelector(
+  isAdminAuthenticated,
+  adminUser,
+  profileRefreshed,
+  (isAdminAuthenticated, adminUser, profileRefreshed) =>
+    profileRefreshed &&
+    isAdminAuthenticated &&
+    adminUser.status !== USER_STATUSES.ACTIVE,
 );
 
 export const isNewEmailNotVerified = createSelector(

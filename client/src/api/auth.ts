@@ -146,4 +146,12 @@ export default class Auth extends Base {
       voucherId,
     });
   }
+
+  adminLogin(email: string, password: string) {
+    return this.apiClient.post('admin-auth', { data: { email, password } });
+  }
+
+  adminProfile(): Promise<AuthProfileResponse> {
+    return this.apiClient.get('admin-users/me');
+  }
 }
