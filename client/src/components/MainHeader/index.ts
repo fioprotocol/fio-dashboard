@@ -53,8 +53,13 @@ const actions = (
 ) => ({
   showLoginModal: () => dispatch(showLoginModal()),
   logout: () => {
-    const { history } = ownProps;
-    dispatch(logout({ history }, ROUTES.HOME));
+    const { history, isAdminAuthenticated } = ownProps;
+    dispatch(
+      logout(
+        { history },
+        isAdminAuthenticated ? ROUTES.ADMIN_HOME : ROUTES.HOME,
+      ),
+    );
     dispatch(resetLastAuthData());
   },
 });

@@ -5,10 +5,14 @@ import { Location } from 'history';
 import classnames from 'classnames';
 
 import { ROUTES, TOKENS_TAB_ROUTES } from '../../constants/routes';
+
+import { useIsAdminRoute } from '../../hooks/admin';
+
 import { LINKS, LINK_LABELS } from '../../constants/labels';
+
 import classes from './Navigation.module.scss';
 
-const navItems: string[] = [
+const userNavItems: string[] = [
   LINKS.FIO_ADDRESSES,
   LINKS.FIO_DOMAINS,
   LINKS.TOKENS,
@@ -18,9 +22,20 @@ const navItems: string[] = [
   // LINKS.PROTOCOL_UPDATES,
 ];
 
+const adminNavItems: string[] = [];
+const superAdminNavItems: string[] = [LINKS.ADMIN_USERS];
+
 type Props = {
   isNotActiveUser: boolean;
   isContainedFlow: boolean;
+  isNotActiveAdminUser: boolean;
+  isOnSide?: boolean;
+  isSuperAdmin: boolean;
+  closeMenu?: () => void;
+};
+
+type RenderNavItemsProps = {
+  navItemsList: string[];
   isOnSide?: boolean;
   closeMenu?: () => void;
 };
@@ -33,44 +48,69 @@ const isActiveTab = (location: Location, navItem: string) => {
   return location?.pathname === ROUTES[navItem];
 };
 
-export const Navigation: React.FC<Props> | null = props => {
-  const { isOnSide, isNotActiveUser, isContainedFlow } = props;
+const RenderNavItems: React.FC<RenderNavItemsProps> = props => {
+  const { isOnSide, closeMenu, navItemsList } = props;
   const location = useLocation();
+  return (
+    <>
+      {navItemsList.map((item, i) => {
+        const active = isActiveTab(location, item);
+        return (
+          <Nav.Item
+            className={classnames(
+              classes.sideItem,
+              isOnSide && classes.isOnSide,
+            )}
+            key={LINK_LABELS[item]}
+          >
+            <Nav.Link
+              as={Link}
+              to={ROUTES[item]}
+              className={classes.sideLink}
+              data-content={LINK_LABELS[item]}
+              eventKey={i}
+              onClick={closeMenu}
+              active={active}
+            >
+              {LINK_LABELS[item]}
+            </Nav.Link>
+          </Nav.Item>
+        );
+      })}
+    </>
+  );
+};
+
+export const Navigation: React.FC<Props> | null = props => {
+  const {
+    isOnSide,
+    isNotActiveUser,
+    isContainedFlow,
+    isNotActiveAdminUser,
+    isSuperAdmin,
+    closeMenu,
+  } = props;
+  const isAdminLocation = useIsAdminRoute();
 
   if (isContainedFlow) return null;
-  if (isNotActiveUser) return null;
+  if (isNotActiveUser && isNotActiveAdminUser) return null;
 
-  const renderItems = () => {
-    const { closeMenu } = props;
-    return navItems.map((item, i) => {
-      const active = isActiveTab(location, item);
-      return (
-        <Nav.Item
-          className={classnames(classes.sideItem, isOnSide && classes.isOnSide)}
-          key={LINK_LABELS[item]}
-        >
-          <Nav.Link
-            as={Link}
-            to={ROUTES[item]}
-            className={classes.sideLink}
-            data-content={LINK_LABELS[item]}
-            eventKey={i}
-            onClick={closeMenu}
-            active={active}
-          >
-            {LINK_LABELS[item]}
-          </Nav.Link>
-        </Nav.Item>
-      );
-    });
-  };
+  const navItemsList = !isAdminLocation
+    ? userNavItems
+    : isSuperAdmin
+    ? superAdminNavItems
+    : adminNavItems;
 
   return (
     <Nav
       className={classnames(classes.sideWrapper, isOnSide && classes.isOnSide)}
       defaultActiveKey={1}
     >
-      {renderItems()}
+      <RenderNavItems
+        closeMenu={closeMenu}
+        navItemsList={navItemsList}
+        isOnSide={isOnSide}
+      />
     </Nav>
   );
 };

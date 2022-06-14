@@ -4,14 +4,17 @@ import { Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import { useCheckIfDesktop } from '../../../screenType';
-
-import { ROUTES } from '../../../constants/routes';
-import classes from '../MainHeader.module.scss';
 import { LoggedActionButtons } from './ActionButtons';
 import SideMenu from './SideMenu';
-import { CartItem, Notification, RefProfile } from '../../../types';
 import SiteLink from './SiteLink';
+
+import { ROUTES } from '../../../constants/routes';
+
+import { useCheckIfDesktop } from '../../../screenType';
+
+import { CartItem, Notification, RefProfile } from '../../../types';
+
+import classes from '../MainHeader.module.scss';
 
 type LoggedNavProps = {
   cartItems: CartItem[];
@@ -23,6 +26,7 @@ type LoggedNavProps = {
   hideNotifications: boolean;
   showSiteLink: boolean;
   onlyAuth: boolean;
+  hideSettings?: boolean;
   refProfileInfo: RefProfile;
   notifications: Notification[];
   logout: () => void;
