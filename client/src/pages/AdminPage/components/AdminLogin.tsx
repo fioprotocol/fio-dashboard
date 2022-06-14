@@ -1,0 +1,51 @@
+import React from 'react';
+import { Form, Field, FormRenderProps } from 'react-final-form';
+
+import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
+import { TextInput } from '../../../components/Input/TextInput';
+
+import { AdminLoginPageProps, FormValues } from '../types';
+
+import classes from '../AdminPage.module.scss';
+
+const AdminLogin: React.FC<AdminLoginPageProps> = props => {
+  const { login, loading } = props;
+
+  const onSubmit = (values: FormValues) => {
+    login(values);
+  };
+
+  const formRender = (formRenderProps: FormRenderProps) => {
+    const { handleSubmit } = formRenderProps;
+
+    return (
+      <div className={classes.container}>
+        <div className={classes.formContainer}>
+          <h2 className={classes.title}>Login</h2>
+          <form className={classes.form} onSubmit={handleSubmit}>
+            <Field
+              component={TextInput}
+              type="text"
+              name="email"
+              placeholder="Enter Your Email"
+              label="Email"
+            />
+            <Field
+              component={TextInput}
+              type="password"
+              name="password"
+              placeholder="Enter Your Password"
+              label="Password"
+            />
+            <SubmitButton text="Login" loading={loading} />
+          </form>
+        </div>
+      </div>
+    );
+  };
+
+  // todo: handle form errors
+  return <Form onSubmit={onSubmit}>{formRender}</Form>;
+};
+
+export default AdminLogin;

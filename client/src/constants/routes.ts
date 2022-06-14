@@ -1,8 +1,9 @@
 const ROUTES: { [route: string]: string } = {
   HOME: '/',
-  ADMIN: '/admin',
-  ADMIN_USERS: '/admin/users',
   DASHBOARD: '/dashboard',
+
+  ADMIN_HOME: '/admin',
+  ADMIN_USERS: '/admin/users',
 
   CONFIRM_EMAIL: '/confirm-email/:hash',
   CONFIRM_EMAIL_RESULT: '/confirm-email-result',

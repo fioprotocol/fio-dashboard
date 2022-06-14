@@ -1,0 +1,17 @@
+@import '../../assets/styles/colors';
+
+.container {
+  width: 100%;
+  background-color: $content-background;
+
+  .formContainer {
+    width: 100%;
+    max-width: 335px;
+    margin: 5% auto;
+
+    .title {
+      color: $white;
+      margin-bottom: 30px;
+    }
+  }
+}
