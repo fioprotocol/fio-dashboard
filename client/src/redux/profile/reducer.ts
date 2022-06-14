@@ -13,6 +13,7 @@ import {
   LastAuthData,
   EmailConfirmationResult,
   AnyType,
+  AdminUser,
 } from '../../types';
 
 export default combineReducers({
@@ -25,6 +26,8 @@ export default combineReducers({
       case actions.SIGNUP_REQUEST:
       case actions.RESEND_CONFIRM_EMAIL_REQUEST:
       case actions.CONFIRM_EMAIL_REQUEST:
+      case actions.ADMIN_LOGIN_REQUEST:
+      case actions.ADMIN_PROFILE_REQUEST:
         return true;
       case actions.PROFILE_SUCCESS:
       case actions.PROFILE_FAILURE:
@@ -40,6 +43,10 @@ export default combineReducers({
       case actions.RESEND_CONFIRM_EMAIL_FAILURE:
       case actions.CONFIRM_EMAIL_SUCCESS:
       case actions.CONFIRM_EMAIL_FAILURE:
+      case actions.ADMIN_LOGIN_SUCCESS:
+      case actions.ADMIN_LOGIN_FAILURE:
+      case actions.ADMIN_PROFILE_SUCCESS:
+      case actions.ADMIN_PROFILE_FAILURE:
         return false;
       default:
         return state;
@@ -152,6 +159,16 @@ export default combineReducers({
         return state;
     }
   },
+  adminUser(state: AdminUser | null = null, action) {
+    switch (action.type) {
+      case actions.ADMIN_PROFILE_SUCCESS:
+        return action.data;
+      case actions.LOGOUT_SUCCESS:
+        return null;
+      default:
+        return state;
+    }
+  },
   emailConfirmationResult(state: EmailConfirmationResult = {}, action) {
     switch (action.type) {
       case actions.CONFIRM_EMAIL_SUCCESS:
@@ -205,9 +222,12 @@ export default combineReducers({
   profileRefreshed(state: boolean = false, action) {
     switch (action.type) {
       case actions.PROFILE_REQUEST:
+      case actions.ADMIN_PROFILE_REQUEST:
         return false;
       case actions.PROFILE_SUCCESS:
       case actions.PROFILE_FAILURE:
+      case actions.ADMIN_PROFILE_SUCCESS:
+      case actions.ADMIN_PROFILE_FAILURE:
         return true;
       default:
         return state;

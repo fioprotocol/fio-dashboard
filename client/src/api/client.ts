@@ -8,22 +8,35 @@ export default class ApiClient {
   prefix: string;
   baseUrl: string;
   token: string | null;
+  adminToken: string | null;
 
   constructor(prefix: string) {
     if (!prefix) throw new Error('[apiPrefix] required');
     this.prefix = prefix;
     this.baseUrl = config.apiBaseUrl || '';
-    this.token = window.localStorage.getItem('token') || null;
+    this.token = window.localStorage.getItem(config.userTokenName) || null;
+    this.adminToken =
+      window.localStorage.getItem(config.adminTokenName) || null;
   }
 
   setToken(token: string): void {
     this.token = token;
-    window.localStorage.setItem('token', token);
+    window.localStorage.setItem(config.userTokenName, token);
   }
 
   removeToken(): void {
     this.token = null;
-    window.localStorage.removeItem('token');
+    window.localStorage.removeItem(config.userTokenName);
+  }
+
+  setAdminToken(adminToken: string): void {
+    this.adminToken = adminToken;
+    window.localStorage.setItem(config.adminTokenName, adminToken);
+  }
+
+  removeAdminToken(): void {
+    this.adminToken = null;
+    window.localStorage.removeItem(config.adminTokenName);
   }
 
   get(url: string, params: Object = {}): Promise<ApisResponse> {
@@ -64,6 +77,7 @@ export default class ApiClient {
     if (params) req.query(params);
     if (body) req.send(body);
     if (this.token) req.set('Authorization', `Bearer ${this.token}`);
+    if (this.adminToken) req.set('Authorization', `Bearer ${this.adminToken}`);
     // todo pass refcode to request
 
     return req.then(
