@@ -1,38 +1,43 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
+import { compose } from '../../utils';
+
 import { edgeContextInit } from '../../redux/edge/actions';
-import { loadProfile } from '../../redux/profile/actions';
+import { loadProfile, loadAdminProfile } from '../../redux/profile/actions';
 import { showRecoveryModal } from '../../redux/modal/actions';
 import { pathname } from '../../redux/navigation/selectors';
-import { isAuthenticated, isActiveUser } from '../../redux/profile/selectors';
+import {
+  isAuthenticated,
+  isActiveUser,
+  isAdminAuthenticated,
+} from '../../redux/profile/selectors';
 import { loginSuccess, edgeContextSet } from '../../redux/edge/selectors';
 import { showLogin, showRecovery } from '../../redux/modal/selectors';
 import { isContainedFlow } from '../../redux/containedFlow/selectors';
 
 import MainLayout from './MainLayout';
 
-import { AppDispatch } from '../../redux/init';
-
-const selector = createStructuredSelector({
-  pathname,
-  isAuthenticated,
-  isActiveUser,
-  loginSuccess,
-  showLogin,
-  showRecovery,
-  edgeContextSet,
-  isContainedFlow,
-});
-
-const actions = (dispatch: AppDispatch) => ({
-  init: () => {
-    dispatch(loadProfile());
-    dispatch(edgeContextInit());
+const reduxConnect = connect(
+  createStructuredSelector({
+    pathname,
+    isAuthenticated,
+    isActiveUser,
+    loginSuccess,
+    showLogin,
+    showRecovery,
+    edgeContextSet,
+    isAdminAuthenticated,
+    isContainedFlow,
+  }),
+  {
+    edgeContextInit,
+    showRecoveryModal,
+    loadProfile,
+    loadAdminProfile,
   },
-  showRecoveryModal: () => dispatch(showRecoveryModal()),
-});
+);
 
 export { MainLayout };
 
-export default connect(selector, actions)(MainLayout);
+export default compose(reduxConnect)(MainLayout);
