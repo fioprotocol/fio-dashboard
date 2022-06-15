@@ -38,7 +38,7 @@ const PaymentDetailsResults: React.FC<TokenTransferResultsProps> = props => {
           <p className={classes.title}>Amount</p>
           <p className={classes.item}>
             <span>
-              {<Amount value={price} /> + ' ' + tokenCode}
+              <Amount value={price} /> {' ' + tokenCode}
               {isFioChain(chainCode) && (
                 <>
                   {' ('}

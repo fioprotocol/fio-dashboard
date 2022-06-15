@@ -12,7 +12,10 @@ const EndPoint = entities.EndPoint;
 
 class Fio {
   getPublicFioSDK() {
-    return new FIOSDK('', '', process.env.FIO_BASE_URL, fetch);
+    if (!this.publicFioSDK) {
+      this.publicFioSDK = new FIOSDK('', '', process.env.FIO_BASE_URL, fetch);
+    }
+    return this.publicFioSDK;
   }
 
   getWalletSdkInstance(publicKey) {
