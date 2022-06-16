@@ -141,8 +141,8 @@ export class OrderItem extends Base {
           INNER JOIN orders o ON o.id = oi."orderId"
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
           LEFT JOIN "fio-account-profiles" fap.id = rp."fioAccountProfileId"
-        WHERE ois.status = ${Payment.STATUS.COMPLETED} 
-          AND ois.status = ${status}
+        WHERE ois."paymentStatus" = ${Payment.STATUS.COMPLETED} 
+          AND ois."txStatus" = ${status}
         ORDER BY oi.id
         LIMIT 100
       `);
