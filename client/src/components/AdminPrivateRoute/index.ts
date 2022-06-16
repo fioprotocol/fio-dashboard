@@ -1,21 +1,25 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-import { compose } from '../../utils';
+import AdminPrivateRoute from './AdminPrivateRoute';
 
 import {
-  adminUser,
+  loading,
+  isAdminAuthenticated,
   isAuthenticated as isAuthUser,
 } from '../../redux/profile/selectors';
 
-import AdminPage from './AdminPage';
+import { compose } from '../../utils';
 
 const reduxConnect = connect(
   createStructuredSelector({
-    adminUser,
+    isAdminAuthenticated,
     isAuthUser,
+    loading,
   }),
-  {},
+  null,
+  null,
+  { pure: false },
 );
 
-export default compose(reduxConnect)(AdminPage);
+export default compose(reduxConnect)(AdminPrivateRoute);

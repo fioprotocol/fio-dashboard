@@ -47,7 +47,10 @@ import UpdateEmailPage from './pages/UpdateEmailPage';
 import RejectFioRequestPage from './pages/RejectFioRequestPage';
 import EmailConfirmationResultPage from './pages/EmailConfirmationResultsPage';
 
+import AdminPrivateRoute from './components/AdminPrivateRoute';
 import AdminPage from './pages/AdminPage';
+import AdminLoginPage from './pages/AdminLoginPage';
+import AdminUserListPage from './pages/AdminUserListPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -59,7 +62,11 @@ const Routes = (): React.ReactElement => (
       <Switch>
         <Route path={ROUTES.HOME} component={HomePage} exact />
         <Route path={ROUTES.REF_PROFILE_HOME} component={RefHomePage} exact />
-        <Route path={ROUTES.ADMIN_HOME} component={AdminPage} exact />
+        <AdminPrivateRoute
+          path={ROUTES.ADMIN_HOME}
+          component={AdminPage}
+          exact
+        />
         <Route
           path={ROUTES.CONFIRM_EMAIL}
           component={EmailConfirmationPage}
@@ -228,6 +235,14 @@ const Routes = (): React.ReactElement => (
         <PrivateRoute
           path={ROUTES.REJECT_FIO_REQUEST}
           component={RejectFioRequestPage}
+          exact
+        />
+
+        <Route path={ROUTES.ADMIN_LOGIN} component={AdminLoginPage} exact />
+
+        <AdminPrivateRoute
+          path={ROUTES.ADMIN_USERS}
+          component={AdminUserListPage}
           exact
         />
 

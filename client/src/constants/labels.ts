@@ -17,6 +17,7 @@ export const LINKS: { [linkKey: string]: string } = {
   TOKENS: 'TOKENS',
   GOVERNANCE: 'GOVERNANCE',
   PROTOCOL_UPDATES: 'PROTOCOL_UPDATES',
+  ADMIN_USERS: 'ADMIN_USERS',
 };
 
 export const LINK_LABELS: { [linkKey: string]: string } = {
@@ -36,6 +37,7 @@ export const LINK_LABELS: { [linkKey: string]: string } = {
   [LINKS.TOKENS]: 'Tokens',
   [LINKS.GOVERNANCE]: 'Governance',
   [LINKS.PROTOCOL_UPDATES]: 'Protocol Updates',
+  [LINKS.ADMIN_USERS]: 'Admin Users',
 };
 
 export const fioNameLabels: { [fioNameType: string]: string } = {
