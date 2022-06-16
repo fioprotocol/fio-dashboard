@@ -1,20 +1,18 @@
 import React from 'react';
-import { Redirect } from 'react-router';
 
-import AdminLogin from './components/AdminLogin';
+import { AdminUser } from '../../types';
 
-import { ROUTES } from '../../constants/routes';
+type Props = {
+  adminUser: AdminUser;
+  isAuthUser: boolean;
+};
 
-import { AdminPageProps } from './types';
-
-const AdminPage: React.FC<AdminPageProps> = props => {
-  const { loading, login, adminUser, isAuthUser } = props;
-
-  if (isAuthUser) return <Redirect to={ROUTES.HOME} />;
+const AdminPage: React.FC<Props> = props => {
+  const { adminUser } = props;
 
   if (adminUser) return <div>Hi, {adminUser.email}</div>;
 
-  return <AdminLogin login={login} loading={loading} />;
+  return null;
 };
 
 export default AdminPage;

@@ -44,6 +44,7 @@ export default function* rootSaga(history: History, api: Api) {
     setBalancesService(),
     confirmEmailSuccess(history),
     purchaseResultsClose(history),
-    adminLoginSuccess(api),
+    adminLoginSuccess(history, api),
+    adminConfirmSuccess(history, api),
   ]);
 }

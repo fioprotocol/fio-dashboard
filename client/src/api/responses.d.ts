@@ -5,6 +5,7 @@ import {
   ContainedFlowQueryParams,
   User,
   RefProfile,
+  AdminUser,
 } from '../types';
 
 export type AccountGetWalletsResponse = FioWalletDoublet[];
@@ -73,6 +74,11 @@ export type RefProfileGetResponse = RefProfile;
 export type UsersListResponse = User[];
 export type UsersShowResponse = User;
 
+export type AdminUsersListResponse = AdminUser[];
+export type RemoveAdminResponse =
+  | { success: true }
+  | { success: false; message: 'Not Found' };
+
 export type ApisResponse = AccountGetWalletsResponse &
   AccountSetWalletsResponse &
   AccountAddWalletsResponse &
@@ -106,4 +112,6 @@ export type ApisResponse = AccountGetWalletsResponse &
   NotificationsUpdateResponse &
   RefProfileGetResponse &
   UsersListResponse &
-  UsersShowResponse;
+  UsersShowResponse &
+  AdminUsersListResponse &
+  RemoveAdminResponse;
