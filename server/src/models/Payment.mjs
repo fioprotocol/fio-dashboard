@@ -27,6 +27,8 @@ export class Payment extends Base {
     return {
       COINBASE: 'COINBASE',
       COINPAYMENTS: 'COINPAYMENTS',
+      CREDIT_CARD: 'CREDIT_CARD',
+      FIO: 'FIO',
       ADMIN: 'ADMIN',
     };
   }

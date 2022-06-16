@@ -73,4 +73,8 @@ router.get('/contacts', checkAuth, routes.contacts.list);
 
 router.get('/check-pub-address', checkAuth, routes.external.validatePubAddress);
 
+router.get('/orders', checkAuth, routes.orders.list);
+router.post('/orders', checkAuth, routes.orders.create);
+router.post('/orders/update', checkAuth, routes.orders.update);
+
 export default router;
