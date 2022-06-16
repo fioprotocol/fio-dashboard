@@ -15,7 +15,7 @@ const defaultParamsBuilder = () => ({});
 const defaultContextBuilder = req =>
   cloneDeep({
     ...(req.user || {}),
-    ipAddress: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+    ipAddress: getIpAddress(req),
     userAgent: req.headers['user-agent'],
     referer: req.headers.referer,
   });
@@ -136,4 +136,25 @@ function defaultLogger(type, data) {
     }[type && type.toLowerCase()] || 'debug';
 
   logger[logMethodName](data);
+}
+
+function getIpAddress(req) {
+  let ipAddress = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+  // first address of xff, list is comma separated
+  if (ipAddress && ipAddress.indexOf(',') > -1) {
+    ipAddress = ipAddress.split(',')[0];
+  } else if (ipAddress === '') {
+    ipAddress = req.ip;
+  }
+  // strip the port if present.
+  const stripPort = ipAddress.split(':');
+  if (stripPort.length === 2) {
+    ipAddress = stripPort[0];
+  } else if (stripPort.length === 7) {
+    stripPort.pop();
+    ipAddress = stripPort.join(':');
+  }
+
+  return ipAddress;
 }

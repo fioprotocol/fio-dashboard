@@ -112,6 +112,7 @@
     "final-form-arrays": "^3.0.2",
     "gt3-sdk": "^2.0.0",
     "handlebars": "^4.7.7",
+    "hashids": "^2.2.10",
     "http-proxy-middleware": "^2.0.1",
     "js-cookie": "3.0.1",
     "json-pointer": "^0.6.0",

@@ -30,6 +30,7 @@ export class BlockchainTransaction extends Base {
   // could be several records with status RETRY_PROCESSED for one orderItemId
   static get STATUS() {
     return {
+      NONE: 0,
       READY: 1,
       PENDING: 2,
       SUCCESS: 3,
