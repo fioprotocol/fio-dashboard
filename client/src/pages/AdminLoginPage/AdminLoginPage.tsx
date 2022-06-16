@@ -1,15 +1,29 @@
 import React from 'react';
 import { Form, Field, FormRenderProps } from 'react-final-form';
+import { Redirect } from 'react-router';
 
-import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
-import { TextInput } from '../../../components/Input/TextInput';
+import { ROUTES } from '../../constants/routes';
 
-import { AdminLoginPageProps, FormValues } from '../types';
+import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
+import { TextInput } from '../../components/Input/TextInput';
 
-import classes from '../AdminPage.module.scss';
+import classes from './AdminLoginPage.module.scss';
 
-const AdminLogin: React.FC<AdminLoginPageProps> = props => {
-  const { login, loading } = props;
+type FormValues = {
+  email: string;
+  password: string;
+};
+
+type Props = {
+  login: (values: FormValues) => void;
+  loading: boolean;
+  isAdminAuthenticated: boolean;
+};
+
+const AdminLogin: React.FC<Props> = props => {
+  const { login, loading, isAdminAuthenticated } = props;
+
+  if (isAdminAuthenticated) return <Redirect to={ROUTES.ADMIN_HOME} />;
 
   const onSubmit = (values: FormValues) => {
     login(values);

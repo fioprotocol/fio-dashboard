@@ -10,6 +10,7 @@ import FioHistory from './fio-history';
 import Account from './account';
 import RefProfile from './ref-profile';
 import Contacts from './contacts';
+import Admin from './admin';
 
 const apiClient = new ApiClient(config.apiPrefix);
 
@@ -34,6 +35,7 @@ export type Api = {
   refProfile: RefProfile;
   contacts: Contacts;
   client: ApiClient;
+  admin: Admin;
 };
 
 const apis = {
@@ -47,6 +49,7 @@ const apis = {
   refProfile: new RefProfile(apiClient),
   contacts: new Contacts(apiClient),
   client: apiClient,
+  admin: new Admin(apiClient),
 };
 
 export default apis;

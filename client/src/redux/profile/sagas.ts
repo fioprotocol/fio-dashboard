@@ -146,11 +146,13 @@ export function* confirmEmailSuccess(history: History): Generator {
   });
 }
 
-export function* adminLoginSuccess(api: Api): Generator {
+export function* adminLoginSuccess(history: History, api: Api): Generator {
   yield takeEvery(ADMIN_LOGIN_SUCCESS, function*(action: Action) {
     api.client.removeToken();
     api.client.setAdminToken(action.data.jwt);
 
     yield put<Action>(loadAdminProfile());
+
+    history.push(ROUTES.ADMIN_HOME);
   });
 }
