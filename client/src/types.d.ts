@@ -505,6 +505,7 @@ export type FioActionExecuted = {
 };
 
 export type AdminUser = {
+  id: string;
   email: string;
   status: string;
   role: string;
