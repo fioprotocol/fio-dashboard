@@ -19,6 +19,7 @@ import {
   AuthUpdateEmailRevertResponse,
   AuthUpdateNewDeviceResponse,
   AuthUsernameResponse,
+  AdminConfirmResponse,
 } from './responses';
 
 export default class Auth extends Base {
@@ -153,5 +154,13 @@ export default class Auth extends Base {
 
   adminProfile(): Promise<AuthProfileResponse> {
     return this.apiClient.get('admin-users/me');
+  }
+
+  confirmAdmin(hash: string): Promise<AdminConfirmResponse> {
+    return this.apiClient.post(`actions/admin/${hash}`, {});
+  }
+
+  adminInviteAuth(adminId: string): Promise<AuthLoginResponse> {
+    return this.apiClient.post('admin-auth/invite', { adminId });
   }
 }

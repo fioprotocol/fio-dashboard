@@ -16,6 +16,7 @@ export const templates = {
   expiringDomains: 'expiringDomains',
   lowBundleCount: 'lowBundleCount',
   fallbackFundsEmail: 'fallbackFundsEmail',
+  confirmAdminEmail: 'confirmAdminEmail',
 };
 
 const FIO_LOGO_BASE64 =

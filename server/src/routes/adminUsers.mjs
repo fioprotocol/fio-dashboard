@@ -5,6 +5,7 @@ import AdminUserShow from '../services/adminUsers/Show';
 import AdminUsersList from '../services/adminUsers/List';
 import AdminUserUpdate from '../services/adminUsers/Update';
 import AdminUserRemove from '../services/adminUsers/Remove';
+import AdminUserInvite from '../services/adminUsers/Invite';
 
 export default {
   info: makeServiceRunner(AdminUserInfo),
@@ -12,4 +13,5 @@ export default {
   list: makeServiceRunner(AdminUsersList),
   update: makeServiceRunner(AdminUserUpdate, req => req.body),
   remove: makeServiceRunner(AdminUserRemove, req => req.body),
+  invite: makeServiceRunner(AdminUserInvite, req => req.body),
 };
