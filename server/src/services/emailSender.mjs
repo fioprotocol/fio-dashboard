@@ -99,6 +99,15 @@ class EmailSender {
           images: EmailTemplate.getInlineImages(templateName),
         };
       }
+      case templates.confirmAdminEmail:
+        return {
+          subject: 'FIO Dashboard - please confirm your email',
+          body: EmailTemplate.get(templateName, {
+            link: `${sendData.mainUrl}confirm-admin-email/${sendData.hash}`,
+            ...sendData,
+          }),
+          images: EmailTemplate.getInlineImages(templateName),
+        };
       case templates.passRecovery:
         return {
           subject: 'FIO Dashboard recovery link',
