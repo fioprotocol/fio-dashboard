@@ -8,6 +8,7 @@ import {
   nonceSuccess,
   confirmEmailSuccess,
   adminLoginSuccess,
+  adminConfirmSuccess,
 } from './profile/sagas';
 import { edgeLoginSuccess } from './edge/sagas';
 import { notify } from './notify/sagas';

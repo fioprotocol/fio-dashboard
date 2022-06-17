@@ -14,10 +14,12 @@ import {
   LOGOUT_SUCCESS,
   NONCE_SUCCESS,
   ADMIN_LOGIN_SUCCESS,
+  CONFIRM_ADMIN_EMAIL_SUCCESS,
+  CONFIRM_EMAIL_SUCCESS,
   loadAdminProfile,
   loadProfile,
   login,
-  CONFIRM_EMAIL_SUCCESS,
+  logout,
 } from './actions';
 
 import { closeLoginModal } from '../modal/actions';
@@ -41,7 +43,10 @@ import { USER_STATUSES } from '../../constants/common';
 
 import { FioWalletDoublet, PrivateRedirectLocationState } from '../../types';
 import { Action } from '../types';
-import { AuthDeleteNewDeviceRequestResponse } from '../../api/responses';
+import {
+  AuthDeleteNewDeviceRequestResponse,
+  AuthLoginResponse,
+} from '../../api/responses';
 
 export function* loginSuccess(history: History, api: Api): Generator {
   yield takeEvery(LOGIN_SUCCESS, function*(action: Action) {
@@ -154,5 +159,25 @@ export function* adminLoginSuccess(history: History, api: Api): Generator {
     yield put<Action>(loadAdminProfile());
 
     history.push(ROUTES.ADMIN_HOME);
+  });
+}
+
+export function* adminConfirmSuccess(history: History, api: Api): Generator {
+  yield takeEvery(CONFIRM_ADMIN_EMAIL_SUCCESS, function*(action: Action) {
+    api.client.removeToken();
+    api.client.removeAdminToken();
+
+    yield put<Action>(logout({ history }, ROUTES.ADMIN_HOME));
+
+    const authData: AuthLoginResponse = yield api.auth.adminInviteAuth(
+      action.data.adminId,
+    );
+
+    api.client.removeToken();
+    api.client.setAdminToken(authData.jwt);
+
+    yield put<Action>(loadAdminProfile());
+
+    history.push(ROUTES.ADMIN_SET_PASSWORD);
   });
 }
