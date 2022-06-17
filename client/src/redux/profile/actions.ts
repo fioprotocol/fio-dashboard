@@ -250,3 +250,17 @@ export const loadAdminProfile = (): CommonPromiseAction => ({
   types: [ADMIN_PROFILE_REQUEST, ADMIN_PROFILE_SUCCESS, ADMIN_PROFILE_FAILURE],
   promise: (api: Api) => api.auth.adminProfile(),
 });
+
+export const CONFIRM_ADMIN_EMAIL_REQUEST = `${prefix}/CONFIRM_ADMIN_EMAIL_REQUEST`;
+export const CONFIRM_ADMIN_EMAIL_SUCCESS = `${prefix}/CONFIRM_ADMIN_EMAIL_SUCCESS`;
+export const CONFIRM_ADMIN_EMAIL_FAILURE = `${prefix}/CONFIRM_ADMIN_EMAIL_FAILURE`;
+
+export const confirmAdminEmail = (hash: string): CommonPromiseAction => ({
+  types: [
+    CONFIRM_ADMIN_EMAIL_REQUEST,
+    CONFIRM_ADMIN_EMAIL_SUCCESS,
+    CONFIRM_ADMIN_EMAIL_FAILURE,
+  ],
+  promise: (api: Api) =>
+    minWaitTimeFunction(() => api.auth.confirm(hash), 2000),
+});

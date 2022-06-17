@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import Sequelize from 'sequelize';
 
 import { User } from './User.mjs';
+import { AdminUser } from './AdminUser.mjs';
 import Base from './Base';
 
 const { DataTypes: DT } = Sequelize;
@@ -14,6 +15,7 @@ export class Action extends Base {
       RESET_PASSWORD: 'resetPassword',
       RESEND_EMAIL_CONFIRM: 'resendEmailConfirm',
       UPDATE_EMAIL: 'updateEmail',
+      CONFIRM_ADMIN_EMAIL: 'confirmAdminEmail',
     };
   }
 
@@ -46,6 +48,12 @@ export class Action extends Base {
     const user = await User.findById(this.data.userId);
 
     return user.update({ status: User.STATUS.ACTIVE, email: this.data.newEmail });
+  }
+
+  async confirmAdminEmail() {
+    const adminUser = await AdminUser.findById(this.data.adminId);
+
+    return adminUser.update({ status: AdminUser.STATUS.ACTIVE });
   }
 
   static generateHash() {

@@ -78,6 +78,10 @@ export type AdminUsersListResponse = AdminUser[];
 export type RemoveAdminResponse =
   | { success: true }
   | { success: false; message: 'Not Found' };
+export type AdminInviteResponse =
+  | { success: true }
+  | { success: false; message: 'Not Unique' };
+export type AdminConfirmResponse = AdminUser;
 
 export type ApisResponse = AccountGetWalletsResponse &
   AccountSetWalletsResponse &
@@ -114,4 +118,6 @@ export type ApisResponse = AccountGetWalletsResponse &
   UsersListResponse &
   UsersShowResponse &
   AdminUsersListResponse &
-  RemoveAdminResponse;
+  RemoveAdminResponse &
+  AdminInviteResponse &
+  AdminConfirmResponse;
