@@ -30,6 +30,15 @@ export class Payment extends Base {
       CREDIT_CARD: 'CREDIT_CARD',
       FIO: 'FIO',
       ADMIN: 'ADMIN',
+      SYSTEM: 'SYSTEM',
+    };
+  }
+  static get SPENT_TYPE() {
+    return {
+      ORDER: 1,
+      ACTION: 2,
+      ACTION_REFUND: 3,
+      ORDER_REFUND: 4,
     };
   }
 
@@ -41,6 +50,13 @@ export class Payment extends Base {
           type: DT.STRING,
           allowNull: false,
           comment: 'COINBASE, COINPAYMENTS, ADMIN, etc',
+        },
+        spentType: {
+          type: DT.INTEGER,
+          allowNull: false,
+          defaultValue: 1,
+          comment:
+            'Payment spent type: ORDER(1), ACTION(2), ACTION_REFUND(3), ORDER_REFUND(4)',
         },
         externalId: {
           type: DT.STRING,
@@ -80,6 +96,9 @@ export class Payment extends Base {
           {
             fields: ['orderId'],
           },
+          {
+            fields: ['spentType'],
+          },
         ],
       },
     );
@@ -103,9 +122,14 @@ export class Payment extends Base {
     });
   }
 
-  static format({ id }) {
+  static format({ id, price, currency, status, spentType, processor }) {
     return {
       id,
+      price,
+      currency,
+      status,
+      spentType,
+      processor,
     };
   }
 }
