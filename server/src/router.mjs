@@ -24,6 +24,7 @@ router.get(
   routes.newDeviceTwoFactor.checkRejected,
 );
 router.post('/admin-auth', routes.auth.adminCreate);
+router.post('/admin-auth/invite', routes.auth.adminInvite);
 
 router.post('/actions/:hash', routes.actions.submit);
 
@@ -44,6 +45,7 @@ router.get('/admin-users', checkAdminAuth, routes.adminUsers.list);
 router.get('/admin-users/:id', checkAdminAuth, routes.adminUsers.show);
 router.put('/admin-users', checkAdminAuth, routes.adminUsers.update);
 router.delete('/admin-users', checkAdminAuth, routes.adminUsers.remove);
+router.post('/admin-users/invite', checkAdminAuth, routes.adminUsers.invite);
 
 router.get('/notifications', checkAuth, routes.notifications.list);
 router.post('/notifications', checkAuth, routes.notifications.create);
