@@ -1,5 +1,7 @@
 import Sequelize from 'sequelize';
 
+import { PAYMENTS_STATUSES } from '../config/constants.js';
+
 import Base from './Base';
 
 import { Order } from './Order';
@@ -9,13 +11,7 @@ const { DataTypes: DT } = Sequelize;
 
 export class Payment extends Base {
   static get STATUS() {
-    return {
-      NEW: 1,
-      PENDING: 2,
-      COMPLETED: 3,
-      EXPIRED: 4,
-      CANCELLED: 5,
-    };
+    return PAYMENTS_STATUSES;
   }
   static get CURRENCY() {
     return {
@@ -26,7 +22,7 @@ export class Payment extends Base {
   static get PROCESSOR() {
     return {
       COINBASE: 'COINBASE',
-      COINPAYMENTS: 'COINPAYMENTS',
+      COIN_PAYMENTS: 'COIN_PAYMENTS',
       CREDIT_CARD: 'CREDIT_CARD',
       FIO: 'FIO',
       ADMIN: 'ADMIN',
