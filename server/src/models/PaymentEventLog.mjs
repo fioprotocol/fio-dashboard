@@ -1,19 +1,15 @@
 import Sequelize from 'sequelize';
 
 import Base from './Base';
-
 import { Payment } from './Payment.mjs';
+
+import { PAYMENT_EVENT_STATUSES } from '../config/constants.js';
 
 const { DataTypes: DT } = Sequelize;
 
 export class PaymentEventLog extends Base {
   static get STATUS() {
-    return {
-      PENDING: 2,
-      SUCCESS: 3,
-      REVIEW: 4,
-      CANCEL: 5,
-    };
+    return PAYMENT_EVENT_STATUSES;
   }
 
   static init(sequelize) {
