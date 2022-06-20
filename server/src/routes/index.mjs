@@ -8,6 +8,7 @@ import refProfiles from './refProfiles';
 import newDeviceTwoFactor from './newDeviceTwoFactor';
 import contacts from './contacts';
 import orders from './orders';
+import payments from './payments';
 
 export default {
   users,
@@ -20,4 +21,5 @@ export default {
   newDeviceTwoFactor,
   contacts,
   orders,
+  payments,
 };
