@@ -77,4 +77,6 @@ router.get('/orders', checkAuth, routes.orders.list);
 router.post('/orders', checkAuth, routes.orders.create);
 router.post('/orders/update', checkAuth, routes.orders.update);
 
+router.post('/payments/webhook/', routes.payments.webhook);
+
 export default router;
