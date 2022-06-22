@@ -55,7 +55,7 @@ const DashboardPage: React.FC<Props> = props => {
         <div className={classes.listHeader}>
           <h5 className={classes.subtitle}>FIO Crypto Handles:</h5>
           <Link to={ROUTES.FIO_ADDRESSES}>
-            <Button className={classes.actionButton}>Manage Addresses</Button>
+            <Button className={classes.actionButton}>Manage Handles</Button>
           </Link>
         </div>
         {loading ? (
