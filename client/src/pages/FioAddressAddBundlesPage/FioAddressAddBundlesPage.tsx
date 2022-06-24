@@ -66,7 +66,7 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
       !fioAddresses.find(
         ({ name: fioCryptoHandleName }) => fioCryptoHandleName === name,
       )
-        ? `Fio Crypto Handle (${name}) is not available`
+        ? `FIO Crypto Handle (${name}) is not available`
         : '',
     );
   }, [name, fioAddresses]);
