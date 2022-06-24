@@ -216,7 +216,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
             ) : null}
             <LowBalanceBadge
               hasLowBalance={hasLowBalance}
-              messageText={`Not enough Fio. Balance: ${apis.fio
+              messageText={`Not enough FIO. Balance: ${apis.fio
                 .sufToAmount(fioWallet.available || 0)
                 .toFixed(2)} FIO`}
             />

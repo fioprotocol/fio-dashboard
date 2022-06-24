@@ -52,7 +52,7 @@ const FioRecordDetailedItem: React.FC<Props> = props => {
       setSelectedAddress(address);
       setError(
         !address
-          ? 'This Fio Crypto Handle no longer exists in current wallet.'
+          ? 'This FIO Crypto Handle no longer exists in current wallet.'
           : null,
       );
     }

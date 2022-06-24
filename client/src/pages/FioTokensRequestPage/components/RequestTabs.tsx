@@ -9,7 +9,7 @@ import { RequestTokensProps } from '../types';
 const TABS_LIST = [
   {
     eventKey: 'fioTokens',
-    title: 'Fio Tokens',
+    title: 'FIO Tokens',
     renderTab: (props: RequestTokensProps) => (
       <RequestTokensForm {...props} isFio={true} />
     ),

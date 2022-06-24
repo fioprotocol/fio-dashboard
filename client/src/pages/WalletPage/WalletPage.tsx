@@ -60,7 +60,7 @@ const WalletPage: React.FC<ContainerProps> = props => {
 
   useEffect(() => {
     if (publicKey && profileRefreshed && !fioWallet)
-      setError(`Fio Wallet (${publicKey}) is not available`);
+      setError(`FIO Wallet (${publicKey}) is not available`);
   }, [publicKey, fioWallet, profileRefreshed]);
 
   const closeWalletDetails = () => setShowDetails(false);
