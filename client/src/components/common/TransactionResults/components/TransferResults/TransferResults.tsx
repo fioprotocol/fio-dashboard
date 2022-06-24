@@ -1,9 +1,11 @@
 import React from 'react';
+import classnames from 'classnames';
 
 import Results from '../../';
 import Badge, { BADGE_TYPES } from '../../../../Badge/Badge';
 
 import { fioNameLabels } from '../../../../../constants/labels';
+import { PAGE_NAME } from '../../../../ManagePageContainer/constants';
 
 import { ResultsProps } from '../../types';
 
@@ -30,7 +32,12 @@ const TransferResults: React.FC<ResultsProps &
     <Results {...props} onClose={onClose}>
       <p className={classes.label}>Transfer Information</p>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
-        <div className={classes.badgeContainer}>
+        <div
+          className={classnames(
+            classes.badgeContainer,
+            pageName === PAGE_NAME.ADDRESS && classes.longTitle,
+          )}
+        >
           <p className={classes.title}>{fioNameLabel}</p>
           <p className={classes.item}>{name}</p>
         </div>
