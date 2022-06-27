@@ -77,7 +77,7 @@ const Ref = (props: Props & RouterProps): React.FunctionComponent | null => {
         // Update refProfileCode cookies and set ref profile. Works for non auth user and not ref link
         if (!isRefLink) {
           const cookieRefProfileCode =
-            Cookies.get(REFERRAL_PROFILE_COOKIE_NAME) || null;
+            Cookies.get(REFERRAL_PROFILE_COOKIE_NAME) || '';
 
           getInfo(cookieRefProfileCode);
         }
@@ -96,7 +96,7 @@ const Ref = (props: Props & RouterProps): React.FunctionComponent | null => {
   // Set user refProfileCode to cookies
   useEffect(() => {
     if (isAuthenticated) {
-      const refProfileCode = user?.refProfile?.code || null;
+      const refProfileCode = user?.refProfile?.code || '';
 
       getInfo(refProfileCode);
       setCookies(REFERRAL_PROFILE_COOKIE_NAME, refProfileCode, {

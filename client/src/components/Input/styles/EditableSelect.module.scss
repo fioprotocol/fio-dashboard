@@ -88,6 +88,9 @@
         padding-right: 20px;
         @include proxima-nova-bold;
       }
+      & > div {
+        visibility: visible;
+      }
     }
 
     .clearIcon {

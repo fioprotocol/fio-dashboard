@@ -3,10 +3,6 @@
 @import '../../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
-  position: absolute;
-  top: 0;
-  margin-top: 60px;
-  right: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -30,12 +26,5 @@
     &:hover {
       background-color: $dark;
     }
-  }
-}
-
-@include sm {
-  .container {
-    margin-top: 30px;
-    right: 20px;
   }
 }

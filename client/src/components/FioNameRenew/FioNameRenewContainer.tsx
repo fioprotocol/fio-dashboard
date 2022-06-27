@@ -65,7 +65,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
     fioNameType === DOMAIN &&
       setError(
         !fioDomains.find(({ name: fioDomainName }) => fioDomainName === name)
-          ? `Fio Domain (${name}) is not available`
+          ? `FIO Domain (${name}) is not available`
           : '',
       );
   }, [name, fioDomains, fioNameType]);

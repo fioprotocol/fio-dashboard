@@ -81,7 +81,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
               <br />
               <br />
               <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>
-                Get Fio Crypto Handle
+                Get FIO Crypto Handle
               </Link>
             </>
           }
@@ -116,7 +116,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
               <br />
               Want to use a bundle transaction instead of paying fee?{' '}
               <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>
-                Get Fio Crypto Handle
+                Get FIO Crypto Handle
               </Link>
             </>
           }

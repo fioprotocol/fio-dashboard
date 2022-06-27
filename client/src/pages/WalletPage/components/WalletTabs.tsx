@@ -30,12 +30,12 @@ type Location = {
 const WALLET_TABS_LIST = [
   {
     eventKey: 'fioRequests',
-    title: 'Fio Requests',
+    title: 'FIO Requests',
     renderTab: (props: Props) => <FioRequestsTab {...props} />,
   },
   {
     eventKey: 'fioData',
-    title: 'Fio Data',
+    title: 'FIO Data',
     renderTab: (props: Props) => <FioObtDataTab {...props} />,
   },
   {

@@ -8,6 +8,7 @@ import WalletDetailsModal from './components/WalletDetailsModal';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import ActionButtonsContainer from '../WalletsPage/components/ActionButtonsContainer';
 import TotalBalanceBadge from '../WalletsPage/components/TotalBalanceBadge';
+import Title from '../WalletsPage/components/Title';
 import TransactionHistory from './components/TransactionHistory';
 import EditWalletName from './components/EditWalletName';
 import WalletTabs from './components/WalletTabs';
@@ -59,7 +60,7 @@ const WalletPage: React.FC<ContainerProps> = props => {
 
   useEffect(() => {
     if (publicKey && profileRefreshed && !fioWallet)
-      setError(`Fio Wallet (${publicKey}) is not available`);
+      setError(`FIO Wallet (${publicKey}) is not available`);
   }, [publicKey, fioWallet, profileRefreshed]);
 
   const closeWalletDetails = () => setShowDetails(false);
@@ -93,7 +94,7 @@ const WalletPage: React.FC<ContainerProps> = props => {
   if (!fioWallet || !fioWallet.id) return <FioLoader wrap={true} />;
 
   const renderTitle = () => {
-    return (
+    const title = (
       <>
         {fioWallet.name}
         <FontAwesomeIcon
@@ -103,26 +104,8 @@ const WalletPage: React.FC<ContainerProps> = props => {
         />
       </>
     );
-  };
-
-  return (
-    <div className={classes.container}>
-      {showDetails ? (
-        <WalletDetailsModal
-          show={true}
-          fioWallet={fioWallet}
-          onClose={closeWalletDetails}
-        />
-      ) : null}
-      {showWalletNameEdit ? (
-        <EditWalletName
-          show={showWalletNameEdit}
-          fioWallet={fioWallet}
-          onSuccess={onWalletUpdated}
-          onClose={closeWalletNameEdit}
-        />
-      ) : null}
-      <LayoutContainer title={renderTitle()}>
+    return (
+      <Title title={title} subtitle="Manage your FIO tokens">
         <ActionButtonsContainer>
           <Link
             to={putParamsToUrl(ROUTES.FIO_TOKENS_REQUEST, {
@@ -147,8 +130,28 @@ const WalletPage: React.FC<ContainerProps> = props => {
             <FontAwesomeIcon icon="qrcode" />
           </div>
         </ActionButtonsContainer>
+      </Title>
+    );
+  };
 
-        <p className={classes.subtitle}>Manage your FIO tokens</p>
+  return (
+    <div className={classes.container}>
+      {showDetails ? (
+        <WalletDetailsModal
+          show={true}
+          fioWallet={fioWallet}
+          onClose={closeWalletDetails}
+        />
+      ) : null}
+      {showWalletNameEdit ? (
+        <EditWalletName
+          show={showWalletNameEdit}
+          fioWallet={fioWallet}
+          onSuccess={onWalletUpdated}
+          onClose={closeWalletNameEdit}
+        />
+      ) : null}
+      <LayoutContainer title={renderTitle()}>
         <p className={classes.text}>
           View your transactions by type as well as sent or received.
         </p>

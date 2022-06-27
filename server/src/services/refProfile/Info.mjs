@@ -6,11 +6,11 @@ import { ReferrerProfile } from '../../models';
 export default class RefProfileInfo extends Base {
   static get validationRules() {
     return {
-      code: ['required', 'trim', 'to_lc'],
+      code: ['trim', 'to_lc'],
     };
   }
   async execute({ code }) {
-    if (code != null && code !== 'null') {
+    if (code) {
       const refProfile = await ReferrerProfile.getItem({ code });
 
       if (!refProfile) {
