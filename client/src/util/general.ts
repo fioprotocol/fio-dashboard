@@ -92,19 +92,25 @@ export const shareData = (data: { url?: string; text?: string }): void => {
 
 export const commonFormatTime = (date: string): string => {
   if (!date) return 'N/A';
-  const activationDay = (dateString: string) =>
+
+  const isDateInUtc = /z/i.test(date);
+  const activationDate = isDateInUtc ? date : getUTCDate(date);
+
+  const activationDay = (dateString: string | number) =>
     new Date(dateString).toLocaleDateString([], {
       year: 'numeric',
       month: '2-digit',
       day: 'numeric',
     });
-  const activationTime = (dateString: string) =>
+
+  const activationTime = (dateString: string | number) =>
     new Date(dateString).toLocaleString([], {
       hour: 'numeric',
       minute: 'numeric',
       hour12: true,
     });
-  return `${activationDay(date)} @ ${activationTime(date)}`;
+
+  return `${activationDay(activationDate)} @ ${activationTime(activationDate)}`;
 };
 
 export const getValueFromPaste = async (): Promise<string | undefined> => {
@@ -161,3 +167,7 @@ export const transformInputValues = ({
   onChange(transformedValue);
   setTimeout(() => e.target.setSelectionRange(startPos, endPos), 0);
 };
+
+export const removeExtraCharactersFromString = (
+  str: string | null,
+): string | null => (str != null ? str.replaceAll(/[^A-Za-z0-9]/g, '') : null);

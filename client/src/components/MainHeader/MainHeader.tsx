@@ -6,6 +6,8 @@ import classnames from 'classnames';
 import RegularNav from './components/RegularNav';
 import LoggedNav from './components/LoggedNav';
 
+import { ROUTES } from '../../constants/routes';
+
 import classes from './MainHeader.module.scss';
 
 import { MainHeaderProps } from './types';
@@ -20,10 +22,8 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     locationState,
     fioAddresses,
     refProfileLoading,
-    refProfileInfo,
-    homePageLink,
+    isContainedFlow,
   } = props;
-  const isRefFlow: boolean = refProfileInfo != null && !!refProfileInfo.code;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
 
   const closeMenu = () => {
@@ -62,7 +62,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
 
   return (
     <div className={classnames(classes.header, isMenuOpen && classes.isOpen)}>
-      <Link to={homePageLink}>
+      <Link to={ROUTES.HOME}>
         <div className={classes.logo} onClick={closeMenu} />
       </Link>
       {isAuthenticated ? (
@@ -71,10 +71,12 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
           toggleMenuOpen={toggleMenuOpen}
           closeMenu={closeMenu}
           showLogin={showLogin}
-          hideCart={(isRefFlow && !!fioAddresses.length) || isNotActiveUser}
-          hideNotifications={isRefFlow || isNotActiveUser}
-          onlyAuth={isRefFlow || isNotActiveUser}
-          showSiteLink={isRefFlow}
+          hideCart={
+            (isContainedFlow && !!fioAddresses.length) || isNotActiveUser
+          }
+          hideNotifications={isContainedFlow || isNotActiveUser}
+          onlyAuth={isContainedFlow || isNotActiveUser}
+          showSiteLink={isContainedFlow}
           {...props}
           logout={logout}
         />
@@ -84,8 +86,8 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
           isMenuOpen={isMenuOpen}
           closeMenu={closeMenu}
           showLogin={showLogin}
-          onlyAuth={isRefFlow || isNotActiveUser}
-          hideCart={isRefFlow}
+          onlyAuth={isContainedFlow || isNotActiveUser}
+          hideCart={isContainedFlow}
           {...props}
         />
       )}

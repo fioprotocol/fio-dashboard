@@ -93,7 +93,7 @@ const EmailConfirmationPage: React.FC<Props &
     let redirectLink = ROUTES.HOME;
     if (
       result.stateData != null &&
-      result.stateData.refProfileQueryParams != null
+      result.stateData.containedFlowQueryParams != null
     )
       redirectLink = ROUTES.CHECKOUT;
 

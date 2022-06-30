@@ -56,7 +56,7 @@ router.post(
   routes.account.importValidateWallet,
 );
 
-router.get('/ref-profile/:code', routes.refProfiles.info);
+router.get('/ref-profile/:code?', routes.refProfiles.info);
 router.use(
   '/fio-api/chain/:url',
   createProxyMiddleware({

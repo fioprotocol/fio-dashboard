@@ -61,10 +61,22 @@ const ROUTES: { [route: string]: string } = {
 
   // Referrer Profile pages
   REF_PROFILE_HOME: '/ref/:refProfileCode',
-  REF_SIGN_NFT: '/ref/:refProfileCode/sign-nft',
+
+  // Contained Flow pages
+  CONTAINED_FLOW_SIGN_NFT: '/sign-nft',
 
   PRIVACY_POLICY: '/privacy-policy',
   TERMS_OF_SERVICE: '/terms-of-service',
 };
 
 export { ROUTES };
+
+export const TOKENS_TAB_ROUTES: string[] = [
+  ROUTES.TOKENS,
+  ROUTES.FIO_WALLET,
+  ROUTES.SEND,
+  ROUTES.FIO_TOKENS_REQUEST,
+  ROUTES.PAYMENT_DETAILS,
+  ROUTES.STAKE,
+  ROUTES.UNSTAKE,
+];

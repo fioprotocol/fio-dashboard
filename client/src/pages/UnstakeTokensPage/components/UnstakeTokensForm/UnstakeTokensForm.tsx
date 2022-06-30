@@ -57,7 +57,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
               <br />
               <br />
               <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>
-                Get Fio Crypto Handle
+                Get FIO Crypto Handle
               </Link>
             </>
           }
@@ -91,7 +91,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
               <br />
               Want to use a bundle transaction instead of paying fee?{' '}
               <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>
-                Get Fio Crypto Handle
+                Get FIO Crypto Handle
               </Link>
             </>
           }
@@ -211,7 +211,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
             {!selectedAddress ? (
               <LowBalanceBadge
                 hasLowBalance={hasLowBalance}
-                messageText="You do not have enough Fio in your available balance. Please select an address with available bundles or send more FIO to your wallet."
+                messageText="You do not have enough FIO in your available balance. Please select an address with available bundles or send more FIO to your wallet."
               />
             ) : (
               <>

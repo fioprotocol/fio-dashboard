@@ -9,7 +9,6 @@ import {
   isNewUser,
   isNewEmailNotVerified,
 } from '../../redux/profile/selectors';
-import { homePageLink } from '../../redux/refProfile/selectors';
 
 import { compose } from '../../utils';
 
@@ -18,7 +17,6 @@ const reduxConnect = connect(
     noProfileLoaded: state => noProfileLoaded(state),
     isNewUser: state => isNewUser(state),
     isNewEmailNotVerified: state => isNewEmailNotVerified(state),
-    homePageLink,
     loading,
   }),
   null,

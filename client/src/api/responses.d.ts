@@ -2,7 +2,7 @@ import {
   Domain,
   FioWalletDoublet,
   Notification,
-  RefQueryParams,
+  ContainedFlowQueryParams,
   User,
   RefProfile,
 } from '../types';
@@ -25,7 +25,7 @@ export type AuthAvailableResponse = boolean;
 export type AuthNonceResponse = { email: string; nonce: string };
 export type AuthSignUpResponse = User;
 export type AuthConfirmResponse = {
-  stateData: { refProfileQueryParams?: RefQueryParams };
+  stateData: { containedFlowQueryParams?: ContainedFlowQueryParams };
 } & User;
 export type AuthSetRecoveryResponse = void;
 export type AuthLogoutResponse = null;

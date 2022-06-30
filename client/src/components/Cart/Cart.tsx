@@ -121,8 +121,7 @@ const Cart: React.FC<Props> = props => {
           <div className={classes.walletContainer}>
             <h6 className={classes.title}>FIO Wallet Assignment</h6>
             <p className={classes.subtitle}>
-              Please choose which FIO wallet you would like these FIO Crypto
-              Handles assigned to.
+              Please choose a FIO wallet to assign your purchase(s) to.
             </p>
             <Form
               onSubmit={() => null}

@@ -8,6 +8,7 @@ import { pathname } from '../../redux/navigation/selectors';
 import { isAuthenticated, isActiveUser } from '../../redux/profile/selectors';
 import { loginSuccess, edgeContextSet } from '../../redux/edge/selectors';
 import { showLogin, showRecovery } from '../../redux/modal/selectors';
+import { containedFlowLinkError } from '../../redux/containedFlow/selectors';
 
 import MainLayout from './MainLayout';
 
@@ -21,6 +22,7 @@ const selector = createStructuredSelector({
   showLogin,
   showRecovery,
   edgeContextSet,
+  containedFlowLinkError,
 });
 
 const actions = (dispatch: AppDispatch) => ({

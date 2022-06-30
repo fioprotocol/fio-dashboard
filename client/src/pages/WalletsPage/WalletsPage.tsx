@@ -7,6 +7,8 @@ import WalletItem from './components/WalletItem';
 import CreateWallet from './components/CreateWallet';
 import ActionButtonsContainer from './components/ActionButtonsContainer';
 import TotalBalanceBadge from './components/TotalBalanceBadge';
+import Title from './components/Title';
+
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 import NotificationBadge from '../../components/NotificationBadge/NotificationBadge';
 
@@ -54,14 +56,9 @@ const WalletsPage: React.FC<Props> = props => {
     setShowWalletCreated(true);
   };
 
-  return (
-    <div className={classes.container}>
-      <CreateWallet
-        show={showCreateWallet}
-        onClose={closeCreateWallet}
-        onWalletCreated={onWalletCreated}
-      />
-      <LayoutContainer title="FIO Wallets">
+  const renderTitle = () => {
+    return (
+      <Title title="FIO Wallets" subtitle="Manage your wallets">
         <ActionButtonsContainer>
           <Link to={ROUTES.IMPORT_WALLET} className={classes.link}>
             <div>
@@ -72,7 +69,18 @@ const WalletsPage: React.FC<Props> = props => {
             <FontAwesomeIcon icon="plus-circle" />
           </div>
         </ActionButtonsContainer>
-        <p className={classes.subtitle}>Manage your wallets</p>
+      </Title>
+    );
+  };
+
+  return (
+    <div className={classes.container}>
+      <CreateWallet
+        show={showCreateWallet}
+        onClose={closeCreateWallet}
+        onWalletCreated={onWalletCreated}
+      />
+      <LayoutContainer title={renderTitle()}>
         <NotificationBadge
           type={BADGE_TYPES.SUCCESS}
           show={showWalletImported}

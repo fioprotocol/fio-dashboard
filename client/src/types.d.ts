@@ -5,6 +5,8 @@ import { LocationState, Path } from 'history';
 
 import { FIOSDK_LIB } from './api/fio';
 
+import { CONTAINED_FLOW_ACTIONS } from './constants/containedFlow';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Unknown = any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -15,6 +17,8 @@ export type AnyType = any;
 export type OwnPropsAny = any; // todo: fix usages for ownProps
 
 export type Domain = { domain: string; free?: boolean };
+
+type ContainedFlowActionSettingsKey = keyof typeof CONTAINED_FLOW_ACTIONS;
 
 export type CartItem = {
   address?: string;
@@ -263,6 +267,7 @@ export type User = {
     deviceDescription?: string;
     status: string;
   }[];
+  refProfile: { code?: string } | null;
 };
 
 export type RefProfile = {
@@ -273,10 +278,20 @@ export type RefProfile = {
   settings: {
     domains: string[];
     allowCustomDomain: boolean;
-    actions: string[];
+    actions: Record<
+      ContainedFlowActionSettingsKey,
+      {
+        subtitle?: string;
+        title?: string;
+        hideActionText?: boolean;
+        actionText?: string;
+      }
+    >;
+
     img: string;
     link: string;
   };
+  tpid: string;
 };
 
 type SignNFTQuery = {
@@ -299,20 +314,20 @@ export type SignNFTParams = {
   };
 };
 
-export type RefQuery = {
-  action: string;
+export type ContainedFlowQuery = {
+  action: ContainedFlowActionSettingsKey;
   r: string;
 } & SignNFTQuery;
 
-export type RefQueryParams = {
-  action: string;
+export type ContainedFlowQueryParams = {
+  action: ContainedFlowActionSettingsKey;
   r: string;
-} & (SignNFTParams | {});
+} & Partial<SignNFTParams>; // could be (SignNFTParams | RenewDomainActionParams | AnyOtherActionParams )
 
 export type EmailConfirmationStateData = {
   redirectLink?: string;
   refCode?: string;
-  refProfileQueryParams?: RefQueryParams | null;
+  containedFlowQueryParams?: ContainedFlowQueryParams | null;
 };
 
 export type EmailConfirmationResult = {

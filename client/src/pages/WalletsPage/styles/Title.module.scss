@@ -1,0 +1,18 @@
+@import '../../../assets/styles/fontMixins';
+
+.titleContainer {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  .title {
+    word-break: break-all;
+    line-height: 1.3em;
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+    @include proxima-nova-thin;
+  }
+}

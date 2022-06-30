@@ -2,6 +2,8 @@ import Sequelize from 'sequelize';
 
 import Base from './Base';
 
+import { User } from './User';
+
 const { DataTypes: DT } = Sequelize;
 
 export class ReferrerProfile extends Base {
@@ -32,13 +34,21 @@ export class ReferrerProfile extends Base {
     );
   }
 
+  static associate() {
+    this.hasMany(User, {
+      foreignKey: 'refProfileId',
+      sourceKey: 'id',
+      as: 'refProfile',
+    });
+  }
+
   static getItem(where) {
     return this.findOne({
       where: { ...where },
     });
   }
 
-  static format({ id, code, regRefCode, label, title, subTitle, settings }) {
+  static format({ id, code, regRefCode, label, title, subTitle, settings, tpid }) {
     return {
       id,
       code,
@@ -47,6 +57,7 @@ export class ReferrerProfile extends Base {
       title,
       subTitle,
       settings,
+      tpid,
     };
   }
 }

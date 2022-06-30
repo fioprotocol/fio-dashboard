@@ -16,10 +16,11 @@ type Props = {
   value: string;
   field: FioRecordViewKeysProps;
   chain: string;
+  token: string;
 };
 
 const FioRecordFieldContent: React.FC<Props> = props => {
-  const { field, value, chain } = props;
+  const { field, value, chain, token } = props;
 
   if (
     field === FIO_RECORD_DETAILED_FIELDS.obtId &&
@@ -53,7 +54,7 @@ const FioRecordFieldContent: React.FC<Props> = props => {
   if (field === FIO_RECORD_DETAILED_FIELDS.amount && !isFioChain(chain)) {
     return (
       <span>
-        {value} {chain}
+        {value} {token || chain}
       </span>
     );
   }

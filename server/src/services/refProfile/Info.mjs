@@ -6,24 +6,28 @@ import { ReferrerProfile } from '../../models';
 export default class RefProfileInfo extends Base {
   static get validationRules() {
     return {
-      code: ['required', 'trim', 'to_lc'],
+      code: ['trim', 'to_lc'],
     };
   }
   async execute({ code }) {
-    const refProfile = await ReferrerProfile.getItem({ code });
+    if (code) {
+      const refProfile = await ReferrerProfile.getItem({ code });
 
-    if (!refProfile) {
-      throw new X({
-        code: 'NOT_FOUND',
-        fields: {
+      if (!refProfile) {
+        throw new X({
           code: 'NOT_FOUND',
-        },
-      });
-    }
+          fields: {
+            code: 'NOT_FOUND',
+          },
+        });
+      }
 
-    return {
-      data: ReferrerProfile.format(refProfile.get({ plain: true })),
-    };
+      return {
+        data: ReferrerProfile.format(refProfile.get({ plain: true })),
+      };
+    } else {
+      return { data: null };
+    }
   }
 
   static get paramsSecret() {

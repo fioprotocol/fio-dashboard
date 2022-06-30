@@ -129,7 +129,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = props => {
           },
       );
       setError(
-        `We could not find your fio request (${fioRequestId}). Fio crypto handle or wallet is not available.`,
+        `We could not find your FIO request (${fioRequestId}). FIO crypto handle or wallet is not available.`,
       );
     }
   }, [fioWalletsData, fioRequest, fioRequestId, publicKey]);
@@ -230,7 +230,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = props => {
     return (
       <div className={classes.container}>
         <PseudoModalContainer
-          title="Fio Request"
+          title="FIO Request"
           onBack={null}
           middleWidth={true}
         >
@@ -273,7 +273,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = props => {
       ) : null}
 
       <PseudoModalContainer
-        title="Fio Request"
+        title="FIO Request"
         onBack={onBack || null}
         middleWidth={true}
       >

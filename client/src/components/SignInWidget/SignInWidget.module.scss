@@ -1,0 +1,33 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.signInCallToAction {
+  @include sf-pro-display-regular;
+  font-size: 14px;
+  padding: 20px 40px;
+  background-color: $badge-background;
+  border-radius: 10px;
+  max-width: 75%;
+  letter-spacing: 0.075em;
+
+  button {
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+}
+
+
+@include md {
+  .signInCallToAction {
+    font-size: 12px;
+    max-width: 100%;
+  }
+}
+
+@include sm {
+  .signInCallToAction {
+    font-size: 12px;
+    max-width: 100%;
+  }
+}

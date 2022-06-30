@@ -25,7 +25,7 @@ import AddTokenPage from './pages/AddTokenPage';
 import EditTokenPage from './pages/EditTokenPage';
 import SettingsPage from './pages/SettingsPage';
 import RefHomePage from './pages/RefHomePage';
-import RefSignNftPage from './pages/RefSignNftPage';
+import ContainiedFlowActionPage from './pages/ContainiedFlowActionPage';
 import AccountRecoveryPage from './pages/AccountRecoveryPage';
 import EmailConfirmationPage from './pages/EmailConfirmationPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
@@ -196,7 +196,10 @@ const Routes = (): React.ReactElement => (
           exact
         />
 
-        <PrivateRoute path={ROUTES.REF_SIGN_NFT} component={RefSignNftPage} />
+        <PrivateRoute
+          path={ROUTES.CONTAINED_FLOW_SIGN_NFT}
+          component={ContainiedFlowActionPage}
+        />
 
         <PrivateRoute
           path={ROUTES.FIO_ADDRESS_NFT_EDIT}
