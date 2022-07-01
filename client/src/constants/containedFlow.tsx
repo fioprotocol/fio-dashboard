@@ -1,15 +1,20 @@
 import { CONFIRM_PIN_ACTIONS } from './common';
 import { ROUTES } from './routes';
 import { removeExtraCharactersFromString } from '../util/general';
+import { putParamsToUrl } from '../utils';
 
 import { ContainedFlowSignNftTitle } from '../components/AddressWidget/components/TitleComponent';
 
 export const CONTAINED_FLOW_ACTIONS = {
   SIGNNFT: removeExtraCharactersFromString(CONFIRM_PIN_ACTIONS.SIGN_NFT),
+  REG: 'REG',
 };
 
 export const CONTAINED_FLOW_ACTIONS_TO_ROUTES = {
-  [CONTAINED_FLOW_ACTIONS.SIGNNFT]: ROUTES.CONTAINED_FLOW_SIGN_NFT,
+  [CONTAINED_FLOW_ACTIONS.SIGNNFT]: putParamsToUrl(ROUTES.FIO_ADDRESS_SIGN, {
+    address: '',
+  }),
+  [CONTAINED_FLOW_ACTIONS.REG]: ROUTES.FIO_ADDRESSES_SELECTION,
 };
 
 export const CONTAINED_FLOW_STEPS = {
