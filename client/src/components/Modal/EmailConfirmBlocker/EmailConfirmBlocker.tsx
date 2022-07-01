@@ -26,6 +26,7 @@ type Props = {
   refProfileInfo: RefProfile | null;
   containedFlowQueryParams?: ContainedFlowQueryParams | null;
   redirectLink: RedirectLinkData;
+  setRedirectPath: (path: string | null) => void;
 };
 
 const EmailConfirmBlocker: React.FC<Props> = props => {
@@ -40,6 +41,7 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
     isContainedFlow,
     redirectLink,
     resendConfirmEmail,
+    setRedirectPath,
   } = props;
 
   const history = useHistory();
@@ -48,6 +50,7 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
     if (isAuthenticated && isActiveUser) {
       const { pathname, state: redirectState } = redirectLink || {};
       history.replace(pathname || ROUTES.HOME, redirectState);
+      setRedirectPath(null);
     }
 
     if (!isAuthenticated) {

@@ -46,6 +46,7 @@ import UnstakeTokensPage from './pages/UnstakeTokensPage';
 import UpdateEmailConfirmGatePage from './pages/UpdateEmailConfirmGatePage';
 import UpdateEmailPage from './pages/UpdateEmailPage';
 import RejectFioRequestPage from './pages/RejectFioRequestPage';
+import EmailConfirmationResultPage from './pages/EmailConfirmationResultsPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -61,6 +62,11 @@ const Routes = (): React.ReactElement => (
         <Route
           path={ROUTES.CONFIRM_EMAIL}
           component={EmailConfirmationPage}
+          exact
+        />
+        <Route
+          path={ROUTES.CONFIRM_EMAIL_RESULT}
+          component={EmailConfirmationResultPage}
           exact
         />
         <Route

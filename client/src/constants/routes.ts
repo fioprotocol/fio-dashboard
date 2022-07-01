@@ -5,6 +5,7 @@ const ROUTES: { [route: string]: string } = {
   DASHBOARD: '/dashboard',
 
   CONFIRM_EMAIL: '/confirm-email/:hash',
+  CONFIRM_EMAIL_RESULT: '/confirm-email-result',
   PROFILE: '/profile',
   RESET_PASSWORD: '/reset-password/:hash',
   PASSWORD_RECOVERY: '/password-recovery',
@@ -39,7 +40,7 @@ const ROUTES: { [route: string]: string } = {
   FIO_DOMAIN_RENEW: '/fio-domain-renew',
   FIO_NAME_RENEW_RESULTS: '/fio-name-results',
   FIO_ADDRESS_SIGNATURES: '/nft-signatures/:address',
-  FIO_ADDRESS_SIGN: '/sign-nft/:address',
+  FIO_ADDRESS_SIGN: '/sign-nft/:address?',
   FIO_ADDRESS_NFT_EDIT: '/nft-signatures/:address/edit/:id',
   FIO_REQUEST_DECRYPT: '/fio-wallet/:publicKey/fio-request/:id',
 
@@ -61,9 +62,6 @@ const ROUTES: { [route: string]: string } = {
 
   // Referrer Profile pages
   REF_PROFILE_HOME: '/ref/:refProfileCode',
-
-  // Contained Flow pages
-  CONTAINED_FLOW_SIGN_NFT: '/sign-nft',
 
   PRIVACY_POLICY: '/privacy-policy',
   TERMS_OF_SERVICE: '/terms-of-service',
