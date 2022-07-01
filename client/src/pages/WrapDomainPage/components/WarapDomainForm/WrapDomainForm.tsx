@@ -14,6 +14,7 @@ import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import { formValidation } from './validation';
 import MathOp from '../../../../util/math';
 import { convertFioPrices, DEFAULT_FEE_PRICES } from '../../../../util/prices';
+import useInitializeProviderConnection from '../../../../hooks/externalWalletsConnection/useInitializeProviderConnection';
 
 import apis from '../../../../api';
 
@@ -32,6 +33,8 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
     initialValues,
     balance,
   } = props;
+
+  const providerData = useInitializeProviderConnection();
 
   const [unitedFee, setUnitedFee] = useState<FeePrice>(DEFAULT_FEE_PRICES);
   const [walletAvailableAmount, setWalletAvailableAmount] = useState(0);
@@ -85,6 +88,7 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={TextInput}
+              connectWalletProps={providerData}
               showConnectWalletButton
               connectWalletModalText="Please connect your wallet in order to wrap and receive your wrapped FIO domain."
               showPasteButton

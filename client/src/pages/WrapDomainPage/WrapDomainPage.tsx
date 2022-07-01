@@ -8,16 +8,12 @@ import { MatchParams, Props } from './types';
 
 const WrapDomainPage: React.FC<Props &
   RouteComponentProps<MatchParams>> = props => {
-  const { fioNameList, history } = props;
+  const { fioNameList } = props;
   const { id }: { id: string } = useParams();
 
   return (
     <FioNamesInitWrapper>
-      <WrapDomainContainer
-        fioNameList={fioNameList}
-        name={id}
-        history={history}
-      />
+      <WrapDomainContainer fioNameList={fioNameList} name={id} />
     </FioNamesInitWrapper>
   );
 };

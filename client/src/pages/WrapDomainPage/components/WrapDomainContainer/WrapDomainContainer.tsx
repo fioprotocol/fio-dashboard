@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import classNames from 'classnames';
+import { useHistory } from 'react-router';
 
 import FioLoader from '../../../../components/common/FioLoader/FioLoader';
 import PseudoModalContainer from '../../../../components/PseudoModalContainer';
@@ -16,6 +17,7 @@ import {
   DOMAIN_WRAP_NETWORKS_LIST,
   WALLET_CREATED_FROM,
 } from '../../../../constants/common';
+import { emptyWallet } from '../../../../redux/fio/reducer';
 
 import { TrxResponsePaidBundles } from '../../../../api/fio';
 import {
@@ -28,7 +30,7 @@ import {
 import classes from '../../styles/WrapDomainPage.module.scss';
 
 const POLYGON_NETWORK_DATA = DOMAIN_WRAP_NETWORKS_LIST.find(
-  o => o.chain_code === 'POLY',
+  o => o.chain_code === 'MATIC',
 );
 
 const WrapDomainContainer: React.FC<ContainerProps> = props => {
@@ -39,12 +41,14 @@ const WrapDomainContainer: React.FC<ContainerProps> = props => {
     feePrice,
     oracleFeePrice,
     roe,
-    history,
     refreshBalance,
     getFee,
     getOracleFees,
     refreshWalletDataPublicKey,
+    resetFioNames,
   } = props;
+
+  const history = useHistory();
 
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
   const [sendData, setSendData] = useState<WrapDomainValues | null>(null);
@@ -100,12 +104,14 @@ const WrapDomainContainer: React.FC<ContainerProps> = props => {
     setResultsData(null);
   };
   const onResultsClose = () => {
+    resetFioNames();
     history.push(ROUTES.FIO_DOMAINS);
   };
 
-  if (!currentWallet || !currentWallet.id) return <FioLoader wrap={true} />;
-
   const onBack = () => history.push(ROUTES.FIO_DOMAINS);
+  if (currentWallet && currentWallet.id === emptyWallet.id) onBack();
+
+  if (!currentWallet || !currentWallet.id) return <FioLoader wrap={true} />;
 
   const initialValues: InitialValues = {
     tpid: walletFioAddresses[0]?.name,
