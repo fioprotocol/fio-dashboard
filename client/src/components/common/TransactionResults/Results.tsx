@@ -34,12 +34,18 @@ const Results: React.FC<ResultsContainerProps> = props => {
     errorType,
     onClose,
     onRetry,
+    onTxResultsClose,
     children,
   } = props;
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const handleClose = () => {
+    onTxResultsClose();
+    onClose();
+  };
 
   const paymentDetailsTitle = () => {
     if (!nativeFio && !bundlesCollected) return null;
@@ -94,7 +100,7 @@ const Results: React.FC<ResultsContainerProps> = props => {
   return (
     <PseudoModalContainer
       title={title}
-      onClose={onClose}
+      onClose={handleClose}
       hasAutoWidth={hasAutoWidth}
       fullWidth={fullWidth}
       middleWidth={middleWidth}
@@ -107,7 +113,11 @@ const Results: React.FC<ResultsContainerProps> = props => {
             {paymentDetailsTitle()}
             {totalCost()}
             {totalBundlesCost()}
-            <SubmitButton onClick={onClose} text="Close" withTopMargin={true} />
+            <SubmitButton
+              onClick={handleClose}
+              text="Close"
+              withTopMargin={true}
+            />
           </>
         )}
         {error && onRetry != null ? (
