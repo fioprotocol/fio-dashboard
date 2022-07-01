@@ -6,6 +6,10 @@
   color: $white;
 }
 
+.boldMessage {
+  @include proxima-nova-bold;
+}
+
 .container {
   display: flex;
   flex-direction: column;

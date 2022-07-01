@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 
@@ -24,6 +24,8 @@ import useEffectOnce from '../../hooks/general';
 import { Props } from './types';
 
 import classes from './styles/WalletsPage.module.scss';
+import unwrapIcon from '../../assets/images/unwrap.svg';
+import { putParamsToUrl } from '../../utils';
 
 const WalletsPage: React.FC<Props> = props => {
   const { fioWallets, balance, refreshBalance, location } = props;
@@ -60,6 +62,16 @@ const WalletsPage: React.FC<Props> = props => {
     return (
       <Title title="FIO Wallets" subtitle="Manage your wallets">
         <ActionButtonsContainer>
+          <Link
+            to={putParamsToUrl(ROUTES.UNWRAP_TOKENS, {
+              publicKey: null,
+            })}
+            className={classes.link}
+          >
+            <div>
+              <img src={unwrapIcon} alt="unwrap" />
+            </div>
+          </Link>
           <Link to={ROUTES.IMPORT_WALLET} className={classes.link}>
             <div>
               <FontAwesomeIcon icon="download" />
