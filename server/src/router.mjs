@@ -1,4 +1,7 @@
+import fs from 'fs';
+
 import express from 'express';
+import superagent from 'superagent';
 
 import { createProxyMiddleware } from 'http-proxy-middleware';
 
@@ -104,6 +107,20 @@ router.post(
 );
 
 router.get('/ref-profile/:code?', routes.refProfiles.info);
+
+router.post('/fio-api/chain/get_table_rows', async (req, res) => {
+  const sReq = superagent.post(`${process.env.FIO_BASE_URL}chain/get_table_rows`);
+
+  sReq.send(req.body);
+
+  const result = await sReq.then(res => {
+    if (!res.status) throw res.body.error;
+    return res.body;
+  });
+
+  return res.status(200).send(result);
+});
+
 router.use(
   '/fio-api/chain/:url',
   createProxyMiddleware({
@@ -111,6 +128,17 @@ router.use(
     changeOrigin: true,
     pathRewrite: {
       [`^/api/v1/fio-api`]: '',
+    },
+  }),
+);
+
+router.use(
+  '/mumbai-api',
+  createProxyMiddleware({
+    target: 'https://mumbai.polygonscan.com/',
+    changeOrigin: true,
+    pathRewrite: {
+      [`^/api/v1/mumbai-api`]: '',
     },
   }),
 );
@@ -133,5 +161,25 @@ router.post('/payments/cancel', checkAuth, routes.payments.cancel);
 router.get('/chain-codes/:chainCode?', routes.chainCodes.list);
 
 router.post('/generate-pdf', checkAuth, routes.generatePdf.create);
+
+let WRAPPED_DOMAIN_ABI;
+let WRAPPED_TOKEN_ABI;
+try {
+  WRAPPED_DOMAIN_ABI = JSON.parse(
+    fs.readFileSync('server/static-files/abi_fio_domain_nft.json', 'utf8'), // readFileSync used because require is not working in .mjs files
+  );
+  WRAPPED_TOKEN_ABI = JSON.parse(
+    fs.readFileSync('server/static-files/abi_fio_token.json', 'utf8'),
+  );
+} catch (e) {
+  // eslint-disable-next-line no-console
+  console.error('No ABI for wrapped FIO was found! Please check "/server/static-files/"');
+}
+router.get('/abi_fio_domain_nft', (req, res) =>
+  res.send({ data: WRAPPED_DOMAIN_ABI, status: WRAPPED_DOMAIN_ABI ? 1 : 0 }),
+);
+router.get('/abi_fio_token', (req, res) =>
+  res.send({ data: WRAPPED_TOKEN_ABI, status: WRAPPED_TOKEN_ABI ? 1 : 0 }),
+);
 
 export default router;
