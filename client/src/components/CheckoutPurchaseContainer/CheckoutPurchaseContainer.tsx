@@ -8,8 +8,9 @@ import Processing from '../common/TransactionProcessing';
 
 import { ROUTES } from '../../constants/routes';
 import { ERROR_TYPES } from '../../constants/errors';
+import { CONTAINED_FLOW_ACTIONS } from '../../constants/containedFlow';
 
-import { RegistrationResult } from '../../types';
+import { RegistrationResult, FioActionExecuted } from '../../types';
 
 import classes from './CheckoutPurchaseContainer.module.scss';
 
@@ -24,6 +25,7 @@ type Props = {
   registrationResult: RegistrationResult;
   closeText: () => void;
   onClose: () => void;
+  fioActionExecuted: (data: FioActionExecuted) => void;
 };
 
 const CheckoutPurchaseContainer: React.FC<Props> = props => {
@@ -38,6 +40,7 @@ const CheckoutPurchaseContainer: React.FC<Props> = props => {
     registrationResult,
     closeText,
     onClose: parentOnClose,
+    fioActionExecuted,
   } = props;
 
   const errors = registrationResult.errors || [];
@@ -65,6 +68,20 @@ const CheckoutPurchaseContainer: React.FC<Props> = props => {
     setRegistration(results);
 
     setProcessing(false);
+    if (!isRetry) {
+      const txIds: string[] = [];
+      results.registered.forEach(regAddress => {
+        const { transactions } = regAddress;
+        if (transactions?.length > 0) {
+          txIds.push(...transactions);
+        }
+      });
+
+      fioActionExecuted({
+        result: { status: 1, txIds },
+        executeActionType: CONTAINED_FLOW_ACTIONS.REG,
+      });
+    }
     isCheckout && history.push(ROUTES.PURCHASE);
   };
 
