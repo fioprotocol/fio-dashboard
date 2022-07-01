@@ -63,6 +63,7 @@ export interface ContainerProps extends ContainerOwnProps {
   getFee: () => void;
   getOracleFees: () => void;
   refreshWalletDataPublicKey: (publicKey: string) => void;
+  resetFioNames: () => void;
 }
 
 export type MatchParams = {
