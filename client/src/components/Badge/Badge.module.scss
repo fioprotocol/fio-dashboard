@@ -14,7 +14,7 @@
   overflow: hidden;
   transition: all 0.3s ease-out;
 
-  & > p {
+  & > div {
     margin: 0 auto 0 20px;
     @include proxima-nova-thin;
   }
