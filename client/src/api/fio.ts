@@ -122,17 +122,23 @@ export default class Fio {
     return publicKey;
   };
 
-  convertFioToUsdc = (nativeAmount: number, roe: number): number =>
-    new MathOp(this.sufToAmount(nativeAmount))
+  convertFioToUsdc = (nativeAmount: number, roe: number | null): number => {
+    if (roe == null) return 0;
+
+    return new MathOp(this.sufToAmount(nativeAmount))
       .mul(roe)
       .round(2, 1)
       .toNumber();
+  };
 
-  convertUsdcToFio = (amount: number, roe: number): number =>
-    new MathOp(amount)
+  convertUsdcToFio = (amount: number, roe: number | null): number => {
+    if (roe == null) return 0;
+
+    return new MathOp(amount)
       .div(roe)
       .round(9, 2)
       .toNumber();
+  };
 
   checkWallet = (): void => {
     if (!this.walletFioSDK) throw new Error('No wallet set.');
@@ -283,16 +289,21 @@ export default class Fio {
         roe,
       } = await this.publicFioSDK.getFioBalance(publicKey);
 
+      const rewards =
+        roe == null
+          ? 0
+          : new MathOp(srps)
+              .mul(roe)
+              .round(0, 2)
+              .sub(staked)
+              .toNumber();
+
       balances = {
         ...balances,
         balance,
         available,
         staked,
-        rewards: new MathOp(srps)
-          .mul(roe)
-          .round(0, 2)
-          .sub(staked)
-          .toNumber(),
+        rewards,
       };
     } catch (e) {
       this.logError(e);

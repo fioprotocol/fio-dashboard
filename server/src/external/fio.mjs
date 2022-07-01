@@ -27,6 +27,8 @@ class Fio {
   }
 
   convertFioToUsdc(nativeAmount, roe) {
+    if (roe == null) return 0;
+
     return new MathOp(this.sufToAmount(nativeAmount))
       .mul(roe)
       .round(2, 1)
