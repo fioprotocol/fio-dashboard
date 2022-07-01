@@ -8,6 +8,7 @@ import {
   getFee,
   getOracleFees,
   refreshBalance,
+  resetFioNames,
 } from '../../../../redux/fio/actions';
 
 import {
@@ -43,6 +44,7 @@ const reduxConnect = connect(
     getFee: () => getFee(apis.fio.actionEndPoints.wrapFioDomain),
     getOracleFees: () => getOracleFees(),
     refreshWalletDataPublicKey,
+    resetFioNames,
   },
 );
 
