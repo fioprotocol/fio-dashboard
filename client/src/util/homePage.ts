@@ -41,10 +41,12 @@ export const handleHomePageContent = ({
     if (isContainedFlow) {
       title =
         actions[actionName as ContainedFlowActionSettingsKey]?.title ||
-        CONTAINED_FLOW_TITLES[actionName];
+        CONTAINED_FLOW_TITLES[actionName] ||
+        '';
       subtitle =
-        actions[actionName as ContainedFlowActionSettingsKey].subtitle ||
-        CONTAINED_FLOW_SUBTITLES[actionName];
+        actions[actionName as ContainedFlowActionSettingsKey]?.subtitle ||
+        CONTAINED_FLOW_SUBTITLES[actionName] ||
+        '';
       actionText = actions[actionName as ContainedFlowActionSettingsKey]
         ?.hideActionText
         ? null
