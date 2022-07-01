@@ -16,6 +16,7 @@ import { formValidation } from './validation';
 import { useWalletBalances } from '../../../../util/hooks';
 import MathOp from '../../../../util/math';
 import { convertFioPrices, DEFAULT_FEE_PRICES } from '../../../../util/prices';
+import useInitializeProviderConnection from '../../../../hooks/externalWalletsConnection/useInitializeProviderConnection';
 
 import apis from '../../../../api';
 
@@ -34,6 +35,8 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
     initialValues,
     balance,
   } = props;
+
+  const providerData = useInitializeProviderConnection();
 
   const [unitedFee, setUnitedFee] = useState<FeePrice>(DEFAULT_FEE_PRICES);
   const [walletAvailableAmount, setWalletAvailableAmount] = useState(0);
@@ -105,6 +108,7 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
               errorColor={COLOR_TYPE.WARN}
               component={TextInput}
               showConnectWalletButton
+              connectWalletProps={providerData}
               connectWalletModalText="Please connect your wallet in order to wrap and receive your FIO tokens."
               showPasteButton
               placeholder="Paste Public Address or Connect a Wallet"
