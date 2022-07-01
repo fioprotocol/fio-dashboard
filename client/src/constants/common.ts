@@ -89,7 +89,7 @@ export const NFT_CHAIN_CODE_LIST = [
 export const DOMAIN_WRAP_NETWORKS_LIST = [
   {
     name: 'Polygon',
-    chain_code: 'POLY',
+    chain_code: 'MATIC',
   },
 ];
 
@@ -175,7 +175,7 @@ export const CHAIN_CODE_LIST = [
         name: 'Kyber Network',
       },
       {
-        id: 'POLY',
+        id: 'MATIC',
         name: 'Polymath Network',
       },
       {
