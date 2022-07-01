@@ -36,9 +36,9 @@
     @include proxima-nova-thin;
     margin-bottom: 0;
   }
-  
+
   .link {
-    margin-top: 1.25em;
+    display: flex;
 
     .button {
       background-color: transparent;

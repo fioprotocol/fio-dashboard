@@ -2,18 +2,21 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
-import { Web3Provider } from '@ethersproject/providers/src.ts/web3-provider';
 
-import ModalComponent from '../Modal/Modal';
-import DangerModal from '../Modal/DangerModal';
-import { LoadingIcon } from '../Input/StaticInputParts';
+import ModalComponent from '../../Modal/Modal';
+import DangerModal from '../../Modal/DangerModal';
+import { LoadingIcon } from '../../Input/StaticInputParts';
 
-import { log } from '../../util/general';
-import { AnyObject } from '../../types';
+import { log } from '../../../util/general';
+import { AnyObject } from '../../../types';
+import {
+  ConnectionErrorType,
+  ConnectProviderType,
+} from '../../../hooks/externalWalletsConnection/useInitializeProviderConnection';
 
-import classes from './../Input/Input.module.scss';
+import classes from '../../Input/Input.module.scss';
 
-import metamaskIcon from '../../assets/images/metamask.svg';
+import metamaskIcon from '../../../assets/images/metamask.svg';
 
 type Props = {
   isVisible?: boolean;
@@ -22,14 +25,22 @@ type Props = {
   isWalletConnected?: boolean;
   inputValue?: string;
   description?: string;
-};
-
-type ConnectionError = ({ code: number; message: string } & Error) | null;
+  wFioBalance?: string;
+} & ConnectProviderType;
 
 const OPENED_METAMASK_WINDOW_ERROR_CODE = -32002;
 
 const ConnectWalletButton: React.FC<Props> = props => {
   const {
+    provider,
+    web3Provider,
+    connectionError,
+    address,
+    setProvider,
+    setWeb3Provider,
+    setConnectionError,
+    setAddress,
+    setNetwork,
     handleAddressChange,
     inputValue,
     isVisible,
@@ -38,12 +49,6 @@ const ConnectWalletButton: React.FC<Props> = props => {
     description = 'Please connect your Polygon wallet with the wFio domain that you would like to unwrap to the FIO network.',
   } = props;
 
-  // todo: add types from "@metamask/providers" module and check why it breaks "edge-currency-accountbased" types declaration
-  const [provider, setProvider] = useState<AnyObject>(null);
-  const [web3Provider, setWeb3Provider] = useState<Web3Provider>(null);
-
-  const [address, setAddress] = useState<string | null>(null);
-  const [error, setError] = useState<ConnectionError>(null);
   const [
     showBrowserExtensionErrorModal,
     setShowBrowserExtensionErrorModal,
@@ -68,6 +73,7 @@ const ConnectWalletButton: React.FC<Props> = props => {
     }
 
     const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+    const network = await web3Provider.getNetwork();
 
     try {
       await provider.request({
@@ -80,13 +86,22 @@ const ConnectWalletButton: React.FC<Props> = props => {
       setProvider(provider);
       setWeb3Provider(web3Provider);
       setAddress(address);
+      setNetwork(network);
 
       closeSelectProviderModal();
       setIsWalletConnected(true);
     } catch (error) {
-      setError(error);
+      setConnectionError(error);
+      setShowProviderLoadingIcon(false);
     }
-  }, [setIsWalletConnected]);
+  }, [
+    setAddress,
+    setConnectionError,
+    setIsWalletConnected,
+    setNetwork,
+    setProvider,
+    setWeb3Provider,
+  ]);
 
   const handleDisconnect = async (
     setIsWalletConnectedStateInInput: (val?: boolean) => void,
@@ -98,7 +113,8 @@ const ConnectWalletButton: React.FC<Props> = props => {
     }
     setProvider(null);
     setAddress(null);
-    setError(null);
+    setNetwork(null);
+    setConnectionError(null);
     setIsWalletConnectedStateInInput(false);
     setIsFormInputFilled(false);
     handleAddressChangeInForm(null);
@@ -110,7 +126,7 @@ const ConnectWalletButton: React.FC<Props> = props => {
       handleAddressChange,
       provider,
     );
-  }, [provider, setIsWalletConnected, handleAddressChange]);
+  }, [handleDisconnect, setIsWalletConnected, handleAddressChange, provider]);
 
   const closeSelectProviderModal = () => {
     setShowProviderLoadingIcon(false);
@@ -137,7 +153,7 @@ const ConnectWalletButton: React.FC<Props> = props => {
 
   useEffect(() => {
     if (provider?.on) {
-      const disconnect = (error?: ConnectionError) => {
+      const disconnect = (error?: ConnectionErrorType) => {
         if (error) log.info('disconnect', error);
         handleDisconnect(setIsWalletConnected, handleAddressChange, provider);
       };
@@ -146,11 +162,11 @@ const ConnectWalletButton: React.FC<Props> = props => {
         log.info('accountsChanged', accounts);
         if (accounts.length) {
           setAddress(accounts[0]);
-          if (error?.code === OPENED_METAMASK_WINDOW_ERROR_CODE) setError(null);
+          if (connectionError?.code === OPENED_METAMASK_WINDOW_ERROR_CODE)
+            setConnectionError(null);
         } else {
           // clear form value when user manually disconnects all addresses by metamask interface
           // (not the same as 'disconnect' event)
-          // todo: check why this event dont works after MetaMask password entered case (long inactivity)
           disconnect();
         }
       };
@@ -172,13 +188,24 @@ const ConnectWalletButton: React.FC<Props> = props => {
         }
       };
     }
-  }, [handleAddressChange, provider, setIsWalletConnected, error]);
+  }, [
+    handleAddressChange,
+    provider,
+    setIsWalletConnected,
+    connectionError,
+    handleDisconnect,
+    setAddress,
+    setConnectionError,
+  ]);
 
   useEffect(() => {
-    error && log.error('wallet connection error: ', error);
-    if (error?.code === OPENED_METAMASK_WINDOW_ERROR_CODE && isWalletConnected)
-      setError(null);
-  }, [error, isWalletConnected]);
+    connectionError && log.error('wallet connection error: ', connectionError);
+    if (
+      connectionError?.code === OPENED_METAMASK_WINDOW_ERROR_CODE &&
+      isWalletConnected
+    )
+      setConnectionError(null);
+  }, [connectionError, isWalletConnected, setConnectionError]);
 
   if (!isVisible) return null;
 
@@ -192,11 +219,11 @@ const ConnectWalletButton: React.FC<Props> = props => {
         onActionButtonClick={() => setShowBrowserExtensionErrorModal(false)}
       />
       <DangerModal
-        show={error?.code === OPENED_METAMASK_WINDOW_ERROR_CODE}
+        show={connectionError?.code === OPENED_METAMASK_WINDOW_ERROR_CODE}
         title="MetaMask window is already opened for this site. Please check your browser windows first."
-        onClose={() => setError(null)}
+        onClose={() => setConnectionError(null)}
         buttonText="Close"
-        onActionButtonClick={() => setError(null)}
+        onActionButtonClick={() => setConnectionError(null)}
       />
       <ModalComponent
         show={showSelectProviderModalVisible}
