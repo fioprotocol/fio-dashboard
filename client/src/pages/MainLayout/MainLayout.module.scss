@@ -12,18 +12,6 @@
     width: 80%;
     margin: 0 auto;
   }
-
-  .container {
-    width: 100%;
-
-    .validationErrorContainer {
-      background: $footer-background;
-      color: white;
-      text-align: center;
-      padding: 9% 25px 0;
-      min-height: 75vh;
-    }
-  }
 }
 .header {
   background: $elephant;
