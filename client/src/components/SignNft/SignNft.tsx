@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useHistory } from 'react-router';
 
 import PseudoModalContainer from '../PseudoModalContainer';
@@ -12,6 +12,8 @@ import { BUNDLES_TX_COUNT } from '../../constants/fio';
 
 import { putParamsToUrl } from '../../utils';
 
+import useEffectOnce from '../../hooks/general';
+
 import apis from '../../api';
 
 import { NFTTokenDoublet } from '../../types';
@@ -23,9 +25,10 @@ const SignNft: React.FC<ContainerProps> = props => {
   const {
     backTo,
     initialValues,
-    fioAddresses,
     fioWallets,
     fioAddressName,
+    fioAddresses,
+    loading,
     getFee,
     isEdit,
     addressSelectOff,
@@ -34,35 +37,40 @@ const SignNft: React.FC<ContainerProps> = props => {
   } = props;
 
   const history = useHistory();
+
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<NFTTokenDoublet | null>(null);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
   const [alreadySigned, setAlreadySigned] = useState<boolean>(false);
-  const [selectedFioAddressName, setSelectedFioAddress] = useState<string>(
-    fioAddressName,
+  const [selectedFioAddressName, setSelectedFioAddressName] = useState<string>(
+    '',
   );
 
-  const fioAddress = fioAddresses.find(
-    ({ name }) => name === selectedFioAddressName,
-  );
+  const fioAddress =
+    fioAddresses.find(({ name }) => name === fioAddressName) || fioAddresses[0];
+
   const currentWallet = fioWallets.find(
     ({ publicKey }) => publicKey === fioAddress?.walletPublicKey,
   );
 
-  const checkNftSigned = async (
-    chainCode: string,
-    contractAddress: string,
-    tokenId: string = '',
-  ) => {
-    if (isEdit) return;
-    const { nfts } = await apis.fio.checkNftSigned(
-      chainCode,
-      contractAddress,
-      tokenId,
-    );
-    setAlreadySigned(nfts.length > 0);
-    return nfts.length > 0;
-  };
+  const checkNftSigned = useCallback(
+    async (
+      chainCode: string,
+      contractAddress: string,
+      tokenId: string = '',
+    ) => {
+      if (isEdit) return;
+      const { nfts } = await apis.fio.checkNftSigned(
+        chainCode,
+        contractAddress,
+        tokenId,
+      );
+
+      setAlreadySigned(nfts.length > 0);
+      return nfts.length > 0;
+    },
+    [isEdit],
+  );
 
   const fieldValuesChanged = () => {
     if (alreadySigned) {
@@ -70,8 +78,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     }
   };
 
-  useEffect(() => {
-    getFee(fioAddressName);
+  useEffectOnce(() => {
     if (
       initialValues != null &&
       initialValues.chainCode &&
@@ -84,7 +91,25 @@ const SignNft: React.FC<ContainerProps> = props => {
         initialValues.tokenId,
       );
     }
-  }, []);
+  }, [initialValues, isEdit, checkNftSigned]);
+
+  useEffect(() => {
+    if (selectedFioAddressName) {
+      getFee(selectedFioAddressName);
+    }
+  }, [selectedFioAddressName, getFee]);
+
+  useEffect(() => {
+    if (fioAddress?.name) {
+      setSelectedFioAddressName(fioAddress.name);
+    }
+  }, [fioAddress?.name]);
+
+  useEffect(() => {
+    if (fioWallets.length) {
+      fioWallets.forEach(fioWallet => refreshFioNames(fioWallet.publicKey));
+    }
+  }, [fioWallets.length, refreshFioNames]);
 
   const submit = async ({ keys, data }: SubmitActionParams) => {
     return await apis.fio.singNFT(keys, fioAddress?.name || '', [{ ...data }]);
@@ -98,6 +123,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     );
     if (nftSigned) return {};
     setSubmitData({
+      fioAddress: fioAddress?.name,
       chainCode: values.chainCode,
       contractAddress: values.contractAddress,
       tokenId: values.tokenId || '',
@@ -170,7 +196,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     alreadySigned,
     selectedFioAddressName,
     fioAddresses,
-    setSelectedFioAddress,
+    setSelectedFioAddressName,
     bundleCost: BUNDLES_TX_COUNT.ADD_NFT,
     hasLowBalance,
     processing,
@@ -178,6 +204,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     isEdit,
     addressSelectOff,
     currentWallet,
+    loading,
   };
 
   const title = isEdit ? 'Signed NFT' : 'Sign NFT';
