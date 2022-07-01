@@ -5,9 +5,25 @@
   margin-top: 1em;
   .transactionTitle {
     font-size: 0.875em;
-    margin-bottom: -16px;
+    margin-bottom: 14px;
     color: $dark-jungle-green;
     align-self: flex-start;
     @include sf-pro-display-medium;
   }
+}
+
+.additionalSubInfo {
+  width: 100%;
+  font-size: 0.875em;;
+  margin-bottom: 20px;
+  margin-top: -20px;
+  color: $black;
+
+  span {
+    color: $dark-jungle-green;
+  }
+}
+
+.warning {
+  color: $warn-red;
 }
