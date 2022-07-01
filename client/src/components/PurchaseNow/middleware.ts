@@ -241,6 +241,7 @@ const handleResponses = (
     error?: string;
     errorType?: string;
     fee_collected?: number;
+    transaction_id: string;
   }>[] &
     AnyObject, // todo: check this ts issue, for status === 'rejected' there is no value
   result: RegistrationResult,
@@ -274,13 +275,20 @@ const handleResponses = (
             result.registered[existingCartItemRegisteredIndex],
             response.value,
           ),
+          transactions: [
+            ...result.registered[existingCartItemRegisteredIndex].transactions,
+            response.value.transaction_id,
+          ],
         };
         continue;
       }
       if (existingCartItemErrorIndex > -1) {
         result.partial.push(response.value.cartItemId);
       }
-      result.registered.push(response.value);
+      result.registered.push({
+        ...response.value,
+        transactions: [response.value.transaction_id],
+      });
     }
   }
 };

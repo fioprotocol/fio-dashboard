@@ -13,6 +13,8 @@ import {
   isProcessing,
 } from '../../redux/registrations/selectors';
 
+import { fioActionExecuted } from '../../redux/fio/actions';
+
 import CheckoutPurchaseContainer from './CheckoutPurchaseContainer';
 
 const reduxConnect = connect(
@@ -23,6 +25,7 @@ const reduxConnect = connect(
   {
     setRegistration,
     setProcessing,
+    fioActionExecuted,
   },
 );
 
