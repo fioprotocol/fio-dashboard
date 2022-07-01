@@ -91,6 +91,16 @@ const SettingsItem: React.FC<SettingsProps> = props => {
           <Button className={classes.button}>Start Wrapping</Button>
         </Link>
       </div>
+      <div>
+        <h5 className={classes.actionTitle}>wFIO Domain Unwrapping</h5>
+        <p className={classes.text}>
+          Unwrapping wFIO domain allows you to transport your domain to FIO
+          network chain. Simply connect a wallet and initiate unwrapping.
+        </p>
+        <Link to={ROUTES.UNWRAP_DOMAIN} className={classes.buttonLink}>
+          <Button className={classes.button}>Start Unwrapping</Button>
+        </Link>
+      </div>
     </div>
   );
 };

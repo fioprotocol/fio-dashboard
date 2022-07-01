@@ -52,6 +52,8 @@ import EmailConfirmationResultPage from './pages/EmailConfirmationResultsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import WrapTokensPage from './pages/WrapTokensPage';
 import WrapDomainPage from './pages/WrapDomainPage';
+import UnwrapDomainPage from './pages/UnwrapDomainPage';
+import UnwrapTokensPage from './pages/UnwrapTokensPage';
 
 import AdminPrivateRoute from './components/AdminPrivateRoute';
 import AdminOrdersPage from './pages/AdminOrdersPage';
@@ -191,6 +193,17 @@ const Routes = (): React.ReactElement => (
         <PrivateRoute
           path={ROUTES.WRAP_DOMAIN}
           component={WrapDomainPage}
+          exact
+        />
+
+        <PrivateRoute
+          path={ROUTES.UNWRAP_TOKENS}
+          component={UnwrapTokensPage}
+          exact
+        />
+        <PrivateRoute
+          path={ROUTES.UNWRAP_DOMAIN}
+          component={UnwrapDomainPage}
           exact
         />
 
