@@ -10,7 +10,7 @@ import {
 } from './InputActionButtons';
 import { Label, LoadingIcon, Prefix, PrefixLabel } from './StaticInputParts';
 import { ErrorBadge } from './ErrorBadge';
-import ConnectWalletButton from '../ConnectWalletButton/ConnectWalletButton';
+import ConnectWalletButton from '../ConnectWallet/ConnectWalletButton/ConnectWalletButton';
 
 import {
   getValueFromPaste,
@@ -18,6 +18,8 @@ import {
   transformInputValues,
 } from '../../util/general';
 import { useFieldElemActiveState } from '../../util/hooks';
+
+import { ConnectProviderType } from '../../hooks/externalWalletsConnection/useInitializeProviderConnection';
 
 import classes from './Input.module.scss';
 import metamaskIcon from '../../assets/images/metamask.svg';
@@ -57,6 +59,9 @@ export type TextInputProps = {
   hasSmallText?: boolean;
   hasThinText?: boolean;
   debounceTimeout?: number;
+  additionalOnchangeAction?: (val: string) => void;
+  wFioBalance?: string;
+  connectWalletProps: ConnectProviderType;
 };
 
 export const TextInput: React.ForwardRefRenderFunction<
@@ -86,8 +91,11 @@ export const TextInput: React.ForwardRefRenderFunction<
     showErrorBorder,
     isLowHeight,
     label,
+    additionalOnchangeAction,
+    connectWalletProps,
     showConnectWalletButton,
     connectWalletModalText,
+    wFioBalance,
     ...rest
   } = props;
   const {
@@ -155,6 +163,7 @@ export const TextInput: React.ForwardRefRenderFunction<
       return;
     }
     onChange(currentValue);
+    if (additionalOnchangeAction) additionalOnchangeAction(currentValue);
   };
 
   if (type === 'hidden') return null;
@@ -207,22 +216,33 @@ export const TextInput: React.ForwardRefRenderFunction<
             className={isWalletConnected ? classes.dark : ''}
           />
         </div>
-        <ConnectWalletButton
-          isVisible={showConnectWalletButton}
-          handleAddressChange={input.onChange}
-          inputValue={value}
-          setIsWalletConnected={setIsWalletConnected}
-          isWalletConnected={isWalletConnected}
-          description={connectWalletModalText}
-        />
+        {connectWalletProps ? (
+          <ConnectWalletButton
+            isVisible={showConnectWalletButton}
+            handleAddressChange={val => {
+              input.onChange(val);
+              if (additionalOnchangeAction) additionalOnchangeAction(val);
+            }}
+            inputValue={value}
+            setIsWalletConnected={setIsWalletConnected}
+            isWalletConnected={isWalletConnected}
+            description={connectWalletModalText}
+            wFioBalance={wFioBalance}
+            {...connectWalletProps}
+          />
+        ) : null}
         <ClearButton
-          isVisible={(isInputHasValue || !!onClose) && !disabled && !loading}
+          isVisible={
+            (isInputHasValue || !!onClose) &&
+            (isWalletConnected ? true : !disabled) &&
+            !loading
+          }
           onClear={clearInputFn}
           onClose={onClose}
           inputType={type}
           isBW={isBW}
           isBigDoubleIcon={showConnectWalletButton && !isWalletConnected}
-          disabled={disabled}
+          disabled={isWalletConnected ? false : disabled}
           uiType={isWalletConnected ? 'whiteBlack' : uiType}
         />
         <ShowPasswordIcon
