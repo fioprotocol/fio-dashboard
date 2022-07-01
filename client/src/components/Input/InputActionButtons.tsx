@@ -10,6 +10,7 @@ import classes from './InputActionButtons.module.scss';
 type ClearButtonProps = {
   isBW?: boolean;
   isBigDoubleIcon?: boolean;
+  isMiddleDoubleIcon?: boolean;
   disabled?: boolean;
   inputType?: string;
   onClear: () => void;
@@ -108,6 +109,7 @@ export const ClearButton: React.FC<ClearButtonProps & DefaultProps> = ({
   onClear,
   onClose,
   isBigDoubleIcon,
+  isMiddleDoubleIcon,
 }) => {
   if (!isVisible) return null;
 
@@ -118,6 +120,7 @@ export const ClearButton: React.FC<ClearButtonProps & DefaultProps> = ({
         classes.inputIcon,
         inputType === 'password' && classes.doubleIcon,
         isBigDoubleIcon && classes.bigDoubleIcon,
+        isMiddleDoubleIcon && classes.middleDoubleIcon,
         isBW && classes.bw,
         disabled && classes.disabled,
         uiType && classes[uiType],
