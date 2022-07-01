@@ -5,41 +5,63 @@ import { createStructuredSelector } from 'reselect';
 import { useHistory } from 'react-router';
 
 import { compose } from '../utils';
-import { useContainedFlowActionCondition } from '../hooks/containedFlow';
 
-import { CONTAINED_FLOW_ACTIONS_TO_ROUTES } from '../constants/containedFlow';
+import {
+  CONTAINED_FLOW_ACTIONS,
+  CONTAINED_FLOW_STEPS,
+} from '../constants/containedFlow';
 
-import { setContainedParams } from '../redux/containedFlow/actions';
-import { containedFlowQueryParams } from '../redux/containedFlow/selectors';
+import { setContainedParams, setStep } from '../redux/containedFlow/actions';
+import {
+  containedFlowQueryParams,
+  isContainedFlow,
+} from '../redux/containedFlow/selectors';
+import { fioAddresses } from '../redux/fio/selectors';
+import { isAuthenticated } from '../redux/profile/selectors';
 
 import {
   ContainedFlowQueryParams,
   ContainedFlowQuery,
   AnyType,
+  FioAddressDoublet,
 } from '../types';
 
 // example url - ?action=SIGNNFT&chain_code=ETH&contract_address=FIO5CniznG2z6yVPc4as69si711R1HJMAAnC3Rxjd4kGri4Kp8D8P&token_id=ETH&url=ifg://dfs.sdfs/sdfs&hash=f83klsjlgsldkfjsdlf&metadata={"creator_url":"https://www.google.com.ua/"}&r=https://www.google.com.ua/
 
 type Props = {
   containedFlowQueryParams: ContainedFlowQueryParams;
+  fioAddresses: FioAddressDoublet[];
+  isAuthenticated: boolean;
+  isContainedFlow: boolean;
   setContainedParams: (params: ContainedFlowQuery) => void;
+  setStep: (
+    step: string,
+    data?: {
+      containedFlowAction?: string;
+    },
+  ) => void;
 };
 
 const ContainedFlow: React.FC<Props> | null = props => {
-  const { setContainedParams, containedFlowQueryParams } = props;
+  const {
+    containedFlowQueryParams,
+    fioAddresses,
+    isAuthenticated,
+    isContainedFlow,
+    setContainedParams,
+    setStep,
+  } = props;
 
   const history = useHistory();
 
-  // todo: fix query type
+  // todo: fix query type, works well if we use withRouter wrapper
   const {
     location: { query },
-  }: { locatoin: { query: ContainedFlowQuery } } & AnyType = history;
+  }: { location: { query: ContainedFlowQuery } } & AnyType = history;
 
   const containedFlowAction = containedFlowQueryParams
     ? containedFlowQueryParams.action
     : '';
-
-  const actionCondition = useContainedFlowActionCondition(containedFlowAction);
 
   useEffect(() => {
     if (!containedFlowQueryParams && query?.action) {
@@ -48,9 +70,24 @@ const ContainedFlow: React.FC<Props> | null = props => {
   }, [containedFlowQueryParams, query, setContainedParams]);
 
   useEffect(() => {
-    if (actionCondition)
-      history.push(CONTAINED_FLOW_ACTIONS_TO_ROUTES[containedFlowAction]);
-  }, [actionCondition, history, containedFlowAction]);
+    if (isContainedFlow && isAuthenticated) {
+      if (containedFlowAction !== CONTAINED_FLOW_ACTIONS.REG) {
+        if (fioAddresses.length) {
+          return setStep(CONTAINED_FLOW_STEPS.ACTION, { containedFlowAction });
+        } else {
+          return setStep(CONTAINED_FLOW_STEPS.REGISTRATION);
+        }
+      }
+
+      return setStep(CONTAINED_FLOW_STEPS.ACTION, { containedFlowAction });
+    }
+  }, [
+    fioAddresses.length,
+    isAuthenticated,
+    isContainedFlow,
+    containedFlowAction,
+    setStep,
+  ]);
 
   return null;
 };
@@ -59,9 +96,13 @@ const ContainedFlow: React.FC<Props> | null = props => {
 const reduxConnect = connect(
   createStructuredSelector({
     containedFlowQueryParams,
+    fioAddresses,
+    isAuthenticated,
+    isContainedFlow,
   }),
   {
     setContainedParams,
+    setStep,
   },
 );
 

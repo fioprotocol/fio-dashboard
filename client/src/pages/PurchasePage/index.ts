@@ -3,6 +3,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 import { recalculate } from '../../redux/cart/actions';
+import { onPurchaseResultsClose } from '../../redux/registrations/actions';
 
 import {
   registrationResult,
@@ -28,6 +29,7 @@ const reduxConnect = connect(
   }),
   {
     recalculate,
+    onPurchaseResultsClose,
   },
 );
 

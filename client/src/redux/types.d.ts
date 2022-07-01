@@ -2,15 +2,36 @@ import { EdgeAccount, EdgeCurrencyWallet } from 'edge-core-js';
 
 import { LOGIN_SUCCESS } from './edge/actions';
 import { LOGIN_SUCCESS as PROFILE_LOGIN_SUCCESS } from './profile/actions';
-import { AnyType, AnyObject, FioWalletDoublet } from '../types';
+import {
+  FIO_ACTION_EXECUTE_SUCCESS,
+  FIO_SIGN_NFT_SUCCESS,
+} from './fio/actions';
+import { SET_STEP } from './containedFlow/actions';
+
 import { Api } from '../api';
-import { FIO_SIGN_NFT_SUCCESS } from './fio/actions';
 import { GetState } from './init';
+
+import {
+  AnyType,
+  AnyObject,
+  FioWalletDoublet,
+  FioActionExecuted,
+} from '../types';
 
 // todo: set all actions types
 
 type GetFeeAction = { data: { fee: number }; type: string; endpoint: string };
 type PricesAction = { data: { pricing: { usdtRoe: number } }; type: string };
+type ContainedFlowAction = {
+  type: FIO_ACTION_EXECUTE_SUCCESS;
+  data: FioActionExecuted;
+};
+type ContainedFlowSteps = {
+  type: SET_STEP;
+  containedFlowAction: string;
+  redirectUrl: string;
+};
+
 type CommonPromiseAction = {
   promise: (api: Api, getState: GetState) => Promise<AnyObject>;
   types: string[];
@@ -50,4 +71,6 @@ export type Action = {
   PricesAction &
   CommonPromiseAction &
   CommonAction &
-  any;
+  ContainedFlowAction &
+  ContainedFlowSteps &
+  AnyType;

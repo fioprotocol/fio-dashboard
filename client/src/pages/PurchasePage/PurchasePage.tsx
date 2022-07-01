@@ -6,10 +6,7 @@ import PseudoModalContainer from '../../components/PseudoModalContainer';
 import CheckoutPurchaseContainer from '../../components/CheckoutPurchaseContainer';
 import { RenderPurchase } from '../../components/CheckoutPurchaseContainer/CheckoutPurchaseComponents';
 
-import {
-  CONTAINED_FLOW_ACTIONS,
-  CONTAINED_FLOW_ACTIONS_TO_ROUTES,
-} from '../../constants/containedFlow';
+import { CONTAINED_FLOW_ACTIONS } from '../../constants/containedFlow';
 import { ROUTES } from '../../constants/routes';
 
 import { transformResult } from '../../util/fio';
@@ -36,6 +33,7 @@ type Props = {
   containedFlowQueryParams: ContainedFlowQueryParams;
   roe: number | null;
   recalculate: (cartItems: CartItem[]) => void;
+  onPurchaseResultsClose: () => void;
 };
 
 const PurchasePage: React.FC<Props & RouteComponentProps> = props => {
@@ -48,6 +46,7 @@ const PurchasePage: React.FC<Props & RouteComponentProps> = props => {
     containedFlowQueryParams,
     roe,
     recalculate,
+    onPurchaseResultsClose,
   } = props;
 
   useEffect(() => {
@@ -75,13 +74,7 @@ const PurchasePage: React.FC<Props & RouteComponentProps> = props => {
   }, [recalculate, updatedCart]);
 
   const onClose = () => {
-    if (containedFlowQueryParams != null && containedFlowQueryParams.action) {
-      return history.push(
-        CONTAINED_FLOW_ACTIONS_TO_ROUTES[containedFlowQueryParams.action],
-      );
-    }
-
-    history.push(ROUTES.HOME);
+    onPurchaseResultsClose();
   };
 
   return (
