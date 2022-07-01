@@ -13,3 +13,5 @@ yarn-error.log
 .DS_Store
 .idea/
 .vscode/
+/server/static-files/abi_fio_token.json
+/server/static-files/abi_fio_domain_nft.json
