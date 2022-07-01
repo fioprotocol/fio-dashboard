@@ -3,6 +3,8 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../../utils';
 import { resendConfirmEmail } from '../../../redux/profile/actions';
+import { setRedirectPath } from '../../../redux/navigation/actions';
+
 import {
   loading,
   emailConfirmationToken,
@@ -34,6 +36,7 @@ const reduxConnect = connect(
   }),
   {
     resendConfirmEmail,
+    setRedirectPath,
   },
 );
 

@@ -15,6 +15,7 @@ import {
   NONCE_SUCCESS,
   loadProfile,
   login,
+  CONFIRM_EMAIL_SUCCESS,
 } from './actions';
 
 import { closeLoginModal } from '../modal/actions';
@@ -34,6 +35,8 @@ import { ROUTES } from '../../constants/routes';
 import { Api } from '../../api';
 
 import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
+import { USER_STATUSES } from '../../constants/common';
+
 import { FioWalletDoublet, PrivateRedirectLocationState } from '../../types';
 import { Action } from '../types';
 import { AuthDeleteNewDeviceRequestResponse } from '../../api/responses';
@@ -77,7 +80,6 @@ export function* loginSuccess(history: History, api: Api): Generator {
     }
 
     yield put(closeLoginModal());
-    yield put(setRedirectPath(null));
   });
 }
 
@@ -99,6 +101,10 @@ export function* profileSuccess(): Generator {
 
     for (const fioWallet of action.data.fioWallets) {
       yield put<Action>(refreshBalance(fioWallet.publicKey));
+    }
+
+    if (action.data.status === USER_STATUSES.ACTIVE) {
+      yield put(setRedirectPath(null));
     }
   });
 }
@@ -127,5 +133,11 @@ export function* nonceSuccess(): Generator {
         voucherId,
       }),
     );
+  });
+}
+
+export function* confirmEmailSuccess(history: History): Generator {
+  yield takeEvery(CONFIRM_EMAIL_SUCCESS, function*() {
+    yield history.push(ROUTES.CONFIRM_EMAIL_RESULT);
   });
 }
