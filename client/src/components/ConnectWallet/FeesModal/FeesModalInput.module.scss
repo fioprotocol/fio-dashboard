@@ -1,0 +1,342 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+$tabMargin: 40px;
+
+.container {
+  display: block;
+  width: 100%;
+  border-radius: 7px;
+  background-color: $black !important;
+  color: $white !important;
+  margin-bottom: 30px;
+  overflow: hidden;
+
+  .dark {
+    background-color: $black !important;
+    color: $white !important;
+  }
+}
+
+.errorMessage {
+  max-height: 0;
+  font-size: 12px;
+  line-height: 15px;
+  margin-left: 20px;
+  transition: max-height 0.3s ease-out;
+
+  .errorIcon {
+    width: 14px;
+    height: 14px;
+    margin-right: 10px;
+    max-height: inherit;
+  }
+
+  &.error {
+    max-height: 30px;
+    margin-bottom: 8px;
+    margin-top: 13px;
+    display: flex;
+    align-items: center;
+  }
+
+  &.visible {
+    visibility: visible;
+  }
+  &.hidden {
+    visibility: hidden;
+  }
+
+  &.white {
+    color: $white;
+  }
+
+  &.warn {
+    color: $warn-red;
+  }
+}
+
+.labelSuffix {
+  font-size: 0.875em;
+  @include sf-pro-display-thin;
+  color: $gray-main;
+
+  &.blackLight, &.blackWhite {
+    color: $dark-jungle-green;
+  }
+
+  &.withBottomMargin {
+    margin-bottom: 15px;
+  }
+}
+
+.cursorPointer {
+  cursor: pointer;
+}
+
+.additionalSubInfo {
+  font-size: 0.875em;;
+  margin: 10px 20px;
+  color: $black;
+
+  span {
+    color: $dark-jungle-green;
+  }
+}
+
+.inputGroup {
+  position: relative;
+
+  .editButtonContainer {
+    align-items: center;
+    margin-left: 5px;
+    cursor: pointer;
+    width: 40px !important;
+    height: 35px!important;
+
+    button {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      font-size: 14px;
+
+      &:focus {
+        outline: none !important;
+        box-shadow: none!important;
+      }
+    }
+  }
+
+  .inputIcon {
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 20px !important;
+    height: 20px;
+
+    &.bw, &.blackWhite {
+      color: $dark-gray;
+    }
+
+    &.medium {
+      height: 13px;
+    }
+
+    &.disabled {
+      cursor: default;
+    }
+  }
+
+  .iconPosition {
+    top: 20px;
+  }
+
+  .doubleIcon {
+    position: absolute;
+    right: 60px;
+  }
+
+  .inputSpinnerIcon {
+    margin-top: -10px;
+    cursor: default;
+  }
+
+  .prefix {
+    background-color: $dark-gray;
+    color: white;
+    position: absolute;
+    padding: 0px 10px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+
+    &.error {
+      height: 38px;
+      top: 1px;
+      left: 1px;
+    }
+  }
+
+  .prefixLabel {
+    background-color: transparent;
+    display: inline-block;
+    @include proxima-nova-bold;
+    padding-right: 20px;
+  }
+
+  .regInput {
+    width: 100%;
+    height: 54px;
+    padding: 0px 20px;
+    box-sizing: border-box;
+    border-radius: 7px;
+    background: transparent;
+    color: white;
+    outline: none;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .valueContainer {
+      display: flex;
+      align-items: center;
+    }
+
+    input {
+      outline: none;
+      background: transparent;
+      box-sizing: border-box;
+      height: 54px;
+      font-size: 14px;
+      color: white;
+      width: 100%;
+      flex: 1;
+
+      &::placeholder {
+        color: inherit;
+        @include proxima-nova-regular-it;
+      }
+
+      &[data-clear='true'] {
+        padding-right: 35px;
+      }
+    }
+
+    &.prefixSpace {
+      padding-left: 45px;
+    }
+
+    &.hasPasteButton {
+      padding-right: 45px;
+    }
+
+    &.bw {
+      background-color: $white;
+      border-color: transparent;
+      color: $gray-main !important;
+
+      input {
+        color: $gray-main !important;
+
+        &::placeholder {
+          @include proxima-nova-regular-it;
+        }
+      }
+    }
+
+
+    &.error {
+      border-color: $warn-red;
+    }
+  }
+}
+
+.optionsContainer {
+  padding: 0 10px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .title {
+    font-size: 1.75em;
+    font-weight: 500;
+  }
+  .subtitle {
+    color: $dark-gray;
+    font-size: 1em;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .notFound {
+    text-align: center;
+    width: 100%;
+    padding: 15px;
+    color: $dove-gray;
+  }
+
+  .optionsList {
+    max-height: 225px;
+    overflow-y: auto;
+
+    .option {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      cursor: pointer;
+      background-color: $white;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 7px;
+
+      .relateSymbol {
+        margin: 1px 6px 0 6px;
+      }
+    }
+  }
+}
+
+.customPredestination {
+  margin-right: 12px;
+
+  .predestinationContainer {
+    position: relative;
+    padding-left: 12px;
+
+    .relateSymbolForCustomFeesInput {
+      position: absolute;
+      left: 0;
+      top: 4px;
+    }
+  }
+}
+
+.labelTitle {
+  font-size: 0.875em;
+  margin-bottom: 14px;
+  color: $dark-jungle-green;
+  align-self: flex-start;
+  @include sf-pro-display-medium;
+}
+
+.suggestedFee {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 20px;
+  align-items: center;
+  box-sizing: border-box;
+  height: 54px;
+  font-size: 14px;
+  width: 100%;
+  color: white;
+  border-radius: 7px;
+  background-color: $black;
+}
+
+.warningMessage {
+  margin-top: 4px;
+  color: $warn-red;
+  @include proxima-nova-regular;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.suggestedOption {
+  @include sf-pro-display-medium;
+  display: flex;
+  align-items: center;
+}
+
+.suggestedOptionValue {
+  @include sf-pro-display-medium;
+}
