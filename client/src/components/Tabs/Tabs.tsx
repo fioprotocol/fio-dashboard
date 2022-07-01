@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Nav, Tab } from 'react-bootstrap';
 import classnames from 'classnames';
 
@@ -15,6 +15,7 @@ type Props = {
   tabContentClass?: string;
   showTabBorder?: boolean;
   tabProps?: AnyObject;
+  defaultActiveKey?: string;
 };
 
 const Tabs: React.FC<Props> = props => {
@@ -26,7 +27,11 @@ const Tabs: React.FC<Props> = props => {
     tabContentClass,
     showTabBorder,
     tabProps,
+    defaultActiveKey,
   } = props;
+
+  const [activeEventKey, setActiveEventKey] = useState(defaultActiveKey);
+
   return (
     <>
       <Nav className={containerClass || classes.container}>
@@ -34,6 +39,7 @@ const Tabs: React.FC<Props> = props => {
           <Nav.Item key={tab.eventKey + 'tab'}>
             <div className={tabItemContainerClass || classes.tabItemContainer}>
               <Nav.Link
+                onSelect={() => setActiveEventKey(tab.eventKey)}
                 eventKey={tab.eventKey}
                 className={classnames(
                   tabItemClass || classes.tabItem,
@@ -54,7 +60,10 @@ const Tabs: React.FC<Props> = props => {
             eventKey={tab.eventKey}
             className={tabContentClass || classes.tabContent}
           >
-            {tab.renderTab(tabProps)}
+            {tab.renderTab({
+              ...tabProps,
+              isActive: tab.eventKey === activeEventKey,
+            })}
           </Tab.Pane>
         ))}
       </Tab.Content>
