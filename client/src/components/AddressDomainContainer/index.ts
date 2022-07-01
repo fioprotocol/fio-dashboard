@@ -4,6 +4,7 @@ import { createStructuredSelector } from 'reselect';
 import { cartItems } from '../../redux/cart/selectors';
 import { hasFreeAddress } from '../../redux/profile/selectors';
 import { allowCustomDomains } from '../../redux/registrations/selectors';
+import { isContainedFlow } from '../../redux/containedFlow/selectors';
 
 import { compose } from '../../utils';
 
@@ -14,6 +15,7 @@ const reduxConnect = connect(
     cartItems,
     hasFreeAddress,
     allowCustomDomains,
+    isContainedFlow,
   }),
 );
 
