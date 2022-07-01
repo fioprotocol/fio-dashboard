@@ -86,10 +86,11 @@ const CheckoutPage: React.FC<Props> = props => {
     if (
       !loading &&
       !isFree &&
-      paymentWalletPublicKey &&
-      new MathOp(walletBalancesAvailable.nativeFio).lt(
-        totalCost(cartItems, roe).costNativeFio,
-      )
+      ((paymentWalletPublicKey &&
+        new MathOp(walletBalancesAvailable.nativeFio).lt(
+          totalCost(cartItems, roe).costNativeFio,
+        )) ||
+        (!paymentWalletPublicKey && fioWallets.length > 1))
     ) {
       history.push(ROUTES.CART);
     }
