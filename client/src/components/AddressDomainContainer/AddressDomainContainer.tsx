@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter, RouteComponentProps } from 'react-router';
 
-import AddressDomainFrom from '../AddressDomainForm';
+import AddressDomainForm from '../AddressDomainForm';
 import AddressDomainBadge from '../AddressDomainBadge/AddressDomainBadge';
 import AddressDomainCart from '../AddressDomainCart';
 import { useCheckIfDesktop } from '../../screenType';
@@ -16,6 +16,7 @@ type Props = {
   allowCustomDomains: boolean;
   cartItems: CartItem[];
   hasFreeAddress: boolean;
+  isContainedFlow: boolean;
 };
 
 type LocationQuery = {
@@ -34,6 +35,7 @@ const AddressDomainContainer: React.FC<Props &
     location: { query },
     cartItems,
     hasFreeAddress,
+    isContainedFlow,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
@@ -43,14 +45,16 @@ const AddressDomainContainer: React.FC<Props &
       title={title}
       bigCart={
         <>
-          <AddressDomainFrom
+          <AddressDomainForm
             type={type}
             initialValues={query}
             cartItems={cartItems}
             hasFreeAddress={hasFreeAddress}
           />
           {!isDesktop && <AddressDomainCart />}
-          {allowCustomDomains && <AddressDomainBadge type={type} />}
+          {allowCustomDomains && !isContainedFlow && (
+            <AddressDomainBadge type={type} />
+          )}
         </>
       }
       smallCart={isDesktop && <AddressDomainCart />}
