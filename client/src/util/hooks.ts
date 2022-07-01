@@ -1,24 +1,24 @@
-import { useEffect, useState, useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
 import {
-  getWalletsFioAddresses,
   getAllFioPubAddresses,
+  getWalletsFioAddresses,
   refreshBalance,
 } from '../redux/fio/actions';
 
 import {
-  fioWallets,
-  mappedPublicAddresses,
   fioAddresses,
-  walletsFioAddressesLoading,
+  fioWallets,
   fioWalletsBalances,
+  mappedPublicAddresses,
+  walletsFioAddressesLoading,
 } from '../redux/fio/selectors';
 import {
   isAuthenticated,
-  isNewUser as isNewUserSelector,
   isNewEmailNotVerified as isNewEmailNotVerifiedSelector,
+  isNewUser as isNewUserSelector,
 } from '../redux/profile/selectors';
 import { roe } from '../redux/registrations/selectors';
 
@@ -32,16 +32,18 @@ import { DEFAULT_BALANCES } from './prices';
 import { emptyWallet } from '../redux/fio/reducer';
 
 import {
+  FioAddressDoublet,
   FioNameItemProps,
   FioWalletDoublet,
-  FioAddressDoublet,
-  WalletBalances,
   MappedPublicAddresses,
+  WalletBalances,
 } from '../types';
 
 export function useFioAddresses(
   publicKey?: string,
 ): [FioAddressDoublet[], boolean] {
+  const [resultFioAddressesList, setResultFioAddressesList] = useState([]);
+
   const dispatch = useDispatch();
   const isAuth = useSelector(isAuthenticated);
   const wallets: FioWalletDoublet[] = useSelector(fioWallets);
@@ -52,24 +54,28 @@ export function useFioAddresses(
     if (publicKey && isAuth) {
       dispatch(getWalletsFioAddresses([publicKey]));
     }
-  }, [publicKey, isAuth]);
+  }, [publicKey, isAuth, dispatch]);
 
   useEffect(() => {
     if (wallets.length > 0 && isAuth && !publicKey) {
       dispatch(getWalletsFioAddresses(wallets.map(wallet => wallet.publicKey)));
     }
-  }, [wallets.length, isAuth, publicKey]);
+  }, [wallets.length, isAuth, publicKey, wallets, dispatch]);
 
-  const retFioCryptoHandles = (publicKey
-    ? fioCryptoHandles.filter(
-        fioCryptoHandle => fioCryptoHandle.walletPublicKey === publicKey,
-      )
-    : fioCryptoHandles
-  ).sort((fioAddress1: FioAddressDoublet, fioAddress2: FioAddressDoublet) =>
-    fioAddress1.name > fioAddress2.name ? 1 : -1,
-  );
+  useEffect(() => {
+    setResultFioAddressesList(
+      (publicKey
+        ? fioCryptoHandles.filter(
+            fioCryptoHandle => fioCryptoHandle.walletPublicKey === publicKey,
+          )
+        : fioCryptoHandles
+      ).sort((fioAddress1: FioAddressDoublet, fioAddress2: FioAddressDoublet) =>
+        fioAddress1.name > fioAddress2.name ? 1 : -1,
+      ),
+    );
+  }, [fioCryptoHandles, publicKey]);
 
-  return [retFioCryptoHandles, isLoading];
+  return [resultFioAddressesList, isLoading];
 }
 
 export function useFioWallet(
