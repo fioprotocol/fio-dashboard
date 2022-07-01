@@ -94,6 +94,8 @@ const ROUTES: { [route: string]: string } = {
   UNSTAKE: '/unstake', // ?publicKey=
   WRAP_TOKENS: '/wrap-tokens/:publicKey',
   WRAP_DOMAIN: '/wrap-domain/:id',
+  UNWRAP_DOMAIN: '/unwrap-domain',
+  UNWRAP_TOKENS: '/unwrap-tokens/:publicKey?',
 
   LINK_TOKEN_LIST: '/link-token-list', // ?fioCryptoHandle=
   ADD_TOKEN: '/link-token-list/add-token', // ?fioCryptoHandle=

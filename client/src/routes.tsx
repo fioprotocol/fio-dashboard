@@ -272,6 +272,14 @@ const WrapDomainPage = React.lazy(() =>
   import(/* webpackChunkName: 'WrapDomainPage' */ './pages/WrapDomainPage'),
 );
 
+const UnwrapDomainPage = React.lazy(() =>
+  import(/* webpackChunkName: 'UnwrapDomainPage' */ './pages/UnwrapDomainPage'),
+);
+
+const UnwrapTokensPage = React.lazy(() =>
+  import(/* webpackChunkName: 'UnwrapTokensPage' */ './pages/UnwrapTokensPage'),
+);
+
 const Routes = (): React.ReactElement => (
   <MainLayout>
     <ScrollToTop>
@@ -494,6 +502,17 @@ const Routes = (): React.ReactElement => (
         <PrivateRoute
           path={ROUTES.WRAP_DOMAIN}
           component={WrapDomainPage}
+          exact
+        />
+
+        <PrivateRoute
+          path={ROUTES.UNWRAP_TOKENS}
+          component={UnwrapTokensPage}
+          exact
+        />
+        <PrivateRoute
+          path={ROUTES.UNWRAP_DOMAIN}
+          component={UnwrapDomainPage}
           exact
         />
 
