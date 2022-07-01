@@ -53,6 +53,7 @@ export const BUTTONS_TITLE = {
   addBundles: 'Add',
   renew: 'Renew',
   wrap: 'Wrap',
+  unwrap: 'Unwrap',
   link: 'Link',
   nft: 'NFT signature',
   register: 'Register FIO Crypto Handle',

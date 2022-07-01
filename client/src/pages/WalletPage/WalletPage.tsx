@@ -24,6 +24,8 @@ import { putParamsToUrl } from '../../utils';
 import { ContainerProps } from './types';
 
 import classes from './styles/WalletPage.module.scss';
+import wrapIcon from '../../assets/images/wrap.svg';
+import unwrapIcon from '../../assets/images/unwrap.svg';
 
 type Location = {
   location: {
@@ -135,7 +137,16 @@ const WalletPage: React.FC<ContainerProps> = props => {
             })}
           >
             <div>
-              <FontAwesomeIcon icon="infinity" />
+              <img src={wrapIcon} alt="wrap" />
+            </div>
+          </Link>
+          <Link
+            to={putParamsToUrl(ROUTES.UNWRAP_TOKENS, {
+              publicKey: fioWallet.publicKey,
+            })}
+          >
+            <div>
+              <img src={unwrapIcon} alt="unwrap" />
             </div>
           </Link>
         </ActionButtonsContainer>

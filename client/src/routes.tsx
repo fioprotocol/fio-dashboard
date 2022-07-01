@@ -49,6 +49,8 @@ import UpdateEmailPage from './pages/UpdateEmailPage';
 import RejectFioRequestPage from './pages/RejectFioRequestPage';
 import WrapTokensPage from './pages/WrapTokensPage';
 import WrapDomainPage from './pages/WrapDomainPage';
+import UnwrapDomainPage from './pages/UnwrapDomainPage';
+import UnwrapTokensPage from './pages/UnwrapTokensPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -174,6 +176,17 @@ const Routes = (): React.ReactElement => (
         <PrivateRoute
           path={ROUTES.WRAP_DOMAIN}
           component={WrapDomainPage}
+          exact
+        />
+
+        <PrivateRoute
+          path={ROUTES.UNWRAP_TOKENS}
+          component={UnwrapTokensPage}
+          exact
+        />
+        <PrivateRoute
+          path={ROUTES.UNWRAP_DOMAIN}
+          component={UnwrapDomainPage}
           exact
         />
 
