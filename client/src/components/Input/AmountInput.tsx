@@ -122,11 +122,17 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
         apis.fio.amountToSUF(Number(value)).toString(),
       );
     }
-  }, [value]);
+  }, [
+    change,
+    isPrimaryExchange,
+    nativeAmountFieldName,
+    relationFormula,
+    value,
+  ]);
 
   useEffect(() => {
     if (!isPrimaryExchange) onChange(relationFormula(exchangedValue, true));
-  }, [exchangedValue]);
+  }, [exchangedValue, isPrimaryExchange, onChange, relationFormula]);
 
   useEffect(() => {
     toggleClearInput(value !== '');
