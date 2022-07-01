@@ -21,6 +21,9 @@ export default combineReducers({
         }
         return state;
       }
+      case actions.RESET_CONTAINED_PARAMS: {
+        return null;
+      }
       default:
         return state;
     }
@@ -36,7 +39,7 @@ export default combineReducers({
   step(state: string = CONTAINED_FLOW_STEPS.INIT, action) {
     switch (action.type) {
       case actions.SET_STEP:
-        return action.data;
+        return action.step;
       default:
         return state;
     }

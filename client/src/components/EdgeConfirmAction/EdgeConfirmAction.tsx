@@ -5,7 +5,7 @@ import Processing from '../../components/common/TransactionProcessing';
 import { waitForEdgeAccountStop } from '../../util/edge';
 import { removeExtraCharactersFromString } from '../../util/general';
 
-import { FIO_ACTIONS } from '../../constants/common';
+import { CONFIRM_PIN_FIO_ACTIONS } from '../../constants/common';
 
 import { PinConfirmation } from '../../types';
 import { Props, FioActions } from './types';
@@ -73,7 +73,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
             await waitForEdgeAccountStop(edgeAccount);
 
           onSuccess(result);
-          if (FIO_ACTIONS[action as keyof FioActions]) {
+          if (CONFIRM_PIN_FIO_ACTIONS[action as keyof FioActions]) {
             fioActionExecuted({
               result: { status: result.status, txIds: result.transaction_id },
               executeActionType: removeExtraCharactersFromString(action),

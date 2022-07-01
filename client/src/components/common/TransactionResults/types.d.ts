@@ -5,6 +5,7 @@ import {
   PublicAddressDoublet,
   FioAddressWithPubAddresses,
   LinkActionResult,
+  AnyType,
 } from '../../../types';
 
 export type ResultsData = {
@@ -13,7 +14,7 @@ export type ResultsData = {
   name?: string;
   publicKey?: string;
   changedStatus?: string;
-  other?: any;
+  other?: AnyType;
   error?: string | null;
   updated?: PublicAddressDoublet[];
   failed?: PublicAddressDoublet[];
@@ -40,6 +41,7 @@ export type ResultsProps = {
 
 export type ResultsContainerProps = ResultsProps & {
   children: React.ReactNode;
+  onTxResultsClose: () => void;
 };
 
 export type LinkTokenResultsProps = {

@@ -1,6 +1,9 @@
 import { EdgeAccount } from 'edge-core-js';
 
-import { CONFIRM_PIN_ACTIONS, FIO_ACTIONS } from '../../constants/common';
+import {
+  CONFIRM_PIN_ACTIONS,
+  CONFIRM_PIN_FIO_ACTIONS,
+} from '../../constants/common';
 
 import {
   AnyObject,
@@ -19,7 +22,7 @@ export type SubmitActionParams = {
 };
 
 type Action = typeof CONFIRM_PIN_ACTIONS;
-export type FioActions = typeof FIO_ACTIONS;
+export type FioActions = typeof CONFIRM_PIN_FIO_ACTIONS;
 
 export type Props = {
   action: keyof Action;

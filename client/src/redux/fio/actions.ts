@@ -239,3 +239,9 @@ export const fioActionExecuted = (data: FioActionExecuted): CommonAction => ({
   type: FIO_ACTION_EXECUTE_SUCCESS,
   data,
 });
+
+export const TRANSACTION_RESULTS_CLOSE = `${prefix}/TRANSACTION_RESULTS_CLOSE`;
+
+export const onTxResultsClose = (): CommonAction => ({
+  type: TRANSACTION_RESULTS_CLOSE,
+});

@@ -50,3 +50,9 @@ export const setProcessing = (isProcessing: boolean): CommonAction => ({
   type: SET_PROCESSING,
   data: isProcessing,
 });
+
+export const PURCHASE_RESULTS_CLOSE = `${prefix}/PURCHASE_RESULTS_CLOSE`;
+
+export const onPurchaseResultsClose = (): CommonAction => ({
+  type: PURCHASE_RESULTS_CLOSE,
+});

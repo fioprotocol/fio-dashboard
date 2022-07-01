@@ -6,13 +6,15 @@ import {
   logoutSuccess,
   profileSuccess,
   nonceSuccess,
+  confirmEmailSuccess,
 } from './profile/sagas';
 import { edgeLoginSuccess } from './edge/sagas';
 import { notify } from './notify/sagas';
 import {
-  fioAddressRegisterSuccess,
-  containedFlowLoginSuccess,
   containedFlowActionSuccess,
+  containedFlowResultsClose,
+  handleContainedFlowSteps,
+  purchaseResultsClose,
 } from './containedFlow/sagas';
 import { clearGenericModalError } from './modal/sagas';
 import {
@@ -32,12 +34,14 @@ export default function* rootSaga(history: History, api: Api) {
     nonceSuccess(),
     edgeLoginSuccess(),
     notify(history),
-    fioAddressRegisterSuccess(),
-    containedFlowLoginSuccess(),
     clearGenericModalError(),
     containedFlowActionSuccess(),
+    containedFlowResultsClose(),
+    handleContainedFlowSteps(history),
     setFeesService(),
     addFioWalletSuccess(),
     setBalancesService(),
+    confirmEmailSuccess(history),
+    purchaseResultsClose(history),
   ]);
 }
