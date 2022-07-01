@@ -25,7 +25,6 @@ import AddTokenPage from './pages/AddTokenPage';
 import EditTokenPage from './pages/EditTokenPage';
 import SettingsPage from './pages/SettingsPage';
 import RefHomePage from './pages/RefHomePage';
-import ContainiedFlowActionPage from './pages/ContainiedFlowActionPage';
 import AccountRecoveryPage from './pages/AccountRecoveryPage';
 import EmailConfirmationPage from './pages/EmailConfirmationPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
@@ -194,11 +193,6 @@ const Routes = (): React.ReactElement => (
           path={ROUTES.ACCOUNT_RECOVERY}
           component={AccountRecoveryPage}
           exact
-        />
-
-        <PrivateRoute
-          path={ROUTES.CONTAINED_FLOW_SIGN_NFT}
-          component={ContainiedFlowActionPage}
         />
 
         <PrivateRoute
