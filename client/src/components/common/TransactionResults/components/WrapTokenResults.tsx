@@ -88,7 +88,9 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
               target="_blank"
               rel="noreferrer"
             >
-              <b className={classes.white}>status page</b>
+              <span className={classnames(classes.white, classes.boldMessage)}>
+                status page
+              </span>
             </a>{' '}
             for transaction progress.
           </>
@@ -114,18 +116,14 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
         </div>
       </Badge>
 
-      {amount && (
-        <Badge show={true} type={BADGE_TYPES.WHITE}>
-          <div
-            className={classnames(classes.badgeContainer, classes.longTitle)}
-          >
-            <p className={classes.title}>Fio Wrapped</p>
-            <p className={classes.item}>
-              {displayAmount} {displayUsdcAmount}
-            </p>
-          </div>
-        </Badge>
-      )}
+      <Badge show={!!amount} type={BADGE_TYPES.WHITE}>
+        <div className={classnames(classes.badgeContainer, classes.longTitle)}>
+          <p className={classes.title}>Fio Wrapped</p>
+          <p className={classes.item}>
+            {displayAmount} {displayUsdcAmount}
+          </p>
+        </div>
+      </Badge>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
           <p className={classes.title}>Fees</p>
@@ -134,7 +132,7 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
           </p>
         </div>
       </Badge>
-      <Badge show={true} type={BADGE_TYPES.WHITE}>
+      <Badge show={!!transaction_id} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
           <p className={classes.title}>ID</p>
           <p className={classnames(classes.item, classes.isBlue)}>
