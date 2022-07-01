@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
-import { Redirect } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
 import LayoutContainer from '../LayoutContainer/LayoutContainer';
 import Modal from '../Modal/Modal';
@@ -13,6 +13,7 @@ import MobileView from './ManagePageComponents/MobileView';
 import SettingsItem from './ManagePageComponents/SettingsItem';
 import InfiniteScroll from '../InfiniteScroll/InfiniteScroll';
 import InfoBadge from '../Badges/InfoBadge/InfoBadge';
+import ActionButtonsContainer from '../../pages/WalletsPage/components/ActionButtonsContainer';
 
 import { BANNER_DATA, ITEMS_LIMIT, EXPIRED_DAYS, SUBTITLE } from './constants';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
@@ -20,6 +21,7 @@ import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
 } from '../../constants/common';
+import { useCheckIfDesktop } from '../../screenType';
 import { ROUTES } from '../../constants/routes';
 import { ACTIONS } from '../../constants/fio';
 
@@ -29,10 +31,13 @@ import {
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
 
-import { HasMore, ContainerProps } from './types';
+import { ContainerProps, HasMore } from './types';
 import { FioNameItemProps, FioWalletDoublet } from '../../types';
 
 import classes from './ManagePageContainer.module.scss';
+
+import unwrapIcon from '../../assets/images/unwrap.svg';
+import Title from '../../pages/WalletsPage/components/Title';
 
 const INFO_BADGE_CONTENT = {
   address: {
@@ -91,8 +96,6 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
   }
 
   const hasMoreItems = Object.keys(hasMore).some(key => hasMore[key] > 0);
-
-  const { title } = BANNER_DATA[pageName];
 
   // Get and handle Fio Crypto Handles or Fio Domains for one specific wallet (public key)
   const handleWalletAddresses = (wallet: FioWalletDoublet, limit: number) => {
@@ -250,6 +253,22 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
 
   if (noProfileLoaded) return <Redirect to={{ pathname: ROUTES.HOME }} />;
 
+  const renderTitle = () => {
+    return (
+      <Title title={BANNER_DATA[pageName].title} subtitle={SUBTITLE[pageName]}>
+        {pageName === 'domain' ? (
+          <ActionButtonsContainer>
+            <Link to={ROUTES.UNWRAP_DOMAIN} className={classes.link}>
+              <div>
+                <img src={unwrapIcon} alt="unwrap" />
+              </div>
+            </Link>
+          </ActionButtonsContainer>
+        ) : null}
+      </Title>
+    );
+  };
+
   const renderList = () => {
     if ((!fioNameList || fioNameList.length === 0) && !loading)
       return (
@@ -264,9 +283,8 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
 
   return (
     <div className={classes.container}>
-      <LayoutContainer title={title}>
+      <LayoutContainer title={renderTitle()}>
         <div className={classes.dataContainer}>
-          <p className={classes.subtitle}>{SUBTITLE[pageName]}</p>
           {isDesktop && (
             <Notifications
               showWarnBadge={showWarnBadge}
