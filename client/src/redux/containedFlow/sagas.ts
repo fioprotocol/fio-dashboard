@@ -23,10 +23,12 @@ import {
   containedFlowStep as getContainedFlowStep,
 } from './selectors';
 
+import { cartItems } from '../cart/selectors';
+
 import { ROUTES } from '../../constants/routes';
 
 import { Action } from '../types';
-import { ContainedFlowQueryParams } from '../../types';
+import { CartItem, ContainedFlowQueryParams } from '../../types';
 
 export function* containedFlowActionSuccess(): Generator {
   yield takeEvery(FIO_ACTION_EXECUTE_SUCCESS, function*(action: Action) {
@@ -98,10 +100,14 @@ export function* handleContainedFlowSteps(history: History): Generator {
       getContainedFlowQueryParams,
     );
 
+    const cart: CartItem[] = yield select(cartItems);
     if (isContainedFlow) {
       switch (action.step) {
         case CONTAINED_FLOW_STEPS.REGISTRATION: {
-          yield history.push(ROUTES.CHECKOUT, {
+          const registrationPath = cart.length
+            ? ROUTES.CHECKOUT
+            : ROUTES.FIO_ADDRESSES_SELECTION;
+          yield history.push(registrationPath, {
             containedFlowQueryParams,
           });
           break;

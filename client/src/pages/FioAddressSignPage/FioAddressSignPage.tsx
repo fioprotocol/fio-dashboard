@@ -25,7 +25,7 @@ const FioAddressSignPage: React.FC<RouteComponentProps<
     initialValues: signNftInitialValues,
   }: {
     initialValues?: SignNFTParams;
-  } = state;
+  } = state || {};
 
   let initialValues = {};
 
