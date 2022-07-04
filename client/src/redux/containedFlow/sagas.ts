@@ -1,5 +1,5 @@
 import { put, takeEvery, select } from 'redux-saga/effects';
-import { History } from 'History';
+import { History } from 'history';
 
 import {
   CONTAINED_FLOW_STEPS,
