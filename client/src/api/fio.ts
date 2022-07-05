@@ -10,6 +10,7 @@ import { PublicAddressResponse } from '@fioprotocol/fiosdk/src/entities/PublicAd
 import { PublicAddressesResponse } from '@fioprotocol/fiosdk/src/entities/PublicAddressesResponse';
 import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
+import { BalanceResponse } from '@fioprotocol/fiosdk/src/entities/BalanceResponse';
 
 import MathOp from '../util/math';
 import { log } from '../util/general';
@@ -287,16 +288,14 @@ export default class Fio {
         staked,
         srps,
         roe,
-      } = await this.publicFioSDK.getFioBalance(publicKey);
-
-      const rewards =
-        roe == null
-          ? 0
-          : new MathOp(srps)
-              .mul(roe)
-              .round(0, 2)
-              .sub(staked)
-              .toNumber();
+      }: BalanceResponse = await this.publicFioSDK.getFioBalance(publicKey);
+      const rewards = !roe
+        ? 0
+        : new MathOp(srps)
+            .mul(roe)
+            .round(0, 2)
+            .sub(staked)
+            .toNumber();
 
       balances = {
         ...balances,
