@@ -4,7 +4,7 @@ import PaymentProcessor from './base.mjs';
 import { PAYMENT_EVENT_STATUSES, PAYMENTS_STATUSES } from '../../config/constants.js';
 import X from '../../services/Exception.mjs';
 
-const COIN_PAYMENTS_STATUSES = {
+export const COIN_PAYMENTS_STATUSES = {
   PAYPAL_REFUND: -2,
   CANCELLED_TIMED_OUT: -1,
   WAITING: 0,
@@ -23,20 +23,21 @@ const IPN_TYPES = {
   api: 'api',
 };
 const COIN_PAYMENTS_DOMAIN = 'www.coinpayments.net';
+const COIN_PAYMENTS_USER_AGENT = 'CoinPayments.net IPN Generator';
 
 class CoinPayments extends PaymentProcessor {
   constructor() {
     super();
   }
 
-  isWebhook(hostname) {
+  isWebhook(hostname, userAgent) {
     const checkRegex = new RegExp(`${COIN_PAYMENTS_DOMAIN}`, 'i');
-    return checkRegex.exec(hostname);
+    return checkRegex.exec(hostname) || userAgent === COIN_PAYMENTS_USER_AGENT;
   }
 
   getWebhookData(body) {
-    let data = {};
-    const { ipn_type } = body;
+    const { ipn_id, ipn_type } = body;
+    let data = { ipn_id };
 
     if (ipn_type === IPN_TYPES.deposit) {
       const {
@@ -79,6 +80,7 @@ class CoinPayments extends PaymentProcessor {
         currency2, // The coin the buyer chose to pay with.
         amount1, // The total amount of the payment in your original currency/coin.
         amount2, // The total amount of the payment in the buyer's selected coin.
+        net, // The net amount you received of the buyer's selected coin after our fee and any coin TX fees to send the coins to you.
         fee,
         item_name,
         item_desc,
@@ -98,10 +100,11 @@ class CoinPayments extends PaymentProcessor {
         currency2,
         amount1,
         amount2,
+        net,
         fee,
         item_name,
         item_desc,
-        orderNumber: item_number,
+        orderNumber: item_number || invoice,
         invoice,
         custom,
         send_tx,
@@ -109,6 +112,11 @@ class CoinPayments extends PaymentProcessor {
     }
 
     return data;
+  }
+  getWebhookMeta(data) {
+    return {
+      ipn_id: data.ipn_id,
+    };
   }
 
   isCompleted(status) {
@@ -140,7 +148,7 @@ class CoinPayments extends PaymentProcessor {
   }
 
   validate(headers, body) {
-    if (!headers || !headers['HTTP_HMAC'])
+    if (!headers || !headers.hmac)
       throw new X({
         code: 'INVALID_REQUEST_PARAMS',
         fields: {
@@ -159,19 +167,27 @@ class CoinPayments extends PaymentProcessor {
       });
   }
 
-  authenticate(body, hmac) {
+  authenticate(headers, body, rawBody) {
     const bodyHmac = crypto
-      .createHmac('sha1', process.env.COIN_PAYMENTS_SECRET)
-      .update(JSON.stringify(body))
+      .createHmac('sha512', process.env.COIN_PAYMENTS_SECRET)
+      .update(rawBody)
       .digest('hex');
 
-    if (hmac !== bodyHmac)
+    if (headers.hmac !== bodyHmac)
       throw new X({
         code: 'INVALID_REQUEST',
         fields: {
           code: 'HMAC_SIGNATURE_MISMATCH',
         },
       });
+  }
+
+  checkEvent(eventData, data) {
+    return eventData.ipn_id === data.ipn_id;
+  }
+
+  getWebhookIdentifier(webhookData) {
+    return webhookData.ipn_id;
   }
 }
 
