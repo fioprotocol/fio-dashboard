@@ -1,9 +1,20 @@
+import Sequelize from 'sequelize';
+
 import Coinpayments from '../../external/payment-processor/coinpayments';
 
 import Base from '../Base';
 import X from '../Exception';
 
-import { Order, Payment, PaymentEventLog } from '../../models';
+import logger from '../../logger.mjs';
+
+import {
+  Order,
+  Payment,
+  PaymentEventLog,
+  OrderItem,
+  OrderItemStatus,
+  BlockchainTransaction,
+} from '../../models';
 
 export default class PaymentsWebhook extends Base {
   static get validationRules() {
@@ -11,18 +22,19 @@ export default class PaymentsWebhook extends Base {
       body: 'any_object',
       headers: 'any_object',
       hostname: 'string',
+      rawBody: 'string',
     };
   }
 
   getPaymentProcessor(headers, hostname) {
-    if (Coinpayments.isWebhook(hostname)) {
+    if (Coinpayments.isWebhook(hostname, this.context.userAgent)) {
       return Coinpayments;
     }
 
     return null;
   }
 
-  async execute({ body, headers, hostname }) {
+  async execute({ body, headers, hostname, rawBody }) {
     const paymentProcessor = this.getPaymentProcessor(headers, hostname);
     if (!paymentProcessor)
       throw new X({
@@ -32,22 +44,35 @@ export default class PaymentsWebhook extends Base {
         },
       });
 
-    this.validateRequest(paymentProcessor, { body, headers });
+    this.validateRequest(paymentProcessor, { body, headers, rawBody });
 
     const webhookData = paymentProcessor.getWebhookData(body);
+    const paymentStatuses = paymentProcessor.mapPaymentStatus(webhookData.status);
     // Your IPN handler must always check to see if a payment has already been handled
     // before to avoid double-crediting users, etc. in the case of duplicate IPNs.
-    const existingPayment = await Payment.findOneWhere({
-      externalId: webhookData.txn_id,
-      status: paymentProcessor.mapPaymentStatus(webhookData.status),
+    const existingPayment = await Payment.findOne({
+      where: {
+        externalId: webhookData.txn_id,
+      },
+      include: [PaymentEventLog],
     });
 
     if (existingPayment) {
-      return { processed: true };
+      for (const event of existingPayment.PaymentEventLogs) {
+        const eventProcessed = event.data
+          ? paymentProcessor.checkEvent(event.data, webhookData)
+          : false;
+        if (eventProcessed) return { processed: true };
+      }
     }
 
     if (webhookData.invoice && webhookData.orderNumber) {
-      const order = await Order.findOneWhere({ number: webhookData.orderNumber });
+      const order = await Order.findOne({
+        where: {
+          number: webhookData.orderNumber,
+        },
+        include: [OrderItem],
+      });
       if (!order) {
         throw new X({
           code: 'WEBHOOK_DATA_ERROR',
@@ -58,8 +83,19 @@ export default class PaymentsWebhook extends Base {
       }
 
       const payment = await Payment.findOneWhere({
-        orderId: order.id,
-        spentType: Payment.SPENT_TYPE().ORDER,
+        [Sequelize.Op.or]: [
+          {
+            externalId: webhookData.txn_id,
+            orderId: order.id,
+            spentType: Payment.SPENT_TYPE.ORDER,
+          },
+          {
+            externalId: null,
+            status: Payment.STATUS.NEW,
+            orderId: order.id,
+            spentType: Payment.SPENT_TYPE.ORDER,
+          },
+        ],
       });
       if (!payment) {
         throw new X({
@@ -70,15 +106,83 @@ export default class PaymentsWebhook extends Base {
         });
       }
 
-      const paymentStatuses = paymentProcessor.mapPaymentStatus(webhookData.status);
-      await PaymentEventLog.create({
+      // todo: check if events could be received in different order
+      const pEvent = await PaymentEventLog.create({
         status: paymentStatuses.event,
         statusNotes: webhookData.status_text,
+        data: paymentProcessor.getWebhookMeta(webhookData),
+        paymentId: payment.id,
       });
-      payment.status = paymentStatuses.payment;
-      payment.externalId = webhookData.txn_id;
-      payment.data = { ...payment.data, webhookData };
-      await payment.save();
+      try {
+        payment.status = paymentStatuses.payment;
+        payment.externalId = webhookData.txn_id;
+        payment.price = webhookData.amount2;
+        payment.currency = webhookData.currency2;
+        payment.data = { ...payment.data, webhookData };
+        const orderItemStatusUpdates = {
+          paymentStatus: paymentStatuses.payment,
+        };
+
+        // Update payment
+        await Order.sequelize.transaction(async t => {
+          await payment.save({
+            transaction: t,
+          });
+          await OrderItemStatus.update(orderItemStatusUpdates, {
+            where: {
+              orderItemId: {
+                [OrderItemStatus.sequelize.Op.in]: order.OrderItems.map(({ id }) => id),
+              },
+              paymentId: payment.id,
+            },
+            transaction: t,
+          });
+        });
+
+        // Set item is ready to process if payment is completed
+        if (paymentProcessor.isCompleted(webhookData.status)) {
+          // todo: check also if paid amount is enough
+          await Order.sequelize.transaction(async t => {
+            for (const orderItem of order.OrderItems) {
+              orderItemStatusUpdates.txStatus = BlockchainTransaction.STATUS.READY;
+
+              const bcTx = await BlockchainTransaction.create(
+                {
+                  action: orderItem.action,
+                  status: BlockchainTransaction.STATUS.READY,
+                  data: orderItem.params,
+                  orderItemId: orderItem.id,
+                },
+                {
+                  transaction: t,
+                },
+              );
+
+              await OrderItemStatus.update(
+                {
+                  txStatus: BlockchainTransaction.STATUS.READY,
+                  blockchainTransactionId: bcTx.id,
+                },
+                {
+                  where: {
+                    orderItemId: orderItem.id,
+                    paymentId: payment.id,
+                    txStatus: BlockchainTransaction.STATUS.NONE,
+                  },
+                  transaction: t,
+                },
+              );
+            }
+          });
+        }
+      } catch (e) {
+        logger.error(
+          e,
+          `Update payment status error, webhook identifier - ${paymentProcessor.getWebhookIdentifier(
+            webhookData,
+          )}. Payment event id - ${pEvent.id}`,
+        );
+      }
 
       return { processed: true };
     }
@@ -91,7 +195,7 @@ export default class PaymentsWebhook extends Base {
     });
   }
 
-  validateRequest(paymentProcessor, { body, headers }) {
+  validateRequest(paymentProcessor, { body, headers, rawBody }) {
     if (!body)
       throw new X({
         code: 'INVALID_REQUEST_PARAMS',
@@ -101,7 +205,7 @@ export default class PaymentsWebhook extends Base {
       });
 
     paymentProcessor.validate(headers, body);
-    paymentProcessor.authenticate(body, headers['HTTP_HMAC']);
+    paymentProcessor.authenticate(headers, body, rawBody);
   }
 
   static get paramsSecret() {
