@@ -33,6 +33,13 @@ const bree = new Bree({
       timeout: 0,
       closeWorkerAfterMs: 5 * 60 * 1000, // 5 min
     },
+    {
+      path: path.join(JOBS_PATH, 'tx-check.mjs'),
+      name: 'tx-check',
+      interval: process.env.ORDERS_JOB_INTERVAL || 30 * 1000, // 30 sec default
+      timeout: 0,
+      closeWorkerAfterMs: 5 * 60 * 1000, // 5 min
+    },
   ],
   workerMessageHandler: (name, message) => {
     logger.info('JOB MESSAGE === ', name, message);

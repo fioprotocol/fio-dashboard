@@ -125,10 +125,13 @@ export class BlockchainTransaction extends Base {
   }
 
   static checkIrreversibility() {
-    return this.query(`
+    return this.sequelize.query(`
       SELECT oi.id,
              oi.address,
              oi.domain,
+             oi.action,
+             oi.params,
+             oi."orderId",
              o."publicKey",
              o."userId",
              bt.expiration,
@@ -144,7 +147,7 @@ export class BlockchainTransaction extends Base {
 
   static expireRetry() {
     const RETRIES_LIMIT = 3;
-    return this.query(`
+    return this.sequelize.query(`
     WITH r as (
              -- get retry counts
              SELECT count(*) AS retries, rbt.id AS "blockchainTransactionId"
