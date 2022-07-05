@@ -1,20 +1,18 @@
 import superagent from 'superagent';
 import Big from 'big.js';
 
+import { Var } from '../models';
+
 import logger from '../logger';
 
+const ROE_VAR_KEY = 'ROE';
 const roeEndpoint = process.env.FIO_ROE_URL || 'https://ascendex.com/api/pro/v1/';
-const minToUpdate = 15;
-const roe = {
-  value: null,
-  updatedAt: new Date(),
-};
+const timeout = 1000 * 60 * 15; // 15 min
 
 export const getROE = async () => {
-  const now = new Date();
+  const roeVar = await Var.getByKey(ROE_VAR_KEY);
 
-  const diffMins = Math.round((((now - roe.updatedAt) % 86400000) % 3600000) / 60000);
-  if (diffMins > minToUpdate || !roe.value) {
+  if (!roeVar || Var.updateRequired(roeVar.updatedAt, timeout)) {
     try {
       const {
         body: {
@@ -31,16 +29,17 @@ export const getROE = async () => {
         const avgPrice = Big(sum)
           .div(data.length)
           .toNumber();
-        roe.value = avgPrice;
-        roe.updatedAt = now;
+
+        await Var.setValue(ROE_VAR_KEY, avgPrice);
+
         return avgPrice;
       }
     } catch (e) {
       logger.error('ROE UPDATE ERROR ===');
       logger.error(e);
-      return roe.value;
+      return (roeVar && +roeVar.value) || null;
     }
   }
 
-  return roe.value;
+  return +roeVar.value;
 };
