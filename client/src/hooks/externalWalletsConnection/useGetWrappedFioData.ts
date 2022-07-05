@@ -55,15 +55,19 @@ export function useGetWrappedFioData(
 
   useEffect(() => {
     if (web3Provider && address && ethers.utils.isAddress(address)) {
+      // For wrapped FIO Domains, balance = count of wDomains (nfts) on Polygon chain
       const getNfts = async (balance?: number) => {
         let pageNumber = 1;
         const limit = 100;
 
+        // Function that will get wDomain (nft) data from chain Logs.
         const getData = async (
           page: number = pageNumber,
           offset: number = limit,
         ) => {
           setIsLoading(true);
+
+          // Get Logs from chain, could be duplicated (wrap \ unwrap \ transfer to another account)
           const transferLogs = await etherscan.getNftsTransferEventLogs(
             page,
             offset,
@@ -72,17 +76,19 @@ export function useGetWrappedFioData(
 
           const tokensIdsSet = new Set();
 
+          // Filter unique tokenIds only
           transferLogs?.forEach((o: LogItem) => {
             tokensIdsSet.add(o.tokenID);
           });
 
+          // Get wDomain (nft) data
           const getLogData = async (
             tokenId: string,
           ): Promise<{ name: string; id: string } | null> => {
             try {
               const tokenInfo = await Promise.all([
-                tokenContract.tokenURI(tokenId),
-                tokenContract.ownerOf(tokenId),
+                tokenContract.tokenURI(tokenId), // returns wDomain url string
+                tokenContract.ownerOf(tokenId), // returns wDomain owner address string
               ]);
 
               if (tokenInfo[1] === address) {
@@ -110,6 +116,7 @@ export function useGetWrappedFioData(
 
           setNfts([...(nfts || []), ...result]);
 
+          // recursively get next portion of the data if needed
           if (result.length === offset && (!balance || nfts.length < balance)) {
             pageNumber = pageNumber + 1;
             await getData(pageNumber, limit);
