@@ -108,7 +108,7 @@ export class OrderItem extends Base {
         ? 'o."refProfileId" IS NULL'
         : `o."refProfileId" = ${refProfileId}`;
 
-    const [orderItemAmount] = await Sequelize.query(`
+    const [orderItemAmount] = await OrderItem.sequelize.query(`
       SELECT count(oi.id) "orderItemAmount" FROM "order-items" oi 
         JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
         JOIN "orders" o ON o.id = oi."orderId"
@@ -123,24 +123,27 @@ export class OrderItem extends Base {
   // Used to get order items needed to process
   // Common status is READY or RETRY
   static async getActionRequired(status = BlockchainTransaction.STATUS.READY) {
-    const [actions] = await Sequelize.query(`
+    const [actions] = await OrderItem.sequelize.query(`
         SELECT 
           oi.id, 
           oi.address, 
           oi.domain, 
           oi.action, 
           oi.params, 
+          oi.price,
+          o.id "orderId", 
+          o.roe, 
           o."publicKey", 
           ois."blockchainTransactionId",
           rp.label, 
-          rp.tpid
+          rp.tpid,
           fap.actor,
           fap.permission
         FROM "order-items" oi
           INNER JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
           INNER JOIN orders o ON o.id = oi."orderId"
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
-          LEFT JOIN "fio-account-profiles" fap.id = rp."fioAccountProfileId"
+          LEFT JOIN "fio-account-profiles" fap ON fap.id = rp."fioAccountProfileId"
         WHERE ois."paymentStatus" = ${Payment.STATUS.COMPLETED} 
           AND ois."txStatus" = ${status}
         ORDER BY oi.id
@@ -151,13 +154,18 @@ export class OrderItem extends Base {
   }
 
   static async setPending(tx, orderItemId, blockchainTransactionId) {
-    return Sequelize.sequelize.transaction(async t => {
+    await BlockchainTransactionEventLog.create({
+      status: BlockchainTransaction.STATUS.PENDING,
+      blockchainTransactionId,
+    });
+
+    return OrderItem.sequelize.transaction(async t => {
       await BlockchainTransaction.update(
         {
           // expiration: expiration + 'Z',
           txId: tx.transaction_id,
           blockNum: tx.block_num,
-          blockTime: tx.block_time + 'Z',
+          blockTime: tx.block_time ? tx.block_time + 'Z' : new Date(),
           status: BlockchainTransaction.STATUS.PENDING,
         },
         {
@@ -170,23 +178,15 @@ export class OrderItem extends Base {
         },
       );
 
-      await BlockchainTransactionEventLog.create(
-        {
-          status: BlockchainTransaction.STATUS.PENDING,
-          blockchainTransactionId,
-        },
-        { transaction: t },
-      );
-
       await OrderItemStatus.update(
         {
-          status: BlockchainTransaction.STATUS.PENDING,
+          txStatus: BlockchainTransaction.STATUS.PENDING,
         },
         {
           where: {
             orderItemId,
             blockchainTransactionId,
-            status: BlockchainTransaction.STATUS.READY,
+            txStatus: BlockchainTransaction.STATUS.READY,
           },
           transaction: t,
         },
