@@ -1,154 +1,231 @@
-import { parentPort } from 'worker_threads';
-
-import Sequelize from 'sequelize';
-
 import '../db';
-import { fioApi, INSUFFICIENT_FUNDS_ERR_MESSAGE } from '../external/fio.mjs';
+
 import {
   OrderItem,
   FioAccountProfile,
   BlockchainTransaction,
   BlockchainTransactionEventLog,
   OrderItemStatus,
+  Payment,
+  PaymentEventLog,
 } from '../models/index.mjs';
+import CommonJob from './job.mjs';
 
-import { FIO_ADDRESS_DELIMITER } from '../config/constants.js';
+import sendInsufficientFundsNotification from '../services/fallback-funds-email.mjs';
+import { fioApi, INSUFFICIENT_FUNDS_ERR_MESSAGE } from '../external/fio.mjs';
 
-import { sendInsufficientFundsNotification } from '../services/fallback-funds-email.mjs';
+import { FIO_ADDRESS_DELIMITER, FIO_ACTIONS } from '../config/constants.js';
 
 import logger from '../logger.mjs';
 
-// store boolean if the job is cancelled
-let isCancelled = false;
+class OrdersJob extends CommonJob {
+  constructor() {
+    super();
+  }
 
-// handle cancellation (this is a very simple example)
-if (parentPort)
-  parentPort.once('message', message => {
-    if (message === 'cancel') isCancelled = true;
-  });
-
-(async () => {
-  // get order items ready to process
-  const items = await OrderItem.getActionRequired();
-
-  parentPort.postMessage(`Process order items - ${items.length}`);
-
-  const defaultFioAccountProfile = await FioAccountProfile.getDefault();
-  const processOrderItem = async item => {
-    if (isCancelled) return false;
-
-    const {
-      id,
-      address,
-      domain,
-      action,
-      params,
-      blockchainTransactionId,
-      label,
-      tpid,
-      actor,
-      permission,
-    } = item;
-
-    parentPort.postMessage(`Processing item id - ${id}`);
-
+  async refundUser(orderItemProps) {
     try {
-      const fioName = (address ? address + FIO_ADDRESS_DELIMITER : '') + domain;
-      const auth = {
-        actor: defaultFioAccountProfile.actor,
-        permission: defaultFioAccountProfile.permission,
-      };
+      const fioAmount = fioApi.convertUsdcToFio(orderItemProps.price, orderItemProps.roe);
+      const fioNativeAmount = fioApi.amountToSUF(fioAmount);
 
-      // Set auth from fio account profile for registerFioAddress action
-      if (action === OrderItem.ACTION.registerFioAddress) {
-        auth.actor = actor;
-        auth.permission = permission;
+      // Refund user for order
+      const refundPayment = await Payment.create({
+        status: Payment.STATUS.NEW,
+        processor: Payment.PROCESSOR.SYSTEM,
+        orderId: orderItemProps.orderId,
+        spentType: Payment.SPENT_TYPE.ORDER_REFUND,
+        price: fioAmount,
+        currency: Payment.CURRENCY.FIO,
+      });
+      await PaymentEventLog.create({
+        status: PaymentEventLog.STATUS.PENDING,
+        statusNotes: '',
+        paymentId: refundPayment.id,
+      });
+
+      const transferTokensTx = await fioApi.executeAction(
+        FIO_ACTIONS.transferTokens,
+        fioApi.getActionParams({
+          ...orderItemProps,
+          amount: fioNativeAmount,
+          action: FIO_ACTIONS.transferTokens,
+        }),
+      );
+
+      if (transferTokensTx.transaction_id) {
+        refundPayment.status = Payment.STATUS.COMPLETED;
+        await refundPayment.save();
+        await PaymentEventLog.create({
+          status: PaymentEventLog.STATUS.SUCCESS,
+          statusNotes: '',
+          paymentId: refundPayment.id,
+        });
+
+        logger.info(`REFUND ORDER ITEM ${orderItemProps.id}`);
+        return;
       }
-      params.tpid = tpid;
+
+      const { notes } = fioApi.checkTxError(transferTokensTx);
+
+      refundPayment.status = Payment.STATUS.CANCELLED;
+      await refundPayment.save();
+      await PaymentEventLog.create({
+        status: PaymentEventLog.STATUS.REVIEW,
+        statusNotes: notes,
+        paymentId: refundPayment.id,
+      });
+    } catch (e) {
+      logger.error(`REFUND ORDER ITEM ERROR ${orderItemProps.id}`, e);
+    }
+  }
+
+  async execute() {
+    await fioApi.getRawAbi();
+    // get order items ready to process
+    const items = await OrderItem.getActionRequired();
+
+    this.postMessage(`Process order items - ${items.length}`);
+
+    const defaultFioAccountProfile = await FioAccountProfile.getDefault();
+    const processOrderItem = async item => {
+      if (this.isCancelled) return false;
+
+      const {
+        id,
+        orderId,
+        address,
+        domain,
+        action,
+        price,
+        blockchainTransactionId,
+        label,
+        actor,
+        permission,
+      } = item;
+
+      this.postMessage(`Processing item id - ${id}`);
 
       try {
-        const result = await fioApi.executeAction(action, params, auth);
-
-        if (result.transaction_id) {
-          parentPort.postMessage(
-            `Processing item transactions created - ${id} / ${result.transaction_id}`,
-          );
-          await OrderItem.setPending(result, id, blockchainTransactionId);
-
-          return;
-        }
-
-        // transaction failed
-        const fieldError = Array.isArray(result.fields)
-          ? result.fields.find(f => f.error)
-          : null;
-
-        const notes = fieldError ? fieldError.error : JSON.stringify(result);
-
-        // try to execute using fallback account when no funds
-        if (
-          notes === INSUFFICIENT_FUNDS_ERR_MESSAGE &&
-          actor !== process.env.REG_FALLBACK_ACCOUNT
-        ) {
-          await sendInsufficientFundsNotification(fioName, label, auth);
-          return processOrderItem({
-            ...item,
-            actor: process.env.REG_FALLBACK_ACCOUNT,
-            permission: process.env.REG_FALLBACK_PERMISSION,
-          });
-        }
-
-        await Sequelize.sequelize.transaction(async t => {
-          await BlockchainTransaction.update(
-            {
-              status: BlockchainTransaction.STATUS.REVIEW,
-            },
-            {
-              where: {
-                id: blockchainTransactionId,
-                orderItemId: id,
-                status: BlockchainTransaction.STATUS.READY,
-              },
-              transaction: t,
-            },
-          );
-
-          await BlockchainTransactionEventLog.create(
-            {
-              status: BlockchainTransaction.STATUS.REVIEW,
-              statusNotes: notes,
-              blockchainTransactionId,
-            },
-            { transaction: t },
-          );
-
-          await OrderItemStatus.update(
-            {
-              status: BlockchainTransaction.STATUS.REVIEW,
-            },
-            {
-              where: {
-                orderItemId: id,
-                blockchainTransactionId,
-                status: BlockchainTransaction.STATUS.READY,
-              },
-              transaction: t,
-            },
-          );
+        // Spend order payment on fio action
+        await Payment.create({
+          status: Payment.STATUS.COMPLETED,
+          processor: Payment.PROCESSOR.SYSTEM,
+          orderId,
+          spentType: Payment.SPENT_TYPE.ACTION,
+          price,
+          currency: Payment.CURRENCY.USDC,
         });
-      } catch (error) {
-        logger.error(`ORDER ITEM PROCESSING ERROR ${item.id}`, error);
+
+        const fioName = (address ? address + FIO_ADDRESS_DELIMITER : '') + domain;
+        const auth = {
+          actor: defaultFioAccountProfile.actor,
+          permission: defaultFioAccountProfile.permission,
+        };
+
+        // Set auth from fio account profile for registerFioAddress action
+        if (action === OrderItem.ACTION.registerFioAddress) {
+          auth.actor = actor;
+          auth.permission = permission;
+        }
+
+        try {
+          const result = await fioApi.executeAction(
+            action,
+            fioApi.getActionParams(item),
+            auth,
+          );
+
+          if (result.transaction_id) {
+            this.postMessage(
+              `Processing item transactions created - ${id} / ${result.transaction_id}`,
+            );
+            await OrderItem.setPending(result, id, blockchainTransactionId);
+
+            return;
+          }
+
+          // transaction failed
+          const { notes } = fioApi.checkTxError(result);
+
+          // Refund order payment for fio action
+          await Payment.create({
+            status: Payment.STATUS.COMPLETED,
+            processor: Payment.PROCESSOR.SYSTEM,
+            orderId,
+            spentType: Payment.SPENT_TYPE.ACTION_REFUND,
+            price,
+            currency: Payment.CURRENCY.USDC,
+          });
+
+          // try to execute using fallback account when no funds
+          if (
+            notes === INSUFFICIENT_FUNDS_ERR_MESSAGE &&
+            actor !== process.env.REG_FALLBACK_ACCOUNT
+          ) {
+            await sendInsufficientFundsNotification(fioName, label, auth);
+            return processOrderItem({
+              ...item,
+              actor: process.env.REG_FALLBACK_ACCOUNT,
+              permission: process.env.REG_FALLBACK_PERMISSION,
+            });
+          }
+
+          await this.refundUser(item);
+
+          await BlockchainTransaction.sequelize.transaction(async t => {
+            await BlockchainTransaction.update(
+              {
+                status: BlockchainTransaction.STATUS.REVIEW,
+              },
+              {
+                where: {
+                  id: blockchainTransactionId,
+                  orderItemId: id,
+                  status: BlockchainTransaction.STATUS.READY,
+                },
+                transaction: t,
+              },
+            );
+
+            await BlockchainTransactionEventLog.create(
+              {
+                status: BlockchainTransaction.STATUS.REVIEW,
+                statusNotes: notes.slice(0, notes.length > 200 ? 200 : notes.length),
+                blockchainTransactionId,
+              },
+              { transaction: t },
+            );
+
+            await OrderItemStatus.update(
+              {
+                txStatus: BlockchainTransaction.STATUS.REVIEW,
+              },
+              {
+                where: {
+                  orderItemId: id,
+                  blockchainTransactionId,
+                  txStatus: BlockchainTransaction.STATUS.READY,
+                },
+                transaction: t,
+              },
+            );
+          });
+        } catch (error) {
+          logger.error(`ORDER ITEM PROCESSING ERROR ${item.id}`, error);
+        }
+      } catch (e) {
+        logger.error(`ORDER ITEM PROCESSING ERROR ${item.id}`, e);
       }
-    } catch (e) {
-      logger.error(`ORDER ITEM PROCESSING ERROR ${item.id}`, e);
-    }
 
-    return true;
-  };
+      return true;
+    };
 
-  const methods = Object.values(items).map(item => processOrderItem(item));
+    const methods = Object.values(items).map(item => processOrderItem(item));
 
-  await Promise.allSettled(methods);
+    await this.executeActions(methods);
 
-  process.exit(0);
-})();
+    this.finish();
+  }
+}
+
+new OrdersJob().execute();

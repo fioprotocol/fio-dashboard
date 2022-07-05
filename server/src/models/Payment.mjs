@@ -15,6 +15,7 @@ export class Payment extends Base {
   }
   static get CURRENCY() {
     return {
+      FIO: 'FIO',
       USDC: 'USDC',
       ETH: 'ETH',
     };
