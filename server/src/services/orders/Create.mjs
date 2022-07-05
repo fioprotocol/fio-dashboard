@@ -1,5 +1,3 @@
-import Sequelize from 'sequelize';
-
 import Base from '../Base';
 
 import {
@@ -43,14 +41,15 @@ export default class OrdersCreate extends Base {
   async execute({ data: { total, roe, publicKey, items, paymentProcessor } }) {
     let newOrder = {};
     let orderPayment = {};
-    await Sequelize.sequelize.transaction(async t => {
+    await Order.sequelize.transaction(async t => {
       newOrder = await Order.create(
         {
-          status: Order.STATUS().NEW,
+          status: Order.STATUS.NEW,
           total,
           roe,
           publicKey,
           customerIp: this.context.ipAddress,
+          userId: this.context.id,
         },
         { transaction: t },
       );
@@ -61,7 +60,7 @@ export default class OrdersCreate extends Base {
       if (total && paymentProcessor) {
         orderPayment = await Payment.create(
           {
-            status: Payment.STATUS().NEW,
+            status: Payment.STATUS.NEW,
             processor: paymentProcessor,
             orderId: newOrder.id,
           },
@@ -95,7 +94,7 @@ export default class OrdersCreate extends Base {
         if (orderPayment.id)
           await OrderItemStatus.create(
             {
-              txStatus: BlockchainTransaction.STATUS().NONE,
+              txStatus: BlockchainTransaction.STATUS.NONE,
               paymentStatus: orderPayment.status,
               blockchainTransactionId: null,
               paymentId: orderPayment.id,
