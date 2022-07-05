@@ -19,4 +19,5 @@ export const {
   OrderItem,
   Payment,
   PaymentEventLog,
+  Var,
 } = db.models;
