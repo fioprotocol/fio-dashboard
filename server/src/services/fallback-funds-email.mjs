@@ -27,14 +27,12 @@ const sendInsufficientFundsNotification = async (
         { fioName, refProfileName, authorization },
       );
     } catch (e) {
-      logger.log('InsufficientFundsNotification send ERROR ===');
-      logger.log(e);
+      logger.error('InsufficientFundsNotification send ERROR ===');
+      logger.error(e);
     }
 
     lastInsufficientFundsNotificationSent.date = now.getTime();
   }
 };
 
-module.exports = {
-  sendInsufficientFundsNotification,
-};
+export default sendInsufficientFundsNotification;
