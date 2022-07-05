@@ -19,6 +19,29 @@ export class Var extends Base {
     );
   }
 
+  static async getByKey(key) {
+    return this.findOne({ where: { key } });
+  }
+
+  static async setValue(key, value) {
+    const varItem = await this.getByKey(key);
+    if (!varItem) return Var.create({ key, value });
+    return Var.update({ value }, { where: { key } });
+  }
+
+  /**
+   *
+   * @param {string} lastUpdated
+   * @param {number} timeout ms
+   * @returns {boolean}
+   */
+  static updateRequired(lastUpdated, timeout) {
+    const now = new Date();
+    const diff = now.getTime() - new Date(lastUpdated).getTime();
+
+    return diff > timeout;
+  }
+
   static format({ id, key, value, createdAt, updatedAt }) {
     return {
       id,

@@ -4,6 +4,8 @@ import fetch from 'node-fetch';
 import { Transactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
 import { Constants } from '@fioprotocol/fiosdk/lib/utils/constants';
 
+import { Var } from '../models';
+
 import {
   FIO_ACTIONS,
   FIO_ACTIONS_TO_END_POINT_KEYS,
@@ -16,6 +18,8 @@ import logger from '../logger.mjs';
 export const FIOSDK = fiosdkLib.FIOSDK;
 export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit).mul(800).toNumber();
 export const INSUFFICIENT_FUNDS_ERR_MESSAGE = 'Insufficient funds to cover fee';
+export const ABIS_VAR_KEY = 'FIO_RAW_ABIS';
+export const ABIS_UPDATE_TIMEOUT_SEC = 1000 * 60 * 60 * 24; // day
 const EndPoint = entities.EndPoint;
 
 const FIO_ACTION_NAMES = {
@@ -126,17 +130,36 @@ class Fio {
   }
 
   async getRawAbi() {
+    const abisVar = await Var.getByKey(ABIS_VAR_KEY);
+    if (abisVar && !Var.updateRequired(abisVar.updatedAt, ABIS_UPDATE_TIMEOUT_SEC)) {
+      const abis = JSON.stringify(abisVar.value);
+
+      for (const accountName of Constants.rawAbiAccountName) {
+        if (!Transactions.abiMap.get(accountName) && abis[accountName]) {
+          Transactions.abiMap.set(abis[accountName].name, abis[accountName].response);
+        }
+      }
+
+      return;
+    }
+
     const fioPublicSdk = fioApi.getPublicFioSDK();
+    const abisObj = {};
     for (const accountName of Constants.rawAbiAccountName) {
       if (!Transactions.abiMap.get(accountName)) {
         try {
           const abiResponse = await fioPublicSdk.getAbi(accountName);
           Transactions.abiMap.set(abiResponse.account_name, abiResponse);
+          abisObj[accountName] = {
+            name: abiResponse.account_name,
+            response: abiResponse,
+          };
         } catch (e) {
           logger.error('Raw Abi Error:', e);
         }
       }
     }
+    await Var.setValue(ABIS_VAR_KEY, JSON.stringify(abisObj));
   }
 
   getActionParams(options) {
