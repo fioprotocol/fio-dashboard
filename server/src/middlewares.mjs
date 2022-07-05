@@ -20,7 +20,12 @@ export default {
       }
     },
   }),
-  urlencoded: bodyParser.urlencoded({ extended: true }),
+  urlencoded: bodyParser.urlencoded({
+    extended: true,
+    verify: (req, res, buf) => {
+      req.rawBody = buf.toString('utf8');
+    },
+  }),
   cors: cors({ origin: '*' }),
   multipart: multipart(),
 };
