@@ -33,6 +33,7 @@ type Props = {
   showLogin: boolean;
   showRecovery: boolean;
   edgeContextSet: boolean;
+  isContainedFlow: boolean;
   init: () => void;
   showRecoveryModal: () => void;
 };
@@ -46,6 +47,7 @@ const MainLayout: React.FC<Props> = props => {
     isActiveUser,
     showLogin,
     showRecovery,
+    isContainedFlow,
     init,
   } = props;
 
@@ -75,7 +77,9 @@ const MainLayout: React.FC<Props> = props => {
       {isAuthenticated && <WalletsDataFlow />}
       {isAuthenticated && <TxHistoryService />}
       {isAuthenticated && isDesktop && <Navigation />}
-      {(!isHomePage || isAuthenticated) && <Notifications />}
+      {(!isHomePage || (isAuthenticated && !isContainedFlow)) && (
+        <Notifications />
+      )}
       <div className={`${classes.content} ${isHomePage && classes.home}`}>
         <ContainedFlowWrapper isAuthenticated={isAuthenticated}>
           {children}
