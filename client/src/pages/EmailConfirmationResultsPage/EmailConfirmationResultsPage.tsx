@@ -77,7 +77,7 @@ const EmailConfirmationResultsPage: React.FC<Props> = props => {
       redirectLink = result.stateData.redirectLink;
 
     if (redirectLink === ROUTES.CHECKOUT && cartItems.length === 0)
-      redirectLink = ROUTES.CART;
+      redirectLink = ROUTES.FIO_ADDRESSES_SELECTION;
 
     if (isAuthenticated && user.email === result.email) {
       return history.replace(redirectLink);
