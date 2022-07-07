@@ -193,6 +193,22 @@ class Fio {
     return { ...actionParams, ...options.params };
   }
 
+  async getFee(action) {
+    try {
+      const publicFioSDK = this.getPublicFioSDK();
+
+      const { fee } = await publicFioSDK.getFee(
+        EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
+      );
+
+      return fee;
+    } catch (e) {
+      this.logError(e);
+    }
+
+    return null;
+  }
+
   async executeAction(action, params, auth = {}, keys = {}) {
     if (keys.private) {
       // todo: set new sdk and use it

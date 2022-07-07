@@ -9,9 +9,11 @@ import {
   Payment,
   PaymentEventLog,
 } from '../models/index.mjs';
+import MathOp from '../services/math.mjs';
 import CommonJob from './job.mjs';
 
 import sendInsufficientFundsNotification from '../services/fallback-funds-email.mjs';
+import { getROE } from '../external/roe.mjs';
 import { fioApi, INSUFFICIENT_FUNDS_ERR_MESSAGE } from '../external/fio.mjs';
 
 import { FIO_ADDRESS_DELIMITER, FIO_ACTIONS } from '../config/constants.js';
@@ -21,6 +23,51 @@ import logger from '../logger.mjs';
 class OrdersJob extends CommonJob {
   constructor() {
     super();
+  }
+
+  async handleFail(item, errorNotes) {
+    const { id, blockchainTransactionId } = item;
+    return BlockchainTransaction.sequelize.transaction(async t => {
+      await BlockchainTransaction.update(
+        {
+          status: BlockchainTransaction.STATUS.REVIEW,
+        },
+        {
+          where: {
+            id: blockchainTransactionId,
+            orderItemId: id,
+            status: BlockchainTransaction.STATUS.READY,
+          },
+          transaction: t,
+        },
+      );
+
+      await BlockchainTransactionEventLog.create(
+        {
+          status: BlockchainTransaction.STATUS.REVIEW,
+          statusNotes: errorNotes.slice(
+            0,
+            errorNotes.length > 200 ? 200 : errorNotes.length,
+          ),
+          blockchainTransactionId,
+        },
+        { transaction: t },
+      );
+
+      await OrderItemStatus.update(
+        {
+          txStatus: BlockchainTransaction.STATUS.REVIEW,
+        },
+        {
+          where: {
+            orderItemId: id,
+            blockchainTransactionId,
+            txStatus: BlockchainTransaction.STATUS.READY,
+          },
+          transaction: t,
+        },
+      );
+    });
   }
 
   async refundUser(orderItemProps) {
@@ -79,8 +126,32 @@ class OrdersJob extends CommonJob {
     }
   }
 
+  async checkPriceChanges(item, currentRoe) {
+    const fee = await fioApi.getFee(item.action);
+    const currentPrice = fioApi.convertFioToUsdc(fee, currentRoe);
+
+    const threshold = new MathOp(currentPrice)
+      .mul(0.25)
+      .round(2, 1)
+      .toNumber();
+
+    const topThreshold = new MathOp(currentPrice).add(threshold).toNumber();
+    const bottomThreshold = new MathOp(currentPrice).sub(threshold).toNumber();
+
+    if (
+      new MathOp(topThreshold).lt(item.price) ||
+      new MathOp(bottomThreshold).gt(item.price)
+    ) {
+      await this.refundUser({ ...item, roe: currentRoe });
+      await this.handleFail(item, `PRICES_CHANGED - roe: ${currentRoe} - fee: ${fee}`);
+
+      throw new Error(`PRICES_CHANGED - roe: ${currentRoe} - fee: ${fee}`);
+    }
+  }
+
   async execute() {
     await fioApi.getRawAbi();
+    const roe = await getROE();
     // get order items ready to process
     const items = await OrderItem.getActionRequired();
 
@@ -106,16 +177,6 @@ class OrdersJob extends CommonJob {
       this.postMessage(`Processing item id - ${id}`);
 
       try {
-        // Spend order payment on fio action
-        await Payment.create({
-          status: Payment.STATUS.COMPLETED,
-          processor: Payment.PROCESSOR.SYSTEM,
-          orderId,
-          spentType: Payment.SPENT_TYPE.ACTION,
-          price,
-          currency: Payment.CURRENCY.USDC,
-        });
-
         const fioName = (address ? address + FIO_ADDRESS_DELIMITER : '') + domain;
         const auth = {
           actor: defaultFioAccountProfile.actor,
@@ -127,6 +188,18 @@ class OrdersJob extends CommonJob {
           auth.actor = actor;
           auth.permission = permission;
         }
+
+        await this.checkPriceChanges(item, roe);
+
+        // Spend order payment on fio action
+        await Payment.create({
+          status: Payment.STATUS.COMPLETED,
+          processor: Payment.PROCESSOR.SYSTEM,
+          orderId,
+          spentType: Payment.SPENT_TYPE.ACTION,
+          price,
+          currency: Payment.CURRENCY.USDC,
+        });
 
         try {
           const result = await fioApi.executeAction(
@@ -172,44 +245,7 @@ class OrdersJob extends CommonJob {
 
           await this.refundUser(item);
 
-          await BlockchainTransaction.sequelize.transaction(async t => {
-            await BlockchainTransaction.update(
-              {
-                status: BlockchainTransaction.STATUS.REVIEW,
-              },
-              {
-                where: {
-                  id: blockchainTransactionId,
-                  orderItemId: id,
-                  status: BlockchainTransaction.STATUS.READY,
-                },
-                transaction: t,
-              },
-            );
-
-            await BlockchainTransactionEventLog.create(
-              {
-                status: BlockchainTransaction.STATUS.REVIEW,
-                statusNotes: notes.slice(0, notes.length > 200 ? 200 : notes.length),
-                blockchainTransactionId,
-              },
-              { transaction: t },
-            );
-
-            await OrderItemStatus.update(
-              {
-                txStatus: BlockchainTransaction.STATUS.REVIEW,
-              },
-              {
-                where: {
-                  orderItemId: id,
-                  blockchainTransactionId,
-                  txStatus: BlockchainTransaction.STATUS.READY,
-                },
-                transaction: t,
-              },
-            );
-          });
+          await this.handleFail(item, notes);
         } catch (error) {
           logger.error(`ORDER ITEM PROCESSING ERROR ${item.id}`, error);
         }
