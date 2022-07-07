@@ -1,0 +1,15 @@
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/colors.scss';
+
+.button {
+  @include proxima-nova-semibold;
+  color: $dark-jungle-green;
+  margin: 15px auto -10px;
+  font-size: 0.875em;
+  width: 100%;
+
+  &:hover {
+    text-decoration: none;
+    color: $dark-blue-grey;
+  }
+}

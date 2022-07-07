@@ -180,6 +180,7 @@ const CartPage: React.FC<Props> = props => {
     isFree,
     totalCartAmount,
     isPriceChanged,
+    totalCartNativeAmount,
     recalculateBalance,
   };
 

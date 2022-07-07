@@ -1,12 +1,11 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button } from 'react-bootstrap';
 
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
+import PaymentsBlock from './components/PaymentsBlock';
 
 import { totalCost } from '../../utils';
 
-import { CartItem as CartItemType } from '../../types';
+import { CartItem as CartItemType, FioWalletDoublet } from '../../types';
 
 import classes from './Cart.module.scss';
 
@@ -14,9 +13,11 @@ type Props = {
   cartItems: CartItemType[];
   isFree: boolean;
   paymentWalletPublicKey: string;
-  recalculateBalance: () => void;
   hasLowBalance: boolean;
   roe: number;
+  totalCartNativeAmount: number;
+  userWallets: FioWalletDoublet[];
+  recalculateBalance: () => void;
 };
 
 const CartAmount: React.FC<Props> = props => {
@@ -25,13 +26,11 @@ const CartAmount: React.FC<Props> = props => {
     hasLowBalance,
     isFree,
     paymentWalletPublicKey,
-    recalculateBalance,
     roe,
+    totalCartNativeAmount,
+    userWallets,
+    recalculateBalance,
   } = props;
-
-  const handleCheckout = () => {
-    recalculateBalance();
-  };
 
   const { costFio, costUsdc } = totalCost(cartItems, roe);
 
@@ -51,18 +50,17 @@ const CartAmount: React.FC<Props> = props => {
         </p>
         <hr className={classes.divider} />
       </div>
-      <Button
-        className={classes.checkout}
-        onClick={handleCheckout}
-        disabled={
-          hasLowBalance ||
-          paymentWalletPublicKey === '' ||
-          cartItems.length === 0
-        }
-      >
-        <FontAwesomeIcon icon="wallet" className={classes.icon} />
-        <p>{isFree ? 'Complete Transaction' : 'Pay with FIO'}</p>
-      </Button>
+      <div className={classes.paymentsBlock}>
+        <PaymentsBlock
+          isFree={isFree}
+          hasLowBalance={hasLowBalance}
+          cartItems={cartItems}
+          paymentWalletPublicKey={paymentWalletPublicKey}
+          recalculateBalance={recalculateBalance}
+          totalCartNativeAmount={totalCartNativeAmount}
+          userWallets={userWallets}
+        />
+      </div>
     </CartSmallContainer>
   );
 };
