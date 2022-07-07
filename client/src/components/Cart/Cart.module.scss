@@ -111,23 +111,6 @@
   @include proxima-nova-regular;
 }
 
-.checkout {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  height: 36px;
-  border-radius: 7px;
-  padding: 0 0.625rem;
-  font-size: 1em;
-
-  p {
-    margin: 0 0 0 0.5625rem;
-    font-size: 0.9375em;
-    @include sf-pro-display-thin;
-  }
-}
-
 .total {
   margin-top: 0.625rem;
 
@@ -278,6 +261,10 @@
       right: -10px;
     }
   }
+}
+
+.paymentsBlock {
+  margin-top: -10px;
 }
 
 @keyframes expand {
