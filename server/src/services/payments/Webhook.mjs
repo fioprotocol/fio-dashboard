@@ -66,6 +66,7 @@ export default class PaymentsWebhook extends Base {
       }
     }
 
+    // Process order payment webhook
     if (webhookData.invoice && webhookData.orderNumber) {
       const order = await Order.findOne({
         where: {
@@ -187,12 +188,9 @@ export default class PaymentsWebhook extends Base {
       return { processed: true };
     }
 
-    throw new X({
-      code: 'WEBHOOK_DATA_ERROR',
-      fields: {
-        code: 'MISS_WEBHOOK_DATA',
-      },
-    });
+    // todo: handle other webhooks types
+
+    return { processed: true };
   }
 
   validateRequest(paymentProcessor, { body, headers, rawBody }) {
