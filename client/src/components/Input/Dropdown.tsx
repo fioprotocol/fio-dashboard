@@ -69,7 +69,7 @@ const Dropdown: React.FC<DropdownProps & FieldRenderProps<DropdownProps>> = ({
         value={value}
         isHigh={isHigh}
         isSimple={isSimple}
-        isFormField={true}
+        withoutMarginBottom={true}
       />
       <div className={classes.regInputWrapper}>
         <ErrorBadge
