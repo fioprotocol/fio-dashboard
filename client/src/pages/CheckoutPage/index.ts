@@ -3,7 +3,11 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 import { refreshBalance } from '../../redux/fio/actions';
-import { fioWallets, loading } from '../../redux/fio/selectors';
+import {
+  fioWallets,
+  loading,
+  fioWalletsBalances,
+} from '../../redux/fio/selectors';
 import { cartItems, paymentWalletPublicKey } from '../../redux/cart/selectors';
 import { setRegistration } from '../../redux/registrations/actions';
 import { setWallet, recalculate } from '../../redux/cart/actions';
@@ -30,6 +34,7 @@ const reduxConnect = connect(
     hasFreeAddress,
     isProcessing,
     roe,
+    fioWalletsBalances,
   }),
   {
     refreshBalance,
