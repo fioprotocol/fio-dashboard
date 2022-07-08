@@ -1,5 +1,6 @@
 @import '../../assets/styles/colors.scss';
 @import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
 
 .dropdown {
   margin-bottom: 30px;
@@ -18,11 +19,15 @@
     min-width: 0;
   }
 
+  &.fitContentWidth {
+    width: fit-content;
+  }
+
   &.hasAutoWidth {
     min-width: auto;
   }
 
-  &.formField {
+  &.withoutMarginBottom {
     margin-bottom: 0;
   }
 
@@ -71,8 +76,20 @@
     height: 54px;
   }
 
+  &.hasAutoHeight {
+    height: auto;
+  }
+
   &.hasError {
     border: 1px solid $warn-red;
+  }
+
+  &.hasBigBorderRadius {
+    border-radius: 12px;
+  }
+
+  &.hasLightBorder {
+    border: 1px solid $light;
   }
 }
 
@@ -81,6 +98,10 @@
 
   &.isWhitePlaceholder {
     color: $white;
+  }
+
+  &.isBlackPlaceholder {
+    color: $black;
   }
 }
 .menu {
