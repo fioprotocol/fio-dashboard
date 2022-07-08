@@ -1,17 +1,18 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
-import { Form, Field } from 'react-final-form';
 import isEmpty from 'lodash/isEmpty';
 import classnames from 'classnames';
 
 import CounterContainer from '../CounterContainer/CounterContainer';
 import CartItem from './CartItem';
-import WalletDropdown from './WalletDropdown';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
+import CustomDropdown from '../CustomDropdown';
 
+import useEffectOnce from '../../hooks/general';
 import { deleteCartItem } from '../../utils';
+import { useCheckIfDesktop } from '../../screenType';
 
 import { ROUTES } from '../../constants/routes';
 
@@ -55,6 +56,9 @@ const Cart: React.FC<Props> = props => {
     isPriceChanged,
     roe,
   } = props;
+
+  const isDesktop = useCheckIfDesktop();
+
   const count = cartItems.length;
   const isCartEmpty = count === 0;
 
@@ -79,6 +83,16 @@ const Cart: React.FC<Props> = props => {
             Needed: ${totalCartAmount} FIO, available in wallet:
             ${walletBalance} FIO. Please add FIO tokens.`,
   };
+
+  const walletsList = userWallets
+    .sort((a, b) => b.available - a.available || a.name.localeCompare(b.name))
+    .map(wallet => ({ id: wallet.publicKey, name: wallet.name }));
+
+  useEffectOnce(() => {
+    if (walletsList.length) {
+      setWallet(walletsList[0].id);
+    }
+  }, [walletsList]);
 
   return (
     <>
@@ -123,18 +137,19 @@ const Cart: React.FC<Props> = props => {
             <p className={classes.subtitle}>
               Please choose a FIO wallet to assign your purchase(s) to.
             </p>
-            <Form
-              onSubmit={() => null}
-              render={() => (
-                <form>
-                  <Field
-                    name="wallet"
-                    component={WalletDropdown}
-                    options={userWallets}
-                    setWallet={setWallet}
-                  />
-                </form>
-              )}
+            <CustomDropdown
+              onChange={setWallet}
+              options={walletsList}
+              isWhite={true}
+              isSimple={true}
+              isHigh={true}
+              value={walletsList[0].id}
+              hasBigBorderRadius={true}
+              isBlackPlaceholder={true}
+              hasLightBorder={true}
+              fitContentWidth={isDesktop}
+              hasAutoWidth={!isDesktop}
+              withoutMarginBottom={true}
             />
           </div>
         )}
