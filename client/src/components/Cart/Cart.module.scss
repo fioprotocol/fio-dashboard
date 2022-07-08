@@ -216,6 +216,14 @@
   }
 }
 
+@include md {
+  .amountTitle {
+    top: -50px;
+    left: 0;
+    margin-left: 0;
+  }
+}
+
 @include sm {
   .amountTitle {
     font-size: 1.25em;
