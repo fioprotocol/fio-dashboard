@@ -9,18 +9,6 @@
   justify-content: space-between;
   width: 100%;
   color: $black;
-
-  .wallet {
-    margin-right: 1.875rem;
-    .title {
-      margin-bottom: 0.2rem;
-    }
-    .balance {
-      margin-bottom: 0;
-      font-size: 0.875em;
-      @include proxima-nova-thin
-    }
-  }
 }
 
 .subtitle {
@@ -35,4 +23,18 @@
   font-size: 0.9375em;
   align-self: flex-start;
   @include proxima-nova-bold;
+}
+
+.wallet {
+  margin-right: 1.875rem;
+
+  .title {
+    margin-bottom: 0.2rem;
+  }
+
+  .balance {
+    margin-bottom: 0;
+    font-size: 0.875em;
+    @include proxima-nova-thin
+  }
 }
