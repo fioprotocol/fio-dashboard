@@ -1,8 +1,9 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import Amount from '../../common/Amount';
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
+
+import { PayWalletInfo } from './PayWalletInfo';
 
 import { useCheckIfDesktop } from '../../../screenType';
 
@@ -36,15 +37,11 @@ const PayWithBadge: React.FC<Props> = props => {
               Paying With
             </span>
           )}
-          <div className={classes.wallet}>
-            <p className={classes.title}>
-              <span className="boldText">{walletName || `FIO Wallet`}</span>
-            </p>
-            <p className={classes.balance}>
-              (Available Balance <Amount value={walletBalances.fio} /> FIO /{' '}
-              <Amount value={walletBalances.usdc} /> USDC)
-            </p>
-          </div>
+          <PayWalletInfo
+            walletName={walletName}
+            fioBalance={walletBalances.fio}
+            usdcBalance={walletBalances.usdc}
+          />
         </div>
       </Badge>
     </>
