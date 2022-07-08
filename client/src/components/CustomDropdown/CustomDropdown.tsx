@@ -7,24 +7,29 @@ import 'react-dropdown/style.css';
 import classes from './CustomDropdown.module.scss';
 
 type Props = {
-  options: { id: string; name: string }[];
+  options: { id: string; name: string | React.ReactNode }[];
   value?: string;
   placeholder?: string;
   onChange: (id: string) => void;
-  customValue?: { id: string; name: string };
+  customValue?: { id: string; name: string | React.ReactNode };
   toggleToCustom?: (isCustom: boolean) => void;
   isShort?: boolean;
   isWidthResponsive?: boolean;
   isWhite?: boolean;
   isVoilet?: boolean;
   isWhitePlaceholder?: boolean;
+  isBlackPlaceholder?: boolean;
   isWhiteIcon?: boolean;
   hasAutoWidth?: boolean;
+  fitContentWidth?: boolean;
   isSimple?: boolean;
   isHigh?: boolean;
-  isFormField?: boolean;
+  hasAutoHeight?: boolean;
+  withoutMarginBottom?: boolean;
   hasError?: boolean;
   noMinWidth?: boolean;
+  hasLightBorder?: boolean;
+  hasBigBorderRadius?: boolean;
 };
 
 const CustomDropdown: React.FC<Props> = props => {
@@ -40,13 +45,18 @@ const CustomDropdown: React.FC<Props> = props => {
     isWhite,
     isVoilet,
     isWhitePlaceholder,
+    isBlackPlaceholder,
     isWhiteIcon,
     hasAutoWidth,
+    fitContentWidth,
     isSimple,
     isHigh,
-    isFormField,
+    hasAutoHeight,
+    withoutMarginBottom,
     hasError,
     noMinWidth,
+    hasLightBorder,
+    hasBigBorderRadius,
   } = props;
 
   const styledOptions = options.map(option => ({
@@ -83,7 +93,8 @@ const CustomDropdown: React.FC<Props> = props => {
         isShort && classes.isShort,
         isWidthResponsive && classes.isWidthResponsive,
         hasAutoWidth && classes.hasAutoWidth,
-        isFormField && classes.formField,
+        fitContentWidth && classes.fitContentWidth,
+        withoutMarginBottom && classes.withoutMarginBottom,
         noMinWidth && classes.noMinWidth,
       )}
       controlClassName={classnames(
@@ -92,11 +103,15 @@ const CustomDropdown: React.FC<Props> = props => {
         isVoilet && classes.isVoilet,
         isSimple && classes.isSimple,
         isHigh && classes.isHigh,
+        hasAutoHeight && classes.hasAutoHeight,
         hasError && classes.hasError,
+        hasLightBorder && classes.hasLightBorder,
+        hasBigBorderRadius && classes.hasBigBorderRadius,
       )}
       placeholderClassName={classnames(
         classes.placeholder,
         isWhitePlaceholder && classes.isWhitePlaceholder,
+        isBlackPlaceholder && classes.isBlackPlaceholder,
       )}
       menuClassName={classes.menu}
       arrowClosed={
