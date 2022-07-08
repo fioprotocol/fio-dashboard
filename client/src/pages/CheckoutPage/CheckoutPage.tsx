@@ -13,7 +13,13 @@ import { totalCost, handleFreeAddressCart } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
 import MathOp from '../../util/math';
 
-import { CartItem, Domain, FioWalletDoublet, Prices } from '../../types';
+import {
+  CartItem,
+  Domain,
+  FioWalletDoublet,
+  Prices,
+  WalletsBalances,
+} from '../../types';
 
 type Props = {
   loading: boolean;
@@ -27,6 +33,7 @@ type Props = {
   prices: Prices;
   isProcessing: boolean;
   roe: number | null;
+  fioWalletsBalances: WalletsBalances;
   setWallet: (publicKey: string) => void;
   refreshBalance: (publicKey: string) => void;
   recalculate: (cartItems: CartItem[]) => void;
@@ -47,6 +54,7 @@ const CheckoutPage: React.FC<Props> = props => {
     prices,
     isProcessing,
     roe,
+    fioWalletsBalances,
   } = props;
 
   useEffect(() => {
@@ -75,6 +83,8 @@ const CheckoutPage: React.FC<Props> = props => {
   const { available: walletBalancesAvailable } = useWalletBalances(
     paymentWalletPublicKey,
   );
+
+  const title = isFree ? 'Make Purchase' : 'Pay with FIO';
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -112,13 +122,17 @@ const CheckoutPage: React.FC<Props> = props => {
   };
 
   return (
-    <PseudoModalContainer title="Make Purchase" onClose={onClose}>
+    <PseudoModalContainer title={title} onClose={onClose}>
       <CheckoutPurchaseContainer isCheckout history={history}>
         <RenderCheckout
           cart={cartItems}
           walletBalances={walletBalancesAvailable}
           walletName={paymentWallet ? paymentWallet.name : ''}
+          paymentWalletPublicKey={paymentWalletPublicKey}
           roe={roe}
+          fioWallets={fioWallets}
+          setWallet={setWallet}
+          fioWalletsBalances={fioWalletsBalances}
         />
       </CheckoutPurchaseContainer>
     </PseudoModalContainer>
