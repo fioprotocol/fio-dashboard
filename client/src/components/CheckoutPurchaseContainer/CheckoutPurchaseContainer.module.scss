@@ -57,6 +57,13 @@
         margin-top: 2.8rem;
       }
     }
+
+    .text {
+      margin-top: 20px;
+      margin-bottom: -15px;
+      font-size: 0.875em;
+      @include proxima-nova-thin;
+    }
   }
 
   .button {

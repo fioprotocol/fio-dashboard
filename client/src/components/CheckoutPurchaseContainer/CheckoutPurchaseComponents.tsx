@@ -5,14 +5,22 @@ import isEmpty from 'lodash/isEmpty';
 
 import CartItem from '../Cart/CartItem';
 import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
+import { PayWalletInfo } from '../Badges/PayWithBadge/PayWalletInfo';
 import PriceBadge from '../Badges/PriceBadge/PriceBadge';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
+
+import CustomDropdown from '../CustomDropdown';
 
 import { totalCost } from '../../utils';
 
 import { ERROR_MESSAGES, ERROR_TYPES } from '../../constants/errors';
 
-import { CartItem as CartItemType, WalletBalancesItem } from '../../types';
+import {
+  CartItem as CartItemType,
+  FioWalletDoublet,
+  WalletsBalances,
+  WalletBalancesItem,
+} from '../../types';
 
 import classes from './CheckoutPurchaseContainer.module.scss';
 
@@ -44,11 +52,46 @@ type RenderCheckoutProps = {
   walletBalances: WalletBalancesItem;
   walletName: string;
   roe: number | null;
+  fioWallets: FioWalletDoublet[];
+  paymentWalletPublicKey: string;
+  fioWalletsBalances: WalletsBalances;
+  setWallet: (publicKey: string) => void;
 };
 
 export const RenderCheckout: React.FC<RenderCheckoutProps> = props => {
-  const { cart, walletBalances, walletName, roe } = props;
+  const {
+    cart,
+    walletBalances,
+    walletName,
+    roe,
+    fioWallets,
+    paymentWalletPublicKey,
+    fioWalletsBalances,
+    setWallet,
+  } = props;
   const { costNativeFio, costFree, costFio, costUsdc } = totalCost(cart, roe);
+
+  const walletsList = fioWallets
+    .filter(wallet => wallet.available > 0)
+    .sort((a, b) => b.available - a.available || a.name.localeCompare(b.name))
+    .map(wallet => {
+      const { fio, usdc } = fioWalletsBalances.wallets[
+        wallet.publicKey
+      ].available;
+
+      return {
+        id: wallet.publicKey,
+        name: (
+          <div className="p-2">
+            <PayWalletInfo
+              walletName={wallet.name}
+              fioBalance={fio}
+              usdcBalance={usdc}
+            />
+          </div>
+        ),
+      };
+    });
 
   return (
     <>
@@ -65,12 +108,39 @@ export const RenderCheckout: React.FC<RenderCheckoutProps> = props => {
           costFio={costFio}
           costUsdc={costUsdc}
         />
+      </div>
+      {fioWallets.length === 1 ? (
         <PayWithBadge
           costFree={!!costFree}
           walletBalances={walletBalances}
           walletName={walletName}
         />
-      </div>
+      ) : (
+        <>
+          <div className={classes.details}>
+            <h6 className={classes.subtitle}>
+              FIO wallet Payment & Assignment
+            </h6>
+            <p className={classes.text}>
+              Please choose which FIO wallet you would like to use for payment
+              and assignment
+            </p>
+          </div>
+
+          <CustomDropdown
+            onChange={setWallet}
+            options={walletsList}
+            isWhite={true}
+            isSimple={true}
+            hasAutoHeight={true}
+            value={paymentWalletPublicKey}
+            hasBigBorderRadius={true}
+            isBlackPlaceholder={true}
+            hasLightBorder={true}
+            withoutMarginBottom={true}
+          />
+        </>
+      )}
     </>
   );
 };
