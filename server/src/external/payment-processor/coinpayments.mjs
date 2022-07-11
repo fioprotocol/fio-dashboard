@@ -97,9 +97,9 @@ class CoinPayments extends PaymentProcessor {
         status,
         status_text,
         currency1,
-        currency2,
+        currency: currency2,
         amount1,
-        amount2,
+        amount: amount2,
         net,
         fee,
         item_name,
@@ -112,11 +112,6 @@ class CoinPayments extends PaymentProcessor {
     }
 
     return data;
-  }
-  getWebhookMeta(data) {
-    return {
-      ipn_id: data.ipn_id,
-    };
   }
 
   isCompleted(status) {
@@ -180,10 +175,8 @@ class CoinPayments extends PaymentProcessor {
           code: 'HMAC_SIGNATURE_MISMATCH',
         },
       });
-  }
 
-  checkEvent(eventData, data) {
-    return eventData.ipn_id === data.ipn_id;
+    return body;
   }
 
   getWebhookIdentifier(webhookData) {

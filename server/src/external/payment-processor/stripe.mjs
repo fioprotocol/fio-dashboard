@@ -1,0 +1,182 @@
+import StripeLib from 'stripe';
+
+import PaymentProcessor from './base.mjs';
+import { PAYMENT_EVENT_STATUSES, PAYMENTS_STATUSES } from '../../config/constants.js';
+import X from '../../services/Exception.mjs';
+
+export const STRIPE_STATUSES = {
+  FAILED: 'requires_payment_method',
+  CANCELLED_TIMED_OUT: 'canceled', // todo
+  WAITING: 'processing',
+  NEW: 'created',
+  COMPLETED: 'succeeded',
+};
+const OBJ_TYPES = {
+  payment_intent: 'payment_intent',
+};
+const PI_TYPES = {
+  succeeded: 'payment_intent.succeeded',
+  created: 'payment_intent.created',
+  amount_capturable_updated: 'payment_intent.amount_capturable_updated',
+  canceled: 'payment_intent.canceled',
+  partially_funded: 'payment_intent.partially_funded',
+  payment_failed: 'payment_intent.payment_failed',
+  requires_action: 'payment_intent.requires_action',
+};
+const STRIPE_USER_AGENT = 'Stripe/1.0';
+const STRIPE_API_VERSION = '2020-08-27';
+
+const stripe = new StripeLib(process.env.STRIPE_SECRET);
+class Stripe extends PaymentProcessor {
+  constructor() {
+    super();
+  }
+
+  isWebhook(hostname, userAgent) {
+    const checkRegex = new RegExp(`${STRIPE_USER_AGENT}`, 'i');
+    return checkRegex.exec(userAgent);
+  }
+
+  getWebhookData(body) {
+    const {
+      id,
+      type,
+      created,
+      data: { object },
+    } = body;
+    let data = { id, type, created };
+
+    if (object.object === OBJ_TYPES.payment_intent) {
+      const {
+        id: txn_id,
+        receipt_email,
+        status,
+        amount,
+        amount_received,
+        application_fee_amount,
+        charges,
+        currency,
+        description,
+        customer,
+        invoice,
+        client_secret,
+      } = object;
+
+      data = {
+        ...data,
+        email: receipt_email,
+        txn_id,
+        status,
+        amount,
+        amount_received,
+        charges,
+        currency,
+        net: null,
+        fee: application_fee_amount,
+        description,
+        orderNumber: description || invoice,
+        invoice, // todo: could we set order number to invoice?
+        customer,
+        client_secret,
+      };
+    }
+
+    return data;
+  }
+  getWebhookMeta(data) {
+    return {
+      ...super.getWebhookMeta(data),
+      type: data.type,
+    };
+  }
+
+  isCompleted(status) {
+    return status === STRIPE_STATUSES.COMPLETED;
+  }
+
+  mapPaymentStatus(stripeStatus) {
+    if (this.isCompleted(stripeStatus)) {
+      return {
+        payment: PAYMENTS_STATUSES.COMPLETED,
+        event: PAYMENT_EVENT_STATUSES.SUCCESS,
+      };
+    }
+
+    switch (stripeStatus) {
+      case STRIPE_STATUSES.CANCELLED_TIMED_OUT:
+        return {
+          payment: PAYMENTS_STATUSES.CANCELLED,
+          event: PAYMENT_EVENT_STATUSES.CANCEL,
+        };
+      case STRIPE_STATUSES.FAILED:
+        return {
+          payment: PAYMENTS_STATUSES.EXPIRED,
+          event: PAYMENT_EVENT_STATUSES.REVIEW,
+        };
+      case STRIPE_STATUSES.WAITING:
+        return {
+          payment: PAYMENTS_STATUSES.PENDING,
+          event: PAYMENT_EVENT_STATUSES.PENDING,
+        };
+      default:
+        return {
+          payment: PAYMENTS_STATUSES.PENDING,
+          event: PAYMENT_EVENT_STATUSES.PENDING,
+        };
+    }
+  }
+
+  validate(headers, body) {
+    if (!headers || !headers['stripe-signature'])
+      throw new X({
+        code: 'INVALID_REQUEST_PARAMS',
+        fields: {
+          code: 'INVALID_REQUEST_HEADERS',
+        },
+      });
+
+    const { api_version, type } = body;
+
+    if (!api_version || api_version !== STRIPE_API_VERSION)
+      throw new X({
+        code: 'INVALID_REQUEST_PARAMS',
+        fields: {
+          code: 'INVALID_API_VERSION',
+        },
+      });
+
+    if (Object.values(PI_TYPES).indexOf(type) < 0)
+      throw new X({
+        code: 'INVALID_REQUEST_PARAMS',
+        fields: {
+          code: 'INVALID_STRIPE_WEBHOOK_TYPE',
+          value: type,
+        },
+      });
+  }
+
+  authenticate(headers, body, rawBody) {
+    const signature = headers['stripe-signature'];
+
+    try {
+      return stripe.webhooks.constructEvent(
+        rawBody,
+        signature,
+        process.env.STRIPE_WEBHOOK_SECRET,
+      );
+    } catch (err) {
+      throw new X({
+        code: 'INVALID_REQUEST',
+        fields: {
+          code: 'STRIPE_SIGNATURE_MISMATCH',
+        },
+      });
+    }
+  }
+
+  getWebhookIdentifier(webhookData) {
+    return webhookData.id;
+  }
+}
+
+export default new Stripe();

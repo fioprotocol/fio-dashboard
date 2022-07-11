@@ -8,6 +8,7 @@ export default {
     verify: (req, res, buf) => {
       try {
         JSON.parse(buf);
+        req.rawBody = buf.toString('utf8');
       } catch (e) {
         res.send({
           status: 0,
