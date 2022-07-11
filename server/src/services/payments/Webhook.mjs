@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize';
 
 import Coinpayments from '../../external/payment-processor/coinpayments';
+import Stripe from '../../external/payment-processor/stripe';
 
 import Base from '../Base';
 import X from '../Exception';
@@ -30,6 +31,9 @@ export default class PaymentsWebhook extends Base {
     if (Coinpayments.isWebhook(hostname, this.context.userAgent)) {
       return Coinpayments;
     }
+    if (Stripe.isWebhook(hostname, this.context.userAgent)) {
+      return Stripe;
+    }
 
     return null;
   }
@@ -44,7 +48,7 @@ export default class PaymentsWebhook extends Base {
         },
       });
 
-    this.validateRequest(paymentProcessor, { body, headers, rawBody });
+    body = this.validateRequest(paymentProcessor, { body, headers, rawBody });
 
     const webhookData = paymentProcessor.getWebhookData(body);
     const paymentStatuses = paymentProcessor.mapPaymentStatus(webhookData.status);
@@ -67,7 +71,7 @@ export default class PaymentsWebhook extends Base {
     }
 
     // Process order payment webhook
-    if (webhookData.invoice && webhookData.orderNumber) {
+    if (webhookData.orderNumber) {
       const order = await Order.findOne({
         where: {
           number: webhookData.orderNumber,
@@ -117,8 +121,8 @@ export default class PaymentsWebhook extends Base {
       try {
         payment.status = paymentStatuses.payment;
         payment.externalId = webhookData.txn_id;
-        payment.price = webhookData.amount2;
-        payment.currency = webhookData.currency2;
+        payment.price = webhookData.amount;
+        payment.currency = webhookData.currency;
         payment.data = { ...payment.data, webhookData };
         const orderItemStatusUpdates = {
           paymentStatus: paymentStatuses.payment,
@@ -203,7 +207,7 @@ export default class PaymentsWebhook extends Base {
       });
 
     paymentProcessor.validate(headers, body);
-    paymentProcessor.authenticate(headers, body, rawBody);
+    return paymentProcessor.authenticate(headers, body, rawBody);
   }
 
   static get paramsSecret() {
