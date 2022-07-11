@@ -1,11 +1,17 @@
 class PaymentProcessor {
   isWebhook() {}
   getWebhookData() {}
-  getWebhookMeta() {}
+  getWebhookMeta(data) {
+    return {
+      webhookEventId: this.getWebhookIdentifier(data),
+    };
+  }
   mapPaymentStatus() {}
   validate() {}
   authenticate() {}
-  checkEvent() {}
+  checkEvent(eventData, data) {
+    return eventData.webhookEventId === this.getWebhookIdentifier(data);
+  }
   getWebhookIdentifier() {}
 }
 
