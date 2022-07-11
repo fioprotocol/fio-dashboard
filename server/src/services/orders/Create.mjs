@@ -1,12 +1,6 @@
 import Base from '../Base';
 
-import {
-  Order,
-  OrderItem,
-  Payment,
-  OrderItemStatus,
-  BlockchainTransaction,
-} from '../../models';
+import { Order, OrderItem } from '../../models';
 
 export default class OrdersCreate extends Base {
   static get validationRules() {
@@ -31,16 +25,14 @@ export default class OrdersCreate extends Base {
                 },
               },
             ],
-            paymentProcessor: 'string',
           },
         },
       ],
     };
   }
 
-  async execute({ data: { total, roe, publicKey, items, paymentProcessor } }) {
+  async execute({ data: { total, roe, publicKey, items } }) {
     let newOrder = {};
-    let orderPayment = {};
     await Order.sequelize.transaction(async t => {
       newOrder = await Order.create(
         {
@@ -57,17 +49,6 @@ export default class OrdersCreate extends Base {
       newOrder.number = Order.generateNumber(newOrder.id);
       await newOrder.save({ transaction: t });
 
-      if (total && paymentProcessor) {
-        orderPayment = await Payment.create(
-          {
-            status: Payment.STATUS.NEW,
-            processor: paymentProcessor,
-            orderId: newOrder.id,
-          },
-          { transaction: t },
-        );
-      }
-
       for (const {
         action,
         address,
@@ -77,7 +58,7 @@ export default class OrdersCreate extends Base {
         price,
         priceCurrency,
       } of items) {
-        const orderItem = await OrderItem.create(
+        await OrderItem.create(
           {
             action,
             address,
@@ -90,18 +71,6 @@ export default class OrdersCreate extends Base {
           },
           { transaction: t },
         );
-
-        if (orderPayment.id)
-          await OrderItemStatus.create(
-            {
-              txStatus: BlockchainTransaction.STATUS.NONE,
-              paymentStatus: orderPayment.status,
-              blockchainTransactionId: null,
-              paymentId: orderPayment.id,
-              orderItemId: orderItem.id,
-            },
-            { transaction: t },
-          );
       }
     });
 
