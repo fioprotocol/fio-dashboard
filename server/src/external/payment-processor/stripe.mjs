@@ -177,6 +177,31 @@ class Stripe extends PaymentProcessor {
   getWebhookIdentifier(webhookData) {
     return webhookData.id;
   }
+
+  /**
+   *
+   * @param {object} options
+   * @param {number} options.amount 12 in cents
+   * @param {string} options.currency usd
+   * @param {string} options.orderNumber FV36JF
+   * @returns {Promise<any>}
+   */
+  async create(options) {
+    const { amount, currency = 'usd', orderNumber } = options;
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency,
+      description: orderNumber,
+      automatic_payment_methods: { enabled: true },
+    });
+
+    return {
+      externalPaymentId: paymentIntent.id,
+      secret: paymentIntent.client_secret,
+      amount,
+      currency,
+    };
+  }
 }
 
 export default new Stripe();
