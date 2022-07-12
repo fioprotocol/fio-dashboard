@@ -157,17 +157,15 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
           />
           <h5 className={classes.label}>Renew Details</h5>
           <PriceBadge
-            costNativeFio={feeNativeFio}
-            costFio={fio}
-            costUsdc={usdc}
+            paymentAmount={fio}
+            convertedPaymentAmount={usdc}
             title={name}
             type={BADGE_TYPES.WHITE}
           />
           <h5 className={classes.label}>Payment Details</h5>
           <PriceBadge
-            costNativeFio={feeNativeFio}
-            costFio={fio}
-            costUsdc={usdc}
+            paymentAmount={fio}
+            convertedPaymentAmount={usdc}
             title="Total Cost"
             type={BADGE_TYPES.BLACK}
           />
