@@ -128,7 +128,7 @@ class OrdersJob extends CommonJob {
         await refundPayment.save();
         await PaymentEventLog.create({
           status: PaymentEventLog.STATUS.SUCCESS,
-          statusNotes: '',
+          statusNotes: JSON.stringify(refundTx),
           paymentId: refundPayment.id,
         });
 
