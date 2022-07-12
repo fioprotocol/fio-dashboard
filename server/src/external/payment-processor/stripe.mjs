@@ -7,7 +7,8 @@ import X from '../../services/Exception.mjs';
 import { PAYMENT_EVENT_STATUSES, PAYMENTS_STATUSES } from '../../config/constants.js';
 
 export const STRIPE_STATUSES = {
-  FAILED: 'requires_payment_method',
+  FAILED: 'payment_failed',
+  REQUIRES_PAYMENT_METHOD: 'requires_payment_method',
   CANCELLED_TIMED_OUT: 'canceled',
   WAITING: 'processing',
   NEW: 'created',
@@ -109,6 +110,11 @@ class Stripe extends PaymentProcessor {
     }
 
     switch (stripeStatus) {
+      case STRIPE_STATUSES.REQUIRES_PAYMENT_METHOD:
+        return {
+          payment: PAYMENTS_STATUSES.NEW,
+          event: PAYMENT_EVENT_STATUSES.PENDING,
+        };
       case STRIPE_STATUSES.CANCELLED_TIMED_OUT:
         return {
           payment: PAYMENTS_STATUSES.CANCELLED,
