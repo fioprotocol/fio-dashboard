@@ -5,37 +5,84 @@ import Amount from '../../common/Amount';
 
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 
+import { CURRENCY_CODES } from '../../../constants/common';
+
 import classes from './PriceBadge.module.scss';
 
-type Props = {
-  costNativeFio?: number | null;
+type TotalAmountProps = {
+  paymentAmount: number | string;
+  paymentCurrency: string;
+};
+
+export type Props = {
   costFree?: string;
-  costFio?: string;
-  costUsdc?: string;
   type: string;
   title: string;
+  paymentAmount: number | string;
+  paymentCurrency?: string;
+  convertedPaymentAmount?: number | string;
+  convertedPaymentCurrency?: string;
+};
+
+const TotalAmount: React.FC<TotalAmountProps> = props => {
+  const { paymentAmount, paymentCurrency } = props;
+
+  return (
+    <>
+      <Amount value={paymentAmount} /> {paymentCurrency}
+    </>
+  );
+};
+
+const TotalPriceAmount: React.FC<Props> = props => {
+  const {
+    costFree,
+    paymentAmount,
+    paymentCurrency = CURRENCY_CODES.FIO,
+    convertedPaymentAmount,
+    convertedPaymentCurrency = CURRENCY_CODES.USDC,
+  } = props;
+
+  if (costFree) return <>{costFree}</>;
+
+  return (
+    <>
+      <TotalAmount
+        paymentAmount={paymentAmount}
+        paymentCurrency={paymentCurrency}
+      />
+      {convertedPaymentAmount && (
+        <>
+          {' / '}
+          <TotalAmount
+            paymentAmount={convertedPaymentAmount}
+            paymentCurrency={convertedPaymentCurrency}
+          />
+        </>
+      )}
+    </>
+  );
 };
 
 const PriceBadge: React.FC<Props> = props => {
-  const { costNativeFio, costFree, title, type, costFio, costUsdc } = props;
+  const { title, type } = props;
 
-  const isBlack = type === BADGE_TYPES.BLACK;
+  const hasWhiteText = type === BADGE_TYPES.BLACK || type === BADGE_TYPES.ERROR;
+
   return (
     <Badge type={type} show>
-      <div className={classnames(classes.item, isBlack && classes.black)}>
+      <div
+        className={classnames(
+          classes.item,
+          hasWhiteText && classes.hasWhiteText,
+        )}
+      >
         {title && (
           <span className={classnames(classes.name, 'boldText')}>{title}</span>
         )}
         <p className={classes.totalPrice}>
           <span className="boldText">
-            {costNativeFio && costFio && costUsdc ? (
-              <>
-                <Amount value={costFio} /> FIO / <Amount value={costUsdc} />{' '}
-                USDC
-              </>
-            ) : (
-              costFree
-            )}
+            <TotalPriceAmount {...props} />
           </span>
         </p>
       </div>
