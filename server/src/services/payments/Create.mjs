@@ -8,7 +8,6 @@ import {
   BlockchainTransaction,
 } from '../../models';
 import Stripe from '../../external/payment-processor/stripe';
-import MathOp from '../math.mjs';
 
 import X from '../Exception.mjs';
 
@@ -81,13 +80,13 @@ export default class PaymentsCreate extends Base {
       await Payment.sequelize.transaction(async t => {
         if (paymentProcessor)
           extPaymentParams = await paymentProcessor.create({
-            amount: new MathOp(order.total).mul(100).toNumber(),
+            amount: order.total,
             orderNumber: order.number,
           });
 
         orderPayment = await Payment.create(
           {
-            amount: extPaymentParams.amount, // todo: cents or dollars ? int or float?
+            amount: extPaymentParams.amount,
             currency: extPaymentParams.currency,
             status: Payment.STATUS.NEW,
             processor: paymentProcessorKey,

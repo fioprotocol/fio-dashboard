@@ -1,12 +1,14 @@
 import StripeLib from 'stripe';
 
 import PaymentProcessor from './base.mjs';
-import { PAYMENT_EVENT_STATUSES, PAYMENTS_STATUSES } from '../../config/constants.js';
+import MathOp from '../../services/math.mjs';
 import X from '../../services/Exception.mjs';
+
+import { PAYMENT_EVENT_STATUSES, PAYMENTS_STATUSES } from '../../config/constants.js';
 
 export const STRIPE_STATUSES = {
   FAILED: 'requires_payment_method',
-  CANCELLED_TIMED_OUT: 'canceled', // todo
+  CANCELLED_TIMED_OUT: 'canceled',
   WAITING: 'processing',
   NEW: 'created',
   COMPLETED: 'succeeded',
@@ -67,15 +69,19 @@ class Stripe extends PaymentProcessor {
         email: receipt_email,
         txn_id,
         status,
-        amount,
-        amount_received,
+        amount: new MathOp(amount).div(100).toString(),
+        amount_cents: amount,
+        amount_received: amount_received
+          ? new MathOp(amount_received).div(100).toString()
+          : amount_received,
+        amount_received_cents: amount_received,
         charges,
         currency,
         net: null,
         fee: application_fee_amount,
         description,
         orderNumber: description || invoice,
-        invoice, // todo: could we set order number to invoice?
+        invoice,
         customer,
         client_secret,
       };
@@ -181,7 +187,7 @@ class Stripe extends PaymentProcessor {
   /**
    *
    * @param {object} options
-   * @param {number} options.amount 12 in cents
+   * @param {number} options.amount 12.3
    * @param {string} options.currency usd
    * @param {string} options.orderNumber FV36JF
    * @returns {Promise<any>}
@@ -189,7 +195,7 @@ class Stripe extends PaymentProcessor {
   async create(options) {
     const { amount, currency = 'usd', orderNumber } = options;
     const paymentIntent = await stripe.paymentIntents.create({
-      amount,
+      amount: new MathOp(amount).mul(100).toNumber(), // convert to cents
       currency,
       description: orderNumber,
       automatic_payment_methods: { enabled: true },
