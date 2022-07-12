@@ -202,6 +202,10 @@ class Stripe extends PaymentProcessor {
       currency,
     };
   }
+
+  async cancel(id) {
+    return stripe.paymentIntents.cancel(id);
+  }
 }
 
 export default new Stripe();
