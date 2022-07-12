@@ -93,6 +93,11 @@ export const CHAIN_CODES = {
   ETH: 'ETH',
 };
 
+export const CURRENCY_CODES = {
+  FIO: 'FIO',
+  USDC: 'USDC',
+};
+
 export const FIO_DATA_TRANSACTION_LINK = {
   [CHAIN_CODES.FIO]: process.env.REACT_APP_FIO_BLOCKS_TX_URL,
   [CHAIN_CODES.BTC]: 'https://blockchair.com/bitcoin/transaction/',

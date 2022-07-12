@@ -250,9 +250,8 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
               <PriceBadge
                 title="Fees"
                 type={BADGE_TYPES.BLACK}
-                costNativeFio={fee.nativeFio}
-                costFio={fee.fio}
-                costUsdc={fee.usdc}
+                paymentAmount={fee.fio}
+                convertedPaymentAmount={fee.usdc}
               />
             ) : (
               <BundledTransactionBadge
