@@ -13,6 +13,9 @@ class PaymentProcessor {
     return eventData.webhookEventId === this.getWebhookIdentifier(data);
   }
   getWebhookIdentifier() {}
+
+  async create() {}
+  async cancel() {}
 }
 
 export default PaymentProcessor;
