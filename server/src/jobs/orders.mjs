@@ -11,6 +11,7 @@ import {
 } from '../models/index.mjs';
 import MathOp from '../services/math.mjs';
 import CommonJob from './job.mjs';
+import Stripe from '../external/payment-processor/stripe';
 
 import sendInsufficientFundsNotification from '../services/fallback-funds-email.mjs';
 import { getROE } from '../external/roe.mjs';
@@ -72,8 +73,23 @@ class OrdersJob extends CommonJob {
 
   async refundUser(orderItemProps) {
     try {
-      const fioAmount = fioApi.convertUsdcToFio(orderItemProps.price, orderItemProps.roe);
-      const fioNativeAmount = fioApi.amountToSUF(fioAmount);
+      const payment = await Payment.findOne({ where: { id: orderItemProps.paymentId } });
+
+      let price;
+      let nativePrice = null;
+      let currency;
+
+      switch (payment.processor) {
+        case Payment.PROCESSOR.CREDIT_CARD: {
+          price = orderItemProps.price;
+          currency = Payment.CURRENCY.USD;
+          break;
+        }
+        default:
+          price = fioApi.convertUsdcToFio(orderItemProps.price, orderItemProps.roe);
+          nativePrice = fioApi.amountToSUF(price);
+          currency = Payment.CURRENCY.FIO;
+      }
 
       // Refund user for order
       const refundPayment = await Payment.create({
@@ -81,8 +97,8 @@ class OrdersJob extends CommonJob {
         processor: Payment.PROCESSOR.SYSTEM,
         orderId: orderItemProps.orderId,
         spentType: Payment.SPENT_TYPE.ORDER_REFUND,
-        price: fioAmount,
-        currency: Payment.CURRENCY.FIO,
+        price,
+        currency,
       });
       await PaymentEventLog.create({
         status: PaymentEventLog.STATUS.PENDING,
@@ -90,16 +106,24 @@ class OrdersJob extends CommonJob {
         paymentId: refundPayment.id,
       });
 
-      const transferTokensTx = await fioApi.executeAction(
-        FIO_ACTIONS.transferTokens,
-        fioApi.getActionParams({
-          ...orderItemProps,
-          amount: fioNativeAmount,
-          action: FIO_ACTIONS.transferTokens,
-        }),
-      );
+      let refundTx;
+      switch (payment.processor) {
+        case Payment.PROCESSOR.CREDIT_CARD: {
+          refundTx = await Stripe.refund(payment.externalId, price);
+          break;
+        }
+        default:
+          refundTx = await fioApi.executeAction(
+            FIO_ACTIONS.transferTokens,
+            fioApi.getActionParams({
+              ...orderItemProps,
+              amount: nativePrice,
+              action: FIO_ACTIONS.transferTokens,
+            }),
+          );
+      }
 
-      if (transferTokensTx.transaction_id) {
+      if (refundTx.transaction_id || refundTx.id) {
         refundPayment.status = Payment.STATUS.COMPLETED;
         await refundPayment.save();
         await PaymentEventLog.create({
@@ -112,7 +136,16 @@ class OrdersJob extends CommonJob {
         return;
       }
 
-      const { notes } = fioApi.checkTxError(transferTokensTx);
+      let refundError;
+      switch (payment.processor) {
+        case Payment.PROCESSOR.CREDIT_CARD: {
+          refundError = { notes: JSON.stringify(refundTx) };
+          break;
+        }
+        default:
+          refundError = fioApi.checkTxError(refundTx);
+      }
+      const { notes } = refundError;
 
       refundPayment.status = Payment.STATUS.CANCELLED;
       await refundPayment.save();
