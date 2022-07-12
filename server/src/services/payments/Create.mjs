@@ -12,6 +12,8 @@ import MathOp from '../math.mjs';
 
 import X from '../Exception.mjs';
 
+import logger from '../../logger.mjs';
+
 export default class PaymentsCreate extends Base {
   static get validationRules() {
     return {
@@ -27,13 +29,15 @@ export default class PaymentsCreate extends Base {
     };
   }
 
-  async createExternal(paymentProcessor, options) {
+  getPaymentProcessor(paymentProcessor) {
     if (paymentProcessor === Payment.PROCESSOR.CREDIT_CARD) {
-      return Stripe.create(options);
+      return Stripe;
     }
+
+    return null;
   }
 
-  async execute({ data: { orderId, paymentProcessor } }) {
+  async execute({ data: { orderId, paymentProcessor: paymentProcessorKey } }) {
     let orderPayment = {};
     let extPaymentParams = {};
 
@@ -57,7 +61,7 @@ export default class PaymentsCreate extends Base {
     const exPayment = await Payment.findOne({
       where: {
         status: Payment.STATUS.NEW,
-        processor: paymentProcessor,
+        processor: paymentProcessorKey,
         orderId,
       },
     });
@@ -65,22 +69,28 @@ export default class PaymentsCreate extends Base {
     if (exPayment) {
       throw new X({
         code: 'ALREADY_CREATED',
+        fields: {
+          paymentProcessor: 'ALREADY_CREATED',
+        },
       });
     }
 
+    const paymentProcessor = this.getPaymentProcessor(paymentProcessorKey);
+
     try {
       await Payment.sequelize.transaction(async t => {
-        extPaymentParams = await this.createExternal(paymentProcessor, {
-          amount: new MathOp(order.total).mul(100).toNumber(),
-          orderNumber: order.number,
-        });
+        if (paymentProcessor)
+          extPaymentParams = await paymentProcessor.create({
+            amount: new MathOp(order.total).mul(100).toNumber(),
+            orderNumber: order.number,
+          });
 
         orderPayment = await Payment.create(
           {
             amount: extPaymentParams.amount, // todo: cents or dollars ? int or float?
             currency: extPaymentParams.currency,
             status: Payment.STATUS.NEW,
-            processor: paymentProcessor,
+            processor: paymentProcessorKey,
             externalId: extPaymentParams.externalPaymentId,
             orderId: order.id,
           },
@@ -101,9 +111,18 @@ export default class PaymentsCreate extends Base {
         }
       });
     } catch (e) {
-      if (extPaymentParams.secret) {
-        // todo: handle
+      if (paymentProcessor && extPaymentParams.secret) {
+        await paymentProcessor.cancel(extPaymentParams.externalPaymentId);
       }
+
+      logger.error(`Payment creation error ${e.message}. Order #${order.number}`);
+
+      throw new X({
+        code: 'SERVER_ERROR',
+        fields: {
+          paymentProcessor: 'SERVER_ERROR',
+        },
+      });
     }
 
     return {
