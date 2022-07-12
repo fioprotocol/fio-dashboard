@@ -212,6 +212,18 @@ class Stripe extends PaymentProcessor {
   async cancel(id) {
     return stripe.paymentIntents.cancel(id);
   }
+
+  async refund(id, amount = null) {
+    const refundOptions = {
+      payment_intent: id,
+    };
+
+    if (amount) {
+      refundOptions.amount = new MathOp(amount).mul(100).toNumber();
+    }
+
+    return stripe.refunds.create(refundOptions);
+  }
 }
 
 export default new Stripe();

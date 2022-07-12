@@ -17,6 +17,7 @@ export class Payment extends Base {
     return {
       FIO: 'FIO',
       USDC: 'USDC',
+      USD: 'USD',
       ETH: 'ETH',
     };
   }
