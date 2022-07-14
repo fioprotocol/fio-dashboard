@@ -1,5 +1,5 @@
 import { History } from 'history';
-import { put, takeEvery, select } from 'redux-saga/effects';
+import { put, select, takeEvery } from 'redux-saga/effects';
 
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ACTIONS } from '../../components/Notifications/Notifications';
@@ -9,23 +9,23 @@ import { log } from '../../util/general';
 import { setWallets } from '../account/actions';
 import { refreshBalance } from '../fio/actions';
 import {
-  LOGIN_SUCCESS,
-  PROFILE_SUCCESS,
-  LOGOUT_SUCCESS,
-  NONCE_SUCCESS,
   ADMIN_LOGIN_SUCCESS,
+  ADMIN_LOGOUT_SUCCESS,
   CONFIRM_ADMIN_EMAIL_SUCCESS,
   CONFIRM_EMAIL_SUCCESS,
   loadAdminProfile,
   loadProfile,
   login,
-  logout,
+  LOGIN_SUCCESS,
+  LOGOUT_SUCCESS,
+  NONCE_SUCCESS,
+  PROFILE_SUCCESS,
 } from './actions';
 
 import { closeLoginModal } from '../modal/actions';
 import {
-  listNotifications,
   createNotification,
+  listNotifications,
 } from '../notifications/actions';
 import { setRedirectPath } from '../navigation/actions';
 
@@ -43,10 +43,7 @@ import { USER_STATUSES } from '../../constants/common';
 
 import { FioWalletDoublet, PrivateRedirectLocationState } from '../../types';
 import { Action } from '../types';
-import {
-  AuthDeleteNewDeviceRequestResponse,
-  AuthLoginResponse,
-} from '../../api/responses';
+import { AuthDeleteNewDeviceRequestResponse } from '../../api/responses';
 
 export function* loginSuccess(history: History, api: Api): Generator {
   yield takeEvery(LOGIN_SUCCESS, function*(action: Action) {
@@ -54,7 +51,6 @@ export function* loginSuccess(history: History, api: Api): Generator {
       redirectLink,
     );
     const wallets: FioWalletDoublet[] = yield select(fioWallets);
-    api.client.removeAdminToken();
     api.client.setToken(action.data.jwt);
     if (wallets && wallets.length) yield put<Action>(setWallets(wallets));
     if ((action.otpKey && action.voucherId) || action.voucherId)
@@ -120,7 +116,6 @@ export function* profileSuccess(): Generator {
 export function* logoutSuccess(history: History, api: Api): Generator {
   yield takeEvery(LOGOUT_SUCCESS, function(action: Action) {
     api.client.removeToken();
-    api.client.removeAdminToken();
 
     const { redirect } = action;
 
@@ -151,9 +146,19 @@ export function* confirmEmailSuccess(history: History): Generator {
   });
 }
 
+export function* adminLogoutSuccess(history: History, api: Api): Generator {
+  yield takeEvery(ADMIN_LOGOUT_SUCCESS, function(action: Action) {
+    api.client.removeAdminToken();
+
+    const { redirect } = action;
+
+    if (redirect) history.push(redirect, {});
+    if (!redirect) history.replace(ROUTES.ADMIN_LOGIN, {});
+  });
+}
+
 export function* adminLoginSuccess(history: History, api: Api): Generator {
   yield takeEvery(ADMIN_LOGIN_SUCCESS, function*(action: Action) {
-    api.client.removeToken();
     api.client.setAdminToken(action.data.jwt);
 
     yield put<Action>(loadAdminProfile());
@@ -164,20 +169,10 @@ export function* adminLoginSuccess(history: History, api: Api): Generator {
 
 export function* adminConfirmSuccess(history: History, api: Api): Generator {
   yield takeEvery(CONFIRM_ADMIN_EMAIL_SUCCESS, function*(action: Action) {
-    api.client.removeToken();
-    api.client.removeAdminToken();
-
-    yield put<Action>(logout({ history }, ROUTES.ADMIN_HOME));
-
-    const authData: AuthLoginResponse = yield api.auth.adminInviteAuth(
-      action.data.adminId,
-    );
-
-    api.client.removeToken();
-    api.client.setAdminToken(authData.jwt);
+    api.client.setAdminToken(action.data.jwt);
 
     yield put<Action>(loadAdminProfile());
 
-    history.push(ROUTES.ADMIN_SET_PASSWORD);
+    history.push(ROUTES.ADMIN_HOME);
   });
 }

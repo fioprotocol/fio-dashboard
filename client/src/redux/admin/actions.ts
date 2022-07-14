@@ -10,13 +10,55 @@ export const GET_ADMIN_USERS_REQUEST = `${prefix}/GET_ADMIN_USERS_REQUEST`;
 export const GET_ADMIN_USERS_SUCCESS = `${prefix}/GET_ADMIN_USERS_SUCCESS`;
 export const GET_ADMIN_USERS_FAILURE = `${prefix}/GET_ADMIN_USERS_FAILURE`;
 
-export const getAdminList = (): CommonPromiseAction => ({
+export const getAdminUsersList = (
+  limit = 25,
+  offset = 0,
+): CommonPromiseAction => ({
   types: [
     GET_ADMIN_USERS_REQUEST,
     GET_ADMIN_USERS_SUCCESS,
     GET_ADMIN_USERS_FAILURE,
   ],
-  promise: (api: Api) => api.admin.list(),
+  promise: (api: Api) => api.admin.adminList(limit, offset),
+});
+
+export const GET_ADMIN_USER_PROFILE_REQUEST = `${prefix}/GET_ADMIN_USER_PROFILE_REQUEST`;
+export const GET_ADMIN_USER_PROFILE_SUCCESS = `${prefix}/GET_ADMIN_USER_PROFILE_SUCCESS`;
+export const GET_ADMIN_USER_PROFILE_FAILURE = `${prefix}/GET_ADMIN_USER_PROFILE_FAILURE`;
+
+export const getAdminUserProfile = (id: string): CommonPromiseAction => ({
+  types: [
+    GET_ADMIN_USER_PROFILE_REQUEST,
+    GET_ADMIN_USER_PROFILE_SUCCESS,
+    GET_ADMIN_USER_PROFILE_FAILURE,
+  ],
+  promise: (api: Api) => api.admin.adminUserProfile(id),
+});
+
+export const GET_ORDERS_LIST_BY_ADMIN_REQUEST = `${prefix}/GET_ORDERS_LIST_BY_ADMIN_REQUEST`;
+export const GET_ORDERS_LIST_BY_ADMIN_SUCCESS = `${prefix}/GET_ORDERS_LIST_BY_ADMIN_SUCCESS`;
+export const GET_ORDERS_LIST_BY_ADMIN_FAILURE = `${prefix}/GET_ORDERS_LIST_BY_ADMIN_FAILURE`;
+
+export const getOrdersList = (limit = 25, offset = 0): CommonPromiseAction => ({
+  types: [
+    GET_ORDERS_LIST_BY_ADMIN_REQUEST,
+    GET_ORDERS_LIST_BY_ADMIN_SUCCESS,
+    GET_ORDERS_LIST_BY_ADMIN_FAILURE,
+  ],
+  promise: (api: Api) => api.admin.ordersList(limit, offset),
+});
+
+export const GET_ORDER_BY_ADMIN_REQUEST = `${prefix}/GET_ORDER_BY_ADMIN_REQUEST`;
+export const GET_ORDER_BY_ADMIN_SUCCESS = `${prefix}/GET_ORDER_BY_ADMIN_SUCCESS`;
+export const GET_ORDER_BY_ADMIN_FAILURE = `${prefix}/GET_ORDER_BY_ADMIN_FAILURE`;
+
+export const getOrder = (id: string): CommonPromiseAction => ({
+  types: [
+    GET_ORDER_BY_ADMIN_REQUEST,
+    GET_ORDER_BY_ADMIN_SUCCESS,
+    GET_ORDER_BY_ADMIN_FAILURE,
+  ],
+  promise: (api: Api) => api.admin.order(id),
 });
 
 export const DELETE_ADMIN_USER_REQUEST = `${prefix}/DELETE_ADMIN_USER_REQUEST`;
@@ -30,6 +72,6 @@ export const removeAdminUser = (adminUserId: string): CommonPromiseAction => ({
     DELETE_ADMIN_USER_FAILURE,
   ],
   promise: (api: Api) =>
-    minWaitTimeFunction(() => api.admin.remove(adminUserId), 1000),
+    minWaitTimeFunction(() => api.admin.removeAdmin(adminUserId), 1000),
   adminUserId,
 });

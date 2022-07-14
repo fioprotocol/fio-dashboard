@@ -7,9 +7,15 @@ import { compose } from '../../utils';
 import { confirmAdminEmail } from '../../redux/profile/actions';
 
 import AdminEmailConfirmPage from './AdminEmailConfirmPage';
+import { loading } from '../../redux/profile/selectors';
 
-const reduxConnect = connect(createStructuredSelector({}), {
-  confirmAdminEmail,
-});
+const reduxConnect = connect(
+  createStructuredSelector({
+    loading,
+  }),
+  {
+    confirmAdminEmail,
+  },
+);
 
 export default withRouter(compose(reduxConnect)(AdminEmailConfirmPage));

@@ -66,6 +66,7 @@ export const ActionButtons: React.FC<ActionButtonsProps> = props => {
     </div>
   );
 };
+
 export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => {
   const {
     logout,

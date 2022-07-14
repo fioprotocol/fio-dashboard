@@ -1,10 +1,10 @@
 import {
-  User,
   CartItem,
-  Notification,
-  RefProfile,
   FioAddressDoublet,
+  Notification,
   PrivateRedirectLocationState,
+  RefProfile,
+  User,
 } from '../../types';
 
 export type MainHeaderProps = {
