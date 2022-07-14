@@ -1,12 +1,12 @@
 import React from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 
-import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
-import Input, { INPUT_UI_STYLES } from '../../../components/Input/Input';
+import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
 
-import { COLOR_TYPE } from '../../../components/Input/ErrorBadge';
+import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 
-import { FormValuesProps } from '../types';
+import { FormValuesProps } from '../../types';
 
 import { formValidation } from './validation';
 
