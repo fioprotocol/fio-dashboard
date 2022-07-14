@@ -26,6 +26,8 @@ export class Order extends Base {
       TRANSACTION_EXECUTED: 5,
       PARTIALLY_SUCCESS: 6,
       DONE: 7,
+      FAILED: 8,
+      CANCELED: 9,
     };
   }
 

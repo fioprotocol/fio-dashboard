@@ -96,7 +96,7 @@ export const CHAIN_CODES = {
 export const CURRENCY_CODES = {
   FIO: 'FIO',
   USDC: 'USDC',
-};
+} as const;
 
 export const FIO_DATA_TRANSACTION_LINK = {
   [CHAIN_CODES.FIO]: process.env.REACT_APP_FIO_BLOCKS_TX_URL,

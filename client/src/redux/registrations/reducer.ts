@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import { LOGOUT_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
 
-import { Domain, Prices } from '../../types';
+import { Domain, Prices, RegistrationResult } from '../../types';
 
 const PRICES_DEFAULT: Prices = {
   fio: { address: 0, domain: 0 },
@@ -92,7 +92,7 @@ export default combineReducers({
         return state;
     }
   },
-  registrationResult(state = {}, action) {
+  registrationResult(state: RegistrationResult | null = null, action) {
     switch (action.type) {
       case actions.SET_REGISTRATION_RESULTS:
         return action.data;
