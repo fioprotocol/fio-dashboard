@@ -7,9 +7,16 @@ export const USER_STATUSES = {
   NEW_EMAIL_NOT_VERIFIED: 'NEW_EMAIL_NOT_VERIFIED',
 };
 
+export const ADMIN_USER_STATUSES = {
+  NEW: 1,
+  ACTIVE: 2,
+  BLOCKED: 3,
+  NEW_EMAIL_NOT_VERIFIED: 4,
+};
+
 export const ADMIN_USER_ROLES = {
-  ADMIN: 'ADMIN',
-  SUPER_ADMIN: 'SUPER_ADMIN',
+  ADMIN: 1,
+  SUPER_ADMIN: 2,
 };
 
 export const DEFAULT_WALLET_OPTIONS = {

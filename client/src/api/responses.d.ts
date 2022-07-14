@@ -1,11 +1,11 @@
 import {
+  AdminUser,
+  ContainedFlowQueryParams,
   Domain,
   FioWalletDoublet,
   Notification,
-  ContainedFlowQueryParams,
-  User,
   RefProfile,
-  AdminUser,
+  User,
 } from '../types';
 
 export type AccountGetWalletsResponse = FioWalletDoublet[];
@@ -75,6 +75,8 @@ export type UsersListResponse = User[];
 export type UsersShowResponse = User;
 
 export type AdminUsersListResponse = AdminUser[];
+export type AdminOrdersListResponse = AdminUser[];
+export type AdminOrderItemResponse = AdminUser;
 export type RemoveAdminResponse =
   | { success: true }
   | { success: false; message: 'Not Found' };

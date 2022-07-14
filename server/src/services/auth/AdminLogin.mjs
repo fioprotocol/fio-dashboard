@@ -23,7 +23,10 @@ export default class AdminLogin extends Base {
   }
 
   async execute({ data: { email, password, tfaToken } }) {
-    const adminUser = await AdminUser.findOneWhere({ email, statusType: 2 });
+    const adminUser = await AdminUser.findOneWhere({
+      email,
+      statusId: AdminUser.STATUS.ACTIVE,
+    });
 
     if (
       !adminUser ||

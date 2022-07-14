@@ -4,12 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
 import { Navigation } from './components/Navigation';
-
 import { ROUTES } from '../../constants/routes';
 
 import { MainHeaderProps } from './types';
 
 import classes from './MainHeader.module.scss';
+import { useIsAdminRoute } from '../../hooks/admin';
 
 const MainHeader: React.FC<MainHeaderProps> = props => {
   const {
@@ -48,6 +48,8 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     }
   }, [locationState, showLogin, isAuthenticated, profileRefreshed]);
 
+  const isAdmin = useIsAdminRoute();
+
   if (refProfileLoading) {
     return (
       <div className={classnames(classes.header)}>
@@ -58,9 +60,21 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
 
   return (
     <div className={classnames(classes.header, isMenuOpen && classes.isOpen)}>
-      <Link to={ROUTES.HOME}>
-        <div className={classes.logo} onClick={closeMenu} />
-      </Link>
+      {!isAdmin ? (
+        <Link to={ROUTES.HOME}>
+          <div className={classes.logo} onClick={closeMenu} />
+        </Link>
+      ) : (
+        <div>
+          <div
+            className={classes.logo}
+            onClick={() => {
+              closeMenu();
+              window.open(ROUTES.HOME, '_blank');
+            }}
+          />
+        </div>
+      )}
       <Navigation
         {...props}
         isMenuOpen={isMenuOpen}
