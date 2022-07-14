@@ -5,7 +5,9 @@ import Base from './Base';
 import { User } from './User';
 import { ReferrerProfile } from './ReferrerProfile';
 import { OrderItem } from './OrderItem';
+import { OrderItemStatus } from './OrderItemStatus.mjs';
 import { Payment } from './Payment';
+import { PaymentEventLog } from './PaymentEventLog.mjs';
 
 const { DataTypes: DT } = Sequelize;
 const ORDER_NUMBER_LENGTH = 6;
@@ -126,19 +128,51 @@ export class Order extends Base {
     });
   }
 
+  static ordersCount() {
+    return this.count();
+  }
+
+  static listAll(limit = 25, offset = 0) {
+    return this.findAll({
+      include: [Payment, User],
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+    });
+  }
+
+  static orderInfo(id) {
+    return this.findById(id, {
+      include: [
+        { model: OrderItem, include: OrderItemStatus },
+        { model: Payment, include: PaymentEventLog },
+        User,
+      ],
+      order: [['createdAt', 'DESC']],
+    });
+  }
+
   static format({
     id,
     number,
     total,
     publicKey,
+    createdAt,
+    updatedAt,
+    status,
     OrderItems: orderItems,
     Payments: payments,
+    User: user,
   }) {
     return {
       id,
       number,
       total,
       publicKey,
+      createdAt,
+      updatedAt,
+      status,
+      user: user ? { id: user.id, email: user.email } : null,
       items:
         orderItems && orderItems.length
           ? orderItems.map(item => OrderItem.format(item))
