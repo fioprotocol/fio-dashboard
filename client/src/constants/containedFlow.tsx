@@ -47,3 +47,7 @@ export const CONTAINED_FLOW_SUBTITLES = {
 export const CONTAINED_FLOW_TITLES = {
   [CONTAINED_FLOW_ACTIONS.SIGNNFT]: <ContainedFlowSignNftTitle />,
 };
+
+export const CONTAINED_FLOW_CONTINUE_TEXT = {
+  [CONTAINED_FLOW_ACTIONS.SIGNNFT]: 'Sign Your NFT',
+};
