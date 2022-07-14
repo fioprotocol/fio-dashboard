@@ -194,9 +194,25 @@ export class OrderItem extends Base {
     });
   }
 
-  static format({ id }) {
+  static format({
+    id,
+    price,
+    priceCurrency,
+    action,
+    address,
+    domain,
+    createdAt,
+    updatedAt,
+  }) {
     return {
       id,
+      price,
+      priceCurrency,
+      action,
+      address,
+      domain,
+      createdAt,
+      updatedAt,
     };
   }
 }
