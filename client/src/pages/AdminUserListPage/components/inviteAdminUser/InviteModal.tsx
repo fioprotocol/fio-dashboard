@@ -1,14 +1,14 @@
 import React from 'react';
 
-import Modal from '../../../components/Modal/Modal';
+import Modal from '../../../../components/Modal/Modal';
 import InviteForm from './InviteForm';
 
-import { FormValuesProps } from '../types';
+import { FormValuesProps } from '../../types';
 
 type Props = {
   show: boolean;
   loading: boolean;
-  onSubmit: (values: FormValuesProps) => void;
+  onSubmit: (values: FormValuesProps) => Promise<void>;
   onClose: () => void;
 };
 
