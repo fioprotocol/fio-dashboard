@@ -21,7 +21,7 @@ export default class AuthAdminCheck extends Base {
 
       return {
         adminId: adminUser.id,
-        role: adminUser.role,
+        role: adminUser.roleId,
       };
     } catch (e) {
       throw new X({

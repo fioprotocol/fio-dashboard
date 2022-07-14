@@ -1,5 +1,6 @@
 import jp from 'jsonpath';
 import bcrypt from 'bcrypt';
+import speakeasy from 'speakeasy';
 
 import logger from './logger';
 import Exception from './services/Exception';
@@ -73,14 +74,14 @@ export async function runService(service, { context = {}, params = {} }) {
 export function makeServiceRunner(
   service,
   paramsBuilder = defaultParamsBuilder,
-  contexBuilder = defaultContextBuilder,
+  contextBuilder = defaultContextBuilder,
 ) {
   return async function serviceRunner(req, res) {
     const params = paramsBuilder(req, res);
     const cleanParams = cleanup(params, service.paramsSecret, service.paramsCleanup);
     const resultPromise = runService(service, {
       params,
-      context: contexBuilder(req, res),
+      context: contextBuilder(req, res),
     });
 
     return renderPromiseAsJson(req, res, resultPromise, cleanParams);
@@ -187,4 +188,12 @@ export async function authCheck(req, res, next, model, isAdmin) {
   } catch (e) {
     return renderPromiseAsJson(req, res, promise, { token: '<secret>' });
   }
+}
+
+export function adminTfaValidate(base32secret, userToken) {
+  return speakeasy.totp.verify({
+    secret: base32secret,
+    encoding: 'base32',
+    token: userToken,
+  });
 }

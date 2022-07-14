@@ -1,22 +1,24 @@
 import Sequelize from 'sequelize';
 
 import Base from './Base';
+import { AdminUsersStatus } from './AdminUsersStatus.mjs';
+import { AdminUsersRole } from './AdminUsersRole.mjs';
 
-import { USER_ROLES, USER_STATUS } from '../config/constants';
-import { generateHash, compareHashString } from '../tools.mjs';
+import { adminTfaValidate, compareHashString, generateHash } from '../tools.mjs';
+import { USER_ROLES_IDS, USER_STATUS_IDS } from '../config/constants';
 
 const { DataTypes: DT, Op } = Sequelize;
 
 export class AdminUser extends Base {
   static get ROLE() {
     return {
-      SUPER_ADMIN: USER_ROLES.SUPER_ADMIN,
-      ADMIN: USER_ROLES.ADMIN,
+      SUPER_ADMIN: USER_ROLES_IDS.SUPER_ADMIN,
+      ADMIN: USER_ROLES_IDS.ADMIN,
     };
   }
 
   static get STATUS() {
-    return USER_STATUS;
+    return USER_STATUS_IDS;
   }
 
   static init(sequelize) {
@@ -35,15 +37,32 @@ export class AdminUser extends Base {
             this.setDataValue('password', hashedPassword);
           },
         },
-        status: {
-          type: DT.ENUM,
-          values: Object.values(this.STATUS),
-          defaultValue: this.STATUS.NEW,
+        statusId: {
+          type: DT.INTEGER,
+          allowNull: false,
+          defaultValue: 1,
+          references: {
+            model: 'admin-users-statuses',
+            key: 'id',
+          },
+          onDelete: 'cascade',
         },
-        role: {
-          type: DT.ENUM,
-          values: Object.values(this.ROLE),
-          defaultValue: this.ROLE.USER,
+        roleId: {
+          type: DT.INTEGER,
+          allowNull: false,
+          defaultValue: 1,
+          references: {
+            model: 'admin-users-roles',
+            key: 'id',
+          },
+          onDelete: 'cascade',
+        },
+        tfaSecret: {
+          type: DT.STRING,
+          allowNull: true,
+        },
+        lastLogIn: {
+          type: DT.DATE,
         },
       },
       {
@@ -54,9 +73,22 @@ export class AdminUser extends Base {
     );
   }
 
+  static associate() {
+    this.belongsTo(AdminUsersRole, {
+      foreignKey: 'roleId',
+      targetKey: 'id',
+      as: 'role',
+    });
+    this.belongsTo(AdminUsersStatus, {
+      foreignKey: 'statusId',
+      targetKey: 'id',
+      as: 'status',
+    });
+  }
+
   static attrs(type = 'default') {
     const attributes = {
-      default: ['id', 'email', 'status', 'role'],
+      default: ['id', 'email', 'lastLogIn', 'createdAt', 'role', 'status'],
     };
 
     if (type in attributes) {
@@ -68,21 +100,68 @@ export class AdminUser extends Base {
 
   static findActive(id) {
     return this.findById(id, {
-      where: { status: { [Op.ne]: this.STATUS.BLOCKED } },
+      where: { statusId: { [Op.ne]: USER_STATUS_IDS.BLOCKED } },
+      include: [
+        {
+          model: AdminUsersRole,
+          attributes: ['id', 'role'],
+          as: 'role',
+        },
+        {
+          model: AdminUsersStatus,
+          attributes: ['id', 'status'],
+          as: 'status',
+        },
+      ],
     });
   }
 
-  static info(id) {
-    return this.findById(id);
+  static profileInfo(id) {
+    return this.findById(id, {
+      include: [
+        {
+          model: AdminUsersRole,
+          attributes: ['id', 'role'],
+          as: 'role',
+        },
+        {
+          model: AdminUsersStatus,
+          attributes: ['id', 'status'],
+          as: 'status',
+        },
+      ],
+    });
   }
 
-  static list() {
+  static usersCount() {
+    return this.count();
+  }
+
+  static list(limit = 25, offset = 0) {
     return this.findAll({
-      where: { role: { [Op.ne]: this.ROLE.SUPER_ADMIN } },
+      include: [
+        {
+          model: AdminUsersRole,
+          attributes: ['id', 'role'],
+          as: 'role',
+        },
+        {
+          model: AdminUsersStatus,
+          attributes: ['id', 'status'],
+          as: 'status',
+        },
+      ],
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
     });
   }
 
   checkPassword(password) {
     return compareHashString(password, this.get('password'));
+  }
+
+  tfaValidate(token) {
+    return adminTfaValidate(this.get('tfaSecret'), token);
   }
 }

@@ -2,10 +2,11 @@ import Base from '../Base';
 import X from '../Exception';
 
 import { AdminUser } from '../../models';
+import { USER_ROLES_IDS } from '../../config/constants.js';
 
 export default class AdminUserRemove extends Base {
   static get requiredPermissions() {
-    return [AdminUser.ROLE.SUPER_ADMIN, AdminUser.ROLE.ADMIN];
+    return [USER_ROLES_IDS.SUPER_ADMIN];
   }
 
   static get validationRules() {
