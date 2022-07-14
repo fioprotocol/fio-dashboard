@@ -6,6 +6,8 @@ import { LocationState, Path } from 'history';
 import { FIOSDK_LIB } from './api/fio';
 
 import { CONTAINED_FLOW_ACTIONS } from './constants/containedFlow';
+import { PURCHASE_PROVIDER, PAYMENT_OPTIONS } from './constants/purchase';
+import { CURRENCY_CODES } from './constants/common';
 
 import { ResultsData } from '../components/common/TransactionResults/types';
 
@@ -91,10 +93,19 @@ export type RegistrationRegistered = {
   transactions?: string[];
 };
 
+export type PurchaseProvider = typeof PURCHASE_PROVIDER[keyof typeof PURCHASE_PROVIDER];
+export type PaymentCurrency = typeof CURRENCY_CODES[keyof typeof CURRENCY_CODES];
+export type PaymentOptionsProps = typeof PAYMENT_OPTIONS[keyof typeof PAYMENT_OPTIONS];
+
 export type RegistrationResult = {
   errors: RegistrationErrors[];
   registered: RegistrationRegistered[];
   partial: string[];
+  purchaseProvider?: PurchaseProvider;
+  providerTxId?: string | number;
+  paymentCurrency?: PaymentCurrency;
+  convertedPaymentCurrency?: PaymentCurrency;
+  providerTxStatus?: number;
 };
 
 export type DeleteCartItem =
