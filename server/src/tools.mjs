@@ -71,6 +71,53 @@ export async function runService(service, { context = {}, params = {} }) {
   }
 }
 
+export async function runWsService(service, { wsConnection, context = {}, params = {} }) {
+  const startTime = Date.now();
+  const actionName = service.name;
+
+  const cleanParams = cleanup(params, service.paramsSecret, service.paramsCleanup);
+
+  try {
+    const result = await new service({
+      context,
+      wsConnection,
+    }).run(params);
+
+    const cleanResult = cleanup(result, service.resultSecret, service.resultCleanup);
+
+    logRequest({
+      type: 'info',
+      actionName,
+      params: cleanParams,
+      result: cleanResult,
+      startTime,
+      userId: context.id,
+    });
+
+    return result;
+  } catch (error) {
+    if (error instanceof Exception) {
+      logRequest({
+        type: 'info',
+        actionName,
+        params: cleanParams,
+        result: error,
+        startTime,
+      });
+    } else {
+      logRequest({
+        type: 'error',
+        actionName,
+        params: cleanParams,
+        result: error,
+        startTime,
+      });
+    }
+
+    throw error;
+  }
+}
+
 export function makeServiceRunner(
   service,
   paramsBuilder = defaultParamsBuilder,
@@ -196,4 +243,8 @@ export function adminTfaValidate(base32secret, userToken) {
     encoding: 'base32',
     token: userToken,
   });
+}
+
+export async function sleep(ms = 1000) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
