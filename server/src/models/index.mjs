@@ -3,6 +3,8 @@ import db from '../db';
 export const {
   Action,
   AdminUser,
+  AdminUsersStatus,
+  AdminUsersRole,
   User,
   Notification,
   Nonce,

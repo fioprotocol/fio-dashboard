@@ -6,7 +6,8 @@ import AuthNonce from '../services/auth/Nonce';
 import AuthUsername from '../services/auth/Username';
 import AdminAuthCreate from '../services/auth/AdminCreate';
 import AdminAuthCheck from '../services/auth/AdminCheck';
-import AdminInvite from '../services/auth/AdminInvite';
+import AdminLogin from '../services/auth/AdminLogin.mjs';
+import AuthAdminCreateCheck from '../services/auth/AdminCreateCheck.mjs';
 
 export default {
   create: makeServiceRunner(AuthCreate, req => req.body),
@@ -18,8 +19,10 @@ export default {
   },
 
   adminCreate: makeServiceRunner(AdminAuthCreate, req => req.body),
+  adminCreateCheck: makeServiceRunner(AuthAdminCreateCheck, req => req.query),
+  adminLogin: makeServiceRunner(AdminLogin, req => req.body),
+
   async checkAdminAuth(req, res, next) {
     return await authCheck(req, res, next, AdminAuthCheck, true);
   },
-  adminInvite: makeServiceRunner(AdminInvite, req => req.body),
 };
