@@ -23,8 +23,8 @@ router.get(
   '/auth/new-device-two-factor/check-rejected',
   routes.newDeviceTwoFactor.checkRejected,
 );
-router.post('/admin-auth', routes.auth.adminCreate);
-router.post('/admin-auth/invite', routes.auth.adminInvite);
+router.post('/admin-auth', routes.auth.adminLogin);
+router.post('/admin-auth/create', routes.auth.adminCreate);
 
 router.post('/actions/:hash', routes.actions.submit);
 
@@ -40,12 +40,16 @@ router.post('/users/resendConfirmEmail', routes.users.resendEmailConfirm);
 router.post('/users/update-email-request', checkAuth, routes.users.updateEmailRequest);
 router.post('/users/update-email-revert', checkAuth, routes.users.updateEmailRevert);
 
-router.get('/admin-users/me', checkAdminAuth, routes.adminUsers.info);
-router.get('/admin-users', checkAdminAuth, routes.adminUsers.list);
-router.get('/admin-users/:id', checkAdminAuth, routes.adminUsers.show);
+router.get('/admin-users/me', checkAdminAuth, routes.adminUsers.personalInfo);
+router.get('/admin-users/list', checkAdminAuth, routes.adminUsers.adminsList);
+router.get('/admin-users/admin/:id', checkAdminAuth, routes.adminUsers.adminUserInfo);
 router.put('/admin-users', checkAdminAuth, routes.adminUsers.update);
 router.delete('/admin-users', checkAdminAuth, routes.adminUsers.remove);
 router.post('/admin-users/invite', checkAdminAuth, routes.adminUsers.invite);
+router.get('/admin-users/roles', checkAdminAuth, routes.adminUsers.rolesList);
+router.get('/admin-users/statuses', checkAdminAuth, routes.adminUsers.statusesList);
+router.get('/admin-users/orders', checkAdminAuth, routes.adminUsers.ordersList);
+router.get('/admin-users/orders/:id', checkAdminAuth, routes.adminUsers.order);
 
 router.get('/notifications', checkAuth, routes.notifications.list);
 router.post('/notifications', checkAuth, routes.notifications.create);

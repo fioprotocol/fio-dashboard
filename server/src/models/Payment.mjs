@@ -120,7 +120,17 @@ export class Payment extends Base {
     });
   }
 
-  static format({ id, price, currency, status, spentType, processor }) {
+  static format({
+    id,
+    price,
+    currency,
+    status,
+    spentType,
+    processor,
+    createdAt,
+    updatedAt,
+    PaymentEventLogs: paymentEventLogs,
+  }) {
     return {
       id,
       price,
@@ -128,6 +138,12 @@ export class Payment extends Base {
       status,
       spentType,
       processor,
+      createdAt,
+      updatedAt,
+      paymentEventLogs:
+        paymentEventLogs && paymentEventLogs.length
+          ? paymentEventLogs.map(item => PaymentEventLog.format(item))
+          : [],
     };
   }
 }
