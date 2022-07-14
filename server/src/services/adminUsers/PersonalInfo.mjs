@@ -2,8 +2,13 @@ import Base from '../Base';
 import X from '../Exception';
 
 import { AdminUser } from '../../models';
+import { USER_ROLES_IDS } from '../../config/constants.js';
 
-export default class AdminUserInfo extends Base {
+export default class PersonalInfo extends Base {
+  static get requiredPermissions() {
+    return [USER_ROLES_IDS.ADMIN, USER_ROLES_IDS.SUPER_ADMIN];
+  }
+
   async execute() {
     if (!this.context.adminId) {
       throw new X({
@@ -28,6 +33,7 @@ export default class AdminUserInfo extends Base {
     const userObj = adminUser.json();
 
     delete userObj.password;
+    delete userObj.tfaSecret;
 
     return {
       data: userObj,

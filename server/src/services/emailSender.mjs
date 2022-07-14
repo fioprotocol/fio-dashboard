@@ -20,6 +20,7 @@ class EmailSender {
       ...data,
       mainUrl: config.mainUrl,
       supportLink: config.supportLink,
+      email,
     };
     const template = await this.getTemplate(type, sendData);
     const emailTo = process.env.TEST_RECIEVER_EMAIL
@@ -103,7 +104,7 @@ class EmailSender {
         return {
           subject: 'FIO Dashboard - please confirm your email',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}confirm-admin-email/${sendData.hash}`,
+            link: `${sendData.mainUrl}confirm-admin-email/${sendData.hash}?email=${sendData.email}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),

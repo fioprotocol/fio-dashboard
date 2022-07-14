@@ -2,10 +2,11 @@ import Base from '../Base';
 import X from '../Exception';
 
 import { AdminUser } from '../../models';
+import { USER_ROLES_IDS } from '../../config/constants.js';
 
-export default class UsersShow extends Base {
+export default class AdminUserInfo extends Base {
   static get requiredPermissions() {
-    return [AdminUser.ROLE.ADMIN];
+    return [USER_ROLES_IDS.ADMIN, USER_ROLES_IDS.SUPER_ADMIN];
   }
 
   static get validationRules() {
@@ -15,7 +16,7 @@ export default class UsersShow extends Base {
   }
 
   async execute({ id }) {
-    const user = await AdminUser.info(id);
+    const user = await AdminUser.profileInfo(id);
 
     if (!user) {
       throw new X({
