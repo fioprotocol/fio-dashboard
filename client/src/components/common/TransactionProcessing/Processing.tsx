@@ -3,7 +3,7 @@ import React from 'react';
 import Modal from '../../Modal/Modal';
 import FioLoader from '../FioLoader/FioLoader';
 
-import classes from '../../CheckoutPurchaseContainer/CheckoutPurchaseContainer.module.scss';
+import classes from './Processing.module.scss';
 
 const DEFAULT_TEXT = {
   title: 'Transaction Processing',
