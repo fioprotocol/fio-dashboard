@@ -41,3 +41,14 @@ export const currencyString = (
     currency,
   })}`;
 };
+
+export const formatDateToLocale = (date: string) => {
+  return new Date(date).toLocaleDateString([], {
+    year: 'numeric',
+    month: '2-digit',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    hour12: true,
+  });
+};

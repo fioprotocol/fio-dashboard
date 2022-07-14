@@ -1,15 +1,19 @@
 import { createSelector } from 'reselect';
 
-import { USER_STATUSES, ADMIN_USER_ROLES } from '../../constants/common';
+import {
+  ADMIN_USER_ROLES,
+  ADMIN_USER_STATUSES,
+  USER_STATUSES,
+} from '../../constants/common';
 import { prefix } from './actions';
 
 import { ReduxState } from '../init';
 import {
+  AdminUser,
   AnyType,
   EmailConfirmationResult,
   LastAuthData,
   User,
-  AdminUser,
 } from '../../types';
 
 export const loading = (state: ReduxState): boolean => state[prefix].loading;
@@ -18,7 +22,7 @@ export const adminUser = (state: ReduxState): AdminUser | null =>
   state[prefix].adminUser;
 export const adminRole = createSelector(
   adminUser,
-  adminUser => adminUser && adminUser.role,
+  adminUser => adminUser && adminUser.role.id,
 );
 export const email = (state: ReduxState): string | null =>
   state[prefix].user && state[prefix].user.email;
@@ -57,6 +61,8 @@ export const emailConfirmationSent = (state: ReduxState): boolean =>
   state[prefix].emailConfirmationSent;
 export const profileRefreshed = (state: ReduxState): boolean =>
   state[prefix].profileRefreshed;
+export const adminProfileRefreshed = (state: ReduxState): boolean =>
+  state[prefix].adminProfileRefreshed;
 export const changeRecoveryQuestionsResults = (
   state: ReduxState,
 ): { status?: number } => state[prefix].changeRecoveryQuestionsResults;
@@ -93,11 +99,11 @@ export const isNotActiveUser = createSelector(
 export const isNotActiveAdminUser = createSelector(
   isAdminAuthenticated,
   adminUser,
-  profileRefreshed,
-  (isAdminAuthenticated, adminUser, profileRefreshed) =>
-    profileRefreshed &&
+  adminProfileRefreshed,
+  (isAdminAuthenticated, adminUser, adminProfileRefreshed) =>
+    adminProfileRefreshed &&
     isAdminAuthenticated &&
-    adminUser.status !== USER_STATUSES.ACTIVE,
+    adminUser.status.id !== ADMIN_USER_STATUSES.ACTIVE,
 );
 
 export const isNewEmailNotVerified = createSelector(
