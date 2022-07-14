@@ -57,7 +57,6 @@ const MainLayout: React.FC<Props> = props => {
     loadProfile,
     edgeContextInit,
     isContainedFlow,
-    init,
   } = props;
 
   const isDesktop = useCheckIfDesktop();

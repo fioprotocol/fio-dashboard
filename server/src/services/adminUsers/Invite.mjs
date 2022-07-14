@@ -4,45 +4,51 @@ import X from '../Exception';
 import emailSender from '../emailSender';
 import { templates } from '../../emails/emailTemplate';
 
-import { AdminUser, Action } from '../../models';
+import { Action, AdminUser } from '../../models';
+import { USER_ROLES_IDS } from '../../config/constants.js';
 
 export default class Invite extends Base {
+  static get requiredPermissions() {
+    return [USER_ROLES_IDS.ADMIN, USER_ROLES_IDS.SUPER_ADMIN];
+  }
+
   static get validationRules() {
     return {
-      inviteEmail: ['required', 'string'],
+      email: ['required', 'string'],
     };
   }
 
-  async execute({ inviteEmail }) {
-    if (
-      await AdminUser.findOneWhere({
-        email: inviteEmail,
-      })
-    ) {
+  async execute({ email }) {
+    const existAdminUser = await AdminUser.findOne({
+      where: {
+        email,
+      },
+    });
+
+    if (existAdminUser && existAdminUser.id) {
       throw new X({
-        code: 'NOT_UNIQUE',
+        code: 'INVITATION_FAILED',
         fields: {
-          inviteEmail: 'NOT_UNIQUE',
+          email: 'USER_ALREADY_EXIST',
         },
       });
     }
 
-    const adminUser = new AdminUser({
-      email: inviteEmail,
+    const invitedAdminUser = new AdminUser({
+      email,
     });
-
-    await adminUser.save();
+    await invitedAdminUser.save();
 
     const action = await new Action({
       type: Action.TYPE.CONFIRM_ADMIN_EMAIL,
       hash: Action.generateHash(),
       data: {
-        adminId: adminUser.id,
-        email: adminUser.email,
+        adminId: invitedAdminUser.id,
+        email: invitedAdminUser.email,
       },
     }).save();
 
-    await emailSender.send(templates.confirmAdminEmail, inviteEmail, {
+    await emailSender.send(templates.confirmAdminEmail, email, {
       hash: action.hash,
     });
 
@@ -52,7 +58,7 @@ export default class Invite extends Base {
   }
 
   static get paramsSecret() {
-    return ['inviteEmail'];
+    return ['email'];
   }
 
   static get resultSecret() {
