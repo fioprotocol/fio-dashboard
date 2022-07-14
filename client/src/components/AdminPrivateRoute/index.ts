@@ -4,9 +4,9 @@ import { createStructuredSelector } from 'reselect';
 import AdminPrivateRoute from './AdminPrivateRoute';
 
 import {
-  loading,
+  adminProfileRefreshed,
   isAdminAuthenticated,
-  isAuthenticated as isAuthUser,
+  loading,
 } from '../../redux/profile/selectors';
 
 import { compose } from '../../utils';
@@ -14,7 +14,7 @@ import { compose } from '../../utils';
 const reduxConnect = connect(
   createStructuredSelector({
     isAdminAuthenticated,
-    isAuthUser,
+    adminProfileRefreshed,
     loading,
   }),
   null,

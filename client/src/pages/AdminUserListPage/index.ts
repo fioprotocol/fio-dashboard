@@ -3,9 +3,18 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 
-import { getAdminList, removeAdminUser } from '../../redux/admin/actions';
+import {
+  getAdminUserProfile,
+  getAdminUsersList,
+  removeAdminUser,
+} from '../../redux/admin/actions';
 
-import { loading, adminUsersList } from '../../redux/admin/selectors';
+import {
+  adminUserProfile,
+  adminUsersCount,
+  adminUsersList,
+  loading,
+} from '../../redux/admin/selectors';
 
 import AdminUserListPage from './AdminUserListPage';
 
@@ -13,9 +22,12 @@ const reduxConnect = connect(
   createStructuredSelector({
     loading,
     adminUsersList,
+    adminUsersCount,
+    adminUserProfile,
   }),
   {
-    getAdminList,
+    getAdminList: getAdminUsersList,
+    getAdminUserProfile,
     removeAdminUser,
   },
 );

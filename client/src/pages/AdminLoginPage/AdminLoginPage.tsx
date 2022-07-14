@@ -1,21 +1,24 @@
 import React from 'react';
-import { Form, Field, FormRenderProps } from 'react-final-form';
+import { Field, Form, FormRenderProps } from 'react-final-form';
 import { Redirect } from 'react-router';
 
-import { ROUTES } from '../../constants/routes';
-
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
-import { TextInput } from '../../components/Input/TextInput';
+import Input from '../../components/Input/Input';
+
+import { formValidation } from './validation';
+import { ROUTES } from '../../constants/routes';
+import { AdminAuthResponse } from '../../types';
 
 import classes from './AdminLoginPage.module.scss';
 
 type FormValues = {
   email: string;
   password: string;
+  tfaToken: string;
 };
 
 type Props = {
-  login: (values: FormValues) => void;
+  login: (values: FormValues) => Promise<AdminAuthResponse>;
   loading: boolean;
   isAdminAuthenticated: boolean;
 };
@@ -26,40 +29,57 @@ const AdminLogin: React.FC<Props> = props => {
   if (isAdminAuthenticated) return <Redirect to={ROUTES.ADMIN_HOME} />;
 
   const onSubmit = (values: FormValues) => {
-    login(values);
+    return login(values).then(res => {
+      if (res?.error?.fields) return res.error.fields;
+      return null;
+    });
   };
 
-  const formRender = (formRenderProps: FormRenderProps) => {
-    const { handleSubmit } = formRenderProps;
+  return (
+    <div>
+      <Form onSubmit={onSubmit} validate={formValidation.validateForm}>
+        {(formRenderProps: FormRenderProps) => {
+          const { handleSubmit, valid } = formRenderProps;
 
-    return (
-      <div className={classes.container}>
-        <div className={classes.formContainer}>
-          <h2 className={classes.title}>Login</h2>
-          <form className={classes.form} onSubmit={handleSubmit}>
-            <Field
-              component={TextInput}
-              type="text"
-              name="email"
-              placeholder="Enter Your Email"
-              label="Email"
-            />
-            <Field
-              component={TextInput}
-              type="password"
-              name="password"
-              placeholder="Enter Your Password"
-              label="Password"
-            />
-            <SubmitButton text="Login" loading={loading} />
-          </form>
-        </div>
-      </div>
-    );
-  };
-
-  // todo: handle form errors
-  return <Form onSubmit={onSubmit}>{formRender}</Form>;
+          return (
+            <div className={classes.container}>
+              <div className={classes.formContainer}>
+                <h2 className={classes.title}>Login</h2>
+                <form className={classes.form} onSubmit={handleSubmit}>
+                  <Field
+                    component={Input}
+                    type="text"
+                    name="email"
+                    placeholder="Enter Your Email"
+                    label="Email"
+                  />
+                  <Field
+                    component={Input}
+                    type="password"
+                    name="password"
+                    placeholder="Enter Your Password"
+                    label="Password"
+                  />
+                  <Field
+                    component={Input}
+                    type="number"
+                    name="tfaToken"
+                    placeholder="Enter 2FA code"
+                    label="2FA"
+                  />
+                  <SubmitButton
+                    text="Login"
+                    loading={loading}
+                    disabled={!valid}
+                  />
+                </form>
+              </div>
+            </div>
+          );
+        }}
+      </Form>
+    </div>
+  );
 };
 
 export default AdminLogin;

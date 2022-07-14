@@ -87,8 +87,6 @@ const MainLayout: React.FC<Props> = props => {
       {isAuthenticated && <WalletsDataFlow />}
       {isAuthenticated && <TxHistoryService />}
       {(isAuthenticated || isAdminAuthenticated) && isDesktop && <Navigation />}
-      {(!isHomePage || isAuthenticated) && <Notifications />}
-      {isAuthenticated && isDesktop && <Navigation />}
       {(!isHomePage || (isAuthenticated && !isContainedFlow)) && (
         <Notifications />
       )}

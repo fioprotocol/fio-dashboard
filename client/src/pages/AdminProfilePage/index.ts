@@ -5,10 +5,10 @@ import { compose } from '../../utils';
 
 import {
   adminUser,
-  isAuthenticated as isAuthUser,
+  isAdminAuthenticated as isAuthUser,
 } from '../../redux/profile/selectors';
 
-import AdminPage from './AdminPage';
+import AdminProfilePage from './AdminProfilePage';
 
 const reduxConnect = connect(
   createStructuredSelector({
@@ -18,4 +18,4 @@ const reduxConnect = connect(
   {},
 );
 
-export default compose(reduxConnect)(AdminPage);
+export default compose(reduxConnect)(AdminProfilePage);

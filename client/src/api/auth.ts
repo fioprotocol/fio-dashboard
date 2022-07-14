@@ -19,7 +19,6 @@ import {
   AuthUpdateEmailRevertResponse,
   AuthUpdateNewDeviceResponse,
   AuthUsernameResponse,
-  AdminConfirmResponse,
 } from './responses';
 
 export default class Auth extends Base {
@@ -148,19 +147,27 @@ export default class Auth extends Base {
     });
   }
 
-  adminLogin(email: string, password: string) {
-    return this.apiClient.post('admin-auth', { data: { email, password } });
-  }
-
   adminProfile(): Promise<AuthProfileResponse> {
-    return this.apiClient.get('admin-users/me');
+    return this.apiClient.get('admin/me');
   }
 
-  confirmAdmin(hash: string): Promise<AdminConfirmResponse> {
-    return this.apiClient.post(`actions/admin/${hash}`, {});
+  async adminLogout(): Promise<AuthLogoutResponse> {
+    return null;
   }
 
-  adminInviteAuth(adminId: string): Promise<AuthLoginResponse> {
-    return this.apiClient.post('admin-auth/invite', { adminId });
+  adminLogin(email: string, password: string, tfaToken: string) {
+    return this.apiClient.post('admin-auth', {
+      data: { email, password, tfaToken },
+    });
+  }
+
+  confirmAdminByEmail(values: {
+    email: string;
+    hash: string;
+    password: string;
+    tfaToken: string;
+    tfaSecret: string;
+  }): Promise<AuthLoginResponse> {
+    return this.apiClient.post('admin-auth/create', { data: { ...values } });
   }
 }

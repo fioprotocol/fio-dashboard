@@ -10,7 +10,7 @@ import { ROUTES } from '../../constants/routes';
 
 type Props = {
   isAdminAuthenticated: boolean;
-  isAuthUser: boolean;
+  adminProfileRefreshed: boolean;
   loading: boolean;
 };
 
@@ -18,12 +18,11 @@ const AdminPrivateRoute: React.FC<Props & RouteProps> = props => {
   const {
     component: Component,
     isAdminAuthenticated,
-    isAuthUser,
     loading,
+    adminProfileRefreshed,
   } = props;
-  if (isAuthUser) return <Redirect to={ROUTES.HOME} />;
 
-  if (!isAdminAuthenticated && !loading)
+  if (!isAdminAuthenticated && !loading && adminProfileRefreshed)
     return <Redirect to={ROUTES.ADMIN_LOGIN} />;
 
   return (

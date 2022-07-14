@@ -8,7 +8,7 @@ import { ROUTES, TOKENS_TAB_ROUTES } from '../../constants/routes';
 
 import { useIsAdminRoute } from '../../hooks/admin';
 
-import { LINKS, LINK_LABELS } from '../../constants/labels';
+import { LINK_LABELS, LINKS } from '../../constants/labels';
 
 import classes from './Navigation.module.scss';
 
@@ -22,8 +22,18 @@ const userNavItems: string[] = [
   // LINKS.PROTOCOL_UPDATES,
 ];
 
-const adminNavItems: string[] = [];
-const superAdminNavItems: string[] = [LINKS.ADMIN_USERS];
+const adminNavItems: string[] = [
+  LINKS.ADMIN_HOME,
+  LINKS.ADMIN_REGULAR_USERS,
+  LINKS.ADMIN_USERS,
+  LINKS.ADMIN_PROFILE,
+];
+const superAdminNavItems: string[] = [
+  LINKS.ADMIN_HOME,
+  LINKS.ADMIN_REGULAR_USERS,
+  LINKS.ADMIN_USERS,
+  LINKS.ADMIN_PROFILE,
+];
 
 type Props = {
   isNotActiveUser: boolean;

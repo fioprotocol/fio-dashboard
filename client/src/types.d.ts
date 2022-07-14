@@ -504,9 +504,72 @@ export type FioActionExecuted = {
   result: ResultsData | RegistrationResult;
 };
 
+export type AdminResponseFailure = {
+  error?: {
+    fields?: { [fieldName: string]: AnyType };
+  };
+  code?: string;
+};
+
+export type AdminJwtResponse = {
+  data?: { jwt: string };
+  code?: string;
+};
+
+export type AdminAuthResponse = AdminResponseFailure & AdminJwtResponse;
+
 export type AdminUser = {
   id: string;
   email: string;
-  status: string;
-  role: string;
+  status: { status: string; id: number };
+  role: { role: string; id: number };
+  lastLogIn?: string;
+  createdAt: string;
+};
+
+export type AdminUserProfile = {
+  id: string;
+  email: string;
+  status: { status: string; id: number };
+  role: { role: string; id: number };
+  lastLogIn?: string;
+  createdAt: string;
+};
+
+export type OrderItem = {
+  id: string;
+  number: string;
+  total: string;
+  publicKey: string;
+  createdAt: string;
+  status: number;
+  items?: {
+    action: string;
+    address?: string;
+    createdAt: string;
+    domain?: string;
+    id: string;
+    price: string;
+    priceCurrency: string;
+    updatedAt: string;
+  }[];
+  payments?: {
+    createdAt: string;
+    currency?: string;
+    paymentEventLogs: {
+      id: string;
+      status: number;
+      statusNotes?: string;
+      createdAt: string;
+      updatedAt: string;
+    }[];
+    price?: string;
+    processor: string;
+    spentType: number;
+    status: number;
+    updatedAt: string;
+    id: string;
+  }[];
+  user?: { id: string; email: string };
+  updatedAt: string;
 };
