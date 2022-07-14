@@ -48,11 +48,12 @@ import RejectFioRequestPage from './pages/RejectFioRequestPage';
 import EmailConfirmationResultPage from './pages/EmailConfirmationResultsPage';
 
 import AdminPrivateRoute from './components/AdminPrivateRoute';
-import AdminPage from './pages/AdminPage';
+import AdminOrdersPage from './pages/AdminOrdersPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminUserListPage from './pages/AdminUserListPage';
 import AdminEmailConfirmPage from './pages/AdminEmailConfirmPage';
-import AdminSetPasswordPage from './pages/AdminSetPasswordPage';
+import AdminRegularUsersList from './pages/AdminRegularUsersListPage';
+import AdminProfilePage from './pages/AdminProfilePage';
 
 import { ROUTES } from './constants/routes';
 
@@ -64,11 +65,6 @@ const Routes = (): React.ReactElement => (
       <Switch>
         <Route path={ROUTES.HOME} component={HomePage} exact />
         <Route path={ROUTES.REF_PROFILE_HOME} component={RefHomePage} exact />
-        <AdminPrivateRoute
-          path={ROUTES.ADMIN_HOME}
-          component={AdminPage}
-          exact
-        />
         <Route
           path={ROUTES.CONFIRM_EMAIL}
           component={EmailConfirmationPage}
@@ -240,23 +236,30 @@ const Routes = (): React.ReactElement => (
           exact
         />
 
+        <AdminPrivateRoute
+          path={ROUTES.ADMIN_HOME}
+          component={AdminOrdersPage}
+          exact
+        />
         <Route path={ROUTES.ADMIN_LOGIN} component={AdminLoginPage} exact />
-
         <AdminPrivateRoute
           path={ROUTES.ADMIN_USERS}
           component={AdminUserListPage}
           exact
         />
-
         <Route
           path={ROUTES.ADMIN_CONFIRM_EMAIL}
           component={AdminEmailConfirmPage}
           exact
         />
-
         <AdminPrivateRoute
-          path={ROUTES.ADMIN_SET_PASSWORD}
-          component={AdminSetPasswordPage}
+          path={ROUTES.ADMIN_REGULAR_USERS}
+          component={AdminRegularUsersList}
+          exact
+        />
+        <AdminPrivateRoute
+          path={ROUTES.ADMIN_PROFILE}
+          component={AdminProfilePage}
           exact
         />
 

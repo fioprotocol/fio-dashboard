@@ -53,7 +53,7 @@ export class Action extends Base {
   async confirmAdminEmail() {
     const adminUser = await AdminUser.findById(this.data.adminId);
 
-    return adminUser.update({ status: AdminUser.STATUS.ACTIVE });
+    return adminUser.update({ statusType: 2 });
   }
 
   static generateHash() {
