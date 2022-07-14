@@ -2,8 +2,13 @@ import Base from '../Base';
 import X from '../Exception';
 
 import { AdminUser } from '../../models';
+import { USER_ROLES_IDS } from '../../config/constants.js';
 
 export default class AdminUserUpdate extends Base {
+  static get requiredPermissions() {
+    return [USER_ROLES_IDS.ADMIN, USER_ROLES_IDS.SUPER_ADMIN];
+  }
+
   static get validationRules() {
     return {
       data: [

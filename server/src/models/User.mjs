@@ -114,7 +114,15 @@ export class User extends Base {
     return this.findById(id);
   }
 
-  static list() {
-    return this.findAll();
+  static usersCount() {
+    return this.count();
+  }
+
+  static list(limit = 25, offset = 0) {
+    return this.findAll({
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+    });
   }
 }
