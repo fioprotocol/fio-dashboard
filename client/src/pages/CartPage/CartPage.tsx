@@ -8,11 +8,13 @@ import Cart from '../../components/Cart/Cart';
 import CartAmount from '../../components/Cart/CartAmount';
 
 import { ROUTES } from '../../constants/routes';
+import { ACTIONS } from '../../constants/fio';
+import { CURRENCY_CODES } from '../../constants/common';
 
 import MathOp from '../../util/math';
 import { handleFreeAddressCart, totalCost } from '../../utils';
-import { useWalletBalances } from '../../util/hooks';
 import { convertFioPrices } from '../../util/prices';
+import { useWalletBalances } from '../../util/hooks';
 import useEffectOnce from '../../hooks/general';
 
 import apis from '../../api';
@@ -25,6 +27,7 @@ import {
   PaymentOptionsProps,
   Prices,
 } from '../../types';
+import { CreateOrderActionData } from '../../redux/types';
 
 type Props = {
   cartItems: CartItem[];
@@ -40,6 +43,7 @@ type Props = {
   refreshBalance: (publicKey: string) => void;
   recalculate: (cartItems: CartItem[]) => {};
   deleteItem: (params: DeleteCartItem) => {};
+  createOrder: (params: CreateOrderActionData) => {};
 };
 
 const CartPage: React.FC<Props> = props => {
@@ -55,6 +59,7 @@ const CartPage: React.FC<Props> = props => {
     refreshBalance,
     setWallet,
     recalculate,
+    createOrder,
   } = props;
 
   const lastLocation = useLastLocation();
@@ -84,6 +89,33 @@ const CartPage: React.FC<Props> = props => {
   const {
     nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
   } = prices;
+
+  const checkout = (paymentOption: PaymentOptionsProps) => {
+    const { costUsdc: totalUsdc } = totalCost(cartItems, roe);
+
+    createOrder({
+      total: totalUsdc,
+      roe,
+      publicKey: paymentWalletPublicKey,
+      items: cartItems.map(
+        ({ address, domain, isFree, costNativeFio, costUsdc }) => ({
+          action: address
+            ? ACTIONS.registerFioAddress
+            : ACTIONS.registerFioDomain,
+          address,
+          domain,
+          params: {
+            owner_fio_public_key: paymentWalletPublicKey,
+          },
+          nativeFio: `${costNativeFio}`,
+          price: costUsdc,
+          priceCurrency: CURRENCY_CODES.USDC,
+        }),
+      ),
+    });
+
+    return history.push(ROUTES.CHECKOUT, { paymentOption });
+  };
 
   const recalculateBalance = () => {
     const updatedCartItems = cartItems.map(item => {
@@ -146,8 +178,7 @@ const CartPage: React.FC<Props> = props => {
   };
 
   const onPaymentChoose = (paymentOption: PaymentOptionsProps) => {
-    if (allowCheckout() && paymentOption)
-      return history.push(ROUTES.CHECKOUT, { paymentOption });
+    if (allowCheckout() && paymentOption) checkout(paymentOption);
   };
 
   useEffectOnce(() => {
