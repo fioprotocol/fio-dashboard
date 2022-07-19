@@ -1,8 +1,8 @@
 import Base from '../Base';
-import { AdminUser } from '../../models';
+import { User } from '../../models';
 import { ADMIN_ROLES_IDS } from '../../config/constants.js';
 
-export default class AdminUsersList extends Base {
+export default class RegularUsersList extends Base {
   static get requiredPermissions() {
     return [ADMIN_ROLES_IDS.ADMIN, ADMIN_ROLES_IDS.SUPER_ADMIN];
   }
@@ -15,12 +15,12 @@ export default class AdminUsersList extends Base {
   }
 
   async execute({ limit = 25, offset = 0 }) {
-    const adminUsers = await AdminUser.list(limit, offset);
-    const usersCount = await AdminUser.usersCount();
+    const users = await User.list(limit, offset);
+    const usersCount = await User.usersCount();
 
     return {
       data: {
-        users: adminUsers.map(adminUser => adminUser.json()),
+        users: users.map(user => user.json()),
         maxCount: usersCount,
       },
     };
