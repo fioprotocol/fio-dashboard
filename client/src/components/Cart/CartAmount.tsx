@@ -5,19 +5,19 @@ import PaymentsBlock from './components/PaymentsBlock';
 
 import { totalCost } from '../../utils';
 
-import { CartItem as CartItemType, FioWalletDoublet } from '../../types';
+import { CartItem, FioWalletDoublet, PaymentOptionsProps } from '../../types';
 
 import classes from './Cart.module.scss';
 
 type Props = {
-  cartItems: CartItemType[];
+  cartItems: CartItem[];
   isFree: boolean;
   paymentWalletPublicKey: string;
   hasLowBalance: boolean;
   roe: number;
   totalCartNativeAmount: number;
   userWallets: FioWalletDoublet[];
-  recalculateBalance: () => void;
+  onPaymentChoose: (paymentOption: PaymentOptionsProps) => void;
 };
 
 const CartAmount: React.FC<Props> = props => {
@@ -29,7 +29,7 @@ const CartAmount: React.FC<Props> = props => {
     roe,
     totalCartNativeAmount,
     userWallets,
-    recalculateBalance,
+    onPaymentChoose,
   } = props;
 
   const { costFio, costUsdc } = totalCost(cartItems, roe);
@@ -56,7 +56,7 @@ const CartAmount: React.FC<Props> = props => {
           hasLowBalance={hasLowBalance}
           cartItems={cartItems}
           paymentWalletPublicKey={paymentWalletPublicKey}
-          recalculateBalance={recalculateBalance}
+          onPaymentChoose={onPaymentChoose}
           totalCartNativeAmount={totalCartNativeAmount}
           userWallets={userWallets}
         />
