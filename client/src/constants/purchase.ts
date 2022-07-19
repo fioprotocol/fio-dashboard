@@ -23,10 +23,16 @@ export const PURCHASE_PROVIDER_LABEL = {
 };
 
 export const PAYMENT_OPTIONS = {
-  FIO: 'fio',
-  CREDIT_CARD: 'creditCard',
-  CRYPTO: 'crypto',
+  FIO: 'FIO',
+  CREDIT_CARD: 'CREDIT_CARD',
+  CRYPTO: 'CRYPTO',
 } as const;
+
+export const PAYMENT_OPTION_TITLE = {
+  [PAYMENT_OPTIONS.FIO]: 'Pay with FIO',
+  [PAYMENT_OPTIONS.CREDIT_CARD]: 'Pay with card',
+  [PAYMENT_OPTIONS.CRYPTO]: 'Pay with crypto',
+};
 
 export const PURCHASE_RESULTS_TITLES: { [key: number]: { title: string } } = {
   [PURCHASE_RESULTS_STATUS.DONE]: {
