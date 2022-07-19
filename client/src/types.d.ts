@@ -509,6 +509,11 @@ export type FioActionExecuted = {
   result: ResultsData | RegistrationResult;
 };
 
+export type Order = {
+  id: number;
+  number: string;
+};
+
 export type AdminResponseFailure = {
   error?: {
     fields?: { [fieldName: string]: AnyType };
