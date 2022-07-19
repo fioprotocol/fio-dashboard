@@ -1,31 +1,24 @@
 import Base from '../Base';
 import X from '../Exception';
 
-import { AdminUser } from '../../models';
+import { User } from '../../models';
 import { ADMIN_ROLES_IDS } from '../../config/constants.js';
 
-export default class AdminUserUpdate extends Base {
+export default class RegularUserInfo extends Base {
   static get requiredPermissions() {
     return [ADMIN_ROLES_IDS.ADMIN, ADMIN_ROLES_IDS.SUPER_ADMIN];
   }
 
   static get validationRules() {
     return {
-      data: [
-        'required',
-        {
-          nested_object: {
-            email: { min_length: 2 },
-          },
-        },
-      ],
+      id: ['required'],
     };
   }
 
-  async execute({ data }) {
-    const adminUser = await AdminUser.findActive(this.context.adminId);
+  async execute({ id }) {
+    const user = await User.info(id);
 
-    if (!adminUser) {
+    if (!user) {
       throw new X({
         code: 'NOT_FOUND',
         fields: {
@@ -34,18 +27,16 @@ export default class AdminUserUpdate extends Base {
       });
     }
 
-    await adminUser.update(data);
-
     return {
-      data: adminUser.json(),
+      data: user.json(),
     };
   }
 
   static get paramsSecret() {
-    return ['data.email'];
+    return [];
   }
 
   static get resultSecret() {
-    return ['data.email'];
+    return ['data.email', 'data.location'];
   }
 }

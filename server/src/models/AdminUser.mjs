@@ -5,20 +5,20 @@ import { AdminUsersStatus } from './AdminUsersStatus.mjs';
 import { AdminUsersRole } from './AdminUsersRole.mjs';
 
 import { adminTfaValidate, compareHashString, generateHash } from '../tools.mjs';
-import { USER_ROLES_IDS, USER_STATUS_IDS } from '../config/constants';
+import { ADMIN_ROLES_IDS, ADMIN_STATUS_IDS } from '../config/constants';
 
 const { DataTypes: DT, Op } = Sequelize;
 
 export class AdminUser extends Base {
   static get ROLE() {
     return {
-      SUPER_ADMIN: USER_ROLES_IDS.SUPER_ADMIN,
-      ADMIN: USER_ROLES_IDS.ADMIN,
+      SUPER_ADMIN: ADMIN_ROLES_IDS.SUPER_ADMIN,
+      ADMIN: ADMIN_ROLES_IDS.ADMIN,
     };
   }
 
   static get STATUS() {
-    return USER_STATUS_IDS;
+    return ADMIN_STATUS_IDS;
   }
 
   static init(sequelize) {
@@ -100,7 +100,7 @@ export class AdminUser extends Base {
 
   static findActive(id) {
     return this.findById(id, {
-      where: { statusId: { [Op.ne]: USER_STATUS_IDS.BLOCKED } },
+      where: { statusId: { [Op.ne]: ADMIN_STATUS_IDS.BLOCKED } },
       include: [
         {
           model: AdminUsersRole,

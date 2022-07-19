@@ -4,12 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
 import { Navigation } from './components/Navigation';
+
 import { ROUTES } from '../../constants/routes';
+import { useIsAdminRoute } from '../../hooks/admin';
 
 import { MainHeaderProps } from './types';
 
 import classes from './MainHeader.module.scss';
-import { useIsAdminRoute } from '../../hooks/admin';
 
 const MainHeader: React.FC<MainHeaderProps> = props => {
   const {

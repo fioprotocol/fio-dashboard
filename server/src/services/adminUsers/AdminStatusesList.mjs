@@ -1,10 +1,10 @@
 import Base from '../Base';
 import { AdminUsersStatus } from '../../models';
-import { USER_ROLES_IDS } from '../../config/constants.js';
+import { ADMIN_ROLES_IDS } from '../../config/constants.js';
 
 export default class AdminRolesList extends Base {
   static get requiredPermissions() {
-    return [USER_ROLES_IDS.ADMIN, USER_ROLES_IDS.SUPER_ADMIN];
+    return [ADMIN_ROLES_IDS.ADMIN, ADMIN_ROLES_IDS.SUPER_ADMIN];
   }
 
   async execute() {
