@@ -52,6 +52,8 @@ import {
   faCopy as faRegularCopy,
 } from '@fortawesome/free-regular-svg-icons';
 
+import { faBitcoin } from '@fortawesome/free-brands-svg-icons';
+
 const icons = {
   faEye,
   faEyeSlash,
@@ -101,6 +103,7 @@ const icons = {
   faDollarSign,
   faExternalLinkSquareAlt,
   faCreditCard,
+  faBitcoin,
 };
 
 export default icons;
