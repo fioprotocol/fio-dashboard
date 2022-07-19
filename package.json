@@ -81,6 +81,7 @@
     "@fioprotocol/fiojs": "^1.0.1",
     "@fioprotocol/fiosdk": "github:fioprotocol/fiosdk_typescript#4b5907af862f858486104432b7c560e06bd444bf",
     "@fortawesome/fontawesome-svg-core": "1.2.34",
+    "@fortawesome/free-brands-svg-icons": "5.15.4",
     "@fortawesome/free-regular-svg-icons": "5.15.2",
     "@fortawesome/free-solid-svg-icons": "5.15.2",
     "@fortawesome/react-fontawesome": "0.1.14",

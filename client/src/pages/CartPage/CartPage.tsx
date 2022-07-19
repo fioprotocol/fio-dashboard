@@ -13,6 +13,7 @@ import MathOp from '../../util/math';
 import { handleFreeAddressCart, totalCost } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
 import { convertFioPrices } from '../../util/prices';
+import useEffectOnce from '../../hooks/general';
 
 import apis from '../../api';
 
@@ -21,9 +22,9 @@ import {
   DeleteCartItem,
   Domain,
   FioWalletDoublet,
+  PaymentOptionsProps,
   Prices,
 } from '../../types';
-import useEffectOnce from '../../hooks/general';
 
 type Props = {
   cartItems: CartItem[];
@@ -45,15 +46,15 @@ const CartPage: React.FC<Props> = props => {
   const {
     cartItems,
     history,
-    recalculate,
     prices,
     userWallets,
-    setWallet,
     paymentWalletPublicKey,
-    refreshBalance,
     isAuthenticated,
     hasFreeAddress,
     roe,
+    refreshBalance,
+    setWallet,
+    recalculate,
   } = props;
 
   const lastLocation = useLastLocation();
@@ -83,50 +84,68 @@ const CartPage: React.FC<Props> = props => {
   } = prices;
 
   const recalculateBalance = () => {
+    const updatedCartItems = cartItems.map(item => {
+      if (!item.costNativeFio) return item;
+
+      const retObj = { ...item };
+
+      if (!item.address) {
+        retObj.costNativeFio = nativeFioDomainPrice;
+      } else {
+        retObj.costNativeFio = nativeFioAddressPrice;
+      }
+
+      if (item.hasCustomDomain) {
+        retObj.costNativeFio = new MathOp(retObj.costNativeFio)
+          .add(nativeFioDomainPrice)
+          .toNumber();
+      }
+
+      const fioPrices = convertFioPrices(retObj.costNativeFio, roe);
+
+      retObj.costFio = fioPrices.fio;
+      retObj.costUsdc = fioPrices.usdc;
+
+      return retObj;
+    });
+
+    const {
+      costNativeFio: updatedTotalPrice,
+      costFree: updatedFree,
+    } = totalCost(updatedCartItems, roe);
+
+    return { updatedTotalPrice, updatedFree, updatedCartItems };
+  };
+
+  const allowCheckout = (): boolean => {
     if (totalCartNativeAmount > 0) {
-      const updatedCartItems = cartItems.map(item => {
-        if (!item.costNativeFio) return item;
-
-        const retObj = { ...item };
-
-        if (!item.address) {
-          retObj.costNativeFio = nativeFioDomainPrice;
-        } else {
-          retObj.costNativeFio = nativeFioAddressPrice;
-        }
-
-        if (item.hasCustomDomain) {
-          retObj.costNativeFio = new MathOp(retObj.costNativeFio)
-            .add(nativeFioDomainPrice)
-            .toNumber();
-        }
-
-        const fioPrices = convertFioPrices(retObj.costNativeFio, roe);
-
-        retObj.costFio = fioPrices.fio;
-        retObj.costUsdc = fioPrices.usdc;
-
-        return retObj;
-      });
-
       const {
-        costNativeFio: updatedTotalPrice,
-        costFree: updatedFree,
-      } = totalCost(updatedCartItems, roe);
+        updatedTotalPrice,
+        updatedFree,
+        updatedCartItems,
+      } = recalculateBalance();
 
-      if (updatedFree) return history.push(ROUTES.CHECKOUT);
+      if (updatedFree) return true;
+
       const isEqualPrice = new MathOp(totalCartNativeAmount).eq(
         updatedTotalPrice,
       );
 
       handlePriceChange(!isEqualPrice);
 
-      if (isEqualPrice) return history.push(ROUTES.CHECKOUT);
+      if (isEqualPrice) return true;
+
       recalculate(updatedCartItems);
+      return false;
     } else {
       handlePriceChange(false);
-      history.push(ROUTES.CHECKOUT);
+      return true;
     }
+  };
+
+  const onPaymentChoose = (paymentOption: PaymentOptionsProps) => {
+    if (allowCheckout() && paymentOption)
+      return history.push(ROUTES.CHECKOUT, { paymentOption });
   };
 
   useEffectOnce(() => {
@@ -181,7 +200,7 @@ const CartPage: React.FC<Props> = props => {
     totalCartAmount,
     isPriceChanged,
     totalCartNativeAmount,
-    recalculateBalance,
+    onPaymentChoose,
   };
 
   return (

@@ -18,17 +18,21 @@ import classes from './styles/PaymentOptions.module.scss';
 
 type Props = {
   paymentOptionsList: PaymentOptionsProps[];
-} & PaymentOptionRenderProps;
+} & DefaultPaymentOptionProps;
 
-export type PaymentOptionRenderProps = {
+type DefaultPaymentOptionProps = {
   isFree?: boolean;
-  recalculateBalance?: () => void;
+  onPaymentChoose: (paymentOption: PaymentOptionsProps) => void;
   hasLowBalance?: boolean;
   paymentWalletPublicKey?: string;
   cartItems?: CartItemProps[];
   totalCartNativeAmount?: number;
   userWallets?: FioWalletDoublet[];
 };
+
+type PaymentOptionRenderProps = {
+  paymentOption: PaymentOptionsProps;
+} & DefaultPaymentOptionProps;
 
 const PAYMENT_OPTIONS_PROPS = {
   [PAYMENT_OPTIONS.FIO]: ({
@@ -38,7 +42,8 @@ const PAYMENT_OPTIONS_PROPS = {
     isFree,
     userWallets,
     totalCartNativeAmount,
-    recalculateBalance,
+    paymentOption,
+    onPaymentChoose,
   }: PaymentOptionRenderProps) => ({
     buttonText: isFree ? 'Complete Transaction' : 'Pay with FIO',
     icon: <FontAwesomeIcon icon="wallet" />,
@@ -49,15 +54,21 @@ const PAYMENT_OPTIONS_PROPS = {
         wallet.available &&
         new MathOp(wallet.available).lte(totalCartNativeAmount),
     ),
-    onClick: () => recalculateBalance(),
+    onClick: () => onPaymentChoose(paymentOption),
   }),
-  [PAYMENT_OPTIONS.CREDIT_CARD]: (props: PaymentOptionRenderProps) => ({
+  [PAYMENT_OPTIONS.CREDIT_CARD]: ({
+    onPaymentChoose,
+    paymentOption,
+    cartItems,
+  }: PaymentOptionRenderProps) => ({
     buttonText: 'Pay with Credit/Debit Card',
     icon: <FontAwesomeIcon icon="credit-card" />,
-    onClick: (): null => null,
+    disabled: cartItems?.length === 0,
+    onClick: () => onPaymentChoose(paymentOption),
   }),
   [PAYMENT_OPTIONS.CRYPTO]: (props: PaymentOptionRenderProps) => ({
     buttonText: 'Pay Using Crypto',
+    icon: <FontAwesomeIcon icon={{ prefix: 'fab', iconName: 'bitcoin' }} />,
     disabled: true, // todo: hardcoded to disabled until any crypto provider will be connnected
     hasRoyalBlueBackground: true,
     onClick: (): null => null,
@@ -75,7 +86,10 @@ export const PaymentOptions: React.FC<Props> = props => {
         return (
           <PaymentButton
             key={paymentOption}
-            {...PAYMENT_OPTIONS_PROPS[paymentOption](props)}
+            {...PAYMENT_OPTIONS_PROPS[paymentOption]({
+              ...props,
+              paymentOption,
+            })}
           />
         );
       })}
