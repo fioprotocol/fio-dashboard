@@ -3,7 +3,6 @@ import React from 'react';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import { CheckoutComponent } from './components/CheckoutComponent';
 import Processing from '../../components/common/TransactionProcessing';
-import PurchaseNow from '../../components/PurchaseNow';
 
 import { useContext } from './CheckoutPageContext';
 
@@ -17,12 +16,13 @@ export const CheckoutPage: React.FC = () => {
     paymentWalletPublicKey,
     roe,
     fioWallets,
-    setWallet,
     fioWalletsBalances,
     isProcessing,
     title,
+    paymentOption,
     onClose,
     onFinish,
+    setWallet,
   } = useContext();
 
   return (
@@ -37,8 +37,9 @@ export const CheckoutPage: React.FC = () => {
           fioWallets={fioWallets}
           setWallet={setWallet}
           fioWalletsBalances={fioWalletsBalances}
+          onFinish={onFinish}
+          paymentOption={paymentOption}
         />
-        <PurchaseNow onFinish={onFinish} />
       </div>
       <Processing isProcessing={isProcessing} />
     </PseudoModalContainer>

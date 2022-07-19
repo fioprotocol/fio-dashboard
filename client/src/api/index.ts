@@ -11,6 +11,7 @@ import Account from './account';
 import RefProfile from './ref-profile';
 import Contacts from './contacts';
 import Admin from './admin';
+import Payments from './payments';
 
 const apiClient = new ApiClient(config.apiPrefix);
 
@@ -36,6 +37,7 @@ export type Api = {
   contacts: Contacts;
   client: ApiClient;
   admin: Admin;
+  payments: Payments;
 };
 
 const apis = {
@@ -50,6 +52,7 @@ const apis = {
   contacts: new Contacts(apiClient),
   client: apiClient,
   admin: new Admin(apiClient),
+  payments: new Payments(apiClient),
 };
 
 export default apis;
