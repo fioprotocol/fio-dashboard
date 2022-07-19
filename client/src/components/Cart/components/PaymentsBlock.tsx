@@ -6,14 +6,18 @@ import OtherPaymentsBlock from './OtherPaymentsBlock';
 
 import { PAYMENT_OPTIONS } from '../../../constants/purchase';
 
-import { CartItem as CartItemProps, FioWalletDoublet } from '../../../types';
+import {
+  CartItem,
+  FioWalletDoublet,
+  PaymentOptionsProps,
+} from '../../../types';
 
 type Props = {
   isFree?: boolean;
-  recalculateBalance?: () => void;
+  onPaymentChoose: (paymentOption: PaymentOptionsProps) => void;
   hasLowBalance?: boolean;
   paymentWalletPublicKey?: string;
-  cartItems?: CartItemProps[];
+  cartItems?: CartItem[];
   totalCartNativeAmount: number;
   userWallets: FioWalletDoublet[];
 };
@@ -22,26 +26,28 @@ const PaymentsBlock: React.FC<Props> = props => {
   const {
     isFree,
     hasLowBalance,
-    recalculateBalance,
     cartItems,
     paymentWalletPublicKey,
     totalCartNativeAmount,
     userWallets,
+    onPaymentChoose,
   } = props;
 
   const paymentFioPrpos = {
     paymentOptionsList: [PAYMENT_OPTIONS.FIO],
     isFree,
-    recalculateBalance,
     hasLowBalance,
     paymentWalletPublicKey,
     cartItems,
     totalCartNativeAmount,
     userWallets,
+    onPaymentChoose,
   };
 
   const otherPaymentsProps = {
     paymentOptionsList: [PAYMENT_OPTIONS.CREDIT_CARD, PAYMENT_OPTIONS.CRYPTO],
+    cartItems,
+    onPaymentChoose,
   };
 
   return (
