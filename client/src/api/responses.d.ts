@@ -5,6 +5,7 @@ import {
   FioWalletDoublet,
   Notification,
   RefProfile,
+  Order,
   User,
 } from '../types';
 
@@ -74,6 +75,8 @@ export type RefProfileGetResponse = RefProfile;
 export type UsersListResponse = User[];
 export type UsersShowResponse = User;
 
+export type OrdersCreateResponse = Order;
+
 export type AdminUsersListResponse = AdminUser[];
 export type AdminOrdersListResponse = AdminUser[];
 export type AdminOrderItemResponse = AdminUser;
@@ -127,6 +130,7 @@ export type ApisResponse = AccountGetWalletsResponse &
   RefProfileGetResponse &
   UsersListResponse &
   UsersShowResponse &
+  OrdersCreateResponse &
   AdminUsersListResponse &
   RemoveAdminResponse &
   AdminInviteResponse &
