@@ -76,7 +76,9 @@ const AdminOrderModal: React.FC<Props> = ({
                       <tr key={'itemDetails_' + item.id}>
                         <th>{item.action}</th>
                         <th>
-                          {item.address + FIO_ADDRESS_DELIMITER + item.domain}
+                          {(item.address
+                            ? item.address + FIO_ADDRESS_DELIMITER
+                            : '') + item.domain}
                         </th>
                         <th>{item.price + ' ' + item.priceCurrency}</th>
                         <th>{null}</th>
