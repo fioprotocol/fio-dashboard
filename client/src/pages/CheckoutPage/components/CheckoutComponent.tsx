@@ -5,31 +5,15 @@ import CartItem from '../../../components/Cart/CartItem';
 import PriceBadge from '../../../components/Badges/PriceBadge/PriceBadge';
 import { BADGE_TYPES } from '../../../components/Badge/Badge';
 
-import { PaymentWallet } from './PaymentWallet';
+import { PaymentOptionComponent } from './PaymentOptionComponent';
 
 import { totalCost } from '../../../utils';
 
-import {
-  CartItem as CartItemType,
-  FioWalletDoublet,
-  WalletsBalances,
-  WalletBalancesItem,
-} from '../../../types';
+import { CheckoutComponentProps } from '../types';
 
 import classes from '../../PurchasePage/styles/PurchasePage.module.scss';
 
-type Props = {
-  cart: CartItemType[];
-  walletBalances: WalletBalancesItem;
-  walletName: string;
-  roe: number | null;
-  fioWallets: FioWalletDoublet[];
-  paymentWalletPublicKey: string;
-  fioWalletsBalances: WalletsBalances;
-  setWallet: (publicKey: string) => void;
-};
-
-export const CheckoutComponent: React.FC<Props> = props => {
+export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
   const {
     cart,
     walletBalances,
@@ -38,7 +22,9 @@ export const CheckoutComponent: React.FC<Props> = props => {
     fioWallets,
     paymentWalletPublicKey,
     fioWalletsBalances,
+    paymentOption,
     setWallet,
+    onFinish,
   } = props;
   const { costNativeFio, costFree, costFio, costUsdc } = totalCost(cart, roe);
 
@@ -59,7 +45,8 @@ export const CheckoutComponent: React.FC<Props> = props => {
           type={BADGE_TYPES.BLACK}
         />
       </div>
-      <PaymentWallet
+      <PaymentOptionComponent
+        paymentOption={paymentOption}
         fioWallets={fioWallets}
         paymentWalletPublicKey={paymentWalletPublicKey}
         fioWalletsBalances={fioWalletsBalances}
@@ -67,6 +54,7 @@ export const CheckoutComponent: React.FC<Props> = props => {
         walletBalances={walletBalances}
         walletName={walletName}
         costFree={costFree}
+        onFinish={onFinish}
       />
     </>
   );
