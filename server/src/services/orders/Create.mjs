@@ -1,6 +1,6 @@
 import Base from '../Base';
 
-import { Order, OrderItem } from '../../models';
+import { Order, OrderItem, Payment } from '../../models';
 
 export default class OrdersCreate extends Base {
   static get validationRules() {
@@ -32,22 +32,41 @@ export default class OrdersCreate extends Base {
   }
 
   async execute({ data: { total, roe, publicKey, items } }) {
-    let newOrder = {};
-    await Order.sequelize.transaction(async t => {
-      newOrder = await Order.create(
-        {
-          status: Order.STATUS.NEW,
-          total,
-          roe,
-          publicKey,
-          customerIp: this.context.ipAddress,
-          userId: this.context.id,
-        },
-        { transaction: t },
-      );
+    // assume user should have only one active order with status NEW
+    let order = await Order.findOne({
+      where: { status: Order.STATUS.NEW, userId: this.context.id },
+    });
 
-      newOrder.number = Order.generateNumber(newOrder.id);
-      await newOrder.save({ transaction: t });
+    await Order.sequelize.transaction(async t => {
+      if (order) {
+        order.total = total;
+        order.roe = roe;
+        order.publicKey = publicKey;
+        order.customerIp = this.context.ipAddress;
+        // order.refProfileId: , // todo:
+
+        await order.save({ transaction: t });
+        await OrderItem.destroy({
+          where: { orderId: order.id },
+          force: true,
+          transaction: t,
+        });
+      } else {
+        order = await Order.create(
+          {
+            status: Order.STATUS.NEW,
+            total,
+            roe,
+            publicKey,
+            customerIp: this.context.ipAddress,
+            userId: this.context.id,
+          },
+          { transaction: t },
+        );
+
+        order.number = Order.generateNumber(order.id);
+        await order.save({ transaction: t });
+      }
 
       for (const {
         action,
@@ -66,8 +85,8 @@ export default class OrdersCreate extends Base {
             params,
             nativeFio,
             price,
-            priceCurrency: priceCurrency || 'USDC',
-            orderId: newOrder.id,
+            priceCurrency: priceCurrency || Payment.CURRENCY.USDC,
+            orderId: order.id,
           },
           { transaction: t },
         );
@@ -75,7 +94,7 @@ export default class OrdersCreate extends Base {
     });
 
     return {
-      data: newOrder,
+      data: order,
     };
   }
 
