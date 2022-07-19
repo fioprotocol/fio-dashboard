@@ -85,6 +85,14 @@ export type AdminInviteResponse =
   | { success: false; message: 'Not Unique' };
 export type AdminConfirmResponse = AdminUser;
 
+export type PaymentCreateResponse = {
+  amount: string;
+  currency: string;
+  externalPaymentId: string;
+  id: string;
+  secret: string;
+};
+
 export type ApisResponse = AccountGetWalletsResponse &
   AccountSetWalletsResponse &
   AccountAddWalletsResponse &
@@ -122,4 +130,5 @@ export type ApisResponse = AccountGetWalletsResponse &
   AdminUsersListResponse &
   RemoveAdminResponse &
   AdminInviteResponse &
-  AdminConfirmResponse;
+  AdminConfirmResponse &
+  PaymentCreateResponse;

@@ -33,10 +33,12 @@ import { onPurchaseFinish } from '../../util/purchase';
 import { totalCost, handleFreeAddressCart } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
 import MathOp from '../../util/math';
+import { useEffectOnce } from '../../hooks/general';
 
 import { ROUTES } from '../../constants/routes';
+import { PAYMENT_OPTION_TITLE } from '../../constants/purchase';
 
-import { RegistrationResult } from '../../types';
+import { RegistrationResult, PaymentOptionsProps } from '../../types';
 
 export const useContext = () => {
   const history = useHistory();
@@ -53,7 +55,13 @@ export const useContext = () => {
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
+  const {
+    location: { state },
+  } = history;
+  const { paymentOption }: { paymentOption?: PaymentOptionsProps } =
+    state || {};
+
+  useEffectOnce(() => {
     if (!isEmpty(fioWallets)) {
       for (const fioWallet of fioWallets) {
         if (fioWallet.publicKey) {
@@ -80,7 +88,10 @@ export const useContext = () => {
     paymentWalletPublicKey,
   );
 
-  const title = isFree ? 'Make Purchase' : 'Pay with FIO';
+  const title =
+    isFree || !paymentOption
+      ? 'Make Purchase'
+      : PAYMENT_OPTION_TITLE[paymentOption];
 
   useEffect(() => {
     if (!isAuth) {
@@ -135,11 +146,12 @@ export const useContext = () => {
     paymentWalletPublicKey,
     roe,
     fioWallets,
-    setWallet,
     fioWalletsBalances,
     isProcessing,
     title,
+    paymentOption,
     onClose,
     onFinish,
+    setWallet,
   };
 };
