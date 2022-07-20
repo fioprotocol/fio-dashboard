@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Button, Table } from 'react-bootstrap';
-import Pagination from 'react-bootstrap/Pagination';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Loader from '../../components/Loader/Loader';
@@ -11,34 +10,14 @@ import InviteModal from './components/inviteAdminUser/InviteModal';
 import apis from '../../api';
 import { log } from '../../util/general';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
+import usePagination from '../../hooks/usePagination';
 
-import { AdminUser, AdminUserProfile } from '../../types';
-import { FormValuesProps } from './types';
+import { FormValuesProps, PageProps } from './types';
 
 import classes from './AdminUserListPage.module.scss';
 
-type Props = {
-  loading: boolean;
-  adminUsersCount: number;
-  adminUsersList: AdminUser[];
-  adminUserProfile?: AdminUserProfile;
-  getAdminList: (limit?: number, offset?: number) => Promise<void>;
-  getAdminUserProfile: (id: string) => Promise<void>;
-  removeAdminUser: (adminUserId: string) => void;
-};
-
-const MAX_USERS_PER_PAGE = 25;
-
-const AdminUserListPage: React.FC<Props> = props => {
-  const {
-    loading,
-    adminUsersList,
-    getAdminList,
-    getAdminUserProfile,
-    adminUsersCount: usersCount = 0,
-  } = props;
-
-  const [activePage, setActivePage] = useState(1);
+const AdminUserListPage: React.FC<PageProps> = props => {
+  const { loading, adminUsersList, getAdminList, getAdminUserProfile } = props;
 
   // all commented stuff will be needed for next design updates (delete admin user case)
   // const [showModal, toggleShowModal] = useState(false);
@@ -58,6 +37,8 @@ const AdminUserListPage: React.FC<Props> = props => {
   //   setSelectedAdminUser(adminUser);
   // };
 
+  const { paginationComponent, refresh } = usePagination(getAdminList);
+
   const openInviteModal = () => toggleShowInviteModal(true);
   const closeInviteModal = () => toggleShowInviteModal(false);
 
@@ -65,8 +46,7 @@ const AdminUserListPage: React.FC<Props> = props => {
     setInviteLoading(true);
     try {
       await apis.admin.inviteAdmin(values.inviteEmail).then(async () => {
-        await getAdminList();
-        setActivePage(1);
+        await refresh();
       });
       closeInviteModal();
     } catch (err) {
@@ -85,41 +65,11 @@ const AdminUserListPage: React.FC<Props> = props => {
   //   selectedAdminUser && removeAdminUser(selectedAdminUser.id);
   // };
 
-  useEffect(() => {
-    getAdminList();
-  }, [getAdminList]);
-
   // useEffect(() => {
   //   if (showModal) {
   //     closeModal();
   //   }
   // }, [adminUsersList.length]);
-
-  const paginationItems = [];
-  for (
-    let pageNumber = 1;
-    pageNumber <=
-    (usersCount > MAX_USERS_PER_PAGE ? usersCount / MAX_USERS_PER_PAGE : 1);
-    pageNumber++
-  ) {
-    paginationItems.push(
-      <Pagination.Item
-        key={pageNumber}
-        active={pageNumber === activePage}
-        onClick={() => {
-          if (!(pageNumber === activePage)) {
-            setActivePage(pageNumber);
-            getAdminList(
-              MAX_USERS_PER_PAGE,
-              (pageNumber - 1) * MAX_USERS_PER_PAGE,
-            );
-          }
-        }}
-      >
-        {pageNumber}
-      </Pagination.Item>,
-    );
-  }
 
   return (
     <>
@@ -174,7 +124,7 @@ const AdminUserListPage: React.FC<Props> = props => {
           </tbody>
         </Table>
 
-        <Pagination>{paginationItems}</Pagination>
+        {paginationComponent}
 
         {loading && <Loader />}
       </div>

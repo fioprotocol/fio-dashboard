@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
 
 import { Table } from 'react-bootstrap';
-import Pagination from 'react-bootstrap/Pagination';
 
 import Loader from '../../components/Loader/Loader';
 import AdminOrderModal from './components/AdminOrderModal';
-import useEffectOnce from '../../hooks/general';
+import usePagination from '../../hooks/usePagination';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
+
 import { AdminUser, OrderItem } from '../../types';
 
 import classes from './AdminOrdersListPage.module.scss';
 
 type Props = {
   loading: boolean;
-  getOrdersList: (limit?: number, offset?: number) => void;
+  getOrdersList: (limit?: number, offset?: number) => Promise<void>;
   adminUser: AdminUser;
   ordersList: OrderItem[];
   orderItem: OrderItem;
@@ -21,8 +21,6 @@ type Props = {
   isAuthUser: boolean;
   getOrder: (id: string) => Promise<void>;
 };
-
-const MAX_ORDERS_PER_PAGE = 25;
 
 // todo: create table in the database for this
 const ORDER_STATUSES: { [label: string]: number } = {
@@ -36,24 +34,14 @@ const ORDER_STATUSES: { [label: string]: number } = {
 };
 
 const AdminOrdersPage: React.FC<Props> = props => {
-  const {
-    loading,
-    ordersList,
-    getOrdersList,
-    ordersCount = 0,
-    getOrder,
-    orderItem,
-  } = props;
+  const { loading, ordersList, getOrdersList, getOrder, orderItem } = props;
 
-  const [activePage, setActivePage] = useState(1);
   const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
   const [selectedOrderItemId, setSelectedOrderItemId] = useState<string | null>(
     null,
   );
 
-  useEffectOnce(() => {
-    getOrdersList();
-  }, [getOrdersList]);
+  const { paginationComponent } = usePagination(getOrdersList);
 
   const closeOrderDetails = () => {
     setShowOrderDetailsModal(false);
@@ -65,32 +53,6 @@ const AdminOrdersPage: React.FC<Props> = props => {
     setSelectedOrderItemId(orderId);
     setShowOrderDetailsModal(true);
   };
-
-  const paginationItems = [];
-  for (
-    let pageNumber = 1;
-    pageNumber <=
-    (ordersCount > MAX_ORDERS_PER_PAGE ? ordersCount / MAX_ORDERS_PER_PAGE : 1);
-    pageNumber++
-  ) {
-    paginationItems.push(
-      <Pagination.Item
-        key={pageNumber}
-        active={pageNumber === activePage}
-        onClick={() => {
-          if (!(pageNumber === activePage)) {
-            setActivePage(pageNumber);
-            getOrdersList(
-              MAX_ORDERS_PER_PAGE,
-              (pageNumber - 1) * MAX_ORDERS_PER_PAGE,
-            );
-          }
-        }}
-      >
-        {pageNumber}
-      </Pagination.Item>,
-    );
-  }
 
   return (
     <>
@@ -138,7 +100,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
           </tbody>
         </Table>
 
-        <Pagination>{paginationItems}</Pagination>
+        {paginationComponent}
 
         <AdminOrderModal
           isVisible={
