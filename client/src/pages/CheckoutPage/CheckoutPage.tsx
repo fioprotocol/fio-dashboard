@@ -20,6 +20,7 @@ export const CheckoutPage: React.FC = () => {
     isProcessing,
     title,
     paymentOption,
+    isFree,
     onClose,
     onFinish,
     setWallet,
@@ -35,10 +36,11 @@ export const CheckoutPage: React.FC = () => {
           paymentWalletPublicKey={paymentWalletPublicKey}
           roe={roe}
           fioWallets={fioWallets}
-          setWallet={setWallet}
           fioWalletsBalances={fioWalletsBalances}
-          onFinish={onFinish}
           paymentOption={paymentOption}
+          isFree={isFree}
+          onFinish={onFinish}
+          setWallet={setWallet}
         />
       </div>
       <Processing isProcessing={isProcessing} />
