@@ -6,6 +6,9 @@ import Processing from '../../components/common/TransactionProcessing';
 
 import { useContext } from './CheckoutPageContext';
 
+// Loads captcha files, DO NOT REMOVE
+import '../../helpers/gt-sdk';
+
 import classes from '../PurchasePage/styles/PurchasePage.module.scss';
 
 export const CheckoutPage: React.FC = () => {
