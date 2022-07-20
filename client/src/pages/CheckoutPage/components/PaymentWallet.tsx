@@ -16,10 +16,11 @@ type Props = {
   fioWallets: FioWalletDoublet[];
   paymentWalletPublicKey: string;
   fioWalletsBalances: WalletsBalances;
-  setWallet: (publicKey: string) => void;
   walletBalances: WalletBalancesItem;
   walletName: string;
   costFree?: string;
+  isFree: boolean;
+  setWallet: (publicKey: string) => void;
 };
 
 export const PaymentWallet: React.FC<Props> = props => {
@@ -27,14 +28,15 @@ export const PaymentWallet: React.FC<Props> = props => {
     fioWallets,
     paymentWalletPublicKey,
     fioWalletsBalances,
-    setWallet,
     walletBalances,
     walletName,
     costFree,
+    isFree,
+    setWallet,
   } = props;
 
   const walletsList = fioWallets
-    .filter(wallet => wallet.available > 0)
+    .filter(wallet => (isFree ? wallet : wallet.available > 0))
     .sort((a, b) => b.available - a.available || a.name.localeCompare(b.name))
     .map(wallet => {
       const { fio, usdc } = fioWalletsBalances.wallets[

@@ -55,7 +55,7 @@ const PaymentsBlock: React.FC<Props> = props => {
       <PaymentOptions {...paymentFioPrpos} />
       <OtherPaymentsBlock
         defaultShowState={hasLowBalance}
-        disabled={cartItems.length === 0}
+        disabled={cartItems.length === 0 || isFree}
         {...otherPaymentsProps}
       />
     </>

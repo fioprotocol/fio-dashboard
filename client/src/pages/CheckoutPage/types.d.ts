@@ -14,6 +14,7 @@ type DefaultProps = {
   paymentWalletPublicKey: string;
   fioWalletsBalances: WalletsBalances;
   paymentOption: PaymentOptionsProps;
+  isFree: boolean;
   setWallet: (publicKey: string) => void;
   onFinish: (results: RegistrationResult) => void;
 };
