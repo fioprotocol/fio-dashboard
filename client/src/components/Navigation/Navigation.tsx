@@ -24,6 +24,7 @@ const userNavItems: string[] = [
 
 const adminNavItems: string[] = [
   LINKS.ADMIN_HOME,
+  LINKS.ADMIN_ORDERS,
   LINKS.ADMIN_REGULAR_USERS,
   LINKS.ADMIN_USERS,
   LINKS.ADMIN_PROFILE,
