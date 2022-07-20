@@ -4,6 +4,7 @@ const ROUTES: { [route: string]: string } = {
 
   ADMIN_HOME: '/admin',
   ADMIN_USERS: '/admin/users',
+  ADMIN_ORDERS: '/admin/orders',
   ADMIN_LOGIN: '/admin/login',
   ADMIN_CONFIRM_EMAIL: '/confirm-admin-email/:hash',
   ADMIN_REGULAR_USERS: '/admin/regular-users',

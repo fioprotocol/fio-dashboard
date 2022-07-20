@@ -54,6 +54,7 @@ import AdminUserListPage from './pages/AdminUserListPage';
 import AdminEmailConfirmPage from './pages/AdminEmailConfirmPage';
 import AdminRegularUsersList from './pages/AdminRegularUsersListPage';
 import AdminProfilePage from './pages/AdminProfilePage';
+import AdminHomePage from './pages/AdminHomePage';
 
 import { ROUTES } from './constants/routes';
 
@@ -238,6 +239,11 @@ const Routes = (): React.ReactElement => (
 
         <AdminPrivateRoute
           path={ROUTES.ADMIN_HOME}
+          component={AdminHomePage}
+          exact
+        />
+        <AdminPrivateRoute
+          path={ROUTES.ADMIN_ORDERS}
           component={AdminOrdersPage}
           exact
         />
