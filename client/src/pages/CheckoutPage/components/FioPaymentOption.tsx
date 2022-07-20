@@ -14,19 +14,22 @@ export const FioPaymentOption: React.FC<PaymentOptionComponentProps> = props => 
     walletBalances,
     walletName,
     costFree,
+    isFree,
     onFinish,
     setWallet,
   } = props;
+
   return (
     <>
       <PaymentWallet
         fioWallets={fioWallets}
         paymentWalletPublicKey={paymentWalletPublicKey}
         fioWalletsBalances={fioWalletsBalances}
-        setWallet={setWallet}
         walletBalances={walletBalances}
         walletName={walletName}
         costFree={costFree}
+        isFree={isFree}
+        setWallet={setWallet}
       />
       <PurchaseNow onFinish={onFinish} />
     </>
