@@ -23,6 +23,7 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
     paymentWalletPublicKey,
     fioWalletsBalances,
     paymentOption,
+    isFree,
     setWallet,
     onFinish,
   } = props;
@@ -50,11 +51,12 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
         fioWallets={fioWallets}
         paymentWalletPublicKey={paymentWalletPublicKey}
         fioWalletsBalances={fioWalletsBalances}
-        setWallet={setWallet}
         walletBalances={walletBalances}
         walletName={walletName}
         costFree={costFree}
+        isFree={isFree}
         onFinish={onFinish}
+        setWallet={setWallet}
       />
     </>
   );
