@@ -150,6 +150,7 @@ export const useContext = () => {
     isProcessing,
     title,
     paymentOption,
+    isFree,
     onClose,
     onFinish,
     setWallet,
