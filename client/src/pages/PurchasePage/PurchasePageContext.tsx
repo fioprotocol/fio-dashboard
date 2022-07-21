@@ -37,7 +37,13 @@ import {
 } from '../../constants/purchase';
 import { CURRENCY_CODES } from '../../constants/common';
 
-import { PurchaseProvider, PurchaseTxStatus, CartItem } from '../../types';
+import {
+  FioActionExecuted,
+  RegistrationResult,
+  PurchaseProvider,
+  PurchaseTxStatus,
+  CartItem,
+} from '../../types';
 
 export const useContext = (): {
   regItems: CartItem[];
@@ -102,6 +108,7 @@ export const useContext = (): {
   const {
     purchaseProvider = PURCHASE_PROVIDER.FIO,
     providerTxId,
+    paymentAmount,
     paymentCurrency = CURRENCY_CODES.FIO,
     convertedPaymentCurrency = CURRENCY_CODES.USDC,
     providerTxStatus,
@@ -140,11 +147,13 @@ export const useContext = (): {
     onPurchaseFinish({
       results,
       isRetry: true,
-      setRegistration,
-      setProcessing,
-      fioActionExecuted,
+      setRegistration: (results: RegistrationResult) =>
+        dispatch(setRegistration(results)),
+      setProcessing: (isProcessing: boolean) =>
+        dispatch(setProcessing(isProcessing)),
+      fioActionExecuted: (data: FioActionExecuted) =>
+        dispatch(fioActionExecuted(data)),
       history,
-      dispatch,
     });
 
   return {
@@ -156,7 +165,7 @@ export const useContext = (): {
     purchaseStatus,
     purchaseProvider,
     // todo: handle other currencies too
-    regPaymentAmount: regCostFio,
+    regPaymentAmount: paymentAmount || regCostFio,
     regConvertedPaymentAmount: regCostUsdc,
     regCostFree: !regCostNativeFio && regFree,
     errPaymentAmount: errCostFio,

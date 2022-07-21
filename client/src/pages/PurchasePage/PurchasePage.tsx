@@ -20,8 +20,6 @@ export const PurchasePage: React.FC = () => {
     regItems,
     errItems,
     closeText,
-    onClose,
-    onFinish,
     purchaseStatus,
     purchaseProvider,
     regPaymentAmount,
@@ -37,6 +35,8 @@ export const PurchasePage: React.FC = () => {
     failedTxsTotalAmount,
     isProcessing,
     isRetry,
+    onClose,
+    onFinish,
   } = useContext();
 
   return (

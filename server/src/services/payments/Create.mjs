@@ -7,7 +7,6 @@ import {
   OrderItemStatus,
   BlockchainTransaction,
 } from '../../models';
-import Stripe from '../../external/payment-processor/stripe';
 
 import X from '../Exception.mjs';
 
@@ -26,14 +25,6 @@ export default class PaymentsCreate extends Base {
         },
       ],
     };
-  }
-
-  getPaymentProcessor(paymentProcessor) {
-    if (paymentProcessor === Payment.PROCESSOR.CREDIT_CARD) {
-      return Stripe;
-    }
-
-    return null;
   }
 
   async execute({ data: { orderId, paymentProcessor: paymentProcessorKey } }) {
@@ -57,24 +48,26 @@ export default class PaymentsCreate extends Base {
       });
     }
 
+    const paymentProcessor = Payment.getPaymentProcessor(paymentProcessorKey);
+
     const exPayment = await Payment.findOne({
       where: {
         status: Payment.STATUS.NEW,
-        processor: paymentProcessorKey,
         orderId,
       },
     });
 
+    // Remove existing payment when trying to create new one for the order
     if (exPayment) {
-      throw new X({
-        code: 'ALREADY_CREATED',
-        fields: {
-          paymentProcessor: 'ALREADY_CREATED',
-        },
-      });
+      try {
+        if (exPayment.externalId) await paymentProcessor.cancel(exPayment.externalId);
+        await exPayment.destroy({ force: true });
+      } catch (e) {
+        logger.error(
+          `Existing Payment removing error ${e.message}. Order #${order.number}. Payment ${exPayment.id}`,
+        );
+      }
     }
-
-    const paymentProcessor = this.getPaymentProcessor(paymentProcessorKey);
 
     try {
       await Payment.sequelize.transaction(async t => {
@@ -86,7 +79,7 @@ export default class PaymentsCreate extends Base {
 
         orderPayment = await Payment.create(
           {
-            amount: extPaymentParams.amount,
+            price: extPaymentParams.amount,
             currency: extPaymentParams.currency,
             status: Payment.STATUS.NEW,
             processor: paymentProcessorKey,

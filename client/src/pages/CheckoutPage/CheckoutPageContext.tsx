@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
@@ -19,6 +19,7 @@ import {
   cartItems as CartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
+import { order as orderSelector } from '../../redux/order/selectors';
 import {
   isAuthenticated,
   hasFreeAddress as hasFreeAddressSelector,
@@ -29,11 +30,14 @@ import {
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 
+import apis from '../../api';
+
 import { onPurchaseFinish } from '../../util/purchase';
+import MathOp from '../../util/math';
 import { totalCost, handleFreeAddressCart } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
-import MathOp from '../../util/math';
 import { useEffectOnce } from '../../hooks/general';
+import { log } from '../../util/general';
 
 import { ROUTES } from '../../constants/routes';
 import { PAYMENT_OPTION_TITLE } from '../../constants/purchase';
@@ -41,6 +45,8 @@ import { PAYMENT_OPTION_TITLE } from '../../constants/purchase';
 import {
   RegistrationResult,
   PaymentOptionsProps,
+  FioActionExecuted,
+  Payment,
   CartItem,
   FioWalletDoublet,
   WalletsBalances,
@@ -57,13 +63,18 @@ export const useContext = (): {
   fioWalletsBalances: WalletsBalances;
   isProcessing: boolean;
   title: string;
+  payment: Payment;
   paymentOption: PaymentOptionsProps;
+  paymentOptionError: {
+    code: string;
+  } | null;
   isFree: boolean;
   onClose: () => void;
   onFinish: (results: RegistrationResult) => void;
   setWallet: (walletPublicKey: string) => void;
 } => {
   const history = useHistory();
+  const order = useSelector(orderSelector);
   const fioWallets = useSelector(fioWalletsSelector);
   const loading = useSelector(loadingSelector);
   const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
@@ -74,6 +85,10 @@ export const useContext = (): {
   const prices = useSelector(pricesSelector);
   const isProcessing = useSelector(isProcessingSelector);
   const roe = useSelector(roeSelector);
+  const [payment, setPayment] = useState<Payment>(null);
+  const [paymentOptionError, setPaymentOptionError] = useState<{
+    code: string;
+  } | null>(null);
 
   const dispatch = useDispatch();
 
@@ -82,6 +97,24 @@ export const useContext = (): {
   } = history;
   const { paymentOption }: { paymentOption?: PaymentOptionsProps } =
     state || {};
+  const orderId = order && order.id;
+
+  const createPayment = async (
+    orderId: number,
+    paymentOption: PaymentOptionsProps,
+  ) => {
+    try {
+      const res = await apis.payments.create({
+        orderId,
+        paymentProcessor: paymentOption,
+      });
+
+      setPayment(res);
+    } catch (e) {
+      setPaymentOptionError(e);
+      log.error(e);
+    }
+  };
 
   useEffectOnce(() => {
     if (!isEmpty(fioWallets)) {
@@ -96,6 +129,14 @@ export const useContext = (): {
       }
     }
   }, []);
+
+  useEffectOnce(
+    () => {
+      createPayment(orderId, paymentOption);
+    },
+    [orderId, paymentOption],
+    !!orderId,
+  );
 
   const cartItemsJson = JSON.stringify(cartItems);
 
@@ -160,16 +201,19 @@ export const useContext = (): {
     history.push(ROUTES.CART);
   };
 
-  const onFinish = (results: RegistrationResult) =>
+  const onFinish = (results: RegistrationResult) => {
     onPurchaseFinish({
       results,
       isCheckout: true,
-      setRegistration,
-      setProcessing,
-      fioActionExecuted,
+      setRegistration: (results: RegistrationResult) =>
+        dispatch(setRegistration(results)),
+      setProcessing: (isProcessing: boolean) =>
+        dispatch(setProcessing(isProcessing)),
+      fioActionExecuted: (data: FioActionExecuted) =>
+        dispatch(fioActionExecuted(data)),
       history,
-      dispatch,
     });
+  };
 
   return {
     cartItems,
@@ -181,7 +225,9 @@ export const useContext = (): {
     fioWalletsBalances,
     isProcessing,
     title,
+    payment,
     paymentOption,
+    paymentOptionError,
     isFree,
     onClose,
     onFinish,

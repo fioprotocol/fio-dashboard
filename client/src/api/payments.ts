@@ -8,6 +8,6 @@ export default class Payments extends Base {
     orderId: number | string;
     paymentProcessor: PaymentOptionsProps;
   }): Promise<PaymentCreateResponse> {
-    return this.apiClient.post('/payments', { data });
+    return this.apiClient.post('payments', { data });
   }
 }

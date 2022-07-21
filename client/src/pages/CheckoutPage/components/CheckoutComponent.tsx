@@ -14,19 +14,7 @@ import { CheckoutComponentProps } from '../types';
 import classes from '../../PurchasePage/styles/PurchasePage.module.scss';
 
 export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
-  const {
-    cart,
-    walletBalances,
-    walletName,
-    roe,
-    fioWallets,
-    paymentWalletPublicKey,
-    fioWalletsBalances,
-    paymentOption,
-    isFree,
-    setWallet,
-    onFinish,
-  } = props;
+  const { cart, roe, ...rest } = props;
   const { costNativeFio, costFree, costFio, costUsdc } = totalCost(cart, roe);
 
   return (
@@ -46,18 +34,7 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
           type={BADGE_TYPES.BLACK}
         />
       </div>
-      <PaymentOptionComponent
-        paymentOption={paymentOption}
-        fioWallets={fioWallets}
-        paymentWalletPublicKey={paymentWalletPublicKey}
-        fioWalletsBalances={fioWalletsBalances}
-        walletBalances={walletBalances}
-        walletName={walletName}
-        costFree={costFree}
-        isFree={isFree}
-        onFinish={onFinish}
-        setWallet={setWallet}
-      />
+      <PaymentOptionComponent {...rest} cart={cart} costFree={costFree} />
     </>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import { Elements } from '@stripe/react-stripe-js';
 import { useHistory } from 'react-router';
 
@@ -12,44 +12,44 @@ import {
 
 import { StripeForm } from './StripeForm';
 
-import useEffectOnce from '../../../hooks/general';
-
-import apis from '../../../api';
-
+import { FIO_ADDRESS_DELIMITER } from '../../../utils';
+import { PURCHASE_PROVIDER } from '../../../constants/purchase';
 import { STRIPE_ELEMENT_OPTIONS, STRIPE_PROMISE } from '../constants';
+import { CURRENCY_CODES } from '../../../constants/common';
 
 import { StripePaymentOptionProps } from '../types';
 
 export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => {
-  const { paymentOption } = props;
+  const { cart, payment, paymentOption, paymentOptionError } = props;
 
   const history = useHistory();
 
-  const [clientSecret, setClientSecret] = useState<string>('');
-  const [clientSecretError, setClientSecretError] = useState<{
-    code: string;
-  } | null>(null);
-
-  const getClientSecret = useCallback(async () => {
-    if (clientSecret) return null;
-
-    try {
-      const res = await apis.payments.create({
-        orderId: 1, // todo: order is hardcoded, get order from db
-        paymentProcessor: paymentOption,
+  const onFinish = (success: boolean) => {
+    if (success) {
+      props.onFinish({
+        errors: [],
+        registered: cart.map(
+          ({ id, address, domain, isFree, costNativeFio }) => ({
+            fioName: address
+              ? `${address}${FIO_ADDRESS_DELIMITER}${domain}`
+              : domain,
+            isFree,
+            fee_collected: costNativeFio,
+            cartItemId: id,
+            transaction_id: '',
+          }),
+        ),
+        partial: [],
+        providerTxId: payment.externalPaymentId,
+        purchaseProvider: PURCHASE_PROVIDER.STRIPE,
+        paymentOption,
+        paymentAmount: payment.amount,
+        paymentCurrency: CURRENCY_CODES.USD,
       });
-      setClientSecret(res.secret);
-    } catch (err) {
-      setClientSecretError(err);
-      console.error(err);
     }
-  }, [clientSecret, paymentOption]);
+  };
 
-  useEffectOnce(() => {
-    getClientSecret();
-  }, [getClientSecret]);
-
-  if (clientSecretError)
+  if (paymentOptionError)
     return (
       <div className="d-flex justify-content-center flex-column">
         <ErrorBadge
@@ -66,14 +66,18 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
       </div>
     );
 
-  if (!clientSecret) return <Loader />;
+  if (!payment || !payment.secret) return <Loader />;
 
   return (
     <Elements
       stripe={STRIPE_PROMISE}
-      options={{ ...STRIPE_ELEMENT_OPTIONS, clientSecret }}
+      options={{
+        ...STRIPE_ELEMENT_OPTIONS,
+        clientSecret: payment.secret,
+        locale: 'en',
+      }}
     >
-      <StripeForm />
+      <StripeForm onFinish={onFinish} />
     </Elements>
   );
 };
