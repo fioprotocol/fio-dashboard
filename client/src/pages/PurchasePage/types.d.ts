@@ -34,7 +34,7 @@ export type PurchaseResultsProps = {
   hidePayWithBadge?: boolean;
 } & CommonResultsProps;
 
-export type InfoBadgeCmoponentProps = {
+export type InfoBadgeComponentProps = {
   purchaseProvider: PurchaseProvider;
   purchaseStatus: PurchaseTxStatus;
   failedTxsTotalAmount?: number | string;

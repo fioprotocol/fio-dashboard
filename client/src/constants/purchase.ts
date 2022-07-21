@@ -22,6 +22,14 @@ export const PURCHASE_PROVIDER_LABEL = {
   [PURCHASE_PROVIDER.CRYPTO]: 'Crypto',
 };
 
+export const PAYMENT_STATUSES = {
+  NEW: 1,
+  PENDING: 2,
+  COMPLETED: 3,
+  EXPIRED: 4,
+  CANCELLED: 5,
+} as const;
+
 export const PAYMENT_OPTIONS = {
   FIO: 'FIO',
   CREDIT_CARD: 'CREDIT_CARD',
