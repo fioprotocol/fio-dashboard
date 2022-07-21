@@ -7,6 +7,7 @@ import {
   RefProfile,
   Order,
   User,
+  Payment,
 } from '../types';
 
 export type AccountGetWalletsResponse = FioWalletDoublet[];
@@ -88,13 +89,7 @@ export type AdminInviteResponse =
   | { success: false; message: 'Not Unique' };
 export type AdminConfirmResponse = AdminUser;
 
-export type PaymentCreateResponse = {
-  amount: string;
-  currency: string;
-  externalPaymentId: string;
-  id: string;
-  secret: string;
-};
+export type PaymentCreateResponse = Payment;
 
 export type ApisResponse = AccountGetWalletsResponse &
   AccountSetWalletsResponse &

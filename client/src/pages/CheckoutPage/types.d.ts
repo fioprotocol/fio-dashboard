@@ -5,6 +5,7 @@ import {
   WalletBalancesItem,
   RegistrationResult,
   PaymentOptionsProps,
+  Payment,
 } from '../../types';
 
 type DefaultProps = {
@@ -17,10 +18,14 @@ type DefaultProps = {
   isFree: boolean;
   setWallet: (publicKey: string) => void;
   onFinish: (results: RegistrationResult) => void;
+  cart: CartItemType[];
+  payment: Payment;
+  paymentOptionError: {
+    code: string;
+  } | null;
 };
 
 export type CheckoutComponentProps = {
-  cart: CartItemType[];
   roe: number | null;
 } & DefaultProps;
 
@@ -30,4 +35,4 @@ export type PaymentOptionComponentProps = {
 
 export type StripePaymentOptionProps = {
   paymentOption: PaymentOptionsProps;
-};
+} & DefaultProps;

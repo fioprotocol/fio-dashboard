@@ -22,7 +22,9 @@ export const CheckoutPage: React.FC = () => {
     fioWalletsBalances,
     isProcessing,
     title,
+    payment,
     paymentOption,
+    paymentOptionError,
     isFree,
     onClose,
     onFinish,
@@ -40,7 +42,9 @@ export const CheckoutPage: React.FC = () => {
           roe={roe}
           fioWallets={fioWallets}
           fioWalletsBalances={fioWalletsBalances}
+          payment={payment}
           paymentOption={paymentOption}
+          paymentOptionError={paymentOptionError}
           isFree={isFree}
           onFinish={onFinish}
           setWallet={setWallet}

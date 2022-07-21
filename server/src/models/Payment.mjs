@@ -7,6 +7,8 @@ import Base from './Base';
 import { Order } from './Order';
 import { PaymentEventLog } from './PaymentEventLog';
 
+import Stripe from '../external/payment-processor/stripe.mjs';
+
 const { DataTypes: DT } = Sequelize;
 
 export class Payment extends Base {
@@ -118,6 +120,14 @@ export class Payment extends Base {
       where,
       order: [['id', 'ASC']],
     });
+  }
+
+  static getPaymentProcessor(paymentProcessor) {
+    if (paymentProcessor === this.PROCESSOR.CREDIT_CARD) {
+      return Stripe;
+    }
+
+    return null;
   }
 
   static format({

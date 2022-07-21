@@ -13,11 +13,11 @@ import {
   ERROR_UI_TYPE,
 } from '../../../components/Input/ErrorBadge';
 
-import { ROUTES } from '../../../constants/routes';
-
 import classes from '../styles/StripePaymentOption.module.scss';
 
-export const StripeForm: React.FC = () => {
+export const StripeForm: React.FC<{ onFinish: (success: boolean) => void }> = ({
+  onFinish,
+}) => {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -37,15 +37,14 @@ export const StripeForm: React.FC = () => {
 
     const { error } = await stripe.confirmPayment({
       elements,
-      confirmParams: {
-        return_url: `${window.location.origin}${ROUTES.PURCHASE}`,
-      },
+      redirect: 'if_required',
     });
 
     if (error) {
       setErrorMessage(error.message);
     }
 
+    onFinish(!error);
     setLoading(false);
   };
 
