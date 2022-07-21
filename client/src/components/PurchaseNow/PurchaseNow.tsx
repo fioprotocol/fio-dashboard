@@ -123,7 +123,8 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     if (walletKeys && Object.keys(walletKeys).length) resetPinConfirm();
 
     if (confirmationError) setWaiting(false);
-  }, [pinConfirmation]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pinConfirmation]); // We need run this hook only on pinConfirmation change
 
   useEffect(() => {
     const { success, verifyParams } = captchaResult;
@@ -147,7 +148,8 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     if (success && isWaiting) execRegistration();
 
     if (success === false) setWaiting(false);
-  }, [captchaResult]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [captchaResult]); // We need run this hook only on captchaResults change
 
   const purchase = () => {
     setWaiting(true);

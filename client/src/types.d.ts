@@ -6,7 +6,11 @@ import { LocationState, Path } from 'history';
 import { FIOSDK_LIB } from './api/fio';
 
 import { CONTAINED_FLOW_ACTIONS } from './constants/containedFlow';
-import { PURCHASE_PROVIDER, PAYMENT_OPTIONS } from './constants/purchase';
+import {
+  PURCHASE_PROVIDER,
+  PAYMENT_OPTIONS,
+  PURCHASE_RESULTS_STATUS,
+} from './constants/purchase';
 import { CURRENCY_CODES } from './constants/common';
 
 import { ResultsData } from '../components/common/TransactionResults/types';
@@ -96,6 +100,7 @@ export type RegistrationRegistered = {
 export type PurchaseProvider = typeof PURCHASE_PROVIDER[keyof typeof PURCHASE_PROVIDER];
 export type PaymentCurrency = typeof CURRENCY_CODES[keyof typeof CURRENCY_CODES];
 export type PaymentOptionsProps = typeof PAYMENT_OPTIONS[keyof typeof PAYMENT_OPTIONS];
+export type PurchaseTxStatus = typeof PURCHASE_RESULTS_STATUS[keyof typeof PURCHASE_RESULTS_STATUS];
 
 export type RegistrationResult = {
   errors: RegistrationErrors[];

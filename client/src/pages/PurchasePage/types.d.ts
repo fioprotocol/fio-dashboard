@@ -1,14 +1,9 @@
-import {
-  PURCHASE_PROVIDER,
-  PURCHASE_RESULTS_STATUS,
-} from '../../constants/purchase';
+import { PURCHASE_PROVIDER } from '../../constants/purchase';
 import { CURRENCY_CODES } from '../../../constants/common';
 
-import { CartItem } from '../../../types';
+import { CartItem, PurchaseTxStatus } from '../../../types';
 
 type PurchaseProvider = typeof PURCHASE_PROVIDER[keyof typeof PURCHASE_PROVIDER];
-
-type PurchaseTxStatus = typeof PURCHASE_RESULTS_STATUS[keyof typeof PURCHASE_RESULTS_STATUS];
 
 type PaymentCurrency = typeof CURRENCY_CODES[keyof typeof CURRENCY_CODES];
 
