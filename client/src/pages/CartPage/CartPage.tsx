@@ -59,6 +59,8 @@ const CartPage: React.FC<Props> = props => {
 
   const lastLocation = useLastLocation();
   const walletJson = JSON.stringify(userWallets);
+  const cartItemsJson = JSON.stringify(cartItems);
+
   const [isPriceChanged, handlePriceChange] = useState(false);
 
   const walletCount = userWallets.length;
@@ -166,12 +168,20 @@ const CartPage: React.FC<Props> = props => {
     }
     handleFreeAddressCart({
       recalculate,
-      cartItems,
+      cartItems: JSON.parse(cartItemsJson),
       prices,
       hasFreeAddress,
       roe,
     });
-  }, [isAuthenticated, hasFreeAddress, roe]);
+  }, [
+    isAuthenticated,
+    hasFreeAddress,
+    roe,
+    history,
+    prices,
+    cartItemsJson,
+    recalculate,
+  ]);
 
   useEffectOnce(() => {
     const wallets = JSON.parse(walletJson);

@@ -161,7 +161,7 @@ export const transformInputValues = ({
   e: ChangeEvent<HTMLInputElement>;
   transformedValue: string;
   onChange: (value: string) => void;
-}) => {
+}): void => {
   const startPos = e.target.selectionStart;
   const endPos = e.target.selectionEnd;
   onChange(transformedValue);
