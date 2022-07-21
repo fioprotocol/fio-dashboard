@@ -17,6 +17,7 @@ import {
   FioActionExecuted,
   Prices,
   AnyObject,
+  PurchaseTxStatus,
 } from '../types';
 
 export const onPurchaseFinish = ({
@@ -37,7 +38,7 @@ export const onPurchaseFinish = ({
   setProcessing: (isProcessing: boolean) => void;
   fioActionExecuted: (data: FioActionExecuted) => void;
   dispatch: Dispatch<AnyObject>;
-}) => {
+}): void => {
   dispatch(setRegistration(results));
   dispatch(setProcessing(false));
 
@@ -193,7 +194,7 @@ export const handlePurchaseStatus = ({
   hasRegItems: boolean;
   hasFailedItems: boolean;
   providerTxStatus: number;
-}) => {
+}): PurchaseTxStatus => {
   if (providerTxStatus === PURCHASE_RESULTS_STATUS.PENDING)
     return PURCHASE_RESULTS_STATUS.PENDING;
 

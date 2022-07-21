@@ -6,7 +6,7 @@ export const setCookies = (
   params: { expires?: number; path?: string } = {
     path: '/',
   },
-) => {
+): void => {
   if (!cookieValue) return Cookies.remove(cookieName, params);
   Cookies.set(cookieName, cookieValue, params);
 };
