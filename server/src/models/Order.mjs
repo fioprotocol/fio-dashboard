@@ -8,6 +8,7 @@ import { OrderItem } from './OrderItem';
 import { OrderItemStatus } from './OrderItemStatus.mjs';
 import { Payment } from './Payment';
 import { PaymentEventLog } from './PaymentEventLog.mjs';
+import { BlockchainTransaction } from './BlockchainTransaction.mjs';
 
 const { DataTypes: DT } = Sequelize;
 const ORDER_NUMBER_LENGTH = 6;
@@ -150,6 +151,56 @@ export class Order extends Base {
       ],
       order: [['createdAt', 'DESC']],
     });
+  }
+
+  static async updateStatus(orderId, paymentStatus = null, txStatus = null, t = null) {
+    let orderStatus = null;
+    switch (paymentStatus) {
+      case Payment.STATUS.PENDING: {
+        orderStatus = Order.STATUS.PENDING;
+        break;
+      }
+      case Payment.STATUS.EXPIRED: {
+        orderStatus = Order.STATUS.FAILED;
+        break;
+      }
+      case Payment.STATUS.CANCELLED: {
+        orderStatus = Order.STATUS.CANCELED;
+        break;
+      }
+      case Payment.STATUS.COMPLETED: {
+        orderStatus = Order.STATUS.PAID;
+        break;
+      }
+      default:
+      //
+    }
+    switch (txStatus) {
+      case BlockchainTransaction.STATUS.PENDING: {
+        orderStatus = Order.STATUS.PAID;
+        break;
+      }
+      case BlockchainTransaction.STATUS.CANCEL: {
+        orderStatus = Order.STATUS.CANCELED;
+        break;
+      }
+      case BlockchainTransaction.STATUS.RETRY_PROCESSED: {
+        orderStatus = Order.STATUS.FAILED;
+        break;
+      }
+      case BlockchainTransaction.STATUS.SUCCESS: {
+        orderStatus = Order.STATUS.TRANSACTION_EXECUTED;
+        break;
+      }
+      default:
+      //
+    }
+
+    if (orderStatus !== null)
+      await Order.update(
+        { status: orderStatus },
+        { where: { id: orderId }, transaction: t },
+      );
   }
 
   static format({

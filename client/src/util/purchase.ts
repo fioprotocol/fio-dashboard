@@ -1,6 +1,5 @@
 import isEmpty from 'lodash/isEmpty';
 import { History } from 'history';
-import { Dispatch } from 'redux';
 
 import { isDomain } from '../utils';
 import { convertFioPrices } from './prices';
@@ -9,14 +8,16 @@ import MathOp from './math';
 import { CONTAINED_FLOW_ACTIONS } from '../constants/containedFlow';
 import { ROUTES } from '../constants/routes';
 import { ERROR_TYPES } from '../constants/errors';
-import { PURCHASE_RESULTS_STATUS } from '../constants/purchase';
+import {
+  PAYMENT_OPTIONS,
+  PURCHASE_RESULTS_STATUS,
+} from '../constants/purchase';
 
 import {
   RegistrationResult,
   CartItem,
   FioActionExecuted,
   Prices,
-  AnyObject,
   PurchaseTxStatus,
 } from '../types';
 
@@ -28,7 +29,6 @@ export const onPurchaseFinish = ({
   setRegistration,
   setProcessing,
   fioActionExecuted,
-  dispatch,
 }: {
   results: RegistrationResult;
   isRetry?: boolean;
@@ -37,10 +37,9 @@ export const onPurchaseFinish = ({
   setRegistration: (regData: RegistrationResult) => void;
   setProcessing: (isProcessing: boolean) => void;
   fioActionExecuted: (data: FioActionExecuted) => void;
-  dispatch: Dispatch<AnyObject>;
-}): void => {
-  dispatch(setRegistration(results));
-  dispatch(setProcessing(false));
+}) => {
+  setRegistration(results);
+  setProcessing(false);
 
   if (!isRetry) {
     const txIds: string[] = [];
@@ -51,14 +50,16 @@ export const onPurchaseFinish = ({
       }
     });
 
-    dispatch(
+    if (results.paymentOption === PAYMENT_OPTIONS.FIO)
       fioActionExecuted({
         result: { status: 1, txIds },
         executeActionType: CONTAINED_FLOW_ACTIONS.REG,
-      }),
-    );
+      });
   }
-  isCheckout && history.push(ROUTES.PURCHASE);
+
+  if (isCheckout) {
+    history.push(ROUTES.PURCHASE);
+  }
 };
 
 export const transformPurchaseResults = ({
