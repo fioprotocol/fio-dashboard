@@ -92,6 +92,7 @@ export type RegistrationRegistered = {
   fioName: string;
   isFree?: boolean;
   fee_collected: number;
+  costUsdc?: string;
   cartItemId: string;
   transaction_id: string;
   transactions?: string[];
@@ -108,6 +109,8 @@ export type RegistrationResult = {
   partial: string[];
   purchaseProvider?: PurchaseProvider;
   providerTxId?: string | number;
+  paymentOption?: PaymentOptionsProps;
+  paymentAmount?: string;
   paymentCurrency?: PaymentCurrency;
   convertedPaymentCurrency?: PaymentCurrency;
   providerTxStatus?: number;
@@ -582,4 +585,12 @@ export type OrderItem = {
   }[];
   user?: { id: string; email: string };
   updatedAt: string;
+};
+
+export type Payment = {
+  id: number;
+  externalPaymentId: string;
+  amount: string;
+  currency: string;
+  secret?: string;
 };

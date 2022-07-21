@@ -10,11 +10,11 @@ import {
 
 import { ERROR_MESSAGES, ERROR_TYPES } from '../../../constants/errors';
 
-import { InfoBadgeCmoponentProps } from '../types';
+import { InfoBadgeComponentProps } from '../types';
 
 const STRIPE_REQUIRES_PAYMENT_ERROR = 'requires_payment_method';
 
-export const InfoBadgeComponent: React.FC<InfoBadgeCmoponentProps> = props => {
+export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
   const {
     purchaseProvider,
     purchaseStatus,

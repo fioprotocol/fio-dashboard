@@ -108,6 +108,7 @@ export const CHAIN_CODES = {
 export const CURRENCY_CODES = {
   FIO: 'FIO',
   USDC: 'USDC',
+  USD: 'USD',
 } as const;
 
 export const FIO_DATA_TRANSACTION_LINK = {

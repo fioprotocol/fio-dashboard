@@ -16,6 +16,7 @@ import { PurchaseNowTypes } from './types';
 import { RegistrationResult } from '../../types';
 
 import classes from './PurchaseNow.module.scss';
+import { PAYMENT_OPTIONS } from '../../constants/purchase';
 
 const MIN_WAIT_TIME = 3000;
 
@@ -71,6 +72,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
         break;
       }
     }
+    results.paymentOption = PAYMENT_OPTIONS.FIO;
     setWaiting(false);
     waitFn(onFinish, results);
   };

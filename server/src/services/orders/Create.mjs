@@ -1,6 +1,8 @@
+import Sequelize from 'sequelize';
+
 import Base from '../Base';
 
-import { Order, OrderItem, Payment } from '../../models';
+import { Order, OrderItem, OrderItemStatus, Payment } from '../../models';
 
 export default class OrdersCreate extends Base {
   static get validationRules() {
@@ -34,10 +36,18 @@ export default class OrdersCreate extends Base {
   async execute({ data: { total, roe, publicKey, items } }) {
     // assume user should have only one active order with status NEW
     let order = await Order.findOne({
-      where: { status: Order.STATUS.NEW, userId: this.context.id },
+      where: {
+        status: Order.STATUS.NEW,
+        userId: this.context.id,
+        createdAt: {
+          [Sequelize.Op.gt]: new Date(new Date().getTime() - 1000 * 60 * 60 * 24),
+        },
+      },
+      include: [OrderItem],
     });
 
     await Order.sequelize.transaction(async t => {
+      // Update existing new order and remove items from it
       if (order) {
         order.total = total;
         order.roe = roe;
@@ -48,6 +58,13 @@ export default class OrdersCreate extends Base {
         await order.save({ transaction: t });
         await OrderItem.destroy({
           where: { orderId: order.id },
+          force: true,
+          transaction: t,
+        });
+        await OrderItemStatus.destroy({
+          where: {
+            orderItemId: { [Sequelize.Op.in]: order.OrderItems.map(({ id }) => id) },
+          },
           force: true,
           transaction: t,
         });
