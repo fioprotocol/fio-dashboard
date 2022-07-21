@@ -37,7 +37,30 @@ import {
 } from '../../constants/purchase';
 import { CURRENCY_CODES } from '../../constants/common';
 
-export const useContext = () => {
+import { PurchaseProvider, PurchaseTxStatus, CartItem } from '../../types';
+
+export const useContext = (): {
+  regItems: CartItem[];
+  errItems: CartItem[];
+  closeText: string;
+  onClose: () => void;
+  onFinish: () => void;
+  purchaseStatus: PurchaseTxStatus;
+  purchaseProvider: PurchaseProvider;
+  regPaymentAmount: string | number;
+  regConvertedPaymentAmount: string | number;
+  regCostFree: string;
+  errPaymentAmount: string | number;
+  errConvertedPaymentAmount: string | number;
+  errCostFree: string;
+  paymentCurrency: string;
+  convertedPaymentCurrency: string;
+  providerTxId: string | number;
+  allErrored: boolean;
+  failedTxsTotalAmount: string | number;
+  isProcessing: boolean;
+  isRetry: boolean;
+} => {
   const history = useHistory();
   const isAuth = useSelector(isAuthenticated);
   const results = useSelector(registrationResult);
