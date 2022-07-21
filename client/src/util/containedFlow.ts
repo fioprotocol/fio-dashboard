@@ -25,6 +25,6 @@ export const validateContainedFlowActionQuery = (
 export const compareContainedFlowAction = (
   containedFlowAction: string,
   comparedContainedFlowAction: string,
-) =>
+): boolean =>
   removeExtraCharactersFromString(containedFlowAction) ===
   removeExtraCharactersFromString(comparedContainedFlowAction);

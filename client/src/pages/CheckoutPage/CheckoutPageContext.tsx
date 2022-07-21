@@ -38,9 +38,31 @@ import { useEffectOnce } from '../../hooks/general';
 import { ROUTES } from '../../constants/routes';
 import { PAYMENT_OPTION_TITLE } from '../../constants/purchase';
 
-import { RegistrationResult, PaymentOptionsProps } from '../../types';
+import {
+  RegistrationResult,
+  PaymentOptionsProps,
+  CartItem,
+  FioWalletDoublet,
+  WalletsBalances,
+  WalletBalancesItem,
+} from '../../types';
 
-export const useContext = () => {
+export const useContext = (): {
+  cartItems: CartItem[];
+  walletBalancesAvailable: WalletBalancesItem;
+  paymentWallet: FioWalletDoublet;
+  paymentWalletPublicKey: string;
+  roe: number | null;
+  fioWallets: FioWalletDoublet[];
+  fioWalletsBalances: WalletsBalances;
+  isProcessing: boolean;
+  title: string;
+  paymentOption: PaymentOptionsProps;
+  isFree: boolean;
+  onClose: () => void;
+  onFinish: (results: RegistrationResult) => void;
+  setWallet: (walletPublicKey: string) => void;
+} => {
   const history = useHistory();
   const fioWallets = useSelector(fioWalletsSelector);
   const loading = useSelector(loadingSelector);
@@ -75,6 +97,8 @@ export const useContext = () => {
     }
   }, []);
 
+  const cartItemsJson = JSON.stringify(cartItems);
+
   const isFree =
     !isEmpty(cartItems) &&
     cartItems.length === 1 &&
@@ -87,6 +111,10 @@ export const useContext = () => {
   const { available: walletBalancesAvailable } = useWalletBalances(
     paymentWalletPublicKey,
   );
+
+  const walletHasNoEnoughBalance = new MathOp(
+    walletBalancesAvailable.nativeFio,
+  ).lt(totalCost(cartItems, roe).costNativeFio);
 
   const title =
     isFree || !paymentOption
@@ -103,26 +131,30 @@ export const useContext = () => {
     if (
       !loading &&
       !isFree &&
-      ((paymentWalletPublicKey &&
-        new MathOp(walletBalancesAvailable.nativeFio).lt(
-          totalCost(cartItems, roe).costNativeFio,
-        )) ||
+      ((paymentWalletPublicKey && walletHasNoEnoughBalance) ||
         (!paymentWalletPublicKey && fioWallets.length > 1))
     ) {
       history.push(ROUTES.CART);
     }
-  }, [walletBalancesAvailable.nativeFio, paymentWalletPublicKey, loading]);
+  }, [
+    fioWallets.length,
+    history,
+    isFree,
+    loading,
+    paymentWalletPublicKey,
+    walletHasNoEnoughBalance,
+  ]);
 
   useEffect(() => {
     !isProcessing &&
       handleFreeAddressCart({
-        recalculate,
-        cartItems,
+        recalculate: cartItems => dispatch(recalculate(cartItems)),
+        cartItems: JSON.parse(cartItemsJson),
         prices,
         hasFreeAddress,
         roe,
       });
-  }, [hasFreeAddress, prices, roe]);
+  }, [hasFreeAddress, prices, roe, isProcessing, cartItemsJson, dispatch]);
 
   const onClose = () => {
     history.push(ROUTES.CART);
