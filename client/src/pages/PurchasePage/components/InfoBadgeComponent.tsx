@@ -1,13 +1,12 @@
 import React from 'react';
 
-import { BADGE_TYPES } from '../../../components/Badge/Badge';
 import InfoBadge from '../../../components/InfoBadge/InfoBadge';
 
+import { BADGE_TYPES } from '../../../components/Badge/Badge';
 import {
   PURCHASE_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from '../../../constants/purchase';
-
 import { ERROR_MESSAGES, ERROR_TYPES } from '../../../constants/errors';
 
 import { InfoBadgeComponentProps } from '../types';
@@ -30,7 +29,11 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
   if (purchaseStatus === PURCHASE_RESULTS_STATUS.DONE) return null;
 
   // Customize content info badge for In Progress status
-  if (purchaseStatus === PURCHASE_RESULTS_STATUS.PENDING) {
+  if (
+    purchaseStatus === PURCHASE_RESULTS_STATUS.PENDING ||
+    purchaseStatus === PURCHASE_RESULTS_STATUS.PAYMENT_PENDING ||
+    purchaseStatus === PURCHASE_RESULTS_STATUS.PAYMENT_AWAITING
+  ) {
     title = 'Confirmation in Progress';
     badgeUIType = BADGE_TYPES.INFO;
 

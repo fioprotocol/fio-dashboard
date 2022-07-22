@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 
-import useEffectOnce from './general';
 import apis from '../api';
+import { log } from '../util/general';
+
+import useEffectOnce from './general';
 
 import { isAuthenticated } from '../redux/profile/selectors';
 
@@ -15,7 +17,7 @@ export type Options = {
   endpoint: string;
   params: AnyObject;
   onOpen?: () => void;
-  onMessage?: (msg: string) => void;
+  onMessage?: (data: AnyObject) => void;
   onClose?: (e: Error) => void;
   onError?: (msg: string) => void;
 };
@@ -27,7 +29,7 @@ export function useWebsocket({
   onMessage,
   onClose,
   onError,
-}: Options) {
+}: Options): WebSocket {
   const isAuth = useSelector(isAuthenticated);
   const [ws, setWs] = useState(null);
 
@@ -67,11 +69,7 @@ export function useWebsocket({
 
       // websocket onerror event listener
       ws.onerror = (err: Error) => {
-        console.error(
-          'Socket encountered error: ',
-          err.message,
-          'Closing socket',
-        );
+        log.error(`Socket encountered error: ${err.message}. Closing socket`);
 
         onError && onError(err.message);
 
@@ -81,7 +79,7 @@ export function useWebsocket({
       // websocket onerror event listener
       ws.onmessage = (evt: { data: string }) => {
         const message = JSON.parse(evt.data);
-        onMessage && onMessage(message);
+        onMessage && onMessage(message.data);
       };
     },
     [ws],

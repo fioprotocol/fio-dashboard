@@ -94,7 +94,7 @@ router.get('/check-pub-address', checkAuth, routes.external.validatePubAddress);
 
 router.get('/orders', checkAuth, routes.orders.list);
 router.post('/orders', checkAuth, routes.orders.create);
-router.post('/orders/update', checkAuth, routes.orders.update);
+router.post('/orders/update/:id', checkAuth, routes.orders.update);
 
 router.post('/payments', checkAuth, routes.payments.create);
 router.post('/payments/webhook/', routes.payments.webhook);
