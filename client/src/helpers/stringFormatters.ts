@@ -42,7 +42,7 @@ export const currencyString = (
   })}`;
 };
 
-export const formatDateToLocale = (date: string) => {
+export const formatDateToLocale = (date: string): string => {
   return new Date(date).toLocaleDateString([], {
     year: 'numeric',
     month: '2-digit',

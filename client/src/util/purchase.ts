@@ -37,7 +37,7 @@ export const onPurchaseFinish = ({
   setRegistration: (regData: RegistrationResult) => void;
   setProcessing: (isProcessing: boolean) => void;
   fioActionExecuted: (data: FioActionExecuted) => void;
-}) => {
+}): void => {
   setRegistration(results);
   setProcessing(false);
 

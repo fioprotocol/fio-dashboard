@@ -4,7 +4,7 @@ import config from '../config';
 
 import { ApisResponse } from './responses';
 
-export const isAdminService = (url: string) => /admin/g.test(url);
+export const isAdminService = (url: string): boolean => /admin/g.test(url);
 
 export default class ApiClient {
   prefix: string;
