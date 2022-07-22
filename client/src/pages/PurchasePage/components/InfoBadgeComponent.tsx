@@ -73,7 +73,7 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
       message =
         'Your purchase was not completed in full. Please see below what failed to be completed.';
     } else {
-      message = `The following items failed to purchase. We have credited your account with ${failedTxsTotalAmount} FIO Tokens which represents the value of those items. Please go back and try your purchase again.`;
+      message = `The following items failed to purchase. We have credited your account with ${failedTxsTotalAmount as string} FIO Tokens which represents the value of those items. Please go back and try your purchase again.`;
     }
   }
 
@@ -91,7 +91,7 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
     // Custom title and message for crypto provider
     if (purchaseProvider === PURCHASE_PROVIDER.CRYPTO) {
       title = 'Purchase Error';
-      message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount} FIO Tokens. You can use these tokens to register FIO Crypto Handle or Domain.`;
+      message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount as string} FIO Tokens. You can use these tokens to register FIO Crypto Handle or Domain.`;
     }
 
     // Custom title and message for stripe provider
@@ -103,7 +103,7 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
           'The credit card you have provided was not accepted by the issuing bank and therefore your transaction was not complete. Click close and try purchasing again with another form of payment.';
       } else {
         title = 'Purchase Error';
-        message = `There was an error during registration. As a result we have refunded the entire amount of order, $${failedTxsTotalAmount} back to your credit card. Click close and try purchasing again.`;
+        message = `There was an error during registration. As a result we have refunded the entire amount of order, $${failedTxsTotalAmount as string} back to your credit card. Click close and try purchasing again.`;
       }
     }
   }

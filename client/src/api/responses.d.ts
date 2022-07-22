@@ -42,6 +42,7 @@ export type AuthDeleteNewDeviceRequestResponse =
   | { success: false; message: 'Not Found' };
 export type AuthUpdateNewDeviceResponse = null;
 export type AuthCheckRejectedResponse = boolean;
+export type AdminAuthLoginResponse = { jwt: string };
 
 export type ContactsListResponse = string[];
 export type ContactsCreateResponse = string;

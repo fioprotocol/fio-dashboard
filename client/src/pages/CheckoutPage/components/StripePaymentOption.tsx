@@ -18,6 +18,7 @@ import { STRIPE_ELEMENT_OPTIONS, STRIPE_PROMISE } from '../constants';
 import { CURRENCY_CODES } from '../../../constants/common';
 
 import { StripePaymentOptionProps } from '../types';
+import { CartItem } from '../../../types';
 
 export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => {
   const { cart, payment, paymentOption, paymentOptionError } = props;
@@ -29,7 +30,7 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
       props.onFinish({
         errors: [],
         registered: cart.map(
-          ({ id, address, domain, isFree, costNativeFio }) => ({
+          ({ id, address, domain, isFree, costNativeFio }: CartItem) => ({
             fioName: address
               ? `${address}${FIO_ADDRESS_DELIMITER}${domain}`
               : domain,
