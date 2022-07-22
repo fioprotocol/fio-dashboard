@@ -19,7 +19,7 @@ export default class OrdersUpdate extends Base {
   }
 
   async execute({ id, data }) {
-    const order = await Order.findOneWhere({ id });
+    const order = await Order.findOneWhere({ id, userId: this.context.id });
 
     if (!order) {
       throw new X({
@@ -30,7 +30,7 @@ export default class OrdersUpdate extends Base {
       });
     }
 
-    await Order.update({ id }, data);
+    await Order.update(data, { where: { id, userId: this.context.id } });
 
     return {
       data: { success: true },

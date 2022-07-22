@@ -142,7 +142,7 @@ export default class PaymentsWebhook extends Base {
             },
             transaction: t,
           });
-          await Order.updateStatus(order.id, payment.status, null, t);
+          await Order.updateStatus(order.id, payment.status, [], t);
         });
 
         // Set item is ready to process if payment is completed

@@ -1,7 +1,7 @@
 import isEmpty from 'lodash/isEmpty';
 import { History } from 'history';
 
-import { isDomain } from '../utils';
+import { FIO_ADDRESS_DELIMITER, isDomain } from '../utils';
 import { convertFioPrices } from './prices';
 import MathOp from './math';
 
@@ -98,7 +98,7 @@ export const transformPurchaseResults = ({
         retObj.domain = fioName;
         retObj.costNativeFio = nativeFioDomainPrice;
       } else {
-        const name = fioName.split('@');
+        const name = fioName.split(FIO_ADDRESS_DELIMITER);
         const addressName = name[0];
         const domainName = name[1];
 
@@ -153,7 +153,7 @@ export const transformPurchaseResults = ({
       };
 
       if (!isDomain(fioName)) {
-        const name = fioName.split('@');
+        const name = fioName.split(FIO_ADDRESS_DELIMITER);
         const addressName = name[0];
         const domainName = name[1];
 
@@ -194,13 +194,9 @@ export const handlePurchaseStatus = ({
 }: {
   hasRegItems: boolean;
   hasFailedItems: boolean;
-  providerTxStatus: number;
+  providerTxStatus: PurchaseTxStatus;
 }): PurchaseTxStatus => {
-  if (providerTxStatus === PURCHASE_RESULTS_STATUS.PENDING)
-    return PURCHASE_RESULTS_STATUS.PENDING;
-
-  if (providerTxStatus === PURCHASE_RESULTS_STATUS.CANCELED)
-    return PURCHASE_RESULTS_STATUS.CANCELED;
+  if (providerTxStatus) return providerTxStatus;
 
   if (hasRegItems && !hasFailedItems) return PURCHASE_RESULTS_STATUS.DONE;
 
@@ -208,4 +204,6 @@ export const handlePurchaseStatus = ({
 
   if (hasRegItems && hasFailedItems)
     return PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS;
+
+  return PURCHASE_RESULTS_STATUS.PENDING;
 };
