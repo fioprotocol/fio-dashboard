@@ -26,11 +26,12 @@ export class Order extends Base {
       PENDING: 2,
       PAYMENT_AWAITING: 3,
       PAID: 4,
-      TRANSACTION_EXECUTED: 5,
+      TRANSACTION_PENDING: 5,
       PARTIALLY_SUCCESS: 6,
       DONE: 7,
       FAILED: 8,
       CANCELED: 9,
+      PAYMENT_PENDING: 10,
     };
   }
 
@@ -153,7 +154,7 @@ export class Order extends Base {
     });
   }
 
-  static async updateStatus(orderId, paymentStatus = null, txStatus = null, t = null) {
+  static async updateStatus(orderId, paymentStatus = null, txStatuses = [], t = null) {
     let orderStatus = null;
     switch (paymentStatus) {
       case Payment.STATUS.PENDING: {
@@ -175,25 +176,44 @@ export class Order extends Base {
       default:
       //
     }
-    switch (txStatus) {
-      case BlockchainTransaction.STATUS.PENDING: {
-        orderStatus = Order.STATUS.PAID;
-        break;
+
+    if (txStatuses.length) {
+      orderStatus = Order.STATUS.TRANSACTION_PENDING;
+      const txStatusesMap = {
+        [BlockchainTransaction.STATUS.PENDING]: 0,
+        [BlockchainTransaction.STATUS.CANCEL]: 0,
+        [BlockchainTransaction.STATUS.REVIEW]: 0,
+        [BlockchainTransaction.STATUS.SUCCESS]: 0,
+      };
+
+      for (const txStatus of txStatuses) {
+        if (txStatusesMap[txStatus] !== undefined) txStatusesMap[txStatus]++;
       }
-      case BlockchainTransaction.STATUS.CANCEL: {
-        orderStatus = Order.STATUS.CANCELED;
-        break;
-      }
-      case BlockchainTransaction.STATUS.RETRY_PROCESSED: {
+
+      // All processed, some succeeded (will be reset if all succeeded all failed)
+      if (
+        txStatusesMap[BlockchainTransaction.STATUS.SUCCESS] +
+          txStatusesMap[BlockchainTransaction.STATUS.REVIEW] +
+          txStatusesMap[BlockchainTransaction.STATUS.CANCEL] ===
+        txStatuses.length
+      )
+        orderStatus = Order.STATUS.PARTIALLY_SUCCESS;
+
+      // All failed
+      if (
+        txStatusesMap[BlockchainTransaction.STATUS.REVIEW] +
+          txStatusesMap[BlockchainTransaction.STATUS.CANCEL] ===
+        txStatuses.length
+      )
         orderStatus = Order.STATUS.FAILED;
-        break;
-      }
-      case BlockchainTransaction.STATUS.SUCCESS: {
-        orderStatus = Order.STATUS.TRANSACTION_EXECUTED;
-        break;
-      }
-      default:
-      //
+
+      // All canceled
+      if (txStatusesMap[BlockchainTransaction.STATUS.CANCEL] === txStatuses.length)
+        orderStatus = Order.STATUS.CANCELED;
+
+      // All success
+      if (txStatusesMap[BlockchainTransaction.STATUS.SUCCESS] === txStatuses.length)
+        orderStatus = Order.STATUS.DONE;
     }
 
     if (orderStatus !== null)

@@ -11,7 +11,10 @@ import { ActionButton } from './components/ActionButton';
 import { RegisteredResultsComponent } from './components/RegisteredResultsComponent';
 import { FailedResultsComponent } from './components/FailedResultsComponent';
 
-import { PURCHASE_RESULTS_TITLES } from '../../constants/purchase';
+import {
+  PURCHASE_RESULTS_STATUS,
+  PURCHASE_RESULTS_TITLES,
+} from '../../constants/purchase';
 
 import classes from './styles/PurchasePage.module.scss';
 
@@ -41,7 +44,11 @@ export const PurchasePage: React.FC = () => {
 
   return (
     <PseudoModalContainer
-      title={PURCHASE_RESULTS_TITLES[purchaseStatus].title}
+      title={
+        PURCHASE_RESULTS_TITLES[purchaseStatus]
+          ? PURCHASE_RESULTS_TITLES[purchaseStatus].title
+          : PURCHASE_RESULTS_TITLES[PURCHASE_RESULTS_STATUS.PENDING].title
+      }
       onClose={onClose}
     >
       <div className={classes.container}>

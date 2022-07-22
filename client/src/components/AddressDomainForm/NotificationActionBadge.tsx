@@ -6,7 +6,12 @@ import { connect } from 'react-redux';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 
-import { deleteCartItem, isFreeDomain, compose } from '../../utils';
+import {
+  deleteCartItem,
+  isFreeDomain,
+  compose,
+  FIO_ADDRESS_DELIMITER,
+} from '../../utils';
 import MathOp from '../../util/math';
 import { convertFioPrices } from '../../util/prices';
 
@@ -70,7 +75,7 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
   const addItemToCart = () => {
     let id = '';
     if (address) {
-      id = address + '@';
+      id = address + FIO_ADDRESS_DELIMITER;
     }
 
     id += domainName;

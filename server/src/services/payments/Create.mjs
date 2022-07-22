@@ -53,6 +53,7 @@ export default class PaymentsCreate extends Base {
     const exPayment = await Payment.findOne({
       where: {
         status: Payment.STATUS.NEW,
+        spentType: Payment.SPENT_TYPE.ORDER,
         orderId,
       },
     });
