@@ -111,7 +111,7 @@ export default class OrdersCreate extends Base {
     });
 
     return {
-      data: order,
+      data: Order.format(order.get({ plain: true })),
     };
   }
 
