@@ -3,11 +3,12 @@ export const PURCHASE_RESULTS_STATUS = {
   PENDING: 2,
   PAYMENT_AWAITING: 3,
   PAID: 4,
-  TRANSACTION_EXECUTED: 5,
+  TRANSACTION_PENDING: 5,
   PARTIALLY_SUCCESS: 6,
   DONE: 7,
   FAILED: 8,
   CANCELED: 9,
+  PAYMENT_PENDING: 10,
 } as const;
 
 export const PURCHASE_PROVIDER = {
@@ -53,6 +54,9 @@ export const PURCHASE_RESULTS_TITLES: { [key: number]: { title: string } } = {
     title: 'Purchased!',
   },
   [PURCHASE_RESULTS_STATUS.PENDING]: {
+    title: 'In Progress!',
+  },
+  [PURCHASE_RESULTS_STATUS.PAYMENT_PENDING]: {
     title: 'In Progress!',
   },
   [PURCHASE_RESULTS_STATUS.CANCELED]: {

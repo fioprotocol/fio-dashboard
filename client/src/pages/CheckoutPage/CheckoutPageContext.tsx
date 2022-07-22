@@ -40,7 +40,11 @@ import { useEffectOnce } from '../../hooks/general';
 import { log } from '../../util/general';
 
 import { ROUTES } from '../../constants/routes';
-import { PAYMENT_OPTION_TITLE } from '../../constants/purchase';
+import {
+  PAYMENT_OPTION_TITLE,
+  PAYMENT_OPTIONS,
+  PURCHASE_RESULTS_STATUS,
+} from '../../constants/purchase';
 
 import {
   RegistrationResult,
@@ -120,12 +124,11 @@ export const useContext = (): {
     if (!isEmpty(fioWallets)) {
       for (const fioWallet of fioWallets) {
         if (fioWallet.publicKey) {
-          refreshBalance(fioWallet.publicKey);
+          dispatch(refreshBalance(fioWallet.publicKey));
         }
       }
       if (!paymentWalletPublicKey && fioWallets.length === 1) {
-        const sortedWallets = fioWallets.sort((a, b) => b.balance - a.balance);
-        setWallet(sortedWallets[0].publicKey);
+        dispatch(setWallet(fioWallets[0].publicKey));
       }
     }
   }, []);
@@ -172,7 +175,9 @@ export const useContext = (): {
     if (
       !loading &&
       !isFree &&
-      ((paymentWalletPublicKey && walletHasNoEnoughBalance) ||
+      ((paymentWalletPublicKey &&
+        walletHasNoEnoughBalance &&
+        paymentOption === PAYMENT_OPTIONS.FIO) ||
         (!paymentWalletPublicKey && fioWallets.length > 1))
     ) {
       history.push(ROUTES.CART);
@@ -183,6 +188,7 @@ export const useContext = (): {
     isFree,
     loading,
     paymentWalletPublicKey,
+    paymentOption,
     walletHasNoEnoughBalance,
   ]);
 
@@ -202,6 +208,9 @@ export const useContext = (): {
   };
 
   const onFinish = (results: RegistrationResult) => {
+    apis.orders.update(order.id, {
+      status: results.providerTxStatus || PURCHASE_RESULTS_STATUS.DONE,
+    });
     onPurchaseFinish({
       results,
       isCheckout: true,

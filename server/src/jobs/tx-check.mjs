@@ -1,8 +1,9 @@
 import '../db';
 import {
+  Order,
+  OrderItemStatus,
   BlockchainTransaction,
   BlockchainTransactionEventLog,
-  OrderItemStatus,
 } from '../models/index.mjs';
 import CommonJob from './job.mjs';
 
@@ -27,7 +28,7 @@ class TxCheckJob extends CommonJob {
     const processTxItem = async item => {
       if (this.isCancelled) return false;
 
-      const { id, address, domain, action, params, publicKey, btId } = item;
+      const { id, address, domain, action, params, publicKey, btId, orderId } = item;
 
       this.postMessage(`Processing tx item id - ${id}`);
 
@@ -101,6 +102,22 @@ class TxCheckJob extends CommonJob {
           });
         } catch (error) {
           logger.error(`TX ITEM PROCESSING ERROR ${item.id} - SQL UPDATE`, error);
+        }
+
+        // Update Order status
+        try {
+          const items = await OrderItemStatus.getAllItemsStatuses(orderId);
+
+          await Order.updateStatus(
+            orderId,
+            null,
+            items.map(({ txStatus }) => txStatus),
+          );
+        } catch (error) {
+          logger.error(
+            `TX ITEM PROCESSING ERROR - ORDER STATUS UPDATE - ${orderId}`,
+            error,
+          );
         }
       } catch (e) {
         logger.error(`TX ITEM PROCESSING ERROR ${item.id}`, e);

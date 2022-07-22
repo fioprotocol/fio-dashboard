@@ -83,17 +83,6 @@ export async function runWsService(service, { wsConnection, context = {}, params
       wsConnection,
     }).run(params);
 
-    const cleanResult = cleanup(result, service.resultSecret, service.resultCleanup);
-
-    logRequest({
-      type: 'info',
-      actionName,
-      params: cleanParams,
-      result: cleanResult,
-      startTime,
-      userId: context.id,
-    });
-
     return result;
   } catch (error) {
     if (error instanceof Exception) {

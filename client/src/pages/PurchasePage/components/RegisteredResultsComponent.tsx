@@ -24,7 +24,7 @@ export const RegisteredResultsComponent: React.FC<RegisteredResultsComponentProp
 
   return (
     <div className={classes.details}>
-      {purchaseStatus !== PURCHASE_RESULTS_STATUS.PENDING && (
+      {purchaseStatus === PURCHASE_RESULTS_STATUS.DONE && (
         <h5 className={classes.completeTitle}>Purchases Completed</h5>
       )}
       <InfoBadgeComponent
