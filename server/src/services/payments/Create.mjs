@@ -60,8 +60,9 @@ export default class PaymentsCreate extends Base {
     // Remove existing payment when trying to create new one for the order
     if (exPayment) {
       try {
-        if (exPayment.externalId) await paymentProcessor.cancel(exPayment.externalId);
+        const pExtId = exPayment.externalId;
         await exPayment.destroy({ force: true });
+        if (pExtId) await paymentProcessor.cancel(pExtId);
       } catch (e) {
         logger.error(
           `Existing Payment removing error ${e.message}. Order #${order.number}. Payment ${exPayment.id}`,
@@ -71,19 +72,13 @@ export default class PaymentsCreate extends Base {
 
     try {
       await Payment.sequelize.transaction(async t => {
-        if (paymentProcessor)
-          extPaymentParams = await paymentProcessor.create({
-            amount: order.total,
-            orderNumber: order.number,
-          });
-
         orderPayment = await Payment.create(
           {
             price: extPaymentParams.amount,
             currency: extPaymentParams.currency,
             status: Payment.STATUS.NEW,
             processor: paymentProcessorKey,
-            externalId: extPaymentParams.externalPaymentId,
+            externalId: '',
             orderId: order.id,
           },
           { transaction: t },
@@ -100,6 +95,15 @@ export default class PaymentsCreate extends Base {
             },
             { transaction: t },
           );
+        }
+
+        if (paymentProcessor) {
+          extPaymentParams = await paymentProcessor.create({
+            amount: order.total,
+            orderNumber: order.number,
+          });
+          orderPayment.externalId = extPaymentParams.externalPaymentId;
+          await orderPayment.save({ transaction: t });
         }
       });
     } catch (e) {
