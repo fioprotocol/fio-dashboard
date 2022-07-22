@@ -19,6 +19,7 @@ import {
   AuthUpdateEmailRevertResponse,
   AuthUpdateNewDeviceResponse,
   AuthUsernameResponse,
+  AdminAuthLoginResponse,
 } from './responses';
 
 export default class Auth extends Base {
@@ -155,7 +156,11 @@ export default class Auth extends Base {
     return null;
   }
 
-  adminLogin(email: string, password: string, tfaToken: string) {
+  adminLogin(
+    email: string,
+    password: string,
+    tfaToken: string,
+  ): Promise<AdminAuthLoginResponse> {
     return this.apiClient.post('admin-auth', {
       data: { email, password, tfaToken },
     });

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { useHistory } from 'react-router-dom';
 import Pagination from 'react-bootstrap/Pagination';
@@ -25,7 +25,18 @@ export default function usePagination(
     } & AnyObject
   >,
   maxItemsPerPage: number = DEFAULT_LIMIT, // this param will be useful for query initialization in case limit is empty in query, otherwise param from query will be in prior
-) {
+): {
+  paginationComponent: React.Component;
+  refresh: () =>
+    | Promise<
+        {
+          data: {
+            maxCount: number;
+          };
+        } & AnyObject
+      >
+    | undefined;
+} {
   const history = useHistory();
   const queryParams = useQuery();
 
