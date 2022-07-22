@@ -81,6 +81,20 @@ export class OrderItemStatus extends Base {
     });
   }
 
+  static async getAllItemsStatuses(orderId) {
+    const [items] = await this.sequelize.query(`
+        SELECT 
+          oi.id, 
+          ois."txStatus",
+          ois."paymentStatus"
+        FROM "order-items" oi
+          INNER JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
+        WHERE oi."orderId" = ${orderId}
+      `);
+
+    return items;
+  }
+
   static format({ id }) {
     return {
       id,

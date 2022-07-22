@@ -113,7 +113,8 @@ export type RegistrationResult = {
   paymentAmount?: string;
   paymentCurrency?: PaymentCurrency;
   convertedPaymentCurrency?: PaymentCurrency;
-  providerTxStatus?: number;
+  convertedPaymentAmount?: string;
+  providerTxStatus?: PurchaseTxStatus;
 };
 
 export type DeleteCartItem =
