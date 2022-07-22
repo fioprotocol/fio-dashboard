@@ -8,14 +8,35 @@ import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import { CartItem as CartItemType } from '../../types';
 
 import classes from './Cart.module.scss';
+import { CURRENCY_CODES } from '../../constants/common';
 
 type Props = {
   item: CartItemType;
+  primaryCurrency?: string;
   onDelete?: (id: string) => void;
 };
 
 const CartItem: React.FC<Props> = props => {
-  const { item, onDelete } = props;
+  const { item, primaryCurrency = CURRENCY_CODES.FIO, onDelete } = props;
+
+  const renderPrice = () => {
+    if (!item.costNativeFio) return 'FREE';
+
+    if (primaryCurrency === CURRENCY_CODES.FIO)
+      return (
+        <>
+          <Amount value={item.costFio} /> FIO (
+          <Amount value={item.costUsdc} /> USDC)
+        </>
+      );
+
+    return (
+      <>
+        <Amount value={item.costUsdc} /> USDC (
+        <Amount value={item.costFio} /> FIO)
+      </>
+    );
+  };
 
   return (
     <>
@@ -37,16 +58,7 @@ const CartItem: React.FC<Props> = props => {
               onDelete && classes.deletePrice,
             )}
           >
-            <span className="boldText">
-              {!item.costNativeFio ? (
-                'FREE'
-              ) : (
-                <>
-                  <Amount value={item.costFio} /> FIO (
-                  <Amount value={item.costUsdc} /> USDC)
-                </>
-              )}
-            </span>
+            <span className="boldText">{renderPrice()}</span>
           </p>
           {onDelete && (
             <FontAwesomeIcon

@@ -78,6 +78,7 @@ export type UsersListResponse = User[];
 export type UsersShowResponse = User;
 
 export type OrdersCreateResponse = Order;
+export type OrdersUpdateResponse = { success: true };
 
 export type AdminUsersListResponse = AdminUser[];
 export type AdminOrdersListResponse = AdminUser[];

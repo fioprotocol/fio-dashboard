@@ -13,7 +13,10 @@ import {
 import { StripeForm } from './StripeForm';
 
 import { FIO_ADDRESS_DELIMITER } from '../../../utils';
-import { PURCHASE_PROVIDER } from '../../../constants/purchase';
+import {
+  PURCHASE_PROVIDER,
+  PURCHASE_RESULTS_STATUS,
+} from '../../../constants/purchase';
 import { STRIPE_ELEMENT_OPTIONS, STRIPE_PROMISE } from '../constants';
 import { CURRENCY_CODES } from '../../../constants/common';
 
@@ -46,6 +49,8 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
         paymentOption,
         paymentAmount: payment.amount,
         paymentCurrency: CURRENCY_CODES.USD,
+        convertedPaymentCurrency: CURRENCY_CODES.FIO,
+        providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
       });
     }
   };
