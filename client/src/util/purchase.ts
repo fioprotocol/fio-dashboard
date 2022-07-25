@@ -58,7 +58,7 @@ export const onPurchaseFinish = ({
   }
 
   if (isCheckout) {
-    history.push(ROUTES.PURCHASE);
+    history.push(ROUTES.PURCHASE, { paymentOption: results.paymentOption });
   }
 };
 
@@ -68,17 +68,19 @@ export const transformPurchaseResults = ({
   prices,
   roe,
 }: {
-  results: RegistrationResult;
+  results: RegistrationResult | null;
   cart: CartItem[];
   prices: Prices;
   roe: number;
 }): { errItems: CartItem[]; regItems: CartItem[]; updatedCart: CartItem[] } => {
-  const errItems = [];
-  const regItems = [];
-
-  const { registered, errors, partial } = results;
+  const errItems: CartItem[] = [];
+  const regItems: CartItem[] = [];
 
   const updatedCart = [...cart];
+
+  if (!results) return { errItems, regItems, updatedCart };
+
+  const { registered, errors, partial } = results;
 
   const {
     nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
