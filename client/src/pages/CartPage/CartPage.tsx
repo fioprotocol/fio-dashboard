@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'lodash/isEmpty';
 import { History } from 'history';
-import { useLastLocation } from 'react-router-last-location';
 
 import DoubleCardContainer from '../../components/DoubleCardContainer';
 import Cart from '../../components/Cart/Cart';
@@ -62,14 +61,12 @@ const CartPage: React.FC<Props> = props => {
     createOrder,
   } = props;
 
-  const lastLocation = useLastLocation();
   const walletJson = JSON.stringify(userWallets);
   const cartItemsJson = JSON.stringify(cartItems);
 
   const [isPriceChanged, handlePriceChange] = useState(false);
 
   const walletCount = userWallets.length;
-  const lastLocationPathname = lastLocation?.pathname || '';
 
   const totalCartNativeAmount =
     (cartItems && totalCost(cartItems, roe).costNativeFio) || 0;
@@ -181,18 +178,6 @@ const CartPage: React.FC<Props> = props => {
   const onPaymentChoose = (paymentOption: PaymentOptionsProps) => {
     if (allowCheckout() && paymentOption) checkout(paymentOption);
   };
-
-  useEffectOnce(() => {
-    if (
-      !isEmpty(cartItems) &&
-      cartItems.length === 1 &&
-      walletCount === 1 &&
-      lastLocation.pathname ===
-        (ROUTES.FIO_ADDRESSES_SELECTION || ROUTES.FIO_DOMAINS_SELECTION)
-    ) {
-      history.push(ROUTES.CHECKOUT);
-    }
-  }, [cartItems, history, lastLocationPathname, walletCount]);
 
   useEffect(() => {
     if (!isAuthenticated) {

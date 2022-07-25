@@ -40,7 +40,6 @@ const AddressDomainCart: React.FC<Props> = props => {
     cartItems,
     deleteItem,
     domains,
-    fioWallets,
     prices,
     recalculate,
     hasFreeAddress,
@@ -56,9 +55,8 @@ const AddressDomainCart: React.FC<Props> = props => {
   const history = useHistory();
 
   const handleCheckout = () => {
-    const multipleWallets = fioWallets && fioWallets.length > 1;
     const route =
-      count === 1 && !multipleWallets ? ROUTES.CHECKOUT : ROUTES.CART;
+      count === 1 && !hasFreeAddress ? ROUTES.CHECKOUT : ROUTES.CART;
 
     if (!isAuthenticated) {
       setRedirectPath({ pathname: route });
