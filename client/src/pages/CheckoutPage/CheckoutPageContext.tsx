@@ -150,7 +150,7 @@ export const useContext = (): {
       !isFree &&
       ((paymentWalletPublicKey &&
         walletHasNoEnoughBalance &&
-        paymentOption === PAYMENT_OPTIONS.FIO) ||
+        (paymentOption === PAYMENT_OPTIONS.FIO || !paymentOption)) ||
         (!paymentWalletPublicKey && fioWallets.length > 1))
     ) {
       history.push(ROUTES.CART);
