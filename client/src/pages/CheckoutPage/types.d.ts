@@ -6,6 +6,7 @@ import {
   RegistrationResult,
   PaymentOptionsProps,
   Payment,
+  ApiError,
 } from '../../types';
 
 type DefaultProps = {
@@ -20,9 +21,7 @@ type DefaultProps = {
   onFinish: (results: RegistrationResult) => void;
   cart: CartItemType[];
   payment: Payment;
-  paymentOptionError: {
-    code: string;
-  } | null;
+  paymentOptionError: ApiError;
 };
 
 export type CheckoutComponentProps = {

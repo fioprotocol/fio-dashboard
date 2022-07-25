@@ -7,6 +7,7 @@ import { Constants } from '@fioprotocol/fiosdk/lib/utils/constants';
 import { Var } from '../models';
 
 import {
+  DAY_MS,
   FIO_ACTIONS,
   FIO_ACTIONS_TO_END_POINT_KEYS,
   FIO_ADDRESS_DELIMITER,
@@ -19,7 +20,7 @@ export const FIOSDK = fiosdkLib.FIOSDK;
 export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit).mul(800).toNumber();
 export const INSUFFICIENT_FUNDS_ERR_MESSAGE = 'Insufficient funds to cover fee';
 export const ABIS_VAR_KEY = 'FIO_RAW_ABIS';
-export const ABIS_UPDATE_TIMEOUT_SEC = 1000 * 60 * 60 * 24; // day
+export const ABIS_UPDATE_TIMEOUT_SEC = DAY_MS;
 const EndPoint = entities.EndPoint;
 
 const FIO_ACTION_NAMES = {

@@ -16,6 +16,7 @@ import {
   AnyObject,
   FioWalletDoublet,
   FioActionExecuted,
+  PaymentOptionsProps,
 } from '../types';
 
 // todo: set all actions types
@@ -24,6 +25,7 @@ export type CreateOrderActionData = {
   total: string;
   roe: number;
   publicKey: string;
+  paymentProcessor?: PaymentOptionsProps;
   items: {
     action: string;
     address?: string;

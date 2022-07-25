@@ -4,6 +4,8 @@ import Base from '../Base';
 
 import { Order, OrderItem, OrderItemStatus, Payment } from '../../models';
 
+import { DAY_MS } from '../../config/constants.js';
+
 export default class OrdersCreate extends Base {
   static get validationRules() {
     return {
@@ -14,6 +16,7 @@ export default class OrdersCreate extends Base {
             total: 'string',
             roe: 'string',
             publicKey: 'string',
+            paymentProcessor: 'string',
             items: [
               {
                 list_of_objects: {
@@ -33,18 +36,20 @@ export default class OrdersCreate extends Base {
     };
   }
 
-  async execute({ data: { total, roe, publicKey, items } }) {
+  async execute({ data: { total, roe, publicKey, paymentProcessor, items } }) {
     // assume user should have only one active order with status NEW
     let order = await Order.findOne({
       where: {
         status: Order.STATUS.NEW,
         userId: this.context.id,
         createdAt: {
-          [Sequelize.Op.gt]: new Date(new Date().getTime() - 1000 * 60 * 60 * 24),
+          [Sequelize.Op.gt]: new Date(new Date().getTime() - DAY_MS),
         },
       },
       include: [OrderItem],
     });
+    let payment = null;
+    const orderItems = [];
 
     await Order.sequelize.transaction(async t => {
       // Update existing new order and remove items from it
@@ -56,15 +61,15 @@ export default class OrdersCreate extends Base {
         // order.refProfileId: , // todo:
 
         await order.save({ transaction: t });
-        await OrderItem.destroy({
-          where: { orderId: order.id },
-          force: true,
-          transaction: t,
-        });
         await OrderItemStatus.destroy({
           where: {
             orderItemId: { [Sequelize.Op.in]: order.OrderItems.map(({ id }) => id) },
           },
+          force: true,
+          transaction: t,
+        });
+        await OrderItem.destroy({
+          where: { orderId: order.id },
           force: true,
           transaction: t,
         });
@@ -94,7 +99,7 @@ export default class OrdersCreate extends Base {
         price,
         priceCurrency,
       } of items) {
-        await OrderItem.create(
+        const orderItem = await OrderItem.create(
           {
             action,
             address,
@@ -107,11 +112,19 @@ export default class OrdersCreate extends Base {
           },
           { transaction: t },
         );
+        orderItems.push(orderItem);
       }
     });
 
+    if (paymentProcessor)
+      payment = await Payment.createForOrder(order, paymentProcessor, orderItems);
+
     return {
-      data: Order.format(order.get({ plain: true })),
+      data: {
+        id: order.id,
+        number: order.number,
+        payment,
+      },
     };
   }
 
