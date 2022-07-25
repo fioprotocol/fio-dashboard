@@ -109,6 +109,8 @@ const ADMIN_STATUS_IDS = {
   [USER_STATUS.NEW_EMAIL_NOT_VERIFIED]: 4,
 };
 
+const DAY_MS = 1000 * 60 * 60 * 24; // 1 day
+
 module.exports = {
   WALLET_CREATED_FROM,
   DOMAIN_EXP_PERIOD,
@@ -123,4 +125,5 @@ module.exports = {
   USER_STATUS,
   ADMIN_ROLES_IDS,
   ADMIN_STATUS_IDS,
+  DAY_MS,
 };

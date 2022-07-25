@@ -24,6 +24,7 @@ export type CreateOrderActionData = {
   total: string;
   roe: number;
   publicKey: string;
+  paymentProcessor?: string;
   items: {
     action: string;
     address?: string;
