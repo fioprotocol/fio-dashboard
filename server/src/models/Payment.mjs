@@ -1,15 +1,20 @@
 import Sequelize from 'sequelize';
 
-import { PAYMENTS_STATUSES } from '../config/constants.js';
-
 import Base from './Base';
 
 import { Order } from './Order';
 import { PaymentEventLog } from './PaymentEventLog';
+import { BlockchainTransaction } from './BlockchainTransaction';
+import { OrderItemStatus } from './OrderItemStatus';
 
 import Stripe from '../external/payment-processor/stripe.mjs';
 
+import logger from '../logger.mjs';
+import X from '../services/Exception.mjs';
+
 const { DataTypes: DT } = Sequelize;
+
+import { PAYMENTS_STATUSES } from '../config/constants.js';
 
 export class Payment extends Base {
   static get STATUS() {
@@ -128,6 +133,89 @@ export class Payment extends Base {
     }
 
     return null;
+  }
+
+  static async createForOrder(order, paymentProcessorKey, orderItems) {
+    const paymentProcessor = Payment.getPaymentProcessor(paymentProcessorKey);
+    let orderPayment = {};
+    let extPaymentParams = {};
+
+    const exPayment = await Payment.findOne({
+      where: {
+        status: Payment.STATUS.NEW,
+        spentType: Payment.SPENT_TYPE.ORDER,
+        orderId: order.id,
+      },
+    });
+
+    // Remove existing payment when trying to create new one for the order
+    if (exPayment) {
+      try {
+        const pExtId = exPayment.externalId;
+        await exPayment.destroy({ force: true });
+        if (pExtId) await paymentProcessor.cancel(pExtId);
+      } catch (e) {
+        logger.error(
+          `Existing Payment removing error ${e.message}. Order #${order.number}. Payment ${exPayment.id}`,
+        );
+      }
+    }
+
+    try {
+      await Payment.sequelize.transaction(async t => {
+        orderPayment = await Payment.create(
+          {
+            price: extPaymentParams.amount,
+            currency: extPaymentParams.currency,
+            status: Payment.STATUS.NEW,
+            processor: paymentProcessorKey,
+            externalId: '',
+            orderId: order.id,
+          },
+          { transaction: t },
+        );
+
+        for (const orderItem of orderItems) {
+          await OrderItemStatus.create(
+            {
+              txStatus: BlockchainTransaction.STATUS.NONE,
+              paymentStatus: orderPayment.status,
+              blockchainTransactionId: null,
+              paymentId: orderPayment.id,
+              orderItemId: orderItem.id,
+            },
+            { transaction: t },
+          );
+        }
+
+        if (paymentProcessor) {
+          extPaymentParams = await paymentProcessor.create({
+            amount: order.total,
+            orderNumber: order.number,
+          });
+          orderPayment.externalId = extPaymentParams.externalPaymentId;
+          await orderPayment.save({ transaction: t });
+        }
+      });
+    } catch (e) {
+      if (paymentProcessor && extPaymentParams.secret) {
+        await paymentProcessor.cancel(extPaymentParams.externalPaymentId);
+      }
+
+      logger.error(`Payment creation error ${e.message}. Order #${order.number}`);
+
+      throw new X({
+        code: 'SERVER_ERROR',
+        fields: {
+          paymentProcessor: 'SERVER_ERROR',
+        },
+      });
+    }
+
+    return {
+      id: orderPayment.id,
+      ...extPaymentParams,
+    };
   }
 
   static format({

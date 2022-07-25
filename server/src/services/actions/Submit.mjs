@@ -3,7 +3,9 @@ import X from '../Exception';
 
 import { Action } from '../../models';
 
-export const ACTION_EPX_TIME = 1000 * 60 * 60 * 24 * 30; // 1 month
+import { DAY_MS } from '../../config/constants.js';
+
+export const ACTION_EPX_TIME = DAY_MS * 30; // 1 month
 
 export default class ActionsSubmit extends Base {
   async validate(data) {

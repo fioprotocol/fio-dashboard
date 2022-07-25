@@ -1,16 +1,12 @@
+import Sequelize from 'sequelize';
+
 import Base from '../Base';
 
-import {
-  Order,
-  OrderItem,
-  Payment,
-  OrderItemStatus,
-  BlockchainTransaction,
-} from '../../models';
+import { Order, OrderItem, Payment } from '../../models';
 
 import X from '../Exception.mjs';
 
-import logger from '../../logger.mjs';
+import { DAY_MS } from '../../config/constants.js';
 
 export default class PaymentsCreate extends Base {
   static get validationRules() {
@@ -28,13 +24,13 @@ export default class PaymentsCreate extends Base {
   }
 
   async execute({ data: { orderId, paymentProcessor: paymentProcessorKey } }) {
-    let orderPayment = {};
-    let extPaymentParams = {};
-
     const order = await Order.findOne({
       where: {
         id: orderId,
         userId: this.context.id,
+        createdAt: {
+          [Sequelize.Op.gt]: new Date(new Date().getTime() - DAY_MS),
+        },
       },
       include: [OrderItem],
     });
@@ -48,85 +44,14 @@ export default class PaymentsCreate extends Base {
       });
     }
 
-    const paymentProcessor = Payment.getPaymentProcessor(paymentProcessorKey);
-
-    const exPayment = await Payment.findOne({
-      where: {
-        status: Payment.STATUS.NEW,
-        spentType: Payment.SPENT_TYPE.ORDER,
-        orderId,
-      },
-    });
-
-    // Remove existing payment when trying to create new one for the order
-    if (exPayment) {
-      try {
-        const pExtId = exPayment.externalId;
-        await exPayment.destroy({ force: true });
-        if (pExtId) await paymentProcessor.cancel(pExtId);
-      } catch (e) {
-        logger.error(
-          `Existing Payment removing error ${e.message}. Order #${order.number}. Payment ${exPayment.id}`,
-        );
-      }
-    }
-
-    try {
-      await Payment.sequelize.transaction(async t => {
-        orderPayment = await Payment.create(
-          {
-            price: extPaymentParams.amount,
-            currency: extPaymentParams.currency,
-            status: Payment.STATUS.NEW,
-            processor: paymentProcessorKey,
-            externalId: '',
-            orderId: order.id,
-          },
-          { transaction: t },
-        );
-
-        for (const orderItem of order.OrderItems) {
-          await OrderItemStatus.create(
-            {
-              txStatus: BlockchainTransaction.STATUS.NONE,
-              paymentStatus: orderPayment.status,
-              blockchainTransactionId: null,
-              paymentId: orderPayment.id,
-              orderItemId: orderItem.id,
-            },
-            { transaction: t },
-          );
-        }
-
-        if (paymentProcessor) {
-          extPaymentParams = await paymentProcessor.create({
-            amount: order.total,
-            orderNumber: order.number,
-          });
-          orderPayment.externalId = extPaymentParams.externalPaymentId;
-          await orderPayment.save({ transaction: t });
-        }
-      });
-    } catch (e) {
-      if (paymentProcessor && extPaymentParams.secret) {
-        await paymentProcessor.cancel(extPaymentParams.externalPaymentId);
-      }
-
-      logger.error(`Payment creation error ${e.message}. Order #${order.number}`);
-
-      throw new X({
-        code: 'SERVER_ERROR',
-        fields: {
-          paymentProcessor: 'SERVER_ERROR',
-        },
-      });
-    }
+    const paymentData = await Payment.createForOrder(
+      order,
+      paymentProcessorKey,
+      order.orderItems,
+    );
 
     return {
-      data: {
-        id: orderPayment.id,
-        ...extPaymentParams,
-      },
+      data: paymentData,
     };
   }
 
