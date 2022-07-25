@@ -36,16 +36,18 @@ export async function runService(service, { context = {}, params = {} }) {
       context,
     }).run(params);
 
-    const cleanResult = cleanup(result, service.resultSecret, service.resultCleanup);
+    if (service.resultSecret[0] !== '*') {
+      const cleanResult = cleanup(result, service.resultSecret, service.resultCleanup);
 
-    logRequest({
-      type: 'info',
-      actionName,
-      params: cleanParams,
-      result: cleanResult,
-      startTime,
-      userId: context.id,
-    });
+      logRequest({
+        type: 'info',
+        actionName,
+        params: cleanParams,
+        result: cleanResult,
+        startTime,
+        userId: context.id,
+      });
+    }
 
     return result;
   } catch (error) {
