@@ -79,27 +79,29 @@ export const useContext = (): {
   const cart = useSelector(cartItems);
   const order = useSelector(orderSelector);
   const prices = useSelector(pricesSelector);
+  const noResults = !results;
 
   const dispatch = useDispatch();
 
   const [orderStatusData, setOrderStatusData] = useState<{
     status: PurchaseTxStatus;
     results?: RegistrationResult;
-  }>({ status: results.providerTxStatus });
+  }>({ status: results?.providerTxStatus || PURCHASE_RESULTS_STATUS.PENDING });
 
   const onStatusUpdate = (data: {
     orderStatus: PurchaseTxStatus;
     results?: RegistrationResult;
   }) => {
-    setOrderStatusData({
-      status: data.orderStatus,
-      results: data.results,
-    });
+    if (data)
+      setOrderStatusData({
+        status: data.orderStatus,
+        results: data.results,
+      });
   };
 
   useWebsocket({
     endpoint: WS_ENDPOINTS.ORDER_STATUS,
-    params: { orderId: order.id },
+    params: { orderId: order?.id },
     onMessage: onStatusUpdate,
   });
 
@@ -108,6 +110,12 @@ export const useContext = (): {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
   }, [isAuth, history]);
+
+  useEffectOnce(() => {
+    if (noResults) {
+      history.replace(ROUTES.FIO_ADDRESSES_SELECTION);
+    }
+  }, [noResults, history]);
 
   const { regItems, errItems, updatedCart } = transformPurchaseResults({
     results: orderStatusData.results || results,
@@ -136,8 +144,8 @@ export const useContext = (): {
     paymentAmount,
     paymentCurrency = CURRENCY_CODES.FIO,
     convertedPaymentCurrency = CURRENCY_CODES.USDC,
-  } = results;
-  let { convertedPaymentAmount } = results;
+  } = results || {};
+  let { convertedPaymentAmount } = results || {};
   if (
     !convertedPaymentAmount &&
     convertedPaymentCurrency === CURRENCY_CODES.FIO

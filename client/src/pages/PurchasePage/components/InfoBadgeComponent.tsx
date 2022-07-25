@@ -112,11 +112,14 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
   }
 
   return (
-    <InfoBadge
-      title={title}
-      message={message}
-      show={!!title && !!message && !!badgeUIType}
-      type={badgeUIType}
-    />
+    <>
+      <InfoBadge
+        title={title}
+        message={message}
+        show={!!title && !!message && !!badgeUIType}
+        type={badgeUIType}
+      />
+      <br />
+    </>
   );
 };
