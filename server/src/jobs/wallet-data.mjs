@@ -10,11 +10,11 @@ import { getROE } from '../external/roe.mjs';
 
 import logger from '../logger.mjs';
 
-import { DOMAIN_EXP_PERIOD } from '../config/constants.js';
+import { DAY_MS, DOMAIN_EXP_PERIOD } from '../config/constants.js';
 
 const CHUNKS_LIMIT = 40;
 const LOW_BUNDLES_THRESHOLD = 25;
-const DAYS_30 = 1000 * 60 * 60 * 24 * 30;
+const DAYS_30 = DAY_MS * 30;
 const DOMAIN_EXP_TABLE = {
   5: null,
   4: DOMAIN_EXP_PERIOD.ABOUT_TO_EXPIRE,

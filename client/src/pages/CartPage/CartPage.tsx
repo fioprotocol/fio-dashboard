@@ -97,6 +97,7 @@ const CartPage: React.FC<Props> = props => {
       total: totalUsdc,
       roe,
       publicKey: paymentWalletPublicKey,
+      paymentProcessor: paymentOption,
       items: cartItems.map(
         ({ address, domain, isFree, costNativeFio, costUsdc }) => ({
           action: address
