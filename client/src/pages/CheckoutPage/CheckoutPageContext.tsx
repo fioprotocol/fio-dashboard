@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
@@ -19,7 +19,10 @@ import {
   cartItems as CartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
-import { order as orderSelector } from '../../redux/order/selectors';
+import {
+  order as orderSelector,
+  error as orderErrorSelector,
+} from '../../redux/order/selectors';
 import {
   isAuthenticated,
   hasFreeAddress as hasFreeAddressSelector,
@@ -37,7 +40,6 @@ import MathOp from '../../util/math';
 import { totalCost, handleFreeAddressCart } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
 import { useEffectOnce } from '../../hooks/general';
-import { log } from '../../util/general';
 
 import { ROUTES } from '../../constants/routes';
 import {
@@ -55,6 +57,7 @@ import {
   FioWalletDoublet,
   WalletsBalances,
   WalletBalancesItem,
+  ApiError,
 } from '../../types';
 
 export const useContext = (): {
@@ -69,9 +72,7 @@ export const useContext = (): {
   title: string;
   payment: Payment;
   paymentOption: PaymentOptionsProps;
-  paymentOptionError: {
-    code: string;
-  } | null;
+  paymentOptionError: ApiError;
   isFree: boolean;
   onClose: () => void;
   onFinish: (results: RegistrationResult) => void;
@@ -79,6 +80,7 @@ export const useContext = (): {
 } => {
   const history = useHistory();
   const order = useSelector(orderSelector);
+  const orderError = useSelector(orderErrorSelector);
   const fioWallets = useSelector(fioWalletsSelector);
   const loading = useSelector(loadingSelector);
   const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
@@ -89,10 +91,6 @@ export const useContext = (): {
   const prices = useSelector(pricesSelector);
   const isProcessing = useSelector(isProcessingSelector);
   const roe = useSelector(roeSelector);
-  const [payment, setPayment] = useState<Payment>(null);
-  const [paymentOptionError, setPaymentOptionError] = useState<{
-    code: string;
-  } | null>(null);
 
   const dispatch = useDispatch();
 
@@ -101,24 +99,7 @@ export const useContext = (): {
   } = history;
   const { paymentOption }: { paymentOption?: PaymentOptionsProps } =
     state || {};
-  const orderId = order && order.id;
-
-  const createPayment = async (
-    orderId: number,
-    paymentOption: PaymentOptionsProps,
-  ) => {
-    try {
-      const res = await apis.payments.create({
-        orderId,
-        paymentProcessor: paymentOption,
-      });
-
-      setPayment(res);
-    } catch (e) {
-      setPaymentOptionError(e);
-      log.error(e);
-    }
-  };
+  const payment = order && order.payment;
 
   useEffectOnce(() => {
     if (!isEmpty(fioWallets)) {
@@ -132,14 +113,6 @@ export const useContext = (): {
       }
     }
   }, []);
-
-  useEffectOnce(
-    () => {
-      createPayment(orderId, paymentOption);
-    },
-    [orderId, paymentOption],
-    !!orderId,
-  );
 
   const cartItemsJson = JSON.stringify(cartItems);
 
@@ -236,7 +209,7 @@ export const useContext = (): {
     title,
     payment,
     paymentOption,
-    paymentOptionError,
+    paymentOptionError: orderError,
     isFree,
     onClose,
     onFinish,

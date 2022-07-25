@@ -513,9 +513,18 @@ export type FioActionExecuted = {
   result: ResultsData | RegistrationResult;
 };
 
+export type Payment = {
+  id: number;
+  externalPaymentId: string;
+  amount: string;
+  currency: string;
+  secret?: string;
+};
+
 export type Order = {
   id: number;
   number: string;
+  payment?: Payment;
 };
 
 export type AdminResponseFailure = {
@@ -588,10 +597,7 @@ export type OrderItem = {
   updatedAt: string;
 };
 
-export type Payment = {
-  id: number;
-  externalPaymentId: string;
-  amount: string;
-  currency: string;
-  secret?: string;
-};
+export type ApiError = {
+  code: string;
+  fields?: { [fieldName: string]: AnyType };
+} | null;

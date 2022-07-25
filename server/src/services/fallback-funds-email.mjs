@@ -3,7 +3,9 @@ import logger from '../logger.mjs';
 
 import { templates } from '../emails/emailTemplate.mjs';
 
-const TIMEOUT_HOURS = 1000 * 60 * 60 * 24; // 24 hours
+import { DAY_MS } from '../config/constants.js';
+
+const TIMEOUT_HOURS = DAY_MS; // 24 hours
 const lastInsufficientFundsNotificationSent = {
   date: null,
 };
