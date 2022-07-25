@@ -29,6 +29,6 @@ export default class NotificationsList extends Base {
   }
 
   static get resultSecret() {
-    return [];
+    return ['*'];
   }
 }
