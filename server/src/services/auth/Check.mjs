@@ -37,6 +37,6 @@ export default class AuthCheck extends Base {
   }
 
   static get resultSecret() {
-    return [];
+    return ['*'];
   }
 }

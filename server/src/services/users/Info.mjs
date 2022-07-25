@@ -57,6 +57,6 @@ export default class UsersInfo extends Base {
   }
 
   static get resultSecret() {
-    return ['data.email', 'data.location'];
+    return ['*'];
   }
 }
