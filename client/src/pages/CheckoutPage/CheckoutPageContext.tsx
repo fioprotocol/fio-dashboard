@@ -9,6 +9,7 @@ import {
   setRegistration,
   setProcessing,
 } from '../../redux/registrations/actions';
+import { createOrder } from '../../redux/order/actions';
 
 import {
   fioWallets as fioWalletsSelector,
@@ -22,6 +23,7 @@ import {
 import {
   order as orderSelector,
   error as orderErrorSelector,
+  orderLoading as orderLoadingSelector,
 } from '../../redux/order/selectors';
 import {
   isAuthenticated,
@@ -47,6 +49,8 @@ import {
   PAYMENT_OPTIONS,
   PURCHASE_RESULTS_STATUS,
 } from '../../constants/purchase';
+import { ACTIONS } from '../../constants/fio';
+import { CURRENCY_CODES } from '../../constants/common';
 
 import {
   RegistrationResult,
@@ -90,6 +94,7 @@ export const useContext = (): {
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const prices = useSelector(pricesSelector);
   const isProcessing = useSelector(isProcessingSelector);
+  const orderLoading = useSelector(orderLoadingSelector);
   const roe = useSelector(roeSelector);
 
   const dispatch = useDispatch();
@@ -131,12 +136,54 @@ export const useContext = (): {
 
   const walletHasNoEnoughBalance = new MathOp(
     walletBalancesAvailable.nativeFio,
-  ).lt(totalCost(cartItems, roe).costNativeFio);
+  ).lt(totalCost(cartItems, roe).costNativeFio || 0);
 
   const title =
     isFree || !paymentOption
       ? 'Make Purchase'
       : PAYMENT_OPTION_TITLE[paymentOption];
+
+  // Create order for free address
+  useEffectOnce(
+    () => {
+      dispatch(
+        createOrder({
+          total: '0',
+          roe,
+          publicKey: paymentWalletPublicKey,
+          paymentProcessor: PAYMENT_OPTIONS.FIO,
+          items: cartItems.map(({ address, domain, costNativeFio }) => ({
+            action: ACTIONS.registerFioAddress,
+            address,
+            domain,
+            params: {
+              owner_fio_public_key: paymentWalletPublicKey,
+            },
+            nativeFio: `${costNativeFio || 0}`,
+            price: '0',
+            priceCurrency: CURRENCY_CODES.USDC,
+          })),
+        }),
+      );
+    },
+    [
+      order,
+      orderLoading,
+      loading,
+      isFree,
+      paymentWalletPublicKey,
+      paymentOption,
+      fioWallets.length,
+      dispatch,
+      createOrder,
+    ],
+    !order &&
+      !orderLoading &&
+      !loading &&
+      isFree &&
+      paymentWalletPublicKey &&
+      fioWallets.length === 1,
+  );
 
   useEffect(() => {
     if (!isAuth) {
@@ -144,6 +191,7 @@ export const useContext = (): {
     }
   }, [isAuth, history]);
 
+  // Redirect back to cart when payment option is FIO and not enough FIO tokens ot more than 1 FIO wallet
   useEffect(() => {
     if (
       !loading &&

@@ -1,4 +1,8 @@
-import { CommonPromiseAction, CreateOrderActionData } from '../types';
+import {
+  CommonPromiseAction,
+  CommonAction,
+  CreateOrderActionData,
+} from '../types';
 import { Api } from '../../api';
 
 export const prefix = 'order';
@@ -12,4 +16,10 @@ export const createOrder = (
 ): CommonPromiseAction => ({
   types: [CREATE_ORDER_REQUEST, CREATE_ORDER_SUCCESS, CREATE_ORDER_FAILURE],
   promise: (api: Api) => api.orders.create(data),
+});
+
+export const CLEAR_ORDER = `${prefix}/CLEAR_ORDER`;
+
+export const clearOrder = (): CommonAction => ({
+  type: CLEAR_ORDER,
 });

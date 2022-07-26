@@ -3,6 +3,7 @@ import React from 'react';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import { CheckoutComponent } from './components/CheckoutComponent';
 import Processing from '../../components/common/TransactionProcessing';
+import Loader from '../../components/Loader/Loader';
 
 import { useContext } from './CheckoutPageContext';
 
@@ -30,6 +31,8 @@ export const CheckoutPage: React.FC = () => {
     onFinish,
     setWallet,
   } = useContext();
+
+  if (!payment) return <Loader />;
 
   return (
     <PseudoModalContainer title={title} onClose={onClose}>
