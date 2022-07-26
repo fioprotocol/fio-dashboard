@@ -23,4 +23,6 @@ export const {
   Payment,
   PaymentEventLog,
   Var,
+  ChainCode,
+  TokenCode,
 } = db.models;

@@ -1,0 +1,1846 @@
+[
+  {
+    "chainCodeId": "1X2",
+    "chainCodeName": "1X2 COIN"
+  },
+  {
+    "chainCodeId": "42",
+    "chainCodeName": "42-coin"
+  },
+  {
+    "chainCodeId": "ABBC",
+    "chainCodeName": "ABBC Coin"
+  },
+  {
+    "chainCodeId": "ACT",
+    "chainCodeName": "Achain"
+  },
+  {
+    "chainCodeId": "ADA",
+    "chainCodeName": "Cardano"
+  },
+  {
+    "chainCodeId": "ADC",
+    "chainCodeName": "AudioCoin"
+  },
+  {
+    "chainCodeId": "ADK",
+    "chainCodeName": "Aidos Kuneen"
+  },
+  {
+    "chainCodeId": "ADM",
+    "chainCodeName": "ADAMANT Messenger"
+  },
+  {
+    "chainCodeId": "ADS",
+    "chainCodeName": "Adshares"
+  },
+  {
+    "chainCodeId": "AE",
+    "chainCodeName": "Aeternity"
+  },
+  {
+    "chainCodeId": "AEON",
+    "chainCodeName": "Aeon"
+  },
+  {
+    "chainCodeId": "AG8",
+    "chainCodeName": "AtromG8"
+  },
+  {
+    "chainCodeId": "AHT",
+    "chainCodeName": "AhaToken"
+  },
+  {
+    "chainCodeId": "AION",
+    "chainCodeName": "Aion"
+  },
+  {
+    "chainCodeId": "AITRA",
+    "chainCodeName": "Aitra"
+  },
+  {
+    "chainCodeId": "ALGO",
+    "chainCodeName": "Algorand"
+  },
+  {
+    "chainCodeId": "AMB",
+    "chainCodeName": "Ambrosus"
+  },
+  {
+    "chainCodeId": "APL",
+    "chainCodeName": "Apollo Currency"
+  },
+  {
+    "chainCodeId": "APN",
+    "chainCodeName": "Apron Network"
+  },
+  {
+    "chainCodeId": "APPC",
+    "chainCodeName": "AppCoins"
+  },
+  {
+    "chainCodeId": "AR",
+    "chainCodeName": "Arweave"
+  },
+  {
+    "chainCodeId": "ARBIONE",
+    "chainCodeName": "Arbitrum One"
+  },
+  {
+    "chainCodeId": "ARC",
+    "chainCodeName": "Advanced Technology Coin"
+  },
+  {
+    "chainCodeId": "ARDR",
+    "chainCodeName": "Ardor"
+  },
+  {
+    "chainCodeId": "ARK",
+    "chainCodeName": "Ark"
+  },
+  {
+    "chainCodeId": "ARQ",
+    "chainCodeName": "Arqma"
+  },
+  {
+    "chainCodeId": "ARRR",
+    "chainCodeName": "Pirate Chain"
+  },
+  {
+    "chainCodeId": "ASK",
+    "chainCodeName": "Permission Coin"
+  },
+  {
+    "chainCodeId": "ATOM",
+    "chainCodeName": "Cosmos"
+  },
+  {
+    "chainCodeId": "AUX",
+    "chainCodeName": "Auxilium"
+  },
+  {
+    "chainCodeId": "AVAX",
+    "chainCodeName": "Avalanche"
+  },
+  {
+    "chainCodeId": "AXEL",
+    "chainCodeName": "AXEL"
+  },
+  {
+    "chainCodeId": "AYA",
+    "chainCodeName": "Aryacoin"
+  },
+  {
+    "chainCodeId": "BAN",
+    "chainCodeName": "Banano"
+  },
+  {
+    "chainCodeId": "BAND",
+    "chainCodeName": "Band Protocol"
+  },
+  {
+    "chainCodeId": "BC",
+    "chainCodeName": "Bitcoin Confidential"
+  },
+  {
+    "chainCodeId": "BCA",
+    "chainCodeName": "Bitcoin Atom"
+  },
+  {
+    "chainCodeId": "BCD",
+    "chainCodeName": "Bitcoin Diamond"
+  },
+  {
+    "chainCodeId": "BCH",
+    "chainCodeName": "Bitcoin Cash"
+  },
+  {
+    "chainCodeId": "BCHA",
+    "chainCodeName": "Bitcoin Cash ABC"
+  },
+  {
+    "chainCodeId": "BCN",
+    "chainCodeName": "Bytecoin"
+  },
+  {
+    "chainCodeId": "BEAM",
+    "chainCodeName": "Beam"
+  },
+  {
+    "chainCodeId": "BECN",
+    "chainCodeName": "Beacon"
+  },
+  {
+    "chainCodeId": "BHD",
+    "chainCodeName": "BitcoinHD"
+  },
+  {
+    "chainCodeId": "BHP",
+    "chainCodeName": "BHPCoin"
+  },
+  {
+    "chainCodeId": "BIP",
+    "chainCodeName": "Minter Network"
+  },
+  {
+    "chainCodeId": "BIR",
+    "chainCodeName": "Birake"
+  },
+  {
+    "chainCodeId": "BIS",
+    "chainCodeName": "Bismuth"
+  },
+  {
+    "chainCodeId": "BITB",
+    "chainCodeName": "Bean Cash"
+  },
+  {
+    "chainCodeId": "BITG",
+    "chainCodeName": "BitGreen"
+  },
+  {
+    "chainCodeId": "BITS",
+    "chainCodeName": "Bitstar"
+  },
+  {
+    "chainCodeId": "BLK",
+    "chainCodeName": "BlackCoin"
+  },
+  {
+    "chainCodeId": "BLKC",
+    "chainCodeName": "BlackHat"
+  },
+  {
+    "chainCodeId": "BLOCK",
+    "chainCodeName": "Blocknet"
+  },
+  {
+    "chainCodeId": "BNB",
+    "chainCodeName": "Binance Coin"
+  },
+  {
+    "chainCodeId": "BOS",
+    "chainCodeName": "BOScoin"
+  },
+  {
+    "chainCodeId": "BPS",
+    "chainCodeName": "BitcoinPoS"
+  },
+  {
+    "chainCodeId": "BSC",
+    "chainCodeName": "BSC FARM"
+  },
+  {
+    "chainCodeId": "BSTY",
+    "chainCodeName": "GlobalBoost-Y"
+  },
+  {
+    "chainCodeId": "BSV",
+    "chainCodeName": "Bitcoin SV"
+  },
+  {
+    "chainCodeId": "BTC",
+    "chainCodeName": "Bitcoin"
+  },
+  {
+    "chainCodeId": "BTC2",
+    "chainCodeName": "Bitcoin 2"
+  },
+  {
+    "chainCodeId": "BTCP",
+    "chainCodeName": "Bitcoin Private"
+  },
+  {
+    "chainCodeId": "BTCZ",
+    "chainCodeName": "BitcoinZ"
+  },
+  {
+    "chainCodeId": "BTG",
+    "chainCodeName": "Bitcoin Gold"
+  },
+  {
+    "chainCodeId": "BTM",
+    "chainCodeName": "Bytom"
+  },
+  {
+    "chainCodeId": "BTO",
+    "chainCodeName": "Bottos"
+  },
+  {
+    "chainCodeId": "BTS",
+    "chainCodeName": "BitShares"
+  },
+  {
+    "chainCodeId": "BTX",
+    "chainCodeName": "BitCore"
+  },
+  {
+    "chainCodeId": "BUZZ",
+    "chainCodeName": "BUZZCoin"
+  },
+  {
+    "chainCodeId": "CANN",
+    "chainCodeName": "CannabisCoin"
+  },
+  {
+    "chainCodeId": "CARBON",
+    "chainCodeName": "Carboncoin"
+  },
+  {
+    "chainCodeId": "CCX",
+    "chainCodeName": "Conceal"
+  },
+  {
+    "chainCodeId": "CELO",
+    "chainCodeName": "Celo"
+  },
+  {
+    "chainCodeId": "CENNZ",
+    "chainCodeName": "Centrality"
+  },
+  {
+    "chainCodeId": "CET",
+    "chainCodeName": "CoinEx Token"
+  },
+  {
+    "chainCodeId": "CFG",
+    "chainCodeName": "Centrifuge"
+  },
+  {
+    "chainCodeId": "CFX",
+    "chainCodeName": "Conflux"
+  },
+  {
+    "chainCodeId": "CHAT",
+    "chainCodeName": "ChatCoin"
+  },
+  {
+    "chainCodeId": "CHI",
+    "chainCodeName": "Xaya"
+  },
+  {
+    "chainCodeId": "CHX",
+    "chainCodeName": "WeOwn"
+  },
+  {
+    "chainCodeId": "CHZ",
+    "chainCodeName": "Chiliz"
+  },
+  {
+    "chainCodeId": "CKB",
+    "chainCodeName": "Nervos Network"
+  },
+  {
+    "chainCodeId": "CLO",
+    "chainCodeName": "Callisto Network"
+  },
+  {
+    "chainCodeId": "CLOAK",
+    "chainCodeName": "CloakCoin"
+  },
+  {
+    "chainCodeId": "CMT",
+    "chainCodeName": "CyberMiles"
+  },
+  {
+    "chainCodeId": "COLX",
+    "chainCodeName": "ColossusXT"
+  },
+  {
+    "chainCodeId": "COTI",
+    "chainCodeName": "COTI"
+  },
+  {
+    "chainCodeId": "CREA",
+    "chainCodeName": "CREA"
+  },
+  {
+    "chainCodeId": "CRON",
+    "chainCodeName": "Cryptocean"
+  },
+  {
+    "chainCodeId": "CRP",
+    "chainCodeName": "Crypton"
+  },
+  {
+    "chainCodeId": "CRU",
+    "chainCodeName": "Crust Network"
+  },
+  {
+    "chainCodeId": "CRW",
+    "chainCodeName": "Crown"
+  },
+  {
+    "chainCodeId": "CS",
+    "chainCodeName": "Credits"
+  },
+  {
+    "chainCodeId": "CSPR",
+    "chainCodeName": "Casper"
+  },
+  {
+    "chainCodeId": "CTC",
+    "chainCodeName": "Creditcoin"
+  },
+  {
+    "chainCodeId": "CTK",
+    "chainCodeName": "CertiK"
+  },
+  {
+    "chainCodeId": "CTXC",
+    "chainCodeName": "Cortex"
+  },
+  {
+    "chainCodeId": "CURE",
+    "chainCodeName": "Curecoin"
+  },
+  {
+    "chainCodeId": "CUT",
+    "chainCodeName": "CUTcoin"
+  },
+  {
+    "chainCodeId": "D",
+    "chainCodeName": "Denarius"
+  },
+  {
+    "chainCodeId": "DAG",
+    "chainCodeName": "Constellation"
+  },
+  {
+    "chainCodeId": "DAPS",
+    "chainCodeName": "DAPS Coin"
+  },
+  {
+    "chainCodeId": "DASH",
+    "chainCodeName": "Dash"
+  },
+  {
+    "chainCodeId": "DCR",
+    "chainCodeName": "Decred"
+  },
+  {
+    "chainCodeId": "DDK",
+    "chainCodeName": "DDKoin"
+  },
+  {
+    "chainCodeId": "DEAL",
+    "chainCodeName": "iDealCash"
+  },
+  {
+    "chainCodeId": "DERO",
+    "chainCodeName": "Dero"
+  },
+  {
+    "chainCodeId": "DFI",
+    "chainCodeName": "DeFiChain"
+  },
+  {
+    "chainCodeId": "DGB",
+    "chainCodeName": "DigiByte"
+  },
+  {
+    "chainCodeId": "DIME",
+    "chainCodeName": "Dimecoin"
+  },
+  {
+    "chainCodeId": "DIVI",
+    "chainCodeName": "Divi"
+  },
+  {
+    "chainCodeId": "DMCH",
+    "chainCodeName": "Darma Cash"
+  },
+  {
+    "chainCodeId": "DMD",
+    "chainCodeName": "Diamond"
+  },
+  {
+    "chainCodeId": "DNA",
+    "chainCodeName": "Metaverse Dualchain Network Architecture"
+  },
+  {
+    "chainCodeId": "DOCK",
+    "chainCodeName": "Dock"
+  },
+  {
+    "chainCodeId": "DOGE",
+    "chainCodeName": "Dogecoin"
+  },
+  {
+    "chainCodeId": "DOGEC",
+    "chainCodeName": "DogeCash"
+  },
+  {
+    "chainCodeId": "DOT",
+    "chainCodeName": "Polkadot"
+  },
+  {
+    "chainCodeId": "DTEP",
+    "chainCodeName": "DECOIN"
+  },
+  {
+    "chainCodeId": "DYN",
+    "chainCodeName": "Dynamic"
+  },
+  {
+    "chainCodeId": "EBST",
+    "chainCodeName": "eBoost"
+  },
+  {
+    "chainCodeId": "EDG",
+    "chainCodeName": "Edgeware"
+  },
+  {
+    "chainCodeId": "EFL",
+    "chainCodeName": "e-Gulden"
+  },
+  {
+    "chainCodeId": "EGLD",
+    "chainCodeName": "Elrond"
+  },
+  {
+    "chainCodeId": "ELA",
+    "chainCodeName": "Elastos"
+  },
+  {
+    "chainCodeId": "EMC",
+    "chainCodeName": "Emercoin"
+  },
+  {
+    "chainCodeId": "EMC2",
+    "chainCodeName": "Einsteinium"
+  },
+  {
+    "chainCodeId": "ENQ",
+    "chainCodeName": "Enecuum"
+  },
+  {
+    "chainCodeId": "EOS",
+    "chainCodeName": "EOS"
+  },
+  {
+    "chainCodeId": "EOSC",
+    "chainCodeName": "EOS Force"
+  },
+  {
+    "chainCodeId": "EPIC",
+    "chainCodeName": "Epic Cash"
+  },
+  {
+    "chainCodeId": "ERG",
+    "chainCodeName": "Ergo"
+  },
+  {
+    "chainCodeId": "ERK",
+    "chainCodeName": "Eureka Coin"
+  },
+  {
+    "chainCodeId": "ESBC",
+    "chainCodeName": "ESBC"
+  },
+  {
+    "chainCodeId": "ETC",
+    "chainCodeName": "Ethereum Classic"
+  },
+  {
+    "chainCodeId": "ETH",
+    "chainCodeName": "Ethereum"
+  },
+  {
+    "chainCodeId": "ETHO",
+    "chainCodeName": "Etho Protocol"
+  },
+  {
+    "chainCodeId": "ETN",
+    "chainCodeName": "Electroneum"
+  },
+  {
+    "chainCodeId": "ETP",
+    "chainCodeName": "Metaverse ETP"
+  },
+  {
+    "chainCodeId": "ETZ",
+    "chainCodeName": "Ether Zero"
+  },
+  {
+    "chainCodeId": "EUNO",
+    "chainCodeName": "EUNO"
+  },
+  {
+    "chainCodeId": "EWT",
+    "chainCodeName": "Energy Web Token"
+  },
+  {
+    "chainCodeId": "EXCL",
+    "chainCodeName": "ExclusiveCoin"
+  },
+  {
+    "chainCodeId": "EXP",
+    "chainCodeName": "Expanse"
+  },
+  {
+    "chainCodeId": "FIAT",
+    "chainCodeName": "Virtual chain representing traditional banking system"
+  },
+  {
+    "chainCodeId": "FIL",
+    "chainCodeName": "Filecoin"
+  },
+  {
+    "chainCodeId": "FIO",
+    "chainCodeName": "FIO Protocol"
+  },
+  {
+    "chainCodeId": "FIRO",
+    "chainCodeName": "Firo"
+  },
+  {
+    "chainCodeId": "FIS",
+    "chainCodeName": "Stafi"
+  },
+  {
+    "chainCodeId": "FJC",
+    "chainCodeName": "FujiCoin"
+  },
+  {
+    "chainCodeId": "FLOW",
+    "chainCodeName": "Flow"
+  },
+  {
+    "chainCodeId": "FLUX",
+    "chainCodeName": "Flux"
+  },
+  {
+    "chainCodeId": "FO",
+    "chainCodeName": "FIBOS"
+  },
+  {
+    "chainCodeId": "FRC",
+    "chainCodeName": "Freicoin"
+  },
+  {
+    "chainCodeId": "FSN",
+    "chainCodeName": "Fusion"
+  },
+  {
+    "chainCodeId": "FTC",
+    "chainCodeName": "Feathercoin"
+  },
+  {
+    "chainCodeId": "FTM",
+    "chainCodeName": "Fantom"
+  },
+  {
+    "chainCodeId": "FUND",
+    "chainCodeName": "Unification"
+  },
+  {
+    "chainCodeId": "FYD",
+    "chainCodeName": "FYDcoin"
+  },
+  {
+    "chainCodeId": "GBX",
+    "chainCodeName": "GoByte"
+  },
+  {
+    "chainCodeId": "GBYTE",
+    "chainCodeName": "Obyte"
+  },
+  {
+    "chainCodeId": "GCC",
+    "chainCodeName": "Global Cryptocurrency"
+  },
+  {
+    "chainCodeId": "GHOST",
+    "chainCodeName": "Ghost"
+  },
+  {
+    "chainCodeId": "GIO",
+    "chainCodeName": "Graviocoin"
+  },
+  {
+    "chainCodeId": "GLEEC",
+    "chainCodeName": "Gleec"
+  },
+  {
+    "chainCodeId": "GLS",
+    "chainCodeName": "Golos Blockchain"
+  },
+  {
+    "chainCodeId": "GO",
+    "chainCodeName": "GoChain"
+  },
+  {
+    "chainCodeId": "GRC",
+    "chainCodeName": "Gridcoin"
+  },
+  {
+    "chainCodeId": "GRIN",
+    "chainCodeName": "Grin"
+  },
+  {
+    "chainCodeId": "GRLC",
+    "chainCodeName": "Garlicoin"
+  },
+  {
+    "chainCodeId": "GRS",
+    "chainCodeName": "Groestlcoin"
+  },
+  {
+    "chainCodeId": "GXC",
+    "chainCodeName": "GXChain"
+  },
+  {
+    "chainCodeId": "HBAR",
+    "chainCodeName": "Hedera Hashgraph"
+  },
+  {
+    "chainCodeId": "HC",
+    "chainCodeName": "HyperCash"
+  },
+  {
+    "chainCodeId": "HEAT",
+    "chainCodeName": "HEAT"
+  },
+  {
+    "chainCodeId": "HIVE",
+    "chainCodeName": "Hive"
+  },
+  {
+    "chainCodeId": "HNS",
+    "chainCodeName": "Handshake"
+  },
+  {
+    "chainCodeId": "HNT",
+    "chainCodeName": "Helium"
+  },
+  {
+    "chainCodeId": "HPB",
+    "chainCodeName": "High Performance Blockchain"
+  },
+  {
+    "chainCodeId": "HT",
+    "chainCodeName": "Huobi ECO Chain"
+  },
+  {
+    "chainCodeId": "HTDF",
+    "chainCodeName": "Orient Walt"
+  },
+  {
+    "chainCodeId": "HTML",
+    "chainCodeName": "HTMLCOIN"
+  },
+  {
+    "chainCodeId": "HTR",
+    "chainCodeName": "Hathor"
+  },
+  {
+    "chainCodeId": "HTZ",
+    "chainCodeName": "Hertz Network"
+  },
+  {
+    "chainCodeId": "HUSH",
+    "chainCodeName": "Hush"
+  },
+  {
+    "chainCodeId": "HYDRA",
+    "chainCodeName": "Hydra"
+  },
+  {
+    "chainCodeId": "ICP",
+    "chainCodeName": "Internet Computer"
+  },
+  {
+    "chainCodeId": "ICX",
+    "chainCodeName": "ICON"
+  },
+  {
+    "chainCodeId": "IDNA",
+    "chainCodeName": "Idena"
+  },
+  {
+    "chainCodeId": "IFC",
+    "chainCodeName": "Infinitecoin"
+  },
+  {
+    "chainCodeId": "ILC",
+    "chainCodeName": "ILCOIN"
+  },
+  {
+    "chainCodeId": "INSTAR",
+    "chainCodeName": "Insights Network"
+  },
+  {
+    "chainCodeId": "INT",
+    "chainCodeName": "INT"
+  },
+  {
+    "chainCodeId": "IOC",
+    "chainCodeName": "I/O Coin"
+  },
+  {
+    "chainCodeId": "ION",
+    "chainCodeName": "ION"
+  },
+  {
+    "chainCodeId": "IOST",
+    "chainCodeName": "IOST"
+  },
+  {
+    "chainCodeId": "IOTX",
+    "chainCodeName": "IoTeX"
+  },
+  {
+    "chainCodeId": "IRD",
+    "chainCodeName": "Iridium"
+  },
+  {
+    "chainCodeId": "IRIS",
+    "chainCodeName": "IRISnet"
+  },
+  {
+    "chainCodeId": "IXC",
+    "chainCodeName": "Ixcoin"
+  },
+  {
+    "chainCodeId": "JUP",
+    "chainCodeName": "Jupiter"
+  },
+  {
+    "chainCodeId": "KAI",
+    "chainCodeName": "KardiaChain"
+  },
+  {
+    "chainCodeId": "KAVA",
+    "chainCodeName": "Kava"
+  },
+  {
+    "chainCodeId": "KCC",
+    "chainCodeName": "KuCoin Community Chain"
+  },
+  {
+    "chainCodeId": "KDA",
+    "chainCodeName": "Kadena"
+  },
+  {
+    "chainCodeId": "KEX",
+    "chainCodeName": "Kira Network"
+  },
+  {
+    "chainCodeId": "KLAY",
+    "chainCodeName": "Klaytn"
+  },
+  {
+    "chainCodeId": "KMD",
+    "chainCodeName": "Komodo"
+  },
+  {
+    "chainCodeId": "KRB",
+    "chainCodeName": "Karbo"
+  },
+  {
+    "chainCodeId": "KSM",
+    "chainCodeName": "Kusama"
+  },
+  {
+    "chainCodeId": "KUBO",
+    "chainCodeName": "KuboCoin"
+  },
+  {
+    "chainCodeId": "LANA",
+    "chainCodeName": "LanaCoin"
+  },
+  {
+    "chainCodeId": "LAT",
+    "chainCodeName": "PlatON"
+  },
+  {
+    "chainCodeId": "LBC",
+    "chainCodeName": "LBRY Credits"
+  },
+  {
+    "chainCodeId": "LBTC",
+    "chainCodeName": "Lightning Bitcoin"
+  },
+  {
+    "chainCodeId": "LCC",
+    "chainCodeName": "Litecoin Cash"
+  },
+  {
+    "chainCodeId": "LIKE",
+    "chainCodeName": "LikeCoin"
+  },
+  {
+    "chainCodeId": "LN",
+    "chainCodeName": "LINK"
+  },
+  {
+    "chainCodeId": "LOBS",
+    "chainCodeName": "Lobstex"
+  },
+  {
+    "chainCodeId": "LOG",
+    "chainCodeName": "Woodcoin"
+  },
+  {
+    "chainCodeId": "LPT",
+    "chainCodeName": "Livepeer"
+  },
+  {
+    "chainCodeId": "LSK",
+    "chainCodeName": "Lisk"
+  },
+  {
+    "chainCodeId": "LTC",
+    "chainCodeName": "Litecoin"
+  },
+  {
+    "chainCodeId": "LTHN",
+    "chainCodeName": "Lethean"
+  },
+  {
+    "chainCodeId": "LTO",
+    "chainCodeName": "LTO Network"
+  },
+  {
+    "chainCodeId": "LUNA",
+    "chainCodeName": "Terra"
+  },
+  {
+    "chainCodeId": "LUNES",
+    "chainCodeName": "Lunes"
+  },
+  {
+    "chainCodeId": "LUX",
+    "chainCodeName": "LUXCoin"
+  },
+  {
+    "chainCodeId": "MANNA",
+    "chainCodeName": "Manna"
+  },
+  {
+    "chainCodeId": "MARO",
+    "chainCodeName": "Maro"
+  },
+  {
+    "chainCodeId": "MASS",
+    "chainCodeName": "Massnet"
+  },
+  {
+    "chainCodeId": "MATIC",
+    "chainCodeName": "Polygon"
+  },
+  {
+    "chainCodeId": "MBC",
+    "chainCodeName": "MicroBitcoin"
+  },
+  {
+    "chainCodeId": "MCM",
+    "chainCodeName": "Mochimo"
+  },
+  {
+    "chainCodeId": "MEC",
+    "chainCodeName": "Megacoin"
+  },
+  {
+    "chainCodeId": "MED",
+    "chainCodeName": "MediBloc"
+  },
+  {
+    "chainCodeId": "MEME",
+    "chainCodeName": "Memetic / PepeCoin"
+  },
+  {
+    "chainCodeId": "META",
+    "chainCodeName": "Metadium"
+  },
+  {
+    "chainCodeId": "MHC",
+    "chainCodeName": "#MetaHash"
+  },
+  {
+    "chainCodeId": "MINA",
+    "chainCodeName": "Mina"
+  },
+  {
+    "chainCodeId": "MINTME",
+    "chainCodeName": "MintMe.com Coin"
+  },
+  {
+    "chainCodeId": "MIOTA",
+    "chainCodeName": "IOTA"
+  },
+  {
+    "chainCodeId": "MLK",
+    "chainCodeName": "MiL.k"
+  },
+  {
+    "chainCodeId": "MODIC",
+    "chainCodeName": "Modern Investment Coin"
+  },
+  {
+    "chainCodeId": "MONA",
+    "chainCodeName": "MonaCoin"
+  },
+  {
+    "chainCodeId": "MONK",
+    "chainCodeName": "MONK"
+  },
+  {
+    "chainCodeId": "MOTA",
+    "chainCodeName": "MotaCoin"
+  },
+  {
+    "chainCodeId": "MOTO",
+    "chainCodeName": "Motocoin"
+  },
+  {
+    "chainCodeId": "MOVR",
+    "chainCodeName": "Moonriver"
+  },
+  {
+    "chainCodeId": "MRX",
+    "chainCodeName": "Metrix Coin"
+  },
+  {
+    "chainCodeId": "MSR",
+    "chainCodeName": "Masari"
+  },
+  {
+    "chainCodeId": "MTRG",
+    "chainCodeName": "Meter Governance"
+  },
+  {
+    "chainCodeId": "MUE",
+    "chainCodeName": "MonetaryUnit"
+  },
+  {
+    "chainCodeId": "MWC",
+    "chainCodeName": "MimbleWimbleCoin"
+  },
+  {
+    "chainCodeId": "N8V",
+    "chainCodeName": "NativeCoin"
+  },
+  {
+    "chainCodeId": "NANO",
+    "chainCodeName": "Nano"
+  },
+  {
+    "chainCodeId": "NAS",
+    "chainCodeName": "Nebulas"
+  },
+  {
+    "chainCodeId": "NAV",
+    "chainCodeName": "Navcoin"
+  },
+  {
+    "chainCodeId": "NBX",
+    "chainCodeName": "Netbox Coin"
+  },
+  {
+    "chainCodeId": "NEAR",
+    "chainCodeName": "NEAR Protocol"
+  },
+  {
+    "chainCodeId": "NEBL",
+    "chainCodeName": "Neblio"
+  },
+  {
+    "chainCodeId": "NEO",
+    "chainCodeName": "Neo"
+  },
+  {
+    "chainCodeId": "NEXT",
+    "chainCodeName": "NEXT"
+  },
+  {
+    "chainCodeId": "NIM",
+    "chainCodeName": "Nimiq"
+  },
+  {
+    "chainCodeId": "NIX",
+    "chainCodeName": "NIX"
+  },
+  {
+    "chainCodeId": "NKN",
+    "chainCodeName": "NKN"
+  },
+  {
+    "chainCodeId": "NLG",
+    "chainCodeName": "Gulden"
+  },
+  {
+    "chainCodeId": "NMC",
+    "chainCodeName": "Namecoin"
+  },
+  {
+    "chainCodeId": "NRG",
+    "chainCodeName": "Energi"
+  },
+  {
+    "chainCodeId": "NULS",
+    "chainCodeName": "NULS"
+  },
+  {
+    "chainCodeId": "NVT",
+    "chainCodeName": "NerveNetwork"
+  },
+  {
+    "chainCodeId": "NXS",
+    "chainCodeName": "Nexus"
+  },
+  {
+    "chainCodeId": "NXT",
+    "chainCodeName": "Nxt"
+  },
+  {
+    "chainCodeId": "NYE",
+    "chainCodeName": "NewYork Exchange"
+  },
+  {
+    "chainCodeId": "NYZO",
+    "chainCodeName": "Nyzo"
+  },
+  {
+    "chainCodeId": "OBPP5",
+    "chainCodeName": "Open Bitcoin Privacy Project OBPP5"
+  },
+  {
+    "chainCodeId": "OBSR",
+    "chainCodeName": "Observer"
+  },
+  {
+    "chainCodeId": "OGO",
+    "chainCodeName": "Origo"
+  },
+  {
+    "chainCodeId": "OK",
+    "chainCodeName": "OKCash"
+  },
+  {
+    "chainCodeId": "OKT",
+    "chainCodeName": "OKChain"
+  },
+  {
+    "chainCodeId": "OLT",
+    "chainCodeName": "OneLedger"
+  },
+  {
+    "chainCodeId": "OMNI",
+    "chainCodeName": "Omni"
+  },
+  {
+    "chainCodeId": "ONE",
+    "chainCodeName": "Harmony"
+  },
+  {
+    "chainCodeId": "ONION",
+    "chainCodeName": "DeepOnion"
+  },
+  {
+    "chainCodeId": "ONT",
+    "chainCodeName": "Ontology"
+  },
+  {
+    "chainCodeId": "ORB",
+    "chainCodeName": "Orbitcoin"
+  },
+  {
+    "chainCodeId": "OSMO",
+    "chainCodeName": "Osmosis"
+  },
+  {
+    "chainCodeId": "OTO",
+    "chainCodeName": "OTOCASH"
+  },
+  {
+    "chainCodeId": "OWC",
+    "chainCodeName": "ODUWA"
+  },
+  {
+    "chainCodeId": "OXEN",
+    "chainCodeName": "Oxen"
+  },
+  {
+    "chainCodeId": "PAC",
+    "chainCodeName": "PAC Protocol"
+  },
+  {
+    "chainCodeId": "PAI",
+    "chainCodeName": "Project Pai"
+  },
+  {
+    "chainCodeId": "PAK",
+    "chainCodeName": "Pakcoin"
+  },
+  {
+    "chainCodeId": "PART",
+    "chainCodeName": "Particl"
+  },
+  {
+    "chainCodeId": "PASC",
+    "chainCodeName": "Pascal"
+  },
+  {
+    "chainCodeId": "PCX",
+    "chainCodeName": "ChainX"
+  },
+  {
+    "chainCodeId": "PEPS",
+    "chainCodeName": "PEPS Coin"
+  },
+  {
+    "chainCodeId": "PGN",
+    "chainCodeName": "Pigeoncoin"
+  },
+  {
+    "chainCodeId": "PHR",
+    "chainCodeName": "Phore"
+  },
+  {
+    "chainCodeId": "PI",
+    "chainCodeName": "Plian"
+  },
+  {
+    "chainCodeId": "PIN",
+    "chainCodeName": "Public Index Network"
+  },
+  {
+    "chainCodeId": "PINK",
+    "chainCodeName": "Pinkcoin"
+  },
+  {
+    "chainCodeId": "PIRATE",
+    "chainCodeName": "PirateCash"
+  },
+  {
+    "chainCodeId": "PIVX",
+    "chainCodeName": "PIVX"
+  },
+  {
+    "chainCodeId": "PLC",
+    "chainCodeName": "PLATINCOIN"
+  },
+  {
+    "chainCodeId": "PMEER",
+    "chainCodeName": "Qitmeer"
+  },
+  {
+    "chainCodeId": "PNY",
+    "chainCodeName": "Peony"
+  },
+  {
+    "chainCodeId": "POA",
+    "chainCodeName": "POA"
+  },
+  {
+    "chainCodeId": "POT",
+    "chainCodeName": "PotCoin"
+  },
+  {
+    "chainCodeId": "PPC",
+    "chainCodeName": "Peercoin"
+  },
+  {
+    "chainCodeId": "PRCY",
+    "chainCodeName": "PRCY Coin"
+  },
+  {
+    "chainCodeId": "PWR",
+    "chainCodeName": "PWR Coin"
+  },
+  {
+    "chainCodeId": "PXC",
+    "chainCodeName": "Phoenixcoin"
+  },
+  {
+    "chainCodeId": "PZM",
+    "chainCodeName": "PRIZM"
+  },
+  {
+    "chainCodeId": "QRK",
+    "chainCodeName": "Quark"
+  },
+  {
+    "chainCodeId": "QRL",
+    "chainCodeName": "Quantum Resistant Ledger"
+  },
+  {
+    "chainCodeId": "QTUM",
+    "chainCodeName": "Qtum"
+  },
+  {
+    "chainCodeId": "QWC",
+    "chainCodeName": "Qwertycoin"
+  },
+  {
+    "chainCodeId": "RDD",
+    "chainCodeName": "ReddCoin"
+  },
+  {
+    "chainCodeId": "REEF",
+    "chainCodeName": "Reef"
+  },
+  {
+    "chainCodeId": "RFUEL",
+    "chainCodeName": "RioDeFi"
+  },
+  {
+    "chainCodeId": "RISE",
+    "chainCodeName": "Rise"
+  },
+  {
+    "chainCodeId": "ROSE",
+    "chainCodeName": "Oasis Network"
+  },
+  {
+    "chainCodeId": "RSK",
+    "chainCodeName": "RSK"
+  },
+  {
+    "chainCodeId": "RSTR",
+    "chainCodeName": "Ondori"
+  },
+  {
+    "chainCodeId": "RVC",
+    "chainCodeName": "Ravencoin Classic"
+  },
+  {
+    "chainCodeId": "RVN",
+    "chainCodeName": "Ravencoin"
+  },
+  {
+    "chainCodeId": "RYO",
+    "chainCodeName": "Ryo Currency"
+  },
+  {
+    "chainCodeId": "SAFE",
+    "chainCodeName": "Safe"
+  },
+  {
+    "chainCodeId": "SAFE2",
+    "chainCodeName": "Safecoin"
+  },
+  {
+    "chainCodeId": "SAPP",
+    "chainCodeName": "Sapphire"
+  },
+  {
+    "chainCodeId": "SC",
+    "chainCodeName": "Siacoin"
+  },
+  {
+    "chainCodeId": "SCP",
+    "chainCodeName": "ScPrime"
+  },
+  {
+    "chainCodeId": "SCR",
+    "chainCodeName": "Scorum Coins"
+  },
+  {
+    "chainCodeId": "SCRT",
+    "chainCodeName": "Secret"
+  },
+  {
+    "chainCodeId": "SERO",
+    "chainCodeName": "Super Zero Protocol"
+  },
+  {
+    "chainCodeId": "SFD",
+    "chainCodeName": "SAFE DEAL"
+  },
+  {
+    "chainCodeId": "SFT",
+    "chainCodeName": "Safex Token"
+  },
+  {
+    "chainCodeId": "SFX",
+    "chainCodeName": "Safex Cash"
+  },
+  {
+    "chainCodeId": "SHFT",
+    "chainCodeName": "Shyft Network"
+  },
+  {
+    "chainCodeId": "SHND",
+    "chainCodeName": "StrongHands"
+  },
+  {
+    "chainCodeId": "SIB",
+    "chainCodeName": "SIBCoin"
+  },
+  {
+    "chainCodeId": "SIGNA",
+    "chainCodeName": "Signum"
+  },
+  {
+    "chainCodeId": "SKY",
+    "chainCodeName": "Skycoin"
+  },
+  {
+    "chainCodeId": "SMART",
+    "chainCodeName": "SmartCash"
+  },
+  {
+    "chainCodeId": "SMLY",
+    "chainCodeName": "SmileyCoin"
+  },
+  {
+    "chainCodeId": "SOL",
+    "chainCodeName": "Solana"
+  },
+  {
+    "chainCodeId": "SONO",
+    "chainCodeName": "SonoCoin"
+  },
+  {
+    "chainCodeId": "SPD",
+    "chainCodeName": "Stipend"
+  },
+  {
+    "chainCodeId": "SPHTX",
+    "chainCodeName": "SophiaTX"
+  },
+  {
+    "chainCodeId": "STEEM",
+    "chainCodeName": "Steem"
+  },
+  {
+    "chainCodeId": "STRAX",
+    "chainCodeName": "Stratis"
+  },
+  {
+    "chainCodeId": "STX",
+    "chainCodeName": "Stacks"
+  },
+  {
+    "chainCodeId": "SUMO",
+    "chainCodeName": "Sumokoin"
+  },
+  {
+    "chainCodeId": "SYS",
+    "chainCodeName": "Syscoin"
+  },
+  {
+    "chainCodeId": "TAU",
+    "chainCodeName": "Lamden"
+  },
+  {
+    "chainCodeId": "TCC",
+    "chainCodeName": "The ChampCoin"
+  },
+  {
+    "chainCodeId": "TELOS",
+    "chainCodeName": "Teloscoin"
+  },
+  {
+    "chainCodeId": "TENT",
+    "chainCodeName": "TENT"
+  },
+  {
+    "chainCodeId": "TERA",
+    "chainCodeName": "TERA"
+  },
+  {
+    "chainCodeId": "THC",
+    "chainCodeName": "HempCoin"
+  },
+  {
+    "chainCodeId": "THETA",
+    "chainCodeName": "THETA"
+  },
+  {
+    "chainCodeId": "TIPS",
+    "chainCodeName": "FedoraCoin"
+  },
+  {
+    "chainCodeId": "TKS",
+    "chainCodeName": "Tokes"
+  },
+  {
+    "chainCodeId": "TLOS",
+    "chainCodeName": "Telos"
+  },
+  {
+    "chainCodeId": "TN",
+    "chainCodeName": "TurtleNetwork"
+  },
+  {
+    "chainCodeId": "TNC",
+    "chainCodeName": "TNC Coin"
+  },
+  {
+    "chainCodeId": "TOMO",
+    "chainCodeName": "TomoChain"
+  },
+  {
+    "chainCodeId": "TPAY",
+    "chainCodeName": "TokenPay"
+  },
+  {
+    "chainCodeId": "TRC",
+    "chainCodeName": "Terracoin"
+  },
+  {
+    "chainCodeId": "TROLL",
+    "chainCodeName": "Trollcoin"
+  },
+  {
+    "chainCodeId": "TRTL",
+    "chainCodeName": "TurtleCoin"
+  },
+  {
+    "chainCodeId": "TRTT",
+    "chainCodeName": "Trittium"
+  },
+  {
+    "chainCodeId": "TRUE",
+    "chainCodeName": "TrueChain"
+  },
+  {
+    "chainCodeId": "TRUMP",
+    "chainCodeName": "TrumpCoin"
+  },
+  {
+    "chainCodeId": "TRX",
+    "chainCodeName": "TRON"
+  },
+  {
+    "chainCodeId": "TT",
+    "chainCodeName": "Thunder Token"
+  },
+  {
+    "chainCodeId": "TTN",
+    "chainCodeName": "Titan Coin"
+  },
+  {
+    "chainCodeId": "TUBE",
+    "chainCodeName": "BitTube"
+  },
+  {
+    "chainCodeId": "TUP",
+    "chainCodeName": "TenUp"
+  },
+  {
+    "chainCodeId": "TX",
+    "chainCodeName": "TransferCoin"
+  },
+  {
+    "chainCodeId": "UBQ",
+    "chainCodeName": "Ubiq"
+  },
+  {
+    "chainCodeId": "UBX",
+    "chainCodeName": "UBIX.Network"
+  },
+  {
+    "chainCodeId": "UCA",
+    "chainCodeName": "UCA Coin"
+  },
+  {
+    "chainCodeId": "USNBT",
+    "chainCodeName": "NuBits"
+  },
+  {
+    "chainCodeId": "UT",
+    "chainCodeName": "Ulord"
+  },
+  {
+    "chainCodeId": "VAL",
+    "chainCodeName": "Validity"
+  },
+  {
+    "chainCodeId": "VAULT",
+    "chainCodeName": "VAULT"
+  },
+  {
+    "chainCodeId": "VEIL",
+    "chainCodeName": "Veil"
+  },
+  {
+    "chainCodeId": "VET",
+    "chainCodeName": "VeChain"
+  },
+  {
+    "chainCodeId": "VEX",
+    "chainCodeName": "Vexanium"
+  },
+  {
+    "chainCodeId": "VIA",
+    "chainCodeName": "Viacoin"
+  },
+  {
+    "chainCodeId": "VIN",
+    "chainCodeName": "VINchain"
+  },
+  {
+    "chainCodeId": "VIP",
+    "chainCodeName": "Limitless VIP"
+  },
+  {
+    "chainCodeId": "VIPS",
+    "chainCodeName": "Vipstar Coin"
+  },
+  {
+    "chainCodeId": "VITE",
+    "chainCodeName": "VITE"
+  },
+  {
+    "chainCodeId": "VLX",
+    "chainCodeName": "Velas"
+  },
+  {
+    "chainCodeId": "VRC",
+    "chainCodeName": "VeriCoin"
+  },
+  {
+    "chainCodeId": "VRSC",
+    "chainCodeName": "VerusCoin"
+  },
+  {
+    "chainCodeId": "VSYS",
+    "chainCodeName": "v.systems"
+  },
+  {
+    "chainCodeId": "VTC",
+    "chainCodeName": "Vertcoin"
+  },
+  {
+    "chainCodeId": "WAN",
+    "chainCodeName": "Wanchain"
+  },
+  {
+    "chainCodeId": "WAVES",
+    "chainCodeName": "Waves"
+  },
+  {
+    "chainCodeId": "WAXP",
+    "chainCodeName": "WAX"
+  },
+  {
+    "chainCodeId": "WEBD",
+    "chainCodeName": "WebDollar"
+  },
+  {
+    "chainCodeId": "WEST",
+    "chainCodeName": "Waves Enterprise"
+  },
+  {
+    "chainCodeId": "WGR",
+    "chainCodeName": "Wagerr"
+  },
+  {
+    "chainCodeId": "WICC",
+    "chainCodeName": "WaykiChain"
+  },
+  {
+    "chainCodeId": "WOW",
+    "chainCodeName": "Wownero"
+  },
+  {
+    "chainCodeId": "X42",
+    "chainCodeName": "x42 Protocol"
+  },
+  {
+    "chainCodeId": "XBC",
+    "chainCodeName": "Bitcoin Plus"
+  },
+  {
+    "chainCodeId": "XCASH",
+    "chainCodeName": "X-CASH"
+  },
+  {
+    "chainCodeId": "XCH",
+    "chainCodeName": "Chia Network"
+  },
+  {
+    "chainCodeId": "XCP",
+    "chainCodeName": "Counterparty"
+  },
+  {
+    "chainCodeId": "XDAI",
+    "chainCodeName": "xDai Chain"
+  },
+  {
+    "chainCodeId": "XDC",
+    "chainCodeName": "XDC Network"
+  },
+  {
+    "chainCodeId": "XDN",
+    "chainCodeName": "DigitalNote"
+  },
+  {
+    "chainCodeId": "XEM",
+    "chainCodeName": "NEM"
+  },
+  {
+    "chainCodeId": "XEP",
+    "chainCodeName": "Electra Protocol"
+  },
+  {
+    "chainCodeId": "XFC",
+    "chainCodeName": "Footballcoin"
+  },
+  {
+    "chainCodeId": "XHI",
+    "chainCodeName": "HiCoin"
+  },
+  {
+    "chainCodeId": "XHV",
+    "chainCodeName": "Haven Protocol"
+  },
+  {
+    "chainCodeId": "XLA",
+    "chainCodeName": "Scala"
+  },
+  {
+    "chainCodeId": "XLM",
+    "chainCodeName": "Stellar"
+  },
+  {
+    "chainCodeId": "XLT",
+    "chainCodeName": "Nexalt"
+  },
+  {
+    "chainCodeId": "XMC",
+    "chainCodeName": "Monero Classic"
+  },
+  {
+    "chainCodeId": "XMR",
+    "chainCodeName": "Monero"
+  },
+  {
+    "chainCodeId": "XMY",
+    "chainCodeName": "Myriad"
+  },
+  {
+    "chainCodeId": "XNC",
+    "chainCodeName": "XeniosCoin"
+  },
+  {
+    "chainCodeId": "XNS",
+    "chainCodeName": "Insolar"
+  },
+  {
+    "chainCodeId": "XNV",
+    "chainCodeName": "Nerva"
+  },
+  {
+    "chainCodeId": "XPC",
+    "chainCodeName": "eXPerience Chain"
+  },
+  {
+    "chainCodeId": "XPM",
+    "chainCodeName": "Primecoin"
+  },
+  {
+    "chainCodeId": "XPX",
+    "chainCodeName": "ProximaX"
+  },
+  {
+    "chainCodeId": "XRC",
+    "chainCodeName": "xRhodium"
+  },
+  {
+    "chainCodeId": "XRP",
+    "chainCodeName": "XRP"
+  },
+  {
+    "chainCodeId": "XSM",
+    "chainCodeName": "SpectrumCash"
+  },
+  {
+    "chainCodeId": "XSN",
+    "chainCodeName": "Stakenet"
+  },
+  {
+    "chainCodeId": "XST",
+    "chainCodeName": "Stealth"
+  },
+  {
+    "chainCodeId": "XTZ",
+    "chainCodeName": "Tezos"
+  },
+  {
+    "chainCodeId": "XVG",
+    "chainCodeName": "Verge"
+  },
+  {
+    "chainCodeId": "XWC",
+    "chainCodeName": "WhiteCoin"
+  },
+  {
+    "chainCodeId": "XYM",
+    "chainCodeName": "Symbol"
+  },
+  {
+    "chainCodeId": "YAP",
+    "chainCodeName": "YAP STONE"
+  },
+  {
+    "chainCodeId": "YEC",
+    "chainCodeName": "Ycash"
+  },
+  {
+    "chainCodeId": "YOYOW",
+    "chainCodeName": "YOYOW"
+  },
+  {
+    "chainCodeId": "ZANO",
+    "chainCodeName": "Zano"
+  },
+  {
+    "chainCodeId": "ZCL",
+    "chainCodeName": "ZClassic"
+  },
+  {
+    "chainCodeId": "ZEBI",
+    "chainCodeName": "Zebi Token"
+  },
+  {
+    "chainCodeId": "ZEC",
+    "chainCodeName": "Zcash"
+  },
+  {
+    "chainCodeId": "ZEN",
+    "chainCodeName": "Horizen"
+  },
+  {
+    "chainCodeId": "ZENI",
+    "chainCodeName": "Zennies"
+  },
+  {
+    "chainCodeId": "ZER",
+    "chainCodeName": "Zero"
+  },
+  {
+    "chainCodeId": "ZET",
+    "chainCodeName": "Zetacoin"
+  },
+  {
+    "chainCodeId": "ZIL",
+    "chainCodeName": "Zilliqa"
+  },
+  {
+    "chainCodeId": "ZNN",
+    "chainCodeName": "Zenon"
+  },
+  {
+    "chainCodeId": "ZNZ",
+    "chainCodeName": "ZENZO"
+  },
+  {
+    "chainCodeId": "ZP",
+    "chainCodeName": "Zen Protocol"
+  },
+  {
+    "chainCodeId": "ZRC",
+    "chainCodeName": "ZrCoin"
+  },
+  {
+    "chainCodeId": "ZYN",
+    "chainCodeName": "Zynecoin"
+  }
+]
