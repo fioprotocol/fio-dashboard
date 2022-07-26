@@ -24,6 +24,8 @@ import { Var } from './models/Var.mjs';
 import { AdminUser } from './models/AdminUser.mjs';
 import { AdminUsersRole } from './models/AdminUsersRole.mjs';
 import { AdminUsersStatus } from './models/AdminUsersStatus.mjs';
+import { ChainCode } from './models/ChainCode.mjs';
+import { TokenCode } from './models/TokenCode.mjs';
 
 const sequelize = new Sequelize(config.postgres);
 
@@ -49,6 +51,8 @@ AdminUsersRole.init(sequelize);
 AdminUsersStatus.init(sequelize);
 Var.init(sequelize);
 AdminUser.init(sequelize);
+ChainCode.init(sequelize);
+TokenCode.init(sequelize);
 
 const { models } = sequelize;
 

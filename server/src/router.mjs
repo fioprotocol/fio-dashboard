@@ -99,4 +99,6 @@ router.post('/orders/update/:id', checkAuth, routes.orders.update);
 router.post('/payments', checkAuth, routes.payments.create);
 router.post('/payments/webhook/', routes.payments.webhook);
 
+router.get('/chain-codes/:chainCode?', routes.chainCodes.list);
+
 export default router;
