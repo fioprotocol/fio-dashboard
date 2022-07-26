@@ -50,13 +50,16 @@ const AddressDomainCart: React.FC<Props> = props => {
   const count = cartItems.length;
   const domainsAmount = domains.length;
   const isCartEmpty = count === 0;
+  const cartHasFreeAddress = !!cartItems.find(({ allowFree }) => allowFree);
   const cartItemsJson = JSON.stringify(cartItems);
 
   const history = useHistory();
 
   const handleCheckout = () => {
-    const route =
-      count === 1 && !hasFreeAddress ? ROUTES.CHECKOUT : ROUTES.CART; // todo: check if cart item is fio address with proper domain to be free
+    let route = ROUTES.CART;
+    if (count === 1 && !hasFreeAddress && cartHasFreeAddress) {
+      route = ROUTES.CHECKOUT;
+    }
 
     if (!isAuthenticated) {
       setRedirectPath({ pathname: route });
