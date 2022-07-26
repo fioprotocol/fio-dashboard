@@ -9,6 +9,7 @@ import {
   Payment,
   PaymentEventLog,
   Order,
+  FreeAddress,
 } from '../models/index.mjs';
 import MathOp from '../services/math.mjs';
 import CommonJob from './job.mjs';
@@ -17,6 +18,7 @@ import Stripe from '../external/payment-processor/stripe';
 import sendInsufficientFundsNotification from '../services/fallback-funds-email.mjs';
 import { getROE } from '../external/roe.mjs';
 import { fioApi, INSUFFICIENT_FUNDS_ERR_MESSAGE } from '../external/fio.mjs';
+import { FioRegApi } from '../external/fio-reg.mjs';
 
 import { FIO_ADDRESS_DELIMITER, FIO_ACTIONS } from '../config/constants.js';
 
@@ -183,6 +185,54 @@ class OrdersJob extends CommonJob {
     }
   }
 
+  async registerFree(fioName, item) {
+    const { regRefCode, regRefApiToken, publicKey } = item;
+
+    let res;
+    try {
+      res = await FioRegApi.register({
+        address: fioName,
+        publicKey,
+        referralCode: regRefCode,
+        apiToken: regRefApiToken,
+      });
+    } catch (error) {
+      let message = error.message;
+      if (error.response && error.response.body) {
+        message = error.response.body.error;
+      }
+      logger.error(`Register free address error: ${message}`);
+      return this.handleFail(item, message);
+    }
+
+    if (res) {
+      await OrderItem.setPending(
+        {
+          transaction_id: 'free',
+          block_num: 0,
+        },
+        item.orderId,
+        item.blockchainTransactionId,
+      );
+      this.postMessage(
+        `Processing item transactions created (FREE) - ${item.id} / ${JSON.stringify(
+          res,
+        )}`,
+      );
+
+      const freeAddressRecord = new FreeAddress({
+        name: fioName,
+        userId: item.userId,
+      });
+      await freeAddressRecord.save();
+
+      return;
+    }
+
+    logger.error(`Register free address error. No response data`);
+    return this.handleFail(item, 'Server error. No response data');
+  }
+
   async execute() {
     await fioApi.getRawAbi();
     const roe = await getROE();
@@ -223,6 +273,12 @@ class OrdersJob extends CommonJob {
           auth.permission = permission;
         }
 
+        // Handle free addresses
+        if (!price || price === '0') {
+          return this.registerFree(fioName, item);
+        }
+
+        // Check if fee/roe changed and handle changes
         await this.checkPriceChanges(item, roe);
 
         // Spend order payment on fio action

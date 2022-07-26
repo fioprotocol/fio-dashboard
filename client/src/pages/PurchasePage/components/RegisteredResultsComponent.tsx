@@ -30,6 +30,7 @@ export const RegisteredResultsComponent: React.FC<RegisteredResultsComponentProp
       <InfoBadgeComponent
         purchaseStatus={purchaseStatus}
         purchaseProvider={purchaseProvider}
+        hide={purchaseStatus === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS}
       />
       <PurchaseResultsComponent
         txItems={txItems}

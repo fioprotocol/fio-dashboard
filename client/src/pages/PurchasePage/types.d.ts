@@ -39,4 +39,5 @@ export type InfoBadgeComponentProps = {
   purchaseStatus: PurchaseTxStatus;
   failedTxsTotalAmount?: number | string;
   failedMessage?: string;
+  hide?: boolean;
 };
