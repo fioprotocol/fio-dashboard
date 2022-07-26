@@ -8,17 +8,13 @@ import MathOp from './math';
 import { CONTAINED_FLOW_ACTIONS } from '../constants/containedFlow';
 import { ROUTES } from '../constants/routes';
 import { ERROR_TYPES } from '../constants/errors';
-import {
-  PAYMENT_OPTIONS,
-  PURCHASE_RESULTS_STATUS,
-} from '../constants/purchase';
+import { PAYMENT_OPTIONS } from '../constants/purchase';
 
 import {
   RegistrationResult,
   CartItem,
   FioActionExecuted,
   Prices,
-  PurchaseTxStatus,
 } from '../types';
 
 export const onPurchaseFinish = ({
@@ -187,25 +183,4 @@ export const transformPurchaseResults = ({
   }
 
   return { errItems, regItems, updatedCart };
-};
-
-export const handlePurchaseStatus = ({
-  hasRegItems,
-  hasFailedItems,
-  providerTxStatus,
-}: {
-  hasRegItems: boolean;
-  hasFailedItems: boolean;
-  providerTxStatus: PurchaseTxStatus;
-}): PurchaseTxStatus => {
-  if (providerTxStatus) return providerTxStatus;
-
-  if (hasRegItems && !hasFailedItems) return PURCHASE_RESULTS_STATUS.DONE;
-
-  if (!hasRegItems && hasFailedItems) return PURCHASE_RESULTS_STATUS.FAILED;
-
-  if (hasRegItems && hasFailedItems)
-    return PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS;
-
-  return PURCHASE_RESULTS_STATUS.PENDING;
 };

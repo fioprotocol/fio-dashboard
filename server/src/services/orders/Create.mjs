@@ -2,9 +2,10 @@ import Sequelize from 'sequelize';
 
 import Base from '../Base';
 
-import { Order, OrderItem, OrderItemStatus, Payment } from '../../models';
+import { Order, OrderItem, OrderItemStatus, Payment, User } from '../../models';
 
 import { DAY_MS } from '../../config/constants.js';
+import X from '../Exception.mjs';
 
 export default class OrdersCreate extends Base {
   static get validationRules() {
@@ -17,6 +18,7 @@ export default class OrdersCreate extends Base {
             roe: 'string',
             publicKey: 'string',
             paymentProcessor: 'string',
+            refProfileId: 'integer',
             items: [
               {
                 list_of_objects: {
@@ -36,7 +38,9 @@ export default class OrdersCreate extends Base {
     };
   }
 
-  async execute({ data: { total, roe, publicKey, paymentProcessor, items } }) {
+  async execute({
+    data: { total, roe, publicKey, paymentProcessor, refProfileId, items },
+  }) {
     // assume user should have only one active order with status NEW
     let order = await Order.findOne({
       where: {
@@ -51,6 +55,17 @@ export default class OrdersCreate extends Base {
     let payment = null;
     const orderItems = [];
 
+    const user = await User.findActive(this.context.id);
+
+    if (!user) {
+      throw new X({
+        code: 'NOT_FOUND',
+        fields: {
+          id: 'NOT_FOUND',
+        },
+      });
+    }
+
     await Order.sequelize.transaction(async t => {
       // Update existing new order and remove items from it
       if (order) {
@@ -58,7 +73,7 @@ export default class OrdersCreate extends Base {
         order.roe = roe;
         order.publicKey = publicKey;
         order.customerIp = this.context.ipAddress;
-        // order.refProfileId: , // todo:
+        order.refProfileId = refProfileId ? refProfileId : user.refProfileId;
 
         await order.save({ transaction: t });
         await OrderItemStatus.destroy({
@@ -82,6 +97,7 @@ export default class OrdersCreate extends Base {
             publicKey,
             customerIp: this.context.ipAddress,
             userId: this.context.id,
+            refProfileId: refProfileId ? refProfileId : user.refProfileId,
           },
           { transaction: t },
         );

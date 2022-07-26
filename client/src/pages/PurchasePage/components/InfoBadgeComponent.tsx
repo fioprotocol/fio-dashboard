@@ -19,6 +19,7 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
     purchaseStatus,
     failedTxsTotalAmount = '',
     failedMessage,
+    hide,
   } = props;
 
   let title = null;
@@ -26,7 +27,7 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
   let badgeUIType = null;
 
   // Don't show info badge on success results
-  if (purchaseStatus === PURCHASE_RESULTS_STATUS.DONE) return null;
+  if (purchaseStatus === PURCHASE_RESULTS_STATUS.DONE || hide) return null;
 
   // Customize content info badge for In Progress status
   if (
@@ -72,7 +73,7 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
     badgeUIType = BADGE_TYPES.ERROR;
 
     // Custom message for FIO and non FIO providers
-    if (purchaseProvider === PURCHASE_PROVIDER.FIO) {
+    if (purchaseProvider === PURCHASE_PROVIDER.FIO || !failedTxsTotalAmount) {
       message =
         'Your purchase was not completed in full. Please see below what failed to be completed.';
     } else {
