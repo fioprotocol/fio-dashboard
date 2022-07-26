@@ -25,11 +25,12 @@ import { order as orderSelector } from '../../redux/order/selectors';
 import {
   onPurchaseFinish,
   transformPurchaseResults,
-  handlePurchaseStatus,
 } from '../../util/purchase';
 import { totalCost } from '../../utils';
 import { useEffectOnce } from '../../hooks/general';
 import { useWebsocket } from '../../hooks/websocket';
+
+import apis from '../../api';
 
 import { ROUTES } from '../../constants/routes';
 import { CONTAINED_FLOW_CONTINUE_TEXT } from '../../constants/containedFlow';
@@ -53,7 +54,7 @@ export const useContext = (): {
   errItems: CartItem[];
   closeText: string;
   onClose: () => void;
-  onFinish: () => void;
+  onFinish: () => Promise<void>;
   purchaseStatus: PurchaseTxStatus;
   purchaseProvider: PurchaseProvider;
   regPaymentAmount: string | number;
@@ -154,16 +155,11 @@ export const useContext = (): {
   }
 
   const allErrored = isEmpty(regItems) && !isEmpty(errItems);
-  const isRetry = !isEmpty(errItems);
-
-  const purchaseStatus = handlePurchaseStatus({
-    hasRegItems: !isEmpty(regItems),
-    hasFailedItems: !isEmpty(errItems),
-    providerTxStatus: orderStatusData.status,
-  });
+  const isRetry =
+    purchaseProvider === PURCHASE_PROVIDER.FIO && !isEmpty(errItems);
 
   const failedTxsTotalAmount =
-    purchaseStatus === PURCHASE_RESULTS_STATUS.FAILED &&
+    orderStatusData.status === PURCHASE_RESULTS_STATUS.FAILED &&
     purchaseProvider === PURCHASE_PROVIDER.STRIPE
       ? errCostUsdc
       : errCostFio;
@@ -182,7 +178,11 @@ export const useContext = (): {
     dispatch(onPurchaseResultsClose());
   };
 
-  const onFinish = () =>
+  const onFinish = async () => {
+    await apis.orders.update(order.id, {
+      status: results.providerTxStatus || PURCHASE_RESULTS_STATUS.DONE,
+      results,
+    });
     onPurchaseFinish({
       results,
       isRetry: true,
@@ -194,6 +194,7 @@ export const useContext = (): {
         dispatch(fioActionExecuted(data)),
       history,
     });
+  };
 
   return {
     regItems,
@@ -201,7 +202,7 @@ export const useContext = (): {
     closeText,
     onClose,
     onFinish,
-    purchaseStatus,
+    purchaseStatus: orderStatusData.status,
     purchaseProvider,
     // todo: handle other currencies too
     regPaymentAmount: paymentAmount || regCostFio,

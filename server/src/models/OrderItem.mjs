@@ -134,9 +134,12 @@ export class OrderItem extends Base {
           o.id "orderId", 
           o.roe, 
           o."publicKey", 
+          o."userId", 
           ois."blockchainTransactionId",
           ois."paymentId",
-          rp.label, 
+          rp.label,
+          rp."regRefCode", 
+          rp."regRefApiToken", 
           rp.tpid,
           fap.actor,
           fap.permission

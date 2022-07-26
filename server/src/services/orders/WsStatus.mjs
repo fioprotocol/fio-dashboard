@@ -13,6 +13,11 @@ import { FIO_ADDRESS_DELIMITER } from '../../config/constants.js';
 
 import logger from '../../logger.mjs';
 
+const ERROR_TYPES = {
+  default: 'default',
+  freeAddressIsNotRegistered: 'freeAddressIsNotRegistered',
+};
+
 export default class WsStatus extends WsBase {
   constructor(args) {
     super(args);
@@ -53,12 +58,7 @@ export default class WsStatus extends WsBase {
           include: [
             {
               model: OrderItemStatus,
-              include: [
-                {
-                  model: BlockchainTransaction,
-                  include: [BlockchainTransactionEventLog],
-                },
-              ],
+              include: [BlockchainTransaction],
             },
           ],
         },
@@ -82,6 +82,8 @@ export default class WsStatus extends WsBase {
           for (const orderItem of order.OrderItems) {
             const { address, domain, price, nativeFio } = orderItem;
             const itemStatus = orderItem.OrderItemStatus;
+            const isFree = price === '0';
+
             let bcTx = {};
 
             if (itemStatus.blockchainTransactionId) {
@@ -96,16 +98,25 @@ export default class WsStatus extends WsBase {
               itemStatus.txStatus === BlockchainTransaction.STATUS.REVIEW ||
               itemStatus.txStatus === BlockchainTransaction.STATUS.CANCEL
             ) {
-              const event = bcTx.BlockchainTransactionEventLogs.find(
+              const eventLogs = await BlockchainTransactionEventLog.findAll({
+                where: {
+                  blockchainTransactionId: bcTx.id,
+                },
+              });
+              const event = eventLogs.find(
                 ({ status }) =>
                   status === BlockchainTransaction.STATUS.REVIEW ||
                   status === BlockchainTransaction.STATUS.CANCEL,
               );
               this.messageData.results.errors.push({
                 fioName,
+                fee_collected: isFree ? null : nativeFio,
                 error: event ? event.statusNotes : '',
                 cartItemId: fioName,
-                errorType: 'default',
+                isFree,
+                errorType: isFree
+                  ? ERROR_TYPES.freeAddressIsNotRegistered
+                  : ERROR_TYPES.default,
               });
 
               continue;
@@ -113,9 +124,10 @@ export default class WsStatus extends WsBase {
 
             this.messageData.results.registered.push({
               fioName,
-              fee_collected: nativeFio, // todo: set fee collected from tx
+              fee_collected: isFree ? null : nativeFio, // todo: set fee collected from tx
               costUsdc: price,
               cartItemId: fioName,
+              isFree,
               transaction_id: bcTx.txId,
             });
           }

@@ -79,7 +79,7 @@ export const useContext = (): {
   paymentOptionError: ApiError;
   isFree: boolean;
   onClose: () => void;
-  onFinish: (results: RegistrationResult) => void;
+  onFinish: (results: RegistrationResult) => Promise<void>;
   setWallet: (walletPublicKey: string) => void;
 } => {
   const history = useHistory();
@@ -228,9 +228,10 @@ export const useContext = (): {
     history.push(ROUTES.CART);
   };
 
-  const onFinish = (results: RegistrationResult) => {
-    apis.orders.update(order.id, {
+  const onFinish = async (results: RegistrationResult) => {
+    await apis.orders.update(order.id, {
       status: results.providerTxStatus || PURCHASE_RESULTS_STATUS.DONE,
+      results,
     });
     onPurchaseFinish({
       results,
