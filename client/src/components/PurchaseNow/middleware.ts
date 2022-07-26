@@ -1,10 +1,17 @@
+import isEmpty from 'lodash/isEmpty';
+
 import apis from '../../api/index';
 import { toString } from '../../redux/notify/sagas';
-import { FIO_ADDRESS_DELIMITER } from '../../utils';
 import { waitForAddressRegistered } from '../../util/fio';
 import { log } from '../../util/general';
 
+import { FIO_ADDRESS_DELIMITER } from '../../utils';
+import {
+  PURCHASE_PROVIDER,
+  PURCHASE_RESULTS_STATUS,
+} from '../../constants/purchase';
 import { ERROR_TYPES } from '../../constants/errors';
+
 import { RegistrationType } from './types';
 import {
   CartItem,
@@ -12,6 +19,7 @@ import {
   WalletKeys,
   RegistrationRegistered,
   AnyObject,
+  PurchaseTxStatus,
 } from '../../types';
 
 const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 2000;
@@ -19,6 +27,20 @@ const wait = () =>
   new Promise(resolve =>
     setTimeout(resolve, TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION),
   );
+
+const setTxStatus = (
+  hasRegItems: boolean,
+  hasFailedItems: boolean,
+): PurchaseTxStatus => {
+  if (hasRegItems && !hasFailedItems) return PURCHASE_RESULTS_STATUS.DONE;
+
+  if (!hasRegItems && hasFailedItems) return PURCHASE_RESULTS_STATUS.FAILED;
+
+  if (hasRegItems && hasFailedItems)
+    return PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS;
+
+  return PURCHASE_RESULTS_STATUS.PENDING;
+};
 
 export const registerFree = async ({
   fioName,
@@ -122,6 +144,8 @@ export const executeRegistration = async (
     errors: [],
     registered: [],
     partial: [],
+    purchaseProvider: PURCHASE_PROVIDER.FIO,
+    providerTxStatus: PURCHASE_RESULTS_STATUS.PENDING,
   };
   const registrations = makeRegistrationOrder([...items], fees);
   const registrationPromises = [];
@@ -161,6 +185,11 @@ export const executeRegistration = async (
     //
   }
   if (keys.private) apis.fio.clearWalletFioSdk();
+
+  result.providerTxStatus = setTxStatus(
+    !isEmpty(result.registered),
+    !isEmpty(result.errors),
+  );
 
   return result;
 };

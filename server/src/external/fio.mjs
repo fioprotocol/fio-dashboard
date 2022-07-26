@@ -114,6 +114,10 @@ class Fio {
       .toNumber();
   }
 
+  setFioName(address, domain) {
+    return address ? `${address}${FIO_ADDRESS_DELIMITER}${domain}` : domain;
+  }
+
   logError(e) {
     if (e.errorCode !== 404) logger.error(e.message);
     if (e.json) {
