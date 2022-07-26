@@ -6,7 +6,7 @@ import { compose } from '../../utils';
 import { cartItems, paymentWalletPublicKey } from '../../redux/cart/selectors';
 import { deleteItem, recalculate, setWallet } from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
-import { createOrder } from '../../redux/order/actions';
+import { createOrder, clearOrder } from '../../redux/order/actions';
 
 import { hasFreeAddress, isAuthenticated } from '../../redux/profile/selectors';
 import { domains, prices, roe } from '../../redux/registrations/selectors';
@@ -31,6 +31,7 @@ const reduxConnect = connect(
     setWallet,
     refreshBalance,
     createOrder,
+    clearOrder,
   },
 );
 

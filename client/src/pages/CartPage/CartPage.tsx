@@ -42,7 +42,8 @@ type Props = {
   refreshBalance: (publicKey: string) => void;
   recalculate: (cartItems: CartItem[]) => {};
   deleteItem: (params: DeleteCartItem) => {};
-  createOrder: (params: CreateOrderActionData) => {};
+  createOrder: (params: CreateOrderActionData) => void;
+  clearOrder: () => void;
 };
 
 const CartPage: React.FC<Props> = props => {
@@ -59,6 +60,7 @@ const CartPage: React.FC<Props> = props => {
     setWallet,
     recalculate,
     createOrder,
+    clearOrder,
   } = props;
 
   const walletJson = JSON.stringify(userWallets);
@@ -105,7 +107,7 @@ const CartPage: React.FC<Props> = props => {
           params: {
             owner_fio_public_key: paymentWalletPublicKey,
           },
-          nativeFio: `${costNativeFio}`,
+          nativeFio: `${costNativeFio || 0}`,
           price: costUsdc,
           priceCurrency: CURRENCY_CODES.USDC,
         }),
@@ -212,7 +214,8 @@ const CartPage: React.FC<Props> = props => {
         setWallet(wallets[0].publicKey);
       }
     }
-  }, [walletJson, refreshBalance, setWallet]);
+    clearOrder();
+  }, [walletJson, refreshBalance, setWallet, clearOrder]);
 
   const hasLowBalance =
     !isEmpty(walletBalancesAvailable) &&
