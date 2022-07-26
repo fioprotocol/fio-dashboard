@@ -10,6 +10,7 @@ import contacts from './contacts';
 import orders from './orders';
 import payments from './payments';
 import adminUsers from './adminUsers';
+import chainCodes from './chainCodes';
 
 export default {
   users,
@@ -24,4 +25,5 @@ export default {
   orders,
   payments,
   adminUsers,
+  chainCodes,
 };
