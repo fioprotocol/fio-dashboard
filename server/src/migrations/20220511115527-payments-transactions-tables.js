@@ -141,7 +141,7 @@ module.exports = {
       blockchainTransactionId: {
         type: DT.BIGINT,
         references: {
-          model: 'order-items',
+          model: 'blockchain-transactions',
           key: 'id',
         },
         onUpdate: 'cascade',
@@ -180,7 +180,7 @@ module.exports = {
       blockchainTransactionId: {
         type: DT.BIGINT,
         references: {
-          model: 'order-items',
+          model: 'blockchain-transactions',
           key: 'id',
         },
         onUpdate: 'cascade',
