@@ -13,6 +13,7 @@ import Contacts from './contacts';
 import Admin from './admin';
 import Payments from './payments';
 import Orders from './orders';
+import ChainCode from './chain-code';
 
 const apiClient = new ApiClient(config.apiPrefix);
 
@@ -40,6 +41,7 @@ export type Api = {
   client: ApiClient;
   admin: Admin;
   payments: Payments;
+  chainCode: ChainCode;
 };
 
 const apis = {
@@ -56,6 +58,7 @@ const apis = {
   client: apiClient,
   admin: new Admin(apiClient),
   payments: new Payments(apiClient),
+  chainCode: new ChainCode(apiClient),
 };
 
 export default apis;
