@@ -1,4 +1,4 @@
-export const PURCHASE_RESULTS_STATUS = {
+export const PURCHASE_RESULTS_STATUS: { [label: string]: number } = {
   NEW: 1,
   PENDING: 2,
   PAYMENT_AWAITING: 3,
