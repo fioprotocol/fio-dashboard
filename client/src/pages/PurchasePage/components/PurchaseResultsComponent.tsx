@@ -33,6 +33,9 @@ export const PurchaseResultsComponent: React.FC<PurchaseResultsProps> = props =>
       {txItems.map(item => (
         <CartItem item={item} primaryCurrency={paymentCurrency} key={item.id} />
       ))}
+      <h6 className={classnames(classes.subtitle, classes.hasTopMargin)}>
+        Payment Details
+      </h6>
       <PriceBadge
         paymentAmount={paymentAmount}
         paymentCurrency={paymentCurrency}
