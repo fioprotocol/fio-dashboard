@@ -1,5 +1,6 @@
 @import '../../../assets/styles/fontMixins.scss';
 @import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
 
 .form {
   margin-top: 1em;
@@ -9,5 +10,18 @@
     color: $dark-jungle-green;
     align-self: flex-start;
     @include sf-pro-display-medium;
+  }
+  .chainAndTokenCodesContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+@include lg {
+  .form {
+    .chainAndTokenCodesContainer {
+      flex-direction: row;
+    }
   }
 }

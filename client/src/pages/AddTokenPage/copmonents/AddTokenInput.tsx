@@ -3,12 +3,10 @@ import { Field } from 'react-final-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FieldArrayRenderProps } from 'react-final-form-arrays';
 
-import ChainCodeField from '../../../components/ChainCodeField/ChainCodeField';
+import { ChainAndTokenCodesAutocompleteFields } from '../../../components/ChainAndTokenCodesAutocompleteFields/ChainAndTokenCodesAutocompleteFields';
 
 import Input, { INPUT_UI_STYLES } from '../../../components/Input/Input';
 import { ErrorBadge, COLOR_TYPE } from '../../../components/Input/ErrorBadge';
-
-import { NFT_CHAIN_CODE_LIST } from '../../../constants/common';
 
 import { FormValues } from '../types';
 
@@ -62,27 +60,14 @@ const AddTokenInput: React.FC<FieldArrayRenderProps<FormValues, HTMLElement> &
           <div className={classes.container} key={field}>
             <div className={classes.itemContainer}>
               <div className={classes.fieldContainer}>
-                <div className={classes.chainCodeInput}>
-                  <ChainCodeField
-                    hasAutoWidth={true}
-                    isHigh={true}
-                    optionsList={NFT_CHAIN_CODE_LIST}
-                    fieldName={`${field}.chainCode`}
-                    hideError={true}
-                    noShadow={true}
-                  />
-                </div>
-                <div className={classes.tokenCodeInput}>
-                  <Field
-                    name={`${field}.tokenCode`}
-                    type="text"
-                    component={Input}
-                    placeholder="Enter Token Code"
-                    hideError={true}
-                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                    upperCased={true}
-                  />
-                </div>
+                <ChainAndTokenCodesAutocompleteFields
+                  chainCodeFieldName={`${field}.chainCode`}
+                  hasAutoWidth={true}
+                  hideError={true}
+                  isHigh={true}
+                  noShadow={true}
+                  tokenCodeFieldName={`${field}.tokenCode`}
+                />
                 <div className={classes.pubAddressInput}>
                   <Field
                     name={`${field}.publicAddress`}
