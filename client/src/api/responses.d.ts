@@ -8,6 +8,7 @@ import {
   Order,
   User,
   Payment,
+  ChainCodeProps,
 } from '../types';
 
 export type AccountGetWalletsResponse = FioWalletDoublet[];
@@ -43,6 +44,8 @@ export type AuthDeleteNewDeviceRequestResponse =
 export type AuthUpdateNewDeviceResponse = null;
 export type AuthCheckRejectedResponse = boolean;
 export type AdminAuthLoginResponse = { jwt: string };
+
+export type ChainCodesListResults = ChainCodeProps[] | null;
 
 export type ContactsListResponse = string[];
 export type ContactsCreateResponse = string;
@@ -132,4 +135,5 @@ export type ApisResponse = AccountGetWalletsResponse &
   RemoveAdminResponse &
   AdminInviteResponse &
   AdminConfirmResponse &
-  PaymentCreateResponse;
+  PaymentCreateResponse &
+  ChainCodesListResults;

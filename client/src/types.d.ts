@@ -602,3 +602,15 @@ export type ApiError = {
   code: string;
   fields?: { [fieldName: string]: AnyType };
 } | null;
+
+type TokenCodeProps = {
+  chainCodeId: string;
+  tokenCodeId: string;
+  tokenCodeName: string;
+};
+
+export type ChainCodeProps = {
+  chainCodeId: string;
+  chainCodeName: string;
+  tokens?: TokenCodeProps[];
+};
