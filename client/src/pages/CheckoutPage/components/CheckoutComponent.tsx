@@ -34,7 +34,12 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
           type={BADGE_TYPES.BLACK}
         />
       </div>
-      <PaymentOptionComponent {...rest} cart={cart} costFree={costFree} />
+      <PaymentOptionComponent
+        {...rest}
+        cart={cart}
+        costFree={costFree}
+        totalCost={costNativeFio}
+      />
     </>
   );
 };

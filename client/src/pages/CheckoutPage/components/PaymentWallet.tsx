@@ -20,6 +20,7 @@ type Props = {
   walletName: string;
   costFree?: string;
   isFree: boolean;
+  totalCost: number;
   setWallet: (publicKey: string) => void;
 };
 
@@ -32,11 +33,12 @@ export const PaymentWallet: React.FC<Props> = props => {
     walletName,
     costFree,
     isFree,
+    totalCost,
     setWallet,
   } = props;
 
   const walletsList = fioWallets
-    .filter(wallet => (isFree ? wallet : wallet.available > 0))
+    .filter(wallet => (isFree ? wallet : wallet.available > totalCost))
     .sort((a, b) => b.available - a.available || a.name.localeCompare(b.name))
     .map(wallet => {
       const { fio, usdc } = fioWalletsBalances.wallets[
@@ -57,7 +59,7 @@ export const PaymentWallet: React.FC<Props> = props => {
       };
     });
 
-  if (fioWallets.length === 1)
+  if (walletsList.length === 1)
     return (
       <PayWithBadge
         costFree={!!costFree}
