@@ -87,6 +87,13 @@ export const createAccount = async (
     result.fioWallet = fioWallet;
   } catch (e) {
     log.error(e);
+    if (result.account) {
+      try {
+        result.account.logout();
+      } catch (e) {
+        log.error(e);
+      }
+    }
     result.errors = { email: e.message };
   }
 

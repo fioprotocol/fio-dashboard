@@ -10,6 +10,7 @@ import {
 import { closeLoginModal as onClose } from '../../redux/modal/actions';
 import { resetLastAuthData } from '../../redux/profile/actions';
 import { showLogin as show } from '../../redux/modal/selectors';
+import { refProfileInfo } from '../../redux/refProfile/selectors';
 import {
   error as loginFailure,
   lastAuthData,
@@ -31,6 +32,7 @@ const reduxConnect = connect(
     edgeLoginFailure,
     loginFailure,
     lastAuthData,
+    refProfileInfo,
     emailConfirmationResult,
   }),
   {
