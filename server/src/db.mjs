@@ -2,30 +2,30 @@ import Sequelize from 'sequelize';
 
 import config from './config';
 
-import { User } from './models/User';
 import { Action } from './models/Action';
-import { Notification } from './models/Notification';
-import { Nonce } from './models/Nonce';
-import { FreeAddress } from './models/FreeAddress';
-import { Wallet } from './models/Wallet';
-import { ReferrerProfile } from './models/ReferrerProfile';
-import { FioAccountProfile } from './models/FioAccountProfile';
-import { NewDeviceTwoFactor } from './models/NewDeviceTwoFactor';
-import { Contact } from './models/Contact.mjs';
-import { PublicWalletData } from './models/PublicWalletData.mjs';
-import { Order } from './models/Order.mjs';
-import { OrderItem } from './models/OrderItem.mjs';
-import { OrderItemStatus } from './models/OrderItemStatus.mjs';
-import { BlockchainTransaction } from './models/BlockchainTransaction.mjs';
-import { BlockchainTransactionEventLog } from './models/BlockchainTransactionEventLog.mjs';
-import { Payment } from './models/Payment.mjs';
-import { PaymentEventLog } from './models/PaymentEventLog.mjs';
-import { Var } from './models/Var.mjs';
 import { AdminUser } from './models/AdminUser.mjs';
 import { AdminUsersRole } from './models/AdminUsersRole.mjs';
 import { AdminUsersStatus } from './models/AdminUsersStatus.mjs';
+import { BlockchainTransaction } from './models/BlockchainTransaction.mjs';
+import { BlockchainTransactionEventLog } from './models/BlockchainTransactionEventLog.mjs';
 import { ChainCode } from './models/ChainCode.mjs';
+import { Contact } from './models/Contact.mjs';
+import { FioAccountProfile } from './models/FioAccountProfile';
+import { FreeAddress } from './models/FreeAddress';
+import { NewDeviceTwoFactor } from './models/NewDeviceTwoFactor';
+import { Nonce } from './models/Nonce';
+import { Notification } from './models/Notification';
+import { Order } from './models/Order.mjs';
+import { OrderItem } from './models/OrderItem.mjs';
+import { OrderItemStatus } from './models/OrderItemStatus.mjs';
+import { Payment } from './models/Payment.mjs';
+import { PaymentEventLog } from './models/PaymentEventLog.mjs';
+import { PublicWalletData } from './models/PublicWalletData.mjs';
+import { ReferrerProfile } from './models/ReferrerProfile';
 import { TokenCode } from './models/TokenCode.mjs';
+import { User } from './models/User';
+import { Var } from './models/Var.mjs';
+import { Wallet } from './models/Wallet';
 
 const sequelize = new Sequelize(config.postgres);
 
