@@ -11,22 +11,29 @@ import AmountInput from '../../../../components/Input/AmountInput';
 import SelectModalInput from '../../../../components/Input/SelectModalInput';
 import BundledTransactionBadge from '../../../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
-import TokenDataFields from './TokenDataFields';
-import PublicKeyField from './PublicKeyField';
 import LowBalanceBadge from '../../../../components/Badges/LowBalanceBadge/LowBalanceBadge';
+import { ChainAndTokenCodesAutocompleteFields } from '../../../../components/ChainAndTokenCodesAutocompleteFields/ChainAndTokenCodesAutocompleteFields';
+
+import PublicKeyField from './PublicKeyField';
 
 import { formValidation, submitValidation } from './validation';
 import { minWaitTimeFunction } from '../../../../utils';
 import { fioAddressExistsValidator } from '../../../../util/validators';
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import { CHAIN_CODE_LIST } from '../../../../constants/common';
+import { CHAIN_CODES } from '../../../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
 
 import { RequestTokensProps, RequestTokensValues } from '../../types';
 import { FioAddressDoublet } from '../../../../types';
 
 import classes from '../../styles/RequestTokensForm.module.scss';
+
+const CHAIN_CODE_FIELD_NAME = 'chainCode';
+const TOKEN_CODE_FIELD_NAME = 'tokenCode';
+const CHAIN_CODE_FIELD_LABEL = 'Chain Id';
+const TOKEN_CODE_FIELD_LABEL = 'Token';
+const INITIAL_CHAIN_CODE_VALUE = CHAIN_CODES.ETH;
 
 const RequestTokensForm: React.FC<RequestTokensProps> = props => {
   const {
@@ -47,10 +54,8 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
   };
 
   if (!isFio) {
-    initialValues.chainCode = CHAIN_CODE_LIST[0].id;
-    initialValues.tokenCode = CHAIN_CODE_LIST[0].tokens?.length
-      ? CHAIN_CODE_LIST[0].tokens[0].id
-      : CHAIN_CODE_LIST[0].id;
+    initialValues.chainCode = INITIAL_CHAIN_CODE_VALUE;
+    initialValues.tokenCode = INITIAL_CHAIN_CODE_VALUE;
   }
 
   if (fioAddresses.length) {
@@ -88,7 +93,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
     >
       {(formRenderProps: FormRenderProps) => {
         const {
-          values: { payeeFioAddress, chainCode, tokenCode, mapPubAddress },
+          values: { payeeFioAddress, tokenCode, mapPubAddress },
           validating,
           values,
         } = formRenderProps;
@@ -181,12 +186,22 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
             </OnChange>
             {renderRequester()}
 
-            <TokenDataFields
-              isVisible={!isFio}
-              chainCodeValue={chainCode}
-              chainCodeList={CHAIN_CODE_LIST}
-              initialValues={initialValues}
-            />
+            <div className={classes.chainAndTokenCodesContainer}>
+              <ChainAndTokenCodesAutocompleteFields
+                chainCodeFieldLabel={CHAIN_CODE_FIELD_LABEL}
+                chainCodeFieldName={CHAIN_CODE_FIELD_NAME}
+                chainCodeInitialValue={INITIAL_CHAIN_CODE_VALUE}
+                hasAutoWidth={true}
+                hasFullWidth={true}
+                hideComponent={isFio}
+                hideError={true}
+                isHigh={true}
+                noShadow={true}
+                tokenCodeFieldLabel={TOKEN_CODE_FIELD_LABEL}
+                tokenCodeFieldName={TOKEN_CODE_FIELD_NAME}
+                uiType={INPUT_UI_STYLES.BLACK_WHITE}
+              />
+            </div>
 
             {!isFio && (
               <PublicKeyField

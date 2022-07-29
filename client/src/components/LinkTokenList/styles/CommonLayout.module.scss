@@ -25,6 +25,7 @@
     line-height: 0;
     border-radius: 7px;
     padding: 0 12px;
+    white-space: nowrap;
     @include sf-pro-display-thin;
 
     .icon {
