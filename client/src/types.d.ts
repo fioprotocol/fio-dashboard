@@ -518,7 +518,7 @@ export type Payment = {
   id: number;
   externalPaymentId: string;
   amount: string;
-  currency: string;
+  currency: PaymentCurrency;
   secret?: string;
 };
 

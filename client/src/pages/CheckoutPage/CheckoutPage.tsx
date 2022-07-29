@@ -15,21 +15,13 @@ import classes from '../PurchasePage/styles/PurchasePage.module.scss';
 export const CheckoutPage: React.FC = () => {
   const {
     cartItems,
-    walletBalancesAvailable,
-    paymentWallet,
-    paymentWalletPublicKey,
-    roe,
-    fioWallets,
-    fioWalletsBalances,
     isProcessing,
-    title,
     payment,
-    paymentOption,
-    paymentOptionError,
-    isFree,
+    paymentWallet,
+    title,
+    walletBalancesAvailable,
     onClose,
-    onFinish,
-    setWallet,
+    ...rest
   } = useContext();
 
   if (!payment) return <Loader />;
@@ -38,19 +30,11 @@ export const CheckoutPage: React.FC = () => {
     <PseudoModalContainer title={title} onClose={onClose}>
       <div className={classes.container}>
         <CheckoutComponent
-          cart={cartItems}
           walletBalances={walletBalancesAvailable}
           walletName={paymentWallet ? paymentWallet.name : ''}
-          paymentWalletPublicKey={paymentWalletPublicKey}
-          roe={roe}
-          fioWallets={fioWallets}
-          fioWalletsBalances={fioWalletsBalances}
           payment={payment}
-          paymentOption={paymentOption}
-          paymentOptionError={paymentOptionError}
-          isFree={isFree}
-          onFinish={onFinish}
-          setWallet={setWallet}
+          cart={cartItems}
+          {...rest}
         />
       </div>
       <Processing isProcessing={isProcessing} />
