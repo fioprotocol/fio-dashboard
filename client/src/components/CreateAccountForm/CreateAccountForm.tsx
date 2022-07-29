@@ -5,6 +5,8 @@ import { Link } from 'react-router-dom';
 import { WithLastLocationProps } from 'react-router-last-location';
 import classnames from 'classnames';
 
+import { EdgeAccount, EdgeCurrencyWallet } from 'edge-core-js';
+
 import Wizard from './CreateAccountFormWizard';
 import FormModalWrapper from '../FormModalWrapper/FormModalWrapper';
 import GenericErrorModal from '../Modal/GenericErrorModal/GenericErrorModal';
@@ -23,6 +25,7 @@ import {
   usernameAvailable,
   createAccount,
   checkUsernameAndPassword,
+  checkEdgeLogin,
 } from './middleware';
 import { emailToUsername, getWalletKeys, setDataMutator } from '../../utils';
 import { emailAvailable } from '../../api/middleware/auth';
@@ -70,6 +73,7 @@ type State = {
   step: string;
   keys: WalletKeysObj;
   loading: boolean;
+  retrySignup: boolean;
 };
 
 type OwnProps = {
@@ -113,6 +117,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       step: STEPS.EMAIL_PASSWORD,
       keys: {},
       loading: false,
+      retrySignup: false,
     };
 
     this.form = null;
@@ -146,32 +151,14 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     );
   };
 
-  isEmailExists = async (e: React.FocusEvent<HTMLInputElement>) => {
-    if (!this.form) return null;
-
-    const emailField = this.form.getFieldState('email');
-    if (!emailField?.valid) return emailField?.blur();
-    const email = e.target.value;
-    this.setState({
-      usernameAvailableLoading: true,
-      usernameIsAvailable: false,
-    });
-    const { error: emailError } = await emailAvailable(email);
-    const { error: usernameError } = await usernameAvailable(
-      emailToUsername(email),
-    );
-    this.setState({
-      usernameAvailableLoading: false,
-      usernameIsAvailable: !emailError && !usernameError,
-    });
-
+  setEmailError = (emailError: string) => {
     this.form &&
       this.form.mutators &&
       this.form.mutators.setDataMutator(
         'email',
         {
           // @ts-ignore
-          error: (!!emailError || !!usernameError) && (
+          error: !!emailError && (
             <span>
               This Email Address is already registered,{' '}
               <Link to="#" onClick={this.openLogin}>
@@ -183,6 +170,32 @@ export default class CreateAccountForm extends React.Component<Props, State> {
         },
         {},
       );
+  };
+
+  isEmailExists = async (e: React.FocusEvent<HTMLInputElement>) => {
+    if (!this.form) return null;
+
+    const emailField = this.form.getFieldState('email');
+    if (!emailField?.valid && !emailField?.modifiedSinceLastSubmit)
+      return emailField?.blur();
+    const email = e.target.value;
+    this.setState({
+      usernameAvailableLoading: true,
+      usernameIsAvailable: false,
+      retrySignup: false,
+    });
+    const { error: emailError } = await emailAvailable(email);
+    const { error: usernameError } = await usernameAvailable(
+      emailToUsername(email),
+    );
+
+    this.setState({
+      usernameAvailableLoading: false,
+      usernameIsAvailable: !emailError,
+      retrySignup: !emailError && !!usernameError,
+    });
+
+    this.setEmailError(emailError);
 
     return emailField?.blur();
   };
@@ -251,7 +264,11 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     });
   };
 
-  handleSubmit = async (values: FormValues) => {
+  confirm = async (
+    account: EdgeAccount,
+    fioWallet: EdgeCurrencyWallet,
+    values: FormValues,
+  ) => {
     const {
       onSubmit,
       isRefSet,
@@ -260,12 +277,79 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       redirectLink,
       isContainedFlow,
     } = this.props;
-    const { step } = this.state;
+    const { email, addEmailToPromoList } = values;
+
+    const fioWallets: FioWalletDoublet[] = [
+      {
+        id: '',
+        edgeId: fioWallet.id,
+        name: fioWallet.name || '',
+        publicKey: fioWallet.publicWalletInfo.keys.publicKey,
+        from: WALLET_CREATED_FROM.EDGE,
+      },
+    ];
+    this.setState({ keys: getWalletKeys([fioWallet]) });
+    await account.logout();
+
+    let stateData: EmailConfirmationStateData = {
+      redirectLink: redirectLink ? redirectLink.pathname : '',
+    };
+    if (isRefSet) {
+      stateData = {
+        ...stateData,
+        refCode: refProfileInfo?.code,
+      };
+    }
+    if (isContainedFlow) {
+      stateData = {
+        ...stateData,
+        containedFlowQueryParams: containedFlowQueryParams || undefined,
+      };
+    }
+    return onSubmit({
+      username: emailToUsername(email),
+      email,
+      fioWallets,
+      refCode: isRefSet ? refProfileInfo?.code : '',
+      stateData,
+      addEmailToPromoList,
+    });
+  };
+
+  handleSubmit = async (values: FormValues) => {
+    const { step, retrySignup } = this.state;
 
     switch (step) {
       case STEPS.EMAIL_PASSWORD: {
         const { email, password, confirmPassword } = values;
         this.setState({ loading: true });
+
+        // Retry signup if there is no user on our end
+        if (retrySignup) {
+          const { account, fioWallet, errors } = await checkEdgeLogin(
+            emailToUsername(email),
+            password,
+          );
+          if (errors.username) {
+            this.setEmailError(errors.username);
+            return this.setState({
+              loading: false,
+              usernameIsAvailable: false,
+            });
+          }
+
+          if (account) {
+            this.setState({
+              step: STEPS.SUCCESS,
+              loading: false,
+              retrySignup: false,
+            });
+            await this.confirm(account, fioWallet, values);
+          }
+
+          return errors;
+        }
+
         const { errors } = await checkUsernameAndPassword(
           emailToUsername(email),
           password,
@@ -274,6 +358,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
         this.setState({ loading: false });
         if (!Object.values(errors).length)
           return this.setState({ step: STEPS.PIN });
+
         return errors;
       }
       case STEPS.PIN: {
@@ -292,7 +377,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       case STEPS.CONFIRMATION: {
         this.setState({ step: STEPS.SUCCESS });
 
-        const { email, password, pin, addEmailToPromoList } = values;
+        const { email, password, pin } = values;
         this.setState({ loading: true });
         const { account, fioWallet, errors } = await createAccount(
           emailToUsername(email),
@@ -300,42 +385,11 @@ export default class CreateAccountForm extends React.Component<Props, State> {
           pin,
         );
         this.setState({ loading: false });
+
         if (!Object.values(errors).length && account && fioWallet) {
-          const fioWallets: FioWalletDoublet[] = [
-            {
-              id: '',
-              edgeId: fioWallet.id,
-              name: fioWallet.name || '',
-              publicKey: fioWallet.publicWalletInfo.keys.publicKey,
-              from: WALLET_CREATED_FROM.EDGE,
-            },
-          ];
-          this.setState({ keys: getWalletKeys([fioWallet]) });
-          await account.logout();
-          let stateData: EmailConfirmationStateData = {
-            redirectLink: redirectLink ? redirectLink.pathname : '',
-          };
-          if (isRefSet) {
-            stateData = {
-              ...stateData,
-              refCode: refProfileInfo?.code,
-            };
-          }
-          if (isContainedFlow) {
-            stateData = {
-              ...stateData,
-              containedFlowQueryParams: containedFlowQueryParams || undefined,
-            };
-          }
-          return onSubmit({
-            username: emailToUsername(email),
-            email,
-            fioWallets,
-            refCode: isRefSet ? refProfileInfo?.code : '',
-            stateData,
-            addEmailToPromoList,
-          });
+          await this.confirm(account, fioWallet, values);
         }
+
         return errors;
       }
       default:
@@ -386,7 +440,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
 
     this.form = form;
 
-    if (hasSubmitErrors && submitErrors) {
+    if (hasSubmitErrors && submitErrors && step === STEPS.SUCCESS) {
       return (
         <GenericErrorModal
           showGenericError={true}

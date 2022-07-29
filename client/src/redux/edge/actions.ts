@@ -8,11 +8,13 @@ import { log } from '../../util/general';
 import { AnyObject, EdgeWalletsKeys } from '../../types';
 import { CommonAction, CommonPromiseAction } from '../types';
 import { emailToUsername } from '../../utils';
+
 import {
   DEFAULT_WALLET_OPTIONS,
   FIO_WALLET_TYPE,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
+import { FIO_CHAIN_CODE } from '../../constants/fio';
 
 export const prefix = 'edge';
 
@@ -78,7 +80,7 @@ export const login = ({
 
         // todo: investigate why wallet name changes to 'io.fioprotocol.app'
 
-        if (wallet.currencyInfo.currencyCode === 'FIO') {
+        if (wallet.currencyInfo.currencyCode === FIO_CHAIN_CODE) {
           fioWallets.push(wallet);
         }
       }
