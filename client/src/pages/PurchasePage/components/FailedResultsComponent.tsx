@@ -58,7 +58,12 @@ export const FailedResultsComponent: React.FC<FailedResultsComponentProps> = pro
         failedTxsTotalAmount={failedTxsTotalAmount}
       />
       <div className={classes.details}>
-        <h5 className={classnames(classes.completeTitle, classes.second)}>
+        <h5
+          className={classnames(
+            classes.completeTitle,
+            !allErrored && classes.second,
+          )}
+        >
           Purchases Not Completed
         </h5>
         <PurchaseResultsComponent
