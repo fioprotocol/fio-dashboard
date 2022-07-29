@@ -86,6 +86,7 @@
   .price {
     margin: 0 1.875rem 0 auto;
     font-size: 1em;
+    @include proxima-nova-regular;
   }
 
   .icon {
