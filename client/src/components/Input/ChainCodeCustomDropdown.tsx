@@ -36,6 +36,11 @@ const ChainCodeCustomDropdown: React.FC<Props &
     isHigh,
     noShadow,
     disabled,
+    forceReset,
+    loading,
+    upperCased,
+    onClear,
+    onInputChange,
     toggleToCustom,
   } = props;
   const { value } = input;
@@ -66,8 +71,13 @@ const ChainCodeCustomDropdown: React.FC<Props &
     noShadow,
     disabled,
     hasError,
-    toggleToCustom,
     meta,
+    forceReset,
+    loading,
+    upperCased,
+    onClear,
+    onInputChange,
+    toggleToCustom,
   };
 
   return (
