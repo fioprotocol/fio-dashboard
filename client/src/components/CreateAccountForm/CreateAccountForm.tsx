@@ -7,6 +7,7 @@ import classnames from 'classnames';
 
 import Wizard from './CreateAccountFormWizard';
 import FormModalWrapper from '../FormModalWrapper/FormModalWrapper';
+import GenericErrorModal from '../Modal/GenericErrorModal/GenericErrorModal';
 import Pin from './Pin';
 import Confirmation from './Confirmation';
 import Success from './Success';
@@ -372,6 +373,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       pristine,
       values,
       errors,
+      submitErrors,
       form,
     } = formProps;
     const { serverSignUpLoading, signupSuccess } = this.props;
@@ -383,6 +385,17 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     } = this.state;
 
     this.form = form;
+
+    if (hasSubmitErrors && submitErrors) {
+      return (
+        <GenericErrorModal
+          showGenericError={true}
+          closeGenericErrorModal={() => {
+            window.location.reload();
+          }}
+        />
+      );
+    }
 
     return (
       <form

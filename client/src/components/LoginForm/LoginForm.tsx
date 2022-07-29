@@ -18,12 +18,14 @@ import {
   EmailConfirmationResult,
   LastAuthData,
   LoginFailure,
+  RefProfile,
 } from '../../types';
 
 type FormValues = {
   email?: string;
   password?: string;
   pin?: string;
+  refCode?: string;
   options?: {
     otpKey: string;
   };
@@ -48,6 +50,7 @@ type Props = {
   };
   cachedUsers: string[];
   lastAuthData: LastAuthData;
+  refProfileInfo: RefProfile;
   emailConfirmationResult: EmailConfirmationResult;
 };
 
@@ -59,6 +62,7 @@ const LoginForm: React.FC<Props> = props => {
     onClose,
     cachedUsers,
     lastAuthData,
+    refProfileInfo,
     getCachedUsers,
     resetLastAuthData,
     resetLoginFailure,
@@ -149,6 +153,7 @@ const LoginForm: React.FC<Props> = props => {
       email,
       password,
       pin,
+      refCode: refProfileInfo?.code || '',
     });
   };
 
