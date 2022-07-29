@@ -21,6 +21,9 @@ const APPEARANCE_STRIPE_OPTIONS: Appearance = {
   },
 
   rules: {
+    '.Tab': {
+      marginTop: '15px',
+    },
     '.Label': {
       fontSize: '14px',
       marginBottom: '15px',
