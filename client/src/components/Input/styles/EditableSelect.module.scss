@@ -46,11 +46,15 @@
   & > div[class$="-control"] {
     height: 40px;
     border-radius: 7px;
-    z-index: 2;
+    z-index: 1;
     background-color: $white;
     border-color: $white;
     box-shadow: 0 0 8px 0 rgba(0,0,0,0.37);
     cursor: text;
+
+    &.menuIsOpen {
+      z-index: 3;
+    }
 
     & > div {
       &:first-child {
@@ -109,6 +113,7 @@
   .menu {
     margin-top: -7px;
     border-radius: 0 0 7px 7px;
+    z-index: 2;
 
     .menuList {
       padding-top: 7px;

@@ -4,6 +4,8 @@ import { Field } from 'react-final-form';
 import ChainCodeCustomDropdown from '../Input/ChainCodeCustomDropdown';
 
 export const CUSTOM_CHAIN_CODE = 'customChainCode';
+const CHAIN_CODE_FIELD_NAME = 'chainCode';
+const CHAIN_CODE_PLACEHOLDER = 'Type or Select Chain Code';
 
 type Props = {
   hasAutoWidth?: boolean;
@@ -17,6 +19,13 @@ type Props = {
   label?: string;
   hideError?: boolean;
   fieldName?: string;
+  forceReset?: boolean;
+  loading?: boolean;
+  placeholder?: string;
+  uiType?: string;
+  upperCased?: boolean;
+  onClear?: () => void;
+  onInputChange?: (chainCodeValue: string) => Promise<void> | void;
 };
 
 const ChainCodeField: React.FC<Props> = props => {
@@ -31,7 +40,14 @@ const ChainCodeField: React.FC<Props> = props => {
     label,
     errorColor,
     hideError,
-    fieldName = 'chainCode',
+    fieldName = CHAIN_CODE_FIELD_NAME,
+    forceReset,
+    loading,
+    placeholder = CHAIN_CODE_PLACEHOLDER,
+    uiType,
+    upperCased,
+    onClear,
+    onInputChange,
   } = props;
 
   return (
@@ -43,7 +59,7 @@ const ChainCodeField: React.FC<Props> = props => {
         value: chainCode.id,
         label: `${chainCode.id} (${chainCode.name})`,
       }))}
-      placeholder="Type or Select Chain Code"
+      placeholder={placeholder}
       hasAutoWidth={hasAutoWidth}
       noShadow={noShadow}
       isShort={isShort}
@@ -53,6 +69,12 @@ const ChainCodeField: React.FC<Props> = props => {
       label={label}
       errorColor={errorColor}
       hideError={hideError}
+      forceReset={forceReset}
+      loading={loading}
+      uiType={uiType}
+      upperCased={upperCased}
+      onClear={onClear}
+      onInputChange={onInputChange}
     />
   );
 };
