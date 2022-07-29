@@ -7,6 +7,8 @@ import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 
 import { CURRENCY_CODES } from '../../../constants/common';
 
+import { PaymentCurrency } from '../../../types';
+
 import classes from './PriceBadge.module.scss';
 
 type TotalAmountProps = {
@@ -19,7 +21,7 @@ export type Props = {
   type: string;
   title: string;
   paymentAmount: number | string;
-  paymentCurrency?: string;
+  paymentCurrency?: PaymentCurrency;
   convertedPaymentAmount?: number | string;
   convertedPaymentCurrency?: string;
 };
@@ -27,7 +29,7 @@ export type Props = {
 const TotalAmount: React.FC<TotalAmountProps> = props => {
   const { paymentAmount, paymentCurrency } = props;
 
-  if (paymentCurrency === CURRENCY_CODES.USD)
+  if (paymentCurrency.toUpperCase() === CURRENCY_CODES.USD)
     return (
       <>
         $<Amount value={paymentAmount} />
