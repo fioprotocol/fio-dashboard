@@ -7,6 +7,7 @@ import AdminOrderModal from './components/AdminOrderModal';
 import usePagination from '../../hooks/usePagination';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 
+import { PURCHASE_RESULTS_STATUS } from '../../constants/purchase';
 import { AdminUser, OrderItem } from '../../types';
 
 import classes from './AdminOrdersListPage.module.scss';
@@ -20,17 +21,6 @@ type Props = {
   ordersCount: number;
   isAuthUser: boolean;
   getOrder: (id: string) => Promise<void>;
-};
-
-// todo: create table in the database for this
-const ORDER_STATUSES: { [label: string]: number } = {
-  NEW: 1,
-  PENDING: 2,
-  PAYMENT_AWAITING: 3,
-  PAID: 4,
-  TRANSACTION_EXECUTED: 5,
-  PARTIALLY_SUCCESS: 6,
-  DONE: 7,
 };
 
 const AdminOrdersPage: React.FC<Props> = props => {
@@ -88,10 +78,10 @@ const AdminOrdersPage: React.FC<Props> = props => {
                     <th>{order.publicKey}</th>
                     <th>
                       {
-                        Object.entries(ORDER_STATUSES).find(
+                        Object.entries(PURCHASE_RESULTS_STATUS).find(
                           ([label, value]) =>
-                            ORDER_STATUSES[label] === order.status,
-                        )[0]
+                            PURCHASE_RESULTS_STATUS[label] === order.status,
+                        )?.[0]
                       }
                     </th>
                   </tr>
