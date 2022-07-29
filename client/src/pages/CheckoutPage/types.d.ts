@@ -30,6 +30,7 @@ export type CheckoutComponentProps = {
 
 export type PaymentOptionComponentProps = {
   costFree?: string | null;
+  totalCost: number;
 } & DefaultProps;
 
 export type StripePaymentOptionProps = {
