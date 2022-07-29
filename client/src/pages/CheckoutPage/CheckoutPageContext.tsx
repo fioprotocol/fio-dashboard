@@ -113,7 +113,7 @@ export const useContext = (): {
           dispatch(refreshBalance(fioWallet.publicKey));
         }
       }
-      if (!paymentWalletPublicKey && fioWallets.length === 1) {
+      if (!paymentWalletPublicKey && fioWallets.length) {
         dispatch(setWallet(fioWallets[0].publicKey));
       }
     }
@@ -177,12 +177,7 @@ export const useContext = (): {
       dispatch,
       createOrder,
     ],
-    !order &&
-      !orderLoading &&
-      !loading &&
-      isFree &&
-      paymentWalletPublicKey &&
-      fioWallets.length === 1,
+    !order && !orderLoading && !loading && isFree && !!paymentWalletPublicKey,
   );
 
   useEffect(() => {
