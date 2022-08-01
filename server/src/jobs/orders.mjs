@@ -336,27 +336,27 @@ class OrdersJob extends CommonJob {
           await this.refundUser(item);
 
           await this.handleFail(item, notes);
-
-          // Update Order status
-          try {
-            const items = await OrderItemStatus.getAllItemsStatuses(orderId);
-
-            await Order.updateStatus(
-              orderId,
-              null,
-              items.map(({ txStatus }) => txStatus),
-            );
-          } catch (error) {
-            logger.error(
-              `ORDER ITEM PROCESSING ERROR - ORDER STATUS UPDATE - ${orderId}`,
-              error,
-            );
-          }
         } catch (error) {
           logger.error(`ORDER ITEM PROCESSING ERROR ${item.id}`, error);
         }
       } catch (e) {
         logger.error(`ORDER ITEM PROCESSING ERROR ${item.id}`, e);
+      }
+
+      // Update Order status
+      try {
+        const items = await OrderItemStatus.getAllItemsStatuses(orderId);
+
+        await Order.updateStatus(
+          orderId,
+          null,
+          items.map(({ txStatus }) => txStatus),
+        );
+      } catch (error) {
+        logger.error(
+          `ORDER ITEM PROCESSING ERROR - ORDER STATUS UPDATE - ${orderId}`,
+          error,
+        );
       }
 
       return true;
