@@ -43,6 +43,19 @@ export default class WsStatus extends WsBase {
   }
 
   async watch({ data: { orderId } }) {
+    // Update Order status
+    try {
+      const items = await OrderItemStatus.getAllItemsStatuses(orderId);
+
+      await Order.updateStatus(
+        orderId,
+        null,
+        items.map(({ txStatus }) => txStatus),
+      );
+    } catch (error) {
+      logger.error(`ORDER STATUS UPDATE - ${orderId}`, error);
+    }
+
     const order = await Order.findOne({
       where: {
         id: orderId,
