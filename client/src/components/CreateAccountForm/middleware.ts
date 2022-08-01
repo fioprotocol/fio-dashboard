@@ -48,6 +48,7 @@ export const checkEdgeLogin = async (
 ): Promise<CreateAccountRes> => {
   const result: CreateAccountRes = { errors: {} };
   try {
+    await apis.edge.clearCachedUser(username);
     const account = await apis.edge.login(username, password);
 
     if (!account) {

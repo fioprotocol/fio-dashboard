@@ -16,7 +16,10 @@ import Success from './Success';
 
 import { ROUTES } from '../../constants/routes';
 import { PIN_LENGTH } from '../../constants/form';
-import { WALLET_CREATED_FROM } from '../../constants/common';
+import {
+  DEFAULT_WALLET_OPTIONS,
+  WALLET_CREATED_FROM,
+} from '../../constants/common';
 
 import EmailPassword, {
   validate as validateEmailPassword,
@@ -283,7 +286,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       {
         id: '',
         edgeId: fioWallet.id,
-        name: fioWallet.name || '',
+        name: DEFAULT_WALLET_OPTIONS.name,
         publicKey: fioWallet.publicWalletInfo.keys.publicKey,
         from: WALLET_CREATED_FROM.EDGE,
       },
