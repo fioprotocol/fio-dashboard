@@ -101,10 +101,10 @@ export const login = ({
       await api.auth.signup({
         username,
         email,
-        fioWallets: fioWallets.map(({ id, name, publicWalletInfo }) => ({
+        fioWallets: fioWallets.map(({ id, publicWalletInfo }) => ({
           id: '',
           edgeId: id,
-          name: name || '',
+          name: DEFAULT_WALLET_OPTIONS.name,
           publicKey: publicWalletInfo.keys.publicKey,
           from: WALLET_CREATED_FROM.EDGE,
         })),
