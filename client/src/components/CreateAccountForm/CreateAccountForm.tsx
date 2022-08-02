@@ -77,6 +77,7 @@ type State = {
   keys: WalletKeysObj;
   loading: boolean;
   retrySignup: boolean;
+  emailWasBlurred: boolean;
 };
 
 type OwnProps = {
@@ -121,6 +122,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       keys: {},
       loading: false,
       retrySignup: false,
+      emailWasBlurred: false,
     };
 
     this.form = null;
@@ -175,13 +177,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       );
   };
 
-  isEmailExists = async (e: React.FocusEvent<HTMLInputElement>) => {
-    if (!this.form) return null;
-
-    const emailField = this.form.getFieldState('email');
-    if (!emailField?.valid && !emailField?.modifiedSinceLastSubmit)
-      return emailField?.blur();
-    const email = e.target.value;
+  isEmailExists = async (email: string) => {
     this.setState({
       usernameAvailableLoading: true,
       usernameIsAvailable: false,
@@ -200,7 +196,10 @@ export default class CreateAccountForm extends React.Component<Props, State> {
 
     this.setEmailError(emailError);
 
-    return emailField?.blur();
+    return {
+      usernameIsAvailable: !emailError,
+      retrySignup: !emailError && !!usernameError,
+    };
   };
 
   validate = (values: FormValues) => {
@@ -319,13 +318,34 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     });
   };
 
+  handleEmailBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    this.setState({ emailWasBlurred: true });
+
+    if (!this.form) return null;
+
+    const emailField = this.form.getFieldState('email');
+    if (!emailField?.valid && !emailField?.modifiedSinceLastSubmit)
+      return emailField?.blur();
+
+    await this.isEmailExists(e.target.value || '');
+
+    return emailField?.blur();
+  };
+
   handleSubmit = async (values: FormValues) => {
-    const { step, retrySignup } = this.state;
+    const { step } = this.state;
 
     switch (step) {
       case STEPS.EMAIL_PASSWORD: {
         const { email, password, confirmPassword } = values;
+        const { emailWasBlurred } = this.state;
+        let { retrySignup } = this.state;
         this.setState({ loading: true });
+
+        if (!emailWasBlurred) {
+          const emailExistsRes = await this.isEmailExists(email);
+          retrySignup = emailExistsRes.retrySignup;
+        }
 
         // Retry signup if there is no user on our end
         if (retrySignup) {
@@ -483,7 +503,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
             }
           >
             <EmailPassword
-              onEmailBlur={this.isEmailExists}
+              onEmailBlur={this.handleEmailBlur}
               passwordValidation={passwordValidation}
               loading={loading}
               usernameAvailableLoading={usernameAvailableLoading}
