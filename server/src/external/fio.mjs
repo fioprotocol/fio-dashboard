@@ -19,6 +19,8 @@ import logger from '../logger.mjs';
 export const FIOSDK = fiosdkLib.FIOSDK;
 export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit).mul(800).toNumber();
 export const INSUFFICIENT_FUNDS_ERR_MESSAGE = 'Insufficient funds to cover fee';
+export const FEES_VAR_KEY = 'FIO_FEES';
+export const FEES_UPDATE_TIMEOUT_SEC = 1000 * 60 * 5; // 5 min
 export const ABIS_VAR_KEY = 'FIO_RAW_ABIS';
 export const ABIS_UPDATE_TIMEOUT_SEC = DAY_MS;
 const EndPoint = entities.EndPoint;
@@ -137,7 +139,7 @@ class Fio {
   async getRawAbi() {
     const abisVar = await Var.getByKey(ABIS_VAR_KEY);
     if (abisVar && !Var.updateRequired(abisVar.updatedAt, ABIS_UPDATE_TIMEOUT_SEC)) {
-      const abis = JSON.stringify(abisVar.value);
+      const abis = JSON.parse(abisVar.value);
 
       for (const accountName of Constants.rawAbiAccountName) {
         if (!Transactions.abiMap.get(accountName) && abis[accountName]) {

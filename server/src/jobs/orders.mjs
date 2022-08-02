@@ -10,6 +10,7 @@ import {
   PaymentEventLog,
   Order,
   FreeAddress,
+  Var,
 } from '../models/index.mjs';
 import MathOp from '../services/math.mjs';
 import CommonJob from './job.mjs';
@@ -17,7 +18,12 @@ import Stripe from '../external/payment-processor/stripe';
 
 import sendInsufficientFundsNotification from '../services/fallback-funds-email.mjs';
 import { getROE } from '../external/roe.mjs';
-import { fioApi, INSUFFICIENT_FUNDS_ERR_MESSAGE } from '../external/fio.mjs';
+import {
+  FEES_UPDATE_TIMEOUT_SEC,
+  FEES_VAR_KEY,
+  fioApi,
+  INSUFFICIENT_FUNDS_ERR_MESSAGE,
+} from '../external/fio.mjs';
 import { FioRegApi } from '../external/fio-reg.mjs';
 
 import { FIO_ADDRESS_DELIMITER, FIO_ACTIONS } from '../config/constants.js';
@@ -27,6 +33,7 @@ import logger from '../logger.mjs';
 class OrdersJob extends CommonJob {
   constructor() {
     super();
+    this.feesJson = {};
   }
 
   async handleFail(item, errorNotes) {
@@ -163,7 +170,21 @@ class OrdersJob extends CommonJob {
   }
 
   async checkPriceChanges(item, currentRoe) {
-    const fee = await fioApi.getFee(item.action);
+    let fee;
+
+    if (
+      this.feesUpdatedAt &&
+      !Var.updateRequired(this.feesUpdatedAt, FEES_UPDATE_TIMEOUT_SEC) &&
+      this.feesJson[item.action]
+    ) {
+      fee = this.feesJson[item.action];
+    } else {
+      fee = await fioApi.getFee(item.action);
+      this.feesJson[item.action] = fee;
+      this.feesUpdatedAt = new Date();
+      await Var.setValue(FEES_VAR_KEY, JSON.stringify(this.feesJson));
+    }
+
     const currentPrice = fioApi.convertFioToUsdc(fee, currentRoe);
 
     const threshold = new MathOp(currentPrice)
@@ -236,6 +257,10 @@ class OrdersJob extends CommonJob {
   async execute() {
     await fioApi.getRawAbi();
     const roe = await getROE();
+    const feesVar = await Var.getByKey(FEES_VAR_KEY);
+    this.feesJson = feesVar ? JSON.parse(feesVar.value) : {};
+    this.feesUpdatedAt = feesVar ? feesVar.updatedAt : null;
+
     // get order items ready to process
     const items = await OrderItem.getActionRequired();
 
