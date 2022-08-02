@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import {
   Redirect,
   Route,
@@ -8,14 +9,14 @@ import {
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { ROUTES } from '../../constants/routes';
+import {
+  loading as loadingSelector,
+  noProfileLoaded as noProfileLoadedSelector,
+  isNewUser as isNewUserSelector,
+  isNewEmailNotVerified as isNewEmailNotVerifiedSelector,
+} from '../../redux/profile/selectors';
 
-type PrivateRouteProps = {
-  noProfileLoaded: boolean;
-  isNewUser: boolean;
-  isNewEmailNotVerified: boolean;
-  loading: boolean;
-};
+import { ROUTES } from '../../constants/routes';
 
 type OwnProps = {
   redirectOptions?: {
@@ -23,17 +24,16 @@ type OwnProps = {
   };
 };
 
-export const PrivateRoute: React.FC<PrivateRouteProps &
-  RouteProps &
-  OwnProps> = ({
+export const PrivateRoute: React.FC<RouteProps & OwnProps> = ({
   component: Component,
-  noProfileLoaded,
-  isNewUser,
-  isNewEmailNotVerified,
-  loading,
   redirectOptions,
   ...rest
 }) => {
+  const loading = useSelector(loadingSelector);
+  const noProfileLoaded = useSelector(noProfileLoadedSelector);
+  const isNewUser = useSelector(isNewUserSelector);
+  const isNewEmailNotVerified = useSelector(isNewEmailNotVerifiedSelector);
+
   return (
     <Route
       {...rest}
