@@ -89,6 +89,8 @@ export const useContext = (): {
     results?: RegistrationResult;
   }>({ status: results?.providerTxStatus || PURCHASE_RESULTS_STATUS.PENDING });
 
+  const [prevCart, setPrevCart] = useState<CartItem[]>(cart);
+
   const onStatusUpdate = (data: {
     orderStatus: PurchaseTxStatus;
     results?: RegistrationResult;
@@ -167,6 +169,28 @@ export const useContext = (): {
   useEffectOnce(() => {
     dispatch(recalculate(updatedCart));
   }, [recalculate, updatedCart]);
+
+  useEffectOnce(() => {
+    setPrevCart(cart);
+  }, [cart]);
+
+  useEffectOnce(
+    () => {
+      const { updatedCart } = transformPurchaseResults({
+        results: orderStatusData.results,
+        prices,
+        roe,
+        cart: prevCart,
+      });
+      dispatch(recalculate(updatedCart));
+    },
+    [orderStatusData, prevCart, roe, prices],
+    [
+      PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
+      PURCHASE_RESULTS_STATUS.FAILED,
+      PURCHASE_RESULTS_STATUS.CANCELED,
+    ].indexOf(orderStatusData.status) > -1,
+  );
 
   const closeText =
     containedFlowParams != null && containedFlowParams.action
