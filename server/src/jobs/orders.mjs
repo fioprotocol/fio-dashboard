@@ -207,7 +207,7 @@ class OrdersJob extends CommonJob {
   }
 
   async registerFree(fioName, item) {
-    const { regRefCode, regRefApiToken, publicKey } = item;
+    const { regRefCode, regRefApiToken, publicKey, orderId } = item;
 
     let res;
     try {
@@ -223,7 +223,9 @@ class OrdersJob extends CommonJob {
         message = error.response.body.error;
       }
       logger.error(`Register free address error: ${message}`);
-      return this.handleFail(item, message);
+      await this.handleFail(item, message);
+
+      return this.updateOrderStatus(orderId);
     }
 
     if (res) {
@@ -232,7 +234,7 @@ class OrdersJob extends CommonJob {
           transaction_id: 'free',
           block_num: 0,
         },
-        item.orderId,
+        item.id,
         item.blockchainTransactionId,
       );
       this.postMessage(
@@ -251,7 +253,25 @@ class OrdersJob extends CommonJob {
     }
 
     logger.error(`Register free address error. No response data`);
-    return this.handleFail(item, 'Server error. No response data');
+    await this.handleFail(item, 'Server error. No response data');
+    return this.updateOrderStatus(orderId);
+  }
+
+  async updateOrderStatus(orderId) {
+    try {
+      const items = await OrderItemStatus.getAllItemsStatuses(orderId);
+
+      await Order.updateStatus(
+        orderId,
+        null,
+        items.map(({ txStatus }) => txStatus),
+      );
+    } catch (error) {
+      logger.error(
+        `ORDER ITEM PROCESSING ERROR - ORDER STATUS UPDATE - ${orderId}`,
+        error,
+      );
+    }
   }
 
   async execute() {
@@ -329,7 +349,7 @@ class OrdersJob extends CommonJob {
             );
             await OrderItem.setPending(result, id, blockchainTransactionId);
 
-            return;
+            return this.updateOrderStatus(orderId);
           }
 
           // transaction failed
@@ -368,21 +388,7 @@ class OrdersJob extends CommonJob {
         logger.error(`ORDER ITEM PROCESSING ERROR ${item.id}`, e);
       }
 
-      // Update Order status
-      try {
-        const items = await OrderItemStatus.getAllItemsStatuses(orderId);
-
-        await Order.updateStatus(
-          orderId,
-          null,
-          items.map(({ txStatus }) => txStatus),
-        );
-      } catch (error) {
-        logger.error(
-          `ORDER ITEM PROCESSING ERROR - ORDER STATUS UPDATE - ${orderId}`,
-          error,
-        );
-      }
+      await this.updateOrderStatus(orderId);
 
       return true;
     };
