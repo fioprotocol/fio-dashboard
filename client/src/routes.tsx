@@ -9,7 +9,7 @@ import FioAddressPage from './pages/FioAddressPage';
 import FioAddressManage from './pages/FioAddressManagePage';
 import FioDomainPage from './pages/FioDomainPage';
 import FioDomainManagePage from './pages/FioDomainManagePage';
-import CartPage from './pages/CartPage';
+import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
 import { PurchasePage } from './pages/PurchasePage';
 import ScrollToTop from './components/ScrollToTop';

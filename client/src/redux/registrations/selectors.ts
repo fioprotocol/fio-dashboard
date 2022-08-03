@@ -55,3 +55,5 @@ export const allowCustomDomains = (state: ReduxState): boolean => {
   }
   return true;
 };
+export const hasGetPricesError = (state: ReduxState): boolean =>
+  state[prefix].hasGetPricesError;
