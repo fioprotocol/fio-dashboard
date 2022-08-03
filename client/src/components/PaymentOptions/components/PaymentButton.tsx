@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
+
+import Loader from '../../Loader/Loader';
 
 import classes from '../styles/PaymentOptions.module.scss';
 
@@ -11,6 +13,7 @@ export type PaymentButtonProps = {
   disabled?: boolean;
   hideButton?: boolean;
   afterTextIcon?: React.ReactNode | null;
+  loading: boolean;
   onClick: () => void;
 };
 
@@ -22,8 +25,22 @@ export const PaymentButton: React.FC<PaymentButtonProps> = props => {
     disabled,
     hideButton,
     afterTextIcon,
+    loading,
     onClick,
   } = props;
+
+  const [isButtonClicked, toggleIsButtonClicked] = useState(false);
+
+  const handleClick = () => {
+    toggleIsButtonClicked(true);
+    onClick();
+  };
+
+  useEffect(() => {
+    if (!loading) {
+      toggleIsButtonClicked(false);
+    }
+  }, [loading]);
 
   if (hideButton) return null;
 
@@ -33,12 +50,15 @@ export const PaymentButton: React.FC<PaymentButtonProps> = props => {
         classes.button,
         hasRoyalBlueBackground && classes.hasRoyalBlueBackground,
       )}
-      onClick={onClick}
+      onClick={handleClick}
       disabled={disabled}
     >
       {icon && <div className="mr-2">{icon}</div>}
-      <p>{buttonText}</p>
+      <p className={classes.buttonText}>{buttonText}</p>
       {afterTextIcon && <div className="ml-2">{afterTextIcon}</div>}
+      {loading && isButtonClicked && (
+        <Loader isWhite={true} hasInheritFontSize={true} hasAutoWidth={true} />
+      )}
     </Button>
   );
 };
