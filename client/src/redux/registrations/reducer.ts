@@ -34,7 +34,7 @@ export default combineReducers({
         return state;
     }
   },
-  prices(state = PRICES_DEFAULT, action) {
+  prices(state: Prices = PRICES_DEFAULT, action) {
     switch (action.type) {
       case actions.PRICES_SUCCESS: {
         const prices = { ...action.data.pricing };
@@ -98,6 +98,18 @@ export default combineReducers({
         return action.data;
       case LOGOUT_SUCCESS:
         return {};
+      default:
+        return state;
+    }
+  },
+  hasGetPricesError(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.PRICES_FAILURE: {
+        return true;
+      }
+      case actions.PRICES_REQUEST:
+      case actions.PRICES_SUCCESS:
+        return false;
       default:
         return state;
     }

@@ -19,7 +19,7 @@ export const deleteItem = ({
   cartItems,
 }: {
   id: string;
-  cartItems: CartItem[];
+  cartItems?: CartItem[];
 }): CommonAction => ({
   type: DELETE_ITEM,
   data: { id, cartItems },

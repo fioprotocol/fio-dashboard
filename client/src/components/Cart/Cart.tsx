@@ -28,7 +28,7 @@ import classes from './Cart.module.scss';
 
 type Props = {
   cartItems: CartItemType[];
-  deleteItem?: (data: DeleteCartItem) => {};
+  deleteItem?: (data: DeleteCartItem) => void;
   userWallets: FioWalletDoublet[];
   setWallet: (publicKey: string) => void;
   hasLowBalance: boolean;
@@ -36,9 +36,10 @@ type Props = {
   totalCartAmount: string;
   walletBalancesAvailable: WalletBalancesItem;
   prices: Prices;
-  recalculate?: (cartItems: CartItemType[]) => {};
+  setCartItems?: (cartItems: CartItemType[]) => {};
   isPriceChanged: boolean;
   roe: number;
+  hasGetPricesError?: boolean;
 };
 
 const Cart: React.FC<Props> = props => {
@@ -52,9 +53,10 @@ const Cart: React.FC<Props> = props => {
     totalCartAmount,
     walletBalancesAvailable,
     prices,
-    recalculate,
+    setCartItems,
     isPriceChanged,
     roe,
+    hasGetPricesError,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
@@ -71,7 +73,7 @@ const Cart: React.FC<Props> = props => {
       prices,
       deleteItem,
       cartItems,
-      recalculate,
+      setCartItems,
       roe,
     });
   };
@@ -94,24 +96,29 @@ const Cart: React.FC<Props> = props => {
     }
   }, [walletsList]);
 
+  let errorMessage = 'Your price has been updated due to pricing changes.';
+  if (hasGetPricesError) {
+    errorMessage = 'Price updating has been failed. Please, try again';
+  }
+
   return (
     <>
-      {isPriceChanged && (
-        <div className={classes.badgeContainer}>
-          <Badge show type={BADGE_TYPES.ERROR}>
-            <div className={classnames(classes.infoBadge, classes.priceBadge)}>
-              <FontAwesomeIcon
-                icon="exclamation-circle"
-                className={classes.infoIcon}
-              />
-              <p className={classes.infoText}>
-                <span className="boldText">Pricing update</span> - Your price
-                has been updated due to pricing changes.
-              </p>
-            </div>
-          </Badge>
-        </div>
-      )}
+      <div className={classes.badgeContainer}>
+        <Badge
+          show={isPriceChanged || hasGetPricesError}
+          type={BADGE_TYPES.ERROR}
+        >
+          <div className={classnames(classes.infoBadge, classes.priceBadge)}>
+            <FontAwesomeIcon
+              icon="exclamation-circle"
+              className={classes.infoIcon}
+            />
+            <p className={classes.infoText}>
+              <span className="boldText">Pricing update</span> - {errorMessage}
+            </p>
+          </div>
+        </Badge>
+      </div>
       <div className={classes.container}>
         <div className={classes.header}>
           <CounterContainer isEmpty={isCartEmpty}>{count}</CounterContainer>
