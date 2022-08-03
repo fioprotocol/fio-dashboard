@@ -15,7 +15,7 @@ import {
 import MathOp from '../../util/math';
 import { convertFioPrices } from '../../util/prices';
 
-import { addItem, deleteItem, recalculate } from '../../redux/cart/actions';
+import { addItem, deleteItem, setCartItems } from '../../redux/cart/actions';
 
 import { NotificationActionProps } from './types';
 import { CartItem } from '../../types';
@@ -38,7 +38,7 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
     roe,
     addItem,
     deleteItem,
-    recalculate,
+    setCartItems,
   } = props;
 
   const { address, domain: domainName } = values || {};
@@ -98,7 +98,7 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
       newCartItem.costFio = recalcFioPrices.fio;
       newCartItem.costUsdc = recalcFioPrices.usdc;
 
-      recalculate([
+      setCartItems([
         ...cartItems.filter(
           (item: CartItem) => item.domain !== domainName.toLowerCase(),
         ),
@@ -171,7 +171,7 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
                   prices,
                   deleteItem,
                   cartItems,
-                  recalculate,
+                  setCartItems,
                   roe,
                 });
               }}
@@ -186,7 +186,7 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
 const reduxConnect = connect(null, {
   addItem,
   deleteItem,
-  recalculate,
+  setCartItems,
 });
 
 export default compose(reduxConnect)(NotificationActionBadge);

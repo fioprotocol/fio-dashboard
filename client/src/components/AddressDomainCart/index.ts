@@ -3,7 +3,7 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 
-import { deleteItem, recalculate } from '../../redux/cart/actions';
+import { deleteItem, setCartItems } from '../../redux/cart/actions';
 import { setRedirectPath } from '../../redux/navigation/actions';
 
 import { cartItems } from '../../redux/cart/selectors';
@@ -25,7 +25,7 @@ const reduxConnect = connect(
   }),
   {
     deleteItem,
-    recalculate,
+    setCartItems,
     setRedirectPath,
   },
 );

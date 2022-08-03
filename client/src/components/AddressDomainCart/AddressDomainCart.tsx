@@ -30,7 +30,7 @@ type Props = {
   hasFreeAddress: boolean;
   isAuthenticated: boolean;
   roe: number | null;
-  recalculate: (cartItems: CartItem[]) => void;
+  setCartItems: (cartItems: CartItem[]) => void;
   deleteItem: (params: DeleteCartItem) => void;
   setRedirectPath: (redirectPath: RedirectLinkData) => void;
 };
@@ -41,7 +41,7 @@ const AddressDomainCart: React.FC<Props> = props => {
     deleteItem,
     domains,
     prices,
-    recalculate,
+    setCartItems,
     hasFreeAddress,
     isAuthenticated,
     setRedirectPath,
@@ -75,7 +75,7 @@ const AddressDomainCart: React.FC<Props> = props => {
       cartItems,
       roe,
       deleteItem,
-      recalculate,
+      setCartItems,
     });
   };
 
@@ -85,10 +85,10 @@ const AddressDomainCart: React.FC<Props> = props => {
       cartItems: JSON.parse(cartItemsJson),
       prices,
       hasFreeAddress,
-      recalculate,
+      setCartItems,
       roe,
     });
-  }, [cartItemsJson, domainsAmount, hasFreeAddress, prices, recalculate, roe]);
+  }, [cartItemsJson, domainsAmount, hasFreeAddress, prices, setCartItems, roe]);
 
   return (
     <CartSmallContainer isAquaColor={true}>
