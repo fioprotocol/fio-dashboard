@@ -33,7 +33,7 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
     links,
     fioWallets,
     getDomains,
-    recalculate,
+    setCartItems,
     refreshFioNames,
   } = props;
 
@@ -64,7 +64,7 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
     options,
     isAddress,
     cartItems,
-    recalculate,
+    setCartItems,
     toggleShowAvailable,
     changeFormErrors,
     toggleValidating,

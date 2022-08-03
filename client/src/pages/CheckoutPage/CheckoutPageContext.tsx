@@ -4,7 +4,7 @@ import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
 import { refreshBalance, fioActionExecuted } from '../../redux/fio/actions';
-import { setWallet, recalculate } from '../../redux/cart/actions';
+import { setWallet, setCartItems } from '../../redux/cart/actions';
 import {
   setRegistration,
   setProcessing,
@@ -211,7 +211,7 @@ export const useContext = (): {
   useEffect(() => {
     !isProcessing &&
       handleFreeAddressCart({
-        recalculate: cartItems => dispatch(recalculate(cartItems)),
+        setCartItems: cartItems => dispatch(setCartItems(cartItems)),
         cartItems: JSON.parse(cartItemsJson),
         prices,
         hasFreeAddress,

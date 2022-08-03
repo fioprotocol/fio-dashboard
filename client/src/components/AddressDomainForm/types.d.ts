@@ -80,7 +80,7 @@ export type AddressDomainFormProps = {
   fioWallets: FioWalletDoublet[];
   getDomains: () => void;
   cartItems: CartItem[];
-  recalculate: () => void;
+  setCartItems: () => void;
   hasFreeAddress: boolean;
   initialValues: FormValuesProps;
   prices: Prices;
@@ -131,7 +131,7 @@ export type NotificationActionProps = {
   hasCustomDomain: boolean;
   addItem: (data: CartItem) => void;
   deleteItem: (data: DeleteCartItem) => {};
-  recalculate: (cartItems: CartItem[]) => {};
+  setCartItems: (cartItems: CartItem[]) => {};
 } & DefaultProps;
 
 export type NotificationInfoProps = {
