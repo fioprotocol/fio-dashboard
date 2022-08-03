@@ -32,7 +32,7 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
     alreadySigned,
     selectedFioAddressName,
     fioAddresses,
-    setSelectedFioAddress,
+    setSelectedFioAddressName,
     bundleCost,
     hasLowBalance,
     processing,
@@ -40,9 +40,10 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
     isEdit,
     addressSelectOff,
     currentWallet,
+    loading,
   } = props;
 
-  const hasFioCryptoHandleError = !fioAddress || !currentWallet;
+  const hasFioCryptoHandleError = (!fioAddress || !currentWallet) && !loading;
 
   return (
     <Form
@@ -95,7 +96,7 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
                       <CustomDropdown
                         value={selectedFioAddressName}
                         list={fioAddresses.map(({ name }) => name)}
-                        onChange={setSelectedFioAddress}
+                        onChange={setSelectedFioAddressName}
                       />
                     </div>
                   </Col>

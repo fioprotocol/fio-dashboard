@@ -7,6 +7,14 @@ import { log } from '../../util/general';
 
 import { AnyObject, EdgeWalletsKeys } from '../../types';
 import { CommonAction, CommonPromiseAction } from '../types';
+import { emailToUsername } from '../../utils';
+
+import {
+  DEFAULT_WALLET_OPTIONS,
+  FIO_WALLET_TYPE,
+  WALLET_CREATED_FROM,
+} from '../../constants/common';
+import { FIO_CHAIN_CODE } from '../../constants/fio';
 
 export const prefix = 'edge';
 
@@ -32,6 +40,7 @@ export const login = ({
   username,
   password,
   pin,
+  refCode,
   options,
   voucherId,
 }: {
@@ -39,16 +48,26 @@ export const login = ({
   username: string;
   password: string;
   pin: string;
+  refCode?: string;
   options?: { otpKey?: string };
   voucherId?: string;
 }): CommonPromiseAction => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
   promise: async (api: Api) => {
+    let retrySignup = false;
     if (email && !username) {
       try {
         username = await api.auth.username(email);
       } catch (e) {
         username = '';
+        if (
+          e.code === 'AUTHENTICATION_FAILED' &&
+          e.fields &&
+          e.fields.email === 'INVALID'
+        ) {
+          username = emailToUsername(email);
+          retrySignup = true;
+        }
       }
     }
     const account = pin
@@ -61,12 +80,37 @@ export const login = ({
 
         // todo: investigate why wallet name changes to 'io.fioprotocol.app'
 
-        if (wallet.currencyInfo.currencyCode === 'FIO') {
+        if (wallet.currencyInfo.currencyCode === FIO_CHAIN_CODE) {
           fioWallets.push(wallet);
         }
       }
     } catch (e) {
       log.error(e);
+    }
+
+    // Create user on our side if not exist
+    if (retrySignup) {
+      if (!fioWallets.length) {
+        const fioWallet = await account.createCurrencyWallet(
+          FIO_WALLET_TYPE,
+          DEFAULT_WALLET_OPTIONS,
+        );
+        await fioWallet.renameWallet(DEFAULT_WALLET_OPTIONS.name);
+        fioWallets.push(fioWallet);
+      }
+      await api.auth.signup({
+        username,
+        email,
+        fioWallets: fioWallets.map(({ id, publicWalletInfo }) => ({
+          id: '',
+          edgeId: id,
+          name: DEFAULT_WALLET_OPTIONS.name,
+          publicKey: publicWalletInfo.keys.publicKey,
+          from: WALLET_CREATED_FROM.EDGE,
+        })),
+        refCode,
+        addEmailToPromoList: true,
+      });
     }
     return { account, fioWallets, options, voucherId };
   },

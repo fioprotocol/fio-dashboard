@@ -1,6 +1,11 @@
 import { History } from 'history';
 
-import { FioWalletDoublet, FioAddressDoublet, FeePrice } from '../../types';
+import {
+  FioWalletDoublet,
+  FioAddressDoublet,
+  FeePrice,
+  AnyObject,
+} from '../../types';
 
 export type NftFormValues = {
   chainCode: string;
@@ -36,17 +41,18 @@ export type ContainerProps = {
 
 export type SignNftFormProps = {
   alreadySigned: boolean;
-  onSubmit: (values: NftFormValues) => Promise<any>;
+  onSubmit: (values: NftFormValues) => Promise<AnyObject>;
   initialValues?: NftFormValues;
   fieldValuesChanged: () => void;
   selectedFioAddressName: string;
   fioAddresses: FioAddressDoublet[];
   fioAddress?: FioAddressDoublet;
-  setSelectedFioAddress: (value: string) => void;
+  setSelectedFioAddressName: (value: string) => void;
   bundleCost: number;
   hasLowBalance: boolean;
   processing: boolean;
   isEdit?: boolean;
   addressSelectOff?: boolean;
   currentWallet: FioWalletDoublet;
+  loading: boolean;
 };

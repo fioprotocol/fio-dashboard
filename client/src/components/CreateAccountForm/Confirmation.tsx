@@ -66,14 +66,18 @@ export default class Confirmation extends Component<Props, LocalState> {
                 <FontAwesomeIcon icon="user-circle" className={classes.icon} />
               </Col>
               <Col xs={3}>Email</Col>
-              <Col xs={6}>{data.email}</Col>
+              <Col xs={7} className="text-break pr-0">
+                {data.email}
+              </Col>
             </Row>
             <Row className="mx-3 py-2">
               <Col xs={1}>
                 <FontAwesomeIcon icon="ban" className={classes.icon} />
               </Col>
               <Col xs={3}>Password</Col>
-              <Col xs={6}>{data.password}</Col>
+              <Col xs={7} className="text-break">
+                {data.password}
+              </Col>
             </Row>
             <Row className="mx-3 pb-2">
               <Col xs={1}>

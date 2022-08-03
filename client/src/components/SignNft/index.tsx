@@ -4,7 +4,7 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from '../../utils';
 import SignNft from './SignNft';
 
-import { fioAddresses, fioWallets } from '../../redux/fio/selectors';
+import { fioAddresses, fioWallets, loading } from '../../redux/fio/selectors';
 import {
   getFee,
   refreshFioNames,
@@ -29,6 +29,7 @@ const reduxConnect = connect(
         fees[apis.fio.actionEndPoints[ACTIONS.addNft]] || DEFAULT_FEE_PRICES
       );
     },
+    loading,
   }),
   {
     getFee: (fioAddress: string) =>

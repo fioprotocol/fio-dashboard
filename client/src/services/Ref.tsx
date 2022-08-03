@@ -35,22 +35,26 @@ type Props = {
   getInfo: (refProfileCode: string | null) => void;
 };
 
-const Ref = (props: Props & RouterProps): React.FunctionComponent | null => {
+type Location = {
+  location: { query: { ref?: string }; pathname: string };
+};
+
+const Ref = (
+  props: Props & RouterProps & Location,
+): React.FunctionComponent | null => {
   const {
     isAuthenticated,
     fioWallets,
     refProfileInfo,
     user,
-    history: {
-      location: { pathname },
-    },
+    location: { pathname, query },
     refreshFioNames,
     getInfo,
   } = props;
 
   const fioWalletsAmount = fioWallets.length;
 
-  const isRefLink = IS_REFERRAL_PROFILE_PATH.test(pathname);
+  const isRefLink = IS_REFERRAL_PROFILE_PATH.test(pathname) || query.ref;
 
   useEffect(() => {
     if (
@@ -88,10 +92,10 @@ const Ref = (props: Props & RouterProps): React.FunctionComponent | null => {
   useEffect(() => {
     // load profile when have ref link
     if (isRefLink && !isAuthenticated) {
-      const refProfileCode = pathname.split('/')[2];
+      const refProfileCode = pathname.split('/')[2] || query.ref;
       getInfo(refProfileCode);
     }
-  }, [isRefLink, pathname, isAuthenticated, getInfo]);
+  }, [isRefLink, pathname, isAuthenticated, query.ref, getInfo]);
 
   // Set user refProfileCode to cookies
   useEffect(() => {

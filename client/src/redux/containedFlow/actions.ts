@@ -23,8 +23,11 @@ export const setContainedParams = (query: ContainedFlowQuery): CommonAction => {
 
   let params: ContainedFlowQueryParams = {
     action: query.action,
-    r: query.r,
   };
+
+  if (query.r) {
+    params.r = query.r;
+  }
 
   switch (query.action) {
     case CONTAINED_FLOW_ACTIONS.SIGNNFT: {
@@ -69,7 +72,20 @@ export const setContainedParams = (query: ContainedFlowQuery): CommonAction => {
 
 export const SET_STEP = `${prefix}/SET_STEP`;
 
-export const setStep = (step: string): CommonAction => ({
+export const setStep = (
+  step: string,
+  data?: {
+    redirectUrl?: string;
+    containedFlowAction?: string;
+  },
+): CommonAction => ({
   type: SET_STEP,
-  data: step,
+  data,
+  step,
+});
+
+export const RESET_CONTAINED_PARAMS = `${prefix}/RESET_CONTAINED_PARAMS`;
+
+export const resetContainedParams = (): CommonAction => ({
+  type: RESET_CONTAINED_PARAMS,
 });

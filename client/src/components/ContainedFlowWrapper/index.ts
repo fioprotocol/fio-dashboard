@@ -3,17 +3,21 @@ import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
 
+import {
+  containedFlowLinkError,
+  isContainedFlow,
+} from '../../redux/containedFlow/selectors';
 import { isAuthenticated } from '../../redux/profile/selectors';
 
-import { containedFlowQueryParams } from '../../redux/containedFlow/selectors';
-
-import { ContainiedFlowActionPage } from './ContainiedFlowActionPage';
+import ContainedFlowWrapper from './ContainedFlowWrapper';
 
 const reduxConnect = connect(
   createStructuredSelector({
+    containedFlowLinkError,
+    isContainedFlow,
     isAuthenticated,
-    containedFlowQueryParams,
   }),
+  {},
 );
 
-export default compose(reduxConnect)(ContainiedFlowActionPage);
+export default compose(reduxConnect)(ContainedFlowWrapper);

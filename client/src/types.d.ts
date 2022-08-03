@@ -7,6 +7,8 @@ import { FIOSDK_LIB } from './api/fio';
 
 import { CONTAINED_FLOW_ACTIONS } from './constants/containedFlow';
 
+import { ResultsData } from '../components/common/TransactionResults/types';
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Unknown = any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,7 +20,7 @@ export type OwnPropsAny = any; // todo: fix usages for ownProps
 
 export type Domain = { domain: string; free?: boolean };
 
-type ContainedFlowActionSettingsKey = keyof typeof CONTAINED_FLOW_ACTIONS;
+export type ContainedFlowActionSettingsKey = keyof typeof CONTAINED_FLOW_ACTIONS;
 
 export type CartItem = {
   address?: string;
@@ -85,6 +87,8 @@ export type RegistrationRegistered = {
   isFree?: boolean;
   fee_collected: number;
   cartItemId: string;
+  transaction_id: string;
+  transactions?: string[];
 };
 
 export type RegistrationResult = {
@@ -316,12 +320,12 @@ export type SignNFTParams = {
 
 export type ContainedFlowQuery = {
   action: ContainedFlowActionSettingsKey;
-  r: string;
+  r?: string;
 } & SignNFTQuery;
 
 export type ContainedFlowQueryParams = {
   action: ContainedFlowActionSettingsKey;
-  r: string;
+  r?: string;
 } & Partial<SignNFTParams>; // could be (SignNFTParams | RenewDomainActionParams | AnyOtherActionParams )
 
 export type EmailConfirmationStateData = {
@@ -482,4 +486,9 @@ export type StatusResponse = { status?: number };
 export type LoginFailure = {
   fields?: { [fieldName: string]: AnyType };
   code?: string;
+};
+
+export type FioActionExecuted = {
+  executeActionType: string;
+  result: ResultsData | RegistrationResult;
 };

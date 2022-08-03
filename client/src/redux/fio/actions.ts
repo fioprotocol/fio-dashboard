@@ -4,7 +4,12 @@ import apis, { Api } from '../../api';
 
 import { ENDPOINT_FEE_HASH } from '../../api/fio';
 
-import { PublicAddressDoublet, FeePrice, WalletsBalances } from '../../types';
+import {
+  PublicAddressDoublet,
+  FeePrice,
+  WalletsBalances,
+  FioActionExecuted,
+} from '../../types';
 import { CommonAction, CommonPromiseAction } from '../types';
 
 export const prefix = 'fio';
@@ -230,9 +235,13 @@ export const updatePublicAddresses = (
 
 export const FIO_ACTION_EXECUTE_SUCCESS = `${prefix}/FIO_ACTION_EXECUTE_SUCCESS`;
 
-export const fioActionExecuted = (data: {
-  executeActionType: string;
-}): CommonAction => ({
+export const fioActionExecuted = (data: FioActionExecuted): CommonAction => ({
   type: FIO_ACTION_EXECUTE_SUCCESS,
   data,
+});
+
+export const TRANSACTION_RESULTS_CLOSE = `${prefix}/TRANSACTION_RESULTS_CLOSE`;
+
+export const onTxResultsClose = (): CommonAction => ({
+  type: TRANSACTION_RESULTS_CLOSE,
 });

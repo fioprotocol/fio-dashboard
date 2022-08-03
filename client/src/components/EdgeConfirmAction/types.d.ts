@@ -1,11 +1,17 @@
 import { EdgeAccount } from 'edge-core-js';
 
 import {
+  CONFIRM_PIN_ACTIONS,
+  CONFIRM_PIN_FIO_ACTIONS,
+} from '../../constants/common';
+
+import {
   AnyObject,
   AnyType,
   EdgeWalletsKeys,
   PinConfirmation,
   WalletKeys,
+  FioActionExecuted,
 } from '../../types';
 import { PinDataType } from '../../redux/modal/types';
 
@@ -15,8 +21,11 @@ export type SubmitActionParams = {
   data?: AnyObject;
 };
 
+type Action = typeof CONFIRM_PIN_ACTIONS;
+export type FioActions = typeof CONFIRM_PIN_FIO_ACTIONS;
+
 export type Props = {
-  action: string;
+  action: keyof Action;
   confirmingPin: boolean;
   pinModalIsOpen: boolean;
   edgeAccountLogoutBefore: boolean;
@@ -36,5 +45,5 @@ export type Props = {
   setProcessing: (processing: boolean) => void;
   resetPinConfirm: () => void;
   setConfirmPinKeys: (keys: null) => void;
-  fioActionExecuted: (data: { executeActionType: string } & AnyType) => void;
+  fioActionExecuted: (data: FioActionExecuted) => void;
 };

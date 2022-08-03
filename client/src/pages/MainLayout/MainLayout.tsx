@@ -9,6 +9,8 @@ import PinConfirmModal from '../../components/PinConfirmModal';
 import GenericErrorModal from '../../components/Modal/GenericErrorModal';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
 import TwoFactorApproveModal from '../../components/TwoFactorApproveModal';
+import ContainedFlowWrapper from '../../components/ContainedFlowWrapper';
+
 import { useCheckIfDesktop } from '../../screenType';
 import AutoLogout from '../../services/AutoLogout';
 import CartTimeout from '../../services/CartTimeout';
@@ -31,7 +33,7 @@ type Props = {
   showLogin: boolean;
   showRecovery: boolean;
   edgeContextSet: boolean;
-  containedFlowLinkError: string | null;
+  isContainedFlow: boolean;
   init: () => void;
   showRecoveryModal: () => void;
 };
@@ -45,7 +47,7 @@ const MainLayout: React.FC<Props> = props => {
     isActiveUser,
     showLogin,
     showRecovery,
-    containedFlowLinkError,
+    isContainedFlow,
     init,
   } = props;
 
@@ -75,17 +77,13 @@ const MainLayout: React.FC<Props> = props => {
       {isAuthenticated && <WalletsDataFlow />}
       {isAuthenticated && <TxHistoryService />}
       {isAuthenticated && isDesktop && <Navigation />}
-      {(!isHomePage || isAuthenticated) && <Notifications />}
+      {(!isHomePage || (isAuthenticated && !isContainedFlow)) && (
+        <Notifications />
+      )}
       <div className={`${classes.content} ${isHomePage && classes.home}`}>
-        {containedFlowLinkError ? (
-          <div className={classes.container}>
-            <div className={classes.validationErrorContainer}>
-              {containedFlowLinkError}
-            </div>
-          </div>
-        ) : (
-          children
-        )}
+        <ContainedFlowWrapper isAuthenticated={isAuthenticated}>
+          {children}
+        </ContainedFlowWrapper>
       </div>
       <Footer />
       {showLogin && edgeContextSet && loginFormModalRender()}
