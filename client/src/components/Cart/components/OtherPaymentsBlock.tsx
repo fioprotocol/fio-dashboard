@@ -12,6 +12,7 @@ type Props = {
   disabled: boolean;
   paymentOptionsList: PaymentOptionsProps[];
   cartItems?: CartItem[];
+  loading: boolean;
   onPaymentChoose: (paymentOption: PaymentOptionsProps) => void;
 };
 
@@ -21,6 +22,7 @@ const OtherPaymentsBlock: React.FC<Props> = props => {
     paymentOptionsList,
     disabled,
     cartItems,
+    loading,
     onPaymentChoose,
   } = props;
 
@@ -42,6 +44,7 @@ const OtherPaymentsBlock: React.FC<Props> = props => {
         paymentOptionsList={paymentOptionsList}
         onPaymentChoose={onPaymentChoose}
         cartItems={cartItems}
+        loading={loading}
       />
     );
 

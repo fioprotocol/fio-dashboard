@@ -20,8 +20,9 @@
   font-family: 'SF Pro Display Thin';
   margin-top: 15px;
 
-  p {
-    margin: 0 0 0 0.5625rem;
+  .buttonText {
+    white-space: nowrap;
+    margin: 0 1rem 0 0.5625rem;
     font-size: 0.9375em;
     @include sf-pro-display-thin;
   }
