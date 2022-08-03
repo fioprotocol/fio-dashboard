@@ -1,6 +1,5 @@
 import Sequelize from 'sequelize';
 
-import Coinpayments from '../../external/payment-processor/coinpayments';
 import Stripe from '../../external/payment-processor/stripe';
 
 import Base from '../Base';
@@ -28,9 +27,6 @@ export default class PaymentsWebhook extends Base {
   }
 
   getPaymentProcessor(headers, hostname) {
-    if (Coinpayments.isWebhook(hostname, this.context.userAgent)) {
-      return Coinpayments;
-    }
     if (Stripe.isWebhook(hostname, this.context.userAgent)) {
       return Stripe;
     }
@@ -111,7 +107,16 @@ export default class PaymentsWebhook extends Base {
         });
       }
 
-      // todo: check if events could be received in different order
+      if (
+        [
+          Payment.STATUS.COMPLETED,
+          Payment.STATUS.CANCELLED,
+          Payment.STATUS.EXPIRED,
+        ].indexOf(payment.status) > -1
+      ) {
+        return { processed: true };
+      }
+
       const pEvent = await PaymentEventLog.create({
         status: paymentStatuses.event,
         statusNotes: webhookData.status_text,
@@ -147,7 +152,6 @@ export default class PaymentsWebhook extends Base {
 
         // Set item is ready to process if payment is completed
         if (paymentProcessor.isCompleted(webhookData.status)) {
-          // todo: check also if paid amount is enough
           await Order.sequelize.transaction(async t => {
             for (const orderItem of order.OrderItems) {
               orderItemStatusUpdates.txStatus = BlockchainTransaction.STATUS.READY;
@@ -192,8 +196,6 @@ export default class PaymentsWebhook extends Base {
 
       return { processed: true };
     }
-
-    // todo: handle other webhooks types
 
     return { processed: true };
   }
