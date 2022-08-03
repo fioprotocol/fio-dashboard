@@ -117,12 +117,10 @@ export type RegistrationResult = {
   providerTxStatus?: PurchaseTxStatus;
 };
 
-export type DeleteCartItem =
-  | {
-      id?: string;
-      cartItems?: CartItem[];
-    }
-  | string;
+export type DeleteCartItem = {
+  id: string;
+  cartItems?: CartItem[];
+};
 
 export type FioWalletDoublet = {
   id: string;
