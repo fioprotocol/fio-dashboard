@@ -28,6 +28,7 @@ type DefaultPaymentOptionProps = {
   cartItems?: CartItemProps[];
   totalCartNativeAmount?: number;
   userWallets?: FioWalletDoublet[];
+  loading: boolean;
 };
 
 type PaymentOptionRenderProps = {
@@ -43,15 +44,21 @@ const PAYMENT_OPTIONS_PROPS = {
     userWallets,
     totalCartNativeAmount,
     paymentOption,
+    loading,
     onPaymentChoose,
   }: PaymentOptionRenderProps) => ({
     buttonText: isFree ? 'Complete Transaction' : 'Pay with FIO',
     icon: <FontAwesomeIcon icon="wallet" />,
     disabled:
-      hasLowBalance || paymentWalletPublicKey === '' || cartItems?.length === 0,
+      hasLowBalance ||
+      paymentWalletPublicKey === '' ||
+      cartItems?.length === 0 ||
+      loading,
+    loading,
     hideButton: userWallets?.every(
       wallet =>
         wallet.available &&
+        totalCartNativeAmount &&
         new MathOp(wallet.available).lte(totalCartNativeAmount),
     ),
     onClick: () => onPaymentChoose(paymentOption),
@@ -60,16 +67,19 @@ const PAYMENT_OPTIONS_PROPS = {
     onPaymentChoose,
     paymentOption,
     cartItems,
+    loading,
   }: PaymentOptionRenderProps) => ({
     buttonText: 'Pay with Credit/Debit Card',
     icon: <FontAwesomeIcon icon="credit-card" />,
-    disabled: cartItems?.length === 0,
+    disabled: cartItems?.length === 0 || loading,
+    loading,
     onClick: () => onPaymentChoose(paymentOption),
   }),
-  [PAYMENT_OPTIONS.CRYPTO]: (props: PaymentOptionRenderProps) => ({
+  [PAYMENT_OPTIONS.CRYPTO]: ({ loading }: PaymentOptionRenderProps) => ({
     buttonText: 'Pay Using Crypto',
     icon: <FontAwesomeIcon icon={{ prefix: 'fab', iconName: 'bitcoin' }} />,
     disabled: true, // todo: hardcoded to disabled until any crypto provider will be connnected
+    loading,
     hasRoyalBlueBackground: true,
     onClick: (): null => null,
   }),
