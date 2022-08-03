@@ -51,11 +51,13 @@ export type ContactsListResponse = string[];
 export type ContactsCreateResponse = string;
 
 export type FioRegPricesResponse = {
-  nativeFio: {
-    domain: number;
-    address: number;
+  pricing: {
+    nativeFio: {
+      domain: number;
+      address: number;
+    };
+    usdtRoe: number;
   };
-  usdtRoe: number;
 };
 export type FioRegDomainsResponse = { domains: Domain[] };
 export type FioRegRegisterResponse = {
