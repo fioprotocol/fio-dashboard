@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
-import { recalculate } from '../../redux/cart/actions';
+import { setCartItems } from '../../redux/cart/actions';
 import {
   onPurchaseResultsClose,
   setRegistration,
@@ -167,8 +167,8 @@ export const useContext = (): {
       : errCostFio;
 
   useEffectOnce(() => {
-    dispatch(recalculate(updatedCart));
-  }, [recalculate, updatedCart]);
+    dispatch(setCartItems(updatedCart));
+  }, [setCartItems, updatedCart]);
 
   useEffectOnce(() => {
     setPrevCart(cart);
@@ -182,7 +182,7 @@ export const useContext = (): {
         roe,
         cart: prevCart,
       });
-      dispatch(recalculate(updatedCart));
+      dispatch(setCartItems(updatedCart));
     },
     [orderStatusData, prevCart, roe, prices],
     [
