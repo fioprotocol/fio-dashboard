@@ -27,7 +27,6 @@ const PI_TYPES = {
   requires_action: 'payment_intent.requires_action',
 };
 const STRIPE_USER_AGENT = 'Stripe/1.0';
-const STRIPE_API_VERSION = '2020-08-27';
 
 const stripe = new StripeLib(process.env.STRIPE_SECRET);
 class Stripe extends PaymentProcessor {
@@ -149,7 +148,7 @@ class Stripe extends PaymentProcessor {
 
     const { api_version, type } = body;
 
-    if (!api_version || api_version !== STRIPE_API_VERSION)
+    if (!api_version || api_version !== process.env.STRIPE_API_VERSION)
       throw new X({
         code: 'INVALID_REQUEST_PARAMS',
         fields: {
