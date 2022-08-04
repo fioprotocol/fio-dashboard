@@ -219,7 +219,7 @@ export class OrderItem extends Base {
       domain,
       createdAt,
       updatedAt,
-      orderItemStatus: OrderItemStatus.format(orderItemStatus),
+      orderItemStatus: orderItemStatus ? OrderItemStatus.format(orderItemStatus) : {},
       blockchainTransactions:
         blockchainTransactions && blockchainTransactions.length
           ? blockchainTransactions.map(item => BlockchainTransaction.format(item))

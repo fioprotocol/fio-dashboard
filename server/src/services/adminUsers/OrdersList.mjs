@@ -16,12 +16,10 @@ export default class OrdersList extends Base {
 
   async execute({ limit = 25, offset = 0 }) {
     const ordersList = await Order.listAll(limit, offset);
-    // const ordersCount = await Order.ordersCount();
-    const ordersCount = 68;
+    const ordersCount = await Order.ordersCount();
 
     return {
       data: {
-        // orders: ordersList.map(order => Order.format(order.get({ plain: true }))),
         orders: ordersList,
         maxCount: ordersCount,
       },
