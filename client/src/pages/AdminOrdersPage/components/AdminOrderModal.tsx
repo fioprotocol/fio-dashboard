@@ -15,6 +15,8 @@ import {
   PAYMENT_STATUSES,
   PAYMENTS_STATUSES_TITLES,
   PAYMENT_OPTIONS,
+  PURCHASE_RESULTS_STATUS,
+  BC_TX_STATUSES,
 } from '../../../constants/purchase';
 import {
   OrderItem,
@@ -36,6 +38,7 @@ type HistoryListItem = {
   date: string;
   amount: string;
   currency?: string;
+  withdraw?: boolean;
   status: string;
   dateTime: number;
 };
@@ -77,6 +80,8 @@ const setHistory = (
     },
   ];
 
+  if (!payment) return history;
+
   payment.paymentEventLogs.forEach(({ createdAt, status }) => {
     history.push({
       key: `payment-event-log-${new Date(createdAt).getTime()}`,
@@ -99,11 +104,9 @@ const setHistory = (
         history.push({
           key: `payment-${new Date(createdAt).getTime()}`,
           date: formatDateToLocale(createdAt),
-          amount:
-            spentType === PAYMENT_SPENT_TYPES.ACTION_REFUND
-              ? price
-              : `-${price}`,
+          amount: price,
           currency,
+          withdraw: spentType !== PAYMENT_SPENT_TYPES.ACTION_REFUND,
           status: `${
             PAYMENT_SPENT_TYPES_ORDER_HISTORY_LABEL[
               spentType as PaymentSpentType
@@ -142,10 +145,27 @@ const AdminOrderModal: React.FC<Props> = ({
   onClose,
   orderItem,
 }) => {
+  if (!orderItem) return null;
+
   const orderPayment = orderItem.payments.find(
     ({ spentType }) => spentType === PAYMENT_SPENT_TYPES.ORDER,
   );
   const historyList = setHistory(orderItem, orderPayment);
+  const renderHistoryPrice = (
+    amount: string,
+    currency: string,
+    withdraw?: boolean,
+  ) => {
+    if (withdraw)
+      return (
+        <>
+          <span className="text-danger">({amount})</span>{' '}
+          {currency || CURRENCY_CODES.USDC}{' '}
+        </>
+      );
+
+    return amount + ` ${currency || CURRENCY_CODES.USDC}`;
+  };
 
   return (
     <Modal
@@ -177,7 +197,10 @@ const AdminOrderModal: React.FC<Props> = ({
             )}
             {renderOrderItemFieldData(
               'Status',
-              PURCHASE_RESULTS_TITLES[orderItem.status].title,
+              PURCHASE_RESULTS_TITLES[orderItem.status]
+                ? PURCHASE_RESULTS_TITLES[orderItem.status].title
+                : PURCHASE_RESULTS_TITLES[PURCHASE_RESULTS_STATUS.PENDING]
+                    .title,
             )}
             {renderOrderItemFieldData(
               'Payments received',
@@ -185,7 +208,10 @@ const AdminOrderModal: React.FC<Props> = ({
                 ? orderPayment.price + ` ${orderPayment.currency}`
                 : '-',
             )}
-            {renderOrderItemFieldData('Wallet', orderItem.publicKey)}
+            {renderOrderItemFieldData(
+              'Ref Profile',
+              orderItem.refProfileName || 'FIO Dashboard',
+            )}
 
             <br />
             {renderOrderItemFieldData('Items', '', false)}
@@ -208,9 +234,10 @@ const AdminOrderModal: React.FC<Props> = ({
                             ? item.address + FIO_ADDRESS_DELIMITER
                             : '') + item.domain}
                         </th>
-                        <th>{(item.price || 0) + ' ' + item.priceCurrency}</th>
+                        <th>{item.price || 0 + ' ' + item.priceCurrency}</th>
                         <th>
-                          {BC_TX_STATUS_LABELS[item.orderItemStatus.txStatus]}
+                          {BC_TX_STATUS_LABELS[item.orderItemStatus.txStatus] ||
+                            BC_TX_STATUS_LABELS[BC_TX_STATUSES.NONE]}
                         </th>
                       </tr>
                     ))
@@ -230,11 +257,11 @@ const AdminOrderModal: React.FC<Props> = ({
               <tbody>
                 {historyList?.length
                   ? historyList.map(
-                      ({ key, date, amount, currency, status }) => (
-                        <tr key={'history_item_' + key}>
+                      ({ key, date, amount, currency, status, withdraw }) => (
+                        <tr key={'history-item-' + key}>
                           <th>{date}</th>
                           <th>
-                            {amount + ` ${currency || CURRENCY_CODES.USDC}`}
+                            {renderHistoryPrice(amount, currency, withdraw)}
                           </th>
                           <th>{status}</th>
                         </tr>

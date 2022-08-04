@@ -149,10 +149,12 @@ export class Order extends Base {
           o."updatedAt",
           p.price,
           p.currency,
-          u.email as "userEmail"
+          u.email as "userEmail",
+          rp.label as "refProfileName"
         FROM "orders" o
           INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${Payment.SPENT_TYPE.ORDER}
           INNER JOIN users u ON u.id = o."userId"
+          LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
         WHERE o."deletedAt" IS NULL
         ORDER BY o.id DESC
         OFFSET ${offset}
@@ -174,6 +176,7 @@ export class Order extends Base {
         },
         { model: Payment, include: PaymentEventLog },
         User,
+        ReferrerProfile,
       ],
     });
 
@@ -273,6 +276,7 @@ export class Order extends Base {
     OrderItems: orderItems,
     Payments: payments,
     User: user,
+    ReferrerProfile: refProfile,
   }) {
     return {
       id,
@@ -289,6 +293,7 @@ export class Order extends Base {
           : [],
       payments:
         payments && payments.length ? payments.map(item => Payment.format(item)) : [],
+      refProfileName: refProfile ? refProfile.label : null,
     };
   }
 

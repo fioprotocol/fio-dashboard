@@ -614,6 +614,7 @@ export type OrderItem = {
   blockchainTransactionEvents: BcTxEvent[];
   userId: string;
   userEmail: string;
+  refProfileName?: string;
   user?: { id: string; email: string };
   updatedAt: string;
 };
