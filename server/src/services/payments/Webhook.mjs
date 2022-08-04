@@ -214,7 +214,7 @@ export default class PaymentsWebhook extends Base {
   }
 
   static get paramsSecret() {
-    return [];
+    return ['body', 'rawBody'];
   }
 
   static get resultSecret() {
