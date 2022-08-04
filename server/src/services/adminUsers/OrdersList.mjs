@@ -31,6 +31,6 @@ export default class OrdersList extends Base {
   }
 
   static get resultSecret() {
-    return ['data.users[*].email'];
+    return ['data'];
   }
 }

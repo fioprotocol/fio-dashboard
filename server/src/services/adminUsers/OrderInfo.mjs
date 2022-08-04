@@ -37,6 +37,6 @@ export default class OrderInfo extends Base {
   }
 
   static get resultSecret() {
-    return [];
+    return ['data'];
   }
 }
