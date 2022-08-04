@@ -155,16 +155,19 @@ export const useContext = (): {
   const {
     purchaseProvider = PURCHASE_PROVIDER.FIO,
     providerTxId,
-    paymentAmount,
     paymentCurrency = CURRENCY_CODES.FIO,
     convertedPaymentCurrency = CURRENCY_CODES.USDC,
   } = results || {};
-  let { convertedPaymentAmount } = results || {};
-  if (
-    !convertedPaymentAmount &&
-    convertedPaymentCurrency === CURRENCY_CODES.FIO
-  ) {
-    convertedPaymentAmount = regCostFio;
+  let regPaymentAmount = regCostFio;
+  let regConvertedPaymentAmount = regCostUsdc;
+  let errPaymentAmount = errCostFio;
+  let errConvertedPaymentAmount = errCostUsdc;
+  // todo: handle other currencies too
+  if (convertedPaymentCurrency === CURRENCY_CODES.FIO) {
+    regPaymentAmount = regCostUsdc;
+    regConvertedPaymentAmount = regCostFio;
+    errPaymentAmount = errCostUsdc;
+    errConvertedPaymentAmount = errCostFio;
   }
 
   const allErrored = isEmpty(regItems) && !isEmpty(errItems);
@@ -240,12 +243,11 @@ export const useContext = (): {
     paymentWallet,
     purchaseStatus: orderStatusData.status,
     purchaseProvider,
-    // todo: handle other currencies too
-    regPaymentAmount: paymentAmount || regCostFio,
-    regConvertedPaymentAmount: convertedPaymentAmount || regCostUsdc,
+    regPaymentAmount,
+    regConvertedPaymentAmount,
     regCostFree: !regCostNativeFio && regFree,
-    errPaymentAmount: errCostFio,
-    errConvertedPaymentAmount: errCostUsdc,
+    errPaymentAmount,
+    errConvertedPaymentAmount,
     errCostFree: !errCostNativeFio && errFree,
     paymentCurrency,
     convertedPaymentCurrency,
