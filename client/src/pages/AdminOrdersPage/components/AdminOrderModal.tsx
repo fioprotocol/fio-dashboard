@@ -7,7 +7,21 @@ import Modal from '../../../components/Modal/Modal';
 import { FIO_ADDRESS_DELIMITER } from '../../../utils';
 import { formatDateToLocale } from '../../../helpers/stringFormatters';
 
-import { OrderItem } from '../../../types';
+import {
+  BC_TX_STATUS_LABELS,
+  PAYMENT_SPENT_TYPES,
+  PAYMENT_SPENT_TYPES_ORDER_HISTORY_LABEL,
+  PURCHASE_RESULTS_TITLES,
+  PAYMENT_STATUSES,
+  PAYMENTS_STATUSES_TITLES,
+  PAYMENT_OPTIONS,
+} from '../../../constants/purchase';
+import {
+  OrderItem,
+  OrderPaymentItem,
+  PaymentOptionsProps,
+} from '../../../types';
+import { CURRENCY_CODES } from '../../../constants/common';
 
 type Props = {
   onClose: () => void;
@@ -15,8 +29,33 @@ type Props = {
   isVisible: boolean;
 };
 
-const renderOrderItemFieldData = (label: string, value: string | number) => (
-  <div className="d-flex justify-content-between">
+type PaymentSpentType = typeof PAYMENT_SPENT_TYPES[keyof typeof PAYMENT_SPENT_TYPES];
+type PaymentStatusType = typeof PAYMENT_STATUSES[keyof typeof PAYMENT_STATUSES];
+type HistoryListItem = {
+  key: string;
+  date: string;
+  amount: string;
+  currency?: string;
+  status: string;
+  dateTime: number;
+};
+
+export const PAYMENT_OPTION_LABEL = {
+  [PAYMENT_OPTIONS.FIO]: 'FIO',
+  [PAYMENT_OPTIONS.CREDIT_CARD]: 'Stripe',
+  [PAYMENT_OPTIONS.CRYPTO]: '-',
+};
+
+const renderOrderItemFieldData = (
+  label: string,
+  value: string | number,
+  withBorder = true,
+) => (
+  <div
+    className={`d-flex justify-content-between mb-2 ${
+      withBorder ? 'border-bottom' : ''
+    }`}
+  >
     <div className="mr-3">
       <b>{label}</b>
     </div>
@@ -24,11 +63,90 @@ const renderOrderItemFieldData = (label: string, value: string | number) => (
   </div>
 );
 
+const setHistory = (
+  order: OrderItem,
+  payment: OrderPaymentItem,
+): HistoryListItem[] => {
+  const history: HistoryListItem[] = [
+    {
+      key: `order-${new Date(order.createdAt).getTime()}`,
+      date: formatDateToLocale(order.createdAt),
+      amount: '0.00',
+      status: 'Order created',
+      dateTime: new Date(order.createdAt).getTime(),
+    },
+  ];
+
+  payment.paymentEventLogs.forEach(({ createdAt, status }) => {
+    history.push({
+      key: `payment-event-log-${new Date(createdAt).getTime()}`,
+      date: formatDateToLocale(createdAt),
+      amount: status === PAYMENT_STATUSES.COMPLETED ? payment.price : '0.00',
+      currency: payment.currency,
+      status: `${
+        PAYMENT_OPTION_LABEL[payment.processor as PaymentOptionsProps]
+      } notification received (${
+        payment.externalId
+      } Status: ${PAYMENTS_STATUSES_TITLES[status as PaymentStatusType] ||
+        PAYMENTS_STATUSES_TITLES[2]}`,
+      dateTime: new Date(createdAt).getTime(),
+    });
+  });
+
+  order.payments.forEach(
+    ({ price, currency, status, createdAt, spentType, paymentEventLogs }) => {
+      if (spentType !== PAYMENT_SPENT_TYPES.ORDER)
+        history.push({
+          key: `payment-${new Date(createdAt).getTime()}`,
+          date: formatDateToLocale(createdAt),
+          amount:
+            spentType === PAYMENT_SPENT_TYPES.ACTION_REFUND
+              ? price
+              : `-${price}`,
+          currency,
+          status: `${
+            PAYMENT_SPENT_TYPES_ORDER_HISTORY_LABEL[
+              spentType as PaymentSpentType
+            ]
+          } ${
+            paymentEventLogs && paymentEventLogs.length
+              ? paymentEventLogs[0].statusNotes
+              : 'action'
+          }`,
+          dateTime: new Date(createdAt).getTime(),
+        });
+    },
+  );
+
+  order.blockchainTransactionEvents.forEach(
+    ({ id, status, statusNotes, createdAt }) => {
+      history.push({
+        key: `bc-event-${id}-${new Date(createdAt).getTime()}`,
+        date: formatDateToLocale(createdAt),
+        amount: '0.00',
+        status: `Status: ${
+          BC_TX_STATUS_LABELS[status]
+        }. Message: ${statusNotes || '-'}`,
+        dateTime: new Date(createdAt).getTime(),
+      });
+    },
+  );
+
+  return history.sort(({ dateTime: date1 }, { dateTime: date2 }) =>
+    date1 >= date2 ? 1 : -1,
+  );
+};
+
 const AdminOrderModal: React.FC<Props> = ({
   isVisible,
   onClose,
   orderItem,
 }) => {
+  const orderPayment = orderItem.payments.find(
+    ({ spentType }) => spentType === PAYMENT_SPENT_TYPES.ORDER,
+  );
+  const historyList = setHistory(orderItem, orderPayment);
+
   return (
     <Modal
       show={isVisible}
@@ -55,12 +173,22 @@ const AdminOrderModal: React.FC<Props> = ({
             {renderOrderItemFieldData('User', orderItem.user.email)}
             {renderOrderItemFieldData(
               'Payment Type',
-              orderItem.payments?.[0]?.processor || null,
+              orderPayment?.processor || null,
+            )}
+            {renderOrderItemFieldData(
+              'Status',
+              PURCHASE_RESULTS_TITLES[orderItem.status].title,
+            )}
+            {renderOrderItemFieldData(
+              'Payments received',
+              orderPayment.status === PAYMENT_STATUSES.COMPLETED
+                ? orderPayment.price + ` ${orderPayment.currency}`
+                : '-',
             )}
             {renderOrderItemFieldData('Wallet', orderItem.publicKey)}
 
             <br />
-            {renderOrderItemFieldData('Items', '')}
+            {renderOrderItemFieldData('Items', '', false)}
             <Table className="table" striped={true}>
               <thead>
                 <tr>
@@ -80,15 +208,17 @@ const AdminOrderModal: React.FC<Props> = ({
                             ? item.address + FIO_ADDRESS_DELIMITER
                             : '') + item.domain}
                         </th>
-                        <th>{item.price + ' ' + item.priceCurrency}</th>
-                        <th>{null}</th>
+                        <th>{(item.price || 0) + ' ' + item.priceCurrency}</th>
+                        <th>
+                          {BC_TX_STATUS_LABELS[item.orderItemStatus.txStatus]}
+                        </th>
                       </tr>
                     ))
                   : null}
               </tbody>
             </Table>
 
-            {renderOrderItemFieldData('History', '')}
+            {renderOrderItemFieldData('History', '', false)}
             <Table className="table" striped={true}>
               <thead>
                 <tr>
@@ -98,14 +228,18 @@ const AdminOrderModal: React.FC<Props> = ({
                 </tr>
               </thead>
               <tbody>
-                {orderItem.payments?.length
-                  ? orderItem.payments.map((payment, i) => (
-                      <tr key={'paymentDetails_' + payment.id}>
-                        <th>{formatDateToLocale(payment.createdAt)}</th>
-                        <th>{payment.price + ' USDC'}</th>
-                        <th>{payment.status}</th>
-                      </tr>
-                    ))
+                {historyList?.length
+                  ? historyList.map(
+                      ({ key, date, amount, currency, status }) => (
+                        <tr key={'history_item_' + key}>
+                          <th>{date}</th>
+                          <th>
+                            {amount + ` ${currency || CURRENCY_CODES.USDC}`}
+                          </th>
+                          <th>{status}</th>
+                        </tr>
+                      ),
+                    )
                   : null}
               </tbody>
             </Table>

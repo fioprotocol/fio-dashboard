@@ -11,7 +11,11 @@ const AdminHomePage: React.FC<Props> = props => {
 
   if (!adminUser) return null;
 
-  return <div className="">Welcome {adminUser.email}</div>;
+  return (
+    <div className="mt-5">
+      Welcome <i>{adminUser.email}</i>
+    </div>
+  );
 };
 
 export default AdminHomePage;
