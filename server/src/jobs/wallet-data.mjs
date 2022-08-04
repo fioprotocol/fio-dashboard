@@ -12,7 +12,7 @@ import logger from '../logger.mjs';
 
 import { DAY_MS, DOMAIN_EXP_PERIOD } from '../config/constants.js';
 
-const CHUNKS_LIMIT = 40;
+const CHUNKS_LIMIT = 5;
 const LOW_BUNDLES_THRESHOLD = 25;
 const DAYS_30 = DAY_MS * 30;
 const DOMAIN_EXP_TABLE = {
@@ -23,6 +23,7 @@ const DOMAIN_EXP_TABLE = {
   1: DOMAIN_EXP_PERIOD.EXPIRED_90,
   0: DOMAIN_EXP_PERIOD.EXPIRED,
 };
+const ITEMS_PER_FETCH = 20;
 
 const returnDayRange = timePeriod => {
   if (timePeriod > DAYS_30) return DAYS_30 + 1;
@@ -69,7 +70,12 @@ class WalletDataJob extends CommonJob {
 
       if (!sent.length && sentRequests.length) {
         changed = true;
-        sent.push(...sentRequests);
+        sent.push(
+          ...sentRequests.map(({ fio_request_id, status }) => ({
+            fio_request_id,
+            status,
+          })),
+        );
       }
 
       for (const request of sent) {
@@ -122,7 +128,12 @@ class WalletDataJob extends CommonJob {
       if (!received.length && receivedRequests.length) {
         changed = true;
         meta.receivedRequestsOffset = receivedRequests.length;
-        received.push(...receivedRequests);
+        received.push(
+          ...receivedRequests.map(({ fio_request_id, status }) => ({
+            fio_request_id,
+            status,
+          })),
+        );
       }
 
       if (received.length && receivedRequests.length) {
@@ -161,7 +172,16 @@ class WalletDataJob extends CommonJob {
     if (changed) {
       await PublicWalletData.update(
         {
-          requests: { sent: sentRequests, received: receivedRequests },
+          requests: {
+            sent: sentRequests.map(({ fio_request_id, status }) => ({
+              fio_request_id,
+              status,
+            })),
+            received: receivedRequests.map(({ fio_request_id, status }) => ({
+              fio_request_id,
+              status,
+            })),
+          },
           meta,
         },
         { where: { id: wallet.publicWalletData.id } },
@@ -343,10 +363,8 @@ class WalletDataJob extends CommonJob {
     }
   }
 
-  async execute() {
-    await fioApi.getRawAbi();
-
-    const wallets = await Wallet.findAll({
+  async getWallets(offset = 0) {
+    return Wallet.findAll({
       include: [
         {
           model: User,
@@ -354,14 +372,21 @@ class WalletDataJob extends CommonJob {
         },
         { model: PublicWalletData, as: 'publicWalletData' },
       ],
+      offset,
+      limit: ITEMS_PER_FETCH,
       raw: true,
       nest: true,
     });
+  }
 
-    this.postMessage(`Process wallets - ${wallets.length}`);
+  async execute() {
+    await fioApi.getRawAbi();
+    let offset = 0;
 
     const processWallet = async wallet => {
       if (this.isCancelled) return false;
+
+      this.postMessage(`Process wallet - ${wallet.id}`);
 
       if (!wallet.publicWalletData.id) {
         const newItem = await PublicWalletData.create({
@@ -392,21 +417,29 @@ class WalletDataJob extends CommonJob {
       return true;
     };
 
-    const methods = wallets.map(wallet => processWallet(wallet));
+    let wallets = await this.getWallets();
+    while (wallets.length) {
+      this.postMessage(`Process wallets - ${wallets.length} / ${offset}`);
 
-    let chunks = [];
-    for (const method of methods) {
-      chunks.push(method);
-      if (chunks.length === CHUNKS_LIMIT) {
+      const methods = wallets.map(wallet => processWallet(wallet));
+
+      let chunks = [];
+      for (const method of methods) {
+        chunks.push(method);
+        if (chunks.length === CHUNKS_LIMIT) {
+          this.postMessage(`Process chunk - ${chunks.length}`);
+          await Promise.allSettled(chunks);
+          chunks = [];
+        }
+      }
+
+      if (chunks.length) {
         this.postMessage(`Process chunk - ${chunks.length}`);
         await Promise.allSettled(chunks);
-        chunks = [];
       }
-    }
 
-    if (chunks.length) {
-      this.postMessage(`Process chunk - ${chunks.length}`);
-      await Promise.allSettled(chunks);
+      offset += ITEMS_PER_FETCH;
+      wallets = await this.getWallets(offset);
     }
 
     this.finish();
