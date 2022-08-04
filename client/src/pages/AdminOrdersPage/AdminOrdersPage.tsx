@@ -54,7 +54,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
               <th scope="col">Order</th>
               <th scope="col">User</th>
               <th scope="col">Amount</th>
-              <th scope="col">Wallet</th>
+              <th scope="col">Ref Profile</th>
               <th scope="col">Status</th>
             </tr>
           </thead>
@@ -75,7 +75,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
                     <th>{order.number}</th>
                     <th>{order.user ? order.user.email : order.userEmail}</th>
                     <th>{order.total || 0}</th>
-                    <th>{order.publicKey}</th>
+                    <th>{order.refProfileName || 'FIO Dashboard'}</th>
                     <th>
                       {
                         Object.entries(PURCHASE_RESULTS_STATUS).find(

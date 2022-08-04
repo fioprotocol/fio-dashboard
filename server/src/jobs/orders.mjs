@@ -88,17 +88,20 @@ class OrdersJob extends CommonJob {
       let price;
       let nativePrice = null;
       let currency;
+      let statusNotes;
 
       switch (payment.processor) {
         case Payment.PROCESSOR.CREDIT_CARD: {
           price = orderItemProps.price;
           currency = Payment.CURRENCY.USD;
+          statusNotes = "User's credit cart";
           break;
         }
         default:
           price = fioApi.convertUsdcToFio(orderItemProps.price, orderItemProps.roe);
           nativePrice = fioApi.amountToSUF(price);
           currency = Payment.CURRENCY.FIO;
+          statusNotes = "User's FIO Wallet";
       }
 
       // Refund user for order
@@ -112,7 +115,7 @@ class OrdersJob extends CommonJob {
       });
       await PaymentEventLog.create({
         status: PaymentEventLog.STATUS.PENDING,
-        statusNotes: '',
+        statusNotes,
         paymentId: refundPayment.id,
       });
 
@@ -138,7 +141,7 @@ class OrdersJob extends CommonJob {
         await refundPayment.save();
         await PaymentEventLog.create({
           status: PaymentEventLog.STATUS.SUCCESS,
-          statusNotes: JSON.stringify(refundTx),
+          statusNotes: `${statusNotes}. ${refundTx.transaction_id || refundTx.id}`,
           paymentId: refundPayment.id,
         });
 
@@ -327,13 +330,18 @@ class OrdersJob extends CommonJob {
         await this.checkPriceChanges(item, roe);
 
         // Spend order payment on fio action
-        await Payment.create({
+        const actionPayment = await Payment.create({
           status: Payment.STATUS.COMPLETED,
           processor: Payment.PROCESSOR.SYSTEM,
           orderId,
           spentType: Payment.SPENT_TYPE.ACTION,
           price,
           currency: Payment.CURRENCY.USDC,
+        });
+        await PaymentEventLog.create({
+          status: PaymentEventLog.STATUS.SUCCESS,
+          statusNotes: `${fioName}. Action: ${action}`,
+          paymentId: actionPayment.id,
         });
 
         try {
@@ -356,13 +364,18 @@ class OrdersJob extends CommonJob {
           const { notes } = fioApi.checkTxError(result);
 
           // Refund order payment for fio action
-          await Payment.create({
+          const actionRefundPayment = await Payment.create({
             status: Payment.STATUS.COMPLETED,
             processor: Payment.PROCESSOR.SYSTEM,
             orderId,
             spentType: Payment.SPENT_TYPE.ACTION_REFUND,
             price,
             currency: Payment.CURRENCY.USDC,
+          });
+          await PaymentEventLog.create({
+            status: PaymentEventLog.STATUS.SUCCESS,
+            statusNotes: `${fioName}. Action: ${action}`,
+            paymentId: actionRefundPayment.id,
           });
 
           // try to execute using fallback account when no funds

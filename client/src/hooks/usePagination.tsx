@@ -99,9 +99,12 @@ export default function usePagination(
 
   useEffect(() => {
     const paginationItems = [];
+    const pages = itemsCount / limit + 1;
+    const renderPagesAmount = pages > 10 ? 10 : pages;
+    // todo: fix to not render all pages if there are a lot (1000...)
     for (
       let pageNumber = 1;
-      pageNumber <= (itemsCount > limit ? itemsCount / limit : 1);
+      pageNumber <= (itemsCount > limit ? renderPagesAmount : 1);
       pageNumber++
     ) {
       paginationItems.push(
