@@ -14,6 +14,7 @@ import classes from '../styles/PurchasePage.module.scss';
 
 export const FailedResultsComponent: React.FC<FailedResultsComponentProps> = props => {
   const {
+    paymentWallet,
     purchaseStatus,
     purchaseProvider,
     txItems,
@@ -36,6 +37,7 @@ export const FailedResultsComponent: React.FC<FailedResultsComponentProps> = pro
         />
         <div className={classes.details}>
           <PurchaseResultsComponent
+            paymentWallet={paymentWallet}
             txItems={txItems}
             paymentAmount={paymentAmount}
             paymentCurrency={paymentCurrency}
@@ -67,6 +69,7 @@ export const FailedResultsComponent: React.FC<FailedResultsComponentProps> = pro
           Purchases Not Completed
         </h5>
         <PurchaseResultsComponent
+          paymentWallet={paymentWallet}
           txItems={txItems}
           paymentAmount={paymentAmount}
           paymentCurrency={paymentCurrency}

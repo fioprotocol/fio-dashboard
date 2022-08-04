@@ -85,7 +85,6 @@ export const useContext = (): UseContextReturnType => {
 
   const history = useHistory();
 
-  const walletJson = JSON.stringify(userWallets);
   const walletCount = userWallets.length;
 
   const [isPriceChanged, handlePriceChange] = useState(false);
@@ -274,19 +273,18 @@ export const useContext = (): UseContextReturnType => {
   }, [dispatch, getPrices]);
 
   useEffectOnce(() => {
-    const wallets = JSON.parse(walletJson);
-    if (!isEmpty(wallets)) {
-      for (const fioWallet of wallets) {
+    if (!isEmpty(userWallets)) {
+      for (const fioWallet of userWallets) {
         if (fioWallet.publicKey) {
           dispatch(refreshBalance(fioWallet.publicKey));
         }
       }
-      if (wallets.length === 1) {
-        dispatch(setWallet(wallets[0].publicKey));
+      if (userWallets.length === 1) {
+        dispatch(setWallet(userWallets[0].publicKey));
       }
     }
     dispatch(clearOrder());
-  }, [walletJson, dispatch, refreshBalance, setWallet, clearOrder]);
+  }, [userWallets, dispatch, refreshBalance, setWallet, clearOrder]);
 
   useEffectOnce(() => {
     if (isAuth) handleFreeAddressCartFn();

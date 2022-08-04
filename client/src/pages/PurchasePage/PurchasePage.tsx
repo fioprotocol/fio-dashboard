@@ -23,6 +23,7 @@ export const PurchasePage: React.FC = () => {
     regItems,
     errItems,
     closeText,
+    paymentWallet,
     purchaseStatus,
     purchaseProvider,
     regPaymentAmount,
@@ -54,6 +55,7 @@ export const PurchasePage: React.FC = () => {
       <div className={classes.container}>
         {!isEmpty(regItems) && (
           <RegisteredResultsComponent
+            paymentWallet={paymentWallet}
             purchaseStatus={purchaseStatus}
             purchaseProvider={purchaseProvider}
             txItems={regItems}
@@ -67,6 +69,7 @@ export const PurchasePage: React.FC = () => {
         )}
         {!isEmpty(errItems) && (
           <FailedResultsComponent
+            paymentWallet={paymentWallet}
             purchaseStatus={purchaseStatus}
             purchaseProvider={purchaseProvider}
             txItems={errItems}
