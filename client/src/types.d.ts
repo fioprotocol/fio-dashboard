@@ -7,6 +7,7 @@ import { FIOSDK_LIB } from './api/fio';
 
 import { CONTAINED_FLOW_ACTIONS } from './constants/containedFlow';
 import {
+  BC_TX_STATUSES,
   PURCHASE_PROVIDER,
   PAYMENT_OPTIONS,
   PURCHASE_RESULTS_STATUS,
@@ -102,6 +103,7 @@ export type PurchaseProvider = typeof PURCHASE_PROVIDER[keyof typeof PURCHASE_PR
 export type PaymentCurrency = typeof CURRENCY_CODES[keyof typeof CURRENCY_CODES];
 export type PaymentOptionsProps = typeof PAYMENT_OPTIONS[keyof typeof PAYMENT_OPTIONS];
 export type PurchaseTxStatus = typeof PURCHASE_RESULTS_STATUS[keyof typeof PURCHASE_RESULTS_STATUS];
+export type BcTxStatus = typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
 
 export type RegistrationResult = {
   errors: RegistrationErrors[];
@@ -557,6 +559,36 @@ export type AdminUserProfile = {
   createdAt: string;
 };
 
+export type OrderPaymentItem = {
+  createdAt: string;
+  currency?: string;
+  externalId?: string;
+  paymentEventLogs: {
+    id: string;
+    status: number;
+    statusNotes?: string;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+  price?: string;
+  processor: string;
+  spentType: number;
+  status: number;
+  updatedAt: string;
+  id: string;
+  statusNotes?: string;
+};
+
+export type BcTxEvent = {
+  blockchainTransactionId: number;
+  createdAt: string;
+  data: AnyObject;
+  id: number;
+  status: BcTxStatus;
+  statusNotes: string;
+  updatedAt: string;
+};
+
 export type OrderItem = {
   id: string;
   number: string;
@@ -573,24 +605,14 @@ export type OrderItem = {
     price: string;
     priceCurrency: string;
     updatedAt: string;
+    orderItemStatus: {
+      txStatus: typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
+    };
   }[];
-  payments?: {
-    createdAt: string;
-    currency?: string;
-    paymentEventLogs: {
-      id: string;
-      status: number;
-      statusNotes?: string;
-      createdAt: string;
-      updatedAt: string;
-    }[];
-    price?: string;
-    processor: string;
-    spentType: number;
-    status: number;
-    updatedAt: string;
-    id: string;
-  }[];
+  payments?: OrderPaymentItem[];
+  blockchainTransactionEvents: BcTxEvent[];
+  userId: string;
+  userEmail: string;
   user?: { id: string; email: string };
   updatedAt: string;
 };

@@ -9,6 +9,7 @@ import { OrderItemStatus } from './OrderItemStatus.mjs';
 import { Payment } from './Payment';
 import { PaymentEventLog } from './PaymentEventLog.mjs';
 import { BlockchainTransaction } from './BlockchainTransaction.mjs';
+import { BlockchainTransactionEventLog } from './BlockchainTransactionEventLog.mjs';
 
 const { DataTypes: DT } = Sequelize;
 const ORDER_NUMBER_LENGTH = 6;
@@ -134,24 +135,62 @@ export class Order extends Base {
     return this.count();
   }
 
-  static listAll(limit = 25, offset = 0) {
-    return this.findAll({
-      include: [Payment, User],
-      order: [['createdAt', 'DESC']],
-      limit,
-      offset,
-    });
+  static async listAll(limit = 25, offset = 0) {
+    const [orders] = await this.sequelize.query(`
+        SELECT 
+          o.id, 
+          o.roe, 
+          o.number, 
+          o."total", 
+          o."publicKey", 
+          o."userId", 
+          o."status", 
+          o."createdAt", 
+          o."updatedAt",
+          p.price,
+          p.currency,
+          u.email as "userEmail"
+        FROM "orders" o
+          INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${Payment.SPENT_TYPE.ORDER}
+          INNER JOIN users u ON u.id = o."userId"
+        WHERE o."deletedAt" IS NULL
+        ORDER BY o.id DESC
+        OFFSET ${offset}
+        LIMIT ${limit}
+      `);
+
+    return orders;
   }
 
-  static orderInfo(id) {
-    return this.findById(id, {
+  static async orderInfo(id) {
+    const orderObj = await this.findById(id, {
       include: [
-        { model: OrderItem, include: OrderItemStatus },
+        {
+          model: OrderItem,
+          include: [
+            OrderItemStatus,
+            { model: BlockchainTransaction, include: [BlockchainTransactionEventLog] },
+          ],
+        },
         { model: Payment, include: PaymentEventLog },
         User,
       ],
-      order: [['createdAt', 'DESC']],
     });
+
+    const order = this.format(orderObj.get({ plain: true }));
+    const blockchainTransactionsIds = [];
+
+    order.items.forEach(orderItem => {
+      orderItem.blockchainTransactions.forEach(blockchainTransactionItem => {
+        blockchainTransactionsIds.push(blockchainTransactionItem.id);
+      });
+    });
+
+    order.blockchainTransactionEvents = await BlockchainTransactionEventLog.list({
+      blockchainTransactionId: { [Sequelize.Op.in]: blockchainTransactionsIds },
+    });
+
+    return order;
   }
 
   static async updateStatus(orderId, paymentStatus = null, txStatuses = [], t = null) {

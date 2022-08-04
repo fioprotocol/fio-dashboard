@@ -28,7 +28,7 @@ export default class OrderInfo extends Base {
     }
 
     return {
-      data: Order.format(order.get({ plain: true })),
+      data: order,
     };
   }
 

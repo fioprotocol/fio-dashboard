@@ -166,9 +166,16 @@ export class BlockchainTransaction extends Base {
    `);
   }
 
-  static format({ id }) {
+  static format({ id, data, action, status, txId, createdAt, createdBy, blockTime }) {
     return {
       id,
+      data,
+      action,
+      status,
+      txId,
+      createdAt,
+      createdBy,
+      blockTime,
     };
   }
 }
