@@ -2,12 +2,14 @@ import { PURCHASE_PROVIDER } from '../../constants/purchase';
 import { CURRENCY_CODES } from '../../../constants/common';
 
 import { CartItem, PurchaseTxStatus } from '../../../types';
+import { FioWalletDoublet } from '../../types';
 
 type PurchaseProvider = typeof PURCHASE_PROVIDER[keyof typeof PURCHASE_PROVIDER];
 
 type PaymentCurrency = typeof CURRENCY_CODES[keyof typeof CURRENCY_CODES];
 
 type CommonResultsProps = {
+  paymentWallet: FioWalletDoublet;
   purchaseProvider: PurchaseProvider;
   txItems: CartItem[];
   paymentAmount: number | string;

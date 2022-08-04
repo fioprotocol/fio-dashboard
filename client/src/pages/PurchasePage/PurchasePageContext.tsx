@@ -19,7 +19,10 @@ import {
 } from '../../redux/registrations/selectors';
 import { isAuthenticated } from '../../redux/profile/selectors';
 import { containedFlowQueryParams } from '../../redux/containedFlow/selectors';
-import { cartItems } from '../../redux/cart/selectors';
+import {
+  cartItems,
+  paymentWalletPublicKey as paymentWalletPublicKeySelector,
+} from '../../redux/cart/selectors';
 import { order as orderSelector } from '../../redux/order/selectors';
 
 import {
@@ -43,11 +46,13 @@ import { WS_ENDPOINTS } from '../../constants/websocket';
 
 import {
   FioActionExecuted,
+  FioWalletDoublet,
   RegistrationResult,
   PurchaseProvider,
   PurchaseTxStatus,
   CartItem,
 } from '../../types';
+import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 
 export const useContext = (): {
   regItems: CartItem[];
@@ -55,6 +60,7 @@ export const useContext = (): {
   closeText: string;
   onClose: () => void;
   onFinish: () => Promise<void>;
+  paymentWallet: FioWalletDoublet;
   purchaseStatus: PurchaseTxStatus;
   purchaseProvider: PurchaseProvider;
   regPaymentAmount: string | number;
@@ -80,7 +86,12 @@ export const useContext = (): {
   const cart = useSelector(cartItems);
   const order = useSelector(orderSelector);
   const prices = useSelector(pricesSelector);
+  const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
+  const userWallets = useSelector(fioWalletsSelector);
   const noResults = !results;
+  const paymentWallet = userWallets.find(
+    ({ publicKey }) => publicKey === paymentWalletPublicKey,
+  );
 
   const dispatch = useDispatch();
 
@@ -226,6 +237,7 @@ export const useContext = (): {
     closeText,
     onClose,
     onFinish,
+    paymentWallet,
     purchaseStatus: orderStatusData.status,
     purchaseProvider,
     // todo: handle other currencies too
