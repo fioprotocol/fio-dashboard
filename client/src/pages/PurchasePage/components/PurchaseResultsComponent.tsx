@@ -5,7 +5,10 @@ import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import PriceBadge from '../../../components/Badges/PriceBadge/PriceBadge';
 import CartItem from '../../../components/Cart/CartItem';
 
-import { PURCHASE_PROVIDER_LABEL } from '../../../constants/purchase';
+import {
+  PURCHASE_PROVIDER,
+  PURCHASE_PROVIDER_LABEL,
+} from '../../../constants/purchase';
 
 import { PurchaseResultsProps } from '../types';
 
@@ -13,6 +16,7 @@ import classes from '../styles/PurchasePage.module.scss';
 
 export const PurchaseResultsComponent: React.FC<PurchaseResultsProps> = props => {
   const {
+    paymentWallet,
     paymentAmount,
     paymentCurrency,
     convertedPaymentAmount,
@@ -26,6 +30,12 @@ export const PurchaseResultsComponent: React.FC<PurchaseResultsProps> = props =>
     failedPayment,
     hidePayWithBadge,
   } = props;
+
+  const renderPayWith = () => {
+    if (failedPayment) return 'Not Paid';
+    if (PURCHASE_PROVIDER.FIO === purchaseProvider) return paymentWallet.name;
+    return PURCHASE_PROVIDER_LABEL[purchaseProvider];
+  };
 
   return (
     <>
@@ -51,11 +61,7 @@ export const PurchaseResultsComponent: React.FC<PurchaseResultsProps> = props =>
             Paid With
           </span>
           <p className={classes.itemValue}>
-            <span className="boldText">
-              {failedPayment
-                ? 'Not Paid'
-                : PURCHASE_PROVIDER_LABEL[purchaseProvider]}
-            </span>
+            <span className="boldText">{renderPayWith()}</span>
           </p>
         </div>
       </Badge>

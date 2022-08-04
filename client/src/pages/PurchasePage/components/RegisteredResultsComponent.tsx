@@ -11,6 +11,7 @@ import classes from '../styles/PurchasePage.module.scss';
 
 export const RegisteredResultsComponent: React.FC<RegisteredResultsComponentProps> = props => {
   const {
+    paymentWallet,
     purchaseStatus,
     purchaseProvider,
     txItems,
@@ -33,6 +34,7 @@ export const RegisteredResultsComponent: React.FC<RegisteredResultsComponentProp
         hide={purchaseStatus === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS}
       />
       <PurchaseResultsComponent
+        paymentWallet={paymentWallet}
         txItems={txItems}
         paymentAmount={paymentAmount}
         paymentCurrency={paymentCurrency}
