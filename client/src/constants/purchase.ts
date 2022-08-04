@@ -31,10 +31,25 @@ export const PAYMENT_STATUSES = {
   CANCELLED: 5,
 } as const;
 
+export const PAYMENTS_STATUSES_TITLES = {
+  [PAYMENT_STATUSES.NEW]: 'NEW',
+  [PAYMENT_STATUSES.PENDING]: 'PENDING',
+  [PAYMENT_STATUSES.COMPLETED]: 'COMPLETED',
+  [PAYMENT_STATUSES.EXPIRED]: 'EXPIRED',
+  [PAYMENT_STATUSES.CANCELLED]: 'CANCELLED',
+};
+
 export const PAYMENT_OPTIONS = {
   FIO: 'FIO',
   CREDIT_CARD: 'CREDIT_CARD',
   CRYPTO: 'CRYPTO',
+} as const;
+
+export const PAYMENT_SPENT_TYPES = {
+  ORDER: 1,
+  ACTION: 2,
+  ACTION_REFUND: 3,
+  ORDER_REFUND: 4,
 } as const;
 
 export const PAYMENT_OPTION_TITLE = {
@@ -42,6 +57,36 @@ export const PAYMENT_OPTION_TITLE = {
   [PAYMENT_OPTIONS.CREDIT_CARD]: 'Pay with card',
   [PAYMENT_OPTIONS.CRYPTO]: 'Pay with crypto',
 };
+
+export const BC_TX_STATUSES = {
+  NONE: 0,
+  READY: 1,
+  PENDING: 2,
+  SUCCESS: 3,
+  REVIEW: 4,
+  CANCEL: 5,
+  RETRY: 6,
+  EXPIRE: 7,
+  RETRY_PROCESSED: 8,
+};
+
+export const BC_TX_STATUS_LABELS = {
+  [BC_TX_STATUSES.NONE]: '-',
+  [BC_TX_STATUSES.READY]: 'Ready',
+  [BC_TX_STATUSES.PENDING]: 'Pending',
+  [BC_TX_STATUSES.CANCEL]: 'Cancelled',
+  [BC_TX_STATUSES.REVIEW]: 'Review',
+  [BC_TX_STATUSES.SUCCESS]: 'SUCCESS',
+  [BC_TX_STATUSES.RETRY]: 'Retry',
+  [BC_TX_STATUSES.EXPIRE]: 'Expired',
+};
+
+export const PAYMENT_SPENT_TYPES_ORDER_HISTORY_LABEL = {
+  [PAYMENT_SPENT_TYPES.ORDER]: 'Payment for ',
+  [PAYMENT_SPENT_TYPES.ACTION]: 'Charge for ',
+  [PAYMENT_SPENT_TYPES.ACTION_REFUND]: 'Discharge for ',
+  [PAYMENT_SPENT_TYPES.ORDER_REFUND]: 'Refund to ',
+} as const;
 
 export const PURCHASE_RESULTS_TITLES: { [key: number]: { title: string } } = {
   [PURCHASE_RESULTS_STATUS.DONE]: {

@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize';
 
 import '../db';
-import { User, Wallet, PublicWalletData, Notification } from '../models/index.mjs';
+import { Notification, PublicWalletData, User, Wallet } from '../models/index.mjs';
 import CommonJob from './job.mjs';
 import MathOp from '../services/math.mjs';
 

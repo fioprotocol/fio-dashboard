@@ -95,9 +95,23 @@ export class OrderItemStatus extends Base {
     return items;
   }
 
-  static format({ id }) {
+  static format({
+    id,
+    paymentStatus,
+    blockchainTransactionId,
+    txStatus,
+    createdAt,
+    paymentId,
+    orderItemId,
+  }) {
     return {
       id,
+      paymentStatus,
+      blockchainTransactionId,
+      createdAt,
+      paymentId,
+      txStatus,
+      orderItemId,
     };
   }
 }

@@ -73,8 +73,8 @@ const AdminOrdersPage: React.FC<Props> = props => {
                         : null}
                     </th>
                     <th>{order.number}</th>
-                    <th>{order.user.email}</th>
-                    <th>{order.total}</th>
+                    <th>{order.user ? order.user.email : order.userEmail}</th>
+                    <th>{order.total || 0}</th>
                     <th>{order.publicKey}</th>
                     <th>
                       {

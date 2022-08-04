@@ -50,9 +50,10 @@ export class BlockchainTransactionEventLog extends Base {
     });
   }
 
-  static format({ id }) {
+  static format({ id, ...rest }) {
     return {
       id,
+      ...rest,
     };
   }
 }
