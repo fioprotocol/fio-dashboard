@@ -135,6 +135,7 @@ export async function renderPromiseAsJson(req, res, promise, params) {
     return res.send(data);
   } catch (error) {
     if (error instanceof Exception) {
+      if (error.status) res.status(error.status);
       res.send({
         status: 0,
         error: error.toHash(),
