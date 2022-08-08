@@ -1,16 +1,14 @@
 import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link } from 'react-router-dom';
 import { RouterProps } from 'react-router';
 import { History } from 'history';
+
+import { Button } from 'react-bootstrap';
 
 import { ROUTES } from '../../constants/routes';
 import { ACTIONS } from '../../components/Notifications/Notifications';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
-import {
-  NOTIFICATIONS_CONTENT_TYPE,
-  NOTIFICATIONS_CONTENT,
-} from '../../constants/notifications';
+import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
 
 import {
   NotificationParams,
@@ -39,20 +37,16 @@ type Props = {
 
 const EmailConfirmationResultsPage: React.FC<Props> = props => {
   const {
-    isAuthenticated,
-    user,
-    lastAuthData,
     emailConfirmationResult,
-    cartItems,
-    history,
-    showLoginModal,
-    logout,
-    resetLastAuthData,
     resetEmailConfirmationResult,
     createNotification,
   } = props;
 
-  const handleResult = (result: EmailConfirmationResult) => {
+  const emailConfirmed =
+    emailConfirmationResult && emailConfirmationResult.success;
+  const handleClosePage = () => window.close();
+
+  const handleResult = () => {
     createNotification({
       action: ACTIONS.EMAIL_CONFIRM,
       type: BADGE_TYPES.INFO,
@@ -65,77 +59,42 @@ const EmailConfirmationResultsPage: React.FC<Props> = props => {
         ROUTES.HOME,
       ],
     });
-
-    let redirectLink = ROUTES.HOME;
-    if (
-      result.stateData != null &&
-      result.stateData.containedFlowQueryParams != null
-    )
-      redirectLink = ROUTES.CHECKOUT;
-
-    if (result.stateData != null && result.stateData.redirectLink)
-      redirectLink = result.stateData.redirectLink;
-
-    if (redirectLink === ROUTES.CHECKOUT && cartItems.length === 0)
-      redirectLink = ROUTES.FIO_ADDRESSES_SELECTION;
-
-    if (isAuthenticated && user.email === result.email) {
-      return history.replace(redirectLink);
-    }
-    if (isAuthenticated) {
-      logout({ history });
-    }
-    if (lastAuthData && lastAuthData.email !== result.email) {
-      resetLastAuthData();
-    }
-
-    showLoginModal(redirectLink);
   };
 
   useEffect(() => {
-    if (emailConfirmationResult.success) {
-      handleResult(emailConfirmationResult);
+    if (emailConfirmed) {
+      handleResult();
     }
-  }, [emailConfirmationResult]);
+  }, [emailConfirmed, handleResult]);
 
   useEffectOnce(() => () => resetEmailConfirmationResult(), []);
 
-  const showLogin = () => {
-    let redirectLink = ROUTES.HOME;
-    if (
-      emailConfirmationResult &&
-      emailConfirmationResult.success &&
-      emailConfirmationResult.stateData != null &&
-      emailConfirmationResult.stateData.redirectLink
-    )
-      redirectLink = emailConfirmationResult.stateData.redirectLink;
-
-    showLoginModal(redirectLink);
-  };
-
-  if (emailConfirmationResult.success === false) return null;
-
-  const renderLoginSection = () => {
-    return (
-      <p className="mt-3">
-        Now you can to login!{' '}
-        <Link to="#" onClick={showLogin}>
-          Sign In
-        </Link>
-      </p>
-    );
-  };
+  if (!emailConfirmed) return null;
 
   return (
-    <div className={classes.container}>
-      <div>
-        <FontAwesomeIcon icon="envelope" className={classes.icon} />
-        <h4 className={classes.title}>
-          {NOTIFICATIONS_CONTENT.ACCOUNT_CONFIRMATION.message}
-        </h4>
-        {renderLoginSection()}
+    <>
+      <div className={classes.confirmBackground} />
+      <div className={classes.actionModal}>
+        <div className={classes.closeIcon} onClick={handleClosePage}>
+          ×
+        </div>
+        <div className="d-flex justify-content-center my-4">
+          <FontAwesomeIcon icon="list-alt" className={classes.listIcon} />
+        </div>
+        <div className={classes.title}>Close Window</div>
+        <div className={classes.infoText}>
+          An email has been confirmed. You can close this window now.
+        </div>
+        <Button
+          onClick={handleClosePage}
+          variant="outline-primary"
+          size="lg"
+          className={classes.closeButton}
+        >
+          Close
+        </Button>
       </div>
-    </div>
+    </>
   );
 };
 

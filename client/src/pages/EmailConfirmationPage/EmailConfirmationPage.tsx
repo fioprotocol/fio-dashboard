@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { RouteComponentProps } from 'react-router-dom';
 
-import classes from '../../components/Modal/EmailModal/EmailModal.module.scss';
+import { AnyObject, EmailConfirmationResult } from '../../types';
 
-import { EmailConfirmationResult } from '../../types';
+import classes from '../../components/Modal/EmailModal/EmailModal.module.scss';
 
 type MatchParams = {
   hash: string;
@@ -21,7 +21,7 @@ type Location = {
 type Props = {
   profileRefreshed: boolean;
   emailConfirmationResult: EmailConfirmationResult;
-  confirmEmail: (hash: string) => void;
+  confirmEmail: (hash: string) => Promise<AnyObject>;
   getInfo: (refCode: string) => void;
 };
 
