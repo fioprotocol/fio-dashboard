@@ -16,6 +16,8 @@ export default class Exception extends Error {
     this.code = data.code;
     this.message = data.message;
     this.data = data.data;
+
+    if (data.status) this.status = data.status;
   }
 
   toHash() {
