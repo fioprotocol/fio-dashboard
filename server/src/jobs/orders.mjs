@@ -190,17 +190,17 @@ class OrdersJob extends CommonJob {
 
     const currentPrice = fioApi.convertFioToUsdc(fee, currentRoe);
 
-    const threshold = new MathOp(currentPrice)
+    const threshold = new MathOp(item.price)
       .mul(0.25)
       .round(2, 1)
       .toNumber();
 
-    const topThreshold = new MathOp(currentPrice).add(threshold).toNumber();
-    const bottomThreshold = new MathOp(currentPrice).sub(threshold).toNumber();
+    const topThreshold = new MathOp(item.price).add(threshold).toNumber();
+    const bottomThreshold = new MathOp(item.price).sub(threshold).toNumber();
 
     if (
-      new MathOp(topThreshold).lt(item.price) ||
-      new MathOp(bottomThreshold).gt(item.price)
+      new MathOp(topThreshold).lt(currentPrice) ||
+      new MathOp(bottomThreshold).gt(currentPrice)
     ) {
       await this.refundUser({ ...item, roe: currentRoe });
       await this.handleFail(item, `PRICES_CHANGED - roe: ${currentRoe} - fee: ${fee}`);
