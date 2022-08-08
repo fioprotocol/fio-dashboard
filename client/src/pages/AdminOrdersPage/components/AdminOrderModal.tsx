@@ -127,9 +127,9 @@ const setHistory = (
         key: `bc-event-${id}-${new Date(createdAt).getTime()}`,
         date: formatDateToLocale(createdAt),
         amount: '0.00',
-        status: `Status: ${
-          BC_TX_STATUS_LABELS[status]
-        }. Message: ${statusNotes || '-'}`,
+        status: `Status: ${BC_TX_STATUS_LABELS[status]}. ${
+          statusNotes ? `Message: ${statusNotes}` : ''
+        }`,
         dateTime: new Date(createdAt).getTime(),
       });
     },
@@ -150,6 +150,7 @@ const AdminOrderModal: React.FC<Props> = ({
   const orderPayment = orderItem.payments.find(
     ({ spentType }) => spentType === PAYMENT_SPENT_TYPES.ORDER,
   );
+  const isFree = orderItem.total === '0' || !orderItem.total;
   const historyList = setHistory(orderItem, orderPayment);
   const renderHistoryPrice = (
     amount: string,
@@ -165,6 +166,13 @@ const AdminOrderModal: React.FC<Props> = ({
       );
 
     return amount + ` ${currency || CURRENCY_CODES.USDC}`;
+  };
+  const renderPaymentReceived = () => {
+    if (orderPayment.status !== PAYMENT_STATUSES.COMPLETED) return '-';
+
+    return orderPayment.price
+      ? orderPayment.price + ` ${orderPayment.currency.toUpperCase()}`
+      : 'None';
   };
 
   return (
@@ -186,9 +194,7 @@ const AdminOrderModal: React.FC<Props> = ({
             )}
             {renderOrderItemFieldData(
               'Order Amount',
-              orderItem.total +
-                ' ' +
-                (orderItem.items?.[0]?.priceCurrency || ''),
+              isFree ? 'Free' : orderItem.total + ' ' + CURRENCY_CODES.USDC,
             )}
             {renderOrderItemFieldData('User', orderItem.user.email)}
             {renderOrderItemFieldData(
@@ -204,9 +210,7 @@ const AdminOrderModal: React.FC<Props> = ({
             )}
             {renderOrderItemFieldData(
               'Payments received',
-              orderPayment.status === PAYMENT_STATUSES.COMPLETED
-                ? orderPayment.price + ` ${orderPayment.currency}`
-                : '-',
+              renderPaymentReceived(),
             )}
             {renderOrderItemFieldData(
               'Ref Profile',

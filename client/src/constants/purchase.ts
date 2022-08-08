@@ -71,7 +71,7 @@ export const BC_TX_STATUSES = {
 };
 
 export const BC_TX_STATUS_LABELS = {
-  [BC_TX_STATUSES.NONE]: '-',
+  [BC_TX_STATUSES.NONE]: 'None',
   [BC_TX_STATUSES.READY]: 'Ready',
   [BC_TX_STATUSES.PENDING]: 'Pending',
   [BC_TX_STATUSES.CANCEL]: 'Cancelled',
