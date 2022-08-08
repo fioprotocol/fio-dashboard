@@ -20,6 +20,8 @@ import TxHistoryService from '../../services/TxHistory';
 import WalletsDataFlow from '../../services/WalletsDataFlow';
 import ContainedFlow from '../../services/ContainedFlow';
 
+import { ROUTES } from '../../constants/routes';
+
 import useEffectOnce from '../../hooks/general';
 import { useIsAdminRoute } from '../../hooks/admin';
 
@@ -61,6 +63,7 @@ const MainLayout: React.FC<Props> = props => {
 
   const isDesktop = useCheckIfDesktop();
   const isAdminRoute = useIsAdminRoute();
+  const isConfirmEmailRoute = pathname === ROUTES.CONFIRM_EMAIL_RESULT;
 
   useEffectOnce(() => {
     edgeContextInit();
@@ -72,6 +75,7 @@ const MainLayout: React.FC<Props> = props => {
     showRecovery &&
     edgeContextSet &&
     isAuthenticated &&
+    !isConfirmEmailRoute &&
     isActiveUser && <PasswordRecoveryForm />;
 
   const isHomePage = pathname === '/';
