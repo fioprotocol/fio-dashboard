@@ -38,6 +38,7 @@ export default class PaymentsWebhook extends Base {
     const paymentProcessor = this.getPaymentProcessor(headers, hostname);
     if (!paymentProcessor)
       throw new X({
+        status: 417,
         code: 'INVALID_REQUEST',
         fields: {
           code: 'UNKNOWN_REQUEST_HOST',
@@ -76,6 +77,7 @@ export default class PaymentsWebhook extends Base {
       });
       if (!order) {
         throw new X({
+          status: 400,
           code: 'WEBHOOK_DATA_ERROR',
           fields: {
             code: 'NO_ORDER_FOUND',
@@ -100,6 +102,7 @@ export default class PaymentsWebhook extends Base {
       });
       if (!payment) {
         throw new X({
+          status: 400,
           code: 'WEBHOOK_DATA_ERROR',
           fields: {
             code: 'NO_PAYMENT_FOUND',
@@ -203,6 +206,7 @@ export default class PaymentsWebhook extends Base {
   validateRequest(paymentProcessor, { body, headers, rawBody }) {
     if (!body)
       throw new X({
+        status: 400,
         code: 'INVALID_REQUEST_PARAMS',
         fields: {
           code: 'INVALID_BODY',

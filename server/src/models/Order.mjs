@@ -200,7 +200,7 @@ export class Order extends Base {
     let orderStatus = null;
     switch (paymentStatus) {
       case Payment.STATUS.PENDING: {
-        orderStatus = Order.STATUS.PENDING;
+        orderStatus = Order.STATUS.PAYMENT_PENDING;
         break;
       }
       case Payment.STATUS.EXPIRED: {

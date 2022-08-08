@@ -140,6 +140,7 @@ class Stripe extends PaymentProcessor {
   validate(headers, body) {
     if (!headers || !headers['stripe-signature'])
       throw new X({
+        status: 417,
         code: 'INVALID_REQUEST_PARAMS',
         fields: {
           code: 'INVALID_REQUEST_HEADERS',
@@ -150,6 +151,7 @@ class Stripe extends PaymentProcessor {
 
     if (!api_version || api_version !== process.env.STRIPE_API_VERSION)
       throw new X({
+        status: 400,
         code: 'INVALID_REQUEST_PARAMS',
         fields: {
           code: 'INVALID_API_VERSION',
@@ -158,6 +160,7 @@ class Stripe extends PaymentProcessor {
 
     if (Object.values(PI_TYPES).indexOf(type) < 0)
       throw new X({
+        status: 400,
         code: 'INVALID_REQUEST_PARAMS',
         fields: {
           code: 'INVALID_STRIPE_WEBHOOK_TYPE',
@@ -177,6 +180,7 @@ class Stripe extends PaymentProcessor {
       );
     } catch (err) {
       throw new X({
+        status: 401,
         code: 'INVALID_REQUEST',
         fields: {
           code: 'STRIPE_SIGNATURE_MISMATCH',
