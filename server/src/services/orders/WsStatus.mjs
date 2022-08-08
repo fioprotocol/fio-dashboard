@@ -50,7 +50,9 @@ export default class WsStatus extends WsBase {
       await Order.updateStatus(
         orderId,
         null,
-        items.map(({ txStatus }) => txStatus),
+        items
+          .filter(({ txStatus }) => txStatus !== BlockchainTransaction.STATUS.NONE)
+          .map(({ txStatus }) => txStatus),
       );
     } catch (error) {
       logger.error(`ORDER STATUS UPDATE - ${orderId}`, error);
