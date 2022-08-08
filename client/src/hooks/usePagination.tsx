@@ -1,17 +1,28 @@
-import { Component, useCallback, useEffect, useState } from 'react';
+import { ReactNode, Component, useCallback, useEffect, useState } from 'react';
 
 import { useHistory } from 'react-router-dom';
 import Pagination from 'react-bootstrap/Pagination';
 
 import useQuery from './useQuery';
 
-import { AnyObject } from '../types';
 import useEffectOnce from './general';
+import MathOp from '../util/math';
+
+import { AnyObject } from '../types';
 
 export const DEFAULT_LIMIT = 25;
 
 const LIMIT_QUERY_PARAMETER_NAME = 'limit';
 const OFFSET_QUERY_PARAMETER_NAME = 'offset';
+const PAGE_ITEMS_RENDER_AMOUNT = 13;
+const PAGE_ITEMS_RENDER_CORNER_AMOUNT = 2;
+const PAGE_ITEMS_RENDER_MIDDLE_AMOUNT = 5;
+const PAGE_ITEMS_RENDER_HALF_MIDDLE_AMOUNT = new MathOp(
+  PAGE_ITEMS_RENDER_MIDDLE_AMOUNT,
+)
+  .div(2)
+  .round(0, 0)
+  .toNumber();
 
 export default function usePagination(
   getItemsList: (
@@ -98,15 +109,14 @@ export default function usePagination(
   }, []);
 
   useEffect(() => {
-    const paginationItems = [];
-    const pages = itemsCount / limit + 1;
-    const renderPagesAmount = pages > 10 ? 10 : pages;
-    // todo: fix to not render all pages if there are a lot (1000...)
-    for (
-      let pageNumber = 1;
-      pageNumber <= (itemsCount > limit ? renderPagesAmount : 1);
-      pageNumber++
-    ) {
+    const paginationItems: ReactNode[] = [];
+    const pages =
+      new MathOp(itemsCount)
+        .div(limit)
+        .round()
+        .toNumber() + 1;
+
+    const addPage = (pageNumber: number) => {
       paginationItems.push(
         <Pagination.Item
           key={pageNumber}
@@ -120,7 +130,71 @@ export default function usePagination(
           {pageNumber}
         </Pagination.Item>,
       );
+    };
+
+    if (pages < PAGE_ITEMS_RENDER_AMOUNT) {
+      for (
+        let pageNumber = 1;
+        pageNumber <= (itemsCount > limit ? pages : 1);
+        pageNumber++
+      ) {
+        addPage(pageNumber);
+      }
+    } else {
+      for (
+        let pageStart = 1;
+        pageStart <= PAGE_ITEMS_RENDER_CORNER_AMOUNT;
+        pageStart++
+      ) {
+        addPage(pageStart);
+      }
+      let middleStart = activePage - PAGE_ITEMS_RENDER_HALF_MIDDLE_AMOUNT;
+      let addStartDelimiter = true;
+      let addEndDelimiter = true;
+      if (
+        activePage <=
+        PAGE_ITEMS_RENDER_CORNER_AMOUNT +
+          PAGE_ITEMS_RENDER_HALF_MIDDLE_AMOUNT +
+          1
+      ) {
+        addStartDelimiter = false;
+        middleStart = PAGE_ITEMS_RENDER_CORNER_AMOUNT + 1;
+      }
+      if (
+        activePage >=
+        pages -
+          (PAGE_ITEMS_RENDER_CORNER_AMOUNT +
+            PAGE_ITEMS_RENDER_HALF_MIDDLE_AMOUNT)
+      ) {
+        addEndDelimiter = false;
+        middleStart =
+          pages -
+          PAGE_ITEMS_RENDER_CORNER_AMOUNT -
+          PAGE_ITEMS_RENDER_MIDDLE_AMOUNT +
+          1;
+      }
+      if (addStartDelimiter) {
+        paginationItems.push(<div className="mr-3 ml-3">...</div>);
+      }
+      for (
+        let pageMiddle = middleStart;
+        pageMiddle < middleStart + PAGE_ITEMS_RENDER_MIDDLE_AMOUNT;
+        pageMiddle++
+      ) {
+        addPage(pageMiddle);
+      }
+      if (addEndDelimiter) {
+        paginationItems.push(<div className="mr-3 ml-3">...</div>);
+      }
+      for (
+        let pageEnd = pages - PAGE_ITEMS_RENDER_CORNER_AMOUNT + 1;
+        pageEnd <= pages;
+        pageEnd++
+      ) {
+        addPage(pageEnd);
+      }
     }
+
     setPaginationComponent(<Pagination>{paginationItems}</Pagination>);
   }, [activePage, handleChangeOffset, itemsCount, limit]);
 
