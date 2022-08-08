@@ -9,13 +9,13 @@ import { log } from '../../util/general';
 import { setWallets } from '../account/actions';
 import { refreshBalance } from '../fio/actions';
 import {
+  loadAdminProfile,
+  loadProfile,
+  login,
   ADMIN_LOGIN_SUCCESS,
   ADMIN_LOGOUT_SUCCESS,
   CONFIRM_ADMIN_EMAIL_SUCCESS,
   CONFIRM_EMAIL_SUCCESS,
-  loadAdminProfile,
-  loadProfile,
-  login,
   LOGIN_SUCCESS,
   LOGOUT_SUCCESS,
   NONCE_SUCCESS,
@@ -142,7 +142,7 @@ export function* nonceSuccess(): Generator {
 
 export function* confirmEmailSuccess(history: History): Generator {
   yield takeEvery(CONFIRM_EMAIL_SUCCESS, function*() {
-    yield history.push(ROUTES.CONFIRM_EMAIL_RESULT);
+    yield history.replace(ROUTES.CONFIRM_EMAIL_RESULT);
   });
 }
 
