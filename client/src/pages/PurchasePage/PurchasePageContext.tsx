@@ -175,7 +175,8 @@ export const useContext = (): {
     purchaseProvider === PURCHASE_PROVIDER.FIO && !isEmpty(errItems);
 
   const failedTxsTotalAmount =
-    orderStatusData.status === PURCHASE_RESULTS_STATUS.FAILED &&
+    (orderStatusData.status === PURCHASE_RESULTS_STATUS.FAILED ||
+      orderStatusData.status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS) &&
     purchaseProvider === PURCHASE_PROVIDER.STRIPE
       ? errCostUsdc
       : errCostFio;
