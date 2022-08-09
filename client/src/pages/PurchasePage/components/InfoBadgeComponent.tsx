@@ -76,8 +76,10 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
     if (purchaseProvider === PURCHASE_PROVIDER.FIO || !failedTxsTotalAmount) {
       message =
         'Your purchase was not completed in full. Please see below what failed to be completed.';
-    } else {
-      message = `The following items failed to purchase. We have credited your account with ${failedTxsTotalAmount as string} FIO Tokens which represents the value of those items. Please go back and try your purchase again.`;
+    }
+
+    if (purchaseProvider === PURCHASE_PROVIDER.STRIPE && failedTxsTotalAmount) {
+      message = `The following items failed to purchase. As a result we have refunded $${failedTxsTotalAmount as string} back to your credit card. Click close and try purchasing again.`;
     }
   }
 
