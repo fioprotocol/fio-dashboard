@@ -12,6 +12,7 @@ export type PaymentButtonProps = {
   hasRoyalBlueBackground?: boolean;
   disabled?: boolean;
   hideButton?: boolean;
+  hidden?: boolean;
   afterTextIcon?: React.ReactNode | null;
   loading: boolean;
   onClick: () => void;

@@ -78,7 +78,8 @@ const PAYMENT_OPTIONS_PROPS = {
   [PAYMENT_OPTIONS.CRYPTO]: ({ loading }: PaymentOptionRenderProps) => ({
     buttonText: 'Pay Using Crypto',
     icon: <FontAwesomeIcon icon={{ prefix: 'fab', iconName: 'bitcoin' }} />,
-    disabled: true, // todo: hardcoded to disabled until any crypto provider will be connnected
+    disabled: true,
+    hideButton: true, // not implemented
     loading,
     hasRoyalBlueBackground: true,
     onClick: (): null => null,
