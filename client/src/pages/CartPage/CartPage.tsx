@@ -39,6 +39,7 @@ export const CartPage: React.FC = () => {
     hasGetPricesError,
     prices,
     totalCartAmount,
+    totalCartNativeAmount,
     walletBalancesAvailable,
     walletCount,
     deleteItem,
