@@ -57,7 +57,7 @@ const PAYMENT_OPTIONS_PROPS = {
     loading,
     hideButton: userWallets?.every(
       wallet =>
-        wallet.available &&
+        wallet.available != null &&
         totalCartNativeAmount &&
         new MathOp(wallet.available).lte(totalCartNativeAmount),
     ),

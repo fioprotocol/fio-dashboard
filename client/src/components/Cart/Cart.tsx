@@ -25,6 +25,7 @@ import {
 } from '../../types';
 
 import classes from './Cart.module.scss';
+import MathOp from '../../util/math';
 
 type Props = {
   cartItems: CartItemType[];
@@ -34,6 +35,7 @@ type Props = {
   hasLowBalance: boolean;
   walletCount: number;
   totalCartAmount: string;
+  totalCartNativeAmount: number;
   walletBalancesAvailable: WalletBalancesItem;
   prices: Prices;
   setCartItems?: (cartItems: CartItemType[]) => {};
@@ -51,6 +53,7 @@ const Cart: React.FC<Props> = props => {
     hasLowBalance,
     walletCount,
     totalCartAmount,
+    totalCartNativeAmount,
     walletBalancesAvailable,
     prices,
     setCartItems,
@@ -89,6 +92,13 @@ const Cart: React.FC<Props> = props => {
   const walletsList = userWallets
     .sort((a, b) => b.available - a.available || a.name.localeCompare(b.name))
     .map(wallet => ({ id: wallet.publicKey, name: wallet.name }));
+
+  const allWalletsHasLowBalance = userWallets?.every(
+    wallet =>
+      wallet.available != null &&
+      totalCartNativeAmount &&
+      new MathOp(wallet.available).lte(totalCartNativeAmount),
+  );
 
   useEffectOnce(() => {
     if (walletsList.length) {
@@ -161,7 +171,10 @@ const Cart: React.FC<Props> = props => {
           </div>
         )}
       </div>
-      <LowBalanceBadge {...lowBalanceText} hasLowBalance={hasLowBalance} />
+      <LowBalanceBadge
+        {...lowBalanceText}
+        hasLowBalance={hasLowBalance && !allWalletsHasLowBalance}
+      />
     </>
   );
 };
