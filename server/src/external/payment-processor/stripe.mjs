@@ -155,6 +155,7 @@ class Stripe extends PaymentProcessor {
         code: 'INVALID_REQUEST_PARAMS',
         fields: {
           code: 'INVALID_API_VERSION',
+          message: `Current API VERSION: ${process.env.STRIPE_API_VERSION}`,
         },
       });
 
