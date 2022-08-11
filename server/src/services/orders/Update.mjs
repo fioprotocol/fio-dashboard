@@ -160,12 +160,12 @@ export default class OrdersUpdate extends Base {
                 id: blockchainTransactionId,
               });
 
-              bcTx.transaction_id = transaction_id || 'free';
+              bcTx.txId = transaction_id || 'free';
               bcTx.status = BlockchainTransaction.STATUS.SUCCESS;
               await bcTx.save();
             } else {
               bcTx = await BlockchainTransaction.create({
-                transaction_id: transaction_id || 'free',
+                txId: transaction_id || 'free',
                 action: orderItem.action,
                 status: BlockchainTransaction.STATUS.SUCCESS,
                 data: orderItem.params,
