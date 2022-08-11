@@ -3,9 +3,9 @@ import isEmpty from 'lodash/isEmpty';
 import apis from '../../api/index';
 import { toString } from '../../redux/notify/sagas';
 import { waitForAddressRegistered } from '../../util/fio';
+import { setFioName } from '../../utils';
 import { log } from '../../util/general';
 
-import { FIO_ADDRESS_DELIMITER } from '../../utils';
 import {
   PURCHASE_PROVIDER,
   PURCHASE_RESULTS_STATUS,
@@ -211,9 +211,7 @@ const makeRegistrationOrder = (
   )) {
     const registration: RegistrationType = {
       cartItemId: cartItem.id,
-      fioName: cartItem.address
-        ? `${cartItem.address}${FIO_ADDRESS_DELIMITER}${cartItem.domain}`
-        : cartItem.domain,
+      fioName: setFioName(cartItem.address, cartItem.domain),
       isFree: !cartItem.costNativeFio,
       fee: cartItem.address ? fees.address : fees.domain,
     };

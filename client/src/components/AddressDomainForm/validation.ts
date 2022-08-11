@@ -1,8 +1,10 @@
 import { isEmpty } from 'lodash';
 
 import apis from '../../api/index';
+
+import { setFioName } from '../../utils';
+
 import { ADDRESS_REGEXP } from '../../constants/regExps';
-import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
 import { DefaultValidationProps, FormValidationErrorProps } from './types';
 
@@ -45,9 +47,7 @@ const verifyAddress = async (props: DefaultValidationProps) => {
 
   if (address && domain) {
     try {
-      const isAvail = await apis.fio.availCheck(
-        `${address}${FIO_ADDRESS_DELIMITER}${domain}`,
-      );
+      const isAvail = await apis.fio.availCheck(setFioName(address, domain));
       if (isAvail && isAvail.is_registered === 1) {
         errors.address = 'This FIO Crypto Handle is already registered.';
       }

@@ -12,7 +12,8 @@ import {
 
 import { StripeForm } from './StripeForm';
 
-import { FIO_ADDRESS_DELIMITER } from '../../../utils';
+import { setFioName } from '../../../utils';
+
 import {
   PURCHASE_PROVIDER,
   PURCHASE_RESULTS_STATUS,
@@ -34,9 +35,7 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
         errors: [],
         registered: cart.map(
           ({ id, address, domain, isFree, costNativeFio }: CartItem) => ({
-            fioName: address
-              ? `${address}${FIO_ADDRESS_DELIMITER}${domain}`
-              : domain,
+            fioName: setFioName(address, domain),
             isFree,
             fee_collected: costNativeFio,
             cartItemId: id,
