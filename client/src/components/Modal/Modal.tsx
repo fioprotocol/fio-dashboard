@@ -19,6 +19,7 @@ type Props = {
   isWide?: boolean;
   hasDefaultCloseColor?: boolean;
   isMiddleWidth?: boolean;
+  isFullWidth?: boolean;
   isBlue?: boolean;
   withoutPaggingBottom?: boolean;
 };
@@ -39,6 +40,7 @@ const ModalComponent: React.FC<Props> = props => {
     isWide,
     hasDefaultCloseColor,
     isMiddleWidth,
+    isFullWidth,
     isBlue,
     withoutPaggingBottom,
   } = props;
@@ -63,6 +65,7 @@ const ModalComponent: React.FC<Props> = props => {
       dialogClassName={classnames(
         classes.dialog,
         isWide && classes.isWide,
+        isFullWidth && classes.fullWidth,
         isMiddleWidth && classes.isMiddleWidth,
         hasDefaultCloseColor && classes.defaultCloseColor,
       )}

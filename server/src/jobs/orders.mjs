@@ -94,7 +94,7 @@ class OrdersJob extends CommonJob {
         case Payment.PROCESSOR.CREDIT_CARD: {
           price = orderItemProps.price;
           currency = Payment.CURRENCY.USD;
-          statusNotes = "User's credit cart";
+          statusNotes = "User's credit card";
           break;
         }
         default:
@@ -141,7 +141,7 @@ class OrdersJob extends CommonJob {
         await refundPayment.save();
         await PaymentEventLog.create({
           status: PaymentEventLog.STATUS.SUCCESS,
-          statusNotes: `${statusNotes}. ${refundTx.transaction_id || refundTx.id}`,
+          statusNotes: `${statusNotes}. (${refundTx.transaction_id || refundTx.id})`,
           paymentId: refundPayment.id,
         });
 
@@ -202,8 +202,8 @@ class OrdersJob extends CommonJob {
       new MathOp(topThreshold).lt(currentPrice) ||
       new MathOp(bottomThreshold).gt(currentPrice)
     ) {
-      await this.refundUser({ ...item, roe: currentRoe });
       await this.handleFail(item, `PRICES_CHANGED - roe: ${currentRoe} - fee: ${fee}`);
+      await this.refundUser({ ...item, roe: currentRoe });
 
       throw new Error(`PRICES_CHANGED - roe: ${currentRoe} - fee: ${fee}`);
     }
@@ -391,9 +391,8 @@ class OrdersJob extends CommonJob {
             });
           }
 
-          await this.refundUser(item);
-
           await this.handleFail(item, notes);
+          await this.refundUser(item);
         } catch (error) {
           logger.error(`ORDER ITEM PROCESSING ERROR ${item.id}`, error);
         }

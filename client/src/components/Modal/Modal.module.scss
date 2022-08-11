@@ -38,6 +38,11 @@
   margin-top: 160px;
   width: 375px;
 
+  &.fullWidth {
+    width: 90%;
+    max-width: 1200px;
+  }
+
   &.isWide {
     max-width: 650px;
     width: auto;
