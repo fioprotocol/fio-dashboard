@@ -311,6 +311,8 @@ export const isDomain = (fioName: string): boolean =>
   fioName.indexOf(FIO_ADDRESS_DELIMITER) < 0;
 export const hasFioAddressDelimiter = (value: string): boolean =>
   value.indexOf(FIO_ADDRESS_DELIMITER) > 0;
+export const setFioName = (address: string | null, domain: string): string =>
+  address ? `${address}${FIO_ADDRESS_DELIMITER}${domain}` : domain;
 
 export const priceToNumber = (price: string): number =>
   +parseFloat(price).toFixed(2);

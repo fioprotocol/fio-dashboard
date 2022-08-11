@@ -580,6 +580,8 @@ export type OrderPaymentItem = {
   statusNotes?: string;
 };
 
+export type BcTx = { id: number; action: string; txId?: string };
+
 export type BcTxEvent = {
   blockchainTransactionId: number;
   createdAt: string;
@@ -606,6 +608,7 @@ export type OrderItem = {
     price: string;
     priceCurrency: string;
     updatedAt: string;
+    blockchainTransactions: BcTx[];
     orderItemStatus: {
       txStatus: typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
     };

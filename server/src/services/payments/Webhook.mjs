@@ -157,8 +157,6 @@ export default class PaymentsWebhook extends Base {
         if (paymentProcessor.isCompleted(webhookData.status)) {
           await Order.sequelize.transaction(async t => {
             for (const orderItem of order.OrderItems) {
-              orderItemStatusUpdates.txStatus = BlockchainTransaction.STATUS.READY;
-
               const bcTx = await BlockchainTransaction.create(
                 {
                   action: orderItem.action,

@@ -11,6 +11,15 @@ export const PURCHASE_RESULTS_STATUS: { [label: string]: number } = {
   PAYMENT_PENDING: 10,
 } as const;
 
+export const PURCHASE_RESULTS_STATUS_LABELS: {
+  [key: number]: string;
+} = Object.entries(PURCHASE_RESULTS_STATUS).reduce((acc, [label, value]) => {
+  const transformedLabel = label.toLowerCase().replace('_', ' ');
+  acc[value] =
+    transformedLabel.charAt(0).toUpperCase() + transformedLabel.slice(1);
+  return acc;
+}, {} as { [key: number]: string });
+
 export const PURCHASE_PROVIDER = {
   FIO: 'fio',
   STRIPE: 'stripe',
@@ -76,7 +85,7 @@ export const BC_TX_STATUS_LABELS = {
   [BC_TX_STATUSES.PENDING]: 'Pending',
   [BC_TX_STATUSES.CANCEL]: 'Cancelled',
   [BC_TX_STATUSES.REVIEW]: 'Review',
-  [BC_TX_STATUSES.SUCCESS]: 'SUCCESS',
+  [BC_TX_STATUSES.SUCCESS]: 'Success',
   [BC_TX_STATUSES.RETRY]: 'Retry',
   [BC_TX_STATUSES.EXPIRE]: 'Expired',
 };
