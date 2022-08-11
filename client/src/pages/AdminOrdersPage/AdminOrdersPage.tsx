@@ -3,11 +3,12 @@ import React, { useState } from 'react';
 import { Table } from 'react-bootstrap';
 
 import Loader from '../../components/Loader/Loader';
-import AdminOrderModal from './components/AdminOrderModal';
+import AdminOrderModal from './components/AdminOrderModal/AdminOrderModal';
 import usePagination from '../../hooks/usePagination';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 
-import { PURCHASE_RESULTS_STATUS } from '../../constants/purchase';
+import { PURCHASE_RESULTS_STATUS_LABELS } from '../../constants/purchase';
+
 import { AdminUser, OrderItem } from '../../types';
 
 import classes from './AdminOrdersListPage.module.scss';
@@ -76,14 +77,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
                     <th>{order.user ? order.user.email : order.userEmail}</th>
                     <th>{order.total || 0}</th>
                     <th>{order.refProfileName || 'FIO Dashboard'}</th>
-                    <th>
-                      {
-                        Object.entries(PURCHASE_RESULTS_STATUS).find(
-                          ([label, value]) =>
-                            PURCHASE_RESULTS_STATUS[label] === order.status,
-                        )?.[0]
-                      }
-                    </th>
+                    <th>{PURCHASE_RESULTS_STATUS_LABELS[order.status]}</th>
                   </tr>
                 ))
               : null}
