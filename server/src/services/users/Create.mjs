@@ -13,7 +13,7 @@ export default class UsersCreate extends Base {
         'required',
         {
           nested_object: {
-            username: ['string'],
+            username: ['string', 'to_lc'],
             email: ['required', 'trim', 'email', 'to_lc'],
             fioWallets: [
               'required',

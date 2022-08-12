@@ -7,7 +7,7 @@ import X from '../Exception';
 export default class AuthNonce extends Base {
   static get validationRules() {
     return {
-      username: ['required', 'string'],
+      username: ['required', 'string', 'to_lc'],
     };
   }
 
