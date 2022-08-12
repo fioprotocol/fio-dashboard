@@ -9,6 +9,7 @@ import PriceBadge from '../../../../components/Badges/PriceBadge/PriceBadge';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import AmountInput from '../../../../components/Input/AmountInput';
 
+import { CURRENCY_CODES } from '../../../../constants/common';
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 
@@ -139,9 +140,10 @@ const WrapTokensForm: React.FC<WrapTokensFormProps> = props => {
             <PriceBadge
               title="Fees"
               type={BADGE_TYPES.BLACK}
-              costNativeFio={unitedFee.nativeFio}
-              costFio={unitedFee.fio}
-              costUsdc={unitedFee.usdc}
+              paymentAmount={unitedFee.fio}
+              paymentCurrency={CURRENCY_CODES.FIO}
+              convertedPaymentAmount={unitedFee.usdc}
+              convertedPaymentCurrency={CURRENCY_CODES.USDC}
             />
             <LowBalanceBadge
               hasLowBalance={hasLowBalance}
