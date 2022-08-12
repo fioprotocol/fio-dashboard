@@ -11,8 +11,8 @@ export default class UsersUpdateEmailRequest extends Base {
     return {
       data: {
         nested_object: {
-          oldEmail: ['required', 'string'],
-          newEmail: ['required', 'string'],
+          oldEmail: ['required', 'string', 'email', 'to_lc'],
+          newEmail: ['required', 'string', 'email', 'to_lc'],
         },
       },
     };

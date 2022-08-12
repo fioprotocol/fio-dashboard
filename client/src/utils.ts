@@ -66,7 +66,7 @@ export async function minWaitTimeFunction(
 
 export function emailToUsername(email: string): string {
   if (email && email.indexOf('@') > 0) {
-    const [name, domain] = email.split('@');
+    const [name, domain] = email.toLowerCase().split('@');
     // return name
     return `${name}${FIO_DASH_USERNAME_DELIMITER}${domain}`;
   }
