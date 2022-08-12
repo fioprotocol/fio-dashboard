@@ -328,7 +328,7 @@ const ABI_WRAPPED_FIO_TOKEN = [
   },
   {
     inputs: [
-      { internalType: 'address', name: 'recipient', type: 'address' },
+      { internalType: 'address', name: 'to', type: 'address' },
       { internalType: 'uint256', name: 'amount', type: 'uint256' },
     ],
     name: 'transfer',
@@ -338,8 +338,8 @@ const ABI_WRAPPED_FIO_TOKEN = [
   },
   {
     inputs: [
-      { internalType: 'address', name: 'sender', type: 'address' },
-      { internalType: 'address', name: 'recipient', type: 'address' },
+      { internalType: 'address', name: 'from', type: 'address' },
+      { internalType: 'address', name: 'to', type: 'address' },
       { internalType: 'uint256', name: 'amount', type: 'uint256' },
     ],
     name: 'transferFrom',
