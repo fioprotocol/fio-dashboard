@@ -18,6 +18,7 @@ import { PinDataType } from '../../redux/modal/types';
 export type SubmitActionParams = {
   edgeAccount?: EdgeAccount;
   keys?: WalletKeys | null;
+  allWalletKeysInAccount?: EdgeWalletsKeys | null;
   data?: AnyObject;
 };
 

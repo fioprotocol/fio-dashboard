@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
@@ -13,6 +13,7 @@ import { createOrder } from '../../redux/order/actions';
 
 import {
   fioWallets as fioWalletsSelector,
+  fioDomains as fioDomainsSelector,
   loading as loadingSelector,
   fioWalletsBalances as fioWalletsBalancesSelector,
 } from '../../redux/fio/selectors';
@@ -39,7 +40,7 @@ import apis from '../../api';
 
 import { onPurchaseFinish } from '../../util/purchase';
 import MathOp from '../../util/math';
-import { totalCost, handleFreeAddressCart } from '../../utils';
+import { totalCost, handleFreeAddressCart, setFioName } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
 import { useEffectOnce } from '../../hooks/general';
 
@@ -50,7 +51,7 @@ import {
   PURCHASE_RESULTS_STATUS,
 } from '../../constants/purchase';
 import { ACTIONS } from '../../constants/fio';
-import { CURRENCY_CODES } from '../../constants/common';
+import { CURRENCY_CODES, WALLET_CREATED_FROM } from '../../constants/common';
 
 import {
   RegistrationResult,
@@ -63,6 +64,7 @@ import {
   WalletBalancesItem,
   ApiError,
 } from '../../types';
+import { BeforeSubmitData, BeforeSubmitProps } from './types';
 
 export const useContext = (): {
   cartItems: CartItem[];
@@ -78,9 +80,12 @@ export const useContext = (): {
   paymentOption: PaymentOptionsProps;
   paymentOptionError: ApiError;
   isFree: boolean;
+  beforeSubmitProps: BeforeSubmitProps | null;
+  beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   onClose: () => void;
   onFinish: (results: RegistrationResult) => Promise<void>;
   setWallet: (walletPublicKey: string) => void;
+  setProcessing: (isProcessing: boolean) => void;
 } => {
   const history = useHistory();
   const order = useSelector(orderSelector);
@@ -93,11 +98,19 @@ export const useContext = (): {
   const isAuth = useSelector(isAuthenticated);
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const prices = useSelector(pricesSelector);
+  const userDomains = useSelector(fioDomainsSelector);
   const isProcessing = useSelector(isProcessingSelector);
   const orderLoading = useSelector(orderLoadingSelector);
   const roe = useSelector(roeSelector);
 
   const dispatch = useDispatch();
+  const dispatchSetProcessing = (isProcessing: boolean) =>
+    dispatch(setProcessing(isProcessing));
+
+  const [
+    beforeSubmitProps,
+    setBeforeSubmitProps,
+  ] = useState<BeforeSubmitProps | null>(null);
 
   const {
     location: { state },
@@ -241,6 +254,69 @@ export const useContext = (): {
     });
   };
 
+  const beforePaymentSubmit = async (
+    handleSubmit: (data?: BeforeSubmitData) => Promise<void>,
+  ) => {
+    const privateDomainList: { [domain: string]: boolean } = {};
+    for (const cartItem of cartItems) {
+      if (
+        userDomains.findIndex(({ name }) => name === cartItem.domain) < 0 &&
+        !cartItem.hasCustomDomain
+      )
+        continue;
+
+      privateDomainList[cartItem.domain] = false;
+    }
+    for (const domain of Object.keys(privateDomainList)) {
+      const params = apis.fio.setTableRowsParams(domain);
+
+      try {
+        const rows = await apis.fio.getTableRows(params);
+
+        if ((rows && rows.length && rows[0].is_public === 0) || !rows[0]) {
+          privateDomainList[domain] = true;
+        }
+      } catch (e) {
+        //
+      }
+    }
+
+    const signTxItems = [];
+    for (const cartItem of cartItems) {
+      if (privateDomainList[cartItem.domain]) {
+        const domainWallet = userDomains.find(
+          ({ name }) => name === cartItem.domain,
+        );
+        signTxItems.push({
+          fioWallet: fioWallets.find(
+            ({ publicKey }) =>
+              publicKey ===
+              (domainWallet
+                ? domainWallet.walletPublicKey
+                : paymentWalletPublicKey),
+          ),
+          name: setFioName(cartItem.address, cartItem.domain),
+        });
+      }
+    }
+
+    if (signTxItems.length) {
+      return setBeforeSubmitProps({
+        walletConfirmType: WALLET_CREATED_FROM.EDGE,
+        fee: 0,
+        data: { fioAddressItems: signTxItems },
+        processing: false, // todo: remove processing and  setProcessing from here
+        setProcessing: () => null,
+        onSuccess: (data: BeforeSubmitData) => {
+          handleSubmit(data);
+        },
+        onCancel: () => setBeforeSubmitProps(null),
+      });
+    }
+
+    return handleSubmit();
+  };
+
   return {
     cartItems,
     walletBalancesAvailable,
@@ -255,8 +331,11 @@ export const useContext = (): {
     paymentOption,
     paymentOptionError: orderError,
     isFree,
+    beforeSubmitProps,
+    beforePaymentSubmit,
     onClose,
     onFinish,
     setWallet,
+    setProcessing: dispatchSetProcessing,
   };
 };

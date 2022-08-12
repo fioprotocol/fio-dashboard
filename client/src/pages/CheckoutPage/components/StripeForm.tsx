@@ -13,20 +13,21 @@ import {
   ERROR_UI_TYPE,
 } from '../../../components/Input/ErrorBadge';
 
+import { BeforeSubmitData } from '../types';
+
 import classes from '../styles/StripePaymentOption.module.scss';
 
-export const StripeForm: React.FC<{ onFinish: (success: boolean) => void }> = ({
-  onFinish,
-}) => {
+export const StripeForm: React.FC<{
+  onFinish: (success: boolean, data?: BeforeSubmitData) => void;
+  beforeSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
+}> = ({ onFinish, beforeSubmit }) => {
   const stripe = useStripe();
   const elements = useElements();
 
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-
+  const handleSubmit = async (beforeSubmitData?: BeforeSubmitData) => {
     if (!stripe || !elements) {
       // Stripe.js has not yet loaded.
       // Make sure to disable form submission until Stripe.js has loaded.
@@ -44,14 +45,24 @@ export const StripeForm: React.FC<{ onFinish: (success: boolean) => void }> = ({
       setErrorMessage(error.message);
     }
 
-    onFinish(!error);
+    onFinish(!error, beforeSubmitData);
+    setLoading(false);
+  };
+
+  const onSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+
+    setLoading(true);
+
+    await beforeSubmit(handleSubmit);
+
     setLoading(false);
   };
 
   if (!stripe || !elements) return <Loader />;
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={onSubmit}>
       <h6 className={classes.subtitle}>Card Information</h6>
       <div className={classes.paymentContainer}>
         <PaymentElement />

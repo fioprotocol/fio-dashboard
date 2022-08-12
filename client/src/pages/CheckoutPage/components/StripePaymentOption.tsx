@@ -21,15 +21,21 @@ import {
 import { STRIPE_ELEMENT_OPTIONS, STRIPE_PROMISE } from '../constants';
 import { CURRENCY_CODES } from '../../../constants/common';
 
-import { StripePaymentOptionProps } from '../types';
+import { BeforeSubmitData, StripePaymentOptionProps } from '../types';
 import { CartItem } from '../../../types';
 
 export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => {
-  const { cart, payment, paymentOption, paymentOptionError } = props;
+  const {
+    cart,
+    payment,
+    paymentOption,
+    paymentOptionError,
+    beforePaymentSubmit,
+  } = props;
 
   const history = useHistory();
 
-  const onFinish = (success: boolean) => {
+  const onFinish = (success: boolean, beforeSubmitData?: BeforeSubmitData) => {
     if (success) {
       props.onFinish({
         errors: [],
@@ -40,6 +46,9 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
             fee_collected: costNativeFio,
             cartItemId: id,
             transaction_id: '',
+            data: beforeSubmitData
+              ? beforeSubmitData[setFioName(address, domain)]
+              : null,
           }),
         ),
         partial: [],
@@ -82,7 +91,7 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
         locale: 'en',
       }}
     >
-      <StripeForm onFinish={onFinish} />
+      <StripeForm onFinish={onFinish} beforeSubmit={beforePaymentSubmit} />
     </Elements>
   );
 };
