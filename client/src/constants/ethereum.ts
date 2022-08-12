@@ -30,6 +30,11 @@ export const NETWORKS_LIST = {
     currency: 'RIN',
     chainID: 4,
   },
+  Goerli: {
+    name: 'Goerli',
+    currency: 'GOR',
+    chainID: 5,
+  },
   Polygon: {
     name: 'Polygon Mainnet',
     currency: 'MATIC',
