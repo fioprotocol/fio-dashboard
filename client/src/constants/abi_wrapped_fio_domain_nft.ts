@@ -290,6 +290,15 @@ const ABI_WRAPPED_FIO_DOMAIN_NFT = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'address', name: '_owner', type: 'address' }],
+    name: 'listDomainsOfOwner',
+    outputs: [
+      { internalType: 'string[]', name: 'ownerTokens', type: 'string[]' },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'name',
     outputs: [{ internalType: 'string', name: '', type: 'string' }],
@@ -347,7 +356,7 @@ const ABI_WRAPPED_FIO_DOMAIN_NFT = [
       { internalType: 'address', name: 'from', type: 'address' },
       { internalType: 'address', name: 'to', type: 'address' },
       { internalType: 'uint256', name: 'tokenId', type: 'uint256' },
-      { internalType: 'bytes', name: '_data', type: 'bytes' },
+      { internalType: 'bytes', name: 'data', type: 'bytes' },
     ],
     name: 'safeTransferFrom',
     outputs: [],
