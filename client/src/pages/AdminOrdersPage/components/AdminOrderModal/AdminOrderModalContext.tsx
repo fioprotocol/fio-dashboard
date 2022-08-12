@@ -71,8 +71,8 @@ const setHistory = (
         PAYMENT_OPTION_LABEL[payment.processor as PaymentOptionsProps]
       } notification received (${
         payment.externalId
-      } Status: ${PAYMENTS_STATUSES_TITLES[status as PaymentStatusType] ||
-        PAYMENTS_STATUSES_TITLES[PAYMENT_STATUSES.PENDING]})`,
+      }) Status: ${PAYMENTS_STATUSES_TITLES[status as PaymentStatusType] ||
+        PAYMENTS_STATUSES_TITLES[PAYMENT_STATUSES.PENDING]}`,
       dateTime: new Date(createdAt).getTime(),
     });
   });
