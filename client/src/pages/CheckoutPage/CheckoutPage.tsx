@@ -4,6 +4,7 @@ import PseudoModalContainer from '../../components/PseudoModalContainer';
 import { CheckoutComponent } from './components/CheckoutComponent';
 import Processing from '../../components/common/TransactionProcessing';
 import Loader from '../../components/Loader/Loader';
+import BeforeSubmitWalletConfirm from './components/BeforeSubmitWalletConfirm';
 
 import { useContext } from './CheckoutPageContext';
 
@@ -20,7 +21,9 @@ export const CheckoutPage: React.FC = () => {
     paymentWallet,
     title,
     walletBalancesAvailable,
+    beforeSubmitProps,
     onClose,
+    setProcessing,
     ...rest
   } = useContext();
 
@@ -37,6 +40,13 @@ export const CheckoutPage: React.FC = () => {
           {...rest}
         />
       </div>
+      {beforeSubmitProps && (
+        <BeforeSubmitWalletConfirm
+          {...beforeSubmitProps}
+          setProcessing={setProcessing}
+          processing={isProcessing}
+        />
+      )}
       <Processing isProcessing={isProcessing} />
     </PseudoModalContainer>
   );

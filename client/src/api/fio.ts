@@ -197,7 +197,20 @@ export default class Fio {
   getActor = (publicKey: string): string =>
     this.publicFioSDK.transactions.getActor(publicKey);
 
-  availCheckTableRows = async (fioName: string): Promise<boolean> => {
+  setTableRowsParams = (
+    fioName: string,
+  ): {
+    code: string;
+    scope: string;
+    table: string;
+    lower_bound: string;
+    upper_bound?: string;
+    key_type?: string;
+    index_position?: string;
+    json?: boolean;
+    reverse?: boolean;
+    limit?: number;
+  } => {
     const hash = createHash('sha1');
     const bound =
       '0x' +
@@ -222,6 +235,12 @@ export default class Fio {
       params.table = 'domains';
       params.index_position = '4';
     }
+
+    return params;
+  };
+
+  availCheckTableRows = async (fioName: string): Promise<boolean> => {
+    const params = this.setTableRowsParams(fioName);
 
     try {
       const rows = await this.getTableRows(params);

@@ -18,6 +18,7 @@ type DefaultProps = {
   paymentOption: PaymentOptionsProps;
   isFree: boolean;
   setWallet: (publicKey: string) => void;
+  beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   onFinish: (results: RegistrationResult) => void;
   cart: CartItemType[];
   payment: Payment;
@@ -36,3 +37,17 @@ export type PaymentOptionComponentProps = {
 export type StripePaymentOptionProps = {
   paymentOption: PaymentOptionsProps;
 } & DefaultProps;
+
+export type BeforeSubmitData = { [fioAddress: string]: any }; // todo: set proper type for tx
+
+export type BeforeSubmitProps = {
+  walletConfirmType: string;
+  onSuccess: (data: BeforeSubmitData) => void;
+  onCancel: () => void;
+  setProcessing: (processing: boolean) => void;
+  data: {
+    fioAddressItems: { fioWallet: FioWalletDoublet; name: string }[];
+  } | null;
+  processing: boolean;
+  fee?: number | null;
+};
