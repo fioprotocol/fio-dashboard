@@ -36,7 +36,7 @@ const isValidNetwork = (network: NetworkType, isNFT: boolean): boolean => {
       ? network.chainId === NETWORKS_LIST.Polygon.chainID ||
         network.chainId === NETWORKS_LIST.Mumbai.chainID
       : network.chainId === NETWORKS_LIST.Ethereum.chainID ||
-        network.chainId === NETWORKS_LIST.Rinkeby.chainID)
+        network.chainId === NETWORKS_LIST.Goerli.chainID)
   );
 };
 

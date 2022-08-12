@@ -10,6 +10,7 @@ import SubmitButton from '../../../../components/common/SubmitButton/SubmitButto
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
+import { CURRENCY_CODES } from '../../../../constants/common';
 
 import { formValidation } from './validation';
 import MathOp from '../../../../util/math';
@@ -100,9 +101,10 @@ const WrapDomainForm: React.FC<WrapDomainFormProps> = props => {
             <PriceBadge
               title="Fees"
               type={BADGE_TYPES.BLACK}
-              costNativeFio={unitedFee.nativeFio}
-              costFio={unitedFee.fio}
-              costUsdc={unitedFee.usdc}
+              paymentAmount={unitedFee.fio}
+              paymentCurrency={CURRENCY_CODES.FIO}
+              convertedPaymentAmount={unitedFee.usdc}
+              convertedPaymentCurrency={CURRENCY_CODES.USDC}
             />
 
             <div className={classes.additionalSubInfo}>
