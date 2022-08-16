@@ -255,6 +255,30 @@ class Fio {
     }
   }
 
+  async executeTx(action, signedTx) {
+    try {
+      const fioSdk = this.getMasterFioSDK();
+      const result = await fioSdk.executePreparedTrx(
+        EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
+        signedTx,
+      );
+
+      return result;
+    } catch (err) {
+      this.logError(err);
+
+      let errorObj = {
+        message: err.message,
+      };
+
+      if (err.json) {
+        errorObj = { ...errorObj, ...err.json };
+      }
+
+      return errorObj;
+    }
+  }
+
   checkTxError(tx) {
     const fieldError = Array.isArray(tx.fields) ? tx.fields.find(f => f.error) : null;
 

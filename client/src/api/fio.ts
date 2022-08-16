@@ -39,6 +39,13 @@ export interface TrxResponse {
   other?: AnyObject;
 }
 
+export interface SignedTxArgs {
+  compression: number;
+  packed_context_free_data: string;
+  packed_trx: string;
+  signatures: string[];
+}
+
 export type TrxResponsePaidBundles = TrxResponse & {
   bundlesCollected?: number;
 };

@@ -130,6 +130,7 @@ export class OrderItem extends Base {
           oi.domain, 
           oi.action, 
           oi.params, 
+          oi.data, 
           oi.price,
           o.id "orderId", 
           o.roe, 

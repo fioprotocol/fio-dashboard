@@ -64,7 +64,7 @@ import {
   WalletBalancesItem,
   ApiError,
 } from '../../types';
-import { BeforeSubmitData, BeforeSubmitProps } from './types';
+import { BeforeSubmitData, BeforeSubmitState } from './types';
 
 export const useContext = (): {
   cartItems: CartItem[];
@@ -80,7 +80,7 @@ export const useContext = (): {
   paymentOption: PaymentOptionsProps;
   paymentOptionError: ApiError;
   isFree: boolean;
-  beforeSubmitProps: BeforeSubmitProps | null;
+  beforeSubmitProps: BeforeSubmitState | null;
   beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   onClose: () => void;
   onFinish: (results: RegistrationResult) => Promise<void>;
@@ -110,7 +110,7 @@ export const useContext = (): {
   const [
     beforeSubmitProps,
     setBeforeSubmitProps,
-  ] = useState<BeforeSubmitProps | null>(null);
+  ] = useState<BeforeSubmitState | null>(null);
 
   const {
     location: { state },
@@ -303,10 +303,11 @@ export const useContext = (): {
     if (signTxItems.length) {
       return setBeforeSubmitProps({
         walletConfirmType: WALLET_CREATED_FROM.EDGE,
-        fee: 0,
+        fee: new MathOp(prices.nativeFio.address)
+          .mul(1.25) // +25%
+          .round(0, 2)
+          .toNumber(), // todo: handle custom domains
         data: { fioAddressItems: signTxItems },
-        processing: false, // todo: remove processing and  setProcessing from here
-        setProcessing: () => null,
         onSuccess: (data: BeforeSubmitData) => {
           handleSubmit(data);
         },

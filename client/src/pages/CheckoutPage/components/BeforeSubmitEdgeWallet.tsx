@@ -21,13 +21,15 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
 
       try {
         apis.fio.walletFioSDK.setSignedTrxReturnOption(true);
-        signedTxs[item.name] = await apis.fio.walletFioSDK.genericAction(
-          ACTIONS.registerFioAddress,
-          {
-            fioAddress: item.name,
-            maxFee: fee,
-          },
-        );
+        signedTxs[item.name] = {
+          signedTx: await apis.fio.walletFioSDK.genericAction(
+            ACTIONS.registerFioAddress,
+            {
+              fioAddress: item.name,
+              maxFee: fee,
+            },
+          ),
+        };
         apis.fio.clearWalletFioSdk();
       } catch (err) {
         apis.fio.clearWalletFioSdk();

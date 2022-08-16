@@ -161,7 +161,7 @@ export default class PaymentsWebhook extends Base {
                 {
                   action: orderItem.action,
                   status: BlockchainTransaction.STATUS.READY,
-                  data: orderItem.params,
+                  data: { params: orderItem.params },
                   orderItemId: orderItem.id,
                 },
                 {

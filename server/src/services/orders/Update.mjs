@@ -47,6 +47,7 @@ export default class OrdersUpdate extends Base {
                         cartItemId: 'string',
                         transaction_id: 'string',
                         transactions: { list_of: 'string' },
+                        data: 'any_object',
                       },
                     },
                   ],
@@ -121,7 +122,7 @@ export default class OrdersUpdate extends Base {
               bcTx = await BlockchainTransaction.create({
                 action: orderItem.action,
                 status: BlockchainTransaction.STATUS.REVIEW,
-                data: orderItem.params,
+                data: { params: orderItem.params },
                 orderItemId: orderItem.id,
               });
               blockchainTransactionId = bcTx.id;
@@ -168,7 +169,7 @@ export default class OrdersUpdate extends Base {
                 txId: transaction_id || 'free',
                 action: orderItem.action,
                 status: BlockchainTransaction.STATUS.SUCCESS,
-                data: orderItem.params,
+                data: { params: orderItem.params },
                 orderItemId: orderItem.id,
               });
               blockchainTransactionId = bcTx.id;
@@ -191,6 +192,20 @@ export default class OrdersUpdate extends Base {
         }
       } catch (e) {
         logger.error(`ORDER UPDATE ERROR ${order.id} #${order.number} - ${e.message}`);
+      }
+    }
+
+    if (data.results && data.results.paymentOption === Payment.PROCESSOR.CREDIT_CARD) {
+      for (const regItem of data.results.registered) {
+        const { fioName, data: itemData } = regItem;
+
+        const orderItem = order.OrderItems.find(
+          ({ address, domain }) => fioApi.setFioName(address, domain) === fioName,
+        );
+
+        if (orderItem && itemData) {
+          await OrderItem.update({ data: itemData }, { where: { id: orderItem.id } });
+        }
       }
     }
 

@@ -260,6 +260,31 @@ class OrdersJob extends CommonJob {
     return this.updateOrderStatus(orderId);
   }
 
+  async submitSignedTx(item, signedTx) {
+    this.postMessage(JSON.stringify(signedTx));
+
+    // todo: check the fee amount
+    const fee = this.feesJson[item.action];
+
+    // Send tokens to customer
+    try {
+      await fioApi.executeAction(
+        FIO_ACTIONS.transferTokens,
+        fioApi.getActionParams({
+          ...item,
+          amount: fee,
+          action: FIO_ACTIONS.transferTokens,
+        }),
+      );
+    } catch (e) {
+      //
+    }
+
+    // todo: check if received
+
+    return fioApi.executeTx(item.action, signedTx);
+  }
+
   async updateOrderStatus(orderId) {
     try {
       const items = await OrderItemStatus.getAllItemsStatuses(orderId);
@@ -299,12 +324,14 @@ class OrdersJob extends CommonJob {
         address,
         domain,
         action,
+        data,
         price,
         blockchainTransactionId,
         label,
         actor,
         permission,
       } = item;
+      const hasSignedTx = data && !!data.signedTx;
 
       this.postMessage(`Processing item id - ${id}`);
 
@@ -345,11 +372,16 @@ class OrdersJob extends CommonJob {
         });
 
         try {
-          const result = await fioApi.executeAction(
-            action,
-            fioApi.getActionParams(item),
-            auth,
-          );
+          let result;
+          if (hasSignedTx) {
+            result = await this.submitSignedTx(item, data.signedTx);
+          } else {
+            result = await fioApi.executeAction(
+              action,
+              fioApi.getActionParams(item),
+              auth,
+            );
+          }
 
           if (result.transaction_id) {
             this.postMessage(
