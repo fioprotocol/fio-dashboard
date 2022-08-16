@@ -8,6 +8,7 @@ import {
   Payment,
   ApiError,
 } from '../../types';
+import { SignedTxArgs } from '../../api/fio';
 
 type DefaultProps = {
   walletBalances: WalletBalancesItem;
@@ -38,16 +39,23 @@ export type StripePaymentOptionProps = {
   paymentOption: PaymentOptionsProps;
 } & DefaultProps;
 
-export type BeforeSubmitData = { [fioAddress: string]: any }; // todo: set proper type for tx
+export type BeforeSubmitData = {
+  [fioAddress: string]: {
+    signedTx?: SignedTxArgs;
+  };
+};
 
-export type BeforeSubmitProps = {
+export type BeforeSubmitState = {
   walletConfirmType: string;
   onSuccess: (data: BeforeSubmitData) => void;
   onCancel: () => void;
-  setProcessing: (processing: boolean) => void;
   data: {
     fioAddressItems: { fioWallet: FioWalletDoublet; name: string }[];
   } | null;
-  processing: boolean;
   fee?: number | null;
 };
+
+export type BeforeSubmitProps = {
+  setProcessing: (processing: boolean) => void;
+  processing: boolean;
+} & BeforeSubmitState;
