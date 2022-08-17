@@ -22,6 +22,7 @@ export const LINKS: { [linkKey: string]: string } = {
   ADMIN_ORDERS: 'ADMIN_ORDERS',
   ADMIN_REGULAR_USERS: 'ADMIN_REGULAR_USERS',
   ADMIN_PROFILE: 'ADMIN_PROFILE',
+  ADMIN_ACCOUNTS: 'ADMIN_ACCOUNTS',
 };
 
 export const LINK_LABELS: { [linkKey: string]: string } = {
@@ -46,6 +47,7 @@ export const LINK_LABELS: { [linkKey: string]: string } = {
   [LINKS.ADMIN_ORDERS]: 'Orders',
   [LINKS.ADMIN_REGULAR_USERS]: 'Users',
   [LINKS.ADMIN_PROFILE]: 'Profile',
+  [LINKS.ADMIN_ACCOUNTS]: 'Accounts',
 };
 
 export const fioNameLabels: { [fioNameType: string]: string } = {

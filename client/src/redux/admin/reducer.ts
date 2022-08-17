@@ -2,7 +2,12 @@ import { combineReducers } from 'redux';
 
 import * as actions from './actions';
 
-import { AdminUser, AdminUserProfile, OrderItem } from '../../types';
+import {
+  AdminUser,
+  AdminUserProfile,
+  FioAccountProfile,
+  OrderItem,
+} from '../../types';
 
 export default combineReducers({
   loading(state: boolean = false, action) {
@@ -12,6 +17,7 @@ export default combineReducers({
       case actions.GET_ORDERS_LIST_BY_ADMIN_REQUEST:
       case actions.GET_ORDER_BY_ADMIN_REQUEST:
       case actions.GET_ADMIN_USER_PROFILE_REQUEST:
+      case actions.GET_FIO_ACCOUNTS_PROFILES_REQUEST:
         return true;
       case actions.GET_ADMIN_USERS_SUCCESS:
       case actions.GET_ADMIN_USERS_FAILURE:
@@ -23,6 +29,8 @@ export default combineReducers({
       case actions.GET_ORDER_BY_ADMIN_FAILURE:
       case actions.GET_ADMIN_USER_PROFILE_SUCCESS:
       case actions.GET_ADMIN_USER_PROFILE_FAILURE:
+      case actions.GET_FIO_ACCOUNTS_PROFILES_SUCCESS:
+      case actions.GET_FIO_ACCOUNTS_PROFILES_FAILURE:
         return false;
       default:
         return state;
@@ -88,6 +96,26 @@ export default combineReducers({
         return state;
       case actions.DELETE_ADMIN_USER_SUCCESS:
         return state - 1;
+      default:
+        return state;
+    }
+  },
+  fioAccountsProfilesList(state: FioAccountProfile[] = [], action) {
+    switch (action.type) {
+      case actions.GET_FIO_ACCOUNTS_PROFILES_SUCCESS:
+        return action.data.accounts;
+      case actions.GET_FIO_ACCOUNTS_PROFILES_FAILURE:
+        return state;
+      default:
+        return state;
+    }
+  },
+  fioAccountsProfilesCount(state: number = 0, action) {
+    switch (action.type) {
+      case actions.GET_FIO_ACCOUNTS_PROFILES_SUCCESS:
+        return action.data.maxCount;
+      case actions.GET_FIO_ACCOUNTS_PROFILES_FAILURE:
+        return state;
       default:
         return state;
     }

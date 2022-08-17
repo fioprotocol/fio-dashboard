@@ -75,3 +75,19 @@ export const removeAdminUser = (adminUserId: string): CommonPromiseAction => ({
     minWaitTimeFunction(() => api.admin.removeAdmin(adminUserId), 1000),
   adminUserId,
 });
+
+export const GET_FIO_ACCOUNTS_PROFILES_REQUEST = `${prefix}/GET_FIO_ACCOUNTS_PROFILES_REQUEST`;
+export const GET_FIO_ACCOUNTS_PROFILES_SUCCESS = `${prefix}/GET_FIO_ACCOUNTS_PROFILES_SUCCESS`;
+export const GET_FIO_ACCOUNTS_PROFILES_FAILURE = `${prefix}/GET_FIO_ACCOUNTS_PROFILES_FAILURE`;
+
+export const getFioAccountsProfilesList = (
+  limit = 25,
+  offset = 0,
+): CommonPromiseAction => ({
+  types: [
+    GET_FIO_ACCOUNTS_PROFILES_REQUEST,
+    GET_FIO_ACCOUNTS_PROFILES_SUCCESS,
+    GET_FIO_ACCOUNTS_PROFILES_FAILURE,
+  ],
+  promise: (api: Api) => api.admin.fioAccountsProfilesList(limit, offset),
+});

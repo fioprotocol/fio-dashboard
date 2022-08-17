@@ -43,6 +43,18 @@ export class FioAccountProfile extends Base {
     });
   }
 
+  static attrs(type = 'default') {
+    const attributes = {
+      default: ['id', 'actor', 'permission', 'name', 'isDefault', 'createdAt'],
+    };
+
+    if (type in attributes) {
+      return attributes[type];
+    }
+
+    return attributes.default;
+  }
+
   static getItem(where) {
     return this.findOne({
       where: { ...where },
@@ -51,6 +63,18 @@ export class FioAccountProfile extends Base {
 
   static getDefault() {
     return this.getItem({ isDefault: true });
+  }
+
+  static accountsProfilesCount() {
+    return this.count();
+  }
+
+  static list(limit = 25, offset = 0) {
+    return this.findAll({
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+    });
   }
 
   static format({ id, name, actor, permission, isDefault }) {

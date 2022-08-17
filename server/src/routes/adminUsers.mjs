@@ -12,6 +12,9 @@ import OrdersList from '../services/adminUsers/OrdersList';
 import OrderInfo from '../services/adminUsers/OrderInfo.mjs';
 import RegularUserInfo from '../services/adminUsers/RegularUserInfo.mjs';
 import RegularUsersList from '../services/adminUsers/RegularUsersList.mjs';
+import FioAccountsList from '../services/adminUsers/FioAccountsList.mjs';
+import FioAccountProfileUpdate from '../services/adminUsers/FioAccountProfileUpdate.mjs';
+import FioAccountProfileCreate from '../services/adminUsers/FioAccountProfileCreate.mjs';
 
 export default {
   personalInfo: makeServiceRunner(PersonalInfo),
@@ -26,4 +29,10 @@ export default {
   statusesList: makeServiceRunner(AdminStatusesList, req => req.body),
   regularUserInfo: makeServiceRunner(RegularUserInfo, req => req.params),
   regularUsersList: makeServiceRunner(RegularUsersList, req => req.query),
+  fioAccountsProfilesList: makeServiceRunner(FioAccountsList, req => req.query),
+  createFioAccountProfile: makeServiceRunner(FioAccountProfileCreate, req => req.body),
+  updateFioAccountProfile: makeServiceRunner(FioAccountProfileUpdate, req => ({
+    ...req.body,
+    ...req.params,
+  })),
 };
