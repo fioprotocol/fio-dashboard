@@ -122,7 +122,10 @@ export class OrderItem extends Base {
 
   // Used to get order items needed to process
   // Common status is READY or RETRY
-  static async getActionRequired(status = BlockchainTransaction.STATUS.READY) {
+  static async getActionRequired(
+    status = BlockchainTransaction.STATUS.READY,
+    limit = 20,
+  ) {
     const [actions] = await OrderItem.sequelize.query(`
         SELECT 
           oi.id, 
@@ -152,7 +155,7 @@ export class OrderItem extends Base {
         WHERE ois."paymentStatus" = ${Payment.STATUS.COMPLETED} 
           AND ois."txStatus" = ${status}
         ORDER BY oi.id
-        LIMIT 100
+        LIMIT ${limit}
       `);
 
     return actions;
