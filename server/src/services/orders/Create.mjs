@@ -29,6 +29,7 @@ export default class OrdersCreate extends Base {
                   nativeFio: 'string',
                   price: 'string',
                   priceCurrency: 'string',
+                  data: 'any_object',
                 },
               },
             ],
@@ -114,6 +115,7 @@ export default class OrdersCreate extends Base {
         nativeFio,
         price,
         priceCurrency,
+        data: itemData,
       } of items) {
         const orderItem = await OrderItem.create(
           {
@@ -124,6 +126,7 @@ export default class OrdersCreate extends Base {
             nativeFio,
             price,
             priceCurrency: priceCurrency || Payment.CURRENCY.USDC,
+            data: itemData ? { ...itemData } : null,
             orderId: order.id,
           },
           { transaction: t },

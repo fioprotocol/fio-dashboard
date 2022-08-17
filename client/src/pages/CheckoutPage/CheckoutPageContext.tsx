@@ -306,7 +306,7 @@ export const useContext = (): {
         fee: new MathOp(prices.nativeFio.address)
           .mul(1.25) // +25%
           .round(0, 2)
-          .toNumber(), // todo: handle custom domains
+          .toNumber(),
         data: { fioAddressItems: signTxItems },
         onSuccess: (data: BeforeSubmitData) => {
           handleSubmit(data);

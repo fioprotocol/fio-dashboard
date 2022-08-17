@@ -36,6 +36,25 @@ class OrdersJob extends CommonJob {
     this.feesJson = {};
   }
 
+  async getFeeForAction(action) {
+    let fee;
+
+    if (
+      this.feesUpdatedAt &&
+      !Var.updateRequired(this.feesUpdatedAt, FEES_UPDATE_TIMEOUT_SEC) &&
+      this.feesJson[action]
+    ) {
+      fee = this.feesJson[action];
+    } else {
+      fee = await fioApi.getFee(action);
+      this.feesJson[action] = fee;
+      this.feesUpdatedAt = new Date();
+      await Var.setValue(FEES_VAR_KEY, JSON.stringify(this.feesJson));
+    }
+
+    return fee;
+  }
+
   async handleFail(item, errorNotes) {
     const { id, blockchainTransactionId } = item;
     return BlockchainTransaction.sequelize.transaction(async t => {
@@ -173,19 +192,11 @@ class OrdersJob extends CommonJob {
   }
 
   async checkPriceChanges(item, currentRoe) {
-    let fee;
+    let fee = await this.getFeeForAction(item.action);
 
-    if (
-      this.feesUpdatedAt &&
-      !Var.updateRequired(this.feesUpdatedAt, FEES_UPDATE_TIMEOUT_SEC) &&
-      this.feesJson[item.action]
-    ) {
-      fee = this.feesJson[item.action];
-    } else {
-      fee = await fioApi.getFee(item.action);
-      this.feesJson[item.action] = fee;
-      this.feesUpdatedAt = new Date();
-      await Var.setValue(FEES_VAR_KEY, JSON.stringify(this.feesJson));
+    if (item.data && item.data.hasCustomDomain) {
+      const domainFee = await this.getFeeForAction(FIO_ACTIONS.registerFioDomain);
+      fee = new MathOp(fee).add(domainFee).toNumber();
     }
 
     const currentPrice = fioApi.convertFioToUsdc(fee, currentRoe);
@@ -261,8 +272,6 @@ class OrdersJob extends CommonJob {
   }
 
   async submitSignedTx(item, signedTx) {
-    this.postMessage(JSON.stringify(signedTx));
-
     // todo: check the fee amount
     const fee = this.feesJson[item.action];
 
@@ -283,6 +292,66 @@ class OrdersJob extends CommonJob {
     // todo: check if received
 
     return fioApi.executeTx(item.action, signedTx);
+  }
+
+  // returns null when success and result when error
+  async handleCustomDomain(item, auth) {
+    const { domain, data } = item;
+    if (data.hasCustomDomain) {
+      try {
+        const result = await fioApi.executeAction(
+          FIO_ACTIONS.registerFioDomain,
+          fioApi.getActionParams({
+            action: FIO_ACTIONS.registerFioDomain,
+            domain,
+            publicKey: item.publicKey,
+          }),
+          auth,
+        );
+
+        if (result.transaction_id) {
+          const bcTx = await BlockchainTransaction.create({
+            action: item.action,
+            txId: result.transaction_id,
+            blockNum: result.block_num,
+            blockTime: result.block_time ? result.block_time + 'Z' : new Date(),
+            status: BlockchainTransaction.STATUS.SUCCESS,
+            orderItemId: item.id,
+          });
+
+          await BlockchainTransactionEventLog.create({
+            status: BlockchainTransaction.STATUS.SUCCESS,
+            statusNotes: `Item: ${domain}. Action ${item.action}.`,
+            blockchainTransactionId: bcTx.id,
+          });
+
+          return null;
+        }
+
+        return result;
+      } catch (e) {
+        return { error: e };
+      }
+    }
+
+    return null;
+  }
+
+  async executeOrderItemAction(item, auth, hasSignedTx) {
+    const { action, data } = item;
+
+    // Register custom domain if needed
+    const customDomainResult = await this.handleCustomDomain(item, auth);
+    if (customDomainResult) return customDomainResult;
+
+    let result;
+    if (hasSignedTx) {
+      result = await this.submitSignedTx(item, data.signedTx);
+    } else {
+      result = await fioApi.executeAction(action, fioApi.getActionParams(item), auth);
+    }
+
+    return result;
   }
 
   async updateOrderStatus(orderId) {
@@ -315,7 +384,7 @@ class OrdersJob extends CommonJob {
     this.postMessage(`Process order items - ${items.length}`);
 
     const defaultFioAccountProfile = await FioAccountProfile.getDefault();
-    const processOrderItem = async item => {
+    const processOrderItem = item => async () => {
       if (this.isCancelled) return false;
 
       const {
@@ -372,16 +441,7 @@ class OrdersJob extends CommonJob {
         });
 
         try {
-          let result;
-          if (hasSignedTx) {
-            result = await this.submitSignedTx(item, data.signedTx);
-          } else {
-            result = await fioApi.executeAction(
-              action,
-              fioApi.getActionParams(item),
-              auth,
-            );
-          }
+          const result = await this.executeOrderItemAction(item, auth, hasSignedTx);
 
           if (result.transaction_id) {
             this.postMessage(
@@ -437,9 +497,15 @@ class OrdersJob extends CommonJob {
       return true;
     };
 
-    const methods = Object.values(items).map(item => processOrderItem(item));
+    // We want to process items in one order synchronously
+    const methodsByOrder = items.reduce((acc, item) => {
+      if (!acc[item.orderId]) acc[item.orderId] = [];
+      acc[item.orderId].push(processOrderItem(item));
 
-    await this.executeActions(methods);
+      return acc;
+    }, {});
+
+    await this.executeMethodsArray(Object.values(methodsByOrder), items.length);
 
     this.finish();
   }

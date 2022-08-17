@@ -204,7 +204,10 @@ export default class OrdersUpdate extends Base {
         );
 
         if (orderItem && itemData) {
-          await OrderItem.update({ data: itemData }, { where: { id: orderItem.id } });
+          await OrderItem.update(
+            { data: { ...(orderItem.data ? orderItem.data : {}), ...itemData } },
+            { where: { id: orderItem.id } },
+          );
         }
       }
     }

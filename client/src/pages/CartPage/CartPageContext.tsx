@@ -244,19 +244,34 @@ export const useContext = (): UseContextReturnType => {
         publicKey: paymentWalletPublicKey,
         paymentProcessor: paymentOption,
         items: cartItems.map(
-          ({ address, domain, isFree, costNativeFio, costUsdc }) => ({
-            action: address
-              ? ACTIONS.registerFioAddress
-              : ACTIONS.registerFioDomain,
-            address,
-            domain,
-            params: {
-              owner_fio_public_key: paymentWalletPublicKey,
-            },
-            nativeFio: `${costNativeFio || 0}`,
-            price: costUsdc,
-            priceCurrency: CURRENCY_CODES.USDC,
-          }),
+          ({ address, domain, costNativeFio, costUsdc, hasCustomDomain }) => {
+            const data: {
+              hasCustomDomain?: boolean;
+              hasCustomDomainFee?: number;
+            } = {};
+
+            if (hasCustomDomain) {
+              data.hasCustomDomain = hasCustomDomain;
+              data.hasCustomDomainFee = new MathOp(costNativeFio)
+                .sub(prices.nativeFio.address)
+                .toNumber();
+            }
+
+            return {
+              action: address
+                ? ACTIONS.registerFioAddress
+                : ACTIONS.registerFioDomain,
+              address,
+              domain,
+              params: {
+                owner_fio_public_key: paymentWalletPublicKey,
+              },
+              nativeFio: `${costNativeFio || 0}`,
+              price: costUsdc,
+              priceCurrency: CURRENCY_CODES.USDC,
+              data,
+            };
+          },
         ),
       }),
     );
