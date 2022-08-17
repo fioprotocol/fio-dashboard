@@ -1,7 +1,8 @@
 import Base from './base';
 
 import {
-  AdminInviteResponse,
+  AdminFioAccountsProfilesListResponse,
+  AdminGeneralCreateResponse,
   AdminOrderItemResponse,
   AdminOrdersListResponse,
   AdminUsersListResponse,
@@ -12,6 +13,29 @@ import {
 export default class Admin extends Base {
   adminList(limit: number, offset: number): Promise<AdminUsersListResponse> {
     return this.apiClient.get('admin/list', { limit, offset });
+  }
+  fioAccountsProfilesList(
+    limit: number,
+    offset: number,
+  ): Promise<AdminFioAccountsProfilesListResponse> {
+    return this.apiClient.get('admin/accounts/list', { limit, offset });
+  }
+  createFioAccountProfile(data: {
+    name: string;
+    actor: string;
+    permission: string;
+  }): Promise<AdminGeneralCreateResponse> {
+    return this.apiClient.post(`admin/accounts`, data);
+  }
+  editFioAccountProfile(
+    data: {
+      name: string;
+      actor: string;
+      permission: string;
+    },
+    id: string,
+  ): Promise<AdminGeneralCreateResponse> {
+    return this.apiClient.post(`admin/accounts/${id}`, data);
   }
   adminUserProfile(id: string): Promise<AdminUsersListResponse> {
     return this.apiClient.get(`admin/info/${id}`);
@@ -25,7 +49,7 @@ export default class Admin extends Base {
   removeAdmin(adminUserId: string): Promise<RemoveAdminResponse> {
     return this.apiClient.delete(`admin`, { adminUserId });
   }
-  inviteAdmin(email: string): Promise<AdminInviteResponse> {
+  inviteAdmin(email: string): Promise<AdminGeneralCreateResponse> {
     return this.apiClient.post(`admin/invite`, { email });
   }
   checkIsAdminInvited({

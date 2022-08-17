@@ -8,8 +8,8 @@ import { FIOSDK_LIB } from './api/fio';
 import { CONTAINED_FLOW_ACTIONS } from './constants/containedFlow';
 import {
   BC_TX_STATUSES,
-  PURCHASE_PROVIDER,
   PAYMENT_OPTIONS,
+  PURCHASE_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from './constants/purchase';
 import { CURRENCY_CODES } from './constants/common';
@@ -548,6 +548,15 @@ export type AdminUser = {
   status: { status: string; id: number };
   role: { role: string; id: number };
   lastLogIn?: string;
+  createdAt: string;
+};
+
+export type FioAccountProfile = {
+  id: string;
+  actor: string;
+  permission: string;
+  name: string;
+  isDefault: boolean;
   createdAt: string;
 };
 

@@ -8,6 +8,10 @@ export const adminUsersList = (state: ReduxState): AdminUser[] =>
   state[prefix].adminUsersList;
 export const adminUsersCount = (state: ReduxState): number =>
   state[prefix].adminUsersCount;
+export const fioAccountsProfilesList = (state: ReduxState): AdminUser[] =>
+  state[prefix].fioAccountsProfilesList;
+export const fioAccountsProfilesCount = (state: ReduxState): number =>
+  state[prefix].fioAccountsProfilesCount;
 export const ordersList = (state: ReduxState): OrderItem[] =>
   state[prefix].ordersList;
 export const ordersCount = (state: ReduxState): number =>
