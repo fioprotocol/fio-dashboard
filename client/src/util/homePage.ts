@@ -25,18 +25,23 @@ export const handleHomePageContent = ({
   let subtitle = null;
   let logoSrc = null;
   let actionText = null;
+  let initialValues = null;
   const actionName = removeExtraCharactersFromString(
     containedFlowQueryParams?.action,
   );
 
   if (refProfileInfo?.settings) {
     const {
-      settings: { img, actions },
+      settings: { img, actions, preselectedDomain },
       subTitle,
       title: refTitle,
     } = refProfileInfo;
 
     logoSrc = img;
+
+    initialValues = {
+      domain: preselectedDomain,
+    };
 
     if (isContainedFlow) {
       title =
@@ -72,5 +77,6 @@ export const handleHomePageContent = ({
     hasMinHeight: isContainedFlow,
     showSignInWidget: isContainedFlow,
     hideBottomPlug: isContainedFlow,
+    initialValues,
   };
 };
