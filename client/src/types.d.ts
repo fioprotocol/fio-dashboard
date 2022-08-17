@@ -282,6 +282,7 @@ export type RefProfile = {
   settings: {
     domains: string[];
     allowCustomDomain: boolean;
+    preselectedDomain?: string;
     actions: Record<
       ContainedFlowActionSettingsKey,
       {
