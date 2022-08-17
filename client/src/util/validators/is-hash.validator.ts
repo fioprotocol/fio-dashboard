@@ -6,7 +6,7 @@ export const isHashValidator: FieldValidationFunctionSync = ({
   value,
   message,
 }) => {
-  const succeeded = HASH_REGEX.test(value);
+  const succeeded = value ? HASH_REGEX.test(value) : true;
 
   const messageString = succeeded
     ? ''
