@@ -32,6 +32,7 @@ export const handleHomePageContent = ({
   hasMinHeight: boolean;
   showSignInWidget: boolean;
   hideBottomPlug: boolean;
+  initialValues: { domain?: string };
 } => {
   let title = null;
   let subtitle = null;
