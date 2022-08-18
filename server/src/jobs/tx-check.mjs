@@ -25,7 +25,7 @@ class TxCheckJob extends CommonJob {
 
     this.postMessage(`Process tx items - ${items.length}`);
 
-    const processTxItem = async item => {
+    const processTxItem = item => async () => {
       if (this.isCancelled) return false;
 
       const { id, address, domain, action, params, publicKey, btId, orderId } = item;

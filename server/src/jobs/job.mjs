@@ -34,7 +34,26 @@ class CommonJob {
   async execute() {}
 
   async executeActions(methods) {
-    await Promise.allSettled(methods);
+    const amount = methods.length;
+
+    await new Promise(resolve => {
+      let intervalId = null;
+      let itemsResolved = 0;
+      methods.forEach(async method => {
+        try {
+          await method();
+        } catch (e) {
+          //
+        }
+        ++itemsResolved;
+      });
+      intervalId = setInterval(() => {
+        if (itemsResolved === amount) {
+          clearInterval(intervalId);
+          resolve();
+        }
+      }, 500);
+    });
   }
 
   async executeMethodsArray(methods, amount) {
