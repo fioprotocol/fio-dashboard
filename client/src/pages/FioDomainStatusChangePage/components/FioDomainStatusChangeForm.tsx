@@ -35,7 +35,7 @@ const FioDomainStatusChangeForm: React.FC<FormProps> = props => {
     handleSubmit,
   } = props;
 
-  const { nativeFio: fio, usdc } = feePrice;
+  const { fio, usdc } = feePrice;
 
   return (
     <PseudoModalContainer
