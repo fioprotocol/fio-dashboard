@@ -67,7 +67,7 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
   }, [fioAddresses]);
 
   const onSubmit = async (data: UnWrapTokensValues) => {
-    const { amount, fee } = data;
+    const { amount, fee, fioAddress } = data;
 
     if (wFioBalance) {
       try {
@@ -80,7 +80,7 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
         );
 
         const transaction = await wFioWithSigner.unwrap(
-          addressInPage,
+          fioAddress,
           wFioAmount,
           {
             gasLimit: fee?.gasLimit || DEFAULT_GAS_LIMIT,
