@@ -30,19 +30,24 @@ import { FIO_ADDRESS_DELIMITER, FIO_ACTIONS } from '../config/constants.js';
 
 import logger from '../logger.mjs';
 
+const ERROR_CODES = {
+  SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
+};
+
 class OrdersJob extends CommonJob {
   constructor() {
     super();
     this.feesJson = {};
   }
 
-  async getFeeForAction(action) {
+  async getFeeForAction(action, forceUpdate = false) {
     let fee;
 
     if (
       this.feesUpdatedAt &&
       !Var.updateRequired(this.feesUpdatedAt, FEES_UPDATE_TIMEOUT_SEC) &&
-      this.feesJson[action]
+      this.feesJson[action] &&
+      !forceUpdate
     ) {
       fee = this.feesJson[action];
     } else {
@@ -271,27 +276,70 @@ class OrdersJob extends CommonJob {
     return this.updateOrderStatus(orderId);
   }
 
-  async submitSignedTx(item, signedTx) {
-    // todo: check the fee amount
-    const fee = this.feesJson[item.action];
+  async checkTokensReceived(txId, publicKey) {
+    // todo:
+    this.postMessage(`Checking tokens received for ${publicKey} - ${txId}`);
+    await new Promise(resolve => setTimeout(resolve, 2000));
+  }
+
+  async submitSignedTx(orderItem, balanceDifference = null) {
+    const { data } = orderItem;
+    const fee = this.feesJson[orderItem.action];
 
     // Send tokens to customer
     try {
-      await fioApi.executeAction(
+      const transferRes = await fioApi.executeAction(
         FIO_ACTIONS.transferTokens,
         fioApi.getActionParams({
-          ...item,
-          amount: fee,
+          publicKey: data.signingWallet || orderItem.publicKey,
+          amount: balanceDifference || fee,
           action: FIO_ACTIONS.transferTokens,
         }),
       );
+
+      if (!transferRes.transaction_id)
+        throw new Error(JSON.stringify(fioApi.checkTxError(transferRes)));
+
+      await this.checkTokensReceived(
+        transferRes.transaction_id,
+        data.signingWallet || item.publicKey,
+      );
     } catch (e) {
-      //
+      return {
+        message: `Transfer Tokens error. Customer did not receive the tokens to execute the transaction - ${JSON.stringify(
+          e,
+        )}`,
+      };
     }
 
-    // todo: check if received
+    const result = await fioApi.executeTx(item.action, data.signedTx);
 
-    return fioApi.executeTx(item.action, signedTx);
+    if (!result.transaction_id) {
+      const { notes } = fioApi.checkTxError(result);
+
+      if (notes === INSUFFICIENT_FUNDS_ERR_MESSAGE && !balanceDifference) {
+        const updatedFee = await this.getFeeForAction(orderItem.action, true);
+
+        if (new MathOp(updatedFee).gt(fee)) {
+          return this.submitSignedTx(item, new MathOp(updatedFee).sub(fee).toString());
+        }
+
+        return {
+          message: `Submit signed tx error, received '${INSUFFICIENT_FUNDS_ERR_MESSAGE}' but fee is not changed or even decreased.`,
+          code: ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP,
+        };
+      }
+
+      if (notes === INSUFFICIENT_FUNDS_ERR_MESSAGE && balanceDifference)
+        return {
+          message: `Submit signed tx error, received '${INSUFFICIENT_FUNDS_ERR_MESSAGE}' second time.`,
+          code: ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP,
+        };
+
+      result.code = ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP;
+    }
+
+    return result;
   }
 
   // returns null when success and result when error
@@ -338,7 +386,7 @@ class OrdersJob extends CommonJob {
   }
 
   async executeOrderItemAction(item, auth, hasSignedTx) {
-    const { action, data } = item;
+    const { action } = item;
 
     // Register custom domain if needed
     const customDomainResult = await this.handleCustomDomain(item, auth);
@@ -346,7 +394,7 @@ class OrdersJob extends CommonJob {
 
     let result;
     if (hasSignedTx) {
-      result = await this.submitSignedTx(item, data.signedTx);
+      result = await this.submitSignedTx(item);
     } else {
       result = await fioApi.executeAction(action, fioApi.getActionParams(item), auth);
     }
@@ -453,22 +501,24 @@ class OrdersJob extends CommonJob {
           }
 
           // transaction failed
-          const { notes } = fioApi.checkTxError(result);
+          const { notes, code } = fioApi.checkTxError(result);
 
-          // Refund order payment for fio action
-          const actionRefundPayment = await Payment.create({
-            status: Payment.STATUS.COMPLETED,
-            processor: Payment.PROCESSOR.SYSTEM,
-            orderId,
-            spentType: Payment.SPENT_TYPE.ACTION_REFUND,
-            price,
-            currency: Payment.CURRENCY.USDC,
-          });
-          await PaymentEventLog.create({
-            status: PaymentEventLog.STATUS.SUCCESS,
-            statusNotes: `${fioName}. Action: ${action}`,
-            paymentId: actionRefundPayment.id,
-          });
+          // Refund order payment for fio action. Do not refund if system sent tokens to user's wallet to execute signed tx
+          if (code !== ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP) {
+            const actionRefundPayment = await Payment.create({
+              status: Payment.STATUS.COMPLETED,
+              processor: Payment.PROCESSOR.SYSTEM,
+              orderId,
+              spentType: Payment.SPENT_TYPE.ACTION_REFUND,
+              price,
+              currency: Payment.CURRENCY.USDC,
+            });
+            await PaymentEventLog.create({
+              status: PaymentEventLog.STATUS.SUCCESS,
+              statusNotes: `${fioName}. Action: ${action}`,
+              paymentId: actionRefundPayment.id,
+            });
+          }
 
           // try to execute using fallback account when no funds
           if (
@@ -484,7 +534,9 @@ class OrdersJob extends CommonJob {
           }
 
           await this.handleFail(item, notes);
-          await this.refundUser(item);
+
+          if (code !== ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP)
+            await this.refundUser(item);
         } catch (error) {
           logger.error(`ORDER ITEM PROCESSING ERROR ${item.id}`, error);
         }
