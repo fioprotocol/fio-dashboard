@@ -60,8 +60,8 @@ class OrdersJob extends CommonJob {
     return fee;
   }
 
-  async handleFail(item, errorNotes) {
-    const { id, blockchainTransactionId } = item;
+  async handleFail(orderItem, errorNotes) {
+    const { id, blockchainTransactionId } = orderItem;
     return BlockchainTransaction.sequelize.transaction(async t => {
       await BlockchainTransaction.update(
         {
@@ -196,37 +196,40 @@ class OrdersJob extends CommonJob {
     }
   }
 
-  async checkPriceChanges(item, currentRoe) {
-    let fee = await this.getFeeForAction(item.action);
+  async checkPriceChanges(orderItem, currentRoe) {
+    let fee = await this.getFeeForAction(orderItem.action);
 
-    if (item.data && item.data.hasCustomDomain) {
+    if (orderItem.data && orderItem.data.hasCustomDomain) {
       const domainFee = await this.getFeeForAction(FIO_ACTIONS.registerFioDomain);
       fee = new MathOp(fee).add(domainFee).toNumber();
     }
 
     const currentPrice = fioApi.convertFioToUsdc(fee, currentRoe);
 
-    const threshold = new MathOp(item.price)
+    const threshold = new MathOp(orderItem.price)
       .mul(0.25)
       .round(2, 1)
       .toNumber();
 
-    const topThreshold = new MathOp(item.price).add(threshold).toNumber();
-    const bottomThreshold = new MathOp(item.price).sub(threshold).toNumber();
+    const topThreshold = new MathOp(orderItem.price).add(threshold).toNumber();
+    const bottomThreshold = new MathOp(orderItem.price).sub(threshold).toNumber();
 
     if (
       new MathOp(topThreshold).lt(currentPrice) ||
       new MathOp(bottomThreshold).gt(currentPrice)
     ) {
-      await this.handleFail(item, `PRICES_CHANGED - roe: ${currentRoe} - fee: ${fee}`);
-      await this.refundUser({ ...item, roe: currentRoe });
+      await this.handleFail(
+        orderItem,
+        `PRICES_CHANGED - roe: ${currentRoe} - fee: ${fee}`,
+      );
+      await this.refundUser({ ...orderItem, roe: currentRoe });
 
       throw new Error(`PRICES_CHANGED - roe: ${currentRoe} - fee: ${fee}`);
     }
   }
 
-  async registerFree(fioName, item) {
-    const { regRefCode, regRefApiToken, publicKey, orderId } = item;
+  async registerFree(fioName, orderItem) {
+    const { regRefCode, regRefApiToken, publicKey, orderId } = orderItem;
 
     let res;
     try {
@@ -242,7 +245,7 @@ class OrdersJob extends CommonJob {
         message = error.response.body.error;
       }
       logger.error(`Register free address error: ${message}`);
-      await this.handleFail(item, message);
+      await this.handleFail(orderItem, message);
 
       return this.updateOrderStatus(orderId);
     }
@@ -253,18 +256,18 @@ class OrdersJob extends CommonJob {
           transaction_id: 'free',
           block_num: 0,
         },
-        item.id,
-        item.blockchainTransactionId,
+        orderItem.id,
+        orderItem.blockchainTransactionId,
       );
       this.postMessage(
-        `Processing item transactions created (FREE) - ${item.id} / ${JSON.stringify(
+        `Processing item transactions created (FREE) - ${orderItem.id} / ${JSON.stringify(
           res,
         )}`,
       );
 
       const freeAddressRecord = new FreeAddress({
         name: fioName,
-        userId: item.userId,
+        userId: orderItem.userId,
       });
       await freeAddressRecord.save();
 
@@ -272,7 +275,7 @@ class OrdersJob extends CommonJob {
     }
 
     logger.error(`Register free address error. No response data`);
-    await this.handleFail(item, 'Server error. No response data');
+    await this.handleFail(orderItem, 'Server error. No response data');
     return this.updateOrderStatus(orderId);
   }
 
@@ -302,7 +305,7 @@ class OrdersJob extends CommonJob {
 
       await this.checkTokensReceived(
         transferRes.transaction_id,
-        data.signingWallet || item.publicKey,
+        data.signingWallet || orderItem.publicKey,
       );
     } catch (e) {
       return {
@@ -312,7 +315,7 @@ class OrdersJob extends CommonJob {
       };
     }
 
-    const result = await fioApi.executeTx(item.action, data.signedTx);
+    const result = await fioApi.executeTx(orderItem.action, data.signedTx);
 
     if (!result.transaction_id) {
       const { notes } = fioApi.checkTxError(result);
@@ -321,7 +324,10 @@ class OrdersJob extends CommonJob {
         const updatedFee = await this.getFeeForAction(orderItem.action, true);
 
         if (new MathOp(updatedFee).gt(fee)) {
-          return this.submitSignedTx(item, new MathOp(updatedFee).sub(fee).toString());
+          return this.submitSignedTx(
+            orderItem,
+            new MathOp(updatedFee).sub(fee).toString(),
+          );
         }
 
         return {
@@ -343,8 +349,8 @@ class OrdersJob extends CommonJob {
   }
 
   // returns null when success and result when error
-  async handleCustomDomain(item, auth) {
-    const { domain, data } = item;
+  async handleCustomDomain(orderItem, auth) {
+    const { domain, data } = orderItem;
     if (data.hasCustomDomain) {
       try {
         const result = await fioApi.executeAction(
@@ -352,24 +358,24 @@ class OrdersJob extends CommonJob {
           fioApi.getActionParams({
             action: FIO_ACTIONS.registerFioDomain,
             domain,
-            publicKey: item.publicKey,
+            publicKey: orderItem.publicKey,
           }),
           auth,
         );
 
         if (result.transaction_id) {
           const bcTx = await BlockchainTransaction.create({
-            action: item.action,
+            action: orderItem.action,
             txId: result.transaction_id,
             blockNum: result.block_num,
             blockTime: result.block_time ? result.block_time + 'Z' : new Date(),
             status: BlockchainTransaction.STATUS.SUCCESS,
-            orderItemId: item.id,
+            orderItemId: orderItem.id,
           });
 
           await BlockchainTransactionEventLog.create({
             status: BlockchainTransaction.STATUS.SUCCESS,
-            statusNotes: `Item: ${domain}. Action ${item.action}.`,
+            statusNotes: `Item: ${domain}. Action ${orderItem.action}.`,
             blockchainTransactionId: bcTx.id,
           });
 
@@ -385,18 +391,22 @@ class OrdersJob extends CommonJob {
     return null;
   }
 
-  async executeOrderItemAction(item, auth, hasSignedTx) {
-    const { action } = item;
+  async executeOrderItemAction(orderItem, auth, hasSignedTx) {
+    const { action } = orderItem;
 
     // Register custom domain if needed
-    const customDomainResult = await this.handleCustomDomain(item, auth);
+    const customDomainResult = await this.handleCustomDomain(orderItem, auth);
     if (customDomainResult) return customDomainResult;
 
     let result;
     if (hasSignedTx) {
-      result = await this.submitSignedTx(item);
+      result = await this.submitSignedTx(orderItem);
     } else {
-      result = await fioApi.executeAction(action, fioApi.getActionParams(item), auth);
+      result = await fioApi.executeAction(
+        action,
+        fioApi.getActionParams(orderItem),
+        auth,
+      );
     }
 
     return result;
@@ -432,7 +442,7 @@ class OrdersJob extends CommonJob {
     this.postMessage(`Process order items - ${items.length}`);
 
     const defaultFioAccountProfile = await FioAccountProfile.getDefault();
-    const processOrderItem = item => async () => {
+    const processOrderItem = orderItem => async () => {
       if (this.isCancelled) return false;
 
       const {
@@ -447,7 +457,7 @@ class OrdersJob extends CommonJob {
         label,
         actor,
         permission,
-      } = item;
+      } = orderItem;
       const hasSignedTx = data && !!data.signedTx;
 
       this.postMessage(`Processing item id - ${id}`);
@@ -467,11 +477,11 @@ class OrdersJob extends CommonJob {
 
         // Handle free addresses
         if (!price || price === '0') {
-          return this.registerFree(fioName, item);
+          return this.registerFree(fioName, orderItem);
         }
 
         // Check if fee/roe changed and handle changes
-        await this.checkPriceChanges(item, roe);
+        await this.checkPriceChanges(orderItem, roe);
 
         // Spend order payment on fio action
         const actionPayment = await Payment.create({
@@ -489,7 +499,7 @@ class OrdersJob extends CommonJob {
         });
 
         try {
-          const result = await this.executeOrderItemAction(item, auth, hasSignedTx);
+          const result = await this.executeOrderItemAction(orderItem, auth, hasSignedTx);
 
           if (result.transaction_id) {
             this.postMessage(
@@ -527,21 +537,21 @@ class OrdersJob extends CommonJob {
           ) {
             await sendInsufficientFundsNotification(fioName, label, auth);
             return processOrderItem({
-              ...item,
+              ...orderItem,
               actor: process.env.REG_FALLBACK_ACCOUNT,
               permission: process.env.REG_FALLBACK_PERMISSION,
             });
           }
 
-          await this.handleFail(item, notes);
+          await this.handleFail(orderItem, notes);
 
           if (code !== ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP)
-            await this.refundUser(item);
+            await this.refundUser(orderItem);
         } catch (error) {
-          logger.error(`ORDER ITEM PROCESSING ERROR ${item.id}`, error);
+          logger.error(`ORDER ITEM PROCESSING ERROR ${orderItem.id}`, error);
         }
       } catch (e) {
-        logger.error(`ORDER ITEM PROCESSING ERROR ${item.id}`, e);
+        logger.error(`ORDER ITEM PROCESSING ERROR ${orderItem.id}`, e);
       }
 
       await this.updateOrderStatus(orderId);
