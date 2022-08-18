@@ -383,7 +383,7 @@ class WalletDataJob extends CommonJob {
     await fioApi.getRawAbi();
     let offset = 0;
 
-    const processWallet = async wallet => {
+    const processWallet = wallet => async () => {
       if (this.isCancelled) return false;
 
       this.postMessage(`Process wallet - ${wallet.id}`);
@@ -428,14 +428,14 @@ class WalletDataJob extends CommonJob {
         chunks.push(method);
         if (chunks.length === CHUNKS_LIMIT) {
           this.postMessage(`Process chunk - ${chunks.length}`);
-          await Promise.allSettled(chunks);
+          await this.executeActions(chunks);
           chunks = [];
         }
       }
 
       if (chunks.length) {
         this.postMessage(`Process chunk - ${chunks.length}`);
-        await Promise.allSettled(chunks);
+        await this.executeActions(chunks);
       }
 
       offset += ITEMS_PER_FETCH;

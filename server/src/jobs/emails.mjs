@@ -45,7 +45,7 @@ class EmailsJob extends CommonJob {
 
     this.postMessage(`Process notifications - ${notifications.length}`);
 
-    const handleNotifications = async notifications => {
+    const handleNotifications = notifications => async () => {
       if (this.isCancelled) return false;
 
       this.postMessage(`Processing notifications id - ${notifications.map(n => n.id)}`);
