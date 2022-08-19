@@ -66,6 +66,8 @@ import {
 } from '../../types';
 import { BeforeSubmitData, BeforeSubmitState } from './types';
 
+const SIGN_TX_MAX_FEE_COEFF = 1.5;
+
 export const useContext = (): {
   cartItems: CartItem[];
   walletBalancesAvailable: WalletBalancesItem;
@@ -317,7 +319,7 @@ export const useContext = (): {
       return setBeforeSubmitProps({
         walletConfirmType: WALLET_CREATED_FROM.EDGE,
         fee: new MathOp(prices.nativeFio.address)
-          .mul(1.25) // +25%
+          .mul(SIGN_TX_MAX_FEE_COEFF) // +50%
           .round(0, 2)
           .toNumber(),
         data: { fioAddressItems: signTxItems },
