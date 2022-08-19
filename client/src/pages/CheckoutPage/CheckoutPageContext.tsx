@@ -180,9 +180,6 @@ export const useContext = (): {
             action: ACTIONS.registerFioAddress,
             address,
             domain,
-            params: {
-              owner_fio_public_key: paymentWalletPublicKey,
-            },
             nativeFio: `${costNativeFio || 0}`,
             price: '0',
             priceCurrency: CURRENCY_CODES.USDC,
