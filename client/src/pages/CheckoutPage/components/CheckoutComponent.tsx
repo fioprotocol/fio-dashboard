@@ -40,7 +40,7 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
             <CartItem
               item={item}
               key={item.id}
-              primaryCurrency={payment.currency}
+              primaryCurrency={payment?.currency}
             />
           ))}
       </div>

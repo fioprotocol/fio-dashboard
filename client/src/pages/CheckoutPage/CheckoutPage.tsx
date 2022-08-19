@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router';
 
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import { CheckoutComponent } from './components/CheckoutComponent';
@@ -7,6 +8,8 @@ import Loader from '../../components/Loader/Loader';
 import BeforeSubmitWalletConfirm from './components/BeforeSubmitWalletConfirm';
 
 import { useContext } from './CheckoutPageContext';
+
+import { ROUTES } from '../../constants/routes';
 
 // Loads captcha files, DO NOT REMOVE
 import '../../helpers/gt-sdk';
@@ -22,12 +25,18 @@ export const CheckoutPage: React.FC = () => {
     title,
     walletBalancesAvailable,
     beforeSubmitProps,
+    fioLoading,
+    orderLoading,
+    isFreeOrderCreateLoading,
     onClose,
     setProcessing,
     ...rest
   } = useContext();
 
-  if (!payment) return <Loader />;
+  if (fioLoading || orderLoading) return <Loader />;
+
+  if (!payment && !fioLoading && !orderLoading && isFreeOrderCreateLoading)
+    return <Redirect to={ROUTES.FIO_ADDRESSES_SELECTION} />;
 
   return (
     <PseudoModalContainer title={title} onClose={onClose}>

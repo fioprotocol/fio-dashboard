@@ -14,7 +14,7 @@ import { createOrder } from '../../redux/order/actions';
 import {
   fioWallets as fioWalletsSelector,
   fioDomains as fioDomainsSelector,
-  loading as loadingSelector,
+  loading as fioLoadingSelector,
   fioWalletsBalances as fioWalletsBalancesSelector,
 } from '../../redux/fio/selectors';
 import {
@@ -81,6 +81,9 @@ export const useContext = (): {
   paymentOptionError: ApiError;
   isFree: boolean;
   beforeSubmitProps: BeforeSubmitState | null;
+  fioLoading: boolean;
+  orderLoading: boolean;
+  isFreeOrderCreateLoading: boolean;
   beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   onClose: () => void;
   onFinish: (results: RegistrationResult) => Promise<void>;
@@ -91,7 +94,7 @@ export const useContext = (): {
   const order = useSelector(orderSelector);
   const orderError = useSelector(orderErrorSelector);
   const fioWallets = useSelector(fioWalletsSelector);
-  const loading = useSelector(loadingSelector);
+  const fioLoading = useSelector(fioLoadingSelector);
   const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
   const cartItems = useSelector(CartItemsSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
@@ -111,6 +114,9 @@ export const useContext = (): {
     beforeSubmitProps,
     setBeforeSubmitProps,
   ] = useState<BeforeSubmitState | null>(null);
+  const [isFreeOrderCreateLoading, toggleFreeOrderCreateLoading] = useState<
+    boolean
+  >(false);
 
   const {
     location: { state },
@@ -159,6 +165,7 @@ export const useContext = (): {
   // Create order for free address
   useEffectOnce(
     () => {
+      toggleFreeOrderCreateLoading(true);
       dispatch(
         createOrder({
           total: '0',
@@ -182,7 +189,7 @@ export const useContext = (): {
     [
       order,
       orderLoading,
-      loading,
+      fioLoading,
       isFree,
       paymentWalletPublicKey,
       paymentOption,
@@ -190,7 +197,11 @@ export const useContext = (): {
       dispatch,
       createOrder,
     ],
-    !order && !orderLoading && !loading && isFree && !!paymentWalletPublicKey,
+    !order &&
+      !orderLoading &&
+      !fioLoading &&
+      isFree &&
+      !!paymentWalletPublicKey,
   );
 
   useEffect(() => {
@@ -202,7 +213,7 @@ export const useContext = (): {
   // Redirect back to cart when payment option is FIO and not enough FIO tokens ot more than 1 FIO wallet
   useEffect(() => {
     if (
-      !loading &&
+      !fioLoading &&
       !isFree &&
       ((paymentWalletPublicKey &&
         walletHasNoEnoughBalance &&
@@ -215,7 +226,7 @@ export const useContext = (): {
     fioWallets.length,
     history,
     isFree,
-    loading,
+    fioLoading,
     paymentWalletPublicKey,
     paymentOption,
     walletHasNoEnoughBalance,
@@ -333,6 +344,9 @@ export const useContext = (): {
     paymentOptionError: orderError,
     isFree,
     beforeSubmitProps,
+    fioLoading,
+    orderLoading,
+    isFreeOrderCreateLoading,
     beforePaymentSubmit,
     onClose,
     onFinish,
