@@ -102,7 +102,7 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
 
       <Badge show={!!amount} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>Fio Unwrapped</p>
+          <p className={classes.title}>FIO Unwrapped</p>
           <p className={classes.item}>
             {displayAmount} {displayUsdcAmount}
           </p>
