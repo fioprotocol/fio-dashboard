@@ -132,6 +132,7 @@ export class BlockchainTransaction extends Base {
              oi.domain,
              oi.action,
              oi.params,
+             oi.data,
              oi."orderId",
              o."publicKey",
              o."userId",

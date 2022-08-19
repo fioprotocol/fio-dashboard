@@ -29,7 +29,8 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
               maxFee: fee,
             },
           ),
-          signingWallet: allWalletKeysInAccount[item.fioWallet.edgeId].public,
+          signingWalletPubKey:
+            allWalletKeysInAccount[item.fioWallet.edgeId].public,
         };
         apis.fio.clearWalletFioSdk();
       } catch (err) {

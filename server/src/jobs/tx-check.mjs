@@ -28,7 +28,17 @@ class TxCheckJob extends CommonJob {
     const processTxItem = item => async () => {
       if (this.isCancelled) return false;
 
-      const { id, address, domain, action, params, publicKey, btId, orderId } = item;
+      const {
+        id,
+        address,
+        domain,
+        action,
+        params,
+        data,
+        publicKey,
+        btId,
+        orderId,
+      } = item;
 
       this.postMessage(`Processing tx item id - ${id}`);
 
@@ -40,7 +50,9 @@ class TxCheckJob extends CommonJob {
           case FIO_ACTIONS.registerFioAddress:
           case FIO_ACTIONS.registerFioDomain: {
             const { fio_addresses, fio_domains } = await walletSdk.getFioNames(
-              (params && params.owner_fio_public_key) || publicKey,
+              (data && data.signingWalletPubKey) ||
+                (params && params.owner_fio_public_key) ||
+                publicKey,
             );
             const isAddress = action === FIO_ACTIONS.registerFioAddress;
             const fioName = isAddress

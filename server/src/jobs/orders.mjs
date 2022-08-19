@@ -294,7 +294,7 @@ class OrdersJob extends CommonJob {
       const transferRes = await fioApi.executeAction(
         FIO_ACTIONS.transferTokens,
         fioApi.getActionParams({
-          publicKey: data.signingWallet || orderItem.publicKey,
+          publicKey: data.signingWalletPubKey || orderItem.publicKey,
           amount: balanceDifference || fee,
           action: FIO_ACTIONS.transferTokens,
         }),
@@ -305,7 +305,7 @@ class OrdersJob extends CommonJob {
 
       await this.checkTokensReceived(
         transferRes.transaction_id,
-        data.signingWallet || orderItem.publicKey,
+        data.signingWalletPubKey || orderItem.publicKey,
       );
     } catch (e) {
       return {

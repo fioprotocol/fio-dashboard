@@ -264,9 +264,6 @@ export const useContext = (): UseContextReturnType => {
                 : ACTIONS.registerFioDomain,
               address,
               domain,
-              params: {
-                owner_fio_public_key: paymentWalletPublicKey,
-              },
               nativeFio: `${costNativeFio || 0}`,
               price: costUsdc,
               priceCurrency: CURRENCY_CODES.USDC,

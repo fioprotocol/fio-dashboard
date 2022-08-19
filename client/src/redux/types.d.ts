@@ -30,7 +30,7 @@ export type CreateOrderActionData = {
     action: string;
     address?: string;
     domain: string;
-    params: AnyObject;
+    params?: AnyObject;
     nativeFio: string;
     price: string;
     priceCurrency: string;
