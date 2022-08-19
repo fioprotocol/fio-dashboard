@@ -10,6 +10,7 @@ import {
 import { ERROR_MESSAGES, ERROR_TYPES } from '../../../constants/errors';
 
 import { InfoBadgeComponentProps } from '../types';
+import { CURRENCY_CODES } from '../../../constants/common';
 
 const STRIPE_REQUIRES_PAYMENT_ERROR = 'requires_payment_method';
 
@@ -18,6 +19,7 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
     purchaseProvider,
     purchaseStatus,
     failedTxsTotalAmount = '',
+    failedTxsTotalCurrency = '',
     failedMessage,
     hide,
   } = props;
@@ -79,7 +81,14 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
     }
 
     if (purchaseProvider === PURCHASE_PROVIDER.STRIPE && failedTxsTotalAmount) {
-      message = `The following items failed to purchase. As a result we have refunded $${failedTxsTotalAmount as string} back to your credit card. Click close and try purchasing again.`;
+      if (
+        !failedTxsTotalCurrency ||
+        failedTxsTotalCurrency === CURRENCY_CODES.USDC
+      )
+        message = `The following items failed to purchase. As a result we have refunded $${failedTxsTotalAmount as string} back to your credit card. Click close and try purchasing again.`;
+
+      if (failedTxsTotalCurrency === CURRENCY_CODES.FIO)
+        message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount as string} FIO Tokens. You can use these tokens to register FIO Crypto Handle or Domain.`;
     }
   }
 
@@ -109,7 +118,15 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
           'The credit card you have provided was not accepted by the issuing bank and therefore your transaction was not complete. Click close and try purchasing again with another form of payment.';
       } else {
         title = 'Purchase Error';
-        message = `There was an error during registration. As a result we have refunded the entire amount of order, $${failedTxsTotalAmount as string} back to your credit card. Click close and try purchasing again.`;
+
+        if (
+          !failedTxsTotalCurrency ||
+          failedTxsTotalCurrency === CURRENCY_CODES.USDC
+        )
+          message = `There was an error during registration. As a result we have refunded the entire amount of order, $${failedTxsTotalAmount as string} back to your credit card. Click close and try purchasing again.`;
+
+        if (failedTxsTotalCurrency === CURRENCY_CODES.FIO)
+          message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount as string} FIO Tokens. You can use these tokens to register FIO Crypto Handle or Domain.`;
       }
     }
   }

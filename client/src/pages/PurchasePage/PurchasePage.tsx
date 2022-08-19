@@ -32,6 +32,7 @@ export const PurchasePage: React.FC = () => {
     errPaymentAmount,
     errConvertedPaymentAmount,
     errCostFree,
+    errorBadges,
     paymentCurrency,
     convertedPaymentCurrency,
     providerTxId,
@@ -80,6 +81,7 @@ export const PurchasePage: React.FC = () => {
             costFree={errCostFree}
             providerTxId={providerTxId}
             allErrored={allErrored}
+            errorBadges={errorBadges}
             failedTxsTotalAmount={failedTxsTotalAmount}
           />
         )}

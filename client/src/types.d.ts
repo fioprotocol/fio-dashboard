@@ -41,6 +41,7 @@ export type CartItem = {
   showBadge?: boolean;
   error?: string;
   isFree?: boolean;
+  errorData?: { code?: string; credited?: string };
   errorType?: string;
   isCustomDomain?: boolean;
 };
@@ -87,6 +88,7 @@ export type RegistrationErrors = {
   isFree?: boolean;
   cartItemId: string;
   errorType: string;
+  errorData?: { code?: string; credited?: string };
 };
 
 export type RegistrationRegistered = {
