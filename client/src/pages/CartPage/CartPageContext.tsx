@@ -120,6 +120,7 @@ export const useContext = (): UseContextReturnType => {
 
   const hasLowBalance =
     !isEmpty(walletBalancesAvailable) &&
+    totalCartNativeAmount &&
     new MathOp(walletBalancesAvailable.nativeFio).lt(totalCartNativeAmount);
 
   const {
