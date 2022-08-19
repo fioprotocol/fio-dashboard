@@ -127,6 +127,7 @@ export default class WsStatus extends WsBase {
                 fioName,
                 fee_collected: isFree ? null : nativeFio,
                 error: event ? event.statusNotes : '',
+                errorData: event.data,
                 cartItemId: fioName,
                 isFree,
                 errorType: isFree

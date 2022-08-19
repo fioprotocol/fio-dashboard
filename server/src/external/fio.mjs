@@ -284,7 +284,7 @@ class Fio {
 
     const notes = fieldError ? fieldError.error : JSON.stringify(tx);
 
-    return { notes, code: tx.code };
+    return { notes, code: tx.code, data: tx.data };
   }
 }
 

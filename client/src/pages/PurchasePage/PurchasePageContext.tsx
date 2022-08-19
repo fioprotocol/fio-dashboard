@@ -24,6 +24,7 @@ import {
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
 import { order as orderSelector } from '../../redux/order/selectors';
+import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 
 import {
   onPurchaseFinish,
@@ -34,6 +35,8 @@ import { useEffectOnce } from '../../hooks/general';
 import { useWebsocket } from '../../hooks/websocket';
 
 import apis from '../../api';
+
+import MathOp from '../../util/math';
 
 import { ROUTES } from '../../constants/routes';
 import { CONTAINED_FLOW_CONTINUE_TEXT } from '../../constants/containedFlow';
@@ -52,7 +55,11 @@ import {
   PurchaseTxStatus,
   CartItem,
 } from '../../types';
-import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
+import { ErrBadgesProps } from './types';
+
+const ERROR_CODES = {
+  SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
+};
 
 export const useContext = (): {
   regItems: CartItem[];
@@ -69,6 +76,7 @@ export const useContext = (): {
   errPaymentAmount: string | number;
   errConvertedPaymentAmount: string | number;
   errCostFree: string;
+  errorBadges: ErrBadgesProps;
   paymentCurrency: string;
   convertedPaymentCurrency: string;
   providerTxId: string | number;
@@ -181,6 +189,55 @@ export const useContext = (): {
       ? errCostUsdc
       : errCostFio;
 
+  const errorBadges: ErrBadgesProps = errItems
+    ? errItems.reduce((acc, errItem) => {
+        const { errorType, errorData } = errItem;
+        let badgeKey: string = '';
+        let totalCurrency: string;
+        let customItemAmount: number = null;
+
+        if (
+          errorData &&
+          errorData.code === ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP
+        ) {
+          badgeKey = `${errorData.code}`;
+          totalCurrency = CURRENCY_CODES.FIO;
+          customItemAmount = errorData.credited
+            ? new MathOp(errorData.credited).toNumber()
+            : null;
+        } else {
+          badgeKey = `${errorType}`;
+          totalCurrency =
+            purchaseProvider === PURCHASE_PROVIDER.STRIPE
+              ? CURRENCY_CODES.USDC
+              : CURRENCY_CODES.FIO;
+        }
+
+        if (!acc[badgeKey])
+          acc[badgeKey] = {
+            errorType: badgeKey,
+            items: [],
+            total: '',
+            totalCurrency: '',
+          };
+
+        acc[badgeKey].errorType = badgeKey;
+        acc[badgeKey].items.push(
+          customItemAmount
+            ? { ...errItem, costNativeFio: customItemAmount }
+            : errItem,
+        );
+        const total = totalCost(acc[badgeKey].items, roe);
+        acc[badgeKey].total =
+          totalCurrency === CURRENCY_CODES.USDC
+            ? total.costUsdc
+            : total.costFio;
+        acc[badgeKey].totalCurrency = totalCurrency;
+
+        return acc;
+      }, {} as ErrBadgesProps)
+    : {};
+
   useEffectOnce(() => {
     dispatch(setCartItems(updatedCart));
   }, [setCartItems, updatedCart]);
@@ -250,6 +307,7 @@ export const useContext = (): {
     errPaymentAmount,
     errConvertedPaymentAmount,
     errCostFree: !errCostNativeFio && errFree,
+    errorBadges,
     paymentCurrency,
     convertedPaymentCurrency,
     providerTxId,

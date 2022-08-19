@@ -60,7 +60,7 @@ class OrdersJob extends CommonJob {
     return fee;
   }
 
-  async handleFail(orderItem, errorNotes) {
+  async handleFail(orderItem, errorNotes, errorData = null) {
     const { id, blockchainTransactionId } = orderItem;
     return BlockchainTransaction.sequelize.transaction(async t => {
       await BlockchainTransaction.update(
@@ -84,6 +84,7 @@ class OrdersJob extends CommonJob {
             0,
             errorNotes.length > 200 ? 200 : errorNotes.length,
           ),
+          data: errorData ? { ...errorData } : null,
           blockchainTransactionId,
         },
         { transaction: t },
@@ -333,6 +334,9 @@ class OrdersJob extends CommonJob {
         return {
           message: `Submit signed tx error, received '${INSUFFICIENT_FUNDS_ERR_MESSAGE}' but fee is not changed or even decreased.`,
           code: ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP,
+          data: {
+            credited: fee,
+          },
         };
       }
 
@@ -340,9 +344,15 @@ class OrdersJob extends CommonJob {
         return {
           message: `Submit signed tx error, received '${INSUFFICIENT_FUNDS_ERR_MESSAGE}' second time.`,
           code: ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP,
+          data: {
+            credited: fee,
+          },
         };
 
       result.code = ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP;
+      result.data = {
+        credited: fee,
+      };
     }
 
     return result;
@@ -512,7 +522,7 @@ class OrdersJob extends CommonJob {
           }
 
           // transaction failed
-          const { notes, code } = fioApi.checkTxError(result);
+          const { notes, code, data: errorData } = fioApi.checkTxError(result);
 
           // Refund order payment for fio action. Do not refund if system sent tokens to user's wallet to execute signed tx
           if (code !== ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP) {
@@ -544,7 +554,7 @@ class OrdersJob extends CommonJob {
             });
           }
 
-          await this.handleFail(orderItem, notes);
+          await this.handleFail(orderItem, notes, { code, ...errorData });
 
           if (code !== ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP)
             await this.refundUser(orderItem);
