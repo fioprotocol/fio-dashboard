@@ -21,6 +21,7 @@ type Props = {
   totalCartNativeAmount: number;
   userWallets: FioWalletDoublet[];
   loading: boolean;
+  disabled?: boolean;
 };
 
 const PaymentsBlock: React.FC<Props> = props => {
@@ -32,10 +33,11 @@ const PaymentsBlock: React.FC<Props> = props => {
     totalCartNativeAmount,
     userWallets,
     loading,
+    disabled,
     onPaymentChoose,
   } = props;
 
-  const paymentFioPrpos = {
+  const paymentFioProps = {
     paymentOptionsList: [PAYMENT_OPTIONS.FIO],
     isFree,
     hasLowBalance,
@@ -44,6 +46,7 @@ const PaymentsBlock: React.FC<Props> = props => {
     totalCartNativeAmount,
     userWallets,
     loading,
+    disabled,
     onPaymentChoose,
   };
 
@@ -51,15 +54,16 @@ const PaymentsBlock: React.FC<Props> = props => {
     paymentOptionsList: [PAYMENT_OPTIONS.CREDIT_CARD, PAYMENT_OPTIONS.CRYPTO],
     cartItems,
     loading,
+    disabled,
     onPaymentChoose,
   };
 
   return (
     <>
-      <PaymentOptions {...paymentFioPrpos} />
+      <PaymentOptions {...paymentFioProps} />
       <OtherPaymentsBlock
         defaultShowState={hasLowBalance}
-        disabled={cartItems.length === 0 || isFree}
+        optionsDisabled={cartItems.length === 0 || isFree}
         {...otherPaymentsProps}
       />
     </>

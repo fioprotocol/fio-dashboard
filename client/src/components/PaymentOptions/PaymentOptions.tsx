@@ -29,6 +29,7 @@ type DefaultPaymentOptionProps = {
   totalCartNativeAmount?: number;
   userWallets?: FioWalletDoublet[];
   loading: boolean;
+  disabled?: boolean;
 };
 
 type PaymentOptionRenderProps = {
@@ -45,6 +46,7 @@ const PAYMENT_OPTIONS_PROPS = {
     totalCartNativeAmount,
     paymentOption,
     loading,
+    disabled,
     onPaymentChoose,
   }: PaymentOptionRenderProps) => ({
     buttonText: isFree ? 'Complete Transaction' : 'Pay with FIO',
@@ -53,7 +55,8 @@ const PAYMENT_OPTIONS_PROPS = {
       hasLowBalance ||
       paymentWalletPublicKey === '' ||
       cartItems?.length === 0 ||
-      loading,
+      loading ||
+      disabled,
     loading,
     hideButton: userWallets?.every(
       wallet =>
@@ -68,10 +71,11 @@ const PAYMENT_OPTIONS_PROPS = {
     paymentOption,
     cartItems,
     loading,
+    disabled,
   }: PaymentOptionRenderProps) => ({
     buttonText: 'Pay with Credit/Debit Card',
     icon: <FontAwesomeIcon icon="credit-card" />,
-    disabled: cartItems?.length === 0 || loading,
+    disabled: cartItems?.length === 0 || loading || disabled,
     loading,
     onClick: () => onPaymentChoose(paymentOption),
   }),

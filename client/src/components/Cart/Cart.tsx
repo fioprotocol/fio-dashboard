@@ -42,6 +42,7 @@ type Props = {
   isPriceChanged: boolean;
   roe: number;
   hasGetPricesError?: boolean;
+  error: string | null;
 };
 
 const Cart: React.FC<Props> = props => {
@@ -60,6 +61,7 @@ const Cart: React.FC<Props> = props => {
     isPriceChanged,
     roe,
     hasGetPricesError,
+    error,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
@@ -115,7 +117,7 @@ const Cart: React.FC<Props> = props => {
     <>
       <div className={classes.badgeContainer}>
         <Badge
-          show={isPriceChanged || hasGetPricesError}
+          show={isPriceChanged || hasGetPricesError || !!error}
           type={BADGE_TYPES.ERROR}
         >
           <div className={classnames(classes.infoBadge, classes.priceBadge)}>
@@ -123,8 +125,12 @@ const Cart: React.FC<Props> = props => {
               icon="exclamation-circle"
               className={classes.infoIcon}
             />
+
             <p className={classes.infoText}>
-              <span className="boldText">Pricing update</span> - {errorMessage}
+              <span className="boldText">
+                {error ? 'Error' : 'Pricing update'}
+              </span>
+              {error || errorMessage}
             </p>
           </div>
         </Badge>

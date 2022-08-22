@@ -9,7 +9,8 @@ import classes from '../styles/OtherPaymentsBlock.module.scss';
 
 type Props = {
   defaultShowState: boolean;
-  disabled: boolean;
+  optionsDisabled: boolean;
+  disabled?: boolean;
   paymentOptionsList: PaymentOptionsProps[];
   cartItems?: CartItem[];
   loading: boolean;
@@ -20,6 +21,7 @@ const OtherPaymentsBlock: React.FC<Props> = props => {
   const {
     defaultShowState,
     paymentOptionsList,
+    optionsDisabled,
     disabled,
     cartItems,
     loading,
@@ -45,6 +47,7 @@ const OtherPaymentsBlock: React.FC<Props> = props => {
         onPaymentChoose={onPaymentChoose}
         cartItems={cartItems}
         loading={loading}
+        disabled={disabled}
       />
     );
 
@@ -53,7 +56,7 @@ const OtherPaymentsBlock: React.FC<Props> = props => {
       className={classes.button}
       onClick={onOtherPaymentsClick}
       variant="link"
-      disabled={disabled}
+      disabled={optionsDisabled}
     >
       Other Payment Options
     </Button>
