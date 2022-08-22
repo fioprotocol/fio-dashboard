@@ -4,6 +4,8 @@ import { Table } from 'react-bootstrap';
 
 import Modal from '../../../../components/Modal/Modal';
 
+import useContext from './AdminOrderModalContext';
+
 import { setFioName } from '../../../../utils';
 import { formatDateToLocale } from '../../../../helpers/stringFormatters';
 
@@ -13,9 +15,11 @@ import {
   PURCHASE_RESULTS_STATUS_LABELS,
   PAYMENT_STATUSES,
 } from '../../../../constants/purchase';
-import { OrderItem } from '../../../../types';
 import { CURRENCY_CODES } from '../../../../constants/common';
-import useContext from './AdminOrderModalContext';
+
+import { OrderItem } from '../../../../types';
+
+import classes from '../../styles/AdminOrderModal.module.scss';
 
 type Props = {
   onClose: () => void;
@@ -158,7 +162,9 @@ const AdminOrderModal: React.FC<Props> = ({
                             {renderHistoryPrice(amount, currency, withdraw)}
                           </th>
                           <th>
-                            <div className="">{status}</div>
+                            <div className={classes.statusMessage}>
+                              {status}
+                            </div>
                           </th>
                         </tr>
                       ),

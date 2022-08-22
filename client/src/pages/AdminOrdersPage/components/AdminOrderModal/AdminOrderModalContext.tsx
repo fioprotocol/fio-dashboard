@@ -1,6 +1,8 @@
 import { setFioName } from '../../../../utils';
 import { formatDateToLocale } from '../../../../helpers/stringFormatters';
 
+import apis from '../../../../api';
+
 import {
   BC_TX_STATUSES,
   BC_TX_STATUS_LABELS,
@@ -66,12 +68,12 @@ const setHistory = (
       key: `payment-event-log-${new Date(createdAt).getTime()}`,
       date: formatDateToLocale(createdAt),
       amount: status === PAYMENT_STATUSES.COMPLETED ? payment.price : '0.00',
-      currency: payment.currency,
+      currency: payment.currency.toUpperCase(),
       status: `${
         PAYMENT_OPTION_LABEL[payment.processor as PaymentOptionsProps]
       } notification received (${
         payment.externalId
-      }) Status: ${PAYMENTS_STATUSES_TITLES[status as PaymentStatusType] ||
+      }) \nStatus: ${PAYMENTS_STATUSES_TITLES[status as PaymentStatusType] ||
         PAYMENTS_STATUSES_TITLES[PAYMENT_STATUSES.PENDING]}`,
       dateTime: new Date(createdAt).getTime(),
     });
@@ -84,7 +86,7 @@ const setHistory = (
           key: `payment-${new Date(createdAt).getTime()}`,
           date: formatDateToLocale(createdAt),
           amount: price,
-          currency,
+          currency: currency.toUpperCase(),
           withdraw: spentType !== PAYMENT_SPENT_TYPES.ACTION_REFUND,
           status: `${
             PAYMENT_SPENT_TYPES_ORDER_HISTORY_LABEL[
@@ -113,15 +115,23 @@ const setHistory = (
       statusMsg += `${setFioName(
         orderItem.address,
         orderItem.domain,
-      )} status update: ${BC_TX_STATUS_LABELS[status]}. Action: ${
+      )} \nstatus update: ${BC_TX_STATUS_LABELS[status]}. \nAction: ${
         bt.action
-      }. Message: `;
+      }. \nMessage: `;
 
       if (statusNotes) {
         statusMsg += statusNotes;
       } else {
-        statusMsg +=
-          status === BC_TX_STATUSES.SUCCESS ? `TX ID - ${bt.txId}` : '-';
+        if (status === BC_TX_STATUSES.SUCCESS) {
+          statusMsg += `TX ID - ${bt.txId}`;
+          statusMsg += `\nFee collected: ${
+            bt?.feeCollected
+              ? `${apis.fio.sufToAmount(bt.feeCollected)} FIO`
+              : 'N/A'
+          }`;
+        } else {
+          statusMsg += ' -';
+        }
       }
 
       history.push({

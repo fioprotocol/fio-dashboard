@@ -75,6 +75,7 @@ export class BlockchainTransaction extends Base {
             'Last action processing status. READY (1) / PENDING (2) / RETRY (6) / SUCCESS (3) / REVIEW (4) / CANCEL (5) etc.',
         },
         data: { type: DT.JSON, comment: 'Any additional data' },
+        feeCollected: { type: DT.BIGINT },
       },
       {
         sequelize,
@@ -166,7 +167,17 @@ export class BlockchainTransaction extends Base {
    `);
   }
 
-  static format({ id, data, action, status, txId, createdAt, createdBy, blockTime }) {
+  static format({
+    id,
+    data,
+    action,
+    status,
+    txId,
+    createdAt,
+    createdBy,
+    blockTime,
+    feeCollected,
+  }) {
     return {
       id,
       data,
@@ -176,6 +187,7 @@ export class BlockchainTransaction extends Base {
       createdAt,
       createdBy,
       blockTime,
+      feeCollected,
     };
   }
 }

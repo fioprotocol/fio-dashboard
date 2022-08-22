@@ -146,7 +146,7 @@ export default class OrdersUpdate extends Base {
 
         // todo: handle item with custom domain
         for (const regItem of data.results.registered) {
-          const { fioName, transaction_id } = regItem;
+          const { fioName, transaction_id, fee_collected } = regItem;
 
           const orderItem = order.OrderItems.find(
             ({ address, domain }) => fioApi.setFioName(address, domain) === fioName,
@@ -163,6 +163,7 @@ export default class OrdersUpdate extends Base {
 
               bcTx.txId = transaction_id || 'free';
               bcTx.status = BlockchainTransaction.STATUS.SUCCESS;
+              bcTx.feeCollected = fee_collected;
               await bcTx.save();
             } else {
               bcTx = await BlockchainTransaction.create({
@@ -171,6 +172,7 @@ export default class OrdersUpdate extends Base {
                 status: BlockchainTransaction.STATUS.SUCCESS,
                 data: { params: orderItem.params },
                 orderItemId: orderItem.id,
+                feeCollected: fee_collected,
               });
               blockchainTransactionId = bcTx.id;
             }
