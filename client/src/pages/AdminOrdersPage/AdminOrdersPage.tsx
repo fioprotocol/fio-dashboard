@@ -11,7 +11,7 @@ import { PURCHASE_RESULTS_STATUS_LABELS } from '../../constants/purchase';
 
 import { AdminUser, OrderItem } from '../../types';
 
-import classes from './AdminOrdersListPage.module.scss';
+import classes from './styles/AdminOrdersListPage.module.scss';
 
 type Props = {
   loading: boolean;

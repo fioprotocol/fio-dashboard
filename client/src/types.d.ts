@@ -589,7 +589,12 @@ export type OrderPaymentItem = {
   statusNotes?: string;
 };
 
-export type BcTx = { id: number; action: string; txId?: string };
+export type BcTx = {
+  id: number;
+  action: string;
+  txId?: string;
+  feeCollected?: number;
+};
 
 export type BcTxEvent = {
   blockchainTransactionId: number;

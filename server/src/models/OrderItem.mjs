@@ -175,6 +175,7 @@ export class OrderItem extends Base {
           blockNum: tx.block_num,
           blockTime: tx.block_time ? tx.block_time + 'Z' : new Date(),
           status: BlockchainTransaction.STATUS.PENDING,
+          feeCollected: tx.fee_collected,
         },
         {
           where: {

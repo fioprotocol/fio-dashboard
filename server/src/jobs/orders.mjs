@@ -371,6 +371,7 @@ class OrdersJob extends CommonJob {
             blockTime: result.block_time ? result.block_time + 'Z' : new Date(),
             status: BlockchainTransaction.STATUS.SUCCESS,
             orderItemId: orderItem.id,
+            feeCollected: result.fee_collected,
           });
 
           await BlockchainTransactionEventLog.create({
