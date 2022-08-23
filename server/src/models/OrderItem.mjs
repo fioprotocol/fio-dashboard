@@ -90,6 +90,31 @@ export class OrderItem extends Base {
     });
   }
 
+  static attrs(type = 'default') {
+    const attributes = {
+      default: [
+        'id',
+        'action',
+        'address',
+        'domain',
+        'params',
+        'nativeFio',
+        'price',
+        'priceCurrency',
+        'data',
+        'orderId',
+        'createdAt',
+        'updatedAt',
+      ],
+    };
+
+    if (type in attributes) {
+      return attributes[type];
+    }
+
+    return attributes.default;
+  }
+
   static list(where) {
     return this.findAll({
       where,

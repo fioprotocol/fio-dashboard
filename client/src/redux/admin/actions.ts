@@ -48,6 +48,15 @@ export const getOrdersList = (limit = 25, offset = 0): CommonPromiseAction => ({
   promise: (api: Api) => api.admin.ordersList(limit, offset),
 });
 
+export const ADMIN_SEARCH_REQUEST = `${prefix}/ADMIN_SEARCH_REQUEST`;
+export const ADMIN_SEARCH_SUCCESS = `${prefix}/ADMIN_SEARCH_SUCCESS`;
+export const ADMIN_SEARCH_FAILURE = `${prefix}/ADMIN_SEARCH_FAILURE`;
+
+export const adminSearch = (value: string): CommonPromiseAction => ({
+  types: [ADMIN_SEARCH_REQUEST, ADMIN_SEARCH_SUCCESS, ADMIN_SEARCH_FAILURE],
+  promise: (api: Api) => api.admin.search(value),
+});
+
 export const GET_ORDER_BY_ADMIN_REQUEST = `${prefix}/GET_ORDER_BY_ADMIN_REQUEST`;
 export const GET_ORDER_BY_ADMIN_SUCCESS = `${prefix}/GET_ORDER_BY_ADMIN_SUCCESS`;
 export const GET_ORDER_BY_ADMIN_FAILURE = `${prefix}/GET_ORDER_BY_ADMIN_FAILURE`;

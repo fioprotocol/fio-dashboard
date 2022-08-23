@@ -20,3 +20,5 @@ export const orderItem = (state: ReduxState): OrderItem =>
   state[prefix].orderItem;
 export const adminUserProfile = (state: ReduxState): AdminUserProfile =>
   state[prefix].adminUserProfile;
+export const adminSearch = (state: ReduxState): AdminUserProfile =>
+  state[prefix].adminSearch;

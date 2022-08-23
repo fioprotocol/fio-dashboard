@@ -1,4 +1,5 @@
 import {
+  AdminSearchResult,
   AdminUser,
   ChainCodeProps,
   ContainedFlowQueryParams,
@@ -97,6 +98,7 @@ export type AdminGeneralCreateResponse =
   | { success: true }
   | { success: false; message: 'Not Unique' };
 export type AdminConfirmResponse = AdminUser;
+export type AdminSearchResponse = AdminSearchResult;
 
 export type PaymentCreateResponse = Payment;
 
