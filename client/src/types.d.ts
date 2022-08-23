@@ -569,6 +569,17 @@ export type AdminUserProfile = {
   createdAt: string;
 };
 
+export type AdminUserItemProfile = {
+  avatar?: string;
+  createdAt: string;
+  email: string;
+  id: string;
+  location?: string;
+  secretSet: boolean;
+  status: string;
+  username: string;
+};
+
 export type AdminSearchResult = {
   result?: {
     orders: {
@@ -588,16 +599,7 @@ export type AdminSearchResult = {
       paymentProcessor: string;
       blockchainData?: { owner_fio_public_key?: string };
     }[];
-    users: {
-      id: string;
-      username: string;
-      email: string;
-      status: string;
-      avatar?: string;
-      createdAt: string;
-      location?: string;
-      secretSet: boolean;
-    }[];
+    users: AdminUserItemProfile[];
   };
 };
 
