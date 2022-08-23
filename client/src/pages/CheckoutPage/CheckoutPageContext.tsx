@@ -109,6 +109,8 @@ export const useContext = (): {
   const dispatch = useDispatch();
   const dispatchSetProcessing = (isProcessing: boolean) =>
     dispatch(setProcessing(isProcessing));
+  const dispatchSetWallet = (paymentWalletPublicKey: string) =>
+    dispatch(setWallet(paymentWalletPublicKey));
 
   const [
     beforeSubmitProps,
@@ -350,7 +352,7 @@ export const useContext = (): {
     beforePaymentSubmit,
     onClose,
     onFinish,
-    setWallet,
+    setWallet: dispatchSetWallet,
     setProcessing: dispatchSetProcessing,
   };
 };
