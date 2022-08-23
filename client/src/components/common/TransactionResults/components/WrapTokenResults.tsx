@@ -118,7 +118,7 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
 
       <Badge show={!!amount} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
-          <p className={classes.title}>Fio Wrapped</p>
+          <p className={classes.title}>FIO Wrapped</p>
           <p className={classes.item}>
             {displayAmount} {displayUsdcAmount}
           </p>
