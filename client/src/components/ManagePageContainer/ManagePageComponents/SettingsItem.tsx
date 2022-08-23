@@ -27,8 +27,10 @@ const SettingsItem: React.FC<SettingsProps> = props => {
       <h3 className={classes.title}>Advanced Settings</h3>
       <h5 className={classes.subtitle}>{fioNameLabels[pageName]} Ownership</h5>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
-        <p className={classes.badgeTitle}>FIO Wallet</p>
-        <p className={classes.badgeItem}>{walletName}</p>
+        <div className={classes.badgeContainer}>
+          <p className={classes.badgeTitle}>FIO Wallet</p>
+          <p className={classes.badgeItem}>{walletName}</p>
+        </div>
       </Badge>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classes.badgeContainer}>
