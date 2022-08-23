@@ -292,14 +292,7 @@ class OrdersJob extends CommonJob {
     }
 
     if (res) {
-      await OrderItem.setPending(
-        {
-          transaction_id: 'free',
-          block_num: 0,
-        },
-        orderItem.id,
-        orderItem.blockchainTransactionId,
-      );
+      await OrderItem.setPending({}, orderItem.id, orderItem.blockchainTransactionId);
       this.postMessage(
         `Processing item transactions created (FREE) - ${orderItem.id} / ${JSON.stringify(
           res,
