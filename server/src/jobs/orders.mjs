@@ -26,7 +26,7 @@ import {
 } from '../external/fio.mjs';
 import { FioRegApi } from '../external/fio-reg.mjs';
 
-import { FIO_ADDRESS_DELIMITER, FIO_ACTIONS } from '../config/constants.js';
+import { FIO_ACTIONS } from '../config/constants.js';
 
 import logger from '../logger.mjs';
 
@@ -58,6 +58,46 @@ class OrdersJob extends CommonJob {
     }
 
     return fee;
+  }
+
+  // Spend order payment on fio action
+  async spend({
+    fioName,
+    orderId,
+    action,
+    spentType = Payment.SPENT_TYPE.ACTION,
+    price,
+    currency,
+    data = null,
+    updateStatus = null,
+    eventStatus = null,
+    actionPaymentId = null,
+  }) {
+    if (actionPaymentId && updateStatus && eventStatus) {
+      await Payment.update({ status: updateStatus }, { where: { id: actionPaymentId } });
+      await PaymentEventLog.create({
+        status: eventStatus,
+        statusNotes: `${fioName}. Action: ${action}`,
+        paymentId: actionPaymentId,
+      });
+
+      return;
+    }
+
+    const actionPayment = await Payment.create({
+      status: Payment.STATUS.COMPLETED,
+      processor: Payment.PROCESSOR.SYSTEM,
+      orderId,
+      spentType,
+      price,
+      currency,
+      data,
+    });
+    await PaymentEventLog.create({
+      status: PaymentEventLog.STATUS.SUCCESS,
+      statusNotes: `${fioName}. Action: ${action}`,
+      paymentId: actionPayment.id,
+    });
   }
 
   async handleFail(orderItem, errorNotes, errorData = null) {
@@ -106,7 +146,7 @@ class OrdersJob extends CommonJob {
     });
   }
 
-  async refundUser(orderItemProps) {
+  async refundUser(orderItemProps, errorData = {}) {
     try {
       const payment = await Payment.findOne({ where: { id: orderItemProps.paymentId } });
 
@@ -117,7 +157,7 @@ class OrdersJob extends CommonJob {
 
       switch (payment.processor) {
         case Payment.PROCESSOR.CREDIT_CARD: {
-          price = orderItemProps.price;
+          price = errorData.refundUsdcAmount || orderItemProps.price;
           currency = Payment.CURRENCY.USD;
           statusNotes = "User's credit card";
           break;
@@ -287,11 +327,21 @@ class OrdersJob extends CommonJob {
   }
 
   async submitSignedTx(orderItem, balanceDifference = null) {
-    const { data } = orderItem;
+    const { address, domain, action, orderId, roe, data } = orderItem;
     const fee = this.feesJson[orderItem.action];
 
     // Send tokens to customer
     try {
+      // Spend order payment on fio action
+      await this.spend({
+        fioName: fioApi.setFioName(address, domain),
+        action,
+        orderId,
+        price: fioApi.sufToAmount(balanceDifference || fee),
+        currency: Payment.CURRENCY.FIO,
+        data: { roe },
+      });
+
       const transferRes = await fioApi.executeAction(
         FIO_ACTIONS.transferTokens,
         fioApi.getActionParams({
@@ -301,8 +351,21 @@ class OrdersJob extends CommonJob {
         }),
       );
 
-      if (!transferRes.transaction_id)
-        throw new Error(JSON.stringify(fioApi.checkTxError(transferRes)));
+      if (!transferRes.transaction_id) {
+        const transferError = JSON.stringify(fioApi.checkTxError(transferRes));
+
+        await this.spend({
+          fioName: fioApi.setFioName(address, domain),
+          action,
+          orderId,
+          spentType: Payment.SPENT_TYPE.ACTION_REFUND,
+          price: fioApi.sufToAmount(balanceDifference || fee),
+          currency: Payment.CURRENCY.FIO,
+          data: { roe },
+        });
+
+        throw new Error(transferError);
+      }
 
       await this.checkTokensReceived(
         transferRes.transaction_id,
@@ -313,6 +376,9 @@ class OrdersJob extends CommonJob {
         message: `Transfer Tokens error. Customer did not receive the tokens to execute the transaction - ${JSON.stringify(
           e,
         )}`,
+        data: {
+          refundUsdcAmount: fioApi.convertFioToUsdc(balanceDifference || fee, roe), // here roe has value on moment when order was created, not current value
+        },
       };
     }
 
@@ -360,9 +426,19 @@ class OrdersJob extends CommonJob {
 
   // returns null when success and result when error
   async handleCustomDomain(orderItem, auth) {
-    const { domain, data } = orderItem;
+    const { orderId, roe, domain, data } = orderItem;
     if (data.hasCustomDomain) {
+      let error;
       try {
+        await this.spend({
+          fioName: domain,
+          orderId,
+          action: FIO_ACTIONS.registerFioDomain,
+          price: fioApi.sufToAmount(data.hasCustomDomainFee),
+          currency: Payment.CURRENCY.FIO,
+          data: { roe },
+        });
+
         const result = await fioApi.executeAction(
           FIO_ACTIONS.registerFioDomain,
           fioApi.getActionParams({
@@ -393,17 +469,29 @@ class OrdersJob extends CommonJob {
           return null;
         }
 
-        return result;
+        error = result;
       } catch (e) {
-        return { error: e };
+        error = { error: e };
       }
+
+      await this.spend({
+        fioName: domain,
+        orderId,
+        action: FIO_ACTIONS.registerFioDomain,
+        price: fioApi.sufToAmount(data.hasCustomDomainFee),
+        currency: Payment.CURRENCY.FIO,
+        spentType: Payment.SPENT_TYPE.ACTION_REFUND,
+        data: { roe },
+      });
+
+      return error;
     }
 
     return null;
   }
 
   async executeOrderItemAction(orderItem, auth, hasSignedTx) {
-    const { action } = orderItem;
+    const { address, domain, action, price, orderId } = orderItem;
 
     // Register custom domain if needed
     const customDomainResult = await this.handleCustomDomain(orderItem, auth);
@@ -413,11 +501,31 @@ class OrdersJob extends CommonJob {
     if (hasSignedTx) {
       result = await this.submitSignedTx(orderItem);
     } else {
+      // Spend order payment on fio action
+      await this.spend({
+        fioName: fioApi.setFioName(address, domain),
+        action,
+        orderId,
+        price,
+        currency: Payment.CURRENCY.USDC,
+      });
+
       result = await fioApi.executeAction(
         action,
         fioApi.getActionParams(orderItem),
         auth,
       );
+
+      // No tx id. Refund order payment for fio action.
+      if (!result.transaction_id)
+        await this.spend({
+          fioName: fioApi.setFioName(address, domain),
+          action,
+          orderId,
+          spentType: Payment.SPENT_TYPE.ACTION_REFUND,
+          price,
+          currency: Payment.CURRENCY.USDC,
+        });
     }
 
     return result;
@@ -474,7 +582,7 @@ class OrdersJob extends CommonJob {
       this.postMessage(`Processing item id - ${id}`);
 
       try {
-        const fioName = (address ? address + FIO_ADDRESS_DELIMITER : '') + domain;
+        const fioName = fioApi.setFioName(address, domain);
         const auth = {
           actor: defaultFioAccountProfile.actor,
           permission: defaultFioAccountProfile.permission,
@@ -494,21 +602,6 @@ class OrdersJob extends CommonJob {
         // Check if fee/roe changed and handle changes
         await this.checkPriceChanges(orderItem, roe);
 
-        // Spend order payment on fio action
-        const actionPayment = await Payment.create({
-          status: Payment.STATUS.COMPLETED,
-          processor: Payment.PROCESSOR.SYSTEM,
-          orderId,
-          spentType: Payment.SPENT_TYPE.ACTION,
-          price,
-          currency: Payment.CURRENCY.USDC,
-        });
-        await PaymentEventLog.create({
-          status: PaymentEventLog.STATUS.SUCCESS,
-          statusNotes: `${fioName}. Action: ${action}`,
-          paymentId: actionPayment.id,
-        });
-
         try {
           const result = await this.executeOrderItemAction(orderItem, auth, hasSignedTx);
 
@@ -523,23 +616,6 @@ class OrdersJob extends CommonJob {
 
           // transaction failed
           const { notes, code, data: errorData } = fioApi.checkTxError(result);
-
-          // Refund order payment for fio action. Do not refund if system sent tokens to user's wallet to execute signed tx
-          if (code !== ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP) {
-            const actionRefundPayment = await Payment.create({
-              status: Payment.STATUS.COMPLETED,
-              processor: Payment.PROCESSOR.SYSTEM,
-              orderId,
-              spentType: Payment.SPENT_TYPE.ACTION_REFUND,
-              price,
-              currency: Payment.CURRENCY.USDC,
-            });
-            await PaymentEventLog.create({
-              status: PaymentEventLog.STATUS.SUCCESS,
-              statusNotes: `${fioName}. Action: ${action}`,
-              paymentId: actionRefundPayment.id,
-            });
-          }
 
           // try to execute using fallback account when no funds
           if (
@@ -556,8 +632,9 @@ class OrdersJob extends CommonJob {
 
           await this.handleFail(orderItem, notes, { code, ...errorData });
 
+          // Refund order payment for fio action. Do not refund if system sent tokens to user's wallet to execute signed tx
           if (code !== ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP)
-            await this.refundUser(orderItem);
+            await this.refundUser(orderItem, errorData);
         } catch (error) {
           logger.error(`ORDER ITEM PROCESSING ERROR ${orderItem.id}`, error);
         }
