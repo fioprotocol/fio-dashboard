@@ -1,7 +1,8 @@
+import apis from '../../../../api';
+
+import MathOp from '../../../../util/math';
 import { setFioName } from '../../../../utils';
 import { formatDateToLocale } from '../../../../helpers/stringFormatters';
-
-import apis from '../../../../api';
 
 import {
   BC_TX_STATUSES,
@@ -13,6 +14,8 @@ import {
   PAYMENTS_STATUSES_TITLES,
   PAYMENT_OPTIONS,
 } from '../../../../constants/purchase';
+import { CURRENCY_CODES } from '../../../../constants/common';
+
 import {
   BcTx,
   OrderItem,
@@ -80,13 +83,32 @@ const setHistory = (
   });
 
   order.payments.forEach(
-    ({ price, currency, status, createdAt, spentType, paymentEventLogs }) => {
-      if (spentType !== PAYMENT_SPENT_TYPES.ORDER)
+    ({
+      price,
+      currency,
+      status,
+      createdAt,
+      spentType,
+      data,
+      paymentEventLogs,
+    }) => {
+      if (spentType !== PAYMENT_SPENT_TYPES.ORDER) {
+        const amount =
+          currency === CURRENCY_CODES.FIO
+            ? apis.fio.convertFioToUsdc(
+                apis.fio.amountToSUF(new MathOp(price).toNumber()),
+                new MathOp(data && data.roe ? data.roe : order.roe).toNumber(),
+              )
+            : price;
+
         history.push({
           key: `payment-${new Date(createdAt).getTime()}`,
           date: formatDateToLocale(createdAt),
-          amount: price,
-          currency: currency.toUpperCase(),
+          amount: new MathOp(amount).toString(),
+          currency:
+            currency === CURRENCY_CODES.FIO
+              ? CURRENCY_CODES.USDC
+              : currency.toUpperCase(),
           withdraw: spentType !== PAYMENT_SPENT_TYPES.ACTION_REFUND,
           status: `${
             PAYMENT_SPENT_TYPES_ORDER_HISTORY_LABEL[
@@ -99,6 +121,7 @@ const setHistory = (
           }`,
           dateTime: new Date(createdAt).getTime(),
         });
+      }
     },
   );
 

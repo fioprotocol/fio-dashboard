@@ -589,6 +589,7 @@ export type OrderPaymentItem = {
   updatedAt: string;
   id: string;
   statusNotes?: string;
+  data?: { roe?: string };
 };
 
 export type BcTx = {
@@ -611,6 +612,7 @@ export type BcTxEvent = {
 export type OrderItem = {
   id: string;
   number: string;
+  roe: string;
   total: string;
   publicKey: string;
   createdAt: string;
