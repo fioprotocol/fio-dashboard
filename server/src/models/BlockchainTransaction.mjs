@@ -138,6 +138,7 @@ export class BlockchainTransaction extends Base {
              o."userId",
              bt.expiration,
              bt."blockTime",
+             bt.data as "btData",
              bt.id AS "btId"
       FROM "order-items" oi
         INNER JOIN "blockchain-transactions" bt ON oi.id = bt."orderItemId"

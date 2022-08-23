@@ -13,6 +13,8 @@ import { FIO_ADDRESS_DELIMITER, FIO_ACTIONS } from '../config/constants.js';
 
 import logger from '../logger.mjs';
 
+const MAX_CHECK_TIMES = 10;
+
 class TxCheckJob extends CommonJob {
   constructor() {
     super();
@@ -35,6 +37,7 @@ class TxCheckJob extends CommonJob {
         action,
         params,
         data,
+        btData = {},
         publicKey,
         btId,
         orderId,
@@ -44,7 +47,7 @@ class TxCheckJob extends CommonJob {
 
       try {
         const walletSdk = fioApi.getPublicFioSDK();
-        let status = BlockchainTransaction.STATUS.EXPIRE;
+        let status = BlockchainTransaction.STATUS.PENDING;
 
         switch (action) {
           case FIO_ACTIONS.registerFioAddress:
@@ -68,6 +71,15 @@ class TxCheckJob extends CommonJob {
 
             if (found) status = BlockchainTransaction.STATUS.SUCCESS;
 
+            if (!btData.checkIteration) btData.checkIteration = 0;
+            ++btData.checkIteration;
+
+            if (
+              btData.checkIteration > MAX_CHECK_TIMES &&
+              status !== BlockchainTransaction.STATUS.SUCCESS
+            )
+              status = BlockchainTransaction.STATUS.EXPIRE;
+
             break;
           }
           default:
@@ -79,6 +91,7 @@ class TxCheckJob extends CommonJob {
             await BlockchainTransaction.update(
               {
                 status,
+                data: btData,
               },
               {
                 where: {
