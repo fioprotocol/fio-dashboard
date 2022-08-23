@@ -68,6 +68,8 @@ router.post(
   routes.adminUsers.updateFioAccountProfile,
 );
 
+router.get('/admin/search', checkAdminAuth, routes.adminUsers.search);
+
 router.get('/notifications', checkAuth, routes.notifications.list);
 router.post('/notifications', checkAuth, routes.notifications.create);
 router.put('/notifications', checkAuth, routes.notifications.update);

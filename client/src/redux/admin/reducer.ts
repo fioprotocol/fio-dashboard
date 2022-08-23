@@ -3,6 +3,7 @@ import { combineReducers } from 'redux';
 import * as actions from './actions';
 
 import {
+  AdminSearchResult,
   AdminUser,
   AdminUserProfile,
   FioAccountProfile,
@@ -18,6 +19,7 @@ export default combineReducers({
       case actions.GET_ORDER_BY_ADMIN_REQUEST:
       case actions.GET_ADMIN_USER_PROFILE_REQUEST:
       case actions.GET_FIO_ACCOUNTS_PROFILES_REQUEST:
+      case actions.ADMIN_SEARCH_REQUEST:
         return true;
       case actions.GET_ADMIN_USERS_SUCCESS:
       case actions.GET_ADMIN_USERS_FAILURE:
@@ -31,6 +33,8 @@ export default combineReducers({
       case actions.GET_ADMIN_USER_PROFILE_FAILURE:
       case actions.GET_FIO_ACCOUNTS_PROFILES_SUCCESS:
       case actions.GET_FIO_ACCOUNTS_PROFILES_FAILURE:
+      case actions.ADMIN_SEARCH_SUCCESS:
+      case actions.ADMIN_SEARCH_FAILURE:
         return false;
       default:
         return state;
@@ -83,6 +87,16 @@ export default combineReducers({
       case actions.GET_ADMIN_USER_PROFILE_SUCCESS:
         return action.data;
       case actions.GET_ADMIN_USER_PROFILE_FAILURE:
+        return null;
+      default:
+        return state;
+    }
+  },
+  adminSearch(state: AdminSearchResult = null, action) {
+    switch (action.type) {
+      case actions.ADMIN_SEARCH_SUCCESS:
+        return action.data;
+      case actions.ADMIN_SEARCH_FAILURE:
         return null;
       default:
         return state;

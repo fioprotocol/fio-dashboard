@@ -115,6 +115,31 @@ export class Order extends Base {
     });
   }
 
+  static attrs(type = 'default') {
+    const attributes = {
+      default: [
+        'id',
+        'total',
+        'roe',
+        'status',
+        'data',
+        'publicKey',
+        'customerIp',
+        'refProfileId',
+        'userId',
+        'createdAt',
+        'updatedAt',
+        'number',
+      ],
+    };
+
+    if (type in attributes) {
+      return attributes[type];
+    }
+
+    return attributes.default;
+  }
+
   static list(userId, search, page, limit = 50) {
     const where = { userId };
 
@@ -194,6 +219,43 @@ export class Order extends Base {
     });
 
     return order;
+  }
+
+  static async listSearchByItems(domain, address) {
+    const [orders] = await this.sequelize.query(`
+        SELECT 
+          o.id, 
+          o.roe, 
+          o.number, 
+          o."total", 
+          o."publicKey", 
+          o."userId", 
+          o."status", 
+          o."createdAt", 
+          o."updatedAt",
+          p.currency,
+          u.email as "userEmail",
+          rp.label as "refProfileName",
+          p.processor as "paymentProcessor",
+          bt.data as "blockchainData"
+        FROM "orders" o
+          INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${
+            Payment.SPENT_TYPE.ORDER
+          }
+          INNER JOIN users u ON u.id = o."userId"
+          LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
+          LEFT JOIN "order-items" oi ON oi."orderId" = o.id
+          LEFT JOIN "blockchain-transactions" bt ON bt."orderItemId" = oi.id
+        WHERE o."deletedAt" IS NULL
+        AND o.id IN (SELECT "orderId" FROM "order-items" WHERE ${
+          address
+            ? `domain LIKE '${domain}%' AND address LIKE '%${address}'`
+            : `domain LIKE '%${domain}%'`
+        } AND oi."deletedAt" IS NULL) 
+        ORDER BY o.id DESC
+      `);
+
+    return orders;
   }
 
   static async updateStatus(orderId, paymentStatus = null, txStatuses = [], t = null) {

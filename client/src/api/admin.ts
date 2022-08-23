@@ -5,6 +5,7 @@ import {
   AdminGeneralCreateResponse,
   AdminOrderItemResponse,
   AdminOrdersListResponse,
+  AdminSearchResponse,
   AdminUsersListResponse,
   AuthLoginResponse,
   RemoveAdminResponse,
@@ -42,6 +43,9 @@ export default class Admin extends Base {
   }
   ordersList(limit: number, offset: number): Promise<AdminOrdersListResponse> {
     return this.apiClient.get('admin/orders', { limit, offset });
+  }
+  search(value: string): Promise<AdminSearchResponse> {
+    return this.apiClient.get('admin/search', { name: value });
   }
   order(id: string): Promise<AdminOrderItemResponse> {
     return this.apiClient.get(`admin/orders/${id}`);

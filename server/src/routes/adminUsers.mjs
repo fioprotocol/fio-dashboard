@@ -15,6 +15,7 @@ import RegularUsersList from '../services/adminUsers/RegularUsersList.mjs';
 import FioAccountsList from '../services/adminUsers/FioAccountsList.mjs';
 import FioAccountProfileUpdate from '../services/adminUsers/FioAccountProfileUpdate.mjs';
 import FioAccountProfileCreate from '../services/adminUsers/FioAccountProfileCreate.mjs';
+import Search from '../services/adminUsers/Search.mjs';
 
 export default {
   personalInfo: makeServiceRunner(PersonalInfo),
@@ -35,4 +36,5 @@ export default {
     ...req.body,
     ...req.params,
   })),
+  search: makeServiceRunner(Search, req => req.query),
 };
