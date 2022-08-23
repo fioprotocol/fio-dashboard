@@ -1,22 +1,56 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Table } from 'react-bootstrap';
 
 import Loader from '../../components/Loader/Loader';
+import AdminOrderModal from '../AdminOrdersPage/components/AdminOrderModal/AdminOrderModal';
+import AdminUserModal from './components/AdminUserModal/AdminUserModal';
 
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 import { PURCHASE_RESULTS_STATUS_LABELS } from '../../constants/purchase';
 
-import { AdminSearchResult } from '../../types';
+import {
+  AdminSearchResult,
+  AdminUserItemProfile,
+  OrderItem,
+} from '../../types';
 
 import classes from './AdminSearchResultPage.module.scss';
 
 type Props = {
   adminSearch?: AdminSearchResult;
   loading: boolean;
+  orderItem: OrderItem;
+  getOrder: (id: string) => Promise<void>;
 };
 
 const AdminPage: React.FC<Props> = props => {
-  const { adminSearch, loading } = props;
+  const { adminSearch, loading, getOrder, orderItem } = props;
+
+  const [userItem, setUserItem] = useState<AdminUserItemProfile | null>(null);
+
+  const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
+  const [selectedOrderItemId, setSelectedOrderItemId] = useState<string | null>(
+    null,
+  );
+
+  const closeOrderDetails = () => {
+    setShowOrderDetailsModal(false);
+    setSelectedOrderItemId(null);
+  };
+
+  const openOrderDetails = async (orderId: string) => {
+    await getOrder(orderId);
+    setSelectedOrderItemId(orderId);
+    setShowOrderDetailsModal(true);
+  };
+
+  const closeUserDetails = () => {
+    setUserItem(null);
+  };
+
+  const openUserDetails = async (user: AdminUserItemProfile) => {
+    setUserItem(user);
+  };
 
   if (loading) return <Loader />;
 
@@ -46,7 +80,11 @@ const AdminPage: React.FC<Props> = props => {
                 </thead>
                 <tbody>
                   {adminSearch.result.orders.map((order, i) => (
-                    <tr key={order.id} className={classes.userItem}>
+                    <tr
+                      key={order.id}
+                      className={classes.userItem}
+                      onClick={openOrderDetails.bind(null, order.id)}
+                    >
                       <th>
                         {order.createdAt
                           ? formatDateToLocale(order.createdAt)
@@ -79,7 +117,11 @@ const AdminPage: React.FC<Props> = props => {
                 </thead>
                 <tbody>
                   {adminSearch.result.users.map((user, i) => (
-                    <tr key={user.id} className={classes.userItem}>
+                    <tr
+                      key={user.id}
+                      className={classes.userItem}
+                      onClick={openUserDetails.bind(null, user)}
+                    >
                       <th>
                         {user.createdAt
                           ? formatDateToLocale(user.createdAt)
@@ -92,6 +134,20 @@ const AdminPage: React.FC<Props> = props => {
               </Table>
             </div>
           )}
+
+          <AdminOrderModal
+            isVisible={
+              showOrderDetailsModal && selectedOrderItemId === orderItem?.id
+            }
+            onClose={closeOrderDetails}
+            orderItem={orderItem}
+          />
+
+          <AdminUserModal
+            isVisible={!!userItem}
+            onClose={closeUserDetails}
+            userItem={userItem}
+          />
         </div>
       )}
     </>
