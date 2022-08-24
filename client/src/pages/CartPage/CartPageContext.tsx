@@ -11,7 +11,6 @@ import { getPrices } from '../../redux/registrations/actions';
 import {
   cartItems as cartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
-  cartHasItemsWithPrivateDomain as cartHasItemsWithPrivateDomainSelector,
 } from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 import {
@@ -25,7 +24,6 @@ import {
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 
-import { useWalletBalances } from '../../util/hooks';
 import { handleFreeAddressCart, totalCost } from '../../utils';
 import MathOp from '../../util/math';
 import { convertFioPrices } from '../../util/prices';
@@ -34,7 +32,7 @@ import { useEffectOnce } from '../../hooks/general';
 
 import { ROUTES } from '../../constants/routes';
 import { ACTIONS } from '../../constants/fio';
-import { CURRENCY_CODES, WALLET_CREATED_FROM } from '../../constants/common';
+import { CURRENCY_CODES } from '../../constants/common';
 import { log } from '../../util/general';
 
 import { FioRegPricesResponse } from '../../api/responses';
@@ -54,8 +52,8 @@ import {
 type UseContextReturnType = {
   cartItems: CartItem[];
   hasGetPricesError: boolean;
-  error: string | null;
-  hasLowBalance: boolean;
+  error?: string | null;
+  hasLowBalance?: boolean;
   isFree: boolean;
   isPriceChanged: boolean;
   loading: boolean;
@@ -65,18 +63,14 @@ type UseContextReturnType = {
   totalCartAmount: string;
   totalCartNativeAmount: number;
   userWallets: FioWalletDoublet[];
-  walletBalancesAvailable: WalletBalancesItem;
+  walletBalancesAvailable?: WalletBalancesItem;
   walletCount: number;
-  setWallet: (publicKey: string) => void;
   onPaymentChoose: (paymentOption: PaymentOptionsProps) => Promise<void>;
   deleteItem: (data: DeleteCartItem) => void;
 };
 
 export const useContext = (): UseContextReturnType => {
   const cartItems = useSelector(cartItemsSelector);
-  const cartHasItemsWithPrivateDomain = useSelector(
-    cartHasItemsWithPrivateDomainSelector,
-  );
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const hasGetPricesError = useSelector(hasGetPricesErrorSelector);
   const isAuth = useSelector(isAuthenticated);
@@ -95,7 +89,6 @@ export const useContext = (): UseContextReturnType => {
   const [isPriceChanged, handlePriceChange] = useState(false);
   const [isUpdatingPrices, setIsUpdatingPrices] = useState(false);
   const [updatingPricesHasError, setUpdatingPricesHasError] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const handleFreeAddressCartFn = () =>
     handleFreeAddressCart({
@@ -105,10 +98,6 @@ export const useContext = (): UseContextReturnType => {
       roe,
       setCartItems: cartItems => dispatch(setCartItems(cartItems)),
     });
-
-  const { available: walletBalancesAvailable } = useWalletBalances(
-    paymentWalletPublicKey,
-  );
 
   const isFree =
     !isEmpty(cartItems) &&
@@ -123,16 +112,6 @@ export const useContext = (): UseContextReturnType => {
   const totalCartAmount = apis.fio
     .sufToAmount(totalCartNativeAmount)
     .toFixed(2);
-
-  const hasLowBalance =
-    !isEmpty(walletBalancesAvailable) &&
-    totalCartNativeAmount &&
-    new MathOp(walletBalancesAvailable.nativeFio).lt(totalCartNativeAmount);
-
-  const paymentWallet = userWallets.find(
-    ({ publicKey }) => publicKey === paymentWalletPublicKey,
-  );
-  const paymentWalletFrom = paymentWallet && paymentWallet.from;
 
   const {
     nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
@@ -253,7 +232,7 @@ export const useContext = (): UseContextReturnType => {
       createOrder({
         total: totalUsdc,
         roe,
-        publicKey: paymentWalletPublicKey,
+        publicKey: paymentWalletPublicKey || userWallets[0].publicKey,
         paymentProcessor: paymentOption,
         items: cartItems.map(
           ({ address, domain, costNativeFio, costUsdc, hasCustomDomain }) => {
@@ -320,26 +299,10 @@ export const useContext = (): UseContextReturnType => {
     }
   }, [history, isAuth]);
 
-  useEffect(() => {
-    if (
-      paymentWalletFrom &&
-      paymentWalletFrom === WALLET_CREATED_FROM.LEDGER &&
-      cartHasItemsWithPrivateDomain
-    )
-      setError(
-        'At this moment registration of FIO Crypto Handles on private domains is not supported. We are working hard to add this capability to the Ledger’s FIO App.',
-      );
-
-    if (error && paymentWalletFrom === WALLET_CREATED_FROM.EDGE) setError(null);
-  }, [paymentWalletFrom, cartHasItemsWithPrivateDomain, error]);
-
   return {
     cartItems,
     hasGetPricesError: hasGetPricesError || updatingPricesHasError,
-    error,
-    hasLowBalance,
     walletCount,
-    walletBalancesAvailable,
     isFree,
     loading: loading || isUpdatingPrices,
     totalCartAmount,
@@ -350,7 +313,6 @@ export const useContext = (): UseContextReturnType => {
     prices,
     roe,
     onPaymentChoose,
-    setWallet: (publicKey: string) => dispatch(setWallet(publicKey)),
     deleteItem: (data: DeleteCartItem) => dispatch(deleteItem(data)),
   };
 };

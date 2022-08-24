@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
 import { refreshBalance, fioActionExecuted } from '../../redux/fio/actions';
-import { setWallet, setCartItems } from '../../redux/cart/actions';
+import {
+  setWallet as setWalletAction,
+  setCartItems,
+} from '../../redux/cart/actions';
 import {
   setRegistration,
   setProcessing,
@@ -18,6 +21,7 @@ import {
   fioWalletsBalances as fioWalletsBalancesSelector,
 } from '../../redux/fio/selectors';
 import {
+  cartHasItemsWithPrivateDomain as cartHasItemsWithPrivateDomainSelector,
   cartItems as CartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
@@ -86,6 +90,8 @@ export const useContext = (): {
   fioLoading: boolean;
   orderLoading: boolean;
   isFreeOrderCreateLoading: boolean;
+  error: string | null;
+  submitDisabled?: boolean;
   beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   onClose: () => void;
   onFinish: (results: RegistrationResult) => Promise<void>;
@@ -107,12 +113,15 @@ export const useContext = (): {
   const isProcessing = useSelector(isProcessingSelector);
   const orderLoading = useSelector(orderLoadingSelector);
   const roe = useSelector(roeSelector);
+  const cartHasItemsWithPrivateDomain = useSelector(
+    cartHasItemsWithPrivateDomainSelector,
+  );
 
   const dispatch = useDispatch();
   const dispatchSetProcessing = (isProcessing: boolean) =>
     dispatch(setProcessing(isProcessing));
   const dispatchSetWallet = (paymentWalletPublicKey: string) =>
-    dispatch(setWallet(paymentWalletPublicKey));
+    dispatch(setWalletAction(paymentWalletPublicKey));
 
   const [
     beforeSubmitProps,
@@ -121,6 +130,7 @@ export const useContext = (): {
   const [isFreeOrderCreateLoading, toggleFreeOrderCreateLoading] = useState<
     boolean
   >(false);
+  const [error, setError] = useState<string | null>(null);
 
   const {
     location: { state },
@@ -128,6 +138,16 @@ export const useContext = (): {
   const { paymentOption }: { paymentOption?: PaymentOptionsProps } =
     state || {};
   const payment = order && order.payment;
+  const orderId = order && order.id;
+
+  const setWallet = useCallback(
+    (paymentWalletPublicKey: string) => {
+      orderId &&
+        apis.orders.update(orderId, { publicKey: paymentWalletPublicKey });
+      dispatchSetWallet(paymentWalletPublicKey);
+    },
+    [orderId, dispatchSetWallet],
+  );
 
   useEffectOnce(() => {
     if (!isEmpty(fioWallets)) {
@@ -137,7 +157,7 @@ export const useContext = (): {
         }
       }
       if (!paymentWalletPublicKey && fioWallets.length) {
-        dispatch(setWallet(fioWallets[0].publicKey));
+        setWallet(fioWallets[0].publicKey);
       }
     }
   }, []);
@@ -156,6 +176,7 @@ export const useContext = (): {
   const { available: walletBalancesAvailable } = useWalletBalances(
     paymentWalletPublicKey,
   );
+  const paymentWalletFrom = paymentWallet && paymentWallet.from;
 
   const walletHasNoEnoughBalance = new MathOp(
     walletBalancesAvailable.nativeFio,
@@ -244,6 +265,19 @@ export const useContext = (): {
       });
   }, [hasFreeAddress, prices, roe, isProcessing, cartItemsJson, dispatch]);
 
+  useEffect(() => {
+    if (
+      paymentWalletFrom &&
+      paymentWalletFrom === WALLET_CREATED_FROM.LEDGER &&
+      cartHasItemsWithPrivateDomain
+    )
+      setError(
+        'At this moment registration of FIO Crypto Handles on private domains is not supported. We are working hard to add this capability to the Ledger’s FIO App.',
+      );
+
+    if (error && paymentWalletFrom === WALLET_CREATED_FROM.EDGE) setError(null);
+  }, [paymentWalletFrom, cartHasItemsWithPrivateDomain, error]);
+
   const onClose = () => {
     history.push(ROUTES.CART);
   };
@@ -251,6 +285,7 @@ export const useContext = (): {
   const onFinish = async (results: RegistrationResult) => {
     await apis.orders.update(order.id, {
       status: results.providerTxStatus || PURCHASE_RESULTS_STATUS.DONE,
+      publicKey: paymentWalletPublicKey,
       results,
     });
     onPurchaseFinish({
@@ -348,10 +383,12 @@ export const useContext = (): {
     fioLoading,
     orderLoading,
     isFreeOrderCreateLoading,
+    error,
+    submitDisabled: !!error,
     beforePaymentSubmit,
     onClose,
     onFinish,
-    setWallet: dispatchSetWallet,
+    setWallet,
     setProcessing: dispatchSetProcessing,
   };
 };

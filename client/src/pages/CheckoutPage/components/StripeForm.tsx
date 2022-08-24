@@ -20,7 +20,8 @@ import classes from '../styles/StripePaymentOption.module.scss';
 export const StripeForm: React.FC<{
   onFinish: (success: boolean, data?: BeforeSubmitData) => void;
   beforeSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
-}> = ({ onFinish, beforeSubmit }) => {
+  submitDisabled?: boolean;
+}> = ({ onFinish, beforeSubmit, submitDisabled = false }) => {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -76,7 +77,7 @@ export const StripeForm: React.FC<{
       <SubmitButton
         text={loading ? 'Processing...' : 'Pay'}
         withTopMargin={true}
-        disabled={!stripe || !elements || loading}
+        disabled={!stripe || !elements || loading || submitDisabled}
         loading={loading}
       />
     </form>

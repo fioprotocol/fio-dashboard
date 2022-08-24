@@ -8,11 +8,8 @@ import CounterContainer from '../CounterContainer/CounterContainer';
 import CartItem from './CartItem';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
-import CustomDropdown from '../CustomDropdown';
 
-import useEffectOnce from '../../hooks/general';
 import { deleteCartItem } from '../../utils';
-import { useCheckIfDesktop } from '../../screenType';
 
 import { ROUTES } from '../../constants/routes';
 
@@ -31,7 +28,6 @@ type Props = {
   cartItems: CartItemType[];
   deleteItem?: (data: DeleteCartItem) => void;
   userWallets: FioWalletDoublet[];
-  setWallet: (publicKey: string) => void;
   hasLowBalance: boolean;
   walletCount: number;
   totalCartAmount: string;
@@ -50,9 +46,7 @@ const Cart: React.FC<Props> = props => {
     cartItems,
     deleteItem,
     userWallets,
-    setWallet,
     hasLowBalance,
-    walletCount,
     totalCartAmount,
     totalCartNativeAmount,
     walletBalancesAvailable,
@@ -63,8 +57,6 @@ const Cart: React.FC<Props> = props => {
     hasGetPricesError,
     error,
   } = props;
-
-  const isDesktop = useCheckIfDesktop();
 
   const count = cartItems.length;
   const isCartEmpty = count === 0;
@@ -91,22 +83,12 @@ const Cart: React.FC<Props> = props => {
             ${walletBalance} FIO. Please add FIO tokens.`,
   };
 
-  const walletsList = userWallets
-    .sort((a, b) => b.available - a.available || a.name.localeCompare(b.name))
-    .map(wallet => ({ id: wallet.publicKey, name: wallet.name }));
-
   const allWalletsHasLowBalance = userWallets?.every(
     wallet =>
       wallet.available != null &&
       totalCartNativeAmount &&
       new MathOp(wallet.available).lte(totalCartNativeAmount),
   );
-
-  useEffectOnce(() => {
-    if (walletsList.length) {
-      setWallet(walletsList[0].id);
-    }
-  }, [walletsList]);
 
   let errorMessage = 'Your price has been updated due to pricing changes.';
   if (hasGetPricesError) {
@@ -130,6 +112,7 @@ const Cart: React.FC<Props> = props => {
               <span className="boldText">
                 {error ? 'Error' : 'Pricing update'}
               </span>
+              {` - `}
               {error || errorMessage}
             </p>
           </div>
@@ -154,28 +137,6 @@ const Cart: React.FC<Props> = props => {
             Search for more FIO Crypto Handles?
           </p>
         </Link>
-        {walletCount > 1 && (
-          <div className={classes.walletContainer}>
-            <h6 className={classes.title}>FIO Wallet Assignment</h6>
-            <p className={classes.subtitle}>
-              Please choose a FIO wallet to assign your purchase(s) to.
-            </p>
-            <CustomDropdown
-              onChange={setWallet}
-              options={walletsList}
-              isWhite={true}
-              isSimple={true}
-              isHigh={true}
-              value={walletsList[0].id}
-              hasBigBorderRadius={true}
-              isBlackPlaceholder={true}
-              hasLightBorder={true}
-              fitContentWidth={isDesktop}
-              hasAutoWidth={!isDesktop}
-              withoutMarginBottom={true}
-            />
-          </div>
-        )}
       </div>
       <LowBalanceBadge
         {...lowBalanceText}
