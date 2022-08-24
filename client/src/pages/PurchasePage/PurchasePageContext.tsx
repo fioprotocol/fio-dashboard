@@ -264,10 +264,15 @@ export const useContext = (): {
     ].indexOf(orderStatusData.status) > -1,
   );
 
-  const closeText =
-    containedFlowParams != null && containedFlowParams.action
-      ? CONTAINED_FLOW_CONTINUE_TEXT[containedFlowParams.action]
-      : 'Close';
+  let closeText = 'Close';
+
+  if (
+    containedFlowParams != null &&
+    containedFlowParams.action &&
+    CONTAINED_FLOW_CONTINUE_TEXT[containedFlowParams.action]
+  ) {
+    closeText = CONTAINED_FLOW_CONTINUE_TEXT[containedFlowParams.action];
+  }
 
   const onClose = () => {
     dispatch(setRegistration(null));
