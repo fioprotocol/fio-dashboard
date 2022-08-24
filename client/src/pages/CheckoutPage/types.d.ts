@@ -54,7 +54,11 @@ export type BeforeSubmitState = {
   onSuccess: (data: BeforeSubmitData) => void;
   onCancel: () => void;
   data: {
-    fioAddressItems: { fioWallet: FioWalletDoublet; name: string }[];
+    fioAddressItems: {
+      fioWallet: FioWalletDoublet;
+      name: string;
+      ownerKey: string;
+    }[];
   } | null;
   fee?: number | null;
 };

@@ -25,6 +25,7 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
           signedTx: await apis.fio.walletFioSDK.genericAction(
             ACTIONS.registerFioAddress,
             {
+              ownerPublicKey: item.ownerKey,
               fioAddress: item.name,
               maxFee: fee,
             },
