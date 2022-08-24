@@ -221,7 +221,7 @@ export class Order extends Base {
     return order;
   }
 
-  static async listSearchByItems(domain, address) {
+  static async listSearchByFioAddressItems(domain, address) {
     const [orders] = await this.sequelize.query(`
         SELECT 
           o.id, 
@@ -237,7 +237,20 @@ export class Order extends Base {
           u.email as "userEmail",
           rp.label as "refProfileName",
           p.processor as "paymentProcessor",
-          bt.data as "blockchainData"
+          min(
+            case
+              when (oi.domain LIKE '${domain}' ${
+      address ? `AND oi.address LIKE '${address}'` : ``
+    }) then 1
+              when (oi.domain LIKE '${domain}%' ${
+      address ? `AND oi.address LIKE '${address}'` : ``
+    }) then 2
+              when (oi.domain LIKE '${domain}%' ${
+      address ? `AND oi.address LIKE '%${address}'` : ``
+    }) then 3
+              else 4
+            end
+            ) as orderPriority
         FROM "orders" o
           INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${
             Payment.SPENT_TYPE.ORDER
@@ -245,14 +258,82 @@ export class Order extends Base {
           INNER JOIN users u ON u.id = o."userId"
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
           LEFT JOIN "order-items" oi ON oi."orderId" = o.id
-          LEFT JOIN "blockchain-transactions" bt ON bt."orderItemId" = oi.id
         WHERE o."deletedAt" IS NULL
         AND o.id IN (SELECT "orderId" FROM "order-items" WHERE ${
           address
             ? `domain LIKE '${domain}%' AND address LIKE '%${address}'`
             : `domain LIKE '%${domain}%'`
-        } AND oi."deletedAt" IS NULL) 
-        ORDER BY o.id DESC
+        } AND "deletedAt" IS NULL) 
+        GROUP BY o.id, p."currency", u.email, rp.label, p.processor
+        ORDER BY orderPriority
+      `);
+
+    return orders;
+  }
+
+  static async listSearchByUserEmail(email) {
+    const [orders] = await this.sequelize.query(`
+        SELECT 
+          o.id, 
+          o.roe, 
+          o.number, 
+          o."total", 
+          o."publicKey", 
+          o."userId", 
+          o."status", 
+          o."createdAt", 
+          o."updatedAt",
+          p.currency,
+          u.email as "userEmail",
+          rp.label as "refProfileName",
+          p.processor as "paymentProcessor",
+          min(
+            case
+              when (u.email LIKE '${email}') then 1
+              when (u.email LIKE '${email}%') then 2
+              when (u.email LIKE '%${email}%') then 3
+              else 4
+            end
+            ) as orderPriority
+        FROM "orders" o
+          INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${Payment.SPENT_TYPE.ORDER}
+          INNER JOIN users u ON u.id = o."userId"
+          LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
+          LEFT JOIN "order-items" oi ON oi."orderId" = o.id
+        WHERE o."deletedAt" IS NULL
+        AND o."userId" IN (SELECT "id" FROM "users" WHERE email LIKE '%${email}%' AND "deletedAt" IS NULL)
+        GROUP BY o.id, p."currency", u.email, rp.label, p.processor
+        ORDER BY orderPriority
+      `);
+
+    return orders;
+  }
+
+  static async listSearchByPublicKey(publicKey) {
+    const [orders] = await this.sequelize.query(`
+        SELECT 
+          o.id, 
+          o.roe, 
+          o.number, 
+          o."total", 
+          o."publicKey", 
+          o."userId", 
+          o."status", 
+          o."createdAt", 
+          o."updatedAt",
+          p.currency,
+          u.email as "userEmail",
+          rp.label as "refProfileName",
+          p.processor as "paymentProcessor"
+        FROM "orders" o
+          INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${Payment.SPENT_TYPE.ORDER}
+          INNER JOIN users u ON u.id = o."userId"
+          LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
+          LEFT JOIN "order-items" oi ON oi."orderId" = o.id
+        WHERE o."deletedAt" IS NULL
+        AND o."publicKey" = '${publicKey}'
+        GROUP BY o.id, p."currency", u.email, rp.label, p.processor
+        ORDER BY o."createdAt" DESC
       `);
 
     return orders;

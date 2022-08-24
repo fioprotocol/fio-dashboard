@@ -1,3 +1,6 @@
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/colors.scss';
+
 .resultItemContainer {
   display: flex;
   justify-content: center;
@@ -19,4 +22,9 @@
   font-size: 26px;
   font-weight: 600;
   margin-top: 40px;
+}
+
+.link {
+  cursor: pointer;
+  color: $cyan;
 }

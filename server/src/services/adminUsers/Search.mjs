@@ -1,12 +1,11 @@
-import sequelize from 'sequelize';
 import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import Base from '../Base';
-import { Order, User } from '../../models';
+import { Order } from '../../models';
 import { ADMIN_ROLES_IDS } from '../../config/constants.js';
 import X from '../Exception.mjs';
 
-const { Op } = sequelize;
+// const { Op } = sequelize;
 
 const validateEmail = email => {
   return email.match(
@@ -38,6 +37,7 @@ export default class Search extends Base {
     const isEmail = validateEmail(name);
     let isFioAddress = false;
     let isDomain = false;
+    let isPublicKey = false;
 
     try {
       FIOSDK.isFioAddressValid(name);
@@ -53,56 +53,70 @@ export default class Search extends Base {
       //
     }
 
+    try {
+      FIOSDK.isFioPublicKeyValid(name);
+      isPublicKey = true;
+    } catch (e) {
+      //
+    }
+
     const result = {
       users: [],
       orders: [],
     };
 
     if (isEmail) {
-      const usersProfiles = await User.findAll({
-        where: {
-          email: {
-            [Op.like]: `%${name}%`,
-          },
-        },
-      });
+      // could be useful in future
+      // const usersProfiles = await User.findAll({
+      //   where: {
+      //     email: {
+      //       [Op.like]: `%${name}%`,
+      //     },
+      //   },
+      // });
+      // result.users = usersProfiles.map(user => user.json());
 
-      result.users = usersProfiles.map(user => user.json());
+      const orders = await Order.listSearchByUserEmail(name);
+      result.orders = [...result.orders, ...orders];
     }
 
     if (isFioAddress) {
       const fioAddressParts = name.split('@');
 
-      const orders = await Order.listSearchByItems(
+      const orders = await Order.listSearchByFioAddressItems(
         fioAddressParts[1],
         fioAddressParts[0],
       );
 
-      const usersProfiles = await User.findAll({
-        where: {
-          id: {
-            [Op.in]: orders.map(o => o.userId),
-          },
-        },
-      }).map(u => u.json());
-
       result.orders = [...result.orders, ...orders];
-      result.users = [...result.users, ...usersProfiles];
+
+      // const usersProfiles = await User.findAll({
+      //   where: {
+      //     id: {
+      //       [Op.in]: orders.map(o => o.userId),
+      //     },
+      //   },
+      // }).map(u => u.json());
+      // result.users = [...result.users, ...usersProfiles];
     }
 
     if (isDomain) {
-      const orders = await Order.listSearchByItems(name);
-
-      const usersProfiles = await User.findAll({
-        where: {
-          id: {
-            [Op.in]: orders.map(o => o.userId),
-          },
-        },
-      }).map(u => u.json());
-
+      const orders = await Order.listSearchByFioAddressItems(name);
       result.orders = [...result.orders, ...orders];
-      result.users = [...result.users, ...usersProfiles];
+
+      // const usersProfiles = await User.findAll({
+      //   where: {
+      //     id: {
+      //       [Op.in]: orders.map(o => o.userId),
+      //     },
+      //   },
+      // }).map(u => u.json());
+      // result.users = [...result.users, ...usersProfiles];
+    }
+
+    if (isPublicKey) {
+      const orders = await Order.listSearchByPublicKey(name);
+      result.orders = [...result.orders, ...orders];
     }
 
     return {
