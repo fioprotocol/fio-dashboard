@@ -11,6 +11,7 @@ import { getPrices } from '../../redux/registrations/actions';
 import {
   cartItems as cartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
+  isCartPrivateDomainsError as isCartPrivateDomainsErrorSelector,
 } from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 import {
@@ -79,6 +80,9 @@ export const useContext = (): UseContextReturnType => {
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const userWallets = useSelector(fioWalletsSelector);
+  const isCartPrivateDomainsError = useSelector(
+    isCartPrivateDomainsErrorSelector,
+  );
 
   const dispatch = useDispatch();
 
@@ -112,6 +116,10 @@ export const useContext = (): UseContextReturnType => {
   const totalCartAmount = apis.fio
     .sufToAmount(totalCartNativeAmount)
     .toFixed(2);
+
+  const error = isCartPrivateDomainsError
+    ? 'Some FIO Crypto Handles in your cart are on private FIO Domains controlled by different FIO Wallets and therefore cannot be purchased in a single transaction. Please purchase them one at a time.'
+    : null;
 
   const {
     nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
@@ -312,6 +320,7 @@ export const useContext = (): UseContextReturnType => {
     paymentWalletPublicKey,
     prices,
     roe,
+    error,
     onPaymentChoose,
     deleteItem: (data: DeleteCartItem) => dispatch(deleteItem(data)),
   };

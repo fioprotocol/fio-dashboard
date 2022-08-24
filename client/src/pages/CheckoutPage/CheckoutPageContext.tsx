@@ -265,6 +265,7 @@ export const useContext = (): {
       });
   }, [hasFreeAddress, prices, roe, isProcessing, cartItemsJson, dispatch]);
 
+  // Check for ledger wallet when cart has addresses with private domains
   useEffect(() => {
     if (
       paymentWalletFrom &&
