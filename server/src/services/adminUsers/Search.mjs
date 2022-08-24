@@ -1,11 +1,12 @@
+import sequelize from 'sequelize';
 import { FIOSDK } from '@fioprotocol/fiosdk';
 
 import Base from '../Base';
-import { Order } from '../../models';
+import { Order, User } from '../../models';
 import { ADMIN_ROLES_IDS } from '../../config/constants.js';
 import X from '../Exception.mjs';
 
-// const { Op } = sequelize;
+const { Op } = sequelize;
 
 const validateEmail = email => {
   return email.match(
@@ -66,16 +67,6 @@ export default class Search extends Base {
     };
 
     if (isEmail) {
-      // could be useful in future
-      // const usersProfiles = await User.findAll({
-      //   where: {
-      //     email: {
-      //       [Op.like]: `%${name}%`,
-      //     },
-      //   },
-      // });
-      // result.users = usersProfiles.map(user => user.json());
-
       const orders = await Order.listSearchByUserEmail(name);
       result.orders = [...result.orders, ...orders];
     }
@@ -89,29 +80,11 @@ export default class Search extends Base {
       );
 
       result.orders = [...result.orders, ...orders];
-
-      // const usersProfiles = await User.findAll({
-      //   where: {
-      //     id: {
-      //       [Op.in]: orders.map(o => o.userId),
-      //     },
-      //   },
-      // }).map(u => u.json());
-      // result.users = [...result.users, ...usersProfiles];
     }
 
     if (isDomain) {
       const orders = await Order.listSearchByFioAddressItems(name);
       result.orders = [...result.orders, ...orders];
-
-      // const usersProfiles = await User.findAll({
-      //   where: {
-      //     id: {
-      //       [Op.in]: orders.map(o => o.userId),
-      //     },
-      //   },
-      // }).map(u => u.json());
-      // result.users = [...result.users, ...usersProfiles];
     }
 
     if (isPublicKey) {
@@ -124,6 +97,28 @@ export default class Search extends Base {
         result,
       },
     };
+  }
+
+  async userSearch({ userIdsArray, emailAddress }) {
+    if (userIdsArray)
+      return User.findAll({
+        where: {
+          id: {
+            [Op.in]: userIdsArray,
+          },
+        },
+      }).map(u => u.json());
+
+    if (emailAddress)
+      return User.findAll({
+        where: {
+          email: {
+            [Op.like]: `%${emailAddress}%`,
+          },
+        },
+      }).map(u => u.json());
+
+    return [];
   }
 
   static get paramsSecret() {

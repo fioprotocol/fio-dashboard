@@ -4,9 +4,9 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from '../../utils';
 
 import { adminSearch, loading, orderItem } from '../../redux/admin/selectors';
+import { getOrder } from '../../redux/admin/actions';
 
 import AdminSearchResultPage from './AdminSearchResultPage';
-import { getOrder } from '../../redux/admin/actions';
 
 const reduxConnect = connect(
   createStructuredSelector({

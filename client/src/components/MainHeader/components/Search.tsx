@@ -7,7 +7,7 @@ import { useIsAdminRoute } from '../../../hooks/admin';
 import { ROUTES } from '../../../constants/routes';
 import { adminSearch } from '../../../redux/admin/actions';
 
-const AdminSearch: React.FC = () => {
+const Search: React.FC = () => {
   const [searchValue, setSearchValue] = useState('');
 
   const history = useHistory();
@@ -51,4 +51,4 @@ const AdminSearch: React.FC = () => {
   );
 };
 
-export default AdminSearch;
+export default Search;
