@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
 import Navigation from '../../Navigation';
-import AdminSearch from './AdminSearch';
+import Search from './Search';
 
 import { ROUTES } from '../../../constants/routes';
 
@@ -133,7 +133,7 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
         </Nav.Link>
       )}
       <Nav.Link href="#" className="pr-0">
-        <AdminSearch />
+        <Search />
         <Button
           className={classnames(classes.button, !isMenuOpen && 'ml-4')}
           onClick={logout}
