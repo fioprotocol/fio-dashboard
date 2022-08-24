@@ -4,8 +4,6 @@ import has from 'lodash/has';
 
 import { PaymentButton } from './components/PaymentButton';
 
-import MathOp from '../../util/math';
-
 import { PAYMENT_OPTIONS } from '../../constants/purchase';
 
 import {
@@ -42,8 +40,6 @@ const PAYMENT_OPTIONS_PROPS = {
     paymentWalletPublicKey,
     cartItems,
     isFree,
-    userWallets,
-    totalCartNativeAmount,
     paymentOption,
     loading,
     disabled,
@@ -52,18 +48,12 @@ const PAYMENT_OPTIONS_PROPS = {
     buttonText: isFree ? 'Complete Transaction' : 'Pay with FIO',
     icon: <FontAwesomeIcon icon="wallet" />,
     disabled:
-      hasLowBalance ||
       paymentWalletPublicKey === '' ||
       cartItems?.length === 0 ||
       loading ||
       disabled,
     loading,
-    hideButton: userWallets?.every(
-      wallet =>
-        wallet.available != null &&
-        totalCartNativeAmount &&
-        new MathOp(wallet.available).lte(totalCartNativeAmount),
-    ),
+    hideButton: hasLowBalance,
     onClick: () => onPaymentChoose(paymentOption),
   }),
   [PAYMENT_OPTIONS.CREDIT_CARD]: ({

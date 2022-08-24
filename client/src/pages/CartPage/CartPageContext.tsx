@@ -125,6 +125,19 @@ export const useContext = (): UseContextReturnType => {
     nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
   } = prices;
 
+  const hasLowBalance = userWallets?.every(
+    wallet =>
+      wallet.available != null &&
+      totalCartNativeAmount &&
+      new MathOp(wallet.available).lte(totalCartNativeAmount),
+  );
+
+  const highestBalanceWalletPubKey = userWallets.length
+    ? userWallets.sort(
+        (a, b) => b.available - a.available || a.name.localeCompare(b.name),
+      )[0].publicKey
+    : '';
+
   const getFreshPrices = async (): Promise<FioRegPricesResponse> => {
     setIsUpdatingPrices(true);
     try {
@@ -297,6 +310,12 @@ export const useContext = (): UseContextReturnType => {
     dispatch(clearOrder());
   }, [userWallets, dispatch, refreshBalance, setWallet, clearOrder]);
 
+  // Set wallet with the highest balance enough for FIO purchase
+  useEffect(() => {
+    if (highestBalanceWalletPubKey)
+      dispatch(setWallet(highestBalanceWalletPubKey));
+  }, [dispatch, highestBalanceWalletPubKey]);
+
   useEffectOnce(() => {
     if (isAuth) handleFreeAddressCartFn();
   }, [isAuth]);
@@ -310,6 +329,7 @@ export const useContext = (): UseContextReturnType => {
   return {
     cartItems,
     hasGetPricesError: hasGetPricesError || updatingPricesHasError,
+    hasLowBalance,
     walletCount,
     isFree,
     loading: loading || isUpdatingPrices,
