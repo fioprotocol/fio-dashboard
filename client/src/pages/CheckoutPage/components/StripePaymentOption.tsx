@@ -9,7 +9,6 @@ import {
   COLOR_TYPE,
   ERROR_UI_TYPE,
 } from '../../../components/Input/ErrorBadge';
-
 import { StripeForm } from './StripeForm';
 
 import { setFioName } from '../../../utils';
@@ -30,6 +29,7 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
     payment,
     paymentOption,
     paymentOptionError,
+    submitDisabled,
     beforePaymentSubmit,
   } = props;
 
@@ -91,7 +91,11 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
         locale: 'en',
       }}
     >
-      <StripeForm onFinish={onFinish} beforeSubmit={beforePaymentSubmit} />
+      <StripeForm
+        onFinish={onFinish}
+        beforeSubmit={beforePaymentSubmit}
+        submitDisabled={submitDisabled}
+      />
     </Elements>
   );
 };

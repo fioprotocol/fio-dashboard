@@ -24,6 +24,8 @@ type DefaultProps = {
   cart: CartItemType[];
   payment: Payment;
   paymentOptionError: ApiError;
+  error?: string | null;
+  submitDisabled?: boolean;
 };
 
 export type CheckoutComponentProps = {
@@ -37,6 +39,7 @@ export type PaymentOptionComponentProps = {
 
 export type StripePaymentOptionProps = {
   paymentOption: PaymentOptionsProps;
+  totalCost: number;
 } & DefaultProps;
 
 export type BeforeSubmitData = {

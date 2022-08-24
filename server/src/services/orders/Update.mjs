@@ -18,11 +18,11 @@ export default class OrdersUpdate extends Base {
   static get validationRules() {
     return {
       id: 'string',
-      publicKey: 'string',
       data: [
         {
           nested_object: {
             status: 'string',
+            publicKey: 'string',
             results: [
               {
                 nested_object: {
@@ -88,10 +88,12 @@ export default class OrdersUpdate extends Base {
       });
     }
 
-    await Order.update(
-      { status: data.status },
-      { where: { id, userId: this.context.id } },
-    );
+    const orderUpdateParams = {};
+    if (data.status) orderUpdateParams.status = data.status;
+    if (data.publicKey) orderUpdateParams.publicKey = data.publicKey;
+
+    if (Object.values(orderUpdateParams).length)
+      await Order.update(orderUpdateParams, { where: { id, userId: this.context.id } });
 
     if (data.results && data.results.paymentOption === Payment.PROCESSOR.FIO) {
       try {

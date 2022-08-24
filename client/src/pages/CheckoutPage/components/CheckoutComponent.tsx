@@ -3,12 +3,15 @@ import isEmpty from 'lodash/isEmpty';
 
 import CartItem from '../../../components/Cart/CartItem';
 import PriceBadge from '../../../components/Badges/PriceBadge/PriceBadge';
-import { BADGE_TYPES } from '../../../components/Badge/Badge';
-
+import { PaymentWallet } from './PaymentWallet';
 import { PaymentOptionComponent } from './PaymentOptionComponent';
+import InfoBadge from '../../../components/InfoBadge/InfoBadge';
 
 import { totalCost } from '../../../utils';
+
+import { BADGE_TYPES } from '../../../components/Badge/Badge';
 import { CURRENCY_CODES } from '../../../constants/common';
+import { PAYMENT_OPTIONS } from '../../../constants/purchase';
 
 import { CheckoutComponentProps } from '../types';
 import { PaymentCurrency } from '../../../types';
@@ -54,6 +57,21 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
           costFree={!costNativeFio && costFree}
           title="Total Cost"
           type={BADGE_TYPES.BLACK}
+        />
+      </div>
+      <InfoBadge
+        message={rest.error}
+        show={!!rest.error}
+        title=""
+        type={BADGE_TYPES.ERROR}
+        className={classes.details}
+      />
+      <div className={classes.details}>
+        <PaymentWallet
+          {...rest}
+          totalCost={costNativeFio}
+          filterByBalance={rest.paymentOption === PAYMENT_OPTIONS.FIO}
+          includePaymentMessage={rest.paymentOption === PAYMENT_OPTIONS.FIO}
         />
       </div>
       <PaymentOptionComponent
