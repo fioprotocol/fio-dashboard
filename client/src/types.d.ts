@@ -580,26 +580,27 @@ export type AdminUserItemProfile = {
   username: string;
 };
 
+export type AdminOrderItemProfile = {
+  id: string;
+  total: string;
+  roe: string;
+  status: number;
+  data?: string;
+  createdAt: string;
+  customerIp: string;
+  number: string;
+  publicKey: string;
+  refProfileId?: string;
+  updatedAt: string;
+  userId: string;
+  userEmail: string;
+  paymentProcessor: string;
+};
+
 export type AdminSearchResult = {
   result?: {
-    orders: {
-      id: string;
-      total: string;
-      roe: string;
-      status: number;
-      data?: string;
-      createdAt: string;
-      customerIp: string;
-      number: string;
-      publicKey: string;
-      refProfileId?: string;
-      updatedAt: string;
-      userId: string;
-      userEmail: string;
-      paymentProcessor: string;
-      blockchainData?: { owner_fio_public_key?: string };
-    }[];
-    users: AdminUserItemProfile[];
+    orders: AdminOrderItemProfile[];
+    users?: AdminUserItemProfile[];
   };
 };
 
