@@ -36,7 +36,6 @@ class TxCheckJob extends CommonJob {
         domain,
         action,
         params,
-        data,
         btData = {},
         publicKey,
         btId,
@@ -53,9 +52,7 @@ class TxCheckJob extends CommonJob {
           case FIO_ACTIONS.registerFioAddress:
           case FIO_ACTIONS.registerFioDomain: {
             const { fio_addresses, fio_domains } = await walletSdk.getFioNames(
-              (data && data.signingWalletPubKey) ||
-                (params && params.owner_fio_public_key) ||
-                publicKey,
+              (params && params.owner_fio_public_key) || publicKey,
             );
             const isAddress = action === FIO_ACTIONS.registerFioAddress;
             const fioName = isAddress
