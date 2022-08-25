@@ -26,7 +26,9 @@ export default class Search extends Base {
   }
 
   async execute({ name }) {
-    if (!name) {
+    const valueToSearch = name.trim();
+
+    if (!valueToSearch) {
       throw new X({
         code: 'NOT_FOUND',
         fields: {
@@ -35,27 +37,27 @@ export default class Search extends Base {
       });
     }
 
-    const isEmail = validateEmail(name);
+    const isEmail = validateEmail(valueToSearch);
     let isFioAddress = false;
     let isDomain = false;
     let isPublicKey = false;
 
     try {
-      FIOSDK.isFioAddressValid(name);
+      FIOSDK.isFioAddressValid(valueToSearch);
       isFioAddress = true;
     } catch (e) {
       //
     }
 
     try {
-      FIOSDK.isFioDomainValid(name);
+      FIOSDK.isFioDomainValid(valueToSearch);
       isDomain = true;
     } catch (e) {
       //
     }
 
     try {
-      FIOSDK.isFioPublicKeyValid(name);
+      FIOSDK.isFioPublicKeyValid(valueToSearch);
       isPublicKey = true;
     } catch (e) {
       //
@@ -67,12 +69,12 @@ export default class Search extends Base {
     };
 
     if (isEmail) {
-      const orders = await Order.listSearchByUserEmail(name);
+      const orders = await Order.listSearchByUserEmail(valueToSearch);
       result.orders = [...result.orders, ...orders];
     }
 
     if (isFioAddress) {
-      const fioAddressParts = name.split('@');
+      const fioAddressParts = valueToSearch.split('@');
 
       const orders = await Order.listSearchByFioAddressItems(
         fioAddressParts[1],
@@ -83,12 +85,12 @@ export default class Search extends Base {
     }
 
     if (isDomain) {
-      const orders = await Order.listSearchByFioAddressItems(name);
+      const orders = await Order.listSearchByFioAddressItems(valueToSearch);
       result.orders = [...result.orders, ...orders];
     }
 
     if (isPublicKey) {
-      const orders = await Order.listSearchByPublicKey(name);
+      const orders = await Order.listSearchByPublicKey(valueToSearch);
       result.orders = [...result.orders, ...orders];
     }
 

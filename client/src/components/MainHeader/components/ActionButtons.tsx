@@ -132,8 +132,10 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
           <div className="ml-3">Settings</div>
         </Nav.Link>
       )}
+
+      <Search />
+
       <Nav.Link href="#" className="pr-0">
-        <Search />
         <Button
           className={classnames(classes.button, !isMenuOpen && 'ml-4')}
           onClick={logout}

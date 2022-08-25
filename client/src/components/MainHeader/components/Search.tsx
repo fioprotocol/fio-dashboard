@@ -7,6 +7,8 @@ import { useIsAdminRoute } from '../../../hooks/admin';
 import { ROUTES } from '../../../constants/routes';
 import { adminSearch } from '../../../redux/admin/actions';
 
+import classes from '../MainHeader.module.scss';
+
 const Search: React.FC = () => {
   const [searchValue, setSearchValue] = useState('');
 
@@ -24,12 +26,12 @@ const Search: React.FC = () => {
   return (
     <>
       {isAdmin ? (
-        <div className="d-inline-block">
+        <div className="d-flex align-items-center">
           <InputGroup>
             <Form.Control
               placeholder="Search"
               aria-label="Search"
-              value={searchValue}
+              defaultValue={searchValue}
               onChange={e => setSearchValue(e.target.value)}
               onKeyPress={(event: React.KeyboardEvent) => {
                 if (event.key === 'Enter') {
@@ -38,8 +40,9 @@ const Search: React.FC = () => {
               }}
             />
             <Button
+              className={classes.searchButton}
               disabled={!searchValue}
-              variant="outline-primary"
+              variant="outline-light"
               onClick={handleSearch}
             >
               Search
