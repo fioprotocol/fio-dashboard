@@ -12,8 +12,12 @@ import {
   cartItems as cartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
   isCartPrivateDomainsError as isCartPrivateDomainsErrorSelector,
+  cartHasItemsWithPrivateDomain as cartHasItemsWithPrivateDomainSelector,
 } from '../../redux/cart/selectors';
-import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
+import {
+  fioWallets as fioWalletsSelector,
+  privateDomains as privateDomainsSelector,
+} from '../../redux/fio/selectors';
 import {
   isAuthenticated,
   hasFreeAddress as hasFreeAddressSelector,
@@ -80,8 +84,12 @@ export const useContext = (): UseContextReturnType => {
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const userWallets = useSelector(fioWalletsSelector);
+  const privateDomainsMap = useSelector(privateDomainsSelector);
   const isCartPrivateDomainsError = useSelector(
     isCartPrivateDomainsErrorSelector,
+  );
+  const cartHasItemsWithPrivateDomain = useSelector(
+    cartHasItemsWithPrivateDomainSelector,
   );
 
   const dispatch = useDispatch();
@@ -125,12 +133,35 @@ export const useContext = (): UseContextReturnType => {
     nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
   } = prices;
 
-  const hasLowBalance = userWallets?.every(
-    wallet =>
-      wallet.available != null &&
-      totalCartNativeAmount &&
-      new MathOp(wallet.available).lte(totalCartNativeAmount),
-  );
+  // Check if FIO Wallet has enough balance when cart has items with private domains
+  let hasLowBalanceForPrivateDomains = false;
+  let pubKeyForPrivateDomain = '';
+  if (cartHasItemsWithPrivateDomain) {
+    for (const cartItem of cartItems.filter(({ address }) => address)) {
+      if (privateDomainsMap[cartItem.domain]) {
+        hasLowBalanceForPrivateDomains = privateDomainsMap[cartItem.domain]
+          .wallet?.available
+          ? new MathOp(privateDomainsMap[cartItem.domain].wallet.available).lte(
+              totalCartNativeAmount,
+            )
+          : false;
+
+        if (hasLowBalanceForPrivateDomains) break;
+
+        pubKeyForPrivateDomain =
+          privateDomainsMap[cartItem.domain].walletPublicKey;
+      }
+    }
+  }
+
+  const hasLowBalance =
+    hasLowBalanceForPrivateDomains ||
+    userWallets?.every(
+      wallet =>
+        wallet.available != null &&
+        totalCartNativeAmount &&
+        new MathOp(wallet.available).lte(totalCartNativeAmount),
+    );
 
   const highestBalanceWalletPubKey = userWallets.length
     ? userWallets.sort(
@@ -312,9 +343,13 @@ export const useContext = (): UseContextReturnType => {
 
   // Set wallet with the highest balance enough for FIO purchase
   useEffect(() => {
+    if (pubKeyForPrivateDomain) {
+      dispatch(setWallet(pubKeyForPrivateDomain));
+      return;
+    }
     if (highestBalanceWalletPubKey)
       dispatch(setWallet(highestBalanceWalletPubKey));
-  }, [dispatch, highestBalanceWalletPubKey]);
+  }, [dispatch, highestBalanceWalletPubKey, pubKeyForPrivateDomain]);
 
   useEffectOnce(() => {
     if (isAuth) handleFreeAddressCartFn();
