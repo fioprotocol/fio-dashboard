@@ -307,7 +307,7 @@ export const useContext = (): UseContextReturnType => {
               address,
               domain,
               nativeFio: `${costNativeFio || 0}`,
-              price: costUsdc,
+              price: convertFioPrices(costNativeFio || 0, roe).usdc,
               priceCurrency: CURRENCY_CODES.USDC,
               data,
             };
