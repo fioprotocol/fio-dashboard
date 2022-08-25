@@ -168,6 +168,10 @@ export type FioDomainDoublet = {
   walletPublicKey: string;
 };
 
+export type PrivateDomainsMap = {
+  [name: string]: FioDomainDoublet & { wallet: FioWalletDoublet };
+};
+
 export type PublicAddressDoublet = {
   publicAddress: string;
   chainCode: string;

@@ -1,13 +1,11 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
-import isEmpty from 'lodash/isEmpty';
 import classnames from 'classnames';
 
 import CounterContainer from '../CounterContainer/CounterContainer';
 import CartItem from './CartItem';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
-import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
 
 import { deleteCartItem } from '../../utils';
 
@@ -22,7 +20,6 @@ import {
 } from '../../types';
 
 import classes from './Cart.module.scss';
-import MathOp from '../../util/math';
 
 type Props = {
   cartItems: CartItemType[];
@@ -45,11 +42,6 @@ const Cart: React.FC<Props> = props => {
   const {
     cartItems,
     deleteItem,
-    userWallets,
-    hasLowBalance,
-    totalCartAmount,
-    totalCartNativeAmount,
-    walletBalancesAvailable,
     prices,
     setCartItems,
     isPriceChanged,
@@ -61,9 +53,6 @@ const Cart: React.FC<Props> = props => {
   const count = cartItems.length;
   const isCartEmpty = count === 0;
 
-  const walletBalance =
-    (!isEmpty(walletBalancesAvailable) && walletBalancesAvailable.fio) || 0;
-
   const handleDeleteItem = (id: string) => {
     deleteCartItem({
       id,
@@ -74,21 +63,6 @@ const Cart: React.FC<Props> = props => {
       roe,
     });
   };
-
-  const lowBalanceText = {
-    buttonText: 'Make Deposit',
-    messageText: `There are not
-            enough FIO tokens in this FIO Wallet to complete the purchase.
-            Needed: ${totalCartAmount} FIO, available in wallet:
-            ${walletBalance} FIO. Please add FIO tokens.`,
-  };
-
-  const allWalletsHasLowBalance = userWallets?.every(
-    wallet =>
-      wallet.available != null &&
-      totalCartNativeAmount &&
-      new MathOp(wallet.available).lte(totalCartNativeAmount),
-  );
 
   let errorMessage = 'Your price has been updated due to pricing changes.';
   if (hasGetPricesError) {
@@ -138,10 +112,6 @@ const Cart: React.FC<Props> = props => {
           </p>
         </Link>
       </div>
-      <LowBalanceBadge
-        {...lowBalanceText}
-        hasLowBalance={hasLowBalance && !allWalletsHasLowBalance}
-      />
     </>
   );
 };
