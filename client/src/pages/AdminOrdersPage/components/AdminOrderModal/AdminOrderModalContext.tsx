@@ -146,7 +146,7 @@ const setHistory = (
         statusMsg += statusNotes;
       } else {
         if (status === BC_TX_STATUSES.SUCCESS) {
-          statusMsg += `TX ID - ${bt.txId}`;
+          statusMsg += `TX ID - ${bt.txId || 'N/A'}`;
           statusMsg += `\nFee collected: ${
             bt?.feeCollected
               ? `${apis.fio.sufToAmount(bt.feeCollected)} FIO`
