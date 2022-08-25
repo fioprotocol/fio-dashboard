@@ -17,6 +17,8 @@ import {
 } from '../../../../constants/purchase';
 import { CURRENCY_CODES } from '../../../../constants/common';
 
+import apis from '../../../../api';
+
 import { OrderItem } from '../../../../types';
 
 import classes from '../../styles/AdminOrderModal.module.scss';
@@ -71,9 +73,23 @@ const AdminOrderModal: React.FC<Props> = ({
   const renderPaymentReceived = () => {
     if (orderPayment.status !== PAYMENT_STATUSES.COMPLETED) return '-';
 
-    return orderPayment.price
-      ? orderPayment.price + ` ${orderPayment.currency.toUpperCase()}`
-      : 'None';
+    if (!orderPayment.price) return 'None';
+
+    let orderPaymentPrice =
+      orderPayment.price + ` ${orderPayment.currency.toUpperCase()}`;
+
+    if (orderPayment.currency === CURRENCY_CODES.FIO) {
+      orderPaymentPrice =
+        apis.fio.sufToAmount(Number(orderPayment.price)).toFixed(2) +
+        ` ${orderPayment.currency.toUpperCase()}`;
+
+      orderPaymentPrice += ` (${apis.fio.convertFioToUsdc(
+        Number(orderPayment.price),
+        Number(orderItem.roe),
+      )} USDC)`;
+    }
+
+    return orderPaymentPrice;
   };
 
   return (

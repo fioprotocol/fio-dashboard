@@ -97,10 +97,21 @@ export default class OrdersUpdate extends Base {
 
     if (data.results && data.results.paymentOption === Payment.PROCESSOR.FIO) {
       try {
+        const totalFioNativePrice = data.results.registered.reduce((acc, regItem) => {
+          if (!isNaN(Number(regItem.fee_collected))) return acc + regItem.fee_collected;
+          return acc;
+        }, 0);
+
         // todo: do we need to create PaymentEventLog here?
         await Payment.update(
-          { status: Payment.STATUS.COMPLETED },
-          { where: { id: order.Payments[0].id } },
+          {
+            status: Payment.STATUS.COMPLETED,
+            price: totalFioNativePrice || null,
+            currency: Payment.PROCESSOR.FIO,
+          },
+          {
+            where: { id: order.Payments[0].id },
+          },
         );
 
         // todo: check data.results.partial
