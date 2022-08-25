@@ -39,7 +39,19 @@ const AdminLogin: React.FC<Props> = props => {
     <div>
       <Form onSubmit={onSubmit} validate={formValidation.validateForm}>
         {(formRenderProps: FormRenderProps) => {
-          const { handleSubmit, valid } = formRenderProps;
+          const {
+            handleSubmit,
+            modifiedSinceLastSubmit,
+            hasSubmitErrors,
+            hasValidationErrors,
+            pristine,
+          } = formRenderProps;
+
+          const isSubmitDisabled =
+            loading ||
+            (hasSubmitErrors && !modifiedSinceLastSubmit) ||
+            hasValidationErrors ||
+            pristine;
 
           return (
             <div className={classes.container}>
@@ -70,7 +82,7 @@ const AdminLogin: React.FC<Props> = props => {
                   <SubmitButton
                     text="Login"
                     loading={loading}
-                    disabled={!valid}
+                    disabled={isSubmitDisabled}
                   />
                 </form>
               </div>
