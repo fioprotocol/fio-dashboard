@@ -56,6 +56,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
               <th scope="col">User</th>
               <th scope="col">Amount</th>
               <th scope="col">Ref Profile</th>
+              <th scope="col">Payment</th>
               <th scope="col">Status</th>
             </tr>
           </thead>
@@ -77,6 +78,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
                     <th>{order.user ? order.user.email : order.userEmail}</th>
                     <th>{order.total || 0}</th>
                     <th>{order.refProfileName || 'FIO Dashboard'}</th>
+                    <th>{order.currency?.toUpperCase() || 'N/A'}</th>
                     <th>{PURCHASE_RESULTS_STATUS_LABELS[order.status]}</th>
                   </tr>
                 ))

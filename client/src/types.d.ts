@@ -656,6 +656,7 @@ export type OrderItem = {
   publicKey: string;
   createdAt: string;
   status: number;
+  currency?: PaymentCurrency;
   items?: {
     action: string;
     address?: string;
