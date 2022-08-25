@@ -24,7 +24,7 @@ class MarketingMailchimp {
       status_if_new: 'subscribed',
       email_type: 'html',
       status: 'subscribed',
-      timestamp_signup: new Date().toISOString().replace('Z', '+00:00'), // mailchimp doesn't recognize timestamp with Z in the end
+      timestamp_signup: new Date().toISOString().split('.')[0] + '+00:00', // Time format should be ISO 8601. But mailchimp doesn't recognize timestamp with Z in the end
     };
 
     try {
