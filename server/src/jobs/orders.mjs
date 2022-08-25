@@ -319,7 +319,7 @@ class OrdersJob extends CommonJob {
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
-  async submitSignedTx(orderItem, balanceDifference = null) {
+  async submitSignedTx(orderItem, auth, balanceDifference = null) {
     const { address, domain, action, orderId, roe, data } = orderItem;
     const fee = this.feesJson[orderItem.action];
 
@@ -342,10 +342,11 @@ class OrdersJob extends CommonJob {
           amount: balanceDifference || fee,
           action: FIO_ACTIONS.transferTokens,
         }),
+        auth,
       );
 
       if (!transferRes.transaction_id) {
-        const transferError = JSON.stringify(fioApi.checkTxError(transferRes));
+        const transferError = fioApi.checkTxError(transferRes);
 
         await this.spend({
           fioName: fioApi.setFioName(address, domain),
@@ -357,7 +358,9 @@ class OrdersJob extends CommonJob {
           data: { roe },
         });
 
-        throw new Error(transferError);
+        if (transferError.notes === INSUFFICIENT_FUNDS_ERR_MESSAGE) return transferRes;
+
+        throw new Error(JSON.stringify(transferError));
       }
 
       await this.checkTokensReceived(
@@ -386,6 +389,7 @@ class OrdersJob extends CommonJob {
         if (new MathOp(updatedFee).gt(fee)) {
           return this.submitSignedTx(
             orderItem,
+            auth,
             new MathOp(updatedFee).sub(fee).toString(),
           );
         }
@@ -492,7 +496,7 @@ class OrdersJob extends CommonJob {
 
     let result;
     if (hasSignedTx) {
-      result = await this.submitSignedTx(orderItem);
+      result = await this.submitSignedTx(orderItem, auth);
     } else {
       // Spend order payment on fio action
       await this.spend({
@@ -582,7 +586,7 @@ class OrdersJob extends CommonJob {
         };
 
         // Set auth from fio account profile for registerFioAddress action
-        if (action === OrderItem.ACTION.registerFioAddress) {
+        if (action === OrderItem.ACTION.registerFioAddress && actor) {
           auth.actor = actor;
           auth.permission = permission;
         }
@@ -620,7 +624,7 @@ class OrdersJob extends CommonJob {
               ...orderItem,
               actor: process.env.REG_FALLBACK_ACCOUNT,
               permission: process.env.REG_FALLBACK_PERMISSION,
-            });
+            })();
           }
 
           await this.handleFail(orderItem, notes, { code, ...errorData });
