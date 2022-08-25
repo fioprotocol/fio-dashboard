@@ -13,7 +13,7 @@ import {
 import classes from '../../PurchasePage/styles/PurchasePage.module.scss';
 
 type Props = {
-  fioWallets: FioWalletDoublet[];
+  paymentAssignmentWallets: FioWalletDoublet[];
   paymentWalletPublicKey: string;
   fioWalletsBalances: WalletsBalances;
   walletBalances: WalletBalancesItem;
@@ -21,55 +21,42 @@ type Props = {
   costFree?: string;
   isFree: boolean;
   totalCost: number;
-  filterByBalance?: boolean;
   includePaymentMessage?: boolean;
   setWallet: (publicKey: string) => void;
 };
 
 export const PaymentWallet: React.FC<Props> = props => {
   const {
-    fioWallets,
+    paymentAssignmentWallets,
     paymentWalletPublicKey,
     fioWalletsBalances,
     walletBalances,
     walletName,
     costFree,
-    isFree,
-    totalCost,
-    filterByBalance = false,
     includePaymentMessage = false,
     setWallet,
   } = props;
 
-  const filterWallets = (wallet: FioWalletDoublet) => {
-    if (isFree || !filterByBalance) return true;
+  const walletsList = paymentAssignmentWallets.map(wallet => {
+    const { fio, usdc } = fioWalletsBalances.wallets[
+      wallet.publicKey
+    ].available;
 
-    return wallet.available > totalCost;
-  };
+    return {
+      id: wallet.publicKey,
+      name: (
+        <div className="p-2">
+          <PayWalletInfo
+            walletName={wallet.name}
+            fioBalance={fio}
+            usdcBalance={usdc}
+          />
+        </div>
+      ),
+    };
+  });
 
-  const walletsList = fioWallets
-    .filter(filterWallets)
-    .sort((a, b) => b.available - a.available || a.name.localeCompare(b.name))
-    .map(wallet => {
-      const { fio, usdc } = fioWalletsBalances.wallets[
-        wallet.publicKey
-      ].available;
-
-      return {
-        id: wallet.publicKey,
-        name: (
-          <div className="p-2">
-            <PayWalletInfo
-              walletName={wallet.name}
-              fioBalance={fio}
-              usdcBalance={usdc}
-            />
-          </div>
-        ),
-      };
-    });
-
-  if (walletsList.length === 1 && filterByBalance)
+  if (walletsList.length === 1 && includePaymentMessage)
     return (
       <PayWithBadge
         costFree={!!costFree}

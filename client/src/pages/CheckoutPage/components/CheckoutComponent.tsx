@@ -70,7 +70,6 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
         <PaymentWallet
           {...rest}
           totalCost={costNativeFio}
-          filterByBalance={rest.paymentOption === PAYMENT_OPTIONS.FIO}
           includePaymentMessage={rest.paymentOption === PAYMENT_OPTIONS.FIO}
         />
       </div>

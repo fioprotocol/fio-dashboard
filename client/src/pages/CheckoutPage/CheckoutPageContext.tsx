@@ -19,6 +19,7 @@ import {
   fioDomains as fioDomainsSelector,
   loading as fioLoadingSelector,
   fioWalletsBalances as fioWalletsBalancesSelector,
+  privateDomains as privateDomainsSelector,
 } from '../../redux/fio/selectors';
 import {
   cartHasItemsWithPrivateDomain as cartHasItemsWithPrivateDomainSelector,
@@ -80,6 +81,7 @@ export const useContext = (): {
   roe: number | null;
   fioWallets: FioWalletDoublet[];
   fioWalletsBalances: WalletsBalances;
+  paymentAssignmentWallets: FioWalletDoublet[];
   isProcessing: boolean;
   title: string;
   payment: Payment;
@@ -104,6 +106,7 @@ export const useContext = (): {
   const fioWallets = useSelector(fioWalletsSelector);
   const fioLoading = useSelector(fioLoadingSelector);
   const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
+  const privateDomains = useSelector(privateDomainsSelector);
   const cartItems = useSelector(CartItemsSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const isAuth = useSelector(isAuthenticated);
@@ -178,14 +181,38 @@ export const useContext = (): {
   );
   const paymentWalletFrom = paymentWallet && paymentWallet.from;
 
+  const { costNativeFio: totalCostNativeFio } = totalCost(cartItems, roe);
   const walletHasNoEnoughBalance = new MathOp(
     walletBalancesAvailable.nativeFio,
-  ).lt(totalCost(cartItems, roe).costNativeFio || 0);
+  ).lt(totalCostNativeFio || 0);
 
   const title =
     isFree || !paymentOption
       ? 'Make Purchase'
       : PAYMENT_OPTION_TITLE[paymentOption];
+
+  const ownerPubKeysPrivateDomains: string[] = [];
+  if (cartHasItemsWithPrivateDomain) {
+    cartItems.forEach(({ domain }) => {
+      if (privateDomains[domain]) {
+        ownerPubKeysPrivateDomains.push(privateDomains[domain].walletPublicKey);
+      }
+    });
+  }
+
+  const paymentAssignmentWallets = fioWallets
+    .filter(wallet => {
+      if (isFree || paymentOption !== PAYMENT_OPTIONS.FIO) return true;
+      if (
+        cartHasItemsWithPrivateDomain &&
+        paymentOption === PAYMENT_OPTIONS.FIO
+      ) {
+        return ownerPubKeysPrivateDomains.indexOf(wallet.publicKey) > -1;
+      }
+
+      return wallet.available > totalCostNativeFio;
+    })
+    .sort((a, b) => b.available - a.available || a.name.localeCompare(b.name));
 
   // Create order for free address
   useEffectOnce(
@@ -375,6 +402,7 @@ export const useContext = (): {
     roe,
     fioWallets,
     fioWalletsBalances,
+    paymentAssignmentWallets,
     isProcessing,
     title,
     payment,
