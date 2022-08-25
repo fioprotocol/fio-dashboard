@@ -149,7 +149,7 @@ const setHistory = (
           statusMsg += `TX ID - ${bt.txId || 'N/A'}`;
           statusMsg += `\nFee collected: ${
             bt?.feeCollected
-              ? `${apis.fio.sufToAmount(bt.feeCollected)} FIO`
+              ? `${apis.fio.sufToAmount(bt.feeCollected).toFixed(2)} FIO`
               : 'N/A'
           }`;
         } else {
