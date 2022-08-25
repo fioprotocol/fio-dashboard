@@ -45,6 +45,10 @@ const AdminOrdersPage: React.FC<Props> = props => {
     setShowOrderDetailsModal(true);
   };
 
+  const onClick = (orderId: string) => {
+    openOrderDetails(orderId);
+  };
+
   return (
     <>
       <div className={classes.tableContainer}>
@@ -62,11 +66,11 @@ const AdminOrdersPage: React.FC<Props> = props => {
           </thead>
           <tbody>
             {ordersList?.length
-              ? ordersList.map((order, i) => (
+              ? ordersList.map(order => (
                   <tr
                     key={order.id}
                     className={classes.orderItem}
-                    onClick={openOrderDetails.bind(null, order.id)}
+                    onClick={() => onClick(order.id)}
                   >
                     <th>
                       {' '}
