@@ -52,6 +52,7 @@ const ACTIVITY_EVENTS = [
 ];
 
 let activityMethod: (() => {} | void) | null = null;
+let activityTimeout: () => {} | void | null = () => null;
 
 const removeActivityListener = () => {
   try {
@@ -112,11 +113,12 @@ const AutoLogout = (
     }
   };
 
-  const activityTimeout = useCallback(() => {
+  activityTimeout = useCallback(() => {
     removeActivityListener();
     setRedirectPath({ pathname, state });
     logout({ history });
     showLoginModal();
+    clearChecksTimeout();
   }, [history, pathname, state, logout, setRedirectPath, showLoginModal]);
 
   const activityWatcher = () => {
