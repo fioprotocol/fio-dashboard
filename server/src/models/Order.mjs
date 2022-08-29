@@ -174,6 +174,7 @@ export class Order extends Base {
           o."updatedAt",
           p.price,
           p.currency,
+          p.processor as "paymentProcessor",
           u.email as "userEmail",
           rp.label as "refProfileName"
         FROM "orders" o

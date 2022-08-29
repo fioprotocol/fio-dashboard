@@ -16,12 +16,7 @@ import {
 } from '../../../../constants/purchase';
 import { CURRENCY_CODES } from '../../../../constants/common';
 
-import {
-  BcTx,
-  OrderItem,
-  OrderPaymentItem,
-  PaymentOptionsProps,
-} from '../../../../types';
+import { BcTx, OrderItem, OrderPaymentItem } from '../../../../types';
 
 type PaymentSpentType = typeof PAYMENT_SPENT_TYPES[keyof typeof PAYMENT_SPENT_TYPES];
 type PaymentStatusType = typeof PAYMENT_STATUSES[keyof typeof PAYMENT_STATUSES];
@@ -73,7 +68,7 @@ const setHistory = (
       amount: status === PAYMENT_STATUSES.COMPLETED ? payment.price : '0.00',
       currency: payment.currency.toUpperCase(),
       status: `${
-        PAYMENT_OPTION_LABEL[payment.processor as PaymentOptionsProps]
+        PAYMENT_OPTION_LABEL[payment.processor]
       } notification received (${
         payment.externalId
       }) \nStatus: ${PAYMENTS_STATUSES_TITLES[status as PaymentStatusType] ||

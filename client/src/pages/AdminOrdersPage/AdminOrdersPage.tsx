@@ -7,7 +7,10 @@ import AdminOrderModal from './components/AdminOrderModal/AdminOrderModal';
 import usePagination from '../../hooks/usePagination';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 
-import { PURCHASE_RESULTS_STATUS_LABELS } from '../../constants/purchase';
+import {
+  PURCHASE_RESULTS_STATUS_LABELS,
+  PAYMENT_OPTIONS_LABEL,
+} from '../../constants/purchase';
 
 import { AdminUser, OrderItem } from '../../types';
 
@@ -82,7 +85,9 @@ const AdminOrdersPage: React.FC<Props> = props => {
                     <th>{order.user ? order.user.email : order.userEmail}</th>
                     <th>{order.total || 0}</th>
                     <th>{order.refProfileName || 'FIO Dashboard'}</th>
-                    <th>{order.currency?.toUpperCase() || 'N/A'}</th>
+                    <th>
+                      {PAYMENT_OPTIONS_LABEL[order.paymentProcessor] || 'N/A'}
+                    </th>
                     <th>{PURCHASE_RESULTS_STATUS_LABELS[order.status]}</th>
                   </tr>
                 ))
