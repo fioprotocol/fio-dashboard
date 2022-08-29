@@ -622,7 +622,7 @@ export type OrderPaymentItem = {
     updatedAt: string;
   }[];
   price?: string;
-  processor: string;
+  processor: PaymentOptionsProps;
   spentType: number;
   status: number;
   updatedAt: string;
@@ -657,6 +657,7 @@ export type OrderItem = {
   createdAt: string;
   status: number;
   currency?: PaymentCurrency;
+  paymentProcessor: PaymentOptionsProps;
   items?: {
     action: string;
     address?: string;

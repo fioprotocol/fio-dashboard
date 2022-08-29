@@ -14,6 +14,7 @@ import {
   BC_TX_STATUS_LABELS,
   PURCHASE_RESULTS_STATUS_LABELS,
   PAYMENT_STATUSES,
+  PAYMENT_OPTIONS_LABEL,
 } from '../../../../constants/purchase';
 import { CURRENCY_CODES } from '../../../../constants/common';
 
@@ -116,7 +117,9 @@ const AdminOrderModal: React.FC<Props> = ({
             {renderOrderItemFieldData('User', orderItem.user.email)}
             {renderOrderItemFieldData(
               'Payment Type',
-              orderPayment?.processor || null,
+              orderPayment?.processor
+                ? PAYMENT_OPTIONS_LABEL[orderPayment?.processor]
+                : 'N/A',
             )}
             {renderOrderItemFieldData(
               'Status',

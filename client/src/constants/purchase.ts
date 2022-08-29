@@ -54,6 +54,12 @@ export const PAYMENT_OPTIONS = {
   CRYPTO: 'CRYPTO',
 } as const;
 
+export const PAYMENT_OPTIONS_LABEL = {
+  [PAYMENT_OPTIONS.FIO]: 'FIO',
+  [PAYMENT_OPTIONS.CREDIT_CARD]: 'Credit Card',
+  [PAYMENT_OPTIONS.CRYPTO]: 'Crypto',
+};
+
 export const PAYMENT_SPENT_TYPES = {
   ORDER: 1,
   ACTION: 2,
