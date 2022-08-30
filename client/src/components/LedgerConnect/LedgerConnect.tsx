@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import Transport from '@ledgerhq/hw-transport';
-import { FIO } from 'ledgerjs-hw-app-fio';
-import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/lib/fio';
+import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 
 import ConnectionModal from '../Modal/ConnectionModal';
 
@@ -97,7 +96,7 @@ const LedgerConnect: React.FC<Props> = props => {
 
     let newFioApp: LedgerFioApp | null = null;
     try {
-      newFioApp = new FIO.Fio(transport);
+      newFioApp = new LedgerFioApp(transport);
       await newFioApp.getVersion();
     } catch (e) {
       if (e.name && e.name === DISCONNECTED_DEVICE_DURING_OPERATION_ERROR) {

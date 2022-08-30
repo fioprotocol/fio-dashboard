@@ -128,7 +128,7 @@
     "jsonpath": "^1.0.0",
     "jsonwebtoken": "^8.1.1",
     "jspdf": "^2.5.1",
-    "ledgerjs-hw-app-fio": "github:andreyvEze/ledger-fio-js#main",
+    "ledgerjs-hw-app-fio": "github:andreyvEze/ledger-fio-js#91e4a43e9f141803fa8730b6f0cb3a67019e0246",
     "livr": "^2.0.2",
     "livr-extra-rules": "^1.0.2",
     "node-fetch": "^2.6.1",
