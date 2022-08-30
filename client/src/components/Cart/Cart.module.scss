@@ -81,10 +81,13 @@
 
   .address {
     font-size: 1em;
+    word-break: break-word;
+    margin-right: 30px;
   }
 
   .price {
     margin: 0 1.875rem 0 auto;
+    flex-shrink: 0;
     font-size: 1em;
     @include proxima-nova-regular;
   }
