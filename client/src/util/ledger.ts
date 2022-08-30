@@ -1,4 +1,4 @@
-import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/lib/fio';
+import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 import { Ecc } from '@fioprotocol/fiojs';
 
 const HARDENED = 0x80000000;

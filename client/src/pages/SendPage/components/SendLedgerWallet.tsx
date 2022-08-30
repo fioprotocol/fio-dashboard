@@ -2,7 +2,7 @@ import React from 'react';
 import {
   SignTransactionRequest,
   Fio as LedgerFioApp,
-} from 'ledgerjs-hw-app-fio/lib/fio';
+} from 'ledgerjs-hw-app-fio/dist/fio';
 
 import LedgerConnect from '../../../components/LedgerConnect';
 

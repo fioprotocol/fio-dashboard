@@ -1,6 +1,6 @@
 import React from 'react';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
-import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/lib/fio';
+import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 
 import LedgerConnect from '../../../../components/LedgerConnect';
 
