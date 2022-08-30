@@ -3,6 +3,11 @@ import { Transactions as FioTransactionsProvider } from '@fioprotocol/fiosdk/lib
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { Api as ChainApi, Numeric as ChainNumeric } from '@fioprotocol/fiojs';
 
+import {
+  AbiProvider,
+  BinaryAbi,
+} from '@fioprotocol/fiojs/dist/chain-api-interfaces';
+
 import apis from '../api';
 import { sleep } from '../utils';
 import { log } from '../util/general';
@@ -158,14 +163,14 @@ export const serializeTransaction = async (
   tx: RawTransaction,
 ): Promise<string> => {
   try {
-    const abiProvider: any = {
+    const abiProvider: AbiProvider = {
       getRawAbi: async (accountName: string) => {
         const rawAbi = FioTransactionsProvider.abiMap.get(accountName);
         if (!rawAbi) {
           throw new Error(`Missing ABI for account ${accountName}`);
         }
         const abi = ChainNumeric.base64ToBinary(rawAbi.abi);
-        const binaryAbi: any = { accountName: rawAbi.account_name, abi };
+        const binaryAbi: BinaryAbi = { accountName: rawAbi.account_name, abi };
         return binaryAbi;
       },
     };
@@ -177,7 +182,7 @@ export const serializeTransaction = async (
       textDecoder: new TextDecoder(),
       textEncoder: new TextEncoder(),
     });
-    tx = {
+    const serTx = {
       ...tx,
       context_free_actions: await chainApi.serializeActions(
         tx.context_free_actions || [],
@@ -185,7 +190,7 @@ export const serializeTransaction = async (
       actions: await chainApi.serializeActions(tx.actions),
     };
 
-    return Buffer.from(chainApi.serializeTransaction(tx)).toString('hex');
+    return Buffer.from(chainApi.serializeTransaction(serTx)).toString('hex');
   } catch (e) {
     log.error(e);
   }

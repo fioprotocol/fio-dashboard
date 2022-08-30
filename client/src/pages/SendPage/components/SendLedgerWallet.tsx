@@ -7,7 +7,11 @@ import {
 import LedgerConnect from '../../../components/LedgerConnect';
 
 import apis from '../../../api';
-import { RawTransaction, TrxData } from '../../../api/fio';
+import {
+  RawTransaction,
+  TrxData,
+  TrxResponsePaidBundles,
+} from '../../../api/fio';
 import { serializeTransaction } from '../../../util/fio';
 import { formatLedgerSignature, getPath } from '../../../util/ledger';
 
@@ -17,7 +21,7 @@ import { SendTokensValues } from '../types';
 type Props = {
   sendData: SendTokensValues | null;
   fioWallet: FioWalletDoublet;
-  onSuccess: (data: any) => void;
+  onSuccess: (data: TrxResponsePaidBundles) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
   processing: boolean;
@@ -47,7 +51,7 @@ const SendLedgerWallet: React.FC<Props> = props => {
       fee,
     );
 
-    const basicTx: RawTransaction | any = {
+    const basicTx: RawTransaction = {
       ...trx,
       actions: [
         {
