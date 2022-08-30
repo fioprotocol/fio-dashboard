@@ -254,10 +254,10 @@ export const useContext = (): {
   );
 
   useEffect(() => {
-    if (!isAuth) {
+    if (!isAuth || !cartItems.length) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
-  }, [isAuth, history]);
+  }, [cartItems.length, isAuth, history]);
 
   // Redirect back to cart when payment option is FIO and not enough FIO tokens ot more than 1 FIO wallet
   useEffect(() => {
