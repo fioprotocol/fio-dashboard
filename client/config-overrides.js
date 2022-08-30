@@ -8,6 +8,10 @@ module.exports = {
         `src/widget-${process.env.REACT_APP_WIDGET}-index.ts`,
       );
     }
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@ledgerhq/devices/hid-framing": "@ledgerhq/devices/lib-es/hid-framing",
+    };
 
     return config;
   },
