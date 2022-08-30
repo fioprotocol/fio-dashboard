@@ -11,6 +11,7 @@ import { PublicAddressesResponse } from '@fioprotocol/fiosdk/src/entities/Public
 import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 import { BalanceResponse } from '@fioprotocol/fiosdk/src/entities/BalanceResponse';
+import { Action } from 'ledgerjs-hw-app-fio/src/types/public';
 
 import MathOp from '../util/math';
 import { log } from '../util/general';
@@ -52,19 +53,19 @@ export type TrxResponsePaidBundles = TrxResponse & {
 
 export type RawTransaction = {
   expiration: string;
-  ref_block_num: number;
-  ref_block_prefix: number;
+  ref_block_num: number | bigint | string;
+  ref_block_prefix: number | bigint | string;
   max_net_usage_words?: number;
   max_cpu_usage_ms?: number;
   delay_sec?: number;
-  context_free_actions: any[];
+  context_free_actions: Action[];
   actions: {
     account: string;
     name: string;
     authorization: { actor: string; permission: string }[];
-    data: any;
+    data: AnyObject;
   }[];
-  transaction_extensions: any[];
+  transaction_extensions: null;
 };
 export type FIOSDK_LIB = typeof FIOSDK;
 
@@ -81,8 +82,8 @@ export type TrxData = {
     expiration: string;
     ref_block_num: number;
     ref_block_prefix: number;
-    context_free_actions: any[];
-    transaction_extensions: any[];
+    context_free_actions: AnyObject[];
+    transaction_extensions: null;
   };
   actor: string;
   authorization: { actor: string; permission: string }[];
@@ -246,7 +247,7 @@ export default class Fio {
         ref_block_num: blockInfo.block_num & 0xffff,
         ref_block_prefix: blockInfo.ref_block_prefix,
         context_free_actions: [],
-        transaction_extensions: [],
+        transaction_extensions: null,
       },
       actor,
       authorization: [{ actor, permission: 'active' }],

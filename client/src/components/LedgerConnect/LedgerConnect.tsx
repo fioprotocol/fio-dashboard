@@ -5,8 +5,11 @@ import { FIO } from 'ledgerjs-hw-app-fio';
 import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/lib/fio';
 
 import ConnectionModal from '../Modal/ConnectionModal';
-import { FioWalletDoublet } from '../../types';
+
 import { getPubKeyFromLedger } from '../../util/ledger';
+import { log } from '../../util/general';
+
+import { AnyObject, FioWalletDoublet } from '../../types';
 
 const DISCONNECTED_DEVICE_DURING_OPERATION_ERROR =
   'DisconnectedDeviceDuringOperation';
@@ -15,8 +18,8 @@ type Props = {
   isTransaction?: boolean;
   fioWallet?: FioWalletDoublet;
 
-  onConnect: (appFio: LedgerFioApp) => Promise<any>;
-  onSuccess: (data: any) => void;
+  onConnect: (appFio: LedgerFioApp) => Promise<LedgerFioApp>;
+  onSuccess: (data: AnyObject) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
   showGenericErrorModal: (message?: string) => void;
@@ -65,10 +68,9 @@ const LedgerConnect: React.FC<Props> = props => {
   // Handle transport created
   useEffect(() => {
     if (transport != null && connecting) {
-      connectFioAppIntervalRef.current = window.setInterval(
-        connectFioApp,
-        2000,
-      );
+      connectFioAppIntervalRef.current = window.setInterval(() => {
+        connectFioApp();
+      }, 2000);
       return () => {
         clearInterval(connectFioAppIntervalRef.current);
       };
@@ -136,7 +138,7 @@ const LedgerConnect: React.FC<Props> = props => {
 
       onSuccess(result);
     } catch (e) {
-      console.error(e);
+      log.error(e);
       showGenericErrorModal('Try to reconnect your ledger device.');
       onCancel();
     }

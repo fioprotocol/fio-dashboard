@@ -3,7 +3,7 @@ import { Ecc } from '@fioprotocol/fiojs';
 
 const HARDENED = 0x80000000;
 
-export const getPath = (derivationIndex?: number) => {
+export const getPath = (derivationIndex?: number): number[] => {
   return [
     44 + HARDENED,
     235 + HARDENED,
@@ -16,7 +16,7 @@ export const getPath = (derivationIndex?: number) => {
 export const getPubKeyFromLedger = async (
   appFio: LedgerFioApp,
   derivationIndex?: number,
-) => {
+): Promise<string> => {
   const { publicKeyWIF } = await appFio.getPublicKey({
     path: getPath(derivationIndex),
     show_or_not: false,
@@ -25,6 +25,6 @@ export const getPubKeyFromLedger = async (
   return publicKeyWIF;
 };
 
-export const formatLedgerSignature = (witnessSignatureHex: string) => {
+export const formatLedgerSignature = (witnessSignatureHex: string): string => {
   return Ecc.Signature.fromHex(witnessSignatureHex).toString();
 };

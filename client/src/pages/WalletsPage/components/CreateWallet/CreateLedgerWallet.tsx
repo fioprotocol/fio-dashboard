@@ -5,6 +5,8 @@ import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/lib/fio';
 import LedgerConnect from '../../../../components/LedgerConnect';
 
 import { getPubKeyFromLedger } from '../../../../util/ledger';
+import { log } from '../../../../util/general';
+
 import { WALLET_CREATED_FROM } from '../../../../constants/common';
 
 import { FioWalletDoublet, NewFioWalletDoublet } from '../../../../types';
@@ -44,7 +46,7 @@ const CreateLedgerWallet: React.FC<Props> = props => {
     try {
       publicKey = await getPubKeyFromLedger(appFio, derivationIndex);
     } catch (e) {
-      console.error(e);
+      log.error(e);
     }
 
     if (
