@@ -6,7 +6,6 @@ import { Contract } from '@ethersproject/contracts';
 import apis from '../../api';
 import { log } from '../../util/general';
 import EtherScan, { LogItem } from '../../api/ether-scan';
-
 import {
   NETWORKS_LIST,
   W_FIO_DOMAIN_NFT,
@@ -55,10 +54,11 @@ export function useGetWrappedFioData(
 
   useEffect(() => {
     if (web3Provider && address && ethers.utils.isAddress(address)) {
+      // Example of getting wFioDomains not by the contract method
       // For wrapped FIO Domains, balance = count of wDomains (nfts) on Polygon chain
       const getNfts = async (balance?: number) => {
         let pageNumber = 1;
-        const limit = 100;
+        const limit = 20; // For public endpoint users, an IP based limit is applied at 150000/day;700/minute;40/second. Therefore, each transfer event makes two calls (40\2=20)
 
         // Function that will get wDomain (nft) data from chain Logs.
         const getData = async (
@@ -114,7 +114,7 @@ export function useGetWrappedFioData(
 
           const result = (await Promise.all(promises)).filter(o => !!o);
 
-          setNfts([...(nfts || []), ...result]);
+          if (result.length) setNfts([...(nfts || []), ...result]);
 
           // recursively get next portion of the data if needed
           if (result.length === offset && (!balance || nfts.length < balance)) {
@@ -122,6 +122,7 @@ export function useGetWrappedFioData(
             await getData(pageNumber, limit);
           } else {
             setIsLoading(false);
+            if (!nfts && !result.length) setNfts([]);
           }
         };
 
@@ -178,7 +179,16 @@ export function useGetWrappedFioData(
 
             setWFioBalance(walletBalance + '');
 
-            if (isNFT && !nfts) getNfts(walletBalance);
+            if (isNFT && !nfts && !isLoading) await getNfts(walletBalance);
+
+            // todo: use it when newTokenContract.listDomainsOfOwner method will get fixed
+            // if (isNFT && !nfts && !isLoading) {
+            //   setIsLoading(true);
+            //   const nftsList =
+            //     (await newTokenContract.listDomainsOfOwner(address)) || [];
+            //   setNfts(nftsList);
+            //   setIsLoading(false);
+            // }
           } else
             log.error(
               `Cannot get balance for wrong Network (${network.name.toUpperCase()})`,
