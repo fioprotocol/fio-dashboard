@@ -34,7 +34,7 @@ export type UnWrapDomainFormProps = {
   isWrongNetwork: boolean;
   network: NetworkType;
   fioAddressesList: string[];
-  wrappedDomainsList: NtfsItems;
+  wrappedDomainsList?: NtfsItems;
   modalInfoError?: string;
   setModalInfoError: (error: string) => void;
 };

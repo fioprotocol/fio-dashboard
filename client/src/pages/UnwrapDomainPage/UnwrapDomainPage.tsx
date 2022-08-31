@@ -45,11 +45,10 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
   const {
     wFioBalance,
     tokenContract,
-    nfts = [],
+    nfts,
     isWrongNetwork,
   } = useGetWrappedFioData(web3Provider, network, addressInPage, true);
 
-  const [wrappedDomainsList, setWrappedDomainsList] = useState([]);
   const [fioAddressesList, setFioAddressesList] = useState([]);
   const [modalInfoError, setModalInfoError] = useState(null);
 
@@ -59,10 +58,6 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
       : [];
     setFioAddressesList(cryptoHandles);
   }, [fioAddresses]);
-
-  useEffect(() => {
-    setWrappedDomainsList(nfts?.map(o => o) || []);
-  }, [nfts]);
 
   const onSubmit = async (data: UnWrapDomainValues) => {
     const { fee, wrappedDomainTokenId, fioAddress, publicAddress } = data;
@@ -92,9 +87,8 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
         setResultsData({
           chainCode: POLYGON_NETWORK_DATA.chain_code,
           receivingAddress: data.fioAddress,
-          fioDomain: wrappedDomainsList?.length
-            ? wrappedDomainsList.find(o => o.id === data.wrappedDomainTokenId)
-                ?.name
+          fioDomain: nfts?.length
+            ? nfts.find(o => o.id === data.wrappedDomainTokenId)?.name
             : null,
           publicAddress: transaction.from,
           other: {
@@ -178,7 +172,7 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
           providerData={providerData}
           isWrongNetwork={isWrongNetwork}
           fioAddressesList={fioAddressesList}
-          wrappedDomainsList={wrappedDomainsList}
+          wrappedDomainsList={nfts}
           modalInfoError={modalInfoError}
           setModalInfoError={setModalInfoError}
           network={network}
