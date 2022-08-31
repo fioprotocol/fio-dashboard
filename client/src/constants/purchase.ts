@@ -90,7 +90,7 @@ export const BC_TX_STATUS_LABELS = {
   [BC_TX_STATUSES.READY]: 'Ready',
   [BC_TX_STATUSES.PENDING]: 'Pending',
   [BC_TX_STATUSES.CANCEL]: 'Cancelled',
-  [BC_TX_STATUSES.REVIEW]: 'Review',
+  [BC_TX_STATUSES.REVIEW]: 'Failed',
   [BC_TX_STATUSES.SUCCESS]: 'Success',
   [BC_TX_STATUSES.RETRY]: 'Retry',
   [BC_TX_STATUSES.EXPIRE]: 'Expired',
