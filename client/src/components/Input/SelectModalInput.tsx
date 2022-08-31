@@ -86,7 +86,7 @@ const SelectModal: React.FC<Props &
     disabled,
     showErrorBorder,
     isLowHeight,
-    options = [],
+    options,
     show = false,
     onHide,
     isBW,
@@ -108,7 +108,7 @@ const SelectModal: React.FC<Props &
     if (!inputValue) {
       setOptionsList(options);
     } else {
-      const filteredOptions = options.filter(
+      const filteredOptions = options?.filter(
         (o: { name: string; id: string }) => {
           return (
             o.id.includes(inputValue.toLowerCase()) ||
@@ -280,7 +280,9 @@ const SelectModal: React.FC<Props &
               ))}
             </div>
           ) : (
-            <div className={classes.notFound}>Not found</div>
+            <div className={classes.notFound}>
+              {optionsList ? 'Not found' : 'loading...'}
+            </div>
           )}
         </div>
       </div>
@@ -303,7 +305,7 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     showErrorBorder,
     isLowHeight,
     label,
-    options = [],
+    options,
     placeholder,
     type,
     handleConfirmValidate,

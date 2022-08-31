@@ -41,9 +41,10 @@ const UnwrapDomainForm: React.FC<UnWrapDomainFormProps> = props => {
       {(formRenderProps: FormRenderProps) => {
         const { validating, values } = formRenderProps;
         const { wrappedDomainTokenId } = values;
-        const wrappedDomainName = wrappedDomainTokenId
-          ? wrappedDomainsList.find(o => o.id === wrappedDomainTokenId)?.name
-          : null;
+        const wrappedDomainName =
+          wrappedDomainTokenId && wrappedDomainsList?.length
+            ? wrappedDomainsList.find(o => o.id === wrappedDomainTokenId)?.name
+            : null;
 
         const submitDisabled =
           formRenderProps.hasValidationErrors ||
