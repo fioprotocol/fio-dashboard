@@ -23,6 +23,7 @@ import {
   FEES_VAR_KEY,
   fioApi,
   INSUFFICIENT_FUNDS_ERR_MESSAGE,
+  INSUFFICIENT_BALANCE,
 } from '../external/fio.mjs';
 import { FioRegApi } from '../external/fio-reg.mjs';
 
@@ -358,7 +359,7 @@ class OrdersJob extends CommonJob {
           data: { roe },
         });
 
-        if (transferError.notes === INSUFFICIENT_FUNDS_ERR_MESSAGE) return transferRes;
+        if (transferError.notes === INSUFFICIENT_BALANCE) return transferRes;
 
         throw new Error(JSON.stringify(transferError));
       }
@@ -586,7 +587,10 @@ class OrdersJob extends CommonJob {
         };
 
         // Set auth from fio account profile for registerFioAddress action
-        if (action === OrderItem.ACTION.registerFioAddress && actor) {
+        if (
+          (action === OrderItem.ACTION.registerFioAddress && actor) ||
+          actor === process.env.REG_FALLBACK_ACCOUNT
+        ) {
           auth.actor = actor;
           auth.permission = permission;
         }
@@ -616,7 +620,8 @@ class OrdersJob extends CommonJob {
 
           // try to execute using fallback account when no funds
           if (
-            notes === INSUFFICIENT_FUNDS_ERR_MESSAGE &&
+            (notes === INSUFFICIENT_FUNDS_ERR_MESSAGE ||
+              notes === INSUFFICIENT_BALANCE) &&
             actor !== process.env.REG_FALLBACK_ACCOUNT
           ) {
             await sendInsufficientFundsNotification(fioName, label, auth);
