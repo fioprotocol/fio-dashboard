@@ -18,3 +18,5 @@ export const TOKEN_LINK_ERROR_MESSAGE =
   'Some public addresses were not transferred due to an error.';
 export const TOKEN_LINK_PARTIAL_ERROR_MESSAGE =
   'See below for public addresses which were transferred successfully and try again.';
+
+export const INTERNAL_SERVER_ERROR_CODE = 500;
