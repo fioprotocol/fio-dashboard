@@ -205,7 +205,8 @@ export const useContext = (): {
       if (isFree || paymentOption !== PAYMENT_OPTIONS.FIO) return true;
       if (
         cartHasItemsWithPrivateDomain &&
-        paymentOption === PAYMENT_OPTIONS.FIO
+        paymentOption === PAYMENT_OPTIONS.FIO &&
+        ownerPubKeysPrivateDomains.length // cart has at least one item with private domain but not custom domain
       ) {
         return ownerPubKeysPrivateDomains.indexOf(wallet.publicKey) > -1;
       }
