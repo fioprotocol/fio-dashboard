@@ -105,7 +105,7 @@ class OrdersJob extends CommonJob {
     return BlockchainTransaction.sequelize.transaction(async t => {
       await BlockchainTransaction.update(
         {
-          status: BlockchainTransaction.STATUS.REVIEW,
+          status: BlockchainTransaction.STATUS.FAILED,
         },
         {
           where: {
@@ -119,7 +119,7 @@ class OrdersJob extends CommonJob {
 
       await BlockchainTransactionEventLog.create(
         {
-          status: BlockchainTransaction.STATUS.REVIEW,
+          status: BlockchainTransaction.STATUS.FAILED,
           statusNotes: errorNotes.slice(
             0,
             errorNotes.length > 200 ? 200 : errorNotes.length,
@@ -132,7 +132,7 @@ class OrdersJob extends CommonJob {
 
       await OrderItemStatus.update(
         {
-          txStatus: BlockchainTransaction.STATUS.REVIEW,
+          txStatus: BlockchainTransaction.STATUS.FAILED,
         },
         {
           where: {

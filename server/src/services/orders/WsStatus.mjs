@@ -110,7 +110,7 @@ export default class WsStatus extends WsBase {
               : domain;
 
             if (
-              itemStatus.txStatus === BlockchainTransaction.STATUS.REVIEW ||
+              itemStatus.txStatus === BlockchainTransaction.STATUS.FAILED ||
               itemStatus.txStatus === BlockchainTransaction.STATUS.CANCEL
             ) {
               const eventLogs = await BlockchainTransactionEventLog.findAll({
@@ -120,7 +120,7 @@ export default class WsStatus extends WsBase {
               });
               const event = eventLogs.find(
                 ({ status }) =>
-                  status === BlockchainTransaction.STATUS.REVIEW ||
+                  status === BlockchainTransaction.STATUS.FAILED ||
                   status === BlockchainTransaction.STATUS.CANCEL,
               );
               this.messageData.results.errors.push({

@@ -25,7 +25,7 @@ export class OrderItemStatus extends Base {
           type: DT.INTEGER,
           defaultValue: 1,
           comment:
-            'Last action processing status. READY (1) / PENDING (2) / RETRY (6) / SUCCESS (3) / REVIEW (4) / CANCEL (5) etc.',
+            'Last action processing status. READY (1) / PENDING (2) / RETRY (6) / SUCCESS (3) / FAILED (4) / CANCEL (5) etc.',
         },
       },
       {

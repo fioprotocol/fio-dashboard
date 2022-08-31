@@ -129,12 +129,12 @@ export default class OrdersUpdate extends Base {
               bcTx = await BlockchainTransaction.findOneWhere({
                 id: blockchainTransactionId,
               });
-              bcTx.status = BlockchainTransaction.STATUS.REVIEW;
+              bcTx.status = BlockchainTransaction.STATUS.FAILED;
               await bcTx.save();
             } else {
               bcTx = await BlockchainTransaction.create({
                 action: orderItem.action,
-                status: BlockchainTransaction.STATUS.REVIEW,
+                status: BlockchainTransaction.STATUS.FAILED,
                 data: { params: orderItem.params },
                 orderItemId: orderItem.id,
               });
@@ -143,14 +143,14 @@ export default class OrdersUpdate extends Base {
 
             await OrderItemStatus.update(
               {
-                txStatus: BlockchainTransaction.STATUS.REVIEW,
+                txStatus: BlockchainTransaction.STATUS.FAILED,
                 blockchainTransactionId,
               },
               { where: { id: orderItem.OrderItemStatus.id } },
             );
 
             await BlockchainTransactionEventLog.create({
-              status: BlockchainTransaction.STATUS.REVIEW,
+              status: BlockchainTransaction.STATUS.FAILED,
               statusNotes: error,
               blockchainTransactionId,
             });

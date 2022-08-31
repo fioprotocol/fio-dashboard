@@ -368,7 +368,7 @@ export class Order extends Base {
       const txStatusesMap = {
         [BlockchainTransaction.STATUS.PENDING]: 0,
         [BlockchainTransaction.STATUS.CANCEL]: 0,
-        [BlockchainTransaction.STATUS.REVIEW]: 0,
+        [BlockchainTransaction.STATUS.FAILED]: 0,
         [BlockchainTransaction.STATUS.SUCCESS]: 0,
       };
 
@@ -379,7 +379,7 @@ export class Order extends Base {
       // All processed, some succeeded (will be reset if all succeeded all failed)
       if (
         txStatusesMap[BlockchainTransaction.STATUS.SUCCESS] +
-          txStatusesMap[BlockchainTransaction.STATUS.REVIEW] +
+          txStatusesMap[BlockchainTransaction.STATUS.FAILED] +
           txStatusesMap[BlockchainTransaction.STATUS.CANCEL] ===
         txStatuses.length
       )
@@ -387,7 +387,7 @@ export class Order extends Base {
 
       // All failed
       if (
-        txStatusesMap[BlockchainTransaction.STATUS.REVIEW] +
+        txStatusesMap[BlockchainTransaction.STATUS.FAILED] +
           txStatusesMap[BlockchainTransaction.STATUS.CANCEL] ===
         txStatuses.length
       )
