@@ -49,6 +49,7 @@ export const formatDateToLocale = (date: string): string => {
     day: 'numeric',
     hour: 'numeric',
     minute: 'numeric',
+    second: 'numeric',
     hour12: true,
   });
 };
