@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ethers } from 'ethers';
 import { Web3Provider } from '@ethersproject/providers/src.ts/web3-provider';
 import { Contract } from '@ethersproject/contracts';
@@ -20,7 +20,6 @@ export type WrappedFioData = {
   tokenContract: Contract;
   wFioBalance: string | null;
   nfts: NtfsItems;
-  isLoading: boolean;
   isWrongNetwork: boolean;
 };
 
@@ -45,7 +44,7 @@ export function useGetWrappedFioData(
   address: string,
   isNFT?: boolean,
 ): WrappedFioData {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const isNftsLoading = useRef(false);
   const [wFioBalance, setWFioBalance] = useState<string | null>(null);
   const [tokenContract, setTokenContract] = useState<Contract>(null);
   const [nfts, setNfts] = useState<NtfsItems>(null);
@@ -57,6 +56,7 @@ export function useGetWrappedFioData(
       // Example of getting wFioDomains not by the contract method
       // For wrapped FIO Domains, balance = count of wDomains (nfts) on Polygon chain
       const getNfts = async (balance?: number) => {
+        isNftsLoading.current = true;
         let pageNumber = 1;
         const limit = 20; // For public endpoint users, an IP based limit is applied at 150000/day;700/minute;40/second. Therefore, each transfer event makes two calls (40\2=20)
 
@@ -64,9 +64,8 @@ export function useGetWrappedFioData(
         const getData = async (
           page: number = pageNumber,
           offset: number = limit,
+          nftsList: NtfsItems = [],
         ) => {
-          setIsLoading(true);
-
           // Get Logs from chain, could be duplicated (wrap \ unwrap \ transfer to another account)
           const transferLogs = await etherscan.getNftsTransferEventLogs(
             page,
@@ -114,15 +113,18 @@ export function useGetWrappedFioData(
 
           const result = (await Promise.all(promises)).filter(o => !!o);
 
-          if (result.length) setNfts([...(nfts || []), ...result]);
+          if (result.length) nftsList = [...nftsList, ...result];
 
           // recursively get next portion of the data if needed
-          if (result.length === offset && (!balance || nfts.length < balance)) {
+          if (
+            transferLogs?.length === offset &&
+            (!balance || (nfts?.length || 0) < balance)
+          ) {
             pageNumber = pageNumber + 1;
-            await getData(pageNumber, limit);
+            setTimeout(() => getData(pageNumber, limit, nftsList), 1000);
           } else {
-            setIsLoading(false);
-            if (!nfts && !result.length) setNfts([]);
+            isNftsLoading.current = false;
+            setNfts(nftsList);
           }
         };
 
@@ -179,15 +181,16 @@ export function useGetWrappedFioData(
 
             setWFioBalance(walletBalance + '');
 
-            if (isNFT && !nfts && !isLoading) await getNfts(walletBalance);
+            if (isNFT && !nfts && !isNftsLoading.current && tokenContract)
+              await getNfts(walletBalance);
 
             // todo: use it when newTokenContract.listDomainsOfOwner method will get fixed
-            // if (isNFT && !nfts && !isLoading) {
-            //   setIsLoading(true);
+            // if (isNFT && !nfts && !isNftsLoading.current) {
+            //   isNftsLoading.current = true;
             //   const nftsList =
             //     (await newTokenContract.listDomainsOfOwner(address)) || [];
             //   setNfts(nftsList);
-            //   setIsLoading(false);
+            //   isNftsLoading.current = false;
             // }
           } else
             log.error(
@@ -232,7 +235,6 @@ export function useGetWrappedFioData(
     wFioBalance,
     tokenContract,
     nfts,
-    isLoading,
     isWrongNetwork,
   };
 }
