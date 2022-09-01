@@ -30,6 +30,16 @@ class EmailsJob extends CommonJob {
         emailDate: {
           [Sequelize.Op.is]: null,
         },
+        contentType: {
+          [Sequelize.Op.in]: [
+            Notification.CONTENT_TYPE.DOMAIN_EXPIRE,
+            Notification.CONTENT_TYPE.LOW_BUNDLE_TX,
+            Notification.CONTENT_TYPE.BALANCE_CHANGED,
+            Notification.CONTENT_TYPE.NEW_FIO_REQUEST,
+            Notification.CONTENT_TYPE.FIO_REQUEST_APPROVED,
+            Notification.CONTENT_TYPE.FIO_REQUEST_REJECTED,
+          ],
+        },
       },
       include: [
         {
