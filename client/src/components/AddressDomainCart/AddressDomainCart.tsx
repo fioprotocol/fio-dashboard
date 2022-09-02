@@ -16,6 +16,7 @@ import {
   DeleteCartItem,
   Domain,
   FioWalletDoublet,
+  LastAuthData,
   Prices,
   RedirectLinkData,
 } from '../../types';
@@ -30,9 +31,11 @@ type Props = {
   hasFreeAddress: boolean;
   isAuthenticated: boolean;
   roe: number | null;
+  lastAuthData: LastAuthData;
   setCartItems: (cartItems: CartItem[]) => void;
   deleteItem: (params: DeleteCartItem) => void;
   setRedirectPath: (redirectPath: RedirectLinkData) => void;
+  showLoginModal: (redirectRoute: string) => void;
 };
 
 const AddressDomainCart: React.FC<Props> = props => {
@@ -45,7 +48,9 @@ const AddressDomainCart: React.FC<Props> = props => {
     hasFreeAddress,
     isAuthenticated,
     setRedirectPath,
+    showLoginModal,
     roe,
+    lastAuthData,
   } = props;
   const count = cartItems.length;
   const domainsAmount = domains.length;
@@ -57,13 +62,20 @@ const AddressDomainCart: React.FC<Props> = props => {
 
   const handleCheckout = () => {
     let route = ROUTES.CART;
-    if (count === 1 && !hasFreeAddress && cartHasFreeAddress) {
+    if (
+      count === 1 &&
+      !hasFreeAddress &&
+      cartHasFreeAddress &&
+      (isAuthenticated || !lastAuthData)
+    ) {
       route = ROUTES.CHECKOUT;
     }
 
     if (!isAuthenticated) {
       setRedirectPath({ pathname: route });
-      return history.push(ROUTES.CREATE_ACCOUNT);
+      return lastAuthData
+        ? showLoginModal(route)
+        : history.push(ROUTES.CREATE_ACCOUNT);
     }
     history.push(route);
   };
