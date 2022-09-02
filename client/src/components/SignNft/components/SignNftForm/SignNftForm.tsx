@@ -210,7 +210,9 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
               disabled={
                 hasLowBalance ||
                 processing ||
-                !formRenderProps.valid ||
+                (formRenderProps.hasSubmitErrors &&
+                  !formRenderProps.modifiedSinceLastSubmit) ||
+                formRenderProps.hasValidationErrors ||
                 alreadySigned ||
                 formRenderProps.submitting ||
                 (isEdit && formRenderProps.pristine) ||

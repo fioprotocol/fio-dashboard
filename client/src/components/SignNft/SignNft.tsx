@@ -121,7 +121,8 @@ const SignNft: React.FC<ContainerProps> = props => {
       values.contractAddress,
       values.tokenId,
     );
-    if (nftSigned) return {};
+    if (nftSigned) return { tokenId: 'This Token ID has already been used.' };
+
     setSubmitData({
       fioAddress: fioAddress?.name,
       chainCode: values.chainCode,
@@ -131,8 +132,10 @@ const SignNft: React.FC<ContainerProps> = props => {
       hash: values.hash || '',
       metadata: JSON.stringify({ creator_url: values.creatorUrl || '' }),
     });
+
     return {};
   };
+
   const onCancel = () => {
     setSubmitData(null);
     setProcessing(false);
