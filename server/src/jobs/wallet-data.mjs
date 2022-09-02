@@ -158,21 +158,23 @@ class WalletDataJob extends CommonJob {
               fio_request_id: fetchedItem.fio_request_id,
               status: fetchedItem.status,
             });
-            await Notification.create({
-              type: Notification.TYPE.INFO,
-              contentType: Notification.CONTENT_TYPE.NEW_FIO_REQUEST,
-              userId: wallet.User.id,
-              data: {
-                pagesToShow: ['/'],
-                emailData: {
-                  requestor: fetchedItem.payee_fio_address,
-                  to: fetchedItem.payer_fio_address,
-                  wallet: wallet.publicKey,
-                  fioRequestId: fetchedItem.fio_request_id,
-                  date: new Date(fetchedItem.time_stamp),
+
+            if (fetchedItem.status === 'requested')
+              await Notification.create({
+                type: Notification.TYPE.INFO,
+                contentType: Notification.CONTENT_TYPE.NEW_FIO_REQUEST,
+                userId: wallet.User.id,
+                data: {
+                  pagesToShow: ['/'],
+                  emailData: {
+                    requestor: fetchedItem.payee_fio_address,
+                    to: fetchedItem.payer_fio_address,
+                    wallet: wallet.publicKey,
+                    fioRequestId: fetchedItem.fio_request_id,
+                    date: new Date(fetchedItem.time_stamp),
+                  },
                 },
-              },
-            });
+              });
           }
         }
       }
