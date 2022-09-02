@@ -45,6 +45,7 @@ export function useGetWrappedFioData(
   isNFT?: boolean,
 ): WrappedFioData {
   const isNftsLoading = useRef(false);
+  const nftsOwner = useRef(null);
   const [wFioBalance, setWFioBalance] = useState<string | null>(null);
   const [tokenContract, setTokenContract] = useState<Contract>(null);
   const [nfts, setNfts] = useState<NtfsItems>(null);
@@ -73,6 +74,8 @@ export function useGetWrappedFioData(
             address,
           );
 
+          nftsOwner.current = address;
+
           const tokensIdsSet = new Set();
 
           // Filter unique tokenIds only
@@ -90,7 +93,7 @@ export function useGetWrappedFioData(
                 tokenContract.ownerOf(tokenId), // returns wDomain owner address string
               ]);
 
-              if (tokenInfo[1] === address) {
+              if (tokenInfo[1].toLowerCase() === address.toLowerCase()) {
                 const domainName = tokenInfo[0].match(
                   /domainnft\/(.*?).json/,
                 )[1];
@@ -118,7 +121,8 @@ export function useGetWrappedFioData(
           // recursively get next portion of the data if needed
           if (
             transferLogs?.length === offset &&
-            (!balance || (nfts?.length || 0) < balance)
+            balance &&
+            (nftsList?.length || 0) < balance
           ) {
             pageNumber = pageNumber + 1;
             setTimeout(() => getData(pageNumber, limit, nftsList), 1000);
@@ -181,8 +185,15 @@ export function useGetWrappedFioData(
 
             setWFioBalance(walletBalance + '');
 
-            if (isNFT && !nfts && !isNftsLoading.current && tokenContract)
+            if (
+              isNFT &&
+              (!nfts || nftsOwner.current !== address) &&
+              !isNftsLoading.current &&
+              tokenContract
+            ) {
+              setNfts(null);
               await getNfts(walletBalance);
+            }
 
             // todo: use it when newTokenContract.listDomainsOfOwner method will get fixed
             // if (isNFT && !nfts && !isNftsLoading.current) {
