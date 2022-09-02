@@ -40,6 +40,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     fioWallets,
     prices,
     refProfileInfo,
+    disabled = false,
   } = props;
 
   const [isWaiting, setWaiting] = useState(false);
@@ -164,7 +165,11 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   };
 
   return (
-    <Button onClick={purchase} className={classes.button} disabled={loading}>
+    <Button
+      onClick={purchase}
+      className={classes.button}
+      disabled={loading || disabled}
+    >
       {isWaiting && loading ? (
         <FontAwesomeIcon icon="spinner" spin />
       ) : isRetry ? (

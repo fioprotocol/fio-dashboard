@@ -6,7 +6,9 @@ import {
   CHANGE_RECOVERY_QUESTIONS_CLOSE,
   CHANGE_RECOVERY_QUESTIONS_OPEN,
 } from '../edge/actions';
+
 import { USER_STATUSES } from '../../constants/common';
+import { INTERNAL_SERVER_ERROR_CODE } from '../../constants/errors';
 
 import {
   AdminUser,
@@ -78,6 +80,12 @@ export default combineReducers({
       case actions.AUTH_CHECK_SUCCESS:
         return !!action.data.id;
       case actions.AUTH_CHECK_FAILURE:
+        if (
+          action.error &&
+          action.error.status === INTERNAL_SERVER_ERROR_CODE
+        ) {
+          return action.error;
+        }
         return false;
       default:
         return state;

@@ -1,14 +1,16 @@
 import {
+  AdminSearchResult,
   AdminUser,
+  ChainCodeProps,
   ContainedFlowQueryParams,
   Domain,
+  FioAccountProfile,
   FioWalletDoublet,
   Notification,
-  RefProfile,
   Order,
-  User,
   Payment,
-  ChainCodeProps,
+  RefProfile,
+  User,
 } from '../types';
 
 export type AccountGetWalletsResponse = FioWalletDoublet[];
@@ -85,16 +87,18 @@ export type UsersShowResponse = User;
 export type OrdersCreateResponse = Order;
 export type OrdersUpdateResponse = { success: true };
 
+export type AdminFioAccountsProfilesListResponse = FioAccountProfile[];
 export type AdminUsersListResponse = AdminUser[];
 export type AdminOrdersListResponse = AdminUser[];
 export type AdminOrderItemResponse = AdminUser;
 export type RemoveAdminResponse =
   | { success: true }
   | { success: false; message: 'Not Found' };
-export type AdminInviteResponse =
+export type AdminGeneralCreateResponse =
   | { success: true }
   | { success: false; message: 'Not Unique' };
 export type AdminConfirmResponse = AdminUser;
+export type AdminSearchResponse = AdminSearchResult;
 
 export type PaymentCreateResponse = Payment;
 
@@ -135,7 +139,7 @@ export type ApisResponse = AccountGetWalletsResponse &
   OrdersCreateResponse &
   AdminUsersListResponse &
   RemoveAdminResponse &
-  AdminInviteResponse &
+  AdminGeneralCreateResponse &
   AdminConfirmResponse &
   PaymentCreateResponse &
   ChainCodesListResults;

@@ -80,6 +80,7 @@ export class User extends Base {
         'fioWallets',
         'newDeviceTwoFactor',
         'refProfile',
+        'createdAt',
       ],
     };
 

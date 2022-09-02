@@ -10,6 +10,7 @@ export const CartPage: React.FC = () => {
   const {
     cartItems,
     hasGetPricesError,
+    error,
     hasLowBalance,
     isFree,
     isPriceChanged,
@@ -24,7 +25,6 @@ export const CartPage: React.FC = () => {
     walletCount,
     deleteItem,
     onPaymentChoose,
-    setWallet,
   } = useContext();
 
   const commonProps = {
@@ -32,6 +32,7 @@ export const CartPage: React.FC = () => {
     hasLowBalance,
     roe,
     userWallets,
+    error,
   };
 
   const cartProps = {
@@ -43,7 +44,6 @@ export const CartPage: React.FC = () => {
     walletBalancesAvailable,
     walletCount,
     deleteItem,
-    setWallet,
   };
 
   const cartAmountProps = {

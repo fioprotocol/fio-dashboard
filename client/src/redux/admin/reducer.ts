@@ -2,7 +2,13 @@ import { combineReducers } from 'redux';
 
 import * as actions from './actions';
 
-import { AdminUser, AdminUserProfile, OrderItem } from '../../types';
+import {
+  AdminSearchResult,
+  AdminUser,
+  AdminUserProfile,
+  FioAccountProfile,
+  OrderItem,
+} from '../../types';
 
 export default combineReducers({
   loading(state: boolean = false, action) {
@@ -12,6 +18,8 @@ export default combineReducers({
       case actions.GET_ORDERS_LIST_BY_ADMIN_REQUEST:
       case actions.GET_ORDER_BY_ADMIN_REQUEST:
       case actions.GET_ADMIN_USER_PROFILE_REQUEST:
+      case actions.GET_FIO_ACCOUNTS_PROFILES_REQUEST:
+      case actions.ADMIN_SEARCH_REQUEST:
         return true;
       case actions.GET_ADMIN_USERS_SUCCESS:
       case actions.GET_ADMIN_USERS_FAILURE:
@@ -23,6 +31,10 @@ export default combineReducers({
       case actions.GET_ORDER_BY_ADMIN_FAILURE:
       case actions.GET_ADMIN_USER_PROFILE_SUCCESS:
       case actions.GET_ADMIN_USER_PROFILE_FAILURE:
+      case actions.GET_FIO_ACCOUNTS_PROFILES_SUCCESS:
+      case actions.GET_FIO_ACCOUNTS_PROFILES_FAILURE:
+      case actions.ADMIN_SEARCH_SUCCESS:
+      case actions.ADMIN_SEARCH_FAILURE:
         return false;
       default:
         return state;
@@ -80,6 +92,16 @@ export default combineReducers({
         return state;
     }
   },
+  adminSearch(state: AdminSearchResult = null, action) {
+    switch (action.type) {
+      case actions.ADMIN_SEARCH_SUCCESS:
+        return action.data;
+      case actions.ADMIN_SEARCH_FAILURE:
+        return null;
+      default:
+        return state;
+    }
+  },
   adminUsersCount(state: number = 0, action) {
     switch (action.type) {
       case actions.GET_ADMIN_USERS_SUCCESS:
@@ -88,6 +110,26 @@ export default combineReducers({
         return state;
       case actions.DELETE_ADMIN_USER_SUCCESS:
         return state - 1;
+      default:
+        return state;
+    }
+  },
+  fioAccountsProfilesList(state: FioAccountProfile[] = [], action) {
+    switch (action.type) {
+      case actions.GET_FIO_ACCOUNTS_PROFILES_SUCCESS:
+        return action.data.accounts;
+      case actions.GET_FIO_ACCOUNTS_PROFILES_FAILURE:
+        return state;
+      default:
+        return state;
+    }
+  },
+  fioAccountsProfilesCount(state: number = 0, action) {
+    switch (action.type) {
+      case actions.GET_FIO_ACCOUNTS_PROFILES_SUCCESS:
+        return action.data.maxCount;
+      case actions.GET_FIO_ACCOUNTS_PROFILES_FAILURE:
+        return state;
       default:
         return state;
     }

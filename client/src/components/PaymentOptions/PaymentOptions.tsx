@@ -4,8 +4,6 @@ import has from 'lodash/has';
 
 import { PaymentButton } from './components/PaymentButton';
 
-import MathOp from '../../util/math';
-
 import { PAYMENT_OPTIONS } from '../../constants/purchase';
 
 import {
@@ -29,6 +27,7 @@ type DefaultPaymentOptionProps = {
   totalCartNativeAmount?: number;
   userWallets?: FioWalletDoublet[];
   loading: boolean;
+  disabled?: boolean;
 };
 
 type PaymentOptionRenderProps = {
@@ -41,26 +40,20 @@ const PAYMENT_OPTIONS_PROPS = {
     paymentWalletPublicKey,
     cartItems,
     isFree,
-    userWallets,
-    totalCartNativeAmount,
     paymentOption,
     loading,
+    disabled,
     onPaymentChoose,
   }: PaymentOptionRenderProps) => ({
     buttonText: isFree ? 'Complete Transaction' : 'Pay with FIO',
     icon: <FontAwesomeIcon icon="wallet" />,
     disabled:
-      hasLowBalance ||
       paymentWalletPublicKey === '' ||
       cartItems?.length === 0 ||
-      loading,
+      loading ||
+      disabled,
     loading,
-    hideButton: userWallets?.every(
-      wallet =>
-        wallet.available != null &&
-        totalCartNativeAmount &&
-        new MathOp(wallet.available).lte(totalCartNativeAmount),
-    ),
+    hideButton: hasLowBalance,
     onClick: () => onPaymentChoose(paymentOption),
   }),
   [PAYMENT_OPTIONS.CREDIT_CARD]: ({
@@ -68,10 +61,11 @@ const PAYMENT_OPTIONS_PROPS = {
     paymentOption,
     cartItems,
     loading,
+    disabled,
   }: PaymentOptionRenderProps) => ({
     buttonText: 'Pay with Credit/Debit Card',
     icon: <FontAwesomeIcon icon="credit-card" />,
-    disabled: cartItems?.length === 0 || loading,
+    disabled: cartItems?.length === 0 || loading || disabled,
     loading,
     onClick: () => onPaymentChoose(paymentOption),
   }),

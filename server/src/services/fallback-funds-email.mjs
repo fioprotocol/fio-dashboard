@@ -1,3 +1,5 @@
+import { Var } from '../models/index.mjs';
+
 import emailSender from '../services/emailSender.mjs';
 import logger from '../logger.mjs';
 
@@ -6,22 +8,21 @@ import { templates } from '../emails/emailTemplate.mjs';
 import { DAY_MS } from '../config/constants.js';
 
 const TIMEOUT_HOURS = DAY_MS; // 24 hours
-const lastInsufficientFundsNotificationSent = {
-  date: null,
-};
+const INSUFFICIENT_FUNDS_NOTIFICATION_VAR_KEY = 'INSUFFICIENT_FUNDS_NOTIFICATION';
 
 const sendInsufficientFundsNotification = async (
   fioName,
   refProfileName,
   authorization,
 ) => {
-  const now = new Date();
+  const lastInsufficientFundsNotificationSent = await Var.getByKey(
+    INSUFFICIENT_FUNDS_NOTIFICATION_VAR_KEY,
+  );
 
-  if (!lastInsufficientFundsNotificationSent.date) {
-    lastInsufficientFundsNotificationSent.date = now.getTime() - 1000 * 60 * 60 * 25;
-  }
-  const diffHours = now.getTime() - lastInsufficientFundsNotificationSent.date;
-  if (diffHours > TIMEOUT_HOURS) {
+  if (
+    !lastInsufficientFundsNotificationSent ||
+    Var.updateRequired(lastInsufficientFundsNotificationSent.updatedAt, TIMEOUT_HOURS)
+  ) {
     try {
       await emailSender.send(
         templates.fallbackFundsEmail,
@@ -33,7 +34,7 @@ const sendInsufficientFundsNotification = async (
       logger.error(e);
     }
 
-    lastInsufficientFundsNotificationSent.date = now.getTime();
+    await Var.setValue(INSUFFICIENT_FUNDS_NOTIFICATION_VAR_KEY, new Date().getTime());
   }
 };
 

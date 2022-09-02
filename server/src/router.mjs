@@ -56,6 +56,20 @@ router.get('/admin/orders/:id', checkAdminAuth, routes.adminUsers.order);
 router.get('/admin/users/list', checkAdminAuth, routes.adminUsers.regularUsersList);
 router.get('/admin/users/:id', checkAdminAuth, routes.adminUsers.regularUserInfo);
 
+router.get(
+  '/admin/accounts/list',
+  checkAdminAuth,
+  routes.adminUsers.fioAccountsProfilesList,
+);
+router.post('/admin/accounts', checkAdminAuth, routes.adminUsers.createFioAccountProfile);
+router.post(
+  '/admin/accounts/:id',
+  checkAdminAuth,
+  routes.adminUsers.updateFioAccountProfile,
+);
+
+router.get('/admin/search', checkAdminAuth, routes.adminUsers.search);
+
 router.get('/notifications', checkAuth, routes.notifications.list);
 router.post('/notifications', checkAuth, routes.notifications.create);
 router.put('/notifications', checkAuth, routes.notifications.update);

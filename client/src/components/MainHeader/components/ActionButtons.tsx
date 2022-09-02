@@ -4,9 +4,12 @@ import { Button, Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import { ROUTES } from '../../../constants/routes';
-import classes from '../MainHeader.module.scss';
 import Navigation from '../../Navigation';
+import Search from './Search';
+
+import { ROUTES } from '../../../constants/routes';
+
+import classes from '../MainHeader.module.scss';
 
 type ActionButtonsProps = {
   edgeAuthLoading: boolean;
@@ -129,6 +132,9 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
           <div className="ml-3">Settings</div>
         </Nav.Link>
       )}
+
+      <Search />
+
       <Nav.Link href="#" className="pr-0">
         <Button
           className={classnames(classes.button, !isMenuOpen && 'ml-4')}

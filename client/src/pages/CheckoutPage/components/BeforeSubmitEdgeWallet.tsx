@@ -25,11 +25,13 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
           signedTx: await apis.fio.walletFioSDK.genericAction(
             ACTIONS.registerFioAddress,
             {
+              ownerPublicKey: item.ownerKey,
               fioAddress: item.name,
               maxFee: fee,
             },
           ),
-          signingWallet: allWalletKeysInAccount[item.fioWallet.edgeId].public,
+          signingWalletPubKey:
+            allWalletKeysInAccount[item.fioWallet.edgeId].public,
         };
         apis.fio.clearWalletFioSdk();
       } catch (err) {

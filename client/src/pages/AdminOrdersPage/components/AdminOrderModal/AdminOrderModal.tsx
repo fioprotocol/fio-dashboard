@@ -4,6 +4,8 @@ import { Table } from 'react-bootstrap';
 
 import Modal from '../../../../components/Modal/Modal';
 
+import useContext from './AdminOrderModalContext';
+
 import { setFioName } from '../../../../utils';
 import { formatDateToLocale } from '../../../../helpers/stringFormatters';
 
@@ -12,10 +14,15 @@ import {
   BC_TX_STATUS_LABELS,
   PURCHASE_RESULTS_STATUS_LABELS,
   PAYMENT_STATUSES,
+  PAYMENT_OPTIONS_LABEL,
 } from '../../../../constants/purchase';
-import { OrderItem } from '../../../../types';
 import { CURRENCY_CODES } from '../../../../constants/common';
-import useContext from './AdminOrderModalContext';
+
+import apis from '../../../../api';
+
+import { OrderItem } from '../../../../types';
+
+import classes from '../../styles/AdminOrderModal.module.scss';
 
 type Props = {
   onClose: () => void;
@@ -67,9 +74,23 @@ const AdminOrderModal: React.FC<Props> = ({
   const renderPaymentReceived = () => {
     if (orderPayment.status !== PAYMENT_STATUSES.COMPLETED) return '-';
 
-    return orderPayment.price
-      ? orderPayment.price + ` ${orderPayment.currency.toUpperCase()}`
-      : 'None';
+    if (!orderPayment.price) return 'None';
+
+    let orderPaymentPrice =
+      orderPayment.price + ` ${orderPayment.currency.toUpperCase()}`;
+
+    if (orderPayment.currency === CURRENCY_CODES.FIO) {
+      orderPaymentPrice =
+        apis.fio.sufToAmount(Number(orderPayment.price)).toFixed(2) +
+        ` ${orderPayment.currency.toUpperCase()}`;
+
+      orderPaymentPrice += ` (${apis.fio.convertFioToUsdc(
+        Number(orderPayment.price),
+        Number(orderItem.roe),
+      )} USDC)`;
+    }
+
+    return orderPaymentPrice;
   };
 
   return (
@@ -96,7 +117,9 @@ const AdminOrderModal: React.FC<Props> = ({
             {renderOrderItemFieldData('User', orderItem.user.email)}
             {renderOrderItemFieldData(
               'Payment Type',
-              orderPayment?.processor || null,
+              orderPayment?.processor
+                ? PAYMENT_OPTIONS_LABEL[orderPayment?.processor]
+                : 'N/A',
             )}
             {renderOrderItemFieldData(
               'Status',
@@ -158,7 +181,9 @@ const AdminOrderModal: React.FC<Props> = ({
                             {renderHistoryPrice(amount, currency, withdraw)}
                           </th>
                           <th>
-                            <div className="">{status}</div>
+                            <div className={classes.statusMessage}>
+                              {status}
+                            </div>
                           </th>
                         </tr>
                       ),

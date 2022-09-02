@@ -7,11 +7,14 @@ import AdminOrderModal from './components/AdminOrderModal/AdminOrderModal';
 import usePagination from '../../hooks/usePagination';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 
-import { PURCHASE_RESULTS_STATUS_LABELS } from '../../constants/purchase';
+import {
+  PURCHASE_RESULTS_STATUS_LABELS,
+  PAYMENT_OPTIONS_LABEL,
+} from '../../constants/purchase';
 
 import { AdminUser, OrderItem } from '../../types';
 
-import classes from './AdminOrdersListPage.module.scss';
+import classes from './styles/AdminOrdersListPage.module.scss';
 
 type Props = {
   loading: boolean;
@@ -45,6 +48,10 @@ const AdminOrdersPage: React.FC<Props> = props => {
     setShowOrderDetailsModal(true);
   };
 
+  const onClick = (orderId: string) => {
+    openOrderDetails(orderId);
+  };
+
   return (
     <>
       <div className={classes.tableContainer}>
@@ -56,16 +63,17 @@ const AdminOrdersPage: React.FC<Props> = props => {
               <th scope="col">User</th>
               <th scope="col">Amount</th>
               <th scope="col">Ref Profile</th>
+              <th scope="col">Payment</th>
               <th scope="col">Status</th>
             </tr>
           </thead>
           <tbody>
             {ordersList?.length
-              ? ordersList.map((order, i) => (
+              ? ordersList.map(order => (
                   <tr
                     key={order.id}
                     className={classes.orderItem}
-                    onClick={openOrderDetails.bind(null, order.id)}
+                    onClick={() => onClick(order.id)}
                   >
                     <th>
                       {' '}
@@ -77,6 +85,9 @@ const AdminOrdersPage: React.FC<Props> = props => {
                     <th>{order.user ? order.user.email : order.userEmail}</th>
                     <th>{order.total || 0}</th>
                     <th>{order.refProfileName || 'FIO Dashboard'}</th>
+                    <th>
+                      {PAYMENT_OPTIONS_LABEL[order.paymentProcessor] || 'N/A'}
+                    </th>
                     <th>{PURCHASE_RESULTS_STATUS_LABELS[order.status]}</th>
                   </tr>
                 ))

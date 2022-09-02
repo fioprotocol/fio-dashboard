@@ -54,6 +54,12 @@ export const PAYMENT_OPTIONS = {
   CRYPTO: 'CRYPTO',
 } as const;
 
+export const PAYMENT_OPTIONS_LABEL = {
+  [PAYMENT_OPTIONS.FIO]: 'FIO',
+  [PAYMENT_OPTIONS.CREDIT_CARD]: 'Credit Card',
+  [PAYMENT_OPTIONS.CRYPTO]: 'Crypto',
+};
+
 export const PAYMENT_SPENT_TYPES = {
   ORDER: 1,
   ACTION: 2,
@@ -72,7 +78,7 @@ export const BC_TX_STATUSES = {
   READY: 1,
   PENDING: 2,
   SUCCESS: 3,
-  REVIEW: 4,
+  FAILED: 4,
   CANCEL: 5,
   RETRY: 6,
   EXPIRE: 7,
@@ -84,7 +90,7 @@ export const BC_TX_STATUS_LABELS = {
   [BC_TX_STATUSES.READY]: 'Ready',
   [BC_TX_STATUSES.PENDING]: 'Pending',
   [BC_TX_STATUSES.CANCEL]: 'Cancelled',
-  [BC_TX_STATUSES.REVIEW]: 'Review',
+  [BC_TX_STATUSES.FAILED]: 'Failed',
   [BC_TX_STATUSES.SUCCESS]: 'Success',
   [BC_TX_STATUSES.RETRY]: 'Retry',
   [BC_TX_STATUSES.EXPIRE]: 'Expired',

@@ -13,7 +13,7 @@ import {
 import classes from '../../PurchasePage/styles/PurchasePage.module.scss';
 
 type Props = {
-  fioWallets: FioWalletDoublet[];
+  paymentAssignmentWallets: FioWalletDoublet[];
   paymentWalletPublicKey: string;
   fioWalletsBalances: WalletsBalances;
   walletBalances: WalletBalancesItem;
@@ -21,45 +21,42 @@ type Props = {
   costFree?: string;
   isFree: boolean;
   totalCost: number;
+  includePaymentMessage?: boolean;
   setWallet: (publicKey: string) => void;
 };
 
 export const PaymentWallet: React.FC<Props> = props => {
   const {
-    fioWallets,
+    paymentAssignmentWallets,
     paymentWalletPublicKey,
     fioWalletsBalances,
     walletBalances,
     walletName,
     costFree,
-    isFree,
-    totalCost,
+    includePaymentMessage = false,
     setWallet,
   } = props;
 
-  const walletsList = fioWallets
-    .filter(wallet => (isFree ? wallet : wallet.available > totalCost))
-    .sort((a, b) => b.available - a.available || a.name.localeCompare(b.name))
-    .map(wallet => {
-      const { fio, usdc } = fioWalletsBalances.wallets[
-        wallet.publicKey
-      ].available;
+  const walletsList = paymentAssignmentWallets.map(wallet => {
+    const { fio, usdc } = fioWalletsBalances.wallets[
+      wallet.publicKey
+    ].available;
 
-      return {
-        id: wallet.publicKey,
-        name: (
-          <div className="p-2">
-            <PayWalletInfo
-              walletName={wallet.name}
-              fioBalance={fio}
-              usdcBalance={usdc}
-            />
-          </div>
-        ),
-      };
-    });
+    return {
+      id: wallet.publicKey,
+      name: (
+        <div className="p-2">
+          <PayWalletInfo
+            walletName={wallet.name}
+            fioBalance={fio}
+            usdcBalance={usdc}
+          />
+        </div>
+      ),
+    };
+  });
 
-  if (walletsList.length === 1)
+  if (walletsList.length === 1 && includePaymentMessage)
     return (
       <PayWithBadge
         costFree={!!costFree}
@@ -71,9 +68,12 @@ export const PaymentWallet: React.FC<Props> = props => {
   return (
     <>
       <div className={classes.details}>
-        <h6 className={classes.subtitle}>FIO wallet Payment & Assignment</h6>
+        <h6 className={classes.subtitle}>
+          FIO wallet {includePaymentMessage ? 'Payment & ' : ''}Assignment
+        </h6>
         <p className={classes.text}>
-          Please choose which FIO wallet you would like to use for payment and
+          Please choose which FIO wallet you would like to use for{' '}
+          {includePaymentMessage ? 'payment and ' : ''}
           assignment
         </p>
       </div>
@@ -87,7 +87,6 @@ export const PaymentWallet: React.FC<Props> = props => {
         value={paymentWalletPublicKey}
         hasBigBorderRadius={true}
         isBlackPlaceholder={true}
-        hasLightBorder={true}
         withoutMarginBottom={true}
       />
     </>

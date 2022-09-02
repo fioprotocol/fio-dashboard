@@ -19,6 +19,7 @@ import logger from '../logger.mjs';
 export const FIOSDK = fiosdkLib.FIOSDK;
 export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit).mul(800).toNumber();
 export const INSUFFICIENT_FUNDS_ERR_MESSAGE = 'Insufficient funds to cover fee';
+export const INSUFFICIENT_BALANCE = 'Insufficient balance';
 export const FEES_VAR_KEY = 'FIO_FEES';
 export const FEES_UPDATE_TIMEOUT_SEC = 1000 * 60 * 5; // 5 min
 export const ABIS_VAR_KEY = 'FIO_RAW_ABIS';
@@ -284,7 +285,7 @@ class Fio {
 
     const notes = fieldError ? fieldError.error : JSON.stringify(tx);
 
-    return { notes, code: tx.code };
+    return { notes, code: tx.code, data: tx.data };
   }
 }
 

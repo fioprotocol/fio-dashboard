@@ -18,11 +18,11 @@ export default class OrdersUpdate extends Base {
   static get validationRules() {
     return {
       id: 'string',
-      publicKey: 'string',
       data: [
         {
           nested_object: {
             status: 'string',
+            publicKey: 'string',
             results: [
               {
                 nested_object: {
@@ -88,17 +88,30 @@ export default class OrdersUpdate extends Base {
       });
     }
 
-    await Order.update(
-      { status: data.status },
-      { where: { id, userId: this.context.id } },
-    );
+    const orderUpdateParams = {};
+    if (data.status) orderUpdateParams.status = data.status;
+    if (data.publicKey) orderUpdateParams.publicKey = data.publicKey;
+
+    if (Object.values(orderUpdateParams).length)
+      await Order.update(orderUpdateParams, { where: { id, userId: this.context.id } });
 
     if (data.results && data.results.paymentOption === Payment.PROCESSOR.FIO) {
       try {
+        const totalFioNativePrice = data.results.registered.reduce((acc, regItem) => {
+          if (!isNaN(Number(regItem.fee_collected))) return acc + regItem.fee_collected;
+          return acc;
+        }, 0);
+
         // todo: do we need to create PaymentEventLog here?
         await Payment.update(
-          { status: Payment.STATUS.COMPLETED },
-          { where: { id: order.Payments[0].id } },
+          {
+            status: Payment.STATUS.COMPLETED,
+            price: totalFioNativePrice || null,
+            currency: Payment.PROCESSOR.FIO,
+          },
+          {
+            where: { id: order.Payments[0].id },
+          },
         );
 
         // todo: check data.results.partial
@@ -116,12 +129,12 @@ export default class OrdersUpdate extends Base {
               bcTx = await BlockchainTransaction.findOneWhere({
                 id: blockchainTransactionId,
               });
-              bcTx.status = BlockchainTransaction.STATUS.REVIEW;
+              bcTx.status = BlockchainTransaction.STATUS.FAILED;
               await bcTx.save();
             } else {
               bcTx = await BlockchainTransaction.create({
                 action: orderItem.action,
-                status: BlockchainTransaction.STATUS.REVIEW,
+                status: BlockchainTransaction.STATUS.FAILED,
                 data: { params: orderItem.params },
                 orderItemId: orderItem.id,
               });
@@ -130,14 +143,14 @@ export default class OrdersUpdate extends Base {
 
             await OrderItemStatus.update(
               {
-                txStatus: BlockchainTransaction.STATUS.REVIEW,
+                txStatus: BlockchainTransaction.STATUS.FAILED,
                 blockchainTransactionId,
               },
               { where: { id: orderItem.OrderItemStatus.id } },
             );
 
             await BlockchainTransactionEventLog.create({
-              status: BlockchainTransaction.STATUS.REVIEW,
+              status: BlockchainTransaction.STATUS.FAILED,
               statusNotes: error,
               blockchainTransactionId,
             });
@@ -146,7 +159,7 @@ export default class OrdersUpdate extends Base {
 
         // todo: handle item with custom domain
         for (const regItem of data.results.registered) {
-          const { fioName, transaction_id } = regItem;
+          const { fioName, transaction_id, fee_collected } = regItem;
 
           const orderItem = order.OrderItems.find(
             ({ address, domain }) => fioApi.setFioName(address, domain) === fioName,
@@ -161,16 +174,18 @@ export default class OrdersUpdate extends Base {
                 id: blockchainTransactionId,
               });
 
-              bcTx.txId = transaction_id || 'free';
+              bcTx.txId = transaction_id;
               bcTx.status = BlockchainTransaction.STATUS.SUCCESS;
+              bcTx.feeCollected = fee_collected;
               await bcTx.save();
             } else {
               bcTx = await BlockchainTransaction.create({
-                txId: transaction_id || 'free',
+                txId: transaction_id,
                 action: orderItem.action,
                 status: BlockchainTransaction.STATUS.SUCCESS,
                 data: { params: orderItem.params },
                 orderItemId: orderItem.id,
+                feeCollected: fee_collected,
               });
               blockchainTransactionId = bcTx.id;
             }

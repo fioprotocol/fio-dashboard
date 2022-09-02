@@ -115,6 +115,31 @@ export class Order extends Base {
     });
   }
 
+  static attrs(type = 'default') {
+    const attributes = {
+      default: [
+        'id',
+        'total',
+        'roe',
+        'status',
+        'data',
+        'publicKey',
+        'customerIp',
+        'refProfileId',
+        'userId',
+        'createdAt',
+        'updatedAt',
+        'number',
+      ],
+    };
+
+    if (type in attributes) {
+      return attributes[type];
+    }
+
+    return attributes.default;
+  }
+
   static list(userId, search, page, limit = 50) {
     const where = { userId };
 
@@ -149,6 +174,7 @@ export class Order extends Base {
           o."updatedAt",
           p.price,
           p.currency,
+          p.processor as "paymentProcessor",
           u.email as "userEmail",
           rp.label as "refProfileName"
         FROM "orders" o
@@ -196,6 +222,124 @@ export class Order extends Base {
     return order;
   }
 
+  static async listSearchByFioAddressItems(domain, address) {
+    const [orders] = await this.sequelize.query(`
+        SELECT 
+          o.id, 
+          o.roe, 
+          o.number, 
+          o."total", 
+          o."publicKey", 
+          o."userId", 
+          o."status", 
+          o."createdAt", 
+          o."updatedAt",
+          p.currency,
+          u.email as "userEmail",
+          rp.label as "refProfileName",
+          p.processor as "paymentProcessor",
+          min(
+            case
+              when (oi.domain LIKE '${domain}' ${
+      address ? `AND oi.address LIKE '${address}'` : ``
+    }) then 1
+              when (oi.domain LIKE '${domain}%' ${
+      address ? `AND oi.address LIKE '${address}'` : ``
+    }) then 2
+              when (oi.domain LIKE '${domain}%' ${
+      address ? `AND oi.address LIKE '%${address}'` : ``
+    }) then 3
+              else 4
+            end
+            ) as orderPriority
+        FROM "orders" o
+          INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${
+            Payment.SPENT_TYPE.ORDER
+          }
+          INNER JOIN users u ON u.id = o."userId"
+          LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
+          LEFT JOIN "order-items" oi ON oi."orderId" = o.id
+        WHERE o."deletedAt" IS NULL
+        AND o.id IN (SELECT "orderId" FROM "order-items" WHERE ${
+          address
+            ? `domain LIKE '${domain}%' AND address LIKE '%${address}'`
+            : `domain LIKE '%${domain}%'`
+        } AND "deletedAt" IS NULL) 
+        GROUP BY o.id, p."currency", u.email, rp.label, p.processor
+        ORDER BY orderPriority
+      `);
+
+    return orders;
+  }
+
+  static async listSearchByUserEmail(email) {
+    const [orders] = await this.sequelize.query(`
+        SELECT 
+          o.id, 
+          o.roe, 
+          o.number, 
+          o."total", 
+          o."publicKey", 
+          o."userId", 
+          o."status", 
+          o."createdAt", 
+          o."updatedAt",
+          p.currency,
+          u.email as "userEmail",
+          rp.label as "refProfileName",
+          p.processor as "paymentProcessor",
+          min(
+            case
+              when (u.email LIKE '${email}') then 1
+              when (u.email LIKE '${email}%') then 2
+              when (u.email LIKE '%${email}%') then 3
+              else 4
+            end
+            ) as orderPriority
+        FROM "orders" o
+          INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${Payment.SPENT_TYPE.ORDER}
+          INNER JOIN users u ON u.id = o."userId"
+          LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
+          LEFT JOIN "order-items" oi ON oi."orderId" = o.id
+        WHERE o."deletedAt" IS NULL
+        AND o."userId" IN (SELECT "id" FROM "users" WHERE email LIKE '%${email}%' AND "deletedAt" IS NULL)
+        GROUP BY o.id, p."currency", u.email, rp.label, p.processor
+        ORDER BY orderPriority
+      `);
+
+    return orders;
+  }
+
+  static async listSearchByPublicKey(publicKey) {
+    const [orders] = await this.sequelize.query(`
+        SELECT 
+          o.id, 
+          o.roe, 
+          o.number, 
+          o."total", 
+          o."publicKey", 
+          o."userId", 
+          o."status", 
+          o."createdAt", 
+          o."updatedAt",
+          p.currency,
+          u.email as "userEmail",
+          rp.label as "refProfileName",
+          p.processor as "paymentProcessor"
+        FROM "orders" o
+          INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${Payment.SPENT_TYPE.ORDER}
+          INNER JOIN users u ON u.id = o."userId"
+          LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
+          LEFT JOIN "order-items" oi ON oi."orderId" = o.id
+        WHERE o."deletedAt" IS NULL
+        AND o."publicKey" = '${publicKey}'
+        GROUP BY o.id, p."currency", u.email, rp.label, p.processor
+        ORDER BY o."createdAt" DESC
+      `);
+
+    return orders;
+  }
+
   static async updateStatus(orderId, paymentStatus = null, txStatuses = [], t = null) {
     let orderStatus = null;
     switch (paymentStatus) {
@@ -224,7 +368,7 @@ export class Order extends Base {
       const txStatusesMap = {
         [BlockchainTransaction.STATUS.PENDING]: 0,
         [BlockchainTransaction.STATUS.CANCEL]: 0,
-        [BlockchainTransaction.STATUS.REVIEW]: 0,
+        [BlockchainTransaction.STATUS.FAILED]: 0,
         [BlockchainTransaction.STATUS.SUCCESS]: 0,
       };
 
@@ -235,7 +379,7 @@ export class Order extends Base {
       // All processed, some succeeded (will be reset if all succeeded all failed)
       if (
         txStatusesMap[BlockchainTransaction.STATUS.SUCCESS] +
-          txStatusesMap[BlockchainTransaction.STATUS.REVIEW] +
+          txStatusesMap[BlockchainTransaction.STATUS.FAILED] +
           txStatusesMap[BlockchainTransaction.STATUS.CANCEL] ===
         txStatuses.length
       )
@@ -243,7 +387,7 @@ export class Order extends Base {
 
       // All failed
       if (
-        txStatusesMap[BlockchainTransaction.STATUS.REVIEW] +
+        txStatusesMap[BlockchainTransaction.STATUS.FAILED] +
           txStatusesMap[BlockchainTransaction.STATUS.CANCEL] ===
         txStatuses.length
       )
@@ -269,6 +413,7 @@ export class Order extends Base {
     id,
     number,
     total,
+    roe,
     publicKey,
     createdAt,
     updatedAt,
@@ -282,6 +427,7 @@ export class Order extends Base {
       id,
       number,
       total,
+      roe,
       publicKey,
       createdAt,
       updatedAt,

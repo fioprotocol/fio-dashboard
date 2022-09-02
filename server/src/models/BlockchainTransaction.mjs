@@ -18,7 +18,7 @@ export class BlockchainTransaction extends Base {
       READY: 'READY',
       PENDING: 'PENDING',
       CANCEL: 'CANCEL',
-      REVIEW: 'REVIEW',
+      FAILED: 'FAILED',
       SUCCESS: 'SUCCESS',
       RETRY: 'RETRY',
       RETRY_PROCESSED: 'RETRY_PROCESSED',
@@ -34,7 +34,7 @@ export class BlockchainTransaction extends Base {
       READY: 1,
       PENDING: 2,
       SUCCESS: 3,
-      REVIEW: 4,
+      FAILED: 4,
       CANCEL: 5,
       RETRY: 6,
       EXPIRE: 7,
@@ -72,9 +72,10 @@ export class BlockchainTransaction extends Base {
           type: DT.INTEGER,
           defaultValue: 1,
           comment:
-            'Last action processing status. READY (1) / PENDING (2) / RETRY (6) / SUCCESS (3) / REVIEW (4) / CANCEL (5) etc.',
+            'Last action processing status. READY (1) / PENDING (2) / RETRY (6) / SUCCESS (3) / FAILED (4) / CANCEL (5) etc.',
         },
         data: { type: DT.JSON, comment: 'Any additional data' },
+        feeCollected: { type: DT.BIGINT },
       },
       {
         sequelize,
@@ -131,11 +132,13 @@ export class BlockchainTransaction extends Base {
              oi.domain,
              oi.action,
              oi.params,
+             oi.data,
              oi."orderId",
              o."publicKey",
              o."userId",
              bt.expiration,
              bt."blockTime",
+             bt.data as "btData",
              bt.id AS "btId"
       FROM "order-items" oi
         INNER JOIN "blockchain-transactions" bt ON oi.id = bt."orderItemId"
@@ -166,7 +169,17 @@ export class BlockchainTransaction extends Base {
    `);
   }
 
-  static format({ id, data, action, status, txId, createdAt, createdBy, blockTime }) {
+  static format({
+    id,
+    data,
+    action,
+    status,
+    txId,
+    createdAt,
+    createdBy,
+    blockTime,
+    feeCollected,
+  }) {
     return {
       id,
       data,
@@ -176,6 +189,7 @@ export class BlockchainTransaction extends Base {
       createdAt,
       createdBy,
       blockTime,
+      feeCollected,
     };
   }
 }

@@ -10,7 +10,11 @@ export default class Orders extends Base {
   }
   update(
     id: number,
-    data: { status: PurchaseTxStatus; results: RegistrationResult },
+    data: {
+      status?: PurchaseTxStatus;
+      publicKey?: string;
+      results?: RegistrationResult;
+    },
   ): Promise<OrdersUpdateResponse> {
     return this.apiClient.post(`orders/update/${id}`, { data });
   }

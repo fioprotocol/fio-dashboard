@@ -9,6 +9,8 @@ const ROUTES: { [route: string]: string } = {
   ADMIN_CONFIRM_EMAIL: '/confirm-admin-email/:hash',
   ADMIN_REGULAR_USERS: '/admin/regular-users',
   ADMIN_PROFILE: '/admin/profile',
+  ADMIN_ACCOUNTS: '/admin/accounts',
+  ADMIN_SEARCH_RESULT: '/admin/search-result',
 
   CONFIRM_EMAIL: '/confirm-email/:hash',
   CONFIRM_EMAIL_RESULT: '/confirm-email-result',

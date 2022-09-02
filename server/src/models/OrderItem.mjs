@@ -90,6 +90,31 @@ export class OrderItem extends Base {
     });
   }
 
+  static attrs(type = 'default') {
+    const attributes = {
+      default: [
+        'id',
+        'action',
+        'address',
+        'domain',
+        'params',
+        'nativeFio',
+        'price',
+        'priceCurrency',
+        'data',
+        'orderId',
+        'createdAt',
+        'updatedAt',
+      ],
+    };
+
+    if (type in attributes) {
+      return attributes[type];
+    }
+
+    return attributes.default;
+  }
+
   static list(where) {
     return this.findAll({
       where,
@@ -175,6 +200,7 @@ export class OrderItem extends Base {
           blockNum: tx.block_num,
           blockTime: tx.block_time ? tx.block_time + 'Z' : new Date(),
           status: BlockchainTransaction.STATUS.PENDING,
+          feeCollected: tx.fee_collected,
         },
         {
           where: {

@@ -1,3 +1,6 @@
+import apis from '../../../../api';
+
+import MathOp from '../../../../util/math';
 import { setFioName } from '../../../../utils';
 import { formatDateToLocale } from '../../../../helpers/stringFormatters';
 
@@ -11,12 +14,9 @@ import {
   PAYMENTS_STATUSES_TITLES,
   PAYMENT_OPTIONS,
 } from '../../../../constants/purchase';
-import {
-  BcTx,
-  OrderItem,
-  OrderPaymentItem,
-  PaymentOptionsProps,
-} from '../../../../types';
+import { CURRENCY_CODES } from '../../../../constants/common';
+
+import { BcTx, OrderItem, OrderPaymentItem } from '../../../../types';
 
 type PaymentSpentType = typeof PAYMENT_SPENT_TYPES[keyof typeof PAYMENT_SPENT_TYPES];
 type PaymentStatusType = typeof PAYMENT_STATUSES[keyof typeof PAYMENT_STATUSES];
@@ -66,25 +66,44 @@ const setHistory = (
       key: `payment-event-log-${new Date(createdAt).getTime()}`,
       date: formatDateToLocale(createdAt),
       amount: status === PAYMENT_STATUSES.COMPLETED ? payment.price : '0.00',
-      currency: payment.currency,
+      currency: payment.currency.toUpperCase(),
       status: `${
-        PAYMENT_OPTION_LABEL[payment.processor as PaymentOptionsProps]
+        PAYMENT_OPTION_LABEL[payment.processor]
       } notification received (${
         payment.externalId
-      }) Status: ${PAYMENTS_STATUSES_TITLES[status as PaymentStatusType] ||
+      }) \nStatus: ${PAYMENTS_STATUSES_TITLES[status as PaymentStatusType] ||
         PAYMENTS_STATUSES_TITLES[PAYMENT_STATUSES.PENDING]}`,
       dateTime: new Date(createdAt).getTime(),
     });
   });
 
   order.payments.forEach(
-    ({ price, currency, status, createdAt, spentType, paymentEventLogs }) => {
-      if (spentType !== PAYMENT_SPENT_TYPES.ORDER)
+    ({
+      price,
+      currency,
+      status,
+      createdAt,
+      spentType,
+      data,
+      paymentEventLogs,
+    }) => {
+      if (spentType !== PAYMENT_SPENT_TYPES.ORDER) {
+        const amount =
+          currency === CURRENCY_CODES.FIO
+            ? apis.fio.convertFioToUsdc(
+                apis.fio.amountToSUF(new MathOp(price).toNumber()),
+                new MathOp(data && data.roe ? data.roe : order.roe).toNumber(),
+              )
+            : price;
+
         history.push({
           key: `payment-${new Date(createdAt).getTime()}`,
           date: formatDateToLocale(createdAt),
-          amount: price,
-          currency,
+          amount: new MathOp(amount).toString(),
+          currency:
+            currency === CURRENCY_CODES.FIO
+              ? CURRENCY_CODES.USDC
+              : currency.toUpperCase(),
           withdraw: spentType !== PAYMENT_SPENT_TYPES.ACTION_REFUND,
           status: `${
             PAYMENT_SPENT_TYPES_ORDER_HISTORY_LABEL[
@@ -97,6 +116,7 @@ const setHistory = (
           }`,
           dateTime: new Date(createdAt).getTime(),
         });
+      }
     },
   );
 
@@ -113,15 +133,23 @@ const setHistory = (
       statusMsg += `${setFioName(
         orderItem.address,
         orderItem.domain,
-      )} status update: ${BC_TX_STATUS_LABELS[status]}. Action: ${
+      )} \nstatus update: ${BC_TX_STATUS_LABELS[status]}. \nAction: ${
         bt.action
-      }. Message: `;
+      }. \nMessage: `;
 
       if (statusNotes) {
         statusMsg += statusNotes;
       } else {
-        statusMsg +=
-          status === BC_TX_STATUSES.SUCCESS ? `TX ID - ${bt.txId}` : '-';
+        if (status === BC_TX_STATUSES.SUCCESS) {
+          statusMsg += `TX ID - ${bt.txId || 'N/A'}`;
+          statusMsg += `\nFee collected: ${
+            bt?.feeCollected
+              ? `${apis.fio.sufToAmount(bt.feeCollected).toFixed(2)} FIO`
+              : 'N/A'
+          }`;
+        } else {
+          statusMsg += ' -';
+        }
       }
 
       history.push({

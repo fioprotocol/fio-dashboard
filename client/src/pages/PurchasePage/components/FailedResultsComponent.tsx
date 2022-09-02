@@ -18,6 +18,7 @@ export const FailedResultsComponent: React.FC<FailedResultsComponentProps> = pro
     purchaseStatus,
     purchaseProvider,
     txItems,
+    errorBadges,
     paymentAmount,
     paymentCurrency,
     convertedPaymentAmount,
@@ -25,7 +26,6 @@ export const FailedResultsComponent: React.FC<FailedResultsComponentProps> = pro
     costFree,
     providerTxId,
     allErrored,
-    failedTxsTotalAmount,
   } = props;
 
   if (purchaseStatus === PURCHASE_RESULTS_STATUS.CANCELED)
@@ -53,12 +53,16 @@ export const FailedResultsComponent: React.FC<FailedResultsComponentProps> = pro
 
   return (
     <>
-      <InfoBadgeComponent
-        purchaseStatus={purchaseStatus}
-        purchaseProvider={purchaseProvider}
-        failedMessage={txItems[0].errorType}
-        failedTxsTotalAmount={failedTxsTotalAmount}
-      />
+      {Object.values(errorBadges).map(({ errorType, total, totalCurrency }) => (
+        <InfoBadgeComponent
+          purchaseStatus={purchaseStatus}
+          purchaseProvider={purchaseProvider}
+          failedMessage={errorType}
+          failedTxsTotalAmount={total}
+          failedTxsTotalCurrency={totalCurrency}
+        />
+      ))}
+
       <div className={classes.details}>
         <h5
           className={classnames(

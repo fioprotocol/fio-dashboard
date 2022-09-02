@@ -84,7 +84,7 @@ export const transformPurchaseResults = ({
 
   if (!isEmpty(errors)) {
     for (const item of errors) {
-      const { fioName, error, isFree, cartItemId, errorType } = item;
+      const { fioName, error, errorData, isFree, cartItemId, errorType } = item;
 
       const retObj: CartItem = {
         id: fioName,
@@ -104,6 +104,7 @@ export const transformPurchaseResults = ({
         retObj.domain = domainName;
         retObj.error = error;
         retObj.errorType = errorType;
+        retObj.errorData = errorData;
 
         if (isFree) {
           retObj.isFree = isFree;

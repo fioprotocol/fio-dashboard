@@ -8,8 +8,8 @@ import { FIOSDK_LIB } from './api/fio';
 import { CONTAINED_FLOW_ACTIONS } from './constants/containedFlow';
 import {
   BC_TX_STATUSES,
-  PURCHASE_PROVIDER,
   PAYMENT_OPTIONS,
+  PURCHASE_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from './constants/purchase';
 import { CURRENCY_CODES } from './constants/common';
@@ -41,6 +41,7 @@ export type CartItem = {
   showBadge?: boolean;
   error?: string;
   isFree?: boolean;
+  errorData?: { code?: string; credited?: string };
   errorType?: string;
   isCustomDomain?: boolean;
 };
@@ -87,6 +88,7 @@ export type RegistrationErrors = {
   isFree?: boolean;
   cartItemId: string;
   errorType: string;
+  errorData?: { code?: string; credited?: string };
 };
 
 export type RegistrationRegistered = {
@@ -164,6 +166,10 @@ export type FioDomainDoublet = {
   expiration: string;
   isPublic: number;
   walletPublicKey: string;
+};
+
+export type PrivateDomainsMap = {
+  [name: string]: FioDomainDoublet & { wallet: FioWalletDoublet };
 };
 
 export type PublicAddressDoublet = {
@@ -551,6 +557,15 @@ export type AdminUser = {
   createdAt: string;
 };
 
+export type FioAccountProfile = {
+  id: string;
+  actor: string;
+  permission: string;
+  name: string;
+  isDefault: boolean;
+  createdAt: string;
+};
+
 export type AdminUserProfile = {
   id: string;
   email: string;
@@ -558,6 +573,41 @@ export type AdminUserProfile = {
   role: { role: string; id: number };
   lastLogIn?: string;
   createdAt: string;
+};
+
+export type AdminUserItemProfile = {
+  avatar?: string;
+  createdAt: string;
+  email: string;
+  id: string;
+  location?: string;
+  secretSet: boolean;
+  status: string;
+  username: string;
+};
+
+export type AdminOrderItemProfile = {
+  id: string;
+  total: string;
+  roe: string;
+  status: number;
+  data?: string;
+  createdAt: string;
+  customerIp: string;
+  number: string;
+  publicKey: string;
+  refProfileId?: string;
+  updatedAt: string;
+  userId: string;
+  userEmail: string;
+  paymentProcessor: string;
+};
+
+export type AdminSearchResult = {
+  result?: {
+    orders: AdminOrderItemProfile[];
+    users?: AdminUserItemProfile[];
+  };
 };
 
 export type OrderPaymentItem = {
@@ -572,15 +622,21 @@ export type OrderPaymentItem = {
     updatedAt: string;
   }[];
   price?: string;
-  processor: string;
+  processor: PaymentOptionsProps;
   spentType: number;
   status: number;
   updatedAt: string;
   id: string;
   statusNotes?: string;
+  data?: { roe?: string };
 };
 
-export type BcTx = { id: number; action: string; txId?: string };
+export type BcTx = {
+  id: number;
+  action: string;
+  txId?: string;
+  feeCollected?: number;
+};
 
 export type BcTxEvent = {
   blockchainTransactionId: number;
@@ -595,10 +651,13 @@ export type BcTxEvent = {
 export type OrderItem = {
   id: string;
   number: string;
+  roe: string;
   total: string;
   publicKey: string;
   createdAt: string;
   status: number;
+  currency?: PaymentCurrency;
+  paymentProcessor: PaymentOptionsProps;
   items?: {
     action: string;
     address?: string;

@@ -26,6 +26,7 @@ export type PurchaseNowTypes = {
   fioWallets: FioWalletDoublet[];
   prices: Prices;
   refProfileInfo: RefProfile | null;
+  disabled?: boolean;
 };
 
 export type RegistrationType = {

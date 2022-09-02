@@ -14,6 +14,7 @@ type DefaultProps = {
   walletBalances: WalletBalancesItem;
   walletName: string;
   fioWallets: FioWalletDoublet[];
+  paymentAssignmentWallets: FioWalletDoublet[];
   paymentWalletPublicKey: string;
   fioWalletsBalances: WalletsBalances;
   paymentOption: PaymentOptionsProps;
@@ -24,6 +25,8 @@ type DefaultProps = {
   cart: CartItemType[];
   payment: Payment;
   paymentOptionError: ApiError;
+  error?: string | null;
+  submitDisabled?: boolean;
 };
 
 export type CheckoutComponentProps = {
@@ -37,12 +40,13 @@ export type PaymentOptionComponentProps = {
 
 export type StripePaymentOptionProps = {
   paymentOption: PaymentOptionsProps;
+  totalCost: number;
 } & DefaultProps;
 
 export type BeforeSubmitData = {
   [fioAddress: string]: {
     signedTx?: SignedTxArgs;
-    signingWallet?: string;
+    signingWalletPubKey?: string;
   };
 };
 
@@ -51,7 +55,11 @@ export type BeforeSubmitState = {
   onSuccess: (data: BeforeSubmitData) => void;
   onCancel: () => void;
   data: {
-    fioAddressItems: { fioWallet: FioWalletDoublet; name: string }[];
+    fioAddressItems: {
+      fioWallet: FioWalletDoublet;
+      name: string;
+      ownerKey: string;
+    }[];
   } | null;
   fee?: number | null;
 };

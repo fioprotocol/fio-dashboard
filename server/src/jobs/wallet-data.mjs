@@ -24,6 +24,7 @@ const DOMAIN_EXP_TABLE = {
   0: DOMAIN_EXP_PERIOD.EXPIRED,
 };
 const ITEMS_PER_FETCH = 20;
+const DEBUG_INFO = process.env.DEBUG_INFO_LOGS;
 
 const returnDayRange = timePeriod => {
   if (timePeriod > DAYS_30) return DAYS_30 + 1;
@@ -37,11 +38,11 @@ class WalletDataJob extends CommonJob {
     super();
   }
 
-  logFioError(e, wallet) {
+  logFioError(e, wallet, action = '-') {
     if (e && e.errorCode !== 404) {
       if (wallet && wallet.id)
         this.postMessage(
-          `Process wallet error - id: ${wallet.id} - error - ${e.message}`,
+          `Process wallet error - id: ${wallet.id} - error - ${e.message} - action - ${action}`,
         );
 
       logger.error(e);
@@ -51,7 +52,10 @@ class WalletDataJob extends CommonJob {
   async checkRequests(wallet) {
     const walletSdk = fioApi.getWalletSdkInstance(wallet.publicKey);
     const {
-      publicWalletData: { meta },
+      publicWalletData: {
+        requests: { sent, received },
+        meta,
+      },
     } = wallet;
 
     let sentRequests = [];
@@ -59,14 +63,17 @@ class WalletDataJob extends CommonJob {
     let changed = false;
 
     try {
-      const {
-        publicWalletData: {
-          requests: { sent },
-        },
-      } = wallet;
-      const requestsResponse = await walletSdk.getSentFioRequests(0, 0, true);
+      try {
+        const requestsResponse = await walletSdk.getSentFioRequests(0, 0, true);
+        sentRequests = requestsResponse.requests;
+      } catch (e) {
+        sentRequests = [...sent];
+        this.logFioError(e, wallet, 'getSentFioRequests');
+      }
 
-      sentRequests = requestsResponse.requests;
+      if (sent.length && sent.length !== sentRequests.length) {
+        changed = true;
+      }
 
       if (!sent.length && sentRequests.length) {
         changed = true;
@@ -107,27 +114,27 @@ class WalletDataJob extends CommonJob {
         }
       }
     } catch (e) {
-      this.logFioError(e, wallet);
+      this.logFioError(e, wallet, 'checkSentFioRequests');
     }
 
     try {
-      const {
-        publicWalletData: {
-          requests: { received },
-          meta: { receivedRequestsOffset } = { receivedRequestsOffset: 0 },
-        },
-      } = wallet;
+      const receivedRequestsOffset = received.length > 1 ? received.length - 1 : 0;
 
-      const requestsResponse = await walletSdk.getReceivedFioRequests(
-        0,
-        receivedRequestsOffset,
-        true,
-      );
-      receivedRequests = requestsResponse.requests;
+      try {
+        const requestsResponse = await walletSdk.getReceivedFioRequests(
+          0,
+          receivedRequestsOffset,
+          true,
+        );
+        receivedRequests = requestsResponse.requests;
+      } catch (e) {
+        receivedRequests = [...received];
+        this.logFioError(e, wallet, 'getReceivedFioRequests');
+      }
 
       if (!received.length && receivedRequests.length) {
         changed = true;
-        meta.receivedRequestsOffset = receivedRequests.length;
+        meta.receivedRequestsOffset = receivedRequestsOffset;
         received.push(
           ...receivedRequests.map(({ fio_request_id, status }) => ({
             fio_request_id,
@@ -139,7 +146,7 @@ class WalletDataJob extends CommonJob {
       if (received.length && receivedRequests.length) {
         changed = true;
 
-        meta.receivedRequestsOffset = receivedRequestsOffset + receivedRequests.length;
+        meta.receivedRequestsOffset = receivedRequestsOffset;
 
         for (const fetchedItem of receivedRequests) {
           const existed = received.find(
@@ -147,26 +154,32 @@ class WalletDataJob extends CommonJob {
               Number(fetchedItem.fio_request_id) === Number(request.fio_request_id),
           );
           if (!existed) {
-            await Notification.create({
-              type: Notification.TYPE.INFO,
-              contentType: Notification.CONTENT_TYPE.NEW_FIO_REQUEST,
-              userId: wallet.User.id,
-              data: {
-                pagesToShow: ['/'],
-                emailData: {
-                  requestor: fetchedItem.payee_fio_address,
-                  to: fetchedItem.payer_fio_address,
-                  wallet: wallet.publicKey,
-                  fioRequestId: fetchedItem.fio_request_id,
-                  date: new Date(fetchedItem.time_stamp),
-                },
-              },
+            received.push({
+              fio_request_id: fetchedItem.fio_request_id,
+              status: fetchedItem.status,
             });
+
+            if (fetchedItem.status === 'requested')
+              await Notification.create({
+                type: Notification.TYPE.INFO,
+                contentType: Notification.CONTENT_TYPE.NEW_FIO_REQUEST,
+                userId: wallet.User.id,
+                data: {
+                  pagesToShow: ['/'],
+                  emailData: {
+                    requestor: fetchedItem.payee_fio_address,
+                    to: fetchedItem.payer_fio_address,
+                    wallet: wallet.publicKey,
+                    fioRequestId: fetchedItem.fio_request_id,
+                    date: new Date(fetchedItem.time_stamp),
+                  },
+                },
+              });
           }
         }
       }
     } catch (e) {
-      this.logFioError(e, wallet);
+      this.logFioError(e, wallet, 'checkReceivedFioRequests');
     }
 
     if (changed) {
@@ -177,10 +190,7 @@ class WalletDataJob extends CommonJob {
               fio_request_id,
               status,
             })),
-            received: receivedRequests.map(({ fio_request_id, status }) => ({
-              fio_request_id,
-              status,
-            })),
+            received,
           },
           meta,
         },
@@ -297,7 +307,7 @@ class WalletDataJob extends CommonJob {
         );
       }
     } catch (e) {
-      this.logFioError(e, wallet);
+      this.logFioError(e, wallet, 'checkFioNames');
     }
   }
 
@@ -359,7 +369,7 @@ class WalletDataJob extends CommonJob {
         );
       }
     } catch (e) {
-      this.logFioError(e, wallet);
+      this.logFioError(e, wallet, 'checkBalance');
     }
   }
 
@@ -386,7 +396,7 @@ class WalletDataJob extends CommonJob {
     const processWallet = wallet => async () => {
       if (this.isCancelled) return false;
 
-      this.postMessage(`Process wallet - ${wallet.id}`);
+      if (DEBUG_INFO) this.postMessage(`Process wallet - ${wallet.id}`);
 
       if (!wallet.publicWalletData.id) {
         const newItem = await PublicWalletData.create({
@@ -402,6 +412,10 @@ class WalletDataJob extends CommonJob {
           meta: { receivedRequestsOffset: 0 },
         });
         wallet.publicWalletData.id = newItem.id;
+        wallet.publicWalletData.requests = newItem.requests;
+        wallet.publicWalletData.cryptoHandles = newItem.cryptoHandles;
+        wallet.publicWalletData.domains = newItem.domains;
+        wallet.publicWalletData.meta = newItem.meta;
       }
 
       try {
@@ -419,7 +433,7 @@ class WalletDataJob extends CommonJob {
 
     let wallets = await this.getWallets();
     while (wallets.length) {
-      this.postMessage(`Process wallets - ${wallets.length} / ${offset}`);
+      if (DEBUG_INFO) this.postMessage(`Process wallets - ${wallets.length} / ${offset}`);
 
       const methods = wallets.map(wallet => processWallet(wallet));
 
@@ -427,14 +441,14 @@ class WalletDataJob extends CommonJob {
       for (const method of methods) {
         chunks.push(method);
         if (chunks.length === CHUNKS_LIMIT) {
-          this.postMessage(`Process chunk - ${chunks.length}`);
+          if (DEBUG_INFO) this.postMessage(`Process chunk - ${chunks.length}`);
           await this.executeActions(chunks);
           chunks = [];
         }
       }
 
       if (chunks.length) {
-        this.postMessage(`Process chunk - ${chunks.length}`);
+        if (DEBUG_INFO) this.postMessage(`Process chunk - ${chunks.length}`);
         await this.executeActions(chunks);
       }
 
