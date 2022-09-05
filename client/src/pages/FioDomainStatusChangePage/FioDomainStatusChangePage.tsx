@@ -4,8 +4,13 @@ import { Redirect } from 'react-router-dom';
 import FioDomainStatusChangeForm from './components/FioDomainStatusChangeForm';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import SetVisibilityResults from '../../components/common/TransactionResults/components/SetVisibilityResults';
+import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 
-import { CONFIRM_PIN_ACTIONS, DOMAIN_STATUS } from '../../constants/common';
+import {
+  CONFIRM_PIN_ACTIONS,
+  DOMAIN_STATUS,
+  WALLET_CREATED_FROM,
+} from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 import { ACTIONS } from '../../constants/fio';
 import { useWalletBalances } from '../../util/hooks';
@@ -115,17 +120,27 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
 
   return (
     <>
-      <EdgeConfirmAction
-        action={CONFIRM_PIN_ACTIONS.SET_VISIBILITY}
-        setProcessing={setProcessing}
-        onSuccess={onSuccess}
-        onCancel={onCancel}
-        processing={processing}
-        data={submitData}
-        submitAction={submit}
-        fioWalletEdgeId={fioWallet.edgeId || ''}
-        edgeAccountLogoutBefore={true}
-      />
+      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
+        <EdgeConfirmAction
+          action={CONFIRM_PIN_ACTIONS.SET_VISIBILITY}
+          setProcessing={setProcessing}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          processing={processing}
+          data={submitData}
+          submitAction={submit}
+          fioWalletEdgeId={fioWallet.edgeId || ''}
+          edgeAccountLogoutBefore={true}
+        />
+      ) : null}
+
+      {fioWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+        <LedgerWalletActionNotSupported
+          submitData={submitData}
+          onCancel={onCancel}
+        />
+      ) : null}
+
       <FioDomainStatusChangeForm
         statusToChange={statusToChange}
         feePrice={feePrice}
@@ -133,7 +148,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
         hasLowBalance={hasLowBalance}
         processing={processing}
         handleSubmit={onSubmit}
-        walletName={fioWallet.name}
+        fioWallet={fioWallet}
         walletBalancesAvailable={walletBalancesAvailable}
       />
     </>

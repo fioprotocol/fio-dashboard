@@ -5,9 +5,13 @@ import PseudoModalContainer from '../PseudoModalContainer';
 import SignNFTForm from './components/SignNftForm/SignNftForm';
 import SignResults from '../common/TransactionResults/components/SignResults';
 import EdgeConfirmAction from '../EdgeConfirmAction';
+import LedgerWalletActionNotSupported from '../LedgerWalletActionNotSupported';
 
 import { ROUTES } from '../../constants/routes';
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import {
+  CONFIRM_PIN_ACTIONS,
+  WALLET_CREATED_FROM,
+} from '../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../constants/fio';
 
 import { putParamsToUrl } from '../../utils';
@@ -214,17 +218,27 @@ const SignNft: React.FC<ContainerProps> = props => {
 
   return (
     <>
-      <EdgeConfirmAction
-        action={CONFIRM_PIN_ACTIONS.SIGN_NFT}
-        setProcessing={setProcessing}
-        onSuccess={onSuccess}
-        onCancel={onCancel}
-        processing={processing}
-        data={submitData}
-        submitAction={submit}
-        fioWalletEdgeId={currentWallet?.edgeId || ''}
-        edgeAccountLogoutBefore={true}
-      />
+      {currentWallet.from === WALLET_CREATED_FROM.EDGE ? (
+        <EdgeConfirmAction
+          action={CONFIRM_PIN_ACTIONS.SIGN_NFT}
+          setProcessing={setProcessing}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          processing={processing}
+          data={submitData}
+          submitAction={submit}
+          fioWalletEdgeId={currentWallet?.edgeId || ''}
+          edgeAccountLogoutBefore={true}
+        />
+      ) : null}
+
+      {currentWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+        <LedgerWalletActionNotSupported
+          submitData={submitData}
+          onCancel={onCancel}
+        />
+      ) : null}
+
       <PseudoModalContainer title={title} link={backTo} middleWidth={true}>
         <SignNFTForm {...formProps} />
       </PseudoModalContainer>

@@ -14,6 +14,7 @@ import { LOW_BALANCE_TEXT, CONTAINER_TYPES } from './constants';
 import { ROUTES } from '../../constants/routes';
 
 import { LinkTokenResultsProps } from '../common/TransactionResults/types';
+import { FioWalletDoublet } from '../../types';
 
 import classes from './styles/ActionContainer.module.scss';
 
@@ -22,6 +23,7 @@ type Props = {
   isDisabled?: boolean;
   onActionButtonClick: () => void;
   loading?: boolean;
+  fioWallets: FioWalletDoublet[];
 } & LinkTokenResultsProps;
 
 const ActionContainer: React.FC<Props> = props => {

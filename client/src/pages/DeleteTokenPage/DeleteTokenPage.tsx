@@ -5,13 +5,17 @@ import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import CheckedDropdown from './components/CheckedDropdown';
 import DeleteTokenItem from './components/DeleteTokenItem';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
+import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 
 import { linkTokens } from '../../api/middleware/fio';
 import { genericTokenId } from '../../util/fio';
 import { minWaitTimeFunction } from '../../utils';
 import { log } from '../../util/general';
 
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import {
+  CONFIRM_PIN_ACTIONS,
+  WALLET_CREATED_FROM,
+} from '../../constants/common';
 import {
   TOKEN_LINK_MIN_WAIT_TIME,
   BUNDLES_TX_COUNT,
@@ -23,17 +27,19 @@ import {
   PublicAddressDoublet,
   LinkActionResult,
   FioAddressWithPubAddresses,
+  FioWalletDoublet,
 } from '../../types';
 
 import classes from './styles/DeleteToken.module.scss';
 
 type Props = {
   fioCryptoHandle: FioAddressWithPubAddresses;
+  fioWallets: FioWalletDoublet[];
   loading: boolean;
 };
 
 const DeleteTokenPage: React.FC<Props> = props => {
-  const { fioCryptoHandle, loading } = props;
+  const { fioCryptoHandle, fioWallets, loading } = props;
   const {
     remaining = 0,
     edgeWalletId = '',
@@ -52,6 +58,10 @@ const DeleteTokenPage: React.FC<Props> = props => {
   const hasLowBalance = remaining - bundleCost < 0 || remaining === 0;
 
   const hasChecked = pubAddressesArr.some(pubAddress => pubAddress.isChecked);
+
+  const fioWallet = fioWallets.find(
+    ({ publicKey }) => publicKey === fioCryptoHandle.walletPublicKey,
+  );
 
   const pubAddressesToDefault = () =>
     publicAddresses &&
@@ -156,20 +166,31 @@ const DeleteTokenPage: React.FC<Props> = props => {
 
   return (
     <>
-      <EdgeConfirmAction
-        onSuccess={onSuccess}
-        onCancel={onCancel}
-        submitAction={submit}
-        data={submitData}
-        action={CONFIRM_PIN_ACTIONS.DELETE_TOKEN}
-        processing={processing}
-        setProcessing={setProcessing}
-        fioWalletEdgeId={edgeWalletId}
-      />
+      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
+        <EdgeConfirmAction
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          submitAction={submit}
+          data={submitData}
+          action={CONFIRM_PIN_ACTIONS.DELETE_TOKEN}
+          processing={processing}
+          setProcessing={setProcessing}
+          fioWalletEdgeId={edgeWalletId}
+        />
+      ) : null}
+
+      {fioWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+        <LedgerWalletActionNotSupported
+          submitData={submitData}
+          onCancel={onCancel}
+        />
+      ) : null}
+
       <ActionContainer
         containerName={CONTAINER_NAMES.DELETE}
         fioCryptoHandle={fioCryptoHandle}
         bundleCost={bundleCost}
+        fioWallets={fioWallets}
         isDisabled={!hasChecked || remaining === 0}
         onActionButtonClick={onActionClick}
         loading={loading}

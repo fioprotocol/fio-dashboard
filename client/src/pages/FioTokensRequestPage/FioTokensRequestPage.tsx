@@ -6,6 +6,8 @@ import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import RequestTabs from './components/RequestTabs';
 import RequestTokensEdgeWallet from './components/RequestTokensEdgeWallet';
 import TokenTransferResults from '../../components/common/TransactionResults/components/TokenTransferResults';
+import WalletAction from '../../components/WalletAction/WalletAction';
+import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 
 import { useFioAddresses, usePubAddressesFromWallet } from '../../util/hooks';
 
@@ -21,11 +23,11 @@ import { ResultsData } from '../../components/common/TransactionResults/types';
 import apis from '../../api';
 
 import { BADGE_TYPES } from '../../components/Badge/Badge';
-import { WALLET_CREATED_FROM } from '../../constants/common';
 import { FIO_CHAIN_CODE } from '../../constants/fio';
 import { emptyWallet } from '../../redux/fio/reducer';
 
 import classes from './styles/RequestTokensPage.module.scss';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
 const RequestPage: React.FC<ContainerProps> = props => {
   const {
@@ -150,19 +152,20 @@ const RequestPage: React.FC<ContainerProps> = props => {
 
   return (
     <>
-      {fioWallet?.publicKey != null &&
-      fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
-        <RequestTokensEdgeWallet
-          fioWallet={fioWallet}
-          onCancel={onCancel}
-          onSuccess={onSuccess}
-          requestData={requestData}
-          processing={processing}
-          setProcessing={setProcessing}
-          createContact={createContact}
-          contactsList={contactsList}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={fioWallet}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        action={CONFIRM_PIN_ACTIONS.REQUEST}
+        submitData={requestData}
+        processing={processing}
+        setProcessing={setProcessing}
+        createContact={createContact}
+        contactsList={contactsList}
+        FioActionWallet={RequestTokensEdgeWallet}
+        LedgerActionWallet={LedgerWalletActionNotSupported}
+      />
+
       <PseudoModalContainer
         title="Request FIO Tokens"
         onBack={onBack}

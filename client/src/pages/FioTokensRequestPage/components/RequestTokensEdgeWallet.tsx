@@ -24,7 +24,7 @@ type Props = {
   onSuccess: (data: TrxResponsePaidBundles) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  requestData: RequestTokensValues | null;
+  submitData: RequestTokensValues | null;
   processing: boolean;
   createContact: (name: string) => void;
   contactsList: string[];
@@ -49,7 +49,7 @@ const RequestTokensEdgeWallet: React.FC<Props> = props => {
     setProcessing,
     onSuccess,
     onCancel,
-    requestData,
+    submitData: requestData,
     processing,
     createContact,
     contactsList,
@@ -102,7 +102,7 @@ const RequestTokensEdgeWallet: React.FC<Props> = props => {
 
   return (
     <EdgeConfirmAction
-      action={CONFIRM_PIN_ACTIONS.SEND}
+      action={CONFIRM_PIN_ACTIONS.REQUEST}
       setProcessing={setProcessing}
       onSuccess={onSuccess}
       onCancel={onCancel}

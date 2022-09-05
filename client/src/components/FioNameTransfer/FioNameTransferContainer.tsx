@@ -6,6 +6,7 @@ import PseudoModalContainer from '../PseudoModalContainer';
 import InfoBadge from '../InfoBadge/InfoBadge';
 import { TransferForm } from './components/FioNameTransferForm/FioNameTransferForm';
 import TransferResults from '../common/TransactionResults/components/TransferResults';
+import LedgerWalletActionNotSupported from '../LedgerWalletActionNotSupported';
 
 import { BADGE_TYPES } from '../Badge/Badge';
 import { ERROR_TYPES } from '../common/TransactionResults/constants';
@@ -14,6 +15,7 @@ import { fioNameLabels } from '../../constants/labels';
 import {
   CONFIRM_PIN_ACTIONS,
   MANAGE_PAGE_REDIRECT,
+  WALLET_CREATED_FROM,
 } from '../../constants/common';
 import { ACTIONS } from '../../constants/fio';
 
@@ -160,17 +162,27 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
 
   return (
     <>
-      <EdgeConfirmAction
-        action={CONFIRM_PIN_ACTIONS.TRANSFER}
-        setProcessing={setProcessing}
-        onSuccess={onSuccess}
-        onCancel={onCancel}
-        processing={processing}
-        data={submitData}
-        submitAction={submit}
-        fioWalletEdgeId={edgeId || ''}
-        edgeAccountLogoutBefore={true}
-      />
+      {currentWallet.from === WALLET_CREATED_FROM.EDGE ? (
+        <EdgeConfirmAction
+          action={CONFIRM_PIN_ACTIONS.TRANSFER}
+          setProcessing={setProcessing}
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          processing={processing}
+          data={submitData}
+          submitAction={submit}
+          fioWalletEdgeId={edgeId || ''}
+          edgeAccountLogoutBefore={true}
+        />
+      ) : null}
+
+      {currentWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+        <LedgerWalletActionNotSupported
+          submitData={submitData}
+          onCancel={onCancel}
+        />
+      ) : null}
+
       <PseudoModalContainer
         link={FIO_NAME_DATA[fioNameType].backLink}
         title={title}

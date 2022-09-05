@@ -8,7 +8,9 @@ import FioRecordDetailedModal from './FioRecordDetailedModal';
 import FioRecordDetailedTabs from './FioRecordDetailedTabs';
 import FioObtDataDetails from './FioObtDataDetails';
 import FioRecordItem from './FioRecordItem';
+import WalletAction from '../../../components/WalletAction/WalletAction';
 import DecryptContentEdge from './DecryptContentEdge';
+import LedgerWalletActionNotSupported from '../../../components/LedgerWalletActionNotSupported';
 
 import { transformFioRecord } from '../util';
 
@@ -17,7 +19,7 @@ import {
   FIO_REQUEST_FIELDS_LIST,
   FIO_RECORD_TYPES,
 } from '../constants';
-import { WALLET_CREATED_FROM } from '../../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 
 import {
   FioRecord,
@@ -220,16 +222,17 @@ const FioRecordsList: React.FC<Props> = props => {
           onCloseModal,
         })}
       </FioRecordDetailedModal>
-      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
-        <DecryptContentEdge
-          fioWallet={fioWallet}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          processing={processing}
-          setProcessing={setProcessing}
-          submitData={submitData}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={fioWallet}
+        processing={processing}
+        submitData={submitData}
+        action={CONFIRM_PIN_ACTIONS.DETAILED_FIO_REQUEST}
+        setProcessing={setProcessing}
+        onSuccess={onSuccess}
+        onCancel={onCancel}
+        FioActionWallet={DecryptContentEdge}
+        LedgerActionWallet={LedgerWalletActionNotSupported}
+      />
     </div>
   );
 };

@@ -8,6 +8,8 @@ import FioRequest from './components/FioRequest';
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import FioRequestStatusBadge from '../../components/Badges/FioRequestStatusBadge/FioRequestStatusBadge';
+import WalletAction from '../../components/WalletAction/WalletAction';
+import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import FioNamesInitWrapper from '../../components/FioNamesInitWrapper';
 
 import { putParamsToUrl } from '../../utils';
@@ -15,7 +17,7 @@ import { transformFioRecord } from '../WalletPage/util';
 import { isFioChain } from '../../util/fio';
 
 import { ROUTES } from '../../constants/routes';
-import { WALLET_CREATED_FROM } from '../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { FIO_RECORD_TYPES } from '../WalletPage/constants';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import {
@@ -261,16 +263,17 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = props => {
 
   return (
     <div className={classes.container}>
-      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
-        <DecryptContentEdge
-          fioWallet={fioWallet}
-          onCancel={onCancel}
-          onSuccess={onSuccess}
-          submitData={submitData}
-          processing={processing}
-          setProcessing={setProcessing}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={fioWallet}
+        action={CONFIRM_PIN_ACTIONS.DETAILED_FIO_REQUEST}
+        submitData={submitData}
+        processing={processing}
+        setProcessing={setProcessing}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        FioActionWallet={DecryptContentEdge}
+        LedgerActionWallet={LedgerWalletActionNotSupported}
+      />
 
       <PseudoModalContainer
         title="FIO Request"
