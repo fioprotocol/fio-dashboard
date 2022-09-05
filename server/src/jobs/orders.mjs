@@ -8,7 +8,6 @@ import {
   OrderItemStatus,
   Payment,
   PaymentEventLog,
-  Order,
   FreeAddress,
   Var,
 } from '../models/index.mjs';
@@ -17,6 +16,7 @@ import CommonJob from './job.mjs';
 import Stripe from '../external/payment-processor/stripe';
 
 import sendInsufficientFundsNotification from '../services/fallback-funds-email.mjs';
+import { updateOrderStatus as updateOrderStatusService } from '../services/updateOrderStatus.mjs';
 import { getROE } from '../external/roe.mjs';
 import {
   FEES_UPDATE_TIMEOUT_SEC,
@@ -533,7 +533,7 @@ class OrdersJob extends CommonJob {
     try {
       const items = await OrderItemStatus.getAllItemsStatuses(orderId);
 
-      await Order.updateStatus(
+      await updateOrderStatusService(
         orderId,
         null,
         items.map(({ txStatus }) => txStatus),

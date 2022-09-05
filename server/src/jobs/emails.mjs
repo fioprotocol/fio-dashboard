@@ -17,6 +17,7 @@ const CONTENT_TYPE_EMAIL_TEMPLATE_MAP = {
   [Notification.CONTENT_TYPE.BALANCE_CHANGED]: templates.balanceChange,
   [Notification.CONTENT_TYPE.DOMAIN_EXPIRE]: templates.expiringDomains,
   [Notification.CONTENT_TYPE.LOW_BUNDLE_TX]: templates.lowBundleCount,
+  [Notification.CONTENT_TYPE.PURCHASE_CONFIRMATION]: templates.purchaseConfirmation,
 };
 
 class EmailsJob extends CommonJob {
@@ -38,6 +39,7 @@ class EmailsJob extends CommonJob {
             Notification.CONTENT_TYPE.NEW_FIO_REQUEST,
             Notification.CONTENT_TYPE.FIO_REQUEST_APPROVED,
             Notification.CONTENT_TYPE.FIO_REQUEST_REJECTED,
+            Notification.CONTENT_TYPE.PURCHASE_CONFIRMATION,
           ],
         },
       },

@@ -28,6 +28,7 @@ export class Notification extends Base {
       FIO_REQUEST_APPROVED: 'FIO_REQUEST_APPROVED',
       DOMAIN_EXPIRE: 'DOMAIN_EXPIRE',
       LOW_BUNDLE_TX: 'LOW_BUNDLE_TX',
+      PURCHASE_CONFIRMATION: 'PURCHASE_CONFIRMATION',
     };
   }
   static get ACTION() {

@@ -17,6 +17,7 @@ export const templates = {
   lowBundleCount: 'lowBundleCount',
   fallbackFundsEmail: 'fallbackFundsEmail',
   confirmAdminEmail: 'confirmAdminEmail',
+  purchaseConfirmation: 'purchaseConfirmation',
 };
 
 const FIO_LOGO_BASE64 =
