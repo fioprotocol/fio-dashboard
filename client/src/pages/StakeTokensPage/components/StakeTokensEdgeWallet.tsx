@@ -17,7 +17,7 @@ type Props = {
   onSuccess: (data: TrxResponsePaidBundles) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  sendData: StakeTokensValues | null;
+  submitData: StakeTokensValues | null;
   processing: boolean;
   fee: number;
 };
@@ -28,7 +28,7 @@ const StakeTokensEdgeWallet: React.FC<Props> = props => {
     setProcessing,
     onSuccess,
     onCancel,
-    sendData,
+    submitData,
     fee,
     processing,
   } = props;
@@ -53,7 +53,7 @@ const StakeTokensEdgeWallet: React.FC<Props> = props => {
       onSuccess={onSuccess}
       onCancel={onCancel}
       processing={processing}
-      data={sendData}
+      data={submitData}
       submitAction={stake}
       fioWalletEdgeId={fioWallet.edgeId || ''}
       edgeAccountLogoutBefore={true}

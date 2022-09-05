@@ -19,7 +19,7 @@ export type FormProps = {
   hasLowBalance: boolean;
   processing: boolean;
   walletBalancesAvailable: WalletBalancesItem;
-  walletName?: string;
+  fioWallet: FioWalletDoublet;
   handleSubmit: () => void;
 };
 

@@ -12,6 +12,7 @@ import FioLoader from '../../components/common/FioLoader/FioLoader';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import FioNamesInitWrapper from '../../components/FioNamesInitWrapper';
 import Badge, { BADGE_TYPES } from '../../components/Badge/Badge';
+import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 
 import { convertFioPrices } from '../../util/prices';
 import { useFioWallet, useWalletBalances } from '../../util/hooks';
@@ -169,6 +170,13 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
           setProcessing={setProcessing}
           sendData={submitData}
           processing={processing}
+        />
+      ) : null}
+
+      {currentWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+        <LedgerWalletActionNotSupported
+          submitData={submitData}
+          onCancel={onCancel}
         />
       ) : null}
 
