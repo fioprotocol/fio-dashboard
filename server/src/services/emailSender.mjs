@@ -241,6 +241,49 @@ class EmailSender {
 <p>You will receive this email once every 24 hrs or until issue is resolved.</p>`,
           text: `Registration site got insufficient funds error when registering ${sendData.fioName} on profile ${sendData.refProfileName} using account ${sendData.authorization.actor} and permission ${sendData.authorization.permission}. You will receive this email once every 24 hrs or until issue is resolved.`,
         };
+
+      /**
+       *
+       * @param orderNumber exmaple '0LP9XM'
+       * 
+       * @param successedOrderItems[]
+       * @param successedOrderItems.address example 'tester'
+       * @param successedOrderItems.domain example 'testdomain'
+       * @param successedOrderItems.hasCustomDomain example 'true'
+       * @param successedOrderItems.priceAmount example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
+       * 
+       * @param successedOrderPaymentInfo {}
+       * @param successedOrderPaymentInfo.total example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
+       * @param successedOrderPaymentInfo.paidWith example 'My FIO Wallet' or 'visa ending in 7676'
+       * @param successedOrderPaymentInfo.txIds[] example ['b33d97fe0a0f88c8e2d2bd9783af1bd9b369d4a99105a4b3f74abe3922049003',
+      '0f756ad486387411d72aabbdd3b855e30b4d3d18626b13546a9c3d0573cfbac1']
+       * @param successedOrderPaymentInfo.txId example 'b33d97fe0a0f88c8e2d2bd9783af1bd9b369d4a99105a4b3f74abe3922049003' or 'pi_3Lah9zH5nAPUdDeK19TBesUO'
+       *
+       * @param failedOrderItems[]
+       * @param failedOrderItems.address example 'tester'
+       * @param failedOrderItems.domain example 'testdomain'
+       * @param failedOrderItems.hasCustomDomain example 'true'
+       * @param failedOrderItems.priceAmount example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
+       * 
+       * @param failedOrderPaymentInfo {}
+       * @param failedOrderPaymentInfo.total example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
+       * @param failedOrderPaymentInfo.paidWith example 'My FIO Wallet' or 'visa ending in 7676'
+       * @param failedOrderPaymentInfo.txIds[] example ['b33d97fe0a0f88c8e2d2bd9783af1bd9b369d4a99105a4b3f74abe3922049003',
+      '0f756ad486387411d72aabbdd3b855e30b4d3d18626b13546a9c3d0573cfbac1']
+       * @param failedOrderPaymentInfo.txId example 'b33d97fe0a0f88c8e2d2bd9783af1bd9b369d4a99105a4b3f74abe3922049003' or 'pi_3Lah9zH5nAPUdDeK19TBesUO'
+       *
+       * @param error {}
+       * @param error.title string
+       * @param error.message string
+       */
+
+      case templates.purchaseConfirmation:
+        return {
+          subject: `FIO dashboard purchase confirmation - ${sendData.orderNumber}`,
+          body: EmailTemplate.get(templateName, {
+            ...sendData,
+          }),
+        };
     }
 
     throw new Error(`There is no email template with such name - ${templateName}`);

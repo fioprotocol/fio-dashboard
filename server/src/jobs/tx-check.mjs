@@ -1,11 +1,12 @@
 import '../db';
 import {
-  Order,
   OrderItemStatus,
   BlockchainTransaction,
   BlockchainTransactionEventLog,
 } from '../models/index.mjs';
 import CommonJob from './job.mjs';
+
+import { updateOrderStatus } from '../services/updateOrderStatus.mjs';
 
 import { fioApi } from '../external/fio.mjs';
 
@@ -130,7 +131,7 @@ class TxCheckJob extends CommonJob {
         try {
           const items = await OrderItemStatus.getAllItemsStatuses(orderId);
 
-          await Order.updateStatus(
+          await updateOrderStatus(
             orderId,
             null,
             items.map(({ txStatus }) => txStatus),

@@ -11,6 +11,8 @@ import { PaymentEventLog } from './PaymentEventLog.mjs';
 import { BlockchainTransaction } from './BlockchainTransaction.mjs';
 import { BlockchainTransactionEventLog } from './BlockchainTransactionEventLog.mjs';
 
+import logger from '../logger.mjs';
+
 const { DataTypes: DT } = Sequelize;
 const ORDER_NUMBER_LENGTH = 6;
 const ORDER_NUMBER_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
@@ -402,11 +404,16 @@ export class Order extends Base {
         orderStatus = Order.STATUS.DONE;
     }
 
-    if (orderStatus !== null)
-      await Order.update(
-        { status: orderStatus },
-        { where: { id: orderId }, transaction: t },
-      );
+    if (orderStatus !== null) {
+      try {
+        await Order.update(
+          { status: orderStatus },
+          { where: { id: orderId }, transaction: t },
+        );
+      } catch (err) {
+        logger.error(err);
+      }
+    }
   }
 
   static format({
