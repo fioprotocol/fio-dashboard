@@ -84,7 +84,7 @@ const Cart: React.FC<Props> = props => {
 
             <p className={classes.infoText}>
               <span className="boldText">
-                {error ? 'Error' : 'Pricing update'}
+                {error ? 'Unable to purchase' : 'Pricing update'}
               </span>
               {` - `}
               {error || errorMessage}
