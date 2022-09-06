@@ -449,7 +449,7 @@ class OrdersJob extends CommonJob {
 
         if (result.transaction_id) {
           const bcTx = await BlockchainTransaction.create({
-            action: orderItem.action,
+            action: FIO_ACTIONS.registerFioDomain,
             txId: result.transaction_id,
             blockNum: result.block_num,
             blockTime: result.block_time ? result.block_time + 'Z' : new Date(),
@@ -460,7 +460,7 @@ class OrdersJob extends CommonJob {
 
           await BlockchainTransactionEventLog.create({
             status: BlockchainTransaction.STATUS.SUCCESS,
-            statusNotes: `Item: ${domain}. Action ${orderItem.action}.`,
+            statusNotes: `Item: ${domain}. Action ${FIO_ACTIONS.registerFioDomain}.`,
             blockchainTransactionId: bcTx.id,
           });
 

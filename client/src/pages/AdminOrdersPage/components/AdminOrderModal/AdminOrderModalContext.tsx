@@ -45,7 +45,7 @@ const setHistory = (
       key: `order-${new Date(order.createdAt).getTime()}`,
       date: formatDateToLocale(order.createdAt),
       amount: '0.00',
-      status: 'Order created',
+      status: 'Order status: created',
       dateTime: new Date(order.createdAt).getTime(),
     },
     {
@@ -71,8 +71,9 @@ const setHistory = (
         PAYMENT_OPTION_LABEL[payment.processor]
       } notification received (${
         payment.externalId
-      }) \nStatus: ${PAYMENTS_STATUSES_TITLES[status as PaymentStatusType] ||
-        PAYMENTS_STATUSES_TITLES[PAYMENT_STATUSES.PENDING]}`,
+      }) \nPayment status: ${PAYMENTS_STATUSES_TITLES[
+        status as PaymentStatusType
+      ] || PAYMENTS_STATUSES_TITLES[PAYMENT_STATUSES.PENDING]}`,
       dateTime: new Date(createdAt).getTime(),
     });
   });
@@ -130,26 +131,26 @@ const setHistory = (
         );
         return !!bt;
       });
-      statusMsg += `${setFioName(
+      statusMsg += `Item ${setFioName(
         orderItem.address,
         orderItem.domain,
-      )} \nstatus update: ${BC_TX_STATUS_LABELS[status]}. \nAction: ${
+      )} status update: ${BC_TX_STATUS_LABELS[status]}. \nAction: ${
         bt.action
       }. \nMessage: `;
 
       if (statusNotes) {
-        statusMsg += statusNotes;
+        statusMsg += `${statusNotes}\n`;
+      }
+
+      if (status === BC_TX_STATUSES.SUCCESS) {
+        statusMsg += `TX ID - ${bt.txId || 'N/A'}`;
+        statusMsg += `\nFee collected: ${
+          bt?.feeCollected
+            ? `${apis.fio.sufToAmount(bt.feeCollected).toFixed(2)} FIO`
+            : 'N/A'
+        }`;
       } else {
-        if (status === BC_TX_STATUSES.SUCCESS) {
-          statusMsg += `TX ID - ${bt.txId || 'N/A'}`;
-          statusMsg += `\nFee collected: ${
-            bt?.feeCollected
-              ? `${apis.fio.sufToAmount(bt.feeCollected).toFixed(2)} FIO`
-              : 'N/A'
-          }`;
-        } else {
-          statusMsg += ' -';
-        }
+        statusMsg += ' -';
       }
 
       history.push({
