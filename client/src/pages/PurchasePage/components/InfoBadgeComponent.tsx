@@ -29,7 +29,7 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
   let badgeUIType = null;
 
   // Don't show info badge on success results
-  if (purchaseStatus === PURCHASE_RESULTS_STATUS.DONE || hide) return null;
+  if (purchaseStatus === PURCHASE_RESULTS_STATUS.SUCCESS || hide) return null;
 
   // Customize content info badge for In Progress status
   if (

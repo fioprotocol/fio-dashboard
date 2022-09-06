@@ -32,7 +32,7 @@ const setTxStatus = (
   hasRegItems: boolean,
   hasFailedItems: boolean,
 ): PurchaseTxStatus => {
-  if (hasRegItems && !hasFailedItems) return PURCHASE_RESULTS_STATUS.DONE;
+  if (hasRegItems && !hasFailedItems) return PURCHASE_RESULTS_STATUS.SUCCESS;
 
   if (!hasRegItems && hasFailedItems) return PURCHASE_RESULTS_STATUS.FAILED;
 
