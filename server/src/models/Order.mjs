@@ -29,7 +29,7 @@ export class Order extends Base {
       PAID: 4,
       TRANSACTION_PENDING: 5,
       PARTIALLY_SUCCESS: 6,
-      DONE: 7,
+      SUCCESS: 7,
       FAILED: 8,
       CANCELED: 9,
       PAYMENT_PENDING: 10,
@@ -399,7 +399,7 @@ export class Order extends Base {
 
       // All success
       if (txStatusesMap[BlockchainTransaction.STATUS.SUCCESS] === txStatuses.length)
-        orderStatus = Order.STATUS.DONE;
+        orderStatus = Order.STATUS.SUCCESS;
     }
 
     if (orderStatus !== null)

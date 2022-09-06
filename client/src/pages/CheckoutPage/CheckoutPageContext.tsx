@@ -313,7 +313,7 @@ export const useContext = (): {
 
   const onFinish = async (results: RegistrationResult) => {
     await apis.orders.update(order.id, {
-      status: results.providerTxStatus || PURCHASE_RESULTS_STATUS.DONE,
+      status: results.providerTxStatus || PURCHASE_RESULTS_STATUS.SUCCESS,
       publicKey: paymentWalletPublicKey,
       results,
     });

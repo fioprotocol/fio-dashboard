@@ -281,7 +281,7 @@ export const useContext = (): {
 
   const onFinish = async () => {
     await apis.orders.update(order.id, {
-      status: results.providerTxStatus || PURCHASE_RESULTS_STATUS.DONE,
+      status: results.providerTxStatus || PURCHASE_RESULTS_STATUS.SUCCESS,
       results,
     });
     onPurchaseFinish({

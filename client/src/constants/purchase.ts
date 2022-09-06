@@ -5,7 +5,7 @@ export const PURCHASE_RESULTS_STATUS: { [label: string]: number } = {
   PAID: 4,
   TRANSACTION_PENDING: 5,
   PARTIALLY_SUCCESS: 6,
-  DONE: 7,
+  SUCCESS: 7,
   FAILED: 8,
   CANCELED: 9,
   PAYMENT_PENDING: 10,
@@ -104,7 +104,7 @@ export const PAYMENT_SPENT_TYPES_ORDER_HISTORY_LABEL = {
 } as const;
 
 export const PURCHASE_RESULTS_TITLES: { [key: number]: { title: string } } = {
-  [PURCHASE_RESULTS_STATUS.DONE]: {
+  [PURCHASE_RESULTS_STATUS.SUCCESS]: {
     title: 'Purchased!',
   },
   [PURCHASE_RESULTS_STATUS.FAILED]: {
