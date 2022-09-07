@@ -48,7 +48,10 @@ export default class PaymentsWebhook extends Base {
     body = this.validateRequest(paymentProcessor, { body, headers, rawBody });
 
     const webhookData = paymentProcessor.getWebhookData(body);
-    const paymentStatuses = paymentProcessor.mapPaymentStatus(webhookData.status);
+    const paymentStatuses = paymentProcessor.mapPaymentStatus(
+      webhookData.status,
+      webhookData.type,
+    );
     // Your IPN handler must always check to see if a payment has already been handled
     // before to avoid double-crediting users, etc. in the case of duplicate IPNs.
     const existingPayment = await Payment.findOne({

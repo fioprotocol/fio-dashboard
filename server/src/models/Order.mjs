@@ -25,16 +25,16 @@ const hashids = new Hashids(
 export class Order extends Base {
   static get STATUS() {
     return {
-      NEW: 1,
+      NEW: 1, // When user chooses payment method
       PENDING: 2,
       PAYMENT_AWAITING: 3,
-      PAID: 4,
-      TRANSACTION_PENDING: 5,
+      PAID: 4, // Payment completed, 'success' payment webhook received
+      TRANSACTION_PENDING: 5, // Started executing order items
       PARTIALLY_SUCCESS: 6,
       SUCCESS: 7,
       FAILED: 8,
       CANCELED: 9,
-      PAYMENT_PENDING: 10,
+      PAYMENT_PENDING: 10, // 'waiting' webhook received / Updated from client side when purchased
     };
   }
 
