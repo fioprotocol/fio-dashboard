@@ -13,7 +13,7 @@ export const updateOrderStatus = async (orderId, paymentStatus, txStatuses, t) =
     const orderHasCompletedStatus =
       order.status === Order.STATUS.FAILED ||
       order.status === Order.STATUS.PARTIALLY_SUCCESS ||
-      order.status === Order.STATUS.DONE;
+      order.status === Order.STATUS.SUCCESS;
 
     const orderHasNotification = await Notification.findOne({
       where: {
