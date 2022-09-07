@@ -35,7 +35,8 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
   if (
     purchaseStatus === PURCHASE_RESULTS_STATUS.PENDING ||
     purchaseStatus === PURCHASE_RESULTS_STATUS.PAYMENT_PENDING ||
-    purchaseStatus === PURCHASE_RESULTS_STATUS.PAYMENT_AWAITING
+    purchaseStatus === PURCHASE_RESULTS_STATUS.PAYMENT_AWAITING ||
+    purchaseStatus === PURCHASE_RESULTS_STATUS.TRANSACTION_PENDING
   ) {
     title = 'Confirmation in Progress';
     badgeUIType = BADGE_TYPES.INFO;
