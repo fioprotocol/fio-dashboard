@@ -34,6 +34,7 @@ import logger from '../logger.mjs';
 const ERROR_CODES = {
   SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
 };
+const MAX_STATUS_NOTES_LENGTH = 200;
 
 class OrdersJob extends CommonJob {
   constructor() {
@@ -70,15 +71,21 @@ class OrdersJob extends CommonJob {
     price,
     currency,
     data = null,
+    notes = '',
     updateStatus = null,
     eventStatus = null,
     actionPaymentId = null,
   }) {
+    let statusNotes = `${fioName}. Action: ${action}`;
+    if (notes) statusNotes += `\n${notes}`;
+    if (statusNotes.length > MAX_STATUS_NOTES_LENGTH)
+      statusNotes = statusNotes.slice(0, MAX_STATUS_NOTES_LENGTH);
+
     if (actionPaymentId && updateStatus && eventStatus) {
       await Payment.update({ status: updateStatus }, { where: { id: actionPaymentId } });
       await PaymentEventLog.create({
         status: eventStatus,
-        statusNotes: `${fioName}. Action: ${action}`,
+        statusNotes,
         paymentId: actionPaymentId,
       });
 
@@ -96,7 +103,7 @@ class OrdersJob extends CommonJob {
     });
     await PaymentEventLog.create({
       status: PaymentEventLog.STATUS.SUCCESS,
-      statusNotes: `${fioName}. Action: ${action}`,
+      statusNotes,
       paymentId: actionPayment.id,
     });
   }
@@ -123,7 +130,9 @@ class OrdersJob extends CommonJob {
           status: BlockchainTransaction.STATUS.FAILED,
           statusNotes: errorNotes.slice(
             0,
-            errorNotes.length > 200 ? 200 : errorNotes.length,
+            errorNotes.length > MAX_STATUS_NOTES_LENGTH
+              ? MAX_STATUS_NOTES_LENGTH
+              : errorNotes.length,
           ),
           data: errorData ? { ...errorData } : null,
           blockchainTransactionId,
@@ -357,6 +366,7 @@ class OrdersJob extends CommonJob {
           price: fioApi.sufToAmount(balanceDifference || fee),
           currency: Payment.CURRENCY.FIO,
           data: { roe },
+          notes: `${transferError}`,
         });
 
         if (transferError.notes === INSUFFICIENT_BALANCE) return transferRes;
@@ -460,7 +470,6 @@ class OrdersJob extends CommonJob {
 
           await BlockchainTransactionEventLog.create({
             status: BlockchainTransaction.STATUS.SUCCESS,
-            statusNotes: `Item: ${domain}. Action ${FIO_ACTIONS.registerFioDomain}.`,
             blockchainTransactionId: bcTx.id,
           });
 
@@ -480,6 +489,7 @@ class OrdersJob extends CommonJob {
         currency: Payment.CURRENCY.FIO,
         spentType: Payment.SPENT_TYPE.ACTION_REFUND,
         data: { roe },
+        notes: `${error}`,
       });
 
       return error;
@@ -523,6 +533,7 @@ class OrdersJob extends CommonJob {
           spentType: Payment.SPENT_TYPE.ACTION_REFUND,
           price,
           currency: Payment.CURRENCY.USDC,
+          notes: `${JSON.stringify(result)}`,
         });
     }
 
