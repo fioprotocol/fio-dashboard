@@ -387,6 +387,7 @@ export const useContext = (): {
         data: { fioAddressItems: signTxItems },
         onSuccess: (data: BeforeSubmitData) => {
           handleSubmit(data);
+          dispatchSetProcessing(false);
         },
         onCancel: () => setBeforeSubmitProps(null),
       });
