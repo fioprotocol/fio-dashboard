@@ -46,6 +46,7 @@ export default class PaymentsCreate extends Base {
 
     const paymentData = await Payment.createForOrder(
       order,
+      order,
       paymentProcessorKey,
       order.orderItems,
     );

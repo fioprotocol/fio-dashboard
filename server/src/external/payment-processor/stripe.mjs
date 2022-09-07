@@ -100,7 +100,7 @@ class Stripe extends PaymentProcessor {
     return status === STRIPE_STATUSES.COMPLETED;
   }
 
-  mapPaymentStatus(stripeStatus) {
+  mapPaymentStatus(stripeStatus, webhookType) {
     if (this.isCompleted(stripeStatus)) {
       return {
         payment: PAYMENTS_STATUSES.COMPLETED,
@@ -110,6 +110,12 @@ class Stripe extends PaymentProcessor {
 
     switch (stripeStatus) {
       case STRIPE_STATUSES.REQUIRES_PAYMENT_METHOD:
+        if (webhookType === PI_TYPES.payment_failed)
+          return {
+            payment: PAYMENTS_STATUSES.NEW,
+            event: PAYMENT_EVENT_STATUSES.FAILED,
+          };
+
         return {
           payment: PAYMENTS_STATUSES.NEW,
           event: PAYMENT_EVENT_STATUSES.PENDING,
@@ -122,7 +128,7 @@ class Stripe extends PaymentProcessor {
       case STRIPE_STATUSES.FAILED:
         return {
           payment: PAYMENTS_STATUSES.EXPIRED,
-          event: PAYMENT_EVENT_STATUSES.REVIEW,
+          event: PAYMENT_EVENT_STATUSES.FAILED,
         };
       case STRIPE_STATUSES.WAITING:
         return {

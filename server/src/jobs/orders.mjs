@@ -238,7 +238,7 @@ class OrdersJob extends CommonJob {
       refundPayment.status = Payment.STATUS.CANCELLED;
       await refundPayment.save();
       await PaymentEventLog.create({
-        status: PaymentEventLog.STATUS.REVIEW,
+        status: PaymentEventLog.STATUS.FAILED,
         statusNotes: notes,
         paymentId: refundPayment.id,
       });
