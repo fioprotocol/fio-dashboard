@@ -283,6 +283,7 @@ class EmailSender {
           body: EmailTemplate.get(templateName, {
             ...sendData,
           }),
+          images: EmailTemplate.getInlineImages(templateName),
         };
     }
 
