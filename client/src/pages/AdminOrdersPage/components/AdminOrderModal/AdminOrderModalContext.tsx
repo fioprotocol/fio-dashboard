@@ -15,6 +15,7 @@ import {
   PAYMENT_OPTIONS,
 } from '../../../../constants/purchase';
 import { CURRENCY_CODES } from '../../../../constants/common';
+import { ACTIONS } from '../../../../constants/fio';
 
 import { BcTx, OrderItem, OrderPaymentItem } from '../../../../types';
 
@@ -131,8 +132,9 @@ const setHistory = (
         );
         return !!bt;
       });
+
       statusMsg += `Item ${setFioName(
-        orderItem.address,
+        bt.action === ACTIONS.registerFioDomain ? '' : orderItem.address,
         orderItem.domain,
       )} status update: ${BC_TX_STATUS_LABELS[status]}. \nAction: ${
         bt.action
