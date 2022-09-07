@@ -70,23 +70,34 @@ const transformOrderItemsForEmail = (orderItems, showPriceWithFioAmount) =>
     return transformedOrderItem;
   });
 
-const getFioWalletName = async publicKey => {
+const getFioWalletName = async (publicKey, userId) => {
   const wallet = await Wallet.findOne({
-    where: { publicKey },
+    where: { publicKey, userId },
   });
   return wallet.name || 'N/A';
 };
 
 const getCreditCardName = creditCardData => {
-  const {
-    payment_method_details: {
-      card: { brand, last4 },
-    },
-  } = creditCardData || {};
+  const { payment_method_details: { card: { brand, last4 } = {} } = {} } =
+    creditCardData || {};
   return brand && last4 ? `${brand.toUpperCase()} ending in ${last4}` : 'N/A';
 };
 
-const handleOrderPaymentInfo = async ({ orderItems, payment, publicKey }) => {
+const getPaidWith = async ({ isCreditCardProcessor, publicKey, userId, payment }) => {
+  if (isCreditCardProcessor) {
+    const { data: paymentData = {} } = payment;
+
+    const {
+      webhookData: { charges: { data: creditCardData = [] } = {} } = {},
+    } = paymentData;
+
+    return getCreditCardName(creditCardData[0]);
+  }
+
+  return await getFioWalletName(publicKey, userId);
+};
+
+const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith }) => {
   if (!orderItems.length) return {};
 
   const { data: paymentData, processor } = payment;
@@ -99,7 +110,7 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, publicKey }) => {
   const orderItemsTotalAmount = countTotalPriceAmount(orderItems);
 
   if (isFioProcessor) {
-    orderPaymentInfo.paidWith = await getFioWalletName(publicKey);
+    orderPaymentInfo.paidWith = paidWith;
     orderPaymentInfo.txIds = [];
     orderPaymentInfo.total = transformFioPrice(
       orderItemsTotalAmount.priceTotal,
@@ -121,11 +132,9 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, publicKey }) => {
   }
 
   if (isCreditCardProcessor && paymentData) {
-    const {
-      webhookData: { charges: { data: creditCardData }, txn_id } = {},
-    } = paymentData;
+    const { webhookData: { txn_id } = {} } = paymentData;
 
-    orderPaymentInfo.paidWith = getCreditCardName(creditCardData[0]);
+    orderPaymentInfo.paidWith = paidWith;
     orderPaymentInfo.txId = txn_id;
     orderPaymentInfo.total = `${orderItemsTotalAmount.priceTotal} USDC`;
   }
@@ -151,7 +160,14 @@ const handleOrderError = ({ status, price, isCreditCardProcessor }) => {
 
 const createPurchaseConfirmationNotification = async order => {
   try {
-    const { items, number, payments, publicKey, status } = order;
+    const {
+      items,
+      number,
+      payments,
+      publicKey,
+      status,
+      user: { id: userId },
+    } = order;
     const payment =
       payments.find(payment => payment.spentType === Payment.SPENT_TYPE.ORDER) || {};
 
@@ -176,15 +192,22 @@ const createPurchaseConfirmationNotification = async order => {
       isFioProcessor,
     );
 
+    const paidWith = await getPaidWith({
+      isCreditCardProcessor,
+      publicKey,
+      userId,
+      payment,
+    });
+
     const successedOrderPaymentInfo = await handleOrderPaymentInfo({
       orderItems: successedOrderItemsArr,
       payment,
-      publicKey,
+      paidWith,
     });
     const failedOrderPaymentInfo = await handleOrderPaymentInfo({
       orderItems: failedOrderItemsArr,
       payment,
-      publicKey,
+      paidWith,
     });
 
     const error = {};
@@ -202,7 +225,7 @@ const createPurchaseConfirmationNotification = async order => {
     await Notification.create({
       type: Notification.TYPE.INFO,
       contentType: Notification.CONTENT_TYPE.PURCHASE_CONFIRMATION,
-      userId: order.user.id,
+      userId: userId,
       data: {
         emailData: {
           orderNumber: number,
