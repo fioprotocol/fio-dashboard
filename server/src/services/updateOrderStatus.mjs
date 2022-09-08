@@ -9,12 +9,12 @@ export const updateOrderStatus = async (orderId, paymentStatus, txStatuses, t) =
 
   const order = await Order.orderInfo(orderId);
 
-  if (order) {
-    const orderHasCompletedStatus =
-      order.status === Order.STATUS.FAILED ||
+  if (
+    order &&
+    (order.status === Order.STATUS.FAILED ||
       order.status === Order.STATUS.PARTIALLY_SUCCESS ||
-      order.status === Order.STATUS.SUCCESS;
-
+      order.status === Order.STATUS.SUCCESS)
+  ) {
     const orderHasNotification = await Notification.findOne({
       where: {
         contentType: Notification.CONTENT_TYPE.PURCHASE_CONFIRMATION,
@@ -26,8 +26,8 @@ export const updateOrderStatus = async (orderId, paymentStatus, txStatuses, t) =
       },
     });
 
-    if (orderHasCompletedStatus && !orderHasNotification) {
-      createPurchaseConfirmationNotification(order);
+    if (!orderHasNotification) {
+      await createPurchaseConfirmationNotification(order);
     }
   }
 };

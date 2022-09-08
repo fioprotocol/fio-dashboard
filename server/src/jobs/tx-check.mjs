@@ -23,133 +23,140 @@ class TxCheckJob extends CommonJob {
 
   async execute() {
     await fioApi.getRawAbi();
+
+    const walletSdk = fioApi.getPublicFioSDK();
     // get transactions need to check if exists
     const [items] = await BlockchainTransaction.checkIrreversibility();
 
-    this.postMessage(`Process tx items - ${items.length}`);
+    const bcTxOrderItems = items.reduce((acc, item) => {
+      if (!acc[item.orderId]) acc[item.orderId] = [];
+      acc[item.orderId].push(item);
 
-    const processTxItem = item => async () => {
+      return acc;
+    }, {});
+
+    const processTxItems = items => async () => {
       if (this.isCancelled) return false;
 
-      const {
-        id,
-        address,
-        domain,
-        action,
-        params,
-        btData = {},
-        publicKey,
-        btId,
-        orderId,
-      } = item;
+      const { orderId } = items[0];
 
-      this.postMessage(`Processing tx item id - ${id}`);
+      for (const item of items) {
+        const {
+          id,
+          address,
+          domain,
+          action,
+          btData = {},
+          btId,
+          params,
+          publicKey,
+        } = item;
+        this.postMessage(`Processing tx item id - ${id}`);
 
-      try {
-        const walletSdk = fioApi.getPublicFioSDK();
-        let status = BlockchainTransaction.STATUS.PENDING;
+        try {
+          let status = BlockchainTransaction.STATUS.PENDING;
 
-        switch (action) {
-          case FIO_ACTIONS.registerFioAddress:
-          case FIO_ACTIONS.registerFioDomain: {
-            const { fio_addresses, fio_domains } = await walletSdk.getFioNames(
-              (params && params.owner_fio_public_key) || publicKey,
-            );
-            const isAddress = action === FIO_ACTIONS.registerFioAddress;
-            const fioName = isAddress
-              ? `${address}${FIO_ADDRESS_DELIMITER}${domain}`
-              : domain;
+          switch (action) {
+            case FIO_ACTIONS.registerFioAddress:
+            case FIO_ACTIONS.registerFioDomain: {
+              const { fio_addresses, fio_domains } = await walletSdk.getFioNames(
+                (params && params.owner_fio_public_key) || publicKey,
+              );
+              const isAddress = action === FIO_ACTIONS.registerFioAddress;
+              const fioName = isAddress
+                ? `${address}${FIO_ADDRESS_DELIMITER}${domain}`
+                : domain;
 
-            let found;
-            if (isAddress) {
-              found = fio_addresses.find(({ fio_address }) => fio_address === fioName);
-            } else {
-              found = fio_domains.find(({ fio_domain }) => fio_domain === fioName);
+              let found;
+              if (isAddress) {
+                found = fio_addresses.find(({ fio_address }) => fio_address === fioName);
+              } else {
+                found = fio_domains.find(({ fio_domain }) => fio_domain === fioName);
+              }
+
+              if (found) status = BlockchainTransaction.STATUS.SUCCESS;
+
+              if (!btData.checkIteration) btData.checkIteration = 0;
+              ++btData.checkIteration;
+
+              if (
+                btData.checkIteration > MAX_CHECK_TIMES &&
+                status !== BlockchainTransaction.STATUS.SUCCESS
+              )
+                status = BlockchainTransaction.STATUS.EXPIRE;
+
+              break;
             }
-
-            if (found) status = BlockchainTransaction.STATUS.SUCCESS;
-
-            if (!btData.checkIteration) btData.checkIteration = 0;
-            ++btData.checkIteration;
-
-            if (
-              btData.checkIteration > MAX_CHECK_TIMES &&
-              status !== BlockchainTransaction.STATUS.SUCCESS
-            )
-              status = BlockchainTransaction.STATUS.EXPIRE;
-
-            break;
+            default:
+            //
           }
-          default:
-          //
-        }
 
-        try {
-          await BlockchainTransaction.sequelize.transaction(async t => {
-            await BlockchainTransaction.update(
-              {
-                status,
-                data: btData,
-              },
-              {
-                where: {
-                  id: btId,
-                  orderItemId: id,
-                  status: BlockchainTransaction.STATUS.PENDING,
+          try {
+            await BlockchainTransaction.sequelize.transaction(async t => {
+              await BlockchainTransaction.update(
+                {
+                  status,
+                  data: btData,
                 },
-                transaction: t,
-              },
-            );
+                {
+                  where: {
+                    id: btId,
+                    orderItemId: id,
+                    status: BlockchainTransaction.STATUS.PENDING,
+                  },
+                  transaction: t,
+                },
+              );
 
-            await BlockchainTransactionEventLog.create(
-              {
-                status,
-                blockchainTransactionId: btId,
-              },
-              { transaction: t },
-            );
-
-            await OrderItemStatus.update(
-              {
-                txStatus: status,
-              },
-              {
-                where: {
-                  orderItemId: id,
+              await BlockchainTransactionEventLog.create(
+                {
+                  status,
                   blockchainTransactionId: btId,
-                  txStatus: BlockchainTransaction.STATUS.PENDING,
                 },
-                transaction: t,
-              },
-            );
-          });
-        } catch (error) {
-          logger.error(`TX ITEM PROCESSING ERROR ${item.id} - SQL UPDATE`, error);
-        }
+                { transaction: t },
+              );
 
-        // Update Order status
-        try {
-          const items = await OrderItemStatus.getAllItemsStatuses(orderId);
-
-          await updateOrderStatus(
-            orderId,
-            null,
-            items.map(({ txStatus }) => txStatus),
-          );
-        } catch (error) {
-          logger.error(
-            `TX ITEM PROCESSING ERROR - ORDER STATUS UPDATE - ${orderId}`,
-            error,
-          );
+              await OrderItemStatus.update(
+                {
+                  txStatus: status,
+                },
+                {
+                  where: {
+                    orderItemId: id,
+                    blockchainTransactionId: btId,
+                    txStatus: BlockchainTransaction.STATUS.PENDING,
+                  },
+                  transaction: t,
+                },
+              );
+            });
+          } catch (error) {
+            logger.error(`TX ITEM PROCESSING ERROR ${item.id} - SQL UPDATE`, error);
+          }
+        } catch (e) {
+          logger.error(`TX ITEM PROCESSING ERROR ${item.id}`, e);
         }
-      } catch (e) {
-        logger.error(`TX ITEM PROCESSING ERROR ${item.id}`, e);
+      }
+
+      // Update Order status
+      try {
+        const items = await OrderItemStatus.getAllItemsStatuses(orderId);
+        await updateOrderStatus(
+          orderId,
+          null,
+          items.map(({ txStatus }) => txStatus),
+        );
+      } catch (error) {
+        logger.error(
+          `TX ITEM PROCESSING ERROR - ORDER STATUS UPDATE - ${orderId}`,
+          error,
+        );
       }
 
       return true;
     };
 
-    const methods = Object.values(items).map(item => processTxItem(item));
+    const methods = Object.values(bcTxOrderItems).map(items => processTxItems(items));
 
     await this.executeActions(methods);
 
