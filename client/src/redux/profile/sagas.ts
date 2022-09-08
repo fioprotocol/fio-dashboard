@@ -20,6 +20,7 @@ import {
   LOGOUT_SUCCESS,
   NONCE_SUCCESS,
   PROFILE_SUCCESS,
+  RESET_ADMIN_PASSWORD_SUCCESS,
 } from './actions';
 
 import { closeLoginModal } from '../modal/actions';
@@ -174,5 +175,14 @@ export function* adminConfirmSuccess(history: History, api: Api): Generator {
     yield put<Action>(loadAdminProfile());
 
     history.push(ROUTES.ADMIN_HOME);
+  });
+}
+
+export function* adminResetPasswordSuccess(
+  history: History,
+  api: Api,
+): Generator {
+  yield takeEvery(RESET_ADMIN_PASSWORD_SUCCESS, function(action: Action) {
+    history.replace(ROUTES.ADMIN_LOGIN, {});
   });
 }

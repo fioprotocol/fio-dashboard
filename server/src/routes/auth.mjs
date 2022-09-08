@@ -8,6 +8,8 @@ import AdminAuthCreate from '../services/auth/AdminCreate';
 import AdminAuthCheck from '../services/auth/AdminCheck';
 import AdminLogin from '../services/auth/AdminLogin.mjs';
 import AuthAdminCreateCheck from '../services/auth/AdminCreateCheck.mjs';
+import AuthAdminResetPassword from '../services/auth/AdminResetPassword.mjs';
+import AuthAdminResetPasswordCheck from '../services/auth/AdminResetPasswordCheck.mjs';
 
 export default {
   create: makeServiceRunner(AuthCreate, req => req.body),
@@ -20,6 +22,11 @@ export default {
 
   adminCreate: makeServiceRunner(AdminAuthCreate, req => req.body),
   adminCreateCheck: makeServiceRunner(AuthAdminCreateCheck, req => req.query),
+  adminResetPassword: makeServiceRunner(AuthAdminResetPassword, req => req.body),
+  adminResetPasswordCheck: makeServiceRunner(
+    AuthAdminResetPasswordCheck,
+    req => req.query,
+  ),
   adminLogin: makeServiceRunner(AdminLogin, req => req.body),
 
   async checkAdminAuth(req, res, next) {

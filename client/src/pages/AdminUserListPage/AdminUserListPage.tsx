@@ -1,75 +1,36 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { Button, Table } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Loader from '../../components/Loader/Loader';
-// import DangerModal from '../../components/Modal/DangerModal';
 import InviteModal from './components/inviteAdminUser/InviteModal';
+import EditModal from './components/editAdminUser/EditModal';
 
-import apis from '../../api';
-import { log } from '../../util/general';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
-import usePagination from '../../hooks/usePagination';
 
-import { FormValuesProps, PageProps } from './types';
+import { useContext } from './AdminUserListPageContext';
 
 import classes from './AdminUserListPage.module.scss';
 
-const AdminUserListPage: React.FC<PageProps> = props => {
-  const { loading, adminUsersList, getAdminList, getAdminUserProfile } = props;
-
-  // all commented stuff will be needed for next design updates (delete admin user case)
-  // const [showModal, toggleShowModal] = useState(false);
-  // const [selectedAdminUser, setSelectedAdminUser] = useState<AdminUser | null>(
-  //   null,
-  // );
-  const [showInviteModal, toggleShowInviteModal] = useState<boolean>(false);
-  const [inviteLoading, setInviteLoading] = useState<boolean>(false);
-
-  // const closeModal = () => {
-  //   toggleShowModal(false);
-  //   // setSelectedAdminUser(null);
-  // };
-
-  // const openDangerModal = (adminUser: AdminUser) => {
-  //   toggleShowModal(true);
-  //   setSelectedAdminUser(adminUser);
-  // };
-
-  const { paginationComponent, refresh } = usePagination(getAdminList);
-
-  const openInviteModal = () => toggleShowInviteModal(true);
-  const closeInviteModal = () => toggleShowInviteModal(false);
-
-  const inviteAdminUser = async (values: FormValuesProps) => {
-    setInviteLoading(true);
-    try {
-      await apis.admin.inviteAdmin(values.inviteEmail).then(async () => {
-        await refresh();
-      });
-      closeInviteModal();
-    } catch (err) {
-      log.error(err);
-    }
-
-    setInviteLoading(false);
-  };
-
-  const openUserProfile = async (userId: string) => {
-    // todo: add separate page or Modal for userDetails actions (reset password, etc)
-    await getAdminUserProfile(userId);
-  };
-
-  // const deleteUser = () => {
-  //   selectedAdminUser && removeAdminUser(selectedAdminUser.id);
-  // };
-
-  // useEffect(() => {
-  //   if (showModal) {
-  //     closeModal();
-  //   }
-  // }, [adminUsersList.length]);
+const AdminUserListPage: React.FC = () => {
+  const {
+    adminUsersList,
+    isAdminLoading,
+    adminUserProfile,
+    currentAdminUserId,
+    removeAdminUser,
+    resetAdminUserPassword,
+    inviteAdminUser,
+    showEditModal,
+    showInviteModal,
+    inviteLoading,
+    openInviteModal,
+    closeInviteModal,
+    openEditUserModal,
+    closeEditUserModal,
+    paginationComponent,
+  } = useContext();
 
   return (
     <>
@@ -93,7 +54,7 @@ const AdminUserListPage: React.FC<PageProps> = props => {
               ? adminUsersList.map((adminUser, i) => (
                   <tr
                     key={adminUser.id}
-                    onClick={openUserProfile.bind(null, adminUser.id)}
+                    onClick={() => openEditUserModal(adminUser.id)}
                     className={classes.userItem}
                   >
                     <th>{i + 1}</th>
@@ -110,14 +71,6 @@ const AdminUserListPage: React.FC<PageProps> = props => {
                         ? formatDateToLocale(adminUser.lastLogIn)
                         : null}
                     </th>
-                    {/*<th>*/}
-                    {/*  <Button*/}
-                    {/*    onClick={() => openDangerModal(adminUser)}*/}
-                    {/*    variant="danger"*/}
-                    {/*  >*/}
-                    {/*    Remove*/}
-                    {/*  </Button>*/}
-                    {/*</th>*/}
                   </tr>
                 ))
               : null}
@@ -126,17 +79,17 @@ const AdminUserListPage: React.FC<PageProps> = props => {
 
         {paginationComponent}
 
-        {loading && <Loader />}
+        {isAdminLoading && <Loader />}
       </div>
-      {/*<DangerModal*/}
-      {/*  show={showModal}*/}
-      {/*  onClose={closeModal}*/}
-      {/*  onActionButtonClick={deleteUser}*/}
-      {/*  title="Warning"*/}
-      {/*  subtitle={`Are you sure you want to remove ${selectedAdminUser?.email} user?`}*/}
-      {/*  buttonText="Remove"*/}
-      {/*  loading={loading}*/}
-      {/*/>*/}
+      <EditModal
+        show={showEditModal}
+        loading={isAdminLoading}
+        adminUser={adminUserProfile}
+        isCurrentUser={currentAdminUserId === adminUserProfile?.id}
+        onClose={closeEditUserModal}
+        onDelete={removeAdminUser}
+        onResetPassword={resetAdminUserPassword}
+      />
       <InviteModal
         show={showInviteModal}
         onSubmit={inviteAdminUser}

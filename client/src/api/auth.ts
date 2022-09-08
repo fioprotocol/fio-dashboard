@@ -20,6 +20,7 @@ import {
   AuthUpdateNewDeviceResponse,
   AuthUsernameResponse,
   AdminAuthLoginResponse,
+  AdminResetPasswordResponse,
 } from './responses';
 
 export default class Auth extends Base {
@@ -174,5 +175,15 @@ export default class Auth extends Base {
     tfaSecret: string;
   }): Promise<AuthLoginResponse> {
     return this.apiClient.post('admin-auth/create', { data: { ...values } });
+  }
+
+  resetAdminPassword(values: {
+    email: string;
+    hash: string;
+    password: string;
+  }): Promise<AdminResetPasswordResponse> {
+    return this.apiClient.post('admin-auth/reset-password', {
+      data: { ...values },
+    });
   }
 }

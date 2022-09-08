@@ -9,6 +9,7 @@ import {
   AdminUsersListResponse,
   AuthLoginResponse,
   RemoveAdminResponse,
+  SendResetAdminPasswordResponse,
 } from './responses';
 
 export default class Admin extends Base {
@@ -53,6 +54,11 @@ export default class Admin extends Base {
   removeAdmin(adminUserId: string): Promise<RemoveAdminResponse> {
     return this.apiClient.delete(`admin`, { adminUserId });
   }
+  sendResetAdminPassword(
+    adminUserId: string,
+  ): Promise<SendResetAdminPasswordResponse> {
+    return this.apiClient.post(`admin/${adminUserId}/send-reset-password`, {});
+  }
   inviteAdmin(email: string): Promise<AdminGeneralCreateResponse> {
     return this.apiClient.post(`admin/invite`, { email });
   }
@@ -64,6 +70,18 @@ export default class Admin extends Base {
     hash: string;
   }): Promise<AuthLoginResponse> {
     return this.apiClient.get('admin-auth/create/check', {
+      email,
+      hash,
+    });
+  }
+  checkIsAdminPasswordResetSuccess({
+    email,
+    hash,
+  }: {
+    email: string;
+    hash: string;
+  }): Promise<AuthLoginResponse> {
+    return this.apiClient.get('admin-auth/reset-password/check', {
       email,
       hash,
     });

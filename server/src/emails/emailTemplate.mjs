@@ -17,6 +17,7 @@ export const templates = {
   lowBundleCount: 'lowBundleCount',
   fallbackFundsEmail: 'fallbackFundsEmail',
   confirmAdminEmail: 'confirmAdminEmail',
+  resetAdminPasswordEmail: 'resetAdminPasswordEmail',
   purchaseConfirmation: 'purchaseConfirmation',
 };
 

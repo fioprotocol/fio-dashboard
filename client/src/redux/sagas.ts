@@ -5,6 +5,7 @@ import {
   adminConfirmSuccess,
   adminLoginSuccess,
   adminLogoutSuccess,
+  adminResetPasswordSuccess,
   confirmEmailSuccess,
   loginSuccess,
   logoutSuccess,
@@ -49,5 +50,6 @@ export default function* rootSaga(history: History, api: Api) {
     adminLogoutSuccess(history, api),
     adminLoginSuccess(history, api),
     adminConfirmSuccess(history, api),
+    adminResetPasswordSuccess(history, api),
   ]);
 }

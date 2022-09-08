@@ -109,6 +109,15 @@ class EmailSender {
           }),
           images: EmailTemplate.getInlineImages(templateName),
         };
+      case templates.resetAdminPasswordEmail:
+        return {
+          subject: 'FIO Dashboard - password reset',
+          body: EmailTemplate.get(templateName, {
+            link: `${sendData.mainUrl}reset-admin-password/${sendData.hash}?email=${sendData.email}`,
+            ...sendData,
+          }),
+          images: EmailTemplate.getInlineImages(templateName),
+        };
       case templates.passRecovery:
         return {
           subject: 'FIO Dashboard recovery link',
@@ -245,13 +254,13 @@ class EmailSender {
       /**
        *
        * @param orderNumber exmaple '0LP9XM'
-       * 
+       *
        * @param successedOrderItems[]
        * @param successedOrderItems.address example 'tester'
        * @param successedOrderItems.domain example 'testdomain'
        * @param successedOrderItems.hasCustomDomain example 'true'
        * @param successedOrderItems.priceAmount example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
-       * 
+       *
        * @param successedOrderPaymentInfo {}
        * @param successedOrderPaymentInfo.total example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
        * @param successedOrderPaymentInfo.paidWith example 'My FIO Wallet' or 'visa ending in 7676'
@@ -264,7 +273,7 @@ class EmailSender {
        * @param failedOrderItems.domain example 'testdomain'
        * @param failedOrderItems.hasCustomDomain example 'true'
        * @param failedOrderItems.priceAmount example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
-       * 
+       *
        * @param failedOrderPaymentInfo {}
        * @param failedOrderPaymentInfo.total example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
        * @param failedOrderPaymentInfo.paidWith example 'My FIO Wallet' or 'visa ending in 7676'
