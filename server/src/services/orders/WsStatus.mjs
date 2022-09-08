@@ -9,8 +9,6 @@ import {
   BlockchainTransactionEventLog,
 } from '../../models';
 
-import { updateOrderStatus } from '../../services/updateOrderStatus.mjs';
-
 import { FIO_ADDRESS_DELIMITER } from '../../config/constants.js';
 
 import logger from '../../logger.mjs';
@@ -49,7 +47,7 @@ export default class WsStatus extends WsBase {
     try {
       const items = await OrderItemStatus.getAllItemsStatuses(orderId);
 
-      await updateOrderStatus(
+      await Order.updateStatus(
         orderId,
         null,
         items
