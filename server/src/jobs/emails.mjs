@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize';
 
 import '../db';
-import { User, Notification } from '../models/index.mjs';
+import { User, Order, OrderItem, Notification } from '../models/index.mjs';
 import CommonJob from './job.mjs';
 
 import emailSender from '../services/emailSender.mjs';
@@ -23,6 +23,35 @@ const CONTENT_TYPE_EMAIL_TEMPLATE_MAP = {
 class EmailsJob extends CommonJob {
   constructor() {
     super();
+  }
+
+  async allowToSend(notification) {
+    const { id, userId, createdAt } = notification;
+    const CHECK_PERIOD = 1000 * 60 * 10; // 10 min
+
+    const nearestOrder = await Order.findOne({
+      where: {
+        userId,
+        createdAt: {
+          [Sequelize.Op.gte]: new Date(new Date(createdAt).getTime() - CHECK_PERIOD),
+        },
+        status: {
+          [Sequelize.Op.notIn]: [Order.STATUS.NEW, Order.STATUS.PAYMENT_PENDING],
+        },
+      },
+      include: [OrderItem],
+    });
+
+    if (nearestOrder) {
+      for (const orderItem of nearestOrder.OrderItems) {
+        if (orderItem.data && orderItem.data.signedTx) {
+          await Notification.destroy({ where: { id } });
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   async execute() {
@@ -86,6 +115,13 @@ class EmailsJob extends CommonJob {
               domains: notifications.map(n => n.data.emailData),
               expiringStatus: data.emailData.domainExpPeriod,
             };
+          }
+
+          if (
+            contentType === Notification.CONTENT_TYPE.BALANCE_CHANGED &&
+            (await this.allowToSend(notifications[0]))
+          ) {
+            return false;
           }
 
           const emailResult = await emailSender.send(
