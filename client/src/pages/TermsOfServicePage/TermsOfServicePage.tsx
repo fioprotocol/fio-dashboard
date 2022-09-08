@@ -701,7 +701,7 @@ const TermsOfServicePage: React.FC = () => {
         </h4>
         <p>
           In order to resolve a complaint regarding the Site or to receive
-          further information regarding use of the Site, please contact us by
+          further information regarding use of the Site, please contact us by{' '}
           <a
             href="https://fioprotocol.atlassian.net/servicedesk/customer/portal/4"
             title="https://fioprotocol.atlassian.net/servicedesk/customer/portal/4"
