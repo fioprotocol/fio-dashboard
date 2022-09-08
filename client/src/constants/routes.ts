@@ -7,6 +7,7 @@ const ROUTES: { [route: string]: string } = {
   ADMIN_ORDERS: '/admin/orders',
   ADMIN_LOGIN: '/admin/login',
   ADMIN_CONFIRM_EMAIL: '/confirm-admin-email/:hash',
+  ADMIN_RESET_PASSWORD: '/reset-admin-password/:hash',
   ADMIN_REGULAR_USERS: '/admin/regular-users',
   ADMIN_PROFILE: '/admin/profile',
   ADMIN_ACCOUNTS: '/admin/accounts',
