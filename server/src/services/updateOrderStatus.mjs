@@ -4,9 +4,7 @@ import { fioApi } from '../external/fio.mjs';
 import MathOp from './math.mjs';
 import logger from '../logger.mjs';
 
-export const updateOrderStatus = async (orderId, paymentStatus, txStatuses, t) => {
-  await Order.updateStatus(orderId, paymentStatus, txStatuses, t);
-
+export const checkOrderStatusAndCreateNotification = async orderId => {
   const order = await Order.orderInfo(orderId);
 
   if (
@@ -32,6 +30,11 @@ export const updateOrderStatus = async (orderId, paymentStatus, txStatuses, t) =
   }
 };
 
+export const updateOrderStatus = async (orderId, paymentStatus, txStatuses, t) => {
+  await Order.updateStatus(orderId, paymentStatus, txStatuses, t);
+  await checkOrderStatusAndCreateNotification(orderId);
+};
+
 const countTotalPriceAmount = orderItems =>
   orderItems.reduce(
     ({ fioNativeTotal, priceTotal }, orderItem) => {
@@ -48,7 +51,7 @@ const countTotalPriceAmount = orderItems =>
 
 const transformFioPrice = (usdcPrice, nativeAmount) => {
   if (!usdcPrice && !nativeAmount) return 'FREE';
-  return `${usdcPrice.toFixed(2)} USDC (${fioApi
+  return `${new MathOp(usdcPrice).toNumber().toFixed(2)} USDC (${fioApi
     .sufToAmount(nativeAmount)
     .toFixed(2)}) FIO`;
 };
