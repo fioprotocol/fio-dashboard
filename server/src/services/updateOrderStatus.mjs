@@ -145,8 +145,15 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith }) => {
 const handleOrderError = ({ status, price, isCreditCardProcessor }) => {
   const isPartialStatus = status === Order.STATUS.PARTIALLY_SUCCESS;
 
+  let title = 'Purchased Failed';
   let message =
-    'Your purchase was not completed in full. Please see below what failed to be completed.';
+    'Your purchase has failed due to an error. Your funds remain in your account and your registrations did not complete. Please try again later.';
+
+  if (isPartialStatus) {
+    title = 'Incomplete Purchase!';
+    message =
+      'Your purchase was not completed in full. Please see below what failed to be completed.';
+  }
 
   if (isCreditCardProcessor) {
     message = `There was an error during registration. As a result we have refunded the entire amount of order, $${price} back to your credit card. Try purchasing again.`;
@@ -155,7 +162,7 @@ const handleOrderError = ({ status, price, isCreditCardProcessor }) => {
       message = `The following items failed to purchase. As a result we have refunded $${price} back to your credit card. Try purchasing again.`;
     }
   }
-  return { title: 'Incomplete Purchase!', message };
+  return { title, message };
 };
 
 const createPurchaseConfirmationNotification = async order => {
