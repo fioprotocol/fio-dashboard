@@ -43,7 +43,7 @@ export default class OrdersCreate extends Base {
     data: { total, roe, publicKey, paymentProcessor, refProfileId, items },
   }) {
     // assume user should have only one active order with status NEW
-    let order = await Order.findOne({
+    const exOrder = await Order.findOne({
       where: {
         status: Order.STATUS.NEW,
         userId: this.context.id,
@@ -53,6 +53,7 @@ export default class OrdersCreate extends Base {
       },
       include: [OrderItem],
     });
+    let order;
     let payment = null;
     const orderItems = [];
 
@@ -69,43 +70,34 @@ export default class OrdersCreate extends Base {
 
     await Order.sequelize.transaction(async t => {
       // Update existing new order and remove items from it
-      if (order) {
-        order.total = total;
-        order.roe = roe;
-        order.publicKey = publicKey;
-        order.customerIp = this.context.ipAddress;
-        order.refProfileId = refProfileId ? refProfileId : user.refProfileId;
+      if (exOrder) {
+        exOrder.status = Order.STATUS.CANCELED;
 
-        await order.save({ transaction: t });
+        await exOrder.save({ transaction: t });
         await OrderItemStatus.destroy({
           where: {
-            orderItemId: { [Sequelize.Op.in]: order.OrderItems.map(({ id }) => id) },
+            orderItemId: { [Sequelize.Op.in]: exOrder.OrderItems.map(({ id }) => id) },
           },
           force: true,
           transaction: t,
         });
-        await OrderItem.destroy({
-          where: { orderId: order.id },
-          force: true,
-          transaction: t,
-        });
-      } else {
-        order = await Order.create(
-          {
-            status: Order.STATUS.NEW,
-            total,
-            roe,
-            publicKey,
-            customerIp: this.context.ipAddress,
-            userId: this.context.id,
-            refProfileId: refProfileId ? refProfileId : user.refProfileId,
-          },
-          { transaction: t },
-        );
-
-        order.number = Order.generateNumber(order.id);
-        await order.save({ transaction: t });
       }
+
+      order = await Order.create(
+        {
+          status: Order.STATUS.NEW,
+          total,
+          roe,
+          publicKey,
+          customerIp: this.context.ipAddress,
+          userId: this.context.id,
+          refProfileId: refProfileId ? refProfileId : user.refProfileId,
+        },
+        { transaction: t },
+      );
+
+      order.number = Order.generateNumber(order.id);
+      await order.save({ transaction: t });
 
       for (const {
         action,
@@ -136,7 +128,12 @@ export default class OrdersCreate extends Base {
     });
 
     if (paymentProcessor)
-      payment = await Payment.createForOrder(order, paymentProcessor, orderItems);
+      payment = await Payment.createForOrder(
+        order,
+        exOrder,
+        paymentProcessor,
+        orderItems,
+      );
 
     return {
       data: {

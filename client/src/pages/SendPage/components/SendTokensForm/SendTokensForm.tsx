@@ -134,6 +134,13 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
           hasLowBalance ||
           notEnoughBundles ||
           !fee.nativeFio;
+        const walletMaxAvailableAmount = new MathOp(fee.nativeFio || 0).gt(
+          walletBalances.available.nativeFio,
+        )
+          ? 0
+          : new MathOp(walletBalances.available.nativeFio)
+              .sub(fee.nativeFio || 0)
+              .toNumber();
 
         return (
           <form
@@ -180,6 +187,16 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               component={AmountInput}
               disabled={loading}
               label="Send Amount"
+              availableValue={new MathOp(
+                apis.fio.sufToAmount(walletBalances.available.nativeFio),
+              ).toString()}
+              maxValue={
+                walletMaxAvailableAmount
+                  ? new MathOp(
+                      apis.fio.sufToAmount(walletMaxAvailableAmount),
+                    ).toString()
+                  : '0'
+              }
             />
 
             {showMemo ? (

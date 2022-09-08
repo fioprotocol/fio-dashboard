@@ -12,6 +12,8 @@ import {
 
 import X from '../Exception.mjs';
 
+import { checkOrderStatusAndCreateNotification } from '../updateOrderStatus.mjs';
+
 import logger from '../../logger.mjs';
 
 export default class OrdersUpdate extends Base {
@@ -205,6 +207,7 @@ export default class OrdersUpdate extends Base {
             });
           }
         }
+        await checkOrderStatusAndCreateNotification(id);
       } catch (e) {
         logger.error(`ORDER UPDATE ERROR ${order.id} #${order.number} - ${e.message}`);
       }

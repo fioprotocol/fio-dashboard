@@ -110,11 +110,10 @@ export default function usePagination(
 
   useEffect(() => {
     const paginationItems: ReactNode[] = [];
-    const pages =
-      new MathOp(itemsCount)
-        .div(limit)
-        .round()
-        .toNumber() + 1;
+    const pages = new MathOp(itemsCount)
+      .div(limit)
+      .round(0, 3)
+      .toNumber();
 
     const addPage = (pageNumber: number) => {
       paginationItems.push(

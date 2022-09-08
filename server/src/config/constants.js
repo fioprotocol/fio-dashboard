@@ -75,13 +75,15 @@ const PAYMENTS_STATUSES = {
   COMPLETED: 3,
   EXPIRED: 4,
   CANCELLED: 5,
+  FAILED: 6,
 };
 
 const PAYMENT_EVENT_STATUSES = {
   PENDING: 2,
   SUCCESS: 3,
-  REVIEW: 4,
+  EXPIRED: 4,
   CANCEL: 5,
+  FAILED: 6,
 };
 
 const USER_ROLES = {

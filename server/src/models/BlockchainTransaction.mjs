@@ -17,12 +17,12 @@ export class BlockchainTransaction extends Base {
     return {
       READY: 'READY',
       PENDING: 'PENDING',
-      CANCEL: 'CANCEL',
+      CANCEL: 'CANCEL', // not used now
       FAILED: 'FAILED',
       SUCCESS: 'SUCCESS',
-      RETRY: 'RETRY',
-      RETRY_PROCESSED: 'RETRY_PROCESSED',
-      EXPIRE: 'EXPIRE',
+      RETRY: 'RETRY', // not used now
+      RETRY_PROCESSED: 'RETRY_PROCESSED', // not used now
+      EXPIRE: 'EXPIRE', // not used now
     };
   }
 
@@ -35,10 +35,10 @@ export class BlockchainTransaction extends Base {
       PENDING: 2,
       SUCCESS: 3,
       FAILED: 4,
-      CANCEL: 5,
-      RETRY: 6,
-      EXPIRE: 7,
-      RETRY_PROCESSED: 8,
+      CANCEL: 5, // not used now
+      RETRY: 6, // not used now
+      EXPIRE: 7, // not used now
+      RETRY_PROCESSED: 8, // not used now
     };
   }
 

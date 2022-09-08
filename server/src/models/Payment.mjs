@@ -135,29 +135,32 @@ export class Payment extends Base {
     return null;
   }
 
-  static async createForOrder(order, paymentProcessorKey, orderItems) {
+  static async createForOrder(order, exOrder, paymentProcessorKey, orderItems) {
     const paymentProcessor = Payment.getPaymentProcessor(paymentProcessorKey);
     let orderPayment = {};
     let extPaymentParams = {};
 
-    const exPayment = await Payment.findOne({
-      where: {
-        status: Payment.STATUS.NEW,
-        spentType: Payment.SPENT_TYPE.ORDER,
-        orderId: order.id,
-      },
-    });
+    if (exOrder) {
+      const exPayment = await Payment.findOne({
+        where: {
+          status: Payment.STATUS.NEW,
+          spentType: Payment.SPENT_TYPE.ORDER,
+          orderId: exOrder.id,
+        },
+      });
 
-    // Remove existing payment when trying to create new one for the order
-    if (exPayment) {
-      try {
-        const pExtId = exPayment.externalId;
-        await exPayment.destroy({ force: true });
-        if (pExtId) await paymentProcessor.cancel(pExtId);
-      } catch (e) {
-        logger.error(
-          `Existing Payment removing error ${e.message}. Order #${order.number}. Payment ${exPayment.id}`,
-        );
+      // Remove existing payment when trying to create new one for the order
+      if (exPayment) {
+        try {
+          const pExtId = exPayment.externalId;
+          exPayment.status = Payment.STATUS.CANCELLED;
+          await exPayment.save();
+          if (pExtId) await paymentProcessor.cancel(pExtId);
+        } catch (e) {
+          logger.error(
+            `Existing Payment removing error ${e.message}. Order #${exOrder.number}. Payment ${exPayment.id}`,
+          );
+        }
       }
     }
 

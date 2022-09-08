@@ -11,6 +11,8 @@ import { PaymentEventLog } from './PaymentEventLog.mjs';
 import { BlockchainTransaction } from './BlockchainTransaction.mjs';
 import { BlockchainTransactionEventLog } from './BlockchainTransactionEventLog.mjs';
 
+import logger from '../logger.mjs';
+
 const { DataTypes: DT } = Sequelize;
 const ORDER_NUMBER_LENGTH = 6;
 const ORDER_NUMBER_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
@@ -23,16 +25,16 @@ const hashids = new Hashids(
 export class Order extends Base {
   static get STATUS() {
     return {
-      NEW: 1,
+      NEW: 1, // When user chooses payment method
       PENDING: 2,
       PAYMENT_AWAITING: 3,
-      PAID: 4,
-      TRANSACTION_PENDING: 5,
+      PAID: 4, // Payment completed, 'success' payment webhook received
+      TRANSACTION_PENDING: 5, // Started executing order items
       PARTIALLY_SUCCESS: 6,
-      DONE: 7,
+      SUCCESS: 7,
       FAILED: 8,
       CANCELED: 9,
-      PAYMENT_PENDING: 10,
+      PAYMENT_PENDING: 10, // 'waiting' webhook received / Updated from client side when purchased
     };
   }
 
@@ -399,14 +401,19 @@ export class Order extends Base {
 
       // All success
       if (txStatusesMap[BlockchainTransaction.STATUS.SUCCESS] === txStatuses.length)
-        orderStatus = Order.STATUS.DONE;
+        orderStatus = Order.STATUS.SUCCESS;
     }
 
-    if (orderStatus !== null)
-      await Order.update(
-        { status: orderStatus },
-        { where: { id: orderId }, transaction: t },
-      );
+    if (orderStatus !== null) {
+      try {
+        await Order.update(
+          { status: orderStatus },
+          { where: { id: orderId }, transaction: t },
+        );
+      } catch (err) {
+        logger.error(err);
+      }
+    }
   }
 
   static format({

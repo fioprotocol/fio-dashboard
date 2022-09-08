@@ -1,3 +1,5 @@
+import Sequelize from 'sequelize';
+
 import '../db';
 
 import {
@@ -8,15 +10,17 @@ import {
   OrderItemStatus,
   Payment,
   PaymentEventLog,
-  Order,
   FreeAddress,
   Var,
+  PublicWalletData,
+  Wallet,
 } from '../models/index.mjs';
 import MathOp from '../services/math.mjs';
 import CommonJob from './job.mjs';
 import Stripe from '../external/payment-processor/stripe';
 
 import sendInsufficientFundsNotification from '../services/fallback-funds-email.mjs';
+import { updateOrderStatus as updateOrderStatusService } from '../services/updateOrderStatus.mjs';
 import { getROE } from '../external/roe.mjs';
 import {
   FEES_UPDATE_TIMEOUT_SEC,
@@ -34,6 +38,7 @@ import logger from '../logger.mjs';
 const ERROR_CODES = {
   SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
 };
+const MAX_STATUS_NOTES_LENGTH = 200;
 
 class OrdersJob extends CommonJob {
   constructor() {
@@ -61,6 +66,37 @@ class OrdersJob extends CommonJob {
     return fee;
   }
 
+  async updateWalletDataBalance(publicKey) {
+    try {
+      const balanceResponse = await fioApi.getPublicFioSDK().getFioBalance(publicKey);
+      const balance = balanceResponse.balance;
+
+      const wallets = await Wallet.findAll({
+        where: { publicKey },
+        include: [{ model: PublicWalletData, as: 'publicWalletData' }],
+        raw: true,
+        nest: true,
+      });
+
+      await PublicWalletData.update(
+        { balance },
+        {
+          where: {
+            id: {
+              [Sequelize.Op.in]: wallets
+                .map(({ publicWalletData }) => publicWalletData && publicWalletData.id)
+                .filter(id => id),
+            },
+          },
+        },
+      );
+    } catch (e) {
+      logger.error(
+        `Public wallet data balance update error = ${publicKey} / ${e.message}`,
+      );
+    }
+  }
+
   // Spend order payment on fio action
   async spend({
     fioName,
@@ -70,15 +106,21 @@ class OrdersJob extends CommonJob {
     price,
     currency,
     data = null,
+    notes = '',
     updateStatus = null,
     eventStatus = null,
     actionPaymentId = null,
   }) {
+    let statusNotes = `${fioName}. Action: ${action}`;
+    if (notes) statusNotes += `\n${notes}`;
+    if (statusNotes.length > MAX_STATUS_NOTES_LENGTH)
+      statusNotes = statusNotes.slice(0, MAX_STATUS_NOTES_LENGTH);
+
     if (actionPaymentId && updateStatus && eventStatus) {
       await Payment.update({ status: updateStatus }, { where: { id: actionPaymentId } });
       await PaymentEventLog.create({
         status: eventStatus,
-        statusNotes: `${fioName}. Action: ${action}`,
+        statusNotes,
         paymentId: actionPaymentId,
       });
 
@@ -96,7 +138,7 @@ class OrdersJob extends CommonJob {
     });
     await PaymentEventLog.create({
       status: PaymentEventLog.STATUS.SUCCESS,
-      statusNotes: `${fioName}. Action: ${action}`,
+      statusNotes,
       paymentId: actionPayment.id,
     });
   }
@@ -123,7 +165,9 @@ class OrdersJob extends CommonJob {
           status: BlockchainTransaction.STATUS.FAILED,
           statusNotes: errorNotes.slice(
             0,
-            errorNotes.length > 200 ? 200 : errorNotes.length,
+            errorNotes.length > MAX_STATUS_NOTES_LENGTH
+              ? MAX_STATUS_NOTES_LENGTH
+              : errorNotes.length,
           ),
           data: errorData ? { ...errorData } : null,
           blockchainTransactionId,
@@ -229,7 +273,7 @@ class OrdersJob extends CommonJob {
       refundPayment.status = Payment.STATUS.CANCELLED;
       await refundPayment.save();
       await PaymentEventLog.create({
-        status: PaymentEventLog.STATUS.REVIEW,
+        status: PaymentEventLog.STATUS.FAILED,
         statusNotes: notes,
         paymentId: refundPayment.id,
       });
@@ -357,6 +401,7 @@ class OrdersJob extends CommonJob {
           price: fioApi.sufToAmount(balanceDifference || fee),
           currency: Payment.CURRENCY.FIO,
           data: { roe },
+          notes: `${transferError}`,
         });
 
         if (transferError.notes === INSUFFICIENT_BALANCE) return transferRes;
@@ -419,6 +464,8 @@ class OrdersJob extends CommonJob {
       };
     }
 
+    await this.updateWalletDataBalance(orderItem.publicKey);
+
     return result;
   }
 
@@ -449,7 +496,7 @@ class OrdersJob extends CommonJob {
 
         if (result.transaction_id) {
           const bcTx = await BlockchainTransaction.create({
-            action: orderItem.action,
+            action: FIO_ACTIONS.registerFioDomain,
             txId: result.transaction_id,
             blockNum: result.block_num,
             blockTime: result.block_time ? result.block_time + 'Z' : new Date(),
@@ -460,7 +507,6 @@ class OrdersJob extends CommonJob {
 
           await BlockchainTransactionEventLog.create({
             status: BlockchainTransaction.STATUS.SUCCESS,
-            statusNotes: `Item: ${domain}. Action ${orderItem.action}.`,
             blockchainTransactionId: bcTx.id,
           });
 
@@ -480,6 +526,7 @@ class OrdersJob extends CommonJob {
         currency: Payment.CURRENCY.FIO,
         spentType: Payment.SPENT_TYPE.ACTION_REFUND,
         data: { roe },
+        notes: `${error}`,
       });
 
       return error;
@@ -523,6 +570,7 @@ class OrdersJob extends CommonJob {
           spentType: Payment.SPENT_TYPE.ACTION_REFUND,
           price,
           currency: Payment.CURRENCY.USDC,
+          notes: `${JSON.stringify(result)}`,
         });
     }
 
@@ -533,7 +581,7 @@ class OrdersJob extends CommonJob {
     try {
       const items = await OrderItemStatus.getAllItemsStatuses(orderId);
 
-      await Order.updateStatus(
+      await updateOrderStatusService(
         orderId,
         null,
         items.map(({ txStatus }) => txStatus),

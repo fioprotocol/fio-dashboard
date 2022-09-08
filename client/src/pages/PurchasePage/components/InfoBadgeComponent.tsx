@@ -29,13 +29,14 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
   let badgeUIType = null;
 
   // Don't show info badge on success results
-  if (purchaseStatus === PURCHASE_RESULTS_STATUS.DONE || hide) return null;
+  if (purchaseStatus === PURCHASE_RESULTS_STATUS.SUCCESS || hide) return null;
 
   // Customize content info badge for In Progress status
   if (
     purchaseStatus === PURCHASE_RESULTS_STATUS.PENDING ||
     purchaseStatus === PURCHASE_RESULTS_STATUS.PAYMENT_PENDING ||
-    purchaseStatus === PURCHASE_RESULTS_STATUS.PAYMENT_AWAITING
+    purchaseStatus === PURCHASE_RESULTS_STATUS.PAYMENT_AWAITING ||
+    purchaseStatus === PURCHASE_RESULTS_STATUS.TRANSACTION_PENDING
   ) {
     title = 'Confirmation in Progress';
     badgeUIType = BADGE_TYPES.INFO;
