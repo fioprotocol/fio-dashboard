@@ -20,6 +20,9 @@ export const loading = (state: ReduxState): boolean => state[prefix].loading;
 export const user = (state: ReduxState): User | null => state[prefix].user;
 export const adminUser = (state: ReduxState): AdminUser | null =>
   state[prefix].adminUser;
+export const adminUserId = createSelector(adminUser, adminUser =>
+  adminUser ? adminUser.id : null,
+);
 export const adminRole = createSelector(
   adminUser,
   adminUser => adminUser && adminUser.role.id,

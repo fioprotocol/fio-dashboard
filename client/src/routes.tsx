@@ -53,6 +53,7 @@ import AdminOrdersPage from './pages/AdminOrdersPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminUserListPage from './pages/AdminUserListPage';
 import AdminEmailConfirmPage from './pages/AdminEmailConfirmPage';
+import AdminPasswordResetPage from './pages/AdminPasswordResetPage';
 import AdminRegularUsersList from './pages/AdminRegularUsersListPage';
 import AdminProfilePage from './pages/AdminProfilePage';
 import AdminHomePage from './pages/AdminHomePage';
@@ -266,6 +267,11 @@ const Routes = (): React.ReactElement => (
         <Route
           path={ROUTES.ADMIN_CONFIRM_EMAIL}
           component={AdminEmailConfirmPage}
+          exact
+        />
+        <Route
+          path={ROUTES.ADMIN_RESET_PASSWORD}
+          component={AdminPasswordResetPage}
           exact
         />
         <AdminPrivateRoute
