@@ -1,3 +1,5 @@
+import Sequelize from 'sequelize';
+
 import '../db';
 
 import {
@@ -10,6 +12,8 @@ import {
   PaymentEventLog,
   FreeAddress,
   Var,
+  PublicWalletData,
+  Wallet,
 } from '../models/index.mjs';
 import MathOp from '../services/math.mjs';
 import CommonJob from './job.mjs';
@@ -60,6 +64,37 @@ class OrdersJob extends CommonJob {
     }
 
     return fee;
+  }
+
+  async updateWalletDataBalance(publicKey) {
+    try {
+      const balanceResponse = await fioApi.getPublicFioSDK().getFioBalance(publicKey);
+      const balance = balanceResponse.balance;
+
+      const wallets = await Wallet.findAll({
+        where: { publicKey },
+        include: [{ model: PublicWalletData, as: 'publicWalletData' }],
+        raw: true,
+        nest: true,
+      });
+
+      await PublicWalletData.update(
+        { balance },
+        {
+          where: {
+            id: {
+              [Sequelize.Op.in]: wallets
+                .map(({ publicWalletData }) => publicWalletData && publicWalletData.id)
+                .filter(id => id),
+            },
+          },
+        },
+      );
+    } catch (e) {
+      logger.error(
+        `Public wallet data balance update error = ${publicKey} / ${e.message}`,
+      );
+    }
   }
 
   // Spend order payment on fio action
@@ -428,6 +463,8 @@ class OrdersJob extends CommonJob {
         credited: fee,
       };
     }
+
+    await this.updateWalletDataBalance(orderItem.publicKey);
 
     return result;
   }
