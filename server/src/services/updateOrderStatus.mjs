@@ -35,8 +35,11 @@ export const updateOrderStatus = async (orderId, paymentStatus, txStatuses, t) =
 const countTotalPriceAmount = orderItems =>
   orderItems.reduce(
     ({ fioNativeTotal, priceTotal }, orderItem) => {
-      fioNativeTotal += new MathOp(fioNativeTotal).add(orderItem.nativeFio).toNumber();
-      priceTotal += new MathOp(priceTotal).add(orderItem.price).toNumber();
+      const orderNativeFio = new MathOp(orderItem.nativeFio).toNumber();
+      const orderPrice = new MathOp(orderItem.price).toNumber();
+
+      fioNativeTotal = new MathOp(fioNativeTotal).add(orderNativeFio).toNumber();
+      priceTotal = new MathOp(priceTotal).add(orderPrice).toNumber();
 
       return { fioNativeTotal, priceTotal };
     },
@@ -45,7 +48,9 @@ const countTotalPriceAmount = orderItems =>
 
 const transformFioPrice = (usdcPrice, nativeAmount) => {
   if (!usdcPrice && !nativeAmount) return 'FREE';
-  return `${usdcPrice} USDC (${fioApi.sufToAmount(nativeAmount).toFixed(2)}) FIO`;
+  return `${usdcPrice.toFixed(2)} USDC (${fioApi
+    .sufToAmount(nativeAmount)
+    .toFixed(2)}) FIO`;
 };
 
 const transformOrderItemsForEmail = (orderItems, showPriceWithFioAmount) =>
@@ -136,7 +141,7 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith }) => {
 
     orderPaymentInfo.paidWith = paidWith;
     orderPaymentInfo.txId = txn_id;
-    orderPaymentInfo.total = `${orderItemsTotalAmount.priceTotal} USDC`;
+    orderPaymentInfo.total = `${orderItemsTotalAmount.priceTotal.toFixed(2)} USDC`;
   }
 
   return orderPaymentInfo;
@@ -222,7 +227,7 @@ const createPurchaseConfirmationNotification = async order => {
       const { priceTotal } = countTotalPriceAmount(failedOrderItemsArr);
       const { title, message } = handleOrderError({
         status,
-        price: priceTotal,
+        price: priceTotal.toFixed(2),
         isCreditCardProcessor,
       });
       error.title = title;
