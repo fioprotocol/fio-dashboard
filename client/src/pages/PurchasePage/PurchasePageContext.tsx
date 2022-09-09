@@ -66,7 +66,7 @@ export const useContext = (): {
   errItems: CartItem[];
   closeText: string;
   onClose: () => void;
-  onFinish: () => Promise<void>;
+  onFinish: (results: RegistrationResult) => Promise<void>;
   paymentWallet: FioWalletDoublet;
   purchaseStatus: PurchaseTxStatus;
   purchaseProvider: PurchaseProvider;
@@ -179,8 +179,10 @@ export const useContext = (): {
   }
 
   const allErrored = isEmpty(regItems) && !isEmpty(errItems);
-  const isRetry =
-    purchaseProvider === PURCHASE_PROVIDER.FIO && !isEmpty(errItems);
+  // todo: fix retry for FIO purchases - new order creation, websocket update for new order id, ...
+  // const isRetry =
+  //   purchaseProvider === PURCHASE_PROVIDER.FIO && !isEmpty(errItems);
+  const isRetry = false;
 
   const failedTxsTotalAmount =
     (orderStatusData.status === PURCHASE_RESULTS_STATUS.FAILED ||
@@ -261,7 +263,8 @@ export const useContext = (): {
       PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
       PURCHASE_RESULTS_STATUS.FAILED,
       PURCHASE_RESULTS_STATUS.CANCELED,
-    ].indexOf(orderStatusData.status) > -1,
+    ].indexOf(orderStatusData.status) > -1 &&
+      purchaseProvider === PURCHASE_PROVIDER.STRIPE,
   );
 
   let closeText = 'Close';
@@ -279,7 +282,7 @@ export const useContext = (): {
     dispatch(onPurchaseResultsClose());
   };
 
-  const onFinish = async () => {
+  const onFinish = async (results: RegistrationResult) => {
     await apis.orders.update(order.id, {
       status: results.providerTxStatus || PURCHASE_RESULTS_STATUS.SUCCESS,
       results,
