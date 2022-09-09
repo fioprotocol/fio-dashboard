@@ -26,6 +26,7 @@ import {
   setBalancesService,
   setFeesService,
 } from './fio/sagas';
+import { getRefProfileSuccess } from './refProfile/sagas';
 
 import { Api } from '../api';
 
@@ -51,5 +52,6 @@ export default function* rootSaga(history: History, api: Api) {
     adminLoginSuccess(history, api),
     adminConfirmSuccess(history, api),
     adminResetPasswordSuccess(history, api),
+    getRefProfileSuccess(),
   ]);
 }
