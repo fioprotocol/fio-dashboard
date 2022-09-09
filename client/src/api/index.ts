@@ -15,6 +15,7 @@ import Payments from './payments';
 import Orders from './orders';
 import ChainCode from './chain-code';
 import GeneratePdfFile from './generatePdf';
+import WrapStatus from './wrap-status';
 
 const apiClient = new ApiClient(config.apiPrefix);
 
@@ -44,6 +45,7 @@ export type Api = {
   payments: Payments;
   chainCode: ChainCode;
   generatePdfFile: GeneratePdfFile;
+  wrapStatus: WrapStatus;
 };
 
 const apis = {
@@ -62,6 +64,7 @@ const apis = {
   payments: new Payments(apiClient),
   chainCode: new ChainCode(apiClient),
   generatePdfFile: new GeneratePdfFile(apiClient),
+  wrapStatus: new WrapStatus(apiClient),
 };
 
 export default apis;
