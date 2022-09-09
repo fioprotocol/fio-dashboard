@@ -119,6 +119,8 @@ const ROUTES: { [route: string]: string } = {
   PRIVACY_POLICY: '/privacy-policy',
   TERMS_OF_SERVICE: '/terms-of-service',
   COOKIE_NOTICE: '/cookie-notice',
+
+  WRAP_STATUS: '/wrap-status/:name',
 };
 
 export { ROUTES };
