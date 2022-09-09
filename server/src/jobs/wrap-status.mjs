@@ -49,7 +49,7 @@ class WrapStatusJob extends CommonJob {
         process.env.FIO_NFT_POLYGON_CONTRACT,
       );
 
-      const getEthActionsLogs = async (from, to) => {
+      const getPolygonActionsLogs = async (from, to) => {
         return await fioNftContractOnPolygonChain.getPastEvents(
           isWrap ? 'wrapped' : 'unwrapped',
           {
@@ -87,30 +87,31 @@ class WrapStatusJob extends CommonJob {
         );
         this.postMessage(logPrefix + 'finish at blockNumber', lastInChainBlockNumber);
 
-        let fromBlockNumber = lastProcessedBlockNumber;
+        let fromBlockNumber = lastProcessedBlockNumber + 1;
 
         let result = [];
         let maxCheckedBlockNumber = 0;
 
-        // todo: check if possible to rewrite onto Promise.all async bunches process
-        while (fromBlockNumber - 1 < lastInChainBlockNumber) {
+        // todo: check if possible to rewrite onto Promise.all async bunches process. Possible difficulties: 1) large amount of parallel request (server limitations, and Infura Api limitations); 2) configuring limitation value. Profit: much faster job's work for big ranges.
+        while (fromBlockNumber <= lastInChainBlockNumber) {
+          const maxAllowedBlockNumber = fromBlockNumber + blocksRangeLimit - 1;
           const toBlockNumber =
-            fromBlockNumber + blocksRangeLimit - 1 > lastInChainBlockNumber
+            maxAllowedBlockNumber > lastInChainBlockNumber
               ? lastInChainBlockNumber
-              : fromBlockNumber + blocksRangeLimit - 1;
+              : maxAllowedBlockNumber;
 
           maxCheckedBlockNumber = toBlockNumber;
 
           result = [
             ...result,
-            ...(await getEthActionsLogs(fromBlockNumber, toBlockNumber)),
+            ...(await getPolygonActionsLogs(fromBlockNumber, toBlockNumber)),
           ];
 
           fromBlockNumber = toBlockNumber + 1;
         }
 
         await WrapStatusBlockNumbers.setBlockNumber(
-          maxCheckedBlockNumber + 1,
+          maxCheckedBlockNumber,
           networkData.id,
           isWrap,
         );
@@ -198,16 +199,17 @@ class WrapStatusJob extends CommonJob {
         );
         this.postMessage(logPrefix + 'finish at blockNumber', lastInChainBlockNumber);
 
-        let fromBlockNumber = lastProcessedBlockNumber;
+        let fromBlockNumber = lastProcessedBlockNumber + 1;
 
         let result = [];
         let maxCheckedBlockNumber = 0;
 
-        while (fromBlockNumber - 1 < lastInChainBlockNumber) {
+        while (fromBlockNumber <= lastInChainBlockNumber) {
+          const maxAllowedBlockNumber = fromBlockNumber + blocksRangeLimit - 1;
           const toBlockNumber =
-            fromBlockNumber + blocksRangeLimit - 1 > lastInChainBlockNumber
+            maxAllowedBlockNumber > lastInChainBlockNumber
               ? lastInChainBlockNumber
-              : fromBlockNumber + blocksRangeLimit - 1;
+              : maxAllowedBlockNumber;
 
           maxCheckedBlockNumber = toBlockNumber;
 
@@ -220,7 +222,7 @@ class WrapStatusJob extends CommonJob {
         }
 
         await WrapStatusBlockNumbers.setBlockNumber(
-          maxCheckedBlockNumber + 1,
+          maxCheckedBlockNumber,
           networkData.id,
           isWrap,
         );
