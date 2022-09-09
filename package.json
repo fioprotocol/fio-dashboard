@@ -17,6 +17,7 @@
     "server:prod": "npm run migrate && node --es-module-specifier-resolution=node server/src/index.mjs",
     "scheduler": "JOB_LIST=emails,orders,txCheck node --es-module-specifier-resolution=node server/src/scheduler.mjs",
     "scheduler:wallet-data": "JOB_LIST=walletData node --es-module-specifier-resolution=node server/src/scheduler.mjs",
+    "scheduler:wrap-status": "JOB_LIST=wrapStatus node --es-module-specifier-resolution=node server/src/scheduler.mjs",
     "migrate": "sequelize db:migrate",
     "test:api": "cross-env TEST_MODE=0 LOG_LEVEL=error babel-node --extensions .js,.mjs node_modules/.bin/_mocha --exit --timeout 60000 --reporter spec --ui qunit server/tests/api/*",
     "test": "npm run lint && npm run test:create.db && npm run test:api",
@@ -170,8 +171,8 @@
     "stream-browserify": "^3.0.0",
     "stripe": "^9.12.0",
     "superagent": "^7.0.2",
-    "ws": "8.9.0"
-    "web3": "^1.7.0",
+    "ws": "8.9.0",
+    "web3": "^1.7.5"
   },
   "proxy": "http://localhost:9000",
   "resolutions": {
