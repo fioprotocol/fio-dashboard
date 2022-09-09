@@ -105,42 +105,62 @@ class OrdersJob extends CommonJob {
     spentType = Payment.SPENT_TYPE.ACTION,
     price,
     currency,
+    status = Payment.STATUS.COMPLETED,
     data = null,
     notes = '',
     updateStatus = null,
     eventStatus = null,
+    eventData = null,
     actionPaymentId = null,
   }) {
-    let statusNotes = `${fioName}. Action: ${action}`;
-    if (notes) statusNotes += `\n${notes}`;
-    if (statusNotes.length > MAX_STATUS_NOTES_LENGTH)
-      statusNotes = statusNotes.slice(0, MAX_STATUS_NOTES_LENGTH);
+    try {
+      let statusNotes = notes;
+      if (statusNotes.length > MAX_STATUS_NOTES_LENGTH)
+        statusNotes = statusNotes.slice(0, MAX_STATUS_NOTES_LENGTH);
+      if (fioName && action) {
+        if (!data) data = {};
+        data = { ...data, fioName, action };
+      }
 
-    if (actionPaymentId && updateStatus && eventStatus) {
-      await Payment.update({ status: updateStatus }, { where: { id: actionPaymentId } });
+      if (actionPaymentId && updateStatus && eventStatus) {
+        await Payment.update(
+          { status: updateStatus },
+          { where: { id: actionPaymentId } },
+        );
+        await PaymentEventLog.create({
+          status: eventStatus,
+          statusNotes,
+          data: eventData,
+          paymentId: actionPaymentId,
+        });
+
+        return;
+      }
+
+      const actionPayment = await Payment.create({
+        status,
+        processor: Payment.PROCESSOR.SYSTEM,
+        orderId,
+        spentType,
+        price,
+        currency,
+        data,
+      });
       await PaymentEventLog.create({
-        status: eventStatus,
+        status: eventStatus || PaymentEventLog.STATUS.SUCCESS,
         statusNotes,
-        paymentId: actionPaymentId,
+        data: eventData,
+        paymentId: actionPayment.id,
       });
 
-      return;
-    }
+      return actionPayment;
+    } catch (e) {
+      logger.error(
+        `Record spend error. orderId: ${orderId}, fioName: ${fioName}, error: ${e.message}`,
+      );
 
-    const actionPayment = await Payment.create({
-      status: Payment.STATUS.COMPLETED,
-      processor: Payment.PROCESSOR.SYSTEM,
-      orderId,
-      spentType,
-      price,
-      currency,
-      data,
-    });
-    await PaymentEventLog.create({
-      status: PaymentEventLog.STATUS.SUCCESS,
-      statusNotes,
-      paymentId: actionPayment.id,
-    });
+      throw e;
+    }
   }
 
   async handleFail(orderItem, errorNotes, errorData = null) {
@@ -220,6 +240,10 @@ class OrdersJob extends CommonJob {
         processor: Payment.PROCESSOR.SYSTEM,
         orderId: orderItemProps.orderId,
         spentType: Payment.SPENT_TYPE.ORDER_REFUND,
+        data: {
+          fioName: fioApi.setFioName(orderItemProps.address, orderItemProps.domain),
+          action: orderItemProps.action,
+        },
         price,
         currency,
       });
@@ -252,6 +276,7 @@ class OrdersJob extends CommonJob {
         await PaymentEventLog.create({
           status: PaymentEventLog.STATUS.SUCCESS,
           statusNotes: `${statusNotes}. (${refundTx.transaction_id || refundTx.id})`,
+          data: { fioTxId: refundTx.transaction_id, txId: refundTx.id },
           paymentId: refundPayment.id,
         });
 
@@ -275,6 +300,7 @@ class OrdersJob extends CommonJob {
       await PaymentEventLog.create({
         status: PaymentEventLog.STATUS.FAILED,
         statusNotes: notes,
+        data: { error: refundTx },
         paymentId: refundPayment.id,
       });
     } catch (e) {
@@ -368,18 +394,20 @@ class OrdersJob extends CommonJob {
     const { address, domain, action, orderId, roe, data } = orderItem;
     const fee = this.feesJson[orderItem.action];
 
+    // Spend order payment on fio action
+    const fioPayment = await this.spend({
+      fioName: fioApi.setFioName(address, domain),
+      action,
+      orderId,
+      status: Payment.STATUS.PENDING,
+      eventStatus: PaymentEventLog.STATUS.PENDING,
+      price: fioApi.sufToAmount(balanceDifference || fee),
+      currency: Payment.CURRENCY.FIO,
+      data: { roe, sendingFioTokens: true },
+    });
+
     // Send tokens to customer
     try {
-      // Spend order payment on fio action
-      await this.spend({
-        fioName: fioApi.setFioName(address, domain),
-        action,
-        orderId,
-        price: fioApi.sufToAmount(balanceDifference || fee),
-        currency: Payment.CURRENCY.FIO,
-        data: { roe },
-      });
-
       const transferRes = await fioApi.executeAction(
         FIO_ACTIONS.transferTokens,
         fioApi.getActionParams({
@@ -400,7 +428,7 @@ class OrdersJob extends CommonJob {
           spentType: Payment.SPENT_TYPE.ACTION_REFUND,
           price: fioApi.sufToAmount(balanceDifference || fee),
           currency: Payment.CURRENCY.FIO,
-          data: { roe },
+          data: { roe, error: transferError },
           notes: `${transferError}`,
         });
 
@@ -413,7 +441,26 @@ class OrdersJob extends CommonJob {
         transferRes.transaction_id,
         data.signingWalletPubKey || orderItem.publicKey,
       );
+
+      // Save transfer event
+      await this.spend({
+        actionPaymentId: fioPayment.id,
+        updateStatus: Payment.STATUS.COMPLETED,
+        eventStatus: PaymentEventLog.STATUS.SUCCESS,
+        eventData: {
+          fioTxId: transferRes.transaction_id,
+          fioFee: transferRes.fee_collected,
+        },
+      });
     } catch (e) {
+      // Save transfer error event
+      await this.spend({
+        actionPaymentId: fioPayment.id,
+        updateStatus: Payment.STATUS.FAILED,
+        eventStatus: PaymentEventLog.STATUS.FAILED,
+        notes: e.message,
+      });
+
       return {
         message: `Transfer Tokens error. Customer did not receive the tokens to execute the transaction - ${JSON.stringify(
           e,
@@ -525,8 +572,8 @@ class OrdersJob extends CommonJob {
         price: fioApi.sufToAmount(data.hasCustomDomainFee),
         currency: Payment.CURRENCY.FIO,
         spentType: Payment.SPENT_TYPE.ACTION_REFUND,
-        data: { roe },
-        notes: `${error}`,
+        data: { roe, error },
+        notes: `${JSON.stringify(error)}`,
       });
 
       return error;
@@ -570,6 +617,7 @@ class OrdersJob extends CommonJob {
           spentType: Payment.SPENT_TYPE.ACTION_REFUND,
           price,
           currency: Payment.CURRENCY.USDC,
+          data: { error: result },
           notes: `${JSON.stringify(result)}`,
         });
     }

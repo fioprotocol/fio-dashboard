@@ -55,11 +55,12 @@ export class PaymentEventLog extends Base {
     });
   }
 
-  static format({ id, status, statusNotes, createdAt, updatedAt }) {
+  static format({ id, status, statusNotes, data, createdAt, updatedAt }) {
     return {
       id,
       status,
       statusNotes,
+      data,
       createdAt,
       updatedAt,
     };
