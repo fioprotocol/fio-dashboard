@@ -48,6 +48,7 @@ import UpdateEmailConfirmGatePage from './pages/UpdateEmailConfirmGatePage';
 import UpdateEmailPage from './pages/UpdateEmailPage';
 import RejectFioRequestPage from './pages/RejectFioRequestPage';
 import EmailConfirmationResultPage from './pages/EmailConfirmationResultsPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 import AdminPrivateRoute from './components/AdminPrivateRoute';
 import AdminOrdersPage from './pages/AdminOrdersPage';
@@ -70,6 +71,7 @@ const Routes = (): React.ReactElement => (
     <ScrollToTop>
       <Switch>
         <Route path={ROUTES.HOME} component={HomePage} exact />
+        <Route path={ROUTES.NOT_FOUND} component={NotFoundPage} exact />
         <Route path={ROUTES.REF_PROFILE_HOME} component={RefHomePage} exact />
         <Route
           path={ROUTES.CONFIRM_EMAIL}

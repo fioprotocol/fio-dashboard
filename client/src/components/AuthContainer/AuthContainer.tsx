@@ -27,6 +27,7 @@ const AuthContainer: React.FC<Props> = props => {
           <Route path={ROUTES.CREATE_ACCOUNT} component={CreateAccount} exact />
         </Switch>
       )}
+      <Redirect to="/404" />
     </div>
   );
 };
