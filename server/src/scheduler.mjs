@@ -38,6 +38,13 @@ const availableJobsParams = {
     timeout: 0,
     closeWorkerAfterMs: 5 * 60 * 1000, // 5 min
   },
+  wrapStatus: {
+    path: path.join(JOBS_PATH, 'wrap-status.mjs'),
+    name: 'wrap-status',
+    interval: process.env.WRAP_STATUS_JOB_INTERVAL || 60 * 1000, // 60 sec
+    timeout: 0,
+    // closeWorkerAfterMs: 30 * 60 * 1000, // 30 min, Do not close the process it may take some time
+  },
 };
 
 const jobsToLaunch = process.env.JOB_LIST;
