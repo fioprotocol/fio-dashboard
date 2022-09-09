@@ -17,7 +17,7 @@ type Props = {
 };
 
 const DetailsModal: React.FC<Props> = props => {
-  const { itemData, onClose, isComplete, isWrap } = props;
+  const { itemData, onClose, isComplete, isWrap, isTokens } = props;
 
   return (
     <Modal
@@ -49,7 +49,7 @@ const DetailsModal: React.FC<Props> = props => {
               <div className="mr-3">
                 <b>Chain:</b>
               </div>
-              <div>FIO</div>
+              <div>{isWrap ? 'FIO' : isTokens ? 'ETH' : 'POLYGON'}</div>
             </div>
             <div className="d-flex justify-content-between my-2">
               <div className="mr-3">
