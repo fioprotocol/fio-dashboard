@@ -162,6 +162,11 @@ router.get('/chain-codes/:chainCode?', routes.chainCodes.list);
 
 router.post('/generate-pdf', checkAuth, routes.generatePdf.create);
 
+router.get('/wrap-status/tokens/wrap', routes.history.wrapTokens);
+router.get('/wrap-status/domains/wrap', routes.history.wrapDomains);
+router.get('/wrap-status/tokens/unwrap', routes.history.unwrapTokens);
+router.get('/wrap-status/domains/unwrap', routes.history.unwrapDomains);
+
 let WRAPPED_DOMAIN_ABI;
 let WRAPPED_TOKEN_ABI;
 try {
