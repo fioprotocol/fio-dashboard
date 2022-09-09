@@ -707,3 +707,9 @@ export type ChainCodeProps = {
   chainCodeName: string;
   tokens?: TokenCodeProps[];
 };
+
+declare global {
+  interface Window {
+    dataLayer: object[];
+  }
+}
