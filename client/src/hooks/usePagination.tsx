@@ -1,6 +1,13 @@
-import { ReactNode, Component, useCallback, useEffect, useState } from 'react';
+import {
+  Component,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import Pagination from 'react-bootstrap/Pagination';
 
 import useQuery from './useQuery';
@@ -50,6 +57,9 @@ export default function usePagination(
 } {
   const history = useHistory();
   const queryParams = useQuery();
+
+  const location = useLocation();
+  const locationPathname = useRef(location.pathname);
 
   const handleChangeOffset = useCallback(
     (offsetValue: string) => {
@@ -107,6 +117,14 @@ export default function usePagination(
       history.push({ search: queryParams.toString() });
     }
   }, []);
+
+  // reload page, when location pathname has been changed, but component wasn't removed from DOM (page with dynamic parameter in url)
+  useEffect(() => {
+    if (location.pathname !== locationPathname.current) {
+      // history push do not work properly so use full reload
+      document.location.reload();
+    }
+  }, [location]);
 
   useEffect(() => {
     const paginationItems: ReactNode[] = [];
