@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Ecc } from '@fioprotocol/fiojs';
 
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import { PAYMENT_OPTIONS } from '../../constants/purchase';
 import { emptyWallet } from '../../redux/fio/reducer';
 
 import api from '../../api';
@@ -16,7 +17,6 @@ import { PurchaseNowTypes } from './types';
 import { RegistrationResult } from '../../types';
 
 import classes from './PurchaseNow.module.scss';
-import { PAYMENT_OPTIONS } from '../../constants/purchase';
 
 const MIN_WAIT_TIME = 3000;
 
