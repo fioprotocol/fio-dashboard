@@ -11,6 +11,7 @@ import orders from './orders';
 import payments from './payments';
 import refProfiles from './refProfiles';
 import users from './users';
+import history from './wrapStatus.mjs';
 
 export default {
   account,
@@ -26,4 +27,5 @@ export default {
   payments,
   refProfiles,
   users,
+  history,
 };
