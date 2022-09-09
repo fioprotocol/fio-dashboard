@@ -280,6 +280,10 @@ const UnwrapTokensPage = React.lazy(() =>
   import(/* webpackChunkName: 'UnwrapTokensPage' */ './pages/UnwrapTokensPage'),
 );
 
+const WrapStatusPage = React.lazy(() =>
+  import(/* webpackChunkName: 'WrapStatusPage' */ './pages/WrapStatusPage'),
+);
+
 const Routes = (): React.ReactElement => (
   <MainLayout>
     <ScrollToTop>
@@ -653,6 +657,8 @@ const Routes = (): React.ReactElement => (
             component={AdminSearchResultPage}
             exact
           />
+
+          <Route path={ROUTES.WRAP_STATUS} component={WrapStatusPage} exact />
 
           <AuthContainer />
         </Switch>

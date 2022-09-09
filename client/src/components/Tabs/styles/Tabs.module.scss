@@ -15,7 +15,7 @@ $tabMargin: 40px;
       color: $dark-jungle-green;
       padding: 0 0 9px 0;
       margin-right: $tabMargin;
-      
+
       &[aria-selected='true'] ~ .tabBorder {
         position: absolute;
         width: calc(100% - #{$tabMargin});
