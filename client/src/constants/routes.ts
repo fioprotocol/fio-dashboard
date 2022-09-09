@@ -1,6 +1,7 @@
 const ROUTES: { [route: string]: string } = {
   HOME: '/',
   DASHBOARD: '/dashboard',
+  NOT_FOUND: '/404',
 
   ADMIN_HOME: '/admin',
   ADMIN_USERS: '/admin/users',
