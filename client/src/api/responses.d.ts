@@ -11,6 +11,7 @@ import {
   Payment,
   RefProfile,
   User,
+  WrapStatusWrapItem,
 } from '../types';
 
 export type AccountGetWalletsResponse = FioWalletDoublet[];
@@ -105,6 +106,8 @@ export type AdminGeneralCreateResponse =
   | { success: false; message: 'Not Unique' };
 export type AdminConfirmResponse = AdminUser;
 export type AdminSearchResponse = AdminSearchResult;
+
+export type WrapStatusListItemsResponse = WrapStatusWrapItem[];
 
 export type PaymentCreateResponse = Payment;
 

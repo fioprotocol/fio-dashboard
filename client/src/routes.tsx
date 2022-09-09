@@ -66,6 +66,7 @@ import AdminProfilePage from './pages/AdminProfilePage';
 import AdminHomePage from './pages/AdminHomePage';
 import AdminFioAccountsProfilesListPage from './pages/AdminFioAccountsProfilesListPage';
 import AdminSearchResultPage from './pages/AdminSearchResultPage';
+import WrapStatusPage from './pages/WrapStatusPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -316,6 +317,8 @@ const Routes = (): React.ReactElement => (
           component={AdminSearchResultPage}
           exact
         />
+
+        <Route path={ROUTES.WRAP_STATUS} component={WrapStatusPage} exact />
 
         <AuthContainer />
       </Switch>

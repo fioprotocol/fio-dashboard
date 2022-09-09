@@ -722,6 +722,19 @@ export type ChainCodeProps = {
   tokens?: TokenCodeProps[];
 };
 
+export type WrapStatusWrapItem = {
+  id: string;
+  blockNumber: string;
+  transactionId?: string;
+  transactionHash?: string;
+  address: string;
+  domain?: string;
+  amount?: string;
+  fioAddress?: string;
+  data: AnyObject;
+  confirmData: AnyObject;
+} & AnyObject;
+
 export type FioActions = typeof CONFIRM_FIO_ACTIONS;
 export type AnalyticsEventActions = typeof ANALYTICS_EVENT_ACTIONS;
 
