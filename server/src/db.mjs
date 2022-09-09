@@ -26,6 +26,16 @@ import { TokenCode } from './models/TokenCode.mjs';
 import { User } from './models/User';
 import { Var } from './models/Var.mjs';
 import { Wallet } from './models/Wallet';
+import { WrapStatusNetworks } from './models/WrapStatusNetworks.mjs';
+import { WrapStatusBlockNumbers } from './models/WrapStatusBlockNumbers.mjs';
+import { WrapStatusEthWrapLogs } from './models/WrapStatusEthWrapLogs.mjs';
+import { WrapStatusEthUnwrapLogs } from './models/WrapStatusEthUnwrapLogs.mjs';
+import { WrapStatusPolygonUnwrapLogs } from './models/WrapStatusPolygonUnwrapLogs.mjs';
+import { WrapStatusPolygonWrapLogs } from './models/WrapStatusPolygonWrapLogs.mjs';
+import { WrapStatusFioUnwrapNftsLogs } from './models/WrapStatusFioUnwrapNftsLogs.mjs';
+import { WrapStatusFioWrapNftsLogs } from './models/WrapStatusFioWrapNftsLogs.mjs';
+import { WrapStatusFioUnwrapTokensLogs } from './models/WrapStatusFioUnwrapTokensLogs.mjs';
+import { WrapStatusFioWrapTokensLogs } from './models/WrapStatusFioWrapTokensLogs.mjs';
 
 const sequelize = new Sequelize(config.postgres);
 
@@ -53,6 +63,16 @@ Var.init(sequelize);
 AdminUser.init(sequelize);
 ChainCode.init(sequelize);
 TokenCode.init(sequelize);
+WrapStatusNetworks.init(sequelize);
+WrapStatusBlockNumbers.init(sequelize);
+WrapStatusEthWrapLogs.init(sequelize);
+WrapStatusEthUnwrapLogs.init(sequelize);
+WrapStatusPolygonUnwrapLogs.init(sequelize);
+WrapStatusPolygonWrapLogs.init(sequelize);
+WrapStatusFioUnwrapNftsLogs.init(sequelize);
+WrapStatusFioWrapNftsLogs.init(sequelize);
+WrapStatusFioUnwrapTokensLogs.init(sequelize);
+WrapStatusFioWrapTokensLogs.init(sequelize);
 
 const { models } = sequelize;
 
