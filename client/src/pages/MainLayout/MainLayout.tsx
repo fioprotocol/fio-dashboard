@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import MainHeader from '../../components/MainHeader';
 import Notifications from '../../components/Notifications';
@@ -65,10 +65,47 @@ const MainLayout: React.FC<Props> = props => {
   const isAdminRoute = useIsAdminRoute();
   const isConfirmEmailRoute = pathname === ROUTES.CONFIRM_EMAIL_RESULT;
 
+  const addGTMGlobalTags = useCallback(() => {
+    if (!process.env.REACT_APP_GOOGLE_TAG_MANAGER_ID) {
+      return;
+    }
+    const script = document.createElement('script');
+    script.innerHTML = `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${process.env.REACT_APP_GOOGLE_TAG_MANAGER_ID}');`;
+    const noscript = document.createElement('noscript');
+    const iframe = document.createElement('iframe');
+    iframe.src = `https://www.googletagmanager.com/ns.html?id=${process.env.REACT_APP_GOOGLE_TAG_MANAGER_ID}`;
+    iframe.height = '0';
+    iframe.width = '0';
+    iframe.style.cssText = 'display:none;visibility:hidden';
+    noscript.appendChild(iframe);
+
+    document.head.append(
+      document.createComment(' Google Tag Manager '),
+      script,
+      document.createComment(' End Google Tag Manager '),
+    );
+    document.body.prepend(
+      document.createComment(' Google Tag Manager (noscript) '),
+      noscript,
+      document.createComment(' End Google Tag Manager (noscript) '),
+    );
+  }, []);
+
   useEffectOnce(() => {
     edgeContextInit();
-    isAdminRoute ? loadAdminProfile() : loadProfile();
-  }, [edgeContextInit, loadAdminProfile, loadProfile, isAdminRoute]);
+    if (isAdminRoute) {
+      loadAdminProfile();
+    } else {
+      loadProfile();
+      addGTMGlobalTags();
+    }
+  }, [
+    edgeContextInit,
+    loadAdminProfile,
+    loadProfile,
+    addGTMGlobalTags,
+    isAdminRoute,
+  ]);
 
   const loginFormModalRender = () => showLogin && <LoginForm />;
   const recoveryFormModalRender = () =>
