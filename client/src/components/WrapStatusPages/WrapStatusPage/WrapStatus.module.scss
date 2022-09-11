@@ -1,5 +1,5 @@
-@import '../../assets/styles/fontMixins.scss';
-@import '../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/colors.scss';
 
 .tableContainer {
   width: auto;
@@ -29,3 +29,11 @@
   margin-right: 30px;
 }
 
+.trxId {
+  width: 100%;
+  cursor: pointer;
+  color: $cyan;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: bold;
+}

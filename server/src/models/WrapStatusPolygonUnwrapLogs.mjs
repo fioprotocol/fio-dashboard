@@ -55,13 +55,13 @@ export class WrapStatusPolygonUnwrapLogs extends Base {
           up."domain",
           up."fioAddress", 
           up."data", 
-          uf."data" as "confirmData",
-          uo."data" as "oravotes"
+          array_agg(uf."data") FILTER (WHERE uf."data" IS NOT NULL)  as "confirmData",
+          array_agg(uo."data") FILTER (WHERE uo."data" IS NOT NULL)  as "oravotes"
         FROM "wrap-status-polygon-unwrap-logs" up
           LEFT JOIN "wrap-status-fio-unwrap-nfts-logs" uf ON uf."obtId" = up."transactionHash"
           LEFT JOIN "wrap-status-fio-unwrap-nfts-oravotes" uo ON uo."obtId" = up."transactionHash"
         WHERE up."transactionHash" IS NOT NULL
-        GROUP BY up."transactionHash", uf."transactionId", uo.id
+        GROUP BY up."transactionHash"
         ORDER BY up."blockNumber"::bigint desc
         LIMIT ${limit} OFFSET ${offset}
       `);
