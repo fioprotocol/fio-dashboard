@@ -11,7 +11,9 @@ import {
   WrapStatusEthUnwrapLogs,
   WrapStatusEthWrapLogs,
   WrapStatusFioUnwrapNftsLogs,
+  WrapStatusFioUnwrapNftsOravotes,
   WrapStatusFioUnwrapTokensLogs,
+  WrapStatusFioUnwrapTokensOravotes,
   WrapStatusFioWrapNftsLogs,
   WrapStatusFioWrapTokensLogs,
   WrapStatusNetworks,
@@ -37,6 +39,71 @@ class WrapStatusJob extends CommonJob {
     console.log(message);
   }
 
+  // example of getting all POLYGON smart contract events
+  async test() {
+    const web3 = new Web3(process.env.POLYGON_INFURA);
+    const blocksRangeLimit = parseInt(process.env.BLOCKS_RANGE_LIMIT_POLY);
+
+    const fioNftContractOnPolygonChain = new web3.eth.Contract(
+      WRAPPED_DOMAIN_ABI,
+      process.env.FIO_NFT_POLYGON_CONTRACT,
+    );
+
+    const getPolygonActionsLogs = async (from, to) => {
+      return await fioNftContractOnPolygonChain.getPastEvents(
+        'allEvents',
+        {
+          fromBlock: from,
+          toBlock: to,
+        },
+        async (error, events) => {
+          if (!error) {
+            return events;
+          } else {
+            this.handleErrorMessage(error);
+          }
+        },
+      );
+    };
+
+    const getUnprocessedActionsLogs = async () => {
+      const logPrefix = 'Test >>>>>>>>>>';
+      const lastProcessedBlockNumber = 27346247;
+      const lastInChainBlockNumber = await web3.eth.getBlockNumber();
+
+      if (lastProcessedBlockNumber > lastInChainBlockNumber)
+        throw new Error(
+          logPrefix + `Wrong start blockNumber value, pls check the database value.`,
+        );
+
+      let fromBlockNumber = lastProcessedBlockNumber + 1;
+
+      let result = [];
+
+      while (fromBlockNumber <= lastInChainBlockNumber) {
+        const maxAllowedBlockNumber = fromBlockNumber + blocksRangeLimit - 1;
+        const toBlockNumber =
+          maxAllowedBlockNumber > lastInChainBlockNumber
+            ? lastInChainBlockNumber
+            : maxAllowedBlockNumber;
+
+        result = [
+          ...result,
+          ...(await getPolygonActionsLogs(fromBlockNumber, toBlockNumber)),
+        ];
+
+        fromBlockNumber = toBlockNumber + 1;
+      }
+
+      return JSON.stringify(result, null, 2);
+    };
+
+    const data = await getUnprocessedActionsLogs();
+
+    // eslint-disable-next-line no-console
+    console.log(data);
+  }
+
   async getPolygonLogs(isWrap = false) {
     const logPrefix = `Get POLYGON Logs, isWrap: ${isWrap} --> `;
 
@@ -48,6 +115,11 @@ class WrapStatusJob extends CommonJob {
         WRAPPED_DOMAIN_ABI,
         process.env.FIO_NFT_POLYGON_CONTRACT,
       );
+
+      const networkData = await WrapStatusNetworks.findOneWhere({
+        id: WRAP_STATUS_NETWORKS_IDS.POLYGON,
+      });
+      let maxCheckedBlockNumber = 0;
 
       const getPolygonActionsLogs = async (from, to) => {
         return await fioNftContractOnPolygonChain.getPastEvents(
@@ -67,9 +139,6 @@ class WrapStatusJob extends CommonJob {
       };
 
       const getUnprocessedActionsLogs = async () => {
-        const networkData = await WrapStatusNetworks.findOneWhere({
-          id: WRAP_STATUS_NETWORKS_IDS.POLYGON,
-        });
         const lastProcessedBlockNumber = await WrapStatusBlockNumbers.getBlockNumber(
           networkData.id,
           isWrap,
@@ -90,9 +159,8 @@ class WrapStatusJob extends CommonJob {
         let fromBlockNumber = lastProcessedBlockNumber + 1;
 
         let result = [];
-        let maxCheckedBlockNumber = 0;
 
-        // todo: check if possible to rewrite onto Promise.all async bunches process. Possible difficulties: 1) large amount of parallel request (server limitations, and Infura Api limitations); 2) configuring limitation value. Profit: much faster job's work for big ranges.
+        // todo: check if possible to rewrite onto Promise.all async bunches process. Possible difficulties: 1) large amount of parallel request (server limitations, and Infura Api limitations); 2) configuring limitation value. Profit: much faster job's work for big ranges (but less reliable).
         while (fromBlockNumber <= lastInChainBlockNumber) {
           const maxAllowedBlockNumber = fromBlockNumber + blocksRangeLimit - 1;
           const toBlockNumber =
@@ -110,12 +178,6 @@ class WrapStatusJob extends CommonJob {
           fromBlockNumber = toBlockNumber + 1;
         }
 
-        await WrapStatusBlockNumbers.setBlockNumber(
-          maxCheckedBlockNumber,
-          networkData.id,
-          isWrap,
-        );
-
         this.postMessage(logPrefix + `result length ${result.length}`);
         return result;
       };
@@ -124,25 +186,15 @@ class WrapStatusJob extends CommonJob {
 
       if (data.length > 0) {
         if (isWrap) {
-          await WrapStatusPolygonWrapLogs.bulkCreate(
-            data.map(log => ({
-              transactionHash: log.transactionHash,
-              obtId: log.returnValues.obtid,
-              data: { ...log },
-            })),
-          );
-        } else
-          await WrapStatusPolygonUnwrapLogs.bulkCreate(
-            data.map(log => ({
-              transactionHash: log.transactionHash,
-              address: log.address,
-              blockNumber: log.blockNumber,
-              domain: log.returnValues.domain,
-              fioAddress: log.returnValues.fioaddress,
-              data: { ...log },
-            })),
-          );
+          await WrapStatusPolygonWrapLogs.addLogs(data);
+        } else await WrapStatusPolygonUnwrapLogs.addLogs(data);
       }
+
+      await WrapStatusBlockNumbers.setBlockNumber(
+        maxCheckedBlockNumber,
+        networkData.id,
+        isWrap,
+      );
 
       this.postMessage(logPrefix + 'successfully finished');
       return data.length;
@@ -162,6 +214,11 @@ class WrapStatusJob extends CommonJob {
         process.env.FIO_TOKEN_ETH_CONTRACT,
       );
 
+      const networkData = await WrapStatusNetworks.findOneWhere({
+        id: WRAP_STATUS_NETWORKS_IDS.ETH,
+      });
+      let maxCheckedBlockNumber = 0;
+
       const getEthActionsLogs = async (from, to) => {
         return await fioTokenContractOnEthChain.getPastEvents(
           isWrap ? 'wrapped' : 'unwrapped',
@@ -180,9 +237,6 @@ class WrapStatusJob extends CommonJob {
       };
 
       const getUnprocessedActionsLogs = async () => {
-        const networkData = await WrapStatusNetworks.findOneWhere({
-          id: WRAP_STATUS_NETWORKS_IDS.ETH,
-        });
         const lastProcessedBlockNumber = await WrapStatusBlockNumbers.getBlockNumber(
           networkData.id,
           isWrap,
@@ -202,7 +256,6 @@ class WrapStatusJob extends CommonJob {
         let fromBlockNumber = lastProcessedBlockNumber + 1;
 
         let result = [];
-        let maxCheckedBlockNumber = 0;
 
         while (fromBlockNumber <= lastInChainBlockNumber) {
           const maxAllowedBlockNumber = fromBlockNumber + blocksRangeLimit - 1;
@@ -221,12 +274,6 @@ class WrapStatusJob extends CommonJob {
           fromBlockNumber = toBlockNumber + 1;
         }
 
-        await WrapStatusBlockNumbers.setBlockNumber(
-          maxCheckedBlockNumber,
-          networkData.id,
-          isWrap,
-        );
-
         this.postMessage(logPrefix + `result length ${result.length}`);
         return result;
       };
@@ -235,25 +282,15 @@ class WrapStatusJob extends CommonJob {
 
       if (data.length > 0) {
         if (isWrap) {
-          await WrapStatusEthWrapLogs.bulkCreate(
-            data.map(log => ({
-              transactionHash: log.transactionHash,
-              obtId: log.returnValues.obtid,
-              data: { ...log },
-            })),
-          );
-        } else
-          await WrapStatusEthUnwrapLogs.bulkCreate(
-            data.map(log => ({
-              transactionHash: log.transactionHash,
-              address: log.address,
-              blockNumber: log.blockNumber,
-              amount: log.returnValues.amount,
-              fioAddress: log.returnValues.fioaddress,
-              data: { ...log },
-            })),
-          );
+          await WrapStatusEthWrapLogs.addLogs(data);
+        } else await WrapStatusEthUnwrapLogs.addLogs(data);
       }
+
+      await WrapStatusBlockNumbers.setBlockNumber(
+        maxCheckedBlockNumber,
+        networkData.id,
+        isWrap,
+      );
 
       this.postMessage(logPrefix + 'successfully finished');
       return data.length;
@@ -262,8 +299,8 @@ class WrapStatusJob extends CommonJob {
     }
   }
 
-  async getUnwrapFioLogs() {
-    const logPrefix = `Get FIO Logs, Unwrap --> `;
+  async getUnwrapOravotesLogs() {
+    const logPrefix = `Get FIO Oravotes, Unwrap --> `;
     try {
       const getFioOraclesVotes = async (startPosition, limit) => {
         const res = await superagent
@@ -284,8 +321,8 @@ class WrapStatusJob extends CommonJob {
 
       const getUnprocessedOracleVotes = async () => {
         const startPosition =
-          ((await WrapStatusFioUnwrapTokensLogs.count()) || 0) +
-          ((await WrapStatusFioUnwrapNftsLogs.count()) || 0);
+          ((await WrapStatusFioUnwrapNftsOravotes.count()) || 0) +
+          ((await WrapStatusFioUnwrapTokensOravotes.count()) || 0);
 
         const defaultLimit = parseInt(process.env.ORACLE_VOTES_LOGS_LIMIT);
 
@@ -316,22 +353,9 @@ class WrapStatusJob extends CommonJob {
       this.postMessage(logPrefix + `unwrapNfts result length: ${unwrapNfts.length}`);
 
       if (unwrapNfts.length > 0)
-        await WrapStatusFioUnwrapNftsLogs.bulkCreate(
-          unwrapNfts.map(log => ({
-            obtId: log.obt_id,
-            isComplete: !!log.isComplete,
-            data: { ...log },
-          })),
-        );
-
+        await WrapStatusFioUnwrapNftsOravotes.addLogs(unwrapNfts);
       if (unwrapTokens.length > 0)
-        await WrapStatusFioUnwrapTokensLogs.bulkCreate(
-          unwrapTokens.map(log => ({
-            obtId: log.obt_id,
-            isComplete: !!log.isComplete,
-            data: { ...log },
-          })),
-        );
+        await WrapStatusFioUnwrapTokensOravotes.addLogs(unwrapTokens);
 
       this.postMessage(logPrefix + 'successfully finished');
     } catch (e) {
@@ -339,9 +363,18 @@ class WrapStatusJob extends CommonJob {
     }
   }
 
-  async getWrapFioLogs() {
-    const logPrefix = `Get FIO Logs, Wrap --> `;
+  async getFioLogs() {
+    const logPrefix = `Get FIO Logs --> `;
     try {
+      const networkData = await WrapStatusNetworks.findOneWhere({
+        id: WRAP_STATUS_NETWORKS_IDS.FIO,
+      });
+      const lastProcessedBlockNumber = await WrapStatusBlockNumbers.getBlockNumber(
+        networkData.id,
+        true, // not make any diff (in db by default true), because service will get both wrap/unwrap logs
+      );
+      let maxBlockNumber;
+
       const getFioActionsLogs = async offset => {
         // get logs starting from the end of the FIO chain (pos = -1)
         const data = await superagent
@@ -359,13 +392,6 @@ class WrapStatusJob extends CommonJob {
       };
 
       const getUnprocessedActionsOnFioChain = async () => {
-        const networkData = await WrapStatusNetworks.findOneWhere({
-          id: WRAP_STATUS_NETWORKS_IDS.FIO,
-        });
-        const lastProcessedBlockNumber = await WrapStatusBlockNumbers.getBlockNumber(
-          networkData.id,
-          true,
-        );
         const offsetRange = parseInt(process.env.FIO_HISTORY_OFFSET);
         let offset = offsetRange;
 
@@ -390,11 +416,7 @@ class WrapStatusJob extends CommonJob {
           actionsList.length > 0 &&
           actionsList[actionsList.length - 1].block_num > lastProcessedBlockNumber
         )
-          await WrapStatusBlockNumbers.setBlockNumber(
-            actionsList[actionsList.length - 1].block_num,
-            networkData.id,
-            true,
-          );
+          maxBlockNumber = actionsList[actionsList.length - 1].block_num;
 
         return actionsList.filter(
           elem =>
@@ -402,7 +424,9 @@ class WrapStatusJob extends CommonJob {
             ((elem.action_trace.act.name === 'wraptokens' &&
               elem.action_trace.act.data.chain_code === 'ETH') ||
               (elem.action_trace.act.name === 'wrapdomain' &&
-                elem.action_trace.act.data.chain_code === 'MATIC')),
+                elem.action_trace.act.data.chain_code === 'MATIC') ||
+              elem.action_trace.act.name === 'unwraptokens' ||
+              elem.action_trace.act.name === 'unwrapdomain'),
         );
       };
 
@@ -410,37 +434,41 @@ class WrapStatusJob extends CommonJob {
 
       const wrapDomainLogs = [];
       const wrapTokensLogs = [];
+      const unwrapDomainLogs = [];
+      const unwrapTokensLogs = [];
 
       logs.forEach(logItem => {
-        if (logItem.action_trace.act.name === 'wraptokens') {
-          wrapTokensLogs.push(logItem);
-        } else wrapDomainLogs.push(logItem);
+        if (logItem.action_trace.act.name === 'wraptokens') wrapTokensLogs.push(logItem);
+        if (logItem.action_trace.act.name === 'wrapdomain') wrapDomainLogs.push(logItem);
+        if (logItem.action_trace.act.name === 'unwraptokens')
+          unwrapTokensLogs.push(logItem);
+        if (logItem.action_trace.act.name === 'unwrapdomain')
+          unwrapDomainLogs.push(logItem);
       });
 
+      this.postMessage(
+        logPrefix + `unwrapTokens result length: ${unwrapTokensLogs.length}`,
+      );
+      this.postMessage(
+        logPrefix + `unwrapDomains result length: ${unwrapDomainLogs.length}`,
+      );
       this.postMessage(logPrefix + `wrapTokens result length: ${wrapTokensLogs.length}`);
       this.postMessage(logPrefix + `wrapDomains result length: ${wrapDomainLogs.length}`);
 
-      if (wrapDomainLogs.length > 0)
-        await WrapStatusFioWrapNftsLogs.bulkCreate(
-          wrapDomainLogs.map(log => ({
-            transactionId: log.action_trace.trx_id,
-            address: log.action_trace.act.data.public_address,
-            domain: log.action_trace.act.data.fio_domain,
-            blockNumber: log.block_num,
-            data: { ...log },
-          })),
-        );
-
+      if (unwrapDomainLogs.length > 0) {
+        await WrapStatusFioUnwrapNftsLogs.addLogs(unwrapDomainLogs);
+      }
+      if (unwrapTokensLogs.length > 0) {
+        await WrapStatusFioUnwrapTokensLogs.addLogs(unwrapTokensLogs);
+      }
+      if (wrapDomainLogs.length > 0) {
+        await WrapStatusFioWrapNftsLogs.addLogs(wrapDomainLogs);
+      }
       if (wrapTokensLogs.length > 0)
-        await WrapStatusFioWrapTokensLogs.bulkCreate(
-          wrapTokensLogs.map(log => ({
-            transactionId: log.action_trace.trx_id,
-            address: log.action_trace.act.data.public_address,
-            amount: log.action_trace.act.data.amount,
-            blockNumber: log.block_num,
-            data: { ...log },
-          })),
-        );
+        await WrapStatusFioWrapTokensLogs.addLogs(wrapTokensLogs);
+
+      if (maxBlockNumber && maxBlockNumber > lastProcessedBlockNumber)
+        await WrapStatusBlockNumbers.setBlockNumber(maxBlockNumber, networkData.id, true);
 
       this.postMessage(logPrefix + 'successfully finished');
     } catch (e) {
@@ -458,8 +486,9 @@ class WrapStatusJob extends CommonJob {
       this.getPolygonLogs.bind(this, false),
       this.getEthLogs.bind(this, true),
       this.getEthLogs.bind(this, false),
-      this.getUnwrapFioLogs.bind(this),
-      this.getWrapFioLogs.bind(this),
+      this.getUnwrapOravotesLogs.bind(this),
+      this.getFioLogs.bind(this),
+      // this.test,
     ]);
 
     this.finish();
