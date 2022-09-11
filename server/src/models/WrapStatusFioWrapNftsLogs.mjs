@@ -8,8 +8,7 @@ export class WrapStatusFioWrapNftsLogs extends Base {
   static init(sequelize) {
     super.init(
       {
-        id: { type: DT.BIGINT, primaryKey: true, autoIncrement: true },
-        transactionId: { type: DT.STRING, allowNull: false },
+        transactionId: { type: DT.STRING, primaryKey: true },
         address: { type: DT.STRING, allowNull: false },
         domain: { type: DT.STRING, allowNull: false },
         blockNumber: { type: DT.STRING, allowNull: false },
@@ -25,7 +24,7 @@ export class WrapStatusFioWrapNftsLogs extends Base {
 
   static attrs(type = 'default') {
     const attributes = {
-      default: ['id', 'transactionId', 'address', 'domain', 'blockNumber', 'data'],
+      default: ['transactionId', 'address', 'domain', 'blockNumber', 'data'],
     };
 
     if (type in attributes) {
@@ -42,7 +41,6 @@ export class WrapStatusFioWrapNftsLogs extends Base {
   static async listWithConfirmation(limit, offset) {
     const [actions] = await this.sequelize.query(`
         SELECT 
-          wf.id, 
           wf."transactionId", 
           wf.address, 
           wf."domain", 
@@ -52,11 +50,37 @@ export class WrapStatusFioWrapNftsLogs extends Base {
         FROM "wrap-status-fio-wrap-nft-logs" wf
           LEFT JOIN "wrap-status-polygon-wrap-logs" wp ON wp."obtId" = wf."transactionId"
         WHERE wf."transactionId" IS NOT NULL
-        GROUP BY wf.id, wp.id
+        GROUP BY wf."transactionId", wp."transactionHash"
         ORDER BY wf."blockNumber"::bigint desc
         LIMIT ${limit} OFFSET ${offset}
       `);
 
     return actions;
+  }
+
+  static async addLogs(data) {
+    const values = data.map(log => {
+      return [
+        log.action_trace.trx_id,
+        log.action_trace.act.data.public_address,
+        log.action_trace.act.data.fio_domain,
+        log.block_num,
+        JSON.stringify({ ...log }),
+      ];
+    });
+
+    const query =
+      'INSERT INTO "wrap-status-fio-wrap-nft-logs" ("transactionId", address, domain, "blockNumber", data) VALUES ' +
+      data
+        .map(() => {
+          return '(?)';
+        })
+        .join(',') +
+      ' ON CONFLICT ("transactionId") DO UPDATE SET address = EXCLUDED.address, domain = EXCLUDED.domain, "blockNumber" = EXCLUDED."blockNumber", data = EXCLUDED.data;';
+
+    return this.sequelize.query(
+      { query, values },
+      { type: this.sequelize.QueryTypes.INSERT },
+    );
   }
 }
