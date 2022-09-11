@@ -8,8 +8,7 @@ export class WrapStatusEthUnwrapLogs extends Base {
   static init(sequelize) {
     super.init(
       {
-        id: { type: DT.BIGINT, primaryKey: true, autoIncrement: true },
-        transactionHash: { type: DT.STRING, allowNull: false },
+        transactionHash: { type: DT.STRING, primaryKey: true },
         address: { type: DT.STRING, allowNull: false },
         blockNumber: { type: DT.STRING, allowNull: false },
         amount: { type: DT.STRING, allowNull: false },
@@ -27,10 +26,9 @@ export class WrapStatusEthUnwrapLogs extends Base {
   static attrs(type = 'default') {
     const attributes = {
       default: [
-        'id',
-        'blockNumber',
         'transactionHash',
         'address',
+        'blockNumber',
         'amount',
         'fioAddress',
         'data',
@@ -51,22 +49,50 @@ export class WrapStatusEthUnwrapLogs extends Base {
   static async listWithConfirmation(limit, offset) {
     const [actions] = await this.sequelize.query(`
         SELECT 
-          ue.id, 
           ue."transactionHash", 
           ue."blockNumber",
           ue.address, 
           ue."amount",
           ue."fioAddress", 
           ue."data", 
-          uf."data" as "confirmData"
+          uf."data" as "confirmData",
+          uo."data" as "oravotes"
         FROM "wrap-status-eth-unwrap-logs" ue
           LEFT JOIN "wrap-status-fio-unwrap-tokens-logs" uf ON uf."obtId" = ue."transactionHash"
+          LEFT JOIN "wrap-status-fio-unwrap-tokens-oravotes" uo ON uo."obtId" = ue."transactionHash"
         WHERE ue."transactionHash" IS NOT NULL
-        GROUP BY ue.id, uf.id
+        GROUP BY ue."transactionHash", uf."transactionId", uo.id
         ORDER BY ue."blockNumber"::bigint desc
         LIMIT ${limit} OFFSET ${offset}
       `);
 
     return actions;
+  }
+
+  static async addLogs(data) {
+    const values = data.map(log => {
+      return [
+        log.transactionHash,
+        log.address,
+        log.blockNumber,
+        log.returnValues.amount,
+        log.returnValues.fioaddress,
+        JSON.stringify({ ...log }),
+      ];
+    });
+
+    const query =
+      'INSERT INTO "wrap-status-eth-unwrap-logs" ("transactionHash", address, "blockNumber", amount, "fioAddress", data) VALUES ' +
+      data
+        .map(() => {
+          return '(?)';
+        })
+        .join(',') +
+      ' ON CONFLICT ("transactionHash") DO UPDATE SET address = EXCLUDED.address, amount = EXCLUDED.amount, "blockNumber" = EXCLUDED."blockNumber", "fioAddress" = EXCLUDED."fioAddress", data = EXCLUDED.data;';
+
+    return this.sequelize.query(
+      { query, values },
+      { type: this.sequelize.QueryTypes.INSERT },
+    );
   }
 }

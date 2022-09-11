@@ -32,10 +32,12 @@ import { WrapStatusEthWrapLogs } from './models/WrapStatusEthWrapLogs.mjs';
 import { WrapStatusEthUnwrapLogs } from './models/WrapStatusEthUnwrapLogs.mjs';
 import { WrapStatusPolygonUnwrapLogs } from './models/WrapStatusPolygonUnwrapLogs.mjs';
 import { WrapStatusPolygonWrapLogs } from './models/WrapStatusPolygonWrapLogs.mjs';
-import { WrapStatusFioUnwrapNftsLogs } from './models/WrapStatusFioUnwrapNftsLogs.mjs';
+import { WrapStatusFioUnwrapNftsOravotes } from './models/WrapStatusFioUnwrapNftsOravotes.mjs';
+import { WrapStatusFioUnwrapTokensOravotes } from './models/WrapStatusFioUnwrapTokensOravotes.mjs';
 import { WrapStatusFioWrapNftsLogs } from './models/WrapStatusFioWrapNftsLogs.mjs';
 import { WrapStatusFioUnwrapTokensLogs } from './models/WrapStatusFioUnwrapTokensLogs.mjs';
 import { WrapStatusFioWrapTokensLogs } from './models/WrapStatusFioWrapTokensLogs.mjs';
+import { WrapStatusFioUnwrapNftsLogs } from './models/WrapStatusFioUnwrapNftsLogs.mjs';
 
 const sequelize = new Sequelize(config.postgres);
 
@@ -69,10 +71,12 @@ WrapStatusEthWrapLogs.init(sequelize);
 WrapStatusEthUnwrapLogs.init(sequelize);
 WrapStatusPolygonUnwrapLogs.init(sequelize);
 WrapStatusPolygonWrapLogs.init(sequelize);
-WrapStatusFioUnwrapNftsLogs.init(sequelize);
+WrapStatusFioUnwrapNftsOravotes.init(sequelize);
 WrapStatusFioWrapNftsLogs.init(sequelize);
 WrapStatusFioUnwrapTokensLogs.init(sequelize);
 WrapStatusFioWrapTokensLogs.init(sequelize);
+WrapStatusFioUnwrapNftsLogs.init(sequelize);
+WrapStatusFioUnwrapTokensOravotes.init(sequelize);
 
 const { models } = sequelize;
 

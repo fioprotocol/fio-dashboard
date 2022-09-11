@@ -4,17 +4,18 @@ import Base from './Base';
 
 const { DataTypes: DT } = Sequelize;
 
-export class WrapStatusEthWrapLogs extends Base {
+export class WrapStatusFioUnwrapNftsOravotes extends Base {
   static init(sequelize) {
     super.init(
       {
-        transactionHash: { type: DT.STRING, primaryKey: true },
+        id: { type: DT.BIGINT, primaryKey: true },
         obtId: { type: DT.STRING, allowNull: false },
+        isComplete: { type: DT.BOOLEAN, defaultValue: false },
         data: { type: DT.JSON },
       },
       {
         sequelize,
-        tableName: 'wrap-status-eth-wrap-logs',
+        tableName: 'wrap-status-fio-unwrap-nfts-oravotes',
         timestamps: false,
       },
     );
@@ -22,7 +23,7 @@ export class WrapStatusEthWrapLogs extends Base {
 
   static attrs(type = 'default') {
     const attributes = {
-      default: ['transactionHash', 'obtId', 'data'],
+      default: ['id', 'obtId', 'isComplete', 'data'],
     };
 
     if (type in attributes) {
@@ -34,17 +35,17 @@ export class WrapStatusEthWrapLogs extends Base {
 
   static async addLogs(data) {
     const values = data.map(log => {
-      return [log.transactionHash, log.returnValues.obtid, JSON.stringify({ ...log })];
+      return [log.id, log.obt_id, !!log.isComplete, JSON.stringify({ ...log })];
     });
 
     const query =
-      'INSERT INTO "wrap-status-eth-wrap-logs" ("transactionHash", "obtId", data) VALUES ' +
+      'INSERT INTO "wrap-status-fio-unwrap-nfts-oravotes" ("id", "obtId", "isComplete", data) VALUES ' +
       data
         .map(() => {
           return '(?)';
         })
         .join(',') +
-      ' ON CONFLICT ("transactionHash") DO UPDATE SET "obtId" = EXCLUDED."obtId", data = EXCLUDED.data;';
+      ' ON CONFLICT ("id") DO UPDATE SET "obtId" = EXCLUDED."obtId", "isComplete" = EXCLUDED."isComplete", data = EXCLUDED.data;';
 
     return this.sequelize.query(
       { query, values },
