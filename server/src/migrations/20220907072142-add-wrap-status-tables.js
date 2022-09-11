@@ -100,11 +100,11 @@ module.exports = {
         { transaction: t },
       );
 
+      // add ETH actions logs tables
       await QI.createTable(
         'wrap-status-eth-unwrap-logs',
         {
-          id: { type: DT.BIGINT, primaryKey: true, autoIncrement: true },
-          transactionHash: { type: DT.STRING, allowNull: false },
+          transactionHash: { type: DT.STRING, primaryKey: true },
           address: { type: DT.STRING, allowNull: false },
           blockNumber: { type: DT.STRING, allowNull: false },
           amount: { type: DT.STRING, allowNull: false },
@@ -116,8 +116,7 @@ module.exports = {
       await QI.createTable(
         'wrap-status-polygon-unwrap-logs',
         {
-          id: { type: DT.BIGINT, primaryKey: true, autoIncrement: true },
-          transactionHash: { type: DT.STRING, allowNull: false },
+          transactionHash: { type: DT.STRING, primaryKey: true },
           address: { type: DT.STRING, allowNull: false },
           blockNumber: { type: DT.STRING, allowNull: false },
           domain: { type: DT.STRING, allowNull: false },
@@ -130,8 +129,7 @@ module.exports = {
       await QI.createTable(
         'wrap-status-eth-wrap-logs',
         {
-          id: { type: DT.BIGINT, primaryKey: true, autoIncrement: true },
-          transactionHash: { type: DT.STRING, allowNull: false },
+          transactionHash: { type: DT.STRING, primaryKey: true },
           obtId: { type: DT.STRING, allowNull: false },
           data: { type: DT.JSON },
         },
@@ -140,20 +138,41 @@ module.exports = {
       await QI.createTable(
         'wrap-status-polygon-wrap-logs',
         {
-          id: { type: DT.BIGINT, primaryKey: true, autoIncrement: true },
-          transactionHash: { type: DT.STRING, allowNull: false },
+          transactionHash: { type: DT.STRING, primaryKey: true },
           obtId: { type: DT.STRING, allowNull: false },
           data: { type: DT.JSON },
         },
         { transaction: t },
       );
 
+      // add oravotes tables
+      await QI.createTable(
+        'wrap-status-fio-unwrap-nfts-oravotes',
+        {
+          id: { type: DT.BIGINT, primaryKey: true },
+          obtId: { type: DT.STRING, allowNull: false },
+          isComplete: { type: DT.BOOLEAN, defaultValue: false },
+          data: { type: DT.JSON },
+        },
+        { transaction: t },
+      );
+      await QI.createTable(
+        'wrap-status-fio-unwrap-tokens-oravotes',
+        {
+          id: { type: DT.BIGINT, primaryKey: true },
+          obtId: { type: DT.STRING, allowNull: false },
+          isComplete: { type: DT.BOOLEAN, defaultValue: false },
+          data: { type: DT.JSON },
+        },
+        { transaction: t },
+      );
+
+      // add FIO actions logs tables
       await QI.createTable(
         'wrap-status-fio-unwrap-nfts-logs',
         {
-          id: { type: DT.BIGINT, primaryKey: true, autoIncrement: true },
+          transactionId: { type: DT.STRING, primaryKey: true },
           obtId: { type: DT.STRING, allowNull: false },
-          isComplete: { type: DT.BOOLEAN, defaultValue: false },
           data: { type: DT.JSON },
         },
         { transaction: t },
@@ -161,9 +180,8 @@ module.exports = {
       await QI.createTable(
         'wrap-status-fio-unwrap-tokens-logs',
         {
-          id: { type: DT.BIGINT, primaryKey: true, autoIncrement: true },
+          transactionId: { type: DT.STRING, primaryKey: true },
           obtId: { type: DT.STRING, allowNull: false },
-          isComplete: { type: DT.BOOLEAN, defaultValue: false },
           data: { type: DT.JSON },
         },
         { transaction: t },
@@ -172,8 +190,7 @@ module.exports = {
       await QI.createTable(
         'wrap-status-fio-wrap-nft-logs',
         {
-          id: { type: DT.BIGINT, primaryKey: true, autoIncrement: true },
-          transactionId: { type: DT.STRING, allowNull: false },
+          transactionId: { type: DT.STRING, primaryKey: true },
           address: { type: DT.STRING, allowNull: false },
           domain: { type: DT.STRING, allowNull: false },
           blockNumber: { type: DT.STRING, allowNull: false },
@@ -185,8 +202,7 @@ module.exports = {
       return QI.createTable(
         'wrap-status-fio-wrap-tokens-logs',
         {
-          id: { type: DT.BIGINT, primaryKey: true, autoIncrement: true },
-          transactionId: { type: DT.STRING, allowNull: false },
+          transactionId: { type: DT.STRING, primaryKey: true },
           address: { type: DT.STRING, allowNull: false },
           amount: { type: DT.STRING, allowNull: false },
           blockNumber: { type: DT.STRING, allowNull: false },
@@ -207,6 +223,8 @@ module.exports = {
     await QI.dropTable('wrap-status-fio-unwrap-nfts-logs');
     await QI.dropTable('wrap-status-fio-unwrap-tokens-logs');
     await QI.dropTable('wrap-status-fio-wrap-nft-logs');
-    return QI.dropTable('wrap-status-fio-wrap-tokens-logs');
+    await QI.dropTable('wrap-status-fio-wrap-tokens-logs');
+    await QI.dropTable('wrap-status-fio-unwrap-nfts-oravotes');
+    return QI.dropTable('wrap-status-fio-unwrap-tokens-oravotes');
   },
 };
