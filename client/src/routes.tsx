@@ -280,8 +280,20 @@ const UnwrapTokensPage = React.lazy(() =>
   import(/* webpackChunkName: 'UnwrapTokensPage' */ './pages/UnwrapTokensPage'),
 );
 
-const WrapStatusPage = React.lazy(() =>
-  import(/* webpackChunkName: 'WrapStatusPage' */ './pages/WrapStatusPage'),
+const WrapStatusPageUnwrapTokens = React.lazy(() =>
+  import(/* webpackChunkName: 'WrapStatusPageUnwrapTokens' */ './pages/WrapStatusPageUnwrapTokens'),
+);
+
+const WrapStatusPageUnwrapDomains = React.lazy(() =>
+  import(/* webpackChunkName: 'WrapStatusPageUnwrapDomains' */ './pages/WrapStatusPageUnwrapDomains'),
+);
+
+const WrapStatusPageWrapTokens = React.lazy(() =>
+  import(/* webpackChunkName: 'WrapStatusPageWrapTokens' */ './pages/WrapStatusPageWrapTokens'),
+);
+
+const WrapStatusPageWrapDomains = React.lazy(() =>
+  import(/* webpackChunkName: 'WrapStatusPageWrapDomains' */ './pages/WrapStatusPageWrapDomains'),
 );
 
 const Routes = (): React.ReactElement => (
@@ -658,7 +670,26 @@ const Routes = (): React.ReactElement => (
             exact
           />
 
-          <Route path={ROUTES.WRAP_STATUS} component={WrapStatusPage} exact />
+          <Route
+            path={ROUTES.WRAP_STATUS_UNWRAP_TOKENS}
+            component={WrapStatusPageUnwrapTokens}
+            exact
+          />
+          <Route
+            path={ROUTES.WRAP_STATUS_WRAP_TOKENS}
+            component={WrapStatusPageWrapTokens}
+            exact
+          />
+          <Route
+            path={ROUTES.WRAP_STATUS_WRAP_DOMAINS}
+            component={WrapStatusPageWrapDomains}
+            exact
+          />
+          <Route
+            path={ROUTES.WRAP_STATUS_UNWRAP_DOMAINS}
+            component={WrapStatusPageUnwrapDomains}
+            exact
+          />
 
           <AuthContainer />
         </Switch>

@@ -55,13 +55,13 @@ export class WrapStatusEthUnwrapLogs extends Base {
           ue."amount",
           ue."fioAddress", 
           ue."data", 
-          uf."data" as "confirmData",
-          uo."data" as "oravotes"
+          array_agg(uf."data") FILTER (WHERE uf."data" IS NOT NULL)  as "confirmData",
+          array_agg(uo."data") FILTER (WHERE uo."data" IS NOT NULL)  as "oravotes"
         FROM "wrap-status-eth-unwrap-logs" ue
           LEFT JOIN "wrap-status-fio-unwrap-tokens-logs" uf ON uf."obtId" = ue."transactionHash"
           LEFT JOIN "wrap-status-fio-unwrap-tokens-oravotes" uo ON uo."obtId" = ue."transactionHash"
         WHERE ue."transactionHash" IS NOT NULL
-        GROUP BY ue."transactionHash", uf."transactionId", uo.id
+        GROUP BY ue."transactionHash"
         ORDER BY ue."blockNumber"::bigint desc
         LIMIT ${limit} OFFSET ${offset}
       `);

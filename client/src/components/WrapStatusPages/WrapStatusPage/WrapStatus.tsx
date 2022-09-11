@@ -1,32 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { DropdownButton, Table } from 'react-bootstrap';
 import Badge from 'react-bootstrap/Badge';
 
-import { Link, useHistory, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 
-import Loader from '../../components/Loader/Loader';
+import Loader from '../../../components/Loader/Loader';
 import DetailsModal from './components/DetailsModal';
 
-import usePagination from '../../hooks/usePagination';
-import { formatDateToLocale } from '../../helpers/stringFormatters';
-import { putParamsToUrl } from '../../utils';
-import apis from '../../api';
+import usePagination from '../../../hooks/usePagination';
+import { formatDateToLocale } from '../../../helpers/stringFormatters';
+import apis from '../../../api';
 
-import { ROUTES } from '../../constants/routes';
+import { ROUTES } from '../../../constants/routes';
 
 import { PageProps } from './types';
-import { WrapStatusWrapItem } from '../../types';
+import { WrapStatusWrapItem } from '../../../types';
 
-import classes from './WrapStatusPage.module.scss';
-
-const PAGE_NAMES = {
-  WRAP_TOKENS: 'wrapTokens',
-  UNWRAP_TOKENS: 'unwrapTokens',
-  WRAP_DOMAINS: 'wrapDomains',
-  UNWRAP_DOMAINS: 'unwrapDomains',
-};
+import classes from './WrapStatus.module.scss';
 
 const isCompleteAction = (data: WrapStatusWrapItem) => {
   return (
@@ -36,86 +28,15 @@ const isCompleteAction = (data: WrapStatusWrapItem) => {
   );
 };
 
-// todo: move switch logic to index.ts or create four different pages
-const WrapStatusPage: React.FC<PageProps> = props => {
-  const {
-    loading,
-    wrapTokensList,
-    wrapDomainsList,
-    unwrapDomainsList,
-    unwrapTokensList,
-    getWrapTokensList,
-    getWrapDomainsList,
-    getUnwrapTokensList,
-    getUnwrapDomainsList,
-  } = props;
-
-  const history = useHistory();
-  const { name: pageName }: { name: string } = useParams();
+const WrapStatus: React.FC<PageProps> = props => {
+  const { loading, isWrap, isTokens, data, getData } = props;
 
   const [modalData, setModalData] = useState<WrapStatusWrapItem | null>(null);
 
-  const { paginationComponent } = usePagination(
-    (() => {
-      let resultGetter;
-      switch (pageName) {
-        case PAGE_NAMES.WRAP_TOKENS:
-          resultGetter = getWrapTokensList;
-          break;
-        case PAGE_NAMES.WRAP_DOMAINS:
-          resultGetter = getWrapDomainsList;
-          break;
-        case PAGE_NAMES.UNWRAP_TOKENS:
-          resultGetter = getUnwrapTokensList;
-          break;
-        case PAGE_NAMES.UNWRAP_DOMAINS:
-          resultGetter = getUnwrapDomainsList;
-          break;
-        default:
-          resultGetter = null;
-      }
-      return resultGetter;
-    })(),
-  );
+  const { paginationComponent } = usePagination(getData);
 
   const openDetailsModal = (item: WrapStatusWrapItem) => setModalData(item);
   const closeDetailsModal = () => setModalData(null);
-
-  useEffect(() => {
-    if (!pageName || !Object.values(PAGE_NAMES).includes(pageName))
-      history.push(
-        putParamsToUrl(ROUTES.WRAP_STATUS, {
-          name: PAGE_NAMES.WRAP_TOKENS,
-        }),
-      );
-  }, [history, pageName]);
-
-  const data = (() => {
-    let result;
-    switch (pageName) {
-      case PAGE_NAMES.WRAP_TOKENS:
-        result = wrapTokensList;
-        break;
-      case PAGE_NAMES.WRAP_DOMAINS:
-        result = wrapDomainsList;
-        break;
-      case PAGE_NAMES.UNWRAP_TOKENS:
-        result = unwrapTokensList;
-        break;
-      case PAGE_NAMES.UNWRAP_DOMAINS:
-        result = unwrapDomainsList;
-        break;
-      default:
-        result = null;
-    }
-    return result;
-  })();
-
-  const isWrap =
-    pageName === PAGE_NAMES.WRAP_DOMAINS || pageName === PAGE_NAMES.WRAP_TOKENS;
-  const isTokens =
-    pageName === PAGE_NAMES.UNWRAP_TOKENS ||
-    pageName === PAGE_NAMES.WRAP_TOKENS;
 
   return (
     <>
@@ -128,11 +49,9 @@ const WrapStatusPage: React.FC<PageProps> = props => {
           >
             <div className="pl-4 py-2">
               <Link
-                to={putParamsToUrl(ROUTES.WRAP_STATUS, {
-                  name: PAGE_NAMES.WRAP_TOKENS,
-                })}
+                to={ROUTES.WRAP_STATUS_WRAP_TOKENS}
                 className={classNames(
-                  PAGE_NAMES.WRAP_TOKENS === pageName ? classes.disabled : '',
+                  isWrap && isTokens ? classes.disabled : '',
                 )}
               >
                 Tokens
@@ -140,21 +59,15 @@ const WrapStatusPage: React.FC<PageProps> = props => {
             </div>
             <div className="pl-4 py-2">
               <Link
-                to={putParamsToUrl(ROUTES.WRAP_STATUS, {
-                  name: PAGE_NAMES.WRAP_DOMAINS,
-                })}
+                to={ROUTES.WRAP_STATUS_WRAP_DOMAINS}
                 className={classNames(
-                  PAGE_NAMES.WRAP_DOMAINS === pageName ? classes.disabled : '',
+                  isWrap && !isTokens ? classes.disabled : '',
                 )}
               >
                 Domains
               </Link>
             </div>
           </DropdownButton>
-          {(pageName === PAGE_NAMES.WRAP_TOKENS ||
-            pageName === PAGE_NAMES.WRAP_DOMAINS) && (
-            <div className={classes.navActive} />
-          )}
 
           <DropdownButton
             id="dropdown-nav-unwrapping"
@@ -163,11 +76,9 @@ const WrapStatusPage: React.FC<PageProps> = props => {
           >
             <div className="pl-4 py-2">
               <Link
-                to={putParamsToUrl(ROUTES.WRAP_STATUS, {
-                  name: PAGE_NAMES.UNWRAP_TOKENS,
-                })}
+                to={ROUTES.WRAP_STATUS_UNWRAP_TOKENS}
                 className={classNames(
-                  PAGE_NAMES.UNWRAP_TOKENS === pageName ? classes.disabled : '',
+                  !isWrap && isTokens ? classes.disabled : '',
                 )}
               >
                 Tokens
@@ -175,13 +86,9 @@ const WrapStatusPage: React.FC<PageProps> = props => {
             </div>
             <div className="pl-4 py-2">
               <Link
-                to={putParamsToUrl(ROUTES.WRAP_STATUS, {
-                  name: PAGE_NAMES.UNWRAP_DOMAINS,
-                })}
+                to={ROUTES.WRAP_STATUS_UNWRAP_DOMAINS}
                 className={classNames(
-                  PAGE_NAMES.UNWRAP_DOMAINS === pageName
-                    ? classes.disabled
-                    : '',
+                  !isWrap && !isTokens ? classes.disabled : '',
                 )}
               >
                 Domains
@@ -236,8 +143,11 @@ const WrapStatusPage: React.FC<PageProps> = props => {
                             listItem.data.action_trace.block_time,
                           )
                         : null}
-                      {listItem.confirmData?.timestamp
-                        ? formatDateToLocale(listItem.confirmData.timestamp)
+                      {listItem.confirmData?.length &&
+                      listItem.confirmData[0].action_trace?.block_time
+                        ? formatDateToLocale(
+                            listItem.confirmData[0].action_trace.block_time,
+                          )
                         : null}
                     </th>
                     <th>
@@ -271,4 +181,4 @@ const WrapStatusPage: React.FC<PageProps> = props => {
   );
 };
 
-export default WrapStatusPage;
+export default WrapStatus;
