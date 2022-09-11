@@ -2,11 +2,15 @@ import React from 'react';
 
 import Badge from 'react-bootstrap/Badge';
 
-import Modal from '../../../components/Modal/Modal';
+import classNames from 'classnames';
 
-import { WrapStatusWrapItem } from '../../../types';
-import { formatDateToLocale } from '../../../helpers/stringFormatters';
-import apis from '../../../api';
+import Modal from '../../../../components/Modal/Modal';
+
+import { WrapStatusWrapItem } from '../../../../types';
+import { formatDateToLocale } from '../../../../helpers/stringFormatters';
+import apis from '../../../../api';
+
+import classes from './../WrapStatus.module.scss';
 
 type Props = {
   itemData?: WrapStatusWrapItem;
@@ -16,6 +20,7 @@ type Props = {
   isComplete: boolean;
 };
 
+// todo: refactor
 const DetailsModal: React.FC<Props> = props => {
   const { itemData, onClose, isComplete, isWrap, isTokens } = props;
 
@@ -43,7 +48,22 @@ const DetailsModal: React.FC<Props> = props => {
               <div className="mr-3">
                 <b>Trx_id:</b>
               </div>
-              <div>{itemData.transactionHash || itemData.transactionId}</div>
+              <div className={classNames(classes.trxId, 'mr-3')}>
+                <a
+                  href={
+                    (itemData.transactionHash
+                      ? isTokens
+                        ? process.env.REACT_APP_ETH_HISTORY_URL
+                        : process.env.REACT_APP_POLYGON_HISTORY_URL
+                      : process.env.REACT_APP_FIO_BLOCKS_TX_URL) +
+                    (itemData.transactionHash || itemData.transactionId)
+                  }
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {itemData.transactionHash || itemData.transactionId}
+                </a>
+              </div>
             </div>
             <div className="d-flex justify-content-between my-2">
               <div className="mr-3">
@@ -123,6 +143,40 @@ const DetailsModal: React.FC<Props> = props => {
               </div>
             ) : null}
 
+            {!isWrap && itemData.oravotes?.length ? (
+              <div className="mt-4">
+                <div>
+                  <b>
+                    <h4>Oracle votes:</h4>
+                  </b>
+                </div>
+                <div className="d-flex justify-content-between my-2">
+                  <div className="mr-3">
+                    <b>Chain:</b>
+                  </div>
+                  <div>FIO</div>
+                </div>
+                <div className="d-flex justify-content-between my-2">
+                  <div className="mr-3">
+                    <b>Voters:</b>
+                  </div>
+                  <div>{JSON.stringify(itemData.oravotes[0].voters)}</div>
+                </div>
+                <div className="d-flex justify-content-between my-2">
+                  <div className="mr-3">
+                    <b>Is complete:</b>
+                  </div>
+                  <div>{JSON.stringify(!!itemData.oravotes[0].isComplete)}</div>
+                </div>
+                <div className="d-flex justify-content-between my-2">
+                  <div className="mr-3">
+                    <b>FIO Address:</b>
+                  </div>
+                  <div>{itemData.oravotes[0].fio_address}</div>
+                </div>
+              </div>
+            ) : null}
+
             {isWrap && itemData.confirmData ? (
               <div className="mt-4">
                 <div>
@@ -134,7 +188,20 @@ const DetailsModal: React.FC<Props> = props => {
                   <div className="mr-3">
                     <b>Trx_id:</b>
                   </div>
-                  <div>{itemData.confirmData.transactionHash}</div>
+                  <div className={classes.trxId}>
+                    <a
+                      href={
+                        (isTokens
+                          ? process.env.REACT_APP_ETH_HISTORY_URL
+                          : process.env.REACT_APP_POLYGON_HISTORY_URL) +
+                        itemData.confirmData.transactionHash
+                      }
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {itemData.confirmData.transactionHash}
+                    </a>
+                  </div>
                 </div>
                 <div className="d-flex justify-content-between my-2">
                   <div className="mr-3">
@@ -157,52 +224,34 @@ const DetailsModal: React.FC<Props> = props => {
               </div>
             ) : null}
 
-            {!isWrap && itemData.confirmData ? (
+            {!isWrap && itemData.confirmData?.length ? (
               <div className="mt-4">
                 <div>
                   <b>
                     <h4>Confirm data</h4>
                   </b>
                 </div>
-                <div className="d-flex justify-content-between my-2">
+                <div className="my-2">
                   <div className="mr-3">
-                    <b>Chain:</b>
+                    <b>Transactions ids:</b>
                   </div>
-                  <div>FIO</div>
-                </div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>Oracles votes id:</b>
-                  </div>
-                  <div>{itemData.confirmData.id}</div>
-                </div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>Date:</b>
-                  </div>
-                  <div>
-                    {itemData.confirmData?.timestamp
-                      ? formatDateToLocale(itemData.confirmData.timestamp)
-                      : null}
-                  </div>
-                </div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>Voters:</b>
-                  </div>
-                  <div>{JSON.stringify(itemData.confirmData.voters)}</div>
-                </div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>Is complete:</b>
-                  </div>
-                  <div>{JSON.stringify(!!itemData.confirmData.isComplete)}</div>
-                </div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>FIO Address:</b>
-                  </div>
-                  <div>{itemData.confirmData.fio_address}</div>
+                  {itemData.confirmData.map((item: any) => (
+                    <div
+                      key={item.action_trace.trx_id}
+                      className={classes.trxId}
+                    >
+                      <a
+                        href={
+                          process.env.REACT_APP_FIO_BLOCKS_TX_URL +
+                          item.action_trace.trx_id
+                        }
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {item.action_trace.trx_id}
+                      </a>
+                    </div>
+                  ))}
                 </div>
               </div>
             ) : null}
