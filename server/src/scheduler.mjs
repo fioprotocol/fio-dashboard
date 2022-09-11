@@ -43,7 +43,7 @@ const availableJobsParams = {
     name: 'wrap-status',
     interval: process.env.WRAP_STATUS_JOB_INTERVAL || 60 * 1000, // 60 sec
     timeout: 0,
-    // closeWorkerAfterMs: 30 * 60 * 1000, // 30 min, Do not close the process it may take some time
+    closeWorkerAfterMs: 30 * 60 * 1000, // 30 min
   },
 };
 

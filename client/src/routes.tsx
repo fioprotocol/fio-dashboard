@@ -66,7 +66,10 @@ import AdminProfilePage from './pages/AdminProfilePage';
 import AdminHomePage from './pages/AdminHomePage';
 import AdminFioAccountsProfilesListPage from './pages/AdminFioAccountsProfilesListPage';
 import AdminSearchResultPage from './pages/AdminSearchResultPage';
-import WrapStatusPage from './pages/WrapStatusPage';
+import WrapStatusPageUnwrapTokens from './pages/WrapStatusPageUnwrapTokens';
+import WrapStatusPageUnwrapDomains from './pages/WrapStatusPageUnwrapDomains';
+import WrapStatusPageWrapTokens from './pages/WrapStatusPageWrapTokens';
+import WrapStatusPageWrapDomains from './pages/WrapStatusPageWrapDomains';
 
 import { ROUTES } from './constants/routes';
 
@@ -318,7 +321,26 @@ const Routes = (): React.ReactElement => (
           exact
         />
 
-        <Route path={ROUTES.WRAP_STATUS} component={WrapStatusPage} exact />
+        <Route
+          path={ROUTES.WRAP_STATUS_UNWRAP_TOKENS}
+          component={WrapStatusPageUnwrapTokens}
+          exact
+        />
+        <Route
+          path={ROUTES.WRAP_STATUS_WRAP_TOKENS}
+          component={WrapStatusPageWrapTokens}
+          exact
+        />
+        <Route
+          path={ROUTES.WRAP_STATUS_WRAP_DOMAINS}
+          component={WrapStatusPageWrapDomains}
+          exact
+        />
+        <Route
+          path={ROUTES.WRAP_STATUS_UNWRAP_DOMAINS}
+          component={WrapStatusPageUnwrapDomains}
+          exact
+        />
 
         <AuthContainer />
       </Switch>
