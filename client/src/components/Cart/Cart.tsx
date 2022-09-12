@@ -1,11 +1,13 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
+import isEmpty from 'lodash/isEmpty';
 import classnames from 'classnames';
 
 import CounterContainer from '../CounterContainer/CounterContainer';
 import CartItem from './CartItem';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
+import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
 
 import { deleteCartItem } from '../../utils';
 
@@ -47,6 +49,9 @@ const Cart: React.FC<Props> = props => {
     isPriceChanged,
     roe,
     hasGetPricesError,
+    totalCartAmount,
+    walletBalancesAvailable,
+    hasLowBalance,
     error,
   } = props;
 
@@ -68,6 +73,16 @@ const Cart: React.FC<Props> = props => {
   if (hasGetPricesError) {
     errorMessage = 'Price updating has been failed. Please, try again';
   }
+
+  const walletBalance =
+    (!isEmpty(walletBalancesAvailable) && walletBalancesAvailable.fio) || 0;
+  const lowBalanceText = {
+    buttonText: 'Make Deposit',
+    messageText: `There are not
+            enough FIO tokens in this FIO Wallet to complete the purchase.
+            Needed: ${totalCartAmount} FIO, available in wallet:
+            ${walletBalance} FIO. Please add FIO tokens.`,
+  };
 
   return (
     <>
@@ -112,6 +127,7 @@ const Cart: React.FC<Props> = props => {
           </p>
         </Link>
       </div>
+      <LowBalanceBadge {...lowBalanceText} hasLowBalance={hasLowBalance} />
     </>
   );
 };

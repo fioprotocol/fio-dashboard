@@ -51,9 +51,10 @@ const PAYMENT_OPTIONS_PROPS = {
       paymentWalletPublicKey === '' ||
       cartItems?.length === 0 ||
       loading ||
-      disabled,
+      disabled ||
+      hasLowBalance,
     loading,
-    hideButton: hasLowBalance,
+    // hideButton: hasLowBalance,
     onClick: () => onPaymentChoose(paymentOption),
   }),
   [PAYMENT_OPTIONS.CREDIT_CARD]: ({

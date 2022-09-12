@@ -29,6 +29,7 @@ import {
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 
+import { useWalletBalances } from '../../util/hooks';
 import { handleFreeAddressCart, totalCost } from '../../utils';
 import MathOp from '../../util/math';
 import { convertFioPrices } from '../../util/prices';
@@ -110,6 +111,10 @@ export const useContext = (): UseContextReturnType => {
       roe,
       setCartItems: cartItems => dispatch(setCartItems(cartItems)),
     });
+
+  const { available: walletBalancesAvailable } = useWalletBalances(
+    paymentWalletPublicKey,
+  );
 
   const isFree =
     !isEmpty(cartItems) &&
@@ -368,6 +373,7 @@ export const useContext = (): UseContextReturnType => {
     hasGetPricesError: hasGetPricesError || updatingPricesHasError,
     hasLowBalance,
     walletCount,
+    walletBalancesAvailable,
     isFree,
     loading: loading || isUpdatingPrices,
     totalCartAmount,

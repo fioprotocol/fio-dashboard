@@ -58,14 +58,21 @@ const PaymentsBlock: React.FC<Props> = props => {
     onPaymentChoose,
   };
 
-  return (
-    <>
-      <PaymentOptions {...paymentFioProps} />
+  // @ts-ignore // todo: temporary hide
+  // eslint-disable-next-line no-unused-vars
+  const renderOther = () => {
+    return (
       <OtherPaymentsBlock
         defaultShowState={hasLowBalance}
         optionsDisabled={cartItems.length === 0 || isFree}
         {...otherPaymentsProps}
       />
+    );
+  };
+
+  return (
+    <>
+      <PaymentOptions {...paymentFioProps} />
     </>
   );
 };
