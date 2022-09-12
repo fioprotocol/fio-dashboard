@@ -1,0 +1,29 @@
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  width: 100%;
+  height: 100%;
+  padding: 60px 20px;
+  position: relative;
+  max-width: 1086px;
+}
+
+@include sm {
+  .container {
+    padding: 30px 20px;
+  }
+}
+
+:global {
+  .cky-banner-element {
+    padding: 8px 30px;
+    background: #F8F9FA;
+    color: #858A8F;
+    border: 1px solid #DEE2E6;
+    box-sizing: border-box;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+}
