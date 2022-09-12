@@ -160,7 +160,10 @@ export const useContext = (): {
         }
       }
       if (!paymentWalletPublicKey && fioWallets.length) {
-        setWallet(fioWallets[0].publicKey);
+        setWallet(
+          fioWallets.filter(({ from }) => from === WALLET_CREATED_FROM.EDGE)[0]
+            .publicKey,
+        );
       }
     }
   }, []);
@@ -203,6 +206,11 @@ export const useContext = (): {
   const paymentAssignmentWallets = fioWallets
     .filter(wallet => {
       if (isFree || paymentOption !== PAYMENT_OPTIONS.FIO) return true;
+      if (
+        wallet.from === WALLET_CREATED_FROM.LEDGER &&
+        paymentOption === PAYMENT_OPTIONS.FIO
+      )
+        return false;
       if (
         cartHasItemsWithPrivateDomain &&
         paymentOption === PAYMENT_OPTIONS.FIO &&
@@ -304,6 +312,7 @@ export const useContext = (): {
         'At this moment registration of FIO Crypto Handles on private domains is not supported. We are working hard to add this capability to the Ledger’s FIO App.',
       );
 
+    // todo: this part is reset the error if paymentWalletFrom was changed to EDGE. could be situation when setError was called from other place not in this useEffect, in this case error could be reset. should this error be only for ledger error? - rename in this case
     if (error && paymentWalletFrom === WALLET_CREATED_FROM.EDGE) setError(null);
   }, [paymentWalletFrom, cartHasItemsWithPrivateDomain, error]);
 
