@@ -21,7 +21,6 @@ export default class AuthCheck extends Base {
 
       return {
         id: user.id,
-        role: user.role,
       };
     } catch (e) {
       throw new X({
@@ -38,6 +37,6 @@ export default class AuthCheck extends Base {
   }
 
   static get resultSecret() {
-    return [];
+    return ['*'];
   }
 }

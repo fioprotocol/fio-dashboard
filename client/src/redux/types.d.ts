@@ -16,10 +16,26 @@ import {
   AnyObject,
   FioWalletDoublet,
   FioActionExecuted,
+  PaymentOptionsProps,
 } from '../types';
 
 // todo: set all actions types
 
+export type CreateOrderActionData = {
+  total: string;
+  roe: number;
+  publicKey: string;
+  paymentProcessor?: PaymentOptionsProps;
+  items: {
+    action: string;
+    address?: string;
+    domain: string;
+    params?: AnyObject;
+    nativeFio: string;
+    price: string;
+    priceCurrency: string;
+  }[];
+};
 type GetFeeAction = { data: { fee: number }; type: string; endpoint: string };
 type PricesAction = { data: { pricing: { usdtRoe: number } }; type: string };
 type ContainedFlowAction = {

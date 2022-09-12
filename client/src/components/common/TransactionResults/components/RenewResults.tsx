@@ -12,8 +12,7 @@ const RenewResults: React.FC<ResultsProps> = props => {
   const {
     results: {
       name = '',
-      feeCollected: { nativeFio, fio, usdc } = {
-        nativeFio: 0,
+      feeCollected: { fio, usdc } = {
         fio: '0',
         usdc: '0',
       },
@@ -24,9 +23,8 @@ const RenewResults: React.FC<ResultsProps> = props => {
     <Results {...props}>
       <h5 className={classes.label}>Renew Details</h5>
       <PriceBadge
-        costNativeFio={nativeFio}
-        costFio={fio}
-        costUsdc={usdc}
+        paymentAmount={fio}
+        convertedPaymentAmount={usdc}
         title={name}
         type={BADGE_TYPES.WHITE}
       />

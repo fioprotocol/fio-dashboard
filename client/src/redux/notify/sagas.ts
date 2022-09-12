@@ -2,19 +2,22 @@ import { History } from 'history';
 import { put, select, takeEvery } from 'redux-saga/effects';
 
 import {
-  PROFILE_FAILURE,
-  LOGIN_FAILURE,
+  ADMIN_PROFILE_FAILURE,
+  adminLogout,
   AUTH_CHECK_FAILURE,
-  UPDATE_EMAIL_FAILURE,
+  LOGIN_FAILURE,
   logout,
+  PROFILE_FAILURE,
+  UPDATE_EMAIL_FAILURE,
 } from '../profile/actions';
 import {
-  LOGIN_FAILURE as LOGIN_EDGE_FAILURE,
   CONFIRM_PIN_FAILURE,
+  LOGIN_FAILURE as LOGIN_EDGE_FAILURE,
 } from '../edge/actions';
 import { LIST_FAILURE as NOTIFICATIONS_LIST_FAILURE } from '../notifications/actions';
 import { CAPTCHA_FAILURE } from '../registrations/actions';
 import { GET_ALL_PUBLIC_ADDRESS_FAILURE } from '../fio/actions';
+import { CREATE_ORDER_FAILURE } from '../order/actions';
 import { showGenericErrorModal } from '../modal/actions';
 import { showGenericError as getShowGenericError } from '../modal/selectors';
 
@@ -34,12 +37,14 @@ export function* notify(history: History): Generator {
       action.error &&
       action.type !== PROFILE_FAILURE &&
       action.type !== AUTH_CHECK_FAILURE &&
+      action.type !== ADMIN_PROFILE_FAILURE &&
       action.type !== LOGIN_FAILURE &&
       action.type !== LOGIN_EDGE_FAILURE &&
       action.type !== NOTIFICATIONS_LIST_FAILURE &&
       action.type !== CAPTCHA_FAILURE &&
       action.type !== CONFIRM_PIN_FAILURE &&
-      action.type !== GET_ALL_PUBLIC_ADDRESS_FAILURE
+      action.type !== GET_ALL_PUBLIC_ADDRESS_FAILURE &&
+      action.type !== CREATE_ORDER_FAILURE
     ) {
       const genericErrorIsShowing: boolean = yield select(getShowGenericError);
 
@@ -66,7 +71,9 @@ export function* notify(history: History): Generator {
       action.error.fields &&
       action.error.fields.token === 'WRONG_TOKEN'
     ) {
-      yield put<Action>(logout({ history }, ROUTES.HOME));
+      if (action.type === ADMIN_PROFILE_FAILURE) {
+        yield put<Action>(adminLogout({ history }, ROUTES.ADMIN_LOGIN));
+      } else yield put<Action>(logout({ history }, ROUTES.HOME));
     }
   });
 }

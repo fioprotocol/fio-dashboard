@@ -11,6 +11,7 @@ import { PublicAddressesResponse } from '@fioprotocol/fiosdk/src/entities/Public
 import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 import { BalanceResponse } from '@fioprotocol/fiosdk/src/entities/BalanceResponse';
+import { Action } from 'ledgerjs-hw-app-fio/dist/types/public';
 
 import MathOp from '../util/math';
 import { log } from '../util/general';
@@ -39,10 +40,33 @@ export interface TrxResponse {
   other?: AnyObject;
 }
 
+export interface SignedTxArgs {
+  compression: number;
+  packed_context_free_data: string;
+  packed_trx: string;
+  signatures: string[];
+}
+
 export type TrxResponsePaidBundles = TrxResponse & {
   bundlesCollected?: number;
 };
 
+export type RawTransaction = {
+  expiration: string;
+  ref_block_num: number | bigint | string;
+  ref_block_prefix: number | bigint | string;
+  max_net_usage_words?: number;
+  max_cpu_usage_ms?: number;
+  delay_sec?: number;
+  context_free_actions: Action[];
+  actions: {
+    account: string;
+    name: string;
+    authorization: { actor: string; permission: string }[];
+    data: AnyObject;
+  }[];
+  transaction_extensions: AnyObject[];
+};
 export type FIOSDK_LIB = typeof FIOSDK;
 
 export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit)
@@ -51,6 +75,19 @@ export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit)
 export const ENDPOINT_FEE_HASH: { [endpoint: string]: string } = {
   [EndPoint.stakeFioTokens]: '0x83c48bde1205347001e4ddd44c571f78',
   [EndPoint.unStakeFioTokens]: '0x85248efc2886d68989b010f21cb2f480',
+};
+
+export type TrxData = {
+  trx: {
+    expiration: string;
+    ref_block_num: number;
+    ref_block_prefix: number;
+    context_free_actions: AnyObject[];
+    transaction_extensions: AnyObject[];
+  };
+  actor: string;
+  authorization: { actor: string; permission: string }[];
+  chainId: string;
 };
 
 export default class Fio {
@@ -194,10 +231,47 @@ export default class Fio {
     return json.fields?.length ? json.fields[0].error : json.message || 'error';
   };
 
+  getDataForTx = async (publicKey: string): Promise<TrxData> => {
+    const actor = this.publicFioSDK.transactions.getActor(publicKey);
+    const chainInfo = await this.publicFioSDK.transactions.getChainInfo();
+    const blockInfo = await this.publicFioSDK.transactions.getBlock(chainInfo);
+
+    const expiration = new Date(chainInfo.head_block_time + 'Z');
+    expiration.setSeconds(expiration.getSeconds() + 180);
+    const expirationStr = expiration.toISOString();
+
+    return {
+      trx: {
+        expiration: expirationStr.substr(0, expirationStr.length - 1),
+        /* tslint:disable-next-line:no-bitwise */
+        ref_block_num: blockInfo.block_num & 0xffff,
+        ref_block_prefix: blockInfo.ref_block_prefix,
+        context_free_actions: [],
+        transaction_extensions: [],
+      },
+      actor,
+      authorization: [{ actor, permission: 'active' }],
+      chainId: chainInfo.chain_id,
+    };
+  };
+
   getActor = (publicKey: string): string =>
     this.publicFioSDK.transactions.getActor(publicKey);
 
-  availCheckTableRows = async (fioName: string): Promise<boolean> => {
+  setTableRowsParams = (
+    fioName: string,
+  ): {
+    code: string;
+    scope: string;
+    table: string;
+    lower_bound: string;
+    upper_bound?: string;
+    key_type?: string;
+    index_position?: string;
+    json?: boolean;
+    reverse?: boolean;
+    limit?: number;
+  } => {
     const hash = createHash('sha1');
     const bound =
       '0x' +
@@ -222,6 +296,12 @@ export default class Fio {
       params.table = 'domains';
       params.index_position = '4';
     }
+
+    return params;
+  };
+
+  availCheckTableRows = async (fioName: string): Promise<boolean> => {
+    const params = this.setTableRowsParams(fioName);
 
     try {
       const rows = await this.getTableRows(params);
@@ -436,7 +516,7 @@ export default class Fio {
 
   getTransferTokensAction = (
     publicKey: string,
-    amount: number,
+    amount: string,
     fee: number,
   ) => {
     return {

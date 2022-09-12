@@ -6,11 +6,13 @@ import { fioDomains } from '../fio/selectors';
 import { prefix } from './actions';
 
 import { ReduxState } from '../init';
-import { Domain, FioDomainDoublet, Prices } from '../../types';
 import {
-  FioRegCaptchaResponse,
-  FioRegRegisterResponse,
-} from '../../api/responses';
+  Domain,
+  FioDomainDoublet,
+  Prices,
+  RegistrationResult,
+} from '../../types';
+import { FioRegCaptchaResponse } from '../../api/responses';
 
 export const loading = (state: ReduxState): boolean => state[prefix].loading;
 export const prices = (state: ReduxState): Prices => state[prefix].prices;
@@ -42,7 +44,7 @@ export const captchaResult = (state: ReduxState): FioRegCaptchaResponse =>
   state[prefix].captchaResult;
 export const captchaResolving = (state: ReduxState): boolean =>
   state[prefix].captchaResolving;
-export const registrationResult = (state: ReduxState): FioRegRegisterResponse =>
+export const registrationResult = (state: ReduxState): RegistrationResult =>
   state[prefix].registrationResult;
 export const isProcessing = (state: ReduxState): boolean =>
   state[prefix].isProcessing;
@@ -53,3 +55,5 @@ export const allowCustomDomains = (state: ReduxState): boolean => {
   }
   return true;
 };
+export const hasGetPricesError = (state: ReduxState): boolean =>
+  state[prefix].hasGetPricesError;

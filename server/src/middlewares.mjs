@@ -8,6 +8,7 @@ export default {
     verify: (req, res, buf) => {
       try {
         JSON.parse(buf);
+        req.rawBody = buf.toString('utf8');
       } catch (e) {
         res.send({
           status: 0,
@@ -20,7 +21,12 @@ export default {
       }
     },
   }),
-  urlencoded: bodyParser.urlencoded({ extended: true }),
+  urlencoded: bodyParser.urlencoded({
+    extended: true,
+    verify: (req, res, buf) => {
+      req.rawBody = buf.toString('utf8');
+    },
+  }),
   cors: cors({ origin: '*' }),
   multipart: multipart(),
 };

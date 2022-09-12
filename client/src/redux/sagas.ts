@@ -2,11 +2,14 @@ import { History } from 'history';
 import { all } from 'redux-saga/effects';
 
 import {
+  adminConfirmSuccess,
+  adminLoginSuccess,
+  adminLogoutSuccess,
+  confirmEmailSuccess,
   loginSuccess,
   logoutSuccess,
-  profileSuccess,
   nonceSuccess,
-  confirmEmailSuccess,
+  profileSuccess,
 } from './profile/sagas';
 import { edgeLoginSuccess } from './edge/sagas';
 import { notify } from './notify/sagas';
@@ -19,8 +22,8 @@ import {
 import { clearGenericModalError } from './modal/sagas';
 import {
   addFioWalletSuccess,
-  setFeesService,
   setBalancesService,
+  setFeesService,
 } from './fio/sagas';
 
 import { Api } from '../api';
@@ -43,5 +46,8 @@ export default function* rootSaga(history: History, api: Api) {
     setBalancesService(),
     confirmEmailSuccess(history),
     purchaseResultsClose(history),
+    adminLogoutSuccess(history, api),
+    adminLoginSuccess(history, api),
+    adminConfirmSuccess(history, api),
   ]);
 }

@@ -17,7 +17,7 @@ export default combineReducers({
         return state.filter(item => item.id !== action.data.id);
       case actions.CLEAR_CART:
         return [];
-      case actions.RECALCULATE_CART:
+      case actions.SET_CART_ITEMS:
         return action.data;
       default:
         return state;

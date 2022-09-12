@@ -1,10 +1,10 @@
 import {
-  User,
   CartItem,
-  Notification,
-  RefProfile,
   FioAddressDoublet,
+  Notification,
   PrivateRedirectLocationState,
+  RefProfile,
+  User,
 } from '../../types';
 
 export type MainHeaderProps = {
@@ -25,4 +25,12 @@ export type MainHeaderProps = {
   refProfileLoading: boolean;
   fioAddresses: FioAddressDoublet[];
   isContainedFlow: boolean;
+  isAdminAuthenticated: boolean;
 };
+
+export type NavigationProps = {
+  isMenuOpen: boolean;
+  toggleMenuOpen: (isMenuOpen: boolean) => void;
+  closeMenu: () => void;
+  showLogin: () => void;
+} & MainHeaderProps;

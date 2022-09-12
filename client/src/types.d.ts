@@ -6,6 +6,13 @@ import { LocationState, Path } from 'history';
 import { FIOSDK_LIB } from './api/fio';
 
 import { CONTAINED_FLOW_ACTIONS } from './constants/containedFlow';
+import {
+  BC_TX_STATUSES,
+  PAYMENT_OPTIONS,
+  PURCHASE_PROVIDER,
+  PURCHASE_RESULTS_STATUS,
+} from './constants/purchase';
+import { CURRENCY_CODES } from './constants/common';
 
 import { ResultsData } from '../components/common/TransactionResults/types';
 
@@ -34,6 +41,7 @@ export type CartItem = {
   showBadge?: boolean;
   error?: string;
   isFree?: boolean;
+  errorData?: { code?: string; credited?: string };
   errorType?: string;
   isCustomDomain?: boolean;
 };
@@ -80,35 +88,50 @@ export type RegistrationErrors = {
   isFree?: boolean;
   cartItemId: string;
   errorType: string;
+  errorData?: { code?: string; credited?: string };
 };
 
 export type RegistrationRegistered = {
   fioName: string;
   isFree?: boolean;
   fee_collected: number;
+  costUsdc?: string;
   cartItemId: string;
   transaction_id: string;
   transactions?: string[];
 };
 
+export type PurchaseProvider = typeof PURCHASE_PROVIDER[keyof typeof PURCHASE_PROVIDER];
+export type PaymentCurrency = typeof CURRENCY_CODES[keyof typeof CURRENCY_CODES];
+export type PaymentOptionsProps = typeof PAYMENT_OPTIONS[keyof typeof PAYMENT_OPTIONS];
+export type PurchaseTxStatus = typeof PURCHASE_RESULTS_STATUS[keyof typeof PURCHASE_RESULTS_STATUS];
+export type BcTxStatus = typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
+
 export type RegistrationResult = {
   errors: RegistrationErrors[];
   registered: RegistrationRegistered[];
   partial: string[];
+  purchaseProvider?: PurchaseProvider;
+  providerTxId?: string | number;
+  paymentOption?: PaymentOptionsProps;
+  paymentAmount?: string;
+  paymentCurrency?: PaymentCurrency;
+  convertedPaymentCurrency?: PaymentCurrency;
+  convertedPaymentAmount?: string;
+  providerTxStatus?: PurchaseTxStatus;
 };
 
-export type DeleteCartItem =
-  | {
-      id?: string;
-      cartItems?: CartItem[];
-    }
-  | string;
+export type DeleteCartItem = {
+  id: string;
+  cartItems?: CartItem[];
+};
 
 export type FioWalletDoublet = {
   id: string;
   edgeId: string;
   name: string;
   publicKey: string;
+  data?: { device?: number; derivationIndex?: number };
   balance?: number | null;
   available?: number | null;
   locked?: number | null;
@@ -144,6 +167,10 @@ export type FioDomainDoublet = {
   expiration: string;
   isPublic: number;
   walletPublicKey: string;
+};
+
+export type PrivateDomainsMap = {
+  [name: string]: FioDomainDoublet & { wallet: FioWalletDoublet };
 };
 
 export type PublicAddressDoublet = {
@@ -492,4 +519,190 @@ export type LoginFailure = {
 export type FioActionExecuted = {
   executeActionType: string;
   result: ResultsData | RegistrationResult;
+};
+
+export type Payment = {
+  id: number;
+  externalPaymentId: string;
+  amount: string;
+  currency: PaymentCurrency;
+  secret?: string;
+};
+
+export type Order = {
+  id: number;
+  number: string;
+  payment?: Payment;
+};
+
+export type AdminResponseFailure = {
+  error?: {
+    fields?: { [fieldName: string]: AnyType };
+  };
+  code?: string;
+};
+
+export type AdminJwtResponse = {
+  data?: { jwt: string };
+  code?: string;
+};
+
+export type AdminAuthResponse = AdminResponseFailure & AdminJwtResponse;
+
+export type AdminUser = {
+  id: string;
+  email: string;
+  status: { status: string; id: number };
+  role: { role: string; id: number };
+  lastLogIn?: string;
+  createdAt: string;
+};
+
+export type FioAccountProfile = {
+  id: string;
+  actor: string;
+  permission: string;
+  name: string;
+  isDefault: boolean;
+  createdAt: string;
+};
+
+export type AdminUserProfile = {
+  id: string;
+  email: string;
+  status: { status: string; id: number };
+  role: { role: string; id: number };
+  lastLogIn?: string;
+  createdAt: string;
+};
+
+export type AdminUserItemProfile = {
+  avatar?: string;
+  createdAt: string;
+  email: string;
+  id: string;
+  location?: string;
+  secretSet: boolean;
+  status: string;
+  username: string;
+};
+
+export type AdminOrderItemProfile = {
+  id: string;
+  total: string;
+  roe: string;
+  status: number;
+  data?: string;
+  createdAt: string;
+  customerIp: string;
+  number: string;
+  publicKey: string;
+  refProfileId?: string;
+  updatedAt: string;
+  userId: string;
+  userEmail: string;
+  paymentProcessor: string;
+};
+
+export type AdminSearchResult = {
+  result?: {
+    orders: AdminOrderItemProfile[];
+    users?: AdminUserItemProfile[];
+  };
+};
+
+export type PaymentEventLog = {
+  id: string;
+  status: number;
+  statusNotes?: string;
+  data?: { fioTxId?: string; fioFee?: number; error?: AnyObject };
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type OrderPaymentItem = {
+  createdAt: string;
+  currency?: string;
+  externalId?: string;
+  paymentEventLogs: PaymentEventLog[];
+  price?: string;
+  processor: PaymentOptionsProps;
+  spentType: number;
+  status: number;
+  updatedAt: string;
+  id: string;
+  statusNotes?: string;
+  data?: {
+    roe?: string;
+    fioName?: string;
+    action?: string;
+    sendingFioTokens?: boolean;
+  };
+};
+
+export type BcTx = {
+  id: number;
+  action: string;
+  txId?: string;
+  feeCollected?: number;
+};
+
+export type BcTxEvent = {
+  blockchainTransactionId: number;
+  createdAt: string;
+  data: AnyObject;
+  id: number;
+  status: BcTxStatus;
+  statusNotes: string;
+  updatedAt: string;
+};
+
+export type OrderItem = {
+  id: string;
+  number: string;
+  roe: string;
+  total: string;
+  publicKey: string;
+  createdAt: string;
+  status: number;
+  currency?: PaymentCurrency;
+  paymentProcessor: PaymentOptionsProps;
+  items?: {
+    action: string;
+    address?: string;
+    createdAt: string;
+    domain?: string;
+    id: string;
+    price: string;
+    priceCurrency: string;
+    updatedAt: string;
+    blockchainTransactions: BcTx[];
+    orderItemStatus: {
+      txStatus: typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
+    };
+  }[];
+  payments?: OrderPaymentItem[];
+  blockchainTransactionEvents: BcTxEvent[];
+  userId: string;
+  userEmail: string;
+  refProfileName?: string;
+  user?: { id: string; email: string };
+  updatedAt: string;
+};
+
+export type ApiError = {
+  code: string;
+  fields?: { [fieldName: string]: AnyType };
+} | null;
+
+type TokenCodeProps = {
+  chainCodeId: string;
+  tokenCodeId: string;
+  tokenCodeName: string;
+};
+
+export type ChainCodeProps = {
+  chainCodeId: string;
+  chainCodeName: string;
+  tokens?: TokenCodeProps[];
 };

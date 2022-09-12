@@ -1,0 +1,39 @@
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/colors.scss';
+
+.container {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.button {
+  width: 100%;
+  height: 36px;
+  border-radius: 7px;
+  font-size: 1em;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 1em;
+  font-family: 'SF Pro Display Thin';
+  margin-top: 15px;
+
+  .buttonText {
+    white-space: nowrap;
+    margin: 0 1rem 0 0.5625rem;
+    font-size: 0.9375em;
+    @include sf-pro-display-thin;
+  }
+
+  &.hasRoyalBlueBackground {
+    background-color: $royal-blue;
+    border-color: $royal-blue;
+
+    &:hover {
+      background-color: $clear-blue;
+      border-color: $clear-blue;
+    }
+  }
+}

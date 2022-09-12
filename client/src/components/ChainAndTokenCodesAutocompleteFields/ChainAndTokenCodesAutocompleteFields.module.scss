@@ -1,0 +1,22 @@
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.chainCodeField, .tokenCodeField {
+  margin: 0;
+  width: 100%;
+
+  &.hasFullWidth {
+    max-width: none;
+  }
+}
+
+@include lg {
+  .chainCodeField, .tokenCodeField {
+    margin-right: 15px;
+  }
+  .chainCodeField {
+    max-width: 255px;
+  }
+  .tokenCodeField {
+    max-width: 165px;
+  }
+}

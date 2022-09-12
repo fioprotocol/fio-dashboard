@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Ecc } from '@fioprotocol/fiojs';
 
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import { PAYMENT_OPTIONS } from '../../constants/purchase';
 import { emptyWallet } from '../../redux/fio/reducer';
 
 import api from '../../api';
@@ -39,6 +40,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     fioWallets,
     prices,
     refProfileInfo,
+    disabled = false,
   } = props;
 
   const [isWaiting, setWaiting] = useState(false);
@@ -71,6 +73,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
         break;
       }
     }
+    results.paymentOption = PAYMENT_OPTIONS.FIO;
     setWaiting(false);
     waitFn(onFinish, results);
   };
@@ -123,7 +126,8 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     if (walletKeys && Object.keys(walletKeys).length) resetPinConfirm();
 
     if (confirmationError) setWaiting(false);
-  }, [pinConfirmation]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pinConfirmation]); // We need run this hook only on pinConfirmation change
 
   useEffect(() => {
     const { success, verifyParams } = captchaResult;
@@ -147,7 +151,8 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     if (success && isWaiting) execRegistration();
 
     if (success === false) setWaiting(false);
-  }, [captchaResult]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [captchaResult]); // We need run this hook only on captchaResults change
 
   const purchase = () => {
     setWaiting(true);
@@ -160,7 +165,11 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   };
 
   return (
-    <Button onClick={purchase} className={classes.button} disabled={loading}>
+    <Button
+      onClick={purchase}
+      className={classes.button}
+      disabled={loading || disabled}
+    >
       {isWaiting && loading ? (
         <FontAwesomeIcon icon="spinner" spin />
       ) : isRetry ? (

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useCallback } from 'react';
 import CreatableSelect from 'react-select/creatable';
 import Select from 'react-select/base';
 import { FieldInputProps, FieldMetaState } from 'react-final-form';
@@ -22,6 +22,11 @@ export type EditableProps = {
   placeholder?: string;
   input: FieldInputProps<string>;
   meta: FieldMetaState<string>;
+  forceReset?: boolean;
+  loading?: boolean;
+  upperCased?: boolean;
+  onClear?: () => void;
+  onInputChange?: (chainCodeValue: string) => Promise<void> | void;
   toggleToCustom?: (isCustom: boolean) => void;
 };
 
@@ -35,8 +40,13 @@ const EditableSelect: React.FC<EditableProps> = props => {
     noShadow,
     disabled,
     hasError,
-    toggleToCustom,
     meta,
+    forceReset,
+    loading,
+    upperCased,
+    onClear,
+    onInputChange,
+    toggleToCustom,
   } = props;
 
   const { onChange, value } = input;
@@ -44,9 +54,34 @@ const EditableSelect: React.FC<EditableProps> = props => {
 
   const [inputValue, setInputValue] = useState<string>('');
 
-  const refOptions: OptionProps[] = useRef(options).current;
+  const refOptions: OptionProps[] = options;
 
   const selectRef = useRef<Select<OptionProps> | null>(null);
+
+  const convertValue = useCallback(
+    (value?: string) => {
+      if (value && upperCased) return value.toUpperCase();
+
+      return value;
+    },
+    [upperCased],
+  );
+
+  const onFormChangeWithConvertedValue = useCallback(
+    (value?: string) => onChange(convertValue(value)),
+    [convertValue, onChange],
+  );
+  const setInputConvertedValue = useCallback(
+    (value?: string) => setInputValue(convertValue(value)),
+    [convertValue],
+  );
+  const handleFormAndInputChange = useCallback(
+    (value?: string) => {
+      onFormChangeWithConvertedValue(value);
+      setInputConvertedValue(value);
+    },
+    [onFormChangeWithConvertedValue, setInputConvertedValue],
+  );
 
   useEffect(() => {
     toggleToCustom &&
@@ -57,21 +92,28 @@ const EditableSelect: React.FC<EditableProps> = props => {
 
   useEffectOnce(() => {
     if (initialValue != null) {
-      setInputValue(initialValue);
+      setInputConvertedValue(initialValue);
     }
-  }, [initialValue, onChange]);
+  }, [initialValue, setInputConvertedValue]);
+
+  useEffect(() => {
+    if (forceReset) {
+      handleFormAndInputChange('');
+    }
+  }, [forceReset, handleFormAndInputChange]);
+
+  // Handle dropdown value when we programaticaly filled form field. Is not the same when we have initial form value
+  useEffect(() => {
+    if (value && !initialValue && !inputValue) {
+      setInputConvertedValue(value);
+    }
+  }, [value, initialValue, inputValue, setInputConvertedValue]);
 
   const handleBlur = () => {
     const currentValue = inputValue ? inputValue.trim() : '';
-    const optionExists = refOptions.find(
-      (opt: OptionProps) => opt.value === currentValue,
-    );
+    if (!currentValue) return;
 
-    if (!currentValue || optionExists) {
-      return;
-    }
-    onChange(currentValue);
-    setInputValue(currentValue);
+    handleFormAndInputChange(currentValue);
   };
 
   const handleInputChange = (
@@ -83,14 +125,21 @@ const EditableSelect: React.FC<EditableProps> = props => {
     }
 
     if (action === 'input-change') {
-      setInputValue(textInput);
-      if (!textInput) onChange(null);
+      setInputConvertedValue(textInput);
+      onInputChange && onInputChange(convertValue(textInput));
+      if (!textInput) onFormChangeWithConvertedValue(null);
     }
   };
 
-  const handleChange = (newValue: OptionProps) => {
-    onChange(newValue ? newValue.value : null);
-    setInputValue(newValue ? newValue.value.toString() : '');
+  const handleChange = (
+    newValue: OptionProps,
+    { action }: { action: string },
+  ) => {
+    handleFormAndInputChange(newValue ? newValue.value.toString() : '');
+
+    if (action === 'clear') {
+      onClear && onClear();
+    }
   };
 
   const formatCreate = (createdValue: string) => (
@@ -107,6 +156,8 @@ const EditableSelect: React.FC<EditableProps> = props => {
       options={refOptions}
       formatCreateLabel={formatCreate}
       value={value ? { value, label: value } : null}
+      noOptionsMessage={e => (e.inputValue ? 'No options' : null)}
+      isLoading={loading}
       inputValue={inputValue}
       placeholder={placeholder}
       openMenuOnFocus={true}
@@ -121,6 +172,7 @@ const EditableSelect: React.FC<EditableProps> = props => {
         ClearIndicator: CustomComponents.ClearIndicator,
         DropdownIndicator: CustomComponents.DropdownIndicator,
         Input: CustomComponents.Input,
+        Control: CustomComponents.Control,
       }}
       className={classnames(
         classes.dropdown,

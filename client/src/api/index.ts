@@ -10,6 +10,10 @@ import FioHistory from './fio-history';
 import Account from './account';
 import RefProfile from './ref-profile';
 import Contacts from './contacts';
+import Admin from './admin';
+import Payments from './payments';
+import Orders from './orders';
+import ChainCode from './chain-code';
 
 const apiClient = new ApiClient(config.apiPrefix);
 
@@ -33,7 +37,11 @@ export type Api = {
   account: Account;
   refProfile: RefProfile;
   contacts: Contacts;
+  orders: Orders;
   client: ApiClient;
+  admin: Admin;
+  payments: Payments;
+  chainCode: ChainCode;
 };
 
 const apis = {
@@ -46,7 +54,11 @@ const apis = {
   account: new Account(apiClient),
   refProfile: new RefProfile(apiClient),
   contacts: new Contacts(apiClient),
+  orders: new Orders(apiClient),
   client: apiClient,
+  admin: new Admin(apiClient),
+  payments: new Payments(apiClient),
+  chainCode: new ChainCode(apiClient),
 };
 
 export default apis;

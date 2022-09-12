@@ -1,10 +1,16 @@
 import {
+  AdminSearchResult,
+  AdminUser,
+  ChainCodeProps,
+  ContainedFlowQueryParams,
   Domain,
+  FioAccountProfile,
   FioWalletDoublet,
   Notification,
-  ContainedFlowQueryParams,
-  User,
+  Order,
+  Payment,
   RefProfile,
+  User,
 } from '../types';
 
 export type AccountGetWalletsResponse = FioWalletDoublet[];
@@ -39,16 +45,21 @@ export type AuthDeleteNewDeviceRequestResponse =
   | { success: false; message: 'Not Found' };
 export type AuthUpdateNewDeviceResponse = null;
 export type AuthCheckRejectedResponse = boolean;
+export type AdminAuthLoginResponse = { jwt: string };
+
+export type ChainCodesListResults = ChainCodeProps[] | null;
 
 export type ContactsListResponse = string[];
 export type ContactsCreateResponse = string;
 
 export type FioRegPricesResponse = {
-  nativeFio: {
-    domain: number;
-    address: number;
+  pricing: {
+    nativeFio: {
+      domain: number;
+      address: number;
+    };
+    usdtRoe: number;
   };
-  usdtRoe: number;
 };
 export type FioRegDomainsResponse = { domains: Domain[] };
 export type FioRegRegisterResponse = {
@@ -72,6 +83,24 @@ export type RefProfileGetResponse = RefProfile;
 
 export type UsersListResponse = User[];
 export type UsersShowResponse = User;
+
+export type OrdersCreateResponse = Order;
+export type OrdersUpdateResponse = { success: true };
+
+export type AdminFioAccountsProfilesListResponse = FioAccountProfile[];
+export type AdminUsersListResponse = AdminUser[];
+export type AdminOrdersListResponse = AdminUser[];
+export type AdminOrderItemResponse = AdminUser;
+export type RemoveAdminResponse =
+  | { success: true }
+  | { success: false; message: 'Not Found' };
+export type AdminGeneralCreateResponse =
+  | { success: true }
+  | { success: false; message: 'Not Unique' };
+export type AdminConfirmResponse = AdminUser;
+export type AdminSearchResponse = AdminSearchResult;
+
+export type PaymentCreateResponse = Payment;
 
 export type ApisResponse = AccountGetWalletsResponse &
   AccountSetWalletsResponse &
@@ -106,4 +135,11 @@ export type ApisResponse = AccountGetWalletsResponse &
   NotificationsUpdateResponse &
   RefProfileGetResponse &
   UsersListResponse &
-  UsersShowResponse;
+  UsersShowResponse &
+  OrdersCreateResponse &
+  AdminUsersListResponse &
+  RemoveAdminResponse &
+  AdminGeneralCreateResponse &
+  AdminConfirmResponse &
+  PaymentCreateResponse &
+  ChainCodesListResults;

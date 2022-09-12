@@ -9,6 +9,7 @@ import { useCheckIfDesktop } from '../../screenType';
 import DoubleCardContainer from '../DoubleCardContainer';
 
 import { FioNameType, CartItem } from '../../types';
+import useEffectOnce from '../../hooks/general';
 
 type Props = {
   title: string;
@@ -17,6 +18,7 @@ type Props = {
   cartItems: CartItem[];
   hasFreeAddress: boolean;
   isContainedFlow: boolean;
+  clearOrder: () => void;
 };
 
 type LocationQuery = {
@@ -36,9 +38,12 @@ const AddressDomainContainer: React.FC<Props &
     cartItems,
     hasFreeAddress,
     isContainedFlow,
+    clearOrder,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
+
+  useEffectOnce(() => clearOrder(), [clearOrder]);
 
   return (
     <DoubleCardContainer

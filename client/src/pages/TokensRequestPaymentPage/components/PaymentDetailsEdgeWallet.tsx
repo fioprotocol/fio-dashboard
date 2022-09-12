@@ -17,7 +17,7 @@ type Props = {
   onSuccess: (data: TxValues & { error?: string }) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  sendData: PaymentDetailsValues | null;
+  submitData: PaymentDetailsValues | null;
   contactsList: string[];
   createContact: (name: string) => void;
   processing: boolean;
@@ -29,7 +29,7 @@ const PaymentDetailsEdgeWallet: React.FC<Props> = props => {
     setProcessing,
     onSuccess,
     onCancel,
-    sendData,
+    submitData,
     processing,
     createContact,
     contactsList,
@@ -63,7 +63,7 @@ const PaymentDetailsEdgeWallet: React.FC<Props> = props => {
       onSuccess={onSuccess}
       onCancel={onCancel}
       processing={processing}
-      data={sendData}
+      data={submitData}
       submitAction={send}
       fioWalletEdgeId={fioWallet.edgeId || ''}
       edgeAccountLogoutBefore={true}

@@ -5,7 +5,9 @@ import emailSender from '../emailSender';
 
 import { Action, User } from '../../models';
 
-const RESEND_ACTION_EXPIRATION_TIME = 1000 * 60 * 60 * 24; // 1 day
+import { DAY_MS } from '../../config/constants.js';
+
+const RESEND_ACTION_EXPIRATION_TIME = DAY_MS; // 1 day
 
 export default class UsersResendEmailConfirm extends Base {
   static get validationRules() {

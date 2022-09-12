@@ -4,10 +4,12 @@ import {
   PublicAddressDoublet,
   FioAddressWithPubAddresses,
   LinkActionResult,
+  FioWalletDoublet,
 } from '../../types';
 
 export type AddTokenProps = {
   fioCryptoHandle: FioAddressWithPubAddresses;
+  fioWallets: FioWalletDoublet[];
 };
 
 export type FormValues = {

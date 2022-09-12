@@ -1,8 +1,16 @@
 const ROUTES: { [route: string]: string } = {
   HOME: '/',
-  ADMIN: '/admin',
-  ADMIN_USERS: '/admin/users',
   DASHBOARD: '/dashboard',
+
+  ADMIN_HOME: '/admin',
+  ADMIN_USERS: '/admin/users',
+  ADMIN_ORDERS: '/admin/orders',
+  ADMIN_LOGIN: '/admin/login',
+  ADMIN_CONFIRM_EMAIL: '/confirm-admin-email/:hash',
+  ADMIN_REGULAR_USERS: '/admin/regular-users',
+  ADMIN_PROFILE: '/admin/profile',
+  ADMIN_ACCOUNTS: '/admin/accounts',
+  ADMIN_SEARCH_RESULT: '/admin/search-result',
 
   CONFIRM_EMAIL: '/confirm-email/:hash',
   CONFIRM_EMAIL_RESULT: '/confirm-email-result',

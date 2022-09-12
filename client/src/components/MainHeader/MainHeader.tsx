@@ -3,14 +3,14 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import RegularNav from './components/RegularNav';
-import LoggedNav from './components/LoggedNav';
+import { Navigation } from './components/Navigation';
 
 import { ROUTES } from '../../constants/routes';
-
-import classes from './MainHeader.module.scss';
+import { useIsAdminRoute } from '../../hooks/admin';
 
 import { MainHeaderProps } from './types';
+
+import classes from './MainHeader.module.scss';
 
 const MainHeader: React.FC<MainHeaderProps> = props => {
   const {
@@ -18,11 +18,8 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     logout: logoutFn,
     profileRefreshed,
     isAuthenticated,
-    isNotActiveUser,
     locationState,
-    fioAddresses,
     refProfileLoading,
-    isContainedFlow,
   } = props;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
 
@@ -52,6 +49,8 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     }
   }, [locationState, showLogin, isAuthenticated, profileRefreshed]);
 
+  const isAdmin = useIsAdminRoute();
+
   if (refProfileLoading) {
     return (
       <div className={classnames(classes.header)}>
@@ -62,35 +61,29 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
 
   return (
     <div className={classnames(classes.header, isMenuOpen && classes.isOpen)}>
-      <Link to={ROUTES.HOME}>
-        <div className={classes.logo} onClick={closeMenu} />
-      </Link>
-      {isAuthenticated ? (
-        <LoggedNav
-          isMenuOpen={isMenuOpen}
-          toggleMenuOpen={toggleMenuOpen}
-          closeMenu={closeMenu}
-          showLogin={showLogin}
-          hideCart={
-            (isContainedFlow && !!fioAddresses.length) || isNotActiveUser
-          }
-          hideNotifications={isContainedFlow || isNotActiveUser}
-          onlyAuth={isContainedFlow || isNotActiveUser}
-          showSiteLink={isContainedFlow}
-          {...props}
-          logout={logout}
-        />
+      {!isAdmin ? (
+        <Link to={ROUTES.HOME}>
+          <div className={classes.logo} onClick={closeMenu} />
+        </Link>
       ) : (
-        <RegularNav
-          toggleMenuOpen={toggleMenuOpen}
-          isMenuOpen={isMenuOpen}
-          closeMenu={closeMenu}
-          showLogin={showLogin}
-          onlyAuth={isContainedFlow || isNotActiveUser}
-          hideCart={isContainedFlow}
-          {...props}
-        />
+        <div>
+          <div
+            className={classes.logo}
+            onClick={() => {
+              closeMenu();
+              window.open(ROUTES.HOME, '_blank');
+            }}
+          />
+        </div>
       )}
+      <Navigation
+        {...props}
+        isMenuOpen={isMenuOpen}
+        logout={logout}
+        toggleMenuOpen={toggleMenuOpen}
+        closeMenu={closeMenu}
+        showLogin={showLogin}
+      />
     </div>
   );
 };

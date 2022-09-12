@@ -1,128 +1,62 @@
-import React, { useEffect } from 'react';
-import isEmpty from 'lodash/isEmpty';
-import { History } from 'history';
+import React from 'react';
+import { Redirect } from 'react-router';
 
 import PseudoModalContainer from '../../components/PseudoModalContainer';
-import CheckoutPurchaseContainer from '../../components/CheckoutPurchaseContainer';
-import { RenderCheckout } from '../../components/CheckoutPurchaseContainer/CheckoutPurchaseComponents';
+import { CheckoutComponent } from './components/CheckoutComponent';
+import Processing from '../../components/common/TransactionProcessing';
+import Loader from '../../components/Loader/Loader';
+import BeforeSubmitWalletConfirm from './components/BeforeSubmitWalletConfirm';
+
+import { useContext } from './CheckoutPageContext';
 
 import { ROUTES } from '../../constants/routes';
 
+// Loads captcha files, DO NOT REMOVE
 import '../../helpers/gt-sdk';
-import { totalCost, handleFreeAddressCart } from '../../utils';
-import { useWalletBalances } from '../../util/hooks';
-import MathOp from '../../util/math';
 
-import { CartItem, Domain, FioWalletDoublet, Prices } from '../../types';
+import classes from '../PurchasePage/styles/PurchasePage.module.scss';
 
-type Props = {
-  loading: boolean;
-  fioWallets: FioWalletDoublet[];
-  cartItems: CartItem[];
-  history: History;
-  paymentWalletPublicKey: string;
-  isAuthenticated: boolean;
-  domains: Domain[];
-  hasFreeAddress: boolean;
-  prices: Prices;
-  isProcessing: boolean;
-  roe: number | null;
-  setWallet: (publicKey: string) => void;
-  refreshBalance: (publicKey: string) => void;
-  recalculate: (cartItems: CartItem[]) => void;
-};
-
-const CheckoutPage: React.FC<Props> = props => {
+export const CheckoutPage: React.FC = () => {
   const {
-    loading,
-    fioWallets,
-    refreshBalance,
     cartItems,
-    history,
-    paymentWalletPublicKey,
-    isAuthenticated,
-    setWallet,
-    hasFreeAddress,
-    recalculate,
-    prices,
     isProcessing,
-    roe,
-  } = props;
+    payment,
+    paymentWallet,
+    title,
+    walletBalancesAvailable,
+    beforeSubmitProps,
+    fioLoading,
+    orderLoading,
+    isFreeOrderCreateLoading,
+    onClose,
+    setProcessing,
+    ...rest
+  } = useContext();
 
-  useEffect(() => {
-    if (!isEmpty(fioWallets)) {
-      for (const fioWallet of fioWallets) {
-        if (fioWallet.publicKey) {
-          refreshBalance(fioWallet.publicKey);
-        }
-      }
-      if (!paymentWalletPublicKey && fioWallets.length === 1) {
-        const sortedWallets = fioWallets.sort((a, b) => b.balance - a.balance);
-        setWallet(sortedWallets[0].publicKey);
-      }
-    }
-  }, []);
+  if (fioLoading || orderLoading) return <Loader />;
 
-  const isFree =
-    !isEmpty(cartItems) &&
-    cartItems.length === 1 &&
-    !hasFreeAddress &&
-    cartItems[0].allowFree;
-
-  const paymentWallet = fioWallets.find(
-    ({ publicKey }) => publicKey === paymentWalletPublicKey,
-  );
-  const { available: walletBalancesAvailable } = useWalletBalances(
-    paymentWalletPublicKey,
-  );
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      history.push(ROUTES.FIO_ADDRESSES_SELECTION);
-    }
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    if (
-      !loading &&
-      !isFree &&
-      ((paymentWalletPublicKey &&
-        new MathOp(walletBalancesAvailable.nativeFio).lt(
-          totalCost(cartItems, roe).costNativeFio,
-        )) ||
-        (!paymentWalletPublicKey && fioWallets.length > 1))
-    ) {
-      history.push(ROUTES.CART);
-    }
-  }, [walletBalancesAvailable.nativeFio, paymentWalletPublicKey, loading]);
-
-  useEffect(() => {
-    !isProcessing &&
-      handleFreeAddressCart({
-        recalculate,
-        cartItems,
-        prices,
-        hasFreeAddress,
-        roe,
-      });
-  }, [hasFreeAddress, prices, roe]);
-
-  const onClose = () => {
-    history.push(ROUTES.CART);
-  };
+  if (!payment && !fioLoading && !orderLoading && isFreeOrderCreateLoading)
+    return <Redirect to={ROUTES.FIO_ADDRESSES_SELECTION} />;
 
   return (
-    <PseudoModalContainer title="Make Purchase" onClose={onClose}>
-      <CheckoutPurchaseContainer isCheckout history={history}>
-        <RenderCheckout
-          cart={cartItems}
+    <PseudoModalContainer title={title} onClose={onClose}>
+      <div className={classes.container}>
+        <CheckoutComponent
           walletBalances={walletBalancesAvailable}
           walletName={paymentWallet ? paymentWallet.name : ''}
-          roe={roe}
+          payment={payment}
+          cart={cartItems}
+          {...rest}
         />
-      </CheckoutPurchaseContainer>
+      </div>
+      {beforeSubmitProps && (
+        <BeforeSubmitWalletConfirm
+          {...beforeSubmitProps}
+          setProcessing={setProcessing}
+          processing={isProcessing}
+        />
+      )}
+      <Processing isProcessing={isProcessing} />
     </PseudoModalContainer>
   );
 };
-
-export default CheckoutPage;

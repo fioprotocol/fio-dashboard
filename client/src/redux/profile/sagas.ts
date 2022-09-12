@@ -1,5 +1,5 @@
 import { History } from 'history';
-import { put, takeEvery, select } from 'redux-saga/effects';
+import { put, select, takeEvery } from 'redux-saga/effects';
 
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ACTIONS } from '../../components/Notifications/Notifications';
@@ -9,19 +9,23 @@ import { log } from '../../util/general';
 import { setWallets } from '../account/actions';
 import { refreshBalance } from '../fio/actions';
 import {
-  LOGIN_SUCCESS,
-  PROFILE_SUCCESS,
-  LOGOUT_SUCCESS,
-  NONCE_SUCCESS,
+  loadAdminProfile,
   loadProfile,
   login,
+  ADMIN_LOGIN_SUCCESS,
+  ADMIN_LOGOUT_SUCCESS,
+  CONFIRM_ADMIN_EMAIL_SUCCESS,
   CONFIRM_EMAIL_SUCCESS,
+  LOGIN_SUCCESS,
+  LOGOUT_SUCCESS,
+  NONCE_SUCCESS,
+  PROFILE_SUCCESS,
 } from './actions';
 
 import { closeLoginModal } from '../modal/actions';
 import {
-  listNotifications,
   createNotification,
+  listNotifications,
 } from '../notifications/actions';
 import { setRedirectPath } from '../navigation/actions';
 
@@ -138,6 +142,37 @@ export function* nonceSuccess(): Generator {
 
 export function* confirmEmailSuccess(history: History): Generator {
   yield takeEvery(CONFIRM_EMAIL_SUCCESS, function*() {
-    yield history.push(ROUTES.CONFIRM_EMAIL_RESULT);
+    yield history.replace(ROUTES.CONFIRM_EMAIL_RESULT);
+  });
+}
+
+export function* adminLogoutSuccess(history: History, api: Api): Generator {
+  yield takeEvery(ADMIN_LOGOUT_SUCCESS, function(action: Action) {
+    api.client.removeAdminToken();
+
+    const { redirect } = action;
+
+    if (redirect) history.push(redirect, {});
+    if (!redirect) history.replace(ROUTES.ADMIN_LOGIN, {});
+  });
+}
+
+export function* adminLoginSuccess(history: History, api: Api): Generator {
+  yield takeEvery(ADMIN_LOGIN_SUCCESS, function*(action: Action) {
+    api.client.setAdminToken(action.data.jwt);
+
+    yield put<Action>(loadAdminProfile());
+
+    history.push(ROUTES.ADMIN_HOME);
+  });
+}
+
+export function* adminConfirmSuccess(history: History, api: Api): Generator {
+  yield takeEvery(CONFIRM_ADMIN_EMAIL_SUCCESS, function*(action: Action) {
+    api.client.setAdminToken(action.data.jwt);
+
+    yield put<Action>(loadAdminProfile());
+
+    history.push(ROUTES.ADMIN_HOME);
   });
 }

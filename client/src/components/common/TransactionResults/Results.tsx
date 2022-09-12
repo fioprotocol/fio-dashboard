@@ -56,9 +56,8 @@ const Results: React.FC<ResultsContainerProps> = props => {
     if (!nativeFio) return null;
     return (
       <PriceBadge
-        costNativeFio={nativeFio}
-        costFio={fio}
-        costUsdc={usdc}
+        paymentAmount={fio}
+        convertedPaymentAmount={usdc}
         title="Total Cost"
         type={BADGE_TYPES.BLACK}
       />

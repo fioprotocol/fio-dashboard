@@ -66,6 +66,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
           const result = await submitAction({
             edgeAccount,
             keys: fioWalletEdgeId ? keys && keys[fioWalletEdgeId] : null,
+            allWalletKeysInAccount: fioWalletEdgeId ? null : keys,
             data: additionalData,
           });
 
@@ -73,7 +74,9 @@ const EdgeConfirmAction: React.FC<Props> = props => {
             await waitForEdgeAccountStop(edgeAccount);
 
           onSuccess(result);
-          if (CONFIRM_PIN_FIO_ACTIONS[action as keyof FioActions]) {
+
+          // todo: check returned results for all fio actions
+          if (CONFIRM_PIN_FIO_ACTIONS[action as keyof FioActions] && result) {
             fioActionExecuted({
               result: { status: result.status, txIds: result.transaction_id },
               executeActionType: removeExtraCharactersFromString(action),

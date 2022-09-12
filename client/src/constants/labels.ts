@@ -17,6 +17,12 @@ export const LINKS: { [linkKey: string]: string } = {
   TOKENS: 'TOKENS',
   GOVERNANCE: 'GOVERNANCE',
   PROTOCOL_UPDATES: 'PROTOCOL_UPDATES',
+  ADMIN_USERS: 'ADMIN_USERS',
+  ADMIN_HOME: 'ADMIN_HOME',
+  ADMIN_ORDERS: 'ADMIN_ORDERS',
+  ADMIN_REGULAR_USERS: 'ADMIN_REGULAR_USERS',
+  ADMIN_PROFILE: 'ADMIN_PROFILE',
+  ADMIN_ACCOUNTS: 'ADMIN_ACCOUNTS',
 };
 
 export const LINK_LABELS: { [linkKey: string]: string } = {
@@ -36,6 +42,12 @@ export const LINK_LABELS: { [linkKey: string]: string } = {
   [LINKS.TOKENS]: 'Tokens',
   [LINKS.GOVERNANCE]: 'Governance',
   [LINKS.PROTOCOL_UPDATES]: 'Protocol Updates',
+  [LINKS.ADMIN_USERS]: 'Admin Users',
+  [LINKS.ADMIN_HOME]: 'Home',
+  [LINKS.ADMIN_ORDERS]: 'Orders',
+  [LINKS.ADMIN_REGULAR_USERS]: 'Users',
+  [LINKS.ADMIN_PROFILE]: 'Profile',
+  [LINKS.ADMIN_ACCOUNTS]: 'Accounts',
 };
 
 export const fioNameLabels: { [fioNameType: string]: string } = {

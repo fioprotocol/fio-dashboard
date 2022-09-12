@@ -7,6 +7,7 @@ import routes from './routes';
 const router = express.Router();
 
 const checkAuth = routes.auth.check;
+const checkAdminAuth = routes.auth.checkAdminAuth;
 
 router.post('/auth', routes.auth.create);
 router.get('/auth/nonce', routes.auth.nonce);
@@ -22,6 +23,9 @@ router.get(
   '/auth/new-device-two-factor/check-rejected',
   routes.newDeviceTwoFactor.checkRejected,
 );
+router.post('/admin-auth', routes.auth.adminLogin);
+router.post('/admin-auth/create', routes.auth.adminCreate);
+router.get('/admin-auth/create/check', routes.auth.adminCreateCheck);
 
 router.post('/actions/:hash', routes.actions.submit);
 
@@ -36,6 +40,35 @@ router.post('/users/resendRecovery', checkAuth, routes.users.resendRecovery);
 router.post('/users/resendConfirmEmail', routes.users.resendEmailConfirm);
 router.post('/users/update-email-request', checkAuth, routes.users.updateEmailRequest);
 router.post('/users/update-email-revert', checkAuth, routes.users.updateEmailRevert);
+
+router.get('/admin/me', checkAdminAuth, routes.adminUsers.personalInfo);
+router.get('/admin/list', checkAdminAuth, routes.adminUsers.adminsList);
+router.get('/admin/info/:id', checkAdminAuth, routes.adminUsers.adminUserInfo);
+router.put('/admin', checkAdminAuth, routes.adminUsers.update);
+router.delete('/admin', checkAdminAuth, routes.adminUsers.remove);
+router.post('/admin/invite', checkAdminAuth, routes.adminUsers.invite);
+router.get('/admin/roles', checkAdminAuth, routes.adminUsers.rolesList);
+router.get('/admin/statuses', checkAdminAuth, routes.adminUsers.statusesList);
+
+router.get('/admin/orders', checkAdminAuth, routes.adminUsers.ordersList);
+router.get('/admin/orders/:id', checkAdminAuth, routes.adminUsers.order);
+
+router.get('/admin/users/list', checkAdminAuth, routes.adminUsers.regularUsersList);
+router.get('/admin/users/:id', checkAdminAuth, routes.adminUsers.regularUserInfo);
+
+router.get(
+  '/admin/accounts/list',
+  checkAdminAuth,
+  routes.adminUsers.fioAccountsProfilesList,
+);
+router.post('/admin/accounts', checkAdminAuth, routes.adminUsers.createFioAccountProfile);
+router.post(
+  '/admin/accounts/:id',
+  checkAdminAuth,
+  routes.adminUsers.updateFioAccountProfile,
+);
+
+router.get('/admin/search', checkAdminAuth, routes.adminUsers.search);
 
 router.get('/notifications', checkAuth, routes.notifications.list);
 router.post('/notifications', checkAuth, routes.notifications.create);
@@ -72,5 +105,14 @@ router.post('/contacts', checkAuth, routes.contacts.create);
 router.get('/contacts', checkAuth, routes.contacts.list);
 
 router.get('/check-pub-address', checkAuth, routes.external.validatePubAddress);
+
+router.get('/orders', checkAuth, routes.orders.list);
+router.post('/orders', checkAuth, routes.orders.create);
+router.post('/orders/update/:id', checkAuth, routes.orders.update);
+
+router.post('/payments', checkAuth, routes.payments.create);
+router.post('/payments/webhook/', routes.payments.webhook);
+
+router.get('/chain-codes/:chainCode?', routes.chainCodes.list);
 
 export default router;

@@ -13,6 +13,7 @@ import {
   MappedPublicAddresses,
   NFTTokenDoublet,
   OwnPropsAny,
+  PrivateDomainsMap,
   WalletsBalances,
 } from '../../types';
 import { ReduxState } from '../init';
@@ -155,5 +156,27 @@ export const fioWalletForDomain = createSelector(
       );
 
     return wallet || emptyWallet;
+  },
+);
+
+export const privateDomains = createSelector(
+  fioDomains,
+  fioWallets,
+  (fioDomains, wallets) => {
+    return fioDomains
+      .filter(({ isPublic }) => !isPublic)
+      .reduce((acc: PrivateDomainsMap, domain) => {
+        acc[domain.name] = {
+          ...domain,
+          wallet:
+            wallets &&
+            wallets.find(
+              (walletItem: FioWalletDoublet) =>
+                walletItem.publicKey === domain.walletPublicKey,
+            ),
+        };
+
+        return acc;
+      }, {});
   },
 );

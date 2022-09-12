@@ -1,0 +1,24 @@
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/colors.scss';
+
+.container {
+  width: 100px;
+  .ledgerBadge {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    .ledgerIcon {
+      width: 14px;
+      height: 14px;
+    }
+    .ledgerText {
+      margin-top: 0;
+      margin-bottom: 0;
+      color: $white;
+      font-size: 10px;
+      margin-left: 6px;
+      @include sf-pro-display-regular;
+    }
+  }
+}

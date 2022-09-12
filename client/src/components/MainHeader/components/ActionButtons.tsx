@@ -4,15 +4,19 @@ import { Button, Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import { ROUTES } from '../../../constants/routes';
-import classes from '../MainHeader.module.scss';
 import Navigation from '../../Navigation';
+import Search from './Search';
+
+import { ROUTES } from '../../../constants/routes';
+
+import classes from '../MainHeader.module.scss';
 
 type ActionButtonsProps = {
   edgeAuthLoading: boolean;
   profileLoading: boolean;
   isMenuOpen: boolean;
   onlyAuth: boolean;
+  hideSettings?: boolean;
   showLogin: () => void;
   closeMenu: () => void;
 };
@@ -65,6 +69,7 @@ export const ActionButtons: React.FC<ActionButtonsProps> = props => {
     </div>
   );
 };
+
 export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => {
   const {
     logout,
@@ -72,6 +77,7 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
     profileLoading,
     isMenuOpen,
     onlyAuth,
+    hideSettings,
     closeMenu,
   } = props;
 
@@ -110,20 +116,25 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
       {/* @ts-ignore */}
       {isMenuOpen && <Navigation isOnSide={isMenuOpen} closeMenu={closeMenu} />}
       {isMenuOpen && <hr className={classes.horizontal} />}
-      <Nav.Link
-        as={Link}
-        to={ROUTES.SETTINGS}
-        className={classnames(classes.navItem, 'text-white')}
-        onClick={closeMenu}
-      >
-        <div className={classnames(classes.settings)}>
-          <FontAwesomeIcon
-            icon="cog"
-            className={classnames(classes.settingsIcon)}
-          />
-        </div>
-        <div className="ml-3">Settings</div>
-      </Nav.Link>
+      {!hideSettings && (
+        <Nav.Link
+          as={Link}
+          to={ROUTES.SETTINGS}
+          className={classnames(classes.navItem, 'text-white')}
+          onClick={closeMenu}
+        >
+          <div className={classnames(classes.settings)}>
+            <FontAwesomeIcon
+              icon="cog"
+              className={classnames(classes.settingsIcon)}
+            />
+          </div>
+          <div className="ml-3">Settings</div>
+        </Nav.Link>
+      )}
+
+      <Search />
+
       <Nav.Link href="#" className="pr-0">
         <Button
           className={classnames(classes.button, !isMenuOpen && 'ml-4')}

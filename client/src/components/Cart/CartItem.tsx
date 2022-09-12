@@ -5,17 +5,64 @@ import classnames from 'classnames';
 import Amount from '../common/Amount';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 
-import { CartItem as CartItemType } from '../../types';
+import { CURRENCY_CODES } from '../../constants/common';
+
+import { CartItem as CartItemType, PaymentCurrency } from '../../types';
 
 import classes from './Cart.module.scss';
 
 type Props = {
   item: CartItemType;
+  primaryCurrency?: PaymentCurrency;
   onDelete?: (id: string) => void;
 };
 
+type CartItemProps = {
+  primaryCurrency: PaymentCurrency;
+  costFio: string;
+  costUsdc: string;
+  costNativeFio?: number;
+};
+
+const CartItemPrice = (props: CartItemProps) => {
+  const { costFio, costUsdc, costNativeFio, primaryCurrency } = props;
+
+  if (!costNativeFio) return <span className="boldText">FREE</span>;
+
+  if (primaryCurrency === CURRENCY_CODES.FIO)
+    return (
+      <>
+        <span className="boldText">
+          <Amount value={costFio} /> FIO
+        </span>{' '}
+        (
+        <Amount value={costUsdc} /> USDC)
+      </>
+    );
+
+  return (
+    <>
+      <span className="boldText">
+        <Amount value={costUsdc} /> USDC
+      </span>{' '}
+      (
+      <Amount value={costFio} /> FIO)
+    </>
+  );
+};
+
 const CartItem: React.FC<Props> = props => {
-  const { item, onDelete } = props;
+  const { item, primaryCurrency = CURRENCY_CODES.FIO, onDelete } = props;
+
+  const {
+    address,
+    domain,
+    costFio,
+    costUsdc,
+    costNativeFio,
+    showBadge,
+    hasCustomDomain,
+  } = item;
 
   return (
     <>
@@ -23,13 +70,11 @@ const CartItem: React.FC<Props> = props => {
         <div className={classes.itemContainer}>
           {item.address ? (
             <span className={classes.address}>
-              <span className="boldText">{item.address}@</span>
-              <span className={item.hasCustomDomain && 'boldText'}>
-                {item.domain}
-              </span>
+              <span className="boldText">{address}@</span>
+              <span className={hasCustomDomain && 'boldText'}>{domain}</span>
             </span>
           ) : (
-            <span className="boldText">{item.domain && item.domain}</span>
+            <span className="boldText">{domain && domain}</span>
           )}
           <p
             className={classnames(
@@ -37,16 +82,12 @@ const CartItem: React.FC<Props> = props => {
               onDelete && classes.deletePrice,
             )}
           >
-            <span className="boldText">
-              {!item.costNativeFio ? (
-                'FREE'
-              ) : (
-                <>
-                  <Amount value={item.costFio} /> FIO (
-                  <Amount value={item.costUsdc} /> USDC)
-                </>
-              )}
-            </span>
+            <CartItemPrice
+              primaryCurrency={primaryCurrency}
+              costFio={costFio}
+              costUsdc={costUsdc}
+              costNativeFio={costNativeFio}
+            />
           </p>
           {onDelete && (
             <FontAwesomeIcon
@@ -57,7 +98,7 @@ const CartItem: React.FC<Props> = props => {
           )}
         </div>
       </Badge>
-      {item.showBadge && (
+      {showBadge && (
         <Badge show type={BADGE_TYPES.INFO}>
           <div className={classes.infoBadge}>
             <FontAwesomeIcon

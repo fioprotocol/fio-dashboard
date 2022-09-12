@@ -1,4 +1,5 @@
 @import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/colors.scss';
 
 .header {
   margin-top: 30px;
@@ -7,4 +8,20 @@
 .subheader {
   @include proxima-nova-semibold;
   margin-top: 20px;
+}
+
+a {
+  word-break: break-word;
+}
+
+.table {
+  border: 1px solid $gray-main;
+  table-layout: fixed;
+  margin: 0 auto 30px;
+
+  th, td {
+    padding: 8px;
+    border: 1px solid $gray-main;
+    width: 362px;
+  }
 }

@@ -195,13 +195,13 @@ export const cartHasFreeItem = (cartItems: CartItem[]): boolean => {
 };
 
 export const handleFreeAddressCart = ({
-  recalculate,
+  setCartItems,
   cartItems,
   prices,
   hasFreeAddress,
   roe,
 }: {
-  recalculate: (cartItems: CartItem[]) => void;
+  setCartItems: (cartItems: CartItem[]) => void;
   cartItems: CartItem[];
   prices: Prices;
   hasFreeAddress: boolean;
@@ -213,7 +213,7 @@ export const handleFreeAddressCart = ({
   } else if (!cartHasFreeItem(cartItems)) {
     retCart = setFreeCart({ cartItems });
   }
-  recalculate(!isEmpty(retCart) ? retCart : cartItems);
+  setCartItems(!isEmpty(retCart) ? retCart : cartItems);
 };
 
 export const deleteCartItem = ({
@@ -221,17 +221,17 @@ export const deleteCartItem = ({
   prices,
   deleteItem,
   cartItems,
-  recalculate,
+  setCartItems,
   roe,
 }: {
   id?: string;
   prices?: Prices;
-  deleteItem?: (data: DeleteCartItem | string) => void;
+  deleteItem?: (data: DeleteCartItem) => void;
   cartItems?: CartItem[];
-  recalculate?: (cartItems: CartItem[]) => void;
+  setCartItems?: (cartItems: CartItem[]) => void;
   roe?: number;
 } = {}): void => {
-  const data = recalculateCart({ cartItems, id }) || id;
+  const data = recalculateCart({ cartItems, id }) || { id };
   deleteItem(data);
 
   const { domain, hasCustomDomain } =
@@ -267,7 +267,7 @@ export const deleteCartItem = ({
           item.id === firstMatchElem.id ? retObj : item,
         );
 
-        recalculate(retData);
+        setCartItems(retData);
       }
     }
   }
@@ -311,6 +311,8 @@ export const isDomain = (fioName: string): boolean =>
   fioName.indexOf(FIO_ADDRESS_DELIMITER) < 0;
 export const hasFioAddressDelimiter = (value: string): boolean =>
   value.indexOf(FIO_ADDRESS_DELIMITER) > 0;
+export const setFioName = (address: string | null, domain: string): string =>
+  address ? `${address}${FIO_ADDRESS_DELIMITER}${domain}` : domain;
 
 export const priceToNumber = (price: string): number =>
   +parseFloat(price).toFixed(2);

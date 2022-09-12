@@ -226,3 +226,61 @@ export const updateStateEmail = (email: string): CommonAction => ({
   type: UPDATE_STATE_EMAIL,
   data: { email },
 });
+
+export const ADMIN_LOGIN_REQUEST = `${prefix}/ADMIN_LOGIN_REQUEST`;
+export const ADMIN_LOGIN_SUCCESS = `${prefix}/ADMIN_LOGIN_SUCCESS`;
+export const ADMIN_LOGIN_FAILURE = `${prefix}/ADMIN_LOGIN_FAILURE`;
+
+export const ADMIN_LOGOUT_REQUEST = `${prefix}/ADMIN_LOGOUT_REQUEST`;
+export const ADMIN_LOGOUT_SUCCESS = `${prefix}/ADMIN_LOGOUT_SUCCESS`;
+export const ADMIN_LOGOUT_FAILURE = `${prefix}/ADMIN_LOGOUT_FAILURE`;
+
+export const adminLogout = (
+  { history }: RouterProps,
+  redirect: string = '',
+): CommonPromiseAction => ({
+  types: [ADMIN_LOGOUT_REQUEST, ADMIN_LOGOUT_SUCCESS, ADMIN_LOGOUT_FAILURE],
+  promise: (api: Api) => api.auth.adminLogout(),
+  redirect,
+});
+
+export const adminLogin = ({
+  email,
+  password,
+  tfaToken,
+}: {
+  email: string;
+  password: string;
+  tfaToken: string;
+}): CommonPromiseAction => ({
+  types: [ADMIN_LOGIN_REQUEST, ADMIN_LOGIN_SUCCESS, ADMIN_LOGIN_FAILURE],
+  promise: (api: Api) => api.auth.adminLogin(email, password, tfaToken),
+});
+
+export const ADMIN_PROFILE_REQUEST = `${prefix}/ADMIN_PROFILE_REQUEST`;
+export const ADMIN_PROFILE_SUCCESS = `${prefix}/ADMIN_PROFILE_SUCCESS`;
+export const ADMIN_PROFILE_FAILURE = `${prefix}/ADMIN_PROFILE_FAILURE`;
+
+export const loadAdminProfile = (): CommonPromiseAction => ({
+  types: [ADMIN_PROFILE_REQUEST, ADMIN_PROFILE_SUCCESS, ADMIN_PROFILE_FAILURE],
+  promise: (api: Api) => api.auth.adminProfile(),
+});
+
+export const CONFIRM_ADMIN_EMAIL_REQUEST = `${prefix}/CONFIRM_ADMIN_EMAIL_REQUEST`;
+export const CONFIRM_ADMIN_EMAIL_SUCCESS = `${prefix}/CONFIRM_ADMIN_EMAIL_SUCCESS`;
+export const CONFIRM_ADMIN_EMAIL_FAILURE = `${prefix}/CONFIRM_ADMIN_EMAIL_FAILURE`;
+
+export const confirmAdminEmail = (values: {
+  email: string;
+  hash: string;
+  password: string;
+  tfaToken: string;
+  tfaSecret: string;
+}): CommonPromiseAction => ({
+  types: [
+    CONFIRM_ADMIN_EMAIL_REQUEST,
+    CONFIRM_ADMIN_EMAIL_SUCCESS,
+    CONFIRM_ADMIN_EMAIL_FAILURE,
+  ],
+  promise: (api: Api) => api.auth.confirmAdminByEmail(values),
+});

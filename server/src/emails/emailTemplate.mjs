@@ -15,6 +15,9 @@ export const templates = {
   balanceChange: 'balanceChange',
   expiringDomains: 'expiringDomains',
   lowBundleCount: 'lowBundleCount',
+  fallbackFundsEmail: 'fallbackFundsEmail',
+  confirmAdminEmail: 'confirmAdminEmail',
+  purchaseConfirmation: 'purchaseConfirmation',
 };
 
 const FIO_LOGO_BASE64 =

@@ -1,0 +1,25 @@
+@import '../../assets/styles/colors';
+
+.container {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-radius: 6px;
+  width: 100%;
+  background-color: $content-background;
+  padding: 20px;
+
+  .formContainer {
+    width: 100%;
+    max-width: 335px;
+    margin: 5% auto;
+
+    .title {
+      color: $white;
+      margin-bottom: 30px;
+    }
+
+    .downloadSecret2FA {
+      cursor: pointer;
+    }
+  }
+}

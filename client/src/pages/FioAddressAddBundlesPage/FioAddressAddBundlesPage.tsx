@@ -12,6 +12,7 @@ import FioLoader from '../../components/common/FioLoader/FioLoader';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import FioNamesInitWrapper from '../../components/FioNamesInitWrapper';
 import Badge, { BADGE_TYPES } from '../../components/Badge/Badge';
+import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 
 import { convertFioPrices } from '../../util/prices';
 import { useFioWallet, useWalletBalances } from '../../util/hooks';
@@ -172,15 +173,21 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
         />
       ) : null}
 
+      {currentWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+        <LedgerWalletActionNotSupported
+          submitData={submitData}
+          onCancel={onCancel}
+        />
+      ) : null}
+
       <PseudoModalContainer title="Add bundled transactions" link={backUrl}>
         <div className={classes.container}>
           <h5 className={classes.label}>Add Bundled Transactions Details</h5>
           {renderDetails()}
           <h5 className={classes.label}>Payment Details</h5>
           <PriceBadge
-            costNativeFio={feeNativeFio}
-            costFio={fio}
-            costUsdc={usdc}
+            paymentAmount={fio}
+            convertedPaymentAmount={usdc}
             title="Total Cost"
             type={BADGE_TYPES.BLACK}
           />

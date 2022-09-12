@@ -16,6 +16,7 @@ import {
   DeleteCartItem,
   Domain,
   FioWalletDoublet,
+  LastAuthData,
   Prices,
   RedirectLinkData,
 } from '../../types';
@@ -30,9 +31,11 @@ type Props = {
   hasFreeAddress: boolean;
   isAuthenticated: boolean;
   roe: number | null;
-  recalculate: (cartItems: CartItem[]) => void;
+  lastAuthData: LastAuthData;
+  setCartItems: (cartItems: CartItem[]) => void;
   deleteItem: (params: DeleteCartItem) => void;
   setRedirectPath: (redirectPath: RedirectLinkData) => void;
+  showLoginModal: (redirectRoute: string) => void;
 };
 
 const AddressDomainCart: React.FC<Props> = props => {
@@ -40,29 +43,39 @@ const AddressDomainCart: React.FC<Props> = props => {
     cartItems,
     deleteItem,
     domains,
-    fioWallets,
     prices,
-    recalculate,
+    setCartItems,
     hasFreeAddress,
     isAuthenticated,
     setRedirectPath,
+    showLoginModal,
     roe,
+    lastAuthData,
   } = props;
   const count = cartItems.length;
   const domainsAmount = domains.length;
   const isCartEmpty = count === 0;
+  const cartHasFreeAddress = !!cartItems.find(({ allowFree }) => allowFree);
   const cartItemsJson = JSON.stringify(cartItems);
 
   const history = useHistory();
 
   const handleCheckout = () => {
-    const multipleWallets = fioWallets && fioWallets.length > 1;
-    const route =
-      count === 1 && !multipleWallets ? ROUTES.CHECKOUT : ROUTES.CART;
+    let route = ROUTES.CART;
+    if (
+      count === 1 &&
+      !hasFreeAddress &&
+      cartHasFreeAddress &&
+      (isAuthenticated || !lastAuthData)
+    ) {
+      route = ROUTES.CHECKOUT;
+    }
 
     if (!isAuthenticated) {
       setRedirectPath({ pathname: route });
-      return history.push(ROUTES.CREATE_ACCOUNT);
+      return lastAuthData
+        ? showLoginModal(route)
+        : history.push(ROUTES.CREATE_ACCOUNT);
     }
     history.push(route);
   };
@@ -74,7 +87,7 @@ const AddressDomainCart: React.FC<Props> = props => {
       cartItems,
       roe,
       deleteItem,
-      recalculate,
+      setCartItems,
     });
   };
 
@@ -84,10 +97,10 @@ const AddressDomainCart: React.FC<Props> = props => {
       cartItems: JSON.parse(cartItemsJson),
       prices,
       hasFreeAddress,
-      recalculate,
+      setCartItems,
       roe,
     });
-  }, [cartItemsJson, domainsAmount, hasFreeAddress, prices, recalculate, roe]);
+  }, [cartItemsJson, domainsAmount, hasFreeAddress, prices, setCartItems, roe]);
 
   return (
     <CartSmallContainer isAquaColor={true}>

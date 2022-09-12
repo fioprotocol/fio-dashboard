@@ -1,15 +1,11 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
-import { Form, Field } from 'react-final-form';
-import isEmpty from 'lodash/isEmpty';
 import classnames from 'classnames';
 
 import CounterContainer from '../CounterContainer/CounterContainer';
 import CartItem from './CartItem';
-import WalletDropdown from './WalletDropdown';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
-import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
 
 import { deleteCartItem } from '../../utils';
 
@@ -27,39 +23,35 @@ import classes from './Cart.module.scss';
 
 type Props = {
   cartItems: CartItemType[];
-  deleteItem?: (data: DeleteCartItem) => {};
+  deleteItem?: (data: DeleteCartItem) => void;
   userWallets: FioWalletDoublet[];
-  setWallet: (publicKey: string) => void;
   hasLowBalance: boolean;
   walletCount: number;
   totalCartAmount: string;
+  totalCartNativeAmount: number;
   walletBalancesAvailable: WalletBalancesItem;
   prices: Prices;
-  recalculate?: (cartItems: CartItemType[]) => {};
+  setCartItems?: (cartItems: CartItemType[]) => {};
   isPriceChanged: boolean;
   roe: number;
+  hasGetPricesError?: boolean;
+  error: string | null;
 };
 
 const Cart: React.FC<Props> = props => {
   const {
     cartItems,
     deleteItem,
-    userWallets,
-    setWallet,
-    hasLowBalance,
-    walletCount,
-    totalCartAmount,
-    walletBalancesAvailable,
     prices,
-    recalculate,
+    setCartItems,
     isPriceChanged,
     roe,
+    hasGetPricesError,
+    error,
   } = props;
+
   const count = cartItems.length;
   const isCartEmpty = count === 0;
-
-  const walletBalance =
-    (!isEmpty(walletBalancesAvailable) && walletBalancesAvailable.fio) || 0;
 
   const handleDeleteItem = (id: string) => {
     deleteCartItem({
@@ -67,37 +59,39 @@ const Cart: React.FC<Props> = props => {
       prices,
       deleteItem,
       cartItems,
-      recalculate,
+      setCartItems,
       roe,
     });
   };
 
-  const lowBalanceText = {
-    buttonText: 'Make Deposit',
-    messageText: `There are not
-            enough FIO tokens in this FIO Wallet to complete the purchase.
-            Needed: ${totalCartAmount} FIO, available in wallet:
-            ${walletBalance} FIO. Please add FIO tokens.`,
-  };
+  let errorMessage = 'Your price has been updated due to pricing changes.';
+  if (hasGetPricesError) {
+    errorMessage = 'Price updating has been failed. Please, try again';
+  }
 
   return (
     <>
-      {isPriceChanged && (
-        <div className={classes.badgeContainer}>
-          <Badge show type={BADGE_TYPES.ERROR}>
-            <div className={classnames(classes.infoBadge, classes.priceBadge)}>
-              <FontAwesomeIcon
-                icon="exclamation-circle"
-                className={classes.infoIcon}
-              />
-              <p className={classes.infoText}>
-                <span className="boldText">Pricing update</span> - Your price
-                has been updated due to pricing changes.
-              </p>
-            </div>
-          </Badge>
-        </div>
-      )}
+      <div className={classes.badgeContainer}>
+        <Badge
+          show={isPriceChanged || hasGetPricesError || !!error}
+          type={BADGE_TYPES.ERROR}
+        >
+          <div className={classnames(classes.infoBadge, classes.priceBadge)}>
+            <FontAwesomeIcon
+              icon="exclamation-circle"
+              className={classes.infoIcon}
+            />
+
+            <p className={classes.infoText}>
+              <span className="boldText">
+                {error ? 'Unable to purchase' : 'Pricing update'}
+              </span>
+              {` - `}
+              {error || errorMessage}
+            </p>
+          </div>
+        </Badge>
+      </div>
       <div className={classes.container}>
         <div className={classes.header}>
           <CounterContainer isEmpty={isCartEmpty}>{count}</CounterContainer>
@@ -117,29 +111,7 @@ const Cart: React.FC<Props> = props => {
             Search for more FIO Crypto Handles?
           </p>
         </Link>
-        {walletCount > 1 && (
-          <div className={classes.walletContainer}>
-            <h6 className={classes.title}>FIO Wallet Assignment</h6>
-            <p className={classes.subtitle}>
-              Please choose a FIO wallet to assign your purchase(s) to.
-            </p>
-            <Form
-              onSubmit={() => null}
-              render={() => (
-                <form>
-                  <Field
-                    name="wallet"
-                    component={WalletDropdown}
-                    options={userWallets}
-                    setWallet={setWallet}
-                  />
-                </form>
-              )}
-            />
-          </div>
-        )}
       </div>
-      <LowBalanceBadge {...lowBalanceText} hasLowBalance={hasLowBalance} />
     </>
   );
 };

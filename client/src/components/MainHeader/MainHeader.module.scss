@@ -16,6 +16,7 @@
   }
 
   .logo {
+    cursor: pointer;
     width: 76px;
     height: 100%;
     background-image: url("../../assets/images/fiologo.svg");
@@ -175,6 +176,14 @@
         height: 40px;
       }
     }
+  }
+}
+
+.searchButton {
+  font-size: 13px;
+  &:focus {
+    outline: none !important;
+    box-shadow: none;
   }
 }
 

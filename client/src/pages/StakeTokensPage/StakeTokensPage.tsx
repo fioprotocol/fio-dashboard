@@ -6,6 +6,8 @@ import PseudoModalContainer from '../../components/PseudoModalContainer';
 import StakeTokensForm from './components/StakeTokensForm';
 import StakeTokensEdgeWallet from './components/StakeTokensEdgeWallet';
 import StakeTokensResults from '../../components/common/TransactionResults/components/StakeTokensResults';
+import WalletAction from '../../components/WalletAction/WalletAction';
+import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 
 import { putParamsToUrl } from '../../utils';
 import { convertFioPrices } from '../../util/prices';
@@ -17,7 +19,7 @@ import { TrxResponsePaidBundles } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 
 import { ROUTES } from '../../constants/routes';
-import { WALLET_CREATED_FROM } from '../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
 import { ContainerProps, StakeTokensValues, InitialValues } from './types';
 
@@ -130,17 +132,18 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
 
   return (
     <>
-      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
-        <StakeTokensEdgeWallet
-          fioWallet={fioWallet}
-          fee={feePrice.nativeFio}
-          onCancel={onCancel}
-          onSuccess={onSuccess}
-          sendData={stakeTokensData}
-          processing={processing}
-          setProcessing={setProcessing}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={fioWallet}
+        fee={feePrice.nativeFio}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={stakeTokensData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.STAKE}
+        FioActionWallet={StakeTokensEdgeWallet}
+        LedgerActionWallet={LedgerWalletActionNotSupported}
+      />
 
       <PseudoModalContainer
         title="Stake FIO Tokens"

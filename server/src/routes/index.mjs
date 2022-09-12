@@ -1,21 +1,29 @@
-import users from './users';
-import auth from './auth';
-import actions from './actions';
-import notifications from './notifications';
-import external from './external';
 import account from './account';
-import refProfiles from './refProfiles';
-import newDeviceTwoFactor from './newDeviceTwoFactor';
+import actions from './actions';
+import adminUsers from './adminUsers';
+import auth from './auth';
+import chainCodes from './chainCodes';
 import contacts from './contacts';
+import external from './external';
+import newDeviceTwoFactor from './newDeviceTwoFactor';
+import notifications from './notifications';
+import orders from './orders';
+import payments from './payments';
+import refProfiles from './refProfiles';
+import users from './users';
 
 export default {
-  users,
-  auth,
-  actions,
-  notifications,
-  external,
   account,
-  refProfiles,
-  newDeviceTwoFactor,
+  actions,
+  adminUsers,
+  auth,
+  chainCodes,
   contacts,
+  external,
+  newDeviceTwoFactor,
+  notifications,
+  orders,
+  payments,
+  refProfiles,
+  users,
 };

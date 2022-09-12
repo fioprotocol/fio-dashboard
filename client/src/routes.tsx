@@ -2,7 +2,6 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
-import AdminContainer from './components/AdminContainer';
 import MainLayout from './pages/MainLayout';
 import AuthContainer from './components/AuthContainer';
 import PrivateRoute from './components/PrivateRoute';
@@ -10,9 +9,9 @@ import FioAddressPage from './pages/FioAddressPage';
 import FioAddressManage from './pages/FioAddressManagePage';
 import FioDomainPage from './pages/FioDomainPage';
 import FioDomainManagePage from './pages/FioDomainManagePage';
-import CartPage from './pages/CartPage';
-import CheckoutPage from './pages/CheckoutPage';
-import PurchasePage from './pages/PurchasePage';
+import { CartPage } from './pages/CartPage';
+import { CheckoutPage } from './pages/CheckoutPage';
+import { PurchasePage } from './pages/PurchasePage';
 import ScrollToTop from './components/ScrollToTop';
 import FioAddressTransferPage from './pages/FioAddressTransferPage';
 import FioDomainTransferPage from './pages/FioDomainTransferPage';
@@ -48,6 +47,17 @@ import UpdateEmailPage from './pages/UpdateEmailPage';
 import RejectFioRequestPage from './pages/RejectFioRequestPage';
 import EmailConfirmationResultPage from './pages/EmailConfirmationResultsPage';
 
+import AdminPrivateRoute from './components/AdminPrivateRoute';
+import AdminOrdersPage from './pages/AdminOrdersPage';
+import AdminLoginPage from './pages/AdminLoginPage';
+import AdminUserListPage from './pages/AdminUserListPage';
+import AdminEmailConfirmPage from './pages/AdminEmailConfirmPage';
+import AdminRegularUsersList from './pages/AdminRegularUsersListPage';
+import AdminProfilePage from './pages/AdminProfilePage';
+import AdminHomePage from './pages/AdminHomePage';
+import AdminFioAccountsProfilesListPage from './pages/AdminFioAccountsProfilesListPage';
+import AdminSearchResultPage from './pages/AdminSearchResultPage';
+
 import { ROUTES } from './constants/routes';
 
 const LIST_TOKEN_PARENT_ROUTE = `${ROUTES.LINK_TOKEN_LIST}/:id`;
@@ -58,7 +68,6 @@ const Routes = (): React.ReactElement => (
       <Switch>
         <Route path={ROUTES.HOME} component={HomePage} exact />
         <Route path={ROUTES.REF_PROFILE_HOME} component={RefHomePage} exact />
-        <Route path={ROUTES.ADMIN} component={AdminContainer} exact />
         <Route
           path={ROUTES.CONFIRM_EMAIL}
           component={EmailConfirmationPage}
@@ -227,6 +236,48 @@ const Routes = (): React.ReactElement => (
         <PrivateRoute
           path={ROUTES.REJECT_FIO_REQUEST}
           component={RejectFioRequestPage}
+          exact
+        />
+
+        <AdminPrivateRoute
+          path={ROUTES.ADMIN_HOME}
+          component={AdminHomePage}
+          exact
+        />
+        <AdminPrivateRoute
+          path={ROUTES.ADMIN_ORDERS}
+          component={AdminOrdersPage}
+          exact
+        />
+        <Route path={ROUTES.ADMIN_LOGIN} component={AdminLoginPage} exact />
+        <AdminPrivateRoute
+          path={ROUTES.ADMIN_USERS}
+          component={AdminUserListPage}
+          exact
+        />
+        <Route
+          path={ROUTES.ADMIN_CONFIRM_EMAIL}
+          component={AdminEmailConfirmPage}
+          exact
+        />
+        <AdminPrivateRoute
+          path={ROUTES.ADMIN_REGULAR_USERS}
+          component={AdminRegularUsersList}
+          exact
+        />
+        <AdminPrivateRoute
+          path={ROUTES.ADMIN_PROFILE}
+          component={AdminProfilePage}
+          exact
+        />
+        <AdminPrivateRoute
+          path={ROUTES.ADMIN_ACCOUNTS}
+          component={AdminFioAccountsProfilesListPage}
+          exact
+        />
+        <AdminPrivateRoute
+          path={ROUTES.ADMIN_SEARCH_RESULT}
+          component={AdminSearchResultPage}
           exact
         />
 

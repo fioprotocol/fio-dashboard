@@ -1,3 +1,5 @@
+import React from 'react';
+
 import {
   CONTAINED_FLOW_ACTION_TEXT,
   CONTAINED_FLOW_SUBTITLES,
@@ -12,6 +14,8 @@ import {
   ContainedFlowActionSettingsKey,
 } from '../types';
 
+type DefaultContentProps = string | null;
+
 export const handleHomePageContent = ({
   isContainedFlow,
   containedFlowQueryParams,
@@ -20,7 +24,16 @@ export const handleHomePageContent = ({
   isContainedFlow: boolean;
   containedFlowQueryParams: ContainedFlowQueryParams;
   refProfileInfo: RefProfile;
-}) => {
+}): {
+  logoSrc: DefaultContentProps;
+  title: DefaultContentProps | React.ReactElement;
+  subtitle: DefaultContentProps;
+  actionText: DefaultContentProps;
+  hasMinHeight: boolean;
+  showSignInWidget: boolean;
+  hideBottomPlug: boolean;
+  initialValues: { domain?: string };
+} => {
   let title = null;
   let subtitle = null;
   let logoSrc = null;

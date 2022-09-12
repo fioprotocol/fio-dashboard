@@ -9,24 +9,45 @@ const JOBS_PATH = path.resolve('server/src/jobs');
 
 dotenv.load();
 
+const availableJobsParams = {
+  emails: {
+    path: path.join(JOBS_PATH, 'emails.mjs'),
+    name: 'emails',
+    interval: process.env.EMAILS_JOB_INTERVAL,
+    timeout: process.env.EMAILS_JOB_TIMEOUT,
+    closeWorkerAfterMs: 60 * 1000, // 1 min
+  },
+  walletData: {
+    path: path.join(JOBS_PATH, 'wallet-data.mjs'),
+    name: 'wallet-data',
+    interval: process.env.WALLET_DATA_JOB_INTERVAL,
+    timeout: 0,
+    closeWorkerAfterMs: 5 * 60 * 1000, // 5 min
+  },
+  orders: {
+    path: path.join(JOBS_PATH, 'orders.mjs'),
+    name: 'orders',
+    interval: process.env.ORDERS_JOB_INTERVAL,
+    timeout: 0,
+    closeWorkerAfterMs: 5 * 60 * 1000, // 5 min
+  },
+  txCheck: {
+    path: path.join(JOBS_PATH, 'tx-check.mjs'),
+    name: 'tx-check',
+    interval: process.env.ORDERS_JOB_INTERVAL || 30 * 1000, // 30 sec default
+    timeout: 0,
+    closeWorkerAfterMs: 5 * 60 * 1000, // 5 min
+  },
+};
+
+const jobsToLaunch = process.env.JOB_LIST;
+const jobs = jobsToLaunch
+  ? jobsToLaunch.split(',').map(jobKey => availableJobsParams[jobKey])
+  : [];
+
 const bree = new Bree({
   root: false,
-  jobs: [
-    {
-      path: path.join(JOBS_PATH, 'emails.mjs'),
-      name: 'emails',
-      interval: process.env.EMAILS_JOB_INTERVAL,
-      timeout: process.env.EMAILS_JOB_TIMEOUT,
-      closeWorkerAfterMs: 60 * 1000, // 1 min
-    },
-    {
-      path: path.join(JOBS_PATH, 'wallet-data.mjs'),
-      name: 'wallet-data',
-      interval: process.env.WALLET_DATA_JOB_INTERVAL,
-      timeout: 0,
-      closeWorkerAfterMs: 5 * 60 * 1000, // 5 min
-    },
-  ],
+  jobs,
   workerMessageHandler: (name, message) => {
     logger.info('JOB MESSAGE === ', name, message);
   },

@@ -81,11 +81,15 @@
 
   .address {
     font-size: 1em;
+    word-break: break-word;
+    margin-right: 30px;
   }
 
   .price {
     margin: 0 1.875rem 0 auto;
+    flex-shrink: 0;
     font-size: 1em;
+    @include proxima-nova-regular;
   }
 
   .icon {
@@ -109,23 +113,6 @@
 
 .amountSubtitle {
   @include proxima-nova-regular;
-}
-
-.checkout {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  height: 36px;
-  border-radius: 7px;
-  padding: 0 0.625rem;
-  font-size: 1em;
-
-  p {
-    margin: 0 0 0 0.5625rem;
-    font-size: 0.9375em;
-    @include sf-pro-display-thin;
-  }
 }
 
 .total {
@@ -233,6 +220,14 @@
   }
 }
 
+@include md {
+  .amountTitle {
+    top: -50px;
+    left: 0;
+    margin-left: 0;
+  }
+}
+
 @include sm {
   .amountTitle {
     font-size: 1.25em;
@@ -278,6 +273,10 @@
       right: -10px;
     }
   }
+}
+
+.paymentsBlock {
+  margin-top: -10px;
 }
 
 @keyframes expand {

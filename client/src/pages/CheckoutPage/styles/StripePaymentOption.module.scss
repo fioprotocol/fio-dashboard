@@ -1,0 +1,15 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+
+.subtitle {
+  font-size: 0.875em;
+  margin-bottom: 15px;
+  color: $dark-jungle-green;
+  align-self: flex-start;
+  @include proxima-nova-semibold;
+}
+
+.paymentContainer {
+  width: 100%;
+  margin-top: -15px;
+}

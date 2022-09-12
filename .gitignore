@@ -1,5 +1,6 @@
 .env
 /client/build/
+/server/tests/use-case/webhook/webhook-options.json
 notification-content.json
 # Package managers:
 lerna-debug.log

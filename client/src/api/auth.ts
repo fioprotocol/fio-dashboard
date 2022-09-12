@@ -19,6 +19,7 @@ import {
   AuthUpdateEmailRevertResponse,
   AuthUpdateNewDeviceResponse,
   AuthUsernameResponse,
+  AdminAuthLoginResponse,
 } from './responses';
 
 export default class Auth extends Base {
@@ -145,5 +146,33 @@ export default class Auth extends Base {
     return this.apiClient.get('/auth/new-device-two-factor/check-rejected', {
       voucherId,
     });
+  }
+
+  adminProfile(): Promise<AuthProfileResponse> {
+    return this.apiClient.get('admin/me');
+  }
+
+  async adminLogout(): Promise<AuthLogoutResponse> {
+    return null;
+  }
+
+  adminLogin(
+    email: string,
+    password: string,
+    tfaToken: string,
+  ): Promise<AdminAuthLoginResponse> {
+    return this.apiClient.post('admin-auth', {
+      data: { email, password, tfaToken },
+    });
+  }
+
+  confirmAdminByEmail(values: {
+    email: string;
+    hash: string;
+    password: string;
+    tfaToken: string;
+    tfaSecret: string;
+  }): Promise<AuthLoginResponse> {
+    return this.apiClient.post('admin-auth/create', { data: { ...values } });
   }
 }

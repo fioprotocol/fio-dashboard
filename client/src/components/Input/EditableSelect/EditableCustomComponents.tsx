@@ -71,6 +71,18 @@ export const Option: React.FC<EditableCustomComponentsTypes> = optionProps => {
   );
 };
 
+export const Control: React.FC<EditableCustomComponentsTypes> = controlProps => {
+  const {
+    selectProps: { menuIsOpen },
+  } = controlProps;
+  return (
+    <components.Control
+      {...controlProps}
+      className={menuIsOpen && classes.menuIsOpen}
+    />
+  );
+};
+
 type DropdownIndicatorProps = {
   selectProps: { menuIsOpen: boolean };
 } & EditableCustomComponentsTypes;
