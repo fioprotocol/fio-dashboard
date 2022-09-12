@@ -25,5 +25,13 @@
         @include proxima-nova-thin;
       }
     }
+
+    a {
+      color: $violet;
+
+      &:hover {
+        color: $clear-blue;
+      }
+    }
   }
 }

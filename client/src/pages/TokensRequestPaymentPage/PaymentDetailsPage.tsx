@@ -6,8 +6,13 @@ import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import PaymentDetailsForm from './components/PaymentDetailsForm';
 import PaymentDetailsEdgeWallet from './components/PaymentDetailsEdgeWallet';
 import PaymentDetailsResults from '../../components/common/TransactionResults/components/PaymentDetailsResults';
+import FioLoader from '../../components/common/FioLoader/FioLoader';
+import WalletAction from '../../components/WalletAction/WalletAction';
+import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 
+import { useFioAddresses } from '../../util/hooks';
 import { putParamsToUrl } from '../../utils';
+import { isFioChain } from '../../util/fio';
 
 import {
   ContainerProps,
@@ -19,13 +24,11 @@ import {
 
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ROUTES } from '../../constants/routes';
-import { WALLET_CREATED_FROM } from '../../constants/common';
-import { FioAddressDoublet, FioWalletDoublet } from '../../types';
-import { useFioAddresses } from '../../util/hooks';
-import FioLoader from '../../components/common/FioLoader/FioLoader';
-import { FioRecordViewDecrypted } from '../WalletPage/types';
-import { isFioChain } from '../../util/fio';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { FIO_RECORD_TYPES } from '../WalletPage/constants';
+
+import { FioRecordViewDecrypted } from '../WalletPage/types';
+import { FioAddressDoublet, FioWalletDoublet } from '../../types';
 
 const PaymentDetailsPage: React.FC<ContainerProps> = props => {
   const {
@@ -172,18 +175,19 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
 
   return (
     <>
-      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
-        <PaymentDetailsEdgeWallet
-          fioWallet={fioWallet}
-          onCancel={onCancel}
-          onSuccess={onSuccess}
-          sendData={sendData}
-          processing={processing}
-          setProcessing={setProcessing}
-          contactsList={contactsList}
-          createContact={createContact}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={fioWallet}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={sendData}
+        processing={processing}
+        setProcessing={setProcessing}
+        contactsList={contactsList}
+        createContact={createContact}
+        action={CONFIRM_PIN_ACTIONS.SEND}
+        FioActionWallet={PaymentDetailsEdgeWallet}
+        LedgerActionWallet={LedgerWalletActionNotSupported}
+      />
 
       <PseudoModalContainer
         title="Payment Details"

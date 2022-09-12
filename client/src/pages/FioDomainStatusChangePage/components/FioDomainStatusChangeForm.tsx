@@ -31,7 +31,7 @@ const FioDomainStatusChangeForm: React.FC<FormProps> = props => {
     hasLowBalance,
     processing,
     walletBalancesAvailable,
-    walletName,
+    fioWallet,
     handleSubmit,
   } = props;
 
@@ -70,7 +70,7 @@ const FioDomainStatusChangeForm: React.FC<FormProps> = props => {
 
         <PayWithBadge
           walletBalances={walletBalancesAvailable}
-          walletName={walletName}
+          walletName={fioWallet.name}
         />
         <LowBalanceBadge hasLowBalance={hasLowBalance} />
         <SubmitButton

@@ -17,7 +17,12 @@ import {
 import { CURRENCY_CODES } from '../../../../constants/common';
 import { ACTIONS } from '../../../../constants/fio';
 
-import { BcTx, OrderItem, OrderPaymentItem } from '../../../../types';
+import {
+  BcTx,
+  OrderItem,
+  OrderPaymentItem,
+  PaymentEventLog,
+} from '../../../../types';
 
 type PaymentSpentType = typeof PAYMENT_SPENT_TYPES[keyof typeof PAYMENT_SPENT_TYPES];
 type PaymentStatusType = typeof PAYMENT_STATUSES[keyof typeof PAYMENT_STATUSES];
@@ -35,6 +40,29 @@ export const PAYMENT_OPTION_LABEL = {
   [PAYMENT_OPTIONS.FIO]: 'FIO',
   [PAYMENT_OPTIONS.CREDIT_CARD]: 'Stripe',
   [PAYMENT_OPTIONS.CRYPTO]: '-',
+};
+
+const generatePaymentEventLogsNotes = (eventLogs: PaymentEventLog[]) => {
+  if (!eventLogs || eventLogs.length === 0) return '';
+
+  const last = eventLogs.sort(({ id: id1 }, { id: id2 }) =>
+    id1 < id2 ? 1 : -1,
+  )[0];
+
+  const { statusNotes, data: eventData } = last;
+
+  let notes = '';
+  if (statusNotes) notes += `\n${statusNotes}`;
+  if (eventData) {
+    if (eventData.fioTxId) notes += `\nTX ID: ${eventData.fioTxId}`;
+    if (eventData.fioFee)
+      notes += `\nFee collected: ${apis.fio
+        .sufToAmount(new MathOp(eventData.fioFee).toNumber())
+        .toString()} ${CURRENCY_CODES.FIO}`;
+    if (eventData.error) notes += `\n${JSON.stringify(eventData.error)}`;
+  }
+
+  return notes;
 };
 
 const setHistory = (
@@ -111,11 +139,13 @@ const setHistory = (
             PAYMENT_SPENT_TYPES_ORDER_HISTORY_LABEL[
               spentType as PaymentSpentType
             ]
-          } ${
-            paymentEventLogs && paymentEventLogs.length
-              ? paymentEventLogs[0].statusNotes
-              : 'action'
-          }`,
+          } ${data && data.fioName ? data.fioName : 'action'} ${
+            data && data.action ? `Action: ${data.action}` : ''
+          }${
+            data && data.sendingFioTokens
+              ? `\nTransfer Tokens\nAmount: ${price} ${CURRENCY_CODES.FIO}`
+              : ''
+          }${generatePaymentEventLogsNotes(paymentEventLogs)}`,
           dateTime: new Date(createdAt).getTime(),
         });
       }

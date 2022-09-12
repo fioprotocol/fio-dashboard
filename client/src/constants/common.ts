@@ -32,6 +32,7 @@ export const CONFIRM_PIN_FIO_ACTIONS = {
   RENEW: 'RENEW',
   SIGN_NFT: 'SIGN_NFT',
   SEND: 'SEND',
+  REQUEST: 'REQUEST',
   ADD_TOKEN: 'ADD_TOKEN',
   DELETE_TOKEN: 'DELETE_TOKEN',
   EDIT_TOKEN: 'EDIT_TOKEN',
@@ -68,6 +69,9 @@ export const MANAGE_PAGE_REDIRECT = {
   address: ROUTES.FIO_ADDRESSES,
   domain: ROUTES.FIO_DOMAINS,
 };
+
+export const DEFAULT_FIO_TRX_ERR_MESSAGE =
+  'Your purchase has failed due to an error. Your funds remain in your account and your registrations did not complete. Please try again later.';
 
 export const NFT_TOKEN_ITEM_PROPS_ORDER: NFTTokenItemProps[] = [
   'fioAddress',

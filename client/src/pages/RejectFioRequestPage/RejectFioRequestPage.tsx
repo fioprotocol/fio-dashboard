@@ -8,11 +8,12 @@ import FioRecordFieldsList from '../WalletPage/components/FioRecordFieldsList';
 import BundledTransactionBadge from '../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import LowBalanceBadge from '../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import RejectRequestEdge from './components/RejectRequestEdge';
-import { ERROR_TYPES } from '../../components/common/TransactionResults/constants';
+import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 
 import { putParamsToUrl } from '../../utils';
 import { useFioAddresses } from '../../util/hooks';
 
+import { ERROR_TYPES } from '../../components/common/TransactionResults/constants';
 import { WALLET_CREATED_FROM } from '../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../constants/fio';
 import {
@@ -176,6 +177,13 @@ const RejectFioRequestPage: React.FC<Props &
           onCancel={onCancel}
           submitData={submitData}
           fioWallet={fioWallet}
+        />
+      ) : null}
+
+      {fioWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+        <LedgerWalletActionNotSupported
+          submitData={submitData}
+          onCancel={onCancel}
         />
       ) : null}
     </>

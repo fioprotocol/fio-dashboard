@@ -4,6 +4,7 @@ import arrayMutators from 'final-form-arrays';
 
 import AddTokenForm from './copmonents/AddTokenForm';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
+import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 
 import { validate as validation } from './validation';
 
@@ -11,7 +12,10 @@ import { linkTokens } from '../../api/middleware/fio';
 import { minWaitTimeFunction } from '../../utils';
 import { log } from '../../util/general';
 
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import {
+  CONFIRM_PIN_ACTIONS,
+  WALLET_CREATED_FROM,
+} from '../../constants/common';
 import { TOKEN_LINK_MIN_WAIT_TIME } from '../../constants/fio';
 
 import { AddTokenProps, FormValues } from './types';
@@ -22,7 +26,7 @@ import {
 } from '../../types';
 
 const AddToken: React.FC<AddTokenProps> = props => {
-  const { fioCryptoHandle } = props;
+  const { fioCryptoHandle, fioWallets } = props;
   const [resultsData, setResultsData] = useState<LinkActionResult | null>(null);
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<
@@ -31,6 +35,9 @@ const AddToken: React.FC<AddTokenProps> = props => {
   const [bundleCost, changeBundleCost] = useState(0);
 
   const { name, edgeWalletId = '', publicAddresses } = fioCryptoHandle;
+  const fioWallet = fioWallets.find(
+    ({ publicKey }) => publicKey === fioCryptoHandle.walletPublicKey,
+  );
 
   const onSubmit = (values: FormValues) => {
     setSubmitData(values);
@@ -90,16 +97,26 @@ const AddToken: React.FC<AddTokenProps> = props => {
 
   return (
     <>
-      <EdgeConfirmAction
-        onSuccess={onSuccess}
-        onCancel={onCancel}
-        submitAction={submit}
-        data={submitData}
-        action={CONFIRM_PIN_ACTIONS.ADD_TOKEN}
-        processing={processing}
-        setProcessing={setProcessing}
-        fioWalletEdgeId={edgeWalletId}
-      />
+      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
+        <EdgeConfirmAction
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          submitAction={submit}
+          data={submitData}
+          action={CONFIRM_PIN_ACTIONS.ADD_TOKEN}
+          processing={processing}
+          setProcessing={setProcessing}
+          fioWalletEdgeId={edgeWalletId}
+        />
+      ) : null}
+
+      {fioWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+        <LedgerWalletActionNotSupported
+          submitData={submitData}
+          onCancel={onCancel}
+        />
+      ) : null}
+
       <Form
         onSubmit={onSubmit}
         validate={validate}
@@ -112,6 +129,7 @@ const AddToken: React.FC<AddTokenProps> = props => {
             fioCryptoHandle={fioCryptoHandle}
             results={resultsData}
             bundleCost={bundleCost}
+            fioWallets={fioWallets}
             changeBundleCost={changeBundleCost}
             onBack={() => onBack(formProps)}
             onRetry={onRetry}

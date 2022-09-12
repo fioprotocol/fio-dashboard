@@ -5,6 +5,7 @@ import ActionContainer from '../../components/LinkTokenList/ActionContainer';
 import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import PublicAddressEdit from './components/PublicAddressEdit';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
+import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 
 import { linkTokens } from '../../api/middleware/fio';
 import { genericTokenId } from '../../util/fio';
@@ -15,19 +16,24 @@ import {
   ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
   TOKEN_LINK_MIN_WAIT_TIME,
 } from '../../constants/fio';
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import {
+  CONFIRM_PIN_ACTIONS,
+  WALLET_CREATED_FROM,
+} from '../../constants/common';
 
 import {
   LinkActionResult,
   PublicAddressDoublet,
   WalletKeys,
   FioAddressWithPubAddresses,
+  FioWalletDoublet,
 } from '../../types';
 
 import classes from './styles/EditTokenPage.module.scss';
 
 type Props = {
   fioCryptoHandle: FioAddressWithPubAddresses;
+  fioWallets: FioWalletDoublet[];
 };
 
 type EditTokenElement = {
@@ -46,7 +52,9 @@ const EditTokenPage: React.FC<Props> = props => {
       remaining,
       edgeWalletId,
       name: fioAddressName,
+      walletPublicKey,
     },
+    fioWallets,
   } = props;
 
   const [pubAddressesArr, changePubAddresses] = useState<EditTokenElement[]>(
@@ -60,6 +68,9 @@ const EditTokenPage: React.FC<Props> = props => {
   const hasLowBalance = remaining - bundleCost < 0;
   const hasEdited = pubAddressesArr.some(
     pubAddress => pubAddress.newPublicAddress,
+  );
+  const fioWallet = fioWallets.find(
+    ({ publicKey }) => publicKey === walletPublicKey,
   );
 
   const pubAddressesToDefault = () => {
@@ -173,20 +184,31 @@ const EditTokenPage: React.FC<Props> = props => {
 
   return (
     <>
-      <EdgeConfirmAction
-        onSuccess={onSuccess}
-        onCancel={onCancel}
-        submitAction={submit}
-        data={submitData}
-        action={CONFIRM_PIN_ACTIONS.EDIT_TOKEN}
-        processing={processing}
-        setProcessing={setProcessing}
-        fioWalletEdgeId={edgeWalletId}
-      />
+      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
+        <EdgeConfirmAction
+          onSuccess={onSuccess}
+          onCancel={onCancel}
+          submitAction={submit}
+          data={submitData}
+          action={CONFIRM_PIN_ACTIONS.EDIT_TOKEN}
+          processing={processing}
+          setProcessing={setProcessing}
+          fioWalletEdgeId={edgeWalletId}
+        />
+      ) : null}
+
+      {fioWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+        <LedgerWalletActionNotSupported
+          submitData={submitData}
+          onCancel={onCancel}
+        />
+      ) : null}
+
       <ActionContainer
         containerName={CONTAINER_NAMES.EDIT}
         fioCryptoHandle={props.fioCryptoHandle}
         bundleCost={bundleCost}
+        fioWallets={fioWallets}
         onActionButtonClick={onActionClick}
         results={resultsData}
         changeBundleCost={changeBundleCost}

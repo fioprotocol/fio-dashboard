@@ -7,6 +7,7 @@ import Modal from '../../../components/Modal/Modal';
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import CopyTooltip from '../../../components/CopyTooltip';
 import ShowPrivateKeyModal from './ShowPrivateKeyModal';
+import LedgerBadge from '../../../components/Badges/LedgerBadge/LedgerBadge';
 
 import { WALLET_CREATED_FROM } from '../../../constants/common';
 
@@ -79,6 +80,13 @@ const WalletDetailsModal: React.FC<Props> = props => {
         hasDefaultCloseColor={true}
       >
         <div className={classes.container}>
+          {from === WALLET_CREATED_FROM.LEDGER ? (
+            <div className={classes.ledgerContainer}>
+              <LedgerBadge />
+            </div>
+          ) : (
+            ''
+          )}
           <h3 className={classes.title}>Wallet Details</h3>
           <div className={classes.qrCode}>
             <QRCode value={publicKey} />

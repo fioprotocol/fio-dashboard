@@ -131,6 +131,7 @@ export type FioWalletDoublet = {
   edgeId: string;
   name: string;
   publicKey: string;
+  data?: { device?: number; derivationIndex?: number };
   balance?: number | null;
   available?: number | null;
   locked?: number | null;
@@ -610,17 +611,20 @@ export type AdminSearchResult = {
   };
 };
 
+export type PaymentEventLog = {
+  id: string;
+  status: number;
+  statusNotes?: string;
+  data?: { fioTxId?: string; fioFee?: number; error?: AnyObject };
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type OrderPaymentItem = {
   createdAt: string;
   currency?: string;
   externalId?: string;
-  paymentEventLogs: {
-    id: string;
-    status: number;
-    statusNotes?: string;
-    createdAt: string;
-    updatedAt: string;
-  }[];
+  paymentEventLogs: PaymentEventLog[];
   price?: string;
   processor: PaymentOptionsProps;
   spentType: number;
@@ -628,7 +632,12 @@ export type OrderPaymentItem = {
   updatedAt: string;
   id: string;
   statusNotes?: string;
-  data?: { roe?: string };
+  data?: {
+    roe?: string;
+    fioName?: string;
+    action?: string;
+    sendingFioTokens?: boolean;
+  };
 };
 
 export type BcTx = {

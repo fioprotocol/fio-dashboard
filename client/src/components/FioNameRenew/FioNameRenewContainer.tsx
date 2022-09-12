@@ -10,6 +10,7 @@ import RenewResults from '../common/TransactionResults/components/RenewResults';
 import RenewEdgeWallet from './components/RenewEdgeWallet';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
 import FioLoader from '../common/FioLoader/FioLoader';
+import LedgerWalletActionNotSupported from '../LedgerWalletActionNotSupported';
 
 import {
   DOMAIN,
@@ -142,6 +143,12 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
           renewData={submitData}
           processing={processing}
           fee={feeNativeFio}
+        />
+      ) : null}
+      {currentWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+        <LedgerWalletActionNotSupported
+          submitData={submitData}
+          onCancel={onCancel}
         />
       ) : null}
       <PseudoModalContainer
