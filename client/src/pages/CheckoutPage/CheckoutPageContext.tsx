@@ -160,7 +160,10 @@ export const useContext = (): {
         }
       }
       if (!paymentWalletPublicKey && fioWallets.length) {
-        setWallet(fioWallets[0].publicKey);
+        setWallet(
+          fioWallets.filter(({ from }) => from === WALLET_CREATED_FROM.EDGE)[0]
+            .publicKey,
+        );
       }
     }
   }, []);
@@ -203,6 +206,11 @@ export const useContext = (): {
   const paymentAssignmentWallets = fioWallets
     .filter(wallet => {
       if (isFree || paymentOption !== PAYMENT_OPTIONS.FIO) return true;
+      if (
+        wallet.from === WALLET_CREATED_FROM.LEDGER &&
+        paymentOption === PAYMENT_OPTIONS.FIO
+      )
+        return false;
       if (
         cartHasItemsWithPrivateDomain &&
         paymentOption === PAYMENT_OPTIONS.FIO &&

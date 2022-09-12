@@ -37,7 +37,7 @@ import { useEffectOnce } from '../../hooks/general';
 
 import { ROUTES } from '../../constants/routes';
 import { ACTIONS } from '../../constants/fio';
-import { CURRENCY_CODES } from '../../constants/common';
+import { CURRENCY_CODES, WALLET_CREATED_FROM } from '../../constants/common';
 import { log } from '../../util/general';
 
 import { FioRegPricesResponse } from '../../api/responses';
@@ -164,9 +164,11 @@ export const useContext = (): UseContextReturnType => {
     );
 
   const highestBalanceWalletPubKey = userWallets.length
-    ? userWallets.sort(
-        (a, b) => b.available - a.available || a.name.localeCompare(b.name),
-      )[0].publicKey
+    ? userWallets
+        .filter(({ from }) => from === WALLET_CREATED_FROM.EDGE)
+        .sort(
+          (a, b) => b.available - a.available || a.name.localeCompare(b.name),
+        )[0].publicKey
     : '';
 
   const getFreshPrices = async (): Promise<FioRegPricesResponse> => {
