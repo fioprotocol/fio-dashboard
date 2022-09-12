@@ -29,6 +29,7 @@ import AccountRecoveryPage from './pages/AccountRecoveryPage';
 import EmailConfirmationPage from './pages/EmailConfirmationPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsOfServicePage from './pages/TermsOfServicePage';
+import CookieNoticePage from './pages/CookieNoticePage';
 import EmailConfirmGatePage from './pages/EmailConfirmGatePage';
 import FioAddressSignaturesPage from './pages/FioAddressSignaturesPage';
 import FioAddressSignPage from './pages/FioAddressSignPage';
@@ -235,6 +236,8 @@ const Routes = (): React.ReactElement => (
           component={TermsOfServicePage}
           exact
         />
+
+        <Route path={ROUTES.COOKIE_NOTICE} component={CookieNoticePage} exact />
 
         <Route
           path={ROUTES.NFT_VALIDATION}
