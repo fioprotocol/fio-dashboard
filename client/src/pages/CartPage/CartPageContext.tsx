@@ -140,7 +140,7 @@ export const useContext = (): UseContextReturnType => {
     for (const cartItem of cartItems.filter(({ address }) => address)) {
       if (privateDomainsMap[cartItem.domain]) {
         hasLowBalanceForPrivateDomains = privateDomainsMap[cartItem.domain]
-          .wallet?.available
+          .wallet
           ? new MathOp(privateDomainsMap[cartItem.domain].wallet.available).lte(
               totalCartNativeAmount,
             )
