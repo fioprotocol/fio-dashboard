@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import TransportWebUSB from '@ledgerhq/hw-transport-webusb';
 import Transport from '@ledgerhq/hw-transport';
 import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
+import { DeviceStatusCodes } from 'ledgerjs-hw-app-fio/dist/errors/deviceStatusError';
 
 import ConnectionModal from '../Modal/ConnectionModal';
 
@@ -40,6 +41,7 @@ const LedgerConnect: React.FC<Props> = props => {
   } = props;
   const connectFioAppIntervalRef = useRef<number | null>(null);
   const [connecting, setConnecting] = useState(false);
+  const [awaitingLedger, setAwaitingLedger] = useState(false);
   const [fioApp, setFioApp] = useState<LedgerFioApp | null>(null);
   const [transport, setTransport] = useState<Transport | null>(null);
 
@@ -63,6 +65,7 @@ const LedgerConnect: React.FC<Props> = props => {
   // Handle fioApp connection set
   useEffect(() => {
     if (fioApp != null) {
+      setAwaitingLedger(true);
       afterConnect(fioApp);
     }
   }, [fioApp]);
@@ -147,8 +150,16 @@ const LedgerConnect: React.FC<Props> = props => {
 
       onSuccess(result);
     } catch (e) {
-      log.error(e);
-      showGenericErrorModal('Try to reconnect your ledger device.');
+      log.error(e, e.code);
+      let title = 'Something went wrong';
+      let msg = 'Try to reconnect your ledger device.';
+
+      if (e.code === DeviceStatusCodes.ERR_REJECTED_BY_USER) {
+        title = 'Rejected';
+        msg = 'Action rejected by user';
+      }
+
+      showGenericErrorModal(msg, title);
       onCancel();
     }
   };
@@ -157,7 +168,12 @@ const LedgerConnect: React.FC<Props> = props => {
     <ConnectionModal
       show={connecting}
       onClose={closeConnection}
-      message="Please connect your Ledger device and confirm"
+      awaitingLedger={awaitingLedger}
+      message={
+        awaitingLedger
+          ? 'Please confirm action in your Ledger device'
+          : 'Please connect your Ledger device and confirm'
+      }
       isTransaction={isTransaction}
     />
   );
