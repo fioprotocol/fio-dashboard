@@ -17,7 +17,7 @@ import MathOp from '../services/math.mjs';
 import logger from '../logger.mjs';
 
 export const FIOSDK = fiosdkLib.FIOSDK;
-export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit).mul(800).toNumber();
+export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit).mul(1500).toNumber();
 export const INSUFFICIENT_FUNDS_ERR_MESSAGE = 'Insufficient funds to cover fee';
 export const INSUFFICIENT_BALANCE = 'Insufficient balance';
 export const FEES_VAR_KEY = 'FIO_FEES';

@@ -70,7 +70,7 @@ export type RawTransaction = {
 export type FIOSDK_LIB = typeof FIOSDK;
 
 export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit)
-  .mul(800)
+  .mul(1500)
   .toNumber();
 export const ENDPOINT_FEE_HASH: { [endpoint: string]: string } = {
   [EndPoint.stakeFioTokens]: '0x83c48bde1205347001e4ddd44c571f78',
