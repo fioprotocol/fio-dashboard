@@ -2,6 +2,7 @@ import Sequelize from 'sequelize';
 
 import '../db';
 import { Notification, PublicWalletData, User, Wallet } from '../models/index.mjs';
+import { sleep } from '../tools.mjs';
 import CommonJob from './job.mjs';
 import MathOp from '../services/math.mjs';
 
@@ -12,7 +13,8 @@ import logger from '../logger.mjs';
 
 import { DAY_MS, DOMAIN_EXP_PERIOD } from '../config/constants.js';
 
-const CHUNKS_LIMIT = 5;
+const CHUNKS_LIMIT = process.env.WALLET_DATA_JOB_CHUNKS_LIMIT || 1;
+const CHUNKS_TIMEOUT = process.env.WALLET_DATA_JOB_CHUNKS_TIMEOUT || 1500;
 const LOW_BUNDLES_THRESHOLD = 25;
 const DAYS_30 = DAY_MS * 30;
 const DOMAIN_EXP_TABLE = {
@@ -23,7 +25,7 @@ const DOMAIN_EXP_TABLE = {
   1: DOMAIN_EXP_PERIOD.EXPIRED_90,
   0: DOMAIN_EXP_PERIOD.EXPIRED,
 };
-const ITEMS_PER_FETCH = 20;
+const ITEMS_PER_FETCH = process.env.WALLET_DATA_JOB_ITEMS_PER_FETCH || 5;
 const DEBUG_INFO = process.env.DEBUG_INFO_LOGS;
 
 const returnDayRange = timePeriod => {
@@ -443,6 +445,7 @@ class WalletDataJob extends CommonJob {
         if (chunks.length === CHUNKS_LIMIT) {
           if (DEBUG_INFO) this.postMessage(`Process chunk - ${chunks.length}`);
           await this.executeActions(chunks);
+          await sleep(CHUNKS_TIMEOUT);
           chunks = [];
         }
       }
