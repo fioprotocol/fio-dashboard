@@ -156,12 +156,15 @@ export const useContext = (): UseContextReturnType => {
 
   const hasLowBalance =
     hasLowBalanceForPrivateDomains ||
-    userWallets?.every(
-      wallet =>
-        wallet.available != null &&
-        totalCartNativeAmount &&
-        new MathOp(wallet.available).lte(totalCartNativeAmount),
-    );
+    (userWallets &&
+      userWallets
+        .filter(({ from }) => from === WALLET_CREATED_FROM.EDGE)
+        .every(
+          wallet =>
+            wallet.available != null &&
+            totalCartNativeAmount &&
+            new MathOp(wallet.available).lte(totalCartNativeAmount),
+        ));
 
   const highestBalanceWalletPubKey = userWallets.length
     ? userWallets
