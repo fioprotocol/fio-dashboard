@@ -14,10 +14,11 @@ type Props = {
   onClose: () => void;
   message?: string;
   isTransaction?: boolean;
+  awaitingLedger?: boolean;
 };
 
 const ConnectionModal: React.FC<Props> = props => {
-  const { show, message, isTransaction, onClose } = props;
+  const { show, message, awaitingLedger, isTransaction, onClose } = props;
 
   const renderRegular = () => (
     <>
@@ -28,9 +29,11 @@ const ConnectionModal: React.FC<Props> = props => {
           ? message
           : 'Please connect your Ledger device and open FIO App.'}
       </p>
-      <Button className={classes.button} onClick={onClose}>
-        Close
-      </Button>
+      {!awaitingLedger ? (
+        <Button className={classes.button} onClick={onClose}>
+          Close
+        </Button>
+      ) : null}
     </>
   );
   const renderTransaction = () => (
@@ -44,6 +47,11 @@ const ConnectionModal: React.FC<Props> = props => {
           ? message
           : 'Please connect your Ledger device, open FIO App and confirm your transactions.'}
       </p>
+      {awaitingLedger ? (
+        <p>
+          <FontAwesomeIcon icon="spinner" spin={true} />
+        </p>
+      ) : null}
     </>
   );
 
@@ -51,8 +59,8 @@ const ConnectionModal: React.FC<Props> = props => {
     <Modal
       show={show}
       isBlue={!isTransaction}
-      closeButton={true}
-      onClose={onClose}
+      closeButton={!awaitingLedger}
+      onClose={!awaitingLedger ? onClose : null}
     >
       {isTransaction ? renderTransaction() : renderRegular()}
     </Modal>

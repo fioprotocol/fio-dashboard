@@ -22,7 +22,7 @@ const availableJobsParams = {
     name: 'wallet-data',
     interval: process.env.WALLET_DATA_JOB_INTERVAL,
     timeout: 0,
-    closeWorkerAfterMs: 5 * 60 * 1000, // 5 min
+    closeWorkerAfterMs: process.env.WALLET_DATA_JOB_CLOSE_TIMEOUT || 60 * 60 * 1000, // 60 min
   },
   orders: {
     path: path.join(JOBS_PATH, 'orders.mjs'),
