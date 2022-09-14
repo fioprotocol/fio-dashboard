@@ -8,7 +8,6 @@ import { PAGE_NAME, BUTTONS_TITLE } from '../constants';
 import { ROUTES } from '../../../constants/routes';
 
 import { useCheckIfSmallDesktop } from '../../../screenType';
-import { putParamsToUrl } from '../../../utils';
 
 import { ActionButtonProps } from '../types';
 
@@ -26,7 +25,7 @@ export const RenderAddBundles: React.FC<{
   return (
     <div className={classes.actionButtonsContainer}>
       <Link
-        to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}/${name}`}
+        to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?name=${name}`}
         className={classnames(
           classes.actionButton,
           isMobileView && classes.mobileView,
@@ -49,7 +48,10 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
 
   const renderRenew = () => (
     <Link
-      to={`${ROUTES.FIO_DOMAIN_RENEW}/${name}`}
+      to={{
+        pathname: ROUTES.FIO_DOMAIN_RENEW,
+        search: `name=${name}`,
+      }}
       className={classes.actionButton}
     >
       <Button title={isSmallDesktop ? BUTTONS_TITLE.renew : ''}>
@@ -72,7 +74,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
 
   const renderLinkToken = () => (
     <Link
-      to={`${ROUTES.LINK_TOKEN_LIST}/${name}`}
+      to={`${ROUTES.LINK_TOKEN_LIST}?name=${name}`}
       className={classes.actionButton}
     >
       <Button title={isSmallDesktop ? BUTTONS_TITLE.link : ''}>
@@ -85,7 +87,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
   const renderFioRequest = () => (
     <Link
       to={{
-        pathname: putParamsToUrl(ROUTES.FIO_TOKENS_REQUEST, { publicKey: '' }),
+        pathname: ROUTES.FIO_TOKENS_REQUEST,
         state: {
           payeeFioAddress: name,
         },
@@ -102,7 +104,10 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
   return pageName === PAGE_NAME.ADDRESS ? (
     <div className={classes.actionButtonsContainer}>
       <Link
-        to={`${ROUTES.FIO_ADDRESS_SIGNATURES}`.replace(':address', name)}
+        to={{
+          pathname: ROUTES.FIO_ADDRESS_SIGNATURES,
+          search: `address=${name}`,
+        }}
         className={classes.actionButton}
       >
         <Button title={isSmallDesktop ? BUTTONS_TITLE.nft : ''}>

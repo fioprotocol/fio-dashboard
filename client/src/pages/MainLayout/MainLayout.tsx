@@ -19,11 +19,14 @@ import Roe from '../../services/Roe';
 import TxHistoryService from '../../services/TxHistory';
 import WalletsDataFlow from '../../services/WalletsDataFlow';
 import ContainedFlow from '../../services/ContainedFlow';
+import PageTitle from '../../components/PageTitle/PageTitle';
 
 import { ROUTES } from '../../constants/routes';
+import { LINKS } from '../../constants/labels';
 
 import useEffectOnce from '../../hooks/general';
 import { useIsAdminRoute } from '../../hooks/admin';
+import { getObjKeyByValue } from '../../utils';
 
 import classes from './MainLayout.module.scss';
 
@@ -64,6 +67,7 @@ const MainLayout: React.FC<Props> = props => {
   const isDesktop = useCheckIfDesktop();
   const isAdminRoute = useIsAdminRoute();
   const isConfirmEmailRoute = pathname === ROUTES.CONFIRM_EMAIL_RESULT;
+  const routeName = getObjKeyByValue(ROUTES, pathname);
 
   const addGTMGlobalTags = useCallback(() => {
     if (!process.env.REACT_APP_GOOGLE_TAG_MANAGER_ID) {
@@ -119,6 +123,7 @@ const MainLayout: React.FC<Props> = props => {
 
   return (
     <div className={classes.root}>
+      {routeName && <PageTitle link={LINKS[routeName]} />}
       <MainHeader isAdminAuthenticated={isAdminAuthenticated} />
       <CartTimeout />
       <AutoLogout />

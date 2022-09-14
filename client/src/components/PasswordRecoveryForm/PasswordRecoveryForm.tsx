@@ -18,12 +18,14 @@ import ModalComponent from '../Modal/Modal';
 import FormHeader from '../FormHeader/FormHeader';
 import Input from '../Input/Input';
 import SuccessModal from '../Modal/SuccessModal';
+import PageTitle from '../PageTitle/PageTitle';
 
 import { ACTIONS } from '../Notifications/Notifications';
 import { BADGE_TYPES } from '../Badge/Badge';
 import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
+import { LINKS } from '../../constants/labels';
 
 import { formValidation } from './validation';
 import { log } from '../../util/general';
@@ -205,6 +207,7 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
 
   const renderSkip = () => (
     <div className={classes.skip}>
+      <PageTitle link={LINKS.CREATE_ACCOUNT_SECRET_QUESTIONS_SKIP} />
       <FontAwesomeIcon icon="ban" className={classes.icon} />
       <FormHeader
         title="Sure You Want to Skip"
@@ -373,13 +376,22 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
     isSkip && !isSettings ? (
       renderSkip()
     ) : (
-      <Form
-        onSubmit={onSubmit}
-        initialValues={defaultValues}
-        validate={formValidation.validateForm}
-      >
-        {renderFormItems}
-      </Form>
+      <>
+        <PageTitle
+          link={
+            !isQuestions
+              ? LINKS.CREATE_ACCOUNT_SECRET_QUESTIONS
+              : LINKS.CREATE_ACCOUNT_SECRET_ANSWERS
+          }
+        />
+        <Form
+          onSubmit={onSubmit}
+          initialValues={defaultValues}
+          validate={formValidation.validateForm}
+        >
+          {renderFormItems}
+        </Form>
+      </>
     );
 
   return (

@@ -150,7 +150,8 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
 
   const history = useHistory();
 
-  const onClose = () => history.push(`${ROUTES.LINK_TOKEN_LIST}/${name}`);
+  const onClose = () =>
+    history.push({ pathname: ROUTES.LINK_TOKEN_LIST, search: `name=${name}` });
   const handleOnRetry = () => onRetry(results);
 
   return (

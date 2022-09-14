@@ -12,7 +12,9 @@ import ShowPrivateKeyModal from './ShowPrivateKeyModal';
 import LedgerBadge from '../../../components/Badges/LedgerBadge/LedgerBadge';
 import ViewPubAddressLedgerWallet from './ViewPubAddress/ViewPubAddressLedgerWallet';
 import InfoBadge from '../../../components/InfoBadge/InfoBadge';
+import PageTitle from '../../../components/PageTitle/PageTitle';
 
+import { LINKS } from '../../../constants/labels';
 import { WALLET_CREATED_FROM } from '../../../constants/common';
 
 import {
@@ -110,6 +112,7 @@ const WalletDetailsModal: React.FC<Props> = props => {
 
   return (
     <>
+      <PageTitle link={LINKS.FIO_WALLET_DETAILS} />
       <Modal
         show={
           show &&

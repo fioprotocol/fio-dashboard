@@ -7,8 +7,8 @@ import SendTokensForm from './components/SendTokensForm';
 import SendEdgeWallet from './components/SendEdgeWallet';
 import SendLedgerWallet from './components/SendLedgerWallet';
 import TokenTransferResults from '../../components/common/TransactionResults/components/TokenTransferResults';
+import PageTitle from '../../components/PageTitle/PageTitle';
 
-import { putParamsToUrl } from '../../utils';
 import { fioAddressToPubKey } from '../../util/fio';
 
 import { ContainerProps, SendTokensValues, InitialValues } from './types';
@@ -19,11 +19,12 @@ import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { ROUTES } from '../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../constants/common';
 import { FIO_RECORD_TYPES } from '../WalletPage/constants';
+import { LINKS } from '../../constants/labels';
 
 import { useFioAddresses } from '../../util/hooks';
+import { convertFioPrices } from '../../util/prices';
 
 import classes from './styles/SendPage.module.scss';
-import { convertFioPrices } from '../../util/prices';
 
 const SendPage: React.FC<ContainerProps> = props => {
   const {
@@ -57,8 +58,14 @@ const SendPage: React.FC<ContainerProps> = props => {
   }, []);
 
   useEffect(() => {
-    if (fioWallet && fioWallet.publicKey) refreshBalance(fioWallet.publicKey);
-  }, [fioWallet]);
+    if (!fioWallet?.publicKey) {
+      history.push({
+        pathname: ROUTES.TOKENS,
+      });
+    } else {
+      refreshBalance(fioWallet.publicKey);
+    }
+  }, [fioWallet?.publicKey, history, refreshBalance]);
 
   const onSend = async (values: SendTokensValues) => {
     const newSendData = { ...values };
@@ -105,26 +112,26 @@ const SendPage: React.FC<ContainerProps> = props => {
     setResultsData(null);
   };
   const onResultsClose = () => {
-    history.push(
-      putParamsToUrl(ROUTES.FIO_WALLET, { publicKey: fioWallet.publicKey }),
-      {
+    history.push({
+      pathname: ROUTES.FIO_WALLET,
+      search: `publicKey=${fioWallet.publicKey}`,
+      state: {
         fioRequestTab: fioRecordDecrypted && FIO_RECORD_TYPES.RECEIVED,
       },
-    );
+    });
   };
 
   if (!fioWallet || !fioWallet.id) return <FioLoader wrap={true} />;
 
   const onBack = () =>
-    history.push(
-      putParamsToUrl(ROUTES.FIO_WALLET, {
-        publicKey: fioWallet.publicKey,
-      }),
-      {
+    history.push({
+      pathname: ROUTES.FIO_WALLET,
+      search: `publicKey=${fioWallet.publicKey}`,
+      state: {
         fioRequestTab: fioRecordDecrypted && FIO_RECORD_TYPES.RECEIVED,
         fioRecordDecrypted,
       },
-    );
+    });
 
   const renderInfoBadge = () =>
     walletFioAddresses.length ? (
@@ -149,13 +156,16 @@ const SendPage: React.FC<ContainerProps> = props => {
 
   if (resultsData)
     return (
-      <TokenTransferResults
-        results={resultsData}
-        title={resultsData.error ? 'FIO Tokens not Sent' : 'FIO Tokens Sent'}
-        roe={roe}
-        onClose={onResultsClose}
-        onRetry={onResultsRetry}
-      />
+      <>
+        <PageTitle link={LINKS.SEND_CONFIRMATION} />
+        <TokenTransferResults
+          results={resultsData}
+          title={resultsData.error ? 'FIO Tokens not Sent' : 'FIO Tokens Sent'}
+          roe={roe}
+          onClose={onResultsClose}
+          onRetry={onResultsRetry}
+        />
+      </>
     );
 
   return (

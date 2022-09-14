@@ -11,8 +11,12 @@ import apis from '../../api';
 
 import { FeePrice, FioNameItemProps } from '../../types';
 
-type MatchParams = {
-  id: string;
+type LocationProps = {
+  location: {
+    query: {
+      name: string;
+    };
+  };
 };
 
 type Props = {
@@ -21,9 +25,10 @@ type Props = {
 };
 
 export const FioDomainTransferPage: React.FC<Props &
-  RouteComponentProps<MatchParams>> = props => {
-  const { fioNameList, fees, match, history } = props;
-  const { id: name } = match.params;
+  RouteComponentProps &
+  LocationProps> = props => {
+  const { fioNameList, fees, location, history } = props;
+  const { name } = location.query;
 
   return (
     <FioNameTransferContainer

@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router-dom';
 
 import AddressWidget from '../../components/AddressWidget';
 import DomainsBanner from '../../components/DomainsBanner/DomainsBanner';
-import DashboardPage from '../DashboardPage';
+
+import { ROUTES } from '../../constants/routes';
 
 import { handleHomePageContent } from '../../util/homePage';
 
@@ -19,6 +21,8 @@ type Props = {
 };
 
 const HomePage: React.FC<Props & RouteComponentProps> = props => {
+  const history = useHistory();
+
   const {
     isAuthenticated,
     isContainedFlow,
@@ -32,18 +36,20 @@ const HomePage: React.FC<Props & RouteComponentProps> = props => {
     refProfileInfo,
   });
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      history.replace(ROUTES.DASHBOARD);
+    }
+  }, [isAuthenticated, history]);
+
   if (isContainedFlow) return <AddressWidget {...addressWidgetContent} />;
 
-  if (!isAuthenticated) {
-    return (
-      <div className={classnames.container}>
-        <AddressWidget {...addressWidgetContent} />
-        <DomainsBanner />
-      </div>
-    );
-  }
-
-  return <DashboardPage />;
+  return (
+    <div className={classnames.container}>
+      <AddressWidget {...addressWidgetContent} />
+      <DomainsBanner />
+    </div>
+  );
 };
 
 export default HomePage;

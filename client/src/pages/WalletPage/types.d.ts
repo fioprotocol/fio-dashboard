@@ -13,6 +13,17 @@ type MatchProps = {
   publicKey: string;
 };
 
+type LocationProps = {
+  location: {
+    state: {
+      isOpenLockedList?: boolean;
+    };
+    query?: {
+      publicKey?: string;
+    };
+  };
+};
+
 export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
   children?: React.ReactNode;
 }
