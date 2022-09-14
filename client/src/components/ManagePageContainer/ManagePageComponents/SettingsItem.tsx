@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
+import PageTitle from '../../PageTitle/PageTitle';
 
-import { FIO_OWNERSHIP } from '../constants';
+import { FIO_OWNERSHIP, SETTING_LINK } from '../constants';
 import { fioNameLabels } from '../../../constants/labels';
 import { ROUTES } from '../../../constants/routes';
 
@@ -24,6 +25,7 @@ const SettingsItem: React.FC<SettingsProps> = props => {
 
   return (
     <div className={classes.settingsContainer}>
+      <PageTitle link={SETTING_LINK[pageName]} />
       <h3 className={classes.title}>Advanced Settings</h3>
       <h5 className={classes.subtitle}>{fioNameLabels[pageName]} Ownership</h5>
       <Badge show={true} type={BADGE_TYPES.WHITE}>
@@ -47,7 +49,7 @@ const SettingsItem: React.FC<SettingsProps> = props => {
             to public.
           </p>
           <Link
-            to={`${ROUTES.FIO_DOMAIN_STATUS_CHANGE}/${fioName}`}
+            to={`${ROUTES.FIO_DOMAIN_STATUS_CHANGE}?name=${fioName}`}
             className={classes.buttonLink}
           >
             <Button className={classes.button}>
@@ -66,7 +68,7 @@ const SettingsItem: React.FC<SettingsProps> = props => {
           verify the transaction.
         </p>
         <Link
-          to={`${FIO_OWNERSHIP[pageName]}/${fioName}`}
+          to={`${FIO_OWNERSHIP[pageName]}?name=${fioName}`}
           className={classes.buttonLink}
         >
           <Button className={classes.button}>Start Transfer</Button>

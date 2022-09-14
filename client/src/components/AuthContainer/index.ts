@@ -1,5 +1,6 @@
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import { withRouter } from 'react-router-dom';
 
 import { edgeContextInit } from '../../redux/edge/actions';
 
@@ -18,4 +19,4 @@ const actions = {
   edgeContextInit,
 };
 
-export default connect(selector, actions)(AuthContainer);
+export default withRouter(connect(selector, actions)(AuthContainer));

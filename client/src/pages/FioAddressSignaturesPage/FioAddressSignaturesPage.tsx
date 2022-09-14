@@ -21,8 +21,10 @@ type Props = {
   getNFTSignatures: (searchParams: { fioAddress: string }) => void;
   nftSignatures: NFTTokenDoublet[];
   loading: boolean;
-  match: {
-    params: { address: string };
+  location: {
+    query?: {
+      address?: string;
+    };
   };
 };
 
@@ -31,9 +33,7 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
     nftSignatures,
     getNFTSignatures,
     loading,
-    match: {
-      params: { address },
-    },
+    location: { query: { address } = {} },
   } = props;
   useEffect(() => {
     getNFTSignatures({ fioAddress: address });
@@ -63,7 +63,10 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
           <FioName name={address} />
           <div className={classes.buttonsContainer}>
             <Link
-              to={`${ROUTES.FIO_ADDRESS_SIGN}`.replace(':address', address)}
+              to={{
+                pathname: ROUTES.FIO_ADDRESS_SIGN,
+                search: `address=${address}`,
+              }}
               className={classes.link}
             >
               <Button>

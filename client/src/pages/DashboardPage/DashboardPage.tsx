@@ -8,12 +8,13 @@ import DashboardListItem from './DashboardListItem';
 import ManagePageCtaBadge from '../../components/ManagePageContainer/ManagePageCtaBadge';
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 
+import { ROUTES } from '../../constants/routes';
+
 import { useFioAddresses, useNonActiveUserRedirect } from '../../util/hooks';
 
 import { FioWalletDoublet } from '../../types';
 
 import classes from './DashboardPage.module.scss';
-import { ROUTES } from '../../constants/routes';
 
 type Props = {
   fioWallets: FioWalletDoublet[];

@@ -11,7 +11,6 @@ import { useCheckIfDesktop } from '../../../screenType';
 import { ROUTES } from '../../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../../constants/common';
 
-import { putParamsToUrl } from '../../../utils';
 import { useWalletBalances } from '../../../util/hooks';
 
 import { FioWalletDoublet } from '../../../types';
@@ -30,11 +29,10 @@ const WalletItem: React.FC<Props> = props => {
   const { total: walletBalancesTotal } = useWalletBalances(fioWallet.publicKey);
 
   const goToWallet = () => {
-    history.push(
-      putParamsToUrl(ROUTES.FIO_WALLET, {
-        publicKey: fioWallet.publicKey,
-      }),
-    );
+    history.push({
+      pathname: ROUTES.FIO_WALLET,
+      search: `publicKey=${fioWallet.publicKey}`,
+    });
   };
 
   return (

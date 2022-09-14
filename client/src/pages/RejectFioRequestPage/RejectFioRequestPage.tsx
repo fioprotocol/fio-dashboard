@@ -9,8 +9,8 @@ import BundledTransactionBadge from '../../components/Badges/BundledTransactionB
 import LowBalanceBadge from '../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import RejectRequestEdge from './components/RejectRequestEdge';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
+import PageTitle from '../../components/PageTitle/PageTitle';
 
-import { putParamsToUrl } from '../../utils';
 import { useFioAddresses } from '../../util/hooks';
 
 import { ERROR_TYPES } from '../../components/common/TransactionResults/constants';
@@ -22,6 +22,7 @@ import {
   FIO_RECORD_TYPES,
 } from '../WalletPage/constants';
 import { ROUTES } from '../../constants/routes';
+import { LINKS } from '../../constants/labels';
 
 import { FioRecordViewDecrypted } from '../WalletPage/types';
 import { FioWalletDoublet } from '../../types';
@@ -79,13 +80,14 @@ const RejectFioRequestPage: React.FC<Props &
   const hasLowBalance = remaining - BUNDLES_TX_COUNT.REJECT_FIO_REQUEST < 0;
 
   const onBack = () => {
-    history.push(
-      putParamsToUrl(ROUTES.FIO_WALLET, { publicKey: fioWallet.publicKey }),
-      {
+    history.push({
+      pathname: ROUTES.FIO_WALLET,
+      search: `publicKey=${fioWallet.publicKey}`,
+      state: {
         fioRecordDecrypted,
         fioRequestTab: FIO_RECORD_TYPES.RECEIVED,
       },
-    );
+    });
   };
 
   const onClick = () => {
@@ -107,12 +109,13 @@ const RejectFioRequestPage: React.FC<Props &
   };
 
   const onCloseResults = () => {
-    history.push(
-      putParamsToUrl(ROUTES.FIO_WALLET, {
-        publicKey: fioWallet.publicKey,
-      }),
-      { fioRequestTab: FIO_RECORD_TYPES.RECEIVED },
-    );
+    history.push({
+      pathname: ROUTES.FIO_WALLET,
+      search: `publicKey=${fioWallet.publicKey}`,
+      state: {
+        fioRequestTab: FIO_RECORD_TYPES.RECEIVED,
+      },
+    });
   };
 
   const onResultsRetry = () => {
@@ -121,15 +124,18 @@ const RejectFioRequestPage: React.FC<Props &
 
   if (resultsData)
     return (
-      <RejectFioRequestResults
-        title={resultsData.error != null ? 'Rejection Failed!' : 'Rejected!'}
-        onClose={onCloseResults}
-        results={resultsData}
-        onRetry={onResultsRetry}
-        middleWidth={true}
-        fioRecordType={fioRecordType}
-        errorType={ERROR_TYPES.REJECT_ERROR}
-      />
+      <>
+        <PageTitle link={LINKS.REJECT_FIO_REQUEST_CONFIRMATION} />
+        <RejectFioRequestResults
+          title={resultsData.error != null ? 'Rejection Failed!' : 'Rejected!'}
+          onClose={onCloseResults}
+          results={resultsData}
+          onRetry={onResultsRetry}
+          middleWidth={true}
+          fioRecordType={fioRecordType}
+          errorType={ERROR_TYPES.REJECT_ERROR}
+        />
+      </>
     );
 
   return (

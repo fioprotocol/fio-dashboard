@@ -8,6 +8,15 @@ type MatchProps = {
   id: number;
 };
 
+type LocationProps = {
+  location: {
+    query?: {
+      publicKey?: string;
+      fioRequestId?: string;
+    };
+  };
+};
+
 export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
   children?: React.ReactNode;
 }

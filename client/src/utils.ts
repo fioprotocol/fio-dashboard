@@ -333,17 +333,6 @@ export const getElementByFioName = ({
   );
 };
 
-export const putParamsToUrl = (
-  route: string,
-  params: { [paramName: string]: string },
-): string => {
-  return Object.keys(params).reduce(
-    (acc: string, key: string) =>
-      acc.replace(new RegExp(`:${key}[?]?`, 'g'), params[key]),
-    `${route}`,
-  );
-};
-
 export const camelizeFioRequestsData = (
   data: ResponseFioRecord[],
 ): FioRecord[] => {
@@ -406,4 +395,18 @@ export const decryptFioRequestData = ({
   const result = cipher.decrypt(contentType, content);
 
   return camelizeObjKeys(result);
+};
+
+export const fireAnalyticsEvent = (
+  event: string,
+  data: AnyObject = {},
+): void => {
+  window.dataLayer?.push({
+    event,
+    ...data,
+  });
+};
+
+export const getObjKeyByValue = (object: AnyObject, value: string): string => {
+  return Object.keys(object).find(key => object[key] === value);
 };

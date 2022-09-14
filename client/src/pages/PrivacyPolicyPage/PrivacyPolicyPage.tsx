@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import { Element } from 'react-scroll';
 
 import { AnchorComponent } from '../../components/AnchorComponent';
-
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 
-import classes from './PrivacyPolicyPage.module.scss';
 import { ROUTES } from '../../constants/routes';
+
+import classes from './PrivacyPolicyPage.module.scss';
 
 const PrivacyPolicyPage: React.FC = () => {
   return (
