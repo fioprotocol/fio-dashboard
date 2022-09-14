@@ -7,8 +7,6 @@ import CancelButton from '../../../components/common/CancelButton/CancelButton';
 import { CHAIN_CODES } from '../../../constants/common';
 import { ROUTES } from '../../../constants/routes';
 
-import { putParamsToUrl } from '../../../utils';
-
 import { FioRecordViewDecrypted } from '../types';
 
 import { FioWalletDoublet } from '../../../types';
@@ -45,25 +43,26 @@ const FioRecordDetailedActionButtons: React.FC<Props &
   };
 
   const onPayClick = () => {
-    const payLink = putParamsToUrl(ROUTES.SEND, {
-      publicKey: fioWallet.publicKey,
-    });
-
-    history.push(payLink, {
-      fioWallet,
-      fioRecordDecrypted,
-    });
+    history.push(
+      {
+        pathname: ROUTES.SEND,
+        search: `publicKey=${fioWallet.publicKey}`,
+      },
+      {
+        fioWallet,
+        fioRecordDecrypted,
+      },
+    );
   };
 
   const onEnterPaymentDetails = () => {
-    const paymentDetailsLink = putParamsToUrl(ROUTES.PAYMENT_DETAILS, {
-      publicKey: fioWallet.publicKey,
-      fioRequestId: fioRecordDecrypted.fioRecord.id + '',
-    });
-
-    history.push(paymentDetailsLink, {
-      fioWallet,
-      fioRecordDecrypted,
+    history.push({
+      pathname: ROUTES.PAYMENT_DETAILS,
+      search: `publicKey=${fioWallet.publicKey}&fioRequestId=${fioRecordDecrypted.fioRecord.id}`,
+      state: {
+        fioWallet,
+        fioRecordDecrypted,
+      },
     });
   };
 

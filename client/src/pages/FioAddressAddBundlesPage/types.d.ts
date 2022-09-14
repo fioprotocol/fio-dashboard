@@ -2,8 +2,12 @@ import { RouteComponentProps } from 'react-router-dom';
 
 import { FeePrice, FioNameItemProps } from '../../types';
 
-type MatchProps = {
-  name: string;
+type LocationProps = {
+  location: {
+    query: {
+      name: string;
+    };
+  };
 };
 
 export type AddBundlesValues = {
@@ -12,7 +16,7 @@ export type AddBundlesValues = {
   maxFee?: number | null;
 };
 
-export type ContainerOwnProps = RouteComponentProps<MatchProps>;
+export type ContainerOwnProps = RouteComponentProps & LocationProps;
 
 export interface ContainerProps extends ContainerOwnProps {
   fioAddresses: FioNameItemProps[];

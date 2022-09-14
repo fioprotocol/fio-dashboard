@@ -1,4 +1,6 @@
 import { ROUTES } from '../../constants/routes';
+import { LINKS } from '../../constants/labels';
+
 import colors from '../../assets/styles/colorsToJs.module.scss';
 
 export const BANNER_DATA = {
@@ -76,4 +78,9 @@ export const FIO_OWNERSHIP = {
 export const PLURAL_NAME = {
   [PAGE_NAME.ADDRESS]: 'FIO Crypto Handles',
   [PAGE_NAME.DOMAIN]: 'Domains',
+};
+
+export const SETTING_LINK = {
+  [PAGE_NAME.ADDRESS]: LINKS.FIO_ADDRESSES_SETTINGS,
+  [PAGE_NAME.DOMAIN]: LINKS.FIO_DOMAINS_SETTINGS,
 };

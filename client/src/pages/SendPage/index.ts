@@ -40,7 +40,7 @@ const reduxConnect = connect(
 
       return fioWallets.find(
         ({ publicKey }: FioWalletDoublet) =>
-          publicKey === ownProps.match.params.publicKey,
+          publicKey === ownProps.location?.query?.publicKey,
       );
     },
     loading,
@@ -55,7 +55,7 @@ const reduxConnect = connect(
 
       const fioWallet = fioWallets.find(
         ({ publicKey }: { publicKey: string }) =>
-          publicKey === ownProps.match.params.publicKey,
+          publicKey === ownProps.location?.query?.publicKey,
       );
 
       if (!fioWallet || !fioWalletsBalances.wallets[fioWallet.publicKey])

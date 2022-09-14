@@ -2,6 +2,7 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
+import DashboardPage from './pages/DashboardPage';
 import MainLayout from './pages/MainLayout';
 import AuthContainer from './components/AuthContainer';
 import PrivateRoute from './components/PrivateRoute';
@@ -63,8 +64,6 @@ import AdminFioAccountsProfilesListPage from './pages/AdminFioAccountsProfilesLi
 import AdminSearchResultPage from './pages/AdminSearchResultPage';
 
 import { ROUTES } from './constants/routes';
-
-const LIST_TOKEN_PARENT_ROUTE = `${ROUTES.LINK_TOKEN_LIST}/:id`;
 
 const Routes = (): React.ReactElement => (
   <MainLayout>
@@ -134,6 +133,7 @@ const Routes = (): React.ReactElement => (
           component={FioDomainManagePage}
           exact
         />
+        <PrivateRoute path={ROUTES.DASHBOARD} component={DashboardPage} exact />
 
         <PrivateRoute path={ROUTES.CART} component={CartPage} exact />
         <PrivateRoute path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
@@ -146,52 +146,43 @@ const Routes = (): React.ReactElement => (
         />
         <PrivateRoute path={ROUTES.FIO_WALLET} component={WalletPage} exact />
         <PrivateRoute
-          path={`${ROUTES.FIO_ADDRESS_OWNERSHIP}/:id`}
+          path={ROUTES.FIO_ADDRESS_OWNERSHIP}
           component={FioAddressTransferPage}
         />
         <PrivateRoute
-          path={`${ROUTES.FIO_DOMAIN_OWNERSHIP}/:id`}
+          path={ROUTES.FIO_DOMAIN_OWNERSHIP}
           component={FioDomainTransferPage}
         />
 
         <PrivateRoute
-          path={`${ROUTES.FIO_DOMAIN_STATUS_CHANGE}/:id`}
+          path={ROUTES.FIO_DOMAIN_STATUS_CHANGE}
           component={FioDomainStatusChangePage}
         />
 
         <PrivateRoute
-          path={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}/:id`}
+          path={ROUTES.FIO_ADDRESS_ADD_BUNDLES}
           component={FioAddressAddBundlesPage}
         />
         <PrivateRoute
-          path={`${ROUTES.FIO_DOMAIN_RENEW}/:id`}
+          path={ROUTES.FIO_DOMAIN_RENEW}
           component={FioDomainRenewPage}
         />
 
         <PrivateRoute
-          path={LIST_TOKEN_PARENT_ROUTE}
+          path={ROUTES.LINK_TOKEN_LIST}
           component={TokenListPage}
           exact
         />
-        <PrivateRoute
-          path={`${LIST_TOKEN_PARENT_ROUTE}${ROUTES.DELETE_TOKEN}`}
-          component={DeleteTokenPage}
-        />
-        <PrivateRoute
-          path={`${LIST_TOKEN_PARENT_ROUTE}${ROUTES.ADD_TOKEN}`}
-          component={AddTokenPage}
-        />
-        <PrivateRoute
-          path={`${LIST_TOKEN_PARENT_ROUTE}${ROUTES.EDIT_TOKEN}`}
-          component={EditTokenPage}
-        />
+        <PrivateRoute path={ROUTES.DELETE_TOKEN} component={DeleteTokenPage} />
+        <PrivateRoute path={ROUTES.ADD_TOKEN} component={AddTokenPage} />
+        <PrivateRoute path={ROUTES.EDIT_TOKEN} component={EditTokenPage} />
 
         <PrivateRoute path={ROUTES.SETTINGS} component={SettingsPage} exact />
 
         <PrivateRoute path={ROUTES.SEND} component={SendPage} exact />
 
         <PrivateRoute
-          path={ROUTES.FIO_REQUEST_DECRYPT}
+          path={ROUTES.FIO_REQUEST}
           component={FioRequestDecryptPage}
           redirectOptions={{ setKeysForAction: true }}
           exact

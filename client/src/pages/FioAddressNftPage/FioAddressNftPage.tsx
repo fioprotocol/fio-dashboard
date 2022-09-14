@@ -6,8 +6,6 @@ import SignNft from '../../components/SignNft';
 
 import { ROUTES } from '../../constants/routes';
 
-import { putParamsToUrl } from '../../utils';
-
 import { FioAddressDoublet, NFTTokenDoublet } from '../../types';
 
 type Props = {
@@ -48,9 +46,7 @@ const FioAddressNftPage: React.FC<Props> = props => {
       isEdit={true}
       initialValues={initialValues}
       fioAddressName={address}
-      backTo={putParamsToUrl(ROUTES.FIO_ADDRESS_SIGNATURES, {
-        address,
-      })}
+      backTo={`${ROUTES.FIO_ADDRESS_SIGNATURES}?address=${address}`}
     />
   );
 };

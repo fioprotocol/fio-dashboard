@@ -2,23 +2,22 @@ import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
 import SignNft from '../../components/SignNft';
-import { putParamsToUrl } from '../../utils';
 import { ROUTES } from '../../constants/routes';
 
 import { SignNFTParams } from '../../types';
 
-type MatchParams = {
-  address: string;
+type LocationProps = {
+  location: {
+    query?: {
+      address?: string;
+    };
+  };
 };
 
-const FioAddressSignPage: React.FC<RouteComponentProps<
-  MatchParams
->> = props => {
+const FioAddressSignPage: React.FC<RouteComponentProps &
+  LocationProps> = props => {
   const {
-    match: {
-      params: { address },
-    },
-    location: { state },
+    location: { state = {}, query: { address } = {} },
   } = props;
 
   const {
@@ -43,9 +42,7 @@ const FioAddressSignPage: React.FC<RouteComponentProps<
         addressSelectOff={address}
         fioAddressName={address}
         backTo={
-          address
-            ? putParamsToUrl(ROUTES.FIO_ADDRESS_SIGNATURES, { address })
-            : null
+          address ? `${ROUTES.FIO_ADDRESS_SIGNATURES}?address=${address}` : null
         }
       />
     </>

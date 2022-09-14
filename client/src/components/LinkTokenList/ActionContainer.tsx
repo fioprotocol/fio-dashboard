@@ -5,6 +5,7 @@ import FioName from '../common/FioName/FioName';
 import BundledTransactionBadge from '../Badges/BundledTransactionBadge/BundledTransactionBadge';
 import PseudoModalContainer from '../PseudoModalContainer';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
+import PageTitle from '../PageTitle/PageTitle';
 
 import LinkTokenListResults from '../common/TransactionResults/components/LinkTokenListResults/';
 
@@ -12,6 +13,7 @@ import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 
 import { LOW_BALANCE_TEXT, CONTAINER_TYPES } from './constants';
 import { ROUTES } from '../../constants/routes';
+import { LINKS } from '../../constants/labels';
 
 import { LinkTokenResultsProps } from '../common/TransactionResults/types';
 import { FioWalletDoublet } from '../../types';
@@ -49,26 +51,29 @@ const ActionContainer: React.FC<Props> = props => {
 
   if (results)
     return (
-      <LinkTokenListResults
-        fioCryptoHandle={fioCryptoHandle}
-        results={results}
-        containerName={containerName}
-        bundleCost={bundleCost}
-        changeBundleCost={changeBundleCost}
-        onBack={onBack}
-        onRetry={onRetry}
-      />
+      <>
+        <PageTitle link={LINKS.ADD_TOKEN_CONFIRMATION} />
+        <LinkTokenListResults
+          fioCryptoHandle={fioCryptoHandle}
+          results={results}
+          containerName={containerName}
+          bundleCost={bundleCost}
+          changeBundleCost={changeBundleCost}
+          onBack={onBack}
+          onRetry={onRetry}
+        />
+      </>
     );
 
   const onLowBalanceActionClick = () =>
-    history.push(`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}/${name}`, {
-      backUrl: `${ROUTES.LINK_TOKEN_LIST}/${name}`,
+    history.push(`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?name=${name}`, {
+      backUrl: `${ROUTES.LINK_TOKEN_LIST}?name=${name}`,
     });
 
   return (
     <PseudoModalContainer
       title={CONTAINER_TYPES[containerName].title}
-      link={`${ROUTES.LINK_TOKEN_LIST}/${name}`}
+      link={`${ROUTES.LINK_TOKEN_LIST}?name=${name}`}
       fullWidth={true}
     >
       <div className={classes.actionContainer}>

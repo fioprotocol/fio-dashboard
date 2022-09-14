@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useLocation, useParams } from 'react-router';
+import { useLocation } from 'react-router';
 
 import { loading as profileLoadingSelector } from '../../redux/profile/selectors';
 import { resetAdminPassword } from '../../redux/profile/actions';
@@ -8,7 +8,7 @@ import { resetAdminPassword } from '../../redux/profile/actions';
 import apis from '../../api';
 import useEffectOnce from '../../hooks/general';
 
-import { MatchParams, SubmitValues } from './types';
+import { SubmitValues } from './types';
 import { AnyObject } from '../../types';
 
 export const useContext = (): {
@@ -23,9 +23,8 @@ export const useContext = (): {
 
   const {
     // @ts-ignore // todo: research, mb update "react-router"
-    query: { email },
+    query: { email, hash },
   } = useLocation();
-  const { hash }: MatchParams = useParams();
 
   const [initialValues, setInitialValues] = useState(null);
   const [isTokenValidationLoading, setIsTokenValidationLoading] = useState(

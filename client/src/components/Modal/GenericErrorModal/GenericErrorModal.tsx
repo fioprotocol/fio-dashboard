@@ -1,6 +1,9 @@
 import React from 'react';
 
 import DangerModal from '../DangerModal';
+import PageTitle from '../../PageTitle/PageTitle';
+
+import { LINKS } from '../../../constants/labels';
 
 type Props = {
   genericErrorData?: { message: string; title?: string; buttonText?: string };
@@ -16,14 +19,17 @@ const GenericErrorModal: React.FC<Props> = props => {
     buttonText = 'Try Again',
   } = genericErrorData || {};
   return (
-    <DangerModal
-      title={title}
-      buttonText={buttonText}
-      subtitle={message}
-      show={showGenericError}
-      onActionButtonClick={closeGenericErrorModal}
-      onClose={closeGenericErrorModal}
-    />
+    <>
+      {showGenericError && <PageTitle link={LINKS.ERROR} />}
+      <DangerModal
+        title={title}
+        buttonText={buttonText}
+        subtitle={message}
+        show={showGenericError}
+        onActionButtonClick={closeGenericErrorModal}
+        onClose={closeGenericErrorModal}
+      />
+    </>
   );
 };
 
