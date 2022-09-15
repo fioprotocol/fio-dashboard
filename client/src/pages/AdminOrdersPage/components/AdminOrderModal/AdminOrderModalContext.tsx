@@ -12,7 +12,7 @@ import {
   PURCHASE_RESULTS_STATUS_LABELS,
   PAYMENT_STATUSES,
   PAYMENTS_STATUSES_TITLES,
-  PAYMENT_OPTIONS,
+  PURCHASE_PROVIDER_LABEL,
 } from '../../../../constants/purchase';
 import { CURRENCY_CODES } from '../../../../constants/common';
 import { ACTIONS } from '../../../../constants/fio';
@@ -34,12 +34,6 @@ type HistoryListItem = {
   withdraw?: boolean;
   status: string;
   dateTime: number;
-};
-
-export const PAYMENT_OPTION_LABEL = {
-  [PAYMENT_OPTIONS.FIO]: 'FIO',
-  [PAYMENT_OPTIONS.CREDIT_CARD]: 'Stripe',
-  [PAYMENT_OPTIONS.CRYPTO]: '-',
 };
 
 const generatePaymentEventLogsNotes = (eventLogs: PaymentEventLog[]) => {
@@ -97,7 +91,7 @@ const setHistory = (
       amount: status === PAYMENT_STATUSES.COMPLETED ? payment.price : '0.00',
       currency: payment.currency.toUpperCase(),
       status: `${
-        PAYMENT_OPTION_LABEL[payment.processor]
+        PURCHASE_PROVIDER_LABEL[payment.processor]
       } notification received (${
         payment.externalId
       }) \nPayment status: ${PAYMENTS_STATUSES_TITLES[

@@ -6,15 +6,11 @@ import OtherPaymentsBlock from './OtherPaymentsBlock';
 
 import { PAYMENT_OPTIONS } from '../../../constants/purchase';
 
-import {
-  CartItem,
-  FioWalletDoublet,
-  PaymentOptionsProps,
-} from '../../../types';
+import { CartItem, FioWalletDoublet, PurchaseProvider } from '../../../types';
 
 type Props = {
   isFree?: boolean;
-  onPaymentChoose: (paymentOption: PaymentOptionsProps) => void;
+  onPaymentChoose: (paymentProvider: PurchaseProvider) => void;
   hasLowBalance?: boolean;
   paymentWalletPublicKey?: string;
   cartItems?: CartItem[];
