@@ -626,7 +626,7 @@ export type OrderPaymentItem = {
   externalId?: string;
   paymentEventLogs: PaymentEventLog[];
   price?: string;
-  processor: PaymentOptionsProps;
+  processor: PurchaseProvider;
   spentType: number;
   status: number;
   updatedAt: string;
@@ -637,6 +637,7 @@ export type OrderPaymentItem = {
     fioName?: string;
     action?: string;
     sendingFioTokens?: boolean;
+    webhookData?: { charges: { data: { payment_method_details: { type } }[] } };
   };
 };
 
@@ -666,7 +667,7 @@ export type OrderItem = {
   createdAt: string;
   status: number;
   currency?: PaymentCurrency;
-  paymentProcessor: PaymentOptionsProps;
+  paymentProcessor: PurchaseProvider;
   items?: {
     action: string;
     address?: string;

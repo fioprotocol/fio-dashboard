@@ -5,7 +5,7 @@ import PaymentsBlock from './components/PaymentsBlock';
 
 import { totalCost } from '../../utils';
 
-import { CartItem, FioWalletDoublet, PaymentOptionsProps } from '../../types';
+import { CartItem, FioWalletDoublet, PurchaseProvider } from '../../types';
 
 import classes from './Cart.module.scss';
 
@@ -19,7 +19,7 @@ type Props = {
   userWallets: FioWalletDoublet[];
   loading: boolean;
   error: string | null;
-  onPaymentChoose: (paymentOption: PaymentOptionsProps) => void;
+  onPaymentChoose: (paymentProvider: PurchaseProvider) => void;
 };
 
 const CartAmount: React.FC<Props> = props => {

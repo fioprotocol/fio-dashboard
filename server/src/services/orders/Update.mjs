@@ -213,7 +213,7 @@ export default class OrdersUpdate extends Base {
       }
     }
 
-    if (data.results && data.results.paymentOption === Payment.PROCESSOR.CREDIT_CARD) {
+    if (data.results && data.results.paymentOption === Payment.PROCESSOR.STRIPE) {
       for (const regItem of data.results.registered) {
         const { fioName, data: itemData } = regItem;
 

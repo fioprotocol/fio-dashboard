@@ -9,7 +9,7 @@ import { formatDateToLocale } from '../../helpers/stringFormatters';
 
 import {
   PURCHASE_RESULTS_STATUS_LABELS,
-  PAYMENT_OPTIONS_LABEL,
+  PURCHASE_PROVIDER_LABEL,
 } from '../../constants/purchase';
 
 import { AdminUser, OrderItem } from '../../types';
@@ -86,7 +86,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
                     <th>{order.total || 0}</th>
                     <th>{order.refProfileName || 'FIO Dashboard'}</th>
                     <th>
-                      {PAYMENT_OPTIONS_LABEL[order.paymentProcessor] || 'N/A'}
+                      {PURCHASE_PROVIDER_LABEL[order.paymentProcessor] || 'N/A'}
                     </th>
                     <th>{PURCHASE_RESULTS_STATUS_LABELS[order.status]}</th>
                   </tr>

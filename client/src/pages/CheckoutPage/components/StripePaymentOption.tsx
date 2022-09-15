@@ -28,7 +28,7 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
     cart,
     payment,
     paymentOption,
-    paymentOptionError,
+    paymentProviderError,
     submitDisabled,
     beforePaymentSubmit,
   } = props;
@@ -63,7 +63,7 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
     }
   };
 
-  if (paymentOptionError)
+  if (paymentProviderError)
     return (
       <div className="d-flex justify-content-center flex-column">
         <ErrorBadge
