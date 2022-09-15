@@ -172,6 +172,8 @@ class Fio {
 
   getActionParams(options) {
     let actionParams = { tpid: options.tpid };
+    if (options.fee) actionParams.max_fee = options.fee;
+
     switch (options.action) {
       case FIO_ACTIONS.registerFioAddress: {
         actionParams = {
@@ -222,7 +224,11 @@ class Fio {
       // todo: set new sdk and use it
     }
 
-    if (!params.max_fee) params.max_fee = DEFAULT_ACTION_FEE_AMOUNT;
+    if (
+      !params.max_fee ||
+      (params.max_fee && new MathOp(params.max_fee).lt(DEFAULT_ACTION_FEE_AMOUNT))
+    )
+      params.max_fee = DEFAULT_ACTION_FEE_AMOUNT;
 
     try {
       if (auth.actor) {

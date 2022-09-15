@@ -537,6 +537,7 @@ class OrdersJob extends CommonJob {
             action: FIO_ACTIONS.registerFioDomain,
             domain,
             publicKey: orderItem.publicKey,
+            fee: await this.getFeeForAction(FIO_ACTIONS.registerFioDomain),
           }),
           auth,
         );
@@ -604,7 +605,7 @@ class OrdersJob extends CommonJob {
 
       result = await fioApi.executeAction(
         action,
-        fioApi.getActionParams(orderItem),
+        fioApi.getActionParams({ ...orderItem, fee: await this.getFeeForAction(action) }),
         auth,
       );
 
