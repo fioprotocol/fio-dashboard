@@ -7,7 +7,7 @@ import {
   PaymentOptionsProps,
   Payment,
   ApiError,
-  PurchaseProvider,
+  PaymentProvider,
 } from '../../types';
 import { SignedTxArgs } from '../../api/fio';
 
@@ -21,7 +21,7 @@ type DefaultProps = {
   payment: Payment;
   paymentProviderError: ApiError;
   paymentOption: PaymentOptionsProps;
-  paymentProvider: PurchaseProvider;
+  paymentProvider: PaymentProvider;
   isFree: boolean;
   setWallet: (publicKey: string) => void;
   beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;

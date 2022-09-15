@@ -6,8 +6,8 @@ import PriceBadge from '../../../components/Badges/PriceBadge/PriceBadge';
 import CartItem from '../../../components/Cart/CartItem';
 
 import {
-  PURCHASE_PROVIDER,
-  PURCHASE_PROVIDER_LABEL,
+  PAYMENT_PROVIDER,
+  PAYMENT_PROVIDER_LABEL,
 } from '../../../constants/purchase';
 
 import { PurchaseResultsProps } from '../types';
@@ -25,7 +25,7 @@ export const PurchaseResultsComponent: React.FC<PurchaseResultsProps> = props =>
     priceUIType = BADGE_TYPES.BLACK,
     priceTitle = 'Total Cost',
     providerTxId,
-    purchaseProvider,
+    paymentProvider,
     txItems,
     failedPayment,
     hidePayWithBadge,
@@ -33,8 +33,8 @@ export const PurchaseResultsComponent: React.FC<PurchaseResultsProps> = props =>
 
   const renderPayWith = () => {
     if (failedPayment) return 'Not Paid';
-    if (PURCHASE_PROVIDER.FIO === purchaseProvider) return paymentWallet.name;
-    return PURCHASE_PROVIDER_LABEL[purchaseProvider];
+    if (PAYMENT_PROVIDER.FIO === paymentProvider) return paymentWallet.name;
+    return PAYMENT_PROVIDER_LABEL[paymentProvider];
   };
 
   return (

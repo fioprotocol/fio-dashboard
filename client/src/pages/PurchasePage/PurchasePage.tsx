@@ -25,7 +25,7 @@ export const PurchasePage: React.FC = () => {
     closeText,
     paymentWallet,
     purchaseStatus,
-    purchaseProvider,
+    paymentProvider,
     regPaymentAmount,
     regConvertedPaymentAmount,
     regCostFree,
@@ -58,7 +58,7 @@ export const PurchasePage: React.FC = () => {
           <RegisteredResultsComponent
             paymentWallet={paymentWallet}
             purchaseStatus={purchaseStatus}
-            purchaseProvider={purchaseProvider}
+            paymentProvider={paymentProvider}
             txItems={regItems}
             paymentAmount={regPaymentAmount}
             paymentCurrency={paymentCurrency}
@@ -72,7 +72,7 @@ export const PurchasePage: React.FC = () => {
           <FailedResultsComponent
             paymentWallet={paymentWallet}
             purchaseStatus={purchaseStatus}
-            purchaseProvider={purchaseProvider}
+            paymentProvider={paymentProvider}
             txItems={errItems}
             paymentAmount={errPaymentAmount}
             paymentCurrency={paymentCurrency}

@@ -4,7 +4,7 @@ import InfoBadge from '../../../components/InfoBadge/InfoBadge';
 
 import { BADGE_TYPES } from '../../../components/Badge/Badge';
 import {
-  PURCHASE_PROVIDER,
+  PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from '../../../constants/purchase';
 import { ERROR_MESSAGES, ERROR_TYPES } from '../../../constants/errors';
@@ -16,7 +16,7 @@ const STRIPE_REQUIRES_PAYMENT_ERROR = 'requires_payment_method';
 
 export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
   const {
-    purchaseProvider,
+    paymentProvider,
     purchaseStatus,
     failedTxsTotalAmount = '',
     failedTxsTotalCurrency = '',
@@ -42,13 +42,13 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
     badgeUIType = BADGE_TYPES.INFO;
 
     // Custom message for crypto provider
-    if (purchaseProvider === PURCHASE_PROVIDER.CRYPTO) {
+    if (paymentProvider === PAYMENT_PROVIDER.CRYPTO) {
       message =
         'Your crypto payment is currently being confirmed. You do not need to remain on this screen and may close the view without disrupting your purchase.';
     }
 
     // Custom message for stripe provider
-    if (purchaseProvider === PURCHASE_PROVIDER.STRIPE) {
+    if (paymentProvider === PAYMENT_PROVIDER.STRIPE) {
       message =
         'Your credit/debit card payment is currently being confirmed. You do not need to remain on this screen and may close the view without disrupting your purchase.';
     }
@@ -60,12 +60,12 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
     badgeUIType = BADGE_TYPES.INFO;
 
     // Custom message for crypto provider
-    if (purchaseProvider === PURCHASE_PROVIDER.CRYPTO) {
+    if (paymentProvider === PAYMENT_PROVIDER.CRYPTO) {
       message = 'Your crypto payment has been cancelled.';
     }
 
     // Custom message for stripe provider
-    if (purchaseProvider === PURCHASE_PROVIDER.STRIPE) {
+    if (paymentProvider === PAYMENT_PROVIDER.STRIPE) {
       message = 'Your credit/debit card payment has been cancelled.';
     }
   }
@@ -76,12 +76,12 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
     badgeUIType = BADGE_TYPES.ERROR;
 
     // Custom message for FIO and non FIO providers
-    if (purchaseProvider === PURCHASE_PROVIDER.FIO || !failedTxsTotalAmount) {
+    if (paymentProvider === PAYMENT_PROVIDER.FIO || !failedTxsTotalAmount) {
       message =
         'Your purchase was not completed in full. Please see below what failed to be completed.';
     }
 
-    if (purchaseProvider === PURCHASE_PROVIDER.STRIPE && failedTxsTotalAmount) {
+    if (paymentProvider === PAYMENT_PROVIDER.STRIPE && failedTxsTotalAmount) {
       if (
         !failedTxsTotalCurrency ||
         failedTxsTotalCurrency === CURRENCY_CODES.USDC
@@ -98,20 +98,20 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
     badgeUIType = BADGE_TYPES.ERROR;
 
     // Custom title and message for FIO provider
-    if (purchaseProvider === PURCHASE_PROVIDER.FIO) {
+    if (paymentProvider === PAYMENT_PROVIDER.FIO) {
       title = 'Purchase failed!';
       message =
         ERROR_MESSAGES[failedMessage] || ERROR_MESSAGES[ERROR_TYPES.default];
     }
 
     // Custom title and message for crypto provider
-    if (purchaseProvider === PURCHASE_PROVIDER.CRYPTO) {
+    if (paymentProvider === PAYMENT_PROVIDER.CRYPTO) {
       title = 'Purchase Error';
       message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount as string} FIO Tokens. You can use these tokens to register FIO Crypto Handle or Domain.`;
     }
 
     // Custom title and message for stripe provider
-    if (purchaseProvider === PURCHASE_PROVIDER.STRIPE) {
+    if (paymentProvider === PAYMENT_PROVIDER.STRIPE) {
       // Custom title and message for default and requires_payment_method stripe errors
       if (failedMessage === STRIPE_REQUIRES_PAYMENT_ERROR) {
         title = 'Credit/Debit Card not accepted';

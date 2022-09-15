@@ -16,7 +16,7 @@ export const FailedResultsComponent: React.FC<FailedResultsComponentProps> = pro
   const {
     paymentWallet,
     purchaseStatus,
-    purchaseProvider,
+    paymentProvider,
     txItems,
     errorBadges,
     paymentAmount,
@@ -33,7 +33,7 @@ export const FailedResultsComponent: React.FC<FailedResultsComponentProps> = pro
       <>
         <InfoBadgeComponent
           purchaseStatus={purchaseStatus}
-          purchaseProvider={purchaseProvider}
+          paymentProvider={paymentProvider}
         />
         <div className={classes.details}>
           <PurchaseResultsComponent
@@ -45,7 +45,7 @@ export const FailedResultsComponent: React.FC<FailedResultsComponentProps> = pro
             convertedPaymentCurrency={convertedPaymentCurrency}
             costFree={costFree}
             providerTxId={providerTxId}
-            purchaseProvider={purchaseProvider}
+            paymentProvider={paymentProvider}
           />
         </div>
       </>
@@ -56,7 +56,7 @@ export const FailedResultsComponent: React.FC<FailedResultsComponentProps> = pro
       {Object.values(errorBadges).map(({ errorType, total, totalCurrency }) => (
         <InfoBadgeComponent
           purchaseStatus={purchaseStatus}
-          purchaseProvider={purchaseProvider}
+          paymentProvider={paymentProvider}
           failedMessage={errorType}
           failedTxsTotalAmount={total}
           failedTxsTotalCurrency={totalCurrency}
@@ -81,7 +81,7 @@ export const FailedResultsComponent: React.FC<FailedResultsComponentProps> = pro
           convertedPaymentCurrency={convertedPaymentCurrency}
           costFree={costFree}
           providerTxId={providerTxId}
-          purchaseProvider={purchaseProvider}
+          paymentProvider={paymentProvider}
           priceUIType={
             purchaseStatus === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS
               ? BADGE_TYPES.ERROR

@@ -12,7 +12,7 @@ import {
   PURCHASE_RESULTS_STATUS_LABELS,
   PAYMENT_STATUSES,
   PAYMENTS_STATUSES_TITLES,
-  PURCHASE_PROVIDER_LABEL,
+  PAYMENT_PROVIDER_LABEL,
 } from '../../../../constants/purchase';
 import { CURRENCY_CODES } from '../../../../constants/common';
 import { ACTIONS } from '../../../../constants/fio';
@@ -91,7 +91,7 @@ const setHistory = (
       amount: status === PAYMENT_STATUSES.COMPLETED ? payment.price : '0.00',
       currency: payment.currency.toUpperCase(),
       status: `${
-        PURCHASE_PROVIDER_LABEL[payment.processor]
+        PAYMENT_PROVIDER_LABEL[payment.processor]
       } notification received (${
         payment.externalId
       }) \nPayment status: ${PAYMENTS_STATUSES_TITLES[

@@ -51,11 +51,11 @@ import { useEffectOnce } from '../../hooks/general';
 
 import { ROUTES } from '../../constants/routes';
 import {
-  PURCHASE_PROVIDER_PAYMENT_TITLE,
+  PAYMENT_PROVIDER_PAYMENT_TITLE,
   PAYMENT_OPTIONS,
   PURCHASE_RESULTS_STATUS,
-  PURCHASE_PROVIDE_PAYMENT_OPTION,
-  PURCHASE_PROVIDER,
+  PAYMENT_PROVIDER_PAYMENT_OPTION,
+  PAYMENT_PROVIDER,
 } from '../../constants/purchase';
 import { ACTIONS } from '../../constants/fio';
 import { CURRENCY_CODES, WALLET_CREATED_FROM } from '../../constants/common';
@@ -69,7 +69,7 @@ import {
   WalletsBalances,
   WalletBalancesItem,
   ApiError,
-  PurchaseProvider,
+  PaymentProvider,
   PaymentOptionsProps,
 } from '../../types';
 import { BeforeSubmitData, BeforeSubmitState } from './types';
@@ -89,7 +89,7 @@ export const useContext = (): {
   title: string;
   payment: Payment;
   paymentOption: PaymentOptionsProps;
-  paymentProvider: PurchaseProvider;
+  paymentProvider: PaymentProvider;
   paymentProviderError: ApiError;
   isFree: boolean;
   beforeSubmitProps: BeforeSubmitState | null;
@@ -142,11 +142,11 @@ export const useContext = (): {
   const {
     location: { state },
   } = history;
-  const { paymentProvider }: { paymentProvider?: PurchaseProvider } =
+  const { paymentProvider }: { paymentProvider?: PaymentProvider } =
     state || {};
   const payment = order && order.payment;
   const orderId = order && order.id;
-  const paymentOption = PURCHASE_PROVIDE_PAYMENT_OPTION[paymentProvider];
+  const paymentOption = PAYMENT_PROVIDER_PAYMENT_OPTION[paymentProvider];
 
   const setWallet = useCallback(
     (paymentWalletPublicKey: string) => {
@@ -197,7 +197,7 @@ export const useContext = (): {
   const title =
     isFree || !paymentProvider
       ? 'Make Purchase'
-      : PURCHASE_PROVIDER_PAYMENT_TITLE[paymentProvider];
+      : PAYMENT_PROVIDER_PAYMENT_TITLE[paymentProvider];
 
   const ownerPubKeysPrivateDomains: string[] = [];
   if (cartHasItemsWithPrivateDomain) {
@@ -237,7 +237,7 @@ export const useContext = (): {
           total: '0',
           roe,
           publicKey: paymentWalletPublicKey,
-          paymentProcessor: PURCHASE_PROVIDER.FIO,
+          paymentProcessor: PAYMENT_PROVIDER.FIO,
           items: cartItems.map(({ address, domain, costNativeFio }) => ({
             action: ACTIONS.registerFioAddress,
             address,

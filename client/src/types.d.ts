@@ -9,7 +9,7 @@ import { CONTAINED_FLOW_ACTIONS } from './constants/containedFlow';
 import {
   BC_TX_STATUSES,
   PAYMENT_OPTIONS,
-  PURCHASE_PROVIDER,
+  PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from './constants/purchase';
 import { CURRENCY_CODES } from './constants/common';
@@ -101,7 +101,7 @@ export type RegistrationRegistered = {
   transactions?: string[];
 };
 
-export type PurchaseProvider = typeof PURCHASE_PROVIDER[keyof typeof PURCHASE_PROVIDER];
+export type PaymentProvider = typeof PAYMENT_PROVIDER[keyof typeof PAYMENT_PROVIDER];
 export type PaymentCurrency = typeof CURRENCY_CODES[keyof typeof CURRENCY_CODES];
 export type PaymentOptionsProps = typeof PAYMENT_OPTIONS[keyof typeof PAYMENT_OPTIONS];
 export type PurchaseTxStatus = typeof PURCHASE_RESULTS_STATUS[keyof typeof PURCHASE_RESULTS_STATUS];
@@ -111,7 +111,7 @@ export type RegistrationResult = {
   errors: RegistrationErrors[];
   registered: RegistrationRegistered[];
   partial: string[];
-  purchaseProvider?: PurchaseProvider;
+  paymentProvider?: PaymentProvider;
   providerTxId?: string | number;
   paymentOption?: PaymentOptionsProps;
   paymentAmount?: string;
@@ -626,7 +626,7 @@ export type OrderPaymentItem = {
   externalId?: string;
   paymentEventLogs: PaymentEventLog[];
   price?: string;
-  processor: PurchaseProvider;
+  processor: PaymentProvider;
   spentType: number;
   status: number;
   updatedAt: string;
@@ -667,7 +667,7 @@ export type OrderItem = {
   createdAt: string;
   status: number;
   currency?: PaymentCurrency;
-  paymentProcessor: PurchaseProvider;
+  paymentProcessor: PaymentProvider;
   items?: {
     action: string;
     address?: string;
