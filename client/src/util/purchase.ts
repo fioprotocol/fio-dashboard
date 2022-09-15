@@ -55,7 +55,7 @@ export const onPurchaseFinish = ({
 
   if (isCheckout) {
     history.push(ROUTES.PURCHASE, {
-      paymentProvider: results.purchaseProvider,
+      paymentProvider: results.paymentProvider,
     });
   }
 };

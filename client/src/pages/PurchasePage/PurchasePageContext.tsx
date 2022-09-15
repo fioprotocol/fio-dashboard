@@ -41,7 +41,7 @@ import MathOp from '../../util/math';
 import { ROUTES } from '../../constants/routes';
 import { CONTAINED_FLOW_CONTINUE_TEXT } from '../../constants/containedFlow';
 import {
-  PURCHASE_PROVIDER,
+  PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from '../../constants/purchase';
 import { CURRENCY_CODES } from '../../constants/common';
@@ -51,7 +51,7 @@ import {
   FioActionExecuted,
   FioWalletDoublet,
   RegistrationResult,
-  PurchaseProvider,
+  PaymentProvider,
   PurchaseTxStatus,
   CartItem,
 } from '../../types';
@@ -69,7 +69,7 @@ export const useContext = (): {
   onFinish: (results: RegistrationResult) => Promise<void>;
   paymentWallet: FioWalletDoublet;
   purchaseStatus: PurchaseTxStatus;
-  purchaseProvider: PurchaseProvider;
+  paymentProvider: PaymentProvider;
   regPaymentAmount: string | number;
   regConvertedPaymentAmount: string | number;
   regCostFree: string;
@@ -161,7 +161,7 @@ export const useContext = (): {
   } = totalCost(errItems, roe);
 
   const {
-    purchaseProvider = PURCHASE_PROVIDER.FIO,
+    paymentProvider = PAYMENT_PROVIDER.FIO,
     providerTxId,
     paymentCurrency = CURRENCY_CODES.FIO,
     convertedPaymentCurrency = CURRENCY_CODES.USDC,
@@ -181,13 +181,13 @@ export const useContext = (): {
   const allErrored = isEmpty(regItems) && !isEmpty(errItems);
   // todo: fix retry for FIO purchases - new order creation, websocket update for new order id, ...
   // const isRetry =
-  //   purchaseProvider === PURCHASE_PROVIDER.FIO && !isEmpty(errItems);
+  //   paymentProvider === PURCHASE_PROVIDER.FIO && !isEmpty(errItems);
   const isRetry = false;
 
   const failedTxsTotalAmount =
     (orderStatusData.status === PURCHASE_RESULTS_STATUS.FAILED ||
       orderStatusData.status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS) &&
-    purchaseProvider === PURCHASE_PROVIDER.STRIPE
+    paymentProvider === PAYMENT_PROVIDER.STRIPE
       ? errCostUsdc
       : errCostFio;
 
@@ -210,7 +210,7 @@ export const useContext = (): {
         } else {
           badgeKey = `${errorType}`;
           totalCurrency =
-            purchaseProvider === PURCHASE_PROVIDER.STRIPE
+            paymentProvider === PAYMENT_PROVIDER.STRIPE
               ? CURRENCY_CODES.USDC
               : CURRENCY_CODES.FIO;
         }
@@ -264,7 +264,7 @@ export const useContext = (): {
       PURCHASE_RESULTS_STATUS.FAILED,
       PURCHASE_RESULTS_STATUS.CANCELED,
     ].indexOf(orderStatusData.status) > -1 &&
-      purchaseProvider === PURCHASE_PROVIDER.STRIPE,
+      paymentProvider === PAYMENT_PROVIDER.STRIPE,
   );
 
   let closeText = 'Close';
@@ -308,7 +308,7 @@ export const useContext = (): {
     onFinish,
     paymentWallet,
     purchaseStatus: orderStatusData.status,
-    purchaseProvider,
+    paymentProvider,
     regPaymentAmount,
     regConvertedPaymentAmount,
     regCostFree: !regCostNativeFio && regFree,

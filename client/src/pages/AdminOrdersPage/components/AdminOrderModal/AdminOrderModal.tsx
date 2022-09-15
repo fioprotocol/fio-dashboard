@@ -14,8 +14,8 @@ import {
   BC_TX_STATUS_LABELS,
   PURCHASE_RESULTS_STATUS_LABELS,
   PAYMENT_STATUSES,
-  PURCHASE_PROVIDER_LABEL,
-  PURCHASE_PROVIDER,
+  PAYMENT_PROVIDER_LABEL,
+  PAYMENT_PROVIDER,
 } from '../../../../constants/purchase';
 import { CURRENCY_CODES } from '../../../../constants/common';
 
@@ -94,11 +94,11 @@ const AdminOrderModal: React.FC<Props> = ({
     return orderPaymentPrice;
   };
   let paymentType = orderPayment?.processor
-    ? PURCHASE_PROVIDER_LABEL[orderPayment?.processor]
+    ? PAYMENT_PROVIDER_LABEL[orderPayment?.processor]
     : 'N/A';
 
   if (
-    orderPayment?.processor === PURCHASE_PROVIDER.STRIPE &&
+    orderPayment?.processor === PAYMENT_PROVIDER.STRIPE &&
     orderPayment.data?.webhookData?.charges?.data[0]?.payment_method_details
       ?.type
   ) {
