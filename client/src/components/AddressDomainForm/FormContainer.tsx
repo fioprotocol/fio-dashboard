@@ -47,13 +47,13 @@ const FormContainer: React.FC<FormContainerProps> = props => {
   const buttonText = `Get My FIO ${isDomain ? 'Domain' : 'Crypto Handle'}`;
 
   useEffectOnce(() => {
-    if (!isHomepage && isAddress && !isEmpty(formProps)) {
+    if (!isHomepage && !isEmpty(formProps)) {
       const { handleSubmit, values } = formProps || {};
       if (!isEmpty(values)) {
         handleSubmit();
       }
     }
-  }, [isHomepage, isAddress, formProps]);
+  }, [isHomepage, formProps]);
 
   const renderActionButton = () => {
     if (!isHomepage) return null;
