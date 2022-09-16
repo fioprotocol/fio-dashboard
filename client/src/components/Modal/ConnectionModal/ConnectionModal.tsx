@@ -51,7 +51,7 @@ const ConnectionModal: React.FC<Props> = props => {
           : 'Please connect your Ledger device and open FIO App.'}
       </p>
       {renderContinue()}
-      {!awaitingLedger ? (
+      {!awaitingLedger && !onContinue ? (
         <Button className={classes.button} onClick={onClose}>
           Close
         </Button>
