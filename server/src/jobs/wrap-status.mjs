@@ -154,7 +154,7 @@ class WrapStatusJob extends CommonJob {
         this.postMessage(
           logPrefix + `starting from blockNumber: ${lastProcessedBlockNumber}`,
         );
-        this.postMessage(logPrefix + 'finish at blockNumber', lastInChainBlockNumber);
+        this.postMessage(logPrefix + `finish at blockNumber: ${lastInChainBlockNumber}`);
 
         let fromBlockNumber = lastProcessedBlockNumber + 1;
 
@@ -251,7 +251,7 @@ class WrapStatusJob extends CommonJob {
         this.postMessage(
           logPrefix + `starting from blockNumber: ${lastProcessedBlockNumber}`,
         );
-        this.postMessage(logPrefix + 'finish at blockNumber', lastInChainBlockNumber);
+        this.postMessage(logPrefix + `finish at blockNumber: ${lastInChainBlockNumber}`);
 
         let fromBlockNumber = lastProcessedBlockNumber + 1;
 
