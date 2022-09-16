@@ -19,6 +19,7 @@ const FIO_APP_INIT_TIMEOUT = 2000;
 type Props = {
   isTransaction?: boolean;
   fioWallet?: FioWalletDoublet;
+  hideConnectionModal?: boolean;
 
   onConnect: (appFio: LedgerFioApp) => Promise<LedgerFioApp>;
   onSuccess: (data: AnyObject) => void;
@@ -35,6 +36,7 @@ const LedgerConnect: React.FC<Props> = props => {
   const {
     isTransaction,
     fioWallet,
+    hideConnectionModal,
     onConnect,
     onSuccess,
     onCancel,
@@ -210,7 +212,7 @@ const LedgerConnect: React.FC<Props> = props => {
 
   return (
     <ConnectionModal
-      show={connecting}
+      show={connecting && !hideConnectionModal}
       onClose={closeConnection}
       onContinue={onContinue}
       awaitingLedger={awaitingLedger || awaitingFioApp}
