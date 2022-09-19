@@ -54,7 +54,9 @@ export const onPurchaseFinish = ({
   }
 
   if (isCheckout) {
-    history.push(ROUTES.PURCHASE, { paymentOption: results.paymentOption });
+    history.push(ROUTES.PURCHASE, {
+      paymentProvider: results.paymentProvider,
+    });
   }
 };
 

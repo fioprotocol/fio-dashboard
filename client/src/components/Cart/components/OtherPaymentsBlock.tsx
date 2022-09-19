@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 
 import { PaymentOptions } from '../../PaymentOptions';
 
-import { PaymentOptionsProps, CartItem } from '../../../types';
+import { PaymentOptionsProps, CartItem, PaymentProvider } from '../../../types';
 
 import classes from '../styles/OtherPaymentsBlock.module.scss';
 
@@ -14,7 +14,7 @@ type Props = {
   paymentOptionsList: PaymentOptionsProps[];
   cartItems?: CartItem[];
   loading: boolean;
-  onPaymentChoose: (paymentOption: PaymentOptionsProps) => void;
+  onPaymentChoose: (paymentProvider: PaymentProvider) => void;
 };
 
 const OtherPaymentsBlock: React.FC<Props> = props => {

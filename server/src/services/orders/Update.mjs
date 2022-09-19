@@ -54,7 +54,7 @@ export default class OrdersUpdate extends Base {
                     },
                   ],
                   partial: { list_of: 'string' },
-                  purchaseProvider: 'string',
+                  paymentProvider: 'string',
                   providerTxId: 'string',
                   paymentOption: 'string',
                   paymentAmount: 'string',
@@ -97,7 +97,7 @@ export default class OrdersUpdate extends Base {
     if (Object.values(orderUpdateParams).length)
       await Order.update(orderUpdateParams, { where: { id, userId: this.context.id } });
 
-    if (data.results && data.results.paymentOption === Payment.PROCESSOR.FIO) {
+    if (data.results && data.results.paymentProvider === Payment.PROCESSOR.FIO) {
       try {
         const totalFioNativePrice = data.results.registered.reduce((acc, regItem) => {
           if (!isNaN(Number(regItem.fee_collected))) return acc + regItem.fee_collected;
@@ -213,7 +213,7 @@ export default class OrdersUpdate extends Base {
       }
     }
 
-    if (data.results && data.results.paymentOption === Payment.PROCESSOR.CREDIT_CARD) {
+    if (data.results && data.results.paymentProvider === Payment.PROCESSOR.STRIPE) {
       for (const regItem of data.results.registered) {
         const { fioName, data: itemData } = regItem;
 

@@ -2,12 +2,16 @@ import React, { useState } from 'react';
 import QRCode from 'qrcode.react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'react-bootstrap';
+import classnames from 'classnames';
 
 import Modal from '../../../components/Modal/Modal';
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
+import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
 import CopyTooltip from '../../../components/CopyTooltip';
 import ShowPrivateKeyModal from './ShowPrivateKeyModal';
 import LedgerBadge from '../../../components/Badges/LedgerBadge/LedgerBadge';
+import ViewPubAddressLedgerWallet from './ViewPubAddress/ViewPubAddressLedgerWallet';
+import InfoBadge from '../../../components/InfoBadge/InfoBadge';
 
 import { WALLET_CREATED_FROM } from '../../../constants/common';
 
@@ -34,7 +38,16 @@ const WalletDetailsModal: React.FC<Props> = props => {
     onClose,
   } = props;
 
+  const isLedgerWallet = from === WALLET_CREATED_FROM.LEDGER;
   const [showPrivateKeyModal, setShowPrivateKeyModal] = useState(false);
+  const [showLedgerPubKey, setShowLedgerPubKey] = useState(false);
+  const [processing, setProcessing] = useState(false);
+  const [exportedPubAddress, setExportedPubAddress] = useState<string | null>(
+    null,
+  );
+  const [viewingAddressInLedger, setViewingAddressInLedger] = useState<boolean>(
+    false,
+  );
 
   const onCopy = () => {
     copyToClipboard(publicKey);
@@ -46,6 +59,16 @@ const WalletDetailsModal: React.FC<Props> = props => {
     });
   const onKeyShow = () => setShowPrivateKeyModal(true);
   const onShowPrivateModalClose = () => setShowPrivateKeyModal(false);
+  const onLedgerViewPubKey = () => {
+    setExportedPubAddress(null);
+    setShowLedgerPubKey(true);
+  };
+  const onLedgerViewPubKeyClose = (exportedKey?: string) => {
+    setShowLedgerPubKey(false);
+    setProcessing(false);
+    setViewingAddressInLedger(false);
+    if (exportedKey) setExportedPubAddress(exportedKey);
+  };
 
   const renderShare = () => {
     if (!nativeShareIsAvailable) return null;
@@ -58,7 +81,7 @@ const WalletDetailsModal: React.FC<Props> = props => {
   };
 
   const renderShowPrivateKey = () => {
-    if (from === WALLET_CREATED_FROM.LEDGER) return null;
+    if (isLedgerWallet) return null;
     return (
       <Button onClick={onKeyShow} className={classes.iconContainer}>
         <FontAwesomeIcon
@@ -69,10 +92,30 @@ const WalletDetailsModal: React.FC<Props> = props => {
     );
   };
 
+  const renderViewPubKey = () => {
+    if (!isLedgerWallet) return null;
+
+    return (
+      <div className={classes.actionButtonsLeft}>
+        <SubmitButton
+          onClick={onLedgerViewPubKey}
+          hasLowHeight={true}
+          loading={processing}
+          disabled={processing}
+          text="View Public Address on Ledger"
+        />
+      </div>
+    );
+  };
+
   return (
     <>
       <Modal
-        show={show && !showPrivateKeyModal}
+        show={
+          show &&
+          !showPrivateKeyModal &&
+          (!showLedgerPubKey || viewingAddressInLedger)
+        }
         isSimple={true}
         closeButton={true}
         onClose={onClose}
@@ -80,7 +123,7 @@ const WalletDetailsModal: React.FC<Props> = props => {
         hasDefaultCloseColor={true}
       >
         <div className={classes.container}>
-          {from === WALLET_CREATED_FROM.LEDGER ? (
+          {isLedgerWallet ? (
             <div className={classes.ledgerContainer}>
               <LedgerBadge />
             </div>
@@ -98,18 +141,45 @@ const WalletDetailsModal: React.FC<Props> = props => {
             </div>
           </Badge>
 
-          <div className={classes.actionButtons}>
-            <CopyTooltip>
-              <Button onClick={onCopy} className={classes.iconContainer}>
-                <FontAwesomeIcon
-                  className={classes.icon}
-                  icon={{ prefix: 'far', iconName: 'copy' }}
-                />
-              </Button>
-            </CopyTooltip>
-            {renderShare()}
+          <InfoBadge
+            title=""
+            message={
+              <span className={classes.publicKey}>
+                You can compare exported address with one above -<br />
+                {exportedPubAddress}
+              </span>
+            }
+            show={!!exportedPubAddress}
+            type={BADGE_TYPES.INFO}
+          />
 
-            {renderShowPrivateKey()}
+          <InfoBadge
+            title=""
+            message="You can now view and compare your public address on your Ledger Device."
+            show={viewingAddressInLedger}
+            type={BADGE_TYPES.INFO}
+          />
+
+          <div className={classes.actionButtonsContainer}>
+            {renderViewPubKey()}
+            <div
+              className={classnames(
+                classes.actionButtons,
+                !isLedgerWallet && classes.center,
+              )}
+            >
+              <CopyTooltip>
+                <Button onClick={onCopy} className={classes.iconContainer}>
+                  <FontAwesomeIcon
+                    className={classes.icon}
+                    icon={{ prefix: 'far', iconName: 'copy' }}
+                  />
+                </Button>
+              </CopyTooltip>
+              {renderShare()}
+
+              {renderShowPrivateKey()}
+            </div>
           </div>
         </div>
       </Modal>
@@ -117,6 +187,15 @@ const WalletDetailsModal: React.FC<Props> = props => {
         show={showPrivateKeyModal}
         fioWallet={props.fioWallet}
         onClose={onShowPrivateModalClose}
+      />
+      <ViewPubAddressLedgerWallet
+        submitData={showLedgerPubKey}
+        fioWallet={props.fioWallet}
+        viewingAddressInLedger={viewingAddressInLedger}
+        onSuccess={onLedgerViewPubKeyClose}
+        onCancel={onLedgerViewPubKeyClose}
+        setProcessing={setProcessing}
+        setViewingAddressInLedger={setViewingAddressInLedger}
       />
     </>
   );

@@ -4,12 +4,13 @@ import has from 'lodash/has';
 
 import { PaymentButton } from './components/PaymentButton';
 
-import { PAYMENT_OPTIONS } from '../../constants/purchase';
+import { PAYMENT_OPTIONS, PAYMENT_PROVIDER } from '../../constants/purchase';
 
 import {
   CartItem as CartItemProps,
   FioWalletDoublet,
   PaymentOptionsProps,
+  PaymentProvider,
 } from '../../types';
 
 import classes from './styles/PaymentOptions.module.scss';
@@ -20,7 +21,7 @@ type Props = {
 
 type DefaultPaymentOptionProps = {
   isFree?: boolean;
-  onPaymentChoose: (paymentOption: PaymentOptionsProps) => void;
+  onPaymentChoose: (paymentProvider: PaymentProvider) => void;
   hasLowBalance?: boolean;
   paymentWalletPublicKey?: string;
   cartItems?: CartItemProps[];
@@ -52,9 +53,10 @@ const PAYMENT_OPTIONS_PROPS = {
       cartItems?.length === 0 ||
       loading ||
       disabled,
+    provider: PAYMENT_PROVIDER.FIO,
     loading,
     hideButton: hasLowBalance,
-    onClick: () => onPaymentChoose(paymentOption),
+    onClick: () => onPaymentChoose(PAYMENT_PROVIDER.FIO),
   }),
   [PAYMENT_OPTIONS.CREDIT_CARD]: ({
     onPaymentChoose,
@@ -66,8 +68,9 @@ const PAYMENT_OPTIONS_PROPS = {
     buttonText: 'Pay with Credit/Debit Card',
     icon: <FontAwesomeIcon icon="credit-card" />,
     disabled: cartItems?.length === 0 || loading || disabled,
+    provider: PAYMENT_PROVIDER.STRIPE,
     loading,
-    onClick: () => onPaymentChoose(paymentOption),
+    onClick: () => onPaymentChoose(PAYMENT_PROVIDER.STRIPE),
   }),
   [PAYMENT_OPTIONS.CRYPTO]: ({ loading }: PaymentOptionRenderProps) => ({
     buttonText: 'Pay Using Crypto',

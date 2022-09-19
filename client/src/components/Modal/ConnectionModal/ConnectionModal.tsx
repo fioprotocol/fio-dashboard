@@ -12,13 +12,34 @@ import classes from './ConnectionModal.module.scss';
 type Props = {
   show: boolean;
   onClose: () => void;
+  onContinue?: () => void;
   message?: string;
   isTransaction?: boolean;
   awaitingLedger?: boolean;
 };
 
 const ConnectionModal: React.FC<Props> = props => {
-  const { show, message, awaitingLedger, isTransaction, onClose } = props;
+  const {
+    show,
+    message,
+    awaitingLedger,
+    isTransaction,
+    onClose,
+    onContinue,
+  } = props;
+
+  const renderContinue = () => {
+    if (!onContinue) return null;
+
+    return (
+      <Button
+        className={`${classes.button} ${isTransaction ? classes.light : ''}`}
+        onClick={onContinue}
+      >
+        Continue
+      </Button>
+    );
+  };
 
   const renderRegular = () => (
     <>
@@ -29,7 +50,8 @@ const ConnectionModal: React.FC<Props> = props => {
           ? message
           : 'Please connect your Ledger device and open FIO App.'}
       </p>
-      {!awaitingLedger ? (
+      {renderContinue()}
+      {!awaitingLedger && !onContinue ? (
         <Button className={classes.button} onClick={onClose}>
           Close
         </Button>
@@ -47,6 +69,7 @@ const ConnectionModal: React.FC<Props> = props => {
           ? message
           : 'Please connect your Ledger device, open FIO App and confirm your transactions.'}
       </p>
+      {renderContinue()}
       {awaitingLedger ? (
         <p>
           <FontAwesomeIcon icon="spinner" spin={true} />

@@ -49,7 +49,7 @@ import {
   DeleteCartItem,
   FioWalletDoublet,
   IncomePrices,
-  PaymentOptionsProps,
+  PaymentProvider,
   Prices,
   WalletBalancesItem,
 } from '../../types';
@@ -70,7 +70,7 @@ type UseContextReturnType = {
   userWallets: FioWalletDoublet[];
   walletBalancesAvailable?: WalletBalancesItem;
   walletCount: number;
-  onPaymentChoose: (paymentOption: PaymentOptionsProps) => Promise<void>;
+  onPaymentChoose: (paymentProvider: PaymentProvider) => Promise<void>;
   deleteItem: (data: DeleteCartItem) => void;
 };
 
@@ -282,7 +282,7 @@ export const useContext = (): UseContextReturnType => {
     }
   };
 
-  const checkout = (paymentOption: PaymentOptionsProps) => {
+  const checkout = (paymentProvider: PaymentProvider) => {
     const { costUsdc: totalUsdc } = totalCost(cartItems, roe);
 
     dispatch(
@@ -290,7 +290,7 @@ export const useContext = (): UseContextReturnType => {
         total: totalUsdc,
         roe,
         publicKey: paymentWalletPublicKey || userWallets[0].publicKey,
-        paymentProcessor: paymentOption,
+        paymentProcessor: paymentProvider,
         items: cartItems.map(
           ({ address, domain, costNativeFio, costUsdc, hasCustomDomain }) => {
             const data: {
@@ -321,11 +321,11 @@ export const useContext = (): UseContextReturnType => {
       }),
     );
 
-    return history.push(ROUTES.CHECKOUT, { paymentOption });
+    return history.push(ROUTES.CHECKOUT, { paymentProvider });
   };
 
-  const onPaymentChoose = async (paymentOption: PaymentOptionsProps) => {
-    if ((await allowCheckout()) && paymentOption) checkout(paymentOption);
+  const onPaymentChoose = async (paymentProvider: PaymentProvider) => {
+    if ((await allowCheckout()) && paymentProvider) checkout(paymentProvider);
   };
 
   useEffectOnce(() => {

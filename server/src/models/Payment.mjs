@@ -32,7 +32,7 @@ export class Payment extends Base {
     return {
       COINBASE: 'COINBASE',
       COIN_PAYMENTS: 'COIN_PAYMENTS',
-      CREDIT_CARD: 'CREDIT_CARD',
+      STRIPE: 'STRIPE',
       FIO: 'FIO',
       ADMIN: 'ADMIN',
       SYSTEM: 'SYSTEM',
@@ -128,7 +128,7 @@ export class Payment extends Base {
   }
 
   static getPaymentProcessor(paymentProcessor) {
-    if (paymentProcessor === this.PROCESSOR.CREDIT_CARD) {
+    if (paymentProcessor === this.PROCESSOR.STRIPE) {
       return Stripe;
     }
 

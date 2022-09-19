@@ -3,17 +3,17 @@ import React from 'react';
 import { FioPaymentOption } from './FioPaymentOption';
 import { StripePaymentOption } from './StripePaymentOption';
 
-import { PAYMENT_OPTIONS } from '../../../constants/purchase';
+import { PAYMENT_PROVIDER } from '../../../constants/purchase';
 
 import { PaymentOptionComponentProps } from '../types';
 
 export const PaymentOptionComponent: React.FC<PaymentOptionComponentProps> = props => {
-  const { paymentOption = PAYMENT_OPTIONS.FIO } = props;
+  const { paymentProvider = PAYMENT_PROVIDER.FIO } = props;
 
-  if (paymentOption === PAYMENT_OPTIONS.FIO)
+  if (paymentProvider === PAYMENT_PROVIDER.FIO)
     return <FioPaymentOption {...props} />;
 
-  if (paymentOption === PAYMENT_OPTIONS.CREDIT_CARD)
+  if (paymentProvider === PAYMENT_PROVIDER.STRIPE)
     return <StripePaymentOption {...props} />;
 
   return null;
