@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 
 import AddressWidget from '../../components/AddressWidget';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
-import FioAddressPage from '../FioAddressPage';
+import FioAddressSelectionPage from '../FioAddressSelectionPage';
 
 import { APP_TITLE } from '../../constants/labels';
 
@@ -130,7 +130,7 @@ export const RefHomePage: React.FC<Props &
       );
     }
 
-    return <FioAddressPage />;
+    return <FioAddressSelectionPage />;
   };
 
   return (

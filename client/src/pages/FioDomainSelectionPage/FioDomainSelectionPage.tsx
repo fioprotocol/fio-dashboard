@@ -7,7 +7,7 @@ import { DOMAIN } from '../../constants/common';
 
 import { useNonActiveUserRedirect } from '../../util/hooks';
 
-const FioDomainPage: React.FC = () => {
+const FioDomainSelectionPage: React.FC = () => {
   useNonActiveUserRedirect();
   return (
     <AddressDomainContainer
@@ -17,4 +17,4 @@ const FioDomainPage: React.FC = () => {
   );
 };
 
-export default FioDomainPage;
+export default FioDomainSelectionPage;
