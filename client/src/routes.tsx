@@ -6,10 +6,10 @@ import DashboardPage from './pages/DashboardPage';
 import MainLayout from './pages/MainLayout';
 import AuthContainer from './components/AuthContainer';
 import PrivateRoute from './components/PrivateRoute';
-import FioAddressPage from './pages/FioAddressPage';
+import FioAddressSelectionPage from './pages/FioAddressSelectionPage';
 import FioAddressManage from './pages/FioAddressManagePage';
+import FioDomainSelectionPage from './pages/FioDomainSelectionPage';
 import FioDomainLandingPage from './pages/FioDomainLandingPage';
-import FioDomainPage from './pages/FioDomainPage';
 import FioDomainManagePage from './pages/FioDomainManagePage';
 import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
@@ -99,7 +99,7 @@ const Routes = (): React.ReactElement => (
         />
         <Route
           path={ROUTES.FIO_ADDRESSES_SELECTION}
-          component={FioAddressPage}
+          component={FioAddressSelectionPage}
           exact
         />
         <PrivateRoute
@@ -125,7 +125,7 @@ const Routes = (): React.ReactElement => (
         />
         <Route
           path={ROUTES.FIO_DOMAINS_SELECTION}
-          component={FioDomainPage}
+          component={FioDomainSelectionPage}
           exact
         />
         <PrivateRoute
