@@ -26,6 +26,7 @@ const ROUTES: { [route: string]: string } = {
   FIO_DOMAINS_SELECTION: '/fio-domains-selection',
   FIO_ADDRESSES: '/fio-crypto-handles',
   FIO_DOMAINS: '/fio-domains',
+  FIO_DOMAIN: '/fio-domain',
   FIO_REQUESTS: '/fio-requests',
   FIO_WALLET: '/fio-wallet/:publicKey',
   TOKENS: '/tokens',
