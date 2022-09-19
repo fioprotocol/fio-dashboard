@@ -7,6 +7,7 @@ import AuthContainer from './components/AuthContainer';
 import PrivateRoute from './components/PrivateRoute';
 import FioAddressPage from './pages/FioAddressPage';
 import FioAddressManage from './pages/FioAddressManagePage';
+import FioDomainLandingPage from './pages/FioDomainLandingPage';
 import FioDomainPage from './pages/FioDomainPage';
 import FioDomainManagePage from './pages/FioDomainManagePage';
 import { CartPage } from './pages/CartPage';
@@ -113,6 +114,12 @@ const Routes = (): React.ReactElement => (
           component={FioAddressManage}
           exact
         />
+
+        <Route
+          path={ROUTES.FIO_DOMAIN}
+          component={FioDomainLandingPage}
+          exact
+        />
         <Route
           path={ROUTES.FIO_DOMAINS_SELECTION}
           component={FioDomainPage}
@@ -123,6 +130,7 @@ const Routes = (): React.ReactElement => (
           component={FioDomainManagePage}
           exact
         />
+
         <PrivateRoute path={ROUTES.CART} component={CartPage} exact />
         <PrivateRoute path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
         <PrivateRoute path={ROUTES.PURCHASE} component={PurchasePage} exact />
