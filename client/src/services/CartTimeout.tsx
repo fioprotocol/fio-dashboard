@@ -14,6 +14,7 @@ import { ACTIONS } from '../components/Notifications/Notifications';
 import { CONTAINED_FLOW_NOTIFICATION_MESSAGES } from '../constants/containedFlow';
 import { ROUTES } from '../constants/routes';
 import { NOTIFICATIONS_CONTENT } from '../constants/notifications';
+import { ANALYTICS_EVENT_ACTIONS } from '../constants/common';
 
 import { setCartDate, clear } from '../redux/cart/actions';
 import { addManual as createNotification } from '../redux/notifications/actions';
@@ -29,6 +30,7 @@ import {
 import { confirmingPin } from '../redux/edge/selectors';
 
 import { compose } from '../utils';
+import { fireAnalyticsEvent } from '../util/analytics';
 import useEffectOnce from '../hooks/general';
 
 import { CartItem, ContainedFlowQueryParams } from '../types';
@@ -93,6 +95,7 @@ const CartTimeout: React.FC<Props> = props => {
   const timeIsOut = useCallback((): void => {
     const { location } = history;
     clearCartTimeout();
+    fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.CART_EMPTIED);
     if (
       [ROUTES.CART, ROUTES.CHECKOUT, ROUTES.PURCHASE].indexOf(
         location.pathname,

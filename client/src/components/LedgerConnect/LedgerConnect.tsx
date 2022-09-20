@@ -9,14 +9,20 @@ import ConnectionModal from '../Modal/ConnectionModal';
 import useEffectOnce from '../../hooks/general';
 import { getPubKeyFromLedger } from '../../util/ledger';
 import { log } from '../../util/general';
+import {
+  fireActionAnalyticsEvent,
+  fireActionAnalyticsEventError,
+} from '../../util/analytics';
 
-import { AnyObject, FioWalletDoublet } from '../../types';
+import { AnyObject, AnyType, FioWalletDoublet } from '../../types';
 
 const DISCONNECTED_DEVICE_DURING_OPERATION_ERROR =
   'DisconnectedDeviceDuringOperation';
 const FIO_APP_INIT_TIMEOUT = 2000;
 
 type Props = {
+  action?: string;
+  data: AnyType | null;
   isTransaction?: boolean;
   fioWallet?: FioWalletDoublet;
   hideConnectionModal?: boolean;
@@ -34,6 +40,8 @@ type Props = {
 
 const LedgerConnect: React.FC<Props> = props => {
   const {
+    action,
+    data,
     isTransaction,
     fioWallet,
     hideConnectionModal,
@@ -185,11 +193,13 @@ const LedgerConnect: React.FC<Props> = props => {
     try {
       setProcessing(true);
       const result = await onConnect(appFio);
+      fireActionAnalyticsEvent(action, data);
 
       setConnecting(false);
 
       onSuccess(result);
     } catch (e) {
+      fireActionAnalyticsEventError(action);
       log.error(e, e.code);
       let title = 'Something went wrong';
       let msg = 'Try to reconnect your ledger device.';

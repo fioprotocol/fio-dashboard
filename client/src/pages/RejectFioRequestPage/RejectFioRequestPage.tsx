@@ -11,8 +11,6 @@ import RejectRequestEdge from './components/RejectRequestEdge';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import PageTitle from '../../components/PageTitle/PageTitle';
 
-import { useFioAddresses } from '../../util/hooks';
-
 import { ERROR_TYPES } from '../../components/common/TransactionResults/constants';
 import { WALLET_CREATED_FROM } from '../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../constants/fio';
@@ -23,6 +21,8 @@ import {
 } from '../WalletPage/constants';
 import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
+
+import { useFioAddresses } from '../../util/hooks';
 
 import { FioRecordViewDecrypted } from '../WalletPage/types';
 import { FioWalletDoublet } from '../../types';

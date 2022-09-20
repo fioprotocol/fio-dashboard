@@ -4,14 +4,22 @@ import { Navbar, Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import { useCheckIfDesktop } from '../../../screenType';
-
-import { ROUTES } from '../../../constants/routes';
-import classes from '../MainHeader.module.scss';
 import { ActionButtons } from './ActionButtons';
 import SideMenu from './SideMenu';
 import SiteLink from './SiteLink';
+
+import { ROUTES } from '../../../constants/routes';
+import { ANALYTICS_EVENT_ACTIONS } from '../../../constants/common';
+
+import { useCheckIfDesktop } from '../../../screenType';
+import {
+  fireAnalyticsEvent,
+  getCartItemsDataForAnalytics,
+} from '../../../util/analytics';
+
 import { CartItem, RefProfile } from '../../../types';
+
+import classes from '../MainHeader.module.scss';
 
 type RegularNavProps = {
   cartItems: CartItem[];
@@ -27,7 +35,7 @@ type RegularNavProps = {
 };
 
 const RegularNav: React.FC<RegularNavProps> = props => {
-  const { cartItems, hideCart } = props;
+  const { cartItems, hideCart, closeMenu } = props;
 
   const isDesktop = useCheckIfDesktop();
 
@@ -40,6 +48,16 @@ const RegularNav: React.FC<RegularNavProps> = props => {
     );
   };
 
+  const onCartClick = () => {
+    if (cartItems.length) {
+      fireAnalyticsEvent(
+        ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
+        getCartItemsDataForAnalytics(cartItems),
+      );
+    }
+    closeMenu();
+  };
+
   const renderNav = () => {
     return (
       <Nav className="mr-auto align-items-center">
@@ -48,6 +66,7 @@ const RegularNav: React.FC<RegularNavProps> = props => {
             className={classnames(classes.navItem, 'text-white')}
             as={Link}
             to={ROUTES.FIO_ADDRESSES_SELECTION}
+            onClick={onCartClick}
           >
             <div className={classnames(classes.notifWrapper, classes.cartanim)}>
               <FontAwesomeIcon

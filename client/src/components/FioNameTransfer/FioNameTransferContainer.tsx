@@ -66,6 +66,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   const [submitting, setSubmitting] = useState(false);
   const [submitData, setSubmitData] = useState<{
     transferAddress: string;
+    fioNameType: string;
   } | null>(null);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
@@ -113,7 +114,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   };
 
   const onSubmit = (transferAddress: string) => {
-    setSubmitData({ transferAddress });
+    setSubmitData({ transferAddress, fioNameType });
     setSubmitting(true);
   };
   const onCancel = () => {

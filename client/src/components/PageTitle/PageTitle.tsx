@@ -3,7 +3,9 @@ import { Helmet } from 'react-helmet-async';
 
 import { APP_TITLE, LINK_TITLES } from '../../constants/labels';
 import { ROUTES } from '../../constants/routes';
-import { fireAnalyticsEvent } from '../../utils';
+import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
+
+import { fireAnalyticsEvent } from '../../util/analytics';
 
 type Props = {
   link: string;
@@ -19,11 +21,9 @@ const PageTitle: React.FC<Props> = props => {
   useEffect(() => {
     const path = ROUTES[link];
     if (link && path) {
-      fireAnalyticsEvent('pageview', {
-        page: {
-          path,
-          title,
-        },
+      fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PAGE_VIEW, {
+        page_title: title,
+        page_location: path,
       });
     }
   }, [link, title]);

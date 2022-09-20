@@ -2,13 +2,17 @@ import React, { useEffect, useRef, useCallback, useState } from 'react';
 
 import Processing from '../../components/common/TransactionProcessing';
 
+import { CONFIRM_FIO_ACTIONS } from '../../constants/common';
+
 import { waitForEdgeAccountStop } from '../../util/edge';
 import { removeExtraCharactersFromString } from '../../util/general';
+import {
+  fireActionAnalyticsEvent,
+  fireActionAnalyticsEventError,
+} from '../../util/analytics';
 
-import { CONFIRM_PIN_FIO_ACTIONS } from '../../constants/common';
-
-import { PinConfirmation } from '../../types';
-import { Props, FioActions } from './types';
+import { PinConfirmation, FioActions } from '../../types';
+import { Props } from './types';
 
 const EdgeConfirmActionContainer: React.FC<Props> = props => {
   if (props.data != null) return <EdgeConfirmAction {...props} />;
@@ -75,8 +79,10 @@ const EdgeConfirmAction: React.FC<Props> = props => {
 
           onSuccess(result);
 
+          fireActionAnalyticsEvent(action, additionalData);
+
           // todo: check returned results for all fio actions
-          if (CONFIRM_PIN_FIO_ACTIONS[action as keyof FioActions] && result) {
+          if (CONFIRM_FIO_ACTIONS[action as keyof FioActions] && result) {
             fioActionExecuted({
               result: { status: result.status, txIds: result.transaction_id },
               executeActionType: removeExtraCharactersFromString(action),
@@ -85,6 +91,7 @@ const EdgeConfirmAction: React.FC<Props> = props => {
 
           setConfirmPinKeys(null);
         } catch (e) {
+          fireActionAnalyticsEventError(action);
           showGenericErrorModal();
           onCancel();
         }
