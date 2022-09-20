@@ -71,7 +71,7 @@ export const RefHomePage: React.FC<Props &
         },
       });
     }
-  }, [refProfileInfo?.code, refProfileInfo.label]);
+  }, [refProfileInfo?.code, refProfileInfo?.label]);
   useEffect(() => {
     if (hideLoader) {
       const tId = setTimeout(
@@ -118,7 +118,7 @@ export const RefHomePage: React.FC<Props &
         <div className={classnames.container}>
           <Helmet>
             <title>
-              ${APP_TITLE} - {refProfileInfo.label}
+              {APP_TITLE} - {refProfileInfo.label}
             </title>
           </Helmet>
           <AddressWidget
