@@ -218,6 +218,7 @@ const SendPage: React.FC<ContainerProps> = props => {
           obtDataOn={true}
           contactsList={contactsList}
           initialValues={initialValues}
+          isMemoDisabled={fioWallet.from === WALLET_CREATED_FROM.LEDGER}
         />
       </PseudoModalContainer>
     </>
