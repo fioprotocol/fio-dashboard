@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 
+import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
+
 import {
   deleteCartItem,
   isFreeDomain,
@@ -14,6 +16,10 @@ import {
 } from '../../utils';
 import MathOp from '../../util/math';
 import { convertFioPrices } from '../../util/prices';
+import {
+  fireAnalyticsEvent,
+  getCartItemsDataForAnalytics,
+} from '../../util/analytics';
 
 import { addItem, deleteItem, setCartItems } from '../../redux/cart/actions';
 
@@ -110,6 +116,10 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
       newCartItem.costUsdc = addItemFioPrices.usdc;
       addItem(newCartItem);
     }
+    fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
+      getCartItemsDataForAnalytics([newCartItem]),
+    );
   };
   return (
     <Badge type={BADGE_TYPES.SIMPLE} show={showAvailable}>

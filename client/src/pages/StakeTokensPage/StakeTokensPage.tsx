@@ -9,18 +9,17 @@ import StakeTokensResults from '../../components/common/TransactionResults/compo
 import WalletAction from '../../components/WalletAction/WalletAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 
+import { ROUTES } from '../../constants/routes';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+
 import { convertFioPrices } from '../../util/prices';
 import { useFioAddresses } from '../../util/hooks';
 
 import apis from '../../api';
 
+import { ContainerProps, StakeTokensValues, InitialValues } from './types';
 import { TrxResponsePaidBundles } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
-
-import { ROUTES } from '../../constants/routes';
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
-
-import { ContainerProps, StakeTokensValues, InitialValues } from './types';
 
 import classes from './styles/StakeTokensPage.module.scss';
 

@@ -11,9 +11,17 @@ import WalletAction from '../../components/WalletAction/WalletAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import PageTitle from '../../components/PageTitle/PageTitle';
 
+import { BADGE_TYPES } from '../../components/Badge/Badge';
+import { ROUTES } from '../../constants/routes';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import { FIO_RECORD_TYPES } from '../WalletPage/constants';
+import { LINKS } from '../../constants/labels';
+
 import { useFioAddresses } from '../../util/hooks';
 import { isFioChain } from '../../util/fio';
 
+import { FioRecordViewDecrypted } from '../WalletPage/types';
+import { FioAddressDoublet, FioWalletDoublet } from '../../types';
 import {
   ContainerProps,
   PaymentDetailsResultValues,
@@ -22,15 +30,6 @@ import {
   TxValues,
   LocationProps,
 } from './types';
-
-import { BADGE_TYPES } from '../../components/Badge/Badge';
-import { ROUTES } from '../../constants/routes';
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
-import { FIO_RECORD_TYPES } from '../WalletPage/constants';
-import { LINKS } from '../../constants/labels';
-
-import { FioRecordViewDecrypted } from '../WalletPage/types';
-import { FioAddressDoublet, FioWalletDoublet } from '../../types';
 
 const PaymentDetailsPage: React.FC<ContainerProps & LocationProps> = props => {
   const {

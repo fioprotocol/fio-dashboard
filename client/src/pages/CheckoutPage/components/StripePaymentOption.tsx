@@ -92,6 +92,7 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
       }}
     >
       <StripeForm
+        cart={cart}
         onFinish={onFinish}
         beforeSubmit={beforePaymentSubmit}
         submitDisabled={submitDisabled}

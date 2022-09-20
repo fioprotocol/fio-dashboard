@@ -18,6 +18,7 @@ import PageTitle from '../PageTitle/PageTitle';
 import { ROUTES } from '../../constants/routes';
 import { PIN_LENGTH } from '../../constants/form';
 import {
+  ANALYTICS_EVENT_ACTIONS,
   DEFAULT_WALLET_OPTIONS,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
@@ -34,6 +35,7 @@ import {
 } from './middleware';
 import { emailToUsername, getWalletKeys, setDataMutator } from '../../utils';
 import { emailAvailable } from '../../api/middleware/auth';
+import { fireAnalyticsEvent } from '../../util/analytics';
 
 import {
   EmailConfirmationStateData,
@@ -159,6 +161,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       values: { email },
     } = this.form ? this.form.getState() : { values: { email: undefined } };
 
+    fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SIGN_UP);
     this.props.makeNonce(emailToUsername(email), this.state.keys);
     this.props.history.push(
       (this.props.lastLocation && this.props.lastLocation.pathname) ||

@@ -18,7 +18,6 @@ import { LINKS } from '../../constants/labels';
 
 import { useWalletBalances } from '../../util/hooks';
 import MathOp from '../../util/math';
-
 import { convertFioPrices } from '../../util/prices';
 
 import apis from '../../api';

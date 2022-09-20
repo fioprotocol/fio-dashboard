@@ -12,7 +12,11 @@ import {
   PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from './constants/purchase';
-import { CURRENCY_CODES } from './constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CONFIRM_FIO_ACTIONS,
+  CURRENCY_CODES,
+} from './constants/common';
 
 import { ResultsData } from '../components/common/TransactionResults/types';
 
@@ -707,6 +711,9 @@ export type ChainCodeProps = {
   chainCodeName: string;
   tokens?: TokenCodeProps[];
 };
+
+export type FioActions = typeof CONFIRM_FIO_ACTIONS;
+export type AnalyticsEventActions = typeof ANALYTICS_EVENT_ACTIONS;
 
 declare global {
   interface Window {

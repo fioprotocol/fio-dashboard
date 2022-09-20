@@ -7,7 +7,10 @@ import LedgerConnect from '../../../../components/LedgerConnect';
 import { getPubKeyFromLedger } from '../../../../util/ledger';
 import { log } from '../../../../util/general';
 
-import { WALLET_CREATED_FROM } from '../../../../constants/common';
+import {
+  CONFIRM_LEDGER_ACTIONS,
+  WALLET_CREATED_FROM,
+} from '../../../../constants/common';
 
 import { FioWalletDoublet, NewFioWalletDoublet } from '../../../../types';
 import { CreateWalletValues } from '../../types';
@@ -72,6 +75,8 @@ const CreateLedgerWallet: React.FC<Props> = props => {
 
   return (
     <LedgerConnect
+      action={CONFIRM_LEDGER_ACTIONS.CREATE_WALLET}
+      data={values}
       onConnect={createLedgerWallet}
       onSuccess={onWalletDataPrepared}
       onCancel={onOptionCancel}

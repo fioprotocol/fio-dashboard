@@ -6,6 +6,8 @@ import {
 
 import LedgerConnect from '../../../components/LedgerConnect';
 
+import { CONFIRM_LEDGER_ACTIONS } from '../../../constants/common';
+
 import apis from '../../../api';
 import {
   RawTransaction,
@@ -90,6 +92,8 @@ const SendLedgerWallet: React.FC<Props> = props => {
 
   return (
     <LedgerConnect
+      action={CONFIRM_LEDGER_ACTIONS.SEND}
+      data={sendData}
       fioWallet={fioWallet}
       onConnect={send}
       onSuccess={onSuccess}

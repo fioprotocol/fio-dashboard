@@ -5,7 +5,10 @@ import { Fio } from '@fioprotocol/fiojs';
 import mapKeys from 'lodash/mapKeys';
 import camelCase from 'camelcase';
 
+import { ANALYTICS_EVENT_ACTIONS } from './constants/common';
+
 import MathOp from './util/math';
+import { convertFioPrices } from './util/prices';
 
 import {
   CartItem,
@@ -21,7 +24,10 @@ import {
   Unknown,
   AnyObject,
 } from './types';
-import { convertFioPrices } from './util/prices';
+import {
+  fireAnalyticsEvent,
+  getCartItemsDataForAnalytics,
+} from './util/analytics';
 
 const FIO_DASH_USERNAME_DELIMITER = `.fio.dash.${process.env
   .REACT_APP_EDGE_ACC_DELIMITER || ''}`;
@@ -146,12 +152,17 @@ export const recalculateCart = ({
 }: {
   cartItems: CartItem[];
   id: string;
-}): { id: string; cartItems?: CartItem[] } => {
+}): { id: string; cartItems?: CartItem[]; deletedCartItem?: CartItem } => {
   const deletedElement = cartItems.find(item => item.id === id);
   if (!deletedElement) return;
 
-  const data: { id: string; cartItems?: CartItem[] } = {
+  const data: {
+    id: string;
+    cartItems?: CartItem[];
+    deletedCartItem?: CartItem;
+  } = {
     id,
+    deletedCartItem: deletedElement,
   };
 
   const deletedElemCart = cartItems.filter(item => item.id !== id);
@@ -233,6 +244,12 @@ export const deleteCartItem = ({
 } = {}): void => {
   const data = recalculateCart({ cartItems, id }) || { id };
   deleteItem(data);
+  if (data.deletedCartItem) {
+    fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.REMOVE_ITEM_FROM_CART,
+      getCartItemsDataForAnalytics([data.deletedCartItem]),
+    );
+  }
 
   const { domain, hasCustomDomain } =
     cartItems.find(item => item.id === id) || {};
@@ -395,16 +412,6 @@ export const decryptFioRequestData = ({
   const result = cipher.decrypt(contentType, content);
 
   return camelizeObjKeys(result);
-};
-
-export const fireAnalyticsEvent = (
-  event: string,
-  data: AnyObject = {},
-): void => {
-  window.dataLayer?.push({
-    event,
-    ...data,
-  });
 };
 
 export const getObjKeyByValue = (object: AnyObject, value: string): string => {

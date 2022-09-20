@@ -9,8 +9,13 @@ import SideMenu from './SideMenu';
 import SiteLink from './SiteLink';
 
 import { ROUTES } from '../../../constants/routes';
+import { ANALYTICS_EVENT_ACTIONS } from '../../../constants/common';
 
 import { useCheckIfDesktop } from '../../../screenType';
+import {
+  fireAnalyticsEvent,
+  getCartItemsDataForAnalytics,
+} from '../../../util/analytics';
 
 import { CartItem, Notification, RefProfile } from '../../../types';
 
@@ -47,6 +52,15 @@ const LoggedNav: React.FC<LoggedNavProps> = props => {
   } = props;
 
   const isDesktop = useCheckIfDesktop();
+  const onCartClick = () => {
+    if (cartItems.length) {
+      fireAnalyticsEvent(
+        ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
+        getCartItemsDataForAnalytics(cartItems),
+      );
+    }
+    closeMenu();
+  };
 
   const renderCart = () => {
     if (hideCart) return null;
@@ -54,7 +68,7 @@ const LoggedNav: React.FC<LoggedNavProps> = props => {
       <>
         <Nav.Link
           className={classnames(classes.navItem, 'text-white')}
-          onClick={closeMenu}
+          onClick={onCartClick}
           as={Link}
           to={
             cartItems.length > 0 ? ROUTES.CART : ROUTES.FIO_ADDRESSES_SELECTION

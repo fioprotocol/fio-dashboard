@@ -58,7 +58,7 @@ const PaymentDetailsEdgeWallet: React.FC<Props> = props => {
 
   return (
     <EdgeConfirmAction
-      action={CONFIRM_PIN_ACTIONS.SEND}
+      action={CONFIRM_PIN_ACTIONS.PAYMENT_DETAILS}
       setProcessing={setProcessing}
       onSuccess={onSuccess}
       onCancel={onCancel}

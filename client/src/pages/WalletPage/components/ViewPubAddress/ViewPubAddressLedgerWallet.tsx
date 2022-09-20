@@ -3,6 +3,8 @@ import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
 
 import LedgerConnect from '../../../../components/LedgerConnect';
 
+import { CONFIRM_LEDGER_ACTIONS } from '../../../../constants/common';
+
 import { getPath } from '../../../../util/ledger';
 
 import { FioWalletDoublet } from '../../../../types';
@@ -46,6 +48,7 @@ const ViewPubAddressLedgerWallet: React.FC<Props> = props => {
 
   return (
     <LedgerConnect
+      action={CONFIRM_LEDGER_ACTIONS.VIEW_PUB_ADDRESS}
       fioWallet={fioWallet}
       onConnect={view}
       onSuccess={onSuccess}

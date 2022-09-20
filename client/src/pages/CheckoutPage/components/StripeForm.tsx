@@ -13,15 +13,24 @@ import {
   ERROR_UI_TYPE,
 } from '../../../components/Input/ErrorBadge';
 
+import { ANALYTICS_EVENT_ACTIONS } from '../../../constants/common';
+
+import {
+  fireAnalyticsEvent,
+  getCartItemsDataForAnalytics,
+} from '../../../util/analytics';
+
 import { BeforeSubmitData } from '../types';
+import { CartItem as CartItemType } from '../../../types';
 
 import classes from '../styles/StripePaymentOption.module.scss';
 
 export const StripeForm: React.FC<{
+  cart: CartItemType[];
   onFinish: (success: boolean, data?: BeforeSubmitData) => void;
   beforeSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   submitDisabled?: boolean;
-}> = ({ onFinish, beforeSubmit, submitDisabled = false }) => {
+}> = ({ cart, onFinish, beforeSubmit, submitDisabled = false }) => {
   const stripe = useStripe();
   const elements = useElements();
 
@@ -54,6 +63,10 @@ export const StripeForm: React.FC<{
     event.preventDefault();
 
     setLoading(true);
+    fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.PURCHASE_STARTED,
+      getCartItemsDataForAnalytics(cart),
+    );
 
     await beforeSubmit(handleSubmit);
 

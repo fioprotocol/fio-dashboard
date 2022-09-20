@@ -31,6 +31,7 @@ import {
   transformPurchaseResults,
 } from '../../util/purchase';
 import { totalCost } from '../../utils';
+import { fireAnalyticsEvent } from '../../util/analytics';
 import { useEffectOnce } from '../../hooks/general';
 import { useWebsocket } from '../../hooks/websocket';
 
@@ -44,7 +45,10 @@ import {
   PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from '../../constants/purchase';
-import { CURRENCY_CODES } from '../../constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CURRENCY_CODES,
+} from '../../constants/common';
 import { WS_ENDPOINTS } from '../../constants/websocket';
 
 import {
@@ -257,6 +261,14 @@ export const useContext = (): {
         cart: prevCart,
       });
       dispatch(setCartItems(updatedCart));
+      if (
+        orderStatusData.status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS
+      ) {
+        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_PARTIAL);
+      }
+      if (orderStatusData.status === PURCHASE_RESULTS_STATUS.FAILED) {
+        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_FAILED);
+      }
     },
     [orderStatusData, prevCart, roe, prices],
     [

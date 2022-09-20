@@ -31,9 +31,10 @@ import { formValidation } from './validation';
 import { log } from '../../util/general';
 import useEffectOnce from '../../hooks/general';
 
-import classes from './PasswordRecoveryForm.module.scss';
 import { NotificationParams, StatusResponse } from '../../types';
 import { SubmitActionParams } from '../EdgeConfirmAction/types';
+
+import classes from './PasswordRecoveryForm.module.scss';
 
 const SCROLL_BAR_STYLES = { height: '350px', marginBottom: '30px' };
 
