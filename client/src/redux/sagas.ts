@@ -27,6 +27,10 @@ import {
   setFeesService,
 } from './fio/sagas';
 import { getRefProfileSuccess } from './refProfile/sagas';
+import {
+  resetAdminUserPasswordSuccess,
+  deleteAdminUserSuccess,
+} from './admin/sagas';
 
 import { Api } from '../api';
 
@@ -53,5 +57,7 @@ export default function* rootSaga(history: History, api: Api) {
     adminConfirmSuccess(history, api),
     adminResetPasswordSuccess(history, api),
     getRefProfileSuccess(),
+    resetAdminUserPasswordSuccess(),
+    deleteAdminUserSuccess(),
   ]);
 }
