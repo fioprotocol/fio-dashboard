@@ -54,6 +54,9 @@ export const StripeForm: React.FC<{
 
     if (error) {
       errorMsg = error.message;
+
+      if (error.payment_intent && error.payment_intent.status === 'succeeded')
+        errorMsg = null;
     }
 
     if (paymentIntent && paymentIntent.status === 'requires_action') {
