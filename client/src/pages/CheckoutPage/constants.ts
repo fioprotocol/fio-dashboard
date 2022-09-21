@@ -21,13 +21,10 @@ const APPEARANCE_STRIPE_OPTIONS: Appearance = {
   },
 
   rules: {
-    '.Tab': {
-      marginTop: '15px',
-    },
     '.Label': {
-      fontSize: '14px',
-      marginBottom: '15px',
-      marginTop: '15px',
+      fontSize: '13px',
+      marginBottom: '10px',
+      marginTop: '5px',
     },
     '.Input': {
       outline: 'none',
