@@ -27,7 +27,7 @@ type DefaultPaymentOptionProps = {
   cartItems?: CartItemProps[];
   totalCartNativeAmount?: number;
   userWallets?: FioWalletDoublet[];
-  loading: boolean;
+  checkoutApproving: PaymentProvider;
   disabled?: boolean;
 };
 
@@ -42,19 +42,16 @@ const PAYMENT_OPTIONS_PROPS = {
     cartItems,
     isFree,
     paymentOption,
-    loading,
+    checkoutApproving,
     disabled,
     onPaymentChoose,
   }: PaymentOptionRenderProps) => ({
     buttonText: isFree ? 'Complete Transaction' : 'Pay with FIO',
     icon: <FontAwesomeIcon icon="wallet" />,
     disabled:
-      paymentWalletPublicKey === '' ||
-      cartItems?.length === 0 ||
-      loading ||
-      disabled,
+      paymentWalletPublicKey === '' || cartItems?.length === 0 || disabled,
     provider: PAYMENT_PROVIDER.FIO,
-    loading,
+    loading: checkoutApproving === PAYMENT_PROVIDER.FIO,
     hideButton: hasLowBalance,
     onClick: () => onPaymentChoose(PAYMENT_PROVIDER.FIO),
   }),
@@ -62,22 +59,24 @@ const PAYMENT_OPTIONS_PROPS = {
     onPaymentChoose,
     paymentOption,
     cartItems,
-    loading,
+    checkoutApproving,
     disabled,
   }: PaymentOptionRenderProps) => ({
     buttonText: 'Pay with Credit/Debit Card',
     icon: <FontAwesomeIcon icon="credit-card" />,
-    disabled: cartItems?.length === 0 || loading || disabled,
+    disabled: cartItems?.length === 0 || disabled,
     provider: PAYMENT_PROVIDER.STRIPE,
-    loading,
+    loading: checkoutApproving === PAYMENT_PROVIDER.STRIPE,
     onClick: () => onPaymentChoose(PAYMENT_PROVIDER.STRIPE),
   }),
-  [PAYMENT_OPTIONS.CRYPTO]: ({ loading }: PaymentOptionRenderProps) => ({
+  [PAYMENT_OPTIONS.CRYPTO]: ({
+    checkoutApproving,
+  }: PaymentOptionRenderProps) => ({
     buttonText: 'Pay Using Crypto',
     icon: <FontAwesomeIcon icon={{ prefix: 'fab', iconName: 'bitcoin' }} />,
     disabled: true,
     hideButton: true, // not implemented
-    loading,
+    loading: checkoutApproving === PAYMENT_PROVIDER.CRYPTO,
     hasRoyalBlueBackground: true,
     onClick: (): null => null,
   }),
