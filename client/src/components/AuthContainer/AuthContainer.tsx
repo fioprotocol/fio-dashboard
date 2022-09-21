@@ -24,22 +24,18 @@ const AuthContainer: React.FC<Props & RouteComponentProps> = props => {
     return <Redirect to={ROUTES.NOT_FOUND} />;
   }
 
-  const renderAuthContent = () => {
-    if (loading || !edgeContextSet) {
-      return (
+  return (
+    <div className={styles.container}>
+      {(loading || !edgeContextSet) && (
         <FontAwesomeIcon icon={faSpinner} spin className={styles.spinner} />
-      );
-    }
-    if (!isAuthenticated && edgeContextSet) {
-      return (
+      )}
+      {!isAuthenticated && edgeContextSet && (
         <Switch>
           <Route path={ROUTES.CREATE_ACCOUNT} component={CreateAccount} exact />
         </Switch>
-      );
-    }
-  };
-
-  return <div className={styles.container}>{renderAuthContent()}</div>;
+      )}
+    </div>
+  );
 };
 
 export default AuthContainer;
