@@ -46,16 +46,23 @@ export const StripeForm: React.FC<{
 
     setLoading(true);
 
-    const { error } = await stripe.confirmPayment({
+    let errorMsg;
+    const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       redirect: 'if_required',
     });
 
     if (error) {
-      setErrorMessage(error.message);
+      errorMsg = error.message;
     }
 
-    onFinish(!error, beforeSubmitData);
+    if (paymentIntent && paymentIntent.status === 'requires_action') {
+      errorMsg = 'Please try again and continue your payment';
+    }
+
+    if (errorMsg) setErrorMessage(errorMsg);
+
+    onFinish(!errorMsg, beforeSubmitData);
     setLoading(false);
   };
 
