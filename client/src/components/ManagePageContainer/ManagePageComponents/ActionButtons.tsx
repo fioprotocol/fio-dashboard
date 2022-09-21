@@ -72,7 +72,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
 
   const renderWrap = () => (
     <Link
-      to={ROUTES.WRAP_DOMAIN.replace(':id', name)}
+      to={`${ROUTES.WRAP_DOMAIN}?name=${name}`}
       className={classes.actionButton}
     >
       <Button title={isSmallDesktop ? BUTTONS_TITLE.wrap : ''}>
