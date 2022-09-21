@@ -307,7 +307,8 @@ export default class Fio {
       const rows = await this.getTableRows(params);
 
       if (rows && rows.length) {
-        return !!rows[0].id;
+        const rowId = rows[0].id;
+        return !!rowId || rowId === 0;
       }
     } catch (e) {
       this.logError(e);
