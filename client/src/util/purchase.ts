@@ -15,10 +15,12 @@ import {
   CartItem,
   FioActionExecuted,
   Prices,
+  Order,
 } from '../types';
 
 export const onPurchaseFinish = ({
   results,
+  order,
   isRetry,
   isCheckout,
   history,
@@ -27,6 +29,7 @@ export const onPurchaseFinish = ({
   fioActionExecuted,
 }: {
   results: RegistrationResult;
+  order: Order;
   isRetry?: boolean;
   isCheckout?: boolean;
   history: History;
@@ -54,9 +57,13 @@ export const onPurchaseFinish = ({
   }
 
   if (isCheckout) {
-    history.push(ROUTES.PURCHASE, {
-      paymentProvider: results.paymentProvider,
-    });
+    history.push(
+      { pathname: ROUTES.PURCHASE, search: `orderNumber=${order.number}` },
+      {
+        paymentProvider: results.paymentProvider,
+        order,
+      },
+    );
   }
 };
 

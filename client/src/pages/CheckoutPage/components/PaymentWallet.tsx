@@ -3,6 +3,9 @@ import React from 'react';
 import CustomDropdown from '../../../components/CustomDropdown';
 import PayWithBadge from '../../../components/Badges/PayWithBadge/PayWithBadge';
 import { PayWalletInfo } from '../../../components/Badges/PayWithBadge/PayWalletInfo';
+import Loader from '../../../components/Loader/Loader';
+
+import MathOp from '../../../util/math';
 
 import {
   FioWalletDoublet,
@@ -37,12 +40,21 @@ export const PaymentWallet: React.FC<Props> = props => {
     setWallet,
   } = props;
 
-  const walletsList = paymentAssignmentWallets.map(wallet => {
-    const { fio, usdc } = fioWalletsBalances.wallets[
-      wallet.publicKey
-    ].available;
+  if (
+    paymentAssignmentWallets.length === 0 ||
+    !fioWalletsBalances.wallets[paymentWalletPublicKey]
+  )
+    return <Loader />;
 
-    return {
+  const walletsList = paymentAssignmentWallets.reduce((acc, wallet) => {
+    const walletBalances = fioWalletsBalances.wallets[wallet.publicKey];
+    if (!walletBalances) return acc;
+    const { fio, usdc } = walletBalances.available;
+
+    // Default option render is not updating when balances changed. We need to wait when balances are set.
+    if (new MathOp(usdc).eq(0) && !new MathOp(fio).eq(0)) return acc;
+
+    acc.push({
       id: wallet.publicKey,
       name: (
         <div className="p-2">
@@ -53,8 +65,14 @@ export const PaymentWallet: React.FC<Props> = props => {
           />
         </div>
       ),
-    };
-  });
+    });
+
+    return acc;
+  }, []);
+
+  // Waiting to default value set
+  if (!walletsList.find(({ id }) => id === paymentWalletPublicKey))
+    return <Loader />;
 
   if (walletsList.length === 1 && includePaymentMessage)
     return (

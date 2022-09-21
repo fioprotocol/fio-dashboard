@@ -5,10 +5,16 @@ import { Fio } from '@fioprotocol/fiojs';
 import mapKeys from 'lodash/mapKeys';
 import camelCase from 'camelcase';
 
+import { ACTIONS } from './constants/fio';
+import { CURRENCY_CODES } from './constants/common';
 import { ANALYTICS_EVENT_ACTIONS } from './constants/common';
 
 import MathOp from './util/math';
 import { convertFioPrices } from './util/prices';
+import {
+  fireAnalyticsEvent,
+  getCartItemsDataForAnalytics,
+} from './util/analytics';
 
 import {
   CartItem,
@@ -24,10 +30,6 @@ import {
   Unknown,
   AnyObject,
 } from './types';
-import {
-  fireAnalyticsEvent,
-  getCartItemsDataForAnalytics,
-} from './util/analytics';
 
 const FIO_DASH_USERNAME_DELIMITER = `.fio.dash.${process.env
   .REACT_APP_EDGE_ACC_DELIMITER || ''}`;
@@ -288,6 +290,40 @@ export const deleteCartItem = ({
       }
     }
   }
+};
+
+export const cartItemsToOrderItems = (
+  cartItems: CartItem[],
+  prices: Prices,
+  roe: number,
+) => {
+  return cartItems.map(
+    ({ address, domain, costNativeFio, costUsdc, hasCustomDomain }) => {
+      const data: {
+        hasCustomDomain?: boolean;
+        hasCustomDomainFee?: number;
+      } = {};
+
+      if (hasCustomDomain) {
+        data.hasCustomDomain = hasCustomDomain;
+        data.hasCustomDomainFee = new MathOp(costNativeFio)
+          .sub(prices.nativeFio.address)
+          .toNumber();
+      }
+
+      return {
+        action: address
+          ? ACTIONS.registerFioAddress
+          : ACTIONS.registerFioDomain,
+        address,
+        domain,
+        nativeFio: `${costNativeFio || 0}`,
+        price: convertFioPrices(costNativeFio || 0, roe).usdc,
+        priceCurrency: CURRENCY_CODES.USDC,
+        data,
+      };
+    },
+  );
 };
 
 export const totalCost = (

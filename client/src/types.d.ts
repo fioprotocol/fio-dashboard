@@ -530,12 +530,14 @@ export type Payment = {
   externalPaymentId: string;
   amount: string;
   currency: PaymentCurrency;
+  processor: PaymentProvider;
   secret?: string;
 };
 
 export type Order = {
   id: number;
   number: string;
+  publicKey: string;
   payment?: Payment;
 };
 
