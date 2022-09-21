@@ -7,6 +7,7 @@ import PseudoModalContainer from '../../../../components/PseudoModalContainer';
 import WrapDomainForm from '../WarapDomainForm';
 import WrapDomainEdgeWallet from '../WrapDomainEdgeWallet';
 import WrapTokenResults from '../../../../components/common/TransactionResults/components/WrapTokenResults';
+import PageTitle from '../../../../components/PageTitle/PageTitle';
 
 import { useFioAddresses, useWalletBalances } from '../../../../util/hooks';
 import useEffectOnce from '../../../../hooks/general';
@@ -18,6 +19,7 @@ import {
   WALLET_CREATED_FROM,
 } from '../../../../constants/common';
 import { emptyWallet } from '../../../../redux/fio/reducer';
+import { LINKS } from '../../../../constants/labels';
 
 import { TrxResponsePaidBundles } from '../../../../api/fio';
 import {
@@ -122,15 +124,18 @@ const WrapDomainContainer: React.FC<ContainerProps> = props => {
 
   if (resultsData)
     return (
-      <WrapTokenResults
-        results={resultsData}
-        title={
-          resultsData.error ? 'FIO Domain not Wrapped' : 'FIO Domain Wrapped'
-        }
-        roe={roe}
-        onClose={onResultsClose}
-        onRetry={onResultsRetry}
-      />
+      <>
+        <PageTitle link={LINKS.WRAP_DOMAIN_CONFIRMATION} isVirtualPage />
+        <WrapTokenResults
+          results={resultsData}
+          title={
+            resultsData.error ? 'FIO Domain not Wrapped' : 'FIO Domain Wrapped'
+          }
+          roe={roe}
+          onClose={onResultsClose}
+          onRetry={onResultsRetry}
+        />
+      </>
     );
 
   return (

@@ -11,8 +11,8 @@ import UnwrapTokensForm from './components/UnwrapTokensForm/UnwrapTokensForm';
 import UnWrapResults, {
   ResultsData,
 } from '../../components/common/TransactionResults/components/UnWrapResults';
+import PageTitle from '../../components/PageTitle/PageTitle';
 
-import { putParamsToUrl } from '../../utils';
 import { useFioAddresses } from '../../util/hooks';
 import useInitializeProviderConnection from '../../hooks/externalWalletsConnection/useInitializeProviderConnection';
 import useGetWrappedFioData from '../../hooks/externalWalletsConnection/useGetWrappedFioData';
@@ -22,6 +22,7 @@ import { ROUTES } from '../../constants/routes';
 import { W_FIO_TOKEN } from '../../constants/ethereum';
 import { CHAIN_CODE_LIST, CHAIN_CODES } from '../../constants/common';
 import { DEFAULT_GAS_LIMIT } from '../../components/ConnectWallet/FeesModal/FeesModalInput';
+import { LINKS } from '../../constants/labels';
 
 import { ContainerProps, InitialValues, UnWrapTokensValues } from './types';
 
@@ -124,9 +125,7 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
 
   const onBack = () => {
     const url = fioWallet?.publicKey
-      ? putParamsToUrl(ROUTES.FIO_WALLET, {
-          publicKey: fioWallet.publicKey,
-        })
+      ? `${ROUTES.FIO_WALLET}?publicKey=${fioWallet.publicKey}`
       : ROUTES.TOKENS;
 
     history.push(url);
@@ -134,17 +133,20 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
 
   if (resultsData)
     return (
-      <UnWrapResults
-        results={resultsData}
-        title={
-          resultsData.error
-            ? 'FIO Tokens not Unwrapped'
-            : 'FIO Tokens Unwrapped'
-        }
-        roe={roe}
-        onClose={onBack}
-        onRetry={onResultsRetry}
-      />
+      <>
+        <PageTitle link={LINKS.UNWRAP_TOKENS_CONFIRMATION} isVirtualPage />
+        <UnWrapResults
+          results={resultsData}
+          title={
+            resultsData.error
+              ? 'FIO Tokens not Unwrapped'
+              : 'FIO Tokens Unwrapped'
+          }
+          roe={roe}
+          onClose={onBack}
+          onRetry={onResultsRetry}
+        />
+      </>
     );
 
   return (

@@ -84,9 +84,7 @@ const SettingsItem: React.FC<SettingsProps> = props => {
           wallet and initiate wrapping.
         </p>
         <Link
-          to={putParamsToUrl(ROUTES.WRAP_DOMAIN, {
-            id: fioName,
-          })}
+          to={`${ROUTES.WRAP_DOMAIN}?name=${fioName}`}
           className={classes.buttonLink}
         >
           <Button className={classes.button}>Start Wrapping</Button>
