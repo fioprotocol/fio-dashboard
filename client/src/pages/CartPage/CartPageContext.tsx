@@ -64,7 +64,8 @@ type UseContextReturnType = {
   hasLowBalance?: boolean;
   isFree: boolean;
   isPriceChanged: boolean;
-  loading: boolean;
+  checkoutApproving: PaymentProvider;
+  disabled: boolean;
   paymentWalletPublicKey: string;
   prices: Prices;
   roe: number;
@@ -104,7 +105,10 @@ export const useContext = (): UseContextReturnType => {
   const [isPriceChanged, handlePriceChange] = useState(false);
   const [isUpdatingPrices, setIsUpdatingPrices] = useState(false);
   const [updatingPricesHasError, setUpdatingPricesHasError] = useState(false);
-  const [creatingOrder, setCreatingOrder] = useState(false);
+  const [
+    checkoutApproving,
+    setCheckoutApproving,
+  ] = useState<PaymentProvider | null>(null);
 
   const handleFreeAddressCartFn = () =>
     handleFreeAddressCart({
@@ -290,7 +294,6 @@ export const useContext = (): UseContextReturnType => {
     const { costUsdc: totalUsdc } = totalCost(cartItems, roe);
 
     try {
-      setCreatingOrder(true);
       await apis.orders.create({
         total: totalUsdc,
         roe,
@@ -303,12 +306,13 @@ export const useContext = (): UseContextReturnType => {
     } catch (e) {
       dispatch(showGenericErrorModal());
     }
-
-    setCreatingOrder(false);
   };
 
   const onPaymentChoose = async (paymentProvider: PaymentProvider) => {
-    if ((await allowCheckout()) && paymentProvider) checkout(paymentProvider);
+    setCheckoutApproving(paymentProvider);
+    if ((await allowCheckout()) && paymentProvider)
+      await checkout(paymentProvider);
+    setCheckoutApproving(null);
   };
 
   useEffectOnce(() => {
@@ -354,7 +358,8 @@ export const useContext = (): UseContextReturnType => {
     hasLowBalance,
     walletCount,
     isFree,
-    loading: loading || isUpdatingPrices || creatingOrder,
+    checkoutApproving,
+    disabled: loading || isUpdatingPrices || !!checkoutApproving,
     totalCartAmount,
     isPriceChanged,
     totalCartNativeAmount,
