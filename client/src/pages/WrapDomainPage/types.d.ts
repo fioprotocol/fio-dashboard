@@ -66,8 +66,12 @@ export interface ContainerProps extends ContainerOwnProps {
   resetFioNames: () => void;
 }
 
-export type MatchParams = {
-  id: string;
+export type LocationProps = {
+  location: {
+    query: {
+      name: string;
+    };
+  };
 };
 
 export type Props = {
