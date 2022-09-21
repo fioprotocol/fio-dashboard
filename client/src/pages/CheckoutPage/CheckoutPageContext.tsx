@@ -12,7 +12,6 @@ import {
   setRegistration,
   setProcessing,
 } from '../../redux/registrations/actions';
-import { createOrder } from '../../redux/order/actions';
 
 import {
   fioWallets as fioWalletsSelector,
@@ -27,12 +26,8 @@ import {
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
 import {
-  order as orderSelector,
-  error as orderErrorSelector,
-  orderLoading as orderLoadingSelector,
-} from '../../redux/order/selectors';
-import {
-  isAuthenticated,
+  isAuthenticated as isAuthenticatedSelector,
+  noProfileLoaded as noProfileLoadedSelector,
   hasFreeAddress as hasFreeAddressSelector,
 } from '../../redux/profile/selectors';
 import {
@@ -61,13 +56,13 @@ import {
   PAYMENT_PROVIDER_PAYMENT_OPTION,
   PAYMENT_PROVIDER,
 } from '../../constants/purchase';
-import { ACTIONS } from '../../constants/fio';
 import {
   ANALYTICS_EVENT_ACTIONS,
   ANALYTICS_PAYMENT_TYPE,
   CURRENCY_CODES,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
+import { ACTIONS } from '../../constants/fio';
 
 import {
   RegistrationResult,
@@ -80,8 +75,10 @@ import {
   ApiError,
   PaymentProvider,
   PaymentOptionsProps,
+  Order,
 } from '../../types';
 import { BeforeSubmitData, BeforeSubmitState } from './types';
+import { CreateOrderActionData } from '../../redux/types';
 
 const SIGN_TX_MAX_FEE_COEFF = 1.5;
 
@@ -98,14 +95,14 @@ export const useContext = (): {
   title: string;
   payment: Payment;
   paymentOption: PaymentOptionsProps;
-  paymentProvider: PaymentProvider;
+  paymentProvider: PaymentProvider | null;
   paymentProviderError: ApiError;
   isFree: boolean;
   beforeSubmitProps: BeforeSubmitState | null;
   fioLoading: boolean;
   orderLoading: boolean;
-  isFreeOrderCreateLoading: boolean;
   error: string | null;
+  orderError: ApiError;
   submitDisabled?: boolean;
   beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   onClose: () => void;
@@ -114,20 +111,18 @@ export const useContext = (): {
   setProcessing: (isProcessing: boolean) => void;
 } => {
   const history = useHistory();
-  const order = useSelector(orderSelector);
-  const orderError = useSelector(orderErrorSelector);
   const fioWallets = useSelector(fioWalletsSelector);
   const fioLoading = useSelector(fioLoadingSelector);
   const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
   const privateDomains = useSelector(privateDomainsSelector);
   const cartItems = useSelector(CartItemsSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
-  const isAuth = useSelector(isAuthenticated);
+  const noProfileLoaded = useSelector(noProfileLoadedSelector);
+  const isAuth = useSelector(isAuthenticatedSelector);
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const prices = useSelector(pricesSelector);
   const userDomains = useSelector(fioDomainsSelector);
   const isProcessing = useSelector(isProcessingSelector);
-  const orderLoading = useSelector(orderLoadingSelector);
   const roe = useSelector(roeSelector);
   const cartHasItemsWithPrivateDomain = useSelector(
     cartHasItemsWithPrivateDomainSelector,
@@ -143,19 +138,23 @@ export const useContext = (): {
     beforeSubmitProps,
     setBeforeSubmitProps,
   ] = useState<BeforeSubmitState | null>(null);
-  const [isFreeOrderCreateLoading, toggleFreeOrderCreateLoading] = useState<
-    boolean
-  >(false);
   const [error, setError] = useState<string | null>(null);
+  const [order, setOrder] = useState<Order | null | undefined>(undefined);
+  const [orderError, setOrderError] = useState<ApiError>(null);
 
   const {
     location: { state },
   } = history;
-  const { paymentProvider }: { paymentProvider?: PaymentProvider } =
-    state || {};
+  const {
+    orderParams: orderParamsFromLocation,
+  }: { orderParams?: CreateOrderActionData } = state || {}; // todo: implement setting order params from places where we going to checkout page
   const payment = order && order.payment;
   const orderId = order && order.id;
-  const paymentOption = PAYMENT_PROVIDER_PAYMENT_OPTION[paymentProvider];
+  const paymentProvider = payment ? payment.processor : null;
+  const paymentOption = paymentProvider
+    ? PAYMENT_PROVIDER_PAYMENT_OPTION[paymentProvider]
+    : null;
+  const orderLoading = order === undefined;
 
   const setWallet = useCallback(
     (paymentWalletPublicKey: string) => {
@@ -166,21 +165,98 @@ export const useContext = (): {
     [orderId, dispatchSetWallet],
   );
 
-  useEffectOnce(() => {
-    if (!isEmpty(fioWallets)) {
-      for (const fioWallet of fioWallets) {
-        if (fioWallet.publicKey) {
-          dispatch(refreshBalance(fioWallet.publicKey));
+  const getOrder = async () => {
+    let result;
+
+    try {
+      result = await apis.orders.getActive();
+    } catch (e) {
+      setOrderError(e);
+    }
+
+    // todo: check order items are relevant to cartItems
+
+    if (result && result.id) {
+      if (result.publicKey) setWallet(result.publicKey);
+      return setOrder(result);
+    }
+
+    setOrder(null);
+  };
+  const createOrder = async (
+    paymentWalletPublicKey: string,
+    fioWallets: FioWalletDoublet[],
+    orderParamsFromLocation: CreateOrderActionData,
+    cartItems: CartItem[],
+    isFree: boolean,
+  ) => {
+    let result;
+    let orderParams: CreateOrderActionData | null = null;
+
+    if (!orderParamsFromLocation && isFree) {
+      orderParams = {
+        total: '0',
+        roe,
+        publicKey: paymentWalletPublicKey,
+        paymentProcessor: PAYMENT_PROVIDER.FIO,
+        items: cartItems.map(({ address, domain, costNativeFio }) => ({
+          action: ACTIONS.registerFioAddress,
+          address,
+          domain,
+          nativeFio: `${costNativeFio || 0}`,
+          price: '0',
+          priceCurrency: CURRENCY_CODES.USDC,
+        })),
+      };
+    }
+
+    if (orderParamsFromLocation) {
+      orderParams = { ...orderParamsFromLocation };
+      if (!orderParams.publicKey)
+        orderParams.publicKey =
+          paymentWalletPublicKey ||
+          fioWallets.filter(({ from }) => from === WALLET_CREATED_FROM.EDGE)[0]
+            .publicKey;
+    }
+
+    // There is no order, redirect to cart
+    if (!orderParams) return history.push(ROUTES.CART);
+
+    try {
+      result = await apis.orders.create(orderParams);
+    } catch (e) {
+      setOrderError(e);
+    }
+
+    if (result && result.id) {
+      if (result.publicKey) setWallet(result.publicKey);
+      return setOrder(result);
+    }
+
+    setOrder(null);
+  };
+
+  useEffectOnce(
+    () => {
+      if (!isEmpty(fioWallets)) {
+        for (const fioWallet of fioWallets) {
+          if (fioWallet.publicKey) {
+            dispatch(refreshBalance(fioWallet.publicKey));
+          }
+        }
+        if (!paymentWalletPublicKey && fioWallets.length) {
+          setWallet(
+            fioWallets.filter(
+              ({ from }) => from === WALLET_CREATED_FROM.EDGE,
+            )[0].publicKey,
+          );
         }
       }
-      if (!paymentWalletPublicKey && fioWallets.length) {
-        setWallet(
-          fioWallets.filter(({ from }) => from === WALLET_CREATED_FROM.EDGE)[0]
-            .publicKey,
-        );
-      }
-    }
-  }, []);
+      getOrder();
+    },
+    [dispatch, fioWallets, getOrder, paymentWalletPublicKey, setWallet],
+    fioWallets.length > 0,
+  );
 
   const cartItemsJson = JSON.stringify(cartItems);
 
@@ -199,9 +275,10 @@ export const useContext = (): {
   const paymentWalletFrom = paymentWallet && paymentWallet.from;
 
   const { costNativeFio: totalCostNativeFio } = totalCost(cartItems, roe);
-  const walletHasNoEnoughBalance = new MathOp(
-    walletBalancesAvailable.nativeFio,
-  ).lt(totalCostNativeFio || 0);
+
+  const walletHasNoEnoughBalance = totalCostNativeFio
+    ? new MathOp(walletBalancesAvailable.nativeFio).lt(totalCostNativeFio || 0)
+    : false;
 
   const title =
     isFree || !paymentProvider
@@ -240,52 +317,48 @@ export const useContext = (): {
   // Create order for free address
   useEffectOnce(
     () => {
-      toggleFreeOrderCreateLoading(true);
-      dispatch(
-        createOrder({
-          total: '0',
-          roe,
-          publicKey: paymentWalletPublicKey,
-          paymentProcessor: PAYMENT_PROVIDER.FIO,
-          items: cartItems.map(({ address, domain, costNativeFio }) => ({
-            action: ACTIONS.registerFioAddress,
-            address,
-            domain,
-            nativeFio: `${costNativeFio || 0}`,
-            price: '0',
-            priceCurrency: CURRENCY_CODES.USDC,
-          })),
-        }),
+      setOrder(undefined);
+      createOrder(
+        paymentWalletPublicKey,
+        fioWallets,
+        orderParamsFromLocation,
+        cartItems,
+        isFree,
       );
     },
-    [paymentWalletPublicKey, dispatch, createOrder],
-    !order &&
+    [
+      paymentWalletPublicKey,
+      fioWallets,
+      orderParamsFromLocation,
+      cartItems,
+      isFree,
+    ],
+    isAuth &&
+      !order &&
       !orderLoading &&
       !fioLoading &&
-      isFree &&
-      !!paymentWalletPublicKey,
+      !!paymentWalletPublicKey &&
+      !!fioWallets.length,
   );
 
   useEffect(() => {
-    if (!isAuth || !cartItems.length) {
+    if (noProfileLoaded || !cartItems.length) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
-  }, [cartItems.length, isAuth, history]);
+  }, [cartItems.length, noProfileLoaded, history]);
 
-  // Redirect back to cart when payment option is FIO and not enough FIO tokens ot more than 1 FIO wallet
+  // Redirect back to cart when payment option is FIO and not enough FIO tokens
   useEffect(() => {
     if (
       !fioLoading &&
       !isFree &&
-      ((paymentWalletPublicKey &&
-        walletHasNoEnoughBalance &&
-        (paymentOption === PAYMENT_OPTIONS.FIO || !paymentOption)) ||
-        (!paymentWalletPublicKey && fioWallets.length > 1))
+      paymentWalletPublicKey &&
+      walletHasNoEnoughBalance &&
+      paymentOption === PAYMENT_OPTIONS.FIO
     ) {
       history.push(ROUTES.CART);
     }
   }, [
-    fioWallets.length,
     history,
     isFree,
     fioLoading,
@@ -341,6 +414,7 @@ export const useContext = (): {
     });
     onPurchaseFinish({
       results,
+      order,
       isCheckout: true,
       setRegistration: (results: RegistrationResult) =>
         dispatch(setRegistration(results)),
@@ -432,13 +506,13 @@ export const useContext = (): {
     payment,
     paymentOption,
     paymentProvider,
-    paymentProviderError: orderError,
+    paymentProviderError: null,
     isFree,
     beforeSubmitProps,
     fioLoading,
     orderLoading,
-    isFreeOrderCreateLoading,
     error,
+    orderError,
     submitDisabled: !!error,
     beforePaymentSubmit,
     onClose,

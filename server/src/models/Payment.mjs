@@ -168,8 +168,6 @@ export class Payment extends Base {
       await Payment.sequelize.transaction(async t => {
         orderPayment = await Payment.create(
           {
-            price: extPaymentParams.amount,
-            currency: extPaymentParams.currency,
             status: Payment.STATUS.NEW,
             processor: paymentProcessorKey,
             externalId: '',
@@ -197,6 +195,9 @@ export class Payment extends Base {
             orderNumber: order.number,
           });
           orderPayment.externalId = extPaymentParams.externalPaymentId;
+          orderPayment.amount = extPaymentParams.amount;
+          orderPayment.currency = extPaymentParams.currency;
+          orderPayment.data = { ...orderPayment.data, secret: extPaymentParams.secret };
           await orderPayment.save({ transaction: t });
         }
       });
@@ -217,6 +218,7 @@ export class Payment extends Base {
 
     return {
       id: orderPayment.id,
+      processor: paymentProcessorKey,
       ...extPaymentParams,
     };
   }

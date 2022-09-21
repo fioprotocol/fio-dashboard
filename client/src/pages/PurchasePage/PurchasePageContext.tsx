@@ -17,13 +17,12 @@ import {
   roe as roeSelector,
   prices as pricesSelector,
 } from '../../redux/registrations/selectors';
-import { isAuthenticated } from '../../redux/profile/selectors';
+import { noProfileLoaded } from '../../redux/profile/selectors';
 import { containedFlowQueryParams } from '../../redux/containedFlow/selectors';
 import {
   cartItems,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
-import { order as orderSelector } from '../../redux/order/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 
 import {
@@ -58,6 +57,7 @@ import {
   PaymentProvider,
   PurchaseTxStatus,
   CartItem,
+  Order,
 } from '../../types';
 import { ErrBadgesProps } from './types';
 
@@ -89,14 +89,13 @@ export const useContext = (): {
   isProcessing: boolean;
   isRetry: boolean;
 } => {
-  const history = useHistory();
-  const isAuth = useSelector(isAuthenticated);
+  const history = useHistory<{ order: Order }>();
+  const noProfile = useSelector(noProfileLoaded);
   const results = useSelector(registrationResult);
   const roe = useSelector(roeSelector);
   const containedFlowParams = useSelector(containedFlowQueryParams);
   const isProcessing = useSelector(isProcessingSelector);
   const cart = useSelector(cartItems);
-  const order = useSelector(orderSelector);
   const prices = useSelector(pricesSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const userWallets = useSelector(fioWalletsSelector);
@@ -113,6 +112,11 @@ export const useContext = (): {
   }>({ status: results?.providerTxStatus || PURCHASE_RESULTS_STATUS.PENDING });
 
   const [prevCart, setPrevCart] = useState<CartItem[]>(cart);
+
+  const {
+    location: { state },
+  } = history;
+  const { order } = state || {};
 
   const onStatusUpdate = (data: {
     orderStatus: PurchaseTxStatus;
@@ -132,10 +136,10 @@ export const useContext = (): {
   });
 
   useEffect(() => {
-    if (!isAuth) {
+    if (noProfile) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
-  }, [isAuth, history]);
+  }, [noProfile, history]);
 
   useEffectOnce(() => {
     if (noResults) {
@@ -301,6 +305,7 @@ export const useContext = (): {
     });
     onPurchaseFinish({
       results,
+      order,
       isRetry: true,
       setRegistration: (results: RegistrationResult) =>
         dispatch(setRegistration(results)),

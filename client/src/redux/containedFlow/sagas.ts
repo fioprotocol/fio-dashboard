@@ -109,7 +109,7 @@ export function* handleContainedFlowSteps(history: History): Generator {
             : ROUTES.FIO_ADDRESSES_SELECTION;
           yield history.push(registrationPath, {
             containedFlowQueryParams,
-          });
+          }); // todo: check containedFlowQueryParams when registrationPath is CHECKOUT, we need to set orderParams in this case
           break;
         }
         case CONTAINED_FLOW_STEPS.ACTION: {
