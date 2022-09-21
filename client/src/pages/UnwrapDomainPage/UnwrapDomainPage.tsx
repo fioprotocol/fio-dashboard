@@ -7,6 +7,7 @@ import UnwrapDomainForm from './components/UnwrapDomainForm';
 import UnWrapResults, {
   ResultsData,
 } from '../../components/common/TransactionResults/components/UnWrapResults';
+import PageTitle from '../../components/PageTitle/PageTitle';
 
 import { useFioAddresses } from '../../util/hooks';
 import useInitializeProviderConnection from '../../hooks/externalWalletsConnection/useInitializeProviderConnection';
@@ -15,6 +16,7 @@ import { log } from '../../util/general';
 
 import { DEFAULT_GAS_LIMIT } from '../../components/ConnectWallet/FeesModal/FeesModalInput';
 import { ROUTES } from '../../constants/routes';
+import { LINKS } from '../../constants/labels';
 
 import { CHAIN_CODES, DOMAIN_WRAP_NETWORKS_LIST } from '../../constants/common';
 import { ContainerProps, InitialValues, UnWrapDomainValues } from './types';
@@ -123,18 +125,21 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
 
   if (resultsData)
     return (
-      <UnWrapResults
-        results={resultsData}
-        itemName="domain"
-        title={
-          resultsData.error
-            ? 'FIO Domain not Unwrapped'
-            : 'FIO Domain Unwrapped'
-        }
-        roe={roe}
-        onClose={onBack}
-        onRetry={onResultsRetry}
-      />
+      <>
+        <PageTitle link={LINKS.UNWRAP_DOMAIN_CONFIRMATION} isVirtualPage />
+        <UnWrapResults
+          results={resultsData}
+          itemName="domain"
+          title={
+            resultsData.error
+              ? 'FIO Domain not Unwrapped'
+              : 'FIO Domain Unwrapped'
+          }
+          roe={roe}
+          onClose={onBack}
+          onRetry={onResultsRetry}
+        />
+      </>
     );
 
   return (

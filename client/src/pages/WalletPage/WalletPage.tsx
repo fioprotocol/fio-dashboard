@@ -119,20 +119,12 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
           <div onClick={onDetails}>
             <FontAwesomeIcon icon="qrcode" />
           </div>
-          <Link
-            to={putParamsToUrl(ROUTES.WRAP_TOKENS, {
-              publicKey: fioWallet.publicKey,
-            })}
-          >
+          <Link to={`${ROUTES.WRAP_TOKENS}?publicKey=${fioWallet.publicKey}`}>
             <div>
               <img src={wrapIcon} alt="wrap" />
             </div>
           </Link>
-          <Link
-            to={putParamsToUrl(ROUTES.UNWRAP_TOKENS, {
-              publicKey: fioWallet.publicKey,
-            })}
-          >
+          <Link to={`${ROUTES.UNWRAP_TOKENS}?publicKey=${fioWallet.publicKey}`}>
             <div>
               <img src={unwrapIcon} alt="unwrap" />
             </div>
