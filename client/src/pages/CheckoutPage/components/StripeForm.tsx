@@ -1,9 +1,12 @@
-import React, { useState, FormEvent } from 'react';
+import React, { useEffect, useState, FormEvent } from 'react';
 import {
   PaymentElement,
   useStripe,
   useElements,
 } from '@stripe/react-stripe-js';
+
+import { StripePaymentElementChangeEvent } from '@stripe/stripe-js/types/stripe-js/elements/payment';
+import { StripePaymentElement } from '@stripe/stripe-js/types/stripe-js/elements';
 
 import Loader from '../../../components/Loader/Loader';
 import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
@@ -12,18 +15,25 @@ import {
   COLOR_TYPE,
   ERROR_UI_TYPE,
 } from '../../../components/Input/ErrorBadge';
-
 import { ANALYTICS_EVENT_ACTIONS } from '../../../constants/common';
 
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../../util/analytics';
+import useEffectOnce from '../../../hooks/general';
 
 import { BeforeSubmitData } from '../types';
 import { CartItem as CartItemType } from '../../../types';
 
 import classes from '../styles/StripePaymentOption.module.scss';
+
+const PAYMENT_METHODS = {
+  CARD: 'card',
+  GOOGLE_PAY: 'google_pay',
+  APPLE_PAY: 'apple_pay',
+  WECHAT_PAY: 'wechat_pay',
+};
 
 export const StripeForm: React.FC<{
   cart: CartItemType[];
@@ -36,8 +46,24 @@ export const StripeForm: React.FC<{
 
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [paymentEl, setPaymentEl] = useState<StripePaymentElement | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<string>(
+    PAYMENT_METHODS.CARD,
+  );
+  const [submitData, setSubmitData] = useState<BeforeSubmitData | null>(null);
 
   const handleSubmit = async (beforeSubmitData?: BeforeSubmitData) => {
+    if (paymentMethod === PAYMENT_METHODS.APPLE_PAY && beforeSubmitData) {
+      return setSubmitData(beforeSubmitData);
+    }
+
+    if (submitData) beforeSubmitData = submitData;
+
+    fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.PURCHASE_STARTED,
+      getCartItemsDataForAnalytics(cart),
+    );
+
     if (!stripe || !elements) {
       // Stripe.js has not yet loaded.
       // Make sure to disable form submission until Stripe.js has loaded.
@@ -73,15 +99,37 @@ export const StripeForm: React.FC<{
     event.preventDefault();
 
     setLoading(true);
-    fireAnalyticsEvent(
-      ANALYTICS_EVENT_ACTIONS.PURCHASE_STARTED,
-      getCartItemsDataForAnalytics(cart),
-    );
 
-    await beforeSubmit(handleSubmit);
+    if (submitData) {
+      await handleSubmit();
+    } else {
+      await beforeSubmit(handleSubmit);
+    }
 
     setLoading(false);
   };
+
+  const onPaymentElChange = (event: StripePaymentElementChangeEvent) => {
+    if (event.elementType === 'payment') {
+      setPaymentMethod(event.value.type);
+      setSubmitData(null);
+    }
+  };
+
+  useEffect(() => {
+    if (paymentEl) paymentEl.on('change', onPaymentElChange);
+    return () => {
+      paymentEl && paymentEl.off('change', onPaymentElChange);
+    };
+  }, [paymentEl]);
+
+  useEffectOnce(
+    () => {
+      setPaymentEl(elements.getElement('payment'));
+    },
+    [elements],
+    !!elements,
+  );
 
   if (!stripe || !elements) return <Loader />;
 
@@ -98,7 +146,7 @@ export const StripeForm: React.FC<{
         error={errorMessage}
       />
       <SubmitButton
-        text={loading ? 'Processing...' : 'Pay'}
+        text={loading ? 'Processing...' : submitData ? 'Continue' : 'Pay'}
         withTopMargin={true}
         disabled={!stripe || !elements || loading || submitDisabled}
         loading={loading}
