@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize';
 
 import Base from '../Base';
-import { Order, Payment } from '../../models';
+import { Order, OrderItem, Payment } from '../../models';
 
 import X from '../Exception.mjs';
 
@@ -17,7 +17,7 @@ export default class OrdersActive extends Base {
           [Sequelize.Op.gt]: new Date(new Date().getTime() - CART_TIMEOUT),
         },
       },
-      include: [Payment],
+      include: [Payment, OrderItem],
       order: [['createdAt', 'DESC']],
     });
 
@@ -36,6 +36,18 @@ export default class OrdersActive extends Base {
         id: order.id,
         number: order.number,
         publicKey: order.publicKey,
+        orderItems: order.OrderItems.map(orderItem => ({
+          id: orderItem.id,
+          action: orderItem.action,
+          address: orderItem.address,
+          domain: orderItem.domain,
+          price: orderItem.price,
+          priceCurrency: orderItem.priceCurrency,
+          createdAt: orderItem.createdAt,
+          updatedAt: orderItem.updatedAt,
+          blockchainTransactions: [],
+          orderItemStatus: {},
+        })),
         payment: {
           id: payment.id,
           processor: payment.processor,

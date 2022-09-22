@@ -12,7 +12,7 @@ import {
   PAYMENT_PROVIDER_LABEL,
 } from '../../constants/purchase';
 
-import { AdminUser, OrderItem } from '../../types';
+import { AdminUser, OrderDetails } from '../../types';
 
 import classes from './styles/AdminOrdersListPage.module.scss';
 
@@ -20,8 +20,8 @@ type Props = {
   loading: boolean;
   getOrdersList: (limit?: number, offset?: number) => Promise<void>;
   adminUser: AdminUser;
-  ordersList: OrderItem[];
-  orderItem: OrderItem;
+  ordersList: OrderDetails[];
+  orderItem: OrderDetails;
   ordersCount: number;
   isAuthUser: boolean;
   getOrder: (id: string) => Promise<void>;
