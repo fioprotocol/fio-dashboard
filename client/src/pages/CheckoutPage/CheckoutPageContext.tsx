@@ -40,7 +40,12 @@ import apis from '../../api';
 
 import { onPurchaseFinish } from '../../util/purchase';
 import MathOp from '../../util/math';
-import { totalCost, handleFreeAddressCart, setFioName } from '../../utils';
+import {
+  totalCost,
+  handleFreeAddressCart,
+  setFioName,
+  cartIsRelative,
+} from '../../utils';
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
@@ -174,9 +179,11 @@ export const useContext = (): {
       setOrderError(e);
     }
 
-    // todo: check order items are relevant to cartItems
-
-    if (result && result.id) {
+    if (
+      result &&
+      result.id &&
+      cartIsRelative(cartItems, result.orderItems || [])
+    ) {
       if (result.publicKey) setWallet(result.publicKey);
       return setOrder(result);
     }

@@ -21,13 +21,13 @@ import { CURRENCY_CODES } from '../../../../constants/common';
 
 import apis from '../../../../api';
 
-import { OrderItem } from '../../../../types';
+import { OrderDetails } from '../../../../types';
 
 import classes from '../../styles/AdminOrderModal.module.scss';
 
 type Props = {
   onClose: () => void;
-  orderItem: OrderItem;
+  orderItem: OrderDetails;
   isVisible: boolean;
 };
 

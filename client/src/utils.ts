@@ -29,6 +29,7 @@ import {
   DecryptedFioRecordContent,
   Unknown,
   AnyObject,
+  OrderItem,
 } from './types';
 
 const FIO_DASH_USERNAME_DELIMITER = `.fio.dash.${process.env
@@ -358,6 +359,25 @@ export const totalCost = (
     costFio: fioPrices.fio || '0',
     costUsdc: fioPrices.usdc || '0',
   };
+};
+
+export const cartIsRelative = (
+  cartItems: CartItem[],
+  orderItems: OrderItem[],
+) => {
+  if (cartItems.length !== orderItems.length) return false;
+
+  for (const cartItem of cartItems) {
+    if (
+      !orderItems.find(
+        ({ address, domain }) =>
+          setFioName(address, domain) ===
+          setFioName(cartItem.address, cartItem.domain),
+      )
+    )
+      return false;
+  }
+  return true;
 };
 
 export const isDomain = (fioName: string): boolean =>

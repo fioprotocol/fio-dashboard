@@ -538,6 +538,7 @@ export type Order = {
   id: number;
   number: string;
   publicKey: string;
+  orderItems?: OrderItem[];
   payment?: Payment;
 };
 
@@ -665,6 +666,21 @@ export type BcTxEvent = {
 };
 
 export type OrderItem = {
+  action: string;
+  address?: string;
+  createdAt: string;
+  domain?: string;
+  id: string;
+  price: string;
+  priceCurrency: string;
+  updatedAt: string;
+  blockchainTransactions: BcTx[];
+  orderItemStatus: {
+    txStatus: typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
+  };
+};
+
+export type OrderDetails = {
   id: string;
   number: string;
   roe: string;
@@ -674,20 +690,7 @@ export type OrderItem = {
   status: number;
   currency?: PaymentCurrency;
   paymentProcessor: PaymentProvider;
-  items?: {
-    action: string;
-    address?: string;
-    createdAt: string;
-    domain?: string;
-    id: string;
-    price: string;
-    priceCurrency: string;
-    updatedAt: string;
-    blockchainTransactions: BcTx[];
-    orderItemStatus: {
-      txStatus: typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
-    };
-  }[];
+  items?: OrderItem[];
   payments?: OrderPaymentItem[];
   blockchainTransactionEvents: BcTxEvent[];
   userId: string;
