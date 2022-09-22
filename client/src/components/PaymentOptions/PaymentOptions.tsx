@@ -27,7 +27,7 @@ type DefaultPaymentOptionProps = {
   cartItems?: CartItemProps[];
   totalCartNativeAmount?: number;
   userWallets?: FioWalletDoublet[];
-  checkoutApproving: PaymentProvider;
+  selectedPaymentProvider: PaymentProvider;
   disabled?: boolean;
 };
 
@@ -42,7 +42,7 @@ const PAYMENT_OPTIONS_PROPS = {
     cartItems,
     isFree,
     paymentOption,
-    checkoutApproving,
+    selectedPaymentProvider,
     disabled,
     onPaymentChoose,
   }: PaymentOptionRenderProps) => ({
@@ -51,7 +51,7 @@ const PAYMENT_OPTIONS_PROPS = {
     disabled:
       paymentWalletPublicKey === '' || cartItems?.length === 0 || disabled,
     provider: PAYMENT_PROVIDER.FIO,
-    loading: checkoutApproving === PAYMENT_PROVIDER.FIO,
+    loading: selectedPaymentProvider === PAYMENT_PROVIDER.FIO,
     hideButton: hasLowBalance,
     onClick: () => onPaymentChoose(PAYMENT_PROVIDER.FIO),
   }),
@@ -59,24 +59,24 @@ const PAYMENT_OPTIONS_PROPS = {
     onPaymentChoose,
     paymentOption,
     cartItems,
-    checkoutApproving,
+    selectedPaymentProvider,
     disabled,
   }: PaymentOptionRenderProps) => ({
     buttonText: 'Pay with Credit/Debit Card',
     icon: <FontAwesomeIcon icon="credit-card" />,
     disabled: cartItems?.length === 0 || disabled,
     provider: PAYMENT_PROVIDER.STRIPE,
-    loading: checkoutApproving === PAYMENT_PROVIDER.STRIPE,
+    loading: selectedPaymentProvider === PAYMENT_PROVIDER.STRIPE,
     onClick: () => onPaymentChoose(PAYMENT_PROVIDER.STRIPE),
   }),
   [PAYMENT_OPTIONS.CRYPTO]: ({
-    checkoutApproving,
+    selectedPaymentProvider,
   }: PaymentOptionRenderProps) => ({
     buttonText: 'Pay Using Crypto',
     icon: <FontAwesomeIcon icon={{ prefix: 'fab', iconName: 'bitcoin' }} />,
     disabled: true,
     hideButton: true, // not implemented
-    loading: checkoutApproving === PAYMENT_PROVIDER.CRYPTO,
+    loading: selectedPaymentProvider === PAYMENT_PROVIDER.CRYPTO,
     hasRoyalBlueBackground: true,
     onClick: (): null => null,
   }),

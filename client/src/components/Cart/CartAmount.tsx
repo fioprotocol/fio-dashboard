@@ -17,7 +17,7 @@ type Props = {
   roe: number;
   totalCartNativeAmount: number;
   userWallets: FioWalletDoublet[];
-  checkoutApproving: PaymentProvider;
+  selectedPaymentProvider: PaymentProvider;
   disabled: boolean;
   error: string | null;
   onPaymentChoose: (paymentProvider: PaymentProvider) => void;
@@ -32,7 +32,7 @@ const CartAmount: React.FC<Props> = props => {
     roe,
     totalCartNativeAmount,
     userWallets,
-    checkoutApproving,
+    selectedPaymentProvider,
     disabled,
     error,
     onPaymentChoose,
@@ -65,7 +65,7 @@ const CartAmount: React.FC<Props> = props => {
           onPaymentChoose={onPaymentChoose}
           totalCartNativeAmount={totalCartNativeAmount}
           userWallets={userWallets}
-          checkoutApproving={checkoutApproving}
+          selectedPaymentProvider={selectedPaymentProvider}
           disabled={!!error || disabled}
         />
       </div>

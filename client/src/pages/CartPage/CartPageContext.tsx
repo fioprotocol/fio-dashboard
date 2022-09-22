@@ -64,7 +64,7 @@ type UseContextReturnType = {
   hasLowBalance?: boolean;
   isFree: boolean;
   isPriceChanged: boolean;
-  checkoutApproving: PaymentProvider;
+  selectedPaymentProvider: PaymentProvider;
   disabled: boolean;
   paymentWalletPublicKey: string;
   prices: Prices;
@@ -106,8 +106,8 @@ export const useContext = (): UseContextReturnType => {
   const [isUpdatingPrices, setIsUpdatingPrices] = useState(false);
   const [updatingPricesHasError, setUpdatingPricesHasError] = useState(false);
   const [
-    checkoutApproving,
-    setCheckoutApproving,
+    selectedPaymentProvider,
+    setSelectedPaymentProvider,
   ] = useState<PaymentProvider | null>(null);
 
   const handleFreeAddressCartFn = () =>
@@ -309,10 +309,10 @@ export const useContext = (): UseContextReturnType => {
   };
 
   const onPaymentChoose = async (paymentProvider: PaymentProvider) => {
-    setCheckoutApproving(paymentProvider);
+    setSelectedPaymentProvider(paymentProvider);
     if ((await allowCheckout()) && paymentProvider)
       await checkout(paymentProvider);
-    setCheckoutApproving(null);
+    setSelectedPaymentProvider(null);
   };
 
   useEffectOnce(() => {
@@ -358,8 +358,8 @@ export const useContext = (): UseContextReturnType => {
     hasLowBalance,
     walletCount,
     isFree,
-    checkoutApproving,
-    disabled: loading || isUpdatingPrices || !!checkoutApproving,
+    selectedPaymentProvider,
+    disabled: loading || isUpdatingPrices || !!selectedPaymentProvider,
     totalCartAmount,
     isPriceChanged,
     totalCartNativeAmount,
