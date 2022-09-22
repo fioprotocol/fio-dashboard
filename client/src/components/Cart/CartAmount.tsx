@@ -3,7 +3,7 @@ import React from 'react';
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import PaymentsBlock from './components/PaymentsBlock';
 
-import { totalCost } from '../../utils';
+import { totalCost } from '../../util/cart';
 
 import { CartItem, FioWalletDoublet, PaymentProvider } from '../../types';
 

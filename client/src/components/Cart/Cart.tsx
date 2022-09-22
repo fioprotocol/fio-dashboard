@@ -7,7 +7,7 @@ import CounterContainer from '../CounterContainer/CounterContainer';
 import CartItem from './CartItem';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 
-import { deleteCartItem } from '../../utils';
+import { deleteCartItem } from '../../util/cart';
 
 import { ROUTES } from '../../constants/routes';
 

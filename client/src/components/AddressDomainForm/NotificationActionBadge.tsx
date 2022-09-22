@@ -8,13 +8,9 @@ import Badge, { BADGE_TYPES } from '../Badge/Badge';
 
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
-import {
-  deleteCartItem,
-  isFreeDomain,
-  compose,
-  FIO_ADDRESS_DELIMITER,
-} from '../../utils';
+import { isFreeDomain, compose, FIO_ADDRESS_DELIMITER } from '../../utils';
 import MathOp from '../../util/math';
+import { deleteCartItem } from '../../util/cart';
 import { convertFioPrices } from '../../util/prices';
 import {
   fireAnalyticsEvent,

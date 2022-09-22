@@ -29,7 +29,7 @@ import {
   onPurchaseFinish,
   transformPurchaseResults,
 } from '../../util/purchase';
-import { totalCost } from '../../utils';
+import { totalCost } from '../../util/cart';
 import { fireAnalyticsEvent } from '../../util/analytics';
 import { useEffectOnce } from '../../hooks/general';
 import { useWebsocket } from '../../hooks/websocket';

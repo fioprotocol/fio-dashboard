@@ -33,7 +33,7 @@ import {
   cartItemsToOrderItems,
   handleFreeAddressCart,
   totalCost,
-} from '../../utils';
+} from '../../util/cart';
 import MathOp from '../../util/math';
 import { convertFioPrices } from '../../util/prices';
 

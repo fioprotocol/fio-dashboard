@@ -10,7 +10,7 @@ import CounterContainer from '../CounterContainer/CounterContainer';
 import { ROUTES } from '../../constants/routes';
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
-import { handleFreeAddressCart, deleteCartItem } from '../../utils';
+import { handleFreeAddressCart, deleteCartItem } from '../../util/cart';
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
