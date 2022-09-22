@@ -12,14 +12,14 @@ import Link from '../Link/Link';
 import Input from '../Input/Input';
 import FormHeader from '../FormHeader/FormHeader';
 
-import { usernamePasswordValidation } from './components/validation';
-import { setDataMutator } from '../../utils';
-
 import { ROUTES } from '../../constants/routes';
 
-import classes from './LoginForm.module.scss';
+import { usernamePasswordValidation } from './components/validation';
+import { isEdgeLoginError, setDataMutator } from '../../utils';
 
 import { LoginFailure } from '../../types';
+
+import classes from './LoginForm.module.scss';
 
 type FormValues = {
   email: string;
@@ -33,7 +33,7 @@ type OwnProps = {
   onClose: () => void;
   toggleForgotPass: (open: boolean) => void;
   loginFailure: LoginFailure;
-  edgeLoginFailure: { type?: string };
+  edgeLoginFailure: { name?: string; type?: string };
   title: string;
   subtitle?: string;
   headerIcon?: IconProp | null;
@@ -65,18 +65,16 @@ const UsernamePassword: React.FC<Props> = props => {
       const { mutators } = currentForm;
 
       mutators.setDataMutator('password', {
-        error:
-          edgeLoginFailure.type === 'PasswordError' ||
-          edgeLoginFailure.type === 'UsernameError'
-            ? 'Invalid Email Address or Password'
-            : 'Server Error', // todo: set proper message text
+        error: isEdgeLoginError(edgeLoginFailure)
+          ? 'Invalid email or password. Try again or click Forgot Password?'
+          : 'Server Error', // todo: set proper message text
       });
       mutators.setDataMutator('email', {
         error: true,
         hideError: true,
       });
     }
-  }, [edgeLoginFailure]);
+  }, [currentForm, edgeLoginFailure]);
 
   useEffect(() => {
     if (currentForm && !isEmpty(loginFailure)) {

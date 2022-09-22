@@ -4,6 +4,7 @@ import { TextDecoder, TextEncoder } from 'text-encoding';
 import { Fio } from '@fioprotocol/fiojs';
 import mapKeys from 'lodash/mapKeys';
 import camelCase from 'camelcase';
+import { PasswordError, UsernameError } from 'edge-core-js';
 
 import { ACTIONS } from './constants/fio';
 import { CURRENCY_CODES } from './constants/common';
@@ -364,7 +365,7 @@ export const totalCost = (
 export const cartIsRelative = (
   cartItems: CartItem[],
   orderItems: OrderItem[],
-) => {
+): boolean => {
   if (cartItems.length !== orderItems.length) return false;
 
   for (const cartItem of cartItems) {
@@ -472,4 +473,13 @@ export const decryptFioRequestData = ({
 
 export const getObjKeyByValue = (object: AnyObject, value: string): string => {
   return Object.keys(object).find(key => object[key] === value);
+};
+
+export const isEdgeLoginError = (edgeLoginFailure: {
+  name?: string;
+  type?: string;
+}): boolean => {
+  const type = edgeLoginFailure.type || edgeLoginFailure.name;
+
+  return type === PasswordError.name || type === UsernameError.name;
 };
