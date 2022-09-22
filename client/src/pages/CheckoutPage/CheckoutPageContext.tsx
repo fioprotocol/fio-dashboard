@@ -43,9 +43,9 @@ import MathOp from '../../util/math';
 import {
   totalCost,
   handleFreeAddressCart,
-  setFioName,
   cartIsRelative,
-} from '../../utils';
+} from '../../util/cart';
+import { setFioName } from '../../utils';
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
