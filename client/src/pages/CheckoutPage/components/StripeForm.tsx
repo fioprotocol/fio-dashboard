@@ -85,7 +85,12 @@ export const StripeForm: React.FC<{
         errorMsg = null;
     }
 
-    if (paymentIntent && paymentIntent.status === 'requires_action') {
+    if (
+      paymentIntent &&
+      (paymentIntent.status === 'requires_action' ||
+        paymentIntent.status === 'requires_payment_method' ||
+        paymentIntent.last_payment_error)
+    ) {
       errorMsg = 'Please try again and continue your payment';
     }
 
