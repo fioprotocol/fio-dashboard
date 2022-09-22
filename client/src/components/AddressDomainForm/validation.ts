@@ -33,7 +33,7 @@ const verifyAddress = async (props: DefaultValidationProps) => {
   if (domain) {
     if (!isAddress) {
       fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM, {
-        search_term: ANALYTICS_FIO_NAME_TYPE.DOMAIN,
+        search_term: domain,
         type: ANALYTICS_FIO_NAME_TYPE.DOMAIN,
       });
     }
@@ -62,12 +62,12 @@ const verifyAddress = async (props: DefaultValidationProps) => {
     try {
       if (options.length > 0 && options.every(option => option !== domain)) {
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM, {
-          search_term: ANALYTICS_FIO_NAME_TYPE.ADDRESS,
+          search_term: setFioName(address, domain),
           type: ANALYTICS_FIO_NAME_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
         });
       } else {
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM, {
-          search_term: ANALYTICS_FIO_NAME_TYPE.ADDRESS,
+          search_term: setFioName(address, domain),
           type: ANALYTICS_FIO_NAME_TYPE.ADDRESS,
         });
       }
