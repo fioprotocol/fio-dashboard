@@ -8,7 +8,7 @@ import PinForm from '../PinForm';
 import { FIELD_NAME } from '../PinForm/PinForm';
 import { PIN_LENGTH } from '../../constants/form';
 
-import { isEdgeLoginError } from '../../utils';
+import { isEdgeAuthenticationError, isEdgeNetworkError } from '../../util/edge';
 
 import { LoginFailure } from '../../types';
 
@@ -40,10 +40,13 @@ const Pin: React.FC<Props> = props => {
   useEffect(() => {
     if (!isEmpty(edgeLoginFailure)) {
       const messageText = () => {
-        if (isEdgeLoginError(edgeLoginFailure)) {
+        if (isEdgeAuthenticationError(edgeLoginFailure)) {
           if (edgeLoginFailure.wait && edgeLoginFailure.wait > 0)
             return 'Pin login has been blocked';
           return 'Invalid PIN Entry. Try again or start over';
+        }
+        if (isEdgeNetworkError(edgeLoginFailure)) {
+          return 'Unable to connect to authentication server, please try again later';
         }
         return 'Server Error';
       };

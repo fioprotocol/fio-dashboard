@@ -1,4 +1,9 @@
-import { EdgeAccount } from 'edge-core-js';
+import {
+  EdgeAccount,
+  PasswordError,
+  UsernameError,
+  NetworkError,
+} from 'edge-core-js';
 
 import { sleep } from '../utils';
 import { log } from './general';
@@ -36,4 +41,21 @@ export const waitForEdgeAccountStop = async (
   } catch (e) {
     //
   }
+};
+
+export const isEdgeAuthenticationError = (edgeLoginFailure: {
+  name?: string;
+  type?: string;
+}): boolean => {
+  const type = edgeLoginFailure.type || edgeLoginFailure.name;
+
+  return type === PasswordError.name || type === UsernameError.name;
+};
+export const isEdgeNetworkError = (edgeLoginFailure: {
+  name?: string;
+  type?: string;
+}): boolean => {
+  const type = edgeLoginFailure.type || edgeLoginFailure.name;
+
+  return type === NetworkError.name;
 };

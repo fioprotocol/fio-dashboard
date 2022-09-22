@@ -15,7 +15,8 @@ import FormHeader from '../FormHeader/FormHeader';
 import { ROUTES } from '../../constants/routes';
 
 import { usernamePasswordValidation } from './components/validation';
-import { isEdgeLoginError, setDataMutator } from '../../utils';
+import { isEdgeAuthenticationError, isEdgeNetworkError } from '../../util/edge';
+import { setDataMutator } from '../../utils';
 
 import { LoginFailure } from '../../types';
 
@@ -65,8 +66,10 @@ const UsernamePassword: React.FC<Props> = props => {
       const { mutators } = currentForm;
 
       mutators.setDataMutator('password', {
-        error: isEdgeLoginError(edgeLoginFailure)
+        error: isEdgeAuthenticationError(edgeLoginFailure)
           ? 'Invalid email or password. Try again or click Forgot Password?'
+          : isEdgeNetworkError(edgeLoginFailure)
+          ? 'Unable to connect to authentication server, please try again later'
           : 'Server Error', // todo: set proper message text
       });
       mutators.setDataMutator('email', {
@@ -78,6 +81,7 @@ const UsernamePassword: React.FC<Props> = props => {
 
   useEffect(() => {
     if (currentForm && !isEmpty(loginFailure)) {
+      console.log(loginFailure);
       const { mutators } = currentForm;
 
       if (loginFailure.fields != null) {
