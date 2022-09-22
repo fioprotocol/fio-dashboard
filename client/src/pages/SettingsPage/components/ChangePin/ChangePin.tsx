@@ -6,7 +6,7 @@ import ModalUIComponent from '../ModalUIComponent';
 import SuccessModal from '../../../../components/Modal/SuccessModal';
 import ChangePinForm from './ChangePinForm';
 
-import { isEdgeLoginError } from '../../../../utils';
+import { isEdgeAuthenticationError } from '../../../../util/edge';
 
 import { ClickEventTypes } from './types';
 
@@ -55,7 +55,7 @@ const ChangePin: React.FC<Props> = props => {
   const { status } = results;
   const error =
     (changePinError &&
-      isEdgeLoginError(changePinError) &&
+      isEdgeAuthenticationError(changePinError) &&
       'Invalid Password') ||
     undefined;
 
