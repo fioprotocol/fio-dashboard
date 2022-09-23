@@ -10,6 +10,10 @@ import { log } from './general';
 
 import { EdgeWalletsKeys } from '../types';
 
+const PASSWORD_ERROR = new PasswordError('').name;
+const USERNAME_ERROR = new UsernameError('').name;
+const NETWORK_ERROR = new NetworkError('').name;
+
 export const waitWalletKeys = async (
   account: EdgeAccount,
 ): Promise<EdgeWalletsKeys> => {
@@ -49,7 +53,7 @@ export const isEdgeAuthenticationError = (edgeLoginFailure: {
 }): boolean => {
   const type = edgeLoginFailure.type || edgeLoginFailure.name;
 
-  return type === PasswordError.name || type === UsernameError.name;
+  return type === PASSWORD_ERROR || type === USERNAME_ERROR;
 };
 export const isEdgeNetworkError = (edgeLoginFailure: {
   name?: string;
@@ -57,5 +61,5 @@ export const isEdgeNetworkError = (edgeLoginFailure: {
 }): boolean => {
   const type = edgeLoginFailure.type || edgeLoginFailure.name;
 
-  return type === NetworkError.name;
+  return type === NETWORK_ERROR;
 };
