@@ -121,6 +121,7 @@ router.get('/orders/item/:orderNumber', checkAuth, routes.orders.get);
 
 router.post('/payments', checkAuth, routes.payments.create);
 router.post('/payments/webhook/', routes.payments.webhook);
+router.post('/payments/cancel', checkAuth, routes.payments.cancel);
 
 router.get('/chain-codes/:chainCode?', routes.chainCodes.list);
 

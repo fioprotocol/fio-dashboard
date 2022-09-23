@@ -10,4 +10,7 @@ export default class Payments extends Base {
   }): Promise<PaymentCreateResponse> {
     return this.apiClient.post('payments', { data });
   }
+  cancel(id: number): Promise<null> {
+    return this.apiClient.post('payments/cancel', { id });
+  }
 }
