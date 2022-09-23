@@ -1,4 +1,10 @@
-import React, { useEffect, useState, FormEvent } from 'react';
+import React, {
+  useEffect,
+  useState,
+  FormEvent,
+  useCallback,
+  useRef,
+} from 'react';
 import {
   PaymentElement,
   useStripe,
@@ -6,7 +12,6 @@ import {
 } from '@stripe/react-stripe-js';
 
 import { StripePaymentElementChangeEvent } from '@stripe/stripe-js/types/stripe-js/elements/payment';
-import { StripePaymentElement } from '@stripe/stripe-js/types/stripe-js/elements';
 
 import Loader from '../../../components/Loader/Loader';
 import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
@@ -21,10 +26,12 @@ import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../../util/analytics';
-import useEffectOnce from '../../../hooks/general';
+import { log } from '../../../util/general';
+
+import apis from '../../../api';
 
 import { BeforeSubmitData } from '../types';
-import { CartItem as CartItemType } from '../../../types';
+import { CartItem as CartItemType, Payment } from '../../../types';
 
 import classes from '../styles/StripePaymentOption.module.scss';
 
@@ -40,18 +47,23 @@ export const StripeForm: React.FC<{
   onFinish: (success: boolean, data?: BeforeSubmitData) => void;
   beforeSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   submitDisabled?: boolean;
-}> = ({ cart, onFinish, beforeSubmit, submitDisabled = false }) => {
+  payment: Payment;
+}> = ({ cart, onFinish, beforeSubmit, payment, submitDisabled = false }) => {
   const stripe = useStripe();
   const elements = useElements();
 
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [paymentEl, setPaymentEl] = useState<StripePaymentElement | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<string>(
     PAYMENT_METHODS.CARD,
   );
   const [submitData, setSubmitData] = useState<BeforeSubmitData | null>(null);
+  const confirmRef = useRef<boolean>(false);
 
+  const paymentId = payment && payment.id;
+  const cancelPayment = useCallback(() => {
+    apis.payments.cancel(paymentId).catch(e => log.error(e.message));
+  }, [paymentId]);
   const handleSubmit = async (beforeSubmitData?: BeforeSubmitData) => {
     if (paymentMethod === PAYMENT_METHODS.APPLE_PAY && beforeSubmitData) {
       return setSubmitData(beforeSubmitData);
@@ -72,11 +84,13 @@ export const StripeForm: React.FC<{
 
     setLoading(true);
 
+    confirmRef.current = true;
     let errorMsg;
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       redirect: 'if_required',
     });
+    confirmRef.current = false;
 
     if (error) {
       errorMsg = error.message;
@@ -89,6 +103,7 @@ export const StripeForm: React.FC<{
       paymentIntent &&
       (paymentIntent.status === 'requires_action' ||
         paymentIntent.status === 'requires_payment_method' ||
+        paymentIntent.status === 'canceled' ||
         paymentIntent.last_payment_error)
     ) {
       errorMsg = 'Please try again and continue your payment';
@@ -121,19 +136,13 @@ export const StripeForm: React.FC<{
     }
   };
 
-  useEffect(() => {
-    if (paymentEl) paymentEl.on('change', onPaymentElChange);
-    return () => {
-      paymentEl && paymentEl.off('change', onPaymentElChange);
-    };
-  }, [paymentEl]);
-
-  useEffectOnce(
-    () => {
-      setPaymentEl(elements.getElement('payment'));
+  useEffect(
+    () => () => {
+      if (confirmRef.current) {
+        cancelPayment(); // Cancel the payment on page change when confirmPayment is in progress
+      }
     },
-    [elements],
-    !!elements,
+    [cancelPayment],
   );
 
   if (!stripe || !elements) return <Loader />;
@@ -142,7 +151,7 @@ export const StripeForm: React.FC<{
     <form onSubmit={onSubmit}>
       <h6 className={classes.subtitle}>Card Information</h6>
       <div className={classes.paymentContainer}>
-        <PaymentElement />
+        <PaymentElement onChange={onPaymentElChange} />
       </div>
       <ErrorBadge
         hasError={errorMessage}
