@@ -3,7 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
-import { refreshBalance, fioActionExecuted } from '../../redux/fio/actions';
+import {
+  refreshBalance,
+  refreshFioNames,
+  fioActionExecuted,
+} from '../../redux/fio/actions';
 import {
   setWallet as setWalletAction,
   setCartItems,
@@ -136,8 +140,11 @@ export const useContext = (): {
   const dispatch = useDispatch();
   const dispatchSetProcessing = (isProcessing: boolean) =>
     dispatch(setProcessing(isProcessing));
-  const dispatchSetWallet = (paymentWalletPublicKey: string) =>
-    dispatch(setWalletAction(paymentWalletPublicKey));
+  const dispatchSetWallet = useCallback(
+    (paymentWalletPublicKey: string) =>
+      dispatch(setWalletAction(paymentWalletPublicKey)),
+    [dispatch],
+  );
 
   const [
     beforeSubmitProps,
@@ -249,6 +256,7 @@ export const useContext = (): {
         for (const fioWallet of fioWallets) {
           if (fioWallet.publicKey) {
             dispatch(refreshBalance(fioWallet.publicKey));
+            dispatch(refreshFioNames(fioWallet.publicKey));
           }
         }
         if (!paymentWalletPublicKey && fioWallets.length) {
