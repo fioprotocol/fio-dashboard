@@ -66,8 +66,8 @@ export const RefHomePage: React.FC<Props &
   useEffect(() => {
     if (refProfileInfo?.code) {
       fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PAGE_VIEW, {
-        title: `/ref/${refProfileInfo.code}`,
-        location: `${APP_TITLE} - ${refProfileInfo.label}`,
+        page_title: `/ref/${refProfileInfo.code}`,
+        page_location: `${APP_TITLE} - ${refProfileInfo.label}`,
       });
     }
   }, [refProfileInfo?.code, refProfileInfo?.label]);
