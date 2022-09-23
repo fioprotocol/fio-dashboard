@@ -14,6 +14,7 @@ import {
 } from './profile/sagas';
 import { edgeLoginSuccess } from './edge/sagas';
 import { notify } from './notify/sagas';
+import { cartWasCleared } from './cart/sagas';
 import {
   containedFlowActionSuccess,
   containedFlowResultsClose,
@@ -59,5 +60,6 @@ export default function* rootSaga(history: History, api: Api) {
     getRefProfileSuccess(),
     resetAdminUserPasswordSuccess(),
     deleteAdminUserSuccess(),
+    cartWasCleared(),
   ]);
 }
