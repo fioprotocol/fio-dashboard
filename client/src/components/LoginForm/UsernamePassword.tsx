@@ -81,7 +81,6 @@ const UsernamePassword: React.FC<Props> = props => {
 
   useEffect(() => {
     if (currentForm && !isEmpty(loginFailure)) {
-      console.log(loginFailure);
       const { mutators } = currentForm;
 
       if (loginFailure.fields != null) {
