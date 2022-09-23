@@ -22,8 +22,8 @@ const PageTitle: React.FC<Props> = props => {
     const path = ROUTES[link];
     if (link && path) {
       fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PAGE_VIEW, {
-        title,
-        location: path,
+        page_title: title,
+        page_location: path,
       });
     }
   }, [link, title]);
