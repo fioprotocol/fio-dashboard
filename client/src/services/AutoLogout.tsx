@@ -16,26 +16,30 @@ import {
 } from '../redux/profile/actions';
 import { showLoginModal } from '../redux/modal/actions';
 import { setRedirectPath } from '../redux/navigation/actions';
+import { clear } from '../redux/cart/actions';
 import {
   isAuthenticated,
   tokenCheckResult,
   lastActivityDate,
   profileRefreshed,
 } from '../redux/profile/selectors';
+import { cartItems } from '../redux/cart/selectors';
 
 import { compose } from '../utils';
-
-import { RedirectLinkData, Unknown } from '../types';
 import useEffectOnce from '../hooks/general';
+
+import { CartItem, RedirectLinkData, Unknown } from '../types';
 
 type Props = {
   tokenCheckResult: boolean;
   lastActivityDate: number;
   isAuthenticated: boolean;
   profileRefreshed: boolean;
+  cartItems: CartItem[];
   checkAuthToken: () => void;
   setLastActivity: (value: number) => void;
   logout: (routerProps: RouterProps) => void;
+  clear: () => void;
   showLoginModal: () => void;
   setRedirectPath: (route: RedirectLinkData) => void;
 };
@@ -83,12 +87,14 @@ const AutoLogout = (
     isAuthenticated,
     profileRefreshed,
     history,
+    cartItems,
     history: {
       location: { pathname, state },
     },
     checkAuthToken,
     setLastActivity,
     logout,
+    clear,
     showLoginModal,
     setRedirectPath,
   } = props;
@@ -103,6 +109,8 @@ const AutoLogout = (
     new Date().getTime(),
   );
 
+  const cartIsNotEmpty = cartItems.length > 0;
+
   const clearChecksTimeout = () => {
     timeoutRef.current && clearTimeout(timeoutRef.current);
     intervalRef.current && clearInterval(intervalRef.current);
@@ -116,10 +124,20 @@ const AutoLogout = (
   activityTimeout = useCallback(() => {
     removeActivityListener();
     setRedirectPath({ pathname, state });
+    cartIsNotEmpty && clear();
     logout({ history });
     showLoginModal();
     clearChecksTimeout();
-  }, [history, pathname, state, logout, setRedirectPath, showLoginModal]);
+  }, [
+    history,
+    pathname,
+    state,
+    cartIsNotEmpty,
+    logout,
+    clear,
+    setRedirectPath,
+    showLoginModal,
+  ]);
 
   const activityWatcher = () => {
     let lastActivity = new Date().getTime();
@@ -225,11 +243,13 @@ const reduxConnect = connect(
     lastActivityDate,
     tokenCheckResult,
     profileRefreshed,
+    cartItems,
   }),
   {
     setLastActivity,
     checkAuthToken,
     logout,
+    clear,
     showLoginModal,
     setRedirectPath,
   },

@@ -40,7 +40,7 @@ export default combineReducers({
       case SET_RECOVERY_SUCCESS:
         return [];
       case LOGOUT_SUCCESS:
-        return [];
+        return state.filter(notification => notification.isManual);
       default:
         return state;
     }

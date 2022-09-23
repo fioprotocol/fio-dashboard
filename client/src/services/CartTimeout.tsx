@@ -9,19 +9,9 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 
-import { BADGE_TYPES } from '../components/Badge/Badge';
-import { ACTIONS } from '../components/Notifications/Notifications';
-import { CONTAINED_FLOW_NOTIFICATION_MESSAGES } from '../constants/containedFlow';
 import { ROUTES } from '../constants/routes';
-import { NOTIFICATIONS_CONTENT } from '../constants/notifications';
-import { ANALYTICS_EVENT_ACTIONS } from '../constants/common';
 
 import { setCartDate, clear } from '../redux/cart/actions';
-import { addManual as createNotification } from '../redux/notifications/actions';
-import {
-  isContainedFlow,
-  containedFlowQueryParams,
-} from '../redux/containedFlow/selectors';
 import { cartItems, cartDate } from '../redux/cart/selectors';
 import {
   isProcessing,
@@ -30,10 +20,9 @@ import {
 import { confirmingPin } from '../redux/edge/selectors';
 
 import { compose } from '../utils';
-import { fireAnalyticsEvent } from '../util/analytics';
 import useEffectOnce from '../hooks/general';
 
-import { CartItem, ContainedFlowQueryParams } from '../types';
+import { CartItem } from '../types';
 
 const INTERVAL = 200;
 const CART_TIMEOUT = 1000 * 60 * 30; // 30 min
@@ -45,16 +34,7 @@ type Props = {
   isRegistrationProcessing: boolean;
   captchaResolving: boolean;
   confirmingPin: boolean;
-  isContainedFlow: boolean;
-  containedFlowQueryParams: ContainedFlowQueryParams;
   clear: () => void;
-  createNotification: (data: {
-    type: string;
-    action: string;
-    title?: string;
-    message?: string;
-    pagesToShow: string[];
-  }) => void;
   setCartDate: (dateTime: number) => void;
 } & RouteComponentProps;
 
@@ -64,23 +44,22 @@ const CartTimeout: React.FC<Props> = props => {
     cartDate,
     setCartDate,
     clear,
-    createNotification,
     isRegistrationProcessing,
     captchaResolving,
     confirmingPin,
     history,
-    isContainedFlow,
-    containedFlowQueryParams,
   } = props;
 
-  const containedFlowAction = containedFlowQueryParams
-    ? containedFlowQueryParams.action
-    : '';
   const cartItemsAmount = cartItems.length;
+  const cartIsNotEmpty = cartItemsAmount > 0;
 
   const allowClear = useMemo(
-    () => !isRegistrationProcessing && !captchaResolving && !confirmingPin,
-    [captchaResolving, confirmingPin, isRegistrationProcessing],
+    () =>
+      !isRegistrationProcessing &&
+      !captchaResolving &&
+      !confirmingPin &&
+      cartIsNotEmpty,
+    [captchaResolving, confirmingPin, isRegistrationProcessing, cartIsNotEmpty],
   );
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [refreshInterval, setRefreshInterval] = useState<boolean>(false);
@@ -95,7 +74,6 @@ const CartTimeout: React.FC<Props> = props => {
   const timeIsOut = useCallback((): void => {
     const { location } = history;
     clearCartTimeout();
-    fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.CART_EMPTIED);
     if (
       [ROUTES.CART, ROUTES.CHECKOUT, ROUTES.PURCHASE].indexOf(
         location.pathname,
@@ -103,28 +81,7 @@ const CartTimeout: React.FC<Props> = props => {
     ) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
-    createNotification({
-      action: ACTIONS.CART_TIMEOUT,
-      type: BADGE_TYPES.WARNING,
-      title: NOTIFICATIONS_CONTENT.CART_TIMEOUT.title,
-      message:
-        isContainedFlow && containedFlowAction != null
-          ? `${NOTIFICATIONS_CONTENT.CART_TIMEOUT.message}, ${CONTAINED_FLOW_NOTIFICATION_MESSAGES[containedFlowAction]}.`
-          : `${NOTIFICATIONS_CONTENT.CART_TIMEOUT.message}. Add your items again.`,
-      pagesToShow: [
-        ROUTES.CART,
-        ROUTES.FIO_ADDRESSES_SELECTION,
-        ROUTES.FIO_DOMAINS_SELECTION,
-        ROUTES.HOME,
-      ],
-    });
-  }, [
-    clearCartTimeout,
-    history,
-    isContainedFlow,
-    containedFlowAction,
-    createNotification,
-  ]);
+  }, [clearCartTimeout, history]);
 
   const createInterval = useCallback(
     (countDownDate: number | null = null): void => {
@@ -169,10 +126,18 @@ const CartTimeout: React.FC<Props> = props => {
     if (!intervalRef.current && !cartDate && cartItemsAmount > 0) {
       createInterval();
     }
-    if (cartItemsAmount === 0) {
-      clearCartTimeout();
+    if (cartItemsAmount === 0 && intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+      setCartDate(null);
     }
-  }, [cartDate, cartItemsAmount, clearCartTimeout, createInterval]);
+  }, [
+    cartDate,
+    cartItemsAmount,
+    clearCartTimeout,
+    createInterval,
+    setCartDate,
+  ]);
 
   useEffect(() => {
     if (refreshInterval) {
@@ -207,13 +172,10 @@ const reduxConnect = connect(
     isRegistrationProcessing: isProcessing,
     captchaResolving,
     confirmingPin,
-    isContainedFlow,
-    containedFlowQueryParams,
   }),
   {
     clear,
     setCartDate,
-    createNotification,
   },
 );
 
