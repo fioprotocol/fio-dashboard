@@ -248,6 +248,25 @@ export const useContext = (): {
       }, {} as ErrBadgesProps)
     : {};
 
+  useEffectOnce(
+    () => {
+      if (
+        orderStatusData.status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS
+      ) {
+        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_PARTIAL);
+      }
+      if (orderStatusData.status === PURCHASE_RESULTS_STATUS.FAILED) {
+        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_FAILED);
+      }
+    },
+    [orderStatusData],
+    [
+      PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
+      PURCHASE_RESULTS_STATUS.FAILED,
+      PURCHASE_RESULTS_STATUS.CANCELED,
+    ].includes(orderStatusData.status),
+  );
+
   useEffectOnce(() => {
     dispatch(setCartItems(updatedCart));
   }, [setCartItems, updatedCart]);
@@ -265,14 +284,6 @@ export const useContext = (): {
         cart: prevCart,
       });
       dispatch(setCartItems(updatedCart));
-      if (
-        orderStatusData.status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS
-      ) {
-        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_PARTIAL);
-      }
-      if (orderStatusData.status === PURCHASE_RESULTS_STATUS.FAILED) {
-        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_FAILED);
-      }
     },
     [orderStatusData, prevCart, roe, prices],
     [
