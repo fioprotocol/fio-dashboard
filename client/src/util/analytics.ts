@@ -35,19 +35,17 @@ export const getCartItemsDataForAnalytics = (
       (sum, item) => new MathOp(sum).add(item.costUsdc || 0).toNumber(),
       0,
     ),
-    items: JSON.stringify(
-      cartItems.map(item => ({
-        item_name: item.id,
-        item_category: !item.address
-          ? ANALYTICS_FIO_NAME_TYPE.DOMAIN
-          : item.hasCustomDomain
-          ? ANALYTICS_FIO_NAME_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
-          : +item.costUsdc
-          ? ANALYTICS_FIO_NAME_TYPE.ADDRESS
-          : ANALYTICS_FIO_NAME_TYPE.ADDRESS_FREE,
-        price: +item.costUsdc,
-      })),
-    ),
+    items: cartItems.map(item => ({
+      item_name: item.id,
+      item_category: !item.address
+        ? ANALYTICS_FIO_NAME_TYPE.DOMAIN
+        : item.hasCustomDomain
+        ? ANALYTICS_FIO_NAME_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+        : +item.costUsdc
+        ? ANALYTICS_FIO_NAME_TYPE.ADDRESS
+        : ANALYTICS_FIO_NAME_TYPE.ADDRESS_FREE,
+      price: +item.costUsdc,
+    })),
   };
 };
 export const prepareAnalyticsEventData = (
