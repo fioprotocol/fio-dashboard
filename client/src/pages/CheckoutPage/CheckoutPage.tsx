@@ -38,6 +38,9 @@ export const CheckoutPage: React.FC = () => {
     ...rest
   } = useContext();
 
+  if (fioLoading || orderLoading || !paymentProvider || !paymentWalletPublicKey)
+    return <Loader />;
+
   if (orderError)
     return (
       <PseudoModalContainer title={title} onClose={onClose}>
@@ -57,9 +60,6 @@ export const CheckoutPage: React.FC = () => {
         </div>
       </PseudoModalContainer>
     );
-
-  if (fioLoading || orderLoading || !paymentProvider || !paymentWalletPublicKey)
-    return <Loader />;
 
   if (!payment && !fioLoading && !orderLoading)
     return <Redirect to={ROUTES.FIO_ADDRESSES_SELECTION} />;

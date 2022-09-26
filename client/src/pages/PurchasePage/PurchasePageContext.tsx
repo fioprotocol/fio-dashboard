@@ -7,9 +7,7 @@ import { setCartItems } from '../../redux/cart/actions';
 import {
   onPurchaseResultsClose,
   setRegistration,
-  setProcessing,
 } from '../../redux/registrations/actions';
-import { fioActionExecuted } from '../../redux/fio/actions';
 
 import {
   registrationResult,
@@ -25,16 +23,11 @@ import {
 } from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 
-import {
-  onPurchaseFinish,
-  transformPurchaseResults,
-} from '../../util/purchase';
-import { totalCost } from '../../util/cart';
+import { transformPurchaseResults } from '../../util/purchase';
+import { cartItemsToOrderItems, totalCost } from '../../util/cart';
 import { fireAnalyticsEvent } from '../../util/analytics';
 import { useEffectOnce } from '../../hooks/general';
 import { useWebsocket } from '../../hooks/websocket';
-
-import apis from '../../api';
 
 import MathOp from '../../util/math';
 
@@ -51,7 +44,6 @@ import {
 import { WS_ENDPOINTS } from '../../constants/websocket';
 
 import {
-  FioActionExecuted,
   FioWalletDoublet,
   RegistrationResult,
   PaymentProvider,
@@ -60,6 +52,7 @@ import {
   Order,
 } from '../../types';
 import { ErrBadgesProps } from './types';
+import { CreateOrderActionData } from '../../redux/types';
 
 const ERROR_CODES = {
   SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
@@ -70,7 +63,7 @@ export const useContext = (): {
   errItems: CartItem[];
   closeText: string;
   onClose: () => void;
-  onFinish: (results: RegistrationResult) => Promise<void>;
+  onRetry: () => void;
   paymentWallet: FioWalletDoublet;
   purchaseStatus: PurchaseTxStatus;
   paymentProvider: PaymentProvider;
@@ -87,9 +80,11 @@ export const useContext = (): {
   allErrored: boolean;
   failedTxsTotalAmount: string | number;
   isProcessing: boolean;
-  isRetry: boolean;
 } => {
-  const history = useHistory<{ order: Order }>();
+  const history = useHistory<{
+    order?: Order;
+    orderParams?: CreateOrderActionData;
+  }>();
   const noProfile = useSelector(noProfileLoaded);
   const results = useSelector(registrationResult);
   const roe = useSelector(roeSelector);
@@ -187,10 +182,6 @@ export const useContext = (): {
   }
 
   const allErrored = isEmpty(regItems) && !isEmpty(errItems);
-  // todo: fix retry for FIO purchases - new order creation, websocket update for new order id, ...
-  // const isRetry =
-  //   paymentProvider === PURCHASE_PROVIDER.FIO && !isEmpty(errItems);
-  const isRetry = false;
 
   const failedTxsTotalAmount =
     (orderStatusData.status === PURCHASE_RESULTS_STATUS.FAILED ||
@@ -309,22 +300,19 @@ export const useContext = (): {
     dispatch(onPurchaseResultsClose());
   };
 
-  const onFinish = async (results: RegistrationResult) => {
-    await apis.orders.update(order.id, {
-      status: results.providerTxStatus || PURCHASE_RESULTS_STATUS.SUCCESS,
-      results,
-    });
-    onPurchaseFinish({
-      results,
-      order,
-      isRetry: true,
-      setRegistration: (results: RegistrationResult) =>
-        dispatch(setRegistration(results)),
-      setProcessing: (isProcessing: boolean) =>
-        dispatch(setProcessing(isProcessing)),
-      fioActionExecuted: (data: FioActionExecuted) =>
-        dispatch(fioActionExecuted(data)),
-      history,
+  const onRetry = () => {
+    const { costUsdc: totalUsdc } = totalCost(cart, roe);
+    history.push({
+      pathname: ROUTES.CHECKOUT,
+      state: {
+        orderParams: {
+          total: totalUsdc,
+          roe,
+          publicKey: paymentWalletPublicKey || userWallets[0].publicKey,
+          paymentProcessor: paymentProvider,
+          items: cartItemsToOrderItems(cart, prices, roe),
+        },
+      },
     });
   };
 
@@ -333,7 +321,7 @@ export const useContext = (): {
     errItems,
     closeText,
     onClose,
-    onFinish,
+    onRetry,
     paymentWallet,
     purchaseStatus: orderStatusData.status,
     paymentProvider,
@@ -350,6 +338,5 @@ export const useContext = (): {
     allErrored,
     failedTxsTotalAmount,
     isProcessing,
-    isRetry,
   };
 };
