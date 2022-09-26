@@ -153,6 +153,8 @@ export const useContext = (): {
   const [error, setError] = useState<string | null>(null);
   const [order, setOrder] = useState<Order | null | undefined>(undefined);
   const [orderError, setOrderError] = useState<ApiError>(null);
+  const [getOrderLoading, setGetOrderLoading] = useState<boolean>(true);
+  const [createOrderLoading, setCreateOrderLoading] = useState<boolean>(true);
 
   const {
     location: { state },
@@ -166,7 +168,6 @@ export const useContext = (): {
   const paymentOption = paymentProvider
     ? PAYMENT_PROVIDER_PAYMENT_OPTION[paymentProvider]
     : null;
-  const orderLoading = order === undefined;
 
   const setWallet = useCallback(
     (paymentWalletPublicKey: string) => {
@@ -192,10 +193,14 @@ export const useContext = (): {
       cartIsRelative(cartItems, result.orderItems || [])
     ) {
       if (result.publicKey) setWallet(result.publicKey);
-      return setOrder(result);
+      setOrder(result);
+      setGetOrderLoading(false);
+      setCreateOrderLoading(false);
+      return;
     }
 
     setOrder(null);
+    setGetOrderLoading(false);
   };
   const createOrder = async (
     paymentWalletPublicKey: string,
@@ -244,10 +249,14 @@ export const useContext = (): {
 
     if (result && result.id) {
       if (result.publicKey) setWallet(result.publicKey);
-      return setOrder(result);
+      setOrderError(null);
+      setOrder(result);
+      setCreateOrderLoading(false);
+      return;
     }
 
     setOrder(null);
+    setCreateOrderLoading(false);
   };
 
   useEffectOnce(
@@ -349,8 +358,8 @@ export const useContext = (): {
       isFree,
     ],
     isAuth &&
-      !order &&
-      !orderLoading &&
+      order === null &&
+      !getOrderLoading &&
       !fioLoading &&
       !!paymentWalletPublicKey &&
       !!fioWallets.length,
@@ -525,7 +534,7 @@ export const useContext = (): {
     isFree,
     beforeSubmitProps,
     fioLoading,
-    orderLoading,
+    orderLoading: getOrderLoading || createOrderLoading,
     error,
     orderError,
     submitDisabled: !!error,

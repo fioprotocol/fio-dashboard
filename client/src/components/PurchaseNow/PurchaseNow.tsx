@@ -43,7 +43,6 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     onFinish,
     setProcessing,
     resetPinConfirm,
-    isRetry,
     fioWallets,
     prices,
     refProfileInfo,
@@ -183,8 +182,6 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     >
       {isWaiting && loading ? (
         <FontAwesomeIcon icon="spinner" spin />
-      ) : isRetry ? (
-        'Try Again'
       ) : (
         'Purchase Now'
       )}

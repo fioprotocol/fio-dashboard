@@ -39,9 +39,8 @@ export const PurchasePage: React.FC = () => {
     allErrored,
     failedTxsTotalAmount,
     isProcessing,
-    isRetry,
     onClose,
-    onFinish,
+    onRetry,
   } = useContext();
 
   return (
@@ -88,8 +87,8 @@ export const PurchasePage: React.FC = () => {
         <ActionButton
           onClose={onClose}
           closeText={closeText}
-          isRetry={isRetry}
-          onFinish={onFinish}
+          isRetry={!isEmpty(errItems)}
+          onRetry={onRetry}
         />
       </div>
       <Processing isProcessing={isProcessing} />
