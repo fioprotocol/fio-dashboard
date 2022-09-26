@@ -4,6 +4,7 @@ const ROUTES: { [route: string]: string } = {
   NOT_FOUND: '/404',
   ERROR: '/error',
   SIGN_IN: '/signin',
+  RESET_PASSWORD: '/reset-password',
 
   ADMIN_HOME: '/admin',
   ADMIN_USERS: '/admin/users',
