@@ -36,11 +36,15 @@ import {
 } from '../../util/cart';
 import MathOp from '../../util/math';
 import { convertFioPrices } from '../../util/prices';
+import { fireAnalyticsEvent } from '../../util/analytics';
 
 import { useEffectOnce } from '../../hooks/general';
 
 import { ROUTES } from '../../constants/routes';
-import { WALLET_CREATED_FROM } from '../../constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  WALLET_CREATED_FROM,
+} from '../../constants/common';
 import { log } from '../../util/general';
 
 import { FioRegPricesResponse } from '../../api/responses';
@@ -276,6 +280,7 @@ export const useContext = (): UseContextReturnType => {
         handlePriceChange(!isEqualPrice);
 
         if (isEqualPrice) return true;
+        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PRICE_CHANGE);
 
         dispatch(setCartItems(updatedCartItems));
         dispatch(getPrices());

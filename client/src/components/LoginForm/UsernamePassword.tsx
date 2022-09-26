@@ -11,8 +11,10 @@ import classnames from 'classnames';
 import Link from '../Link/Link';
 import Input from '../Input/Input';
 import FormHeader from '../FormHeader/FormHeader';
+import PageTitle from '../PageTitle/PageTitle';
 
 import { ROUTES } from '../../constants/routes';
+import { LINKS } from '../../constants/labels';
 
 import { usernamePasswordValidation } from './components/validation';
 import { isEdgeAuthenticationError, isEdgeNetworkError } from '../../util/edge';
@@ -172,6 +174,7 @@ const UsernamePassword: React.FC<Props> = props => {
 
   const renderForgotPass = () => (
     <div className={classes.forgotPass}>
+      {isForgotPass && <PageTitle link={LINKS.RESET_PASSWORD} isVirtualPage />}
       <FontAwesomeIcon icon="ban" className={classes.icon} />
       <FormHeader
         title="Forgot Password?"

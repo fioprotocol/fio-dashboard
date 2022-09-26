@@ -30,6 +30,7 @@ export const ANALYTICS_EVENT_ACTIONS = {
   REMOVE_ITEM_FROM_CART: 'remove_from_cart',
   ADD_ITEM_TO_CART: 'add_to_cart',
   BEGIN_CHECKOUT: 'begin_checkout',
+  PRICE_CHANGE: 'price_change',
   PURCHASE_STARTED: 'purchase_started',
   PURCHASE_FINISHED: 'purchase',
   PURCHASE_FINISHED_PARTIAL: 'purchase_partial',
