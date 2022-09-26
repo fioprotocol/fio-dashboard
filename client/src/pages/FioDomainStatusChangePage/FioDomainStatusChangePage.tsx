@@ -105,7 +105,10 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
   if (resultsData)
     return (
       <>
-        <PageTitle link={LINKS.FIO_DOMAIN_STATUS_CHANGE_CONFIRMATION} />
+        <PageTitle
+          link={LINKS.FIO_DOMAIN_STATUS_CHANGE_CONFIRMATION}
+          isVirtualPage
+        />
         <SetVisibilityResults
           results={resultsData}
           title={

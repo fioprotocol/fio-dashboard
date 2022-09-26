@@ -9,24 +9,28 @@ import { fireAnalyticsEvent } from '../../util/analytics';
 
 type Props = {
   link: string;
+  isVirtualPage?: boolean;
 };
 
 const PageTitle: React.FC<Props> = props => {
-  const { link } = props;
+  const { link, isVirtualPage = false } = props;
 
   const title = LINK_TITLES[link]
     ? `${APP_TITLE} - ${LINK_TITLES[link]}`
     : APP_TITLE;
 
   useEffect(() => {
+    if (!isVirtualPage) {
+      return;
+    }
     const path = ROUTES[link];
     if (link && path) {
-      fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PAGE_VIEW, {
+      fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.VIRTUAL_PAGE_VIEW, {
         page_title: title,
         page_location: path,
       });
     }
-  }, [link, title]);
+  }, [link, title, isVirtualPage]);
 
   return (
     <Helmet>

@@ -20,7 +20,7 @@ const GenericErrorModal: React.FC<Props> = props => {
   } = genericErrorData || {};
   return (
     <>
-      {showGenericError && <PageTitle link={LINKS.ERROR} />}
+      {showGenericError && <PageTitle link={LINKS.ERROR} isVirtualPage />}
       <DangerModal
         title={title}
         buttonText={buttonText}

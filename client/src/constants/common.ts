@@ -58,6 +58,7 @@ export const ANALYTICS_EVENT_ACTIONS = {
   ENABLE_TWO_FACTOR: 'sec_2fa',
   RECOVERY: 'sec_recovery',
   PAGE_VIEW: 'page_view',
+  VIRTUAL_PAGE_VIEW: 'virtual_page_view',
   CHAIN_ERROR: 'chain_error',
 };
 

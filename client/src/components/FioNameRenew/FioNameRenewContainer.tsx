@@ -25,10 +25,7 @@ import { convertFioPrices } from '../../util/prices';
 import { hasFioAddressDelimiter } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
 import MathOp from '../../util/math';
-import {
-  RENEW_PAGE_LINK,
-  RENEW_PAGE_CONFIRMATION_LINK,
-} from '../../constants/labels';
+import { RENEW_PAGE_CONFIRMATION_LINK } from '../../constants/labels';
 
 import { ContainerProps } from './types';
 import { ResultsData } from '../common/TransactionResults/types';
@@ -108,7 +105,10 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
   if (resultsData)
     return (
       <>
-        <PageTitle link={RENEW_PAGE_CONFIRMATION_LINK[fioNameType]} />
+        <PageTitle
+          link={RENEW_PAGE_CONFIRMATION_LINK[fioNameType]}
+          isVirtualPage
+        />
         <RenewResults
           results={resultsData}
           title={resultsData.error ? 'Renewed Failed!' : 'Renewed!'}
@@ -125,7 +125,6 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
         title="Renew Now"
         link={MANAGE_PAGE_REDIRECT[fioNameType]}
       >
-        <PageTitle link={RENEW_PAGE_LINK[fioNameType]} />
         <InfoBadge
           message={error}
           show={!!error}
@@ -143,7 +142,6 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
 
   return (
     <>
-      <PageTitle link={RENEW_PAGE_LINK[fioNameType]} />
       {currentWallet.from === WALLET_CREATED_FROM.EDGE ? (
         <RenewEdgeWallet
           fioWallet={currentWallet}

@@ -165,7 +165,7 @@ const PaymentDetailsPage: React.FC<ContainerProps & LocationProps> = props => {
   if (resultsData)
     return (
       <>
-        <PageTitle link={LINKS.PAYMENT_DETAILS_CONFIRMATION} />
+        <PageTitle link={LINKS.PAYMENT_DETAILS_CONFIRMATION} isVirtualPage />
         <PaymentDetailsResults
           results={resultsData}
           title="Payment Details"

@@ -197,7 +197,7 @@ const LoginForm: React.FC<Props> = props => {
 
   return (
     <>
-      <PageTitle link={LINKS.SIGN_IN} />
+      <PageTitle link={LINKS.SIGN_IN} isVirtualPage />
       <TwoFactorDangerModal
         show={showBlockModal}
         onClose={onCloseBlockModal}

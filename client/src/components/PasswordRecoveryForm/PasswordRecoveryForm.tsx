@@ -208,7 +208,10 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
 
   const renderSkip = () => (
     <div className={classes.skip}>
-      <PageTitle link={LINKS.CREATE_ACCOUNT_SECRET_QUESTIONS_SKIP} />
+      <PageTitle
+        link={LINKS.CREATE_ACCOUNT_SECRET_QUESTIONS_SKIP}
+        isVirtualPage
+      />
       <FontAwesomeIcon icon="ban" className={classes.icon} />
       <FormHeader
         title="Sure You Want to Skip"
@@ -384,6 +387,7 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
               ? LINKS.CREATE_ACCOUNT_SECRET_QUESTIONS
               : LINKS.CREATE_ACCOUNT_SECRET_ANSWERS
           }
+          isVirtualPage
         />
         <Form
           onSubmit={onSubmit}

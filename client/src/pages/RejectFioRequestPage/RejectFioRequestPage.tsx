@@ -125,7 +125,7 @@ const RejectFioRequestPage: React.FC<Props &
   if (resultsData)
     return (
       <>
-        <PageTitle link={LINKS.REJECT_FIO_REQUEST_CONFIRMATION} />
+        <PageTitle link={LINKS.REJECT_FIO_REQUEST_CONFIRMATION} isVirtualPage />
         <RejectFioRequestResults
           title={resultsData.error != null ? 'Rejection Failed!' : 'Rejected!'}
           onClose={onCloseResults}

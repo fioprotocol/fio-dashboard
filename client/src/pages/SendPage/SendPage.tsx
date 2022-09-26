@@ -157,7 +157,7 @@ const SendPage: React.FC<ContainerProps> = props => {
   if (resultsData)
     return (
       <>
-        <PageTitle link={LINKS.SEND_CONFIRMATION} />
+        <PageTitle link={LINKS.SEND_CONFIRMATION} isVirtualPage />
         <TokenTransferResults
           results={resultsData}
           title={resultsData.error ? 'FIO Tokens not Sent' : 'FIO Tokens Sent'}

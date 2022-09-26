@@ -120,7 +120,10 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
   if (resultsData)
     return (
       <>
-        <PageTitle link={LINKS.FIO_ADDRESS_ADD_BUNDLES_CONFIRMATION} />
+        <PageTitle
+          link={LINKS.FIO_ADDRESS_ADD_BUNDLES_CONFIRMATION}
+          isVirtualPage
+        />
         <Results
           results={resultsData}
           title={

@@ -15,7 +15,6 @@ import { ROUTES } from '../../constants/routes';
 import {
   fioNameLabels,
   TRANSFER_PAGE_CONFIRMATION_LINK,
-  TRANSFER_PAGE_LINK,
 } from '../../constants/labels';
 import {
   CONFIRM_PIN_ACTIONS,
@@ -147,7 +146,10 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   if (resultsData)
     return (
       <>
-        <PageTitle link={TRANSFER_PAGE_CONFIRMATION_LINK[fioNameType]} />
+        <PageTitle
+          link={TRANSFER_PAGE_CONFIRMATION_LINK[fioNameType]}
+          isVirtualPage
+        />
         <TransferResults
           pageName={fioNameType}
           results={resultsData}
@@ -171,7 +173,6 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
 
   return (
     <>
-      <PageTitle link={TRANSFER_PAGE_LINK[fioNameType]} />
       {currentWallet.from === WALLET_CREATED_FROM.EDGE ? (
         <EdgeConfirmAction
           action={CONFIRM_PIN_ACTIONS.TRANSFER}
