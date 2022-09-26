@@ -145,7 +145,7 @@ const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
   if (resultsData)
     return (
       <>
-        <PageTitle link={LINKS.FIO_TOKENS_REQUEST_CONFIRMATION} />
+        <PageTitle link={LINKS.FIO_TOKENS_REQUEST_CONFIRMATION} isVirtualPage />
         <TokenTransferResults
           results={resultsData}
           title={resultsData.error ? 'Request not Sent' : 'Request Sent'}

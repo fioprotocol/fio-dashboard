@@ -112,7 +112,7 @@ const WalletDetailsModal: React.FC<Props> = props => {
 
   return (
     <>
-      <PageTitle link={LINKS.FIO_WALLET_DETAILS} />
+      <PageTitle link={LINKS.FIO_WALLET_DETAILS} isVirtualPage />
       <Modal
         show={
           show &&

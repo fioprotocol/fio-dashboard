@@ -186,7 +186,7 @@ const SignNft: React.FC<ContainerProps> = props => {
   if (resultsData && !isEdit)
     return (
       <>
-        <PageTitle link={LINKS.FIO_ADDRESS_SIGN_CONFIRMATION} />
+        <PageTitle link={LINKS.FIO_ADDRESS_SIGN_CONFIRMATION} isVirtualPage />
         <SignResults
           results={resultsData}
           title="Signed!"

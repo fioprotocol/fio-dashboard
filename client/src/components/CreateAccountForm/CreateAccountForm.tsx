@@ -547,7 +547,10 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     const { step } = this.state;
     return (
       <FormModalWrapper>
-        <PageTitle link={STEPS_LINK[step]} />
+        <PageTitle
+          link={STEPS_LINK[step]}
+          isVirtualPage={step !== STEPS.EMAIL_PASSWORD}
+        />
         <Form
           mutators={{ setDataMutator }}
           validate={this.validate}

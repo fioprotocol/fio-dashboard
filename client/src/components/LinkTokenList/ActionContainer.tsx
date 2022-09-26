@@ -52,7 +52,7 @@ const ActionContainer: React.FC<Props> = props => {
   if (results)
     return (
       <>
-        <PageTitle link={LINKS.ADD_TOKEN_CONFIRMATION} />
+        <PageTitle link={LINKS.ADD_TOKEN_CONFIRMATION} isVirtualPage />
         <LinkTokenListResults
           fioCryptoHandle={fioCryptoHandle}
           results={results}
