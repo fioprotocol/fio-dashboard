@@ -65,6 +65,7 @@ const ROUTES: { [route: string]: string } = {
   FIO_ADDRESS_ADD_BUNDLES: '/add-bundles',
   FIO_ADDRESS_ADD_BUNDLES_CONFIRMATION: '/add-bundles-confirmation',
   FIO_DOMAIN_RENEW: '/fio-domain-renew',
+  FIO_DOMAIN_RENEW_CONFIRMATION: '/fio-domain-renew-confirmation',
   FIO_NAME_RENEW_RESULTS: '/fio-name-results',
   FIO_ADDRESS_SIGNATURES: '/nft-signatures', // ?address=
   FIO_ADDRESS_SIGN: '/sign-nft', // ?address= (not required)
