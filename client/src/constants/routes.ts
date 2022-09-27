@@ -10,14 +10,17 @@ const ROUTES: { [route: string]: string } = {
   ADMIN_USERS: '/admin/users',
   ADMIN_ORDERS: '/admin/orders',
   ADMIN_LOGIN: '/admin/login',
-  ADMIN_CONFIRM_EMAIL: '/confirm-admin-email', // ?hash=
-  ADMIN_RESET_PASSWORD: '/reset-admin-password', // ?hash=
+  ADMIN_CONFIRM_EMAIL: '/confirm-admin-email', // ?hash=&email=
+  ADMIN_CONFIRM_EMAIL_OLD: '/confirm-admin-email/:hash', // ?email=
+  ADMIN_RESET_PASSWORD: '/reset-admin-password', // ?hash=&email=
+  ADMIN_RESET_PASSWORD_OLD: '/reset-admin-password/:hash', // ?email=
   ADMIN_REGULAR_USERS: '/admin/regular-users',
   ADMIN_PROFILE: '/admin/profile',
   ADMIN_ACCOUNTS: '/admin/accounts',
   ADMIN_SEARCH_RESULT: '/admin/search-result',
 
   CONFIRM_EMAIL: '/confirm-email', // ?hash=
+  CONFIRM_EMAIL_OLD: '/confirm-email/:hash', // ?refCode= (not required)
   CONFIRM_EMAIL_RESULT: '/confirm-email-result',
   PROFILE: '/profile',
   PASSWORD_RECOVERY: '/password-recovery',
@@ -31,6 +34,7 @@ const ROUTES: { [route: string]: string } = {
   IS_NEW_USER: '/email-confirm-gate',
   NEW_EMAIL_NOT_VERIFIED: '/update-email-confirm-gate',
   CONFIRM_UPDATED_EMAIL: '/confirm-updated-email', // ?hash=
+  CONFIRM_UPDATED_EMAIL_OLD: '/confirm-updated-email/:hash',
 
   FIO_ADDRESSES_SELECTION: '/fio-crypto-handles-selection',
   FIO_DOMAINS_SELECTION: '/fio-domains-selection',
@@ -41,6 +45,7 @@ const ROUTES: { [route: string]: string } = {
   FIO_DOMAIN: '/fio-domain',
   FIO_REQUESTS: '/fio-requests',
   FIO_WALLET: '/fio-wallet', // ?publicKey=
+  FIO_WALLET_OLD: '/fio-wallet/:publicKey', // ?publicKey=
   FIO_WALLET_DETAILS: '/fio-wallet-details',
   TOKENS: '/tokens',
   IMPORT_WALLET: '/import',
@@ -64,14 +69,17 @@ const ROUTES: { [route: string]: string } = {
   FIO_DOMAIN_STATUS_CHANGE_RESULTS: '/fio-domain-status-results',
   FIO_ADDRESS_ADD_BUNDLES: '/add-bundles',
   FIO_ADDRESS_ADD_BUNDLES_CONFIRMATION: '/add-bundles-confirmation',
+  FIO_ADDRESS_ADD_BUNDLES_OLD: '/add-bundles/:name',
   FIO_DOMAIN_RENEW: '/fio-domain-renew',
   FIO_DOMAIN_RENEW_CONFIRMATION: '/fio-domain-renew-confirmation',
+  FIO_DOMAIN_RENEW_OLD: '/fio-domain-renew/:name',
   FIO_NAME_RENEW_RESULTS: '/fio-name-results',
   FIO_ADDRESS_SIGNATURES: '/nft-signatures', // ?address=
   FIO_ADDRESS_SIGN: '/sign-nft', // ?address= (not required)
   FIO_ADDRESS_SIGN_CONFIRMATION: '/sign-nft-confirmation', // ?address=&id=
   FIO_ADDRESS_NFT_EDIT: '/nft-signatures-edit',
   FIO_REQUEST: '/fio-request',
+  FIO_REQUEST_OLD: '/fio-wallet/:publicKey/fio-request/:id',
 
   SEND: '/send', // ?publicKey=
   SEND_CONFIRMATION: '/send-confirmation',
