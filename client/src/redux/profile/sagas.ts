@@ -20,6 +20,7 @@ import {
   LOGOUT_SUCCESS,
   NONCE_SUCCESS,
   PROFILE_SUCCESS,
+  RESET_ADMIN_PASSWORD_SUCCESS,
 } from './actions';
 
 import { closeLoginModal } from '../modal/actions';
@@ -77,7 +78,10 @@ export function* loginSuccess(history: History, api: Api): Generator {
       locationState.from &&
       locationState.from.pathname
     ) {
-      history.push(locationState.from.pathname);
+      history.push({
+        pathname: locationState.from.pathname,
+        search: locationState.from.search || '',
+      });
     }
     if (hasRedirectTo) {
       history.push(hasRedirectTo.pathname, hasRedirectTo.state);
@@ -174,5 +178,14 @@ export function* adminConfirmSuccess(history: History, api: Api): Generator {
     yield put<Action>(loadAdminProfile());
 
     history.push(ROUTES.ADMIN_HOME);
+  });
+}
+
+export function* adminResetPasswordSuccess(
+  history: History,
+  api: Api,
+): Generator {
+  yield takeEvery(RESET_ADMIN_PASSWORD_SUCCESS, function(action: Action) {
+    history.replace(ROUTES.ADMIN_LOGIN, {});
   });
 }

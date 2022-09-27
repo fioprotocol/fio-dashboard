@@ -7,9 +7,7 @@ import { setCartItems } from '../../redux/cart/actions';
 import {
   onPurchaseResultsClose,
   setRegistration,
-  setProcessing,
 } from '../../redux/registrations/actions';
-import { fioActionExecuted } from '../../redux/fio/actions';
 
 import {
   registrationResult,
@@ -17,24 +15,19 @@ import {
   roe as roeSelector,
   prices as pricesSelector,
 } from '../../redux/registrations/selectors';
-import { isAuthenticated } from '../../redux/profile/selectors';
+import { noProfileLoaded } from '../../redux/profile/selectors';
 import { containedFlowQueryParams } from '../../redux/containedFlow/selectors';
 import {
   cartItems,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
-import { order as orderSelector } from '../../redux/order/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 
-import {
-  onPurchaseFinish,
-  transformPurchaseResults,
-} from '../../util/purchase';
-import { totalCost } from '../../utils';
+import { transformPurchaseResults } from '../../util/purchase';
+import { cartItemsToOrderItems, totalCost } from '../../util/cart';
+import { fireAnalyticsEvent } from '../../util/analytics';
 import { useEffectOnce } from '../../hooks/general';
 import { useWebsocket } from '../../hooks/websocket';
-
-import apis from '../../api';
 
 import MathOp from '../../util/math';
 
@@ -44,18 +37,22 @@ import {
   PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from '../../constants/purchase';
-import { CURRENCY_CODES } from '../../constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CURRENCY_CODES,
+} from '../../constants/common';
 import { WS_ENDPOINTS } from '../../constants/websocket';
 
 import {
-  FioActionExecuted,
   FioWalletDoublet,
   RegistrationResult,
   PaymentProvider,
   PurchaseTxStatus,
   CartItem,
+  Order,
 } from '../../types';
 import { ErrBadgesProps } from './types';
+import { CreateOrderActionData } from '../../redux/types';
 
 const ERROR_CODES = {
   SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
@@ -66,7 +63,7 @@ export const useContext = (): {
   errItems: CartItem[];
   closeText: string;
   onClose: () => void;
-  onFinish: (results: RegistrationResult) => Promise<void>;
+  onRetry: () => void;
   paymentWallet: FioWalletDoublet;
   purchaseStatus: PurchaseTxStatus;
   paymentProvider: PaymentProvider;
@@ -83,16 +80,17 @@ export const useContext = (): {
   allErrored: boolean;
   failedTxsTotalAmount: string | number;
   isProcessing: boolean;
-  isRetry: boolean;
 } => {
-  const history = useHistory();
-  const isAuth = useSelector(isAuthenticated);
+  const history = useHistory<{
+    order?: Order;
+    orderParams?: CreateOrderActionData;
+  }>();
+  const noProfile = useSelector(noProfileLoaded);
   const results = useSelector(registrationResult);
   const roe = useSelector(roeSelector);
   const containedFlowParams = useSelector(containedFlowQueryParams);
   const isProcessing = useSelector(isProcessingSelector);
   const cart = useSelector(cartItems);
-  const order = useSelector(orderSelector);
   const prices = useSelector(pricesSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const userWallets = useSelector(fioWalletsSelector);
@@ -109,6 +107,11 @@ export const useContext = (): {
   }>({ status: results?.providerTxStatus || PURCHASE_RESULTS_STATUS.PENDING });
 
   const [prevCart, setPrevCart] = useState<CartItem[]>(cart);
+
+  const {
+    location: { state },
+  } = history;
+  const { order } = state || {};
 
   const onStatusUpdate = (data: {
     orderStatus: PurchaseTxStatus;
@@ -128,10 +131,10 @@ export const useContext = (): {
   });
 
   useEffect(() => {
-    if (!isAuth) {
+    if (noProfile) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
-  }, [isAuth, history]);
+  }, [noProfile, history]);
 
   useEffectOnce(() => {
     if (noResults) {
@@ -179,10 +182,6 @@ export const useContext = (): {
   }
 
   const allErrored = isEmpty(regItems) && !isEmpty(errItems);
-  // todo: fix retry for FIO purchases - new order creation, websocket update for new order id, ...
-  // const isRetry =
-  //   paymentProvider === PURCHASE_PROVIDER.FIO && !isEmpty(errItems);
-  const isRetry = false;
 
   const failedTxsTotalAmount =
     (orderStatusData.status === PURCHASE_RESULTS_STATUS.FAILED ||
@@ -240,6 +239,25 @@ export const useContext = (): {
       }, {} as ErrBadgesProps)
     : {};
 
+  useEffectOnce(
+    () => {
+      if (
+        orderStatusData.status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS
+      ) {
+        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_PARTIAL);
+      }
+      if (orderStatusData.status === PURCHASE_RESULTS_STATUS.FAILED) {
+        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_FAILED);
+      }
+    },
+    [orderStatusData],
+    [
+      PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
+      PURCHASE_RESULTS_STATUS.FAILED,
+      PURCHASE_RESULTS_STATUS.CANCELED,
+    ].includes(orderStatusData.status),
+  );
+
   useEffectOnce(() => {
     dispatch(setCartItems(updatedCart));
   }, [setCartItems, updatedCart]);
@@ -282,21 +300,19 @@ export const useContext = (): {
     dispatch(onPurchaseResultsClose());
   };
 
-  const onFinish = async (results: RegistrationResult) => {
-    await apis.orders.update(order.id, {
-      status: results.providerTxStatus || PURCHASE_RESULTS_STATUS.SUCCESS,
-      results,
-    });
-    onPurchaseFinish({
-      results,
-      isRetry: true,
-      setRegistration: (results: RegistrationResult) =>
-        dispatch(setRegistration(results)),
-      setProcessing: (isProcessing: boolean) =>
-        dispatch(setProcessing(isProcessing)),
-      fioActionExecuted: (data: FioActionExecuted) =>
-        dispatch(fioActionExecuted(data)),
-      history,
+  const onRetry = () => {
+    const { costUsdc: totalUsdc } = totalCost(cart, roe);
+    history.push({
+      pathname: ROUTES.CHECKOUT,
+      state: {
+        orderParams: {
+          total: totalUsdc,
+          roe,
+          publicKey: paymentWalletPublicKey || userWallets[0].publicKey,
+          paymentProcessor: paymentProvider,
+          items: cartItemsToOrderItems(cart, prices, roe),
+        },
+      },
     });
   };
 
@@ -305,7 +321,7 @@ export const useContext = (): {
     errItems,
     closeText,
     onClose,
-    onFinish,
+    onRetry,
     paymentWallet,
     purchaseStatus: orderStatusData.status,
     paymentProvider,
@@ -322,6 +338,5 @@ export const useContext = (): {
     allErrored,
     failedTxsTotalAmount,
     isProcessing,
-    isRetry,
   };
 };

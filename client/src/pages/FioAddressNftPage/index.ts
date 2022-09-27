@@ -24,8 +24,8 @@ const reduxConnect = connect(
         fio: { nftList },
       } = state;
       const {
-        match: {
-          params: { address, id },
+        location: {
+          query: { address, id },
         },
       } = ownProps;
 

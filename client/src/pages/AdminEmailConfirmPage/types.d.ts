@@ -2,8 +2,13 @@ import { GeneratedSecret } from 'speakeasy';
 
 import { AdminAuthResponse } from '../../types';
 
-type MatchParams = {
-  hash: string;
+type LocationProps = {
+  location: {
+    query: {
+      hash: string;
+      email?: string;
+    };
+  };
 };
 
 export type InitialValues = {

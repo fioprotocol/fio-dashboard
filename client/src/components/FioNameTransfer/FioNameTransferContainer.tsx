@@ -7,11 +7,15 @@ import InfoBadge from '../InfoBadge/InfoBadge';
 import { TransferForm } from './components/FioNameTransferForm/FioNameTransferForm';
 import TransferResults from '../common/TransactionResults/components/TransferResults';
 import LedgerWalletActionNotSupported from '../LedgerWalletActionNotSupported';
+import PageTitle from '../PageTitle/PageTitle';
 
 import { BADGE_TYPES } from '../Badge/Badge';
 import { ERROR_TYPES } from '../common/TransactionResults/constants';
 import { ROUTES } from '../../constants/routes';
-import { fioNameLabels } from '../../constants/labels';
+import {
+  fioNameLabels,
+  TRANSFER_PAGE_CONFIRMATION_LINK,
+} from '../../constants/labels';
 import {
   CONFIRM_PIN_ACTIONS,
   MANAGE_PAGE_REDIRECT,
@@ -61,6 +65,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   const [submitting, setSubmitting] = useState(false);
   const [submitData, setSubmitData] = useState<{
     transferAddress: string;
+    fioNameType: string;
   } | null>(null);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
@@ -108,7 +113,7 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
   };
 
   const onSubmit = (transferAddress: string) => {
-    setSubmitData({ transferAddress });
+    setSubmitData({ transferAddress, fioNameType });
     setSubmitting(true);
   };
   const onCancel = () => {
@@ -140,19 +145,25 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
 
   if (resultsData)
     return (
-      <TransferResults
-        pageName={fioNameType}
-        results={resultsData}
-        title={
-          resultsData.error
-            ? 'Ownership Transfer Failed!'
-            : 'Ownership Transferred!'
-        }
-        hasAutoWidth={true}
-        onClose={onResultsClose}
-        onRetry={onResultsRetry}
-        errorType={ERROR_TYPES.TRANSFER_ERROR}
-      />
+      <>
+        <PageTitle
+          link={TRANSFER_PAGE_CONFIRMATION_LINK[fioNameType]}
+          isVirtualPage
+        />
+        <TransferResults
+          pageName={fioNameType}
+          results={resultsData}
+          title={
+            resultsData.error
+              ? 'Ownership Transfer Failed!'
+              : 'Ownership Transferred!'
+          }
+          hasAutoWidth={true}
+          onClose={onResultsClose}
+          onRetry={onResultsRetry}
+          errorType={ERROR_TYPES.TRANSFER_ERROR}
+        />
+      </>
     );
 
   if (!publicKey && !processing)

@@ -45,6 +45,7 @@ export type SendTokensProps = {
   contactsList: string[];
   initialValues?: InitialValues;
   onSubmit: (values: SendTokensValues) => void;
+  isMemoDisabled: boolean;
 };
 
 export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {

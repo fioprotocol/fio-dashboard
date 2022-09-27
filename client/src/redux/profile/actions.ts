@@ -284,3 +284,20 @@ export const confirmAdminEmail = (values: {
   ],
   promise: (api: Api) => api.auth.confirmAdminByEmail(values),
 });
+
+export const RESET_ADMIN_PASSWORD_REQUEST = `${prefix}/RESET_ADMIN_PASSWORD_REQUEST`;
+export const RESET_ADMIN_PASSWORD_SUCCESS = `${prefix}/RESET_ADMIN_PASSWORD_SUCCESS`;
+export const RESET_ADMIN_PASSWORD_FAILURE = `${prefix}/RESET_ADMIN_PASSWORD_FAILURE`;
+
+export const resetAdminPassword = (values: {
+  email: string;
+  hash: string;
+  password: string;
+}): CommonPromiseAction => ({
+  types: [
+    RESET_ADMIN_PASSWORD_REQUEST,
+    RESET_ADMIN_PASSWORD_SUCCESS,
+    RESET_ADMIN_PASSWORD_FAILURE,
+  ],
+  promise: (api: Api) => api.auth.resetAdminPassword(values),
+});

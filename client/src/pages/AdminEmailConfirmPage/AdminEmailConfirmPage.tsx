@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import { useLocation, useParams } from 'react-router';
 import { GeneratedSecret } from 'speakeasy';
 
 import AdminEmailConfirmForm from './components/AdminEmailConfirmForm';
@@ -10,16 +9,14 @@ import apis from '../../api';
 import useEffectOnce from '../../hooks/general';
 import TFAHelper from '../../helpers/tfa';
 
-import { MatchParams, PageProps, SubmitValues } from './types';
+import { LocationProps, PageProps, SubmitValues } from './types';
 
-const AdminEmailConfirmPage: React.FC<PageProps> = props => {
-  const { confirmAdminEmail, loading } = props;
-
+const AdminEmailConfirmPage: React.FC<PageProps & LocationProps> = props => {
   const {
-    // @ts-ignore // todo: research, mb update "react-router"
-    query: { email },
-  } = useLocation();
-  const { hash }: MatchParams = useParams();
+    confirmAdminEmail,
+    loading,
+    location: { query: { hash, email } = {} },
+  } = props;
 
   const [initialValues, setInitialValues] = useState(null);
   const [isTokenValidationLoading, setIsTokenValidationLoading] = useState(

@@ -11,8 +11,12 @@ import apis from '../../api';
 
 import { FeePrice, FioNameItemProps } from '../../types';
 
-type MatchParams = {
-  id: string;
+type LocationProps = {
+  location: {
+    query: {
+      name: string;
+    };
+  };
 };
 
 type Props = {
@@ -21,9 +25,10 @@ type Props = {
 };
 
 const FioDomainRenewPage: React.FC<Props &
-  RouteComponentProps<MatchParams>> = props => {
-  const { fioNameList, match, history, fees } = props;
-  const { id: name } = match.params;
+  RouteComponentProps &
+  LocationProps> = props => {
+  const { fioNameList, location, history, fees } = props;
+  const { name } = location.query;
 
   return (
     <FioNamesInitWrapper>

@@ -36,7 +36,7 @@ const AddBundlesEdgeWallet: React.FC<Props> = props => {
 
   return (
     <EdgeConfirmAction
-      action={CONFIRM_PIN_ACTIONS.SEND}
+      action={CONFIRM_PIN_ACTIONS.ADD_BUNDLES}
       setProcessing={setProcessing}
       onSuccess={onSuccess}
       onCancel={onCancel}

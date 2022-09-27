@@ -3,8 +3,13 @@ import { RouteComponentProps } from 'react-router-dom';
 
 import { FeePrice, FioAddressDoublet, FioWalletDoublet } from '../../types';
 
-type MatchProps = {
-  publicKey: string;
+export type LocationProps = {
+  location: {
+    query: {
+      publicKey: string;
+      fioRequestId?: string;
+    };
+  };
 };
 
 export type PaymentDetailsValues = {
@@ -68,7 +73,7 @@ export type PaymentDetailsProps = {
   onSubmit: (values: PaymentDetailsValues) => void;
 };
 
-export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
+export interface ContainerOwnProps extends RouteComponentProps {
   children?: React.ReactNode;
 }
 

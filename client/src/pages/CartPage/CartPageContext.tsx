@@ -5,8 +5,8 @@ import isEmpty from 'lodash/isEmpty';
 
 import { deleteItem, setCartItems, setWallet } from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
-import { createOrder, clearOrder } from '../../redux/order/actions';
 import { getPrices } from '../../redux/registrations/actions';
+import { showGenericErrorModal } from '../../redux/modal/actions';
 
 import {
   cartItems as cartItemsSelector,
@@ -29,15 +29,22 @@ import {
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
 
-import { handleFreeAddressCart, totalCost } from '../../utils';
+import {
+  cartItemsToOrderItems,
+  handleFreeAddressCart,
+  totalCost,
+} from '../../util/cart';
 import MathOp from '../../util/math';
 import { convertFioPrices } from '../../util/prices';
+import { fireAnalyticsEvent } from '../../util/analytics';
 
 import { useEffectOnce } from '../../hooks/general';
 
 import { ROUTES } from '../../constants/routes';
-import { ACTIONS } from '../../constants/fio';
-import { CURRENCY_CODES, WALLET_CREATED_FROM } from '../../constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  WALLET_CREATED_FROM,
+} from '../../constants/common';
 import { log } from '../../util/general';
 
 import { FioRegPricesResponse } from '../../api/responses';
@@ -61,7 +68,8 @@ type UseContextReturnType = {
   hasLowBalance?: boolean;
   isFree: boolean;
   isPriceChanged: boolean;
-  loading: boolean;
+  selectedPaymentProvider: PaymentProvider;
+  disabled: boolean;
   paymentWalletPublicKey: string;
   prices: Prices;
   roe: number;
@@ -101,6 +109,10 @@ export const useContext = (): UseContextReturnType => {
   const [isPriceChanged, handlePriceChange] = useState(false);
   const [isUpdatingPrices, setIsUpdatingPrices] = useState(false);
   const [updatingPricesHasError, setUpdatingPricesHasError] = useState(false);
+  const [
+    selectedPaymentProvider,
+    setSelectedPaymentProvider,
+  ] = useState<PaymentProvider | null>(null);
 
   const handleFreeAddressCartFn = () =>
     handleFreeAddressCart({
@@ -268,6 +280,7 @@ export const useContext = (): UseContextReturnType => {
         handlePriceChange(!isEqualPrice);
 
         if (isEqualPrice) return true;
+        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PRICE_CHANGE);
 
         dispatch(setCartItems(updatedCartItems));
         dispatch(getPrices());
@@ -282,50 +295,29 @@ export const useContext = (): UseContextReturnType => {
     }
   };
 
-  const checkout = (paymentProvider: PaymentProvider) => {
+  const checkout = async (paymentProvider: PaymentProvider) => {
     const { costUsdc: totalUsdc } = totalCost(cartItems, roe);
 
-    dispatch(
-      createOrder({
+    try {
+      await apis.orders.create({
         total: totalUsdc,
         roe,
         publicKey: paymentWalletPublicKey || userWallets[0].publicKey,
         paymentProcessor: paymentProvider,
-        items: cartItems.map(
-          ({ address, domain, costNativeFio, costUsdc, hasCustomDomain }) => {
-            const data: {
-              hasCustomDomain?: boolean;
-              hasCustomDomainFee?: number;
-            } = {};
+        items: cartItemsToOrderItems(cartItems, prices, roe),
+      });
 
-            if (hasCustomDomain) {
-              data.hasCustomDomain = hasCustomDomain;
-              data.hasCustomDomainFee = new MathOp(costNativeFio)
-                .sub(prices.nativeFio.address)
-                .toNumber();
-            }
-
-            return {
-              action: address
-                ? ACTIONS.registerFioAddress
-                : ACTIONS.registerFioDomain,
-              address,
-              domain,
-              nativeFio: `${costNativeFio || 0}`,
-              price: convertFioPrices(costNativeFio || 0, roe).usdc,
-              priceCurrency: CURRENCY_CODES.USDC,
-              data,
-            };
-          },
-        ),
-      }),
-    );
-
-    return history.push(ROUTES.CHECKOUT, { paymentProvider });
+      return history.push(ROUTES.CHECKOUT);
+    } catch (e) {
+      dispatch(showGenericErrorModal());
+    }
   };
 
   const onPaymentChoose = async (paymentProvider: PaymentProvider) => {
-    if ((await allowCheckout()) && paymentProvider) checkout(paymentProvider);
+    setSelectedPaymentProvider(paymentProvider);
+    if ((await allowCheckout()) && paymentProvider)
+      await checkout(paymentProvider);
+    setSelectedPaymentProvider(null);
   };
 
   useEffectOnce(() => {
@@ -343,8 +335,7 @@ export const useContext = (): UseContextReturnType => {
         dispatch(setWallet(userWallets[0].publicKey));
       }
     }
-    dispatch(clearOrder());
-  }, [userWallets, dispatch, refreshBalance, setWallet, clearOrder]);
+  }, [userWallets, dispatch, refreshBalance, setWallet]);
 
   // Set wallet with the highest balance enough for FIO purchase
   useEffect(() => {
@@ -372,7 +363,8 @@ export const useContext = (): UseContextReturnType => {
     hasLowBalance,
     walletCount,
     isFree,
-    loading: loading || isUpdatingPrices,
+    selectedPaymentProvider,
+    disabled: loading || isUpdatingPrices || !!selectedPaymentProvider,
     totalCartAmount,
     isPriceChanged,
     totalCartNativeAmount,

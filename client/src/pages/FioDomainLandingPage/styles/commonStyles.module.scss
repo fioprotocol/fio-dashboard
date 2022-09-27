@@ -1,0 +1,10 @@
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+.sectionLayout {
+  padding: 100px 120px;
+
+  @include sm {
+    padding: 50px 25px;
+  }
+}
+

@@ -12,7 +12,11 @@ import {
   PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from './constants/purchase';
-import { CURRENCY_CODES } from './constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CONFIRM_FIO_ACTIONS,
+  CURRENCY_CODES,
+} from './constants/common';
 
 import { ResultsData } from '../components/common/TransactionResults/types';
 
@@ -469,7 +473,7 @@ export type RedirectLinkData = {
 };
 
 export type PrivateRedirectLocationState = {
-  from?: { pathname?: string };
+  from?: { pathname?: string; search?: string };
   options?: { setKeysForAction?: boolean };
 };
 
@@ -526,12 +530,15 @@ export type Payment = {
   externalPaymentId: string;
   amount: string;
   currency: PaymentCurrency;
+  processor: PaymentProvider;
   secret?: string;
 };
 
 export type Order = {
   id: number;
   number: string;
+  publicKey: string;
+  orderItems?: OrderItem[];
   payment?: Payment;
 };
 
@@ -659,6 +666,21 @@ export type BcTxEvent = {
 };
 
 export type OrderItem = {
+  action: string;
+  address?: string;
+  createdAt: string;
+  domain?: string;
+  id: string;
+  price: string;
+  priceCurrency: string;
+  updatedAt: string;
+  blockchainTransactions: BcTx[];
+  orderItemStatus: {
+    txStatus: typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
+  };
+};
+
+export type OrderDetails = {
   id: string;
   number: string;
   roe: string;
@@ -668,20 +690,7 @@ export type OrderItem = {
   status: number;
   currency?: PaymentCurrency;
   paymentProcessor: PaymentProvider;
-  items?: {
-    action: string;
-    address?: string;
-    createdAt: string;
-    domain?: string;
-    id: string;
-    price: string;
-    priceCurrency: string;
-    updatedAt: string;
-    blockchainTransactions: BcTx[];
-    orderItemStatus: {
-      txStatus: typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
-    };
-  }[];
+  items?: OrderItem[];
   payments?: OrderPaymentItem[];
   blockchainTransactionEvents: BcTxEvent[];
   userId: string;
@@ -707,3 +716,12 @@ export type ChainCodeProps = {
   chainCodeName: string;
   tokens?: TokenCodeProps[];
 };
+
+export type FioActions = typeof CONFIRM_FIO_ACTIONS;
+export type AnalyticsEventActions = typeof ANALYTICS_EVENT_ACTIONS;
+
+declare global {
+  interface Window {
+    dataLayer: object[];
+  }
+}

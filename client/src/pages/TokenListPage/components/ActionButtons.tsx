@@ -10,18 +10,18 @@ import { ROUTES } from '../../../constants/routes';
 import classes from '../styles/TokenList.module.scss';
 
 type Props = {
-  url: string;
+  search: string;
   isDisabled: boolean;
 };
 
 const ActionButtons: React.FC<Props> = props => {
-  const { url, isDisabled } = props;
+  const { search, isDisabled } = props;
 
   return (
     <div className={classes.buttonsContainer}>
       <Link
         isDisabled={isDisabled}
-        to={`${url}${ROUTES.EDIT_TOKEN}`}
+        to={`${ROUTES.EDIT_TOKEN}${search}`}
         classname={classes.link}
       >
         <Button disabled={isDisabled}>
@@ -31,7 +31,7 @@ const ActionButtons: React.FC<Props> = props => {
       </Link>
       <Link
         isDisabled={isDisabled}
-        to={`${url}${ROUTES.DELETE_TOKEN}`}
+        to={`${ROUTES.DELETE_TOKEN}${search}`}
         classname={classes.link}
       >
         <Button className={classes.middleButton} disabled={isDisabled}>
@@ -39,7 +39,7 @@ const ActionButtons: React.FC<Props> = props => {
           Delete Link
         </Button>
       </Link>
-      <RouterLink to={`${url}${ROUTES.ADD_TOKEN}`} className={classes.link}>
+      <RouterLink to={`${ROUTES.ADD_TOKEN}${search}`} className={classes.link}>
         <Button>
           <FontAwesomeIcon icon="plus-circle" className={classes.icon} />
           Add Link

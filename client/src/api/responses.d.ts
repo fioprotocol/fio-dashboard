@@ -46,6 +46,9 @@ export type AuthDeleteNewDeviceRequestResponse =
 export type AuthUpdateNewDeviceResponse = null;
 export type AuthCheckRejectedResponse = boolean;
 export type AdminAuthLoginResponse = { jwt: string };
+export type AdminResetPasswordResponse =
+  | { success: true }
+  | { success: false; message: 'Not Found' };
 
 export type ChainCodesListResults = ChainCodeProps[] | null;
 
@@ -92,6 +95,9 @@ export type AdminUsersListResponse = AdminUser[];
 export type AdminOrdersListResponse = AdminUser[];
 export type AdminOrderItemResponse = AdminUser;
 export type RemoveAdminResponse =
+  | { success: true }
+  | { success: false; message: 'Not Found' };
+export type SendResetAdminPasswordResponse =
   | { success: true }
   | { success: false; message: 'Not Found' };
 export type AdminGeneralCreateResponse =

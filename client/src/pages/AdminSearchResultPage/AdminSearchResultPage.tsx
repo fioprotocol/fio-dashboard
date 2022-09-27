@@ -3,14 +3,14 @@ import React from 'react';
 import Loader from '../../components/Loader/Loader';
 import AdminOrdersSearchResult from './components/AdminOrdersSearchResult';
 
-import { AdminSearchResult, OrderItem } from '../../types';
+import { AdminSearchResult, OrderDetails } from '../../types';
 
 import classes from './AdminSearchResultPage.module.scss';
 
 type Props = {
   adminSearch?: AdminSearchResult;
   loading: boolean;
-  orderItem: OrderItem;
+  orderItem: OrderDetails;
   getOrder: (id: string) => Promise<void>;
 };
 

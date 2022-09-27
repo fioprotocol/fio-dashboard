@@ -2,6 +2,7 @@ import { makeServiceRunner } from '../tools';
 
 import PaymentsCreate from '../services/payments/Create';
 import PaymentsWebhook from '../services/payments/Webhook';
+import PaymentsCancel from '../services/payments/Cancel.mjs';
 
 export default {
   create: makeServiceRunner(PaymentsCreate, req => req.body),
@@ -11,4 +12,5 @@ export default {
     hostname: req.hostname,
     rawBody: req.rawBody,
   })),
+  cancel: makeServiceRunner(PaymentsCancel, req => req.body),
 };

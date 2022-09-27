@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import { Route, Switch, Redirect, RouteComponentProps } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner } from '@fortawesome/free-solid-svg-icons';
 
@@ -14,12 +14,19 @@ type Props = {
   loading: boolean;
 };
 
-const AuthContainer: React.FC<Props> = props => {
-  const { edgeContextSet, isAuthenticated, loading } = props;
+const AuthContainer: React.FC<Props & RouteComponentProps> = props => {
+  const { edgeContextSet, isAuthenticated, loading, location } = props;
+
+  if (isAuthenticated && !loading) {
+    return <Redirect to={ROUTES.HOME} />;
+  }
+  if (location.pathname !== ROUTES.CREATE_ACCOUNT) {
+    return <Redirect to={ROUTES.NOT_FOUND} />;
+  }
+
   return (
     <div className={styles.container}>
-      {isAuthenticated && !loading && <Redirect to={ROUTES.HOME} />}
-      {!edgeContextSet && (
+      {(loading || !edgeContextSet) && (
         <FontAwesomeIcon icon={faSpinner} spin className={styles.spinner} />
       )}
       {!isAuthenticated && edgeContextSet && (

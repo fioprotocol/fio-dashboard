@@ -16,7 +16,7 @@ type Props = {
   cartItems?: CartItem[];
   totalCartNativeAmount: number;
   userWallets: FioWalletDoublet[];
-  loading: boolean;
+  selectedPaymentProvider: PaymentProvider;
   disabled?: boolean;
 };
 
@@ -28,7 +28,7 @@ const PaymentsBlock: React.FC<Props> = props => {
     paymentWalletPublicKey,
     totalCartNativeAmount,
     userWallets,
-    loading,
+    selectedPaymentProvider,
     disabled,
     onPaymentChoose,
   } = props;
@@ -41,7 +41,7 @@ const PaymentsBlock: React.FC<Props> = props => {
     cartItems,
     totalCartNativeAmount,
     userWallets,
-    loading,
+    selectedPaymentProvider,
     disabled,
     onPaymentChoose,
   };
@@ -49,7 +49,7 @@ const PaymentsBlock: React.FC<Props> = props => {
   const otherPaymentsProps = {
     paymentOptionsList: [PAYMENT_OPTIONS.CREDIT_CARD, PAYMENT_OPTIONS.CRYPTO],
     cartItems,
-    loading,
+    selectedPaymentProvider,
     disabled,
     onPaymentChoose,
   };

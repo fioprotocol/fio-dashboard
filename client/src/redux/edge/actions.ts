@@ -1,15 +1,17 @@
 import { EdgeAccount } from 'edge-core-js';
 
-import { Api } from '../../api';
-
 import { waitWalletKeys } from '../../util/edge';
 import { log } from '../../util/general';
+import { emailToUsername } from '../../utils';
+import { fireAnalyticsEvent } from '../../util/analytics';
 
+import { Api } from '../../api';
 import { AnyObject, EdgeWalletsKeys } from '../../types';
 import { CommonAction, CommonPromiseAction } from '../types';
-import { emailToUsername } from '../../utils';
 
 import {
+  ANALYTICS_EVENT_ACTIONS,
+  ANALYTICS_LOGIN_METHOD,
   DEFAULT_WALLET_OPTIONS,
   FIO_WALLET_TYPE,
   WALLET_CREATED_FROM,
@@ -73,6 +75,11 @@ export const login = ({
     const account = pin
       ? await api.edge.loginPIN(username, pin)
       : await api.edge.login(username, password, options);
+    fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.LOGIN, {
+      method: pin
+        ? ANALYTICS_LOGIN_METHOD.PIN
+        : ANALYTICS_LOGIN_METHOD.PASSWORD,
+    });
     const fioWallets = [];
     try {
       for (const walletId of account.activeWalletIds) {

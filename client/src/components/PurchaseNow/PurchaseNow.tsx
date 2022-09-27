@@ -3,13 +3,20 @@ import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Ecc } from '@fioprotocol/fiojs';
 
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CONFIRM_PIN_ACTIONS,
+} from '../../constants/common';
 import { PAYMENT_OPTIONS } from '../../constants/purchase';
 import { emptyWallet } from '../../redux/fio/reducer';
 
 import api from '../../api';
 
 import { executeRegistration } from './middleware';
+import {
+  fireAnalyticsEvent,
+  getCartItemsDataForAnalytics,
+} from '../../util/analytics';
 import { sleep } from '../../utils';
 import { waitForEdgeAccountStop } from '../../util/edge';
 
@@ -36,7 +43,6 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     onFinish,
     setProcessing,
     resetPinConfirm,
-    isRetry,
     fioWallets,
     prices,
     refProfileInfo,
@@ -155,6 +161,10 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   }, [captchaResult]); // We need run this hook only on captchaResults change
 
   const purchase = () => {
+    fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.PURCHASE_STARTED,
+      getCartItemsDataForAnalytics(cartItems),
+    );
     setWaiting(true);
     for (const item of cartItems) {
       if (item.costNativeFio) {
@@ -172,8 +182,6 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     >
       {isWaiting && loading ? (
         <FontAwesomeIcon icon="spinner" spin />
-      ) : isRetry ? (
-        'Try Again'
       ) : (
         'Purchase Now'
       )}

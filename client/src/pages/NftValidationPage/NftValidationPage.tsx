@@ -5,18 +5,21 @@ import apis from '../../api/index';
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 import NftValidationForm from './components/NftValidationForm';
 import CustomDropdown from '../../components/CustomDropdown';
-
 import NftListResults from './components/NftListResults';
-import { OPTIONS, optionsList, TITLE_NAME } from './constant';
+
 import { transformNft } from '../../util/fio';
 import { getHash, log } from '../../util/general';
 import { minWaitTimeFunction } from '../../utils';
+import { fireAnalyticsEvent } from '../../util/analytics';
+
+import { OPTIONS, optionsList, TITLE_NAME } from './constant';
 import { URL_REGEXP } from '../../constants/regExps';
+import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
 import { NftValidationFormValues, ValidationOption } from './components/types';
+import { NFTTokenDoublet } from '../../types';
 
 import classes from './styles/NftValidationPage.module.scss';
-import { NFTTokenDoublet } from '../../types';
 
 const NftValidationPage: React.FC = () => {
   const [activeOption, setActiveOption] = useState<ValidationOption | null>(
@@ -40,7 +43,10 @@ const NftValidationPage: React.FC = () => {
       () => apis.fio.getNFTs(params),
       2000,
     );
-    if (nftResults) setResults(transformNft(nftResults.nfts));
+    if (nftResults) {
+      fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.NFT_VALIDATE);
+      setResults(transformNft(nftResults.nfts));
+    }
     toggleLoading(false);
   };
 

@@ -79,15 +79,15 @@ class EmailSender {
           images: EmailTemplate.getInlineImages(templateName),
         };
       case templates.confirmEmail: {
-        let link = `${sendData.mainUrl}confirm-email/${sendData.hash}`;
+        let link = `${sendData.mainUrl}confirm-email?hash=${sendData.hash}`;
 
         if (sendData.refCode) {
-          link = `${link}?refCode=${sendData.refCode}`;
+          link = `${link}&refCode=${sendData.refCode}`;
         }
         delete sendData.refCode;
 
         if (sendData.updateEmail) {
-          link = `${sendData.mainUrl}confirm-updated-email/${sendData.hash}`;
+          link = `${sendData.mainUrl}confirm-updated-email?hash=${sendData.hash}`;
           delete sendData.updateEmail;
         }
 
@@ -104,7 +104,16 @@ class EmailSender {
         return {
           subject: 'FIO Dashboard - please confirm your email',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}confirm-admin-email/${sendData.hash}?email=${sendData.email}`,
+            link: `${sendData.mainUrl}confirm-admin-email?hash=${sendData.hash}&email=${sendData.email}`,
+            ...sendData,
+          }),
+          images: EmailTemplate.getInlineImages(templateName),
+        };
+      case templates.resetAdminPasswordEmail:
+        return {
+          subject: 'FIO Dashboard - password reset',
+          body: EmailTemplate.get(templateName, {
+            link: `${sendData.mainUrl}reset-admin-password?hash=${sendData.hash}&email=${sendData.email}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
@@ -131,7 +140,7 @@ class EmailSender {
         return {
           subject: 'Your FIO request has been approved',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}fio-wallet/${sendData.wallet}/fio-request/${sendData.fioRequestId}`,
+            link: `${sendData.mainUrl}fio-request?publicKey=${sendData.wallet}&fioRequestId=${sendData.fioRequestId}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
@@ -149,7 +158,7 @@ class EmailSender {
         return {
           subject: 'Your FIO request has been rejected',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}fio-wallet/${sendData.wallet}/fio-request/${sendData.fioRequestId}`,
+            link: `${sendData.mainUrl}fio-request?publicKey=${sendData.wallet}&fioRequestId=${sendData.fioRequestId}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
@@ -167,7 +176,7 @@ class EmailSender {
         return {
           subject: 'You have received a new FIO request',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}fio-wallet/${sendData.wallet}/fio-request/${sendData.fioRequestId}`,
+            link: `${sendData.mainUrl}fio-request?publicKey=${sendData.wallet}&fioRequestId=${sendData.fioRequestId}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
@@ -184,7 +193,7 @@ class EmailSender {
         return {
           subject: 'Your FIO balance has changed',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}fio-wallet/${sendData.wallet}`,
+            link: `${sendData.mainUrl}fio-wallet?publicKey=${sendData.wallet}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
@@ -203,7 +212,7 @@ class EmailSender {
           body: EmailTemplate.get(templateName, {
             link: `${
               sendData.domains.length === 1
-                ? `${sendData.mainUrl}fio-domain-renew/${sendData.domains[0].name}`
+                ? `${sendData.mainUrl}fio-domain-renew?name=${sendData.domains[0].name}`
                 : `${sendData.mainUrl}fio-domains`
             }`,
             title: EXPIRING_DOMAINS_EMAIL_SUBJECTS[sendData.expiringStatus],
@@ -225,7 +234,7 @@ class EmailSender {
           body: EmailTemplate.get(templateName, {
             link: `${
               sendData.fioCryptoHandles.length === 1
-                ? `${sendData.mainUrl}add-bundles/${sendData.fioCryptoHandles[0].name}`
+                ? `${sendData.mainUrl}add-bundles?name=${sendData.fioCryptoHandles[0].name}`
                 : `${sendData.mainUrl}fio-crypto-handles`
             }`,
             ...sendData,
@@ -245,13 +254,13 @@ class EmailSender {
       /**
        *
        * @param orderNumber exmaple '0LP9XM'
-       * 
+       *
        * @param successedOrderItems[]
        * @param successedOrderItems.address example 'tester'
        * @param successedOrderItems.domain example 'testdomain'
        * @param successedOrderItems.hasCustomDomain example 'true'
        * @param successedOrderItems.priceAmount example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
-       * 
+       *
        * @param successedOrderPaymentInfo {}
        * @param successedOrderPaymentInfo.total example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
        * @param successedOrderPaymentInfo.paidWith example 'My FIO Wallet' or 'visa ending in 7676'
@@ -264,7 +273,7 @@ class EmailSender {
        * @param failedOrderItems.domain example 'testdomain'
        * @param failedOrderItems.hasCustomDomain example 'true'
        * @param failedOrderItems.priceAmount example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
-       * 
+       *
        * @param failedOrderPaymentInfo {}
        * @param failedOrderPaymentInfo.total example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
        * @param failedOrderPaymentInfo.paidWith example 'My FIO Wallet' or 'visa ending in 7676'

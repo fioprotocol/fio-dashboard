@@ -7,7 +7,7 @@ import { PaymentWallet } from './PaymentWallet';
 import { PaymentOptionComponent } from './PaymentOptionComponent';
 import InfoBadge from '../../../components/InfoBadge/InfoBadge';
 
-import { totalCost } from '../../../utils';
+import { totalCost } from '../../../util/cart';
 
 import { BADGE_TYPES } from '../../../components/Badge/Badge';
 import { CURRENCY_CODES } from '../../../constants/common';

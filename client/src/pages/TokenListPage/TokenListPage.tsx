@@ -30,7 +30,7 @@ type Props = {
 const TokenListPage: React.FC<Props & RouteComponentProps> = props => {
   const {
     currentFioAddress: { name, publicAddresses },
-    match: { url },
+    location: { search },
     loading,
     showTokenListInfoBadge,
     toggleTokenListInfoBadge,
@@ -72,7 +72,10 @@ const TokenListPage: React.FC<Props & RouteComponentProps> = props => {
           className={classnames(classes.actionContainer, classes.columnMobile)}
         >
           <FioName name={name} />
-          <ActionButtons url={url} isDisabled={publicAddresses.length === 0} />
+          <ActionButtons
+            search={search}
+            isDisabled={publicAddresses.length === 0}
+          />
         </div>
         <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
           Linked Tokens

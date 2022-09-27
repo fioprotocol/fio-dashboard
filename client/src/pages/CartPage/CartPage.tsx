@@ -14,7 +14,8 @@ export const CartPage: React.FC = () => {
     hasLowBalance,
     isFree,
     isPriceChanged,
-    loading,
+    selectedPaymentProvider,
+    disabled,
     paymentWalletPublicKey,
     prices,
     roe,
@@ -48,7 +49,8 @@ export const CartPage: React.FC = () => {
 
   const cartAmountProps = {
     isFree,
-    loading,
+    selectedPaymentProvider,
+    disabled,
     paymentWalletPublicKey,
     totalCartNativeAmount,
     onPaymentChoose,

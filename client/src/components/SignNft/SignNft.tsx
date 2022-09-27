@@ -6,6 +6,7 @@ import SignNFTForm from './components/SignNftForm/SignNftForm';
 import SignResults from '../common/TransactionResults/components/SignResults';
 import EdgeConfirmAction from '../EdgeConfirmAction';
 import LedgerWalletActionNotSupported from '../LedgerWalletActionNotSupported';
+import PageTitle from '../PageTitle/PageTitle';
 
 import { ROUTES } from '../../constants/routes';
 import {
@@ -13,8 +14,7 @@ import {
   WALLET_CREATED_FROM,
 } from '../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../constants/fio';
-
-import { putParamsToUrl } from '../../utils';
+import { LINKS } from '../../constants/labels';
 
 import useEffectOnce from '../../hooks/general';
 
@@ -176,21 +176,23 @@ const SignNft: React.FC<ContainerProps> = props => {
 
   const onResultsClose = () => {
     if (fioAddress?.name) {
-      history.push(
-        putParamsToUrl(ROUTES.FIO_ADDRESS_SIGNATURES, {
-          address: fioAddress?.name,
-        }),
-      );
+      history.push({
+        pathname: ROUTES.FIO_ADDRESS_SIGNATURES,
+        search: `address=${fioAddress?.name}`,
+      });
     }
   };
 
   if (resultsData && !isEdit)
     return (
-      <SignResults
-        results={resultsData}
-        title="Signed!"
-        onClose={onResultsClose}
-      />
+      <>
+        <PageTitle link={LINKS.FIO_ADDRESS_SIGN_CONFIRMATION} isVirtualPage />
+        <SignResults
+          results={resultsData}
+          title="Signed!"
+          onClose={onResultsClose}
+        />
+      </>
     );
 
   const hasLowBalance =

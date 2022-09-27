@@ -22,7 +22,6 @@ export type PurchaseNowTypes = {
   onFinish: () => void;
   setProcessing: (isProcessing: boolean) => void;
   resetPinConfirm: () => void;
-  isRetry: boolean;
   fioWallets: FioWalletDoublet[];
   prices: Prices;
   refProfileInfo: RefProfile | null;

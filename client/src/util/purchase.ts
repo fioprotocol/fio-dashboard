@@ -15,11 +15,12 @@ import {
   CartItem,
   FioActionExecuted,
   Prices,
+  Order,
 } from '../types';
 
 export const onPurchaseFinish = ({
   results,
-  isRetry,
+  order,
   isCheckout,
   history,
   setRegistration,
@@ -27,7 +28,7 @@ export const onPurchaseFinish = ({
   fioActionExecuted,
 }: {
   results: RegistrationResult;
-  isRetry?: boolean;
+  order: Order;
   isCheckout?: boolean;
   history: History;
   setRegistration: (regData: RegistrationResult) => void;
@@ -37,26 +38,28 @@ export const onPurchaseFinish = ({
   setRegistration(results);
   setProcessing(false);
 
-  if (!isRetry) {
-    const txIds: string[] = [];
-    results.registered.forEach(regAddress => {
-      const { transactions } = regAddress;
-      if (transactions?.length > 0) {
-        txIds.push(...transactions);
-      }
-    });
+  const txIds: string[] = [];
+  results.registered.forEach(regAddress => {
+    const { transactions } = regAddress;
+    if (transactions?.length > 0) {
+      txIds.push(...transactions);
+    }
+  });
 
-    if (results.paymentOption === PAYMENT_OPTIONS.FIO)
-      fioActionExecuted({
-        result: { status: 1, txIds },
-        executeActionType: CONTAINED_FLOW_ACTIONS.REG,
-      });
-  }
+  if (results.paymentOption === PAYMENT_OPTIONS.FIO)
+    fioActionExecuted({
+      result: { status: 1, txIds },
+      executeActionType: CONTAINED_FLOW_ACTIONS.REG,
+    });
 
   if (isCheckout) {
-    history.push(ROUTES.PURCHASE, {
-      paymentProvider: results.paymentProvider,
-    });
+    history.push(
+      { pathname: ROUTES.PURCHASE, search: `orderNumber=${order.number}` },
+      {
+        paymentProvider: results.paymentProvider,
+        order,
+      },
+    );
   }
 };
 

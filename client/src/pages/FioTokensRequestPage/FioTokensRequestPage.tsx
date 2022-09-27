@@ -8,11 +8,21 @@ import RequestTokensEdgeWallet from './components/RequestTokensEdgeWallet';
 import TokenTransferResults from '../../components/common/TransactionResults/components/TokenTransferResults';
 import WalletAction from '../../components/WalletAction/WalletAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
+import PageTitle from '../../components/PageTitle/PageTitle';
+
+import { LINKS } from '../../constants/labels';
+import { FIO_CHAIN_CODE } from '../../constants/fio';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import { BADGE_TYPES } from '../../components/Badge/Badge';
+import { emptyWallet } from '../../redux/fio/reducer';
 
 import { useFioAddresses, usePubAddressesFromWallet } from '../../util/hooks';
 
+import apis from '../../api';
+
 import {
   ContainerProps,
+  LocationProps,
   RequestTokensInitialValues,
   RequestTokensValues,
 } from './types';
@@ -20,16 +30,9 @@ import { FioWalletDoublet, MappedPublicAddresses } from '../../types';
 import { TrxResponsePaidBundles } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 
-import apis from '../../api';
-
-import { BADGE_TYPES } from '../../components/Badge/Badge';
-import { FIO_CHAIN_CODE } from '../../constants/fio';
-import { emptyWallet } from '../../redux/fio/reducer';
-
 import classes from './styles/RequestTokensPage.module.scss';
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
-const RequestPage: React.FC<ContainerProps> = props => {
+const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
   const {
     fioWallets,
     fioWalletsLoading,
@@ -37,9 +40,9 @@ const RequestPage: React.FC<ContainerProps> = props => {
     history,
     contactsList,
     contactsLoading,
-    location: { state: { payeeFioAddress } = {} },
-    match: {
-      params: { publicKey: publicKeyFromPath },
+    location: {
+      state: { payeeFioAddress } = {},
+      query: { publicKey: publicKeyFromPath } = {},
     },
     createContact,
     getContactsList,
@@ -56,6 +59,8 @@ const RequestPage: React.FC<ContainerProps> = props => {
   const [processing, setProcessing] = useState<boolean>(false);
 
   const loading = fioWalletsLoading || contactsLoading;
+  const isValidPublicKeyFromPath =
+    publicKeyFromPath != null && publicKeyFromPath !== '';
 
   const [fioAddresses] = useFioAddresses(publicKeyFromPath);
   // todo: move getting mapped addresses to form on fio address selection
@@ -75,7 +80,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
   }, []);
 
   useEffect(() => {
-    if (publicKeyFromPath != null) {
+    if (isValidPublicKeyFromPath) {
       setFioWallet(
         fioWallets.find(
           ({ publicKey: walletPublicKey }) =>
@@ -83,10 +88,10 @@ const RequestPage: React.FC<ContainerProps> = props => {
         ) || emptyWallet,
       );
     }
-  }, [publicKeyFromPath]);
+  }, [isValidPublicKeyFromPath, fioWallets, publicKeyFromPath]);
 
   const onRequest = async (values: RequestTokensValues) => {
-    if (publicKeyFromPath == null) {
+    if (!isValidPublicKeyFromPath) {
       const fioAddress = fioAddresses.find(
         ({ name }) => name === values.payeeFioAddress,
       );
@@ -133,21 +138,25 @@ const RequestPage: React.FC<ContainerProps> = props => {
     history.goBack();
   };
 
-  if (publicKeyFromPath != null && (!fioWallet || !fioWallet.id))
+  if (isValidPublicKeyFromPath && (!fioWallet || !fioWallet.id)) {
     return <FioLoader wrap={true} />;
+  }
 
   if (resultsData)
     return (
-      <TokenTransferResults
-        results={resultsData}
-        title={resultsData.error ? 'Request not Sent' : 'Request Sent'}
-        titleTo="Request Sent To"
-        titleFrom="Requesting FIO Crypto Handle"
-        titleAmount="Amount Requested"
-        roe={roe}
-        onClose={onBack}
-        onRetry={onResultsRetry}
-      />
+      <>
+        <PageTitle link={LINKS.FIO_TOKENS_REQUEST_CONFIRMATION} isVirtualPage />
+        <TokenTransferResults
+          results={resultsData}
+          title={resultsData.error ? 'Request not Sent' : 'Request Sent'}
+          titleTo="Request Sent To"
+          titleFrom="Requesting FIO Crypto Handle"
+          titleAmount="Amount Requested"
+          roe={roe}
+          onClose={onBack}
+          onRetry={onResultsRetry}
+        />
+      </>
     );
 
   return (
@@ -171,7 +180,7 @@ const RequestPage: React.FC<ContainerProps> = props => {
         onBack={onBack}
         middleWidth={true}
       >
-        {publicKeyFromPath != null ? (
+        {isValidPublicKeyFromPath ? (
           <p className={classes.subtitle}>
             <span className={classes.subtitleThin}>FIO Wallet Name:</span>{' '}
             {fioWallet?.name}

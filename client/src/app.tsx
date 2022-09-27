@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import { ConnectedRouter } from 'connected-react-router';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { LastLocationProvider } from 'react-router-last-location';
+import { HelmetProvider } from 'react-helmet-async';
 
 import icons from './icons';
 
@@ -21,7 +22,9 @@ class App extends Component {
       <Provider store={store}>
         <ConnectedRouter history={history}>
           <LastLocationProvider>
-            <Routes />
+            <HelmetProvider>
+              <Routes />
+            </HelmetProvider>
           </LastLocationProvider>
         </ConnectedRouter>
       </Provider>

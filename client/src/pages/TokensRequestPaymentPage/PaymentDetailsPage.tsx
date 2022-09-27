@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useParams, Redirect } from 'react-router-dom';
+import { useLocation, Redirect } from 'react-router-dom';
 
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
@@ -9,28 +9,29 @@ import PaymentDetailsResults from '../../components/common/TransactionResults/co
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import WalletAction from '../../components/WalletAction/WalletAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
+import PageTitle from '../../components/PageTitle/PageTitle';
+
+import { BADGE_TYPES } from '../../components/Badge/Badge';
+import { ROUTES } from '../../constants/routes';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import { FIO_RECORD_TYPES } from '../WalletPage/constants';
+import { LINKS } from '../../constants/labels';
 
 import { useFioAddresses } from '../../util/hooks';
-import { putParamsToUrl } from '../../utils';
 import { isFioChain } from '../../util/fio';
 
+import { FioRecordViewDecrypted } from '../WalletPage/types';
+import { FioAddressDoublet, FioWalletDoublet } from '../../types';
 import {
   ContainerProps,
   PaymentDetailsResultValues,
   PaymentDetailsValues,
   PaymentDetailsInitialValues,
   TxValues,
+  LocationProps,
 } from './types';
 
-import { BADGE_TYPES } from '../../components/Badge/Badge';
-import { ROUTES } from '../../constants/routes';
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
-import { FIO_RECORD_TYPES } from '../WalletPage/constants';
-
-import { FioRecordViewDecrypted } from '../WalletPage/types';
-import { FioAddressDoublet, FioWalletDoublet } from '../../types';
-
-const PaymentDetailsPage: React.FC<ContainerProps> = props => {
+const PaymentDetailsPage: React.FC<ContainerProps & LocationProps> = props => {
   const {
     history,
     contactsList,
@@ -38,6 +39,7 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
     createContact,
     getContactsList,
     refreshWalletDataPublicKey,
+    location: { query: { publicKey, fioRequestId } = {} },
   } = props;
 
   const [
@@ -52,10 +54,6 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
     setInitialValues,
   ] = useState<PaymentDetailsInitialValues | null>(null);
 
-  const {
-    fioRequestId,
-    publicKey,
-  }: { fioRequestId?: string; publicKey?: string } = useParams();
   const location: {
     state: {
       fioWallet: FioWalletDoublet;
@@ -116,22 +114,24 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
     setResultsData(null);
   };
   const onResultsClose = () => {
-    history.push(
-      putParamsToUrl(ROUTES.FIO_WALLET, {
-        publicKey,
+    history.push({
+      pathname: ROUTES.FIO_WALLET,
+      search: `publicKey=${publicKey}`,
+      state: {
         fioRequestTab: FIO_RECORD_TYPES.RECEIVED,
-      }),
-    );
+      },
+    });
   };
 
   const onBack = () => {
-    history.push(
-      putParamsToUrl(ROUTES.FIO_WALLET, { publicKey: fioWallet.publicKey }),
-      {
+    history.push({
+      pathname: ROUTES.FIO_WALLET,
+      search: `publicKey=${fioWallet.publicKey}`,
+      state: {
         fioRecordDecrypted,
         fioRequestTab: FIO_RECORD_TYPES.RECEIVED,
       },
-    );
+    });
   };
 
   const [walletFioAddresses] = useFioAddresses(
@@ -154,9 +154,8 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
     return (
       <Redirect
         to={{
-          pathname: putParamsToUrl(ROUTES.FIO_WALLET, {
-            publicKey,
-          }),
+          pathname: ROUTES.FIO_WALLET,
+          search: `publicKey=${publicKey}`,
         }}
       />
     );
@@ -165,12 +164,15 @@ const PaymentDetailsPage: React.FC<ContainerProps> = props => {
 
   if (resultsData)
     return (
-      <PaymentDetailsResults
-        results={resultsData}
-        title="Payment Details"
-        onClose={onResultsClose}
-        onRetry={onResultsRetry}
-      />
+      <>
+        <PageTitle link={LINKS.PAYMENT_DETAILS_CONFIRMATION} isVirtualPage />
+        <PaymentDetailsResults
+          results={resultsData}
+          title="Payment Details"
+          onClose={onResultsClose}
+          onRetry={onResultsRetry}
+        />
+      </>
     );
 
   return (

@@ -9,7 +9,7 @@ import Modal from '../../../components/Modal/Modal';
 import { ROUTES } from '../../../constants/routes';
 import { US_LOCALE } from '../../../constants/common';
 
-import { priceToNumber, putParamsToUrl } from '../../../utils';
+import { priceToNumber } from '../../../utils';
 
 import { UnlockPeriod, WalletBalances } from '../../../types';
 
@@ -145,17 +145,16 @@ const TotalBalanceBadge: React.FC<Props> = props => {
         {publicKey ? (
           <div className={classes.actionButtons}>
             <Link
-              to={putParamsToUrl(ROUTES.STAKE, {
-                publicKey,
-              })}
+              to={{ pathname: ROUTES.STAKE, search: `publicKey=${publicKey}` }}
               className={classes.link}
             >
               Stake
             </Link>
             <Link
-              to={putParamsToUrl(ROUTES.UNSTAKE, {
-                publicKey,
-              })}
+              to={{
+                pathname: ROUTES.UNSTAKE,
+                search: `publicKey=${publicKey}`,
+              }}
               className={classnames(classes.link, classes.secondary)}
             >
               Unstake

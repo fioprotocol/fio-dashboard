@@ -2,12 +2,8 @@ import React from 'react';
 import isEmpty from 'lodash/isEmpty';
 
 import PseudoModalContainer from '../../components/PseudoModalContainer';
-
 import Processing from '../../components/common/TransactionProcessing';
-
-import { useContext } from './PurchasePageContext';
 import { ActionButton } from './components/ActionButton';
-
 import { RegisteredResultsComponent } from './components/RegisteredResultsComponent';
 import { FailedResultsComponent } from './components/FailedResultsComponent';
 
@@ -15,6 +11,9 @@ import {
   PURCHASE_RESULTS_STATUS,
   PURCHASE_RESULTS_TITLES,
 } from '../../constants/purchase';
+import { ERROR_TYPES } from '../../constants/errors';
+
+import { useContext } from './PurchasePageContext';
 
 import classes from './styles/PurchasePage.module.scss';
 
@@ -39,10 +38,14 @@ export const PurchasePage: React.FC = () => {
     allErrored,
     failedTxsTotalAmount,
     isProcessing,
-    isRetry,
     onClose,
-    onFinish,
+    onRetry,
   } = useContext();
+
+  const isRetryAvailable =
+    !isEmpty(errItems) &&
+    (errItems.length > 1 ||
+      errItems[0]?.errorType !== ERROR_TYPES.freeAddressIsNotRegistered);
 
   return (
     <PseudoModalContainer
@@ -88,8 +91,8 @@ export const PurchasePage: React.FC = () => {
         <ActionButton
           onClose={onClose}
           closeText={closeText}
-          isRetry={isRetry}
-          onFinish={onFinish}
+          isRetry={isRetryAvailable}
+          onRetry={onRetry}
         />
       </div>
       <Processing isProcessing={isProcessing} />

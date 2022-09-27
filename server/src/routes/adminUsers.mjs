@@ -5,6 +5,7 @@ import AdminUserInfo from '../services/adminUsers/AdminUserInfo.mjs';
 import AdminUsersList from '../services/adminUsers/AdminUsersList.mjs';
 import AdminUserUpdate from '../services/adminUsers/Update';
 import AdminUserRemove from '../services/adminUsers/Remove';
+import AdminUserSendResetPassword from '../services/adminUsers/SendResetPassword.mjs';
 import AdminUserInvite from '../services/adminUsers/Invite';
 import AdminRolesList from '../services/adminUsers/AdminRolesList';
 import AdminStatusesList from '../services/adminUsers/AdminStatusesList';
@@ -25,6 +26,7 @@ export default {
   order: makeServiceRunner(OrderInfo, req => req.params),
   update: makeServiceRunner(AdminUserUpdate, req => req.body),
   remove: makeServiceRunner(AdminUserRemove, req => req.body),
+  sendResetPassword: makeServiceRunner(AdminUserSendResetPassword, req => req.params),
   invite: makeServiceRunner(AdminUserInvite, req => req.body),
   rolesList: makeServiceRunner(AdminRolesList, req => req.body),
   statusesList: makeServiceRunner(AdminStatusesList, req => req.body),

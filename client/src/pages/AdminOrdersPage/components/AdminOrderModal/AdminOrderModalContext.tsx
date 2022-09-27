@@ -19,7 +19,7 @@ import { ACTIONS } from '../../../../constants/fio';
 
 import {
   BcTx,
-  OrderItem,
+  OrderDetails,
   OrderPaymentItem,
   PaymentEventLog,
 } from '../../../../types';
@@ -60,7 +60,7 @@ const generatePaymentEventLogsNotes = (eventLogs: PaymentEventLog[]) => {
 };
 
 const setHistory = (
-  order: OrderItem,
+  order: OrderDetails,
   payment: OrderPaymentItem,
 ): HistoryListItem[] => {
   const history: HistoryListItem[] = [
@@ -197,7 +197,7 @@ const setHistory = (
 export const useContext = ({
   orderItem,
 }: {
-  orderItem: OrderItem;
+  orderItem: OrderDetails;
 }): {
   isFree: boolean;
   historyList: HistoryListItem[];
