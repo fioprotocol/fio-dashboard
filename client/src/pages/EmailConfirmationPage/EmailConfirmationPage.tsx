@@ -6,7 +6,7 @@ import { AnyObject, EmailConfirmationResult } from '../../types';
 
 import classes from '../../components/Modal/EmailModal/EmailModal.module.scss';
 
-type Location = {
+export type LocationProps = {
   location: {
     query: {
       hash?: string;
@@ -24,7 +24,7 @@ type Props = {
 
 const EmailConfirmationPage: React.FC<Props &
   RouteComponentProps &
-  Location> = props => {
+  LocationProps> = props => {
   const {
     profileRefreshed,
     emailConfirmationResult,

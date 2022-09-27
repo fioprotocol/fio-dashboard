@@ -78,7 +78,10 @@ export function* loginSuccess(history: History, api: Api): Generator {
       locationState.from &&
       locationState.from.pathname
     ) {
-      history.push(locationState.from.pathname);
+      history.push({
+        pathname: locationState.from.pathname,
+        search: locationState.from.search || '',
+      });
     }
     if (hasRedirectTo) {
       history.push(hasRedirectTo.pathname, hasRedirectTo.state);

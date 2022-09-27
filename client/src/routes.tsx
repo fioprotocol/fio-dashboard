@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, RouteComponentProps, Redirect } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
 import DashboardPage from './pages/DashboardPage';
@@ -65,10 +65,101 @@ import AdminSearchResultPage from './pages/AdminSearchResultPage';
 
 import { ROUTES } from './constants/routes';
 
+import { LocationProps as AdminEmailConfirmPageLocationProps } from './pages/AdminEmailConfirmPage/types';
+import { LocationProps as AdminPasswordResetPageLocationProps } from './pages/AdminPasswordResetPage/types';
+import { LocationProps as EmailConfirmationPageLocationProps } from './pages/EmailConfirmationPage/EmailConfirmationPage';
+
 const Routes = (): React.ReactElement => (
   <MainLayout>
     <ScrollToTop>
       <Switch>
+        <Route
+          path={ROUTES.FIO_ADDRESS_ADD_BUNDLES_OLD}
+          component={(props: RouteComponentProps<{ name?: string }>) => (
+            <Redirect
+              to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?name=${props.match.params.name}`}
+            />
+          )}
+        />
+        <Route
+          path={ROUTES.FIO_DOMAIN_RENEW_OLD}
+          component={(props: RouteComponentProps<{ name?: string }>) => (
+            <Redirect
+              to={`${ROUTES.FIO_DOMAIN_RENEW}?name=${props.match.params.name}`}
+            />
+          )}
+        />
+        <Route
+          path={ROUTES.FIO_REQUEST_OLD}
+          component={(
+            props: RouteComponentProps<{ publicKey?: string; id?: string }>,
+          ) => (
+            <Redirect
+              to={`${ROUTES.FIO_REQUEST}?publicKey=${props.match.params.publicKey}&fioRequestId=${props.match.params.id}`}
+            />
+          )}
+          exact
+        />
+        <Route
+          path={ROUTES.FIO_WALLET_OLD}
+          component={(props: RouteComponentProps<{ publicKey?: string }>) => (
+            <Redirect
+              to={`${ROUTES.FIO_WALLET}?publicKey=${props.match.params.publicKey}`}
+            />
+          )}
+          exact
+        />
+        <Route
+          path={ROUTES.ADMIN_CONFIRM_EMAIL_OLD}
+          component={(
+            props: RouteComponentProps<{ hash?: string }> &
+              AdminEmailConfirmPageLocationProps,
+          ) => (
+            <Redirect
+              to={`${ROUTES.ADMIN_CONFIRM_EMAIL}?hash=${
+                props.match.params.hash
+              }&email=${props.location.query.email || ''}`}
+            />
+          )}
+          exact
+        />
+        <Route
+          path={ROUTES.ADMIN_RESET_PASSWORD_OLD}
+          component={(
+            props: RouteComponentProps<{ hash?: string }> &
+              AdminPasswordResetPageLocationProps,
+          ) => (
+            <Redirect
+              to={`${ROUTES.ADMIN_RESET_PASSWORD}?hash=${
+                props.match.params.hash
+              }&email=${props.location.query.email || ''}`}
+            />
+          )}
+          exact
+        />
+        <Route
+          path={ROUTES.CONFIRM_EMAIL_OLD}
+          component={(
+            props: RouteComponentProps<{ hash?: string }> &
+              EmailConfirmationPageLocationProps,
+          ) => (
+            <Redirect
+              to={`${ROUTES.CONFIRM_EMAIL}?hash=${
+                props.match.params.hash
+              }&refCode=${props.location.query.refCode || ''}`}
+            />
+          )}
+          exact
+        />
+        <Route
+          path={ROUTES.CONFIRM_UPDATED_EMAIL_OLD}
+          component={(props: RouteComponentProps<{ hash?: string }>) => (
+            <Redirect
+              to={`${ROUTES.CONFIRM_UPDATED_EMAIL}?hash=${props.match.params.hash}`}
+            />
+          )}
+        />
+
         <Route path={ROUTES.HOME} component={HomePage} exact />
         <Route path={ROUTES.NOT_FOUND} component={NotFoundPage} exact />
         <Route path={ROUTES.REF_PROFILE_HOME} component={RefHomePage} exact />

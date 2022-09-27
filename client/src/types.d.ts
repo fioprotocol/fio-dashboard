@@ -473,7 +473,7 @@ export type RedirectLinkData = {
 };
 
 export type PrivateRedirectLocationState = {
-  from?: { pathname?: string };
+  from?: { pathname?: string; search?: string };
   options?: { setKeysForAction?: boolean };
 };
 
