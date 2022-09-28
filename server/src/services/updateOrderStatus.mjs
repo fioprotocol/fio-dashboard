@@ -82,7 +82,8 @@ const getFioWalletName = async (publicKey, userId) => {
   const wallet = await Wallet.findOne({
     where: { publicKey, userId },
   });
-  return wallet.name || 'N/A';
+  if (wallet) return wallet.name;
+  return 'N/A';
 };
 
 const getCreditCardName = creditCardData => {
@@ -91,7 +92,12 @@ const getCreditCardName = creditCardData => {
   return brand && last4 ? `${brand.toUpperCase()} ending in ${last4}` : 'N/A';
 };
 
-const getPaidWith = async ({ isCreditCardProcessor, publicKey, userId, payment }) => {
+export const getPaidWith = async ({
+  isCreditCardProcessor,
+  publicKey,
+  userId,
+  payment,
+}) => {
   if (isCreditCardProcessor) {
     const { data: paymentData = {} } = payment;
 

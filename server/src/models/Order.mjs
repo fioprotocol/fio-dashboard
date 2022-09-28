@@ -11,6 +11,8 @@ import { PaymentEventLog } from './PaymentEventLog.mjs';
 import { BlockchainTransaction } from './BlockchainTransaction.mjs';
 import { BlockchainTransactionEventLog } from './BlockchainTransactionEventLog.mjs';
 
+import { getPaidWith } from '../services/updateOrderStatus.mjs';
+
 import logger from '../logger.mjs';
 
 const { DataTypes: DT } = Sequelize;
@@ -21,6 +23,8 @@ const hashids = new Hashids(
   ORDER_NUMBER_LENGTH,
   ORDER_NUMBER_ALPHABET,
 );
+
+const DEFAULT_ORDERS_LIMIT = 25;
 
 export class Order extends Base {
   static get STATUS() {
@@ -142,7 +146,7 @@ export class Order extends Base {
     return attributes.default;
   }
 
-  static list(userId, search, page, limit = 50) {
+  static async list(userId, search, offset, limit = DEFAULT_ORDERS_LIMIT) {
     const where = { userId };
 
     if (search) {
@@ -151,18 +155,18 @@ export class Order extends Base {
 
     return this.findAll({
       where,
-      include: [OrderItem, Payment],
-      order: [['id', 'DESC']],
-      offset: (page - 1) * limit,
+      include: [OrderItem, Payment, ReferrerProfile, User],
+      order: [['createdAt', 'DESC']],
+      offset: offset,
       limit,
     });
   }
 
-  static ordersCount() {
-    return this.count();
+  static ordersCount(query) {
+    return this.count(query);
   }
 
-  static async listAll(limit = 25, offset = 0) {
+  static async listAll(limit = DEFAULT_ORDERS_LIMIT, offset = 0) {
     const [orders] = await this.sequelize.query(`
         SELECT 
           o.id, 
@@ -448,6 +452,50 @@ export class Order extends Base {
           : [],
       payments:
         payments && payments.length ? payments.map(item => Payment.format(item)) : [],
+      refProfileName: refProfile ? refProfile.label : null,
+    };
+  }
+
+  static async formatToMinData({
+    id,
+    number,
+    total,
+    roe,
+    publicKey,
+    createdAt,
+    status,
+    Payments: payments,
+    User: user,
+    ReferrerProfile: refProfile,
+  }) {
+    const payment =
+      (payments &&
+        payments.length &&
+        payments.find(payment => payment.spentType === Payment.SPENT_TYPE.ORDER)) ||
+      {};
+
+    let paidWith = 'N/A';
+    if (payment) {
+      paidWith = await getPaidWith({
+        isCreditCardProcessor: payment.processor === Payment.PROCESSOR.STRIPE,
+        publicKey,
+        userId: user.id || null,
+        payment,
+      });
+    }
+
+    return {
+      id,
+      number,
+      total,
+      roe,
+      publicKey,
+      createdAt,
+      status,
+      payment: {
+        paidWith,
+        paymentProcessor: payment ? payment.processor : null,
+      },
       refProfileName: refProfile ? refProfile.label : null,
     };
   }

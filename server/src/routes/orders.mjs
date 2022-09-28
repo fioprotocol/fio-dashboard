@@ -7,7 +7,7 @@ import OrdersActive from '../services/orders/Active';
 import OrdersGet from '../services/orders/Get';
 
 export default {
-  list: makeServiceRunner(OrdersList, req => req.params),
+  list: makeServiceRunner(OrdersList, req => req.query),
   create: makeServiceRunner(OrdersCreate, req => req.body),
   update: makeServiceRunner(OrdersUpdate, req => ({ ...req.params, ...req.body })),
   getActive: makeServiceRunner(OrdersActive),
