@@ -11,6 +11,7 @@ import {
   Payment,
   RefProfile,
   User,
+  UserOrderDetails,
 } from '../types';
 
 export type AccountGetWalletsResponse = FioWalletDoublet[];
@@ -89,6 +90,13 @@ export type UsersShowResponse = User;
 
 export type OrdersCreateResponse = Order;
 export type OrdersUpdateResponse = { success: true };
+export type UserOrdersListResponse = {
+  data: {
+    orders: UserOrderDetails;
+    totalOrdersCount: number;
+  };
+  status: number;
+};
 
 export type AdminFioAccountsProfilesListResponse = FioAccountProfile[];
 export type AdminUsersListResponse = AdminUser[];
@@ -148,4 +156,5 @@ export type ApisResponse = AccountGetWalletsResponse &
   AdminGeneralCreateResponse &
   AdminConfirmResponse &
   PaymentCreateResponse &
-  ChainCodesListResults;
+  ChainCodesListResults &
+  UserOrdersListResponse;

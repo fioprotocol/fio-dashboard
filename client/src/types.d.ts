@@ -704,6 +704,21 @@ export type OrderDetails = {
   updatedAt: string;
 };
 
+export type UserOrderDetails = {
+  id: string;
+  number: string;
+  roe: string;
+  total: string;
+  publicKey: string;
+  createdAt: string;
+  status: number;
+  payment: {
+    paidWith: string;
+    paymentProcessor: string;
+  };
+  refProfileName: string;
+};
+
 export type ApiError = {
   code: string;
   fields?: { [fieldName: string]: AnyType };
