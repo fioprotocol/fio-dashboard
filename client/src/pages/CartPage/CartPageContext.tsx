@@ -126,7 +126,7 @@ export const useContext = (): UseContextReturnType => {
   const isFree =
     !isEmpty(cartItems) &&
     cartItems.length === 1 &&
-    cartItems.every(item => !item.costNativeFio);
+    cartItems.every(item => !item.costNativeFio && !!item.address);
 
   const {
     costNativeFio: totalCartNativeAmount,
