@@ -212,7 +212,7 @@ const makeRegistrationOrder = (
     const registration: RegistrationType = {
       cartItemId: cartItem.id,
       fioName: setFioName(cartItem.address, cartItem.domain),
-      isFree: !cartItem.costNativeFio,
+      isFree: !cartItem.costNativeFio && !!cartItem.address,
       fee: cartItem.address ? fees.address : fees.domain,
     };
 
