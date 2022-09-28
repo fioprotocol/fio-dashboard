@@ -37,6 +37,7 @@ import {
   faPlus,
   faPlusCircle,
   faPlusSquare,
+  faPrint,
   faQrcode,
   faSearch,
   faShareAlt,
@@ -112,6 +113,7 @@ const icons = {
   faCertificate,
   faExclamation,
   faPlus,
+  faPrint,
 };
 
 export default icons;

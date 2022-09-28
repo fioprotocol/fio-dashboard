@@ -1,0 +1,26 @@
+@import '../../../../assets/styles/fontMixins.scss';
+
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 20px;
+  min-width: 150px;
+
+  .button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    font-size: 0.75rem;
+    border-radius: 7px;
+    line-height: 0;
+    @include proxima-nova-thin;
+  }
+
+  .icon {
+    font-size: 18px;
+    cursor: pointer;
+  }
+}

@@ -50,6 +50,7 @@ import UpdateEmailPage from './pages/UpdateEmailPage';
 import RejectFioRequestPage from './pages/RejectFioRequestPage';
 import EmailConfirmationResultPage from './pages/EmailConfirmationResultsPage';
 import NotFoundPage from './pages/NotFoundPage';
+import OrdersPage from './pages/OrdersPage';
 
 import AdminPrivateRoute from './components/AdminPrivateRoute';
 import AdminOrdersPage from './pages/AdminOrdersPage';
@@ -334,6 +335,8 @@ const Routes = (): React.ReactElement => (
           component={RejectFioRequestPage}
           exact
         />
+
+        <PrivateRoute path={ROUTES.ORDERS} component={OrdersPage} exact />
 
         <AdminPrivateRoute
           path={ROUTES.ADMIN_HOME}

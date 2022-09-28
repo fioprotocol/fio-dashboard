@@ -22,6 +22,39 @@ export const PURCHASE_RESULTS_STATUS_LABELS: {
   return acc;
 }, {} as { [key: number]: string });
 
+export const ORDER_STATUS_LABELS = {
+  [PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS]: {
+    title: 'PARTIAL',
+    color: {
+      isBlueGreen: true,
+    },
+  },
+  [PURCHASE_RESULTS_STATUS.SUCCESS]: {
+    title: 'COMPLETE',
+    color: {
+      isGreen: true,
+    },
+  },
+  [PURCHASE_RESULTS_STATUS.CANCELED]: {
+    title: 'CANCELED',
+    color: {
+      isOrange: true,
+    },
+  },
+  [PURCHASE_RESULTS_STATUS.FAILED]: {
+    title: 'FAILED',
+    color: {
+      isRed: true,
+    },
+  },
+  DEAFULT: {
+    title: 'IN PROGRESS',
+    color: {
+      isRose: true,
+    },
+  },
+};
+
 export const PAYMENT_PROVIDER = {
   FIO: 'FIO',
   STRIPE: 'STRIPE',
