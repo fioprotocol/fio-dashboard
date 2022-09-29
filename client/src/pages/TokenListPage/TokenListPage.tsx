@@ -80,6 +80,10 @@ const TokenListPage: React.FC<Props & RouteComponentProps> = props => {
         <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
           Linked Tokens
         </h5>
+        <h5 className={classnames(classes.subtitle, classes.infoSubtitle)}>
+          <span className="boldText">Hint:</span>{' '}
+          <span className={classes.asterisk}>*</span> maps all tokens on a chain
+        </h5>
         <PublicAddresses publicAddresses={publicAddresses} loading={loading} />
       </div>
     </PseudoModalContainer>
