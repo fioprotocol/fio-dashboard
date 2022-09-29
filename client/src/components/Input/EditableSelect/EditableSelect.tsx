@@ -102,12 +102,12 @@ const EditableSelect: React.FC<EditableProps> = props => {
     }
   }, [forceReset, handleFormAndInputChange]);
 
-  // Handle dropdown value when we programaticaly filled form field. Is not the same when we have initial form value
+  // Handle dropdown value when we programaticaly filled form field.
   useEffect(() => {
-    if (value && !initialValue && !inputValue) {
+    if (value && !inputValue) {
       setInputConvertedValue(value);
     }
-  }, [value, initialValue, inputValue, setInputConvertedValue]);
+  }, [value, inputValue, setInputConvertedValue]);
 
   const handleBlur = () => {
     const currentValue = inputValue ? inputValue.trim() : '';
