@@ -110,7 +110,7 @@ export const transformPublicAddresses = (
 
     return {
       chain_code: chainCode,
-      token_code: tokenCode === '*' ? chainCode : tokenCode,
+      token_code: tokenCode,
       public_address: publicAddress,
     };
   });
@@ -120,7 +120,7 @@ export const normalizePublicAddresses = (
 ): PublicAddressDoublet[] =>
   publicAddresses.map(({ chainCode, tokenCode, publicAddress }) => ({
     chainCode,
-    tokenCode: tokenCode === '*' ? chainCode : tokenCode,
+    tokenCode,
     publicAddress,
   }));
 

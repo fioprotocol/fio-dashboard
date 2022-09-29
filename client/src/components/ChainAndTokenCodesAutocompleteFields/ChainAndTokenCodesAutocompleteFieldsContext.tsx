@@ -9,6 +9,8 @@ import apis from '../../api';
 
 import { sleep } from '../../utils';
 
+import { ASTERISK_SIGN } from '../../constants/common';
+
 import { ChainCodeProps } from '../../types';
 import { ChainAndTokenCodesAutocompleteFieldsProps } from './types';
 
@@ -90,7 +92,7 @@ export const useContext = (
     const selectedTokenCodesList = selectedChainCodeTokens || [];
 
     if (
-      !tokenCodeValue &&
+      (!tokenCodeValue || tokenCodeValue === ASTERISK_SIGN) &&
       selectedTokenCodesList.length > MAX_TOKEN_CODES_LIST_COUNT
     )
       return setTokenCodesList([]);
