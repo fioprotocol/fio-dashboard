@@ -199,3 +199,5 @@ export const ANALYTICS_SEND_TYPE = {
   ADDRESS: 'fch',
   PUBLIC_KEY: 'pubadd',
 };
+
+export const ASTERISK_SIGN = '*';

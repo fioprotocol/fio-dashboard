@@ -21,7 +21,7 @@ import { minWaitTimeFunction } from '../../../../utils';
 import { fioAddressExistsValidator } from '../../../../util/validators';
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import { CHAIN_CODES } from '../../../../constants/common';
+import { ASTERISK_SIGN, CHAIN_CODES } from '../../../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
 
 import { RequestTokensProps, RequestTokensValues } from '../../types';
@@ -76,7 +76,8 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
       ].publicAddresses.find(
         ({ chainCode, tokenCode }) =>
           chainCode === initialValues.chainCode &&
-          tokenCode === initialValues.tokenCode,
+          (tokenCode === initialValues.tokenCode ||
+            tokenCode === ASTERISK_SIGN),
       );
 
       if (pubAddressItem != null) {
