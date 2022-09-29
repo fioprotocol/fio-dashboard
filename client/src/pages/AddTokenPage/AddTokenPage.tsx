@@ -97,7 +97,7 @@ const AddToken: React.FC<AddTokenProps> = props => {
 
   return (
     <>
-      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
+      {fioWallet?.from === WALLET_CREATED_FROM.EDGE ? (
         <EdgeConfirmAction
           onSuccess={onSuccess}
           onCancel={onCancel}
@@ -110,7 +110,7 @@ const AddToken: React.FC<AddTokenProps> = props => {
         />
       ) : null}
 
-      {fioWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+      {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
