@@ -13,7 +13,6 @@ import ContainedFlowWrapper from '../../components/ContainedFlowWrapper';
 
 import { useCheckIfDesktop } from '../../screenType';
 import AutoLogout from '../../services/AutoLogout';
-import CartTimeout from '../../services/CartTimeout';
 import Ref from '../../services/Ref';
 import Roe from '../../services/Roe';
 import TxHistoryService from '../../services/TxHistory';
@@ -128,7 +127,6 @@ const MainLayout: React.FC<Props> = props => {
     <div className={classes.root}>
       {routeName && <PageTitle link={LINKS[routeName]} />}
       <MainHeader isAdminAuthenticated={isAdminAuthenticated} />
-      <CartTimeout />
       <AutoLogout />
       <Ref />
       <Roe />
