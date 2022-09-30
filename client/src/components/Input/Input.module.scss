@@ -120,6 +120,14 @@
   }
 }
 
+.infoBadge {
+  margin: 0 0 20px 0;
+
+  a:hover {
+    color: $iron;
+  }
+}
+
 .inputGroup {
   position: relative;
 
