@@ -44,6 +44,7 @@ type Props = {
   availableTitle?: string;
   availableValue?: string;
   maxValue?: string;
+  isUnwrap?: boolean;
   showMaxInfoBadge?: string;
 };
 
@@ -55,6 +56,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     availableValue = '0',
     maxValue = availableValue,
     showMaxInfoBadge = true,
+    isUnwrap = false,
     debounceTimeout = 0,
     colorSchema,
     hideError,
@@ -287,9 +289,23 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
       {new MathOp(availableValue || 0).gt(0) && (
         <div className={classes.additionalSubInfo}>
           <span>{availableTitle + ': '}</span>
-          <b>{availableValue} FIO</b>
+          <b>
+            {availableValue} {isUnwrap ? 'w' : ''}FIO
+          </b>
         </div>
       )}
+
+      <InfoBadge
+        className={classes.infoBadge}
+        type={BADGE_TYPES.ERROR}
+        show={
+          isUnwrap && availableValue
+            ? new MathOp(availableValue || 0).lt(value)
+            : false
+        }
+        title="Balance!"
+        message="You are attempting to unwrap more wFIO than available."
+      />
     </div>
   );
 };

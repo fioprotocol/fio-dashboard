@@ -10,9 +10,11 @@ import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import SelectModalInput from '../../../../components/Input/SelectModalInput';
 import DangerModal from '../../../../components/Modal/DangerModal';
 import FeesModalInput from '../../../../components/ConnectWallet/FeesModal/FeesModalInput';
+import InfoBadge from '../../../../components/InfoBadge/InfoBadge';
 
 import { formValidation } from './validation';
 
+import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import { UnWrapDomainFormProps } from '../../types';
 
 import classes from '../../styles/UnwrapDomainForm.module.scss';
@@ -82,6 +84,14 @@ const UnwrapDomainForm: React.FC<UnWrapDomainFormProps> = props => {
               label="Public Address"
             />
 
+            <InfoBadge
+              className={classes.infoBadge}
+              type={BADGE_TYPES.ERROR}
+              show={isWrongNetwork && !!network?.name}
+              title="Network!"
+              message={`The connected network ${network?.name.toUpperCase()}, is not valid for unwrapping domains.`}
+            />
+
             <Field
               name="fioAddress"
               placeholder="Enter or select FIO Crypto Handle"
@@ -135,13 +145,6 @@ const UnwrapDomainForm: React.FC<UnWrapDomainFormProps> = props => {
               valueTitle="MATIC"
               isNFT
             />
-
-            {isWrongNetwork && network?.name ? (
-              <div className={classes.warning}>
-                Current Network {network.name.toUpperCase()} is not valid for
-                unwrap Domain action.
-              </div>
-            ) : null}
 
             <SubmitButton
               text="Unwrap FIO Domain"
