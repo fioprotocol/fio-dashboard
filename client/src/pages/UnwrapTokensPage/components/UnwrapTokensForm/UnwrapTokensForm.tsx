@@ -8,6 +8,7 @@ import SelectModalInput from '../../../../components/Input/SelectModalInput';
 import DangerModal from '../../../../components/Modal/DangerModal';
 import AmountInput from '../../../../components/Input/AmountInput';
 import FeesModalInput from '../../../../components/ConnectWallet/FeesModal/FeesModalInput';
+import InfoBadge from '../../../../components/InfoBadge/InfoBadge';
 
 import MathOp from '../../../../util/math';
 import { formValidation } from './validation';
@@ -16,6 +17,7 @@ import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import TextInput, {
   INPUT_UI_STYLES,
 } from '../../../../components/Input/TextInput';
+import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import { WrapTokensFormProps } from '../../types';
 
 import classes from '../../styles/UnwrapTokensForm.module.scss';
@@ -81,6 +83,14 @@ const UnwrapDomainForm: React.FC<WrapTokensFormProps> = props => {
               label="Public Address"
             />
 
+            <InfoBadge
+              className={classes.infoBadge}
+              type={BADGE_TYPES.ERROR}
+              show={isWrongNetwork && !!network?.name}
+              title="Network!"
+              message={`The connected network ${network?.name.toUpperCase()}, is not valid for unwrapping tokens.`}
+            />
+
             <Field
               name="fioAddress"
               placeholder="Enter or select FIO Crypto Handle"
@@ -107,6 +117,7 @@ const UnwrapDomainForm: React.FC<WrapTokensFormProps> = props => {
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               availableValue={wFioBalance}
+              isUnwrap={true}
               component={AmountInput}
             />
 
@@ -123,13 +134,6 @@ const UnwrapDomainForm: React.FC<WrapTokensFormProps> = props => {
               valueTitle="ETH"
               errorColor={COLOR_TYPE.WARN}
             />
-
-            {isWrongNetwork && network?.name ? (
-              <div className={classes.warning}>
-                Current Network {network.name.toUpperCase()} is not valid for
-                unwrap Tokens action.
-              </div>
-            ) : null}
 
             <SubmitButton
               text="Unwrap FIO Tokens"
