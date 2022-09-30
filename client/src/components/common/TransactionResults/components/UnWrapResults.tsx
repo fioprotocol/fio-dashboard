@@ -68,7 +68,11 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
             time for this transaction can vary and your {itemName} will not be
             immediately available in your wallet. <br /> Please check the{' '}
             <a
-              href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transaction_id}`}
+              href={`${
+                amount
+                  ? process.env.REACT_APP_ETH_HISTORY_URL
+                  : process.env.REACT_APP_POLYGON_HISTORY_URL
+              }${transaction_id}`}
               target="_blank"
               rel="noreferrer"
             >
@@ -119,7 +123,11 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
           <p className={classes.title}>ID</p>
           <p className={classnames(classes.item, classes.isBlue)}>
             <a
-              href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transaction_id}`}
+              href={`${
+                amount
+                  ? process.env.REACT_APP_ETH_HISTORY_URL
+                  : process.env.REACT_APP_POLYGON_HISTORY_URL
+              }${transaction_id}`}
               target="_blank"
               rel="noreferrer"
             >
