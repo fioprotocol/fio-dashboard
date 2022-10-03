@@ -8,6 +8,8 @@ import TextInput, {
 } from '../../../../components/Input/TextInput';
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 
+import { ASTERISK_SIGN } from '../../../../constants/common';
+
 import { RequestTokensValues } from '../../types';
 import { MappedPublicAddresses } from '../../../../types';
 
@@ -55,7 +57,7 @@ const PublicKeyField: React.FC<Props> = props => {
       payeeFioAddress
     ].publicAddresses.find(
       ({ chainCode: cCode, tokenCode: tCode }) =>
-        chainCode === cCode && tokenCode === tCode,
+        chainCode === cCode && (tokenCode === tCode || tCode === ASTERISK_SIGN),
     );
 
     if (pubAddressItem != null) {
@@ -103,7 +105,7 @@ const PublicKeyField: React.FC<Props> = props => {
       payeeFioAddress
     ].publicAddresses.find(
       ({ chainCode: cCode, tokenCode: tCode }) =>
-        chainCode === cCode && tokenCode === tCode,
+        chainCode === cCode && (tokenCode === tCode || tCode === ASTERISK_SIGN),
     );
 
     if (

@@ -13,24 +13,21 @@ type Props = {
 };
 
 const PageTitle: React.FC<Props> = props => {
-  const { link, isVirtualPage = false } = props;
+  const { link } = props;
 
   const title = LINK_TITLES[link]
     ? `${APP_TITLE} - ${LINK_TITLES[link]}`
     : APP_TITLE;
 
   useEffect(() => {
-    if (!isVirtualPage) {
-      return;
-    }
     const path = ROUTES[link];
     if (link && path) {
       fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.VIRTUAL_PAGE_VIEW, {
-        page_title: title,
-        page_location: path,
+        vpv_page_title: title,
+        vpv_page_location: `${window.location.origin}${path}`,
       });
     }
-  }, [link, title, isVirtualPage]);
+  }, [link, title]);
 
   return (
     <Helmet>
