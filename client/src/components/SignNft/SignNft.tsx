@@ -220,7 +220,7 @@ const SignNft: React.FC<ContainerProps> = props => {
 
   return (
     <>
-      {currentWallet.from === WALLET_CREATED_FROM.EDGE ? (
+      {currentWallet?.from === WALLET_CREATED_FROM.EDGE ? (
         <EdgeConfirmAction
           action={CONFIRM_PIN_ACTIONS.SIGN_NFT}
           setProcessing={setProcessing}
@@ -234,7 +234,7 @@ const SignNft: React.FC<ContainerProps> = props => {
         />
       ) : null}
 
-      {currentWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+      {currentWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
