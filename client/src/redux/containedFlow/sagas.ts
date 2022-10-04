@@ -17,6 +17,8 @@ import {
 
 import { PURCHASE_RESULTS_CLOSE } from '../registrations/actions';
 
+import { LOGOUT_SUCCESS } from '../profile/actions';
+
 import {
   isContainedFlow as getIsContainedFlow,
   containedFlowQueryParams as getContainedFlowQueryParams,
@@ -29,6 +31,16 @@ import { ROUTES } from '../../constants/routes';
 
 import { Action } from '../types';
 import { CartItem, ContainedFlowQueryParams } from '../../types';
+
+export function* setContainedFlowToInitStep(): Generator {
+  yield takeEvery(LOGOUT_SUCCESS, function*() {
+    const isContainedFlow: boolean = yield select(getIsContainedFlow);
+
+    if (isContainedFlow) {
+      yield put(setStep(CONTAINED_FLOW_STEPS.INIT));
+    }
+  });
+}
 
 export function* containedFlowActionSuccess(): Generator {
   yield takeEvery(FIO_ACTION_EXECUTE_SUCCESS, function*(action: Action) {

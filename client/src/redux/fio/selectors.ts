@@ -28,6 +28,8 @@ export const fioWallets = (state: ReduxState): FioWalletDoublet[] =>
 export const fioWalletsIdKeys = (
   state: ReduxState,
 ): { id: string; publicKey: string }[] => state[prefix].fioWalletsIdKeys;
+export const fioAddressesLoading = (state: ReduxState): boolean =>
+  state[prefix].fioAddressesLoading;
 export const fioAddresses = (state: ReduxState): FioAddressDoublet[] =>
   state[prefix].fioAddresses;
 export const fioDomains = (state: ReduxState): FioDomainDoublet[] =>
