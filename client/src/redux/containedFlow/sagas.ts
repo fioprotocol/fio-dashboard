@@ -15,6 +15,8 @@ import {
   TRANSACTION_RESULTS_CLOSE,
 } from '../fio/actions';
 
+import { setRedirectPath } from '../navigation/actions';
+
 import { PURCHASE_RESULTS_CLOSE } from '../registrations/actions';
 
 import { LOGOUT_SUCCESS } from '../profile/actions';
@@ -26,6 +28,8 @@ import {
 } from './selectors';
 
 import { cartItems } from '../cart/selectors';
+
+import { redirectLink } from '../navigation/selectors';
 
 import { ROUTES } from '../../constants/routes';
 
@@ -119,6 +123,11 @@ export function* handleContainedFlowSteps(history: History): Generator {
           const registrationPath = cart.length
             ? ROUTES.CHECKOUT
             : ROUTES.FIO_ADDRESSES_SELECTION;
+          const redirectLinkSelector: string = yield select(redirectLink);
+
+          if (!redirectLinkSelector) {
+            yield put<Action>(setRedirectPath({ pathname: registrationPath }));
+          }
           yield history.push(registrationPath, {
             containedFlowQueryParams,
           }); // todo: check containedFlowQueryParams when registrationPath is CHECKOUT, we need to set orderParams in this case
