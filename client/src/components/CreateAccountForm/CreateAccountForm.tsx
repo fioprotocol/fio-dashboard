@@ -15,7 +15,6 @@ import Confirmation from './Confirmation';
 import Success from './Success';
 import PageTitle from '../PageTitle/PageTitle';
 
-import { ROUTES } from '../../constants/routes';
 import { PIN_LENGTH } from '../../constants/form';
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -163,10 +162,6 @@ export default class CreateAccountForm extends React.Component<Props, State> {
 
     fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SIGN_UP);
     this.props.makeNonce(emailToUsername(email), this.state.keys);
-    this.props.history.push(
-      (this.props.lastLocation && this.props.lastLocation.pathname) ||
-        ROUTES.HOME,
-    );
   };
 
   setEmailError = (emailError: string) => {
@@ -547,10 +542,9 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     const { step } = this.state;
     return (
       <FormModalWrapper>
-        <PageTitle
-          link={STEPS_LINK[step]}
-          isVirtualPage={step !== STEPS.EMAIL_PASSWORD}
-        />
+        {step !== STEPS.EMAIL_PASSWORD && (
+          <PageTitle link={STEPS_LINK[step]} isVirtualPage />
+        )}
         <Form
           mutators={{ setDataMutator }}
           validate={this.validate}

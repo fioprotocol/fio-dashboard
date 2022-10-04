@@ -8,11 +8,10 @@ import FioLoader from '../../components/common/FioLoader/FioLoader';
 import FioAddressSelectionPage from '../FioAddressSelectionPage';
 
 import { APP_TITLE } from '../../constants/labels';
-import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
 import { handleHomePageContent } from '../../util/homePage';
 import { useNonActiveUserRedirect } from '../../util/hooks';
-import { fireAnalyticsEvent } from '../../util/analytics';
+import { firePageViewAnalyticsEvent } from '../../util/analytics';
 
 import {
   RefProfile,
@@ -65,10 +64,10 @@ export const RefHomePage: React.FC<Props &
   }, [refProfileInfo]);
   useEffect(() => {
     if (refProfileInfo?.code) {
-      fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.VIRTUAL_PAGE_VIEW, {
-        vpv_page_title: `${APP_TITLE} - ${refProfileInfo.label}`,
-        vpv_page_location: `${window.location.origin}/ref/${refProfileInfo.code}`,
-      });
+      firePageViewAnalyticsEvent(
+        `${APP_TITLE} - ${refProfileInfo.label}`,
+        `${window.location.origin}/ref/${refProfileInfo.code}`,
+      );
     }
   }, [refProfileInfo?.code, refProfileInfo?.label]);
   useEffect(() => {

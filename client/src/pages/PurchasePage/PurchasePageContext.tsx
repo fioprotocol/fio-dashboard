@@ -25,7 +25,10 @@ import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 
 import { transformPurchaseResults } from '../../util/purchase';
 import { cartItemsToOrderItems, totalCost } from '../../util/cart';
-import { fireAnalyticsEvent } from '../../util/analytics';
+import {
+  fireAnalyticsEvent,
+  getCartItemsDataForAnalytics,
+} from '../../util/analytics';
 import { useEffectOnce } from '../../hooks/general';
 import { useWebsocket } from '../../hooks/websocket';
 
@@ -39,6 +42,7 @@ import {
 } from '../../constants/purchase';
 import {
   ANALYTICS_EVENT_ACTIONS,
+  ANALYTICS_PAYMENT_TYPE,
   CURRENCY_CODES,
 } from '../../constants/common';
 import { WS_ENDPOINTS } from '../../constants/websocket';
@@ -242,6 +246,23 @@ export const useContext = (): {
   useEffectOnce(
     () => {
       if (
+        [
+          PURCHASE_RESULTS_STATUS.SUCCESS,
+          PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
+        ].includes(orderStatusData.status)
+      ) {
+        const purchaseItems = getCartItemsDataForAnalytics(regItems);
+        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED, {
+          ...purchaseItems,
+          transaction_id: order?.number,
+          payment_type: !purchaseItems.value
+            ? ANALYTICS_PAYMENT_TYPE.FREE
+            : results.paymentProvider === PAYMENT_PROVIDER.STRIPE
+            ? ANALYTICS_PAYMENT_TYPE.STRIPE
+            : ANALYTICS_PAYMENT_TYPE.FIO,
+        });
+      }
+      if (
         orderStatusData.status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS
       ) {
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_PARTIAL);
@@ -250,8 +271,9 @@ export const useContext = (): {
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_FAILED);
       }
     },
-    [orderStatusData],
+    [orderStatusData, results],
     [
+      PURCHASE_RESULTS_STATUS.SUCCESS,
       PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
       PURCHASE_RESULTS_STATUS.FAILED,
       PURCHASE_RESULTS_STATUS.CANCELED,

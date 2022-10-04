@@ -722,6 +722,6 @@ export type AnalyticsEventActions = typeof ANALYTICS_EVENT_ACTIONS;
 
 declare global {
   interface Window {
-    dataLayer: object[];
+    dataLayer: AnyObject[];
   }
 }

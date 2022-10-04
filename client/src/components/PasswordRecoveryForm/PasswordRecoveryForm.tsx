@@ -130,7 +130,7 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
       action: ACTIONS.RECOVERY,
       contentType: NOTIFICATIONS_CONTENT_TYPE.RECOVERY_PASSWORD,
       type: BADGE_TYPES.ALERT,
-      pagesToShow: [ROUTES.HOME],
+      pagesToShow: [ROUTES.HOME, ROUTES.DASHBOARD],
     });
   };
 
@@ -211,6 +211,7 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
       <PageTitle
         link={LINKS.CREATE_ACCOUNT_SECRET_QUESTIONS_SKIP}
         isVirtualPage
+        shouldFireOnce
       />
       <FontAwesomeIcon icon="ban" className={classes.icon} />
       <FormHeader
@@ -388,6 +389,7 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
               : LINKS.CREATE_ACCOUNT_SECRET_ANSWERS
           }
           isVirtualPage
+          shouldFireOnce
         />
         <Form
           onSubmit={onSubmit}
