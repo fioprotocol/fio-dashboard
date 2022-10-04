@@ -91,7 +91,7 @@ export function* purchaseResultsClose(history: History): Generator {
       }
     }
 
-    yield history.push(ROUTES.HOME);
+    yield history.push(isContainedFlow ? ROUTES.HOME : ROUTES.DASHBOARD);
   });
 }
 

@@ -3,17 +3,17 @@ import { Helmet } from 'react-helmet-async';
 
 import { APP_TITLE, LINK_TITLES } from '../../constants/labels';
 import { ROUTES } from '../../constants/routes';
-import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
-import { fireAnalyticsEvent } from '../../util/analytics';
+import { firePageViewAnalyticsEvent } from '../../util/analytics';
 
 type Props = {
   link: string;
   isVirtualPage?: boolean;
+  shouldFireOnce?: boolean;
 };
 
 const PageTitle: React.FC<Props> = props => {
-  const { link } = props;
+  const { link, shouldFireOnce = false } = props;
 
   const title = LINK_TITLES[link]
     ? `${APP_TITLE} - ${LINK_TITLES[link]}`
@@ -22,12 +22,13 @@ const PageTitle: React.FC<Props> = props => {
   useEffect(() => {
     const path = ROUTES[link];
     if (link && path) {
-      fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.VIRTUAL_PAGE_VIEW, {
-        vpv_page_title: title,
-        vpv_page_location: `${window.location.origin}${path}`,
-      });
+      firePageViewAnalyticsEvent(
+        title,
+        `${window.location.origin}${path}`,
+        shouldFireOnce,
+      );
     }
-  }, [link, title]);
+  }, [link, title, shouldFireOnce]);
 
   return (
     <Helmet>

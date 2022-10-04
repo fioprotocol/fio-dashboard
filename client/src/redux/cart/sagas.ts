@@ -48,6 +48,7 @@ export function* cartWasCleared(): Generator {
           ROUTES.FIO_ADDRESSES_SELECTION,
           ROUTES.FIO_DOMAINS_SELECTION,
           ROUTES.HOME,
+          ROUTES.DASHBOARD,
         ],
       }),
     );

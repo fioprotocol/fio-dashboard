@@ -73,7 +73,7 @@ const UpdateEmailPage: React.FC<Props &
       action: ACTIONS.EMAIL_CONFIRM,
       type: BADGE_TYPES.INFO,
       contentType: NOTIFICATIONS_CONTENT_TYPE.UPDATE_EMAIL,
-      pagesToShow: [ROUTES.HOME, ROUTES.SETTINGS],
+      pagesToShow: [ROUTES.HOME, ROUTES.DASHBOARD, ROUTES.SETTINGS],
     });
 
     if (isAuthenticated && user.email === result.oldEmail && result.newEmail) {

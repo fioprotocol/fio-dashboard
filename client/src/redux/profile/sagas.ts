@@ -35,6 +35,7 @@ import {
   redirectLink,
 } from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
+import { isNewUser as isNewUserSelector } from './selectors';
 import { ROUTES } from '../../constants/routes';
 
 import { Api } from '../../api';
@@ -66,12 +67,18 @@ export function* loginSuccess(history: History, api: Api): Generator {
       } catch (e) {
         log.error(e);
       }
-    yield put<Action>(loadProfile());
+    // Need to wait for result, so use hack with two yield
+    // @ts-ignore
+    yield yield put<Action>(loadProfile());
     yield put<Action>(listNotifications());
 
     const locationState: PrivateRedirectLocationState = yield select(
       locationStateSelector,
     );
+    const isNewUser: boolean = yield select(isNewUserSelector);
+    if (isNewUser) {
+      return history.push(ROUTES.IS_NEW_USER);
+    }
     if (
       !hasRedirectTo &&
       locationState &&
@@ -100,7 +107,7 @@ export function* profileSuccess(): Generator {
             action: ACTIONS.RECOVERY,
             contentType: NOTIFICATIONS_CONTENT_TYPE.RECOVERY_PASSWORD,
             type: BADGE_TYPES.ALERT,
-            pagesToShow: [ROUTES.HOME],
+            pagesToShow: [ROUTES.HOME, ROUTES.DASHBOARD],
           }),
         );
     } catch (e) {

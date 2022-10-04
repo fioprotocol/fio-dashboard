@@ -9,7 +9,7 @@ import {
 import apis from '../../api/index';
 
 import { setFioName } from '../../utils';
-import { fireAnalyticsEvent } from '../../util/analytics';
+import { fireAnalyticsEventDebounced } from '../../util/analytics';
 
 import { DefaultValidationProps, FormValidationErrorProps } from './types';
 
@@ -32,7 +32,7 @@ const verifyAddress = async (props: DefaultValidationProps) => {
   toggleValidating(true);
   if (domain) {
     if (!isAddress) {
-      fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM, {
+      fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM, {
         search_term: domain,
         type: ANALYTICS_FIO_NAME_TYPE.DOMAIN,
       });
@@ -48,12 +48,16 @@ const verifyAddress = async (props: DefaultValidationProps) => {
       ) {
         errors.domain =
           'Unfortunately the domain name you have selected is not available. Please select an alternative.';
-        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED);
+        fireAnalyticsEventDebounced(
+          ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
+        );
       }
       if (!isAddress) {
         errors.domain =
           'Unfortunately the domain name you have selected is not available. Please select an alternative.';
-        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED);
+        fireAnalyticsEventDebounced(
+          ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
+        );
       }
     }
   }
@@ -61,12 +65,12 @@ const verifyAddress = async (props: DefaultValidationProps) => {
   if (address && domain) {
     try {
       if (options.length > 0 && options.every(option => option !== domain)) {
-        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM, {
+        fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM, {
           search_term: setFioName(address, domain),
           type: ANALYTICS_FIO_NAME_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
         });
       } else {
-        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM, {
+        fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM, {
           search_term: setFioName(address, domain),
           type: ANALYTICS_FIO_NAME_TYPE.ADDRESS,
         });
@@ -74,7 +78,9 @@ const verifyAddress = async (props: DefaultValidationProps) => {
       const isAvail = await apis.fio.availCheck(setFioName(address, domain));
       if (isAvail && isAvail.is_registered === 1) {
         errors.address = 'This FIO Crypto Handle is already registered.';
-        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED);
+        fireAnalyticsEventDebounced(
+          ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
+        );
       }
     } catch (e) {
       errors.address = 'Server error. Please try later.';
