@@ -5,24 +5,28 @@ import Badge from 'react-bootstrap/Badge';
 import classNames from 'classnames';
 
 import Modal from '../../../../components/Modal/Modal';
+import { parseActionStatus } from '../WrapStatus';
 
+import { BADGE_TYPES } from '../../../Badge/Badge';
 import { WrapStatusWrapItem } from '../../../../types';
 import { formatDateToLocale } from '../../../../helpers/stringFormatters';
 import apis from '../../../../api';
 
 import classes from './../WrapStatus.module.scss';
+import InfoBadge from '../../../InfoBadge/InfoBadge';
 
 type Props = {
   itemData?: WrapStatusWrapItem;
   onClose: () => void;
   isWrap: boolean;
   isTokens: boolean;
-  isComplete: boolean;
 };
 
 // todo: refactor
 const DetailsModal: React.FC<Props> = props => {
-  const { itemData, onClose, isComplete, isWrap, isTokens } = props;
+  const { itemData, onClose, isWrap, isTokens } = props;
+
+  const { badgeType, badgeText } = parseActionStatus(itemData);
 
   return (
     <Modal
@@ -35,12 +39,10 @@ const DetailsModal: React.FC<Props> = props => {
     >
       <div className="d-flex flex-column w-100">
         <h3 className="d-flex mt-2 mb-3 justify-content-between">
-          <div>Action Details</div>
-          {itemData ? (
-            <Badge variant={isComplete ? 'primary' : 'secondary'}>
-              {isComplete ? 'Complete' : 'Pending'}
-            </Badge>
-          ) : null}
+          <div>
+            {isWrap ? 'Wrap' : 'Unwrap'} FIO {isTokens ? 'Tokens' : 'Domain'}
+          </div>
+          {itemData ? <Badge variant={badgeType}>{badgeText}</Badge> : null}
         </h3>
         {itemData ? (
           <div>
@@ -67,6 +69,22 @@ const DetailsModal: React.FC<Props> = props => {
             </div>
             <div className="d-flex justify-content-between my-2">
               <div className="mr-3">
+                <b>Date:</b>
+              </div>
+              <div>
+                {itemData.data.action_trace?.block_time
+                  ? formatDateToLocale(itemData.data.action_trace.block_time)
+                  : null}
+                {itemData.confirmData?.length &&
+                itemData.confirmData[0].action_trace?.block_time
+                  ? formatDateToLocale(
+                      itemData.confirmData[0].action_trace.block_time,
+                    )
+                  : null}
+              </div>
+            </div>
+            <div className="d-flex justify-content-between my-2">
+              <div className="mr-3">
                 <b>Chain:</b>
               </div>
               <div>{isWrap ? 'FIO' : isTokens ? 'ETH' : 'POLYGON'}</div>
@@ -77,22 +95,14 @@ const DetailsModal: React.FC<Props> = props => {
               </div>
               <div>{itemData.blockNumber}</div>
             </div>
-            <div className="d-flex justify-content-between my-2">
-              <div className="mr-3">
-                <b>Date:</b>
+            {itemData.data.action_trace?.act?.name ? (
+              <div className="d-flex justify-content-between my-2">
+                <div className="mr-3">
+                  <b>Action type:</b>
+                </div>
+                <div>{itemData.data.action_trace.act.name}</div>
               </div>
-              <div>
-                {itemData.data.action_trace?.block_time
-                  ? formatDateToLocale(itemData.data.action_trace.block_time)
-                  : null}
-              </div>
-            </div>
-            <div className="d-flex justify-content-between my-2">
-              <div className="mr-3">
-                <b>{isWrap ? 'To' : 'From'} Address</b>
-              </div>
-              <div>{itemData.address}</div>
-            </div>
+            ) : null}
             {itemData.amount ? (
               <div className="d-flex justify-content-between my-2">
                 <div className="mr-3">
@@ -112,44 +122,60 @@ const DetailsModal: React.FC<Props> = props => {
                 <div>{itemData.domain}</div>
               </div>
             ) : null}
+            {itemData.data.action_trace?.act?.data?.actor ? (
+              <div className="d-flex justify-content-between my-2">
+                <div className="mr-3">
+                  <b>From Account:</b>
+                </div>
+                <div>{itemData.data.action_trace.act.data.actor}</div>
+              </div>
+            ) : null}
+            <div className="d-flex justify-content-between my-2">
+              <div className="mr-3">
+                <b>{isWrap ? 'To' : 'From'} Address:</b>
+              </div>
+              <div>{itemData.address}</div>
+            </div>
+
             {itemData.data.action_trace ? (
               <div>
                 <div className="d-flex justify-content-between my-2">
                   <div className="mr-3">
-                    <b>Action type:</b>
-                  </div>
-                  <div>{itemData.data.action_trace.act.name}</div>
-                </div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>Receiver:</b>
-                  </div>
-                  <div>{itemData.data.action_trace.receiver}</div>
-                </div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>Actor:</b>
-                  </div>
-                  <div>{itemData.data.action_trace.act.data.actor}</div>
-                </div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>tpid:</b>
+                    <b>TPID:</b>
                   </div>
                   <div>
                     {JSON.stringify(itemData.data.action_trace.act.data.tpid)}
                   </div>
                 </div>
+
+                <div className="d-flex justify-content-between my-2">
+                  <div className="mr-3">
+                    <b>Escrow Account:</b>
+                  </div>
+                  <div>{itemData.data.action_trace.receiver}</div>
+                </div>
               </div>
             ) : null}
 
             {!isWrap && itemData.oravotes?.length ? (
-              <div className="mt-4">
-                <div>
-                  <b>
-                    <h4>Oracle votes:</h4>
-                  </b>
+              <div className="d-flex justify-content-between my-2">
+                <div className="mr-3">
+                  <b>To Handle:</b>
                 </div>
+                <div>{itemData.oravotes[0].fio_address}</div>
+              </div>
+            ) : null}
+
+            <div className="mt-4">
+              <div>
+                <b>
+                  <h4>Confirmation</h4>
+                </b>
+              </div>
+            </div>
+
+            {!isWrap && itemData.oravotes?.length ? (
+              <div>
                 <div className="d-flex justify-content-between my-2">
                   <div className="mr-3">
                     <b>Chain:</b>
@@ -168,22 +194,11 @@ const DetailsModal: React.FC<Props> = props => {
                   </div>
                   <div>{JSON.stringify(!!itemData.oravotes[0].isComplete)}</div>
                 </div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>FIO Address:</b>
-                  </div>
-                  <div>{itemData.oravotes[0].fio_address}</div>
-                </div>
               </div>
             ) : null}
 
             {isWrap && itemData.confirmData ? (
-              <div className="mt-4">
-                <div>
-                  <b>
-                    <h4>Confirm data</h4>
-                  </b>
-                </div>
+              <div>
                 <div className="d-flex justify-content-between my-2">
                   <div className="mr-3">
                     <b>Trx_id:</b>
@@ -207,7 +222,11 @@ const DetailsModal: React.FC<Props> = props => {
                   <div className="mr-3">
                     <b>Chain:</b>
                   </div>
-                  <div>{itemData.data.action_trace.act.data.chain_code}</div>
+                  <div>
+                    {itemData.data.action_trace.act.data.chain_code === 'MATIC'
+                      ? 'Polygon'
+                      : itemData.data.action_trace.act.data.chain_code}
+                  </div>
                 </div>
                 <div className="d-flex justify-content-between my-2">
                   <div className="mr-3">
@@ -215,22 +234,11 @@ const DetailsModal: React.FC<Props> = props => {
                   </div>
                   <div>{itemData.confirmData.blockNumber}</div>
                 </div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
-                    <b>Event name:</b>
-                  </div>
-                  <div>{itemData.confirmData.event}</div>
-                </div>
               </div>
             ) : null}
 
             {!isWrap && itemData.confirmData?.length ? (
-              <div className="mt-4">
-                <div>
-                  <b>
-                    <h4>Confirm data</h4>
-                  </b>
-                </div>
+              <div>
                 <div className="my-2">
                   <div className="mr-3">
                     <b>Transactions ids:</b>
@@ -255,6 +263,14 @@ const DetailsModal: React.FC<Props> = props => {
                 </div>
               </div>
             ) : null}
+
+            <InfoBadge
+              className={classes.infoBadge}
+              type={BADGE_TYPES.ERROR}
+              show={!itemData.confirmData}
+              title="Confirmation!"
+              message="Something went wrong."
+            />
           </div>
         ) : null}
       </div>
