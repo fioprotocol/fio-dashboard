@@ -222,6 +222,23 @@ export default combineReducers({
         return state;
     }
   },
+  fioAddressesLoading(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.GET_FIO_ADDRESSES_REQUEST:
+      case actions.REFRESH_FIO_NAMES_REQUEST:
+      case actions.GET_WALLETS_FIO_ADDRESSES_REQUEST:
+        return true;
+      case actions.REFRESH_FIO_NAMES_SUCCESS:
+      case actions.GET_WALLETS_FIO_ADDRESSES_SUCCESS:
+      case actions.GET_FIO_ADDRESSES_SUCCESS:
+      case actions.REFRESH_FIO_NAMES_FAILURE:
+      case actions.GET_WALLETS_FIO_ADDRESSES_FAILURE:
+      case actions.GET_FIO_ADDRESSES_FAILURE:
+        return false;
+      default:
+        return state;
+    }
+  },
   fioAddresses(state: FioAddressDoublet[] = [], action) {
     switch (action.type) {
       case actions.RESET_FIO_NAMES: {
