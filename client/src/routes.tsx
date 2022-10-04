@@ -70,6 +70,7 @@ import WrapStatusPageUnwrapTokens from './pages/WrapStatusPageUnwrapTokens';
 import WrapStatusPageUnwrapDomains from './pages/WrapStatusPageUnwrapDomains';
 import WrapStatusPageWrapTokens from './pages/WrapStatusPageWrapTokens';
 import WrapStatusPageWrapDomains from './pages/WrapStatusPageWrapDomains';
+import WrapStatusPage from './pages/WrapStatusPage';
 
 import { ROUTES } from './constants/routes';
 
@@ -341,6 +342,7 @@ const Routes = (): React.ReactElement => (
           component={WrapStatusPageUnwrapDomains}
           exact
         />
+        <Route path={ROUTES.WRAP_STATUS} component={WrapStatusPage} exact />
 
         <AuthContainer />
       </Switch>

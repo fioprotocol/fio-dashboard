@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 
-import { DropdownButton, Table } from 'react-bootstrap';
+import { Table } from 'react-bootstrap';
 import Badge from 'react-bootstrap/Badge';
-
-import { Link } from 'react-router-dom';
 import classNames from 'classnames';
+
+import { useHistory } from 'react-router';
 
 import Loader from '../../../components/Loader/Loader';
 import DetailsModal from './components/DetailsModal';
@@ -20,16 +20,61 @@ import { WrapStatusWrapItem } from '../../../types';
 
 import classes from './WrapStatus.module.scss';
 
-const isCompleteAction = (data: WrapStatusWrapItem) => {
-  return (
-    data?.confirmData &&
-    (!Object.keys(data.confirmData).includes('isComplete') ||
-      !!data.confirmData.isComplete)
-  );
+export const parseActionStatus = (
+  item: WrapStatusWrapItem,
+): {
+  badgeType: string;
+  badgeText: string;
+  isComplete: boolean;
+} => {
+  const TRANSACTION_OUT_OF_TIME_MILLISECONDS = 10 * 60 * 1000; // 10 minutes - time delay which proves that transaction wasn't completed successfully (oracle - 1m, wrap_status job - 1m, else - chains requests)
+
+  let badgeType;
+  let badgeText;
+  const isTransactionIsOutOfTime = (date?: string) => {
+    if (!date) return true;
+    return (
+      new Date().getTime() - new Date(date).getTime() >=
+      TRANSACTION_OUT_OF_TIME_MILLISECONDS
+    );
+  };
+
+  const isCompleteAction = (data: WrapStatusWrapItem) => {
+    return (
+      data?.confirmData &&
+      (!Object.keys(data.confirmData).includes('isComplete') ||
+        !!data.confirmData.isComplete)
+    );
+  };
+
+  const isComplete = isCompleteAction(item);
+  if (isComplete) {
+    badgeType = 'primary';
+    badgeText = 'Complete';
+  } else {
+    if (isTransactionIsOutOfTime(item?.data?.action_trace?.block_time)) {
+      badgeType = 'danger';
+      badgeText = 'Failed';
+    } else {
+      badgeType = 'secondary';
+      badgeText = 'Pending';
+    }
+  }
+
+  return {
+    badgeType,
+    badgeText,
+    isComplete,
+  };
 };
 
 const WrapStatus: React.FC<PageProps> = props => {
   const { loading, isWrap, isTokens, data, getData } = props;
+
+  const history = useHistory();
+
+  const [isWrapSelected, setIsWrapSelected] = useState<boolean>(isWrap);
+  const [isTokensSelected, setIsTokensSelected] = useState<boolean>(isTokens);
 
   const [modalData, setModalData] = useState<WrapStatusWrapItem | null>(null);
 
@@ -38,69 +83,60 @@ const WrapStatus: React.FC<PageProps> = props => {
   const openDetailsModal = (item: WrapStatusWrapItem) => setModalData(item);
   const closeDetailsModal = () => setModalData(null);
 
+  const handleOpenLink = () => {
+    if (isWrapSelected && isTokensSelected)
+      history.push(ROUTES.WRAP_STATUS_WRAP_TOKENS);
+    if (isWrapSelected && !isTokensSelected)
+      history.push(ROUTES.WRAP_STATUS_WRAP_DOMAINS);
+    if (!isWrapSelected && !isTokensSelected)
+      history.push(ROUTES.WRAP_STATUS_UNWRAP_DOMAINS);
+    if (!isWrapSelected && isTokensSelected)
+      history.push(ROUTES.WRAP_STATUS_UNWRAP_TOKENS);
+  };
+
   return (
     <>
       <div className={classes.tableContainer}>
         <div className="d-flex my-3">
-          <DropdownButton
-            id="dropdown-nav-unwrapping"
-            title="Wrapping"
-            className={classes.navDropdown}
+          <select
+            className={classNames(
+              'custom-select custom-select-lg mr-3',
+              classes.navSelect,
+            )}
+            defaultValue={isWrapSelected ? 0 : 1}
+            onChange={e => setIsWrapSelected(!parseInt(e.target.value))}
           >
-            <div className="pl-4 py-2">
-              <Link
-                to={ROUTES.WRAP_STATUS_WRAP_TOKENS}
-                className={classNames(
-                  isWrap && isTokens ? classes.disabled : '',
-                )}
-              >
-                Tokens
-              </Link>
-            </div>
-            <div className="pl-4 py-2">
-              <Link
-                to={ROUTES.WRAP_STATUS_WRAP_DOMAINS}
-                className={classNames(
-                  isWrap && !isTokens ? classes.disabled : '',
-                )}
-              >
-                Domains
-              </Link>
-            </div>
-          </DropdownButton>
+            <option value={0}>Wrap</option>
+            <option value={1}>Unwrap</option>
+          </select>
 
-          <DropdownButton
-            id="dropdown-nav-unwrapping"
-            title="Unwrapping"
-            className={classes.navDropdown}
+          <select
+            className={classNames(
+              'custom-select custom-select-lg mr-3',
+              classes.navSelect,
+            )}
+            defaultValue={isTokensSelected ? 0 : 1}
+            onChange={e => setIsTokensSelected(!parseInt(e.target.value))}
           >
-            <div className="pl-4 py-2">
-              <Link
-                to={ROUTES.WRAP_STATUS_UNWRAP_TOKENS}
-                className={classNames(
-                  !isWrap && isTokens ? classes.disabled : '',
-                )}
-              >
-                Tokens
-              </Link>
-            </div>
-            <div className="pl-4 py-2">
-              <Link
-                to={ROUTES.WRAP_STATUS_UNWRAP_DOMAINS}
-                className={classNames(
-                  !isWrap && !isTokens ? classes.disabled : '',
-                )}
-              >
-                Domains
-              </Link>
-            </div>
-          </DropdownButton>
+            <option value={0}>Tokens</option>
+            <option value={1}>Domains</option>
+          </select>
+
+          <button
+            type="button"
+            className="btn btn-outline-primary"
+            disabled={
+              isWrap === isWrapSelected && isTokens === isTokensSelected
+            }
+            onClick={handleOpenLink}
+          >
+            Show
+          </button>
         </div>
 
         <div>
           <h3>
-            {isWrap ? 'Wrap' : 'Unwrap'} FIO {isTokens ? 'Tokens' : 'Domains'}{' '}
-            actions list.
+            {isWrap ? 'Wrap' : 'Unwrap'} FIO {isTokens ? 'Tokens' : 'Domains'}
           </h3>
         </div>
 
@@ -152,11 +188,12 @@ const WrapStatus: React.FC<PageProps> = props => {
                     </th>
                     <th>
                       <Badge
-                        variant={
-                          isCompleteAction(listItem) ? 'primary' : 'secondary'
-                        }
+                        variant={parseActionStatus(listItem).badgeType}
+                        // variant={
+                        //   isCompleteAction(listItem) ? 'primary' : 'secondary'
+                        // }
                       >
-                        {isCompleteAction(listItem) ? 'Complete' : 'Pending'}
+                        {parseActionStatus(listItem).badgeText}
                       </Badge>
                     </th>
                   </tr>
@@ -175,7 +212,6 @@ const WrapStatus: React.FC<PageProps> = props => {
         onClose={closeDetailsModal}
         isWrap={isWrap}
         isTokens={isTokens}
-        isComplete={isCompleteAction(modalData)}
       />
     </>
   );
