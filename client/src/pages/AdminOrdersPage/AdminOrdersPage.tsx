@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
-import { Table } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Loader from '../../components/Loader/Loader';
 import AdminOrderModal from './components/AdminOrderModal/AdminOrderModal';
@@ -19,6 +20,7 @@ import classes from './styles/AdminOrdersListPage.module.scss';
 type Props = {
   loading: boolean;
   getOrdersList: (limit?: number, offset?: number) => Promise<void>;
+  exportOrdersData: () => void;
   adminUser: AdminUser;
   ordersList: OrderDetails[];
   orderItem: OrderDetails;
@@ -28,7 +30,14 @@ type Props = {
 };
 
 const AdminOrdersPage: React.FC<Props> = props => {
-  const { loading, ordersList, getOrdersList, getOrder, orderItem } = props;
+  const {
+    loading,
+    ordersList,
+    getOrdersList,
+    exportOrdersData,
+    getOrder,
+    orderItem,
+  } = props;
 
   const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
   const [selectedOrderItemId, setSelectedOrderItemId] = useState<string | null>(
@@ -55,6 +64,9 @@ const AdminOrdersPage: React.FC<Props> = props => {
   return (
     <>
       <div className={classes.tableContainer}>
+        <Button className="mb-4" onClick={exportOrdersData}>
+          <FontAwesomeIcon icon="download" className="mr-2" /> Export
+        </Button>
         <Table className="table" striped={true}>
           <thead>
             <tr>

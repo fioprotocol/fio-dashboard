@@ -180,13 +180,15 @@ export class Order extends Base {
           u.email as "userEmail",
           rp.label as "refProfileName"
         FROM "orders" o
-          INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${Payment.SPENT_TYPE.ORDER}
+          INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${
+            Payment.SPENT_TYPE.ORDER
+          }
           INNER JOIN users u ON u.id = o."userId"
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
         WHERE o."deletedAt" IS NULL
         ORDER BY o.id DESC
         OFFSET ${offset}
-        LIMIT ${limit}
+        ${limit ? `LIMIT ${limit}` : ``}
       `);
 
     return orders;

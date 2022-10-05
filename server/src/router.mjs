@@ -58,6 +58,7 @@ router.get('/admin/roles', checkAdminAuth, routes.adminUsers.rolesList);
 router.get('/admin/statuses', checkAdminAuth, routes.adminUsers.statusesList);
 
 router.get('/admin/orders', checkAdminAuth, routes.adminUsers.ordersList);
+router.get('/admin/orders/export', checkAdminAuth, routes.adminUsers.exportOrdersData);
 router.get('/admin/orders/:id', checkAdminAuth, routes.adminUsers.order);
 
 router.get('/admin/users/list', checkAdminAuth, routes.adminUsers.regularUsersList);

@@ -675,6 +675,10 @@ export type OrderItem = {
   priceCurrency: string;
   updatedAt: string;
   blockchainTransactions: BcTx[];
+  order?: {
+    id: string;
+    number: string;
+  };
   orderItemStatus: {
     txStatus: typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
   };

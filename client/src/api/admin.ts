@@ -45,6 +45,9 @@ export default class Admin extends Base {
   ordersList(limit: number, offset: number): Promise<AdminOrdersListResponse> {
     return this.apiClient.get('admin/orders', { limit, offset });
   }
+  exportOrdersData(): Promise<AdminOrdersListResponse> {
+    return this.apiClient.get('admin/orders/export');
+  }
   search(value: string): Promise<AdminSearchResponse> {
     return this.apiClient.get('admin/search', { name: value });
   }

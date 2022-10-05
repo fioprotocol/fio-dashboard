@@ -1,3 +1,5 @@
+import { ACTIONS } from './fio';
+
 export const PURCHASE_RESULTS_STATUS: { [label: string]: number } = {
   NEW: 1,
   PENDING: 2,
@@ -30,6 +32,11 @@ export const PAYMENT_PROVIDER_LABEL = {
   [PAYMENT_PROVIDER.FIO]: 'Fio Wallet',
   [PAYMENT_PROVIDER.STRIPE]: 'Stripe',
   [PAYMENT_PROVIDER.CRYPTO]: 'Crypto',
+};
+
+export const PAYMENT_ITEM_TYPE_LABEL = {
+  [ACTIONS.registerFioAddress]: 'FCH',
+  [ACTIONS.registerFioDomain]: 'Domain',
 };
 
 export const PAYMENT_STATUSES = {

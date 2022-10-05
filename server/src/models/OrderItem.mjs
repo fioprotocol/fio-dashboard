@@ -122,6 +122,41 @@ export class OrderItem extends Base {
     });
   }
 
+  static async listAll(limit = 25, offset = 0) {
+    const [orderItems] = await this.sequelize.query(`
+        SELECT
+          oi.id,
+          oi.action,
+          oi.address,
+          oi.domain,
+          oi."nativeFio",
+          oi.price,
+          oi."priceCurrency",
+          oi."orderId",
+          oi."createdAt",
+          ois."txStatus",
+          o.number AS "orderNumber"
+        FROM "order-items" oi
+          INNER JOIN "orders" o ON oi."orderId" = o.id
+          LEFT JOIN "order-items-status" ois ON oi.id = ois."orderItemId"
+        WHERE oi."deletedAt" IS NULL
+        ORDER BY oi.id DESC
+        OFFSET ${offset}
+        ${limit ? `LIMIT ${limit}` : ``}
+      `);
+
+    return orderItems.map(({ orderId, orderNumber, txStatus, ...item }) => ({
+      ...item,
+      order: {
+        id: orderId,
+        number: orderNumber,
+      },
+      orderItemStatus: {
+        txStatus,
+      },
+    }));
+  }
+
   // todo: one of the usage is to get amount of crypto handle registrations by fio domains to check if there is no limit reached
   static async amount(action, refProfileId, statuses, paramsWhere) {
     const statusesWhere =
