@@ -77,7 +77,9 @@ export function* loginSuccess(history: History, api: Api): Generator {
     );
     const isNewUser: boolean = yield select(isNewUserSelector);
     if (isNewUser) {
-      return history.push(ROUTES.IS_NEW_USER);
+      history.push(ROUTES.IS_NEW_USER);
+      yield put(closeLoginModal());
+      return;
     }
     if (
       !hasRedirectTo &&
