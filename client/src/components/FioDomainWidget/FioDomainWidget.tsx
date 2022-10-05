@@ -31,8 +31,8 @@ export const FioDomainWidget: React.FC<Props> = props => {
         </span>
       </h1>
       <p className={classes.subtitle}>
-        Purchase you FIO domain before it’s gone forever. Multi-year
-        Registration Discounts. Starting @ $40.
+        Purchase your FIO Domain before it’s gone forever. 2 and 3 character
+        domains still available.
       </p>
       <FioDomainForm onSubmit={onSubmit} />
       <div className={classes.actionTextContainer}>

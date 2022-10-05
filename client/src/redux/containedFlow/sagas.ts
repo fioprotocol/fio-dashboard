@@ -134,12 +134,28 @@ export function* handleContainedFlowSteps(history: History): Generator {
           break;
         }
         case CONTAINED_FLOW_STEPS.ACTION: {
-          yield history.push(
-            CONTAINED_FLOW_ACTIONS_TO_ROUTES[action.data.containedFlowAction],
-            {
-              initialValues: containedFlowQueryParams,
-            },
-          );
+          let registrationPath =
+            CONTAINED_FLOW_ACTIONS_TO_ROUTES[action.data.containedFlowAction];
+          const containedFlowAction = containedFlowQueryParams
+            ? containedFlowQueryParams.action
+            : '';
+          if (
+            containedFlowAction &&
+            containedFlowAction === CONTAINED_FLOW_ACTIONS.REG
+          ) {
+            if (cart.length) registrationPath = ROUTES.CHECKOUT;
+
+            const redirectLinkSelector: string = yield select(redirectLink);
+
+            if (!redirectLinkSelector) {
+              yield put<Action>(
+                setRedirectPath({ pathname: registrationPath }),
+              );
+            }
+          }
+          yield history.push(registrationPath, {
+            initialValues: containedFlowQueryParams,
+          });
           break;
         }
         case CONTAINED_FLOW_STEPS.FINISH: {

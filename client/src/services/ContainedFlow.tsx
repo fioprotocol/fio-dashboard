@@ -100,7 +100,9 @@ const ContainedFlow: React.FC<Props> | null = props => {
         }
         return;
       }
-      return setStep(CONTAINED_FLOW_STEPS.ACTION, { containedFlowAction });
+      if (containedFlowStep !== CONTAINED_FLOW_STEPS.ACTION) {
+        return setStep(CONTAINED_FLOW_STEPS.ACTION, { containedFlowAction });
+      }
     }
   }, [
     isContainedFlow,
