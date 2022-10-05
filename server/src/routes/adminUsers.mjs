@@ -10,6 +10,7 @@ import AdminUserInvite from '../services/adminUsers/Invite';
 import AdminRolesList from '../services/adminUsers/AdminRolesList';
 import AdminStatusesList from '../services/adminUsers/AdminStatusesList';
 import OrdersList from '../services/adminUsers/OrdersList';
+import ExportOrdersData from '../services/adminUsers/ExportOrdersData';
 import OrderInfo from '../services/adminUsers/OrderInfo.mjs';
 import RegularUserInfo from '../services/adminUsers/RegularUserInfo.mjs';
 import RegularUsersList from '../services/adminUsers/RegularUsersList.mjs';
@@ -23,6 +24,7 @@ export default {
   adminUserInfo: makeServiceRunner(AdminUserInfo, req => req.params),
   adminsList: makeServiceRunner(AdminUsersList, req => req.query),
   ordersList: makeServiceRunner(OrdersList, req => req.query),
+  exportOrdersData: makeServiceRunner(ExportOrdersData, req => req.query),
   order: makeServiceRunner(OrderInfo, req => req.params),
   update: makeServiceRunner(AdminUserUpdate, req => req.body),
   remove: makeServiceRunner(AdminUserRemove, req => req.body),

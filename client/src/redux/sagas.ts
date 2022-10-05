@@ -32,6 +32,7 @@ import { getRefProfileSuccess } from './refProfile/sagas';
 import {
   resetAdminUserPasswordSuccess,
   deleteAdminUserSuccess,
+  exportOrdersDataSuccess,
 } from './admin/sagas';
 
 import { Api } from '../api';
@@ -62,6 +63,7 @@ export default function* rootSaga(history: History, api: Api) {
     getRefProfileSuccess(),
     resetAdminUserPasswordSuccess(),
     deleteAdminUserSuccess(),
+    exportOrdersDataSuccess(),
     cartWasCleared(),
   ]);
 }
