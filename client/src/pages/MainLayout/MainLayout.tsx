@@ -66,7 +66,10 @@ const MainLayout: React.FC<Props> = props => {
 
   const isDesktop = useCheckIfDesktop();
   const isAdminRoute = useIsAdminRoute();
-  const isConfirmEmailRoute = pathname === ROUTES.CONFIRM_EMAIL_RESULT;
+  const isConfirmEmailRoute = [
+    ROUTES.CONFIRM_EMAIL,
+    ROUTES.CONFIRM_EMAIL_RESULT,
+  ].includes(pathname);
   const routeName = getObjKeyByValue(ROUTES, pathname);
 
   const addGTMGlobalTags = useCallback(() => {

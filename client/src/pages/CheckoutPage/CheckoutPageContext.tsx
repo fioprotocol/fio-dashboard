@@ -50,10 +50,6 @@ import {
   cartIsRelative,
 } from '../../util/cart';
 import { setFioName } from '../../utils';
-import {
-  fireAnalyticsEvent,
-  getCartItemsDataForAnalytics,
-} from '../../util/analytics';
 import { useWalletBalances } from '../../util/hooks';
 import { useEffectOnce } from '../../hooks/general';
 
@@ -65,12 +61,7 @@ import {
   PAYMENT_PROVIDER_PAYMENT_OPTION,
   PAYMENT_PROVIDER,
 } from '../../constants/purchase';
-import {
-  ANALYTICS_EVENT_ACTIONS,
-  ANALYTICS_PAYMENT_TYPE,
-  CURRENCY_CODES,
-  WALLET_CREATED_FROM,
-} from '../../constants/common';
+import { CURRENCY_CODES, WALLET_CREATED_FROM } from '../../constants/common';
 import { ACTIONS } from '../../constants/fio';
 
 import {
@@ -422,15 +413,6 @@ export const useContext = (): {
   };
 
   const onFinish = async (results: RegistrationResult) => {
-    fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED, {
-      ...getCartItemsDataForAnalytics(cartItems),
-      transaction_id: order.number,
-      payment_type: isFree
-        ? ANALYTICS_PAYMENT_TYPE.FREE
-        : results.paymentProvider === PAYMENT_PROVIDER.STRIPE
-        ? ANALYTICS_PAYMENT_TYPE.STRIPE
-        : ANALYTICS_PAYMENT_TYPE.FIO,
-    });
     await apis.orders.update(order.id, {
       status: results.providerTxStatus || PURCHASE_RESULTS_STATUS.SUCCESS,
       publicKey: paymentWalletPublicKey,

@@ -49,14 +49,14 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
   useEffect(() => {
     if (isAuthenticated && isActiveUser) {
       const { pathname, state: redirectState } = redirectLink || {};
-      history.replace(pathname || ROUTES.HOME, redirectState);
+      history.replace(pathname || ROUTES.DASHBOARD, redirectState);
       setRedirectPath(null);
     }
 
     if (!isAuthenticated) {
       history.replace(ROUTES.HOME);
     }
-  }, [isAuthenticated, isActiveUser, redirectLink]);
+  }, [isAuthenticated, isActiveUser, redirectLink, history, setRedirectPath]);
 
   const onSend = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();

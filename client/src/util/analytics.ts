@@ -1,3 +1,5 @@
+import debounce from 'lodash/debounce';
+
 import {
   ANALYTICS_EVENT_ACTIONS,
   ANALYTICS_FIO_NAME_TYPE,
@@ -17,6 +19,8 @@ import {
   FioActions,
 } from '../types';
 
+const DEBOUNCE_TIMEOUT = 1000;
+
 export const fireAnalyticsEvent = (
   event: string,
   data: AnyObject = {},
@@ -26,6 +30,33 @@ export const fireAnalyticsEvent = (
     ...data,
   });
 };
+
+export const fireAnalyticsEventDebounced = debounce(
+  fireAnalyticsEvent,
+  DEBOUNCE_TIMEOUT,
+);
+
+export const firePageViewAnalyticsEvent = (
+  title: string,
+  location: string,
+  shouldFireOnce = false,
+): void => {
+  if (shouldFireOnce) {
+    const exists = window.dataLayer?.find(
+      item =>
+        item.event === ANALYTICS_EVENT_ACTIONS.VIRTUAL_PAGE_VIEW &&
+        item.vpv_page_location === location,
+    );
+    if (exists) {
+      return;
+    }
+  }
+  fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.VIRTUAL_PAGE_VIEW, {
+    vpv_page_title: title,
+    vpv_page_location: location,
+  });
+};
+
 export const getCartItemsDataForAnalytics = (
   cartItems: CartItem[],
 ): AnyObject => {

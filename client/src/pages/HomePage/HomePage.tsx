@@ -37,10 +37,10 @@ const HomePage: React.FC<Props & RouteComponentProps> = props => {
   });
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !isContainedFlow) {
       history.replace(ROUTES.DASHBOARD);
     }
-  }, [isAuthenticated, history]);
+  }, [isAuthenticated, isContainedFlow, history]);
 
   if (isContainedFlow) return <AddressWidget {...addressWidgetContent} />;
 
