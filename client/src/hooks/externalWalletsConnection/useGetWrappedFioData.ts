@@ -5,7 +5,6 @@ import { Contract } from '@ethersproject/contracts';
 
 import apis from '../../api';
 import { log } from '../../util/general';
-import EtherScan, { LogItem } from '../../api/ether-scan';
 import {
   NETWORKS_LIST,
   W_FIO_DOMAIN_NFT,
@@ -24,8 +23,6 @@ export type WrappedFioData = {
 };
 
 export type NtfsItems = { name: string; id: string }[];
-
-const etherscan = new EtherScan();
 
 const isValidNetwork = (network: NetworkType, isNFT: boolean): boolean => {
   return (
@@ -54,85 +51,22 @@ export function useGetWrappedFioData(
 
   useEffect(() => {
     if (web3Provider && address && ethers.utils.isAddress(address)) {
-      // Example of getting wFioDomains not by the contract method
-      // For wrapped FIO Domains, balance = count of wDomains (nfts) on Polygon chain
-      const getNfts = async (balance?: number) => {
+      const getNfts = async () => {
         isNftsLoading.current = true;
-        let pageNumber = 1;
-        const limit = 20; // For public endpoint users, an IP based limit is applied at 150000/day;700/minute;40/second. Therefore, each transfer event makes two calls (40\2=20)
-
-        // Function that will get wDomain (nft) data from chain Logs.
-        const getData = async (
-          page: number = pageNumber,
-          offset: number = limit,
-          nftsList: NtfsItems = [],
-        ) => {
-          // Get Logs from chain, could be duplicated (wrap \ unwrap \ transfer to another account)
-          const transferLogs = await etherscan.getNftsTransferEventLogs(
-            page,
-            offset,
-            address,
-          );
-
-          nftsOwner.current = address;
-
-          const tokensIdsSet = new Set();
-
-          // Filter unique tokenIds only
-          transferLogs?.forEach((o: LogItem) => {
-            tokensIdsSet.add(o.tokenID);
-          });
-
-          // Get wDomain (nft) data
-          const getLogData = async (
-            tokenId: string,
-          ): Promise<{ name: string; id: string } | null> => {
-            try {
-              const tokenInfo = await Promise.all([
-                tokenContract.tokenURI(tokenId), // returns wDomain url string
-                tokenContract.ownerOf(tokenId), // returns wDomain owner address string
-              ]);
-
-              if (tokenInfo[1].toLowerCase() === address.toLowerCase()) {
-                const domainName = tokenInfo[0].match(
-                  /domainnft\/(.*?).json/,
-                )[1];
-
+        const data = await tokenContract.listDomainsOfOwner(address);
+        const result =
+          data.length > 0
+            ? data.map((nftData: string) => {
+                const nftParts = nftData.split(': ');
                 return {
-                  name: domainName,
-                  id: tokenId,
+                  name: nftParts[0],
+                  id: nftParts[1],
                 };
-              } else return null;
-            } catch (e) {
-              return null;
-            }
-          };
-
-          const promises: Promise<{ name: string; id: string } | null>[] = [];
-
-          tokensIdsSet.forEach(value => {
-            promises.push(getLogData(value as string));
-          });
-
-          const result = (await Promise.all(promises)).filter(o => !!o);
-
-          if (result.length) nftsList = [...nftsList, ...result];
-
-          // recursively get next portion of the data if needed
-          if (
-            transferLogs?.length === offset &&
-            balance &&
-            (nftsList?.length || 0) < balance
-          ) {
-            pageNumber = pageNumber + 1;
-            setTimeout(() => getData(pageNumber, limit, nftsList), 1000);
-          } else {
-            isNftsLoading.current = false;
-            setNfts(nftsList);
-          }
-        };
-
-        await getData(pageNumber, limit);
+              })
+            : null;
+        setNfts(result);
+        nftsOwner.current = address;
+        isNftsLoading.current = false;
 
         // example of using etherjs provider to get the logs, but it works with limitation of only 1000 Blocks per request and difference between two transactions could be more than 10000 Blocks
         // const currentBlock = await web3Provider.getBlockNumber();
@@ -192,17 +126,8 @@ export function useGetWrappedFioData(
               tokenContract
             ) {
               setNfts(null);
-              await getNfts(walletBalance);
+              await getNfts();
             }
-
-            // todo: use it when newTokenContract.listDomainsOfOwner method will get fixed
-            // if (isNFT && !nfts && !isNftsLoading.current) {
-            //   isNftsLoading.current = true;
-            //   const nftsList =
-            //     (await newTokenContract.listDomainsOfOwner(address)) || [];
-            //   setNfts(nftsList);
-            //   isNftsLoading.current = false;
-            // }
           } else
             log.error(
               `Cannot get balance for wrong Network (${network.name.toUpperCase()})`,
