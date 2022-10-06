@@ -26,11 +26,13 @@ export const parseActionStatus = (
   badgeType: string;
   badgeText: string;
   isComplete: boolean;
+  isPending: boolean;
 } => {
   const TRANSACTION_OUT_OF_TIME_MILLISECONDS = 10 * 60 * 1000; // 10 minutes - time delay which proves that transaction wasn't completed successfully (oracle - 1m, wrap_status job - 1m, else - chains requests)
 
   let badgeType;
   let badgeText;
+  let isPending = false;
   const isTransactionIsOutOfTime = (date?: string) => {
     if (!date) return true;
     return (
@@ -52,10 +54,17 @@ export const parseActionStatus = (
     badgeType = 'primary';
     badgeText = 'Complete';
   } else {
-    if (isTransactionIsOutOfTime(item?.data?.action_trace?.block_time)) {
+    if (
+      isTransactionIsOutOfTime(
+        item?.data?.action_trace?.block_time
+          ? item?.data?.action_trace?.block_time + 'Z'
+          : null,
+      )
+    ) {
       badgeType = 'danger';
       badgeText = 'Failed';
     } else {
+      isPending = true;
       badgeType = 'secondary';
       badgeText = 'Pending';
     }
@@ -65,6 +74,7 @@ export const parseActionStatus = (
     badgeType,
     badgeText,
     isComplete,
+    isPending,
   };
 };
 
@@ -176,7 +186,7 @@ const WrapStatus: React.FC<PageProps> = props => {
                     <th>
                       {listItem.data.action_trace?.block_time
                         ? formatDateToLocale(
-                            listItem.data.action_trace.block_time,
+                            listItem.data.action_trace.block_time + 'Z',
                           )
                         : null}
                       {listItem.confirmData?.length &&
