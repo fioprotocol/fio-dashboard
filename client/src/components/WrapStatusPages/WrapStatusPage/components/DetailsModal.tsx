@@ -26,7 +26,7 @@ type Props = {
 const DetailsModal: React.FC<Props> = props => {
   const { itemData, onClose, isWrap, isTokens } = props;
 
-  const { badgeType, badgeText } = parseActionStatus(itemData);
+  const { badgeType, badgeText, isPending } = parseActionStatus(itemData);
 
   return (
     <Modal
@@ -73,7 +73,9 @@ const DetailsModal: React.FC<Props> = props => {
               </div>
               <div>
                 {itemData.data.action_trace?.block_time
-                  ? formatDateToLocale(itemData.data.action_trace.block_time)
+                  ? formatDateToLocale(
+                      itemData.data.action_trace.block_time + 'Z',
+                    )
                   : null}
                 {itemData.confirmData?.length &&
                 itemData.confirmData[0].action_trace?.block_time
@@ -266,10 +268,10 @@ const DetailsModal: React.FC<Props> = props => {
 
             <InfoBadge
               className={classes.infoBadge}
-              type={BADGE_TYPES.ERROR}
+              type={isPending ? BADGE_TYPES.REGULAR : BADGE_TYPES.ERROR}
               show={!itemData.confirmData}
               title="Confirmation!"
-              message="Something went wrong."
+              message={isPending ? 'Waiting...' : 'Something went wrong.'}
             />
           </div>
         ) : null}
