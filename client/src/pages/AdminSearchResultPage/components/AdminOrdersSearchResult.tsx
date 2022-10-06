@@ -6,14 +6,14 @@ import AdminOrderModal from '../../AdminOrdersPage/components/AdminOrderModal/Ad
 import { PURCHASE_RESULTS_STATUS_LABELS } from '../../../constants/purchase';
 import { formatDateToLocale } from '../../../helpers/stringFormatters';
 
-import { AdminOrderItemProfile, OrderItem } from '../../../types';
+import { AdminOrderItemProfile, OrderDetails } from '../../../types';
 
 import classes from '.././AdminSearchResultPage.module.scss';
 
 type Props = {
   orders?: AdminOrderItemProfile[];
   getOrder: (id: string) => Promise<void>;
-  orderItem: OrderItem;
+  orderItem: OrderDetails;
 };
 
 const AdminOrdersSearchResult: React.FC<Props> = props => {

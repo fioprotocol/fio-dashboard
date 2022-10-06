@@ -4,12 +4,13 @@ import has from 'lodash/has';
 
 import { PaymentButton } from './components/PaymentButton';
 
-import { PAYMENT_OPTIONS } from '../../constants/purchase';
+import { PAYMENT_OPTIONS, PAYMENT_PROVIDER } from '../../constants/purchase';
 
 import {
   CartItem as CartItemProps,
   FioWalletDoublet,
   PaymentOptionsProps,
+  PaymentProvider,
 } from '../../types';
 
 import classes from './styles/PaymentOptions.module.scss';
@@ -20,13 +21,13 @@ type Props = {
 
 type DefaultPaymentOptionProps = {
   isFree?: boolean;
-  onPaymentChoose: (paymentOption: PaymentOptionsProps) => void;
+  onPaymentChoose: (paymentProvider: PaymentProvider) => void;
   hasLowBalance?: boolean;
   paymentWalletPublicKey?: string;
   cartItems?: CartItemProps[];
   totalCartNativeAmount?: number;
   userWallets?: FioWalletDoublet[];
-  loading: boolean;
+  selectedPaymentProvider: PaymentProvider;
   disabled?: boolean;
 };
 
@@ -41,40 +42,41 @@ const PAYMENT_OPTIONS_PROPS = {
     cartItems,
     isFree,
     paymentOption,
-    loading,
+    selectedPaymentProvider,
     disabled,
     onPaymentChoose,
   }: PaymentOptionRenderProps) => ({
     buttonText: isFree ? 'Complete Transaction' : 'Pay with FIO',
     icon: <FontAwesomeIcon icon="wallet" />,
     disabled:
-      paymentWalletPublicKey === '' ||
-      cartItems?.length === 0 ||
-      loading ||
-      disabled,
-    loading,
+      paymentWalletPublicKey === '' || cartItems?.length === 0 || disabled,
+    provider: PAYMENT_PROVIDER.FIO,
+    loading: selectedPaymentProvider === PAYMENT_PROVIDER.FIO,
     hideButton: hasLowBalance,
-    onClick: () => onPaymentChoose(paymentOption),
+    onClick: () => onPaymentChoose(PAYMENT_PROVIDER.FIO),
   }),
   [PAYMENT_OPTIONS.CREDIT_CARD]: ({
     onPaymentChoose,
     paymentOption,
     cartItems,
-    loading,
+    selectedPaymentProvider,
     disabled,
   }: PaymentOptionRenderProps) => ({
     buttonText: 'Pay with Credit/Debit Card',
     icon: <FontAwesomeIcon icon="credit-card" />,
-    disabled: cartItems?.length === 0 || loading || disabled,
-    loading,
-    onClick: () => onPaymentChoose(paymentOption),
+    disabled: cartItems?.length === 0 || disabled,
+    provider: PAYMENT_PROVIDER.STRIPE,
+    loading: selectedPaymentProvider === PAYMENT_PROVIDER.STRIPE,
+    onClick: () => onPaymentChoose(PAYMENT_PROVIDER.STRIPE),
   }),
-  [PAYMENT_OPTIONS.CRYPTO]: ({ loading }: PaymentOptionRenderProps) => ({
+  [PAYMENT_OPTIONS.CRYPTO]: ({
+    selectedPaymentProvider,
+  }: PaymentOptionRenderProps) => ({
     buttonText: 'Pay Using Crypto',
     icon: <FontAwesomeIcon icon={{ prefix: 'fab', iconName: 'bitcoin' }} />,
     disabled: true,
     hideButton: true, // not implemented
-    loading,
+    loading: selectedPaymentProvider === PAYMENT_PROVIDER.CRYPTO,
     hasRoyalBlueBackground: true,
     onClick: (): null => null,
   }),

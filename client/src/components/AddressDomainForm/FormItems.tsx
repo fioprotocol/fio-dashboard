@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import FormContainer from './FormContainer';
 import Notifications from './Notifications';
 
-import { cartHasFreeItem, isFreeDomain } from '../../utils';
+import { isFreeDomain } from '../../utils';
+import { cartHasFreeItem } from '../../util/cart';
 
 import { FormItemsProps } from './types';
 

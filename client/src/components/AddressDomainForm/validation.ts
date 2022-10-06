@@ -1,10 +1,15 @@
 import { isEmpty } from 'lodash';
 
+import { ADDRESS_REGEXP } from '../../constants/regExps';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  ANALYTICS_FIO_NAME_TYPE,
+} from '../../constants/common';
+
 import apis from '../../api/index';
 
 import { setFioName } from '../../utils';
-
-import { ADDRESS_REGEXP } from '../../constants/regExps';
+import { fireAnalyticsEventDebounced } from '../../util/analytics';
 
 import { DefaultValidationProps, FormValidationErrorProps } from './types';
 
@@ -26,6 +31,12 @@ const verifyAddress = async (props: DefaultValidationProps) => {
   const errors: FormValidationErrorProps = {};
   toggleValidating(true);
   if (domain) {
+    if (!isAddress) {
+      fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM, {
+        search_term: domain,
+        type: ANALYTICS_FIO_NAME_TYPE.DOMAIN,
+      });
+    }
     // avail_check returns wrong information about availability of domains, temporary changed to use this
     const isRegistered = await apis.fio.availCheckTableRows(domain);
 
@@ -37,19 +48,39 @@ const verifyAddress = async (props: DefaultValidationProps) => {
       ) {
         errors.domain =
           'Unfortunately the domain name you have selected is not available. Please select an alternative.';
+        fireAnalyticsEventDebounced(
+          ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
+        );
       }
       if (!isAddress) {
         errors.domain =
           'Unfortunately the domain name you have selected is not available. Please select an alternative.';
+        fireAnalyticsEventDebounced(
+          ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
+        );
       }
     }
   }
 
   if (address && domain) {
     try {
+      if (options.length > 0 && options.every(option => option !== domain)) {
+        fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM, {
+          search_term: setFioName(address, domain),
+          type: ANALYTICS_FIO_NAME_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
+        });
+      } else {
+        fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM, {
+          search_term: setFioName(address, domain),
+          type: ANALYTICS_FIO_NAME_TYPE.ADDRESS,
+        });
+      }
       const isAvail = await apis.fio.availCheck(setFioName(address, domain));
       if (isAvail && isAvail.is_registered === 1) {
         errors.address = 'This FIO Crypto Handle is already registered.';
+        fireAnalyticsEventDebounced(
+          ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
+        );
       }
     } catch (e) {
       errors.address = 'Server error. Please try later.';

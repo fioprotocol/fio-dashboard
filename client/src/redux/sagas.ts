@@ -5,6 +5,7 @@ import {
   adminConfirmSuccess,
   adminLoginSuccess,
   adminLogoutSuccess,
+  adminResetPasswordSuccess,
   confirmEmailSuccess,
   loginSuccess,
   logoutSuccess,
@@ -13,11 +14,13 @@ import {
 } from './profile/sagas';
 import { edgeLoginSuccess } from './edge/sagas';
 import { notify } from './notify/sagas';
+import { cartWasCleared } from './cart/sagas';
 import {
   containedFlowActionSuccess,
   containedFlowResultsClose,
   handleContainedFlowSteps,
   purchaseResultsClose,
+  setContainedFlowToInitStep,
 } from './containedFlow/sagas';
 import { clearGenericModalError } from './modal/sagas';
 import {
@@ -25,6 +28,11 @@ import {
   setBalancesService,
   setFeesService,
 } from './fio/sagas';
+import { getRefProfileSuccess } from './refProfile/sagas';
+import {
+  resetAdminUserPasswordSuccess,
+  deleteAdminUserSuccess,
+} from './admin/sagas';
 
 import { Api } from '../api';
 
@@ -40,6 +48,7 @@ export default function* rootSaga(history: History, api: Api) {
     clearGenericModalError(),
     containedFlowActionSuccess(),
     containedFlowResultsClose(),
+    setContainedFlowToInitStep(),
     handleContainedFlowSteps(history),
     setFeesService(),
     addFioWalletSuccess(),
@@ -49,5 +58,10 @@ export default function* rootSaga(history: History, api: Api) {
     adminLogoutSuccess(history, api),
     adminLoginSuccess(history, api),
     adminConfirmSuccess(history, api),
+    adminResetPasswordSuccess(history, api),
+    getRefProfileSuccess(),
+    resetAdminUserPasswordSuccess(),
+    deleteAdminUserSuccess(),
+    cartWasCleared(),
   ]);
 }

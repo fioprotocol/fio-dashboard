@@ -8,8 +8,12 @@ import {
   FioNameItemProps,
 } from '../../types';
 
-type MatchParams = {
-  id: string;
+type LocationProps = {
+  location: {
+    query: {
+      name: string;
+    };
+  };
 };
 
 export type FormProps = {
@@ -23,7 +27,7 @@ export type FormProps = {
   handleSubmit: () => void;
 };
 
-export type ContainerOwnProps = RouteComponentProps<MatchParams>;
+export type ContainerOwnProps = RouteComponentProps & LocationProps;
 
 export type ContainerProps = {
   children?: React.ReactNode;

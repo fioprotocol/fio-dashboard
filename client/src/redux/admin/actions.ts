@@ -85,6 +85,26 @@ export const removeAdminUser = (adminUserId: string): CommonPromiseAction => ({
   adminUserId,
 });
 
+export const RESET_ADMIN_USER_PASSWORD_REQUEST = `${prefix}/RESET_ADMIN_USER_PASSWORD_REQUEST`;
+export const RESET_ADMIN_USER_PASSWORD_SUCCESS = `${prefix}/RESET_ADMIN_USER_PASSWORD_SUCCESS`;
+export const RESET_ADMIN_USER_PASSWORD_FAILURE = `${prefix}/RESET_ADMIN_USER_PASSWORD_FAILURE`;
+
+export const resetAdminUserPassword = (
+  adminUserId: string,
+): CommonPromiseAction => ({
+  types: [
+    RESET_ADMIN_USER_PASSWORD_REQUEST,
+    RESET_ADMIN_USER_PASSWORD_SUCCESS,
+    RESET_ADMIN_USER_PASSWORD_FAILURE,
+  ],
+  promise: (api: Api) =>
+    minWaitTimeFunction(
+      () => api.admin.sendResetAdminPassword(adminUserId),
+      1000,
+    ),
+  adminUserId,
+});
+
 export const GET_FIO_ACCOUNTS_PROFILES_REQUEST = `${prefix}/GET_FIO_ACCOUNTS_PROFILES_REQUEST`;
 export const GET_FIO_ACCOUNTS_PROFILES_SUCCESS = `${prefix}/GET_FIO_ACCOUNTS_PROFILES_SUCCESS`;
 export const GET_FIO_ACCOUNTS_PROFILES_FAILURE = `${prefix}/GET_FIO_ACCOUNTS_PROFILES_FAILURE`;

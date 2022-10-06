@@ -1,9 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Element } from 'react-scroll';
 
 import { AnchorComponent } from '../../components/AnchorComponent';
-
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
+
+import { ROUTES } from '../../constants/routes';
 
 import classes from './PrivacyPolicyPage.module.scss';
 
@@ -776,9 +778,9 @@ const PrivacyPolicyPage: React.FC = () => {
         and pixels) to access or store information. Specific information about
         how we use such technologies and how you can refuse certain cookies is
         set out in our{' '}
-        <a href="/" title="cookie-notice">
+        <Link to={ROUTES.COOKIE_NOTICE} title="cookie-notice">
           Cookie Notice
-        </a>
+        </Link>
         .
       </p>
       <h4 className={classes.header} id="PrivacyPolicy-6">

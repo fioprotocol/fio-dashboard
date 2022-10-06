@@ -54,4 +54,15 @@
     border: $dark;
     background-color: $dark;
   }
+
+  &.light {
+
+    border: $butterfly-blue;
+    background-color: $butterfly-blue;
+
+    &:hover:enabled {
+      border: $azure-radiance;
+      background-color: $azure-radiance;
+    }
+  }
 }

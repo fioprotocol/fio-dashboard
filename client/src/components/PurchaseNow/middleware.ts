@@ -7,7 +7,7 @@ import { setFioName } from '../../utils';
 import { log } from '../../util/general';
 
 import {
-  PURCHASE_PROVIDER,
+  PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from '../../constants/purchase';
 import { ERROR_TYPES } from '../../constants/errors';
@@ -144,7 +144,7 @@ export const executeRegistration = async (
     errors: [],
     registered: [],
     partial: [],
-    purchaseProvider: PURCHASE_PROVIDER.FIO,
+    paymentProvider: PAYMENT_PROVIDER.FIO,
     providerTxStatus: PURCHASE_RESULTS_STATUS.PENDING,
   };
   const registrations = makeRegistrationOrder([...items], fees);

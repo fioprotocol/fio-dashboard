@@ -6,17 +6,26 @@ import { DeviceStatusCodes } from 'ledgerjs-hw-app-fio/dist/errors/deviceStatusE
 
 import ConnectionModal from '../Modal/ConnectionModal';
 
+import useEffectOnce from '../../hooks/general';
 import { getPubKeyFromLedger } from '../../util/ledger';
 import { log } from '../../util/general';
+import {
+  fireActionAnalyticsEvent,
+  fireActionAnalyticsEventError,
+} from '../../util/analytics';
 
-import { AnyObject, FioWalletDoublet } from '../../types';
+import { AnyObject, AnyType, FioWalletDoublet } from '../../types';
 
 const DISCONNECTED_DEVICE_DURING_OPERATION_ERROR =
   'DisconnectedDeviceDuringOperation';
+const FIO_APP_INIT_TIMEOUT = 2000;
 
 type Props = {
+  action?: string;
+  data: AnyType | null;
   isTransaction?: boolean;
   fioWallet?: FioWalletDoublet;
+  hideConnectionModal?: boolean;
 
   onConnect: (appFio: LedgerFioApp) => Promise<LedgerFioApp>;
   onSuccess: (data: AnyObject) => void;
@@ -31,17 +40,24 @@ type Props = {
 
 const LedgerConnect: React.FC<Props> = props => {
   const {
+    action,
+    data,
     isTransaction,
     fioWallet,
+    hideConnectionModal,
     onConnect,
     onSuccess,
     onCancel,
     showGenericErrorModal,
     setProcessing,
   } = props;
-  const connectFioAppIntervalRef = useRef<number | null>(null);
+  const connectFioAppIntervalRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
   const [connecting, setConnecting] = useState(false);
   const [awaitingLedger, setAwaitingLedger] = useState(false);
+  const [awaitingUnlock, setAwaitingUnlock] = useState(false);
+  const [awaitingFioApp, setAwaitingFioApp] = useState(false);
   const [fioApp, setFioApp] = useState<LedgerFioApp | null>(null);
   const [transport, setTransport] = useState<Transport | null>(null);
 
@@ -55,32 +71,10 @@ const LedgerConnect: React.FC<Props> = props => {
     }
     setTransport(null);
     setConnecting(false);
+    setAwaitingUnlock(false);
+    setAwaitingFioApp(false);
     onCancel();
   };
-
-  useEffect(() => {
-    connect();
-  }, []);
-
-  // Handle fioApp connection set
-  useEffect(() => {
-    if (fioApp != null) {
-      setAwaitingLedger(true);
-      afterConnect(fioApp);
-    }
-  }, [fioApp]);
-
-  // Handle transport created
-  useEffect(() => {
-    if (transport != null && connecting) {
-      connectFioAppIntervalRef.current = window.setInterval(() => {
-        connectFioApp();
-      }, 2000);
-      return () => {
-        clearInterval(connectFioAppIntervalRef.current);
-      };
-    }
-  }, [transport, connecting]);
 
   const connect = async () => {
     const isTransportSupported = await TransportWebUSB.isSupported();
@@ -105,13 +99,22 @@ const LedgerConnect: React.FC<Props> = props => {
   };
 
   const connectFioApp = async () => {
-    if (!transport || fioApp) return;
+    if (!transport || fioApp) {
+      connectFioAppIntervalRef.current = setTimeout(() => {
+        connectFioApp();
+      }, FIO_APP_INIT_TIMEOUT);
+      return setAwaitingFioApp(false);
+    }
 
     let newFioApp: LedgerFioApp | null = null;
     try {
       newFioApp = new LedgerFioApp(transport);
       await newFioApp.getVersion();
     } catch (e) {
+      connectFioAppIntervalRef.current = setTimeout(() => {
+        connectFioApp();
+      }, FIO_APP_INIT_TIMEOUT);
+
       if (e.name && e.name === DISCONNECTED_DEVICE_DURING_OPERATION_ERROR) {
         clearInterval(connectFioAppIntervalRef.current);
         connectFioAppIntervalRef.current = null;
@@ -120,6 +123,13 @@ const LedgerConnect: React.FC<Props> = props => {
 
         connect();
       }
+
+      if (e.code === DeviceStatusCodes.ERR_DEVICE_LOCKED) {
+        clearInterval(connectFioAppIntervalRef.current);
+        setAwaitingUnlock(true);
+      }
+
+      setAwaitingFioApp(false);
       return;
     }
 
@@ -138,18 +148,58 @@ const LedgerConnect: React.FC<Props> = props => {
       }
     }
 
+    setAwaitingFioApp(false);
     setFioApp(newFioApp);
   };
+
+  const onContinue = awaitingUnlock
+    ? () => {
+        setAwaitingUnlock(false);
+        setAwaitingFioApp(true);
+        connectFioApp();
+      }
+    : null;
+
+  useEffect(() => {
+    return () => {
+      connectFioAppIntervalRef.current &&
+        clearInterval(connectFioAppIntervalRef.current);
+    };
+  }, []);
+
+  useEffectOnce(() => {
+    connect();
+  }, [connect]);
+
+  // Handle fioApp connection set
+  useEffect(() => {
+    if (fioApp != null) {
+      setAwaitingLedger(true);
+      afterConnect(fioApp);
+    }
+  }, [fioApp]);
+
+  // Handle transport created
+  useEffectOnce(
+    () => {
+      setAwaitingFioApp(true);
+      connectFioApp();
+    },
+    [connectFioApp],
+    transport != null && connecting,
+  );
 
   const afterConnect = async (appFio: LedgerFioApp) => {
     try {
       setProcessing(true);
       const result = await onConnect(appFio);
+      fireActionAnalyticsEvent(action, data);
 
       setConnecting(false);
 
       onSuccess(result);
     } catch (e) {
+      fireActionAnalyticsEventError(action);
       log.error(e, e.code);
       let title = 'Something went wrong';
       let msg = 'Try to reconnect your ledger device.';
@@ -164,16 +214,19 @@ const LedgerConnect: React.FC<Props> = props => {
     }
   };
 
+  let message = 'Please connect your Ledger device and confirm';
+  if (awaitingLedger) message = 'Please confirm action in your Ledger device';
+  if (awaitingFioApp) message = 'Connecting...';
+  if (awaitingUnlock)
+    message = 'Please unlock your device and then press continue';
+
   return (
     <ConnectionModal
-      show={connecting}
+      show={connecting && !hideConnectionModal}
       onClose={closeConnection}
-      awaitingLedger={awaitingLedger}
-      message={
-        awaitingLedger
-          ? 'Please confirm action in your Ledger device'
-          : 'Please connect your Ledger device and confirm'
-      }
+      onContinue={onContinue}
+      awaitingLedger={awaitingLedger || awaitingFioApp}
+      message={message}
       isTransaction={isTransaction}
     />
   );

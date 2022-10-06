@@ -25,7 +25,45 @@ export const DEFAULT_WALLET_OPTIONS = {
 };
 export const FIO_WALLET_TYPE = 'wallet:fio';
 
-export const CONFIRM_PIN_FIO_ACTIONS = {
+// Key name should be the same as confirm pin or ledger action
+export const ANALYTICS_EVENT_ACTIONS = {
+  REMOVE_ITEM_FROM_CART: 'remove_from_cart',
+  ADD_ITEM_TO_CART: 'add_to_cart',
+  BEGIN_CHECKOUT: 'begin_checkout',
+  PRICE_CHANGE: 'price_change',
+  PURCHASE_STARTED: 'purchase_started',
+  PURCHASE_FINISHED: 'purchase',
+  PURCHASE_FINISHED_PARTIAL: 'purchase_partial',
+  PURCHASE_FINISHED_FAILED: 'purchase_error',
+  SEARCH_ITEM: 'search',
+  SEARCH_ITEM_ALREADY_USED: 'search_not_available',
+  RENEW: 'fio_domain_renew',
+  TRANSFER: 'fio_transfer',
+  TRANSFER_DOMAIN: 'fio_domain_transfer',
+  TRANSFER_FCH: 'fch_transfer',
+  SET_VISIBILITY: 'fio_domain_status',
+  ADD_BUNDLES: 'fch_add_bundles',
+  PAYMENT_DETAILS: 'fio_data_new',
+  SEND: 'token_send',
+  REQUEST: 'fio_request_new',
+  REJECT_FIO_REQUEST: 'fio_request_reject',
+  STAKE: 'token_stake',
+  UNSTAKE: 'token_unstake',
+  SIGN_NFT: 'fch_sign_nft',
+  NFT_VALIDATE: 'nft_validate',
+  ADD_TOKEN: 'fch_link_token',
+  CREATE_WALLET: 'wallet_create',
+  CART_EMPTIED: 'cart_emptied',
+  LOGIN: 'login',
+  SIGN_UP: 'sign_up',
+  ENABLE_TWO_FACTOR: 'sec_2fa',
+  RECOVERY: 'sec_recovery',
+  PAGE_VIEW: 'page_view',
+  VIRTUAL_PAGE_VIEW: 'virtual_page_view',
+  CHAIN_ERROR: 'chain_error',
+};
+
+export const CONFIRM_FIO_ACTIONS = {
   PURCHASE: 'PURCHASE',
   TRANSFER: 'TRANSFER',
   SET_VISIBILITY: 'SET_VISIBILITY',
@@ -33,6 +71,8 @@ export const CONFIRM_PIN_FIO_ACTIONS = {
   SIGN_NFT: 'SIGN_NFT',
   SEND: 'SEND',
   REQUEST: 'REQUEST',
+  PAYMENT_DETAILS: 'PAYMENT_DETAILS',
+  ADD_BUNDLES: 'ADD_BUNDLES',
   ADD_TOKEN: 'ADD_TOKEN',
   DELETE_TOKEN: 'DELETE_TOKEN',
   EDIT_TOKEN: 'EDIT_TOKEN',
@@ -40,6 +80,12 @@ export const CONFIRM_PIN_FIO_ACTIONS = {
   STAKE: 'STAKE',
   UNSTAKE: 'UNSTAKE',
   REGISTER_ADDRESS_PRIVATE_DOMAIN: 'REGISTER_ADDRESS_PRIVATE_DOMAIN',
+};
+
+export const CONFIRM_LEDGER_ACTIONS = {
+  CREATE_WALLET: 'CREATE_WALLET',
+  VIEW_PUB_ADDRESS: 'VIEW_PUB_ADDRESS',
+  ...CONFIRM_FIO_ACTIONS,
 };
 
 export const CONFIRM_PIN_ACTIONS = {
@@ -54,7 +100,7 @@ export const CONFIRM_PIN_ACTIONS = {
   TWO_FACTOR_REQUEST: 'TWO_FACTOR_REQUEST',
   SHOW_BACKUP_CODE: 'SHOW_BACKUP_CODE',
   DETAILED_FIO_REQUEST: 'DETAILED_FIO_REQUEST',
-  ...CONFIRM_PIN_FIO_ACTIONS,
+  ...CONFIRM_FIO_ACTIONS,
 };
 
 export const ADDRESS = 'address';
@@ -125,3 +171,33 @@ export const FIO_DATA_TRANSACTION_LINK = {
 export const DEFAULT_TEXT_TRUNCATE_LENGTH = 5;
 
 export const US_LOCALE = 'en-US';
+
+export const ANALYTICS_FIO_NAME_TYPE = {
+  ADDRESS: 'fch',
+  DOMAIN: 'domain',
+  ADDRESS_WITH_CUSTOM_DOMAIN: 'combo',
+  ADDRESS_FREE: 'free_fch',
+};
+
+export const ANALYTICS_PAYMENT_TYPE = {
+  FIO: 'fio',
+  STRIPE: 'stripe',
+  FREE: 'free',
+};
+
+export const ANALYTICS_LOGIN_METHOD = {
+  PIN: 'pin',
+  PASSWORD: 'password',
+};
+
+export const ANALYTICS_WALLET_TYPE = {
+  LEDGER: 'ledger',
+  EDGE: 'standard',
+};
+
+export const ANALYTICS_SEND_TYPE = {
+  ADDRESS: 'fch',
+  PUBLIC_KEY: 'pubadd',
+};
+
+export const ASTERISK_SIGN = '*';

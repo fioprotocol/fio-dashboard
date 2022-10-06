@@ -13,7 +13,7 @@ export const RegisteredResultsComponent: React.FC<RegisteredResultsComponentProp
   const {
     paymentWallet,
     purchaseStatus,
-    purchaseProvider,
+    paymentProvider,
     txItems,
     paymentAmount,
     paymentCurrency,
@@ -30,7 +30,7 @@ export const RegisteredResultsComponent: React.FC<RegisteredResultsComponentProp
       )}
       <InfoBadgeComponent
         purchaseStatus={purchaseStatus}
-        purchaseProvider={purchaseProvider}
+        paymentProvider={paymentProvider}
         hide={purchaseStatus === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS}
       />
       <PurchaseResultsComponent
@@ -42,7 +42,7 @@ export const RegisteredResultsComponent: React.FC<RegisteredResultsComponentProp
         convertedPaymentCurrency={convertedPaymentCurrency}
         costFree={costFree}
         providerTxId={providerTxId}
-        purchaseProvider={purchaseProvider}
+        paymentProvider={paymentProvider}
       />
     </div>
   );

@@ -8,12 +8,15 @@ import TwoFactorDangerModal from './components/TwoFactorDangerModal';
 import TwoFactorCodeModal, {
   BackupFormValues,
 } from './components/TwoFactorCodeModal';
+import PageTitle from '../PageTitle/PageTitle';
+
+import { CONTAINED_FLOW_LOGIN_SUBTITLES } from '../../constants/containedFlow';
+import { LINKS } from '../../constants/labels';
 
 import apis from '../../api';
 
 import { autoLogin, AutoLoginParams } from '../../util/login';
 
-import { CONTAINED_FLOW_LOGIN_SUBTITLES } from '../../constants/containedFlow';
 import {
   EmailConfirmationResult,
   LastAuthData,
@@ -194,6 +197,7 @@ const LoginForm: React.FC<Props> = props => {
 
   return (
     <>
+      <PageTitle link={LINKS.SIGN_IN} isVirtualPage />
       <TwoFactorDangerModal
         show={showBlockModal}
         onClose={onCloseBlockModal}

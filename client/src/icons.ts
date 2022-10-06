@@ -7,6 +7,7 @@ import {
   faBackspace,
   faBan,
   faBell,
+  faCertificate,
   faCheck,
   faCheckCircle,
   faCheckSquare,
@@ -20,6 +21,7 @@ import {
   faDownload,
   faEnvelope,
   faExchangeAlt,
+  faExclamation,
   faExclamationCircle,
   faExclamationTriangle,
   faExternalLinkSquareAlt,
@@ -32,6 +34,7 @@ import {
   faLink,
   faListAlt,
   faPen,
+  faPlus,
   faPlusCircle,
   faPlusSquare,
   faQrcode,
@@ -106,6 +109,9 @@ const icons = {
   faCreditCard,
   faBitcoin,
   faListAlt,
+  faCertificate,
+  faExclamation,
+  faPlus,
 };
 
 export default icons;

@@ -12,14 +12,14 @@ import {
   PURCHASE_RESULTS_STATUS_LABELS,
   PAYMENT_STATUSES,
   PAYMENTS_STATUSES_TITLES,
-  PAYMENT_OPTIONS,
+  PAYMENT_PROVIDER_LABEL,
 } from '../../../../constants/purchase';
 import { CURRENCY_CODES } from '../../../../constants/common';
 import { ACTIONS } from '../../../../constants/fio';
 
 import {
   BcTx,
-  OrderItem,
+  OrderDetails,
   OrderPaymentItem,
   PaymentEventLog,
 } from '../../../../types';
@@ -34,12 +34,6 @@ type HistoryListItem = {
   withdraw?: boolean;
   status: string;
   dateTime: number;
-};
-
-export const PAYMENT_OPTION_LABEL = {
-  [PAYMENT_OPTIONS.FIO]: 'FIO',
-  [PAYMENT_OPTIONS.CREDIT_CARD]: 'Stripe',
-  [PAYMENT_OPTIONS.CRYPTO]: '-',
 };
 
 const generatePaymentEventLogsNotes = (eventLogs: PaymentEventLog[]) => {
@@ -66,7 +60,7 @@ const generatePaymentEventLogsNotes = (eventLogs: PaymentEventLog[]) => {
 };
 
 const setHistory = (
-  order: OrderItem,
+  order: OrderDetails,
   payment: OrderPaymentItem,
 ): HistoryListItem[] => {
   const history: HistoryListItem[] = [
@@ -97,7 +91,7 @@ const setHistory = (
       amount: status === PAYMENT_STATUSES.COMPLETED ? payment.price : '0.00',
       currency: payment.currency.toUpperCase(),
       status: `${
-        PAYMENT_OPTION_LABEL[payment.processor]
+        PAYMENT_PROVIDER_LABEL[payment.processor]
       } notification received (${
         payment.externalId
       }) \nPayment status: ${PAYMENTS_STATUSES_TITLES[
@@ -203,7 +197,7 @@ const setHistory = (
 export const useContext = ({
   orderItem,
 }: {
-  orderItem: OrderItem;
+  orderItem: OrderDetails;
 }): {
   isFree: boolean;
   historyList: HistoryListItem[];

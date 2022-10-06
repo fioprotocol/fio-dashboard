@@ -7,6 +7,7 @@ import {
   PaymentOptionsProps,
   Payment,
   ApiError,
+  PaymentProvider,
 } from '../../types';
 import { SignedTxArgs } from '../../api/fio';
 
@@ -17,14 +18,15 @@ type DefaultProps = {
   paymentAssignmentWallets: FioWalletDoublet[];
   paymentWalletPublicKey: string;
   fioWalletsBalances: WalletsBalances;
+  payment: Payment;
+  paymentProviderError: ApiError;
   paymentOption: PaymentOptionsProps;
+  paymentProvider: PaymentProvider;
   isFree: boolean;
   setWallet: (publicKey: string) => void;
   beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   onFinish: (results: RegistrationResult) => void;
   cart: CartItemType[];
-  payment: Payment;
-  paymentOptionError: ApiError;
   error?: string | null;
   submitDisabled?: boolean;
 };
@@ -50,16 +52,18 @@ export type BeforeSubmitData = {
   };
 };
 
+export type SignFioAddressItem = {
+  fioWallet: FioWalletDoublet;
+  name: string;
+  ownerKey: string;
+};
+
 export type BeforeSubmitState = {
   walletConfirmType: string;
   onSuccess: (data: BeforeSubmitData) => void;
   onCancel: () => void;
   data: {
-    fioAddressItems: {
-      fioWallet: FioWalletDoublet;
-      name: string;
-      ownerKey: string;
-    }[];
+    fioAddressItems: SignFioAddressItem[];
   } | null;
   fee?: number | null;
 };

@@ -9,6 +9,7 @@ import CancelButton from '../common/CancelButton/CancelButton';
 import { ErrorBadge, ERROR_UI_TYPE } from '../Input/ErrorBadge';
 
 import { formValidation } from './validation';
+import { isEdgeAuthenticationError } from '../../util/edge';
 
 import { FormValues } from './types';
 
@@ -47,7 +48,7 @@ const AccountRecoveryForm: React.FC<Props> = props => {
   };
 
   const answersError =
-    recoveryAccountResults.type === 'PasswordError' &&
+    isEdgeAuthenticationError(recoveryAccountResults) &&
     'Some of the answers were incorrect. Please try again!';
 
   const onSubmit = (values: FormValues) => {

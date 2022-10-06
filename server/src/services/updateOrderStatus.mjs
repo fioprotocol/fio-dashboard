@@ -112,7 +112,7 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith }) => {
 
   const orderPaymentInfo = {};
 
-  const isCreditCardProcessor = processor === Payment.PROCESSOR.CREDIT_CARD;
+  const isCreditCardProcessor = processor === Payment.PROCESSOR.STRIPE;
   const isFioProcessor = processor === Payment.PROCESSOR.FIO;
 
   const orderItemsTotalAmount = countTotalPriceAmount(orderItems);
@@ -186,7 +186,7 @@ const createPurchaseConfirmationNotification = async order => {
     const payment =
       payments.find(payment => payment.spentType === Payment.SPENT_TYPE.ORDER) || {};
 
-    const isCreditCardProcessor = payment.processor === Payment.PROCESSOR.CREDIT_CARD;
+    const isCreditCardProcessor = payment.processor === Payment.PROCESSOR.STRIPE;
     const isFioProcessor = payment.processor === Payment.PROCESSOR.FIO;
 
     const successedOrderItemsArr = items.filter(

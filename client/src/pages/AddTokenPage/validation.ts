@@ -2,6 +2,8 @@ import { CHAIN_CODE_REGEXP, TOKEN_CODE_REGEXP } from '../../constants/regExps';
 
 import { MAX_CHAIN_LENGTH, MAX_TOKEN_LENGTH } from '../../constants/fio';
 
+import { ASTERISK_SIGN } from '../../constants/common';
+
 import { FormValues } from './types';
 
 import { PublicAddressDoublet } from '../../types';
@@ -75,12 +77,14 @@ export const validate = (
             values.tokens.findIndex(
               token =>
                 token.chainCode === chainCode &&
-                (token.tokenCode === tokenCode || token.tokenCode === '*'),
+                (token.tokenCode === tokenCode ||
+                  token.tokenCode === ASTERISK_SIGN),
             ) ||
           publicAddresses.some(
             pubAddressItem =>
               pubAddressItem.chainCode === chainCode &&
-              (pubAddressItem.tokenCode === tokenCode || tokenCode === '*'),
+              (pubAddressItem.tokenCode === tokenCode ||
+                tokenCode === ASTERISK_SIGN),
           )
         ) {
           tokenErrors.tokenCode = {

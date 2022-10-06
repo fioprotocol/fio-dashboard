@@ -221,7 +221,7 @@ class OrdersJob extends CommonJob {
       let statusNotes;
 
       switch (payment.processor) {
-        case Payment.PROCESSOR.CREDIT_CARD: {
+        case Payment.PROCESSOR.STRIPE: {
           price = errorData.refundUsdcAmount || orderItemProps.price;
           currency = Payment.CURRENCY.USD;
           statusNotes = "User's credit card";
@@ -255,7 +255,7 @@ class OrdersJob extends CommonJob {
 
       let refundTx;
       switch (payment.processor) {
-        case Payment.PROCESSOR.CREDIT_CARD: {
+        case Payment.PROCESSOR.STRIPE: {
           refundTx = await Stripe.refund(payment.externalId, price);
           break;
         }
@@ -286,7 +286,7 @@ class OrdersJob extends CommonJob {
 
       let refundError;
       switch (payment.processor) {
-        case Payment.PROCESSOR.CREDIT_CARD: {
+        case Payment.PROCESSOR.STRIPE: {
           refundError = { notes: JSON.stringify(refundTx) };
           break;
         }
@@ -537,6 +537,7 @@ class OrdersJob extends CommonJob {
             action: FIO_ACTIONS.registerFioDomain,
             domain,
             publicKey: orderItem.publicKey,
+            fee: await this.getFeeForAction(FIO_ACTIONS.registerFioDomain),
           }),
           auth,
         );
@@ -604,7 +605,7 @@ class OrdersJob extends CommonJob {
 
       result = await fioApi.executeAction(
         action,
-        fioApi.getActionParams(orderItem),
+        fioApi.getActionParams({ ...orderItem, fee: await this.getFeeForAction(action) }),
         auth,
       );
 

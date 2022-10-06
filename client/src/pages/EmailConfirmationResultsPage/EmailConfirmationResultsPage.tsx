@@ -57,6 +57,7 @@ const EmailConfirmationResultsPage: React.FC<Props> = props => {
         ROUTES.FIO_ADDRESSES_SELECTION,
         ROUTES.FIO_DOMAINS_SELECTION,
         ROUTES.HOME,
+        ROUTES.DASHBOARD,
       ],
     });
   };

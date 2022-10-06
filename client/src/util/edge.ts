@@ -1,9 +1,18 @@
-import { EdgeAccount } from 'edge-core-js';
+import {
+  EdgeAccount,
+  PasswordError,
+  UsernameError,
+  NetworkError,
+} from 'edge-core-js';
 
 import { sleep } from '../utils';
 import { log } from './general';
 
 import { EdgeWalletsKeys } from '../types';
+
+const PASSWORD_ERROR = new PasswordError('').name;
+const USERNAME_ERROR = new UsernameError('').name;
+const NETWORK_ERROR = new NetworkError('').name;
 
 export const waitWalletKeys = async (
   account: EdgeAccount,
@@ -36,4 +45,21 @@ export const waitForEdgeAccountStop = async (
   } catch (e) {
     //
   }
+};
+
+export const isEdgeAuthenticationError = (edgeLoginFailure: {
+  name?: string;
+  type?: string;
+}): boolean => {
+  const type = edgeLoginFailure.type || edgeLoginFailure.name;
+
+  return type === PASSWORD_ERROR || type === USERNAME_ERROR;
+};
+export const isEdgeNetworkError = (edgeLoginFailure: {
+  name?: string;
+  type?: string;
+}): boolean => {
+  const type = edgeLoginFailure.type || edgeLoginFailure.name;
+
+  return type === NETWORK_ERROR;
 };

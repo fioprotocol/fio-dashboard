@@ -13,6 +13,7 @@ import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import FioNamesInitWrapper from '../../components/FioNamesInitWrapper';
 import Badge, { BADGE_TYPES } from '../../components/Badge/Badge';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
+import PageTitle from '../../components/PageTitle/PageTitle';
 
 import { convertFioPrices } from '../../util/prices';
 import { useFioWallet, useWalletBalances } from '../../util/hooks';
@@ -21,6 +22,7 @@ import MathOp from '../../util/math';
 import { WALLET_CREATED_FROM } from '../../constants/common';
 import { ERROR_TYPES } from '../../components/common/TransactionResults/constants';
 import { ROUTES } from '../../constants/routes';
+import { LINKS } from '../../constants/labels';
 
 import { ResultsData } from '../../components/common/TransactionResults/types';
 import { AddBundlesValues, ContainerProps } from './types';
@@ -39,17 +41,11 @@ const DEFAULT_BUNDLE_AMOUNT = 100;
 
 const FioAddressAddBundlesPage: React.FC<ContainerProps &
   RouteComponentProps<MatchParams, {}, LocationState>> = props => {
+  const { fioAddresses, feePrice, roe, history, getFee, location } = props;
   const {
-    fioAddresses,
-    feePrice,
-    roe,
-    history,
-    getFee,
-    match,
-    location,
-  } = props;
-  const { id: name } = match.params;
-  const { state: { backUrl = ROUTES.FIO_ADDRESSES } = {} } = location;
+    query: { name },
+    state: { backUrl = ROUTES.FIO_ADDRESSES } = {},
+  } = location;
 
   const { currentWallet, settingWallet } = useFioWallet(fioAddresses, name);
   const { nativeFio: feeNativeFio, fio, usdc } = feePrice;
@@ -123,20 +119,26 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
 
   if (resultsData)
     return (
-      <Results
-        results={resultsData}
-        title={
-          resultsData.error
-            ? 'Adding Bundled Transactions Failed!'
-            : 'Bundled Transactions Added!'
-        }
-        onClose={onResultsClose}
-        onRetry={onResultsRetry}
-        errorType={ERROR_TYPES.ADD_BUNDLES_ERROR}
-      >
-        <h5 className={classes.label}>Add Bundled Transactions Details</h5>
-        {renderDetails()}
-      </Results>
+      <>
+        <PageTitle
+          link={LINKS.FIO_ADDRESS_ADD_BUNDLES_CONFIRMATION}
+          isVirtualPage
+        />
+        <Results
+          results={resultsData}
+          title={
+            resultsData.error
+              ? 'Adding Bundled Transactions Failed!'
+              : 'Bundled Transactions Added!'
+          }
+          onClose={onResultsClose}
+          onRetry={onResultsRetry}
+          errorType={ERROR_TYPES.ADD_BUNDLES_ERROR}
+        >
+          <h5 className={classes.label}>Add Bundled Transactions Details</h5>
+          {renderDetails()}
+        </Results>
+      </>
     );
 
   if (error)

@@ -7,9 +7,7 @@ import { setCartItems } from '../../redux/cart/actions';
 import {
   onPurchaseResultsClose,
   setRegistration,
-  setProcessing,
 } from '../../redux/registrations/actions';
-import { fioActionExecuted } from '../../redux/fio/actions';
 
 import {
   registrationResult,
@@ -17,45 +15,48 @@ import {
   roe as roeSelector,
   prices as pricesSelector,
 } from '../../redux/registrations/selectors';
-import { isAuthenticated } from '../../redux/profile/selectors';
+import { noProfileLoaded } from '../../redux/profile/selectors';
 import { containedFlowQueryParams } from '../../redux/containedFlow/selectors';
 import {
   cartItems,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
-import { order as orderSelector } from '../../redux/order/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 
+import { transformPurchaseResults } from '../../util/purchase';
+import { cartItemsToOrderItems, totalCost } from '../../util/cart';
 import {
-  onPurchaseFinish,
-  transformPurchaseResults,
-} from '../../util/purchase';
-import { totalCost } from '../../utils';
+  fireAnalyticsEvent,
+  getCartItemsDataForAnalytics,
+} from '../../util/analytics';
 import { useEffectOnce } from '../../hooks/general';
 import { useWebsocket } from '../../hooks/websocket';
-
-import apis from '../../api';
 
 import MathOp from '../../util/math';
 
 import { ROUTES } from '../../constants/routes';
 import { CONTAINED_FLOW_CONTINUE_TEXT } from '../../constants/containedFlow';
 import {
-  PURCHASE_PROVIDER,
+  PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from '../../constants/purchase';
-import { CURRENCY_CODES } from '../../constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  ANALYTICS_PAYMENT_TYPE,
+  CURRENCY_CODES,
+} from '../../constants/common';
 import { WS_ENDPOINTS } from '../../constants/websocket';
 
 import {
-  FioActionExecuted,
   FioWalletDoublet,
   RegistrationResult,
-  PurchaseProvider,
+  PaymentProvider,
   PurchaseTxStatus,
   CartItem,
+  Order,
 } from '../../types';
 import { ErrBadgesProps } from './types';
+import { CreateOrderActionData } from '../../redux/types';
 
 const ERROR_CODES = {
   SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
@@ -66,10 +67,10 @@ export const useContext = (): {
   errItems: CartItem[];
   closeText: string;
   onClose: () => void;
-  onFinish: (results: RegistrationResult) => Promise<void>;
+  onRetry: () => void;
   paymentWallet: FioWalletDoublet;
   purchaseStatus: PurchaseTxStatus;
-  purchaseProvider: PurchaseProvider;
+  paymentProvider: PaymentProvider;
   regPaymentAmount: string | number;
   regConvertedPaymentAmount: string | number;
   regCostFree: string;
@@ -83,16 +84,17 @@ export const useContext = (): {
   allErrored: boolean;
   failedTxsTotalAmount: string | number;
   isProcessing: boolean;
-  isRetry: boolean;
 } => {
-  const history = useHistory();
-  const isAuth = useSelector(isAuthenticated);
+  const history = useHistory<{
+    order?: Order;
+    orderParams?: CreateOrderActionData;
+  }>();
+  const noProfile = useSelector(noProfileLoaded);
   const results = useSelector(registrationResult);
   const roe = useSelector(roeSelector);
   const containedFlowParams = useSelector(containedFlowQueryParams);
   const isProcessing = useSelector(isProcessingSelector);
   const cart = useSelector(cartItems);
-  const order = useSelector(orderSelector);
   const prices = useSelector(pricesSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const userWallets = useSelector(fioWalletsSelector);
@@ -109,6 +111,11 @@ export const useContext = (): {
   }>({ status: results?.providerTxStatus || PURCHASE_RESULTS_STATUS.PENDING });
 
   const [prevCart, setPrevCart] = useState<CartItem[]>(cart);
+
+  const {
+    location: { state },
+  } = history;
+  const { order } = state || {};
 
   const onStatusUpdate = (data: {
     orderStatus: PurchaseTxStatus;
@@ -128,10 +135,10 @@ export const useContext = (): {
   });
 
   useEffect(() => {
-    if (!isAuth) {
+    if (noProfile) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
-  }, [isAuth, history]);
+  }, [noProfile, history]);
 
   useEffectOnce(() => {
     if (noResults) {
@@ -161,7 +168,7 @@ export const useContext = (): {
   } = totalCost(errItems, roe);
 
   const {
-    purchaseProvider = PURCHASE_PROVIDER.FIO,
+    paymentProvider = PAYMENT_PROVIDER.FIO,
     providerTxId,
     paymentCurrency = CURRENCY_CODES.FIO,
     convertedPaymentCurrency = CURRENCY_CODES.USDC,
@@ -179,15 +186,11 @@ export const useContext = (): {
   }
 
   const allErrored = isEmpty(regItems) && !isEmpty(errItems);
-  // todo: fix retry for FIO purchases - new order creation, websocket update for new order id, ...
-  // const isRetry =
-  //   purchaseProvider === PURCHASE_PROVIDER.FIO && !isEmpty(errItems);
-  const isRetry = false;
 
   const failedTxsTotalAmount =
     (orderStatusData.status === PURCHASE_RESULTS_STATUS.FAILED ||
       orderStatusData.status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS) &&
-    purchaseProvider === PURCHASE_PROVIDER.STRIPE
+    paymentProvider === PAYMENT_PROVIDER.STRIPE
       ? errCostUsdc
       : errCostFio;
 
@@ -210,7 +213,7 @@ export const useContext = (): {
         } else {
           badgeKey = `${errorType}`;
           totalCurrency =
-            purchaseProvider === PURCHASE_PROVIDER.STRIPE
+            paymentProvider === PAYMENT_PROVIDER.STRIPE
               ? CURRENCY_CODES.USDC
               : CURRENCY_CODES.FIO;
         }
@@ -240,6 +243,43 @@ export const useContext = (): {
       }, {} as ErrBadgesProps)
     : {};
 
+  useEffectOnce(
+    () => {
+      if (
+        [
+          PURCHASE_RESULTS_STATUS.SUCCESS,
+          PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
+        ].includes(orderStatusData.status)
+      ) {
+        const purchaseItems = getCartItemsDataForAnalytics(regItems);
+        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED, {
+          ...purchaseItems,
+          transaction_id: order?.number,
+          payment_type: !purchaseItems.value
+            ? ANALYTICS_PAYMENT_TYPE.FREE
+            : results.paymentProvider === PAYMENT_PROVIDER.STRIPE
+            ? ANALYTICS_PAYMENT_TYPE.STRIPE
+            : ANALYTICS_PAYMENT_TYPE.FIO,
+        });
+      }
+      if (
+        orderStatusData.status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS
+      ) {
+        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_PARTIAL);
+      }
+      if (orderStatusData.status === PURCHASE_RESULTS_STATUS.FAILED) {
+        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_FAILED);
+      }
+    },
+    [orderStatusData, results],
+    [
+      PURCHASE_RESULTS_STATUS.SUCCESS,
+      PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
+      PURCHASE_RESULTS_STATUS.FAILED,
+      PURCHASE_RESULTS_STATUS.CANCELED,
+    ].includes(orderStatusData.status),
+  );
+
   useEffectOnce(() => {
     dispatch(setCartItems(updatedCart));
   }, [setCartItems, updatedCart]);
@@ -264,7 +304,7 @@ export const useContext = (): {
       PURCHASE_RESULTS_STATUS.FAILED,
       PURCHASE_RESULTS_STATUS.CANCELED,
     ].indexOf(orderStatusData.status) > -1 &&
-      purchaseProvider === PURCHASE_PROVIDER.STRIPE,
+      paymentProvider === PAYMENT_PROVIDER.STRIPE,
   );
 
   let closeText = 'Close';
@@ -282,21 +322,19 @@ export const useContext = (): {
     dispatch(onPurchaseResultsClose());
   };
 
-  const onFinish = async (results: RegistrationResult) => {
-    await apis.orders.update(order.id, {
-      status: results.providerTxStatus || PURCHASE_RESULTS_STATUS.SUCCESS,
-      results,
-    });
-    onPurchaseFinish({
-      results,
-      isRetry: true,
-      setRegistration: (results: RegistrationResult) =>
-        dispatch(setRegistration(results)),
-      setProcessing: (isProcessing: boolean) =>
-        dispatch(setProcessing(isProcessing)),
-      fioActionExecuted: (data: FioActionExecuted) =>
-        dispatch(fioActionExecuted(data)),
-      history,
+  const onRetry = () => {
+    const { costUsdc: totalUsdc } = totalCost(cart, roe);
+    history.push({
+      pathname: ROUTES.CHECKOUT,
+      state: {
+        orderParams: {
+          total: totalUsdc,
+          roe,
+          publicKey: paymentWalletPublicKey || userWallets[0].publicKey,
+          paymentProcessor: paymentProvider,
+          items: cartItemsToOrderItems(cart, prices, roe),
+        },
+      },
     });
   };
 
@@ -305,10 +343,10 @@ export const useContext = (): {
     errItems,
     closeText,
     onClose,
-    onFinish,
+    onRetry,
     paymentWallet,
     purchaseStatus: orderStatusData.status,
-    purchaseProvider,
+    paymentProvider,
     regPaymentAmount,
     regConvertedPaymentAmount,
     regCostFree: !regCostNativeFio && regFree,
@@ -322,6 +360,5 @@ export const useContext = (): {
     allErrored,
     failedTxsTotalAmount,
     isProcessing,
-    isRetry,
   };
 };

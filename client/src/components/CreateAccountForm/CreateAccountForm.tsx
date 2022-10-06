@@ -13,13 +13,15 @@ import GenericErrorModal from '../Modal/GenericErrorModal/GenericErrorModal';
 import Pin from './Pin';
 import Confirmation from './Confirmation';
 import Success from './Success';
+import PageTitle from '../PageTitle/PageTitle';
 
-import { ROUTES } from '../../constants/routes';
 import { PIN_LENGTH } from '../../constants/form';
 import {
+  ANALYTICS_EVENT_ACTIONS,
   DEFAULT_WALLET_OPTIONS,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
+import { LINKS } from '../../constants/labels';
 
 import EmailPassword, {
   validate as validateEmailPassword,
@@ -32,6 +34,7 @@ import {
 } from './middleware';
 import { emailToUsername, getWalletKeys, setDataMutator } from '../../utils';
 import { emailAvailable } from '../../api/middleware/auth';
+import { fireAnalyticsEvent } from '../../util/analytics';
 
 import {
   EmailConfirmationStateData,
@@ -59,6 +62,14 @@ const STEPS_ORDER = {
   [STEPS.PIN_CONFIRM]: 2,
   [STEPS.CONFIRMATION]: 3,
   [STEPS.SUCCESS]: 4,
+};
+
+const STEPS_LINK = {
+  [STEPS.EMAIL_PASSWORD]: LINKS.CREATE_ACCOUNT,
+  [STEPS.PIN]: LINKS.CREATE_ACCOUNT_PIN,
+  [STEPS.PIN_CONFIRM]: LINKS.CREATE_ACCOUNT_PIN,
+  [STEPS.CONFIRMATION]: LINKS.CREATE_ACCOUNT_CONFIRM,
+  [STEPS.SUCCESS]: LINKS.CREATE_ACCOUNT_CONFIRMATION,
 };
 
 type Location = {
@@ -149,11 +160,8 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       values: { email },
     } = this.form ? this.form.getState() : { values: { email: undefined } };
 
+    fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SIGN_UP);
     this.props.makeNonce(emailToUsername(email), this.state.keys);
-    this.props.history.push(
-      (this.props.lastLocation && this.props.lastLocation.pathname) ||
-        ROUTES.HOME,
-    );
   };
 
   setEmailError = (emailError: string) => {
@@ -531,8 +539,12 @@ export default class CreateAccountForm extends React.Component<Props, State> {
   };
 
   render(): React.ReactElement {
+    const { step } = this.state;
     return (
       <FormModalWrapper>
+        {step !== STEPS.EMAIL_PASSWORD && (
+          <PageTitle link={STEPS_LINK[step]} isVirtualPage />
+        )}
         <Form
           mutators={{ setDataMutator }}
           validate={this.validate}

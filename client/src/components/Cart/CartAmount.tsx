@@ -3,9 +3,9 @@ import React from 'react';
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import PaymentsBlock from './components/PaymentsBlock';
 
-import { totalCost } from '../../utils';
+import { totalCost } from '../../util/cart';
 
-import { CartItem, FioWalletDoublet, PaymentOptionsProps } from '../../types';
+import { CartItem, FioWalletDoublet, PaymentProvider } from '../../types';
 
 import classes from './Cart.module.scss';
 
@@ -17,9 +17,10 @@ type Props = {
   roe: number;
   totalCartNativeAmount: number;
   userWallets: FioWalletDoublet[];
-  loading: boolean;
+  selectedPaymentProvider: PaymentProvider;
+  disabled: boolean;
   error: string | null;
-  onPaymentChoose: (paymentOption: PaymentOptionsProps) => void;
+  onPaymentChoose: (paymentProvider: PaymentProvider) => void;
 };
 
 const CartAmount: React.FC<Props> = props => {
@@ -31,7 +32,8 @@ const CartAmount: React.FC<Props> = props => {
     roe,
     totalCartNativeAmount,
     userWallets,
-    loading,
+    selectedPaymentProvider,
+    disabled,
     error,
     onPaymentChoose,
   } = props;
@@ -63,8 +65,8 @@ const CartAmount: React.FC<Props> = props => {
           onPaymentChoose={onPaymentChoose}
           totalCartNativeAmount={totalCartNativeAmount}
           userWallets={userWallets}
-          loading={loading}
-          disabled={!!error}
+          selectedPaymentProvider={selectedPaymentProvider}
+          disabled={!!error || disabled}
         />
       </div>
     </CartSmallContainer>

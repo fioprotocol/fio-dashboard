@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 
 import { PaymentOptions } from '../../PaymentOptions';
 
-import { PaymentOptionsProps, CartItem } from '../../../types';
+import { PaymentOptionsProps, CartItem, PaymentProvider } from '../../../types';
 
 import classes from '../styles/OtherPaymentsBlock.module.scss';
 
@@ -13,8 +13,8 @@ type Props = {
   disabled?: boolean;
   paymentOptionsList: PaymentOptionsProps[];
   cartItems?: CartItem[];
-  loading: boolean;
-  onPaymentChoose: (paymentOption: PaymentOptionsProps) => void;
+  selectedPaymentProvider: PaymentProvider;
+  onPaymentChoose: (paymentProvider: PaymentProvider) => void;
 };
 
 const OtherPaymentsBlock: React.FC<Props> = props => {
@@ -24,7 +24,7 @@ const OtherPaymentsBlock: React.FC<Props> = props => {
     optionsDisabled,
     disabled,
     cartItems,
-    loading,
+    selectedPaymentProvider,
     onPaymentChoose,
   } = props;
 
@@ -46,7 +46,7 @@ const OtherPaymentsBlock: React.FC<Props> = props => {
         paymentOptionsList={paymentOptionsList}
         onPaymentChoose={onPaymentChoose}
         cartItems={cartItems}
-        loading={loading}
+        selectedPaymentProvider={selectedPaymentProvider}
         disabled={disabled}
       />
     );

@@ -9,10 +9,14 @@ import { CONTAINED_FLOW_ACTIONS } from './constants/containedFlow';
 import {
   BC_TX_STATUSES,
   PAYMENT_OPTIONS,
-  PURCHASE_PROVIDER,
+  PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from './constants/purchase';
-import { CURRENCY_CODES } from './constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CONFIRM_FIO_ACTIONS,
+  CURRENCY_CODES,
+} from './constants/common';
 
 import { ResultsData } from '../components/common/TransactionResults/types';
 
@@ -101,7 +105,7 @@ export type RegistrationRegistered = {
   transactions?: string[];
 };
 
-export type PurchaseProvider = typeof PURCHASE_PROVIDER[keyof typeof PURCHASE_PROVIDER];
+export type PaymentProvider = typeof PAYMENT_PROVIDER[keyof typeof PAYMENT_PROVIDER];
 export type PaymentCurrency = typeof CURRENCY_CODES[keyof typeof CURRENCY_CODES];
 export type PaymentOptionsProps = typeof PAYMENT_OPTIONS[keyof typeof PAYMENT_OPTIONS];
 export type PurchaseTxStatus = typeof PURCHASE_RESULTS_STATUS[keyof typeof PURCHASE_RESULTS_STATUS];
@@ -111,7 +115,7 @@ export type RegistrationResult = {
   errors: RegistrationErrors[];
   registered: RegistrationRegistered[];
   partial: string[];
-  purchaseProvider?: PurchaseProvider;
+  paymentProvider?: PaymentProvider;
   providerTxId?: string | number;
   paymentOption?: PaymentOptionsProps;
   paymentAmount?: string;
@@ -469,7 +473,7 @@ export type RedirectLinkData = {
 };
 
 export type PrivateRedirectLocationState = {
-  from?: { pathname?: string };
+  from?: { pathname?: string; search?: string };
   options?: { setKeysForAction?: boolean };
 };
 
@@ -526,12 +530,15 @@ export type Payment = {
   externalPaymentId: string;
   amount: string;
   currency: PaymentCurrency;
+  processor: PaymentProvider;
   secret?: string;
 };
 
 export type Order = {
   id: number;
   number: string;
+  publicKey: string;
+  orderItems?: OrderItem[];
   payment?: Payment;
 };
 
@@ -626,7 +633,7 @@ export type OrderPaymentItem = {
   externalId?: string;
   paymentEventLogs: PaymentEventLog[];
   price?: string;
-  processor: PaymentOptionsProps;
+  processor: PaymentProvider;
   spentType: number;
   status: number;
   updatedAt: string;
@@ -637,6 +644,7 @@ export type OrderPaymentItem = {
     fioName?: string;
     action?: string;
     sendingFioTokens?: boolean;
+    webhookData?: { charges: { data: { payment_method_details: { type } }[] } };
   };
 };
 
@@ -658,6 +666,21 @@ export type BcTxEvent = {
 };
 
 export type OrderItem = {
+  action: string;
+  address?: string;
+  createdAt: string;
+  domain?: string;
+  id: string;
+  price: string;
+  priceCurrency: string;
+  updatedAt: string;
+  blockchainTransactions: BcTx[];
+  orderItemStatus: {
+    txStatus: typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
+  };
+};
+
+export type OrderDetails = {
   id: string;
   number: string;
   roe: string;
@@ -666,21 +689,8 @@ export type OrderItem = {
   createdAt: string;
   status: number;
   currency?: PaymentCurrency;
-  paymentProcessor: PaymentOptionsProps;
-  items?: {
-    action: string;
-    address?: string;
-    createdAt: string;
-    domain?: string;
-    id: string;
-    price: string;
-    priceCurrency: string;
-    updatedAt: string;
-    blockchainTransactions: BcTx[];
-    orderItemStatus: {
-      txStatus: typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
-    };
-  }[];
+  paymentProcessor: PaymentProvider;
+  items?: OrderItem[];
   payments?: OrderPaymentItem[];
   blockchainTransactionEvents: BcTxEvent[];
   userId: string;
@@ -706,3 +716,12 @@ export type ChainCodeProps = {
   chainCodeName: string;
   tokens?: TokenCodeProps[];
 };
+
+export type FioActions = typeof CONFIRM_FIO_ACTIONS;
+export type AnalyticsEventActions = typeof ANALYTICS_EVENT_ACTIONS;
+
+declare global {
+  interface Window {
+    dataLayer: AnyObject[];
+  }
+}

@@ -26,6 +26,8 @@ router.get(
 router.post('/admin-auth', routes.auth.adminLogin);
 router.post('/admin-auth/create', routes.auth.adminCreate);
 router.get('/admin-auth/create/check', routes.auth.adminCreateCheck);
+router.post('/admin-auth/reset-password', routes.auth.adminResetPassword);
+router.get('/admin-auth/reset-password/check', routes.auth.adminResetPasswordCheck);
 
 router.post('/actions/:hash', routes.actions.submit);
 
@@ -46,6 +48,11 @@ router.get('/admin/list', checkAdminAuth, routes.adminUsers.adminsList);
 router.get('/admin/info/:id', checkAdminAuth, routes.adminUsers.adminUserInfo);
 router.put('/admin', checkAdminAuth, routes.adminUsers.update);
 router.delete('/admin', checkAdminAuth, routes.adminUsers.remove);
+router.post(
+  '/admin/:id/send-reset-password',
+  checkAdminAuth,
+  routes.adminUsers.sendResetPassword,
+);
 router.post('/admin/invite', checkAdminAuth, routes.adminUsers.invite);
 router.get('/admin/roles', checkAdminAuth, routes.adminUsers.rolesList);
 router.get('/admin/statuses', checkAdminAuth, routes.adminUsers.statusesList);
@@ -107,11 +114,14 @@ router.get('/contacts', checkAuth, routes.contacts.list);
 router.get('/check-pub-address', checkAuth, routes.external.validatePubAddress);
 
 router.get('/orders', checkAuth, routes.orders.list);
+router.get('/orders/active', checkAuth, routes.orders.getActive);
 router.post('/orders', checkAuth, routes.orders.create);
 router.post('/orders/update/:id', checkAuth, routes.orders.update);
+router.get('/orders/item/:orderNumber', checkAuth, routes.orders.get);
 
 router.post('/payments', checkAuth, routes.payments.create);
 router.post('/payments/webhook/', routes.payments.webhook);
+router.post('/payments/cancel', checkAuth, routes.payments.cancel);
 
 router.get('/chain-codes/:chainCode?', routes.chainCodes.list);
 

@@ -8,8 +8,13 @@ import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import CounterContainer from '../CounterContainer/CounterContainer';
 
 import { ROUTES } from '../../constants/routes';
+import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
-import { handleFreeAddressCart, deleteCartItem } from '../../utils';
+import { handleFreeAddressCart, deleteCartItem } from '../../util/cart';
+import {
+  fireAnalyticsEvent,
+  getCartItemsDataForAnalytics,
+} from '../../util/analytics';
 
 import {
   CartItem,
@@ -61,6 +66,10 @@ const AddressDomainCart: React.FC<Props> = props => {
   const history = useHistory();
 
   const handleCheckout = () => {
+    fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
+      getCartItemsDataForAnalytics(cartItems),
+    );
     let route = ROUTES.CART;
     if (
       count === 1 &&

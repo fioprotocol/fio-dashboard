@@ -5,8 +5,6 @@ import { Link } from 'react-router-dom';
 
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 
-import { putParamsToUrl } from '../../../utils';
-
 import { NFTTokenDoublet } from '../../../types';
 
 import classes from './TokenBadge.module.scss';
@@ -22,7 +20,10 @@ const NFTTokenBadge: React.FC<Props> = props => {
 
   return (
     <Link
-      to={putParamsToUrl(ROUTES.FIO_ADDRESS_NFT_EDIT, { address: name, id })}
+      to={{
+        pathname: ROUTES.FIO_ADDRESS_NFT_EDIT,
+        search: `address=${name}&id=${id}`,
+      }}
     >
       <Badge show={true} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.container, classes.isNft)}>

@@ -139,6 +139,7 @@ export default class OrdersCreate extends Base {
       data: {
         id: order.id,
         number: order.number,
+        publicKey: order.publicKey,
         payment,
       },
     };

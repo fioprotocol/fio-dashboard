@@ -12,7 +12,6 @@ import WalletAction from '../../components/WalletAction/WalletAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import FioNamesInitWrapper from '../../components/FioNamesInitWrapper';
 
-import { putParamsToUrl } from '../../utils';
 import { transformFioRecord } from '../WalletPage/util';
 import { isFioChain } from '../../util/fio';
 
@@ -26,7 +25,7 @@ import {
 } from '../../constants/fio';
 import { emptyWallet } from '../../redux/fio/reducer';
 
-import { ContainerProps } from './types';
+import { ContainerProps, LocationProps } from './types';
 import {
   FioDecryptedRecordData,
   FioRecord,
@@ -37,14 +36,13 @@ import { FioRecordViewDecrypted } from '../WalletPage/types';
 import detailsModalClasses from '../WalletPage/styles/FioRecordDetailedModal.module.scss';
 import classes from '../WalletPage/styles/WalletPage.module.scss';
 
-const FioRequestDecryptPage: React.FC<ContainerProps> = props => {
+const FioRequestDecryptPage: React.FC<ContainerProps &
+  LocationProps> = props => {
   const {
     fioWallets,
     fioWalletsData,
     history,
-    match: {
-      params: { publicKey, id },
-    },
+    location: { query: { publicKey, fioRequestId: id } = {} },
     refreshBalance,
     refreshWalletDataPublicKey,
     setConfirmPinKeys,
@@ -202,26 +200,23 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = props => {
     }
 
     if (isFioChain(fioRecordDecrypted.fioDecryptedContent.chainCode)) {
-      history.push(
-        putParamsToUrl(ROUTES.SEND, {
-          publicKey: fioWallet.publicKey,
-        }),
-        {
+      history.push({
+        pathname: ROUTES.SEND,
+        search: `publicKey=${fioWallet.publicKey}`,
+        state: {
           fioWallet,
           fioRecordDecrypted,
         },
-      );
+      });
     } else {
-      history.push(
-        putParamsToUrl(ROUTES.PAYMENT_DETAILS, {
-          publicKey: fioWallet.publicKey,
-          fioRequestId: fioRecordDecrypted.fioRecord.id + '',
-        }),
-        {
+      history.push({
+        pathname: ROUTES.PAYMENT_DETAILS,
+        search: `publicKey=${fioWallet.publicKey}&fioRequestId=${fioRecordDecrypted.fioRecord.id}`,
+        state: {
           fioWallet,
           fioRecordDecrypted,
         },
-      );
+      });
     }
   };
 
@@ -255,11 +250,10 @@ const FioRequestDecryptPage: React.FC<ContainerProps> = props => {
     return <FioLoader wrap={true} />;
 
   const onBack = () =>
-    history.push(
-      putParamsToUrl(ROUTES.FIO_WALLET, {
-        publicKey: fioWallet.publicKey,
-      }),
-    );
+    history.push({
+      pathname: ROUTES.FIO_WALLET,
+      search: `publicKey=${fioWallet.publicKey}`,
+    });
 
   return (
     <div className={classes.container}>

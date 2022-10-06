@@ -7,7 +7,7 @@ import {
   AdminUser,
   AdminUserProfile,
   FioAccountProfile,
-  OrderItem,
+  OrderDetails,
 } from '../../types';
 
 export default combineReducers({
@@ -40,7 +40,7 @@ export default combineReducers({
         return state;
     }
   },
-  orderItem(state: OrderItem = null, action) {
+  orderItem(state: OrderDetails = null, action) {
     switch (action.type) {
       case actions.GET_ORDER_BY_ADMIN_SUCCESS:
         return action.data;
@@ -50,7 +50,7 @@ export default combineReducers({
         return state;
     }
   },
-  ordersList(state: OrderItem[] = [], action) {
+  ordersList(state: OrderDetails[] = [], action) {
     switch (action.type) {
       case actions.GET_ORDERS_LIST_BY_ADMIN_SUCCESS:
         return action.data.orders;

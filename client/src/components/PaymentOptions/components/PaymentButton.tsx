@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 
@@ -30,19 +30,6 @@ export const PaymentButton: React.FC<PaymentButtonProps> = props => {
     onClick,
   } = props;
 
-  const [isButtonClicked, toggleIsButtonClicked] = useState(false);
-
-  const handleClick = () => {
-    toggleIsButtonClicked(true);
-    onClick();
-  };
-
-  useEffect(() => {
-    if (!loading) {
-      toggleIsButtonClicked(false);
-    }
-  }, [loading]);
-
   if (hideButton) return null;
 
   return (
@@ -51,13 +38,13 @@ export const PaymentButton: React.FC<PaymentButtonProps> = props => {
         classes.button,
         hasRoyalBlueBackground && classes.hasRoyalBlueBackground,
       )}
-      onClick={handleClick}
+      onClick={onClick}
       disabled={disabled}
     >
       {icon && <div className="mr-2">{icon}</div>}
       <p className={classes.buttonText}>{buttonText}</p>
       {afterTextIcon && <div className="ml-2">{afterTextIcon}</div>}
-      {loading && isButtonClicked && (
+      {loading && (
         <Loader isWhite={true} hasInheritFontSize={true} hasAutoWidth={true} />
       )}
     </Button>

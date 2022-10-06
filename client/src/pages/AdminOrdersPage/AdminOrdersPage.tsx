@@ -9,10 +9,10 @@ import { formatDateToLocale } from '../../helpers/stringFormatters';
 
 import {
   PURCHASE_RESULTS_STATUS_LABELS,
-  PAYMENT_OPTIONS_LABEL,
+  PAYMENT_PROVIDER_LABEL,
 } from '../../constants/purchase';
 
-import { AdminUser, OrderItem } from '../../types';
+import { AdminUser, OrderDetails } from '../../types';
 
 import classes from './styles/AdminOrdersListPage.module.scss';
 
@@ -20,8 +20,8 @@ type Props = {
   loading: boolean;
   getOrdersList: (limit?: number, offset?: number) => Promise<void>;
   adminUser: AdminUser;
-  ordersList: OrderItem[];
-  orderItem: OrderItem;
+  ordersList: OrderDetails[];
+  orderItem: OrderDetails;
   ordersCount: number;
   isAuthUser: boolean;
   getOrder: (id: string) => Promise<void>;
@@ -86,7 +86,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
                     <th>{order.total || 0}</th>
                     <th>{order.refProfileName || 'FIO Dashboard'}</th>
                     <th>
-                      {PAYMENT_OPTIONS_LABEL[order.paymentProcessor] || 'N/A'}
+                      {PAYMENT_PROVIDER_LABEL[order.paymentProcessor] || 'N/A'}
                     </th>
                     <th>{PURCHASE_RESULTS_STATUS_LABELS[order.status]}</th>
                   </tr>

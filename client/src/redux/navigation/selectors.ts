@@ -1,11 +1,9 @@
-import { History } from 'history';
+import { LocationState } from 'history';
 
 import { prefix } from './actions';
 
 import { ReduxState } from '../init';
 import { RedirectLinkData } from '../../types';
-
-import LocationState = History.LocationState;
 
 export const pathname = (state: ReduxState): string =>
   state.router.location.pathname;

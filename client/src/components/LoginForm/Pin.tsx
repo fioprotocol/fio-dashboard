@@ -4,13 +4,15 @@ import { isEmpty } from 'lodash';
 import FormHeader from '../FormHeader/FormHeader';
 import CloseButton from '../CloseButton/CloseButton';
 import PinForm from '../PinForm';
-import { FIELD_NAME } from '../PinForm/PinForm';
 
+import { FIELD_NAME } from '../PinForm/PinForm';
 import { PIN_LENGTH } from '../../constants/form';
 
-import classes from './LoginForm.module.scss';
+import { isEdgeAuthenticationError, isEdgeNetworkError } from '../../util/edge';
 
 import { LoginFailure } from '../../types';
+
+import classes from './LoginForm.module.scss';
 
 type OwnProps = {
   onSubmit: (params: { email: string; pin: string }) => void;
@@ -18,7 +20,7 @@ type OwnProps = {
   resetLoginFailure: () => void;
   edgeAuthLoading: boolean;
   loginFailure: LoginFailure;
-  edgeLoginFailure: { type?: string; wait?: number };
+  edgeLoginFailure: { name?: string; type?: string; wait?: number };
   email: string;
 };
 type Props = OwnProps;
@@ -37,17 +39,20 @@ const Pin: React.FC<Props> = props => {
 
   useEffect(() => {
     if (!isEmpty(edgeLoginFailure)) {
-      const messageText = (type?: string) => {
-        if (type === 'PasswordError' || type === 'UsernameError') {
+      const messageText = () => {
+        if (isEdgeAuthenticationError(edgeLoginFailure)) {
           if (edgeLoginFailure.wait && edgeLoginFailure.wait > 0)
             return 'Pin login has been blocked';
-          return 'Invalid Pin';
+          return 'Invalid PIN Entry. Try again or start over';
+        }
+        if (isEdgeNetworkError(edgeLoginFailure)) {
+          return 'Unable to connect to authentication server, please try again later';
         }
         return 'Server Error';
       };
       setError({
         name: FIELD_NAME,
-        message: messageText(edgeLoginFailure.type),
+        message: messageText(),
       });
     }
   }, [edgeLoginFailure]);

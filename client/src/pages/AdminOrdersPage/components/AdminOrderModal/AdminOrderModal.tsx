@@ -14,19 +14,20 @@ import {
   BC_TX_STATUS_LABELS,
   PURCHASE_RESULTS_STATUS_LABELS,
   PAYMENT_STATUSES,
-  PAYMENT_OPTIONS_LABEL,
+  PAYMENT_PROVIDER_LABEL,
+  PAYMENT_PROVIDER,
 } from '../../../../constants/purchase';
 import { CURRENCY_CODES } from '../../../../constants/common';
 
 import apis from '../../../../api';
 
-import { OrderItem } from '../../../../types';
+import { OrderDetails } from '../../../../types';
 
 import classes from '../../styles/AdminOrderModal.module.scss';
 
 type Props = {
   onClose: () => void;
-  orderItem: OrderItem;
+  orderItem: OrderDetails;
   isVisible: boolean;
 };
 
@@ -92,6 +93,17 @@ const AdminOrderModal: React.FC<Props> = ({
 
     return orderPaymentPrice;
   };
+  let paymentType = orderPayment?.processor
+    ? PAYMENT_PROVIDER_LABEL[orderPayment?.processor]
+    : 'N/A';
+
+  if (
+    orderPayment?.processor === PAYMENT_PROVIDER.STRIPE &&
+    orderPayment.data?.webhookData?.charges?.data[0]?.payment_method_details
+      ?.type
+  ) {
+    paymentType = `${paymentType} - ${orderPayment.data.webhookData.charges.data[0].payment_method_details.type}`;
+  }
 
   return (
     <Modal
@@ -115,12 +127,7 @@ const AdminOrderModal: React.FC<Props> = ({
               isFree ? 'Free' : orderItem.total + ' ' + CURRENCY_CODES.USDC,
             )}
             {renderOrderItemFieldData('User', orderItem.user.email)}
-            {renderOrderItemFieldData(
-              'Payment Type',
-              orderPayment?.processor
-                ? PAYMENT_OPTIONS_LABEL[orderPayment?.processor]
-                : 'N/A',
-            )}
+            {renderOrderItemFieldData('Payment Type', paymentType)}
             {renderOrderItemFieldData(
               'Status',
               PURCHASE_RESULTS_STATUS_LABELS[orderItem.status],

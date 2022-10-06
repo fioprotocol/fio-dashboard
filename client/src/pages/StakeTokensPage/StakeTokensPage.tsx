@@ -9,19 +9,17 @@ import StakeTokensResults from '../../components/common/TransactionResults/compo
 import WalletAction from '../../components/WalletAction/WalletAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 
-import { putParamsToUrl } from '../../utils';
+import { ROUTES } from '../../constants/routes';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+
 import { convertFioPrices } from '../../util/prices';
 import { useFioAddresses } from '../../util/hooks';
 
 import apis from '../../api';
 
+import { ContainerProps, StakeTokensValues, InitialValues } from './types';
 import { TrxResponsePaidBundles } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
-
-import { ROUTES } from '../../constants/routes';
-import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
-
-import { ContainerProps, StakeTokensValues, InitialValues } from './types';
 
 import classes from './styles/StakeTokensPage.module.scss';
 
@@ -62,8 +60,14 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
   }, []);
 
   useEffect(() => {
-    if (fioWallet && fioWallet.publicKey) refreshBalance(fioWallet.publicKey);
-  }, [fioWallet]);
+    if (!fioWallet?.publicKey) {
+      history.push({
+        pathname: ROUTES.TOKENS,
+      });
+    } else {
+      refreshBalance(fioWallet.publicKey);
+    }
+  }, [fioWallet?.publicKey, history, refreshBalance]);
 
   const onStakeTokens = async (values: StakeTokensValues) => {
     setStakeTokensData({ ...values });
@@ -92,9 +96,10 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
     setResultsData(null);
   };
   const onResultsClose = () => {
-    history.push(
-      putParamsToUrl(ROUTES.FIO_WALLET, { publicKey: fioWallet.publicKey }),
-    );
+    history.push({
+      pathname: ROUTES.FIO_WALLET,
+      search: `publicKey=${fioWallet.publicKey}`,
+    });
   };
 
   if (
@@ -106,11 +111,10 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
     return <FioLoader wrap={true} />;
 
   const onBack = () =>
-    history.push(
-      putParamsToUrl(ROUTES.FIO_WALLET, {
-        publicKey: fioWallet.publicKey,
-      }),
-    );
+    history.push({
+      pathname: ROUTES.FIO_WALLET,
+      search: `publicKey=${fioWallet.publicKey}`,
+    });
 
   const initialValues: InitialValues = {
     publicKey: fioWallet.publicKey,

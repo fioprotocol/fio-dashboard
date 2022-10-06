@@ -1,10 +1,10 @@
-import { PURCHASE_PROVIDER } from '../../constants/purchase';
+import { PAYMENT_PROVIDER } from '../../constants/purchase';
 import { CURRENCY_CODES } from '../../../constants/common';
 
 import { CartItem, PurchaseTxStatus } from '../../types';
 import { FioWalletDoublet } from '../../types';
 
-type PurchaseProvider = typeof PURCHASE_PROVIDER[keyof typeof PURCHASE_PROVIDER];
+type PurchaseProvider = typeof PAYMENT_PROVIDER[keyof typeof PAYMENT_PROVIDER];
 
 type PaymentCurrency = typeof CURRENCY_CODES[keyof typeof CURRENCY_CODES];
 
@@ -19,7 +19,7 @@ export type ErrBadgesProps = {
 
 type CommonResultsProps = {
   paymentWallet: FioWalletDoublet;
-  purchaseProvider: PurchaseProvider;
+  paymentProvider: PurchaseProvider;
   txItems: CartItem[];
   paymentAmount: number | string;
   paymentCurrency: PaymentCurrency;
@@ -47,7 +47,7 @@ export type PurchaseResultsProps = {
 } & CommonResultsProps;
 
 export type InfoBadgeComponentProps = {
-  purchaseProvider: PurchaseProvider;
+  paymentProvider: PurchaseProvider;
   purchaseStatus: PurchaseTxStatus;
   failedTxsTotalAmount?: number | string;
   failedTxsTotalCurrency?: string;

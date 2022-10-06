@@ -15,13 +15,18 @@ import { setContainedParams, setStep } from '../redux/containedFlow/actions';
 import {
   containedFlowQueryParams,
   isContainedFlow,
+  containedFlowStep,
 } from '../redux/containedFlow/selectors';
-import { fioAddresses } from '../redux/fio/selectors';
-import { isAuthenticated } from '../redux/profile/selectors';
+import { fioAddresses, fioAddressesLoading } from '../redux/fio/selectors';
+import {
+  isAuthenticated,
+  emailConfirmationResult,
+} from '../redux/profile/selectors';
 
 import {
   ContainedFlowQueryParams,
   ContainedFlowQuery,
+  EmailConfirmationResult,
   AnyType,
   FioAddressDoublet,
 } from '../types';
@@ -33,6 +38,9 @@ type Props = {
   fioAddresses: FioAddressDoublet[];
   isAuthenticated: boolean;
   isContainedFlow: boolean;
+  containedFlowStep: string;
+  emailConfirmationResult: EmailConfirmationResult;
+  fioAddressesLoading: boolean;
   setContainedParams: (params: ContainedFlowQuery) => void;
   setStep: (
     step: string,
@@ -48,12 +56,14 @@ const ContainedFlow: React.FC<Props> | null = props => {
     fioAddresses,
     isAuthenticated,
     isContainedFlow,
+    containedFlowStep,
+    emailConfirmationResult,
+    fioAddressesLoading,
     setContainedParams,
     setStep,
   } = props;
 
   const history = useHistory();
-
   // todo: fix query type, works well if we use withRouter wrapper
   const {
     location: { query },
@@ -62,6 +72,7 @@ const ContainedFlow: React.FC<Props> | null = props => {
   const containedFlowAction = containedFlowQueryParams
     ? containedFlowQueryParams.action
     : '';
+  const isEmailVerification = !!emailConfirmationResult?.success;
 
   useEffect(() => {
     if (!containedFlowQueryParams && query?.action) {
@@ -70,22 +81,37 @@ const ContainedFlow: React.FC<Props> | null = props => {
   }, [containedFlowQueryParams, query, setContainedParams]);
 
   useEffect(() => {
-    if (isContainedFlow && isAuthenticated) {
+    if (isContainedFlow && isAuthenticated && !isEmailVerification) {
       if (containedFlowAction !== CONTAINED_FLOW_ACTIONS.REG) {
-        if (fioAddresses.length) {
-          return setStep(CONTAINED_FLOW_STEPS.ACTION, { containedFlowAction });
-        } else {
+        if (fioAddressesLoading) return;
+        if (
+          containedFlowStep !== CONTAINED_FLOW_STEPS.REGISTRATION &&
+          !fioAddresses.length
+        ) {
           return setStep(CONTAINED_FLOW_STEPS.REGISTRATION);
         }
+        if (
+          fioAddresses.length &&
+          containedFlowStep !== CONTAINED_FLOW_STEPS.REGISTRATION
+        ) {
+          return setStep(CONTAINED_FLOW_STEPS.ACTION, {
+            containedFlowAction,
+          });
+        }
+        return;
       }
-
-      return setStep(CONTAINED_FLOW_STEPS.ACTION, { containedFlowAction });
+      if (containedFlowStep !== CONTAINED_FLOW_STEPS.ACTION) {
+        return setStep(CONTAINED_FLOW_STEPS.ACTION, { containedFlowAction });
+      }
     }
   }, [
-    fioAddresses.length,
-    isAuthenticated,
     isContainedFlow,
+    isAuthenticated,
+    isEmailVerification,
+    fioAddresses.length,
     containedFlowAction,
+    containedFlowStep,
+    fioAddressesLoading,
     setStep,
   ]);
 
@@ -99,6 +125,9 @@ const reduxConnect = connect(
     fioAddresses,
     isAuthenticated,
     isContainedFlow,
+    containedFlowStep,
+    emailConfirmationResult,
+    fioAddressesLoading,
   }),
   {
     setContainedParams,

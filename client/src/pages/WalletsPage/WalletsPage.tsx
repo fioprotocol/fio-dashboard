@@ -8,7 +8,6 @@ import CreateWallet from './components/CreateWallet';
 import ActionButtonsContainer from './components/ActionButtonsContainer';
 import TotalBalanceBadge from './components/TotalBalanceBadge';
 import Title from './components/Title';
-
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 import NotificationBadge from '../../components/NotificationBadge/NotificationBadge';
 

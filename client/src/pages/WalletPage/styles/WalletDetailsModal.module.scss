@@ -36,11 +36,20 @@
       margin-right: 30px;
       margin-top: 0;
     }
-    .publicKey {
-      font-size: 1em;
-      word-break: break-all;
-      margin-top: 10px;
-    }
+  }
+  .publicKey {
+    font-size: 1em;
+    word-break: break-all;
+    margin-top: 10px;
+  }
+  .actionButtonsContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .actionButtonsLeft {
+    width: 100%;
   }
   .actionButtons {
     display: flex;
@@ -81,6 +90,10 @@
       .icon {
         font-size: 20px;
       }
+    }
+
+    &.center {
+      width: 100%;
     }
   }
 

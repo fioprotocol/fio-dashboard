@@ -7,8 +7,15 @@ import {
   MappedPublicAddresses,
 } from '../../types';
 
-type MatchProps = {
-  publicKey?: string;
+type LocationProps = {
+  location: {
+    state: {
+      payeeFioAddress: string;
+    };
+    query?: {
+      publicKey?: string;
+    };
+  };
 };
 
 type LocationState = {
@@ -45,7 +52,7 @@ export type RequestTokensProps = {
 };
 
 export interface ContainerOwnProps
-  extends RouteComponentProps<MatchProps, {}, LocationState> {
+  extends RouteComponentProps<{}, {}, LocationState> {
   children?: React.ReactNode;
 }
 

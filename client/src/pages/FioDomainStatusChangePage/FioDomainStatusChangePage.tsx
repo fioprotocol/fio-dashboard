@@ -5,6 +5,7 @@ import FioDomainStatusChangeForm from './components/FioDomainStatusChangeForm';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import SetVisibilityResults from '../../components/common/TransactionResults/components/SetVisibilityResults';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
+import PageTitle from '../../components/PageTitle/PageTitle';
 
 import {
   CONFIRM_PIN_ACTIONS,
@@ -13,9 +14,10 @@ import {
 } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
 import { ACTIONS } from '../../constants/fio';
+import { LINKS } from '../../constants/labels';
+
 import { useWalletBalances } from '../../util/hooks';
 import MathOp from '../../util/math';
-
 import { convertFioPrices } from '../../util/prices';
 
 import apis from '../../api';
@@ -26,7 +28,7 @@ import { SubmitActionParams } from '../../components/EdgeConfirmAction/types';
 
 const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
   const {
-    match,
+    location,
     history,
     roe,
     feePrice,
@@ -35,7 +37,7 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
     refreshBalance,
     getFee,
   } = props;
-  const { id: name } = match.params;
+  const { name } = location.query;
 
   const domainStatus: string = selectedFioDomain.isPublic
     ? DOMAIN_STATUS.PUBLIC
@@ -102,17 +104,23 @@ const FioDomainStatusChangePage: React.FC<ContainerProps> = props => {
 
   if (resultsData)
     return (
-      <SetVisibilityResults
-        results={resultsData}
-        title={
-          resultsData.error
-            ? 'Domain Status Change Failed!'
-            : 'Domain Status Changed!'
-        }
-        hasAutoWidth={true}
-        onClose={onResultsClose}
-        onRetry={onResultsRetry}
-      />
+      <>
+        <PageTitle
+          link={LINKS.FIO_DOMAIN_STATUS_CHANGE_CONFIRMATION}
+          isVirtualPage
+        />
+        <SetVisibilityResults
+          results={resultsData}
+          title={
+            resultsData.error
+              ? 'Domain Status Change Failed!'
+              : 'Domain Status Changed!'
+          }
+          hasAutoWidth={true}
+          onClose={onResultsClose}
+          onRetry={onResultsRetry}
+        />
+      </>
     );
 
   if (!selectedFioDomain.walletPublicKey && !processing)

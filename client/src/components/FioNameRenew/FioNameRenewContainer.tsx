@@ -11,6 +11,7 @@ import RenewEdgeWallet from './components/RenewEdgeWallet';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
 import FioLoader from '../common/FioLoader/FioLoader';
 import LedgerWalletActionNotSupported from '../LedgerWalletActionNotSupported';
+import PageTitle from '../PageTitle/PageTitle';
 
 import {
   DOMAIN,
@@ -24,6 +25,7 @@ import { convertFioPrices } from '../../util/prices';
 import { hasFioAddressDelimiter } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
 import MathOp from '../../util/math';
+import { RENEW_PAGE_CONFIRMATION_LINK } from '../../constants/labels';
 
 import { ContainerProps } from './types';
 import { ResultsData } from '../common/TransactionResults/types';
@@ -102,13 +104,19 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
 
   if (resultsData)
     return (
-      <RenewResults
-        results={resultsData}
-        title={resultsData.error ? 'Renewed Failed!' : 'Renewed!'}
-        onClose={onResultsClose}
-        onRetry={onResultsRetry}
-        errorType={ERROR_TYPES.RENEW_ERROR}
-      />
+      <>
+        <PageTitle
+          link={RENEW_PAGE_CONFIRMATION_LINK[fioNameType]}
+          isVirtualPage
+        />
+        <RenewResults
+          results={resultsData}
+          title={resultsData.error ? 'Renewed Failed!' : 'Renewed!'}
+          onClose={onResultsClose}
+          onRetry={onResultsRetry}
+          errorType={ERROR_TYPES.RENEW_ERROR}
+        />
+      </>
     );
 
   if (error)

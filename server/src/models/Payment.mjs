@@ -32,7 +32,7 @@ export class Payment extends Base {
     return {
       COINBASE: 'COINBASE',
       COIN_PAYMENTS: 'COIN_PAYMENTS',
-      CREDIT_CARD: 'CREDIT_CARD',
+      STRIPE: 'STRIPE',
       FIO: 'FIO',
       ADMIN: 'ADMIN',
       SYSTEM: 'SYSTEM',
@@ -128,7 +128,7 @@ export class Payment extends Base {
   }
 
   static getPaymentProcessor(paymentProcessor) {
-    if (paymentProcessor === this.PROCESSOR.CREDIT_CARD) {
+    if (paymentProcessor === this.PROCESSOR.STRIPE) {
       return Stripe;
     }
 
@@ -168,8 +168,6 @@ export class Payment extends Base {
       await Payment.sequelize.transaction(async t => {
         orderPayment = await Payment.create(
           {
-            price: extPaymentParams.amount,
-            currency: extPaymentParams.currency,
             status: Payment.STATUS.NEW,
             processor: paymentProcessorKey,
             externalId: '',
@@ -197,6 +195,9 @@ export class Payment extends Base {
             orderNumber: order.number,
           });
           orderPayment.externalId = extPaymentParams.externalPaymentId;
+          orderPayment.amount = extPaymentParams.amount;
+          orderPayment.currency = extPaymentParams.currency;
+          orderPayment.data = { ...orderPayment.data, secret: extPaymentParams.secret };
           await orderPayment.save({ transaction: t });
         }
       });
@@ -217,6 +218,7 @@ export class Payment extends Base {
 
     return {
       id: orderPayment.id,
+      processor: paymentProcessorKey,
       ...extPaymentParams,
     };
   }

@@ -22,8 +22,12 @@ import {
 
 import classes from '../../components/Modal/EmailModal/EmailModal.module.scss';
 
-type MatchParams = {
-  hash: string;
+type LocationProps = {
+  location: {
+    query: {
+      hash: string;
+    };
+  };
 };
 
 type Props = {
@@ -44,7 +48,8 @@ type Props = {
 };
 
 const UpdateEmailPage: React.FC<Props &
-  RouteComponentProps<MatchParams>> = props => {
+  RouteComponentProps &
+  LocationProps> = props => {
   const {
     isAuthenticated,
     profileRefreshed,
@@ -53,9 +58,7 @@ const UpdateEmailPage: React.FC<Props &
     emailConfirmationResult,
     history,
     updateEmail,
-    match: {
-      params: { hash },
-    },
+    location: { query: { hash } = {} },
     user,
     lastAuthData,
     logout,
@@ -70,7 +73,7 @@ const UpdateEmailPage: React.FC<Props &
       action: ACTIONS.EMAIL_CONFIRM,
       type: BADGE_TYPES.INFO,
       contentType: NOTIFICATIONS_CONTENT_TYPE.UPDATE_EMAIL,
-      pagesToShow: [ROUTES.HOME, ROUTES.SETTINGS],
+      pagesToShow: [ROUTES.HOME, ROUTES.DASHBOARD, ROUTES.SETTINGS],
     });
 
     if (isAuthenticated && user.email === result.oldEmail && result.newEmail) {

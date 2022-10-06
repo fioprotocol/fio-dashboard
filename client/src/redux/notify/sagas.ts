@@ -17,7 +17,6 @@ import {
 import { LIST_FAILURE as NOTIFICATIONS_LIST_FAILURE } from '../notifications/actions';
 import { CAPTCHA_FAILURE } from '../registrations/actions';
 import { GET_ALL_PUBLIC_ADDRESS_FAILURE } from '../fio/actions';
-import { CREATE_ORDER_FAILURE } from '../order/actions';
 import { showGenericErrorModal } from '../modal/actions';
 import { showGenericError as getShowGenericError } from '../modal/selectors';
 
@@ -43,8 +42,7 @@ export function* notify(history: History): Generator {
       action.type !== NOTIFICATIONS_LIST_FAILURE &&
       action.type !== CAPTCHA_FAILURE &&
       action.type !== CONFIRM_PIN_FAILURE &&
-      action.type !== GET_ALL_PUBLIC_ADDRESS_FAILURE &&
-      action.type !== CREATE_ORDER_FAILURE
+      action.type !== GET_ALL_PUBLIC_ADDRESS_FAILURE
     ) {
       const genericErrorIsShowing: boolean = yield select(getShowGenericError);
 

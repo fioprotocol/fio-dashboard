@@ -11,6 +11,7 @@ import {
 import { INPUT_UI_STYLES } from '../../../../components/Input/InputRedux';
 
 import validate from './validation';
+import { isEdgeAuthenticationError } from '../../../../util/edge';
 
 import { FormValuesTypes } from './types';
 
@@ -65,7 +66,7 @@ const ChangePasswordForm: React.FC<Props> = props => {
   };
 
   const isCurrentPasswordError =
-    changePasswordError && changePasswordError.type === 'PasswordError';
+    changePasswordError && isEdgeAuthenticationError(changePasswordError);
   const error = isCurrentPasswordError
     ? 'Invalid Password'
     : changePasswordError?.message || changePasswordError?.name;

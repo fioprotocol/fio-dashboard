@@ -15,7 +15,11 @@ import {
   TRANSACTION_RESULTS_CLOSE,
 } from '../fio/actions';
 
+import { setRedirectPath } from '../navigation/actions';
+
 import { PURCHASE_RESULTS_CLOSE } from '../registrations/actions';
+
+import { LOGOUT_SUCCESS } from '../profile/actions';
 
 import {
   isContainedFlow as getIsContainedFlow,
@@ -25,10 +29,22 @@ import {
 
 import { cartItems } from '../cart/selectors';
 
+import { redirectLink } from '../navigation/selectors';
+
 import { ROUTES } from '../../constants/routes';
 
 import { Action } from '../types';
 import { CartItem, ContainedFlowQueryParams } from '../../types';
+
+export function* setContainedFlowToInitStep(): Generator {
+  yield takeEvery(LOGOUT_SUCCESS, function*() {
+    const isContainedFlow: boolean = yield select(getIsContainedFlow);
+
+    if (isContainedFlow) {
+      yield put(setStep(CONTAINED_FLOW_STEPS.INIT));
+    }
+  });
+}
 
 export function* containedFlowActionSuccess(): Generator {
   yield takeEvery(FIO_ACTION_EXECUTE_SUCCESS, function*(action: Action) {
@@ -79,7 +95,7 @@ export function* purchaseResultsClose(history: History): Generator {
       }
     }
 
-    yield history.push(ROUTES.HOME);
+    yield history.push(isContainedFlow ? ROUTES.HOME : ROUTES.DASHBOARD);
   });
 }
 
@@ -107,18 +123,39 @@ export function* handleContainedFlowSteps(history: History): Generator {
           const registrationPath = cart.length
             ? ROUTES.CHECKOUT
             : ROUTES.FIO_ADDRESSES_SELECTION;
+          const redirectLinkSelector: string = yield select(redirectLink);
+
+          if (!redirectLinkSelector) {
+            yield put<Action>(setRedirectPath({ pathname: registrationPath }));
+          }
           yield history.push(registrationPath, {
             containedFlowQueryParams,
-          });
+          }); // todo: check containedFlowQueryParams when registrationPath is CHECKOUT, we need to set orderParams in this case
           break;
         }
         case CONTAINED_FLOW_STEPS.ACTION: {
-          yield history.push(
-            CONTAINED_FLOW_ACTIONS_TO_ROUTES[action.data.containedFlowAction],
-            {
-              initialValues: containedFlowQueryParams,
-            },
-          );
+          let registrationPath =
+            CONTAINED_FLOW_ACTIONS_TO_ROUTES[action.data.containedFlowAction];
+          const containedFlowAction = containedFlowQueryParams
+            ? containedFlowQueryParams.action
+            : '';
+          if (
+            containedFlowAction &&
+            containedFlowAction === CONTAINED_FLOW_ACTIONS.REG
+          ) {
+            if (cart.length) registrationPath = ROUTES.CHECKOUT;
+
+            const redirectLinkSelector: string = yield select(redirectLink);
+
+            if (!redirectLinkSelector) {
+              yield put<Action>(
+                setRedirectPath({ pathname: registrationPath }),
+              );
+            }
+          }
+          yield history.push(registrationPath, {
+            initialValues: containedFlowQueryParams,
+          });
           break;
         }
         case CONTAINED_FLOW_STEPS.FINISH: {

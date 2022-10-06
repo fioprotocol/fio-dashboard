@@ -1,0 +1,53 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+@import './commonStyles.module.scss';
+
+.container {
+  background: $blue-linear-background;
+  color: $white;
+
+  .contentContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+
+    @include lg {
+      flex-direction: row;
+      flex-flow: row wrap;
+      justify-content: center;
+    }
+
+    .contentItem {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      @include lg {
+        width: 350px;
+        margin: 20px auto;
+      }
+
+      .contentItemAmount {
+        font-size: 5rem;
+
+        @include sm {
+          margin-top: 20px;
+          font-size: 4rem;
+        }
+      }
+      .contentItemText {
+        color: $fun-blue;
+        font-size: 2.5rem;
+        margin-top: 18px;
+        @include proxima-nova-semibold;
+        @include sm {
+          margin-top: 0;
+          font-size: 2.2rem;
+        }
+      }
+    }
+  }
+}

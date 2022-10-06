@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useHistory } from 'react-router';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import WalletDetailsModal from './components/WalletDetailsModal';
@@ -19,21 +18,11 @@ import apis from '../../api';
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 
-import { putParamsToUrl } from '../../utils';
-
-import { ContainerProps } from './types';
+import { ContainerProps, LocationProps } from './types';
 
 import classes from './styles/WalletPage.module.scss';
 
-type Location = {
-  location: {
-    state: {
-      isOpenLockedList: boolean;
-    };
-  };
-};
-
-const WalletPage: React.FC<ContainerProps> = props => {
+const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
   const {
     fioWallet,
     balance,
@@ -41,18 +30,15 @@ const WalletPage: React.FC<ContainerProps> = props => {
     refreshBalance,
     fioWalletsData,
     fioWalletsTxHistory,
-    match: {
-      params: { publicKey },
+    location: {
+      query: { publicKey } = {},
+      state: { isOpenLockedList = false } = {},
     },
   } = props;
 
   const [showDetails, setShowDetails] = useState(false);
   const [showWalletNameEdit, setShowWalletNameEdit] = useState(false);
   const [error, setError] = useState<string>('');
-
-  const { location }: Location = useHistory();
-
-  const { isOpenLockedList } = location.state || { isOpenLockedList: false };
 
   useEffect(() => {
     if (fioWallet && fioWallet.publicKey) refreshBalance(fioWallet.publicKey);
@@ -108,9 +94,10 @@ const WalletPage: React.FC<ContainerProps> = props => {
       <Title title={title} subtitle="Manage your FIO tokens">
         <ActionButtonsContainer>
           <Link
-            to={putParamsToUrl(ROUTES.FIO_TOKENS_REQUEST, {
-              publicKey: fioWallet.publicKey,
-            })}
+            to={{
+              pathname: ROUTES.FIO_TOKENS_REQUEST,
+              search: `publicKey=${fioWallet.publicKey}`,
+            }}
             className={classes.firstLink}
           >
             <div>
@@ -118,9 +105,10 @@ const WalletPage: React.FC<ContainerProps> = props => {
             </div>
           </Link>
           <Link
-            to={putParamsToUrl(ROUTES.SEND, {
-              publicKey: fioWallet.publicKey,
-            })}
+            to={{
+              pathname: ROUTES.SEND,
+              search: `publicKey=${fioWallet.publicKey}`,
+            }}
           >
             <div>
               <FontAwesomeIcon icon="arrow-up" />

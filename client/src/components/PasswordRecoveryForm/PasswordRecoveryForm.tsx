@@ -18,20 +18,23 @@ import ModalComponent from '../Modal/Modal';
 import FormHeader from '../FormHeader/FormHeader';
 import Input from '../Input/Input';
 import SuccessModal from '../Modal/SuccessModal';
+import PageTitle from '../PageTitle/PageTitle';
 
 import { ACTIONS } from '../Notifications/Notifications';
 import { BADGE_TYPES } from '../Badge/Badge';
 import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
+import { LINKS } from '../../constants/labels';
 
 import { formValidation } from './validation';
 import { log } from '../../util/general';
 import useEffectOnce from '../../hooks/general';
 
-import classes from './PasswordRecoveryForm.module.scss';
 import { NotificationParams, StatusResponse } from '../../types';
 import { SubmitActionParams } from '../EdgeConfirmAction/types';
+
+import classes from './PasswordRecoveryForm.module.scss';
 
 const SCROLL_BAR_STYLES = { height: '350px', marginBottom: '30px' };
 
@@ -127,7 +130,7 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
       action: ACTIONS.RECOVERY,
       contentType: NOTIFICATIONS_CONTENT_TYPE.RECOVERY_PASSWORD,
       type: BADGE_TYPES.ALERT,
-      pagesToShow: [ROUTES.HOME],
+      pagesToShow: [ROUTES.HOME, ROUTES.DASHBOARD],
     });
   };
 
@@ -205,6 +208,11 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
 
   const renderSkip = () => (
     <div className={classes.skip}>
+      <PageTitle
+        link={LINKS.CREATE_ACCOUNT_SECRET_QUESTIONS_SKIP}
+        isVirtualPage
+        shouldFireOnce
+      />
       <FontAwesomeIcon icon="ban" className={classes.icon} />
       <FormHeader
         title="Sure You Want to Skip"
@@ -373,13 +381,24 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
     isSkip && !isSettings ? (
       renderSkip()
     ) : (
-      <Form
-        onSubmit={onSubmit}
-        initialValues={defaultValues}
-        validate={formValidation.validateForm}
-      >
-        {renderFormItems}
-      </Form>
+      <>
+        <PageTitle
+          link={
+            !isQuestions
+              ? LINKS.CREATE_ACCOUNT_SECRET_QUESTIONS
+              : LINKS.CREATE_ACCOUNT_SECRET_ANSWERS
+          }
+          isVirtualPage
+          shouldFireOnce
+        />
+        <Form
+          onSubmit={onSubmit}
+          initialValues={defaultValues}
+          validate={formValidation.validateForm}
+        >
+          {renderFormItems}
+        </Form>
+      </>
     );
 
   return (

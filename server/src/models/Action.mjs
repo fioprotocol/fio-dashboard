@@ -16,6 +16,7 @@ export class Action extends Base {
       RESEND_EMAIL_CONFIRM: 'resendEmailConfirm',
       UPDATE_EMAIL: 'updateEmail',
       CONFIRM_ADMIN_EMAIL: 'confirmAdminEmail',
+      RESET_ADMIN_PASSWORD: 'resetAdminPasswordEmail',
     };
   }
 

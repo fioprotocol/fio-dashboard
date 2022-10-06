@@ -20,6 +20,7 @@ import {
   LOGOUT_SUCCESS,
   NONCE_SUCCESS,
   PROFILE_SUCCESS,
+  RESET_ADMIN_PASSWORD_SUCCESS,
 } from './actions';
 
 import { closeLoginModal } from '../modal/actions';
@@ -34,6 +35,7 @@ import {
   redirectLink,
 } from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
+import { isNewUser as isNewUserSelector } from './selectors';
 import { ROUTES } from '../../constants/routes';
 
 import { Api } from '../../api';
@@ -65,19 +67,30 @@ export function* loginSuccess(history: History, api: Api): Generator {
       } catch (e) {
         log.error(e);
       }
-    yield put<Action>(loadProfile());
+    // Need to wait for result, so use hack with two yield
+    // @ts-ignore
+    yield yield put<Action>(loadProfile());
     yield put<Action>(listNotifications());
 
     const locationState: PrivateRedirectLocationState = yield select(
       locationStateSelector,
     );
+    const isNewUser: boolean = yield select(isNewUserSelector);
+    if (isNewUser) {
+      history.push(ROUTES.IS_NEW_USER);
+      yield put(closeLoginModal());
+      return;
+    }
     if (
       !hasRedirectTo &&
       locationState &&
       locationState.from &&
       locationState.from.pathname
     ) {
-      history.push(locationState.from.pathname);
+      history.push({
+        pathname: locationState.from.pathname,
+        search: locationState.from.search || '',
+      });
     }
     if (hasRedirectTo) {
       history.push(hasRedirectTo.pathname, hasRedirectTo.state);
@@ -96,7 +109,7 @@ export function* profileSuccess(): Generator {
             action: ACTIONS.RECOVERY,
             contentType: NOTIFICATIONS_CONTENT_TYPE.RECOVERY_PASSWORD,
             type: BADGE_TYPES.ALERT,
-            pagesToShow: [ROUTES.HOME],
+            pagesToShow: [ROUTES.HOME, ROUTES.DASHBOARD],
           }),
         );
     } catch (e) {
@@ -174,5 +187,14 @@ export function* adminConfirmSuccess(history: History, api: Api): Generator {
     yield put<Action>(loadAdminProfile());
 
     history.push(ROUTES.ADMIN_HOME);
+  });
+}
+
+export function* adminResetPasswordSuccess(
+  history: History,
+  api: Api,
+): Generator {
+  yield takeEvery(RESET_ADMIN_PASSWORD_SUCCESS, function(action: Action) {
+    history.replace(ROUTES.ADMIN_LOGIN, {});
   });
 }

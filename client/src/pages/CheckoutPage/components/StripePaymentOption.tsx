@@ -14,7 +14,7 @@ import { StripeForm } from './StripeForm';
 import { setFioName } from '../../../utils';
 
 import {
-  PURCHASE_PROVIDER,
+  PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from '../../../constants/purchase';
 import { STRIPE_ELEMENT_OPTIONS, STRIPE_PROMISE } from '../constants';
@@ -28,7 +28,7 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
     cart,
     payment,
     paymentOption,
-    paymentOptionError,
+    paymentProviderError,
     submitDisabled,
     beforePaymentSubmit,
   } = props;
@@ -53,7 +53,7 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
         ),
         partial: [],
         providerTxId: payment.externalPaymentId,
-        purchaseProvider: PURCHASE_PROVIDER.STRIPE,
+        paymentProvider: PAYMENT_PROVIDER.STRIPE,
         paymentOption,
         paymentAmount: payment.amount,
         paymentCurrency: CURRENCY_CODES.USD,
@@ -63,7 +63,7 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
     }
   };
 
-  if (paymentOptionError)
+  if (paymentProviderError)
     return (
       <div className="d-flex justify-content-center flex-column">
         <ErrorBadge
@@ -92,9 +92,11 @@ export const StripePaymentOption: React.FC<StripePaymentOptionProps> = props => 
       }}
     >
       <StripeForm
+        cart={cart}
         onFinish={onFinish}
         beforeSubmit={beforePaymentSubmit}
         submitDisabled={submitDisabled}
+        payment={payment}
       />
     </Elements>
   );

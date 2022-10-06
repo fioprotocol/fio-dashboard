@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from 'react';
 
 import { RouteComponentProps } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 import AddressWidget from '../../components/AddressWidget';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
-import FioAddressPage from '../FioAddressPage';
+import FioAddressSelectionPage from '../FioAddressSelectionPage';
+
+import { APP_TITLE } from '../../constants/labels';
 
 import { handleHomePageContent } from '../../util/homePage';
+import { useNonActiveUserRedirect } from '../../util/hooks';
+import { firePageViewAnalyticsEvent } from '../../util/analytics';
 
-import classnames from './RefHomePage.module.scss';
 import {
   RefProfile,
   ContainedFlowQuery,
   ContainedFlowQueryParams,
 } from '../../types';
-import { useNonActiveUserRedirect } from '../../util/hooks';
+
+import classnames from './RefHomePage.module.scss';
 
 const FADE_OUT_TIMEOUT = 780;
 
@@ -57,6 +62,14 @@ export const RefHomePage: React.FC<Props &
       setHideLoader(true);
     }
   }, [refProfileInfo]);
+  useEffect(() => {
+    if (refProfileInfo?.code) {
+      firePageViewAnalyticsEvent(
+        `${APP_TITLE} - ${refProfileInfo.label}`,
+        `${window.location.origin}/ref/${refProfileInfo.code}`,
+      );
+    }
+  }, [refProfileInfo?.code, refProfileInfo?.label]);
   useEffect(() => {
     if (hideLoader) {
       const tId = setTimeout(
@@ -101,6 +114,11 @@ export const RefHomePage: React.FC<Props &
       });
       return (
         <div className={classnames.container}>
+          <Helmet>
+            <title>
+              {APP_TITLE} - {refProfileInfo.label}
+            </title>
+          </Helmet>
           <AddressWidget
             {...addressWidgetContent}
             showSignInWidget={true}
@@ -110,7 +128,7 @@ export const RefHomePage: React.FC<Props &
       );
     }
 
-    return <FioAddressPage />;
+    return <FioAddressSelectionPage />;
   };
 
   return (

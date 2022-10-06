@@ -235,7 +235,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
                         <Link
                           to={`${
                             ROUTES.FIO_ADDRESS_ADD_BUNDLES
-                          }/${fioAddress as string}`}
+                          }?name=${fioAddress as string}`}
                         >
                           add more bundles
                         </Link>

@@ -6,13 +6,10 @@ import { AnyObject, EmailConfirmationResult } from '../../types';
 
 import classes from '../../components/Modal/EmailModal/EmailModal.module.scss';
 
-type MatchParams = {
-  hash: string;
-};
-
-type Location = {
+export type LocationProps = {
   location: {
     query: {
+      hash?: string;
       refCode?: string;
     };
   };
@@ -26,15 +23,12 @@ type Props = {
 };
 
 const EmailConfirmationPage: React.FC<Props &
-  RouteComponentProps<MatchParams> &
-  Location> = props => {
+  RouteComponentProps &
+  LocationProps> = props => {
   const {
     profileRefreshed,
     emailConfirmationResult,
-    match: {
-      params: { hash },
-    },
-    location: { query },
+    location: { query: { hash, refCode } = {} },
     history,
     getInfo,
     confirmEmail,
@@ -44,10 +38,10 @@ const EmailConfirmationPage: React.FC<Props &
     typeof emailConfirmationResult.success === 'undefined';
 
   useEffect(() => {
-    if (query != null && query.refCode != null && query.refCode !== '') {
-      getInfo(query.refCode);
+    if (refCode != null && refCode !== '') {
+      getInfo(refCode);
     }
-  }, []);
+  }, [refCode, getInfo]);
 
   useEffect(() => {
     if (profileRefreshed && isNotConfirmedEmail && !confirmRequested) {
