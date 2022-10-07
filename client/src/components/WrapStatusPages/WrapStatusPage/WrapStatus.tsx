@@ -146,7 +146,8 @@ const WrapStatus: React.FC<PageProps> = props => {
 
         <div>
           <h3>
-            {isWrap ? 'Wrap' : 'Unwrap'} FIO {isTokens ? 'Tokens' : 'Domains'}
+            {isWrap ? 'Wrap ' : 'Unwrap '}
+            {isTokens ? `${isWrap ? '' : 'w'}FIO` : 'FIO Domain'}
           </h3>
         </div>
 
