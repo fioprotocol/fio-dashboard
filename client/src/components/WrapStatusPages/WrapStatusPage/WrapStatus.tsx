@@ -154,13 +154,10 @@ const WrapStatus: React.FC<PageProps> = props => {
         <Table className="table" striped={true}>
           <thead>
             <tr>
-              <th scope="col">
-                Transaction
-                {isWrap ? ' Id' : ' Hash'}
-              </th>
-              <th scope="col">Address</th>
+              <th scope="col">Transaction</th>
+              <th scope="col">From</th>
+              <th scope="col">To</th>
               <th scope="col">{!isTokens ? 'Domain' : 'Amount'}</th>
-              {!isWrap ? <th scope="col">FIO Address</th> : null}
               <th scope="col">Date</th>
               <th scope="col">Status</th>
             </tr>
@@ -175,7 +172,12 @@ const WrapStatus: React.FC<PageProps> = props => {
                     >
                       {listItem.transactionId || listItem.transactionHash}
                     </th>
-                    <th>{listItem.address}</th>
+                    <th>
+                      {isWrap
+                        ? listItem.data.action_trace.act.data.actor
+                        : listItem.address}
+                    </th>
+                    <th>{isWrap ? listItem.address : listItem.fioAddress}</th>
                     <th>
                       {!isTokens
                         ? listItem.domain
@@ -183,7 +185,6 @@ const WrapStatus: React.FC<PageProps> = props => {
                             .sufToAmount(listItem.amount || 0)
                             .toFixed(2) + ' FIO'}
                     </th>
-                    {!isWrap ? <th>{listItem.fioAddress}</th> : null}
                     <th>
                       {listItem.data.action_trace?.block_time
                         ? formatDateToLocale(
@@ -198,12 +199,7 @@ const WrapStatus: React.FC<PageProps> = props => {
                         : null}
                     </th>
                     <th>
-                      <Badge
-                        variant={parseActionStatus(listItem).badgeType}
-                        // variant={
-                        //   isCompleteAction(listItem) ? 'primary' : 'secondary'
-                        // }
-                      >
+                      <Badge variant={parseActionStatus(listItem).badgeType}>
                         {parseActionStatus(listItem).badgeText}
                       </Badge>
                     </th>
