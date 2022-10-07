@@ -40,7 +40,8 @@ const DetailsModal: React.FC<Props> = props => {
       <div className="d-flex flex-column w-100">
         <h3 className="d-flex mt-2 mb-3 justify-content-between">
           <div>
-            {isWrap ? 'Wrap' : 'Unwrap'} FIO {isTokens ? 'Tokens' : 'Domain'}
+            {isWrap ? 'Wrap ' : 'Unwrap '}
+            {isTokens ? `${isWrap ? '' : 'w'}FIO` : 'FIO Domain'}
           </div>
           {itemData ? <Badge variant={badgeType}>{badgeText}</Badge> : null}
         </h3>
@@ -168,6 +169,19 @@ const DetailsModal: React.FC<Props> = props => {
               </div>
             ) : null}
 
+            {!isWrap &&
+            !itemData.oravotes?.length &&
+            itemData.confirmData.length ? (
+              <div className="d-flex justify-content-between my-2">
+                <div className="mr-3">
+                  <b>To Handle:</b>
+                </div>
+                <div>
+                  {itemData.confirmData[0].action_trace.act.data.fio_address}
+                </div>
+              </div>
+            ) : null}
+
             <div className="mt-4">
               <div>
                 <b>
@@ -201,6 +215,12 @@ const DetailsModal: React.FC<Props> = props => {
 
             {isWrap && itemData.confirmData ? (
               <div>
+                <div className="d-flex justify-content-between my-2">
+                  <div className="mr-3">
+                    <b>Approvals:</b>
+                  </div>
+                  <div></div>
+                </div>
                 <div className="d-flex justify-content-between my-2">
                   <div className="mr-3">
                     <b>Trx_id:</b>
@@ -243,7 +263,7 @@ const DetailsModal: React.FC<Props> = props => {
               <div>
                 <div className="my-2">
                   <div className="mr-3">
-                    <b>Transactions ids:</b>
+                    <b>Approvals:</b>
                   </div>
                   {itemData.confirmData.map((item: any) => (
                     <div
