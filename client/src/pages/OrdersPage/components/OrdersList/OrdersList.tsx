@@ -23,9 +23,8 @@ type Props = {
   loading: boolean;
   ordersList: UserOrderDetails[] | [];
   getMoreOrders: () => void;
-  onDownloadClick: (id: string) => void;
-  onPrintClick: (id: string) => void;
-  onViewClick: (id: string) => void;
+  onDownloadClick: (orderId: string) => void;
+  onPrintClick: (orderId: string) => void;
 };
 
 export const OrdersList: React.FC<Props> = props => {
@@ -36,7 +35,6 @@ export const OrdersList: React.FC<Props> = props => {
     getMoreOrders,
     onDownloadClick,
     onPrintClick,
-    onViewClick,
   } = props;
 
   return (
@@ -57,7 +55,6 @@ export const OrdersList: React.FC<Props> = props => {
             key={orderItem.number}
             onDownloadClick={onDownloadClick}
             onPrintClick={onPrintClick}
-            onViewClick={onViewClick}
           />
         ))}
       </div>

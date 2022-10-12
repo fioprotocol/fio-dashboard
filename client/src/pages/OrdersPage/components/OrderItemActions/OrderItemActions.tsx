@@ -3,40 +3,40 @@ import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
 
+import { ORDER_NUMBER_PARAM_NAME } from '../../../../constants/order';
 import { ROUTES } from '../../../../constants/routes';
 
 import classes from './OrderItemActions.module.scss';
 
 type Props = {
-  id: string;
-  onDownloadClick: (id: string) => void;
-  onPrintClick: (id: string) => void;
-  onViewClick: (id: string) => void;
+  orderId: string;
+  orderNumber: string;
+  onDownloadClick: (orderId: string) => void;
+  onPrintClick: (orderId: string) => void;
 };
 
 export const OrderItemActions: React.FC<Props> = props => {
-  const { id, onDownloadClick, onPrintClick, onViewClick } = props;
-
-  const viewLink = ROUTES.HOME; // todo: set link to order details page
-
-  const handleViewClick = () => {
-    onViewClick(id);
-  };
+  const { orderId, orderNumber, onDownloadClick, onPrintClick } = props;
 
   const handlePrintClick = () => {
-    onPrintClick(id);
+    onPrintClick(orderId);
   };
 
   const handleDownloadClick = () => {
-    onDownloadClick(id);
+    onDownloadClick(orderId);
   };
 
   return (
     <div className={classes.container}>
-      <Link to={viewLink} className={classes.link}>
-        <Button onClick={handleViewClick} className={classes.button}>
-          VIEW
-        </Button>
+      <Link
+        to={{
+          pathname: ROUTES.ORDER_DETAILS,
+          search: `${ORDER_NUMBER_PARAM_NAME}=${orderNumber}`,
+          state: { orderId },
+        }}
+        className={classes.link}
+      >
+        <Button className={classes.button}>VIEW</Button>
       </Link>
 
       <FontAwesomeIcon

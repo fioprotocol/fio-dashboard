@@ -168,7 +168,8 @@ export const LINK_TITLES: { [linkKey: string]: string } = {
   [LINKS.COOKIE_NOTICE]: 'Cookie Notice',
   [LINKS.NOT_FOUND]: 'Not Found',
   [LINKS.ERROR]: 'Error',
-  [LINKS.ORDERS]: 'My Orders',
+  [LINKS.ORDERS]: 'Orders',
+  [LINKS.ORDER_DETAILS]: 'Order Details',
 };
 
 export const fioNameLabels: { [fioNameType: string]: string } = {

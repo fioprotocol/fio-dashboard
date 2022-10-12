@@ -8,6 +8,7 @@ import {
   FioWalletDoublet,
   Notification,
   Order,
+  OrderDetailed,
   Payment,
   RefProfile,
   User,
@@ -89,6 +90,7 @@ export type UsersListResponse = User[];
 export type UsersShowResponse = User;
 
 export type OrdersCreateResponse = Order;
+export type OrderGetResponse = OrderDetailed;
 export type OrdersUpdateResponse = { success: true };
 export type UserOrdersListResponse = {
   data: {

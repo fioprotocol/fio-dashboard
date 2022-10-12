@@ -2,6 +2,7 @@ import Base from './base';
 
 import {
   OrdersCreateResponse,
+  OrderGetResponse,
   OrdersUpdateResponse,
   UserOrdersListResponse,
 } from './responses';
@@ -28,7 +29,7 @@ export default class Orders extends Base {
   getActive(): Promise<OrdersCreateResponse> {
     return this.apiClient.get(`orders/active`);
   }
-  get(orderNumber: string): Promise<OrdersCreateResponse> {
-    return this.apiClient.get(`orders/item/${orderNumber}`);
+  get(id: string): Promise<OrderGetResponse> {
+    return this.apiClient.get(`orders/item/${id}`);
   }
 }

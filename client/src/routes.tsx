@@ -51,6 +51,7 @@ import RejectFioRequestPage from './pages/RejectFioRequestPage';
 import EmailConfirmationResultPage from './pages/EmailConfirmationResultsPage';
 import NotFoundPage from './pages/NotFoundPage';
 import OrdersPage from './pages/OrdersPage';
+import OrderDetailsPage from './pages/OrderDetailsPage';
 
 import AdminPrivateRoute from './components/AdminPrivateRoute';
 import AdminOrdersPage from './pages/AdminOrdersPage';
@@ -337,6 +338,11 @@ const Routes = (): React.ReactElement => (
         />
 
         <PrivateRoute path={ROUTES.ORDERS} component={OrdersPage} exact />
+        <PrivateRoute
+          path={ROUTES.ORDER_DETAILS}
+          component={OrderDetailsPage}
+          exact
+        />
 
         <AdminPrivateRoute
           path={ROUTES.ADMIN_HOME}

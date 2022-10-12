@@ -103,6 +103,7 @@ const ROUTES: { [route: string]: string } = {
   REJECT_FIO_REQUEST_CONFIRMATION: '/reject-fio-request-confirmation',
 
   ORDERS: '/orders',
+  ORDER_DETAILS: '/order-details', // ?orderNumber=
 
   // Referrer Profile pages
   REF_PROFILE_HOME: '/ref/:refProfileCode',

@@ -18,15 +18,14 @@ import { UserOrderDetails } from '../../../../types';
 import classes from './OrderItem.module.scss';
 
 type Props = {
-  onDownloadClick: (id: string) => void;
-  onPrintClick: (id: string) => void;
-  onViewClick: (id: string) => void;
+  onDownloadClick: (orderId: string) => void;
+  onPrintClick: (orderId: string) => void;
 };
 
 export const OrderItem: React.FC<Props & UserOrderDetails> = props => {
   const {
-    id,
     createdAt,
+    id,
     number,
     roe,
     payment: { paidWith, paymentProcessor },
@@ -34,7 +33,6 @@ export const OrderItem: React.FC<Props & UserOrderDetails> = props => {
     total,
     onDownloadClick,
     onPrintClick,
-    onViewClick,
   } = props;
 
   const statusTitle =
@@ -63,10 +61,10 @@ export const OrderItem: React.FC<Props & UserOrderDetails> = props => {
       </div>
       <div className={classnames(classes.tableCol, classes.lastCol)}>
         <OrderItemActions
-          id={id}
+          orderId={id}
+          orderNumber={number}
           onDownloadClick={onDownloadClick}
           onPrintClick={onPrintClick}
-          onViewClick={onViewClick}
         />
       </div>
     </React.Fragment>

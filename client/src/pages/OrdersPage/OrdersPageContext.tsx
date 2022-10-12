@@ -23,9 +23,8 @@ type Props = {
   loading: boolean;
   ordersList: UserOrderDetails[];
   getMoreOrders: () => void;
-  onDownloadClick: (id: string) => void;
-  onPrintClick: (id: string) => void;
-  onViewClick: (id: string) => void;
+  onDownloadClick: (orderId: string) => void;
+  onPrintClick: (orderId: string) => void;
 };
 
 export const useContext = (): Props => {
@@ -49,16 +48,12 @@ export const useContext = (): Props => {
     setOffset(offset + ORDERS_ITEMS_LIMIT);
   }, [dispatch, offset]);
 
-  const onDownloadClick = (id: string) => {
+  const onDownloadClick = (orderId: string) => {
     // todo: set download action
   };
 
-  const onPrintClick = (id: string) => {
+  const onPrintClick = (orderId: string) => {
     // todo: set print action
-  };
-
-  const onViewClick = (id: string) => {
-    // todo: set view order details action
   };
 
   return {
@@ -69,6 +64,5 @@ export const useContext = (): Props => {
     getMoreOrders,
     onDownloadClick,
     onPrintClick,
-    onViewClick,
   };
 };

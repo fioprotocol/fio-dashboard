@@ -12,6 +12,8 @@ type AmountProps = {
 export const OrderItemAmount: React.FC<AmountProps> = props => {
   const { roe, showFioPrice, total } = props;
 
+  if (total === '0') return <>FREE</>;
+
   let amount = `${total} USDC`;
 
   if (showFioPrice) {

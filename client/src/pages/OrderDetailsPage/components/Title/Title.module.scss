@@ -1,0 +1,23 @@
+@import '../../../../assets/styles/colors.scss';
+
+.container {
+  display: flex;
+  flex-direction: row;
+
+  .iconContainer {
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+    background-color: $azure-radiance;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+  }
+
+  .icon {
+    font-size: 1.375rem;
+    color: $white;
+  }
+}

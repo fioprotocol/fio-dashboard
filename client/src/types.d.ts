@@ -719,6 +719,44 @@ export type UserOrderDetails = {
   refProfileName: string;
 };
 
+export type OrderItemDetailed = {
+  address?: string;
+  domain?: string;
+  fee_collected: number;
+  costUsdc: string;
+  id: string;
+  isFree: boolean;
+  hasCustomDomain?: boolean;
+  transaction_id: string;
+  error?: string;
+  errorData?: { code?: string; credited?: string; errorType?: string };
+  errorType?: string;
+  costNativeFio?: number;
+};
+
+export type OrderDetailed = {
+  id: string;
+  number: string;
+  total: string;
+  roe: string;
+  publicKey: string;
+  createdAt: string;
+  status: number;
+  user?: { id: string; email: string };
+  errItems: OrderItemDetailed[];
+  regItems: OrderItemDetailed[];
+  isAllErrored: boolean;
+  isPartial: boolean;
+  payment: {
+    regTotalCost: { fioNativeTotal: number; usdcTotal: number };
+    errTotalCost?: { fioNativeTotal: number; usdcTotal: number };
+    paidWith: string;
+    paymentProcessor: PaymentProvider;
+    paymentCurrency: PaymentCurrency;
+  };
+  refProfileName?: string;
+};
+
 export type ApiError = {
   code: string;
   fields?: { [fieldName: string]: AnyType };
