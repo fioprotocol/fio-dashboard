@@ -1,21 +1,47 @@
 import Base from '../Base';
-import { Order, Payment } from '../../models';
+import {
+  BlockchainTransaction,
+  BlockchainTransactionEventLog,
+  Order,
+  OrderItem,
+  OrderItemStatus,
+  Payment,
+  ReferrerProfile,
+  User,
+} from '../../models';
 
 import X from '../Exception.mjs';
 
 export default class OrdersGet extends Base {
   static get validationRules() {
     return {
-      orderNumber: 'string',
+      id: 'string',
     };
   }
-  async execute({ orderNumber }) {
+  async execute({ id }) {
     const order = await Order.findOne({
       where: {
-        orderNumber,
+        id,
         userId: this.context.id,
       },
-      include: [Payment],
+      include: [
+        {
+          model: OrderItem,
+          include: [
+            OrderItemStatus,
+            {
+              model: BlockchainTransaction,
+              include: [BlockchainTransactionEventLog],
+            },
+          ],
+        },
+        {
+          model: Payment,
+          where: { spentType: Payment.SPENT_TYPE.ORDER },
+        },
+        User,
+        ReferrerProfile,
+      ],
     });
 
     if (!order)
@@ -26,21 +52,8 @@ export default class OrdersGet extends Base {
         },
       });
 
-    const payment = order.Payments[0];
-
     return {
-      data: {
-        id: order.id,
-        number: order.number,
-        publicKey: order.publicKey,
-        payment: {
-          id: payment.id,
-          processor: payment.processor,
-          externalPaymentId: payment.externalId,
-          amount: payment.amount,
-          currency: payment.currency,
-        },
-      },
+      data: await Order.formatDetailed(order.get({ plain: true })),
     };
   }
 

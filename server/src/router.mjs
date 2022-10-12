@@ -118,7 +118,7 @@ router.get('/orders', checkAuth, routes.orders.list);
 router.get('/orders/active', checkAuth, routes.orders.getActive);
 router.post('/orders', checkAuth, routes.orders.create);
 router.post('/orders/update/:id', checkAuth, routes.orders.update);
-router.get('/orders/item/:orderNumber', checkAuth, routes.orders.get);
+router.get('/orders/item/:id', checkAuth, routes.orders.get);
 
 router.post('/payments', checkAuth, routes.payments.create);
 router.post('/payments/webhook/', routes.payments.webhook);

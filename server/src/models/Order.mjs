@@ -11,7 +11,9 @@ import { PaymentEventLog } from './PaymentEventLog.mjs';
 import { BlockchainTransaction } from './BlockchainTransaction.mjs';
 import { BlockchainTransactionEventLog } from './BlockchainTransactionEventLog.mjs';
 
-import { getPaidWith } from '../services/updateOrderStatus.mjs';
+import { countTotalPriceAmount, getPaidWith } from '../utils/order.mjs';
+
+import { FIO_ADDRESS_DELIMITER } from '../config/constants.js';
 
 import logger from '../logger.mjs';
 
@@ -25,6 +27,11 @@ const hashids = new Hashids(
 );
 
 const DEFAULT_ORDERS_LIMIT = 25;
+
+const ERROR_TYPES = {
+  default: 'default',
+  freeAddressIsNotRegistered: 'freeAddressIsNotRegistered',
+};
 
 export class Order extends Base {
   static get STATUS() {
@@ -452,6 +459,151 @@ export class Order extends Base {
           : [],
       payments:
         payments && payments.length ? payments.map(item => Payment.format(item)) : [],
+      refProfileName: refProfile ? refProfile.label : null,
+    };
+  }
+
+  static async formatDetailed({
+    id,
+    number,
+    total,
+    roe,
+    publicKey,
+    createdAt,
+    status,
+    OrderItems: orderItems,
+    Payments: payments,
+    User: user,
+    ReferrerProfile: refProfile,
+  }) {
+    const errItems = [];
+    const regItems = [];
+
+    const items =
+      orderItems && orderItems.length
+        ? orderItems.map(orderItem => OrderItem.format(orderItem))
+        : [];
+
+    for (const orderItem of items) {
+      const {
+        address,
+        blockchainTransactions,
+        data,
+        domain,
+        price,
+        nativeFio,
+      } = orderItem;
+
+      const itemStatus = orderItem.orderItemStatus;
+      const isFree = price === '0';
+
+      let bcTx = {};
+
+      if (itemStatus.blockchainTransactionId) {
+        bcTx =
+          blockchainTransactions.find(
+            bcTxItem => bcTxItem.id === itemStatus.blockchainTransactionId,
+          ) || {};
+      }
+
+      const fioName = address ? `${address}${FIO_ADDRESS_DELIMITER}${domain}` : domain;
+      const feeCollected = bcTx.feeCollected || nativeFio;
+      const { hasCustomDomain } = data;
+
+      if (
+        itemStatus.txStatus === BlockchainTransaction.STATUS.FAILED ||
+        itemStatus.txStatus === BlockchainTransaction.STATUS.CANCEL
+      ) {
+        const eventLogs = await BlockchainTransactionEventLog.findAll({
+          where: {
+            blockchainTransactionId: bcTx.id,
+          },
+        });
+        const event = eventLogs.find(
+          ({ status }) =>
+            status === BlockchainTransaction.STATUS.FAILED ||
+            status === BlockchainTransaction.STATUS.CANCEL,
+        );
+        errItems.push({
+          address,
+          domain,
+          fee_collected: isFree ? null : feeCollected,
+          costUsdc: price,
+          error: event ? event.statusNotes : '',
+          errorData: event.data,
+          id: fioName,
+          isFree,
+          hasCustomDomain,
+          errorType:
+            event.data && event.data.errorType
+              ? event.data.errorType
+              : isFree
+              ? ERROR_TYPES.freeAddressIsNotRegistered
+              : ERROR_TYPES.default,
+        });
+
+        continue;
+      }
+
+      regItems.push({
+        address,
+        domain,
+        fee_collected: isFree ? null : feeCollected,
+        costUsdc: price,
+        id: fioName,
+        isFree,
+        hasCustomDomain,
+        transaction_id: bcTx.txId,
+      });
+    }
+
+    const regTotalCost = countTotalPriceAmount(regItems);
+    const errTotalCost = errItems.length > 0 ? countTotalPriceAmount(errItems) : null;
+
+    const payment =
+      (payments &&
+        payments.length &&
+        payments.find(payment => payment.spentType === Payment.SPENT_TYPE.ORDER)) ||
+      {};
+    let paidWith = 'N/A';
+    if (payment) {
+      paidWith = await getPaidWith({
+        isCreditCardProcessor: payment.processor === Payment.PROCESSOR.STRIPE,
+        publicKey,
+        userId: user ? user.id : null,
+        payment,
+      });
+    }
+
+    const isPartial =
+      errItems.length > 0 &&
+      regItems.length > 0 &&
+      status === this.STATUS.PARTIALLY_SUCCESS;
+
+    const isAllErrored =
+      errItems.length > 0 && regItems.length === 0 && status === this.STATUS.FAILED;
+
+    return {
+      id,
+      number,
+      total,
+      roe,
+      publicKey,
+      createdAt,
+      status,
+      user: user ? { id: user.id, email: user.email } : null,
+      errItems,
+      regItems,
+      isAllErrored,
+      isPartial,
+      payment: {
+        regTotalCost,
+        errTotalCost,
+        paidWith,
+        paymentProcessor: payment ? payment.processor : null,
+        paymentCurrency:
+          payment && payment.currency ? payment.currency : Payment.CURRENCY.FIO,
+      },
       refProfileName: refProfile ? refProfile.label : null,
     };
   }
