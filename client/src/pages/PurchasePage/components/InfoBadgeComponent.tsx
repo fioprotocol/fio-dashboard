@@ -12,6 +12,8 @@ import { ERROR_MESSAGES, ERROR_TYPES } from '../../../constants/errors';
 import { InfoBadgeComponentProps } from '../types';
 import { CURRENCY_CODES } from '../../../constants/common';
 
+import classes from '../styles/InfoBadgeComponent.module.scss';
+
 const STRIPE_REQUIRES_PAYMENT_ERROR = 'requires_payment_method';
 
 export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
@@ -22,6 +24,7 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
     failedTxsTotalCurrency = '',
     failedMessage,
     hide,
+    withoutTopMargin,
   } = props;
 
   let title = null;
@@ -40,34 +43,15 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
   ) {
     title = 'Confirmation in Progress';
     badgeUIType = BADGE_TYPES.INFO;
-
-    // Custom message for crypto provider
-    if (paymentProvider === PAYMENT_PROVIDER.CRYPTO) {
-      message =
-        'Your crypto payment is currently being confirmed. You do not need to remain on this screen and may close the view without disrupting your purchase.';
-    }
-
-    // Custom message for stripe provider
-    if (paymentProvider === PAYMENT_PROVIDER.STRIPE) {
-      message =
-        'Your credit/debit card payment is currently being confirmed. You do not need to remain on this screen and may close the view without disrupting your purchase.';
-    }
+    message =
+      ' Your transaction is currently being confirmed. You do not need to remain on this screen and may close it without disrupting your purchase.';
   }
 
   // Customize content info badge for Canceled status
   if (purchaseStatus === PURCHASE_RESULTS_STATUS.CANCELED) {
     title = 'Canceled Payment';
     badgeUIType = BADGE_TYPES.INFO;
-
-    // Custom message for crypto provider
-    if (paymentProvider === PAYMENT_PROVIDER.CRYPTO) {
-      message = 'Your crypto payment has been cancelled.';
-    }
-
-    // Custom message for stripe provider
-    if (paymentProvider === PAYMENT_PROVIDER.STRIPE) {
-      message = 'Your credit/debit card payment has been cancelled.';
-    }
+    message = 'Your transaction has been cancelled.';
   }
 
   // Customize content info badge for Partial status
@@ -78,7 +62,7 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
     // Custom message for FIO and non FIO providers
     if (paymentProvider === PAYMENT_PROVIDER.FIO || !failedTxsTotalAmount) {
       message =
-        'Your purchase was not completed in full. Please see below what failed to be completed.';
+        'There was an error during purchase of some items. No FIO Tokens were deducted from your wallet for the failed items. Go to your cart to try purchase again.';
     }
 
     if (paymentProvider === PAYMENT_PROVIDER.STRIPE && failedTxsTotalAmount) {
@@ -86,10 +70,10 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
         !failedTxsTotalCurrency ||
         failedTxsTotalCurrency === CURRENCY_CODES.USDC
       )
-        message = `The following items failed to purchase. As a result we have refunded $${failedTxsTotalAmount as string} back to your credit card. Click close and try purchasing again.`;
+        message = `There was an error during purchase of some items. As a result we have refunded $${failedTxsTotalAmount as string} back to your credit card. Go to your cart to try purchase again.`;
 
       if (failedTxsTotalCurrency === CURRENCY_CODES.FIO)
-        message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount as string} FIO Tokens. You can use these tokens to register FIO Crypto Handle or Domain.`;
+        message = `There was an error during purchase of some items. As a result we have credited ${failedTxsTotalAmount as string} FIO Tokens to your wallet. Go to your cart to try purchase using FIO Tokens instead.`;
     }
   }
 
@@ -133,7 +117,7 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
   }
 
   return (
-    <>
+    <div className={withoutTopMargin && classes.withoutTopMargin}>
       <InfoBadge
         title={title}
         message={message}
@@ -141,6 +125,6 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
         type={badgeUIType}
       />
       <br />
-    </>
+    </div>
   );
 };
