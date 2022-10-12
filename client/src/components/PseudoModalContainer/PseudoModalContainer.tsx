@@ -15,7 +15,7 @@ type Props = {
   link?: string;
   onClose?: () => void;
   onBack?: () => void;
-  title: string;
+  title: string | React.ReactNode;
 };
 
 const PseudoModalContainer: React.FC<Props> = props => {
