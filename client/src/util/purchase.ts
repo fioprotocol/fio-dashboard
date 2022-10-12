@@ -23,7 +23,6 @@ export const onPurchaseFinish = ({
   order,
   isCheckout,
   history,
-  setRegistration,
   setProcessing,
   fioActionExecuted,
 }: {
@@ -31,11 +30,9 @@ export const onPurchaseFinish = ({
   order: Order;
   isCheckout?: boolean;
   history: History;
-  setRegistration: (regData: RegistrationResult) => void;
   setProcessing: (isProcessing: boolean) => void;
   fioActionExecuted: (data: FioActionExecuted) => void;
 }): void => {
-  setRegistration(results);
   setProcessing(false);
 
   const txIds: string[] = [];
@@ -56,8 +53,7 @@ export const onPurchaseFinish = ({
     history.push(
       { pathname: ROUTES.PURCHASE, search: `orderNumber=${order.number}` },
       {
-        paymentProvider: results.paymentProvider,
-        order,
+        orderId: order.id,
       },
     );
   }

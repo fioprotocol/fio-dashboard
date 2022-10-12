@@ -2,7 +2,7 @@ import React from 'react';
 
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
-import { InfoBadgeComponent } from '../PurchasePage/components/InfoBadgeComponent';
+import { InfoBadgeComponent } from './components/InfoBadgeComponent';
 import { OrderDetailsContainer } from '../../components/OrderDetailsContainer';
 
 import { OrderItemsList } from './components/OrderItemsList';
@@ -44,7 +44,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = props => {
               failedTxsTotalAmount={total}
               failedTxsTotalCurrency={totalCurrency}
               withoutTopMargin={i === 0}
-              key={total}
+              key={total + errorType}
             />
           ))
         ) : (

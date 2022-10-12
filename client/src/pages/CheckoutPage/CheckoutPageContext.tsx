@@ -12,10 +12,7 @@ import {
   setWallet as setWalletAction,
   setCartItems,
 } from '../../redux/cart/actions';
-import {
-  setRegistration,
-  setProcessing,
-} from '../../redux/registrations/actions';
+import { setProcessing } from '../../redux/registrations/actions';
 
 import {
   fioWallets as fioWalletsSelector,
@@ -422,8 +419,6 @@ export const useContext = (): {
       results,
       order,
       isCheckout: true,
-      setRegistration: (results: RegistrationResult) =>
-        dispatch(setRegistration(results)),
       setProcessing: (isProcessing: boolean) =>
         dispatch(setProcessing(isProcessing)),
       fioActionExecuted: (data: FioActionExecuted) =>

@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import PriceBadge from '../../../../components/Badges/PriceBadge/PriceBadge';
-import { InfoBadgeComponent } from '../../../PurchasePage/components/InfoBadgeComponent';
+import { InfoBadgeComponent } from '../InfoBadgeComponent';
 
 import { OrderItemsList } from '../OrderItemsList';
 

@@ -1,22 +1,33 @@
 import React from 'react';
 
-import InfoBadge from '../../../components/InfoBadge/InfoBadge';
+import InfoBadge from '../../../../components/InfoBadge/InfoBadge';
 
-import { BADGE_TYPES } from '../../../components/Badge/Badge';
+import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import {
   PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
-} from '../../../constants/purchase';
-import { ERROR_MESSAGES, ERROR_TYPES } from '../../../constants/errors';
+} from '../../../../constants/purchase';
+import { ERROR_MESSAGES, ERROR_TYPES } from '../../../../constants/errors';
 
-import { InfoBadgeComponentProps } from '../types';
-import { CURRENCY_CODES } from '../../../constants/common';
+import { CURRENCY_CODES } from '../../../../constants/common';
 
-import classes from '../styles/InfoBadgeComponent.module.scss';
+import { PaymentProvider, PurchaseTxStatus } from '../../../../types';
+
+import classes from './InfoBadgeComponent.module.scss';
 
 const STRIPE_REQUIRES_PAYMENT_ERROR = 'requires_payment_method';
 
-export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
+type Props = {
+  paymentProvider: PaymentProvider;
+  purchaseStatus: PurchaseTxStatus;
+  failedTxsTotalAmount?: number | string;
+  failedTxsTotalCurrency?: string;
+  failedMessage?: string;
+  hide?: boolean;
+  withoutTopMargin?: boolean;
+};
+
+export const InfoBadgeComponent: React.FC<Props> = props => {
   const {
     paymentProvider,
     purchaseStatus,
@@ -117,7 +128,7 @@ export const InfoBadgeComponent: React.FC<InfoBadgeComponentProps> = props => {
   }
 
   return (
-    <div className={withoutTopMargin && classes.withoutTopMargin}>
+    <div className={withoutTopMargin ? classes.withoutTopMargin : undefined}>
       <InfoBadge
         title={title}
         message={message}

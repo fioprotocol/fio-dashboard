@@ -13,7 +13,7 @@ import FioDomainLandingPage from './pages/FioDomainLandingPage';
 import FioDomainManagePage from './pages/FioDomainManagePage';
 import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
-import { PurchasePage } from './pages/PurchasePage';
+import PurchasePage from './pages/PurchasePage';
 import ScrollToTop from './components/ScrollToTop';
 import FioAddressTransferPage from './pages/FioAddressTransferPage';
 import FioDomainTransferPage from './pages/FioDomainTransferPage';
