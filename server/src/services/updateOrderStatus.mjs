@@ -1,6 +1,7 @@
-import { BlockchainTransaction, Notification, Order, Payment, Wallet } from '../models';
+import { BlockchainTransaction, Notification, Order, Payment } from '../models';
 
 import { fioApi } from '../external/fio.mjs';
+import { countTotalPriceAmount, getPaidWith } from '../utils/order.mjs';
 import MathOp from './math.mjs';
 import logger from '../logger.mjs';
 
@@ -35,20 +36,6 @@ export const updateOrderStatus = async (orderId, paymentStatus, txStatuses, t) =
   await checkOrderStatusAndCreateNotification(orderId);
 };
 
-const countTotalPriceAmount = orderItems =>
-  orderItems.reduce(
-    ({ fioNativeTotal, priceTotal }, orderItem) => {
-      const orderNativeFio = new MathOp(orderItem.nativeFio).toNumber();
-      const orderPrice = new MathOp(orderItem.price).toNumber();
-
-      fioNativeTotal = new MathOp(fioNativeTotal).add(orderNativeFio).toNumber();
-      priceTotal = new MathOp(priceTotal).add(orderPrice).toNumber();
-
-      return { fioNativeTotal, priceTotal };
-    },
-    { fioNativeTotal: 0, priceTotal: 0 },
-  );
-
 const transformFioPrice = (usdcPrice, nativeAmount) => {
   if (!usdcPrice && !nativeAmount) return 'FREE';
   return `${new MathOp(usdcPrice).toNumber().toFixed(2)} USDC (${fioApi
@@ -77,39 +64,6 @@ const transformOrderItemsForEmail = (orderItems, showPriceWithFioAmount) =>
 
     return transformedOrderItem;
   });
-
-const getFioWalletName = async (publicKey, userId) => {
-  const wallet = await Wallet.findOne({
-    where: { publicKey, userId },
-  });
-  if (wallet) return wallet.name;
-  return 'N/A';
-};
-
-const getCreditCardName = creditCardData => {
-  const { payment_method_details: { card: { brand, last4 } = {} } = {} } =
-    creditCardData || {};
-  return brand && last4 ? `${brand.toUpperCase()} ending in ${last4}` : 'N/A';
-};
-
-export const getPaidWith = async ({
-  isCreditCardProcessor,
-  publicKey,
-  userId,
-  payment,
-}) => {
-  if (isCreditCardProcessor) {
-    const { data: paymentData = {} } = payment;
-
-    const {
-      webhookData: { charges: { data: creditCardData = [] } = {} } = {},
-    } = paymentData;
-
-    return getCreditCardName(creditCardData[0]);
-  }
-
-  return await getFioWalletName(publicKey, userId);
-};
 
 const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith }) => {
   if (!orderItems.length) return {};
