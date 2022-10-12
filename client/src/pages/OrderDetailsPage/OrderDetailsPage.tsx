@@ -1,9 +1,9 @@
 import React from 'react';
 
-import Loader from '../../components/Loader/Loader';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import { InfoBadgeComponent } from '../PurchasePage/components/InfoBadgeComponent';
+import { OrderDetailsContainer } from '../../components/OrderDetailsContainer';
 
 import { OrderItemsList } from './components/OrderItemsList';
 import { PaymentDetails } from './components/PaymentDetails';
@@ -12,17 +12,17 @@ import { PartialErroredOrderItemsList } from './components/PartialErroredOrderIt
 import { useContext } from './OrderDetailsPageContext';
 
 import { OrderDetailsProps } from './types';
+import { ContextProps } from '../../components/OrderDetailsContainer/OrderDetailsContainerContext';
 
 import classes from './OrderDetailsPage.module.scss';
 
-const OrderDetailsPage: React.FC<OrderDetailsProps> = props => {
+export const OrderDetails: React.FC<OrderDetailsProps> = props => {
   const {
     actionButtonProps,
     infoBadgeData,
     isAllErrored,
     isPartial,
     errorBadges,
-    loading,
     orderItemsToRender,
     paymentInfo,
     partialErrorItems,
@@ -30,10 +30,8 @@ const OrderDetailsPage: React.FC<OrderDetailsProps> = props => {
     title,
   } = useContext(props);
 
-  if (loading) return <Loader />;
-
   return (
-    <PseudoModalContainer title={title}>
+    <PseudoModalContainer title={title} onClose={actionButtonProps.onClick}>
       <div className={classes.container}>
         {isAllErrored && errorBadges ? (
           Object.values(
@@ -73,5 +71,11 @@ const OrderDetailsPage: React.FC<OrderDetailsProps> = props => {
     </PseudoModalContainer>
   );
 };
+
+const OrderDetailsPage = () => (
+  <OrderDetailsContainer>
+    {(containerProps: ContextProps) => <OrderDetails {...containerProps} />}
+  </OrderDetailsContainer>
+);
 
 export default OrderDetailsPage;

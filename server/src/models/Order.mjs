@@ -508,7 +508,7 @@ export class Order extends Base {
 
       const fioName = address ? `${address}${FIO_ADDRESS_DELIMITER}${domain}` : domain;
       const feeCollected = bcTx.feeCollected || nativeFio;
-      const { hasCustomDomain } = data;
+      const { hasCustomDomain } = data || {};
 
       if (
         itemStatus.txStatus === BlockchainTransaction.STATUS.FAILED ||
@@ -530,12 +530,12 @@ export class Order extends Base {
           fee_collected: isFree ? null : feeCollected,
           costUsdc: price,
           error: event ? event.statusNotes : '',
-          errorData: event.data,
+          errorData: event && event.data,
           id: fioName,
           isFree,
           hasCustomDomain,
           errorType:
-            event.data && event.data.errorType
+            event && event.data && event.data.errorType
               ? event.data.errorType
               : isFree
               ? ERROR_TYPES.freeAddressIsNotRegistered

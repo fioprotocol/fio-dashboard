@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 
 import {
+  OrderDetailed,
   OrderItemDetailed,
   PaymentCurrency,
   PaymentProvider,
@@ -18,6 +19,7 @@ export type ErrBadgesProps = {
 export type OrderDetailsProps = {
   buttonText?: string;
   actionClick?: () => void;
+  orderItem: OrderDetailed;
 };
 
 export type TotalCost = {
@@ -43,7 +45,6 @@ export type ContextProps = {
   infoBadgeData: InfoBadgeData;
   isPartial: boolean;
   isAllErrored: boolean;
-  loading: boolean;
   title: ReactNode;
   paymentInfo: {
     orderNumber: string;

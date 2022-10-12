@@ -34,7 +34,7 @@ export const OrderItem: React.FC<Props> = props => {
     domain,
     costFio: apis.fio.sufToAmount(fee_collected).toFixed(2),
     costUsdc,
-    costNativeFio: new MathOp(fee_collected).toNumber(),
+    costNativeFio: fee_collected ? new MathOp(fee_collected).toNumber() : null,
     id,
     hasCustomDomain,
   };

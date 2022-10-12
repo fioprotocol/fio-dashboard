@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useHistory } from 'react-router';
 
 import { Title } from './components/Title';
@@ -7,23 +6,10 @@ import apis from '../../api';
 
 import MathOp from '../../util/math';
 
-import useEffectOnce from '../../hooks/general';
-import { useWebsocket } from '../../hooks/websocket';
-
 import { CURRENCY_CODES } from '../../constants/common';
-import {
-  PAYMENT_PROVIDER,
-  PURCHASE_RESULTS_STATUS,
-} from '../../constants/purchase';
-import { WS_ENDPOINTS } from '../../constants/websocket';
+import { PAYMENT_PROVIDER } from '../../constants/purchase';
 
-import {
-  PaymentCurrency,
-  PaymentProvider,
-  PurchaseTxStatus,
-  RegistrationResult,
-  OrderDetailed,
-} from '../../types';
+import { PaymentCurrency, PaymentProvider } from '../../types';
 
 import {
   ContextProps,
@@ -81,15 +67,8 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
   const {
     buttonText = DEFAULT_BUTTON_TEXT_VALUE,
     actionClick = defaultOnClick,
+    orderItem,
   } = props;
-
-  const {
-    location: { state },
-  } = history;
-  const { orderId } = state || {};
-
-  const [loading, toggleLoading] = useState<boolean>(false);
-  const [orderItem, setOrderItem] = useState<OrderDetailed>(null);
 
   const {
     errItems,
@@ -107,41 +86,6 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
     errTotalCost,
     paymentCurrency,
   } = payment || {};
-
-  const getOrder = async () => {
-    toggleLoading(true);
-    const order = await apis.orders.get(orderId);
-    setOrderItem(order);
-    toggleLoading(false);
-  };
-
-  useEffectOnce(() => {
-    getOrder();
-  }, [getOrder]);
-
-  const onStatusUpdate = (data: {
-    orderStatus: PurchaseTxStatus;
-    results?: RegistrationResult;
-  }) => {
-    if (data) {
-      const { orderStatus } = data;
-      if (
-        orderStatus &&
-        (orderStatus === PURCHASE_RESULTS_STATUS.SUCCESS ||
-          orderStatus === PURCHASE_RESULTS_STATUS.FAILED ||
-          orderStatus === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS ||
-          orderStatus === PURCHASE_RESULTS_STATUS.CANCELED)
-      ) {
-        getOrder();
-      }
-    }
-  };
-
-  useWebsocket({
-    endpoint: WS_ENDPOINTS.ORDER_STATUS,
-    params: { orderId: Number(orderId) },
-    onMessage: onStatusUpdate,
-  });
 
   const title = <Title orderStatus={status} />;
 
@@ -251,7 +195,6 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
     partialErrorItems,
     partialErrorTotalCost,
     errorBadges,
-    loading,
     title,
     paymentInfo,
   };
