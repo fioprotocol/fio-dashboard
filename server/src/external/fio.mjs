@@ -171,12 +171,13 @@ class Fio {
   }
 
   getActionParams(options) {
-    let actionParams = { tpid: options.tpid };
+    let actionParams = { tpid: options.tpid || process.env.DEFAULT_TPID };
     if (options.fee) actionParams.max_fee = options.fee;
 
     switch (options.action) {
       case FIO_ACTIONS.registerFioAddress: {
         actionParams = {
+          ...actionParams,
           fio_address: `${options.address}${FIO_ADDRESS_DELIMITER}${options.domain}`,
           owner_fio_public_key: options.publicKey,
         };
@@ -184,6 +185,7 @@ class Fio {
       }
       case FIO_ACTIONS.registerFioDomain: {
         actionParams = {
+          ...actionParams,
           fio_domain: options.domain,
           owner_fio_public_key: options.publicKey,
         };
@@ -191,6 +193,7 @@ class Fio {
       }
       case FIO_ACTIONS.transferTokens: {
         actionParams = {
+          ...actionParams,
           payee_public_key: options.publicKey,
           amount: options.amount,
         };
