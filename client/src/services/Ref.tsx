@@ -110,7 +110,9 @@ const Ref = (
   }, [isAuthenticated, user?.refProfile?.code, getInfo]);
 
   useEffect(() => {
-    apis.fio.setTpid(refProfileInfo?.tpid || '');
+    apis.fio.setTpid(
+      refProfileInfo?.tpid || process.env.REACT_APP_DEFAULT_TPID,
+    );
   }, [refProfileInfo?.tpid]);
 
   return null;
