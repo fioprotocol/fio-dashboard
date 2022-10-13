@@ -183,7 +183,12 @@ export class OrderItem extends Base {
         LIMIT ${limit}
       `);
 
-    return actions;
+    return actions.map(action => {
+      if (!action.tpid) {
+        action.tpid = process.env.DEFAULT_TPID;
+      }
+      return action;
+    });
   }
 
   static async setPending(tx, orderItemId, blockchainTransactionId) {
