@@ -99,7 +99,7 @@ export default class Fio {
     [ACTIONS.addNft]: 'add_nft',
     [ACTIONS.pushTransaction]: 'push_transaction',
   };
-  tpid: string | null = null;
+  tpid: string = process.env.REACT_APP_DEFAULT_TPID || '';
 
   constructor() {
     this.publicFioSDK = new FIOSDK(
@@ -527,7 +527,7 @@ export default class Fio {
         payee_public_key: publicKey,
         amount,
         max_fee: fee,
-        tpid: '',
+        tpid: this.tpid,
       },
     };
   };
@@ -565,7 +565,7 @@ export default class Fio {
             }),
           ),
           max_fee: DEFAULT_ACTION_FEE_AMOUNT,
-          tpid: '',
+          tpid: this.tpid,
         },
       });
       return { other: { nfts }, ...result };
