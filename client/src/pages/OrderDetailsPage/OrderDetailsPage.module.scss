@@ -50,6 +50,14 @@
     margin: 0 0 0 30px;
     flex-shrink: 0;
     word-break: break-all;
+
+    &.withAutoMargin {
+      margin: 0 1.875rem 0 auto;
+    }
+  }
+
+  &.hasWhiteText {
+    color: $white;
   }
 }
 

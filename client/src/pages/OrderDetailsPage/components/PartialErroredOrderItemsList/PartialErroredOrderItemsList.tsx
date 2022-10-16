@@ -1,14 +1,14 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import { BADGE_TYPES } from '../../../../components/Badge/Badge';
-import PriceBadge from '../../../../components/Badges/PriceBadge/PriceBadge';
+import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
+
 import { InfoBadgeComponent } from '../InfoBadgeComponent';
 
 import { OrderItemsList } from '../OrderItemsList';
 
 import { OrderItemDetailed, PaymentCurrency } from '../../../../types';
-import { InfoBadgeData, ErrBadgesProps, TotalCost } from '../../types';
+import { InfoBadgeData, ErrBadgesProps } from '../../types';
 
 import classes from './PartialErroredOrderItemsList.module.scss';
 
@@ -17,10 +17,8 @@ type Props = {
   items: OrderItemDetailed[];
   errorBadges: ErrBadgesProps;
   primaryCurrency: PaymentCurrency;
-  totalCost: TotalCost;
+  totalCostPrice: string;
 };
-
-const PRICE_BADGE_TITLE = 'Remaining Cost';
 
 export const PartialErroredOrderItemsList: React.FC<Props> = props => {
   const {
@@ -28,7 +26,7 @@ export const PartialErroredOrderItemsList: React.FC<Props> = props => {
     items,
     errorBadges,
     primaryCurrency,
-    totalCost,
+    totalCostPrice,
   } = props;
 
   if (!items) return null;
@@ -49,11 +47,16 @@ export const PartialErroredOrderItemsList: React.FC<Props> = props => {
         />
       ))}
       <OrderItemsList items={items} primaryCurrency={primaryCurrency} />
-      <PriceBadge
-        {...totalCost}
-        title={PRICE_BADGE_TITLE}
-        type={BADGE_TYPES.ERROR}
-      />
+      <Badge type={BADGE_TYPES.ERROR} show={true}>
+        <div className={classnames(classes.item, classes.hasWhiteText)}>
+          <span className={classnames(classes.name, 'boldText')}>
+            Remaining Cost
+          </span>
+          <p className={classnames(classes.itemValue, classes.withAutoMargin)}>
+            <span className="boldText">{totalCostPrice}</span>
+          </p>
+        </div>
+      </Badge>
     </div>
   );
 };

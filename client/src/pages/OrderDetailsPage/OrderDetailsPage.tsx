@@ -56,13 +56,13 @@ export const OrderDetails: React.FC<OrderDetailsProps> = props => {
         )}
         <OrderItemsList
           items={orderItemsToRender}
-          primaryCurrency={paymentInfo?.totalCost?.paymentCurrency}
+          primaryCurrency={paymentInfo?.paymentCurrency}
         />
         <PaymentDetails {...paymentInfo} />
         <PartialErroredOrderItemsList
           items={partialErrorItems}
-          primaryCurrency={paymentInfo?.totalCost?.paymentCurrency}
-          totalCost={partialErrorTotalCost}
+          primaryCurrency={paymentInfo?.paymentCurrency}
+          totalCostPrice={partialErrorTotalCost}
           infoBadgeData={infoBadgeData}
           errorBadges={errorBadges}
         />

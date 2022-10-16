@@ -1,6 +1,11 @@
+import fiosdkLib from '@fioprotocol/fiosdk';
+
+import { Payment } from '../models/Payment.mjs';
 import { Wallet } from '../models/Wallet.mjs';
 
 import MathOp from '../services/math.mjs';
+
+const FREE_PRICE = 'FREE';
 
 const getFioWalletName = async (publicKey, userId) => {
   const wallet = await Wallet.findOne({
@@ -52,3 +57,63 @@ export const countTotalPriceAmount = orderItems =>
     },
     { fioNativeTotal: 0, usdcTotal: 0 },
   );
+
+export const transformCostToPriceString = ({
+  fioNativeAmount,
+  usdcAmount,
+  hasDollarSign,
+}) => {
+  if (fioNativeAmount)
+    return `${fiosdkLib.FIOSDK.SUFToAmount(fioNativeAmount).toFixed(2)} FIO`;
+  if (usdcAmount) {
+    if (hasDollarSign) return `$${usdcAmount.toFixed(2)}`;
+    return `${usdcAmount} USDC`;
+  }
+};
+
+export const transformOrderTotalCostToPriceObj = ({ totalCostObj, paymentCurrency }) => {
+  const { fioNativeTotal, usdcTotal } = totalCostObj || {};
+
+  if (!fioNativeTotal && fioNativeTotal !== 0 && !usdcTotal && usdcTotal !== 0)
+    return null;
+
+  if (fioNativeTotal === 0 && usdcTotal === 0)
+    return {
+      freeTotalPrice: FREE_PRICE,
+    };
+
+  if (paymentCurrency === Payment.CURRENCY.FIO)
+    return {
+      fioTotalPrice: transformCostToPriceString({ fioNativeAmount: fioNativeTotal }),
+      usdcTotalPrice: transformCostToPriceString({ usdcAmount: usdcTotal }),
+    };
+
+  if (paymentCurrency.toUpperCase() === Payment.CURRENCY.USD)
+    return {
+      usdcTotalPrice: transformCostToPriceString({
+        usdcAmount: usdcTotal,
+        hasDollarSign: true,
+      }),
+    };
+
+  return { usdcTotalPrice: `${usdcTotal} USDC` };
+};
+
+export const transformOrderItemCostToPriceString = ({
+  orderItemCostObj,
+  paymentCurrency,
+}) => {
+  const { usdcAmount, fioNativeAmount, isFree } = orderItemCostObj;
+
+  if (isFree) return FREE_PRICE;
+
+  const fioPrice = transformCostToPriceString({ fioNativeAmount });
+
+  const usdcPrice = transformCostToPriceString({ usdcAmount });
+
+  if (paymentCurrency === Payment.CURRENCY.FIO) {
+    return `${fioPrice} (${usdcPrice})`;
+  }
+
+  return `${usdcPrice} (${fioPrice})`;
+};

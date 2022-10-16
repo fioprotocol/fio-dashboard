@@ -2,61 +2,21 @@ import { useHistory } from 'react-router';
 
 import { Title } from './components/Title';
 
-import apis from '../../api';
-
 import MathOp from '../../util/math';
+
+import { combinePriceWithDivider } from '../../util/prices';
 
 import { CURRENCY_CODES } from '../../constants/common';
 import { PAYMENT_PROVIDER } from '../../constants/purchase';
 
-import { PaymentCurrency, PaymentProvider } from '../../types';
+import { PaymentProvider } from '../../types';
 
-import {
-  ContextProps,
-  ErrBadgesProps,
-  OrderDetailsProps,
-  TotalCost,
-} from './types';
+import { ContextProps, ErrBadgesProps, OrderDetailsProps } from './types';
 
 const DEFAULT_BUTTON_TEXT_VALUE = 'Close';
 
 const ERROR_CODES = {
   SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
-};
-
-const generateTotalCostObj = ({
-  paymentCurrency,
-  paymentProcessor,
-  fioNativeTotal,
-  usdcTotal,
-}: {
-  fioNativeTotal: number;
-  usdcTotal: number;
-  paymentCurrency: PaymentCurrency;
-  paymentProcessor: PaymentProvider;
-}): TotalCost => {
-  let convertedPaymentAmount = null;
-  let convertedPaymentCurrency = null;
-  let paymentAmount = null;
-
-  const costFree = usdcTotal === 0 ? 'FREE' : null;
-
-  if (paymentProcessor === PAYMENT_PROVIDER.FIO) {
-    paymentAmount = apis.fio.sufToAmount(fioNativeTotal).toFixed(2);
-
-    convertedPaymentAmount = usdcTotal?.toFixed(2);
-    convertedPaymentCurrency = CURRENCY_CODES.USDC;
-  } else {
-    paymentAmount = usdcTotal?.toFixed(2);
-  }
-
-  return {
-    convertedPaymentAmount,
-    convertedPaymentCurrency,
-    costFree,
-    paymentAmount,
-    paymentCurrency,
-  };
 };
 
 export const useContext = (props: OrderDetailsProps): ContextProps => {
@@ -92,47 +52,39 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
   let partialErrorItems = null;
   let partialErrorTotalCost = null;
 
-  const regTotalCostObj = generateTotalCostObj({
-    paymentCurrency,
+  const regTotalCostPrice = combinePriceWithDivider({
     paymentProcessor,
-    ...regTotalCost,
+    totalCostPrice: regTotalCost,
   });
 
-  const errTotalCostObj = generateTotalCostObj({
-    paymentCurrency,
+  const errTotalCostPrice = combinePriceWithDivider({
     paymentProcessor,
-    ...errTotalCost,
+    totalCostPrice: errTotalCost,
   });
 
   const infoBadgeData: {
-    failedTxsTotalAmount?: string;
-    failedTxsTotalCurrency?: PaymentCurrency;
     paymentProvider: PaymentProvider;
     purchaseStatus: number;
   } = {
-    failedTxsTotalAmount: null,
-    failedTxsTotalCurrency: null,
     paymentProvider: paymentProcessor,
     purchaseStatus: status,
   };
 
-  if (paymentProcessor !== PAYMENT_PROVIDER.FIO) {
-    infoBadgeData.failedTxsTotalAmount = errTotalCostObj.paymentAmount;
-    infoBadgeData.failedTxsTotalCurrency = errTotalCostObj.paymentCurrency;
-  }
-
   if (isPartial) {
     partialErrorItems = errItems;
-    partialErrorTotalCost = errTotalCostObj;
+    partialErrorTotalCost = errTotalCostPrice;
   }
 
   const orderItemsToRender = regItems?.length ? regItems : errItems;
-  const totalCostObj = regItems?.length ? regTotalCostObj : errTotalCostObj;
+  const totalCostPrice = regItems?.length
+    ? regTotalCostPrice
+    : errTotalCostPrice;
 
   const paymentInfo = {
     orderNumber: number,
     paidWith,
-    totalCost: totalCostObj,
+    totalCostPrice,
+    paymentCurrency,
   };
 
   const errorBadges: ErrBadgesProps = errItems
@@ -174,7 +126,7 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
             : errItem,
         );
 
-        acc[badgeKey].total = errTotalCostObj.paymentAmount;
+        acc[badgeKey].total = errTotalCostPrice;
         acc[badgeKey].totalCurrency = totalCurrency;
 
         return acc;

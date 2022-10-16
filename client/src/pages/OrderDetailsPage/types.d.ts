@@ -23,16 +23,12 @@ export type OrderDetailsProps = {
 };
 
 export type TotalCost = {
-  convertedPaymentAmount?: string;
-  convertedPaymentCurrency?: PaymentCurrency;
-  costFree?: string;
-  paymentAmount: string;
-  paymentCurrency?: PaymentCurrency;
+  fioNativeTotalPrice?: string;
+  freeTotalPrice?: string;
+  usdcTotalPrice?: string;
 };
 
 export type InfoBadgeData = {
-  failedTxsTotalAmount?: string;
-  failedTxsTotalCurrency?: PaymentCurrency;
   paymentProvider: PaymentProvider;
   purchaseStatus: number;
 };
@@ -49,10 +45,11 @@ export type ContextProps = {
   paymentInfo: {
     orderNumber: string;
     paidWith?: string;
-    totalCost: TotalCost;
+    totalCostPrice: string;
+    paymentCurrency: PaymentCurrency;
   };
   orderItemsToRender: OrderItemDetailed[];
   partialErrorItems: OrderItemDetailed[];
-  partialErrorTotalCost: TotalCost;
+  partialErrorTotalCost: string;
   errorBadges: ErrBadgesProps;
 };

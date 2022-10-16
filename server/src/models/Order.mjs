@@ -11,9 +11,14 @@ import { PaymentEventLog } from './PaymentEventLog.mjs';
 import { BlockchainTransaction } from './BlockchainTransaction.mjs';
 import { BlockchainTransactionEventLog } from './BlockchainTransactionEventLog.mjs';
 
-import { countTotalPriceAmount, getPaidWith } from '../utils/order.mjs';
+import {
+  countTotalPriceAmount,
+  getPaidWith,
+  transformOrderTotalCostToPriceObj,
+  transformOrderItemCostToPriceString,
+} from '../utils/order.mjs';
 
-import { FIO_ADDRESS_DELIMITER } from '../config/constants.js';
+import { FIO_ADDRESS_DELIMITER, FIO_ACTIONS_LABEL } from '../config/constants.js';
 
 import logger from '../logger.mjs';
 
@@ -484,8 +489,27 @@ export class Order extends Base {
         ? orderItems.map(orderItem => OrderItem.format(orderItem))
         : [];
 
+    const payment =
+      (payments &&
+        payments.length &&
+        payments.find(payment => payment.spentType === Payment.SPENT_TYPE.ORDER)) ||
+      {};
+    let paidWith = 'N/A';
+    if (payment) {
+      paidWith = await getPaidWith({
+        isCreditCardProcessor: payment.processor === Payment.PROCESSOR.STRIPE,
+        publicKey,
+        userId: user ? user.id : null,
+        payment,
+      });
+    }
+
+    const paymentCurrency =
+      payment && payment.currency ? payment.currency : Payment.CURRENCY.FIO;
+
     for (const orderItem of items) {
       const {
+        action,
         address,
         blockchainTransactions,
         data,
@@ -525,6 +549,7 @@ export class Order extends Base {
             status === BlockchainTransaction.STATUS.CANCEL,
         );
         errItems.push({
+          action: FIO_ACTIONS_LABEL[action],
           address,
           domain,
           fee_collected: isFree ? null : feeCollected,
@@ -534,6 +559,14 @@ export class Order extends Base {
           id: fioName,
           isFree,
           hasCustomDomain,
+          priceString: transformOrderItemCostToPriceString({
+            orderItemCostObj: {
+              fioNativeAmount: feeCollected,
+              usdcAmount: price,
+              isFree,
+            },
+            paymentCurrency,
+          }),
           errorType:
             event && event.data && event.data.errorType
               ? event.data.errorType
@@ -546,6 +579,7 @@ export class Order extends Base {
       }
 
       regItems.push({
+        action: FIO_ACTIONS_LABEL[action],
         address,
         domain,
         fee_collected: isFree ? null : feeCollected,
@@ -553,27 +587,33 @@ export class Order extends Base {
         id: fioName,
         isFree,
         hasCustomDomain,
+        priceString: transformOrderItemCostToPriceString({
+          orderItemCostObj: {
+            fioNativeAmount: feeCollected,
+            usdcAmount: price,
+            isFree,
+          },
+          paymentCurrency,
+        }),
         transaction_id: bcTx.txId,
       });
     }
 
-    const regTotalCost = countTotalPriceAmount(regItems);
-    const errTotalCost = errItems.length > 0 ? countTotalPriceAmount(errItems) : null;
+    const regTotalCostAmount = countTotalPriceAmount(regItems);
+    const errTotalCostAmount =
+      errItems.length > 0 ? countTotalPriceAmount(errItems) : null;
 
-    const payment =
-      (payments &&
-        payments.length &&
-        payments.find(payment => payment.spentType === Payment.SPENT_TYPE.ORDER)) ||
-      {};
-    let paidWith = 'N/A';
-    if (payment) {
-      paidWith = await getPaidWith({
-        isCreditCardProcessor: payment.processor === Payment.PROCESSOR.STRIPE,
-        publicKey,
-        userId: user ? user.id : null,
-        payment,
-      });
-    }
+    const regTotalCostPrice = transformOrderTotalCostToPriceObj({
+      totalCostObj: regTotalCostAmount,
+      paymentCurrency,
+    });
+    const errTotalCostPrice = transformOrderTotalCostToPriceObj({
+      totalCostObj: errTotalCostAmount,
+      paymentCurrency,
+    });
+
+    const regTotalCost = { ...regTotalCostAmount, ...regTotalCostPrice };
+    const errTotalCost = { ...errTotalCostAmount, ...errTotalCostPrice };
 
     const isPartial =
       errItems.length > 0 &&
@@ -601,8 +641,7 @@ export class Order extends Base {
         errTotalCost,
         paidWith,
         paymentProcessor: payment ? payment.processor : null,
-        paymentCurrency:
-          payment && payment.currency ? payment.currency : Payment.CURRENCY.FIO,
+        paymentCurrency,
       },
       refProfileName: refProfile ? refProfile.label : null,
     };
