@@ -26,7 +26,10 @@ export const getPaidWith = async ({
   publicKey,
   userId,
   payment,
+  isCanceledStatus,
 }) => {
+  if (isCanceledStatus) return 'Not Paid';
+
   if (isCreditCardProcessor) {
     const { data: paymentData = {} } = payment;
 

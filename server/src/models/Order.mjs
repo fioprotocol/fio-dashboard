@@ -501,6 +501,7 @@ export class Order extends Base {
         publicKey,
         userId: user ? user.id : null,
         payment,
+        isCanceledStatus: status === this.STATUS.CANCELED,
       });
     }
 
