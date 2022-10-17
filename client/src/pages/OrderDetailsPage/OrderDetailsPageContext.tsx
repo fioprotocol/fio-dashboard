@@ -27,6 +27,8 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
   const {
     buttonText = DEFAULT_BUTTON_TEXT_VALUE,
     actionClick = defaultOnClick,
+    disabled,
+    hideTopCloseButton,
     orderItem,
   } = props;
 
@@ -136,6 +138,7 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
   const actionButtonProps = {
     text: buttonText,
     onClick: actionClick,
+    disabled,
   };
 
   return {
@@ -143,6 +146,7 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
     infoBadgeData,
     isAllErrored,
     isPartial,
+    hideTopCloseButton,
     orderItemsToRender,
     partialErrorItems,
     partialErrorTotalCost,

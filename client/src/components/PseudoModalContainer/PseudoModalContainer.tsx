@@ -16,6 +16,7 @@ type Props = {
   onClose?: () => void;
   onBack?: () => void;
   title: string | React.ReactNode;
+  hideTopCloseButton?: boolean;
 };
 
 const PseudoModalContainer: React.FC<Props> = props => {
@@ -29,6 +30,7 @@ const PseudoModalContainer: React.FC<Props> = props => {
     title,
     middleWidth,
     isInfo,
+    hideTopCloseButton,
   } = props;
   return (
     <div
@@ -44,7 +46,7 @@ const PseudoModalContainer: React.FC<Props> = props => {
         {onClose && (
           <div className={classes.withClose}>
             <h2 className={classes.title}>{title}</h2>
-            <CloseButton handleClick={onClose} />
+            {!hideTopCloseButton && <CloseButton handleClick={onClose} />}
           </div>
         )}
         {(link || onBack) && (

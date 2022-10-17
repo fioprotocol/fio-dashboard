@@ -9,13 +9,21 @@ import Processing from '../../components/common/TransactionProcessing';
 import { useContext } from './PurchasePageContext';
 
 const PurchaseComponent: React.FC<ContextProps> = props => {
-  const { actionClick, buttonText, isProcessing } = useContext(props);
+  const {
+    actionClick,
+    buttonText,
+    disabledButton,
+    hideTopCloseButton,
+    isProcessing,
+  } = useContext(props);
 
   return (
     <>
       <OrderDetails
         buttonText={buttonText}
         actionClick={actionClick}
+        disabled={disabledButton}
+        hideTopCloseButton={hideTopCloseButton}
         {...props}
       />
       <Processing isProcessing={isProcessing} />

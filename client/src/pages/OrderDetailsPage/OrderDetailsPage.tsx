@@ -28,10 +28,15 @@ export const OrderDetails: React.FC<OrderDetailsProps> = props => {
     partialErrorItems,
     partialErrorTotalCost,
     title,
+    hideTopCloseButton,
   } = useContext(props);
 
   return (
-    <PseudoModalContainer title={title} onClose={actionButtonProps.onClick}>
+    <PseudoModalContainer
+      title={title}
+      onClose={actionButtonProps.onClick}
+      hideTopCloseButton={hideTopCloseButton}
+    >
       <div className={classes.container}>
         {isAllErrored && errorBadges ? (
           Object.values(

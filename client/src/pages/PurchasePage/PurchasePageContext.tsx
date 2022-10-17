@@ -5,6 +5,7 @@ import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
 import { setCartItems } from '../../redux/cart/actions';
+import { fioActionExecuted } from '../../redux/fio/actions';
 import { onPurchaseResultsClose } from '../../redux/registrations/actions';
 
 import {
@@ -13,7 +14,10 @@ import {
   prices as pricesSelector,
 } from '../../redux/registrations/selectors';
 import { noProfileLoaded } from '../../redux/profile/selectors';
-import { containedFlowQueryParams } from '../../redux/containedFlow/selectors';
+import {
+  containedFlowQueryParams,
+  isContainedFlow as isContainedFlowSelector,
+} from '../../redux/containedFlow/selectors';
 import {
   cartItems,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
@@ -28,7 +32,10 @@ import {
 import { useEffectOnce } from '../../hooks/general';
 
 import { ROUTES } from '../../constants/routes';
-import { CONTAINED_FLOW_CONTINUE_TEXT } from '../../constants/containedFlow';
+import {
+  CONTAINED_FLOW_CONTINUE_TEXT,
+  CONTAINED_FLOW_ACTIONS,
+} from '../../constants/containedFlow';
 import {
   PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
@@ -53,6 +60,8 @@ export const useContext = (
   actionClick: () => void;
   buttonText: string;
   isProcessing: boolean;
+  disabledButton: boolean;
+  hideTopCloseButton?: boolean;
 } => {
   const history = useHistory<{
     order?: Order;
@@ -66,6 +75,7 @@ export const useContext = (
   const prices = useSelector(pricesSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const userWallets = useSelector(fioWalletsSelector);
+  const isContainedFlow = useSelector(isContainedFlowSelector);
 
   const dispatch = useDispatch();
 
@@ -75,16 +85,29 @@ export const useContext = (
   const { order } = state || {};
 
   const { orderItem } = props;
-
   const { errItems, payment, regItems, status } = orderItem || {};
-
   const { paymentProcessor } = payment || {};
+
+  let buttonText = 'Close';
 
   useEffect(() => {
     if (noProfile) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
   }, [noProfile, history]);
+
+  useEffect(() => {
+    if (status === PURCHASE_RESULTS_STATUS.SUCCESS) {
+      const txIds = regItems.map(regItem => regItem.transaction_id);
+
+      dispatch(
+        fioActionExecuted({
+          result: { status: 1, txIds },
+          executeActionType: CONTAINED_FLOW_ACTIONS.REG,
+        }),
+      );
+    }
+  }, [dispatch, status, regItems]);
 
   useEffectOnce(
     () => {
@@ -150,8 +173,6 @@ export const useContext = (
     ].includes(status) && regItems.length > 0,
   );
 
-  let buttonText = 'Close';
-
   if (
     containedFlowParams != null &&
     containedFlowParams.action &&
@@ -189,11 +210,22 @@ export const useContext = (
 
   if (isRetryAvailable) {
     actionClick = onRetry;
+    buttonText = 'Try Again';
   }
+
+  const finalPurchaseStateStatus = [
+    PURCHASE_RESULTS_STATUS.SUCCESS,
+    PURCHASE_RESULTS_STATUS.FAILED,
+    PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
+    PURCHASE_RESULTS_STATUS.CANCELED,
+  ].includes(status);
+  const disabledButton = isContainedFlow && !finalPurchaseStateStatus;
 
   return {
     actionClick,
     buttonText,
     isProcessing,
+    disabledButton,
+    hideTopCloseButton: disabledButton,
   };
 };

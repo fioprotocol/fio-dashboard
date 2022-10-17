@@ -6,6 +6,7 @@ import {
   OrderItemStatus,
   Payment,
   BlockchainTransaction,
+  BlockchainTransactionEventLog,
   User,
   ReferrerProfile,
 } from '../../models';
@@ -65,9 +66,10 @@ export default class WsStatus extends WsBase {
         {
           model: OrderItem,
           include: [
+            OrderItemStatus,
             {
-              model: OrderItemStatus,
-              include: [BlockchainTransaction],
+              model: BlockchainTransaction,
+              include: [BlockchainTransactionEventLog],
             },
           ],
         },

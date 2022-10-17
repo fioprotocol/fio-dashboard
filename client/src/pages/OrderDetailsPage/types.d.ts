@@ -19,6 +19,8 @@ export type ErrBadgesProps = {
 export type OrderDetailsProps = {
   buttonText?: string;
   actionClick?: () => void;
+  disabled?: boolean;
+  hideTopCloseButton?: boolean;
   orderItem: OrderDetailed;
 };
 
@@ -35,12 +37,15 @@ export type InfoBadgeData = {
 
 export type ContextProps = {
   actionButtonProps: {
+    disabled?: boolean;
+    hideTopCloseButton?: boolean;
     text: string;
     onClick: () => void;
   };
   infoBadgeData: InfoBadgeData;
   isPartial: boolean;
   isAllErrored: boolean;
+  hideTopCloseButton?: boolean;
   title: ReactNode;
   paymentInfo: {
     orderNumber: string;
