@@ -11,7 +11,12 @@ import { ERROR_MESSAGES, ERROR_TYPES } from '../../../../constants/errors';
 
 import { CURRENCY_CODES } from '../../../../constants/common';
 
-import { PaymentProvider, PurchaseTxStatus } from '../../../../types';
+import {
+  OrderDetailedTotalCost,
+  PaymentCurrency,
+  PaymentProvider,
+  PurchaseTxStatus,
+} from '../../../../types';
 
 import classes from './InfoBadgeComponent.module.scss';
 
@@ -20,8 +25,8 @@ const STRIPE_REQUIRES_PAYMENT_ERROR = 'requires_payment_method';
 type Props = {
   paymentProvider: PaymentProvider;
   purchaseStatus: PurchaseTxStatus;
-  failedTxsTotalAmount?: number | string;
-  failedTxsTotalCurrency?: string;
+  failedTxsTotalAmount?: OrderDetailedTotalCost;
+  failedTxsTotalCurrency?: PaymentCurrency;
   failedMessage?: string;
   hide?: boolean;
   withoutTopMargin?: boolean;
@@ -31,16 +36,20 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
   const {
     paymentProvider,
     purchaseStatus,
-    failedTxsTotalAmount = '',
-    failedTxsTotalCurrency = '',
+    failedTxsTotalAmount,
+    failedTxsTotalCurrency,
     failedMessage,
     hide,
     withoutTopMargin,
   } = props;
 
+  console.log(props);
+
   let title = null;
   let message = null;
   let badgeUIType = null;
+
+  const isFree = failedTxsTotalAmount?.freeTotalPrice;
 
   // Don't show info badge on success results
   if (purchaseStatus === PURCHASE_RESULTS_STATUS.SUCCESS || hide) return null;
@@ -81,48 +90,56 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
         !failedTxsTotalCurrency ||
         failedTxsTotalCurrency === CURRENCY_CODES.USDC
       )
-        message = `There was an error during purchase of some items. As a result we have refunded $${failedTxsTotalAmount as string} back to your credit card. Go to your cart to try purchase again.`;
+        message = `There was an error during purchase of some items. As a result we have refunded ${failedTxsTotalAmount.usdcTotalPrice} back to your credit card. Go to your cart to try purchase again.`;
 
       if (failedTxsTotalCurrency === CURRENCY_CODES.FIO)
-        message = `There was an error during purchase of some items. As a result we have credited ${failedTxsTotalAmount as string} FIO Tokens to your wallet. Go to your cart to try purchase using FIO Tokens instead.`;
+        message = `There was an error during purchase of some items. As a result we have credited ${failedTxsTotalAmount.usdcTotalPrice} (${failedTxsTotalAmount.fioTotalPrice}) Tokens to your wallet. Go to your cart to try purchase using FIO Tokens instead.`;
+    }
+
+    if (isFree) {
+      message =
+        'There was an error during purchase of some items. Click close and try again.';
     }
   }
 
   // Customize content info badge for Failed status
   if (purchaseStatus === PURCHASE_RESULTS_STATUS.FAILED) {
+    title = 'Purchase Error';
     badgeUIType = BADGE_TYPES.ERROR;
 
     // Custom title and message for FIO provider
     if (paymentProvider === PAYMENT_PROVIDER.FIO) {
-      title = 'Purchase failed!';
       message =
         ERROR_MESSAGES[failedMessage] || ERROR_MESSAGES[ERROR_TYPES.default];
     }
 
     // Custom title and message for crypto provider
     if (paymentProvider === PAYMENT_PROVIDER.CRYPTO) {
-      title = 'Purchase Error';
-      message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount as string} FIO Tokens. You can use these tokens to register FIO Crypto Handle or Domain.`;
+      message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount.fioTotalPrice} Tokens. You can use these tokens to register FIO Crypto Handle or Domain.`;
     }
 
     // Custom title and message for stripe provider
     if (paymentProvider === PAYMENT_PROVIDER.STRIPE) {
       // Custom title and message for default and requires_payment_method stripe errors
       if (failedMessage === STRIPE_REQUIRES_PAYMENT_ERROR) {
-        title = 'Credit/Debit Card not accepted';
+        title = 'Payment Error';
         message =
-          'The credit card you have provided was not accepted by the issuing bank and therefore your transaction was not complete. Click close and try purchasing again with another form of payment.';
+          'The payment was not accepted and as a result the transaction was not processed.';
       } else {
-        title = 'Purchase Error';
+        if (failedTxsTotalCurrency === CURRENCY_CODES.FIO) {
+          message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount.usdcTotalPrice} FIO Tokens. You can use these tokens to register FIO Crypto Handle or Domain.`;
+        } else {
+          message = `There was an error during purchase. As a result we have refunded the entire amount of order, ${failedTxsTotalAmount.usdcTotalPrice} back to your credit card. Click close and try purchase again.`;
+        }
+      }
+    }
 
-        if (
-          !failedTxsTotalCurrency ||
-          failedTxsTotalCurrency === CURRENCY_CODES.USDC
-        )
-          message = `There was an error during registration. As a result we have refunded the entire amount of order, $${failedTxsTotalAmount as string} back to your credit card. Click close and try purchasing again.`;
-
-        if (failedTxsTotalCurrency === CURRENCY_CODES.FIO)
-          message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount as string} FIO Tokens. You can use these tokens to register FIO Crypto Handle or Domain.`;
+    //Custom message for FREE fch
+    if (isFree) {
+      if (failedMessage === ERROR_TYPES.freeAddressIsNotRegistered) {
+        message = ERROR_MESSAGES[ERROR_TYPES.freeAddressIsNotRegistered];
+      } else {
+        message = ERROR_MESSAGES[ERROR_TYPES.freeAddressError];
       }
     }
   }

@@ -7,8 +7,12 @@ import { InfoBadgeComponent } from '../InfoBadgeComponent';
 
 import { OrderItemsList } from '../OrderItemsList';
 
-import { OrderItemDetailed, PaymentCurrency } from '../../../../types';
-import { InfoBadgeData, ErrBadgesProps } from '../../types';
+import {
+  ErrBadgesProps,
+  OrderItemDetailed,
+  PaymentCurrency,
+} from '../../../../types';
+import { InfoBadgeData } from '../../types';
 
 import classes from './PartialErroredOrderItemsList.module.scss';
 
@@ -36,16 +40,18 @@ export const PartialErroredOrderItemsList: React.FC<Props> = props => {
       <h5 className={classnames(classes.completeTitle, classes.second)}>
         Purchases Not Completed
       </h5>
-      {Object.values(errorBadges).map(({ errorType, total, totalCurrency }) => (
-        <InfoBadgeComponent
-          purchaseStatus={infoBadgeData.purchaseStatus}
-          paymentProvider={infoBadgeData.paymentProvider}
-          failedMessage={errorType}
-          failedTxsTotalAmount={total}
-          failedTxsTotalCurrency={totalCurrency}
-          key={total}
-        />
-      ))}
+      {Object.values(errorBadges).map(
+        ({ errorType, total, totalCurrency, items }) => (
+          <InfoBadgeComponent
+            purchaseStatus={infoBadgeData.purchaseStatus}
+            paymentProvider={infoBadgeData.paymentProvider}
+            failedMessage={errorType}
+            failedTxsTotalAmount={total}
+            failedTxsTotalCurrency={totalCurrency}
+            key={items[0].id}
+          />
+        ),
+      )}
       <OrderItemsList items={items} primaryCurrency={primaryCurrency} />
       <Badge type={BADGE_TYPES.ERROR} show={true}>
         <div className={classnames(classes.item, classes.hasWhiteText)}>

@@ -720,6 +720,7 @@ export type UserOrderDetails = {
 };
 
 export type OrderItemDetailed = {
+  action: string;
   address?: string;
   domain?: string;
   fee_collected: number;
@@ -727,11 +728,29 @@ export type OrderItemDetailed = {
   id: string;
   isFree: boolean;
   hasCustomDomain?: boolean;
+  priceString: string;
   transaction_id: string;
   error?: string;
   errorData?: { code?: string; credited?: string; errorType?: string };
   errorType?: string;
   costNativeFio?: number;
+};
+
+export type OrderDetailedTotalCost = {
+  fioNativeTotal: number;
+  usdcTotal: number;
+  freeTotalPrice?: string;
+  fioTotalPrice?: string;
+  usdcTotalPrice?: string;
+};
+
+export type ErrBadgesProps = {
+  [badgeKey: string]: {
+    errorType: string;
+    items: OrderItemDetailed[];
+    total: OrderDetailedTotalCost;
+    totalCurrency: PaymentCurrency;
+  };
 };
 
 export type OrderDetailed = {
@@ -745,11 +764,12 @@ export type OrderDetailed = {
   user?: { id: string; email: string };
   errItems: OrderItemDetailed[];
   regItems: OrderItemDetailed[];
+  errorBadges: ErrBadgesProps;
   isAllErrored: boolean;
   isPartial: boolean;
   payment: {
-    regTotalCost: { fioNativeTotal: number; usdcTotal: number };
-    errTotalCost?: { fioNativeTotal: number; usdcTotal: number };
+    regTotalCost: OrderDetailedTotalCost;
+    errTotalCost?: OrderDetailedTotalCost;
     paidWith: string;
     paymentProcessor: PaymentProvider;
     paymentCurrency: PaymentCurrency;

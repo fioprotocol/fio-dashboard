@@ -5,6 +5,8 @@ import { Wallet } from '../models/Wallet.mjs';
 
 import MathOp from '../services/math.mjs';
 
+import { ERROR_CODES } from '../config/constants';
+
 const FREE_PRICE = 'FREE';
 
 const getFioWalletName = async (publicKey, userId) => {
@@ -119,4 +121,47 @@ export const transformOrderItemCostToPriceString = ({
   }
 
   return `${usdcPrice} (${fioPrice})`;
+};
+
+export const generateErrBadgeItem = ({ errItems = [], paymentCurrency }) => {
+  return errItems.reduce((acc, errItem) => {
+    const { errorType, errorData } = errItem;
+    let badgeKey = '';
+    let totalCurrency;
+    let customItemAmount = null;
+
+    if (errorData && errorData.code === ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP) {
+      badgeKey = `${errorData.code}`;
+      totalCurrency = Payment.CURRENCY.FIO;
+      customItemAmount = errorData.credited
+        ? new MathOp(errorData.credited).toNumber()
+        : null;
+    } else {
+      badgeKey = `${errorType}`;
+      totalCurrency = paymentCurrency;
+    }
+
+    if (!acc[badgeKey])
+      acc[badgeKey] = {
+        errorType: badgeKey,
+        items: [],
+        total: '',
+        totalCurrency: '',
+      };
+
+    acc[badgeKey].errorType = badgeKey;
+    acc[badgeKey].items.push(
+      customItemAmount ? { ...errItem, costNativeFio: customItemAmount } : errItem,
+    );
+
+    const totalCostObj = countTotalPriceAmount([errItem]);
+
+    acc[badgeKey].total = transformOrderTotalCostToPriceObj({
+      totalCostObj,
+      paymentCurrency,
+    });
+    acc[badgeKey].totalCurrency = totalCurrency;
+
+    return acc;
+  }, {});
 };

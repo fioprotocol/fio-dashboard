@@ -41,7 +41,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = props => {
         {isAllErrored && errorBadges ? (
           Object.values(
             errorBadges,
-          ).map(({ errorType, total, totalCurrency }, i) => (
+          ).map(({ errorType, total, totalCurrency, items }, i) => (
             <InfoBadgeComponent
               purchaseStatus={infoBadgeData.purchaseStatus}
               paymentProvider={infoBadgeData.paymentProvider}
@@ -49,7 +49,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = props => {
               failedTxsTotalAmount={total}
               failedTxsTotalCurrency={totalCurrency}
               withoutTopMargin={i === 0}
-              key={total + errorType}
+              key={items[0].id}
             />
           ))
         ) : (

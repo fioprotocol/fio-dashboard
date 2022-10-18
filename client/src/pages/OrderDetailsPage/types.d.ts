@@ -1,20 +1,12 @@
 import { ReactNode } from 'react';
 
 import {
+  ErrBadgesProps,
   OrderDetailed,
   OrderItemDetailed,
   PaymentCurrency,
   PaymentProvider,
 } from '../../types';
-
-export type ErrBadgesProps = {
-  [badgeKey: string]: {
-    total: string;
-    totalCurrency: string;
-    errorType: string;
-    items: OrderItemDetailed[];
-  };
-};
 
 export type OrderDetailsProps = {
   buttonText?: string;
