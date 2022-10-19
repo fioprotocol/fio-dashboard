@@ -20,6 +20,8 @@ import {
   PURCHASE_RESULTS_STATUS_LABELS,
 } from '../../constants/purchase';
 
+import { formatDateToLocale } from '../../helpers/stringFormatters';
+
 import { Action } from '../types';
 import { OrderDetails, OrderItem } from '../../types';
 
@@ -66,7 +68,7 @@ export function* exportOrdersDataSuccess(): Generator {
     }).generateCsv(
       action.data.orders.map((order: OrderDetails) => ({
         number: order.number,
-        item: order.createdAt,
+        item: order.createdAt ? formatDateToLocale(order.createdAt) : '',
         refProfileName: order.refProfileName || 'FIO Dashboard',
         userEmail: order.userEmail,
         paymentProcessor:
