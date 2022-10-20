@@ -19,6 +19,7 @@ const Notifications = (
     isAddress,
     isDomain,
     isFree,
+    isLoading,
     hasCustomDomain,
     prices,
     showAvailable,
@@ -70,6 +71,7 @@ const Notifications = (
         isFree={isFree}
         hasCustomDomain={hasCustomDomain}
         prices={prices}
+        isLoading={isLoading}
       />
     </div>
   );

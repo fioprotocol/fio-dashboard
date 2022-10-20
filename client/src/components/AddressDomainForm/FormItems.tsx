@@ -21,6 +21,7 @@ const FormItems = (
     domains,
     hasFreeAddress,
     showAvailable,
+    isLoading,
     debouncedHandleChange,
     handleChange,
     toggleShowAvailable,
@@ -82,6 +83,7 @@ const FormItems = (
           showAvailable={showAvailable}
           key="notifications"
           isFree={isFree}
+          isLoading={isLoading}
           ref={innerRef}
           hasCurrentDomain={hasCurrentDomain}
         />

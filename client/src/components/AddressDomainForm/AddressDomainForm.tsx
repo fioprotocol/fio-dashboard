@@ -27,6 +27,7 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
     cartItems = [],
     hasFreeAddress,
     initialValues,
+    pricesLoading,
     prices,
     roe,
     allowCustomDomains,
@@ -138,6 +139,7 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
           isDesktop={isDesktop}
           handleChange={handleChange}
           ref={notificationRef}
+          isLoading={pricesLoading}
           prices={prices}
           type={type}
           cartItems={cartItems}

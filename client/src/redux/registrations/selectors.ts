@@ -14,7 +14,8 @@ import {
 } from '../../types';
 import { FioRegCaptchaResponse } from '../../api/responses';
 
-export const loading = (state: ReduxState): boolean => state[prefix].loading;
+export const loading = (state: ReduxState): boolean =>
+  state[prefix].loadingArray.length > 0;
 export const prices = (state: ReduxState): Prices => state[prefix].prices;
 export const registrationDomains = (state: ReduxState): Domain[] =>
   state[prefix].domains;
