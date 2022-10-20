@@ -12,16 +12,19 @@ const PRICES_DEFAULT: Prices = {
 };
 
 export default combineReducers({
-  loading(state: boolean = false, action) {
+  loadingArray(state: string[] = [], action) {
     switch (action.type) {
       case actions.PRICES_REQUEST:
       case actions.DOMAINS_REQUEST:
-        return true;
+        return [...state, action.type];
       case actions.PRICES_FAILURE:
       case actions.PRICES_SUCCESS:
       case actions.DOMAINS_FAILURE:
       case actions.DOMAINS_SUCCESS:
-        return false;
+        return state.filter(
+          type =>
+            type !== action.type.replace(/_FAILURE|_SUCCESS/gi, '_REQUEST'),
+        );
       default:
         return state;
     }

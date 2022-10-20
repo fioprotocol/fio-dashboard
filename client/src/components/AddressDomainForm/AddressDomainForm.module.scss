@@ -152,6 +152,30 @@
   max-height: fit-content;
 }
 
+.bouncingLoader {
+  display: flex;
+  justify-content: center;
+  margin: 0 16px;
+
+  > div {
+    width: 8px;
+    height: 8px;
+    margin: 3px;
+    border-radius: 50%;
+    background-color: $white;
+    opacity: 1;
+    animation: bouncing-loader 0.6s infinite alternate;
+
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
 @include sm {
   .form {
     flex-flow: wrap;
@@ -227,4 +251,10 @@
 @keyframes expand {
   0%   { max-height: 0; }
   100% { max-height: 15em; }
+}
+
+@keyframes bouncing-loader {
+  to {
+    opacity: 0.1;
+  }
 }

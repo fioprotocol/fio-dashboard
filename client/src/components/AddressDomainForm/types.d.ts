@@ -83,6 +83,7 @@ export type AddressDomainFormProps = {
   setCartItems: () => void;
   hasFreeAddress: boolean;
   initialValues: FormValuesProps;
+  pricesLoading: boolean;
   prices: Prices;
   roe: number;
   allowCustomDomains: boolean;
@@ -93,6 +94,7 @@ export type AddressDomainFormProps = {
 };
 
 export type FormItemsProps = {
+  isLoading: boolean;
   cartItems: CartItem[];
   showAvailable: boolean;
   formErrors: FormError;
@@ -107,6 +109,7 @@ export type FormContainerProps = {
 } & DefaultFormContainerProps;
 
 export type NotificationProps = {
+  isLoading: boolean;
   cartItems: CartItem[];
   currentCartItem: CartItem | undefined;
   domains: Domain[];
@@ -121,6 +124,7 @@ export type NotificationProps = {
 } & DefaultProps;
 
 export type NotificationActionProps = {
+  isLoading: boolean;
   cartItems: CartItem[];
   domains: Domain[];
   isAddress: boolean;
