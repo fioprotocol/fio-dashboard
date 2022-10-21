@@ -28,6 +28,7 @@ type LoggedNavProps = {
   edgeAuthLoading: boolean;
   profileLoading: boolean;
   hideCart: boolean;
+  hideOrder?: boolean;
   hideNotifications: boolean;
   showSiteLink: boolean;
   onlyAuth: boolean;
@@ -47,6 +48,7 @@ const LoggedNav: React.FC<LoggedNavProps> = props => {
     closeMenu,
     notifications,
     hideCart,
+    hideOrder,
     hideNotifications,
     showSiteLink,
   } = props;
@@ -63,6 +65,7 @@ const LoggedNav: React.FC<LoggedNavProps> = props => {
   };
 
   const renderOrdersList = () => {
+    if (hideOrder) return null;
     const onOrderClick = () => {
       fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.ORDERS);
     };
