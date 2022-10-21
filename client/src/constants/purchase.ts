@@ -1,5 +1,7 @@
 import { ACTIONS } from './fio';
 
+import { PurchaseTxStatus, ColorTypes } from '../types';
+
 export const PURCHASE_RESULTS_STATUS: { [label: string]: number } = {
   NEW: 1,
   PENDING: 2,
@@ -22,7 +24,12 @@ export const PURCHASE_RESULTS_STATUS_LABELS: {
   return acc;
 }, {} as { [key: number]: string });
 
-export const ORDER_STATUS_LABELS = {
+export const ORDER_STATUS_LABELS: {
+  [key: PurchaseTxStatus | string]: {
+    title: string;
+    color: ColorTypes;
+  };
+} = {
   [PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS]: {
     title: 'PARTIAL',
     color: {

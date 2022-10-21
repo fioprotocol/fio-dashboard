@@ -6,18 +6,14 @@ import { Link } from 'react-router-dom';
 import { ORDER_NUMBER_PARAM_NAME } from '../../../../constants/order';
 import { ROUTES } from '../../../../constants/routes';
 
+import { ActionsProps } from '../../types';
+
 import classes from './OrderItemActions.module.scss';
 
 type Props = {
   orderId: string;
   orderNumber: string;
-  onDownloadClick: (data: {
-    orderId: string;
-    orderNumber: string;
-    togglePdfLoading: (loading: boolean) => void;
-  }) => Promise<void>;
-  onPrintClick: (orderId: string, orderNumber: string) => Promise<void>;
-};
+} & ActionsProps;
 
 export const OrderItemActions: React.FC<Props> = props => {
   const { orderId, orderNumber, onDownloadClick, onPrintClick } = props;

@@ -797,6 +797,14 @@ export type ChainCodeProps = {
 export type FioActions = typeof CONFIRM_FIO_ACTIONS;
 export type AnalyticsEventActions = typeof ANALYTICS_EVENT_ACTIONS;
 
+export type ColorTypes = {
+  isBlueGreen?: boolean;
+  isGreen?: boolean;
+  isOrange?: boolean;
+  isRed?: boolean;
+  isRose?: boolean;
+};
+
 declare global {
   interface Window {
     dataLayer: AnyObject[];

@@ -2,9 +2,9 @@ import React from 'react';
 
 import InfiniteScroll from '../../../../components/InfiniteScroll/InfiniteScroll';
 
-import { OrderItem } from '../OrderItem/OrderItem';
+import { OrderItemRender } from '../OrderItemRender';
 
-import { UserOrderDetails } from '../../../../types';
+import { OrdersPageProps } from '../../types';
 
 import classes from './OrdersList.module.scss';
 
@@ -17,25 +17,12 @@ const TABLE_HEADERS_LIST = [
   'Actions',
 ];
 
-type Props = {
-  hasMoreOrders: boolean;
-  isDesktop: boolean;
-  loading: boolean;
-  ordersList: UserOrderDetails[] | [];
-  getMoreOrders: () => void;
-  onDownloadClick: (data: {
-    orderId: string;
-    orderNumber: string;
-    togglePdfLoading: (loading: boolean) => void;
-  }) => Promise<void>;
-  onPrintClick: (orderId: string, orderNumber: string) => Promise<void>;
-};
-
-export const OrdersList: React.FC<Props> = props => {
+export const OrdersList: React.FC<OrdersPageProps> = props => {
   const {
     hasMoreOrders,
     loading,
     ordersList,
+    isDesktop,
     getMoreOrders,
     onDownloadClick,
     onPrintClick,
@@ -48,14 +35,16 @@ export const OrdersList: React.FC<Props> = props => {
       onLoadMore={getMoreOrders}
     >
       <div className={classes.container}>
-        {TABLE_HEADERS_LIST.map(headerItem => (
-          <div className={classes.tableHeader} key={headerItem}>
-            {headerItem}
-          </div>
-        ))}
+        {isDesktop &&
+          TABLE_HEADERS_LIST.map(headerItem => (
+            <div className={classes.tableHeader} key={headerItem}>
+              {headerItem}
+            </div>
+          ))}
         {ordersList.map(orderItem => (
-          <OrderItem
-            {...orderItem}
+          <OrderItemRender
+            isDesktop={isDesktop}
+            orderItem={orderItem}
             key={orderItem.number}
             onDownloadClick={onDownloadClick}
             onPrintClick={onPrintClick}

@@ -1,20 +1,33 @@
+@import '../../assets/styles/mediaQueriesMixings.scss'; 
+
 .container {
   display: flex;
   position: relative;
-  flex-direction: row;
   max-width: 1200px;
   width: 100%;
-  margin: 0 80px;
+  flex-direction: column-reverse;
+  margin: 0 20px;
 
   .actionBadgeContainer {
-    max-width: 285px;
     width: 100%;
-    margin: 60px 0 30px 30px;
+    margin: 30px 0;
 
     div {
       &:first-child {
         margin-bottom: 30px;
       }
+    }
+  }
+}
+
+@include lg {
+  .container {
+    flex-direction: row;
+    margin: 0 80px;
+
+    .actionBadgeContainer {
+      margin: 60px 0 30px 30px;
+      max-width: 285px;
     }
   }
 }

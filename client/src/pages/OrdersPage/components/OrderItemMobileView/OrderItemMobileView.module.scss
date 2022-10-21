@@ -1,0 +1,37 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+
+.container {
+  border-radius: 8px;
+  background-color: $white-smoke;
+  margin-top: 10px;
+  padding: 20px;
+  position: relative;
+
+  .orderNumber {
+    @include proxima-nova-bold;
+  }
+
+  .defaultItem {
+    margin-top: 15px;
+    word-break: break-all;
+  }
+
+  .defaultItem, .actionsContainer {
+    margin-top: 15px;
+  }
+
+  .status {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    .statusTitle {
+      color: $white;
+      font-size: 0.75rem;
+    }
+  }
+  .actionsContainer {
+    border-top: 1px solid $gray-main;
+    padding-top: 15px;
+  }
+}

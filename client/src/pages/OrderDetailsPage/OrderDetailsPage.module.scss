@@ -78,6 +78,10 @@
 
     .itemValue {
       margin: 10px 0 0 0;
+
+      &.withAutoMargin {
+        margin: 10px 0 0 0;
+      }
     }
   }
 }

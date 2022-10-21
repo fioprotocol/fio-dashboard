@@ -23,25 +23,11 @@ import {
   ordersList as ordersListSelector,
 } from '../../redux/orders/selectors';
 
-import { UserOrderDetails } from '../../types';
+import { OrdersPageProps } from './types';
 
 const ORDERS_ITEMS_LIMIT = 25;
 
-type Props = {
-  hasMoreOrders: boolean;
-  isDesktop: boolean;
-  loading: boolean;
-  ordersList: UserOrderDetails[];
-  getMoreOrders: () => void;
-  onDownloadClick: (data: {
-    orderId: string;
-    orderNumber: string;
-    togglePdfLoading: (loading: boolean) => void;
-  }) => Promise<void>;
-  onPrintClick: (orderId: string, orderNumber: string) => Promise<void>;
-};
-
-export const useContext = (): Props => {
+export const useContext = (): OrdersPageProps => {
   const totalOrdersCount = useSelector(totalOrdersCountSelector);
   const ordersList = useSelector(ordersListSelector);
   const loading = useSelector(loadingSelector);

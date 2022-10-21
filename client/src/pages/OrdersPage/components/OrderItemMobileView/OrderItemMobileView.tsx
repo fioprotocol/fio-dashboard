@@ -1,16 +1,15 @@
 import React from 'react';
-import classnames from 'classnames';
 
 import CommonBadge from '../../../../components/Badges/CommonBadge/CommonBadge';
 
-import { OrderItemActions } from '../OrderItemActions/OrderItemActions';
 import { OrderItemAmount } from '../OrderItemAmount';
+import { OrderItemActions } from '../OrderItemActions/OrderItemActions';
 
 import { OrderItemProps } from '../../types';
 
-import classes from './OrderItem.module.scss';
+import classes from './OrderItemMobileView.module.scss';
 
-export const OrderItem: React.FC<OrderItemProps> = props => {
+export const OrderItemMobileView: React.FC<OrderItemProps> = props => {
   const {
     date,
     id,
@@ -26,21 +25,19 @@ export const OrderItem: React.FC<OrderItemProps> = props => {
   } = props;
 
   return (
-    <React.Fragment>
-      <div className={classnames(classes.tableCol, classes.firstCol)}>
-        {date}
-      </div>
-      <div className={classes.tableCol}>{number}</div>
-      <div className={classes.tableCol}>
+    <div className={classes.container}>
+      <div className={classes.orderNumber}>{number}</div>
+      <div className={classes.defaultItem}>{date}</div>
+      <div className={classes.defaultItem}>
         <OrderItemAmount total={total} roe={roe} showFioPrice={showFioPrice} />
       </div>
-      <div className={classes.tableCol}>{paidWith}</div>
-      <div className={classes.tableCol}>
+      <div className={classes.defaultItem}>{paidWith}</div>
+      <div className={classes.status}>
         <CommonBadge {...statusColor}>
-          <span className={classes.status}>{statusTitle}</span>
+          <div className={classes.statusTitle}>{statusTitle}</div>
         </CommonBadge>
       </div>
-      <div className={classnames(classes.tableCol, classes.lastCol)}>
+      <div className={classes.actionsContainer}>
         <OrderItemActions
           orderId={id}
           orderNumber={number}
@@ -48,6 +45,6 @@ export const OrderItem: React.FC<OrderItemProps> = props => {
           onPrintClick={onPrintClick}
         />
       </div>
-    </React.Fragment>
+    </div>
   );
 };
