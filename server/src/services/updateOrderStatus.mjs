@@ -9,8 +9,7 @@ export const checkOrderStatusAndCreateNotification = async orderId => {
 
   if (
     order &&
-    (order.status === Order.STATUS.FAILED ||
-      order.status === Order.STATUS.PARTIALLY_SUCCESS ||
+    (order.status === Order.STATUS.PARTIALLY_SUCCESS ||
       order.status === Order.STATUS.SUCCESS)
   ) {
     const orderHasNotification = await Notification.findOne({
@@ -150,29 +149,6 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith }) => {
   return orderPaymentInfo;
 };
 
-const handleOrderError = ({ status, price, isCreditCardProcessor }) => {
-  const isPartialStatus = status === Order.STATUS.PARTIALLY_SUCCESS;
-
-  let title = 'Purchased Failed';
-  let message =
-    'Your purchase has failed due to an error. Your funds remain in your account and your registrations did not complete. Please try again later.';
-
-  if (isPartialStatus) {
-    title = 'Incomplete Purchase!';
-    message =
-      'Your purchase was not completed in full. Please see below what failed to be completed.';
-  }
-
-  if (isCreditCardProcessor) {
-    message = `There was an error during registration. As a result we have refunded the entire amount of order, $${price} back to your credit card. Try purchasing again.`;
-
-    if (isPartialStatus) {
-      message = `The following items failed to purchase. As a result we have refunded $${price} back to your credit card. Try purchasing again.`;
-    }
-  }
-  return { title, message };
-};
-
 const createPurchaseConfirmationNotification = async order => {
   try {
     const {
@@ -180,7 +156,6 @@ const createPurchaseConfirmationNotification = async order => {
       number,
       payments,
       publicKey,
-      status,
       user: { id: userId },
     } = order;
     const payment =
@@ -193,17 +168,9 @@ const createPurchaseConfirmationNotification = async order => {
       orderItem =>
         orderItem.orderItemStatus.txStatus === BlockchainTransaction.STATUS.SUCCESS,
     );
-    const failedOrderItemsArr = items.filter(
-      orderItem =>
-        orderItem.orderItemStatus.txStatus === BlockchainTransaction.STATUS.FAILED,
-    );
 
     const successedOrderItems = transformOrderItemsForEmail(
       successedOrderItemsArr,
-      isFioProcessor,
-    );
-    const failedOrderItems = transformOrderItemsForEmail(
-      failedOrderItemsArr,
       isFioProcessor,
     );
 
@@ -219,23 +186,6 @@ const createPurchaseConfirmationNotification = async order => {
       payment,
       paidWith,
     });
-    const failedOrderPaymentInfo = await handleOrderPaymentInfo({
-      orderItems: failedOrderItemsArr,
-      payment,
-      paidWith,
-    });
-
-    const error = {};
-    if (failedOrderItemsArr.length) {
-      const { priceTotal } = countTotalPriceAmount(failedOrderItemsArr);
-      const { title, message } = handleOrderError({
-        status,
-        price: priceTotal.toFixed(2),
-        isCreditCardProcessor,
-      });
-      error.title = title;
-      error.message = message;
-    }
 
     await Notification.create({
       type: Notification.TYPE.INFO,
@@ -246,9 +196,6 @@ const createPurchaseConfirmationNotification = async order => {
           orderNumber: number,
           successedOrderItems,
           successedOrderPaymentInfo,
-          failedOrderItems,
-          failedOrderPaymentInfo,
-          error,
           date: new Date(),
         },
       },
