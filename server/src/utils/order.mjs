@@ -33,11 +33,10 @@ export const getPaidWith = async ({
   if (isCanceledStatus) return 'Not Paid';
 
   if (isCreditCardProcessor) {
-    const { data: paymentData = {} } = payment;
+    const { data: paymentData } = payment;
 
-    const {
-      webhookData: { charges: { data: creditCardData = [] } = {} } = {},
-    } = paymentData;
+    const { webhookData: { charges: { data: creditCardData = [] } = {} } = {} } =
+      paymentData || {};
 
     return getCreditCardName(creditCardData[0]);
   }
