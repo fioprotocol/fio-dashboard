@@ -18,8 +18,12 @@ import { UserOrderDetails } from '../../../../types';
 import classes from './OrderItem.module.scss';
 
 type Props = {
-  onDownloadClick: (orderId: string) => void;
-  onPrintClick: (orderId: string) => void;
+  onDownloadClick: (data: {
+    orderId: string;
+    orderNumber: string;
+    togglePdfLoading: (loading: boolean) => void;
+  }) => Promise<void>;
+  onPrintClick: (orderId: string, orderNumber: string) => Promise<void>;
 };
 
 export const OrderItem: React.FC<Props & UserOrderDetails> = props => {

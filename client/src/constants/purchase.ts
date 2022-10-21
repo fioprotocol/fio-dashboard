@@ -55,6 +55,14 @@ export const ORDER_STATUS_LABELS = {
   },
 };
 
+export const ORDER_STATUS_LABEL_PDF = {
+  [PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS]: 'Transaction Partially Complete',
+  [PURCHASE_RESULTS_STATUS.SUCCESS]: 'Transaction Complete',
+  [PURCHASE_RESULTS_STATUS.FAILED]: 'Transaction Failed',
+  [PURCHASE_RESULTS_STATUS.CANCELED]: 'Transaction Canceled',
+  DEFAULT: 'Transaction in Progress',
+};
+
 export const PAYMENT_PROVIDER = {
   FIO: 'FIO',
   STRIPE: 'STRIPE',

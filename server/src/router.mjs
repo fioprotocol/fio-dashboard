@@ -126,4 +126,6 @@ router.post('/payments/cancel', checkAuth, routes.payments.cancel);
 
 router.get('/chain-codes/:chainCode?', routes.chainCodes.list);
 
+router.post('/generate-pdf', checkAuth, routes.generatePdf.create);
+
 export default router;

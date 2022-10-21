@@ -14,6 +14,7 @@ import { BlockchainTransactionEventLog } from './BlockchainTransactionEventLog.m
 import {
   countTotalPriceAmount,
   getPaidWith,
+  generateErrBadgeItem,
   transformOrderTotalCostToPriceObj,
   transformOrderItemCostToPriceString,
 } from '../utils/order.mjs';
@@ -600,6 +601,9 @@ export class Order extends Base {
       });
     }
 
+    const errorBadges =
+      errItems.length > 0 ? generateErrBadgeItem({ errItems, paymentCurrency }) : {};
+
     const regTotalCostAmount = countTotalPriceAmount(regItems);
     const errTotalCostAmount =
       errItems.length > 0 ? countTotalPriceAmount(errItems) : null;
@@ -635,6 +639,7 @@ export class Order extends Base {
       user: user ? { id: user.id, email: user.email } : null,
       errItems,
       regItems,
+      errorBadges,
       isAllErrored,
       isPartial,
       payment: {
