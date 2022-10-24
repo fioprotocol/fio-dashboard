@@ -7,16 +7,11 @@ import {
   Payment,
   BlockchainTransaction,
   BlockchainTransactionEventLog,
+  User,
+  ReferrerProfile,
 } from '../../models';
 
-import { FIO_ADDRESS_DELIMITER } from '../../config/constants.js';
-
 import logger from '../../logger.mjs';
-
-const ERROR_TYPES = {
-  default: 'default',
-  freeAddressIsNotRegistered: 'freeAddressIsNotRegistered',
-};
 
 export default class WsStatus extends WsBase {
   constructor(args) {
@@ -71,12 +66,15 @@ export default class WsStatus extends WsBase {
         {
           model: OrderItem,
           include: [
+            OrderItemStatus,
             {
-              model: OrderItemStatus,
-              include: [BlockchainTransaction],
+              model: BlockchainTransaction,
+              include: [BlockchainTransactionEventLog],
             },
           ],
         },
+        User,
+        ReferrerProfile,
       ],
     });
 
@@ -89,64 +87,8 @@ export default class WsStatus extends WsBase {
         this.messageData.paymentStatus = order.Payments[0].status;
 
         try {
-          this.messageData.results = {
-            errors: [],
-            registered: [],
-            partial: [],
-          };
-          for (const orderItem of order.OrderItems) {
-            const { address, domain, price, nativeFio } = orderItem;
-            const itemStatus = orderItem.OrderItemStatus;
-            const isFree = price === '0';
-
-            let bcTx = {};
-
-            if (itemStatus.blockchainTransactionId) {
-              bcTx = itemStatus.BlockchainTransaction;
-            }
-
-            const fioName = address
-              ? `${address}${FIO_ADDRESS_DELIMITER}${domain}`
-              : domain;
-
-            if (
-              itemStatus.txStatus === BlockchainTransaction.STATUS.FAILED ||
-              itemStatus.txStatus === BlockchainTransaction.STATUS.CANCEL
-            ) {
-              const eventLogs = await BlockchainTransactionEventLog.findAll({
-                where: {
-                  blockchainTransactionId: bcTx.id,
-                },
-              });
-              const event = eventLogs.find(
-                ({ status }) =>
-                  status === BlockchainTransaction.STATUS.FAILED ||
-                  status === BlockchainTransaction.STATUS.CANCEL,
-              );
-              this.messageData.results.errors.push({
-                fioName,
-                fee_collected: isFree ? null : nativeFio,
-                error: event ? event.statusNotes : '',
-                errorData: event.data,
-                cartItemId: fioName,
-                isFree,
-                errorType: isFree
-                  ? ERROR_TYPES.freeAddressIsNotRegistered
-                  : ERROR_TYPES.default,
-              });
-
-              continue;
-            }
-
-            this.messageData.results.registered.push({
-              fioName,
-              fee_collected: isFree ? null : nativeFio, // todo: set fee collected from tx
-              costUsdc: price,
-              cartItemId: fioName,
-              isFree,
-              transaction_id: bcTx.txId,
-            });
-          }
+          const orderDetailed = await Order.formatDetailed(order.get({ plain: true }));
+          this.messageData.results = orderDetailed;
         } catch (e) {
           logger.error(`WS ERROR. Order items set. ${orderId}. ${e}`);
         }

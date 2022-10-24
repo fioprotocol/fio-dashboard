@@ -1,9 +1,8 @@
 import { combineReducers } from 'redux';
 
-import { LOGOUT_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
 
-import { Domain, Prices, RegistrationResult } from '../../types';
+import { Domain, Prices } from '../../types';
 
 const PRICES_DEFAULT: Prices = {
   fio: { address: 0, domain: 0 },
@@ -91,16 +90,6 @@ export default combineReducers({
       case actions.CAPTCHA_SUCCESS:
       case actions.CAPTCHA_FAILURE:
         return false;
-      default:
-        return state;
-    }
-  },
-  registrationResult(state: RegistrationResult | null = null, action) {
-    switch (action.type) {
-      case actions.SET_REGISTRATION_RESULTS:
-        return action.data;
-      case LOGOUT_SUCCESS:
-        return {};
       default:
         return state;
     }

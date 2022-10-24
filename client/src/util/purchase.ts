@@ -5,59 +5,29 @@ import { FIO_ADDRESS_DELIMITER, isDomain } from '../utils';
 import { convertFioPrices } from './prices';
 import MathOp from './math';
 
-import { CONTAINED_FLOW_ACTIONS } from '../constants/containedFlow';
 import { ROUTES } from '../constants/routes';
 import { ERROR_TYPES } from '../constants/errors';
-import { PAYMENT_OPTIONS } from '../constants/purchase';
 
-import {
-  RegistrationResult,
-  CartItem,
-  FioActionExecuted,
-  Prices,
-  Order,
-} from '../types';
+import { RegistrationResult, CartItem, Prices, Order } from '../types';
 
 export const onPurchaseFinish = ({
-  results,
   order,
   isCheckout,
   history,
-  setRegistration,
   setProcessing,
-  fioActionExecuted,
 }: {
-  results: RegistrationResult;
   order: Order;
   isCheckout?: boolean;
   history: History;
-  setRegistration: (regData: RegistrationResult) => void;
   setProcessing: (isProcessing: boolean) => void;
-  fioActionExecuted: (data: FioActionExecuted) => void;
 }): void => {
-  setRegistration(results);
   setProcessing(false);
-
-  const txIds: string[] = [];
-  results.registered.forEach(regAddress => {
-    const { transactions } = regAddress;
-    if (transactions?.length > 0) {
-      txIds.push(...transactions);
-    }
-  });
-
-  if (results.paymentOption === PAYMENT_OPTIONS.FIO)
-    fioActionExecuted({
-      result: { status: 1, txIds },
-      executeActionType: CONTAINED_FLOW_ACTIONS.REG,
-    });
 
   if (isCheckout) {
     history.push(
       { pathname: ROUTES.PURCHASE, search: `orderNumber=${order.number}` },
       {
-        paymentProvider: results.paymentProvider,
-        order,
+        orderId: order.id,
       },
     );
   }

@@ -29,7 +29,7 @@ export type Props = {
 const TotalAmount: React.FC<TotalAmountProps> = props => {
   const { paymentAmount, paymentCurrency } = props;
 
-  if (paymentCurrency.toUpperCase() === CURRENCY_CODES.USD)
+  if (paymentCurrency?.toUpperCase() === CURRENCY_CODES.USD)
     return (
       <>
         $<Amount value={paymentAmount} />

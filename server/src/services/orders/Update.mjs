@@ -118,7 +118,7 @@ export default class OrdersUpdate extends Base {
 
         // todo: check data.results.partial
         for (const errorItem of data.results.errors) {
-          const { fioName, error } = errorItem;
+          const { fioName, error, errorType } = errorItem;
           const orderItem = order.OrderItems.find(
             ({ address, domain }) => fioApi.setFioName(address, domain) === fioName,
           );
@@ -154,6 +154,7 @@ export default class OrdersUpdate extends Base {
             await BlockchainTransactionEventLog.create({
               status: BlockchainTransaction.STATUS.FAILED,
               statusNotes: error,
+              data: errorType ? { errorType } : null,
               blockchainTransactionId,
             });
           }
