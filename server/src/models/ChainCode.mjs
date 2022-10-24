@@ -38,9 +38,18 @@ export class ChainCode extends Base {
 
   static list(chainCode) {
     const where = {
-      chainCodeId: {
-        [Op.iRegexp]: `^${chainCode}`,
-      },
+      [Op.or]: [
+        {
+          chainCodeId: {
+            [Op.iRegexp]: `^${chainCode}`,
+          },
+        },
+        {
+          chainCodeName: {
+            [Op.iRegexp]: `${chainCode}`,
+          },
+        },
+      ],
     };
 
     return this.findAll({
