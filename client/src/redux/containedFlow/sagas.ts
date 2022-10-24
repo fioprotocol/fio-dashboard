@@ -8,8 +8,6 @@ import {
 } from '../../constants/containedFlow';
 import { setStep, SET_STEP, resetContainedParams } from './actions';
 
-import { clear as clearCart } from '../cart/actions';
-
 import {
   FIO_ACTION_EXECUTE_SUCCESS,
   TRANSACTION_RESULTS_CLOSE,
@@ -61,8 +59,6 @@ export function* containedFlowActionSuccess(): Generator {
       const { r }: ContainedFlowQueryParams = yield select(
         getContainedFlowQueryParams,
       );
-
-      yield put(clearCart());
 
       if (r) {
         let redirectUrl = r;
