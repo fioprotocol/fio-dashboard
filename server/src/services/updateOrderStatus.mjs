@@ -80,7 +80,7 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith }) => {
     orderPaymentInfo.paidWith = paidWith;
     orderPaymentInfo.txIds = [];
     orderPaymentInfo.total = transformFioPrice(
-      orderItemsTotalAmount.priceTotal,
+      orderItemsTotalAmount.usdcTotal,
       orderItemsTotalAmount.fioNativeTotal,
     );
 
@@ -103,7 +103,7 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith }) => {
 
     orderPaymentInfo.paidWith = paidWith;
     orderPaymentInfo.txId = txn_id;
-    orderPaymentInfo.total = `${orderItemsTotalAmount.priceTotal.toFixed(2)} USDC`;
+    orderPaymentInfo.total = `${orderItemsTotalAmount.usdcTotal.toFixed(2)} USDC`;
   }
 
   return orderPaymentInfo;

@@ -47,12 +47,11 @@ export const getPaidWith = async ({
 export const countTotalPriceAmount = orderItems =>
   orderItems.reduce(
     ({ fioNativeTotal, usdcTotal }, orderItem) => {
-      const orderNativeFio = orderItem.fee_collected
-        ? new MathOp(orderItem.fee_collected).toNumber()
-        : 0;
-      const orderPrice = orderItem.costUsdc
-        ? new MathOp(orderItem.costUsdc).toNumber()
-        : 0;
+      const fioNativeAmount = orderItem.fee_collected || orderItem.nativeFio || 0;
+      const usdcAmount = orderItem.costUsdc || orderItem.price || 0;
+
+      const orderNativeFio = new MathOp(fioNativeAmount).toNumber();
+      const orderPrice = new MathOp(usdcAmount).toNumber();
 
       fioNativeTotal = new MathOp(fioNativeTotal).add(orderNativeFio).toNumber();
       usdcTotal = new MathOp(usdcTotal).add(orderPrice).toNumber();
