@@ -127,6 +127,7 @@
         cursor: pointer;
         background-color: $white;
         color: $dark-gray;
+        word-break: break-word;
 
         &:before {
           content: ' ';
