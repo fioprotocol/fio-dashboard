@@ -37,9 +37,10 @@ export default class Auth extends Base {
     signature: string,
     challenge: string,
     referrerCode?: string,
+    timeZone?: string,
   ): Promise<AuthLoginResponse> {
     return this.apiClient.post('auth', {
-      data: { email, signature, challenge, referrerCode },
+      data: { email, signature, challenge, referrerCode, timeZone },
     });
   }
 
