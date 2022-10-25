@@ -20,13 +20,14 @@ export default class AuthCreate extends Base {
             email: ['required', 'trim', 'email', 'to_lc'],
             signature: ['string'],
             challenge: ['string'],
+            timeZone: ['string'],
           },
         },
       ],
     };
   }
 
-  async execute({ data: { email, signature, challenge } }) {
+  async execute({ data: { email, signature, challenge, timeZone } }) {
     const user = await User.findOneWhere({
       email,
       status: { [Sequelize.Op.ne]: User.STATUS.BLOCKED },
@@ -81,6 +82,10 @@ export default class AuthCreate extends Base {
     const responseData = {
       jwt: generate({ id: user.id }, new Date(EXPIRATION_TIME + now.getTime())),
     };
+
+    if (timeZone) {
+      await user.update({ timeZone });
+    }
 
     if (user.status === User.STATUS.NEW) {
       let resendConfirmEmailAction = await Action.findOneWhere({

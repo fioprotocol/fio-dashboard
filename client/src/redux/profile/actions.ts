@@ -60,6 +60,7 @@ export const login = ({
   signature,
   challenge,
   referrerCode,
+  timeZone,
   otpKey,
   voucherId,
 }: {
@@ -67,12 +68,13 @@ export const login = ({
   signature: string;
   challenge: string;
   referrerCode?: string;
+  timeZone?: string;
   otpKey?: string;
   voucherId?: string;
 }): CommonPromiseAction => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
   promise: (api: Api) =>
-    api.auth.login(email, signature, challenge, referrerCode),
+    api.auth.login(email, signature, challenge, referrerCode, timeZone),
   otpKey,
   voucherId,
 });
