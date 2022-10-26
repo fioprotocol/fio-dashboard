@@ -104,6 +104,7 @@ const ROUTES: { [route: string]: string } = {
 
   ORDERS: '/orders',
   ORDER_DETAILS: '/order-details', // ?orderNumber=
+  ORDER_INVOICE: '/order-invoice',
 
   // Referrer Profile pages
   REF_PROFILE_HOME: '/ref/:refProfileCode',

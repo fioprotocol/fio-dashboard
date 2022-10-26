@@ -10,11 +10,14 @@ import { useEffectOnce } from '../../hooks/general';
 
 import { log } from '../../util/general';
 import { generateOrderHtmlToPrint } from '../../util/order';
+import { firePageViewAnalyticsEvent } from '../../util/analytics';
 
 import { useCheckIfDesktop } from '../../screenType';
 
 import { getUserOrdersList } from '../../redux/orders/actions';
 
+import { LINK_TITLES } from '../../constants/labels';
+import { ROUTES } from '../../constants/routes';
 import { PRINT_SCREEN_PARAMS } from '../../constants/screen';
 
 import {
@@ -45,6 +48,12 @@ export const useContext = (): OrdersPageProps => {
 
   const getOrder = async (orderId: string) => await apis.orders.get(orderId);
 
+  const fireInvoiceAnalytics = () =>
+    firePageViewAnalyticsEvent(
+      LINK_TITLES.ORDER_INVOICE,
+      `${window.location.origin}${ROUTES.ORDER_INVOICE}`,
+    );
+
   useEffectOnce(() => {
     dispatch(getUserOrdersList(ORDERS_ITEMS_LIMIT, offset));
     setOffset(offset + ORDERS_ITEMS_LIMIT);
@@ -59,6 +68,8 @@ export const useContext = (): OrdersPageProps => {
     try {
       togglePdfLoading(true);
       const orderItemToPrint = await getOrder(orderId);
+
+      fireInvoiceAnalytics();
 
       const componentHtml = ReactDOMServer.renderToStaticMarkup(
         <OrderDetailedPdf orderItem={orderItemToPrint} />,
@@ -97,6 +108,8 @@ export const useContext = (): OrdersPageProps => {
   const onPrintClick = async (orderId: string, orderNumber: string) => {
     try {
       const orderItemToPrint = await getOrder(orderId);
+
+      fireInvoiceAnalytics();
 
       const componentHtml = ReactDOMServer.renderToStaticMarkup(
         <OrderDetailedPdf orderItem={orderItemToPrint} />,
