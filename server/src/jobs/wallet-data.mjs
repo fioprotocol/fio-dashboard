@@ -390,6 +390,7 @@ class WalletDataJob extends CommonJob {
         },
         { model: PublicWalletData, as: 'publicWalletData' },
       ],
+      order: [['id', 'ASC']],
       offset,
       limit: ITEMS_PER_FETCH,
       raw: true,
