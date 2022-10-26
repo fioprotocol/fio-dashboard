@@ -1,4 +1,5 @@
 import React from 'react';
+import { isDesktop as isDesktopBrowser } from 'react-device-detect';
 
 import { OrderItem } from '../OrderItem/OrderItem';
 import { OrderItemMobileView } from '../OrderItemMobileView';
@@ -44,7 +45,7 @@ export const OrderItemRender: React.FC<OrderItemRenderProps> = props => {
   const orderProps = {
     ...orderItem,
     date,
-    hidePrintButton: !isSuccessOrPartialStatus,
+    hidePrintButton: !isSuccessOrPartialStatus || !isDesktopBrowser,
     hidePdfButton: !isSuccessOrPartialStatus,
     showFioPrice,
     statusTitle,
