@@ -8,6 +8,7 @@ import { commonFormatTime } from '../../../../util/general';
 import {
   ORDER_STATUS_LABELS,
   PAYMENT_PROVIDER,
+  PURCHASE_RESULTS_STATUS,
 } from '../../../../constants/purchase';
 
 import { UserOrderDetails } from '../../../../types';
@@ -36,9 +37,15 @@ export const OrderItemRender: React.FC<OrderItemRenderProps> = props => {
 
   const date = commonFormatTime(createdAt);
 
+  const isSuccessOrPartialStatus =
+    status === PURCHASE_RESULTS_STATUS.SUCCESS ||
+    status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS;
+
   const orderProps = {
     ...orderItem,
     date,
+    hidePrintButton: !isSuccessOrPartialStatus,
+    hidePdfButton: !isSuccessOrPartialStatus,
     showFioPrice,
     statusTitle,
     statusColor,

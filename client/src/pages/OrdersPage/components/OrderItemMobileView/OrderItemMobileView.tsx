@@ -13,6 +13,8 @@ export const OrderItemMobileView: React.FC<OrderItemProps> = props => {
   const {
     date,
     id,
+    hidePrintButton,
+    hidePdfButton,
     number,
     roe,
     payment: { paidWith },
@@ -41,6 +43,8 @@ export const OrderItemMobileView: React.FC<OrderItemProps> = props => {
         <OrderItemActions
           orderId={id}
           orderNumber={number}
+          hidePrintButton={hidePrintButton}
+          hidePdfButton={hidePdfButton}
           onDownloadClick={onDownloadClick}
           onPrintClick={onPrintClick}
         />

@@ -3,14 +3,10 @@
 
 .container {
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   justify-content: space-between;
   align-items: center;
   min-width: 150px;
-
-  .link {
-    order: 3;
-  }
 
   .button {
     display: flex;
@@ -34,10 +30,7 @@
 @include lg {
   .container {
     padding-right: 20px;
-
-    .link {
-      order: 1;
-    }
+    flex-direction: row;
 
     .button {
       width: fit-content;
@@ -46,7 +39,7 @@
 
     .icon {
       font-size: 18px;
-      width: fit-content;
+      width: 18px;
     }
   }
 }
