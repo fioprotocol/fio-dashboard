@@ -246,10 +246,7 @@ export const OrderDetailedPdf: React.FC<Props> = props => {
             {transactionDetails.regItems &&
               transactionDetails.regItems.map((item, i) => {
                 let detailedStyles = styles.detailedItem;
-                if (
-                  isLastChild(transactionDetails.regItems, i) &&
-                  !transactionDetails.errItems.length
-                ) {
+                if (isLastChild(transactionDetails.regItems, i)) {
                   detailedStyles = {
                     ...detailedStyles,
                     ...styles.detailedItemLast,
@@ -278,24 +275,6 @@ export const OrderDetailedPdf: React.FC<Props> = props => {
                         </div>
                       )}
                     </div>
-                  </div>
-                );
-              })}
-            {transactionDetails.errItems &&
-              transactionDetails.errItems.map((item, i) => {
-                let detailedStyles = styles.detailedItem;
-                if (isLastChild(transactionDetails.errItems, i)) {
-                  detailedStyles = {
-                    ...detailedStyles,
-                    ...styles.detailedItemLast,
-                  };
-                }
-                return (
-                  <div style={detailedStyles} key={item.description}>
-                    <div style={styles.type}>{item.type}</div>
-                    <div style={styles.description}>{item.description}</div>
-                    <div style={styles.debit}>{item.debit}</div>
-                    <div style={styles.credit}>{item.credit}</div>
                   </div>
                 );
               })}

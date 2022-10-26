@@ -25,25 +25,12 @@ type Props = {
   transactionDetails: {
     title: string;
     regItems: TransactionItem[];
-    errItems: TransactionItem[];
   };
 };
 
 export const useContext = (orderItem: OrderDetailed): Props => {
-  const {
-    createdAt,
-    number,
-    payment,
-    status,
-    isPartial,
-    isAllErrored,
-    regItems = [],
-    errItems = [],
-  } = orderItem || {};
-  const { paidWith, regTotalCost, errTotalCost, paymentProcessor } =
-    payment || {};
-
-  const totalCostPrice = !isAllErrored ? regTotalCost : errTotalCost;
+  const { createdAt, number, payment, status, regItems = [] } = orderItem || {};
+  const { paidWith, regTotalCost, paymentProcessor } = payment || {};
 
   const orderDetails = {
     title: 'Order Details',
@@ -69,23 +56,13 @@ export const useContext = (orderItem: OrderDetailed): Props => {
       {
         title: 'Total Cost',
         value: combinePriceWithDivider({
-          totalCostPrice,
+          totalCostPrice: regTotalCost,
           paymentProcessor,
         }),
       },
       { title: 'Paid With', value: paidWith },
     ],
   };
-
-  if (isPartial) {
-    paymentDetails.items.splice(1, 0, {
-      title: 'Total Errored Cost',
-      value: combinePriceWithDivider({
-        totalCostPrice: errTotalCost,
-        paymentProcessor,
-      }),
-    });
-  }
 
   const transformOrderItemsToTransactionItems = (
     orderItems: OrderItemDetailed[],
@@ -115,7 +92,6 @@ export const useContext = (orderItem: OrderDetailed): Props => {
   const transactionDetails = {
     title: 'Transaction Details',
     regItems: transformOrderItemsToTransactionItems(regItems),
-    errItems: transformOrderItemsToTransactionItems(errItems, true),
   };
 
   return { orderDetails, paymentDetails, transactionDetails };
