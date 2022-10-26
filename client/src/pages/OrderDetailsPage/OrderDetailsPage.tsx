@@ -1,4 +1,5 @@
 import React from 'react';
+import { History } from 'history';
 
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
@@ -11,10 +12,16 @@ import { PartialErroredOrderItemsList } from './components/PartialErroredOrderIt
 
 import { useContext } from './OrderDetailsPageContext';
 
+import { ROUTES } from '../../constants/routes';
+
 import { OrderDetailsProps } from './types';
 import { ContextProps } from '../../components/OrderDetailsContainer/OrderDetailsContainerContext';
 
 import classes from './OrderDetailsPage.module.scss';
+
+const actionClick = (history: History) => {
+  history.push(ROUTES.ORDERS);
+};
 
 export const OrderDetails: React.FC<OrderDetailsProps> = props => {
   const {
@@ -77,9 +84,14 @@ export const OrderDetails: React.FC<OrderDetailsProps> = props => {
   );
 };
 
-const OrderDetailsPage = () => (
+const OrderDetailsPage = (props: { history: History }) => (
   <OrderDetailsContainer>
-    {(containerProps: ContextProps) => <OrderDetails {...containerProps} />}
+    {(containerProps: ContextProps) => (
+      <OrderDetails
+        {...containerProps}
+        actionClick={() => actionClick(props.history)}
+      />
+    )}
   </OrderDetailsContainer>
 );
 
