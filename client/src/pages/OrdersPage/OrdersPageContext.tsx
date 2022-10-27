@@ -8,9 +8,10 @@ import apis from '../../api';
 
 import { useEffectOnce } from '../../hooks/general';
 
+import { firePageViewAnalyticsEvent } from '../../util/analytics';
 import { log } from '../../util/general';
 import { generateOrderHtmlToPrint } from '../../util/order';
-import { firePageViewAnalyticsEvent } from '../../util/analytics';
+import { getPagePrintScreenDimensions } from '../../util/screen';
 
 import { useCheckIfDesktop } from '../../screenType';
 
@@ -18,7 +19,6 @@ import { getUserOrdersList } from '../../redux/orders/actions';
 
 import { LINK_TITLES } from '../../constants/labels';
 import { ROUTES } from '../../constants/routes';
-import { PRINT_SCREEN_PARAMS } from '../../constants/screen';
 
 import {
   totalOrdersCount as totalOrdersCountSelector,
@@ -75,10 +75,10 @@ export const useContext = (): OrdersPageProps => {
         <OrderDetailedPdf orderItem={orderItemToPrint} />,
       );
 
-      const preparedPageToPrint = generateOrderHtmlToPrint(
+      const preparedPageToPrint = generateOrderHtmlToPrint({
         componentHtml,
         orderNumber,
-      );
+      });
 
       const pdfData = await apis.generatePdfFile.generatePdf(
         preparedPageToPrint,
@@ -112,18 +112,21 @@ export const useContext = (): OrdersPageProps => {
       fireInvoiceAnalytics();
 
       const componentHtml = ReactDOMServer.renderToStaticMarkup(
-        <OrderDetailedPdf orderItem={orderItemToPrint} />,
+        <OrderDetailedPdf orderItem={orderItemToPrint} isPrint={true} />,
       );
 
-      const preparedPageToPrint = generateOrderHtmlToPrint(
+      const preparedPageToPrint = generateOrderHtmlToPrint({
         componentHtml,
         orderNumber,
-      );
+        isPrint: true,
+      });
+
+      const { width, height } = getPagePrintScreenDimensions({ isPrint: true });
 
       const winPrint = window.open(
         null,
         'PRINT',
-        `width=${PRINT_SCREEN_PARAMS.default.width},height=${PRINT_SCREEN_PARAMS.default.height},toolbar=0,scrollbars=0,status=0`,
+        `width=${width},height=${height},toolbar=0,scrollbars=0,status=0`,
       );
 
       winPrint.document.write(preparedPageToPrint);
