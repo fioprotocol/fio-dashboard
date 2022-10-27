@@ -9,6 +9,7 @@
     background-color: $white;
     padding-bottom: 15px;
     font-size: 0.875em;
+    white-space: nowrap;
     @include sf-pro-display-medium;
 
     &:first-child {
