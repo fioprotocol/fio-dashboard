@@ -66,15 +66,11 @@ const LoggedNav: React.FC<LoggedNavProps> = props => {
 
   const renderOrdersList = () => {
     if (hideOrder) return null;
-    const onOrderClick = () => {
-      fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.ORDERS);
-    };
 
     return (
       <>
         <Nav.Link
           className={classnames(classes.navItem, 'text-white')}
-          onClick={onOrderClick}
           as={Link}
           to={ROUTES.ORDERS}
         >

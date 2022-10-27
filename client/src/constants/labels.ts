@@ -76,7 +76,7 @@ export const LINKS: { [linkKey: string]: string } = {
   NOT_FOUND: 'NOT_FOUND',
   ERROR: 'ERROR',
   ORDERS: 'ORDERS',
-  ORDER_DETAILES: 'ORDER_DETAILS',
+  ORDER_DETAILS: 'ORDER_DETAILS',
   ORDER_INVOICE: 'ORDER_INVOICE',
 };
 

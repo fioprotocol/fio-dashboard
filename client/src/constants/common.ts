@@ -61,7 +61,6 @@ export const ANALYTICS_EVENT_ACTIONS = {
   PAGE_VIEW: 'page_view',
   VIRTUAL_PAGE_VIEW: 'virtual_page_view',
   CHAIN_ERROR: 'chain_error',
-  ORDERS: 'orders',
 };
 
 export const CONFIRM_FIO_ACTIONS = {

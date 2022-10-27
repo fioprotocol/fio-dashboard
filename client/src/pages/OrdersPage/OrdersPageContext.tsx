@@ -17,7 +17,7 @@ import { useCheckIfDesktop } from '../../screenType';
 
 import { getUserOrdersList } from '../../redux/orders/actions';
 
-import { LINK_TITLES } from '../../constants/labels';
+import { APP_TITLE, LINK_TITLES } from '../../constants/labels';
 import { ROUTES } from '../../constants/routes';
 
 import {
@@ -50,7 +50,7 @@ export const useContext = (): OrdersPageProps => {
 
   const fireInvoiceAnalytics = () =>
     firePageViewAnalyticsEvent(
-      LINK_TITLES.ORDER_INVOICE,
+      `${APP_TITLE} - ${LINK_TITLES.ORDER_INVOICE}`,
       `${window.location.origin}${ROUTES.ORDER_INVOICE}`,
     );
 
