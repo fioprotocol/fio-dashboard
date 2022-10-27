@@ -30,6 +30,7 @@ const MIN_WAIT_TIME = 3000;
 export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   const {
     user,
+    hasFreeAddress,
     cartItems,
     pinConfirmation,
     captchaResult,
@@ -107,6 +108,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
         cartItems,
         walletKeys[currentWallet.edgeId],
         prices.nativeFio,
+        !hasFreeAddress,
         {
           walletSignature: Ecc.sign(
             nonce,
@@ -147,6 +149,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
           private: '',
         },
         prices.nativeFio,
+        !hasFreeAddress,
         verifyParams,
         refProfileInfo != null ? refProfileInfo.code : '',
       );
@@ -167,7 +170,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     );
     setWaiting(true);
     for (const item of cartItems) {
-      if (item.costNativeFio) {
+      if (item.costNativeFio || hasFreeAddress) {
         return showPinModal(CONFIRM_PIN_ACTIONS.PURCHASE);
       }
     }

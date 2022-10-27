@@ -9,6 +9,7 @@ import {
 
 export type PurchaseNowTypes = {
   user: User;
+  hasFreeAddress: boolean;
   cartItems: CartItem[];
   pinConfirmation: PinConfirmation;
   captchaResult: { success: boolean; verifyParams: {} };
