@@ -16,6 +16,7 @@ export default combineReducers({
       case actions.GET_ADMIN_USERS_REQUEST:
       case actions.DELETE_ADMIN_USER_REQUEST:
       case actions.GET_ORDERS_LIST_BY_ADMIN_REQUEST:
+      case actions.EXPORT_ORDERS_DATA_BY_ADMIN_REQUEST:
       case actions.GET_ORDER_BY_ADMIN_REQUEST:
       case actions.GET_ADMIN_USER_PROFILE_REQUEST:
       case actions.GET_FIO_ACCOUNTS_PROFILES_REQUEST:
@@ -27,6 +28,8 @@ export default combineReducers({
       case actions.DELETE_ADMIN_USER_FAILURE:
       case actions.GET_ORDERS_LIST_BY_ADMIN_SUCCESS:
       case actions.GET_ORDERS_LIST_BY_ADMIN_FAILURE:
+      case actions.EXPORT_ORDERS_DATA_BY_ADMIN_SUCCESS:
+      case actions.EXPORT_ORDERS_DATA_BY_ADMIN_FAILURE:
       case actions.GET_ORDER_BY_ADMIN_SUCCESS:
       case actions.GET_ORDER_BY_ADMIN_FAILURE:
       case actions.GET_ADMIN_USER_PROFILE_SUCCESS:

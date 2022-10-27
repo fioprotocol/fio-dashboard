@@ -2,7 +2,7 @@ import url from 'url';
 
 import _ from 'lodash';
 
-import WebSocket from 'ws';
+import { WebSocketServer } from 'ws';
 
 import AuthCheck from './services/auth/Check.mjs';
 import Exception from './services/Exception.mjs';
@@ -66,7 +66,7 @@ const runWs = async (service, wsConnection, context, params, isPrivate = true) =
 };
 
 export default expressServer => {
-  const websocketServer = new WebSocket.Server({
+  const websocketServer = new WebSocketServer({
     noServer: true,
     path: '/ws',
   });

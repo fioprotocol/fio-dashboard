@@ -5,6 +5,7 @@ import auth from './auth';
 import chainCodes from './chainCodes';
 import contacts from './contacts';
 import external from './external';
+import generatePdf from './generatePdf';
 import newDeviceTwoFactor from './newDeviceTwoFactor';
 import notifications from './notifications';
 import orders from './orders';
@@ -20,6 +21,7 @@ export default {
   chainCodes,
   contacts,
   external,
+  generatePdf,
   newDeviceTwoFactor,
   notifications,
   orders,

@@ -290,6 +290,7 @@ class EmailSender {
         return {
           subject: `FIO dashboard purchase confirmation - ${sendData.orderNumber}`,
           body: EmailTemplate.get(templateName, {
+            link: `${sendData.mainUrl}order-details?orderNumber=${sendData.orderNumber}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),

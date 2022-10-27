@@ -13,7 +13,7 @@ import {
   WalletBalancesItem,
 } from '../../../types';
 
-import classes from '../../PurchasePage/styles/PurchasePage.module.scss';
+import classes from '../CheckoutPage.module.scss';
 
 type Props = {
   paymentAssignmentWallets: FioWalletDoublet[];

@@ -16,7 +16,7 @@ import { PAYMENT_OPTIONS } from '../../../constants/purchase';
 import { CheckoutComponentProps } from '../types';
 import { PaymentCurrency } from '../../../types';
 
-import classes from '../../PurchasePage/styles/PurchasePage.module.scss';
+import classes from '../CheckoutPage.module.scss';
 
 export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
   const { cart, roe, payment, ...rest } = props;

@@ -11,6 +11,9 @@
   &.isBlue {
     background-color: $butterfly-blue;
   }
+  &.isBlueGreen {
+    background-color: $blue-green;
+  }
   &.isGreen {
     background-color: $irish-green;
   }
@@ -19,5 +22,8 @@
   }
   &.isRose {
     background-color: $wild-strawberry;
+  }
+  &.isRed {
+    background-color: $faded-red;
   }
 }

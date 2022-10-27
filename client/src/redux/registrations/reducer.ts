@@ -1,9 +1,8 @@
 import { combineReducers } from 'redux';
 
-import { LOGOUT_SUCCESS } from '../profile/actions';
 import * as actions from './actions';
 
-import { Domain, Prices, RegistrationResult } from '../../types';
+import { Domain, Prices } from '../../types';
 
 const PRICES_DEFAULT: Prices = {
   fio: { address: 0, domain: 0 },
@@ -12,16 +11,19 @@ const PRICES_DEFAULT: Prices = {
 };
 
 export default combineReducers({
-  loading(state: boolean = false, action) {
+  loadingArray(state: string[] = [], action) {
     switch (action.type) {
       case actions.PRICES_REQUEST:
       case actions.DOMAINS_REQUEST:
-        return true;
+        return [...state, action.type];
       case actions.PRICES_FAILURE:
       case actions.PRICES_SUCCESS:
       case actions.DOMAINS_FAILURE:
       case actions.DOMAINS_SUCCESS:
-        return false;
+        return state.filter(
+          type =>
+            type !== action.type.replace(/_FAILURE|_SUCCESS/gi, '_REQUEST'),
+        );
       default:
         return state;
     }
@@ -88,16 +90,6 @@ export default combineReducers({
       case actions.CAPTCHA_SUCCESS:
       case actions.CAPTCHA_FAILURE:
         return false;
-      default:
-        return state;
-    }
-  },
-  registrationResult(state: RegistrationResult | null = null, action) {
-    switch (action.type) {
-      case actions.SET_REGISTRATION_RESULTS:
-        return action.data;
-      case LOGOUT_SUCCESS:
-        return {};
       default:
         return state;
     }

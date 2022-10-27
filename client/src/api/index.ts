@@ -14,6 +14,7 @@ import Admin from './admin';
 import Payments from './payments';
 import Orders from './orders';
 import ChainCode from './chain-code';
+import GeneratePdfFile from './generatePdf';
 
 const apiClient = new ApiClient(config.apiPrefix);
 
@@ -42,6 +43,7 @@ export type Api = {
   admin: Admin;
   payments: Payments;
   chainCode: ChainCode;
+  generatePdfFile: GeneratePdfFile;
 };
 
 const apis = {
@@ -59,6 +61,7 @@ const apis = {
   admin: new Admin(apiClient),
   payments: new Payments(apiClient),
   chainCode: new ChainCode(apiClient),
+  generatePdfFile: new GeneratePdfFile(apiClient),
 };
 
 export default apis;

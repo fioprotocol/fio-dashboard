@@ -67,6 +67,15 @@ const FIO_ACTIONS_TO_END_POINT_KEYS = {
   [FIO_ACTIONS.addBundledTransactions]: 'addBundledTransactions',
 };
 
+const FIO_ACTIONS_LABEL = {
+  [FIO_ACTIONS.registerFioAddress]: 'FIO Address Registration',
+  [FIO_ACTIONS.registerFioDomain]: 'FIO Domain Registration',
+};
+
+const ERROR_CODES = {
+  SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
+};
+
 const FIO_ADDRESS_DELIMITER = '@';
 
 const PAYMENTS_STATUSES = {
@@ -113,16 +122,26 @@ const ADMIN_STATUS_IDS = {
 
 const DAY_MS = 1000 * 60 * 60 * 24; // 1 day
 
+const PRINT_SCREEN_PARAMS = {
+  default: {
+    width: '1275px',
+    height: '1803px',
+  },
+};
+
 module.exports = {
   WALLET_CREATED_FROM,
   DOMAIN_EXP_PERIOD,
+  ERROR_CODES,
   EXPIRING_DOMAINS_EMAIL_SUBJECTS,
   EXPIRING_DOMAINS_EMAIL_TITLE,
   FIO_ACTIONS,
   FIO_ACTIONS_TO_END_POINT_KEYS,
+  FIO_ACTIONS_LABEL,
   FIO_ADDRESS_DELIMITER,
   PAYMENTS_STATUSES,
   PAYMENT_EVENT_STATUSES,
+  PRINT_SCREEN_PARAMS,
   USER_ROLES,
   USER_STATUS,
   ADMIN_ROLES_IDS,

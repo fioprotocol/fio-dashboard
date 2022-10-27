@@ -11,6 +11,16 @@ import { PaymentEventLog } from './PaymentEventLog.mjs';
 import { BlockchainTransaction } from './BlockchainTransaction.mjs';
 import { BlockchainTransactionEventLog } from './BlockchainTransactionEventLog.mjs';
 
+import {
+  countTotalPriceAmount,
+  getPaidWith,
+  generateErrBadgeItem,
+  transformOrderTotalCostToPriceObj,
+  transformOrderItemCostToPriceString,
+} from '../utils/order.mjs';
+
+import { FIO_ADDRESS_DELIMITER, FIO_ACTIONS_LABEL } from '../config/constants.js';
+
 import logger from '../logger.mjs';
 
 const { DataTypes: DT } = Sequelize;
@@ -21,6 +31,13 @@ const hashids = new Hashids(
   ORDER_NUMBER_LENGTH,
   ORDER_NUMBER_ALPHABET,
 );
+
+const DEFAULT_ORDERS_LIMIT = 25;
+
+const ERROR_TYPES = {
+  default: 'default',
+  freeAddressIsNotRegistered: 'freeAddressIsNotRegistered',
+};
 
 export class Order extends Base {
   static get STATUS() {
@@ -142,7 +159,7 @@ export class Order extends Base {
     return attributes.default;
   }
 
-  static list(userId, search, page, limit = 50) {
+  static async list(userId, search, offset, limit = DEFAULT_ORDERS_LIMIT) {
     const where = { userId };
 
     if (search) {
@@ -151,18 +168,18 @@ export class Order extends Base {
 
     return this.findAll({
       where,
-      include: [OrderItem, Payment],
-      order: [['id', 'DESC']],
-      offset: (page - 1) * limit,
+      include: [OrderItem, Payment, ReferrerProfile, User],
+      order: [['createdAt', 'DESC']],
+      offset: offset,
       limit,
     });
   }
 
-  static ordersCount() {
-    return this.count();
+  static ordersCount(query) {
+    return this.count(query);
   }
 
-  static async listAll(limit = 25, offset = 0) {
+  static async listAll(limit = DEFAULT_ORDERS_LIMIT, offset = 0) {
     const [orders] = await this.sequelize.query(`
         SELECT 
           o.id, 
@@ -180,13 +197,15 @@ export class Order extends Base {
           u.email as "userEmail",
           rp.label as "refProfileName"
         FROM "orders" o
-          INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${Payment.SPENT_TYPE.ORDER}
+          INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${
+            Payment.SPENT_TYPE.ORDER
+          }
           INNER JOIN users u ON u.id = o."userId"
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
         WHERE o."deletedAt" IS NULL
         ORDER BY o.id DESC
         OFFSET ${offset}
-        LIMIT ${limit}
+        ${limit ? `LIMIT ${limit}` : ``}
       `);
 
     return orders;
@@ -446,6 +465,234 @@ export class Order extends Base {
           : [],
       payments:
         payments && payments.length ? payments.map(item => Payment.format(item)) : [],
+      refProfileName: refProfile ? refProfile.label : null,
+    };
+  }
+
+  static async formatDetailed({
+    id,
+    number,
+    total,
+    roe,
+    publicKey,
+    createdAt,
+    status,
+    OrderItems: orderItems,
+    Payments: payments,
+    User: user,
+    ReferrerProfile: refProfile,
+  }) {
+    const errItems = [];
+    const regItems = [];
+
+    const items =
+      orderItems && orderItems.length
+        ? orderItems.map(orderItem => OrderItem.format(orderItem))
+        : [];
+
+    const payment =
+      (payments &&
+        payments.length &&
+        payments.find(payment => payment.spentType === Payment.SPENT_TYPE.ORDER)) ||
+      {};
+    let paidWith = 'N/A';
+    if (payment) {
+      paidWith = await getPaidWith({
+        isCreditCardProcessor: payment.processor === Payment.PROCESSOR.STRIPE,
+        publicKey,
+        userId: user ? user.id : null,
+        payment,
+        isCanceledStatus: status === this.STATUS.CANCELED,
+      });
+    }
+
+    const paymentCurrency =
+      payment && payment.currency ? payment.currency : Payment.CURRENCY.FIO;
+
+    for (const orderItem of items) {
+      const {
+        action,
+        address,
+        blockchainTransactions,
+        data,
+        domain,
+        price,
+        nativeFio,
+      } = orderItem;
+
+      const itemStatus = orderItem.orderItemStatus;
+      const isFree = price === '0';
+
+      let bcTx = {};
+
+      if (itemStatus.blockchainTransactionId) {
+        bcTx =
+          blockchainTransactions.find(
+            bcTxItem => bcTxItem.id === itemStatus.blockchainTransactionId,
+          ) || {};
+      }
+
+      const fioName = address ? `${address}${FIO_ADDRESS_DELIMITER}${domain}` : domain;
+      const feeCollected = bcTx.feeCollected || nativeFio;
+      const { hasCustomDomain } = data || {};
+
+      if (
+        itemStatus.txStatus === BlockchainTransaction.STATUS.FAILED ||
+        itemStatus.txStatus === BlockchainTransaction.STATUS.CANCEL
+      ) {
+        const eventLogs = await BlockchainTransactionEventLog.findAll({
+          where: {
+            blockchainTransactionId: bcTx.id,
+          },
+        });
+        const event = eventLogs.find(
+          ({ status }) =>
+            status === BlockchainTransaction.STATUS.FAILED ||
+            status === BlockchainTransaction.STATUS.CANCEL,
+        );
+        errItems.push({
+          action: FIO_ACTIONS_LABEL[action],
+          address,
+          domain,
+          fee_collected: isFree ? null : feeCollected,
+          costUsdc: price,
+          error: event ? event.statusNotes : '',
+          errorData: event && event.data,
+          id: fioName,
+          isFree,
+          hasCustomDomain,
+          priceString: transformOrderItemCostToPriceString({
+            orderItemCostObj: {
+              fioNativeAmount: feeCollected,
+              usdcAmount: price,
+              isFree,
+            },
+            paymentCurrency,
+          }),
+          errorType:
+            event && event.data && event.data.errorType
+              ? event.data.errorType
+              : isFree
+              ? ERROR_TYPES.freeAddressIsNotRegistered
+              : ERROR_TYPES.default,
+        });
+
+        continue;
+      }
+
+      regItems.push({
+        action: FIO_ACTIONS_LABEL[action],
+        address,
+        domain,
+        fee_collected: isFree ? null : feeCollected,
+        costUsdc: price,
+        id: fioName,
+        isFree,
+        hasCustomDomain,
+        priceString: transformOrderItemCostToPriceString({
+          orderItemCostObj: {
+            fioNativeAmount: feeCollected,
+            usdcAmount: price,
+            isFree,
+          },
+          paymentCurrency,
+        }),
+        transaction_id: bcTx.txId,
+      });
+    }
+
+    const errorBadges =
+      errItems.length > 0 ? generateErrBadgeItem({ errItems, paymentCurrency }) : {};
+
+    const regTotalCostAmount = countTotalPriceAmount(regItems);
+    const errTotalCostAmount =
+      errItems.length > 0 ? countTotalPriceAmount(errItems) : null;
+
+    const regTotalCostPrice = transformOrderTotalCostToPriceObj({
+      totalCostObj: regTotalCostAmount,
+      paymentCurrency,
+    });
+    const errTotalCostPrice = transformOrderTotalCostToPriceObj({
+      totalCostObj: errTotalCostAmount,
+      paymentCurrency,
+    });
+
+    const regTotalCost = { ...regTotalCostAmount, ...regTotalCostPrice };
+    const errTotalCost = { ...errTotalCostAmount, ...errTotalCostPrice };
+
+    const isPartial =
+      errItems.length > 0 &&
+      regItems.length > 0 &&
+      status === this.STATUS.PARTIALLY_SUCCESS;
+
+    const isAllErrored =
+      errItems.length > 0 && regItems.length === 0 && status === this.STATUS.FAILED;
+
+    return {
+      id,
+      number,
+      total,
+      roe,
+      publicKey,
+      createdAt,
+      status,
+      user: user ? { id: user.id, email: user.email } : null,
+      errItems,
+      regItems,
+      errorBadges,
+      isAllErrored,
+      isPartial,
+      payment: {
+        regTotalCost,
+        errTotalCost,
+        paidWith,
+        paymentProcessor: payment ? payment.processor : null,
+        paymentCurrency,
+      },
+      refProfileName: refProfile ? refProfile.label : null,
+    };
+  }
+
+  static async formatToMinData({
+    id,
+    number,
+    total,
+    roe,
+    publicKey,
+    createdAt,
+    status,
+    Payments: payments,
+    User: user,
+    ReferrerProfile: refProfile,
+  }) {
+    const payment =
+      (payments &&
+        payments.length &&
+        payments.find(payment => payment.spentType === Payment.SPENT_TYPE.ORDER)) ||
+      {};
+
+    let paidWith = 'N/A';
+    if (payment) {
+      paidWith = await getPaidWith({
+        isCreditCardProcessor: payment.processor === Payment.PROCESSOR.STRIPE,
+        publicKey,
+        userId: user.id || null,
+        payment,
+      });
+    }
+
+    return {
+      id,
+      number,
+      total,
+      roe,
+      publicKey,
+      createdAt,
+      status,
+      payment: {
+        paidWith,
+        paymentProcessor: payment ? payment.processor : null,
+      },
       refProfileName: refProfile ? refProfile.label : null,
     };
   }

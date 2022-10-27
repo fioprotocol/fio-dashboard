@@ -693,7 +693,7 @@ class OrdersJob extends CommonJob {
         }
 
         // Handle free addresses
-        if (!price || price === '0') {
+        if ((!price || price === '0') && address) {
           return this.registerFree(fioName, orderItem);
         }
 

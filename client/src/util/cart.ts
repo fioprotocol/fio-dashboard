@@ -88,7 +88,10 @@ export const removeFreeCart = ({
 };
 
 export const cartHasFreeItem = (cartItems: CartItem[]): boolean => {
-  return !isEmpty(cartItems) && cartItems.some(item => !item.costNativeFio);
+  return (
+    !isEmpty(cartItems) &&
+    cartItems.some(item => !item.costNativeFio && !!item.address)
+  );
 };
 
 export const handleFreeAddressCart = ({
@@ -219,7 +222,10 @@ export const totalCost = (
   costFio?: string;
   costUsdc?: string;
 } => {
-  if (cart.length === 1 && cart.some(item => !item.costNativeFio))
+  if (
+    cart.length === 1 &&
+    cart.some(item => !item.costNativeFio && !!item.address)
+  )
     return { costFree: 'FREE' };
 
   const cost = isEmpty(cart)

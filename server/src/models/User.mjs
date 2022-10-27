@@ -37,6 +37,7 @@ export class User extends Base {
         location: DT.STRING,
         secretSet: DT.BOOLEAN,
         refProfileId: { type: DT.BIGINT, allowNull: true },
+        timeZone: { type: DT.STRING, defaultValue: 'America/New_York' },
       },
       {
         sequelize,
@@ -124,6 +125,20 @@ export class User extends Base {
       order: [['createdAt', 'DESC']],
       limit,
       offset,
+    });
+  }
+
+  static async formatDateWithTimeZone(id, date = undefined) {
+    const user = await this.findById(id);
+    return (date ? new Date(date) : new Date()).toLocaleDateString([], {
+      timeZone: user.timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric',
+      hour12: true,
     });
   }
 }

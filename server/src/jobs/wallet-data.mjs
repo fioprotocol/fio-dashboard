@@ -109,7 +109,10 @@ class WalletDataJob extends CommonJob {
                 requestSentTo: fetchedItem.payer_fio_address,
                 wallet: wallet.publicKey,
                 fioRequestId: fetchedItem.fio_request_id,
-                date: new Date(fetchedItem.time_stamp),
+                date: await User.formatDateWithTimeZone(
+                  wallet.User.id,
+                  fetchedItem.time_stamp,
+                ),
               },
             },
           });
@@ -173,7 +176,10 @@ class WalletDataJob extends CommonJob {
                     to: fetchedItem.payer_fio_address,
                     wallet: wallet.publicKey,
                     fioRequestId: fetchedItem.fio_request_id,
-                    date: new Date(fetchedItem.time_stamp),
+                    date: await User.formatDateWithTimeZone(
+                      wallet.User.id,
+                      fetchedItem.time_stamp,
+                    ),
                   },
                 },
               });
@@ -360,7 +366,7 @@ class WalletDataJob extends CommonJob {
               )} FIO ($${usdcChangeBalance} USDC)`,
               newFioBalance: `${fioApi.sufToAmount(balance)} FIO ($${usdcBalance} USDC)`,
               wallet: wallet.publicKey,
-              date: new Date(),
+              date: await User.formatDateWithTimeZone(wallet.User.id),
             },
           },
         });
@@ -384,6 +390,7 @@ class WalletDataJob extends CommonJob {
         },
         { model: PublicWalletData, as: 'publicWalletData' },
       ],
+      order: [['id', 'ASC']],
       offset,
       limit: ITEMS_PER_FETCH,
       raw: true,

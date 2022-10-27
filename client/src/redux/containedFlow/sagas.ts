@@ -8,11 +8,10 @@ import {
 } from '../../constants/containedFlow';
 import { setStep, SET_STEP, resetContainedParams } from './actions';
 
-import { clear as clearCart } from '../cart/actions';
-
 import {
   FIO_ACTION_EXECUTE_SUCCESS,
   TRANSACTION_RESULTS_CLOSE,
+  refreshFioNames,
 } from '../fio/actions';
 
 import { setRedirectPath } from '../navigation/actions';
@@ -31,10 +30,16 @@ import { cartItems } from '../cart/selectors';
 
 import { redirectLink } from '../navigation/selectors';
 
+import { fioWallets as getFioWallets } from '../fio/selectors';
+
 import { ROUTES } from '../../constants/routes';
 
 import { Action } from '../types';
-import { CartItem, ContainedFlowQueryParams } from '../../types';
+import {
+  CartItem,
+  ContainedFlowQueryParams,
+  FioWalletDoublet,
+} from '../../types';
 
 export function* setContainedFlowToInitStep(): Generator {
   yield takeEvery(LOGOUT_SUCCESS, function*() {
@@ -62,8 +67,6 @@ export function* containedFlowActionSuccess(): Generator {
         getContainedFlowQueryParams,
       );
 
-      yield put(clearCart());
-
       if (r) {
         let redirectUrl = r;
         if (action.data.result.txIds)
@@ -81,11 +84,17 @@ export function* purchaseResultsClose(history: History): Generator {
     const containedFlowQueryParams: ContainedFlowQueryParams = yield select(
       getContainedFlowQueryParams,
     );
+    const fioWallets: FioWalletDoublet[] = yield select(getFioWallets);
 
     if (isContainedFlow) {
       if (containedFlowQueryParams.action === CONTAINED_FLOW_ACTIONS.REG) {
         yield put(setStep(CONTAINED_FLOW_STEPS.FINISH));
       } else {
+        for (const fioWallet of fioWallets) {
+          if (fioWallet.publicKey) {
+            yield put<Action>(refreshFioNames(fioWallet.publicKey));
+          }
+        }
         yield put(
           setStep(CONTAINED_FLOW_STEPS.ACTION, {
             containedFlowAction: containedFlowQueryParams.action,

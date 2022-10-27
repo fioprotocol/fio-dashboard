@@ -17,7 +17,7 @@ import { BADGE_TYPES } from '../../components/Badge/Badge';
 // Loads captcha files, DO NOT REMOVE
 import '../../helpers/gt-sdk';
 
-import classes from '../PurchasePage/styles/PurchasePage.module.scss';
+import classes from './CheckoutPage.module.scss';
 
 export const CheckoutPage: React.FC = () => {
   const {

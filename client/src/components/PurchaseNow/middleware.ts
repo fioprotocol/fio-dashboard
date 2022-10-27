@@ -137,6 +137,7 @@ export const executeRegistration = async (
   items: CartItem[],
   keys: WalletKeys,
   fees: { address: number; domain: number },
+  isFreeAllowed: boolean,
   verifyParams = {},
   refCode = '',
 ): Promise<RegistrationResult> => {
@@ -147,7 +148,7 @@ export const executeRegistration = async (
     paymentProvider: PAYMENT_PROVIDER.FIO,
     providerTxStatus: PURCHASE_RESULTS_STATUS.PENDING,
   };
-  const registrations = makeRegistrationOrder([...items], fees);
+  const registrations = makeRegistrationOrder([...items], fees, isFreeAllowed);
   const registrationPromises = [];
   const dependedRegistrationPromises = [];
 
@@ -197,6 +198,7 @@ export const executeRegistration = async (
 const makeRegistrationOrder = (
   cartItems: CartItem[],
   fees: { address: number; domain: number },
+  isFreeAllowed: boolean,
 ): {
   cartItemId: string;
   fioName: string;
@@ -212,7 +214,7 @@ const makeRegistrationOrder = (
     const registration: RegistrationType = {
       cartItemId: cartItem.id,
       fioName: setFioName(cartItem.address, cartItem.domain),
-      isFree: !cartItem.costNativeFio,
+      isFree: isFreeAllowed && !cartItem.costNativeFio && !!cartItem.address,
       fee: cartItem.address ? fees.address : fees.domain,
     };
 

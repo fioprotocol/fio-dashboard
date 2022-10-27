@@ -3,19 +3,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
-import {
-  refreshBalance,
-  refreshFioNames,
-  fioActionExecuted,
-} from '../../redux/fio/actions';
+import { refreshBalance, refreshFioNames } from '../../redux/fio/actions';
 import {
   setWallet as setWalletAction,
   setCartItems,
 } from '../../redux/cart/actions';
-import {
-  setRegistration,
-  setProcessing,
-} from '../../redux/registrations/actions';
+import { setProcessing } from '../../redux/registrations/actions';
 
 import {
   fioWallets as fioWalletsSelector,
@@ -66,7 +59,6 @@ import { ACTIONS } from '../../constants/fio';
 
 import {
   RegistrationResult,
-  FioActionExecuted,
   Payment,
   CartItem,
   FioWalletDoublet,
@@ -419,15 +411,10 @@ export const useContext = (): {
       results,
     });
     onPurchaseFinish({
-      results,
       order,
       isCheckout: true,
-      setRegistration: (results: RegistrationResult) =>
-        dispatch(setRegistration(results)),
       setProcessing: (isProcessing: boolean) =>
         dispatch(setProcessing(isProcessing)),
-      fioActionExecuted: (data: FioActionExecuted) =>
-        dispatch(fioActionExecuted(data)),
       history,
     });
   };

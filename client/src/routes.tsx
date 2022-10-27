@@ -13,7 +13,7 @@ import FioDomainLandingPage from './pages/FioDomainLandingPage';
 import FioDomainManagePage from './pages/FioDomainManagePage';
 import { CartPage } from './pages/CartPage';
 import { CheckoutPage } from './pages/CheckoutPage';
-import { PurchasePage } from './pages/PurchasePage';
+import PurchasePage from './pages/PurchasePage';
 import ScrollToTop from './components/ScrollToTop';
 import FioAddressTransferPage from './pages/FioAddressTransferPage';
 import FioDomainTransferPage from './pages/FioDomainTransferPage';
@@ -50,6 +50,8 @@ import UpdateEmailPage from './pages/UpdateEmailPage';
 import RejectFioRequestPage from './pages/RejectFioRequestPage';
 import EmailConfirmationResultPage from './pages/EmailConfirmationResultsPage';
 import NotFoundPage from './pages/NotFoundPage';
+import OrdersPage from './pages/OrdersPage';
+import OrderDetailsPage from './pages/OrderDetailsPage';
 
 import AdminPrivateRoute from './components/AdminPrivateRoute';
 import AdminOrdersPage from './pages/AdminOrdersPage';
@@ -332,6 +334,13 @@ const Routes = (): React.ReactElement => (
         <PrivateRoute
           path={ROUTES.REJECT_FIO_REQUEST}
           component={RejectFioRequestPage}
+          exact
+        />
+
+        <PrivateRoute path={ROUTES.ORDERS} component={OrdersPage} exact />
+        <PrivateRoute
+          path={ROUTES.ORDER_DETAILS}
+          component={OrderDetailsPage}
           exact
         />
 

@@ -122,6 +122,7 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
                   disabled={isEdit}
                   prefixLabel="Chain Code"
                   optionsList={NFT_CHAIN_CODE_LIST}
+                  upperCased={true}
                 />
               </Col>
               <Col>
