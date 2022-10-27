@@ -45,8 +45,8 @@ export const OrderItemRender: React.FC<OrderItemRenderProps> = props => {
   const orderProps = {
     ...orderItem,
     date,
-    hidePrintButton: !isSuccessOrPartialStatus || !isDesktopBrowser,
-    hidePdfButton: !isSuccessOrPartialStatus,
+    disablePrintButton: !isSuccessOrPartialStatus || !isDesktopBrowser,
+    disablePdfButton: !isSuccessOrPartialStatus,
     showFioPrice,
     statusTitle,
     statusColor,

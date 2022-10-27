@@ -1,8 +1,8 @@
 import { ColorTypes, UserOrderDetails } from '../../types';
 
 export type HideButtonsProps = {
-  hidePrintButton: boolean;
-  hidePdfButton: boolean;
+  disablePrintButton: boolean;
+  disablePdfButton: boolean;
 };
 
 export type ActionsProps = {

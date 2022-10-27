@@ -1,3 +1,4 @@
+@import '../../../../assets/styles/colors.scss';
 @import '../../../../assets/styles/fontMixins.scss';
 @import '../../../../assets/styles/mediaQueriesMixings.scss';
 
@@ -24,6 +25,12 @@
     font-size: 20px;
     width: 50px;
     cursor: pointer;
+
+    &.disabledButton {
+      cursor: not-allowed;
+      pointer-events: none;
+      color: $silver-chalice;
+    }
   }
 }
 
