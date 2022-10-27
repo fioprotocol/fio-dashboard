@@ -3,7 +3,7 @@ import React from 'react';
 import { useContext } from './OrderDetailedPdfContext';
 
 import { ROUTES } from '../../constants/routes';
-import { PRINT_SCREEN_PARAMS } from '../../constants/screen';
+import { getPagePrintScreenDimensions } from '../../util/screen';
 
 import { OrderDetailed, AnyObject } from '../../types';
 
@@ -18,6 +18,7 @@ type DetailsContainerProps = {
 
 type Props = {
   orderItem: OrderDetailed;
+  isPrint?: boolean;
 };
 
 const fioLogoSrc =
@@ -29,7 +30,7 @@ const styles = {
     flexDirection: 'column' as const,
     fontFamily: 'Proxima Nova Regular',
     fontSize: '16px',
-    width: PRINT_SCREEN_PARAMS.default.width,
+    backgroundColor: colorsToJs['white'],
   },
   header: {
     display: 'flex',
@@ -175,7 +176,7 @@ const DetailsContainer: React.FC<DetailsContainerProps> = props => {
 };
 
 export const OrderDetailedPdf: React.FC<Props> = props => {
-  const { orderItem } = props;
+  const { orderItem, isPrint } = props;
   const { orderDetails, paymentDetails, transactionDetails } = useContext(
     orderItem,
   );
@@ -184,7 +185,13 @@ export const OrderDetailedPdf: React.FC<Props> = props => {
   const siteLink = `${window.location.origin}`;
 
   return (
-    <div style={styles.container}>
+    <div
+      style={{
+        ...styles.container,
+        width: getPagePrintScreenDimensions({ isPrint }).width,
+        height: getPagePrintScreenDimensions({ isPrint }).height,
+      }}
+    >
       <div style={styles.header}>
         <a href={siteLink}>
           <img src={fioLogoSrc} alt="fio-logo" style={styles.logo} />
@@ -246,10 +253,7 @@ export const OrderDetailedPdf: React.FC<Props> = props => {
             {transactionDetails.regItems &&
               transactionDetails.regItems.map((item, i) => {
                 let detailedStyles = styles.detailedItem;
-                if (
-                  isLastChild(transactionDetails.regItems, i) &&
-                  !transactionDetails.errItems.length
-                ) {
+                if (isLastChild(transactionDetails.regItems, i)) {
                   detailedStyles = {
                     ...detailedStyles,
                     ...styles.detailedItemLast,
@@ -278,24 +282,6 @@ export const OrderDetailedPdf: React.FC<Props> = props => {
                         </div>
                       )}
                     </div>
-                  </div>
-                );
-              })}
-            {transactionDetails.errItems &&
-              transactionDetails.errItems.map((item, i) => {
-                let detailedStyles = styles.detailedItem;
-                if (isLastChild(transactionDetails.errItems, i)) {
-                  detailedStyles = {
-                    ...detailedStyles,
-                    ...styles.detailedItemLast,
-                  };
-                }
-                return (
-                  <div style={detailedStyles} key={item.description}>
-                    <div style={styles.type}>{item.type}</div>
-                    <div style={styles.description}>{item.description}</div>
-                    <div style={styles.debit}>{item.debit}</div>
-                    <div style={styles.credit}>{item.credit}</div>
                   </div>
                 );
               })}

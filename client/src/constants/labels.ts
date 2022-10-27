@@ -75,6 +75,9 @@ export const LINKS: { [linkKey: string]: string } = {
   COOKIE_NOTICE: 'COOKIE_NOTICE',
   NOT_FOUND: 'NOT_FOUND',
   ERROR: 'ERROR',
+  ORDERS: 'ORDERS',
+  ORDER_DETAILES: 'ORDER_DETAILS',
+  ORDER_INVOICE: 'ORDER_INVOICE',
 };
 
 export const LINK_LABELS: { [linkKey: string]: string } = {
@@ -170,6 +173,7 @@ export const LINK_TITLES: { [linkKey: string]: string } = {
   [LINKS.ERROR]: 'Error',
   [LINKS.ORDERS]: 'Orders',
   [LINKS.ORDER_DETAILS]: 'Order Details',
+  [LINKS.ORDER_INVOICE]: 'Order Invoice',
 };
 
 export const fioNameLabels: { [fioNameType: string]: string } = {

@@ -14,6 +14,8 @@ export const OrderItem: React.FC<OrderItemProps> = props => {
   const {
     date,
     id,
+    disablePrintButton,
+    disablePdfButton,
     number,
     roe,
     payment: { paidWith },
@@ -46,6 +48,8 @@ export const OrderItem: React.FC<OrderItemProps> = props => {
           orderNumber={number}
           onDownloadClick={onDownloadClick}
           onPrintClick={onPrintClick}
+          disablePrintButton={disablePrintButton}
+          disablePdfButton={disablePdfButton}
         />
       </div>
     </React.Fragment>

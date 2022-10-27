@@ -1,8 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
+
+import useQuery from '../../hooks/useQuery';
 
 import { useWebsocket } from '../../hooks/websocket';
 
+import { ORDER_NUMBER_PARAM_NAME } from '../../constants/order';
+import { ROUTES } from '../../constants/routes';
 import { WS_ENDPOINTS } from '../../constants/websocket';
 
 import { OrderDetailed, PurchaseTxStatus } from '../../types';
@@ -13,13 +17,15 @@ export type ContextProps = {
 
 export const useContext = (): ContextProps => {
   const history = useHistory<{ orderId: string }>();
+  const queryParams = useQuery();
 
-  const {
-    location: { state },
-  } = history;
-  const { orderId } = state || {};
+  const orderNumber = queryParams.get(ORDER_NUMBER_PARAM_NAME);
 
   const [orderItem, setOrderItem] = useState<OrderDetailed>(null);
+
+  useEffect(() => {
+    if (!orderNumber) history.push(ROUTES.ORDERS);
+  }, [orderNumber, history]);
 
   const onStatusUpdate = (data: {
     orderStatus: PurchaseTxStatus;
@@ -35,7 +41,7 @@ export const useContext = (): ContextProps => {
 
   useWebsocket({
     endpoint: WS_ENDPOINTS.ORDER_STATUS,
-    params: { orderId: Number(orderId) },
+    params: { orderNumber },
     onMessage: onStatusUpdate,
   });
 

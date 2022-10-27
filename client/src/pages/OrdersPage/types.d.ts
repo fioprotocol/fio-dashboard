@@ -1,5 +1,10 @@
 import { ColorTypes, UserOrderDetails } from '../../types';
 
+export type HideButtonsProps = {
+  disablePrintButton: boolean;
+  disablePdfButton: boolean;
+};
+
 export type ActionsProps = {
   onDownloadClick: (data: {
     orderId: string;
@@ -23,4 +28,5 @@ export type OrderItemProps = {
   statusTitle?: string;
   statusColor: ColorTypes;
 } & ActionsProps &
-  UserOrderDetails;
+  UserOrderDetails &
+  HideButtonsProps;

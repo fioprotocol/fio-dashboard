@@ -1,16 +1,21 @@
 import base64Fonts from '../assets/fonts/base64-fonts';
 
-import { PRINT_SCREEN_PARAMS } from '../constants/screen';
+import { getPagePrintScreenDimensions } from '../util/screen';
 
-export const generateOrderHtmlToPrint = (
-  componentHtml: string,
-  orderNumber: string,
-): string => {
+export const generateOrderHtmlToPrint = ({
+  componentHtml,
+  orderNumber,
+  isPrint,
+}: {
+  componentHtml: string;
+  orderNumber: string;
+  isPrint?: boolean;
+}): string => {
+  const { width, height } = getPagePrintScreenDimensions({ isPrint });
+
   return `
     <!DOCTYPE html>
-    <html style="margin:0;width:${
-      PRINT_SCREEN_PARAMS.default.width
-    };display:block;height:${PRINT_SCREEN_PARAMS.default.height}">
+    <html style="margin:0;width:${width};display:block;height:${height}">
     <head>
     <style>
       @font-face {
@@ -41,17 +46,13 @@ export const generateOrderHtmlToPrint = (
       <style>
         @media print {
           @page {
-            size: ${PRINT_SCREEN_PARAMS.default.width} ${
-    PRINT_SCREEN_PARAMS.default.height
-  };
+            size: ${width} ${height};
           }
         }
       </style>
       <title>FIO Dashboard Order - ${orderNumber}</title>
       </head>
-      <body style="margin:0;width:${
-        PRINT_SCREEN_PARAMS.default.width
-      };display:block;height:${PRINT_SCREEN_PARAMS.default.height}">
+      <body style="margin:0;width:${width};display:block;height:${height}">
         ${componentHtml.replaceAll('-word-break', 'word-break')}
       </body>
       </html>

@@ -30,77 +30,86 @@ export default class WsStatus extends WsBase {
         'required',
         {
           nested_object: {
-            orderId: 'integer',
+            orderNumber: 'string',
           },
         },
       ],
     };
   }
 
-  async watch({ data: { orderId } }) {
-    // Update Order status
+  async watch({ data: { orderNumber } }) {
     try {
-      const items = await OrderItemStatus.getAllItemsStatuses(orderId);
+      const { id: orderId } =
+        (await Order.findOne({ where: { number: orderNumber } })) || {};
 
-      await Order.updateStatus(
-        orderId,
-        null,
-        items
-          .filter(({ txStatus }) => txStatus !== BlockchainTransaction.STATUS.NONE)
-          .map(({ txStatus }) => txStatus),
-      );
-    } catch (error) {
-      logger.error(`ORDER STATUS UPDATE - ${orderId}`, error);
-    }
+      if (!orderId)
+        throw new Error(`Can't find order id for order number ${orderNumber}`);
+      // Update Order status
+      try {
+        const items = await OrderItemStatus.getAllItemsStatuses(orderId);
 
-    const order = await Order.findOne({
-      where: {
-        id: orderId,
-        userId: this.context.id,
-      },
-      include: [
-        {
-          model: Payment,
-          where: { spentType: Payment.SPENT_TYPE.ORDER },
-        },
-        {
-          model: OrderItem,
-          include: [
-            OrderItemStatus,
-            {
-              model: BlockchainTransaction,
-              include: [BlockchainTransactionEventLog],
-            },
-          ],
-        },
-        User,
-        ReferrerProfile,
-      ],
-    });
-
-    try {
-      if (
-        this.messageData.orderStatus !== order.status ||
-        this.messageData.paymentStatus !== order.Payments[0].status
-      ) {
-        this.messageData.orderStatus = order.status;
-        this.messageData.paymentStatus = order.Payments[0].status;
-
-        try {
-          const orderDetailed = await Order.formatDetailed(order.get({ plain: true }));
-          this.messageData.results = orderDetailed;
-        } catch (e) {
-          logger.error(`WS ERROR. Order items set. ${orderId}. ${e}`);
-        }
-
-        this.send(
-          JSON.stringify({
-            data: this.messageData,
-          }),
+        await Order.updateStatus(
+          orderId,
+          null,
+          items
+            .filter(({ txStatus }) => txStatus !== BlockchainTransaction.STATUS.NONE)
+            .map(({ txStatus }) => txStatus),
         );
+      } catch (error) {
+        logger.error(`ORDER STATUS UPDATE - ${orderId}`, error);
+      }
+
+      const order = await Order.findOne({
+        where: {
+          id: orderId,
+          userId: this.context.id,
+        },
+        include: [
+          {
+            model: Payment,
+            where: { spentType: Payment.SPENT_TYPE.ORDER },
+          },
+          {
+            model: OrderItem,
+            include: [
+              OrderItemStatus,
+              {
+                model: BlockchainTransaction,
+                include: [BlockchainTransactionEventLog],
+              },
+            ],
+          },
+          User,
+          ReferrerProfile,
+        ],
+      });
+
+      try {
+        if (
+          this.messageData.orderStatus !== order.status ||
+          this.messageData.paymentStatus !== order.Payments[0].status
+        ) {
+          this.messageData.orderStatus = order.status;
+          this.messageData.paymentStatus = order.Payments[0].status;
+
+          try {
+            const orderDetailed = await Order.formatDetailed(order.get({ plain: true }));
+            this.messageData.results = orderDetailed;
+          } catch (e) {
+            logger.error(`WS ERROR. Order items set. ${orderId}. ${e}`);
+          }
+
+          this.send(
+            JSON.stringify({
+              data: this.messageData,
+            }),
+          );
+        }
+      } catch (e) {
+        logger.error(`WS ERROR. Order status. ${orderId}. ${e}`);
       }
     } catch (e) {
-      logger.error(`WS ERROR. Order status. ${orderId}. ${e}`);
+      logger.error(`WS ERROR. Order items get. ${e}`);
     }
   }
 

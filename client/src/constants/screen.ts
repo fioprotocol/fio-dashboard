@@ -9,4 +9,8 @@ export const PRINT_SCREEN_PARAMS = {
     width: '1275px',
     height: '1803px',
   },
+  safari: {
+    width: '1100px',
+    height: '1400px',
+  },
 };

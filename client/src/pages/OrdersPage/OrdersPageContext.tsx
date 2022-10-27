@@ -8,14 +8,17 @@ import apis from '../../api';
 
 import { useEffectOnce } from '../../hooks/general';
 
+import { firePageViewAnalyticsEvent } from '../../util/analytics';
 import { log } from '../../util/general';
 import { generateOrderHtmlToPrint } from '../../util/order';
+import { getPagePrintScreenDimensions } from '../../util/screen';
 
 import { useCheckIfDesktop } from '../../screenType';
 
 import { getUserOrdersList } from '../../redux/orders/actions';
 
-import { PRINT_SCREEN_PARAMS } from '../../constants/screen';
+import { LINK_TITLES } from '../../constants/labels';
+import { ROUTES } from '../../constants/routes';
 
 import {
   totalOrdersCount as totalOrdersCountSelector,
@@ -45,6 +48,12 @@ export const useContext = (): OrdersPageProps => {
 
   const getOrder = async (orderId: string) => await apis.orders.get(orderId);
 
+  const fireInvoiceAnalytics = () =>
+    firePageViewAnalyticsEvent(
+      LINK_TITLES.ORDER_INVOICE,
+      `${window.location.origin}${ROUTES.ORDER_INVOICE}`,
+    );
+
   useEffectOnce(() => {
     dispatch(getUserOrdersList(ORDERS_ITEMS_LIMIT, offset));
     setOffset(offset + ORDERS_ITEMS_LIMIT);
@@ -60,14 +69,16 @@ export const useContext = (): OrdersPageProps => {
       togglePdfLoading(true);
       const orderItemToPrint = await getOrder(orderId);
 
+      fireInvoiceAnalytics();
+
       const componentHtml = ReactDOMServer.renderToStaticMarkup(
         <OrderDetailedPdf orderItem={orderItemToPrint} />,
       );
 
-      const preparedPageToPrint = generateOrderHtmlToPrint(
+      const preparedPageToPrint = generateOrderHtmlToPrint({
         componentHtml,
         orderNumber,
-      );
+      });
 
       const pdfData = await apis.generatePdfFile.generatePdf(
         preparedPageToPrint,
@@ -98,19 +109,24 @@ export const useContext = (): OrdersPageProps => {
     try {
       const orderItemToPrint = await getOrder(orderId);
 
+      fireInvoiceAnalytics();
+
       const componentHtml = ReactDOMServer.renderToStaticMarkup(
-        <OrderDetailedPdf orderItem={orderItemToPrint} />,
+        <OrderDetailedPdf orderItem={orderItemToPrint} isPrint={true} />,
       );
 
-      const preparedPageToPrint = generateOrderHtmlToPrint(
+      const preparedPageToPrint = generateOrderHtmlToPrint({
         componentHtml,
         orderNumber,
-      );
+        isPrint: true,
+      });
+
+      const { width, height } = getPagePrintScreenDimensions({ isPrint: true });
 
       const winPrint = window.open(
         null,
         'PRINT',
-        `width=${PRINT_SCREEN_PARAMS.default.width},height=${PRINT_SCREEN_PARAMS.default.height},toolbar=0,scrollbars=0,status=0`,
+        `width=${width},height=${height},toolbar=0,scrollbars=0,status=0`,
       );
 
       winPrint.document.write(preparedPageToPrint);

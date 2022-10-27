@@ -43,8 +43,6 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
     withoutTopMargin,
   } = props;
 
-  console.log(props);
-
   let title = null;
   let message = null;
   let badgeUIType = null;
@@ -88,7 +86,8 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
     if (paymentProvider === PAYMENT_PROVIDER.STRIPE && failedTxsTotalAmount) {
       if (
         !failedTxsTotalCurrency ||
-        failedTxsTotalCurrency === CURRENCY_CODES.USDC
+        failedTxsTotalCurrency === CURRENCY_CODES.USDC ||
+        failedTxsTotalCurrency.toUpperCase() === CURRENCY_CODES.USD
       )
         message = `There was an error during purchase of some items. As a result we have refunded ${failedTxsTotalAmount.usdcTotalPrice} back to your credit card. Go to your cart to try purchase again.`;
 
