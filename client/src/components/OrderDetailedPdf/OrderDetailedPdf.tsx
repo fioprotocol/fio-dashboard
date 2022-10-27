@@ -52,6 +52,7 @@ const styles = {
     marginTop: '15px',
     marginBottom: '15px',
     fontFamily: 'Proxima Nova Semibold',
+    fontSize: '1.125rem',
   },
   subtitle: {
     marginTop: '0',
@@ -87,6 +88,7 @@ const styles = {
     paddingBottom: '1rem',
     margin: '0',
     fontSize: '1.125rem',
+    fontFamily: 'Proxima Nova Semibold',
   },
   detailedItem: {
     width: '100%',
@@ -169,7 +171,7 @@ const DetailsContainer: React.FC<DetailsContainerProps> = props => {
 
   return (
     <div style={detailedContainerStyle}>
-      <h5 style={styles.detailedTitle}>{title}</h5>
+      <div style={styles.detailedTitle}>{title}</div>
       {children}
     </div>
   );
@@ -198,7 +200,7 @@ export const OrderDetailedPdf: React.FC<Props> = props => {
         </a>
       </div>
       <div style={styles.orderContainer}>
-        <h4 style={styles.title}>My Order</h4>
+        <div style={styles.title}>My Order</div>
         <p style={styles.subtitle}>
           Please find your order information listed below.
         </p>
