@@ -69,10 +69,19 @@
     margin-bottom: 0;
     margin-right: 30px;
     word-break: break-word;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
     .name {
       @include proxima-nova-bold;
     }
   }
+
+  .descriptor {
+    @include proxima-nova-regular;
+    font-size: 13px;
+  }
+
   .price {
     @include proxima-nova-bold;
     margin: 0 30px 0 auto;

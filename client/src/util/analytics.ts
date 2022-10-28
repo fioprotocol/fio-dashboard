@@ -9,6 +9,7 @@ import {
   CURRENCY_CODES,
   DOMAIN,
 } from '../constants/common';
+import { FIO_ADDRESS_DELIMITER } from '../utils';
 
 import MathOp from './math';
 
@@ -67,14 +68,12 @@ export const getCartItemsDataForAnalytics = (
       0,
     ),
     items: cartItems.map(item => ({
-      item_name: item.id,
-      item_category: !item.address
-        ? ANALYTICS_FIO_NAME_TYPE.DOMAIN
-        : item.hasCustomDomain
-        ? ANALYTICS_FIO_NAME_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
-        : +item.costUsdc
-        ? ANALYTICS_FIO_NAME_TYPE.ADDRESS
-        : ANALYTICS_FIO_NAME_TYPE.ADDRESS_FREE,
+      item_name: [item.address, item.domain]
+        .filter(Boolean)
+        .join(FIO_ADDRESS_DELIMITER),
+      item_category: !item.costUsdc
+        ? ANALYTICS_FIO_NAME_TYPE.ADDRESS_FREE
+        : item.type,
       price: +item.costUsdc,
     })),
   };

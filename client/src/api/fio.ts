@@ -601,6 +601,26 @@ export default class Fio {
     }
   };
 
+  executeActionWithoutKeys = async (
+    action: string,
+    params: AnyObject,
+  ): Promise<TrxResponse> => {
+    if (!params.maxFee) params.maxFee = DEFAULT_ACTION_FEE_AMOUNT;
+
+    try {
+      this.walletFioSDK.setSignedTrxReturnOption(true);
+      const preparedTrx = await this.walletFioSDK.genericAction(action, params);
+      this.validateAction();
+      return await this.walletFioSDK.executePreparedTrx(
+        this.actionEndPoints[ACTIONS_TO_END_POINT_KEYS[action]],
+        preparedTrx,
+      );
+    } catch (err) {
+      this.logError(err);
+      throw err;
+    }
+  };
+
   getProxies = async () => {
     let proxies;
     try {

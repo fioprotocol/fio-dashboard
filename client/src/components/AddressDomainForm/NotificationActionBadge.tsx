@@ -6,11 +6,14 @@ import { connect } from 'react-redux';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 
-import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_TYPE,
+} from '../../constants/common';
 
 import { isFreeDomain, compose, FIO_ADDRESS_DELIMITER } from '../../utils';
 import MathOp from '../../util/math';
-import { deleteCartItem } from '../../util/cart';
+import { deleteCartItem, getCartItemDescriptor } from '../../util/cart';
 import { convertFioPrices } from '../../util/prices';
 import {
   fireAnalyticsEvent,
@@ -53,8 +56,15 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
     domainName &&
     cartItems.some(
       (item: CartItem) =>
-        !item.address && item.domain === domainName.toLowerCase(),
+        item.type === CART_ITEM_TYPE.DOMAIN &&
+        !item.address &&
+        item.domain === domainName.toLowerCase(),
     );
+  const itemType = !address
+    ? CART_ITEM_TYPE.DOMAIN
+    : (address && hasCustomDomain) || hasOnlyDomain
+    ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+    : CART_ITEM_TYPE.ADDRESS;
 
   let costNativeFio = 0;
 
@@ -85,6 +95,7 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
 
     const newCartItem: CartItem = {
       ...values,
+      type: itemType,
       id,
       allowFree: isFreeDomain({ domains, domain: domainName }),
     };
@@ -115,7 +126,7 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
     }
     fireAnalyticsEvent(
       ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
-      getCartItemsDataForAnalytics([newCartItem]),
+      getCartItemsDataForAnalytics([...cartItems, newCartItem]),
     );
   };
   return (
@@ -127,16 +138,21 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
         )}
       >
         <p className={classes.address}>
-          {isAddress && (
-            <>
-              <span className={classes.name}>{address}</span>@
-            </>
-          )}
-          {isDomain ? (
-            <span className={classes.name}>{domainName}</span>
-          ) : (
-            domainName
-          )}
+          <span>
+            {isAddress && (
+              <>
+                <span className={classes.name}>{address}</span>@
+              </>
+            )}
+            {isDomain ? (
+              <span className={classes.name}>{domainName}</span>
+            ) : (
+              domainName
+            )}
+          </span>
+          <span className={classes.descriptor}>
+            {getCartItemDescriptor(itemType)}
+          </span>
         </p>
         <p className={classes.price}>
           {isFree && !hasCustomDomain ? (

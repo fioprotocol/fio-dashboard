@@ -62,6 +62,8 @@ export type FioRegPricesResponse = {
     nativeFio: {
       domain: number;
       address: number;
+      renewDomain: number;
+      addBundles: number;
     };
     usdtRoe: number;
   };

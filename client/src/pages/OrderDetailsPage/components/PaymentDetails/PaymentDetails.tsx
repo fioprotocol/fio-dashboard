@@ -14,6 +14,7 @@ type Props = {
 export const PaymentDetails: React.FC<Props> = props => {
   const { orderNumber, paidWith, totalCostPrice } = props;
 
+  const isFree = totalCostPrice === 'FREE';
   const paidWithTitle = totalCostPrice === 'FREE' ? 'Assigned To' : 'Paid With';
 
   return (
@@ -29,7 +30,7 @@ export const PaymentDetails: React.FC<Props> = props => {
           </p>
         </div>
       </Badge>
-      <Badge type={BADGE_TYPES.WHITE} show={!!paidWith}>
+      <Badge type={BADGE_TYPES.WHITE} show={!isFree && !!paidWith}>
         <div className={classes.item}>
           <span className={classnames(classes.name, 'boldText')}>
             {paidWithTitle}

@@ -1,4 +1,4 @@
-import { ADDRESS, DOMAIN } from './common';
+import { ADDRESS, CART_ITEM_TYPE, DOMAIN } from './common';
 
 export const LINKS: { [linkKey: string]: string } = {
   HOME: 'HOME',
@@ -199,4 +199,13 @@ export const TRANSFER_PAGE_LINK = {
 export const TRANSFER_PAGE_CONFIRMATION_LINK = {
   [DOMAIN]: LINKS.FIO_DOMAIN_OWNERSHIP_CONFIRMATION,
   [ADDRESS]: LINKS.FIO_ADDRESS_OWNERSHIP_CONFIRMATION,
+};
+
+export const CART_ITEM_DESCRIPTOR = {
+  [CART_ITEM_TYPE.ADDRESS]: 'FIO Crypto Handle Registration',
+  [CART_ITEM_TYPE.DOMAIN]: 'FIO Domain Registration',
+  [CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN]:
+    'FIO Crypto Handle and Domain Registration',
+  [CART_ITEM_TYPE.DOMAIN_RENEWAL]: 'FIO Domain Renewal',
+  [CART_ITEM_TYPE.ADD_BUNDLES]: 'Add Bundled Transactions',
 };

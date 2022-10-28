@@ -177,6 +177,8 @@ export const ANALYTICS_FIO_NAME_TYPE = {
   DOMAIN: 'domain',
   ADDRESS_WITH_CUSTOM_DOMAIN: 'combo',
   ADDRESS_FREE: 'free_fch',
+  DOMAIN_RENEWAL: 'domain_renewal',
+  ADD_BUNDLES: 'add_bundles',
 };
 
 export const ANALYTICS_PAYMENT_TYPE = {
@@ -201,3 +203,15 @@ export const ANALYTICS_SEND_TYPE = {
 };
 
 export const ASTERISK_SIGN = '*';
+
+// Must match ANALYTICS_FIO_NAME_TYPE for correct works of analytics
+export const CART_ITEM_TYPE = {
+  ADDRESS: 'fch',
+  DOMAIN: 'domain',
+  ADDRESS_WITH_CUSTOM_DOMAIN: 'combo',
+  DOMAIN_RENEWAL: 'domain_renewal',
+  ADD_BUNDLES: 'add_bundles',
+};
+
+export const DEFAULT_BUNDLE_SET_VALUE = 1;
+export const DEFAULT_BUNDLE_AMOUNT = 100;
