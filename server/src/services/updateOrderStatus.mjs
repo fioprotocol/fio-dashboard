@@ -4,6 +4,7 @@ import { fioApi } from '../external/fio.mjs';
 import { countTotalPriceAmount, getPaidWith } from '../utils/order.mjs';
 import MathOp from './math.mjs';
 import logger from '../logger.mjs';
+import { FIO_ACTIONS_LABEL } from '../config/constants.js';
 
 export const checkOrderStatusAndCreateNotification = async orderId => {
   const order = await Order.orderInfo(orderId);
@@ -44,7 +45,7 @@ const transformFioPrice = (usdcPrice, nativeAmount) => {
 
 const transformOrderItemsForEmail = (orderItems, showPriceWithFioAmount) =>
   orderItems.map(orderItem => {
-    const { address, data, domain, nativeFio, price } = orderItem;
+    const { action, address, data, domain, nativeFio, price } = orderItem;
     let priceAmount = {};
 
     if (price && price !== '0') {
@@ -57,7 +58,12 @@ const transformOrderItemsForEmail = (orderItems, showPriceWithFioAmount) =>
       priceAmount = 'FREE';
     }
 
-    const transformedOrderItem = { address, domain, priceAmount };
+    const transformedOrderItem = {
+      descriptor: FIO_ACTIONS_LABEL[action],
+      address,
+      domain,
+      priceAmount,
+    };
     if (data && data.hasCustomDomain)
       transformedOrderItem.hasCustomDomain = data.hasCustomDomain;
 

@@ -19,7 +19,12 @@ import {
   transformOrderItemCostToPriceString,
 } from '../utils/order.mjs';
 
-import { FIO_ADDRESS_DELIMITER, FIO_ACTIONS_LABEL } from '../config/constants.js';
+import {
+  FIO_ADDRESS_DELIMITER,
+  FIO_ACTIONS_LABEL,
+  CART_ITEM_TYPE,
+  FIO_ACTIONS,
+} from '../config/constants.js';
 
 import logger from '../logger.mjs';
 
@@ -499,6 +504,23 @@ export class Order extends Base {
     };
   }
 
+  static getOrderItemType(orderItem) {
+    const { action, address, data } = orderItem;
+    const { hasCustomDomain } = data || {};
+
+    if (action === FIO_ACTIONS.renewFioDomain) {
+      return CART_ITEM_TYPE.DOMAIN_RENEWAL;
+    } else if (action === FIO_ACTIONS.addBundledTransactions) {
+      return CART_ITEM_TYPE.ADD_BUNDLES;
+    } else if (!address) {
+      return CART_ITEM_TYPE.DOMAIN;
+    } else if (address && hasCustomDomain) {
+      return CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
+    } else {
+      return CART_ITEM_TYPE.ADDRESS;
+    }
+  }
+
   static async formatDetailed({
     id,
     number,
@@ -564,7 +586,8 @@ export class Order extends Base {
 
       const fioName = address ? `${address}${FIO_ADDRESS_DELIMITER}${domain}` : domain;
       const feeCollected = bcTx.feeCollected || nativeFio;
-      const { hasCustomDomain } = data || {};
+      const { hasCustomDomain, cartItemId } = data || {};
+      const itemType = this.getOrderItemType(orderItem);
 
       if (
         itemStatus.txStatus === BlockchainTransaction.STATUS.FAILED ||
@@ -586,9 +609,10 @@ export class Order extends Base {
           domain,
           fee_collected: isFree ? null : feeCollected,
           costUsdc: price,
+          type: itemType,
           error: event ? event.statusNotes : '',
           errorData: event && event.data,
-          id: fioName,
+          id: cartItemId || fioName,
           isFree,
           hasCustomDomain,
           priceString: transformOrderItemCostToPriceString({
@@ -616,7 +640,8 @@ export class Order extends Base {
         domain,
         fee_collected: isFree ? null : feeCollected,
         costUsdc: price,
-        id: fioName,
+        type: itemType,
+        id: cartItemId || fioName,
         isFree,
         hasCustomDomain,
         priceString: transformOrderItemCostToPriceString({

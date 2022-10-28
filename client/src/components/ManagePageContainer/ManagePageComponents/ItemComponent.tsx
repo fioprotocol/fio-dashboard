@@ -31,6 +31,8 @@ const ItemComponent: React.FC<Props> = props => {
     showExpired,
     showStatus,
     showBundles,
+    onAddBundles,
+    onRenewDomain,
   } = props;
   const { name = '', remaining, expiration, isPublic } = fioNameItem || {};
 
@@ -70,7 +72,11 @@ const ItemComponent: React.FC<Props> = props => {
         <div className="d-flex align-items-center w-100">
           <p className={classes.badgeTitle}>Bundled Transactions</p>
           <p className={classes.badgeItem}>{remaining || 0}</p>
-          <RenderAddBundles name={name} isMobileView={true} />
+          <RenderAddBundles
+            name={name}
+            isMobileView={true}
+            onAddBundles={onAddBundles}
+          />
         </div>
       </Badge>
       <Badge show={showStatus} type={BADGE_TYPES.WHITE}>
@@ -90,6 +96,7 @@ const ItemComponent: React.FC<Props> = props => {
           isDesktop={isDesktop}
           onSettingsOpen={onSettingsOpen}
           fioNameItem={fioNameItem}
+          onRenewDomain={onRenewDomain}
         />
       </div>
     </div>

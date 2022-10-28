@@ -1,14 +1,25 @@
 import isEmpty from 'lodash/isEmpty';
 
-import { ANALYTICS_EVENT_ACTIONS, CURRENCY_CODES } from '../constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_TYPE,
+  CURRENCY_CODES,
+} from '../constants/common';
 import { ACTIONS } from '../constants/fio';
+import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
 
 import MathOp from './math';
 import { setFioName } from '../utils';
 import { convertFioPrices } from './prices';
 import { fireAnalyticsEvent, getCartItemsDataForAnalytics } from './analytics';
 
-import { CartItem, DeleteCartItem, OrderItem, Prices } from '../types';
+import {
+  CartItem,
+  CartItemType,
+  DeleteCartItem,
+  OrderItem,
+  Prices,
+} from '../types';
 
 export const setFreeCart = ({
   cartItems,
@@ -179,17 +190,35 @@ export const deleteCartItem = ({
   }
 };
 
+export const getActionByCartItem = (
+  type: CartItemType,
+  address: string,
+): string => {
+  if (type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
+    return ACTIONS.renewFioDomain;
+  } else if (type === CART_ITEM_TYPE.ADD_BUNDLES) {
+    return ACTIONS.addBundledTransactions;
+  } else if (address) {
+    return ACTIONS.registerFioAddress;
+  } else {
+    return ACTIONS.registerFioDomain;
+  }
+};
+
 export const cartItemsToOrderItems = (
   cartItems: CartItem[],
   prices: Prices,
   roe: number,
 ) => {
   return cartItems.map(
-    ({ address, domain, costNativeFio, costUsdc, hasCustomDomain }) => {
+    ({ id, type, address, domain, costNativeFio, hasCustomDomain }) => {
       const data: {
         hasCustomDomain?: boolean;
         hasCustomDomainFee?: number;
-      } = {};
+        cartItemId: string;
+      } = {
+        cartItemId: id,
+      };
 
       if (hasCustomDomain) {
         data.hasCustomDomain = hasCustomDomain;
@@ -199,9 +228,7 @@ export const cartItemsToOrderItems = (
       }
 
       return {
-        action: address
-          ? ACTIONS.registerFioAddress
-          : ACTIONS.registerFioDomain,
+        action: getActionByCartItem(type, address),
         address,
         domain,
         nativeFio: `${costNativeFio || 0}`,
@@ -267,4 +294,8 @@ export const cartIsRelative = (
       return false;
   }
   return true;
+};
+
+export const getCartItemDescriptor = (type: CartItemType): string => {
+  return CART_ITEM_DESCRIPTOR[type];
 };

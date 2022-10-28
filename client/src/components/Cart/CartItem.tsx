@@ -7,6 +7,8 @@ import Badge, { BADGE_TYPES } from '../Badge/Badge';
 
 import { CURRENCY_CODES } from '../../constants/common';
 
+import { getCartItemDescriptor } from '../../util/cart';
+
 import { CartItem as CartItemType, PaymentCurrency } from '../../types';
 
 import classes from './Cart.module.scss';
@@ -68,14 +70,19 @@ const CartItem: React.FC<Props> = props => {
     <>
       <Badge show type={BADGE_TYPES.WHITE}>
         <div className={classes.itemContainer}>
-          {item.address ? (
-            <span className={classes.address}>
-              <span className="boldText">{address}@</span>
-              <span className={hasCustomDomain && 'boldText'}>{domain}</span>
+          <div className={classes.itemNameContainer}>
+            {item.address ? (
+              <span className={classes.address}>
+                <span className="boldText">{address}@</span>
+                <span className={hasCustomDomain && 'boldText'}>{domain}</span>
+              </span>
+            ) : (
+              <span className="boldText">{domain && domain}</span>
+            )}
+            <span className={classes.descriptor}>
+              {getCartItemDescriptor(item.type)}
             </span>
-          ) : (
-            <span className="boldText">{domain && domain}</span>
-          )}
+          </div>
           <p
             className={classnames(
               classes.price,

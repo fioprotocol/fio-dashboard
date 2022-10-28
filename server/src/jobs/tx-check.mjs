@@ -57,6 +57,10 @@ class TxCheckJob extends CommonJob {
           let status = BlockchainTransaction.STATUS.PENDING;
 
           switch (action) {
+            case FIO_ACTIONS.renewFioDomain:
+            case FIO_ACTIONS.addBundledTransactions:
+              status = BlockchainTransaction.STATUS.SUCCESS;
+              break;
             case FIO_ACTIONS.registerFioAddress:
             case FIO_ACTIONS.registerFioDomain: {
               const { fio_addresses, fio_domains } = await walletSdk.getFioNames(

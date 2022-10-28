@@ -8,9 +8,16 @@ import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import CounterContainer from '../CounterContainer/CounterContainer';
 
 import { ROUTES } from '../../constants/routes';
-import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_TYPE,
+} from '../../constants/common';
 
-import { handleFreeAddressCart, deleteCartItem } from '../../util/cart';
+import {
+  handleFreeAddressCart,
+  deleteCartItem,
+  getCartItemDescriptor,
+} from '../../util/cart';
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
@@ -147,17 +154,20 @@ const AddressDomainCart: React.FC<Props> = props => {
                       <span className="boldText">{item.domain}</span>
                     </p>
                   )}
+                  <p className={classes.itemName}>
+                    <span>{getCartItemDescriptor(item.type)}</span>
+                  </p>
                   <p className={classes.itemPrice}>
-                    Cost:{' '}
                     <span className="boldText">
+                      Cost:{' '}
                       {!Number.isFinite(item.costNativeFio)
                         ? 'FREE'
                         : `${item.costFio} FIO
                       (${item.costUsdc} USDC)`}
                     </span>{' '}
-                    {item.address ? null : (
+                    {item.type === CART_ITEM_TYPE.DOMAIN ? (
                       <span className={classes.thin}>- annually</span>
-                    )}
+                    ) : null}
                   </p>
                 </div>
 

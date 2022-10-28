@@ -43,6 +43,7 @@ import { useEffectOnce } from '../../hooks/general';
 import { ROUTES } from '../../constants/routes';
 import {
   ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_TYPE,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
 import { log } from '../../util/general';
@@ -216,6 +217,8 @@ export const useContext = (): UseContextReturnType => {
         nativeFio: {
           address: updatedFioAddressPrice = nativeFioAddressPrice,
           domain: updatedFioDomainPrice = nativeFioDomainPrice,
+          renewDomain: updatedRenewFioDomainPrice = nativeFioDomainPrice,
+          addBundles: updatedAddBundlesPrice = 0,
         } = {},
         usdtRoe: updatedRoe = roe,
       } = {},
@@ -226,7 +229,11 @@ export const useContext = (): UseContextReturnType => {
 
       const retObj = { ...item };
 
-      if (!item.address) {
+      if (item.type === CART_ITEM_TYPE.ADD_BUNDLES) {
+        retObj.costNativeFio = updatedAddBundlesPrice;
+      } else if (item.type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
+        retObj.costNativeFio = updatedRenewFioDomainPrice;
+      } else if (!item.address) {
         retObj.costNativeFio = updatedFioDomainPrice;
       } else {
         retObj.costNativeFio = updatedFioAddressPrice;

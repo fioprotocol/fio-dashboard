@@ -16,6 +16,7 @@ import {
   ANALYTICS_EVENT_ACTIONS,
   CONFIRM_FIO_ACTIONS,
   CURRENCY_CODES,
+  CART_ITEM_TYPE,
 } from './constants/common';
 
 import { ResultsData } from '../components/common/TransactionResults/types';
@@ -32,6 +33,7 @@ export type OwnPropsAny = any; // todo: fix usages for ownProps
 export type Domain = { domain: string; free?: boolean };
 
 export type ContainedFlowActionSettingsKey = keyof typeof CONTAINED_FLOW_ACTIONS;
+export type CartItemType = typeof CART_ITEM_TYPE[keyof typeof CART_ITEM_TYPE];
 
 export type CartItem = {
   address?: string;
@@ -48,6 +50,7 @@ export type CartItem = {
   errorData?: { code?: string; credited?: string };
   errorType?: string;
   isCustomDomain?: boolean;
+  type?: CartItemType;
 };
 
 export type Notification = {
@@ -81,7 +84,12 @@ export type Prices = {
 
 export type IncomePrices = {
   pricing: {
-    nativeFio: { address: number; domain: number };
+    nativeFio: {
+      address: number;
+      domain: number;
+      renewDomain: number;
+      addBundles: number;
+    };
     usdtRoe: number;
   };
 };
@@ -734,6 +742,7 @@ export type OrderItemDetailed = {
   errorData?: { code?: string; credited?: string; errorType?: string };
   errorType?: string;
   costNativeFio?: number;
+  type?: CartItemType;
 };
 
 export type OrderDetailedTotalCost = {
