@@ -97,9 +97,11 @@ export const useContext = (
     )
       return setTokenCodesList([]);
 
-    const tokenRegex = new RegExp('^' + tokenCodeValue, 'i');
-    const tokenList = selectedTokenCodesList.filter(tokenCodeItem =>
-      tokenRegex.test(tokenCodeItem.tokenCodeId),
+    const tokenRegex = new RegExp(tokenCodeValue, 'i');
+    const tokenList = selectedTokenCodesList.filter(
+      tokenCodeItem =>
+        tokenRegex.test(tokenCodeItem.tokenCodeId) ||
+        tokenRegex.test(tokenCodeItem.tokenCodeName),
     );
 
     setTokenCodesList(tokenList);

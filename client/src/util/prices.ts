@@ -1,7 +1,17 @@
 import MathOp from '../util/math';
 import apis from '../api';
 
-import { FioBalanceRes, WalletBalances, WalletBalancesItem } from '../types';
+import { PAYMENT_PROVIDER } from '../constants/purchase';
+
+import {
+  FioBalanceRes,
+  OrderDetailedTotalCost,
+  PaymentProvider,
+  WalletBalances,
+  WalletBalancesItem,
+} from '../types';
+
+const DEFAULT_DIVIDER = ' / ';
 
 export function convertFioPrices(
   nativeFio: number | null | undefined,
@@ -90,3 +100,23 @@ export const calculateTotalBalances = (
 
 export const DEFAULT_FEE_PRICES = convertFioPrices(0, 1);
 export const DEFAULT_BALANCES = calculateBalances({}, 1);
+
+export const combinePriceWithDivider = ({
+  totalCostPrice,
+  paymentProcessor,
+  divider = DEFAULT_DIVIDER,
+}: {
+  totalCostPrice: OrderDetailedTotalCost;
+  paymentProcessor: PaymentProvider;
+  divider?: string;
+}) => {
+  const { freeTotalPrice, fioTotalPrice, usdcTotalPrice } =
+    totalCostPrice || {};
+  if (freeTotalPrice) return freeTotalPrice;
+
+  if (paymentProcessor === PAYMENT_PROVIDER.FIO) {
+    return `${fioTotalPrice}${divider}${usdcTotalPrice}`;
+  }
+
+  return usdcTotalPrice;
+};

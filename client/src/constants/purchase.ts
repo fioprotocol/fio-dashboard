@@ -1,3 +1,7 @@
+import { ACTIONS } from './fio';
+
+import { PurchaseTxStatus, ColorTypes } from '../types';
+
 export const PURCHASE_RESULTS_STATUS: { [label: string]: number } = {
   NEW: 1,
   PENDING: 2,
@@ -20,6 +24,52 @@ export const PURCHASE_RESULTS_STATUS_LABELS: {
   return acc;
 }, {} as { [key: number]: string });
 
+export const ORDER_STATUS_LABELS: {
+  [key: PurchaseTxStatus | string]: {
+    title: string;
+    color: ColorTypes;
+  };
+} = {
+  [PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS]: {
+    title: 'PARTIAL',
+    color: {
+      isBlueGreen: true,
+    },
+  },
+  [PURCHASE_RESULTS_STATUS.SUCCESS]: {
+    title: 'COMPLETE',
+    color: {
+      isGreen: true,
+    },
+  },
+  [PURCHASE_RESULTS_STATUS.CANCELED]: {
+    title: 'CANCELED',
+    color: {
+      isOrange: true,
+    },
+  },
+  [PURCHASE_RESULTS_STATUS.FAILED]: {
+    title: 'FAILED',
+    color: {
+      isRed: true,
+    },
+  },
+  DEAFULT: {
+    title: 'IN PROGRESS',
+    color: {
+      isRose: true,
+    },
+  },
+};
+
+export const ORDER_STATUS_LABEL_PDF = {
+  [PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS]: 'Transaction Partially Complete',
+  [PURCHASE_RESULTS_STATUS.SUCCESS]: 'Transaction Complete',
+  [PURCHASE_RESULTS_STATUS.FAILED]: 'Transaction Failed',
+  [PURCHASE_RESULTS_STATUS.CANCELED]: 'Transaction Canceled',
+  DEFAULT: 'Transaction in Progress',
+};
+
 export const PAYMENT_PROVIDER = {
   FIO: 'FIO',
   STRIPE: 'STRIPE',
@@ -30,6 +80,11 @@ export const PAYMENT_PROVIDER_LABEL = {
   [PAYMENT_PROVIDER.FIO]: 'Fio Wallet',
   [PAYMENT_PROVIDER.STRIPE]: 'Stripe',
   [PAYMENT_PROVIDER.CRYPTO]: 'Crypto',
+};
+
+export const PAYMENT_ITEM_TYPE_LABEL = {
+  [ACTIONS.registerFioAddress]: 'FCH',
+  [ACTIONS.registerFioDomain]: 'Domain',
 };
 
 export const PAYMENT_STATUSES = {

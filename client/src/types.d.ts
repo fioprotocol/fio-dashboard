@@ -675,6 +675,10 @@ export type OrderItem = {
   priceCurrency: string;
   updatedAt: string;
   blockchainTransactions: BcTx[];
+  order?: {
+    id: string;
+    number: string;
+  };
   orderItemStatus: {
     txStatus: typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
   };
@@ -700,6 +704,79 @@ export type OrderDetails = {
   updatedAt: string;
 };
 
+export type UserOrderDetails = {
+  id: string;
+  number: string;
+  roe: string;
+  total: string;
+  publicKey: string;
+  createdAt: string;
+  status: number;
+  payment: {
+    paidWith: string;
+    paymentProcessor: string;
+  };
+  refProfileName: string;
+};
+
+export type OrderItemDetailed = {
+  action: string;
+  address?: string;
+  domain?: string;
+  fee_collected: number;
+  costUsdc: string;
+  id: string;
+  isFree: boolean;
+  hasCustomDomain?: boolean;
+  priceString: string;
+  transaction_id: string;
+  error?: string;
+  errorData?: { code?: string; credited?: string; errorType?: string };
+  errorType?: string;
+  costNativeFio?: number;
+};
+
+export type OrderDetailedTotalCost = {
+  fioNativeTotal: number;
+  usdcTotal: number;
+  freeTotalPrice?: string;
+  fioTotalPrice?: string;
+  usdcTotalPrice?: string;
+};
+
+export type ErrBadgesProps = {
+  [badgeKey: string]: {
+    errorType: string;
+    items: OrderItemDetailed[];
+    total: OrderDetailedTotalCost;
+    totalCurrency: PaymentCurrency;
+  };
+};
+
+export type OrderDetailed = {
+  id: string;
+  number: string;
+  total: string;
+  roe: string;
+  publicKey: string;
+  createdAt: string;
+  status: number;
+  user?: { id: string; email: string };
+  errItems: OrderItemDetailed[];
+  regItems: OrderItemDetailed[];
+  errorBadges: ErrBadgesProps;
+  isAllErrored: boolean;
+  isPartial: boolean;
+  payment: {
+    regTotalCost: OrderDetailedTotalCost;
+    errTotalCost?: OrderDetailedTotalCost;
+    paidWith: string;
+    paymentProcessor: PaymentProvider;
+    paymentCurrency: PaymentCurrency;
+  };
+  refProfileName?: string;
+};
+
 export type ApiError = {
   code: string;
   fields?: { [fieldName: string]: AnyType };
@@ -719,6 +796,14 @@ export type ChainCodeProps = {
 
 export type FioActions = typeof CONFIRM_FIO_ACTIONS;
 export type AnalyticsEventActions = typeof ANALYTICS_EVENT_ACTIONS;
+
+export type ColorTypes = {
+  isBlueGreen?: boolean;
+  isGreen?: boolean;
+  isOrange?: boolean;
+  isRed?: boolean;
+  isRose?: boolean;
+};
 
 declare global {
   interface Window {

@@ -1,0 +1,52 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: center;
+  min-width: 150px;
+
+  .button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 35px;
+    font-size: 0.75rem;
+    border-radius: 7px;
+    line-height: 0;
+    width: 70px;
+    @include proxima-nova-thin;
+  }
+
+  .icon {
+    font-size: 20px;
+    width: 50px;
+    cursor: pointer;
+
+    &.disabledButton {
+      cursor: not-allowed;
+      pointer-events: none;
+      color: $silver-chalice;
+    }
+  }
+}
+
+@include lg {
+  .container {
+    padding-right: 20px;
+    flex-direction: row;
+
+    .button {
+      width: fit-content;
+      height: 30px;
+    }
+
+    .icon {
+      font-size: 18px;
+      width: 18px;
+    }
+  }
+}

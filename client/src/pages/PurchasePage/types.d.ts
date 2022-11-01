@@ -53,4 +53,5 @@ export type InfoBadgeComponentProps = {
   failedTxsTotalCurrency?: string;
   failedMessage?: string;
   hide?: boolean;
+  withoutTopMargin?: boolean;
 };

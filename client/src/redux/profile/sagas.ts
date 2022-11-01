@@ -140,12 +140,14 @@ export function* logoutSuccess(history: History, api: Api): Generator {
 export function* nonceSuccess(): Generator {
   yield takeEvery(NONCE_SUCCESS, function*(action: Action) {
     const { email, signature, nonce, otpKey, voucherId } = action.data;
+    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     yield put<Action>(
       login({
         email,
         signature,
         challenge: nonce,
+        timeZone,
         otpKey,
         voucherId,
       }),

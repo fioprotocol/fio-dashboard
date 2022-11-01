@@ -1,7 +1,6 @@
 import { initCaptcha, verifyCaptcha } from '../../helpers/captcha';
 
 import { Api } from '../../api';
-import { RegistrationResult } from '../../types';
 import { CommonAction, CommonPromiseAction } from '../types';
 
 export const prefix = 'registrations';
@@ -35,13 +34,6 @@ export const checkCaptcha = (): CommonPromiseAction => ({
     const captchaObj = await initCaptcha(data);
     return verifyCaptcha(captchaObj);
   },
-});
-
-export const SET_REGISTRATION_RESULTS = `${prefix}/SET_REGISTRATION_RESULTS`;
-
-export const setRegistration = (results: RegistrationResult): CommonAction => ({
-  type: SET_REGISTRATION_RESULTS,
-  data: results,
 });
 
 export const SET_PROCESSING = `${prefix}/SET_PROCESSING`;

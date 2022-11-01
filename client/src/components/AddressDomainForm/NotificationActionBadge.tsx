@@ -41,6 +41,7 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
     addItem,
     deleteItem,
     setCartItems,
+    isLoading,
   } = props;
 
   const { address, domain: domainName } = values || {};
@@ -153,10 +154,22 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
               classes.button,
               !currentCartItem && classes.show,
             )}
+            variant={isLoading ? 'secondary' : 'primary'}
+            disabled={isLoading}
             onClick={addItemToCart}
           >
-            <FontAwesomeIcon icon="plus-square" className={classes.icon} />
-            Add to Cart
+            {isLoading ? (
+              <div className={classes.bouncingLoader}>
+                <div />
+                <div />
+                <div />
+              </div>
+            ) : (
+              <>
+                <FontAwesomeIcon icon="plus-square" className={classes.icon} />
+                Add to Cart
+              </>
+            )}
           </Button>
           <div
             className={classnames(

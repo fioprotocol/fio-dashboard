@@ -28,6 +28,7 @@ type LoggedNavProps = {
   edgeAuthLoading: boolean;
   profileLoading: boolean;
   hideCart: boolean;
+  hideOrder?: boolean;
   hideNotifications: boolean;
   showSiteLink: boolean;
   onlyAuth: boolean;
@@ -47,6 +48,7 @@ const LoggedNav: React.FC<LoggedNavProps> = props => {
     closeMenu,
     notifications,
     hideCart,
+    hideOrder,
     hideNotifications,
     showSiteLink,
   } = props;
@@ -60,6 +62,32 @@ const LoggedNav: React.FC<LoggedNavProps> = props => {
       );
     }
     closeMenu();
+  };
+
+  const renderOrdersList = () => {
+    if (hideOrder) return null;
+
+    return (
+      <>
+        <Nav.Link
+          className={classnames(classes.navItem, 'text-white')}
+          as={Link}
+          to={ROUTES.ORDERS}
+        >
+          <div className={classnames(classes.notifWrapper, classes.cartanim)}>
+            <FontAwesomeIcon
+              icon="list-alt"
+              className={classnames(classes.icon)}
+            />
+          </div>
+        </Nav.Link>
+        {isDesktop ? (
+          <hr className={classnames(classes.vertical, 'mx-3')} />
+        ) : (
+          <div className="mx-3" />
+        )}
+      </>
+    );
   };
 
   const renderCart = () => {
@@ -151,6 +179,7 @@ const LoggedNav: React.FC<LoggedNavProps> = props => {
     <div className={classes.loggedNavContainer}>
       {showSiteLink ? <SiteLink {...props} /> : <div />}
       <Nav className="pr-0 align-items-center">
+        {renderOrdersList()}
         {renderCart()}
         {/* Notifications commented due to BD-2631 task */}
         {/* {renderNotifications()} */}

@@ -15,6 +15,7 @@ import {
   faChevronRight,
   faChevronUp,
   faCircle,
+  faCircleNotch,
   faCog,
   faCreditCard,
   faDollarSign,
@@ -37,6 +38,7 @@ import {
   faPlus,
   faPlusCircle,
   faPlusSquare,
+  faPrint,
   faQrcode,
   faSearch,
   faShareAlt,
@@ -112,6 +114,8 @@ const icons = {
   faCertificate,
   faExclamation,
   faPlus,
+  faPrint,
+  faCircleNotch,
 };
 
 export default icons;

@@ -35,6 +35,7 @@ export const Navigation: React.FC<NavigationProps> | null = props => {
           isNotActiveUser ||
           isAdminRoute
         }
+        hideOrder={isContainedFlow || isNotActiveUser || isAdminRoute}
         hideNotifications={isContainedFlow || isNotActiveUser || isAdminRoute}
         onlyAuth={isContainedFlow || isNotActiveUser}
         hideSettings={isAdminRoute}

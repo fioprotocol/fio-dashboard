@@ -1,0 +1,41 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.tableCol {
+  white-space: nowrap;
+  background-color: $white-smoke;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  vertical-align: middle;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px;
+  font-size: 0.8125em;
+  min-height: 54px;
+
+  .status {
+    color: $white;
+    font-size: 11px;
+  }
+}
+
+.firstCol {
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  padding-left: 15px;
+  padding-right: 20px;
+  @include sf-pro-display-regular;
+}
+
+.lastCol {
+  border-bottom-right-radius: 12px;
+  border-top-right-radius: 12px;
+  padding-right: 10px;
+  display: block;
+
+  @include sm {
+    display: initial;
+  }
+}

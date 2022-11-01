@@ -9,7 +9,7 @@ import {
   metaValidator,
 } from '../../../../util/validators';
 
-const TOKEN_ID_MAX_LENGTH = 64;
+const TOKEN_ID_MAX_LENGTH = 128;
 const URL_MAX_LENGTH = 128;
 
 const validationSchema: ValidationSchema = {

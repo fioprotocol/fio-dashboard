@@ -58,6 +58,7 @@ router.get('/admin/roles', checkAdminAuth, routes.adminUsers.rolesList);
 router.get('/admin/statuses', checkAdminAuth, routes.adminUsers.statusesList);
 
 router.get('/admin/orders', checkAdminAuth, routes.adminUsers.ordersList);
+router.get('/admin/orders/export', checkAdminAuth, routes.adminUsers.exportOrdersData);
 router.get('/admin/orders/:id', checkAdminAuth, routes.adminUsers.order);
 
 router.get('/admin/users/list', checkAdminAuth, routes.adminUsers.regularUsersList);
@@ -117,12 +118,14 @@ router.get('/orders', checkAuth, routes.orders.list);
 router.get('/orders/active', checkAuth, routes.orders.getActive);
 router.post('/orders', checkAuth, routes.orders.create);
 router.post('/orders/update/:id', checkAuth, routes.orders.update);
-router.get('/orders/item/:orderNumber', checkAuth, routes.orders.get);
+router.get('/orders/item/:id', checkAuth, routes.orders.get);
 
 router.post('/payments', checkAuth, routes.payments.create);
 router.post('/payments/webhook/', routes.payments.webhook);
 router.post('/payments/cancel', checkAuth, routes.payments.cancel);
 
 router.get('/chain-codes/:chainCode?', routes.chainCodes.list);
+
+router.post('/generate-pdf', checkAuth, routes.generatePdf.create);
 
 export default router;
