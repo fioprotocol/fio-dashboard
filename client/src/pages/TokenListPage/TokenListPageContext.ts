@@ -1,0 +1,67 @@
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { toggleTokenListInfoBadge } from '../../redux/fio/actions';
+import {
+  currentFioAddress as currentFioAddressSelector,
+  loading as loadingSelector,
+  showTokenListInfoBadge as showTokenListInfoBadgeSelector,
+} from '../../redux/fio/selectors';
+
+import { usePublicAddresses } from '../../util/hooks';
+import useQuery from '../../hooks/useQuery';
+import { useGetMappedErrorRedirect } from '../../hooks/fio';
+
+import { FCH_QUERY_PARAM_NAME } from '../../constants/queryParams';
+
+import { PublicAddressDoublet } from '../../types';
+
+type Props = {
+  loading: boolean;
+  fioCryptoHandleName: string;
+  publicAddresses: PublicAddressDoublet[];
+  search: string;
+  showBadge: boolean;
+  onClose: () => void;
+};
+
+export const useContext = (): Props => {
+  const queryParams = useQuery();
+  const fioCryptoHandleName = queryParams.get(FCH_QUERY_PARAM_NAME);
+
+  const currentFioAddress = useSelector(state =>
+    currentFioAddressSelector(state, fioCryptoHandleName),
+  );
+  const loading = useSelector(loadingSelector);
+  const showTokenListInfoBadge = useSelector(showTokenListInfoBadgeSelector);
+
+  const dispatch = useDispatch();
+
+  usePublicAddresses(fioCryptoHandleName);
+  useGetMappedErrorRedirect(fioCryptoHandleName);
+
+  const [showBadge, toggleShowBadge] = useState<boolean>(false);
+
+  const { publicAddresses } = currentFioAddress || {};
+
+  useEffect(() => {
+    // show info badge if only FIO linked
+    toggleShowBadge(
+      showTokenListInfoBadge &&
+        publicAddresses != null &&
+        publicAddresses.length === 0,
+    );
+  }, [publicAddresses, showTokenListInfoBadge]);
+
+  const onClose = () => dispatch(toggleTokenListInfoBadge(false));
+  const search = `?${FCH_QUERY_PARAM_NAME}=${fioCryptoHandleName}`;
+
+  return {
+    fioCryptoHandleName,
+    loading,
+    publicAddresses,
+    search,
+    showBadge,
+    onClose,
+  };
+};

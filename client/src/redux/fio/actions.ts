@@ -245,3 +245,9 @@ export const TRANSACTION_RESULTS_CLOSE = `${prefix}/TRANSACTION_RESULTS_CLOSE`;
 export const onTxResultsClose = (): CommonAction => ({
   type: TRANSACTION_RESULTS_CLOSE,
 });
+
+export const RESET_MAPPED_PUB_ADDRESS_ERROR = `${prefix}/RESET_MAPPED_PUB_ADDRESS_ERROR`;
+
+export const resetMappedPubAddressError = (): CommonAction => ({
+  type: RESET_MAPPED_PUB_ADDRESS_ERROR,
+});

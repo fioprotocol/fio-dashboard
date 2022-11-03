@@ -1,6 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { RouteComponentProps } from 'react-router';
-import { Redirect } from 'react-router-dom';
+import React from 'react';
 import classnames from 'classnames';
 
 import NotificationBadge from '../../components/NotificationBadge';
@@ -14,44 +12,19 @@ import PublicAddresses from './components/PublicAddresses';
 import InfoMessage from './components/InfoMessage';
 import ActionButtons from './components/ActionButtons';
 
-import { usePublicAddresses } from '../../util/hooks';
+import { useContext } from './TokenListPageContext';
 
-import { FioAddressWithPubAddresses } from '../../types';
+import classes from './TokenList.module.scss';
 
-import classes from './styles/TokenList.module.scss';
-
-type Props = {
-  currentFioAddress: FioAddressWithPubAddresses;
-  showTokenListInfoBadge: boolean;
-  toggleTokenListInfoBadge: (enabled: boolean) => void;
-  loading: boolean;
-};
-
-const TokenListPage: React.FC<Props & RouteComponentProps> = props => {
+const TokenListPage: React.FC = () => {
   const {
-    currentFioAddress: { name, publicAddresses },
-    location: { search },
     loading,
-    showTokenListInfoBadge,
-    toggleTokenListInfoBadge,
-  } = props;
-
-  usePublicAddresses(name);
-
-  const [showBadge, toggleShowBadge] = useState(false);
-
-  const onClose = () => toggleTokenListInfoBadge(false);
-
-  useEffect(() => {
-    // show info badge if only FIO linked
-    toggleShowBadge(
-      showTokenListInfoBadge &&
-        publicAddresses != null &&
-        publicAddresses.length === 0,
-    );
-  }, [publicAddresses, showTokenListInfoBadge]);
-
-  if (!name) return <Redirect to={{ pathname: ROUTES.FIO_ADDRESSES }} />;
+    fioCryptoHandleName,
+    publicAddresses,
+    search,
+    showBadge,
+    onClose,
+  } = useContext();
 
   return (
     <PseudoModalContainer
@@ -71,10 +44,10 @@ const TokenListPage: React.FC<Props & RouteComponentProps> = props => {
         <div
           className={classnames(classes.actionContainer, classes.columnMobile)}
         >
-          <FioName name={name} />
+          <FioName name={fioCryptoHandleName} />
           <ActionButtons
             search={search}
-            isDisabled={publicAddresses.length === 0}
+            isDisabled={publicAddresses?.length === 0}
           />
         </div>
         <h5 className={classnames(classes.subtitle, classes.hasMargin)}>

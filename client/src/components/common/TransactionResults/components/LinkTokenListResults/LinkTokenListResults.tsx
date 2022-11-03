@@ -10,6 +10,7 @@ import { genericTokenId } from '../../../../../util/fio';
 import { ROUTES } from '../../../../../constants/routes';
 import { ERROR_TYPES } from '../../constants';
 import { ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION } from '../../../../../constants/fio';
+import { FCH_QUERY_PARAM_NAME } from '../../../../../constants/queryParams';
 
 import { CONTAINER_NAMES } from '../../../../LinkTokenList/constants';
 
@@ -84,7 +85,7 @@ type Props = {
 
 const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
   const {
-    fioCryptoHandle,
+    fioCryptoHandleObj,
     containerName,
     results,
     bundleCost,
@@ -95,7 +96,7 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
     updatePublicAddresses,
   } = props;
 
-  const { name, remaining, walletPublicKey } = fioCryptoHandle;
+  const { name, remaining, walletPublicKey } = fioCryptoHandleObj;
 
   const {
     connect: {
@@ -151,7 +152,10 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
   const history = useHistory();
 
   const onClose = () =>
-    history.push({ pathname: ROUTES.LINK_TOKEN_LIST, search: `name=${name}` });
+    history.push({
+      pathname: ROUTES.LINK_TOKEN_LIST,
+      search: `${FCH_QUERY_PARAM_NAME}=${name}`,
+    });
   const handleOnRetry = () => onRetry(results);
 
   return (

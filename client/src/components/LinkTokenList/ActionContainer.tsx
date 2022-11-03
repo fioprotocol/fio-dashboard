@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import FioName from '../common/FioName/FioName';
 import BundledTransactionBadge from '../Badges/BundledTransactionBadge/BundledTransactionBadge';
@@ -14,6 +14,7 @@ import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import { LOW_BALANCE_TEXT, CONTAINER_TYPES } from './constants';
 import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
+import { FCH_QUERY_PARAM_NAME } from '../../constants/queryParams';
 
 import { LinkTokenResultsProps } from '../common/TransactionResults/types';
 import { FioWalletDoublet } from '../../types';
@@ -34,7 +35,7 @@ const ActionContainer: React.FC<Props> = props => {
     children,
     containerName,
     isDisabled,
-    fioCryptoHandle,
+    fioCryptoHandleObj,
     onActionButtonClick,
     loading,
     results,
@@ -44,17 +45,15 @@ const ActionContainer: React.FC<Props> = props => {
   } = props;
 
   const history = useHistory();
-  const { name, remaining } = fioCryptoHandle;
+  const { name, remaining } = fioCryptoHandleObj || {};
   const hasLowBalance = remaining - bundleCost < 0;
-
-  if (!name) return <Redirect to={{ pathname: ROUTES.FIO_ADDRESSES }} />;
 
   if (results)
     return (
       <>
         <PageTitle link={LINKS.ADD_TOKEN_CONFIRMATION} isVirtualPage />
         <LinkTokenListResults
-          fioCryptoHandle={fioCryptoHandle}
+          fioCryptoHandleObj={fioCryptoHandleObj}
           results={results}
           containerName={containerName}
           bundleCost={bundleCost}
@@ -67,13 +66,13 @@ const ActionContainer: React.FC<Props> = props => {
 
   const onLowBalanceActionClick = () =>
     history.push(`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?name=${name}`, {
-      backUrl: `${ROUTES.LINK_TOKEN_LIST}?name=${name}`,
+      backUrl: `${ROUTES.LINK_TOKEN_LIST}?${FCH_QUERY_PARAM_NAME}=${name}`,
     });
 
   return (
     <PseudoModalContainer
       title={CONTAINER_TYPES[containerName].title}
-      link={`${ROUTES.LINK_TOKEN_LIST}?name=${name}`}
+      link={`${ROUTES.LINK_TOKEN_LIST}?${FCH_QUERY_PARAM_NAME}=${name}`}
       fullWidth={true}
     >
       <div className={classes.actionContainer}>

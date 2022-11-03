@@ -6,6 +6,7 @@ import classnames from 'classnames';
 
 import { PAGE_NAME, BUTTONS_TITLE } from '../constants';
 import { ROUTES } from '../../../constants/routes';
+import { FCH_QUERY_PARAM_NAME } from '../../../constants/queryParams';
 
 import { useCheckIfSmallDesktop } from '../../../screenType';
 
@@ -81,7 +82,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
 
   const renderLinkToken = () => (
     <Link
-      to={`${ROUTES.LINK_TOKEN_LIST}?name=${name}`}
+      to={`${ROUTES.LINK_TOKEN_LIST}?${FCH_QUERY_PARAM_NAME}=${name}`}
       className={classes.actionButton}
     >
       <Button title={isSmallDesktop ? BUTTONS_TITLE.link : ''}>

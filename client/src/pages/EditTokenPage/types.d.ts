@@ -1,39 +1,38 @@
 import {
+  LinkActionResult,
+  WalletKeys,
   FioAddressWithPubAddresses,
   FioWalletDoublet,
-  LinkActionResult,
-  PublicAddressDoublet,
-  WalletKeys,
 } from '../../types';
 
-export type CheckedTokenType = {
-  isChecked: boolean;
+export type EditTokenElement = {
+  chainCode: string;
+  tokenCode: string;
+  isEditing: boolean;
   id: string;
-} & PublicAddressDoublet;
+  publicAddress: string;
+  newPublicAddress: string;
+};
 
-export type DeleteTokenContextProps = {
-  allChecked: boolean;
+export type EditTokenContextProps = {
   bundleCost: number;
   edgeWalletId: string;
   fioCryptoHandleObj: FioAddressWithPubAddresses;
   fioWallet: FioWalletDoublet;
   fioWallets: FioWalletDoublet[];
-  hasChecked: boolean;
   hasLowBalance: boolean;
   isDisabled: boolean;
-  loading: boolean;
   processing: boolean;
-  pubAddressesArr: CheckedTokenType[];
+  pubAddressesArr: EditTokenElement[];
   resultsData: LinkActionResult;
-  submitData: boolean;
-  allCheckedChange: (isChecked: boolean) => void;
-  setProcessing: (processing: boolean) => void;
+  submitData: boolean | null;
   changeBundleCost: (bundles: number) => void;
+  handleEditTokenItem: (editedId: string, editedPubAddress: string) => void;
   onActionClick: () => void;
   onBack: () => void;
   onCancel: () => void;
-  onCheckClick: (checkedId: string) => void;
   onRetry: () => void;
   onSuccess: () => void;
+  setProcessing: (processing: boolean) => void;
   submit: ({ keys }: { keys: WalletKeys }) => Promise<void>;
 };

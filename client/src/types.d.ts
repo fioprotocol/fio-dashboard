@@ -163,12 +163,12 @@ export type NewFioWalletDoublet = {
 
 export type FioAddressDoublet = {
   name: string;
-  expiration: string;
+  expiration: Date;
   remaining: number;
   walletPublicKey: string;
 };
 
-export type FioAddressWithPubAddresses = FioAddressDoublet & {
+export type FioAddressWithPubAddresses = FioNameItemProps & {
   edgeWalletId: string;
   publicAddresses: PublicAddressDoublet[];
   more: boolean;
@@ -176,7 +176,7 @@ export type FioAddressWithPubAddresses = FioAddressDoublet & {
 
 export type FioDomainDoublet = {
   name: string;
-  expiration: string;
+  expiration: Date;
   isPublic: number;
   walletPublicKey: string;
 };
@@ -219,14 +219,8 @@ export type LastAuthData = {
 
 export type FioNameType = 'address' | 'domain';
 
-export type FioNameItemProps = {
-  name?: string;
-  expiration?: Date;
-  remaining?: number;
-  isPublic?: number;
-  walletPublicKey?: string;
-  edgeWalletId?: string;
-};
+export type FioNameItemProps = Partial<FioAddressDoublet> &
+  Partial<FioDomainDoublet>;
 
 export type LinkResult = {
   updated: PublicAddressDoublet[];
@@ -237,7 +231,7 @@ export type LinkResult = {
 export type LinkActionResult = {
   connect: LinkResult;
   disconnect: LinkResult;
-};
+} | null;
 
 export type WalletKeys = { private: string; public: string };
 export type EdgeWalletsKeys = { [edgeWalletId: string]: WalletKeys };
