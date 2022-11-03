@@ -24,6 +24,7 @@ type Props = {
   placeholder?: string;
   uiType?: string;
   upperCased?: boolean;
+  onBlur?: (fieldName: string) => void;
   onClear?: () => void;
   onInputChange?: (chainCodeValue: string) => Promise<void> | void;
 };
@@ -46,6 +47,7 @@ const ChainCodeField: React.FC<Props> = props => {
     placeholder = CHAIN_CODE_PLACEHOLDER,
     uiType,
     upperCased,
+    onBlur,
     onClear,
     onInputChange,
   } = props;
@@ -73,6 +75,7 @@ const ChainCodeField: React.FC<Props> = props => {
       loading={loading}
       uiType={uiType}
       upperCased={upperCased}
+      onBlur={onBlur}
       onClear={onClear}
       onInputChange={onInputChange}
     />

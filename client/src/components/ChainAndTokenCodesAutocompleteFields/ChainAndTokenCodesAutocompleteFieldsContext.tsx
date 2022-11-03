@@ -36,7 +36,7 @@ export const useContext = (
     false,
   );
 
-  const { getFieldState, change: fieldChange } = useForm();
+  const { getFieldState, change: fieldChange, blur } = useForm();
 
   const { value: chainCodeFieldValue } =
     getFieldState(chainCodeFieldName) || {};
@@ -107,6 +107,10 @@ export const useContext = (
     setTokenCodesList(tokenList);
   };
 
+  const onBlur = (fieldName: string) => {
+    blur(fieldName);
+  };
+
   useEffect(() => {
     if (tokenCodeListHasOneItem) {
       fieldChange(tokenCodeFieldName, selectedChainCodeId);
@@ -133,6 +137,7 @@ export const useContext = (
     tokenCodesList,
     onChainCodeChange,
     onChainCodeClear,
+    onBlur,
     onTokenCodeChange,
     setSelectedTokensToList,
   };
