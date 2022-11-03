@@ -10,6 +10,7 @@ import TotalBalanceBadge from './components/TotalBalanceBadge';
 import Title from './components/Title';
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 import NotificationBadge from '../../components/NotificationBadge/NotificationBadge';
+import { GetFioTokens } from '../../components/GetFioTokens';
 
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
@@ -123,6 +124,7 @@ const WalletsPage: React.FC<Props> = props => {
       </LayoutContainer>
       <div className={classes.totalBalanceContainer}>
         <TotalBalanceBadge {...balance.total} />
+        <GetFioTokens />
       </div>
     </div>
   );

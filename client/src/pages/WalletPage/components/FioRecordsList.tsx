@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 
-import InfoBadge from '../../../components/Badges/InfoBadge/InfoBadge';
 import Loader from '../../../components/Loader/Loader';
 import InfiniteScroll from '../../../components/InfiniteScroll/InfiniteScroll';
 import FioRecordDetailedModal from './FioRecordDetailedModal';
@@ -11,20 +10,18 @@ import FioRecordItem from './FioRecordItem';
 import WalletAction from '../../../components/WalletAction/WalletAction';
 import DecryptContentEdge from './DecryptContentEdge';
 import LedgerWalletActionNotSupported from '../../../components/LedgerWalletActionNotSupported';
+import { FioTokensReceive } from '../../../components/FioTokensReceive';
 
 import { transformFioRecord } from '../util';
 
-import {
-  INFO_BADGE_CONTENT,
-  FIO_REQUEST_FIELDS_LIST,
-  FIO_RECORD_TYPES,
-} from '../constants';
+import { FIO_REQUEST_FIELDS_LIST, FIO_RECORD_TYPES } from '../constants';
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 
 import {
   FioRecord,
   FioWalletDoublet,
   FioDecryptedRecordData,
+  FioAddressDoublet,
 } from '../../../types';
 import { FioRecordViewDecrypted } from '../types';
 
@@ -36,6 +33,7 @@ type Props = {
   fioRecordType: string;
   loading: boolean;
   fioWallet: FioWalletDoublet;
+  fioCryptoHandles: FioAddressDoublet[];
 };
 
 type DetailedItemProps = {
@@ -81,6 +79,7 @@ const FioRecordsList: React.FC<Props> = props => {
     fioRecordType,
     loading,
     fioWallet,
+    fioCryptoHandles,
     paymentDataList,
   } = props;
 
@@ -127,9 +126,11 @@ const FioRecordsList: React.FC<Props> = props => {
 
   if ((!fioDataList || fioDataList.length === 0) && !loading)
     return (
-      <InfoBadge
-        title={`No ${INFO_BADGE_CONTENT[fioRecordType].title} Transactions`}
-        message={`There are no ${INFO_BADGE_CONTENT[fioRecordType].message} transactions for this wallet`}
+      <FioTokensReceive
+        fioWallet={fioWallet}
+        fioCryptoHandles={fioCryptoHandles}
+        subtitle="We see that you do not have any FIO tokens in your wallet."
+        noVerticalMargin
       />
     );
 

@@ -3,20 +3,19 @@ import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
-import WalletDetailsModal from './components/WalletDetailsModal';
+import ShowPrivateKeyModal from './components/ShowPrivateKeyModal';
+import { GetFioTokens } from '../../components/GetFioTokens';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import ActionButtonsContainer from '../WalletsPage/components/ActionButtonsContainer';
 import TotalBalanceBadge from '../WalletsPage/components/TotalBalanceBadge';
 import Title from '../WalletsPage/components/Title';
-import TransactionHistory from './components/TransactionHistory';
 import EditWalletName from './components/EditWalletName';
 import WalletTabs from './components/WalletTabs';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 
-import apis from '../../api';
-
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
+import { WALLET_CREATED_FROM } from '../../constants/common';
 
 import { ContainerProps, LocationProps } from './types';
 
@@ -25,6 +24,7 @@ import classes from './styles/WalletPage.module.scss';
 const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
   const {
     fioWallet,
+    fioCryptoHandles,
     balance,
     profileRefreshed,
     refreshBalance,
@@ -36,7 +36,8 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
     },
   } = props;
 
-  const [showDetails, setShowDetails] = useState(false);
+  const isLedgerWallet = fioWallet?.from === WALLET_CREATED_FROM.LEDGER;
+  const [showPrivateKeyModal, setShowPrivateKeyModal] = useState(false);
   const [showWalletNameEdit, setShowWalletNameEdit] = useState(false);
   const [error, setError] = useState<string>('');
 
@@ -49,20 +50,16 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
       setError(`FIO Wallet (${publicKey}) is not available`);
   }, [publicKey, fioWallet, profileRefreshed]);
 
-  const closeWalletDetails = () => setShowDetails(false);
+  const onShowPrivateModalClose = () => setShowPrivateKeyModal(false);
   const closeWalletNameEdit = () => setShowWalletNameEdit(false);
 
-  const onDetails = () => {
-    setShowDetails(true);
-  };
+  const onKeyShow = () => setShowPrivateKeyModal(true);
   const onWalletEdit = () => {
     setShowWalletNameEdit(true);
   };
   const onWalletUpdated = () => {
     closeWalletNameEdit();
   };
-
-  const actorName = fioWallet ? apis.fio.getActor(fioWallet.publicKey) : '';
 
   if (error)
     return (
@@ -88,6 +85,14 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
           onClick={onWalletEdit}
           className={classes.editIcon}
         />
+        {!isLedgerWallet && (
+          <div className={classes.privateKeyIcon}>
+            <FontAwesomeIcon
+              icon={{ prefix: 'fas', iconName: 'key' }}
+              onClick={onKeyShow}
+            />
+          </div>
+        )}
       </>
     );
     return (
@@ -95,7 +100,7 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
         <ActionButtonsContainer>
           <Link
             to={{
-              pathname: ROUTES.FIO_TOKENS_REQUEST,
+              pathname: ROUTES.FIO_TOKENS_RECEIVE,
               search: `publicKey=${fioWallet.publicKey}`,
             }}
             className={classes.firstLink}
@@ -114,37 +119,35 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
               <FontAwesomeIcon icon="arrow-up" />
             </div>
           </Link>
-          <div onClick={onDetails}>
-            <FontAwesomeIcon icon="qrcode" />
-          </div>
         </ActionButtonsContainer>
       </Title>
     );
   };
+  const hasNoTransactions =
+    balance.total.nativeFio === 0 &&
+    fioWalletsTxHistory[fioWallet.publicKey]?.txs.length === 0;
 
   return (
     <div className={classes.container}>
-      {showDetails ? (
-        <WalletDetailsModal
-          show={true}
-          fioWallet={fioWallet}
-          onClose={closeWalletDetails}
-        />
-      ) : null}
-      {showWalletNameEdit ? (
-        <EditWalletName
-          show={showWalletNameEdit}
-          fioWallet={fioWallet}
-          onSuccess={onWalletUpdated}
-          onClose={closeWalletNameEdit}
-        />
-      ) : null}
+      <ShowPrivateKeyModal
+        show={showPrivateKeyModal}
+        fioWallet={fioWallet}
+        onClose={onShowPrivateModalClose}
+      />
+      <EditWalletName
+        show={showWalletNameEdit}
+        fioWallet={fioWallet}
+        onSuccess={onWalletUpdated}
+        onClose={closeWalletNameEdit}
+      />
       <LayoutContainer title={renderTitle()}>
         <p className={classes.text}>
           View your transactions by type as well as sent or received.
         </p>
         <WalletTabs
           fioWallet={fioWallet}
+          fioCryptoHandles={fioCryptoHandles}
+          hasNoTransactions={hasNoTransactions}
           walletData={fioWalletsData[fioWallet.publicKey]}
           walletTxHistory={fioWalletsTxHistory[fioWallet.publicKey]}
         />
@@ -155,7 +158,7 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
           publicKey={fioWallet.publicKey}
           isOpenLockedList={isOpenLockedList}
         />
-        <TransactionHistory actorName={actorName} />
+        {!hasNoTransactions && <GetFioTokens />}
       </div>
     </div>
   );

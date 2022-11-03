@@ -19,7 +19,7 @@ import '../../helpers/gt-sdk';
 
 import classes from './CheckoutPage.module.scss';
 
-export const CheckoutPage: React.FC = () => {
+const CheckoutPage: React.FC = () => {
   const {
     cartItems,
     isProcessing,
@@ -88,3 +88,5 @@ export const CheckoutPage: React.FC = () => {
     </PseudoModalContainer>
   );
 };
+
+export default CheckoutPage;
