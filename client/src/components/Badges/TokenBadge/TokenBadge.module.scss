@@ -20,6 +20,10 @@
   p {
     margin-bottom: 0;
   }
+
+  &.textHasWhiteColor {
+    color: $white;
+  }
 }
 
 .addressContainer {

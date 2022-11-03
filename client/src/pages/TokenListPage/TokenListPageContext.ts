@@ -12,12 +12,14 @@ import { usePublicAddresses } from '../../util/hooks';
 import useQuery from '../../hooks/useQuery';
 import { useGetMappedErrorRedirect } from '../../hooks/fio';
 
+import { CHAIN_CODES } from '../../constants/common';
 import { FCH_QUERY_PARAM_NAME } from '../../constants/queryParams';
 
 import { PublicAddressDoublet } from '../../types';
 
 type Props = {
   loading: boolean;
+  fioCryptoHandlePub: PublicAddressDoublet;
   fioCryptoHandleName: string;
   publicAddresses: PublicAddressDoublet[];
   search: string;
@@ -42,7 +44,7 @@ export const useContext = (): Props => {
 
   const [showBadge, toggleShowBadge] = useState<boolean>(false);
 
-  const { publicAddresses } = currentFioAddress || {};
+  const { publicAddresses, walletPublicKey } = currentFioAddress || {};
 
   useEffect(() => {
     // show info badge if only FIO linked
@@ -56,7 +58,14 @@ export const useContext = (): Props => {
   const onClose = () => dispatch(toggleTokenListInfoBadge(false));
   const search = `?${FCH_QUERY_PARAM_NAME}=${fioCryptoHandleName}`;
 
+  const fioCryptoHandlePub = {
+    chainCode: CHAIN_CODES.FIO,
+    tokenCode: CHAIN_CODES.FIO,
+    publicAddress: walletPublicKey,
+  };
+
   return {
+    fioCryptoHandlePub,
     fioCryptoHandleName,
     loading,
     publicAddresses,

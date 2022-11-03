@@ -16,12 +16,20 @@ const TokenBadgeDesktop: React.FC<TokenBadgeProps> = props => {
     publicAddress,
     showInput,
     isBold,
+    badgeType,
   } = props;
 
+  const textHasWhiteColor = badgeType === BADGE_TYPES.BLACK;
+
   return (
-    <Badge show={true} type={BADGE_TYPES.WHITE}>
+    <Badge show={true} type={badgeType || BADGE_TYPES.WHITE}>
       <div className={classes.container}>
-        <div className={classes.addressContainer}>
+        <div
+          className={classnames(
+            classes.addressContainer,
+            textHasWhiteColor && classes.textHasWhiteColor,
+          )}
+        >
           <p className="boldText">{tokenCode}</p>
           <p className={classes.subtitle}>
             Chain Code: <span className="boldText">{chainCode}</span>

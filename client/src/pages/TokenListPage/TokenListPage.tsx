@@ -4,6 +4,7 @@ import classnames from 'classnames';
 import NotificationBadge from '../../components/NotificationBadge';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
+import TokenBadge from '../../components/Badges/TokenBadge/TokenBadge';
 
 import { ROUTES } from '../../constants/routes';
 import FioName from '../../components/common/FioName/FioName';
@@ -19,6 +20,7 @@ import classes from './TokenList.module.scss';
 const TokenListPage: React.FC = () => {
   const {
     loading,
+    fioCryptoHandlePub,
     fioCryptoHandleName,
     publicAddresses,
     search,
@@ -49,6 +51,12 @@ const TokenListPage: React.FC = () => {
             search={search}
             isDisabled={publicAddresses?.length === 0}
           />
+        </div>
+        <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
+          FIO Public Address
+        </h5>
+        <div className={classes.fioPubContainer}>
+          <TokenBadge badgeType={BADGE_TYPES.BLACK} {...fioCryptoHandlePub} />
         </div>
         <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
           Linked Tokens
