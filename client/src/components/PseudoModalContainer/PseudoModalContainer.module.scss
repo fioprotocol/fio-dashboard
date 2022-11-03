@@ -83,6 +83,9 @@
       width: 100%;
       max-width: 595px;
     }
+    &.noVerticalMargin {
+      margin: 0 auto;
+    }
     &.info {
       background-color: $blue-dark;
     }

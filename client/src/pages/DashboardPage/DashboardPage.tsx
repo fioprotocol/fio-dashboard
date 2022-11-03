@@ -7,6 +7,7 @@ import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import DashboardListItem from './DashboardListItem';
 import ManagePageCtaBadge from '../../components/ManagePageContainer/ManagePageCtaBadge';
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
+import { GetFioTokens } from '../../components/GetFioTokens';
 
 import { ROUTES } from '../../constants/routes';
 
@@ -81,6 +82,7 @@ const DashboardPage: React.FC<Props> = props => {
       <div className={classes.actionBadgeContainer}>
         <ManagePageCtaBadge name="address" />
         <ManagePageCtaBadge name="domain" />
+        <GetFioTokens />
       </div>
     </div>
   );

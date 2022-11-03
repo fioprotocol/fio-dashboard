@@ -11,8 +11,8 @@ import FioAddressManage from './pages/FioAddressManagePage';
 import FioDomainSelectionPage from './pages/FioDomainSelectionPage';
 import FioDomainLandingPage from './pages/FioDomainLandingPage';
 import FioDomainManagePage from './pages/FioDomainManagePage';
-import { CartPage } from './pages/CartPage';
-import { CheckoutPage } from './pages/CheckoutPage';
+import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/CheckoutPage';
 import PurchasePage from './pages/PurchasePage';
 import ScrollToTop from './components/ScrollToTop';
 import FioAddressTransferPage from './pages/FioAddressTransferPage';
@@ -37,6 +37,8 @@ import FioAddressSignPage from './pages/FioAddressSignPage';
 import FioAddressNftPage from './pages/FioAddressNftPage';
 import FioRequestDecryptPage from './pages/FioRequestDecryptPage';
 import FioTokensRequestPage from './pages/FioTokensRequestPage';
+import FioTokensReceivePage from './pages/FioTokensReceivePage';
+import FioTokensGetPage from './pages/FioTokensGetPage';
 import TokensRequestPaymentPage from './pages/TokensRequestPaymentPage';
 import NftValidationPage from './pages/NftValidationPage';
 import WalletsPage from './pages/WalletsPage';
@@ -284,6 +286,18 @@ const Routes = (): React.ReactElement => (
         <PrivateRoute
           path={ROUTES.FIO_TOKENS_REQUEST}
           component={FioTokensRequestPage}
+          exact
+        />
+
+        <PrivateRoute
+          path={ROUTES.FIO_TOKENS_RECEIVE}
+          component={FioTokensReceivePage}
+          exact
+        />
+
+        <PrivateRoute
+          path={ROUTES.FIO_TOKENS_GET}
+          component={FioTokensGetPage}
           exact
         />
 

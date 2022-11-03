@@ -7,12 +7,17 @@ import FioRecordsList from './FioRecordsList';
 
 import { FIO_RECORD_TYPES } from '../constants';
 
-import { FioWalletData, FioWalletDoublet } from '../../../types';
+import {
+  FioAddressDoublet,
+  FioWalletData,
+  FioWalletDoublet,
+} from '../../../types';
 
 import classes from '../styles/FioRequestsTab.module.scss';
 
 type Props = {
   fioWallet: FioWalletDoublet;
+  fioCryptoHandles: FioAddressDoublet[];
   walletData: FioWalletData;
 };
 

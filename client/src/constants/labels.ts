@@ -94,7 +94,7 @@ export const LINK_LABELS: { [linkKey: string]: string } = {
   [LINKS.FIO_DOMAINS]: 'FIO Domains',
   [LINKS.FIO_REQUESTS]: 'FIO Requests',
   [LINKS.FIO_WALLET]: 'FIO Wallet',
-  [LINKS.TOKENS]: 'Tokens',
+  [LINKS.TOKENS]: 'FIO Tokens',
   [LINKS.GOVERNANCE]: 'Governance',
   [LINKS.PROTOCOL_UPDATES]: 'Protocol Updates',
   [LINKS.ADMIN_USERS]: 'Admin Users',
