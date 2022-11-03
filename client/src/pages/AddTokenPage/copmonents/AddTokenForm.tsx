@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { FieldArray } from 'react-final-form-arrays';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,6 +10,8 @@ import { ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION } from '../../../constants/fio';
 import { CONTAINER_NAMES } from '../../../components/LinkTokenList/constants';
 
 import AddTokenInput from './AddTokenInput';
+
+import { useEffectOnce } from '../../../hooks/general';
 
 import { FormValues, AddTokenFormProps } from '../types';
 
@@ -32,16 +34,16 @@ const AddTokenForm: React.FC<AddTokenFormProps> = props => {
   const tokens: FormValues['tokens'] =
     values != null && values.tokens != null ? values.tokens : [];
 
-  const addTokenRow = () => push('tokens');
+  const addTokenRow = useCallback(() => push('tokens'), [push]);
 
   useEffect(
     () =>
       changeBundleCost(
         Math.ceil(tokens.length / ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION),
       ),
-    [JSON.stringify(tokens)],
+    [changeBundleCost, tokens.length],
   );
-  useEffect(() => addTokenRow(), []);
+  useEffectOnce(() => addTokenRow(), [addTokenRow]);
 
   return (
     <form onSubmit={handleSubmit}>

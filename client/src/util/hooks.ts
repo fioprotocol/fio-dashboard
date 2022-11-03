@@ -1,4 +1,10 @@
-import { useEffect, useState, useLayoutEffect, useRef } from 'react';
+import {
+  useEffect,
+  useState,
+  useLayoutEffect,
+  useRef,
+  useCallback,
+} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
@@ -136,8 +142,11 @@ export function usePublicAddresses(
     fioAddressToPubAddresses[fioAddress] &&
     fioAddressToPubAddresses[fioAddress].more;
 
-  const fetchPublicAddresses = (incOffset: number = 0) =>
-    dispatch(getAllFioPubAddresses(fioAddress, limit, incOffset));
+  const fetchPublicAddresses = useCallback(
+    (incOffset: number = 0) =>
+      dispatch(getAllFioPubAddresses(fioAddress, limit, incOffset)),
+    [dispatch, fioAddress, limit],
+  );
 
   useEffectOnce(() => {
     if (!fioAddress) return;
@@ -150,7 +159,7 @@ export function usePublicAddresses(
       fetchPublicAddresses(incOffset);
       setOffset(incOffset);
     }
-  }, [hasMore]);
+  }, [hasMore, limit, offset, fetchPublicAddresses, setOffset]);
 }
 
 export function usePubAddressesFromWallet(

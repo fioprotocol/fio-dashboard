@@ -7,7 +7,7 @@ import Link from '../../../components/Link/Link';
 
 import { ROUTES } from '../../../constants/routes';
 
-import classes from '../styles/TokenList.module.scss';
+import classes from '../TokenList.module.scss';
 
 type Props = {
   search: string;

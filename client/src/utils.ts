@@ -129,11 +129,10 @@ export const getElementByFioName = ({
   name: string;
 }): FioNameItemProps => {
   return (
-    (fioNameList &&
-      fioNameList.find(
-        ({ name: itemName }: FioNameItemProps) => itemName === name,
-      )) ||
-    {}
+    fioNameList &&
+    fioNameList.find(
+      ({ name: itemName }: FioNameItemProps) => itemName === name,
+    )
   );
 };
 

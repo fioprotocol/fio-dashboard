@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import classnames from 'classnames';
 
 import ActionContainer from '../../components/LinkTokenList/ActionContainer';
@@ -7,184 +7,42 @@ import PublicAddressEdit from './components/PublicAddressEdit';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 
-import { linkTokens } from '../../api/middleware/fio';
-import { genericTokenId } from '../../util/fio';
-import { minWaitTimeFunction } from '../../utils';
-import { log } from '../../util/general';
-
-import {
-  ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
-  TOKEN_LINK_MIN_WAIT_TIME,
-} from '../../constants/fio';
 import {
   CONFIRM_PIN_ACTIONS,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
 
-import {
-  LinkActionResult,
-  PublicAddressDoublet,
-  WalletKeys,
-  FioAddressWithPubAddresses,
-  FioWalletDoublet,
-} from '../../types';
+import { useContext } from './EditTokenPageContext';
 
 import classes from './styles/EditTokenPage.module.scss';
 
-type Props = {
-  fioCryptoHandle: FioAddressWithPubAddresses;
-  fioWallets: FioWalletDoublet[];
-};
-
-type EditTokenElement = {
-  chainCode: string;
-  tokenCode: string;
-  isEditing: boolean;
-  id: string;
-  publicAddress: string;
-  newPublicAddress: string;
-};
-
-const EditTokenPage: React.FC<Props> = props => {
+const EditTokenPage: React.FC = () => {
   const {
-    fioCryptoHandle: {
-      publicAddresses,
-      remaining,
-      edgeWalletId,
-      name: fioAddressName,
-      walletPublicKey,
-    },
+    bundleCost,
+    edgeWalletId,
+    fioCryptoHandleObj,
+    fioWallet,
     fioWallets,
-  } = props;
-
-  const [pubAddressesArr, changePubAddresses] = useState<EditTokenElement[]>(
-    [],
-  );
-  const [bundleCost, changeBundleCost] = useState(0);
-  const [resultsData, setResultsData] = useState<LinkActionResult | null>(null);
-  const [processing, setProcessing] = useState(false);
-  const [submitData, setSubmitData] = useState<boolean | null>(null);
-
-  const hasLowBalance = remaining - bundleCost < 0;
-  const hasEdited = pubAddressesArr.some(
-    pubAddress => pubAddress.newPublicAddress,
-  );
-  const fioWallet = fioWallets.find(
-    ({ publicKey }) => publicKey === walletPublicKey,
-  );
-
-  const pubAddressesToDefault = () => {
-    publicAddresses &&
-      changePubAddresses(
-        publicAddresses.map(pubAddress => ({
-          ...pubAddress,
-          isEditing: false,
-          newPublicAddress: '',
-          id: genericTokenId(
-            pubAddress.chainCode,
-            pubAddress.tokenCode,
-            pubAddress.publicAddress,
-          ),
-        })),
-      );
-  };
-
-  useEffect(() => {
-    pubAddressesToDefault();
-  }, []);
-
-  const handleEditTokenItem = (editedId: string, editedPubAddress: string) => {
-    const currentAddress = pubAddressesArr.find(
-      pubAddress => pubAddress.id === editedId,
-    );
-    if (!currentAddress) return;
-    const { isEditing } = currentAddress;
-    const updatePubAddressArr = () => {
-      const updatedArr = pubAddressesArr.map(pubAddress =>
-        pubAddress.id === editedId
-          ? {
-              ...pubAddress,
-              newPublicAddress:
-                editedPubAddress === pubAddress.publicAddress
-                  ? ''
-                  : editedPubAddress,
-              isEditing: !isEditing,
-            }
-          : { ...pubAddress, isEditing: false },
-      );
-      const editedCount = updatedArr.filter(
-        pubAddress => pubAddress.newPublicAddress || pubAddress.isEditing,
-      ).length;
-
-      changeBundleCost(
-        Math.ceil(editedCount / ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION),
-      );
-      changePubAddresses(updatedArr);
-    };
-    updatePubAddressArr();
-  };
-
-  const onSuccess = () => {
-    setProcessing(false);
-  };
-
-  const onCancel = () => {
-    setSubmitData(null);
-    setProcessing(false);
-  };
-
-  const submit = async ({ keys }: { keys: WalletKeys }) => {
-    const editedPubAddresses = pubAddressesArr.filter(
-      pubAddress => pubAddress.newPublicAddress,
-    );
-    const params: {
-      fioAddress: string;
-      connectList: PublicAddressDoublet[];
-      keys: WalletKeys;
-    } = {
-      fioAddress: fioAddressName,
-      connectList: editedPubAddresses.map(pubAddress => ({
-        ...pubAddress,
-        publicAddress: pubAddress.newPublicAddress,
-      })),
-      keys,
-    };
-    try {
-      const actionResults = await minWaitTimeFunction(
-        () => linkTokens(params),
-        TOKEN_LINK_MIN_WAIT_TIME,
-      );
-      setResultsData({
-        ...actionResults,
-        disconnect: {
-          ...actionResults.disconnect,
-          updated: editedPubAddresses,
-        },
-      });
-    } catch (err) {
-      log.error(err);
-    } finally {
-      setSubmitData(null);
-    }
-  };
-
-  const onActionClick = () => {
-    setSubmitData(true);
-  };
-
-  const onBack = () => {
-    setResultsData(null);
-    changeBundleCost(0);
-    pubAddressesToDefault();
-  };
-
-  const onRetry = () => {
-    setSubmitData(true);
-  };
+    hasLowBalance,
+    isDisabled,
+    processing,
+    pubAddressesArr,
+    resultsData,
+    submitData,
+    changeBundleCost,
+    handleEditTokenItem,
+    onActionClick,
+    onBack,
+    onCancel,
+    onRetry,
+    onSuccess,
+    setProcessing,
+    submit,
+  } = useContext();
 
   return (
     <>
-      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
+      {fioWallet?.from === WALLET_CREATED_FROM.EDGE ? (
         <EdgeConfirmAction
           onSuccess={onSuccess}
           onCancel={onCancel}
@@ -197,7 +55,7 @@ const EditTokenPage: React.FC<Props> = props => {
         />
       ) : null}
 
-      {fioWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+      {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
@@ -206,7 +64,7 @@ const EditTokenPage: React.FC<Props> = props => {
 
       <ActionContainer
         containerName={CONTAINER_NAMES.EDIT}
-        fioCryptoHandle={props.fioCryptoHandle}
+        fioCryptoHandleObj={fioCryptoHandleObj}
         bundleCost={bundleCost}
         fioWallets={fioWallets}
         onActionButtonClick={onActionClick}
@@ -214,7 +72,7 @@ const EditTokenPage: React.FC<Props> = props => {
         changeBundleCost={changeBundleCost}
         onBack={onBack}
         onRetry={onRetry}
-        isDisabled={!hasEdited || hasLowBalance || remaining === 0}
+        isDisabled={isDisabled}
       >
         <div className={classes.container}>
           <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
