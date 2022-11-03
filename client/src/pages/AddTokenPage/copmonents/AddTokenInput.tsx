@@ -2,11 +2,16 @@ import React from 'react';
 import { Field } from 'react-final-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FieldArrayRenderProps } from 'react-final-form-arrays';
+import classnames from 'classnames';
 
 import { ChainAndTokenCodesAutocompleteFields } from '../../../components/ChainAndTokenCodesAutocompleteFields/ChainAndTokenCodesAutocompleteFields';
 
 import Input, { INPUT_UI_STYLES } from '../../../components/Input/Input';
-import { ErrorBadge, COLOR_TYPE } from '../../../components/Input/ErrorBadge';
+import {
+  ErrorBadge,
+  COLOR_TYPE,
+  ERROR_UI_TYPE,
+} from '../../../components/Input/ErrorBadge';
 
 import { FormValues } from '../types';
 
@@ -30,11 +35,12 @@ const AddTokenInput: React.FC<FieldArrayRenderProps<FormValues, HTMLElement> &
         const oneItem = fields.length === 1;
         const fieldError = error != null ? error[index] : '';
         let errMessage = '';
+        let errType = ERROR_UI_TYPE.TEXT;
         const fieldErrorsArr: {
           message: string;
           touched: boolean;
+          type?: string;
         }[] = [];
-
         if (fieldError != null) {
           if (typeof error === 'string') errMessage = fieldError;
           if (typeof error === 'object') {
@@ -43,9 +49,10 @@ const AddTokenInput: React.FC<FieldArrayRenderProps<FormValues, HTMLElement> &
                 !!touched && touched[`tokens[${index}].${key}`];
               fieldErrorsArr.push(fieldError[key]);
             });
-            const { message = '' } =
+            const { message = '', type } =
               fieldErrorsArr.find(fieldErr => fieldErr.touched) || {};
             message && (errMessage = message);
+            type && (errType = type);
           }
         }
 
@@ -57,7 +64,13 @@ const AddTokenInput: React.FC<FieldArrayRenderProps<FormValues, HTMLElement> &
         };
 
         return (
-          <div className={classes.container} key={field}>
+          <div
+            className={classnames(
+              classes.container,
+              errType === ERROR_UI_TYPE.BADGE && classes.hasMarginBottom,
+            )}
+            key={field}
+          >
             <div className={classes.itemContainer}>
               <div className={classes.fieldContainer}>
                 <ChainAndTokenCodesAutocompleteFields
@@ -94,6 +107,7 @@ const AddTokenInput: React.FC<FieldArrayRenderProps<FormValues, HTMLElement> &
                 hasError={hasError}
                 wrap={true}
                 color={COLOR_TYPE.WARN}
+                type={errType}
               />
             </div>
           </div>

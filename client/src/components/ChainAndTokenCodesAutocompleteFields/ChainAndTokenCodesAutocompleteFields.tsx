@@ -28,6 +28,7 @@ export const ChainAndTokenCodesAutocompleteFields: React.FC<ChainAndTokenCodesAu
     loading,
     tokenCodesList,
     onChainCodeChange,
+    onBlur,
     onChainCodeClear,
     onTokenCodeChange,
     setSelectedTokensToList,
@@ -53,6 +54,7 @@ export const ChainAndTokenCodesAutocompleteFields: React.FC<ChainAndTokenCodesAu
             const { chainCodeId: id, chainCodeName: name } = chainCodeItem;
             return { id, name };
           })}
+          onBlur={onBlur}
           upperCased={true}
           {...props}
         />
@@ -75,6 +77,7 @@ export const ChainAndTokenCodesAutocompleteFields: React.FC<ChainAndTokenCodesAu
             const { tokenCodeId: id, tokenCodeName: name } = chainCodeItem;
             return { id, name };
           })}
+          onBlur={onBlur}
           placeholder="Type or Select Token Code"
           upperCased={true}
           {...props}

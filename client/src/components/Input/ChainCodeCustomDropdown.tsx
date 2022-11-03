@@ -39,6 +39,7 @@ const ChainCodeCustomDropdown: React.FC<Props &
     forceReset,
     loading,
     upperCased,
+    onBlur,
     onClear,
     onInputChange,
     toggleToCustom,
@@ -56,11 +57,10 @@ const ChainCodeCustomDropdown: React.FC<Props &
   } = meta;
 
   const hasError =
-    (((error || data?.error) &&
+    ((error || data?.error) &&
       (touched || modified || submitSucceeded || !!value) &&
       !active) ||
-      (submitError && !modifiedSinceLastSubmit)) &&
-    !hideError;
+    (submitError && !modifiedSinceLastSubmit);
 
   const editableSelectProps: EditableProps = {
     options,
@@ -75,6 +75,7 @@ const ChainCodeCustomDropdown: React.FC<Props &
     forceReset,
     loading,
     upperCased,
+    onBlur,
     onClear,
     onInputChange,
     toggleToCustom,
