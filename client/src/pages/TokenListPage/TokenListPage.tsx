@@ -43,14 +43,8 @@ const TokenListPage: React.FC = () => {
           title="What is Wallet Linking?"
           type={BADGE_TYPES.INFO}
         />
-        <div
-          className={classnames(classes.actionContainer, classes.columnMobile)}
-        >
+        <div className="mt-4">
           <FioName name={fioCryptoHandleName} />
-          <ActionButtons
-            search={search}
-            isDisabled={publicAddresses?.length === 0}
-          />
         </div>
         <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
           FIO Public Address
@@ -58,9 +52,18 @@ const TokenListPage: React.FC = () => {
         <div className={classes.fioPubContainer}>
           <TokenBadge badgeType={BADGE_TYPES.BLACK} {...fioCryptoHandlePub} />
         </div>
-        <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
-          Linked Tokens
-        </h5>
+        <div
+          className={classnames(classes.actionContainer, classes.columnMobile)}
+        >
+          <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
+            Linked Tokens
+          </h5>
+          <ActionButtons
+            search={search}
+            isDisabled={publicAddresses?.length === 0}
+          />
+        </div>
+
         <h5 className={classnames(classes.subtitle, classes.infoSubtitle)}>
           <span className="boldText">Hint:</span>{' '}
           <span className={classes.asterisk}>*</span> maps all tokens on a chain
