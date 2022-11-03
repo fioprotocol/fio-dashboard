@@ -21,6 +21,7 @@ import {
   BUNDLES_TX_COUNT,
 } from '../../constants/fio';
 import { FCH_QUERY_PARAM_NAME } from '../../constants/queryParams';
+import { CHAIN_CODES } from '../../constants/common';
 
 import { CheckedTokenType, DeleteTokenContextProps } from './types';
 import {
@@ -140,9 +141,12 @@ export const useContext = (): DeleteTokenContextProps => {
       disconnectAll: boolean;
     } = {
       fioAddress: fioCryptoHandleName,
-      disconnectList: pubAddressesArr.filter(
-        pubAddress => pubAddress.isChecked,
-      ),
+      disconnectList: pubAddressesArr.filter(pubAddress => {
+        const { isChecked, chainCode, tokenCode } = pubAddress;
+        const isFioToken =
+          chainCode === CHAIN_CODES.FIO && tokenCode === CHAIN_CODES.FIO;
+        return isChecked && !isFioToken;
+      }),
       keys,
       disconnectAll: allChecked,
     };
