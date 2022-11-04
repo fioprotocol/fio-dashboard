@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FormApi } from 'final-form';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 import Card from '../Card/Card';
 import PriceBadge from './PriceBadge';

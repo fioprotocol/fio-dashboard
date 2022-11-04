@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { useHistory } from 'react-router-dom';
 
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
