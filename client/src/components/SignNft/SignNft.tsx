@@ -70,10 +70,13 @@ const SignNft: React.FC<ContainerProps> = props => {
         tokenId,
       );
 
-      setAlreadySigned(nfts.length > 0);
-      return nfts.length > 0;
+      const currentFioAddressNfts = nfts.filter(
+        ({ fio_address }) => fio_address === fioAddressName,
+      );
+      setAlreadySigned(currentFioAddressNfts.length > 0);
+      return currentFioAddressNfts.length > 0;
     },
-    [isEdit],
+    [isEdit, fioAddressName],
   );
 
   const fieldValuesChanged = () => {
