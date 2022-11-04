@@ -90,11 +90,11 @@ const ROUTES: { [route: string]: string } = {
   STAKE: '/stake', // ?publicKey=
   UNSTAKE: '/unstake', // ?publicKey=
 
-  LINK_TOKEN_LIST: '/link-token-list',
-  ADD_TOKEN: '/link-token-list/add-token',
+  LINK_TOKEN_LIST: '/link-token-list', // ?fioCryptoHandle=
+  ADD_TOKEN: '/link-token-list/add-token', // ?fioCryptoHandle=
   ADD_TOKEN_CONFIRMATION: '/link-token-list/add-token-confirmation',
-  EDIT_TOKEN: '/link-token-list/edit-token',
-  DELETE_TOKEN: '/link-token-list/delete-token',
+  EDIT_TOKEN: '/link-token-list/edit-token', // ?fioCryptoHandle=
+  DELETE_TOKEN: '/link-token-list/delete-token', // ?fioCryptoHandle=
   SETTINGS: '/settings',
   ACCOUNT_RECOVERY: '/account-recovery',
   NFT_VALIDATION: '/nft-validation',
