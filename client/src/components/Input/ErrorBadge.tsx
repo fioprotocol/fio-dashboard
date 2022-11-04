@@ -20,13 +20,17 @@ export const COLOR_TYPE = {
   WARN: 'warn',
 };
 
+const DEFAULT_ERROR_BADGE_TITLE = 'Try again!';
+
 type Props = {
   error?: string | null;
   hasError: boolean;
+  hideErrorTitle?: boolean;
   data?: { [key: string]: AnyType };
   submitError?: boolean;
   useVisibility?: boolean;
   wrap?: boolean;
+  title?: string;
   type?: string;
   color?: string;
 };
@@ -36,9 +40,11 @@ export const ErrorBadge: React.FC<Props> = props => {
     useVisibility = false,
     error,
     hasError,
+    hideErrorTitle,
     data = {},
     submitError,
     wrap = false,
+    title = DEFAULT_ERROR_BADGE_TITLE,
     type = ERROR_UI_TYPE.TEXT,
     color = COLOR_TYPE.WHITE,
   } = props;
@@ -69,7 +75,7 @@ export const ErrorBadge: React.FC<Props> = props => {
       <InfoBadge
         message={message}
         show={hasError}
-        title="Try again!"
+        title={!hideErrorTitle && title}
         type={BADGE_TYPES.ERROR}
       />
     );

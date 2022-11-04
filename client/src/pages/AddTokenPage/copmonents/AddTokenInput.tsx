@@ -105,6 +105,7 @@ const AddTokenInput: React.FC<FieldArrayRenderProps<FormValues, HTMLElement> &
               <ErrorBadge
                 error={errMessage}
                 hasError={hasError}
+                hideErrorTitle
                 wrap={true}
                 color={COLOR_TYPE.WARN}
                 type={errType}
