@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import debounce from 'lodash/debounce';
 import { DebouncedFunc } from 'lodash';
 import { useForm } from 'react-final-form';
@@ -107,9 +107,12 @@ export const useContext = (
     setTokenCodesList(tokenList);
   };
 
-  const onBlur = (fieldName: string) => {
-    blur(fieldName);
-  };
+  const onBlur = useCallback(
+    (fieldName: string) => {
+      blur(fieldName);
+    },
+    [blur],
+  );
 
   useEffect(() => {
     if (tokenCodeListHasOneItem) {
