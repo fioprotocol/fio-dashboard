@@ -44,22 +44,19 @@ const ChainCodeCustomDropdown: React.FC<Props &
     onInputChange,
     toggleToCustom,
   } = props;
-  const { value } = input;
+
   const {
     error,
     data,
     touched,
     active,
-    modified,
     submitError,
     modifiedSinceLastSubmit,
     submitSucceeded,
   } = meta;
 
   const hasError =
-    ((error || data?.error) &&
-      (touched || modified || submitSucceeded || !!value) &&
-      !active) ||
+    ((error || data?.error) && (touched || submitSucceeded) && !active) ||
     (submitError && !modifiedSinceLastSubmit);
 
   const editableSelectProps: EditableProps = {
