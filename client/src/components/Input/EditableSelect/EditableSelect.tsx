@@ -113,7 +113,8 @@ const EditableSelect: React.FC<EditableProps> = props => {
 
   const handleBlur = () => {
     const currentValue = inputValue ? inputValue.trim() : '';
-    onBlur(name);
+    onBlur && onBlur(name);
+
     if (!currentValue) return;
 
     handleFormAndInputChange(currentValue);
