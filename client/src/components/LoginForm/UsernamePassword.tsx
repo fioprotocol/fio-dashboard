@@ -3,7 +3,7 @@ import { Button } from 'react-bootstrap';
 import { Form, Field, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { OnChange } from 'react-final-form-listeners';
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import classnames from 'classnames';

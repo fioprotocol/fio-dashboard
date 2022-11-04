@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
 import debounce from 'lodash/debounce';
-import { DebouncedFunc } from 'lodash';
 import { useForm } from 'react-final-form';
 
 import useEffectOnce from '../../hooks/general';
@@ -78,9 +77,7 @@ export const useContext = (
     toggleForceResetTokenField(tokenCodeFieldValue);
   };
 
-  const onChainCodeChange: DebouncedFunc<(
-    chainCodeValue: string,
-  ) => Promise<void>> = debounce(handleChainCodeChange, DEBOUNCE_TIMEOUT);
+  const onChainCodeChange = debounce(handleChainCodeChange, DEBOUNCE_TIMEOUT);
 
   const setSelectedTokensToList = () => {
     if (selectedChainCodeTokens.length > MAX_TOKEN_CODES_LIST_COUNT)

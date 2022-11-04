@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 import PinInput from '../Input/PinInput/PinInput';
 import Counter from '../Counter/Counter';
