@@ -9,6 +9,8 @@ const router = express.Router();
 const checkAuth = routes.auth.check;
 const checkAdminAuth = routes.auth.checkAdminAuth;
 
+router.get('/ping', routes.general.healthCheck);
+
 router.post('/auth', routes.auth.create);
 router.get('/auth/nonce', routes.auth.nonce);
 router.get('/auth/username/:email', routes.auth.username);
