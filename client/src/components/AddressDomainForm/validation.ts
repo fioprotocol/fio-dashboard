@@ -1,10 +1,7 @@
 import isEmpty from 'lodash/isEmpty';
 
 import { ADDRESS_REGEXP } from '../../constants/regExps';
-import {
-  ANALYTICS_EVENT_ACTIONS,
-  ANALYTICS_FIO_NAME_TYPE,
-} from '../../constants/common';
+import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
 import apis from '../../api/index';
 
@@ -32,10 +29,7 @@ const verifyAddress = async (props: DefaultValidationProps) => {
   toggleValidating(true);
   if (domain) {
     if (!isAddress) {
-      fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM, {
-        search_term: domain,
-        type: ANALYTICS_FIO_NAME_TYPE.DOMAIN,
-      });
+      fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
     }
     // avail_check returns wrong information about availability of domains, temporary changed to use this
     const isRegistered = await apis.fio.availCheckTableRows(domain);
@@ -65,15 +59,9 @@ const verifyAddress = async (props: DefaultValidationProps) => {
   if (address && domain) {
     try {
       if (options.length > 0 && options.every(option => option !== domain)) {
-        fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM, {
-          search_term: setFioName(address, domain),
-          type: ANALYTICS_FIO_NAME_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
-        });
+        fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
       } else {
-        fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM, {
-          search_term: setFioName(address, domain),
-          type: ANALYTICS_FIO_NAME_TYPE.ADDRESS,
-        });
+        fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
       }
       const isAvail = await apis.fio.availCheck(setFioName(address, domain));
       if (isAvail && isAvail.is_registered === 1) {
