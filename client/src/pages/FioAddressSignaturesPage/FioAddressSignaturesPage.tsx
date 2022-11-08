@@ -10,6 +10,7 @@ import NFTTokenBadge from '../../components/Badges/TokenBadge/NFTTokenBadge';
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 
 import { ROUTES } from '../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { genericTokenId } from '../../util/fio';
 
@@ -65,7 +66,7 @@ const FioAddressSignaturesPage: React.FC<Props> = props => {
             <Link
               to={{
                 pathname: ROUTES.FIO_ADDRESS_SIGN,
-                search: `address=${address}`,
+                search: `${QUERY_PARAMS_NAMES.ADDRESS}=${address}`,
               }}
               className={classes.link}
             >

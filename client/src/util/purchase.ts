@@ -7,6 +7,7 @@ import MathOp from './math';
 
 import { ROUTES } from '../constants/routes';
 import { ERROR_TYPES } from '../constants/errors';
+import { QUERY_PARAMS_NAMES } from '../constants/queryParams';
 
 import { RegistrationResult, CartItem, Prices, Order } from '../types';
 
@@ -25,7 +26,10 @@ export const onPurchaseFinish = ({
 
   if (isCheckout) {
     history.push(
-      { pathname: ROUTES.PURCHASE, search: `orderNumber=${order.number}` },
+      {
+        pathname: ROUTES.PURCHASE,
+        search: `${QUERY_PARAMS_NAMES.ORDER_NUMBER}=${order.number}`,
+      },
       {
         orderId: order.id,
       },

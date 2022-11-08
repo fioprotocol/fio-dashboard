@@ -20,7 +20,7 @@ import {
   TOKEN_LINK_MIN_WAIT_TIME,
   BUNDLES_TX_COUNT,
 } from '../../constants/fio';
-import { FCH_QUERY_PARAM_NAME } from '../../constants/queryParams';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { CHAIN_CODES } from '../../constants/common';
 
 import { CheckedTokenType, DeleteTokenContextProps } from './types';
@@ -32,7 +32,9 @@ import {
 
 export const useContext = (): DeleteTokenContextProps => {
   const queryParams = useQuery();
-  const fioCryptoHandleName = queryParams.get(FCH_QUERY_PARAM_NAME);
+  const fioCryptoHandleName = queryParams.get(
+    QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE,
+  );
 
   const fioCryptoHandleObj = useSelector(state =>
     currentFioAddress(state, fioCryptoHandleName),

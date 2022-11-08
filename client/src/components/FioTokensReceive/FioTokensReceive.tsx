@@ -11,6 +11,7 @@ import { DataValue } from './components/DataValue';
 
 import { BADGE_TYPES } from '../Badge/Badge';
 import { ROUTES } from '../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { FioAddressDoublet, FioWalletDoublet } from '../../types';
 
@@ -95,7 +96,7 @@ export const FioTokensReceive: React.FC<Props> = props => {
       <Link
         to={{
           pathname: ROUTES.FIO_TOKENS_REQUEST,
-          search: `publicKey=${fioWallet.publicKey}`,
+          search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
         }}
         className={classes.actionButton}
       >

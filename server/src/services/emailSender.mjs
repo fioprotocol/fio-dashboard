@@ -6,6 +6,7 @@ import logger from './../logger';
 import {
   EXPIRING_DOMAINS_EMAIL_SUBJECTS,
   EXPIRING_DOMAINS_EMAIL_TITLE,
+  QUERY_PARAMS_NAMES,
 } from '../config/constants';
 
 const EMAIL_SENT_STATUS = 'sent';
@@ -79,15 +80,15 @@ class EmailSender {
           images: EmailTemplate.getInlineImages(templateName),
         };
       case templates.confirmEmail: {
-        let link = `${sendData.mainUrl}confirm-email?hash=${sendData.hash}`;
+        let link = `${sendData.mainUrl}confirm-email?${QUERY_PARAMS_NAMES.HASH}=${sendData.hash}`;
 
         if (sendData.refCode) {
-          link = `${link}&refCode=${sendData.refCode}`;
+          link = `${link}&${QUERY_PARAMS_NAMES.REF_CODE}=${sendData.refCode}`;
         }
         delete sendData.refCode;
 
         if (sendData.updateEmail) {
-          link = `${sendData.mainUrl}confirm-updated-email?hash=${sendData.hash}`;
+          link = `${sendData.mainUrl}confirm-updated-email?${QUERY_PARAMS_NAMES.HASH}=${sendData.hash}`;
           delete sendData.updateEmail;
         }
 
@@ -104,7 +105,7 @@ class EmailSender {
         return {
           subject: 'FIO Dashboard - please confirm your email',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}confirm-admin-email?hash=${sendData.hash}&email=${sendData.email}`,
+            link: `${sendData.mainUrl}confirm-admin-email?${QUERY_PARAMS_NAMES.HASH}=${sendData.hash}&${QUERY_PARAMS_NAMES.EMAIL}=${sendData.email}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
@@ -113,7 +114,7 @@ class EmailSender {
         return {
           subject: 'FIO Dashboard - password reset',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}reset-admin-password?hash=${sendData.hash}&email=${sendData.email}`,
+            link: `${sendData.mainUrl}reset-admin-password?${QUERY_PARAMS_NAMES.HASH}=${sendData.hash}&${QUERY_PARAMS_NAMES.EMAIL}=${sendData.email}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
@@ -122,7 +123,7 @@ class EmailSender {
         return {
           subject: 'FIO Dashboard recovery link',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}account-recovery?username=${sendData.username}&token=${sendData.token}`,
+            link: `${sendData.mainUrl}account-recovery?${QUERY_PARAMS_NAMES.USERNAME}=${sendData.username}&${QUERY_PARAMS_NAMES.TOKEN}=${sendData.token}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
@@ -140,7 +141,7 @@ class EmailSender {
         return {
           subject: 'Your FIO request has been approved',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}fio-request?publicKey=${sendData.wallet}&fioRequestId=${sendData.fioRequestId}`,
+            link: `${sendData.mainUrl}fio-request?${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${sendData.wallet}&${QUERY_PARAMS_NAMES.FIO_REQUEST_ID}=${sendData.fioRequestId}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
@@ -158,7 +159,7 @@ class EmailSender {
         return {
           subject: 'Your FIO request has been rejected',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}fio-request?publicKey=${sendData.wallet}&fioRequestId=${sendData.fioRequestId}`,
+            link: `${sendData.mainUrl}fio-request?${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${sendData.wallet}&${QUERY_PARAMS_NAMES.FIO_REQUEST_ID}=${sendData.fioRequestId}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
@@ -176,7 +177,7 @@ class EmailSender {
         return {
           subject: 'You have received a new FIO request',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}fio-request?publicKey=${sendData.wallet}&fioRequestId=${sendData.fioRequestId}`,
+            link: `${sendData.mainUrl}fio-request?${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${sendData.wallet}&${QUERY_PARAMS_NAMES.FIO_REQUEST_ID}=${sendData.fioRequestId}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
@@ -193,7 +194,7 @@ class EmailSender {
         return {
           subject: 'Your FIO balance has changed',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}fio-wallet?publicKey=${sendData.wallet}`,
+            link: `${sendData.mainUrl}fio-wallet?${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${sendData.wallet}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
@@ -212,7 +213,7 @@ class EmailSender {
           body: EmailTemplate.get(templateName, {
             link: `${
               sendData.domains.length === 1
-                ? `${sendData.mainUrl}fio-domain-renew?name=${sendData.domains[0].name}`
+                ? `${sendData.mainUrl}fio-domain-renew?${QUERY_PARAMS_NAMES.NAME}=${sendData.domains[0].name}`
                 : `${sendData.mainUrl}fio-domains`
             }`,
             title: EXPIRING_DOMAINS_EMAIL_SUBJECTS[sendData.expiringStatus],
@@ -234,7 +235,7 @@ class EmailSender {
           body: EmailTemplate.get(templateName, {
             link: `${
               sendData.fioCryptoHandles.length === 1
-                ? `${sendData.mainUrl}add-bundles?name=${sendData.fioCryptoHandles[0].name}`
+                ? `${sendData.mainUrl}add-bundles?${QUERY_PARAMS_NAMES.NAME}=${sendData.fioCryptoHandles[0].name}`
                 : `${sendData.mainUrl}fio-crypto-handles`
             }`,
             ...sendData,
@@ -292,7 +293,7 @@ class EmailSender {
         return {
           subject: `FIO dashboard purchase confirmation - ${sendData.orderNumber}`,
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}order-details?orderNumber=${sendData.orderNumber}`,
+            link: `${sendData.mainUrl}order-details?${QUERY_PARAMS_NAMES.ORDER_NUMBER}=${sendData.orderNumber}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),

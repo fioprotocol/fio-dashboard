@@ -16,6 +16,7 @@ import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import { ROUTES } from '../../../../constants/routes';
 import { BUNDLES_TX_COUNT } from '../../../../constants/fio';
+import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
 
 import { formValidation } from './validation';
 import MathOp from '../../../../util/math';
@@ -233,9 +234,9 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
                         select an address with an available bundle balance, pay
                         the fee below or{' '}
                         <Link
-                          to={`${
-                            ROUTES.FIO_ADDRESS_ADD_BUNDLES
-                          }?name=${fioAddress as string}`}
+                          to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?${
+                            QUERY_PARAMS_NAMES.NAME
+                          }=${fioAddress as string}`}
                         >
                           add more bundles
                         </Link>

@@ -6,7 +6,7 @@ import classnames from 'classnames';
 
 import { PAGE_NAME, BUTTONS_TITLE } from '../constants';
 import { ROUTES } from '../../../constants/routes';
-import { FCH_QUERY_PARAM_NAME } from '../../../constants/queryParams';
+import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
 
 import { useCheckIfSmallDesktop } from '../../../screenType';
 
@@ -82,7 +82,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
 
   const renderLinkToken = () => (
     <Link
-      to={`${ROUTES.LINK_TOKEN_LIST}?${FCH_QUERY_PARAM_NAME}=${name}`}
+      to={`${ROUTES.LINK_TOKEN_LIST}?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`}
       className={classes.actionButton}
     >
       <Button title={isSmallDesktop ? BUTTONS_TITLE.link : ''}>
@@ -114,7 +114,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
       <Link
         to={{
           pathname: ROUTES.FIO_ADDRESS_SIGNATURES,
-          search: `address=${name}`,
+          search: `${QUERY_PARAMS_NAMES.ADDRESS}=${name}`,
         }}
         className={classes.actionButton}
       >

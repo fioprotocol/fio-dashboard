@@ -5,10 +5,12 @@ import { Link } from 'react-router-dom';
 
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 
+import { ROUTES } from '../../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
+
 import { NFTTokenDoublet } from '../../../types';
 
 import classes from './TokenBadge.module.scss';
-import { ROUTES } from '../../../constants/routes';
 
 type Props = {
   name: string;
@@ -22,7 +24,7 @@ const NFTTokenBadge: React.FC<Props> = props => {
     <Link
       to={{
         pathname: ROUTES.FIO_ADDRESS_NFT_EDIT,
-        search: `address=${name}&id=${id}`,
+        search: `${QUERY_PARAMS_NAMES.ADDRESS}=${name}&${QUERY_PARAMS_NAMES.ID}=${id}`,
       }}
     >
       <Badge show={true} type={BADGE_TYPES.WHITE}>

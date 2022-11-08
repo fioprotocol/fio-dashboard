@@ -20,6 +20,7 @@ import { ROUTES } from '../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../constants/common';
 import { FIO_RECORD_TYPES } from '../WalletPage/constants';
 import { LINKS } from '../../constants/labels';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { useFioAddresses } from '../../util/hooks';
 import { convertFioPrices } from '../../util/prices';
@@ -114,7 +115,7 @@ const SendPage: React.FC<ContainerProps> = props => {
   const onResultsClose = () => {
     history.push({
       pathname: ROUTES.FIO_WALLET,
-      search: `publicKey=${fioWallet.publicKey}`,
+      search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
       state: {
         fioRequestTab: fioRecordDecrypted && FIO_RECORD_TYPES.RECEIVED,
       },
@@ -126,7 +127,7 @@ const SendPage: React.FC<ContainerProps> = props => {
   const onBack = () =>
     history.push({
       pathname: ROUTES.FIO_WALLET,
-      search: `publicKey=${fioWallet.publicKey}`,
+      search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
       state: {
         fioRequestTab: fioRecordDecrypted && FIO_RECORD_TYPES.RECEIVED,
         fioRecordDecrypted,

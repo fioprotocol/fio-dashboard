@@ -8,6 +8,7 @@ import PageTitle from '../../PageTitle/PageTitle';
 import { FIO_OWNERSHIP, SETTING_LINK } from '../constants';
 import { fioNameLabels } from '../../../constants/labels';
 import { ROUTES } from '../../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
 
 import { FioWalletDoublet } from '../../../types';
 import { SettingsProps } from '../types';
@@ -49,7 +50,7 @@ const SettingsItem: React.FC<SettingsProps> = props => {
             to public.
           </p>
           <Link
-            to={`${ROUTES.FIO_DOMAIN_STATUS_CHANGE}?name=${fioName}`}
+            to={`${ROUTES.FIO_DOMAIN_STATUS_CHANGE}?${QUERY_PARAMS_NAMES.NAME}=${fioName}`}
             className={classes.buttonLink}
           >
             <Button className={classes.button}>
@@ -68,7 +69,7 @@ const SettingsItem: React.FC<SettingsProps> = props => {
           verify the transaction.
         </p>
         <Link
-          to={`${FIO_OWNERSHIP[pageName]}?name=${fioName}`}
+          to={`${FIO_OWNERSHIP[pageName]}?${QUERY_PARAMS_NAMES.NAME}=${fioName}`}
           className={classes.buttonLink}
         >
           <Button className={classes.button}>Start Transfer</Button>

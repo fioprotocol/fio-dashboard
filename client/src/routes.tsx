@@ -9,6 +9,7 @@ import AdminPrivateRoute from './components/AdminPrivateRoute';
 import FioLoader from './components/common/FioLoader/FioLoader';
 
 import { ROUTES } from './constants/routes';
+import { QUERY_PARAMS_NAMES } from './constants/queryParams';
 
 import { LocationProps as AdminEmailConfirmPageLocationProps } from './pages/AdminEmailConfirmPage/types';
 import { LocationProps as AdminPasswordResetPageLocationProps } from './pages/AdminPasswordResetPage/types';
@@ -267,7 +268,7 @@ const Routes = (): React.ReactElement => (
             path={ROUTES.FIO_ADDRESS_ADD_BUNDLES_OLD}
             component={(props: RouteComponentProps<{ name?: string }>) => (
               <Redirect
-                to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?name=${props.match.params.name}`}
+                to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?${QUERY_PARAMS_NAMES.NAME}=${props.match.params.name}`}
               />
             )}
           />
@@ -275,7 +276,7 @@ const Routes = (): React.ReactElement => (
             path={ROUTES.FIO_DOMAIN_RENEW_OLD}
             component={(props: RouteComponentProps<{ name?: string }>) => (
               <Redirect
-                to={`${ROUTES.FIO_DOMAIN_RENEW}?name=${props.match.params.name}`}
+                to={`${ROUTES.FIO_DOMAIN_RENEW}?${QUERY_PARAMS_NAMES.NAME}=${props.match.params.name}`}
               />
             )}
           />
@@ -285,7 +286,7 @@ const Routes = (): React.ReactElement => (
               props: RouteComponentProps<{ publicKey?: string; id?: string }>,
             ) => (
               <Redirect
-                to={`${ROUTES.FIO_REQUEST}?publicKey=${props.match.params.publicKey}&fioRequestId=${props.match.params.id}`}
+                to={`${ROUTES.FIO_REQUEST}?${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${props.match.params.publicKey}&${QUERY_PARAMS_NAMES.FIO_REQUEST_ID}=${props.match.params.id}`}
               />
             )}
             exact
@@ -294,7 +295,7 @@ const Routes = (): React.ReactElement => (
             path={ROUTES.FIO_WALLET_OLD}
             component={(props: RouteComponentProps<{ publicKey?: string }>) => (
               <Redirect
-                to={`${ROUTES.FIO_WALLET}?publicKey=${props.match.params.publicKey}`}
+                to={`${ROUTES.FIO_WALLET}?${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${props.match.params.publicKey}`}
               />
             )}
             exact
@@ -306,9 +307,10 @@ const Routes = (): React.ReactElement => (
                 AdminEmailConfirmPageLocationProps,
             ) => (
               <Redirect
-                to={`${ROUTES.ADMIN_CONFIRM_EMAIL}?hash=${
+                to={`${ROUTES.ADMIN_CONFIRM_EMAIL}?${QUERY_PARAMS_NAMES.HASH}=${
                   props.match.params.hash
-                }&email=${props.location.query.email || ''}`}
+                }&${QUERY_PARAMS_NAMES.EMAIL}=${props.location.query.email ||
+                  ''}`}
               />
             )}
             exact
@@ -320,9 +322,10 @@ const Routes = (): React.ReactElement => (
                 AdminPasswordResetPageLocationProps,
             ) => (
               <Redirect
-                to={`${ROUTES.ADMIN_RESET_PASSWORD}?hash=${
-                  props.match.params.hash
-                }&email=${props.location.query.email || ''}`}
+                to={`${ROUTES.ADMIN_RESET_PASSWORD}?${
+                  QUERY_PARAMS_NAMES.HASH
+                }=${props.match.params.hash}&${QUERY_PARAMS_NAMES.EMAIL}=${props
+                  .location.query.email || ''}`}
               />
             )}
             exact
@@ -334,9 +337,10 @@ const Routes = (): React.ReactElement => (
                 EmailConfirmationPageLocationProps,
             ) => (
               <Redirect
-                to={`${ROUTES.CONFIRM_EMAIL}?hash=${
+                to={`${ROUTES.CONFIRM_EMAIL}?${QUERY_PARAMS_NAMES.HASH}=${
                   props.match.params.hash
-                }&refCode=${props.location.query.refCode || ''}`}
+                }&${QUERY_PARAMS_NAMES.REF_CODE}=${props.location.query
+                  .refCode || ''}`}
               />
             )}
             exact
@@ -345,7 +349,7 @@ const Routes = (): React.ReactElement => (
             path={ROUTES.CONFIRM_UPDATED_EMAIL_OLD}
             component={(props: RouteComponentProps<{ hash?: string }>) => (
               <Redirect
-                to={`${ROUTES.CONFIRM_UPDATED_EMAIL}?hash=${props.match.params.hash}`}
+                to={`${ROUTES.CONFIRM_UPDATED_EMAIL}?${QUERY_PARAMS_NAMES.HASH}=${props.match.params.hash}`}
               />
             )}
           />
