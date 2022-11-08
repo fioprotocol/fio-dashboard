@@ -51,180 +51,188 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
       validate={formValidation.validateForm}
       initialValues={initialValues}
     >
-      {(formRenderProps: FormRenderProps) => (
-        <form onSubmit={formRenderProps.handleSubmit}>
-          <OnChange name="chainCode">{fieldValuesChanged}</OnChange>
-          <OnChange name="contractAddress">{fieldValuesChanged}</OnChange>
-          <OnChange name="tokenId">{fieldValuesChanged}</OnChange>
-          <Container fluid className={classes.signSection}>
-            {!isEdit && !addressSelectOff ? (
-              <>
-                <InfoBadge
-                  type={BADGE_TYPES.INFO}
-                  show={alreadySigned}
-                  title="Already Signed"
-                  message="This NFT that you are attempting to sign, has already been signed"
-                />
-                <InfoBadge
-                  type={BADGE_TYPES.WARNING}
-                  show={hasFioCryptoHandleError}
-                  title="FIO Crypto Handle Error"
-                  message={
-                    <>
-                      <div>One of the issues could cause the error:</div>
-                      <div>
-                        - FIO Crypto Handle or wallet public key is missing.
+      {(formRenderProps: FormRenderProps) => {
+        const { blur } = formRenderProps?.form || {};
+
+        const onBlur = (fieldName: string) => {
+          blur && blur(fieldName);
+        };
+        return (
+          <form onSubmit={formRenderProps.handleSubmit}>
+            <OnChange name="chainCode">{fieldValuesChanged}</OnChange>
+            <OnChange name="contractAddress">{fieldValuesChanged}</OnChange>
+            <OnChange name="tokenId">{fieldValuesChanged}</OnChange>
+            <Container fluid className={classes.signSection}>
+              {!isEdit && !addressSelectOff ? (
+                <>
+                  <InfoBadge
+                    type={BADGE_TYPES.INFO}
+                    show={alreadySigned}
+                    title="Already Signed"
+                    message="This NFT that you are attempting to sign, has already been signed"
+                  />
+                  <InfoBadge
+                    type={BADGE_TYPES.WARNING}
+                    show={hasFioCryptoHandleError}
+                    title="FIO Crypto Handle Error"
+                    message={
+                      <>
+                        <div>One of the issues could cause the error:</div>
+                        <div>
+                          - FIO Crypto Handle or wallet public key is missing.
+                        </div>
+                        <div>
+                          - FIO Crypto Handle and wallet public key missmatch.
+                          Please choose another FIO Crypto Handle.
+                        </div>
+                      </>
+                    }
+                  />
+                  <Row className="mt-4">
+                    <Col className={classes.subTitleSection}>Details</Col>
+                  </Row>
+                  <Row>
+                    <Col className={classes.subTitleSection}>
+                      <div
+                        className={`${classes.fioAddress} d-flex justify-content-start`}
+                      >
+                        <div className={classes.fioAddressLabel}>
+                          FIO Crypto Handle
+                        </div>
+                        <CustomDropdown
+                          value={selectedFioAddressName}
+                          list={fioAddresses.map(({ name }) => name)}
+                          onChange={setSelectedFioAddressName}
+                        />
                       </div>
-                      <div>
-                        - FIO Crypto Handle and wallet public key missmatch.
-                        Please choose another FIO Crypto Handle.
-                      </div>
-                    </>
-                  }
-                />
-                <Row className="mt-4">
-                  <Col className={classes.subTitleSection}>Details</Col>
-                </Row>
-                <Row>
-                  <Col className={classes.subTitleSection}>
-                    <div
-                      className={`${classes.fioAddress} d-flex justify-content-start`}
-                    >
-                      <div className={classes.fioAddressLabel}>
-                        FIO Crypto Handle
-                      </div>
-                      <CustomDropdown
-                        value={selectedFioAddressName}
-                        list={fioAddresses.map(({ name }) => name)}
-                        onChange={setSelectedFioAddressName}
-                      />
-                    </div>
-                  </Col>
-                </Row>
-              </>
-            ) : (
-              <div className="mt-3 mb-4">
-                <FioName name={fioAddress?.name} />
-                <Row>
-                  <Col className={classes.subTitleSection}>
-                    Signed NFT Details
-                  </Col>
-                </Row>
+                    </Col>
+                  </Row>
+                </>
+              ) : (
+                <div className="mt-3 mb-4">
+                  <FioName name={fioAddress?.name} />
+                  <Row>
+                    <Col className={classes.subTitleSection}>
+                      Signed NFT Details
+                    </Col>
+                  </Row>
+                </div>
+              )}
+              <div className={classes.chainContainer}>
+                <Col>
+                  <ChainCodeField
+                    hasAutoWidth={true}
+                    noShadow={true}
+                    isHigh={true}
+                    errorColor={COLOR_TYPE.WARN}
+                    disabled={isEdit}
+                    prefixLabel="Chain Code"
+                    optionsList={NFT_CHAIN_CODE_LIST}
+                    upperCased={true}
+                    onBlur={onBlur}
+                  />
+                </Col>
+                <Col>
+                  <Field
+                    name="tokenId"
+                    type="text"
+                    placeholder="Enter token ID"
+                    prefixLabel="Token ID"
+                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                    errorColor={COLOR_TYPE.WARN}
+                    component={Input}
+                    disabled={isEdit}
+                  />
+                </Col>
               </div>
-            )}
-            <div className={classes.chainContainer}>
-              <Col>
-                <ChainCodeField
-                  hasAutoWidth={true}
-                  noShadow={true}
-                  isHigh={true}
-                  errorColor={COLOR_TYPE.WARN}
-                  disabled={isEdit}
-                  prefixLabel="Chain Code"
-                  optionsList={NFT_CHAIN_CODE_LIST}
-                  upperCased={true}
-                />
-              </Col>
-              <Col>
-                <Field
-                  name="tokenId"
-                  type="text"
-                  placeholder="Enter token ID"
-                  prefixLabel="Token ID"
-                  uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                  errorColor={COLOR_TYPE.WARN}
-                  component={Input}
-                  disabled={isEdit}
-                />
-              </Col>
-            </div>
-            <Row>
-              <Col>
-                <Field
-                  name="contractAddress"
-                  type="text"
-                  placeholder="Enter or paste contract address"
-                  prefixLabel="Contract Address"
-                  uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                  errorColor={COLOR_TYPE.WARN}
-                  component={Input}
-                  showPasteButton={!isEdit}
-                  disabled={isEdit}
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Field
-                  name="url"
-                  type="text"
-                  placeholder="Enter or paste url"
-                  prefixLabel="URL"
-                  uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                  errorColor={COLOR_TYPE.WARN}
-                  component={Input}
-                  showPasteButton
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Field
-                  name="hash"
-                  type="text"
-                  placeholder="Enter or paste hash"
-                  prefixLabel="Hash"
-                  uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                  errorColor={COLOR_TYPE.WARN}
-                  component={Input}
-                  showPasteButton
-                />
-              </Col>
-            </Row>
-            <Row>
-              <Col>
-                <Field
-                  name="creatorUrl"
-                  type="text"
-                  placeholder="Enter or paste creator url"
-                  prefixLabel="Creator URL"
-                  uiType={INPUT_UI_STYLES.BLACK_WHITE}
-                  errorColor={COLOR_TYPE.WARN}
-                  component={Input}
-                  showPasteButton
-                />
-              </Col>
-            </Row>
-            <Row className="mb-n3">
-              <Col className={classes.subTitleSection}>Transaction cost</Col>
-            </Row>
-            <BundledTransactionBadge
-              bundles={bundleCost}
-              remaining={fioAddress != null ? fioAddress.remaining : 0}
-            />
-            <LowBalanceBadge
-              hasLowBalance={hasLowBalance}
-              messageText="Not enough bundles"
-            />
-            <SubmitButton
-              text={isEdit ? 'Update' : 'Sign NFT'}
-              disabled={
-                hasLowBalance ||
-                processing ||
-                (formRenderProps.hasSubmitErrors &&
-                  !formRenderProps.modifiedSinceLastSubmit) ||
-                formRenderProps.hasValidationErrors ||
-                alreadySigned ||
-                formRenderProps.submitting ||
-                (isEdit && formRenderProps.pristine) ||
-                hasFioCryptoHandleError
-              }
-              withTopMargin={true}
-              loading={processing}
-            />
-          </Container>
-        </form>
-      )}
+              <Row>
+                <Col>
+                  <Field
+                    name="contractAddress"
+                    type="text"
+                    placeholder="Enter or paste contract address"
+                    prefixLabel="Contract Address"
+                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                    errorColor={COLOR_TYPE.WARN}
+                    component={Input}
+                    showPasteButton={!isEdit}
+                    disabled={isEdit}
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Field
+                    name="url"
+                    type="text"
+                    placeholder="Enter or paste url"
+                    prefixLabel="URL"
+                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                    errorColor={COLOR_TYPE.WARN}
+                    component={Input}
+                    showPasteButton
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Field
+                    name="hash"
+                    type="text"
+                    placeholder="Enter or paste hash"
+                    prefixLabel="Hash"
+                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                    errorColor={COLOR_TYPE.WARN}
+                    component={Input}
+                    showPasteButton
+                  />
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <Field
+                    name="creatorUrl"
+                    type="text"
+                    placeholder="Enter or paste creator url"
+                    prefixLabel="Creator URL"
+                    uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                    errorColor={COLOR_TYPE.WARN}
+                    component={Input}
+                    showPasteButton
+                  />
+                </Col>
+              </Row>
+              <Row className="mb-n3">
+                <Col className={classes.subTitleSection}>Transaction cost</Col>
+              </Row>
+              <BundledTransactionBadge
+                bundles={bundleCost}
+                remaining={fioAddress != null ? fioAddress.remaining : 0}
+              />
+              <LowBalanceBadge
+                hasLowBalance={hasLowBalance}
+                messageText="Not enough bundles"
+              />
+              <SubmitButton
+                text={isEdit ? 'Update' : 'Sign NFT'}
+                disabled={
+                  hasLowBalance ||
+                  processing ||
+                  (formRenderProps.hasSubmitErrors &&
+                    !formRenderProps.modifiedSinceLastSubmit) ||
+                  formRenderProps.hasValidationErrors ||
+                  alreadySigned ||
+                  formRenderProps.submitting ||
+                  (isEdit && formRenderProps.pristine) ||
+                  hasFioCryptoHandleError
+                }
+                withTopMargin={true}
+                loading={processing}
+              />
+            </Container>
+          </form>
+        );
+      }}
     </Form>
   );
 };
