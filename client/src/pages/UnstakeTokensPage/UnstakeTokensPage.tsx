@@ -16,6 +16,7 @@ import { useFioAddresses } from '../../util/hooks';
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { TrxResponsePaidBundles } from '../../api/fio';
 import { ContainerProps, StakeTokensValues, InitialValues } from './types';
@@ -91,7 +92,7 @@ const UnstakeTokensPage: React.FC<ContainerProps> = props => {
   const onResultsClose = (isOpenLockedList: boolean) => {
     history.push({
       pathname: ROUTES.FIO_WALLET,
-      search: `publicKey=${fioWallet.publicKey}`,
+      search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
       state: {
         isOpenLockedList,
       },
@@ -109,7 +110,7 @@ const UnstakeTokensPage: React.FC<ContainerProps> = props => {
   const onBack = () =>
     history.push({
       pathname: ROUTES.FIO_WALLET,
-      search: `publicKey=${fioWallet.publicKey}`,
+      search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
     });
 
   const initialValues: InitialValues = {

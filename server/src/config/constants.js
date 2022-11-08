@@ -141,6 +141,18 @@ const CART_ITEM_TYPE = {
 
 const DEFAULT_BUNDLE_SET_VALUE = 1;
 
+const QUERY_PARAMS_NAMES = {
+  EMAIL: 'email',
+  FIO_REQUEST_ID: 'fioRequestId',
+  HASH: 'hash',
+  NAME: 'name',
+  ORDER_NUMBER: 'orderNumber',
+  PUBLIC_KEY: 'publicKey',
+  REF_CODE: 'refCode',
+  TOKEN: 'token',
+  USERNAME: 'username',
+};
+
 module.exports = {
   WALLET_CREATED_FROM,
   DOMAIN_EXP_PERIOD,
@@ -161,4 +173,5 @@ module.exports = {
   DAY_MS,
   CART_ITEM_TYPE,
   DEFAULT_BUNDLE_SET_VALUE,
+  QUERY_PARAMS_NAMES,
 };

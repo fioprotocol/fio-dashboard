@@ -23,6 +23,8 @@ import {
   FIO_REQUEST_STATUS_TYPES,
   FIO_REQUEST_STATUS_TYPES_TITLES,
 } from '../../constants/fio';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+
 import { emptyWallet } from '../../redux/fio/reducer';
 
 import { ContainerProps, LocationProps } from './types';
@@ -202,7 +204,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
     if (isFioChain(fioRecordDecrypted.fioDecryptedContent.chainCode)) {
       history.push({
         pathname: ROUTES.SEND,
-        search: `publicKey=${fioWallet.publicKey}`,
+        search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
         state: {
           fioWallet,
           fioRecordDecrypted,
@@ -211,7 +213,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
     } else {
       history.push({
         pathname: ROUTES.PAYMENT_DETAILS,
-        search: `publicKey=${fioWallet.publicKey}&fioRequestId=${fioRecordDecrypted.fioRecord.id}`,
+        search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}&${QUERY_PARAMS_NAMES.FIO_REQUEST_ID}=${fioRecordDecrypted.fioRecord.id}`,
         state: {
           fioWallet,
           fioRecordDecrypted,
@@ -252,7 +254,7 @@ const FioRequestDecryptPage: React.FC<ContainerProps &
   const onBack = () =>
     history.push({
       pathname: ROUTES.FIO_WALLET,
-      search: `publicKey=${fioWallet.publicKey}`,
+      search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
     });
 
   return (

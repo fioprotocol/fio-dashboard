@@ -10,7 +10,7 @@ import { genericTokenId } from '../../../../../util/fio';
 import { ROUTES } from '../../../../../constants/routes';
 import { ERROR_TYPES } from '../../constants';
 import { ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION } from '../../../../../constants/fio';
-import { FCH_QUERY_PARAM_NAME } from '../../../../../constants/queryParams';
+import { QUERY_PARAMS_NAMES } from '../../../../../constants/queryParams';
 
 import { CONTAINER_NAMES } from '../../../../LinkTokenList/constants';
 
@@ -154,7 +154,7 @@ const LinkTokenListResults: React.FC<LinkTokenResultsProps & Props> = props => {
   const onClose = () =>
     history.push({
       pathname: ROUTES.LINK_TOKEN_LIST,
-      search: `${FCH_QUERY_PARAM_NAME}=${name}`,
+      search: `${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`,
     });
   const handleOnRetry = () => onRetry(results);
 

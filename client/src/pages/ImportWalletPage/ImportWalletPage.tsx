@@ -13,6 +13,7 @@ import {
   WALLET_CREATED_FROM,
 } from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { SubmitActionParams } from '../../components/EdgeConfirmAction/types';
 import { ContainerProps, ImportWalletValues } from './types';
@@ -45,7 +46,9 @@ const ImportWalletPage: React.FC<ContainerProps> = props => {
         ({ publicKey }) => publicKey === importedPublicKey,
       );
       if (importedWallet != null && importedWallet.id)
-        history.push(`${ROUTES.TOKENS}?imported=${importedPublicKey}`);
+        history.push(
+          `${ROUTES.TOKENS}?${QUERY_PARAMS_NAMES.IMPORTED}=${importedPublicKey}`,
+        );
     }
   }, [fioWallets, addWalletLoading, importedPublicKey]);
 

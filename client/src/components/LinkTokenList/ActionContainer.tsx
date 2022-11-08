@@ -14,7 +14,7 @@ import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import { LOW_BALANCE_TEXT, CONTAINER_TYPES } from './constants';
 import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
-import { FCH_QUERY_PARAM_NAME } from '../../constants/queryParams';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { LinkTokenResultsProps } from '../common/TransactionResults/types';
 import { FioWalletDoublet } from '../../types';
@@ -65,14 +65,17 @@ const ActionContainer: React.FC<Props> = props => {
     );
 
   const onLowBalanceActionClick = () =>
-    history.push(`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?name=${name}`, {
-      backUrl: `${ROUTES.LINK_TOKEN_LIST}?${FCH_QUERY_PARAM_NAME}=${name}`,
-    });
+    history.push(
+      `${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?${QUERY_PARAMS_NAMES.NAME}=${name}`,
+      {
+        backUrl: `${ROUTES.LINK_TOKEN_LIST}?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`,
+      },
+    );
 
   return (
     <PseudoModalContainer
       title={CONTAINER_TYPES[containerName].title}
-      link={`${ROUTES.LINK_TOKEN_LIST}?${FCH_QUERY_PARAM_NAME}=${name}`}
+      link={`${ROUTES.LINK_TOKEN_LIST}?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`}
       fullWidth={true}
     >
       <div className={classes.actionContainer}>

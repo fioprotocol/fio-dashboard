@@ -16,6 +16,7 @@ import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import { ROUTES } from '../../constants/routes';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { WALLET_CREATED_FROM } from '../../constants/common';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { ContainerProps, LocationProps } from './types';
 
@@ -101,7 +102,7 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
           <Link
             to={{
               pathname: ROUTES.FIO_TOKENS_RECEIVE,
-              search: `publicKey=${fioWallet.publicKey}`,
+              search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
             }}
             className={classes.firstLink}
           >
@@ -112,7 +113,7 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
           <Link
             to={{
               pathname: ROUTES.SEND,
-              search: `publicKey=${fioWallet.publicKey}`,
+              search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
             }}
           >
             <div>

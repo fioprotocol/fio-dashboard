@@ -13,7 +13,7 @@ import useQuery from '../../hooks/useQuery';
 import { useGetMappedErrorRedirect } from '../../hooks/fio';
 
 import { CHAIN_CODES } from '../../constants/common';
-import { FCH_QUERY_PARAM_NAME } from '../../constants/queryParams';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { PublicAddressDoublet } from '../../types';
 
@@ -29,7 +29,9 @@ type Props = {
 
 export const useContext = (): Props => {
   const queryParams = useQuery();
-  const fioCryptoHandleName = queryParams.get(FCH_QUERY_PARAM_NAME);
+  const fioCryptoHandleName = queryParams.get(
+    QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE,
+  );
 
   const currentFioAddress = useSelector(state =>
     currentFioAddressSelector(state, fioCryptoHandleName),
@@ -56,7 +58,7 @@ export const useContext = (): Props => {
   }, [publicAddresses, showTokenListInfoBadge]);
 
   const onClose = () => dispatch(toggleTokenListInfoBadge(false));
-  const search = `?${FCH_QUERY_PARAM_NAME}=${fioCryptoHandleName}`;
+  const search = `?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${fioCryptoHandleName}`;
 
   const fioCryptoHandlePub = {
     chainCode: CHAIN_CODES.FIO,
