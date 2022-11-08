@@ -74,6 +74,28 @@ export class ReferrerProfile extends Base {
     });
   }
 
+  static attrs(type = 'default') {
+    const attributes = {
+      default: [
+        'id',
+        'code',
+        'label',
+        'title',
+        'subTitle',
+        'tpid',
+        'settings',
+        'regRefApiToken',
+        'createdAt',
+      ],
+    };
+
+    if (type in attributes) {
+      return attributes[type];
+    }
+
+    return attributes.default;
+  }
+
   static getItem(where) {
     return this.findOne({
       where: { ...where },
@@ -91,5 +113,17 @@ export class ReferrerProfile extends Base {
       settings,
       tpid,
     };
+  }
+
+  static list(limit = 25, offset = 0) {
+    return this.findAll({
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+    });
+  }
+
+  static partnersCount() {
+    return this.count();
   }
 }

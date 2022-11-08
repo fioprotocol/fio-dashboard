@@ -78,6 +78,10 @@ router.post(
   routes.adminUsers.updateFioAccountProfile,
 );
 
+router.get('/admin/partners/list', checkAdminAuth, routes.adminUsers.partnersList);
+router.post('/admin/partners', checkAdminAuth, routes.adminUsers.createPartner);
+router.post('/admin/partners/:id', checkAdminAuth, routes.adminUsers.updatePartner);
+
 router.get('/admin/search', checkAdminAuth, routes.adminUsers.search);
 
 router.get('/notifications', checkAuth, routes.notifications.list);

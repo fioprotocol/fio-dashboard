@@ -11,6 +11,7 @@ import MathOp from '../util/math';
 import { AnyObject } from '../types';
 
 export const DEFAULT_LIMIT = 25;
+export const DEFAULT_OFFSET = 0;
 
 const LIMIT_QUERY_PARAMETER_NAME = 'limit';
 const OFFSET_QUERY_PARAMETER_NAME = 'offset';

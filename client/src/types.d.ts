@@ -308,6 +308,7 @@ export type User = {
 };
 
 export type RefProfile = {
+  id?: string;
   code: string;
   label: string;
   title: string;
@@ -319,17 +320,19 @@ export type RefProfile = {
     actions: Record<
       ContainedFlowActionSettingsKey,
       {
+        enabled?: boolean;
         subtitle?: string;
         title?: string;
         hideActionText?: boolean;
         actionText?: string;
       }
     >;
-
     img: string;
     link: string;
   };
   tpid: string;
+  regRefApiToken: string;
+  createdAt?: string;
 };
 
 type SignNFTQuery = {
