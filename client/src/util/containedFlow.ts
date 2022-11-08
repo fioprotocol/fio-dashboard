@@ -9,10 +9,7 @@ export const validateContainedFlowActionQuery = (
 
   switch (removeExtraCharactersFromString(query.action)) {
     case removeExtraCharactersFromString(CONTAINED_FLOW_ACTIONS.SIGNNFT): {
-      if (query.chain_code && query.contract_address) return true;
-      throw new Error(
-        `Invalid params for ${CONTAINED_FLOW_ACTIONS.SIGNNFT} action`,
-      );
+      return true;
     }
     case CONTAINED_FLOW_ACTIONS.REG: {
       return true;
