@@ -15,7 +15,6 @@ import {
   ADMIN_LOGIN_SUCCESS,
   ADMIN_LOGOUT_SUCCESS,
   CONFIRM_ADMIN_EMAIL_SUCCESS,
-  CONFIRM_EMAIL_SUCCESS,
   LOGIN_SUCCESS,
   LOGOUT_SUCCESS,
   NONCE_SUCCESS,
@@ -152,12 +151,6 @@ export function* nonceSuccess(): Generator {
         voucherId,
       }),
     );
-  });
-}
-
-export function* confirmEmailSuccess(history: History): Generator {
-  yield takeEvery(CONFIRM_EMAIL_SUCCESS, function*() {
-    yield history.replace(ROUTES.CONFIRM_EMAIL_RESULT);
   });
 }
 
