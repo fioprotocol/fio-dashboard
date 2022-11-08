@@ -1,0 +1,36 @@
+import Base from '../Base';
+import { ReferrerProfile } from '../../models';
+import { ADMIN_ROLES_IDS } from '../../config/constants.js';
+
+export default class PartnersList extends Base {
+  static get requiredPermissions() {
+    return [ADMIN_ROLES_IDS.ADMIN, ADMIN_ROLES_IDS.SUPER_ADMIN];
+  }
+
+  static get validationRules() {
+    return {
+      offset: 'string',
+      limit: 'string',
+    };
+  }
+
+  async execute({ limit = 25, offset = 0 }) {
+    const partners = await ReferrerProfile.list(limit, offset);
+    const partnersCount = await ReferrerProfile.partnersCount();
+
+    return {
+      data: {
+        partners: partners.map(partner => partner.json()),
+        maxCount: partnersCount,
+      },
+    };
+  }
+
+  static get paramsSecret() {
+    return [];
+  }
+
+  static get resultSecret() {
+    return [];
+  }
+}

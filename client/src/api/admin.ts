@@ -5,12 +5,14 @@ import {
   AdminGeneralCreateResponse,
   AdminOrderItemResponse,
   AdminOrdersListResponse,
+  AdminPartnersListResponse,
   AdminSearchResponse,
   AdminUsersListResponse,
   AuthLoginResponse,
   RemoveAdminResponse,
   SendResetAdminPasswordResponse,
 } from './responses';
+import { RefProfile } from '../types';
 
 export default class Admin extends Base {
   adminList(limit: number, offset: number): Promise<AdminUsersListResponse> {
@@ -88,5 +90,17 @@ export default class Admin extends Base {
       email,
       hash,
     });
+  }
+  partnersList(
+    limit: number,
+    offset: number,
+  ): Promise<AdminPartnersListResponse> {
+    return this.apiClient.get('admin/partners/list', { limit, offset });
+  }
+  createPartner(data: RefProfile): Promise<AdminGeneralCreateResponse> {
+    return this.apiClient.post(`admin/partners`, data);
+  }
+  editPartner(data: RefProfile): Promise<AdminGeneralCreateResponse> {
+    return this.apiClient.post(`admin/partners/${data.id}`, data);
   }
 }

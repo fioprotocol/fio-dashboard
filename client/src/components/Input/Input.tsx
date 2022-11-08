@@ -43,6 +43,7 @@ type Props = {
   };
   hasSmallText?: boolean;
   hasThinText?: boolean;
+  showPreview?: boolean;
 };
 
 const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
@@ -71,6 +72,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     isSimple,
     hasSmallText,
     hasThinText,
+    showPreview = true,
     ...rest
   } = props;
   const {
@@ -262,7 +264,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
           type={type}
           className={classes.fileInput}
         />
-        {value && previewUrl ? (
+        {showPreview && value && previewUrl ? (
           <img className={classes.image} src={previewUrl} alt="preview" />
         ) : (
           <>
@@ -295,7 +297,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
   if (type === 'checkbox')
     return (
       <label className={classes.checkboxContainer}>
-        <input {...rest} {...input} />
+        <input disabled={disabled} {...rest} {...input} />
         <FontAwesomeIcon
           icon="check-square"
           className={classnames(

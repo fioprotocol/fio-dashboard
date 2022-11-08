@@ -22,3 +22,5 @@ export const adminUserProfile = (state: ReduxState): AdminUserProfile =>
   state[prefix].adminUserProfile;
 export const adminSearch = (state: ReduxState): AdminUserProfile =>
   state[prefix].adminSearch;
+export const partnersList = (state: ReduxState): AdminUserProfile =>
+  state[prefix].partnersList;

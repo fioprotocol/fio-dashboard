@@ -66,6 +66,7 @@ export const LINKS: { [linkKey: string]: string } = {
   ADMIN_REGULAR_USERS: 'ADMIN_REGULAR_USERS',
   ADMIN_PROFILE: 'ADMIN_PROFILE',
   ADMIN_ACCOUNTS: 'ADMIN_ACCOUNTS',
+  ADMIN_PARTNERS: 'ADMIN_PARTNERS',
   IS_NEW_USER: 'IS_NEW_USER',
   CART: 'CART',
   CHECKOUT: 'CHECKOUT',
@@ -103,6 +104,7 @@ export const LINK_LABELS: { [linkKey: string]: string } = {
   [LINKS.ADMIN_REGULAR_USERS]: 'Users',
   [LINKS.ADMIN_PROFILE]: 'Profile',
   [LINKS.ADMIN_ACCOUNTS]: 'Accounts',
+  [LINKS.ADMIN_PARTNERS]: 'Partners',
 };
 
 export const APP_TITLE = 'FIO Dashboard';

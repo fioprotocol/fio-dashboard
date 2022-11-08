@@ -217,6 +217,11 @@ const AdminFioAccountsProfilesListPage = React.lazy(() =>
     /* webpackChunkName: 'adminFioAccountsProfilesListPage' */ './pages/AdminFioAccountsProfilesListPage'
   ),
 );
+const AdminPartnersListPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'adminPartnersListPage' */ './pages/AdminPartnersListPage'
+  ),
+);
 const AdminSearchResultPage = React.lazy(() =>
   import(
     /* webpackChunkName: 'adminSearchResultPage' */ './pages/AdminSearchResultPage'
@@ -598,6 +603,11 @@ const Routes = (): React.ReactElement => (
           <AdminPrivateRoute
             path={ROUTES.ADMIN_ACCOUNTS}
             component={AdminFioAccountsProfilesListPage}
+            exact
+          />
+          <AdminPrivateRoute
+            path={ROUTES.ADMIN_PARTNERS}
+            component={AdminPartnersListPage}
             exact
           />
           <AdminPrivateRoute
