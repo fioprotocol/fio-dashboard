@@ -308,6 +308,7 @@ export type User = {
 };
 
 export type RefProfile = {
+  id?: string;
   code: string;
   label: string;
   title: string;
@@ -325,11 +326,12 @@ export type RefProfile = {
         actionText?: string;
       }
     >;
-
     img: string;
     link: string;
   };
   tpid: string;
+  regRefApiToken: string;
+  createdAt?: string;
 };
 
 type SignNFTQuery = {

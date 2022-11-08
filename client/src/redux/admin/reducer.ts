@@ -8,6 +8,7 @@ import {
   AdminUserProfile,
   FioAccountProfile,
   OrderDetails,
+  RefProfile,
 } from '../../types';
 
 export default combineReducers({
@@ -21,6 +22,7 @@ export default combineReducers({
       case actions.GET_ADMIN_USER_PROFILE_REQUEST:
       case actions.GET_FIO_ACCOUNTS_PROFILES_REQUEST:
       case actions.ADMIN_SEARCH_REQUEST:
+      case actions.GET_PARTNERS_REQUEST:
         return true;
       case actions.GET_ADMIN_USERS_SUCCESS:
       case actions.GET_ADMIN_USERS_FAILURE:
@@ -38,6 +40,8 @@ export default combineReducers({
       case actions.GET_FIO_ACCOUNTS_PROFILES_FAILURE:
       case actions.ADMIN_SEARCH_SUCCESS:
       case actions.ADMIN_SEARCH_FAILURE:
+      case actions.GET_PARTNERS_SUCCESS:
+      case actions.GET_PARTNERS_FAILURE:
         return false;
       default:
         return state;
@@ -132,6 +136,16 @@ export default combineReducers({
       case actions.GET_FIO_ACCOUNTS_PROFILES_SUCCESS:
         return action.data.maxCount;
       case actions.GET_FIO_ACCOUNTS_PROFILES_FAILURE:
+        return state;
+      default:
+        return state;
+    }
+  },
+  partnersList(state: RefProfile[] = [], action) {
+    switch (action.type) {
+      case actions.GET_PARTNERS_SUCCESS:
+        return action.data.partners;
+      case actions.GET_PARTNERS_FAILURE:
         return state;
       default:
         return state;

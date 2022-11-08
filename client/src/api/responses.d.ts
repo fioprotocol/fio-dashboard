@@ -103,6 +103,7 @@ export type UserOrdersListResponse = {
 };
 
 export type AdminFioAccountsProfilesListResponse = FioAccountProfile[];
+export type AdminPartnersListResponse = RefProfile[];
 export type AdminUsersListResponse = AdminUser[];
 export type AdminOrdersListResponse = AdminUser[];
 export type AdminOrderItemResponse = AdminUser;
