@@ -1,6 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classnames from 'classnames';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import Amount from '../../../components/common/Amount';
@@ -39,8 +40,13 @@ const WalletItem: React.FC<Props> = props => {
   return (
     <div className={classes.container} onClick={goToWallet}>
       <Badge type={BADGE_TYPES.BORDERED} show={true}>
-        <div className={classes.badgeItem}>
-          {isDesktop && <p className={classes.walletName}>{fioWallet.name}</p>}
+        <div
+          className={classnames(
+            classes.badgeItem,
+            isDesktop && classes.isDesktopView,
+          )}
+        >
+          <p className={classes.walletName}>{fioWallet.name}</p>
           <div className={classes.itemContainer}>
             <div className={classes.balanceContainer}>
               <p className={classes.totalBalance}>Total balance</p>
