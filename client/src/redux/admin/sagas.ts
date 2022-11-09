@@ -20,11 +20,13 @@ import {
   PURCHASE_RESULTS_STATUS_LABELS,
 } from '../../constants/purchase';
 
+import apis from '../../api';
+
+import { transformOrderItems } from '../../util/purchase';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 
 import { Action } from '../types';
 import { OrderDetails, OrderItem } from '../../types';
-import { transformOrderItems } from '../../util/purchase';
 
 export function* resetAdminUserPasswordSuccess(): Generator {
   yield takeEvery(RESET_ADMIN_USER_PASSWORD_SUCCESS, function*() {
@@ -82,13 +84,21 @@ export function* exportOrdersDataSuccess(): Generator {
     new ExportToCsv({
       showLabels: true,
       filename: 'items',
-      headers: ['Order ID', 'Item Type', 'Amount', 'Fee Collected', 'Status'],
+      headers: [
+        'Order ID',
+        'Item Type',
+        'Amount',
+        'FIO',
+        'Fee Collected',
+        'Status',
+      ],
     }).generateCsv(
       transformOrderItems(action.data.orderItems).map(
         (orderItem: OrderItem) => ({
           number: orderItem.order?.number,
           itemType: PAYMENT_ITEM_TYPE_LABEL[orderItem.action],
           amount: `${orderItem.price} ${orderItem.priceCurrency}`,
+          fio: apis.fio.sufToAmount(Number(orderItem.nativeFio)).toFixed(2),
           feeCollected: `${orderItem.feeCollected} FIO`,
           status:
             BC_TX_STATUS_LABELS[orderItem.orderItemStatus?.txStatus] ||
