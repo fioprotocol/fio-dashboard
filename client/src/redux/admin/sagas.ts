@@ -24,6 +24,7 @@ import { formatDateToLocale } from '../../helpers/stringFormatters';
 
 import { Action } from '../types';
 import { OrderDetails, OrderItem } from '../../types';
+import { transformOrderItems } from '../../util/purchase';
 
 export function* resetAdminUserPasswordSuccess(): Generator {
   yield takeEvery(RESET_ADMIN_USER_PASSWORD_SUCCESS, function*() {
@@ -81,16 +82,19 @@ export function* exportOrdersDataSuccess(): Generator {
     new ExportToCsv({
       showLabels: true,
       filename: 'items',
-      headers: ['Order ID', 'Item Type', 'Amount', 'Status'],
+      headers: ['Order ID', 'Item Type', 'Amount', 'Fee Collected', 'Status'],
     }).generateCsv(
-      action.data.orderItems.map((orderItem: OrderItem) => ({
-        number: orderItem.order?.number,
-        itemType: PAYMENT_ITEM_TYPE_LABEL[orderItem.action],
-        amount: orderItem.price,
-        status:
-          BC_TX_STATUS_LABELS[orderItem.orderItemStatus?.txStatus] ||
-          BC_TX_STATUS_LABELS[BC_TX_STATUSES.NONE],
-      })),
+      transformOrderItems(action.data.orderItems).map(
+        (orderItem: OrderItem) => ({
+          number: orderItem.order?.number,
+          itemType: PAYMENT_ITEM_TYPE_LABEL[orderItem.action],
+          amount: `${orderItem.price} ${orderItem.priceCurrency}`,
+          feeCollected: `${orderItem.feeCollected} FIO`,
+          status:
+            BC_TX_STATUS_LABELS[orderItem.orderItemStatus?.txStatus] ||
+            BC_TX_STATUS_LABELS[BC_TX_STATUSES.NONE],
+        }),
+      ),
     );
   });
 }
