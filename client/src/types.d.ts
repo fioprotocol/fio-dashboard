@@ -673,17 +673,20 @@ export type OrderItem = {
   createdAt: string;
   domain?: string;
   id: string;
+  nativeFio: string;
   price: string;
   priceCurrency: string;
+  data: {
+    hasCustomDomain?: boolean;
+    hasCustomDomainFee?: string;
+  };
   updatedAt: string;
   blockchainTransactions: BcTx[];
-  order?: {
-    id: string;
-    number: string;
-  };
+  order?: OrderDetails;
   orderItemStatus: {
     txStatus: typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
   };
+  feeCollected?: string;
 };
 
 export type OrderDetails = {

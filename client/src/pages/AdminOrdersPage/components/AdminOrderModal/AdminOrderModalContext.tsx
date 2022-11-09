@@ -2,6 +2,7 @@ import apis from '../../../../api';
 
 import MathOp from '../../../../util/math';
 import { setFioName } from '../../../../utils';
+import { transformOrderItems } from '../../../../util/purchase';
 import { formatDateToLocale } from '../../../../helpers/stringFormatters';
 
 import {
@@ -20,6 +21,7 @@ import { ACTIONS } from '../../../../constants/fio';
 import {
   BcTx,
   OrderDetails,
+  OrderItem,
   OrderPaymentItem,
   PaymentEventLog,
 } from '../../../../types';
@@ -202,19 +204,30 @@ export const useContext = ({
   isFree: boolean;
   historyList: HistoryListItem[];
   orderPayment: OrderPaymentItem | null;
+  orderItems: OrderItem[];
 } => {
-  if (!orderItem) return { isFree: false, historyList: [], orderPayment: null };
+  if (!orderItem)
+    return {
+      isFree: false,
+      historyList: [],
+      orderPayment: null,
+      orderItems: [],
+    };
 
   const orderPayment = orderItem.payments.find(
     ({ spentType }) => spentType === PAYMENT_SPENT_TYPES.ORDER,
   );
   const isFree = orderItem.total === '0' || !orderItem.total;
   const historyList = setHistory(orderItem, orderPayment);
+  const orderItems: OrderItem[] = transformOrderItems(
+    orderItem.items.map(item => ({ ...item, order: orderItem })),
+  );
 
   return {
     isFree,
     historyList,
     orderPayment,
+    orderItems,
   };
 };
 
