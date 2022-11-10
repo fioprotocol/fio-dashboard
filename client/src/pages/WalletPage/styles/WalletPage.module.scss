@@ -43,24 +43,41 @@
     cursor: pointer;
   }
 
-  .privateKeyIcon {
-    background-color: $gray-main;
-    width: 40px;
-    height: 40px;
-    margin-left: 5px;
-    border-radius: 5px;
-    display: inline-flex;
-    justify-content: center;
+  .titleContainer {
+    display: flex;
     align-items: center;
-    cursor: pointer;
 
-    svg {
-      font-size: 20px;
-      color: $white;
+    .title {
+      word-break: break-all;
+      margin-bottom: 0;
+      line-height: 1.3em;
     }
 
-    &:hover {
-      background-color: $dark;
+    .titleActionButtons {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .privateKeyIcon {
+        background-color: $gray-main;
+        width: 40px;
+        height: 40px;
+        margin-left: 10px;
+        border-radius: 5px;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+    
+        svg {
+          font-size: 20px;
+          color: $white;
+        }
+    
+        &:hover {
+          background-color: $dark;
+        }
+      }
     }
   }
 }

@@ -79,22 +79,24 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
 
   const renderTitle = () => {
     const title = (
-      <>
-        {fioWallet.name}
-        <FontAwesomeIcon
-          icon="pen"
-          onClick={onWalletEdit}
-          className={classes.editIcon}
-        />
-        {!isLedgerWallet && (
-          <div className={classes.privateKeyIcon}>
-            <FontAwesomeIcon
-              icon={{ prefix: 'fas', iconName: 'key' }}
-              onClick={onKeyShow}
-            />
-          </div>
-        )}
-      </>
+      <div className={classes.titleContainer}>
+        <h3 className={classes.title}>{fioWallet.name}</h3>
+        <div className={classes.titleActionButtons}>
+          <FontAwesomeIcon
+            icon="pen"
+            onClick={onWalletEdit}
+            className={classes.editIcon}
+          />
+          {!isLedgerWallet && (
+            <div className={classes.privateKeyIcon}>
+              <FontAwesomeIcon
+                icon={{ prefix: 'fas', iconName: 'key' }}
+                onClick={onKeyShow}
+              />
+            </div>
+          )}
+        </div>
+      </div>
     );
     return (
       <Title title={title} subtitle="Manage your FIO tokens">
