@@ -5,18 +5,17 @@ import Badge, { BADGE_TYPES } from '../../components/Badge/Badge';
 import CopyTooltip from '../../components/CopyTooltip';
 
 import { copyToClipboard } from '../../util/general';
-import { useCheckIfDesktop } from '../../screenType';
 
 import classes from './DashboardPage.module.scss';
 
 type Props = {
+  hideTitle?: boolean;
   listItem: string;
   title: string;
 };
 
 const DashboardListItem: React.FC<Props> = props => {
-  const { listItem, title } = props;
-  const isDesktop = useCheckIfDesktop();
+  const { hideTitle, listItem, title } = props;
 
   const onClick = () => {
     copyToClipboard(listItem);
@@ -26,15 +25,17 @@ const DashboardListItem: React.FC<Props> = props => {
     <div className={classes.badgeContainer}>
       <Badge type={BADGE_TYPES.BORDERED} show={true}>
         <div className={classes.badgeItem}>
-          {isDesktop && <span>{title}</span>}
+          {!hideTitle && <span className={classes.title}>{title}</span>}
           <span className={classes.listItem}>{listItem}</span>
-          <CopyTooltip>
-            <FontAwesomeIcon
-              icon={{ prefix: 'far', iconName: 'copy' }}
-              className={classes.copyButton}
-              onClick={onClick}
-            />
-          </CopyTooltip>
+          <div className={classes.copyButtonContainer}>
+            <CopyTooltip>
+              <FontAwesomeIcon
+                icon={{ prefix: 'far', iconName: 'copy' }}
+                className={classes.copyButton}
+                onClick={onClick}
+              />
+            </CopyTooltip>
+          </div>
         </div>
       </Badge>
     </div>

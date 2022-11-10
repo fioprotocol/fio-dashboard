@@ -43,25 +43,38 @@
   margin-top: -10px;
 
   .badgeItem {
-    display: grid;
-    grid-template-columns: auto 20px;
+    display: flex;
+    flex-direction: column;
     font-size: 1em;
     width: 100%;
+    position: relative;
+
+    .title {
+      margin-bottom: 10px;
+    }
 
     .listItem {
       word-break: break-all;
-      margin-right: 20px;
+      margin-right: 50px;
     }
 
-    .copyButton {
-      font-size: 24px;
-      cursor: pointer;
-      transition: 0.2s all;
-      &:active {
-        transform: scale(0.8);
-        /* Scaling button to 0.98 to its original size */
-        box-shadow: 3px 2px 22px 1px rgba(69, 136, 255, 1);
-        /* Lowering the shadow */
+    .copyButtonContainer {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      right: 0;
+
+      .copyButton {
+        font-size: 24px;
+        cursor: pointer;
+        transition: 0.2s all;
+    
+        &:active {
+          transform: scale(0.8);
+          /* Scaling button to 0.98 to its original size */
+          box-shadow: 3px 2px 22px 1px rgba(69, 136, 255, 1);
+          /* Lowering the shadow */
+        }
       }
     }
   }
@@ -119,7 +132,17 @@
 
   .badgeContainer {
     .badgeItem {
+      display: grid;
       grid-template-columns: 140px auto 20px;
+      align-items: center;
+
+      .title {
+        margin-bottom: 0;
+      }
+
+      .listItem {
+        margin-right: 20px;
+      }
     }
   }
 }
