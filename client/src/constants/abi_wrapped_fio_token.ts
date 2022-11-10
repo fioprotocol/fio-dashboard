@@ -213,6 +213,13 @@ const ABI_WRAPPED_FIO_TOKEN = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+    name: 'changeOwner',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'decimals',
     outputs: [{ internalType: 'uint8', name: '', type: 'uint8' }],
