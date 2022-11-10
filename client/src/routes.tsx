@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch, RouteComponentProps, Redirect } from 'react-router-dom';
+import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
 
 import MainLayout from './pages/MainLayout';
 import AuthContainer from './components/AuthContainer';
@@ -281,19 +281,27 @@ const UnwrapTokensPage = React.lazy(() =>
 );
 
 const WrapStatusPageUnwrapTokens = React.lazy(() =>
-  import(/* webpackChunkName: 'WrapStatusPageUnwrapTokens' */ './pages/WrapStatusPageUnwrapTokens'),
+  import(
+    /* webpackChunkName: 'WrapStatusPageUnwrapTokens' */ './pages/WrapStatusPageUnwrapTokens'
+  ),
 );
 
 const WrapStatusPageUnwrapDomains = React.lazy(() =>
-  import(/* webpackChunkName: 'WrapStatusPageUnwrapDomains' */ './pages/WrapStatusPageUnwrapDomains'),
+  import(
+    /* webpackChunkName: 'WrapStatusPageUnwrapDomains' */ './pages/WrapStatusPageUnwrapDomains'
+  ),
 );
 
 const WrapStatusPageWrapTokens = React.lazy(() =>
-  import(/* webpackChunkName: 'WrapStatusPageWrapTokens' */ './pages/WrapStatusPageWrapTokens'),
+  import(
+    /* webpackChunkName: 'WrapStatusPageWrapTokens' */ './pages/WrapStatusPageWrapTokens'
+  ),
 );
 
 const WrapStatusPageWrapDomains = React.lazy(() =>
-  import(/* webpackChunkName: 'WrapStatusPageWrapDomains' */ './pages/WrapStatusPageWrapDomains'),
+  import(
+    /* webpackChunkName: 'WrapStatusPageWrapDomains' */ './pages/WrapStatusPageWrapDomains'
+  ),
 );
 
 const Routes = (): React.ReactElement => (
@@ -510,27 +518,27 @@ const Routes = (): React.ReactElement => (
 
           <PrivateRoute path={ROUTES.SEND} component={SendPage} exact />
 
-        <PrivateRoute
-          path={ROUTES.WRAP_TOKENS}
-          component={WrapTokensPage}
-          exact
-        />
-        <PrivateRoute
-          path={ROUTES.WRAP_DOMAIN}
-          component={WrapDomainPage}
-          exact
-        />
+          <PrivateRoute
+            path={ROUTES.WRAP_TOKENS}
+            component={WrapTokensPage}
+            exact
+          />
+          <PrivateRoute
+            path={ROUTES.WRAP_DOMAIN}
+            component={WrapDomainPage}
+            exact
+          />
 
-        <PrivateRoute
-          path={ROUTES.UNWRAP_TOKENS}
-          component={UnwrapTokensPage}
-          exact
-        />
-        <PrivateRoute
-          path={ROUTES.UNWRAP_DOMAIN}
-          component={UnwrapDomainPage}
-          exact
-        />
+          <PrivateRoute
+            path={ROUTES.UNWRAP_TOKENS}
+            component={UnwrapTokensPage}
+            exact
+          />
+          <PrivateRoute
+            path={ROUTES.UNWRAP_DOMAIN}
+            component={UnwrapDomainPage}
+            exact
+          />
 
           <PrivateRoute
             path={ROUTES.FIO_REQUEST}

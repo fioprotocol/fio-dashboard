@@ -9,7 +9,6 @@ import { FIO_OWNERSHIP, SETTING_LINK } from '../constants';
 import { fioNameLabels } from '../../../constants/labels';
 import { ROUTES } from '../../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
-import { putParamsToUrl } from '../../../utils';
 
 import { FioWalletDoublet } from '../../../types';
 import { SettingsProps } from '../types';

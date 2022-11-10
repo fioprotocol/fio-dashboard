@@ -15,7 +15,7 @@ import InfiniteScroll from '../InfiniteScroll/InfiniteScroll';
 import InfoBadge from '../Badges/InfoBadge/InfoBadge';
 import ActionButtonsContainer from '../../pages/WalletsPage/components/ActionButtonsContainer';
 
-import { BANNER_DATA, ITEMS_LIMIT, EXPIRED_DAYS, SUBTITLE } from './constants';
+import { BANNER_DATA, EXPIRED_DAYS, ITEMS_LIMIT, SUBTITLE } from './constants';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -25,7 +25,6 @@ import { useCheckIfDesktop } from '../../screenType';
 import { ROUTES } from '../../constants/routes';
 import { ACTIONS } from '../../constants/fio';
 
-import { useCheckIfDesktop } from '../../screenType';
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
