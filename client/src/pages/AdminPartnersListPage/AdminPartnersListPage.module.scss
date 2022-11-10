@@ -41,3 +41,22 @@
   border-radius: 7px;
   box-shadow: 0 0 8px 0 rgba($black, 0.11);
 }
+
+.previewImageWrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.removeImg {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
