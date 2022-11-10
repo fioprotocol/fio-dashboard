@@ -136,6 +136,7 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
       <>
         <PageTitle link={LINKS.UNWRAP_TOKENS_CONFIRMATION} isVirtualPage />
         <UnWrapResults
+          isTokens
           results={resultsData}
           title={
             resultsData.error
