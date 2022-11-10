@@ -13,6 +13,7 @@ type Props = {
   index: number;
   value: string;
   isDefault: boolean;
+  isRemoveAvailable: boolean;
   onSetDefaultDomain: (value: string) => void;
   onRemove: (index: number) => void;
 };
@@ -23,6 +24,7 @@ export const PartnerFormDomainRow: React.FC<Props> = props => {
     index,
     value,
     isDefault,
+    isRemoveAvailable,
     onSetDefaultDomain,
     onRemove,
   } = props;
@@ -54,7 +56,12 @@ export const PartnerFormDomainRow: React.FC<Props> = props => {
       >
         {isDefault ? 'Default' : 'Set default'}
       </Button>
-      <Button className="w-25 ml-3" variant="danger" onClick={handleRemove}>
+      <Button
+        className="w-25 ml-3"
+        variant="danger"
+        onClick={handleRemove}
+        disabled={!isRemoveAvailable}
+      >
         Remove
       </Button>
     </div>

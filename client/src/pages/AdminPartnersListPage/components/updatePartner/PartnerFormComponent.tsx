@@ -184,6 +184,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
                     values?.settings?.domains[index] ===
                     values?.settings?.preselectedDomain
                   }
+                  isRemoveAvailable={values?.settings?.domains?.length > 1}
                   onSetDefaultDomain={onSetDefaultDomain}
                   onRemove={fields.remove}
                 />

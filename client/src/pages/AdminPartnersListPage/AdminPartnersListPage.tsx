@@ -30,7 +30,7 @@ const AdminPartnersListPage: React.FC<Props> = props => {
   const onAddPartner = useCallback(() => {
     setSelectedPartner({
       settings: {
-        domains: [],
+        domains: [''],
         allowCustomDomain: false,
         actions: {
           SIGNNFT: {},
