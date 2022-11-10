@@ -10,7 +10,7 @@ type Props = {
   loading: boolean;
   onSubmit: (values: RefProfile) => Promise<void>;
   onClose: () => void;
-  initialValues?: RefProfile;
+  initialValues?: Partial<RefProfile>;
 };
 
 export const PartnerModal: React.FC<Props> = props => {

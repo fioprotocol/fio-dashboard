@@ -12,6 +12,9 @@ export const validate = (values: RefProfile): AnyObject => {
   if (!values.code) {
     errors.code = 'Required.';
   }
+  if (!values.regRefApiToken) {
+    errors.regRefApiToken = 'Required.';
+  }
   if (values.settings?.link && !URL_REGEXP.test(values.settings.link)) {
     errors.settings.link = 'Invalid URL.';
   }
