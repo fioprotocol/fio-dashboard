@@ -11,7 +11,7 @@ import { RefProfile } from '../../../../types';
 type Props = {
   onSubmit: (values: RefProfile) => Promise<void>;
   loading: boolean;
-  initialValues?: RefProfile;
+  initialValues?: Partial<RefProfile>;
 };
 
 export const PartnerForm: React.FC<Props> = props => {

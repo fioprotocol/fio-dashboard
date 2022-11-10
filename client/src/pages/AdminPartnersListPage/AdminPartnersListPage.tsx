@@ -18,7 +18,9 @@ import classes from './AdminPartnersListPage.module.scss';
 const AdminPartnersListPage: React.FC<Props> = props => {
   const { loading, partnersList, getPartnersList } = props;
   const [showPartnerModal, setShowPartnerModal] = useState<boolean>(false);
-  const [selectedPartner, setSelectedPartner] = useState<RefProfile>(null);
+  const [selectedPartner, setSelectedPartner] = useState<Partial<RefProfile>>(
+    null,
+  );
   const [partnerActionLoading, setPartnerActionLoading] = useState<boolean>(
     false,
   );
@@ -26,6 +28,18 @@ const AdminPartnersListPage: React.FC<Props> = props => {
   const { paginationComponent, refresh } = usePagination(getPartnersList);
 
   const onAddPartner = useCallback(() => {
+    setSelectedPartner({
+      settings: {
+        domains: [],
+        allowCustomDomain: false,
+        actions: {
+          SIGNNFT: {},
+          REG: {},
+        },
+        img: '',
+        link: '',
+      },
+    });
     setShowPartnerModal(true);
   }, []);
   const onEditPartner = useCallback((partner: RefProfile) => {

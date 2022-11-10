@@ -74,7 +74,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
         component={Input}
         uiType={INPUT_UI_STYLES.BLACK_WHITE}
         errorColor={COLOR_TYPE.WARN}
-        label="Name"
+        label="Name *"
         placeholder="Name"
         loading={validating}
         disabled={submitting || loading}
@@ -85,7 +85,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
         component={Input}
         uiType={INPUT_UI_STYLES.BLACK_WHITE}
         errorColor={COLOR_TYPE.WARN}
-        label="Referral Code"
+        label="Referral Code *"
         placeholder="Referral Code"
         loading={validating}
         disabled={!!values?.id || submitting || loading}
@@ -129,7 +129,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
         component={Input}
         uiType={INPUT_UI_STYLES.BLACK_WHITE}
         errorColor={COLOR_TYPE.WARN}
-        label="Registration site API token"
+        label="Registration site API token *"
         placeholder="Registration site API token"
         loading={validating}
         disabled={submitting || loading}
