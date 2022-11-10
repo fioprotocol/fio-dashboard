@@ -320,7 +320,6 @@ export type RefProfile = {
     actions: Record<
       ContainedFlowActionSettingsKey,
       {
-        enabled?: boolean;
         subtitle?: string;
         title?: string;
         hideActionText?: boolean;

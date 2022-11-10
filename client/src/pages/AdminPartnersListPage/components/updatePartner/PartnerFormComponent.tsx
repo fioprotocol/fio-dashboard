@@ -47,6 +47,10 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
     [form],
   );
 
+  const onRemoveImage = useCallback(() => {
+    form.change('settings.img' as keyof RefProfile, null);
+  }, [form]);
+
   const onAddDomain = useCallback(() => {
     form.mutators.push('settings.domains');
   }, [form]);
@@ -103,13 +107,18 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
             loading={validating}
             disabled={submitting || loading}
           />
-          <div className="d-flex align-items-center">
+          <div className={classes.previewImageWrapper}>
             {values?.settings?.img && (
               <img
                 className={classes.previewImage}
                 src={values?.settings?.img}
                 alt={values.label}
               />
+            )}
+            {values?.settings?.img && (
+              <Button onClick={onRemoveImage} className={classes.removeImg}>
+                <FontAwesomeIcon icon="times-circle" onClick={onRemoveImage} />
+              </Button>
             )}
           </div>
         </div>
@@ -154,6 +163,12 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
             <FontAwesomeIcon icon="plus-square" className="mr-2" /> Add
           </Button>
         </div>
+
+        <Field
+          type="hidden"
+          name="settings.preselectedDomain"
+          component={Input}
+        />
 
         <div className="d-flex flex-column">
           <FieldArray
@@ -235,14 +250,6 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
         )}
       >
         <span className={classes.label}>Sign NFT</span>
-        <div className="mb-2">
-          <Field
-            name={`settings.actions[${CONTAINED_FLOW_ACTIONS.SIGNNFT}].enabled`}
-            type="checkbox"
-            component={Input}
-            label="Enabled"
-          />
-        </div>
         <Field
           type="text"
           name={`settings.actions[${CONTAINED_FLOW_ACTIONS.SIGNNFT}].title`}
@@ -252,11 +259,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
           label="Title"
           placeholder="Title"
           loading={validating}
-          disabled={
-            !values?.settings?.actions?.SIGNNFT?.enabled ||
-            submitting ||
-            loading
-          }
+          disabled={submitting || loading}
         />
         <Field
           type="text"
@@ -267,11 +270,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
           label="Sub Title"
           placeholder="Sub Title"
           loading={validating}
-          disabled={
-            !values?.settings?.actions?.SIGNNFT?.enabled ||
-            submitting ||
-            loading
-          }
+          disabled={submitting || loading}
         />
         <Field
           type="text"
@@ -282,22 +281,14 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
           label="Action Text"
           placeholder="Action Text"
           loading={validating}
-          disabled={
-            !values?.settings?.actions?.SIGNNFT?.enabled ||
-            submitting ||
-            loading
-          }
+          disabled={submitting || loading}
         />
         <Field
           name={`settings.actions[${CONTAINED_FLOW_ACTIONS.SIGNNFT}].hideActionText`}
           type="checkbox"
           component={Input}
           label="Hide Action Text"
-          disabled={
-            !values?.settings?.actions?.SIGNNFT?.enabled ||
-            submitting ||
-            loading
-          }
+          disabled={submitting || loading}
         />
       </div>
 
@@ -312,14 +303,6 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
         )}
       >
         <span className={classes.label}>Registration</span>
-        <div className="mb-2">
-          <Field
-            name={`settings.actions[${CONTAINED_FLOW_ACTIONS.REG}].enabled`}
-            type="checkbox"
-            component={Input}
-            label="Enabled"
-          />
-        </div>
         <Field
           type="text"
           name={`settings.actions[${CONTAINED_FLOW_ACTIONS.REG}].title`}
@@ -329,9 +312,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
           label="Title"
           placeholder="Title"
           loading={validating}
-          disabled={
-            !values?.settings?.actions?.REG?.enabled || submitting || loading
-          }
+          disabled={submitting || loading}
         />
         <Field
           type="text"
@@ -342,9 +323,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
           label="Sub Title"
           placeholder="Sub Title"
           loading={validating}
-          disabled={
-            !values?.settings?.actions?.REG?.enabled || submitting || loading
-          }
+          disabled={submitting || loading}
         />
         <Field
           type="text"
@@ -355,18 +334,14 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
           label="Action Text"
           placeholder="Action Text"
           loading={validating}
-          disabled={
-            !values?.settings?.actions?.REG?.enabled || submitting || loading
-          }
+          disabled={submitting || loading}
         />
         <Field
           name={`settings.actions[${CONTAINED_FLOW_ACTIONS.REG}].hideActionText`}
           type="checkbox"
           component={Input}
           label="Hide Action Text"
-          disabled={
-            !values?.settings?.actions?.REG?.enabled || submitting || loading
-          }
+          disabled={submitting || loading}
         />
       </div>
       <SubmitButton

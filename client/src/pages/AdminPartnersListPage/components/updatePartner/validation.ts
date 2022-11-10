@@ -1,10 +1,9 @@
 import { AnyObject, RefProfile } from '../../../../types';
+import { URL_REGEXP } from '../../../../constants/regExps';
 
 export const validate = (values: RefProfile): AnyObject => {
   const errors: AnyObject = {
-    settings: {
-      domains: [],
-    },
+    settings: {},
   };
 
   if (!values.label) {
@@ -13,7 +12,10 @@ export const validate = (values: RefProfile): AnyObject => {
   if (!values.code) {
     errors.code = 'Required.';
   }
-  if (values.settings?.domains) {
+  if (values.settings?.link && !URL_REGEXP.test(values.settings.link)) {
+    errors.settings.link = 'Invalid URL.';
+  }
+  if (values.settings?.domains?.length) {
     errors.settings.domains = values.settings.domains.map((domain, index) =>
       domain
         ? values.settings.domains.slice(0, index).includes(domain)

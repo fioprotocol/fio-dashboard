@@ -29,20 +29,6 @@ const AdminPartnersListPage: React.FC<Props> = props => {
     setShowPartnerModal(true);
   }, []);
   const onEditPartner = useCallback((partner: RefProfile) => {
-    if (partner.settings?.actions?.SIGNNFT) {
-      partner.settings.actions.SIGNNFT.enabled = true;
-    }
-    if (partner.settings?.actions?.REG) {
-      partner.settings.actions.REG.enabled = true;
-    }
-    if (
-      partner.settings?.domains.length &&
-      !partner.settings.domains.includes(partner.settings.preselectedDomain)
-    ) {
-      partner.settings.preselectedDomain = partner.settings.domains[0];
-    } else {
-      partner.settings.preselectedDomain = null;
-    }
     setSelectedPartner(partner);
     setShowPartnerModal(true);
   }, []);
@@ -54,13 +40,16 @@ const AdminPartnersListPage: React.FC<Props> = props => {
     async (partner: RefProfile) => {
       setPartnerActionLoading(true);
       try {
-        if (partner.settings?.actions) {
-          if (!partner.settings.actions.SIGNNFT?.enabled) {
-            delete partner.settings.actions.SIGNNFT;
+        if (partner.settings?.domains.length) {
+          if (
+            !partner.settings.domains.includes(
+              partner.settings.preselectedDomain,
+            )
+          ) {
+            partner.settings.preselectedDomain = partner.settings.domains[0];
           }
-          if (!partner.settings.actions.REG?.enabled) {
-            delete partner.settings.actions.REG;
-          }
+        } else {
+          partner.settings.preselectedDomain = null;
         }
         if (partner.id) {
           await apis.admin.editPartner(partner);
