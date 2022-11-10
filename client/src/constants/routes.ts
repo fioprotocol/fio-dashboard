@@ -120,6 +120,7 @@ const ROUTES: { [route: string]: string } = {
   TERMS_OF_SERVICE: '/terms-of-service',
   COOKIE_NOTICE: '/cookie-notice',
 
+  WRAP_STATUS: '/wrap-status',
   WRAP_STATUS_WRAP_TOKENS: '/wrap-status/wrapTokens',
   WRAP_STATUS_UNWRAP_TOKENS: '/wrap-status/unwrapTokens',
   WRAP_STATUS_WRAP_DOMAINS: '/wrap-status/wrapDomains',
