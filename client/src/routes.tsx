@@ -679,6 +679,11 @@ const Routes = (): React.ReactElement => (
           />
 
           <Route
+            path={ROUTES.WRAP_STATUS}
+            component={() => <Redirect to={ROUTES.WRAP_STATUS_WRAP_TOKENS} />}
+            exact
+          />
+          <Route
             path={ROUTES.WRAP_STATUS_UNWRAP_TOKENS}
             component={WrapStatusPageUnwrapTokens}
             exact
