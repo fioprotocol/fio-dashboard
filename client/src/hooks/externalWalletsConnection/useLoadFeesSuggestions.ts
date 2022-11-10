@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
 
 import { FeePriceOptionsList } from '../../components/ConnectWallet/FeesModal/FeesModalInput';
-import EtherScan from '../../api/ether-scan';
+// import EtherScan from '../../api/ether-scan';
+import InfuraApi from '../../api/infura';
 import { log } from '../../util/general';
 
-const etherscan = new EtherScan();
+// const etherscan = new EtherScan();
+const infura = new InfuraApi();
 
 export function useLoadFeePriceSuggestions(
   startLoad: boolean = false,
@@ -23,51 +25,54 @@ export function useLoadFeePriceSuggestions(
     const getGasData = async () => {
       try {
         setIsLoading(true);
-        const gasData = await etherscan.getGasOracle(isNFT);
+        // const gasData = await etherscan.getGasOracle(isNFT);
+        const gasData = await infura.getGasOracle(isNFT);
 
         const dataList: FeePriceOptionsList = [
           {
             name: 'High',
             gasPrice: ethers.utils
-              .parseUnits(gasData.FastGasPrice, 'gwei')
+              .parseUnits(gasData.FastGasPrice, 'wei')
               .toString(),
           },
           {
             name: 'Medium',
             gasPrice: ethers.utils
-              .parseUnits(gasData.ProposeGasPrice, 'gwei')
+              .parseUnits(gasData.ProposeGasPrice, 'wei')
               .toString(),
           },
           {
             name: 'Low',
             gasPrice: ethers.utils
-              .parseUnits(gasData.SafeGasPrice, 'gwei')
+              .parseUnits(gasData.SafeGasPrice, 'wei')
               .toString(),
           },
         ];
-        if (!isNFT) {
-          const getHighPriceEstimation = etherscan
-            .getEstimationOfConfirmationTime(gasData.FastGasPrice)
-            .then((val: string) => {
-              dataList[0].estimation = val;
-            });
-          const getMediumPriceEstimation = etherscan
-            .getEstimationOfConfirmationTime(gasData.ProposeGasPrice)
-            .then((val: string) => {
-              dataList[1].estimation = val;
-            });
-          const getLowPriceEstimation = etherscan
-            .getEstimationOfConfirmationTime(gasData.SafeGasPrice)
-            .then((val: string) => {
-              dataList[2].estimation = val;
-            });
 
-          await Promise.all([
-            getHighPriceEstimation,
-            getMediumPriceEstimation,
-            getLowPriceEstimation,
-          ]);
-        }
+        // This could be used in production
+        // if (!isNFT) {
+        //   const getHighPriceEstimation = etherscan
+        //     .getEstimationOfConfirmationTime(gasData.FastGasPrice)
+        //     .then((val: string) => {
+        //       dataList[0].estimation = val;
+        //     });
+        //   const getMediumPriceEstimation = etherscan
+        //     .getEstimationOfConfirmationTime(gasData.ProposeGasPrice)
+        //     .then((val: string) => {
+        //       dataList[1].estimation = val;
+        //     });
+        //   const getLowPriceEstimation = etherscan
+        //     .getEstimationOfConfirmationTime(gasData.SafeGasPrice)
+        //     .then((val: string) => {
+        //       dataList[2].estimation = val;
+        //     });
+        //
+        //   await Promise.all([
+        //     getHighPriceEstimation,
+        //     getMediumPriceEstimation,
+        //     getLowPriceEstimation,
+        //   ]);
+        // }
 
         setFeePriceOptionsList(dataList);
         setIsLoading(false);
