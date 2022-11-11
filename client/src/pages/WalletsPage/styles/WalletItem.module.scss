@@ -10,8 +10,10 @@
     font-size: 1em;
     width: 100%;
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: 0;
+    position: relative;
 
     .walletName {
       @include proxima-nova-semibold;
@@ -56,9 +58,18 @@
     .detailsButton {
       display: block;
       font-size: 1em;
-      transition: 0.2s all;
-      margin-left: auto;
       color: $dark-jungle-green;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      right: 0;
+      transition: 0.2s ease-in-out;
+    }
+
+    &:hover {
+      .detailsButton {
+        transform: translateY(-51%);
+      }
     }
   }
 }
@@ -66,6 +77,10 @@
 @include lg {
   .container {
     .badgeItem {
+      flex-direction: row;
+      align-items: center;
+      margin-left: 20px;
+
       .itemContainer {
         flex-direction: row;
         align-items: center;

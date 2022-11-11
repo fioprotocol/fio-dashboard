@@ -1,8 +1,10 @@
+import { ERROR_UI_TYPE } from '../../components/Input/ErrorBadge';
+
 import { CHAIN_CODE_REGEXP, TOKEN_CODE_REGEXP } from '../../constants/regExps';
 
 import { MAX_CHAIN_LENGTH, MAX_TOKEN_LENGTH } from '../../constants/fio';
 
-import { ASTERISK_SIGN } from '../../constants/common';
+import { ASTERISK_SIGN, CHAIN_CODES } from '../../constants/common';
 
 import { FormValues } from './types';
 
@@ -11,6 +13,7 @@ import { PublicAddressDoublet } from '../../types';
 type ErrorsProps = {
   chainCode?: {
     message: string;
+    type?: string;
   };
   tokenCode?: {
     message: string;
@@ -89,6 +92,15 @@ export const validate = (
         ) {
           tokenErrors.tokenCode = {
             message: 'This pair of Chain and Token Codes alreay exists',
+          };
+          tokenArrayErrors[index] = tokenErrors;
+        }
+
+        if (chainCode === CHAIN_CODES.FIO && tokenCode === CHAIN_CODES.FIO) {
+          tokenErrors.chainCode = {
+            message:
+              'Your FIO Public Key is already mapped to your FIO Crypto Handle and that mapping cannot be changed via the Dashboard.',
+            type: ERROR_UI_TYPE.BADGE,
           };
           tokenArrayErrors[index] = tokenErrors;
         }

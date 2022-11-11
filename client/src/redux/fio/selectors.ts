@@ -14,6 +14,7 @@ import {
   NFTTokenDoublet,
   OwnPropsAny,
   PrivateDomainsMap,
+  FioAddressWithPubAddresses,
   WalletsBalances,
 } from '../../types';
 import { ReduxState } from '../init';
@@ -85,17 +86,20 @@ export const currentFioAddress = createSelector(
     fioWallets,
     fioAddresses,
     mappedPublicAddresses,
-    (state: ReduxState, ownProps: RouteComponentProps & OwnPropsAny) =>
-      ownProps.location?.query?.name,
+    (state: ReduxState, fioCryptoHandle: string) => fioCryptoHandle,
   ],
-  // tslint:disable-next-line:no-shadowed-variable
-  (fioWallets, fioAddresses, mappedPublicAddresses, name) => {
+  (
+    fioWallets,
+    fioAddresses,
+    mappedPublicAddresses,
+    fioCryptoHandle,
+  ): FioAddressWithPubAddresses | null => {
     const currentAddress = getElementByFioName({
       fioNameList: (fioAddresses as unknown) as FioNameItemProps[],
-      name,
+      name: fioCryptoHandle,
     });
 
-    if (!currentAddress) return {};
+    if (!currentAddress) return null;
 
     const wallet: FioWalletDoublet =
       fioWallets &&
@@ -104,8 +108,10 @@ export const currentFioAddress = createSelector(
           walletItem.publicKey === currentAddress.walletPublicKey,
       );
 
-    const { publicAddresses = [], more = false } = mappedPublicAddresses[name]
-      ? mappedPublicAddresses[name]
+    const { publicAddresses = [], more = false } = mappedPublicAddresses[
+      fioCryptoHandle
+    ]
+      ? mappedPublicAddresses[fioCryptoHandle]
       : {};
 
     return {
@@ -180,3 +186,6 @@ export const privateDomains = createSelector(
       }, {});
   },
 );
+
+export const getMappedPubAddressError = (state: ReduxState): number | null =>
+  state[prefix].getMappedPubAddressError;

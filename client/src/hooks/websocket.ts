@@ -10,6 +10,7 @@ import { isAuthenticated } from '../redux/profile/selectors';
 
 import config from '../config';
 import { AUTH_REQ_ENDPOINTS } from '../constants/websocket';
+import { QUERY_PARAMS_NAMES } from '../constants/queryParams';
 
 import { AnyObject } from '../types';
 
@@ -45,9 +46,9 @@ export function useWebsocket({
 
   useEffectOnce(
     () => {
-      let query = `?endpoint=${endpoint}&${queryString}`;
+      let query = `?${QUERY_PARAMS_NAMES.ENDPOINT}=${endpoint}&${queryString}`;
       if (AUTH_REQ_ENDPOINTS[endpoint]) {
-        query += `&token=${apis.client.token}`;
+        query += `&${QUERY_PARAMS_NAMES.TOKEN}=${apis.client.token}`;
       }
       setWs(new WebSocket(`${config.wsBaseUrl}ws${query}`));
     },

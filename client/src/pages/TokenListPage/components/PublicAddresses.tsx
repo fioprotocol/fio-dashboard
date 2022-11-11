@@ -8,7 +8,7 @@ import { genericTokenId } from '../../../util/fio';
 
 import { PublicAddressDoublet } from '../../../types';
 
-import classes from '../styles/TokenList.module.scss';
+import classes from '../TokenList.module.scss';
 
 type Props = {
   publicAddresses: PublicAddressDoublet[] | null;

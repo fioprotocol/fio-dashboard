@@ -64,6 +64,10 @@
   .fields {
     .container {
       margin-top: 0;
+
+      &.hasMarginBottom {
+        margin-bottom: 30px;
+      }
     
       .itemContainer {
         .fieldContainer {

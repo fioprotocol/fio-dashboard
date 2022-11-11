@@ -54,7 +54,11 @@ import {
   PAYMENT_PROVIDER_PAYMENT_OPTION,
   PAYMENT_PROVIDER,
 } from '../../constants/purchase';
-import { CURRENCY_CODES, WALLET_CREATED_FROM } from '../../constants/common';
+import {
+  CART_ITEM_TYPE,
+  CURRENCY_CODES,
+  WALLET_CREATED_FROM,
+} from '../../constants/common';
 import { ACTIONS } from '../../constants/fio';
 
 import {
@@ -448,7 +452,13 @@ export const useContext = (): {
 
     const signTxItems = [];
     for (const cartItem of cartItems) {
-      if (privateDomainList[cartItem.domain]) {
+      if (
+        [
+          CART_ITEM_TYPE.ADDRESS,
+          CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
+        ].includes(cartItem.type) &&
+        privateDomainList[cartItem.domain]
+      ) {
         const domainWallet = userDomains.find(
           ({ name }) => name === cartItem.domain,
         );

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classnames from 'classnames';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
 import Amount from '../../../components/common/Amount';
@@ -10,6 +11,7 @@ import { useCheckIfDesktop } from '../../../screenType';
 
 import { ROUTES } from '../../../constants/routes';
 import { WALLET_CREATED_FROM } from '../../../constants/common';
+import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
 
 import { useWalletBalances } from '../../../util/hooks';
 
@@ -31,15 +33,20 @@ const WalletItem: React.FC<Props> = props => {
   const goToWallet = () => {
     history.push({
       pathname: ROUTES.FIO_WALLET,
-      search: `publicKey=${fioWallet.publicKey}`,
+      search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
     });
   };
 
   return (
     <div className={classes.container} onClick={goToWallet}>
       <Badge type={BADGE_TYPES.BORDERED} show={true}>
-        <div className={classes.badgeItem}>
-          {isDesktop && <p className={classes.walletName}>{fioWallet.name}</p>}
+        <div
+          className={classnames(
+            classes.badgeItem,
+            isDesktop && classes.isDesktopView,
+          )}
+        >
+          <p className={classes.walletName}>{fioWallet.name}</p>
           <div className={classes.itemContainer}>
             <div className={classes.balanceContainer}>
               <p className={classes.totalBalance}>Total balance</p>

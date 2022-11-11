@@ -47,7 +47,7 @@
   width: 100%;
   height: 100%;
   max-width: 400px;
-  max-height: 300px;
+  max-height: 350px;
   border-radius: 15px;
   background-color: $bright-turquoise;
   padding: 20px;
@@ -95,6 +95,11 @@
     color: $white;
     width: 100%;
     border-radius: 10px;
+    border: none;
+
+    &:hover {
+      background-color: $cyan;
+    }
   }
 }
 

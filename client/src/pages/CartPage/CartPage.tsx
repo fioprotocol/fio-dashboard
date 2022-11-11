@@ -6,7 +6,7 @@ import CartAmount from '../../components/Cart/CartAmount';
 
 import { useContext } from './CartPageContext';
 
-export const CartPage: React.FC = () => {
+const CartPage: React.FC = () => {
   const {
     cartItems,
     hasGetPricesError,
@@ -64,3 +64,5 @@ export const CartPage: React.FC = () => {
     />
   );
 };
+
+export default CartPage;

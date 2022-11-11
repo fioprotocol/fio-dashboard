@@ -1,0 +1,62 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+
+.tableContainer {
+  width: auto;
+  margin-top: 30px;
+
+  th {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .userItem { cursor: pointer }
+}
+
+.label {
+  margin-bottom: 1rem;
+  font-size: 0.875em;
+  color: $dark-jungle-green;
+  @include sf-pro-display-medium;
+}
+
+.button {
+  line-height: 1;
+}
+
+.imageContainer {
+  > div {
+    padding: 0 20px;
+  }
+  .previewImage {
+    max-width: 380px;
+    max-height: 115px;
+    width: 100%;
+  }
+}
+
+.landingTextsContainer {
+  padding: 10px;
+  background-color: $gallery;
+  border-radius: 7px;
+  box-shadow: 0 0 8px 0 rgba($black, 0.11);
+}
+
+.previewImageWrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.removeImg {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -94,6 +94,11 @@ export default class Search extends Base {
       result.orders = [...result.orders, ...orders];
     }
 
+    if (!isEmail && !isFioAddress && !isPublicKey) {
+      const orders = await Order.listSearchByNumber(valueToSearch);
+      result.orders = [...result.orders, ...orders];
+    }
+
     return {
       data: {
         result,

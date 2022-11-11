@@ -1,4 +1,5 @@
 const path = require('path');
+const rewireCompressionPlugin = require('react-app-rewire-compression-plugin');
 
 module.exports = {
   webpack: function(config, env) {
@@ -12,6 +13,14 @@ module.exports = {
       ...config.resolve.alias,
       "@ledgerhq/devices/hid-framing": "@ledgerhq/devices/lib-es/hid-framing",
     };
+    config = rewireCompressionPlugin(config, env, {
+      filename: '[path].gz[query]',
+      algorithm: 'gzip',
+      test: /\.js$|\.css$|\.html$|\.eot?.+$|\.ttf?.+$|\.woff?.+$|\.svg?.+$/,
+      threshold: 10240,
+      minRatio: 0.8,
+      cache: true,
+    });
 
     return config;
   },

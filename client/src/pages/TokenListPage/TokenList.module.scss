@@ -1,4 +1,4 @@
-@import '../../../components/LinkTokenList/styles/CommonLayout.module.scss';
+@import '../../components/LinkTokenList/styles/CommonLayout.module.scss';
 
 .container {
   width: 100%;
@@ -14,6 +14,10 @@
 
 .publicAddresses {
   margin-top: -10px;
+}
+
+.fioPubContainer {
+  margin-top: -30px;
 }
 
 .infoBadge {

@@ -7,4 +7,5 @@ export type TokenBadgeProps = {
   input?: React.ReactNode;
   showInput?: boolean;
   isBold?: boolean;
+  badgeType?: string;
 } & PublicAddressDoublet;

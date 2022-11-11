@@ -1,0 +1,17 @@
+export const QUERY_PARAMS_NAMES = {
+  ADDRESS: 'address',
+  DOMAIN: 'domain',
+  EMAIL: 'email',
+  ENDPOINT: 'endpoint',
+  FIO_CRYPTO_HANDLE: 'fioCryptoHandle',
+  FIO_REQUEST_ID: 'fioRequestId',
+  HASH: 'hash',
+  ID: 'id',
+  IMPORTED: 'imported',
+  NAME: 'name',
+  ORDER_NUMBER: 'orderNumber',
+  PUBLIC_KEY: 'publicKey',
+  REF_CODE: 'refCode',
+  TOKEN: 'token',
+  TX_IDS: 'txIds',
+};

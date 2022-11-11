@@ -7,6 +7,7 @@ import {
   WalletBalances,
   DecryptedFioRecordContent,
   FioWalletTxHistory,
+  FioAddressDoublet,
 } from '../../types';
 
 type MatchProps = {
@@ -30,6 +31,7 @@ export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
 
 export interface ContainerProps extends ContainerOwnProps {
   fioWallet: FioWalletDoublet | null;
+  fioCryptoHandles: FioAddressDoublet[];
   loading: boolean;
   profileRefreshed: boolean;
   refreshBalance: (publicKey: string) => void;

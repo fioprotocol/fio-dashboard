@@ -5,6 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 import SignNft from '../../components/SignNft';
 
 import { ROUTES } from '../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { FioAddressDoublet, NFTTokenDoublet } from '../../types';
 
@@ -46,7 +47,7 @@ const FioAddressNftPage: React.FC<Props> = props => {
       isEdit={true}
       initialValues={initialValues}
       fioAddressName={address}
-      backTo={`${ROUTES.FIO_ADDRESS_SIGNATURES}?address=${address}`}
+      backTo={`${ROUTES.FIO_ADDRESS_SIGNATURES}?${QUERY_PARAMS_NAMES.ADDRESS}}=${address}`}
     />
   );
 };

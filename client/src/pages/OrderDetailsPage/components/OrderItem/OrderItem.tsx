@@ -22,6 +22,7 @@ export const OrderItem: React.FC<Props> = props => {
     address,
     hasCustomDomain,
     domain,
+    type,
     id,
     fee_collected,
     costUsdc,
@@ -32,6 +33,7 @@ export const OrderItem: React.FC<Props> = props => {
   const item = {
     address,
     domain,
+    type,
     costFio: apis.fio.sufToAmount(fee_collected).toFixed(2),
     costUsdc,
     costNativeFio: fee_collected ? new MathOp(fee_collected).toNumber() : null,

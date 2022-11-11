@@ -1,4 +1,4 @@
-import { ADDRESS, DOMAIN } from './common';
+import { ADDRESS, CART_ITEM_TYPE, DOMAIN } from './common';
 
 export const LINKS: { [linkKey: string]: string } = {
   HOME: 'HOME',
@@ -66,6 +66,7 @@ export const LINKS: { [linkKey: string]: string } = {
   ADMIN_REGULAR_USERS: 'ADMIN_REGULAR_USERS',
   ADMIN_PROFILE: 'ADMIN_PROFILE',
   ADMIN_ACCOUNTS: 'ADMIN_ACCOUNTS',
+  ADMIN_PARTNERS: 'ADMIN_PARTNERS',
   IS_NEW_USER: 'IS_NEW_USER',
   CART: 'CART',
   CHECKOUT: 'CHECKOUT',
@@ -94,7 +95,7 @@ export const LINK_LABELS: { [linkKey: string]: string } = {
   [LINKS.FIO_DOMAINS]: 'FIO Domains',
   [LINKS.FIO_REQUESTS]: 'FIO Requests',
   [LINKS.FIO_WALLET]: 'FIO Wallet',
-  [LINKS.TOKENS]: 'Tokens',
+  [LINKS.TOKENS]: 'FIO Tokens',
   [LINKS.GOVERNANCE]: 'Governance',
   [LINKS.PROTOCOL_UPDATES]: 'Protocol Updates',
   [LINKS.ADMIN_USERS]: 'Admin Users',
@@ -103,6 +104,7 @@ export const LINK_LABELS: { [linkKey: string]: string } = {
   [LINKS.ADMIN_REGULAR_USERS]: 'Users',
   [LINKS.ADMIN_PROFILE]: 'Profile',
   [LINKS.ADMIN_ACCOUNTS]: 'Accounts',
+  [LINKS.ADMIN_PARTNERS]: 'Partners',
 };
 
 export const APP_TITLE = 'FIO Dashboard';
@@ -199,4 +201,13 @@ export const TRANSFER_PAGE_LINK = {
 export const TRANSFER_PAGE_CONFIRMATION_LINK = {
   [DOMAIN]: LINKS.FIO_DOMAIN_OWNERSHIP_CONFIRMATION,
   [ADDRESS]: LINKS.FIO_ADDRESS_OWNERSHIP_CONFIRMATION,
+};
+
+export const CART_ITEM_DESCRIPTOR = {
+  [CART_ITEM_TYPE.ADDRESS]: 'FIO Crypto Handle Registration',
+  [CART_ITEM_TYPE.DOMAIN]: 'FIO Domain Registration',
+  [CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN]:
+    'FIO Crypto Handle and Domain Registration',
+  [CART_ITEM_TYPE.DOMAIN_RENEWAL]: 'FIO Domain Renewal',
+  [CART_ITEM_TYPE.ADD_BUNDLES]: 'Add Bundled Transactions',
 };

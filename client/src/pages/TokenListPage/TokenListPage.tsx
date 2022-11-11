@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { RouteComponentProps } from 'react-router';
-import { Redirect } from 'react-router-dom';
+import React from 'react';
 import classnames from 'classnames';
 
 import NotificationBadge from '../../components/NotificationBadge';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
+import TokenBadge from '../../components/Badges/TokenBadge/TokenBadge';
 
 import { ROUTES } from '../../constants/routes';
 import FioName from '../../components/common/FioName/FioName';
@@ -14,44 +13,20 @@ import PublicAddresses from './components/PublicAddresses';
 import InfoMessage from './components/InfoMessage';
 import ActionButtons from './components/ActionButtons';
 
-import { usePublicAddresses } from '../../util/hooks';
+import { useContext } from './TokenListPageContext';
 
-import { FioAddressWithPubAddresses } from '../../types';
+import classes from './TokenList.module.scss';
 
-import classes from './styles/TokenList.module.scss';
-
-type Props = {
-  currentFioAddress: FioAddressWithPubAddresses;
-  showTokenListInfoBadge: boolean;
-  toggleTokenListInfoBadge: (enabled: boolean) => void;
-  loading: boolean;
-};
-
-const TokenListPage: React.FC<Props & RouteComponentProps> = props => {
+const TokenListPage: React.FC = () => {
   const {
-    currentFioAddress: { name, publicAddresses },
-    location: { search },
     loading,
-    showTokenListInfoBadge,
-    toggleTokenListInfoBadge,
-  } = props;
-
-  usePublicAddresses(name);
-
-  const [showBadge, toggleShowBadge] = useState(false);
-
-  const onClose = () => toggleTokenListInfoBadge(false);
-
-  useEffect(() => {
-    // show info badge if only FIO linked
-    toggleShowBadge(
-      showTokenListInfoBadge &&
-        publicAddresses != null &&
-        publicAddresses.length === 0,
-    );
-  }, [publicAddresses, showTokenListInfoBadge]);
-
-  if (!name) return <Redirect to={{ pathname: ROUTES.FIO_ADDRESSES }} />;
+    fioCryptoHandlePub,
+    fioCryptoHandleName,
+    publicAddresses,
+    search,
+    showBadge,
+    onClose,
+  } = useContext();
 
   return (
     <PseudoModalContainer
@@ -68,18 +43,27 @@ const TokenListPage: React.FC<Props & RouteComponentProps> = props => {
           title="What is Wallet Linking?"
           type={BADGE_TYPES.INFO}
         />
+        <div className="mt-4">
+          <FioName name={fioCryptoHandleName} />
+        </div>
+        <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
+          FIO Public Address
+        </h5>
+        <div className={classes.fioPubContainer}>
+          <TokenBadge badgeType={BADGE_TYPES.BLACK} {...fioCryptoHandlePub} />
+        </div>
         <div
           className={classnames(classes.actionContainer, classes.columnMobile)}
         >
-          <FioName name={name} />
+          <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
+            Linked Tokens
+          </h5>
           <ActionButtons
             search={search}
-            isDisabled={publicAddresses.length === 0}
+            isDisabled={publicAddresses?.length === 0}
           />
         </div>
-        <h5 className={classnames(classes.subtitle, classes.hasMargin)}>
-          Linked Tokens
-        </h5>
+
         <h5 className={classnames(classes.subtitle, classes.infoSubtitle)}>
           <span className="boldText">Hint:</span>{' '}
           <span className={classes.asterisk}>*</span> maps all tokens on a chain

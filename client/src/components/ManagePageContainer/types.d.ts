@@ -1,7 +1,13 @@
 import React, { Dispatch, SetStateAction, MouseEventHandler } from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
-import { FioNameItemProps, FioWalletDoublet, FioNameType } from '../../types';
+import {
+  FioNameItemProps,
+  FioWalletDoublet,
+  FioNameType,
+  FeePrice,
+  CartItem,
+} from '../../types';
 
 export type HasMore = { [key: string]: number };
 type GetWalletAddresses = (
@@ -23,6 +29,12 @@ export interface ContainerProps extends RouteComponentProps {
   showBundles?: boolean;
   showStatus?: boolean;
   showFioAddressName?: boolean;
+  cartItems: CartItem[];
+  addItemToCart: (data: CartItem) => void;
+  addBundlesFeePrice?: FeePrice;
+  renewDomainFeePrice?: FeePrice;
+  getAddBundlesFee: () => void;
+  getRenewDomainFee: () => void;
 }
 
 export type BoolStateFunc = Dispatch<SetStateAction<boolean>>;
@@ -43,6 +55,8 @@ export type DefaultProps = {
   onItemModalOpen?: ModalOpenActionType;
   onSettingsOpen?: ModalOpenActionType;
   showFioAddressName?: boolean;
+  onAddBundles?: (name: string) => void;
+  onRenewDomain?: (name: string) => void;
 };
 
 export type NotificationsProps = {
@@ -61,6 +75,8 @@ export type ItemComponentProps = {
   showExpired?: boolean;
   showStatus?: boolean;
   showBundles?: boolean;
+  onAddBundles?: (name: string) => void;
+  onRenewDomain?: (name: string) => void;
 };
 
 export type SettingsProps = {
@@ -75,4 +91,5 @@ export type ActionButtonProps = {
   isDesktop: boolean;
   onSettingsOpen?: ModalOpenActionType;
   fioNameItem: FioNameItemProps;
+  onRenewDomain?: (domain: string) => void;
 };

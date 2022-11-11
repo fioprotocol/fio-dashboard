@@ -53,7 +53,9 @@ const AdminOrderModal: React.FC<Props> = ({
   onClose,
   orderItem,
 }) => {
-  const { isFree, historyList, orderPayment } = useContext({ orderItem });
+  const { isFree, historyList, orderPayment, orderItems } = useContext({
+    orderItem,
+  });
 
   if (!orderItem) return null;
 
@@ -149,16 +151,20 @@ const AdminOrderModal: React.FC<Props> = ({
                   <th scope="col">Type</th>
                   <th scope="col">Item</th>
                   <th scope="col">Amount</th>
+                  <th scope="col">Fee Collected</th>
                   <th scope="col">Status</th>
                 </tr>
               </thead>
               <tbody>
-                {orderItem.items?.length
-                  ? orderItem.items.map((item, i) => (
+                {orderItems?.length
+                  ? orderItems.map(item => (
                       <tr key={'itemDetails_' + item.id}>
                         <th>{item.action}</th>
                         <th>{setFioName(item.address, item.domain)}</th>
-                        <th>{item.price || 0 + ' ' + item.priceCurrency}</th>
+                        <th>
+                          {item.price || 0} {item.priceCurrency}
+                        </th>
+                        <th>{item.feeCollected} FIO</th>
                         <th>
                           {BC_TX_STATUS_LABELS[item.orderItemStatus.txStatus] ||
                             BC_TX_STATUS_LABELS[BC_TX_STATUSES.NONE]}

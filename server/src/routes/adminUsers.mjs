@@ -17,6 +17,9 @@ import RegularUsersList from '../services/adminUsers/RegularUsersList.mjs';
 import FioAccountsList from '../services/adminUsers/FioAccountsList.mjs';
 import FioAccountProfileUpdate from '../services/adminUsers/FioAccountProfileUpdate.mjs';
 import FioAccountProfileCreate from '../services/adminUsers/FioAccountProfileCreate.mjs';
+import PartnersList from '../services/adminUsers/PartnersList.mjs';
+import PartnerUpdate from '../services/adminUsers/PartnerUpdate.mjs';
+import PartnerCreate from '../services/adminUsers/PartnerCreate.mjs';
 import Search from '../services/adminUsers/Search.mjs';
 
 export default {
@@ -37,6 +40,12 @@ export default {
   fioAccountsProfilesList: makeServiceRunner(FioAccountsList, req => req.query),
   createFioAccountProfile: makeServiceRunner(FioAccountProfileCreate, req => req.body),
   updateFioAccountProfile: makeServiceRunner(FioAccountProfileUpdate, req => ({
+    ...req.body,
+    ...req.params,
+  })),
+  partnersList: makeServiceRunner(PartnersList, req => req.query),
+  createPartner: makeServiceRunner(PartnerCreate, req => req.body),
+  updatePartner: makeServiceRunner(PartnerUpdate, req => ({
     ...req.body,
     ...req.params,
   })),

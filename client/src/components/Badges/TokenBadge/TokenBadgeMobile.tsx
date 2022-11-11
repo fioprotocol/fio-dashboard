@@ -16,6 +16,7 @@ const TokenBadgeMobile: React.FC<TokenBadgeProps> = props => {
     input,
     showInput,
     isBold,
+    badgeType,
   } = props;
 
   const [isOpen, toggleOpen] = useState(false);
@@ -32,13 +33,16 @@ const TokenBadgeMobile: React.FC<TokenBadgeProps> = props => {
     !actionButton && toggleOpen(!isOpen);
   };
 
+  const textHasWhiteColor = badgeType === BADGE_TYPES.BLACK;
+
   return (
     <div className={classes.mobileContainer}>
-      <Badge show={true} type={BADGE_TYPES.WHITE}>
+      <Badge show={true} type={badgeType || BADGE_TYPES.WHITE}>
         <div
           className={classnames(
             classes.addressMobileContainer,
             (isOpen || actionButton) && classes.containerOpen,
+            textHasWhiteColor && classes.textHasWhiteColor,
           )}
           onClick={onClick}
         >

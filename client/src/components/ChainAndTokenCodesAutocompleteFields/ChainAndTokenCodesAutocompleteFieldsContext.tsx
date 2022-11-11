@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import debounce from 'lodash/debounce';
-import { DebouncedFunc } from 'lodash';
 import { useForm } from 'react-final-form';
 
 import useEffectOnce from '../../hooks/general';
@@ -36,7 +35,7 @@ export const useContext = (
     false,
   );
 
-  const { getFieldState, change: fieldChange } = useForm();
+  const { getFieldState, change: fieldChange, blur } = useForm();
 
   const { value: chainCodeFieldValue } =
     getFieldState(chainCodeFieldName) || {};
@@ -78,9 +77,7 @@ export const useContext = (
     toggleForceResetTokenField(tokenCodeFieldValue);
   };
 
-  const onChainCodeChange: DebouncedFunc<(
-    chainCodeValue: string,
-  ) => Promise<void>> = debounce(handleChainCodeChange, DEBOUNCE_TIMEOUT);
+  const onChainCodeChange = debounce(handleChainCodeChange, DEBOUNCE_TIMEOUT);
 
   const setSelectedTokensToList = () => {
     if (selectedChainCodeTokens.length > MAX_TOKEN_CODES_LIST_COUNT)
@@ -97,7 +94,10 @@ export const useContext = (
     )
       return setTokenCodesList([]);
 
-    const tokenRegex = new RegExp(tokenCodeValue, 'i');
+    const tokenRegex = new RegExp(
+      tokenCodeValue.replace(/^\+/, '\\+').replace(/^\*/, '\\*'),
+      'i',
+    );
     const tokenList = selectedTokenCodesList.filter(
       tokenCodeItem =>
         tokenRegex.test(tokenCodeItem.tokenCodeId) ||
@@ -106,6 +106,13 @@ export const useContext = (
 
     setTokenCodesList(tokenList);
   };
+
+  const onBlur = useCallback(
+    (fieldName: string) => {
+      blur(fieldName);
+    },
+    [blur],
+  );
 
   useEffect(() => {
     if (tokenCodeListHasOneItem) {
@@ -133,6 +140,7 @@ export const useContext = (
     tokenCodesList,
     onChainCodeChange,
     onChainCodeClear,
+    onBlur,
     onTokenCodeChange,
     setSelectedTokensToList,
   };

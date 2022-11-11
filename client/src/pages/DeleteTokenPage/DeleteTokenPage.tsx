@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import ActionContainer from '../../components/LinkTokenList/ActionContainer';
 import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
@@ -7,166 +7,45 @@ import DeleteTokenItem from './components/DeleteTokenItem';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 
-import { linkTokens } from '../../api/middleware/fio';
-import { genericTokenId } from '../../util/fio';
-import { minWaitTimeFunction } from '../../utils';
-import { log } from '../../util/general';
-
 import {
   CONFIRM_PIN_ACTIONS,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
-import {
-  TOKEN_LINK_MIN_WAIT_TIME,
-  BUNDLES_TX_COUNT,
-} from '../../constants/fio';
 
-import { CheckedTokenType } from './types';
-import {
-  WalletKeys,
-  PublicAddressDoublet,
-  LinkActionResult,
-  FioAddressWithPubAddresses,
-  FioWalletDoublet,
-} from '../../types';
+import { useContext } from './DeleteTokenPageContext';
 
 import classes from './styles/DeleteToken.module.scss';
 
-type Props = {
-  fioCryptoHandle: FioAddressWithPubAddresses;
-  fioWallets: FioWalletDoublet[];
-  loading: boolean;
-};
-
-const DeleteTokenPage: React.FC<Props> = props => {
-  const { fioCryptoHandle, fioWallets, loading } = props;
+const DeleteTokenPage: React.FC = () => {
   const {
-    remaining = 0,
-    edgeWalletId = '',
-    publicAddresses = [],
-  } = fioCryptoHandle;
-
-  const [pubAddressesArr, changePubAddresses] = useState<CheckedTokenType[]>(
-    [],
-  );
-  const [bundleCost, changeBundleCost] = useState(0);
-  const [allChecked, toggleAllChecked] = useState(false);
-  const [processing, setProcessing] = useState(false);
-  const [submitData, setSubmitData] = useState<boolean | null>(null);
-  const [resultsData, setResultsData] = useState<LinkActionResult | null>(null);
-
-  const hasLowBalance = remaining - bundleCost < 0 || remaining === 0;
-
-  const hasChecked = pubAddressesArr.some(pubAddress => pubAddress.isChecked);
-
-  const fioWallet = fioWallets.find(
-    ({ publicKey }) => publicKey === fioCryptoHandle.walletPublicKey,
-  );
-
-  const pubAddressesToDefault = () =>
-    publicAddresses &&
-    changePubAddresses(
-      publicAddresses.map(pubAddress => ({
-        ...pubAddress,
-        isChecked: false,
-        id: genericTokenId(
-          pubAddress.chainCode,
-          pubAddress.tokenCode,
-          pubAddress.publicAddress,
-        ),
-      })),
-    );
-
-  useEffect(() => {
-    pubAddressesToDefault();
-  }, []);
-
-  useEffect(() => {
-    hasChecked
-      ? changeBundleCost(BUNDLES_TX_COUNT.REMOVE_PUBLIC_ADDRESS)
-      : changeBundleCost(0);
-  }, [hasChecked]);
-
-  useEffect(() => {
-    toggleAllChecked(pubAddressesArr.every(pubAddress => pubAddress.isChecked));
-  }, [JSON.stringify(pubAddressesArr)]);
-
-  const onCheckClick = (checkedId: string) => {
-    changePubAddresses(
-      pubAddressesArr.map(pubAddress =>
-        pubAddress.id === checkedId
-          ? {
-              ...pubAddress,
-              isChecked: !pubAddress.isChecked,
-            }
-          : pubAddress,
-      ),
-    );
-  };
-
-  const allCheckedChange = (isChecked: boolean) => {
-    toggleAllChecked(isChecked);
-    changePubAddresses(
-      pubAddressesArr.map(pubAddress => ({
-        ...pubAddress,
-        isChecked,
-      })),
-    );
-  };
-
-  const onSuccess = () => {
-    setProcessing(false);
-  };
-
-  const onCancel = () => {
-    setSubmitData(null);
-    setProcessing(false);
-  };
-
-  const submit = async ({ keys }: { keys: WalletKeys }) => {
-    const params: {
-      fioAddress: string;
-      disconnectList: PublicAddressDoublet[];
-      keys: WalletKeys;
-      disconnectAll: boolean;
-    } = {
-      fioAddress: fioCryptoHandle.name,
-      disconnectList: pubAddressesArr.filter(
-        pubAddress => pubAddress.isChecked,
-      ),
-      keys,
-      disconnectAll: allChecked,
-    };
-    try {
-      const actionResults = await minWaitTimeFunction(
-        () => linkTokens(params),
-        TOKEN_LINK_MIN_WAIT_TIME,
-      );
-      setResultsData(actionResults);
-    } catch (err) {
-      log.error(err);
-    } finally {
-      setSubmitData(null);
-    }
-  };
-
-  const onActionClick = () => {
-    setSubmitData(true);
-  };
-
-  const onBack = () => {
-    setResultsData(null);
-    changeBundleCost(0);
-    pubAddressesToDefault();
-  };
-
-  const onRetry = () => {
-    setSubmitData(true);
-  };
+    allChecked,
+    bundleCost,
+    edgeWalletId,
+    fioCryptoHandleObj,
+    fioWallet,
+    fioWallets,
+    hasLowBalance,
+    isDisabled,
+    loading,
+    processing,
+    pubAddressesArr,
+    resultsData,
+    submitData,
+    allCheckedChange,
+    changeBundleCost,
+    onActionClick,
+    onBack,
+    onCancel,
+    onCheckClick,
+    onRetry,
+    onSuccess,
+    setProcessing,
+    submit,
+  } = useContext();
 
   return (
     <>
-      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
+      {fioWallet?.from === WALLET_CREATED_FROM.EDGE ? (
         <EdgeConfirmAction
           onSuccess={onSuccess}
           onCancel={onCancel}
@@ -179,7 +58,7 @@ const DeleteTokenPage: React.FC<Props> = props => {
         />
       ) : null}
 
-      {fioWallet.from === WALLET_CREATED_FROM.LEDGER ? (
+      {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
         <LedgerWalletActionNotSupported
           submitData={submitData}
           onCancel={onCancel}
@@ -188,10 +67,10 @@ const DeleteTokenPage: React.FC<Props> = props => {
 
       <ActionContainer
         containerName={CONTAINER_NAMES.DELETE}
-        fioCryptoHandle={fioCryptoHandle}
+        fioCryptoHandleObj={fioCryptoHandleObj}
         bundleCost={bundleCost}
         fioWallets={fioWallets}
-        isDisabled={!hasChecked || remaining === 0}
+        isDisabled={isDisabled}
         onActionButtonClick={onActionClick}
         loading={loading}
         results={resultsData}

@@ -6,6 +6,7 @@ import CancelButton from '../../../components/common/CancelButton/CancelButton';
 
 import { CHAIN_CODES } from '../../../constants/common';
 import { ROUTES } from '../../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
 
 import { FioRecordViewDecrypted } from '../types';
 
@@ -46,7 +47,7 @@ const FioRecordDetailedActionButtons: React.FC<Props &
     history.push(
       {
         pathname: ROUTES.SEND,
-        search: `publicKey=${fioWallet.publicKey}`,
+        search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
       },
       {
         fioWallet,
@@ -58,7 +59,7 @@ const FioRecordDetailedActionButtons: React.FC<Props &
   const onEnterPaymentDetails = () => {
     history.push({
       pathname: ROUTES.PAYMENT_DETAILS,
-      search: `publicKey=${fioWallet.publicKey}&fioRequestId=${fioRecordDecrypted.fioRecord.id}`,
+      search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}&${QUERY_PARAMS_NAMES.FIO_REQUEST_ID}=${fioRecordDecrypted.fioRecord.id}`,
       state: {
         fioWallet,
         fioRecordDecrypted,

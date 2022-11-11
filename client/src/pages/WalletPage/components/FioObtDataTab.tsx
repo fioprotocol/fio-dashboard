@@ -4,10 +4,15 @@ import FioRecordsList from './FioRecordsList';
 
 import { FIO_RECORD_TYPES } from '../constants';
 
-import { FioWalletData, FioWalletDoublet } from '../../../types';
+import {
+  FioAddressDoublet,
+  FioWalletData,
+  FioWalletDoublet,
+} from '../../../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
+  fioCryptoHandles: FioAddressDoublet[];
   walletData: FioWalletData;
 };
 

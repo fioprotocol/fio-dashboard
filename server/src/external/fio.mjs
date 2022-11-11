@@ -11,6 +11,7 @@ import {
   FIO_ACTIONS,
   FIO_ACTIONS_TO_END_POINT_KEYS,
   FIO_ADDRESS_DELIMITER,
+  DEFAULT_BUNDLE_SET_VALUE,
 } from '../config/constants.js';
 
 import MathOp from '../services/math.mjs';
@@ -196,6 +197,21 @@ class Fio {
           ...actionParams,
           payee_public_key: options.publicKey,
           amount: options.amount,
+        };
+        break;
+      }
+      case FIO_ACTIONS.renewFioDomain: {
+        actionParams = {
+          ...actionParams,
+          fio_domain: options.domain,
+        };
+        break;
+      }
+      case FIO_ACTIONS.addBundledTransactions: {
+        actionParams = {
+          ...actionParams,
+          fio_address: `${options.address}${FIO_ADDRESS_DELIMITER}${options.domain}`,
+          bundle_sets: DEFAULT_BUNDLE_SET_VALUE,
         };
         break;
       }

@@ -25,6 +25,8 @@ const DesktopView: React.FC<DefaultProps> = props => {
     toggleShowWarnBadge,
     isDesktop,
     onSettingsOpen,
+    onAddBundles,
+    onRenewDomain,
   } = props;
   const isAddress = pageName === PAGE_NAME.ADDRESS;
 
@@ -45,7 +47,10 @@ const DesktopView: React.FC<DefaultProps> = props => {
           ) : (
             '-'
           )}
-          <RenderAddBundles name={fioNameItem.name || ''} />
+          <RenderAddBundles
+            name={fioNameItem.name || ''}
+            onAddBundles={onAddBundles}
+          />
         </div>
         <div className={classnames(classes.tableCol, classes.lastCol)}>
           <ActionButtons
@@ -86,6 +91,7 @@ const DesktopView: React.FC<DefaultProps> = props => {
             isDesktop={isDesktop}
             onSettingsOpen={onSettingsOpen}
             fioNameItem={fioNameItem}
+            onRenewDomain={onRenewDomain}
           />
         </div>
       </React.Fragment>
