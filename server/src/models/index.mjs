@@ -37,4 +37,6 @@ export const {
   WrapStatusFioWrapTokensLogs,
   WrapStatusFioUnwrapNftsOravotes,
   WrapStatusFioUnwrapTokensOravotes,
+  WrapStatusEthOraclesConfirmationsLogs,
+  WrapStatusPolygonOraclesConfirmationsLogs,
 } = db.models;

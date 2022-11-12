@@ -46,9 +46,11 @@ export class WrapStatusFioWrapTokensLogs extends Base {
           wf."amount", 
           wf."blockNumber", 
           wf."data", 
-          we."data" as "confirmData"
+          we."data" as "confirmData",
+          array_agg(wo."data") FILTER (WHERE wo."data" IS NOT NULL)  as "oravotes"
         FROM "wrap-status-fio-wrap-tokens-logs" wf
           LEFT JOIN "wrap-status-eth-wrap-logs" we ON we."obtId" = wf."transactionId"
+          LEFT JOIN "wrap-status-eth-oracles-confirmations-logs" wo ON wo."obtId" = wf."transactionId"
         WHERE wf."transactionId" IS NOT NULL
         GROUP BY wf."transactionId", we."transactionHash"
         ORDER BY wf."blockNumber"::bigint desc

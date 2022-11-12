@@ -14,9 +14,9 @@ import {
 } from './constants/purchase';
 import {
   ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_TYPE,
   CONFIRM_FIO_ACTIONS,
   CURRENCY_CODES,
-  CART_ITEM_TYPE,
 } from './constants/common';
 
 import { ResultsData } from '../components/common/TransactionResults/types';
@@ -819,6 +819,7 @@ export type WrapStatusWrapItem = {
   fioAddress?: string;
   data: AnyObject;
   confirmData: AnyObject;
+  oravotes?: [{ transactionHash: string }];
 } & AnyObject;
 
 export type FioActions = typeof CONFIRM_FIO_ACTIONS;
