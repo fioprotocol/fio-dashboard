@@ -38,6 +38,8 @@ import { WrapStatusFioWrapNftsLogs } from './models/WrapStatusFioWrapNftsLogs.mj
 import { WrapStatusFioUnwrapTokensLogs } from './models/WrapStatusFioUnwrapTokensLogs.mjs';
 import { WrapStatusFioWrapTokensLogs } from './models/WrapStatusFioWrapTokensLogs.mjs';
 import { WrapStatusFioUnwrapNftsLogs } from './models/WrapStatusFioUnwrapNftsLogs.mjs';
+import { WrapStatusEthOraclesConfirmationsLogs } from './models/WrapStatusEthOraclesConfirmationsLogs.mjs';
+import { WrapStatusPolygonOraclesConfirmationsLogs } from './models/WrapStatusPolygonOraclesConfirmationsLogs.mjs';
 
 const sequelize = new Sequelize(config.postgres);
 
@@ -77,6 +79,8 @@ WrapStatusFioUnwrapTokensLogs.init(sequelize);
 WrapStatusFioWrapTokensLogs.init(sequelize);
 WrapStatusFioUnwrapNftsLogs.init(sequelize);
 WrapStatusFioUnwrapTokensOravotes.init(sequelize);
+WrapStatusEthOraclesConfirmationsLogs.init(sequelize);
+WrapStatusPolygonOraclesConfirmationsLogs.init(sequelize);
 
 const { models } = sequelize;
 

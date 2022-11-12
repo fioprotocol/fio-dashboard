@@ -8,6 +8,7 @@ import '../db';
 import CommonJob from './job.mjs';
 import {
   WrapStatusBlockNumbers,
+  WrapStatusEthOraclesConfirmationsLogs,
   WrapStatusEthUnwrapLogs,
   WrapStatusEthWrapLogs,
   WrapStatusFioUnwrapNftsLogs,
@@ -17,6 +18,7 @@ import {
   WrapStatusFioWrapNftsLogs,
   WrapStatusFioWrapTokensLogs,
   WrapStatusNetworks,
+  WrapStatusPolygonOraclesConfirmationsLogs,
   WrapStatusPolygonUnwrapLogs,
   WrapStatusPolygonWrapLogs,
 } from '../models/index.mjs';
@@ -51,7 +53,7 @@ class WrapStatusJob extends CommonJob {
 
     const getPolygonActionsLogs = async (from, to) => {
       return await fioNftContractOnPolygonChain.getPastEvents(
-        'allEvents',
+        'allEvents', //'consensus_activity',
         {
           fromBlock: from,
           toBlock: to,
@@ -68,7 +70,7 @@ class WrapStatusJob extends CommonJob {
 
     const getUnprocessedActionsLogs = async () => {
       const logPrefix = 'Test >>>>>>>>>>';
-      const lastProcessedBlockNumber = 27346247;
+      const lastProcessedBlockNumber = 28994555;
       const lastInChainBlockNumber = await web3.eth.getBlockNumber();
 
       if (lastProcessedBlockNumber > lastInChainBlockNumber)
@@ -121,9 +123,13 @@ class WrapStatusJob extends CommonJob {
       });
       let maxCheckedBlockNumber = 0;
 
-      const getPolygonActionsLogs = async (from, to) => {
+      const getPolygonActionsLogs = async (from, to, isOraclesConfirmations = false) => {
         return await fioNftContractOnPolygonChain.getPastEvents(
-          isWrap ? 'wrapped' : 'unwrapped',
+          isOraclesConfirmations
+            ? 'consensus_activity'
+            : isWrap
+            ? 'wrapped'
+            : 'unwrapped',
           {
             fromBlock: from,
             toBlock: to,
@@ -158,7 +164,10 @@ class WrapStatusJob extends CommonJob {
 
         let fromBlockNumber = lastProcessedBlockNumber + 1;
 
-        let result = [];
+        const data = {
+          transferActions: [],
+          oraclesConfirmationActions: [],
+        };
 
         // todo: check if possible to rewrite onto Promise.all async bunches process. Possible difficulties: 1) large amount of parallel request (server limitations, and Infura Api limitations); 2) configuring limitation value. Profit: much faster job's work for big ranges (but less reliable).
         while (fromBlockNumber <= lastInChainBlockNumber) {
@@ -170,24 +179,42 @@ class WrapStatusJob extends CommonJob {
 
           maxCheckedBlockNumber = toBlockNumber;
 
-          result = [
-            ...result,
+          data.transferActions = [
+            ...data.transferActions,
             ...(await getPolygonActionsLogs(fromBlockNumber, toBlockNumber)),
           ];
+
+          if (isWrap) {
+            data.oraclesConfirmationActions = [
+              ...data.oraclesConfirmationActions,
+              ...(await getPolygonActionsLogs(fromBlockNumber, toBlockNumber, true)),
+            ];
+          }
 
           fromBlockNumber = toBlockNumber + 1;
         }
 
-        this.postMessage(logPrefix + `result length ${result.length}`);
-        return result;
+        this.postMessage(
+          logPrefix +
+            `result length: transfers: ${data.transferActions.length} ${
+              isWrap ? `oracles confirmations: ${data.oraclesConfirmationActions}` : ''
+            }`,
+        );
+        return data;
       };
 
       const data = await getUnprocessedActionsLogs();
 
-      if (data.length > 0) {
+      if (data.transferActions.length > 0) {
         if (isWrap) {
-          await WrapStatusPolygonWrapLogs.addLogs(data);
-        } else await WrapStatusPolygonUnwrapLogs.addLogs(data);
+          await WrapStatusPolygonWrapLogs.addLogs(data.transferActions);
+        } else await WrapStatusPolygonUnwrapLogs.addLogs(data.transferActions);
+      }
+
+      if (data.oraclesConfirmationActions.length > 0) {
+        WrapStatusPolygonOraclesConfirmationsLogs.addLogs(
+          data.oraclesConfirmationActions,
+        );
       }
 
       await WrapStatusBlockNumbers.setBlockNumber(
@@ -197,7 +224,7 @@ class WrapStatusJob extends CommonJob {
       );
 
       this.postMessage(logPrefix + 'successfully finished');
-      return data.length;
+      return data.transferActions.length;
     } catch (e) {
       this.handleErrorMessage(e);
     }
@@ -219,9 +246,13 @@ class WrapStatusJob extends CommonJob {
       });
       let maxCheckedBlockNumber = 0;
 
-      const getEthActionsLogs = async (from, to) => {
+      const getEthActionsLogs = async (from, to, isOraclesConfirmations = false) => {
         return await fioTokenContractOnEthChain.getPastEvents(
-          isWrap ? 'wrapped' : 'unwrapped',
+          isOraclesConfirmations
+            ? 'consensus_activity'
+            : isWrap
+            ? 'wrapped'
+            : 'unwrapped',
           {
             fromBlock: from,
             toBlock: to,
@@ -255,7 +286,10 @@ class WrapStatusJob extends CommonJob {
 
         let fromBlockNumber = lastProcessedBlockNumber + 1;
 
-        let result = [];
+        const data = {
+          transferActions: [],
+          oraclesConfirmationActions: [],
+        };
 
         while (fromBlockNumber <= lastInChainBlockNumber) {
           const maxAllowedBlockNumber = fromBlockNumber + blocksRangeLimit - 1;
@@ -266,24 +300,43 @@ class WrapStatusJob extends CommonJob {
 
           maxCheckedBlockNumber = toBlockNumber;
 
-          result = [
-            ...result,
+          data.transferActions = [
+            ...data.transferActions,
             ...(await getEthActionsLogs(fromBlockNumber, toBlockNumber)),
           ];
+
+          if (isWrap) {
+            data.oraclesConfirmationActions = [
+              ...data.oraclesConfirmationActions,
+              ...(await getEthActionsLogs(fromBlockNumber, toBlockNumber, true)),
+            ];
+          }
 
           fromBlockNumber = toBlockNumber + 1;
         }
 
-        this.postMessage(logPrefix + `result length ${result.length}`);
-        return result;
+        this.postMessage(
+          logPrefix +
+            `result length: transfers: ${data.transferActions.length} ${
+              isWrap ? `oracles confirmations: ${data.oraclesConfirmationActions}` : ''
+            }`,
+        );
+        return data;
       };
 
       const data = await getUnprocessedActionsLogs();
 
-      if (data.length > 0) {
+      if (data.transferActions.length > 0) {
         if (isWrap) {
-          await WrapStatusEthWrapLogs.addLogs(data);
-        } else await WrapStatusEthUnwrapLogs.addLogs(data);
+          await WrapStatusEthWrapLogs.addLogs(data.transferActions);
+        } else await WrapStatusEthUnwrapLogs.addLogs(data.transferActions);
+      }
+
+      if (data.oraclesConfirmationActions.length > 0) {
+        WrapStatusEthOraclesConfirmationsLogs.addLogs(data.oraclesConfirmationActions);
+        WrapStatusPolygonOraclesConfirmationsLogs.addLogs(
+          data.oraclesConfirmationActions,
+        );
       }
 
       await WrapStatusBlockNumbers.setBlockNumber(
@@ -293,7 +346,7 @@ class WrapStatusJob extends CommonJob {
       );
 
       this.postMessage(logPrefix + 'successfully finished');
-      return data.length;
+      return data.transferActions.length;
     } catch (e) {
       this.handleErrorMessage(e);
     }
