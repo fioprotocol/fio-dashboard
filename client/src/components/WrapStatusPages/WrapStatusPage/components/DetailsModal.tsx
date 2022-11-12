@@ -213,6 +213,34 @@ const DetailsModal: React.FC<Props> = props => {
               </div>
             ) : null}
 
+            {isWrap && itemData.oravotes?.length ? (
+              <div>
+                <div className="d-flex justify-content-between my-2">
+                  <div className="mr-3">
+                    <b>Voters:</b>
+                  </div>
+                  <div className={classes.trxId}>
+                    {itemData.oravotes.map((o: { transactionHash: string }) => (
+                      <div className={classes.trxId}>
+                        <a
+                          href={
+                            (isTokens
+                              ? process.env.REACT_APP_ETH_HISTORY_URL
+                              : process.env.REACT_APP_POLYGON_HISTORY_URL) +
+                            o.transactionHash
+                          }
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {o.transactionHash}
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : null}
+
             {isWrap && itemData.confirmData ? (
               <div>
                 <div className="d-flex justify-content-between my-2">
