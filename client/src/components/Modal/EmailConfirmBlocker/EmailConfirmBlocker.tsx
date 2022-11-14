@@ -29,7 +29,9 @@ const EmailConfirmBlocker: React.FC = () => {
             </span>
           </p>
         )}
-        <p className="mt-0 mb-0">{emailConfirmationSentTitle}&nbsp;</p>
+        {emailConfirmationSentTitle && (
+          <p className="mt-0 mb-0">{emailConfirmationSentTitle}&nbsp;</p>
+        )}
       </div>
     </div>
   );
