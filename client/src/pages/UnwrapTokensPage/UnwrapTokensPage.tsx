@@ -106,6 +106,12 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
 
         // const receipt = await transaction.wait(); this will wait for transaction completion in chain
       } catch (err) {
+        if (err.code === 'ACTION_REJECTED') {
+          setModalInfoError(
+            'Transaction rejected in wallet. Please try again.',
+          );
+          return;
+        }
         log.error('wrapped tokens transaction error', err);
         setModalInfoError(
           err.message ||
