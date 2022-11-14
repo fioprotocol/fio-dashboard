@@ -44,7 +44,7 @@ export const OrderItem: React.FC<Props> = props => {
   return (
     <>
       <CartItem item={item} primaryCurrency={primaryCurrency} />
-      {transaction_ids?.length &&
+      {transaction_ids?.length > 0 &&
         transaction_ids.map(transaction_id => (
           <Badge
             key={transaction_id}

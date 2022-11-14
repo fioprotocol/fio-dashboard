@@ -270,7 +270,7 @@ export const OrderDetailedPdf: React.FC<Props> = props => {
                         <div style={styles.debit}>{item.debit}</div>
                         <div style={styles.credit}>{item.credit}</div>
                       </div>
-                      {item.txIds?.length &&
+                      {item.txIds?.length > 0 &&
                         item.txIds.map(txId => (
                           <div key={txId} style={styles.txIdContainer}>
                             <div style={styles.txIdTitle}>Transaction ID</div>
