@@ -4,7 +4,7 @@ import { fioApi } from '../external/fio.mjs';
 import { countTotalPriceAmount, getPaidWith } from '../utils/order.mjs';
 import MathOp from './math.mjs';
 import logger from '../logger.mjs';
-import { FIO_ACTIONS_LABEL } from '../config/constants.js';
+import { FIO_ACTIONS_LABEL, FIO_ACTIONS } from '../config/constants.js';
 
 export const checkOrderStatusAndCreateNotification = async orderId => {
   const order = await Order.orderInfo(orderId);
@@ -64,8 +64,13 @@ const transformOrderItemsForEmail = (orderItems, showPriceWithFioAmount) =>
       domain,
       priceAmount,
     };
-    if (data && data.hasCustomDomain)
+    if (data && data.hasCustomDomain) {
       transformedOrderItem.hasCustomDomain = data.hasCustomDomain;
+      transformedOrderItem.descriptor =
+        FIO_ACTIONS_LABEL[
+          `${FIO_ACTIONS.registerFioAddress}_${FIO_ACTIONS.registerFioDomain}`
+        ];
+    }
 
     return transformedOrderItem;
   });
