@@ -737,6 +737,7 @@ export type OrderItemDetailed = {
   hasCustomDomain?: boolean;
   priceString: string;
   transaction_id: string;
+  transaction_ids: string[];
   error?: string;
   errorData?: { code?: string; credited?: string; errorType?: string };
   errorType?: string;

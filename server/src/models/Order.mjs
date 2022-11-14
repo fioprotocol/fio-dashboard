@@ -576,12 +576,21 @@ export class Order extends Base {
       const isFree = price === '0';
 
       let bcTx = {};
+      let customDomainBcTx = {};
 
       if (itemStatus.blockchainTransactionId) {
         bcTx =
           blockchainTransactions.find(
             bcTxItem => bcTxItem.id === itemStatus.blockchainTransactionId,
           ) || {};
+        if (data.hasCustomDomain) {
+          customDomainBcTx = blockchainTransactions.find(
+            bcTxItem => bcTxItem.action === FIO_ACTIONS.registerFioDomain,
+          );
+          if (customDomainBcTx && customDomainBcTx.feeCollected) {
+            bcTx.feeCollected = +bcTx.feeCollected + +customDomainBcTx.feeCollected;
+          }
+        }
       }
 
       const fioName = address ? `${address}${FIO_ADDRESS_DELIMITER}${domain}` : domain;
@@ -604,7 +613,11 @@ export class Order extends Base {
             status === BlockchainTransaction.STATUS.CANCEL,
         );
         errItems.push({
-          action: FIO_ACTIONS_LABEL[action],
+          action: hasCustomDomain
+            ? FIO_ACTIONS_LABEL[
+                `${FIO_ACTIONS.registerFioAddress}_${FIO_ACTIONS.registerFioDomain}`
+              ]
+            : FIO_ACTIONS_LABEL[action],
           address,
           domain,
           fee_collected: isFree ? null : feeCollected,
@@ -635,7 +648,11 @@ export class Order extends Base {
       }
 
       regItems.push({
-        action: FIO_ACTIONS_LABEL[action],
+        action: hasCustomDomain
+          ? FIO_ACTIONS_LABEL[
+              `${FIO_ACTIONS.registerFioAddress}_${FIO_ACTIONS.registerFioDomain}`
+            ]
+          : FIO_ACTIONS_LABEL[action],
         address,
         domain,
         fee_collected: isFree ? null : feeCollected,
@@ -653,6 +670,9 @@ export class Order extends Base {
           paymentCurrency,
         }),
         transaction_id: bcTx.txId,
+        transaction_ids: [bcTx.txId, customDomainBcTx && customDomainBcTx.txId].filter(
+          Boolean,
+        ),
       });
     }
 
