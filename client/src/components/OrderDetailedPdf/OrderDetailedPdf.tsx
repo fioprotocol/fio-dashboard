@@ -270,19 +270,20 @@ export const OrderDetailedPdf: React.FC<Props> = props => {
                         <div style={styles.debit}>{item.debit}</div>
                         <div style={styles.credit}>{item.credit}</div>
                       </div>
-                      {item.txId && (
-                        <div style={styles.txIdContainer}>
-                          <div style={styles.txIdTitle}>Transaction ID</div>
-                          <a
-                            href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${item.txId}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            style={styles.txIdLink}
-                          >
-                            {`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${item.txId}`}
-                          </a>
-                        </div>
-                      )}
+                      {item.txIds?.length > 0 &&
+                        item.txIds.map(txId => (
+                          <div key={txId} style={styles.txIdContainer}>
+                            <div style={styles.txIdTitle}>Transaction ID</div>
+                            <a
+                              href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${txId}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              style={styles.txIdLink}
+                            >
+                              {`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${txId}`}
+                            </a>
+                          </div>
+                        ))}
                     </div>
                   </div>
                 );

@@ -12,6 +12,7 @@ type TransactionItem = {
   debit: string;
   credit: string;
   txId?: string;
+  txIds?: string[];
 };
 
 type Props = {
@@ -77,6 +78,7 @@ export const useContext = (orderItem: OrderDetailed): Props => {
         domain,
         priceString,
         transaction_id,
+        transaction_ids,
       } = orderItem;
       let debit = '';
       let credit = '';
@@ -93,6 +95,7 @@ export const useContext = (orderItem: OrderDetailed): Props => {
         credit,
         type: action,
         txId: transaction_id || null,
+        txIds: transaction_ids || [],
       };
     });
 

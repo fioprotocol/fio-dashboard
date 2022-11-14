@@ -112,22 +112,27 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
       newCartItem.costFio = recalcFioPrices.fio;
       newCartItem.costUsdc = recalcFioPrices.usdc;
 
-      setCartItems([
+      const newCartItems = [
         ...cartItems.filter(
           (item: CartItem) => item.domain !== domainName.toLowerCase(),
         ),
         newCartItem,
-      ]);
+      ];
+      setCartItems(newCartItems);
+      fireAnalyticsEvent(
+        ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
+        getCartItemsDataForAnalytics(newCartItems),
+      );
     } else {
       const addItemFioPrices = convertFioPrices(newCartItem.costNativeFio, roe);
       newCartItem.costFio = addItemFioPrices.fio;
       newCartItem.costUsdc = addItemFioPrices.usdc;
       addItem(newCartItem);
+      fireAnalyticsEvent(
+        ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
+        getCartItemsDataForAnalytics([...cartItems, newCartItem]),
+      );
     }
-    fireAnalyticsEvent(
-      ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
-      getCartItemsDataForAnalytics([...cartItems, newCartItem]),
-    );
   };
   return (
     <Badge type={BADGE_TYPES.SIMPLE} show={showAvailable}>
