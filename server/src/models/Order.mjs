@@ -578,12 +578,13 @@ export class Order extends Base {
       let bcTx = {};
       let customDomainBcTx = {};
 
+      const { hasCustomDomain, cartItemId } = data || {};
       if (itemStatus.blockchainTransactionId) {
         bcTx =
           blockchainTransactions.find(
             bcTxItem => bcTxItem.id === itemStatus.blockchainTransactionId,
           ) || {};
-        if (data.hasCustomDomain) {
+        if (hasCustomDomain) {
           customDomainBcTx = blockchainTransactions.find(
             bcTxItem => bcTxItem.action === FIO_ACTIONS.registerFioDomain,
           );
@@ -595,7 +596,6 @@ export class Order extends Base {
 
       const fioName = address ? `${address}${FIO_ADDRESS_DELIMITER}${domain}` : domain;
       const feeCollected = bcTx.feeCollected || nativeFio;
-      const { hasCustomDomain, cartItemId } = data || {};
       const itemType = this.getOrderItemType(orderItem);
 
       if (
