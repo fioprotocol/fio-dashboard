@@ -33,6 +33,7 @@ import { redirectLink } from '../navigation/selectors';
 import { fioWallets as getFioWallets } from '../fio/selectors';
 
 import { ROUTES } from '../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { Action } from '../types';
 import {
@@ -70,7 +71,8 @@ export function* containedFlowActionSuccess(): Generator {
       if (r) {
         let redirectUrl = r;
         if (action.data.result.txIds)
-          redirectUrl += `?txIds=${action.data.result.txIds as string}`;
+          redirectUrl += `?${QUERY_PARAMS_NAMES.TX_IDS}=${action.data.result
+            .txIds as string}`;
 
         yield put(setStep(CONTAINED_FLOW_STEPS.FINISH, { redirectUrl }));
       }

@@ -1,5 +1,6 @@
 import {
   CartItem,
+  CartItemType,
   FioWalletDoublet,
   PinConfirmation,
   Prices,
@@ -37,4 +38,5 @@ export type RegistrationType = {
   isCustomDomain?: boolean;
   depended?: { domain: string };
   fee_collected?: number;
+  type: CartItemType;
 };

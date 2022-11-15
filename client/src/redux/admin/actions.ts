@@ -1,5 +1,7 @@
 import { Api } from '../../api';
 
+import { DEFAULT_LIMIT, DEFAULT_OFFSET } from '../../hooks/usePagination';
+
 import { minWaitTimeFunction } from '../../utils';
 
 import { CommonPromiseAction } from '../types';
@@ -11,8 +13,8 @@ export const GET_ADMIN_USERS_SUCCESS = `${prefix}/GET_ADMIN_USERS_SUCCESS`;
 export const GET_ADMIN_USERS_FAILURE = `${prefix}/GET_ADMIN_USERS_FAILURE`;
 
 export const getAdminUsersList = (
-  limit = 25,
-  offset = 0,
+  limit = DEFAULT_LIMIT,
+  offset = DEFAULT_OFFSET,
 ): CommonPromiseAction => ({
   types: [
     GET_ADMIN_USERS_REQUEST,
@@ -39,7 +41,10 @@ export const GET_ORDERS_LIST_BY_ADMIN_REQUEST = `${prefix}/GET_ORDERS_LIST_BY_AD
 export const GET_ORDERS_LIST_BY_ADMIN_SUCCESS = `${prefix}/GET_ORDERS_LIST_BY_ADMIN_SUCCESS`;
 export const GET_ORDERS_LIST_BY_ADMIN_FAILURE = `${prefix}/GET_ORDERS_LIST_BY_ADMIN_FAILURE`;
 
-export const getOrdersList = (limit = 25, offset = 0): CommonPromiseAction => ({
+export const getOrdersList = (
+  limit = DEFAULT_LIMIT,
+  offset = DEFAULT_OFFSET,
+): CommonPromiseAction => ({
   types: [
     GET_ORDERS_LIST_BY_ADMIN_REQUEST,
     GET_ORDERS_LIST_BY_ADMIN_SUCCESS,
@@ -123,8 +128,8 @@ export const GET_FIO_ACCOUNTS_PROFILES_SUCCESS = `${prefix}/GET_FIO_ACCOUNTS_PRO
 export const GET_FIO_ACCOUNTS_PROFILES_FAILURE = `${prefix}/GET_FIO_ACCOUNTS_PROFILES_FAILURE`;
 
 export const getFioAccountsProfilesList = (
-  limit = 25,
-  offset = 0,
+  limit = DEFAULT_LIMIT,
+  offset = DEFAULT_OFFSET,
 ): CommonPromiseAction => ({
   types: [
     GET_FIO_ACCOUNTS_PROFILES_REQUEST,
@@ -132,4 +137,16 @@ export const getFioAccountsProfilesList = (
     GET_FIO_ACCOUNTS_PROFILES_FAILURE,
   ],
   promise: (api: Api) => api.admin.fioAccountsProfilesList(limit, offset),
+});
+
+export const GET_PARTNERS_REQUEST = `${prefix}/GET_PARTNERS_REQUEST`;
+export const GET_PARTNERS_SUCCESS = `${prefix}/GET_PARTNERS_SUCCESS`;
+export const GET_PARTNERS_FAILURE = `${prefix}/GET_PARTNERS_FAILURE`;
+
+export const getPartnersList = (
+  limit = DEFAULT_LIMIT,
+  offset = DEFAULT_OFFSET,
+): CommonPromiseAction => ({
+  types: [GET_PARTNERS_REQUEST, GET_PARTNERS_SUCCESS, GET_PARTNERS_FAILURE],
+  promise: (api: Api) => api.admin.partnersList(limit, offset),
 });

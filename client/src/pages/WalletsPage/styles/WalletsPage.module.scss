@@ -66,12 +66,18 @@
   font-size: 13px;
 }
 
+@include sm {
+  .totalBalanceContainer {
+    margin: 0 20px;
+  }
+}
+
 @include md {
   .container {
     padding: 30px 20px;
   }
   .totalBalanceContainer {
-    margin-left: 20px;
+    margin: 0 20px;
   }
 }
 

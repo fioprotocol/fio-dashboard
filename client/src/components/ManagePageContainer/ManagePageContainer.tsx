@@ -15,8 +15,19 @@ import InfiniteScroll from '../InfiniteScroll/InfiniteScroll';
 import InfoBadge from '../Badges/InfoBadge/InfoBadge';
 
 import { BANNER_DATA, ITEMS_LIMIT, EXPIRED_DAYS, SUBTITLE } from './constants';
-import { useCheckIfDesktop } from '../../screenType';
+import { FIO_ADDRESS_DELIMITER } from '../../utils';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_TYPE,
+} from '../../constants/common';
 import { ROUTES } from '../../constants/routes';
+import { ACTIONS } from '../../constants/fio';
+
+import { useCheckIfDesktop } from '../../screenType';
+import {
+  fireAnalyticsEvent,
+  getCartItemsDataForAnalytics,
+} from '../../util/analytics';
 
 import { HasMore, ContainerProps } from './types';
 import { FioNameItemProps, FioWalletDoublet } from '../../types';
@@ -56,6 +67,13 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     showBundles,
     showStatus,
     showFioAddressName,
+    addBundlesFeePrice,
+    renewDomainFeePrice,
+    getAddBundlesFee,
+    getRenewDomainFee,
+    cartItems,
+    addItemToCart,
+    history,
   } = props;
   const [showWarnBadge, toggleShowWarnBadge] = useState<boolean>(false);
   const [showInfoBadge, toggleShowInfoBadge] = useState<boolean>(false);
@@ -149,7 +167,13 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
 
   useEffect(() => {
     getAllWalletsAddresses();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    getAddBundlesFee && getAddBundlesFee();
+    getRenewDomainFee && getRenewDomainFee();
+  }, [getAddBundlesFee, getRenewDomainFee]);
 
   const onItemModalOpen = (fioNameItem: FioNameItemProps) => {
     setCurrentAddress(fioNameItem);
@@ -166,6 +190,45 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     !isDesktop && handleShowModal(true);
     handleShowSettings(false);
   };
+  const handleAddBundles = (name: string) => {
+    const [address, domain] = name.split(FIO_ADDRESS_DELIMITER);
+    const newCartItem = {
+      address,
+      domain,
+      type: CART_ITEM_TYPE.ADD_BUNDLES,
+      id: `${name}-${ACTIONS.addBundledTransactions}-${+new Date()}`,
+      allowFree: false,
+      costNativeFio: addBundlesFeePrice?.nativeFio,
+      costFio: addBundlesFeePrice.fio,
+      costUsdc: addBundlesFeePrice.usdc,
+    };
+
+    addItemToCart(newCartItem);
+    fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
+      getCartItemsDataForAnalytics([...cartItems, newCartItem]),
+    );
+    history.push(ROUTES.CART);
+  };
+
+  const handleRenewDomain = (domain: string) => {
+    const newCartItem = {
+      domain,
+      type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
+      id: `${domain}-${ACTIONS.renewFioDomain}-${+new Date()}`,
+      allowFree: false,
+      costNativeFio: renewDomainFeePrice?.nativeFio,
+      costFio: renewDomainFeePrice.fio,
+      costUsdc: renewDomainFeePrice.usdc,
+    };
+
+    addItemToCart(newCartItem);
+    fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
+      getCartItemsDataForAnalytics([...cartItems, newCartItem]),
+    );
+    history.push(ROUTES.CART);
+  };
 
   const propsToComponents = {
     fioNameList,
@@ -181,6 +244,8 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     showBundles,
     showStatus,
     showFioAddressName,
+    onAddBundles: handleAddBundles,
+    onRenewDomain: handleRenewDomain,
   };
 
   if (noProfileLoaded) return <Redirect to={{ pathname: ROUTES.HOME }} />;

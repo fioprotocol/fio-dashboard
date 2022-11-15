@@ -3,6 +3,7 @@ import { RouteComponentProps } from 'react-router-dom';
 
 import SignNft from '../../components/SignNft';
 import { ROUTES } from '../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { SignNFTParams } from '../../types';
 
@@ -42,7 +43,9 @@ const FioAddressSignPage: React.FC<RouteComponentProps &
         addressSelectOff={address}
         fioAddressName={address}
         backTo={
-          address ? `${ROUTES.FIO_ADDRESS_SIGNATURES}?address=${address}` : null
+          address
+            ? `${ROUTES.FIO_ADDRESS_SIGNATURES}?${QUERY_PARAMS_NAMES.ADDRESS}=${address}`
+            : null
         }
       />
     </>

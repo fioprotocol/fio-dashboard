@@ -11,8 +11,8 @@ type Props = {
 const Title: React.FC<Props> = props => {
   const { title, subtitle, children } = props;
   return (
-    <div className={classes.titleContainer}>
-      <div className={classes.title}>
+    <div className={classes.container}>
+      <div>
         {title}
         <p className={classes.subtitle}>{subtitle}</p>
       </div>

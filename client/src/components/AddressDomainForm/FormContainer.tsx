@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FormApi } from 'final-form';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 import Card from '../Card/Card';
 import PriceBadge from './PriceBadge';
@@ -11,6 +11,7 @@ import DomainForm from './DomainForm';
 
 import { ROUTES } from '../../constants/routes';
 import { ADDRESS_FORM_CONTENT } from './constants';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import useEffectOnce from '../../hooks/general';
 
@@ -62,7 +63,7 @@ const FormContainer: React.FC<FormContainerProps> = props => {
       values: { address = '', domain: domainValue = '' },
     } = formProps;
 
-    const queryString: string = `?address=${address}&domain=${domainValue}`;
+    const queryString: string = `?${QUERY_PARAMS_NAMES.ADDRESS}=${address}&${QUERY_PARAMS_NAMES.DOMAIN}=${domainValue}`;
 
     if (links && links.getCryptoHandle) {
       const link = links.getCryptoHandle.toString() + queryString;

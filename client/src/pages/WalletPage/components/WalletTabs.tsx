@@ -8,6 +8,7 @@ import FioObtDataTab from './FioObtDataTab';
 import TransactionList from './TransactionList';
 
 import {
+  FioAddressDoublet,
   FioWalletData,
   FioWalletDoublet,
   FioWalletTxHistory,
@@ -15,8 +16,10 @@ import {
 
 type Props = {
   fioWallet: FioWalletDoublet;
+  fioCryptoHandles: FioAddressDoublet[];
   walletData: FioWalletData;
   walletTxHistory: FioWalletTxHistory;
+  hasNoTransactions: boolean;
 };
 
 type Location = {
@@ -52,12 +55,18 @@ const WalletTabs: React.FC<Props> = props => {
   return (
     <TabsContainer
       defaultActiveKey={
-        fioRequestTab
+        fioRequestTab || props.hasNoTransactions
           ? WALLET_TABS_LIST[0].eventKey
           : WALLET_TABS_LIST[2].eventKey
       }
     >
-      <Tabs list={WALLET_TABS_LIST} showTabBorder={true} tabProps={props} />
+      <Tabs
+        list={WALLET_TABS_LIST.filter(
+          item => !props.hasNoTransactions || item.eventKey !== 'transactions',
+        )}
+        showTabBorder={true}
+        tabProps={props}
+      />
     </TabsContainer>
   );
 };

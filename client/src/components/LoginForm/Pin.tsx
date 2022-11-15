@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 
 import FormHeader from '../FormHeader/FormHeader';
 import CloseButton from '../CloseButton/CloseButton';

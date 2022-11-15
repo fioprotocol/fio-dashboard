@@ -11,6 +11,11 @@ import {
   PURCHASE_RESULTS_STATUS,
 } from '../../constants/purchase';
 import { ERROR_TYPES } from '../../constants/errors';
+import {
+  CART_ITEM_TYPE,
+  DEFAULT_BUNDLE_SET_VALUE,
+} from '../../constants/common';
+import { ACTIONS } from '../../constants/fio';
 
 import { RegistrationType } from './types';
 import {
@@ -20,6 +25,7 @@ import {
   RegistrationRegistered,
   AnyObject,
   PurchaseTxStatus,
+  CartItemType,
 } from '../../types';
 
 const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 2000;
@@ -98,12 +104,12 @@ export const register = async ({
   fioName,
   fee,
   cartItemId,
+  type,
 }: {
   fioName: string;
   fee: number;
   cartItemId: string;
-  error?: string;
-  errorType?: string;
+  type: CartItemType;
 }): Promise<{
   cartItemId: string;
   fioName: string;
@@ -117,7 +123,24 @@ export const register = async ({
     errorType?: string;
   } = { cartItemId, fioName };
   try {
-    const res = await apis.fio.register(fioName, fee);
+    let res;
+    if (type === CART_ITEM_TYPE.ADD_BUNDLES) {
+      res = await apis.fio.executeActionWithoutKeys(
+        ACTIONS.addBundledTransactions,
+        {
+          fioAddress: fioName,
+          bundleSets: DEFAULT_BUNDLE_SET_VALUE,
+          maxFee: fee,
+        },
+      );
+    } else if (type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
+      res = await apis.fio.executeActionWithoutKeys(ACTIONS.renewFioDomain, {
+        fioDomain: fioName,
+        maxFee: fee,
+      });
+    } else {
+      res = await apis.fio.register(fioName, fee);
+    }
 
     if (!res) {
       throw new Error('Server Error');
@@ -199,14 +222,7 @@ const makeRegistrationOrder = (
   cartItems: CartItem[],
   fees: { address: number; domain: number },
   isFreeAllowed: boolean,
-): {
-  cartItemId: string;
-  fioName: string;
-  fee: number;
-  isFree: boolean;
-  isCustomDomain?: boolean;
-  depended?: { domain: string };
-}[] => {
+): RegistrationType[] => {
   const registrations = [];
   for (const cartItem of cartItems.sort(item =>
     item.hasCustomDomain ? -1 : 1,
@@ -215,7 +231,14 @@ const makeRegistrationOrder = (
       cartItemId: cartItem.id,
       fioName: setFioName(cartItem.address, cartItem.domain),
       isFree: isFreeAllowed && !cartItem.costNativeFio && !!cartItem.address,
-      fee: cartItem.address ? fees.address : fees.domain,
+      fee: [CART_ITEM_TYPE.DOMAIN_RENEWAL, CART_ITEM_TYPE.ADD_BUNDLES].includes(
+        cartItem.type,
+      )
+        ? cartItem.costNativeFio
+        : cartItem.address
+        ? fees.address
+        : fees.domain,
+      type: cartItem.type,
     };
 
     if (!cartItem.costNativeFio || !cartItem.address) {
@@ -235,6 +258,7 @@ const makeRegistrationOrder = (
         cartItemId: cartItem.id,
         fioName: cartItem.domain,
         fee: fees.domain,
+        type: CART_ITEM_TYPE.DOMAIN,
         isFree: false,
         isCustomDomain: true,
       });

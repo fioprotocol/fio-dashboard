@@ -16,6 +16,7 @@ import { ROUTES } from '../../constants/routes';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { FIO_RECORD_TYPES } from '../WalletPage/constants';
 import { LINKS } from '../../constants/labels';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { useFioAddresses } from '../../util/hooks';
 import { isFioChain } from '../../util/fio';
@@ -116,7 +117,7 @@ const PaymentDetailsPage: React.FC<ContainerProps & LocationProps> = props => {
   const onResultsClose = () => {
     history.push({
       pathname: ROUTES.FIO_WALLET,
-      search: `publicKey=${publicKey}`,
+      search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`,
       state: {
         fioRequestTab: FIO_RECORD_TYPES.RECEIVED,
       },
@@ -126,7 +127,7 @@ const PaymentDetailsPage: React.FC<ContainerProps & LocationProps> = props => {
   const onBack = () => {
     history.push({
       pathname: ROUTES.FIO_WALLET,
-      search: `publicKey=${fioWallet.publicKey}`,
+      search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
       state: {
         fioRecordDecrypted,
         fioRequestTab: FIO_RECORD_TYPES.RECEIVED,
@@ -155,7 +156,7 @@ const PaymentDetailsPage: React.FC<ContainerProps & LocationProps> = props => {
       <Redirect
         to={{
           pathname: ROUTES.FIO_WALLET,
-          search: `publicKey=${publicKey}`,
+          search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${publicKey}`,
         }}
       />
     );

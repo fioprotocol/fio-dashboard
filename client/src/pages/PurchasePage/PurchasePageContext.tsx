@@ -79,11 +79,6 @@ export const useContext = (
 
   const dispatch = useDispatch();
 
-  const {
-    location: { state },
-  } = history;
-  const { order } = state || {};
-
   const { orderItem } = props;
   const { errItems, payment, regItems, status } = orderItem || {};
   const { paymentProcessor } = payment || {};
@@ -126,7 +121,6 @@ export const useContext = (
         const purchaseItems = getCartItemsDataForAnalytics(purcahsedItems);
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED, {
           ...purchaseItems,
-          transaction_id: order?.number,
           payment_type: !purchaseItems.value
             ? ANALYTICS_PAYMENT_TYPE.FREE
             : paymentProcessor === PAYMENT_PROVIDER.STRIPE

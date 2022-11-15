@@ -6,6 +6,7 @@ import { compose } from '../../utils';
 import { refreshBalance } from '../../redux/fio/actions';
 import {
   fioWallets as fioWalletsSelector,
+  fioAddresses as fioAddressesSelector,
   fioWalletsBalances as fioWalletsBalancesSelector,
   loading,
 } from '../../redux/fio/selectors';
@@ -24,7 +25,7 @@ import {
 import { user as userSelector } from '../../redux/profile/selectors';
 
 import { ContainerOwnProps } from './types';
-import { OwnPropsAny } from '../../types';
+import { FioAddressDoublet, OwnPropsAny } from '../../types';
 
 const reduxConnect = connect(
   createStructuredSelector({
@@ -38,6 +39,18 @@ const reduxConnect = connect(
       return fioWallets.find(
         ({ publicKey }: { publicKey: string }) =>
           publicKey === ownProps.location?.query?.publicKey,
+      );
+    },
+    fioCryptoHandles: (
+      state: ReduxState,
+      ownProps: ContainerOwnProps & OwnPropsAny,
+    ) => {
+      const fioAddresses = fioAddressesSelector(state);
+      if (!('match' in ownProps)) return [];
+
+      return fioAddresses.filter(
+        ({ walletPublicKey }: FioAddressDoublet) =>
+          walletPublicKey === ownProps.location?.query?.publicKey,
       );
     },
     loading,

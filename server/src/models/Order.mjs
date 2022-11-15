@@ -19,7 +19,12 @@ import {
   transformOrderItemCostToPriceString,
 } from '../utils/order.mjs';
 
-import { FIO_ADDRESS_DELIMITER, FIO_ACTIONS_LABEL } from '../config/constants.js';
+import {
+  FIO_ADDRESS_DELIMITER,
+  FIO_ACTIONS_LABEL,
+  CART_ITEM_TYPE,
+  FIO_ACTIONS,
+} from '../config/constants.js';
 
 import logger from '../logger.mjs';
 
@@ -361,6 +366,36 @@ export class Order extends Base {
     return orders;
   }
 
+  static async listSearchByNumber(number) {
+    const [orders] = await this.sequelize.query(`
+        SELECT 
+          o.id, 
+          o.roe, 
+          o.number, 
+          o."total", 
+          o."publicKey", 
+          o."userId", 
+          o."status", 
+          o."createdAt", 
+          o."updatedAt",
+          p.currency,
+          u.email as "userEmail",
+          rp.label as "refProfileName",
+          p.processor as "paymentProcessor"
+        FROM "orders" o
+          INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${Payment.SPENT_TYPE.ORDER}
+          INNER JOIN users u ON u.id = o."userId"
+          LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
+          LEFT JOIN "order-items" oi ON oi."orderId" = o.id
+        WHERE o."deletedAt" IS NULL
+        AND o.number = '${number}'
+        GROUP BY o.id, p."currency", u.email, rp.label, p.processor
+        ORDER BY o."createdAt" DESC
+      `);
+
+    return orders;
+  }
+
   static async updateStatus(orderId, paymentStatus = null, txStatuses = [], t = null) {
     let orderStatus = null;
     switch (paymentStatus) {
@@ -469,6 +504,23 @@ export class Order extends Base {
     };
   }
 
+  static getOrderItemType(orderItem) {
+    const { action, address, data } = orderItem;
+    const { hasCustomDomain } = data || {};
+
+    if (action === FIO_ACTIONS.renewFioDomain) {
+      return CART_ITEM_TYPE.DOMAIN_RENEWAL;
+    } else if (action === FIO_ACTIONS.addBundledTransactions) {
+      return CART_ITEM_TYPE.ADD_BUNDLES;
+    } else if (!address) {
+      return CART_ITEM_TYPE.DOMAIN;
+    } else if (address && hasCustomDomain) {
+      return CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
+    } else {
+      return CART_ITEM_TYPE.ADDRESS;
+    }
+  }
+
   static async formatDetailed({
     id,
     number,
@@ -524,17 +576,27 @@ export class Order extends Base {
       const isFree = price === '0';
 
       let bcTx = {};
+      let customDomainBcTx = {};
 
       if (itemStatus.blockchainTransactionId) {
         bcTx =
           blockchainTransactions.find(
             bcTxItem => bcTxItem.id === itemStatus.blockchainTransactionId,
           ) || {};
+        if (data.hasCustomDomain) {
+          customDomainBcTx = blockchainTransactions.find(
+            bcTxItem => bcTxItem.action === FIO_ACTIONS.registerFioDomain,
+          );
+          if (customDomainBcTx && customDomainBcTx.feeCollected) {
+            bcTx.feeCollected = +bcTx.feeCollected + +customDomainBcTx.feeCollected;
+          }
+        }
       }
 
       const fioName = address ? `${address}${FIO_ADDRESS_DELIMITER}${domain}` : domain;
       const feeCollected = bcTx.feeCollected || nativeFio;
-      const { hasCustomDomain } = data || {};
+      const { hasCustomDomain, cartItemId } = data || {};
+      const itemType = this.getOrderItemType(orderItem);
 
       if (
         itemStatus.txStatus === BlockchainTransaction.STATUS.FAILED ||
@@ -551,14 +613,19 @@ export class Order extends Base {
             status === BlockchainTransaction.STATUS.CANCEL,
         );
         errItems.push({
-          action: FIO_ACTIONS_LABEL[action],
+          action: hasCustomDomain
+            ? FIO_ACTIONS_LABEL[
+                `${FIO_ACTIONS.registerFioAddress}_${FIO_ACTIONS.registerFioDomain}`
+              ]
+            : FIO_ACTIONS_LABEL[action],
           address,
           domain,
           fee_collected: isFree ? null : feeCollected,
           costUsdc: price,
+          type: itemType,
           error: event ? event.statusNotes : '',
           errorData: event && event.data,
-          id: fioName,
+          id: cartItemId || fioName,
           isFree,
           hasCustomDomain,
           priceString: transformOrderItemCostToPriceString({
@@ -581,12 +648,17 @@ export class Order extends Base {
       }
 
       regItems.push({
-        action: FIO_ACTIONS_LABEL[action],
+        action: hasCustomDomain
+          ? FIO_ACTIONS_LABEL[
+              `${FIO_ACTIONS.registerFioAddress}_${FIO_ACTIONS.registerFioDomain}`
+            ]
+          : FIO_ACTIONS_LABEL[action],
         address,
         domain,
         fee_collected: isFree ? null : feeCollected,
         costUsdc: price,
-        id: fioName,
+        type: itemType,
+        id: cartItemId || fioName,
         isFree,
         hasCustomDomain,
         priceString: transformOrderItemCostToPriceString({
@@ -598,6 +670,9 @@ export class Order extends Base {
           paymentCurrency,
         }),
         transaction_id: bcTx.txId,
+        transaction_ids: [bcTx.txId, customDomainBcTx && customDomainBcTx.txId].filter(
+          Boolean,
+        ),
       });
     }
 

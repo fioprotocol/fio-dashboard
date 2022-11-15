@@ -19,7 +19,11 @@ import { convertFioPrices } from '../../util/prices';
 import { useFioWallet, useWalletBalances } from '../../util/hooks';
 import MathOp from '../../util/math';
 
-import { WALLET_CREATED_FROM } from '../../constants/common';
+import {
+  WALLET_CREATED_FROM,
+  DEFAULT_BUNDLE_SET_VALUE,
+  DEFAULT_BUNDLE_AMOUNT,
+} from '../../constants/common';
 import { ERROR_TYPES } from '../../components/common/TransactionResults/constants';
 import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
@@ -35,9 +39,6 @@ type MatchParams = {
 type LocationState = {
   backUrl?: string;
 };
-
-const DEFAULT_BUNDLE_SET_VALUE = 1;
-const DEFAULT_BUNDLE_AMOUNT = 100;
 
 const FioAddressAddBundlesPage: React.FC<ContainerProps &
   RouteComponentProps<MatchParams, {}, LocationState>> = props => {

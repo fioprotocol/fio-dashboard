@@ -15,6 +15,7 @@ import {
 } from '../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../constants/fio';
 import { LINKS } from '../../constants/labels';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import useEffectOnce from '../../hooks/general';
 
@@ -70,10 +71,13 @@ const SignNft: React.FC<ContainerProps> = props => {
         tokenId,
       );
 
-      setAlreadySigned(nfts.length > 0);
-      return nfts.length > 0;
+      const currentFioAddressNfts = nfts.filter(
+        ({ fio_address }) => fio_address === fioAddressName,
+      );
+      setAlreadySigned(currentFioAddressNfts.length > 0);
+      return currentFioAddressNfts.length > 0;
     },
-    [isEdit],
+    [isEdit, fioAddressName],
   );
 
   const fieldValuesChanged = () => {
@@ -178,7 +182,7 @@ const SignNft: React.FC<ContainerProps> = props => {
     if (fioAddress?.name) {
       history.push({
         pathname: ROUTES.FIO_ADDRESS_SIGNATURES,
-        search: `address=${fioAddress?.name}`,
+        search: `${QUERY_PARAMS_NAMES.ADDRESS}=${fioAddress?.name}`,
       });
     }
   };

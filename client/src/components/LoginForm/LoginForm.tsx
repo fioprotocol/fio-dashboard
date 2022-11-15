@@ -235,8 +235,7 @@ const LoginForm: React.FC<Props> = props => {
             edgeLoginFailure={edgeLoginFailure}
             isForgotPass={isForgotPass}
             toggleForgotPass={toggleForgotPass}
-            headerIcon={isEmailVerification ? 'envelope' : null}
-            title={isEmailVerification ? 'Email Verified' : 'Sign In'}
+            title="Sign In"
             subtitle={subtitle}
             hideCreateAccount={isEmailVerification}
             onClose={onCloseLogin}

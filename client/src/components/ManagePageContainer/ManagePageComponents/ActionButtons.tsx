@@ -6,6 +6,7 @@ import classnames from 'classnames';
 
 import { PAGE_NAME, BUTTONS_TITLE } from '../constants';
 import { ROUTES } from '../../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
 
 import { useCheckIfSmallDesktop } from '../../../screenType';
 
@@ -18,14 +19,18 @@ import icon from '../../../assets/images/timelapse_white_24dp.svg'; // todo: rem
 export const RenderAddBundles: React.FC<{
   name: string;
   isMobileView?: boolean;
+  onAddBundles: (name: string) => void;
 }> = props => {
-  const { name, isMobileView } = props;
+  const { name, isMobileView, onAddBundles } = props;
   const isSmallDesktop = useCheckIfSmallDesktop();
+  const handleAddBundles = () => {
+    onAddBundles(name);
+  };
 
   return (
     <div className={classes.actionButtonsContainer}>
-      <Link
-        to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?name=${name}`}
+      <div
+        onClick={handleAddBundles}
         className={classnames(
           classes.actionButton,
           isMobileView && classes.mobileView,
@@ -35,30 +40,33 @@ export const RenderAddBundles: React.FC<{
           <FontAwesomeIcon icon="plus-square" className={classes.linkIcon} />
           {!isSmallDesktop && BUTTONS_TITLE.addBundles}
         </Button>
-      </Link>
+      </div>
     </div>
   );
 };
 
 const ActionButtons: React.FC<ActionButtonProps> = props => {
-  const { pageName, isDesktop, onSettingsOpen, fioNameItem } = props;
+  const {
+    pageName,
+    isDesktop,
+    onSettingsOpen,
+    fioNameItem,
+    onRenewDomain,
+  } = props;
   const { name = '' } = fioNameItem;
 
   const isSmallDesktop = useCheckIfSmallDesktop();
+  const handleRenewDomain = () => {
+    onRenewDomain(name);
+  };
 
   const renderRenew = () => (
-    <Link
-      to={{
-        pathname: ROUTES.FIO_DOMAIN_RENEW,
-        search: `name=${name}`,
-      }}
-      className={classes.actionButton}
-    >
+    <div onClick={handleRenewDomain} className={classes.actionButton}>
       <Button title={isSmallDesktop ? BUTTONS_TITLE.renew : ''}>
         <img src={icon} alt="timelapse" />
         {!isSmallDesktop && BUTTONS_TITLE.renew}
       </Button>
-    </Link>
+    </div>
   );
 
   const renderSettings = () => (
@@ -74,7 +82,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
 
   const renderLinkToken = () => (
     <Link
-      to={`${ROUTES.LINK_TOKEN_LIST}?name=${name}`}
+      to={`${ROUTES.LINK_TOKEN_LIST}?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${name}`}
       className={classes.actionButton}
     >
       <Button title={isSmallDesktop ? BUTTONS_TITLE.link : ''}>
@@ -106,7 +114,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
       <Link
         to={{
           pathname: ROUTES.FIO_ADDRESS_SIGNATURES,
-          search: `address=${name}`,
+          search: `${QUERY_PARAMS_NAMES.ADDRESS}=${name}`,
         }}
         className={classes.actionButton}
       >

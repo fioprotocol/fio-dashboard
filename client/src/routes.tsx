@@ -1,398 +1,624 @@
 import React from 'react';
 import { Route, Switch, RouteComponentProps, Redirect } from 'react-router-dom';
 
-import HomePage from './pages/HomePage';
-import DashboardPage from './pages/DashboardPage';
 import MainLayout from './pages/MainLayout';
 import AuthContainer from './components/AuthContainer';
 import PrivateRoute from './components/PrivateRoute';
-import FioAddressSelectionPage from './pages/FioAddressSelectionPage';
-import FioAddressManage from './pages/FioAddressManagePage';
-import FioDomainSelectionPage from './pages/FioDomainSelectionPage';
-import FioDomainLandingPage from './pages/FioDomainLandingPage';
-import FioDomainManagePage from './pages/FioDomainManagePage';
-import { CartPage } from './pages/CartPage';
-import { CheckoutPage } from './pages/CheckoutPage';
-import PurchasePage from './pages/PurchasePage';
 import ScrollToTop from './components/ScrollToTop';
-import FioAddressTransferPage from './pages/FioAddressTransferPage';
-import FioDomainTransferPage from './pages/FioDomainTransferPage';
-import FioDomainStatusChangePage from './pages/FioDomainStatusChangePage';
-import FioAddressAddBundlesPage from './pages/FioAddressAddBundlesPage';
-import FioDomainRenewPage from './pages/FioDomainRenewPage';
-import TokenListPage from './pages/TokenListPage';
-import DeleteTokenPage from './pages/DeleteTokenPage';
-import AddTokenPage from './pages/AddTokenPage';
-import EditTokenPage from './pages/EditTokenPage';
-import SettingsPage from './pages/SettingsPage';
-import RefHomePage from './pages/RefHomePage';
-import AccountRecoveryPage from './pages/AccountRecoveryPage';
-import EmailConfirmationPage from './pages/EmailConfirmationPage';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
-import TermsOfServicePage from './pages/TermsOfServicePage';
-import CookieNoticePage from './pages/CookieNoticePage';
-import EmailConfirmGatePage from './pages/EmailConfirmGatePage';
-import FioAddressSignaturesPage from './pages/FioAddressSignaturesPage';
-import FioAddressSignPage from './pages/FioAddressSignPage';
-import FioAddressNftPage from './pages/FioAddressNftPage';
-import FioRequestDecryptPage from './pages/FioRequestDecryptPage';
-import FioTokensRequestPage from './pages/FioTokensRequestPage';
-import TokensRequestPaymentPage from './pages/TokensRequestPaymentPage';
-import NftValidationPage from './pages/NftValidationPage';
-import WalletsPage from './pages/WalletsPage';
-import WalletPage from './pages/WalletPage';
-import ImportWalletPage from './pages/ImportWalletPage';
-import SendPage from './pages/SendPage';
-import StakeTokensPage from './pages/StakeTokensPage';
-import UnstakeTokensPage from './pages/UnstakeTokensPage';
-import UpdateEmailConfirmGatePage from './pages/UpdateEmailConfirmGatePage';
-import UpdateEmailPage from './pages/UpdateEmailPage';
-import RejectFioRequestPage from './pages/RejectFioRequestPage';
-import EmailConfirmationResultPage from './pages/EmailConfirmationResultsPage';
-import NotFoundPage from './pages/NotFoundPage';
-import OrdersPage from './pages/OrdersPage';
-import OrderDetailsPage from './pages/OrderDetailsPage';
-
 import AdminPrivateRoute from './components/AdminPrivateRoute';
-import AdminOrdersPage from './pages/AdminOrdersPage';
-import AdminLoginPage from './pages/AdminLoginPage';
-import AdminUserListPage from './pages/AdminUserListPage';
-import AdminEmailConfirmPage from './pages/AdminEmailConfirmPage';
-import AdminPasswordResetPage from './pages/AdminPasswordResetPage';
-import AdminRegularUsersList from './pages/AdminRegularUsersListPage';
-import AdminProfilePage from './pages/AdminProfilePage';
-import AdminHomePage from './pages/AdminHomePage';
-import AdminFioAccountsProfilesListPage from './pages/AdminFioAccountsProfilesListPage';
-import AdminSearchResultPage from './pages/AdminSearchResultPage';
+import FioLoader from './components/common/FioLoader/FioLoader';
 
 import { ROUTES } from './constants/routes';
+import { QUERY_PARAMS_NAMES } from './constants/queryParams';
 
 import { LocationProps as AdminEmailConfirmPageLocationProps } from './pages/AdminEmailConfirmPage/types';
 import { LocationProps as AdminPasswordResetPageLocationProps } from './pages/AdminPasswordResetPage/types';
 import { LocationProps as EmailConfirmationPageLocationProps } from './pages/EmailConfirmationPage/EmailConfirmationPage';
 
+const DashboardPage = React.lazy(() =>
+  import(/* webpackChunkName: 'dashboardPage' */ './pages/DashboardPage'),
+);
+const FioAddressManagePage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioAddressManagePage' */ './pages/FioAddressManagePage'
+  ),
+);
+const FioDomainManagePage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioDomainManagePage' */ './pages/FioDomainManagePage'
+  ),
+);
+const CartPage = React.lazy(() =>
+  import(/* webpackChunkName: 'cartPage' */ './pages/CartPage'),
+);
+const CheckoutPage = React.lazy(() =>
+  import(/* webpackChunkName: 'checkoutPage' */ './pages/CheckoutPage'),
+);
+const PurchasePage = React.lazy(() =>
+  import(/* webpackChunkName: 'purchasePage' */ './pages/PurchasePage'),
+);
+const FioAddressTransferPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioAddressTransferPage' */ './pages/FioAddressTransferPage'
+  ),
+);
+const FioDomainTransferPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioDomainTransferPage' */ './pages/FioDomainTransferPage'
+  ),
+);
+const FioDomainStatusChangePage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioDomainStatusChangePage' */ './pages/FioDomainStatusChangePage'
+  ),
+);
+const FioAddressAddBundlesPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioAddressAddBundlesPage' */ './pages/FioAddressAddBundlesPage'
+  ),
+);
+const FioDomainRenewPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioDomainRenewPage' */ './pages/FioDomainRenewPage'
+  ),
+);
+const TokenListPage = React.lazy(() =>
+  import(/* webpackChunkName: 'tokenListPage' */ './pages/TokenListPage'),
+);
+const DeleteTokenPage = React.lazy(() =>
+  import(/* webpackChunkName: 'deleteTokenPage' */ './pages/DeleteTokenPage'),
+);
+const AddTokenPage = React.lazy(() =>
+  import(/* webpackChunkName: 'addTokenPage' */ './pages/AddTokenPage'),
+);
+const EditTokenPage = React.lazy(() =>
+  import(/* webpackChunkName: 'editTokenPage' */ './pages/EditTokenPage'),
+);
+const SettingsPage = React.lazy(() =>
+  import(/* webpackChunkName: 'settingsPage' */ './pages/SettingsPage'),
+);
+const RefHomePage = React.lazy(() =>
+  import(/* webpackChunkName: 'refHomePage' */ './pages/RefHomePage'),
+);
+const AccountRecoveryPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'accountRecoveryPage' */ './pages/AccountRecoveryPage'
+  ),
+);
+const EmailConfirmationPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'emailConfirmationPage' */ './pages/EmailConfirmationPage'
+  ),
+);
+const EmailConfirmGatePage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'emailConfirmGatePage' */ './pages/EmailConfirmGatePage'
+  ),
+);
+const FioAddressSignaturesPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioAddressSignaturesPage' */ './pages/FioAddressSignaturesPage'
+  ),
+);
+const FioAddressSignPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioAddressSignPage' */ './pages/FioAddressSignPage'
+  ),
+);
+const FioAddressNftPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioAddressNftPage' */ './pages/FioAddressNftPage'
+  ),
+);
+const FioRequestDecryptPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioRequestDecryptPage' */ './pages/FioRequestDecryptPage'
+  ),
+);
+const FioTokensRequestPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioTokensRequestPage' */ './pages/FioTokensRequestPage'
+  ),
+);
+const FioTokensReceivePage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioTokensReceivePage' */ './pages/FioTokensReceivePage'
+  ),
+);
+const FioTokensGetPage = React.lazy(() =>
+  import(/* webpackChunkName: 'fioTokensGetPage' */ './pages/FioTokensGetPage'),
+);
+const TokensRequestPaymentPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'tokensRequestPaymentPage' */ './pages/TokensRequestPaymentPage'
+  ),
+);
+const NftValidationPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'nftValidationPage' */ './pages/NftValidationPage'
+  ),
+);
+const WalletsPage = React.lazy(() =>
+  import(/* webpackChunkName: 'walletsPage' */ './pages/WalletsPage'),
+);
+const WalletPage = React.lazy(() =>
+  import(/* webpackChunkName: 'walletPage' */ './pages/WalletPage'),
+);
+const ImportWalletPage = React.lazy(() =>
+  import(/* webpackChunkName: 'importWalletPage' */ './pages/ImportWalletPage'),
+);
+const SendPage = React.lazy(() =>
+  import(/* webpackChunkName: 'sendPage' */ './pages/SendPage'),
+);
+const StakeTokensPage = React.lazy(() =>
+  import(/* webpackChunkName: 'stakeTokensPage' */ './pages/StakeTokensPage'),
+);
+const UnstakeTokensPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'unstakeTokensPage' */ './pages/UnstakeTokensPage'
+  ),
+);
+const UpdateEmailConfirmGatePage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'updateEmailConfirmGatePage' */ './pages/UpdateEmailConfirmGatePage'
+  ),
+);
+const UpdateEmailPage = React.lazy(() =>
+  import(/* webpackChunkName: 'updateEmailPage' */ './pages/UpdateEmailPage'),
+);
+const RejectFioRequestPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'rejectFioRequestPage' */ './pages/RejectFioRequestPage'
+  ),
+);
+const EmailConfirmationResultPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'emailConfirmationResultPage' */ './pages/EmailConfirmationResultsPage'
+  ),
+);
+const NotFoundPage = React.lazy(() =>
+  import(/* webpackChunkName: 'notFoundPage' */ './pages/NotFoundPage'),
+);
+const OrdersPage = React.lazy(() =>
+  import(/* webpackChunkName: 'ordersPage' */ './pages/OrdersPage'),
+);
+const OrderDetailsPage = React.lazy(() =>
+  import(/* webpackChunkName: 'orderDetailsPage' */ './pages/OrderDetailsPage'),
+);
+const AdminOrdersPage = React.lazy(() =>
+  import(/* webpackChunkName: 'adminOrdersPage' */ './pages/AdminOrdersPage'),
+);
+const AdminLoginPage = React.lazy(() =>
+  import(/* webpackChunkName: 'adminLoginPage' */ './pages/AdminLoginPage'),
+);
+const AdminUserListPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'adminUserListPage' */ './pages/AdminUserListPage'
+  ),
+);
+const AdminPasswordResetPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'adminPasswordResetPage' */ './pages/AdminPasswordResetPage'
+  ),
+);
+const AdminRegularUsersListPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'adminRegularUsersListPage' */ './pages/AdminRegularUsersListPage'
+  ),
+);
+const AdminProfilePage = React.lazy(() =>
+  import(/* webpackChunkName: 'adminProfilePage' */ './pages/AdminProfilePage'),
+);
+const AdminHomePage = React.lazy(() =>
+  import(/* webpackChunkName: 'adminHomePage' */ './pages/AdminHomePage'),
+);
+const AdminFioAccountsProfilesListPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'adminFioAccountsProfilesListPage' */ './pages/AdminFioAccountsProfilesListPage'
+  ),
+);
+const AdminPartnersListPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'adminPartnersListPage' */ './pages/AdminPartnersListPage'
+  ),
+);
+const AdminSearchResultPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'adminSearchResultPage' */ './pages/AdminSearchResultPage'
+  ),
+);
+const AdminEmailConfirmPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'adminEmailConfirmPage' */ './pages/AdminEmailConfirmPage'
+  ),
+);
+const FioDomainLandingPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioDomainLandingPage' */ './pages/FioDomainLandingPage'
+  ),
+);
+const FioAddressSelectionPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioAddressSelectionPage' */ './pages/FioAddressSelectionPage'
+  ),
+);
+const FioDomainSelectionPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioDomainSelectionPage' */ './pages/FioDomainSelectionPage'
+  ),
+);
+const HomePage = React.lazy(() =>
+  import(/* webpackChunkName: 'homePage' */ './pages/HomePage'),
+);
+const PrivacyPolicyPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'privacyPolicyPage' */ './pages/PrivacyPolicyPage'
+  ),
+);
+const TermsOfServicePage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'termsOfServicePage' */ './pages/TermsOfServicePage'
+  ),
+);
+const CookieNoticePage = React.lazy(() =>
+  import(/* webpackChunkName: 'cookieNoticePage' */ './pages/CookieNoticePage'),
+);
+
 const Routes = (): React.ReactElement => (
   <MainLayout>
     <ScrollToTop>
-      <Switch>
-        <Route
-          path={ROUTES.FIO_ADDRESS_ADD_BUNDLES_OLD}
-          component={(props: RouteComponentProps<{ name?: string }>) => (
-            <Redirect
-              to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?name=${props.match.params.name}`}
-            />
-          )}
-        />
-        <Route
-          path={ROUTES.FIO_DOMAIN_RENEW_OLD}
-          component={(props: RouteComponentProps<{ name?: string }>) => (
-            <Redirect
-              to={`${ROUTES.FIO_DOMAIN_RENEW}?name=${props.match.params.name}`}
-            />
-          )}
-        />
-        <Route
-          path={ROUTES.FIO_REQUEST_OLD}
-          component={(
-            props: RouteComponentProps<{ publicKey?: string; id?: string }>,
-          ) => (
-            <Redirect
-              to={`${ROUTES.FIO_REQUEST}?publicKey=${props.match.params.publicKey}&fioRequestId=${props.match.params.id}`}
-            />
-          )}
-          exact
-        />
-        <Route
-          path={ROUTES.FIO_WALLET_OLD}
-          component={(props: RouteComponentProps<{ publicKey?: string }>) => (
-            <Redirect
-              to={`${ROUTES.FIO_WALLET}?publicKey=${props.match.params.publicKey}`}
-            />
-          )}
-          exact
-        />
-        <Route
-          path={ROUTES.ADMIN_CONFIRM_EMAIL_OLD}
-          component={(
-            props: RouteComponentProps<{ hash?: string }> &
-              AdminEmailConfirmPageLocationProps,
-          ) => (
-            <Redirect
-              to={`${ROUTES.ADMIN_CONFIRM_EMAIL}?hash=${
-                props.match.params.hash
-              }&email=${props.location.query.email || ''}`}
-            />
-          )}
-          exact
-        />
-        <Route
-          path={ROUTES.ADMIN_RESET_PASSWORD_OLD}
-          component={(
-            props: RouteComponentProps<{ hash?: string }> &
-              AdminPasswordResetPageLocationProps,
-          ) => (
-            <Redirect
-              to={`${ROUTES.ADMIN_RESET_PASSWORD}?hash=${
-                props.match.params.hash
-              }&email=${props.location.query.email || ''}`}
-            />
-          )}
-          exact
-        />
-        <Route
-          path={ROUTES.CONFIRM_EMAIL_OLD}
-          component={(
-            props: RouteComponentProps<{ hash?: string }> &
-              EmailConfirmationPageLocationProps,
-          ) => (
-            <Redirect
-              to={`${ROUTES.CONFIRM_EMAIL}?hash=${
-                props.match.params.hash
-              }&refCode=${props.location.query.refCode || ''}`}
-            />
-          )}
-          exact
-        />
-        <Route
-          path={ROUTES.CONFIRM_UPDATED_EMAIL_OLD}
-          component={(props: RouteComponentProps<{ hash?: string }>) => (
-            <Redirect
-              to={`${ROUTES.CONFIRM_UPDATED_EMAIL}?hash=${props.match.params.hash}`}
-            />
-          )}
-        />
+      <React.Suspense fallback={<FioLoader wrap />}>
+        <Switch>
+          <Route
+            path={ROUTES.FIO_ADDRESS_ADD_BUNDLES_OLD}
+            component={(props: RouteComponentProps<{ name?: string }>) => (
+              <Redirect
+                to={`${ROUTES.FIO_ADDRESS_ADD_BUNDLES}?${QUERY_PARAMS_NAMES.NAME}=${props.match.params.name}`}
+              />
+            )}
+          />
+          <Route
+            path={ROUTES.FIO_DOMAIN_RENEW_OLD}
+            component={(props: RouteComponentProps<{ name?: string }>) => (
+              <Redirect
+                to={`${ROUTES.FIO_DOMAIN_RENEW}?${QUERY_PARAMS_NAMES.NAME}=${props.match.params.name}`}
+              />
+            )}
+          />
+          <Route
+            path={ROUTES.FIO_REQUEST_OLD}
+            component={(
+              props: RouteComponentProps<{ publicKey?: string; id?: string }>,
+            ) => (
+              <Redirect
+                to={`${ROUTES.FIO_REQUEST}?${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${props.match.params.publicKey}&${QUERY_PARAMS_NAMES.FIO_REQUEST_ID}=${props.match.params.id}`}
+              />
+            )}
+            exact
+          />
+          <Route
+            path={ROUTES.FIO_WALLET_OLD}
+            component={(props: RouteComponentProps<{ publicKey?: string }>) => (
+              <Redirect
+                to={`${ROUTES.FIO_WALLET}?${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${props.match.params.publicKey}`}
+              />
+            )}
+            exact
+          />
+          <Route
+            path={ROUTES.ADMIN_CONFIRM_EMAIL_OLD}
+            component={(
+              props: RouteComponentProps<{ hash?: string }> &
+                AdminEmailConfirmPageLocationProps,
+            ) => (
+              <Redirect
+                to={`${ROUTES.ADMIN_CONFIRM_EMAIL}?${QUERY_PARAMS_NAMES.HASH}=${
+                  props.match.params.hash
+                }&${QUERY_PARAMS_NAMES.EMAIL}=${props.location.query.email ||
+                  ''}`}
+              />
+            )}
+            exact
+          />
+          <Route
+            path={ROUTES.ADMIN_RESET_PASSWORD_OLD}
+            component={(
+              props: RouteComponentProps<{ hash?: string }> &
+                AdminPasswordResetPageLocationProps,
+            ) => (
+              <Redirect
+                to={`${ROUTES.ADMIN_RESET_PASSWORD}?${
+                  QUERY_PARAMS_NAMES.HASH
+                }=${props.match.params.hash}&${QUERY_PARAMS_NAMES.EMAIL}=${props
+                  .location.query.email || ''}`}
+              />
+            )}
+            exact
+          />
+          <Route
+            path={ROUTES.CONFIRM_EMAIL_OLD}
+            component={(
+              props: RouteComponentProps<{ hash?: string }> &
+                EmailConfirmationPageLocationProps,
+            ) => (
+              <Redirect
+                to={`${ROUTES.CONFIRM_EMAIL}?${QUERY_PARAMS_NAMES.HASH}=${
+                  props.match.params.hash
+                }&${QUERY_PARAMS_NAMES.REF_CODE}=${props.location.query
+                  .refCode || ''}`}
+              />
+            )}
+            exact
+          />
+          <Route
+            path={ROUTES.CONFIRM_UPDATED_EMAIL_OLD}
+            component={(props: RouteComponentProps<{ hash?: string }>) => (
+              <Redirect
+                to={`${ROUTES.CONFIRM_UPDATED_EMAIL}?${QUERY_PARAMS_NAMES.HASH}=${props.match.params.hash}`}
+              />
+            )}
+          />
 
-        <Route path={ROUTES.HOME} component={HomePage} exact />
-        <Route path={ROUTES.NOT_FOUND} component={NotFoundPage} exact />
-        <Route path={ROUTES.REF_PROFILE_HOME} component={RefHomePage} exact />
-        <Route
-          path={ROUTES.CONFIRM_EMAIL}
-          component={EmailConfirmationPage}
-          exact
-        />
-        <Route
-          path={ROUTES.CONFIRM_EMAIL_RESULT}
-          component={EmailConfirmationResultPage}
-          exact
-        />
-        <Route
-          path={ROUTES.IS_NEW_USER}
-          component={EmailConfirmGatePage}
-          exact
-        />
-        <Route
-          path={ROUTES.NEW_EMAIL_NOT_VERIFIED}
-          component={UpdateEmailConfirmGatePage}
-          exact
-        />
-        <Route
-          path={ROUTES.CONFIRM_UPDATED_EMAIL}
-          component={UpdateEmailPage}
-          exact
-        />
-        <Route
-          path={ROUTES.FIO_ADDRESSES_SELECTION}
-          component={FioAddressSelectionPage}
-          exact
-        />
-        <PrivateRoute
-          path={ROUTES.FIO_ADDRESS_SIGNATURES}
-          component={FioAddressSignaturesPage}
-          exact
-        />
-        <PrivateRoute
-          path={ROUTES.FIO_ADDRESS_SIGN}
-          component={FioAddressSignPage}
-          exact
-        />
-        <PrivateRoute
-          path={ROUTES.FIO_ADDRESSES}
-          component={FioAddressManage}
-          exact
-        />
+          <Route path={ROUTES.HOME} component={HomePage} exact />
+          <Route path={ROUTES.NOT_FOUND} component={NotFoundPage} exact />
+          <Route path={ROUTES.REF_PROFILE_HOME} component={RefHomePage} exact />
+          <Route
+            path={ROUTES.CONFIRM_EMAIL}
+            component={EmailConfirmationPage}
+            exact
+          />
+          <Route
+            path={ROUTES.CONFIRM_EMAIL_RESULT}
+            component={EmailConfirmationResultPage}
+            exact
+          />
+          <Route
+            path={ROUTES.IS_NEW_USER}
+            component={EmailConfirmGatePage}
+            exact
+          />
+          <Route
+            path={ROUTES.NEW_EMAIL_NOT_VERIFIED}
+            component={UpdateEmailConfirmGatePage}
+            exact
+          />
+          <Route
+            path={ROUTES.CONFIRM_UPDATED_EMAIL}
+            component={UpdateEmailPage}
+            exact
+          />
+          <Route
+            path={ROUTES.FIO_ADDRESSES_SELECTION}
+            component={FioAddressSelectionPage}
+            exact
+          />
+          <PrivateRoute
+            path={ROUTES.FIO_ADDRESS_SIGNATURES}
+            component={FioAddressSignaturesPage}
+            exact
+          />
+          <PrivateRoute
+            path={ROUTES.FIO_ADDRESS_SIGN}
+            component={FioAddressSignPage}
+            exact
+          />
+          <PrivateRoute
+            path={ROUTES.FIO_ADDRESSES}
+            component={FioAddressManagePage}
+            exact
+          />
 
-        <Route
-          path={ROUTES.FIO_DOMAIN}
-          component={FioDomainLandingPage}
-          exact
-        />
-        <Route
-          path={ROUTES.FIO_DOMAINS_SELECTION}
-          component={FioDomainSelectionPage}
-          exact
-        />
-        <PrivateRoute
-          path={ROUTES.FIO_DOMAINS}
-          component={FioDomainManagePage}
-          exact
-        />
-        <PrivateRoute path={ROUTES.DASHBOARD} component={DashboardPage} exact />
+          <Route
+            path={ROUTES.FIO_DOMAIN}
+            component={FioDomainLandingPage}
+            exact
+          />
+          <Route
+            path={ROUTES.FIO_DOMAINS_SELECTION}
+            component={FioDomainSelectionPage}
+            exact
+          />
+          <PrivateRoute
+            path={ROUTES.FIO_DOMAINS}
+            component={FioDomainManagePage}
+            exact
+          />
+          <PrivateRoute
+            path={ROUTES.DASHBOARD}
+            component={DashboardPage}
+            exact
+          />
 
-        <PrivateRoute path={ROUTES.CART} component={CartPage} exact />
-        <PrivateRoute path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
-        <PrivateRoute path={ROUTES.PURCHASE} component={PurchasePage} exact />
-        <PrivateRoute path={ROUTES.TOKENS} component={WalletsPage} exact />
-        <PrivateRoute
-          path={ROUTES.IMPORT_WALLET}
-          component={ImportWalletPage}
-          exact
-        />
-        <PrivateRoute path={ROUTES.FIO_WALLET} component={WalletPage} exact />
-        <PrivateRoute
-          path={ROUTES.FIO_ADDRESS_OWNERSHIP}
-          component={FioAddressTransferPage}
-        />
-        <PrivateRoute
-          path={ROUTES.FIO_DOMAIN_OWNERSHIP}
-          component={FioDomainTransferPage}
-        />
+          <PrivateRoute path={ROUTES.CART} component={CartPage} exact />
+          <PrivateRoute path={ROUTES.CHECKOUT} component={CheckoutPage} exact />
+          <PrivateRoute path={ROUTES.PURCHASE} component={PurchasePage} exact />
+          <PrivateRoute path={ROUTES.TOKENS} component={WalletsPage} exact />
+          <PrivateRoute
+            path={ROUTES.IMPORT_WALLET}
+            component={ImportWalletPage}
+            exact
+          />
+          <PrivateRoute path={ROUTES.FIO_WALLET} component={WalletPage} exact />
+          <PrivateRoute
+            path={ROUTES.FIO_ADDRESS_OWNERSHIP}
+            component={FioAddressTransferPage}
+          />
+          <PrivateRoute
+            path={ROUTES.FIO_DOMAIN_OWNERSHIP}
+            component={FioDomainTransferPage}
+          />
 
-        <PrivateRoute
-          path={ROUTES.FIO_DOMAIN_STATUS_CHANGE}
-          component={FioDomainStatusChangePage}
-        />
+          <PrivateRoute
+            path={ROUTES.FIO_DOMAIN_STATUS_CHANGE}
+            component={FioDomainStatusChangePage}
+          />
 
-        <PrivateRoute
-          path={ROUTES.FIO_ADDRESS_ADD_BUNDLES}
-          component={FioAddressAddBundlesPage}
-        />
-        <PrivateRoute
-          path={ROUTES.FIO_DOMAIN_RENEW}
-          component={FioDomainRenewPage}
-        />
+          <PrivateRoute
+            path={ROUTES.FIO_ADDRESS_ADD_BUNDLES}
+            component={FioAddressAddBundlesPage}
+          />
+          <PrivateRoute
+            path={ROUTES.FIO_DOMAIN_RENEW}
+            component={FioDomainRenewPage}
+          />
 
-        <PrivateRoute
-          path={ROUTES.LINK_TOKEN_LIST}
-          component={TokenListPage}
-          exact
-        />
-        <PrivateRoute path={ROUTES.DELETE_TOKEN} component={DeleteTokenPage} />
-        <PrivateRoute path={ROUTES.ADD_TOKEN} component={AddTokenPage} />
-        <PrivateRoute path={ROUTES.EDIT_TOKEN} component={EditTokenPage} />
+          <PrivateRoute
+            path={ROUTES.LINK_TOKEN_LIST}
+            component={TokenListPage}
+            exact
+          />
+          <PrivateRoute
+            path={ROUTES.DELETE_TOKEN}
+            component={DeleteTokenPage}
+          />
+          <PrivateRoute path={ROUTES.ADD_TOKEN} component={AddTokenPage} />
+          <PrivateRoute path={ROUTES.EDIT_TOKEN} component={EditTokenPage} />
 
-        <PrivateRoute path={ROUTES.SETTINGS} component={SettingsPage} exact />
+          <PrivateRoute path={ROUTES.SETTINGS} component={SettingsPage} exact />
 
-        <PrivateRoute path={ROUTES.SEND} component={SendPage} exact />
+          <PrivateRoute path={ROUTES.SEND} component={SendPage} exact />
 
-        <PrivateRoute
-          path={ROUTES.FIO_REQUEST}
-          component={FioRequestDecryptPage}
-          redirectOptions={{ setKeysForAction: true }}
-          exact
-        />
+          <PrivateRoute
+            path={ROUTES.FIO_REQUEST}
+            component={FioRequestDecryptPage}
+            redirectOptions={{ setKeysForAction: true }}
+            exact
+          />
 
-        <PrivateRoute
-          path={ROUTES.FIO_TOKENS_REQUEST}
-          component={FioTokensRequestPage}
-          exact
-        />
+          <PrivateRoute
+            path={ROUTES.FIO_TOKENS_REQUEST}
+            component={FioTokensRequestPage}
+            exact
+          />
 
-        <PrivateRoute
-          path={ROUTES.PAYMENT_DETAILS}
-          component={TokensRequestPaymentPage}
-          exact
-        />
+          <PrivateRoute
+            path={ROUTES.FIO_TOKENS_RECEIVE}
+            component={FioTokensReceivePage}
+            exact
+          />
 
-        <PrivateRoute path={ROUTES.STAKE} component={StakeTokensPage} exact />
-        <PrivateRoute
-          path={ROUTES.UNSTAKE}
-          component={UnstakeTokensPage}
-          exact
-        />
+          <PrivateRoute
+            path={ROUTES.FIO_TOKENS_GET}
+            component={FioTokensGetPage}
+            exact
+          />
 
-        <Route
-          path={ROUTES.ACCOUNT_RECOVERY}
-          component={AccountRecoveryPage}
-          exact
-        />
+          <PrivateRoute
+            path={ROUTES.PAYMENT_DETAILS}
+            component={TokensRequestPaymentPage}
+            exact
+          />
 
-        <PrivateRoute
-          path={ROUTES.FIO_ADDRESS_NFT_EDIT}
-          component={FioAddressNftPage}
-        />
+          <PrivateRoute path={ROUTES.STAKE} component={StakeTokensPage} exact />
+          <PrivateRoute
+            path={ROUTES.UNSTAKE}
+            component={UnstakeTokensPage}
+            exact
+          />
 
-        <Route
-          path={ROUTES.PRIVACY_POLICY}
-          component={PrivacyPolicyPage}
-          exact
-        />
+          <Route
+            path={ROUTES.ACCOUNT_RECOVERY}
+            component={AccountRecoveryPage}
+            exact
+          />
 
-        <Route
-          path={ROUTES.TERMS_OF_SERVICE}
-          component={TermsOfServicePage}
-          exact
-        />
+          <PrivateRoute
+            path={ROUTES.FIO_ADDRESS_NFT_EDIT}
+            component={FioAddressNftPage}
+          />
 
-        <Route path={ROUTES.COOKIE_NOTICE} component={CookieNoticePage} exact />
+          <Route
+            path={ROUTES.PRIVACY_POLICY}
+            component={PrivacyPolicyPage}
+            exact
+          />
 
-        <Route
-          path={ROUTES.NFT_VALIDATION}
-          component={NftValidationPage}
-          exact
-        />
+          <Route
+            path={ROUTES.TERMS_OF_SERVICE}
+            component={TermsOfServicePage}
+            exact
+          />
 
-        <PrivateRoute
-          path={ROUTES.REJECT_FIO_REQUEST}
-          component={RejectFioRequestPage}
-          exact
-        />
+          <Route
+            path={ROUTES.COOKIE_NOTICE}
+            component={CookieNoticePage}
+            exact
+          />
 
-        <PrivateRoute path={ROUTES.ORDERS} component={OrdersPage} exact />
-        <PrivateRoute
-          path={ROUTES.ORDER_DETAILS}
-          component={OrderDetailsPage}
-          exact
-        />
+          <Route
+            path={ROUTES.NFT_VALIDATION}
+            component={NftValidationPage}
+            exact
+          />
 
-        <AdminPrivateRoute
-          path={ROUTES.ADMIN_HOME}
-          component={AdminHomePage}
-          exact
-        />
-        <AdminPrivateRoute
-          path={ROUTES.ADMIN_ORDERS}
-          component={AdminOrdersPage}
-          exact
-        />
-        <Route path={ROUTES.ADMIN_LOGIN} component={AdminLoginPage} exact />
-        <AdminPrivateRoute
-          path={ROUTES.ADMIN_USERS}
-          component={AdminUserListPage}
-          exact
-        />
-        <Route
-          path={ROUTES.ADMIN_CONFIRM_EMAIL}
-          component={AdminEmailConfirmPage}
-          exact
-        />
-        <Route
-          path={ROUTES.ADMIN_RESET_PASSWORD}
-          component={AdminPasswordResetPage}
-          exact
-        />
-        <AdminPrivateRoute
-          path={ROUTES.ADMIN_REGULAR_USERS}
-          component={AdminRegularUsersList}
-          exact
-        />
-        <AdminPrivateRoute
-          path={ROUTES.ADMIN_PROFILE}
-          component={AdminProfilePage}
-          exact
-        />
-        <AdminPrivateRoute
-          path={ROUTES.ADMIN_ACCOUNTS}
-          component={AdminFioAccountsProfilesListPage}
-          exact
-        />
-        <AdminPrivateRoute
-          path={ROUTES.ADMIN_SEARCH_RESULT}
-          component={AdminSearchResultPage}
-          exact
-        />
+          <PrivateRoute
+            path={ROUTES.REJECT_FIO_REQUEST}
+            component={RejectFioRequestPage}
+            exact
+          />
 
-        <AuthContainer />
-      </Switch>
+          <PrivateRoute path={ROUTES.ORDERS} component={OrdersPage} exact />
+          <PrivateRoute
+            path={ROUTES.ORDER_DETAILS}
+            component={OrderDetailsPage}
+            exact
+          />
+
+          <AdminPrivateRoute
+            path={ROUTES.ADMIN_HOME}
+            component={AdminHomePage}
+            exact
+          />
+          <AdminPrivateRoute
+            path={ROUTES.ADMIN_ORDERS}
+            component={AdminOrdersPage}
+            exact
+          />
+          <Route path={ROUTES.ADMIN_LOGIN} component={AdminLoginPage} exact />
+          <AdminPrivateRoute
+            path={ROUTES.ADMIN_USERS}
+            component={AdminUserListPage}
+            exact
+          />
+          <Route
+            path={ROUTES.ADMIN_CONFIRM_EMAIL}
+            component={AdminEmailConfirmPage}
+            exact
+          />
+          <Route
+            path={ROUTES.ADMIN_RESET_PASSWORD}
+            component={AdminPasswordResetPage}
+            exact
+          />
+          <AdminPrivateRoute
+            path={ROUTES.ADMIN_REGULAR_USERS}
+            component={AdminRegularUsersListPage}
+            exact
+          />
+          <AdminPrivateRoute
+            path={ROUTES.ADMIN_PROFILE}
+            component={AdminProfilePage}
+            exact
+          />
+          <AdminPrivateRoute
+            path={ROUTES.ADMIN_ACCOUNTS}
+            component={AdminFioAccountsProfilesListPage}
+            exact
+          />
+          <AdminPrivateRoute
+            path={ROUTES.ADMIN_PARTNERS}
+            component={AdminPartnersListPage}
+            exact
+          />
+          <AdminPrivateRoute
+            path={ROUTES.ADMIN_SEARCH_RESULT}
+            component={AdminSearchResultPage}
+            exact
+          />
+
+          <AuthContainer />
+        </Switch>
+      </React.Suspense>
     </ScrollToTop>
   </MainLayout>
 );

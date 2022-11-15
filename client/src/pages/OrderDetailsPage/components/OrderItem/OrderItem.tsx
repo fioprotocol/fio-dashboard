@@ -22,16 +22,18 @@ export const OrderItem: React.FC<Props> = props => {
     address,
     hasCustomDomain,
     domain,
+    type,
     id,
     fee_collected,
     costUsdc,
     primaryCurrency,
-    transaction_id,
+    transaction_ids,
   } = props;
 
   const item = {
     address,
     domain,
+    type,
     costFio: apis.fio.sufToAmount(fee_collected).toFixed(2),
     costUsdc,
     costNativeFio: fee_collected ? new MathOp(fee_collected).toNumber() : null,
@@ -42,22 +44,30 @@ export const OrderItem: React.FC<Props> = props => {
   return (
     <>
       <CartItem item={item} primaryCurrency={primaryCurrency} />
-      <Badge type={BADGE_TYPES.WHITE} show={!!transaction_id} className="mt-3">
-        <div className={classes.item}>
-          <span className={classnames(classes.name, 'boldText')}>
-            Transaction ID
-          </span>
-          <p className={classes.itemValue}>
-            <a
-              href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transaction_id}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <span className="boldText">{transaction_id}</span>
-            </a>
-          </p>
-        </div>
-      </Badge>
+      {transaction_ids?.length > 0 &&
+        transaction_ids.map(transaction_id => (
+          <Badge
+            key={transaction_id}
+            type={BADGE_TYPES.WHITE}
+            show={!!transaction_id}
+            className="mt-3"
+          >
+            <div className={classes.item}>
+              <span className={classnames(classes.name, 'boldText')}>
+                Transaction ID
+              </span>
+              <p className={classes.itemValue}>
+                <a
+                  href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transaction_id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <span className="boldText">{transaction_id}</span>
+                </a>
+              </p>
+            </div>
+          </Badge>
+        ))}
     </>
   );
 };

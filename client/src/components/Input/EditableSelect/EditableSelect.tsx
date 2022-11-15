@@ -25,6 +25,7 @@ export type EditableProps = {
   forceReset?: boolean;
   loading?: boolean;
   upperCased?: boolean;
+  onBlur?: (fieldName: string) => void;
   onClear?: () => void;
   onInputChange?: (chainCodeValue: string) => Promise<void> | void;
   toggleToCustom?: (isCustom: boolean) => void;
@@ -44,12 +45,13 @@ const EditableSelect: React.FC<EditableProps> = props => {
     forceReset,
     loading,
     upperCased,
+    onBlur,
     onClear,
     onInputChange,
     toggleToCustom,
   } = props;
 
-  const { onChange, value } = input;
+  const { onChange, value, name } = input;
   const { initial: initialValue } = meta;
 
   const [inputValue, setInputValue] = useState<string>('');
@@ -111,6 +113,8 @@ const EditableSelect: React.FC<EditableProps> = props => {
 
   const handleBlur = () => {
     const currentValue = inputValue ? inputValue.trim() : '';
+    onBlur && onBlur(name);
+
     if (!currentValue) return;
 
     handleFormAndInputChange(currentValue);

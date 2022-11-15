@@ -1,77 +1,12 @@
-import React, { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { useContext } from './EmailConfirmBlockerContext';
 
 import classes from '../EmailModal/EmailModal.module.scss';
 
-import {
-  EmailConfirmationStateData,
-  RedirectLinkData,
-  RefProfile,
-  ContainedFlowQueryParams,
-} from '../../../types';
-import { ROUTES } from '../../../constants/routes';
-
-type Props = {
-  loading: boolean;
-  isAuthenticated: boolean;
-  isActiveUser: boolean;
-  emailConfirmationToken: string;
-  emailConfirmationSent: boolean;
-  resendConfirmEmail: (
-    token: string,
-    stateData: EmailConfirmationStateData,
-  ) => void;
-  isContainedFlow: boolean;
-  refProfileInfo: RefProfile | null;
-  containedFlowQueryParams?: ContainedFlowQueryParams | null;
-  redirectLink: RedirectLinkData;
-  setRedirectPath: (path: string | null) => void;
-};
-
-const EmailConfirmBlocker: React.FC<Props> = props => {
-  const {
-    isAuthenticated,
-    isActiveUser,
-    emailConfirmationToken,
-    emailConfirmationSent,
-    loading,
-    containedFlowQueryParams,
-    refProfileInfo,
-    isContainedFlow,
-    redirectLink,
-    resendConfirmEmail,
-    setRedirectPath,
-  } = props;
-
-  const history = useHistory();
-
-  useEffect(() => {
-    if (isAuthenticated && isActiveUser) {
-      const { pathname, state: redirectState } = redirectLink || {};
-      history.replace(pathname || ROUTES.DASHBOARD, redirectState);
-      setRedirectPath(null);
-    }
-
-    if (!isAuthenticated) {
-      history.replace(ROUTES.HOME);
-    }
-  }, [isAuthenticated, isActiveUser, redirectLink, history, setRedirectPath]);
-
-  const onSend = (e: React.MouseEvent<HTMLElement>) => {
-    e.preventDefault();
-    let stateData: EmailConfirmationStateData = {
-      redirectLink: redirectLink ? redirectLink.pathname : '',
-    };
-    if (isContainedFlow) {
-      stateData = {
-        ...stateData,
-        refCode: refProfileInfo?.code,
-        containedFlowQueryParams,
-      };
-    }
-    resendConfirmEmail(emailConfirmationToken, stateData);
-  };
+const EmailConfirmBlocker: React.FC = () => {
+  const { emailConfirmationSentTitle, loading, onSend } = useContext();
 
   return (
     <div className={classes.container}>
@@ -94,9 +29,9 @@ const EmailConfirmBlocker: React.FC<Props> = props => {
             </span>
           </p>
         )}
-        <p className="mt-0 mb-0">
-          {emailConfirmationSent ? 'Email sent' : ''}&nbsp;
-        </p>
+        {emailConfirmationSentTitle && (
+          <p className="mt-0 mb-0">{emailConfirmationSentTitle}&nbsp;</p>
+        )}
       </div>
     </div>
   );

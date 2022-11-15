@@ -79,10 +79,21 @@
   display: flex;
   justify-content: space-between;
 
+  .itemNameContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
   .address {
     font-size: 1em;
     word-break: break-word;
     margin-right: 30px;
+  }
+
+  .descriptor {
+    @include proxima-nova-regular;
+    font-size: 13px;
   }
 
   .price {
@@ -257,7 +268,7 @@
       }
     }
   }
-  
+
   .itemContainer {
     flex-direction: column;
     position: relative;
@@ -265,7 +276,7 @@
     .price {
       margin: 0.625rem 1.875rem 0 0;
     }
-    
+
     .icon {
       position: absolute;
       transform: translate(-50%, -50%);

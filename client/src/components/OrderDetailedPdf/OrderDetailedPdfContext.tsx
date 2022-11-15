@@ -1,5 +1,6 @@
 import { commonFormatTime } from '../../util/general';
 import { combinePriceWithDivider } from '../../util/prices';
+import { setFioName } from '../../utils';
 
 import { ORDER_STATUS_LABEL_PDF } from '../../constants/purchase';
 
@@ -11,6 +12,7 @@ type TransactionItem = {
   debit: string;
   credit: string;
   txId?: string;
+  txIds?: string[];
 };
 
 type Props = {
@@ -70,7 +72,14 @@ export const useContext = (orderItem: OrderDetailed): Props => {
   ): TransactionItem[] =>
     orderItems &&
     orderItems.map(orderItem => {
-      const { action, id, priceString, transaction_id } = orderItem;
+      const {
+        action,
+        address,
+        domain,
+        priceString,
+        transaction_id,
+        transaction_ids,
+      } = orderItem;
       let debit = '';
       let credit = '';
 
@@ -81,11 +90,12 @@ export const useContext = (orderItem: OrderDetailed): Props => {
       }
 
       return {
-        description: id,
+        description: setFioName(address, domain),
         debit,
         credit,
         type: action,
         txId: transaction_id || null,
+        txIds: transaction_ids || [],
       };
     });
 

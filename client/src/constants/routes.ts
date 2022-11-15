@@ -17,6 +17,7 @@ const ROUTES: { [route: string]: string } = {
   ADMIN_REGULAR_USERS: '/admin/regular-users',
   ADMIN_PROFILE: '/admin/profile',
   ADMIN_ACCOUNTS: '/admin/accounts',
+  ADMIN_PARTNERS: '/admin/partners',
   ADMIN_SEARCH_RESULT: '/admin/search-result',
 
   CONFIRM_EMAIL: '/confirm-email', // ?hash=
@@ -47,6 +48,8 @@ const ROUTES: { [route: string]: string } = {
   FIO_WALLET: '/fio-wallet', // ?publicKey=
   FIO_WALLET_OLD: '/fio-wallet/:publicKey', // ?publicKey=
   FIO_WALLET_DETAILS: '/fio-wallet-details',
+  FIO_TOKENS_GET: '/get-fio-tokens',
+  FIO_TOKENS_RECEIVE: '/receive-fio-tokens', // ?publicKey=
   TOKENS: '/tokens',
   IMPORT_WALLET: '/import',
 
@@ -90,11 +93,11 @@ const ROUTES: { [route: string]: string } = {
   STAKE: '/stake', // ?publicKey=
   UNSTAKE: '/unstake', // ?publicKey=
 
-  LINK_TOKEN_LIST: '/link-token-list',
-  ADD_TOKEN: '/link-token-list/add-token',
+  LINK_TOKEN_LIST: '/link-token-list', // ?fioCryptoHandle=
+  ADD_TOKEN: '/link-token-list/add-token', // ?fioCryptoHandle=
   ADD_TOKEN_CONFIRMATION: '/link-token-list/add-token-confirmation',
-  EDIT_TOKEN: '/link-token-list/edit-token',
-  DELETE_TOKEN: '/link-token-list/delete-token',
+  EDIT_TOKEN: '/link-token-list/edit-token', // ?fioCryptoHandle=
+  DELETE_TOKEN: '/link-token-list/delete-token', // ?fioCryptoHandle=
   SETTINGS: '/settings',
   ACCOUNT_RECOVERY: '/account-recovery',
   NFT_VALIDATION: '/nft-validation',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState, MouseEvent } from 'react';
 import QRCode from 'qrcode.react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'react-bootstrap';
@@ -50,9 +50,22 @@ const WalletDetailsModal: React.FC<Props> = props => {
   const [viewingAddressInLedger, setViewingAddressInLedger] = useState<boolean>(
     false,
   );
+  const publicKeyRef = useRef<HTMLDivElement | null>(null);
 
   const onCopy = () => {
     copyToClipboard(publicKey);
+  };
+
+  const onClick = (event: MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    if (event.detail === 2) {
+      const range = document.createRange();
+      range.selectNodeContents(publicKeyRef.current);
+
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(range);
+    }
   };
 
   const onShare = () =>
@@ -140,7 +153,13 @@ const WalletDetailsModal: React.FC<Props> = props => {
           <Badge type={BADGE_TYPES.WHITE} show={true}>
             <div className={classes.publicAddressContainer}>
               <div className={classes.title}>Public Address</div>
-              <div className={classes.publicKey}>{publicKey}</div>
+              <div
+                className={classes.publicKey}
+                ref={publicKeyRef}
+                onClick={onClick}
+              >
+                {publicKey}
+              </div>
             </div>
           </Badge>
 

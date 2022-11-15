@@ -1,4 +1,7 @@
 import React from 'react';
+import { FormRenderProps } from 'react-final-form';
+
+import { FormValues } from '../../../pages/AddTokenPage/types';
 
 import {
   FeePrice,
@@ -46,10 +49,10 @@ export type ResultsContainerProps = ResultsProps & {
 
 export type LinkTokenResultsProps = {
   containerName: string;
-  fioCryptoHandle: FioAddressWithPubAddresses;
+  fioCryptoHandleObj: FioAddressWithPubAddresses;
   results: LinkActionResult;
   bundleCost: number;
   changeBundleCost: (bundleCost: number) => void;
-  onBack: () => void;
+  onBack: (formProps?: FormRenderProps<FormValues>) => void;
   onRetry: (results: LinkActionResult) => void;
 };

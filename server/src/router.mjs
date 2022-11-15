@@ -9,6 +9,8 @@ const router = express.Router();
 const checkAuth = routes.auth.check;
 const checkAdminAuth = routes.auth.checkAdminAuth;
 
+router.get('/ping', routes.general.healthCheck);
+
 router.post('/auth', routes.auth.create);
 router.get('/auth/nonce', routes.auth.nonce);
 router.get('/auth/username/:email', routes.auth.username);
@@ -75,6 +77,10 @@ router.post(
   checkAdminAuth,
   routes.adminUsers.updateFioAccountProfile,
 );
+
+router.get('/admin/partners/list', checkAdminAuth, routes.adminUsers.partnersList);
+router.post('/admin/partners', checkAdminAuth, routes.adminUsers.createPartner);
+router.post('/admin/partners/:id', checkAdminAuth, routes.adminUsers.updatePartner);
 
 router.get('/admin/search', checkAdminAuth, routes.adminUsers.search);
 

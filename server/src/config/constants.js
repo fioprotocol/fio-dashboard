@@ -68,8 +68,11 @@ const FIO_ACTIONS_TO_END_POINT_KEYS = {
 };
 
 const FIO_ACTIONS_LABEL = {
-  [FIO_ACTIONS.registerFioAddress]: 'FIO Address Registration',
+  [FIO_ACTIONS.registerFioAddress]: 'FIO Crypto Handle Registration',
   [FIO_ACTIONS.registerFioDomain]: 'FIO Domain Registration',
+  [`${FIO_ACTIONS.registerFioAddress}_${FIO_ACTIONS.registerFioDomain}`]: 'FIO Crypto Handle and Domain Registration',
+  [FIO_ACTIONS.renewFioDomain]: 'FIO Domain Renewal',
+  [FIO_ACTIONS.addBundledTransactions]: 'Add Bundled Transactions',
 };
 
 const ERROR_CODES = {
@@ -129,6 +132,28 @@ const PRINT_SCREEN_PARAMS = {
   },
 };
 
+const CART_ITEM_TYPE = {
+  ADDRESS: 'fch',
+  DOMAIN: 'domain',
+  ADDRESS_WITH_CUSTOM_DOMAIN: 'combo',
+  DOMAIN_RENEWAL: 'domain_renewal',
+  ADD_BUNDLES: 'add_bundles',
+};
+
+const DEFAULT_BUNDLE_SET_VALUE = 1;
+
+const QUERY_PARAMS_NAMES = {
+  EMAIL: 'email',
+  FIO_REQUEST_ID: 'fioRequestId',
+  HASH: 'hash',
+  NAME: 'name',
+  ORDER_NUMBER: 'orderNumber',
+  PUBLIC_KEY: 'publicKey',
+  REF_CODE: 'refCode',
+  TOKEN: 'token',
+  USERNAME: 'username',
+};
+
 module.exports = {
   WALLET_CREATED_FROM,
   DOMAIN_EXP_PERIOD,
@@ -147,4 +172,7 @@ module.exports = {
   ADMIN_ROLES_IDS,
   ADMIN_STATUS_IDS,
   DAY_MS,
+  CART_ITEM_TYPE,
+  DEFAULT_BUNDLE_SET_VALUE,
+  QUERY_PARAMS_NAMES,
 };

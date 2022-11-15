@@ -16,6 +16,7 @@ import {
   ANALYTICS_EVENT_ACTIONS,
   CONFIRM_FIO_ACTIONS,
   CURRENCY_CODES,
+  CART_ITEM_TYPE,
 } from './constants/common';
 
 import { ResultsData } from '../components/common/TransactionResults/types';
@@ -32,6 +33,7 @@ export type OwnPropsAny = any; // todo: fix usages for ownProps
 export type Domain = { domain: string; free?: boolean };
 
 export type ContainedFlowActionSettingsKey = keyof typeof CONTAINED_FLOW_ACTIONS;
+export type CartItemType = typeof CART_ITEM_TYPE[keyof typeof CART_ITEM_TYPE];
 
 export type CartItem = {
   address?: string;
@@ -48,6 +50,7 @@ export type CartItem = {
   errorData?: { code?: string; credited?: string };
   errorType?: string;
   isCustomDomain?: boolean;
+  type?: CartItemType;
 };
 
 export type Notification = {
@@ -81,7 +84,12 @@ export type Prices = {
 
 export type IncomePrices = {
   pricing: {
-    nativeFio: { address: number; domain: number };
+    nativeFio: {
+      address: number;
+      domain: number;
+      renewDomain: number;
+      addBundles: number;
+    };
     usdtRoe: number;
   };
 };
@@ -155,12 +163,12 @@ export type NewFioWalletDoublet = {
 
 export type FioAddressDoublet = {
   name: string;
-  expiration: string;
+  expiration: Date;
   remaining: number;
   walletPublicKey: string;
 };
 
-export type FioAddressWithPubAddresses = FioAddressDoublet & {
+export type FioAddressWithPubAddresses = FioNameItemProps & {
   edgeWalletId: string;
   publicAddresses: PublicAddressDoublet[];
   more: boolean;
@@ -168,7 +176,7 @@ export type FioAddressWithPubAddresses = FioAddressDoublet & {
 
 export type FioDomainDoublet = {
   name: string;
-  expiration: string;
+  expiration: Date;
   isPublic: number;
   walletPublicKey: string;
 };
@@ -211,14 +219,8 @@ export type LastAuthData = {
 
 export type FioNameType = 'address' | 'domain';
 
-export type FioNameItemProps = {
-  name?: string;
-  expiration?: Date;
-  remaining?: number;
-  isPublic?: number;
-  walletPublicKey?: string;
-  edgeWalletId?: string;
-};
+export type FioNameItemProps = Partial<FioAddressDoublet> &
+  Partial<FioDomainDoublet>;
 
 export type LinkResult = {
   updated: PublicAddressDoublet[];
@@ -229,7 +231,7 @@ export type LinkResult = {
 export type LinkActionResult = {
   connect: LinkResult;
   disconnect: LinkResult;
-};
+} | null;
 
 export type WalletKeys = { private: string; public: string };
 export type EdgeWalletsKeys = { [edgeWalletId: string]: WalletKeys };
@@ -306,6 +308,7 @@ export type User = {
 };
 
 export type RefProfile = {
+  id?: string;
   code: string;
   label: string;
   title: string;
@@ -323,11 +326,12 @@ export type RefProfile = {
         actionText?: string;
       }
     >;
-
     img: string;
     link: string;
   };
   tpid: string;
+  regRefApiToken: string;
+  createdAt?: string;
 };
 
 type SignNFTQuery = {
@@ -671,17 +675,20 @@ export type OrderItem = {
   createdAt: string;
   domain?: string;
   id: string;
+  nativeFio: string;
   price: string;
   priceCurrency: string;
+  data: {
+    hasCustomDomain?: boolean;
+    hasCustomDomainFee?: string;
+  };
   updatedAt: string;
   blockchainTransactions: BcTx[];
-  order?: {
-    id: string;
-    number: string;
-  };
+  order?: OrderDetails;
   orderItemStatus: {
     txStatus: typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
   };
+  feeCollected?: string;
 };
 
 export type OrderDetails = {
@@ -730,10 +737,12 @@ export type OrderItemDetailed = {
   hasCustomDomain?: boolean;
   priceString: string;
   transaction_id: string;
+  transaction_ids: string[];
   error?: string;
   errorData?: { code?: string; credited?: string; errorType?: string };
   errorType?: string;
   costNativeFio?: number;
+  type?: CartItemType;
 };
 
 export type OrderDetailedTotalCost = {

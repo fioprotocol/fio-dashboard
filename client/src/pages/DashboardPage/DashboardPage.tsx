@@ -7,10 +7,12 @@ import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import DashboardListItem from './DashboardListItem';
 import ManagePageCtaBadge from '../../components/ManagePageContainer/ManagePageCtaBadge';
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
+import { GetFioTokens } from '../../components/GetFioTokens';
 
 import { ROUTES } from '../../constants/routes';
 
 import { useFioAddresses, useNonActiveUserRedirect } from '../../util/hooks';
+import { useCheckIfDesktop } from '../../screenType';
 
 import { FioWalletDoublet } from '../../types';
 
@@ -25,6 +27,8 @@ const DashboardPage: React.FC<Props> = props => {
   const { fioWallets, loading } = props;
   const [fioAddresses] = useFioAddresses();
   useNonActiveUserRedirect();
+
+  const isDesktop = useCheckIfDesktop();
 
   return (
     <div className={classes.container}>
@@ -64,6 +68,7 @@ const DashboardPage: React.FC<Props> = props => {
         ) : fioAddresses.length > 0 ? (
           fioAddresses.map(address => (
             <DashboardListItem
+              hideTitle={!isDesktop}
               title="FIO Crypto Handle"
               listItem={address.name}
               key={address.name}
@@ -81,6 +86,7 @@ const DashboardPage: React.FC<Props> = props => {
       <div className={classes.actionBadgeContainer}>
         <ManagePageCtaBadge name="address" />
         <ManagePageCtaBadge name="domain" />
+        <GetFioTokens />
       </div>
     </div>
   );
