@@ -355,9 +355,13 @@ export const useContext = (): UseContextReturnType => {
       dispatch(setWallet(highestBalanceWalletPubKey));
   }, [dispatch, highestBalanceWalletPubKey, pubKeyForPrivateDomain]);
 
-  useEffectOnce(() => {
-    if (isAuth) handleFreeAddressCartFn();
-  }, [isAuth]);
+  useEffectOnce(
+    () => {
+      if (isAuth) handleFreeAddressCartFn();
+    },
+    [isAuth],
+    !loading,
+  );
 
   useEffect(() => {
     if (!isAuth) {
