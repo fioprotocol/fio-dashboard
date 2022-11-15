@@ -26,6 +26,7 @@ export type MainHeaderProps = {
   fioAddresses: FioAddressDoublet[];
   isContainedFlow: boolean;
   isAdminAuthenticated: boolean;
+  hideNavigation?: boolean;
 };
 
 export type NavigationProps = {
