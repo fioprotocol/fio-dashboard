@@ -23,6 +23,7 @@ import classes from '../MainHeader.module.scss';
 
 type RegularNavProps = {
   cartItems: CartItem[];
+  hideNavigation?: boolean;
   isMenuOpen: boolean;
   toggleMenuOpen: (openState: boolean) => void;
   edgeAuthLoading: boolean;
@@ -35,7 +36,7 @@ type RegularNavProps = {
 };
 
 const RegularNav: React.FC<RegularNavProps> = props => {
-  const { cartItems, hideCart, closeMenu } = props;
+  const { cartItems, hideCart, closeMenu, hideNavigation } = props;
 
   const isDesktop = useCheckIfDesktop();
 
@@ -59,6 +60,8 @@ const RegularNav: React.FC<RegularNavProps> = props => {
   };
 
   const renderNav = () => {
+    if (hideNavigation) return null;
+
     return (
       <Nav className="mr-auto align-items-center">
         {hideCart ? null : (
