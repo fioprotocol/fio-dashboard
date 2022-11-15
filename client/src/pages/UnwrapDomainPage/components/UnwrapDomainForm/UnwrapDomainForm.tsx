@@ -116,7 +116,7 @@ const UnwrapDomainForm: React.FC<UnWrapDomainFormProps> = props => {
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={SelectModalInput}
-              options={wrappedDomainsList}
+              options={wrappedDomainsList || []}
               showPasteButton={true}
               placeholder="Enter token id of wFIO domain for unwrapping"
               modalPlaceholder="Enter or select token id of wFIO domain for unwrapping"
