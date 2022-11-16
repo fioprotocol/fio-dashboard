@@ -91,15 +91,15 @@ const Ref = (
 
   useEffect(() => {
     // load profile when have ref link
-    if (isRefLink && !isAuthenticated) {
+    if (isRefLink) {
       const refProfileCode = pathname.split('/')[2] || query.ref;
       getInfo(refProfileCode);
     }
-  }, [isRefLink, pathname, isAuthenticated, query.ref, getInfo]);
+  }, [isRefLink, pathname, query.ref, getInfo]);
 
   // Set user refProfileCode to cookies
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !isRefLink && !refProfileInfo?.code) {
       const refProfileCode = user?.refProfile?.code || '';
 
       getInfo(refProfileCode);
@@ -107,7 +107,13 @@ const Ref = (
         expires: USER_REFERRAL_PROFILE_COOKIE_EXPIRATION_PERIOD,
       });
     }
-  }, [isAuthenticated, user?.refProfile?.code, getInfo]);
+  }, [
+    isAuthenticated,
+    isRefLink,
+    refProfileInfo?.code,
+    user?.refProfile?.code,
+    getInfo,
+  ]);
 
   useEffect(() => {
     apis.fio.setTpid(
