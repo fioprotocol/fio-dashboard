@@ -3,7 +3,6 @@
 
 .header {
   display: flex;
-  justify-content: space-between;
   background: $main-background;
   box-shadow: 0 0 20px 8px rgba(0,0,0,0.2);
   padding: 5px 25px;
@@ -25,7 +24,7 @@
     background-position: left;
   }
 
-  .loggedNavContainer {
+  .loggedNavContainer, .regularNavContainer {
     display: flex;
     flex-direction: row;
     width: 100%;
@@ -34,12 +33,6 @@
   }
 
   .regularNavContainer {
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: space-between;
-    margin-left: 2rem;
-
     .actionContainer {
       display: flex;
 
@@ -67,6 +60,13 @@
     display: flex;
     align-items: center;
     cursor: pointer;
+  }
+
+  .link {
+    &.siteLink {
+      width: 100%;
+      margin-left: 2rem;
+    }
   }
 
   .link {
@@ -287,10 +287,13 @@
   .header {
     padding: 5px 3.75rem;
 
-    .regularNavContainer {
-      margin-left: 5rem;
+    .link {
+      &.siteLink {
+        margin-left: 5rem;
+      }
     }
-    .loggedNavContainer {
+
+    .regularNavContainer, .loggedNavContainer {
       margin-left: 5rem;
     }
   }
