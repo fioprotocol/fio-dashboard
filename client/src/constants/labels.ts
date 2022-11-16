@@ -87,6 +87,10 @@ export const LINKS: { [linkKey: string]: string } = {
   ORDERS: 'ORDERS',
   ORDER_DETAILS: 'ORDER_DETAILS',
   ORDER_INVOICE: 'ORDER_INVOICE',
+  WRAP_STATUS_WRAP_TOKENS: 'WRAP_STATUS_WRAP_TOKENS',
+  WRAP_STATUS_UNWRAP_TOKENS: 'WRAP_STATUS_UNWRAP_TOKENS',
+  WRAP_STATUS_WRAP_DOMAINS: 'WRAP_STATUS_WRAP_DOMAINS',
+  WRAP_STATUS_UNWRAP_DOMAINS: 'WRAP_STATUS_UNWRAP_DOMAINS',
 };
 
 export const LINK_LABELS: { [linkKey: string]: string } = {
@@ -192,6 +196,10 @@ export const LINK_TITLES: { [linkKey: string]: string } = {
   [LINKS.ORDERS]: 'Orders',
   [LINKS.ORDER_DETAILS]: 'Order Details',
   [LINKS.ORDER_INVOICE]: 'Order Invoice',
+  [LINKS.WRAP_STATUS_WRAP_TOKENS]: 'Wrap FIO Tokens Status',
+  [LINKS.WRAP_STATUS_UNWRAP_TOKENS]: 'Unwrap FIO Tokens Status',
+  [LINKS.WRAP_STATUS_WRAP_DOMAINS]: 'Wrap FIO Domains Status',
+  [LINKS.WRAP_STATUS_UNWRAP_DOMAINS]: 'Unwrap FIO Domains Status',
 };
 
 export const fioNameLabels: { [fioNameType: string]: string } = {
