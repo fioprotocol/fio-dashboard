@@ -22,7 +22,10 @@
     "test:api": "cross-env TEST_MODE=0 LOG_LEVEL=error babel-node --extensions .js,.mjs node_modules/.bin/_mocha --exit --timeout 60000 --reporter spec --ui qunit server/tests/api/*",
     "test": "npm run lint && npm run test:create.db && npm run test:api",
     "test:create.db": "node --experimental-modules server/tests/createDB.mjs",
-    "coinpayments:webhooks": "node --es-module-specifier-resolution=node server/tests/use-case/webhook/coinpayments-webhook.mjs"
+    "coinpayments:webhooks": "node --es-module-specifier-resolution=node server/tests/use-case/webhook/coinpayments-webhook.mjs",
+    "landing-page-wrap-status:as:start": "export REACT_APP_LANDING_PAGE=wrap-status && npm run client:start",
+    "landing-page-wrap-status:as:build": "export REACT_APP_LANDING_PAGE=wrap-status && npm run client:build"
+
   },
   "license": "ISC",
   "overrides": {
