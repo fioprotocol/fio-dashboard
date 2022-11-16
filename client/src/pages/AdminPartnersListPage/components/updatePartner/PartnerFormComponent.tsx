@@ -12,6 +12,10 @@ import { PartnerFormDomainRow } from './PartnerFormDomainRow';
 import { INPUT_UI_STYLES } from '../../../../components/Input/Input';
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
 import { CONTAINED_FLOW_ACTIONS } from '../../../../constants/containedFlow';
+import {
+  PARTNER_LOGO_MAX_WIDTH,
+  PARTNER_LOGO_MAX_HEIGHT,
+} from '../../../../constants/common';
 
 import { RefProfile } from '../../../../types';
 
@@ -37,10 +41,35 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
     (file: File) => {
       const reader = new FileReader();
       reader.onload = function() {
-        form.change(
-          'settings.img' as keyof RefProfile,
-          reader.result as RefProfile[keyof RefProfile],
-        );
+        const img = document.createElement('img');
+        img.src = reader.result as string;
+
+        img.onload = function() {
+          let width = img.width;
+          let height = img.height;
+          if (width > height) {
+            if (width > PARTNER_LOGO_MAX_WIDTH) {
+              height *= PARTNER_LOGO_MAX_WIDTH / width;
+              width = PARTNER_LOGO_MAX_WIDTH;
+            }
+          } else {
+            if (height > PARTNER_LOGO_MAX_HEIGHT) {
+              width *= PARTNER_LOGO_MAX_HEIGHT / height;
+              height = PARTNER_LOGO_MAX_HEIGHT;
+            }
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          form.change(
+            'settings.img' as keyof RefProfile,
+            canvas.toDataURL(file.type) as RefProfile[keyof RefProfile],
+          );
+        };
       };
       reader.readAsDataURL(file);
     },
@@ -49,6 +78,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
 
   const onRemoveImage = useCallback(() => {
     form.change('settings.img' as keyof RefProfile, null);
+    form.change('image' as keyof RefProfile, null);
   }, [form]);
 
   const onAddDomain = useCallback(() => {
@@ -89,6 +119,17 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
         placeholder="Referral Code"
         loading={validating}
         disabled={!!values?.id || submitting || loading}
+      />
+      <Field
+        type="text"
+        name="regRefCode"
+        component={Input}
+        uiType={INPUT_UI_STYLES.BLACK_WHITE}
+        errorColor={COLOR_TYPE.WARN}
+        label="Reg Site Ref Code *"
+        placeholder="Reg Site Ref Code"
+        loading={validating}
+        disabled={submitting || loading}
       />
       <div className="d-flex flex-column align-self-start mb-4">
         <span className={classes.label}>Wallet logo</span>

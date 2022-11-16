@@ -54,6 +54,9 @@ const AdminPartnersListPage: React.FC<Props> = props => {
     async (partner: RefProfile) => {
       setPartnerActionLoading(true);
       try {
+        // image it's temporary field that used for image upload
+        // @ts-ignore
+        delete partner.image;
         if (partner.settings?.domains.length) {
           if (
             !partner.settings.domains.includes(

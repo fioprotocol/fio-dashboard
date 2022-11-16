@@ -12,6 +12,9 @@ export const validate = (values: RefProfile): AnyObject => {
   if (!values.code) {
     errors.code = 'Required.';
   }
+  if (!values.regRefCode) {
+    errors.regRefCode = 'Required.';
+  }
   if (!values.regRefApiToken) {
     errors.regRefApiToken = 'Required.';
   }
