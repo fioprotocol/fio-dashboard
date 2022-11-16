@@ -79,6 +79,7 @@ export class ReferrerProfile extends Base {
       default: [
         'id',
         'code',
+        'regRefCode',
         'label',
         'title',
         'subTitle',

@@ -215,3 +215,6 @@ export const CART_ITEM_TYPE = {
 
 export const DEFAULT_BUNDLE_SET_VALUE = 1;
 export const DEFAULT_BUNDLE_AMOUNT = 100;
+
+export const PARTNER_LOGO_MAX_WIDTH = 380;
+export const PARTNER_LOGO_MAX_HEIGHT = 115;

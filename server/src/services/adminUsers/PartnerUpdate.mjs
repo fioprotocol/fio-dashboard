@@ -12,6 +12,7 @@ export default class PartnerUpdate extends Base {
   static get validationRules() {
     return {
       id: ['required', 'string'],
+      regRefCode: ['required', 'string'],
       label: ['required', 'string'],
       regRefApiToken: ['string'],
       tpid: ['string'],
@@ -66,7 +67,7 @@ export default class PartnerUpdate extends Base {
         code: 'NOT_FOUND',
         fields: {
           id: 'NOT_FOUND',
-          name: 'NOT_FOUND',
+          code: 'NOT_FOUND',
         },
       });
     }
@@ -79,10 +80,10 @@ export default class PartnerUpdate extends Base {
   }
 
   static get paramsSecret() {
-    return [];
+    return ['settings.img'];
   }
 
   static get resultSecret() {
-    return [];
+    return ['data.settings.img'];
   }
 }

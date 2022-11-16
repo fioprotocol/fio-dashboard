@@ -310,6 +310,7 @@ export type User = {
 export type RefProfile = {
   id?: string;
   code: string;
+  regRefCode: string;
   label: string;
   title: string;
   subTitle: string;

@@ -31,6 +31,6 @@ export default class PartnersList extends Base {
   }
 
   static get resultSecret() {
-    return [];
+    return ['data.partners[*].settings.img'];
   }
 }
