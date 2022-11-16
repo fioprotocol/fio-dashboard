@@ -6,11 +6,12 @@ import classes from '../MainHeader.module.scss';
 import { RefProfile } from '../../../types';
 
 type SiteLinkProps = {
-  refProfileInfo: RefProfile;
+  hideSiteLink?: boolean;
+  refProfileInfo?: RefProfile;
 };
 
 const SiteLink: React.FC<SiteLinkProps> = props => {
-  const { refProfileInfo } = props;
+  const { hideSiteLink, refProfileInfo } = props;
 
   let link = 'https://fioprotocol.io/';
   let text = 'Go to fioprotocol.io';
@@ -22,8 +23,10 @@ const SiteLink: React.FC<SiteLinkProps> = props => {
     target = '_self';
   }
 
+  if (hideSiteLink) return null;
+
   return (
-    <div className={classes.link}>
+    <div className={classnames(classes.link, classes.siteLink)}>
       <a
         href={link}
         target={target}
