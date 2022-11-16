@@ -5,7 +5,6 @@ import { Helmet } from 'react-helmet-async';
 
 import AddressWidget from '../../components/AddressWidget';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
-import FioAddressSelectionPage from '../FioAddressSelectionPage';
 
 import { APP_TITLE } from '../../constants/labels';
 
@@ -35,6 +34,7 @@ type Location = {
 
 type Props = {
   isAuthenticated: boolean;
+  hasFreeAddress: boolean;
   loading: boolean;
   refProfileInfo: RefProfile;
   containedFlowQueryParams: ContainedFlowQueryParams;
@@ -49,6 +49,7 @@ export const RefHomePage: React.FC<Props &
     refProfileInfo,
     containedFlowQueryParams,
     isAuthenticated,
+    hasFreeAddress,
     loading,
     refLinkError,
     isContainedFlow,
@@ -106,29 +107,27 @@ export const RefHomePage: React.FC<Props &
 
   const renderContent = () => {
     if (refProfileInfo == null) return null;
-    if (!isAuthenticated) {
-      const addressWidgetContent = handleHomePageContent({
-        isContainedFlow,
-        containedFlowQueryParams,
-        refProfileInfo,
-      });
-      return (
-        <div className={classnames.container}>
-          <Helmet>
-            <title>
-              {APP_TITLE} - {refProfileInfo.label}
-            </title>
-          </Helmet>
-          <AddressWidget
-            {...addressWidgetContent}
-            showSignInWidget={true}
-            hideBottomPlug={true}
-          />
-        </div>
-      );
-    }
-
-    return <FioAddressSelectionPage />;
+    const addressWidgetContent = handleHomePageContent({
+      isContainedFlow,
+      containedFlowQueryParams,
+      refProfileInfo,
+    });
+    return (
+      <div className={classnames.container}>
+        <Helmet>
+          <title>
+            {APP_TITLE} - {refProfileInfo.label}
+          </title>
+        </Helmet>
+        <AddressWidget
+          {...addressWidgetContent}
+          isAuthenticated={isAuthenticated}
+          hasFreeAddress={hasFreeAddress}
+          showSignInWidget
+          hideBottomPlug
+        />
+      </div>
+    );
   };
 
   return (

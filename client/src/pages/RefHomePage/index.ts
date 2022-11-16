@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom';
 
 import { compose } from '../../utils';
 
-import { isAuthenticated } from '../../redux/profile/selectors';
+import { isAuthenticated, hasFreeAddress } from '../../redux/profile/selectors';
 import {
   loading,
   refProfileInfo,
@@ -20,6 +20,7 @@ import { RefHomePage } from './RefHomePage';
 const reduxConnect = connect(
   createStructuredSelector({
     isAuthenticated,
+    hasFreeAddress,
     loading,
     refProfileInfo,
     containedFlowQueryParams,
