@@ -163,6 +163,7 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
               disabled={loading}
               loading={validating}
               label="Send to Address"
+              notFoundText="No FIO Crypto Handles found"
               onChangeFormat={formatReceiverValue}
               handleConfirmValidate={(value: string) =>
                 minWaitTimeFunction(

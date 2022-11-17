@@ -99,6 +99,7 @@ const UnwrapDomainForm: React.FC<UnWrapDomainFormProps> = props => {
               title="Choose FIO Crypto Handle"
               subTitle="Select or manually enter a FIO Crypto Handle to receive your domain."
               footerTitle="Available FIO Crypto Handles"
+              notFoundText="No FIO Crypto Handles found"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={SelectModalInput}
@@ -124,6 +125,7 @@ const UnwrapDomainForm: React.FC<UnWrapDomainFormProps> = props => {
               subTitle="Select or manually enter a token id of wFIO domain to unwrap"
               label="wFIO Domain Unwrap"
               footerTitle="Wrapped Domains"
+              notFoundText="No FIO Domains found"
             />
             {wrappedDomainName ? (
               <div className={classes.selectedDomainName}>

@@ -38,9 +38,9 @@ export const calculateGasFee = (
   gasPrice: string | number, // wei
   gasLimit: number = DEFAULT_GAS_LIMIT,
 ) => {
-  return +(
-    parseFloat(ethers.utils.formatEther(gasPrice).toString()) * gasLimit
-  ).toFixed(9);
+  return (parseFloat(ethers.utils.formatEther(gasPrice).toString()) * gasLimit)
+    .toFixed(9)
+    .replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/, '$1');
 };
 
 type Props = {
