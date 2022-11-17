@@ -1,19 +1,21 @@
 import React from 'react';
 
 import Badge from 'react-bootstrap/Badge';
-
 import classNames from 'classnames';
 
 import Modal from '../../../../components/Modal/Modal';
+import InfoBadge from '../../../InfoBadge/InfoBadge';
+import { BADGE_TYPES } from '../../../Badge/Badge';
+
 import { parseActionStatus } from '../WrapStatus';
 
-import { BADGE_TYPES } from '../../../Badge/Badge';
-import { WrapStatusWrapItem } from '../../../../types';
 import { formatDateToLocale } from '../../../../helpers/stringFormatters';
+
 import apis from '../../../../api';
 
+import { AnyType, WrapStatusWrapItem } from '../../../../types';
+
 import classes from './../WrapStatus.module.scss';
-import InfoBadge from '../../../InfoBadge/InfoBadge';
 
 type Props = {
   itemData?: WrapStatusWrapItem;
@@ -293,7 +295,7 @@ const DetailsModal: React.FC<Props> = props => {
                   <div className="mr-3">
                     <b>Approvals:</b>
                   </div>
-                  {itemData.confirmData.map((item: any) => (
+                  {itemData.confirmData.map((item: AnyType) => (
                     <div
                       key={item.action_trace.trx_id}
                       className={classes.trxId}
