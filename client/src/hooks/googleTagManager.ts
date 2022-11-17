@@ -9,15 +9,19 @@ type UseGTMGlobalTagsProps = {
 export function useGTMGlobalTags(props?: UseGTMGlobalTagsProps): void {
   const { disableLoading } = props || {};
 
+  const GOOGLE_TAG_MANAGER_ID = process.env.REACT_APP_IS_WRAP_STATUS_PAGE
+    ? process.env.REACT_APP_WRAP_GOOGLE_TAG_MANAGER_ID
+    : process.env.REACT_APP_GOOGLE_TAG_MANAGER_ID;
+
   const addGTMGlobalTags = useCallback(() => {
-    if (!process.env.REACT_APP_GOOGLE_TAG_MANAGER_ID) {
+    if (!GOOGLE_TAG_MANAGER_ID) {
       return;
     }
     const script = document.createElement('script');
-    script.innerHTML = `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${process.env.REACT_APP_GOOGLE_TAG_MANAGER_ID}');`;
+    script.innerHTML = `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${GOOGLE_TAG_MANAGER_ID}');`;
     const noscript = document.createElement('noscript');
     const iframe = document.createElement('iframe');
-    iframe.src = `https://www.googletagmanager.com/ns.html?id=${process.env.REACT_APP_GOOGLE_TAG_MANAGER_ID}`;
+    iframe.src = `https://www.googletagmanager.com/ns.html?id=${GOOGLE_TAG_MANAGER_ID}}`;
     iframe.height = '0';
     iframe.width = '0';
     iframe.style.cssText = 'display:none;visibility:hidden';
@@ -33,7 +37,7 @@ export function useGTMGlobalTags(props?: UseGTMGlobalTagsProps): void {
       noscript,
       document.createComment(' End Google Tag Manager (noscript) '),
     );
-  }, []);
+  }, [GOOGLE_TAG_MANAGER_ID]);
 
   useEffectOnce(() => {
     if (!disableLoading) {
