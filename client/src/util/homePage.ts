@@ -41,7 +41,7 @@ export const handleHomePageContent = ({
   let initialValues = null;
   const actionName = removeExtraCharactersFromString(
     containedFlowQueryParams?.action,
-  );
+  ).toUpperCase();
 
   if (refProfileInfo?.settings) {
     const {

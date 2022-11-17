@@ -70,7 +70,7 @@ const ContainedFlow: React.FC<Props> | null = props => {
   }: { location: { query: ContainedFlowQuery } } & AnyType = history;
 
   const containedFlowAction = containedFlowQueryParams
-    ? containedFlowQueryParams.action
+    ? containedFlowQueryParams.action.toUpperCase()
     : '';
   const isEmailVerification = !!emailConfirmationResult?.success;
 

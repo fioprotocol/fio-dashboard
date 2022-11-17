@@ -3,7 +3,11 @@ import { log } from '../../util/general';
 
 import { CONTAINED_FLOW_ACTIONS } from '../../constants/containedFlow';
 
-import { ContainedFlowQuery, ContainedFlowQueryParams } from '../../types';
+import {
+  ContainedFlowActionSettingsKey,
+  ContainedFlowQuery,
+  ContainedFlowQueryParams,
+} from '../../types';
 import { CommonAction } from '../types';
 
 export const prefix = 'containedFlow';
@@ -22,7 +26,7 @@ export const setContainedParams = (query: ContainedFlowQuery): CommonAction => {
   }
 
   let params: ContainedFlowQueryParams = {
-    action: query.action,
+    action: query.action.toUpperCase() as ContainedFlowActionSettingsKey,
   };
 
   if (query.r) {
