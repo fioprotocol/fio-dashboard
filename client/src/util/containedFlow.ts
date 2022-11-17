@@ -7,7 +7,7 @@ export const validateContainedFlowActionQuery = (
 ): boolean => {
   if (!query.action) throw new Error('Contained flow action is required');
 
-  switch (removeExtraCharactersFromString(query.action)) {
+  switch (removeExtraCharactersFromString(query.action).toUpperCase()) {
     case removeExtraCharactersFromString(CONTAINED_FLOW_ACTIONS.SIGNNFT): {
       return true;
     }

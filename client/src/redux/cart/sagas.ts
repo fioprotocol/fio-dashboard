@@ -30,7 +30,7 @@ export function* cartWasCleared(): Generator {
     );
 
     const containedFlowAction = containedFlowQueryParams
-      ? containedFlowQueryParams.action
+      ? containedFlowQueryParams.action.toUpperCase()
       : '';
 
     yield put<Action>(
