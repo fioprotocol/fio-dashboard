@@ -2,13 +2,13 @@ import React from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 
-import SiteLink from './SiteLink';
+import SiteLink from '../MainHeader/components/SiteLink';
 
-import { ROUTES } from '../../../constants/routes';
+import { ROUTES } from '../../constants/routes';
 
-import { RefProfile } from '../../../types';
+import { RefProfile } from '../../types';
 
-import classes from '../MainHeader.module.scss';
+import classes from './MainHeaderContainer.module.scss';
 
 type Props = {
   hideSiteLink?: boolean;
