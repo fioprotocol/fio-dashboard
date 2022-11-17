@@ -6,7 +6,7 @@ type UseGTMGlobalTagsProps = {
   disableLoading?: boolean;
 };
 
-export const useGTMGlobalTags = (props?: UseGTMGlobalTagsProps) => {
+export function useGTMGlobalTags(props?: UseGTMGlobalTagsProps): void {
   const { disableLoading } = props || {};
 
   const addGTMGlobalTags = useCallback(() => {
@@ -40,4 +40,4 @@ export const useGTMGlobalTags = (props?: UseGTMGlobalTagsProps) => {
       addGTMGlobalTags();
     }
   }, [disableLoading, addGTMGlobalTags]);
-};
+}
