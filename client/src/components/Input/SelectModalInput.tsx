@@ -55,6 +55,8 @@ type ModalProps = {
   show?: boolean;
   subTitle?: string;
   title?: string;
+  footerTitle?: string;
+  notFoundText?: string;
   options?: { name: string; id: string }[];
   handleClose?: () => void;
   isBW?: boolean;
@@ -81,6 +83,7 @@ const SelectModal: React.FC<Props &
     title = 'Choose FIO Crypto Handle or Public Key',
     subTitle = 'Enter or select a FIO Crypto Handle or Public Key to send FIO tokens to',
     footerTitle = 'Past FIO Crypto Handles',
+    notFoundText = 'Not found',
     upperCased = false,
     lowerCased = false,
     disabled,
@@ -281,7 +284,7 @@ const SelectModal: React.FC<Props &
             </div>
           ) : (
             <div className={classes.notFound}>
-              {optionsList ? 'Not found' : 'loading...'}
+              {optionsList ? notFoundText : 'loading...'}
             </div>
           )}
         </div>

@@ -9,15 +9,16 @@ import DangerModal from '../../../../components/Modal/DangerModal';
 import AmountInput from '../../../../components/Input/AmountInput';
 import FeesModalInput from '../../../../components/ConnectWallet/FeesModal/FeesModalInput';
 import InfoBadge from '../../../../components/InfoBadge/InfoBadge';
+import TextInput from '../../../../components/Input/TextInput';
 
 import MathOp from '../../../../util/math';
 import { formValidation } from './validation';
 
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
-import TextInput, {
-  INPUT_UI_STYLES,
-} from '../../../../components/Input/TextInput';
+import { INPUT_UI_STYLES } from '../../../../components/Input/TextInput';
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
+import { CURRENCY_CODES } from '../../../../constants/common';
+
 import { WrapTokensFormProps } from '../../types';
 
 import classes from '../../styles/UnwrapTokensForm.module.scss';
@@ -98,6 +99,7 @@ const UnwrapDomainForm: React.FC<WrapTokensFormProps> = props => {
               title="Choose FIO Crypto Handle"
               subTitle="Select or manually enter a FIO Crypto Handle to receive your tokens."
               footerTitle="Available FIO Crypto Handles"
+              notFoundText="No FIO Crypto Handles found"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={SelectModalInput}
@@ -114,6 +116,8 @@ const UnwrapDomainForm: React.FC<WrapTokensFormProps> = props => {
               type="number"
               label="wFIO Unwrap Amount"
               placeholder="Enter Unwrap Amount"
+              amountCurrencyCode={CURRENCY_CODES.wFIO}
+              availableTitle="Available wFIO Balance"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               availableValue={wFioBalance}
