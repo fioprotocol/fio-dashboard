@@ -23,9 +23,8 @@
     "test": "npm run lint && npm run test:create.db && npm run test:api",
     "test:create.db": "node --experimental-modules server/tests/createDB.mjs",
     "coinpayments:webhooks": "node --es-module-specifier-resolution=node server/tests/use-case/webhook/coinpayments-webhook.mjs",
-    "landing-page-wrap-status:as:start": "export REACT_APP_LANDING_PAGE=wrap-status && npm run client:start",
-    "landing-page-wrap-status:as:build": "export REACT_APP_LANDING_PAGE=wrap-status && npm run client:build"
-
+    "landing-page-wrap-status:as:start": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:start",
+    "landing-page-wrap-status:as:build": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:build"
   },
   "license": "ISC",
   "overrides": {
