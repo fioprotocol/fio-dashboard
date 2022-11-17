@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { ContentContainer } from '../../../../pages/MainLayout/components/ContentContainer';
-import { MainHeaderContainer } from '../../../../components/MainHeader/components/MainHeaderContainer';
-import { MainLayoutContainer } from '../../../../pages/MainLayout/components/MainLayoutContainer';
+import { ContentContainer } from '../../../../components/ContentContainer';
 import Footer from '../../../../components/Footer';
+import { MainHeaderContainer } from '../../../../components/MainHeaderContainer';
+import { MainLayoutContainer } from '../../../../components/MainLayoutContainer';
 import PageTitle from '../../../../components/PageTitle/PageTitle';
 
 import { useContext } from './WrapStatusContainerContext';

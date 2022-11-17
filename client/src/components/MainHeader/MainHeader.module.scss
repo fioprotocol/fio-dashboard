@@ -1,151 +1,127 @@
-@import "../../assets/styles/colors";
-@import "../../assets/styles/mediaQueriesMixings.scss";
+@import '../../assets/styles/colors';
+@import '../../assets/styles/mediaQueriesMixings.scss';
 
-.header {
+.loggedNavContainer, .regularNavContainer {
   display: flex;
-  background: $main-background;
-  box-shadow: 0 0 20px 8px rgba(0,0,0,0.2);
-  padding: 5px 25px;
-  min-height: 80px;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  margin-left: 2rem;
+}
 
-  &.isOpen {
-    position: sticky;
-    top: 0;
-    z-index: 1002;
-  }
-
-  .logo {
-    cursor: pointer;
-    width: 76px;
-    height: 100%;
-    background-image: url("../../assets/images/fiologo.svg");
-    background-size: 100%;
-    background-repeat: no-repeat;
-    background-position: left;
-  }
-
-  .loggedNavContainer, .regularNavContainer {
+.regularNavContainer {
+  .actionContainer {
     display: flex;
-    flex-direction: row;
+
+    &.isOpen {
+      flex-direction: column;
+
+      a {
+        padding: 0;
+        margin-top: 25px;
+        .button {
+          width: 100%;
+          margin-right: 0 !important;
+          height: 40px;
+        }
+      }
+
+      a:nth-child(1) {
+        margin-top: 0;
+      }
+    }
+  }
+}
+
+.link, .navItem {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.link {
+  &.siteLink {
     width: 100%;
-    justify-content: space-between;
     margin-left: 2rem;
   }
+}
 
-  .regularNavContainer {
-    .actionContainer {
-      display: flex;
-
-      &.isOpen {
-        flex-direction: column;
-
-        a {
-          padding: 0;
-          margin-top: 25px;
-          .button {
-            width: 100%;
-            margin-right: 0 !important;
-            height: 40px;
-          }
-        }
-
-        a:nth-child(1) {
-          margin-top: 0;
-        }
-      }
-    }
+.link {
+  .arrow {
+    position: relative;
+    transition: 0.2s ease-in-out;
+    transform: translateX(0);
   }
 
-  .link, .navItem {
-    display: flex;
+  &:hover .arrow {
+    transform: translateX(-4px);
+  }
+}
+
+.navItem {
+  .icon {
+    width: 20px;
+    height: 20px;
+    color: $white;
+  }
+
+  .notifWrapper {
+    position: relative;
     align-items: center;
-    cursor: pointer;
-  }
+    position: relative;
+    display: flex;
 
-  .link {
-    &.siteLink {
+    .notifActiveWrapper {
+      position: absolute;
+      top: -6px;
+    }
+
+    .notifActive {
+      width: 9px;
+      height: 9px;
+    }
+
+    .notifActiveWrapperRight {
       width: 100%;
-      margin-left: 2rem;
+      right: -15px;
     }
   }
 
-  .link {
-    .arrow {
-      position: relative;
-      transition: 0.2s ease-in-out;
-      transform: translateX(0);
-    }
+  .settings {
+    background-color: white;
+    padding: 3px;
+    border-radius: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-    &:hover .arrow {
-      transform: translateX(-4px);
-    }
-  }
-
-  .navItem {
-    .icon {
-      width: 20px;
-      height: 20px;
-      color: $white;
-    }
-
-    .notifWrapper {
-      position: relative;
-      align-items: center;
-      position: relative;
-      display: flex;
-
-      .notifActiveWrapper {
-        position: absolute;
-        top: -6px;
-      }
-
-      .notifActive {
-        width: 9px;
-        height: 9px;
-      }
-
-      .notifActiveWrapperRight {
-        width: 100%;
-        right: -15px;
-      }
-    }
-
-    .settings {
-      background-color: white;
-      padding: 3px;
-      border-radius: 2px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      .settingsIcon {
-        width: 14px;
-        height: 14px;
-        color: black !important;
-        transition: transform 0.4s ease-in-out;
-      }
-    }
-
-    &:hover .settings .settingsIcon {
-      transform: rotate(90deg);
-    }
-
-    &:hover .bellshake {
-      animation: bellshake 0.6s cubic-bezier(.36,.07,.19,.97) both;
-      backface-visibility: hidden;
-      transform-origin: center;
-    }
-
-    &:hover .cartanim {
-      animation: cartscale 0.6s cubic-bezier(.36,.07,.19,.97) both;
-      backface-visibility: hidden;
-      transform-origin: center;
+    .settingsIcon {
+      width: 14px;
+      height: 14px;
+      color: black !important;
+      transition: transform 0.4s ease-in-out;
     }
   }
 
-  .button, .navItem {
-    font-size: 13px;
+  &:hover .settings .settingsIcon {
+    transform: rotate(90deg);
   }
+
+  &:hover .bellshake {
+    animation: bellshake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+    backface-visibility: hidden;
+    transform-origin: center;
+  }
+
+  &:hover .cartanim {
+    animation: cartscale 0.6s cubic-bezier(.36,.07,.19,.97) both;
+    backface-visibility: hidden;
+    transform-origin: center;
+  }
+}
+
+.button, .navItem {
+  font-size: 13px;
 }
 
 .vertical {
@@ -284,18 +260,14 @@
 }
 
 @include lg {
-  .header {
-    padding: 5px 3.75rem;
-
-    .link {
-      &.siteLink {
-        margin-left: 5rem;
-      }
-    }
-
-    .regularNavContainer, .loggedNavContainer {
+  .link {
+    &.siteLink {
       margin-left: 5rem;
     }
+  }
+
+  .regularNavContainer, .loggedNavContainer {
+    margin-left: 5rem;
   }
 }
 
