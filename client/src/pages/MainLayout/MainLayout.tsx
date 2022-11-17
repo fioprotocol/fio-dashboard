@@ -19,8 +19,8 @@ import TxHistoryService from '../../services/TxHistory';
 import WalletsDataFlow from '../../services/WalletsDataFlow';
 import ContainedFlow from '../../services/ContainedFlow';
 import PageTitle from '../../components/PageTitle/PageTitle';
-import { ContentContainer } from './components/ContentContainer';
-import { MainLayoutContainer } from './components/MainLayoutContainer';
+import { ContentContainer } from '../../components/ContentContainer';
+import { MainLayoutContainer } from '../../components/MainLayoutContainer';
 
 import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';

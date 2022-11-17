@@ -1,15 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classnames from 'classnames';
 
+import { MainHeaderContainer } from '../MainHeaderContainer';
 import { Navigation } from './components/Navigation';
-import { MainHeaderContainer } from './components/MainHeaderContainer';
 
 import { useIsAdminRoute } from '../../hooks/admin';
 
 import { MainHeaderProps } from './types';
-
-import classes from './MainHeader.module.scss';
 
 const MainHeader: React.FC<MainHeaderProps> = props => {
   const {
@@ -54,9 +51,9 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
 
   if (refProfileLoading) {
     return (
-      <div className={classnames(classes.header)}>
+      <MainHeaderContainer>
         <FontAwesomeIcon icon="spinner" spin />
-      </div>
+      </MainHeaderContainer>
     );
   }
 
