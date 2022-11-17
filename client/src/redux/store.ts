@@ -8,9 +8,11 @@ import { routerMiddleware } from 'connected-react-router';
 import { composeWithDevTools } from '@redux-devtools/extension';
 import createSagaMiddleware from 'redux-saga';
 import throttle from 'lodash/throttle';
+import isEqual from 'lodash/isEqual';
 import { History } from 'history';
 
-import { loadState, saveState } from '../localStorage';
+import { loadState, parseState, saveState } from '../localStorage';
+import { setCartItems } from './cart/actions';
 
 import apiMiddleware from './apiMiddleware';
 
@@ -18,6 +20,7 @@ import createReducer from './reducer';
 import rootSaga from './sagas';
 
 import { Api } from '../api';
+import { ReduxState } from './init';
 
 export default function configureStore(api: Api, history: History): Store {
   const compose =
@@ -39,9 +42,11 @@ export default function configureStore(api: Api, history: History): Store {
     ),
   );
 
+  let currentState: ReduxState;
   store.subscribe(
     throttle(() => {
-      saveState({
+      const previousState: ReduxState = currentState;
+      currentState = {
         cart: {
           cartItems: store.getState().cart.cartItems,
           date: store.getState().cart.date,
@@ -61,9 +66,22 @@ export default function configureStore(api: Api, history: History): Store {
           walletsData: store.getState().fioWalletsData.walletsData,
           walletsTxHistory: store.getState().fioWalletsData.walletsTxHistory,
         },
-      });
+      };
+
+      if (!isEqual(previousState, currentState)) {
+        saveState(currentState);
+      }
     }, 1000),
   );
+  window.addEventListener('storage', event => {
+    if (event.key === 'state') {
+      const oldCartItems = parseState(event.oldValue)?.cart?.cartItems;
+      const newCartItems = parseState(event.newValue)?.cart?.cartItems;
+      if (!isEqual(oldCartItems, newCartItems)) {
+        store.dispatch(setCartItems(newCartItems));
+      }
+    }
+  });
 
   sagaMiddleware.run(() => rootSaga(history, api));
 
