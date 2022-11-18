@@ -8,6 +8,8 @@ import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
 import Amount from '../../Amount';
 
 import { FIO_CHAIN_CODE } from '../../../../constants/fio';
+import { ROUTES } from '../../../../constants/routes';
+
 import { ResultsProps } from '../types';
 import { AnyType } from '../../../../types';
 
@@ -84,7 +86,11 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
             {name ? 'domain' : 'tokens'} will not be immediately available in
             your wallet. <br /> Please check the{' '}
             <a
-              href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transaction_id}`}
+              href={`${process.env.REACT_APP_WRAP_STATUS_PAGE_BASE_URL}${
+                name
+                  ? ROUTES.WRAP_STATUS_WRAP_DOMAINS
+                  : ROUTES.WRAP_STATUS_WRAP_TOKENS
+              }`}
               target="_blank"
               rel="noreferrer"
             >
