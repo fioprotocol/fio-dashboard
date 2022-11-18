@@ -8,6 +8,7 @@ import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
 import Amount from '../../Amount';
 
 import { FIO_CHAIN_CODE } from '../../../../constants/fio';
+import { ROUTES } from '../../../../constants/routes';
 
 import { ResultsProps } from '../types';
 import { AnyObject } from '../../../../types';
@@ -70,11 +71,11 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
             time for this transaction can vary and your {itemName} will not be
             immediately available in your wallet. <br /> Please check the{' '}
             <a
-              href={`${
+              href={`${process.env.REACT_APP_WRAP_STATUS_PAGE_BASE_URL}${
                 isTokens
-                  ? process.env.REACT_APP_ETH_HISTORY_URL
-                  : process.env.REACT_APP_POLYGON_HISTORY_URL
-              }${transaction_id}`}
+                  ? ROUTES.WRAP_STATUS_UNWRAP_TOKENS
+                  : ROUTES.WRAP_STATUS_UNWRAP_DOMAINS
+              }`}
               target="_blank"
               rel="noreferrer"
             >
