@@ -10,7 +10,10 @@ import {
   PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from '../../constants/purchase';
-import { ERROR_TYPES } from '../../constants/errors';
+import {
+  ERROR_TYPES,
+  REG_SITE_USER_HAS_FREE_ADDRESS_ERR_MESSAGE,
+} from '../../constants/errors';
 import {
   CART_ITEM_TYPE,
   DEFAULT_BUNDLE_SET_VALUE,
@@ -88,14 +91,20 @@ export const registerFree = async ({
     });
     if (res.error) {
       result.error = res.error;
-      result.errorType = ERROR_TYPES.default;
+      const userHasFreeAddressMessage = new RegExp(
+        REG_SITE_USER_HAS_FREE_ADDRESS_ERR_MESSAGE,
+        'gmi',
+      );
+      result.errorType = userHasFreeAddressMessage.test(res.error)
+        ? ERROR_TYPES.userHasFreeAddress
+        : ERROR_TYPES.freeAddressError;
     } else {
       await waitForAddressRegistered(fioName);
       result = { ...res, ...result };
     }
   } catch (e) {
     result.error = e.message || toString(e.fields);
-    result.errorType = e.errorType || ERROR_TYPES.default;
+    result.errorType = e.errorType || ERROR_TYPES.freeAddressError;
   }
   return result;
 };
