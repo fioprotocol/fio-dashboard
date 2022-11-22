@@ -8,7 +8,7 @@ const apiClient = new ApiClient(config.apiPrefix);
 
 // todo: temporary fix to prevent CORS
 const fetch = window.fetch;
-window.fetch = (uri: RequestInfo, opts: RequestInit = {}) => {
+window.fetch = (uri: RequestInfo | URL, opts: RequestInit = {}) => {
   // @ts-ignore todo: fix headers['Content-Type'] type usage
   if (opts.headers && opts.headers['Content-Type']) {
     // @ts-ignore
