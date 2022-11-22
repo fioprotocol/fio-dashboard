@@ -135,11 +135,9 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
 
     //Custom message for FREE fch
     if (isFree) {
-      if (failedMessage === ERROR_TYPES.freeAddressIsNotRegistered) {
-        message = ERROR_MESSAGES[ERROR_TYPES.freeAddressIsNotRegistered];
-      } else {
-        message = ERROR_MESSAGES[ERROR_TYPES.freeAddressError];
-      }
+      message =
+        ERROR_MESSAGES[failedMessage] ||
+        ERROR_MESSAGES[ERROR_TYPES.freeAddressError];
     }
   }
 
