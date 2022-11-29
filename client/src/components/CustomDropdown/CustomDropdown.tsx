@@ -30,6 +30,7 @@ type Props = {
   noMinWidth?: boolean;
   hasLightBorder?: boolean;
   hasBigBorderRadius?: boolean;
+  disabled?: boolean;
 };
 
 const CustomDropdown: React.FC<Props> = props => {
@@ -57,6 +58,7 @@ const CustomDropdown: React.FC<Props> = props => {
     noMinWidth,
     hasLightBorder,
     hasBigBorderRadius,
+    disabled,
   } = props;
 
   const styledOptions = options.map(option => ({
@@ -88,6 +90,7 @@ const CustomDropdown: React.FC<Props> = props => {
       value={value}
       onChange={onDropdownChange}
       placeholder={placeholder}
+      disabled={disabled}
       className={classnames(
         classes.dropdown,
         isShort && classes.isShort,

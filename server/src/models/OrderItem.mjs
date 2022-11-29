@@ -5,6 +5,7 @@ import { FIO_ACTIONS } from '../config/constants.js';
 import Base from './Base';
 import { Order } from './Order';
 import { Payment } from './Payment';
+import { ReferrerProfile } from './ReferrerProfile';
 import { BlockchainTransaction } from './BlockchainTransaction';
 import { BlockchainTransactionEventLog } from './BlockchainTransactionEventLog';
 import { OrderItemStatus } from './OrderItemStatus';
@@ -181,12 +182,14 @@ export class OrderItem extends Base {
           rp."regRefCode", 
           rp."regRefApiToken", 
           rp.tpid,
+          drp.tpid as "domainTpid",
           fap.actor,
           fap.permission
         FROM "order-items" oi
           INNER JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
           INNER JOIN orders o ON o.id = oi."orderId"
-          LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
+          LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId" AND rp.type = '${ReferrerProfile.TYPE.REF}'
+          LEFT JOIN "referrer-profiles" drp ON drp.id = o."refProfileId"
           LEFT JOIN "fio-account-profiles" fap ON fap.id = rp."fioAccountProfileId"
         WHERE ois."paymentStatus" = ${Payment.STATUS.COMPLETED} 
           AND ois."txStatus" = ${status}
@@ -197,6 +200,9 @@ export class OrderItem extends Base {
     return actions.map(action => {
       if (!action.tpid) {
         action.tpid = process.env.DEFAULT_TPID;
+      }
+      if (!action.domainTpid) {
+        action.domainTpid = process.env.DEFAULT_TPID;
       }
       return action;
     });

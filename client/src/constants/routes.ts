@@ -52,6 +52,8 @@ const ROUTES: { [route: string]: string } = {
   FIO_TOKENS_RECEIVE: '/receive-fio-tokens', // ?publicKey=
   TOKENS: '/tokens',
   IMPORT_WALLET: '/import',
+  FIO_AFFILIATE_PROGRAM_LANDING: '/affiliate-program',
+  FIO_AFFILIATE_PROGRAM_ENABLED: '/affiliate-program-enabled',
 
   GOVERNANCE: '/governance',
   PROTOCOL_UPDATES: '/protocol-updates',

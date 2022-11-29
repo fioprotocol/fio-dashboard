@@ -31,6 +31,8 @@ export default combineReducers({
       case actions.CONFIRM_EMAIL_REQUEST:
       case actions.ADMIN_LOGIN_REQUEST:
       case actions.ADMIN_PROFILE_REQUEST:
+      case actions.ACTIVATE_AFFILIATE_REQUEST:
+      case actions.UPDATE_AFFILIATE_REQUEST:
         return true;
       case actions.PROFILE_SUCCESS:
       case actions.PROFILE_FAILURE:
@@ -54,6 +56,10 @@ export default combineReducers({
       case actions.ADMIN_PROFILE_FAILURE:
       case actions.CONFIRM_ADMIN_EMAIL_SUCCESS:
       case actions.CONFIRM_ADMIN_EMAIL_FAILURE:
+      case actions.ACTIVATE_AFFILIATE_SUCCESS:
+      case actions.ACTIVATE_AFFILIATE_FAILURE:
+      case actions.UPDATE_AFFILIATE_SUCCESS:
+      case actions.UPDATE_AFFILIATE_FAILURE:
         return false;
       default:
         return state;
@@ -94,6 +100,8 @@ export default combineReducers({
   user(state: User | null = null, action) {
     switch (action.type) {
       case actions.PROFILE_SUCCESS:
+      case actions.ACTIVATE_AFFILIATE_SUCCESS:
+      case actions.UPDATE_AFFILIATE_SUCCESS:
         return action.data;
       case actions.SET_RECOVERY_SUCCESS:
         return { ...state, secretSet: true };

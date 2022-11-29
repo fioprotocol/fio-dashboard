@@ -187,4 +187,16 @@ export default class Auth extends Base {
       data: { ...values },
     });
   }
+
+  activateAffiliate(fch: string): Promise<AuthProfileResponse> {
+    return this.apiClient.post('users/affiliate', {
+      data: { fch },
+    });
+  }
+
+  updateAffiliate(fch: string): Promise<AuthProfileResponse> {
+    return this.apiClient.patch('users/affiliate', {
+      data: { fch },
+    });
+  }
 }

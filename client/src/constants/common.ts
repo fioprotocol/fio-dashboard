@@ -61,6 +61,7 @@ export const ANALYTICS_EVENT_ACTIONS = {
   PAGE_VIEW: 'page_view',
   VIRTUAL_PAGE_VIEW: 'virtual_page_view',
   CHAIN_ERROR: 'chain_error',
+  AFFILIATE_ENABLED: 'affiliate_enabled',
 };
 
 export const CONFIRM_FIO_ACTIONS = {
@@ -218,3 +219,19 @@ export const DEFAULT_BUNDLE_AMOUNT = 100;
 
 export const PARTNER_LOGO_MAX_WIDTH = 380;
 export const PARTNER_LOGO_MAX_HEIGHT = 115;
+
+export const REF_PROFILE_TYPE = {
+  REF: 'REFERRER',
+  AFFILIATE: 'AFFILIATE',
+};
+
+export const REF_PROFILE_TYPES_OPTIONS = [
+  {
+    id: REF_PROFILE_TYPE.REF,
+    name: 'Referrer',
+  },
+  {
+    id: REF_PROFILE_TYPE.AFFILIATE,
+    name: 'Affiliate',
+  },
+];

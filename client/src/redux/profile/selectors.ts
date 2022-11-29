@@ -132,3 +132,7 @@ export const hasFreeAddress = createSelector(
   user => user && !!user.freeAddresses.length,
 );
 export const edgeUsername = createSelector(user, user => user && user.username);
+export const isAffiliateEnabled = createSelector(
+  user,
+  user => !!user?.affiliateProfile?.tpid,
+);

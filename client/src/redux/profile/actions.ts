@@ -303,3 +303,29 @@ export const resetAdminPassword = (values: {
   ],
   promise: (api: Api) => api.auth.resetAdminPassword(values),
 });
+
+export const ACTIVATE_AFFILIATE_REQUEST = `${prefix}/ACTIVATE_AFFILIATE_REQUEST`;
+export const ACTIVATE_AFFILIATE_SUCCESS = `${prefix}/ACTIVATE_AFFILIATE_SUCCESS`;
+export const ACTIVATE_AFFILIATE_FAILURE = `${prefix}/ACTIVATE_AFFILIATE_FAILURE`;
+
+export const activateAffiliate = (fch: string): CommonPromiseAction => ({
+  types: [
+    ACTIVATE_AFFILIATE_REQUEST,
+    ACTIVATE_AFFILIATE_SUCCESS,
+    ACTIVATE_AFFILIATE_FAILURE,
+  ],
+  promise: (api: Api) => api.auth.activateAffiliate(fch),
+});
+
+export const UPDATE_AFFILIATE_REQUEST = `${prefix}/UPDATE_AFFILIATE_REQUEST`;
+export const UPDATE_AFFILIATE_SUCCESS = `${prefix}/UPDATE_AFFILIATE_SUCCESS`;
+export const UPDATE_AFFILIATE_FAILURE = `${prefix}/UPDATE_AFFILIATE_FAILURE`;
+
+export const updateAffiliate = (fch: string): CommonPromiseAction => ({
+  types: [
+    UPDATE_AFFILIATE_REQUEST,
+    UPDATE_AFFILIATE_SUCCESS,
+    UPDATE_AFFILIATE_FAILURE,
+  ],
+  promise: (api: Api) => api.auth.updateAffiliate(fch),
+});

@@ -75,7 +75,7 @@ export const FioTokensReceive: React.FC<Props> = props => {
                   Associated FIO Crypto Handles
                 </div>
                 {fioCryptoHandles.map(({ name }) => (
-                  <div key={name} className={classes.value}>
+                  <div key={name} className={classes.dataContainerValue}>
                     <DataValue value={name} />
                   </div>
                 ))}

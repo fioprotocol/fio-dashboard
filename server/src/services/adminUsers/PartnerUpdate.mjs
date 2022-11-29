@@ -12,7 +12,8 @@ export default class PartnerUpdate extends Base {
   static get validationRules() {
     return {
       id: ['required', 'string'],
-      regRefCode: ['required', 'string'],
+      type: ['required', 'string'],
+      regRefCode: ['string'],
       label: ['required', 'string'],
       regRefApiToken: ['string'],
       tpid: ['string'],

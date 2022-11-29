@@ -305,10 +305,12 @@ export type User = {
     status: string;
   }[];
   refProfile: { code?: string } | null;
+  affiliateProfile: { code?: string; tpid?: string } | null;
 };
 
 export type RefProfile = {
   id?: string;
+  type: string;
   code: string;
   regRefCode: string;
   label: string;
@@ -318,7 +320,7 @@ export type RefProfile = {
     domains: string[];
     allowCustomDomain: boolean;
     preselectedDomain?: string;
-    actions: Record<
+    actions?: Record<
       ContainedFlowActionSettingsKey,
       {
         subtitle?: string;
@@ -327,8 +329,8 @@ export type RefProfile = {
         actionText?: string;
       }
     >;
-    img: string;
-    link: string;
+    img?: string;
+    link?: string;
   };
   tpid: string;
   regRefApiToken: string;
