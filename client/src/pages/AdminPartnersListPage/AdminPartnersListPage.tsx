@@ -5,6 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Loader from '../../components/Loader/Loader';
 import { PartnerModal } from './components/updatePartner/PartnerModal';
 
+import { REF_PROFILE_TYPE } from '../../constants/common';
+
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 import usePagination from '../../hooks/usePagination';
 import apis from '../../api';
@@ -29,6 +31,9 @@ const AdminPartnersListPage: React.FC<Props> = props => {
 
   const onAddPartner = useCallback(() => {
     setSelectedPartner({
+      type: REF_PROFILE_TYPE.REF,
+      regRefCode: '',
+      regRefApiToken: '',
       settings: {
         domains: [''],
         allowCustomDomain: false,
@@ -67,6 +72,12 @@ const AdminPartnersListPage: React.FC<Props> = props => {
           }
         } else {
           partner.settings.preselectedDomain = null;
+        }
+        if (partner.type === REF_PROFILE_TYPE.AFFILIATE) {
+          partner.settings = {
+            domains: [],
+            allowCustomDomain: true,
+          };
         }
         if (partner.id) {
           await apis.admin.editPartner(partner);

@@ -25,6 +25,7 @@ import {
 import { IS_REFERRAL_PROFILE_PATH } from '../constants/regExps';
 
 import { FioWalletDoublet, RefProfile, User } from '../types';
+import { REF_PROFILE_TYPE } from '../constants/common';
 
 type Props = {
   isAuthenticated: boolean;
@@ -116,10 +117,14 @@ const Ref = (
   ]);
 
   useEffect(() => {
+    const tpid = refProfileInfo?.tpid || process.env.REACT_APP_DEFAULT_TPID;
     apis.fio.setTpid(
-      refProfileInfo?.tpid || process.env.REACT_APP_DEFAULT_TPID,
+      refProfileInfo?.type === REF_PROFILE_TYPE.REF
+        ? tpid
+        : process.env.REACT_APP_DEFAULT_TPID,
+      tpid,
     );
-  }, [refProfileInfo?.tpid]);
+  }, [refProfileInfo?.type, refProfileInfo?.tpid]);
 
   return null;
 };

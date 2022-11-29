@@ -286,6 +286,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
           options={options}
           {...input}
           {...rest}
+          disabled={disabled}
           value={value}
           isHigh={isHigh}
           isSimple={isSimple}

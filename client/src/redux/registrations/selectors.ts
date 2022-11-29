@@ -5,6 +5,8 @@ import { fioDomains } from '../fio/selectors';
 
 import { prefix } from './actions';
 
+import { REF_PROFILE_TYPE } from '../../constants/common';
+
 import { ReduxState } from '../init';
 import { Domain, FioDomainDoublet, Prices } from '../../types';
 import { FioRegCaptchaResponse } from '../../api/responses';
@@ -20,7 +22,9 @@ export const domains = createSelector(
   registrationDomains,
   refProfileInfo,
   (regDomainItems, refProfileInfo) =>
-    refProfileInfo != null && refProfileInfo.code
+    refProfileInfo != null &&
+    refProfileInfo.code &&
+    refProfileInfo.type === REF_PROFILE_TYPE.REF
       ? refProfileInfo.settings.domains.map((refDomain: string) => ({
           domain: refDomain,
           free: true,

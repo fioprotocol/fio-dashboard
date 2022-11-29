@@ -20,6 +20,7 @@ import {
   NONCE_SUCCESS,
   PROFILE_SUCCESS,
   RESET_ADMIN_PASSWORD_SUCCESS,
+  ACTIVATE_AFFILIATE_SUCCESS,
 } from './actions';
 
 import { closeLoginModal } from '../modal/actions';
@@ -35,12 +36,13 @@ import {
 } from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
 import { isNewUser as isNewUserSelector } from './selectors';
-import { ROUTES } from '../../constants/routes';
-
-import { Api } from '../../api';
 
 import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
-import { USER_STATUSES } from '../../constants/common';
+import { ANALYTICS_EVENT_ACTIONS, USER_STATUSES } from '../../constants/common';
+import { ROUTES } from '../../constants/routes';
+
+import { fireAnalyticsEvent } from '../../util/analytics';
+import { Api } from '../../api';
 
 import { FioWalletDoublet, PrivateRedirectLocationState } from '../../types';
 import { Action } from '../types';
@@ -191,5 +193,12 @@ export function* adminResetPasswordSuccess(
 ): Generator {
   yield takeEvery(RESET_ADMIN_PASSWORD_SUCCESS, function(action: Action) {
     history.replace(ROUTES.ADMIN_LOGIN, {});
+  });
+}
+
+export function* activateAffiliateSuccess(history: History): Generator {
+  yield takeEvery(ACTIVATE_AFFILIATE_SUCCESS, function*() {
+    fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.AFFILIATE_ENABLED);
+    yield history.push(ROUTES.FIO_AFFILIATE_PROGRAM_ENABLED);
   });
 }

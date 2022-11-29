@@ -12,6 +12,8 @@ import UsersResendEmailConfirm from '../services/users/ResendEmailConfirm';
 import UsersList from '../services/users/List';
 import UsersUpdateEmailRequest from '../services/users/UpdateEmailRequest';
 import UsersUpdateEmailRevert from '../services/users/UpdateEmailRevert';
+import ActivateAffiliate from '../services/users/ActivateAffiliate';
+import UpdateAffiliate from '../services/users/UpdateAffiliate';
 
 export default {
   available: makeServiceRunner(UserAvailable, req => req.params),
@@ -26,4 +28,6 @@ export default {
   freeAddress: makeServiceRunner(FreeAddressRegistered, req => req.params),
   updateEmailRequest: makeServiceRunner(UsersUpdateEmailRequest, req => req.body),
   updateEmailRevert: makeServiceRunner(UsersUpdateEmailRevert, req => req.body),
+  activateAffiliate: makeServiceRunner(ActivateAffiliate, req => req.body),
+  updateAffiliate: makeServiceRunner(UpdateAffiliate, req => req.body),
 };

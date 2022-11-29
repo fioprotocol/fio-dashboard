@@ -56,6 +56,10 @@ strong {
   @include proxima-nova-bold;
 }
 
+.throughText {
+  text-decoration: line-through;
+}
+
 // custom modal styles
 
 .modal-header {

@@ -1,0 +1,45 @@
+@import '../../../assets/styles/colors.scss';
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/mediaQueriesMixings.scss';
+
+@import './commonStyles.module.scss';
+
+.instruction {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  padding: 50px;
+  width: 100%;
+  max-width: 900px;
+
+  .instructionRow {
+    display: flex;
+
+    .instructionRowNumber {
+      width: 110px;
+      font-size: 3rem;
+      line-height: 1;
+      padding-right: 50px;
+      color: $violet;
+      @include proxima-nova-bold;
+      border-right: 1px solid $cyan;
+    }
+
+    .instructionRowInfo {
+      padding-left: 50px;
+      flex: 1;
+
+      .instructionRowInfoTitle {
+        font-size: 2rem;
+        line-height: 1;
+        @include proxima-nova-bold;
+        color: $white;
+        margin-bottom: 15px;
+      }
+
+      .instructionRowInfoText {
+        @include proxima-nova-thin;
+      }
+    }
+  }
+}

@@ -11,8 +11,9 @@ export default class PartnerCreate extends Base {
 
   static get validationRules() {
     return {
+      type: ['required', 'string'],
       label: ['required', 'string'],
-      regRefCode: ['required', 'string'],
+      regRefCode: ['string'],
       code: ['required', 'string'],
       regRefApiToken: ['string'],
       tpid: ['string'],
@@ -74,6 +75,8 @@ export default class PartnerCreate extends Base {
         },
       });
     }
+
+    data.code = data.code.toLowerCase();
 
     const createdPartner = new ReferrerProfile(data);
     await createdPartner.save();
