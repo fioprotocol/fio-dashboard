@@ -48,7 +48,6 @@ module.exports = {
         __dirname,
         `public/landing-page-${process.env.REACT_APP_LANDING_PAGE}-index.html`
       );
-      paths.publicUrlOrPath = `${process.env.LANDING_PAGE_PUBLIC_URL}/${process.env.REACT_APP_LANDING_PAGE}/`;
       paths.appBuild = path.resolve(
         __dirname,
         `build/${process.env.REACT_APP_LANDING_PAGE}`
