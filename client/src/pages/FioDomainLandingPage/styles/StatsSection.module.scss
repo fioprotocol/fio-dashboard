@@ -26,7 +26,7 @@
       align-items: center;
 
       @include lg {
-        width: 350px;
+        flex: 1;
         margin: 20px auto;
       }
 
@@ -42,6 +42,7 @@
         color: $fun-blue;
         font-size: 2.5rem;
         margin-top: 18px;
+        text-align: center;
         @include proxima-nova-semibold;
         @include sm {
           margin-top: 0;
