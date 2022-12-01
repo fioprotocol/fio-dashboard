@@ -73,6 +73,7 @@ export type FioRegRegisterResponse = {
   success?: boolean;
   freeAddress?: { id: number; name: string; createdAt: string };
   error?: string;
+  errorType?: string;
 };
 export type FioRegCaptchaResponse = {
   success: boolean;

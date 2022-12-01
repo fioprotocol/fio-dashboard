@@ -136,12 +136,14 @@ export default class Register extends Base {
       });
     } catch (error) {
       let message = error.message;
+      let errorType;
       if (error.response && error.response.body) {
         message = error.response.body.error;
+        errorType = error.response.body.errorCode;
       }
       logger.error(`Register free address error: ${message}`);
       return {
-        data: { error: message },
+        data: { error: message, errorType },
       };
     }
 

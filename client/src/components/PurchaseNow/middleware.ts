@@ -88,7 +88,7 @@ export const registerFree = async ({
     });
     if (res.error) {
       result.error = res.error;
-      result.errorType = ERROR_TYPES.default;
+      result.errorType = res.errorType || ERROR_TYPES.default;
     } else {
       await waitForAddressRegistered(fioName);
       result = { ...res, ...result };

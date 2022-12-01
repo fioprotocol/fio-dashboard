@@ -53,6 +53,7 @@ export const OrderDetails: React.FC<OrderDetailsProps> = props => {
               purchaseStatus={infoBadgeData.purchaseStatus}
               paymentProvider={infoBadgeData.paymentProvider}
               failedMessage={errorType}
+              failedMessageText={items[0].error}
               failedTxsTotalAmount={total}
               failedTxsTotalCurrency={totalCurrency}
               withoutTopMargin={i === 0}

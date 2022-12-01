@@ -28,6 +28,7 @@ type Props = {
   failedTxsTotalAmount?: OrderDetailedTotalCost;
   failedTxsTotalCurrency?: PaymentCurrency;
   failedMessage?: string;
+  failedMessageText?: string;
   hide?: boolean;
   withoutTopMargin?: boolean;
 };
@@ -39,6 +40,7 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
     failedTxsTotalAmount,
     failedTxsTotalCurrency,
     failedMessage,
+    failedMessageText,
     hide,
     withoutTopMargin,
   } = props;
@@ -137,6 +139,8 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
     if (isFree) {
       if (failedMessage === ERROR_TYPES.freeAddressIsNotRegistered) {
         message = ERROR_MESSAGES[ERROR_TYPES.freeAddressIsNotRegistered];
+      } else if (failedMessage !== ERROR_TYPES.default && failedMessageText) {
+        message = failedMessageText;
       } else {
         message = ERROR_MESSAGES[ERROR_TYPES.freeAddressError];
       }
