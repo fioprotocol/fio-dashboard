@@ -75,7 +75,7 @@ const transformOrderItemsForEmail = (orderItems, showPriceWithFioAmount) =>
     return transformedOrderItem;
   });
 
-const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith }) => {
+const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith, number }) => {
   if (!orderItems.length) return {};
 
   const { data: paymentData, processor } = payment;
@@ -110,10 +110,8 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith }) => {
   }
 
   if (isCreditCardProcessor && paymentData) {
-    const { webhookData: { txn_id } = {} } = paymentData;
-
     orderPaymentInfo.paidWith = paidWith;
-    orderPaymentInfo.txId = txn_id;
+    orderPaymentInfo.orderNumber = number;
     orderPaymentInfo.total = `${orderItemsTotalAmount.usdcTotal.toFixed(2)} USDC`;
   }
 
@@ -156,6 +154,7 @@ const createPurchaseConfirmationNotification = async order => {
       orderItems: successedOrderItemsArr,
       payment,
       paidWith,
+      number,
     });
 
     await Notification.create({
