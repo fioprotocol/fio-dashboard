@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize';
 
 import '../db';
-import { Notification, PublicWalletData, User, Wallet } from '../models/index.mjs';
+import { Notification, PublicWalletData, User, Var, Wallet } from '../models/index.mjs';
 import { sleep } from '../tools.mjs';
 import CommonJob from './job.mjs';
 import MathOp from '../services/math.mjs';
@@ -11,7 +11,7 @@ import { getROE } from '../external/roe.mjs';
 
 import logger from '../logger.mjs';
 
-import { DAY_MS, DOMAIN_EXP_PERIOD } from '../config/constants.js';
+import { HOUR_MS, DAY_MS, DOMAIN_EXP_PERIOD } from '../config/constants.js';
 
 const CHUNKS_LIMIT = process.env.WALLET_DATA_JOB_CHUNKS_LIMIT || 1;
 const CHUNKS_TIMEOUT = process.env.WALLET_DATA_JOB_CHUNKS_TIMEOUT || 1500;
@@ -342,10 +342,38 @@ class WalletDataJob extends CommonJob {
         );
       }
 
-      if (!new MathOp(publicWalletData.balance).eq(balance)) {
+      let previousBalance = publicWalletData.balance;
+      if (!new MathOp(previousBalance).eq(balance)) {
+        const existsNotification = await Notification.findOne({
+          where: {
+            type: Notification.TYPE.INFO,
+            contentType: Notification.CONTENT_TYPE.BALANCE_CHANGED,
+            userId: wallet.User.id,
+            data: {
+              emailData: {
+                wallet: wallet.publicKey,
+              },
+            },
+          },
+          order: [['createdAt', 'DESC']],
+        });
+        const alreadyHasPendingNotification =
+          existsNotification &&
+          !Var.updateRequired(
+            existsNotification.emailDate || existsNotification.createdAt,
+            HOUR_MS,
+          ) &&
+          !existsNotification.emailDate;
+        if (alreadyHasPendingNotification) {
+          previousBalance = fioApi.amountToSUF(
+            parseFloat(existsNotification.data.emailData.newFioBalance) -
+              parseFloat(existsNotification.data.emailData.fioBalanceChange),
+          );
+        }
+
         const roe = await getROE();
         const fioNativeChangeBalance = new MathOp(balance)
-          .sub(publicWalletData.balance)
+          .sub(previousBalance)
           .toNumber();
         const usdcChangeBalance = fioApi.convertFioToUsdc(
           new MathOp(fioNativeChangeBalance).abs().toNumber(),
@@ -354,22 +382,42 @@ class WalletDataJob extends CommonJob {
         const usdcBalance = fioApi.convertFioToUsdc(balance, roe);
         const sign = new MathOp(fioNativeChangeBalance).gt(0) ? '+' : '-';
 
-        await Notification.create({
-          type: Notification.TYPE.INFO,
-          contentType: Notification.CONTENT_TYPE.BALANCE_CHANGED,
-          userId: wallet.User.id,
-          data: {
-            pagesToShow: ['/'],
-            emailData: {
-              fioBalanceChange: `${sign}${fioApi.sufToAmount(
-                new MathOp(fioNativeChangeBalance).abs().toNumber(),
-              )} FIO ($${usdcChangeBalance} USDC)`,
-              newFioBalance: `${fioApi.sufToAmount(balance)} FIO ($${usdcBalance} USDC)`,
-              wallet: wallet.publicKey,
-              date: await User.formatDateWithTimeZone(wallet.User.id),
+        if (alreadyHasPendingNotification) {
+          await existsNotification.update({
+            data: {
+              ...existsNotification.data,
+              emailData: {
+                ...existsNotification.data.emailData,
+                fioBalanceChange: `${sign}${fioApi.sufToAmount(
+                  new MathOp(fioNativeChangeBalance).abs().toNumber(),
+                )} FIO ($${usdcChangeBalance} USDC)`,
+                newFioBalance: `${fioApi.sufToAmount(
+                  balance,
+                )} FIO ($${usdcBalance} USDC)`,
+                date: await User.formatDateWithTimeZone(wallet.User.id),
+              },
             },
-          },
-        });
+          });
+        } else {
+          await Notification.create({
+            type: Notification.TYPE.INFO,
+            contentType: Notification.CONTENT_TYPE.BALANCE_CHANGED,
+            userId: wallet.User.id,
+            data: {
+              pagesToShow: ['/'],
+              emailData: {
+                fioBalanceChange: `${sign}${fioApi.sufToAmount(
+                  new MathOp(fioNativeChangeBalance).abs().toNumber(),
+                )} FIO ($${usdcChangeBalance} USDC)`,
+                newFioBalance: `${fioApi.sufToAmount(
+                  balance,
+                )} FIO ($${usdcBalance} USDC)`,
+                wallet: wallet.publicKey,
+                date: await User.formatDateWithTimeZone(wallet.User.id),
+              },
+            },
+          });
+        }
 
         await PublicWalletData.update(
           { balance },
