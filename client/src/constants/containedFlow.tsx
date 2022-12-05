@@ -2,7 +2,10 @@ import { CONFIRM_PIN_ACTIONS } from './common';
 import { ROUTES } from './routes';
 import { removeExtraCharactersFromString } from '../util/general';
 
-import { ContainedFlowSignNftTitle } from '../components/AddressWidget/components/TitleComponent';
+import {
+  ContainedFlowRegTitle,
+  ContainedFlowSignNftTitle,
+} from '../components/AddressWidget/components/TitleComponent';
 
 export const CONTAINED_FLOW_ACTIONS = {
   SIGNNFT: removeExtraCharactersFromString(CONFIRM_PIN_ACTIONS.SIGN_NFT),
@@ -43,6 +46,7 @@ export const CONTAINED_FLOW_SUBTITLES = {
 
 export const CONTAINED_FLOW_TITLES = {
   [CONTAINED_FLOW_ACTIONS.SIGNNFT]: <ContainedFlowSignNftTitle />,
+  [CONTAINED_FLOW_ACTIONS.REG]: <ContainedFlowRegTitle />,
 };
 
 export const CONTAINED_FLOW_CONTINUE_TEXT = {
