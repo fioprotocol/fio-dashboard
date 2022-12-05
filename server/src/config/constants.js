@@ -123,7 +123,8 @@ const ADMIN_STATUS_IDS = {
   [USER_STATUS.NEW_EMAIL_NOT_VERIFIED]: 4,
 };
 
-const DAY_MS = 1000 * 60 * 60 * 24; // 1 day
+const HOUR_MS = 1000 * 60 * 60; // 1 hour
+const DAY_MS = HOUR_MS * 24; // 1 day
 
 const PRINT_SCREEN_PARAMS = {
   default: {
@@ -171,6 +172,7 @@ module.exports = {
   USER_STATUS,
   ADMIN_ROLES_IDS,
   ADMIN_STATUS_IDS,
+  HOUR_MS,
   DAY_MS,
   CART_ITEM_TYPE,
   DEFAULT_BUNDLE_SET_VALUE,

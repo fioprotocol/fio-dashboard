@@ -1,13 +1,15 @@
 import Sequelize from 'sequelize';
 
 import '../db';
-import { User, Order, OrderItem, Notification } from '../models/index.mjs';
+import { User, Order, OrderItem, Notification, Var } from '../models/index.mjs';
 import CommonJob from './job.mjs';
 
 import emailSender from '../services/emailSender.mjs';
 import { templates } from '../emails/emailTemplate.mjs';
 
 import logger from '../logger.mjs';
+
+import { HOUR_MS } from '../config/constants.js';
 
 const NOTIFICATION_LIMIT_PER_JOB = 100;
 const CONTENT_TYPE_EMAIL_TEMPLATE_MAP = {
@@ -25,8 +27,38 @@ class EmailsJob extends CommonJob {
     super();
   }
 
-  async allowToSend(notification) {
-    const { id, userId, createdAt } = notification;
+  async allowToSendBalanceChangedEmail(notification) {
+    const { id, userId, createdAt, data } = notification;
+
+    const previousNotification = await Notification.findOne({
+      where: {
+        id: {
+          [Sequelize.Op.notIn]: [id],
+        },
+        type: Notification.TYPE.INFO,
+        contentType: Notification.CONTENT_TYPE.BALANCE_CHANGED,
+        userId: userId,
+        data: {
+          emailData: {
+            wallet: data.emailData.wallet,
+          },
+        },
+        createdAt: {
+          [Sequelize.Op.lt]: createdAt,
+        },
+      },
+      order: [['createdAt', 'DESC']],
+    });
+    if (
+      previousNotification &&
+      !Var.updateRequired(
+        previousNotification.emailDate || previousNotification.createdAt,
+        HOUR_MS,
+      )
+    ) {
+      return false;
+    }
+
     const CHECK_PERIOD = 1000 * 60 * 10; // 10 min
 
     const nearestOrder = await Order.findOne({
@@ -46,12 +78,12 @@ class EmailsJob extends CommonJob {
       for (const orderItem of nearestOrder.OrderItems) {
         if (orderItem.data && orderItem.data.signedTx) {
           await Notification.destroy({ where: { id } });
-          return true;
+          return false;
         }
       }
     }
 
-    return false;
+    return true;
   }
 
   async execute() {
@@ -82,6 +114,7 @@ class EmailsJob extends CommonJob {
       limit: NOTIFICATION_LIMIT_PER_JOB,
       raw: true,
       nest: true,
+      order: [['createdAt', 'ASC']],
     });
 
     this.postMessage(`Process notifications - ${notifications.length}`);
@@ -119,7 +152,7 @@ class EmailsJob extends CommonJob {
 
           if (
             contentType === Notification.CONTENT_TYPE.BALANCE_CHANGED &&
-            (await this.allowToSend(notifications[0]))
+            !(await this.allowToSendBalanceChangedEmail(notifications[0]))
           ) {
             return false;
           }
