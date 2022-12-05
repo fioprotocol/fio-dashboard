@@ -93,10 +93,29 @@
 @include sm {
   .container {
     padding: 30px 20px;
-  }
+    flex-direction: column;
 
-  .title {
-    font-size: 20px;
-    line-height: 20px;
+    .textContainer {
+      order: 2;
+    }
+
+    .videoContainer {
+      order: 1;
+    }
+
+    .title {
+      font-size: 20px;
+      line-height: 20px;
+    }
+
+    .activeBadge {
+      padding: 5px;
+      font-size: 0.75rem;
+    }
+
+    .fieldsContainer {
+      flex-direction: column;
+      gap: 10px;
+    }
   }
 }

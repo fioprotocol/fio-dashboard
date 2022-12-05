@@ -48,3 +48,11 @@
     }
   }
 }
+
+@include sm {
+  .container {
+    .subtitle {
+      margin: 10px auto;
+    }
+  }
+}
