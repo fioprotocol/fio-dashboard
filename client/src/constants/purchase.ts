@@ -85,8 +85,8 @@ export const PAYMENT_PROVIDER_LABEL = {
 export const PAYMENT_ITEM_TYPE_LABEL = {
   [ACTIONS.registerFioAddress]: 'FCH',
   [ACTIONS.registerFioDomain]: 'Domain',
-  [ACTIONS.addBundledTransactions]: 'Domain Renewal',
-  [ACTIONS.renewFioDomain]: 'Add Bundled Transactions',
+  [ACTIONS.addBundledTransactions]: 'Add Bundled Transactions',
+  [ACTIONS.renewFioDomain]: 'Domain Renewal',
 };
 
 export const PAYMENT_STATUSES = {
