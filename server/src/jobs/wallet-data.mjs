@@ -27,6 +27,14 @@ const DOMAIN_EXP_TABLE = {
 };
 const ITEMS_PER_FETCH = process.env.WALLET_DATA_JOB_ITEMS_PER_FETCH || 5;
 const DEBUG_INFO = process.env.DEBUG_INFO_LOGS;
+const DOMAIN_EXP_DEBUG_AFFIX = 'testdomainexpiration';
+const DOMAIN_EXP_DEBUG_TABLE = {
+  expsoon: DOMAIN_EXP_PERIOD.ABOUT_TO_EXPIRE,
+  exp30: DOMAIN_EXP_PERIOD.EXPIRED_30,
+  exp90: DOMAIN_EXP_PERIOD.EXPIRED_90,
+  exp90plus: DOMAIN_EXP_PERIOD.EXPIRED,
+};
+const LOW_BUNDLE_COUNT_DEBUG_AFFIX = 'testlowbundlecount';
 
 const returnDayRange = timePeriod => {
   if (timePeriod > DAYS_30) return DAYS_30 + 1;
@@ -251,6 +259,34 @@ class WalletDataJob extends CommonJob {
               },
             });
           }
+          if (
+            process.env.EMAILS_JOB_SIMULATION_LOW_BUNDLE_COUNT_ENABLED === 'true' &&
+            fetched.fio_address.includes(LOW_BUNDLE_COUNT_DEBUG_AFFIX)
+          ) {
+            const existingNotification = await Notification.findOneWhere({
+              contentType: Notification.CONTENT_TYPE.LOW_BUNDLE_TX,
+              userId: wallet.User.id,
+              data: {
+                emailData: {
+                  name: fetched.fio_address,
+                },
+              },
+            });
+            if (!existingNotification) {
+              await Notification.create({
+                type: Notification.TYPE.INFO,
+                contentType: Notification.CONTENT_TYPE.LOW_BUNDLE_TX,
+                userId: wallet.User.id,
+                data: {
+                  pagesToShow: ['/'],
+                  emailData: {
+                    name: fetched.fio_address,
+                    bundles: fetched.remaining_bundled_tx,
+                  },
+                },
+              });
+            }
+          }
         } else {
           changed = true;
         }
@@ -272,10 +308,21 @@ class WalletDataJob extends CommonJob {
         }
 
         const timePeriod = new Date(domain.expiration).getTime() - new Date().getTime();
-        const domainExpPeriod =
+        let domainExpPeriod =
           DOMAIN_EXP_TABLE[
             Math.floor((returnDayRange(timePeriod) + DAYS_30 * 4) / DAYS_30)
           ];
+
+        if (
+          process.env.EMAILS_JOB_SIMULATION_EXPIRING_DOMAIN_ENABLED === 'true' &&
+          domain.fio_domain.includes(DOMAIN_EXP_DEBUG_AFFIX)
+        ) {
+          Object.keys(DOMAIN_EXP_DEBUG_TABLE).forEach(key => {
+            if (domain.fio_domain.includes(key)) {
+              domainExpPeriod = DOMAIN_EXP_DEBUG_TABLE[key];
+            }
+          });
+        }
 
         if (domainExpPeriod) {
           const existingNotification = await Notification.findOneWhere({
