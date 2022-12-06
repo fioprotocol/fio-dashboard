@@ -79,6 +79,9 @@ const AdminPartnersListPage: React.FC<Props> = props => {
             allowCustomDomain: true,
           };
         }
+        partner.title = partner.title || '';
+        partner.subTitle = partner.subTitle || '';
+        partner.tpid = partner.tpid || '';
         if (partner.id) {
           await apis.admin.editPartner(partner);
         } else {
