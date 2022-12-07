@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { RouterProps, withRouter } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { useHistory } from 'react-router';
 
 import apis from '../api';
 
@@ -26,6 +27,7 @@ import { IS_REFERRAL_PROFILE_PATH } from '../constants/regExps';
 
 import { FioWalletDoublet, RefProfile, User } from '../types';
 import { REF_PROFILE_TYPE } from '../constants/common';
+import { ROUTES } from '../constants/routes';
 
 type Props = {
   isAuthenticated: boolean;
@@ -52,6 +54,7 @@ const Ref = (
     refreshFioNames,
     getInfo,
   } = props;
+  const history = useHistory();
 
   const fioWalletsAmount = fioWallets.length;
 
@@ -74,21 +77,34 @@ const Ref = (
     // handle cookies for non auth user
     if (!isAuthenticated) {
       // Set refProfileCode to cookies from ref link
+      const cookieRefProfileCode =
+        Cookies.get(REFERRAL_PROFILE_COOKIE_NAME) || '';
       if (refProfileInfo?.code != null) {
         setCookies(REFERRAL_PROFILE_COOKIE_NAME, refProfileInfo.code, {
           expires: REFERRAL_PROFILE_COOKIE_EXPIRATION_PEROID,
         });
+        if (
+          refProfileInfo?.type === REF_PROFILE_TYPE.AFFILIATE &&
+          (!cookieRefProfileCode ||
+            refProfileInfo.code !== cookieRefProfileCode)
+        ) {
+          history.push(ROUTES.FIO_DOMAIN);
+        }
       } else {
         // Update refProfileCode cookies and set ref profile. Works for non auth user and not ref link
         if (!isRefLink) {
-          const cookieRefProfileCode =
-            Cookies.get(REFERRAL_PROFILE_COOKIE_NAME) || '';
-
           getInfo(cookieRefProfileCode);
         }
       }
     }
-  }, [refProfileInfo?.code, isAuthenticated, isRefLink, getInfo]);
+  }, [
+    refProfileInfo?.code,
+    refProfileInfo?.type,
+    isAuthenticated,
+    isRefLink,
+    getInfo,
+    history,
+  ]);
 
   useEffect(() => {
     // load profile when have ref link
