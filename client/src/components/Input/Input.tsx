@@ -44,6 +44,7 @@ type Props = {
   hasSmallText?: boolean;
   hasThinText?: boolean;
   showPreview?: boolean;
+  showTitle?: boolean;
 };
 
 const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
@@ -73,6 +74,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     hasSmallText,
     hasThinText,
     showPreview = true,
+    showTitle = false,
     ...rest
   } = props;
   const {
@@ -152,6 +154,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
         >
           {renderPrefixLabel()}
           <input
+            title={showTitle ? value : null}
             disabled={disabled}
             {...input}
             {...rest}

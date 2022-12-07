@@ -47,7 +47,7 @@ const FioAddressNftPage: React.FC<Props> = props => {
       isEdit={true}
       initialValues={initialValues}
       fioAddressName={address}
-      backTo={`${ROUTES.FIO_ADDRESS_SIGNATURES}?${QUERY_PARAMS_NAMES.ADDRESS}}=${address}`}
+      backTo={`${ROUTES.FIO_ADDRESS_SIGNATURES}?${QUERY_PARAMS_NAMES.ADDRESS}=${address}`}
     />
   );
 };
