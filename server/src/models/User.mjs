@@ -37,6 +37,7 @@ export class User extends Base {
         location: DT.STRING,
         secretSet: DT.BOOLEAN,
         refProfileId: { type: DT.BIGINT, allowNull: true },
+        affiliateProfileId: { type: DT.BIGINT, allowNull: true },
         timeZone: { type: DT.STRING, defaultValue: 'America/New_York' },
       },
       {
@@ -65,6 +66,11 @@ export class User extends Base {
       targetKey: 'id',
       as: 'refProfile',
     });
+    this.belongsTo(ReferrerProfile, {
+      foreignKey: 'affiliateProfileId',
+      targetKey: 'id',
+      as: 'affiliateProfile',
+    });
   }
 
   static attrs(type = 'default') {
@@ -81,6 +87,7 @@ export class User extends Base {
         'fioWallets',
         'newDeviceTwoFactor',
         'refProfile',
+        'affiliateProfile',
         'createdAt',
       ],
     };
@@ -108,6 +115,7 @@ export class User extends Base {
           attributes: ['voucherId', 'deviceDescription', 'createdAt', 'status'],
         },
         { model: ReferrerProfile, as: 'refProfile', attributes: ['code'] },
+        { model: ReferrerProfile, as: 'affiliateProfile', attributes: ['code', 'tpid'] },
       ],
     });
   }

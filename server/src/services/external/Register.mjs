@@ -108,8 +108,13 @@ export default class Register extends Base {
       });
     }
 
-    if (user.freeAddresses.length)
-      throw new Error('Your account is already have a free address registered.');
+    if (user.freeAddresses.length) {
+      return {
+        data: {
+          error: 'You have already registered a free FIO Crypto Handle for that domain',
+        },
+      };
+    }
 
     let referralCode;
     let apiToken;

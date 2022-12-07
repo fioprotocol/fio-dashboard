@@ -33,7 +33,9 @@ const SignResults: React.FC<ResultsProps> = props => {
           <Badge show={true} type={BADGE_TYPES.WHITE}>
             <div className={classes.badgeContainer}>
               <span className={classes.badgeItem}>Token ID</span>
-              <span className={classes.badgeItemNext}>
+              <span
+                className={classnames(classes.badgeItemNext, classes.breakWord)}
+              >
                 {tokenId || dashSign}
               </span>
             </div>

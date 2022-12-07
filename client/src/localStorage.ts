@@ -1,13 +1,21 @@
 import { ReduxState } from './redux/init';
 import { AnyObject } from './types';
 
-export const loadState = (): AnyObject | undefined => {
+export const parseState = (serializedState: string): AnyObject | undefined => {
   try {
-    const serializedState = localStorage.getItem('state');
-    if (serializedState === null) {
+    if (!serializedState) {
       return undefined;
     }
     return JSON.parse(serializedState);
+  } catch (err) {
+    return undefined;
+  }
+};
+
+export const loadState = (): AnyObject | undefined => {
+  try {
+    const serializedState = localStorage.getItem('state');
+    return parseState(serializedState);
   } catch (err) {
     return undefined;
   }

@@ -6,6 +6,7 @@ import { Ecc } from '@fioprotocol/fiojs';
 import {
   ANALYTICS_EVENT_ACTIONS,
   CONFIRM_PIN_ACTIONS,
+  REF_PROFILE_TYPE,
 } from '../../constants/common';
 import { PAYMENT_OPTIONS } from '../../constants/purchase';
 import { emptyWallet } from '../../redux/fio/reducer';
@@ -116,7 +117,9 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
           ),
           walletChallenge: nonce,
         },
-        refProfileInfo != null ? refProfileInfo.code : '',
+        refProfileInfo != null && refProfileInfo?.type === REF_PROFILE_TYPE.REF
+          ? refProfileInfo.code
+          : '',
       );
 
       onProcessingEnd(results);
@@ -151,7 +154,9 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
         prices.nativeFio,
         !hasFreeAddress,
         verifyParams,
-        refProfileInfo != null ? refProfileInfo.code : '',
+        refProfileInfo != null && refProfileInfo?.type === REF_PROFILE_TYPE.REF
+          ? refProfileInfo.code
+          : '',
       );
 
       onProcessingEnd(results);

@@ -24,6 +24,8 @@ type Props = {
   hasMinHeight?: boolean;
   showSignInWidget?: boolean;
   hideBottomPlug?: boolean;
+  isAuthenticated?: boolean;
+  hasFreeAddress?: boolean;
 };
 
 const AddressWidget: React.FC<Props> = props => {
@@ -35,6 +37,7 @@ const AddressWidget: React.FC<Props> = props => {
     hasMinHeight,
     showSignInWidget,
     hideBottomPlug,
+    isAuthenticated,
   } = props;
 
   return (
@@ -50,7 +53,7 @@ const AddressWidget: React.FC<Props> = props => {
       <div className={classes.form}>
         <AddressDomainForm isHomepage={true} type={ADDRESS} {...props} />
       </div>
-      <SignInWidget show={showSignInWidget} />
+      <SignInWidget show={!isAuthenticated && showSignInWidget} />
       <PlugComponent show={!hideBottomPlug} />
     </div>
   );

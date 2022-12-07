@@ -170,9 +170,10 @@ export const useContext = (
   if (
     containedFlowParams != null &&
     containedFlowParams.action &&
-    CONTAINED_FLOW_CONTINUE_TEXT[containedFlowParams.action]
+    CONTAINED_FLOW_CONTINUE_TEXT[containedFlowParams.action.toUpperCase()]
   ) {
-    buttonText = CONTAINED_FLOW_CONTINUE_TEXT[containedFlowParams.action];
+    buttonText =
+      CONTAINED_FLOW_CONTINUE_TEXT[containedFlowParams.action.toUpperCase()];
   }
 
   const onClose = () => {

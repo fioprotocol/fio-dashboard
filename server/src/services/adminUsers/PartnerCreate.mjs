@@ -11,8 +11,10 @@ export default class PartnerCreate extends Base {
 
   static get validationRules() {
     return {
+      type: ['required', 'string'],
       label: ['required', 'string'],
-      code: ['required', 'string'],
+      regRefCode: ['string'],
+      code: ['required', 'string', 'trim', 'to_lc'],
       regRefApiToken: ['string'],
       tpid: ['string'],
       settings: [
@@ -69,14 +71,12 @@ export default class PartnerCreate extends Base {
       throw new X({
         code: 'CREATION_FAILED',
         fields: {
-          name: 'PARTNER_ALREADY_EXIST',
-          actor: 'PARTNER_ALREADY_EXIST',
-          permission: 'PARTNER_ALREADY_EXIST',
+          code: 'PARTNER_ALREADY_EXIST',
         },
       });
     }
 
-    data.regRefCode = data.code;
+    data.code = data.code.toLowerCase();
 
     const createdPartner = new ReferrerProfile(data);
     await createdPartner.save();
@@ -87,7 +87,7 @@ export default class PartnerCreate extends Base {
   }
 
   static get paramsSecret() {
-    return [];
+    return ['settings.img'];
   }
 
   static get resultSecret() {

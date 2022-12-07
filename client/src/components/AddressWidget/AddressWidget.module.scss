@@ -8,7 +8,7 @@
   text-align: center;
   padding: 9% 25px 0;
   width: 100%;
-  
+
   .logoImg {
     max-width: 380px;
     max-height: 115px;
@@ -20,13 +20,19 @@
     font-size: 4rem;
   }
 
+  .customTitle {
+    @include proxima-nova-bold;
+    color: white;
+    font-size: 2rem;
+  }
+
   .coloredText {
     color: $violet;
   }
 
   .subtitle {
     @include sf-pro-display-thin;
-    font-size: 20px;
+    font-size: 18px;
     line-height: 24px;
     max-width: 800px;
     margin: 1% auto;

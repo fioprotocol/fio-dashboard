@@ -48,21 +48,25 @@
     margin-top: 0;
     @include sf-pro-display-medium;
   }
+}
 
-  .value {
-    position: relative;
-    font-size: 1em;
-    word-break: break-all;
-    margin-top: 10px;
-    width: 100%;
-  }
+.dataContainerValue {
+  width: 100%;
+  margin-top: 10px;
+}
 
-  .icon {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    cursor: pointer;
-  }
+.value {
+  position: relative;
+  font-size: 1em;
+  word-break: break-all;
+  width: 100%;
+}
+
+.icon {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  cursor: pointer;
 }
 
 .divider {

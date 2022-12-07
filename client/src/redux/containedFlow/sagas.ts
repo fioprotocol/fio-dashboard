@@ -89,7 +89,10 @@ export function* purchaseResultsClose(history: History): Generator {
     const fioWallets: FioWalletDoublet[] = yield select(getFioWallets);
 
     if (isContainedFlow) {
-      if (containedFlowQueryParams.action === CONTAINED_FLOW_ACTIONS.REG) {
+      if (
+        containedFlowQueryParams.action.toUpperCase() ===
+        CONTAINED_FLOW_ACTIONS.REG
+      ) {
         yield put(setStep(CONTAINED_FLOW_STEPS.FINISH));
       } else {
         for (const fioWallet of fioWallets) {
@@ -99,7 +102,7 @@ export function* purchaseResultsClose(history: History): Generator {
         }
         yield put(
           setStep(CONTAINED_FLOW_STEPS.ACTION, {
-            containedFlowAction: containedFlowQueryParams.action,
+            containedFlowAction: containedFlowQueryParams.action.toUpperCase(),
           }),
         );
         return;
@@ -146,9 +149,11 @@ export function* handleContainedFlowSteps(history: History): Generator {
         }
         case CONTAINED_FLOW_STEPS.ACTION: {
           let registrationPath =
-            CONTAINED_FLOW_ACTIONS_TO_ROUTES[action.data.containedFlowAction];
+            CONTAINED_FLOW_ACTIONS_TO_ROUTES[
+              action.data.containedFlowAction.toUpperCase()
+            ];
           const containedFlowAction = containedFlowQueryParams
-            ? containedFlowQueryParams.action
+            ? containedFlowQueryParams.action.toUpperCase()
             : '';
           if (
             containedFlowAction &&

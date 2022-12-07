@@ -142,6 +142,7 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
                     errorColor={COLOR_TYPE.WARN}
                     component={Input}
                     disabled={isEdit}
+                    showTitle={isEdit}
                   />
                 </Col>
               </div>
@@ -157,6 +158,7 @@ const SignNFTForm: React.FC<SignNftFormProps> = props => {
                     component={Input}
                     showPasteButton={!isEdit}
                     disabled={isEdit}
+                    showTitle={isEdit}
                   />
                 </Col>
               </Row>
