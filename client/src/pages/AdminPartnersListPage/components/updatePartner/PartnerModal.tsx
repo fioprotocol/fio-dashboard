@@ -3,12 +3,12 @@ import React from 'react';
 import Modal from '../../../../components/Modal/Modal';
 import { PartnerForm } from './PartnerForm';
 
-import { RefProfile } from '../../../../types';
+import { AnyObject, RefProfile } from '../../../../types';
 
 type Props = {
   show: boolean;
   loading: boolean;
-  onSubmit: (values: RefProfile) => Promise<void>;
+  onSubmit: (values: RefProfile) => Promise<AnyObject>;
   onClose: () => void;
   initialValues?: Partial<RefProfile>;
 };
