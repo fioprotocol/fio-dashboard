@@ -1,6 +1,7 @@
 import Sequelize from 'sequelize';
 
 import Stripe from '../../external/payment-processor/stripe';
+import Bitpay from '../../external/payment-processor/bitpay.mjs';
 
 import Base from '../Base';
 import X from '../Exception';
@@ -31,6 +32,10 @@ export default class PaymentsWebhook extends Base {
       return Stripe;
     }
 
+    if (Bitpay.isWebhook(hostname, this.context.userAgent)) {
+      return Bitpay;
+    }
+
     return null;
   }
 
@@ -47,7 +52,7 @@ export default class PaymentsWebhook extends Base {
 
     body = this.validateRequest(paymentProcessor, { body, headers, rawBody });
 
-    const webhookData = paymentProcessor.getWebhookData(body);
+    const webhookData = await paymentProcessor.getWebhookData(body);
     const paymentStatuses = paymentProcessor.mapPaymentStatus(
       webhookData.status,
       webhookData.type,

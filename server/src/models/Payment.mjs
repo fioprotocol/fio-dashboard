@@ -6,7 +6,9 @@ import { Order } from './Order';
 import { PaymentEventLog } from './PaymentEventLog';
 import { BlockchainTransaction } from './BlockchainTransaction';
 import { OrderItemStatus } from './OrderItemStatus';
+import { User } from './User.mjs';
 
+import BitPay from '../external/payment-processor/bitpay.mjs';
 import Stripe from '../external/payment-processor/stripe.mjs';
 
 import logger from '../logger.mjs';
@@ -30,6 +32,7 @@ export class Payment extends Base {
   }
   static get PROCESSOR() {
     return {
+      BITPAY: 'BITPAY',
       COINBASE: 'COINBASE',
       COIN_PAYMENTS: 'COIN_PAYMENTS',
       STRIPE: 'STRIPE',
@@ -132,6 +135,10 @@ export class Payment extends Base {
       return Stripe;
     }
 
+    if (paymentProcessor === this.PROCESSOR.BITPAY) {
+      return BitPay;
+    }
+
     return null;
   }
 
@@ -190,9 +197,12 @@ export class Payment extends Base {
         }
 
         if (paymentProcessor) {
+          const user = await User.findById(order.userId);
+
           extPaymentParams = await paymentProcessor.create({
             amount: order.total,
             orderNumber: order.number,
+            buyer: user && user.email,
           });
           orderPayment.externalId = extPaymentParams.externalPaymentId;
           orderPayment.amount = extPaymentParams.amount;
