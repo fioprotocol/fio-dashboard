@@ -11,6 +11,7 @@ import {
   PAYMENT_OPTIONS,
   PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
+  PAYMENT_RESULTS_STATUS,
 } from './constants/purchase';
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -117,6 +118,7 @@ export type PaymentProvider = typeof PAYMENT_PROVIDER[keyof typeof PAYMENT_PROVI
 export type PaymentCurrency = typeof CURRENCY_CODES[keyof typeof CURRENCY_CODES];
 export type PaymentOptionsProps = typeof PAYMENT_OPTIONS[keyof typeof PAYMENT_OPTIONS];
 export type PurchaseTxStatus = typeof PURCHASE_RESULTS_STATUS[keyof typeof PURCHASE_RESULTS_STATUS];
+export type PaymentStatus = typeof PAYMENT_RESULTS_STATUS[keyof typeof PAYMENT_RESULTS_STATUS];
 export type BcTxStatus = typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
 
 export type RegistrationResult = {
@@ -785,6 +787,7 @@ export type OrderDetailed = {
     paidWith: string;
     paymentProcessor: PaymentProvider;
     paymentCurrency: PaymentCurrency;
+    paymentStatus: PaymentStatus;
   };
   refProfileName?: string;
 };
