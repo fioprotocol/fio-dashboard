@@ -64,6 +64,7 @@ const CartAmount: React.FC<Props> = props => {
           paymentWalletPublicKey={paymentWalletPublicKey}
           onPaymentChoose={onPaymentChoose}
           totalCartNativeAmount={totalCartNativeAmount}
+          totlaCartUsdcAmount={costUsdc}
           userWallets={userWallets}
           selectedPaymentProvider={selectedPaymentProvider}
           disabled={!!error || disabled}

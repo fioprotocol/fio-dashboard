@@ -4,6 +4,7 @@ import {
   WalletsBalances,
   WalletBalancesItem,
   RegistrationResult,
+  Order,
   PaymentOptionsProps,
   Payment,
   ApiError,
@@ -18,6 +19,7 @@ type DefaultProps = {
   paymentAssignmentWallets: FioWalletDoublet[];
   paymentWalletPublicKey: string;
   fioWalletsBalances: WalletsBalances;
+  order: Order;
   payment: Payment;
   paymentProviderError: ApiError;
   paymentOption: PaymentOptionsProps;
@@ -72,3 +74,8 @@ export type BeforeSubmitProps = {
   setProcessing: (processing: boolean) => void;
   processing: boolean;
 } & BeforeSubmitState;
+
+export type BitPayOptionProps = {
+  paymentOption: PaymentOptionsProps;
+  totalCost: number;
+} & DefaultProps;

@@ -89,6 +89,7 @@ export const useContext = (): {
   paymentAssignmentWallets: FioWalletDoublet[];
   isProcessing: boolean;
   title: string;
+  order: Order;
   payment: Payment;
   paymentOption: PaymentOptionsProps;
   paymentProvider: PaymentProvider | null;
@@ -506,6 +507,7 @@ export const useContext = (): {
     paymentAssignmentWallets,
     isProcessing,
     title,
+    order,
     payment,
     paymentOption,
     paymentProvider,

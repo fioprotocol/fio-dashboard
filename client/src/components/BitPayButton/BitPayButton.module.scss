@@ -1,0 +1,11 @@
+@import '../../assets/styles/colors.scss';
+
+.regularText {
+  color: $jordy-blue;
+  margin-right: 10px;
+}
+
+.bitPayButtonText {
+  display: flex;
+  flex-direction: row;
+}

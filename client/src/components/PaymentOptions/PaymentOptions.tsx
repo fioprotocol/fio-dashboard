@@ -3,6 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import has from 'lodash/has';
 
 import { PaymentButton } from './components/PaymentButton';
+import { BitPayButtonText, BITPAY_LOGO_WIDTH } from '../BitPayButton';
+
+import MathOp from '../../util/math';
 
 import { PAYMENT_OPTIONS, PAYMENT_PROVIDER } from '../../constants/purchase';
 
@@ -26,6 +29,7 @@ type DefaultPaymentOptionProps = {
   paymentWalletPublicKey?: string;
   cartItems?: CartItemProps[];
   totalCartNativeAmount?: number;
+  totlaCartUsdcAmount?: string;
   userWallets?: FioWalletDoublet[];
   selectedPaymentProvider: PaymentProvider;
   disabled?: boolean;
@@ -41,7 +45,6 @@ const PAYMENT_OPTIONS_PROPS = {
     paymentWalletPublicKey,
     cartItems,
     isFree,
-    paymentOption,
     selectedPaymentProvider,
     disabled,
     onPaymentChoose,
@@ -57,7 +60,6 @@ const PAYMENT_OPTIONS_PROPS = {
   }),
   [PAYMENT_OPTIONS.CREDIT_CARD]: ({
     onPaymentChoose,
-    paymentOption,
     cartItems,
     selectedPaymentProvider,
     disabled,
@@ -70,15 +72,21 @@ const PAYMENT_OPTIONS_PROPS = {
     onClick: () => onPaymentChoose(PAYMENT_PROVIDER.STRIPE),
   }),
   [PAYMENT_OPTIONS.CRYPTO]: ({
+    cartItems,
+    disabled,
     selectedPaymentProvider,
+    totlaCartUsdcAmount,
+    onPaymentChoose,
   }: PaymentOptionRenderProps) => ({
-    buttonText: 'Pay Using Crypto',
-    icon: <FontAwesomeIcon icon={{ prefix: 'fab', iconName: 'bitcoin' }} />,
-    disabled: true,
-    hideButton: true, // not implemented
-    loading: selectedPaymentProvider === PAYMENT_PROVIDER.CRYPTO,
-    hasRoyalBlueBackground: true,
-    onClick: (): null => null,
+    buttonText: <BitPayButtonText width={BITPAY_LOGO_WIDTH.hasLowHeight} />,
+    disabled:
+      cartItems?.length === 0 ||
+      disabled ||
+      new MathOp(totlaCartUsdcAmount).lte(1),
+    loading: selectedPaymentProvider === PAYMENT_PROVIDER.BITPAY,
+    hasCobaltBackground: true,
+    isTextCentered: true,
+    onClick: () => onPaymentChoose(PAYMENT_PROVIDER.BITPAY),
   }),
 };
 
