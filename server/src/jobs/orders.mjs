@@ -13,11 +13,13 @@ import {
   FreeAddress,
   Var,
   PublicWalletData,
+  User,
   Wallet,
 } from '../models/index.mjs';
 import MathOp from '../services/math.mjs';
 import CommonJob from './job.mjs';
 import Stripe from '../external/payment-processor/stripe';
+import BitPay from '../external/payment-processor/bitpay.mjs';
 
 import sendInsufficientFundsNotification from '../services/fallback-funds-email.mjs';
 import { updateOrderStatus as updateOrderStatusService } from '../services/updateOrderStatus.mjs';
@@ -211,7 +213,7 @@ class OrdersJob extends CommonJob {
     });
   }
 
-  async refundUser(orderItemProps, errorData = {}) {
+  async refundUser(orderItemProps, errorData = {}, userEmail) {
     try {
       const payment = await Payment.findOne({ where: { id: orderItemProps.paymentId } });
 
@@ -225,6 +227,12 @@ class OrdersJob extends CommonJob {
           price = errorData.refundUsdcAmount || orderItemProps.price;
           currency = Payment.CURRENCY.USD;
           statusNotes = "User's credit card";
+          break;
+        }
+        case Payment.PROCESSOR.BITPAY: {
+          price = errorData.refundUsdcAmount || orderItemProps.price;
+          currency = orderItemProps.price;
+          statusNotes = "User's crypto";
           break;
         }
         default:
@@ -257,6 +265,10 @@ class OrdersJob extends CommonJob {
       switch (payment.processor) {
         case Payment.PROCESSOR.STRIPE: {
           refundTx = await Stripe.refund(payment.externalId, price);
+          break;
+        }
+        case Payment.PROCESSOR.BITPAY: {
+          refundTx = await BitPay.refund(payment.externalId, price, userEmail);
           break;
         }
         default:
@@ -308,7 +320,7 @@ class OrdersJob extends CommonJob {
     }
   }
 
-  async checkPriceChanges(orderItem, currentRoe) {
+  async checkPriceChanges(orderItem, currentRoe, userEmail) {
     let fee = await this.getFeeForAction(orderItem.action);
 
     if (orderItem.data && orderItem.data.hasCustomDomain) {
@@ -334,7 +346,7 @@ class OrdersJob extends CommonJob {
         orderItem,
         `PRICES_CHANGED - roe: ${currentRoe} - fee: ${fee}`,
       );
-      await this.refundUser({ ...orderItem, roe: currentRoe });
+      await this.refundUser({ ...orderItem, roe: currentRoe }, null, userEmail);
 
       throw new Error(`PRICES_CHANGED - roe: ${currentRoe} - fee: ${fee}`);
     }
@@ -667,6 +679,8 @@ class OrdersJob extends CommonJob {
     const processOrderItem = orderItem => async () => {
       if (this.isCancelled) return false;
 
+      const { email: userEmail } = await User.findById(orderItem.userId);
+
       const {
         id,
         orderId,
@@ -706,7 +720,7 @@ class OrdersJob extends CommonJob {
         }
 
         // Check if fee/roe changed and handle changes
-        await this.checkPriceChanges(orderItem, roe);
+        await this.checkPriceChanges(orderItem, roe, userEmail);
 
         try {
           const result = await this.executeOrderItemAction(orderItem, auth, hasSignedTx);
@@ -741,7 +755,7 @@ class OrdersJob extends CommonJob {
 
           // Refund order payment for fio action. Do not refund if system sent tokens to user's wallet to execute signed tx
           if (code !== ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP)
-            await this.refundUser(orderItem, errorData);
+            await this.refundUser(orderItem, errorData, userEmail);
         } catch (error) {
           logger.error(`ORDER ITEM PROCESSING ERROR ${orderItem.id}`, error);
         }
