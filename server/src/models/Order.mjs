@@ -722,6 +722,7 @@ export class Order extends Base {
         errTotalCost,
         paidWith,
         paymentProcessor: payment ? payment.processor : null,
+        paymentStatus: payment ? payment.status : null,
         paymentCurrency,
       },
       refProfileName: refProfile ? refProfile.label : null,

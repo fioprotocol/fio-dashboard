@@ -4,7 +4,7 @@ import { Title } from './components/Title';
 
 import { combinePriceWithDivider } from '../../util/prices';
 
-import { PaymentProvider } from '../../types';
+import { PaymentProvider, PaymentStatus } from '../../types';
 
 import { ContextProps, OrderDetailsProps } from './types';
 
@@ -39,6 +39,7 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
     regTotalCost,
     errTotalCost,
     paymentCurrency,
+    paymentStatus,
   } = payment || {};
 
   const title = <Title orderStatus={status} />;
@@ -59,9 +60,11 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
   const infoBadgeData: {
     paymentProvider: PaymentProvider;
     purchaseStatus: number;
+    paymentStatus: PaymentStatus;
   } = {
     paymentProvider: paymentProcessor,
     purchaseStatus: status,
+    paymentStatus,
   };
 
   if (isPartial) {

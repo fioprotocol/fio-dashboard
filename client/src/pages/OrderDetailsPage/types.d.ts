@@ -6,6 +6,7 @@ import {
   OrderItemDetailed,
   PaymentCurrency,
   PaymentProvider,
+  PaymentStatus,
 } from '../../types';
 
 export type OrderDetailsProps = {
@@ -25,6 +26,7 @@ export type TotalCost = {
 export type InfoBadgeData = {
   paymentProvider: PaymentProvider;
   purchaseStatus: number;
+  paymentStatus: PaymentStatus;
 };
 
 export type ContextProps = {
