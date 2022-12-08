@@ -1,7 +1,10 @@
 import React from 'react';
 import classnames from 'classnames';
+import { Link } from 'react-router-dom';
 
 import { LinksSection } from './LinksSection';
+
+import { ROUTES } from '../../../constants/routes';
 
 import { CommonComponentProps } from '../types';
 
@@ -20,22 +23,6 @@ const generalInstructionContent = [
   },
 ];
 
-const authenticatedInstructionContent = [
-  {
-    title: 'Activate',
-    text: `<span class="doubleColor">Create an account</span>, get yourself a FIO Crypto Handle and activate affiliate link. Already have an account? Even simpler, <span class="doubleColor">sign in</span> & activate your link.`,
-  },
-  ...generalInstructionContent,
-];
-
-const unAuthenticatedInstructionContent = [
-  {
-    title: 'Activate',
-    text: `<span class="doubleColor">Get yourself a FIO Crypto Handle</span> and activate affiliate link. Already have a FIO Crypto Handle? Even simpler, just <span class="doubleColor">activate your link</span>.`,
-  },
-  ...generalInstructionContent,
-];
-
 export const HowItWorksSection: React.FC<CommonComponentProps> = props => {
   const {
     isAuthenticated,
@@ -50,12 +37,39 @@ export const HowItWorksSection: React.FC<CommonComponentProps> = props => {
     >
       <h1 className={classnames(classes.title, 'boldText')}>How It Works</h1>
       <div className={classes.instruction}>
-        {(isAuthenticated
-          ? authenticatedInstructionContent
-          : unAuthenticatedInstructionContent
-        ).map(({ title, text }, index) => (
+        <div className={classes.instructionRow}>
+          <div className={classes.instructionRowNumber}>01</div>
+          <div className={classes.instructionRowInfo}>
+            <div className={classes.instructionRowInfoTitle}>Activate</div>
+            {isAuthenticated ? (
+              <div className={classes.instructionRowInfoText}>
+                <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>
+                  Get yourself a FIO Crypto Handle
+                </Link>{' '}
+                and activate affiliate link. Already have a FIO Crypto Handle?
+                Even simpler, just{' '}
+                {/* eslint-disable-next-line no-script-url,jsx-a11y/anchor-is-valid */}
+                <a href="javascript:void(0);" onClick={showAffiliateModal}>
+                  activate your link
+                </a>
+              </div>
+            ) : (
+              <div className={classes.instructionRowInfoText}>
+                <Link to={ROUTES.CREATE_ACCOUNT}>Create an account</Link>, get
+                yourself a FIO Crypto Handle and activate affiliate link.
+                Already have an account? Even simpler,{' '}
+                {/* eslint-disable-next-line no-script-url,jsx-a11y/anchor-is-valid */}
+                <a href="javascript:void(0);" onClick={showLogin}>
+                  sign in
+                </a>{' '}
+                & activate your link.
+              </div>
+            )}
+          </div>
+        </div>
+        {generalInstructionContent.map(({ title, text }, index) => (
           <div key={title} className={classes.instructionRow}>
-            <div className={classes.instructionRowNumber}>0{index + 1}</div>
+            <div className={classes.instructionRowNumber}>0{index + 2}</div>
             <div className={classes.instructionRowInfo}>
               <div className={classes.instructionRowInfoTitle}>{title}</div>
               <div
