@@ -71,7 +71,7 @@ export default class PartnerCreate extends Base {
       throw new X({
         code: 'CREATION_FAILED',
         fields: {
-          code: 'PARTNER_ALREADY_EXIST',
+          code: 'This referral code already exists!',
         },
       });
     }

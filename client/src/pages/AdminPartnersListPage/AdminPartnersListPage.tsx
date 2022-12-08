@@ -90,7 +90,11 @@ const AdminPartnersListPage: React.FC<Props> = props => {
         await refresh();
         closeModal();
       } catch (err) {
-        log.error(err);
+        if (err.fields) {
+          return err.fields;
+        } else {
+          log.error(err);
+        }
       } finally {
         setPartnerActionLoading(false);
       }
