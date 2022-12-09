@@ -11,6 +11,7 @@ type Props = {
   hasLowHeight?: boolean;
   bitPayButtonSize?: keyof typeof BITPAY_LOGO_WIDTH;
   loading: boolean;
+  disabled: boolean;
 };
 
 type ButtonTextProps = {
