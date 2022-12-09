@@ -83,11 +83,8 @@ const Ref = (
         setCookies(REFERRAL_PROFILE_COOKIE_NAME, refProfileInfo.code, {
           expires: REFERRAL_PROFILE_COOKIE_EXPIRATION_PEROID,
         });
-        if (
-          refProfileInfo?.type === REF_PROFILE_TYPE.AFFILIATE &&
-          (!cookieRefProfileCode ||
-            refProfileInfo.code !== cookieRefProfileCode)
-        ) {
+
+        if (refProfileInfo?.type === REF_PROFILE_TYPE.AFFILIATE) {
           history.push(ROUTES.FIO_DOMAIN);
         }
       } else {
