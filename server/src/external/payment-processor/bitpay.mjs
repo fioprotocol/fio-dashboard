@@ -6,8 +6,12 @@ import PaymentProcessor from './base.mjs';
 import { PAYMENT_EVENT_STATUSES, PAYMENTS_STATUSES } from '../../config/constants.js';
 import config from '../../config';
 
+import MathOp from '../../services/math.mjs';
+
 const BITPAY_USER_AGENT = 'Webhook-BitPay support@bitpay.com';
-const BITPAY_BASE_URL = process.env.IS_BITPAY_TEST_ENV ? Env.TestUrl : Env.ProdUrl;
+const BITPAY_BASE_URL = process.env.REACT_APP_IS_BITPAY_TEST_ENV
+  ? Env.TestUrl
+  : Env.ProdUrl;
 
 class BitPay extends PaymentProcessor {
   constructor() {
@@ -22,7 +26,7 @@ class BitPay extends PaymentProcessor {
 
       this.bitPayClient = await new Client(
         null,
-        process.env.IS_BITPAY_TEST_ENV ? Env.Test : Env.Prod,
+        process.env.REACT_APP_IS_BITPAY_TEST_ENV ? Env.Test : Env.Prod,
         process.env.BITPAY_PRIVATE_KEY,
         tokens,
       );
@@ -197,22 +201,13 @@ class BitPay extends PaymentProcessor {
     return body;
   }
 
-  async refund(id, amount = null, userEmail) {
+  async refund(id, amount = null) {
     const bitPayClient = await this.getBitPayClient();
-    const bitPayInvoice = await bitPayClient.GetInvoice('9yxhF8tX8pGfr5YQNDkNPy');
-
-    const refundUserEmail = bitPayInvoice.buyer
-      ? bitPayInvoice.buyer.email
-      : bitPayInvoice.buyerProvidedEmail
-      ? bitPayInvoice.buyerProvidedEmail
-      : bitPayInvoice.buyerProvidedInfo
-      ? bitPayInvoice.buyerProvidedInfo.emailAddress
-      : userEmail;
+    const bitPayInvoice = await bitPayClient.GetInvoice(id);
 
     return await bitPayClient.CreateRefund(
       bitPayInvoice,
-      refundUserEmail,
-      amount,
+      new MathOp(amount).toNumber(),
       bitPayInvoice.currency,
     );
   }

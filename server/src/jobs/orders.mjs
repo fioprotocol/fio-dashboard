@@ -13,7 +13,6 @@ import {
   FreeAddress,
   Var,
   PublicWalletData,
-  User,
   Wallet,
 } from '../models/index.mjs';
 import MathOp from '../services/math.mjs';
@@ -213,7 +212,7 @@ class OrdersJob extends CommonJob {
     });
   }
 
-  async refundUser(orderItemProps, errorData = {}, userEmail) {
+  async refundUser(orderItemProps, errorData = {}) {
     try {
       const payment = await Payment.findOne({ where: { id: orderItemProps.paymentId } });
 
@@ -268,7 +267,7 @@ class OrdersJob extends CommonJob {
           break;
         }
         case Payment.PROCESSOR.BITPAY: {
-          refundTx = await BitPay.refund(payment.externalId, price, userEmail);
+          refundTx = await BitPay.refund(payment.externalId, price);
           break;
         }
         default:
@@ -320,7 +319,7 @@ class OrdersJob extends CommonJob {
     }
   }
 
-  async checkPriceChanges(orderItem, currentRoe, userEmail) {
+  async checkPriceChanges(orderItem, currentRoe) {
     let fee = await this.getFeeForAction(orderItem.action);
 
     if (orderItem.data && orderItem.data.hasCustomDomain) {
@@ -346,7 +345,7 @@ class OrdersJob extends CommonJob {
         orderItem,
         `PRICES_CHANGED - roe: ${currentRoe} - fee: ${fee}`,
       );
-      await this.refundUser({ ...orderItem, roe: currentRoe }, null, userEmail);
+      await this.refundUser({ ...orderItem, roe: currentRoe });
 
       throw new Error(`PRICES_CHANGED - roe: ${currentRoe} - fee: ${fee}`);
     }
@@ -679,8 +678,6 @@ class OrdersJob extends CommonJob {
     const processOrderItem = orderItem => async () => {
       if (this.isCancelled) return false;
 
-      const { email: userEmail } = await User.findById(orderItem.userId);
-
       const {
         id,
         orderId,
@@ -720,7 +717,7 @@ class OrdersJob extends CommonJob {
         }
 
         // Check if fee/roe changed and handle changes
-        await this.checkPriceChanges(orderItem, roe, userEmail);
+        await this.checkPriceChanges(orderItem, roe);
 
         try {
           const result = await this.executeOrderItemAction(orderItem, auth, hasSignedTx);
@@ -755,7 +752,7 @@ class OrdersJob extends CommonJob {
 
           // Refund order payment for fio action. Do not refund if system sent tokens to user's wallet to execute signed tx
           if (code !== ERROR_CODES.SINGED_TX_XTOKENS_REFUND_SKIP)
-            await this.refundUser(orderItem, errorData, userEmail);
+            await this.refundUser(orderItem, errorData);
         } catch (error) {
           logger.error(`ORDER ITEM PROCESSING ERROR ${orderItem.id}`, error);
         }
