@@ -27,7 +27,6 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
 
       window.bitpay.showInvoice(bitPayInvoiceId);
     }
-    setIsLoadingBitPay(false);
   }, [bitPayInvoiceId]);
 
   const handleBitPayPaymentMessage = useCallback(event => {
@@ -49,6 +48,9 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
         );
       }
     });
+    window.bitpay.onModalWillEnter(function() {
+      setIsLoadingBitPay(false);
+    });
   }, [history, order.id, order.number, isPaid]);
 
   useEffect(() => {
@@ -64,7 +66,11 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
 
   return (
     <div className="d-flex justify-content-center">
-      <BitPayButton onClick={payWithBitPay} loading={isLoadingBitPay} />
+      <BitPayButton
+        onClick={payWithBitPay}
+        loading={isLoadingBitPay}
+        disabled={isLoadingBitPay}
+      />
     </div>
   );
 };

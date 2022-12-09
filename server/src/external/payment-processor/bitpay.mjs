@@ -1,5 +1,4 @@
 import { Client, Env, Currency, Models, Tokens, InvoiceStatus } from 'bitpay-sdk';
-import request from 'request';
 
 import PaymentProcessor from './base.mjs';
 
@@ -9,9 +8,6 @@ import config from '../../config';
 import MathOp from '../../services/math.mjs';
 
 const BITPAY_USER_AGENT = 'Webhook-BitPay support@bitpay.com';
-const BITPAY_BASE_URL = process.env.REACT_APP_IS_BITPAY_TEST_ENV
-  ? Env.TestUrl
-  : Env.ProdUrl;
 
 class BitPay extends PaymentProcessor {
   constructor() {
@@ -171,28 +167,10 @@ class BitPay extends PaymentProcessor {
   }
 
   async cancel(id) {
-    // TODO: CANCEL has issues, make it working
     const bitPayClient = await this.getBitPayClient();
-    const url = `${BITPAY_BASE_URL}invoices/${id}?token=${process.env.BITPAY_API_TOKEN}`;
 
-    const xHeaders = await bitPayClient._RESTcli.getSignedHeaders(url);
-
-    const headers = {
-      'X-Accept-Version': '2.0.0',
-      'Content-Type': 'application/json',
-      'X-Identity': xHeaders['x-identity'],
-      'X-Signature': xHeaders['x-signature'],
-    };
-
-    const options = {
-      url,
-      method: 'DELETE',
-      headers: headers,
-      json: true,
-    };
-
-    request(options, function() {
-      // TODO: handle result
+    return await bitPayClient._RESTcli.delete(`invoices/${id}`, {
+      token: process.env.BITPAY_API_TOKEN,
     });
   }
 
