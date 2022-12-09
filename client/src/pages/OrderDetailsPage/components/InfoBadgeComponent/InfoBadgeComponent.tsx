@@ -104,6 +104,13 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
         message = `There was an error during purchase of some items. As a result we have credited ${failedTxsTotalAmount.fioTotalPrice} Tokens (${failedTxsTotalAmount.usdcTotalPrice}) to your wallet. Go to your cart to try purchase using FIO Tokens instead.`;
     }
 
+    if (paymentProvider === PAYMENT_PROVIDER.BITPAY) {
+      message = `There was an error during purchase of some items. As a result we have refunded ${failedTxsTotalAmount.usdcTotalPrice} back to your crypto wallet. Go to your cart to try purchase again.`;
+
+      if (failedTxsTotalCurrency === CURRENCY_CODES.FIO)
+        message = `There was an error during purchase of some items. As a result we have credited ${failedTxsTotalAmount.fioTotalPrice} Tokens (${failedTxsTotalAmount.usdcTotalPrice}) to your wallet. Go to your cart to try purchase using FIO Tokens instead.`;
+    }
+
     if (isFree) {
       message =
         'There was an error during purchase of some items. Click close and try again.';
