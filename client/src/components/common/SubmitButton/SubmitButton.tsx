@@ -14,6 +14,7 @@ type Props = {
   isGreen?: boolean;
   isGreenTeal?: boolean;
   isBlack?: boolean;
+  isCobalt?: boolean;
   withBottomMargin?: boolean;
   withTopMargin?: boolean;
   text?: string | React.ReactNode;
@@ -32,6 +33,7 @@ export const SubmitButton: React.FC<Props> = props => {
     isGreen,
     isGreenTeal,
     isBlack,
+    isCobalt,
     withTopMargin,
     withBottomMargin,
     text,
@@ -54,6 +56,7 @@ export const SubmitButton: React.FC<Props> = props => {
         isGreen && classes.isGreen,
         isGreenTeal && classes.isGreenTeal,
         isBlack && classes.isBlack,
+        isCobalt && classes.isCobalt,
         disabled && classes.disabled,
         loading && classes.loading,
         withTopMargin && classes.topMargin,

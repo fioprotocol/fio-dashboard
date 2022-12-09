@@ -27,13 +27,17 @@
     @include sf-pro-display-thin;
   }
 
-  &.hasRoyalBlueBackground {
-    background-color: $royal-blue;
-    border-color: $royal-blue;
+  &.hasCobaltBackground {
+    background-color: $cobalt;
+    border-color: $cobalt;
 
     &:hover {
-      background-color: $clear-blue;
-      border-color: $clear-blue;
+      background-color: $royal-blue;;
+      border-color: $royal-blue;;
     }
+  }
+
+  &.isTextCentered {
+    justify-content: center;
   }
 }

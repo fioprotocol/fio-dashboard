@@ -18,6 +18,7 @@ import {
 import MathOp from '../services/math.mjs';
 import CommonJob from './job.mjs';
 import Stripe from '../external/payment-processor/stripe';
+import BitPay from '../external/payment-processor/bitpay.mjs';
 
 import sendInsufficientFundsNotification from '../services/fallback-funds-email.mjs';
 import { updateOrderStatus as updateOrderStatusService } from '../services/updateOrderStatus.mjs';
@@ -227,6 +228,12 @@ class OrdersJob extends CommonJob {
           statusNotes = "User's credit card";
           break;
         }
+        case Payment.PROCESSOR.BITPAY: {
+          price = errorData.refundUsdcAmount || orderItemProps.price;
+          currency = orderItemProps.price;
+          statusNotes = "User's crypto";
+          break;
+        }
         default:
           price = fioApi.convertUsdcToFio(orderItemProps.price, orderItemProps.roe);
           nativePrice = fioApi.amountToSUF(price);
@@ -257,6 +264,10 @@ class OrdersJob extends CommonJob {
       switch (payment.processor) {
         case Payment.PROCESSOR.STRIPE: {
           refundTx = await Stripe.refund(payment.externalId, price);
+          break;
+        }
+        case Payment.PROCESSOR.BITPAY: {
+          refundTx = await BitPay.refund(payment.externalId, price);
           break;
         }
         default:

@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "preinstall": "npm i github:barrysteyn/node-scrypt#fb60a8d3c158fe115a624b5ffa7480f3a24b03fb",
     "client:start": "cd ./client && react-app-rewired start",
     "client:build": "cd ./client && react-app-rewired --expose-gc --max-old-space-size=8192 build",
     "client:test": "cd ./client && CI=true react-app-rewired test --env=jsdom",
@@ -103,6 +102,7 @@
     "big.js": "6.2.1",
     "bip39": "3.0.4",
     "bitcoin-address-validation": "2.2.1",
+    "bitpay-sdk": "git@github.com:bitpay/nodejs-bitpay-client#035e3fc9e7534a07c7c4c4d1b263d288e69f08f5",
     "body-parser": "1.20.1",
     "bootstrap": "4.6.2",
     "bree": "8.0.5",

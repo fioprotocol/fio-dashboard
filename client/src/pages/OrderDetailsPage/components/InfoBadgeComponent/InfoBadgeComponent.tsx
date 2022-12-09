@@ -6,6 +6,7 @@ import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import {
   PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
+  PAYMENT_RESULTS_STATUS,
 } from '../../../../constants/purchase';
 import { ERROR_MESSAGES, ERROR_TYPES } from '../../../../constants/errors';
 
@@ -15,6 +16,7 @@ import {
   OrderDetailedTotalCost,
   PaymentCurrency,
   PaymentProvider,
+  PaymentStatus,
   PurchaseTxStatus,
 } from '../../../../types';
 
@@ -24,6 +26,7 @@ const STRIPE_REQUIRES_PAYMENT_ERROR = 'requires_payment_method';
 
 type Props = {
   paymentProvider: PaymentProvider;
+  paymentStatus?: PaymentStatus;
   purchaseStatus: PurchaseTxStatus;
   failedTxsTotalAmount?: OrderDetailedTotalCost;
   failedTxsTotalCurrency?: PaymentCurrency;
@@ -35,6 +38,7 @@ type Props = {
 export const InfoBadgeComponent: React.FC<Props> = props => {
   const {
     paymentProvider,
+    paymentStatus,
     purchaseStatus,
     failedTxsTotalAmount,
     failedTxsTotalCurrency,
@@ -70,6 +74,11 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
     title = 'Canceled Payment';
     badgeUIType = BADGE_TYPES.INFO;
     message = 'Your transaction has been cancelled.';
+
+    if (paymentStatus === PAYMENT_RESULTS_STATUS.EXPIRED) {
+      message =
+        'Your transaction has been cancelled because your payment has been expired';
+    }
   }
 
   // Customize content info badge for Partial status
@@ -95,6 +104,13 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
         message = `There was an error during purchase of some items. As a result we have credited ${failedTxsTotalAmount.fioTotalPrice} Tokens (${failedTxsTotalAmount.usdcTotalPrice}) to your wallet. Go to your cart to try purchase using FIO Tokens instead.`;
     }
 
+    if (paymentProvider === PAYMENT_PROVIDER.BITPAY) {
+      message = `There was an error during purchase of some items. As a result we have refunded ${failedTxsTotalAmount.usdcTotalPrice} back to your crypto wallet. Go to your cart to try purchase again.`;
+
+      if (failedTxsTotalCurrency === CURRENCY_CODES.FIO)
+        message = `There was an error during purchase of some items. As a result we have credited ${failedTxsTotalAmount.fioTotalPrice} Tokens (${failedTxsTotalAmount.usdcTotalPrice}) to your wallet. Go to your cart to try purchase using FIO Tokens instead.`;
+    }
+
     if (isFree) {
       message =
         'There was an error during purchase of some items. Click close and try again.';
@@ -113,8 +129,12 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
     }
 
     // Custom title and message for crypto provider
-    if (paymentProvider === PAYMENT_PROVIDER.CRYPTO) {
-      message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount.fioTotalPrice} Tokens. You can use these tokens to register FIO Crypto Handle or Domain.`;
+    if (paymentProvider === PAYMENT_PROVIDER.BITPAY) {
+      if (failedTxsTotalCurrency === CURRENCY_CODES.FIO) {
+        message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount.fioTotalPrice} Tokens. You can use these tokens to register FIO Crypto Handle or Domain.`;
+      } else {
+        message = `There was an error during purchase. As a result we have refunded the entire amount of order, ${failedTxsTotalAmount.usdcTotalPrice} back to your crypto wallet. Click close and try purchase again.`;
+      }
     }
 
     // Custom title and message for stripe provider

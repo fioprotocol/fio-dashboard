@@ -2,6 +2,7 @@
 /client/build/
 /server/tests/use-case/webhook/webhook-options.json
 notification-content.json
+/secure
 # Package managers:
 lerna-debug.log
 node_modules/
