@@ -213,6 +213,25 @@ export const CART_ITEM_TYPE = {
   DOMAIN_RENEWAL: 'domain_renewal',
   ADD_BUNDLES: 'add_bundles',
 };
+export const CART_ITEM_TYPES_WITH_PERIOD = [
+  CART_ITEM_TYPE.DOMAIN,
+  CART_ITEM_TYPE.DOMAIN_RENEWAL,
+];
+
+export const CART_ITEM_PERIOD_OPTIONS = [
+  {
+    id: '1',
+    name: '1 Year',
+  },
+  {
+    id: '2',
+    name: '2 Years',
+  },
+  {
+    id: '3',
+    name: '3 Years',
+  },
+];
 
 export const DEFAULT_BUNDLE_SET_VALUE = 1;
 export const DEFAULT_BUNDLE_AMOUNT = 100;

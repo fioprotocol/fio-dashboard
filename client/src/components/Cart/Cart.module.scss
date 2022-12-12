@@ -74,6 +74,7 @@
 }
 
 .itemContainer {
+  margin-left: 0 !important;
   color: $dark-jungle-green;
   width: 100%;
   display: flex;
@@ -96,8 +97,18 @@
     font-size: 13px;
   }
 
+  .period {
+    margin: 0 5px;
+
+    > div {
+      min-width: 120px;
+      width: 120px;
+      margin-bottom: 0;
+    }
+  }
+
   .price {
-    margin: 0 1.875rem 0 auto;
+    margin: 0 1.5rem 0 auto;
     flex-shrink: 0;
     font-size: 1em;
     @include proxima-nova-regular;
@@ -288,6 +299,16 @@
 
 .paymentsBlock {
   margin-top: -10px;
+}
+
+.itemWithPeriod {
+  overflow: visible;
+
+  .itemContainer {
+    .itemNameContainer {
+      width: 200px;
+    }
+  }
 }
 
 @keyframes expand {

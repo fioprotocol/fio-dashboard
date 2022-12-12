@@ -42,6 +42,7 @@ export default class OrdersGet extends Base {
         User,
         ReferrerProfile,
       ],
+      order: [[OrderItem, 'id', 'ASC']],
     });
 
     if (!order)
