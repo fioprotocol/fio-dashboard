@@ -25,6 +25,7 @@ const CartPage: React.FC = () => {
     walletBalancesAvailable,
     walletCount,
     deleteItem,
+    setCartItems,
     onPaymentChoose,
   } = useContext();
 
@@ -45,6 +46,7 @@ const CartPage: React.FC = () => {
     walletBalancesAvailable,
     walletCount,
     deleteItem,
+    setCartItems,
   };
 
   const cartAmountProps = {

@@ -3,7 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 import apis from '../../api/index';
 import { toString } from '../../redux/notify/sagas';
 import { waitForAddressRegistered } from '../../util/fio';
-import { setFioName } from '../../utils';
+import { setFioName, sleep } from '../../utils';
 import { log } from '../../util/general';
 
 import {
@@ -16,6 +16,7 @@ import {
 } from '../../constants/errors';
 import {
   CART_ITEM_TYPE,
+  CART_ITEM_TYPES_WITH_PERIOD,
   DEFAULT_BUNDLE_SET_VALUE,
 } from '../../constants/common';
 import { ACTIONS } from '../../constants/fio';
@@ -28,7 +29,6 @@ import {
   RegistrationRegistered,
   AnyObject,
   PurchaseTxStatus,
-  CartItemType,
 } from '../../types';
 
 const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 2000;
@@ -114,12 +114,8 @@ export const register = async ({
   fee,
   cartItemId,
   type,
-}: {
-  fioName: string;
-  fee: number;
-  cartItemId: string;
-  type: CartItemType;
-}): Promise<{
+  iteration = 0,
+}: RegistrationType): Promise<{
   cartItemId: string;
   fioName: string;
   error?: string;
@@ -143,10 +139,16 @@ export const register = async ({
         },
       );
     } else if (type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
+      if (iteration) {
+        await sleep(iteration * TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION);
+      }
       res = await apis.fio.executeActionWithoutKeys(ACTIONS.renewFioDomain, {
         fioDomain: fioName,
         maxFee: fee,
       });
+      res.other = {
+        withPeriod: true,
+      };
     } else {
       res = await apis.fio.register(fioName, fee);
     }
@@ -250,6 +252,25 @@ const makeRegistrationOrder = (
       type: cartItem.type,
     };
 
+    if (
+      CART_ITEM_TYPES_WITH_PERIOD.includes(cartItem.type) &&
+      cartItem.period > 1
+    ) {
+      for (let i = 1; i < cartItem.period; i++) {
+        registrations.push({
+          cartItemId: cartItem.id,
+          fioName: cartItem.domain,
+          fee: fees.domain,
+          type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
+          isFree: false,
+          iteration: i,
+          depended:
+            cartItem.type === CART_ITEM_TYPE.DOMAIN
+              ? { domain: cartItem.domain }
+              : null,
+        });
+      }
+    }
     if (!cartItem.costNativeFio || !cartItem.address) {
       registrations.push(registration);
       continue;
@@ -311,10 +332,14 @@ const handleResponses = (
   for (const response of responses) {
     const responseValue = response.value;
     const existingCartItemErrorIndex = result.errors.findIndex(
-      item => item.cartItemId === responseValue.cartItemId,
+      item =>
+        !responseValue.other?.withPeriod &&
+        item.cartItemId === responseValue.cartItemId,
     );
     const existingCartItemRegisteredIndex = result.registered.findIndex(
-      item => item.cartItemId === responseValue.cartItemId,
+      item =>
+        !responseValue.other?.withPeriod &&
+        item.cartItemId === responseValue.cartItemId,
     );
     if (response.status === 'rejected' || response.value.error) {
       if (existingCartItemErrorIndex > -1) {

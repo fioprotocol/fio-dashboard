@@ -126,7 +126,10 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
     <Form
       onSubmit={handleSubmit}
       mutators={{ setDataMutator }}
-      initialValues={initialValues}
+      initialValues={{
+        ...initialValues,
+        period: '1',
+      }}
       render={(
         formProps: FormRenderProps<FormValuesProps, FormValuesProps>,
       ) => (

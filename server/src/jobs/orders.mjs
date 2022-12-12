@@ -23,6 +23,7 @@ import BitPay from '../external/payment-processor/bitpay.mjs';
 import sendInsufficientFundsNotification from '../services/fallback-funds-email.mjs';
 import { updateOrderStatus as updateOrderStatusService } from '../services/updateOrderStatus.mjs';
 import { getROE } from '../external/roe.mjs';
+import { sleep } from '../tools.mjs';
 import {
   FEES_UPDATE_TIMEOUT_SEC,
   FEES_VAR_KEY,
@@ -40,6 +41,7 @@ const ERROR_CODES = {
   SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
 };
 const MAX_STATUS_NOTES_LENGTH = 200;
+const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 2000;
 
 class OrdersJob extends CommonJob {
   constructor() {
@@ -615,6 +617,9 @@ class OrdersJob extends CommonJob {
         currency: Payment.CURRENCY.USDC,
       });
 
+      if (action === FIO_ACTIONS.renewFioDomain) {
+        await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION);
+      }
       result = await fioApi.executeAction(
         action,
         fioApi.getActionParams({

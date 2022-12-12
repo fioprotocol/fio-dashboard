@@ -82,6 +82,7 @@ export default class WsStatus extends WsBase {
           User,
           ReferrerProfile,
         ],
+        order: [[OrderItem, 'id', 'ASC']],
       });
 
       try {

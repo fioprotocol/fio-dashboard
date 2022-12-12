@@ -8,10 +8,7 @@ import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import CounterContainer from '../CounterContainer/CounterContainer';
 
 import { ROUTES } from '../../constants/routes';
-import {
-  ANALYTICS_EVENT_ACTIONS,
-  CART_ITEM_TYPE,
-} from '../../constants/common';
+import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
 import {
   handleFreeAddressCart,
@@ -155,7 +152,7 @@ const AddressDomainCart: React.FC<Props> = props => {
                     </p>
                   )}
                   <p className={classes.itemName}>
-                    <span>{getCartItemDescriptor(item.type)}</span>
+                    <span>{getCartItemDescriptor(item.type, item.period)}</span>
                   </p>
                   <p className={classes.itemPrice}>
                     <span className="boldText">
@@ -165,9 +162,6 @@ const AddressDomainCart: React.FC<Props> = props => {
                         : `${item.costFio} FIO
                       (${item.costUsdc} USDC)`}
                     </span>{' '}
-                    {item.type === CART_ITEM_TYPE.DOMAIN ? (
-                      <span className={classes.thin}>- annually</span>
-                    ) : null}
                   </p>
                 </div>
 

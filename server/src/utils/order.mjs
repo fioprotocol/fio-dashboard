@@ -5,7 +5,7 @@ import { Wallet } from '../models/Wallet.mjs';
 
 import MathOp from '../services/math.mjs';
 
-import { ERROR_CODES } from '../config/constants';
+import { ERROR_CODES, CART_ITEM_TYPES_WITH_PERIOD } from '../config/constants';
 
 const FREE_PRICE = 'FREE';
 
@@ -162,4 +162,45 @@ export const generateErrBadgeItem = ({ errItems = [], paymentCurrency }) => {
 
     return acc;
   }, {});
+};
+
+export const combineOrderItems = ({ orderItems = [], paymentCurrency }) => {
+  return orderItems
+    .reduce((items, item) => {
+      const existsItem = items.find(orderItem => orderItem.id === item.id);
+      if (CART_ITEM_TYPES_WITH_PERIOD.includes(item.type) && existsItem) {
+        existsItem.period++;
+        existsItem.transaction_ids = [
+          ...(existsItem.transaction_ids || []),
+          item.transaction_id,
+        ];
+        existsItem.fee_collected = new MathOp(existsItem.fee_collected)
+          .add(item.fee_collected)
+          .toNumber();
+        existsItem.costUsdc = new MathOp(existsItem.costUsdc)
+          .add(item.costUsdc)
+          .toNumber();
+        existsItem.priceString = transformOrderItemCostToPriceString({
+          orderItemCostObj: {
+            fioNativeAmount: existsItem.fee_collected,
+            usdcAmount: existsItem.costUsdc,
+            isFree: existsItem.isFree,
+          },
+          paymentCurrency,
+        });
+      } else {
+        if (CART_ITEM_TYPES_WITH_PERIOD.includes(item.type)) {
+          item.period = 1;
+        }
+        items.push(item);
+      }
+
+      return items;
+    }, [])
+    .map(item => ({
+      ...item,
+      action: item.period
+        ? `${item.action} - ${item.period} year${item.period > 1 ? 's' : ''}`
+        : item.action,
+    }));
 };
