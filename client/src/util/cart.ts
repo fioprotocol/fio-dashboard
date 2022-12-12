@@ -3,6 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
+  CART_ITEM_TYPES_WITH_PERIOD,
   CURRENCY_CODES,
 } from '../constants/common';
 import { ACTIONS } from '../constants/fio';
@@ -190,6 +191,60 @@ export const deleteCartItem = ({
   }
 };
 
+export const updateCartItemPeriod = ({
+  id,
+  period,
+  cartItems,
+  setCartItems,
+  roe,
+}: {
+  id?: string;
+  period?: number;
+  cartItems?: CartItem[];
+  setCartItems?: (cartItems: CartItem[]) => void;
+  roe?: number;
+} = {}): void => {
+  const updatedCartItem = cartItems.map(item => {
+    const newItem = {
+      ...item,
+    };
+    if (
+      newItem.id === id &&
+      CART_ITEM_TYPES_WITH_PERIOD.includes(newItem.type) &&
+      newItem.period !== period
+    ) {
+      const periodDiff = Math.abs(period - newItem.period);
+      fireAnalyticsEvent(
+        newItem.period < period
+          ? ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART
+          : ANALYTICS_EVENT_ACTIONS.REMOVE_ITEM_FROM_CART,
+        getCartItemsDataForAnalytics([
+          {
+            ...item,
+            type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
+            period: periodDiff,
+            costUsdc: convertFioPrices(
+              new MathOp(newItem.costNativeFio).mul(periodDiff).toNumber(),
+              roe,
+            ).usdc,
+          },
+        ]),
+      );
+
+      const fioPrices = convertFioPrices(
+        new MathOp(newItem.costNativeFio).mul(period).toNumber(),
+        roe,
+      );
+      newItem.costFio = fioPrices.fio;
+      newItem.costUsdc = fioPrices.usdc;
+      newItem.period = period;
+    }
+
+    return newItem;
+  });
+  setCartItems(updatedCartItem);
+};
+
 export const getActionByCartItem = (
   type: CartItemType,
   address: string,
@@ -210,34 +265,63 @@ export const cartItemsToOrderItems = (
   prices: Prices,
   roe: number,
 ) => {
-  return cartItems.map(
-    ({ id, type, address, domain, costNativeFio, hasCustomDomain }) => {
-      const data: {
-        hasCustomDomain?: boolean;
-        hasCustomDomainFee?: number;
-        cartItemId: string;
-      } = {
-        cartItemId: id,
-      };
-
-      if (hasCustomDomain) {
-        data.hasCustomDomain = hasCustomDomain;
-        data.hasCustomDomainFee = new MathOp(costNativeFio)
-          .sub(prices.nativeFio.address)
-          .toNumber();
-      }
-
-      return {
-        action: getActionByCartItem(type, address),
+  return cartItems
+    .map(
+      ({
+        id,
+        type,
         address,
         domain,
-        nativeFio: `${costNativeFio || 0}`,
-        price: convertFioPrices(costNativeFio || 0, roe).usdc,
-        priceCurrency: CURRENCY_CODES.USDC,
-        data,
-      };
-    },
-  );
+        costNativeFio,
+        hasCustomDomain,
+        period,
+      }) => {
+        const data: {
+          hasCustomDomain?: boolean;
+          hasCustomDomainFee?: number;
+          cartItemId: string;
+          period?: number;
+        } = {
+          cartItemId: id,
+        };
+
+        if (hasCustomDomain) {
+          data.hasCustomDomain = hasCustomDomain;
+          data.hasCustomDomainFee = new MathOp(costNativeFio)
+            .sub(prices.nativeFio.address)
+            .toNumber();
+        }
+
+        const item = {
+          action: getActionByCartItem(type, address),
+          address,
+          domain,
+          nativeFio: `${costNativeFio || 0}`,
+          price: convertFioPrices(costNativeFio || 0, roe).usdc,
+          priceCurrency: CURRENCY_CODES.USDC,
+          data,
+        };
+        if (CART_ITEM_TYPES_WITH_PERIOD.includes(type) && period > 1) {
+          const items = [item];
+          const nativeFio = prices.nativeFio.renewDomain || costNativeFio;
+          for (let i = 1; i < period; i++) {
+            items.push({
+              action: ACTIONS.renewFioDomain,
+              address,
+              domain,
+              nativeFio: `${nativeFio || 0}`,
+              price: convertFioPrices(nativeFio || 0, roe).usdc,
+              priceCurrency: CURRENCY_CODES.USDC,
+              data,
+            });
+          }
+          return items;
+        }
+
+        return item;
+      },
+    )
+    .flat();
 };
 
 export const totalCost = (
@@ -261,9 +345,12 @@ export const totalCost = (
         .filter(item => item.costNativeFio)
         .reduce<Record<string, number>>((acc, item) => {
           if (!acc.costNativeFio) acc.costNativeFio = 0;
+          const nativeFio = new MathOp(item.costNativeFio || 0)
+            .mul(item.period || 1)
+            .toNumber();
           return {
             costNativeFio: new MathOp(acc.costNativeFio)
-              .add(item.costNativeFio || 0)
+              .add(nativeFio)
               .toNumber(),
           };
         }, {});
@@ -281,7 +368,14 @@ export const cartIsRelative = (
   cartItems: CartItem[],
   orderItems: OrderItem[],
 ): boolean => {
-  if (cartItems.length !== orderItems.length) return false;
+  const cartItemsLength = cartItems.reduce(
+    (length, item) =>
+      CART_ITEM_TYPES_WITH_PERIOD.includes(item.type) && item.period > 1
+        ? length + item.period
+        : length + 1,
+    0,
+  );
+  if (cartItemsLength !== orderItems.length) return false;
 
   for (const cartItem of cartItems) {
     if (
@@ -296,6 +390,13 @@ export const cartIsRelative = (
   return true;
 };
 
-export const getCartItemDescriptor = (type: CartItemType): string => {
-  return CART_ITEM_DESCRIPTOR[type];
+export const getCartItemDescriptor = (
+  type: CartItemType,
+  period?: number,
+): string => {
+  let descriptor = CART_ITEM_DESCRIPTOR[type];
+  if (CART_ITEM_TYPES_WITH_PERIOD.includes(type) && period) {
+    descriptor = `${descriptor} - ${period} year${period > 1 ? 's' : ''}`;
+  }
+  return descriptor;
 };

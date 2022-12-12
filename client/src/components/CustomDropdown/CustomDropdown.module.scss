@@ -68,6 +68,17 @@
     background-color: $bright-violet;
   }
 
+  &.isDark {
+    background-color: $black-cow;
+    .placeholder {
+      color: $white;
+    }
+
+    svg {
+      color: $white;
+    }
+  }
+
   &.isSimple {
     box-shadow: none;
   }

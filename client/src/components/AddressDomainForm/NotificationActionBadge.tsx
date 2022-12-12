@@ -3,12 +3,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import { Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
+import { Field } from 'react-final-form';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
+import Input from '../Input/Input';
 
 import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
+  CART_ITEM_TYPES_WITH_PERIOD,
+  CART_ITEM_PERIOD_OPTIONS,
 } from '../../constants/common';
 
 import { isFreeDomain, compose, FIO_ADDRESS_DELIMITER } from '../../utils';
@@ -47,7 +51,7 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
     isLoading,
   } = props;
 
-  const { address, domain: domainName } = values || {};
+  const { address, domain: domainName, period: periodValue } = values || {};
   const {
     nativeFio: { address: natvieFioAddressPrice, domain: nativeFioDomainPrice },
   } = prices;
@@ -65,6 +69,8 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
     : (address && hasCustomDomain) || hasOnlyDomain
     ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
     : CART_ITEM_TYPE.ADDRESS;
+  const shouldShowPeriod = CART_ITEM_TYPES_WITH_PERIOD.includes(itemType);
+  const period = shouldShowPeriod ? +periodValue || 1 : 1;
 
   let costNativeFio = 0;
 
@@ -80,7 +86,10 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
     costNativeFio = currentCartItem.costNativeFio;
   }
 
-  const fioPrices = convertFioPrices(costNativeFio, roe);
+  const fioPrices = convertFioPrices(
+    new MathOp(costNativeFio).mul(period).toNumber(),
+    roe,
+  );
 
   const costFio = fioPrices.fio;
   const costUsdc = fioPrices.usdc;
@@ -95,6 +104,7 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
 
     const newCartItem: CartItem = {
       ...values,
+      period,
       type: itemType,
       id,
       allowFree: isFreeDomain({ domains, domain: domainName }),
@@ -120,7 +130,10 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
       ];
       setCartItems(newCartItems);
     } else {
-      const addItemFioPrices = convertFioPrices(newCartItem.costNativeFio, roe);
+      const addItemFioPrices = convertFioPrices(
+        new MathOp(newCartItem.costNativeFio).mul(period).toNumber(),
+        roe,
+      );
       newCartItem.costFio = addItemFioPrices.fio;
       newCartItem.costUsdc = addItemFioPrices.usdc;
       addItem(newCartItem);
@@ -131,7 +144,11 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
     );
   };
   return (
-    <Badge type={BADGE_TYPES.SIMPLE} show={showAvailable}>
+    <Badge
+      type={BADGE_TYPES.SIMPLE}
+      show={showAvailable}
+      className={showAvailable && classes.showOverflow}
+    >
       <div
         className={classnames(
           classes.addressContainer,
@@ -152,9 +169,20 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
             )}
           </span>
           <span className={classes.descriptor}>
-            {getCartItemDescriptor(itemType)}
+            {getCartItemDescriptor(itemType, shouldShowPeriod ? period : null)}
           </span>
         </p>
+        {shouldShowPeriod && (
+          <p className={classes.period}>
+            <Field
+              type="dropdown"
+              name="period"
+              component={Input}
+              options={CART_ITEM_PERIOD_OPTIONS}
+              isDark
+            />
+          </p>
+        )}
         <p className={classes.price}>
           {isFree && !hasCustomDomain ? (
             'FREE'

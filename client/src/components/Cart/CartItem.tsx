@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
 import Amount from '../common/Amount';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
+import CustomDropdown from '../CustomDropdown';
 
-import { CURRENCY_CODES } from '../../constants/common';
+import {
+  CART_ITEM_PERIOD_OPTIONS,
+  CART_ITEM_TYPES_WITH_PERIOD,
+  CURRENCY_CODES,
+} from '../../constants/common';
 
 import { getCartItemDescriptor } from '../../util/cart';
 
@@ -17,6 +22,8 @@ type Props = {
   item: CartItemType;
   primaryCurrency?: PaymentCurrency;
   onDelete?: (id: string) => void;
+  onUpdatePeriod?: (id: string, period: number) => void;
+  isPeriodEditable?: boolean;
 };
 
 type CartItemProps = {
@@ -54,7 +61,13 @@ const CartItemPrice = (props: CartItemProps) => {
 };
 
 const CartItem: React.FC<Props> = props => {
-  const { item, primaryCurrency = CURRENCY_CODES.FIO, onDelete } = props;
+  const {
+    item,
+    primaryCurrency = CURRENCY_CODES.FIO,
+    onDelete,
+    onUpdatePeriod,
+    isPeriodEditable = false,
+  } = props;
 
   const {
     address,
@@ -64,11 +77,25 @@ const CartItem: React.FC<Props> = props => {
     costNativeFio,
     showBadge,
     hasCustomDomain,
+    period,
+    type,
   } = item;
+  const shouldShowPeriod =
+    isPeriodEditable && CART_ITEM_TYPES_WITH_PERIOD.includes(type);
+  const onPeriodChange = useCallback(
+    (value: string) => {
+      onUpdatePeriod && onUpdatePeriod(item.id, +value);
+    },
+    [item, onUpdatePeriod],
+  );
 
   return (
     <>
-      <Badge show type={BADGE_TYPES.WHITE}>
+      <Badge
+        show
+        type={BADGE_TYPES.WHITE}
+        className={shouldShowPeriod && classes.itemWithPeriod}
+      >
         <div className={classes.itemContainer}>
           <div className={classes.itemNameContainer}>
             {item.address ? (
@@ -80,9 +107,19 @@ const CartItem: React.FC<Props> = props => {
               <span className="boldText">{domain && domain}</span>
             )}
             <span className={classes.descriptor}>
-              {getCartItemDescriptor(item.type)}
+              {getCartItemDescriptor(item.type, item.period)}
             </span>
           </div>
+          {shouldShowPeriod && (
+            <div className={classes.period}>
+              <CustomDropdown
+                value={period.toString()}
+                options={CART_ITEM_PERIOD_OPTIONS}
+                onChange={onPeriodChange}
+                isDark
+              />
+            </div>
+          )}
           <p
             className={classnames(
               classes.price,
