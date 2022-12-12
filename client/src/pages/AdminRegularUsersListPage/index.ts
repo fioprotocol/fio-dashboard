@@ -1,3 +1,1 @@
-import AdminRegularUsersList from './AdminRegularUsersList';
-
-export default AdminRegularUsersList;
+export { default } from './AdminRegularUsersList';

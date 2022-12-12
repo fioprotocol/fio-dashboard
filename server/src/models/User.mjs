@@ -89,6 +89,7 @@ export class User extends Base {
         'refProfile',
         'affiliateProfile',
         'createdAt',
+        'timeZone',
       ],
     };
 

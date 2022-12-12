@@ -317,6 +317,8 @@ export type User = {
     deviceDescription?: string;
     status: string;
   }[];
+  createdAt: string;
+  timeZone: string;
   refProfile: { code?: string } | null;
   affiliateProfile: { code?: string; tpid?: string } | null;
 };

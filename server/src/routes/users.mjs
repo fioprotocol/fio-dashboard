@@ -23,7 +23,7 @@ export default {
   setRecovery: makeServiceRunner(UsersSetRecovery, req => req.body),
   resendRecovery: makeServiceRunner(UsersResendRecovery, req => req.body),
   resendEmailConfirm: makeServiceRunner(UsersResendEmailConfirm, req => req.body),
-  list: makeServiceRunner(UsersList),
+  list: makeServiceRunner(UsersList, req => req.query),
   show: makeServiceRunner(ShowInfo, req => req.params),
   freeAddress: makeServiceRunner(FreeAddressRegistered, req => req.params),
   updateEmailRequest: makeServiceRunner(UsersUpdateEmailRequest, req => req.body),
