@@ -150,3 +150,19 @@ export const getPartnersList = (
   types: [GET_PARTNERS_REQUEST, GET_PARTNERS_SUCCESS, GET_PARTNERS_FAILURE],
   promise: (api: Api) => api.admin.partnersList(limit, offset),
 });
+
+export const GET_REGULAR_USERS_REQUEST = `${prefix}/GET_REGULAR_USERS_REQUEST`;
+export const GET_REGULAR_USERS_SUCCESS = `${prefix}/GET_REGULAR_USERS_SUCCESS`;
+export const GET_REGULAR_USERS_FAILURE = `${prefix}/GET_REGULAR_USERS_FAILURE`;
+
+export const getRegularUsersList = (
+  limit = DEFAULT_LIMIT,
+  offset = DEFAULT_OFFSET,
+): CommonPromiseAction => ({
+  types: [
+    GET_REGULAR_USERS_REQUEST,
+    GET_REGULAR_USERS_SUCCESS,
+    GET_REGULAR_USERS_FAILURE,
+  ],
+  promise: (api: Api) => api.admin.usersList(limit, offset),
+});

@@ -1,7 +1,7 @@
 import { prefix } from './actions';
 import { ReduxState } from '../init';
 
-import { AdminUser, AdminUserProfile, OrderDetails } from '../../types';
+import { AdminUser, AdminUserProfile, OrderDetails, User } from '../../types';
 
 export const loading = (state: ReduxState): boolean => state[prefix].loading;
 export const adminUsersList = (state: ReduxState): AdminUser[] =>
@@ -24,3 +24,5 @@ export const adminSearch = (state: ReduxState): AdminUserProfile =>
   state[prefix].adminSearch;
 export const partnersList = (state: ReduxState): AdminUserProfile =>
   state[prefix].partnersList;
+export const regularUsersList = (state: ReduxState): User[] =>
+  state[prefix].regularUsersList;
