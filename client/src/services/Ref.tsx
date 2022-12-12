@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { RouterProps, withRouter } from 'react-router-dom';
@@ -60,6 +60,15 @@ const Ref = (
 
   const isRefLink = IS_REFERRAL_PROFILE_PATH.test(pathname) || query.ref;
 
+  const redirectToDomainLandingPage = useCallback(
+    (refType: string) => {
+      if (refType === REF_PROFILE_TYPE.AFFILIATE && isRefLink) {
+        history.push(ROUTES.FIO_DOMAIN);
+      }
+    },
+    [history, isRefLink],
+  );
+
   useEffect(() => {
     if (
       isAuthenticated &&
@@ -83,19 +92,15 @@ const Ref = (
         setCookies(REFERRAL_PROFILE_COOKIE_NAME, refProfileInfo.code, {
           expires: REFERRAL_PROFILE_COOKIE_EXPIRATION_PEROID,
         });
-        if (
-          refProfileInfo?.type === REF_PROFILE_TYPE.AFFILIATE &&
-          (!cookieRefProfileCode ||
-            refProfileInfo.code !== cookieRefProfileCode)
-        ) {
-          history.push(ROUTES.FIO_DOMAIN);
-        }
+        redirectToDomainLandingPage(refProfileInfo?.type);
       } else {
         // Update refProfileCode cookies and set ref profile. Works for non auth user and not ref link
         if (!isRefLink) {
           getInfo(cookieRefProfileCode);
         }
       }
+    } else {
+      redirectToDomainLandingPage(refProfileInfo?.type);
     }
   }, [
     refProfileInfo?.code,
@@ -103,7 +108,7 @@ const Ref = (
     isAuthenticated,
     isRefLink,
     getInfo,
-    history,
+    redirectToDomainLandingPage,
   ]);
 
   useEffect(() => {
