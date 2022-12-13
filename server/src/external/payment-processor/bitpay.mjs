@@ -7,6 +7,8 @@ import config from '../../config';
 
 import MathOp from '../../services/math.mjs';
 
+import logger from '../../logger.mjs';
+
 const BITPAY_USER_AGENT = 'Webhook-BitPay support@bitpay.com';
 
 class BitPay extends PaymentProcessor {
@@ -19,7 +21,9 @@ class BitPay extends PaymentProcessor {
     if (!this.bitPayClient) {
       const tokens = Tokens;
       tokens.merchant = process.env.BITPAY_API_TOKEN;
-
+      logger.info('ENV', process.env.REACT_APP_IS_BITPAY_TEST_ENV ? Env.Test : Env.Prod);
+      logger.info('PRIVVATE KEY', process.env.BITPAY_PRIVATE_KEY);
+      logger.info('TOKENS', tokens);
       this.bitPayClient = await new Client(
         null,
         process.env.REACT_APP_IS_BITPAY_TEST_ENV ? Env.Test : Env.Prod,
@@ -145,9 +149,9 @@ class BitPay extends PaymentProcessor {
    */
   async create(options) {
     const { amount, buyer, currency = Currency.USD, orderNumber } = options;
-
+    logger.info('OPTIONS', options);
     const bitPayClient = await this.getBitPayClient();
-
+    logger.info('BITPAY CLIENT', bitPayClient);
     const host = config.mainUrl;
 
     const invoiceData = new Models.Invoice(amount, currency);
@@ -155,9 +159,9 @@ class BitPay extends PaymentProcessor {
     invoiceData.buyer = { email: buyer };
     invoiceData.redirectURL = `${host}/order-details?orderNumber=${orderNumber}`;
     invoiceData.notificationURL = `${host}/api/v1/payments/webhook/`;
-
+    logger.info('INVOICE DATA', invoiceData);
     const paymentIntent = await bitPayClient.CreateInvoice(invoiceData);
-
+    logger.info('PAYMENT INTENT', paymentIntent);
     return {
       externalPaymentId: paymentIntent.id,
       secret: paymentIntent.billId,
