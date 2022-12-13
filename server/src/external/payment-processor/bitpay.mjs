@@ -3,7 +3,6 @@ import { Client, Env, Currency, Models, Tokens, InvoiceStatus } from 'bitpay-sdk
 import PaymentProcessor from './base.mjs';
 
 import { PAYMENT_EVENT_STATUSES, PAYMENTS_STATUSES } from '../../config/constants.js';
-import config from '../../config';
 
 import MathOp from '../../services/math.mjs';
 
@@ -148,7 +147,7 @@ class BitPay extends PaymentProcessor {
 
     const bitPayClient = await this.getBitPayClient();
 
-    const host = config.mainUrl;
+    const host = process.env.API_BASE_URL;
 
     const invoiceData = new Models.Invoice(amount, currency);
     invoiceData.orderId = orderNumber;
