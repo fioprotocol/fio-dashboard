@@ -22,7 +22,7 @@ class BitPay extends PaymentProcessor {
 
       this.bitPayClient = await new Client(
         null,
-        process.env.REACT_APP_IS_BITPAY_TEST_ENV ? Env.Test : Env.Prod,
+        process.env.IS_BITPAY_TEST_ENV ? Env.Test : Env.Prod,
         process.env.BITPAY_PRIVATE_KEY,
         tokens,
       );
@@ -153,8 +153,8 @@ class BitPay extends PaymentProcessor {
     const invoiceData = new Models.Invoice(amount, currency);
     invoiceData.orderId = orderNumber;
     invoiceData.buyer = { email: buyer };
-    invoiceData.redirectURL = `${host}/order-details?orderNumber=${orderNumber}`;
-    invoiceData.notificationURL = `${host}/api/v1/payments/webhook/`;
+    invoiceData.redirectURL = `${host}order-details?orderNumber=${orderNumber}`;
+    invoiceData.notificationURL = `${host}api/v1/payments/webhook/`;
 
     const paymentIntent = await bitPayClient.CreateInvoice(invoiceData);
 
