@@ -91,7 +91,10 @@ export const removeFreeCart = ({
       item.showBadge = true;
     }
 
-    const fioPrices = convertFioPrices(item.costNativeFio || 0, roe);
+    const fioPrices = convertFioPrices(
+      new MathOp(item.costNativeFio).mul(item.period || 1).toNumber() || 0,
+      roe,
+    );
     item.costFio = fioPrices.fio;
     item.costUsdc = fioPrices.usdc;
 
@@ -180,6 +183,7 @@ export const deleteCartItem = ({
 
         retObj.costFio = fioPrices.fio;
         retObj.costUsdc = fioPrices.usdc;
+        delete retObj.period;
 
         const retData = updCart.map(item =>
           item.id === firstMatchElem.id ? retObj : item,

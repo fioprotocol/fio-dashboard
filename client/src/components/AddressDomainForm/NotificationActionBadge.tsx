@@ -121,6 +121,7 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
       const recalcFioPrices = convertFioPrices(newCartItem.costNativeFio, roe);
       newCartItem.costFio = recalcFioPrices.fio;
       newCartItem.costUsdc = recalcFioPrices.usdc;
+      delete newCartItem.period;
 
       const newCartItems = [
         ...cartItems.filter(
