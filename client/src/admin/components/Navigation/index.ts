@@ -3,16 +3,10 @@ import { createStructuredSelector } from 'reselect';
 
 import { Navigation } from './Navigation';
 
-import { isContainedFlow } from '../../redux/containedFlow/selectors';
-import {
-  isNotActiveUser,
-  isAffiliateEnabled,
-} from '../../redux/profile/selectors';
+import { isNotActiveAdminUser } from '../../../redux/profile/selectors';
 
 const selector = createStructuredSelector({
-  isNotActiveUser,
-  isContainedFlow,
-  isAffiliateEnabled,
+  isNotActiveAdminUser,
 });
 
 export default connect(selector)(Navigation);

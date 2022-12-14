@@ -17,6 +17,7 @@ export default {
     },
   },
   mainUrl: process.env.BASE_URL,
+  adminUrl: process.env.ADMIN_BASE_URL,
   supportLink: process.env.FIOPROTOCOL_SUPPORT_LINK,
   mail: {
     mailchimpKey: process.env.MAILCHIMP_KEY,

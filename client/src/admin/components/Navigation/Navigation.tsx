@@ -4,30 +4,25 @@ import { Nav } from 'react-bootstrap';
 import { Location } from 'history';
 import classnames from 'classnames';
 
-import { ROUTES, TOKENS_TAB_ROUTES } from '../../constants/routes';
+import { ADMIN_ROUTES } from '../../../constants/routes';
 
-import { LINK_LABELS, LINKS } from '../../constants/labels';
+import { LINK_LABELS, LINKS } from '../../../constants/labels';
 
 import classes from './Navigation.module.scss';
 
-const userNavItems: string[] = [
-  LINKS.FIO_ADDRESSES,
-  LINKS.FIO_DOMAINS,
-  LINKS.TOKENS,
-  LINKS.FIO_AFFILIATE_PROGRAM_LANDING,
-];
-const userWithAffiliateNavItems: string[] = [
-  LINKS.FIO_ADDRESSES,
-  LINKS.FIO_DOMAINS,
-  LINKS.TOKENS,
-  LINKS.FIO_AFFILIATE_PROGRAM_ENABLED,
+const adminNavItems: string[] = [
+  LINKS.ADMIN_HOME,
+  LINKS.ADMIN_ORDERS,
+  LINKS.ADMIN_ACCOUNTS,
+  LINKS.ADMIN_PARTNERS,
+  LINKS.ADMIN_REGULAR_USERS,
+  LINKS.ADMIN_USERS,
+  LINKS.ADMIN_PROFILE,
 ];
 
 type Props = {
-  isNotActiveUser: boolean;
-  isContainedFlow: boolean;
+  isNotActiveAdminUser: boolean;
   isOnSide?: boolean;
-  isAffiliateEnabled: boolean;
   closeMenu?: () => void;
 };
 
@@ -38,11 +33,7 @@ type RenderNavItemsProps = {
 };
 
 const isActiveTab = (location: Location, navItem: string) => {
-  if (ROUTES[navItem] === ROUTES.TOKENS && location?.pathname !== ROUTES.HOME) {
-    const regexp = new RegExp(location?.pathname.split('/')[1]); //get first part of path /fio-wallet/ /send/ /stake/ etc
-    return TOKENS_TAB_ROUTES.some(path => regexp.test(path));
-  }
-  return location?.pathname === ROUTES[navItem];
+  return location?.pathname === ADMIN_ROUTES[navItem];
 };
 
 const RenderNavItems: React.FC<RenderNavItemsProps> = props => {
@@ -62,7 +53,7 @@ const RenderNavItems: React.FC<RenderNavItemsProps> = props => {
           >
             <Nav.Link
               as={Link}
-              to={ROUTES[item]}
+              to={ADMIN_ROUTES[item]}
               className={classes.sideLink}
               data-content={LINK_LABELS[item]}
               eventKey={i}
@@ -79,20 +70,9 @@ const RenderNavItems: React.FC<RenderNavItemsProps> = props => {
 };
 
 export const Navigation: React.FC<Props> | null = props => {
-  const {
-    isOnSide,
-    isNotActiveUser,
-    isContainedFlow,
-    isAffiliateEnabled,
-    closeMenu,
-  } = props;
+  const { isOnSide, isNotActiveAdminUser, closeMenu } = props;
 
-  if (isContainedFlow) return null;
-  if (isNotActiveUser) return null;
-
-  const navItemsList = isAffiliateEnabled
-    ? userWithAffiliateNavItems
-    : userNavItems;
+  if (isNotActiveAdminUser) return null;
 
   return (
     <Nav
@@ -101,7 +81,7 @@ export const Navigation: React.FC<Props> | null = props => {
     >
       <RenderNavItems
         closeMenu={closeMenu}
-        navItemsList={navItemsList}
+        navItemsList={adminNavItems}
         isOnSide={isOnSide}
       />
     </Nav>

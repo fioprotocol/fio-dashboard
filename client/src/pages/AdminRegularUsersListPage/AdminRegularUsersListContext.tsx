@@ -49,7 +49,7 @@ export const useContext = (): UseContextProps => {
   const onClick = useCallback(
     (regularUserEmail: string) => {
       history.push({
-        pathname: ROUTES.ADMIN_REGULAR_USER_DETAIS,
+        pathname: ROUTES.ADMIN_REGULAR_USER_DETAILS,
         search: `${QUERY_PARAMS_NAMES.USER_ID}=${regularUserEmail}`,
       });
     },

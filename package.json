@@ -12,6 +12,8 @@
     "server:dev": "npm run migrate && nodemon -L --inspect --es-module-specifier-resolution=node --watch server server/src/index.mjs",
     "widget:as:start": "export REACT_APP_WIDGET=crypto-handle-selection && npm run client:start",
     "widget:as:build": "export REACT_APP_WIDGET=crypto-handle-selection && npm run client:build && bash -c 'source ./bin/build-widget.sh'",
+    "admin:as:start": "export REACT_APP_API_BASE_URL=http://localhost:3001/ PORT=3001 REACT_APP_IS_ADMIN=true && npm run client:start",
+    "admin:as:build": "export REACT_APP_IS_ADMIN=true && npm run client:build",
     "lint": "eslint ./server/src ./client/src --ext js,mjs,ts,tsx",
     "lint:fix": "eslint ./server/src ./client/src --ext js,mjs,ts,tsx --fix",
     "server:prod": "npm run migrate && node --es-module-specifier-resolution=node server/src/index.mjs",

@@ -39,10 +39,11 @@ import { isNewUser as isNewUserSelector } from './selectors';
 
 import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
 import { ANALYTICS_EVENT_ACTIONS, USER_STATUSES } from '../../constants/common';
-import { ROUTES } from '../../constants/routes';
+import { ADMIN_ROUTES, ROUTES } from '../../constants/routes';
 
 import { fireAnalyticsEvent } from '../../util/analytics';
 import { Api } from '../../api';
+import { Api as AdminApi } from '../../admin/api';
 
 import { FioWalletDoublet, PrivateRedirectLocationState } from '../../types';
 import { Action } from '../types';
@@ -156,43 +157,46 @@ export function* nonceSuccess(): Generator {
   });
 }
 
-export function* adminLogoutSuccess(history: History, api: Api): Generator {
+export function* adminLogoutSuccess(
+  history: History,
+  api: AdminApi,
+): Generator {
   yield takeEvery(ADMIN_LOGOUT_SUCCESS, function(action: Action) {
     api.client.removeAdminToken();
 
     const { redirect } = action;
 
     if (redirect) history.push(redirect, {});
-    if (!redirect) history.replace(ROUTES.ADMIN_LOGIN, {});
+    if (!redirect) history.replace(ADMIN_ROUTES.ADMIN_LOGIN, {});
   });
 }
 
-export function* adminLoginSuccess(history: History, api: Api): Generator {
+export function* adminLoginSuccess(history: History, api: AdminApi): Generator {
   yield takeEvery(ADMIN_LOGIN_SUCCESS, function*(action: Action) {
     api.client.setAdminToken(action.data.jwt);
 
     yield put<Action>(loadAdminProfile());
 
-    history.push(ROUTES.ADMIN_HOME);
+    history.push(ADMIN_ROUTES.ADMIN_HOME);
   });
 }
 
-export function* adminConfirmSuccess(history: History, api: Api): Generator {
+export function* adminConfirmSuccess(
+  history: History,
+  api: AdminApi,
+): Generator {
   yield takeEvery(CONFIRM_ADMIN_EMAIL_SUCCESS, function*(action: Action) {
     api.client.setAdminToken(action.data.jwt);
 
     yield put<Action>(loadAdminProfile());
 
-    history.push(ROUTES.ADMIN_HOME);
+    history.push(ADMIN_ROUTES.ADMIN_HOME);
   });
 }
 
-export function* adminResetPasswordSuccess(
-  history: History,
-  api: Api,
-): Generator {
+export function* adminResetPasswordSuccess(history: History): Generator {
   yield takeEvery(RESET_ADMIN_PASSWORD_SUCCESS, function(action: Action) {
-    history.replace(ROUTES.ADMIN_LOGIN, {});
+    history.replace(ADMIN_ROUTES.ADMIN_LOGIN, {});
   });
 }
 
