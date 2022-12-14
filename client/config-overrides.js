@@ -15,6 +15,12 @@ module.exports = {
         `src/landing-pages/landing-page-${process.env.REACT_APP_LANDING_PAGE}-index.ts`
       );
     }
+    if (process.env.REACT_APP_IS_ADMIN) {
+      config.entry = path.resolve(
+        __dirname,
+        `src/admin/index.ts`
+      );
+    }
     config.resolve.alias = {
       ...config.resolve.alias,
       "@ledgerhq/devices/hid-framing": "@ledgerhq/devices/lib-es/hid-framing",
@@ -53,6 +59,18 @@ module.exports = {
         `build/${process.env.REACT_APP_LANDING_PAGE}`
       );
     }
+
+    if (process.env.REACT_APP_IS_ADMIN) {
+      paths.appHtml = path.resolve(
+        __dirname,
+        `public/admin-index.html`
+      );
+      paths.appBuild = path.resolve(
+        __dirname,
+        `build/admin`
+      );
+    }
+
     return paths;
   },
 };

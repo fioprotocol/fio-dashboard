@@ -6,21 +6,6 @@ const ROUTES: { [route: string]: string } = {
   SIGN_IN: '/signin',
   RESET_PASSWORD: '/reset-password',
 
-  ADMIN_HOME: '/admin',
-  ADMIN_USERS: '/admin/users',
-  ADMIN_ORDERS: '/admin/orders',
-  ADMIN_LOGIN: '/admin/login',
-  ADMIN_CONFIRM_EMAIL: '/confirm-admin-email', // ?hash=&email=
-  ADMIN_CONFIRM_EMAIL_OLD: '/confirm-admin-email/:hash', // ?email=
-  ADMIN_RESET_PASSWORD: '/reset-admin-password', // ?hash=&email=
-  ADMIN_RESET_PASSWORD_OLD: '/reset-admin-password/:hash', // ?email=
-  ADMIN_REGULAR_USERS: '/admin/regular-users',
-  ADMIN_REGULAR_USER_DETAIS: '/admin/regular-user-details', // ?userId=
-  ADMIN_PROFILE: '/admin/profile',
-  ADMIN_ACCOUNTS: '/admin/accounts',
-  ADMIN_PARTNERS: '/admin/partners',
-  ADMIN_SEARCH_RESULT: '/admin/search-result',
-
   CONFIRM_EMAIL: '/confirm-email', // ?hash=
   CONFIRM_EMAIL_OLD: '/confirm-email/:hash', // ?refCode= (not required)
   CONFIRM_EMAIL_RESULT: '/confirm-email-result',
@@ -130,7 +115,22 @@ const ROUTES: { [route: string]: string } = {
   WRAP_STATUS_UNWRAP_DOMAINS: '/unwrapDomains',
 };
 
-export { ROUTES };
+const ADMIN_ROUTES: { [route: string]: string } = {
+  ADMIN_HOME: '/',
+  ADMIN_USERS: '/users',
+  ADMIN_ORDERS: '/orders',
+  ADMIN_LOGIN: '/login',
+  ADMIN_CONFIRM_EMAIL: '/confirm-email', // ?hash=&email=
+  ADMIN_RESET_PASSWORD: '/reset-password', // ?hash=&email=
+  ADMIN_REGULAR_USERS: '/regular-users',
+  ADMIN_REGULAR_USER_DETAILS: '/admin/regular-user-details', // ?userId=
+  ADMIN_PROFILE: '/profile',
+  ADMIN_ACCOUNTS: '/accounts',
+  ADMIN_PARTNERS: '/partners',
+  ADMIN_SEARCH_RESULT: '/search-result',
+};
+
+export { ROUTES, ADMIN_ROUTES };
 
 export const TOKENS_TAB_ROUTES: string[] = [
   ROUTES.TOKENS,

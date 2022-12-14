@@ -21,7 +21,7 @@ import { showGenericErrorModal } from '../modal/actions';
 import { showGenericError as getShowGenericError } from '../modal/selectors';
 
 import { ErrorData } from './constants';
-import { ROUTES } from '../../constants/routes';
+import { ADMIN_ROUTES, ROUTES } from '../../constants/routes';
 
 import { Action } from '../types';
 
@@ -70,7 +70,7 @@ export function* notify(history: History): Generator {
       action.error.fields.token === 'WRONG_TOKEN'
     ) {
       if (action.type === ADMIN_PROFILE_FAILURE) {
-        yield put<Action>(adminLogout({ history }, ROUTES.ADMIN_LOGIN));
+        yield put<Action>(adminLogout({ history }, ADMIN_ROUTES.ADMIN_LOGIN));
       } else yield put<Action>(logout({ history }, ROUTES.HOME));
     }
   });

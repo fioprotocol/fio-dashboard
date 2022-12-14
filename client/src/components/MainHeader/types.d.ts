@@ -30,7 +30,6 @@ export type MainHeaderProps = {
 };
 
 export type NavigationProps = {
-  isAdminRoute: boolean;
   isMenuOpen: boolean;
   toggleMenuOpen: (isMenuOpen: boolean) => void;
   closeMenu: () => void;
