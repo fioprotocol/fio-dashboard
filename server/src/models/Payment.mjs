@@ -228,6 +228,10 @@ export class Payment extends Base {
       });
     }
 
+    if (extPaymentParams.forceInitialWebhook && extPaymentParams.externalPaymentId) {
+      await paymentProcessor.getInvoiceWebHook(extPaymentParams.externalPaymentId);
+    }
+
     return {
       id: orderPayment.id,
       processor: paymentProcessorKey,

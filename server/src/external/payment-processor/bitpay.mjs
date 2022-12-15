@@ -162,7 +162,14 @@ class BitPay extends PaymentProcessor {
       secret: paymentIntent.billId,
       amount,
       currency,
+      forceInitialWebhook: true,
     };
+  }
+
+  async getInvoiceWebHook(invoiceId) {
+    const bitPayClient = await this.getBitPayClient();
+
+    return await bitPayClient.GetInvoiceWebHook(invoiceId);
   }
 
   async cancel(id) {
