@@ -61,6 +61,7 @@ class BitPay extends PaymentProcessor {
       status,
       transactions,
       token,
+      transactionCurrency,
     } = bitPayInvoice;
 
     const data = {
@@ -77,6 +78,7 @@ class BitPay extends PaymentProcessor {
       transactions,
       txn_id: id,
       token,
+      transactionCurrency,
     };
 
     return data;
