@@ -66,6 +66,7 @@ class BitPay extends PaymentProcessor {
     const data = {
       id,
       amountPaid,
+      amount: price,
       currency,
       email: buyerProvidedEmail,
       expirationTime,
