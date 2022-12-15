@@ -24,7 +24,7 @@ const getCreditCardName = creditCardData => {
 };
 
 export const getPaidWith = async ({
-  isCreditCardProcessor,
+  paymentProcessor,
   publicKey,
   userId,
   payment,
@@ -32,13 +32,22 @@ export const getPaidWith = async ({
 }) => {
   if (isCanceledStatus) return 'Not Paid';
 
-  if (isCreditCardProcessor) {
+  if (paymentProcessor === Payment.PROCESSOR.STRIPE) {
     const { data: paymentData } = payment;
 
     const { webhookData: { charges: { data: creditCardData = [] } = {} } = {} } =
       paymentData || {};
 
     return getCreditCardName(creditCardData[0]);
+  }
+
+  if (paymentProcessor === Payment.PROCESSOR.BITPAY) {
+    const { data: paymentData } = payment;
+    const { webhookData: { transactionCurrency } = {} } = paymentData || {};
+
+    if (!transactionCurrency) return `${paymentProcessor} N/A`;
+
+    return `${paymentProcessor} ${transactionCurrency}`;
   }
 
   return await getFioWalletName(publicKey, userId);

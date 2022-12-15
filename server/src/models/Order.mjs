@@ -550,7 +550,7 @@ export class Order extends Base {
     let paidWith = 'N/A';
     if (payment) {
       paidWith = await getPaidWith({
-        isCreditCardProcessor: payment.processor === Payment.PROCESSOR.STRIPE,
+        paymentProcessor: payment.processor,
         publicKey,
         userId: user ? user.id : null,
         payment,
@@ -750,7 +750,7 @@ export class Order extends Base {
     let paidWith = 'N/A';
     if (payment) {
       paidWith = await getPaidWith({
-        isCreditCardProcessor: payment.processor === Payment.PROCESSOR.STRIPE,
+        paymentProcessor: payment.processor,
         publicKey,
         userId: user.id || null,
         payment,

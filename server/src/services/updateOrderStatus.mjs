@@ -82,7 +82,10 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith, number })
 
   const orderPaymentInfo = {};
 
-  const isCreditCardProcessor = processor === Payment.PROCESSOR.STRIPE;
+  const isExternalProcessor = [
+    Payment.PROCESSOR.STRIPE,
+    Payment.PROCESSOR.BITPAY,
+  ].includes(processor);
   const isFioProcessor = processor === Payment.PROCESSOR.FIO;
 
   const orderItemsTotalAmount = countTotalPriceAmount(orderItems);
@@ -109,7 +112,7 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith, number })
     }
   }
 
-  if (isCreditCardProcessor && paymentData) {
+  if (isExternalProcessor && paymentData) {
     orderPaymentInfo.paidWith = paidWith;
     orderPaymentInfo.orderNumber = number;
     orderPaymentInfo.total = `${orderItemsTotalAmount.usdcTotal.toFixed(2)} USDC`;
@@ -130,7 +133,6 @@ const createPurchaseConfirmationNotification = async order => {
     const payment =
       payments.find(payment => payment.spentType === Payment.SPENT_TYPE.ORDER) || {};
 
-    const isCreditCardProcessor = payment.processor === Payment.PROCESSOR.STRIPE;
     const isFioProcessor = payment.processor === Payment.PROCESSOR.FIO;
 
     const successedOrderItemsArr = items.filter(
@@ -144,7 +146,7 @@ const createPurchaseConfirmationNotification = async order => {
     );
 
     const paidWith = await getPaidWith({
-      isCreditCardProcessor,
+      paymentProcessor: payment.processor,
       publicKey,
       userId,
       payment,
