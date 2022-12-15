@@ -8,7 +8,7 @@ import ChangePinForm from './ChangePinForm';
 
 import { isEdgeAuthenticationError } from '../../../../util/edge';
 
-import { ClickEventTypes } from './types';
+import { ClickEventTypes } from '../../../../types';
 
 const ITEM_PROPS = {
   title: 'PIN',

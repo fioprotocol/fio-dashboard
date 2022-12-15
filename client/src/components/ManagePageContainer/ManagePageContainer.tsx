@@ -216,6 +216,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
       type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
       id: `${domain}-${ACTIONS.renewFioDomain}-${+new Date()}`,
       allowFree: false,
+      period: 1,
       costNativeFio: renewDomainFeePrice?.nativeFio,
       costFio: renewDomainFeePrice.fio,
       costUsdc: renewDomainFeePrice.usdc,

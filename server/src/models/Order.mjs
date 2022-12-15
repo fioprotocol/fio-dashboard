@@ -17,6 +17,7 @@ import {
   generateErrBadgeItem,
   transformOrderTotalCostToPriceObj,
   transformOrderItemCostToPriceString,
+  combineOrderItems,
 } from '../utils/order.mjs';
 
 import {
@@ -230,6 +231,7 @@ export class Order extends Base {
         User,
         ReferrerProfile,
       ],
+      order: [[OrderItem, 'id', 'ASC']],
     });
 
     const order = this.format(orderObj.get({ plain: true }));
@@ -550,7 +552,7 @@ export class Order extends Base {
     let paidWith = 'N/A';
     if (payment) {
       paidWith = await getPaidWith({
-        isCreditCardProcessor: payment.processor === Payment.PROCESSOR.STRIPE,
+        paymentProcessor: payment.processor,
         publicKey,
         userId: user ? user.id : null,
         payment,
@@ -712,8 +714,8 @@ export class Order extends Base {
       createdAt,
       status,
       user: user ? { id: user.id, email: user.email } : null,
-      errItems,
-      regItems,
+      errItems: combineOrderItems({ orderItems: errItems, paymentCurrency }),
+      regItems: combineOrderItems({ orderItems: regItems, paymentCurrency }),
       errorBadges,
       isAllErrored,
       isPartial,
@@ -750,7 +752,7 @@ export class Order extends Base {
     let paidWith = 'N/A';
     if (payment) {
       paidWith = await getPaidWith({
-        isCreditCardProcessor: payment.processor === Payment.PROCESSOR.STRIPE,
+        paymentProcessor: payment.processor,
         publicKey,
         userId: user.id || null,
         payment,

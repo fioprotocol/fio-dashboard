@@ -82,9 +82,20 @@
     font-size: 13px;
   }
 
+  .period {
+    margin-bottom: 0;
+    margin-right: 5px;
+
+    > div {
+      min-width: 120px;
+      width: 120px;
+      margin-bottom: 0;
+    }
+  }
+
   .price {
     @include proxima-nova-bold;
-    margin: 0 30px 0 auto;
+    margin: 0 15px 0 auto;
     flex-shrink: 0;
 
     .usdcAmount {
@@ -266,4 +277,8 @@
   to {
     opacity: 0.1;
   }
+}
+
+.showOverflow {
+  overflow: visible;
 }

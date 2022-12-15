@@ -5,7 +5,7 @@ import { Wallet } from '../models/Wallet.mjs';
 
 import MathOp from '../services/math.mjs';
 
-import { ERROR_CODES } from '../config/constants';
+import { ERROR_CODES, CART_ITEM_TYPES_WITH_PERIOD } from '../config/constants';
 
 const FREE_PRICE = 'FREE';
 
@@ -24,7 +24,7 @@ const getCreditCardName = creditCardData => {
 };
 
 export const getPaidWith = async ({
-  isCreditCardProcessor,
+  paymentProcessor,
   publicKey,
   userId,
   payment,
@@ -32,7 +32,7 @@ export const getPaidWith = async ({
 }) => {
   if (isCanceledStatus) return 'Not Paid';
 
-  if (isCreditCardProcessor) {
+  if (paymentProcessor === Payment.PROCESSOR.STRIPE) {
     const { data: paymentData } = payment;
 
     const { webhookData: { charges: { data: creditCardData = [] } = {} } = {} } =
@@ -41,13 +41,26 @@ export const getPaidWith = async ({
     return getCreditCardName(creditCardData[0]);
   }
 
+  if (paymentProcessor === Payment.PROCESSOR.BITPAY) {
+    const { data: paymentData } = payment;
+    const { webhookData: { transactionCurrency } = {} } = paymentData || {};
+
+    if (!transactionCurrency) return `${paymentProcessor} N/A`;
+
+    return `${paymentProcessor} ${transactionCurrency}`;
+  }
+
   return await getFioWalletName(publicKey, userId);
 };
 
 export const countTotalPriceAmount = orderItems =>
   orderItems.reduce(
     ({ fioNativeTotal, usdcTotal }, orderItem) => {
-      const fioNativeAmount = orderItem.fee_collected || orderItem.nativeFio || 0;
+      const fioNativeAmount =
+        (orderItem.errorData && orderItem.errorData.credited) ||
+        orderItem.fee_collected ||
+        orderItem.nativeFio ||
+        0;
       const usdcAmount = orderItem.costUsdc || orderItem.price || 0;
 
       const orderNativeFio = new MathOp(fioNativeAmount).toNumber();
@@ -93,6 +106,9 @@ export const transformOrderTotalCostToPriceObj = ({ totalCostObj, paymentCurrenc
 
   if (paymentCurrency.toUpperCase() === Payment.CURRENCY.USD)
     return {
+      fioTotalPrice: transformCostToPriceString({
+        fioNativeAmount: fioNativeTotal,
+      }),
       usdcTotalPrice: transformCostToPriceString({
         usdcAmount: usdcTotal,
         hasDollarSign: true,
@@ -152,7 +168,7 @@ export const generateErrBadgeItem = ({ errItems = [], paymentCurrency }) => {
       customItemAmount ? { ...errItem, costNativeFio: customItemAmount } : errItem,
     );
 
-    const totalCostObj = countTotalPriceAmount([errItem]);
+    const totalCostObj = countTotalPriceAmount(acc[badgeKey].items);
 
     acc[badgeKey].total = transformOrderTotalCostToPriceObj({
       totalCostObj,
@@ -162,4 +178,45 @@ export const generateErrBadgeItem = ({ errItems = [], paymentCurrency }) => {
 
     return acc;
   }, {});
+};
+
+export const combineOrderItems = ({ orderItems = [], paymentCurrency }) => {
+  return orderItems
+    .reduce((items, item) => {
+      const existsItem = items.find(orderItem => orderItem.id === item.id);
+      if (CART_ITEM_TYPES_WITH_PERIOD.includes(item.type) && existsItem) {
+        existsItem.period++;
+        existsItem.transaction_ids = [
+          ...(existsItem.transaction_ids || []),
+          item.transaction_id,
+        ];
+        existsItem.fee_collected = new MathOp(existsItem.fee_collected)
+          .add(item.fee_collected)
+          .toNumber();
+        existsItem.costUsdc = new MathOp(existsItem.costUsdc)
+          .add(item.costUsdc)
+          .toNumber();
+        existsItem.priceString = transformOrderItemCostToPriceString({
+          orderItemCostObj: {
+            fioNativeAmount: existsItem.fee_collected,
+            usdcAmount: existsItem.costUsdc,
+            isFree: existsItem.isFree,
+          },
+          paymentCurrency,
+        });
+      } else {
+        if (CART_ITEM_TYPES_WITH_PERIOD.includes(item.type)) {
+          item.period = 1;
+        }
+        items.push(item);
+      }
+
+      return items;
+    }, [])
+    .map(item => ({
+      ...item,
+      action: item.period
+        ? `${item.action} - ${item.period} year${item.period > 1 ? 's' : ''}`
+        : item.action,
+    }));
 };

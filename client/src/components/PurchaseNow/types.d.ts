@@ -39,4 +39,5 @@ export type RegistrationType = {
   depended?: { domain: string };
   fee_collected?: number;
   type: CartItemType;
+  iteration?: number;
 };

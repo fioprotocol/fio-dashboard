@@ -32,6 +32,7 @@ type DefaultProps = {
 export type FormValuesProps = {
   address: string;
   domain: string;
+  period: string;
 };
 
 export type FormValidationErrorProps = {

@@ -104,5 +104,5 @@ Useful links:
 ```
 4. Run nginx
 5. Run ngrok with command ```ngrok http 5555```
-6. Ngrok will return a pubilc url address like `https://564b-178-133-53-168.ngrok.io`. Set it as `BASE_URL` and rerun server. Every time you run ngrok your public url address changes re-setup `BASE_URL` and rerun server.
+6. Ngrok will return a pubilc url address like `https://564b-178-133-53-168.ngrok.io`. Set it as `API_BASE_URL` and rerun server. Every time you run ngrok your public url address changes re-setup `API_BASE_URL` and rerun server.
 Enjoy!

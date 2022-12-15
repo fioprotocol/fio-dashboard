@@ -103,6 +103,7 @@ export default class OrdersUpdate extends Base {
           if (!isNaN(Number(regItem.fee_collected))) return acc + regItem.fee_collected;
           return acc;
         }, 0);
+        const processedOrderItems = [];
 
         // todo: do we need to create PaymentEventLog here?
         await Payment.update(
@@ -120,7 +121,9 @@ export default class OrdersUpdate extends Base {
         for (const errorItem of data.results.errors) {
           const { fioName, error, errorType } = errorItem;
           const orderItem = order.OrderItems.find(
-            ({ address, domain }) => fioApi.setFioName(address, domain) === fioName,
+            ({ id, address, domain }) =>
+              !processedOrderItems.includes(id) &&
+              fioApi.setFioName(address, domain) === fioName,
           );
 
           if (orderItem) {
@@ -157,6 +160,7 @@ export default class OrdersUpdate extends Base {
               data: errorType ? { errorType } : null,
               blockchainTransactionId,
             });
+            processedOrderItems.push(orderItem.id);
           }
         }
 
@@ -165,7 +169,9 @@ export default class OrdersUpdate extends Base {
           const { fioName, transaction_id, fee_collected } = regItem;
 
           const orderItem = order.OrderItems.find(
-            ({ address, domain }) => fioApi.setFioName(address, domain) === fioName,
+            ({ id, address, domain }) =>
+              !processedOrderItems.includes(id) &&
+              fioApi.setFioName(address, domain) === fioName,
           );
 
           if (orderItem) {
@@ -206,6 +212,7 @@ export default class OrdersUpdate extends Base {
               statusNotes: '',
               blockchainTransactionId,
             });
+            processedOrderItems.push(orderItem.id);
           }
         }
         await checkOrderStatusAndCreateNotification(id);
@@ -214,7 +221,12 @@ export default class OrdersUpdate extends Base {
       }
     }
 
-    if (data.results && data.results.paymentProvider === Payment.PROCESSOR.STRIPE) {
+    const isExternalProcessor = [
+      Payment.PROCESSOR.STRIPE,
+      Payment.PROCESSOR.BITPAY,
+    ].includes(data.results.paymentProvider);
+
+    if (data.results && isExternalProcessor) {
       for (const regItem of data.results.registered) {
         const { fioName, data: itemData } = regItem;
 

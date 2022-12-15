@@ -30,6 +30,8 @@ import {
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
 import { useEffectOnce } from '../../hooks/general';
+import { convertFioPrices } from '../../util/prices';
+import MathOp from '../../util/math';
 
 import { ROUTES } from '../../constants/routes';
 import {
@@ -43,6 +45,7 @@ import {
 import {
   ANALYTICS_EVENT_ACTIONS,
   ANALYTICS_PAYMENT_TYPE,
+  CART_ITEM_TYPE,
 } from '../../constants/common';
 
 import { ERROR_TYPES } from '../../constants/errors';
@@ -114,9 +117,31 @@ export const useContext = (
       ) {
         const purcahsedItems: CartItem[] = [];
         regItems.forEach(regItem => {
-          const { id } = regItem;
+          const { id, period } = regItem;
           const purcahsedItem = cart.find(cartItem => cartItem.id === id);
-          purcahsedItem && purcahsedItems.push(purcahsedItem);
+          if (purcahsedItem) {
+            if (
+              purcahsedItem.id === id &&
+              purcahsedItem.period &&
+              purcahsedItem.period > period
+            ) {
+              const purcahsedItemPeriod = period;
+              const fioPrices = convertFioPrices(
+                new MathOp(purcahsedItem.costNativeFio)
+                  .mul(purcahsedItemPeriod)
+                  .toNumber(),
+                roe,
+              );
+              purcahsedItems.push({
+                ...purcahsedItem,
+                period: purcahsedItemPeriod,
+                costFio: fioPrices.fio,
+                costUsdc: fioPrices.usdc,
+              });
+            } else {
+              purcahsedItems.push(purcahsedItem);
+            }
+          }
         });
         const purchaseItems = getCartItemsDataForAnalytics(purcahsedItems);
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED, {
@@ -152,10 +177,32 @@ export const useContext = (
       ) {
         let updatedCart: CartItem[] = [...cart];
         regItems.forEach(regItem => {
-          const { id } = regItem;
-          updatedCart = updatedCart.filter(
-            updatedCartItem => updatedCartItem.id !== id,
-          );
+          const { id, period } = regItem;
+          updatedCart = updatedCart
+            .filter(
+              updatedCartItem =>
+                updatedCartItem.id !== id ||
+                !updatedCartItem.period ||
+                updatedCartItem.period !== period,
+            )
+            .map(updatedCartItem => {
+              if (
+                updatedCartItem.id === id &&
+                updatedCartItem.period &&
+                updatedCartItem.period > period
+              ) {
+                updatedCartItem.type = CART_ITEM_TYPE.DOMAIN_RENEWAL;
+                updatedCartItem.period -= period;
+                const fioPrices = convertFioPrices(
+                  updatedCartItem.period * updatedCartItem.costNativeFio,
+                  roe,
+                );
+                updatedCartItem.costFio = fioPrices.fio;
+                updatedCartItem.costUsdc = fioPrices.usdc;
+              }
+
+              return updatedCartItem;
+            });
         });
         dispatch(setCartItems(updatedCart));
       }

@@ -3,7 +3,6 @@ import { Client, Env, Currency, Models, Tokens, InvoiceStatus } from 'bitpay-sdk
 import PaymentProcessor from './base.mjs';
 
 import { PAYMENT_EVENT_STATUSES, PAYMENTS_STATUSES } from '../../config/constants.js';
-import config from '../../config';
 
 import MathOp from '../../services/math.mjs';
 
@@ -22,7 +21,7 @@ class BitPay extends PaymentProcessor {
 
       this.bitPayClient = await new Client(
         null,
-        process.env.REACT_APP_IS_BITPAY_TEST_ENV ? Env.Test : Env.Prod,
+        process.env.IS_BITPAY_TEST_ENV ? Env.Test : Env.Prod,
         process.env.BITPAY_PRIVATE_KEY,
         tokens,
       );
@@ -62,11 +61,13 @@ class BitPay extends PaymentProcessor {
       status,
       transactions,
       token,
+      transactionCurrency,
     } = bitPayInvoice;
 
     const data = {
       id,
       amountPaid,
+      amount: price,
       currency,
       email: buyerProvidedEmail,
       expirationTime,
@@ -77,6 +78,7 @@ class BitPay extends PaymentProcessor {
       transactions,
       txn_id: id,
       token,
+      transactionCurrency,
     };
 
     return data;
@@ -148,13 +150,13 @@ class BitPay extends PaymentProcessor {
 
     const bitPayClient = await this.getBitPayClient();
 
-    const host = config.mainUrl;
+    const host = process.env.API_BASE_URL;
 
     const invoiceData = new Models.Invoice(amount, currency);
     invoiceData.orderId = orderNumber;
     invoiceData.buyer = { email: buyer };
-    invoiceData.redirectURL = `${host}/order-details?orderNumber=${orderNumber}`;
-    invoiceData.notificationURL = `${host}/api/v1/payments/webhook/`;
+    invoiceData.redirectURL = `${host}order-details?orderNumber=${orderNumber}`;
+    invoiceData.notificationURL = `${host}api/v1/payments/webhook/`;
 
     const paymentIntent = await bitPayClient.CreateInvoice(invoiceData);
 
@@ -163,7 +165,14 @@ class BitPay extends PaymentProcessor {
       secret: paymentIntent.billId,
       amount,
       currency,
+      forceInitialWebhook: true,
     };
+  }
+
+  async getInvoiceWebHook(invoiceId) {
+    const bitPayClient = await this.getBitPayClient();
+
+    return await bitPayClient.GetInvoiceWebHook(invoiceId);
   }
 
   async cancel(id) {

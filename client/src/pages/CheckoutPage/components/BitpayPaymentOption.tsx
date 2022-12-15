@@ -1,57 +1,119 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { useHistory } from 'react-router';
-
 import { BitPayButton } from '../../../components/BitPayButton';
 
-import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
-import { ROUTES } from '../../../constants/routes';
+import { setFioName } from '../../../utils';
 
-import { BitPayOptionProps } from '../types';
+import {
+  PAYMENT_PROVIDER,
+  PURCHASE_RESULTS_STATUS,
+} from '../../../constants/purchase';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CURRENCY_CODES,
+} from '../../../constants/common';
+
+import {
+  fireAnalyticsEvent,
+  getCartItemsDataForAnalytics,
+} from '../../../util/analytics';
+
+import { BeforeSubmitData, BitPayOptionProps } from '../types';
+import { CartItem, ClickEventTypes } from '../../../types';
+
+const BITPAY_ORIGIN = 'bitpay';
+const BITPAY_ORIGIN_REGEX = new RegExp(BITPAY_ORIGIN, 'i');
 
 export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
-  const { order } = props;
-  const history = useHistory();
+  const { cart, order, payment, paymentOption, beforePaymentSubmit } = props;
 
   const bitPayInvoiceId = order?.payment?.externalPaymentId;
 
   const [isPaid, setIsPaid] = useState<boolean>(false);
   const [isLoadingBitPay, setIsLoadingBitPay] = useState<boolean>(false);
+  const [submitData, setSubmitData] = useState<BeforeSubmitData>(null);
 
-  const payWithBitPay = useCallback(() => {
-    setIsLoadingBitPay(true);
-    if (bitPayInvoiceId && window.bitpay) {
-      if (process.env.REACT_APP_IS_BITPAY_TEST_ENV) {
-        window.bitpay.enableTestMode();
+  const onFinish = useCallback(
+    (beforeSubmitData?: BeforeSubmitData) => {
+      props.onFinish({
+        errors: [],
+        registered: cart.map(
+          ({ id, address, domain, isFree, costNativeFio }: CartItem) => ({
+            fioName: setFioName(address, domain),
+            isFree,
+            fee_collected: costNativeFio,
+            cartItemId: id,
+            transaction_id: '',
+            data: beforeSubmitData
+              ? beforeSubmitData[setFioName(address, domain)]
+              : null,
+          }),
+        ),
+        partial: [],
+        providerTxId: payment.externalPaymentId,
+        paymentProvider: PAYMENT_PROVIDER.BITPAY,
+        paymentOption,
+        paymentAmount: payment.amount,
+        paymentCurrency: CURRENCY_CODES.USD,
+        convertedPaymentCurrency: CURRENCY_CODES.FIO,
+        providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
+      });
+    },
+    [cart, payment.amount, payment.externalPaymentId, paymentOption, props],
+  );
+
+  const handleSubmit = useCallback(
+    async (beforeSubmitData?: BeforeSubmitData) => {
+      setIsLoadingBitPay(true);
+      beforeSubmitData && setSubmitData(beforeSubmitData);
+      if (bitPayInvoiceId && window.bitpay) {
+        if (process.env.REACT_APP_IS_BITPAY_TEST_ENV) {
+          window.bitpay.enableTestMode();
+        }
+
+        fireAnalyticsEvent(
+          ANALYTICS_EVENT_ACTIONS.PURCHASE_STARTED,
+          getCartItemsDataForAnalytics(cart),
+        );
+
+        window.bitpay.showInvoice(bitPayInvoiceId);
       }
+    },
+    [bitPayInvoiceId, cart],
+  );
 
-      window.bitpay.showInvoice(bitPayInvoiceId);
+  const onSubmit = async (event: ClickEventTypes) => {
+    event.preventDefault();
+
+    setIsLoadingBitPay(true);
+
+    if (submitData) {
+      await handleSubmit();
+    } else {
+      await beforePaymentSubmit(handleSubmit);
     }
-  }, [bitPayInvoiceId]);
+
+    setIsLoadingBitPay(false);
+  };
 
   const handleBitPayPaymentMessage = useCallback(event => {
     const payment_status = event.data.status;
-    setIsPaid(payment_status === 'paid');
+
+    if (BITPAY_ORIGIN_REGEX.test(event.origin)) {
+      setIsPaid(payment_status === 'paid' || payment_status === 'confirmed');
+    }
   }, []);
 
   const onBitPayModalClose = useCallback(() => {
     window.bitpay.onModalWillLeave(function() {
       if (isPaid) {
-        history.push(
-          {
-            pathname: ROUTES.PURCHASE,
-            search: `${QUERY_PARAMS_NAMES.ORDER_NUMBER}=${order.number}`,
-          },
-          {
-            orderId: order.id,
-          },
-        );
+        onFinish(submitData);
       }
     });
     window.bitpay.onModalWillEnter(function() {
       setIsLoadingBitPay(false);
     });
-  }, [history, order.id, order.number, isPaid]);
+  }, [isPaid, onFinish, submitData]);
 
   useEffect(() => {
     onBitPayModalClose();
@@ -61,13 +123,15 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
     window.addEventListener('message', handleBitPayPaymentMessage);
     return () => {
       window.removeEventListener('message', handleBitPayPaymentMessage);
+      const bitpayIframe = document.getElementsByName('bitpay');
+      window.bitpay && bitpayIframe.length > 0 && window.bitpay.hideFrame();
     };
   }, [handleBitPayPaymentMessage]);
 
   return (
     <div className="d-flex justify-content-center">
       <BitPayButton
-        onClick={payWithBitPay}
+        onClick={onSubmit}
         loading={isLoadingBitPay}
         disabled={isLoadingBitPay}
       />

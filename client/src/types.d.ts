@@ -1,3 +1,4 @@
+import { MouseEvent as ReactMouseEvent } from 'react';
 import { EdgeAccount } from 'edge-core-js';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 
@@ -31,6 +32,10 @@ export type AnyType = any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type OwnPropsAny = any; // todo: fix usages for ownProps
 
+export type ClickEventTypes = ReactMouseEvent<HTMLElement, MouseEvent> & {
+  target: { blur: () => void };
+};
+
 export type Domain = { domain: string; free?: boolean };
 
 export type ContainedFlowActionSettingsKey = keyof typeof CONTAINED_FLOW_ACTIONS;
@@ -44,6 +49,7 @@ export type CartItem = {
   costFio?: string;
   costUsdc?: string;
   hasCustomDomain?: boolean;
+  period?: number;
   allowFree?: boolean;
   showBadge?: boolean;
   error?: string;
@@ -79,7 +85,7 @@ export type NotificationParams = {
 
 export type Prices = {
   fio: { address: number; domain: number };
-  nativeFio: { address: number; domain: number };
+  nativeFio: { address: number; domain: number; renewDomain?: number };
   usdt: { address: number; domain: number };
 };
 
@@ -686,6 +692,7 @@ export type OrderItem = {
   data: {
     hasCustomDomain?: boolean;
     hasCustomDomainFee?: string;
+    period?: number;
   };
   updatedAt: string;
   blockchainTransactions: BcTx[];
@@ -740,6 +747,7 @@ export type OrderItemDetailed = {
   id: string;
   isFree: boolean;
   hasCustomDomain?: boolean;
+  period?: number;
   priceString: string;
   transaction_id: string;
   transaction_ids: string[];

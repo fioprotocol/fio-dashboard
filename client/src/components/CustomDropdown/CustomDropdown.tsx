@@ -17,6 +17,7 @@ type Props = {
   isWidthResponsive?: boolean;
   isWhite?: boolean;
   isVoilet?: boolean;
+  isDark?: boolean;
   isWhitePlaceholder?: boolean;
   isBlackPlaceholder?: boolean;
   isWhiteIcon?: boolean;
@@ -45,6 +46,7 @@ const CustomDropdown: React.FC<Props> = props => {
     isWidthResponsive,
     isWhite,
     isVoilet,
+    isDark,
     isWhitePlaceholder,
     isBlackPlaceholder,
     isWhiteIcon,
@@ -104,6 +106,7 @@ const CustomDropdown: React.FC<Props> = props => {
         classes.control,
         isWhite && classes.isWhite,
         isVoilet && classes.isVoilet,
+        isDark && classes.isDark,
         isSimple && classes.isSimple,
         isHigh && classes.isHigh,
         hasAutoHeight && classes.hasAutoHeight,

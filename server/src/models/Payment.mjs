@@ -160,9 +160,11 @@ export class Payment extends Base {
       if (exPayment) {
         try {
           const pExtId = exPayment.externalId;
+          const pExtPaymentProcessor = Payment.getPaymentProcessor(exPayment.processor);
+
           exPayment.status = Payment.STATUS.CANCELLED;
           await exPayment.save();
-          if (pExtId) await paymentProcessor.cancel(pExtId);
+          if (pExtId && pExtPaymentProcessor) await pExtPaymentProcessor.cancel(pExtId);
         } catch (e) {
           logger.error(
             `Existing Payment removing error ${e.message}. Order #${exOrder.number}. Payment ${exPayment.id}`,
@@ -224,6 +226,10 @@ export class Payment extends Base {
           paymentProcessor: 'SERVER_ERROR',
         },
       });
+    }
+
+    if (extPaymentParams.forceInitialWebhook && extPaymentParams.externalPaymentId) {
+      await paymentProcessor.getInvoiceWebHook(extPaymentParams.externalPaymentId);
     }
 
     return {
