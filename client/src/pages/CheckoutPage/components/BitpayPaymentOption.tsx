@@ -84,16 +84,11 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
 
   const onSubmit = async (event: ClickEventTypes) => {
     event.preventDefault();
-
-    setIsLoadingBitPay(true);
-
     if (submitData) {
       await handleSubmit();
     } else {
       await beforePaymentSubmit(handleSubmit);
     }
-
-    setIsLoadingBitPay(false);
   };
 
   const handleBitPayPaymentMessage = useCallback(event => {
