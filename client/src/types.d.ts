@@ -1,3 +1,4 @@
+import { MouseEvent as ReactMouseEvent } from 'react';
 import { EdgeAccount } from 'edge-core-js';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 
@@ -30,6 +31,10 @@ export type AnyObject = any;
 export type AnyType = any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type OwnPropsAny = any; // todo: fix usages for ownProps
+
+export type ClickEventTypes = ReactMouseEvent<HTMLElement, MouseEvent> & {
+  target: { blur: () => void };
+};
 
 export type Domain = { domain: string; free?: boolean };
 

@@ -13,7 +13,7 @@ import {
 
 import { PIN_LENGTH } from '../../../../constants/form';
 
-import { ClickEventTypes } from './types';
+import { ClickEventTypes } from '../../../../types';
 
 import classes from '../../styles/ChangePin.module.scss';
 

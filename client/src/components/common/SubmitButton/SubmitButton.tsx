@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 
-import { ClickEventTypes } from '../../../pages/SettingsPage/components/ChangePin/types';
+import { ClickEventTypes } from '../../../types';
 
 import classes from './SubmitButton.module.scss';
 

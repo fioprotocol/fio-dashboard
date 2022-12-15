@@ -4,10 +4,12 @@ import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 import bitPayLogoSrc from '../../assets/images/bitpay-logo-white.png';
 
+import { ClickEventTypes } from '../../types';
+
 import classes from './BitPayButton.module.scss';
 
 type Props = {
-  onClick: () => void;
+  onClick: (event: ClickEventTypes) => Promise<void>;
   hasLowHeight?: boolean;
   bitPayButtonSize?: keyof typeof BITPAY_LOGO_WIDTH;
   loading: boolean;
