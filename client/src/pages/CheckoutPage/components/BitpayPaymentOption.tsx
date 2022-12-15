@@ -61,6 +61,7 @@ export const BitpayPaymentOption: React.FC<BitPayOptionProps> = props => {
     window.addEventListener('message', handleBitPayPaymentMessage);
     return () => {
       window.removeEventListener('message', handleBitPayPaymentMessage);
+      window.bitpay && window.bitpay.hideFrame();
     };
   }, [handleBitPayPaymentMessage]);
 
