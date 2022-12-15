@@ -56,7 +56,11 @@ export const getPaidWith = async ({
 export const countTotalPriceAmount = orderItems =>
   orderItems.reduce(
     ({ fioNativeTotal, usdcTotal }, orderItem) => {
-      const fioNativeAmount = orderItem.fee_collected || orderItem.nativeFio || 0;
+      const fioNativeAmount =
+        (orderItem.errorData && orderItem.errorData.credited) ||
+        orderItem.fee_collected ||
+        orderItem.nativeFio ||
+        0;
       const usdcAmount = orderItem.costUsdc || orderItem.price || 0;
 
       const orderNativeFio = new MathOp(fioNativeAmount).toNumber();
@@ -102,6 +106,9 @@ export const transformOrderTotalCostToPriceObj = ({ totalCostObj, paymentCurrenc
 
   if (paymentCurrency.toUpperCase() === Payment.CURRENCY.USD)
     return {
+      fioTotalPrice: transformCostToPriceString({
+        fioNativeAmount: fioNativeTotal,
+      }),
       usdcTotalPrice: transformCostToPriceString({
         usdcAmount: usdcTotal,
         hasDollarSign: true,
@@ -161,7 +168,7 @@ export const generateErrBadgeItem = ({ errItems = [], paymentCurrency }) => {
       customItemAmount ? { ...errItem, costNativeFio: customItemAmount } : errItem,
     );
 
-    const totalCostObj = countTotalPriceAmount([errItem]);
+    const totalCostObj = countTotalPriceAmount(acc[badgeKey].items);
 
     acc[badgeKey].total = transformOrderTotalCostToPriceObj({
       totalCostObj,
