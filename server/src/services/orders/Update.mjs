@@ -221,7 +221,12 @@ export default class OrdersUpdate extends Base {
       }
     }
 
-    if (data.results && data.results.paymentProvider === Payment.PROCESSOR.STRIPE) {
+    const isExternalProcessor = [
+      Payment.PROCESSOR.STRIPE,
+      Payment.PROCESSOR.BITPAY,
+    ].includes(data.results.paymentProvider);
+
+    if (data.results && isExternalProcessor) {
       for (const regItem of data.results.registered) {
         const { fioName, data: itemData } = regItem;
 
