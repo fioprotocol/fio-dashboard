@@ -20,7 +20,7 @@ export class PaymentEventLog extends Base {
           type: DT.INTEGER,
           defaultValue: 1,
           comment:
-            'PENDING (2) / SUCCESS (3) / REVIEW (4) / CANCEL (5). A "REVIEW" is a system or payment anomaly.',
+            'PENDING (2) / SUCCESS (3) / REVIEW (4) / CANCEL (5) / FAILED (6) / PENDING_PAID (7) / PENDING_CONFIRMED: (8). A "REVIEW" is a system or payment anomaly.',
         },
         statusNotes: { type: DT.STRING, comment: 'Status details' },
         data: { type: DT.JSON, comment: 'Any additional data for the item' },
