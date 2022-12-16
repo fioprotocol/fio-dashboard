@@ -117,7 +117,7 @@ export const useContext = (
       ) {
         const purcahsedItems: CartItem[] = [];
         regItems.forEach(regItem => {
-          const { id, period } = regItem;
+          const { id, period = 1 } = regItem;
           const purcahsedItem = cart.find(cartItem => cartItem.id === id);
           if (purcahsedItem) {
             if (
@@ -177,7 +177,7 @@ export const useContext = (
       ) {
         let updatedCart: CartItem[] = [...cart];
         regItems.forEach(regItem => {
-          const { id, period } = regItem;
+          const { id, period = 1 } = regItem;
           updatedCart = updatedCart
             .filter(
               updatedCartItem =>

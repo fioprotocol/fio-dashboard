@@ -126,7 +126,12 @@ class BitPay extends PaymentProcessor {
       case InvoiceStatus.Paid:
         return {
           payment: PAYMENTS_STATUSES.PENDING,
-          event: PAYMENT_EVENT_STATUSES.PENDING,
+          event: PAYMENT_EVENT_STATUSES.PENDING_PAID,
+        };
+      case InvoiceStatus.Confirmed:
+        return {
+          payment: PAYMENTS_STATUSES.PENDING,
+          event: PAYMENT_EVENT_STATUSES.PENDING_CONFIRMED,
         };
       default:
         return {
@@ -189,12 +194,26 @@ class BitPay extends PaymentProcessor {
   }
 
   async refund(id, amount = null) {
+    let refundAmount = new MathOp(amount).toNumber();
+
     const bitPayClient = await this.getBitPayClient();
     const bitPayInvoice = await bitPayClient.GetInvoice(id);
 
+    const existingRefunds = await bitPayClient.GetRefunds(bitPayInvoice);
+
+    if (existingRefunds.length > 0) {
+      for (const existingRefunditem of existingRefunds) {
+        const { status, amount: existingRefundAmount } = existingRefunditem;
+        if (status !== 'canceled') {
+          refundAmount = new MathOp(refundAmount).add(existingRefundAmount).toNumber();
+          await bitPayClient.CancelRefund(existingRefunditem);
+        }
+      }
+    }
+
     return await bitPayClient.CreateRefund(
       bitPayInvoice,
-      new MathOp(amount).toNumber(),
+      refundAmount,
       bitPayInvoice.currency,
     );
   }
