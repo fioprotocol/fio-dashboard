@@ -25,6 +25,7 @@ export const FEES_VAR_KEY = 'FIO_FEES';
 export const FEES_UPDATE_TIMEOUT_SEC = 1000 * 60 * 5; // 5 min
 export const ABIS_VAR_KEY = 'FIO_RAW_ABIS';
 export const ABIS_UPDATE_TIMEOUT_SEC = DAY_MS;
+const TRANSACTION_DEFAULT_OFFSET_EXPIRATION = 2700; // 45 min
 const EndPoint = entities.EndPoint;
 
 const FIO_ACTION_NAMES = {
@@ -181,6 +182,7 @@ class Fio {
           ...actionParams,
           fio_address: `${options.address}${FIO_ADDRESS_DELIMITER}${options.domain}`,
           owner_fio_public_key: options.publicKey,
+          expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
         };
         break;
       }
