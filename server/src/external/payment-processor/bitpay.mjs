@@ -126,7 +126,12 @@ class BitPay extends PaymentProcessor {
       case InvoiceStatus.Paid:
         return {
           payment: PAYMENTS_STATUSES.PENDING,
-          event: PAYMENT_EVENT_STATUSES.PENDING,
+          event: PAYMENT_EVENT_STATUSES.PENDING_PAID,
+        };
+      case InvoiceStatus.Confirmed:
+        return {
+          payment: PAYMENTS_STATUSES.PENDING,
+          event: PAYMENT_EVENT_STATUSES.PENDING_CONFIRMED,
         };
       default:
         return {
