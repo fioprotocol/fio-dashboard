@@ -232,7 +232,7 @@ class OrdersJob extends CommonJob {
         }
         case Payment.PROCESSOR.BITPAY: {
           price = errorData.refundUsdcAmount || orderItemProps.price;
-          currency = orderItemProps.price;
+          currency = Payment.CURRENCY.USD;
           statusNotes = "User's crypto";
           break;
         }
