@@ -6,7 +6,10 @@ import apis from '../../../api';
 import { log } from '../../../util/general';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
-import { ACTIONS } from '../../../constants/fio';
+import {
+  ACTIONS,
+  TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
+} from '../../../constants/fio';
 
 import { SubmitActionParams } from '../../../components/EdgeConfirmAction/types';
 import { BeforeSubmitData, BeforeSubmitProps } from '../types';
@@ -28,6 +31,7 @@ const BeforeSubmitEdgeWallet: React.FC<BeforeSubmitProps> = props => {
               ownerPublicKey: item.ownerKey,
               fioAddress: item.name,
               maxFee: fee,
+              expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           ),
           signingWalletPubKey:
