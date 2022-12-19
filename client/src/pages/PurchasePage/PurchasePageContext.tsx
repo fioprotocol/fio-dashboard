@@ -46,6 +46,7 @@ import {
   ANALYTICS_EVENT_ACTIONS,
   ANALYTICS_PAYMENT_TYPE,
   CART_ITEM_TYPE,
+  CART_ITEM_TYPES_WITH_PERIOD,
 } from '../../constants/common';
 
 import { ERROR_TYPES } from '../../constants/errors';
@@ -122,7 +123,7 @@ export const useContext = (
           if (purcahsedItem) {
             if (
               purcahsedItem.id === id &&
-              purcahsedItem.period &&
+              CART_ITEM_TYPES_WITH_PERIOD.includes(purcahsedItem.type) &&
               purcahsedItem.period > period
             ) {
               const purcahsedItemPeriod = period;
@@ -182,8 +183,8 @@ export const useContext = (
             .filter(
               updatedCartItem =>
                 updatedCartItem.id !== id ||
-                !updatedCartItem.period ||
-                updatedCartItem.period !== period,
+                (CART_ITEM_TYPES_WITH_PERIOD.includes(updatedCartItem.type) &&
+                  updatedCartItem.period !== period),
             )
             .map(updatedCartItem => {
               if (

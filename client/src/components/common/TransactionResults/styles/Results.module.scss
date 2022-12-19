@@ -49,6 +49,10 @@
     flex-direction: row;
     @include proxima-nova-semibold;
 
+    .halfWidth {
+      flex: 1;
+    }
+
     .nameBadge {
       min-width: 200px;
       .badgeItemNext {
