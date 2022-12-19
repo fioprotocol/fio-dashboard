@@ -14,7 +14,7 @@ export const AffiliateNoFCHModal: React.FC = () => {
       <h4 className={classes.title}>Missing FIO Crypto Handle</h4>
       <p className={classes.subtitle}>
         To complete your activation, you will need a FIO Crypto Handle to
-        receive your all your rewards.
+        receive all your rewards.
       </p>
       <Link to={ROUTES.FIO_ADDRESSES_SELECTION}>
         <Button className={classes.button}>Get a FREE Crypto Handle Now</Button>
