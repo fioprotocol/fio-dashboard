@@ -73,6 +73,7 @@ export const getCartItemsDataForAnalytics = (
             ? ANALYTICS_FIO_NAME_TYPE.ADDRESS_FREE
             : cartItem.type,
           price: +cartItem.costUsdc,
+          _clear: true,
         };
 
         if (cartItem.period > 1) {
@@ -82,6 +83,7 @@ export const getCartItemsDataForAnalytics = (
             items.push({
               item_name: ANALYTICS_FIO_NAME_TYPE.DOMAIN_RENEWAL,
               price: item.price,
+              _clear: true,
             });
           }
 
