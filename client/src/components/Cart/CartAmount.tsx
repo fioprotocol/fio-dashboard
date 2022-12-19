@@ -40,10 +40,6 @@ const CartAmount: React.FC<Props> = props => {
 
   const { costFio, costUsdc } = totalCost(cartItems, roe);
 
-  const showAnnually = cartItems.length
-    ? cartItems.every(item => !item.address)
-    : false;
-
   return (
     <CartSmallContainer isHintColor={true} hasBigMargin={true}>
       <h3 className={classes.amountTitle}>Amount Due</h3>
@@ -52,7 +48,6 @@ const CartAmount: React.FC<Props> = props => {
         <hr className={classes.divider} />
         <p className={classes.cost}>
           Cost: {isFree ? 'FREE' : `${costFio} FIO / ${costUsdc} USDC`}{' '}
-          {showAnnually && <span className={classes.light}>(annually)</span>}
         </p>
         <hr className={classes.divider} />
       </div>
@@ -64,6 +59,7 @@ const CartAmount: React.FC<Props> = props => {
           paymentWalletPublicKey={paymentWalletPublicKey}
           onPaymentChoose={onPaymentChoose}
           totalCartNativeAmount={totalCartNativeAmount}
+          totlaCartUsdcAmount={costUsdc}
           userWallets={userWallets}
           selectedPaymentProvider={selectedPaymentProvider}
           disabled={!!error || disabled}

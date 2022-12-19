@@ -2,8 +2,11 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import classes from '../MainHeader.module.scss';
+import { REF_PROFILE_TYPE } from '../../../constants/common';
+
 import { RefProfile } from '../../../types';
+
+import classes from '../MainHeader.module.scss';
 
 type SiteLinkProps = {
   refProfileInfo: RefProfile;
@@ -11,6 +14,10 @@ type SiteLinkProps = {
 
 const SiteLink: React.FC<SiteLinkProps> = props => {
   const { refProfileInfo } = props;
+
+  if (refProfileInfo?.type === REF_PROFILE_TYPE.AFFILIATE) {
+    return <div className={classes.link} />;
+  }
 
   let link = 'https://fioprotocol.io/';
   let text = 'Go to fioprotocol.io';

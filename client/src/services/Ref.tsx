@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { RouterProps, withRouter } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { useHistory } from 'react-router';
 
 import apis from '../api';
 
@@ -25,6 +26,8 @@ import {
 import { IS_REFERRAL_PROFILE_PATH } from '../constants/regExps';
 
 import { FioWalletDoublet, RefProfile, User } from '../types';
+import { REF_PROFILE_TYPE } from '../constants/common';
+import { ROUTES } from '../constants/routes';
 
 type Props = {
   isAuthenticated: boolean;
@@ -51,10 +54,20 @@ const Ref = (
     refreshFioNames,
     getInfo,
   } = props;
+  const history = useHistory();
 
   const fioWalletsAmount = fioWallets.length;
 
   const isRefLink = IS_REFERRAL_PROFILE_PATH.test(pathname) || query.ref;
+
+  const redirectToDomainLandingPage = useCallback(
+    (refType: string) => {
+      if (refType === REF_PROFILE_TYPE.AFFILIATE && isRefLink) {
+        history.push(ROUTES.FIO_DOMAIN);
+      }
+    },
+    [history, isRefLink],
+  );
 
   useEffect(() => {
     if (
@@ -73,33 +86,42 @@ const Ref = (
     // handle cookies for non auth user
     if (!isAuthenticated) {
       // Set refProfileCode to cookies from ref link
+      const cookieRefProfileCode =
+        Cookies.get(REFERRAL_PROFILE_COOKIE_NAME) || '';
       if (refProfileInfo?.code != null) {
         setCookies(REFERRAL_PROFILE_COOKIE_NAME, refProfileInfo.code, {
           expires: REFERRAL_PROFILE_COOKIE_EXPIRATION_PEROID,
         });
+        redirectToDomainLandingPage(refProfileInfo?.type);
       } else {
         // Update refProfileCode cookies and set ref profile. Works for non auth user and not ref link
         if (!isRefLink) {
-          const cookieRefProfileCode =
-            Cookies.get(REFERRAL_PROFILE_COOKIE_NAME) || '';
-
           getInfo(cookieRefProfileCode);
         }
       }
+    } else {
+      redirectToDomainLandingPage(refProfileInfo?.type);
     }
-  }, [refProfileInfo?.code, isAuthenticated, isRefLink, getInfo]);
+  }, [
+    refProfileInfo?.code,
+    refProfileInfo?.type,
+    isAuthenticated,
+    isRefLink,
+    getInfo,
+    redirectToDomainLandingPage,
+  ]);
 
   useEffect(() => {
     // load profile when have ref link
-    if (isRefLink && !isAuthenticated) {
+    if (isRefLink) {
       const refProfileCode = pathname.split('/')[2] || query.ref;
       getInfo(refProfileCode);
     }
-  }, [isRefLink, pathname, isAuthenticated, query.ref, getInfo]);
+  }, [isRefLink, pathname, query.ref, getInfo]);
 
   // Set user refProfileCode to cookies
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !isRefLink && !refProfileInfo?.code) {
       const refProfileCode = user?.refProfile?.code || '';
 
       getInfo(refProfileCode);
@@ -107,13 +129,23 @@ const Ref = (
         expires: USER_REFERRAL_PROFILE_COOKIE_EXPIRATION_PERIOD,
       });
     }
-  }, [isAuthenticated, user?.refProfile?.code, getInfo]);
+  }, [
+    isAuthenticated,
+    isRefLink,
+    refProfileInfo?.code,
+    user?.refProfile?.code,
+    getInfo,
+  ]);
 
   useEffect(() => {
+    const tpid = refProfileInfo?.tpid || process.env.REACT_APP_DEFAULT_TPID;
     apis.fio.setTpid(
-      refProfileInfo?.tpid || process.env.REACT_APP_DEFAULT_TPID,
+      refProfileInfo?.type === REF_PROFILE_TYPE.REF
+        ? tpid
+        : process.env.REACT_APP_DEFAULT_TPID,
+      tpid,
     );
-  }, [refProfileInfo?.tpid]);
+  }, [refProfileInfo?.type, refProfileInfo?.tpid]);
 
   return null;
 };

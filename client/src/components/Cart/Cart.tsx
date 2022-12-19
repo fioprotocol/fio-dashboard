@@ -7,7 +7,7 @@ import CounterContainer from '../CounterContainer/CounterContainer';
 import CartItem from './CartItem';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 
-import { deleteCartItem } from '../../util/cart';
+import { deleteCartItem, updateCartItemPeriod } from '../../util/cart';
 
 import { ROUTES } from '../../constants/routes';
 
@@ -31,7 +31,7 @@ type Props = {
   totalCartNativeAmount: number;
   walletBalancesAvailable: WalletBalancesItem;
   prices: Prices;
-  setCartItems?: (cartItems: CartItemType[]) => {};
+  setCartItems?: (cartItems: CartItemType[]) => void;
   isPriceChanged: boolean;
   roe: number;
   hasGetPricesError?: boolean;
@@ -58,6 +58,15 @@ const Cart: React.FC<Props> = props => {
       id,
       prices,
       deleteItem,
+      cartItems,
+      setCartItems,
+      roe,
+    });
+  };
+  const handleUpdateItemPeriod = (id: string, period: number) => {
+    updateCartItemPeriod({
+      id,
+      period,
       cartItems,
       setCartItems,
       roe,
@@ -100,7 +109,12 @@ const Cart: React.FC<Props> = props => {
         {!isCartEmpty &&
           cartItems.map(item => (
             <div key={item.id}>
-              <CartItem item={item} onDelete={handleDeleteItem} />
+              <CartItem
+                item={item}
+                onDelete={handleDeleteItem}
+                onUpdatePeriod={handleUpdateItemPeriod}
+                isPeriodEditable
+              />
             </div>
           ))}
         <Link to={ROUTES.FIO_ADDRESSES_SELECTION} className={classes.cta}>

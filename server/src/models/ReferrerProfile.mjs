@@ -1,10 +1,15 @@
 import Sequelize from 'sequelize';
+import Hashids from 'hashids';
 
 import Base from './Base';
 import { User } from './User';
 import { FioAccountProfile } from './FioAccountProfile';
 
 const { DataTypes: DT } = Sequelize;
+
+const CODE_LENGTH = 5;
+const CODE_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+const hashids = new Hashids(process.env.ORDER_NUMBER_SALT, CODE_LENGTH, CODE_ALPHABET);
 
 export class ReferrerProfile extends Base {
   static get ACTION() {
@@ -13,10 +18,18 @@ export class ReferrerProfile extends Base {
     };
   }
 
+  static get TYPE() {
+    return {
+      REF: 'REFERRER',
+      AFFILIATE: 'AFFILIATE',
+    };
+  }
+
   static init(sequelize) {
     super.init(
       {
         id: { type: DT.BIGINT, primaryKey: true, autoIncrement: true },
+        type: { type: DT.STRING, defaultValue: this.TYPE.REF },
         code: { type: DT.STRING, allowNull: false, unique: true },
         regRefCode: { type: DT.STRING, allowNull: false },
         regRefApiToken: { type: DT.STRING, allowNull: false },
@@ -78,7 +91,9 @@ export class ReferrerProfile extends Base {
     const attributes = {
       default: [
         'id',
+        'type',
         'code',
+        'regRefCode',
         'label',
         'title',
         'subTitle',
@@ -102,9 +117,10 @@ export class ReferrerProfile extends Base {
     });
   }
 
-  static format({ id, code, regRefCode, label, title, subTitle, settings, tpid }) {
+  static format({ id, type, code, regRefCode, label, title, subTitle, settings, tpid }) {
     return {
       id,
+      type,
       code,
       regRefCode,
       label,
@@ -125,5 +141,9 @@ export class ReferrerProfile extends Base {
 
   static partnersCount() {
     return this.count();
+  }
+
+  static generateCode(data) {
+    return hashids.encode(data).toLowerCase();
   }
 }

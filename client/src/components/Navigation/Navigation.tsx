@@ -16,10 +16,13 @@ const userNavItems: string[] = [
   LINKS.FIO_ADDRESSES,
   LINKS.FIO_DOMAINS,
   LINKS.TOKENS,
-  // comment links due to BD-2631 task
-  // LINKS.FIO_REQUESTS,
-  // LINKS.GOVERNANCE,
-  // LINKS.PROTOCOL_UPDATES,
+  LINKS.FIO_AFFILIATE_PROGRAM_LANDING,
+];
+const userWithAffiliateNavItems: string[] = [
+  LINKS.FIO_ADDRESSES,
+  LINKS.FIO_DOMAINS,
+  LINKS.TOKENS,
+  LINKS.FIO_AFFILIATE_PROGRAM_ENABLED,
 ];
 
 const adminNavItems: string[] = [
@@ -47,6 +50,7 @@ type Props = {
   isNotActiveAdminUser: boolean;
   isOnSide?: boolean;
   isSuperAdmin: boolean;
+  isAffiliateEnabled: boolean;
   closeMenu?: () => void;
 };
 
@@ -104,6 +108,7 @@ export const Navigation: React.FC<Props> | null = props => {
     isContainedFlow,
     isNotActiveAdminUser,
     isSuperAdmin,
+    isAffiliateEnabled,
     closeMenu,
   } = props;
   const isAdminLocation = useIsAdminRoute();
@@ -112,7 +117,9 @@ export const Navigation: React.FC<Props> | null = props => {
   if (isNotActiveUser && isNotActiveAdminUser) return null;
 
   const navItemsList = !isAdminLocation
-    ? userNavItems
+    ? isAffiliateEnabled
+      ? userWithAffiliateNavItems
+      : userNavItems
     : isSuperAdmin
     ? superAdminNavItems
     : adminNavItems;

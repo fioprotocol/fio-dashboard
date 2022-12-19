@@ -83,7 +83,7 @@ const LoginForm: React.FC<Props> = props => {
   ) {
     subtitle =
       CONTAINED_FLOW_LOGIN_SUBTITLES[
-        emailConfirmationResult.stateData.containedFlowQueryParams.action
+        emailConfirmationResult.stateData.containedFlowQueryParams.action.toUpperCase()
       ];
   }
 

@@ -1,3 +1,4 @@
+import { MouseEvent as ReactMouseEvent } from 'react';
 import { EdgeAccount } from 'edge-core-js';
 import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 
@@ -11,6 +12,7 @@ import {
   PAYMENT_OPTIONS,
   PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
+  PAYMENT_RESULTS_STATUS,
 } from './constants/purchase';
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -30,6 +32,10 @@ export type AnyType = any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type OwnPropsAny = any; // todo: fix usages for ownProps
 
+export type ClickEventTypes = ReactMouseEvent<HTMLElement, MouseEvent> & {
+  target: { blur: () => void };
+};
+
 export type Domain = { domain: string; free?: boolean };
 
 export type ContainedFlowActionSettingsKey = keyof typeof CONTAINED_FLOW_ACTIONS;
@@ -43,6 +49,7 @@ export type CartItem = {
   costFio?: string;
   costUsdc?: string;
   hasCustomDomain?: boolean;
+  period?: number;
   allowFree?: boolean;
   showBadge?: boolean;
   error?: string;
@@ -78,7 +85,7 @@ export type NotificationParams = {
 
 export type Prices = {
   fio: { address: number; domain: number };
-  nativeFio: { address: number; domain: number };
+  nativeFio: { address: number; domain: number; renewDomain?: number };
   usdt: { address: number; domain: number };
 };
 
@@ -117,6 +124,7 @@ export type PaymentProvider = typeof PAYMENT_PROVIDER[keyof typeof PAYMENT_PROVI
 export type PaymentCurrency = typeof CURRENCY_CODES[keyof typeof CURRENCY_CODES];
 export type PaymentOptionsProps = typeof PAYMENT_OPTIONS[keyof typeof PAYMENT_OPTIONS];
 export type PurchaseTxStatus = typeof PURCHASE_RESULTS_STATUS[keyof typeof PURCHASE_RESULTS_STATUS];
+export type PaymentStatus = typeof PAYMENT_RESULTS_STATUS[keyof typeof PAYMENT_RESULTS_STATUS];
 export type BcTxStatus = typeof BC_TX_STATUSES[keyof typeof BC_TX_STATUSES];
 
 export type RegistrationResult = {
@@ -305,11 +313,14 @@ export type User = {
     status: string;
   }[];
   refProfile: { code?: string } | null;
+  affiliateProfile: { code?: string; tpid?: string } | null;
 };
 
 export type RefProfile = {
   id?: string;
+  type: string;
   code: string;
+  regRefCode: string;
   label: string;
   title: string;
   subTitle: string;
@@ -317,7 +328,7 @@ export type RefProfile = {
     domains: string[];
     allowCustomDomain: boolean;
     preselectedDomain?: string;
-    actions: Record<
+    actions?: Record<
       ContainedFlowActionSettingsKey,
       {
         subtitle?: string;
@@ -326,8 +337,8 @@ export type RefProfile = {
         actionText?: string;
       }
     >;
-    img: string;
-    link: string;
+    img?: string;
+    link?: string;
   };
   tpid: string;
   regRefApiToken: string;
@@ -681,6 +692,7 @@ export type OrderItem = {
   data: {
     hasCustomDomain?: boolean;
     hasCustomDomainFee?: string;
+    period?: number;
   };
   updatedAt: string;
   blockchainTransactions: BcTx[];
@@ -735,6 +747,7 @@ export type OrderItemDetailed = {
   id: string;
   isFree: boolean;
   hasCustomDomain?: boolean;
+  period?: number;
   priceString: string;
   transaction_id: string;
   transaction_ids: string[];
@@ -782,6 +795,7 @@ export type OrderDetailed = {
     paidWith: string;
     paymentProcessor: PaymentProvider;
     paymentCurrency: PaymentCurrency;
+    paymentStatus: PaymentStatus;
   };
   refProfileName?: string;
 };

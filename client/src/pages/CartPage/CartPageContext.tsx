@@ -53,6 +53,7 @@ import { FioRegPricesResponse } from '../../api/responses';
 import apis from '../../api';
 
 import {
+  CartItem as CartItemType,
   CartItem,
   DeleteCartItem,
   FioWalletDoublet,
@@ -81,6 +82,7 @@ type UseContextReturnType = {
   walletCount: number;
   onPaymentChoose: (paymentProvider: PaymentProvider) => Promise<void>;
   deleteItem: (data: DeleteCartItem) => void;
+  setCartItems: (cartItems: CartItemType[]) => void;
 };
 
 export const useContext = (): UseContextReturnType => {
@@ -245,7 +247,11 @@ export const useContext = (): UseContextReturnType => {
           .toNumber();
       }
 
-      const fioPrices = convertFioPrices(retObj.costNativeFio, updatedRoe);
+      const period = retObj.period || 1;
+      const fioPrices = convertFioPrices(
+        new MathOp(retObj.costNativeFio).mul(period).toNumber(),
+        updatedRoe,
+      );
 
       retObj.costFio = fioPrices.fio;
       retObj.costUsdc = fioPrices.usdc;
@@ -355,9 +361,13 @@ export const useContext = (): UseContextReturnType => {
       dispatch(setWallet(highestBalanceWalletPubKey));
   }, [dispatch, highestBalanceWalletPubKey, pubKeyForPrivateDomain]);
 
-  useEffectOnce(() => {
-    if (isAuth) handleFreeAddressCartFn();
-  }, [isAuth]);
+  useEffectOnce(
+    () => {
+      if (isAuth) handleFreeAddressCartFn();
+    },
+    [isAuth],
+    !loading,
+  );
 
   useEffect(() => {
     if (!isAuth) {
@@ -383,5 +393,7 @@ export const useContext = (): UseContextReturnType => {
     error,
     onPaymentChoose,
     deleteItem: (data: DeleteCartItem) => dispatch(deleteItem(data)),
+    setCartItems: (cartItems: CartItemType[]) =>
+      dispatch(setCartItems(cartItems)),
   };
 };

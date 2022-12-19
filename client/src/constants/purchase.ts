@@ -15,6 +15,14 @@ export const PURCHASE_RESULTS_STATUS: { [label: string]: number } = {
   PAYMENT_PENDING: 10,
 } as const;
 
+export const PAYMENT_RESULTS_STATUS: { [label: string]: number } = {
+  NEW: 1,
+  PENDING: 2,
+  COMPLETED: 3,
+  EXPIRED: 4,
+  CANCELLED: 5,
+};
+
 export const PURCHASE_RESULTS_STATUS_LABELS: {
   [key: number]: string;
 } = Object.entries(PURCHASE_RESULTS_STATUS).reduce((acc, [label, value]) => {
@@ -73,20 +81,20 @@ export const ORDER_STATUS_LABEL_PDF = {
 export const PAYMENT_PROVIDER = {
   FIO: 'FIO',
   STRIPE: 'STRIPE',
-  CRYPTO: 'CRYPTO',
+  BITPAY: 'BITPAY',
 } as const;
 
 export const PAYMENT_PROVIDER_LABEL = {
   [PAYMENT_PROVIDER.FIO]: 'Fio Wallet',
   [PAYMENT_PROVIDER.STRIPE]: 'Stripe',
-  [PAYMENT_PROVIDER.CRYPTO]: 'Crypto',
+  [PAYMENT_PROVIDER.BITPAY]: 'BitPay',
 };
 
 export const PAYMENT_ITEM_TYPE_LABEL = {
   [ACTIONS.registerFioAddress]: 'FCH',
   [ACTIONS.registerFioDomain]: 'Domain',
-  [ACTIONS.addBundledTransactions]: 'Domain Renewal',
-  [ACTIONS.renewFioDomain]: 'Add Bundled Transactions',
+  [ACTIONS.addBundledTransactions]: 'Add Bundled Transactions',
+  [ACTIONS.renewFioDomain]: 'Domain Renewal',
 };
 
 export const PAYMENT_STATUSES = {
@@ -96,6 +104,8 @@ export const PAYMENT_STATUSES = {
   EXPIRED: 4,
   CANCELLED: 5,
   FAILED: 6,
+  PENDING_PAID: 7,
+  PENDING_CONFIRMED: 8,
 } as const;
 
 export const PAYMENTS_STATUSES_TITLES = {
@@ -105,6 +115,8 @@ export const PAYMENTS_STATUSES_TITLES = {
   [PAYMENT_STATUSES.EXPIRED]: 'EXPIRED',
   [PAYMENT_STATUSES.CANCELLED]: 'CANCELLED',
   [PAYMENT_STATUSES.FAILED]: 'FAILED',
+  [PAYMENT_STATUSES.PENDING_PAID]: 'PENDING (PAID)',
+  [PAYMENT_STATUSES.PENDING_CONFIRMED]: 'PENDING (CONFIRMED)',
 };
 
 export const PAYMENT_OPTIONS = {
@@ -121,7 +133,7 @@ export const PAYMENT_OPTIONS_LABEL = {
 export const PAYMENT_PROVIDER_PAYMENT_OPTION = {
   [PAYMENT_PROVIDER.FIO]: PAYMENT_OPTIONS.FIO,
   [PAYMENT_PROVIDER.STRIPE]: PAYMENT_OPTIONS.CREDIT_CARD,
-  [PAYMENT_PROVIDER.CRYPTO]: PAYMENT_OPTIONS.CRYPTO,
+  [PAYMENT_PROVIDER.BITPAY]: PAYMENT_OPTIONS.CRYPTO,
 };
 
 export const PAYMENT_SPENT_TYPES = {
@@ -140,7 +152,7 @@ export const PAYMENT_OPTION_TITLE = {
 export const PAYMENT_PROVIDER_PAYMENT_TITLE = {
   [PAYMENT_PROVIDER.FIO]: PAYMENT_OPTION_TITLE.FIO,
   [PAYMENT_PROVIDER.STRIPE]: PAYMENT_OPTION_TITLE.CREDIT_CARD,
-  [PAYMENT_PROVIDER.CRYPTO]: PAYMENT_OPTION_TITLE.CRYPTO,
+  [PAYMENT_PROVIDER.BITPAY]: PAYMENT_OPTION_TITLE.CRYPTO,
 };
 
 export const BC_TX_STATUSES = {

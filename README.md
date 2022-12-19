@@ -74,4 +74,35 @@ How to use embed widget?
 - Go to `${YOUR_WIDGET_NAME_FOLDER}` folder on your server.
 - Share `${REACT_APP_WIDGET}.js` file to web.
 - Paste content from `widget.html` on other website.
-- Voila! 
+- Voila!
+
+### BitPay integration
+
+If you want to use BitPay locally you need to have public access to your running application for webhook and payment BitPay site redirectUrl. How to easy handle this on your machine?
+
+1. Install nginx - `https://www.nginx.com/` 
+Useful links:
+- `https://www.cyberciti.biz/faq/nginx-restart-ubuntu-linux-command/`
+2. Install ngrok - `https://ngrok.com/`
+- You need to register there
+3. Configure nginx:
+- I have 5555 port, you could use any other port you want. Add this to you `nginx.conf` server part:
+```server {
+        # some default settings...
+        
+        listen       5555;
+        server_name  localhost;
+
+        location / {
+            proxy_pass http://localhost:3000;
+        }
+
+        location /api/v1 {
+            proxy_pass http://localhost:9006;
+        }
+    }
+```
+4. Run nginx
+5. Run ngrok with command ```ngrok http 5555```
+6. Ngrok will return a pubilc url address like `https://564b-178-133-53-168.ngrok.io`. Set it as `API_BASE_URL` and rerun server. Every time you run ngrok your public url address changes re-setup `API_BASE_URL` and rerun server.
+Enjoy!

@@ -6,16 +6,12 @@ import classes from '../styles/StatsSection.module.scss';
 
 const contentItems = [
   {
-    text: 'Domains',
-    amount: 10000,
+    text: 'FIO Crypto Handles & Domains',
+    amount: 850000,
   },
   {
-    text: 'Crypto Handles',
-    amount: 700000,
-  },
-  {
-    text: 'Integrations',
-    amount: 90,
+    text: 'Integration Partners',
+    amount: 100,
   },
 ];
 

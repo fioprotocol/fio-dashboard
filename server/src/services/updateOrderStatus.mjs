@@ -4,7 +4,11 @@ import { fioApi } from '../external/fio.mjs';
 import { countTotalPriceAmount, getPaidWith } from '../utils/order.mjs';
 import MathOp from './math.mjs';
 import logger from '../logger.mjs';
-import { FIO_ACTIONS_LABEL, FIO_ACTIONS } from '../config/constants.js';
+import {
+  FIO_ACTIONS_LABEL,
+  FIO_ACTIONS,
+  FIO_ACTIONS_WITH_PERIOD,
+} from '../config/constants.js';
 
 export const checkOrderStatusAndCreateNotification = async orderId => {
   const order = await Order.orderInfo(orderId);
@@ -44,45 +48,80 @@ const transformFioPrice = (usdcPrice, nativeAmount) => {
 };
 
 const transformOrderItemsForEmail = (orderItems, showPriceWithFioAmount) =>
-  orderItems.map(orderItem => {
-    const { action, address, data, domain, nativeFio, price } = orderItem;
-    let priceAmount = {};
-
-    if (price && price !== '0') {
-      if (showPriceWithFioAmount) {
-        priceAmount = transformFioPrice(price, nativeFio);
-      } else {
-        priceAmount = `${price} USDC`;
-      }
-    } else {
-      priceAmount = 'FREE';
-    }
-
-    const transformedOrderItem = {
-      descriptor: FIO_ACTIONS_LABEL[action],
-      address,
-      domain,
-      priceAmount,
-    };
-    if (data && data.hasCustomDomain) {
-      transformedOrderItem.hasCustomDomain = data.hasCustomDomain;
-      transformedOrderItem.descriptor =
-        FIO_ACTIONS_LABEL[
-          `${FIO_ACTIONS.registerFioAddress}_${FIO_ACTIONS.registerFioDomain}`
+  orderItems
+    .reduce((items, item) => {
+      const existsItem = items.find(
+        orderItem =>
+          orderItem.data &&
+          item.data &&
+          orderItem.data.cartItemId === item.data.cartItemId,
+      );
+      if (FIO_ACTIONS_WITH_PERIOD.includes(item.action) && existsItem) {
+        existsItem.period++;
+        existsItem.blockchainTransactions = [
+          ...(existsItem.blockchainTransactions || []),
+          ...(item.blockchainTransactions || []),
         ];
-    }
+        existsItem.nativeFio = +existsItem.nativeFio + +item.nativeFio;
+        existsItem.price = +existsItem.price + +item.price;
+      } else {
+        if (FIO_ACTIONS_WITH_PERIOD.includes(item.action)) {
+          item.period = 1;
+        }
+        items.push({
+          ...item,
+        });
+      }
 
-    return transformedOrderItem;
-  });
+      return items;
+    }, [])
+    .map(orderItem => {
+      const { action, address, data, domain, nativeFio, price } = orderItem;
+      let priceAmount = {};
 
-const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith }) => {
+      if (price && price !== '0') {
+        if (showPriceWithFioAmount) {
+          priceAmount = transformFioPrice(price, nativeFio);
+        } else {
+          priceAmount = `${price} USDC`;
+        }
+      } else {
+        priceAmount = 'FREE';
+      }
+
+      const transformedOrderItem = {
+        descriptor: FIO_ACTIONS_LABEL[action],
+        address,
+        domain,
+        priceAmount,
+      };
+      if (orderItem.period) {
+        transformedOrderItem.descriptor = `${transformedOrderItem.descriptor} - ${
+          orderItem.period
+        } year${orderItem.period > 1 ? 's' : ''}`;
+      }
+      if (data && data.hasCustomDomain) {
+        transformedOrderItem.hasCustomDomain = data.hasCustomDomain;
+        transformedOrderItem.descriptor =
+          FIO_ACTIONS_LABEL[
+            `${FIO_ACTIONS.registerFioAddress}_${FIO_ACTIONS.registerFioDomain}`
+          ];
+      }
+
+      return transformedOrderItem;
+    });
+
+const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith, number }) => {
   if (!orderItems.length) return {};
 
   const { data: paymentData, processor } = payment;
 
   const orderPaymentInfo = {};
 
-  const isCreditCardProcessor = processor === Payment.PROCESSOR.STRIPE;
+  const isExternalProcessor = [
+    Payment.PROCESSOR.STRIPE,
+    Payment.PROCESSOR.BITPAY,
+  ].includes(processor);
   const isFioProcessor = processor === Payment.PROCESSOR.FIO;
 
   const orderItemsTotalAmount = countTotalPriceAmount(orderItems);
@@ -109,11 +148,9 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith }) => {
     }
   }
 
-  if (isCreditCardProcessor && paymentData) {
-    const { webhookData: { txn_id } = {} } = paymentData;
-
+  if (isExternalProcessor && paymentData) {
     orderPaymentInfo.paidWith = paidWith;
-    orderPaymentInfo.txId = txn_id;
+    orderPaymentInfo.orderNumber = number;
     orderPaymentInfo.total = `${orderItemsTotalAmount.usdcTotal.toFixed(2)} USDC`;
   }
 
@@ -132,7 +169,6 @@ const createPurchaseConfirmationNotification = async order => {
     const payment =
       payments.find(payment => payment.spentType === Payment.SPENT_TYPE.ORDER) || {};
 
-    const isCreditCardProcessor = payment.processor === Payment.PROCESSOR.STRIPE;
     const isFioProcessor = payment.processor === Payment.PROCESSOR.FIO;
 
     const successedOrderItemsArr = items.filter(
@@ -146,7 +182,7 @@ const createPurchaseConfirmationNotification = async order => {
     );
 
     const paidWith = await getPaidWith({
-      isCreditCardProcessor,
+      paymentProcessor: payment.processor,
       publicKey,
       userId,
       payment,
@@ -156,6 +192,7 @@ const createPurchaseConfirmationNotification = async order => {
       orderItems: successedOrderItemsArr,
       payment,
       paidWith,
+      number,
     });
 
     await Notification.create({

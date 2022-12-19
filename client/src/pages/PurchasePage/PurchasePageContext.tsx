@@ -30,6 +30,8 @@ import {
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
 import { useEffectOnce } from '../../hooks/general';
+import { convertFioPrices } from '../../util/prices';
+import MathOp from '../../util/math';
 
 import { ROUTES } from '../../constants/routes';
 import {
@@ -43,6 +45,8 @@ import {
 import {
   ANALYTICS_EVENT_ACTIONS,
   ANALYTICS_PAYMENT_TYPE,
+  CART_ITEM_TYPE,
+  CART_ITEM_TYPES_WITH_PERIOD,
 } from '../../constants/common';
 
 import { ERROR_TYPES } from '../../constants/errors';
@@ -114,9 +118,31 @@ export const useContext = (
       ) {
         const purcahsedItems: CartItem[] = [];
         regItems.forEach(regItem => {
-          const { id } = regItem;
+          const { id, period = 1 } = regItem;
           const purcahsedItem = cart.find(cartItem => cartItem.id === id);
-          purcahsedItem && purcahsedItems.push(purcahsedItem);
+          if (purcahsedItem) {
+            if (
+              purcahsedItem.id === id &&
+              CART_ITEM_TYPES_WITH_PERIOD.includes(purcahsedItem.type) &&
+              purcahsedItem.period > period
+            ) {
+              const purcahsedItemPeriod = period;
+              const fioPrices = convertFioPrices(
+                new MathOp(purcahsedItem.costNativeFio)
+                  .mul(purcahsedItemPeriod)
+                  .toNumber(),
+                roe,
+              );
+              purcahsedItems.push({
+                ...purcahsedItem,
+                period: purcahsedItemPeriod,
+                costFio: fioPrices.fio,
+                costUsdc: fioPrices.usdc,
+              });
+            } else {
+              purcahsedItems.push(purcahsedItem);
+            }
+          }
         });
         const purchaseItems = getCartItemsDataForAnalytics(purcahsedItems);
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED, {
@@ -152,10 +178,32 @@ export const useContext = (
       ) {
         let updatedCart: CartItem[] = [...cart];
         regItems.forEach(regItem => {
-          const { id } = regItem;
-          updatedCart = updatedCart.filter(
-            updatedCartItem => updatedCartItem.id !== id,
-          );
+          const { id, period = 1 } = regItem;
+          updatedCart = updatedCart
+            .filter(
+              updatedCartItem =>
+                updatedCartItem.id !== id ||
+                (CART_ITEM_TYPES_WITH_PERIOD.includes(updatedCartItem.type) &&
+                  updatedCartItem.period !== period),
+            )
+            .map(updatedCartItem => {
+              if (
+                updatedCartItem.id === id &&
+                updatedCartItem.period &&
+                updatedCartItem.period > period
+              ) {
+                updatedCartItem.type = CART_ITEM_TYPE.DOMAIN_RENEWAL;
+                updatedCartItem.period -= period;
+                const fioPrices = convertFioPrices(
+                  updatedCartItem.period * updatedCartItem.costNativeFio,
+                  roe,
+                );
+                updatedCartItem.costFio = fioPrices.fio;
+                updatedCartItem.costUsdc = fioPrices.usdc;
+              }
+
+              return updatedCartItem;
+            });
         });
         dispatch(setCartItems(updatedCart));
       }
@@ -170,9 +218,10 @@ export const useContext = (
   if (
     containedFlowParams != null &&
     containedFlowParams.action &&
-    CONTAINED_FLOW_CONTINUE_TEXT[containedFlowParams.action]
+    CONTAINED_FLOW_CONTINUE_TEXT[containedFlowParams.action.toUpperCase()]
   ) {
-    buttonText = CONTAINED_FLOW_CONTINUE_TEXT[containedFlowParams.action];
+    buttonText =
+      CONTAINED_FLOW_CONTINUE_TEXT[containedFlowParams.action.toUpperCase()];
   }
 
   const onClose = () => {
@@ -199,8 +248,9 @@ export const useContext = (
 
   const isRetryAvailable =
     !isEmpty(errItems) &&
-    (errItems.length > 1 ||
-      errItems[0]?.errorType !== ERROR_TYPES.freeAddressIsNotRegistered);
+    errItems.length > 1 &&
+    (errItems[0]?.errorType !== ERROR_TYPES.freeAddressIsNotRegistered ||
+      errItems[0]?.errorType !== ERROR_TYPES.userHasFreeAddress);
 
   if (isRetryAvailable) {
     actionClick = onRetry;

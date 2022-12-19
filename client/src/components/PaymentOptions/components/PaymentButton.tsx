@@ -7,9 +7,10 @@ import Loader from '../../Loader/Loader';
 import classes from '../styles/PaymentOptions.module.scss';
 
 export type PaymentButtonProps = {
-  buttonText: string;
+  buttonText: React.ReactNode;
   icon?: React.ReactNode | null;
-  hasRoyalBlueBackground?: boolean;
+  isTextCentered?: boolean;
+  hasCobaltBackground?: boolean;
   disabled?: boolean;
   hideButton?: boolean;
   hidden?: boolean;
@@ -22,7 +23,8 @@ export const PaymentButton: React.FC<PaymentButtonProps> = props => {
   const {
     buttonText,
     icon,
-    hasRoyalBlueBackground,
+    isTextCentered,
+    hasCobaltBackground,
     disabled,
     hideButton,
     afterTextIcon,
@@ -36,13 +38,14 @@ export const PaymentButton: React.FC<PaymentButtonProps> = props => {
     <Button
       className={classnames(
         classes.button,
-        hasRoyalBlueBackground && classes.hasRoyalBlueBackground,
+        hasCobaltBackground && classes.hasCobaltBackground,
+        isTextCentered && classes.isTextCentered,
       )}
       onClick={onClick}
       disabled={disabled}
     >
       {icon && <div className="mr-2">{icon}</div>}
-      <p className={classes.buttonText}>{buttonText}</p>
+      <div className={classes.buttonText}>{buttonText}</div>
       {afterTextIcon && <div className="ml-2">{afterTextIcon}</div>}
       {loading && (
         <Loader isWhite={true} hasInheritFontSize={true} hasAutoWidth={true} />

@@ -2,6 +2,7 @@ export const ERROR_TYPES = {
   default: 'default',
   freeAddressIsNotRegistered: 'freeAddressIsNotRegistered',
   freeAddressError: 'freeAddressError',
+  userHasFreeAddress: 'useHasFreeAddress',
 };
 
 export const FREE_ADDRESS_REGISTER_ERROR =
@@ -13,10 +14,17 @@ export const DEFAULT_FIO_TRX_ERR_MESSAGE =
 export const DEFAULT_FIO_TRX_FREE_ERR_MESSAGE =
   'There was an error during purchase. As a result we could not complete your purchase. Click close and try again.';
 
+export const USER_HAS_FREE_ADDRESS_ERR_MESSAGE =
+  'There was an error during purchase. You have already registered a free FIO Crypto Handle';
+
+export const REG_SITE_USER_HAS_FREE_ADDRESS_ERR_MESSAGE =
+  'You have already registered a free FIO Crypto Handle for that domain';
+
 export const ERROR_MESSAGES = {
   [ERROR_TYPES.default]: DEFAULT_FIO_TRX_ERR_MESSAGE,
   [ERROR_TYPES.freeAddressIsNotRegistered]: FREE_ADDRESS_REGISTER_ERROR,
   [ERROR_TYPES.freeAddressError]: DEFAULT_FIO_TRX_FREE_ERR_MESSAGE,
+  [ERROR_TYPES.userHasFreeAddress]: USER_HAS_FREE_ADDRESS_ERR_MESSAGE,
 };
 
 export const TOKEN_LINK_ERROR_MESSAGE =

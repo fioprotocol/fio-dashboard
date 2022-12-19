@@ -21,18 +21,7 @@ export const ContainedFlowSignNftTitle: React.FC = () => {
   );
 };
 
-const TitleComponent: React.FC<Props> = props => {
-  const { logoSrc, title } = props;
-
-  if (logoSrc)
-    return (
-      <div className="mb-5">
-        <img src={logoSrc} className={classes.logoImg} alt="" />
-      </div>
-    );
-
-  if (title) return <>{title}</>;
-
+export const ContainedFlowRegTitle: React.FC = () => {
   return (
     <h1 className={classes.title}>
       <span className="boldText">Hi!</span> Get Your{' '}
@@ -43,6 +32,36 @@ const TitleComponent: React.FC<Props> = props => {
         Now
       </span>
     </h1>
+  );
+};
+
+const TitleComponent: React.FC<Props> = props => {
+  const { logoSrc, title } = props;
+
+  const renderLogo = () => {
+    return logoSrc ? (
+      <div className="mb-5">
+        <img src={logoSrc} className={classes.logoImg} alt="" />
+      </div>
+    ) : null;
+  };
+  const renderTitle = () => {
+    return title ? (
+      typeof title === 'string' ? (
+        <h1 className={classes.customTitle}>{title}</h1>
+      ) : (
+        <>{title}</>
+      )
+    ) : (
+      <ContainedFlowRegTitle />
+    );
+  };
+
+  return (
+    <>
+      {renderLogo()}
+      {renderTitle()}
+    </>
   );
 };
 

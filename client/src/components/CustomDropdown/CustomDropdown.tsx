@@ -17,6 +17,7 @@ type Props = {
   isWidthResponsive?: boolean;
   isWhite?: boolean;
   isVoilet?: boolean;
+  isDark?: boolean;
   isWhitePlaceholder?: boolean;
   isBlackPlaceholder?: boolean;
   isWhiteIcon?: boolean;
@@ -30,6 +31,7 @@ type Props = {
   noMinWidth?: boolean;
   hasLightBorder?: boolean;
   hasBigBorderRadius?: boolean;
+  disabled?: boolean;
 };
 
 const CustomDropdown: React.FC<Props> = props => {
@@ -44,6 +46,7 @@ const CustomDropdown: React.FC<Props> = props => {
     isWidthResponsive,
     isWhite,
     isVoilet,
+    isDark,
     isWhitePlaceholder,
     isBlackPlaceholder,
     isWhiteIcon,
@@ -57,6 +60,7 @@ const CustomDropdown: React.FC<Props> = props => {
     noMinWidth,
     hasLightBorder,
     hasBigBorderRadius,
+    disabled,
   } = props;
 
   const styledOptions = options.map(option => ({
@@ -88,6 +92,7 @@ const CustomDropdown: React.FC<Props> = props => {
       value={value}
       onChange={onDropdownChange}
       placeholder={placeholder}
+      disabled={disabled}
       className={classnames(
         classes.dropdown,
         isShort && classes.isShort,
@@ -101,6 +106,7 @@ const CustomDropdown: React.FC<Props> = props => {
         classes.control,
         isWhite && classes.isWhite,
         isVoilet && classes.isVoilet,
+        isDark && classes.isDark,
         isSimple && classes.isSimple,
         isHigh && classes.isHigh,
         hasAutoHeight && classes.hasAutoHeight,

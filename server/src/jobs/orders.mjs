@@ -18,10 +18,12 @@ import {
 import MathOp from '../services/math.mjs';
 import CommonJob from './job.mjs';
 import Stripe from '../external/payment-processor/stripe';
+import BitPay from '../external/payment-processor/bitpay.mjs';
 
 import sendInsufficientFundsNotification from '../services/fallback-funds-email.mjs';
 import { updateOrderStatus as updateOrderStatusService } from '../services/updateOrderStatus.mjs';
 import { getROE } from '../external/roe.mjs';
+import { sleep } from '../tools.mjs';
 import {
   FEES_UPDATE_TIMEOUT_SEC,
   FEES_VAR_KEY,
@@ -39,6 +41,7 @@ const ERROR_CODES = {
   SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
 };
 const MAX_STATUS_NOTES_LENGTH = 200;
+const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 2000;
 
 class OrdersJob extends CommonJob {
   constructor() {
@@ -227,6 +230,12 @@ class OrdersJob extends CommonJob {
           statusNotes = "User's credit card";
           break;
         }
+        case Payment.PROCESSOR.BITPAY: {
+          price = errorData.refundUsdcAmount || orderItemProps.price;
+          currency = Payment.CURRENCY.USD;
+          statusNotes = "User's crypto";
+          break;
+        }
         default:
           price = fioApi.convertUsdcToFio(orderItemProps.price, orderItemProps.roe);
           nativePrice = fioApi.amountToSUF(price);
@@ -257,6 +266,10 @@ class OrdersJob extends CommonJob {
       switch (payment.processor) {
         case Payment.PROCESSOR.STRIPE: {
           refundTx = await Stripe.refund(payment.externalId, price);
+          break;
+        }
+        case Payment.PROCESSOR.BITPAY: {
+          refundTx = await BitPay.refund(payment.externalId, price);
           break;
         }
         default:
@@ -538,6 +551,7 @@ class OrdersJob extends CommonJob {
             domain,
             publicKey: orderItem.publicKey,
             fee: await this.getFeeForAction(FIO_ACTIONS.registerFioDomain),
+            tpid: orderItem.domainTpid,
           }),
           auth,
         );
@@ -603,9 +617,19 @@ class OrdersJob extends CommonJob {
         currency: Payment.CURRENCY.USDC,
       });
 
+      if (action === FIO_ACTIONS.renewFioDomain) {
+        await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION);
+      }
       result = await fioApi.executeAction(
         action,
-        fioApi.getActionParams({ ...orderItem, fee: await this.getFeeForAction(action) }),
+        fioApi.getActionParams({
+          ...orderItem,
+          tpid:
+            action === FIO_ACTIONS.registerFioDomain
+              ? orderItem.domainTpid
+              : orderItem.tpid,
+          fee: await this.getFeeForAction(action),
+        }),
         auth,
       );
 

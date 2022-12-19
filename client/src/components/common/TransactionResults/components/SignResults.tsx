@@ -23,17 +23,21 @@ const SignResults: React.FC<ResultsProps> = props => {
       <FioName name={name || ''} />
       <h5 className={classes.label}>Signed NFT Details</h5>
       <div className={classes.badges}>
-        <Badge show={true} type={BADGE_TYPES.WHITE}>
-          <div className={classes.badgeContainer}>
-            <p className={classes.badgeItem}>Chain Code</p>
-            <p className={classes.badgeItemNext}>{chainCode}</p>
-          </div>
-        </Badge>
-        <div className={classes.statusBadge}>
+        <div className={classes.halfWidth}>
+          <Badge show={true} type={BADGE_TYPES.WHITE}>
+            <div className={classes.badgeContainer}>
+              <p className={classes.badgeItem}>Chain Code</p>
+              <p className={classes.badgeItemNext}>{chainCode}</p>
+            </div>
+          </Badge>
+        </div>
+        <div className={classnames(classes.statusBadge, classes.halfWidth)}>
           <Badge show={true} type={BADGE_TYPES.WHITE}>
             <div className={classes.badgeContainer}>
               <span className={classes.badgeItem}>Token ID</span>
-              <span className={classes.badgeItemNext}>
+              <span
+                className={classnames(classes.badgeItemNext, classes.breakWord)}
+              >
                 {tokenId || dashSign}
               </span>
             </div>

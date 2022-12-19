@@ -8,6 +8,7 @@ import {
   isNotActiveUser,
   isNotActiveAdminUser,
   isSuperAdmin,
+  isAffiliateEnabled,
 } from '../../redux/profile/selectors';
 
 const selector = createStructuredSelector({
@@ -15,6 +16,7 @@ const selector = createStructuredSelector({
   isContainedFlow,
   isNotActiveAdminUser,
   isSuperAdmin,
+  isAffiliateEnabled,
 });
 
 export default connect(selector)(Navigation);

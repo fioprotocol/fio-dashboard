@@ -2,6 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 import Badge, { BADGE_TYPES } from '../../Badge/Badge';
 
@@ -33,15 +34,39 @@ const NFTTokenBadge: React.FC<Props> = props => {
             <div className={classes.subtitle}>
               Chain Code: <span className="boldText">{chainCode}</span>
             </div>
-            <div className={classes.subtitle}>
-              Token ID: <span className="boldText">{tokenId}</span>
-            </div>
-            <div
-              className={classnames(classes.subtitle, classes.contractAddress)}
+            <OverlayTrigger
+              placement="top"
+              overlay={
+                <Tooltip id={`tokenID-${id}`} className={classes.tooltip}>
+                  {tokenId}
+                </Tooltip>
+              }
             >
-              Contract Address:{' '}
-              <span className="boldText">{contractAddress}</span>
-            </div>
+              <div className={classnames(classes.subtitle, classes.tokenID)}>
+                Token ID: <span className="boldText">{tokenId}</span>
+              </div>
+            </OverlayTrigger>
+            <OverlayTrigger
+              placement="top"
+              overlay={
+                <Tooltip
+                  id={`contractAddress-${id}`}
+                  className={classes.tooltip}
+                >
+                  {contractAddress}
+                </Tooltip>
+              }
+            >
+              <div
+                className={classnames(
+                  classes.subtitle,
+                  classes.contractAddress,
+                )}
+              >
+                Contract Address:{' '}
+                <span className="boldText">{contractAddress}</span>
+              </div>
+            </OverlayTrigger>
           </div>
           <FontAwesomeIcon
             icon="chevron-right"

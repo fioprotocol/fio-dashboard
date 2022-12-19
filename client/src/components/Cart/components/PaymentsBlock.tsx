@@ -15,6 +15,7 @@ type Props = {
   paymentWalletPublicKey?: string;
   cartItems?: CartItem[];
   totalCartNativeAmount: number;
+  totlaCartUsdcAmount: string;
   userWallets: FioWalletDoublet[];
   selectedPaymentProvider: PaymentProvider;
   disabled?: boolean;
@@ -27,6 +28,7 @@ const PaymentsBlock: React.FC<Props> = props => {
     cartItems,
     paymentWalletPublicKey,
     totalCartNativeAmount,
+    totlaCartUsdcAmount,
     userWallets,
     selectedPaymentProvider,
     disabled,
@@ -50,6 +52,7 @@ const PaymentsBlock: React.FC<Props> = props => {
     paymentOptionsList: [PAYMENT_OPTIONS.CREDIT_CARD, PAYMENT_OPTIONS.CRYPTO],
     cartItems,
     selectedPaymentProvider,
+    totlaCartUsdcAmount,
     disabled,
     onPaymentChoose,
   };

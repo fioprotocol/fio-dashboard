@@ -247,6 +247,16 @@ const FioDomainSelectionPage = React.lazy(() =>
     /* webpackChunkName: 'fioDomainSelectionPage' */ './pages/FioDomainSelectionPage'
   ),
 );
+const FioAffiliateProgramLandingPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioAffiliateProgramLandingPage' */ './pages/FioAffiliateProgramLandingPage'
+  ),
+);
+const FioAffiliateProgramPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioAffiliateProgramPage' */ './pages/FioAffiliateProgramPage'
+  ),
+);
 const HomePage = React.lazy(() =>
   import(/* webpackChunkName: 'homePage' */ './pages/HomePage'),
 );
@@ -561,6 +571,17 @@ const Routes = (): React.ReactElement => (
           <PrivateRoute
             path={ROUTES.ORDER_DETAILS}
             component={OrderDetailsPage}
+            exact
+          />
+
+          <Route
+            path={ROUTES.FIO_AFFILIATE_PROGRAM_LANDING}
+            component={FioAffiliateProgramLandingPage}
+            exact
+          />
+          <PrivateRoute
+            path={ROUTES.FIO_AFFILIATE_PROGRAM_ENABLED}
+            component={FioAffiliateProgramPage}
             exact
           />
 

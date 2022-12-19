@@ -78,6 +78,16 @@
     }
   }
 
+  &.isCobalt {
+    border: $cobalt;
+    background-color: $cobalt;
+
+    &:hover {
+      border: $royal-blue;
+      background-color: $royal-blue;
+    }
+  }
+
   &.disabled {
     cursor: not-allowed;
   }

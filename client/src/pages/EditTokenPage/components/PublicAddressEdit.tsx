@@ -46,7 +46,7 @@ const PublicAddressEdit: React.FC<Props> = props => {
   };
 
   const onInputBlur = (e: React.FocusEvent<HTMLElement>) => {
-    const focusedElement = e.relatedTarget;
+    const focusedElement = e.relatedTarget as Element;
 
     const isCurrentAddress =
       focusedElement &&

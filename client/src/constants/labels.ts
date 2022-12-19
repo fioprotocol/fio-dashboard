@@ -79,6 +79,8 @@ export const LINKS: { [linkKey: string]: string } = {
   ORDERS: 'ORDERS',
   ORDER_DETAILS: 'ORDER_DETAILS',
   ORDER_INVOICE: 'ORDER_INVOICE',
+  FIO_AFFILIATE_PROGRAM_LANDING: 'FIO_AFFILIATE_PROGRAM_LANDING',
+  FIO_AFFILIATE_PROGRAM_ENABLED: 'FIO_AFFILIATE_PROGRAM_ENABLED',
 };
 
 export const LINK_LABELS: { [linkKey: string]: string } = {
@@ -96,6 +98,8 @@ export const LINK_LABELS: { [linkKey: string]: string } = {
   [LINKS.FIO_REQUESTS]: 'FIO Requests',
   [LINKS.FIO_WALLET]: 'FIO Wallet',
   [LINKS.TOKENS]: 'FIO Tokens',
+  [LINKS.FIO_AFFILIATE_PROGRAM_LANDING]: 'FIO Domain Affiliate Program',
+  [LINKS.FIO_AFFILIATE_PROGRAM_ENABLED]: 'FIO Domain Affiliate Program',
   [LINKS.GOVERNANCE]: 'Governance',
   [LINKS.PROTOCOL_UPDATES]: 'Protocol Updates',
   [LINKS.ADMIN_USERS]: 'Admin Users',
@@ -176,6 +180,8 @@ export const LINK_TITLES: { [linkKey: string]: string } = {
   [LINKS.ORDERS]: 'Orders',
   [LINKS.ORDER_DETAILS]: 'Order Details',
   [LINKS.ORDER_INVOICE]: 'Order Invoice',
+  [LINKS.FIO_AFFILIATE_PROGRAM_LANDING]: 'Affiliate Program',
+  [LINKS.FIO_AFFILIATE_PROGRAM_ENABLED]: 'Affiliate Program Enabled',
 };
 
 export const fioNameLabels: { [fioNameType: string]: string } = {

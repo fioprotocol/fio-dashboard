@@ -100,6 +100,7 @@ export default class Fio {
     [ACTIONS.pushTransaction]: 'push_transaction',
   };
   tpid: string = process.env.REACT_APP_DEFAULT_TPID || '';
+  domainTpid: string = process.env.REACT_APP_DEFAULT_TPID || '';
 
   constructor() {
     this.publicFioSDK = new FIOSDK(
@@ -112,8 +113,9 @@ export default class Fio {
     );
   }
 
-  setTpid = (tpid: string | null): void => {
+  setTpid = (tpid: string | null, domainTpid?: string): void => {
     this.tpid = tpid;
+    this.domainTpid = domainTpid || tpid;
     this.publicFioSDK.technologyProviderId = tpid;
   };
 
@@ -324,7 +326,11 @@ export default class Fio {
   register = async (fioName: string, fee: number): Promise<TrxResponse> => {
     this.validateAction();
     if (isDomain(fioName)) {
-      return await this.walletFioSDK.registerFioDomain(fioName, fee);
+      return await this.walletFioSDK.registerFioDomain(
+        fioName,
+        fee,
+        this.domainTpid,
+      );
     }
     return await this.walletFioSDK.registerFioAddress(fioName, fee);
   };
