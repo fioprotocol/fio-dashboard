@@ -6,6 +6,8 @@ import { PAYMENT_EVENT_STATUSES, PAYMENTS_STATUSES } from '../../config/constant
 
 import MathOp from '../../services/math.mjs';
 
+import config from '../../config';
+
 const BITPAY_USER_AGENT = 'Webhook-BitPay support@bitpay.com';
 
 class BitPay extends PaymentProcessor {
@@ -155,13 +157,14 @@ class BitPay extends PaymentProcessor {
 
     const bitPayClient = await this.getBitPayClient();
 
-    const host = process.env.API_BASE_URL;
+    const redirectHost = config.mainUrl || process.env.BASE_URL;
+    const notificationHost = process.env.API_BASE_URL;
 
     const invoiceData = new Models.Invoice(amount, currency);
     invoiceData.orderId = orderNumber;
     invoiceData.buyer = { email: buyer };
-    invoiceData.redirectURL = `${host}order-details?orderNumber=${orderNumber}`;
-    invoiceData.notificationURL = `${host}api/v1/payments/webhook/`;
+    invoiceData.redirectURL = `${redirectHost}order-details?orderNumber=${orderNumber}`;
+    invoiceData.notificationURL = `${notificationHost}api/v1/payments/webhook/`;
 
     const paymentIntent = await bitPayClient.CreateInvoice(invoiceData);
 
