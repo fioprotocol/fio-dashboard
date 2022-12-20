@@ -19,6 +19,7 @@ export default class WsBase extends Base {
     this.wsConnection.on('error', this.onError.bind(this));
 
     this.WAIT_PERIOD_MS = 2000;
+    this.TIMEOUT_PERIOD_MS = process.env.WS_TIMEOUT_PERIOD || 1000 * 60 * 1; // 1 min
   }
 
   send(data) {
@@ -39,11 +40,23 @@ export default class WsBase extends Base {
   async run(params) {
     await this.checkPermissions();
     const cleanParams = await this.validate(params);
+    const startWsRunTime = Date.now();
 
     while (this.wsConnection.isAlive && !this.CLOSED && !this.ERRORED) {
       if (!this.wsConnection.isAlive) return this.wsConnection.terminate();
 
+      const currentWatchTime = Date.now();
+
       await this.watch(cleanParams);
+
+      // Handle ws disconnect timeout from infrastructure for long time responses
+      if (startWsRunTime + this.TIMEOUT_PERIOD_MS < currentWatchTime) {
+        this.send(
+          JSON.stringify({
+            data: 'PING',
+          }),
+        );
+      }
 
       await sleep(this.WAIT_PERIOD_MS);
     }
