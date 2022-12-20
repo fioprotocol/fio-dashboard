@@ -2,6 +2,8 @@ import Base from './Base.mjs';
 
 import { sleep } from '../tools.mjs';
 
+import MathOp from './math.mjs';
+
 export default class WsBase extends Base {
   constructor(args) {
     super(args);
@@ -40,7 +42,7 @@ export default class WsBase extends Base {
   async run(params) {
     await this.checkPermissions();
     const cleanParams = await this.validate(params);
-    const startWsRunTime = Date.now();
+    let startWsRunTime = Date.now();
 
     while (this.wsConnection.isAlive && !this.CLOSED && !this.ERRORED) {
       if (!this.wsConnection.isAlive) return this.wsConnection.terminate();
@@ -50,12 +52,13 @@ export default class WsBase extends Base {
       await this.watch(cleanParams);
 
       // Handle ws disconnect timeout from infrastructure for long time responses
-      if (startWsRunTime + this.TIMEOUT_PERIOD_MS < currentWatchTime) {
+      if (new MathOp(startWsRunTime).add(this.TIMEOUT_PERIOD_MS).lt(currentWatchTime)) {
         this.send(
           JSON.stringify({
             data: 'PING',
           }),
         );
+        startWsRunTime = Date.now();
       }
 
       await sleep(this.WAIT_PERIOD_MS);
