@@ -10,7 +10,7 @@ import { FormValues } from './types';
 
 import { PublicAddressDoublet } from '../../types';
 
-type ErrorsProps = {
+export type ErrorsProps = {
   chainCode?: {
     message: string;
     type?: string;
@@ -29,6 +29,66 @@ type FieldProps = {
   publicAddress?: string;
 };
 
+export const validateToken = (
+  token: PublicAddressDoublet,
+  publicAddresses: PublicAddressDoublet[],
+): ErrorsProps => {
+  const tokenErrors: ErrorsProps = {};
+  const { chainCode, tokenCode, publicAddress } = token || {};
+
+  if (!chainCode) {
+    tokenErrors.chainCode = { message: 'Required' };
+  }
+  if (chainCode && !CHAIN_CODE_REGEXP.test(chainCode)) {
+    tokenErrors.chainCode = { message: 'Wrong Chain Code' };
+  }
+  if ((chainCode?.length || 0) > MAX_CHAIN_LENGTH) {
+    tokenErrors.chainCode = { message: 'Chain Code is too long' };
+  }
+
+  if (!tokenCode) {
+    tokenErrors.tokenCode = { message: 'Required' };
+  }
+  if (tokenCode && !TOKEN_CODE_REGEXP.test(tokenCode)) {
+    tokenErrors.tokenCode = { message: 'Wrong Token Code' };
+  }
+  if ((tokenCode?.length || 0) > MAX_TOKEN_LENGTH) {
+    tokenErrors.tokenCode = { message: 'Token Code is too long' };
+  }
+
+  if (chainCode && tokenCode) {
+    if (
+      publicAddresses.some(
+        pubAddressItem =>
+          pubAddressItem.chainCode === chainCode &&
+          (pubAddressItem.tokenCode === tokenCode ||
+            tokenCode === ASTERISK_SIGN),
+      )
+    ) {
+      tokenErrors.tokenCode = {
+        message: 'This pair of Chain and Token Codes already exists',
+      };
+    }
+
+    if (chainCode === CHAIN_CODES.FIO && tokenCode === CHAIN_CODES.FIO) {
+      tokenErrors.chainCode = {
+        message:
+          'Your FIO Public Key is already mapped to your FIO Crypto Handle and that mapping cannot be changed via the Dashboard.',
+        type: ERROR_UI_TYPE.BADGE,
+      };
+    }
+  }
+
+  if (!publicAddress) {
+    tokenErrors.publicAddress = { message: 'Required' };
+  }
+  if (publicAddress && publicAddress.length >= 128) {
+    tokenErrors.publicAddress = { message: 'Too long token' };
+  }
+
+  return tokenErrors;
+};
+
 export const validate = (
   values: FormValues,
   publicAddresses: PublicAddressDoublet[],
@@ -45,73 +105,12 @@ export const validate = (
     const tokenArrayErrors: ErrorsProps[] = [];
 
     values.tokens.forEach((field: FieldProps, index: number) => {
-      const tokenErrors: ErrorsProps = {};
-      const { chainCode, tokenCode, publicAddress } = field || {};
+      const tokenErrors: ErrorsProps = validateToken(
+        field as PublicAddressDoublet,
+        [...publicAddresses, ...values.tokens.slice(0, index)].filter(Boolean),
+      );
 
-      if (!chainCode) {
-        tokenErrors.chainCode = { message: 'Required' };
-        tokenArrayErrors[index] = tokenErrors;
-      }
-      if (chainCode && !CHAIN_CODE_REGEXP.test(chainCode)) {
-        tokenErrors.chainCode = { message: 'Wrong Chain Code' };
-        tokenArrayErrors[index] = tokenErrors;
-      }
-      if ((chainCode?.length || 0) > MAX_CHAIN_LENGTH) {
-        tokenErrors.chainCode = { message: 'Chain Code is too long' };
-        tokenArrayErrors[index] = tokenErrors;
-      }
-
-      if (!tokenCode) {
-        tokenErrors.tokenCode = { message: 'Required' };
-        tokenArrayErrors[index] = tokenErrors;
-      }
-      if (tokenCode && !TOKEN_CODE_REGEXP.test(tokenCode)) {
-        tokenErrors.tokenCode = { message: 'Wrong Token Code' };
-        tokenArrayErrors[index] = tokenErrors;
-      }
-      if ((tokenCode?.length || 0) > MAX_TOKEN_LENGTH) {
-        tokenErrors.tokenCode = { message: 'Token Code is too long' };
-        tokenArrayErrors[index] = tokenErrors;
-      }
-
-      if (chainCode && tokenCode) {
-        if (
-          index >
-            values.tokens.findIndex(
-              token =>
-                token.chainCode === chainCode &&
-                (token.tokenCode === tokenCode ||
-                  token.tokenCode === ASTERISK_SIGN),
-            ) ||
-          publicAddresses.some(
-            pubAddressItem =>
-              pubAddressItem.chainCode === chainCode &&
-              (pubAddressItem.tokenCode === tokenCode ||
-                tokenCode === ASTERISK_SIGN),
-          )
-        ) {
-          tokenErrors.tokenCode = {
-            message: 'This pair of Chain and Token Codes alreay exists',
-          };
-          tokenArrayErrors[index] = tokenErrors;
-        }
-
-        if (chainCode === CHAIN_CODES.FIO && tokenCode === CHAIN_CODES.FIO) {
-          tokenErrors.chainCode = {
-            message:
-              'Your FIO Public Key is already mapped to your FIO Crypto Handle and that mapping cannot be changed via the Dashboard.',
-            type: ERROR_UI_TYPE.BADGE,
-          };
-          tokenArrayErrors[index] = tokenErrors;
-        }
-      }
-
-      if (!publicAddress) {
-        tokenErrors.publicAddress = { message: 'Required' };
-        tokenArrayErrors[index] = tokenErrors;
-      }
-      if (publicAddress && publicAddress.length >= 128) {
-        tokenErrors.publicAddress = { message: 'Too long token' };
+      if (Object.keys(tokenErrors).length > 0) {
         tokenArrayErrors[index] = tokenErrors;
       }
     });
