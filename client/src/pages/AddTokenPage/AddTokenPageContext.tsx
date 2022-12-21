@@ -18,7 +18,11 @@ import { useGetMappedErrorRedirect } from '../../hooks/fio';
 import { TOKEN_LINK_MIN_WAIT_TIME } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
-import { validate as validation } from './validation';
+import {
+  ErrorsProps,
+  validate as validation,
+  validateToken as validationToken,
+} from './validation';
 
 import {
   PublicAddressDoublet,
@@ -111,6 +115,16 @@ export const useContext = (): AddTokenContextProps => {
   };
 
   const validate = (values: FormValues) => validation(values, publicAddresses);
+  const validateToken = (token: PublicAddressDoublet, values: FormValues) => {
+    const results = validationToken(
+      token,
+      [...(values?.tokens || []), ...publicAddresses].filter(Boolean),
+    );
+    return Object.keys(results || {}).reduce((result, key) => {
+      result[key] = results[key as keyof ErrorsProps].message;
+      return result;
+    }, {} as { [key: string]: string });
+  };
 
   return {
     bundleCost,
@@ -130,5 +144,7 @@ export const useContext = (): AddTokenContextProps => {
     setProcessing,
     submit,
     validate,
+    validateToken,
+    publicAddresses,
   };
 };

@@ -2,7 +2,7 @@ import React from 'react';
 import { Form } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 
-import AddTokenForm from './copmonents/AddTokenForm';
+import { AddTokenForm } from './copmonents/AddTokenForm';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 
@@ -12,6 +12,8 @@ import {
   CONFIRM_PIN_ACTIONS,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
+
+import { PublicAddressDoublet } from '../../types';
 
 const AddToken: React.FC = () => {
   const {
@@ -32,6 +34,8 @@ const AddToken: React.FC = () => {
     setProcessing,
     submit,
     validate,
+    validateToken,
+    publicAddresses,
   } = useContext();
 
   return (
@@ -72,6 +76,10 @@ const AddToken: React.FC = () => {
             changeBundleCost={changeBundleCost}
             onBack={() => onBack(formProps)}
             onRetry={onRetry}
+            validateToken={(token: PublicAddressDoublet) =>
+              validateToken(token, formProps.values)
+            }
+            publicAddresses={publicAddresses}
           />
         )}
       />
