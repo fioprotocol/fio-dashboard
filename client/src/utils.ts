@@ -107,6 +107,9 @@ export const isFreeDomain = ({
   domains: Domain[];
   domain: string;
 }): boolean => {
+  if (!domain) {
+    return true;
+  }
   const domainFromList = domains.find(item => item.domain === domain);
   return !!domainFromList?.free;
 };
