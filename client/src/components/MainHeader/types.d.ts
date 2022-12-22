@@ -26,9 +26,11 @@ export type MainHeaderProps = {
   fioAddresses: FioAddressDoublet[];
   isContainedFlow: boolean;
   isAdminAuthenticated: boolean;
+  hideNavigation?: boolean;
 };
 
 export type NavigationProps = {
+  isAdminRoute: boolean;
   isMenuOpen: boolean;
   toggleMenuOpen: (isMenuOpen: boolean) => void;
   closeMenu: () => void;

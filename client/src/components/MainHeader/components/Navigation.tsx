@@ -3,12 +3,11 @@ import React from 'react';
 import RegularNav from './RegularNav';
 import LoggedNav from './LoggedNav';
 
-import { useIsAdminRoute } from '../../../hooks/admin';
-
 import { NavigationProps } from '../types';
 
 export const Navigation: React.FC<NavigationProps> | null = props => {
   const {
+    isAdminRoute,
     isAuthenticated,
     isAdminAuthenticated,
     isMenuOpen,
@@ -20,8 +19,6 @@ export const Navigation: React.FC<NavigationProps> | null = props => {
     showLogin,
     logout,
   } = props;
-
-  const isAdminRoute = useIsAdminRoute();
 
   if (isAuthenticated || isAdminAuthenticated)
     return (

@@ -9,6 +9,8 @@ import classes from './InputActionButtons.module.scss';
 
 type ClearButtonProps = {
   isBW?: boolean;
+  isBigDoubleIcon?: boolean;
+  isMiddleDoubleIcon?: boolean;
   disabled?: boolean;
   inputType?: string;
   onClear: () => void;
@@ -23,6 +25,7 @@ type ShowPasswordIconProps = {
 
 type PasteButtonProps = {
   onClick: () => void;
+  isBigDoubleIcon?: boolean;
 };
 
 type CopyButtonProps = {
@@ -78,6 +81,7 @@ export const PasteButton: React.FC<PasteButtonProps &
   onClick,
   uiType,
   isVisible,
+  isBigDoubleIcon,
   ...rest
 }) => {
   if (!navigator.clipboard?.readText || !isVisible) return null;
@@ -85,7 +89,11 @@ export const PasteButton: React.FC<PasteButtonProps &
   return (
     <FontAwesomeIcon
       icon={{ prefix: 'far', iconName: 'clipboard' }}
-      className={classnames(classes.inputIcon, uiType && classes[uiType])}
+      className={classnames(
+        classes.inputIcon,
+        uiType && classes[uiType],
+        isBigDoubleIcon && classes.bigDoubleIcon,
+      )}
       onClick={onClick}
       {...rest}
     />
@@ -100,6 +108,8 @@ export const ClearButton: React.FC<ClearButtonProps & DefaultProps> = ({
   isBW,
   onClear,
   onClose,
+  isBigDoubleIcon,
+  isMiddleDoubleIcon,
 }) => {
   if (!isVisible) return null;
 
@@ -109,6 +119,8 @@ export const ClearButton: React.FC<ClearButtonProps & DefaultProps> = ({
       className={classnames(
         classes.inputIcon,
         inputType === 'password' && classes.doubleIcon,
+        isBigDoubleIcon && classes.bigDoubleIcon,
+        isMiddleDoubleIcon && classes.middleDoubleIcon,
         isBW && classes.bw,
         disabled && classes.disabled,
         uiType && classes[uiType],

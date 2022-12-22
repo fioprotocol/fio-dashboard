@@ -2,6 +2,14 @@
 @import '../../../../assets/styles/fontMixins.scss';
 @import '../../../../assets/styles/mediaQueriesMixings.scss';
 
+.white {
+  color: $white;
+}
+
+.boldMessage {
+  @include proxima-nova-bold;
+}
+
 .container {
   display: flex;
   flex-direction: column;

@@ -17,6 +17,7 @@ import account from './account/reducer';
 import containedFlow from './containedFlow/reducer';
 import admin from './admin/reducer';
 import orders from './orders/reducer';
+import wrapStatus from './wrapStatus/reducer';
 
 const createReducer = (history: History): Reducer =>
   combineReducers({
@@ -35,6 +36,7 @@ const createReducer = (history: History): Reducer =>
     account,
     containedFlow,
     admin,
+    wrapStatus,
     orders,
   });
 

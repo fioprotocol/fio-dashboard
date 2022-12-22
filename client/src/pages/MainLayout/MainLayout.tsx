@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 
 import MainHeader from '../../components/MainHeader';
 import Notifications from '../../components/Notifications';
@@ -19,6 +19,8 @@ import TxHistoryService from '../../services/TxHistory';
 import WalletsDataFlow from '../../services/WalletsDataFlow';
 import ContainedFlow from '../../services/ContainedFlow';
 import PageTitle from '../../components/PageTitle/PageTitle';
+import { ContentContainer } from '../../components/ContentContainer';
+import { MainLayoutContainer } from '../../components/MainLayoutContainer';
 
 import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
@@ -26,8 +28,7 @@ import { LINKS } from '../../constants/labels';
 import useEffectOnce from '../../hooks/general';
 import { useIsAdminRoute } from '../../hooks/admin';
 import { getObjKeyByValue } from '../../utils';
-
-import classes from './MainLayout.module.scss';
+import { useGTMGlobalTags } from '../../hooks/googleTagManager';
 
 type Props = {
   children: React.ReactNode | React.ReactNode[];
@@ -71,31 +72,7 @@ const MainLayout: React.FC<Props> = props => {
   ].includes(pathname);
   const routeName = getObjKeyByValue(ROUTES, pathname);
 
-  const addGTMGlobalTags = useCallback(() => {
-    if (!process.env.REACT_APP_GOOGLE_TAG_MANAGER_ID) {
-      return;
-    }
-    const script = document.createElement('script');
-    script.innerHTML = `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${process.env.REACT_APP_GOOGLE_TAG_MANAGER_ID}');`;
-    const noscript = document.createElement('noscript');
-    const iframe = document.createElement('iframe');
-    iframe.src = `https://www.googletagmanager.com/ns.html?id=${process.env.REACT_APP_GOOGLE_TAG_MANAGER_ID}`;
-    iframe.height = '0';
-    iframe.width = '0';
-    iframe.style.cssText = 'display:none;visibility:hidden';
-    noscript.appendChild(iframe);
-
-    document.head.append(
-      document.createComment(' Google Tag Manager '),
-      script,
-      document.createComment(' End Google Tag Manager '),
-    );
-    document.body.prepend(
-      document.createComment(' Google Tag Manager (noscript) '),
-      noscript,
-      document.createComment(' End Google Tag Manager (noscript) '),
-    );
-  }, []);
+  useGTMGlobalTags({ disableLoading: isAdminRoute });
 
   useEffectOnce(() => {
     edgeContextInit();
@@ -103,15 +80,8 @@ const MainLayout: React.FC<Props> = props => {
       loadAdminProfile();
     } else {
       loadProfile();
-      addGTMGlobalTags();
     }
-  }, [
-    edgeContextInit,
-    loadAdminProfile,
-    loadProfile,
-    addGTMGlobalTags,
-    isAdminRoute,
-  ]);
+  }, [edgeContextInit, loadAdminProfile, loadProfile, isAdminRoute]);
 
   const loginFormModalRender = () => showLogin && <LoginForm />;
   const recoveryFormModalRender = () =>
@@ -124,7 +94,7 @@ const MainLayout: React.FC<Props> = props => {
   const isHomePage = pathname === '/';
 
   return (
-    <div className={classes.root}>
+    <MainLayoutContainer>
       {routeName && <PageTitle link={LINKS[routeName]} />}
       <MainHeader isAdminAuthenticated={isAdminAuthenticated} />
       <AutoLogout />
@@ -137,18 +107,18 @@ const MainLayout: React.FC<Props> = props => {
       {(!isHomePage || (isAuthenticated && !isContainedFlow)) && (
         <Notifications />
       )}
-      <div className={`${classes.content} ${isHomePage && classes.home}`}>
+      <ContentContainer>
         <ContainedFlowWrapper isAuthenticated={isAuthenticated}>
           {children}
         </ContainedFlowWrapper>
-      </div>
+      </ContentContainer>
       <Footer />
       {showLogin && edgeContextSet && loginFormModalRender()}
       {showRecovery && edgeContextSet && recoveryFormModalRender()}
       <PinConfirmModal />
       <GenericErrorModal />
       <TwoFactorApproveModal />
-    </div>
+    </MainLayoutContainer>
   );
 };
 

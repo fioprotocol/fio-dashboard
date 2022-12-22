@@ -32,6 +32,7 @@ const Results: React.FC<ResultsContainerProps> = props => {
     middleWidth,
     bottomElement,
     errorType,
+    isPaymentDetailsVisible = true,
     onClose,
     onRetry,
     onTxResultsClose,
@@ -109,9 +110,13 @@ const Results: React.FC<ResultsContainerProps> = props => {
         {children}
         {!error && (
           <>
-            {paymentDetailsTitle()}
-            {totalCost()}
-            {totalBundlesCost()}
+            {isPaymentDetailsVisible && (
+              <>
+                {paymentDetailsTitle()}
+                {totalCost()}
+                {totalBundlesCost()}
+              </>
+            )}
             <SubmitButton
               onClick={handleClose}
               text="Close"

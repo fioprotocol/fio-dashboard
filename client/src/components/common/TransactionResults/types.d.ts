@@ -5,9 +5,9 @@ import { FormValues } from '../../../pages/AddTokenPage/types';
 
 import {
   FeePrice,
-  PublicAddressDoublet,
   FioAddressWithPubAddresses,
   LinkActionResult,
+  PublicAddressDoublet,
   AnyType,
 } from '../../../types';
 
@@ -40,6 +40,7 @@ export type ResultsProps = {
   roe?: number;
   onClose: () => void;
   onRetry?: () => void;
+  isPaymentDetailsVisible?: boolean;
 };
 
 export type ResultsContainerProps = ResultsProps & {
