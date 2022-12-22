@@ -11,6 +11,8 @@ import {
   ReferrerProfile,
 } from '../../models';
 
+import BitPay from '../../external/payment-processor/bitpay.mjs';
+
 import logger from '../../logger.mjs';
 
 export default class WsStatus extends WsBase {
@@ -94,6 +96,12 @@ export default class WsStatus extends WsBase {
           this.messageData.paymentStatus = order.Payments[0].status;
 
           try {
+            if (
+              order.Payments[0].processor === Payment.PROCESSOR.BITPAY &&
+              order.status === Order.STATUS.NEW
+            ) {
+              await BitPay.getInvoiceWebHook(order.Payments[0].data.webhookData.id);
+            }
             const orderDetailed = await Order.formatDetailed(order.get({ plain: true }));
             this.messageData.results = orderDetailed;
           } catch (e) {
