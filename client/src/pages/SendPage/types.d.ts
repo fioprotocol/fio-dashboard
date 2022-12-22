@@ -45,7 +45,6 @@ export type SendTokensProps = {
   contactsList: string[];
   initialValues?: InitialValues;
   onSubmit: (values: SendTokensValues) => void;
-  isMemoDisabled: boolean;
 };
 
 export interface ContainerOwnProps extends RouteComponentProps<MatchProps> {
@@ -57,6 +56,7 @@ export interface ContainerProps extends ContainerOwnProps {
   loading: boolean;
   roe: number;
   feePrice: FeePrice;
+  feePriceRecordObtData: FeePrice;
   balance: WalletBalances;
   contactsList: string[];
   contactsLoading: boolean;
@@ -67,6 +67,7 @@ export interface ContainerProps extends ContainerOwnProps {
   };
   refreshBalance: (publicKey: string) => void;
   getFee: () => void;
+  getFeeRecordObtData: (fioAddress: string) => void;
   getContactsList: () => void;
   createContact: (name: string) => void;
   refreshWalletDataPublicKey: (publicKey: string) => void;

@@ -33,12 +33,14 @@ const SendPage: React.FC<ContainerProps> = props => {
     balance,
     loading,
     feePrice,
+    feePriceRecordObtData,
     roe,
     history,
     contactsList = [],
     location: { state: { fioRecordDecrypted } = {} },
     refreshBalance,
     getFee,
+    getFeeRecordObtData,
     createContact,
     getContactsList,
     refreshWalletDataPublicKey,
@@ -57,6 +59,12 @@ const SendPage: React.FC<ContainerProps> = props => {
     setSendData(null);
     getContactsList();
   }, []);
+
+  useEffect(() => {
+    if (sendData?.from) {
+      getFeeRecordObtData(sendData.from);
+    }
+  }, [sendData, getFeeRecordObtData]);
 
   useEffect(() => {
     if (!fioWallet?.publicKey) {
@@ -175,11 +183,14 @@ const SendPage: React.FC<ContainerProps> = props => {
         <SendLedgerWallet
           fioWallet={fioWallet}
           fee={feePrice.nativeFio}
+          feeRecordObtData={feePriceRecordObtData.nativeFio}
           onCancel={onCancel}
           onSuccess={onSuccess}
           sendData={sendData}
           processing={processing}
           setProcessing={setProcessing}
+          createContact={createContact}
+          contactsList={contactsList}
         />
       ) : null}
 
@@ -187,6 +198,7 @@ const SendPage: React.FC<ContainerProps> = props => {
         <SendEdgeWallet
           fioWallet={fioWallet}
           fee={feePrice.nativeFio}
+          feeRecordObtData={feePriceRecordObtData.nativeFio}
           onCancel={onCancel}
           onSuccess={onSuccess}
           sendData={sendData}
@@ -219,7 +231,6 @@ const SendPage: React.FC<ContainerProps> = props => {
           obtDataOn={true}
           contactsList={contactsList}
           initialValues={initialValues}
-          isMemoDisabled={fioWallet.from === WALLET_CREATED_FROM.LEDGER}
         />
       </PseudoModalContainer>
     </>

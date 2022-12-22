@@ -115,9 +115,14 @@ const WalletDetailsModal: React.FC<Props> = props => {
         <SubmitButton
           onClick={onLedgerViewPubKey}
           hasLowHeight={true}
-          loading={processing}
+          isGrey={processing}
           disabled={processing}
-          text="View Public Address on Ledger"
+          text={
+            processing
+              ? 'Check Public Address on Ledger'
+              : 'Show Public Address on Ledger'
+          }
+          icon="eye"
         />
       </div>
     );

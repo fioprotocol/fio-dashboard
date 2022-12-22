@@ -5,11 +5,16 @@ import {
   PinConfirmation,
   Prices,
   RefProfile,
-  User,
 } from '../../types';
 
+export type PurchaseValues = {
+  cartItems: CartItem[];
+  prices: Prices;
+  refProfileInfo: RefProfile | null;
+  isFreeAllowed: boolean;
+};
+
 export type PurchaseNowTypes = {
-  user: User;
   hasFreeAddress: boolean;
   cartItems: CartItem[];
   pinConfirmation: PinConfirmation;

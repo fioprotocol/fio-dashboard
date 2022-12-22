@@ -48,6 +48,9 @@ const reduxConnect = connect(
     feePrice: (state: ReduxState) =>
       state.fio.fees[apis.fio.actionEndPoints.transferTokens] ||
       DEFAULT_FEE_PRICES,
+    feePriceRecordObtData: (state: ReduxState) =>
+      state.fio.fees[apis.fio.actionEndPoints.recordObtData] ||
+      DEFAULT_FEE_PRICES,
     balance: (state: ReduxState, ownProps: ContainerOwnProps & OwnPropsAny) => {
       const fioWallets = fioWalletsSelector(state);
       const fioWalletsBalances = fioWalletsBalancesSelector(state);
@@ -69,6 +72,8 @@ const reduxConnect = connect(
   {
     refreshBalance,
     getFee: () => getFee(apis.fio.actionEndPoints.transferTokens),
+    getFeeRecordObtData: (fioAddress: string) =>
+      getFee(apis.fio.actionEndPoints.recordObtData, fioAddress),
     createContact,
     getContactsList,
     refreshWalletDataPublicKey,

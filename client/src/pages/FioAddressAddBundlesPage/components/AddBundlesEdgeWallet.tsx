@@ -16,7 +16,7 @@ type Props = {
   onSuccess: (data: { fee_collected: number }) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  sendData: AddBundlesValues | null;
+  submitData: AddBundlesValues | null;
   processing: boolean;
 };
 
@@ -26,7 +26,7 @@ const AddBundlesEdgeWallet: React.FC<Props> = props => {
     setProcessing,
     onSuccess,
     onCancel,
-    sendData,
+    submitData,
     processing,
   } = props;
 
@@ -41,7 +41,7 @@ const AddBundlesEdgeWallet: React.FC<Props> = props => {
       onSuccess={onSuccess}
       onCancel={onCancel}
       processing={processing}
-      data={sendData}
+      data={submitData}
       submitAction={send}
       fioWalletEdgeId={fioWallet.edgeId || ''}
       edgeAccountLogoutBefore={true}

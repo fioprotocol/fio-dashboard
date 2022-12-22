@@ -8,6 +8,10 @@ import {
   FeePrice,
 } from '../../types';
 
+export type FioRenewValues = {
+  name: string;
+};
+
 export type ContainerOwnProps = {
   fioNameList: FioNameItemProps[];
   name: string;

@@ -21,6 +21,8 @@ import { isDomain } from '../utils';
 import {
   ACTIONS,
   ACTIONS_TO_END_POINT_KEYS,
+  FIO_ACCOUNT_NAMES,
+  FIO_ACTION_NAMES,
   GET_TABLE_ROWS_URL,
   TRANSACTION_ACTION_NAMES,
 } from '../constants/fio';
@@ -529,8 +531,8 @@ export default class Fio {
     fee: number,
   ) => {
     return {
-      account: 'fio.token',
-      name: 'trnsfiopubky',
+      account: FIO_ACCOUNT_NAMES[ACTIONS.transferTokens],
+      name: FIO_ACTION_NAMES[ACTIONS.transferTokens],
       data: {
         payee_public_key: publicKey,
         amount,

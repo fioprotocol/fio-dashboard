@@ -5,9 +5,9 @@ import PseudoModalContainer from '../../components/PseudoModalContainer';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import RequestTabs from './components/RequestTabs';
 import RequestTokensEdgeWallet from './components/RequestTokensEdgeWallet';
+import RequestTokensLedgerWallet from './components/RequestTokensLedgerWallet';
 import TokenTransferResults from '../../components/common/TransactionResults/components/TokenTransferResults';
 import WalletAction from '../../components/WalletAction/WalletAction';
-import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import PageTitle from '../../components/PageTitle/PageTitle';
 
 import { LINKS } from '../../constants/labels';
@@ -34,6 +34,7 @@ import classes from './styles/RequestTokensPage.module.scss';
 
 const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
   const {
+    feePrice,
     fioWallets,
     fioWalletsLoading,
     roe,
@@ -47,6 +48,7 @@ const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
     createContact,
     getContactsList,
     refreshWalletDataPublicKey,
+    getFee,
   } = props;
 
   const [fioWallet, setFioWallet] = useState<FioWalletDoublet | undefined>(
@@ -78,6 +80,12 @@ const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
     setRequestData(null);
     getContactsList();
   }, []);
+
+  useEffect(() => {
+    if (requestData?.payeeFioAddress) {
+      getFee(requestData.payeeFioAddress);
+    }
+  }, [requestData, getFee]);
 
   useEffect(() => {
     if (isValidPublicKeyFromPath) {
@@ -162,6 +170,7 @@ const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
   return (
     <>
       <WalletAction
+        fee={feePrice.nativeFio}
         fioWallet={fioWallet}
         onCancel={onCancel}
         onSuccess={onSuccess}
@@ -172,7 +181,7 @@ const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
         createContact={createContact}
         contactsList={contactsList}
         FioActionWallet={RequestTokensEdgeWallet}
-        LedgerActionWallet={LedgerWalletActionNotSupported}
+        LedgerActionWallet={RequestTokensLedgerWallet}
       />
 
       <PseudoModalContainer

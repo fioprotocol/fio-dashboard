@@ -14,6 +14,7 @@ type WalletTypeActionProps = {
   processing: boolean;
   action: string;
   fee?: number;
+  oracleFee?: number;
   fioWalletEdgeId?: string;
   edgeAccountLogoutBefore?: boolean;
   createContact?: (name: string) => void;

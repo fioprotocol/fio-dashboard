@@ -32,12 +32,12 @@ import {
 } from '../../types';
 
 const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 2000;
-const wait = () =>
+export const wait = () =>
   new Promise(resolve =>
     setTimeout(resolve, TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION),
   );
 
-const setTxStatus = (
+export const setTxStatus = (
   hasRegItems: boolean,
   hasFailedItems: boolean,
 ): PurchaseTxStatus => {
@@ -229,7 +229,7 @@ export const executeRegistration = async (
   return result;
 };
 
-const makeRegistrationOrder = (
+export const makeRegistrationOrder = (
   cartItems: CartItem[],
   fees: { address: number; domain: number },
   isFreeAllowed: boolean,
@@ -317,7 +317,7 @@ const makeRegistrationPromise = (
     : register(registration);
 };
 
-const handleResponses = (
+export const handleResponses = (
   responses: PromiseSettledResult<{
     cartItemId: string;
     fioName: string;

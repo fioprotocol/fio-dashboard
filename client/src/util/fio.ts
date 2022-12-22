@@ -10,10 +10,14 @@ import {
 
 import apis from '../api';
 import { sleep } from '../utils';
-import { log } from '../util/general';
+import { log } from './general';
 
 import { FREE_ADDRESS_REGISTER_ERROR, ERROR_TYPES } from '../constants/errors';
-import { FIO_REQUEST_STATUS_TYPES } from '../constants/fio';
+import {
+  FIO_ACCOUNT_NAMES,
+  FIO_ACTION_NAMES,
+  FIO_REQUEST_STATUS_TYPES,
+} from '../constants/fio';
 import { CHAIN_CODES } from '../constants/common';
 import { RegisterAddressError } from './errors';
 
@@ -23,6 +27,7 @@ import {
   Prices,
   PublicAddressDoublet,
   IncomePrices,
+  AnyObject,
 } from '../types';
 import { RawTransaction } from '../api/fio';
 
@@ -196,4 +201,26 @@ export const serializeTransaction = async (
   }
 
   return '';
+};
+
+export const prepareChainTransaction = async (
+  walletPublicKey: string,
+  action: string,
+  data: AnyObject,
+): Promise<{ chainId: string; transaction: RawTransaction }> => {
+  const chainData = await apis.fio.publicFioSDK.transactions.getChainDataForTx();
+  const transaction = await apis.fio.publicFioSDK.transactions.createRawTransaction(
+    {
+      account: FIO_ACCOUNT_NAMES[action],
+      action: FIO_ACTION_NAMES[action],
+      data: data,
+      publicKey: walletPublicKey,
+      chainData,
+    },
+  );
+
+  return {
+    chainId: chainData.chain_id,
+    transaction,
+  };
 };

@@ -4,11 +4,11 @@ import FioLoader from '../../components/common/FioLoader/FioLoader';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import UnstakeTokensForm from './components/UnstakeTokensForm';
 import UnstakeTokensEdgeWallet from './components/UnstakeTokensEdgeWallet';
+import UnstakeTokensLedgerWallet from './components/UnstakeTokensLedgerWallet';
 import StakeTokensResults from '../../components/common/TransactionResults/components/StakeTokensResults';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import CancelButton from '../../components/common/CancelButton/CancelButton';
 import WalletAction from '../../components/WalletAction/WalletAction';
-import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 
 import { convertFioPrices } from '../../util/prices';
 import { useFioAddresses } from '../../util/hooks';
@@ -161,7 +161,7 @@ const UnstakeTokensPage: React.FC<ContainerProps> = props => {
         setProcessing={setProcessing}
         action={CONFIRM_PIN_ACTIONS.UNSTAKE}
         FioActionWallet={UnstakeTokensEdgeWallet}
-        LedgerActionWallet={LedgerWalletActionNotSupported}
+        LedgerActionWallet={UnstakeTokensLedgerWallet}
       />
 
       <PseudoModalContainer

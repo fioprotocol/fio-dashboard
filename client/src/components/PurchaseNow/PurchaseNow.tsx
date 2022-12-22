@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Ecc } from '@fioprotocol/fiojs';
+
+import WalletAction from '../WalletAction/WalletAction';
+import PurchaseEdgeWallet from './components/PurchaseEdgeWallet';
+import PurchaseLedgerWallet from './components/PurchaseLedgerWallet';
 
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -11,17 +14,14 @@ import {
 import { PAYMENT_OPTIONS } from '../../constants/purchase';
 import { emptyWallet } from '../../redux/fio/reducer';
 
-import api from '../../api';
-
 import { executeRegistration } from './middleware';
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
 import { sleep } from '../../utils';
-import { waitForEdgeAccountStop } from '../../util/edge';
 
-import { PurchaseNowTypes } from './types';
+import { PurchaseValues, PurchaseNowTypes } from './types';
 import { RegistrationResult } from '../../types';
 
 import classes from './PurchaseNow.module.scss';
@@ -30,13 +30,10 @@ const MIN_WAIT_TIME = 3000;
 
 export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   const {
-    user,
     hasFreeAddress,
     cartItems,
-    pinConfirmation,
     captchaResult,
     paymentWalletPublicKey,
-    showPinModal,
     checkCaptcha,
     loadProfile,
     confirmingPin,
@@ -44,7 +41,6 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     isProcessing,
     onFinish,
     setProcessing,
-    resetPinConfirm,
     fioWallets,
     prices,
     refProfileInfo,
@@ -52,6 +48,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   } = props;
 
   const [isWaiting, setWaiting] = useState(false);
+  const [submitData, setSubmitData] = useState<PurchaseValues | null>(null);
   const t0 = performance.now();
 
   const waitFn = async (
@@ -83,62 +80,9 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     }
     results.paymentOption = PAYMENT_OPTIONS.FIO;
     setWaiting(false);
+    setSubmitData(null);
     waitFn(onFinish, results);
   };
-
-  // registration
-  useEffect(() => {
-    const {
-      account: edgeAccount,
-      keys: walletKeys = {},
-      error: confirmationError,
-      action: confirmationAction,
-    } = pinConfirmation;
-
-    async function execRegistration(): Promise<void> {
-      setProcessing(true);
-      await waitForEdgeAccountStop(edgeAccount);
-      let nonce = '';
-      try {
-        const response = await api.auth.nonce(user.username);
-        nonce = response.nonce;
-      } catch (e) {
-        //
-      }
-      const results = await executeRegistration(
-        cartItems,
-        walletKeys[currentWallet.edgeId],
-        prices.nativeFio,
-        !hasFreeAddress,
-        {
-          walletSignature: Ecc.sign(
-            nonce,
-            walletKeys[currentWallet.edgeId].private,
-          ),
-          walletChallenge: nonce,
-        },
-        refProfileInfo != null && refProfileInfo?.type === REF_PROFILE_TYPE.REF
-          ? refProfileInfo.code
-          : '',
-      );
-
-      onProcessingEnd(results);
-    }
-
-    if (confirmationAction !== CONFIRM_PIN_ACTIONS.PURCHASE) return;
-    if (
-      walletKeys &&
-      walletKeys[currentWallet.edgeId] &&
-      !isProcessing &&
-      (isWaiting || !confirmationError)
-    ) {
-      execRegistration();
-    }
-    if (walletKeys && Object.keys(walletKeys).length) resetPinConfirm();
-
-    if (confirmationError) setWaiting(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pinConfirmation]); // We need run this hook only on pinConfirmation change
 
   useEffect(() => {
     const { success, verifyParams } = captchaResult;
@@ -176,10 +120,21 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     setWaiting(true);
     for (const item of cartItems) {
       if (item.costNativeFio || hasFreeAddress) {
-        return showPinModal(CONFIRM_PIN_ACTIONS.PURCHASE);
+        setSubmitData({
+          cartItems,
+          prices,
+          refProfileInfo,
+          isFreeAllowed: !hasFreeAddress,
+        });
+        return;
       }
     }
     checkCaptcha();
+  };
+  const onCancel = () => {
+    setSubmitData(null);
+    setWaiting(false);
+    setProcessing(false);
   };
 
   return (
@@ -193,6 +148,17 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
       ) : (
         'Purchase Now'
       )}
+      <WalletAction
+        fioWallet={currentWallet}
+        onCancel={onCancel}
+        onSuccess={onProcessingEnd}
+        submitData={submitData}
+        processing={isProcessing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.PURCHASE}
+        FioActionWallet={PurchaseEdgeWallet}
+        LedgerActionWallet={PurchaseLedgerWallet}
+      />
     </Button>
   );
 };

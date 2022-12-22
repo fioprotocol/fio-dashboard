@@ -1,5 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 
@@ -14,10 +15,12 @@ type Props = {
   isGreen?: boolean;
   isGreenTeal?: boolean;
   isBlack?: boolean;
+  isGrey?: boolean;
   isCobalt?: boolean;
   withBottomMargin?: boolean;
   withTopMargin?: boolean;
   text?: string | React.ReactNode;
+  icon?: IconProp;
   hasLowHeight?: boolean;
   hasBoldText?: boolean;
   isButtonType?: boolean;
@@ -33,10 +36,12 @@ export const SubmitButton: React.FC<Props> = props => {
     isGreen,
     isGreenTeal,
     isBlack,
+    isGrey,
     isCobalt,
     withTopMargin,
     withBottomMargin,
     text,
+    icon,
     hasLowHeight,
     hasBoldText,
     hasSmallText,
@@ -57,6 +62,7 @@ export const SubmitButton: React.FC<Props> = props => {
         isGreenTeal && classes.isGreenTeal,
         isBlack && classes.isBlack,
         isCobalt && classes.isCobalt,
+        isGrey && classes.isGrey,
         disabled && classes.disabled,
         loading && classes.loading,
         withTopMargin && classes.topMargin,
@@ -68,6 +74,7 @@ export const SubmitButton: React.FC<Props> = props => {
     >
       <div />
       <div>{text || 'Confirm'}</div>
+      {icon && <FontAwesomeIcon icon={icon} />}
       <div>{loading && <FontAwesomeIcon icon="spinner" spin />}</div>
     </Button>
   );

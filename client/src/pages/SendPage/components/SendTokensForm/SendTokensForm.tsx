@@ -47,7 +47,6 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
     obtDataOn,
     contactsList,
     initialValues,
-    isMemoDisabled,
   } = props;
 
   const handleSubmit = async (values: SendTokensValues) => {
@@ -114,7 +113,6 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
           : null;
 
         const showMemo =
-          !isMemoDisabled &&
           selectedAddress != null &&
           obtDataOn &&
           to &&

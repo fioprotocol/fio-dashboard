@@ -4,6 +4,8 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from '../../utils';
 
 import { createContact, getContactsList } from '../../redux/contacts/actions';
+import { refreshWalletDataPublicKey } from '../../redux/fioWalletsData/actions';
+import { getFee } from '../../redux/fio/actions';
 
 import {
   list as contactsList,
@@ -11,17 +13,27 @@ import {
 } from '../../redux/contacts/selectors';
 
 import PaymentDetailsPage from './PaymentDetailsPage';
-import { refreshWalletDataPublicKey } from '../../redux/fioWalletsData/actions';
+
+import { DEFAULT_FEE_PRICES } from '../../util/prices';
+
+import apis from '../../api';
+
+import { ReduxState } from '../../redux/init';
 
 const reduxConnect = connect(
   createStructuredSelector({
     contactsList,
     loading: contactsLoading,
+    feePrice: (state: ReduxState) =>
+      state.fio.fees[apis.fio.actionEndPoints.recordObtData] ||
+      DEFAULT_FEE_PRICES,
   }),
   {
     createContact,
     getContactsList,
     refreshWalletDataPublicKey,
+    getFee: (fioAddress: string) =>
+      getFee(apis.fio.actionEndPoints.recordObtData, fioAddress),
   },
 );
 

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import EdgeConfirmAction from '../EdgeConfirmAction';
+import WalletAction from '../WalletAction/WalletAction';
 import PseudoModalContainer from '../PseudoModalContainer';
 import InfoBadge from '../InfoBadge/InfoBadge';
 import { TransferForm } from './components/FioNameTransferForm/FioNameTransferForm';
 import TransferResults from '../common/TransactionResults/components/TransferResults';
-import LedgerWalletActionNotSupported from '../LedgerWalletActionNotSupported';
+import FioNameTransferEdgeWallet from './components/FioNameTransferEdgeWallet';
+import FioNameTransferLedgerWallet from './components/FioNameTransferLedgerWallet';
 import PageTitle from '../PageTitle/PageTitle';
 
 import { BADGE_TYPES } from '../Badge/Badge';
@@ -19,17 +20,12 @@ import {
 import {
   CONFIRM_PIN_ACTIONS,
   MANAGE_PAGE_REDIRECT,
-  WALLET_CREATED_FROM,
 } from '../../constants/common';
-import { ACTIONS } from '../../constants/fio';
 
-import { hasFioAddressDelimiter, isDomain } from '../../utils';
+import { hasFioAddressDelimiter } from '../../utils';
 import { convertFioPrices } from '../../util/prices';
 
-import apis from '../../api';
-
-import { ContainerProps } from './types';
-import { SubmitActionParams } from '../EdgeConfirmAction/types';
+import { ContainerProps, FioNameTransferValues } from './types';
 import { ResultsData } from '../common/TransactionResults/types';
 
 import classes from './FioNameTransferContainer.module.scss';
@@ -63,13 +59,12 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
 
   const [processing, setProcessing] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [submitData, setSubmitData] = useState<{
-    transferAddress: string;
-    fioNameType: string;
-  } | null>(null);
+  const [submitData, setSubmitData] = useState<FioNameTransferValues | null>(
+    null,
+  );
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
 
-  const { publicKey, edgeId } = currentWallet;
+  const { publicKey } = currentWallet;
 
   useEffect(() => {
     getFee(hasFioAddressDelimiter(name));
@@ -82,38 +77,8 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
     }
   }, [processing]);
 
-  const submit = async ({ keys, data }: SubmitActionParams) => {
-    const { transferAddress } = data;
-    let newOwnerKey = hasFioAddressDelimiter(transferAddress)
-      ? ''
-      : transferAddress;
-    if (!newOwnerKey) {
-      const {
-        public_address: publicAddress,
-      } = await apis.fio.getFioPublicAddress(transferAddress);
-      if (!publicAddress) throw new Error('Public address is invalid.');
-      newOwnerKey = publicAddress;
-    }
-    const result = await apis.fio.executeAction(
-      keys,
-      isDomain(name) ? ACTIONS.transferFioDomain : ACTIONS.transferFioAddress,
-      isDomain(name)
-        ? {
-            fioDomain: name,
-            newOwnerKey,
-            maxFee: feePrice.nativeFio,
-          }
-        : {
-            fioAddress: name,
-            newOwnerKey,
-            maxFee: feePrice.nativeFio,
-          },
-    );
-    return { ...result, newOwnerKey };
-  };
-
   const onSubmit = (transferAddress: string) => {
-    setSubmitData({ transferAddress, fioNameType });
+    setSubmitData({ name, transferAddress, fioNameType });
     setSubmitting(true);
   };
   const onCancel = () => {
@@ -173,26 +138,18 @@ export const FioNameTransferContainer: React.FC<ContainerProps> = props => {
 
   return (
     <>
-      {currentWallet.from === WALLET_CREATED_FROM.EDGE ? (
-        <EdgeConfirmAction
-          action={CONFIRM_PIN_ACTIONS.TRANSFER}
-          setProcessing={setProcessing}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          processing={processing}
-          data={submitData}
-          submitAction={submit}
-          fioWalletEdgeId={edgeId || ''}
-          edgeAccountLogoutBefore={true}
-        />
-      ) : null}
-
-      {currentWallet.from === WALLET_CREATED_FROM.LEDGER ? (
-        <LedgerWalletActionNotSupported
-          submitData={submitData}
-          onCancel={onCancel}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={currentWallet}
+        fee={feePrice.nativeFio}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={submitData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.TRANSFER}
+        FioActionWallet={FioNameTransferEdgeWallet}
+        LedgerActionWallet={FioNameTransferLedgerWallet}
+      />
 
       <PseudoModalContainer
         link={FIO_NAME_DATA[fioNameType].backLink}

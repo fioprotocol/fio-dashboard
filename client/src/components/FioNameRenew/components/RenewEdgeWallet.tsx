@@ -11,13 +11,14 @@ import { ACTIONS } from '../../../constants/fio';
 
 import { FioWalletDoublet } from '../../../types';
 import { SubmitActionParams } from '../../EdgeConfirmAction/types';
+import { FioRenewValues } from '../types';
 
 type Props = {
   fioWallet: FioWalletDoublet;
   onSuccess: (result: { fee_collected: number }) => void;
   onCancel: () => void;
   setProcessing: (processing: boolean) => void;
-  renewData: { name: string } | null;
+  submitData: FioRenewValues | null;
   processing: boolean;
   fee?: number | null;
 };
@@ -28,12 +29,12 @@ const RenewEdgeWallet: React.FC<Props> = props => {
     setProcessing,
     onSuccess,
     onCancel,
-    renewData,
+    submitData,
     fee,
     processing,
   } = props;
 
-  const renew = async ({ keys, data }: SubmitActionParams) => {
+  const submit = async ({ keys, data }: SubmitActionParams) => {
     const { name } = data;
     if (isDomain(name)) {
       return await apis.fio.executeAction(keys, ACTIONS.renewFioDomain, {
@@ -52,8 +53,8 @@ const RenewEdgeWallet: React.FC<Props> = props => {
       onSuccess={onSuccess}
       onCancel={onCancel}
       processing={processing}
-      data={renewData}
-      submitAction={renew}
+      data={submitData}
+      submitAction={submit}
       fioWalletEdgeId={fioWallet.edgeId || ''}
       edgeAccountLogoutBefore={true}
     />

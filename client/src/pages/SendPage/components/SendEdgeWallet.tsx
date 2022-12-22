@@ -7,10 +7,7 @@ import apis from '../../../api';
 import { log } from '../../../util/general';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
-import {
-  DEFAULT_ACTION_FEE_AMOUNT,
-  TrxResponsePaidBundles,
-} from '../../../api/fio';
+import { TrxResponsePaidBundles } from '../../../api/fio';
 
 import { FioWalletDoublet } from '../../../types';
 import { SendTokensValues } from '../types';
@@ -31,6 +28,7 @@ type Props = {
   createContact: (name: string) => void;
   processing: boolean;
   fee?: number | null;
+  feeRecordObtData?: number | null;
 };
 
 const SendEdgeWallet: React.FC<Props> = props => {
@@ -41,6 +39,7 @@ const SendEdgeWallet: React.FC<Props> = props => {
     onCancel,
     sendData,
     fee,
+    feeRecordObtData,
     processing,
     createContact,
     contactsList,
@@ -67,7 +66,7 @@ const SendEdgeWallet: React.FC<Props> = props => {
           obtId: result.transaction_id,
           payeeFioPublicKey: data.toPubKey,
           memo: data.memo,
-          maxFee: DEFAULT_ACTION_FEE_AMOUNT,
+          maxFee: feeRecordObtData,
           fioRequestId: data.fioRequestId,
         });
         bundlesCollected = BUNDLES_TX_COUNT.RECORD_OBT_DATA;

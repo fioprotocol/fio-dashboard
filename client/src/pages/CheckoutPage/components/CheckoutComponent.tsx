@@ -5,7 +5,6 @@ import CartItem from '../../../components/Cart/CartItem';
 import PriceBadge from '../../../components/Badges/PriceBadge/PriceBadge';
 import { PaymentWallet } from './PaymentWallet';
 import { PaymentOptionComponent } from './PaymentOptionComponent';
-import InfoBadge from '../../../components/InfoBadge/InfoBadge';
 
 import { totalCost } from '../../../util/cart';
 
@@ -59,13 +58,6 @@ export const CheckoutComponent: React.FC<CheckoutComponentProps> = props => {
           type={BADGE_TYPES.BLACK}
         />
       </div>
-      <InfoBadge
-        message={rest.error}
-        show={!!rest.error}
-        title=""
-        type={BADGE_TYPES.ERROR}
-        className={classes.details}
-      />
       <div className={classes.details}>
         <PaymentWallet
           {...rest}

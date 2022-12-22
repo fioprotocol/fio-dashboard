@@ -4,7 +4,7 @@ import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import apis from '../../../api';
 
-import { linkTokens } from '../../../api/middleware/fio';
+import { linkTokensEdge } from '../../../api/middleware/fio';
 import { log } from '../../../util/general';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
@@ -71,7 +71,7 @@ const RequestTokensEdgeWallet: React.FC<Props> = props => {
 
     if (data.mapPubAddress && data.chainCode !== FIO_CHAIN_CODE) {
       try {
-        await linkTokens({
+        await linkTokensEdge({
           connectList: [
             {
               publicAddress: data.payeeTokenPublicAddress,

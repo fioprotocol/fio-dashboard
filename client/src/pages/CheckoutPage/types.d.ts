@@ -29,8 +29,6 @@ type DefaultProps = {
   beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   onFinish: (results: RegistrationResult) => void;
   cart: CartItemType[];
-  error?: string | null;
-  submitDisabled?: boolean;
 };
 
 export type CheckoutComponentProps = {
@@ -61,10 +59,10 @@ export type SignFioAddressItem = {
 };
 
 export type BeforeSubmitState = {
-  walletConfirmType: string;
+  fioWallet: FioWalletDoublet;
   onSuccess: (data: BeforeSubmitData) => void;
   onCancel: () => void;
-  data: {
+  submitData: {
     fioAddressItems: SignFioAddressItem[];
   } | null;
   fee?: number | null;
