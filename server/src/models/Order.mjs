@@ -406,7 +406,7 @@ export class Order extends Base {
         break;
       }
       case Payment.STATUS.EXPIRED: {
-        orderStatus = Order.STATUS.FAILED;
+        orderStatus = Order.STATUS.CANCELED;
         break;
       }
       case Payment.STATUS.CANCELLED: {
