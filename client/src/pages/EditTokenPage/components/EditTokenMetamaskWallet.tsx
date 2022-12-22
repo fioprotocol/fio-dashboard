@@ -20,17 +20,17 @@ import useEffectOnce from '../../../hooks/general';
 
 import { ActionParams } from '../../../types/fio';
 import { FioWalletDoublet, LinkActionResult } from '../../../types';
-import { EditTokenElement } from '../types';
+import { EditTokenElement, EditTokenValues } from '../types';
 
 type Props = {
   fioHandle: string;
   fioWallet: FioWalletDoublet;
   processing: boolean;
   pubAddressesArr: EditTokenElement[];
-  submitData: boolean | null;
+  submitData: EditTokenValues | null;
   onSuccess: (result: LinkActionResult) => void;
   onCancel: () => void;
-  setSubmitData: (submitData: boolean | null) => void;
+  setSubmitData: (submitData: EditTokenValues | null) => void;
   setProcessing: (processing: boolean) => void;
   setResultsData: (result: LinkActionResult) => void;
 };

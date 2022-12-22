@@ -2,6 +2,7 @@ import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
 import {
+  FeePrice,
   FioAddressDoublet,
   FioWalletDoublet,
   MappedPublicAddresses,
@@ -61,9 +62,11 @@ export interface ContainerProps extends ContainerOwnProps {
   fioWallets: FioWalletDoublet[];
   fioWalletsLoading: boolean;
   roe: number;
+  feePrice: FeePrice;
   contactsList: string[];
   contactsLoading: boolean;
   getContactsList: () => void;
   createContact: (name: string) => void;
   refreshWalletDataPublicKey: (publicKey?: string) => void;
+  getFee: (fioAddress: string) => void;
 }

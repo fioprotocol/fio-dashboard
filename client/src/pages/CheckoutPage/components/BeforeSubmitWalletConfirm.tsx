@@ -1,23 +1,41 @@
 import React from 'react';
 
+import WalletAction from '../../../components/WalletAction/WalletAction';
 import BeforeSubmitEdgeWallet from './BeforeSubmitEdgeWallet';
 import { BeforeSubmitMetamaskWallet } from './BeforeSubmitMetamaskWallet';
 
-import { WALLET_CREATED_FROM } from '../../../constants/common';
+import BeforeSubmitLedgerWallet from './BeforeSubmitLedgerWallet';
+
+import { CONFIRM_PIN_ACTIONS } from '../../../constants/common';
 
 import { BeforeSubmitProps } from '../types';
 
 const BeforeSubmitWalletConfirm: React.FC<BeforeSubmitProps> = props => {
-  const { walletConfirmType } = props;
+  const {
+    fioWallet,
+    fee,
+    onCancel,
+    onSuccess,
+    submitData,
+    processing,
+    setProcessing,
+  } = props;
 
   return (
     <>
-      {walletConfirmType === WALLET_CREATED_FROM.EDGE ? (
-        <BeforeSubmitEdgeWallet {...props} />
-      ) : null}
-      {walletConfirmType === WALLET_CREATED_FROM.METAMASK ? (
-        <BeforeSubmitMetamaskWallet {...props} />
-      ) : null}
+      <WalletAction
+        fioWallet={fioWallet}
+        fee={fee}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={submitData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.REGISTER_ADDRESS_PRIVATE_DOMAIN}
+        FioActionWallet={BeforeSubmitEdgeWallet}
+        LedgerActionWallet={BeforeSubmitLedgerWallet}
+        MetamaskActionWallet={BeforeSubmitMetamaskWallet}
+      />
     </>
   );
 };

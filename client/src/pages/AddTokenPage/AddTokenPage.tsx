@@ -3,9 +3,10 @@ import { Form } from 'react-final-form';
 import arrayMutators from 'final-form-arrays';
 
 import { AddTokenForm } from './copmonents/AddTokenForm';
-import EdgeConfirmAction from '../../components/EdgeConfirmAction';
-import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import { AddTokenMetamaskWallet } from './copmonents/AddTokenMetamaskWallet';
+import AddTokenEdgeWallet from './components/AddTokenEdgeWallet';
+import AddTokenLedgerWallet from './components/AddTokenLedgerWallet';
+import WalletAction from '../../components/WalletAction/WalletAction';
 
 import { useContext } from './AddTokenPageContext';
 
@@ -19,7 +20,6 @@ import { PublicAddressDoublet } from '../../types';
 const AddToken: React.FC = () => {
   const {
     bundleCost,
-    edgeWalletId,
     fioCryptoHandleObj,
     fioWallet,
     fioWallets,
@@ -35,7 +35,6 @@ const AddToken: React.FC = () => {
     setSubmitData,
     setProcessing,
     setResultsData,
-    submit,
     validate,
     validateToken,
     publicAddresses,
@@ -43,25 +42,17 @@ const AddToken: React.FC = () => {
 
   return (
     <>
-      {fioWallet?.from === WALLET_CREATED_FROM.EDGE ? (
-        <EdgeConfirmAction
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          submitAction={submit}
-          data={submitData}
-          action={CONFIRM_PIN_ACTIONS.ADD_TOKEN}
-          processing={processing}
-          setProcessing={setProcessing}
-          fioWalletEdgeId={edgeWalletId}
-        />
-      ) : null}
-
-      {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
-        <LedgerWalletActionNotSupported
-          submitData={submitData}
-          onCancel={onCancel}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={fioWallet}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={submitData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.ADD_TOKEN}
+        FioActionWallet={AddTokenEdgeWallet}
+        LedgerActionWallet={AddTokenLedgerWallet}
+      />
 
       {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
         <AddTokenMetamaskWallet
@@ -73,7 +64,6 @@ const AddToken: React.FC = () => {
           onCancel={onCancel}
           setSubmitData={setSubmitData}
           setResultsData={setResultsData}
-          setProcessing={setProcessing}
         />
       ) : null}
 

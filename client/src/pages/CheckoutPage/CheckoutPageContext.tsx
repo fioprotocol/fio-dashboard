@@ -90,9 +90,7 @@ export const useContext = (): {
   beforeSubmitProps: BeforeSubmitState | null;
   fioLoading: boolean;
   orderLoading: boolean;
-  error: string | null;
   orderError: ApiError;
-  submitDisabled?: boolean;
   beforePaymentSubmit: (handleSubmit: () => Promise<void>) => Promise<void>;
   onClose: () => void;
   onFinish: (results: RegistrationResult) => Promise<void>;
@@ -130,7 +128,6 @@ export const useContext = (): {
     beforeSubmitProps,
     setBeforeSubmitProps,
   ] = useState<BeforeSubmitState | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [order, setOrder] = useState<Order | null | undefined>(undefined);
   const [orderError, setOrderError] = useState<ApiError>(null);
   const [getOrderLoading, setGetOrderLoading] = useState<boolean>(true);
@@ -255,11 +252,7 @@ export const useContext = (): {
           }
         }
         if (!paymentWalletPublicKey && fioWallets.length) {
-          setWallet(
-            fioWallets.filter(
-              ({ from }) => from !== WALLET_CREATED_FROM.LEDGER,
-            )[0].publicKey,
-          );
+          setWallet(fioWallets[0].publicKey);
         }
       }
       getOrder();
@@ -277,7 +270,6 @@ export const useContext = (): {
   const { available: walletBalancesAvailable } = useWalletBalances(
     paymentWalletPublicKey,
   );
-  const paymentWalletFrom = paymentWallet && paymentWallet.from;
 
   const { costNativeFio: totalCostNativeFio } = totalCost(cartItems, roe);
 
@@ -301,12 +293,13 @@ export const useContext = (): {
 
   const paymentAssignmentWallets = fioWallets
     .filter(wallet => {
-      if (isFree || paymentOption !== PAYMENT_OPTIONS.FIO) return true;
       if (
-        wallet.from === WALLET_CREATED_FROM.LEDGER &&
-        paymentOption === PAYMENT_OPTIONS.FIO
+        paymentWallet &&
+        paymentWallet?.from !== wallet.from &&
+        paymentOption === PAYMENT_OPTIONS.CREDIT_CARD
       )
         return false;
+      if (isFree || paymentOption !== PAYMENT_OPTIONS.FIO) return true;
       if (
         cartHasItemsWithPrivateDomain &&
         paymentOption === PAYMENT_OPTIONS.FIO &&
@@ -386,21 +379,6 @@ export const useContext = (): {
     paymentOption,
     walletHasNoEnoughBalance,
   ]);
-
-  // Check for ledger wallet when cart has addresses with private domains
-  useEffect(() => {
-    if (
-      paymentWalletFrom &&
-      paymentWalletFrom === WALLET_CREATED_FROM.LEDGER &&
-      cartHasItemsWithPrivateDomain
-    )
-      setError(
-        'At this moment registration of FIO Handles on private domains is not supported. We are working hard to add this capability to the Ledger’s FIO App.',
-      );
-
-    // todo: this part is reset the error if paymentWalletFrom was changed to EDGE. could be situation when setError was called from other place not in this useEffect, in this case error could be reset. should this error be only for ledger error? - rename in this case
-    if (error && paymentWalletFrom === WALLET_CREATED_FROM.EDGE) setError(null);
-  }, [paymentWalletFrom, cartHasItemsWithPrivateDomain, error]);
 
   useEffect(() => {
     return () => {
@@ -486,13 +464,12 @@ export const useContext = (): {
 
     if (signTxItems.length) {
       return setBeforeSubmitProps({
-        walletConfirmType: paymentWallet.from,
+        fioWallet: paymentWallet,
         fee: new MathOp(prices?.nativeFio?.address)
           .mul(SIGN_TX_MAX_FEE_COEFF) // +50%
           .round(0, 2)
           .toNumber(),
-        data: { fioAddressItems: signTxItems },
-        paymentWallet,
+        submitData: { fioAddressItems: signTxItems },
         onSuccess: (data: BeforeSubmitData) => {
           handleSubmit(data);
           dispatchSetProcessing(false);
@@ -530,9 +507,7 @@ export const useContext = (): {
     beforeSubmitProps,
     fioLoading,
     orderLoading: getOrderLoading || createOrderLoading,
-    error,
     orderError,
-    submitDisabled: !!error,
     beforePaymentSubmit,
     onClose,
     onFinish,

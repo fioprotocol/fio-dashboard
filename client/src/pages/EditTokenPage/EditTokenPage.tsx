@@ -2,12 +2,13 @@ import React from 'react';
 import classnames from 'classnames';
 
 import ActionContainer from '../../components/LinkTokenList/ActionContainer';
-import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import PublicAddressEdit from './components/PublicAddressEdit';
-import EdgeConfirmAction from '../../components/EdgeConfirmAction';
-import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import { EditTokenMetamaskWallet } from './components/EditTokenMetamaskWallet';
+import WalletAction from '../../components/WalletAction/WalletAction';
+import EditTokenEdgeWallet from './components/EditTokenEdgeWallet';
+import EditTokenLedgerWallet from './components/EditTokenLedgerWallet';
 
+import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import {
   CONFIRM_PIN_ACTIONS,
   WALLET_CREATED_FROM,
@@ -20,7 +21,6 @@ import classes from './styles/EditTokenPage.module.scss';
 const EditTokenPage: React.FC = () => {
   const {
     bundleCost,
-    edgeWalletId,
     fioCryptoHandleObj,
     fioWallet,
     fioWallets,
@@ -40,30 +40,21 @@ const EditTokenPage: React.FC = () => {
     setProcessing,
     setResultsData,
     setSubmitData,
-    submit,
   } = useContext();
 
   return (
     <>
-      {fioWallet?.from === WALLET_CREATED_FROM.EDGE ? (
-        <EdgeConfirmAction
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          submitAction={submit}
-          data={submitData}
-          action={CONFIRM_PIN_ACTIONS.EDIT_TOKEN}
-          processing={processing}
-          setProcessing={setProcessing}
-          fioWalletEdgeId={edgeWalletId}
-        />
-      ) : null}
-
-      {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
-        <LedgerWalletActionNotSupported
-          submitData={submitData}
-          onCancel={onCancel}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={fioWallet}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={submitData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.EDIT_TOKEN}
+        FioActionWallet={EditTokenEdgeWallet}
+        LedgerActionWallet={EditTokenLedgerWallet}
+      />
 
       {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
         <EditTokenMetamaskWallet

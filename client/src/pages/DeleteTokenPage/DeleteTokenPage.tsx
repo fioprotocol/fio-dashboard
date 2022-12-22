@@ -1,13 +1,15 @@
 import React from 'react';
 
 import ActionContainer from '../../components/LinkTokenList/ActionContainer';
-import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import CheckedDropdown from './components/CheckedDropdown';
 import DeleteTokenItem from './components/DeleteTokenItem';
-import EdgeConfirmAction from '../../components/EdgeConfirmAction';
-import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
 import { DeleteTokenMetamaskWallet } from './components/DeleteTokenMetamaskWallet';
 
+import WalletAction from '../../components/WalletAction/WalletAction';
+import DeleteTokenEdgeWallet from './components/DeleteTokenEdgeWallet';
+import DeleteTokenLedgerWallet from './components/DeleteTokenLedgerWallet';
+
+import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import {
   CONFIRM_PIN_ACTIONS,
   WALLET_CREATED_FROM,
@@ -23,7 +25,6 @@ const DeleteTokenPage: React.FC = () => {
     allowDisconnectAll,
     bundleCost,
     checkedPubAddresses,
-    edgeWalletId,
     fioCryptoHandleObj,
     fioWallet,
     fioWallets,
@@ -45,30 +46,21 @@ const DeleteTokenPage: React.FC = () => {
     setProcessing,
     setResultsData,
     setSubmitData,
-    submit,
   } = useContext();
 
   return (
     <>
-      {fioWallet?.from === WALLET_CREATED_FROM.EDGE ? (
-        <EdgeConfirmAction
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          submitAction={submit}
-          data={submitData}
-          action={CONFIRM_PIN_ACTIONS.DELETE_TOKEN}
-          processing={processing}
-          setProcessing={setProcessing}
-          fioWalletEdgeId={edgeWalletId}
-        />
-      ) : null}
-
-      {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
-        <LedgerWalletActionNotSupported
-          submitData={submitData}
-          onCancel={onCancel}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={fioWallet}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={submitData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.DELETE_TOKEN}
+        FioActionWallet={DeleteTokenEdgeWallet}
+        LedgerActionWallet={DeleteTokenLedgerWallet}
+      />
 
       {fioWallet?.from === WALLET_CREATED_FROM.METAMASK ? (
         <DeleteTokenMetamaskWallet

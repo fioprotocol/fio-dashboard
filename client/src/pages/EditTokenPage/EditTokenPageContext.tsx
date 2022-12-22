@@ -6,30 +6,24 @@ import {
   fioWallets as fioWalletsSelector,
 } from '../../redux/fio/selectors';
 
-import { linkTokens } from '../../api/middleware/fio';
 import { genericTokenId } from '../../util/fio';
-import { minWaitTimeFunction } from '../../utils';
-import { log } from '../../util/general';
 
 import { usePublicAddresses } from '../../util/hooks';
 import useQuery from '../../hooks/useQuery';
 import { useGetMappedErrorRedirect } from '../../hooks/fio';
 
-import {
-  ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
-  TOKEN_LINK_MIN_WAIT_TIME,
-} from '../../constants/fio';
+import { ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION } from '../../constants/fio';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { CHAIN_CODES } from '../../constants/common';
 
+import { LinkActionResult } from '../../types';
 import {
-  LinkActionResult,
-  PublicAddressDoublet,
-  WalletKeys,
-} from '../../types';
-import { EditTokenElement } from './types';
+  EditTokenElement,
+  EditTokenContextProps,
+  EditTokenValues,
+} from './types';
 
-export const useContext = () => {
+export const useContext = (): EditTokenContextProps => {
   const queryParams = useQuery();
   const fioCryptoHandleName = queryParams.get(QUERY_PARAMS_NAMES.FIO_HANDLE);
 
@@ -47,10 +41,10 @@ export const useContext = () => {
   const [bundleCost, changeBundleCost] = useState<number>(0);
   const [resultsData, setResultsData] = useState<LinkActionResult>(null);
   const [processing, setProcessing] = useState<boolean>(false);
-  const [submitData, setSubmitData] = useState<boolean | null>(null);
+  const [submitData, setSubmitData] = useState<EditTokenValues | null>(null);
 
   const {
-    edgeWalletId = '',
+    name: fioAddressName,
     remaining = 0,
     publicAddresses = [],
     walletPublicKey = '',
@@ -119,7 +113,9 @@ export const useContext = () => {
     updatePubAddressArr();
   };
 
-  const onSuccess = () => {
+  const onSuccess = (result: LinkActionResult) => {
+    setResultsData(result);
+    setSubmitData(null);
     setProcessing(false);
   };
 
@@ -128,43 +124,11 @@ export const useContext = () => {
     setProcessing(false);
   };
 
-  const submit = async ({ keys }: { keys: WalletKeys }) => {
-    const editedPubAddresses = pubAddressesArr.filter(
-      pubAddress => pubAddress.newPublicAddress,
-    );
-    const params: {
-      fioAddress: string;
-      connectList: PublicAddressDoublet[];
-      keys: WalletKeys;
-    } = {
-      fioAddress: fioCryptoHandleName,
-      connectList: editedPubAddresses.map(pubAddress => ({
-        ...pubAddress,
-        publicAddress: pubAddress.newPublicAddress,
-      })),
-      keys,
-    };
-    try {
-      const actionResults = await minWaitTimeFunction(
-        () => linkTokens(params),
-        TOKEN_LINK_MIN_WAIT_TIME,
-      );
-      setResultsData({
-        ...actionResults,
-        disconnect: {
-          ...actionResults.disconnect,
-          updated: editedPubAddresses,
-        },
-      });
-    } catch (err) {
-      log.error(err);
-    } finally {
-      setSubmitData(null);
-    }
-  };
-
   const onActionClick = () => {
-    setSubmitData(true);
+    setSubmitData({
+      pubAddressesArr,
+      fioAddressName,
+    });
   };
 
   const onBack = () => {
@@ -174,11 +138,13 @@ export const useContext = () => {
   };
 
   const onRetry = () => {
-    setSubmitData(true);
+    setSubmitData({
+      pubAddressesArr,
+      fioAddressName,
+    });
   };
   return {
     bundleCost,
-    edgeWalletId,
     fioCryptoHandleObj,
     fioWallet,
     fioWallets,
@@ -198,6 +164,5 @@ export const useContext = () => {
     setProcessing,
     setResultsData,
     setSubmitData,
-    submit,
   };
 };

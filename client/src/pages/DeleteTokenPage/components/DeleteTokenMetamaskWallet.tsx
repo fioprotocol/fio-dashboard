@@ -21,7 +21,7 @@ import useEffectOnce from '../../../hooks/general';
 
 import { ActionParams } from '../../../types/fio';
 import { FioWalletDoublet, LinkActionResult } from '../../../types';
-import { CheckedTokenType } from '../types';
+import { CheckedTokenType, DeleteTokenValues } from '../types';
 
 type Props = {
   allowDisconnectAll: boolean;
@@ -29,10 +29,10 @@ type Props = {
   fioWallet: FioWalletDoublet;
   processing: boolean;
   checkedPubAddresses: CheckedTokenType[];
-  submitData: boolean | null;
+  submitData: DeleteTokenValues | null;
   onSuccess: (result: LinkActionResult) => void;
   onCancel: () => void;
-  setSubmitData: (submitData: boolean | null) => void;
+  setSubmitData: (submitData: DeleteTokenValues | null) => void;
   setProcessing: (processing: boolean) => void;
   setResultsData: (result: LinkActionResult) => void;
 };
