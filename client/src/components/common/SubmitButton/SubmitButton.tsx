@@ -1,5 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 
@@ -32,6 +33,8 @@ type Props = {
   loading?: boolean;
   text?: string | React.ReactNode;
   title?: string;
+  isGrey?: boolean;
+  icon?: IconProp;
   variant?: string;
   withBottomMargin?: boolean;
   withoutMargin?: boolean;
@@ -51,11 +54,13 @@ export const SubmitButton: React.FC<Props> = props => {
     hasNoSidePaddings,
     hasSmallText,
     hasWhiteHoverBackground,
+    icon,
     isBlack,
     isButtonType,
     isCobalt,
     isGreen,
     isGreenTeal,
+    isGrey,
     isLightBlack,
     isRed,
     isTransparent,
@@ -101,6 +106,8 @@ export const SubmitButton: React.FC<Props> = props => {
         isWhite && classes.isWhite,
         isWhiteBordered && classes.isWhiteBordered,
         isWhiteViolet && classes.isWhiteViolet,
+        isGrey && classes.isGrey,
+        disabled && classes.disabled,
         loading && classes.loading,
         withBottomMargin && classes.bottomMargin,
         withoutMargin && classes.withoutMargin,
@@ -110,6 +117,7 @@ export const SubmitButton: React.FC<Props> = props => {
     >
       <div />
       <div>{text || 'Confirm'}</div>
+      {icon && <FontAwesomeIcon icon={icon} />}
       <div>{loading && <FontAwesomeIcon icon="spinner" spin />}</div>
     </Button>
   );

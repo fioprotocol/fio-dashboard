@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
@@ -8,11 +8,12 @@ import FioRecordFieldsList from '../WalletPage/components/FioRecordFieldsList';
 import BundledTransactionBadge from '../../components/Badges/BundledTransactionBadge/BundledTransactionBadge';
 import LowBalanceBadge from '../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import CancelRequestEdge from './components/CancelRequestEdge';
-import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
+import CancelRequestLedger from './components/CancelRequestLedger';
+import WalletAction from '../../components/WalletAction/WalletAction';
 import PageTitle from '../../components/PageTitle/PageTitle';
 
 import { ERROR_TYPES } from '../../components/common/TransactionResults/constants';
-import { WALLET_CREATED_FROM } from '../../constants/common';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { BUNDLES_TX_COUNT } from '../../constants/fio';
 import {
   FIO_REQUEST_FIELDS_LIST,
@@ -26,7 +27,7 @@ import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { useFioAddresses } from '../../util/hooks';
 
 import { FioRecordViewDecrypted } from '../WalletPage/types';
-import { FioWalletDoublet } from '../../types';
+import { FeePrice, FioWalletDoublet } from '../../types';
 
 import classes from './CancelFioRequestPage.module.scss';
 
@@ -41,6 +42,8 @@ type Location = {
 };
 
 type Props = {
+  feePrice: FeePrice;
+  getFee: (fioAddress: string) => void;
   refreshWalletDataPublicKey: (publicKey: string) => void;
 };
 
@@ -53,6 +56,8 @@ const CancelFioRequestPage: React.FC<Props &
     },
     history,
     refreshWalletDataPublicKey,
+    feePrice,
+    getFee,
   } = props;
 
   const [walletFioCryptoHandles] = useFioAddresses(fioWallet.publicKey);
@@ -77,6 +82,12 @@ const CancelFioRequestPage: React.FC<Props &
   const [submitData, setSubmitData] = useState<FioRecordViewDecrypted | null>(
     null,
   );
+
+  useEffect(() => {
+    if (fioRecordDecrypted?.fioRecord?.from) {
+      getFee(fioRecordDecrypted.fioRecord.from);
+    }
+  }, [fioRecordDecrypted, getFee]);
 
   const hasLowBalance = remaining - BUNDLES_TX_COUNT.CANCEL_FIO_REQUEST < 0;
 
@@ -176,23 +187,18 @@ const CancelFioRequestPage: React.FC<Props &
           />
         </div>
       </PseudoModalContainer>
-      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
-        <CancelRequestEdge
-          processing={processing}
-          setProcessing={setProcessing}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          submitData={submitData}
-          fioWallet={fioWallet}
-        />
-      ) : null}
-
-      {fioWallet.from === WALLET_CREATED_FROM.LEDGER ? (
-        <LedgerWalletActionNotSupported
-          submitData={submitData}
-          onCancel={onCancel}
-        />
-      ) : null}
+      <WalletAction
+        fee={feePrice.nativeFio}
+        fioWallet={fioWallet}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={submitData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.CANCEL_FIO_REQUEST}
+        FioActionWallet={CancelRequestEdge}
+        LedgerActionWallet={CancelRequestLedger}
+      />
     </>
   );
 };

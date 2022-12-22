@@ -7,12 +7,13 @@ import PayWithBadge from '../../components/Badges/PayWithBadge/PayWithBadge';
 import LowBalanceBadge from '../../components/Badges/LowBalanceBadge/LowBalanceBadge';
 import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import AddBundlesEdgeWallet from './components/AddBundlesEdgeWallet';
+import AddBundlesLedgerWallet from './components/AddBundlesLedgerWallet';
 import Results from '../../components/common/TransactionResults';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import FioNamesInitWrapper from '../../components/FioNamesInitWrapper';
 import Badge, { BADGE_TYPES } from '../../components/Badge/Badge';
-import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
+import WalletAction from '../../components/WalletAction/WalletAction';
 import PageTitle from '../../components/PageTitle/PageTitle';
 
 import { convertFioPrices } from '../../util/prices';
@@ -20,7 +21,7 @@ import { useFioWallet, useWalletBalances } from '../../util/hooks';
 import MathOp from '../../util/math';
 
 import {
-  WALLET_CREATED_FROM,
+  CONFIRM_PIN_ACTIONS,
   DEFAULT_BUNDLE_SET_VALUE,
   DEFAULT_BUNDLE_AMOUNT,
 } from '../../constants/common';
@@ -165,23 +166,18 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
 
   return (
     <>
-      {currentWallet.from === WALLET_CREATED_FROM.EDGE ? (
-        <AddBundlesEdgeWallet
-          fioWallet={currentWallet}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          setProcessing={setProcessing}
-          sendData={submitData}
-          processing={processing}
-        />
-      ) : null}
-
-      {currentWallet.from === WALLET_CREATED_FROM.LEDGER ? (
-        <LedgerWalletActionNotSupported
-          submitData={submitData}
-          onCancel={onCancel}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={currentWallet}
+        fee={feeNativeFio}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={submitData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.ADD_BUNDLES}
+        FioActionWallet={AddBundlesEdgeWallet}
+        LedgerActionWallet={AddBundlesLedgerWallet}
+      />
 
       <PseudoModalContainer title="Add bundled transactions" link={backUrl}>
         <div className={classes.container}>

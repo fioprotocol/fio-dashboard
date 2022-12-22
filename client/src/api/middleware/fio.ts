@@ -1,38 +1,51 @@
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
+import { Fio as LedgerFioApp } from 'ledgerjs-hw-app-fio/dist/fio';
+import { arrayToHex } from '@fioprotocol/fiojs/dist/chain-numeric';
 
 import apis from '../';
 
 import {
   transformPublicAddresses,
   normalizePublicAddresses,
+  prepareChainTransaction,
 } from '../../util/fio';
+import { formatLedgerSignature, getPath } from '../../util/ledger';
 import { log } from '../../util/general';
 
 import {
   ACTIONS,
+  ACTIONS_TO_END_POINT_KEYS,
   ELEMENTS_LIMIT_PER_BUNDLE_TRANSACTION,
 } from '../../constants/fio';
 
 import {
+  FioWalletDoublet,
   LinkActionResult,
   PublicAddressDoublet,
   WalletKeys,
 } from '../../types';
 
-export const linkTokens = async ({
+const linkTokens = async ({
   connectList,
   disconnectList,
   fioAddress,
   fee,
-  keys,
   disconnectAll,
+  executeAction,
 }: {
   connectList?: PublicAddressDoublet[];
   disconnectList?: PublicAddressDoublet[];
   fioAddress: string;
   fee?: number;
-  keys: WalletKeys;
   disconnectAll?: boolean;
+  executeAction: (
+    action: string,
+    params: {
+      fioAddress: string;
+      fee?: number;
+      publicAddresses?: PublicAddress[];
+    },
+  ) => Promise<void>;
 }): Promise<LinkActionResult> => {
   const updatePubAddresses = async (
     publicAddresses: PublicAddressDoublet[],
@@ -57,7 +70,7 @@ export const linkTokens = async ({
           publicAddressesIteration,
         );
       }
-      await apis.fio.executeAction(keys, action, params);
+      await executeAction(action, params);
     };
 
     for (const publicAddress of publicAddresses) {
@@ -69,7 +82,7 @@ export const linkTokens = async ({
         !oneBundleTransaction
       ) {
         try {
-          handleUpdatePubAddresses();
+          await handleUpdatePubAddresses();
           updatedConnections = [
             ...updatedConnections,
             ...publicAddressesIteration,
@@ -83,7 +96,7 @@ export const linkTokens = async ({
 
     if (publicAddressesIteration.length) {
       try {
-        handleUpdatePubAddresses();
+        await handleUpdatePubAddresses();
         updatedConnections = [
           ...updatedConnections,
           ...publicAddressesIteration,
@@ -177,4 +190,116 @@ export const linkTokens = async ({
     log.error(e);
     throw e;
   }
+};
+
+export const linkTokensEdge = async ({
+  connectList,
+  disconnectList,
+  fioAddress,
+  fee,
+  keys,
+  disconnectAll,
+}: {
+  connectList?: PublicAddressDoublet[];
+  disconnectList?: PublicAddressDoublet[];
+  fioAddress: string;
+  fee?: number;
+  keys: WalletKeys;
+  disconnectAll?: boolean;
+}): Promise<LinkActionResult> => {
+  const executeAction = async (
+    action: string,
+    params: {
+      fioAddress: string;
+      fee?: number;
+      publicAddresses?: PublicAddress[];
+    },
+  ) => {
+    await apis.fio.executeAction(keys, action, params);
+  };
+
+  return linkTokens({
+    connectList,
+    disconnectList,
+    fioAddress,
+    fee,
+    disconnectAll,
+    executeAction,
+  });
+};
+
+export const linkTokensLedger = async ({
+  connectList,
+  disconnectList,
+  fioAddress,
+  fee,
+  disconnectAll,
+  appFio,
+  fioWallet,
+}: {
+  connectList?: PublicAddressDoublet[];
+  disconnectList?: PublicAddressDoublet[];
+  fioAddress: string;
+  fee?: number;
+  disconnectAll?: boolean;
+  appFio: LedgerFioApp;
+  fioWallet: FioWalletDoublet;
+}): Promise<LinkActionResult> => {
+  const executeAction = async (
+    action: string,
+    params: {
+      fioAddress: string;
+      fee?: number;
+      publicAddresses?: PublicAddress[];
+    },
+  ) => {
+    const { chainId, transaction } = await prepareChainTransaction(
+      fioWallet.publicKey,
+      action,
+      {
+        fio_address: params.fioAddress,
+        public_addresses: params.publicAddresses,
+        max_fee: params.fee || 0,
+        tpid: apis.fio.tpid,
+      },
+    );
+
+    const {
+      witness: { witnessSignatureHex },
+    } = await appFio.signTransaction({
+      path: getPath(fioWallet.data.derivationIndex),
+      chainId,
+      tx: transaction,
+    });
+    const signatureLedger = formatLedgerSignature(witnessSignatureHex);
+
+    const {
+      serializedTransaction,
+      serializedContextFreeData,
+    } = await apis.fio.publicFioSDK.transactions.serialize({
+      chainId,
+      transaction,
+    });
+
+    await apis.fio.publicFioSDK.executePreparedTrx(
+      apis.fio.actionEndPoints[ACTIONS_TO_END_POINT_KEYS[action]],
+      {
+        compression: 0,
+        packed_context_free_data: arrayToHex(
+          serializedContextFreeData || new Uint8Array(0),
+        ),
+        packed_trx: arrayToHex(serializedTransaction),
+        signatures: [signatureLedger],
+      },
+    );
+  };
+
+  return linkTokens({
+    connectList,
+    disconnectList,
+    fioAddress,
+    fee,
+    disconnectAll,
+    executeAction,
+  });
 };

@@ -12,7 +12,7 @@ import {
   isProcessing,
 } from '../../redux/registrations/selectors';
 import { fioWallets } from '../../redux/fio/selectors';
-import { user, hasFreeAddress } from '../../redux/profile/selectors';
+import { hasFreeAddress } from '../../redux/profile/selectors';
 import { refProfileInfo } from '../../redux/refProfile/selectors';
 
 import { PurchaseNow } from './PurchaseNow';
@@ -26,7 +26,6 @@ const selector = createStructuredSelector({
   prices,
   isProcessing,
   refProfileInfo,
-  user,
   hasFreeAddress,
 });
 

@@ -1,16 +1,14 @@
 import React from 'react';
 
 import ActionContainer from '../../components/LinkTokenList/ActionContainer';
-import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
 import CheckedDropdown from './components/CheckedDropdown';
 import DeleteTokenItem from './components/DeleteTokenItem';
-import EdgeConfirmAction from '../../components/EdgeConfirmAction';
-import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionNotSupported';
+import WalletAction from '../../components/WalletAction/WalletAction';
+import DeleteTokenEdgeWallet from './components/DeleteTokenEdgeWallet';
+import DeleteTokenLedgerWallet from './components/DeleteTokenLedgerWallet';
 
-import {
-  CONFIRM_PIN_ACTIONS,
-  WALLET_CREATED_FROM,
-} from '../../constants/common';
+import { CONTAINER_NAMES } from '../../components/LinkTokenList/constants';
+import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 
 import { useContext } from './DeleteTokenPageContext';
 
@@ -20,7 +18,6 @@ const DeleteTokenPage: React.FC = () => {
   const {
     allChecked,
     bundleCost,
-    edgeWalletId,
     fioCryptoHandleObj,
     fioWallet,
     fioWallets,
@@ -40,30 +37,21 @@ const DeleteTokenPage: React.FC = () => {
     onRetry,
     onSuccess,
     setProcessing,
-    submit,
   } = useContext();
 
   return (
     <>
-      {fioWallet?.from === WALLET_CREATED_FROM.EDGE ? (
-        <EdgeConfirmAction
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          submitAction={submit}
-          data={submitData}
-          action={CONFIRM_PIN_ACTIONS.DELETE_TOKEN}
-          processing={processing}
-          setProcessing={setProcessing}
-          fioWalletEdgeId={edgeWalletId}
-        />
-      ) : null}
-
-      {fioWallet?.from === WALLET_CREATED_FROM.LEDGER ? (
-        <LedgerWalletActionNotSupported
-          submitData={submitData}
-          onCancel={onCancel}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={fioWallet}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={submitData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.DELETE_TOKEN}
+        FioActionWallet={DeleteTokenEdgeWallet}
+        LedgerActionWallet={DeleteTokenLedgerWallet}
+      />
 
       <ActionContainer
         containerName={CONTAINER_NAMES.DELETE}

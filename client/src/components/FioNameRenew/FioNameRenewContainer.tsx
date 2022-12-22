@@ -7,16 +7,17 @@ import PriceBadge from '../Badges/PriceBadge/PriceBadge';
 import PayWithBadge from '../Badges/PayWithBadge/PayWithBadge';
 import LowBalanceBadge from '../Badges/LowBalanceBadge/LowBalanceBadge';
 import RenewResults from '../common/TransactionResults/components/RenewResults';
+import WalletAction from '../WalletAction/WalletAction';
 import RenewEdgeWallet from './components/RenewEdgeWallet';
+import RenewLedgerWallet from './components/RenewLedgerWallet';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
 import FioLoader from '../common/FioLoader/FioLoader';
-import LedgerWalletActionNotSupported from '../LedgerWalletActionNotSupported';
 import PageTitle from '../PageTitle/PageTitle';
 
 import {
+  CONFIRM_PIN_ACTIONS,
   DOMAIN,
   MANAGE_PAGE_REDIRECT,
-  WALLET_CREATED_FROM,
 } from '../../constants/common';
 import { BADGE_TYPES } from '../Badge/Badge';
 import { ERROR_TYPES } from '../common/TransactionResults/constants';
@@ -27,7 +28,7 @@ import { useWalletBalances } from '../../util/hooks';
 import MathOp from '../../util/math';
 import { RENEW_PAGE_CONFIRMATION_LINK } from '../../constants/labels';
 
-import { ContainerProps } from './types';
+import { ContainerProps, FioRenewValues } from './types';
 import { ResultsData } from '../common/TransactionResults/types';
 
 import classes from './FioNameRenewContainer.module.scss';
@@ -47,9 +48,7 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
 
   const { nativeFio: feeNativeFio, fio, usdc } = feePrice;
   const [processing, setProcessing] = useState(false);
-  const [submitData, setSubmitData] = useState<{
-    name: string;
-  } | null>(null);
+  const [submitData, setSubmitData] = useState<FioRenewValues | null>(null);
   const [resultsData, setResultsData] = useState<ResultsData | null>(null);
   const [error, setError] = useState<string>('');
 
@@ -142,23 +141,18 @@ const FioNameRenewContainer: React.FC<ContainerProps> = props => {
 
   return (
     <>
-      {currentWallet.from === WALLET_CREATED_FROM.EDGE ? (
-        <RenewEdgeWallet
-          fioWallet={currentWallet}
-          onSuccess={onSuccess}
-          onCancel={onCancel}
-          setProcessing={setProcessing}
-          renewData={submitData}
-          processing={processing}
-          fee={feeNativeFio}
-        />
-      ) : null}
-      {currentWallet.from === WALLET_CREATED_FROM.LEDGER ? (
-        <LedgerWalletActionNotSupported
-          submitData={submitData}
-          onCancel={onCancel}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={currentWallet}
+        fee={feeNativeFio}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={submitData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.RENEW}
+        FioActionWallet={RenewEdgeWallet}
+        LedgerActionWallet={RenewLedgerWallet}
+      />
       <PseudoModalContainer
         title="Renew Now"
         link={MANAGE_PAGE_REDIRECT[fioNameType]}

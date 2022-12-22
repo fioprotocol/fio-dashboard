@@ -106,6 +106,52 @@ export const BUNDLES_TX_COUNT = {
 
 export const GET_TABLE_ROWS_URL = `${process.env.REACT_APP_FIO_BASE_URL}chain/get_table_rows`;
 
+export const FIO_ACCOUNT_NAMES = {
+  [ACTIONS.transferTokens]: 'fio.token',
+  [ACTIONS.recordObtData]: 'fio.reqobt',
+  [ACTIONS.stakeFioTokens]: 'fio.staking',
+  [ACTIONS.unStakeFioTokens]: 'fio.staking',
+  [ACTIONS.transferFioDomain]: 'fio.address',
+  [ACTIONS.transferFioAddress]: 'fio.address',
+  [ACTIONS.setFioDomainVisibility]: 'fio.address',
+  [ACTIONS.renewFioDomain]: 'fio.address',
+  [ACTIONS.addBundledTransactions]: 'fio.address',
+  [ACTIONS.requestFunds]: 'fio.reqobt',
+  [ACTIONS.rejectFundsRequest]: 'fio.reqobt',
+  [ACTIONS.cancelFundsRequest]: 'fio.reqobt',
+  [ACTIONS.addNft]: 'fio.address',
+  [ACTIONS.registerFioAddress]: 'fio.address',
+  [ACTIONS.registerFioDomain]: 'fio.address',
+  [ACTIONS.addPublicAddresses]: 'fio.address',
+  [ACTIONS.removeAllPublicAddresses]: 'fio.address',
+  [ACTIONS.removePublicAddresses]: 'fio.address',
+  [ACTIONS.wrapFioTokens]: 'fio.oracle',
+  [ACTIONS.wrapFioDomain]: 'fio.oracle',
+};
+
+export const FIO_ACTION_NAMES = {
+  [ACTIONS.transferTokens]: 'trnsfiopubky',
+  [ACTIONS.recordObtData]: 'recordobt',
+  [ACTIONS.stakeFioTokens]: 'stakefio',
+  [ACTIONS.unStakeFioTokens]: 'unstakefio',
+  [ACTIONS.transferFioDomain]: 'xferdomain',
+  [ACTIONS.transferFioAddress]: 'xferaddress',
+  [ACTIONS.setFioDomainVisibility]: 'setdomainpub',
+  [ACTIONS.renewFioDomain]: 'renewdomain',
+  [ACTIONS.addBundledTransactions]: 'addbundles',
+  [ACTIONS.requestFunds]: 'newfundsreq',
+  [ACTIONS.rejectFundsRequest]: 'rejectfndreq',
+  [ACTIONS.cancelFundsRequest]: 'cancelfndreq',
+  [ACTIONS.addNft]: 'addnft',
+  [ACTIONS.registerFioAddress]: 'regaddress',
+  [ACTIONS.registerFioDomain]: 'regdomain',
+  [ACTIONS.addPublicAddresses]: 'addaddress',
+  [ACTIONS.removeAllPublicAddresses]: 'remalladdr',
+  [ACTIONS.removePublicAddresses]: 'remaddress',
+  [ACTIONS.wrapFioTokens]: 'wraptokens',
+  [ACTIONS.wrapFioDomain]: 'wrapdomain',
+};
+
 export const DOMAIN_TYPE = {
   CUSTOM: 'custom',
   FREE: 'free',

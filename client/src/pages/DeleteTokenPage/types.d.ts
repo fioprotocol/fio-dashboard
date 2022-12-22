@@ -3,8 +3,13 @@ import {
   FioWalletDoublet,
   LinkActionResult,
   PublicAddressDoublet,
-  WalletKeys,
 } from '../../types';
+
+export type DeleteTokenValues = {
+  pubAddressesArr: CheckedTokenType[];
+  fioCryptoHandle: FioAddressWithPubAddresses;
+  allChecked: boolean;
+};
 
 export type CheckedTokenType = {
   isChecked: boolean;
@@ -14,7 +19,6 @@ export type CheckedTokenType = {
 export type DeleteTokenContextProps = {
   allChecked: boolean;
   bundleCost: number;
-  edgeWalletId: string;
   fioCryptoHandleObj: FioAddressWithPubAddresses;
   fioWallet: FioWalletDoublet;
   fioWallets: FioWalletDoublet[];
@@ -25,7 +29,7 @@ export type DeleteTokenContextProps = {
   processing: boolean;
   pubAddressesArr: CheckedTokenType[];
   resultsData: LinkActionResult;
-  submitData: boolean;
+  submitData: DeleteTokenValues | null;
   allCheckedChange: (isChecked: boolean) => void;
   setProcessing: (processing: boolean) => void;
   changeBundleCost: (bundles: number) => void;
@@ -34,6 +38,5 @@ export type DeleteTokenContextProps = {
   onCancel: () => void;
   onCheckClick: (checkedId: string) => void;
   onRetry: () => void;
-  onSuccess: () => void;
-  submit: ({ keys }: { keys: WalletKeys }) => Promise<void>;
+  onSuccess: (result: LinkActionResult) => void;
 };

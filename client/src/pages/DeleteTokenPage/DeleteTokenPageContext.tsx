@@ -7,28 +7,22 @@ import {
   loading as loadingSelector,
 } from '../../redux/fio/selectors';
 
-import { linkTokens } from '../../api/middleware/fio';
 import { genericTokenId } from '../../util/fio';
-import { minWaitTimeFunction } from '../../utils';
-import { log } from '../../util/general';
 
 import { usePublicAddresses } from '../../util/hooks';
 import useQuery from '../../hooks/useQuery';
 import { useGetMappedErrorRedirect } from '../../hooks/fio';
 
-import {
-  TOKEN_LINK_MIN_WAIT_TIME,
-  BUNDLES_TX_COUNT,
-} from '../../constants/fio';
-import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { CHAIN_CODES } from '../../constants/common';
+import { BUNDLES_TX_COUNT } from '../../constants/fio';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
-import { CheckedTokenType, DeleteTokenContextProps } from './types';
 import {
-  LinkActionResult,
-  PublicAddressDoublet,
-  WalletKeys,
-} from '../../types';
+  CheckedTokenType,
+  DeleteTokenContextProps,
+  DeleteTokenValues,
+} from './types';
+import { LinkActionResult } from '../../types';
 
 export const useContext = (): DeleteTokenContextProps => {
   const queryParams = useQuery();
@@ -52,15 +46,11 @@ export const useContext = (): DeleteTokenContextProps => {
   const [bundleCost, changeBundleCost] = useState<number>(0);
   const [allChecked, toggleAllChecked] = useState<boolean>(false);
   const [processing, setProcessing] = useState<boolean>(false);
-  const [submitData, setSubmitData] = useState<boolean | null>(null);
+  const [submitData, setSubmitData] = useState<DeleteTokenValues | null>(null);
   const [resultsData, setResultsData] = useState<LinkActionResult>(null);
 
-  const {
-    edgeWalletId = '',
-    remaining = 0,
-    publicAddresses = [],
-    walletPublicKey = '',
-  } = fioCryptoHandleObj || {};
+  const { remaining = 0, publicAddresses = [], walletPublicKey = '' } =
+    fioCryptoHandleObj || {};
 
   const hasLowBalance = remaining - bundleCost < 0 || remaining === 0;
 
@@ -128,7 +118,9 @@ export const useContext = (): DeleteTokenContextProps => {
     );
   };
 
-  const onSuccess = () => {
+  const onSuccess = (result: LinkActionResult) => {
+    setResultsData(result);
+    setSubmitData(null);
     setProcessing(false);
   };
 
@@ -137,36 +129,12 @@ export const useContext = (): DeleteTokenContextProps => {
     setProcessing(false);
   };
 
-  const submit = async ({ keys }: { keys: WalletKeys }) => {
-    const params: {
-      fioAddress: string;
-      disconnectList: PublicAddressDoublet[];
-      keys: WalletKeys;
-    } = {
-      fioAddress: fioCryptoHandleName,
-      disconnectList: pubAddressesArr.filter(pubAddress => {
-        const { isChecked, chainCode, tokenCode } = pubAddress;
-        const isFioToken =
-          chainCode === CHAIN_CODES.FIO && tokenCode === CHAIN_CODES.FIO;
-        return isChecked && !isFioToken;
-      }),
-      keys,
-    };
-    try {
-      const actionResults = await minWaitTimeFunction(
-        () => linkTokens(params),
-        TOKEN_LINK_MIN_WAIT_TIME,
-      );
-      setResultsData(actionResults);
-    } catch (err) {
-      log.error(err);
-    } finally {
-      setSubmitData(null);
-    }
-  };
-
   const onActionClick = () => {
-    setSubmitData(true);
+    setSubmitData({
+      pubAddressesArr,
+      fioCryptoHandle: fioCryptoHandleObj,
+      allChecked,
+    });
   };
 
   const onBack = () => {
@@ -176,13 +144,16 @@ export const useContext = (): DeleteTokenContextProps => {
   };
 
   const onRetry = () => {
-    setSubmitData(true);
+    setSubmitData({
+      pubAddressesArr,
+      fioCryptoHandle: fioCryptoHandleObj,
+      allChecked,
+    });
   };
 
   return {
     allChecked,
     bundleCost,
-    edgeWalletId,
     fioCryptoHandleObj,
     fioWallet,
     fioWallets,
@@ -203,6 +174,5 @@ export const useContext = (): DeleteTokenContextProps => {
     onRetry,
     onSuccess,
     setProcessing,
-    submit,
   };
 };

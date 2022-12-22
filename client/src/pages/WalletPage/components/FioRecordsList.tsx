@@ -9,7 +9,7 @@ import FioObtDataDetails from './FioObtDataDetails';
 import FioRecordItem from './FioRecordItem';
 import WalletAction from '../../../components/WalletAction/WalletAction';
 import DecryptContentEdge from './DecryptContentEdge';
-import LedgerWalletActionNotSupported from '../../../components/LedgerWalletActionNotSupported';
+import DecryptContentLedger from './DecryptContentLedger';
 import { FioTokensReceive } from '../../../components/FioTokensReceive';
 
 import { transformFioRecord } from '../util';
@@ -232,7 +232,7 @@ const FioRecordsList: React.FC<Props> = props => {
         onSuccess={onSuccess}
         onCancel={onCancel}
         FioActionWallet={DecryptContentEdge}
-        LedgerActionWallet={LedgerWalletActionNotSupported}
+        LedgerActionWallet={DecryptContentLedger}
       />
     </div>
   );

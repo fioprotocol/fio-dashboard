@@ -6,6 +6,8 @@ import FioLoader from '../../components/common/FioLoader/FioLoader';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import WrapTokensForm from './components/WrapTokensForm';
 import WrapTokensEdgeWallet from './components/WrapTokensEdgeWallet';
+import { WrapTokensLedgerWallet } from './components/WrapTokensLedgerWallet';
+import WalletAction from '../../components/WalletAction/WalletAction';
 import WrapTokenResults from '../../components/common/TransactionResults/components/WrapTokenResults';
 import PageTitle from '../../components/PageTitle/PageTitle';
 
@@ -18,7 +20,7 @@ import MathOp from '../../util/math';
 import { ROUTES } from '../../constants/routes';
 import {
   ANALYTICS_EVENT_ACTIONS,
-  WALLET_CREATED_FROM,
+  CONFIRM_PIN_ACTIONS,
 } from '../../constants/common';
 import { LINKS } from '../../constants/labels';
 import { fireAnalyticsEvent } from '../../util/analytics';
@@ -150,18 +152,19 @@ const WrapTokensPage: React.FC<ContainerProps> = props => {
 
   return (
     <>
-      {fioWallet.from === WALLET_CREATED_FROM.EDGE ? (
-        <WrapTokensEdgeWallet
-          fioWallet={fioWallet}
-          fee={feePrice.nativeFio}
-          oracleFee={oracleFeePrice.nativeFio}
-          onCancel={onCancel}
-          onSuccess={onSuccess}
-          wrapData={sendData}
-          processing={processing}
-          setProcessing={setProcessing}
-        />
-      ) : null}
+      <WalletAction
+        fioWallet={fioWallet}
+        fee={feePrice.nativeFio}
+        oracleFee={oracleFeePrice.nativeFio}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        submitData={sendData}
+        processing={processing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.WRAP_TOKENS}
+        FioActionWallet={WrapTokensEdgeWallet}
+        LedgerActionWallet={WrapTokensLedgerWallet}
+      />
 
       <PseudoModalContainer
         title="Wrap FIO Tokens"

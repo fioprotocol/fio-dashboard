@@ -50,7 +50,6 @@ import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
-  WALLET_CREATED_FROM,
 } from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
 
@@ -185,21 +184,17 @@ export const useContext = (): UseContextReturnType => {
   const hasLowBalance =
     hasLowBalanceForPrivateDomains ||
     (userWallets &&
-      userWallets
-        .filter(({ from }) => from === WALLET_CREATED_FROM.EDGE)
-        .every(
-          wallet =>
-            wallet.available != null &&
-            totalCartNativeAmount &&
-            new MathOp(wallet.available).lte(totalCartNativeAmount),
-        ));
+      userWallets.every(
+        wallet =>
+          wallet.available != null &&
+          totalCartNativeAmount &&
+          new MathOp(wallet.available).lte(totalCartNativeAmount),
+      ));
 
   const highestBalanceWalletPubKey = userWallets.length
-    ? userWallets
-        .filter(({ from }) => from === WALLET_CREATED_FROM.EDGE)
-        .sort(
-          (a, b) => b.available - a.available || a.name.localeCompare(b.name),
-        )[0].publicKey
+    ? userWallets.sort(
+        (a, b) => b.available - a.available || a.name.localeCompare(b.name),
+      )[0].publicKey
     : '';
 
   const getFreshPrices = async (): Promise<FioRegPricesResponse> => {

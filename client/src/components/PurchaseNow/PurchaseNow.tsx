@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
 import WalletAction from '../WalletAction/WalletAction';
-import PurchaseEdgeWallet from './components/PurchaseEdgeWallet';
-import LedgerWalletActionNotSupported from '../LedgerWalletActionNotSupported';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
+
+import PurchaseEdgeWallet from './components/PurchaseEdgeWallet';
+import PurchaseLedgerWallet from './components/PurchaseLedgerWallet';
 
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -140,7 +141,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
         setProcessing={setProcessing}
         action={CONFIRM_PIN_ACTIONS.PURCHASE}
         FioActionWallet={PurchaseEdgeWallet}
-        LedgerActionWallet={LedgerWalletActionNotSupported}
+        LedgerActionWallet={PurchaseLedgerWallet}
       />
       <SubmitButton
         onClick={purchase}

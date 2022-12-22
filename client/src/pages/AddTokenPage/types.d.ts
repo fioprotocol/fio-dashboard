@@ -6,7 +6,6 @@ import {
   FioAddressWithPubAddresses,
   LinkActionResult,
   FioWalletDoublet,
-  WalletKeys,
 } from '../../types';
 
 export type SubmitDataProps = FormValues | PublicAddressDoublet[] | null;
@@ -22,15 +21,13 @@ export type AddTokenDefaultProps = {
 };
 
 export type AddTokenContextProps = {
-  edgeWalletId: string;
   fioWallet: FioWalletDoublet;
   processing: boolean;
   submitData: SubmitDataProps;
   onCancel: () => void;
   onSubmit: (values: FormValues) => void;
-  onSuccess: () => void;
+  onSuccess: (result: LinkActionResult) => void;
   setProcessing: (processing: boolean) => void;
-  submit: (params: { keys: WalletKeys; data: FormValues }) => Promise<void>;
   validate: (values: FormValues) => AnyObject | Promise<AnyObject>;
   validateToken: (
     token: PublicAddressDoublet,
@@ -40,6 +37,7 @@ export type AddTokenContextProps = {
 } & AddTokenDefaultProps;
 
 export type FormValues = {
+  name?: string;
   tokens: PublicAddressDoublet[];
 };
 
