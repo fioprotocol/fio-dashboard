@@ -19,7 +19,7 @@ const generalInstructionContent = [
   {
     title: 'Earn',
     text:
-      "Get creative: you'll earn on each purchase thought your referral link.",
+      "Get creative: you'll earn FIO Tokens on every domain purchased via the referral link.",
   },
 ];
 
