@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, MutableRefObject } from 'react';
+import React, { MutableRefObject, useEffect, useRef, useState } from 'react';
 import { DebounceInput } from 'react-debounce-input';
 import { FieldRenderProps } from 'react-final-form';
 import classnames from 'classnames';
@@ -6,16 +6,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { ErrorBadge } from './ErrorBadge';
 import Modal from '../Modal/Modal';
-import { PasteButton } from './InputActionButtons';
+import { ClearButton, PasteButton } from './InputActionButtons';
 import { Label, LoadingIcon, PrefixLabel } from './StaticInputParts';
-import { ClearButton } from './InputActionButtons';
+import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 import { INPUT_COLOR_SCHEMA } from './TextInput';
 
 import { getValueFromPaste, log } from '../../util/general';
 
 import classes from './Input.module.scss';
-import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 type Props = {
   colorSchema?: string;
@@ -56,9 +55,12 @@ type ModalProps = {
   show?: boolean;
   subTitle?: string;
   title?: string;
-  options?: string[];
+  footerTitle?: string;
+  notFoundText?: string;
+  options?: { name: string; id: string }[];
   handleClose?: () => void;
   isBW?: boolean;
+  isStringOptions?: boolean;
   inputRef: MutableRefObject<HTMLInputElement | null>;
   onHide?: () => void;
 };
@@ -74,18 +76,20 @@ const SelectModal: React.FC<Props &
     handleConfirmValidate,
     showPasteButton = false,
     loading,
+    isStringOptions,
     uiType,
     errorType = '',
     errorColor = '',
     title = 'Choose FIO Crypto Handle or Public Key',
     subTitle = 'Enter or select a FIO Crypto Handle or Public Key to send FIO tokens to',
     footerTitle = 'Past FIO Crypto Handles',
+    notFoundText = 'Not found',
     upperCased = false,
     lowerCased = false,
     disabled,
     showErrorBorder,
     isLowHeight,
-    options = [],
+    options,
     show = false,
     onHide,
     isBW,
@@ -106,12 +110,18 @@ const SelectModal: React.FC<Props &
   useEffect(() => {
     if (!inputValue) {
       setOptionsList(options);
-    } else
-      setOptionsList(
-        options.filter((o: string) => {
-          return o.includes(inputValue.toLowerCase());
-        }),
+    } else {
+      const filteredOptions = options?.filter(
+        (o: { name: string; id: string }) => {
+          return (
+            o.id.includes(inputValue.toLowerCase()) ||
+            o.name.includes(inputValue.toLowerCase())
+          );
+        },
       );
+
+      setOptionsList(filteredOptions);
+    }
   }, [inputValue, options]);
 
   useEffect(() => {
@@ -251,22 +261,31 @@ const SelectModal: React.FC<Props &
           </div>
           {optionsList?.length ? (
             <div className={classes.optionsList}>
-              {optionsList.map((name: string) => (
+              {optionsList.map((option: { name: string; id: string }) => (
                 <div
                   className={classes.option}
-                  key={input.name + name}
+                  key={option.id + input.name}
                   onClick={() => {
-                    input.onChange(name);
+                    input.onChange(option.id);
                     handleClose();
                   }}
                 >
-                  <div className={classes.logo}>{name[0].toUpperCase()}</div>
-                  <div>{name}</div>
+                  <div className={classnames(classes.logo, 'd-flex')}>
+                    {option.name[0].toUpperCase()}
+                  </div>
+                  <div className="d-flex">
+                    {typeof option === 'string' ? option : option.name}
+                  </div>
+                  <div className="d-flex ml-auto">
+                    {typeof option === 'string' ? null : option.id}
+                  </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className={classes.notFound}>Not found</div>
+            <div className={classes.notFound}>
+              {optionsList ? notFoundText : 'loading...'}
+            </div>
           )}
         </div>
       </div>
@@ -289,8 +308,9 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     showErrorBorder,
     isLowHeight,
     label,
-    options = [],
+    options,
     placeholder,
+    type,
     handleConfirmValidate,
   } = props;
   const {
@@ -310,6 +330,15 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
   const modalInputRef = useRef<HTMLInputElement>(null);
 
   const [showModal, toggleShowModal] = useState(false);
+  const [isStringOptions, setIsStringOptions] = useState(false);
+  const [optionsList, setOptionsList] = useState([]);
+
+  useEffect(() => {
+    if (options?.length && typeof options[0] === 'string') {
+      setIsStringOptions(true);
+      setOptionsList(options.map((o: string) => ({ name: o, id: o })));
+    } else setOptionsList(options);
+  }, [options]);
 
   useEffect(() => {
     if (showModal) modalInputRef.current?.focus();
@@ -358,7 +387,7 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
             disabled={true}
             value={input.value}
             readOnly
-            type="text"
+            type={type || 'text'}
             placeholder={placeholder}
           />
         </div>
@@ -386,7 +415,8 @@ const SelectModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
       <SelectModal
         {...props}
         show={showModal}
-        options={options}
+        options={optionsList}
+        isStringOptions={isStringOptions}
         inputRef={modalInputRef}
         onHide={handleCloseModal}
         handleConfirmValidate={handleConfirmValidate}

@@ -16,9 +16,9 @@ import {
 } from './constants/purchase';
 import {
   ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_TYPE,
   CONFIRM_FIO_ACTIONS,
   CURRENCY_CODES,
-  CART_ITEM_TYPE,
 } from './constants/common';
 
 import { ResultsData } from '../components/common/TransactionResults/types';
@@ -256,6 +256,11 @@ export type FeePrice = {
   nativeFio: number | null;
   fio: string;
   usdc: string;
+};
+
+export type OracleFees = {
+  wrap_fio_tokens: FeePrice;
+  wrap_fio_domain: FeePrice;
 };
 
 export type FioBalanceRes = {
@@ -816,6 +821,20 @@ export type ChainCodeProps = {
   chainCodeName: string;
   tokens?: TokenCodeProps[];
 };
+
+export type WrapStatusWrapItem = {
+  id: string;
+  blockNumber: string;
+  transactionId?: string;
+  transactionHash?: string;
+  address: string;
+  domain?: string;
+  amount?: string;
+  fioAddress?: string;
+  data: AnyObject;
+  confirmData: AnyObject;
+  oravotes?: [{ transactionHash: string }];
+} & AnyObject;
 
 export type FioActions = typeof CONFIRM_FIO_ACTIONS;
 export type AnalyticsEventActions = typeof ANALYTICS_EVENT_ACTIONS;

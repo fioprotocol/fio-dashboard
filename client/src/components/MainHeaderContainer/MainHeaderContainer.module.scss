@@ -1,0 +1,32 @@
+@import '../../assets/styles/colors';
+@import '../../assets/styles/mediaQueriesMixings';
+
+.header {
+  display: flex;
+  background: $main-background;
+  box-shadow: 0 0 20px 8px rgba(0, 0, 0, 0.2);
+  padding: 5px 25px;
+  min-height: 80px;
+
+  &.isOpen {
+    position: sticky;
+    top: 0;
+    z-index: 1002;
+  }
+
+  .logo {
+    cursor: pointer;
+    width: 76px;
+    height: 100%;
+    background-image: url("../../assets/images/fiologo.svg");
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: left;
+  }
+}
+
+@include lg {
+  .header {
+    padding: 5px 3.75rem;
+  }
+}

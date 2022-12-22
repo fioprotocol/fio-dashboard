@@ -1,0 +1,37 @@
+@import '../../../assets/styles/fontMixins.scss';
+@import '../../../assets/styles/colors.scss';
+
+.form {
+  margin-top: 1em;
+  .transactionTitle {
+    font-size: 0.875em;
+    margin-bottom: 14px;
+    color: $dark-jungle-green;
+    align-self: flex-start;
+    @include sf-pro-display-medium;
+  }
+
+  .infoBadge {
+    margin: 0 0 20px 0;
+
+    a:hover {
+      color: $iron;
+    }
+  }
+}
+
+.additionalSubInfo {
+  width: 100%;
+  font-size: 0.875em;;
+  margin-bottom: 20px;
+  margin-top: -20px;
+  color: $black;
+
+  span {
+    color: $dark-jungle-green;
+  }
+}
+
+.warning {
+  color: $warn-red;
+}

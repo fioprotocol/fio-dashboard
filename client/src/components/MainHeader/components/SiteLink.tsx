@@ -9,11 +9,12 @@ import { RefProfile } from '../../../types';
 import classes from '../MainHeader.module.scss';
 
 type SiteLinkProps = {
-  refProfileInfo: RefProfile;
+  hideSiteLink?: boolean;
+  refProfileInfo?: RefProfile;
 };
 
 const SiteLink: React.FC<SiteLinkProps> = props => {
-  const { refProfileInfo } = props;
+  const { hideSiteLink, refProfileInfo } = props;
 
   if (refProfileInfo?.type === REF_PROFILE_TYPE.AFFILIATE) {
     return <div className={classes.link} />;
@@ -29,8 +30,10 @@ const SiteLink: React.FC<SiteLinkProps> = props => {
     target = '_self';
   }
 
+  if (hideSiteLink) return null;
+
   return (
-    <div className={classes.link}>
+    <div className={classnames(classes.link, classes.siteLink)}>
       <a
         href={link}
         target={target}

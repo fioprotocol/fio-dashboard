@@ -1,11 +1,13 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 
 import {
-  setFees,
+  GET_FEE_SUCCESS,
+  GET_ORACLE_FEES_SUCCESS,
+  REFRESH_BALANCE_SUCCESS,
   refreshBalance,
   setBalances,
-  GET_FEE_SUCCESS,
-  REFRESH_BALANCE_SUCCESS,
+  setFees,
+  setOracleFees,
 } from './actions';
 import { ADD_WALLET_SUCCESS } from '../account/actions';
 import { PRICES_SUCCESS } from '../registrations/actions';
@@ -17,13 +19,18 @@ import {
 import { roe as roeSelector } from '../registrations/selectors';
 
 import {
-  convertFioPrices,
   calculateBalances,
   calculateTotalBalances,
+  convertFioPrices,
   DEFAULT_BALANCES,
 } from '../../util/prices';
 
-import { FeePrice, FioBalanceRes, WalletsBalances } from '../../types';
+import {
+  FeePrice,
+  FioBalanceRes,
+  OracleFees,
+  WalletsBalances,
+} from '../../types';
 import { Action } from '../types';
 
 type RefreshBalanceAction = {
@@ -40,6 +47,26 @@ export function* addFioWalletSuccess(): Generator {
 }
 
 export function* setFeesService(): Generator {
+  yield takeEvery(GET_ORACLE_FEES_SUCCESS, function*(action: Action) {
+    const {
+      data: { oracle_fees },
+    } = action;
+    const fees = {} as OracleFees;
+    const roe: number = yield select(roeSelector);
+
+    if (oracle_fees?.length) {
+      oracle_fees.forEach(
+        (el: {
+          fee_name: 'wrap_fio_tokens' | 'wrap_fio_domain';
+          fee_amount: number;
+        }) => {
+          fees[el.fee_name] = convertFioPrices(el.fee_amount, roe);
+        },
+      );
+    }
+    yield put(setOracleFees(fees));
+  });
+
   yield takeEvery(GET_FEE_SUCCESS, function*(action: Action) {
     const {
       endpoint,
@@ -51,6 +78,7 @@ export function* setFeesService(): Generator {
     fees[endpoint] = convertFioPrices(fee, roe);
     yield put(setFees(fees));
   });
+
   yield takeEvery(PRICES_SUCCESS, function*(action: Action) {
     const {
       pricing: { usdtRoe },
@@ -65,7 +93,6 @@ export function* setFeesService(): Generator {
         usdtRoe,
       );
     }
-
     yield put(setFees(recalculatedFees));
   });
 }

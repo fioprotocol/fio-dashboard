@@ -6,7 +6,6 @@ import classnames from 'classnames';
 
 import { ActionButtons } from './ActionButtons';
 import SideMenu from './SideMenu';
-import SiteLink from './SiteLink';
 
 import { ROUTES } from '../../../constants/routes';
 import { ANALYTICS_EVENT_ACTIONS } from '../../../constants/common';
@@ -23,6 +22,7 @@ import classes from '../MainHeader.module.scss';
 
 type RegularNavProps = {
   cartItems: CartItem[];
+  hideNavigation?: boolean;
   isMenuOpen: boolean;
   toggleMenuOpen: (openState: boolean) => void;
   edgeAuthLoading: boolean;
@@ -35,7 +35,7 @@ type RegularNavProps = {
 };
 
 const RegularNav: React.FC<RegularNavProps> = props => {
-  const { cartItems, hideCart, closeMenu } = props;
+  const { cartItems, hideCart, closeMenu, hideNavigation } = props;
 
   const isDesktop = useCheckIfDesktop();
 
@@ -59,8 +59,10 @@ const RegularNav: React.FC<RegularNavProps> = props => {
   };
 
   const renderNav = () => {
+    if (hideNavigation) return null;
+
     return (
-      <Nav className="mr-auto align-items-center">
+      <Nav className="ml-auto align-items-center">
         {hideCart ? null : (
           <Nav.Link
             className={classnames(classes.navItem, 'text-white')}
@@ -100,8 +102,7 @@ const RegularNav: React.FC<RegularNavProps> = props => {
 
   return (
     <div className={classes.regularNavContainer}>
-      <SiteLink {...props} />
-      <Navbar className="pr-0">{renderNav()}</Navbar>
+      <Navbar className="pr-0 w-100">{renderNav()}</Navbar>
     </div>
   );
 };
