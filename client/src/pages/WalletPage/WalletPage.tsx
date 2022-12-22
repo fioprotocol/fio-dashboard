@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -21,6 +21,8 @@ import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { ContainerProps, LocationProps } from './types';
 
 import classes from './styles/WalletPage.module.scss';
+import wrapIcon from '../../assets/images/wrap.svg';
+import unwrapIcon from '../../assets/images/unwrap.svg';
 
 const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
   const {
@@ -120,6 +122,16 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
           >
             <div>
               <FontAwesomeIcon icon="arrow-up" />
+            </div>
+          </Link>
+          <Link to={`${ROUTES.WRAP_TOKENS}?publicKey=${fioWallet.publicKey}`}>
+            <div>
+              <img src={wrapIcon} alt="wrap" />
+            </div>
+          </Link>
+          <Link to={`${ROUTES.UNWRAP_TOKENS}?publicKey=${fioWallet.publicKey}`}>
+            <div>
+              <img src={unwrapIcon} alt="unwrap" />
             </div>
           </Link>
         </ActionButtonsContainer>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Switch, RouteComponentProps, Redirect } from 'react-router-dom';
+import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
 
 import MainLayout from './pages/MainLayout';
 import AuthContainer from './components/AuthContainer';
@@ -274,6 +274,22 @@ const CookieNoticePage = React.lazy(() =>
   import(/* webpackChunkName: 'cookieNoticePage' */ './pages/CookieNoticePage'),
 );
 
+const WrapTokensPage = React.lazy(() =>
+  import(/* webpackChunkName: 'WrapTokensPage' */ './pages/WrapTokensPage'),
+);
+
+const WrapDomainPage = React.lazy(() =>
+  import(/* webpackChunkName: 'WrapDomainPage' */ './pages/WrapDomainPage'),
+);
+
+const UnwrapDomainPage = React.lazy(() =>
+  import(/* webpackChunkName: 'UnwrapDomainPage' */ './pages/UnwrapDomainPage'),
+);
+
+const UnwrapTokensPage = React.lazy(() =>
+  import(/* webpackChunkName: 'UnwrapTokensPage' */ './pages/UnwrapTokensPage'),
+);
+
 const Routes = (): React.ReactElement => (
   <MainLayout>
     <ScrollToTop>
@@ -487,6 +503,28 @@ const Routes = (): React.ReactElement => (
           <PrivateRoute path={ROUTES.SETTINGS} component={SettingsPage} exact />
 
           <PrivateRoute path={ROUTES.SEND} component={SendPage} exact />
+
+          <PrivateRoute
+            path={ROUTES.WRAP_TOKENS}
+            component={WrapTokensPage}
+            exact
+          />
+          <PrivateRoute
+            path={ROUTES.WRAP_DOMAIN}
+            component={WrapDomainPage}
+            exact
+          />
+
+          <PrivateRoute
+            path={ROUTES.UNWRAP_TOKENS}
+            component={UnwrapTokensPage}
+            exact
+          />
+          <PrivateRoute
+            path={ROUTES.UNWRAP_DOMAIN}
+            component={UnwrapDomainPage}
+            exact
+          />
 
           <PrivateRoute
             path={ROUTES.FIO_REQUEST}

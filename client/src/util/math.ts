@@ -74,7 +74,7 @@ class MathOp {
 
   eq(x: BigSource): boolean {
     try {
-      return Big(this.value).eq(x);
+      return Big(this.value).eq(x || 0);
     } catch (err) {
       log.error(err);
       return this.value === x;
@@ -83,7 +83,7 @@ class MathOp {
 
   gt(x: BigSource): boolean {
     try {
-      return Big(this.value).gt(x);
+      return Big(this.value).gt(x || 0);
     } catch (err) {
       log.error(err);
       return this.value > x;
@@ -92,7 +92,7 @@ class MathOp {
 
   gte(x: BigSource): boolean {
     try {
-      return Big(this.value).gte(x);
+      return Big(this.value).gte(x || 0);
     } catch (err) {
       log.error(err);
       return this.value >= x;
@@ -101,7 +101,7 @@ class MathOp {
 
   lt(x: BigSource): boolean {
     try {
-      return Big(this.value).lt(x);
+      return Big(this.value).lt(x || 0);
     } catch (err) {
       log.error(err);
       return this.value < x;
@@ -110,7 +110,7 @@ class MathOp {
 
   lte(x: BigSource): boolean {
     try {
-      return Big(this.value).lte(x);
+      return Big(this.value).lte(x || 0);
     } catch (err) {
       log.error(err);
       return this.value <= x;

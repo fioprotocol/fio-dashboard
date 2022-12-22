@@ -217,6 +217,7 @@ const RequestTokensForm: React.FC<RequestTokensProps> = props => {
               modalPlaceholder="Enter or select FIO Crypto Handle"
               title="Choose FIO Crypto Handle"
               subTitle="Enter or select a FIO Crypto Handle to request tokens from"
+              notFoundText="No FIO Crypto Handles found"
               uiType={INPUT_UI_STYLES.BLACK_WHITE}
               errorColor={COLOR_TYPE.WARN}
               component={SelectModalInput}

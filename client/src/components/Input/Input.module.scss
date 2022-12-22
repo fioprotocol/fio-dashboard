@@ -9,6 +9,25 @@
   margin-bottom: 30px;
   overflow: hidden;
 
+  .dark {
+    background-color: $black !important;
+    color: $white !important;
+  }
+
+  .connectedWalletIcon {
+    height: 30px;
+    width: 30px;
+    margin-right: 10px;
+  }
+
+  .fullCircle {
+    width: 8px;
+    height:8px;
+    border-radius: 50%;
+    background-color: $blue-dark;
+    margin-right: 10px;
+  }
+
   .badge {
     margin: 0 0 20px 0;
   }
@@ -98,6 +117,14 @@
 
   span {
     color: $dark-jungle-green;
+  }
+}
+
+.infoBadge {
+  margin: 0 0 20px 0;
+
+  a:hover {
+    color: $iron;
   }
 }
 
@@ -533,6 +560,37 @@
         margin-right: 20px;
         color: $white;
       }
+    }
+  }
+}
+
+.connectWallet {
+  .connectWalletButton {
+    width: 70px !important;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.connectWalletModal {
+  padding-bottom: 20px;
+
+  .connectWalletProviderTypeButton {
+    padding: 8px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: $black;
+    border-radius: 12px;
+    color: $white;
+    width: 100%;
+
+    .providerIcon {
+      margin-left: 10px;
+      width: 30px;
+      height: 30px;
     }
   }
 }
