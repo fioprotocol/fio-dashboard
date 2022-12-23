@@ -5,7 +5,7 @@ import has from 'lodash/has';
 import { PaymentButton } from './components/PaymentButton';
 import { BitPayButtonText, BITPAY_LOGO_WIDTH } from '../BitPayButton';
 
-import MathOp from '../../util/math';
+// import MathOp from '../../util/math';
 
 import { PAYMENT_OPTIONS, PAYMENT_PROVIDER } from '../../constants/purchase';
 
@@ -79,14 +79,15 @@ const PAYMENT_OPTIONS_PROPS = {
     onPaymentChoose,
   }: PaymentOptionRenderProps) => ({
     buttonText: <BitPayButtonText width={BITPAY_LOGO_WIDTH.hasLowHeight} />,
-    disabled:
-      cartItems?.length === 0 ||
-      disabled ||
-      new MathOp(totlaCartUsdcAmount).lte(1),
+    disabled: true,
+    // TODO: DASH-453 Disabled bitpay button because of account issues. Return back on fix.
+    // cartItems?.length === 0 ||
+    // disabled ||
+    // new MathOp(totlaCartUsdcAmount).lte(1),
     loading: selectedPaymentProvider === PAYMENT_PROVIDER.BITPAY,
     hasCobaltBackground: true,
     isTextCentered: true,
-    onClick: () => onPaymentChoose(PAYMENT_PROVIDER.BITPAY),
+    onClick: () => {}, //onPaymentChoose(PAYMENT_PROVIDER.BITPAY),
   }),
 };
 
