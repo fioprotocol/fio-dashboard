@@ -466,6 +466,7 @@ const SelectModal: React.FC<Props &
 const FeesModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
   const {
     input,
+    isNFT,
     meta,
     hideError,
     loading,
@@ -487,7 +488,20 @@ const FeesModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     submitSucceeded,
   } = meta;
 
-  const { value } = input;
+  const { value, onChange } = input;
+
+  const {
+    feePriceOptionsList: options,
+    isLoading: isSuggestionsLoading,
+  } = useLoadFeePriceSuggestions(true, isNFT);
+
+  const mediumFees = options.find(o => o.name === 'Low');
+
+  useEffect(() => {
+    if (!isSuggestionsLoading && mediumFees?.name) {
+      onChange(mediumFees);
+    }
+  }, [isSuggestionsLoading, mediumFees, onChange]);
 
   const [showModal, toggleShowModal] = useState(false);
 
