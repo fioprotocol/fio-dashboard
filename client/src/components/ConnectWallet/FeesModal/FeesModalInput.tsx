@@ -152,7 +152,7 @@ const CustomFeeInputsTab = ({
           <div>
             {basicOptions?.length === 3
               ? `${calculateGasFee(
-                  basicOptions.find(o => o.name === 'Low')?.gasPrice,
+                  basicOptions.find(o => o.name === 'Medium')?.gasPrice,
                 )} ${valueTitle}`
               : ''}
           </div>
@@ -495,7 +495,7 @@ const FeesModalInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     isLoading: isSuggestionsLoading,
   } = useLoadFeePriceSuggestions(true, isNFT);
 
-  const mediumFees = options.find(o => o.name === 'Low');
+  const mediumFees = options.find(o => o.name === 'Medium');
 
   useEffect(() => {
     if (!isSuggestionsLoading && mediumFees?.name) {
