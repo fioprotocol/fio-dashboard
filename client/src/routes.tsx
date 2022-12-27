@@ -206,6 +206,11 @@ const AdminRegularUsersListPage = React.lazy(() =>
     /* webpackChunkName: 'adminRegularUsersListPage' */ './pages/AdminRegularUsersListPage'
   ),
 );
+const AdminRegularUserDetailsPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'adminRegularUserDetailsPage' */ './pages/AdminRegularUserDetailsPage'
+  ),
+);
 const AdminProfilePage = React.lazy(() =>
   import(/* webpackChunkName: 'adminProfilePage' */ './pages/AdminProfilePage'),
 );
@@ -652,6 +657,11 @@ const Routes = (): React.ReactElement => (
           <AdminPrivateRoute
             path={ROUTES.ADMIN_REGULAR_USERS}
             component={AdminRegularUsersListPage}
+            exact
+          />
+          <AdminPrivateRoute
+            path={ROUTES.ADMIN_REGULAR_USER_DETAIS}
+            component={AdminRegularUserDetailsPage}
             exact
           />
           <AdminPrivateRoute
