@@ -8,9 +8,7 @@ import { formatDateToLocale } from '../../helpers/stringFormatters';
 
 import classes from './AdminRegularUsersList.module.scss';
 
-type Props = {};
-
-const AdminRegularUsersList: React.FC<Props> = props => {
+const AdminRegularUsersList: React.FC = () => {
   const { paginationComponent, regularUsersList, onClick } = useContext();
 
   return (

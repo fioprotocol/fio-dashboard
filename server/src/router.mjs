@@ -38,7 +38,6 @@ router.post('/actions/:hash', routes.actions.submit);
 
 router.get('/users/available/:email', routes.users.available);
 router.get('/users/me', checkAuth, routes.users.info);
-router.get('/admin/reg-users', checkAdminAuth, routes.users.list);
 router.get('/users/:id', checkAdminAuth, routes.users.show);
 router.post('/users', routes.users.create);
 router.put('/users', checkAuth, routes.users.update);
@@ -88,6 +87,9 @@ router.post('/admin/partners', checkAdminAuth, routes.adminUsers.createPartner);
 router.post('/admin/partners/:id', checkAdminAuth, routes.adminUsers.updatePartner);
 
 router.get('/admin/search', checkAdminAuth, routes.adminUsers.search);
+
+router.get('/admin/reg-users', checkAdminAuth, routes.users.list);
+router.get('/admin/reg-users/:id', checkAdminAuth, routes.users.detailedInfo);
 
 router.get('/notifications', checkAuth, routes.notifications.list);
 router.post('/notifications', checkAuth, routes.notifications.create);

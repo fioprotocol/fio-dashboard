@@ -11,6 +11,7 @@ import {
   AuthLoginResponse,
   RemoveAdminResponse,
   SendResetAdminPasswordResponse,
+  UsersDetailsResponse,
   UsersListResponse,
 } from './responses';
 import { RefProfile } from '../types';
@@ -107,5 +108,9 @@ export default class Admin extends Base {
 
   usersList(limit: number, offset: number): Promise<UsersListResponse[]> {
     return this.apiClient.get('admin/reg-users', { limit, offset });
+  }
+
+  userDetails(id: string): Promise<UsersDetailsResponse> {
+    return this.apiClient.get(`admin/reg-users/${id}`);
   }
 }

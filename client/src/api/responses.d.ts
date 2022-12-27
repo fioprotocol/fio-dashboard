@@ -13,6 +13,7 @@ import {
   RefProfile,
   User,
   WrapStatusWrapItem,
+  UserDetails,
   UserOrderDetails,
 } from '../types';
 
@@ -89,6 +90,7 @@ export type NotificationsUpdateResponse = Notification;
 
 export type RefProfileGetResponse = RefProfile;
 
+export type UsersDetailsResponse = UserDetails;
 export type UsersListResponse = User[];
 export type UsersShowResponse = User;
 
@@ -156,6 +158,7 @@ export type ApisResponse = AccountGetWalletsResponse &
   NotificationsCreateResponse &
   NotificationsUpdateResponse &
   RefProfileGetResponse &
+  UsersDetailsResponse &
   UsersListResponse &
   UsersShowResponse &
   OrdersCreateResponse &

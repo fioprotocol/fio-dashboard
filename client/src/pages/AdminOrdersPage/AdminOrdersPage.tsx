@@ -3,10 +3,14 @@ import React, { useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { useLocation } from 'react-router';
+
 import Loader from '../../components/Loader/Loader';
 import AdminOrderModal from './components/AdminOrderModal/AdminOrderModal';
+
 import usePagination from '../../hooks/usePagination';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
+import useEffectOnce from '../../hooks/general';
 
 import {
   PURCHASE_RESULTS_STATUS_LABELS,
@@ -39,6 +43,9 @@ const AdminOrdersPage: React.FC<Props> = props => {
     orderItem,
   } = props;
 
+  const location = useLocation<{ orderId?: string }>();
+  const orderId = location?.state?.orderId;
+
   const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
   const [selectedOrderItemId, setSelectedOrderItemId] = useState<string | null>(
     null,
@@ -60,6 +67,14 @@ const AdminOrdersPage: React.FC<Props> = props => {
   const onClick = (orderId: string) => {
     openOrderDetails(orderId);
   };
+
+  useEffectOnce(
+    () => {
+      onClick(orderId);
+    },
+    [orderId],
+    orderId != null,
+  );
 
   return (
     <>
