@@ -41,6 +41,7 @@ export const WalletsTable: React.FC<Props> = props => {
           <tr>
             <th className="mt-3 ml-3">No Wallets</th>
             <th></th>
+            <th></th>
           </tr>
         )}
       </tbody>
