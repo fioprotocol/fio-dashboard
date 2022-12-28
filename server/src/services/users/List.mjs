@@ -7,11 +7,22 @@ export default class UsersList extends Base {
     return [AdminUser.ROLE.ADMIN];
   }
 
-  async execute() {
-    const users = await User.list();
+  static get validationRules() {
+    return {
+      offset: 'string',
+      limit: 'string',
+    };
+  }
+
+  async execute({ limit = 25, offset = 0 }) {
+    const users = await User.list(limit, offset);
+    const usersCount = await User.usersCount();
 
     return {
-      data: users.map(user => user.json()).filter(user => user.id !== this.context.id),
+      data: {
+        users: users.map(user => user.json()).filter(user => user.id !== this.context.id),
+        maxCount: usersCount,
+      },
     };
   }
 

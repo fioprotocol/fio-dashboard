@@ -158,7 +158,17 @@ export default combineReducers({
   regularUsersList(state: User[] = [], action) {
     switch (action.type) {
       case actions.GET_REGULAR_USERS_SUCCESS:
-        return action.data;
+        return action.data.users;
+      case actions.GET_REGULAR_USERS_FAILURE:
+        return state;
+      default:
+        return state;
+    }
+  },
+  usersCount(state: number = 0, action) {
+    switch (action.type) {
+      case actions.GET_REGULAR_USERS_SUCCESS:
+        return action.data.maxCount;
       case actions.GET_REGULAR_USERS_FAILURE:
         return state;
       default:
