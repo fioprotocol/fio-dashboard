@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { Table } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import Loader from '../../components/Loader/Loader';
 
 import { useContext } from './AdminRegularUsersListContext';
 
@@ -9,10 +12,31 @@ import { formatDateToLocale } from '../../helpers/stringFormatters';
 import classes from './AdminRegularUsersList.module.scss';
 
 const AdminRegularUsersList: React.FC = () => {
-  const { paginationComponent, regularUsersList, onClick } = useContext();
+  const {
+    loading,
+    paginationComponent,
+    regularUsersList,
+    onClick,
+    onExportCsv,
+  } = useContext();
 
   return (
     <div className={classes.tableContainer}>
+      <Button
+        className="mb-4 d-flex flex-direction-row align-items-center"
+        onClick={onExportCsv}
+        disabled={loading}
+      >
+        <FontAwesomeIcon icon="download" className="mr-2" />{' '}
+        {loading ? (
+          <>
+            <span className="mr-3">Exporting...</span>
+            <Loader isWhite hasInheritFontSize />
+          </>
+        ) : (
+          'Export'
+        )}
+      </Button>
       <Table className="table" striped={true}>
         <thead>
           <tr>

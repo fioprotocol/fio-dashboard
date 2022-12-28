@@ -15,6 +15,7 @@ export const WalletsTable: React.FC<Props> = props => {
     <TableWrapper title="FIO Wallets">
       <thead>
         <tr>
+          <th scope="col">Name</th>
           <th scope="col">Public Key</th>
           <th scope="col">Balance</th>
         </tr>
@@ -23,6 +24,7 @@ export const WalletsTable: React.FC<Props> = props => {
         {fioWallets?.length ? (
           fioWallets.map(fioWallet => (
             <tr key={fioWallet.publicKey}>
+              <th>{fioWallet.name}</th>
               <th>
                 <a
                   href={`${process.env.REACT_APP_FIO_BLOCKS_BASE_URL}key/${fioWallet.publicKey}`}

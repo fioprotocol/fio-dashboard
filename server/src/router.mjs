@@ -90,6 +90,7 @@ router.get('/admin/search', checkAdminAuth, routes.adminUsers.search);
 
 router.get('/admin/reg-users', checkAdminAuth, routes.users.list);
 router.get('/admin/reg-users/:id', checkAdminAuth, routes.users.detailedInfo);
+router.get('/admin/detailed-list-reg-users', checkAdminAuth, routes.users.detailedList);
 
 router.get('/notifications', checkAuth, routes.notifications.list);
 router.post('/notifications', checkAuth, routes.notifications.create);
