@@ -8,6 +8,7 @@ import {
   setWallet as setWalletAction,
   setCartItems,
 } from '../../redux/cart/actions';
+import { loadProfile } from '../../redux/profile/actions';
 import { setProcessing } from '../../redux/registrations/actions';
 
 import {
@@ -404,6 +405,10 @@ export const useContext = (): {
     // todo: this part is reset the error if paymentWalletFrom was changed to EDGE. could be situation when setError was called from other place not in this useEffect, in this case error could be reset. should this error be only for ledger error? - rename in this case
     if (error && paymentWalletFrom === WALLET_CREATED_FROM.EDGE) setError(null);
   }, [paymentWalletFrom, cartHasItemsWithPrivateDomain, error]);
+
+  useEffect(() => {
+    return () => dispatch(loadProfile());
+  }, [dispatch]);
 
   const onClose = () => {
     history.push(ROUTES.CART);
