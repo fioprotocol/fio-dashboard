@@ -160,6 +160,25 @@ export class User extends Base {
     });
   }
 
+  static listAll(limit = 25, offset) {
+    return this.findAll({
+      order: [['createdAt', 'DESC']],
+      limit: limit ? limit : null,
+      offset,
+      include: [
+        { model: FreeAddress, as: 'freeAddresses' },
+        { model: Wallet, as: 'fioWallets' },
+        { model: ReferrerProfile, as: 'refProfile', attributes: ['code'] },
+        {
+          model: ReferrerProfile,
+          as: 'affiliateProfile',
+          attributes: ['code', 'tpid'],
+        },
+        { model: Order, as: 'orders' },
+      ],
+    });
+  }
+
   static async formatDateWithTimeZone(id, date = undefined) {
     const user = await this.findById(id);
     return (date ? new Date(date) : new Date()).toLocaleDateString([], {

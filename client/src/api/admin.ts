@@ -110,6 +110,10 @@ export default class Admin extends Base {
     return this.apiClient.get('admin/reg-users', { limit, offset });
   }
 
+  usersDetailedList(): Promise<UsersDetailsResponse[]> {
+    return this.apiClient.get('admin/detailed-list-reg-users');
+  }
+
   userDetails(id: string): Promise<UsersDetailsResponse> {
     return this.apiClient.get(`admin/reg-users/${id}`);
   }
