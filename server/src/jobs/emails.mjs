@@ -6,6 +6,7 @@ import CommonJob from './job.mjs';
 
 import emailSender from '../services/emailSender.mjs';
 import { templates } from '../emails/emailTemplate.mjs';
+import sendEmailSenderErrorNotification from '../services/fallback-email-sender-error-email.mjs';
 
 import logger from '../logger.mjs';
 
@@ -61,15 +62,10 @@ class EmailsJob extends CommonJob {
           [Sequelize.Op.is]: null,
         },
         contentType: {
-          [Sequelize.Op.in]: [
-            Notification.CONTENT_TYPE.DOMAIN_EXPIRE,
-            Notification.CONTENT_TYPE.LOW_BUNDLE_TX,
-            Notification.CONTENT_TYPE.BALANCE_CHANGED,
-            Notification.CONTENT_TYPE.NEW_FIO_REQUEST,
-            Notification.CONTENT_TYPE.FIO_REQUEST_APPROVED,
-            Notification.CONTENT_TYPE.FIO_REQUEST_REJECTED,
-            Notification.CONTENT_TYPE.PURCHASE_CONFIRMATION,
-          ],
+          [Sequelize.Op.in]: Notification.EMAIL_CONTENT_TYPES,
+        },
+        attempts: {
+          [Sequelize.Op.lt]: parseInt(process.env.EMAILS_JOB_ATTEMPTS_LIMIT) || 1,
         },
       },
       include: [
@@ -145,12 +141,38 @@ class EmailsJob extends CommonJob {
           this.postMessage(
             `Notification processed, email sent - ${notifications.map(n => n.id)}`,
           );
+        } else {
+          for (const notification of notifications) {
+            await Notification.update(
+              { attempts: notification.attempts + 1 },
+              { where: { id: notification.id } },
+            );
+          }
         }
       } catch (e) {
         logger.error(`NOTIFICATION PROCESSING ERROR`, e);
       }
 
       return true;
+    };
+    const checkFailedNotifications = async () => {
+      const failedNotificationsCount = await Notification.count({
+        where: {
+          emailDate: {
+            [Sequelize.Op.is]: null,
+          },
+          contentType: {
+            [Sequelize.Op.in]: Notification.EMAIL_CONTENT_TYPES,
+          },
+          attempts: {
+            [Sequelize.Op.gte]: parseInt(process.env.EMAILS_JOB_ATTEMPTS_LIMIT) || 1,
+          },
+        },
+      });
+
+      if (failedNotificationsCount) {
+        await sendEmailSenderErrorNotification();
+      }
     };
 
     const notificationGroups = notifications.reduce((acc, notification) => {
@@ -192,6 +214,7 @@ class EmailsJob extends CommonJob {
     );
 
     await this.executeActions(methods);
+    await checkFailedNotifications();
 
     this.finish();
   }

@@ -48,8 +48,8 @@ const jobs = jobsToLaunch
 const bree = new Bree({
   root: false,
   jobs,
-  workerMessageHandler: (name, message) => {
-    logger.info('JOB MESSAGE === ', name, message);
+  workerMessageHandler: message => {
+    logger.info('JOB MESSAGE === ', message || '');
   },
 });
 
