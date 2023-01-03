@@ -51,7 +51,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
     null,
   );
 
-  const { paginationComponent } = usePagination(getOrdersList);
+  const { paginationComponent, range } = usePagination(getOrdersList);
 
   const closeOrderDetails = () => {
     setShowOrderDetailsModal(false);
@@ -85,6 +85,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
         <Table className="table" striped={true}>
           <thead>
             <tr>
+              <th scope="col">N</th>
               <th scope="col">Date</th>
               <th scope="col">Order</th>
               <th scope="col">User</th>
@@ -96,12 +97,13 @@ const AdminOrdersPage: React.FC<Props> = props => {
           </thead>
           <tbody>
             {ordersList?.length
-              ? ordersList.map(order => (
+              ? ordersList.map((order, i) => (
                   <tr
                     key={order.id}
                     className={classes.orderItem}
                     onClick={() => onClick(order.id)}
                   >
+                    <th>{range[i]}</th>
                     <th>
                       {' '}
                       {order.createdAt

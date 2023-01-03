@@ -16,6 +16,7 @@ const AdminRegularUsersList: React.FC = () => {
     loading,
     paginationComponent,
     regularUsersList,
+    range,
     onClick,
     onExportCsv,
   } = useContext();
@@ -40,6 +41,7 @@ const AdminRegularUsersList: React.FC = () => {
       <Table className="table" striped={true}>
         <thead>
           <tr>
+            <th scope="col">N</th>
             <th scope="col">Date</th>
             <th scope="col">User</th>
             <th scope="col">Status</th>
@@ -48,12 +50,13 @@ const AdminRegularUsersList: React.FC = () => {
         </thead>
         <tbody>
           {regularUsersList?.length
-            ? regularUsersList.map(regularUser => (
+            ? regularUsersList.map((regularUser, i) => (
                 <tr
                   key={regularUser.id}
                   className={classes.userItem}
                   onClick={() => onClick(regularUser.id)}
                 >
+                  <th>{range[i]}</th>
                   <th>
                     {regularUser.createdAt
                       ? formatDateToLocale(regularUser.createdAt)

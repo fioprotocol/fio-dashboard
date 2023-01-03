@@ -24,6 +24,7 @@ type UseContextProps = {
   loading: boolean;
   paginationComponent: Component;
   regularUsersList: User[];
+  range: number[];
   onClick: (regularUserId: string) => void;
   onExportCsv: () => Promise<void>;
 };
@@ -43,7 +44,7 @@ export const useContext = (): UseContextProps => {
     [dispatch],
   );
 
-  const { paginationComponent } = usePagination(getRegularUsers);
+  const { paginationComponent, range } = usePagination(getRegularUsers);
 
   const onClick = useCallback(
     (regularUserEmail: string) => {
@@ -193,6 +194,7 @@ export const useContext = (): UseContextProps => {
     loading,
     paginationComponent,
     regularUsersList,
+    range,
     onClick,
     onExportCsv,
   };
