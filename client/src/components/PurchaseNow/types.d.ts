@@ -17,7 +17,6 @@ export type PurchaseNowTypes = {
   paymentWalletPublicKey: string;
   showPinModal: (action: string) => void;
   checkCaptcha: () => void;
-  loadProfile: () => void;
   confirmingPin: boolean;
   captchaResolving: boolean;
   isProcessing: boolean;

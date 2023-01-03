@@ -38,7 +38,6 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     paymentWalletPublicKey,
     showPinModal,
     checkCaptcha,
-    loadProfile,
     confirmingPin,
     captchaResolving,
     isProcessing,
@@ -75,12 +74,6 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   };
 
   const onProcessingEnd = (results: RegistrationResult) => {
-    for (const registered of results.registered) {
-      if (registered.isFree) {
-        loadProfile();
-        break;
-      }
-    }
     results.paymentOption = PAYMENT_OPTIONS.FIO;
     setWaiting(false);
     waitFn(onFinish, results);

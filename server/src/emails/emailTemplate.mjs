@@ -19,6 +19,7 @@ export const templates = {
   confirmAdminEmail: 'confirmAdminEmail',
   resetAdminPasswordEmail: 'resetAdminPasswordEmail',
   purchaseConfirmation: 'purchaseConfirmation',
+  emailSenderErrorEmail: 'emailSenderErrorEmail',
 };
 
 const FIO_LOGO_BASE64 =
