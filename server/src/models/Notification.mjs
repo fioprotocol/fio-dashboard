@@ -31,6 +31,17 @@ export class Notification extends Base {
       PURCHASE_CONFIRMATION: 'PURCHASE_CONFIRMATION',
     };
   }
+  static get EMAIL_CONTENT_TYPES() {
+    return [
+      this.CONTENT_TYPE.DOMAIN_EXPIRE,
+      this.CONTENT_TYPE.LOW_BUNDLE_TX,
+      this.CONTENT_TYPE.BALANCE_CHANGED,
+      this.CONTENT_TYPE.NEW_FIO_REQUEST,
+      this.CONTENT_TYPE.FIO_REQUEST_APPROVED,
+      this.CONTENT_TYPE.FIO_REQUEST_REJECTED,
+      this.CONTENT_TYPE.PURCHASE_CONFIRMATION,
+    ];
+  }
   static get ACTION() {
     return {
       RECOVERY: 'RECOVERY',
@@ -50,6 +61,11 @@ export class Notification extends Base {
         closeDate: { type: DT.DATE, allowNull: true },
         emailDate: { type: DT.DATE, allowNull: true },
         data: { type: DT.JSON },
+        attempts: {
+          type: DT.INTEGER,
+          allowNull: false,
+          defaultValue: 0,
+        },
       },
       {
         sequelize,
