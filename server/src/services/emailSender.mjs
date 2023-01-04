@@ -252,6 +252,15 @@ class EmailSender {
           text: `Registration site got insufficient funds error when registering ${sendData.fioName} on profile ${sendData.refProfileName} using account ${sendData.authorization.actor} and permission ${sendData.authorization.permission}. You will receive this email once every 24 hrs or until issue is resolved.`,
         };
 
+      case templates.emailSenderErrorEmail:
+        return {
+          subject: 'Email Sender Error',
+          body: `
+<p>Something went wrong while trying to send the email</p>
+<p>You will receive this email once every 24 hrs or until issue is resolved.</p>`,
+          text: `Something went wrong while trying to send the email. You will receive this email once every 24 hrs or until issue is resolved.`,
+        };
+
       /**
        *
        * @param orderNumber exmaple '0LP9XM'
