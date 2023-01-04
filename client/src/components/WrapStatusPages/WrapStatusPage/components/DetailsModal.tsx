@@ -217,27 +217,50 @@ const DetailsModal: React.FC<Props> = props => {
 
             {isWrap && itemData.oravotes?.length ? (
               <div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
+                <div className="d-flex flex-column my-2">
+                  <div className="mr-3 mb-2">
                     <b>Voters:</b>
                   </div>
-                  <div className={classes.trxId}>
-                    {itemData.oravotes.map((o: { transactionHash: string }) => (
-                      <div className={classes.trxId}>
-                        <a
-                          href={
-                            (isTokens
-                              ? process.env.REACT_APP_ETH_HISTORY_URL
-                              : process.env.REACT_APP_POLYGON_HISTORY_URL) +
-                            o.transactionHash
-                          }
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {o.transactionHash}
-                        </a>
-                      </div>
-                    ))}
+                  <div>
+                    {itemData.oravotes.map(
+                      (o: {
+                        transactionHash: string;
+                        returnValues: { account: string };
+                      }) => (
+                        <div className="d-flex flex-row">
+                          <div className="d-flex flex-row">
+                            <p className="mr-2">Oracle:</p>
+                            <a
+                              href={
+                                (isTokens
+                                  ? process.env.REACT_APP_ETH_ADDRESS_URL
+                                  : process.env.REACT_APP_POLYGON_ADDRESS_URL) +
+                                o.returnValues?.account
+                              }
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              {o.returnValues?.account.substring(0, 10)}...
+                            </a>
+                          </div>
+                          <div className="d-flex flex-row ml-4">
+                            <p className="mr-2">Trx:</p>
+                            <a
+                              href={
+                                (isTokens
+                                  ? process.env.REACT_APP_ETH_HISTORY_URL
+                                  : process.env.REACT_APP_POLYGON_HISTORY_URL) +
+                                o.transactionHash
+                              }
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              {o.transactionHash.substring(0, 10)}...
+                            </a>
+                          </div>
+                        </div>
+                      ),
+                    )}
                   </div>
                 </div>
               </div>
