@@ -4,7 +4,7 @@ import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import { PAGE_NAME, BUTTONS_TITLE } from '../constants';
+import { BUTTONS_TITLE, PAGE_NAME } from '../constants';
 import { ROUTES } from '../../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
 
@@ -15,6 +15,7 @@ import { ActionButtonProps } from '../types';
 import classes from './ActionButtons.module.scss';
 
 import icon from '../../../assets/images/timelapse_white_24dp.svg'; // todo: remove after changing library to google material
+import wrapIcon from '../../../assets/images/wrap.svg';
 
 export const RenderAddBundles: React.FC<{
   name: string;
@@ -67,6 +68,18 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
         {!isSmallDesktop && BUTTONS_TITLE.renew}
       </Button>
     </div>
+  );
+
+  const renderWrap = () => (
+    <Link
+      to={`${ROUTES.WRAP_DOMAIN}?name=${name}`}
+      className={classes.actionButton}
+    >
+      <Button title={isSmallDesktop ? BUTTONS_TITLE.wrap : ''}>
+        <img src={wrapIcon} alt="wrap" />
+        {!isSmallDesktop && BUTTONS_TITLE.wrap}
+      </Button>
+    </Link>
   );
 
   const renderSettings = () => (
@@ -130,6 +143,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
   ) : (
     <div className={classes.actionButtonsContainer}>
       {renderRenew()}
+      {renderWrap()}
       <Link
         to={ROUTES.FIO_ADDRESSES_SELECTION}
         className={classes.actionButton}

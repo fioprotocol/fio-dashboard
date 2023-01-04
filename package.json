@@ -15,13 +15,16 @@
     "lint": "eslint ./server/src ./client/src --ext js,mjs,ts,tsx",
     "lint:fix": "eslint ./server/src ./client/src --ext js,mjs,ts,tsx --fix",
     "server:prod": "npm run migrate && node --es-module-specifier-resolution=node server/src/index.mjs",
-    "scheduler": "JOB_LIST=emails,orders,txCheck node --es-module-specifier-resolution=node server/src/scheduler.mjs",
+    "scheduler": "JOB_LIST=emails,orders,txCheck,wrapStatus node --es-module-specifier-resolution=node server/src/scheduler.mjs",
     "scheduler:wallet-data": "JOB_LIST=walletData node --es-module-specifier-resolution=node server/src/scheduler.mjs",
+    "scheduler:wrap-status": "JOB_LIST=wrapStatus node --es-module-specifier-resolution=node server/src/scheduler.mjs",
     "migrate": "sequelize db:migrate",
     "test:api": "cross-env TEST_MODE=0 LOG_LEVEL=error babel-node --extensions .js,.mjs node_modules/.bin/_mocha --exit --timeout 60000 --reporter spec --ui qunit server/tests/api/*",
     "test": "npm run lint && npm run test:create.db && npm run test:api",
     "test:create.db": "node --experimental-modules server/tests/createDB.mjs",
-    "coinpayments:webhooks": "node --es-module-specifier-resolution=node server/tests/use-case/webhook/coinpayments-webhook.mjs"
+    "coinpayments:webhooks": "node --es-module-specifier-resolution=node server/tests/use-case/webhook/coinpayments-webhook.mjs",
+    "landing-page-wrap-status:as:start": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:start",
+    "landing-page-wrap-status:as:build": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:build"
   },
   "license": "ISC",
   "overrides": {
@@ -120,6 +123,7 @@
     "edge-core-js": "0.19.31",
     "edge-currency-accountbased": "github:fioprotocol/edge-currency-accountbased#0505be53a252e8de66c289a8e63896f123d25159",
     "email-validator": "2.0.4",
+    "ethers": "5.6.4",
     "export-to-csv": "0.2.1",
     "express": "4.18.2",
     "final-form": "4.20.7",

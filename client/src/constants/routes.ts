@@ -94,6 +94,10 @@ const ROUTES: { [route: string]: string } = {
   PAYMENT_DETAILS_CONFIRMATION: '/payment-details-confirmation',
   STAKE: '/stake', // ?publicKey=
   UNSTAKE: '/unstake', // ?publicKey=
+  WRAP_TOKENS: '/wrap-tokens', // ?publicKey=
+  WRAP_DOMAIN: '/wrap-domain', // ?name=
+  UNWRAP_DOMAIN: '/unwrap-domain',
+  UNWRAP_TOKENS: '/unwrap-tokens', // ?publicKey=
 
   LINK_TOKEN_LIST: '/link-token-list', // ?fioCryptoHandle=
   ADD_TOKEN: '/link-token-list/add-token', // ?fioCryptoHandle=
@@ -117,6 +121,12 @@ const ROUTES: { [route: string]: string } = {
   PRIVACY_POLICY: '/privacy-policy',
   TERMS_OF_SERVICE: '/terms-of-service',
   COOKIE_NOTICE: '/cookie-notice',
+
+  WRAP_STATUS: '/',
+  WRAP_STATUS_WRAP_TOKENS: '/wrapTokens',
+  WRAP_STATUS_UNWRAP_TOKENS: '/unwrapTokens',
+  WRAP_STATUS_WRAP_DOMAINS: '/wrapDomains',
+  WRAP_STATUS_UNWRAP_DOMAINS: '/unwrapDomains',
 };
 
 export { ROUTES };

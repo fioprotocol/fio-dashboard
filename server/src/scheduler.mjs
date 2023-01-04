@@ -22,7 +22,8 @@ const availableJobsParams = {
     name: 'wallet-data',
     interval: process.env.WALLET_DATA_JOB_INTERVAL,
     timeout: 0,
-    closeWorkerAfterMs: process.env.WALLET_DATA_JOB_CLOSE_TIMEOUT || 60 * 60 * 1000, // 60 min
+    closeWorkerAfterMs:
+      parseInt(process.env.WALLET_DATA_JOB_CLOSE_TIMEOUT) || 60 * 60 * 1000, // 60 min
   },
   orders: {
     path: path.join(JOBS_PATH, 'orders.mjs'),
@@ -37,6 +38,14 @@ const availableJobsParams = {
     interval: process.env.ORDERS_JOB_INTERVAL || 30 * 1000, // 30 sec default
     timeout: 0,
     closeWorkerAfterMs: 5 * 60 * 1000, // 5 min
+  },
+  wrapStatus: {
+    path: path.join(JOBS_PATH, 'wrap-status.mjs'),
+    name: 'wrap-status',
+    interval: process.env.WRAP_STATUS_JOB_INTERVAL || 60 * 1000, // 60 sec
+    timeout: 0,
+    closeWorkerAfterMs:
+      parseInt(process.env.WRAP_STATUS_JOB_CLOSE_TIMEOUT) || 60 * 60 * 1000, // 60 min
   },
 };
 

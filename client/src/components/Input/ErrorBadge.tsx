@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
@@ -23,7 +23,7 @@ export const COLOR_TYPE = {
 const DEFAULT_ERROR_BADGE_TITLE = 'Try again!';
 
 type Props = {
-  error?: string | null;
+  error?: string | null | ReactElement;
   hasError: boolean;
   hideErrorTitle?: boolean;
   data?: { [key: string]: AnyType };

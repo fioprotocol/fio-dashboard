@@ -9,7 +9,7 @@ const TabsContainer: React.FC<Props> = props => {
   const { defaultActiveKey, children } = props;
   return (
     <Tab.Container defaultActiveKey={defaultActiveKey}>
-      {children}
+      {React.cloneElement(children as React.ReactElement, { defaultActiveKey })}
     </Tab.Container>
   );
 };
