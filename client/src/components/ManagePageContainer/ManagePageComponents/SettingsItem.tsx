@@ -75,6 +75,30 @@ const SettingsItem: React.FC<SettingsProps> = props => {
           <Button className={classes.button}>Start Transfer</Button>
         </Link>
       </div>
+      <div>
+        <h5 className={classes.actionTitle}>FIO Domain Wrapping</h5>
+        <p className={classes.text}>
+          Wrapping your FIO domain allows you to transport your domain to
+          another network chain. Simply paste a public address or connect a
+          wallet and initiate wrapping.
+        </p>
+        <Link
+          to={`${ROUTES.WRAP_DOMAIN}?name=${fioName}`}
+          className={classes.buttonLink}
+        >
+          <Button className={classes.button}>Start Wrapping</Button>
+        </Link>
+      </div>
+      <div>
+        <h5 className={classes.actionTitle}>FIO Domain Unwrapping</h5>
+        <p className={classes.text}>
+          Unwrapping FIO domain allows you to transport your domain to FIO
+          network chain. Simply connect a wallet and initiate unwrapping.
+        </p>
+        <Link to={ROUTES.UNWRAP_DOMAIN} className={classes.buttonLink}>
+          <Button className={classes.button}>Start Unwrapping</Button>
+        </Link>
+      </div>
     </div>
   );
 };

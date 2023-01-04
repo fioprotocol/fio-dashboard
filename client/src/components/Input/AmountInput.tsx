@@ -44,6 +44,8 @@ type Props = {
   availableTitle?: string;
   availableValue?: string;
   maxValue?: string;
+  isUnwrap?: boolean;
+  showMaxInfoBadge?: string;
 };
 
 const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
@@ -53,6 +55,8 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
     availableTitle = 'Available FIO Balance',
     availableValue = '0',
     maxValue = availableValue,
+    showMaxInfoBadge = true,
+    isUnwrap = false,
     debounceTimeout = 0,
     colorSchema,
     hideError,
@@ -120,11 +124,17 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
         apis.fio.amountToSUF(Number(value)).toString(),
       );
     }
-  }, [value]);
+  }, [
+    change,
+    isPrimaryExchange,
+    nativeAmountFieldName,
+    relationFormula,
+    value,
+  ]);
 
   useEffect(() => {
     if (!isPrimaryExchange) onChange(relationFormula(exchangedValue, true));
-  }, [exchangedValue]);
+  }, [exchangedValue, isPrimaryExchange, onChange, relationFormula]);
 
   useEffect(() => {
     toggleClearInput(value !== '');
@@ -165,6 +175,7 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
         className={classes.badge}
         type={BADGE_TYPES.INFO}
         show={
+          showMaxInfoBadge &&
           isMaxValue &&
           new MathOp(maxValue).gt(0) &&
           new MathOp(maxValue).lt(availableValue)
@@ -278,9 +289,23 @@ const AmountInput: React.FC<Props & FieldRenderProps<Props>> = props => {
       {new MathOp(availableValue || 0).gt(0) && (
         <div className={classes.additionalSubInfo}>
           <span>{availableTitle + ': '}</span>
-          <b>{availableValue} FIO</b>
+          <b>
+            {availableValue} {isUnwrap ? 'w' : ''}FIO
+          </b>
         </div>
       )}
+
+      <InfoBadge
+        className={classes.infoBadge}
+        type={BADGE_TYPES.ERROR}
+        show={
+          isUnwrap && availableValue
+            ? new MathOp(availableValue || 0).lt(value)
+            : false
+        }
+        title="Balance!"
+        message="You are attempting to unwrap more wFIO than available."
+      />
     </div>
   );
 };

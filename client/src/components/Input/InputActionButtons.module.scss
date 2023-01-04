@@ -14,9 +14,23 @@
   &.blackLight, &.blackWhite {
     color: $dark-jungle-green;
   }
+
+  &.lightBlack, .whiteBlack {
+    color: $white;
+  }
 }
 
 .doubleIcon {
+  position: absolute;
+  right: 60px;
+}
+
+.bigDoubleIcon {
+  position: absolute;
+  right: 100px;
+}
+
+.middleDoubleIcon {
   position: absolute;
   right: 60px;
 }

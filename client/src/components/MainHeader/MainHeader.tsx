@@ -1,41 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classnames from 'classnames';
 
+import { MainHeaderContainer } from '../MainHeaderContainer';
 import { Navigation } from './components/Navigation';
 
-import { ROUTES } from '../../constants/routes';
 import { useIsAdminRoute } from '../../hooks/admin';
 
 import { MainHeaderProps } from './types';
-
-import classes from './MainHeader.module.scss';
 
 const MainHeader: React.FC<MainHeaderProps> = props => {
   const {
     showLoginModal,
     logout: logoutFn,
     profileRefreshed,
+    isAdminAuthenticated,
     isAuthenticated,
     locationState,
     refProfileLoading,
   } = props;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
 
-  const closeMenu = () => {
+  const closeMenu = useCallback(() => {
     toggleMenuOpen(false);
-  };
+  }, []);
 
-  const showLogin = () => {
+  const showLogin = useCallback(() => {
     closeMenu();
     showLoginModal();
-  };
+  }, [closeMenu, showLoginModal]);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     closeMenu();
     logoutFn();
-  };
+  }, [closeMenu, logoutFn]);
 
   useEffect(() => {
     if (
@@ -50,41 +47,34 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
   }, [locationState, showLogin, isAuthenticated, profileRefreshed]);
 
   const isAdmin = useIsAdminRoute();
+  const hideSiteLink = isAuthenticated || isAdminAuthenticated || isAdmin;
 
   if (refProfileLoading) {
     return (
-      <div className={classnames(classes.header)}>
+      <MainHeaderContainer>
         <FontAwesomeIcon icon="spinner" spin />
-      </div>
+      </MainHeaderContainer>
     );
   }
 
   return (
-    <div className={classnames(classes.header, isMenuOpen && classes.isOpen)}>
-      {!isAdmin ? (
-        <Link to={ROUTES.HOME}>
-          <div className={classes.logo} onClick={closeMenu} />
-        </Link>
-      ) : (
-        <div>
-          <div
-            className={classes.logo}
-            onClick={() => {
-              closeMenu();
-              window.open(ROUTES.HOME, '_blank');
-            }}
-          />
-        </div>
-      )}
+    <MainHeaderContainer
+      hideSiteLink={hideSiteLink}
+      isAdmin={isAdmin}
+      isMenuOpen={isMenuOpen}
+      closeMenu={closeMenu}
+      {...props}
+    >
       <Navigation
         {...props}
+        isAdminRoute={isAdmin}
         isMenuOpen={isMenuOpen}
         logout={logout}
         toggleMenuOpen={toggleMenuOpen}
         closeMenu={closeMenu}
         showLogin={showLogin}
       />
-    </div>
+    </MainHeaderContainer>
   );
 };
 

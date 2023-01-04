@@ -32,6 +32,19 @@ export const ACTIONS = {
   addNft: 'addNft',
   stakeFioTokens: 'stakeFioTokens',
   unStakeFioTokens: 'unStakeFioTokens',
+  wrapFioTokens: 'wrapFioTokens',
+  wrapFioDomain: 'wrapFioDomain',
+};
+
+export const TRANSACTION_ACTION_NAMES = {
+  [ACTIONS.addNft]: 'addnft',
+  [ACTIONS.wrapFioTokens]: 'wraptokens',
+  [ACTIONS.wrapFioDomain]: 'wrapdomain',
+};
+
+export const TRANSACTION_ACCOUNT_NAMES = {
+  [ACTIONS.wrapFioTokens]: 'fio.oracle',
+  [ACTIONS.wrapFioDomain]: 'fio.oracle',
 };
 
 export const ACTIONS_TO_END_POINT_KEYS = {

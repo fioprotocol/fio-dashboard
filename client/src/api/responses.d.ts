@@ -12,6 +12,7 @@ import {
   Payment,
   RefProfile,
   User,
+  WrapStatusWrapItem,
   UserOrderDetails,
 } from '../types';
 
@@ -118,6 +119,8 @@ export type AdminGeneralCreateResponse =
   | { success: false; message: 'Not Unique' };
 export type AdminConfirmResponse = AdminUser;
 export type AdminSearchResponse = AdminSearchResult;
+
+export type WrapStatusListItemsResponse = WrapStatusWrapItem[];
 
 export type PaymentCreateResponse = Payment;
 
