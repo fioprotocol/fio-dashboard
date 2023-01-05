@@ -21,8 +21,11 @@ import { WrapStatusWrapItem } from '../../../types';
 
 import classes from './WrapStatus.module.scss';
 
+const DEFAULT_ORACLE_APPROVAL_COUNT = 3;
+
 export const parseActionStatus = (
   item: WrapStatusWrapItem,
+  isWrap: boolean,
 ): {
   badgeType: string;
   badgeText: string;
@@ -41,7 +44,18 @@ export const parseActionStatus = (
     );
   };
 
-  const isCompleteAction = (data: WrapStatusWrapItem) => {
+  const isCompleteAction = (data: WrapStatusWrapItem, isWrap: boolean) => {
+    if (!isWrap) {
+      return (
+        data?.confirmData &&
+        data?.oravotes &&
+        data.oravotes.length === DEFAULT_ORACLE_APPROVAL_COUNT &&
+        data.oravotes.every(
+          (oravote: { isComplete?: number }) => !!oravote.isComplete,
+        )
+      );
+    }
+
     return (
       data?.confirmData &&
       (!Object.keys(data.confirmData).includes('isComplete') ||
@@ -49,7 +63,7 @@ export const parseActionStatus = (
     );
   };
 
-  const isComplete = isCompleteAction(item);
+  const isComplete = isCompleteAction(item, isWrap);
   if (isComplete) {
     badgeType = 'primary';
     badgeText = WRAP_ITEM_STATUS.COMPLETE;
@@ -200,8 +214,10 @@ const WrapStatus: React.FC<PageProps> = props => {
                         : null}
                     </th>
                     <th>
-                      <Badge variant={parseActionStatus(listItem).badgeType}>
-                        {parseActionStatus(listItem).badgeText}
+                      <Badge
+                        variant={parseActionStatus(listItem, isWrap).badgeType}
+                      >
+                        {parseActionStatus(listItem, isWrap).badgeText}
                       </Badge>
                     </th>
                   </tr>
