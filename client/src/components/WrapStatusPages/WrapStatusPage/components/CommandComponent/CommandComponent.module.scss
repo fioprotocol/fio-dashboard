@@ -1,0 +1,15 @@
+.commandContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .copyButton {
+    cursor: pointer;
+    width: 20px;
+    margin-left: 30px;
+
+    .icon {
+      font-size: 20px;
+    }
+  }
+}

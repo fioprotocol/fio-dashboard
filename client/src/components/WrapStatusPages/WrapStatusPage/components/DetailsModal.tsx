@@ -5,11 +5,13 @@ import classNames from 'classnames';
 
 import Modal from '../../../../components/Modal/Modal';
 import InfoBadge from '../../../InfoBadge/InfoBadge';
-import { BADGE_TYPES } from '../../../Badge/Badge';
+import { CommandComponent } from '../components/CommandComponent';
 
-import { parseActionStatus } from '../WrapStatus';
+import { BADGE_TYPES } from '../../../Badge/Badge';
+import { WRAP_ITEM_STATUS } from '../../../../constants/wrap';
 
 import { formatDateToLocale } from '../../../../helpers/stringFormatters';
+import { parseActionStatus } from '../WrapStatus';
 
 import apis from '../../../../api';
 
@@ -28,7 +30,22 @@ type Props = {
 const DetailsModal: React.FC<Props> = props => {
   const { itemData, onClose, isWrap, isTokens } = props;
 
-  const { badgeType, badgeText, isPending } = parseActionStatus(itemData);
+  const { badgeType, badgeText, status } = parseActionStatus(itemData);
+  const isPending = status === WRAP_ITEM_STATUS.PENDING;
+  const isFailed = status === WRAP_ITEM_STATUS.FAILED;
+
+  const wrapTokenFailedCommand = `npm run oracle wrap tokens ${itemData?.amount as number} ${itemData?.address as string} ${itemData?.transactionId as string}`;
+  const wrapDomainFailedCommand = `npm run oracle wrap domain ${itemData?.domain as string} ${itemData?.address as string} ${itemData?.transactionId as string}`;
+  const unwrapTokenFailedCommand = `npm run oracle unwrap tokens ${itemData?.amount as number} ${itemData?.fioAddress as string} ${itemData?.transactionHash as string}`;
+  const unwrapDomainFailedCommand = `npm run oracle unwrap domain ${itemData?.domain as string} ${itemData?.fioAddress as string} ${itemData?.transactionHash as string}`;
+
+  const wrapCommand = isWrap
+    ? isTokens
+      ? wrapTokenFailedCommand
+      : wrapDomainFailedCommand
+    : isTokens
+    ? unwrapTokenFailedCommand
+    : unwrapDomainFailedCommand;
 
   return (
     <Modal
@@ -212,6 +229,7 @@ const DetailsModal: React.FC<Props> = props => {
                   </div>
                   <div>{JSON.stringify(!!itemData.oravotes[0].isComplete)}</div>
                 </div>
+                <CommandComponent commandString={wrapCommand} show={isFailed} />
               </div>
             ) : null}
 
@@ -263,6 +281,7 @@ const DetailsModal: React.FC<Props> = props => {
                     )}
                   </div>
                 </div>
+                <CommandComponent commandString={wrapCommand} show={isFailed} />
               </div>
             ) : null}
 
