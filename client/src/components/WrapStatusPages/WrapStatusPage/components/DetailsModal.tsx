@@ -30,7 +30,7 @@ type Props = {
 const DetailsModal: React.FC<Props> = props => {
   const { itemData, onClose, isWrap, isTokens } = props;
 
-  const { badgeType, badgeText, status } = parseActionStatus(itemData);
+  const { badgeType, badgeText, status } = parseActionStatus(itemData, isWrap);
   const isPending = status === WRAP_ITEM_STATUS.PENDING;
   const isFailed = status === WRAP_ITEM_STATUS.FAILED;
 
