@@ -352,6 +352,15 @@ class WalletDataJob extends CommonJob {
         }
       }
 
+      if (
+        (cryptoHandles.length &&
+          fio_addresses.length &&
+          cryptoHandles.length !== fio_addresses.length) ||
+        (domains.length && fio_domains.length && domains.length !== fio_domains.length)
+      ) {
+        changed = true;
+      }
+
       if (changed) {
         await PublicWalletData.update(
           {
