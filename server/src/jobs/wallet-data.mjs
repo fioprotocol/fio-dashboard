@@ -13,8 +13,8 @@ import logger from '../logger.mjs';
 
 import { HOUR_MS, DAY_MS, DOMAIN_EXP_PERIOD } from '../config/constants.js';
 
-const CHUNKS_LIMIT = process.env.WALLET_DATA_JOB_CHUNKS_LIMIT || 1;
-const CHUNKS_TIMEOUT = process.env.WALLET_DATA_JOB_CHUNKS_TIMEOUT || 1500;
+const CHUNKS_LIMIT = parseInt(process.env.WALLET_DATA_JOB_CHUNKS_LIMIT) || 1;
+const CHUNKS_TIMEOUT = parseInt(process.env.WALLET_DATA_JOB_CHUNKS_TIMEOUT) || 1500;
 const LOW_BUNDLES_THRESHOLD = 25;
 const DAYS_30 = DAY_MS * 30;
 const DOMAIN_EXP_TABLE = {
@@ -25,7 +25,7 @@ const DOMAIN_EXP_TABLE = {
   1: DOMAIN_EXP_PERIOD.EXPIRED_90,
   0: DOMAIN_EXP_PERIOD.EXPIRED,
 };
-const ITEMS_PER_FETCH = process.env.WALLET_DATA_JOB_ITEMS_PER_FETCH || 5;
+const ITEMS_PER_FETCH = parseInt(process.env.WALLET_DATA_JOB_ITEMS_PER_FETCH) || 5;
 const DEBUG_INFO = process.env.DEBUG_INFO_LOGS;
 const DOMAIN_EXP_DEBUG_AFFIX = 'testdomainexpiration';
 const DOMAIN_EXP_DEBUG_TABLE = {
