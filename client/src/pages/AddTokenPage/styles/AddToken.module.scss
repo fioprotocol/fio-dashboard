@@ -175,6 +175,10 @@
     display: flex;
     margin-top: 20px;
     gap: 30px;
+
+    > div {
+      max-width: unset !important;
+    }
   }
 
   .modalButtonContainer {

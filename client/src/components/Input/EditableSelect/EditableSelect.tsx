@@ -29,6 +29,7 @@ export type EditableProps = {
   onClear?: () => void;
   onInputChange?: (chainCodeValue: string) => Promise<void> | void;
   toggleToCustom?: (isCustom: boolean) => void;
+  hideDropdownIndicator?: boolean;
 };
 
 const EditableSelect: React.FC<EditableProps> = props => {
@@ -49,6 +50,7 @@ const EditableSelect: React.FC<EditableProps> = props => {
     onClear,
     onInputChange,
     toggleToCustom,
+    hideDropdownIndicator,
   } = props;
 
   const { onChange, value, name } = input;
@@ -174,7 +176,9 @@ const EditableSelect: React.FC<EditableProps> = props => {
         Placeholder: CustomComponents.Placeholder,
         SingleValue: () => null, // no need this component to avoid double render, we use Input component for that
         ClearIndicator: CustomComponents.ClearIndicator,
-        DropdownIndicator: CustomComponents.DropdownIndicator,
+        DropdownIndicator: hideDropdownIndicator
+          ? () => null
+          : CustomComponents.DropdownIndicator,
         Input: CustomComponents.Input,
         Control: CustomComponents.Control,
       }}

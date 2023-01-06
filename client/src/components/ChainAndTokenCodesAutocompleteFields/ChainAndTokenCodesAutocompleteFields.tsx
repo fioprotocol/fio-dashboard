@@ -78,7 +78,7 @@ export const ChainAndTokenCodesAutocompleteFields: React.FC<ChainAndTokenCodesAu
             return { id, name };
           })}
           onBlur={onBlur}
-          placeholder="Type or Select Token Code"
+          placeholder="Type Token Code"
           upperCased={true}
           {...props}
         />
