@@ -3,12 +3,14 @@ import {
   ReactNode,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
 
 import { useHistory, useLocation } from 'react-router-dom';
 import Pagination from 'react-bootstrap/Pagination';
+import Range from 'lodash/range';
 
 import useQuery from './useQuery';
 
@@ -55,6 +57,7 @@ export default function usePagination(
         } & AnyObject
       >
     | undefined;
+  range: number[];
 } {
   const history = useHistory();
   const queryParams = useQuery();
@@ -216,5 +219,13 @@ export default function usePagination(
     setPaginationComponent(<Pagination>{paginationItems}</Pagination>);
   }, [activePage, handleChangeOffset, itemsCount, limit]);
 
-  return { paginationComponent, refresh: refreshData };
+  const getRange = useMemo(() => {
+    const start = activePage * limit + 1 - limit;
+    const end =
+      activePage * limit > itemsCount ? itemsCount : activePage * limit;
+
+    return Range(start, end + 1);
+  }, [activePage, itemsCount, limit]);
+
+  return { paginationComponent, refresh: refreshData, range: getRange };
 }

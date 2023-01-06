@@ -14,4 +14,5 @@ export const QUERY_PARAMS_NAMES = {
   REF_CODE: 'refCode',
   TOKEN: 'token',
   TX_IDS: 'txIds',
+  USER_ID: 'userId',
 };

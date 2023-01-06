@@ -14,25 +14,28 @@ import { formatDateToLocale } from '../../../helpers/stringFormatters';
 import apis from '../../../api';
 
 import { ROUTES } from '../../../constants/routes';
+import { WRAP_ITEM_STATUS } from '../../../constants/wrap';
 
 import { PageProps } from './types';
 import { WrapStatusWrapItem } from '../../../types';
 
 import classes from './WrapStatus.module.scss';
 
+const DEFAULT_ORACLE_APPROVAL_COUNT = 3;
+
 export const parseActionStatus = (
   item: WrapStatusWrapItem,
+  isWrap: boolean,
 ): {
   badgeType: string;
   badgeText: string;
-  isComplete: boolean;
-  isPending: boolean;
+  status: typeof WRAP_ITEM_STATUS[keyof typeof WRAP_ITEM_STATUS];
 } => {
   const TRANSACTION_OUT_OF_TIME_MILLISECONDS = 10 * 60 * 1000; // 10 minutes - time delay which proves that transaction wasn't completed successfully (oracle - 1m, wrap_status job - 1m, else - chains requests)
 
   let badgeType;
   let badgeText;
-  let isPending = false;
+  let status;
   const isTransactionIsOutOfTime = (date?: string) => {
     if (!date) return true;
     return (
@@ -41,7 +44,18 @@ export const parseActionStatus = (
     );
   };
 
-  const isCompleteAction = (data: WrapStatusWrapItem) => {
+  const isCompleteAction = (data: WrapStatusWrapItem, isWrap: boolean) => {
+    if (!isWrap) {
+      return (
+        data?.confirmData &&
+        data?.oravotes &&
+        data.oravotes.length === DEFAULT_ORACLE_APPROVAL_COUNT &&
+        data.oravotes.every(
+          (oravote: { isComplete?: number }) => !!oravote.isComplete,
+        )
+      );
+    }
+
     return (
       data?.confirmData &&
       (!Object.keys(data.confirmData).includes('isComplete') ||
@@ -49,10 +63,11 @@ export const parseActionStatus = (
     );
   };
 
-  const isComplete = isCompleteAction(item);
+  const isComplete = isCompleteAction(item, isWrap);
   if (isComplete) {
     badgeType = 'primary';
-    badgeText = 'Complete';
+    badgeText = WRAP_ITEM_STATUS.COMPLETE;
+    status = WRAP_ITEM_STATUS.COMPLETE;
   } else {
     if (
       isTransactionIsOutOfTime(
@@ -62,19 +77,19 @@ export const parseActionStatus = (
       )
     ) {
       badgeType = 'danger';
-      badgeText = 'Failed';
+      badgeText = WRAP_ITEM_STATUS.FAILED;
+      status = WRAP_ITEM_STATUS.FAILED;
     } else {
-      isPending = true;
+      status = WRAP_ITEM_STATUS.PENDING;
       badgeType = 'secondary';
-      badgeText = 'Pending';
+      badgeText = WRAP_ITEM_STATUS.PENDING;
     }
   }
 
   return {
     badgeType,
     badgeText,
-    isComplete,
-    isPending,
+    status,
   };
 };
 
@@ -199,8 +214,10 @@ const WrapStatus: React.FC<PageProps> = props => {
                         : null}
                     </th>
                     <th>
-                      <Badge variant={parseActionStatus(listItem).badgeType}>
-                        {parseActionStatus(listItem).badgeText}
+                      <Badge
+                        variant={parseActionStatus(listItem, isWrap).badgeType}
+                      >
+                        {parseActionStatus(listItem, isWrap).badgeText}
                       </Badge>
                     </th>
                   </tr>

@@ -8,6 +8,7 @@ import { FreeAddress } from './FreeAddress';
 import { Wallet } from './Wallet';
 import { NewDeviceTwoFactor } from './NewDeviceTwoFactor';
 import { ReferrerProfile } from './ReferrerProfile';
+import { Order } from './Order';
 
 import { USER_STATUS } from '../config/constants';
 
@@ -61,6 +62,11 @@ export class User extends Base {
       sourceKey: 'id',
       as: 'newDeviceTwoFactor',
     });
+    this.hasMany(Order, {
+      foreignKey: 'userId',
+      sourceKey: 'id',
+      as: 'orders',
+    });
     this.belongsTo(ReferrerProfile, {
       foreignKey: 'refProfileId',
       targetKey: 'id',
@@ -89,6 +95,8 @@ export class User extends Base {
         'refProfile',
         'affiliateProfile',
         'createdAt',
+        'timeZone',
+        'orders',
       ],
     };
 
@@ -120,6 +128,22 @@ export class User extends Base {
     });
   }
 
+  static findUser(id) {
+    return this.findById(id, {
+      include: [
+        { model: FreeAddress, as: 'freeAddresses' },
+        { model: Wallet, as: 'fioWallets' },
+        { model: ReferrerProfile, as: 'refProfile', attributes: ['code'] },
+        {
+          model: ReferrerProfile,
+          as: 'affiliateProfile',
+          attributes: ['code', 'tpid'],
+        },
+        { model: Order, as: 'orders' },
+      ],
+    });
+  }
+
   static info(id) {
     return this.findById(id);
   }
@@ -133,6 +157,25 @@ export class User extends Base {
       order: [['createdAt', 'DESC']],
       limit,
       offset,
+    });
+  }
+
+  static listAll(limit = 25, offset) {
+    return this.findAll({
+      order: [['createdAt', 'DESC']],
+      limit: limit ? limit : null,
+      offset,
+      include: [
+        { model: FreeAddress, as: 'freeAddresses' },
+        { model: Wallet, as: 'fioWallets' },
+        { model: ReferrerProfile, as: 'refProfile', attributes: ['code'] },
+        {
+          model: ReferrerProfile,
+          as: 'affiliateProfile',
+          attributes: ['code', 'tpid'],
+        },
+        { model: Order, as: 'orders' },
+      ],
     });
   }
 

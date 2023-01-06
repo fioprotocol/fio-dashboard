@@ -76,6 +76,7 @@ const ChainCodeCustomDropdown: React.FC<Props &
     onClear,
     onInputChange,
     toggleToCustom,
+    hideDropdownIndicator: true,
   };
 
   return (

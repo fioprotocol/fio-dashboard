@@ -49,6 +49,7 @@ const WrapDomainEdgeWallet: React.FC<Props> = props => {
         public_address: data.publicAddress,
         max_oracle_fee: oracleFee,
         max_fee: fee,
+        tpid: apis.fio.tpid,
       },
     });
 

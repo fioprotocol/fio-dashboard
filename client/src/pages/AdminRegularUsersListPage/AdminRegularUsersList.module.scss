@@ -1,0 +1,18 @@
+.tableContainer {
+  width: auto;
+  margin-top: 30px;
+
+  th {
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .userItem {
+    cursor: pointer
+  }
+}
+
+.loading {
+  display: flex;
+  flex-direction: row;
+}

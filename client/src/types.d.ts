@@ -174,6 +174,7 @@ export type FioAddressDoublet = {
   expiration: Date;
   remaining: number;
   walletPublicKey: string;
+  walletName?: string;
 };
 
 export type FioAddressWithPubAddresses = FioNameItemProps & {
@@ -187,6 +188,7 @@ export type FioDomainDoublet = {
   expiration: Date;
   isPublic: number;
   walletPublicKey: string;
+  walletName?: string;
 };
 
 export type PrivateDomainsMap = {
@@ -317,8 +319,28 @@ export type User = {
     deviceDescription?: string;
     status: string;
   }[];
+  createdAt: string;
+  timeZone: string;
   refProfile: { code?: string } | null;
   affiliateProfile: { code?: string; tpid?: string } | null;
+};
+
+export type UserDetails = {
+  email: string;
+  username: string;
+  fioWallets: FioWalletDoublet[];
+  fioAddresses: FioAddressDoublet[];
+  fioDomains: FioDomainDoublet[];
+  freeAddresses: { name: string }[];
+  id: string;
+  role: string;
+  status: string;
+  secretSet?: boolean;
+  createdAt: string;
+  timeZone: string;
+  refProfile: { code?: string } | null;
+  affiliateProfile: { code?: string; tpid?: string } | null;
+  orders: OrderDefault[];
 };
 
 export type RefProfile = {
@@ -560,6 +582,22 @@ export type Order = {
   publicKey: string;
   orderItems?: OrderItem[];
   payment?: Payment;
+};
+
+type OrderDefault = {
+  createdAt: string;
+  customerIp: string;
+  data: AnyObject | null;
+  deletedAt: string | null;
+  id: string;
+  number: string;
+  publicKey: string;
+  refProfileId: string | null;
+  roe: string;
+  status: number;
+  total: string;
+  updatedAt: string;
+  userId: string;
 };
 
 export type AdminResponseFailure = {

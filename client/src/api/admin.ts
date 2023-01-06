@@ -11,6 +11,8 @@ import {
   AuthLoginResponse,
   RemoveAdminResponse,
   SendResetAdminPasswordResponse,
+  UsersDetailsResponse,
+  UsersListResponse,
 } from './responses';
 import { RefProfile } from '../types';
 
@@ -102,5 +104,17 @@ export default class Admin extends Base {
   }
   editPartner(data: RefProfile): Promise<AdminGeneralCreateResponse> {
     return this.apiClient.post(`admin/partners/${data.id}`, data);
+  }
+
+  usersList(limit: number, offset: number): Promise<UsersListResponse[]> {
+    return this.apiClient.get('admin/reg-users', { limit, offset });
+  }
+
+  usersDetailedList(): Promise<UsersDetailsResponse[]> {
+    return this.apiClient.get('admin/detailed-list-reg-users');
+  }
+
+  userDetails(id: string): Promise<UsersDetailsResponse> {
+    return this.apiClient.get(`admin/reg-users/${id}`);
   }
 }

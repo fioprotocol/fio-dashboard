@@ -12,3 +12,198 @@
 .asterisk {
   line-height: 1.25em;
 }
+
+.addCustomButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: auto;
+  height: 54px;
+  margin: 0 0 20px;
+  align-items: center;
+  font-size: 0.8125rem;
+  line-height: 0;
+  border-radius: 7px;
+  padding: 0 12px;
+  white-space: nowrap;
+  @include sf-pro-display-thin;
+
+  .icon {
+    font-size: 1rem;
+    line-height: 0;
+    margin-right: 10px;
+  }
+}
+
+.closeIcon {
+  color: $dark-gray;
+  cursor: pointer;
+  transition: all 0.2s ease-in;
+  font-size: 1.25rem;
+
+  &:hover {
+    transform: rotate(90deg);
+  }
+}
+
+.popularList {
+  margin-bottom: 20px;
+  display: flex;
+  flex-flow: row wrap;
+  gap: 15px;
+
+  .popularListItem {
+    flex: 0 1 calc(20% - 12px);
+    padding: 10px;
+    background: $white;
+    border-radius: 8px;
+    cursor: pointer;
+
+    &.popularListItemSelected {
+      background: $tundora;
+      color: $white;
+      cursor: default;
+
+      .popularListItemTitleCheckIcon {
+        color: $green;
+        display: inline;
+      }
+    }
+
+    .popularListItemTitle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      @include proxima-nova-bold;
+      font-size: 0.875rem;
+      margin-bottom: 6px;
+    }
+
+    .popularListItemTitleWrapper {
+      display: flex;
+      align-items: center;
+    }
+
+    .popularListItemTitleLogo {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      img {
+        width: 16px;
+      }
+
+      &.popularListItemTitleLogoToken {
+        opacity: 1;
+        z-index: 1;
+      }
+
+      &.popularListItemTitleLogoChain {
+        margin-left: -9px;
+        margin-right: 5px;
+        opacity: 0.4;
+        z-index: 0;
+      }
+
+      &.popularListItemLogoBTC {
+        background: $web-orange;
+      }
+
+      &.popularListItemLogoBSC {
+        background: $saffron;
+      }
+
+      &.popularListItemLogoETH {
+        background: $twine;
+      }
+
+      &.popularListItemLogoUSDT {
+        background: $tradewind;
+      }
+    }
+
+    .popularListItemTitleCheckIcon {
+      display: none;
+    }
+
+    .popularListItemRow {
+      @include proxima-nova-regular;
+      font-size: 0.625rem;
+      line-height: 1rem;
+
+      span {
+        @include proxima-nova-thin;
+        display: inline-block;
+        min-width: 55px;
+        margin-right: 5px;
+      }
+    }
+  }
+}
+
+.modalContainer {
+  width: 100%;
+  margin: 0 0 20px;
+
+  .modalTitle {
+    font-size: 1.5em;
+    @include proxima-nova-semibold;
+    color: $dark-jungle-green;
+  }
+
+  .modalText {
+    font-size: 0.875em;
+    margin: 20px 0;
+    @include proxima-nova-regular;
+    color: $dark-jungle-green;
+  }
+
+  .modalBadgeIcon {
+    font-size: 20px;
+  }
+
+  .modalBadgeTextContainer {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .modalFieldContainer {
+    display: flex;
+    margin-top: 20px;
+    gap: 30px;
+
+    > div {
+      max-width: unset !important;
+    }
+  }
+
+  .modalButtonContainer {
+    display: flex;
+    justify-content: center;
+
+    .modalButton {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 54px;
+      width: 335px;
+      border-radius: 7px;
+      font-size: 0.875em;
+      @include sf-pro-display-medium;
+    }
+  }
+}
+
+@include sm {
+  .popularList {
+    flex-flow: column;
+
+    .popularListItem {
+      flex: 1;
+    }
+  }
+}

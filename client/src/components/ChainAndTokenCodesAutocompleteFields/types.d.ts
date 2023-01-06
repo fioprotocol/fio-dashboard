@@ -11,4 +11,5 @@ export type ChainAndTokenCodesAutocompleteFieldsProps = {
   tokenCodeFieldLabel?: string;
   tokenCodeFieldName: string;
   uiType?: string;
+  errorColor?: string;
 };

@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize';
 
 import '../db';
-import { Notification, PublicWalletData, User, Wallet } from '../models/index.mjs';
+import { Notification, PublicWalletData, User, Var, Wallet } from '../models/index.mjs';
 import { sleep } from '../tools.mjs';
 import CommonJob from './job.mjs';
 import MathOp from '../services/math.mjs';
@@ -11,10 +11,10 @@ import { getROE } from '../external/roe.mjs';
 
 import logger from '../logger.mjs';
 
-import { DAY_MS, DOMAIN_EXP_PERIOD } from '../config/constants.js';
+import { HOUR_MS, DAY_MS, DOMAIN_EXP_PERIOD } from '../config/constants.js';
 
-const CHUNKS_LIMIT = process.env.WALLET_DATA_JOB_CHUNKS_LIMIT || 1;
-const CHUNKS_TIMEOUT = process.env.WALLET_DATA_JOB_CHUNKS_TIMEOUT || 1500;
+const CHUNKS_LIMIT = parseInt(process.env.WALLET_DATA_JOB_CHUNKS_LIMIT) || 1;
+const CHUNKS_TIMEOUT = parseInt(process.env.WALLET_DATA_JOB_CHUNKS_TIMEOUT) || 1500;
 const LOW_BUNDLES_THRESHOLD = 25;
 const DAYS_30 = DAY_MS * 30;
 const DOMAIN_EXP_TABLE = {
@@ -25,8 +25,16 @@ const DOMAIN_EXP_TABLE = {
   1: DOMAIN_EXP_PERIOD.EXPIRED_90,
   0: DOMAIN_EXP_PERIOD.EXPIRED,
 };
-const ITEMS_PER_FETCH = process.env.WALLET_DATA_JOB_ITEMS_PER_FETCH || 5;
+const ITEMS_PER_FETCH = parseInt(process.env.WALLET_DATA_JOB_ITEMS_PER_FETCH) || 5;
 const DEBUG_INFO = process.env.DEBUG_INFO_LOGS;
+const DOMAIN_EXP_DEBUG_AFFIX = 'testdomainexpiration';
+const DOMAIN_EXP_DEBUG_TABLE = {
+  expsoon: DOMAIN_EXP_PERIOD.ABOUT_TO_EXPIRE,
+  exp30: DOMAIN_EXP_PERIOD.EXPIRED_30,
+  exp90: DOMAIN_EXP_PERIOD.EXPIRED_90,
+  exp90plus: DOMAIN_EXP_PERIOD.EXPIRED,
+};
+const LOW_BUNDLE_COUNT_DEBUG_AFFIX = 'testlowbundlecount';
 
 const returnDayRange = timePeriod => {
   if (timePeriod > DAYS_30) return DAYS_30 + 1;
@@ -251,6 +259,34 @@ class WalletDataJob extends CommonJob {
               },
             });
           }
+          if (
+            process.env.EMAILS_JOB_SIMULATION_LOW_BUNDLE_COUNT_ENABLED === 'true' &&
+            fetched.fio_address.includes(LOW_BUNDLE_COUNT_DEBUG_AFFIX)
+          ) {
+            const existingNotification = await Notification.findOneWhere({
+              contentType: Notification.CONTENT_TYPE.LOW_BUNDLE_TX,
+              userId: wallet.User.id,
+              data: {
+                emailData: {
+                  name: fetched.fio_address,
+                },
+              },
+            });
+            if (!existingNotification) {
+              await Notification.create({
+                type: Notification.TYPE.INFO,
+                contentType: Notification.CONTENT_TYPE.LOW_BUNDLE_TX,
+                userId: wallet.User.id,
+                data: {
+                  pagesToShow: ['/'],
+                  emailData: {
+                    name: fetched.fio_address,
+                    bundles: fetched.remaining_bundled_tx,
+                  },
+                },
+              });
+            }
+          }
         } else {
           changed = true;
         }
@@ -272,18 +308,33 @@ class WalletDataJob extends CommonJob {
         }
 
         const timePeriod = new Date(domain.expiration).getTime() - new Date().getTime();
-        const domainExpPeriod =
+        let domainExpPeriod =
           DOMAIN_EXP_TABLE[
             Math.floor((returnDayRange(timePeriod) + DAYS_30 * 4) / DAYS_30)
           ];
 
+        if (
+          process.env.EMAILS_JOB_SIMULATION_EXPIRING_DOMAIN_ENABLED === 'true' &&
+          domain.fio_domain.includes(DOMAIN_EXP_DEBUG_AFFIX)
+        ) {
+          Object.keys(DOMAIN_EXP_DEBUG_TABLE).forEach(key => {
+            if (domain.fio_domain.includes(key)) {
+              domainExpPeriod = DOMAIN_EXP_DEBUG_TABLE[key];
+            }
+          });
+        }
+
         if (domainExpPeriod) {
           const existingNotification = await Notification.findOneWhere({
+            contentType: Notification.CONTENT_TYPE.DOMAIN_EXPIRE,
             userId: wallet.User.id,
             data: {
               emailData: {
                 name: domain.fio_domain,
-                date: new Date(domain.expiration),
+                date: await User.formatDateWithTimeZone(
+                  wallet.User.id,
+                  domain.expiration,
+                ),
                 domainExpPeriod,
               },
             },
@@ -297,12 +348,24 @@ class WalletDataJob extends CommonJob {
                 pagesToShow: ['/'],
                 emailData: {
                   name: domain.fio_domain,
-                  date: new Date(domain.expiration),
+                  date: await User.formatDateWithTimeZone(
+                    wallet.User.id,
+                    domain.expiration,
+                  ),
                   domainExpPeriod,
                 },
               },
             });
         }
+      }
+
+      if (
+        (cryptoHandles.length &&
+          fio_addresses.length &&
+          cryptoHandles.length !== fio_addresses.length) ||
+        (domains.length && fio_domains.length && domains.length !== fio_domains.length)
+      ) {
+        changed = true;
       }
 
       if (changed) {
@@ -342,10 +405,38 @@ class WalletDataJob extends CommonJob {
         );
       }
 
-      if (!new MathOp(publicWalletData.balance).eq(balance)) {
+      let previousBalance = publicWalletData.balance;
+      if (!new MathOp(previousBalance).eq(balance)) {
+        const existsNotification = await Notification.findOne({
+          where: {
+            type: Notification.TYPE.INFO,
+            contentType: Notification.CONTENT_TYPE.BALANCE_CHANGED,
+            userId: wallet.User.id,
+            data: {
+              emailData: {
+                wallet: wallet.publicKey,
+              },
+            },
+          },
+          order: [['createdAt', 'DESC']],
+        });
+        const alreadyHasPendingNotification =
+          existsNotification &&
+          !Var.updateRequired(
+            existsNotification.emailDate || existsNotification.createdAt,
+            HOUR_MS,
+          ) &&
+          !existsNotification.emailDate;
+        if (alreadyHasPendingNotification) {
+          previousBalance = fioApi.amountToSUF(
+            parseFloat(existsNotification.data.emailData.newFioBalance) -
+              parseFloat(existsNotification.data.emailData.fioBalanceChange),
+          );
+        }
+
         const roe = await getROE();
         const fioNativeChangeBalance = new MathOp(balance)
-          .sub(publicWalletData.balance)
+          .sub(previousBalance)
           .toNumber();
         const usdcChangeBalance = fioApi.convertFioToUsdc(
           new MathOp(fioNativeChangeBalance).abs().toNumber(),
@@ -354,22 +445,42 @@ class WalletDataJob extends CommonJob {
         const usdcBalance = fioApi.convertFioToUsdc(balance, roe);
         const sign = new MathOp(fioNativeChangeBalance).gt(0) ? '+' : '-';
 
-        await Notification.create({
-          type: Notification.TYPE.INFO,
-          contentType: Notification.CONTENT_TYPE.BALANCE_CHANGED,
-          userId: wallet.User.id,
-          data: {
-            pagesToShow: ['/'],
-            emailData: {
-              fioBalanceChange: `${sign}${fioApi.sufToAmount(
-                new MathOp(fioNativeChangeBalance).abs().toNumber(),
-              )} FIO ($${usdcChangeBalance} USDC)`,
-              newFioBalance: `${fioApi.sufToAmount(balance)} FIO ($${usdcBalance} USDC)`,
-              wallet: wallet.publicKey,
-              date: await User.formatDateWithTimeZone(wallet.User.id),
+        if (alreadyHasPendingNotification) {
+          await existsNotification.update({
+            data: {
+              ...existsNotification.data,
+              emailData: {
+                ...existsNotification.data.emailData,
+                fioBalanceChange: `${sign}${fioApi.sufToAmount(
+                  new MathOp(fioNativeChangeBalance).abs().toNumber(),
+                )} FIO ($${usdcChangeBalance} USDC)`,
+                newFioBalance: `${fioApi.sufToAmount(
+                  balance,
+                )} FIO ($${usdcBalance} USDC)`,
+                date: await User.formatDateWithTimeZone(wallet.User.id),
+              },
             },
-          },
-        });
+          });
+        } else {
+          await Notification.create({
+            type: Notification.TYPE.INFO,
+            contentType: Notification.CONTENT_TYPE.BALANCE_CHANGED,
+            userId: wallet.User.id,
+            data: {
+              pagesToShow: ['/'],
+              emailData: {
+                fioBalanceChange: `${sign}${fioApi.sufToAmount(
+                  new MathOp(fioNativeChangeBalance).abs().toNumber(),
+                )} FIO ($${usdcChangeBalance} USDC)`,
+                newFioBalance: `${fioApi.sufToAmount(
+                  balance,
+                )} FIO ($${usdcBalance} USDC)`,
+                wallet: wallet.publicKey,
+                date: await User.formatDateWithTimeZone(wallet.User.id),
+              },
+            },
+          });
+        }
 
         await PublicWalletData.update(
           { balance },
