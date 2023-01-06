@@ -59,8 +59,8 @@ const POPULAR_CURRENCIES: AnyObject[] = [
   {
     key: 4,
     title: 'USDT',
-    chainCode: 'USDT',
-    tokenCode: 'ETH',
+    chainCode: 'ETH',
+    tokenCode: 'USDT',
     tokenLogo: tetherSrc,
     tokenLogoClass: classes.popularListItemLogoUSDT,
     chainLogo: ethereumSrc,
@@ -69,8 +69,8 @@ const POPULAR_CURRENCIES: AnyObject[] = [
   {
     key: 5,
     title: 'USDT',
-    chainCode: 'USDT',
-    tokenCode: 'BSC',
+    chainCode: 'BSC',
+    tokenCode: 'USDT',
     tokenLogo: tetherSrc,
     tokenLogoClass: classes.popularListItemLogoUSDT,
     chainLogo: binanceDarkSrc,
