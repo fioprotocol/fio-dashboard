@@ -326,6 +326,7 @@ class WalletDataJob extends CommonJob {
 
         if (domainExpPeriod) {
           const existingNotification = await Notification.findOneWhere({
+            contentType: Notification.CONTENT_TYPE.DOMAIN_EXPIRE,
             userId: wallet.User.id,
             data: {
               emailData: {
