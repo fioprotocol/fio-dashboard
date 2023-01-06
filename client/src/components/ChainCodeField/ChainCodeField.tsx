@@ -5,7 +5,7 @@ import ChainCodeCustomDropdown from '../Input/ChainCodeCustomDropdown';
 
 export const CUSTOM_CHAIN_CODE = 'customChainCode';
 const CHAIN_CODE_FIELD_NAME = 'chainCode';
-const CHAIN_CODE_PLACEHOLDER = 'Type or Select Chain Code';
+const CHAIN_CODE_PLACEHOLDER = 'Type Chain Code';
 
 type Props = {
   hasAutoWidth?: boolean;

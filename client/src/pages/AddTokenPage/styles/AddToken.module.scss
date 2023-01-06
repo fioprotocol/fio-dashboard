@@ -175,6 +175,18 @@
     display: flex;
     margin-top: 20px;
     gap: 30px;
+
+    > div {
+      max-width: unset !important;
+
+      [class*="IndicatorsContainer"] {
+        [class*="indicatorContainer"] {
+          &:last-of-type {
+            display: none;
+          }
+        }
+      }
+    }
   }
 
   .modalButtonContainer {
