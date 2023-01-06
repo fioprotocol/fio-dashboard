@@ -331,7 +331,10 @@ class WalletDataJob extends CommonJob {
             data: {
               emailData: {
                 name: domain.fio_domain,
-                date: new Date(domain.expiration),
+                date: await User.formatDateWithTimeZone(
+                  wallet.User.id,
+                  domain.expiration,
+                ),
                 domainExpPeriod,
               },
             },
@@ -345,7 +348,10 @@ class WalletDataJob extends CommonJob {
                 pagesToShow: ['/'],
                 emailData: {
                   name: domain.fio_domain,
-                  date: new Date(domain.expiration),
+                  date: await User.formatDateWithTimeZone(
+                    wallet.User.id,
+                    domain.expiration,
+                  ),
                   domainExpPeriod,
                 },
               },
