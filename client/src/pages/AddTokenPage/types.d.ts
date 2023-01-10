@@ -32,6 +32,11 @@ export type AddTokenContextProps = {
   setProcessing: (processing: boolean) => void;
   submit: (params: { keys: WalletKeys; data: FormValues }) => Promise<void>;
   validate: (values: FormValues) => AnyObject | Promise<AnyObject>;
+  validateToken: (
+    token: PublicAddressDoublet,
+    values: FormValues,
+  ) => AnyObject | Promise<AnyObject>;
+  publicAddresses: PublicAddressDoublet[];
 } & AddTokenDefaultProps;
 
 export type FormValues = {
@@ -40,6 +45,10 @@ export type FormValues = {
 
 export type AddTokenFormProps = {
   formProps: FormRenderProps<FormValues>;
+  validateToken: (
+    values: PublicAddressDoublet,
+  ) => AnyObject | Promise<AnyObject>;
+  publicAddresses: PublicAddressDoublet[];
 } & AddTokenDefaultProps;
 
 export type ArrayErrorsProps = {

@@ -3,10 +3,14 @@ import React, { useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { useLocation } from 'react-router';
+
 import Loader from '../../components/Loader/Loader';
 import AdminOrderModal from './components/AdminOrderModal/AdminOrderModal';
+
 import usePagination from '../../hooks/usePagination';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
+import useEffectOnce from '../../hooks/general';
 
 import {
   PURCHASE_RESULTS_STATUS_LABELS,
@@ -39,12 +43,15 @@ const AdminOrdersPage: React.FC<Props> = props => {
     orderItem,
   } = props;
 
+  const location = useLocation<{ orderId?: string }>();
+  const orderId = location?.state?.orderId;
+
   const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
   const [selectedOrderItemId, setSelectedOrderItemId] = useState<string | null>(
     null,
   );
 
-  const { paginationComponent } = usePagination(getOrdersList);
+  const { paginationComponent, range } = usePagination(getOrdersList);
 
   const closeOrderDetails = () => {
     setShowOrderDetailsModal(false);
@@ -61,6 +68,14 @@ const AdminOrdersPage: React.FC<Props> = props => {
     openOrderDetails(orderId);
   };
 
+  useEffectOnce(
+    () => {
+      onClick(orderId);
+    },
+    [orderId],
+    orderId != null,
+  );
+
   return (
     <>
       <div className={classes.tableContainer}>
@@ -70,6 +85,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
         <Table className="table" striped={true}>
           <thead>
             <tr>
+              <th scope="col">#</th>
               <th scope="col">Date</th>
               <th scope="col">Order</th>
               <th scope="col">User</th>
@@ -81,12 +97,13 @@ const AdminOrdersPage: React.FC<Props> = props => {
           </thead>
           <tbody>
             {ordersList?.length
-              ? ordersList.map(order => (
+              ? ordersList.map((order, i) => (
                   <tr
                     key={order.id}
                     className={classes.orderItem}
                     onClick={() => onClick(order.id)}
                   >
+                    <th>{range[i]}</th>
                     <th>
                       {' '}
                       {order.createdAt

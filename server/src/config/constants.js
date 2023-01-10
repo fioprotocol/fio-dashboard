@@ -11,18 +11,18 @@ const DOMAIN_EXP_PERIOD = {
 };
 
 const EXPIRING_DOMAINS_EMAIL_SUBJECTS = {
-  [DOMAIN_EXP_PERIOD.ABOUT_TO_EXPIRE]: 'Your FIO domain(s) is about to expire',
-  [DOMAIN_EXP_PERIOD.EXPIRED_30]: 'Your FIO domain(s) has expired',
-  [DOMAIN_EXP_PERIOD.EXPIRED_90]: 'Your FIO domain(s) has expired and will be burned',
+  [DOMAIN_EXP_PERIOD.ABOUT_TO_EXPIRE]: 'Your FIO domain(s) are about to expire',
+  [DOMAIN_EXP_PERIOD.EXPIRED_30]: 'Your FIO domain(s) have expired',
+  [DOMAIN_EXP_PERIOD.EXPIRED_90]: 'Your FIO domain(s) have expired and will be burned',
   [DOMAIN_EXP_PERIOD.EXPIRED]:
     'Your FIO domain(s) and associated addresses have been burned',
 };
 
 const EXPIRING_DOMAINS_EMAIL_TITLE = {
   [DOMAIN_EXP_PERIOD.ABOUT_TO_EXPIRE]: 'FIO Domain(s) Expiring',
-  [DOMAIN_EXP_PERIOD.EXPIRED_30]: 'FIO Domain(s) has Expired',
+  [DOMAIN_EXP_PERIOD.EXPIRED_30]: 'FIO Domain(s) have Expired',
   [DOMAIN_EXP_PERIOD.EXPIRED_90]: 'FIO Domain(s) will be burned',
-  [DOMAIN_EXP_PERIOD.EXPIRED]: 'FIO Domain(s) has been burned',
+  [DOMAIN_EXP_PERIOD.EXPIRED]: 'FIO Domain(s) have been burned',
 };
 
 const FIO_ACTIONS = {
@@ -130,7 +130,8 @@ const ADMIN_STATUS_IDS = {
   [USER_STATUS.NEW_EMAIL_NOT_VERIFIED]: 4,
 };
 
-const DAY_MS = 1000 * 60 * 60 * 24; // 1 day
+const HOUR_MS = 1000 * 60 * 60; // 1 hour
+const DAY_MS = HOUR_MS * 24; // 1 day
 
 const PRINT_SCREEN_PARAMS = {
   default: {
@@ -196,6 +197,7 @@ module.exports = {
   USER_STATUS,
   ADMIN_ROLES_IDS,
   ADMIN_STATUS_IDS,
+  HOUR_MS,
   DAY_MS,
   WRAP_STATUS_NETWORKS,
   WRAP_STATUS_NETWORKS_IDS,

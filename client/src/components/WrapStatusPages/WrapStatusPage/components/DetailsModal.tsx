@@ -5,11 +5,13 @@ import classNames from 'classnames';
 
 import Modal from '../../../../components/Modal/Modal';
 import InfoBadge from '../../../InfoBadge/InfoBadge';
-import { BADGE_TYPES } from '../../../Badge/Badge';
+import { CommandComponent } from '../components/CommandComponent';
 
-import { parseActionStatus } from '../WrapStatus';
+import { BADGE_TYPES } from '../../../Badge/Badge';
+import { WRAP_ITEM_STATUS } from '../../../../constants/wrap';
 
 import { formatDateToLocale } from '../../../../helpers/stringFormatters';
+import { parseActionStatus } from '../WrapStatus';
 
 import apis from '../../../../api';
 
@@ -28,7 +30,22 @@ type Props = {
 const DetailsModal: React.FC<Props> = props => {
   const { itemData, onClose, isWrap, isTokens } = props;
 
-  const { badgeType, badgeText, isPending } = parseActionStatus(itemData);
+  const { badgeType, badgeText, status } = parseActionStatus(itemData, isWrap);
+  const isPending = status === WRAP_ITEM_STATUS.PENDING;
+  const isFailed = status === WRAP_ITEM_STATUS.FAILED;
+
+  const wrapTokenFailedCommand = `npm run oracle wrap tokens ${itemData?.amount as number} ${itemData?.address as string} ${itemData?.transactionId as string}`;
+  const wrapDomainFailedCommand = `npm run oracle wrap domain ${itemData?.domain as string} ${itemData?.address as string} ${itemData?.transactionId as string}`;
+  const unwrapTokenFailedCommand = `npm run oracle unwrap tokens ${itemData?.amount as number} ${itemData?.fioAddress as string} ${itemData?.transactionHash as string}`;
+  const unwrapDomainFailedCommand = `npm run oracle unwrap domain ${itemData?.domain as string} ${itemData?.fioAddress as string} ${itemData?.transactionHash as string}`;
+
+  const wrapCommand = isWrap
+    ? isTokens
+      ? wrapTokenFailedCommand
+      : wrapDomainFailedCommand
+    : isTokens
+    ? unwrapTokenFailedCommand
+    : unwrapDomainFailedCommand;
 
   return (
     <Modal
@@ -212,34 +229,59 @@ const DetailsModal: React.FC<Props> = props => {
                   </div>
                   <div>{JSON.stringify(!!itemData.oravotes[0].isComplete)}</div>
                 </div>
+                <CommandComponent commandString={wrapCommand} show={isFailed} />
               </div>
             ) : null}
 
             {isWrap && itemData.oravotes?.length ? (
               <div>
-                <div className="d-flex justify-content-between my-2">
-                  <div className="mr-3">
+                <div className="d-flex flex-column my-2">
+                  <div className="mr-3 mb-2">
                     <b>Voters:</b>
                   </div>
-                  <div className={classes.trxId}>
-                    {itemData.oravotes.map((o: { transactionHash: string }) => (
-                      <div className={classes.trxId}>
-                        <a
-                          href={
-                            (isTokens
-                              ? process.env.REACT_APP_ETH_HISTORY_URL
-                              : process.env.REACT_APP_POLYGON_HISTORY_URL) +
-                            o.transactionHash
-                          }
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {o.transactionHash}
-                        </a>
-                      </div>
-                    ))}
+                  <div>
+                    {itemData.oravotes.map(
+                      (o: {
+                        transactionHash: string;
+                        returnValues: { account: string };
+                      }) => (
+                        <div className="d-flex flex-row">
+                          <div className="d-flex flex-row">
+                            <p className="mr-2">Oracle:</p>
+                            <a
+                              href={
+                                (isTokens
+                                  ? process.env.REACT_APP_ETH_ADDRESS_URL
+                                  : process.env.REACT_APP_POLYGON_ADDRESS_URL) +
+                                o.returnValues?.account
+                              }
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              {o.returnValues?.account.substring(0, 10)}...
+                            </a>
+                          </div>
+                          <div className="d-flex flex-row ml-4">
+                            <p className="mr-2">Trx:</p>
+                            <a
+                              href={
+                                (isTokens
+                                  ? process.env.REACT_APP_ETH_HISTORY_URL
+                                  : process.env.REACT_APP_POLYGON_HISTORY_URL) +
+                                o.transactionHash
+                              }
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              {o.transactionHash.substring(0, 10)}...
+                            </a>
+                          </div>
+                        </div>
+                      ),
+                    )}
                   </div>
                 </div>
+                <CommandComponent commandString={wrapCommand} show={isFailed} />
               </div>
             ) : null}
 
