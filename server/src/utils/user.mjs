@@ -14,17 +14,20 @@ export const getDetailedUsersInfo = async user => {
       const { publicKey, name } = fioWallet;
 
       const fioWalletObj = { publicKey, name };
+      fioWalletObj.balance = 'N/A';
 
       try {
         const balanceResponse = await fioApi.getPublicFioSDK().getFioBalance(publicKey);
         fioWalletObj.balance = await fioApi
           .sufToAmount(balanceResponse.balance)
           .toFixed(2);
-
-        fioWallets.push(fioWalletObj);
       } catch (err) {
+        // getFioBalance returns a 404 error if user doesn't have any transactions on a wallet
+        if (err.errorCode === 404) fioWalletObj.balance = '0.00';
         logger.error(err);
       }
+
+      fioWallets.push(fioWalletObj);
 
       try {
         const { fio_addresses, fio_domains } = await fioApi
