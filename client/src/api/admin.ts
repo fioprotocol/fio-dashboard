@@ -106,12 +106,16 @@ export default class Admin extends Base {
     return this.apiClient.post(`admin/partners/${data.id}`, data);
   }
 
-  usersList(limit: number, offset: number): Promise<UsersListResponse[]> {
-    return this.apiClient.get('admin/reg-users', { limit, offset });
-  }
-
-  usersDetailedList(): Promise<UsersDetailsResponse[]> {
-    return this.apiClient.get('admin/detailed-list-reg-users');
+  usersList(
+    limit = 0,
+    offset = 0,
+    includeMoreDetailedInfo?: boolean,
+  ): Promise<UsersListResponse> {
+    return this.apiClient.get('admin/reg-users', {
+      limit,
+      offset,
+      includeMoreDetailedInfo,
+    });
   }
 
   userDetails(id: string): Promise<UsersDetailsResponse> {

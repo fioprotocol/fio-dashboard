@@ -41,7 +41,7 @@ const AdminRegularUsersList: React.FC = () => {
       <Table className="table" striped={true}>
         <thead>
           <tr>
-            <th scope="col">N</th>
+            <th scope="col">#</th>
             <th scope="col">Date</th>
             <th scope="col">User</th>
             <th scope="col">Status</th>
