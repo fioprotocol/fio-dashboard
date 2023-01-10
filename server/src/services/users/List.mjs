@@ -1,6 +1,6 @@
 import Base from '../Base';
 
-import { AdminUser, User } from '../../models';
+import { AdminUser, ReferrerProfile, User } from '../../models';
 
 export default class UsersList extends Base {
   static get requiredPermissions() {
@@ -11,11 +11,25 @@ export default class UsersList extends Base {
     return {
       offset: 'string',
       limit: 'string',
+      includeMoreDetailedInfo: 'boolean',
     };
   }
 
-  async execute({ limit = 25, offset = 0 }) {
-    const users = await User.list(limit, offset);
+  async execute({ limit = 25, offset = 0, includeMoreDetailedInfo }) {
+    const include = [
+      { model: ReferrerProfile, as: 'refProfile', attributes: ['code'] },
+      {
+        model: ReferrerProfile,
+        as: 'affiliateProfile',
+        attributes: ['code', 'tpid'],
+      },
+    ];
+
+    const users = await User.list(
+      limit,
+      offset,
+      includeMoreDetailedInfo ? include : null,
+    );
     const usersCount = await User.usersCount();
 
     return {

@@ -152,31 +152,16 @@ export class User extends Base {
     return this.count();
   }
 
-  static list(limit = 25, offset = 0) {
-    return this.findAll({
+  static list(limit = 25, offset, include) {
+    const params = {
       order: [['createdAt', 'DESC']],
-      limit,
       offset,
-    });
-  }
+    };
 
-  static listAll(limit = 25, offset) {
-    return this.findAll({
-      order: [['createdAt', 'DESC']],
-      limit: limit ? limit : null,
-      offset,
-      include: [
-        { model: FreeAddress, as: 'freeAddresses' },
-        { model: Wallet, as: 'fioWallets' },
-        { model: ReferrerProfile, as: 'refProfile', attributes: ['code'] },
-        {
-          model: ReferrerProfile,
-          as: 'affiliateProfile',
-          attributes: ['code', 'tpid'],
-        },
-        { model: Order, as: 'orders' },
-      ],
-    });
+    if (limit && Number(limit) > 0) params.limit = limit;
+    if (include) params.include = include;
+
+    return this.findAll(params);
   }
 
   static async formatDateWithTimeZone(id, date = undefined) {

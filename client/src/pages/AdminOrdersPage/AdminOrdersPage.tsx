@@ -85,7 +85,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
         <Table className="table" striped={true}>
           <thead>
             <tr>
-              <th scope="col">N</th>
+              <th scope="col">#</th>
               <th scope="col">Date</th>
               <th scope="col">Order</th>
               <th scope="col">User</th>
