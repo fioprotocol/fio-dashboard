@@ -91,7 +91,10 @@ export type NotificationsUpdateResponse = Notification;
 export type RefProfileGetResponse = RefProfile;
 
 export type UsersDetailsResponse = UserDetails;
-export type UsersListResponse = User[];
+export type UsersListResponse = {
+  users: User[];
+  maxCount: number;
+};
 export type UsersShowResponse = User;
 
 export type OrdersCreateResponse = Order;

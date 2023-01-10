@@ -13,12 +13,11 @@ import usePagination from '../../hooks/usePagination';
 
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 
-import { DOMAIN_STATUS } from '../../constants/common';
-import { PURCHASE_RESULTS_STATUS_LABELS } from '../../constants/purchase';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { ROUTES } from '../../constants/routes';
 
 import { User } from '../../types';
+import { log } from '../../util/general';
 
 type UseContextProps = {
   loading: boolean;
@@ -58,32 +57,19 @@ export const useContext = (): UseContextProps => {
 
   const onExportCsv = useCallback(async () => {
     setLoading(true);
-    const usersList = await apis.admin.usersDetailedList();
+    const usersList = await apis.admin.usersList(0, 0, true);
 
     const preparedUsersListToCsv: {
-      email?: string;
-      created?: string;
-      status?: string;
-      refProfile?: string;
-      affiliate?: string;
-      timeZone?: string;
-      fioWalletName?: string;
-      fioWalletPublicKey?: string;
-      fioWaleltBalance?: number | string;
-      fioDomainName?: string;
-      fioDomainExpiration?: string;
-      fioDomainStatus?: string;
-      fioDomainWalletName?: string;
-      fioAddressName?: string;
-      fioAddressBundles?: number | string;
-      fioAddressWalletName?: string;
-      orderDate?: string;
-      orderId?: string;
-      orderAmount?: string;
-      orderStatus?: string;
+      number: number;
+      email: string;
+      created: string;
+      status: string;
+      refProfile: string;
+      affiliate: string;
+      timeZone: string;
     }[] = [];
 
-    usersList.forEach(user => {
+    usersList.users?.forEach((user, i) => {
       const {
         email,
         createdAt,
@@ -91,102 +77,41 @@ export const useContext = (): UseContextProps => {
         refProfile,
         affiliateProfile,
         timeZone,
-        fioWallets,
-        fioDomains,
-        fioAddresses,
-        orders,
       } = user;
 
-      const commonUserData = {
+      preparedUsersListToCsv.push({
+        number: i + 1,
         email,
         created: formatDateToLocale(createdAt),
         status,
         refProfile: refProfile?.code || 'No Ref profile',
         affiliate: affiliateProfile?.code || 'No Affiliate',
         timeZone,
-      };
-
-      const longestArray = [
-        fioWallets.length,
-        fioDomains.length,
-        fioAddresses.length,
-        orders.length,
-      ].sort((a, b) => b - a);
-
-      for (let i = 0; i < longestArray[0]; i++) {
-        const nestedUsersData = {
-          fioWalletName: fioWallets[i]?.name || '',
-          fioWalletPublicKey: fioWallets[i]?.publicKey || '',
-          fioWaleltBalance: fioWallets[i]?.balance || '',
-          fioDomainName: fioDomains[i]?.name || '',
-          fioDomainExpiration: fioDomains[i]?.expiration
-            ? formatDateToLocale(fioDomains[i].expiration.toString())
-            : '',
-          fioDomainStatus: fioDomains[i]
-            ? fioDomains[i].isPublic
-              ? DOMAIN_STATUS.PUBLIC
-              : DOMAIN_STATUS.PRIVATE
-            : '',
-          fioDomainWalletName: fioDomains[i]?.walletName || '',
-          fioAddressName: fioAddresses[i]?.name || '',
-          fioAddressBundles: fioAddresses[i]?.remaining || '',
-          fioAddressWalletName: fioAddresses[i]?.walletName || '',
-          orderDate: orders[i]?.createdAt
-            ? formatDateToLocale(orders[i].createdAt)
-            : '',
-          orderId: orders[i]?.number || '',
-          orderAmount: orders[i]?.total || '',
-          orderStatus: orders[i]?.status
-            ? PURCHASE_RESULTS_STATUS_LABELS[orders[i].status]
-            : '',
-        };
-        if (i === 0) {
-          preparedUsersListToCsv.push({
-            ...commonUserData,
-            ...nestedUsersData,
-          });
-        } else {
-          preparedUsersListToCsv.push({
-            ...nestedUsersData,
-            email: '',
-            created: '',
-            status: '',
-            refProfile: '',
-            affiliate: '',
-            timeZone: '',
-          });
-        }
-      }
+      });
     });
     const currentDate = new Date();
 
-    new ExportToCsv({
-      showLabels: true,
-      filename: `Users-List-${currentDate.getFullYear()}-${currentDate.getMonth() +
-        1}-${currentDate.getDate()}-${currentDate.getHours()}-${currentDate.getMinutes()}`,
-      headers: [
-        'Email',
-        'Created',
-        'Status',
-        'Ref Profile',
-        'Affiliate',
-        'TimeZone',
-        'FIO Wallet Name',
-        'FIO Wallet Public Key',
-        'FIO Wallet Balance',
-        'FIO Domain Name',
-        'FIO Domain Expiration',
-        'FIO Domain Status',
-        'FIO Domain Wallet Name',
-        'FIO Address Name',
-        'FIO Address Bundles',
-        'FIO Address Wallet Name',
-        'Order Date',
-        'Order ID',
-        'Order Amount',
-        'Order Status',
-      ],
-    }).generateCsv(preparedUsersListToCsv);
+    try {
+      new ExportToCsv({
+        showLabels: true,
+        filename: `Users-List-Total-${
+          usersList.maxCount
+        }-${currentDate.getFullYear()}-${currentDate.getMonth() +
+          1}-${currentDate.getDate()}-${currentDate.getHours()}-${currentDate.getMinutes()}`,
+        headers: [
+          '#',
+          'Email',
+          'Created',
+          'Status',
+          'Ref Profile',
+          'Affiliate',
+          'TimeZone',
+        ],
+      }).generateCsv(preparedUsersListToCsv);
+    } catch (err) {
+      log.error(err);
+    }
+
     setLoading(false);
   }, []);
 
