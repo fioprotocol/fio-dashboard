@@ -12,6 +12,11 @@ export class WrapStatusFioUnwrapNftsOravotes extends Base {
         obtId: { type: DT.STRING, allowNull: false },
         isComplete: { type: DT.BOOLEAN, defaultValue: false },
         data: { type: DT.JSON },
+        attempts: {
+          type: DT.INTEGER,
+          allowNull: false,
+          defaultValue: 0,
+        },
       },
       {
         sequelize,

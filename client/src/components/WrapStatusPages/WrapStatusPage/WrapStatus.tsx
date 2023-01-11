@@ -49,10 +49,8 @@ export const parseActionStatus = (
       return (
         data?.confirmData &&
         data?.oravotes &&
-        data.oravotes.length === DEFAULT_ORACLE_APPROVAL_COUNT &&
-        data.oravotes.every(
-          (oravote: { isComplete?: number }) => !!oravote.isComplete,
-        )
+        data.oravotes[0]?.isComplete &&
+        data.oravotes[0]?.voters?.length === DEFAULT_ORACLE_APPROVAL_COUNT
       );
     }
 
@@ -71,8 +69,12 @@ export const parseActionStatus = (
   } else {
     if (
       isTransactionIsOutOfTime(
-        item?.data?.action_trace?.block_time
-          ? item?.data?.action_trace?.block_time + 'Z'
+        isWrap
+          ? item?.data?.action_trace?.block_time
+            ? item?.data?.action_trace?.block_time + 'Z'
+            : null
+          : item?.confirmData?.[0]?.action_trace?.block_time
+          ? item?.confirmData?.[0]?.action_trace?.block_time + 'Z'
           : null,
       )
     ) {
