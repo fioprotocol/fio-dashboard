@@ -51,7 +51,8 @@ class EmailSender {
     try {
       const response = await this.sendMail(mailOptions);
 
-      if (response[0] == null) throw new Error('Email send error');
+      if (response[0] == null)
+        throw new Error('Email send error ' + JSON.stringify(response));
       if (response[0].status !== EMAIL_SENT_STATUS)
         throw new Error(JSON.stringify(response[0]));
 
