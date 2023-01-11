@@ -1,5 +1,6 @@
 import fs from 'fs';
 
+import Sequelize from 'sequelize';
 import Web3 from 'web3';
 import superagent from 'superagent';
 
@@ -30,6 +31,7 @@ const WRAPPED_DOMAIN_ABI = JSON.parse(
 const WRAPPED_TOKEN_ABI = JSON.parse(
   fs.readFileSync('server/static-files/abi_fio_token.json', 'utf8'),
 );
+const UNWRAP_RETRIES_LIMIT = 3;
 
 class WrapStatusJob extends CommonJob {
   constructor() {
@@ -372,6 +374,31 @@ class WrapStatusJob extends CommonJob {
         }
       };
 
+      const getUncompletedOracleVotes = async Model => {
+        const uncompletedUnwrapOravotes = await Model.findAll({
+          where: {
+            isComplete: {
+              [Sequelize.Op.is]: false,
+            },
+            attempts: {
+              [Sequelize.Op.lt]: UNWRAP_RETRIES_LIMIT,
+            },
+          },
+        });
+        const oracleVotesList = await Promise.all(
+          uncompletedUnwrapOravotes.map(async item => {
+            await Model.update(
+              { attempts: item.attempts + 1 },
+              { where: { id: item.id } },
+            );
+
+            return getFioOraclesVotes(item.id, 1);
+          }),
+        );
+
+        return oracleVotesList.flat();
+      };
+
       const getUnprocessedOracleVotes = async () => {
         const startPosition =
           ((await WrapStatusFioUnwrapNftsOravotes.count()) || 0) +
@@ -391,16 +418,26 @@ class WrapStatusJob extends CommonJob {
         return oracleVotesList;
       };
 
+      const uncompletedNftsResults = await getUncompletedOracleVotes(
+        WrapStatusFioUnwrapNftsOravotes,
+      );
+      const uncompletedTokensResults = await getUncompletedOracleVotes(
+        WrapStatusFioUnwrapTokensOravotes,
+      );
       const result = await getUnprocessedOracleVotes();
 
       const unwrapNfts = [];
       const unwrapTokens = [];
 
-      result.forEach(logItem => {
-        if (logItem.nftname && logItem.nftname.length > 1) {
-          unwrapNfts.push(logItem);
-        } else unwrapTokens.push(logItem);
-      });
+      [...uncompletedNftsResults, ...uncompletedTokensResults, ...result].forEach(
+        logItem => {
+          if (logItem.nftname && logItem.nftname.length > 1) {
+            unwrapNfts.push(logItem);
+          } else {
+            unwrapTokens.push(logItem);
+          }
+        },
+      );
 
       this.postMessage(logPrefix + `unwrapTokens result length: ${unwrapTokens.length}`);
       this.postMessage(logPrefix + `unwrapNfts result length: ${unwrapNfts.length}`);
