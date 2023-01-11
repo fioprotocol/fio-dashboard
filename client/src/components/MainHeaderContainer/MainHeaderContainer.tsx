@@ -2,7 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 
-import SiteLink from '../MainHeader/components/SiteLink';
+import { SiteLink } from '../MainHeader/components/SiteLink/SiteLink';
 
 import { ROUTES } from '../../constants/routes';
 

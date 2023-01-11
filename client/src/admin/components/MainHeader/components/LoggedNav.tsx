@@ -2,7 +2,7 @@ import React from 'react';
 import { Nav } from 'react-bootstrap';
 
 import { LoggedActionButtons } from './ActionButtons';
-import SideMenu from '../../../../components/MainHeader/components/SideMenu';
+import { SideMenu } from '../../../../components/MainHeader/components/SideMenu/SideMenu';
 
 import { useCheckIfDesktop } from '../../../../screenType';
 

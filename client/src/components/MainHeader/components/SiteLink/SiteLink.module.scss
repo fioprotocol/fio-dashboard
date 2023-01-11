@@ -1,0 +1,55 @@
+@import '../../../../assets/styles/colors';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.link {
+  display: flex;
+  align-items: center;
+  color: $baltic-sea;
+  cursor: pointer;
+
+  & a, .arrow {
+    color: inherit;
+  }
+
+  & a {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    line-height: 1em;
+  }
+
+  &.siteLink {
+    width: 100%;
+    margin-left: 2rem;
+  }
+
+  .arrow {
+    position: relative;
+    transition: 0.2s ease-in-out;
+    transform: translateX(0);
+  }
+
+  &:hover .arrow {
+    transform: translateX(-4px);
+  }
+}
+
+@include lg {
+  .link {
+    &.siteLink {
+      margin-left: 5rem;
+    }
+  }
+}
+
+@include sm {
+  .link {
+    font-size: 13px;
+
+    a {
+      display: flex;
+      align-items: center;
+    }
+  }
+}

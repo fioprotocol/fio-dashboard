@@ -119,16 +119,15 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
         <Nav.Link
           as={Link}
           to={ROUTES.SETTINGS}
-          className={classnames(classes.navItem, 'text-white')}
+          className={classes.navItem}
           onClick={closeMenu}
         >
-          <div className={classnames(classes.settings)}>
-            <FontAwesomeIcon
-              icon="cog"
-              className={classnames(classes.settingsIcon)}
-            />
+          <div className={classes.settings}>
+            <FontAwesomeIcon icon="cog" className={classes.settingsIcon} />
           </div>
-          <div className="ml-3">Settings</div>
+          <div className={classnames(classes.settingsText, 'ml-3')}>
+            Settings
+          </div>
         </Nav.Link>
       )}
 
