@@ -67,7 +67,6 @@ const PinConfirmModal: React.FC<PinConfirmModalProps> = props => {
       <div className={classes.form}>
         <FormHeader
           title={`Confirm ${TITLES[pinConfirmData.action] || 'to continue'}`}
-          isDoubleColor
           subtitle="Enter your 6 digit PIN to confirm this transaction"
           isSubNarrow
         />

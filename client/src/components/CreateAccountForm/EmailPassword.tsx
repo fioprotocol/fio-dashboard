@@ -157,7 +157,6 @@ export default class EmailPassword extends Component<Props, LocalState> {
       <>
         <FormHeader
           title="Create Your FIO Account"
-          isDoubleColor
           header="Set 1 of 2"
           subtitle="Simply choose a username and password. We will use these to encrypt your account."
         />

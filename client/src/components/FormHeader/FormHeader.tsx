@@ -5,24 +5,14 @@ import classes from './FormHeader.module.scss';
 
 type Props = {
   title: string;
-  titleBluePart?: string;
   subtitle: string | React.ReactNode;
-  isDoubleColor?: boolean;
   header?: string | React.ReactElement;
   isSubNarrow?: boolean;
 };
 
 const FormHeader: React.FC<Props> = props => {
-  const {
-    title,
-    titleBluePart = '',
-    subtitle,
-    isDoubleColor,
-    header,
-    isSubNarrow,
-  } = props;
+  const { header, isSubNarrow, title, subtitle } = props;
 
-  const firstWord = isDoubleColor && `${title}`.split(' ')[0];
   return (
     <div
       className={classnames(
@@ -31,19 +21,7 @@ const FormHeader: React.FC<Props> = props => {
       )}
     >
       {header && <div className={classes.header}>{header}</div>}
-      <h4
-        className={classnames(
-          isDoubleColor && classes.colored,
-          classes.baseColored,
-        )}
-        data-highlightword={isDoubleColor && firstWord}
-      >
-        {title}
-        <span className={classnames(classes.baseColored, classes.colored)}>
-          {' '}
-          {titleBluePart}
-        </span>
-      </h4>
+      <h4 className={classes.baseColored}>{title}</h4>
       {subtitle && (
         <div
           className={classnames(
