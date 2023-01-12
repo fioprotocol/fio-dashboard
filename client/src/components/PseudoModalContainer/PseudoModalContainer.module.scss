@@ -9,7 +9,7 @@
   position: relative;
   border-radius: 12px;
   width: 100%;
-  color: $dark-jungle-green;
+  color: $black;
 
   .actionContainer {
     .withClose {
@@ -31,7 +31,7 @@
         margin-top: 1rem;
         margin-bottom: 0.5rem;
         font-size: 1.375em;
-        color: $dark-jungle-green;
+        color: $black;
         @include proxima-nova-bold;
       }
     }

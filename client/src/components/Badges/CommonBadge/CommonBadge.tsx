@@ -12,10 +12,12 @@ type Props = {
   isRose?: boolean;
   isRed?: boolean;
   children: React.ReactNode;
+  hasRoundBorders?: boolean;
 };
 
 const CommonBadge: React.FC<Props> = props => {
   const {
+    hasRoundBorders,
     isBlack,
     children,
     isBlue,
@@ -29,6 +31,7 @@ const CommonBadge: React.FC<Props> = props => {
     <div
       className={classnames(
         classes.container,
+        hasRoundBorders && classes.hasRoundBorders,
         isBlack && classes.isBlack,
         isBlue && classes.isBlue,
         isBlueGreen && classes.isBlueGreen,

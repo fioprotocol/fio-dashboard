@@ -24,23 +24,38 @@ export const BANNER_DATA = {
   },
 };
 
+export const CTA_BADGE_TYPE = {
+  ADDRESS: 'address',
+  DOMAIN: 'domain',
+  TOKENS: 'tokens',
+};
+
 export const CTA_BADGE = {
-  address: {
+  [CTA_BADGE_TYPE.ADDRESS]: {
     link: ROUTES.FIO_ADDRESSES_SELECTION,
     button: 'Register FIO Crypto Handle',
     title: 'Need an Additional FIO Crypto Handle?',
     text: 'Add a FIO Crypto Handle to a custom domain.',
-    color: colors['main-background'],
+    color: colors['baltic-sea'],
   },
-  domain: {
+  [CTA_BADGE_TYPE.DOMAIN]: {
     link: ROUTES.FIO_DOMAINS_SELECTION,
     button: 'Register FIO Domain',
     title: 'Need another domain?',
     text:
       'Want to register a FIO Crypto Handle or FIO Crypto Handles with a custom domain?',
-    color: colors.cyan,
+    color: colors['dark-slate-blue'],
   },
-};
+  [CTA_BADGE_TYPE.TOKENS]: {
+    link: ROUTES.FIO_TOKENS_GET,
+    button: 'Get Now',
+    title: 'Need to Get FIO Tokens?',
+    text:
+      'FIO tokens are used to pay fees for certain transaction types such as FIO Domain and Crypto Handle registrations or adding bundles.',
+    color: colors['light-indigo'],
+    ctaText: 'Get FIO Token from one of our partners today.',
+  },
+} as const;
 
 export const PAGE_NAME = {
   ADDRESS: 'address',

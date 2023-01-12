@@ -1,6 +1,6 @@
 import React from 'react';
 
-import logoAnimation from '../../CreateAccountForm/logo-animation.json';
+import logoAnimation from './logo-animation.json';
 
 type Props = {
   wrap?: boolean;

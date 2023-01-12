@@ -3,7 +3,7 @@
 @import '../../../assets/styles/mediaQueriesMixings.scss';
 
 .dropdown {
-  color: $dark-jungle-green;
+  color: $baltic-sea;
 
   @include sm {
     max-width: 375px;
@@ -83,7 +83,7 @@
       text-align: left;
       font-size: 14px;
       margin: 0;
-      color: $dark-jungle-green;
+      color: $baltic-sea;
     }
 
     .prefixContainer {

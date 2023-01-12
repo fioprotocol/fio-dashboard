@@ -80,7 +80,6 @@ const FormContainer: React.FC<FormContainerProps> = props => {
             hasLowHeight={true}
             text={buttonText}
             hasSmallText={true}
-            variant="primary"
           />
         </a>
       );
@@ -95,7 +94,6 @@ const FormContainer: React.FC<FormContainerProps> = props => {
           hasLowHeight={true}
           text={buttonText}
           hasSmallText={true}
-          variant="primary"
         />
       </Link>
     );

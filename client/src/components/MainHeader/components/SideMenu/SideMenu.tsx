@@ -1,16 +1,17 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import Menu from '../../Menu';
+import Menu from '../../../Menu';
 
-import classes from '../MainHeader.module.scss';
+import classes from './SideMenu.module.scss';
 
 type SideMenuProps = {
   children: React.ReactNode;
   isMenuOpen: boolean;
   toggleMenuOpen: (openState: boolean) => void;
 };
-const SideMenu: React.FC<SideMenuProps> = props => {
+
+export const SideMenu: React.FC<SideMenuProps> = props => {
   const { children, isMenuOpen, toggleMenuOpen } = props;
   return (
     <>
@@ -29,5 +30,3 @@ const SideMenu: React.FC<SideMenuProps> = props => {
     </>
   );
 };
-
-export default SideMenu;

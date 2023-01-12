@@ -5,7 +5,7 @@
 .button {
   position: relative;
   font-size: 1em;
-  border-radius: 7px;
+  border-radius: 100px;
   padding: 15px;
   margin-top: 4px;
   margin-bottom: 0;
@@ -39,12 +39,12 @@
   }
 
   &.defaultColor {
-    background-color: $violet;
-    border-color: $violet;
+    background-color: $light-indigo;
+    border-color: $light-indigo;
 
     &:hover {
-      background-color: $clear-blue;
-      border-color: $clear-blue;
+      background-color: $iris;
+      border-color: $iris;
     }
   }
 

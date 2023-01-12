@@ -10,7 +10,7 @@
   overflow: hidden;
 
   .dark {
-    background-color: $black !important;
+    background-color: $baltic-sea !important;
     color: $white !important;
   }
 
@@ -84,7 +84,7 @@
   width: 100%;
 
   &.blackLight, &.blackWhite {
-    color: $dark-jungle-green;
+    color: $baltic-sea;
   }
 
   b {
@@ -98,7 +98,7 @@
   color: $gray-main;
 
   &.blackLight, &.blackWhite {
-    color: $dark-jungle-green;
+    color: $baltic-sea;
   }
 
   &.withBottomMargin {
@@ -113,10 +113,10 @@
 .additionalSubInfo {
   font-size: 0.875em;;
   margin: 10px 20px;
-  color: $black;
+  color: $baltic-sea;
 
   span {
-    color: $dark-jungle-green;
+    color: $baltic-sea;
   }
 }
 
@@ -151,6 +151,7 @@
       margin: 0;
       padding: 0;
       font-size: 14px;
+      border-radius: 100px;
 
       &:focus {
         outline: none !important;
@@ -198,7 +199,7 @@
   .switchIcon {
     margin: 0 4px;
     height: 18px;
-    color: $black;
+    color: $baltic-sea;
     cursor: pointer;
     @media only screen and (max-width: 575px) {
       margin-left: auto;
@@ -336,10 +337,10 @@
 
     &.blackLight, &.blackWhite {
       border-color: transparent;
-      color: $dark-jungle-green;
+      color: $baltic-sea;
 
       input {
-        color: $dark-jungle-green;
+        color: $baltic-sea;
 
         &::placeholder {
           color: $dove-gray;
@@ -373,7 +374,7 @@
   .pinInput {
     opacity: 0;
     width: 100%;
-    color: black
+    color: $baltic-sea;
   }
 
   .dotsContainer{
@@ -428,7 +429,7 @@
   background-color: $light-gray;
   border-radius: 7px;
   box-shadow: 0 0 8px 0 rgba(0,0,0,0.11);
-  color: $dark-jungle-green;
+  color: $baltic-sea;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -476,7 +477,7 @@
 
   .unchecked, .checked {
     font-size: 22.87px;
-    color: $dark-jungle-green;
+    color: $baltic-sea;
 
     &.blackWhite {
       color: $white;
@@ -490,7 +491,7 @@
   .label {
     margin: 2px 0 0 10px;
     font-size: 0.875em;
-    color: $dark-jungle-green;
+    color: $baltic-sea;
     @include proxima-nova-semibold;
 
     &.blackWhite {
@@ -582,7 +583,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: $black;
+    background-color: $baltic-sea;
     border-radius: 12px;
     color: $white;
     width: 100%;

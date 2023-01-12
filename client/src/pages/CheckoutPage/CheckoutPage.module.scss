@@ -4,6 +4,8 @@
 
 .container {
   margin-top: 1.875rem;
+  display: flex;
+  flex-direction: column;
 
   .details {
     margin-bottom: 1.875rem;
@@ -39,7 +41,7 @@
       display: grid;
       grid-template-columns: 110px auto;
       width: 100%;
-      color: $black;
+      color: $baltic-sea;
 
       .name {
         word-break: break-all;

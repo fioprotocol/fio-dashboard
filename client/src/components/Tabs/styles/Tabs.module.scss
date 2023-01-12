@@ -12,7 +12,7 @@ $tabMargin: 40px;
 
     .tabItem {
       font-size: 0.875em;
-      color: $dark-jungle-green;
+      color: $baltic-sea;
       padding: 0 0 9px 0;
       margin-right: $tabMargin;
 
@@ -20,7 +20,7 @@ $tabMargin: 40px;
         position: absolute;
         width: calc(100% - #{$tabMargin});
         height: 10px;
-        background-color: $azure-radiance;
+        background-color: $light-indigo;
         border-radius: 0 0px 10px 10px;
       }
     }

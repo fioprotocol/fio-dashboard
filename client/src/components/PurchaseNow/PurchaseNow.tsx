@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Ecc } from '@fioprotocol/fiojs';
+
+import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -23,8 +23,6 @@ import { waitForEdgeAccountStop } from '../../util/edge';
 
 import { PurchaseNowTypes } from './types';
 import { RegistrationResult } from '../../types';
-
-import classes from './PurchaseNow.module.scss';
 
 const MIN_WAIT_TIME = 3000;
 
@@ -176,16 +174,11 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   };
 
   return (
-    <Button
+    <SubmitButton
       onClick={purchase}
-      className={classes.button}
       disabled={loading || disabled}
-    >
-      {isWaiting && loading ? (
-        <FontAwesomeIcon icon="spinner" spin />
-      ) : (
-        'Purchase Now'
-      )}
-    </Button>
+      loading={isWaiting || loading}
+      text="Purchase Now"
+    />
   );
 };

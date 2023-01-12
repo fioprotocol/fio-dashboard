@@ -12,6 +12,7 @@ import Link from '../Link/Link';
 import Input from '../Input/Input';
 import FormHeader from '../FormHeader/FormHeader';
 import PageTitle from '../PageTitle/PageTitle';
+import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
@@ -191,11 +192,7 @@ const UsernamePassword: React.FC<Props> = props => {
           </>
         }
       />
-      <Button
-        variant="primary"
-        className={classes.button}
-        onClick={onForgotPassClose}
-      >
+      <Button className={classes.button} onClick={onForgotPassClose}>
         Ok
       </Button>
     </div>
@@ -224,19 +221,13 @@ const UsernamePassword: React.FC<Props> = props => {
           disabled={edgeAuthLoading}
         />
         <OnChange name="password">{handleChange}</OnChange>
-        <Button
-          type="submit"
-          variant="primary"
-          className="w-100"
+        <SubmitButton
           onClick={login}
           disabled={edgeAuthLoading}
-        >
-          {edgeAuthLoading ? (
-            <FontAwesomeIcon icon="spinner" spin />
-          ) : (
-            'Sign In'
-          )}
-        </Button>
+          text="Sign In"
+          loading={edgeAuthLoading}
+          withBottomMargin
+        />
         <Link
           classname={classes.forgotPasswordLink}
           to=""

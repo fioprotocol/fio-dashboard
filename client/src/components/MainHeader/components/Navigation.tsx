@@ -1,7 +1,7 @@
 import React from 'react';
 
-import RegularNav from './RegularNav';
-import LoggedNav from './LoggedNav';
+import { LoggedNav } from './LoggedNav';
+import { RegularNav } from './RegularNav';
 
 import { NavigationProps } from '../types';
 

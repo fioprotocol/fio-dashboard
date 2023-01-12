@@ -29,9 +29,16 @@
       align-items: center;
       font-size: 0.8125em;
       line-height: 0;
-      border-radius: 7px;
+      border-radius: 100px;
       padding: 0 12px;
       @include sf-pro-display-thin;
+      background-color: $light-indigo;
+      border-color: $light-indigo;
+
+      &:hover {
+        background-color: $iris;
+        border-color: $iris;
+      }
     }
     .middleButton {
       margin: 20px 20px 0;
@@ -65,7 +72,7 @@
 
 .subTitle {
   font-size: 0.875em;
-  color: $dark-jungle-green;
+  color: $baltic-sea;
   margin-top: 20px;
   margin-bottom: 0;
   @include proxima-nova-semibold;

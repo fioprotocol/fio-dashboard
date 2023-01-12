@@ -12,7 +12,7 @@
   .pinInput {
     opacity: 0;
     width: 100%;
-    color: black
+    color: $baltic-sea;
   }
 
   .dotsContainer{
@@ -26,13 +26,13 @@
     .dotEmpty {
       height: 25px;
       width: 25px;
-      border: 1px solid $violet;
+      border: 1px solid $light-indigo;
       border-radius: 50%;
       background: none;
       color: transparent;
 
       &.dotFull {
-        background-color: $violet;
+        background-color: $light-indigo;
       }
       &.dotError {
         background-color: $warn-red;

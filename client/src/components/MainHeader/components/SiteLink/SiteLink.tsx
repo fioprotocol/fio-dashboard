@@ -2,26 +2,29 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import { REF_PROFILE_TYPE } from '../../../constants/common';
+import { REF_PROFILE_TYPE } from '../../../../constants/common';
 
-import { RefProfile } from '../../../types';
+import { RefProfile } from '../../../../types';
 
-import classes from '../MainHeader.module.scss';
+import classes from './SiteLink.module.scss';
+
+const DEFAULT_LINK = 'https://fioprotocol.io/';
+const DEFAULT_LINK_TEXT = 'Go to fioprotocol.io';
 
 type SiteLinkProps = {
   hideSiteLink?: boolean;
   refProfileInfo?: RefProfile;
 };
 
-const SiteLink: React.FC<SiteLinkProps> = props => {
+export const SiteLink: React.FC<SiteLinkProps> = props => {
   const { hideSiteLink, refProfileInfo } = props;
 
   if (refProfileInfo?.type === REF_PROFILE_TYPE.AFFILIATE) {
     return <div className={classes.link} />;
   }
 
-  let link = 'https://fioprotocol.io/';
-  let text = 'Go to fioprotocol.io';
+  let link = DEFAULT_LINK;
+  let text = DEFAULT_LINK_TEXT;
   let target = '_blank';
 
   if (refProfileInfo != null && refProfileInfo.code) {
@@ -34,20 +37,13 @@ const SiteLink: React.FC<SiteLinkProps> = props => {
 
   return (
     <div className={classnames(classes.link, classes.siteLink)}>
-      <a
-        href={link}
-        target={target}
-        rel="noopener noreferrer"
-        className="text-white"
-      >
+      <a href={link} target={target} rel="noopener noreferrer">
         <FontAwesomeIcon
           icon="arrow-left"
-          className={classnames(classes.arrow, 'mr-2', 'text-white')}
+          className={classnames(classes.arrow, 'mr-2')}
         />
         {text}
       </a>
     </div>
   );
 };
-
-export default SiteLink;

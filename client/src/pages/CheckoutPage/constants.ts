@@ -16,7 +16,7 @@ const APPEARANCE_STRIPE_OPTIONS: Appearance = {
   theme: 'none',
 
   variables: {
-    colorText: jsColors['dark-jungle-green'],
+    colorText: jsColors['baltic-sea'],
     borderRadius: '12px',
   },
 
