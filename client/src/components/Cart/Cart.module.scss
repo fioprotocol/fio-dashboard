@@ -40,6 +40,7 @@
 
     .title {
       margin: 0 0 0 1.25rem;
+      color: $black;
     }
   }
 
@@ -67,7 +68,7 @@
     .ctaText {
       margin-left: 0.625rem;
       font-size: 0.9375em;
-      color: $black;
+      color: $baltic-sea;
       margin-bottom: 0;
     }
   }
@@ -115,7 +116,7 @@
   }
 
   .icon {
-    color: $black;
+    color: $baltic-sea;
     font-size: 1.25rem;
     cursor: pointer;
     transition: 0.3s ease-in-out;
@@ -131,10 +132,12 @@
   position: absolute;
   top: 60px;
   margin-left: -1.875rem;
+  color: $baltic-sea;
 }
 
 .amountSubtitle {
   @include proxima-nova-regular;
+  color: $black;
 }
 
 .total {
@@ -213,7 +216,7 @@
       @include sf-pro-display-medium;
       margin: 0 auto;
       font-size: 13px;
-      color: $black;
+      color: $baltic-sea;
       text-align: left;
       padding: 0.9375rem 1.25rem;
 

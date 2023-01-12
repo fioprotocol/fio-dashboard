@@ -81,7 +81,7 @@
     .settingsIcon {
       width: 14px;
       height: 14px;
-      color: $black;
+      color: $baltic-sea;
       transition: transform 0.4s ease-in-out;
     }
   }
@@ -91,7 +91,7 @@
   }
 
   &:hover {
-    color: $dark-jungle-green;
+    color: $baltic-sea;
   }
 
   &:hover .settings .settingsIcon {
