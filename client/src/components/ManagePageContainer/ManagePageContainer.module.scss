@@ -37,10 +37,16 @@
     margin-bottom: 0;
   }
 
+  .ctaText {
+    margin-top: 1em;
+    @include proxima-nova-semibold;
+  }
+
   .link {
     display: flex;
 
     .button {
+      min-width: 70%;
       background-color: transparent;
       border-color: $white;
       min-height: 40px;

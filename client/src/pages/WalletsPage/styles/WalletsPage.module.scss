@@ -63,18 +63,13 @@
   font-size: 13px;
 }
 
-@include sm {
-  .totalBalanceContainer {
-    margin: 0 20px;
-  }
+.totalBalanceContainer {
+  margin: 0 20px 30px;
 }
 
 @include md {
   .container {
     padding: 30px 20px;
-  }
-  .totalBalanceContainer {
-    margin: 0 20px;
   }
 }
 
@@ -92,7 +87,6 @@
   .totalBalanceContainer {
     width: 100%;
     max-width: 365px;
-    margin: 0 20px;
   }
 }
 
