@@ -4,6 +4,8 @@
 
 .container {
   margin-top: 1.875rem;
+  display: flex;
+  flex-direction: column;
 
   .details {
     margin-bottom: 1.875rem;

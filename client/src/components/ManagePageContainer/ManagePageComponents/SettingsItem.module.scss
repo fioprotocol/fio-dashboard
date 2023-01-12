@@ -55,10 +55,16 @@
       align-items: center;
       height: 54px;
       padding: 20px;
-      border-radius: 7px;
+      border-radius: 100px;
       font-size: 0.875em;
       margin-bottom: 20px;
       @include sf-pro-display-medium;
+      background-color: $light-indigo;
+      border-color: $light-indigo;
+      &:hover {
+        background-color: $iris;
+        border-color: $iris;
+      }
     }
   }
 }

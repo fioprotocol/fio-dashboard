@@ -26,4 +26,8 @@
   &.isRed {
     background-color: $faded-red;
   }
+
+  &.hasRoundBorders {
+    border-radius: 100px;
+  }
 }

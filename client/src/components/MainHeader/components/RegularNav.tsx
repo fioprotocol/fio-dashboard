@@ -38,7 +38,8 @@ type DefaultNavItemProps = { isDesktop: boolean } & RegularNavProps;
 type NavItemsProps = { onCartClick: () => void } & DefaultNavItemProps;
 
 const ActionButtonsNavItem: React.FC<DefaultNavItemProps> = props => {
-  if (props.isDesktop) return <ActionButtons {...props} />;
+  if (props.isDesktop)
+    return <ActionButtons {...props} hasVioletColor={true} />;
 
   return (
     <SideMenu {...props}>

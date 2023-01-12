@@ -91,8 +91,9 @@
 .actionButton {
   width: 100%;
   min-width: 144px;
-  background-color: $violet;
-  border-radius: 7px;
+  background-color: $light-indigo;
+  border-color: $light-indigo;
+  border-radius: 100px;
   text-align: left;
   flex-direction: row;
   display: flex;
@@ -101,6 +102,11 @@
   min-height: 36px;
   @include sf-pro-display-thin;
   font-size: 13px;
+  
+  &:hover {
+    background-color: $iris;
+    border-color: $iris;
+  }
 }
 
 @include md {

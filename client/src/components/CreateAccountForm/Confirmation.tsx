@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Button, Col, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
 import FormHeader from '../FormHeader/FormHeader';
+import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 import { FormValues } from './types';
 
@@ -89,7 +90,7 @@ export default class Confirmation extends Component<Props, LocalState> {
           </div>
         </div>
 
-        <Button type="submit">CREATE ACCOUNT</Button>
+        <SubmitButton text="CREATE ACCOUNT" withBottomMargin />
       </>
     );
   }

@@ -38,7 +38,7 @@ export const OrderItem: React.FC<OrderItemProps> = props => {
       </div>
       <div className={classes.tableCol}>{paidWith}</div>
       <div className={classes.tableCol}>
-        <CommonBadge {...statusColor}>
+        <CommonBadge {...statusColor} hasRoundBorders>
           <span className={classes.status}>{statusTitle}</span>
         </CommonBadge>
       </div>

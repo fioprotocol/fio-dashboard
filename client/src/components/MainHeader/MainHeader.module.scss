@@ -23,6 +23,22 @@
           width: 100%;
           margin-right: 0 !important;
           height: 40px;
+          background-color: $light-indigo;
+          border: 1px solid $light-indigo;
+          border-radius: 100px;
+
+          &.hasTransparentBackground {
+            background-color: transparent;
+
+            &:hover {
+              background-color: $light-indigo;
+            }
+          }
+          
+          &:hover {
+            background-color: $iris;
+            border-color: $iris;
+          }
         }
       }
 
@@ -115,6 +131,32 @@
   font-size: 13px;
 }
 
+.button {
+  background-color: $light-indigo;
+  border: 1px solid $light-indigo;
+  border-radius: 100px;
+
+  &.hasVioletColor {
+    color: $light-indigo;
+    &:hover {
+      color: $white;
+    }
+  }
+
+  &.hasTransparentBackground {
+    background-color: transparent;
+
+    &:hover {
+      background-color: $light-indigo;
+    }
+  }
+
+  &:hover {
+    background-color: $iris;
+    border-color: $iris;
+  }
+}
+
 .vertical {
   width: 1px;
   height: 20px;
@@ -141,6 +183,14 @@
         width: 100%;
         margin-right: 0 !important;
         height: 40px;
+        background-color: $light-indigo;
+        border: none;
+        border-radius: 100px;
+
+        &:hover {
+          background-color: $iris;
+          border-color: $iris;
+        }
       }
     }
   }

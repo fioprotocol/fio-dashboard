@@ -35,7 +35,14 @@
   .button {
     width: 189px;
     height: 40px;
-    border-radius: 7px;
+    border-radius: 100px;
+    background-color: $light-indigo;
+    border-color: $light-indigo;
+
+    &:hover {
+      background-color: $iris;
+      border-color: $iris;
+    }
 
     a {
       width: 100%;
