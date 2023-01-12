@@ -172,3 +172,32 @@ export type ApisResponse = AccountGetWalletsResponse &
   PaymentCreateResponse &
   ChainCodesListResults &
   UserOrdersListResponse;
+
+export type AdminDomain = {
+  id?: string | number;
+  name: string;
+  rank: number;
+  isPremium: boolean;
+  isDashboardDomain: boolean;
+};
+
+export type SearchTerm = {
+  id?: string | number;
+  term: string;
+  rank: number;
+  isPrefix: boolean;
+};
+
+export type UsernameOnDomain = {
+  id?: string | number;
+  username: string;
+  rank: number;
+};
+
+export type AdminDefaults = {
+  availableDomains: AdminDomain[];
+  dashboardDomains: AdminDomain[];
+  searchPrefixes: SearchTerm[];
+  searchPostfixes: SearchTerm[];
+  usernamesOnCustomDomains: UsernameOnDomain[];
+};

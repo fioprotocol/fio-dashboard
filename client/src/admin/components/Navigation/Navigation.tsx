@@ -18,6 +18,7 @@ const adminNavItems: string[] = [
   LINKS.ADMIN_REGULAR_USERS,
   LINKS.ADMIN_USERS,
   LINKS.ADMIN_PROFILE,
+  LINKS.ADMIN_DEFAULTS,
 ];
 
 type Props = {

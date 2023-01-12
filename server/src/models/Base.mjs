@@ -6,6 +6,7 @@ export default class Base extends Sequelize.Model {
     return this.findOne({ where });
   }
 
+
   json(fields = this.constructor.attrs()) {
     return pick(this.toJSON(), fields);
   }
