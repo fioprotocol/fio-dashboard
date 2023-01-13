@@ -1,0 +1,91 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  padding: 100px 154px;
+  background: $light-indigo;
+
+  .title {
+    margin-bottom: 50px;
+    font-size: 3rem;
+    line-height: 1;
+    color: $white;
+    @include comfortaa-bold;
+    text-align: center;
+  }
+
+  .grid {
+    display: grid;
+    grid-gap: 40px;
+    grid-template-columns: 1fr 1fr 1fr;
+    margin-bottom: 50px;
+  }
+
+  .domain {
+    background: $white;
+    padding: 30px;
+    border-radius: 24px;
+
+    .domainTitle {
+      margin: 15px 0 30px;
+      text-align: center;
+      font-size: 2rem;
+      line-height: 1;
+      @include proxima-nova-bold;
+    }
+
+    .domainContainer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .domainPrice {
+        display: flex;
+        flex-direction: column;
+        font-size: 1rem;
+        line-height: 1.25rem;
+        color: $baltic-sea;
+
+        .domainPriceLabel {
+          @include proxima-nova-thin;
+        }
+
+        .domainPriceValue {
+          @include proxima-nova-semibold;
+        }
+      }
+    }
+  }
+}
+
+@include sm {
+  .container {
+    padding: 70px 20px;
+
+    .title {
+      font-size: 1.875rem;
+    }
+
+    .grid {
+      grid-gap: 20px;
+      grid-template-columns: 1fr;
+    }
+
+    .domain {
+      padding: 20px;
+
+      .domainTitle {
+        margin: 15px 0 20px;
+        font-size: 1.5625rem;
+      }
+
+      .domainContainer {
+        .domainPrice {
+          flex-direction: row;
+          gap: 5px;
+        }
+      }
+    }
+  }
+}

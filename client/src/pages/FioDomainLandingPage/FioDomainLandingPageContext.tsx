@@ -1,8 +1,14 @@
 import { useHistory } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import { ROUTES } from '../../constants/routes';
-
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+
+import {
+  prices as pricesSelector,
+  roe as roeSelector,
+} from '../../redux/registrations/selectors';
+import { convertFioPrices } from '../../util/prices';
 
 import { FormValues } from '../../components/FioDomainWidget/types';
 
@@ -18,5 +24,9 @@ export const useContext = () => {
     history.push(domainSelectionRoute);
   };
 
-  return { onSubmit };
+  const roe = useSelector(roeSelector);
+  const prices = useSelector(pricesSelector);
+  const domainPrice = convertFioPrices(prices.nativeFio.domain, roe).usdc;
+
+  return { onSubmit, domainPrice };
 };

@@ -1,0 +1,60 @@
+import React from 'react';
+
+import classes from './WidelyAdoptedSection.module.scss';
+
+import aaxSrc from '../../assets/images/ecosystem/aax.svg';
+import airnftsSrc from '../../assets/images/ecosystem/airnfts.svg';
+import bitcoinComSrc from '../../assets/images/ecosystem/bitcoin.com.svg';
+import changellySrc from '../../assets/images/ecosystem/changelly.svg';
+import coinomiSrc from '../../assets/images/ecosystem/coinomi.svg';
+import dopamineSrc from '../../assets/images/ecosystem/dopamine.svg';
+import edgeSrc from '../../assets/images/ecosystem/edge.svg';
+import guardaSrc from '../../assets/images/ecosystem/guarda.svg';
+import liquidSrc from '../../assets/images/ecosystem/liquid.svg';
+import operaSrc from '../../assets/images/ecosystem/opera.svg';
+import trustwalletSrc from '../../assets/images/ecosystem/trustwallet.svg';
+import whitebitSrc from '../../assets/images/ecosystem/whitebit.svg';
+import SubmitButton from '../common/SubmitButton/SubmitButton';
+
+export const WidelyAdoptedSection: React.FC = () => {
+  return (
+    <div className={classes.container}>
+      <div className={classes.title}>Widely Adopted!</div>
+
+      <div className={classes.descriptionContainer}>
+        <div className={classes.description}>
+          <span className="boldText">900,000 +</span> - Handles registered
+        </div>
+        <div className={classes.description}>
+          <span className="boldText">100 +</span> - Wallets & exchanges use it
+        </div>
+      </div>
+
+      <div className={classes.iconsGrid}>
+        <img src={aaxSrc} alt="AAX" />
+        <img src={airnftsSrc} alt="AirNFTs" />
+        <img src={bitcoinComSrc} alt="bitcoin.com" />
+        <img src={changellySrc} alt="Changelly" />
+        <img src={coinomiSrc} alt="Coinomi" />
+        <img src={dopamineSrc} alt="Dopamine" />
+        <img src={edgeSrc} alt="Edge" />
+        <img src={guardaSrc} alt="Guarda Wallet" />
+        <img src={liquidSrc} alt="Liquid" />
+        <img src={operaSrc} alt="Opera" />
+        <img src={trustwalletSrc} alt="Trust Wallet" />
+        <img src={whitebitSrc} alt="WhiteBIT" />
+      </div>
+
+      <div className={classes.buttonWrapper}>
+        <a href="https://www.fioprotocol.io/ecosystem">
+          <SubmitButton
+            text="SHOW MORE"
+            hasLowHeight
+            hasSmallText
+            withoutMargin
+          />
+        </a>
+      </div>
+    </div>
+  );
+};

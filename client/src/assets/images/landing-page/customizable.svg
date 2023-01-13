@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="402px" height="177px" viewBox="0 0 402 177" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Customizable@1x</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="246" height="90" rx="8"></rect>
+        <filter x="-9.1%" y="-25.0%" width="118.3%" height="150.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="2.5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <linearGradient x1="50%" y1="44.4934999%" x2="100%" y2="55.5065001%" id="linearGradient-3">
+            <stop stop-color="#D3FAEA" offset="0%"></stop>
+            <stop stop-color="#D3FAEA" offset="0%"></stop>
+            <stop stop-color="#D3FAEA" offset="0%"></stop>
+            <stop stop-color="#DFD6FF" offset="99.9829272%"></stop>
+        </linearGradient>
+        <filter x="-58.8%" y="-58.8%" width="217.6%" height="217.6%" filterUnits="objectBoundingBox" id="filter-4">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.118877704 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="Final-Files" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="FIO_NFT_DemoSignInorUp---v2---DOMAIN-ONLY---v3" transform="translate(-786.000000, -4011.000000)">
+            <g id="Group-11-Copy-2" transform="translate(154.000000, 3970.000000)">
+                <g id="Customizable" transform="translate(647.000000, 56.000000)">
+                    <g id="Group-9">
+                        <g id="Rectangle-Copy-6" opacity="0.09920974">
+                            <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                            <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                        </g>
+                        <path d="M18,8 L228,8 C232.418278,8 236,11.581722 236,16 L236,75 C236,79.418278 232.418278,83 228,83 L18,83 C13.581722,83 10,79.418278 10,75 L10,16 C10,11.581722 13.581722,8 18,8 Z" id="Rectangle" stroke="url(#linearGradient-3)" stroke-width="4" fill-opacity="0.0803649476" fill="#FFFFFF" stroke-dasharray="10"></path>
+                        <text id="bob@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="36" font-weight="300">
+                            <tspan x="37.32" y="56" fill="#FFFFFF">bob@</tspan>
+                            <tspan x="127.176" y="56" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700" fill="#4C186E">rulez</tspan>
+                        </text>
+                    </g>
+                    <g id="bracket" transform="translate(122.905823, 114.000000) rotate(-90.000000) translate(-122.905823, -114.000000) translate(110.405823, 0.732252)" fill="#FFFFFF" fill-rule="nonzero">
+                        <path d="M22.9166178,4.17384499 C24.0666089,4.17384499 25,3.23882389 25,2.08682467 C25,0.934825452 24.0666089,0 22.9166178,0 C14.8750791,0 8.33333333,6.55297381 8.33333333,14.6087509 L8.33333333,111.775002 L2.08338216,111.775002 C0.933391145,111.775002 0,112.710023 0,113.862023 C0,115.014022 0.933391145,115.948847 2.08338216,115.948847 L8.33333333,115.948847 L8.33333333,211.926744 C8.33333333,219.982326 14.8748838,226.535495 22.9166178,226.535495 C24.0666089,226.535495 25,225.600474 25,224.448475 C25,223.296476 24.0666089,222.361454 22.9166178,222.361454 C17.1707643,222.361454 12.5000977,217.682436 12.5000977,211.926744 L12.5000977,14.6087509 C12.5000977,8.85286355 17.1707643,4.17384499 22.9166178,4.17384499 Z" id="Path"></path>
+                    </g>
+                    <text id="FIO-Crypto-Handle" font-family="ProximaNova-Light, Proxima Nova" font-size="18" font-weight="300" line-spacing="27" fill="#FFFFFF">
+                        <tspan x="50" y="152">FIO Crypto Handle</tspan>
+                    </text>
+                    <text id="domain" font-family="ProximaNova-Extrabld, Proxima Nova" font-size="36" font-weight="700" line-spacing="27" fill="#4C186E">
+                        <tspan x="262" y="64">domain</tspan>
+                    </text>
+                    <circle id="Oval" fill="#FFFFFF" cx="235" cy="47" r="16"></circle>
+                    <g id="arrow-right" filter="url(#filter-4)" transform="translate(235.000000, 47.000000) scale(-1, 1) translate(-235.000000, -47.000000) translate(218.000000, 30.000000)" fill="#4C186E" fill-rule="nonzero">
+                        <path d="M17.0204147,0 C9.09841122,0 2.03080096,5.68692955 0.373625039,13.4309258 C-0.454312368,17.3003249 0.103428599,21.4148915 1.95056606,24.9161064 C3.72831118,28.2856414 6.64278964,31.0089049 10.1297549,32.5522464 C13.756806,34.1579626 17.9207804,34.4377825 21.7330223,33.3427595 C25.4108165,32.2867206 28.671823,29.9688929 30.8919443,26.85752 C35.5338585,20.3527884 34.9132307,11.2157565 29.4520532,5.38718431 C26.2513313,1.97130142 21.7052654,0 17.0204147,0 L17.0204147,0 Z M25.1865925,17.9097781 L20.5459795,22.6563219 C19.3710804,23.858335 17.5139678,22.0373393 18.6840962,20.8409573 L21.0256541,18.4460275 L9.92895084,18.4460275 C9.14091403,18.4460275 8.48342157,17.788927 8.48342157,17.0023123 C8.48342157,16.2156977 9.14134773,15.5585972 9.92895084,15.5585972 L20.9701402,15.5585972 L18.5821762,13.1740632 C17.3955671,11.9889433 19.2353316,10.1510545 20.4219407,11.3361744 L25.17575,16.0835845 C25.6797119,16.5864808 25.6844826,17.4008176 25.1865925,17.9097781 L25.1865925,17.9097781 Z" id="Shape"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

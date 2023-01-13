@@ -3,62 +3,45 @@
 @import '../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
-  background: $footer-background;
-  color: white;
+  color: $baltic-sea;
   text-align: center;
-  padding: 9% 25px 100px;
+  padding: 100px 32px;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
 
-  &.withoutBackground {
-    background: none;
+  &.isReverseColors {
+    background: $light-indigo;
+    .title, .subtitle, .actionInfo {
+      color: $white;
+    }
+    .actionTextContainer {
+      color: $white;
+    }
   }
 
-  &.withoutBottomMargin {
-    padding-bottom: 0;
-  }
-  
   .title {
-    color: white;
-    font-size: 3rem;
+    margin: 0;
+    font-size: 2.625rem;
+    line-height: 3.75rem;
+    color: $baltic-sea;
+    @include comfortaa-bold;
   }
 
   .subtitle {
+    margin: 15px 0;
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+    color: $baltic-sea;
     @include proxima-nova-semibold;
-    font-size: 20px;
-    line-height: 24px;
-    max-width: 900px;
-    margin: 1% auto;
   }
 
   .actionTextContainer {
-    color: $green-tea;
-    margin-top: 40px;
+    color: $black;
     font-size: 0.9375rem;
     display: flex;
     flex-direction: row;
-
-    .iconContainer {
-      position: relative;
-      display: flex;
-      width: 24px;
-      height: 24px;
-
-      .icon {
-        font-size: 1.5rem;
-      }
-  
-      .insideIcon {
-        color: $content-background;
-        position: absolute;
-        font-size: 0.7rem;
-        top: 50%;
-        left: 50%;        
-        transform: translate(-50%, -50%);
-      }
-    }
 
     .actionText {
       margin-left: 10px;
@@ -66,17 +49,63 @@
   }
 
   .form {
-    max-width: 325px;
+    max-width: 430px;
     width: 100%;
-    margin-top: 20px;
+    margin: 30px 0;
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+
+    > div {
+      margin: 0;
+    }
+
+    .actionButton {
+      min-width: 80px;
+
+      button {
+        height: 40px;
+        margin: 0;
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+@include sm {
+  .container {
+    padding: 70px 32px;
+
+    .title {
+      text-align: center;
+      font-size: 2rem;
+      line-height: 3.125rem;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+    }
+
+    .actionTextContainer {
+      flex-direction: column;
+      align-items: center;
+      max-width: 220px;
+      gap: 10px;
+    }
+
+    .form {
+      flex-direction: column;
+      gap: 0;
+
+      > div {
+        margin-bottom: 20px;
+      }
+    }
 
     .actionButton {
       width: 100%;
-      max-width: 275px;
-
-      @include sm {
-        max-width: 325px;
-      }
     }
   }
 }

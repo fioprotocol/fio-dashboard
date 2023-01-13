@@ -11,12 +11,14 @@ type Props = {
   onClick?: (() => void) | ((event: ClickEventTypes) => void);
   disabled?: boolean;
   loading?: boolean;
+  isWhiteBordered?: boolean;
   isGreen?: boolean;
   isGreenTeal?: boolean;
   isBlack?: boolean;
   isCobalt?: boolean;
   withBottomMargin?: boolean;
   withTopMargin?: boolean;
+  withoutMargin?: boolean;
   text?: string | React.ReactNode;
   hasLowHeight?: boolean;
   hasBoldText?: boolean;
@@ -30,12 +32,14 @@ export const SubmitButton: React.FC<Props> = props => {
     onClick,
     disabled,
     loading,
+    isWhiteBordered,
     isGreen,
     isGreenTeal,
     isBlack,
     isCobalt,
     withTopMargin,
     withBottomMargin,
+    withoutMargin,
     text,
     hasLowHeight,
     hasBoldText,
@@ -53,6 +57,7 @@ export const SubmitButton: React.FC<Props> = props => {
       className={classnames(
         classes.button,
         !variant && classes.defaultColor,
+        isWhiteBordered && classes.isWhiteBordered,
         isGreen && classes.isGreen,
         isGreenTeal && classes.isGreenTeal,
         isBlack && classes.isBlack,
@@ -61,6 +66,7 @@ export const SubmitButton: React.FC<Props> = props => {
         loading && classes.loading,
         withTopMargin && classes.topMargin,
         withBottomMargin && classes.bottomMargin,
+        withoutMargin && classes.withoutMargin,
         hasLowHeight && classes.hasLowHeight,
         hasBoldText && classes.hasBoldText,
         hasSmallText && classes.hasSmallText,

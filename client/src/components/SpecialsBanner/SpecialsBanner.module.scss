@@ -1,0 +1,151 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  padding: 100px 154px;
+  background: linear-gradient(90deg, $humming-bird 0%, $fog 53%, $carousel-pink 100%);
+
+  .title {
+    margin-bottom: 40px;
+    font-size: 2.625rem;
+    line-height: 1;
+    color: $baltic-sea;
+    @include comfortaa-bold;
+    text-align: center;
+  }
+
+  .badgeWrapper {
+    padding: 20px;
+    background: $fog;
+    border-radius: 24px;
+
+    + .badgeWrapper {
+      margin-top: 40px;
+    }
+  }
+
+  .badge {
+    display: flex;
+    padding: 30px 70px;
+    background: linear-gradient(270deg, $medium-purple 0%, $light-indigo 100%);
+    border-radius: 24px;
+    gap: 80px;
+    align-items: center;
+    min-height: 225px;
+
+    &.isFlipped {
+      .badgeIcon {
+        order: 1;
+        justify-content: start;
+      }
+
+      .badgeContainer {
+        text-align: right;
+      }
+    }
+
+    &.isBig {
+      padding: 30px;
+      gap: 60px;
+
+      .badgeIcon {
+        flex: 5;
+      }
+
+      .badgeContainer {
+        flex: 6;
+      }
+    }
+
+    .badgeIcon {
+      flex: 1;
+      display: flex;
+      justify-content: end;
+
+      img {
+        max-width: 100%;
+      }
+
+      .badgeIconMobile {
+        display: none;
+      }
+    }
+
+    .badgeContainer {
+      flex: 2;
+
+      .badgeTitle {
+        margin-bottom: 20px;
+        font-size: 2rem;
+        line-height: 1;
+        color: $white;
+        @include comfortaa-bold;
+      }
+
+      .badgeSubtitle {
+        font-size: 1.25rem;
+        line-height: 1.35;
+        color: $white;
+        @include proxima-nova-thin;
+      }
+    }
+  }
+}
+
+@include sm {
+  .container {
+    padding: 70px 20px;
+
+    .title {
+      font-size: 1.875rem;
+    }
+
+    .badgeWrapper {
+
+      + .badgeWrapper {
+        margin-top: 20px;
+      }
+    }
+
+    .badge {
+      padding: 30px 20px;
+      flex-direction: column;
+      gap: 35px;
+
+      &.isBig {
+        gap: 30px;
+      }
+
+      .badgeIcon {
+        flex: 1;
+        order: 1;
+
+        .badgeIconDesktop {
+          display: none;
+        }
+
+        .badgeIconMobile {
+          display: inline;
+        }
+      }
+
+      .badgeContainer {
+        flex: 1;
+        order: 2;
+        text-align: center !important;
+
+        .badgeTitle {
+          margin-bottom: 10px;
+          font-size: 1.375rem;
+          line-height: 2rem;
+        }
+
+        .badgeSubtitle {
+          font-size: 1rem;
+          line-height: 1.5;
+        }
+      }
+    }
+  }
+}

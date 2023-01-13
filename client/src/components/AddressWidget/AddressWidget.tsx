@@ -7,7 +7,6 @@ import SignInWidget from '../SignInWidget';
 import TitleComponent from './components/TitleComponent';
 import SubtitleComponent from './components/SubtitleComponent';
 import ActionTextComponent from './components/ActionTextComponent';
-import PlugComponent from './components/PlugComponent';
 
 import { ADDRESS } from '../../constants/common';
 
@@ -26,6 +25,7 @@ type Props = {
   hideBottomPlug?: boolean;
   isAuthenticated?: boolean;
   hasFreeAddress?: boolean;
+  isReverseColors?: boolean;
 };
 
 const AddressWidget: React.FC<Props> = props => {
@@ -36,8 +36,8 @@ const AddressWidget: React.FC<Props> = props => {
     actionText,
     hasMinHeight,
     showSignInWidget,
-    hideBottomPlug,
     isAuthenticated,
+    isReverseColors,
   } = props;
 
   return (
@@ -45,16 +45,21 @@ const AddressWidget: React.FC<Props> = props => {
       className={classnames(
         classes.container,
         hasMinHeight && classes.hasMinHeight,
+        isReverseColors && classes.isReverseColors,
       )}
     >
       <TitleComponent logoSrc={logoSrc} title={title} />
       <SubtitleComponent subtitle={subtitle} />
       <ActionTextComponent actionText={actionText} />
       <div className={classes.form}>
-        <AddressDomainForm isHomepage={true} type={ADDRESS} {...props} />
+        <AddressDomainForm
+          isHomepage={true}
+          type={ADDRESS}
+          isReverseColors={isReverseColors}
+          {...props}
+        />
       </div>
       <SignInWidget show={!isAuthenticated && showSignInWidget} />
-      <PlugComponent show={!hideBottomPlug} />
     </div>
   );
 };

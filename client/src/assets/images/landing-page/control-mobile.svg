@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="244px" height="224px" viewBox="0 0 244 224" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Control-Mobile@1x</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="72" height="36" rx="3.2"></rect>
+        <filter x="-12.5%" y="-25.0%" width="125.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-3" x="0" y="0" width="72" height="36" rx="3.2"></rect>
+        <filter x="-12.5%" y="-25.0%" width="125.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-4">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-5" x="0" y="0" width="72" height="36" rx="3.2"></rect>
+        <filter x="-12.5%" y="-25.0%" width="125.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-6">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-7" x="0" y="0" width="72" height="36" rx="3.2"></rect>
+        <filter x="-12.5%" y="-25.0%" width="125.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-8">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-9" x="0" y="0" width="72" height="36" rx="3.2"></rect>
+        <filter x="-12.5%" y="-25.0%" width="125.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-10">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-11" x="0" y="0" width="72" height="36" rx="3.2"></rect>
+        <filter x="-12.5%" y="-25.0%" width="125.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-12">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-13" x="0" y="0" width="72" height="36" rx="3.2"></rect>
+        <filter x="-12.5%" y="-25.0%" width="125.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-14">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-15" x="0" y="0" width="72" height="36" rx="3.2"></rect>
+        <filter x="-12.5%" y="-25.0%" width="125.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-16">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-17" x="0" y="0" width="72" height="36" rx="3.2"></rect>
+        <filter x="-12.5%" y="-25.0%" width="125.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-18">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-19" x="0" y="0" width="72" height="36" rx="3.2"></rect>
+        <filter x="-12.5%" y="-25.0%" width="125.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-20">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-21" x="0" y="0" width="72" height="36" rx="3.2"></rect>
+        <filter x="-12.5%" y="-25.0%" width="125.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-22">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-23" x="0" y="0" width="72" height="36" rx="3.2"></rect>
+        <filter x="-12.5%" y="-25.0%" width="125.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-24">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-25" x="0" y="0" width="72" height="36" rx="3.2"></rect>
+        <filter x="-12.5%" y="-25.0%" width="125.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-26">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-27" x="0" y="0" width="72" height="36" rx="3.2"></rect>
+        <filter x="-12.5%" y="-25.0%" width="125.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-28">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-29" x="0" y="0" width="72" height="36" rx="3.2"></rect>
+        <filter x="-12.5%" y="-25.0%" width="125.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-30">
+            <feMorphology radius="1" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="2" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+        <rect id="path-31" x="0" y="0" width="197" height="72" rx="6.4"></rect>
+        <filter x="-9.1%" y="-25.0%" width="118.3%" height="150.0%" filterUnits="objectBoundingBox" id="filter-32">
+            <feMorphology radius="2" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="4" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="Final-Files" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Domain_Landing_Page---Mobile" transform="translate(-65.000000, -4198.000000)">
+            <g id="Group-11-Copy" transform="translate(20.000000, 4155.000000)">
+                <g id="Control-Mobile" transform="translate(51.000000, 49.000000)">
+                    <g id="Group-14-Copy">
+                        <g id="Group-9-Copy-2">
+                            <g id="Rectangle-Copy-6" opacity="0.09920974">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                                <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                            </g>
+                            <path d="M7.2,3.2 L64.8,3.2 C66.5673112,3.2 68,4.6326888 68,6.4 L68,29.6 C68,31.3673112 66.5673112,32.8 64.8,32.8 L7.2,32.8 C5.4326888,32.8 4,31.3673112 4,29.6 L4,6.4 C4,4.6326888 5.4326888,3.2 7.2,3.2 Z" id="Rectangle" fill-opacity="0.0803649476" fill="#FFFFFF"></path>
+                            <text id="@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="14.4" font-weight="300">
+                                <tspan x="14.0616" y="22.2" fill="#FFFFFF">@</tspan>
+                                <tspan x="25.3368" y="22.2" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700" fill="#4C186E">rulez</tspan>
+                            </text>
+                        </g>
+                        <g id="Group-9-Copy-12" transform="translate(0.000000, 88.000000)">
+                            <g id="Rectangle-Copy-6" opacity="0.09920974">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-4)" xlink:href="#path-3"></use>
+                                <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-3"></use>
+                            </g>
+                            <path d="M7.2,3.2 L64.8,3.2 C66.5673112,3.2 68,4.6326888 68,6.4 L68,29.6 C68,31.3673112 66.5673112,32.8 64.8,32.8 L7.2,32.8 C5.4326888,32.8 4,31.3673112 4,29.6 L4,6.4 C4,4.6326888 5.4326888,3.2 7.2,3.2 Z" id="Rectangle" fill-opacity="0.0803649476" fill="#FFFFFF"></path>
+                            <text id="@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="14.4" font-weight="300">
+                                <tspan x="14.0616" y="22.2" fill="#FFFFFF">@</tspan>
+                                <tspan x="25.3368" y="22.2" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700" fill="#4C186E">rulez</tspan>
+                            </text>
+                        </g>
+                        <g id="Group-9-Copy-13" transform="translate(0.000000, 132.000000)">
+                            <g id="Rectangle-Copy-6" opacity="0.09920974">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-6)" xlink:href="#path-5"></use>
+                                <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-5"></use>
+                            </g>
+                            <path d="M7.2,3.2 L64.8,3.2 C66.5673112,3.2 68,4.6326888 68,6.4 L68,29.6 C68,31.3673112 66.5673112,32.8 64.8,32.8 L7.2,32.8 C5.4326888,32.8 4,31.3673112 4,29.6 L4,6.4 C4,4.6326888 5.4326888,3.2 7.2,3.2 Z" id="Rectangle" fill-opacity="0.0803649476" fill="#FFFFFF"></path>
+                            <text id="@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="14.4" font-weight="300">
+                                <tspan x="14.0616" y="22.2" fill="#FFFFFF">@</tspan>
+                                <tspan x="25.3368" y="22.2" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700" fill="#4C186E">rulez</tspan>
+                            </text>
+                        </g>
+                        <g id="Group-9-Copy-19" transform="translate(0.000000, 176.000000)">
+                            <g id="Rectangle-Copy-6" opacity="0.09920974">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-8)" xlink:href="#path-7"></use>
+                                <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-7"></use>
+                            </g>
+                            <path d="M7.2,3.2 L64.8,3.2 C66.5673112,3.2 68,4.6326888 68,6.4 L68,29.6 C68,31.3673112 66.5673112,32.8 64.8,32.8 L7.2,32.8 C5.4326888,32.8 4,31.3673112 4,29.6 L4,6.4 C4,4.6326888 5.4326888,3.2 7.2,3.2 Z" id="Rectangle" fill-opacity="0.0803649476" fill="#FFFFFF"></path>
+                            <text id="@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="14.4" font-weight="300">
+                                <tspan x="14.0616" y="22.2" fill="#FFFFFF">@</tspan>
+                                <tspan x="25.3368" y="22.2" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700" fill="#4C186E">rulez</tspan>
+                            </text>
+                        </g>
+                        <g id="Group-9-Copy-7" transform="translate(0.000000, 44.000000)">
+                            <g id="Rectangle-Copy-6" opacity="0.09920974">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-10)" xlink:href="#path-9"></use>
+                                <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-9"></use>
+                            </g>
+                            <path d="M7.2,3.2 L64.8,3.2 C66.5673112,3.2 68,4.6326888 68,6.4 L68,29.6 C68,31.3673112 66.5673112,32.8 64.8,32.8 L7.2,32.8 C5.4326888,32.8 4,31.3673112 4,29.6 L4,6.4 C4,4.6326888 5.4326888,3.2 7.2,3.2 Z" id="Rectangle" fill-opacity="0.0803649476" fill="#FFFFFF"></path>
+                            <text id="@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="14.4" font-weight="300">
+                                <tspan x="14.0616" y="22.2" fill="#FFFFFF">@</tspan>
+                                <tspan x="25.3368" y="22.2" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700" fill="#4C186E">rulez</tspan>
+                            </text>
+                        </g>
+                        <g id="Group-9-Copy-3" transform="translate(80.000000, 0.000000)">
+                            <g id="Rectangle-Copy-6" opacity="0.09920974">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-12)" xlink:href="#path-11"></use>
+                                <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-11"></use>
+                            </g>
+                            <path d="M7.2,3.2 L64.8,3.2 C66.5673112,3.2 68,4.6326888 68,6.4 L68,29.6 C68,31.3673112 66.5673112,32.8 64.8,32.8 L7.2,32.8 C5.4326888,32.8 4,31.3673112 4,29.6 L4,6.4 C4,4.6326888 5.4326888,3.2 7.2,3.2 Z" id="Rectangle" fill-opacity="0.0803649476" fill="#FFFFFF"></path>
+                            <text id="@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="14.4" font-weight="300">
+                                <tspan x="14.0616" y="22.2" fill="#FFFFFF">@</tspan>
+                                <tspan x="25.3368" y="22.2" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700" fill="#4C186E">rulez</tspan>
+                            </text>
+                        </g>
+                        <g id="Group-9-Copy-14" transform="translate(80.000000, 88.000000)">
+                            <g id="Rectangle-Copy-6" opacity="0.09920974">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-14)" xlink:href="#path-13"></use>
+                                <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-13"></use>
+                            </g>
+                            <path d="M7.2,3.2 L64.8,3.2 C66.5673112,3.2 68,4.6326888 68,6.4 L68,29.6 C68,31.3673112 66.5673112,32.8 64.8,32.8 L7.2,32.8 C5.4326888,32.8 4,31.3673112 4,29.6 L4,6.4 C4,4.6326888 5.4326888,3.2 7.2,3.2 Z" id="Rectangle" fill-opacity="0.0803649476" fill="#FFFFFF"></path>
+                            <text id="@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="14.4" font-weight="300">
+                                <tspan x="14.0616" y="22.2" fill="#FFFFFF">@</tspan>
+                                <tspan x="25.3368" y="22.2" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700" fill="#4C186E">rulez</tspan>
+                            </text>
+                        </g>
+                        <g id="Group-9-Copy-15" transform="translate(80.000000, 132.000000)">
+                            <g id="Rectangle-Copy-6" opacity="0.09920974">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-16)" xlink:href="#path-15"></use>
+                                <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-15"></use>
+                            </g>
+                            <path d="M7.2,3.2 L64.8,3.2 C66.5673112,3.2 68,4.6326888 68,6.4 L68,29.6 C68,31.3673112 66.5673112,32.8 64.8,32.8 L7.2,32.8 C5.4326888,32.8 4,31.3673112 4,29.6 L4,6.4 C4,4.6326888 5.4326888,3.2 7.2,3.2 Z" id="Rectangle" fill-opacity="0.0803649476" fill="#FFFFFF"></path>
+                            <text id="@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="14.4" font-weight="300">
+                                <tspan x="14.0616" y="22.2" fill="#FFFFFF">@</tspan>
+                                <tspan x="25.3368" y="22.2" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700" fill="#4C186E">rulez</tspan>
+                            </text>
+                        </g>
+                        <g id="Group-9-Copy-20" transform="translate(80.000000, 176.000000)">
+                            <g id="Rectangle-Copy-6" opacity="0.09920974">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-18)" xlink:href="#path-17"></use>
+                                <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-17"></use>
+                            </g>
+                            <path d="M7.2,3.2 L64.8,3.2 C66.5673112,3.2 68,4.6326888 68,6.4 L68,29.6 C68,31.3673112 66.5673112,32.8 64.8,32.8 L7.2,32.8 C5.4326888,32.8 4,31.3673112 4,29.6 L4,6.4 C4,4.6326888 5.4326888,3.2 7.2,3.2 Z" id="Rectangle" fill-opacity="0.0803649476" fill="#FFFFFF"></path>
+                            <text id="@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="14.4" font-weight="300">
+                                <tspan x="14.0616" y="22.2" fill="#FFFFFF">@</tspan>
+                                <tspan x="25.3368" y="22.2" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700" fill="#4C186E">rulez</tspan>
+                            </text>
+                        </g>
+                        <g id="Group-9-Copy-8" transform="translate(80.000000, 44.000000)">
+                            <g id="Rectangle-Copy-6" opacity="0.09920974">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-20)" xlink:href="#path-19"></use>
+                                <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-19"></use>
+                            </g>
+                            <path d="M7.2,3.2 L64.8,3.2 C66.5673112,3.2 68,4.6326888 68,6.4 L68,29.6 C68,31.3673112 66.5673112,32.8 64.8,32.8 L7.2,32.8 C5.4326888,32.8 4,31.3673112 4,29.6 L4,6.4 C4,4.6326888 5.4326888,3.2 7.2,3.2 Z" id="Rectangle" fill-opacity="0.0803649476" fill="#FFFFFF"></path>
+                            <text id="@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="14.4" font-weight="300">
+                                <tspan x="14.0616" y="22.2" fill="#FFFFFF">@</tspan>
+                                <tspan x="25.3368" y="22.2" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700" fill="#4C186E">rulez</tspan>
+                            </text>
+                        </g>
+                        <g id="Group-9-Copy-4" transform="translate(160.000000, 0.000000)">
+                            <g id="Rectangle-Copy-6" opacity="0.09920974">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-22)" xlink:href="#path-21"></use>
+                                <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-21"></use>
+                            </g>
+                            <path d="M7.2,3.2 L64.8,3.2 C66.5673112,3.2 68,4.6326888 68,6.4 L68,29.6 C68,31.3673112 66.5673112,32.8 64.8,32.8 L7.2,32.8 C5.4326888,32.8 4,31.3673112 4,29.6 L4,6.4 C4,4.6326888 5.4326888,3.2 7.2,3.2 Z" id="Rectangle" fill-opacity="0.0803649476" fill="#FFFFFF"></path>
+                            <text id="@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="14.4" font-weight="300">
+                                <tspan x="14.0616" y="22.2" fill="#FFFFFF">@</tspan>
+                                <tspan x="25.3368" y="22.2" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700" fill="#4C186E">rulez</tspan>
+                            </text>
+                        </g>
+                        <g id="Group-9-Copy-16" transform="translate(160.000000, 88.000000)">
+                            <g id="Rectangle-Copy-6" opacity="0.09920974">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-24)" xlink:href="#path-23"></use>
+                                <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-23"></use>
+                            </g>
+                            <path d="M7.2,3.2 L64.8,3.2 C66.5673112,3.2 68,4.6326888 68,6.4 L68,29.6 C68,31.3673112 66.5673112,32.8 64.8,32.8 L7.2,32.8 C5.4326888,32.8 4,31.3673112 4,29.6 L4,6.4 C4,4.6326888 5.4326888,3.2 7.2,3.2 Z" id="Rectangle" fill-opacity="0.0803649476" fill="#FFFFFF"></path>
+                            <text id="@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="14.4" font-weight="300">
+                                <tspan x="14.0616" y="22.2" fill="#FFFFFF">@</tspan>
+                                <tspan x="25.3368" y="22.2" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700" fill="#4C186E">rulez</tspan>
+                            </text>
+                        </g>
+                        <g id="Group-9-Copy-17" transform="translate(160.000000, 132.000000)">
+                            <g id="Rectangle-Copy-6" opacity="0.09920974">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-26)" xlink:href="#path-25"></use>
+                                <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-25"></use>
+                            </g>
+                            <path d="M7.2,3.2 L64.8,3.2 C66.5673112,3.2 68,4.6326888 68,6.4 L68,29.6 C68,31.3673112 66.5673112,32.8 64.8,32.8 L7.2,32.8 C5.4326888,32.8 4,31.3673112 4,29.6 L4,6.4 C4,4.6326888 5.4326888,3.2 7.2,3.2 Z" id="Rectangle" fill-opacity="0.0803649476" fill="#FFFFFF"></path>
+                            <text id="@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="14.4" font-weight="300">
+                                <tspan x="14.0616" y="22.2" fill="#FFFFFF">@</tspan>
+                                <tspan x="25.3368" y="22.2" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700" fill="#4C186E">rulez</tspan>
+                            </text>
+                        </g>
+                        <g id="Group-9-Copy-21" transform="translate(160.000000, 176.000000)">
+                            <g id="Rectangle-Copy-6" opacity="0.09920974">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-28)" xlink:href="#path-27"></use>
+                                <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-27"></use>
+                            </g>
+                            <path d="M7.2,3.2 L64.8,3.2 C66.5673112,3.2 68,4.6326888 68,6.4 L68,29.6 C68,31.3673112 66.5673112,32.8 64.8,32.8 L7.2,32.8 C5.4326888,32.8 4,31.3673112 4,29.6 L4,6.4 C4,4.6326888 5.4326888,3.2 7.2,3.2 Z" id="Rectangle" fill-opacity="0.0803649476" fill="#FFFFFF"></path>
+                            <text id="@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="14.4" font-weight="300">
+                                <tspan x="14.0616" y="22.2" fill="#FFFFFF">@</tspan>
+                                <tspan x="25.3368" y="22.2" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700" fill="#4C186E">rulez</tspan>
+                            </text>
+                        </g>
+                        <g id="Group-9-Copy-9" transform="translate(160.000000, 44.000000)">
+                            <g id="Rectangle-Copy-6" opacity="0.09920974">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-30)" xlink:href="#path-29"></use>
+                                <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-29"></use>
+                            </g>
+                            <path d="M7.2,3.2 L64.8,3.2 C66.5673112,3.2 68,4.6326888 68,6.4 L68,29.6 C68,31.3673112 66.5673112,32.8 64.8,32.8 L7.2,32.8 C5.4326888,32.8 4,31.3673112 4,29.6 L4,6.4 C4,4.6326888 5.4326888,3.2 7.2,3.2 Z" id="Rectangle" fill-opacity="0.0803649476" fill="#FFFFFF"></path>
+                            <text id="@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="14.4" font-weight="300">
+                                <tspan x="14.0616" y="22.2" fill="#FFFFFF">@</tspan>
+                                <tspan x="25.3368" y="22.2" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700" fill="#4C186E">rulez</tspan>
+                            </text>
+                        </g>
+                    </g>
+                    <g id="Group-9-Copy-6" transform="translate(18.000000, 70.000000)">
+                        <g id="Rectangle-Copy-6" opacity="0.952296666">
+                            <use fill="black" fill-opacity="1" filter="url(#filter-32)" xlink:href="#path-31"></use>
+                            <use fill="#DFD6FF" fill-rule="evenodd" xlink:href="#path-31"></use>
+                        </g>
+                        <path d="M14.4081301,6.4 L182.59187,6.4 C186.126492,6.4 188.99187,9.2653776 188.99187,12.8 L188.99187,59.2 C188.99187,62.7346224 186.126492,65.6 182.59187,65.6 L14.4081301,65.6 C10.8735077,65.6 8.00813008,62.7346224 8.00813008,59.2 L8.00813008,12.8 C8.00813008,9.2653776 10.8735077,6.4 14.4081301,6.4 Z" id="Rectangle" fill="#FFFFFF"></path>
+                        <text id="who@rulez" font-family="ProximaNova-Light, Proxima Nova" font-size="28.8" font-weight="300" fill="#4C186E">
+                            <tspan x="28.2712" y="44.4">who@</tspan>
+                            <tspan x="103.5256" y="44.4" font-family="ProximaNova-Extrabld, Proxima Nova" font-weight="700">rulez</tspan>
+                        </text>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
