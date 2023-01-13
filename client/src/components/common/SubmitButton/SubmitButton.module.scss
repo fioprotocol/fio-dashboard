@@ -38,6 +38,10 @@
     margin-bottom: 20px;
   }
 
+  &.withoutMargin {
+    margin: 0;
+  }
+
   &.defaultColor {
     background-color: $light-indigo;
     border-color: $light-indigo;
@@ -45,6 +49,14 @@
     &:hover {
       background-color: $iris;
       border-color: $iris;
+    }
+  }
+
+  &.isWhiteBordered {
+    border: 1px solid $white;
+
+    &:hover {
+      border: 1px solid $white;
     }
   }
 

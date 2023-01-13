@@ -31,6 +31,7 @@ export const INPUT_UI_STYLES = {
 
 export const INPUT_COLOR_SCHEMA = {
   BLACK_AND_WHITE: 'black_and_white',
+  INDIGO_AND_WHITE: 'indigo_and_white',
 };
 
 export type TextInputProps = {
@@ -112,6 +113,7 @@ export const TextInput: React.ForwardRefRenderFunction<
   const { type, value, onChange } = input;
 
   const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
+  const isIW = colorSchema === INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE;
 
   const [showPass, toggleShowPass] = useState(false);
 
@@ -179,6 +181,7 @@ export const TextInput: React.ForwardRefRenderFunction<
             (hasError || showErrorBorder) && classes.error,
             uiType && classes[uiType],
             isBW && classes.bw,
+            isIW && classes.iw,
             prefix && classes.prefixSpace,
             showPasteButton && classes.hasPasteButton,
             type === 'password' && classes.doubleIconInput,

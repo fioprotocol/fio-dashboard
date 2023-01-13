@@ -8,12 +8,13 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  max-width: 610px;
+  max-width: 430px;
 
   .selectionContainer {
     width: 100%;
     display: flex;
     flex-direction: row;
+    gap: 30px;
   }
 
   .username {
@@ -27,7 +28,13 @@
   }
 
   .link {
-    width: 50%;
+    min-width: 80px;
+
+    button {
+      height: 40px;
+      margin: 0;
+      white-space: nowrap;
+    }
   }
 
   .submit {
@@ -42,6 +49,17 @@
     justify-content: center;
   }
 
+  .actionTextContainer {
+    color: $black;
+    font-size: 0.9375rem;
+    display: flex;
+    flex-direction: row;
+
+    .actionText {
+      margin-left: 10px;
+    }
+  }
+
   .loaderIcon {
     margin-left: 1rem;
     position: absolute;
@@ -54,6 +72,12 @@
 
   .domainInput {
     width: 100%;
+  }
+
+  &.isReverseColors {
+    .actionTextContainer {
+      color: $white;
+    }
   }
 }
 
@@ -198,15 +222,27 @@
 
 @include sm {
   .form {
-    flex-flow: wrap;
-
     .selectionContainer {
       flex-direction: column;
+      gap: 0;
+    }
+
+    .username {
+      > div {
+        margin-bottom: 20px;
+      }
     }
 
     .username, .domainContainer, .domainInput {
       flex-basis: 80%;
       max-width: 100%;
+    }
+
+    .actionTextContainer {
+      flex-direction: column;
+      align-items: center;
+      max-width: 220px;
+      gap: 10px;
     }
 
     .submit, .optionButton {

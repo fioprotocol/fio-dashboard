@@ -72,6 +72,7 @@ type DefaultFormContainerProps = {
   debouncedHandleChange: (
     formProps: FormApi<FormValuesProps, FormValuesProps>,
   ) => void;
+  isReverseColors?: boolean;
 };
 
 export type AddressDomainFormProps = {
@@ -92,6 +93,7 @@ export type AddressDomainFormProps = {
     getCryptoHandle: string | React.ReactNode;
   };
   refreshFioNames: (publicKey: string) => void;
+  isReverseColors?: boolean;
 };
 
 export type FormItemsProps = {

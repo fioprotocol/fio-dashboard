@@ -3,7 +3,9 @@ import { useHistory } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router-dom';
 
 import AddressWidget from '../../components/AddressWidget';
-import DomainsBanner from '../../components/DomainsBanner/DomainsBanner';
+import { FCHBanner } from '../../components/FCHBanner';
+import { FCHSpecialsBanner } from '../../components/SpecialsBanner';
+import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
 
 import { ROUTES } from '../../constants/routes';
 
@@ -47,7 +49,10 @@ const HomePage: React.FC<Props & RouteComponentProps> = props => {
   return (
     <div className={classnames.container}>
       <AddressWidget {...addressWidgetContent} />
-      <DomainsBanner />
+      <FCHBanner />
+      <FCHSpecialsBanner />
+      <WidelyAdoptedSection />
+      <AddressWidget {...addressWidgetContent} isReverseColors />
     </div>
   );
 };

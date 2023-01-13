@@ -78,3 +78,11 @@
   font-family: 'SF Pro Display Medium';
   letter-spacing: 0.05em;
 }
+
+@mixin comfortaa-regular {
+  font-family: 'Comfortaa Regular', cursive;
+}
+
+@mixin comfortaa-bold {
+  font-family: 'Comfortaa Bold', cursive;
+}

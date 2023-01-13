@@ -2,10 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { FormApi } from 'final-form';
 import isEmpty from 'lodash/isEmpty';
+import classnames from 'classnames';
 
 import Card from '../Card/Card';
-import PriceBadge from './PriceBadge';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
+import { ExclamationIcon } from '../ExclamationIcon';
+
+import PriceBadge from './PriceBadge';
 import AddressForm from './AddressForm';
 import DomainForm from './DomainForm';
 
@@ -43,9 +46,10 @@ const FormContainer: React.FC<FormContainerProps> = props => {
     toggleShowAvailable,
     handleChange,
     debouncedHandleChange,
+    isReverseColors,
   } = props;
 
-  const buttonText = `Get My FIO ${isDomain ? 'Domain' : 'Crypto Handle'}`;
+  const buttonText = 'GET IT';
 
   useEffectOnce(() => {
     if (!isHomepage && !isEmpty(formProps)) {
@@ -80,6 +84,7 @@ const FormContainer: React.FC<FormContainerProps> = props => {
             hasLowHeight={true}
             text={buttonText}
             hasSmallText={true}
+            isWhiteBordered={isReverseColors}
           />
         </a>
       );
@@ -94,6 +99,7 @@ const FormContainer: React.FC<FormContainerProps> = props => {
           hasLowHeight={true}
           text={buttonText}
           hasSmallText={true}
+          isWhiteBordered={isReverseColors}
         />
       </Link>
     );
@@ -120,6 +126,7 @@ const FormContainer: React.FC<FormContainerProps> = props => {
       allowCustomDomains,
       isValidating,
       toggleShowCustomDomain,
+      isReverseColors,
       onChangeHandleField,
       debouncedOnChangeHandleField,
     };
@@ -129,7 +136,10 @@ const FormContainer: React.FC<FormContainerProps> = props => {
         onSubmit={() => {
           handleSubmit();
         }}
-        className={classes.form}
+        className={classnames(
+          classes.form,
+          isReverseColors && classes.isReverseColors,
+        )}
         key="form"
         id="addressForm"
       >
@@ -139,6 +149,7 @@ const FormContainer: React.FC<FormContainerProps> = props => {
           ) : (
             <DomainForm {...propsToForm} />
           )}
+          {renderActionButton()}
         </div>
         {(isHomepage || isDesktop) && (
           <PriceBadge
@@ -162,7 +173,15 @@ const FormContainer: React.FC<FormContainerProps> = props => {
             }
           />
         )}
-        {renderActionButton()}
+        <div className={classes.actionTextContainer}>
+          <ExclamationIcon
+            isBlackWhite={!isReverseColors}
+            isWhiteIndigo={isReverseColors}
+          />
+          <span className={classes.actionText}>
+            You can pay with a credit card OR crypto!
+          </span>
+        </div>
       </form>
     );
   };

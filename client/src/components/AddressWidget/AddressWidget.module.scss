@@ -3,11 +3,17 @@
 @import '../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
-  background: $footer-background;
-  color: white;
+  color: $baltic-sea;
   text-align: center;
-  padding: 9% 25px 0;
+  padding: 100px 32px;
   width: 100%;
+
+  &.isReverseColors {
+    background: $light-indigo;
+    .title, .subtitle, .actionInfo {
+      color: $white;
+    }
+  }
 
   .logoImg {
     max-width: 380px;
@@ -16,89 +22,59 @@
   }
 
   .title {
-    color: white;
-    font-size: 4rem;
-  }
-
-  .customTitle {
-    @include proxima-nova-bold;
-    color: white;
-    font-size: 2rem;
-  }
-
-  .coloredText {
-    color: $violet;
+    margin: 0;
+    font-size: 2.625rem;
+    line-height: 3.75rem;
+    color: $baltic-sea;
+    @include comfortaa-bold;
   }
 
   .subtitle {
-    @include sf-pro-display-thin;
-    font-size: 18px;
-    line-height: 24px;
-    max-width: 800px;
-    margin: 1% auto;
+    margin: 15px 0;
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+    color: $baltic-sea;
+    @include proxima-nova-semibold;
   }
 
   .actionInfo {
-    margin: 35px 0 0;
-    @include sf-pro-display-thin;
-    font-size: 16px;
-    font-style: italic;
-    color: $manatee;
-    letter-spacing: 0.075em;
+    margin: 15px 0;
+    font-size: 1rem;
+    color: $black;
+    @include proxima-nova-regular;
   }
 
   .form {
-    margin: 3% 0 0;
+    margin: 30px 0 0;
   }
 
   .bottom {
     height: 110px;
   }
+}
 
-  @include md {
+@include sm {
+  .container {
+    padding: 70px 32px;
+
     .title {
-      font-size: 3rem;
+      text-align: center;
+      font-size: 2rem;
+      line-height: 3.125rem;
     }
 
     .subtitle {
-      font-size: 16px;
+      text-align: center;
+      font-size: 1.125rem;
+      line-height: 1.75rem;
     }
 
-    .actionInfo {
-      font-size: 14px;
-    }
-
-    .bottom {
-      height: 70px;
-    }
-  }
-
-  @include sm {
-    .title, .subtitle {
-      text-align: left;
-    }
-
-    .title {
-      font-size: 34px;
-      line-height: 41px;
+    .form {
+      margin: 20px 0 0;
     }
 
     .newLine {
       display: block;
-    }
-
-    .subtitle {
-      margin: 4% 0;
-      font-size: 16px;
-      line-height: 26px;
-    }
-
-    .actionInfo {
-      font-size: 14px;
-    }
-
-    .form {
-      margin-top: 7%;
     }
 
     .bottom {
