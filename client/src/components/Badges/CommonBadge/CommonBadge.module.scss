@@ -26,6 +26,9 @@
   &.isRed {
     background-color: $faded-red;
   }
+  &.isYellowGreen {
+    background-color: $rio-grande;
+  }
 
   &.hasRoundBorders {
     border-radius: 100px;

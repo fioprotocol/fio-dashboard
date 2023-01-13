@@ -11,10 +11,12 @@ import LedgerWalletActionNotSupported from '../../components/LedgerWalletActionN
 import PageTitle from '../../components/PageTitle/PageTitle';
 
 import { LINKS } from '../../constants/labels';
-import { FIO_CHAIN_CODE } from '../../constants/fio';
+import { FIO_CHAIN_CODE, FIO_REQUEST_STATUS_TYPES } from '../../constants/fio';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import { emptyWallet } from '../../redux/fio/reducer';
+import { ROUTES } from '../../constants/routes';
+import { FIO_RECORD_TYPES } from '../WalletPage/constants';
 
 import { useFioAddresses, usePubAddressesFromWallet } from '../../util/hooks';
 
@@ -26,7 +28,11 @@ import {
   RequestTokensInitialValues,
   RequestTokensValues,
 } from './types';
-import { FioWalletDoublet, MappedPublicAddresses } from '../../types';
+import {
+  AnyObject,
+  FioWalletDoublet,
+  MappedPublicAddresses,
+} from '../../types';
 import { TrxResponsePaidBundles } from '../../api/fio';
 import { ResultsData } from '../../components/common/TransactionResults/types';
 
@@ -138,6 +144,31 @@ const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
     history.goBack();
   };
 
+  const onCancelRequest = () => {
+    history.push(ROUTES.CANCEL_FIO_REQUEST, {
+      fioRecordDecrypted: {
+        fioRecord: {
+          id: resultsData.other.fio_request_id,
+          from: resultsData.other.fromFioAddress,
+          to: resultsData.other.toFioAddress,
+          payeeFioPublicKey: resultsData.other.payeeTokenPublicAddress,
+          date: resultsData.other.block_time,
+          status: FIO_REQUEST_STATUS_TYPES.PENDING,
+          fioTxType: FIO_RECORD_TYPES.SENT,
+        },
+        fioDecryptedContent: {
+          payeePublicAddress: resultsData.other.payeeTokenPublicAddress,
+          amount: resultsData.other.amount,
+          chainCode: resultsData.other.chainCode,
+          tokenCode: resultsData.other.tokenCode,
+          memo: resultsData.other.memo,
+        },
+      },
+      fioWallet,
+      fioRecordType: FIO_RECORD_TYPES.SENT,
+    } as AnyObject);
+  };
+
   if (isValidPublicKeyFromPath && (!fioWallet || !fioWallet.id)) {
     return <FioLoader wrap={true} />;
   }
@@ -155,6 +186,7 @@ const RequestPage: React.FC<ContainerProps & LocationProps> = props => {
           roe={roe}
           onClose={onBack}
           onRetry={onResultsRetry}
+          onCancel={onCancelRequest}
         />
       </>
     );

@@ -5,6 +5,7 @@ import { BADGE_TYPES } from '../../Badge/Badge';
 import PriceBadge from '../../Badges/PriceBadge/PriceBadge';
 import InfoBadge from '../../InfoBadge/InfoBadge';
 import SubmitButton from '../SubmitButton/SubmitButton';
+import CancelButton from '../CancelButton/CancelButton';
 import BundledTransactionBadge from '../../Badges/BundledTransactionBadge/BundledTransactionBadge';
 
 import { ERROR_MESSAGES } from './constants';
@@ -35,6 +36,7 @@ const Results: React.FC<ResultsContainerProps> = props => {
     isPaymentDetailsVisible = true,
     onClose,
     onRetry,
+    onCancel,
     onTxResultsClose,
     children,
   } = props;
@@ -117,11 +119,15 @@ const Results: React.FC<ResultsContainerProps> = props => {
                 {totalBundlesCost()}
               </>
             )}
-            <SubmitButton
-              onClick={handleClose}
-              text="Close"
-              withTopMargin={true}
-            />
+            <SubmitButton onClick={handleClose} text="Close" withTopMargin />
+            {onCancel && (
+              <CancelButton
+                text="Cancel Request"
+                onClick={onCancel}
+                isIndigo
+                withTopMargin
+              />
+            )}
           </>
         )}
         {error && onRetry != null ? (

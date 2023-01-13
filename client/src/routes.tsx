@@ -168,6 +168,11 @@ const RejectFioRequestPage = React.lazy(() =>
     /* webpackChunkName: 'rejectFioRequestPage' */ './pages/RejectFioRequestPage'
   ),
 );
+const CancelFioRequestPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'cancelFioRequestPage' */ './pages/CancelFioRequestPage'
+  ),
+);
 const EmailConfirmationResultPage = React.lazy(() =>
   import(
     /* webpackChunkName: 'emailConfirmationResultPage' */ './pages/EmailConfirmationResultsPage'
@@ -522,6 +527,12 @@ const Routes = (): React.ReactElement => (
           <PrivateRoute
             path={ROUTES.REJECT_FIO_REQUEST}
             component={RejectFioRequestPage}
+            exact
+          />
+
+          <PrivateRoute
+            path={ROUTES.CANCEL_FIO_REQUEST}
+            component={CancelFioRequestPage}
             exact
           />
 

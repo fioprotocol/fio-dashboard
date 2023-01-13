@@ -21,6 +21,7 @@ export const ACTIONS = {
   setFioDomainVisibility: 'setFioDomainVisibility',
   rejectFundsRequest: 'rejectFundsRequest',
   requestFunds: 'requestFunds',
+  cancelFundsRequest: 'cancelFundsRequest',
   recordObtData: 'recordObtData',
   registerFioAddress: 'registerFioAddress',
   registerFioDomain: 'registerFioDomain',
@@ -49,6 +50,7 @@ export const TRANSACTION_ACCOUNT_NAMES = {
 
 export const ACTIONS_TO_END_POINT_KEYS = {
   [ACTIONS.requestFunds]: 'newFundsRequest',
+  [ACTIONS.cancelFundsRequest]: 'cancelFundsRequest',
   [ACTIONS.registerFioAddress]: 'registerFioAddress',
   [ACTIONS.registerFioDomain]: 'registerFioDomain',
   [ACTIONS.renewFioDomain]: 'renewFioDomain',
@@ -71,12 +73,14 @@ export const FIO_REQUEST_STATUS_TYPES: { [key: string]: string } = {
   REJECTED: 'rejected',
   PAID: 'sent_to_blockchain',
   PENDING: 'requested',
+  CANCELED: 'cancelled',
 };
 
 export const FIO_REQUEST_STATUS_TYPES_TITLES: { [key: string]: string } = {
   [FIO_REQUEST_STATUS_TYPES.REJECTED]: 'REJECTED',
   [FIO_REQUEST_STATUS_TYPES.PAID]: 'PAID',
   [FIO_REQUEST_STATUS_TYPES.PENDING]: 'PENDING',
+  [FIO_REQUEST_STATUS_TYPES.CANCELED]: 'CANCELED',
 };
 
 export const BUNDLES_TX_COUNT = {

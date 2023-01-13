@@ -8,6 +8,7 @@ export const ERROR_TYPES = {
   TRANSFER_ERROR: 'TRANSFER_ERROR',
   RENEW_ERROR: 'RENEW_ERROR',
   REJECT_ERROR: 'REJECT_ERROR',
+  CANCEL_ERROR: 'CANCEL_ERROR',
   ADD_BUNDLES_ERROR: 'ADD_BUNDLES_ERROR',
   ADD_TOKEN_ERROR: 'ADD_TOKEN_ERROR',
   EDIT_TOKEN_ERROR: 'EDIT_TOKEN_ERROR',
@@ -40,6 +41,12 @@ export const ERROR_MESSAGES: {
     message: `${DEFAULT_FIO_TRX_ERR_MESSAGE}`
       .replace('purchase', 'reject')
       .replace('registrations', 'rejection'),
+  },
+  [ERROR_TYPES.CANCEL_ERROR]: {
+    title: 'Cancel error',
+    message: `${DEFAULT_FIO_TRX_ERR_MESSAGE}`
+      .replace('purchase', 'cancel')
+      .replace('registrations', 'cancellation'),
   },
   [ERROR_TYPES.ADD_BUNDLES_ERROR]: {
     title: 'Add Bundled Transactions error',

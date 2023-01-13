@@ -40,6 +40,7 @@ export type ResultsProps = {
   roe?: number;
   onClose: () => void;
   onRetry?: () => void;
+  onCancel?: () => void;
   isPaymentDetailsVisible?: boolean;
 };
 

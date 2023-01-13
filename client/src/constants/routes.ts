@@ -96,6 +96,8 @@ const ROUTES: { [route: string]: string } = {
 
   REJECT_FIO_REQUEST: '/reject-fio-request',
   REJECT_FIO_REQUEST_CONFIRMATION: '/reject-fio-request-confirmation',
+  CANCEL_FIO_REQUEST: '/cancel-request',
+  CANCEL_FIO_REQUEST_CONFIRMATION: '/cancel-request-confirmation',
 
   ORDERS: '/orders',
   ORDER_DETAILS: '/order-details', // ?orderNumber=
