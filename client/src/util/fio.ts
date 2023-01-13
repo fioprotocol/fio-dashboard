@@ -126,10 +126,16 @@ export const normalizePublicAddresses = (
 
 export const statusBadgeColours = (
   status: string,
-): { isBlue: boolean; isOrange: boolean; isRose: boolean } => ({
+): {
+  isBlue: boolean;
+  isOrange: boolean;
+  isRose: boolean;
+  isYellowGreen: boolean;
+} => ({
   isBlue: FIO_REQUEST_STATUS_TYPES.PAID === status,
   isOrange: FIO_REQUEST_STATUS_TYPES.REJECTED === status,
   isRose: FIO_REQUEST_STATUS_TYPES.PENDING === status,
+  isYellowGreen: FIO_REQUEST_STATUS_TYPES.CANCELED === status,
 });
 
 export const isFioChain = (chain: string): boolean => chain === CHAIN_CODES.FIO;

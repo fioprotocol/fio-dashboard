@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import FioRecordDetailedActionButtons from './FioRecordDetailedActionButtons';
+import FioRecordPendingActionButtons from './FioRecordPendingActionButtons';
 import FioRecordFieldsList from './FioRecordFieldsList';
 import InfoBadge from '../../../components/Badges/InfoBadge/InfoBadge';
 
@@ -63,13 +64,24 @@ const FioRecordDetailedItem: React.FC<Props> = props => {
   const renderActionButtons = () =>
     !!selectedAddress &&
     fioRecordDecrypted.fioRecord.status === FIO_REQUEST_STATUS_TYPES.PENDING &&
-    fioRecordType === FIO_RECORD_TYPES.RECEIVED && (
+    fioRecordType === FIO_RECORD_TYPES.RECEIVED ? (
       <FioRecordDetailedActionButtons
         fioRecordDecrypted={fioRecordDecrypted}
         fioWallet={fioWallet}
         fioRecordType={fioRecordType}
         onCloseModal={onCloseModal}
       />
+    ) : (
+      fioRecordDecrypted.fioRecord.status ===
+        FIO_REQUEST_STATUS_TYPES.PENDING &&
+      fioRecordType === FIO_RECORD_TYPES.SENT && (
+        <FioRecordPendingActionButtons
+          fioRecordDecrypted={fioRecordDecrypted}
+          fioWallet={fioWallet}
+          fioRecordType={fioRecordType}
+          onCloseModal={onCloseModal}
+        />
+      )
     );
   return (
     <div className={classes.fieldsContainer}>
