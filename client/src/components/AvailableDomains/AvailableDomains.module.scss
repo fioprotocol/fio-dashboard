@@ -16,16 +16,14 @@
   }
 
   .grid {
-    display: grid;
-    grid-gap: 40px;
-    grid-template-columns: 1fr 1fr 1fr;
-    margin-bottom: 50px;
+    margin: -40px -20px 50px;
   }
 
   .domain {
     background: $white;
     padding: 30px;
     border-radius: 24px;
+    margin: 40px 20px;
 
     .domainTitle {
       margin: 15px 0 30px;
@@ -68,12 +66,12 @@
     }
 
     .grid {
-      grid-gap: 20px;
-      grid-template-columns: 1fr;
+      margin: -20px -10px 50px;
     }
 
     .domain {
       padding: 20px;
+      margin: 20px 10px;
 
       .domainTitle {
         margin: 15px 0 20px;

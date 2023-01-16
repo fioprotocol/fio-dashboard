@@ -1,58 +1,25 @@
 import React, { useCallback } from 'react';
+import Slider from 'react-slick';
 
 import { FunFactLabel } from '../FunFactLabel';
 
 import { AvailableDomainsItem } from './AvailableDomainsItem';
 
+import { useCheckIfDesktop } from '../../screenType';
+
+import { AdminDomain } from '../../api/responses';
+
 import classes from './AvailableDomains.module.scss';
 
-// TODO: replace with API call for available domains
-const AVAILABLE_DOMAINS = [
-  {
-    id: 1,
-    domain: 'domain',
-  },
-  {
-    id: 2,
-    domain: 'domain',
-  },
-  {
-    id: 3,
-    domain: 'domain',
-  },
-  {
-    id: 4,
-    domain: 'domain',
-  },
-  {
-    id: 5,
-    domain: 'domain',
-  },
-  {
-    id: 6,
-    domain: 'domain',
-  },
-  {
-    id: 7,
-    domain: 'domain',
-  },
-  {
-    id: 8,
-    domain: 'domain',
-  },
-  {
-    id: 9,
-    domain: 'domain',
-  },
-];
-
 type Props = {
+  domains: AdminDomain[];
   onSubmit: (values: { domain: string }) => void;
   domainPrice: string;
 };
 
 export const AvailableDomains: React.FC<Props> = props => {
-  const { onSubmit, domainPrice } = props;
+  const { domains, onSubmit, domainPrice } = props;
+  const isDesktop = useCheckIfDesktop();
 
   const onClick = useCallback(
     (domain: string) => {
@@ -61,23 +28,31 @@ export const AvailableDomains: React.FC<Props> = props => {
     [onSubmit],
   );
 
-  if (!AVAILABLE_DOMAINS.length) {
+  if (!domains.length) {
     return null;
   }
 
   return (
     <div className={classes.container}>
       <div className={classes.title}>Now Available!</div>
-      <div className={classes.grid}>
-        {AVAILABLE_DOMAINS.map(item => (
+      <Slider
+        className={classes.grid}
+        dots
+        infinite={false}
+        arrows={false}
+        rows={3}
+        slidesToShow={isDesktop ? 3 : 1}
+        slidesToScroll={isDesktop ? 3 : 1}
+      >
+        {domains.map(item => (
           <AvailableDomainsItem
             key={item.id}
-            domain={item.domain}
+            domain={item.name}
             price={domainPrice}
             onClick={onClick}
           />
         ))}
-      </div>
+      </Slider>
 
       <FunFactLabel>
         <span>The most expensive web3 domain sold for $2,000,000</span>

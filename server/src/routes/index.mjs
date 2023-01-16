@@ -4,6 +4,7 @@ import adminUsers from './adminUsers';
 import auth from './auth';
 import chainCodes from './chainCodes';
 import contacts from './contacts';
+import defaults from './defaults';
 import external from './external';
 import general from './general';
 import generatePdf from './generatePdf';
@@ -22,6 +23,7 @@ export default {
   auth,
   chainCodes,
   contacts,
+  defaults,
   external,
   general,
   generatePdf,

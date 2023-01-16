@@ -9,13 +9,22 @@ import { OpenseaDomains } from '../../components/OpenseaDomains';
 import { useContext } from './FioDomainLandingPageContext';
 
 const FioDomainLandingPage: React.FC = () => {
-  const { domainPrice, onSubmit } = useContext();
+  const {
+    availableDomains,
+    openseaDomains,
+    domainPrice,
+    onSubmit,
+  } = useContext();
 
   return (
     <div className="w-100">
       <FioDomainWidget onSubmit={onSubmit} />
-      <AvailableDomains domainPrice={domainPrice} onSubmit={onSubmit} />
-      <OpenseaDomains />
+      <AvailableDomains
+        domains={availableDomains}
+        domainPrice={domainPrice}
+        onSubmit={onSubmit}
+      />
+      <OpenseaDomains domains={openseaDomains} />
       <DomainsSpecialsBanner />
       <WidelyAdoptedSection />
       <FioDomainWidget onSubmit={onSubmit} isReverseColors />

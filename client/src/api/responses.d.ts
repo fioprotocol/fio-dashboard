@@ -210,3 +210,5 @@ export type AdminDefaultsRequest = AdminDefaults & {
   searchPrefixesToDelete?: string[];
   usernamesOnCustomDomainsToDelete?: string[];
 };
+
+export type DefaultsAvailableDomainsResponse = AdminDomain[];

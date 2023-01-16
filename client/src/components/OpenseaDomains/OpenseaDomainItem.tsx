@@ -2,12 +2,12 @@ import React from 'react';
 
 import SubmitButton from '../common/SubmitButton/SubmitButton';
 
-import { OpenseaDomain } from './types';
+import { AnyObject } from '../../types';
 
 import classes from './OpenseaDomains.module.scss';
 
 type Props = {
-  domain: OpenseaDomain;
+  domain: AnyObject;
 };
 
 export const OpenseaDomainItem: React.FC<Props> = props => {
