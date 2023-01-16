@@ -8,6 +8,8 @@ $theme-colors: (
 );
 
 @import '~bootstrap/scss/bootstrap.scss';
+@import '~slick-carousel/slick/slick.css';
+@import '~slick-carousel/slick/slick-theme.css';
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,

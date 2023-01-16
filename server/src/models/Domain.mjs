@@ -50,7 +50,10 @@ export class Domain extends Base {
           [Op.eq]: false,
         },
       },
-      order: [['rank', 'DESC']],
+      order: [
+        ['rank', 'DESC'],
+        ['name', 'ASC'],
+      ],
     });
   }
 }
