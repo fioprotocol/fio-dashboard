@@ -48,6 +48,7 @@ router.post('/users/update-email-request', checkAuth, routes.users.updateEmailRe
 router.post('/users/update-email-revert', checkAuth, routes.users.updateEmailRevert);
 router.post('/users/affiliate', checkAuth, routes.users.activateAffiliate);
 router.patch('/users/affiliate', checkAuth, routes.users.updateAffiliate);
+router.post('/users/sendEvent', checkAuth, routes.users.sendEvent);
 
 router.get('/admin/me', checkAdminAuth, routes.adminUsers.personalInfo);
 router.get('/admin/list', checkAdminAuth, routes.adminUsers.adminsList);

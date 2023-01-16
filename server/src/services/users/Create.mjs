@@ -57,6 +57,7 @@ export default class UsersCreate extends Base {
       email,
       status: User.STATUS.NEW,
       refProfileId,
+      isOptIn: !!addEmailToPromoList,
     });
 
     await user.save();
