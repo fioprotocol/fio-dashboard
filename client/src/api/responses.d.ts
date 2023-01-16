@@ -48,6 +48,7 @@ export type AuthDeleteNewDeviceRequestResponse =
   | { success: true }
   | { success: false; message: 'Not Found' };
 export type AuthUpdateNewDeviceResponse = null;
+export type AuthProfileSendEvent = { success: true };
 export type AuthCheckRejectedResponse = boolean;
 export type AdminAuthLoginResponse = { jwt: string };
 export type AdminResetPasswordResponse =

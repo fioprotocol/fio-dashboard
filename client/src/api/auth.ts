@@ -21,6 +21,7 @@ import {
   AuthUsernameResponse,
   AdminAuthLoginResponse,
   AdminResetPasswordResponse,
+  AuthProfileSendEvent,
 } from './responses';
 
 export default class Auth extends Base {
@@ -197,6 +198,12 @@ export default class Auth extends Base {
   updateAffiliate(fch: string): Promise<AuthProfileResponse> {
     return this.apiClient.patch('users/affiliate', {
       data: { fch },
+    });
+  }
+
+  sendEvent(event: string): Promise<AuthProfileSendEvent> {
+    return this.apiClient.post('users/sendEvent', {
+      event,
     });
   }
 }

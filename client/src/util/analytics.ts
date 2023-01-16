@@ -11,6 +11,8 @@ import {
 } from '../constants/common';
 
 import MathOp from './math';
+import api from '../api';
+import { log } from './general';
 
 import {
   AnyObject,
@@ -25,6 +27,20 @@ export const fireAnalyticsEvent = (
   event: string,
   data: AnyObject = {},
 ): void => {
+  if (
+    ![
+      ANALYTICS_EVENT_ACTIONS.PAGE_VIEW,
+      ANALYTICS_EVENT_ACTIONS.VIRTUAL_PAGE_VIEW,
+      ANALYTICS_EVENT_ACTIONS.CHAIN_ERROR,
+    ].includes(event)
+  ) {
+    try {
+      api.auth.sendEvent(event);
+    } catch (err) {
+      log.error(err);
+    }
+  }
+
   window.dataLayer?.push({
     event,
     ...data,
