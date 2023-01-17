@@ -17,6 +17,7 @@
     color: $white;
     margin-top: 7.125rem;
     margin-bottom: 0;
+    @include comfortaa-bold;
   }
   .subtitle {
     max-width: 795px;

@@ -6,8 +6,6 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 
 import icons from '../icons';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 import { store, history } from './redux/init';
 
 import Routes from './routes';

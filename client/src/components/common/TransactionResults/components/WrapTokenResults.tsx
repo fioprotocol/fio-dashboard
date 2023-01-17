@@ -141,7 +141,7 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
       <Badge show={!!transaction_id} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
           <p className={classes.title}>ID</p>
-          <p className={classnames(classes.item, classes.isBlue)}>
+          <p className={classnames(classes.item, classes.isIndigo)}>
             <a
               href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transaction_id}`}
               target="_blank"

@@ -9,20 +9,20 @@ type Props = {
   onClick: () => void;
   title: string;
   isGreen?: boolean;
-  isBlue?: boolean;
+  isIndigo?: boolean;
   isSmall?: boolean;
   loading?: boolean;
 };
 
 const ActionButton: React.FC<Props> = props => {
-  const { onClick, title, isGreen, isBlue, isSmall, loading } = props;
+  const { onClick, title, isGreen, isIndigo, isSmall, loading } = props;
   return (
     <Button
       onClick={onClick}
       className={classnames(
         classes.button,
         isGreen && classes.isGreen,
-        isBlue && classes.isBlue,
+        isIndigo && classes.isIndigo,
         isSmall && classes.isSmall,
       )}
       disabled={loading}

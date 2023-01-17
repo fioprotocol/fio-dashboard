@@ -124,7 +124,7 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
       <Badge show={!!transaction_id} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
           <p className={classes.title}>ID</p>
-          <p className={classnames(classes.item, classes.isBlue)}>
+          <p className={classnames(classes.item, classes.isIndigo)}>
             <a
               href={`${
                 isTokens

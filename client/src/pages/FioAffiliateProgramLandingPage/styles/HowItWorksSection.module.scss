@@ -4,6 +4,9 @@
 
 @import './commonStyles.module.scss';
 
+.containerLayout {
+  background: $baltic-sea;
+}
 .instruction {
   display: flex;
   flex-direction: column;
@@ -20,9 +23,9 @@
       font-size: 3rem;
       line-height: 1;
       padding-right: 50px;
-      color: $violet;
+      color: $light-indigo;
       @include proxima-nova-bold;
-      border-right: 1px solid $cyan;
+      border-right: 1px solid $iris;
     }
 
     .instructionRowInfo {

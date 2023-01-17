@@ -15,6 +15,13 @@
     }
   }
 
+  &.isDarkWhite {
+    background: $shark;
+    .title, .subtitle, .actionInfo {
+      color: $white;
+    }
+  }
+
   .logoImg {
     max-width: 380px;
     max-height: 115px;

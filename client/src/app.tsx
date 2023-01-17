@@ -8,8 +8,6 @@ import { HelmetProvider } from 'react-helmet-async';
 
 import icons from './icons';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 import { store, history } from './redux/init';
 
 import Routes from './routes';

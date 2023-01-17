@@ -125,6 +125,7 @@ export const RefHomePage: React.FC<Props &
           hasFreeAddress={hasFreeAddress}
           showSignInWidget
           hideBottomPlug
+          isDarkWhite
         />
       </div>
     );
