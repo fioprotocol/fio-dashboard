@@ -36,6 +36,7 @@ const AdminPartnersListPage: React.FC<Props> = props => {
       regRefApiToken: '',
       settings: {
         domains: [''],
+        premiumDomains: [],
         allowCustomDomain: false,
         actions: {
           SIGNNFT: {},
@@ -76,6 +77,7 @@ const AdminPartnersListPage: React.FC<Props> = props => {
         if (partner.type === REF_PROFILE_TYPE.AFFILIATE) {
           partner.settings = {
             domains: [],
+            premiumDomains: [],
             allowCustomDomain: true,
           };
         }

@@ -87,6 +87,14 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
     form.mutators.push('settings.domains');
   }, [form]);
 
+  const onSetPremiumDomain = useCallback(
+    (value: string, checked: boolean) => {
+      if (checked) form.mutators.push('settings.premiumDomains', value);
+      else form.mutators.remove('settings.premiumDomains', value);
+    },
+    [form],
+  );
+
   const onSetDefaultDomain = useCallback(
     (domain: string) => {
       form.change(
@@ -248,12 +256,16 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
                       field={field}
                       index={index}
                       value={values?.settings?.domains[index]}
+                      isPremium={values?.settings?.premiumDomains?.includes(
+                        values?.settings?.domains[index],
+                      )}
                       isDefault={
                         values?.settings?.domains[index] ===
                         values?.settings?.preselectedDomain
                       }
                       isRemoveAvailable={values?.settings?.domains?.length > 1}
                       onSetDefaultDomain={onSetDefaultDomain}
+                      onSetPremiumDomain={onSetPremiumDomain}
                       onRemove={fields.remove}
                     />
                   ))
