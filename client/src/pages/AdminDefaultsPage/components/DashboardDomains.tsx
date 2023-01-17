@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { FormApi } from 'final-form';
 import { Field } from 'react-final-form';
@@ -8,29 +8,35 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 import InputAdapter from './InputAdapter';
 import { makeOnDragEndFunction } from '../dndUtils';
+import { AdminDefaultsRequest } from '../../../api/responses';
 import classes from '../styles/AdminDefaultsPage.module.scss';
 
 interface DashboardDomainsProps {
-  form: FormApi<any>;
+  form: FormApi<AdminDefaultsRequest>;
 }
 
+const FIELD_ARRAY_KEY = 'dashboardDomains';
+
 const DashboardDomains: React.FC<DashboardDomainsProps> = ({ form }) => {
-  const addNewEntry = () => {
-    form.mutators.push('dashboardDomains', {
+  const addNewEntry = useCallback(() => {
+    form.mutators.push(FIELD_ARRAY_KEY, {
       name: '',
       isPremium: false,
       isDashboardDomain: true,
       rank: 0,
     });
-  };
+  }, [form]);
 
-  const removeEntry = (index: number, fields: any) => {
-    const { id } = fields.value[index];
-    if (id) {
-      form.mutators.push('dashboardDomainsToDelete', id);
-    }
-    fields.remove(index);
-  };
+  const removeEntry = useCallback(
+    (index: number, fields: any) => {
+      const { id } = fields.value[index];
+      if (id) {
+        form.mutators.push('dashboardDomainsToDelete', id);
+      }
+      fields.remove(index);
+    },
+    [form],
+  );
 
   return (
     <div className={classes.section}>
@@ -38,10 +44,10 @@ const DashboardDomains: React.FC<DashboardDomainsProps> = ({ form }) => {
         <h3>Dashboard Domains</h3>
         <Button onClick={addNewEntry}>Add</Button>
       </div>
-      <FieldArray name="dashboardDomains">
+      <FieldArray name={FIELD_ARRAY_KEY}>
         {props => (
           <DragDropContext onDragEnd={makeOnDragEndFunction(props.fields)}>
-            <Droppable droppableId="dashboardDomains">
+            <Droppable droppableId={FIELD_ARRAY_KEY}>
               {provided => (
                 <div ref={provided.innerRef}>
                   {props.fields.map((name, index) => (

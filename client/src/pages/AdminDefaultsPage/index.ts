@@ -1,3 +1,3 @@
-import AdminDetaultsPage from './AdminDetaultsPage';
+import AdminDefaultsPage from './AdminDefaultsPage';
 
-export default AdminDetaultsPage;
+export default AdminDefaultsPage;

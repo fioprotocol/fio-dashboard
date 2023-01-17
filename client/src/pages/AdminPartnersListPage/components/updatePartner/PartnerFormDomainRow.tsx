@@ -38,8 +38,8 @@ export const PartnerFormDomainRow: React.FC<Props> = props => {
   }, [onSetDefaultDomain, value]);
 
   const handleSetPremium = useCallback(
-    (e: any) => {
-      onSetPremiumDomain(value, e.target.checked);
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      onSetPremiumDomain(value, event.target.checked);
     },
     [onSetPremiumDomain, value],
   );

@@ -201,3 +201,11 @@ export type AdminDefaults = {
   searchPostfixes: SearchTerm[];
   usernamesOnCustomDomains: UsernameOnDomain[];
 };
+
+export type AdminDefaultsRequest = AdminDefaults & {
+  availableDomainsToDelete?: string[];
+  dashboardDomainsToDelete?: string[];
+  searchPostfixesToDelete?: string[];
+  searchPrefixesToDelete?: string[];
+  usernamesOnCustomDomainsToDelete?: string[];
+};

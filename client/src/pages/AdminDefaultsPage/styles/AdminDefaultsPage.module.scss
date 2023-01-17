@@ -1,3 +1,5 @@
+@import '../../../assets/styles/colors';
+
 .container {
   width: 60%;
   margin: 0 auto;
@@ -28,8 +30,8 @@
 }
 
 .listItem {
-  border: 1px solid #ebebeb;
-  background-color: #f0f0f0;
+  border: 1px solid $desert-storm;
+  background-color: $desert-storm;
   padding: 10px;
   border-radius: 5px;
   margin: 10px auto;

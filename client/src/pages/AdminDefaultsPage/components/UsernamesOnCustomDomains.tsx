@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Button } from 'react-bootstrap';
 import { FormApi } from 'final-form';
 import { Field } from 'react-final-form';
@@ -7,31 +7,37 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 import InputAdapter from './InputAdapter';
-
-import classes from '../styles/AdminDefaultsPage.module.scss';
 import { makeOnDragEndFunction } from '../dndUtils';
 
+import { AdminDefaultsRequest } from '../../../api/responses';
+import classes from '../styles/AdminDefaultsPage.module.scss';
+
 interface UsernamesOnCustomDomainsProps {
-  form: FormApi<any>;
+  form: FormApi<AdminDefaultsRequest>;
 }
+
+const FIELD_ARRAY_KEY = 'usernamesOnCustomDomains';
 
 const UsernamesOnCustomDomains: React.FC<UsernamesOnCustomDomainsProps> = ({
   form,
 }) => {
-  const addNewEntry = () => {
-    form.mutators.push('usernamesOnCustomDomains', {
+  const addNewEntry = useCallback(() => {
+    form.mutators.push(FIELD_ARRAY_KEY, {
       username: '',
       rank: 0,
     });
-  };
+  }, [form]);
 
-  const removeEntry = (index: number, fields: any) => {
-    const { id } = fields.value[index];
-    if (id) {
-      form.mutators.push('usernamesOnCustomDomainsToDelete', id);
-    }
-    fields.remove(index);
-  };
+  const removeEntry = useCallback(
+    (index: number, fields: any) => {
+      const { id } = fields.value[index];
+      if (id) {
+        form.mutators.push('usernamesOnCustomDomainsToDelete', id);
+      }
+      fields.remove(index);
+    },
+    [form],
+  );
 
   return (
     <div className={classes.section}>
@@ -39,10 +45,10 @@ const UsernamesOnCustomDomains: React.FC<UsernamesOnCustomDomainsProps> = ({
         <h3>Usernames on Custom Domains</h3>
         <Button onClick={addNewEntry}>Add</Button>
       </div>
-      <FieldArray name="usernamesOnCustomDomains">
+      <FieldArray name={FIELD_ARRAY_KEY}>
         {props => (
           <DragDropContext onDragEnd={makeOnDragEndFunction(props.fields)}>
-            <Droppable droppableId="usernamesOnCustomDomains">
+            <Droppable droppableId={FIELD_ARRAY_KEY}>
               {provided => (
                 <div ref={provided.innerRef}>
                   {props.fields.map((name, index) => (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Button } from 'react-bootstrap';
 import { FormApi } from 'final-form';
 import { Field } from 'react-final-form';
@@ -8,28 +8,34 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 import InputAdapter from './InputAdapter';
 import { makeOnDragEndFunction } from '../dndUtils';
+import { AdminDefaultsRequest } from '../../../api/responses';
 import classes from '../styles/AdminDefaultsPage.module.scss';
 
 interface SearchPostfixesProps {
-  form: FormApi<any>;
+  form: FormApi<AdminDefaultsRequest>;
 }
 
+const FIELD_ARRAY_KEY = 'searchPostfixes';
+
 const SearchPostfixes: React.FC<SearchPostfixesProps> = ({ form }) => {
-  const addNewEntry = () => {
-    form.mutators.push('searchPostfixes', {
+  const addNewEntry = useCallback(() => {
+    form.mutators.push(FIELD_ARRAY_KEY, {
       term: '',
       isPrefix: false,
       rank: 0,
     });
-  };
+  }, [form]);
 
-  const removeEntry = (index: number, fields: any) => {
-    const { id } = fields.value[index];
-    if (id) {
-      form.mutators.push('searchPostfixesToDelete', id);
-    }
-    fields.remove(index);
-  };
+  const removeEntry = useCallback(
+    (index: number, fields: any) => {
+      const { id } = fields.value[index];
+      if (id) {
+        form.mutators.push('searchPostfixesToDelete', id);
+      }
+      fields.remove(index);
+    },
+    [form],
+  );
 
   return (
     <div className={classes.section}>
@@ -37,10 +43,10 @@ const SearchPostfixes: React.FC<SearchPostfixesProps> = ({ form }) => {
         <h3>Search postfix</h3>
         <Button onClick={addNewEntry}>Add</Button>
       </div>
-      <FieldArray name="searchPostfixes">
+      <FieldArray name={FIELD_ARRAY_KEY}>
         {props => (
           <DragDropContext onDragEnd={makeOnDragEndFunction(props.fields)}>
-            <Droppable droppableId="searchPostfixes">
+            <Droppable droppableId={FIELD_ARRAY_KEY}>
               {provided => (
                 <div ref={provided.innerRef}>
                   {props.fields.map((name, index) => (
