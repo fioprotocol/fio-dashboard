@@ -26,13 +26,13 @@
     }
   }
 
-  &.isBlue {
-    background-color: $cyan-blue;
-    border-color: $cyan-blue;
+  &.isIndigo {
+    background-color: $light-indigo;
+    border-color: $light-indigo;
 
     &:hover {
-      background-color: $cyan;
-      border-color: $cyan;
+      background-color: $iris;
+      border-color: $iris;
     }
   }
 

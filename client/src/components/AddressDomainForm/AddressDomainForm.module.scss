@@ -79,6 +79,12 @@
       color: $white;
     }
   }
+
+  &.isDarkWhite {
+    .actionTextContainer {
+      color: $white;
+    }
+  }
 }
 
 .addressContainer {

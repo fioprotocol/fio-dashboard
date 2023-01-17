@@ -11,7 +11,7 @@
   margin: 50px 10px;
   border-radius: 15px;
   text-align: center;
-  background-color: $cyan-blue;
+  background-color: $light-indigo;
   padding: 20px;
   color: $white;
 
@@ -49,7 +49,7 @@
   max-width: 400px;
   max-height: 350px;
   border-radius: 15px;
-  background-color: $bright-turquoise;
+  background-color: $light-indigo;
   padding: 20px;
   color: $white;
 
@@ -99,14 +99,14 @@
     font-size: 1rem;
     padding-top: 15px;
     padding-bottom: 15px;
-    background-color: $deep-blue;
+    background-color: $iris;
     color: $white;
     width: 100%;
     border-radius: 10px;
     border: none;
 
     &:hover {
-      background-color: $cyan;
+      background-color: $dark-slate-blue;
     }
   }
 }

@@ -30,6 +30,16 @@
     }
   }
 
+  &.isWhiteBlack {
+    .icon {
+      color: $white;
+    }
+
+    .insideIcon {
+      color: $baltic-sea;
+    }
+  }
+
   &.isWhiteIndigo {
     .icon {
       color: $white;

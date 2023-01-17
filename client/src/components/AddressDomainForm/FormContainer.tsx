@@ -47,6 +47,7 @@ const FormContainer: React.FC<FormContainerProps> = props => {
     handleChange,
     debouncedHandleChange,
     isReverseColors,
+    isDarkWhite,
   } = props;
 
   const buttonText = 'GET IT';
@@ -127,6 +128,7 @@ const FormContainer: React.FC<FormContainerProps> = props => {
       isValidating,
       toggleShowCustomDomain,
       isReverseColors,
+      isDarkWhite,
       onChangeHandleField,
       debouncedOnChangeHandleField,
     };
@@ -139,6 +141,7 @@ const FormContainer: React.FC<FormContainerProps> = props => {
         className={classnames(
           classes.form,
           isReverseColors && classes.isReverseColors,
+          isDarkWhite && classes.isDarkWhite,
         )}
         key="form"
         id="addressForm"
@@ -175,8 +178,9 @@ const FormContainer: React.FC<FormContainerProps> = props => {
         )}
         <div className={classes.actionTextContainer}>
           <ExclamationIcon
-            isBlackWhite={!isReverseColors}
-            isWhiteIndigo={isReverseColors}
+            isBlackWhite={!isReverseColors && !isDarkWhite}
+            isWhiteIndigo={isReverseColors && !isDarkWhite}
+            isWhiteBlack={isDarkWhite && !isReverseColors}
           />
           <span className={classes.actionText}>
             You can pay with a credit card OR crypto!

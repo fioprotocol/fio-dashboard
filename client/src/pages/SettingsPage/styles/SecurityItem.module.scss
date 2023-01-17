@@ -5,7 +5,7 @@
 .container {
   margin-top: 30px;
   max-width: 500px;
-  
+
   .title {
     font-size: 1.125em;
     color: $gray-main;
@@ -26,13 +26,13 @@
     border-radius: 7px;
     padding: 7px 35px;
     margin-top: 4px;
-    background-color: $violet;
+    background-color: $light-indigo;
     min-width: 250px;
     outline: none;
 
     &:hover {
-      background-color: $clear-blue;
-      border-color: $clear-blue;
+      background-color: $iris;
+      border-color: $iris;
     }
 
     &.passwordPin {

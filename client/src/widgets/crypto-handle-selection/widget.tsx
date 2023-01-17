@@ -7,8 +7,6 @@ import WidgetContainer from './components/WidgetContainer';
 
 import icons from './icons';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 import { store } from './redux/init';
 
 library.add(icons);

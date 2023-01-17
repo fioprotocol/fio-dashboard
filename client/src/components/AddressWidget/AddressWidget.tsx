@@ -26,6 +26,7 @@ type Props = {
   isAuthenticated?: boolean;
   hasFreeAddress?: boolean;
   isReverseColors?: boolean;
+  isDarkWhite?: boolean;
 };
 
 const AddressWidget: React.FC<Props> = props => {
@@ -38,6 +39,7 @@ const AddressWidget: React.FC<Props> = props => {
     showSignInWidget,
     isAuthenticated,
     isReverseColors,
+    isDarkWhite,
   } = props;
 
   return (
@@ -46,6 +48,7 @@ const AddressWidget: React.FC<Props> = props => {
         classes.container,
         hasMinHeight && classes.hasMinHeight,
         isReverseColors && classes.isReverseColors,
+        isDarkWhite && classes.isDarkWhite,
       )}
     >
       <TitleComponent logoSrc={logoSrc} title={title} />
@@ -56,6 +59,7 @@ const AddressWidget: React.FC<Props> = props => {
           isHomepage={true}
           type={ADDRESS}
           isReverseColors={isReverseColors}
+          isDarkWhite={isDarkWhite}
           {...props}
         />
       </div>

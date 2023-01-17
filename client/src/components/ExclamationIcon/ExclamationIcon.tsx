@@ -7,16 +7,18 @@ import classes from './ExclamationIcon.module.scss';
 type Props = {
   isBlackWhite?: boolean;
   isWhiteIndigo?: boolean;
+  isWhiteBlack?: boolean;
 };
 
 export const ExclamationIcon: React.FC<Props> = props => {
-  const { isBlackWhite, isWhiteIndigo } = props;
+  const { isBlackWhite, isWhiteIndigo, isWhiteBlack } = props;
 
   return (
     <div
       className={classnames(
         classes.container,
         isBlackWhite && classes.isBlackWhite,
+        isWhiteBlack && classes.isWhiteBlack,
         isWhiteIndigo && classes.isWhiteIndigo,
       )}
     >

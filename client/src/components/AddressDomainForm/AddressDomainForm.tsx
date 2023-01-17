@@ -37,6 +37,7 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
     setCartItems,
     refreshFioNames,
     isReverseColors,
+    isDarkWhite,
   } = props;
 
   const isAddress = type === ADDRESS;
@@ -158,6 +159,7 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
           allowCustomDomains={allowCustomDomains}
           links={links}
           isReverseColors={isReverseColors}
+          isDarkWhite={isDarkWhite}
         />
       )}
     />

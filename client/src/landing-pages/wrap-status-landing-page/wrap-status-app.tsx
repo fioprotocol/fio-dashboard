@@ -5,8 +5,6 @@ import { ConnectedRouter } from 'connected-react-router';
 import { HelmetProvider } from 'react-helmet-async';
 import { library } from '@fortawesome/fontawesome-svg-core';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
-
 import icons from './icons';
 
 import { store, history } from './redux/init';

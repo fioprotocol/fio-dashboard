@@ -73,6 +73,7 @@ type DefaultFormContainerProps = {
     formProps: FormApi<FormValuesProps, FormValuesProps>,
   ) => void;
   isReverseColors?: boolean;
+  isDarkWhite?: boolean;
 };
 
 export type AddressDomainFormProps = {
@@ -94,6 +95,7 @@ export type AddressDomainFormProps = {
   };
   refreshFioNames: (publicKey: string) => void;
   isReverseColors?: boolean;
+  isDarkWhite?: boolean;
 };
 
 export type FormItemsProps = {
