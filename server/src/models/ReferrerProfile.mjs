@@ -9,11 +9,7 @@ const { DataTypes: DT } = Sequelize;
 
 const CODE_LENGTH = 5;
 const CODE_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
-const hashids = new Hashids(
-  process.env.ORDER_NUMBER_SALT,
-  CODE_LENGTH,
-  CODE_ALPHABET,
-);
+const hashids = new Hashids(process.env.ORDER_NUMBER_SALT, CODE_LENGTH, CODE_ALPHABET);
 
 export class ReferrerProfile extends Base {
   static get ACTION() {
@@ -122,17 +118,7 @@ export class ReferrerProfile extends Base {
     });
   }
 
-  static format({
-    id,
-    type,
-    code,
-    regRefCode,
-    label,
-    title,
-    subTitle,
-    settings,
-    tpid,
-  }) {
+  static format({ id, type, code, regRefCode, label, title, subTitle, settings, tpid }) {
     return {
       id,
       type,

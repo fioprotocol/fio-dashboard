@@ -1,4 +1,5 @@
 import Sequelize from 'sequelize';
+
 import Base from './Base';
 
 const { DataTypes: DT } = Sequelize;

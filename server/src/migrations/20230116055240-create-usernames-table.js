@@ -23,7 +23,7 @@ module.exports = {
     return;
   },
 
-  down: async (QI) => {
+  down: async QI => {
     return QI.dropTable('usernames');
   },
 };
