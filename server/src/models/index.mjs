@@ -41,5 +41,5 @@ export const {
   WrapStatusPolygonOraclesConfirmationsLogs,
   Domain,
   SearchTerm,
-  Username
+  Username,
 } = db.models;
