@@ -142,35 +142,39 @@ export class Payment extends Base {
     return null;
   }
 
+  static async cancelPayment(order) {
+    const payment = await Payment.findOne({
+      where: {
+        status: Payment.STATUS.NEW,
+        spentType: Payment.SPENT_TYPE.ORDER,
+        orderId: order.id,
+      },
+    });
+
+    // Remove existing payment when trying to create new one for the order
+    if (payment) {
+      try {
+        const pExtId = payment.externalId;
+        const pExtPaymentProcessor = Payment.getPaymentProcessor(payment.processor);
+
+        payment.status = Payment.STATUS.CANCELLED;
+        await payment.save();
+        if (pExtId && pExtPaymentProcessor) await pExtPaymentProcessor.cancel(pExtId);
+      } catch (e) {
+        logger.error(
+          `Existing Payment removing error ${e.message}. Order #${order.number}. Payment ${payment.id}`,
+        );
+      }
+    }
+  }
+
   static async createForOrder(order, exOrder, paymentProcessorKey, orderItems) {
     const paymentProcessor = Payment.getPaymentProcessor(paymentProcessorKey);
     let orderPayment = {};
     let extPaymentParams = {};
 
     if (exOrder) {
-      const exPayment = await Payment.findOne({
-        where: {
-          status: Payment.STATUS.NEW,
-          spentType: Payment.SPENT_TYPE.ORDER,
-          orderId: exOrder.id,
-        },
-      });
-
-      // Remove existing payment when trying to create new one for the order
-      if (exPayment) {
-        try {
-          const pExtId = exPayment.externalId;
-          const pExtPaymentProcessor = Payment.getPaymentProcessor(exPayment.processor);
-
-          exPayment.status = Payment.STATUS.CANCELLED;
-          await exPayment.save();
-          if (pExtId && pExtPaymentProcessor) await pExtPaymentProcessor.cancel(pExtId);
-        } catch (e) {
-          logger.error(
-            `Existing Payment removing error ${e.message}. Order #${exOrder.number}. Payment ${exPayment.id}`,
-          );
-        }
-      }
+      await this.cancelPayment(exOrder);
     }
 
     try {

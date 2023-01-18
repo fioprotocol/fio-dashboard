@@ -410,9 +410,12 @@ export const useContext = (): {
     return () => dispatch(loadProfile());
   }, [dispatch]);
 
-  const onClose = () => {
+  const onClose = useCallback(() => {
+    apis.orders.update(order.id, {
+      status: PURCHASE_RESULTS_STATUS.CANCELED,
+    });
     history.push(ROUTES.CART);
-  };
+  }, [order, history]);
 
   const onFinish = async (results: RegistrationResult) => {
     await apis.orders.update(order.id, {
