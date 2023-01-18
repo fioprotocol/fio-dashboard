@@ -15,11 +15,14 @@ import MathOp from '../../../../util/math';
 
 import { ROUTES } from '../../../../constants/routes';
 import {
+  ANALYTICS_EVENT_ACTIONS,
   DOMAIN_WRAP_NETWORKS_LIST,
   WALLET_CREATED_FROM,
 } from '../../../../constants/common';
 import { emptyWallet } from '../../../../redux/fio/reducer';
 import { LINKS } from '../../../../constants/labels';
+
+import { fireAnalyticsEvent } from '../../../../util/analytics';
 
 import { TrxResponsePaidBundles } from '../../../../api/fio';
 import {
@@ -76,6 +79,7 @@ const WrapDomainContainer: React.FC<ContainerProps> = props => {
 
   const onSend = async (values: WrapDomainValues) => {
     setSendData({ ...values });
+    fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.WRAP_DOMAIN, values);
   };
   const onCancel = () => {
     setSendData(null);

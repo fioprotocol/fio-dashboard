@@ -20,9 +20,15 @@ import { log } from '../../util/general';
 
 import { ROUTES } from '../../constants/routes';
 import { W_FIO_TOKEN } from '../../constants/ethereum';
-import { CHAIN_CODE_LIST, CHAIN_CODES } from '../../constants/common';
-import { DEFAULT_GAS_LIMIT } from '../../components/ConnectWallet/FeesModal/FeesModalInput';
+import {
+  CHAIN_CODE_LIST,
+  CHAIN_CODES,
+  ANALYTICS_EVENT_ACTIONS,
+} from '../../constants/common';
 import { LINKS } from '../../constants/labels';
+
+import { DEFAULT_GAS_LIMIT } from '../../components/ConnectWallet/FeesModal/FeesModalInput';
+import { fireAnalyticsEvent } from '../../util/analytics';
 
 import { ContainerProps, InitialValues, UnWrapTokensValues } from './types';
 
@@ -89,8 +95,7 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
           },
         );
 
-        setProcessing(false);
-        setResultsData({
+        const results = {
           amount: data.amount,
           chainCode: ETHEREUM_NETWORK_DATA.id,
           receivingAddress: data.fioAddress,
@@ -100,7 +105,12 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
             ...transaction,
             transaction_id: transaction.hash || transaction.transactionHash,
           },
-        });
+        };
+
+        setProcessing(false);
+        setResultsData(results);
+        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.UNWRAP_TOKENS, results);
+
         if (fioWallet?.publicKey)
           refreshWalletDataPublicKey(fioWallet.publicKey);
 

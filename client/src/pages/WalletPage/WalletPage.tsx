@@ -110,6 +110,8 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
               search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
             }}
             className={classes.firstLink}
+            title="Receive tokens"
+            aria-label="Receive tokens"
           >
             <div>
               <FontAwesomeIcon icon="arrow-down" />
@@ -120,17 +122,27 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
               pathname: ROUTES.SEND,
               search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioWallet.publicKey}`,
             }}
+            title="Send tokens"
+            aria-label="Send tokens"
           >
             <div>
               <FontAwesomeIcon icon="arrow-up" />
             </div>
           </Link>
-          <Link to={`${ROUTES.WRAP_TOKENS}?publicKey=${fioWallet.publicKey}`}>
+          <Link
+            to={`${ROUTES.WRAP_TOKENS}?publicKey=${fioWallet.publicKey}`}
+            title="Wrap tokens"
+            aria-label="Wrap tokens"
+          >
             <div>
               <img src={wrapIcon} alt="wrap" />
             </div>
           </Link>
-          <Link to={`${ROUTES.UNWRAP_TOKENS}?publicKey=${fioWallet.publicKey}`}>
+          <Link
+            to={`${ROUTES.UNWRAP_TOKENS}?publicKey=${fioWallet.publicKey}`}
+            title="Unwrap tokens"
+            aria-label="Unwrap tokens"
+          >
             <div>
               <img src={unwrapIcon} alt="unwrap" />
             </div>
