@@ -2,19 +2,29 @@ import React, { useCallback } from 'react';
 import { Button } from 'react-bootstrap';
 import { FormApi } from 'final-form';
 import { Field } from 'react-final-form';
-import { FieldArray } from 'react-final-form-arrays';
+import { FieldArray, FieldArrayRenderProps } from 'react-final-form-arrays';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-import InputAdapter from './InputAdapter';
+import TextInput, {
+  INPUT_COLOR_SCHEMA,
+  INPUT_UI_STYLES,
+} from '../../../components/Input/TextInput';
+
 import { makeOnDragEndFunction } from '../dndUtils';
 
-import { AdminDefaultsRequest } from '../../../api/responses';
+import { AdminDefaultsRequest, UsernameOnDomain } from '../../../api/responses';
+
 import classes from '../styles/AdminDefaultsPage.module.scss';
 
 interface UsernamesOnCustomDomainsProps {
   form: FormApi<AdminDefaultsRequest>;
 }
+
+type FieldsType = FieldArrayRenderProps<
+  UsernameOnDomain,
+  HTMLElement
+>['fields'];
 
 const FIELD_ARRAY_KEY = 'usernamesOnCustomDomains';
 
@@ -29,7 +39,7 @@ const UsernamesOnCustomDomains: React.FC<UsernamesOnCustomDomainsProps> = ({
   }, [form]);
 
   const removeEntry = useCallback(
-    (index: number, fields: any) => {
+    (index: number, fields: FieldsType) => {
       const { id } = fields.value[index];
       if (id) {
         form.mutators.push('usernamesOnCustomDomainsToDelete', id);
@@ -63,10 +73,15 @@ const UsernamesOnCustomDomains: React.FC<UsernamesOnCustomDomainsProps> = ({
                           <Button size="sm" variant="light" className="mr-2">
                             <FontAwesomeIcon icon="sort" />
                           </Button>
-                          <Field
-                            name={`${name}.username`}
-                            component={InputAdapter as any}
-                          />
+                          <div className={classes.sectionInputWrapper}>
+                            <Field
+                              name={`${name}.username`}
+                              component={TextInput}
+                              withoutBottomMargin
+                              uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                              colorScheme={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
+                            />
+                          </div>
                           <Button
                             type="button"
                             size="sm"

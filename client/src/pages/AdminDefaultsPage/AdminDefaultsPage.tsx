@@ -8,9 +8,11 @@ import DashboardDomains from './components/DashboardDomains';
 import UsernamesOnCustomDomains from './components/UsernamesOnCustomDomains';
 import SearchPrefixes from './components/SearchPrefixes';
 import SearchPostfixes from './components/SearchPostfixes';
+
 import api from '../../api';
 
 import { AdminDefaults } from '../../api/responses';
+
 import classes from './styles/AdminDefaultsPage.module.scss';
 
 const AdminDefaultsPage: React.FC = () => {

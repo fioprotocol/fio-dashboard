@@ -2,18 +2,26 @@ import React, { useCallback } from 'react';
 import { Button } from 'react-bootstrap';
 import { FormApi } from 'final-form';
 import { Field } from 'react-final-form';
-import { FieldArray } from 'react-final-form-arrays';
+import { FieldArray, FieldArrayRenderProps } from 'react-final-form-arrays';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-import InputAdapter from './InputAdapter';
+import TextInput, {
+  INPUT_COLOR_SCHEMA,
+  INPUT_UI_STYLES,
+} from '../../../components/Input/TextInput';
+
 import { makeOnDragEndFunction } from '../dndUtils';
-import { AdminDefaultsRequest } from '../../../api/responses';
+
+import { AdminDefaultsRequest, AdminDomain } from '../../../api/responses';
+
 import classes from '../styles/AdminDefaultsPage.module.scss';
 
 interface AvailableDomainsProps {
   form: FormApi<AdminDefaultsRequest>;
 }
+
+type FieldsType = FieldArrayRenderProps<AdminDomain, HTMLElement>['fields'];
 
 const FIELD_ARRAY_KEY = 'availableDomains';
 
@@ -28,7 +36,7 @@ const AvailableDomains: React.FC<AvailableDomainsProps> = ({ form }) => {
   }, [form]);
 
   const removeEntry = useCallback(
-    (index: number, fields: any) => {
+    (index: number, fields: FieldsType) => {
       const { id } = fields.value[index];
       if (id) {
         form.mutators.push('availableDomainsToDelete', id);
@@ -62,10 +70,15 @@ const AvailableDomains: React.FC<AvailableDomainsProps> = ({ form }) => {
                           <Button size="sm" variant="light" className="mr-2">
                             <FontAwesomeIcon icon="sort" />
                           </Button>
-                          <Field
-                            name={`${name}.name`}
-                            component={InputAdapter as any}
-                          />
+                          <div className={classes.sectionInputWrapper}>
+                            <Field
+                              name={`${name}.name`}
+                              component={TextInput}
+                              withoutBottomMargin
+                              uiType={INPUT_UI_STYLES.BLACK_WHITE}
+                              colorScheme={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
+                            />
+                          </div>
                           <Button
                             type="button"
                             size="sm"
