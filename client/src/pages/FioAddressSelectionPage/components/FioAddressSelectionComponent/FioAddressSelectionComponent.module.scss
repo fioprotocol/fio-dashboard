@@ -1,0 +1,11 @@
+@import '../../../../assets/styles/fontMixins.scss';
+
+.subtitle {
+  margin-top: 30px;
+  font-size: 1.125rem;
+  @include proxima-nova-semibold;
+}
+
+.infoBadgeContainer {
+  margin-top: -10px;
+}

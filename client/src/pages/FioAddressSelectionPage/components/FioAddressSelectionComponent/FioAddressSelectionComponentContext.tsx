@@ -72,6 +72,7 @@ export const useContext = (): UseContextProps => {
   }, [dispatch]);
 
   useEffect(() => {
+    setError(null);
     if (addressValue) validateAddress(addressValue);
   }, [addressValue, validateAddress]);
 
