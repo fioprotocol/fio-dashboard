@@ -1,3 +1,5 @@
+import Sequelize from 'sequelize';
+
 import Base from '../Base';
 
 import { Order } from '../../models';
@@ -11,10 +13,15 @@ export default class OrdersList extends Base {
   }
 
   async execute({ offset, limit }) {
-    const ordersList = await Order.list(this.context.id, null, offset, limit);
+    const ordersList = await Order.list(this.context.id, null, offset, limit, true);
     const totalOrdersCount = await Order.ordersCount({
       col: 'userId',
-      where: { userId: this.context.id },
+      where: {
+        status: {
+          [Sequelize.Op.notIn]: [Order.STATUS.NEW, Order.STATUS.CANCELED],
+        },
+        userId: this.context.id,
+      },
     });
 
     const orders = [];

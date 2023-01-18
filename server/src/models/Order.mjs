@@ -165,11 +165,22 @@ export class Order extends Base {
     return attributes.default;
   }
 
-  static async list(userId, search, offset, limit = DEFAULT_ORDERS_LIMIT) {
+  static async list(
+    userId,
+    search,
+    offset,
+    limit = DEFAULT_ORDERS_LIMIT,
+    isProcessed = false,
+  ) {
     const where = { userId };
 
     if (search) {
       where.number = { [Sequelize.Op.iLike]: search };
+    }
+    if (isProcessed) {
+      where.status = {
+        [Sequelize.Op.notIn]: [Order.STATUS.NEW, Order.STATUS.CANCELED],
+      };
     }
 
     return this.findAll({

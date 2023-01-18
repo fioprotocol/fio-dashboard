@@ -1,3 +1,5 @@
+import Sequelize from 'sequelize';
+
 import Base from '../Base';
 import { fioApi } from '../../external/fio.mjs';
 
@@ -23,7 +25,7 @@ export default class OrdersUpdate extends Base {
       data: [
         {
           nested_object: {
-            status: 'string',
+            status: 'integer',
             publicKey: 'string',
             results: [
               {
@@ -88,6 +90,24 @@ export default class OrdersUpdate extends Base {
           code: 'NOT_FOUND',
         },
       });
+    }
+
+    if (data.status && data.status === Order.STATUS.CANCELED) {
+      await Order.update(
+        { status: data.status },
+        { where: { id, userId: this.context.id } },
+      );
+      await OrderItemStatus.destroy({
+        where: {
+          orderItemId: { [Sequelize.Op.in]: order.OrderItems.map(({ id }) => id) },
+        },
+        force: true,
+      });
+      await Payment.cancelPayment(order);
+
+      return {
+        data: { success: true },
+      };
     }
 
     const orderUpdateParams = {};
