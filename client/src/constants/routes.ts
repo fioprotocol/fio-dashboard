@@ -130,6 +130,7 @@ const ADMIN_ROUTES: { [route: string]: string } = {
   ADMIN_ACCOUNTS: '/accounts',
   ADMIN_PARTNERS: '/partners',
   ADMIN_SEARCH_RESULT: '/search-result',
+  ADMIN_DEFAULTS: '/defaults',
 };
 
 export { ROUTES, ADMIN_ROUTES };

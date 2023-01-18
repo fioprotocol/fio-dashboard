@@ -19,6 +19,11 @@ const AdminUserListPage = React.lazy(() =>
     /* webpackChunkName: 'adminUserListPage' */ '../pages/AdminUserListPage'
   ),
 );
+const AdminDefaultsPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'adminDefaultsPage' */ '../pages/AdminDefaultsPage'
+  ),
+);
 const AdminPasswordResetPage = React.lazy(() =>
   import(
     /* webpackChunkName: 'adminPasswordResetPage' */ '../pages/AdminPasswordResetPage'
@@ -86,6 +91,11 @@ const Routes = (): React.ReactElement => (
           <AdminPrivateRoute
             path={ADMIN_ROUTES.ADMIN_USERS}
             component={AdminUserListPage}
+            exact
+          />
+          <AdminPrivateRoute
+            path={ADMIN_ROUTES.ADMIN_DEFAULTS}
+            component={AdminDefaultsPage}
             exact
           />
           <Route

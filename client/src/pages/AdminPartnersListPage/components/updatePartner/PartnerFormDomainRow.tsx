@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { Field } from 'react-final-form';
-import { Button } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 import classnames from 'classnames';
 
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
@@ -13,8 +13,10 @@ type Props = {
   index: number;
   value: string;
   isDefault: boolean;
+  isPremium: boolean;
   isRemoveAvailable: boolean;
   onSetDefaultDomain: (value: string) => void;
+  onSetPremiumDomain: (value: string, checked: boolean) => void;
   onRemove: (index: number) => void;
 };
 
@@ -24,8 +26,10 @@ export const PartnerFormDomainRow: React.FC<Props> = props => {
     index,
     value,
     isDefault,
+    isPremium,
     isRemoveAvailable,
     onSetDefaultDomain,
+    onSetPremiumDomain,
     onRemove,
   } = props;
 
@@ -33,12 +37,19 @@ export const PartnerFormDomainRow: React.FC<Props> = props => {
     onSetDefaultDomain(value);
   }, [onSetDefaultDomain, value]);
 
+  const handleSetPremium = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      onSetPremiumDomain(value, event.target.checked);
+    },
+    [onSetPremiumDomain, value],
+  );
+
   const handleRemove = useCallback(() => {
     onRemove(index);
   }, [onRemove, index]);
 
   return (
-    <div className="d-flex">
+    <div className="d-flex align-items-center">
       <Field
         name={field}
         type="text"
@@ -46,6 +57,15 @@ export const PartnerFormDomainRow: React.FC<Props> = props => {
         placeholder="Domain"
         uiType={INPUT_UI_STYLES.BLACK_WHITE}
         errorColor={COLOR_TYPE.WARN}
+      />
+
+      <Form.Check
+        type="switch"
+        id={`${field}-premium`}
+        label="Premium"
+        onChange={handleSetPremium}
+        checked={isPremium}
+        className="text-black w-25 ml-3 mb-4"
       />
 
       <Button

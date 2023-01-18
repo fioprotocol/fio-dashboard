@@ -353,6 +353,7 @@ export type RefProfile = {
   subTitle: string;
   settings: {
     domains: string[];
+    premiumDomains: string[];
     allowCustomDomain: boolean;
     preselectedDomain?: string;
     actions?: Record<

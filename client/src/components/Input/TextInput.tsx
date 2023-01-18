@@ -63,6 +63,7 @@ export type TextInputProps = {
   additionalOnchangeAction?: (val: string) => void;
   wFioBalance?: string;
   connectWalletProps: ConnectProviderType;
+  withoutBottomMargin?: boolean;
 };
 
 export const TextInput: React.ForwardRefRenderFunction<
@@ -97,6 +98,7 @@ export const TextInput: React.ForwardRefRenderFunction<
     showConnectWalletButton,
     connectWalletModalText,
     wFioBalance,
+    withoutBottomMargin,
     ...rest
   } = props;
   const {
@@ -171,7 +173,11 @@ export const TextInput: React.ForwardRefRenderFunction<
   if (type === 'hidden') return null;
 
   return (
-    <div className={classes.regInputWrapper}>
+    <div
+      className={classnames(classes.regInputWrapper, {
+        [classes.withoutBottomMargin]: withoutBottomMargin,
+      })}
+    >
       <Label label={label} uiType={uiType} />
       <div className={classes.inputGroup}>
         <Prefix prefix={prefix} hasError={hasError} />

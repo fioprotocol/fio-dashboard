@@ -1,0 +1,46 @@
+@import '../../../assets/styles/colors';
+
+.container {
+  width: 60%;
+  margin: 0 auto;
+}
+
+.section {
+  margin: 40px 0;
+  display: flex;
+  flex-flow: column nowrap;
+  position: relative;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    margin: 0;
+  }
+}
+
+.listItem {
+  border: 1px solid $milk;
+  background-color: $milk;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sectionInputWrapper {
+  width: 300px;
+  margin-right: auto;
+}

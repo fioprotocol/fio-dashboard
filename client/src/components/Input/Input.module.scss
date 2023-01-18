@@ -9,6 +9,10 @@
   margin-bottom: 30px;
   overflow: hidden;
 
+  &.withoutBottomMargin {
+    margin-bottom: 0;
+  }
+
   .dark {
     background-color: $baltic-sea !important;
     color: $white !important;
