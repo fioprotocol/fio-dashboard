@@ -42,12 +42,13 @@ export const makeNonce = (
   keys: WalletKeysObj,
   otpKey?: string,
   voucherId?: string,
+  isPinLogin?: boolean,
 ): CommonPromiseAction => ({
   types: [NONCE_REQUEST, NONCE_SUCCESS, NONCE_FAILURE],
   promise: async (api: Api) => {
     const { nonce, email } = await api.auth.nonce(username);
     const signature: string = Ecc.sign(nonce, Object.values(keys)[0].private);
-    return { email, nonce, signature, otpKey, voucherId };
+    return { email, nonce, signature, otpKey, voucherId, isPinLogin };
   },
 });
 
@@ -63,6 +64,7 @@ export const login = ({
   timeZone,
   otpKey,
   voucherId,
+  isPinLogin,
 }: {
   email: string;
   signature: string;
@@ -71,12 +73,14 @@ export const login = ({
   timeZone?: string;
   otpKey?: string;
   voucherId?: string;
+  isPinLogin?: boolean;
 }): CommonPromiseAction => ({
   types: [LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAILURE],
   promise: (api: Api) =>
     api.auth.login(email, signature, challenge, referrerCode, timeZone),
   otpKey,
   voucherId,
+  isPinLogin,
 });
 
 export const SIGNUP_REQUEST = `${prefix}/SIGNUP_REQUEST`;

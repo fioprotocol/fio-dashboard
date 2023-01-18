@@ -10,6 +10,7 @@ import routes from './routes';
 const router = express.Router();
 
 const checkAuth = routes.auth.check;
+const checkAuthOptional = routes.auth.checkOptional;
 const checkAdminAuth = routes.auth.checkAdminAuth;
 
 router.get('/ping', routes.general.healthCheck);
@@ -48,7 +49,7 @@ router.post('/users/update-email-request', checkAuth, routes.users.updateEmailRe
 router.post('/users/update-email-revert', checkAuth, routes.users.updateEmailRevert);
 router.post('/users/affiliate', checkAuth, routes.users.activateAffiliate);
 router.patch('/users/affiliate', checkAuth, routes.users.updateAffiliate);
-router.post('/users/sendEvent', routes.users.sendEvent);
+router.post('/users/sendEvent', checkAuthOptional, routes.users.sendEvent);
 
 router.get('/admin/me', checkAdminAuth, routes.adminUsers.personalInfo);
 router.get('/admin/list', checkAdminAuth, routes.adminUsers.adminsList);

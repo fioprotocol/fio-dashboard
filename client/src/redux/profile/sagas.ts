@@ -38,7 +38,11 @@ import { fioWallets } from '../fio/selectors';
 import { isNewUser as isNewUserSelector } from './selectors';
 
 import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
-import { ANALYTICS_EVENT_ACTIONS, USER_STATUSES } from '../../constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  ANALYTICS_LOGIN_METHOD,
+  USER_STATUSES,
+} from '../../constants/common';
 import { ADMIN_ROUTES, ROUTES } from '../../constants/routes';
 
 import { fireAnalyticsEvent } from '../../util/analytics';
@@ -56,6 +60,11 @@ export function* loginSuccess(history: History, api: Api): Generator {
     );
     const wallets: FioWalletDoublet[] = yield select(fioWallets);
     api.client.setToken(action.data.jwt);
+    fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.LOGIN, {
+      method: action.isPinLogin
+        ? ANALYTICS_LOGIN_METHOD.PIN
+        : ANALYTICS_LOGIN_METHOD.PASSWORD,
+    });
     if (wallets && wallets.length) yield put<Action>(setWallets(wallets));
     if ((action.otpKey && action.voucherId) || action.voucherId)
       try {
@@ -141,7 +150,14 @@ export function* logoutSuccess(history: History, api: Api): Generator {
 
 export function* nonceSuccess(): Generator {
   yield takeEvery(NONCE_SUCCESS, function*(action: Action) {
-    const { email, signature, nonce, otpKey, voucherId } = action.data;
+    const {
+      email,
+      signature,
+      nonce,
+      otpKey,
+      voucherId,
+      isPinLogin,
+    } = action.data;
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     yield put<Action>(
@@ -152,6 +168,7 @@ export function* nonceSuccess(): Generator {
         timeZone,
         otpKey,
         voucherId,
+        isPinLogin,
       }),
     );
   });
