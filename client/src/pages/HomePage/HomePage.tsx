@@ -44,7 +44,8 @@ const HomePage: React.FC<Props & RouteComponentProps> = props => {
     }
   }, [isAuthenticated, isContainedFlow, history]);
 
-  if (isContainedFlow) return <AddressWidget {...addressWidgetContent} />;
+  if (isContainedFlow)
+    return <AddressWidget isDarkWhite {...addressWidgetContent} />;
 
   return (
     <div className={classnames.container}>
