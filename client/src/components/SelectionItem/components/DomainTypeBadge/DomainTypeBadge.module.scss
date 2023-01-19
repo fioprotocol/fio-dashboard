@@ -1,0 +1,13 @@
+@import '../../../../assets/styles/colors.scss';
+
+.badgeContainer {
+  > div {
+    padding: 7px;
+  }
+
+  .text {
+    color: $white;
+    font-size: 10px;
+    line-height: 10px;
+  }
+}

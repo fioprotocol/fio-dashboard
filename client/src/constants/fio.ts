@@ -98,3 +98,37 @@ export const BUNDLES_TX_COUNT = {
 };
 
 export const GET_TABLE_ROWS_URL = `${process.env.REACT_APP_FIO_BASE_URL}chain/get_table_rows`;
+
+export const DOMAIN_TYPE = {
+  CUSTOM: 'custom',
+  FREE: 'free',
+  PREMIUM: 'premium',
+  USERS: 'users',
+} as const;
+
+export const DOMAIN_TYPE_PARAMS: {
+  [key: string]: {
+    title: string;
+    isBlue?: boolean;
+    isOrange?: boolean;
+    isRed?: boolean;
+    isRose?: boolean;
+  };
+} = {
+  [DOMAIN_TYPE.CUSTOM]: {
+    title: 'Custom',
+    isRed: true,
+  },
+  [DOMAIN_TYPE.FREE]: {
+    title: 'Free',
+    isRose: true,
+  },
+  [DOMAIN_TYPE.PREMIUM]: {
+    title: 'Premium',
+    isBlue: true,
+  },
+  [DOMAIN_TYPE.USERS]: {
+    title: 'My Domain',
+    isOrange: true,
+  },
+};

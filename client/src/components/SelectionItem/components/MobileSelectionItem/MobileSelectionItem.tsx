@@ -1,10 +1,10 @@
 import React from 'react';
 
-import CommonBadge from '../../../Badges/CommonBadge/CommonBadge';
 import { CheckIconComponent } from '../../../CheckIconComponent';
 import { AddToCartButton } from '../AddToCartButton';
 import { FCHItem } from '../FCHItem';
 import { PirceItem } from '../PriceItem';
+import { DomainTypeBadge } from '../DomainTypeBadge';
 
 import { SelectedItemProps } from '../../../../pages/FioAddressSelectionPage/types';
 
@@ -21,8 +21,8 @@ export const MobileSelectionItem: React.FC<Props> = props => {
     costNativeFio,
     costUsdc,
     domain,
+    domainType,
     isSelected,
-    status,
     onClick,
   } = props;
 
@@ -39,7 +39,7 @@ export const MobileSelectionItem: React.FC<Props> = props => {
           />
         </div>
         <div className={classes.badgeContainer}>
-          <CommonBadge>{status}</CommonBadge>
+          <DomainTypeBadge domainType={domainType} />
         </div>
       </div>
       <AddToCartButton onClick={onClick} isSelected={isSelected} />
