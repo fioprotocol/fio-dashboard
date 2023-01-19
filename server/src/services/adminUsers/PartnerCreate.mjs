@@ -21,8 +21,15 @@ export default class PartnerCreate extends Base {
         'required',
         {
           nested_object: {
-            domains: { list_of: 'string' },
-            premiumDomains: { list_of: 'string' },
+            domains: {
+              list_of_objects: [
+                {
+                  name: 'string',
+                  isPremium: 'boolean',
+                  rank: 'positive_integer',
+                },
+              ],
+            },
             preselectedDomain: 'string',
             allowCustomDomain: 'boolean',
             img: 'string',

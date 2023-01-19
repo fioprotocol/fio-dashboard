@@ -1,9 +1,15 @@
 import React, { useCallback } from 'react';
 import { Field, FormRenderProps } from 'react-final-form';
-import { FieldArray } from 'react-final-form-arrays';
+import { FieldArray, FieldArrayRenderProps } from 'react-final-form-arrays';
 import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from 'react-beautiful-dnd';
 
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import Input from '../../../../components/Input/Input';
@@ -19,9 +25,14 @@ import {
   REF_PROFILE_TYPE,
 } from '../../../../constants/common';
 
-import { RefProfile } from '../../../../types';
+import { RefProfile, RefProfileDomain } from '../../../../types';
 
 import classes from '../../AdminPartnersListPage.module.scss';
+
+type FieldsType = FieldArrayRenderProps<
+  RefProfileDomain,
+  HTMLElement
+>['fields'];
 
 export const PartnerFormComponent: React.FC<FormRenderProps<
   RefProfile
@@ -84,16 +95,12 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
   }, [form]);
 
   const onAddDomain = useCallback(() => {
-    form.mutators.push('settings.domains');
+    form.mutators.push('settings.domains', {
+      name: '',
+      isPremium: false,
+      rank: 0,
+    });
   }, [form]);
-
-  const onSetPremiumDomain = useCallback(
-    (value: string, checked: boolean) => {
-      if (checked) form.mutators.push('settings.premiumDomains', value);
-      else form.mutators.remove('settings.premiumDomains', value);
-    },
-    [form],
-  );
 
   const onSetDefaultDomain = useCallback(
     (domain: string) => {
@@ -104,6 +111,29 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
     },
     [form],
   );
+
+  const makeOnDragEndFunction = (fields: FieldsType) => (
+    result: DropResult,
+  ) => {
+    if (!result.destination) {
+      return;
+    }
+    const length = fields.value.length;
+    const source = fields.value[result.source.index];
+    const dest = fields.value[result.destination.index];
+
+    fields.update(result.source.index, {
+      ...source,
+      rank: length - result.destination.index,
+    });
+
+    fields.update(result.destination.index, {
+      ...dest,
+      rank: length - result.source.index,
+    });
+
+    fields.swap(result.source.index, result.destination.index);
+  };
 
   return (
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -245,31 +275,53 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
               name="settings.preselectedDomain"
               component={Input}
             />
-
             <div className="d-flex flex-column">
               <FieldArray
                 name="settings.domains"
-                render={({ fields }) =>
-                  fields.map((field, index) => (
-                    <PartnerFormDomainRow
-                      key={field}
-                      field={field}
-                      index={index}
-                      value={values?.settings?.domains[index]}
-                      isPremium={values?.settings?.premiumDomains?.includes(
-                        values?.settings?.domains[index],
+                render={({ fields }) => (
+                  <DragDropContext onDragEnd={makeOnDragEndFunction(fields)}>
+                    <Droppable droppableId="settings.domains">
+                      {provided => (
+                        <div ref={provided.innerRef}>
+                          {fields.map((field, index) => (
+                            <Draggable
+                              index={index}
+                              key={field}
+                              draggableId={field}
+                            >
+                              {provided => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  className="d-flex align-items-center border border-light px-2 py-3 rounded"
+                                >
+                                  <PartnerFormDomainRow
+                                    key={field}
+                                    index={index}
+                                    field={field}
+                                    value={
+                                      values?.settings?.domains[index].name
+                                    }
+                                    isDefault={
+                                      values?.settings?.domains[index].name ===
+                                      values?.settings?.preselectedDomain
+                                    }
+                                    isRemoveAvailable={
+                                      values?.settings?.domains?.length > 1
+                                    }
+                                    onSetDefaultDomain={onSetDefaultDomain}
+                                    onRemove={fields.remove}
+                                  />
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                        </div>
                       )}
-                      isDefault={
-                        values?.settings?.domains[index] ===
-                        values?.settings?.preselectedDomain
-                      }
-                      isRemoveAvailable={values?.settings?.domains?.length > 1}
-                      onSetDefaultDomain={onSetDefaultDomain}
-                      onSetPremiumDomain={onSetPremiumDomain}
-                      onRemove={fields.remove}
-                    />
-                  ))
-                }
+                    </Droppable>
+                  </DragDropContext>
+                )}
               />
             </div>
           </div>

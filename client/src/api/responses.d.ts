@@ -174,25 +174,26 @@ export type ApisResponse = AccountGetWalletsResponse &
   ChainCodesListResults &
   UserOrdersListResponse;
 
-export type AdminDomain = {
+export type Rankable = {
+  rank: number;
+};
+
+export type AdminDomain = Rankable & {
   id?: string | number;
   name: string;
-  rank: number;
   isPremium: boolean;
   isDashboardDomain: boolean;
 };
 
-export type SearchTerm = {
+export type SearchTerm = Rankable & {
   id?: string | number;
   term: string;
-  rank: number;
   isPrefix: boolean;
 };
 
-export type UsernameOnDomain = {
+export type UsernameOnDomain = Rankable & {
   id?: string | number;
   username: string;
-  rank: number;
 };
 
 export type AdminDefaults = {

@@ -343,6 +343,12 @@ export type UserDetails = {
   orders: OrderDefault[];
 };
 
+export type RefProfileDomain = {
+  name: string;
+  isPremium: boolean;
+  rank: number;
+};
+
 export type RefProfile = {
   id?: string;
   type: string;
@@ -352,8 +358,7 @@ export type RefProfile = {
   title: string;
   subTitle: string;
   settings: {
-    domains: string[];
-    premiumDomains: string[];
+    domains: RefProfileDomain[];
     allowCustomDomain: boolean;
     preselectedDomain?: string;
     actions?: Record<
