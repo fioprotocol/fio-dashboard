@@ -1,9 +1,8 @@
-import { CartItem } from '../../types';
+import { CartItem, DomainItemType } from '../../types';
 
 export type UseContextProps = {
   additionalItemsList: SelectedItemProps[];
   addressValue: string | null;
-  cartItemList: SelectedItemProps[];
   error: string | null;
   loading: boolean;
   suggestedItemsList: SelectedItemProps[];
@@ -16,3 +15,5 @@ export type UseContextProps = {
 export type SelectedItemProps = {
   isSelected: boolean;
 } & CartItem;
+
+export type DomainsArrItemType = { name: string; domainType: DomainItemType }[];
