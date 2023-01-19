@@ -25,9 +25,11 @@ export const domains = createSelector(
     refProfileInfo != null &&
     refProfileInfo.code &&
     refProfileInfo.type === REF_PROFILE_TYPE.REF
-      ? refProfileInfo.settings.domains.map((refDomain: string) => ({
-          domain: refDomain,
+      ? refProfileInfo.settings.domains.map(refDomain => ({
+          domain: refDomain.name,
           free: true,
+          isPremium: refDomain.isPremium,
+          rank: refDomain.rank,
         }))
       : regDomainItems,
 );

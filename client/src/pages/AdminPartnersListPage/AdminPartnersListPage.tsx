@@ -35,8 +35,13 @@ const AdminPartnersListPage: React.FC<Props> = props => {
       regRefCode: '',
       regRefApiToken: '',
       settings: {
-        domains: [''],
-        premiumDomains: [],
+        domains: [
+          {
+            name: '',
+            isPremium: false,
+            rank: 0,
+          },
+        ],
         allowCustomDomain: false,
         actions: {
           SIGNNFT: {},
@@ -64,12 +69,12 @@ const AdminPartnersListPage: React.FC<Props> = props => {
         // @ts-ignore
         delete partner.image;
         if (partner.settings?.domains.length) {
-          if (
-            !partner.settings.domains.includes(
-              partner.settings.preselectedDomain,
-            )
-          ) {
-            partner.settings.preselectedDomain = partner.settings.domains[0];
+          const hasPreselectedDomain = partner.settings.domains.find(
+            domain => domain.name === partner.settings.preselectedDomain,
+          );
+          if (!hasPreselectedDomain) {
+            partner.settings.preselectedDomain =
+              partner.settings.domains[0].name;
           }
         } else {
           partner.settings.preselectedDomain = null;
@@ -77,7 +82,6 @@ const AdminPartnersListPage: React.FC<Props> = props => {
         if (partner.type === REF_PROFILE_TYPE.AFFILIATE) {
           partner.settings = {
             domains: [],
-            premiumDomains: [],
             allowCustomDomain: true,
           };
         }

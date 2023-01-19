@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
 import { Field } from 'react-final-form';
-import { Button, Form } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 
 import Input, { INPUT_UI_STYLES } from '../../../../components/Input/Input';
+import TextInput from '../../../../components/Input/TextInput';
 
 import classes from '../../AdminPartnersListPage.module.scss';
 import { COLOR_TYPE } from '../../../../components/Input/ErrorBadge';
@@ -13,10 +14,8 @@ type Props = {
   index: number;
   value: string;
   isDefault: boolean;
-  isPremium: boolean;
   isRemoveAvailable: boolean;
   onSetDefaultDomain: (value: string) => void;
-  onSetPremiumDomain: (value: string, checked: boolean) => void;
   onRemove: (index: number) => void;
 };
 
@@ -26,10 +25,8 @@ export const PartnerFormDomainRow: React.FC<Props> = props => {
     index,
     value,
     isDefault,
-    isPremium,
     isRemoveAvailable,
     onSetDefaultDomain,
-    onSetPremiumDomain,
     onRemove,
   } = props;
 
@@ -37,53 +34,45 @@ export const PartnerFormDomainRow: React.FC<Props> = props => {
     onSetDefaultDomain(value);
   }, [onSetDefaultDomain, value]);
 
-  const handleSetPremium = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      onSetPremiumDomain(value, event.target.checked);
-    },
-    [onSetPremiumDomain, value],
-  );
-
   const handleRemove = useCallback(() => {
     onRemove(index);
   }, [onRemove, index]);
 
   return (
-    <div className="d-flex align-items-center">
+    <>
       <Field
-        name={field}
+        name={`${field}.name`}
         type="text"
-        component={Input}
+        component={TextInput}
         placeholder="Domain"
         uiType={INPUT_UI_STYLES.BLACK_WHITE}
         errorColor={COLOR_TYPE.WARN}
+        withoutBottomMargin
       />
-
-      <Form.Check
-        type="switch"
+      <Field
+        type="checkbox"
         id={`${field}-premium`}
+        component={Input}
+        name={`${field}.isPremium`}
+        wrapperClasses="ml-3"
         label="Premium"
-        onChange={handleSetPremium}
-        checked={isPremium}
-        className="text-black w-25 ml-3 mb-4"
       />
-
       <Button
         onClick={handleSetDefault}
         variant="secondary"
-        className={classnames(classes.button, 'w-25', 'ml-3')}
+        className={classnames(classes.button, 'w-25', 'ml-3', 'mb-0')}
         disabled={isDefault}
       >
         {isDefault ? 'Default' : 'Set default'}
       </Button>
       <Button
-        className="w-25 ml-3"
+        className="w-25 ml-3 mb-0"
         variant="danger"
         onClick={handleRemove}
         disabled={!isRemoveAvailable}
       >
         Remove
       </Button>
-    </div>
+    </>
   );
 };
