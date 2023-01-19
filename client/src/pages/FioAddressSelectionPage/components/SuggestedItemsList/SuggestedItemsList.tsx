@@ -22,14 +22,13 @@ export const SuggestedItemsList: React.FC<Props> = props => {
   return (
     <div className={classes.container}>
       {list.map(listItem => (
-        <div className={classes.itemContainer}>
-          <SelectionItem
-            {...listItem}
-            isSquareShape
-            isDesktop={isDesktop}
-            onClick={onClick}
-          />
-        </div>
+        <SelectionItem
+          {...listItem}
+          isSquareShape
+          isDesktop={isDesktop}
+          onClick={onClick}
+          key={listItem.id}
+        />
       ))}
       <div className={classes.buttonContainer}>
         <ActionButton

@@ -32,47 +32,49 @@ export const FioAddressSelectionComponent: React.FC<Props> = props => {
   } = props;
 
   return (
-    <div>
-      <AddressFormContainer
-        loading={loading}
-        setAddressValue={setAddressValue}
-      />
-      <UsersItemsList
-        list={usersItemsList}
-        error={error}
-        isDesktop={isDesktop}
-        onClick={onClick}
-      />
-      <h5 className={classes.subtitle}>Suggested FIO Crypto Handles</h5>
-      <SuggestedItemsList
-        list={suggestedItemsList}
-        error={error}
-        isDesktop={isDesktop}
-        onClick={onClick}
-      />
-      <div className={classes.infoBadgeContainer}>
-        <InfoBadge
-          show={!addressValue}
-          type={BADGE_TYPES.INFO}
-          title="Enter Username"
-          message="Please enter a username in order to register a FIO Crypto Handle."
+    <>
+      <div className={classes.container}>
+        <AddressFormContainer
+          loading={loading}
+          setAddressValue={setAddressValue}
+        />
+        <UsersItemsList
+          list={usersItemsList}
+          error={error}
+          isDesktop={isDesktop}
+          onClick={onClick}
+        />
+        <h5 className={classes.subtitle}>Suggested FIO Crypto Handles</h5>
+        <SuggestedItemsList
+          list={suggestedItemsList}
+          error={error}
+          isDesktop={isDesktop}
+          onClick={onClick}
+        />
+        <div className={classes.infoBadgeContainer}>
+          <InfoBadge
+            show={!addressValue}
+            type={BADGE_TYPES.INFO}
+            title="Enter Username"
+            message="Please enter a username in order to register a FIO Crypto Handle."
+          />
+        </div>
+        <div className={classes.infoBadgeContainer}>
+          <InfoBadge
+            title="Try again!"
+            message={error}
+            show={!!error}
+            type={BADGE_TYPES.ERROR}
+          />
+        </div>
+        <AdditionalItemsList
+          list={additionalItemsList}
+          error={error}
+          isDesktop={isDesktop}
+          onClick={onClick}
         />
       </div>
-      <div className={classes.infoBadgeContainer}>
-        <InfoBadge
-          title="Try again!"
-          message={error}
-          show={!!error}
-          type={BADGE_TYPES.ERROR}
-        />
-      </div>
-      <AdditionalItemsList
-        list={additionalItemsList}
-        error={error}
-        isDesktop={isDesktop}
-        onClick={onClick}
-      />
       {!isDesktop && <AddressDomainCart />}
-    </div>
+    </>
   );
 };

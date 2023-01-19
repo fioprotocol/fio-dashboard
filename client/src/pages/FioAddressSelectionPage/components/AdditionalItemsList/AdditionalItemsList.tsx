@@ -22,7 +22,7 @@ export const AdditionalItemsList: React.FC<Props> = props => {
     <div>
       <h5 className={classes.subtitle}>Additional FIO Crypto Handles</h5>
       {list.map(listItem => (
-        <div className={classes.itemContainer}>
+        <div className={classes.itemContainer} key={listItem.id}>
           <SelectionItem
             {...listItem}
             isDesktop={isDesktop}

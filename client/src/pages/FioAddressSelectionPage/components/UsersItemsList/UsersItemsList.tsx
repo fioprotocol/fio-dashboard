@@ -29,6 +29,7 @@ export const UsersItemsList: React.FC<Props> = props => {
             isSquareShape
             isDesktop={isDesktop}
             onClick={onClick}
+            key={listItem.id}
           />
         ))}
         <div className={classes.buttonContainer}>

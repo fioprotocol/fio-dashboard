@@ -4,12 +4,11 @@
   background-color: $desert-storm;
   border-radius: 12px;
   padding: 15px 20px;
-  display: flex;
-  flex-direction: row;
+  display: grid;
+  grid-template-columns: 18px 300px 100px auto 46px;
   align-items: center;
 
   .badgeContainer {
-    font-size: 0.625em;
     margin-left: 33%;
     margin-right: 20px;
     width: 56px;

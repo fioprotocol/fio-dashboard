@@ -1,9 +1,18 @@
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
 .container {
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 30px;
 
   .buttonContainer {
     margin-top: 30px;
+  }
+}
+
+@include sm {
+  .listContainer {
+    gap: 10px;
   }
 }
