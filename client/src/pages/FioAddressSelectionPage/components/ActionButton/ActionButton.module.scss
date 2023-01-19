@@ -1,13 +1,13 @@
 @import '../../../../assets/styles/colors.scss';
 @import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
 
 .button {
   background-color: $light-indigo;
   border-color: $light-indigo;
   border-radius: 12px;
   height: 66px;
-  width: 100%;
-  max-width: 335px;
+  width: 335px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -40,5 +40,11 @@
     margin-left: 10px;
     margin-bottom: 0;
     @include proxima-nova-semibold;
+  }
+}
+
+@include sm {
+  .button {
+    width: 100%;
   }
 }

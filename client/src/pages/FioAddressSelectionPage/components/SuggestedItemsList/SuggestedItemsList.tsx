@@ -21,15 +21,16 @@ export const SuggestedItemsList: React.FC<Props> = props => {
 
   return (
     <div className={classes.container}>
-      {list.map(listItem => (
-        <SelectionItem
-          {...listItem}
-          isSquareShape
-          isDesktop={isDesktop}
-          onClick={onClick}
-          key={listItem.id}
-        />
-      ))}
+      {!error &&
+        list.map(listItem => (
+          <SelectionItem
+            {...listItem}
+            isSquareShape
+            isDesktop={isDesktop}
+            onClick={onClick}
+            key={listItem.id}
+          />
+        ))}
       <div className={classes.buttonContainer}>
         <ActionButton
           text="Add Custom Ending"
