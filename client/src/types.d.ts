@@ -58,6 +58,7 @@ export type CartItem = {
   errorType?: string;
   isCustomDomain?: boolean;
   type?: CartItemType;
+  status?: string;
 };
 
 export type Notification = {

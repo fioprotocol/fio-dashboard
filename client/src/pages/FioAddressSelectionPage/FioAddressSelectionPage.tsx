@@ -9,15 +9,21 @@ import { LINK_LABELS } from '../../constants/labels';
 import { useCheckIfDesktop } from '../../screenType';
 import { useNonActiveUserRedirect } from '../../util/hooks';
 
+import { useContext } from './FioAddressSelectionPageContext';
+
 const FioAddressSelectionPage: React.FC = () => {
   useNonActiveUserRedirect();
+
+  const props = useContext();
 
   const isDesktop = useCheckIfDesktop();
 
   return (
     <DoubleCardContainer
       title={LINK_LABELS.FIO_ADDRESSES.toUpperCase()}
-      bigCart={<FioAddressSelectionComponent isDesktop={isDesktop} />}
+      bigCart={
+        <FioAddressSelectionComponent isDesktop={isDesktop} {...props} />
+      }
       smallCart={isDesktop && <AddressDomainCart />}
     />
   );

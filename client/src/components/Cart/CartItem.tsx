@@ -26,15 +26,20 @@ type Props = {
   isPeriodEditable?: boolean;
 };
 
-type CartItemProps = {
-  primaryCurrency: PaymentCurrency;
+export type CartItemProps = {
+  primaryCurrency?: PaymentCurrency;
   costFio: string;
   costUsdc: string;
   costNativeFio?: number;
 };
 
-const CartItemPrice = (props: CartItemProps) => {
-  const { costFio, costUsdc, costNativeFio, primaryCurrency } = props;
+export const CartItemPrice = (props: CartItemProps) => {
+  const {
+    costFio,
+    costUsdc,
+    costNativeFio,
+    primaryCurrency = CURRENCY_CODES.FIO,
+  } = props;
 
   if (!costNativeFio) return <span className="boldText">FREE</span>;
 

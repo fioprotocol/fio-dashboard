@@ -3,21 +3,33 @@ import React from 'react';
 import AddressDomainCart from '../../../../components/AddressDomainCart';
 import InfoBadge from '../../../../components/InfoBadge/InfoBadge';
 
+import { SuggestedItemsList } from '../SuggestedItemsList';
+import { UsersItemsList } from '../UsersItemsList';
+import { AdditionalItemsList } from '../AdditionalItemsList';
 import { AddressFormContainer } from '../AddressFormContainer';
 
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 
-import { useContext } from './FioAddressSelectionComponentContext';
+import { UseContextProps } from '../../types';
 
 import classes from './FioAddressSelectionComponent.module.scss';
 
 type Props = {
   isDesktop: boolean;
-};
+} & UseContextProps;
 
 export const FioAddressSelectionComponent: React.FC<Props> = props => {
-  const { isDesktop } = props;
-  const { addressValue, error, loading, setAddressValue } = useContext();
+  const {
+    additionalItemsList,
+    addressValue,
+    error,
+    isDesktop,
+    loading,
+    suggestedItemsList,
+    usersItemsList,
+    onClick,
+    setAddressValue,
+  } = props;
 
   return (
     <div>
@@ -25,7 +37,19 @@ export const FioAddressSelectionComponent: React.FC<Props> = props => {
         loading={loading}
         setAddressValue={setAddressValue}
       />
+      <UsersItemsList
+        list={usersItemsList}
+        error={error}
+        isDesktop={isDesktop}
+        onClick={onClick}
+      />
       <h5 className={classes.subtitle}>Suggested FIO Crypto Handles</h5>
+      <SuggestedItemsList
+        list={suggestedItemsList}
+        error={error}
+        isDesktop={isDesktop}
+        onClick={onClick}
+      />
       <div className={classes.infoBadgeContainer}>
         <InfoBadge
           show={!addressValue}
@@ -42,6 +66,12 @@ export const FioAddressSelectionComponent: React.FC<Props> = props => {
           type={BADGE_TYPES.ERROR}
         />
       </div>
+      <AdditionalItemsList
+        list={additionalItemsList}
+        error={error}
+        isDesktop={isDesktop}
+        onClick={onClick}
+      />
       {!isDesktop && <AddressDomainCart />}
     </div>
   );

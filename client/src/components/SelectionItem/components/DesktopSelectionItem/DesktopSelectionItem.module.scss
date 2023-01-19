@@ -1,0 +1,27 @@
+@import '../../../../assets/styles/colors.scss';
+
+.container {
+  background-color: $desert-storm;
+  border-radius: 12px;
+  padding: 15px 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .badgeContainer {
+    font-size: 0.625em;
+    margin-left: 33%;
+    margin-right: 20px;
+    width: 56px;
+    display: flex;
+    align-items: center;
+  }
+
+  .fchContainer {
+    margin: 0 0 0 12px;
+  }
+
+  .priceContainer {
+    margin-right: auto;
+  }
+}

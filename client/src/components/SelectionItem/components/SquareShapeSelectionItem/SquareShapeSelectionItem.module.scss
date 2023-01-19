@@ -1,0 +1,42 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  background-color: $desert-storm;
+  border-radius: 12px;
+  padding: 15px 20px 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 160px;
+  min-height: 145px;
+  margin-top: 30px;
+
+  .badge {
+    position: absolute;
+    bottom: -12px;
+    left: 0;
+    right: 0;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 0.625em;
+  }
+
+  .priceContainer {
+    margin: 10px 0;
+    white-space: nowrap;
+  }
+
+  .buttonContainer {
+    margin-top: auto;
+  }
+}
+
+@include sm {
+  .container {
+    width: auto;
+  }
+}

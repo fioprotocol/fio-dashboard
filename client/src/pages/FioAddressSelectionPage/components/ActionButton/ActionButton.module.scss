@@ -1,0 +1,44 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+
+.button {
+  background-color: $light-indigo;
+  border-color: $light-indigo;
+  border-radius: 12px;
+  height: 66px;
+  width: 100%;
+  max-width: 335px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+
+  &.hasSquareShape {
+    width: 160px;
+    min-height: 145px;
+    height: 100%;
+    flex-direction: column;
+    align-self: auto;
+
+    .icon {
+      font-size: 48px;
+    }
+
+    .text {
+      margin-left: 0;
+      margin-top: 15px;
+    }
+  }
+
+  .icon {
+    font-size: 34px;
+  }
+
+  .text {
+    font-size: 0.875em;
+    margin-left: 10px;
+    margin-bottom: 0;
+    @include proxima-nova-semibold;
+  }
+}
