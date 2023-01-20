@@ -62,12 +62,13 @@ export function* loginSuccess(history: History, api: Api): Generator {
     api.client.setToken(action.data.jwt);
     if (action.isSignUp) {
       fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SIGN_UP);
+    } else {
+      fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.LOGIN, {
+        method: action.isPinLogin
+          ? ANALYTICS_LOGIN_METHOD.PIN
+          : ANALYTICS_LOGIN_METHOD.PASSWORD,
+      });
     }
-    fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.LOGIN, {
-      method: action.isPinLogin
-        ? ANALYTICS_LOGIN_METHOD.PIN
-        : ANALYTICS_LOGIN_METHOD.PASSWORD,
-    });
     if (wallets && wallets.length) yield put<Action>(setWallets(wallets));
     if ((action.otpKey && action.voucherId) || action.voucherId)
       try {
