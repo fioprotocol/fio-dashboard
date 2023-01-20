@@ -1,6 +1,10 @@
 @import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
 
 .badgeContainer {
+  cursor: pointer;
+
   > div {
     padding: 7px;
   }
@@ -9,5 +13,27 @@
     color: $white;
     font-size: 10px;
     line-height: 10px;
+  }
+}
+
+.modalContainer {
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+
+  .modalTitle {
+    margin-bottom: 15px;
+  }
+
+  .modalBodyText {
+    @include sf-pro-display-thin;
+    font-size: 0.875em;
+    margin-bottom: 40px;
+  }
+}
+
+@include sm {
+  .modalContainer {
+    padding: 0;
   }
 }

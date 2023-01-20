@@ -42,6 +42,10 @@
     margin: 0;
   }
 
+  &.hasAutoWidth {
+    width: auto;
+  }
+
   &.defaultColor {
     background-color: $light-indigo;
     border-color: $light-indigo;
