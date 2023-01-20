@@ -45,10 +45,20 @@ export const FioAddressSelectionComponent: React.FC<Props> = props => {
           onClick={onClick}
         />
         <h5 className={classes.subtitle}>Suggested FIO Crypto Handles</h5>
+        <div className={classes.infoBadgeContainer}>
+          <InfoBadge
+            title="Try again!"
+            message={error}
+            show={!!error}
+            type={BADGE_TYPES.ERROR}
+          />
+        </div>
         <SuggestedItemsList
           list={suggestedItemsList}
+          loading={loading}
           error={error}
           isDesktop={isDesktop}
+          addressValue={addressValue}
           onClick={onClick}
         />
         <div className={classes.infoBadgeContainer}>
@@ -59,16 +69,9 @@ export const FioAddressSelectionComponent: React.FC<Props> = props => {
             message="Please enter a username in order to register a FIO Crypto Handle."
           />
         </div>
-        <div className={classes.infoBadgeContainer}>
-          <InfoBadge
-            title="Try again!"
-            message={error}
-            show={!!error}
-            type={BADGE_TYPES.ERROR}
-          />
-        </div>
         <AdditionalItemsList
           list={additionalItemsList}
+          loading={loading}
           error={error}
           isDesktop={isDesktop}
           onClick={onClick}

@@ -20,7 +20,7 @@ export const UsersItemsList: React.FC<Props> = props => {
   if (error || !list.length) return null;
 
   return (
-    <div>
+    <div className={classes.container}>
       <h5 className={classes.subtitle}>My Domain FIO Crypto Handle</h5>
       <div className={classes.listContainer}>
         {list.map(listItem => (
