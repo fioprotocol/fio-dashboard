@@ -68,7 +68,7 @@
         font-size: 24px;
         cursor: pointer;
         transition: 0.2s all;
-    
+
         &:active {
           transform: scale(0.8);
           /* Scaling button to 0.98 to its original size */
@@ -102,7 +102,7 @@
   min-height: 36px;
   @include sf-pro-display-thin;
   font-size: 13px;
-  
+
   &:hover {
     background-color: $iris;
     border-color: $iris;
@@ -115,8 +115,15 @@
 
     .actionBadgeContainer {
       width: 100%;
-      max-width: 335px;
       margin: 0 0 30px;
+
+      > div {
+        a {
+          button {
+            min-width: auto !important;
+          }
+        }
+      }
     }
   }
 }

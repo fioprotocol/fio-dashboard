@@ -24,7 +24,15 @@
   .container {
     .actionBadgeContainer {
       width: 100%;
-      max-width: 335px;
+      margin: 0 0 30px;
+
+      > div {
+        a {
+          button {
+            min-width: auto !important;
+          }
+        }
+      }
     }
   }
 }

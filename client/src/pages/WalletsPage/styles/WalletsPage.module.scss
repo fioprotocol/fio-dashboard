@@ -70,6 +70,16 @@
 @include md {
   .container {
     padding: 30px 20px;
+
+    .totalBalanceContainer {
+      > div {
+        a {
+          button {
+            min-width: auto !important;
+          }
+        }
+      }
+    }
   }
 }
 

@@ -55,6 +55,19 @@
       border: 4px dashed $humming-bird;
       background: $medium-purple;
       box-sizing: border-box;
+      word-break: break-all;
+    }
+  }
+}
+
+@include md {
+  .container {
+    .row {
+      flex-direction: column;
+
+      .text {
+        text-align: center;
+      }
     }
   }
 }
@@ -76,7 +89,6 @@
       .publicKey {
         font-size: 1.625rem;
         max-width: 226px;
-        word-break: break-all;
         padding: 11px 16px;
       }
     }
