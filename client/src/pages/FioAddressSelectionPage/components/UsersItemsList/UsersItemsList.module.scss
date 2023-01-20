@@ -1,0 +1,33 @@
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  margin-bottom: 30px;
+
+  .subtitle {
+    margin-top: 30px;
+    margin-bottom: 0;
+    font-size: 1.125em;
+    @include proxima-nova-semibold;
+  }
+
+  .listContainer {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    gap: 20px;
+
+    .buttonContainer {
+      margin-top: 30px;
+    }
+  }
+}
+
+
+@include sm {
+  .container {
+    .listContainer {
+      gap: 10px;
+    }
+  }
+}

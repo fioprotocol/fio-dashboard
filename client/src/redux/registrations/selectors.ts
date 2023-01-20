@@ -6,40 +6,47 @@ import { fioDomains } from '../fio/selectors';
 import { prefix } from './actions';
 
 import { REF_PROFILE_TYPE } from '../../constants/common';
+import { DOMAIN_TYPE } from '../../constants/fio';
 
 import { ReduxState } from '../init';
-import { Domain, FioDomainDoublet, Prices } from '../../types';
-import { FioRegCaptchaResponse } from '../../api/responses';
+import { RefProfileDomains, FioDomainDoublet, Prices } from '../../types';
+import { DomainsResponse, FioRegCaptchaResponse } from '../../api/responses';
+
+type AllDomains = Partial<DomainsResponse> & Partial<RefProfileDomains>;
 
 export const loading = (state: ReduxState): boolean =>
   state[prefix].loadingArray.length > 0;
 export const prices = (state: ReduxState): Prices => state[prefix].prices;
-export const registrationDomains = (state: ReduxState): Domain[] =>
+export const registrationDomains = (state: ReduxState): DomainsResponse =>
   state[prefix].domains;
 export const roe = (state: ReduxState): number | null => state[prefix].roe;
 export const roeSetDate = (state: ReduxState): Date => state[prefix].roeSetDate;
 export const domains = createSelector(
   registrationDomains,
   refProfileInfo,
-  (regDomainItems, refProfileInfo) =>
+  (regDomainItems, refProfileInfo): AllDomains =>
     refProfileInfo != null &&
     refProfileInfo.code &&
     refProfileInfo.type === REF_PROFILE_TYPE.REF
-      ? refProfileInfo.settings.domains.map(refDomain => ({
-          domain: refDomain.name,
-          free: true,
-          isPremium: refDomain.isPremium,
-          rank: refDomain.rank,
-        }))
+      ? {
+          refProfileDomains: refProfileInfo.settings.domains.map(refDomain => ({
+            name: refDomain.name,
+            isPremium: refDomain.isPremium,
+            rank: refDomain.rank,
+          })),
+        }
       : regDomainItems,
 );
 export const allDomains = createSelector(
   domains,
   fioDomains,
-  (publicDomains, userDomains) => [
+  (publicDomains, userDomains) => ({
     ...publicDomains,
-    ...userDomains.map(({ name }: FioDomainDoublet) => ({ domain: name })),
-  ],
+    userDomains: userDomains.map(({ name }: FioDomainDoublet) => ({
+      name,
+      domainType: DOMAIN_TYPE.USERS,
+    })),
+  }),
 );
 
 export const captchaResult = (state: ReduxState): FioRegCaptchaResponse =>

@@ -98,3 +98,51 @@ export const BUNDLES_TX_COUNT = {
 };
 
 export const GET_TABLE_ROWS_URL = `${process.env.REACT_APP_FIO_BASE_URL}chain/get_table_rows`;
+
+export const DOMAIN_TYPE = {
+  CUSTOM: 'custom',
+  FREE: 'free',
+  PREMIUM: 'premium',
+  USERS: 'users',
+} as const;
+
+export const DOMAIN_TYPE_PARAMS: {
+  [key: string]: {
+    title: string;
+    modalTitle: string;
+    modalBodyText: string;
+    isBlue?: boolean;
+    isOrange?: boolean;
+    isRed?: boolean;
+    isRose?: boolean;
+  };
+} = {
+  [DOMAIN_TYPE.CUSTOM]: {
+    title: 'Custom',
+    isRed: true,
+    modalTitle: 'Custom FIO Crypto Handle',
+    modalBodyText:
+      'When you register a Custom FIO Crypto Handle you also get your own FIO Domain (@domain). By default this domain is private, meaning only you can create new handles on it.',
+  },
+  [DOMAIN_TYPE.FREE]: {
+    title: 'Free',
+    isRose: true,
+    modalTitle: 'Free FIO Crypto Handle',
+    modalBodyText:
+      'Please enjoy this free FIO Crypto Handle for life. Limit: one free handle per user.',
+  },
+  [DOMAIN_TYPE.PREMIUM]: {
+    title: 'Premium',
+    isBlue: true,
+    modalTitle: 'Premium FIO Crypto Handle',
+    modalBodyText:
+      'Premium FIO Crypto Handles are on hand-picked FIO Domains (@domain), which are reserved for users who want to stand out from the crowd.',
+  },
+  [DOMAIN_TYPE.USERS]: {
+    title: 'My Domain',
+    isOrange: true,
+    modalTitle: 'My Domain',
+    modalBodyText:
+      'You already own the FIO Domain, now get a FIO Crypto Handle on it.',
+  },
+};

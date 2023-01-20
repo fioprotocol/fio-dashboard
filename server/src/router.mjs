@@ -115,6 +115,8 @@ router.post(
   routes.account.importValidateWallet,
 );
 
+router.get('/reg/domains/list', routes.registration.domainsList);
+
 router.get('/ref-profile/:code?', routes.refProfiles.info);
 
 router.post('/fio-api/chain/get_table_rows', async (req, res) => {

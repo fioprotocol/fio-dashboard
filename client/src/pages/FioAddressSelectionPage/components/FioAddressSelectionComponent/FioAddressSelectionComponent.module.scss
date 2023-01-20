@@ -1,0 +1,25 @@
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  margin-bottom: 30px;
+  max-width: 768px;
+
+  .subtitle {
+    margin-top: 30px;
+    margin-bottom: 0;
+    font-size: 1.125rem;
+    @include proxima-nova-semibold;
+  }
+
+  .infoBadgeContainer {
+    margin-top: -10px;
+  }
+}
+
+@include lg {
+  .container {
+    margin-bottom: 0;
+  }
+}
+

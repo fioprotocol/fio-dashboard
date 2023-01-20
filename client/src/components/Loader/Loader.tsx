@@ -1,6 +1,6 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import classes from './Loader.module.scss';
 
@@ -22,7 +22,7 @@ const Loader: React.FC<Props> = props => {
         isWhite && classes.isWhite,
       )}
     >
-      <FontAwesomeIcon icon="spinner" spin />
+      <CircularProgress />
     </div>
   );
 };

@@ -1,13 +1,17 @@
 import isEmpty from 'lodash/isEmpty';
 
+import { store } from '../redux/init';
+
 import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
   CURRENCY_CODES,
 } from '../constants/common';
-import { ACTIONS } from '../constants/fio';
+import { ACTIONS, DOMAIN_TYPE } from '../constants/fio';
 import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
+
+import { setCartItems } from '../redux/cart/actions';
 
 import MathOp from './math';
 import { setFioName } from '../utils';
@@ -31,9 +35,7 @@ export const setFreeCart = ({
     item => item.address && item.domain && item.allowFree,
   );
   if (recalcElem) {
-    delete recalcElem.costNativeFio;
-    recalcElem.costFio = '0.00';
-    recalcElem.costUsdc = '0';
+    recalcElem.domainType = DOMAIN_TYPE.FREE;
 
     return cartItems.map(item => {
       delete item.showBadge;
@@ -86,7 +88,7 @@ export const removeFreeCart = ({
   } = prices;
 
   return cartItems.map(item => {
-    if (!item.costNativeFio) {
+    if (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) {
       item.costNativeFio = nativeFioAddressPrice;
       item.showBadge = true;
     }
@@ -105,7 +107,11 @@ export const removeFreeCart = ({
 export const cartHasFreeItem = (cartItems: CartItem[]): boolean => {
   return (
     !isEmpty(cartItems) &&
-    cartItems.some(item => !item.costNativeFio && !!item.address)
+    cartItems.some(
+      item =>
+        (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
+        !!item.address,
+    )
   );
 };
 
@@ -129,6 +135,28 @@ export const handleFreeAddressCart = ({
     retCart = setFreeCart({ cartItems });
   }
   setCartItems(!isEmpty(retCart) ? retCart : cartItems);
+};
+
+export const addCartItem = (selectedItem: CartItem) => {
+  const { domain } = selectedItem || {};
+
+  const currentStore = store.getState();
+
+  const cartItems: CartItem[] = currentStore.cart.cartItems;
+
+  const newCartItems = [
+    ...cartItems.filter(
+      (item: CartItem) => item.domain !== domain.toLowerCase(),
+    ),
+    selectedItem,
+  ];
+
+  store.dispatch(setCartItems(newCartItems));
+
+  fireAnalyticsEvent(
+    ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
+    getCartItemsDataForAnalytics([selectedItem]),
+  );
 };
 
 export const deleteCartItem = ({

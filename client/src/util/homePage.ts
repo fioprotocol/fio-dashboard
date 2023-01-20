@@ -31,7 +31,6 @@ export const handleHomePageContent = ({
   actionText: DefaultContentProps;
   hasMinHeight: boolean;
   showSignInWidget: boolean;
-  hideBottomPlug: boolean;
   initialValues: { domain?: string };
 } => {
   let title = null;
@@ -89,7 +88,6 @@ export const handleHomePageContent = ({
     actionText,
     hasMinHeight: isContainedFlow,
     showSignInWidget: isContainedFlow,
-    hideBottomPlug: isContainedFlow,
     initialValues,
   };
 };

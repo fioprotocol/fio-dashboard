@@ -196,13 +196,16 @@ export type UsernameOnDomain = Rankable & {
   username: string;
 };
 
-export type AdminDefaults = {
+export type DomainsResponse = {
   availableDomains: AdminDomain[];
   dashboardDomains: AdminDomain[];
-  searchPrefixes: SearchTerm[];
-  searchPostfixes: SearchTerm[];
   usernamesOnCustomDomains: UsernameOnDomain[];
 };
+
+export type AdminDefaults = {
+  searchPrefixes: SearchTerm[];
+  searchPostfixes: SearchTerm[];
+} & DomainsResponse;
 
 export type AdminDefaultsRequest = AdminDefaults & {
   availableDomainsToDelete?: string[];

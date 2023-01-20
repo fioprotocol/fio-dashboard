@@ -7,6 +7,7 @@ import { LocationState, Path } from 'history';
 import { FIOSDK_LIB } from './api/fio';
 
 import { CONTAINED_FLOW_ACTIONS } from './constants/containedFlow';
+import { DOMAIN_TYPE } from './constants/fio';
 import {
   BC_TX_STATUSES,
   PAYMENT_OPTIONS,
@@ -40,6 +41,7 @@ export type Domain = { domain: string; free?: boolean };
 
 export type ContainedFlowActionSettingsKey = keyof typeof CONTAINED_FLOW_ACTIONS;
 export type CartItemType = typeof CART_ITEM_TYPE[keyof typeof CART_ITEM_TYPE];
+export type DomainItemType = typeof DOMAIN_TYPE[keyof typeof DOMAIN_TYPE];
 
 export type CartItem = {
   address?: string;
@@ -58,6 +60,7 @@ export type CartItem = {
   errorType?: string;
   isCustomDomain?: boolean;
   type?: CartItemType;
+  domainType?: DomainItemType;
 };
 
 export type Notification = {
@@ -377,6 +380,13 @@ export type RefProfile = {
   regRefApiToken: string;
   createdAt?: string;
 };
+
+export type RefProfileDomain = {
+  name: string;
+  isPremium?: boolean;
+  rank?: number;
+};
+export type RefProfileDomains = { refProfileDomains: RefProfileDomain[] };
 
 type SignNFTQuery = {
   chain_code: string;

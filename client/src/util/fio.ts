@@ -2,6 +2,7 @@ import { TextDecoder, TextEncoder } from 'text-encoding';
 import { Transactions as FioTransactionsProvider } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { Api as ChainApi, Numeric as ChainNumeric } from '@fioprotocol/fiojs';
+import { allRules, validate } from '@fioprotocol/fiosdk/lib/utils/validation';
 
 import {
   AbiProvider,
@@ -9,12 +10,14 @@ import {
 } from '@fioprotocol/fiojs/dist/chain-api-interfaces';
 
 import apis from '../api';
-import { sleep } from '../utils';
+import { fireAnalyticsEventDebounced } from './analytics';
+import { setFioName, sleep } from '../utils';
 import { log } from '../util/general';
 
 import { FREE_ADDRESS_REGISTER_ERROR, ERROR_TYPES } from '../constants/errors';
 import { FIO_REQUEST_STATUS_TYPES } from '../constants/fio';
-import { CHAIN_CODES } from '../constants/common';
+import { ANALYTICS_EVENT_ACTIONS, CHAIN_CODES } from '../constants/common';
+import { FIO_ADDRESS_DELIMITER } from '../utils';
 import { RegisterAddressError } from './errors';
 
 import {
@@ -51,6 +54,63 @@ export const waitForAddressRegistered = async (
   };
 
   return checkAddressIsRegistered();
+};
+
+export const validateFioAddress = async (address: string, domain: string) => {
+  if (!address) {
+    return 'FIO Crypto Handle Field Should Be Filled';
+  }
+
+  if (!domain) {
+    return 'Missing domain';
+  }
+
+  const addressValidation = validate(
+    { fioAddress: `${address}${FIO_ADDRESS_DELIMITER}${domain}` },
+    { fioAddress: allRules.fioAddress },
+  );
+
+  if (!addressValidation.isValid) {
+    return 'FIO Crypto Handle only allows letters, numbers and dash in the middle';
+  }
+
+  const domainValidation = validate(
+    { fioDomain: domain },
+    { fioDomain: allRules.fioDomain },
+  );
+
+  if (!domainValidation.isValid) {
+    return 'Domain name only allows letters, numbers and dash in the middle';
+  }
+
+  if (domain && domain.length > 62) {
+    return 'Domain name should be less than 62 characters';
+  }
+
+  if (address && domain && address.length + domain.length > 63) {
+    return 'FIO Crypto Handle should be less than 63 characters';
+  }
+
+  return null;
+};
+
+export const checkAddressIsExist = async (address: string, domain: string) => {
+  if (address && domain) {
+    try {
+      fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
+      const isAvail = await apis.fio.availCheck(setFioName(address, domain));
+      if (isAvail && isAvail.is_registered === 1) {
+        fireAnalyticsEventDebounced(
+          ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
+        );
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      //
+    }
+  }
 };
 
 export const transformNft = (nfts: NftTokenResponse[]): NFTTokenDoublet[] => {
