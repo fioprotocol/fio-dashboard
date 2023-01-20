@@ -36,6 +36,7 @@ export const MobileSelectionItem: React.FC<Props> = props => {
             costNativeFio={costNativeFio}
             costUsdc={costUsdc}
             costFio={costFio}
+            domainType={domainType}
           />
         </div>
         <div className={classes.badgeContainer}>

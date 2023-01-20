@@ -11,10 +11,15 @@ import {
   CART_ITEM_TYPES_WITH_PERIOD,
   CURRENCY_CODES,
 } from '../../constants/common';
+import { DOMAIN_TYPE } from '../../constants/fio';
 
 import { getCartItemDescriptor } from '../../util/cart';
 
-import { CartItem as CartItemType, PaymentCurrency } from '../../types';
+import {
+  CartItem as CartItemType,
+  DomainItemType,
+  PaymentCurrency,
+} from '../../types';
 
 import classes from './Cart.module.scss';
 
@@ -31,6 +36,7 @@ export type CartItemProps = {
   costFio: string;
   costUsdc: string;
   costNativeFio?: number;
+  domainType?: DomainItemType;
 };
 
 export const CartItemPrice = (props: CartItemProps) => {
@@ -38,10 +44,12 @@ export const CartItemPrice = (props: CartItemProps) => {
     costFio,
     costUsdc,
     costNativeFio,
+    domainType,
     primaryCurrency = CURRENCY_CODES.FIO,
   } = props;
 
-  if (!costNativeFio) return <span className="boldText">FREE</span>;
+  if (!costNativeFio || domainType === DOMAIN_TYPE.FREE)
+    return <span className="boldText">FREE</span>;
 
   if (primaryCurrency === CURRENCY_CODES.FIO)
     return (

@@ -36,6 +36,7 @@ export const SquareShapeSelectionItem: React.FC<Props> = props => {
           costNativeFio={costNativeFio}
           costUsdc={costUsdc}
           costFio={costFio}
+          domainType={domainType}
           hasSmallFontSize
         />
       </div>

@@ -8,6 +8,8 @@ import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 import {
   allDomains as allDomainsSelector,
   loading as domainsLoaingSelector,
+  prices as pricesSelector,
+  roe as roeSelector,
 } from '../../redux/registrations/selectors';
 import { hasFreeAddress as hasFreeAddressSelector } from '../../redux/profile/selectors';
 
@@ -15,6 +17,8 @@ import { FIO_ADDRESS_ALREADY_EXISTS } from '../../constants/errors';
 import { DOMAIN_TYPE } from '../../constants/fio';
 
 import { checkAddressIsExist, validateFioAddress } from '../../util/fio';
+import MathOp from '../../util/math';
+import { convertFioPrices } from '../../util/prices';
 import { setFioName } from '../../utils';
 
 import {
@@ -23,6 +27,7 @@ import {
   UseContextProps,
 } from './types';
 import { AdminDomain } from '../../api/responses';
+import { Prices } from '../../types';
 
 const ADDITIONAL_DOMAINS_COUNT_LIMIT = 25;
 const USER_DOMAINS_LIMIT = 3;
@@ -31,15 +36,21 @@ const DEFAULT_DOMAIN_TYPE_LIMIT = 5;
 const handleFCHItems = async ({
   domainArr,
   address,
+  prices,
+  roe,
   setError,
-  addFCHItem,
 }: {
   domainArr: DomainsArrItemType;
   address: string;
+  prices: Prices;
+  roe: number;
   setError: (error: string) => void;
-  addFCHItem: (fchItem: SelectedItemProps[]) => void;
 }) => {
   const itemslist = [];
+
+  const {
+    nativeFio: { address: natvieFioAddressPrice, domain: nativeFioDomainPrice },
+  } = prices;
 
   for (const domain of domainArr) {
     const error = await validateFioAddress(address, domain.name);
@@ -50,13 +61,20 @@ const handleFCHItems = async ({
 
     const isAddressExist = await checkAddressIsExist(address, domain.name);
 
+    const totalNativeFio =
+      domain.domainType === DOMAIN_TYPE.CUSTOM
+        ? new MathOp(natvieFioAddressPrice).add(nativeFioDomainPrice).toNumber()
+        : natvieFioAddressPrice;
+
+    const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
+
     itemslist.push({
       id: setFioName(address, domain.name),
       address,
       domain: domain.name,
-      costFio: '12.34',
-      costUsdc: '1.04',
-      costNativeFio: 12340000,
+      costFio: fio,
+      costUsdc: usdc,
+      costNativeFio: totalNativeFio,
       domainType: domain.domainType,
       isSelected: false,
       isExist: isAddressExist,
@@ -71,6 +89,8 @@ export const useContext = (): UseContextProps => {
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const domainsLoaing = useSelector(domainsLoaingSelector);
   const fioWallets = useSelector(fioWalletsSelector);
+  const prices = useSelector(pricesSelector);
+  const roe = useSelector(roeSelector);
 
   const dispatch = useDispatch();
 
@@ -152,32 +172,26 @@ export const useContext = (): UseContextProps => {
       const parsedPremiumDomains = JSON.parse(premiumPublicDomainsJSON);
       const parsedCustomDomains = JSON.parse(customDomainsJSON);
 
+      const defaultParams = { address, prices, roe, setError };
+
       const validatedUserFCH = await handleFCHItems({
         domainArr: parsedUsersDomains,
-        address,
-        setError,
-        addFCHItem: setUsersItemsList,
+        ...defaultParams,
       });
 
       const validatedNonPremiumFCH = await handleFCHItems({
         domainArr: parsedNonPremiumDomains,
-        address,
-        setError,
-        addFCHItem: setSuggestedItemsList,
+        ...defaultParams,
       });
 
       const validatedPremiumFCH = await handleFCHItems({
         domainArr: parsedPremiumDomains,
-        address,
-        setError,
-        addFCHItem: setSuggestedItemsList,
+        ...defaultParams,
       });
 
       const validatedCustomFCH = await handleFCHItems({
         domainArr: parsedCustomDomains,
-        address,
-        setError,
-        addFCHItem: setSuggestedItemsList,
+        ...defaultParams,
       });
 
       const userFCHAllExist = validatedUserFCH.every(
@@ -281,6 +295,8 @@ export const useContext = (): UseContextProps => {
       customDomainsJSON,
       nonPremiumPublicDomainsJSON,
       premiumPublicDomainsJSON,
+      prices,
+      roe,
       userDomainsJSON,
     ],
   );

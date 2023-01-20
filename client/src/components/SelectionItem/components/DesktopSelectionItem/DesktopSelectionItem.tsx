@@ -41,6 +41,7 @@ export const DesktopSelectionItem: React.FC<Props> = props => {
           costNativeFio={costNativeFio}
           costUsdc={costUsdc}
           costFio={costFio}
+          domainType={domainType}
         />
       </div>
       <AddToCartButton onClick={onClick} isSelected={isSelected} />
