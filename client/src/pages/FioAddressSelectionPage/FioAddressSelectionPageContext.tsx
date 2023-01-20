@@ -25,6 +25,7 @@ import {
 import { AdminDomain } from '../../api/responses';
 
 const ADDITIONAL_DOMAINS_COUNT_LIMIT = 25;
+const USER_DOMAINS_LIMIT = 3;
 const DEFAULT_DOMAIN_TYPE_LIMIT = 5;
 
 const handleFCHItems = async ({
@@ -41,8 +42,6 @@ const handleFCHItems = async ({
   const itemslist = [];
 
   for (const domain of domainArr) {
-    if (itemslist.length > ADDITIONAL_DOMAINS_COUNT_LIMIT) break;
-
     const error = await validateFioAddress(address, domain.name);
     if (error) {
       setError(error);
@@ -51,25 +50,20 @@ const handleFCHItems = async ({
 
     const isAddressExist = await checkAddressIsExist(address, domain.name);
 
-    if (isAddressExist) {
-      setError(FIO_ADDRESS_ALREADY_EXISTS);
-      break;
-    }
-
-    if (!isAddressExist) {
-      itemslist.push({
-        id: setFioName(address, domain.name),
-        address,
-        domain: domain.name,
-        costFio: '12.34',
-        costUsdc: '1.04',
-        costNativeFio: 12340000,
-        domainType: domain.domainType,
-        isSelected: false,
-      });
-    }
+    itemslist.push({
+      id: setFioName(address, domain.name),
+      address,
+      domain: domain.name,
+      costFio: '12.34',
+      costUsdc: '1.04',
+      costNativeFio: 12340000,
+      domainType: domain.domainType,
+      isSelected: false,
+      isExist: isAddressExist,
+    });
   }
-  itemslist.length > 0 && addFCHItem(itemslist);
+
+  return itemslist;
 };
 
 export const useContext = (): UseContextProps => {
@@ -104,6 +98,13 @@ export const useContext = (): UseContextProps => {
     ? refProfileDomains
     : dashboardDomains;
 
+  const sortedUserDomains = userDomains
+    .map(userDomain => ({
+      name: userDomain.name,
+      domainType: DOMAIN_TYPE.USERS,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
   const nonPremiumPublicDomains = publicDomains
     .filter(publicDomain => !publicDomain.isPremium)
     .map(publicDomain => ({
@@ -130,6 +131,7 @@ export const useContext = (): UseContextProps => {
     }))
     .sort((a, b) => b.rank - a.rank);
 
+  const userDomainsJSON = JSON.stringify(sortedUserDomains);
   const nonPremiumPublicDomainsJSON = JSON.stringify(nonPremiumPublicDomains);
   const premiumPublicDomainsJSON = JSON.stringify(premiumPublicDomains);
   const customDomainsJSON = JSON.stringify(customDomains);
@@ -145,54 +147,133 @@ export const useContext = (): UseContextProps => {
         return;
       }
 
+      const parsedUsersDomains = JSON.parse(userDomainsJSON);
       const parsedNonPremiumDomains = JSON.parse(nonPremiumPublicDomainsJSON);
       const parsedPremiumDomains = JSON.parse(premiumPublicDomainsJSON);
       const parsedCustomDomains = JSON.parse(customDomainsJSON);
 
-      const suggestedPublicDomains = [
-        ...parsedNonPremiumDomains.slice(0, DEFAULT_DOMAIN_TYPE_LIMIT),
-        ...parsedPremiumDomains.slice(0, DEFAULT_DOMAIN_TYPE_LIMIT),
-        ...parsedCustomDomains.slice(0, DEFAULT_DOMAIN_TYPE_LIMIT),
-      ];
+      const validatedUserFCH = await handleFCHItems({
+        domainArr: parsedUsersDomains,
+        address,
+        setError,
+        addFCHItem: setUsersItemsList,
+      });
 
-      const additionalPublicDomains = [
-        ...parsedNonPremiumDomains.slice(DEFAULT_DOMAIN_TYPE_LIMIT),
-        ...parsedPremiumDomains.slice(DEFAULT_DOMAIN_TYPE_LIMIT),
-        ...parsedCustomDomains.slice(DEFAULT_DOMAIN_TYPE_LIMIT),
-      ];
+      const validatedNonPremiumFCH = await handleFCHItems({
+        domainArr: parsedNonPremiumDomains,
+        address,
+        setError,
+        addFCHItem: setSuggestedItemsList,
+      });
 
-      if (userDomains?.length) {
-        await handleFCHItems({
-          domainArr: userDomains
-            .map(userDomain => ({
-              name: userDomain.name,
-              domainType: DOMAIN_TYPE.USERS,
-            }))
-            .sort((a, b) => a.name.localeCompare(b.name))
-            .slice(0, 3),
-          address,
-          setError,
-          addFCHItem: setUsersItemsList,
-        });
+      const validatedPremiumFCH = await handleFCHItems({
+        domainArr: parsedPremiumDomains,
+        address,
+        setError,
+        addFCHItem: setSuggestedItemsList,
+      });
+
+      const validatedCustomFCH = await handleFCHItems({
+        domainArr: parsedCustomDomains,
+        address,
+        setError,
+        addFCHItem: setSuggestedItemsList,
+      });
+
+      const userFCHAllExist = validatedUserFCH.every(
+        userFCH => userFCH.isExist,
+      );
+      const nonPremiumFCHAllExist = validatedNonPremiumFCH.every(
+        nonPremiumFCH => nonPremiumFCH.isExist,
+      );
+      const premiumFCHAllExist = validatedPremiumFCH.every(
+        premiumFCH => premiumFCH.isExist,
+      );
+      const customFCHAllExist = validatedCustomFCH.every(
+        customFCH => customFCH.isExist,
+      );
+
+      if (
+        userFCHAllExist &&
+        nonPremiumFCHAllExist &&
+        premiumFCHAllExist &&
+        customFCHAllExist
+      ) {
+        setError(FIO_ADDRESS_ALREADY_EXISTS);
+        setAdditionalItemsList([]);
+        setSuggestedItemsList([]);
+        setUsersItemsList([]);
+        return;
       }
 
-      if (suggestedPublicDomains.length) {
-        await handleFCHItems({
-          domainArr: suggestedPublicDomains,
-          address,
-          setError,
-          addFCHItem: setSuggestedItemsList,
-        });
+      if (userFCHAllExist) {
+        setUsersItemsList([]);
+      } else {
+        setUsersItemsList(
+          validatedUserFCH
+            .filter(userFCH => !userFCH.isExist)
+            .slice(0, USER_DOMAINS_LIMIT),
+        );
       }
 
-      if (additionalPublicDomains.length) {
-        await handleFCHItems({
-          domainArr: additionalPublicDomains,
-          address,
-          setError,
-          addFCHItem: setAdditionalItemsList,
-        });
+      if (nonPremiumFCHAllExist && premiumFCHAllExist && customFCHAllExist) {
+        setAdditionalItemsList([]);
+        setSuggestedItemsList([]);
+        return;
       }
+
+      let suggestedPublicDomains: SelectedItemProps[] = [];
+      let additionalPublicDomains: SelectedItemProps[] = [];
+
+      if (!nonPremiumFCHAllExist) {
+        suggestedPublicDomains = [
+          ...suggestedPublicDomains,
+          ...validatedNonPremiumFCH
+            .filter(nonPremiumFCH => !nonPremiumFCH.isExist)
+            .slice(0, DEFAULT_DOMAIN_TYPE_LIMIT),
+        ];
+        additionalPublicDomains = [
+          ...additionalPublicDomains,
+          ...validatedNonPremiumFCH
+            .filter(nonPremiumFCH => !nonPremiumFCH.isExist)
+            .slice(DEFAULT_DOMAIN_TYPE_LIMIT),
+        ];
+      }
+
+      if (!premiumFCHAllExist) {
+        suggestedPublicDomains = [
+          ...suggestedPublicDomains,
+          ...validatedPremiumFCH
+            .filter(premiumFCH => !premiumFCH.isExist)
+            .slice(0, DEFAULT_DOMAIN_TYPE_LIMIT),
+        ];
+        additionalPublicDomains = [
+          ...additionalPublicDomains,
+          ...validatedPremiumFCH
+            .filter(premiumFCH => !premiumFCH.isExist)
+            .slice(DEFAULT_DOMAIN_TYPE_LIMIT),
+        ];
+      }
+
+      if (!customFCHAllExist) {
+        suggestedPublicDomains = [
+          ...suggestedPublicDomains,
+          ...validatedCustomFCH
+            .filter(customFCH => !customFCH.isExist)
+            .slice(0, DEFAULT_DOMAIN_TYPE_LIMIT),
+        ];
+        additionalPublicDomains = [
+          ...additionalPublicDomains,
+          ...validatedCustomFCH
+            .filter(customFCH => !customFCH.isExist)
+            .slice(DEFAULT_DOMAIN_TYPE_LIMIT),
+        ];
+      }
+
+      setSuggestedItemsList(suggestedPublicDomains);
+      setAdditionalItemsList(
+        additionalPublicDomains.slice(0, ADDITIONAL_DOMAINS_COUNT_LIMIT),
+      );
 
       toggleLoading(false);
     },
@@ -200,7 +281,7 @@ export const useContext = (): UseContextProps => {
       customDomainsJSON,
       nonPremiumPublicDomainsJSON,
       premiumPublicDomainsJSON,
-      userDomains,
+      userDomainsJSON,
     ],
   );
 
