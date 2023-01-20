@@ -348,9 +348,10 @@ export type UserDetails = {
 
 export type RefProfileDomain = {
   name: string;
-  isPremium: boolean;
-  rank: number;
+  isPremium?: boolean;
+  rank?: number;
 };
+export type RefProfileDomains = { refProfileDomains: RefProfileDomain[] };
 
 export type RefProfile = {
   id?: string;
@@ -380,13 +381,6 @@ export type RefProfile = {
   regRefApiToken: string;
   createdAt?: string;
 };
-
-export type RefProfileDomain = {
-  name: string;
-  isPremium?: boolean;
-  rank?: number;
-};
-export type RefProfileDomains = { refProfileDomains: RefProfileDomain[] };
 
 type SignNFTQuery = {
   chain_code: string;
@@ -718,7 +712,9 @@ export type OrderPaymentItem = {
     fioName?: string;
     action?: string;
     sendingFioTokens?: boolean;
-    webhookData?: { charges: { data: { payment_method_details: { type } }[] } };
+    webhookData?: {
+      charges: { data: { payment_method_details: { type: string } }[] };
+    };
   };
 };
 

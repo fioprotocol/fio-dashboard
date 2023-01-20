@@ -143,7 +143,9 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
           <p className={classes.title}>ID</p>
           <p className={classnames(classes.item, classes.isIndigo)}>
             <a
-              href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transaction_id}`}
+              href={`${
+                process.env.REACT_APP_FIO_BLOCKS_TX_URL
+              }${transaction_id as string}`}
               target="_blank"
               rel="noreferrer"
             >

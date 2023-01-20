@@ -130,7 +130,7 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
                 isTokens
                   ? process.env.REACT_APP_ETH_HISTORY_URL
                   : process.env.REACT_APP_POLYGON_HISTORY_URL
-              }${transaction_id}`}
+              }${transaction_id as string}`}
               target="_blank"
               rel="noreferrer"
             >
