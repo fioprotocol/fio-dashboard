@@ -75,6 +75,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     renewDomainFeePrice,
     getAddBundlesFee,
     getRenewDomainFee,
+    cartItems,
     addItemToCart,
     history,
   } = props;
@@ -209,6 +210,10 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
       ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
       getCartItemsDataForAnalytics([newCartItem]),
     );
+    fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
+      getCartItemsDataForAnalytics([...cartItems, newCartItem]),
+    );
     history.push(ROUTES.CART);
   };
 
@@ -228,6 +233,10 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     fireAnalyticsEvent(
       ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
       getCartItemsDataForAnalytics([newCartItem]),
+    );
+    fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
+      getCartItemsDataForAnalytics([...cartItems, newCartItem]),
     );
     history.push(ROUTES.CART);
   };

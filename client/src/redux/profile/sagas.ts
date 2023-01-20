@@ -60,6 +60,9 @@ export function* loginSuccess(history: History, api: Api): Generator {
     );
     const wallets: FioWalletDoublet[] = yield select(fioWallets);
     api.client.setToken(action.data.jwt);
+    if (action.isSignUp) {
+      fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SIGN_UP);
+    }
     fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.LOGIN, {
       method: action.isPinLogin
         ? ANALYTICS_LOGIN_METHOD.PIN
@@ -157,6 +160,7 @@ export function* nonceSuccess(): Generator {
       otpKey,
       voucherId,
       isPinLogin,
+      isSignUp,
     } = action.data;
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -169,6 +173,7 @@ export function* nonceSuccess(): Generator {
         otpKey,
         voucherId,
         isPinLogin,
+        isSignUp,
       }),
     );
   });
