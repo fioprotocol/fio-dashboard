@@ -22,14 +22,14 @@ export const DomainsSpecialsBanner: React.FC = () => {
         title="DOMAINS ARE NFTS"
         subtitle="Transferrable & Tradeable on OpenSea"
         isFlipped
-        isBig
+        isBigImage
       />
       <SpecialsBannerBadge
         icon={controlIcon}
         mobileIcon={controlMobileIcon}
         title="CONTROL"
         subtitle="Decide who can register FIO crypto handles on your domain"
-        isBig
+        isBigImage
       />
       <SpecialsBannerBadge
         icon={customizableIcon}
@@ -37,7 +37,7 @@ export const DomainsSpecialsBanner: React.FC = () => {
         title="CUSTOMIZABLE"
         subtitle="Use your FIO domain to create a unique web3 identity"
         isFlipped
-        isBig
+        isBigImage
       />
     </div>
   );

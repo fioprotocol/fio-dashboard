@@ -45,7 +45,7 @@
       }
     }
 
-    &.isBig {
+    &.isBigImage {
       padding: 30px;
       gap: 60px;
 
@@ -93,6 +93,49 @@
   }
 }
 
+@include md {
+  .container {
+
+    .badge {
+      padding: 30px 20px;
+      flex-direction: column;
+      gap: 35px;
+
+      &.isBigImage {
+        padding: 30px 20px;
+        gap: 30px;
+
+        .badgeIcon {
+          flex: 1;
+        }
+
+        .badgeContainer {
+          flex: 1;
+        }
+      }
+
+      .badgeIcon {
+        flex: 1;
+        order: 1;
+
+        .badgeIconDesktop {
+          display: none;
+        }
+
+        .badgeIconMobile {
+          display: inline;
+        }
+      }
+
+      .badgeContainer {
+        flex: 1;
+        order: 2;
+        text-align: center !important;
+      }
+    }
+  }
+}
+
 @include sm {
   .container {
     padding: 70px 20px;
@@ -113,8 +156,17 @@
       flex-direction: column;
       gap: 35px;
 
-      &.isBig {
+      &.isBigImage {
+        padding: 30px 20px;
         gap: 30px;
+
+        .badgeIcon {
+          flex: 1;
+        }
+
+        .badgeContainer {
+          flex: 1;
+        }
       }
 
       .badgeIcon {

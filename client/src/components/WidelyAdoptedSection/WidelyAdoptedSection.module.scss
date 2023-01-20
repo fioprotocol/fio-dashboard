@@ -52,6 +52,23 @@
   }
 }
 
+@include md {
+  .container {
+    .description {
+      &:first-of-type {
+        display: none;
+      }
+    }
+
+    .iconsGrid {
+      margin: 50px 0;
+      grid-column-gap: 36px;
+      grid-row-gap: 20px;
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+  }
+}
+
 @include sm {
   .container {
     padding: 70px 20px;

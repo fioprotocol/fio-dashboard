@@ -9,7 +9,7 @@ type Props = {
   title: string;
   subtitle: string;
   isFlipped?: boolean;
-  isBig?: boolean;
+  isBigImage?: boolean;
 };
 
 export const SpecialsBannerBadge: React.FC<Props> = props => {
@@ -19,7 +19,7 @@ export const SpecialsBannerBadge: React.FC<Props> = props => {
     title,
     subtitle,
     isFlipped = false,
-    isBig = false,
+    isBigImage = false,
   } = props;
 
   return (
@@ -28,7 +28,7 @@ export const SpecialsBannerBadge: React.FC<Props> = props => {
         className={classnames(
           classes.badge,
           isFlipped && classes.isFlipped,
-          isBig && classes.isBig,
+          isBigImage && classes.isBigImage,
         )}
       >
         <div className={classes.badgeIcon}>
