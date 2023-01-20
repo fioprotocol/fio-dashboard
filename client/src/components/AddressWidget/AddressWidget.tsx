@@ -51,7 +51,11 @@ const AddressWidget: React.FC<Props> = props => {
       <TitleComponent logoSrc={logoSrc} title={title} />
       <SubtitleComponent subtitle={subtitle} />
       <ActionTextComponent actionText={actionText} />
-      <FormComponent isReverseColors={isReverseColors} links={links} />
+      <FormComponent
+        isReverseColors={isReverseColors}
+        links={links}
+        isDarkWhite={isDarkWhite}
+      />
       <SignInWidget show={!isAuthenticated && showSignInWidget} />
     </div>
   );

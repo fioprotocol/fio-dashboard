@@ -9,6 +9,7 @@ import CounterContainer from '../CounterContainer/CounterContainer';
 
 import { ROUTES } from '../../constants/routes';
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
+import { DOMAIN_TYPE } from '../../constants/fio';
 
 import {
   handleFreeAddressCart,
@@ -29,7 +30,6 @@ import {
   Prices,
   RedirectLinkData,
 } from '../../types';
-import { DOMAIN_TYPE } from '../../constants/fio';
 
 import classes from './AddressDomainCart.module.scss';
 

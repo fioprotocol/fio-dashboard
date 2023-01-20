@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 
 import CommonBadge from '../../../Badges/CommonBadge/CommonBadge';
 import Modal from '../../../Modal/Modal';
+import SubmitButton from '../../../common/SubmitButton/SubmitButton';
 
 import { DOMAIN_TYPE_PARAMS } from '../../../../constants/fio';
 
 import { DomainItemType } from '../../../../types';
 
 import classes from './DomainTypeBadge.module.scss';
-import SubmitButton from '../../../common/SubmitButton/SubmitButton';
 
 type Props = {
   domainType: DomainItemType;

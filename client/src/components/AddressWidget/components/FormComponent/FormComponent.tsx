@@ -18,6 +18,7 @@ type Props = {
     getCryptoHandle: React.ReactNode;
   };
   isReverseColors?: boolean;
+  isDarkWhite?: boolean;
 };
 
 type ActionButtonProps = {
@@ -73,7 +74,7 @@ const ActionButton: React.FC<ActionButtonProps> = props => {
 };
 
 export const FormComponent: React.FC<Props> = props => {
-  const { buttonText, isReverseColors, links } = props;
+  const { buttonText, isReverseColors, isDarkWhite, links } = props;
 
   const history = useHistory();
 
@@ -116,13 +117,15 @@ export const FormComponent: React.FC<Props> = props => {
           </form>
           <div className={classes.actionTextContainer}>
             <ExclamationIcon
-              isBlackWhite={!isReverseColors}
-              isWhiteIndigo={isReverseColors}
+              isBlackWhite={!isReverseColors && !isDarkWhite}
+              isWhiteIndigo={isReverseColors && !isDarkWhite}
+              isWhiteBlack={isDarkWhite && !isReverseColors}
             />
             <span
               className={classnames(
                 classes.actionText,
                 isReverseColors && classes.isReverseColors,
+                isDarkWhite && classes.isDarkWhite,
               )}
             >
               You can pay with a credit card OR crypto!

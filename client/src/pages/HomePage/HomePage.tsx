@@ -49,7 +49,7 @@ const HomePage: React.FC<Props & RouteComponentProps> = props => {
 
   return (
     <div className={classnames.container}>
-      <AddressWidget {...addressWidgetContent} />
+      <AddressWidget isDarkWhite={!!refProfileInfo} {...addressWidgetContent} />
       <FCHBanner />
       <FCHSpecialsBanner />
       <WidelyAdoptedSection />
