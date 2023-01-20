@@ -354,6 +354,20 @@ export const useContext = (): {
       !!fioWallets.length,
   );
 
+  useEffectOnce(
+    () => {
+      window.addEventListener('beforeunload', e => {
+        if (order?.id) {
+          apis.orders.update(order.id, {
+            status: PURCHASE_RESULTS_STATUS.CANCELED,
+          });
+        }
+      });
+    },
+    [order],
+    !!order,
+  );
+
   useEffect(() => {
     if (noProfileLoaded || !cartItems.length) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
