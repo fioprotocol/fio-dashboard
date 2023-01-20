@@ -4,6 +4,7 @@ import { SelectionItem } from '../../../../components/SelectionItem';
 import Loader from '../../../../components/Loader/Loader';
 
 import { SelectedItemProps } from '../../types';
+import { CartItem } from '../../../../types';
 
 import classes from './AdditionalItemsList.module.scss';
 
@@ -12,7 +13,7 @@ type Props = {
   list: SelectedItemProps[];
   loading: boolean;
   error?: string;
-  onClick: () => void;
+  onClick: (selectedItem: CartItem) => void;
 };
 
 export const AdditionalItemsList: React.FC<Props> = props => {

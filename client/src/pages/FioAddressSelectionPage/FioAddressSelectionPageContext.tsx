@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { refreshFioNames } from '../../redux/fio/actions';
 import { getDomains } from '../../redux/registrations/actions';
 
+import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 import {
   allDomains as allDomainsSelector,
@@ -15,7 +16,9 @@ import { hasFreeAddress as hasFreeAddressSelector } from '../../redux/profile/se
 
 import { FIO_ADDRESS_ALREADY_EXISTS } from '../../constants/errors';
 import { DOMAIN_TYPE } from '../../constants/fio';
+import { CART_ITEM_TYPE } from '../../constants/common';
 
+import { addCartItem } from '../../util/cart';
 import { checkAddressIsExist, validateFioAddress } from '../../util/fio';
 import MathOp from '../../util/math';
 import { convertFioPrices } from '../../util/prices';
@@ -27,7 +30,7 @@ import {
   UseContextProps,
 } from './types';
 import { AdminDomain } from '../../api/responses';
-import { Prices } from '../../types';
+import { CartItem, Prices } from '../../types';
 
 const ADDITIONAL_DOMAINS_COUNT_LIMIT = 25;
 const USER_DOMAINS_LIMIT = 3;
@@ -61,10 +64,11 @@ const handleFCHItems = async ({
 
     const isAddressExist = await checkAddressIsExist(address, domain.name);
 
-    const totalNativeFio =
-      domain.domainType === DOMAIN_TYPE.CUSTOM
-        ? new MathOp(natvieFioAddressPrice).add(nativeFioDomainPrice).toNumber()
-        : natvieFioAddressPrice;
+    const isCustomDomain = domain.domainType === DOMAIN_TYPE.CUSTOM;
+
+    const totalNativeFio = isCustomDomain
+      ? new MathOp(natvieFioAddressPrice).add(nativeFioDomainPrice).toNumber()
+      : natvieFioAddressPrice;
 
     const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
 
@@ -78,6 +82,11 @@ const handleFCHItems = async ({
       domainType: domain.domainType,
       isSelected: false,
       isExist: isAddressExist,
+      period: 1,
+      type: isCustomDomain
+        ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+        : CART_ITEM_TYPE.ADDRESS,
+      allowFree: domain.allowFree,
     });
   }
 
@@ -91,6 +100,7 @@ export const useContext = (): UseContextProps => {
   const fioWallets = useSelector(fioWalletsSelector);
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
+  const cartItems = useSelector(cartItemsSelector);
 
   const dispatch = useDispatch();
 
@@ -114,6 +124,10 @@ export const useContext = (): UseContextProps => {
   const [error, setError] = useState<string>(null);
   const [loading, toggleLoading] = useState<boolean>(false);
 
+  const cartHasFreeItem = cartItems.some(
+    cartItem => cartItem.domainType === DOMAIN_TYPE.FREE,
+  );
+
   const publicDomains: Partial<AdminDomain>[] = refProfileDomains.length
     ? refProfileDomains
     : dashboardDomains;
@@ -129,8 +143,12 @@ export const useContext = (): UseContextProps => {
     .filter(publicDomain => !publicDomain.isPremium)
     .map(publicDomain => ({
       name: publicDomain.name,
-      domainType: hasFreeAddress ? DOMAIN_TYPE.PREMIUM : DOMAIN_TYPE.FREE,
+      domainType:
+        hasFreeAddress || cartHasFreeItem
+          ? DOMAIN_TYPE.PREMIUM
+          : DOMAIN_TYPE.FREE,
       rank: publicDomain.rank || 0,
+      allowFree: true,
     }))
     .sort((a, b) => b.rank - a.rank);
 
@@ -155,6 +173,10 @@ export const useContext = (): UseContextProps => {
   const nonPremiumPublicDomainsJSON = JSON.stringify(nonPremiumPublicDomains);
   const premiumPublicDomainsJSON = JSON.stringify(premiumPublicDomains);
   const customDomainsJSON = JSON.stringify(customDomains);
+  const cartItemsJSON = JSON.stringify(cartItems);
+  const additionalItemsListJSON = JSON.stringify(additionalItemsList);
+  const suggestedItemsListJSON = JSON.stringify(suggestedItemsList);
+  const usersItemsListJSON = JSON.stringify(usersItemsList);
 
   const validateAddress = useCallback(
     async (address: string) => {
@@ -194,18 +216,21 @@ export const useContext = (): UseContextProps => {
         ...defaultParams,
       });
 
-      const userFCHAllExist = validatedUserFCH.every(
-        userFCH => userFCH.isExist,
-      );
-      const nonPremiumFCHAllExist = validatedNonPremiumFCH.every(
-        nonPremiumFCH => nonPremiumFCH.isExist,
-      );
-      const premiumFCHAllExist = validatedPremiumFCH.every(
-        premiumFCH => premiumFCH.isExist,
-      );
-      const customFCHAllExist = validatedCustomFCH.every(
-        customFCH => customFCH.isExist,
-      );
+      const userFCHAllExist =
+        validatedUserFCH.length &&
+        validatedUserFCH.every(userFCH => userFCH.isExist);
+
+      const nonPremiumFCHAllExist =
+        validatedNonPremiumFCH.length &&
+        validatedNonPremiumFCH.every(nonPremiumFCH => nonPremiumFCH.isExist);
+
+      const premiumFCHAllExist =
+        validatedPremiumFCH.length &&
+        validatedPremiumFCH.every(premiumFCH => premiumFCH.isExist);
+
+      const customFCHAllExist =
+        validatedCustomFCH.length &&
+        validatedCustomFCH.every(customFCH => customFCH.isExist);
 
       if (
         userFCHAllExist &&
@@ -284,11 +309,10 @@ export const useContext = (): UseContextProps => {
         ];
       }
 
-      setSuggestedItemsList(suggestedPublicDomains);
       setAdditionalItemsList(
         additionalPublicDomains.slice(0, ADDITIONAL_DOMAINS_COUNT_LIMIT),
       );
-
+      setSuggestedItemsList(suggestedPublicDomains);
       toggleLoading(false);
     },
     [
@@ -301,8 +325,8 @@ export const useContext = (): UseContextProps => {
     ],
   );
 
-  const onClick = () => {
-    // TODO: Set action
+  const onClick = (selectedItem: CartItem) => {
+    addCartItem(selectedItem);
   };
 
   useEffect(() => {
@@ -319,6 +343,51 @@ export const useContext = (): UseContextProps => {
       dispatch(refreshFioNames(fioWallet.publicKey));
     }
   }, [dispatch, fioWallets]);
+
+  useEffect(() => {
+    if (loading) return;
+
+    const parsedCartItems: CartItem[] = JSON.parse(cartItemsJSON);
+    const parsedAdditionalItemsList: SelectedItemProps[] = JSON.parse(
+      additionalItemsListJSON,
+    );
+    const parsedSuggestedItemsList: SelectedItemProps[] = JSON.parse(
+      suggestedItemsListJSON,
+    );
+    const parsedUsersItemsList: SelectedItemProps[] = JSON.parse(
+      usersItemsListJSON,
+    );
+
+    setAdditionalItemsList(
+      parsedAdditionalItemsList.map(additionalItem =>
+        parsedCartItems.find(cartItem => cartItem.id === additionalItem.id)
+          ? { ...additionalItem, isSelected: true }
+          : { ...additionalItem, isSelected: false },
+      ),
+    );
+
+    setSuggestedItemsList(
+      parsedSuggestedItemsList.map(suggestedItem =>
+        parsedCartItems.find(cartItem => cartItem.id === suggestedItem.id)
+          ? { ...suggestedItem, isSelected: true }
+          : { ...suggestedItem, isSelected: false },
+      ),
+    );
+
+    setUsersItemsList(
+      parsedUsersItemsList.map(usersItem =>
+        parsedCartItems.find(cartItem => cartItem.id === usersItem.id)
+          ? { ...usersItem, isSelected: true }
+          : { ...usersItem, isSelected: false },
+      ),
+    );
+  }, [
+    loading,
+    additionalItemsListJSON,
+    cartItemsJSON,
+    suggestedItemsListJSON,
+    usersItemsListJSON,
+  ]);
 
   return {
     additionalItemsList,

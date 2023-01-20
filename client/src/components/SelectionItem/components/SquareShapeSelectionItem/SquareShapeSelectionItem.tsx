@@ -6,11 +6,12 @@ import { PirceItem } from '../PriceItem';
 import { DomainTypeBadge } from '../DomainTypeBadge';
 
 import { SelectedItemProps } from '../../../../pages/FioAddressSelectionPage/types';
+import { CartItem } from '../../../../types';
 
 import classes from './SquareShapeSelectionItem.module.scss';
 
 type Props = {
-  onClick: () => void;
+  onClick: (selectedItem: CartItem) => void;
 } & SelectedItemProps;
 
 export const SquareShapeSelectionItem: React.FC<Props> = props => {
@@ -21,8 +22,6 @@ export const SquareShapeSelectionItem: React.FC<Props> = props => {
     costUsdc,
     domain,
     domainType,
-    isSelected,
-    onClick,
   } = props;
 
   return (
@@ -42,7 +41,7 @@ export const SquareShapeSelectionItem: React.FC<Props> = props => {
       </div>
 
       <div className={classes.buttonContainer}>
-        <AddToCartButton onClick={onClick} isSelected={isSelected} />
+        <AddToCartButton {...props} />
       </div>
     </div>
   );

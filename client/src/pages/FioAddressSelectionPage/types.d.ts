@@ -7,7 +7,7 @@ export type UseContextProps = {
   loading: boolean;
   suggestedItemsList: SelectedItemProps[];
   usersItemsList: SelectedItemProps[];
-  onClick: () => void;
+  onClick: (selectedItem: CartItem) => void;
   setAddressValue: (address: string) => void;
   setError: (error: string) => void;
 };
@@ -16,4 +16,8 @@ export type SelectedItemProps = {
   isSelected: boolean;
 } & CartItem;
 
-export type DomainsArrItemType = { name: string; domainType: DomainItemType }[];
+export type DomainsArrItemType = {
+  name: string;
+  domainType: DomainItemType;
+  allowFree?: boolean;
+}[];

@@ -7,6 +7,7 @@ import { ActionButton } from '../ActionButton';
 import { FIO_ADDRESS_ALREADY_EXISTS } from '../../../../constants/errors';
 
 import { SelectedItemProps } from '../../types';
+import { CartItem } from '../../../../types';
 
 import classes from './SuggestedItemsList.module.scss';
 
@@ -16,7 +17,7 @@ type Props = {
   isDesktop: boolean;
   list: SelectedItemProps[];
   error?: string;
-  onClick: () => void;
+  onClick: (selectedItem: CartItem) => void;
 };
 
 export const SuggestedItemsList: React.FC<Props> = props => {
@@ -45,11 +46,7 @@ export const SuggestedItemsList: React.FC<Props> = props => {
           />
         ))}
       <div className={classes.buttonContainer}>
-        <ActionButton
-          text="Add Custom Ending"
-          hasSquareShape={!!list.length}
-          onClick={onClick}
-        />
+        <ActionButton text="Add Custom Ending" hasSquareShape={!!list.length} />
       </div>
     </div>
   );

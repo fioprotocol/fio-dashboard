@@ -8,11 +8,12 @@ import { PirceItem } from '../PriceItem';
 import { DomainTypeBadge } from '../DomainTypeBadge';
 
 import { SelectedItemProps } from '../../../../pages/FioAddressSelectionPage/types';
+import { CartItem } from '../../../../types';
 
 import classes from './DesktopSelectionItem.module.scss';
 
 type Props = {
-  onClick: () => void;
+  onClick: (selectedItem: CartItem) => void;
 } & SelectedItemProps;
 
 export const DesktopSelectionItem: React.FC<Props> = props => {
@@ -23,8 +24,6 @@ export const DesktopSelectionItem: React.FC<Props> = props => {
     costUsdc,
     domain,
     domainType,
-    isSelected,
-    onClick,
   } = props;
 
   return (
@@ -44,7 +43,7 @@ export const DesktopSelectionItem: React.FC<Props> = props => {
           domainType={domainType}
         />
       </div>
-      <AddToCartButton onClick={onClick} isSelected={isSelected} />
+      <AddToCartButton {...props} />
     </div>
   );
 };

@@ -29,6 +29,7 @@ import {
   Prices,
   RedirectLinkData,
 } from '../../types';
+import { DOMAIN_TYPE } from '../../constants/fio';
 
 import classes from './AddressDomainCart.module.scss';
 
@@ -157,7 +158,8 @@ const AddressDomainCart: React.FC<Props> = props => {
                   <p className={classes.itemPrice}>
                     <span className="boldText">
                       Cost:{' '}
-                      {!Number.isFinite(item.costNativeFio)
+                      {!Number.isFinite(item.costNativeFio) ||
+                      item.domainType === DOMAIN_TYPE.FREE
                         ? 'FREE'
                         : `${item.costFio} FIO
                       (${item.costUsdc} USDC)`}

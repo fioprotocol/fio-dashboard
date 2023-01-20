@@ -9,15 +9,15 @@ import classes from './ActionButton.module.scss';
 type Props = {
   hasSquareShape?: boolean;
   text: string;
-  onClick: () => void;
 };
 
 export const ActionButton: React.FC<Props> = props => {
-  const { hasSquareShape, text, onClick } = props;
+  const { hasSquareShape, text } = props;
 
   return (
     <Button
-      onClick={onClick}
+      // TODO: set onclick
+      // onClick={onClick}
       className={classnames(
         classes.button,
         hasSquareShape && classes.hasSquareShape,

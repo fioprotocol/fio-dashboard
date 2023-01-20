@@ -5,11 +5,12 @@ import { MobileSelectionItem } from './components/MobileSelectionItem';
 import { SquareShapeSelectionItem } from './components/SquareShapeSelectionItem';
 
 import { SelectedItemProps } from '../../pages/FioAddressSelectionPage/types';
+import { CartItem } from '../../types';
 
 type Props = {
   isDesktop: boolean;
   isSquareShape?: boolean;
-  onClick: () => void;
+  onClick: (selectedItem: CartItem) => void;
 } & SelectedItemProps;
 
 export const SelectionItem: React.FC<Props> = props => {
