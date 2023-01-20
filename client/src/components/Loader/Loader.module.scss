@@ -5,18 +5,27 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  font-size: 1.5rem;
-  color: $light-indigo;
+
+  > span {
+    color: $light-indigo;
+    font-size: 1.5rem;
+  }
 
   &.hasAutoWidth {
-    width: auto;
+    > span {
+      width: auto;
+    }
   }
 
   &.hasInheritFontSize {
-    font-size: inherit;
+    > span {
+      font-size: inherit;
+    }
   }
 
   &.isWhite {
-    color: $white;
+    > span {
+      color: $white;
+    }
   }
 }
