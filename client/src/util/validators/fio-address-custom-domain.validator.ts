@@ -5,6 +5,7 @@ import {
 import { allRules } from '@fioprotocol/fiosdk/lib/utils/validation';
 
 import {
+  DOMAIN_ALREADY_EXISTS,
   FIO_ADDRESS_ALREADY_EXISTS,
   NON_VALID_FCH,
 } from '../../constants/errors';
@@ -70,7 +71,21 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
     }
   } catch (e) {
     succeeded = false;
-    message = 'Something went wrong';
+    message = 'Something went wrong on FIO Crypto Handle validation';
+  }
+
+  try {
+    const params = apis.fio.setTableRowsParams(domain);
+
+    const rows = await apis.fio.getTableRows(params);
+
+    if (rows.length && !rows[0].is_public) {
+      succeeded = false;
+      message = DOMAIN_ALREADY_EXISTS;
+    }
+  } catch (e) {
+    succeeded = false;
+    message = 'Something went wrong on domain validation';
   }
 
   return {

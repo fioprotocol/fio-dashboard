@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 
@@ -19,8 +20,11 @@ import {
   transformPremiumDomains,
 } from '../../../../util/fio';
 
+import apis from '../../../../api';
+
 import { SelectedItemComponentProps } from './SelectedItemComponent';
-import { CartItem } from '../../../../types';
+import { CartItem, UserDomainType } from '../../../../types';
+import { FioDomainDoubletResponse } from '../../../../api/responses';
 
 type useContextProps = {
   selectedItemProps: CartItem;
@@ -36,9 +40,34 @@ export const useContext = (
   const roe = useSelector(roeSelector);
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
 
+  const [chainPublicDomains, setChainPublicDomains] = useState<
+    UserDomainType[]
+  >([]);
+
   const {
     nativeFio: { address: natvieFioAddressPrice, domain: nativeFioDomainPrice },
   } = prices;
+
+  const getPublicDomainsFromChain = async (domain: string) => {
+    try {
+      const params = apis.fio.setTableRowsParams(domain);
+
+      const rows: FioDomainDoubletResponse[] = await apis.fio.getTableRows(
+        params,
+      );
+
+      setChainPublicDomains(
+        rows
+          .filter(
+            row =>
+              row.is_public && row.expiration > Math.floor(Date.now() / 1000),
+          )
+          .map(row => ({ name: row.name, domainType: DOMAIN_TYPE.PREMIUM })),
+      );
+    } catch (e) {
+      //
+    }
+  };
 
   const nonPremiumDomains = allDomains.dashboardDomains
     ? transformNonPremiumDomains(allDomains.dashboardDomains, hasFreeAddress)
@@ -59,6 +88,7 @@ export const useContext = (
         ...customDomains,
         ...userDomains,
         ...refProfileDomains,
+        ...chainPublicDomains,
       ].find(publicDomain => publicDomain.name === domain)?.domainType ||
       DOMAIN_TYPE.CUSTOM
     : DOMAIN_TYPE.CUSTOM;
@@ -84,6 +114,12 @@ export const useContext = (
   };
 
   const showPremiumInfoBadge = domainType === DOMAIN_TYPE.PREMIUM;
+
+  useEffect(() => {
+    if (domain) {
+      getPublicDomainsFromChain(domain);
+    }
+  }, [domain]);
 
   return { selectedItemProps, showPremiumInfoBadge };
 };
