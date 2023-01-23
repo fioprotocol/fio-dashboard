@@ -24,7 +24,7 @@ export default class PartnerUpdate extends Base {
             domains: {
               list_of_objects: [
                 {
-                  name: 'string',
+                  name: ['required', 'string'],
                   isPremium: 'boolean',
                   rank: { min_number: 0 },
                 },
