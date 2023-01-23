@@ -1,4 +1,4 @@
-import { AnyObject, RefProfile } from '../../../../types';
+import { AnyObject, RefProfile, RefProfileDomain } from '../../../../types';
 import { URL_REGEXP } from '../../../../constants/regExps';
 import { REF_PROFILE_TYPE } from '../../../../constants/common';
 
@@ -33,15 +33,22 @@ export const validate = (values: RefProfile): AnyObject => {
   ) {
     errors.settings.link = 'Invalid URL.';
   }
+
   if (isReferrer && values.settings?.domains?.length) {
-    errors.settings.domains = values.settings.domains.map((domain, index) =>
-      domain
-        ? values.settings.domains.slice(0, index).includes(domain)
-          ? 'Domain Not Unique'
-          : undefined
-        : 'Required.',
+    errors.settings.domains = values.settings.domains.map(
+      (domain: RefProfileDomain, index) => {
+        if (domain.name) {
+          const domainExistsInTheList = values.settings.domains
+            .slice(0, index)
+            .find(d => domain.name === d.name);
+          return domainExistsInTheList ? 'Domain Not Unique' : undefined;
+        }
+        return 'Required.';
+      },
     );
-    if (!errors.settings.domains.filter(Boolean).length) {
+
+    const domainsContainErrors = errors.settings.domains.filter(Boolean);
+    if (!domainsContainErrors) {
       delete errors.settings.domains;
     }
   }
