@@ -18,6 +18,7 @@ type Props = {
   onBack?: () => void;
   title: string | React.ReactNode;
   hideTopCloseButton?: boolean;
+  hasDesertStormBackground?: boolean;
 };
 
 const PseudoModalContainer: React.FC<Props> = props => {
@@ -33,6 +34,7 @@ const PseudoModalContainer: React.FC<Props> = props => {
     noVerticalMargin,
     isInfo,
     hideTopCloseButton,
+    hasDesertStormBackground,
   } = props;
   return (
     <div
@@ -43,6 +45,7 @@ const PseudoModalContainer: React.FC<Props> = props => {
         middleWidth && classes.middleWidth,
         noVerticalMargin && classes.noVerticalMargin,
         isInfo && classes.info,
+        hasDesertStormBackground && classes.hasDesertStormBackground,
       )}
     >
       <div className={classes.actionContainer}>

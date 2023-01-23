@@ -11,6 +11,10 @@
   width: 100%;
   color: $black;
 
+  &.hasDesertStormBackground {
+    background-color: $desert-storm;
+  }
+
   .actionContainer {
     .withClose {
       display: flex;

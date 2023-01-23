@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 
 import { CheckIconComponent } from '../../../CheckIconComponent';
 
@@ -13,7 +14,9 @@ import { CartItem } from '../../../../types';
 import classes from './DesktopSelectionItem.module.scss';
 
 type Props = {
+  hasShortNamePart?: boolean;
   onClick: (selectedItem: CartItem) => void;
+  hasWhiteBackground?: boolean;
 } & SelectedItemProps;
 
 export const DesktopSelectionItem: React.FC<Props> = props => {
@@ -22,12 +25,20 @@ export const DesktopSelectionItem: React.FC<Props> = props => {
     costFio,
     costNativeFio,
     costUsdc,
+    hasShortNamePart,
     domain,
     domainType,
+    hasWhiteBackground,
   } = props;
 
   return (
-    <div className={classes.container}>
+    <div
+      className={classnames(
+        classes.container,
+        hasShortNamePart && classes.hasShortNamePart,
+        hasWhiteBackground && classes.hasWhiteBackground,
+      )}
+    >
       <CheckIconComponent fontSize="18px" isGreen />
       <div className={classes.fchContainer}>
         <FCHItem address={address} domain={domain} />

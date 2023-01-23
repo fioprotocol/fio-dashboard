@@ -1,5 +1,7 @@
 import React from 'react';
 
+import classnames from 'classnames';
+
 import { CheckIconComponent } from '../../../CheckIconComponent';
 import { AddToCartButton } from '../AddToCartButton';
 import { FCHItem } from '../FCHItem';
@@ -13,6 +15,7 @@ import classes from './MobileSelectionItem.module.scss';
 
 type Props = {
   onClick: (selectedItem: CartItem) => void;
+  hasWhiteBackground?: boolean;
 } & SelectedItemProps;
 
 export const MobileSelectionItem: React.FC<Props> = props => {
@@ -23,10 +26,16 @@ export const MobileSelectionItem: React.FC<Props> = props => {
     costUsdc,
     domain,
     domainType,
+    hasWhiteBackground,
   } = props;
 
   return (
-    <div className={classes.container}>
+    <div
+      className={classnames(
+        classes.container,
+        hasWhiteBackground && classes.hasWhiteBackground,
+      )}
+    >
       <CheckIconComponent fontSize="18px" isGreen />
       <div className={classes.centralContainer}>
         <FCHItem address={address} domain={domain} hasSmallFont />

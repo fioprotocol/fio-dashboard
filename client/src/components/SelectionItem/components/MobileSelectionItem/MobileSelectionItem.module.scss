@@ -8,6 +8,10 @@
   flex-direction: row;
   align-items: flex-start;
 
+  &.hasWhiteBackground {
+    background-color: $white;
+  }
+
   .centralContainer {
     margin-left: 12px;
     margin-right: auto;
@@ -18,7 +22,8 @@
     }
 
     .badgeContainer {
-      width: 56px;
+      width: 100%;
+      max-width: 70px;
       font-size: 0.667em;
       display: flex;
       align-items: center;

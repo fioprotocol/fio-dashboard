@@ -254,28 +254,6 @@
     cursor: default;
   }
 
-  .prefix {
-    background-color: $dark-gray;
-    color: white;
-    position: absolute;
-    padding: 0px 10px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    border-top-left-radius: 6px;
-    border-bottom-left-radius: 6px;
-
-    &.indigoWhite {
-      background-color: $light-indigo;
-    }
-
-    &.error {
-      height: 38px;
-      top: 1px;
-      left: 1px;
-    }
-  }
-
   .prefixLabel {
     background-color: transparent;
     display: inline-block;
@@ -396,6 +374,32 @@
     }
   }
 }
+
+ .prefix {
+   background-color: $dark-gray;
+   color: white;
+   position: absolute;
+   padding: 0px 10px;
+   height: 40px;
+   display: flex;
+   align-items: center;
+   border-top-left-radius: 6px;
+   border-bottom-left-radius: 6px;
+
+   &.highZIndex {
+    z-index: 4;
+   } 
+
+   &.indigoWhite {
+     background-color: $light-indigo;
+   }
+
+   &.error {
+     height: 38px;
+     top: 1px;
+     left: 1px;
+   }
+ }
 
 .pin {
   width: 219px;

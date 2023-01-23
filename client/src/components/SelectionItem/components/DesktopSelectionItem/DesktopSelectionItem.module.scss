@@ -8,10 +8,19 @@
   grid-template-columns: 18px 300px 100px auto 46px;
   align-items: center;
 
+  &.hasShortNamePart {
+    grid-template-columns: 18px 150px 100px auto 46px;
+  }
+
+  &.hasWhiteBackground {
+    background-color: $white;
+  }
+
   .badgeContainer {
-    margin-left: 33%;
+    margin-left: auto;
     margin-right: 20px;
-    width: 56px;
+    width: 100%;
+    max-width: 70px;
     display: flex;
     align-items: center;
   }
