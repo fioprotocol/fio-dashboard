@@ -216,3 +216,12 @@ export type AdminDefaultsRequest = AdminDefaults & {
 };
 
 export type DefaultsAvailableDomainsResponse = AdminDomain[];
+
+export type FioDomainDoubletResponse = {
+  id: string;
+  name: string;
+  domainhash: string;
+  account: string;
+  is_public: number;
+  expiration: number;
+};
