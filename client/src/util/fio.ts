@@ -66,6 +66,10 @@ export const validateFioAddress = async (address: string, domain: string) => {
     return 'Missing domain';
   }
 
+  if (address && domain && address.length + domain.length > 63) {
+    return 'FIO Crypto Handle should be less than 63 characters';
+  }
+
   const addressValidation = validate(
     { fioAddress: `${address}${FIO_ADDRESS_DELIMITER}${domain}` },
     { fioAddress: allRules.fioAddress },
@@ -86,10 +90,6 @@ export const validateFioAddress = async (address: string, domain: string) => {
 
   if (domain && domain.length > 62) {
     return 'Domain name should be less than 62 characters';
-  }
-
-  if (address && domain && address.length + domain.length > 63) {
-    return 'FIO Crypto Handle should be less than 63 characters';
   }
 
   return null;
