@@ -57,11 +57,18 @@ export const PrefixLabel: React.FC<PrefixLabelProps> = ({
 export const Label: React.FC<{
   label?: string | React.ReactNode;
   uiType?: string;
-}> = ({ label, uiType }) => {
+  hasItalic?: boolean;
+}> = ({ label, uiType, hasItalic }) => {
   if (!label) return null;
 
   return (
-    <div className={classnames(classes.label, uiType && classes[uiType])}>
+    <div
+      className={classnames(
+        classes.label,
+        uiType && classes[uiType],
+        hasItalic && classes.hasItalic,
+      )}
+    >
       {label}
     </div>
   );
@@ -87,14 +94,23 @@ export const LabelSuffix: React.FC<{
   );
 };
 
-export const Prefix: React.FC<{ prefix?: string; hasError?: boolean }> = ({
-  prefix,
-  hasError,
-}) => {
+export const Prefix: React.FC<{
+  prefix?: string;
+  hasError?: boolean;
+  uiType?: string;
+  highZIndex?: boolean;
+}> = ({ prefix, hasError, uiType, highZIndex }) => {
   if (!prefix?.length) return null;
 
   return (
-    <div className={classnames(classes.prefix, hasError && classes.error)}>
+    <div
+      className={classnames(
+        classes.prefix,
+        hasError && classes.error,
+        uiType && classes[uiType],
+        highZIndex && classes.highZIndex,
+      )}
+    >
       {prefix}
     </div>
   );
