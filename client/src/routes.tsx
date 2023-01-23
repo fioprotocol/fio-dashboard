@@ -197,6 +197,11 @@ const FioAddressSelectionPage = React.lazy(() =>
     /* webpackChunkName: 'fioAddressSelectionPage' */ './pages/FioAddressSelectionPage'
   ),
 );
+const FioAddressCustomSelectionPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioAddressSelectionPage' */ './pages/FioAddressCustomSelectionPage'
+  ),
+);
 const FioDomainSelectionPage = React.lazy(() =>
   import(
     /* webpackChunkName: 'fioDomainSelectionPage' */ './pages/FioDomainSelectionPage'
@@ -341,6 +346,11 @@ const Routes = (): React.ReactElement => (
           <Route
             path={ROUTES.FIO_ADDRESSES_SELECTION}
             component={FioAddressSelectionPage}
+            exact
+          />
+          <Route
+            path={ROUTES.FIO_ADDRESS_CUSTOM_SELECTION}
+            component={FioAddressCustomSelectionPage}
             exact
           />
           <PrivateRoute
