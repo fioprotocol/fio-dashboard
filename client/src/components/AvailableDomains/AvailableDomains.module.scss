@@ -31,6 +31,8 @@
       font-size: 2rem;
       line-height: 1;
       @include proxima-nova-bold;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .domainContainer {
@@ -52,6 +54,42 @@
         .domainPriceValue {
           @include proxima-nova-semibold;
         }
+      }
+    }
+  }
+}
+
+@include lg {
+  .container {
+    .domain {
+      padding: 30px;
+
+      .domainTitle {
+        font-size: 1.625rem;
+      }
+    }
+  }
+}
+
+@include xlg {
+  .container {
+    .domain {
+      padding: 20px;
+
+      .domainTitle {
+        font-size: 2rem;
+      }
+    }
+  }
+}
+
+@include md {
+  .container {
+    .domain {
+      padding: 20px;
+
+      .domainTitle {
+        font-size: 1.625rem;
       }
     }
   }
