@@ -10,12 +10,13 @@ import {
 } from '@fioprotocol/fiojs/dist/chain-api-interfaces';
 
 import apis from '../api';
+import { AdminDomain, UsernameOnDomain } from '../api/responses';
 import { fireAnalyticsEventDebounced } from './analytics';
 import { setFioName, sleep } from '../utils';
 import { log } from '../util/general';
 
 import { FREE_ADDRESS_REGISTER_ERROR, ERROR_TYPES } from '../constants/errors';
-import { FIO_REQUEST_STATUS_TYPES } from '../constants/fio';
+import { DOMAIN_TYPE, FIO_REQUEST_STATUS_TYPES } from '../constants/fio';
 import { ANALYTICS_EVENT_ACTIONS, CHAIN_CODES } from '../constants/common';
 import { FIO_ADDRESS_DELIMITER } from '../utils';
 import { RegisterAddressError } from './errors';
@@ -263,3 +264,32 @@ export const serializeTransaction = async (
 
   return '';
 };
+
+export const transformNonPremiumDomains = (
+  domains: Partial<AdminDomain>[],
+  isPremium: boolean,
+) =>
+  domains
+    .filter(domain => !domain.isPremium)
+    .map(domain => ({
+      name: domain.name,
+      domainType: isPremium ? DOMAIN_TYPE.PREMIUM : DOMAIN_TYPE.FREE,
+      rank: domain.rank || 0,
+      allowFree: true,
+    }));
+
+export const transformPremiumDomains = (domains: Partial<AdminDomain>[]) =>
+  domains
+    .filter(domain => domain.isPremium)
+    .map(domain => ({
+      name: domain.name,
+      domainType: DOMAIN_TYPE.PREMIUM,
+      rank: domain.rank || 0,
+    }));
+
+export const transformCustomDomains = (domains: UsernameOnDomain[]) =>
+  domains.map(customDomain => ({
+    name: customDomain.username,
+    domainType: DOMAIN_TYPE.CUSTOM,
+    rank: customDomain.rank,
+  }));

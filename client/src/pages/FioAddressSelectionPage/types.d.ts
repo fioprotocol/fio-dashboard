@@ -13,7 +13,7 @@ export type UseContextProps = {
 };
 
 export type SelectedItemProps = {
-  isSelected: boolean;
+  isSelected?: boolean;
 } & CartItem;
 
 export type DomainsArrItemType = {
