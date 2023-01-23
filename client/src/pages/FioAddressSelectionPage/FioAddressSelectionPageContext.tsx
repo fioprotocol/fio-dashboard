@@ -16,13 +16,27 @@ import { hasFreeAddress as hasFreeAddressSelector } from '../../redux/profile/se
 
 import { FIO_ADDRESS_ALREADY_EXISTS } from '../../constants/errors';
 import { DOMAIN_TYPE } from '../../constants/fio';
-import { CART_ITEM_TYPE } from '../../constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_TYPE,
+} from '../../constants/common';
 
 import { addCartItem } from '../../util/cart';
-import { checkAddressIsExist, validateFioAddress } from '../../util/fio';
+import {
+  checkAddressIsExist,
+  transformCustomDomains,
+  transformNonPremiumDomains,
+  transformPremiumDomains,
+  validateFioAddress,
+} from '../../util/fio';
 import MathOp from '../../util/math';
 import { convertFioPrices } from '../../util/prices';
 import { setFioName } from '../../utils';
+import {
+  fireAnalyticsEvent,
+  fireAnalyticsEventDebounced,
+  getCartItemsDataForAnalytics,
+} from '../../util/analytics';
 
 import {
   DomainsArrItemType,
@@ -53,6 +67,8 @@ const handleFCHItems = async ({
     nativeFio: { address: natvieFioAddressPrice, domain: nativeFioDomainPrice },
   } = prices;
 
+  fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
+
   return (
     await Promise.all(
       domainArr.map(async domain => {
@@ -63,6 +79,12 @@ const handleFCHItems = async ({
         }
 
         const isAddressExist = await checkAddressIsExist(address, domain.name);
+
+        if (isAddressExist) {
+          fireAnalyticsEventDebounced(
+            ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
+          );
+        }
 
         const isCustomDomain = domain.domainType === DOMAIN_TYPE.CUSTOM;
 
@@ -134,42 +156,22 @@ export const useContext = (): UseContextProps => {
     ? refProfileDomains
     : dashboardDomains;
 
-  const sortedUserDomains = userDomains
-    .map(userDomain => ({
-      name: userDomain.name,
-      domainType: DOMAIN_TYPE.USERS,
-    }))
-    .sort((a, b) => a.name.localeCompare(b.name));
+  const sortedUserDomains = userDomains.sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
 
-  const nonPremiumPublicDomains = publicDomains
-    .filter(publicDomain => !publicDomain.isPremium)
-    .map(publicDomain => ({
-      name: publicDomain.name,
-      domainType:
-        hasFreeAddress || cartHasFreeItem
-          ? DOMAIN_TYPE.PREMIUM
-          : DOMAIN_TYPE.FREE,
-      rank: publicDomain.rank || 0,
-      allowFree: true,
-    }))
-    .sort((a, b) => b.rank - a.rank);
+  const nonPremiumPublicDomains = transformNonPremiumDomains(
+    publicDomains,
+    hasFreeAddress || cartHasFreeItem,
+  ).sort((a, b) => b.rank - a.rank);
 
-  const premiumPublicDomains = publicDomains
-    .filter(publicDomain => publicDomain.isPremium)
-    .map(publicDomain => ({
-      name: publicDomain.name,
-      domainType: DOMAIN_TYPE.PREMIUM,
-      rank: publicDomain.rank,
-    }))
-    .sort((a, b) => b.rank - a.rank);
+  const premiumPublicDomains = transformPremiumDomains(publicDomains).sort(
+    (a, b) => b.rank - a.rank,
+  );
 
-  const customDomains = usernamesOnCustomDomains
-    .map(customDomain => ({
-      name: customDomain.username,
-      domainType: DOMAIN_TYPE.CUSTOM,
-      rank: customDomain.rank,
-    }))
-    .sort((a, b) => b.rank - a.rank);
+  const customDomains = transformCustomDomains(usernamesOnCustomDomains).sort(
+    (a, b) => b.rank - a.rank,
+  );
 
   const userDomainsJSON = JSON.stringify(sortedUserDomains);
   const nonPremiumPublicDomainsJSON = JSON.stringify(nonPremiumPublicDomains);
@@ -182,14 +184,14 @@ export const useContext = (): UseContextProps => {
 
   const validateAddress = useCallback(
     async (address: string) => {
-      toggleLoading(true);
-
       if (!address) {
         setAdditionalItemsList([]);
         setSuggestedItemsList([]);
         setUsersItemsList([]);
         return;
       }
+
+      toggleLoading(true);
 
       const parsedUsersDomains = JSON.parse(userDomainsJSON);
       const parsedNonPremiumDomains = JSON.parse(nonPremiumPublicDomainsJSON);
@@ -333,6 +335,10 @@ export const useContext = (): UseContextProps => {
 
   const onClick = (selectedItem: CartItem) => {
     addCartItem(selectedItem);
+    fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
+      getCartItemsDataForAnalytics([selectedItem]),
+    );
   };
 
   useEffect(() => {

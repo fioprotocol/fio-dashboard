@@ -9,10 +9,13 @@ import { REF_PROFILE_TYPE } from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
 
 import { ReduxState } from '../init';
-import { RefProfileDomains, FioDomainDoublet, Prices } from '../../types';
+import {
+  AllDomains,
+  FioDomainDoublet,
+  Prices,
+  PubilcDomainsType,
+} from '../../types';
 import { DomainsResponse, FioRegCaptchaResponse } from '../../api/responses';
-
-type AllDomains = Partial<DomainsResponse> & Partial<RefProfileDomains>;
 
 export const loading = (state: ReduxState): boolean =>
   state[prefix].loadingArray.length > 0;
@@ -24,7 +27,7 @@ export const roeSetDate = (state: ReduxState): Date => state[prefix].roeSetDate;
 export const domains = createSelector(
   registrationDomains,
   refProfileInfo,
-  (regDomainItems, refProfileInfo): AllDomains =>
+  (regDomainItems, refProfileInfo): PubilcDomainsType =>
     refProfileInfo != null &&
     refProfileInfo.code &&
     refProfileInfo.type === REF_PROFILE_TYPE.REF
@@ -32,6 +35,10 @@ export const domains = createSelector(
           refProfileDomains: refProfileInfo.settings.domains.map(refDomain => ({
             name: refDomain.name,
             isPremium: refDomain.isPremium,
+            domainType: refDomain.isPremium
+              ? DOMAIN_TYPE.PREMIUM
+              : DOMAIN_TYPE.FREE,
+            allowFree: !refDomain.isPremium,
             rank: refDomain.rank,
           })),
         }
@@ -40,7 +47,7 @@ export const domains = createSelector(
 export const allDomains = createSelector(
   domains,
   fioDomains,
-  (publicDomains, userDomains) => ({
+  (publicDomains, userDomains): AllDomains => ({
     ...publicDomains,
     userDomains: userDomains.map(({ name }: FioDomainDoublet) => ({
       name,

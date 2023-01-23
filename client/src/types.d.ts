@@ -23,6 +23,7 @@ import {
 } from './constants/common';
 
 import { ResultsData } from '../components/common/TransactionResults/types';
+import { DomainsResponse } from './api/responses';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Unknown = any;
@@ -194,6 +195,17 @@ export type FioDomainDoublet = {
   walletName?: string;
 };
 
+export type UserDomainType = {
+  name: string;
+  domainType: DomainItemType;
+};
+
+export type PubilcDomainsType = Partial<DomainsResponse> &
+  Partial<RefProfileDomains>;
+
+export type AllDomains = PubilcDomainsType &
+  Partial<{ userDomains: UserDomainType[] }>;
+
 export type PrivateDomainsMap = {
   [name: string]: FioDomainDoublet & { wallet: FioWalletDoublet };
 };
@@ -348,8 +360,10 @@ export type UserDetails = {
 
 export type RefProfileDomain = {
   name: string;
-  isPremium?: boolean;
-  rank?: number;
+  isPremium: boolean;
+  rank: number;
+  domainType?: DomainItemType;
+  allowFree?: boolean;
 };
 export type RefProfileDomains = { refProfileDomains: RefProfileDomain[] };
 
