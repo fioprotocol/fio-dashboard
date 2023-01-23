@@ -49,48 +49,50 @@ const handleFCHItems = async ({
   roe: number;
   setError: (error: string) => void;
 }) => {
-  const itemslist = [];
-
   const {
     nativeFio: { address: natvieFioAddressPrice, domain: nativeFioDomainPrice },
   } = prices;
 
-  for (const domain of domainArr) {
-    const error = await validateFioAddress(address, domain.name);
-    if (error) {
-      setError(error);
-      break;
-    }
+  return (
+    await Promise.all(
+      domainArr.map(async domain => {
+        const error = await validateFioAddress(address, domain.name);
+        if (error) {
+          setError(error);
+          return;
+        }
 
-    const isAddressExist = await checkAddressIsExist(address, domain.name);
+        const isAddressExist = await checkAddressIsExist(address, domain.name);
 
-    const isCustomDomain = domain.domainType === DOMAIN_TYPE.CUSTOM;
+        const isCustomDomain = domain.domainType === DOMAIN_TYPE.CUSTOM;
 
-    const totalNativeFio = isCustomDomain
-      ? new MathOp(natvieFioAddressPrice).add(nativeFioDomainPrice).toNumber()
-      : natvieFioAddressPrice;
+        const totalNativeFio = isCustomDomain
+          ? new MathOp(natvieFioAddressPrice)
+              .add(nativeFioDomainPrice)
+              .toNumber()
+          : natvieFioAddressPrice;
 
-    const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
+        const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
 
-    itemslist.push({
-      id: setFioName(address, domain.name),
-      address,
-      domain: domain.name,
-      costFio: fio,
-      costUsdc: usdc,
-      costNativeFio: totalNativeFio,
-      domainType: domain.domainType,
-      isSelected: false,
-      isExist: isAddressExist,
-      period: 1,
-      type: isCustomDomain
-        ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
-        : CART_ITEM_TYPE.ADDRESS,
-      allowFree: domain.allowFree,
-    });
-  }
-
-  return itemslist;
+        return {
+          id: setFioName(address, domain.name),
+          address,
+          domain: domain.name,
+          costFio: fio,
+          costUsdc: usdc,
+          costNativeFio: totalNativeFio,
+          domainType: domain.domainType,
+          isSelected: false,
+          isExist: isAddressExist,
+          period: 1,
+          type: isCustomDomain
+            ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+            : CART_ITEM_TYPE.ADDRESS,
+          allowFree: domain.allowFree,
+        };
+      }),
+    )
+  ).filter(Boolean);
 };
 
 export const useContext = (): UseContextProps => {
@@ -196,25 +198,29 @@ export const useContext = (): UseContextProps => {
 
       const defaultParams = { address, prices, roe, setError };
 
-      const validatedUserFCH = await handleFCHItems({
+      const validatedUserFCHPromise = handleFCHItems({
         domainArr: parsedUsersDomains,
         ...defaultParams,
       });
 
-      const validatedNonPremiumFCH = await handleFCHItems({
+      const validatedNonPremiumFCHPromise = handleFCHItems({
         domainArr: parsedNonPremiumDomains,
         ...defaultParams,
       });
 
-      const validatedPremiumFCH = await handleFCHItems({
+      const validatedPremiumFCHPromise = handleFCHItems({
         domainArr: parsedPremiumDomains,
         ...defaultParams,
       });
 
-      const validatedCustomFCH = await handleFCHItems({
+      const validatedCustomFCHPromise = handleFCHItems({
         domainArr: parsedCustomDomains,
         ...defaultParams,
       });
+      const validatedUserFCH = await validatedUserFCHPromise;
+      const validatedNonPremiumFCH = await validatedNonPremiumFCHPromise;
+      const validatedPremiumFCH = await validatedPremiumFCHPromise;
+      const validatedCustomFCH = await validatedCustomFCHPromise;
 
       const userFCHAllExist =
         validatedUserFCH.length &&
