@@ -46,7 +46,11 @@ export const SuggestedItemsList: React.FC<Props> = props => {
           />
         ))}
       <div className={classes.buttonContainer}>
-        <ActionButton text="Add Custom Ending" hasSquareShape={!!list.length} />
+        <ActionButton
+          text="Add Custom Ending"
+          hasSquareShape={!!list.length}
+          addressValue={addressValue}
+        />
       </div>
     </div>
   );

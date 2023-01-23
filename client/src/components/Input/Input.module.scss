@@ -87,8 +87,12 @@
   color: $white;
   width: 100%;
 
-  &.blackLight, &.blackWhite {
-    color: $baltic-sea;
+  &.blackLight, &.blackWhite, &.indigoWhite {
+    color: $dark-jungle-green;
+  }
+
+  &.hasItalic {
+    @include proxima-nova-regular-it;
   }
 
   b {
@@ -223,6 +227,10 @@
       color: $dark-gray;
     }
 
+    &.iw {
+      color: $light-indigo;
+    }
+
     &.medium {
       height: 13px;
     }
@@ -256,6 +264,10 @@
     align-items: center;
     border-top-left-radius: 6px;
     border-bottom-left-radius: 6px;
+
+    &.indigoWhite {
+      background-color: $light-indigo;
+    }
 
     &.error {
       height: 38px;

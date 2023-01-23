@@ -39,10 +39,12 @@ export const FioAddressSelectionComponent: React.FC<Props> = props => {
           setAddressValue={setAddressValue}
         />
         <UsersItemsList
+          addressValue={addressValue}
           list={usersItemsList}
           error={error}
           isDesktop={isDesktop}
           onClick={onClick}
+          loading={loading}
         />
         <h5 className={classes.subtitle}>Suggested FIO Crypto Handles</h5>
         <div className={classes.infoBadgeContainer}>
