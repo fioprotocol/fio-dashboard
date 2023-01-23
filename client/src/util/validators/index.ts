@@ -13,3 +13,4 @@ export * from './is-hash.validator';
 export * from './meta.validator';
 export * from './password-recovery-answer.validator';
 export * from './is-amount.validator';
+export * from './fio-address-custom-domain.validator';

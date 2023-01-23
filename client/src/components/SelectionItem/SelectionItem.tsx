@@ -10,6 +10,8 @@ import { CartItem } from '../../types';
 type Props = {
   isDesktop: boolean;
   isSquareShape?: boolean;
+  hasShortNamePart?: boolean;
+  hasWhiteBackground?: boolean;
   onClick: (selectedItem: CartItem) => void;
 } & SelectedItemProps;
 
