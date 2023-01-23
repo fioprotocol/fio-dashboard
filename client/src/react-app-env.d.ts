@@ -1,6 +1,8 @@
 /// <reference types="react-scripts" />
 
 import { GroupBase } from 'react-select';
+
+import { AnyObject } from './types';
 declare module 'react-select/dist/declarations/src/Select' {
   export interface Props<
     Option,
@@ -10,5 +12,9 @@ declare module 'react-select/dist/declarations/src/Select' {
     Group extends GroupBase<Option>
   > {
     prefix?: string;
+    uiType?: string;
+    inputPrefix?: string;
+    actionButtonText?: string;
+    actionButtonClick?: (data: AnyObject) => void;
   }
 }
