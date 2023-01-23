@@ -26,7 +26,7 @@ export default class PartnerCreate extends Base {
                 {
                   name: 'string',
                   isPremium: 'boolean',
-                  rank: 'positive_integer',
+                  rank: { min_number: 0 },
                 },
               ],
             },

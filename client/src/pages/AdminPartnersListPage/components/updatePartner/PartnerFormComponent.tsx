@@ -102,16 +102,6 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
     });
   }, [form]);
 
-  const onSetDefaultDomain = useCallback(
-    (domain: string) => {
-      form.change(
-        'settings.preselectedDomain' as keyof RefProfile,
-        domain as RefProfile[keyof RefProfile],
-      );
-    },
-    [form],
-  );
-
   const makeOnDragEndFunction = (fields: FieldsType) => (
     result: DropResult,
   ) => {
@@ -300,17 +290,9 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
                                     key={field}
                                     index={index}
                                     field={field}
-                                    value={
-                                      values?.settings?.domains[index].name
-                                    }
-                                    isDefault={
-                                      values?.settings?.domains[index].name ===
-                                      values?.settings?.preselectedDomain
-                                    }
                                     isRemoveAvailable={
                                       values?.settings?.domains?.length > 1
                                     }
-                                    onSetDefaultDomain={onSetDefaultDomain}
                                     onRemove={fields.remove}
                                   />
                                 </div>
