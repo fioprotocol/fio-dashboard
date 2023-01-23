@@ -23,10 +23,10 @@ export const AdditionalItemsList: React.FC<Props> = props => {
 
   if (loading)
     return (
-      <div className={classes.loaderContainer}>
+      <>
         <h5 className={classes.subtitle}>Additional FIO Crypto Handles</h5>
         <Loader />
-      </div>
+      </>
     );
 
   return (

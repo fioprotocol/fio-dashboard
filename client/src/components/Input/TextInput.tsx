@@ -27,6 +27,7 @@ import metamaskIcon from '../../assets/images/metamask.svg';
 export const INPUT_UI_STYLES = {
   BLACK_LIGHT: 'blackLight',
   BLACK_WHITE: 'blackWhite',
+  INDIGO_WHITE: 'indigoWhite',
 };
 
 export const INPUT_COLOR_SCHEMA = {
@@ -64,6 +65,7 @@ export type TextInputProps = {
   wFioBalance?: string;
   connectWalletProps: ConnectProviderType;
   withoutBottomMargin?: boolean;
+  hasItalicLabel?: boolean;
 };
 
 export const TextInput: React.ForwardRefRenderFunction<
@@ -99,6 +101,7 @@ export const TextInput: React.ForwardRefRenderFunction<
     connectWalletModalText,
     wFioBalance,
     withoutBottomMargin,
+    hasItalicLabel,
     ...rest
   } = props;
   const {
@@ -178,9 +181,9 @@ export const TextInput: React.ForwardRefRenderFunction<
         [classes.withoutBottomMargin]: withoutBottomMargin,
       })}
     >
-      <Label label={label} uiType={uiType} />
+      <Label label={label} uiType={uiType} hasItalic={hasItalicLabel} />
       <div className={classes.inputGroup}>
-        <Prefix prefix={prefix} hasError={hasError} />
+        <Prefix prefix={prefix} hasError={hasError} uiType={uiType} />
         <div
           className={classnames(
             classes.regInput,
@@ -250,6 +253,7 @@ export const TextInput: React.ForwardRefRenderFunction<
           onClose={onClose}
           inputType={type}
           isBW={isBW}
+          isIW={isIW}
           isBigDoubleIcon={showConnectWalletButton && !isWalletConnected}
           disabled={isWalletConnected ? false : disabled}
           uiType={isWalletConnected ? 'whiteBlack' : uiType}
