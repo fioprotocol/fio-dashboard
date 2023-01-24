@@ -46,12 +46,12 @@ import {
   CART_ITEM_TYPE,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
+import { DOMAIN_TYPE } from '../../constants/fio';
+
 import { log } from '../../util/general';
-
-import { FioRegPricesResponse } from '../../api/responses';
-
 import apis from '../../api';
 
+import { FioRegPricesResponse } from '../../api/responses';
 import {
   CartItem as CartItemType,
   CartItem,
@@ -241,7 +241,7 @@ export const useContext = (): UseContextReturnType => {
         retObj.costNativeFio = updatedFioAddressPrice;
       }
 
-      if (item.hasCustomDomain) {
+      if (item.domainType === DOMAIN_TYPE.CUSTOM) {
         retObj.costNativeFio = new MathOp(retObj.costNativeFio)
           .add(updatedFioDomainPrice)
           .toNumber();

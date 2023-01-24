@@ -183,11 +183,10 @@ export const deleteCartItem = ({
     );
   }
 
-  const { domain, hasCustomDomain } =
-    cartItems.find(item => item.id === id) || {};
+  const { domain, domainType } = cartItems.find(item => item.id === id) || {};
   const updCart = cartItems.filter(item => item.id !== id);
 
-  if (hasCustomDomain) {
+  if (domainType === DOMAIN_TYPE.CUSTOM) {
     const hasCurrentDomain =
       domain && updCart.some(item => item.domain === domain.toLowerCase());
     if (hasCurrentDomain) {
@@ -298,61 +297,51 @@ export const cartItemsToOrderItems = (
   roe: number,
 ) => {
   return cartItems
-    .map(
-      ({
-        id,
-        type,
+    .map(({ id, type, address, domain, costNativeFio, domainType, period }) => {
+      const data: {
+        hasCustomDomain?: boolean;
+        hasCustomDomainFee?: number;
+        cartItemId: string;
+        period?: number;
+      } = {
+        cartItemId: id,
+      };
+
+      if (domainType === DOMAIN_TYPE.CUSTOM) {
+        data.hasCustomDomain = true;
+        data.hasCustomDomainFee = new MathOp(costNativeFio)
+          .sub(prices.nativeFio.address)
+          .toNumber();
+      }
+
+      const item = {
+        action: getActionByCartItem(type, address),
         address,
         domain,
-        costNativeFio,
-        hasCustomDomain,
-        period,
-      }) => {
-        const data: {
-          hasCustomDomain?: boolean;
-          hasCustomDomainFee?: number;
-          cartItemId: string;
-          period?: number;
-        } = {
-          cartItemId: id,
-        };
-
-        if (hasCustomDomain) {
-          data.hasCustomDomain = hasCustomDomain;
-          data.hasCustomDomainFee = new MathOp(costNativeFio)
-            .sub(prices.nativeFio.address)
-            .toNumber();
+        nativeFio: `${costNativeFio || 0}`,
+        price: convertFioPrices(costNativeFio || 0, roe).usdc,
+        priceCurrency: CURRENCY_CODES.USDC,
+        data,
+      };
+      if (CART_ITEM_TYPES_WITH_PERIOD.includes(type) && period > 1) {
+        const items = [item];
+        const nativeFio = prices.nativeFio.renewDomain || costNativeFio;
+        for (let i = 1; i < period; i++) {
+          items.push({
+            action: ACTIONS.renewFioDomain,
+            address,
+            domain,
+            nativeFio: `${nativeFio || 0}`,
+            price: convertFioPrices(nativeFio || 0, roe).usdc,
+            priceCurrency: CURRENCY_CODES.USDC,
+            data,
+          });
         }
+        return items;
+      }
 
-        const item = {
-          action: getActionByCartItem(type, address),
-          address,
-          domain,
-          nativeFio: `${costNativeFio || 0}`,
-          price: convertFioPrices(costNativeFio || 0, roe).usdc,
-          priceCurrency: CURRENCY_CODES.USDC,
-          data,
-        };
-        if (CART_ITEM_TYPES_WITH_PERIOD.includes(type) && period > 1) {
-          const items = [item];
-          const nativeFio = prices.nativeFio.renewDomain || costNativeFio;
-          for (let i = 1; i < period; i++) {
-            items.push({
-              action: ACTIONS.renewFioDomain,
-              address,
-              domain,
-              nativeFio: `${nativeFio || 0}`,
-              price: convertFioPrices(nativeFio || 0, roe).usdc,
-              priceCurrency: CURRENCY_CODES.USDC,
-              data,
-            });
-          }
-          return items;
-        }
-
-        return item;
-      },
-    )
+      return item;
+    })
     .flat();
 };
 

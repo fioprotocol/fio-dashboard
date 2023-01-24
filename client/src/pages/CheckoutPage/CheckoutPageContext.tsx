@@ -60,7 +60,7 @@ import {
   CURRENCY_CODES,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
-import { ACTIONS } from '../../constants/fio';
+import { ACTIONS, DOMAIN_TYPE } from '../../constants/fio';
 
 import {
   RegistrationResult,
@@ -453,7 +453,7 @@ export const useContext = (): {
     for (const cartItem of cartItems) {
       if (
         userDomains.findIndex(({ name }) => name === cartItem.domain) < 0 &&
-        !cartItem.hasCustomDomain
+        cartItem.domainType !== DOMAIN_TYPE.CUSTOM
       )
         continue;
 
