@@ -18,16 +18,11 @@ import {
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { ROUTES } from '../../constants/routes';
-import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
 import useQuery from '../../hooks/useQuery';
 import useEffectOnce from '../../hooks/general';
 import { addCartItem } from '../../util/cart';
 import { useCheckIfDesktop } from '../../screenType';
-import {
-  fireAnalyticsEvent,
-  getCartItemsDataForAnalytics,
-} from '../../util/analytics';
 
 import { OptionProps } from '../../components/Input/EditableSelect/EditableSelect';
 import { AllDomains, CartItem } from '../../types';
@@ -71,11 +66,6 @@ export const useContext = (): UseContextProps => {
 
   const onClick = (selectedItem: CartItem) => {
     addCartItem(selectedItem);
-
-    fireAnalyticsEvent(
-      ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
-      getCartItemsDataForAnalytics([selectedItem]),
-    );
 
     history.push(ROUTES.CART);
   };

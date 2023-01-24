@@ -5,6 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 import { CART_ITEM_TYPE } from '../../../../constants/common';
 import { DOMAIN_TYPE } from '../../../../constants/fio';
 
+import { cartItems as cartItemsSelector } from '../../../../redux/cart/selectors';
 import {
   prices as pricesSelector,
   roe as roeSelector,
@@ -39,6 +40,7 @@ export const useContext = (
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
+  const cartItems = useSelector(cartItemsSelector);
 
   const [chainPublicDomains, setChainPublicDomains] = useState<
     UserDomainType[]
@@ -70,7 +72,11 @@ export const useContext = (
   };
 
   const nonPremiumDomains = allDomains.dashboardDomains
-    ? transformNonPremiumDomains(allDomains.dashboardDomains, hasFreeAddress)
+    ? transformNonPremiumDomains(
+        allDomains.dashboardDomains,
+        hasFreeAddress,
+        cartItems,
+      )
     : [];
   const premiumDomains = allDomains.dashboardDomains
     ? transformPremiumDomains(allDomains.dashboardDomains)

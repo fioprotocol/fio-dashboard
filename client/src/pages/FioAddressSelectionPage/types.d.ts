@@ -17,6 +17,7 @@ export type SelectedItemProps = {
 } & CartItem;
 
 export type DomainsArrItemType = {
+  rank?: number;
   name: string;
   domainType: DomainItemType;
   allowFree?: boolean;
