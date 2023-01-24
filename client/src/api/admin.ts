@@ -3,6 +3,7 @@ import Base from './base';
 import {
   AdminDefaults,
   AdminFioAccountsProfilesListResponse,
+  AdminFioApiUrlsListResponse,
   AdminGeneralCreateResponse,
   AdminOrderItemResponse,
   AdminOrdersListResponse,
@@ -154,5 +155,27 @@ export default class Admin extends Base {
 
   saveDefaults(data: AdminDefaults): Promise<AdminGeneralCreateResponse> {
     return this.apiClient.post(`admin/defaults`, { data });
+  }
+
+  getFioApiUrlsList(
+    limit: number,
+    offset: number,
+  ): Promise<AdminFioApiUrlsListResponse> {
+    return this.apiClient.get('admin/api-urls', { limit, offset });
+  }
+
+  createFioApiUrl(data: { url: string }): Promise<AdminGeneralCreateResponse> {
+    return this.apiClient.post(`admin/api-urls`, data);
+  }
+
+  editFioApiUrl(data: {
+    id: string;
+    url: string;
+  }): Promise<AdminGeneralCreateResponse> {
+    return this.apiClient.patch(`admin/api-urls/${data.id}`, data);
+  }
+
+  deleteFioApiUrl(data: { id: string }): Promise<AdminGeneralCreateResponse> {
+    return this.apiClient.delete(`admin/api-urls/${data.id}`, {});
   }
 }

@@ -60,7 +60,7 @@ class WalletDataJob extends CommonJob {
   }
 
   async checkRequests(wallet) {
-    const walletSdk = fioApi.getWalletSdkInstance(wallet.publicKey);
+    const walletSdk = await fioApi.getWalletSdkInstance(wallet.publicKey);
     const {
       publicWalletData: {
         requests: { sent, received },

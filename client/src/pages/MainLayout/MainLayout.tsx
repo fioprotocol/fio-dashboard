@@ -29,6 +29,7 @@ import { LINKS } from '../../constants/labels';
 import useEffectOnce from '../../hooks/general';
 import { getObjKeyByValue } from '../../utils';
 import { useGTMGlobalTags } from '../../hooks/googleTagManager';
+import apis from '../../api';
 
 type Props = {
   children: React.ReactNode | React.ReactNode[];
@@ -44,6 +45,8 @@ type Props = {
   isContainedFlow: boolean;
   init: () => void;
   showRecoveryModal: () => void;
+  apiUrls: string[];
+  getApiUrls: () => void;
 };
 
 const MainLayout: React.FC<Props> = props => {
@@ -58,6 +61,8 @@ const MainLayout: React.FC<Props> = props => {
     loadProfile,
     edgeContextInit,
     isContainedFlow,
+    apiUrls,
+    getApiUrls,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
@@ -72,7 +77,16 @@ const MainLayout: React.FC<Props> = props => {
   useEffectOnce(() => {
     edgeContextInit();
     loadProfile();
-  }, [edgeContextInit, loadProfile]);
+    getApiUrls();
+  }, [edgeContextInit, loadProfile, getApiUrls]);
+
+  useEffectOnce(
+    () => {
+      apis.fio.setApiUrls(apiUrls);
+    },
+    [apiUrls],
+    apiUrls?.length !== 0,
+  );
 
   const loginFormModalRender = () => showLogin && <LoginForm />;
   const recoveryFormModalRender = () =>

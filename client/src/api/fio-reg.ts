@@ -1,6 +1,7 @@
 import Base from './base';
 
 import {
+  FioRegApiUrlsResponse,
   FioRegCaptchaResponse,
   FioRegDomainsResponse,
   FioRegPricesResponse,
@@ -29,5 +30,8 @@ export default class FioReg extends Base {
   }
   initCaptcha(): Promise<FioRegCaptchaResponse> {
     return this.apiClient.post('reg/captcha/init', {});
+  }
+  apiUrls(): Promise<FioRegApiUrlsResponse> {
+    return this.apiClient.get('reg/api-urls');
   }
 }
