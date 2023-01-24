@@ -24,7 +24,7 @@ class TxCheckJob extends CommonJob {
   async execute() {
     await fioApi.getRawAbi();
 
-    const walletSdk = fioApi.getPublicFioSDK();
+    const walletSdk = await fioApi.getPublicFioSDK();
     // get transactions need to check if exists
     const [items] = await BlockchainTransaction.checkIrreversibility();
 

@@ -84,6 +84,18 @@ router.post(
   checkAdminAuth,
   routes.adminUsers.updateFioAccountProfile,
 );
+router.get('/admin/api-urls', checkAdminAuth, routes.adminUsers.fioApiUrlsList);
+router.post('/admin/api-urls', checkAdminAuth, routes.adminUsers.createFioApiUrlsList);
+router.patch(
+  '/admin/api-urls/:id',
+  checkAdminAuth,
+  routes.adminUsers.updateFioApiUrlsList,
+);
+router.delete(
+  '/admin/api-urls/:id',
+  checkAdminAuth,
+  routes.adminUsers.deleteFioApiUrlsList,
+);
 
 router.get('/admin/partners/list', checkAdminAuth, routes.adminUsers.partnersList);
 router.post('/admin/partners', checkAdminAuth, routes.adminUsers.createPartner);
@@ -107,6 +119,7 @@ router.get('/reg/domain-prefix-postfix', routes.registration.prefixPostfixList);
 router.get('/reg/prices', routes.external.prices);
 router.post('/reg/register', checkAuth, routes.external.register);
 router.post('/reg/captcha/init', checkAuth, routes.external.initCaptcha);
+router.get('/reg/api-urls', routes.external.apiUrls);
 
 router.get('/account/wallets', checkAuth, routes.account.walletsList);
 router.post('/account/wallets', checkAuth, routes.account.setWallets);

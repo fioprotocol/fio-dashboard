@@ -16,11 +16,14 @@ export default combineReducers({
     switch (action.type) {
       case actions.PRICES_REQUEST:
       case actions.DOMAINS_REQUEST:
+      case actions.API_URLS_REQUEST:
         return [...state, action.type];
       case actions.PRICES_FAILURE:
       case actions.PRICES_SUCCESS:
       case actions.DOMAINS_FAILURE:
       case actions.DOMAINS_SUCCESS:
+      case actions.API_URLS_SUCCESS:
+      case actions.API_URLS_FAILURE:
         return state.filter(
           type =>
             type !== action.type.replace(/_FAILURE|_SUCCESS/gi, '_REQUEST'),
@@ -103,6 +106,15 @@ export default combineReducers({
       case actions.PRICES_REQUEST:
       case actions.PRICES_SUCCESS:
         return false;
+      default:
+        return state;
+    }
+  },
+  apiUrls(state: string[] = [], action) {
+    switch (action.type) {
+      case actions.API_URLS_SUCCESS: {
+        return action.data;
+      }
       default:
         return state;
     }

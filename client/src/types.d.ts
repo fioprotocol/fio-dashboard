@@ -700,6 +700,12 @@ export type AdminSearchResult = {
   };
 };
 
+export type FioApiUrl = {
+  id: string;
+  url: string;
+  createdAt: string;
+};
+
 export type PaymentEventLog = {
   id: string;
   status: number;

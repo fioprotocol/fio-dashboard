@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 import { Transactions } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
 import { Constants } from '@fioprotocol/fiosdk/lib/utils/constants';
 
-import { Var } from '../models';
+import { FioApiUrl, Var } from '../models';
 
 import {
   DAY_MS,
@@ -50,22 +50,24 @@ const FIO_ACCOUNT_NAMES = {
 };
 
 class Fio {
-  getPublicFioSDK() {
+  async getPublicFioSDK() {
     if (!this.publicFioSDK) {
-      this.publicFioSDK = new FIOSDK('', '', process.env.FIO_BASE_URL, fetch);
+      const apiUrls = await FioApiUrl.getApiUrls();
+      this.publicFioSDK = new FIOSDK('', '', apiUrls, fetch);
     }
     return this.publicFioSDK;
   }
 
-  getMasterFioSDK() {
+  async getMasterFioSDK() {
     if (!this.masterFioSDK) {
       const { publicKey: masterPubKey } = FIOSDK.derivedPublicKey(
         process.env.MASTER_FIOSDK_KEY,
       );
+      const apiUrls = await FioApiUrl.getApiUrls();
       this.masterFioSDK = new FIOSDK(
         process.env.MASTER_FIOSDK_KEY,
         masterPubKey,
-        process.env.FIO_BASE_URL,
+        apiUrls,
         fetch,
         '',
         '',
@@ -75,8 +77,9 @@ class Fio {
     return this.masterFioSDK;
   }
 
-  getWalletSdkInstance(publicKey) {
-    return new FIOSDK('', publicKey, process.env.FIO_BASE_URL, fetch);
+  async getWalletSdkInstance(publicKey) {
+    const apiUrls = await FioApiUrl.getApiUrls();
+    return new FIOSDK('', publicKey, apiUrls, fetch);
   }
 
   sufToAmount(suf = 0) {
@@ -131,7 +134,7 @@ class Fio {
   }
 
   async registrationFee(forDomain = false) {
-    const publicFioSDK = this.getPublicFioSDK();
+    const publicFioSDK = await this.getPublicFioSDK();
 
     const { fee } = await publicFioSDK.getFee(
       forDomain ? EndPoint.registerFioDomain : EndPoint.registerFioAddress,
@@ -153,7 +156,7 @@ class Fio {
       return;
     }
 
-    const fioPublicSdk = fioApi.getPublicFioSDK();
+    const fioPublicSdk = await fioApi.getPublicFioSDK();
     const abisObj = {};
     for (const accountName of Constants.rawAbiAccountName) {
       if (!Transactions.abiMap.get(accountName)) {
@@ -256,7 +259,7 @@ class Fio {
         params.actor = auth.actor;
         params.permission = auth.permission;
       }
-      const fioSdk = this.getMasterFioSDK();
+      const fioSdk = await this.getMasterFioSDK();
       const preparedTrx = await fioSdk.pushTransaction(
         FIO_ACCOUNT_NAMES[action] || '',
         FIO_ACTION_NAMES[action],
@@ -285,7 +288,7 @@ class Fio {
 
   async executeTx(action, signedTx) {
     try {
-      const fioSdk = this.getMasterFioSDK();
+      const fioSdk = await this.getMasterFioSDK();
       const result = await fioSdk.executePreparedTrx(
         EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
         signedTx,

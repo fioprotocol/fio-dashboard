@@ -5,6 +5,7 @@ import GetDomains from '../services/external/Domains';
 import Register from '../services/external/Register';
 import Captcha from '../services/external/Captcha';
 import ValidatePubAddress from '../services/external/ValidatePubAddress';
+import ApiUrls from '../services/external/ApiUrls';
 
 export default {
   prices: makeServiceRunner(GetPrices),
@@ -12,4 +13,5 @@ export default {
   register: makeServiceRunner(Register, req => req.body),
   initCaptcha: makeServiceRunner(Captcha),
   validatePubAddress: makeServiceRunner(ValidatePubAddress, req => req.query),
+  apiUrls: makeServiceRunner(ApiUrls),
 };

@@ -136,6 +136,7 @@ const ADMIN_ROUTES: { [route: string]: string } = {
   ADMIN_REGULAR_USER_DETAILS: '/admin/regular-user-details', // ?userId=
   ADMIN_PROFILE: '/profile',
   ADMIN_ACCOUNTS: '/accounts',
+  ADMIN_API_URLS: '/api-urls',
   ADMIN_PARTNERS: '/partners',
   ADMIN_SEARCH_RESULT: '/search-result',
   ADMIN_DEFAULTS: '/defaults',

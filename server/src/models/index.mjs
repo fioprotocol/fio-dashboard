@@ -10,6 +10,7 @@ export const {
   ChainCode,
   Contact,
   FioAccountProfile,
+  FioApiUrl,
   FreeAddress,
   NewDeviceTwoFactor,
   Nonce,

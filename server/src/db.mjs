@@ -11,6 +11,7 @@ import { BlockchainTransactionEventLog } from './models/BlockchainTransactionEve
 import { ChainCode } from './models/ChainCode.mjs';
 import { Contact } from './models/Contact.mjs';
 import { FioAccountProfile } from './models/FioAccountProfile';
+import { FioApiUrl } from './models/FioApiUrl';
 import { FreeAddress } from './models/FreeAddress';
 import { NewDeviceTwoFactor } from './models/NewDeviceTwoFactor';
 import { Nonce } from './models/Nonce';
@@ -54,6 +55,7 @@ FreeAddress.init(sequelize);
 Wallet.init(sequelize);
 ReferrerProfile.init(sequelize);
 FioAccountProfile.init(sequelize);
+FioApiUrl.init(sequelize);
 NewDeviceTwoFactor.init(sequelize);
 Contact.init(sequelize);
 PublicWalletData.init(sequelize);

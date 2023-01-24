@@ -10,6 +10,7 @@ import {
   OrderDetails,
   RefProfile,
   User,
+  FioApiUrl,
 } from '../../types';
 
 export default combineReducers({
@@ -25,6 +26,7 @@ export default combineReducers({
       case actions.ADMIN_SEARCH_REQUEST:
       case actions.GET_PARTNERS_REQUEST:
       case actions.GET_REGULAR_USERS_REQUEST:
+      case actions.GET_FIO_API_URLS_REQUEST:
         return true;
       case actions.GET_ADMIN_USERS_SUCCESS:
       case actions.GET_ADMIN_USERS_FAILURE:
@@ -46,6 +48,8 @@ export default combineReducers({
       case actions.GET_PARTNERS_FAILURE:
       case actions.GET_REGULAR_USERS_SUCCESS:
       case actions.GET_REGULAR_USERS_FAILURE:
+      case actions.GET_FIO_API_URLS_SUCCESS:
+      case actions.GET_FIO_API_URLS_FAILURE:
         return false;
       default:
         return state;
@@ -171,6 +175,22 @@ export default combineReducers({
         return action.data.maxCount;
       case actions.GET_REGULAR_USERS_FAILURE:
         return state;
+      default:
+        return state;
+    }
+  },
+  fioApiUrlsList(state: FioApiUrl[] = [], action) {
+    switch (action.type) {
+      case actions.GET_FIO_API_URLS_SUCCESS:
+        return action.data.apiUrls;
+      default:
+        return state;
+    }
+  },
+  fioApiUrlsCount(state: number = 0, action) {
+    switch (action.type) {
+      case actions.GET_FIO_API_URLS_SUCCESS:
+        return action.data.maxCount;
       default:
         return state;
     }

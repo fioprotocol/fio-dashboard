@@ -48,3 +48,12 @@ export const PURCHASE_RESULTS_CLOSE = `${prefix}/PURCHASE_RESULTS_CLOSE`;
 export const onPurchaseResultsClose = (): CommonAction => ({
   type: PURCHASE_RESULTS_CLOSE,
 });
+
+export const API_URLS_REQUEST = `${prefix}/API_URLS_REQUEST`;
+export const API_URLS_SUCCESS = `${prefix}/API_URLS_SUCCESS`;
+export const API_URLS_FAILURE = `${prefix}/API_URLS_FAILURE`;
+
+export const getApiUrls = (): CommonPromiseAction => ({
+  types: [API_URLS_REQUEST, API_URLS_SUCCESS, API_URLS_FAILURE],
+  promise: (api: Api) => api.fioReg.apiUrls(),
+});

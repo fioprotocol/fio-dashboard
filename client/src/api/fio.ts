@@ -93,7 +93,7 @@ export type TrxData = {
 };
 
 export default class Fio {
-  baseurl: string = process.env.REACT_APP_FIO_BASE_URL || '';
+  baseurls: string[] = [process.env.REACT_APP_FIO_BASE_URL || ''];
   publicFioSDK: FIOSDK_LIB | null = null;
   walletFioSDK: FIOSDK_LIB | null = null;
   actionEndPoints: { [actionName: string]: string } = {
@@ -108,7 +108,7 @@ export default class Fio {
     this.publicFioSDK = new FIOSDK(
       '',
       '',
-      this.baseurl,
+      this.baseurls,
       window.fetch,
       '',
       this.tpid,
@@ -119,6 +119,11 @@ export default class Fio {
     this.tpid = tpid;
     this.domainTpid = domainTpid || tpid;
     this.publicFioSDK.technologyProviderId = tpid;
+  };
+
+  setApiUrls = (apiUrls: string[]): void => {
+    this.baseurls = apiUrls;
+    this.publicFioSDK.setApiUrls(apiUrls);
   };
 
   amountToSUF = (amount: number): number => {
@@ -208,13 +213,13 @@ export default class Fio {
 
   // todo: check if we need to update tpid for public wallet FIOSDK in other place
   createPublicWalletFioSdk = (keys: { public: string }): FIOSDK_LIB =>
-    new FIOSDK('', keys.public, this.baseurl, window.fetch, '', this.tpid);
+    new FIOSDK('', keys.public, this.baseurls, window.fetch, '', this.tpid);
 
   setWalletFioSdk = (keys: { public: string; private: string }): void =>
     (this.walletFioSDK = new FIOSDK(
       keys.private,
       keys.public,
-      this.baseurl,
+      this.baseurls,
       window.fetch,
       '',
       this.tpid,
