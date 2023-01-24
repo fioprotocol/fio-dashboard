@@ -306,6 +306,7 @@ export const cartItemsToOrderItems = (
       } = {
         cartItemId: id,
       };
+      const nativeFio = domainType === DOMAIN_TYPE.FREE ? 0 : costNativeFio;
 
       if (domainType === DOMAIN_TYPE.CUSTOM) {
         data.hasCustomDomain = true;
@@ -318,8 +319,8 @@ export const cartItemsToOrderItems = (
         action: getActionByCartItem(type, address),
         address,
         domain,
-        nativeFio: `${costNativeFio || 0}`,
-        price: convertFioPrices(costNativeFio || 0, roe).usdc,
+        nativeFio: `${nativeFio || 0}`,
+        price: convertFioPrices(nativeFio || 0, roe).usdc,
         priceCurrency: CURRENCY_CODES.USDC,
         data,
       };
@@ -356,7 +357,11 @@ export const totalCost = (
 } => {
   if (
     cart.length === 1 &&
-    cart.some(item => !item.costNativeFio && !!item.address)
+    cart.some(
+      item =>
+        (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
+        !!item.address,
+    )
   )
     return { costFree: 'FREE' };
 
@@ -366,9 +371,12 @@ export const totalCost = (
         .filter(item => item.costNativeFio)
         .reduce<Record<string, number>>((acc, item) => {
           if (!acc.costNativeFio) acc.costNativeFio = 0;
-          const nativeFio = new MathOp(item.costNativeFio || 0)
-            .mul(item.period || 1)
-            .toNumber();
+          const nativeFio =
+            item.domainType === DOMAIN_TYPE.FREE
+              ? 0
+              : new MathOp(item.costNativeFio || 0)
+                  .mul(item.period || 1)
+                  .toNumber();
           return {
             costNativeFio: new MathOp(acc.costNativeFio)
               .add(nativeFio)

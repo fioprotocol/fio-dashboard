@@ -10,6 +10,7 @@ import {
 } from '../../constants/common';
 import { PAYMENT_OPTIONS } from '../../constants/purchase';
 import { emptyWallet } from '../../redux/fio/reducer';
+import { DOMAIN_TYPE } from '../../constants/fio';
 
 import api from '../../api';
 
@@ -166,7 +167,10 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     );
     setWaiting(true);
     for (const item of cartItems) {
-      if (item.costNativeFio || hasFreeAddress) {
+      if (
+        (item.costNativeFio && item.domainType !== DOMAIN_TYPE.FREE) ||
+        hasFreeAddress
+      ) {
         return showPinModal(CONFIRM_PIN_ACTIONS.PURCHASE);
       }
     }
