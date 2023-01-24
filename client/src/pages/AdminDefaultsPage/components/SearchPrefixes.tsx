@@ -12,6 +12,7 @@ import TextInput, {
 } from '../../../components/Input/TextInput';
 
 import { makeOnDragEndFunction } from '../dndUtils';
+import { useRearrangeRanks } from '../useRearrangeRanks';
 
 import { AdminDefaultsRequest, SearchTerm } from '../../../api/responses';
 
@@ -26,11 +27,14 @@ type FieldsType = FieldArrayRenderProps<SearchTerm, HTMLElement>['fields'];
 const FIELD_ARRAY_KEY = 'searchPrefixes';
 
 const SearchPrefixes: React.FC<SearchPrefixesProps> = ({ form }) => {
+  useRearrangeRanks(FIELD_ARRAY_KEY, form);
+
   const addNewEntry = useCallback(() => {
+    const numberOfItems = form.getFieldState(FIELD_ARRAY_KEY).value.length + 1;
     form.mutators.push(FIELD_ARRAY_KEY, {
       term: '',
       isPrefix: true,
-      rank: 0,
+      rank: numberOfItems,
     });
   }, [form]);
 

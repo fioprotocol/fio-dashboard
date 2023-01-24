@@ -11,18 +11,17 @@ export const makeOnDragEndFunction = (fields: FieldsType) => (
   if (!result.destination) {
     return;
   }
-  const length = fields.value.length;
   const source = fields.value[result.source.index];
   const dest = fields.value[result.destination.index];
 
   fields.update(result.source.index, {
     ...source,
-    rank: length - result.destination.index,
+    rank: result.destination.index + 1,
   });
 
   fields.update(result.destination.index, {
     ...dest,
-    rank: length - result.source.index,
+    rank: result.source.index + 1,
   });
 
   fields.swap(result.source.index, result.destination.index);

@@ -12,6 +12,7 @@ import TextInput, {
 } from '../../../components/Input/TextInput';
 
 import { makeOnDragEndFunction } from '../dndUtils';
+import { useRearrangeRanks } from '../useRearrangeRanks';
 
 import { AdminDefaultsRequest, AdminDomain } from '../../../api/responses';
 
@@ -26,12 +27,15 @@ type FieldsType = FieldArrayRenderProps<AdminDomain, HTMLElement>['fields'];
 const FIELD_ARRAY_KEY = 'availableDomains';
 
 const AvailableDomains: React.FC<AvailableDomainsProps> = ({ form }) => {
+  useRearrangeRanks(FIELD_ARRAY_KEY, form);
+
   const addNewEntry = useCallback(() => {
+    const numberOfItems = form.getFieldState(FIELD_ARRAY_KEY).value.length + 1;
     form.mutators.push(FIELD_ARRAY_KEY, {
       name: '',
       isPremium: false,
       isDashboardDomain: false,
-      rank: 0,
+      rank: numberOfItems,
     });
   }, [form]);
 
