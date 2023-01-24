@@ -92,6 +92,7 @@ const CartItem: React.FC<Props> = props => {
     hasCustomDomain,
     period,
     type,
+    domainType,
   } = item;
   const shouldShowPeriod =
     isPeriodEditable && CART_ITEM_TYPES_WITH_PERIOD.includes(type);
@@ -144,6 +145,7 @@ const CartItem: React.FC<Props> = props => {
               costFio={costFio}
               costUsdc={costUsdc}
               costNativeFio={costNativeFio}
+              domainType={domainType}
             />
           </p>
           {onDelete && (

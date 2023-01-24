@@ -130,7 +130,11 @@ export const useContext = (): UseContextReturnType => {
     !hasFreeAddress &&
     !isEmpty(cartItems) &&
     cartItems.length === 1 &&
-    cartItems.every(item => !item.costNativeFio && !!item.address);
+    cartItems.every(
+      item =>
+        (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
+        !!item.address,
+    );
 
   const {
     costNativeFio: totalCartNativeAmount,
@@ -227,7 +231,8 @@ export const useContext = (): UseContextReturnType => {
     } = updatedPrices || {};
 
     const updatedCartItems = cartItems.map(item => {
-      if (!item.costNativeFio) return item;
+      if (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE)
+        return item;
 
       const retObj = { ...item };
 

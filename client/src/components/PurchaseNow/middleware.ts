@@ -241,7 +241,10 @@ const makeRegistrationOrder = (
     const registration: RegistrationType = {
       cartItemId: cartItem.id,
       fioName: setFioName(cartItem.address, cartItem.domain),
-      isFree: isFreeAllowed && !cartItem.costNativeFio && !!cartItem.address,
+      isFree:
+        isFreeAllowed &&
+        (!cartItem.costNativeFio || cartItem.domainType === DOMAIN_TYPE.FREE) &&
+        !!cartItem.address,
       fee: [CART_ITEM_TYPE.DOMAIN_RENEWAL, CART_ITEM_TYPE.ADD_BUNDLES].includes(
         cartItem.type,
       )
@@ -271,7 +274,11 @@ const makeRegistrationOrder = (
         });
       }
     }
-    if (!cartItem.costNativeFio || !cartItem.address) {
+    if (
+      !cartItem.costNativeFio ||
+      cartItem.domainType === DOMAIN_TYPE.FREE ||
+      !cartItem.address
+    ) {
       registrations.push(registration);
       continue;
     }
