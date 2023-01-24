@@ -32,11 +32,7 @@ import {
 import MathOp from '../../util/math';
 import { convertFioPrices } from '../../util/prices';
 import { setFioName } from '../../utils';
-import {
-  fireAnalyticsEvent,
-  fireAnalyticsEventDebounced,
-  getCartItemsDataForAnalytics,
-} from '../../util/analytics';
+import { fireAnalyticsEventDebounced } from '../../util/analytics';
 
 import {
   DomainsArrItemType,
@@ -46,9 +42,14 @@ import {
 import { AdminDomain } from '../../api/responses';
 import { CartItem, Prices } from '../../types';
 
-const ADDITIONAL_DOMAINS_COUNT_LIMIT = 25;
+const ADDITIONAL_DOMAINS_COUNT_LIMIT = 12;
 const USER_DOMAINS_LIMIT = 3;
-const DEFAULT_DOMAIN_TYPE_LIMIT = 5;
+
+const SUGGESTED_TYPE: { FIRST: 'first'; SECOND: 'second'; THIRD: 'third' } = {
+  FIRST: 'first',
+  SECOND: 'second',
+  THIRD: 'third',
+} as const;
 
 const handleFCHItems = async ({
   domainArr,
@@ -111,6 +112,7 @@ const handleFCHItems = async ({
             ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
             : CART_ITEM_TYPE.ADDRESS,
           allowFree: domain.allowFree,
+          rank: domain.rank || 0,
         };
       }),
     )
@@ -163,14 +165,17 @@ export const useContext = (): UseContextProps => {
   const nonPremiumPublicDomains = transformNonPremiumDomains(
     publicDomains,
     hasFreeAddress || cartHasFreeItem,
-  ).sort((a, b) => b.rank - a.rank);
+    cartItems,
+  )
+    .sort((a, b) => a.rank - b.rank)
+    .map((nonPremiumDomain, i) => ({ ...nonPremiumDomain, rank: i }));
 
-  const premiumPublicDomains = transformPremiumDomains(publicDomains).sort(
-    (a, b) => b.rank - a.rank,
-  );
+  const premiumPublicDomains = transformPremiumDomains(publicDomains)
+    .sort((a, b) => a.rank - b.rank)
+    .map((premiumDomain, i) => ({ ...premiumDomain, rank: i }));
 
   const customDomains = transformCustomDomains(usernamesOnCustomDomains).sort(
-    (a, b) => b.rank - a.rank,
+    (a, b) => a.rank - b.rank,
   );
 
   const userDomainsJSON = JSON.stringify(sortedUserDomains);
@@ -224,27 +229,24 @@ export const useContext = (): UseContextProps => {
       const validatedPremiumFCH = await validatedPremiumFCHPromise;
       const validatedCustomFCH = await validatedCustomFCHPromise;
 
-      const userFCHAllExist =
-        validatedUserFCH.length &&
-        validatedUserFCH.every(userFCH => userFCH.isExist);
-
-      const nonPremiumFCHAllExist =
-        validatedNonPremiumFCH.length &&
-        validatedNonPremiumFCH.every(nonPremiumFCH => nonPremiumFCH.isExist);
-
-      const premiumFCHAllExist =
-        validatedPremiumFCH.length &&
-        validatedPremiumFCH.every(premiumFCH => premiumFCH.isExist);
-
-      const customFCHAllExist =
-        validatedCustomFCH.length &&
-        validatedCustomFCH.every(customFCH => customFCH.isExist);
+      const avaliableUserFCH = validatedUserFCH.length
+        ? validatedUserFCH.filter(userFCH => !userFCH.isExist)
+        : [];
+      const availableNonPremiumFCH = validatedNonPremiumFCH.length
+        ? validatedNonPremiumFCH.filter(nonPremiumFCH => !nonPremiumFCH.isExist)
+        : [];
+      const availablePremiumFCH = validatedPremiumFCH.length
+        ? validatedPremiumFCH.filter(premiumFCH => !premiumFCH.isExist)
+        : [];
+      const availlableCustomFCH = validatedCustomFCH.length
+        ? validatedCustomFCH.filter(customFCH => !customFCH.isExist)
+        : [];
 
       if (
-        userFCHAllExist &&
-        nonPremiumFCHAllExist &&
-        premiumFCHAllExist &&
-        customFCHAllExist
+        !avaliableUserFCH &&
+        !availableNonPremiumFCH &&
+        !availablePremiumFCH &&
+        !availlableCustomFCH
       ) {
         setError(FIO_ADDRESS_ALREADY_EXISTS);
         setAdditionalItemsList([]);
@@ -253,69 +255,81 @@ export const useContext = (): UseContextProps => {
         return;
       }
 
-      if (userFCHAllExist) {
-        setUsersItemsList([]);
-      } else {
-        setUsersItemsList(
-          validatedUserFCH
-            .filter(userFCH => !userFCH.isExist)
-            .slice(0, USER_DOMAINS_LIMIT),
-        );
-      }
+      setUsersItemsList(avaliableUserFCH.slice(0, USER_DOMAINS_LIMIT));
 
-      if (nonPremiumFCHAllExist && premiumFCHAllExist && customFCHAllExist) {
+      if (
+        !availableNonPremiumFCH.length &&
+        !availablePremiumFCH.length &&
+        !availlableCustomFCH.length
+      ) {
         setAdditionalItemsList([]);
         setSuggestedItemsList([]);
         return;
       }
 
-      let suggestedPublicDomains: SelectedItemProps[] = [];
-      let additionalPublicDomains: SelectedItemProps[] = [];
+      const handleSuggestedElement = (
+        suggestedType: typeof SUGGESTED_TYPE[keyof typeof SUGGESTED_TYPE],
+      ) => {
+        let suggestedElement = null;
 
-      if (!nonPremiumFCHAllExist) {
-        suggestedPublicDomains = [
-          ...suggestedPublicDomains,
-          ...validatedNonPremiumFCH
-            .filter(nonPremiumFCH => !nonPremiumFCH.isExist)
-            .slice(0, DEFAULT_DOMAIN_TYPE_LIMIT),
-        ];
-        additionalPublicDomains = [
-          ...additionalPublicDomains,
-          ...validatedNonPremiumFCH
-            .filter(nonPremiumFCH => !nonPremiumFCH.isExist)
-            .slice(DEFAULT_DOMAIN_TYPE_LIMIT),
-        ];
-      }
+        if (
+          availableNonPremiumFCH[0] &&
+          suggestedType === SUGGESTED_TYPE.FIRST
+        ) {
+          suggestedElement = availableNonPremiumFCH[0];
+          availableNonPremiumFCH.shift();
+          return suggestedElement;
+        }
+        if (
+          availablePremiumFCH[0] &&
+          (suggestedType === SUGGESTED_TYPE.FIRST ||
+            suggestedType === SUGGESTED_TYPE.SECOND)
+        ) {
+          suggestedElement = availablePremiumFCH[0];
+          availablePremiumFCH.shift();
+          return suggestedElement;
+        }
+        if (
+          availlableCustomFCH[0] &&
+          (suggestedType === SUGGESTED_TYPE.FIRST ||
+            suggestedType === SUGGESTED_TYPE.SECOND ||
+            suggestedType === SUGGESTED_TYPE.THIRD)
+        ) {
+          suggestedElement = availlableCustomFCH[0];
+          availlableCustomFCH.shift();
+          return suggestedElement;
+        }
+      };
 
-      if (!premiumFCHAllExist) {
-        suggestedPublicDomains = [
-          ...suggestedPublicDomains,
-          ...validatedPremiumFCH
-            .filter(premiumFCH => !premiumFCH.isExist)
-            .slice(0, DEFAULT_DOMAIN_TYPE_LIMIT),
-        ];
-        additionalPublicDomains = [
-          ...additionalPublicDomains,
-          ...validatedPremiumFCH
-            .filter(premiumFCH => !premiumFCH.isExist)
-            .slice(DEFAULT_DOMAIN_TYPE_LIMIT),
-        ];
-      }
+      const suggestedPublicDomains: SelectedItemProps[] = [];
 
-      if (!customFCHAllExist) {
-        suggestedPublicDomains = [
-          ...suggestedPublicDomains,
-          ...validatedCustomFCH
-            .filter(customFCH => !customFCH.isExist)
-            .slice(0, DEFAULT_DOMAIN_TYPE_LIMIT),
-        ];
-        additionalPublicDomains = [
-          ...additionalPublicDomains,
-          ...validatedCustomFCH
-            .filter(customFCH => !customFCH.isExist)
-            .slice(DEFAULT_DOMAIN_TYPE_LIMIT),
-        ];
-      }
+      const firstSuggested = handleSuggestedElement(SUGGESTED_TYPE.FIRST);
+      const secondSuggested = handleSuggestedElement(SUGGESTED_TYPE.SECOND);
+      const thirdSuggested = handleSuggestedElement(SUGGESTED_TYPE.THIRD);
+
+      firstSuggested && suggestedPublicDomains.push(firstSuggested);
+      secondSuggested && suggestedPublicDomains.push(secondSuggested);
+      thirdSuggested && suggestedPublicDomains.push(thirdSuggested);
+
+      const additionalPublicDomains: SelectedItemProps[] = [
+        ...availableNonPremiumFCH,
+        ...availablePremiumFCH,
+        ...availlableCustomFCH,
+      ].sort((a, b) => {
+        const rankCount = a.rank - b.rank;
+        if (rankCount) return rankCount;
+
+        if (a.domainType === DOMAIN_TYPE.FREE) return -1;
+        if (b.domainType === DOMAIN_TYPE.FREE) return 1;
+
+        if (a.domainType === DOMAIN_TYPE.PREMIUM) return -1;
+        if (b.domainType === DOMAIN_TYPE.PREMIUM) return 1;
+
+        if (a.domainType === DOMAIN_TYPE.CUSTOM) return -1;
+        if (b.domainType === DOMAIN_TYPE.CUSTOM) return 1;
+
+        return 0;
+      });
 
       setAdditionalItemsList(
         additionalPublicDomains.slice(0, ADDITIONAL_DOMAINS_COUNT_LIMIT),
@@ -335,10 +349,6 @@ export const useContext = (): UseContextProps => {
 
   const onClick = (selectedItem: CartItem) => {
     addCartItem(selectedItem);
-    fireAnalyticsEvent(
-      ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
-      getCartItemsDataForAnalytics([selectedItem]),
-    );
   };
 
   useEffect(() => {

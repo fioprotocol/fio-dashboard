@@ -27,6 +27,7 @@ import {
   Prices,
   PublicAddressDoublet,
   IncomePrices,
+  CartItem,
 } from '../types';
 import { RawTransaction } from '../api/fio';
 
@@ -268,12 +269,21 @@ export const serializeTransaction = async (
 export const transformNonPremiumDomains = (
   domains: Partial<AdminDomain>[],
   isPremium: boolean,
+  cartItems: CartItem[],
 ) =>
   domains
     .filter(domain => !domain.isPremium)
     .map(domain => ({
       name: domain.name,
-      domainType: isPremium ? DOMAIN_TYPE.PREMIUM : DOMAIN_TYPE.FREE,
+      domainType:
+        isPremium &&
+        !cartItems.filter(
+          cartItem =>
+            cartItem.domain === domain.name &&
+            cartItem.domainType === DOMAIN_TYPE.FREE,
+        ).length
+          ? DOMAIN_TYPE.PREMIUM
+          : DOMAIN_TYPE.FREE,
       rank: domain.rank || 0,
       allowFree: true,
     }));
