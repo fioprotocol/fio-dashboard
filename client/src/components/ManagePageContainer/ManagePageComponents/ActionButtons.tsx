@@ -145,7 +145,10 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
       {renderRenew()}
       {renderWrap()}
       <Link
-        to={ROUTES.FIO_ADDRESSES_SELECTION}
+        to={{
+          pathname: ROUTES.FIO_ADDRESS_CUSTOM_SELECTION,
+          search: `${QUERY_PARAMS_NAMES.DOMAIN}=${name}`,
+        }}
         className={classes.actionButton}
       >
         <Button title={isSmallDesktop ? BUTTONS_TITLE.register : ''}>
