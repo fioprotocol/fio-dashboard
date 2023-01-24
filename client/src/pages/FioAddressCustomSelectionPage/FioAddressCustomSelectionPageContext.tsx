@@ -30,7 +30,7 @@ import { AllDomains, CartItem } from '../../types';
 type UseContextProps = {
   allDomains: AllDomains;
   domainsLoaing: boolean;
-  initialValues: { address: string };
+  initialValues: { address: string; domain: string };
   isDesktop: boolean;
   link: string;
   options: OptionProps[];
@@ -56,6 +56,7 @@ export const useContext = (): UseContextProps => {
     state?.shouldPrependUserDomains && isAuthenticated;
 
   const addressParam = queryParams.get(QUERY_PARAMS_NAMES.ADDRESS);
+  const domainParam = queryParams.get(QUERY_PARAMS_NAMES.DOMAIN);
   const link = `${ROUTES.FIO_ADDRESSES_SELECTION}?${QUERY_PARAMS_NAMES.ADDRESS}=${addressParam}`;
 
   const options =
@@ -83,7 +84,7 @@ export const useContext = (): UseContextProps => {
   return {
     allDomains,
     domainsLoaing: publicDomainsLoaing || userDomainsLoading,
-    initialValues: { address: addressParam },
+    initialValues: { address: addressParam, domain: domainParam },
     isDesktop,
     link,
     options,
