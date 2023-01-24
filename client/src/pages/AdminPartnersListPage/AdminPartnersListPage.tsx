@@ -39,7 +39,7 @@ const AdminPartnersListPage: React.FC<Props> = props => {
           {
             name: '',
             isPremium: false,
-            rank: 0,
+            rank: 1,
           },
         ],
         allowCustomDomain: false,

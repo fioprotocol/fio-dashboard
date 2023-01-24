@@ -1,4 +1,5 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
+import { FormState } from 'final-form';
 import { Field, FormRenderProps } from 'react-final-form';
 import { FieldArray, FieldArrayRenderProps } from 'react-final-form-arrays';
 import { Button } from 'react-bootstrap';
@@ -10,6 +11,7 @@ import {
   Draggable,
   DropResult,
 } from 'react-beautiful-dnd';
+import debounce from 'lodash/debounce';
 
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
 import Input from '../../../../components/Input/Input';
@@ -34,6 +36,8 @@ type FieldsType = FieldArrayRenderProps<
   HTMLElement
 >['fields'];
 
+const RANK_REARRANGEMENT_DELAY_MS = 1000;
+
 export const PartnerFormComponent: React.FC<FormRenderProps<
   RefProfile
 >> = props => {
@@ -49,6 +53,25 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
     // @ts-ignore
     loading,
   } = props;
+
+  useEffect(() => {
+    const subscriptionFn = debounce((subscription: FormState<RefProfile>) => {
+      const items = subscription.values.settings.domains;
+      items.forEach((item, index) => {
+        const expectedRank = index + 1;
+        if (item.rank !== expectedRank) {
+          form.mutators.update('settings.domains', index, {
+            ...item,
+            rank: expectedRank,
+          });
+        }
+      });
+    }, RANK_REARRANGEMENT_DELAY_MS);
+    const unsubscribe = form.subscribe(subscriptionFn, { values: true });
+    return () => {
+      unsubscribe();
+    };
+  }, []);
 
   const onChange = useCallback(
     (file: File) => {
@@ -95,10 +118,12 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
   }, [form]);
 
   const onAddDomain = useCallback(() => {
+    const fieldKey = 'settings.domains' as keyof RefProfile;
+    const numberOfDomains = form.getFieldState(fieldKey).length;
     form.mutators.push('settings.domains', {
       name: '',
       isPremium: false,
-      rank: 0,
+      rank: numberOfDomains + 1,
     });
   }, [form]);
 
@@ -108,18 +133,17 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
     if (!result.destination) {
       return;
     }
-    const length = fields.value.length;
     const source = fields.value[result.source.index];
     const dest = fields.value[result.destination.index];
 
     fields.update(result.source.index, {
       ...source,
-      rank: length - result.destination.index,
+      rank: result.destination.index + 1,
     });
 
     fields.update(result.destination.index, {
       ...dest,
-      rank: length - result.source.index,
+      rank: result.source.index + 1,
     });
 
     fields.swap(result.source.index, result.destination.index);
