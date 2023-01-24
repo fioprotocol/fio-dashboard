@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 
 import { prefix } from './actions';
+import { DOMAIN_TYPE } from '../../constants/fio';
 
 import { fioDomains } from '../fio/selectors';
 import { domains } from '../registrations/selectors';
@@ -30,7 +31,7 @@ export const cartHasItemsWithPrivateDomain = createSelector(
       if (
         cartItem.address &&
         (privateDomains.indexOf(cartItem.domain) > -1 ||
-          cartItem.hasCustomDomain)
+          cartItem.domainType === DOMAIN_TYPE.CUSTOM)
       )
         return true;
     }

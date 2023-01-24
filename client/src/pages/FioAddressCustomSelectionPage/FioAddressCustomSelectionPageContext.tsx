@@ -9,7 +9,7 @@ import { refreshFioNames } from '../../redux/fio/actions';
 import { isAuthenticated as isAuthenticatedSelector } from '../../redux/profile/selectors';
 import {
   allDomains as allDomainsSelector,
-  loading as publicDomainsLoaingSelector,
+  loading as publicDomainsLoadingSelector,
 } from '../../redux/registrations/selectors';
 import {
   fioWallets as fioWalletsSelector,
@@ -29,7 +29,7 @@ import { AllDomains, CartItem } from '../../types';
 
 type UseContextProps = {
   allDomains: AllDomains;
-  domainsLoaing: boolean;
+  domainsLoading: boolean;
   initialValues: { address: string; domain: string };
   isDesktop: boolean;
   link: string;
@@ -41,7 +41,7 @@ type UseContextProps = {
 export const useContext = (): UseContextProps => {
   const allDomains = useSelector(allDomainsSelector);
   const isAuthenticated = useSelector(isAuthenticatedSelector);
-  const publicDomainsLoaing = useSelector(publicDomainsLoaingSelector);
+  const publicDomainsLoading = useSelector(publicDomainsLoadingSelector);
   const fioWallets = useSelector(fioWalletsSelector);
   const userDomainsLoading = useSelector(userDomainsLoadingSelector);
 
@@ -83,7 +83,7 @@ export const useContext = (): UseContextProps => {
 
   return {
     allDomains,
-    domainsLoaing: publicDomainsLoaing || userDomainsLoading,
+    domainsLoading: publicDomainsLoading || userDomainsLoading,
     initialValues: { address: addressParam, domain: domainParam },
     isDesktop,
     link,

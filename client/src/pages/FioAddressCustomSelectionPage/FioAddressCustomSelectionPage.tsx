@@ -33,7 +33,7 @@ type FormValues = { address: string; domain: string };
 const FioAddressCustomSelectionPage: React.FC = () => {
   const {
     allDomains,
-    domainsLoaing,
+    domainsLoading,
     initialValues,
     isDesktop,
     link,
@@ -90,7 +90,7 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                     hideError="true"
                     lowerCased
                     loading={validating}
-                    disabled={validating || domainsLoaing}
+                    disabled={validating || domainsLoading}
                     debounceTimeout={DEFAULT_DEBOUNCE_TIMEOUT}
                   />
                   {shouldPrependUserDomains ? (
@@ -127,7 +127,7 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                       hideError="true"
                       prefix={FIO_ADDRESS_DELIMITER}
                       loading={validating}
-                      disabled={validating || domainsLoaing}
+                      disabled={validating || domainsLoading}
                       hasItalicLabel
                       debounceTimeout={DEFAULT_DEBOUNCE_TIMEOUT}
                     />

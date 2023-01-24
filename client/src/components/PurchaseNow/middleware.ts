@@ -19,7 +19,7 @@ import {
   CART_ITEM_TYPES_WITH_PERIOD,
   DEFAULT_BUNDLE_SET_VALUE,
 } from '../../constants/common';
-import { ACTIONS } from '../../constants/fio';
+import { ACTIONS, DOMAIN_TYPE } from '../../constants/fio';
 
 import { RegistrationType } from './types';
 import {
@@ -236,7 +236,7 @@ const makeRegistrationOrder = (
 ): RegistrationType[] => {
   const registrations = [];
   for (const cartItem of cartItems.sort(item =>
-    item.hasCustomDomain ? -1 : 1,
+    item.domainType === DOMAIN_TYPE.CUSTOM ? -1 : 1,
   )) {
     const registration: RegistrationType = {
       cartItemId: cartItem.id,
@@ -283,7 +283,7 @@ const makeRegistrationOrder = (
       registration.depended = { domain: cartItem.domain };
     }
 
-    if (cartItem.hasCustomDomain) {
+    if (cartItem.domainType === DOMAIN_TYPE.CUSTOM) {
       registrations.push({
         cartItemId: cartItem.id,
         fioName: cartItem.domain,
