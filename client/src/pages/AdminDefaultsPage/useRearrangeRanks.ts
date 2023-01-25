@@ -13,6 +13,7 @@ export function useRearrangeRanks(
   useEffect(() => {
     const subscriptionFn = debounce(
       (subscription: FormState<AdminDefaults>) => {
+        if (!subscription.values) return;
         const items = subscription.values[fieldName];
         items.forEach((item, index) => {
           const expectedRank = index + 1;
