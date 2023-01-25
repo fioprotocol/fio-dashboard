@@ -146,7 +146,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
       {renderWrap()}
       <Link
         to={{
-          pathname: ROUTES.FIO_ADDRESS_CUSTOM_SELECTION,
+          pathname: ROUTES.FIO_ADDRESSES_CUSTOM_SELECTION,
           search: `${QUERY_PARAMS_NAMES.DOMAIN}=${name}`,
         }}
         className={classes.actionButton}
