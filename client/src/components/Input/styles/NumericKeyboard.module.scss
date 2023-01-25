@@ -16,9 +16,9 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid $violet;
+    border: 1px solid $light-indigo;
     border-radius: 7px;
-    color: $violet;
+    color: $light-indigo;
     cursor: pointer;
     user-select: none;
 
@@ -27,7 +27,7 @@
     }
 
     &:active {
-      background-color: $clear-blue;
+      background-color: $light-indigo;
       color: $white;
     }
 
@@ -42,11 +42,11 @@
       height: 100%;
       opacity: 0;
       transition: all 0.5s;
-      box-shadow: 0 0 10px 20px $violet;
+      box-shadow: 0 0 10px 20px $light-indigo;
     }
     
     &:active:after {
-      box-shadow: 0 0 0 0 $violet;
+      box-shadow: 0 0 0 0 $light-indigo;
       position: absolute;
       border-radius: 7px;
       left: 0;
@@ -62,7 +62,7 @@
   .container {
     .numKey {
       &:hover {
-        background-color: $clear-blue;
+        background-color: $light-indigo;
         color: $white;
       }
     }

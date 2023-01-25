@@ -1,18 +1,27 @@
 import React from 'react';
 
-import AddressDomainContainer from '../../components/AddressDomainContainer';
+import AddressDomainCart from '../../components/AddressDomainCart';
+import DoubleCardContainer from '../../components/DoubleCardContainer';
 
-import { LINK_LABELS } from '../../constants/labels';
-import { DOMAIN } from '../../constants/common';
+import { FioDomainSelectionComponent } from './components/FioDomainSelectionComponent/FioDomainSelectionComponent';
 
+import { useContext } from './FioDomainSelectionPageContext';
+
+import { useCheckIfDesktop } from '../../screenType';
 import { useNonActiveUserRedirect } from '../../util/hooks';
 
 const FioDomainSelectionPage: React.FC = () => {
   useNonActiveUserRedirect();
+
+  const props = useContext();
+
+  const isDesktop = useCheckIfDesktop();
+
   return (
-    <AddressDomainContainer
-      title={LINK_LABELS.FIO_DOMAINS.toUpperCase()}
-      type={DOMAIN}
+    <DoubleCardContainer
+      title="FIO Domain Registration"
+      bigCart={<FioDomainSelectionComponent isDesktop={isDesktop} {...props} />}
+      smallCart={isDesktop && <AddressDomainCart />}
     />
   );
 };

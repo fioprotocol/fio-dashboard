@@ -2,10 +2,6 @@ import { History } from 'history';
 import { all } from 'redux-saga/effects';
 
 import {
-  adminConfirmSuccess,
-  adminLoginSuccess,
-  adminLogoutSuccess,
-  adminResetPasswordSuccess,
   loginSuccess,
   logoutSuccess,
   nonceSuccess,
@@ -29,11 +25,6 @@ import {
   setFeesService,
 } from './fio/sagas';
 import { getRefProfileSuccess } from './refProfile/sagas';
-import {
-  resetAdminUserPasswordSuccess,
-  deleteAdminUserSuccess,
-  exportOrdersDataSuccess,
-} from './admin/sagas';
 
 import { Api } from '../api';
 
@@ -56,14 +47,7 @@ export default function* rootSaga(history: History, api: Api) {
     addFioWalletSuccess(),
     setBalancesService(),
     purchaseResultsClose(history),
-    adminLogoutSuccess(history, api),
-    adminLoginSuccess(history, api),
-    adminConfirmSuccess(history, api),
-    adminResetPasswordSuccess(history, api),
     getRefProfileSuccess(),
-    resetAdminUserPasswordSuccess(),
-    deleteAdminUserSuccess(),
-    exportOrdersDataSuccess(),
     cartWasCleared(),
   ]);
 }

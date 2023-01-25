@@ -12,7 +12,11 @@
   height: 20px;
 
   &.blackLight, &.blackWhite {
-    color: $dark-jungle-green;
+    color: $baltic-sea;
+  }
+
+  &.iw {
+    color: $light-indigo;
   }
 
   &.lightBlack, .whiteBlack {
@@ -27,7 +31,7 @@
 
 .bigDoubleIcon {
   position: absolute;
-  right: 100px;
+  right: 115px;
 }
 
 .middleDoubleIcon {

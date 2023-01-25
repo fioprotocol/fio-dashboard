@@ -68,12 +68,12 @@
         justify-content: center;
         align-items: center;
         cursor: pointer;
-    
+
         svg {
           font-size: 20px;
           color: $white;
         }
-    
+
         &:hover {
           background-color: $dark;
         }
@@ -89,6 +89,14 @@
     .actionBadges {
       margin: 0 20px;
       width: auto;
+
+      > div {
+        a {
+          button {
+            min-width: auto !important;
+          }
+        }
+      }
     }
   }
 }

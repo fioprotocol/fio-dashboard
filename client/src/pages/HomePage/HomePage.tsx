@@ -3,7 +3,9 @@ import { useHistory } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router-dom';
 
 import AddressWidget from '../../components/AddressWidget';
-import DomainsBanner from '../../components/DomainsBanner/DomainsBanner';
+import { FCHBanner } from '../../components/FCHBanner';
+import { FCHSpecialsBanner } from '../../components/SpecialsBanner';
+import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
 
 import { ROUTES } from '../../constants/routes';
 
@@ -42,12 +44,16 @@ const HomePage: React.FC<Props & RouteComponentProps> = props => {
     }
   }, [isAuthenticated, isContainedFlow, history]);
 
-  if (isContainedFlow) return <AddressWidget {...addressWidgetContent} />;
+  if (isContainedFlow)
+    return <AddressWidget isDarkWhite {...addressWidgetContent} />;
 
   return (
     <div className={classnames.container}>
-      <AddressWidget {...addressWidgetContent} />
-      <DomainsBanner />
+      <AddressWidget isDarkWhite={!!refProfileInfo} {...addressWidgetContent} />
+      <FCHBanner />
+      <FCHSpecialsBanner />
+      <WidelyAdoptedSection />
+      <AddressWidget {...addressWidgetContent} isReverseColors />
     </div>
   );
 };

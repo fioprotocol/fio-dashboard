@@ -40,6 +40,7 @@ export class User extends Base {
         refProfileId: { type: DT.BIGINT, allowNull: true },
         affiliateProfileId: { type: DT.BIGINT, allowNull: true },
         timeZone: { type: DT.STRING, defaultValue: 'America/New_York' },
+        isOptIn: { type: DT.BOOLEAN, defaultValue: false },
       },
       {
         sequelize,

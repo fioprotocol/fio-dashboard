@@ -1,13 +1,17 @@
 import isEmpty from 'lodash/isEmpty';
 
+import { store } from '../redux/init';
+
 import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
   CURRENCY_CODES,
 } from '../constants/common';
-import { ACTIONS } from '../constants/fio';
+import { ACTIONS, DOMAIN_TYPE } from '../constants/fio';
 import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
+
+import { setCartItems } from '../redux/cart/actions';
 
 import MathOp from './math';
 import { setFioName } from '../utils';
@@ -31,9 +35,7 @@ export const setFreeCart = ({
     item => item.address && item.domain && item.allowFree,
   );
   if (recalcElem) {
-    delete recalcElem.costNativeFio;
-    recalcElem.costFio = '0.00';
-    recalcElem.costUsdc = '0';
+    recalcElem.domainType = DOMAIN_TYPE.FREE;
 
     return cartItems.map(item => {
       delete item.showBadge;
@@ -86,7 +88,7 @@ export const removeFreeCart = ({
   } = prices;
 
   return cartItems.map(item => {
-    if (!item.costNativeFio) {
+    if (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) {
       item.costNativeFio = nativeFioAddressPrice;
       item.showBadge = true;
     }
@@ -105,7 +107,11 @@ export const removeFreeCart = ({
 export const cartHasFreeItem = (cartItems: CartItem[]): boolean => {
   return (
     !isEmpty(cartItems) &&
-    cartItems.some(item => !item.costNativeFio && !!item.address)
+    cartItems.some(
+      item =>
+        (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
+        !!item.address,
+    )
   );
 };
 
@@ -129,6 +135,28 @@ export const handleFreeAddressCart = ({
     retCart = setFreeCart({ cartItems });
   }
   setCartItems(!isEmpty(retCart) ? retCart : cartItems);
+};
+
+export const addCartItem = (selectedItem: CartItem) => {
+  const { domain } = selectedItem || {};
+
+  const currentStore = store.getState();
+
+  const cartItems: CartItem[] = currentStore.cart.cartItems;
+
+  const newCartItems = [
+    ...cartItems.filter(
+      (item: CartItem) => item.domain !== domain.toLowerCase(),
+    ),
+    selectedItem,
+  ];
+
+  store.dispatch(setCartItems(newCartItems));
+
+  fireAnalyticsEvent(
+    ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
+    getCartItemsDataForAnalytics([selectedItem]),
+  );
 };
 
 export const deleteCartItem = ({
@@ -155,11 +183,11 @@ export const deleteCartItem = ({
     );
   }
 
-  const { domain, hasCustomDomain } =
+  const { address, domain, domainType } =
     cartItems.find(item => item.id === id) || {};
   const updCart = cartItems.filter(item => item.id !== id);
 
-  if (hasCustomDomain) {
+  if (!!address && domainType === DOMAIN_TYPE.CUSTOM) {
     const hasCurrentDomain =
       domain && updCart.some(item => item.domain === domain.toLowerCase());
     if (hasCurrentDomain) {
@@ -270,61 +298,52 @@ export const cartItemsToOrderItems = (
   roe: number,
 ) => {
   return cartItems
-    .map(
-      ({
-        id,
-        type,
+    .map(({ id, type, address, domain, costNativeFio, domainType, period }) => {
+      const data: {
+        hasCustomDomain?: boolean;
+        hasCustomDomainFee?: number;
+        cartItemId: string;
+        period?: number;
+      } = {
+        cartItemId: id,
+      };
+      const nativeFio = domainType === DOMAIN_TYPE.FREE ? 0 : costNativeFio;
+
+      if (!!address && domainType === DOMAIN_TYPE.CUSTOM) {
+        data.hasCustomDomain = true;
+        data.hasCustomDomainFee = new MathOp(costNativeFio)
+          .sub(prices.nativeFio.address)
+          .toNumber();
+      }
+
+      const item = {
+        action: getActionByCartItem(type, address),
         address,
         domain,
-        costNativeFio,
-        hasCustomDomain,
-        period,
-      }) => {
-        const data: {
-          hasCustomDomain?: boolean;
-          hasCustomDomainFee?: number;
-          cartItemId: string;
-          period?: number;
-        } = {
-          cartItemId: id,
-        };
-
-        if (hasCustomDomain) {
-          data.hasCustomDomain = hasCustomDomain;
-          data.hasCustomDomainFee = new MathOp(costNativeFio)
-            .sub(prices.nativeFio.address)
-            .toNumber();
+        nativeFio: `${nativeFio || 0}`,
+        price: convertFioPrices(nativeFio || 0, roe).usdc,
+        priceCurrency: CURRENCY_CODES.USDC,
+        data,
+      };
+      if (CART_ITEM_TYPES_WITH_PERIOD.includes(type) && period > 1) {
+        const items = [item];
+        const nativeFio = prices.nativeFio.renewDomain || costNativeFio;
+        for (let i = 1; i < period; i++) {
+          items.push({
+            action: ACTIONS.renewFioDomain,
+            address,
+            domain,
+            nativeFio: `${nativeFio || 0}`,
+            price: convertFioPrices(nativeFio || 0, roe).usdc,
+            priceCurrency: CURRENCY_CODES.USDC,
+            data,
+          });
         }
+        return items;
+      }
 
-        const item = {
-          action: getActionByCartItem(type, address),
-          address,
-          domain,
-          nativeFio: `${costNativeFio || 0}`,
-          price: convertFioPrices(costNativeFio || 0, roe).usdc,
-          priceCurrency: CURRENCY_CODES.USDC,
-          data,
-        };
-        if (CART_ITEM_TYPES_WITH_PERIOD.includes(type) && period > 1) {
-          const items = [item];
-          const nativeFio = prices.nativeFio.renewDomain || costNativeFio;
-          for (let i = 1; i < period; i++) {
-            items.push({
-              action: ACTIONS.renewFioDomain,
-              address,
-              domain,
-              nativeFio: `${nativeFio || 0}`,
-              price: convertFioPrices(nativeFio || 0, roe).usdc,
-              priceCurrency: CURRENCY_CODES.USDC,
-              data,
-            });
-          }
-          return items;
-        }
-
-        return item;
-      },
-    )
+      return item;
+    })
     .flat();
 };
 
@@ -339,7 +358,11 @@ export const totalCost = (
 } => {
   if (
     cart.length === 1 &&
-    cart.some(item => !item.costNativeFio && !!item.address)
+    cart.some(
+      item =>
+        (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
+        !!item.address,
+    )
   )
     return { costFree: 'FREE' };
 
@@ -349,9 +372,12 @@ export const totalCost = (
         .filter(item => item.costNativeFio)
         .reduce<Record<string, number>>((acc, item) => {
           if (!acc.costNativeFio) acc.costNativeFio = 0;
-          const nativeFio = new MathOp(item.costNativeFio || 0)
-            .mul(item.period || 1)
-            .toNumber();
+          const nativeFio =
+            item.domainType === DOMAIN_TYPE.FREE
+              ? 0
+              : new MathOp(item.costNativeFio || 0)
+                  .mul(item.period || 1)
+                  .toNumber();
           return {
             costNativeFio: new MathOp(acc.costNativeFio)
               .add(nativeFio)

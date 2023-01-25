@@ -1,6 +1,6 @@
 import isEmpty from 'lodash/isEmpty';
+import { allRules, validate } from '@fioprotocol/fiosdk/lib/utils/validation';
 
-import { ADDRESS_REGEXP } from '../../constants/regExps';
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
 import apis from '../../api/index';
@@ -58,11 +58,7 @@ const verifyAddress = async (props: DefaultValidationProps) => {
 
   if (address && domain) {
     try {
-      if (options.length > 0 && options.every(option => option !== domain)) {
-        fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
-      } else {
-        fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
-      }
+      fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
       const isAvail = await apis.fio.availCheck(setFioName(address, domain));
       if (isAvail && isAvail.is_registered === 1) {
         errors.address = 'This FIO Crypto Handle is already registered.';
@@ -119,7 +115,11 @@ export const addressValidation = async (
     errors.domain = 'Domain Field Should Be Filled';
   }
 
-  if (address && !ADDRESS_REGEXP.test(address)) {
+  const addressValidation = validate(
+    { fioAddress: `${address}@${domain}` },
+    { fioAddress: allRules.fioAddress },
+  );
+  if (!addressValidation.isValid) {
     errors.address =
       'FIO Crypto Handle only allows letters, numbers and dash in the middle';
   }
@@ -127,7 +127,11 @@ export const addressValidation = async (
   if (!domain && modified.domain) {
     errors.domain = 'Select Domain Please';
   }
-  if (!ADDRESS_REGEXP.test(domain)) {
+  const domainValidation = validate(
+    { fioDomain: domain },
+    { fioDomain: allRules.fioDomain },
+  );
+  if (!domainValidation.isValid) {
     errors.domain =
       'Domain name only allows letters, numbers and dash in the middle';
   }
@@ -174,7 +178,11 @@ export const domainValidation = (props: DefaultValidationProps): void => {
   //   errors.domain = 'Domain Field Should Be Filled';
   // }
 
-  if (!ADDRESS_REGEXP.test(domain)) {
+  const validation = validate(
+    { fioDomain: domain },
+    { fioDomain: allRules.fioDomain },
+  );
+  if (!validation.isValid) {
     errors.domain =
       'Domain name only allows letters, numbers and dash in the middle';
   }

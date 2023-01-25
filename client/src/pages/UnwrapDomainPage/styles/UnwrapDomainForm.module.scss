@@ -6,7 +6,7 @@
   .transactionTitle {
     font-size: 0.875em;
     margin-bottom: 1rem;
-    color: $dark-jungle-green;
+    color: $baltic-sea;
     align-self: flex-start;
     @include sf-pro-display-medium;
   }
@@ -24,10 +24,10 @@
   width: 100%;
   font-size: 0.875em;;
   margin: 10px 20px 10px 40px;
-  color: $black;
+  color: $baltic-sea;
 
   span {
-    color: $dark-jungle-green;
+    color: $baltic-sea;
   }
 }
 
@@ -40,7 +40,7 @@
   margin-left: 10px;
   margin-bottom: 20px;
   width: 100%;
-  color: $dark-jungle-green;
+  color: $baltic-sea;
 
   span {
     @include sf-pro-display-medium;

@@ -68,7 +68,7 @@
         font-size: 24px;
         cursor: pointer;
         transition: 0.2s all;
-    
+
         &:active {
           transform: scale(0.8);
           /* Scaling button to 0.98 to its original size */
@@ -91,8 +91,9 @@
 .actionButton {
   width: 100%;
   min-width: 144px;
-  background-color: $violet;
-  border-radius: 7px;
+  background-color: $light-indigo;
+  border-color: $light-indigo;
+  border-radius: 100px;
   text-align: left;
   flex-direction: row;
   display: flex;
@@ -101,6 +102,11 @@
   min-height: 36px;
   @include sf-pro-display-thin;
   font-size: 13px;
+
+  &:hover {
+    background-color: $iris;
+    border-color: $iris;
+  }
 }
 
 @include md {
@@ -109,8 +115,15 @@
 
     .actionBadgeContainer {
       width: 100%;
-      max-width: 335px;
       margin: 0 0 30px;
+
+      > div {
+        a {
+          button {
+            min-width: auto !important;
+          }
+        }
+      }
     }
   }
 }

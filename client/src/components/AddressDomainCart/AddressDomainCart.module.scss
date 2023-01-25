@@ -11,6 +11,7 @@
     padding: 0;
     margin: 0 0 0 1.25rem;
     @include sf-pro-display-medium;
+    color: $black;
   }
 }
 
@@ -30,8 +31,9 @@
 .button {
   width: 100%;
   margin-top: 1.25rem;
-  background-color: $violet;
-  border-radius: 7px;
+  background-color: $light-indigo;
+  border-color: $light-indigo;
+  border-radius: 100px;
   text-align: left;
   flex-direction: row;
   display: flex;
@@ -39,14 +41,19 @@
   min-height: 36px;
   @include sf-pro-display-thin;
 
+  &:hover {
+    background-color: $iris;
+    border-color: $iris;
+  }
+
   .cartIcon {
     font-size: 1.25em;
-    line-height: 0,9375em;
+    line-height: 0.9375em;
   }
 
   p {
-    font-size: 0,8125em;
-    line-height: 0,9375em;
+    font-size: 0.8125em;
+    line-height: 0.9375em;
     margin-bottom: 0;
     margin-left: 10px;
   }
@@ -87,7 +94,7 @@
     }
 
     .text {
-      font-size: 0,8125em;
+      font-size: 0.8125em;
     }
   }
 }

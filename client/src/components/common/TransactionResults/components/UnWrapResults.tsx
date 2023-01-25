@@ -124,13 +124,13 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
       <Badge show={!!transaction_id} type={BADGE_TYPES.WHITE}>
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
           <p className={classes.title}>ID</p>
-          <p className={classnames(classes.item, classes.isBlue)}>
+          <p className={classnames(classes.item, classes.isIndigo)}>
             <a
               href={`${
                 isTokens
                   ? process.env.REACT_APP_ETH_HISTORY_URL
                   : process.env.REACT_APP_POLYGON_HISTORY_URL
-              }${transaction_id}`}
+              }${transaction_id as string}`}
               target="_blank"
               rel="noreferrer"
             >

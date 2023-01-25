@@ -3,17 +3,19 @@
 @import '../../assets/styles/mediaQueriesMixings.scss';
 
 .signInCallToAction {
+  margin: 20px 0 0;
   @include sf-pro-display-regular;
   font-size: 14px;
   padding: 20px 40px;
-  background-color: $badge-background;
-  border-radius: 10px;
+  background-color: transparent;
+  color: $white;
   max-width: 75%;
   letter-spacing: 0.075em;
 
   button {
     font-size: 12px;
     letter-spacing: 0.05em;
+    border-radius: 100px;
   }
 }
 

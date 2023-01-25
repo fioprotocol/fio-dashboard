@@ -26,7 +26,6 @@ import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
 
 import useEffectOnce from '../../hooks/general';
-import { useIsAdminRoute } from '../../hooks/admin';
 import { getObjKeyByValue } from '../../utils';
 import { useGTMGlobalTags } from '../../hooks/googleTagManager';
 
@@ -39,8 +38,6 @@ type Props = {
   showLogin: boolean;
   showRecovery: boolean;
   edgeContextSet: boolean;
-  isAdminAuthenticated: boolean;
-  loadAdminProfile: () => void;
   loadProfile: () => void;
   edgeContextInit: () => void;
   isContainedFlow: boolean;
@@ -57,31 +54,24 @@ const MainLayout: React.FC<Props> = props => {
     isActiveUser,
     showLogin,
     showRecovery,
-    isAdminAuthenticated,
-    loadAdminProfile,
     loadProfile,
     edgeContextInit,
     isContainedFlow,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
-  const isAdminRoute = useIsAdminRoute();
   const isConfirmEmailRoute = [
     ROUTES.CONFIRM_EMAIL,
     ROUTES.CONFIRM_EMAIL_RESULT,
   ].includes(pathname);
   const routeName = getObjKeyByValue(ROUTES, pathname);
 
-  useGTMGlobalTags({ disableLoading: isAdminRoute });
+  useGTMGlobalTags();
 
   useEffectOnce(() => {
     edgeContextInit();
-    if (isAdminRoute) {
-      loadAdminProfile();
-    } else {
-      loadProfile();
-    }
-  }, [edgeContextInit, loadAdminProfile, loadProfile, isAdminRoute]);
+    loadProfile();
+  }, [edgeContextInit, loadProfile]);
 
   const loginFormModalRender = () => showLogin && <LoginForm />;
   const recoveryFormModalRender = () =>
@@ -96,14 +86,14 @@ const MainLayout: React.FC<Props> = props => {
   return (
     <MainLayoutContainer>
       {routeName && <PageTitle link={LINKS[routeName]} />}
-      <MainHeader isAdminAuthenticated={isAdminAuthenticated} />
+      <MainHeader />
       <AutoLogout />
       <Ref />
       <Roe />
       <ContainedFlow />
       {isAuthenticated && <WalletsDataFlow />}
       {isAuthenticated && <TxHistoryService />}
-      {(isAuthenticated || isAdminAuthenticated) && isDesktop && <Navigation />}
+      {isAuthenticated && isDesktop && <Navigation />}
       {(!isHomePage || (isAuthenticated && !isContainedFlow)) && (
         <Notifications />
       )}

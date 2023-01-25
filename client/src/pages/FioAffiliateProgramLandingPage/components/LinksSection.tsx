@@ -61,7 +61,7 @@ export const LinksSection: React.FC<CommonComponentProps & Props> = props => {
         {!isAuthenticated && (
           <Button
             variant="outline-primary"
-            className={classnames(classes.button, 'text-white')}
+            className={classnames(classes.button, classes.outlineButton)}
             onClick={showLogin}
           >
             Sign In & Activate

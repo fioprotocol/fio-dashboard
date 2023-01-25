@@ -3,10 +3,7 @@ import { Field, Form } from 'react-final-form';
 
 import SubmitButton from '../../../components/common/SubmitButton/SubmitButton';
 
-import TextInput, {
-  INPUT_COLOR_SCHEMA,
-  INPUT_UI_STYLES,
-} from '../../Input/TextInput';
+import TextInput, { INPUT_COLOR_SCHEMA } from '../../Input/TextInput';
 
 import { DOMAIN } from '../../../constants/common';
 
@@ -27,18 +24,18 @@ export const FioDomainForm: React.FC<Props> = props => {
           <Field
             component={TextInput}
             name={DOMAIN}
-            placeholder="Find your domain"
+            placeholder="Find domain"
             lowerCased
             hideError="true"
-            colorSchema={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
-            uiType={INPUT_UI_STYLES.BLACK_WHITE}
+            colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
             type="text"
           />
           <div className={classes.actionButton}>
             <SubmitButton
-              text="GET MY DOMAIN"
-              hasLowHeight={true}
-              hasSmallText={true}
+              text="GET IT"
+              hasLowHeight
+              hasSmallText
+              isWhiteBordered
             />
           </div>
         </form>

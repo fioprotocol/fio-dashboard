@@ -2,7 +2,8 @@ import { combineReducers } from 'redux';
 
 import * as actions from './actions';
 
-import { Domain, Prices } from '../../types';
+import { Prices } from '../../types';
+import { DomainsResponse } from '../../api/responses';
 
 const PRICES_DEFAULT: Prices = {
   fio: { address: 0, domain: 0 },
@@ -63,10 +64,10 @@ export default combineReducers({
         return state;
     }
   },
-  domains(state: Domain[] = [], action) {
+  domains(state: DomainsResponse[] = [], action) {
     switch (action.type) {
       case actions.DOMAINS_SUCCESS:
-        return action.data.domains;
+        return action.data;
       default:
         return state;
     }

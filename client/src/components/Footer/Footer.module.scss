@@ -1,7 +1,7 @@
 @import '../../assets/styles/colors.scss';
 
 .footer {
-  background: $footer-background;
+  background: $baltic-sea;
   height: 260px;
   padding: 5px 3%;
   flex-shrink: 0;
@@ -14,7 +14,7 @@
       margin-top: 60px;
       width: 76px;
       min-height: 36px;
-      background-image: url("../../assets/images/fiologo.svg");
+      background-image: url("../../assets/images/fio-logo-white-text.svg");
       background-size: 100%;
       background-repeat: no-repeat;
       background-position: left;

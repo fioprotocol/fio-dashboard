@@ -30,4 +30,8 @@
       margin-top: 0;
     }
   }
+
+  @include md {
+    margin-top: 30px;
+  }
 }

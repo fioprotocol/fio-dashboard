@@ -8,13 +8,13 @@ $tabMargin: 40px;
   display: block;
   width: 100%;
   border-radius: 7px;
-  background-color: $black !important;
+  background-color: $baltic-sea !important;
   color: $white !important;
   margin-bottom: 30px;
   overflow: hidden;
 
   .dark {
-    background-color: $black !important;
+    background-color: $baltic-sea !important;
     color: $white !important;
   }
 }
@@ -63,7 +63,7 @@ $tabMargin: 40px;
   color: $gray-main;
 
   &.blackLight, &.blackWhite {
-    color: $dark-jungle-green;
+    color: $baltic-sea;
   }
 
   &.withBottomMargin {
@@ -78,10 +78,10 @@ $tabMargin: 40px;
 .additionalSubInfo {
   font-size: 0.875em;;
   margin: 10px 20px;
-  color: $black;
+  color: $baltic-sea;
 
   span {
-    color: $dark-jungle-green;
+    color: $baltic-sea;
   }
 }
 
@@ -92,8 +92,8 @@ $tabMargin: 40px;
     align-items: center;
     margin-left: 5px;
     cursor: pointer;
-    width: 40px !important;
-    height: 35px!important;
+    width: 55px !important;
+    height: 35px !important;
 
     button {
       height: 100%;
@@ -101,6 +101,7 @@ $tabMargin: 40px;
       margin: 0;
       padding: 0;
       font-size: 14px;
+      border-radius: 100px;
 
       &:focus {
         outline: none !important;
@@ -303,7 +304,7 @@ $tabMargin: 40px;
 .labelTitle {
   font-size: 0.875em;
   margin-bottom: 14px;
-  color: $dark-jungle-green;
+  color: $baltic-sea;
   align-self: flex-start;
   @include sf-pro-display-medium;
 }
@@ -319,7 +320,7 @@ $tabMargin: 40px;
   width: 100%;
   color: white;
   border-radius: 7px;
-  background-color: $black;
+  background-color: $baltic-sea;
 }
 
 .warningMessage {

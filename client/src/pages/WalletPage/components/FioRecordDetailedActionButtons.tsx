@@ -77,7 +77,7 @@ const FioRecordDetailedActionButtons: React.FC<Props &
         onClick={onEnterPaymentDetails}
         withBottomMargin={true}
       />
-      <CancelButton text="Reject" onClick={onRejectClick} isBlue={true} />
+      <CancelButton text="Reject" onClick={onRejectClick} isIndigo />
     </div>
   );
 };

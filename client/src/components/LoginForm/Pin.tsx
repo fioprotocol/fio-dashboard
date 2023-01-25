@@ -87,8 +87,7 @@ const Pin: React.FC<Props> = props => {
       <div className={classes.box}>
         <div className="mt-4">
           <FormHeader
-            title="Sign in with"
-            titleBluePart="PIN"
+            title="Sign in with PIN"
             subtitle="Please enter your 6 digit PIN to sign in"
           />
           <PinForm

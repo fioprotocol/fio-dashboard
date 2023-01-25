@@ -1,4 +1,5 @@
 import Sequelize from 'sequelize';
+import uniqBy from 'lodash/uniqBy';
 
 import Base from './Base';
 
@@ -66,7 +67,10 @@ export class WrapStatusEthUnwrapLogs extends Base {
         LIMIT ${limit} OFFSET ${offset}
       `);
 
-    return actions;
+    return actions.map(action => ({
+      ...action,
+      oravotes: uniqBy(action.oravotes, 'id'),
+    }));
   }
 
   static async addLogs(data) {

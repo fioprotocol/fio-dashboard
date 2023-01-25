@@ -39,7 +39,7 @@
   display: grid;
   grid-template-columns: 115px auto;
   width: 100%;
-  color: $black;
+  color: $baltic-sea;
   margin-left: 0 !important;
 
   .name {
@@ -67,7 +67,7 @@
   margin: 2.5rem auto 0;
   width: 100%;
   max-width: 335px;
-  border-radius: 7px;
+  border-radius: 100px;
   height: 54px;
   @include sf-pro-display-medium;
 }

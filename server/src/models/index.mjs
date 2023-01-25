@@ -39,4 +39,7 @@ export const {
   WrapStatusFioUnwrapTokensOravotes,
   WrapStatusEthOraclesConfirmationsLogs,
   WrapStatusPolygonOraclesConfirmationsLogs,
+  Domain,
+  SearchTerm,
+  Username,
 } = db.models;

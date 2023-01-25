@@ -45,6 +45,7 @@ type Props = {
   hasThinText?: boolean;
   showPreview?: boolean;
   showTitle?: boolean;
+  wrapperClasses?: string;
 };
 
 const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
@@ -75,6 +76,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     hasThinText,
     showPreview = true,
     showTitle = false,
+    wrapperClasses = '',
     ...rest
   } = props;
   const {
@@ -300,7 +302,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
 
   if (type === 'checkbox')
     return (
-      <label className={classes.checkboxContainer}>
+      <label className={classnames(classes.checkboxContainer, wrapperClasses)}>
         <input disabled={disabled} {...rest} {...input} />
         <FontAwesomeIcon
           icon="check-square"

@@ -5,6 +5,7 @@ import { User, Order, OrderItem, Notification, Var } from '../models/index.mjs';
 import CommonJob from './job.mjs';
 
 import emailSender from '../services/emailSender.mjs';
+import marketingMailchimp from '../external/marketing-mailchimp';
 import { templates } from '../emails/emailTemplate.mjs';
 import sendEmailSenderErrorNotification from '../services/fallback-email-sender-error-email.mjs';
 
@@ -22,6 +23,7 @@ const CONTENT_TYPE_EMAIL_TEMPLATE_MAP = {
   [Notification.CONTENT_TYPE.LOW_BUNDLE_TX]: templates.lowBundleCount,
   [Notification.CONTENT_TYPE.PURCHASE_CONFIRMATION]: templates.purchaseConfirmation,
 };
+const OPT_IN_STATUS_SYNCED = 'OPT_IN_STATUS_SYNCED';
 
 class EmailsJob extends CommonJob {
   constructor() {
@@ -207,6 +209,24 @@ class EmailsJob extends CommonJob {
         await sendEmailSenderErrorNotification();
       }
     };
+    const checkUserOptInStatus = async () => {
+      const optInStatusSynced = await Var.getByKey(OPT_IN_STATUS_SYNCED);
+
+      if (optInStatusSynced) {
+        return;
+      }
+
+      const users = await User.findAll({
+        where: { status: User.STATUS.ACTIVE },
+      });
+
+      for (const user of users) {
+        const isOptIn = await marketingMailchimp.isSubscribed(user.email);
+
+        await User.update({ isOptIn }, { where: { id: user.id } });
+      }
+      await Var.setValue(OPT_IN_STATUS_SYNCED, true);
+    };
 
     const notificationGroups = notifications.reduce((acc, notification) => {
       if (!notification.data || !notification.data.emailData) return acc;
@@ -248,6 +268,7 @@ class EmailsJob extends CommonJob {
 
     await this.executeActions(methods);
     await checkFailedNotifications();
+    await checkUserOptInStatus();
 
     this.finish();
   }

@@ -1,0 +1,137 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  padding: 100px 154px;
+  background: $main-background;
+
+  .wrapper {
+    padding: 30px;
+    background: $gradient-background;
+    border-radius: 24px;
+    cursor: pointer;
+
+    .content {
+      background: $white;
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+
+      .title {
+        margin: 50px 20px;
+        font-size: 3.75rem;
+        line-height: 1;
+        color: $baltic-sea;
+        text-align: center;
+        @include comfortaa-bold;
+      }
+
+      .logoContainer {
+        display: flex;
+        justify-content: center;
+        gap: 60px;
+
+        .monsterImage {
+          max-width: 370px;
+        }
+
+        .logo {
+          max-width: 360px;
+          margin-bottom: 20px;
+        }
+      }
+    }
+  }
+}
+
+@include md {
+  .container {
+    padding: 70px 20px;
+
+    .wrapper {
+      padding: 20px;
+
+      .content {
+        .title {
+          margin: 30px 20px;
+          font-size: 2.5rem;
+        }
+
+        .logoContainer {
+          gap: 40px;
+
+          .monsterImage {
+            max-width: 260px;
+          }
+
+          .logo {
+            max-width: 250px;
+            margin-bottom: 10px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@include tablet {
+  .container {
+    .wrapper {
+      .content {
+        .logoContainer {
+          flex-direction: column;
+          align-items: center;
+          gap: 20px;
+          margin-top: 20px;
+
+          .monsterImage {
+            max-width: 200px;
+            order: 2;
+          }
+
+          .logo {
+            margin-bottom: 0;
+            max-width: 245px;
+            order: 1;
+          }
+        }
+      }
+    }
+  }
+}
+
+@include sm {
+  .container {
+    padding: 70px 20px;
+
+    .wrapper {
+      padding: 20px;
+
+      .content {
+        .title {
+          margin: 30px 20px;
+          font-size: 2rem;
+        }
+
+        .logoContainer {
+          flex-direction: column;
+          align-items: center;
+          gap: 20px;
+          margin-top: 20px;
+
+          .monsterImage {
+            max-width: 200px;
+            order: 2;
+          }
+
+          .logo {
+            margin-bottom: 0;
+            max-width: 245px;
+            order: 1;
+          }
+        }
+      }
+    }
+  }
+}

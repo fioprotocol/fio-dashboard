@@ -9,7 +9,7 @@
 }
 
 .containerLayout {
-  background: $footer-background;
+  background: $shark;
   color: $white;
   display: flex;
   flex-direction: column;
@@ -17,6 +17,7 @@
 
   .title {
     font-size: 3rem;
+    @include comfortaa-bold;
   }
 }
 

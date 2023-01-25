@@ -2,6 +2,7 @@ import { TextDecoder, TextEncoder } from 'text-encoding';
 import { Transactions as FioTransactionsProvider } from '@fioprotocol/fiosdk/lib/transactions/Transactions';
 import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { Api as ChainApi, Numeric as ChainNumeric } from '@fioprotocol/fiojs';
+import { allRules, validate } from '@fioprotocol/fiosdk/lib/utils/validation';
 
 import {
   AbiProvider,
@@ -9,12 +10,19 @@ import {
 } from '@fioprotocol/fiojs/dist/chain-api-interfaces';
 
 import apis from '../api';
-import { sleep } from '../utils';
+import { AdminDomain, UsernameOnDomain } from '../api/responses';
+import { fireAnalyticsEventDebounced } from './analytics';
+import { setFioName, sleep } from '../utils';
 import { log } from '../util/general';
 
-import { FREE_ADDRESS_REGISTER_ERROR, ERROR_TYPES } from '../constants/errors';
-import { FIO_REQUEST_STATUS_TYPES } from '../constants/fio';
-import { CHAIN_CODES } from '../constants/common';
+import {
+  FREE_ADDRESS_REGISTER_ERROR,
+  ERROR_TYPES,
+  NON_VAILD_DOMAIN,
+} from '../constants/errors';
+import { DOMAIN_TYPE, FIO_REQUEST_STATUS_TYPES } from '../constants/fio';
+import { ANALYTICS_EVENT_ACTIONS, CHAIN_CODES } from '../constants/common';
+import { FIO_ADDRESS_DELIMITER } from '../utils';
 import { RegisterAddressError } from './errors';
 
 import {
@@ -23,6 +31,7 @@ import {
   Prices,
   PublicAddressDoublet,
   IncomePrices,
+  CartItem,
 } from '../types';
 import { RawTransaction } from '../api/fio';
 
@@ -51,6 +60,77 @@ export const waitForAddressRegistered = async (
   };
 
   return checkAddressIsRegistered();
+};
+
+export const vaildateFioDomain = (domain: string) => {
+  if (!domain) {
+    return 'Domain Field Should Be Filled';
+  }
+
+  if (domain && domain.length > 62) {
+    return 'Domain name should be less than 62 characters';
+  }
+
+  const domainValidation = validate(
+    { fioDomain: domain },
+    { fioDomain: allRules.fioDomain },
+  );
+
+  if (!domainValidation.isValid) {
+    return NON_VAILD_DOMAIN;
+  }
+};
+
+export const validateFioAddress = async (address: string, domain: string) => {
+  if (!address) {
+    return 'FIO Crypto Handle Field Should Be Filled';
+  }
+
+  if (!domain) {
+    return 'Missing domain';
+  }
+
+  if (address && domain && address.length + domain.length > 63) {
+    return 'FIO Crypto Handle should be less than 63 characters';
+  }
+
+  const addressValidation = validate(
+    { fioAddress: `${address}${FIO_ADDRESS_DELIMITER}${domain}` },
+    { fioAddress: allRules.fioAddress },
+  );
+
+  if (!addressValidation.isValid) {
+    return 'FIO Crypto Handle only allows letters, numbers and dash in the middle';
+  }
+
+  vaildateFioDomain(domain);
+
+  return null;
+};
+
+export const checkAddressOrDomainIsExist = async ({
+  address,
+  domain,
+}: {
+  address?: string;
+  domain: string;
+}) => {
+  if (domain) {
+    try {
+      fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
+      const isAvail = await apis.fio.availCheck(setFioName(address, domain));
+      if (isAvail && isAvail.is_registered === 1) {
+        fireAnalyticsEventDebounced(
+          ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
+        );
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      //
+    }
+  }
 };
 
 export const transformNft = (nfts: NftTokenResponse[]): NFTTokenDoublet[] => {
@@ -126,10 +206,16 @@ export const normalizePublicAddresses = (
 
 export const statusBadgeColours = (
   status: string,
-): { isBlue: boolean; isOrange: boolean; isRose: boolean } => ({
+): {
+  isBlue: boolean;
+  isOrange: boolean;
+  isRose: boolean;
+  isYellowGreen: boolean;
+} => ({
   isBlue: FIO_REQUEST_STATUS_TYPES.PAID === status,
   isOrange: FIO_REQUEST_STATUS_TYPES.REJECTED === status,
   isRose: FIO_REQUEST_STATUS_TYPES.PENDING === status,
+  isYellowGreen: FIO_REQUEST_STATUS_TYPES.CANCELED === status,
 });
 
 export const isFioChain = (chain: string): boolean => chain === CHAIN_CODES.FIO;
@@ -197,3 +283,41 @@ export const serializeTransaction = async (
 
   return '';
 };
+
+export const transformNonPremiumDomains = (
+  domains: Partial<AdminDomain>[],
+  isPremium: boolean,
+  cartItems: CartItem[],
+) =>
+  domains
+    .filter(domain => !domain.isPremium)
+    .map(domain => ({
+      name: domain.name,
+      domainType:
+        isPremium &&
+        !cartItems.filter(
+          cartItem =>
+            cartItem.domain === domain.name &&
+            cartItem.domainType === DOMAIN_TYPE.FREE,
+        ).length
+          ? DOMAIN_TYPE.PREMIUM
+          : DOMAIN_TYPE.FREE,
+      rank: domain.rank || 0,
+      allowFree: true,
+    }));
+
+export const transformPremiumDomains = (domains: Partial<AdminDomain>[]) =>
+  domains
+    .filter(domain => domain.isPremium)
+    .map(domain => ({
+      name: domain.name,
+      domainType: DOMAIN_TYPE.PREMIUM,
+      rank: domain.rank || 0,
+    }));
+
+export const transformCustomDomains = (domains: UsernameOnDomain[]) =>
+  domains.map(customDomain => ({
+    name: customDomain.username,
+    domainType: DOMAIN_TYPE.CUSTOM,
+    rank: customDomain.rank,
+  }));

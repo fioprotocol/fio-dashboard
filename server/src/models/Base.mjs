@@ -1,5 +1,5 @@
 import Sequelize from 'sequelize';
-import _ from 'lodash';
+import pick from 'lodash/pick';
 
 export default class Base extends Sequelize.Model {
   static findOneWhere(where) {
@@ -7,6 +7,6 @@ export default class Base extends Sequelize.Model {
   }
 
   json(fields = this.constructor.attrs()) {
-    return _.pick(this.toJSON(), fields);
+    return pick(this.toJSON(), fields);
   }
 }

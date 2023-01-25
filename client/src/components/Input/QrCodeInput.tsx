@@ -18,7 +18,7 @@ export type QrModalProps = {
 };
 
 type Props = TextInputProps & {
-  isBlue: boolean;
+  isIndigo: boolean;
   renderModalComponent: (props: QrModalProps) => HTMLDivElement;
 };
 
@@ -48,7 +48,7 @@ export const QrCodeInput: React.ForwardRefRenderFunction<
     showErrorBorder,
     isLowHeight,
     renderModalComponent,
-    isBlue = true,
+    isIndigo = true,
     label,
     ...rest
   } = props;
@@ -114,7 +114,7 @@ export const QrCodeInput: React.ForwardRefRenderFunction<
             debounceTimeout={debounceTimeout}
             {...input}
             {...rest}
-            className={classnames(isBlue && classes.blue)}
+            className={classnames(isIndigo && classes.indigo)}
             onChange={e => {
               const currentValue = e.target.value;
               if (lowerCased) return onChange(currentValue.toLowerCase());

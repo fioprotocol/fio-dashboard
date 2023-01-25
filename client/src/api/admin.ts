@@ -1,6 +1,7 @@
 import Base from './base';
 
 import {
+  AdminDefaults,
   AdminFioAccountsProfilesListResponse,
   AdminGeneralCreateResponse,
   AdminOrderItemResponse,
@@ -20,12 +21,14 @@ export default class Admin extends Base {
   adminList(limit: number, offset: number): Promise<AdminUsersListResponse> {
     return this.apiClient.get('admin/list', { limit, offset });
   }
+
   fioAccountsProfilesList(
     limit: number,
     offset: number,
   ): Promise<AdminFioAccountsProfilesListResponse> {
     return this.apiClient.get('admin/accounts/list', { limit, offset });
   }
+
   createFioAccountProfile(data: {
     name: string;
     actor: string;
@@ -33,6 +36,7 @@ export default class Admin extends Base {
   }): Promise<AdminGeneralCreateResponse> {
     return this.apiClient.post(`admin/accounts`, data);
   }
+
   editFioAccountProfile(
     data: {
       name: string;
@@ -43,32 +47,41 @@ export default class Admin extends Base {
   ): Promise<AdminGeneralCreateResponse> {
     return this.apiClient.post(`admin/accounts/${id}`, data);
   }
+
   adminUserProfile(id: string): Promise<AdminUsersListResponse> {
     return this.apiClient.get(`admin/info/${id}`);
   }
+
   ordersList(limit: number, offset: number): Promise<AdminOrdersListResponse> {
     return this.apiClient.get('admin/orders', { limit, offset });
   }
+
   exportOrdersData(): Promise<AdminOrdersListResponse> {
     return this.apiClient.get('admin/orders/export');
   }
+
   search(value: string): Promise<AdminSearchResponse> {
     return this.apiClient.get('admin/search', { name: value });
   }
+
   order(id: string): Promise<AdminOrderItemResponse> {
     return this.apiClient.get(`admin/orders/${id}`);
   }
+
   removeAdmin(adminUserId: string): Promise<RemoveAdminResponse> {
     return this.apiClient.delete(`admin`, { adminUserId });
   }
+
   sendResetAdminPassword(
     adminUserId: string,
   ): Promise<SendResetAdminPasswordResponse> {
     return this.apiClient.post(`admin/${adminUserId}/send-reset-password`, {});
   }
+
   inviteAdmin(email: string): Promise<AdminGeneralCreateResponse> {
     return this.apiClient.post(`admin/invite`, { email });
   }
+
   checkIsAdminInvited({
     email,
     hash,
@@ -81,6 +94,7 @@ export default class Admin extends Base {
       hash,
     });
   }
+
   checkIsAdminPasswordResetSuccess({
     email,
     hash,
@@ -93,15 +107,18 @@ export default class Admin extends Base {
       hash,
     });
   }
+
   partnersList(
     limit: number,
     offset: number,
   ): Promise<AdminPartnersListResponse> {
     return this.apiClient.get('admin/partners/list', { limit, offset });
   }
+
   createPartner(data: RefProfile): Promise<AdminGeneralCreateResponse> {
     return this.apiClient.post(`admin/partners`, data);
   }
+
   editPartner(data: RefProfile): Promise<AdminGeneralCreateResponse> {
     return this.apiClient.post(`admin/partners/${data.id}`, data);
   }
@@ -120,5 +137,13 @@ export default class Admin extends Base {
 
   userDetails(id: string): Promise<UsersDetailsResponse> {
     return this.apiClient.get(`admin/reg-users/${id}`);
+  }
+
+  getDefaults(): Promise<AdminDefaults> {
+    return this.apiClient.get(`admin/defaults`);
+  }
+
+  saveDefaults(data: AdminDefaults): Promise<AdminGeneralCreateResponse> {
+    return this.apiClient.post(`admin/defaults`, { data });
   }
 }

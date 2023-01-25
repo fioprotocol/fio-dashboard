@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
 import Navigation from '../../Navigation';
-import Search from './Search';
 
 import { ROUTES } from '../../../constants/routes';
 
@@ -13,6 +12,7 @@ import classes from '../MainHeader.module.scss';
 
 type ActionButtonsProps = {
   edgeAuthLoading: boolean;
+  hasVioletColor?: boolean;
   profileLoading: boolean;
   isMenuOpen: boolean;
   onlyAuth: boolean;
@@ -29,6 +29,7 @@ export const ActionButtons: React.FC<ActionButtonsProps> = props => {
   const {
     showLogin,
     edgeAuthLoading,
+    hasVioletColor,
     profileLoading,
     isMenuOpen,
     closeMenu,
@@ -45,7 +46,12 @@ export const ActionButtons: React.FC<ActionButtonsProps> = props => {
         <Nav.Link as={Link} to={ROUTES.CREATE_ACCOUNT}>
           <Button
             variant="outline-primary"
-            className={classnames(classes.button, 'text-white', 'mr-3')}
+            className={classnames(
+              classes.button,
+              classes.hasTransparentBackground,
+              hasVioletColor && classes.hasVioletColor,
+              'mr-3',
+            )}
             size="lg"
             onClick={closeMenu}
           >
@@ -120,20 +126,17 @@ export const LoggedActionButtons: React.FC<LoggedActionButtonsProps> = props => 
         <Nav.Link
           as={Link}
           to={ROUTES.SETTINGS}
-          className={classnames(classes.navItem, 'text-white')}
+          className={classes.navItem}
           onClick={closeMenu}
         >
-          <div className={classnames(classes.settings)}>
-            <FontAwesomeIcon
-              icon="cog"
-              className={classnames(classes.settingsIcon)}
-            />
+          <div className={classes.settings}>
+            <FontAwesomeIcon icon="cog" className={classes.settingsIcon} />
           </div>
-          <div className="ml-3">Settings</div>
+          <div className={classnames(classes.settingsText, 'ml-3')}>
+            Settings
+          </div>
         </Nav.Link>
       )}
-
-      <Search />
 
       <Nav.Link href="#" className="pr-0">
         <Button

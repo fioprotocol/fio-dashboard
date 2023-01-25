@@ -11,10 +11,15 @@ import {
   CART_ITEM_TYPES_WITH_PERIOD,
   CURRENCY_CODES,
 } from '../../constants/common';
+import { DOMAIN_TYPE } from '../../constants/fio';
 
 import { getCartItemDescriptor } from '../../util/cart';
 
-import { CartItem as CartItemType, PaymentCurrency } from '../../types';
+import {
+  CartItem as CartItemType,
+  DomainItemType,
+  PaymentCurrency,
+} from '../../types';
 
 import classes from './Cart.module.scss';
 
@@ -26,17 +31,25 @@ type Props = {
   isPeriodEditable?: boolean;
 };
 
-type CartItemProps = {
-  primaryCurrency: PaymentCurrency;
+export type CartItemProps = {
+  primaryCurrency?: PaymentCurrency;
   costFio: string;
   costUsdc: string;
   costNativeFio?: number;
+  domainType?: DomainItemType;
 };
 
-const CartItemPrice = (props: CartItemProps) => {
-  const { costFio, costUsdc, costNativeFio, primaryCurrency } = props;
+export const CartItemPrice = (props: CartItemProps) => {
+  const {
+    costFio,
+    costUsdc,
+    costNativeFio,
+    domainType,
+    primaryCurrency = CURRENCY_CODES.FIO,
+  } = props;
 
-  if (!costNativeFio) return <span className="boldText">FREE</span>;
+  if (!costNativeFio || domainType === DOMAIN_TYPE.FREE)
+    return <span className="boldText">FREE</span>;
 
   if (primaryCurrency === CURRENCY_CODES.FIO)
     return (
@@ -79,6 +92,7 @@ const CartItem: React.FC<Props> = props => {
     hasCustomDomain,
     period,
     type,
+    domainType,
   } = item;
   const shouldShowPeriod =
     isPeriodEditable && CART_ITEM_TYPES_WITH_PERIOD.includes(type);
@@ -131,6 +145,7 @@ const CartItem: React.FC<Props> = props => {
               costFio={costFio}
               costUsdc={costUsdc}
               costNativeFio={costNativeFio}
+              domainType={domainType}
             />
           </p>
           {onDelete && (

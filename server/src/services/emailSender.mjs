@@ -20,6 +20,7 @@ class EmailSender {
     const sendData = {
       ...data,
       mainUrl: config.mainUrl,
+      adminUrl: config.adminUrl,
       supportLink: config.supportLink,
       email,
     };
@@ -50,7 +51,8 @@ class EmailSender {
     try {
       const response = await this.sendMail(mailOptions);
 
-      if (response[0] == null) throw new Error('Email send error');
+      if (response[0] == null)
+        throw new Error('Email send error ' + JSON.stringify(response));
       if (response[0].status !== EMAIL_SENT_STATUS)
         throw new Error(JSON.stringify(response[0]));
 
@@ -105,7 +107,7 @@ class EmailSender {
         return {
           subject: 'FIO Dashboard - please confirm your email',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}confirm-admin-email?${QUERY_PARAMS_NAMES.HASH}=${sendData.hash}&${QUERY_PARAMS_NAMES.EMAIL}=${sendData.email}`,
+            link: `${sendData.adminUrl}confirm-email?${QUERY_PARAMS_NAMES.HASH}=${sendData.hash}&${QUERY_PARAMS_NAMES.EMAIL}=${sendData.email}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),
@@ -114,7 +116,7 @@ class EmailSender {
         return {
           subject: 'FIO Dashboard - password reset',
           body: EmailTemplate.get(templateName, {
-            link: `${sendData.mainUrl}reset-admin-password?${QUERY_PARAMS_NAMES.HASH}=${sendData.hash}&${QUERY_PARAMS_NAMES.EMAIL}=${sendData.email}`,
+            link: `${sendData.adminUrl}reset-password?${QUERY_PARAMS_NAMES.HASH}=${sendData.hash}&${QUERY_PARAMS_NAMES.EMAIL}=${sendData.email}`,
             ...sendData,
           }),
           images: EmailTemplate.getInlineImages(templateName),

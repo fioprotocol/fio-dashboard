@@ -1,15 +1,13 @@
 import React from 'react';
 
-import RegularNav from './RegularNav';
-import LoggedNav from './LoggedNav';
+import { LoggedNav } from './LoggedNav';
+import { RegularNav } from './RegularNav';
 
 import { NavigationProps } from '../types';
 
 export const Navigation: React.FC<NavigationProps> | null = props => {
   const {
-    isAdminRoute,
     isAuthenticated,
-    isAdminAuthenticated,
     isMenuOpen,
     isContainedFlow,
     isNotActiveUser,
@@ -20,40 +18,32 @@ export const Navigation: React.FC<NavigationProps> | null = props => {
     logout,
   } = props;
 
-  if (isAuthenticated || isAdminAuthenticated)
+  if (isAuthenticated)
     return (
       <LoggedNav
         isMenuOpen={isMenuOpen}
         toggleMenuOpen={toggleMenuOpen}
         closeMenu={closeMenu}
         showLogin={showLogin}
-        hideCart={
-          (isContainedFlow && !!fioAddresses.length) ||
-          isNotActiveUser ||
-          isAdminRoute
-        }
-        hideOrder={isContainedFlow || isNotActiveUser || isAdminRoute}
-        hideNotifications={isContainedFlow || isNotActiveUser || isAdminRoute}
+        hideCart={(isContainedFlow && !!fioAddresses.length) || isNotActiveUser}
+        hideOrder={isContainedFlow || isNotActiveUser}
+        hideNotifications={isContainedFlow || isNotActiveUser}
         onlyAuth={isContainedFlow || isNotActiveUser}
-        hideSettings={isAdminRoute}
         showSiteLink={isContainedFlow}
         {...props}
         logout={logout}
       />
     );
 
-  if (!isAdminRoute)
-    return (
-      <RegularNav
-        toggleMenuOpen={toggleMenuOpen}
-        isMenuOpen={isMenuOpen}
-        closeMenu={closeMenu}
-        showLogin={showLogin}
-        onlyAuth={isContainedFlow || isNotActiveUser}
-        hideCart={isContainedFlow}
-        {...props}
-      />
-    );
-
-  return null;
+  return (
+    <RegularNav
+      toggleMenuOpen={toggleMenuOpen}
+      isMenuOpen={isMenuOpen}
+      closeMenu={closeMenu}
+      showLogin={showLogin}
+      onlyAuth={isContainedFlow || isNotActiveUser}
+      hideCart={isContainedFlow}
+      {...props}
+    />
+  );
 };

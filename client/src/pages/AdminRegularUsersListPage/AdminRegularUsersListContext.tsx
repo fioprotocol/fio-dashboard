@@ -14,7 +14,7 @@ import usePagination from '../../hooks/usePagination';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
-import { ROUTES } from '../../constants/routes';
+import { ADMIN_ROUTES } from '../../constants/routes';
 
 import { User } from '../../types';
 import { log } from '../../util/general';
@@ -48,7 +48,7 @@ export const useContext = (): UseContextProps => {
   const onClick = useCallback(
     (regularUserEmail: string) => {
       history.push({
-        pathname: ROUTES.ADMIN_REGULAR_USER_DETAIS,
+        pathname: ADMIN_ROUTES.ADMIN_REGULAR_USER_DETAILS,
         search: `${QUERY_PARAMS_NAMES.USER_ID}=${regularUserEmail}`,
       });
     },

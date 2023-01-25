@@ -7,7 +7,7 @@ type Props = {
   onClick: () => void;
   disabled?: boolean;
   isBlack?: boolean;
-  isBlue?: boolean;
+  isIndigo?: boolean;
   withTopMargin?: boolean;
   withBottomMargin?: boolean;
   isThin?: boolean;
@@ -19,7 +19,7 @@ const CancelButton: React.FC<Props> = props => {
     onClick,
     disabled,
     isBlack,
-    isBlue,
+    isIndigo,
     withTopMargin,
     withBottomMargin,
     isThin,
@@ -32,7 +32,7 @@ const CancelButton: React.FC<Props> = props => {
         classes.button,
         isThin && classes.thin,
         isBlack && classes.black,
-        isBlue && classes.blue,
+        isIndigo && classes.indigo,
         withTopMargin && classes.topMargin,
         withBottomMargin && classes.bottomMargin,
       )}

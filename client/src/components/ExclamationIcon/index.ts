@@ -1,0 +1,1 @@
+export { ExclamationIcon } from './ExclamationIcon';

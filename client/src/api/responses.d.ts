@@ -48,6 +48,7 @@ export type AuthDeleteNewDeviceRequestResponse =
   | { success: true }
   | { success: false; message: 'Not Found' };
 export type AuthUpdateNewDeviceResponse = null;
+export type AuthProfileSendEvent = { success: true };
 export type AuthCheckRejectedResponse = boolean;
 export type AdminAuthLoginResponse = { jwt: string };
 export type AdminResetPasswordResponse =
@@ -172,3 +173,57 @@ export type ApisResponse = AccountGetWalletsResponse &
   PaymentCreateResponse &
   ChainCodesListResults &
   UserOrdersListResponse;
+
+export type Rankable = {
+  rank: number;
+};
+
+export type AdminDomain = Rankable & {
+  id?: string | number;
+  name: string;
+  isPremium: boolean;
+  isDashboardDomain: boolean;
+};
+
+export type SearchTerm = Rankable & {
+  id?: string | number;
+  term: string;
+  isPrefix: boolean;
+};
+
+export type UsernameOnDomain = Rankable & {
+  id?: string | number;
+  username: string;
+};
+
+export type DomainsResponse = {
+  availableDomains: AdminDomain[];
+  dashboardDomains: AdminDomain[];
+  usernamesOnCustomDomains: UsernameOnDomain[];
+};
+
+export type SearchPrefixesAndPostfixes = {
+  searchPrefixes: SearchTerm[];
+  searchPostfixes: SearchTerm[];
+};
+
+export type AdminDefaults = SearchPrefixesAndPostfixes & DomainsResponse;
+
+export type AdminDefaultsRequest = AdminDefaults & {
+  availableDomainsToDelete?: string[];
+  dashboardDomainsToDelete?: string[];
+  searchPostfixesToDelete?: string[];
+  searchPrefixesToDelete?: string[];
+  usernamesOnCustomDomainsToDelete?: string[];
+};
+
+export type DefaultsAvailableDomainsResponse = AdminDomain[];
+
+export type FioDomainDoubletResponse = {
+  id: string;
+  name: string;
+  domainhash: string;
+  account: string;
+  is_public: number;
+  expiration: number;
+};

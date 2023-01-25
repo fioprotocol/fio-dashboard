@@ -51,7 +51,7 @@
 .actionButton {
   width: 100%;
   min-width: 144px;
-  background-color: $violet;
+  background-color: $light-indigo;
   border-radius: 7px;
   text-align: left;
   flex-direction: row;
@@ -63,18 +63,23 @@
   font-size: 13px;
 }
 
-@include sm {
-  .totalBalanceContainer {
-    margin: 0 20px;
-  }
+.totalBalanceContainer {
+  margin: 0 20px 30px;
 }
 
 @include md {
   .container {
     padding: 30px 20px;
-  }
-  .totalBalanceContainer {
-    margin: 0 20px;
+
+    .totalBalanceContainer {
+      > div {
+        a {
+          button {
+            min-width: auto !important;
+          }
+        }
+      }
+    }
   }
 }
 
@@ -92,7 +97,6 @@
   .totalBalanceContainer {
     width: 100%;
     max-width: 365px;
-    margin: 0 20px;
   }
 }
 

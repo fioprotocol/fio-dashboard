@@ -41,6 +41,7 @@ export class ReferrerProfile extends Base {
         // Possible settings keys:
         // settings: {
         //   domains: ['refprofile'],
+        //   premiumDomains: ['refprofile'],
         //   allowCustomDomain: false,
         //   actions: {"SIGNNFT": {title: '', subtitle: ''}, "REG": {title: '', subtitle: ''}},
         //   img: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA3A/wD/A...',

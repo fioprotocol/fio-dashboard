@@ -6,7 +6,7 @@ import SubmitButton from '../../components/common/SubmitButton/SubmitButton';
 import Input from '../../components/Input/Input';
 
 import { formValidation } from './validation';
-import { ROUTES } from '../../constants/routes';
+import { ADMIN_ROUTES } from '../../constants/routes';
 import { AdminAuthResponse } from '../../types';
 
 import classes from './AdminLoginPage.module.scss';
@@ -26,7 +26,7 @@ type Props = {
 const AdminLogin: React.FC<Props> = props => {
   const { login, loading, isAdminAuthenticated } = props;
 
-  if (isAdminAuthenticated) return <Redirect to={ROUTES.ADMIN_HOME} />;
+  if (isAdminAuthenticated) return <Redirect to={ADMIN_ROUTES.ADMIN_HOME} />;
 
   const onSubmit = (values: FormValues) => {
     return login(values).then(res => {

@@ -22,8 +22,10 @@ export type Api = {
   fio: Fio;
 };
 
-export default {
+const ApiObj = {
   fioReg: new FioReg(apiClient),
   fio: new Fio(),
   client: apiClient,
 };
+
+export default ApiObj;

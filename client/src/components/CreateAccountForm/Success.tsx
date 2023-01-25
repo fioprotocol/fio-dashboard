@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 
-import { sleep } from '../../utils';
+import FioLoader from '../common/FioLoader/FioLoader';
 
 import FormHeader from '../FormHeader/FormHeader';
-import classes from './CreateAccountForm.module.scss';
 
-import logoAnimation from './logo-animation.json';
+import { sleep } from '../../utils';
+
+import classes from './CreateAccountForm.module.scss';
 
 const MIN_WAIT_TIME = 3000;
 
@@ -39,13 +40,7 @@ export default class Success extends Component<Props> {
       <FormHeader
         header={
           <div className={classes.logoAnimation}>
-            <lottie-player
-              id="logo-loading"
-              autoplay
-              loop
-              mode="normal"
-              src={JSON.stringify(logoAnimation)}
-            ></lottie-player>
+            <FioLoader />
           </div>
         }
         title="Great job!"

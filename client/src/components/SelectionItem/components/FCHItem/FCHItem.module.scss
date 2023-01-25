@@ -1,0 +1,23 @@
+@import '../../../../assets/styles/fontMixins.scss';
+
+.container {
+  font-size: 0.9375em;
+  margin: 0;
+  word-break: break-all;
+
+  &.hasSmallFont {
+    font-size: 0.8125em;
+  }
+
+  &.hasCenteredText {
+    text-align: center;
+  }
+
+  .address {
+    @include proxima-nova-thin;
+  }
+
+  .delimiter, .domain {
+    @include proxima-nova-bold;
+  }
+}

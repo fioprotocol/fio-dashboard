@@ -17,7 +17,6 @@ import PageTitle from '../PageTitle/PageTitle';
 
 import { PIN_LENGTH } from '../../constants/form';
 import {
-  ANALYTICS_EVENT_ACTIONS,
   DEFAULT_WALLET_OPTIONS,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
@@ -34,7 +33,6 @@ import {
 } from './middleware';
 import { emailToUsername, getWalletKeys, setDataMutator } from '../../utils';
 import { emailAvailable } from '../../api/middleware/auth';
-import { fireAnalyticsEvent } from '../../util/analytics';
 
 import {
   EmailConfirmationStateData,
@@ -93,7 +91,14 @@ type State = {
 
 type OwnProps = {
   resetSuccessState: () => void;
-  makeNonce: (username: string, keys: WalletKeysObj) => void;
+  makeNonce: (
+    username: string,
+    keys: WalletKeysObj,
+    otpKey?: string,
+    voucherId?: string,
+    isPinLogin?: boolean,
+    isSignUp?: boolean,
+  ) => void;
   showLoginModal: () => void;
   onSubmit: (params: {
     username: string;
@@ -160,8 +165,14 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       values: { email },
     } = this.form ? this.form.getState() : { values: { email: undefined } };
 
-    fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SIGN_UP);
-    this.props.makeNonce(emailToUsername(email), this.state.keys);
+    this.props.makeNonce(
+      emailToUsername(email),
+      this.state.keys,
+      '',
+      '',
+      false,
+      true,
+    );
   };
 
   setEmailError = (emailError: string) => {

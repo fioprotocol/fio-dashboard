@@ -9,7 +9,11 @@
   position: relative;
   border-radius: 12px;
   width: 100%;
-  color: $dark-jungle-green;
+  color: $black;
+
+  &.hasDesertStormBackground {
+    background-color: $desert-storm;
+  }
 
   .actionContainer {
     .withClose {
@@ -31,7 +35,7 @@
         margin-top: 1rem;
         margin-bottom: 0.5rem;
         font-size: 1.375em;
-        color: $dark-jungle-green;
+        color: $black;
         @include proxima-nova-bold;
       }
     }
@@ -87,7 +91,7 @@
       margin: 0 auto;
     }
     &.info {
-      background-color: $blue-dark;
+      background-color: $light-indigo;
     }
   }
 }

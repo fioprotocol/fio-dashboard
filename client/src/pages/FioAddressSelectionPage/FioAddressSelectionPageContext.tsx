@@ -1,0 +1,428 @@
+import { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { refreshFioNames } from '../../redux/fio/actions';
+import { getDomains } from '../../redux/registrations/actions';
+
+import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
+import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
+import {
+  allDomains as allDomainsSelector,
+  loading as domainsLoaingSelector,
+  prices as pricesSelector,
+  roe as roeSelector,
+} from '../../redux/registrations/selectors';
+import { hasFreeAddress as hasFreeAddressSelector } from '../../redux/profile/selectors';
+
+import { FIO_ADDRESS_ALREADY_EXISTS } from '../../constants/errors';
+import { DOMAIN_TYPE } from '../../constants/fio';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_TYPE,
+} from '../../constants/common';
+
+import { addCartItem } from '../../util/cart';
+import {
+  checkAddressOrDomainIsExist,
+  transformCustomDomains,
+  transformNonPremiumDomains,
+  transformPremiumDomains,
+  validateFioAddress,
+} from '../../util/fio';
+import MathOp from '../../util/math';
+import { convertFioPrices } from '../../util/prices';
+import { setFioName } from '../../utils';
+import { fireAnalyticsEventDebounced } from '../../util/analytics';
+
+import {
+  DomainsArrItemType,
+  SelectedItemProps,
+  UseContextProps,
+} from './types';
+import { AdminDomain } from '../../api/responses';
+import { CartItem, Prices } from '../../types';
+
+const ADDITIONAL_DOMAINS_COUNT_LIMIT = 12;
+const USER_DOMAINS_LIMIT = 3;
+
+const SUGGESTED_TYPE: { FIRST: 'first'; SECOND: 'second'; THIRD: 'third' } = {
+  FIRST: 'first',
+  SECOND: 'second',
+  THIRD: 'third',
+} as const;
+
+const handleFCHItems = async ({
+  domainArr,
+  address,
+  prices,
+  roe,
+  setError,
+}: {
+  domainArr: DomainsArrItemType;
+  address: string;
+  prices: Prices;
+  roe: number;
+  setError: (error: string) => void;
+}) => {
+  const {
+    nativeFio: { address: natvieFioAddressPrice, domain: nativeFioDomainPrice },
+  } = prices;
+
+  fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
+
+  return (
+    await Promise.all(
+      domainArr.map(async domain => {
+        const error = await validateFioAddress(address, domain.name);
+        if (error) {
+          setError(error);
+          return;
+        }
+
+        const isAddressExist = await checkAddressOrDomainIsExist({
+          address,
+          domain: domain.name,
+        });
+
+        if (isAddressExist) {
+          fireAnalyticsEventDebounced(
+            ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
+          );
+        }
+
+        const isCustomDomain = domain.domainType === DOMAIN_TYPE.CUSTOM;
+
+        const totalNativeFio = isCustomDomain
+          ? new MathOp(natvieFioAddressPrice)
+              .add(nativeFioDomainPrice)
+              .toNumber()
+          : natvieFioAddressPrice;
+
+        const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
+
+        return {
+          id: setFioName(address, domain.name),
+          address,
+          domain: domain.name,
+          costFio: fio,
+          costUsdc: usdc,
+          costNativeFio: totalNativeFio,
+          domainType: domain.domainType,
+          isSelected: false,
+          isExist: isAddressExist,
+          period: 1,
+          type: isCustomDomain
+            ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+            : CART_ITEM_TYPE.ADDRESS,
+          allowFree: domain.allowFree,
+          rank: domain.rank || 0,
+        };
+      }),
+    )
+  ).filter(Boolean);
+};
+
+export const useContext = (): UseContextProps => {
+  const allDomains = useSelector(allDomainsSelector);
+  const hasFreeAddress = useSelector(hasFreeAddressSelector);
+  const domainsLoaing = useSelector(domainsLoaingSelector);
+  const fioWallets = useSelector(fioWalletsSelector);
+  const prices = useSelector(pricesSelector);
+  const roe = useSelector(roeSelector);
+  const cartItems = useSelector(cartItemsSelector);
+
+  const dispatch = useDispatch();
+
+  const {
+    userDomains = [],
+    dashboardDomains = [],
+    refProfileDomains = [],
+    usernamesOnCustomDomains = [],
+  } = allDomains;
+
+  const [addressValue, setAddressValue] = useState<string>(null);
+  const [additionalItemsList, setAdditionalItemsList] = useState<
+    SelectedItemProps[] | []
+  >([]);
+  const [suggestedItemsList, setSuggestedItemsList] = useState<
+    SelectedItemProps[] | []
+  >([]);
+  const [usersItemsList, setUsersItemsList] = useState<
+    SelectedItemProps[] | []
+  >([]);
+  const [error, setError] = useState<string>(null);
+  const [loading, toggleLoading] = useState<boolean>(false);
+
+  const cartHasFreeItem = cartItems.some(
+    cartItem => cartItem.domainType === DOMAIN_TYPE.FREE,
+  );
+
+  const publicDomains: Partial<AdminDomain>[] = refProfileDomains.length
+    ? refProfileDomains
+    : dashboardDomains;
+
+  const sortedUserDomains = userDomains.sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+
+  const nonPremiumPublicDomains = transformNonPremiumDomains(
+    publicDomains,
+    hasFreeAddress || cartHasFreeItem,
+    cartItems,
+  )
+    .sort((a, b) => a.rank - b.rank)
+    .map((nonPremiumDomain, i) => ({ ...nonPremiumDomain, rank: i }));
+
+  const premiumPublicDomains = transformPremiumDomains(publicDomains)
+    .sort((a, b) => a.rank - b.rank)
+    .map((premiumDomain, i) => ({ ...premiumDomain, rank: i }));
+
+  const customDomains = transformCustomDomains(usernamesOnCustomDomains).sort(
+    (a, b) => a.rank - b.rank,
+  );
+
+  const userDomainsJSON = JSON.stringify(sortedUserDomains);
+  const nonPremiumPublicDomainsJSON = JSON.stringify(nonPremiumPublicDomains);
+  const premiumPublicDomainsJSON = JSON.stringify(premiumPublicDomains);
+  const customDomainsJSON = JSON.stringify(customDomains);
+  const cartItemsJSON = JSON.stringify(cartItems);
+  const additionalItemsListJSON = JSON.stringify(additionalItemsList);
+  const suggestedItemsListJSON = JSON.stringify(suggestedItemsList);
+  const usersItemsListJSON = JSON.stringify(usersItemsList);
+
+  const validateAddress = useCallback(
+    async (address: string) => {
+      if (!address) {
+        setAdditionalItemsList([]);
+        setSuggestedItemsList([]);
+        setUsersItemsList([]);
+        return;
+      }
+
+      toggleLoading(true);
+
+      const parsedUsersDomains = JSON.parse(userDomainsJSON);
+      const parsedNonPremiumDomains = JSON.parse(nonPremiumPublicDomainsJSON);
+      const parsedPremiumDomains = JSON.parse(premiumPublicDomainsJSON);
+      const parsedCustomDomains = JSON.parse(customDomainsJSON);
+
+      const defaultParams = { address, prices, roe, setError };
+
+      const validatedUserFCHPromise = handleFCHItems({
+        domainArr: parsedUsersDomains,
+        ...defaultParams,
+      });
+
+      const validatedNonPremiumFCHPromise = handleFCHItems({
+        domainArr: parsedNonPremiumDomains,
+        ...defaultParams,
+      });
+
+      const validatedPremiumFCHPromise = handleFCHItems({
+        domainArr: parsedPremiumDomains,
+        ...defaultParams,
+      });
+
+      const validatedCustomFCHPromise = handleFCHItems({
+        domainArr: parsedCustomDomains,
+        ...defaultParams,
+      });
+      const validatedUserFCH = await validatedUserFCHPromise;
+      const validatedNonPremiumFCH = await validatedNonPremiumFCHPromise;
+      const validatedPremiumFCH = await validatedPremiumFCHPromise;
+      const validatedCustomFCH = await validatedCustomFCHPromise;
+
+      const avaliableUserFCH = validatedUserFCH.length
+        ? validatedUserFCH.filter(userFCH => !userFCH.isExist)
+        : [];
+      const availableNonPremiumFCH = validatedNonPremiumFCH.length
+        ? validatedNonPremiumFCH.filter(nonPremiumFCH => !nonPremiumFCH.isExist)
+        : [];
+      const availablePremiumFCH = validatedPremiumFCH.length
+        ? validatedPremiumFCH.filter(premiumFCH => !premiumFCH.isExist)
+        : [];
+      const availlableCustomFCH = validatedCustomFCH.length
+        ? validatedCustomFCH.filter(customFCH => !customFCH.isExist)
+        : [];
+
+      if (
+        !avaliableUserFCH &&
+        !availableNonPremiumFCH &&
+        !availablePremiumFCH &&
+        !availlableCustomFCH
+      ) {
+        setError(FIO_ADDRESS_ALREADY_EXISTS);
+        setAdditionalItemsList([]);
+        setSuggestedItemsList([]);
+        setUsersItemsList([]);
+        return;
+      }
+
+      setUsersItemsList(avaliableUserFCH.slice(0, USER_DOMAINS_LIMIT));
+
+      if (
+        !availableNonPremiumFCH.length &&
+        !availablePremiumFCH.length &&
+        !availlableCustomFCH.length
+      ) {
+        setAdditionalItemsList([]);
+        setSuggestedItemsList([]);
+        return;
+      }
+
+      const handleSuggestedElement = (
+        suggestedType: typeof SUGGESTED_TYPE[keyof typeof SUGGESTED_TYPE],
+      ) => {
+        let suggestedElement = null;
+
+        if (
+          availableNonPremiumFCH[0] &&
+          suggestedType === SUGGESTED_TYPE.FIRST
+        ) {
+          suggestedElement = availableNonPremiumFCH[0];
+          availableNonPremiumFCH.shift();
+          return suggestedElement;
+        }
+        if (
+          availablePremiumFCH[0] &&
+          (suggestedType === SUGGESTED_TYPE.FIRST ||
+            suggestedType === SUGGESTED_TYPE.SECOND)
+        ) {
+          suggestedElement = availablePremiumFCH[0];
+          availablePremiumFCH.shift();
+          return suggestedElement;
+        }
+        if (
+          availlableCustomFCH[0] &&
+          (suggestedType === SUGGESTED_TYPE.FIRST ||
+            suggestedType === SUGGESTED_TYPE.SECOND ||
+            suggestedType === SUGGESTED_TYPE.THIRD)
+        ) {
+          suggestedElement = availlableCustomFCH[0];
+          availlableCustomFCH.shift();
+          return suggestedElement;
+        }
+      };
+
+      const suggestedPublicDomains: SelectedItemProps[] = [];
+
+      const firstSuggested = handleSuggestedElement(SUGGESTED_TYPE.FIRST);
+      const secondSuggested = handleSuggestedElement(SUGGESTED_TYPE.SECOND);
+      const thirdSuggested = handleSuggestedElement(SUGGESTED_TYPE.THIRD);
+
+      firstSuggested && suggestedPublicDomains.push(firstSuggested);
+      secondSuggested && suggestedPublicDomains.push(secondSuggested);
+      thirdSuggested && suggestedPublicDomains.push(thirdSuggested);
+
+      const additionalPublicDomains: SelectedItemProps[] = [
+        ...availableNonPremiumFCH,
+        ...availablePremiumFCH,
+        ...availlableCustomFCH,
+      ].sort((a, b) => {
+        const rankCount = a.rank - b.rank;
+        if (rankCount) return rankCount;
+
+        if (a.domainType === DOMAIN_TYPE.FREE) return -1;
+        if (b.domainType === DOMAIN_TYPE.FREE) return 1;
+
+        if (a.domainType === DOMAIN_TYPE.PREMIUM) return -1;
+        if (b.domainType === DOMAIN_TYPE.PREMIUM) return 1;
+
+        if (a.domainType === DOMAIN_TYPE.CUSTOM) return -1;
+        if (b.domainType === DOMAIN_TYPE.CUSTOM) return 1;
+
+        return 0;
+      });
+
+      setAdditionalItemsList(
+        additionalPublicDomains.slice(0, ADDITIONAL_DOMAINS_COUNT_LIMIT),
+      );
+      setSuggestedItemsList(suggestedPublicDomains);
+      toggleLoading(false);
+    },
+    [
+      customDomainsJSON,
+      nonPremiumPublicDomainsJSON,
+      premiumPublicDomainsJSON,
+      prices,
+      roe,
+      userDomainsJSON,
+    ],
+  );
+
+  const onClick = (selectedItem: CartItem) => {
+    addCartItem(selectedItem);
+  };
+
+  useEffect(() => {
+    dispatch(getDomains());
+  }, [dispatch]);
+
+  useEffect(() => {
+    setError(null);
+    validateAddress(addressValue);
+  }, [addressValue, validateAddress]);
+
+  useEffect(() => {
+    for (const fioWallet of fioWallets) {
+      dispatch(refreshFioNames(fioWallet.publicKey));
+    }
+  }, [dispatch, fioWallets]);
+
+  useEffect(() => {
+    if (loading) return;
+
+    const parsedCartItems: CartItem[] = JSON.parse(cartItemsJSON);
+    const parsedAdditionalItemsList: SelectedItemProps[] = JSON.parse(
+      additionalItemsListJSON,
+    );
+    const parsedSuggestedItemsList: SelectedItemProps[] = JSON.parse(
+      suggestedItemsListJSON,
+    );
+    const parsedUsersItemsList: SelectedItemProps[] = JSON.parse(
+      usersItemsListJSON,
+    );
+
+    setAdditionalItemsList(
+      parsedAdditionalItemsList.map(additionalItem =>
+        parsedCartItems.find(cartItem => cartItem.id === additionalItem.id)
+          ? { ...additionalItem, isSelected: true }
+          : { ...additionalItem, isSelected: false },
+      ),
+    );
+
+    setSuggestedItemsList(
+      parsedSuggestedItemsList.map(suggestedItem =>
+        parsedCartItems.find(cartItem => cartItem.id === suggestedItem.id)
+          ? { ...suggestedItem, isSelected: true }
+          : { ...suggestedItem, isSelected: false },
+      ),
+    );
+
+    setUsersItemsList(
+      parsedUsersItemsList.map(usersItem =>
+        parsedCartItems.find(cartItem => cartItem.id === usersItem.id)
+          ? { ...usersItem, isSelected: true }
+          : { ...usersItem, isSelected: false },
+      ),
+    );
+  }, [
+    loading,
+    additionalItemsListJSON,
+    cartItemsJSON,
+    suggestedItemsListJSON,
+    usersItemsListJSON,
+  ]);
+
+  return {
+    additionalItemsList,
+    addressValue,
+    error,
+    loading: loading || domainsLoaing,
+    suggestedItemsList,
+    usersItemsList,
+    setAddressValue,
+    setError,
+    onClick,
+  };
+};

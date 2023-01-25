@@ -1,0 +1,120 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  padding: 100px 154px;
+  background: $white;
+
+  .title {
+    margin-bottom: 60px;
+    text-align: center;
+    font-size: 2rem;
+    line-height: 1;
+    @include comfortaa-bold;
+
+    span {
+      display: inline-block;
+      padding: 20px 60px;
+      background: $baltic-sea;
+      color: $white;
+      border-radius: 50px;
+    }
+  }
+
+  .logoContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 60px;
+
+    img {
+      max-width: 500px;
+    }
+  }
+
+  .grid {
+    display: grid;
+    grid-gap: 40px;
+    grid-template-columns: 1fr 1fr 1fr;
+    margin-bottom: 40px;
+  }
+
+  .domain {
+    background: $gradient-background;
+    padding: 30px;
+    border-radius: 24px;
+
+    .domainTitle {
+      margin: 15px 0 30px;
+      text-align: center;
+      font-size: 2rem;
+      line-height: 1;
+      @include proxima-nova-bold;
+    }
+
+    .domainContainer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .domainPrice {
+        display: flex;
+        flex-direction: column;
+        font-size: 1rem;
+        line-height: 1.25rem;
+        color: $baltic-sea;
+
+        .domainPriceLabel {
+          @include proxima-nova-thin;
+        }
+
+        .domainPriceValue {
+          @include proxima-nova-semibold;
+        }
+      }
+    }
+  }
+
+  .buttonWrapper {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 50px;
+  }
+
+  .bold {
+    @include proxima-nova-bold;
+  }
+}
+
+@include sm {
+  .container {
+    padding: 70px 20px;
+
+    .title {
+      margin-bottom: 30px;
+      font-size: 1.125rem;
+
+      span {
+        padding: 15px 40px;
+      }
+    }
+
+    .logoContainer {
+      margin-bottom: 30px;
+
+      img {
+        max-width: 295px;
+      }
+    }
+
+    .grid {
+      grid-gap: 20px;
+      grid-template-columns: 1fr;
+    }
+
+    .buttonWrapper {
+      margin-bottom: 40px;
+    }
+  }
+}

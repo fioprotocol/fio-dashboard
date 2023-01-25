@@ -53,12 +53,12 @@
   .closeButton {
     width: 240px;
     height: 54px;
-    border-radius: 7px;
+    border-radius: 100px;
     @include proxima-nova-bold;
     margin-top: 20px;
-    background-color: $azure-radiance;
+    background-color: $light-indigo;
     color: white;
-    border-color: $azure-radiance;
+    border-color: $light-indigo;
   }
 }
 
@@ -67,8 +67,8 @@
   width: auto;
 
   .link {
-    background-color: $azure-radiance;
-    border-radius: 7px;
+    background-color: $light-indigo;
+    border-radius: 100px;
     color: $white;
     font-size: 13px;
     line-height: 13px;
@@ -80,14 +80,14 @@
     justify-content: center;
     font-weight: bold;
     &:hover {
-      background-color: $butterfly-blue;
+      background-color: $iris;
     }
 
     &.secondary {
-      background-color: $cyan;
+      background-color: $dark-slate-blue;
 
       &:hover {
-        background-color: $dark-blue-grey;
+        background-color: $honey-flower;
       }
     }
 
@@ -103,7 +103,7 @@
   }
 
   .totalBadge {
-    background-color: $midnight;
+    background-color: $baltic-sea;
     border-radius: 12px;
     padding: 25px;
     color: $white;
@@ -137,7 +137,7 @@
     }
     .balanceContainer {
       padding: 10px;
-      background-color: $dark-blue-grey;
+      background-color: $tuna;
       border-radius: 7px;
       margin-top: 15px;
 

@@ -1,0 +1,1 @@
+export { WidelyAdoptedSection } from './WidelyAdoptedSection';

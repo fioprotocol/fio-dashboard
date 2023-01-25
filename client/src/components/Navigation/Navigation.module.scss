@@ -1,9 +1,10 @@
 @import '../../assets/styles/colors.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
 
 .sideWrapper {
-  background-color: $milk;
+  background-color: $light-indigo;
   min-height: 50px;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 
   &.isOnSide {
@@ -20,23 +21,32 @@
         margin-top: 0;
       }
     }
-    
+
     .sideLink {
-      color: $blue;
+      color: $light-indigo;
       position: relative;
       overflow: hidden;
-      transition: clip-path 275ms ease;
+      transform: translateY(0) scale(1, 1);
+      transition: transform 0.3s ease-in-out;
 
-      &:hover::before {
-        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      &:hover {
+        transform: translateY(-2px) scale(1.04, 1.04) ;
       }
+    }
+  }
+}
 
-      &::before {
-        position: absolute;
-        content: attr(data-content);
-        color: midnightblue;
-        clip-path: polygon(0 0, 0 0, 0% 100%, 0 100%);
-        transition: clip-path 275ms ease;
+@include lg {
+  .sideWrapper {
+    padding-left: 3.75rem;
+
+    .sideItem {
+      .sideLink {
+        color: $white;
+
+        &:first-of-type {
+          padding-left: 0;
+        }
       }
     }
   }

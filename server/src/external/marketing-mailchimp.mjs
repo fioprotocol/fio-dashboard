@@ -5,6 +5,11 @@ import mailchimpMarketing from '@mailchimp/mailchimp_marketing';
 import logger from '../logger';
 import config from '../config';
 
+const STATUSES = {
+  subscribed: 'subscribed',
+  unsubscribed: 'unsubscribed',
+};
+
 class MarketingMailchimp {
   constructor() {
     mailchimpMarketing.setConfig({
@@ -13,11 +18,49 @@ class MarketingMailchimp {
     });
   }
 
-  async addEmailToPromoList(email) {
-    const subscriberHash = crypto
+  hashEmail(email) {
+    return crypto
       .createHash('md5')
       .update(email.toLowerCase())
       .digest('hex');
+  }
+
+  async isSubscribed(email) {
+    const subscriberHash = this.hashEmail(email);
+
+    try {
+      const data = await mailchimpMarketing.lists.getListMember(
+        config.mail.mailchimpListId,
+        subscriberHash,
+        {},
+      );
+      return data.status === STATUSES.subscribed;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  async sendEvent(email, event) {
+    const subscriberHash = this.hashEmail(email);
+
+    try {
+      await mailchimpMarketing.lists.createListMemberEvent(
+        config.mail.mailchimpListId,
+        subscriberHash,
+        {
+          name: event,
+          properties: '',
+          is_syncing: false,
+          occurred_at: '',
+        },
+      );
+    } catch (err) {
+      logger.error(err.message);
+    }
+  }
+
+  async addEmailToPromoList(email) {
+    const subscriberHash = this.hashEmail(email);
 
     const body = {
       email_address: email,

@@ -35,7 +35,7 @@ export const HowItWorksSection: React.FC<CommonComponentProps> = props => {
     <section
       className={classnames(classes.containerLayout, classes.sectionLayout)}
     >
-      <h1 className={classnames(classes.title, 'boldText')}>How It Works</h1>
+      <h1 className={classes.title}>How It Works</h1>
       <div className={classes.instruction}>
         <div className={classes.instructionRow}>
           <div className={classes.instructionRowNumber}>01</div>

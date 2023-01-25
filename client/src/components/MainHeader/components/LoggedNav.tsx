@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Nav } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
 import { LoggedActionButtons } from './ActionButtons';
-import SideMenu from './SideMenu';
-import SiteLink from './SiteLink';
+import { SideMenu } from './SideMenu/SideMenu';
+import { SiteLink } from './SiteLink/SiteLink';
+import { NavItemContainer } from './NavItemContainer';
 
 import { ROUTES } from '../../../constants/routes';
 import { ANALYTICS_EVENT_ACTIONS } from '../../../constants/common';
@@ -40,21 +41,139 @@ type LoggedNavProps = {
   closeMenu: () => void;
 };
 
-const LoggedNav: React.FC<LoggedNavProps> = props => {
+type DefaultNavItemProps = {
+  hide?: boolean;
+  isDesktop?: boolean;
+};
+
+type CartNavItemProps = {
+  cartItems: CartItem[];
+  hasMarginRight?: boolean;
+  hideVerticalLine?: boolean;
+  to: string;
+  onClick: () => void;
+} & DefaultNavItemProps;
+
+type NotificationsNavItemProps = {
+  notifications: Notification[];
+  onClick: () => void;
+} & DefaultNavItemProps;
+
+const OrdersListNavItem: React.FC<DefaultNavItemProps> = props => (
+  <NavItemContainer hide={props.hide}>
+    <Nav.Link className={classes.navItem} as={Link} to={ROUTES.ORDERS}>
+      <div className={classnames(classes.notifWrapper, classes.cartanim)}>
+        <FontAwesomeIcon icon="list-alt" className={classnames(classes.icon)} />
+      </div>
+    </Nav.Link>
+    {!props.isDesktop && <div className="mx-3" />}
+  </NavItemContainer>
+);
+
+export const CartNavItem: React.FC<CartNavItemProps> = props => {
   const {
     cartItems,
-    isMenuOpen,
-    toggleMenuOpen,
-    closeMenu,
-    notifications,
+    hasMarginRight,
+    hide,
+    hideVerticalLine,
+    isDesktop,
+    to,
+    onClick,
+  } = props;
+
+  return (
+    <NavItemContainer hide={hide}>
+      <Nav.Link className={classes.navItem} onClick={onClick} as={Link} to={to}>
+        <div className={classnames(classes.notifWrapper, classes.cartanim)}>
+          <FontAwesomeIcon
+            icon="shopping-cart"
+            className={classnames(classes.icon, hasMarginRight && 'mr-4')}
+          />
+          {cartItems.length > 0 && (
+            <div
+              className={classnames(
+                classes.notifActiveWrapper,
+                classes.notifActiveWrapperRight,
+              )}
+            >
+              <FontAwesomeIcon
+                icon="circle"
+                className={classnames(classes.notifActive, 'text-success')}
+              />
+            </div>
+          )}
+        </div>
+      </Nav.Link>
+      {hideVerticalLine ? null : isDesktop ? (
+        <hr className={classnames(classes.vertical, 'mx-3')} />
+      ) : (
+        <div className="mx-3" />
+      )}
+    </NavItemContainer>
+  );
+};
+
+const ActiveButtons: React.FC<LoggedNavProps & DefaultNavItemProps> = props => {
+  const { isDesktop, isMenuOpen, toggleMenuOpen } = props;
+
+  if (isDesktop) return <LoggedActionButtons {...props} />;
+
+  return (
+    <SideMenu isMenuOpen={isMenuOpen} toggleMenuOpen={toggleMenuOpen}>
+      <LoggedActionButtons {...props} />
+    </SideMenu>
+  );
+};
+
+const NotificationsNavItem: React.FC<NotificationsNavItemProps> = props => {
+  const { hide, isDesktop, notifications, onClick } = props;
+
+  return (
+    <NavItemContainer hide={hide}>
+      <hr className={classnames(classes.vertical, 'mx-3')} />
+      <Nav.Link href="#" className={classes.navItem} onClick={onClick}>
+        <div className={classnames(classes.notifWrapper, classes.bellshake)}>
+          <FontAwesomeIcon
+            icon="bell"
+            className={classnames(classes.icon, classes.notification)}
+          />
+          {!!notifications.length && (
+            <div className={classes.notifActiveWrapper}>
+              <FontAwesomeIcon
+                icon="circle"
+                className={classnames(
+                  classes.notifActive,
+                  'mr-2',
+                  'text-danger',
+                )}
+              />
+            </div>
+          )}
+        </div>
+        {isDesktop && <div className="ml-3">Notifications</div>}
+      </Nav.Link>{' '}
+      {isDesktop ? (
+        <hr className={classnames(classes.vertical, 'mx-3')} />
+      ) : (
+        <div className="mx-3" />
+      )}
+    </NavItemContainer>
+  );
+};
+
+export const LoggedNav: React.FC<LoggedNavProps> = props => {
+  const {
+    cartItems,
     hideCart,
     hideOrder,
-    hideNotifications,
+    notifications,
     showSiteLink,
+    closeMenu,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
-  const onCartClick = () => {
+
+  const onCartClick = useCallback(() => {
     if (cartItems.length) {
       fireAnalyticsEvent(
         ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
@@ -62,137 +181,31 @@ const LoggedNav: React.FC<LoggedNavProps> = props => {
       );
     }
     closeMenu();
-  };
-
-  const renderOrdersList = () => {
-    if (hideOrder) return null;
-
-    return (
-      <>
-        <Nav.Link
-          className={classnames(classes.navItem, 'text-white')}
-          as={Link}
-          to={ROUTES.ORDERS}
-        >
-          <div className={classnames(classes.notifWrapper, classes.cartanim)}>
-            <FontAwesomeIcon
-              icon="list-alt"
-              className={classnames(classes.icon)}
-            />
-          </div>
-        </Nav.Link>
-        {isDesktop ? (
-          <hr className={classnames(classes.vertical, 'mx-3')} />
-        ) : (
-          <div className="mx-3" />
-        )}
-      </>
-    );
-  };
-
-  const renderCart = () => {
-    if (hideCart) return null;
-    return (
-      <>
-        <Nav.Link
-          className={classnames(classes.navItem, 'text-white')}
-          onClick={onCartClick}
-          as={Link}
-          to={
-            cartItems.length > 0 ? ROUTES.CART : ROUTES.FIO_ADDRESSES_SELECTION
-          }
-        >
-          <div className={classnames(classes.notifWrapper, classes.cartanim)}>
-            <FontAwesomeIcon
-              icon="shopping-cart"
-              className={classnames(classes.icon)}
-            />
-            {cartItems.length > 0 && (
-              <div
-                className={classnames(
-                  classes.notifActiveWrapper,
-                  classes.notifActiveWrapperRight,
-                )}
-              >
-                <FontAwesomeIcon
-                  icon="circle"
-                  className={classnames(classes.notifActive, 'text-success')}
-                />
-              </div>
-            )}
-          </div>
-        </Nav.Link>
-        {isDesktop ? (
-          <hr className={classnames(classes.vertical, 'mx-3')} />
-        ) : (
-          <div className="mx-3" />
-        )}
-      </>
-    );
-  };
-
-  // @ts-ignore
-  // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
-  const renderNotifications = () => {
-    return hideNotifications ? null : (
-      <>
-        <hr className={classnames(classes.vertical, 'mx-3')} />
-        <Nav.Link
-          href="#"
-          className={classnames(classes.navItem, 'text-white')}
-          onClick={closeMenu}
-        >
-          <div className={classnames(classes.notifWrapper, classes.bellshake)}>
-            <FontAwesomeIcon
-              icon="bell"
-              className={classnames(
-                classes.icon,
-                classes.notification,
-                'text-white',
-              )}
-            />
-            {!!notifications.length && (
-              <div className={classes.notifActiveWrapper}>
-                <FontAwesomeIcon
-                  icon="circle"
-                  className={classnames(
-                    classes.notifActive,
-                    'mr-2',
-                    'text-danger',
-                  )}
-                />
-              </div>
-            )}
-          </div>
-          {isDesktop && <div className="ml-3">Notifications</div>}
-        </Nav.Link>{' '}
-        {isDesktop ? (
-          <hr className={classnames(classes.vertical, 'mx-3')} />
-        ) : (
-          <div className="mx-3" />
-        )}
-      </>
-    );
-  };
+  }, [cartItems, closeMenu]);
 
   return (
     <div className={classes.loggedNavContainer}>
       {showSiteLink ? <SiteLink {...props} /> : <div />}
       <Nav className="pr-0 align-items-center">
-        {renderOrdersList()}
-        {renderCart()}
+        <OrdersListNavItem hide={hideOrder} isDesktop={isDesktop} />
+        <CartNavItem
+          cartItems={cartItems}
+          hide={hideCart}
+          isDesktop={isDesktop}
+          to={
+            cartItems.length > 0 ? ROUTES.CART : ROUTES.FIO_ADDRESSES_SELECTION
+          }
+          onClick={onCartClick}
+        />
+        <ActiveButtons isDesktop={isDesktop} {...props} />
         {/* Notifications commented due to BD-2631 task */}
-        {/* {renderNotifications()} */}
-        {isDesktop ? (
-          <LoggedActionButtons {...props} />
-        ) : (
-          <SideMenu isMenuOpen={isMenuOpen} toggleMenuOpen={toggleMenuOpen}>
-            <LoggedActionButtons {...props} />
-          </SideMenu>
-        )}
+        <NotificationsNavItem
+          hide={true}
+          isDesktop={isDesktop}
+          notifications={notifications}
+          onClick={closeMenu}
+        />
       </Nav>
     </div>
   );
 };
-
-export default LoggedNav;

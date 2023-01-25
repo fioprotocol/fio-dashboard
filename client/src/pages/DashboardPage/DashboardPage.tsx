@@ -5,11 +5,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 import DashboardListItem from './DashboardListItem';
-import ManagePageCtaBadge from '../../components/ManagePageContainer/ManagePageCtaBadge';
+import { ManagePageCtaBadge } from '../../components/ManagePageContainer/ManagePageCtaBadge';
 import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
-import { GetFioTokens } from '../../components/GetFioTokens';
 
 import { ROUTES } from '../../constants/routes';
+import { CTA_BADGE_TYPE } from '../../components/ManagePageContainer/constants';
 
 import { useFioAddresses, useNonActiveUserRedirect } from '../../util/hooks';
 import { useCheckIfDesktop } from '../../screenType';
@@ -84,9 +84,9 @@ const DashboardPage: React.FC<Props> = props => {
         )}
       </LayoutContainer>
       <div className={classes.actionBadgeContainer}>
-        <ManagePageCtaBadge name="address" />
-        <ManagePageCtaBadge name="domain" />
-        <GetFioTokens />
+        <ManagePageCtaBadge name={CTA_BADGE_TYPE.ADDRESS} />
+        <ManagePageCtaBadge name={CTA_BADGE_TYPE.DOMAIN} />
+        <ManagePageCtaBadge name={CTA_BADGE_TYPE.TOKENS} />
       </div>
     </div>
   );

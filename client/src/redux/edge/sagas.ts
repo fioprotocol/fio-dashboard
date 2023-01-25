@@ -14,7 +14,7 @@ import { PrivateRedirectLocationState } from '../../types';
 
 export function* edgeLoginSuccess(): Generator {
   yield takeEvery(LOGIN_SUCCESS, function*(action: Action) {
-    const { account, fioWallets, options, voucherId } = action.data;
+    const { account, fioWallets, options, voucherId, isPinLogin } = action.data;
     const keys = getWalletKeys(fioWallets);
     for (const fioWallet of fioWallets) {
       yield put<Action>(refreshBalance(keys[fioWallet.id].public));
@@ -34,6 +34,6 @@ export function* edgeLoginSuccess(): Generator {
 
     yield put<
       Action
-    >(makeNonce(account.username, keys, options && options.otpKey, voucherId));
+    >(makeNonce(account.username, keys, options && options.otpKey, voucherId, isPinLogin));
   });
 }

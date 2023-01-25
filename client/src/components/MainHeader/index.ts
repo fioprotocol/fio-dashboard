@@ -2,11 +2,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { createStructuredSelector } from 'reselect';
 
-import {
-  adminLogout,
-  logout,
-  resetLastAuthData,
-} from '../../redux/profile/actions';
+import { logout, resetLastAuthData } from '../../redux/profile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
 import { locationState, pathname } from '../../redux/navigation/selectors';
 import {
@@ -31,7 +27,6 @@ import MainHeader from './MainHeader';
 import { MainHeaderProps } from './types';
 import { AppDispatch } from '../../redux/init';
 import { OwnPropsAny } from '../../types';
-import { isAdminService } from '../../api/client';
 
 const selector = createStructuredSelector({
   pathname,
@@ -56,12 +51,8 @@ const actions = (
 ) => ({
   showLoginModal: () => dispatch(showLoginModal()),
   logout: () => {
-    const { history, location } = ownProps;
-    dispatch(
-      isAdminService(location.pathname)
-        ? adminLogout({ history })
-        : logout({ history }),
-    );
+    const { history } = ownProps;
+    dispatch(logout({ history }));
     dispatch(resetLastAuthData());
   },
 });

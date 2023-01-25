@@ -1,10 +1,12 @@
 import React from 'react';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
-import ManagePageCtaBadge from '../../components/ManagePageContainer/ManagePageCtaBadge';
+import { ManagePageCtaBadge } from '../../components/ManagePageContainer/ManagePageCtaBadge';
 
 import { OrdersList } from './components/OrdersList/OrdersList';
 import { useContext } from './OrdersPageContext';
+
+import { CTA_BADGE_TYPE } from '../../components/ManagePageContainer/constants';
 
 import classes from './OrdersPage.module.scss';
 
@@ -25,8 +27,8 @@ const OrdersPage: React.FC = () => {
         </div>
       </LayoutContainer>
       <div className={classes.actionBadgeContainer}>
-        <ManagePageCtaBadge name="address" />
-        <ManagePageCtaBadge name="domain" />
+        <ManagePageCtaBadge name={CTA_BADGE_TYPE.ADDRESS} />
+        <ManagePageCtaBadge name={CTA_BADGE_TYPE.DOMAIN} />
       </div>
     </div>
   );

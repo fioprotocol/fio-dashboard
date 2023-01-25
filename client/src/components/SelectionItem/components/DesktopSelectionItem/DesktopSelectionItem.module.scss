@@ -1,0 +1,42 @@
+@import '../../../../assets/styles/colors.scss';
+
+.container {
+  background-color: $desert-storm;
+  border-radius: 12px;
+  padding: 15px 20px;
+  display: grid;
+  grid-template-columns: 18px 300px auto auto 46px;
+  align-items: center;
+
+  &.hasMaxWidth {
+    grid-template-columns: 18px 300px 160px auto 46px;
+  }
+
+  &.hasShortNamePart {
+    grid-template-columns: 18px 150px 100px auto 46px;
+  }
+
+  &.hasWhiteBackground {
+    background-color: $white;
+  }
+
+  .badgeContainer {
+    margin-left: auto;
+    margin-right: 20px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    &.hasMaxWidth {
+      max-width: 70px;
+    }
+  }
+
+  .fchContainer {
+    margin: 0 0 0 12px;
+  }
+
+  .priceContainer {
+    margin-right: auto;
+  }
+}

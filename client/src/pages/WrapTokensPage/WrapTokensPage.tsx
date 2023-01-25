@@ -14,8 +14,13 @@ import useEffectOnce from '../../hooks/general';
 import MathOp from '../../util/math';
 
 import { ROUTES } from '../../constants/routes';
-import { WALLET_CREATED_FROM } from '../../constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  WALLET_CREATED_FROM,
+} from '../../constants/common';
 import { LINKS } from '../../constants/labels';
+
+import { fireAnalyticsEvent } from '../../util/analytics';
 
 import { TrxResponsePaidBundles } from '../../api/fio';
 import {
@@ -74,6 +79,7 @@ const WrapTokensPage: React.FC<ContainerProps> = props => {
 
   const onSend = async (values: WrapTokensValues) => {
     setSendData({ ...values });
+    fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.WRAP_TOKENS, values);
   };
   const onCancel = () => {
     setSendData(null);

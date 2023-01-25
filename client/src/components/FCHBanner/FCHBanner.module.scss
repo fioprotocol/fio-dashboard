@@ -1,0 +1,96 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  padding: 100px 154px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 30px;
+  background: $light-indigo;
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .text {
+      color: $white;
+      font-size: 2.5rem;
+      line-height: 2.75rem;
+      @include comfortaa-bold;
+    }
+
+    .fchWrapper, .publicKeyWrapper {
+      padding: 8px 10px;
+      border-radius: 8px;
+    }
+
+    .fchWrapper {
+      background: $fog;
+    }
+
+    .fch {
+      padding: 15px 25px;
+      background: $white;
+      border-radius: 8px;
+      color: $honey-flower;
+      font-size: 2.25rem;
+      line-height: 2.75rem;
+      @include proxima-nova-bold;
+    }
+
+    .publicKeyWrapper {
+      background: $medium-purple;
+    }
+
+    .publicKey {
+      padding: 11px 25px;
+      border-radius: 8px;
+      color: $white;
+      font-size: 2.25rem;
+      line-height: 2.75rem;
+      @include proxima-nova-thin;
+      border: 4px dashed $humming-bird;
+      background: $medium-purple;
+      box-sizing: border-box;
+      word-break: break-all;
+    }
+  }
+}
+
+@include md {
+  .container {
+    .row {
+      flex-direction: column;
+
+      .text {
+        text-align: center;
+      }
+    }
+  }
+}
+
+@include sm {
+  .container {
+    padding: 70px 52px;
+
+    .row {
+      flex-direction: column;
+      gap: 30px;
+
+      .text {
+        font-size: 1.875rem;
+        line-height: 1.5;
+        text-align: center;
+      }
+
+      .publicKey {
+        font-size: 1.625rem;
+        max-width: 226px;
+        padding: 11px 16px;
+      }
+    }
+  }
+}

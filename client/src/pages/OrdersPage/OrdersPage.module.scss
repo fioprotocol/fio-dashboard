@@ -1,4 +1,4 @@
-@import '../../assets/styles/mediaQueriesMixings.scss'; 
+@import '../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
   display: flex;
@@ -9,7 +9,7 @@
   margin: 0 20px;
 
   .actionBadgeContainer {
-    width: 100%;
+    width: auto;
     margin: 30px 0;
 
     div {
@@ -20,14 +20,44 @@
   }
 }
 
+@include md {
+  .container {
+    .actionBadgeContainer {
+      width: 100%;
+      margin: 0 0 30px;
+
+      > div {
+        a {
+          button {
+            min-width: auto !important;
+          }
+        }
+      }
+    }
+  }
+}
+
 @include lg {
   .container {
+    .actionBadgeContainer {
+      width: 100%;
+      max-width: 335px;
+    }
+  }
+}
+
+@include xlg {
+  .container {
     flex-direction: row;
+    max-width: 1200px;
+    width: 100%;
     margin: 0 80px;
 
     .actionBadgeContainer {
       margin: 60px 0 30px 30px;
+      min-width: 265px;
       max-width: 285px;
+      width: 100%;
     }
   }
 }

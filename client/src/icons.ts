@@ -50,6 +50,7 @@ import {
   faTrash,
   faUserCircle,
   faWallet,
+  faSort,
 } from '@fortawesome/free-solid-svg-icons';
 
 import {
@@ -118,6 +119,7 @@ const icons = {
   faPlus,
   faPrint,
   faCircleNotch,
+  faSort,
 };
 
 export default icons;

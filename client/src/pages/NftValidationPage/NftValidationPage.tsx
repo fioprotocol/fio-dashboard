@@ -85,9 +85,7 @@ const NftValidationPage: React.FC = () => {
 
   return (
     <div className={classes.container}>
-      <h1 className={classes.title}>
-        <span className="doubleColor boldText">Validate a</span> NFT Signature
-      </h1>
+      <h1 className={classes.title}>Validate a NFT Signature</h1>
       <h3 className={classes.subtitle}>
         You can easily validate a NFT signature through with NFT details, FIO
         Crypto Handle, image or hash/media URL.

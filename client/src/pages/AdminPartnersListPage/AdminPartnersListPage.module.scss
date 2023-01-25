@@ -16,7 +16,7 @@
 .label {
   margin-bottom: 1rem;
   font-size: 0.875em;
-  color: $dark-jungle-green;
+  color: $baltic-sea;
   @include sf-pro-display-medium;
 }
 
@@ -39,7 +39,7 @@
   padding: 10px;
   background-color: $gallery;
   border-radius: 7px;
-  box-shadow: 0 0 8px 0 rgba($black, 0.11);
+  box-shadow: 0 0 8px 0 rgba($baltic-sea, 0.11);
 }
 
 .previewImageWrapper {

@@ -20,18 +20,18 @@
 }
 
 .actionButton {
-  border: $onyx;
-  background-color: $onyx;
+  border: $baltic-sea;
+  background-color: $baltic-sea;
   height: 54px;
   width: 100%;
   margin-top: 30px;
-  border-radius: 7px;
+  border-radius: 100px;
   color: $white;
   @include proxima-nova-semibold;
 
   &:hover:enabled {
-    border: $content-background;
-    background-color: $content-background;
+    border: $dark-jungle-green;
+    background-color: $dark-jungle-green;
   }
 
   &:disabled, &[disabled] {

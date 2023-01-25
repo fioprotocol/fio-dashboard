@@ -15,7 +15,6 @@ import cart from './cart/reducer';
 import refProfile from './refProfile/reducer';
 import account from './account/reducer';
 import containedFlow from './containedFlow/reducer';
-import admin from './admin/reducer';
 import orders from './orders/reducer';
 import wrapStatus from './wrapStatus/reducer';
 
@@ -35,7 +34,6 @@ const createReducer = (history: History): Reducer =>
     refProfile,
     account,
     containedFlow,
-    admin,
     wrapStatus,
     orders,
   });
