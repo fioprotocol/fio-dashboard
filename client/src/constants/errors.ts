@@ -36,10 +36,13 @@ export const FIO_ADDRESS_ALREADY_EXISTS =
   'Unfortunately no username & domain name combinations are available. Try adding a custom ending to create your FIO Crypto Handle.';
 
 export const DOMAIN_ALREADY_EXISTS =
-  'Unfortunately this domain name already exists.';
+  'Unfortunately this domain is not available. Please search again or select from the additional domains for sale below.';
 
 export const NON_VALID_FCH =
   'FIO Crypto Handle only allows letters, numbers and dash in the middle';
+
+export const NON_VAILD_DOMAIN =
+  'Domain only allows letters, numbers and dash in the middle';
 
 export const INTERNAL_SERVER_ERROR_CODE = 500;
 export const NOT_FOUND = 404;

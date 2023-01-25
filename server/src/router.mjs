@@ -101,6 +101,8 @@ router.post('/notifications', checkAuth, routes.notifications.create);
 router.put('/notifications', checkAuth, routes.notifications.update);
 
 router.get('/reg/domains', routes.external.domains);
+router.get('/reg/domains/list', routes.registration.domainsList);
+router.get('/reg/domain-prefix-postfix', routes.registration.prefixPostfixList);
 router.get('/reg/prices', routes.external.prices);
 router.post('/reg/register', checkAuth, routes.external.register);
 router.post('/reg/captcha/init', checkAuth, routes.external.initCaptcha);
@@ -114,8 +116,6 @@ router.post(
   checkAuth,
   routes.account.importValidateWallet,
 );
-
-router.get('/reg/domains/list', routes.registration.domainsList);
 
 router.get('/ref-profile/:code?', routes.refProfiles.info);
 
