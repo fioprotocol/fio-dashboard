@@ -338,11 +338,18 @@ export const useContext = () => {
     );
 
     setAdditionalItemsList(
-      parsedAdditionalItemsList.map(additionalItem =>
-        parsedCartItems.find(cartItem => cartItem.id === additionalItem.id)
-          ? { ...additionalItem, isSelected: true }
-          : { ...additionalItem, isSelected: false },
-      ),
+      parsedAdditionalItemsList.map(additionalItem => {
+        const existingCartItem = parsedCartItems.find(
+          cartItem => cartItem.id === additionalItem.id,
+        );
+        return existingCartItem
+          ? {
+              ...additionalItem,
+              isSelected: true,
+              period: existingCartItem.period,
+            }
+          : { ...additionalItem, isSelected: false };
+      }),
     );
   }, [loading, additionalItemsListJSON, cartItemsJSON]);
 
