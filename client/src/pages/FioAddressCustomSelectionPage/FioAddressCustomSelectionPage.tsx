@@ -1,6 +1,5 @@
 import React from 'react';
 import { Form, Field, FormRenderProps } from 'react-final-form';
-import isEmpty from 'lodash/isEmpty';
 
 import TextInput, {
   INPUT_COLOR_SCHEMA,
@@ -10,7 +9,8 @@ import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 
 import { BADGE_TYPES } from '../../components/Badge/Badge';
-import EditableSelect from '../../components/Input/EditableSelect/EditableSelect';
+import { CustomDomainDropdown } from '../../components/Input/CustomDomainDropdown';
+
 import { Label } from '../../components/Input/StaticInputParts';
 
 import { SelectedItemComponent } from './components/SelectedItemComponent';
@@ -62,21 +62,40 @@ const FioAddressCustomSelectionPage: React.FC = () => {
         >
           {(props: FormRenderProps<FormValues>) => {
             const {
+              dirtyFields,
               errors,
+              form,
               touched,
               validating,
               valid,
               values: { address, domain },
+              visited,
             } = props;
 
             let error = '';
-            if (!!errors.domain && touched.domain) {
+
+            const hasAddressError =
+              !!errors.address &&
+              (touched.address || visited.address) &&
+              !validating &&
+              dirtyFields.address;
+
+            const hasDomainError =
+              !!errors.domain &&
+              (touched.domain || visited.domain) &&
+              !validating &&
+              dirtyFields.domain;
+
+            if (hasDomainError) {
               error = errors.domain;
             }
-
-            if (!!errors.address && touched.address) {
+            if (hasAddressError) {
               error = errors.address;
             }
+
+            const onBlur = () => {
+              form.blur(DOMAIN_FIELD_NAME);
+            };
 
             return (
               <>
@@ -90,8 +109,9 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                     hideError="true"
                     lowerCased
                     loading={validating}
-                    disabled={validating || domainsLoading}
+                    disabled={domainsLoading}
                     debounceTimeout={DEFAULT_DEBOUNCE_TIMEOUT}
+                    hasErrorForced={hasAddressError}
                   />
                   {shouldPrependUserDomains ? (
                     <>
@@ -103,15 +123,18 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                       <Field
                         type="dropdown"
                         name={DOMAIN_FIELD_NAME}
-                        component={EditableSelect}
+                        component={CustomDomainDropdown}
                         options={options}
                         placeholder="Enter Custom Ending"
                         uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                         inputPrefix={FIO_ADDRESS_DELIMITER}
+                        onBlur={onBlur}
+                        hideError
                         actionButtonText="Add Custom Ending"
                         noShadow
                         containerHasFullWidth
                         hasMarginBottom
+                        hasErrorForced={hasDomainError}
                       />
                     </>
                   ) : (
@@ -127,9 +150,10 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                       hideError="true"
                       prefix={FIO_ADDRESS_DELIMITER}
                       loading={validating}
-                      disabled={validating || domainsLoading}
+                      disabled={domainsLoading}
                       hasItalicLabel
                       debounceTimeout={DEFAULT_DEBOUNCE_TIMEOUT}
+                      hasErrorForced={hasDomainError}
                     />
                   )}
                 </form>
@@ -145,10 +169,7 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                   <InfoBadge
                     title="Try again!"
                     message={error}
-                    show={
-                      !isEmpty(errors) &&
-                      Object.values(touched).some(tochedField => !!tochedField)
-                    }
+                    show={!!error}
                     type={BADGE_TYPES.ERROR}
                   />
                 </div>
