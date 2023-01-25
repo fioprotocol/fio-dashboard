@@ -33,7 +33,7 @@ export const DomainSelectionComponent: React.FC<Props> = props => {
     onPeriodChange,
   } = props;
 
-  if (!domainValue || !suggestedItem) return null;
+  if (!domainValue) return null;
 
   if (error)
     return (
@@ -57,6 +57,8 @@ export const DomainSelectionComponent: React.FC<Props> = props => {
         <Loader />
       </>
     );
+
+  if (!suggestedItem) return null;
 
   return (
     <div>
