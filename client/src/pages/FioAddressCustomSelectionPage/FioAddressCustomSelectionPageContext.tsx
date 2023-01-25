@@ -70,10 +70,12 @@ export const useContext = (): UseContextProps => {
   const [link, setLink] = useState<string>(defaultInitialLink);
 
   const options =
-    allDomains?.userDomains.map(userDomain => ({
-      value: userDomain.name,
-      label: userDomain.name,
-    })) || [];
+    allDomains?.userDomains
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(userDomain => ({
+        value: userDomain.name,
+        label: userDomain.name,
+      })) || [];
 
   const onClick = (selectedItem: CartItem) => {
     addCartItem({
