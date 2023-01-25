@@ -36,7 +36,7 @@ type FieldsType = FieldArrayRenderProps<
   HTMLElement
 >['fields'];
 
-const RANK_REARRANGEMENT_DELAY_MS = 1000;
+const RANK_REARRANGEMENT_DELAY_MS = 500;
 
 export const PartnerFormComponent: React.FC<FormRenderProps<
   RefProfile
