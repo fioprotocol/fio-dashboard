@@ -236,7 +236,7 @@ const makeRegistrationOrder = (
 ): RegistrationType[] => {
   const registrations = [];
   for (const cartItem of cartItems.sort(item =>
-    item.domainType === DOMAIN_TYPE.CUSTOM ? -1 : 1,
+    !!item.address && item.domainType === DOMAIN_TYPE.CUSTOM ? -1 : 1,
   )) {
     const registration: RegistrationType = {
       cartItemId: cartItem.id,
@@ -290,7 +290,7 @@ const makeRegistrationOrder = (
       registration.depended = { domain: cartItem.domain };
     }
 
-    if (cartItem.domainType === DOMAIN_TYPE.CUSTOM) {
+    if (!!cartItem.address && cartItem.domainType === DOMAIN_TYPE.CUSTOM) {
       registrations.push({
         cartItemId: cartItem.id,
         fioName: cartItem.domain,

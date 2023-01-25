@@ -183,10 +183,11 @@ export const deleteCartItem = ({
     );
   }
 
-  const { domain, domainType } = cartItems.find(item => item.id === id) || {};
+  const { address, domain, domainType } =
+    cartItems.find(item => item.id === id) || {};
   const updCart = cartItems.filter(item => item.id !== id);
 
-  if (domainType === DOMAIN_TYPE.CUSTOM) {
+  if (!!address && domainType === DOMAIN_TYPE.CUSTOM) {
     const hasCurrentDomain =
       domain && updCart.some(item => item.domain === domain.toLowerCase());
     if (hasCurrentDomain) {
@@ -308,7 +309,7 @@ export const cartItemsToOrderItems = (
       };
       const nativeFio = domainType === DOMAIN_TYPE.FREE ? 0 : costNativeFio;
 
-      if (domainType === DOMAIN_TYPE.CUSTOM) {
+      if (!!address && domainType === DOMAIN_TYPE.CUSTOM) {
         data.hasCustomDomain = true;
         data.hasCustomDomainFee = new MathOp(costNativeFio)
           .sub(prices.nativeFio.address)

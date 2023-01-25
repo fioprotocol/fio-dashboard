@@ -31,7 +31,7 @@ export const cartHasItemsWithPrivateDomain = createSelector(
       if (
         cartItem.address &&
         (privateDomains.indexOf(cartItem.domain) > -1 ||
-          cartItem.domainType === DOMAIN_TYPE.CUSTOM)
+          (!!cartItem.address && cartItem.domainType === DOMAIN_TYPE.CUSTOM))
       )
         return true;
     }

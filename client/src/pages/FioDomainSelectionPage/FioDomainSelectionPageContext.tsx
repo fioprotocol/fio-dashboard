@@ -18,6 +18,7 @@ import useEffectOnce from '../../hooks/general';
 import { convertFioPrices } from '../../util/prices';
 import { checkAddressOrDomainIsExist, vaildateFioDomain } from '../../util/fio';
 import { addCartItem } from '../../util/cart';
+import MathOp from '../../util/math';
 
 import { SearchTerm } from '../../api/responses';
 import { SelectedItemProps } from '../FioAddressSelectionPage/types';
@@ -47,17 +48,18 @@ const handleDomainItem = async ({
   nativeFioDomainPrice: number;
   roe: number;
 }) => {
-  const { name, rank } = domainItem;
-
-  const { fio, usdc } = convertFioPrices(nativeFioDomainPrice, roe);
-
-  const isDomainExist = await checkAddressOrDomainIsExist({ domain: name });
-
   const parsedCartItems: CartItem[] = JSON.parse(cartItemsJSON);
-
   const existingCartItem = parsedCartItems.find(
     cartItem => cartItem.id === name,
   );
+  const period = existingCartItem ? Number(existingCartItem.period) : 1;
+  const costNativeFio = new MathOp(nativeFioDomainPrice).mul(period).toNumber();
+
+  const { name, rank } = domainItem;
+
+  const { fio, usdc } = convertFioPrices(costNativeFio, roe);
+
+  const isDomainExist = await checkAddressOrDomainIsExist({ domain: name });
 
   return {
     id: name,
@@ -68,7 +70,7 @@ const handleDomainItem = async ({
     domainType: DOMAIN_TYPE.CUSTOM,
     isSelected: !!existingCartItem,
     isExist: isDomainExist,
-    period: existingCartItem ? existingCartItem.period : 1,
+    period,
     type: CART_ITEM_TYPE.DOMAIN,
     rank: rank || 0,
   };
@@ -154,21 +156,39 @@ export const useContext = () => {
   const onPeriodChange = (period: string, id: string) => {
     if (suggestedItem?.id === id) {
       if (suggestedItem.period === Number(period)) return;
+      const fioPrices = convertFioPrices(
+        new MathOp(suggestedItem.costNativeFio).mul(period).toNumber(),
+        roe,
+      );
 
-      setSuggestedItem({ ...suggestedItem, period: Number(period) });
+      setSuggestedItem({
+        ...suggestedItem,
+        period: Number(period),
+        costFio: fioPrices.fio,
+        costUsdc: fioPrices.usdc,
+      });
     }
 
     const existingAdditionalItem = additionalItemsList.find(
-      additionalItem => additionalItem.id,
+      additionalItem => additionalItem.id === id,
     );
 
     if (existingAdditionalItem) {
       if (existingAdditionalItem.period === Number(period)) return;
 
+      const fioPrices = convertFioPrices(
+        new MathOp(existingAdditionalItem.costNativeFio).mul(period).toNumber(),
+        roe,
+      );
       setAdditionalItemsList(
         additionalItemsList.map(additionalItem =>
           additionalItem.id === id
-            ? { ...additionalItem, period: Number(period) }
+            ? {
+                ...additionalItem,
+                period: Number(period),
+                costFio: fioPrices.fio,
+                costUsdc: fioPrices.usdc,
+              }
             : additionalItem,
         ),
       );
@@ -181,12 +201,21 @@ export const useContext = () => {
 
     if (existingCartItem) {
       if (existingCartItem.period === Number(period)) return;
+      const fioPrices = convertFioPrices(
+        new MathOp(existingCartItem.costNativeFio).mul(period).toNumber(),
+        roe,
+      );
 
       dispatch(
         setCartItems(
           parsedCartItems.map(cartItem =>
             cartItem.id === id
-              ? { ...cartItem, period: Number(period) }
+              ? {
+                  ...cartItem,
+                  period: Number(period),
+                  costFio: fioPrices.fio,
+                  costUsdc: fioPrices.usdc,
+                }
               : cartItem,
           ),
         ),

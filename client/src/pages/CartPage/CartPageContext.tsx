@@ -246,7 +246,7 @@ export const useContext = (): UseContextReturnType => {
         retObj.costNativeFio = updatedFioAddressPrice;
       }
 
-      if (item.domainType === DOMAIN_TYPE.CUSTOM) {
+      if (!!item.address && item.domainType === DOMAIN_TYPE.CUSTOM) {
         retObj.costNativeFio = new MathOp(retObj.costNativeFio)
           .add(updatedFioDomainPrice)
           .toNumber();
