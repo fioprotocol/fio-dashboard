@@ -23,7 +23,7 @@ import { SearchTerm } from '../../api/responses';
 import { SelectedItemProps } from '../FioAddressSelectionPage/types';
 import { CartItem } from '../../types';
 
-const DEFAULT_ADDITIONAL_ITEMS_COUNT = 10;
+const DEFAULT_ADDITIONAL_ITEMS_COUNT = 5;
 
 export type UseContextProps = {
   additionalItemsList: SelectedItemProps[];
@@ -265,18 +265,19 @@ export const useContext = () => {
         roe,
       });
 
-      const availablePrefixedItems = validatedPrefixedItems.filter(
-        prefixedDomain => !prefixedDomain?.isExist,
-      );
-      const availablePostfixedItems = validatedPostfixedItems.filter(
-        postfixedDomain => !postfixedDomain?.isExist,
-      );
+      const availablePrefixedItems = validatedPrefixedItems
+        .filter(prefixedDomain => !prefixedDomain?.isExist)
+        .sort((a, b) => a.rank - b.rank)
+        .slice(0, DEFAULT_ADDITIONAL_ITEMS_COUNT);
+      const availablePostfixedItems = validatedPostfixedItems
+        .filter(postfixedDomain => !postfixedDomain?.isExist)
+        .sort((a, b) => a.rank - b.rank)
+        .slice(0, DEFAULT_ADDITIONAL_ITEMS_COUNT);
 
-      setAdditionalItemsList(
-        [...availablePrefixedItems, ...availablePostfixedItems]
-          .sort((a, b) => a.rank - b.rank)
-          .slice(0, DEFAULT_ADDITIONAL_ITEMS_COUNT),
-      );
+      setAdditionalItemsList([
+        ...availablePrefixedItems,
+        ...availablePostfixedItems,
+      ]);
 
       toggleLoading(false);
     },
