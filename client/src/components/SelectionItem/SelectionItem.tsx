@@ -8,10 +8,12 @@ import { SelectedItemProps } from '../../pages/FioAddressSelectionPage/types';
 import { CartItem } from '../../types';
 
 type Props = {
+  actionComponent: React.ReactNode;
   isDesktop: boolean;
   isSquareShape?: boolean;
   hasShortNamePart?: boolean;
   hasWhiteBackground?: boolean;
+  hasMaxWidth?: boolean;
   onClick: (selectedItem: CartItem) => void;
 } & SelectedItemProps;
 

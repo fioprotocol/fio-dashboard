@@ -16,11 +16,33 @@ type Props = {
 } & SelectedItemProps;
 
 export const AddToCartButton: React.FC<Props> = props => {
-  const { isSelected, onClick } = props;
+  const {
+    id,
+    address,
+    allowFree,
+    domain,
+    costFio,
+    costNativeFio,
+    costUsdc,
+    domainType,
+    period,
+    type,
+    isSelected,
+    onClick,
+  } = props;
 
-  const selectedItem = { ...props };
-  delete selectedItem.onClick;
-  delete selectedItem.isSelected;
+  const selectedItem = {
+    id,
+    allowFree,
+    address,
+    domain,
+    costFio,
+    costNativeFio,
+    costUsdc,
+    domainType,
+    period,
+    type,
+  };
 
   return (
     <Button

@@ -23,7 +23,7 @@ import {
 
 import { addCartItem } from '../../util/cart';
 import {
-  checkAddressIsExist,
+  checkAddressOrDomainIsExist,
   transformCustomDomains,
   transformNonPremiumDomains,
   transformPremiumDomains,
@@ -79,7 +79,10 @@ const handleFCHItems = async ({
           return;
         }
 
-        const isAddressExist = await checkAddressIsExist(address, domain.name);
+        const isAddressExist = await checkAddressOrDomainIsExist({
+          address,
+          domain: domain.name,
+        });
 
         if (isAddressExist) {
           fireAnalyticsEventDebounced(

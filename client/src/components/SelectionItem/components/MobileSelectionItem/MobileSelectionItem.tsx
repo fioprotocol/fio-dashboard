@@ -6,7 +6,6 @@ import { CheckIconComponent } from '../../../CheckIconComponent';
 import { AddToCartButton } from '../AddToCartButton';
 import { FCHItem } from '../FCHItem';
 import { PirceItem } from '../PriceItem';
-import { DomainTypeBadge } from '../DomainTypeBadge';
 
 import { SelectedItemProps } from '../../../../pages/FioAddressSelectionPage/types';
 import { CartItem } from '../../../../types';
@@ -16,10 +15,13 @@ import classes from './MobileSelectionItem.module.scss';
 type Props = {
   onClick: (selectedItem: CartItem) => void;
   hasWhiteBackground?: boolean;
+  actionComponent: React.ReactNode;
+  hasMaxWidth?: boolean;
 } & SelectedItemProps;
 
 export const MobileSelectionItem: React.FC<Props> = props => {
   const {
+    actionComponent,
     address,
     costFio,
     costNativeFio,
@@ -27,6 +29,7 @@ export const MobileSelectionItem: React.FC<Props> = props => {
     domain,
     domainType,
     hasWhiteBackground,
+    hasMaxWidth,
   } = props;
 
   return (
@@ -34,6 +37,7 @@ export const MobileSelectionItem: React.FC<Props> = props => {
       className={classnames(
         classes.container,
         hasWhiteBackground && classes.hasWhiteBackground,
+        hasMaxWidth && classes.hasMaxWidth,
       )}
     >
       <CheckIconComponent fontSize="18px" isGreen />
@@ -47,8 +51,13 @@ export const MobileSelectionItem: React.FC<Props> = props => {
             domainType={domainType}
           />
         </div>
-        <div className={classes.badgeContainer}>
-          <DomainTypeBadge domainType={domainType} />
+        <div
+          className={classnames(
+            classes.badgeContainer,
+            hasMaxWidth && classes.hasMaxWidth,
+          )}
+        >
+          {actionComponent}
         </div>
       </div>
       <AddToCartButton {...props} />
