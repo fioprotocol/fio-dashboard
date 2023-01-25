@@ -35,7 +35,7 @@ export class SearchTerm extends Base {
           [Op.eq]: true,
         },
       },
-      order: [['rank', 'DESC']],
+      order: [['rank', 'ASC']],
     });
   }
 
@@ -46,7 +46,7 @@ export class SearchTerm extends Base {
           [Op.eq]: false,
         },
       },
-      order: [['rank', 'DESC']],
+      order: [['rank', 'ASC']],
     });
   }
 }

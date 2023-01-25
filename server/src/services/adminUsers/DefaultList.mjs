@@ -11,7 +11,7 @@ export default class DefaultList extends Base {
     const availableDomains = await Domain.getAvailableDomains();
     const dashboardDomains = await Domain.getDashboardDomains();
     const usernamesOnCustomDomains = await Username.findAll({
-      order: [['rank', 'DESC']],
+      order: [['rank', 'ASC']],
     });
     const searchPrefixes = await SearchTerm.getPrefixes();
     const searchPostfixes = await SearchTerm.getPostfixes();

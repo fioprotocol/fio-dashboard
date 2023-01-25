@@ -39,7 +39,7 @@ export class Domain extends Base {
           [Op.eq]: true,
         },
       },
-      order: [['rank', 'DESC']],
+      order: [['rank', 'ASC']],
     });
   }
 
@@ -51,7 +51,7 @@ export class Domain extends Base {
         },
       },
       order: [
-        ['rank', 'DESC'],
+        ['rank', 'ASC'],
         ['name', 'ASC'],
       ],
     });
