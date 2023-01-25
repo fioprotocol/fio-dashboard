@@ -6,7 +6,6 @@ import { CheckIconComponent } from '../../../CheckIconComponent';
 import { AddToCartButton } from '../AddToCartButton';
 import { FCHItem } from '../FCHItem';
 import { PirceItem } from '../PriceItem';
-import { DomainTypeBadge } from '../DomainTypeBadge';
 
 import { SelectedItemProps } from '../../../../pages/FioAddressSelectionPage/types';
 import { CartItem } from '../../../../types';
@@ -14,13 +13,16 @@ import { CartItem } from '../../../../types';
 import classes from './DesktopSelectionItem.module.scss';
 
 type Props = {
+  actionComponent: React.ReactNode;
   hasShortNamePart?: boolean;
   onClick: (selectedItem: CartItem) => void;
   hasWhiteBackground?: boolean;
+  hasMaxWidth?: boolean;
 } & SelectedItemProps;
 
 export const DesktopSelectionItem: React.FC<Props> = props => {
   const {
+    actionComponent,
     address,
     costFio,
     costNativeFio,
@@ -29,6 +31,7 @@ export const DesktopSelectionItem: React.FC<Props> = props => {
     domain,
     domainType,
     hasWhiteBackground,
+    hasMaxWidth,
   } = props;
 
   return (
@@ -37,14 +40,20 @@ export const DesktopSelectionItem: React.FC<Props> = props => {
         classes.container,
         hasShortNamePart && classes.hasShortNamePart,
         hasWhiteBackground && classes.hasWhiteBackground,
+        hasMaxWidth && classes.hasMaxWidth,
       )}
     >
       <CheckIconComponent fontSize="18px" isGreen />
       <div className={classes.fchContainer}>
         <FCHItem address={address} domain={domain} />
       </div>
-      <div className={classes.badgeContainer}>
-        <DomainTypeBadge domainType={domainType} />
+      <div
+        className={classnames(
+          classes.badgeContainer,
+          hasMaxWidth && classes.hasMaxWidth,
+        )}
+      >
+        {actionComponent}
       </div>
       <div className={classes.priceContainer}>
         <PirceItem

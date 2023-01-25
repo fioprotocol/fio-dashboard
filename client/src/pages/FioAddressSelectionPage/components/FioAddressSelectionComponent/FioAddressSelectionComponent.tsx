@@ -2,13 +2,15 @@ import React from 'react';
 
 import AddressDomainCart from '../../../../components/AddressDomainCart';
 import InfoBadge from '../../../../components/InfoBadge/InfoBadge';
+import { AddressDomainFormContainer } from '../../../../components/AddressDomainFormContainer';
 
 import { SuggestedItemsList } from '../SuggestedItemsList';
 import { UsersItemsList } from '../UsersItemsList';
 import { AdditionalItemsList } from '../AdditionalItemsList';
-import { AddressFormContainer } from '../AddressFormContainer';
 
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
+
+import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
 
 import { UseContextProps } from '../../types';
 
@@ -17,6 +19,8 @@ import classes from './FioAddressSelectionComponent.module.scss';
 type Props = {
   isDesktop: boolean;
 } & UseContextProps;
+
+const FIELD_NAME = 'address';
 
 export const FioAddressSelectionComponent: React.FC<Props> = props => {
   const {
@@ -34,9 +38,12 @@ export const FioAddressSelectionComponent: React.FC<Props> = props => {
   return (
     <>
       <div className={classes.container}>
-        <AddressFormContainer
+        <AddressDomainFormContainer
+          fieldName={FIELD_NAME}
           loading={loading}
-          setAddressValue={setAddressValue}
+          placeholder="Enter a Username"
+          queryParam={QUERY_PARAMS_NAMES.ADDRESS}
+          setFieldValue={setAddressValue}
         />
         <UsersItemsList
           addressValue={addressValue}

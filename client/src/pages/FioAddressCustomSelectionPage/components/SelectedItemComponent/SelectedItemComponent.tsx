@@ -2,6 +2,7 @@ import React from 'react';
 
 import InfoBadge from '../../../../components/InfoBadge/InfoBadge';
 import { SelectionItem } from '../../../../components/SelectionItem';
+import { DomainTypeBadge } from '../../../../components/SelectionItem/components/DomainTypeBadge';
 
 import { BADGE_TYPES } from '../../../../components/Badge/Badge';
 
@@ -33,6 +34,10 @@ export const SelectedItemComponent: React.FC<SelectedItemComponentProps> = props
         onClick={onClick}
         hasShortNamePart
         hasWhiteBackground
+        hasMaxWidth
+        actionComponent={
+          <DomainTypeBadge domainType={selectedItemProps.domainType} />
+        }
       />
       <InfoBadge
         title="Premium"

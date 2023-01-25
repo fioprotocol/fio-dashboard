@@ -2,6 +2,8 @@ import React from 'react';
 
 import { SelectionItem } from '../../../../components/SelectionItem';
 import Loader from '../../../../components/Loader/Loader';
+import { DomainTypeBadge } from '../../../../components/SelectionItem/components/DomainTypeBadge';
+
 import { ActionButton } from '../ActionButton';
 
 import { FIO_ADDRESS_ALREADY_EXISTS } from '../../../../constants/errors';
@@ -41,6 +43,9 @@ export const SuggestedItemsList: React.FC<Props> = props => {
             {...listItem}
             isSquareShape
             isDesktop={isDesktop}
+            actionComponent={
+              <DomainTypeBadge domainType={listItem.domainType} />
+            }
             onClick={onClick}
             key={listItem.id}
           />

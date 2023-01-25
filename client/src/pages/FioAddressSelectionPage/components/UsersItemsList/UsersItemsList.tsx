@@ -1,8 +1,10 @@
 import React from 'react';
 
 import { SelectionItem } from '../../../../components/SelectionItem';
-import { ActionButton } from '../ActionButton';
 import Loader from '../../../../components/Loader/Loader';
+import { DomainTypeBadge } from '../../../../components/SelectionItem/components/DomainTypeBadge';
+
+import { ActionButton } from '../ActionButton';
 
 import { SelectedItemProps } from '../../types';
 import { CartItem } from '../../../../types';
@@ -42,6 +44,9 @@ export const UsersItemsList: React.FC<Props> = props => {
             {...listItem}
             isSquareShape
             isDesktop={isDesktop}
+            actionComponent={
+              <DomainTypeBadge domainType={listItem.domainType} />
+            }
             onClick={onClick}
             key={listItem.id}
           />
