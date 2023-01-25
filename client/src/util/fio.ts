@@ -15,7 +15,11 @@ import { fireAnalyticsEventDebounced } from './analytics';
 import { setFioName, sleep } from '../utils';
 import { log } from '../util/general';
 
-import { FREE_ADDRESS_REGISTER_ERROR, ERROR_TYPES } from '../constants/errors';
+import {
+  FREE_ADDRESS_REGISTER_ERROR,
+  ERROR_TYPES,
+  NON_VAILD_DOMAIN,
+} from '../constants/errors';
 import { DOMAIN_TYPE, FIO_REQUEST_STATUS_TYPES } from '../constants/fio';
 import { ANALYTICS_EVENT_ACTIONS, CHAIN_CODES } from '../constants/common';
 import { FIO_ADDRESS_DELIMITER } from '../utils';
@@ -58,6 +62,25 @@ export const waitForAddressRegistered = async (
   return checkAddressIsRegistered();
 };
 
+export const vaildateFioDomain = (domain: string) => {
+  if (!domain) {
+    return 'Domain Field Should Be Filled';
+  }
+
+  if (domain && domain.length > 62) {
+    return 'Domain name should be less than 62 characters';
+  }
+
+  const domainValidation = validate(
+    { fioDomain: domain },
+    { fioDomain: allRules.fioDomain },
+  );
+
+  if (!domainValidation.isValid) {
+    return NON_VAILD_DOMAIN;
+  }
+};
+
 export const validateFioAddress = async (address: string, domain: string) => {
   if (!address) {
     return 'FIO Crypto Handle Field Should Be Filled';
@@ -80,24 +103,19 @@ export const validateFioAddress = async (address: string, domain: string) => {
     return 'FIO Crypto Handle only allows letters, numbers and dash in the middle';
   }
 
-  const domainValidation = validate(
-    { fioDomain: domain },
-    { fioDomain: allRules.fioDomain },
-  );
-
-  if (!domainValidation.isValid) {
-    return 'Domain name only allows letters, numbers and dash in the middle';
-  }
-
-  if (domain && domain.length > 62) {
-    return 'Domain name should be less than 62 characters';
-  }
+  vaildateFioDomain(domain);
 
   return null;
 };
 
-export const checkAddressIsExist = async (address: string, domain: string) => {
-  if (address && domain) {
+export const checkAddressOrDomainIsExist = async ({
+  address,
+  domain,
+}: {
+  address?: string;
+  domain: string;
+}) => {
+  if (domain) {
     try {
       fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
       const isAvail = await apis.fio.availCheck(setFioName(address, domain));

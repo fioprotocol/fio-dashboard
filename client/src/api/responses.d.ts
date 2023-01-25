@@ -202,10 +202,12 @@ export type DomainsResponse = {
   usernamesOnCustomDomains: UsernameOnDomain[];
 };
 
-export type AdminDefaults = {
+export type SearchPrefixesAndPostfixes = {
   searchPrefixes: SearchTerm[];
   searchPostfixes: SearchTerm[];
-} & DomainsResponse;
+};
+
+export type AdminDefaults = SearchPrefixesAndPostfixes & DomainsResponse;
 
 export type AdminDefaultsRequest = AdminDefaults & {
   availableDomainsToDelete?: string[];

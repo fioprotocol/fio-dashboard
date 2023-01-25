@@ -12,8 +12,9 @@ import {
 
 import apis from '../../api';
 import { setFioName } from '../../utils';
-import { checkAddressIsExist } from '../../util/fio';
+import { checkAddressOrDomainIsExist } from '../../util/fio';
 import { fireAnalyticsEventDebounced } from '../analytics';
+
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
 interface MatchFieldArgs {
@@ -60,7 +61,10 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
   }
 
   try {
-    const isAddressExist = await checkAddressIsExist(address, domain);
+    const isAddressExist = await checkAddressOrDomainIsExist({
+      address,
+      domain,
+    });
     if (isAddressExist) {
       succeeded = false;
       message = FIO_ADDRESS_ALREADY_EXISTS;
