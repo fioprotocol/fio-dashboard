@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Field, FormRenderProps } from 'react-final-form';
+import { OnChange } from 'react-final-form-listeners';
 
 import TextInput, {
   INPUT_COLOR_SCHEMA,
@@ -40,6 +41,7 @@ const FioAddressCustomSelectionPage: React.FC = () => {
     options,
     shouldPrependUserDomains,
     onClick,
+    onFieldChange,
   } = useContext();
 
   return (
@@ -113,6 +115,7 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                     debounceTimeout={DEFAULT_DEBOUNCE_TIMEOUT}
                     hasErrorForced={hasAddressError}
                   />
+                  <OnChange name={ADDRESS_FIELD_NAME}>{onFieldChange}</OnChange>
                   {shouldPrependUserDomains ? (
                     <>
                       <Label

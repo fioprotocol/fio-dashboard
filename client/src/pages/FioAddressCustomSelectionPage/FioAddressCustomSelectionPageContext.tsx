@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
@@ -38,6 +38,7 @@ type UseContextProps = {
   options: OptionProps[];
   shouldPrependUserDomains: boolean;
   onClick: (selectedItem: CartItem) => void;
+  onFieldChange: (value: string) => void;
 };
 
 export const useContext = (): UseContextProps => {
@@ -59,7 +60,14 @@ export const useContext = (): UseContextProps => {
 
   const addressParam = queryParams.get(QUERY_PARAMS_NAMES.ADDRESS);
   const domainParam = queryParams.get(QUERY_PARAMS_NAMES.DOMAIN);
-  const link = `${ROUTES.FIO_ADDRESSES_SELECTION}?${QUERY_PARAMS_NAMES.ADDRESS}=${addressParam}`;
+
+  let defaultInitialLink = `${ROUTES.FIO_ADDRESSES_SELECTION}`;
+
+  if (addressParam)
+    defaultInitialLink =
+      defaultInitialLink + `?${QUERY_PARAMS_NAMES.ADDRESS}=${addressParam}`;
+
+  const [link, setLink] = useState<string>(defaultInitialLink);
 
   const options =
     allDomains?.userDomains.map(userDomain => ({
@@ -78,6 +86,16 @@ export const useContext = (): UseContextProps => {
     });
 
     history.push(ROUTES.CART);
+  };
+
+  const onFieldChange = (value: string) => {
+    if (!value) {
+      setLink(`${ROUTES.FIO_ADDRESSES_SELECTION}`);
+    } else {
+      setLink(
+        `${ROUTES.FIO_ADDRESSES_SELECTION}?${QUERY_PARAMS_NAMES.ADDRESS}=${value}`,
+      );
+    }
   };
 
   useEffectOnce(() => {
@@ -99,5 +117,6 @@ export const useContext = (): UseContextProps => {
     options,
     shouldPrependUserDomains,
     onClick,
+    onFieldChange,
   };
 };
