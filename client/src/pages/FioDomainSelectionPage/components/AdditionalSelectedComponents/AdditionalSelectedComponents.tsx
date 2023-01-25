@@ -39,10 +39,18 @@ export const AdditionalSelectedComponents: React.FC<Props> = props => {
   )
     return null;
 
+  if (loading) {
+    return (
+      <div>
+        <h5 className={classes.subtitle}>Additional FIO Domains</h5>
+        {loading && <Loader />}
+      </div>
+    );
+  }
+
   return (
-    <div className={classes.container}>
+    <div>
       <h5 className={classes.subtitle}>Additional FIO Domains</h5>
-      {loading && <Loader />}
       <div>
         {additionalItemsList.map(additionalItem => (
           <div key={additionalItem.id} className={classes.itemContainer}>
