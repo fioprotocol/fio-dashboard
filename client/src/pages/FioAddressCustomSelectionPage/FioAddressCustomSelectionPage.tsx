@@ -59,7 +59,12 @@ const FioAddressCustomSelectionPage: React.FC = () => {
         </p>
         <Form
           onSubmit={() => null}
-          validate={formValidation.validateForm}
+          validate={values =>
+            formValidation.validateForm({
+              ...values,
+              userDomains: allDomains.userDomains,
+            })
+          }
           initialValues={initialValues}
         >
           {(props: FormRenderProps<FormValues>) => {
@@ -78,13 +83,13 @@ const FioAddressCustomSelectionPage: React.FC = () => {
 
             const hasAddressError =
               !!errors.address &&
-              (touched.address || visited.address) &&
+              (touched.address || visited.address || initialValues.address) &&
               !validating &&
               dirtyFields.address;
 
             const hasDomainError =
               !!errors.domain &&
-              (touched.domain || visited.domain) &&
+              (touched.domain || visited.domain || initialValues.domain) &&
               !validating &&
               dirtyFields.domain;
 
@@ -164,7 +169,7 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                   allDomains={allDomains}
                   address={address}
                   domain={domain}
-                  show={valid}
+                  show={address && domain && valid}
                   isDesktop={isDesktop}
                   onClick={onClick}
                 />

@@ -79,6 +79,8 @@ export const vaildateFioDomain = (domain: string) => {
   if (!domainValidation.isValid) {
     return NON_VAILD_DOMAIN;
   }
+
+  return null;
 };
 
 export const validateFioAddress = async (address: string, domain: string) => {
