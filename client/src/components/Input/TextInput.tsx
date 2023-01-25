@@ -66,6 +66,7 @@ export type TextInputProps = {
   connectWalletProps: ConnectProviderType;
   withoutBottomMargin?: boolean;
   hasItalicLabel?: boolean;
+  hasErrorForced?: boolean;
 };
 
 export const TextInput: React.ForwardRefRenderFunction<
@@ -102,6 +103,7 @@ export const TextInput: React.ForwardRefRenderFunction<
     wFioBalance,
     withoutBottomMargin,
     hasItalicLabel,
+    hasErrorForced,
     ...rest
   } = props;
   const {
@@ -132,6 +134,7 @@ export const TextInput: React.ForwardRefRenderFunction<
   ] = useFieldElemActiveState();
 
   const hasError =
+    hasErrorForced ||
     ((error || data?.error) &&
       (touched || modified || submitSucceeded || !!value) &&
       !active &&
