@@ -36,6 +36,73 @@ export type UseContextProps = {
   setDomainValue: (domain: string) => void;
 };
 
+const handleDomainItem = async ({
+  domainItem,
+  cartItemsJSON,
+  nativeFioDomainPrice,
+  roe,
+}: {
+  domainItem: { name: string; rank?: number };
+  cartItemsJSON: string;
+  nativeFioDomainPrice: number;
+  roe: number;
+}) => {
+  const { name, rank } = domainItem;
+
+  const { fio, usdc } = convertFioPrices(nativeFioDomainPrice, roe);
+
+  const isDomainExist = await checkAddressOrDomainIsExist({ domain: name });
+
+  const parsedCartItems: CartItem[] = JSON.parse(cartItemsJSON);
+
+  const existingCartItem = parsedCartItems.find(
+    cartItem => cartItem.id === name,
+  );
+
+  return {
+    id: name,
+    domain: name,
+    costFio: fio,
+    costUsdc: usdc,
+    costNativeFio: nativeFioDomainPrice,
+    domainType: DOMAIN_TYPE.CUSTOM,
+    isSelected: !!existingCartItem,
+    isExist: isDomainExist,
+    period: existingCartItem ? existingCartItem.period : 1,
+    type: CART_ITEM_TYPE.DOMAIN,
+    rank: rank || 0,
+  };
+};
+
+const validateDomainItems = async ({
+  domainArr,
+  cartItemsJSON,
+  nativeFioDomainPrice,
+  roe,
+}: {
+  domainArr: Partial<SearchTerm> & { name: string }[];
+  cartItemsJSON: string;
+  nativeFioDomainPrice: number;
+  roe: number;
+}) =>
+  (
+    await Promise.all(
+      domainArr.map(async domain => {
+        const error = vaildateFioDomain(domain.name);
+
+        if (!error)
+          return await handleDomainItem({
+            domainItem: domain,
+            cartItemsJSON,
+            nativeFioDomainPrice,
+            roe,
+          });
+
+        return null;
+      }),
+    )
+  ).filter(Boolean);
+
 export const useContext = () => {
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
@@ -45,7 +112,7 @@ export const useContext = () => {
 
   const [domainValue, setDomainValue] = useState<string>(null);
   const [error, setError] = useState<string>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, toggleLoading] = useState<boolean>(false);
   const [prefixesList, setPrefixesList] = useState<SearchTerm[]>([]);
   const [postfixesList, setPostfixesList] = useState<SearchTerm[]>([]);
   const [suggestedItem, setSuggestedItem] = useState<SelectedItemProps>(null);
@@ -57,15 +124,13 @@ export const useContext = () => {
     nativeFio: { domain: nativeFioDomainPrice },
   } = prices;
 
-  const { fio, usdc } = convertFioPrices(nativeFioDomainPrice, roe);
-
   const cartItemsJSON = JSON.stringify(cartItems);
   const prefixesListJSON = JSON.stringify(prefixesList);
   const postfixesListJSON = JSON.stringify(postfixesList);
   const additionalItemsListJSON = JSON.stringify(additionalItemsList);
 
   const getPrefixPostfixList = async () => {
-    setLoading(true);
+    toggleLoading(true);
 
     try {
       const {
@@ -79,7 +144,7 @@ export const useContext = () => {
       //
     }
 
-    setLoading(false);
+    toggleLoading(false);
   };
 
   const onClick = (selectedItem: CartItem) => {
@@ -129,79 +194,37 @@ export const useContext = () => {
     }
   };
 
-  const handleDomainItem = useCallback(
-    async (domainItem: { name: string; rank?: number }) => {
-      const { name, rank } = domainItem;
-
-      const isDomainExist = await checkAddressOrDomainIsExist({ domain: name });
-
-      const parsedCartItems: CartItem[] = JSON.parse(cartItemsJSON);
-
-      const existingCartItem = parsedCartItems.find(
-        cartItem => cartItem.id === name,
-      );
-
-      return {
-        id: name,
-        domain: name,
-        costFio: fio,
-        costUsdc: usdc,
-        costNativeFio: nativeFioDomainPrice,
-        domainType: DOMAIN_TYPE.CUSTOM,
-        isSelected: !!existingCartItem,
-        isExist: isDomainExist,
-        period: existingCartItem ? existingCartItem.period : 1,
-        type: CART_ITEM_TYPE.DOMAIN,
-        rank: rank || 0,
-      };
-    },
-    [cartItemsJSON, fio, nativeFioDomainPrice, usdc],
-  );
-
-  const handleSuggestedItem = useCallback(
+  const handleSelectedItems = useCallback(
     async (domain: string) => {
-      setLoading(true);
+      if (!domainValue) {
+        setSuggestedItem(null);
+        setAdditionalItemsList([]);
+      }
 
-      const error = vaildateFioDomain(domain);
+      toggleLoading(true);
 
-      if (error) {
-        setError(error);
+      const validationError = vaildateFioDomain(domain);
+
+      if (validationError) {
+        setError(validationError);
+        toggleLoading(false);
         return;
       }
 
       const suggestedItemElement = await handleDomainItem({
-        name: domain,
+        domainItem: {
+          name: domain,
+        },
+        cartItemsJSON,
+        nativeFioDomainPrice,
+        roe,
       });
 
       if (suggestedItemElement.isExist) {
         setError(DOMAIN_ALREADY_EXISTS);
+      } else {
+        setSuggestedItem(suggestedItemElement);
       }
-
-      setSuggestedItem(suggestedItemElement);
-
-      setLoading(false);
-    },
-    [handleDomainItem],
-  );
-
-  const validateDomainItems = useCallback(
-    async (domainArr: Partial<SearchTerm> & { name: string }[]) =>
-      await Promise.all(
-        domainArr.map(async domain => {
-          const error = vaildateFioDomain(domain.name);
-
-          if (!error) return await handleDomainItem(domain);
-
-          return null;
-        }),
-      ),
-    [handleDomainItem],
-  );
-
-  const handleAdditionalItemsList = useCallback(
-    async (domain: string) => {
-      if (error && error !== DOMAIN_ALREADY_EXISTS) return;
-      setLoading(true);
 
       const parsedPrexiesList: SearchTerm[] = JSON.parse(prefixesListJSON);
       const parsedPostfixesList: SearchTerm[] = JSON.parse(postfixesListJSON);
@@ -229,17 +252,25 @@ export const useContext = () => {
           name: domain + postfixItem.term,
         }));
 
-      const validatedPrefixedItems = await validateDomainItems(prefixedDomains);
-      const validatedPostfixedItems = await validateDomainItems(
-        postfixedDomains,
-      );
+      const validatedPrefixedItems = await validateDomainItems({
+        domainArr: prefixedDomains,
+        cartItemsJSON,
+        nativeFioDomainPrice,
+        roe,
+      });
+      const validatedPostfixedItems = await validateDomainItems({
+        domainArr: postfixedDomains,
+        cartItemsJSON,
+        nativeFioDomainPrice,
+        roe,
+      });
 
-      const availablePrefixedItems = validatedPrefixedItems
-        .filter(Boolean)
-        .filter(prefixedDomain => !prefixedDomain?.isExist);
-      const availablePostfixedItems = validatedPostfixedItems
-        .filter(Boolean)
-        .filter(postfixedDomain => !postfixedDomain?.isExist);
+      const availablePrefixedItems = validatedPrefixedItems.filter(
+        prefixedDomain => !prefixedDomain?.isExist,
+      );
+      const availablePostfixedItems = validatedPostfixedItems.filter(
+        postfixedDomain => !postfixedDomain?.isExist,
+      );
 
       setAdditionalItemsList(
         [...availablePrefixedItems, ...availablePostfixedItems]
@@ -247,9 +278,16 @@ export const useContext = () => {
           .slice(0, DEFAULT_ADDITIONAL_ITEMS_COUNT),
       );
 
-      setLoading(false);
+      toggleLoading(false);
     },
-    [error, postfixesListJSON, prefixesListJSON, validateDomainItems],
+    [
+      cartItemsJSON,
+      domainValue,
+      nativeFioDomainPrice,
+      postfixesListJSON,
+      prefixesListJSON,
+      roe,
+    ],
   );
 
   useEffectOnce(() => {
@@ -258,9 +296,8 @@ export const useContext = () => {
 
   useEffect(() => {
     setError(null);
-    handleSuggestedItem(domainValue);
-    handleAdditionalItemsList(domainValue);
-  }, [domainValue, handleAdditionalItemsList, handleSuggestedItem]);
+    handleSelectedItems(domainValue);
+  }, [domainValue, handleSelectedItems]);
 
   useEffect(() => {
     if (loading) return;
@@ -283,7 +320,7 @@ export const useContext = () => {
     additionalItemsList,
     domainValue,
     error,
-    loading,
+    loading: loading,
     suggestedItem,
     onClick,
     onPeriodChange,
