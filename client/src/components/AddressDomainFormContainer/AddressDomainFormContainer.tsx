@@ -43,6 +43,7 @@ export const AddressDomainFormContainer: React.FC<Props> = props => {
       handleChange(initialValue);
     }
   }, [initialValue]);
+
   return (
     <div className={classes.container}>
       <Form onSubmit={() => null} initialValues={{ [fieldName]: initialValue }}>
