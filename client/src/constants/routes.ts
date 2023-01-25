@@ -24,7 +24,7 @@ const ROUTES: { [route: string]: string } = {
   CONFIRM_UPDATED_EMAIL_OLD: '/confirm-updated-email/:hash',
 
   FIO_ADDRESSES_SELECTION: '/fio-crypto-handles-selection', //?address= (not required)
-  FIO_ADDRESS_CUSTOM_SELECTION: '/fio-crypto-handles-custom', //?address= (not required)
+  FIO_ADDRESSES_CUSTOM_SELECTION: '/fio-crypto-handles-custom', //?address= (not required)
   FIO_DOMAINS_SELECTION: '/fio-domains-selection',
   FIO_ADDRESSES: '/fio-crypto-handles',
   FIO_ADDRESSES_SETTINGS: '/fio-crypto-handles-settings',

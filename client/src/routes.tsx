@@ -349,7 +349,7 @@ const Routes = (): React.ReactElement => (
             exact
           />
           <Route
-            path={ROUTES.FIO_ADDRESS_CUSTOM_SELECTION}
+            path={ROUTES.FIO_ADDRESSES_CUSTOM_SELECTION}
             component={FioAddressCustomSelectionPage}
             exact
           />
