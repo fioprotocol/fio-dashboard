@@ -18,6 +18,8 @@ import {
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { ROUTES } from '../../constants/routes';
+import { CART_ITEM_TYPE } from '../../constants/common';
+import { DOMAIN_TYPE } from '../../constants/fio';
 
 import useQuery from '../../hooks/useQuery';
 import useEffectOnce from '../../hooks/general';
@@ -66,7 +68,14 @@ export const useContext = (): UseContextProps => {
     })) || [];
 
   const onClick = (selectedItem: CartItem) => {
-    addCartItem(selectedItem);
+    addCartItem({
+      ...selectedItem,
+      allowFree: selectedItem.domainType === DOMAIN_TYPE.FREE,
+      type:
+        selectedItem.domainType === DOMAIN_TYPE.CUSTOM
+          ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+          : CART_ITEM_TYPE.ADDRESS,
+    });
 
     history.push(ROUTES.CART);
   };
