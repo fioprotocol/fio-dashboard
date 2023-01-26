@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { Button, Table } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -7,8 +7,9 @@ import { useLocation } from 'react-router';
 
 import Loader from '../../components/Loader/Loader';
 import AdminOrderModal from './components/AdminOrderModal/AdminOrderModal';
+import CustomDropdown from '../../components/CustomDropdown';
 
-import usePagination from '../../hooks/usePagination';
+import usePagination, { DEFAULT_LIMIT } from '../../hooks/usePagination';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 import useEffectOnce from '../../hooks/general';
 
@@ -16,6 +17,10 @@ import {
   PURCHASE_RESULTS_STATUS_LABELS,
   PAYMENT_PROVIDER_LABEL,
 } from '../../constants/purchase';
+import {
+  ORDER_AMOUNT_FILTER_OPTIONS,
+  ORDER_STATUS_FILTER_OPTIONS,
+} from '../../constants/common';
 
 import { AdminUser, OrderDetails } from '../../types';
 
@@ -46,12 +51,34 @@ const AdminOrdersPage: React.FC<Props> = props => {
   const location = useLocation<{ orderId?: string }>();
   const orderId = location?.state?.orderId;
 
+  const [filters, setFilters] = useState<Partial<OrderDetails>>({
+    status: null,
+    total: '',
+  });
   const [showOrderDetailsModal, setShowOrderDetailsModal] = useState(false);
   const [selectedOrderItemId, setSelectedOrderItemId] = useState<string | null>(
     null,
   );
 
-  const { paginationComponent, range } = usePagination(getOrdersList);
+  const handleChangeStatusFilter = useCallback((newValue: string) => {
+    setFilters(filters => ({
+      ...filters,
+      status: +newValue,
+    }));
+  }, []);
+
+  const handleChangeAmountFilter = useCallback((newValue: string) => {
+    setFilters(filters => ({
+      ...filters,
+      total: newValue,
+    }));
+  }, []);
+
+  const { paginationComponent, range } = usePagination(
+    getOrdersList,
+    DEFAULT_LIMIT,
+    filters,
+  );
 
   const closeOrderDetails = () => {
     setShowOrderDetailsModal(false);
@@ -79,9 +106,42 @@ const AdminOrdersPage: React.FC<Props> = props => {
   return (
     <>
       <div className={classes.tableContainer}>
-        <Button className="mb-4" onClick={exportOrdersData}>
-          <FontAwesomeIcon icon="download" className="mr-2" /> Export
-        </Button>
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <div className="mr-2">
+            <Button onClick={exportOrdersData}>
+              <FontAwesomeIcon icon="download" className="mr-2" /> Export
+            </Button>
+          </div>
+
+          <div className="d-flex">
+            <div className="d-flex align-items-center mr-2">
+              Filter Amount:&nbsp;
+              <CustomDropdown
+                value={filters.total}
+                options={ORDER_AMOUNT_FILTER_OPTIONS}
+                onChange={handleChangeAmountFilter}
+                isDark
+                withoutMarginBottom
+                fitContentWidth
+                hasAutoWidth
+                placeholder="All"
+              />
+            </div>
+            <div className="d-flex align-items-center">
+              Filter Status:&nbsp;
+              <CustomDropdown
+                value={filters.status ? filters.status.toString() : ''}
+                options={ORDER_STATUS_FILTER_OPTIONS}
+                onChange={handleChangeStatusFilter}
+                isDark
+                withoutMarginBottom
+                fitContentWidth
+                hasAutoWidth
+                placeholder="All"
+              />
+            </div>
+          </div>
+        </div>
         <Table className="table" striped={true}>
           <thead>
             <tr>

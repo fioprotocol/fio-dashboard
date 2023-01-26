@@ -132,16 +132,19 @@ export class ReferrerProfile extends Base {
     };
   }
 
-  static list(limit = 25, offset = 0) {
+  static list(limit = 25, offset = 0, where) {
     return this.findAll({
       order: [['createdAt', 'DESC']],
       limit: limit ? limit : undefined,
       offset,
+      where,
     });
   }
 
-  static partnersCount() {
-    return this.count();
+  static partnersCount(where) {
+    return this.count({
+      where,
+    });
   }
 
   static generateCode(data) {

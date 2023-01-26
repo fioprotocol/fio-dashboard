@@ -2,6 +2,11 @@ import { ACTIONS } from './fio';
 
 import { PurchaseTxStatus, ColorTypes } from '../types';
 
+export const FREE_STATUS: { [label: string]: number } = {
+  IS_FREE: 1,
+  IS_PAID: 2,
+};
+
 export const PURCHASE_RESULTS_STATUS: { [label: string]: number } = {
   NEW: 1,
   PENDING: 2,

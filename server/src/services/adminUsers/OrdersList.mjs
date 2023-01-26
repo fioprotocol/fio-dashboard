@@ -11,17 +11,24 @@ export default class OrdersList extends Base {
     return {
       offset: 'string',
       limit: 'string',
+      filters: [
+        {
+          nested_object: {
+            status: 'integer',
+            total: 'integer',
+          },
+        },
+      ],
     };
   }
 
-  async execute({ limit = 25, offset = 0 }) {
-    const ordersList = await Order.listAll(limit, offset);
-    const ordersCount = await Order.ordersCount();
+  async execute({ limit = 25, offset = 0, filters }) {
+    const ordersList = await Order.listAll(limit, offset, filters.status, filters.total);
 
     return {
       data: {
         orders: ordersList,
-        maxCount: ordersCount,
+        maxCount: ordersList && ordersList[0] ? +ordersList[0].maxCount : 0,
       },
     };
   }

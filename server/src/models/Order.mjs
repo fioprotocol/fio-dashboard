@@ -61,6 +61,13 @@ export class Order extends Base {
     };
   }
 
+  static get FREE_STATUS() {
+    return {
+      IS_FREE: 1,
+      IS_PAID: 2,
+    };
+  }
+
   static init(sequelize) {
     super.init(
       {
@@ -196,7 +203,12 @@ export class Order extends Base {
     return this.count(query);
   }
 
-  static async listAll(limit = DEFAULT_ORDERS_LIMIT, offset = 0) {
+  static async listAll(
+    limit = DEFAULT_ORDERS_LIMIT,
+    offset = 0,
+    status = null,
+    freeStatus = null,
+  ) {
     const [orders] = await this.sequelize.query(`
         SELECT 
           o.id, 
@@ -212,7 +224,8 @@ export class Order extends Base {
           p.currency,
           p.processor as "paymentProcessor",
           u.email as "userEmail",
-          rp.label as "refProfileName"
+          rp.label as "refProfileName",
+          count(*) OVER() AS "maxCount"
         FROM "orders" o
           INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${
             Payment.SPENT_TYPE.ORDER
@@ -220,6 +233,14 @@ export class Order extends Base {
           INNER JOIN users u ON u.id = o."userId"
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
         WHERE o."deletedAt" IS NULL
+          ${status ? `AND o."status" = ${status}` : ``}
+          ${
+            freeStatus
+              ? freeStatus === this.FREE_STATUS.IS_FREE
+                ? `AND (o."total" = '0' OR o."total" IS NULL)`
+                : `AND o."total"::numeric > 0`
+              : ``
+          }
         ORDER BY o.id DESC
         OFFSET ${offset}
         ${limit ? `LIMIT ${limit}` : ``}
