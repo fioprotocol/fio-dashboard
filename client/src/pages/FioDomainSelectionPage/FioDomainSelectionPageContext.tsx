@@ -115,6 +115,9 @@ export const useContext = () => {
   const [domainValue, setDomainValue] = useState<string>(null);
   const [error, setError] = useState<string>(null);
   const [loading, toggleLoading] = useState<boolean>(false);
+  const [prefixPostfixListLoading, togglePrefixPostfixListLoading] = useState<
+    boolean
+  >(false);
   const [prefixesList, setPrefixesList] = useState<SearchTerm[]>([]);
   const [postfixesList, setPostfixesList] = useState<SearchTerm[]>([]);
   const [suggestedItem, setSuggestedItem] = useState<SelectedItemProps>(null);
@@ -134,7 +137,7 @@ export const useContext = () => {
   const suggestedItemJSON = JSON.stringify(suggestedItem);
 
   const getPrefixPostfixList = async () => {
-    toggleLoading(true);
+    togglePrefixPostfixListLoading(true);
 
     try {
       const {
@@ -148,7 +151,7 @@ export const useContext = () => {
       //
     }
 
-    toggleLoading(false);
+    togglePrefixPostfixListLoading(false);
   };
 
   const onClick = (selectedItem: CartItem) => {
@@ -336,8 +339,9 @@ export const useContext = () => {
   }, []);
 
   useEffect(() => {
+    if (prefixPostfixListLoading) return;
     handleSelectedItems(domainValue);
-  }, [domainValue, handleSelectedItems]);
+  }, [domainValue, prefixPostfixListLoading, handleSelectedItems]);
 
   useEffect(() => {
     if (loading) return;
@@ -382,7 +386,7 @@ export const useContext = () => {
     additionalItemsList,
     domainValue,
     error,
-    loading: loading,
+    loading: loading || prefixPostfixListLoading,
     suggestedItem,
     onClick,
     onPeriodChange,
