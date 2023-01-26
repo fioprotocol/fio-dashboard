@@ -126,10 +126,12 @@ const handleSeletedDomain = ({
   fchItem,
   cartItems,
   cartHasFreeItem,
+  hasFreeAddress,
 }: {
   fchItem: SelectedItemProps;
   cartItems: CartItem[];
   cartHasFreeItem: boolean;
+  hasFreeAddress: boolean;
 }) => {
   const existingCartItem = cartItems.find(
     cartItem => cartItem.id === fchItem.id,
@@ -142,10 +144,11 @@ const handleSeletedDomain = ({
 
     if (domainType === DOMAIN_TYPE.FREE) {
       if (
-        cartHasFreeItem &&
-        (!existingCartItem ||
-          (!!existingCartItem &&
-            existingCartItem.domainType === DOMAIN_TYPE.PREMIUM))
+        hasFreeAddress ||
+        (cartHasFreeItem &&
+          (!existingCartItem ||
+            (!!existingCartItem &&
+              existingCartItem.domainType === DOMAIN_TYPE.PREMIUM)))
       )
         return DOMAIN_TYPE.PREMIUM;
 
@@ -154,7 +157,7 @@ const handleSeletedDomain = ({
 
     if (domainType === DOMAIN_TYPE.PREMIUM) {
       if (!allowFree) return domainType;
-      if (!cartHasFreeItem) return DOMAIN_TYPE.FREE;
+      if (!cartHasFreeItem && !hasFreeAddress) return DOMAIN_TYPE.FREE;
       return domainType;
     }
   };
@@ -448,6 +451,7 @@ export const useContext = (): UseContextProps => {
           fchItem: suggestedItem,
           cartItems: parsedCartItems,
           cartHasFreeItem,
+          hasFreeAddress,
         }),
       ),
     );
@@ -458,6 +462,7 @@ export const useContext = (): UseContextProps => {
           fchItem: additionalItem,
           cartItems: parsedCartItems,
           cartHasFreeItem,
+          hasFreeAddress,
         }),
       ),
     );
