@@ -1,5 +1,6 @@
 import React from 'react';
 import { Form, Field, FormRenderProps } from 'react-final-form';
+import { OnChange } from 'react-final-form-listeners';
 
 import TextInput, {
   INPUT_COLOR_SCHEMA,
@@ -40,6 +41,7 @@ const FioAddressCustomSelectionPage: React.FC = () => {
     options,
     shouldPrependUserDomains,
     onClick,
+    onFieldChange,
   } = useContext();
 
   return (
@@ -57,7 +59,12 @@ const FioAddressCustomSelectionPage: React.FC = () => {
         </p>
         <Form
           onSubmit={() => null}
-          validate={formValidation.validateForm}
+          validate={values =>
+            formValidation.validateForm({
+              ...values,
+              userDomains: allDomains.userDomains,
+            })
+          }
           initialValues={initialValues}
         >
           {(props: FormRenderProps<FormValues>) => {
@@ -76,13 +83,13 @@ const FioAddressCustomSelectionPage: React.FC = () => {
 
             const hasAddressError =
               !!errors.address &&
-              (touched.address || visited.address) &&
+              (touched.address || visited.address || initialValues.address) &&
               !validating &&
               dirtyFields.address;
 
             const hasDomainError =
               !!errors.domain &&
-              (touched.domain || visited.domain) &&
+              (touched.domain || visited.domain || initialValues.domain) &&
               !validating &&
               dirtyFields.domain;
 
@@ -113,6 +120,7 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                     debounceTimeout={DEFAULT_DEBOUNCE_TIMEOUT}
                     hasErrorForced={hasAddressError}
                   />
+                  <OnChange name={ADDRESS_FIELD_NAME}>{onFieldChange}</OnChange>
                   {shouldPrependUserDomains ? (
                     <>
                       <Label
@@ -161,7 +169,7 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                   allDomains={allDomains}
                   address={address}
                   domain={domain}
-                  show={valid}
+                  show={address && domain && valid}
                   isDesktop={isDesktop}
                   onClick={onClick}
                 />

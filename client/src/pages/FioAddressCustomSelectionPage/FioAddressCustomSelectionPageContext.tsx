@@ -1,12 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
 
 import { getDomains } from '../../redux/registrations/actions';
 import { refreshFioNames } from '../../redux/fio/actions';
+import { showLoginModal } from '../../redux/modal/actions';
+import { setRedirectPath } from '../../redux/navigation/actions';
 
-import { isAuthenticated as isAuthenticatedSelector } from '../../redux/profile/selectors';
+import {
+  isAuthenticated as isAuthenticatedSelector,
+  lastAuthData as lastAuthDataSelector,
+} from '../../redux/profile/selectors';
 import {
   allDomains as allDomainsSelector,
   loading as publicDomainsLoadingSelector,
@@ -38,11 +43,13 @@ type UseContextProps = {
   options: OptionProps[];
   shouldPrependUserDomains: boolean;
   onClick: (selectedItem: CartItem) => void;
+  onFieldChange: (value: string) => void;
 };
 
 export const useContext = (): UseContextProps => {
   const allDomains = useSelector(allDomainsSelector);
   const isAuthenticated = useSelector(isAuthenticatedSelector);
+  const lastAuthData = useSelector(lastAuthDataSelector);
   const publicDomainsLoading = useSelector(publicDomainsLoadingSelector);
   const fioWallets = useSelector(fioWalletsSelector);
   const userDomainsLoading = useSelector(userDomainsLoadingSelector);
@@ -59,13 +66,22 @@ export const useContext = (): UseContextProps => {
 
   const addressParam = queryParams.get(QUERY_PARAMS_NAMES.ADDRESS);
   const domainParam = queryParams.get(QUERY_PARAMS_NAMES.DOMAIN);
-  const link = `${ROUTES.FIO_ADDRESSES_SELECTION}?${QUERY_PARAMS_NAMES.ADDRESS}=${addressParam}`;
+
+  let defaultInitialLink = `${ROUTES.FIO_ADDRESSES_SELECTION}`;
+
+  if (addressParam)
+    defaultInitialLink =
+      defaultInitialLink + `?${QUERY_PARAMS_NAMES.ADDRESS}=${addressParam}`;
+
+  const [link, setLink] = useState<string>(defaultInitialLink);
 
   const options =
-    allDomains?.userDomains.map(userDomain => ({
-      value: userDomain.name,
-      label: userDomain.name,
-    })) || [];
+    allDomains?.userDomains
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .map(userDomain => ({
+        value: userDomain.name,
+        label: userDomain.name,
+      })) || [];
 
   const onClick = (selectedItem: CartItem) => {
     addCartItem({
@@ -77,7 +93,24 @@ export const useContext = (): UseContextProps => {
           : CART_ITEM_TYPE.ADDRESS,
     });
 
-    history.push(ROUTES.CART);
+    if (!isAuthenticated) {
+      dispatch(setRedirectPath({ pathname: ROUTES.CART }));
+      lastAuthData
+        ? dispatch(showLoginModal(ROUTES.CART))
+        : history.push(ROUTES.CREATE_ACCOUNT);
+    } else {
+      history.push(ROUTES.CART);
+    }
+  };
+
+  const onFieldChange = (value: string) => {
+    if (!value) {
+      setLink(`${ROUTES.FIO_ADDRESSES_SELECTION}`);
+    } else {
+      setLink(
+        `${ROUTES.FIO_ADDRESSES_SELECTION}?${QUERY_PARAMS_NAMES.ADDRESS}=${value}`,
+      );
+    }
   };
 
   useEffectOnce(() => {
@@ -99,5 +132,6 @@ export const useContext = (): UseContextProps => {
     options,
     shouldPrependUserDomains,
     onClick,
+    onFieldChange,
   };
 };

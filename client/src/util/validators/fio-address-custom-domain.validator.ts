@@ -8,14 +8,17 @@ import {
   DOMAIN_ALREADY_EXISTS,
   FIO_ADDRESS_ALREADY_EXISTS,
   NON_VALID_FCH,
+  NON_VAILD_DOMAIN,
 } from '../../constants/errors';
 
 import apis from '../../api';
 import { setFioName } from '../../utils';
-import { checkAddressOrDomainIsExist } from '../../util/fio';
+import { checkAddressOrDomainIsExist, vaildateFioDomain } from '../../util/fio';
 import { fireAnalyticsEventDebounced } from '../analytics';
 
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
+
+import { UserDomainType } from '../../types';
 
 interface MatchFieldArgs {
   fieldId?: string;
@@ -46,6 +49,16 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
 
   const { address, domain } = values;
 
+  const userDomains = values.userDomains as UserDomainType[];
+
+  let existingUserDomain = null;
+
+  if (userDomains.length) {
+    existingUserDomain = userDomains.find(
+      userDomain => userDomain.name === domain,
+    );
+  }
+
   let succeeded = true;
   let message = '';
 
@@ -53,11 +66,20 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
 
   fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
 
-  try {
-    apis.fio.isFioAddressValid(fchValue);
-  } catch (e) {
-    succeeded = false;
-    message = NON_VALID_FCH;
+  if (address) {
+    try {
+      apis.fio.isFioAddressValid(fchValue);
+    } catch (e) {
+      succeeded = false;
+      message = NON_VALID_FCH;
+    }
+  } else {
+    const errorValidaton = vaildateFioDomain(domain);
+
+    if (errorValidaton) {
+      succeeded = false;
+      message = NON_VAILD_DOMAIN;
+    }
   }
 
   try {
@@ -65,9 +87,17 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
       address,
       domain,
     });
-    if (isAddressExist) {
+    if (address && isAddressExist) {
       succeeded = false;
       message = FIO_ADDRESS_ALREADY_EXISTS;
+
+      fireAnalyticsEventDebounced(
+        ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
+      );
+    }
+    if (!address && isAddressExist && !existingUserDomain) {
+      succeeded = false;
+      message = DOMAIN_ALREADY_EXISTS;
 
       fireAnalyticsEventDebounced(
         ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
@@ -83,7 +113,7 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
 
     const rows = await apis.fio.getTableRows(params);
 
-    if (rows.length && !rows[0].is_public) {
+    if (rows.length && !rows[0].is_public && !existingUserDomain) {
       succeeded = false;
       message = DOMAIN_ALREADY_EXISTS;
     }

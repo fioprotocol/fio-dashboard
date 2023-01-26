@@ -35,6 +35,14 @@ export const DomainSelectionComponent: React.FC<Props> = props => {
 
   if (!domainValue) return null;
 
+  if (loading)
+    return (
+      <>
+        <h5 className={classes.subtitle}>Suggested FIO Domains</h5>
+        <Loader />
+      </>
+    );
+
   if (error)
     return (
       <div>
@@ -48,14 +56,6 @@ export const DomainSelectionComponent: React.FC<Props> = props => {
           />
         </div>
       </div>
-    );
-
-  if (loading)
-    return (
-      <>
-        <h5 className={classes.subtitle}>Suggested FIO Domains</h5>
-        <Loader />
-      </>
     );
 
   if (!suggestedItem) return null;

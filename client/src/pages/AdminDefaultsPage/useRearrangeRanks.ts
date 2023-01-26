@@ -4,7 +4,7 @@ import debounce from 'lodash/debounce';
 
 import { AdminDefaults } from '../../api/responses';
 
-const RANK_REARRANGEMENT_DELAY_MS = 1000;
+const RANK_REARRANGEMENT_DELAY_MS = 500;
 
 export function useRearrangeRanks(
   fieldName: keyof AdminDefaults,
