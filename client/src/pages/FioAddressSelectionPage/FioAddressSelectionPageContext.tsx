@@ -122,6 +122,50 @@ const handleFCHItems = async ({
   ).filter(Boolean);
 };
 
+const handleSeletedDomain = ({
+  fchItem,
+  cartItems,
+  cartHasFreeItem,
+}: {
+  fchItem: SelectedItemProps;
+  cartItems: CartItem[];
+  cartHasFreeItem: boolean;
+}) => {
+  const existingCartItem = cartItems.find(
+    cartItem => cartItem.id === fchItem.id,
+  );
+
+  const { domainType, allowFree } = fchItem;
+
+  const handleDomainType = () => {
+    if (domainType === DOMAIN_TYPE.CUSTOM) return domainType;
+
+    if (domainType === DOMAIN_TYPE.FREE) {
+      if (
+        cartHasFreeItem &&
+        (!existingCartItem ||
+          (!!existingCartItem &&
+            existingCartItem.domainType === DOMAIN_TYPE.PREMIUM))
+      )
+        return DOMAIN_TYPE.PREMIUM;
+
+      return domainType;
+    }
+
+    if (domainType === DOMAIN_TYPE.PREMIUM) {
+      if (!allowFree) return domainType;
+      if (!cartHasFreeItem) return DOMAIN_TYPE.FREE;
+      return domainType;
+    }
+  };
+
+  return {
+    ...fchItem,
+    isSelected: !!existingCartItem,
+    domainType: handleDomainType(),
+  };
+};
+
 export const useContext = (): UseContextProps => {
   const allDomains = useSelector(allDomainsSelector);
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
@@ -152,6 +196,9 @@ export const useContext = (): UseContextProps => {
   >([]);
   const [error, setError] = useState<string>(null);
   const [loading, toggleLoading] = useState<boolean>(false);
+  const [previousAddressValue, setPreviousAddressValue] = useState<string>(
+    null,
+  );
 
   const cartHasFreeItem = cartItems.some(
     cartItem => cartItem.domainType === DOMAIN_TYPE.FREE,
@@ -196,8 +243,13 @@ export const useContext = (): UseContextProps => {
         setAdditionalItemsList([]);
         setSuggestedItemsList([]);
         setUsersItemsList([]);
+        setError(null);
         return;
       }
+
+      if (previousAddressValue === address) return;
+
+      setError(null);
 
       toggleLoading(true);
 
@@ -256,6 +308,7 @@ export const useContext = (): UseContextProps => {
         setSuggestedItemsList([]);
         setUsersItemsList([]);
         toggleLoading(false);
+        setPreviousAddressValue(address);
         return;
       }
 
@@ -269,6 +322,7 @@ export const useContext = (): UseContextProps => {
         setAdditionalItemsList([]);
         setSuggestedItemsList([]);
         toggleLoading(false);
+        setPreviousAddressValue(address);
         return;
       }
 
@@ -340,12 +394,16 @@ export const useContext = (): UseContextProps => {
         additionalPublicDomains.slice(0, ADDITIONAL_DOMAINS_COUNT_LIMIT),
       );
       setSuggestedItemsList(suggestedPublicDomains);
+
+      setPreviousAddressValue(address);
+
       toggleLoading(false);
     },
     [
       customDomainsJSON,
       nonPremiumPublicDomainsJSON,
       premiumPublicDomainsJSON,
+      previousAddressValue,
       prices,
       roe,
       userDomainsJSON,
@@ -361,7 +419,6 @@ export const useContext = (): UseContextProps => {
   }, [dispatch]);
 
   useEffect(() => {
-    setError(null);
     validateAddress(addressValue);
   }, [addressValue, validateAddress]);
 
@@ -385,19 +442,23 @@ export const useContext = (): UseContextProps => {
       usersItemsListJSON,
     );
 
-    setAdditionalItemsList(
-      parsedAdditionalItemsList.map(additionalItem =>
-        parsedCartItems.find(cartItem => cartItem.id === additionalItem.id)
-          ? { ...additionalItem, isSelected: true }
-          : { ...additionalItem, isSelected: false },
+    setSuggestedItemsList(
+      parsedSuggestedItemsList.map(suggestedItem =>
+        handleSeletedDomain({
+          fchItem: suggestedItem,
+          cartItems: parsedCartItems,
+          cartHasFreeItem,
+        }),
       ),
     );
 
-    setSuggestedItemsList(
-      parsedSuggestedItemsList.map(suggestedItem =>
-        parsedCartItems.find(cartItem => cartItem.id === suggestedItem.id)
-          ? { ...suggestedItem, isSelected: true }
-          : { ...suggestedItem, isSelected: false },
+    setAdditionalItemsList(
+      parsedAdditionalItemsList.map(additionalItem =>
+        handleSeletedDomain({
+          fchItem: additionalItem,
+          cartItems: parsedCartItems,
+          cartHasFreeItem,
+        }),
       ),
     );
 
@@ -414,6 +475,7 @@ export const useContext = (): UseContextProps => {
     cartItemsJSON,
     suggestedItemsListJSON,
     usersItemsListJSON,
+    cartHasFreeItem,
   ]);
 
   return {
