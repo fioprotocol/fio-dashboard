@@ -91,6 +91,7 @@ export const removeFreeCart = ({
     if (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) {
       item.costNativeFio = nativeFioAddressPrice;
       item.showBadge = true;
+      item.domainType = DOMAIN_TYPE.PREMIUM;
     }
 
     const fioPrices = convertFioPrices(
