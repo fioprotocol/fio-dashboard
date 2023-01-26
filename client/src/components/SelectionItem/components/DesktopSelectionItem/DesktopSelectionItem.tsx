@@ -61,6 +61,7 @@ export const DesktopSelectionItem: React.FC<Props> = props => {
           costUsdc={costUsdc}
           costFio={costFio}
           domainType={domainType}
+          hasMarginRight
         />
       </div>
       <AddToCartButton {...props} />
