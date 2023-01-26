@@ -8,6 +8,7 @@ import ChangePin from './components/ChangePin';
 import PasswordRecovery from './components/PasswordRecovery';
 import ChangeEmail from './components/ChangeEmail';
 import TwoFactorAuth from './components/TwoFactorAuth';
+import DeleteMyAccount from './components/DeleteMyAccount';
 
 import classes from './styles/Settings.module.scss';
 
@@ -29,7 +30,7 @@ const SettingsPage: React.FC<Props> = props => {
         <h5 className={classes.title}>Email Address</h5>
         <ChangeEmail />
       </div>
-      <div className={classes.settingsContainer}>
+      <div className={`${classes.settingsContainer} mb-4`}>
         <h5 className={classes.title}>Security</h5>
         <div className={classes.passwordPinContainer}>
           <ChangePassword />
@@ -37,6 +38,10 @@ const SettingsPage: React.FC<Props> = props => {
         </div>
         <TwoFactorAuth />
         <PasswordRecovery />
+      </div>
+      <div className={classes.settingsContainer}>
+        <h5 className={classes.title}>Account Management</h5>
+        <DeleteMyAccount />
       </div>
     </LayoutContainer>
   );

@@ -127,9 +127,9 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
 
   const renderLabel = () =>
     label && (
-      <div className={classnames(classes.label, uiType && classes[uiType])}>
+      <label className={classnames(classes.label, uiType && classes[uiType])}>
         {label}
-      </div>
+      </label>
     );
   const regularInput = (
     <div className={classes.regInputWrapper}>
