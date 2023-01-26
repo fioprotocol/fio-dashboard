@@ -422,8 +422,9 @@ export const useContext = (): UseContextProps => {
   }, [dispatch]);
 
   useEffect(() => {
+    if (domainsLoaing) return;
     validateAddress(addressValue);
-  }, [addressValue, validateAddress]);
+  }, [addressValue, domainsLoaing, validateAddress]);
 
   useEffect(() => {
     for (const fioWallet of fioWallets) {
@@ -481,6 +482,7 @@ export const useContext = (): UseContextProps => {
     suggestedItemsListJSON,
     usersItemsListJSON,
     cartHasFreeItem,
+    hasFreeAddress,
   ]);
 
   return {
