@@ -26,9 +26,13 @@ const ITEM_PROPS = {
 
 type DeleteMyAccountProps = {
   username: string;
+  logout: () => void;
 };
 
-const DeleteMyAccount: React.FC<DeleteMyAccountProps> = props => {
+const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
+  username,
+  logout,
+}) => {
   const [showConfirmationModal, toggleConfirmationModal] = useState(false);
   const [showPasswordModal, togglePasswordModal] = useState(false);
   const [showSuccessModal, toggleSuccessModal] = useState(false);
@@ -48,7 +52,6 @@ const DeleteMyAccount: React.FC<DeleteMyAccountProps> = props => {
   };
 
   const onDeleteConfirmed = () => {
-    console.log('Confirmed deletion...');
     toggleConfirmationModal(false);
     togglePasswordModal(true);
   };
@@ -73,12 +76,12 @@ const DeleteMyAccount: React.FC<DeleteMyAccountProps> = props => {
     setDeletingAccount(true);
     try {
       await apis.auth.deleteUser();
-      //   await apis.edge.deleteAccount(account);
+      await apis.edge.deleteAccount(account);
       togglePasswordModal(false);
       toggleSuccessModal(true);
-      // TODO: log user out
+      setTimeout(logout, 1000);
     } catch (e) {
-      console.log('Error deleting account');
+      return { password: 'Something went wrong, please try again later' };
     } finally {
       setDeletingAccount(false);
     }
@@ -129,7 +132,7 @@ const DeleteMyAccount: React.FC<DeleteMyAccountProps> = props => {
             <PasswordForm
               onSubmit={onFormSubmit}
               loading={checkingPassword}
-              username={props.username}
+              username={username}
             />
           </>
         )}

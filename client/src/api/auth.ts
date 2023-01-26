@@ -22,6 +22,7 @@ import {
   AdminAuthLoginResponse,
   AdminResetPasswordResponse,
   AuthProfileSendEvent,
+  GenericStatusResponse,
 } from './responses';
 
 export default class Auth extends Base {
@@ -207,9 +208,7 @@ export default class Auth extends Base {
     });
   }
 
-  deleteUser(): Promise<void> {
-    return new Promise(resolve => {
-      setTimeout(resolve, 3000);
-    });
+  deleteUser(): Promise<GenericStatusResponse> {
+    return this.apiClient.delete('users/me');
   }
 }
