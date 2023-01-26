@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import ReactDOM from 'react-dom';
 import { ConnectedRouter } from 'connected-react-router';
 import { library } from '@fortawesome/fontawesome-svg-core';
+import { HelmetProvider } from 'react-helmet-async';
 
 import icons from '../icons';
 
@@ -17,7 +18,9 @@ class AdminApp extends Component<{}, {}> {
     return (
       <Provider store={store}>
         <ConnectedRouter history={history}>
-          <Routes />
+          <HelmetProvider>
+            <Routes />
+          </HelmetProvider>
         </ConnectedRouter>
       </Provider>
     );
