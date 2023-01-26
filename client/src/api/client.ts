@@ -26,6 +26,10 @@ export default class ApiClient {
     window.localStorage.setItem(config.userTokenName, token);
   }
 
+  getToken(): string {
+    return this.token || window.localStorage.getItem(config.userTokenName);
+  }
+
   removeToken(): void {
     this.token = null;
     window.localStorage.removeItem(config.userTokenName);
@@ -34,6 +38,12 @@ export default class ApiClient {
   setAdminToken(adminToken: string): void {
     this.adminToken = adminToken;
     window.localStorage.setItem(config.adminTokenName, adminToken);
+  }
+
+  getAdminToken(): string {
+    return (
+      this.adminToken || window.localStorage.getItem(config.adminTokenName)
+    );
   }
 
   removeAdminToken(): void {
@@ -79,12 +89,11 @@ export default class ApiClient {
     if (params) req.query(params);
     if (body) req.send(body);
 
-    if (isAdminService(url)) {
-      if (this.adminToken)
-        req.set('Authorization', `Bearer ${this.adminToken}`);
-    } else if (this.token) req.set('Authorization', `Bearer ${this.token}`);
+    if (isAdminService(url))
+      req.set('Authorization', `Bearer ${this.getAdminToken()}`);
+    else if (this.token) req.set('Authorization', `Bearer ${this.getToken()}`);
 
-    // todo pass refcode to request
+    // TODO: pass refcode to request
 
     return req.then(
       (res: {
