@@ -9,7 +9,7 @@ type Props = {
   bottomChildren?: React.ReactNode;
   buttonText: string;
   isGreen?: boolean;
-  isBlue?: boolean;
+  isIndigo?: boolean;
   isSmall?: boolean;
   onClick: () => void;
   children?: React.ReactNode;
@@ -25,7 +25,7 @@ const SecurityItem: React.FC<Props> = props => {
     bottomChildren,
     buttonText,
     isGreen,
-    isBlue,
+    isIndigo,
     isSmall,
     onClick,
     children,
@@ -46,7 +46,7 @@ const SecurityItem: React.FC<Props> = props => {
           title={buttonText}
           onClick={onClick}
           isGreen={isGreen}
-          isBlue={isBlue}
+          isIndigo={isIndigo}
           isSmall={isSmall}
           loading={loading}
         />

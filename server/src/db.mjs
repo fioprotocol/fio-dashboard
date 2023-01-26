@@ -40,6 +40,9 @@ import { WrapStatusFioWrapTokensLogs } from './models/WrapStatusFioWrapTokensLog
 import { WrapStatusFioUnwrapNftsLogs } from './models/WrapStatusFioUnwrapNftsLogs.mjs';
 import { WrapStatusEthOraclesConfirmationsLogs } from './models/WrapStatusEthOraclesConfirmationsLogs.mjs';
 import { WrapStatusPolygonOraclesConfirmationsLogs } from './models/WrapStatusPolygonOraclesConfirmationsLogs.mjs';
+import { Domain } from './models/Domain.mjs';
+import { SearchTerm } from './models/SearchTerm.mjs';
+import { Username } from './models/Username.mjs';
 
 const sequelize = new Sequelize(config.postgres);
 
@@ -81,6 +84,9 @@ WrapStatusFioUnwrapNftsLogs.init(sequelize);
 WrapStatusFioUnwrapTokensOravotes.init(sequelize);
 WrapStatusEthOraclesConfirmationsLogs.init(sequelize);
 WrapStatusPolygonOraclesConfirmationsLogs.init(sequelize);
+Domain.init(sequelize);
+SearchTerm.init(sequelize);
+Username.init(sequelize);
 
 const { models } = sequelize;
 

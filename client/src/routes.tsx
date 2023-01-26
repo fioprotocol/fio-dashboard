@@ -5,14 +5,11 @@ import MainLayout from './pages/MainLayout';
 import AuthContainer from './components/AuthContainer';
 import PrivateRoute from './components/PrivateRoute';
 import ScrollToTop from './components/ScrollToTop';
-import AdminPrivateRoute from './components/AdminPrivateRoute';
 import FioLoader from './components/common/FioLoader/FioLoader';
 
 import { ROUTES } from './constants/routes';
 import { QUERY_PARAMS_NAMES } from './constants/queryParams';
 
-import { LocationProps as AdminEmailConfirmPageLocationProps } from './pages/AdminEmailConfirmPage/types';
-import { LocationProps as AdminPasswordResetPageLocationProps } from './pages/AdminPasswordResetPage/types';
 import { LocationProps as EmailConfirmationPageLocationProps } from './pages/EmailConfirmationPage/EmailConfirmationPage';
 
 const DashboardPage = React.lazy(() =>
@@ -171,6 +168,11 @@ const RejectFioRequestPage = React.lazy(() =>
     /* webpackChunkName: 'rejectFioRequestPage' */ './pages/RejectFioRequestPage'
   ),
 );
+const CancelFioRequestPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'cancelFioRequestPage' */ './pages/CancelFioRequestPage'
+  ),
+);
 const EmailConfirmationResultPage = React.lazy(() =>
   import(
     /* webpackChunkName: 'emailConfirmationResultPage' */ './pages/EmailConfirmationResultsPage'
@@ -185,58 +187,6 @@ const OrdersPage = React.lazy(() =>
 const OrderDetailsPage = React.lazy(() =>
   import(/* webpackChunkName: 'orderDetailsPage' */ './pages/OrderDetailsPage'),
 );
-const AdminOrdersPage = React.lazy(() =>
-  import(/* webpackChunkName: 'adminOrdersPage' */ './pages/AdminOrdersPage'),
-);
-const AdminLoginPage = React.lazy(() =>
-  import(/* webpackChunkName: 'adminLoginPage' */ './pages/AdminLoginPage'),
-);
-const AdminUserListPage = React.lazy(() =>
-  import(
-    /* webpackChunkName: 'adminUserListPage' */ './pages/AdminUserListPage'
-  ),
-);
-const AdminPasswordResetPage = React.lazy(() =>
-  import(
-    /* webpackChunkName: 'adminPasswordResetPage' */ './pages/AdminPasswordResetPage'
-  ),
-);
-const AdminRegularUsersListPage = React.lazy(() =>
-  import(
-    /* webpackChunkName: 'adminRegularUsersListPage' */ './pages/AdminRegularUsersListPage'
-  ),
-);
-const AdminRegularUserDetailsPage = React.lazy(() =>
-  import(
-    /* webpackChunkName: 'adminRegularUserDetailsPage' */ './pages/AdminRegularUserDetailsPage'
-  ),
-);
-const AdminProfilePage = React.lazy(() =>
-  import(/* webpackChunkName: 'adminProfilePage' */ './pages/AdminProfilePage'),
-);
-const AdminHomePage = React.lazy(() =>
-  import(/* webpackChunkName: 'adminHomePage' */ './pages/AdminHomePage'),
-);
-const AdminFioAccountsProfilesListPage = React.lazy(() =>
-  import(
-    /* webpackChunkName: 'adminFioAccountsProfilesListPage' */ './pages/AdminFioAccountsProfilesListPage'
-  ),
-);
-const AdminPartnersListPage = React.lazy(() =>
-  import(
-    /* webpackChunkName: 'adminPartnersListPage' */ './pages/AdminPartnersListPage'
-  ),
-);
-const AdminSearchResultPage = React.lazy(() =>
-  import(
-    /* webpackChunkName: 'adminSearchResultPage' */ './pages/AdminSearchResultPage'
-  ),
-);
-const AdminEmailConfirmPage = React.lazy(() =>
-  import(
-    /* webpackChunkName: 'adminEmailConfirmPage' */ './pages/AdminEmailConfirmPage'
-  ),
-);
 const FioDomainLandingPage = React.lazy(() =>
   import(
     /* webpackChunkName: 'fioDomainLandingPage' */ './pages/FioDomainLandingPage'
@@ -245,6 +195,11 @@ const FioDomainLandingPage = React.lazy(() =>
 const FioAddressSelectionPage = React.lazy(() =>
   import(
     /* webpackChunkName: 'fioAddressSelectionPage' */ './pages/FioAddressSelectionPage'
+  ),
+);
+const FioAddressCustomSelectionPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'fioAddressSelectionPage' */ './pages/FioAddressCustomSelectionPage'
   ),
 );
 const FioDomainSelectionPage = React.lazy(() =>
@@ -337,36 +292,6 @@ const Routes = (): React.ReactElement => (
             exact
           />
           <Route
-            path={ROUTES.ADMIN_CONFIRM_EMAIL_OLD}
-            component={(
-              props: RouteComponentProps<{ hash?: string }> &
-                AdminEmailConfirmPageLocationProps,
-            ) => (
-              <Redirect
-                to={`${ROUTES.ADMIN_CONFIRM_EMAIL}?${QUERY_PARAMS_NAMES.HASH}=${
-                  props.match.params.hash
-                }&${QUERY_PARAMS_NAMES.EMAIL}=${props.location.query.email ||
-                  ''}`}
-              />
-            )}
-            exact
-          />
-          <Route
-            path={ROUTES.ADMIN_RESET_PASSWORD_OLD}
-            component={(
-              props: RouteComponentProps<{ hash?: string }> &
-                AdminPasswordResetPageLocationProps,
-            ) => (
-              <Redirect
-                to={`${ROUTES.ADMIN_RESET_PASSWORD}?${
-                  QUERY_PARAMS_NAMES.HASH
-                }=${props.match.params.hash}&${QUERY_PARAMS_NAMES.EMAIL}=${props
-                  .location.query.email || ''}`}
-              />
-            )}
-            exact
-          />
-          <Route
             path={ROUTES.CONFIRM_EMAIL_OLD}
             component={(
               props: RouteComponentProps<{ hash?: string }> &
@@ -421,6 +346,11 @@ const Routes = (): React.ReactElement => (
           <Route
             path={ROUTES.FIO_ADDRESSES_SELECTION}
             component={FioAddressSelectionPage}
+            exact
+          />
+          <Route
+            path={ROUTES.FIO_ADDRESSES_CUSTOM_SELECTION}
+            component={FioAddressCustomSelectionPage}
             exact
           />
           <PrivateRoute
@@ -610,6 +540,12 @@ const Routes = (): React.ReactElement => (
             exact
           />
 
+          <PrivateRoute
+            path={ROUTES.CANCEL_FIO_REQUEST}
+            component={CancelFioRequestPage}
+            exact
+          />
+
           <PrivateRoute path={ROUTES.ORDERS} component={OrdersPage} exact />
           <PrivateRoute
             path={ROUTES.ORDER_DETAILS}
@@ -625,63 +561,6 @@ const Routes = (): React.ReactElement => (
           <PrivateRoute
             path={ROUTES.FIO_AFFILIATE_PROGRAM_ENABLED}
             component={FioAffiliateProgramPage}
-            exact
-          />
-
-          <AdminPrivateRoute
-            path={ROUTES.ADMIN_HOME}
-            component={AdminHomePage}
-            exact
-          />
-          <AdminPrivateRoute
-            path={ROUTES.ADMIN_ORDERS}
-            component={AdminOrdersPage}
-            exact
-          />
-          <Route path={ROUTES.ADMIN_LOGIN} component={AdminLoginPage} exact />
-          <AdminPrivateRoute
-            path={ROUTES.ADMIN_USERS}
-            component={AdminUserListPage}
-            exact
-          />
-          <Route
-            path={ROUTES.ADMIN_CONFIRM_EMAIL}
-            component={AdminEmailConfirmPage}
-            exact
-          />
-          <Route
-            path={ROUTES.ADMIN_RESET_PASSWORD}
-            component={AdminPasswordResetPage}
-            exact
-          />
-          <AdminPrivateRoute
-            path={ROUTES.ADMIN_REGULAR_USERS}
-            component={AdminRegularUsersListPage}
-            exact
-          />
-          <AdminPrivateRoute
-            path={ROUTES.ADMIN_REGULAR_USER_DETAIS}
-            component={AdminRegularUserDetailsPage}
-            exact
-          />
-          <AdminPrivateRoute
-            path={ROUTES.ADMIN_PROFILE}
-            component={AdminProfilePage}
-            exact
-          />
-          <AdminPrivateRoute
-            path={ROUTES.ADMIN_ACCOUNTS}
-            component={AdminFioAccountsProfilesListPage}
-            exact
-          />
-          <AdminPrivateRoute
-            path={ROUTES.ADMIN_PARTNERS}
-            component={AdminPartnersListPage}
-            exact
-          />
-          <AdminPrivateRoute
-            path={ROUTES.ADMIN_SEARCH_RESULT}
-            component={AdminSearchResultPage}
             exact
           />
 

@@ -1,11 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Navbar, Nav } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classnames from 'classnames';
 
 import { ActionButtons } from './ActionButtons';
-import SideMenu from './SideMenu';
+import { SideMenu } from './SideMenu/SideMenu';
+import { CartNavItem } from './LoggedNav';
+import { NavItemContainer } from './NavItemContainer';
 
 import { ROUTES } from '../../../constants/routes';
 import { ANALYTICS_EVENT_ACTIONS } from '../../../constants/common';
@@ -34,19 +33,45 @@ type RegularNavProps = {
   closeMenu: () => void;
 };
 
-const RegularNav: React.FC<RegularNavProps> = props => {
-  const { cartItems, hideCart, closeMenu, hideNavigation } = props;
+type DefaultNavItemProps = { isDesktop: boolean } & RegularNavProps;
+
+type NavItemsProps = { onCartClick: () => void } & DefaultNavItemProps;
+
+const ActionButtonsNavItem: React.FC<DefaultNavItemProps> = props => {
+  if (props.isDesktop)
+    return <ActionButtons {...props} hasVioletColor={true} />;
+
+  return (
+    <SideMenu {...props}>
+      <ActionButtons {...props} />
+    </SideMenu>
+  );
+};
+
+const NavItems: React.FC<NavItemsProps> = props => {
+  const { cartItems, hideCart, hideNavigation, isDesktop, onCartClick } = props;
+  return (
+    <NavItemContainer hide={hideNavigation}>
+      <Nav className="ml-auto align-items-center">
+        <CartNavItem
+          cartItems={cartItems}
+          isDesktop={isDesktop}
+          hasMarginRight={true}
+          hide={hideCart}
+          hideVerticalLine={true}
+          to={ROUTES.FIO_ADDRESSES_SELECTION}
+          onClick={onCartClick}
+        />
+        <ActionButtonsNavItem isDesktop={isDesktop} {...props} />
+      </Nav>
+    </NavItemContainer>
+  );
+};
+
+export const RegularNav: React.FC<RegularNavProps> = props => {
+  const { cartItems, closeMenu } = props;
 
   const isDesktop = useCheckIfDesktop();
-
-  const renderActionButtons = () => {
-    if (isDesktop) return <ActionButtons {...props} />;
-    return (
-      <SideMenu {...props}>
-        <ActionButtons {...props} />
-      </SideMenu>
-    );
-  };
 
   const onCartClick = () => {
     if (cartItems.length) {
@@ -58,53 +83,11 @@ const RegularNav: React.FC<RegularNavProps> = props => {
     closeMenu();
   };
 
-  const renderNav = () => {
-    if (hideNavigation) return null;
-
-    return (
-      <Nav className="ml-auto align-items-center">
-        {hideCart ? null : (
-          <Nav.Link
-            className={classnames(classes.navItem, 'text-white')}
-            as={Link}
-            to={ROUTES.FIO_ADDRESSES_SELECTION}
-            onClick={onCartClick}
-          >
-            <div className={classnames(classes.notifWrapper, classes.cartanim)}>
-              <FontAwesomeIcon
-                icon="shopping-cart"
-                className={classnames(classes.icon, 'mr-4')}
-              />
-              {cartItems.length > 0 && (
-                <div
-                  className={classnames(
-                    classes.notifActiveWrapper,
-                    classes.notifActiveWrapperRight,
-                  )}
-                >
-                  <FontAwesomeIcon
-                    icon="circle"
-                    className={classnames(
-                      classes.notifActive,
-                      'text-success',
-                      'mr-2',
-                    )}
-                  />
-                </div>
-              )}
-            </div>
-          </Nav.Link>
-        )}
-        {renderActionButtons()}
-      </Nav>
-    );
-  };
-
   return (
     <div className={classes.regularNavContainer}>
-      <Navbar className="pr-0 w-100">{renderNav()}</Navbar>
+      <Navbar className="pr-0 w-100">
+        <NavItems isDesktop={isDesktop} onCartClick={onCartClick} {...props} />
+      </Navbar>
     </div>
   );
 };
-
-export default RegularNav;

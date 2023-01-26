@@ -1,0 +1,78 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.formContainer {
+  margin: 30px auto 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 430px;
+
+  .form {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    grid-gap: 30px;
+    gap: 30px;
+
+    .field {
+      width: 100%;
+    }
+
+    .button {
+      min-width: 80px;
+      margin-bottom: 30px;
+      white-space: nowrap;
+    }
+  }
+
+  .actionTextContainer {
+    color: $black;
+    font-size: 0.9375rem;
+    display: flex;
+    flex-direction: row;
+
+    .actionText {
+      margin-left: 10px;
+      margin-top: 1px;
+
+      &.isReverseColors {
+        color: $white;
+      }
+      &.isDarkWhite {
+        color: $white;
+      }
+    }
+  }
+}
+
+@include sm {
+  .formContainer {
+    margin: 20px auto 0;
+
+    .form {
+      flex-direction: column;
+      gap: 0;
+
+      .field {
+        > div {
+          margin-bottom: 20px;
+        }
+      }
+
+      .button {
+        width: 100%;
+        margin-top: 0;
+      }
+    }
+    
+    .actionTextContainer {
+      flex-direction: column;
+      align-items: center;
+      max-width: 220px;
+      gap: 10px;
+    }
+  }
+}

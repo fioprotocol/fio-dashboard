@@ -37,14 +37,20 @@
     margin-bottom: 0;
   }
 
+  .ctaText {
+    margin-top: 1em;
+    @include proxima-nova-semibold;
+  }
+
   .link {
     display: flex;
 
     .button {
+      min-width: 70%;
       background-color: transparent;
       border-color: $white;
       min-height: 40px;
-      border-radius: 7px;
+      border-radius: 100px;
       font-size: 0.75rem;
       padding-left: 22px;
       padding-right: 22px;
@@ -53,7 +59,7 @@
 
       &:hover {
         background-color: $white;
-        color: $cyan;
+        color: $light-indigo;
         border-color: $white;
       }
     }
@@ -66,8 +72,15 @@
 
     .actionBadge {
       width: 100%;
-      max-width: 335px;
       margin: 0 0 30px;
+
+      .badgeContainer {
+        .link {
+          .button {
+            min-width: auto;
+          }
+        }
+      }
     }
   }
 }

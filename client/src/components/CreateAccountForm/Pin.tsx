@@ -21,7 +21,6 @@ const Pin: React.FC<Props> = props => {
       <>
         <FormHeader
           title="Confirm PIN"
-          isDoubleColor
           header="Set 2 of 2"
           subtitle="Enter a 6 digit PIN to use for sign in and transaction approvals"
         />
@@ -44,7 +43,6 @@ const Pin: React.FC<Props> = props => {
     <>
       <FormHeader
         title="Create PIN"
-        isDoubleColor
         header="Set 2 of 2"
         subtitle="Create a 6 digit PIN to use for sign in and transaction approvals"
       />

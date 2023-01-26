@@ -5,7 +5,7 @@ import { Link, Redirect } from 'react-router-dom';
 
 import LayoutContainer from '../LayoutContainer/LayoutContainer';
 import Modal from '../Modal/Modal';
-import ManagePageCtaBadge from './ManagePageCtaBadge';
+import { ManagePageCtaBadge } from './ManagePageCtaBadge';
 import Notifications from './ManagePageComponents/Notifications';
 import DesktopView from './ManagePageComponents/DesktopView';
 import ItemComponent from './ManagePageComponents/ItemComponent';
@@ -75,6 +75,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     renewDomainFeePrice,
     getAddBundlesFee,
     getRenewDomainFee,
+    cartItems,
     addItemToCart,
     history,
   } = props;
@@ -209,6 +210,10 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
       ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
       getCartItemsDataForAnalytics([newCartItem]),
     );
+    fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
+      getCartItemsDataForAnalytics([...cartItems, newCartItem]),
+    );
     history.push(ROUTES.CART);
   };
 
@@ -228,6 +233,10 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     fireAnalyticsEvent(
       ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
       getCartItemsDataForAnalytics([newCartItem]),
+    );
+    fireAnalyticsEvent(
+      ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
+      getCartItemsDataForAnalytics([...cartItems, newCartItem]),
     );
     history.push(ROUTES.CART);
   };

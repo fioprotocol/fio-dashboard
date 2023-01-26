@@ -17,8 +17,13 @@ import { log } from '../../util/general';
 import { DEFAULT_GAS_LIMIT } from '../../components/ConnectWallet/FeesModal/FeesModalInput';
 import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CHAIN_CODES,
+  DOMAIN_WRAP_NETWORKS_LIST,
+} from '../../constants/common';
 
-import { CHAIN_CODES, DOMAIN_WRAP_NETWORKS_LIST } from '../../constants/common';
+import { fireAnalyticsEvent } from '../../util/analytics';
 import { ContainerProps, InitialValues, UnWrapDomainValues } from './types';
 
 import classes from './styles/UnwrapDomainPage.module.scss';
@@ -85,8 +90,7 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
           },
         );
 
-        setProcessing(false);
-        setResultsData({
+        const results = {
           chainCode: POLYGON_NETWORK_DATA.chain_code,
           receivingAddress: data.fioAddress,
           fioDomain: nfts?.length
@@ -98,7 +102,11 @@ const UnwrapTokensPage: React.FC<ContainerProps> = props => {
             ...transaction,
             transaction_id: transaction.hash || transaction.transactionHash,
           },
-        });
+        };
+
+        setProcessing(false);
+        setResultsData(results);
+        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.UNWRAP_DOMAIN, results);
 
         // const receipt = await transaction.wait(); this will wait for transaction completion in chain
       } catch (err) {

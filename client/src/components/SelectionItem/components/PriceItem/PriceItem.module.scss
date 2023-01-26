@@ -1,0 +1,11 @@
+.container {
+  font-size: 0.9375em;
+
+  &.hasSmallFontSize {
+    font-size: 0.75em;
+  }
+
+  &.hasMarginRight {
+    margin-right: 20px;
+  }
+}

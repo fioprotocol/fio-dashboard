@@ -80,7 +80,7 @@ const ResendEmail: React.FC<Props> = props => {
         <ActionButton
           title="Resend Recovery Email"
           onClick={onResendClick}
-          isBlue={true}
+          isIndigo
         />
       </div>
       <SendLinkModal

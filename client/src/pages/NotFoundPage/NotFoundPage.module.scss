@@ -3,7 +3,7 @@
 @import '../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
-  background: $footer-background;
+  background: $main-background;
   color: white;
   text-align: center;
   padding: 9% 25px 0;
@@ -20,7 +20,7 @@
   }
 
   .coloredText {
-    color: $violet;
+    color: $light-indigo;
   }
 
   .microHeader {

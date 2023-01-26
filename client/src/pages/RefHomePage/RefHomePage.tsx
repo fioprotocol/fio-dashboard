@@ -49,7 +49,6 @@ export const RefHomePage: React.FC<Props &
     refProfileInfo,
     containedFlowQueryParams,
     isAuthenticated,
-    hasFreeAddress,
     loading,
     refLinkError,
     isContainedFlow,
@@ -122,9 +121,8 @@ export const RefHomePage: React.FC<Props &
         <AddressWidget
           {...addressWidgetContent}
           isAuthenticated={isAuthenticated}
-          hasFreeAddress={hasFreeAddress}
           showSignInWidget
-          hideBottomPlug
+          isDarkWhite
         />
       </div>
     );

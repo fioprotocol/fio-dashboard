@@ -60,7 +60,7 @@ import {
   CURRENCY_CODES,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
-import { ACTIONS } from '../../constants/fio';
+import { ACTIONS, DOMAIN_TYPE } from '../../constants/fio';
 
 import {
   RegistrationResult,
@@ -354,6 +354,20 @@ export const useContext = (): {
       !!fioWallets.length,
   );
 
+  useEffectOnce(
+    () => {
+      window.addEventListener('beforeunload', e => {
+        if (order?.id) {
+          apis.orders.update(order.id, {
+            status: PURCHASE_RESULTS_STATUS.CANCELED,
+          });
+        }
+      });
+    },
+    [order],
+    !!order,
+  );
+
   useEffect(() => {
     if (noProfileLoaded || !cartItems.length) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
@@ -410,9 +424,12 @@ export const useContext = (): {
     return () => dispatch(loadProfile());
   }, [dispatch]);
 
-  const onClose = () => {
+  const onClose = useCallback(() => {
+    apis.orders.update(order.id, {
+      status: PURCHASE_RESULTS_STATUS.CANCELED,
+    });
     history.push(ROUTES.CART);
-  };
+  }, [order, history]);
 
   const onFinish = async (results: RegistrationResult) => {
     await apis.orders.update(order.id, {
@@ -436,7 +453,7 @@ export const useContext = (): {
     for (const cartItem of cartItems) {
       if (
         userDomains.findIndex(({ name }) => name === cartItem.domain) < 0 &&
-        !cartItem.hasCustomDomain
+        cartItem.domainType !== DOMAIN_TYPE.CUSTOM
       )
         continue;
 

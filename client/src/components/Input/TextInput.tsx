@@ -27,10 +27,12 @@ import metamaskIcon from '../../assets/images/metamask.svg';
 export const INPUT_UI_STYLES = {
   BLACK_LIGHT: 'blackLight',
   BLACK_WHITE: 'blackWhite',
+  INDIGO_WHITE: 'indigoWhite',
 };
 
 export const INPUT_COLOR_SCHEMA = {
   BLACK_AND_WHITE: 'black_and_white',
+  INDIGO_AND_WHITE: 'indigo_and_white',
 };
 
 export type TextInputProps = {
@@ -62,6 +64,9 @@ export type TextInputProps = {
   additionalOnchangeAction?: (val: string) => void;
   wFioBalance?: string;
   connectWalletProps: ConnectProviderType;
+  withoutBottomMargin?: boolean;
+  hasItalicLabel?: boolean;
+  hasErrorForced?: boolean;
 };
 
 export const TextInput: React.ForwardRefRenderFunction<
@@ -96,6 +101,9 @@ export const TextInput: React.ForwardRefRenderFunction<
     showConnectWalletButton,
     connectWalletModalText,
     wFioBalance,
+    withoutBottomMargin,
+    hasItalicLabel,
+    hasErrorForced,
     ...rest
   } = props;
   const {
@@ -112,6 +120,7 @@ export const TextInput: React.ForwardRefRenderFunction<
   const { type, value, onChange } = input;
 
   const isBW = colorSchema === INPUT_COLOR_SCHEMA.BLACK_AND_WHITE;
+  const isIW = colorSchema === INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE;
 
   const [showPass, toggleShowPass] = useState(false);
 
@@ -125,6 +134,7 @@ export const TextInput: React.ForwardRefRenderFunction<
   ] = useFieldElemActiveState();
 
   const hasError =
+    hasErrorForced ||
     ((error || data?.error) &&
       (touched || modified || submitSucceeded || !!value) &&
       !active &&
@@ -169,16 +179,21 @@ export const TextInput: React.ForwardRefRenderFunction<
   if (type === 'hidden') return null;
 
   return (
-    <div className={classes.regInputWrapper}>
-      <Label label={label} uiType={uiType} />
+    <div
+      className={classnames(classes.regInputWrapper, {
+        [classes.withoutBottomMargin]: withoutBottomMargin,
+      })}
+    >
+      <Label label={label} uiType={uiType} hasItalic={hasItalicLabel} />
       <div className={classes.inputGroup}>
-        <Prefix prefix={prefix} hasError={hasError} />
+        <Prefix prefix={prefix} hasError={hasError} uiType={uiType} />
         <div
           className={classnames(
             classes.regInput,
             (hasError || showErrorBorder) && classes.error,
             uiType && classes[uiType],
             isBW && classes.bw,
+            isIW && classes.iw,
             prefix && classes.prefixSpace,
             showPasteButton && classes.hasPasteButton,
             type === 'password' && classes.doubleIconInput,
@@ -241,6 +256,7 @@ export const TextInput: React.ForwardRefRenderFunction<
           onClose={onClose}
           inputType={type}
           isBW={isBW}
+          isIW={isIW}
           isBigDoubleIcon={showConnectWalletButton && !isWalletConnected}
           disabled={isWalletConnected ? false : disabled}
           uiType={isWalletConnected ? 'whiteBlack' : uiType}

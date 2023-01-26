@@ -1,0 +1,17 @@
+@import '../../assets/styles/fontMixins.scss';
+
+.container {
+  .title {
+    @include proxima-nova-semibold;
+    font-size: 1.375em;
+    margin-bottom: 0;
+  }
+  .subtitle {
+    @include proxima-nova-thin;
+    font-size: 0.8125em;
+    margin-top: 13px;
+  }
+  .erroInfoBadge {
+    margin-top: -30px;
+  }
+}

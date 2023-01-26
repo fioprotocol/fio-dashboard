@@ -2,6 +2,7 @@ import React from 'react';
 import { components } from 'react-select';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
+import { Button } from 'react-bootstrap';
 
 import classes from '../styles/EditableSelect.module.scss';
 
@@ -16,13 +17,17 @@ type InputProps = {
 export const Input: React.FC<InputProps> = (props: InputProps) => {
   const {
     hasValue,
-    selectProps: { prefix, inputValue, isDisabled },
+    selectProps: { prefix, inputValue, isDisabled, uiType },
   } = props;
 
   if (!inputValue && isDisabled) return null;
 
   const renderInput = () => (
-    <components.Input {...props} isHidden={false} className={classes.input} />
+    <components.Input
+      {...props}
+      isHidden={false}
+      className={classnames(classes.input, uiType && classes[uiType])}
+    />
   );
 
   return (
@@ -43,30 +48,74 @@ export const Menu: React.FC<EditableCustomComponentsTypes> = menuProps => (
   <components.Menu {...menuProps} className={classes.menu} />
 );
 
-export const MenuList: React.FC<EditableCustomComponentsTypes> = menuListProps => (
-  <components.MenuList {...menuListProps} className={classes.menuList} />
-);
+export const MenuList: React.FC<EditableCustomComponentsTypes> = menuListProps => {
+  const {
+    selectProps: { actionButtonText, actionButtonClick, inputValue },
+    setValue,
+  } = menuListProps;
 
-export const Placeholder: React.FC<EditableCustomComponentsTypes> = placeholderProps => (
-  <components.Placeholder
-    {...placeholderProps}
-    className={classes.placeholder}
-  />
-);
+  const onClick = () => {
+    if (actionButtonClick) {
+      actionButtonClick();
+    } else {
+      setValue('', 'set-value');
+    }
+  };
 
-export const ClearIndicator: React.FC<EditableCustomComponentsTypes> = clearIndicatorProps => (
-  <components.ClearIndicator {...clearIndicatorProps}>
-    <FontAwesomeIcon icon="times-circle" className={classes.clearIcon} />
-  </components.ClearIndicator>
-);
+  return (
+    <>
+      <components.MenuList {...menuListProps} className={classes.menuList} />
+      {actionButtonText && !inputValue && (
+        <div className="d-flex">
+          <Button className={classes.actionButton} onClick={onClick}>
+            {actionButtonText}
+          </Button>
+        </div>
+      )}
+    </>
+  );
+};
+export const Placeholder: React.FC<EditableCustomComponentsTypes> = placeholderProps => {
+  const {
+    selectProps: { uiType },
+  } = placeholderProps;
+
+  return (
+    <components.Placeholder
+      {...placeholderProps}
+      className={classnames(classes.placeholder, uiType && classes[uiType])}
+    />
+  );
+};
+
+export const ClearIndicator: React.FC<EditableCustomComponentsTypes> = clearIndicatorProps => {
+  const {
+    selectProps: { uiType },
+  } = clearIndicatorProps;
+  return (
+    <components.ClearIndicator {...clearIndicatorProps}>
+      <FontAwesomeIcon
+        icon="times-circle"
+        className={classnames(classes.clearIcon, uiType && classes[uiType])}
+      />
+    </components.ClearIndicator>
+  );
+};
 
 export const Option: React.FC<EditableCustomComponentsTypes> = optionProps => {
-  const { isSelected } = optionProps;
+  const {
+    isSelected,
+    selectProps: { inputPrefix },
+  } = optionProps;
 
   return (
     <components.Option
       {...optionProps}
-      className={classnames(classes.option, isSelected && classes.isSelected)}
+      className={classnames(
+        classes.option,
+        isSelected && classes.isSelected,
+        inputPrefix && classes.inputPrefix,
+      )}
     />
   );
 };

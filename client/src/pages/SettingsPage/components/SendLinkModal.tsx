@@ -18,7 +18,7 @@ const SendLinkModal: React.FC<Props> = props => {
   return (
     <Modal show={show} onClose={onClose} closeButton={true}>
       <h4 className={classes.title}>
-        Save <span className="doubleColor">Recovery Link</span>
+        Save <span className={classes.label}>Recovery Link</span>
       </h4>
       <p className={classes.subtitle}>
         To complete account recovery setup, you MUST first save the recovery

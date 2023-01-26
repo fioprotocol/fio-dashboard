@@ -4,8 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { MainHeaderContainer } from '../MainHeaderContainer';
 import { Navigation } from './components/Navigation';
 
-import { useIsAdminRoute } from '../../hooks/admin';
-
 import { MainHeaderProps } from './types';
 
 const MainHeader: React.FC<MainHeaderProps> = props => {
@@ -13,7 +11,6 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     showLoginModal,
     logout: logoutFn,
     profileRefreshed,
-    isAdminAuthenticated,
     isAuthenticated,
     locationState,
     refProfileLoading,
@@ -46,8 +43,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     }
   }, [locationState, showLogin, isAuthenticated, profileRefreshed]);
 
-  const isAdmin = useIsAdminRoute();
-  const hideSiteLink = isAuthenticated || isAdminAuthenticated || isAdmin;
+  const hideSiteLink = isAuthenticated;
 
   if (refProfileLoading) {
     return (
@@ -60,14 +56,12 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
   return (
     <MainHeaderContainer
       hideSiteLink={hideSiteLink}
-      isAdmin={isAdmin}
       isMenuOpen={isMenuOpen}
       closeMenu={closeMenu}
       {...props}
     >
       <Navigation
         {...props}
-        isAdminRoute={isAdmin}
         isMenuOpen={isMenuOpen}
         logout={logout}
         toggleMenuOpen={toggleMenuOpen}

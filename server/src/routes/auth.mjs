@@ -2,6 +2,7 @@ import { authCheck, makeServiceRunner } from '../tools';
 
 import AuthCreate from '../services/auth/Create';
 import AuthCheck from '../services/auth/Check';
+import AuthCheckOptional from '../services/auth/CheckOptional';
 import AuthNonce from '../services/auth/Nonce';
 import AuthUsername from '../services/auth/Username';
 import AdminAuthCreate from '../services/auth/AdminCreate';
@@ -18,6 +19,9 @@ export default {
 
   async check(req, res, next) {
     return await authCheck(req, res, next, AuthCheck);
+  },
+  async checkOptional(req, res, next) {
+    return await authCheck(req, res, next, AuthCheckOptional);
   },
 
   adminCreate: makeServiceRunner(AdminAuthCreate, req => req.body),

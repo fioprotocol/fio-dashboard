@@ -21,6 +21,8 @@ import PartnersList from '../services/adminUsers/PartnersList.mjs';
 import PartnerUpdate from '../services/adminUsers/PartnerUpdate.mjs';
 import PartnerCreate from '../services/adminUsers/PartnerCreate.mjs';
 import Search from '../services/adminUsers/Search.mjs';
+import DefaultList from '../services/adminUsers/DefaultList.mjs';
+import DefaultsSave from '../services/adminUsers/DefaultsSave.mjs';
 
 export default {
   personalInfo: makeServiceRunner(PersonalInfo),
@@ -50,4 +52,6 @@ export default {
     ...req.params,
   })),
   search: makeServiceRunner(Search, req => req.query),
+  getDefaults: makeServiceRunner(DefaultList),
+  saveDefaults: makeServiceRunner(DefaultsSave, req => req.body),
 };

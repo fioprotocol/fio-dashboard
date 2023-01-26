@@ -18,15 +18,26 @@
   flex-direction: row;
   justify-content: center;
   width: auto;
-  height: 54px;
+  height: 40px;
   margin: 0 0 20px;
   align-items: center;
   font-size: 0.8125rem;
   line-height: 0;
-  border-radius: 7px;
+  border-radius: 100px;
   padding: 0 12px;
   white-space: nowrap;
   @include sf-pro-display-thin;
+  background-color: $light-indigo !important;
+  border-color: $light-indigo !important;
+  
+  &:hover {
+    background-color: $iris;
+    border-color: $iris;
+  }
+
+  &:focus, &:active {
+    outline: none;
+  }
 
   .icon {
     font-size: 1rem;
@@ -151,14 +162,14 @@
   .modalTitle {
     font-size: 1.5em;
     @include proxima-nova-semibold;
-    color: $dark-jungle-green;
+    color: $baltic-sea;
   }
 
   .modalText {
     font-size: 0.875em;
     margin: 20px 0;
     @include proxima-nova-regular;
-    color: $dark-jungle-green;
+    color: $baltic-sea;
   }
 
   .modalBadgeIcon {
@@ -191,9 +202,16 @@
       align-items: center;
       height: 54px;
       width: 335px;
-      border-radius: 7px;
+      border-radius: 100px;
       font-size: 0.875em;
       @include sf-pro-display-medium;
+      background-color: $light-indigo;
+      border-color: $light-indigo;
+    
+      &:hover {
+        background-color: $iris;
+        border-color: $iris;
+      }
     }
   }
 }

@@ -40,7 +40,7 @@
   height: 54px;
   width: 100%;
   margin-top: 20px;
-  border-radius: 7px;
+  border-radius: 100px;
   color: $white;
   margin-bottom: 10px;
   @include proxima-nova-semibold;
@@ -56,13 +56,12 @@
   }
 
   &.light {
-
-    border: $butterfly-blue;
-    background-color: $butterfly-blue;
+    border: $light-indigo;
+    background-color: $light-indigo;
 
     &:hover:enabled {
-      border: $azure-radiance;
-      background-color: $azure-radiance;
+      border: $iris;
+      background-color: $iris;
     }
   }
 }

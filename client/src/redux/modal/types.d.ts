@@ -1,3 +1,5 @@
+import { AnyType } from '../../types';
+
 export type GenericErrorDataTypes = {
   message?: string;
   title?: string;
@@ -5,7 +7,7 @@ export type GenericErrorDataTypes = {
 };
 
 export type PinDataType = {
-  [key: string]: any;
+  [key: string]: AnyType;
 };
 
 export type PinConfirmDataTypes = {

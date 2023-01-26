@@ -6,6 +6,12 @@
   }
 }
 
+@mixin tablet {
+  @media (max-width: #{$screen-tablet}) {
+    @content;
+  }
+}
+
 // Medium devices
 @mixin md {
   @media (min-width: #{$screen-mobile}) and (max-width: #{$screen-desktop}) {

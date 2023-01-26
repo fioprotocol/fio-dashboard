@@ -61,9 +61,7 @@ const ConnectionModal: React.FC<Props> = props => {
   const renderTransaction = () => (
     <>
       <img src={ledgerIcon} alt="LedgerIcon" className={classes.icon} />
-      <h4 className={classes.transactionTitle}>
-        Confirm <span className="doubleColor">Transaction</span>
-      </h4>
+      <h4 className={classes.transactionTitle}>Confirm Transaction</h4>
       <p className={classes.transactionText}>
         {message
           ? message

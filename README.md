@@ -17,22 +17,6 @@ In case you can't run tests: `brew install watchman`
 
 Create `.env` file from `.env.example` template:
 
-```ini
-HASH_SECRET=secret
-JWT_SECRET=secret
-
-SQL_HOST=localhost
-SQL_PORT=5432
-SQL_DB=boilerplate
-SQL_USER=boilerplate
-SQL_PASS=password
-
-API_PORT=9000
-BASE_URL=/
-PORT=3000
-NODE_LOGGER_TYPE=default
-```
-
 Run docker-compose:
 
 ```bash
@@ -53,6 +37,28 @@ Before start app in dev mode you need to run `npm install`
 ```bash
 npm test:api
 ```
+
+### Code styles
+
+- Imports in files should have the right order:
+    - 3-d party libs
+    - components
+    - components form the same folder
+    - constants
+    - methods/utils/hooks
+    - types
+    - css
+It will be changed after code style implementation from released MVP Generator 2.0
+
+- Default exports for pages and named exports is for other exports
+
+- If you see that something is not styled as it should be - change it.
+
+### Email templates
+
+We change code for email templates here `https://github.com/fioprotocol/fio-dashboard-tools`
+Then we copy generated templates into dashboard app.
+
 ### Build embed widgets
 
 How to create embed widget? That's super easy.

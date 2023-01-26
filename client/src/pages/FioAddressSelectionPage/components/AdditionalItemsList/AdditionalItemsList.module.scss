@@ -1,0 +1,11 @@
+@import '../../../../assets/styles/fontMixins.scss';
+
+.subtitle {
+  margin: 30px 0;
+  font-size: 1.125em;
+  @include proxima-nova-semibold;
+}
+
+.itemContainer {
+  margin-top: 15px;
+}

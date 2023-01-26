@@ -1,0 +1,30 @@
+@import '../../../../assets/styles/colors.scss';
+
+.button {
+  background-color: $light-indigo;
+  border-radius: 7px;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 38px;
+
+  &.isSelected {
+    background-color: $irish-green !important;
+    border: $irish-green;
+    outline: none;
+
+    &:focus {
+      box-shadow: 0 0 0 0.2rem rgba(116, 220, 118, 0.5);
+    }
+
+    &:active:focus {
+      box-shadow: 0 0 0 0.2rem rgb(116, 220, calc(118/2));
+    }
+  }
+  .icon {
+    width: 24px;
+    height: 24px;
+    margin: 1px 0;
+  }
+}

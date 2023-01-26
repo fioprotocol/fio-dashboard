@@ -3,6 +3,14 @@
 @import './forms';
 @import './icons';
 
+$theme-colors: (
+  'primary': $light-indigo,
+);
+
+@import '~bootstrap/scss/bootstrap.scss';
+@import '~slick-carousel/slick/slick.css';
+@import '~slick-carousel/slick/slick-theme.css';
+
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
@@ -120,10 +128,6 @@ strong {
   opacity: 1 !important;
 }
 
-.doubleColor {
-  color: $violet;
-}
-
 .Dropdown-root {
   &.is-open {
     .Dropdown-control {
@@ -135,4 +139,9 @@ strong {
 button:disabled,
 button[disabled] {
   cursor: not-allowed;
+}
+
+input[type=radio],
+input[type=checkbox] {
+  accent-color: $light-indigo;
 }

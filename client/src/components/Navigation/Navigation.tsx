@@ -6,8 +6,6 @@ import classnames from 'classnames';
 
 import { ROUTES, TOKENS_TAB_ROUTES } from '../../constants/routes';
 
-import { useIsAdminRoute } from '../../hooks/admin';
-
 import { LINK_LABELS, LINKS } from '../../constants/labels';
 
 import classes from './Navigation.module.scss';
@@ -25,31 +23,10 @@ const userWithAffiliateNavItems: string[] = [
   LINKS.FIO_AFFILIATE_PROGRAM_ENABLED,
 ];
 
-const adminNavItems: string[] = [
-  LINKS.ADMIN_HOME,
-  LINKS.ADMIN_ORDERS,
-  LINKS.ADMIN_ACCOUNTS,
-  LINKS.ADMIN_PARTNERS,
-  LINKS.ADMIN_REGULAR_USERS,
-  LINKS.ADMIN_USERS,
-  LINKS.ADMIN_PROFILE,
-];
-const superAdminNavItems: string[] = [
-  LINKS.ADMIN_HOME,
-  LINKS.ADMIN_ORDERS,
-  LINKS.ADMIN_ACCOUNTS,
-  LINKS.ADMIN_PARTNERS,
-  LINKS.ADMIN_REGULAR_USERS,
-  LINKS.ADMIN_USERS,
-  LINKS.ADMIN_PROFILE,
-];
-
 type Props = {
   isNotActiveUser: boolean;
   isContainedFlow: boolean;
-  isNotActiveAdminUser: boolean;
   isOnSide?: boolean;
-  isSuperAdmin: boolean;
   isAffiliateEnabled: boolean;
   closeMenu?: () => void;
 };
@@ -106,23 +83,16 @@ export const Navigation: React.FC<Props> | null = props => {
     isOnSide,
     isNotActiveUser,
     isContainedFlow,
-    isNotActiveAdminUser,
-    isSuperAdmin,
     isAffiliateEnabled,
     closeMenu,
   } = props;
-  const isAdminLocation = useIsAdminRoute();
 
   if (isContainedFlow) return null;
-  if (isNotActiveUser && isNotActiveAdminUser) return null;
+  if (isNotActiveUser) return null;
 
-  const navItemsList = !isAdminLocation
-    ? isAffiliateEnabled
-      ? userWithAffiliateNavItems
-      : userNavItems
-    : isSuperAdmin
-    ? superAdminNavItems
-    : adminNavItems;
+  const navItemsList = isAffiliateEnabled
+    ? userWithAffiliateNavItems
+    : userNavItems;
 
   return (
     <Nav

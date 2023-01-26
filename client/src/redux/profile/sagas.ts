@@ -38,11 +38,16 @@ import { fioWallets } from '../fio/selectors';
 import { isNewUser as isNewUserSelector } from './selectors';
 
 import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
-import { ANALYTICS_EVENT_ACTIONS, USER_STATUSES } from '../../constants/common';
-import { ROUTES } from '../../constants/routes';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  ANALYTICS_LOGIN_METHOD,
+  USER_STATUSES,
+} from '../../constants/common';
+import { ADMIN_ROUTES, ROUTES } from '../../constants/routes';
 
 import { fireAnalyticsEvent } from '../../util/analytics';
 import { Api } from '../../api';
+import { Api as AdminApi } from '../../admin/api';
 
 import { FioWalletDoublet, PrivateRedirectLocationState } from '../../types';
 import { Action } from '../types';
@@ -55,6 +60,14 @@ export function* loginSuccess(history: History, api: Api): Generator {
     );
     const wallets: FioWalletDoublet[] = yield select(fioWallets);
     api.client.setToken(action.data.jwt);
+    if (action.isSignUp) {
+      fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SIGN_UP);
+    }
+    fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.LOGIN, {
+      method: action.isPinLogin
+        ? ANALYTICS_LOGIN_METHOD.PIN
+        : ANALYTICS_LOGIN_METHOD.PASSWORD,
+    });
     if (wallets && wallets.length) yield put<Action>(setWallets(wallets));
     if ((action.otpKey && action.voucherId) || action.voucherId)
       try {
@@ -140,7 +153,15 @@ export function* logoutSuccess(history: History, api: Api): Generator {
 
 export function* nonceSuccess(): Generator {
   yield takeEvery(NONCE_SUCCESS, function*(action: Action) {
-    const { email, signature, nonce, otpKey, voucherId } = action.data;
+    const {
+      email,
+      signature,
+      nonce,
+      otpKey,
+      voucherId,
+      isPinLogin,
+      isSignUp,
+    } = action.data;
     const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     yield put<Action>(
@@ -151,48 +172,53 @@ export function* nonceSuccess(): Generator {
         timeZone,
         otpKey,
         voucherId,
+        isPinLogin,
+        isSignUp,
       }),
     );
   });
 }
 
-export function* adminLogoutSuccess(history: History, api: Api): Generator {
+export function* adminLogoutSuccess(
+  history: History,
+  api: AdminApi,
+): Generator {
   yield takeEvery(ADMIN_LOGOUT_SUCCESS, function(action: Action) {
     api.client.removeAdminToken();
 
     const { redirect } = action;
 
     if (redirect) history.push(redirect, {});
-    if (!redirect) history.replace(ROUTES.ADMIN_LOGIN, {});
+    if (!redirect) history.replace(ADMIN_ROUTES.ADMIN_LOGIN, {});
   });
 }
 
-export function* adminLoginSuccess(history: History, api: Api): Generator {
+export function* adminLoginSuccess(history: History, api: AdminApi): Generator {
   yield takeEvery(ADMIN_LOGIN_SUCCESS, function*(action: Action) {
     api.client.setAdminToken(action.data.jwt);
 
     yield put<Action>(loadAdminProfile());
 
-    history.push(ROUTES.ADMIN_HOME);
+    history.push(ADMIN_ROUTES.ADMIN_HOME);
   });
 }
 
-export function* adminConfirmSuccess(history: History, api: Api): Generator {
+export function* adminConfirmSuccess(
+  history: History,
+  api: AdminApi,
+): Generator {
   yield takeEvery(CONFIRM_ADMIN_EMAIL_SUCCESS, function*(action: Action) {
     api.client.setAdminToken(action.data.jwt);
 
     yield put<Action>(loadAdminProfile());
 
-    history.push(ROUTES.ADMIN_HOME);
+    history.push(ADMIN_ROUTES.ADMIN_HOME);
   });
 }
 
-export function* adminResetPasswordSuccess(
-  history: History,
-  api: Api,
-): Generator {
+export function* adminResetPasswordSuccess(history: History): Generator {
   yield takeEvery(RESET_ADMIN_PASSWORD_SUCCESS, function(action: Action) {
-    history.replace(ROUTES.ADMIN_LOGIN, {});
+    history.replace(ADMIN_ROUTES.ADMIN_LOGIN, {});
   });
 }
 

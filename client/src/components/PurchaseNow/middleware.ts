@@ -19,7 +19,7 @@ import {
   CART_ITEM_TYPES_WITH_PERIOD,
   DEFAULT_BUNDLE_SET_VALUE,
 } from '../../constants/common';
-import { ACTIONS } from '../../constants/fio';
+import { ACTIONS, DOMAIN_TYPE } from '../../constants/fio';
 
 import { RegistrationType } from './types';
 import {
@@ -236,12 +236,15 @@ const makeRegistrationOrder = (
 ): RegistrationType[] => {
   const registrations = [];
   for (const cartItem of cartItems.sort(item =>
-    item.hasCustomDomain ? -1 : 1,
+    !!item.address && item.domainType === DOMAIN_TYPE.CUSTOM ? -1 : 1,
   )) {
     const registration: RegistrationType = {
       cartItemId: cartItem.id,
       fioName: setFioName(cartItem.address, cartItem.domain),
-      isFree: isFreeAllowed && !cartItem.costNativeFio && !!cartItem.address,
+      isFree:
+        isFreeAllowed &&
+        (!cartItem.costNativeFio || cartItem.domainType === DOMAIN_TYPE.FREE) &&
+        !!cartItem.address,
       fee: [CART_ITEM_TYPE.DOMAIN_RENEWAL, CART_ITEM_TYPE.ADD_BUNDLES].includes(
         cartItem.type,
       )
@@ -271,7 +274,11 @@ const makeRegistrationOrder = (
         });
       }
     }
-    if (!cartItem.costNativeFio || !cartItem.address) {
+    if (
+      !cartItem.costNativeFio ||
+      cartItem.domainType === DOMAIN_TYPE.FREE ||
+      !cartItem.address
+    ) {
       registrations.push(registration);
       continue;
     }
@@ -283,7 +290,7 @@ const makeRegistrationOrder = (
       registration.depended = { domain: cartItem.domain };
     }
 
-    if (cartItem.hasCustomDomain) {
+    if (!!cartItem.address && cartItem.domainType === DOMAIN_TYPE.CUSTOM) {
       registrations.push({
         cartItemId: cartItem.id,
         fioName: cartItem.domain,

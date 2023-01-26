@@ -1,28 +1,28 @@
 import React from 'react';
 
 import { FioDomainWidget } from '../../components/FioDomainWidget';
-
-import IntegrationSupportSection from './components/IntegrationSupportSection';
-import FAQSection from './components/FAQSection';
-import HumanReadableMarketingSection from './components/HumanReadableMarketingSection';
-import StatsSection from './components/StatsSection';
-import WebMarketingSection from './components/WebMarketingSection';
-import YourDomainYourControlSection from './components/YourDomainYourControlSection';
+import { DomainsSpecialsBanner } from '../../components/SpecialsBanner';
+import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
+import { AvailableDomains } from '../../components/AvailableDomains';
+import { OpenseaDomainsBanner } from '../../components/OpenseaDomainsBanner';
 
 import { useContext } from './FioDomainLandingPageContext';
 
 const FioDomainLandingPage: React.FC = () => {
-  const { onSubmit } = useContext();
+  const { availableDomains, domainPrice, onSubmit } = useContext();
 
   return (
     <div className="w-100">
       <FioDomainWidget onSubmit={onSubmit} />
-      <WebMarketingSection />
-      <YourDomainYourControlSection />
-      <StatsSection />
-      <IntegrationSupportSection />
-      <HumanReadableMarketingSection />
-      <FAQSection onSubmit={onSubmit} />
+      <AvailableDomains
+        domains={availableDomains}
+        domainPrice={domainPrice}
+        onSubmit={onSubmit}
+      />
+      <OpenseaDomainsBanner />
+      <DomainsSpecialsBanner />
+      <WidelyAdoptedSection />
+      <FioDomainWidget onSubmit={onSubmit} isReverseColors />
     </div>
   );
 };

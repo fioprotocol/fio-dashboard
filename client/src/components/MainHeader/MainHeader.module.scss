@@ -23,6 +23,22 @@
           width: 100%;
           margin-right: 0 !important;
           height: 40px;
+          background-color: $light-indigo;
+          border: 1px solid $light-indigo;
+          border-radius: 100px;
+
+          &.hasTransparentBackground {
+            background-color: transparent;
+
+            &:hover {
+              background-color: $light-indigo;
+            }
+          }
+
+          &:hover {
+            background-color: $iris;
+            border-color: $iris;
+          }
         }
       }
 
@@ -33,36 +49,19 @@
   }
 }
 
-.link, .navItem {
+.navItem {
   display: flex;
   align-items: center;
   cursor: pointer;
 }
 
-.link {
-  &.siteLink {
-    width: 100%;
-    margin-left: 2rem;
-  }
-}
-
-.link {
-  .arrow {
-    position: relative;
-    transition: 0.2s ease-in-out;
-    transform: translateX(0);
-  }
-
-  &:hover .arrow {
-    transform: translateX(-4px);
-  }
-}
-
 .navItem {
+  color: $baltic-sea !important;
+
   .icon {
     width: 20px;
     height: 20px;
-    color: $white;
+    color: inherit;
   }
 
   .notifWrapper {
@@ -88,7 +87,7 @@
   }
 
   .settings {
-    background-color: white;
+    background-color: $white;
     padding: 3px;
     border-radius: 2px;
     display: flex;
@@ -98,9 +97,17 @@
     .settingsIcon {
       width: 14px;
       height: 14px;
-      color: black !important;
+      color: $baltic-sea;
       transition: transform 0.4s ease-in-out;
     }
+  }
+
+  .settingsText {
+    color: $light-indigo;
+  }
+
+  &:hover {
+    color: $baltic-sea;
   }
 
   &:hover .settings .settingsIcon {
@@ -122,6 +129,32 @@
 
 .button, .navItem {
   font-size: 13px;
+}
+
+.button {
+  background-color: $light-indigo;
+  border: 1px solid $light-indigo;
+  border-radius: 100px;
+
+  &.hasVioletColor {
+    color: $light-indigo;
+    &:hover {
+      color: $white;
+    }
+  }
+
+  &.hasTransparentBackground {
+    background-color: transparent;
+
+    &:hover {
+      background-color: $light-indigo;
+    }
+  }
+
+  &:hover {
+    background-color: $iris;
+    border-color: $iris;
+  }
 }
 
 .vertical {
@@ -150,95 +183,16 @@
         width: 100%;
         margin-right: 0 !important;
         height: 40px;
+        background-color: $light-indigo;
+        border: none;
+        border-radius: 100px;
+
+        &:hover {
+          background-color: $iris;
+          border-color: $iris;
+        }
       }
     }
-  }
-}
-
-.searchButton {
-  font-size: 13px;
-  &:focus {
-    outline: none !important;
-    box-shadow: none;
-  }
-}
-
-.menuIcon {
-  width: 24px;
-  height: 20px;
-  position: relative;
-  transform: rotate(0deg);
-  transition: .5s ease-in-out;
-  cursor: pointer;
-
-  & span {
-    display: block;
-    position: absolute;
-    height: 1px;
-    width: 50%;
-    background: $white;
-    opacity: 1;
-    transform: rotate(0deg);
-    transition: .25s ease-in-out;
-  }
-  & span:nth-child(even) {
-    left: 50%;
-    border-radius: 0 0.5px 0.5px 0;
-  }
-
-  & span:nth-child(odd) {
-    left:0px;
-    border-radius: 0.5px 0 0 0.5px;
-  }
-
-  & span:nth-child(1), & span:nth-child(2) {
-    top: 0px;
-  }
-
-  & span:nth-child(3), & span:nth-child(4) {
-    top: 9px;
-  }
-
-  & span:nth-child(5), & span:nth-child(6) {
-    top: 19px;
-  }
-
-  &.isOpen span:nth-child(1),&.isOpen span:nth-child(6) {
-    transform: rotate(45deg);
-  }
-
-  &.isOpen span:nth-child(2),&.isOpen span:nth-child(5) {
-    transform: rotate(-45deg);
-  }
-
-  &.isOpen span:nth-child(1) {
-    left: 2px;
-    top: 4px;
-  }
-
-  &.isOpen span:nth-child(2) {
-    left: calc(50% - 2px);
-    top: 4px;
-  }
-
-  &.isOpen span:nth-child(3) {
-    left: -50%;
-    opacity: 0;
-  }
-
-  &.isOpen span:nth-child(4) {
-    left: 100%;
-    opacity: 0;
-  }
-
-  &.isOpen span:nth-child(5) {
-    left: 2px;
-    top: 12px;
-  }
-
-  &.isOpen span:nth-child(6) {
-    left: calc(50% - 2px);
-    top: 12px;
   }
 }
 
@@ -260,25 +214,20 @@
 }
 
 @include lg {
-  .link {
-    &.siteLink {
-      margin-left: 5rem;
-    }
-  }
-
   .regularNavContainer, .loggedNavContainer {
     margin-left: 5rem;
   }
-}
 
-@include sm {
-  .regularNavContainer {
-    .link {
-      font-size: 13px;
-      a {
-        display: flex;
-        align-items: center;
+  .navItem {
+    .settings {
+      background-color: $baltic-sea;
+
+      .settingsIcon {
+        color: $white;
       }
+    }
+    .settingsText {
+      color: $baltic-sea;
     }
   }
 }

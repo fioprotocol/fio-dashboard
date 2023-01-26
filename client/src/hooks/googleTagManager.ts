@@ -2,13 +2,7 @@ import { useCallback } from 'react';
 
 import useEffectOnce from './general';
 
-type UseGTMGlobalTagsProps = {
-  disableLoading?: boolean;
-};
-
-export function useGTMGlobalTags(props?: UseGTMGlobalTagsProps): void {
-  const { disableLoading } = props || {};
-
+export function useGTMGlobalTags(): void {
   const GOOGLE_TAG_MANAGER_ID = process.env.REACT_APP_IS_WRAP_STATUS_PAGE
     ? process.env.REACT_APP_WRAP_GOOGLE_TAG_MANAGER_ID
     : process.env.REACT_APP_GOOGLE_TAG_MANAGER_ID;
@@ -40,8 +34,6 @@ export function useGTMGlobalTags(props?: UseGTMGlobalTagsProps): void {
   }, [GOOGLE_TAG_MANAGER_ID]);
 
   useEffectOnce(() => {
-    if (!disableLoading) {
-      addGTMGlobalTags();
-    }
-  }, [disableLoading, addGTMGlobalTags]);
+    addGTMGlobalTags();
+  }, [addGTMGlobalTags]);
 }

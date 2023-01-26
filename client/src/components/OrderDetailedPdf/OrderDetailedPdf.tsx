@@ -46,7 +46,7 @@ const styles = {
   },
   orderContainer: {
     padding: '50px 70px',
-    color: colorsToJs['dark-jungle-green'],
+    color: colorsToJs['baltic-sea'],
   },
   title: {
     marginTop: '15px',

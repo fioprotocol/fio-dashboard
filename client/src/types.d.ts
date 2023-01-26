@@ -7,6 +7,7 @@ import { LocationState, Path } from 'history';
 import { FIOSDK_LIB } from './api/fio';
 
 import { CONTAINED_FLOW_ACTIONS } from './constants/containedFlow';
+import { DOMAIN_TYPE } from './constants/fio';
 import {
   BC_TX_STATUSES,
   PAYMENT_OPTIONS,
@@ -22,6 +23,7 @@ import {
 } from './constants/common';
 
 import { ResultsData } from '../components/common/TransactionResults/types';
+import { DomainsResponse } from './api/responses';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Unknown = any;
@@ -40,6 +42,7 @@ export type Domain = { domain: string; free?: boolean };
 
 export type ContainedFlowActionSettingsKey = keyof typeof CONTAINED_FLOW_ACTIONS;
 export type CartItemType = typeof CART_ITEM_TYPE[keyof typeof CART_ITEM_TYPE];
+export type DomainItemType = typeof DOMAIN_TYPE[keyof typeof DOMAIN_TYPE];
 
 export type CartItem = {
   address?: string;
@@ -58,6 +61,7 @@ export type CartItem = {
   errorType?: string;
   isCustomDomain?: boolean;
   type?: CartItemType;
+  domainType?: DomainItemType;
 };
 
 export type Notification = {
@@ -190,6 +194,17 @@ export type FioDomainDoublet = {
   walletPublicKey: string;
   walletName?: string;
 };
+
+export type UserDomainType = {
+  name: string;
+  domainType: DomainItemType;
+};
+
+export type PubilcDomainsType = Partial<DomainsResponse> &
+  Partial<RefProfileDomains>;
+
+export type AllDomains = PubilcDomainsType &
+  Partial<{ userDomains: UserDomainType[] }>;
 
 export type PrivateDomainsMap = {
   [name: string]: FioDomainDoublet & { wallet: FioWalletDoublet };
@@ -343,6 +358,15 @@ export type UserDetails = {
   orders: OrderDefault[];
 };
 
+export type RefProfileDomain = {
+  name: string;
+  isPremium: boolean;
+  rank: number;
+  domainType?: DomainItemType;
+  allowFree?: boolean;
+};
+export type RefProfileDomains = { refProfileDomains: RefProfileDomain[] };
+
 export type RefProfile = {
   id?: string;
   type: string;
@@ -352,7 +376,7 @@ export type RefProfile = {
   title: string;
   subTitle: string;
   settings: {
-    domains: string[];
+    domains: RefProfileDomain[];
     allowCustomDomain: boolean;
     preselectedDomain?: string;
     actions?: Record<
@@ -702,7 +726,9 @@ export type OrderPaymentItem = {
     fioName?: string;
     action?: string;
     sendingFioTokens?: boolean;
-    webhookData?: { charges: { data: { payment_method_details: { type } }[] } };
+    webhookData?: {
+      charges: { data: { payment_method_details: { type: string } }[] };
+    };
   };
 };
 

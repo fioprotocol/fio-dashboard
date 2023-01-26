@@ -1,6 +1,6 @@
 import url from 'url';
 
-import _ from 'lodash';
+import omit from 'lodash/omit';
 
 import { WebSocketServer } from 'ws';
 
@@ -30,7 +30,7 @@ const runWs = async (service, wsConnection, context, params, isPrivate = true) =
       context = { ...context, ...userParams };
     }
 
-    const restParams = _.omit(params, ['endpoint', 'token']);
+    const restParams = omit(params, ['endpoint', 'token']);
 
     await runWsService(service, {
       wsConnection,

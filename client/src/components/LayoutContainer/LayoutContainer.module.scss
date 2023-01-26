@@ -7,7 +7,8 @@
   height: 100%;
   padding: 60px 20px;
   position: relative;
-  max-width: 1086px;
+  max-width: 1200px;
+  color: $baltic-sea;
 
   .title {
     @include proxima-nova-semibold;

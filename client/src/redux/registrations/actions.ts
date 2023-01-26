@@ -20,7 +20,7 @@ export const DOMAINS_FAILURE = `${prefix}/DOMAINS_FAILURE`;
 
 export const getDomains = (): CommonPromiseAction => ({
   types: [DOMAINS_REQUEST, DOMAINS_SUCCESS, DOMAINS_FAILURE],
-  promise: (api: Api) => api.fioReg.domains(),
+  promise: (api: Api) => api.registration.domainsList(),
 });
 
 export const CAPTCHA_REQUEST = `${prefix}/CAPTCHA_REQUEST`;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Ecc } from '@fioprotocol/fiojs';
+
+import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -10,6 +10,7 @@ import {
 } from '../../constants/common';
 import { PAYMENT_OPTIONS } from '../../constants/purchase';
 import { emptyWallet } from '../../redux/fio/reducer';
+import { DOMAIN_TYPE } from '../../constants/fio';
 
 import api from '../../api';
 
@@ -23,8 +24,6 @@ import { waitForEdgeAccountStop } from '../../util/edge';
 
 import { PurchaseNowTypes } from './types';
 import { RegistrationResult } from '../../types';
-
-import classes from './PurchaseNow.module.scss';
 
 const MIN_WAIT_TIME = 3000;
 
@@ -168,7 +167,10 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     );
     setWaiting(true);
     for (const item of cartItems) {
-      if (item.costNativeFio || hasFreeAddress) {
+      if (
+        (item.costNativeFio && item.domainType !== DOMAIN_TYPE.FREE) ||
+        hasFreeAddress
+      ) {
         return showPinModal(CONFIRM_PIN_ACTIONS.PURCHASE);
       }
     }
@@ -176,16 +178,11 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   };
 
   return (
-    <Button
+    <SubmitButton
       onClick={purchase}
-      className={classes.button}
       disabled={loading || disabled}
-    >
-      {isWaiting && loading ? (
-        <FontAwesomeIcon icon="spinner" spin />
-      ) : (
-        'Purchase Now'
-      )}
-    </Button>
+      loading={isWaiting || loading}
+      text="Purchase Now"
+    />
   );
 };

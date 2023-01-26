@@ -2,8 +2,20 @@
 @import '../../../assets/styles/fontMixins.scss';
 @import '../../../assets/styles/mediaQueriesMixings.scss';
 
+.container {
+  position: relative;
+
+  &.containerHasFullWidth {
+    width: 100%;
+  }
+
+  &.hasMarginBottom {
+    margin-bottom: 20px;
+  }
+}
+
 .dropdown {
-  color: $dark-jungle-green;
+  color: $baltic-sea;
 
   @include sm {
     max-width: 375px;
@@ -23,7 +35,7 @@
 
   &.hasError {
     & > div[class$="-control"] {
-      border: 1px solid $warn-red;
+      border: 1px solid $warn-red !important;
     }
   }
 
@@ -43,6 +55,18 @@
     margin-bottom: 30px;
   }
 
+  &.inputPrefix {
+    & > div[class$="-control"] {
+      padding-left: 30px;
+    }
+  }
+
+  &.indigoWhite {
+    & > div[class$="-control"] {
+      border-color: $light-indigo;
+    }
+  }
+
   & > div[class$="-control"] {
     height: 40px;
     border-radius: 7px;
@@ -51,6 +75,12 @@
     border-color: $white;
     box-shadow: 0 0 8px 0 rgba(0,0,0,0.37);
     cursor: text;
+
+    .input {
+      &.indigoWhite {
+        color: $light-indigo;
+      }
+    }
 
     &.menuIsOpen {
       z-index: 3;
@@ -77,13 +107,17 @@
       text-align: left;
       color: $dove-gray;
       @include proxima-nova-regular-it;
+
+      &.indigoWhite {
+        color: $light-indigo;
+      }
     }
 
     .singleValue {
       text-align: left;
       font-size: 14px;
       margin: 0;
-      color: $dark-jungle-green;
+      color: $baltic-sea;
     }
 
     .prefixContainer {
@@ -101,6 +135,10 @@
       cursor: pointer;
       color: $dark-gray;
       font-size: 20px;
+
+      &.indigoWhite {
+        color: $light-indigo;
+      }
     }
 
     .toggleMenuIcon {
@@ -128,6 +166,10 @@
         background-color: $white;
         color: $dark-gray;
         word-break: break-word;
+
+        &.inputPrefix {
+          padding-left: 35px;
+        }
 
         &:before {
           content: ' ';
@@ -163,4 +205,15 @@
       }
     }
   }
+}
+
+.actionButton {
+  border-radius: 100px;
+  height: 36px;
+  text-align: left;
+  @include sf-pro-display-thin;
+  font-size: 0.8125em;
+  margin: 0 10px 10px;
+  width: 100%;
+  padding: 0 23px;
 }

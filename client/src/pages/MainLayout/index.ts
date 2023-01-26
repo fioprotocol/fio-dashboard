@@ -4,14 +4,10 @@ import { createStructuredSelector } from 'reselect';
 import { compose } from '../../utils';
 
 import { edgeContextInit } from '../../redux/edge/actions';
-import { loadProfile, loadAdminProfile } from '../../redux/profile/actions';
+import { loadProfile } from '../../redux/profile/actions';
 import { showRecoveryModal } from '../../redux/modal/actions';
 import { pathname } from '../../redux/navigation/selectors';
-import {
-  isAuthenticated,
-  isActiveUser,
-  isAdminAuthenticated,
-} from '../../redux/profile/selectors';
+import { isAuthenticated, isActiveUser } from '../../redux/profile/selectors';
 import { loginSuccess, edgeContextSet } from '../../redux/edge/selectors';
 import { showLogin, showRecovery } from '../../redux/modal/selectors';
 import { isContainedFlow } from '../../redux/containedFlow/selectors';
@@ -27,14 +23,12 @@ const reduxConnect = connect(
     showLogin,
     showRecovery,
     edgeContextSet,
-    isAdminAuthenticated,
     isContainedFlow,
   }),
   {
     edgeContextInit,
     showRecoveryModal,
     loadProfile,
-    loadAdminProfile,
   },
 );
 

@@ -3,7 +3,7 @@
 @import '../../../assets/styles/fontMixins.scss';
 
 .container {
-  background: $footer-background;
+  background: $main-background;
   width: 100%;
   text-align: center;
   color: $white;
@@ -17,6 +17,7 @@
     color: $white;
     margin-top: 7.125rem;
     margin-bottom: 0;
+    @include comfortaa-bold;
   }
   .subtitle {
     max-width: 795px;

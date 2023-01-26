@@ -10,8 +10,7 @@ const SubtitleComponent: React.FC<Props> = props => {
   const { subtitle } = props;
   return (
     <p className={classes.subtitle}>
-      {subtitle ||
-        'Registering a FIO Crypto Handle is fast and easy. Simply add a username and select a domain.'}
+      {subtitle || 'and make your cryptocurrency payments easy'}
     </p>
   );
 };

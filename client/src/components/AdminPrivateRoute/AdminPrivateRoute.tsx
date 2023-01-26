@@ -6,7 +6,7 @@ import {
   RouteProps,
 } from 'react-router-dom';
 
-import { ROUTES } from '../../constants/routes';
+import { ADMIN_ROUTES } from '../../constants/routes';
 
 type Props = {
   isAdminAuthenticated: boolean;
@@ -23,7 +23,7 @@ const AdminPrivateRoute: React.FC<Props & RouteProps> = props => {
   } = props;
 
   if (!isAdminAuthenticated && !loading && adminProfileRefreshed)
-    return <Redirect to={ROUTES.ADMIN_LOGIN} />;
+    return <Redirect to={ADMIN_ROUTES.ADMIN_LOGIN} />;
 
   return (
     <Route

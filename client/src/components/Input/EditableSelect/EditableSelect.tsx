@@ -4,13 +4,15 @@ import Select from 'react-select/base';
 import { FieldInputProps, FieldMetaState } from 'react-final-form';
 import classnames from 'classnames';
 
+import { Prefix } from '../StaticInputParts';
+
 import * as CustomComponents from './EditableCustomComponents';
 
 import { useEffectOnce } from '../../../hooks/general';
 
 import classes from '../styles/EditableSelect.module.scss';
 
-type OptionProps = { value: string; label: string };
+export type OptionProps = { value: string; label: string };
 
 export type EditableProps = {
   options: OptionProps[];
@@ -25,6 +27,13 @@ export type EditableProps = {
   forceReset?: boolean;
   loading?: boolean;
   upperCased?: boolean;
+  inputPrefix?: string;
+  hasAutoWidth?: boolean;
+  containerHasFullWidth?: boolean;
+  uiType?: string;
+  hasMarginBottom?: boolean;
+  actionButtonText?: string;
+  actionButtonClick?: () => void;
   onBlur?: (fieldName: string) => void;
   onClear?: () => void;
   onInputChange?: (chainCodeValue: string) => Promise<void> | void;
@@ -46,6 +55,13 @@ const EditableSelect: React.FC<EditableProps> = props => {
     forceReset,
     loading,
     upperCased,
+    inputPrefix,
+    hasAutoWidth,
+    containerHasFullWidth,
+    uiType,
+    hasMarginBottom,
+    actionButtonText,
+    actionButtonClick,
     onBlur,
     onClear,
     onInputChange,
@@ -153,44 +169,67 @@ const EditableSelect: React.FC<EditableProps> = props => {
   );
 
   return (
-    <CreatableSelect
-      ref={selectRef}
-      isClearable={true}
-      isDisabled={disabled}
-      onChange={handleChange}
-      onInputChange={handleInputChange}
-      options={refOptions}
-      formatCreateLabel={formatCreate}
-      value={value ? { value, label: value } : null}
-      noOptionsMessage={e => (e.inputValue ? 'No options' : null)}
-      isLoading={loading}
-      inputValue={inputValue}
-      placeholder={placeholder}
-      openMenuOnFocus={true}
-      openMenuOnClick={true}
-      components={{
-        IndicatorSeparator: CustomComponents.IndicatorSeparator,
-        Menu: CustomComponents.Menu,
-        MenuList: CustomComponents.MenuList,
-        Option: CustomComponents.Option,
-        Placeholder: CustomComponents.Placeholder,
-        SingleValue: () => null, // no need this component to avoid double render, we use Input component for that
-        ClearIndicator: CustomComponents.ClearIndicator,
-        DropdownIndicator: hideDropdownIndicator
-          ? () => null
-          : CustomComponents.DropdownIndicator,
-        Input: CustomComponents.Input,
-        Control: CustomComponents.Control,
-      }}
+    <div
       className={classnames(
-        classes.dropdown,
-        isHigh && classes.isHigh,
-        noShadow && classes.noShadow,
-        hasError && classes.hasError,
+        classes.container,
+        containerHasFullWidth && classes.containerHasFullWidth,
+        hasMarginBottom && classes.hasMarginBottom,
       )}
-      // custom property
-      prefix={prefix}
-    />
+    >
+      {inputPrefix && (
+        <Prefix
+          prefix={inputPrefix}
+          hasError={hasError}
+          uiType={uiType}
+          highZIndex
+        />
+      )}
+      <CreatableSelect
+        ref={selectRef}
+        isClearable={true}
+        isDisabled={disabled}
+        onChange={handleChange}
+        onInputChange={handleInputChange}
+        options={refOptions}
+        formatCreateLabel={formatCreate}
+        value={value ? { value, label: value } : null}
+        noOptionsMessage={e => (e.inputValue ? 'No options' : null)}
+        isLoading={loading}
+        inputValue={inputValue}
+        placeholder={placeholder}
+        openMenuOnFocus={true}
+        openMenuOnClick={true}
+        components={{
+          IndicatorSeparator: CustomComponents.IndicatorSeparator,
+          Menu: CustomComponents.Menu,
+          MenuList: CustomComponents.MenuList,
+          Option: CustomComponents.Option,
+          Placeholder: CustomComponents.Placeholder,
+          SingleValue: () => null, // no need this component to avoid double render, we use Input component for that
+          ClearIndicator: CustomComponents.ClearIndicator,
+          DropdownIndicator: hideDropdownIndicator
+            ? () => null
+            : CustomComponents.DropdownIndicator,
+          Input: CustomComponents.Input,
+          Control: CustomComponents.Control,
+        }}
+        className={classnames(
+          classes.dropdown,
+          isHigh && classes.isHigh,
+          noShadow && classes.noShadow,
+          hasError && classes.hasError,
+          hasAutoWidth && classes.hasAutoWidth,
+          inputPrefix && classes.inputPrefix,
+          uiType && classes[uiType],
+        )}
+        // custom property
+        prefix={prefix}
+        uiType={uiType}
+        inputPrefix={inputPrefix}
+        actionButtonText={actionButtonText}
+        actionButtonClick={actionButtonClick}
+      />
+    </div>
   );
 };
 

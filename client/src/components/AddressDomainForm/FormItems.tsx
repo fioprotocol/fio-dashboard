@@ -6,6 +6,8 @@ import Notifications from './Notifications';
 import { isFreeDomain } from '../../utils';
 import { cartHasFreeItem } from '../../util/cart';
 
+import { DOMAIN_TYPE } from '../../constants/fio';
+
 import { FormItemsProps } from './types';
 
 const FormItems = (
@@ -57,7 +59,9 @@ const FormItems = (
       !cartHasFreeItem(cartItems) &&
       !hasFreeAddress &&
       isFreeDomain({ domains, domain })) ||
-    (!!currentCartItem && !currentCartItem.costNativeFio);
+    (!!currentCartItem &&
+      (!currentCartItem.costNativeFio ||
+        currentCartItem.domainType === DOMAIN_TYPE.FREE));
 
   return (
     <>

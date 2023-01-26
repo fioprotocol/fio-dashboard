@@ -22,7 +22,7 @@
   }
 
   .badgeContainer {
-    color: $dark-jungle-green;
+    color: $baltic-sea;
     font-size: 1.072em;
     @include proxima-nova-bold;
     display: grid;
@@ -39,8 +39,8 @@
       word-break: break-all;
       padding-left: 15px;
 
-      &.isBlue {
-        color: $violet;
+      &.isIndigo {
+        color: $light-indigo;
       }
     }
 
@@ -79,7 +79,7 @@
     .badgeContainer {
       display: flex;
       flex-direction: row;
-      color: $dark-jungle-green;
+      color: $baltic-sea;
       font-size: 1.072em;
       line-height: 26px;
     }

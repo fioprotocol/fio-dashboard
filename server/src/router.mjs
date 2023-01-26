@@ -10,6 +10,7 @@ import routes from './routes';
 const router = express.Router();
 
 const checkAuth = routes.auth.check;
+const checkAuthOptional = routes.auth.checkOptional;
 const checkAdminAuth = routes.auth.checkAdminAuth;
 
 router.get('/ping', routes.general.healthCheck);
@@ -48,6 +49,7 @@ router.post('/users/update-email-request', checkAuth, routes.users.updateEmailRe
 router.post('/users/update-email-revert', checkAuth, routes.users.updateEmailRevert);
 router.post('/users/affiliate', checkAuth, routes.users.activateAffiliate);
 router.patch('/users/affiliate', checkAuth, routes.users.updateAffiliate);
+router.post('/users/sendEvent', checkAuthOptional, routes.users.sendEvent);
 
 router.get('/admin/me', checkAdminAuth, routes.adminUsers.personalInfo);
 router.get('/admin/list', checkAdminAuth, routes.adminUsers.adminsList);
@@ -91,11 +93,16 @@ router.get('/admin/search', checkAdminAuth, routes.adminUsers.search);
 router.get('/admin/reg-users', checkAdminAuth, routes.users.list);
 router.get('/admin/reg-users/:id', checkAdminAuth, routes.users.detailedInfo);
 
+router.get('/admin/defaults', checkAdminAuth, routes.adminUsers.getDefaults);
+router.post('/admin/defaults', checkAdminAuth, routes.adminUsers.saveDefaults);
+
 router.get('/notifications', checkAuth, routes.notifications.list);
 router.post('/notifications', checkAuth, routes.notifications.create);
 router.put('/notifications', checkAuth, routes.notifications.update);
 
 router.get('/reg/domains', routes.external.domains);
+router.get('/reg/domains/list', routes.registration.domainsList);
+router.get('/reg/domain-prefix-postfix', routes.registration.prefixPostfixList);
 router.get('/reg/prices', routes.external.prices);
 router.post('/reg/register', checkAuth, routes.external.register);
 router.post('/reg/captcha/init', checkAuth, routes.external.initCaptcha);

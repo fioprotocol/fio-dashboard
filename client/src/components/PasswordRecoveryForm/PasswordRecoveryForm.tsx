@@ -294,7 +294,6 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
           <div className={classnames(classes.box, isQuestions && classes.show)}>
             <FormHeader
               title="Setup Password Recovery"
-              isDoubleColor
               header={!isSettings && 'One Last Thing!'}
               subtitle="Set up your password recovery, so you don’t lose your account forever."
             />
@@ -356,7 +355,6 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
           <div className={classnames(classes.box, isQuestions && classes.show)}>
             <FormHeader
               title="Setup Password Recovery"
-              isDoubleColor
               subtitle="Choose Recovery Question"
             />
             <Scrollbar

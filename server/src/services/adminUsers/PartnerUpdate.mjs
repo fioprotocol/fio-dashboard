@@ -21,7 +21,15 @@ export default class PartnerUpdate extends Base {
         'required',
         {
           nested_object: {
-            domains: { list_of: 'string' },
+            domains: {
+              list_of_objects: [
+                {
+                  name: ['required', 'string'],
+                  isPremium: 'boolean',
+                  rank: { min_number: 0 },
+                },
+              ],
+            },
             preselectedDomain: 'string',
             allowCustomDomain: 'boolean',
             img: 'string',

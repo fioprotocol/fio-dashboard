@@ -1,0 +1,1 @@
+export { FunFactLabel } from './FunFactLabel';

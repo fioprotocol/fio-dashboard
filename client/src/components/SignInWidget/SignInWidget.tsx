@@ -20,7 +20,7 @@ const SignInWidget: React.FC<Props> = props => {
       <p className={classes.signInCallToAction}>
         Already have a FIO account? Sign in now!{' '}
         <Button
-          className="btn btn-primary ml-lg-5 ml-md-4 ml-sm-3 pt-2 pb-2"
+          className="btn btn-primary ml-lg-3 ml-md-2 ml-sm-1 pt-2 pb-2"
           size="lg"
           onClick={openLogin}
           disabled={edgeAuthLoading}

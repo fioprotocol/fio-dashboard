@@ -15,6 +15,7 @@ import UsersUpdateEmailRevert from '../services/users/UpdateEmailRevert';
 import ActivateAffiliate from '../services/users/ActivateAffiliate';
 import UpdateAffiliate from '../services/users/UpdateAffiliate';
 import UsersDetailedInfo from '../services/users/DetailedInfo';
+import UsersSendEvent from '../services/users/SendEvent';
 
 export default {
   available: makeServiceRunner(UserAvailable, req => req.params),
@@ -32,4 +33,5 @@ export default {
   updateEmailRevert: makeServiceRunner(UsersUpdateEmailRevert, req => req.body),
   activateAffiliate: makeServiceRunner(ActivateAffiliate, req => req.body),
   updateAffiliate: makeServiceRunner(UpdateAffiliate, req => req.body),
+  sendEvent: makeServiceRunner(UsersSendEvent, req => req.body),
 };
