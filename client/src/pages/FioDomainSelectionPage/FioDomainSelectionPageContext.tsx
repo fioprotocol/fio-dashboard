@@ -230,6 +230,8 @@ export const useContext = () => {
       if (!domain) {
         setSuggestedItem(null);
         setAdditionalItemsList([]);
+        setError(null);
+        return;
       }
 
       if (previousDomainValue === domain) return;
@@ -243,6 +245,7 @@ export const useContext = () => {
       if (validationError) {
         setError(validationError);
         toggleLoading(false);
+        setPreviousDomainValue(domain);
         return;
       }
 
