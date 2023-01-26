@@ -255,6 +255,7 @@ export const useContext = (): UseContextProps => {
         setAdditionalItemsList([]);
         setSuggestedItemsList([]);
         setUsersItemsList([]);
+        toggleLoading(false);
         return;
       }
 
@@ -267,6 +268,7 @@ export const useContext = (): UseContextProps => {
       ) {
         setAdditionalItemsList([]);
         setSuggestedItemsList([]);
+        toggleLoading(false);
         return;
       }
 
