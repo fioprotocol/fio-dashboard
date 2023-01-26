@@ -44,13 +44,14 @@ export const GET_ORDERS_LIST_BY_ADMIN_FAILURE = `${prefix}/GET_ORDERS_LIST_BY_AD
 export const getOrdersList = (
   limit = DEFAULT_LIMIT,
   offset = DEFAULT_OFFSET,
+  filters = {},
 ): CommonPromiseAction => ({
   types: [
     GET_ORDERS_LIST_BY_ADMIN_REQUEST,
     GET_ORDERS_LIST_BY_ADMIN_SUCCESS,
     GET_ORDERS_LIST_BY_ADMIN_FAILURE,
   ],
-  promise: (api: Api) => api.admin.ordersList(limit, offset),
+  promise: (api: Api) => api.admin.ordersList(limit, offset, filters),
 });
 
 export const EXPORT_ORDERS_DATA_BY_ADMIN_REQUEST = `${prefix}/EXPORT_ORDERS_DATA_BY_ADMIN_REQUEST`;
@@ -146,9 +147,10 @@ export const GET_PARTNERS_FAILURE = `${prefix}/GET_PARTNERS_FAILURE`;
 export const getPartnersList = (
   limit = DEFAULT_LIMIT,
   offset = DEFAULT_OFFSET,
+  filters = {},
 ): CommonPromiseAction => ({
   types: [GET_PARTNERS_REQUEST, GET_PARTNERS_SUCCESS, GET_PARTNERS_FAILURE],
-  promise: (api: Api) => api.admin.partnersList(limit, offset),
+  promise: (api: Api) => api.admin.partnersList(limit, offset, filters),
 });
 
 export const GET_REGULAR_USERS_REQUEST = `${prefix}/GET_REGULAR_USERS_REQUEST`;

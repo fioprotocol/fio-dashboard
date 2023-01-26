@@ -15,7 +15,7 @@ import {
   UsersDetailsResponse,
   UsersListResponse,
 } from './responses';
-import { RefProfile } from '../types';
+import { OrderDetails, RefProfile } from '../types';
 
 export default class Admin extends Base {
   adminList(limit: number, offset: number): Promise<AdminUsersListResponse> {
@@ -52,8 +52,12 @@ export default class Admin extends Base {
     return this.apiClient.get(`admin/info/${id}`);
   }
 
-  ordersList(limit: number, offset: number): Promise<AdminOrdersListResponse> {
-    return this.apiClient.get('admin/orders', { limit, offset });
+  ordersList(
+    limit: number,
+    offset: number,
+    filters?: Partial<OrderDetails>,
+  ): Promise<AdminOrdersListResponse> {
+    return this.apiClient.get('admin/orders', { limit, offset, filters });
   }
 
   exportOrdersData(): Promise<AdminOrdersListResponse> {
@@ -111,8 +115,13 @@ export default class Admin extends Base {
   partnersList(
     limit: number,
     offset: number,
+    filters?: Partial<RefProfile>,
   ): Promise<AdminPartnersListResponse> {
-    return this.apiClient.get('admin/partners/list', { limit, offset });
+    return this.apiClient.get('admin/partners/list', {
+      limit,
+      offset,
+      filters,
+    });
   }
 
   createPartner(data: RefProfile): Promise<AdminGeneralCreateResponse> {
