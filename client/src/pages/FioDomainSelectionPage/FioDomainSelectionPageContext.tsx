@@ -121,6 +121,7 @@ export const useContext = () => {
   const [additionalItemsList, setAdditionalItemsList] = useState<
     SelectedItemProps[]
   >([]);
+  const [previousDomainValue, setPreviousDomainValue] = useState<string>(null);
 
   const {
     nativeFio: { domain: nativeFioDomainPrice },
@@ -130,6 +131,7 @@ export const useContext = () => {
   const prefixesListJSON = JSON.stringify(prefixesList);
   const postfixesListJSON = JSON.stringify(postfixesList);
   const additionalItemsListJSON = JSON.stringify(additionalItemsList);
+  const suggestedItemJSON = JSON.stringify(suggestedItem);
 
   const getPrefixPostfixList = async () => {
     toggleLoading(true);
@@ -225,10 +227,14 @@ export const useContext = () => {
 
   const handleSelectedItems = useCallback(
     async (domain: string) => {
-      if (!domainValue) {
+      if (!domain) {
         setSuggestedItem(null);
         setAdditionalItemsList([]);
       }
+
+      if (previousDomainValue === domain) return;
+
+      setPreviousDomainValue(domain);
 
       toggleLoading(true);
 
@@ -312,10 +318,10 @@ export const useContext = () => {
     },
     [
       cartItemsJSON,
-      domainValue,
       nativeFioDomainPrice,
       postfixesListJSON,
       prefixesListJSON,
+      previousDomainValue,
       roe,
     ],
   );
@@ -336,6 +342,21 @@ export const useContext = () => {
     const parsedAdditionalItemsList: SelectedItemProps[] = JSON.parse(
       additionalItemsListJSON,
     );
+    const parsedSuggestedItem: SelectedItemProps = JSON.parse(
+      suggestedItemJSON,
+    );
+
+    if (parsedSuggestedItem?.id) {
+      const existingCartItemSuggested = parsedCartItems.find(
+        cartItem => cartItem.id === parsedSuggestedItem.id,
+      );
+
+      setSuggestedItem({
+        ...parsedSuggestedItem,
+        period: existingCartItemSuggested?.period || parsedSuggestedItem.period,
+        isSelected: !!existingCartItemSuggested,
+      });
+    }
 
     setAdditionalItemsList(
       parsedAdditionalItemsList.map(additionalItem => {
@@ -351,7 +372,7 @@ export const useContext = () => {
           : { ...additionalItem, isSelected: false };
       }),
     );
-  }, [loading, additionalItemsListJSON, cartItemsJSON]);
+  }, [loading, additionalItemsListJSON, cartItemsJSON, suggestedItemJSON]);
 
   return {
     additionalItemsList,
