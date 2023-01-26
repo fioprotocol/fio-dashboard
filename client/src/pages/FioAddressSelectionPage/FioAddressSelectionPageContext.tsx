@@ -12,7 +12,10 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
-import { hasFreeAddress as hasFreeAddressSelector } from '../../redux/profile/selectors';
+import {
+  hasFreeAddress as hasFreeAddressSelector,
+  isAuthenticated as isAuthenticatedSelector,
+} from '../../redux/profile/selectors';
 
 import { FIO_ADDRESS_ALREADY_EXISTS } from '../../constants/errors';
 import { DOMAIN_TYPE } from '../../constants/fio';
@@ -173,6 +176,7 @@ export const useContext = (): UseContextProps => {
   const allDomains = useSelector(allDomainsSelector);
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const domainsLoaing = useSelector(domainsLoaingSelector);
+  const isAuthenticated = useSelector(isAuthenticatedSelector);
   const fioWallets = useSelector(fioWalletsSelector);
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
@@ -431,6 +435,10 @@ export const useContext = (): UseContextProps => {
       dispatch(refreshFioNames(fioWallet.publicKey));
     }
   }, [dispatch, fioWallets]);
+
+  useEffect(() => {
+    setPreviousAddressValue(null);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     if (loading) return;
