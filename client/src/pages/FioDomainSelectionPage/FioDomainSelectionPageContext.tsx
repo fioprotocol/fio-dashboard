@@ -234,7 +234,7 @@ export const useContext = () => {
 
       if (previousDomainValue === domain) return;
 
-      setPreviousDomainValue(domain);
+      setError(null);
 
       toggleLoading(true);
 
@@ -314,6 +314,8 @@ export const useContext = () => {
         ...availablePostfixedItems,
       ]);
 
+      setPreviousDomainValue(domain);
+
       toggleLoading(false);
     },
     [
@@ -331,7 +333,6 @@ export const useContext = () => {
   }, []);
 
   useEffect(() => {
-    setError(null);
     handleSelectedItems(domainValue);
   }, [domainValue, handleSelectedItems]);
 
