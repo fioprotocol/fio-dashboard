@@ -5,8 +5,13 @@ import { useHistory } from 'react-router';
 
 import { getDomains } from '../../redux/registrations/actions';
 import { refreshFioNames } from '../../redux/fio/actions';
+import { showLoginModal } from '../../redux/modal/actions';
+import { setRedirectPath } from '../../redux/navigation/actions';
 
-import { isAuthenticated as isAuthenticatedSelector } from '../../redux/profile/selectors';
+import {
+  isAuthenticated as isAuthenticatedSelector,
+  lastAuthData as lastAuthDataSelector,
+} from '../../redux/profile/selectors';
 import {
   allDomains as allDomainsSelector,
   loading as publicDomainsLoadingSelector,
@@ -43,6 +48,7 @@ type UseContextProps = {
 export const useContext = (): UseContextProps => {
   const allDomains = useSelector(allDomainsSelector);
   const isAuthenticated = useSelector(isAuthenticatedSelector);
+  const lastAuthData = useSelector(lastAuthDataSelector);
   const publicDomainsLoading = useSelector(publicDomainsLoadingSelector);
   const fioWallets = useSelector(fioWalletsSelector);
   const userDomainsLoading = useSelector(userDomainsLoadingSelector);
@@ -77,7 +83,14 @@ export const useContext = (): UseContextProps => {
           : CART_ITEM_TYPE.ADDRESS,
     });
 
-    history.push(ROUTES.CART);
+    if (!isAuthenticated) {
+      dispatch(setRedirectPath({ pathname: ROUTES.CART }));
+      lastAuthData
+        ? dispatch(showLoginModal(ROUTES.CART))
+        : history.push(ROUTES.CREATE_ACCOUNT);
+    } else {
+      history.push(ROUTES.CART);
+    }
   };
 
   useEffectOnce(() => {
