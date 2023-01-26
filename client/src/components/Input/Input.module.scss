@@ -252,6 +252,10 @@
   .inputSpinnerIcon {
     margin-top: -10px;
     cursor: default;
+
+    &.indigoWhite {
+      color: $light-indigo;
+    }
   }
 
   .prefixLabel {

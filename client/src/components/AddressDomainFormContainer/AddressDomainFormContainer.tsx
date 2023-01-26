@@ -5,6 +5,7 @@ import debounce from 'lodash/debounce';
 
 import TextInput, {
   INPUT_COLOR_SCHEMA,
+  INPUT_UI_STYLES,
 } from '../../components/Input/TextInput';
 
 import { DEFAULT_DEBOUNCE_TIMEOUT } from '../../constants/timeout';
@@ -58,6 +59,7 @@ export const AddressDomainFormContainer: React.FC<Props> = props => {
               hideError="true"
               lowerCased
               loading={loading}
+              uiType={INPUT_UI_STYLES.INDIGO_WHITE}
               withoutBottomMargin
             />
             <OnChange name={fieldName}>{debouncedHandleChange}</OnChange>
