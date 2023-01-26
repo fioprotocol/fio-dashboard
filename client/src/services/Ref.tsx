@@ -128,6 +128,13 @@ const Ref = (
       setCookies(REFERRAL_PROFILE_COOKIE_NAME, refProfileCode, {
         expires: USER_REFERRAL_PROFILE_COOKIE_EXPIRATION_PERIOD,
       });
+    } else if (
+      isAuthenticated &&
+      !isRefLink &&
+      !!refProfileInfo?.code &&
+      !user?.refProfile?.code
+    ) {
+      setCookies(REFERRAL_PROFILE_COOKIE_NAME, null);
     }
   }, [
     isAuthenticated,
