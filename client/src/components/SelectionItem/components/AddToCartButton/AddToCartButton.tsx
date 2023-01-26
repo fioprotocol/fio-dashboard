@@ -49,11 +49,18 @@ export const AddToCartButton: React.FC<Props> = props => {
       onClick={() => onClick(selectedItem)}
       className={classnames(classes.button, isSelected && classes.isSelected)}
     >
-      {isSelected ? (
-        <img title="cart" src={checkedCartIconSrc} alt="Cart" />
-      ) : (
-        <AddShoppingCart />
-      )}
+      <div>
+        {isSelected ? (
+          <img
+            title="cart"
+            src={checkedCartIconSrc}
+            alt="Cart"
+            className={classes.icon}
+          />
+        ) : (
+          <AddShoppingCart />
+        )}
+      </div>
     </Button>
   );
 };
