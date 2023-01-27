@@ -77,16 +77,40 @@ const handleFCHItems = async ({
   return (
     await Promise.all(
       domainArr.map(async domain => {
-        const error = await validateFioAddress(address, domain.name);
+        const {
+          allowFree,
+          domainType,
+          name,
+          swapAddressAndDomainPlaces,
+          rank = 0,
+        } = domain;
+
+        let addressName = address;
+        let domainName = name;
+
+        if (swapAddressAndDomainPlaces) {
+          addressName = name;
+          domainName = address;
+        }
+
+        const error = await validateFioAddress(addressName, domainName);
         if (error) {
           setError(error);
           return;
         }
 
         const isAddressExist = await checkAddressOrDomainIsExist({
-          address,
-          domain: domain.name,
+          address: addressName,
+          domain: domainName,
         });
+
+        let isUsernameOnCustomDomainExist = null;
+
+        if (swapAddressAndDomainPlaces) {
+          isUsernameOnCustomDomainExist = await checkAddressOrDomainIsExist({
+            domain: domainName,
+          });
+        }
 
         if (isAddressExist) {
           fireAnalyticsEventDebounced(
@@ -94,7 +118,7 @@ const handleFCHItems = async ({
           );
         }
 
-        const isCustomDomain = domain.domainType === DOMAIN_TYPE.CUSTOM;
+        const isCustomDomain = domainType === DOMAIN_TYPE.CUSTOM;
 
         const totalNativeFio = isCustomDomain
           ? new MathOp(natvieFioAddressPrice)
@@ -104,14 +128,6 @@ const handleFCHItems = async ({
 
         const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
 
-        let addressName = address;
-        let domainName = domain.name;
-
-        if (domain.swapAddressAndDomainPlaces) {
-          addressName = domain.name;
-          domainName = address;
-        }
-
         return {
           id: setFioName(addressName, domainName),
           address: addressName,
@@ -119,16 +135,18 @@ const handleFCHItems = async ({
           costFio: fio,
           costUsdc: usdc,
           costNativeFio: totalNativeFio,
-          domainType: domain.domainType,
+          domainType,
           isSelected: false,
-          isExist: isAddressExist,
+          isExist:
+            isAddressExist ||
+            (swapAddressAndDomainPlaces && isUsernameOnCustomDomainExist),
           period: 1,
           type: isCustomDomain
             ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
             : CART_ITEM_TYPE.ADDRESS,
-          allowFree: domain.allowFree,
-          rank: domain.rank || 0,
-          swapAddressAndDomainPlaces: domain.swapAddressAndDomainPlaces,
+          allowFree,
+          rank,
+          swapAddressAndDomainPlaces,
         };
       }),
     )
