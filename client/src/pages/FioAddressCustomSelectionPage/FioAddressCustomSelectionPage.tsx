@@ -136,13 +136,14 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                         placeholder="Enter Custom Ending"
                         uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                         inputPrefix={FIO_ADDRESS_DELIMITER}
-                        onBlur={onBlur}
-                        hideError
-                        actionButtonText="Add Custom Ending"
-                        noShadow
-                        containerHasFullWidth
-                        hasMarginBottom
                         hasErrorForced={hasDomainError}
+                        onBlur={onBlur}
+                        actionButtonText="Add Custom Ending"
+                        containerHasFullWidth
+                        defaultMenuIsOpen
+                        hasMarginBottom
+                        hideError
+                        noShadow
                       />
                     </>
                   ) : (
