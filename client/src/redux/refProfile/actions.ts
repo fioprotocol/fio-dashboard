@@ -1,6 +1,6 @@
 import { Api } from '../../api';
 
-import { CommonPromiseAction } from '../types';
+import { CommonAction, CommonPromiseAction } from '../types';
 
 export const prefix = 'refProfile';
 
@@ -15,6 +15,12 @@ export const getInfo = (code: string): CommonPromiseAction => ({
     GET_REF_PROFILE_FAILURE,
   ],
   promise: (api: Api) => api.refProfile.get(code),
+});
+
+export const CLEAR_REF_PROFILE = `${prefix}/CLEAR_REF_PROFILE`;
+
+export const clear = (): CommonAction => ({
+  type: CLEAR_REF_PROFILE,
 });
 
 export const SET_CONTAINED_PARAMS = `${prefix}/SET_CONTAINED_PARAMS`;
