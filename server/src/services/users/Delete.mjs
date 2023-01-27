@@ -48,6 +48,8 @@ export default class UserDelete extends Base {
           transaction: t,
         },
       );
+
+      await user.destroy({ force: true, transaction: t });
     });
 
     return {
