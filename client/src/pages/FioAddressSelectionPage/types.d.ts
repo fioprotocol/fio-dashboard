@@ -7,6 +7,7 @@ export type UseContextProps = {
   loading: boolean;
   suggestedItemsList: SelectedItemProps[];
   usersItemsList: SelectedItemProps[];
+  hideSuggestedActionButton: boolean;
   onClick: (selectedItem: CartItem) => void;
   setAddressValue: (address: string) => void;
   setError: (error: string) => void;

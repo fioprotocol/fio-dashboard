@@ -19,11 +19,20 @@ type Props = {
   isDesktop: boolean;
   list: SelectedItemProps[];
   error?: string;
+  hideActionButton?: boolean;
   onClick: (selectedItem: CartItem) => void;
 };
 
 export const SuggestedItemsList: React.FC<Props> = props => {
-  const { addressValue, isDesktop, error, list, loading, onClick } = props;
+  const {
+    addressValue,
+    isDesktop,
+    error,
+    list,
+    loading,
+    hideActionButton,
+    onClick,
+  } = props;
 
   if ((error && error !== FIO_ADDRESS_ALREADY_EXISTS) || !addressValue)
     return null;
@@ -55,6 +64,7 @@ export const SuggestedItemsList: React.FC<Props> = props => {
           text="Add Custom Ending"
           hasSquareShape={!!list.length}
           addressValue={addressValue}
+          hide={hideActionButton}
         />
       </div>
     </div>
