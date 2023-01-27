@@ -67,7 +67,11 @@ export const useContext = (): UseContextProps => {
   const addressParam = queryParams.get(QUERY_PARAMS_NAMES.ADDRESS);
   const domainParam = queryParams.get(QUERY_PARAMS_NAMES.DOMAIN);
 
-  let defaultInitialLink = `${ROUTES.FIO_ADDRESSES_SELECTION}`;
+  const rootLink = domainParam
+    ? ROUTES.FIO_DOMAINS
+    : ROUTES.FIO_ADDRESSES_SELECTION;
+
+  let defaultInitialLink = rootLink;
 
   if (addressParam)
     defaultInitialLink =
@@ -105,10 +109,12 @@ export const useContext = (): UseContextProps => {
 
   const onFieldChange = (value: string) => {
     if (!value) {
-      setLink(`${ROUTES.FIO_ADDRESSES_SELECTION}`);
+      setLink(rootLink);
     } else {
       setLink(
-        `${ROUTES.FIO_ADDRESSES_SELECTION}?${QUERY_PARAMS_NAMES.ADDRESS}=${value}`,
+        domainParam
+          ? rootLink
+          : `${ROUTES.FIO_ADDRESSES_SELECTION}?${QUERY_PARAMS_NAMES.ADDRESS}=${value}`,
       );
     }
   };
