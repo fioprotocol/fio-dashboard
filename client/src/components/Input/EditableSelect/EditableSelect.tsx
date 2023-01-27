@@ -33,6 +33,7 @@ export type EditableProps = {
   uiType?: string;
   hasMarginBottom?: boolean;
   actionButtonText?: string;
+  defaultMenuIsOpen?: boolean;
   actionButtonClick?: () => void;
   onBlur?: (fieldName: string) => void;
   onClear?: () => void;
@@ -61,6 +62,7 @@ const EditableSelect: React.FC<EditableProps> = props => {
     uiType,
     hasMarginBottom,
     actionButtonText,
+    defaultMenuIsOpen,
     actionButtonClick,
     onBlur,
     onClear,
@@ -199,6 +201,7 @@ const EditableSelect: React.FC<EditableProps> = props => {
         placeholder={placeholder}
         openMenuOnFocus={true}
         openMenuOnClick={true}
+        defaultMenuIsOpen={defaultMenuIsOpen}
         components={{
           IndicatorSeparator: CustomComponents.IndicatorSeparator,
           Menu: CustomComponents.Menu,
