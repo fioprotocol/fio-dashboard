@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import Processing from '../../../../components/common/TransactionProcessing';
 import SuccessModal from '../../../../components/Modal/SuccessModal';
 import DangerModal from '../../../../components/Modal/DangerModal';
 import Modal from '../../../../components/Modal/Modal';
@@ -12,7 +13,6 @@ import { ROUTES } from '../../../../constants/routes';
 import apis from '../../../../api';
 
 import classes from '../../styles/DeleteMyAccount.module.scss';
-import Processing from '../../../../components/common/TransactionProcessing';
 
 const ITEM_PROPS = {
   title: 'Delete Account',
@@ -28,6 +28,8 @@ type DeleteMyAccountProps = {
   username: string;
   logout: () => void;
 };
+
+const LOGOUT_TIMEOUT_MS = 1000;
 
 const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
   username,
@@ -79,7 +81,7 @@ const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
       await apis.edge.deleteAccount(account);
       togglePasswordModal(false);
       toggleSuccessModal(true);
-      setTimeout(logout, 1000);
+      setTimeout(logout, LOGOUT_TIMEOUT_MS);
     } catch (e) {
       return { password: 'Something went wrong, please try again later' };
     } finally {
