@@ -10,7 +10,7 @@ import {
 } from '@fioprotocol/fiojs/dist/chain-api-interfaces';
 
 import apis from '../api';
-import { AdminDomain, UsernameOnDomain } from '../api/responses';
+import { AdminDomain } from '../api/responses';
 import { fireAnalyticsEventDebounced } from './analytics';
 import { setFioName, sleep } from '../utils';
 import { log } from '../util/general';
@@ -317,9 +317,17 @@ export const transformPremiumDomains = (domains: Partial<AdminDomain>[]) =>
       rank: domain.rank || 0,
     }));
 
-export const transformCustomDomains = (domains: UsernameOnDomain[]) =>
-  domains.map(customDomain => ({
-    name: customDomain.username,
-    domainType: DOMAIN_TYPE.CUSTOM,
-    rank: customDomain.rank,
-  }));
+export const transformCustomDomains = (
+  domains: { username?: string; name?: string; rank: number }[],
+  swapAddressAndDomainPlaces?: boolean,
+) =>
+  domains.map(customDomain => {
+    const { username = '', name = '' } = customDomain;
+
+    return {
+      name: username || name,
+      domainType: DOMAIN_TYPE.CUSTOM,
+      rank: customDomain.rank,
+      swapAddressAndDomainPlaces,
+    };
+  });
