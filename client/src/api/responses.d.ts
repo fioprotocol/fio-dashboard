@@ -227,3 +227,7 @@ export type FioDomainDoubletResponse = {
   is_public: number;
   expiration: number;
 };
+
+export type GenericStatusResponse = {
+  success: boolean;
+};

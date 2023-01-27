@@ -14,6 +14,7 @@ type Props = {
   showCancel?: boolean;
   title: string;
   subtitle?: string | React.ReactNode;
+  notice?: string | React.ReactNode;
   cancelButtonText?: string;
   loading?: boolean;
   footerContent?: React.ReactNode;
@@ -29,6 +30,7 @@ const DangerModal: React.FC<Props> = props => {
     subtitle,
     cancelButtonText,
     title,
+    notice,
     loading,
     footerContent,
   } = props;
@@ -37,6 +39,7 @@ const DangerModal: React.FC<Props> = props => {
       <FontAwesomeIcon icon="ban" className={classes.icon} />
       <h4 className={classes.title}>{title}</h4>
       <p className={classes.subtitle}>{subtitle}</p>
+      {notice}
       <button
         onClick={onActionButtonClick}
         className={classes.actionButton}
