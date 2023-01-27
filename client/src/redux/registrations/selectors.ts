@@ -27,22 +27,34 @@ export const roeSetDate = (state: ReduxState): Date => state[prefix].roeSetDate;
 export const domains = createSelector(
   registrationDomains,
   refProfileInfo,
-  (regDomainItems, refProfileInfo): PubilcDomainsType =>
-    refProfileInfo != null &&
-    refProfileInfo.code &&
-    refProfileInfo.type === REF_PROFILE_TYPE.REF
-      ? {
-          refProfileDomains: refProfileInfo.settings.domains.map(refDomain => ({
-            name: refDomain.name,
-            isPremium: refDomain.isPremium,
-            domainType: refDomain.isPremium
-              ? DOMAIN_TYPE.PREMIUM
-              : DOMAIN_TYPE.FREE,
-            allowFree: !refDomain.isPremium,
-            rank: refDomain.rank,
-          })),
-        }
-      : regDomainItems,
+  (regDomainItems, refProfileInfo): PubilcDomainsType => {
+    if (
+      refProfileInfo != null &&
+      refProfileInfo.code &&
+      refProfileInfo.type === REF_PROFILE_TYPE.REF
+    ) {
+      const allowCustomDomain = refProfileInfo.settings.allowCustomDomain;
+      return {
+        refProfileDomains: refProfileInfo.settings.domains.map(refDomain => ({
+          name: refDomain.name,
+          isPremium: refDomain.isPremium,
+          domainType: refDomain.isPremium
+            ? DOMAIN_TYPE.PREMIUM
+            : DOMAIN_TYPE.FREE,
+          allowFree: !refDomain.isPremium,
+          rank: refDomain.rank,
+        })),
+        usernamesOnCustomDomains: allowCustomDomain
+          ? regDomainItems.usernamesOnCustomDomains
+          : [],
+        availableDomains: allowCustomDomain
+          ? regDomainItems.availableDomains
+          : [],
+      };
+    }
+
+    return regDomainItems;
+  },
 );
 export const allDomains = createSelector(
   domains,

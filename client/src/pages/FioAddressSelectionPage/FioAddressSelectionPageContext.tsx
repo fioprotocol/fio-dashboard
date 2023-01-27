@@ -16,6 +16,7 @@ import {
   hasFreeAddress as hasFreeAddressSelector,
   isAuthenticated as isAuthenticatedSelector,
 } from '../../redux/profile/selectors';
+import { refProfileInfo as refProfileInfoSelector } from '../../redux/refProfile/selectors';
 
 import { FIO_ADDRESS_ALREADY_EXISTS } from '../../constants/errors';
 import { DOMAIN_TYPE } from '../../constants/fio';
@@ -190,6 +191,7 @@ export const useContext = (): UseContextProps => {
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const cartItems = useSelector(cartItemsSelector);
+  const refProfileInfo = useSelector(refProfileInfoSelector);
 
   const dispatch = useDispatch();
 
@@ -220,6 +222,10 @@ export const useContext = (): UseContextProps => {
   const cartHasFreeItem = cartItems.some(
     cartItem => cartItem.domainType === DOMAIN_TYPE.FREE,
   );
+
+  const refPartnerEnablesCustomDomains =
+    refProfileInfo?.settings.allowCustomDomain;
+  const isRefParnter = !!refProfileInfo;
 
   const publicDomains: Partial<AdminDomain>[] = refProfileDomains.length
     ? refProfileDomains
@@ -536,6 +542,7 @@ export const useContext = (): UseContextProps => {
     loading: loading || domainsLoaing,
     suggestedItemsList,
     usersItemsList,
+    hideSuggestedActionButton: isRefParnter && !refPartnerEnablesCustomDomains,
     setAddressValue,
     setError,
     onClick,
