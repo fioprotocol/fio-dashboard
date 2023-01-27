@@ -103,10 +103,18 @@ const handleFCHItems = async ({
 
         const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
 
+        let addressName = address;
+        let domainName = domain.name;
+
+        if (domain.swapAddressAndDomainPlaces) {
+          addressName = domain.name;
+          domainName = address;
+        }
+
         return {
-          id: setFioName(address, domain.name),
-          address,
-          domain: domain.name,
+          id: setFioName(addressName, domainName),
+          address: addressName,
+          domain: domainName,
           costFio: fio,
           costUsdc: usdc,
           costNativeFio: totalNativeFio,
@@ -119,6 +127,7 @@ const handleFCHItems = async ({
             : CART_ITEM_TYPE.ADDRESS,
           allowFree: domain.allowFree,
           rank: domain.rank || 0,
+          swapAddressAndDomainPlaces: domain.swapAddressAndDomainPlaces,
         };
       }),
     )
@@ -185,6 +194,7 @@ export const useContext = (): UseContextProps => {
   const dispatch = useDispatch();
 
   const {
+    availableDomains = [],
     userDomains = [],
     dashboardDomains = [],
     refProfileDomains = [],
@@ -219,6 +229,11 @@ export const useContext = (): UseContextProps => {
     a.name.localeCompare(b.name),
   );
 
+  const publicUsernamesOnCustomDomains = transformCustomDomains(
+    usernamesOnCustomDomains,
+    true,
+  ).sort((a, b) => a.rank - b.rank);
+
   const nonPremiumPublicDomains = transformNonPremiumDomains(
     publicDomains,
     hasFreeAddress || cartHasFreeItem,
@@ -231,9 +246,14 @@ export const useContext = (): UseContextProps => {
     .sort((a, b) => a.rank - b.rank)
     .map((premiumDomain, i) => ({ ...premiumDomain, rank: i }));
 
-  const customDomains = transformCustomDomains(usernamesOnCustomDomains).sort(
+  const availablePublilcDomains = transformCustomDomains(availableDomains).sort(
     (a, b) => a.rank - b.rank,
   );
+
+  const customDomains = [
+    ...publicUsernamesOnCustomDomains,
+    ...availablePublilcDomains,
+  ];
 
   const userDomainsJSON = JSON.stringify(sortedUserDomains);
   const nonPremiumPublicDomainsJSON = JSON.stringify(nonPremiumPublicDomains);
@@ -300,7 +320,7 @@ export const useContext = (): UseContextProps => {
       const availablePremiumFCH = validatedPremiumFCH.length
         ? validatedPremiumFCH.filter(premiumFCH => !premiumFCH.isExist)
         : [];
-      const availlableCustomFCH = validatedCustomFCH.length
+      const availableCustomFCH = validatedCustomFCH.length
         ? validatedCustomFCH.filter(customFCH => !customFCH.isExist)
         : [];
 
@@ -308,7 +328,7 @@ export const useContext = (): UseContextProps => {
         !avaliableUserFCH &&
         !availableNonPremiumFCH &&
         !availablePremiumFCH &&
-        !availlableCustomFCH
+        !availableCustomFCH
       ) {
         setError(FIO_ADDRESS_ALREADY_EXISTS);
         setAdditionalItemsList([]);
@@ -324,13 +344,29 @@ export const useContext = (): UseContextProps => {
       if (
         !availableNonPremiumFCH.length &&
         !availablePremiumFCH.length &&
-        !availlableCustomFCH.length
+        !availableCustomFCH.length
       ) {
         setAdditionalItemsList([]);
         setSuggestedItemsList([]);
         toggleLoading(false);
         setPreviousAddressValue(address);
         return;
+      }
+
+      const swapedCustomFCH = availableCustomFCH.find(
+        availabelCustom => availabelCustom.swapAddressAndDomainPlaces,
+      );
+
+      let availableCustomFCHWithSwapped = [
+        ...availableCustomFCH.filter(
+          availabelCustom => availabelCustom.domain !== address,
+        ),
+      ];
+
+      if (swapedCustomFCH) {
+        availableCustomFCHWithSwapped = [swapedCustomFCH].concat(
+          availableCustomFCHWithSwapped,
+        );
       }
 
       const handleSuggestedElement = (
@@ -356,13 +392,13 @@ export const useContext = (): UseContextProps => {
           return suggestedElement;
         }
         if (
-          availlableCustomFCH[0] &&
+          availableCustomFCHWithSwapped[0] &&
           (suggestedType === SUGGESTED_TYPE.FIRST ||
             suggestedType === SUGGESTED_TYPE.SECOND ||
             suggestedType === SUGGESTED_TYPE.THIRD)
         ) {
-          suggestedElement = availlableCustomFCH[0];
-          availlableCustomFCH.shift();
+          suggestedElement = availableCustomFCHWithSwapped[0];
+          availableCustomFCHWithSwapped.shift();
           return suggestedElement;
         }
       };
@@ -380,7 +416,7 @@ export const useContext = (): UseContextProps => {
       const additionalPublicDomains: SelectedItemProps[] = [
         ...availableNonPremiumFCH,
         ...availablePremiumFCH,
-        ...availlableCustomFCH,
+        ...availableCustomFCHWithSwapped,
       ].sort((a, b) => {
         const rankCount = a.rank - b.rank;
         if (rankCount) return rankCount;
