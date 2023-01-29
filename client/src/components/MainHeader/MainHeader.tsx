@@ -32,6 +32,10 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
   }, [closeMenu, logoutFn]);
 
   useEffect(() => {
+    const url = new URL(window.location.href);
+    const isSilentLogout = url.searchParams.get('logout') === 'silent';
+    if (isSilentLogout) return;
+
     if (
       profileRefreshed &&
       !isAuthenticated &&
