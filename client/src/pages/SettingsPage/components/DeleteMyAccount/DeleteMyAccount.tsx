@@ -130,7 +130,7 @@ const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
         ) : (
           <>
             <h3>Confirm Deletion</h3>
-            <p>Enter your password to confirm deletion of this account</p>
+            <p>Enter your password to confirm deleting of this account</p>
             <PasswordForm
               onSubmit={onFormSubmit}
               loading={checkingPassword}

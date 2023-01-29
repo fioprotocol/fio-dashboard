@@ -37,7 +37,7 @@ const PasswordForm: React.FC<PasswordFormProps> = props => {
             name="password"
             type="password"
             placeholder="Enter Your Password"
-            uiType={INPUT_UI_STYLES.BLACK_WHITE}
+            uiType={INPUT_UI_STYLES.BLACK_VIOLET}
             errorColor={COLOR_TYPE.WARN}
             component={Input}
             disabled={loading}
