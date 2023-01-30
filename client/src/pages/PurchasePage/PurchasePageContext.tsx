@@ -116,35 +116,35 @@ export const useContext = (
           PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
         ].includes(status)
       ) {
-        const purcahsedItems: CartItem[] = [];
+        const purchasedItems: CartItem[] = [];
         regItems.forEach(regItem => {
           const { id, period = 1 } = regItem;
-          const purcahsedItem = cart.find(cartItem => cartItem.id === id);
-          if (purcahsedItem) {
+          const purchasedItem = cart.find(cartItem => cartItem.id === id);
+          if (purchasedItem) {
             if (
-              purcahsedItem.id === id &&
-              CART_ITEM_TYPES_WITH_PERIOD.includes(purcahsedItem.type) &&
-              purcahsedItem.period > period
+              purchasedItem.id === id &&
+              CART_ITEM_TYPES_WITH_PERIOD.includes(purchasedItem.type) &&
+              purchasedItem.period > period
             ) {
-              const purcahsedItemPeriod = period;
+              const purchasedItemPeriod = period;
               const fioPrices = convertFioPrices(
-                new MathOp(purcahsedItem.costNativeFio)
-                  .mul(purcahsedItemPeriod)
+                new MathOp(purchasedItem.costNativeFio)
+                  .mul(purchasedItemPeriod)
                   .toNumber(),
                 roe,
               );
-              purcahsedItems.push({
-                ...purcahsedItem,
-                period: purcahsedItemPeriod,
+              purchasedItems.push({
+                ...purchasedItem,
+                period: purchasedItemPeriod,
                 costFio: fioPrices.fio,
                 costUsdc: fioPrices.usdc,
               });
             } else {
-              purcahsedItems.push(purcahsedItem);
+              purchasedItems.push(purchasedItem);
             }
           }
         });
-        const purchaseItems = getCartItemsDataForAnalytics(purcahsedItems);
+        const purchaseItems = getCartItemsDataForAnalytics(purchasedItems);
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED, {
           ...purchaseItems,
           payment_type: !purchaseItems.value

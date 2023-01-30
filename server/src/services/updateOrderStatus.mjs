@@ -8,6 +8,7 @@ import {
   FIO_ACTIONS_LABEL,
   FIO_ACTIONS,
   FIO_ACTIONS_WITH_PERIOD,
+  FIO_ACTIONS_COMBO,
 } from '../config/constants.js';
 
 export const checkOrderStatusAndCreateNotification = async orderId => {
@@ -56,14 +57,31 @@ const transformOrderItemsForEmail = (orderItems, showPriceWithFioAmount) =>
           item.data &&
           orderItem.data.cartItemId === item.data.cartItemId,
       );
-      if (FIO_ACTIONS_WITH_PERIOD.includes(item.action) && existsItem) {
+      if (
+        existsItem &&
+        item.action !== existsItem.action &&
+        FIO_ACTIONS_COMBO.includes(item.action) &&
+        FIO_ACTIONS_COMBO.includes(existsItem.action)
+      ) {
+        if (!existsItem.address) {
+          existsItem.address = item.address;
+        }
+        existsItem.action = FIO_ACTIONS.registerFioAddress;
+        existsItem.data.hasCustomDomain = true;
+        existsItem.nativeFio = new MathOp(existsItem.nativeFio)
+          .add(item.nativeFio)
+          .toNumber();
+        existsItem.price = new MathOp(existsItem.price).add(item.price).toNumber();
+      } else if (FIO_ACTIONS_WITH_PERIOD.includes(item.action) && existsItem) {
         existsItem.period++;
         existsItem.blockchainTransactions = [
           ...(existsItem.blockchainTransactions || []),
           ...(item.blockchainTransactions || []),
         ];
-        existsItem.nativeFio = +existsItem.nativeFio + +item.nativeFio;
-        existsItem.price = +existsItem.price + +item.price;
+        existsItem.nativeFio = new MathOp(existsItem.nativeFio)
+          .add(item.nativeFio)
+          .toNumber();
+        existsItem.price = new MathOp(existsItem.price).add(item.price).toNumber();
       } else {
         if (FIO_ACTIONS_WITH_PERIOD.includes(item.action)) {
           item.period = 1;

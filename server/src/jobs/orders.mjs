@@ -41,7 +41,7 @@ const ERROR_CODES = {
   SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
 };
 const MAX_STATUS_NOTES_LENGTH = 200;
-const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 2000;
+const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 5000;
 
 class OrdersJob extends CommonJob {
   constructor() {
@@ -404,8 +404,10 @@ class OrdersJob extends CommonJob {
   }
 
   async submitSignedTx(orderItem, auth, balanceDifference = null) {
-    const { address, domain, action, orderId, roe, data } = orderItem;
+    const { address, domain, action, orderId, paymentId, roe, data } = orderItem;
     const fee = this.feesJson[orderItem.action];
+    const payment = await Payment.findOne({ where: { id: paymentId } });
+    const isFIO = payment.processor === Payment.PROCESSOR.FIO;
 
     // Spend order payment on fio action
     const fioPayment = await this.spend({
@@ -419,71 +421,79 @@ class OrdersJob extends CommonJob {
       data: { roe, sendingFioTokens: true },
     });
 
-    // Send tokens to customer
-    try {
-      const transferRes = await fioApi.executeAction(
-        FIO_ACTIONS.transferTokens,
-        fioApi.getActionParams({
-          publicKey: data.signingWalletPubKey || orderItem.publicKey,
-          amount: balanceDifference || fee,
-          action: FIO_ACTIONS.transferTokens,
-        }),
-        auth,
-      );
+    if (!isFIO) {
+      // Send tokens to customer
+      try {
+        const transferRes = await fioApi.executeAction(
+          FIO_ACTIONS.transferTokens,
+          fioApi.getActionParams({
+            publicKey: data.signingWalletPubKey || orderItem.publicKey,
+            amount: balanceDifference || fee,
+            action: FIO_ACTIONS.transferTokens,
+          }),
+          auth,
+        );
 
-      if (!transferRes.transaction_id) {
-        const transferError = fioApi.checkTxError(transferRes);
+        if (!transferRes.transaction_id) {
+          const transferError = fioApi.checkTxError(transferRes);
 
+          await this.spend({
+            fioName: fioApi.setFioName(address, domain),
+            action,
+            orderId,
+            spentType: Payment.SPENT_TYPE.ACTION_REFUND,
+            price: fioApi.sufToAmount(balanceDifference || fee),
+            currency: Payment.CURRENCY.FIO,
+            data: {
+              roe,
+              error: transferError,
+            },
+            notes: `${transferError}`,
+          });
+
+          if (transferError.notes === INSUFFICIENT_BALANCE) return transferRes;
+
+          throw new Error(JSON.stringify(transferError));
+        }
+
+        await this.checkTokensReceived(
+          transferRes.transaction_id,
+          data.signingWalletPubKey || orderItem.publicKey,
+        );
+
+        // Save transfer event
         await this.spend({
-          fioName: fioApi.setFioName(address, domain),
-          action,
-          orderId,
-          spentType: Payment.SPENT_TYPE.ACTION_REFUND,
-          price: fioApi.sufToAmount(balanceDifference || fee),
-          currency: Payment.CURRENCY.FIO,
-          data: { roe, error: transferError },
-          notes: `${transferError}`,
+          actionPaymentId: fioPayment.id,
+          updateStatus: Payment.STATUS.COMPLETED,
+          eventStatus: PaymentEventLog.STATUS.SUCCESS,
+          eventData: {
+            fioTxId: transferRes.transaction_id,
+            fioFee: transferRes.fee_collected,
+          },
+        });
+      } catch (e) {
+        // Save transfer error event
+        await this.spend({
+          actionPaymentId: fioPayment.id,
+          updateStatus: Payment.STATUS.FAILED,
+          eventStatus: PaymentEventLog.STATUS.FAILED,
+          notes: e.message,
         });
 
-        if (transferError.notes === INSUFFICIENT_BALANCE) return transferRes;
-
-        throw new Error(JSON.stringify(transferError));
+        return {
+          message: `Transfer Tokens error. Customer did not receive the tokens to execute the transaction - ${JSON.stringify(
+            e,
+          )}`,
+          data: {
+            refundUsdcAmount: fioApi.convertFioToUsdc(balanceDifference || fee, roe), // here roe has value on moment when order was created, not current value
+          },
+        };
       }
-
-      await this.checkTokensReceived(
-        transferRes.transaction_id,
-        data.signingWalletPubKey || orderItem.publicKey,
-      );
-
-      // Save transfer event
-      await this.spend({
-        actionPaymentId: fioPayment.id,
-        updateStatus: Payment.STATUS.COMPLETED,
-        eventStatus: PaymentEventLog.STATUS.SUCCESS,
-        eventData: {
-          fioTxId: transferRes.transaction_id,
-          fioFee: transferRes.fee_collected,
-        },
-      });
-    } catch (e) {
-      // Save transfer error event
-      await this.spend({
-        actionPaymentId: fioPayment.id,
-        updateStatus: Payment.STATUS.FAILED,
-        eventStatus: PaymentEventLog.STATUS.FAILED,
-        notes: e.message,
-      });
-
-      return {
-        message: `Transfer Tokens error. Customer did not receive the tokens to execute the transaction - ${JSON.stringify(
-          e,
-        )}`,
-        data: {
-          refundUsdcAmount: fioApi.convertFioToUsdc(balanceDifference || fee, roe), // here roe has value on moment when order was created, not current value
-        },
-      };
     }
 
+    if (action === FIO_ACTIONS.renewFioDomain) {
+      await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION);
+    }
     const result = await fioApi.executeTx(orderItem.action, data.signedTx);
 
     if (!result.transaction_id) {

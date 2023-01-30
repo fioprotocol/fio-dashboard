@@ -4,7 +4,7 @@ import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 
 import { LocationState, Path } from 'history';
 
-import { FIOSDK_LIB } from './api/fio';
+import { FIOSDK_LIB, SignedTxArgs } from './api/fio';
 
 import { CONTAINED_FLOW_ACTIONS } from './constants/containedFlow';
 import { DOMAIN_TYPE } from './constants/fio';
@@ -122,6 +122,10 @@ export type RegistrationRegistered = {
   cartItemId: string;
   transaction_id: string;
   transactions?: string[];
+  data?: {
+    signedTx?: SignedTxArgs;
+    signingWalletPubKey?: string;
+  };
 };
 
 export type PaymentProvider = typeof PAYMENT_PROVIDER[keyof typeof PAYMENT_PROVIDER];
