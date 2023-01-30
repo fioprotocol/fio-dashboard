@@ -1,12 +1,13 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
-
+import Badge from '../../../../components/Badge/Badge';
 import CartItem from '../../../../components/Cart/CartItem';
 
-import apis from '../../../../api';
+import { BADGE_TYPES } from '../../../../components/Badge/Badge';
+import { DOMAIN_TYPE } from '../../../../constants/fio';
 
+import apis from '../../../../api';
 import MathOp from '../../../../util/math';
 
 import { OrderItemDetailed, PaymentCurrency } from '../../../../types';
@@ -41,6 +42,11 @@ export const OrderItem: React.FC<Props> = props => {
     costNativeFio: fee_collected ? new MathOp(fee_collected).toNumber() : null,
     id,
     hasCustomDomain,
+    domainType: hasCustomDomain
+      ? DOMAIN_TYPE.CUSTOM
+      : fee_collected
+      ? DOMAIN_TYPE.PREMIUM
+      : DOMAIN_TYPE.FREE,
   };
 
   return (

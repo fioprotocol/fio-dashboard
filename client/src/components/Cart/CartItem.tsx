@@ -89,7 +89,6 @@ const CartItem: React.FC<Props> = props => {
     costUsdc,
     costNativeFio,
     showBadge,
-    hasCustomDomain,
     period,
     type,
     domainType,
@@ -115,7 +114,11 @@ const CartItem: React.FC<Props> = props => {
             {item.address ? (
               <span className={classes.address}>
                 <span className="boldText">{address}@</span>
-                <span className={hasCustomDomain && 'boldText'}>{domain}</span>
+                <span
+                  className={domainType === DOMAIN_TYPE.CUSTOM && 'boldText'}
+                >
+                  {domain}
+                </span>
               </span>
             ) : (
               <span className="boldText">{domain && domain}</span>

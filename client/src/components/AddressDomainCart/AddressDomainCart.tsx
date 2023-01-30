@@ -141,7 +141,9 @@ const AddressDomainCart: React.FC<Props> = props => {
                       <span className="boldText">{item.address}</span>
                       <span
                         className={
-                          item.hasCustomDomain ? 'boldText' : classes.thin
+                          item.domainType === DOMAIN_TYPE.CUSTOM
+                            ? 'boldText'
+                            : classes.thin
                         }
                       >
                         @{item.domain}
