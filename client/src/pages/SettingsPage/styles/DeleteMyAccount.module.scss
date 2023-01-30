@@ -1,0 +1,13 @@
+@import '../../../assets/styles/colors.scss';
+
+.dangerNotice {
+  color: $white;
+  font-weight: 400;
+  text-align: center;
+  margin-top: 10px;
+
+  a {
+    color: $black;
+    font-weight: bold;
+  }
+}

@@ -20,6 +20,7 @@ export default combineReducers({
     switch (action.type) {
       case actions.GET_REF_PROFILE_REQUEST:
       case actions.GET_REF_PROFILE_FAILURE:
+      case actions.CLEAR_REF_PROFILE:
         return null;
       case actions.GET_REF_PROFILE_SUCCESS:
         return action.data;

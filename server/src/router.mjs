@@ -39,6 +39,7 @@ router.post('/actions/:hash', routes.actions.submit);
 
 router.get('/users/available/:email', routes.users.available);
 router.get('/users/me', checkAuth, routes.users.info);
+router.delete('/users/me', checkAuth, routes.users.delete);
 router.get('/users/:id', checkAdminAuth, routes.users.show);
 router.post('/users', routes.users.create);
 router.put('/users', checkAuth, routes.users.update);

@@ -35,6 +35,7 @@ const FioAddressCustomSelectionPage: React.FC = () => {
   const {
     allDomains,
     domainsLoading,
+    closedInitialDropdown,
     initialValues,
     isDesktop,
     link,
@@ -136,13 +137,14 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                         placeholder="Enter Custom Ending"
                         uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                         inputPrefix={FIO_ADDRESS_DELIMITER}
+                        hasErrorForced={hasDomainError}
                         onBlur={onBlur}
-                        hideError
                         actionButtonText="Add Custom Ending"
-                        noShadow
+                        defaultMenuIsOpen={!closedInitialDropdown}
                         containerHasFullWidth
                         hasMarginBottom
-                        hasErrorForced={hasDomainError}
+                        hideError
+                        noShadow
                       />
                     </>
                   ) : (

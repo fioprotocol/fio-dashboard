@@ -12,6 +12,7 @@ import classes from './ActionButton.module.scss';
 
 type Props = {
   addressValue: string;
+  hide?: boolean;
   hasSquareShape?: boolean;
   shouldPrependUserDomains?: boolean;
   text: string;
@@ -21,9 +22,12 @@ export const ActionButton: React.FC<Props> = props => {
   const {
     addressValue,
     hasSquareShape,
+    hide,
     shouldPrependUserDomains,
     text,
   } = props;
+
+  if (hide) return null;
 
   return (
     <Link

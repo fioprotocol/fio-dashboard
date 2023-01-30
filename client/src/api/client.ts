@@ -67,7 +67,7 @@ export default class ApiClient {
     return this._request({ url, method: 'put', body });
   }
 
-  delete(url: string, body: Object): Promise<ApisResponse> {
+  delete(url: string, body?: Object): Promise<ApisResponse> {
     return this._request({ url, method: 'delete', body });
   }
 

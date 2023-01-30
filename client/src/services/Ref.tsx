@@ -14,7 +14,7 @@ import { isAuthenticated, user } from '../redux/profile/selectors';
 import { refProfileInfo } from '../redux/refProfile/selectors';
 import { fioWallets } from '../redux/fio/selectors';
 
-import { getInfo } from '../redux/refProfile/actions';
+import { getInfo, clear } from '../redux/refProfile/actions';
 import { refreshFioNames } from '../redux/fio/actions';
 
 import {
@@ -36,6 +36,7 @@ type Props = {
   fioWallets: FioWalletDoublet[];
   refreshFioNames: (publicKey: string) => void;
   getInfo: (refProfileCode: string | null) => void;
+  clear: () => void;
 };
 
 type Location = {
@@ -53,6 +54,7 @@ const Ref = (
     location: { pathname, query },
     refreshFioNames,
     getInfo,
+    clear,
   } = props;
   const history = useHistory();
 
@@ -128,6 +130,14 @@ const Ref = (
       setCookies(REFERRAL_PROFILE_COOKIE_NAME, refProfileCode, {
         expires: USER_REFERRAL_PROFILE_COOKIE_EXPIRATION_PERIOD,
       });
+    } else if (
+      isAuthenticated &&
+      !isRefLink &&
+      !!refProfileInfo?.code &&
+      !user?.refProfile?.code
+    ) {
+      setCookies(REFERRAL_PROFILE_COOKIE_NAME, null);
+      clear();
     }
   }, [
     isAuthenticated,
@@ -135,6 +145,7 @@ const Ref = (
     refProfileInfo?.code,
     user?.refProfile?.code,
     getInfo,
+    clear,
   ]);
 
   useEffect(() => {
@@ -161,6 +172,7 @@ const reduxConnect = connect(
   {
     refreshFioNames,
     getInfo,
+    clear,
   },
 );
 
