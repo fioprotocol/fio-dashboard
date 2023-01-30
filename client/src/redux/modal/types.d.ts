@@ -6,6 +6,8 @@ export type GenericErrorDataTypes = {
   buttonText?: string;
 };
 
+export type GenericSuccessDataTypes = GenericErrorDataTypes;
+
 export type PinDataType = {
   [key: string]: AnyType;
 };

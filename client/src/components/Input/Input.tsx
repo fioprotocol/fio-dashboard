@@ -18,6 +18,7 @@ export const INPUT_COLOR_SCHEMA = {
 export const INPUT_UI_STYLES = {
   BLACK_LIGHT: 'blackLight',
   BLACK_WHITE: 'blackWhite',
+  BLACK_VIOLET: 'blackViolet',
 };
 
 type Props = {

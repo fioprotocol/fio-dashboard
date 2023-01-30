@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import Processing from '../../../../components/common/TransactionProcessing';
-import SuccessModal from '../../../../components/Modal/SuccessModal';
 import DangerModal from '../../../../components/Modal/DangerModal';
 import Modal from '../../../../components/Modal/Modal';
 import SecurityItem from '../SecurityItem';
@@ -27,23 +26,22 @@ const ITEM_PROPS = {
 type DeleteMyAccountProps = {
   username: string;
   logout: () => void;
+  closeSuccessModal: () => void;
+  showSuccessModal: (m: string, t: string) => void;
 };
 
-const LOGOUT_TIMEOUT_MS = 1000;
+const SUCCESS_MODAL_TIMEOUT_MS = 2000;
 
 const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
   username,
   logout,
+  closeSuccessModal,
+  showSuccessModal,
 }) => {
   const [showConfirmationModal, toggleConfirmationModal] = useState(false);
   const [showPasswordModal, togglePasswordModal] = useState(false);
-  const [showSuccessModal, toggleSuccessModal] = useState(false);
   const [checkingPassword, setCheckingPassword] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
-
-  const onSuccessClose = () => {
-    toggleSuccessModal(false);
-  };
 
   const onOpenConfirmationModal = () => {
     toggleConfirmationModal(true);
@@ -80,8 +78,14 @@ const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
       await apis.auth.deleteUser();
       await apis.edge.deleteAccount(account);
       togglePasswordModal(false);
-      toggleSuccessModal(true);
-      setTimeout(logout, LOGOUT_TIMEOUT_MS);
+      showSuccessModal(
+        ITEM_PROPS.successModalSubtitle,
+        ITEM_PROPS.successModalTitle,
+      );
+      logout();
+      setTimeout(() => {
+        closeSuccessModal();
+      }, SUCCESS_MODAL_TIMEOUT_MS);
     } catch (e) {
       return { password: 'Something went wrong, please try again later' };
     } finally {
@@ -130,7 +134,7 @@ const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
         ) : (
           <>
             <h3>Confirm Deletion</h3>
-            <p>Enter your password to confirm deletion of this account</p>
+            <p>Enter your password to confirm deleting of this account</p>
             <PasswordForm
               onSubmit={onFormSubmit}
               loading={checkingPassword}
@@ -139,12 +143,6 @@ const DeleteMyAccount: React.FC<DeleteMyAccountProps> = ({
           </>
         )}
       </Modal>
-      <SuccessModal
-        title={ITEM_PROPS.successModalTitle}
-        subtitle={ITEM_PROPS.successModalSubtitle}
-        onClose={onSuccessClose}
-        showModal={showSuccessModal}
-      />
     </SecurityItem>
   );
 };
