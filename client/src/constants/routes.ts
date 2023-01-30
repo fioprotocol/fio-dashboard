@@ -118,6 +118,13 @@ const ROUTES: { [route: string]: string } = {
   WRAP_STATUS_UNWRAP_DOMAINS: '/unwrapDomains',
 };
 
+export const PUBLIC_ROUTES: string[] = [
+  ROUTES.FIO_ADDRESSES_SELECTION,
+  ROUTES.FIO_ADDRESSES_CUSTOM_SELECTION,
+  ROUTES.FIO_DOMAIN,
+  ROUTES.FIO_DOMAINS_SELECTION,
+];
+
 const ADMIN_ROUTES: { [route: string]: string } = {
   ADMIN_HOME: '/',
   ADMIN_USERS: '/users',
