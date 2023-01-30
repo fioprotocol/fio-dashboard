@@ -33,6 +33,7 @@ import { setRedirectPath } from '../navigation/actions';
 import {
   locationState as locationStateSelector,
   redirectLink,
+  pathname as pathnameSelector,
 } from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
 import { isNewUser as isNewUserSelector } from './selectors';
@@ -43,7 +44,7 @@ import {
   ANALYTICS_LOGIN_METHOD,
   USER_STATUSES,
 } from '../../constants/common';
-import { ADMIN_ROUTES, ROUTES } from '../../constants/routes';
+import { ADMIN_ROUTES, PUBLIC_ROUTES, ROUTES } from '../../constants/routes';
 
 import { fireAnalyticsEvent } from '../../util/analytics';
 import { Api } from '../../api';
@@ -141,13 +142,18 @@ export function* profileSuccess(): Generator {
 }
 
 export function* logoutSuccess(history: History, api: Api): Generator {
-  yield takeEvery(LOGOUT_SUCCESS, function(action: Action) {
+  yield takeEvery(LOGOUT_SUCCESS, function*(action: Action) {
     api.client.removeToken();
 
     const { redirect } = action;
+    const pathname: string = yield select(pathnameSelector);
 
     if (redirect) history.push(redirect, {});
-    if (!redirect) history.replace(ROUTES.HOME, {});
+    if (!redirect) {
+      if (!PUBLIC_ROUTES.includes(pathname)) {
+        history.replace(ROUTES.HOME, {});
+      }
+    }
   });
 }
 
