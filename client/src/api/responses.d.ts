@@ -15,6 +15,7 @@ import {
   WrapStatusWrapItem,
   UserDetails,
   UserOrderDetails,
+  RefProfileDomain,
 } from '../types';
 
 export type AccountGetWalletsResponse = FioWalletDoublet[];
@@ -200,6 +201,7 @@ export type DomainsResponse = {
   availableDomains: AdminDomain[];
   dashboardDomains: AdminDomain[];
   usernamesOnCustomDomains: UsernameOnDomain[];
+  allRefProfileDomains: RefProfileDomain[];
 };
 
 export type SearchPrefixesAndPostfixes = {
