@@ -148,7 +148,10 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
         to={{
           pathname: ROUTES.FIO_ADDRESSES_CUSTOM_SELECTION,
           search: `${QUERY_PARAMS_NAMES.DOMAIN}=${name}`,
-          state: { shouldPrependUserDomains: true },
+          state: {
+            shouldPrependUserDomains: true,
+            closedInitialDropdown: true,
+          },
         }}
         className={classes.actionButton}
       >
