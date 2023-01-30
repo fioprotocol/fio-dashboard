@@ -2,27 +2,27 @@ import {
   CartItem,
   CartItemType,
   FioWalletDoublet,
-  PinConfirmation,
   Prices,
   RefProfile,
-  User,
 } from '../../types';
 
+export type PurchaseValues = {
+  cartItems: CartItem[];
+  prices: Prices;
+  refProfileInfo: RefProfile | null;
+  isFreeAllowed: boolean;
+};
+
 export type PurchaseNowTypes = {
-  user: User;
   hasFreeAddress: boolean;
   cartItems: CartItem[];
-  pinConfirmation: PinConfirmation;
   captchaResult: { success: boolean; verifyParams: {} };
   paymentWalletPublicKey: string;
-  showPinModal: (action: string) => void;
   checkCaptcha: () => void;
-  confirmingPin: boolean;
   captchaResolving: boolean;
   isProcessing: boolean;
   onFinish: () => void;
   setProcessing: (isProcessing: boolean) => void;
-  resetPinConfirm: () => void;
   fioWallets: FioWalletDoublet[];
   prices: Prices;
   refProfileInfo: RefProfile | null;

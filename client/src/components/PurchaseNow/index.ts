@@ -2,11 +2,8 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 import { compose } from '../../utils';
-import { showPinModal } from '../../redux/modal/actions';
 import { checkCaptcha, setProcessing } from '../../redux/registrations/actions';
-import { resetPinConfirm } from '../../redux/edge/actions';
 
-import { confirmingPin, pinConfirmation } from '../../redux/edge/selectors';
 import { cartItems, paymentWalletPublicKey } from '../../redux/cart/selectors';
 import {
   captchaResult,
@@ -24,8 +21,6 @@ const selector = createStructuredSelector({
   cartItems,
   paymentWalletPublicKey,
   captchaResult,
-  pinConfirmation,
-  confirmingPin,
   captchaResolving,
   fioWallets,
   prices,
@@ -36,9 +31,7 @@ const selector = createStructuredSelector({
 });
 
 const actions = {
-  showPinModal,
   checkCaptcha,
-  resetPinConfirm,
   setProcessing,
 };
 

@@ -1,48 +1,44 @@
 import React, { useEffect, useState } from 'react';
-import { Ecc } from '@fioprotocol/fiojs';
 
+import WalletAction from '../WalletAction/WalletAction';
+import PurchaseEdgeWallet from './components/PurchaseEdgeWallet';
+import LedgerWalletActionNotSupported from '../LedgerWalletActionNotSupported';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 import {
   ANALYTICS_EVENT_ACTIONS,
   CONFIRM_PIN_ACTIONS,
-  REF_PROFILE_TYPE,
 } from '../../constants/common';
-import { PAYMENT_OPTIONS } from '../../constants/purchase';
+import {
+  PAYMENT_OPTIONS,
+  PAYMENT_PROVIDER,
+  PURCHASE_RESULTS_STATUS,
+} from '../../constants/purchase';
 import { emptyWallet } from '../../redux/fio/reducer';
 import { DOMAIN_TYPE } from '../../constants/fio';
 
-import api from '../../api';
-
-import { executeRegistration } from './middleware';
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
 import { sleep } from '../../utils';
-import { waitForEdgeAccountStop } from '../../util/edge';
 
-import { PurchaseNowTypes } from './types';
+import { PurchaseValues, PurchaseNowTypes } from './types';
 import { RegistrationResult } from '../../types';
 
 const MIN_WAIT_TIME = 3000;
 
 export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   const {
-    user,
     hasFreeAddress,
     cartItems,
-    pinConfirmation,
     captchaResult,
     paymentWalletPublicKey,
-    showPinModal,
     checkCaptcha,
-    confirmingPin,
     captchaResolving,
     isProcessing,
     onFinish,
     setProcessing,
-    resetPinConfirm,
     fioWallets,
     prices,
     refProfileInfo,
@@ -50,6 +46,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   } = props;
 
   const [isWaiting, setWaiting] = useState(false);
+  const [submitData, setSubmitData] = useState<PurchaseValues | null>(null);
   const t0 = performance.now();
 
   const waitFn = async (
@@ -64,7 +61,7 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     fn(results);
   };
 
-  const loading = confirmingPin || captchaResolving;
+  const loading = captchaResolving;
 
   const currentWallet = (paymentWalletPublicKey &&
     fioWallets &&
@@ -75,83 +72,23 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
   const onProcessingEnd = (results: RegistrationResult) => {
     results.paymentOption = PAYMENT_OPTIONS.FIO;
     setWaiting(false);
+    setSubmitData(null);
     waitFn(onFinish, results);
   };
 
-  // registration
   useEffect(() => {
-    const {
-      account: edgeAccount,
-      keys: walletKeys = {},
-      error: confirmationError,
-      action: confirmationAction,
-    } = pinConfirmation;
-
-    async function execRegistration(): Promise<void> {
-      setProcessing(true);
-      await waitForEdgeAccountStop(edgeAccount);
-      let nonce = '';
-      try {
-        const response = await api.auth.nonce(user.username);
-        nonce = response.nonce;
-      } catch (e) {
-        //
-      }
-      const results = await executeRegistration(
-        cartItems,
-        walletKeys[currentWallet.edgeId],
-        prices.nativeFio,
-        !hasFreeAddress,
-        {
-          walletSignature: Ecc.sign(
-            nonce,
-            walletKeys[currentWallet.edgeId].private,
-          ),
-          walletChallenge: nonce,
-        },
-        refProfileInfo != null && refProfileInfo?.type === REF_PROFILE_TYPE.REF
-          ? refProfileInfo.code
-          : '',
-      );
-
-      onProcessingEnd(results);
-    }
-
-    if (confirmationAction !== CONFIRM_PIN_ACTIONS.PURCHASE) return;
-    if (
-      walletKeys &&
-      walletKeys[currentWallet.edgeId] &&
-      !isProcessing &&
-      (isWaiting || !confirmationError)
-    ) {
-      execRegistration();
-    }
-    if (walletKeys && Object.keys(walletKeys).length) resetPinConfirm();
-
-    if (confirmationError) setWaiting(false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pinConfirmation]); // We need run this hook only on pinConfirmation change
-
-  useEffect(() => {
-    const { success, verifyParams } = captchaResult;
+    const { success } = captchaResult;
 
     async function execRegistration() {
       setProcessing(true);
-      const results = await executeRegistration(
-        cartItems,
-        {
-          public: currentWallet.publicKey,
-          private: '',
-        },
-        prices.nativeFio,
-        !hasFreeAddress,
-        verifyParams,
-        refProfileInfo != null && refProfileInfo?.type === REF_PROFILE_TYPE.REF
-          ? refProfileInfo.code
-          : '',
-      );
 
-      onProcessingEnd(results);
+      onProcessingEnd({
+        errors: [],
+        registered: [],
+        partial: [],
+        paymentProvider: PAYMENT_PROVIDER.FIO,
+        providerTxStatus: PURCHASE_RESULTS_STATUS.PAYMENT_PENDING,
+      });
     }
 
     if (success && isWaiting) execRegistration();
@@ -171,18 +108,42 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
         (item.costNativeFio && item.domainType !== DOMAIN_TYPE.FREE) ||
         hasFreeAddress
       ) {
-        return showPinModal(CONFIRM_PIN_ACTIONS.PURCHASE);
+        setSubmitData({
+          cartItems,
+          prices,
+          refProfileInfo,
+          isFreeAllowed: !hasFreeAddress,
+        });
+        return;
       }
     }
     checkCaptcha();
   };
+  const onCancel = () => {
+    setSubmitData(null);
+    setWaiting(false);
+    setProcessing(false);
+  };
 
   return (
-    <SubmitButton
-      onClick={purchase}
-      disabled={loading || disabled}
-      loading={isWaiting || loading}
-      text="Purchase Now"
-    />
+    <>
+      <WalletAction
+        fioWallet={currentWallet}
+        onCancel={onCancel}
+        onSuccess={onProcessingEnd}
+        submitData={submitData}
+        processing={isProcessing}
+        setProcessing={setProcessing}
+        action={CONFIRM_PIN_ACTIONS.PURCHASE}
+        FioActionWallet={PurchaseEdgeWallet}
+        LedgerActionWallet={LedgerWalletActionNotSupported}
+      />
+      <SubmitButton
+        onClick={purchase}
+        disabled={loading || disabled}
+        loading={isWaiting || loading}
+        text="Purchase Now"
+      />
+    </>
   );
 };
