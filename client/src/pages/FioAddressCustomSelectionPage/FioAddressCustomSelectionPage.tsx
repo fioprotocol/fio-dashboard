@@ -35,6 +35,7 @@ const FioAddressCustomSelectionPage: React.FC = () => {
   const {
     allDomains,
     domainsLoading,
+    closedInitialDropdown,
     initialValues,
     isDesktop,
     link,
@@ -139,8 +140,8 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                         hasErrorForced={hasDomainError}
                         onBlur={onBlur}
                         actionButtonText="Add Custom Ending"
+                        defaultMenuIsOpen={!closedInitialDropdown}
                         containerHasFullWidth
-                        defaultMenuIsOpen
                         hasMarginBottom
                         hideError
                         noShadow
