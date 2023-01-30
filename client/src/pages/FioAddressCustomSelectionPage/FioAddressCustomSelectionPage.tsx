@@ -40,6 +40,7 @@ const FioAddressCustomSelectionPage: React.FC = () => {
     isDesktop,
     link,
     options,
+    removeFilter,
     shouldPrependUserDomains,
     onClick,
     onFieldChange,
@@ -141,6 +142,7 @@ const FioAddressCustomSelectionPage: React.FC = () => {
                         onBlur={onBlur}
                         actionButtonText="Add Custom Ending"
                         defaultMenuIsOpen={!closedInitialDropdown}
+                        removeFilter={removeFilter}
                         containerHasFullWidth
                         hasMarginBottom
                         hideError
