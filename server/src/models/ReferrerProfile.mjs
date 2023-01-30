@@ -135,7 +135,7 @@ export class ReferrerProfile extends Base {
   static list(limit = 25, offset = 0) {
     return this.findAll({
       order: [['createdAt', 'DESC']],
-      limit,
+      limit: limit ? limit : undefined,
       offset,
     });
   }
