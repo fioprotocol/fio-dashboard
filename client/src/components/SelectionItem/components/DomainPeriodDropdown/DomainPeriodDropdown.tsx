@@ -20,7 +20,7 @@ export const DomainPeriodDropdown: React.FC<Props> = props => {
   return (
     <div>
       <CustomDropdown
-        value={period.toString()}
+        value={period?.toString()}
         options={CART_ITEM_PERIOD_OPTIONS}
         onChange={onChange}
         isDark

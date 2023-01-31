@@ -127,7 +127,7 @@ const CartItem: React.FC<Props> = props => {
           {shouldShowPeriod && (
             <div className={classes.period}>
               <CustomDropdown
-                value={period.toString()}
+                value={period?.toString()}
                 options={CART_ITEM_PERIOD_OPTIONS}
                 onChange={onPeriodChange}
                 isDark
