@@ -151,6 +151,7 @@ const ActionButtons: React.FC<ActionButtonProps> = props => {
           state: {
             shouldPrependUserDomains: true,
             closedInitialDropdown: true,
+            removeFilter: true,
           },
         }}
         className={classes.actionButton}

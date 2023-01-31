@@ -42,6 +42,7 @@ type UseContextProps = {
   isDesktop: boolean;
   link: string;
   options: OptionProps[];
+  removeFilter: boolean;
   shouldPrependUserDomains: boolean;
   onClick: (selectedItem: CartItem) => void;
   onFieldChange: (value: string) => void;
@@ -60,6 +61,7 @@ export const useContext = (): UseContextProps => {
   const history = useHistory<{
     shouldPrependUserDomains: boolean;
     closedInitialDropdown: boolean;
+    removeFilter: boolean;
   }>();
 
   const isDesktop = useCheckIfDesktop();
@@ -68,6 +70,7 @@ export const useContext = (): UseContextProps => {
   const shouldPrependUserDomains =
     state?.shouldPrependUserDomains && isAuthenticated;
   const closedInitialDropdown = state?.closedInitialDropdown && isAuthenticated;
+  const removeFilter = state?.removeFilter && isAuthenticated;
 
   const addressParam = queryParams.get(QUERY_PARAMS_NAMES.ADDRESS);
   const domainParam = queryParams.get(QUERY_PARAMS_NAMES.DOMAIN);
@@ -142,6 +145,7 @@ export const useContext = (): UseContextProps => {
     isDesktop,
     link,
     options,
+    removeFilter,
     shouldPrependUserDomains,
     onClick,
     onFieldChange,
