@@ -63,3 +63,26 @@ export const CLEAR_GENERIC_ERROR_DATA = `${prefix}/CLEAR_GENERIC_ERROR_DATA`;
 export const clearGenericErrorData = (): CommonAction => ({
   type: CLEAR_GENERIC_ERROR_DATA,
 });
+
+export const SHOW_GENERIC_SUCCESS_MODAL = `${prefix}/SHOW_GENERIC_SUCCESS_MODAL`;
+
+export const showGenericSuccessModal = (
+  message?: string,
+  title?: string,
+  buttonText?: string,
+): CommonAction => ({
+  type: SHOW_GENERIC_SUCCESS_MODAL,
+  data: { message, title, buttonText },
+});
+
+export const CLOSE_GENERIC_SUCCESS_MODAL = `${prefix}/CLOSE_GENERIC_SUCCESS_MODAL`;
+
+export const closeGenericSuccessModal = (): CommonAction => ({
+  type: CLOSE_GENERIC_SUCCESS_MODAL,
+});
+
+export const CLEAR_GENERIC_SUCCESS_DATA = `${prefix}/CLEAR_GENERIC_SUCCESS_DATA`;
+
+export const clearGenericSuccessData = (): CommonAction => ({
+  type: CLEAR_GENERIC_SUCCESS_DATA,
+});

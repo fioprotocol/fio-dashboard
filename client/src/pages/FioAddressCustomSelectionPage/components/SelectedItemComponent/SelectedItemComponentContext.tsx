@@ -84,8 +84,17 @@ export const useContext = (
   const customDomains = allDomains.usernamesOnCustomDomains
     ? transformCustomDomains(allDomains.usernamesOnCustomDomains)
     : [];
+  const allNonPremiumRefProfileDomains = allDomains.allRefProfileDomains
+    ? transformNonPremiumDomains(
+        allDomains.allRefProfileDomains,
+        hasFreeAddress,
+        cartItems,
+      )
+    : [];
+  const allPremiumRefProfileDomains = allDomains.allRefProfileDomains
+    ? transformPremiumDomains(allDomains.allRefProfileDomains)
+    : [];
   const userDomains = allDomains.userDomains || [];
-  const refProfileDomains = allDomains.refProfileDomains || [];
 
   const domainType = !isEmpty(allDomains)
     ? [
@@ -93,8 +102,18 @@ export const useContext = (
         ...premiumDomains,
         ...customDomains,
         ...userDomains,
-        ...refProfileDomains,
-        ...chainPublicDomains,
+        ...chainPublicDomains.filter(
+          chainPublicDomains =>
+            ![
+              ...allDomains.dashboardDomains,
+              ...allDomains.allRefProfileDomains,
+            ].some(
+              dashboardPubilcDomains =>
+                dashboardPubilcDomains.name === chainPublicDomains.name,
+            ),
+        ),
+        ...allNonPremiumRefProfileDomains,
+        ...allPremiumRefProfileDomains,
       ].find(publicDomain => publicDomain.name === domain)?.domainType ||
       DOMAIN_TYPE.CUSTOM
     : DOMAIN_TYPE.CUSTOM;
@@ -116,7 +135,9 @@ export const useContext = (
     costNativeFio: totalNativeFio,
     domainType,
     period: 1,
-    type: CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
+    type: isCustomDomain
+      ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+      : CART_ITEM_TYPE.ADDRESS,
   };
 
   const showPremiumInfoBadge = domainType === DOMAIN_TYPE.PREMIUM;

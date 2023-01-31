@@ -16,11 +16,13 @@ import ActivateAffiliate from '../services/users/ActivateAffiliate';
 import UpdateAffiliate from '../services/users/UpdateAffiliate';
 import UsersDetailedInfo from '../services/users/DetailedInfo';
 import UsersSendEvent from '../services/users/SendEvent';
+import UsersDelete from '../services/users/Delete';
 
 export default {
   available: makeServiceRunner(UserAvailable, req => req.params),
   create: makeServiceRunner(UsersCreate, req => req.body),
   update: makeServiceRunner(UsersUpdate, req => req.body),
+  delete: makeServiceRunner(UsersDelete),
   info: makeServiceRunner(UsersInfo),
   detailedInfo: makeServiceRunner(UsersDetailedInfo, req => req.params),
   setRecovery: makeServiceRunner(UsersSetRecovery, req => req.body),

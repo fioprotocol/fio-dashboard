@@ -340,7 +340,7 @@
     }
 
 
-     &.error {
+    &.error {
       border-color: $warn-red;
     }
 
@@ -359,6 +359,16 @@
           color: $dove-gray;
         }
       }
+
+      &.error {
+        border-color: $warn-red;
+      }
+    }
+
+    &.blackViolet {
+      background-color: $baltic-sea;
+      border-color: $iris;
+      color: $white;
 
       &.error {
         border-color: $warn-red;

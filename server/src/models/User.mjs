@@ -129,6 +129,14 @@ export class User extends Base {
     });
   }
 
+  static findDeletedUser() {
+    return this.findOne({
+      where: {
+        username: 'DELETEDUSER',
+      },
+    });
+  }
+
   static findUser(id) {
     return this.findById(id, {
       include: [

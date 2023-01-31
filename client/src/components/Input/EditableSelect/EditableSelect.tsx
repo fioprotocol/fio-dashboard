@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import { createFilter } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import Select from 'react-select/base';
 import { FieldInputProps, FieldMetaState } from 'react-final-form';
@@ -33,6 +34,8 @@ export type EditableProps = {
   uiType?: string;
   hasMarginBottom?: boolean;
   actionButtonText?: string;
+  defaultMenuIsOpen?: boolean;
+  removeFilter?: boolean;
   actionButtonClick?: () => void;
   onBlur?: (fieldName: string) => void;
   onClear?: () => void;
@@ -61,6 +64,8 @@ const EditableSelect: React.FC<EditableProps> = props => {
     uiType,
     hasMarginBottom,
     actionButtonText,
+    defaultMenuIsOpen,
+    removeFilter,
     actionButtonClick,
     onBlur,
     onClear,
@@ -168,6 +173,9 @@ const EditableSelect: React.FC<EditableProps> = props => {
     <span> Set: {createdValue}</span>
   );
 
+  // If we don't want to filter menu list just return `true`
+  const filterOption = removeFilter ? () => true : createFilter();
+
   return (
     <div
       className={classnames(
@@ -199,6 +207,8 @@ const EditableSelect: React.FC<EditableProps> = props => {
         placeholder={placeholder}
         openMenuOnFocus={true}
         openMenuOnClick={true}
+        filterOption={filterOption}
+        defaultMenuIsOpen={defaultMenuIsOpen}
         components={{
           IndicatorSeparator: CustomComponents.IndicatorSeparator,
           Menu: CustomComponents.Menu,

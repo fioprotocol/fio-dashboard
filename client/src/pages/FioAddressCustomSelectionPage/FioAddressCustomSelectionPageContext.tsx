@@ -37,10 +37,12 @@ import { AllDomains, CartItem } from '../../types';
 type UseContextProps = {
   allDomains: AllDomains;
   domainsLoading: boolean;
+  closedInitialDropdown: boolean;
   initialValues: { address: string; domain: string };
   isDesktop: boolean;
   link: string;
   options: OptionProps[];
+  removeFilter: boolean;
   shouldPrependUserDomains: boolean;
   onClick: (selectedItem: CartItem) => void;
   onFieldChange: (value: string) => void;
@@ -56,18 +58,28 @@ export const useContext = (): UseContextProps => {
 
   const queryParams = useQuery();
   const dispatch = useDispatch();
-  const history = useHistory<{ shouldPrependUserDomains: boolean }>();
+  const history = useHistory<{
+    shouldPrependUserDomains: boolean;
+    closedInitialDropdown: boolean;
+    removeFilter: boolean;
+  }>();
 
   const isDesktop = useCheckIfDesktop();
 
   const { location: { state } = {} } = history;
   const shouldPrependUserDomains =
     state?.shouldPrependUserDomains && isAuthenticated;
+  const closedInitialDropdown = state?.closedInitialDropdown && isAuthenticated;
+  const removeFilter = state?.removeFilter && isAuthenticated;
 
   const addressParam = queryParams.get(QUERY_PARAMS_NAMES.ADDRESS);
   const domainParam = queryParams.get(QUERY_PARAMS_NAMES.DOMAIN);
 
-  let defaultInitialLink = `${ROUTES.FIO_ADDRESSES_SELECTION}`;
+  const rootLink = domainParam
+    ? ROUTES.FIO_DOMAINS
+    : ROUTES.FIO_ADDRESSES_SELECTION;
+
+  let defaultInitialLink = rootLink;
 
   if (addressParam)
     defaultInitialLink =
@@ -105,10 +117,12 @@ export const useContext = (): UseContextProps => {
 
   const onFieldChange = (value: string) => {
     if (!value) {
-      setLink(`${ROUTES.FIO_ADDRESSES_SELECTION}`);
+      setLink(rootLink);
     } else {
       setLink(
-        `${ROUTES.FIO_ADDRESSES_SELECTION}?${QUERY_PARAMS_NAMES.ADDRESS}=${value}`,
+        domainParam
+          ? rootLink
+          : `${ROUTES.FIO_ADDRESSES_SELECTION}?${QUERY_PARAMS_NAMES.ADDRESS}=${value}`,
       );
     }
   };
@@ -126,10 +140,12 @@ export const useContext = (): UseContextProps => {
   return {
     allDomains,
     domainsLoading: publicDomainsLoading || userDomainsLoading,
+    closedInitialDropdown,
     initialValues: { address: addressParam, domain: domainParam },
     isDesktop,
     link,
     options,
+    removeFilter,
     shouldPrependUserDomains,
     onClick,
     onFieldChange,

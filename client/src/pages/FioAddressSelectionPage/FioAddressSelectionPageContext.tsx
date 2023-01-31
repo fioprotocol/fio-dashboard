@@ -16,6 +16,7 @@ import {
   hasFreeAddress as hasFreeAddressSelector,
   isAuthenticated as isAuthenticatedSelector,
 } from '../../redux/profile/selectors';
+import { refProfileInfo as refProfileInfoSelector } from '../../redux/refProfile/selectors';
 
 import { FIO_ADDRESS_ALREADY_EXISTS } from '../../constants/errors';
 import { DOMAIN_TYPE } from '../../constants/fio';
@@ -76,16 +77,40 @@ const handleFCHItems = async ({
   return (
     await Promise.all(
       domainArr.map(async domain => {
-        const error = await validateFioAddress(address, domain.name);
+        const {
+          allowFree,
+          domainType,
+          name,
+          swapAddressAndDomainPlaces,
+          rank = 0,
+        } = domain;
+
+        let addressName = address;
+        let domainName = name;
+
+        if (swapAddressAndDomainPlaces) {
+          addressName = name;
+          domainName = address;
+        }
+
+        const error = await validateFioAddress(addressName, domainName);
         if (error) {
           setError(error);
           return;
         }
 
         const isAddressExist = await checkAddressOrDomainIsExist({
-          address,
-          domain: domain.name,
+          address: addressName,
+          domain: domainName,
         });
+
+        let isUsernameOnCustomDomainExist = null;
+
+        if (swapAddressAndDomainPlaces) {
+          isUsernameOnCustomDomainExist = await checkAddressOrDomainIsExist({
+            domain: domainName,
+          });
+        }
 
         if (isAddressExist) {
           fireAnalyticsEventDebounced(
@@ -93,7 +118,7 @@ const handleFCHItems = async ({
           );
         }
 
-        const isCustomDomain = domain.domainType === DOMAIN_TYPE.CUSTOM;
+        const isCustomDomain = domainType === DOMAIN_TYPE.CUSTOM;
 
         const totalNativeFio = isCustomDomain
           ? new MathOp(natvieFioAddressPrice)
@@ -104,21 +129,24 @@ const handleFCHItems = async ({
         const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
 
         return {
-          id: setFioName(address, domain.name),
-          address,
-          domain: domain.name,
+          id: setFioName(addressName, domainName),
+          address: addressName,
+          domain: domainName,
           costFio: fio,
           costUsdc: usdc,
           costNativeFio: totalNativeFio,
-          domainType: domain.domainType,
+          domainType,
           isSelected: false,
-          isExist: isAddressExist,
+          isExist:
+            isAddressExist ||
+            (swapAddressAndDomainPlaces && isUsernameOnCustomDomainExist),
           period: 1,
           type: isCustomDomain
             ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
             : CART_ITEM_TYPE.ADDRESS,
-          allowFree: domain.allowFree,
-          rank: domain.rank || 0,
+          allowFree,
+          rank,
+          swapAddressAndDomainPlaces,
         };
       }),
     )
@@ -181,10 +209,12 @@ export const useContext = (): UseContextProps => {
   const prices = useSelector(pricesSelector);
   const roe = useSelector(roeSelector);
   const cartItems = useSelector(cartItemsSelector);
+  const refProfileInfo = useSelector(refProfileInfoSelector);
 
   const dispatch = useDispatch();
 
   const {
+    availableDomains = [],
     userDomains = [],
     dashboardDomains = [],
     refProfileDomains = [],
@@ -211,6 +241,10 @@ export const useContext = (): UseContextProps => {
     cartItem => cartItem.domainType === DOMAIN_TYPE.FREE,
   );
 
+  const refPartnerEnablesCustomDomains =
+    refProfileInfo?.settings.allowCustomDomain;
+  const isRefParnter = !!refProfileInfo;
+
   const publicDomains: Partial<AdminDomain>[] = refProfileDomains.length
     ? refProfileDomains
     : dashboardDomains;
@@ -218,6 +252,11 @@ export const useContext = (): UseContextProps => {
   const sortedUserDomains = userDomains.sort((a, b) =>
     a.name.localeCompare(b.name),
   );
+
+  const publicUsernamesOnCustomDomains = transformCustomDomains(
+    usernamesOnCustomDomains,
+    true,
+  ).sort((a, b) => a.rank - b.rank);
 
   const nonPremiumPublicDomains = transformNonPremiumDomains(
     publicDomains,
@@ -231,9 +270,14 @@ export const useContext = (): UseContextProps => {
     .sort((a, b) => a.rank - b.rank)
     .map((premiumDomain, i) => ({ ...premiumDomain, rank: i }));
 
-  const customDomains = transformCustomDomains(usernamesOnCustomDomains).sort(
+  const availablePublilcDomains = transformCustomDomains(availableDomains).sort(
     (a, b) => a.rank - b.rank,
   );
+
+  const customDomains = [
+    ...publicUsernamesOnCustomDomains,
+    ...availablePublilcDomains,
+  ];
 
   const userDomainsJSON = JSON.stringify(sortedUserDomains);
   const nonPremiumPublicDomainsJSON = JSON.stringify(nonPremiumPublicDomains);
@@ -300,7 +344,7 @@ export const useContext = (): UseContextProps => {
       const availablePremiumFCH = validatedPremiumFCH.length
         ? validatedPremiumFCH.filter(premiumFCH => !premiumFCH.isExist)
         : [];
-      const availlableCustomFCH = validatedCustomFCH.length
+      const availableCustomFCH = validatedCustomFCH.length
         ? validatedCustomFCH.filter(customFCH => !customFCH.isExist)
         : [];
 
@@ -308,7 +352,7 @@ export const useContext = (): UseContextProps => {
         !avaliableUserFCH &&
         !availableNonPremiumFCH &&
         !availablePremiumFCH &&
-        !availlableCustomFCH
+        !availableCustomFCH
       ) {
         setError(FIO_ADDRESS_ALREADY_EXISTS);
         setAdditionalItemsList([]);
@@ -324,13 +368,29 @@ export const useContext = (): UseContextProps => {
       if (
         !availableNonPremiumFCH.length &&
         !availablePremiumFCH.length &&
-        !availlableCustomFCH.length
+        !availableCustomFCH.length
       ) {
         setAdditionalItemsList([]);
         setSuggestedItemsList([]);
         toggleLoading(false);
         setPreviousAddressValue(address);
         return;
+      }
+
+      const swapedCustomFCH = availableCustomFCH.find(
+        availabelCustom => availabelCustom.swapAddressAndDomainPlaces,
+      );
+
+      let availableCustomFCHWithSwapped = [
+        ...availableCustomFCH.filter(
+          availabelCustom => availabelCustom.domain !== address,
+        ),
+      ];
+
+      if (swapedCustomFCH) {
+        availableCustomFCHWithSwapped = [swapedCustomFCH].concat(
+          availableCustomFCHWithSwapped,
+        );
       }
 
       const handleSuggestedElement = (
@@ -356,13 +416,13 @@ export const useContext = (): UseContextProps => {
           return suggestedElement;
         }
         if (
-          availlableCustomFCH[0] &&
+          availableCustomFCHWithSwapped[0] &&
           (suggestedType === SUGGESTED_TYPE.FIRST ||
             suggestedType === SUGGESTED_TYPE.SECOND ||
             suggestedType === SUGGESTED_TYPE.THIRD)
         ) {
-          suggestedElement = availlableCustomFCH[0];
-          availlableCustomFCH.shift();
+          suggestedElement = availableCustomFCHWithSwapped[0];
+          availableCustomFCHWithSwapped.shift();
           return suggestedElement;
         }
       };
@@ -380,7 +440,7 @@ export const useContext = (): UseContextProps => {
       const additionalPublicDomains: SelectedItemProps[] = [
         ...availableNonPremiumFCH,
         ...availablePremiumFCH,
-        ...availlableCustomFCH,
+        ...availableCustomFCHWithSwapped,
       ].sort((a, b) => {
         const rankCount = a.rank - b.rank;
         if (rankCount) return rankCount;
@@ -500,6 +560,7 @@ export const useContext = (): UseContextProps => {
     loading: loading || domainsLoaing,
     suggestedItemsList,
     usersItemsList,
+    hideSuggestedActionButton: isRefParnter && !refPartnerEnablesCustomDomains,
     setAddressValue,
     setError,
     onClick,

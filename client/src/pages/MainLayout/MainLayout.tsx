@@ -7,6 +7,7 @@ import Footer from '../../components/Footer';
 import LoginForm from '../../components/LoginForm';
 import PinConfirmModal from '../../components/PinConfirmModal';
 import GenericErrorModal from '../../components/Modal/GenericErrorModal';
+import GenericSuccessModal from '../../components/Modal/GenericSuccessModal';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
 import TwoFactorApproveModal from '../../components/TwoFactorApproveModal';
 import ContainedFlowWrapper from '../../components/ContainedFlowWrapper';
@@ -107,6 +108,7 @@ const MainLayout: React.FC<Props> = props => {
       {showRecovery && edgeContextSet && recoveryFormModalRender()}
       <PinConfirmModal />
       <GenericErrorModal />
+      <GenericSuccessModal />
       <TwoFactorApproveModal />
     </MainLayoutContainer>
   );

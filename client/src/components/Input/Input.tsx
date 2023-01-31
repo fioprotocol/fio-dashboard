@@ -18,6 +18,7 @@ export const INPUT_COLOR_SCHEMA = {
 export const INPUT_UI_STYLES = {
   BLACK_LIGHT: 'blackLight',
   BLACK_WHITE: 'blackWhite',
+  BLACK_VIOLET: 'blackViolet',
 };
 
 type Props = {
@@ -127,9 +128,9 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
 
   const renderLabel = () =>
     label && (
-      <div className={classnames(classes.label, uiType && classes[uiType])}>
+      <label className={classnames(classes.label, uiType && classes[uiType])}>
         {label}
-      </div>
+      </label>
     );
   const regularInput = (
     <div className={classes.regInputWrapper}>

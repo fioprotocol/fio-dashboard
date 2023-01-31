@@ -22,6 +22,7 @@ import {
   AdminAuthLoginResponse,
   AdminResetPasswordResponse,
   AuthProfileSendEvent,
+  GenericStatusResponse,
 } from './responses';
 
 export default class Auth extends Base {
@@ -205,5 +206,9 @@ export default class Auth extends Base {
     return this.apiClient.post('users/sendEvent', {
       event,
     });
+  }
+
+  deleteUser(): Promise<GenericStatusResponse> {
+    return this.apiClient.delete('users/me');
   }
 }

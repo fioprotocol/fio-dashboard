@@ -31,6 +31,7 @@ export const FioAddressSelectionComponent: React.FC<Props> = props => {
     loading,
     suggestedItemsList,
     usersItemsList,
+    hideSuggestedActionButton,
     onClick,
     setAddressValue,
   } = props;
@@ -68,6 +69,7 @@ export const FioAddressSelectionComponent: React.FC<Props> = props => {
           error={error}
           isDesktop={isDesktop}
           addressValue={addressValue}
+          hideActionButton={hideSuggestedActionButton}
           onClick={onClick}
         />
         <div className={classes.infoBadgeContainer}>
