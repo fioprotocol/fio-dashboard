@@ -129,7 +129,7 @@ const AdminPartnersListPage: React.FC<Props> = props => {
     <>
       <div className={classes.tableContainer}>
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <div className="mr-2">
+          <div className="mr-4">
             <Button onClick={onAddPartner}>
               <FontAwesomeIcon icon="plus-square" className="mr-2" /> Add New
               Partner
@@ -146,7 +146,7 @@ const AdminPartnersListPage: React.FC<Props> = props => {
                 isDark
                 withoutMarginBottom
                 fitContentWidth
-                hasAutoWidth
+                isSmall
                 placeholder="All"
               />
             </div>
