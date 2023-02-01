@@ -30,10 +30,6 @@ const STRIPE_USER_AGENT = 'Stripe/1.0';
 
 const stripe = new StripeLib(process.env.STRIPE_SECRET);
 class Stripe extends PaymentProcessor {
-  constructor() {
-    super();
-  }
-
   isWebhook(hostname, userAgent) {
     const checkRegex = new RegExp(`${STRIPE_USER_AGENT}`, 'i');
     return checkRegex.exec(userAgent);
@@ -238,6 +234,10 @@ class Stripe extends PaymentProcessor {
     }
 
     return stripe.refunds.create(refundOptions);
+  }
+
+  async retrieveIntent(id) {
+    return await stripe.paymentIntents.retrieve(id);
   }
 }
 

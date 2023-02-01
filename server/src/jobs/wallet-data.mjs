@@ -44,10 +44,6 @@ const returnDayRange = timePeriod => {
 };
 
 class WalletDataJob extends CommonJob {
-  constructor() {
-    super();
-  }
-
   logFioError(e, wallet, action = '-') {
     if (e && e.errorCode !== 404) {
       if (wallet && wallet.id)

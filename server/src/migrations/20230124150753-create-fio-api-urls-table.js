@@ -14,6 +14,7 @@ module.exports = {
       },
       createdAt: { type: DT.DATE },
       updatedAt: { type: DT.DATE },
+      deletedAt: { type: DT.DATE },
     });
 
     return QI.sequelize.query(

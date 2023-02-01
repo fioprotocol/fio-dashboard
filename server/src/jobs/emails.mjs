@@ -26,10 +26,6 @@ const CONTENT_TYPE_EMAIL_TEMPLATE_MAP = {
 const OPT_IN_STATUS_SYNCED = 'OPT_IN_STATUS_SYNCED';
 
 class EmailsJob extends CommonJob {
-  constructor() {
-    super();
-  }
-
   async allowToSendBalanceChangedEmail(notification) {
     const { id, userId, createdAt, data } = notification;
 

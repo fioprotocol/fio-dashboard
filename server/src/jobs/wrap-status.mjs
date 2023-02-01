@@ -34,10 +34,6 @@ const WRAPPED_TOKEN_ABI = JSON.parse(
 const UNWRAP_RETRIES_LIMIT = 3;
 
 class WrapStatusJob extends CommonJob {
-  constructor() {
-    super();
-  }
-
   handleErrorMessage(message) {
     // eslint-disable-next-line no-console
     console.log(message);
