@@ -107,7 +107,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
     <>
       <div className={classes.tableContainer}>
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <div className="mr-2">
+          <div className="mr-4">
             <Button onClick={exportOrdersData}>
               <FontAwesomeIcon icon="download" className="mr-2" /> Export
             </Button>
@@ -123,7 +123,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
                 isDark
                 withoutMarginBottom
                 fitContentWidth
-                hasAutoWidth
+                isSmall
                 placeholder="All"
               />
             </div>
@@ -136,7 +136,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
                 isDark
                 withoutMarginBottom
                 fitContentWidth
-                hasAutoWidth
+                isSmall
                 placeholder="All"
               />
             </div>

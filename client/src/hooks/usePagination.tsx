@@ -94,6 +94,12 @@ export default function usePagination(
   };
 
   useEffect(() => {
+    handleChangeOffset('0');
+    // handleChangeOffset refresh on each offset change, need to update only on filters change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters]);
+
+  useEffect(() => {
     const getItems = async () => {
       const result = await getItemsList(limit, offset, filters);
       const maxCount = result.data?.maxCount || 0;
