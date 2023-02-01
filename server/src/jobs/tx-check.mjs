@@ -17,10 +17,6 @@ import logger from '../logger.mjs';
 const MAX_CHECK_TIMES = 10;
 
 class TxCheckJob extends CommonJob {
-  constructor() {
-    super();
-  }
-
   async execute() {
     await fioApi.getRawAbi();
 
