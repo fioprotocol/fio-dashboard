@@ -229,7 +229,7 @@ class Fio {
 
   async getFee(action) {
     try {
-      const publicFioSDK = this.getPublicFioSDK();
+      const publicFioSDK = await this.getPublicFioSDK();
 
       const { fee } = await publicFioSDK.getFee(
         EndPoint[FIO_ACTIONS_TO_END_POINT_KEYS[action]],
