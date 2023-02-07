@@ -8,7 +8,7 @@ import { formatDateToLocale } from '../../../helpers/stringFormatters';
 
 import { CURRENCY_CODES } from '../../../constants/common';
 import { PURCHASE_RESULTS_STATUS_LABELS } from '../../../constants/purchase';
-import { ROUTES } from '../../../constants/routes';
+import { ADMIN_ROUTES } from '../../../constants/routes';
 
 import { OrderDefault } from '../../../types';
 
@@ -43,7 +43,7 @@ export const UserOrders: React.FC<Props> = props => {
                 <th>
                   <Link
                     to={{
-                      pathname: ROUTES.ADMIN_ORDERS,
+                      pathname: ADMIN_ROUTES.ADMIN_ORDERS,
                       state: {
                         orderId: order.id,
                       },
