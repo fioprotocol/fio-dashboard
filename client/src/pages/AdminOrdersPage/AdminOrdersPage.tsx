@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import { Button, Table } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,6 +14,8 @@ import usePagination, { DEFAULT_LIMIT } from '../../hooks/usePagination';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 import useEffectOnce from '../../hooks/general';
 
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+import { ADMIN_ROUTES } from '../../constants/routes';
 import {
   PURCHASE_RESULTS_STATUS_LABELS,
   PAYMENT_PROVIDER_LABEL,
@@ -171,7 +174,15 @@ const AdminOrdersPage: React.FC<Props> = props => {
                         : null}
                     </th>
                     <th>{order.number}</th>
-                    <th>{order.user ? order.user.email : order.userEmail}</th>
+                    <th>
+                      <Link
+                        to={`${ADMIN_ROUTES.ADMIN_REGULAR_USER_DETAILS}?${
+                          QUERY_PARAMS_NAMES.USER_ID
+                        }=${order.user ? order.user.id : order.userId}`}
+                      >
+                        {order.user ? order.user.email : order.userEmail}
+                      </Link>
+                    </th>
                     <th>{order.total || 0}</th>
                     <th>{order.refProfileName || 'FIO Dashboard'}</th>
                     <th>
