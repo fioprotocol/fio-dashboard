@@ -220,6 +220,11 @@ class BitPay extends PaymentProcessor {
       bitPayInvoice.currency,
     );
   }
+
+  async retrieveIntent(id) {
+    const bitPayClient = await this.getBitPayClient();
+    return await bitPayClient.GetInvoice(id);
+  }
 }
 
 export default new BitPay();
