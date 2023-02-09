@@ -5,7 +5,7 @@ import { ReferrerProfile } from './ReferrerProfile.mjs';
 
 import { FIO_ACCOUNT_TYPES } from '../config/constants';
 
-const { DataTypes: DT } = Sequelize;
+const { DataTypes: DT, Op } = Sequelize;
 
 export class FioAccountProfile extends Base {
   static get ACCOUNT_TYPE() {
@@ -72,8 +72,24 @@ export class FioAccountProfile extends Base {
     });
   }
 
-  static getPaid() {
-    return this.getItem({ accountType: FIO_ACCOUNT_TYPES.PAID });
+  static getFreePaidItems() {
+    return this.findAll({
+      order: [['createdAt', 'DESC']],
+      [Op.and]: [
+        {
+          accountType: FIO_ACCOUNT_TYPES.FREE,
+        },
+        {
+          accountType: FIO_ACCOUNT_TYPES.FREE_FALLBACK,
+        },
+        {
+          accountType: FIO_ACCOUNT_TYPES.PAID,
+        },
+        {
+          accountType: FIO_ACCOUNT_TYPES.PAID_FALLBACK,
+        },
+      ],
+    });
   }
 
   static accountsProfilesCount() {

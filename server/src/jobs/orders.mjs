@@ -32,7 +32,11 @@ import {
   INSUFFICIENT_BALANCE,
 } from '../external/fio.mjs';
 
-import { FIO_ACTIONS, USER_HAS_FREE_ADDRESS_MESSAGE } from '../config/constants.js';
+import {
+  FIO_ACCOUNT_TYPES,
+  FIO_ACTIONS,
+  USER_HAS_FREE_ADDRESS_MESSAGE,
+} from '../config/constants.js';
 
 import logger from '../logger.mjs';
 
@@ -217,7 +221,9 @@ class OrdersJob extends CommonJob {
 
   async refundUser(orderItemProps, errorData = {}) {
     try {
-      const payment = await Payment.findOne({ where: { id: orderItemProps.paymentId } });
+      const payment = await Payment.findOne({
+        where: { id: orderItemProps.paymentId },
+      });
 
       let price;
       let nativePrice = null;
@@ -354,16 +360,16 @@ class OrdersJob extends CommonJob {
     }
   }
 
-  async registerFree(fioName, orderItem) {
-    const { id, blockchainTransactionId, orderId, userId } = orderItem;
+  async registerFree(
+    fioName,
+    auth,
+    orderItem,
+    { fallbackFreeFioActor, fallbackFreeFioPermision },
+    processOrderItem,
+  ) {
+    const { id, blockchainTransactionId, label, orderId, userId } = orderItem;
 
-    // TODO: get auth from account profile
-    const auth = {
-      actor: 'bnsntqh5kgqf',
-      permission: 'regaddress',
-    };
-
-    const userHasFreeAddress = !!FreeAddress.getItem({ userId });
+    const userHasFreeAddress = await FreeAddress.getItem({ userId });
 
     if (userHasFreeAddress) {
       logger.error(USER_HAS_FREE_ERROR);
@@ -388,6 +394,25 @@ class OrdersJob extends CommonJob {
         await freeAddressRecord.save();
 
         return this.updateOrderStatus(orderId);
+      }
+      // transaction failed
+      const { notes } = fioApi.checkTxError(result);
+
+      // try to execute using fallback account when no funds
+      if (
+        (notes === INSUFFICIENT_FUNDS_ERR_MESSAGE || notes === INSUFFICIENT_BALANCE) &&
+        auth.actor !== process.env.REG_FALLBACK_ACCOUNT
+      ) {
+        await sendInsufficientFundsNotification(fioName, label, auth);
+        return processOrderItem({
+          ...orderItem,
+          freeActor: fallbackFreeFioActor
+            ? fallbackFreeFioActor
+            : process.env.REG_FALLBACK_ACCOUNT,
+          freePermission: fallbackFreeFioPermision
+            ? fallbackFreeFioPermision
+            : process.env.REG_FALLBACK_PERMISSION,
+        })();
       }
     } catch (error) {
       let message = error.message;
@@ -697,7 +722,27 @@ class OrdersJob extends CommonJob {
 
     this.postMessage(`Process order items - ${items.length}`);
 
-    const paidFioAccountProfile = await FioAccountProfile.getPaid();
+    const FioAccountProfiles = await FioAccountProfile.getFreePaidItems();
+
+    const { account: paidFioActor, permission: paidFioPermision } =
+      FioAccountProfiles.find(
+        fioAccountProfile => fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.PAID,
+      ) || {};
+    const { account: fallbackPaidFioActor, permission: fallbackPaidFioPermision } =
+      FioAccountProfiles.find(
+        fioAccountProfile =>
+          fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.PAID_FALLBACK,
+      ) || {};
+
+    const { account: freeFioActor, permission: freeFioPermision } =
+      FioAccountProfiles.find(
+        fioAccountProfile => fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.FREE,
+      ) || {};
+    const { account: fallbackFreeFioActor, permission: fallbackFreeFioPermision } =
+      FioAccountProfiles.find(
+        fioAccountProfile =>
+          fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.FREE_FALLBACK,
+      ) || {};
 
     const processOrderItem = orderItem => async () => {
       if (this.isCancelled) return false;
@@ -707,13 +752,14 @@ class OrdersJob extends CommonJob {
         orderId,
         address,
         domain,
-        action,
         data,
         price,
         blockchainTransactionId,
         label,
-        actor,
-        permission,
+        freeActor,
+        freePermission,
+        paidActor,
+        paidPermission,
       } = orderItem;
       const hasSignedTx = data && !!data.signedTx;
 
@@ -722,22 +768,26 @@ class OrdersJob extends CommonJob {
       try {
         const fioName = fioApi.setFioName(address, domain);
         const auth = {
-          actor: paidFioAccountProfile.actor,
-          permission: paidFioAccountProfile.permission,
+          actor: paidActor || paidFioActor,
+          permission: paidPermission || paidFioPermision,
         };
-
-        // Set auth from fio account profile for registerFioAddress action
-        if (
-          (action === OrderItem.ACTION.registerFioAddress && actor) ||
-          actor === process.env.REG_FALLBACK_ACCOUNT
-        ) {
-          auth.actor = actor;
-          auth.permission = permission;
-        }
+        const freeAuth = {
+          actor: freeActor || freeFioActor,
+          permission: freePermission || freeFioPermision,
+        };
 
         // Handle free addresses
         if ((!price || price === '0') && address) {
-          return this.registerFree(fioName, orderItem);
+          return this.registerFree(
+            fioName,
+            freeAuth,
+            orderItem,
+            {
+              fallbackFreeFioActor,
+              fallbackFreeFioPermision,
+            },
+            processOrderItem,
+          );
         }
 
         // Check if fee/roe changed and handle changes
@@ -762,13 +812,17 @@ class OrdersJob extends CommonJob {
           if (
             (notes === INSUFFICIENT_FUNDS_ERR_MESSAGE ||
               notes === INSUFFICIENT_BALANCE) &&
-            actor !== process.env.REG_FALLBACK_ACCOUNT
+            auth.actor !== process.env.REG_FALLBACK_ACCOUNT
           ) {
             await sendInsufficientFundsNotification(fioName, label, auth);
             return processOrderItem({
               ...orderItem,
-              actor: process.env.REG_FALLBACK_ACCOUNT,
-              permission: process.env.REG_FALLBACK_PERMISSION,
+              paidActor: fallbackPaidFioActor
+                ? fallbackPaidFioActor
+                : process.env.REG_FALLBACK_ACCOUNT,
+              paidPermission: fallbackPaidFioPermision
+                ? fallbackPaidFioPermision
+                : process.env.REG_FALLBACK_PERMISSION,
             })();
           }
 
