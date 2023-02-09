@@ -2,9 +2,14 @@ import React, { useState } from 'react';
 
 import { Button, Table } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import isEmpty from 'lodash/isEmpty';
 
+import InfoBadge from '../../components/InfoBadge/InfoBadge';
+import { BADGE_TYPES } from '../../components/Badge/Badge';
 import Loader from '../../components/Loader/Loader';
 import FioAccountProfileModal from './components/createNewFioAccountProfile/FioAccountProfileModal';
+
+import { FIO_ACCOUNT_TYPES } from '../../constants/fio';
 
 import apis from '../../api';
 import { log } from '../../util/general';
@@ -34,6 +39,7 @@ const AdminFioAccountsProfilesListPage: React.FC<PageProps> = props => {
     editProfileData,
     setEditProfileData,
   ] = useState<FioAccountProfile | null>(null);
+  const [showWarningModal, toggleShowWarningModal] = useState<boolean>(false);
 
   const { paginationComponent, refresh } = usePagination(
     getFioAccountsProfilesList,
@@ -62,10 +68,52 @@ const AdminFioAccountsProfilesListPage: React.FC<PageProps> = props => {
     setFioAccountProfileActionLoading(false);
   };
 
+  const onSubmit = async (values: FormValuesProps) => {
+    if (
+      fioAccountsProfilesList.some(
+        fioAccountProfile =>
+          fioAccountProfile.accountType === values.accountType,
+      )
+    ) {
+      toggleShowWarningModal(true);
+      return;
+    }
+
+    await createFioAccountProfile(values);
+  };
+
+  const dangerModaActionClick = async (values: FormValuesProps) => {
+    toggleShowWarningModal(false);
+
+    await createFioAccountProfile(values);
+  };
+
   const openProfile = async (fioAccountProfile: FioAccountProfile) => {
     setEditProfileData(fioAccountProfile);
     openFioAccountProfileModal();
   };
+
+  let initialValues;
+
+  if (!isEmpty(editProfileData)) {
+    initialValues = {
+      ...editProfileData,
+      accountType:
+        editProfileData.accountType == null
+          ? FIO_ACCOUNT_TYPES.REGULAR
+          : editProfileData.accountType,
+    };
+  }
+
+  const missedAccountTypes = Object.keys(FIO_ACCOUNT_TYPES)
+    .filter(fioAccountType => fioAccountType !== FIO_ACCOUNT_TYPES.REGULAR) // We don't care about non required type which is REGULAR
+    .filter(
+      fioAccountType =>
+        !fioAccountsProfilesList.some(
+          fioAccountsProfile =>
+            fioAccountsProfile.accountType === fioAccountType,
+        ),
+    );
 
   return (
     <>
@@ -74,33 +122,78 @@ const AdminFioAccountsProfilesListPage: React.FC<PageProps> = props => {
           <FontAwesomeIcon icon="plus-square" className="mr-2" /> Add New
           Account
         </Button>
+        <div className={classes.infoBadge}>
+          <InfoBadge
+            show={!!missedAccountTypes.length}
+            type={BADGE_TYPES.ERROR}
+            title="Attention"
+            message={
+              <span>
+                For correct work you need to set up{' '}
+                {missedAccountTypes.length &&
+                  missedAccountTypes.map((missedAccountType, i) => (
+                    <span className="boldText" key={missedAccountType}>
+                      {i + 1}. {missedAccountType.replace('_', ' ')}
+                      {i + 1 !== missedAccountTypes.length ? ', ' : '.'}
+                    </span>
+                  ))}
+              </span>
+            }
+          />
+        </div>
         <Table className="table" striped={true}>
           <thead>
             <tr>
               <th scope="col">Profile</th>
               <th scope="col">Actor</th>
               <th scope="col">Permission</th>
+              <th scope="col">Type</th>
               <th scope="col">Created</th>
             </tr>
           </thead>
           <tbody>
             {fioAccountsProfilesList?.length
-              ? fioAccountsProfilesList.map((fioAccountProfile, i) => (
-                  <tr
-                    key={fioAccountProfile.id}
-                    onClick={openProfile.bind(null, fioAccountProfile)}
-                    className={classes.userItem}
-                  >
-                    <th>{fioAccountProfile.name}</th>
-                    <th>{fioAccountProfile.actor}</th>
-                    <th>{fioAccountProfile.permission}</th>
-                    <th>
-                      {fioAccountProfile.createdAt
-                        ? formatDateToLocale(fioAccountProfile.createdAt)
-                        : null}
-                    </th>
-                  </tr>
-                ))
+              ? fioAccountsProfilesList
+                  .sort((a, b) => {
+                    if (a.accountType === FIO_ACCOUNT_TYPES.FREE) return -1;
+                    if (b.accountType === FIO_ACCOUNT_TYPES.FREE) return 1;
+
+                    if (a.accountType === FIO_ACCOUNT_TYPES.FREE_FALLBACK)
+                      return -1;
+                    if (b.accountType === FIO_ACCOUNT_TYPES.FREE_FALLBACK)
+                      return 1;
+
+                    if (a.accountType === FIO_ACCOUNT_TYPES.PAID) return -1;
+                    if (b.accountType === FIO_ACCOUNT_TYPES.PAID) return 1;
+
+                    if (a.accountType === FIO_ACCOUNT_TYPES.PAID_FALLBACK)
+                      return -1;
+                    if (b.accountType === FIO_ACCOUNT_TYPES.PAID_FALLBACK)
+                      return 1;
+
+                    return 0;
+                  })
+                  .map((fioAccountProfile, i) => (
+                    <tr
+                      key={fioAccountProfile.id}
+                      onClick={openProfile.bind(null, fioAccountProfile)}
+                      className={classes.userItem}
+                    >
+                      <th>{fioAccountProfile.name}</th>
+                      <th>{fioAccountProfile.actor}</th>
+                      <th>{fioAccountProfile.permission}</th>
+                      <th>
+                        {fioAccountProfile.accountType
+                          ? fioAccountProfile.accountType.replace('_', ' ')
+                          : 'Regular'}
+                      </th>
+                      <th>
+                        {fioAccountProfile.createdAt
+                          ? formatDateToLocale(fioAccountProfile.createdAt)
+                          : null}
+                      </th>
+                    </tr>
+                  ))
               : null}
           </tbody>
         </Table>
@@ -111,11 +204,14 @@ const AdminFioAccountsProfilesListPage: React.FC<PageProps> = props => {
       </div>
 
       <FioAccountProfileModal
-        initialValues={editProfileData}
+        initialValues={initialValues}
         show={showFioAccountProfileModal}
-        onSubmit={createFioAccountProfile}
+        onSubmit={onSubmit}
         loading={fioAccountProfileActionLoading}
         onClose={closeFioAccountProfileModal}
+        showWarningModal={showWarningModal}
+        dangerModaActionClick={dangerModaActionClick}
+        toggleShowWarningModal={toggleShowWarningModal}
       />
     </>
   );

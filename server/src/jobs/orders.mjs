@@ -697,7 +697,8 @@ class OrdersJob extends CommonJob {
 
     this.postMessage(`Process order items - ${items.length}`);
 
-    const defaultFioAccountProfile = await FioAccountProfile.getDefault();
+    const paidFioAccountProfile = await FioAccountProfile.getPaid();
+
     const processOrderItem = orderItem => async () => {
       if (this.isCancelled) return false;
 
@@ -721,8 +722,8 @@ class OrdersJob extends CommonJob {
       try {
         const fioName = fioApi.setFioName(address, domain);
         const auth = {
-          actor: defaultFioAccountProfile.actor,
-          permission: defaultFioAccountProfile.permission,
+          actor: paidFioAccountProfile.actor,
+          permission: paidFioAccountProfile.permission,
         };
 
         // Set auth from fio account profile for registerFioAddress action

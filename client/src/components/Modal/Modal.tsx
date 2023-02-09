@@ -22,6 +22,7 @@ type Props = {
   isFullWidth?: boolean;
   isBlue?: boolean;
   withoutPaggingBottom?: boolean;
+  enableOverflow?: boolean;
 };
 
 const ModalComponent: React.FC<Props> = props => {
@@ -43,6 +44,7 @@ const ModalComponent: React.FC<Props> = props => {
     isFullWidth,
     isBlue,
     withoutPaggingBottom,
+    enableOverflow,
   } = props;
   const handleClose = () => {
     if (!onClose) return;
@@ -61,6 +63,7 @@ const ModalComponent: React.FC<Props> = props => {
         isInfo && classes.info,
         isBlue && classes.blue,
         withoutPaggingBottom && classes.withoutPaggingBottom,
+        enableOverflow && classes.enableOverflow,
       )}
       dialogClassName={classnames(
         classes.dialog,

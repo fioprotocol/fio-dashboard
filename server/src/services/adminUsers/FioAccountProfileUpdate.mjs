@@ -15,10 +15,11 @@ export default class FioAccountProfileUpdate extends Base {
       actor: ['required', 'string'],
       permission: ['required', 'string'],
       id: ['required', 'string'],
+      accountType: ['required', 'string'],
     };
   }
 
-  async execute({ id, name, actor, permission }) {
+  async execute({ id, name, actor, permission, accountType }) {
     const fioAccountProfile = await FioAccountProfile.findById(id);
 
     if (!fioAccountProfile) {
@@ -31,7 +32,24 @@ export default class FioAccountProfileUpdate extends Base {
       });
     }
 
-    await fioAccountProfile.update({ id, name, actor, permission });
+    const fioAccountProfileWithExistingType = await FioAccountProfile.findOneWhere({
+      accountType,
+    });
+
+    if (fioAccountProfileWithExistingType) {
+      await fioAccountProfileWithExistingType.update({
+        ...fioAccountProfileWithExistingType,
+        accountType: null,
+      });
+    }
+
+    await fioAccountProfile.update({
+      id,
+      name,
+      actor,
+      permission,
+      accountType,
+    });
 
     return {
       data: fioAccountProfile.json(),

@@ -146,3 +146,34 @@ export const DOMAIN_TYPE_PARAMS: {
       'You already own the FIO Domain, now get a FIO Crypto Handle on it.',
   },
 };
+
+export const FIO_ACCOUNT_TYPES = {
+  FREE: 'FREE',
+  PAID: 'PAID',
+  FREE_FALLBACK: 'FREE_FALLBACK',
+  PAID_FALLBACK: 'PAID_FALLBACK',
+  REGULAR: 'REGULAR',
+} as const;
+
+export const FIO_ACCOUNT_TYPES_OPTIONS = [
+  {
+    id: FIO_ACCOUNT_TYPES.FREE,
+    name: FIO_ACCOUNT_TYPES.FREE,
+  },
+  {
+    id: FIO_ACCOUNT_TYPES.PAID,
+    name: FIO_ACCOUNT_TYPES.PAID,
+  },
+  {
+    id: FIO_ACCOUNT_TYPES.FREE_FALLBACK,
+    name: FIO_ACCOUNT_TYPES.FREE_FALLBACK,
+  },
+  {
+    id: FIO_ACCOUNT_TYPES.PAID_FALLBACK,
+    name: FIO_ACCOUNT_TYPES.PAID_FALLBACK,
+  },
+  {
+    id: FIO_ACCOUNT_TYPES.REGULAR,
+    name: FIO_ACCOUNT_TYPES.REGULAR,
+  },
+];

@@ -3,9 +3,15 @@ import Sequelize from 'sequelize';
 import Base from './Base';
 import { ReferrerProfile } from './ReferrerProfile.mjs';
 
+import { FIO_ACCOUNT_TYPES } from '../config/constants';
+
 const { DataTypes: DT } = Sequelize;
 
 export class FioAccountProfile extends Base {
+  static get ACCOUNT_TYPE() {
+    return FIO_ACCOUNT_TYPES;
+  }
+
   static init(sequelize) {
     super.init(
       {
@@ -22,10 +28,11 @@ export class FioAccountProfile extends Base {
           type: DT.STRING,
           allowNull: true,
         },
-        isDefault: {
-          type: DT.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
+        accountType: {
+          type: DT.STRING,
+          allowNull: true,
+          defaultValue: null,
+          unique: true,
         },
       },
       {
@@ -45,7 +52,7 @@ export class FioAccountProfile extends Base {
 
   static attrs(type = 'default') {
     const attributes = {
-      default: ['id', 'actor', 'permission', 'name', 'isDefault', 'createdAt'],
+      default: ['id', 'actor', 'permission', 'name', 'accountType', 'createdAt'],
     };
 
     if (type in attributes) {
@@ -61,8 +68,8 @@ export class FioAccountProfile extends Base {
     });
   }
 
-  static getDefault() {
-    return this.getItem({ isDefault: true });
+  static getPaid() {
+    return this.getItem({ accountType: FIO_ACCOUNT_TYPES.PAID });
   }
 
   static accountsProfilesCount() {
@@ -72,18 +79,18 @@ export class FioAccountProfile extends Base {
   static list(limit = 25, offset = 0) {
     return this.findAll({
       order: [['createdAt', 'DESC']],
-      limit,
+      limit: limit ? limit : undefined,
       offset,
     });
   }
 
-  static format({ id, name, actor, permission, isDefault }) {
+  static format({ id, name, actor, permission, accountType }) {
     return {
       id,
       name,
       actor,
       permission,
-      isDefault,
+      accountType,
     };
   }
 }
