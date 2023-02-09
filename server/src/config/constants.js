@@ -25,6 +25,9 @@ const EXPIRING_DOMAINS_EMAIL_TITLE = {
   [DOMAIN_EXP_PERIOD.EXPIRED]: 'FIO Domain(s) have been burned',
 };
 
+const USER_HAS_FREE_ADDRESS_MESSAGE =
+  'You have already registered a free FIO Crypto Handle';
+
 const FIO_ACTIONS = {
   transferTokens: 'transferTokens',
   addPublicAddress: 'addPublicAddress',
@@ -211,4 +214,5 @@ module.exports = {
   CART_ITEM_TYPES_COMBO,
   DEFAULT_BUNDLE_SET_VALUE,
   QUERY_PARAMS_NAMES,
+  USER_HAS_FREE_ADDRESS_MESSAGE,
 };

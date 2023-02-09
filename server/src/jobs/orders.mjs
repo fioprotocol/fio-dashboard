@@ -31,9 +31,8 @@ import {
   INSUFFICIENT_FUNDS_ERR_MESSAGE,
   INSUFFICIENT_BALANCE,
 } from '../external/fio.mjs';
-import { FioRegApi } from '../external/fio-reg.mjs';
 
-import { FIO_ACTIONS } from '../config/constants.js';
+import { FIO_ACTIONS, USER_HAS_FREE_ADDRESS_MESSAGE } from '../config/constants.js';
 
 import logger from '../logger.mjs';
 
@@ -42,6 +41,8 @@ const ERROR_CODES = {
 };
 const MAX_STATUS_NOTES_LENGTH = 200;
 const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 5000;
+
+const USER_HAS_FREE_ERROR = `Register free address error: ${USER_HAS_FREE_ADDRESS_MESSAGE}`;
 
 class OrdersJob extends CommonJob {
   constructor() {
@@ -354,16 +355,40 @@ class OrdersJob extends CommonJob {
   }
 
   async registerFree(fioName, orderItem) {
-    const { regRefCode, regRefApiToken, publicKey, orderId } = orderItem;
+    const { id, blockchainTransactionId, orderId, userId } = orderItem;
 
-    let res;
+    // TODO: get auth from account profile
+    const auth = {
+      actor: 'bnsntqh5kgqf',
+      permission: 'regaddress',
+    };
+
+    const userHasFreeAddress = !!FreeAddress.getItem({ userId });
+
+    if (userHasFreeAddress) {
+      logger.error(USER_HAS_FREE_ERROR);
+
+      await this.handleFail(orderItem, USER_HAS_FREE_ERROR);
+      return this.updateOrderStatus(orderId);
+    }
+
     try {
-      res = await FioRegApi.register({
-        address: fioName,
-        publicKey,
-        referralCode: regRefCode,
-        apiToken: regRefApiToken,
-      });
+      const result = await this.executeOrderItemAction(orderItem, auth);
+
+      if (result.transaction_id) {
+        this.postMessage(
+          `Processing item transactions created (FREE) - ${id} / ${result.transaction_id}`,
+        );
+        await OrderItem.setPending(result, id, blockchainTransactionId);
+
+        const freeAddressRecord = new FreeAddress({
+          name: fioName,
+          userId: orderItem.userId,
+        });
+        await freeAddressRecord.save();
+
+        return this.updateOrderStatus(orderId);
+      }
     } catch (error) {
       let message = error.message;
       if (error.response && error.response.body) {
@@ -373,23 +398,6 @@ class OrdersJob extends CommonJob {
       await this.handleFail(orderItem, message);
 
       return this.updateOrderStatus(orderId);
-    }
-
-    if (res) {
-      await OrderItem.setPending({}, orderItem.id, orderItem.blockchainTransactionId);
-      this.postMessage(
-        `Processing item transactions created (FREE) - ${orderItem.id} / ${JSON.stringify(
-          res,
-        )}`,
-      );
-
-      const freeAddressRecord = new FreeAddress({
-        name: fioName,
-        userId: orderItem.userId,
-      });
-      await freeAddressRecord.save();
-
-      return;
     }
 
     logger.error(`Register free address error. No response data`);
@@ -542,7 +550,7 @@ class OrdersJob extends CommonJob {
   // returns null when success and result when error
   async handleCustomDomain(orderItem, auth) {
     const { orderId, roe, domain, data } = orderItem;
-    if (data.hasCustomDomain) {
+    if (data && data.hasCustomDomain) {
       let error;
       try {
         await this.spend({
