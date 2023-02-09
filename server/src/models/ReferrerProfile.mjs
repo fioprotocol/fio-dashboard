@@ -67,6 +67,16 @@ export class ReferrerProfile extends Base {
           type: DT.STRING,
           allowNull: true,
         },
+        freeFioAccountProfileId: {
+          type: DT.BIGINT,
+          allowNull: true,
+          defaultValue: 1,
+        },
+        paidFioAccountProfileId: {
+          type: DT.BIGINT,
+          allowNull: true,
+          defaultValue: 1,
+        },
       },
       {
         sequelize,
@@ -83,7 +93,11 @@ export class ReferrerProfile extends Base {
       as: 'refProfile',
     });
     this.belongsTo(FioAccountProfile, {
-      foreignKey: 'fioAccountProfileId',
+      foreignKey: 'freeFioAccountProfileId',
+      targetKey: 'id',
+    });
+    this.belongsTo(FioAccountProfile, {
+      foreignKey: 'paidFioAccountProfileId',
       targetKey: 'id',
     });
   }
@@ -95,6 +109,8 @@ export class ReferrerProfile extends Base {
         'type',
         'code',
         'regRefCode',
+        'freeFioAccountProfileId',
+        'paidFioAccountProfileId',
         'label',
         'title',
         'subTitle',
@@ -118,12 +134,26 @@ export class ReferrerProfile extends Base {
     });
   }
 
-  static format({ id, type, code, regRefCode, label, title, subTitle, settings, tpid }) {
+  static format({
+    id,
+    type,
+    code,
+    regRefCode,
+    freeFioAccountProfileId,
+    paidFioAccountProfileId,
+    label,
+    title,
+    subTitle,
+    settings,
+    tpid,
+  }) {
     return {
       id,
       type,
       code,
       regRefCode,
+      freeFioAccountProfileId,
+      paidFioAccountProfileId,
       label,
       title,
       subTitle,

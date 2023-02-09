@@ -65,6 +65,8 @@ export default class PartnerUpdate extends Base {
       ],
       title: ['string'],
       subTitle: ['string'],
+      freeFioAccountProfileId: ['string'],
+      paidFioAccountProfileId: ['string'],
     };
   }
 

@@ -45,7 +45,11 @@ export class FioAccountProfile extends Base {
 
   static associate() {
     this.hasMany(ReferrerProfile, {
-      foreignKey: 'fioAccountProfileId',
+      foreignKey: 'freeFioAccountProfileId',
+      sourceKey: 'id',
+    });
+    this.hasMany(ReferrerProfile, {
+      foreignKey: 'paidFioAccountProfileId',
       sourceKey: 'id',
     });
   }

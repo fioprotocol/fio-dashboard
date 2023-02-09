@@ -398,6 +398,8 @@ export type RefProfile = {
   };
   tpid: string;
   regRefApiToken: string;
+  freeFioAccountProfileId: number;
+  paidFioAccountProfileId: number;
   createdAt?: string;
 };
 
