@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
@@ -33,7 +33,7 @@ const AccountProfileForm: React.FC<Props> = props => {
     toggleShowWarningModal,
   } = props;
 
-  const renderForm = (formRenderProps: FormRenderProps<FormValuesProps>) => {
+  const RenderForm = (formRenderProps: FormRenderProps<FormValuesProps>) => {
     const {
       handleSubmit,
       validating,
@@ -42,6 +42,14 @@ const AccountProfileForm: React.FC<Props> = props => {
       pristine,
       values,
     } = formRenderProps;
+
+    const onClose = useCallback(() => {
+      toggleShowWarningModal(false);
+    }, []);
+
+    const onActionClick = useCallback(() => {
+      dangerModaActionClick(values);
+    }, [values]);
 
     return (
       <>
@@ -109,11 +117,11 @@ const AccountProfileForm: React.FC<Props> = props => {
             show={showWarningModal}
             title="Account type warnings"
             subtitle={`You already have ${values?.accountType} account. Would you like to replace it with this one?`}
-            onClose={() => toggleShowWarningModal(false)}
+            onClose={onClose}
             buttonText="Yes"
             cancelButtonText="No"
             showCancel
-            onActionButtonClick={() => dangerModaActionClick(values)}
+            onActionButtonClick={onActionClick}
           />
         </form>
       </>
@@ -124,9 +132,10 @@ const AccountProfileForm: React.FC<Props> = props => {
     <Form
       onSubmit={onSubmit}
       initialValues={initialValues}
-      render={renderForm}
       validate={formValidation.validateForm}
-    />
+    >
+      {formProps => <RenderForm {...formProps} />}
+    </Form>
   );
 };
 

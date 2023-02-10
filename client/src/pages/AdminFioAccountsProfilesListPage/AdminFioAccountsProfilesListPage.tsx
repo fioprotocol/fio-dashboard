@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { Button, Table } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -51,69 +51,85 @@ const AdminFioAccountsProfilesListPage: React.FC<PageProps> = props => {
     setEditProfileData(null);
   };
 
-  const createFioAccountProfile = async (values: FormValuesProps) => {
-    setFioAccountProfileActionLoading(true);
-    try {
-      await (editProfileData
-        ? apis.admin.editFioAccountProfile(values, values.id)
-        : apis.admin.createFioAccountProfile(values)
-      ).then(async () => {
-        await refresh();
-      });
-      closeFioAccountProfileModal();
-    } catch (err) {
-      log.error(err);
-    }
+  const editProfileDataExist = !isEmpty(editProfileData);
 
-    setFioAccountProfileActionLoading(false);
-  };
-
-  const onSubmit = async (values: FormValuesProps) => {
-    if (
+  const accountTypeAlreadyUsed = useCallback(
+    (accountType: string) =>
       fioAccountsProfilesList.some(
-        fioAccountProfile =>
-          fioAccountProfile.accountType === values.accountType,
-      )
-    ) {
-      toggleShowWarningModal(true);
-      return;
-    }
+        fioAccountProfile => fioAccountProfile.accountType === accountType,
+      ),
+    [fioAccountsProfilesList],
+  );
 
-    await createFioAccountProfile(values);
-  };
+  const createFioAccountProfile = useCallback(
+    async (values: FormValuesProps) => {
+      setFioAccountProfileActionLoading(true);
+      try {
+        await (editProfileDataExist
+          ? apis.admin.editFioAccountProfile(values, values.id)
+          : apis.admin.createFioAccountProfile(values)
+        ).then(async () => {
+          await refresh();
+        });
+        closeFioAccountProfileModal();
+      } catch (err) {
+        log.error(err);
+      }
 
-  const dangerModaActionClick = async (values: FormValuesProps) => {
-    toggleShowWarningModal(false);
+      setFioAccountProfileActionLoading(false);
+    },
+    [editProfileDataExist, refresh],
+  );
 
-    await createFioAccountProfile(values);
-  };
+  const onSubmit = useCallback(
+    async (values: FormValuesProps) => {
+      if (accountTypeAlreadyUsed(values.accountType)) {
+        toggleShowWarningModal(true);
+        return;
+      }
 
-  const openProfile = async (fioAccountProfile: FioAccountProfile) => {
-    setEditProfileData(fioAccountProfile);
-    openFioAccountProfileModal();
-  };
+      await createFioAccountProfile(values);
+    },
+    [createFioAccountProfile, accountTypeAlreadyUsed],
+  );
 
-  let initialValues;
+  const dangerModaActionClick = useCallback(
+    async (values: FormValuesProps) => {
+      toggleShowWarningModal(false);
 
-  if (!isEmpty(editProfileData)) {
-    initialValues = {
-      ...editProfileData,
-      accountType:
-        editProfileData.accountType == null
-          ? FIO_ACCOUNT_TYPES.REGULAR
-          : editProfileData.accountType,
-    };
-  }
+      await createFioAccountProfile(values);
+    },
+    [createFioAccountProfile],
+  );
 
-  const missedAccountTypes = Object.keys(FIO_ACCOUNT_TYPES)
-    .filter(fioAccountType => fioAccountType !== FIO_ACCOUNT_TYPES.REGULAR) // We don't care about non required type which is REGULAR
-    .filter(
-      fioAccountType =>
-        !fioAccountsProfilesList.some(
-          fioAccountsProfile =>
-            fioAccountsProfile.accountType === fioAccountType,
-        ),
-    );
+  const openProfile = useCallback(
+    async (fioAccountProfile: FioAccountProfile) => {
+      setEditProfileData(fioAccountProfile);
+      openFioAccountProfileModal();
+    },
+    [],
+  );
+
+  const initialValues = useMemo(
+    () =>
+      isEmpty(editProfileData)
+        ? undefined
+        : {
+            ...editProfileData,
+            accountType: editProfileData.accountType
+              ? editProfileData.accountType
+              : FIO_ACCOUNT_TYPES.REGULAR,
+          },
+    [editProfileData],
+  );
+
+  const missedAccountTypes = useMemo(
+    () =>
+      Object.keys(FIO_ACCOUNT_TYPES)
+        .filter(fioAccountType => fioAccountType !== FIO_ACCOUNT_TYPES.REGULAR) // We don't care about non required type which is REGULAR
+        .filter(fioAccountType => !accountTypeAlreadyUsed(fioAccountType)),
+    [accountTypeAlreadyUsed],
+  );
 
   return (
     <>
