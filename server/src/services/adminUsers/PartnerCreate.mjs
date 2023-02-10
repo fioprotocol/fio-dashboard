@@ -15,7 +15,6 @@ export default class PartnerCreate extends Base {
       label: ['required', 'string'],
       regRefCode: ['string'],
       code: ['required', 'string', 'trim', 'to_lc'],
-      regRefApiToken: ['string'],
       tpid: ['string'],
       settings: [
         'required',

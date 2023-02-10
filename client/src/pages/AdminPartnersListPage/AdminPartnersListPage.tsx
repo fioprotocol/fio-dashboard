@@ -58,7 +58,6 @@ const AdminPartnersListPage: React.FC<Props> = props => {
     setSelectedPartner({
       type: REF_PROFILE_TYPE.REF,
       regRefCode: '',
-      regRefApiToken: '',
       settings: {
         domains: [
           {

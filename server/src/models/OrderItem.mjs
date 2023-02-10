@@ -180,7 +180,6 @@ export class OrderItem extends Base {
           ois."paymentId",
           rp.label,
           rp."regRefCode", 
-          rp."regRefApiToken", 
           rp.tpid,
           drp.tpid as "domainTpid",
           fapfree.actor as "freeActor",

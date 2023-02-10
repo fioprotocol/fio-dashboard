@@ -15,7 +15,6 @@ export default class PartnerUpdate extends Base {
       type: ['required', 'string'],
       regRefCode: ['string'],
       label: ['required', 'string'],
-      regRefApiToken: ['string'],
       tpid: ['string'],
       settings: [
         'required',
