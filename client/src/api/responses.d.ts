@@ -3,7 +3,6 @@ import {
   AdminUser,
   ChainCodeProps,
   ContainedFlowQueryParams,
-  Domain,
   FioAccountProfile,
   FioWalletDoublet,
   Notification,
@@ -72,12 +71,6 @@ export type FioRegPricesResponse = {
     };
     usdtRoe: number;
   };
-};
-export type FioRegDomainsResponse = { domains: Domain[] };
-export type FioRegRegisterResponse = {
-  success?: boolean;
-  freeAddress?: { id: number; name: string; createdAt: string };
-  error?: string;
 };
 export type FioRegCaptchaResponse = {
   success: boolean;
@@ -159,8 +152,6 @@ export type ApisResponse = AccountGetWalletsResponse &
   ContactsListResponse &
   ContactsCreateResponse &
   FioRegPricesResponse &
-  FioRegDomainsResponse &
-  FioRegRegisterResponse &
   FioRegCaptchaResponse &
   NotificationsListResponse &
   NotificationsCreateResponse &

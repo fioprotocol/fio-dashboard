@@ -12,18 +12,13 @@ import {
 import apis from '../api';
 import { AdminDomain } from '../api/responses';
 import { fireAnalyticsEventDebounced } from './analytics';
-import { setFioName, sleep } from '../utils';
+import { setFioName } from '../utils';
 import { log } from '../util/general';
 
-import {
-  FREE_ADDRESS_REGISTER_ERROR,
-  ERROR_TYPES,
-  NON_VAILD_DOMAIN,
-} from '../constants/errors';
+import { NON_VAILD_DOMAIN } from '../constants/errors';
 import { DOMAIN_TYPE, FIO_REQUEST_STATUS_TYPES } from '../constants/fio';
 import { ANALYTICS_EVENT_ACTIONS, CHAIN_CODES } from '../constants/common';
 import { FIO_ADDRESS_DELIMITER } from '../utils';
-import { RegisterAddressError } from './errors';
 
 import {
   NftTokenResponse,
@@ -34,33 +29,6 @@ import {
   CartItem,
 } from '../types';
 import { RawTransaction } from '../api/fio';
-
-export const waitForAddressRegistered = async (
-  fioAddress: string,
-): Promise<void> => {
-  const CALL_INTERVAL = 3000; // 3 sec
-  const WAIT_TIMEOUT = 60000; // 60 sec
-  const startTime = new Date().getTime();
-
-  const checkAddressIsRegistered: () => Promise<void> = async () => {
-    try {
-      const { is_registered } = await apis.fio.availCheck(fioAddress);
-      if (is_registered) return;
-    } catch (e) {
-      //
-    }
-    const timeOver = new Date().getTime() - startTime >= WAIT_TIMEOUT;
-    if (timeOver)
-      throw new RegisterAddressError({
-        errorType: ERROR_TYPES.freeAddressIsNotRegistered,
-        message: FREE_ADDRESS_REGISTER_ERROR,
-      });
-    await sleep(CALL_INTERVAL);
-    return checkAddressIsRegistered();
-  };
-
-  return checkAddressIsRegistered();
-};
 
 export const vaildateFioDomain = (domain: string) => {
   if (!domain) {

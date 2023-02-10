@@ -1,9 +1,10 @@
-import { FioAccountProfile } from '../../types';
+import { FioAccountProfile, FioAccountProfileType } from '../../types';
 
 export type FormValuesProps = {
   id?: string;
   name: string;
   actor: string;
+  accountType?: FioAccountProfileType;
   permission: string;
 };
 

@@ -42,7 +42,7 @@ const DEFAULT_ORDERS_LIMIT = 25;
 
 const ERROR_TYPES = {
   default: 'default',
-  freeAddressIsNotRegistered: 'freeAddressIsNotRegistered',
+  userHasFreeAddress: 'userHasFreeAddress',
 };
 
 export class Order extends Base {
@@ -674,7 +674,7 @@ export class Order extends Base {
             event && event.data && event.data.errorType
               ? event.data.errorType
               : isFree
-              ? ERROR_TYPES.freeAddressIsNotRegistered
+              ? ERROR_TYPES.userHasFreeAddress
               : ERROR_TYPES.default,
         });
 

@@ -12,6 +12,7 @@ import {
 } from '../../constants/common';
 import { DEFAULT_LIMIT } from '../../hooks/usePagination';
 
+import useEffectOnce from '../../hooks/general';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 import usePagination from '../../hooks/usePagination';
 import apis from '../../api';
@@ -23,7 +24,14 @@ import { RefProfile } from '../../types';
 import classes from './AdminPartnersListPage.module.scss';
 
 const AdminPartnersListPage: React.FC<Props> = props => {
-  const { loading, partnersList, getPartnersList } = props;
+  const {
+    fioAccountLoading,
+    fioAccountsProfilesList,
+    loading,
+    partnersList,
+    getFioAccountsProfilesList,
+    getPartnersList,
+  } = props;
   const [filters, setFilters] = useState<Partial<RefProfile>>({ type: '' });
   const [showPartnerModal, setShowPartnerModal] = useState<boolean>(false);
   const [selectedPartner, setSelectedPartner] = useState<Partial<RefProfile>>(
@@ -50,7 +58,6 @@ const AdminPartnersListPage: React.FC<Props> = props => {
     setSelectedPartner({
       type: REF_PROFILE_TYPE.REF,
       regRefCode: '',
-      regRefApiToken: '',
       settings: {
         domains: [
           {
@@ -125,6 +132,10 @@ const AdminPartnersListPage: React.FC<Props> = props => {
     [refresh, closeModal],
   );
 
+  useEffectOnce(() => {
+    getFioAccountsProfilesList();
+  }, []);
+
   return (
     <>
       <div className={classes.tableContainer}>
@@ -185,12 +196,13 @@ const AdminPartnersListPage: React.FC<Props> = props => {
 
         {paginationComponent}
 
-        {loading && <Loader />}
+        {(loading || fioAccountLoading) && <Loader />}
       </div>
 
       <PartnerModal
         initialValues={selectedPartner}
         show={showPartnerModal}
+        fioAccountsProfilesList={fioAccountsProfilesList}
         onSubmit={savePartner}
         loading={partnerActionLoading}
         onClose={closeModal}

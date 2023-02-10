@@ -249,8 +249,7 @@ export const useContext = (
   const isRetryAvailable =
     !isEmpty(errItems) &&
     errItems.length > 1 &&
-    (errItems[0]?.errorType !== ERROR_TYPES.freeAddressIsNotRegistered ||
-      errItems[0]?.errorType !== ERROR_TYPES.userHasFreeAddress);
+    errItems[0]?.errorType !== ERROR_TYPES.userHasFreeAddress;
 
   if (isRetryAvailable) {
     actionClick = onRetry;

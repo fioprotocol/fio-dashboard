@@ -25,6 +25,9 @@ const EXPIRING_DOMAINS_EMAIL_TITLE = {
   [DOMAIN_EXP_PERIOD.EXPIRED]: 'FIO Domain(s) have been burned',
 };
 
+const USER_HAS_FREE_ADDRESS_MESSAGE =
+  'You have already registered a free FIO Crypto Handle';
+
 const FIO_ACTIONS = {
   transferTokens: 'transferTokens',
   addPublicAddress: 'addPublicAddress',
@@ -183,6 +186,13 @@ const WRAP_STATUS_NETWORKS_IDS = {
   [WRAP_STATUS_NETWORKS.FIO]: 3,
 };
 
+const FIO_ACCOUNT_TYPES = {
+  FREE: 'FREE',
+  PAID: 'PAID',
+  FREE_FALLBACK: 'FREE_FALLBACK',
+  PAID_FALLBACK: 'PAID_FALLBACK',
+};
+
 module.exports = {
   WALLET_CREATED_FROM,
   DOMAIN_EXP_PERIOD,
@@ -195,6 +205,7 @@ module.exports = {
   FIO_ADDRESS_DELIMITER,
   FIO_ACTIONS_WITH_PERIOD,
   FIO_ACTIONS_COMBO,
+  FIO_ACCOUNT_TYPES,
   PAYMENTS_STATUSES,
   PAYMENT_EVENT_STATUSES,
   PRINT_SCREEN_PARAMS,
@@ -211,4 +222,5 @@ module.exports = {
   CART_ITEM_TYPES_COMBO,
   DEFAULT_BUNDLE_SET_VALUE,
   QUERY_PARAMS_NAMES,
+  USER_HAS_FREE_ADDRESS_MESSAGE,
 };

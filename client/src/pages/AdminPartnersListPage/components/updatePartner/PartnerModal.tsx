@@ -3,9 +3,10 @@ import React from 'react';
 import Modal from '../../../../components/Modal/Modal';
 import { PartnerForm } from './PartnerForm';
 
-import { AnyObject, RefProfile } from '../../../../types';
+import { AnyObject, FioAccountProfile, RefProfile } from '../../../../types';
 
 type Props = {
+  fioAccountsProfilesList: FioAccountProfile[];
   show: boolean;
   loading: boolean;
   onSubmit: (values: RefProfile) => Promise<AnyObject>;
@@ -14,7 +15,14 @@ type Props = {
 };
 
 export const PartnerModal: React.FC<Props> = props => {
-  const { show, loading, onSubmit, onClose, initialValues } = props;
+  const {
+    fioAccountsProfilesList,
+    show,
+    loading,
+    onSubmit,
+    onClose,
+    initialValues,
+  } = props;
 
   return (
     <Modal
@@ -33,6 +41,7 @@ export const PartnerModal: React.FC<Props> = props => {
           onSubmit={onSubmit}
           loading={loading}
           initialValues={initialValues}
+          fioAccountsProfilesList={fioAccountsProfilesList}
         />
       </div>
     </Modal>

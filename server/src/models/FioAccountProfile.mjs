@@ -3,9 +3,15 @@ import Sequelize from 'sequelize';
 import Base from './Base';
 import { ReferrerProfile } from './ReferrerProfile.mjs';
 
-const { DataTypes: DT } = Sequelize;
+import { FIO_ACCOUNT_TYPES } from '../config/constants';
+
+const { DataTypes: DT, Op } = Sequelize;
 
 export class FioAccountProfile extends Base {
+  static get ACCOUNT_TYPE() {
+    return FIO_ACCOUNT_TYPES;
+  }
+
   static init(sequelize) {
     super.init(
       {
@@ -22,10 +28,11 @@ export class FioAccountProfile extends Base {
           type: DT.STRING,
           allowNull: true,
         },
-        isDefault: {
-          type: DT.BOOLEAN,
-          allowNull: false,
-          defaultValue: false,
+        accountType: {
+          type: DT.STRING,
+          allowNull: true,
+          defaultValue: null,
+          unique: true,
         },
       },
       {
@@ -38,14 +45,18 @@ export class FioAccountProfile extends Base {
 
   static associate() {
     this.hasMany(ReferrerProfile, {
-      foreignKey: 'fioAccountProfileId',
+      foreignKey: 'freeFioAccountProfileId',
+      sourceKey: 'id',
+    });
+    this.hasMany(ReferrerProfile, {
+      foreignKey: 'paidFioAccountProfileId',
       sourceKey: 'id',
     });
   }
 
   static attrs(type = 'default') {
     const attributes = {
-      default: ['id', 'actor', 'permission', 'name', 'isDefault', 'createdAt'],
+      default: ['id', 'actor', 'permission', 'name', 'accountType', 'createdAt'],
     };
 
     if (type in attributes) {
@@ -61,8 +72,24 @@ export class FioAccountProfile extends Base {
     });
   }
 
-  static getDefault() {
-    return this.getItem({ isDefault: true });
+  static getFreePaidItems() {
+    return this.findAll({
+      order: [['createdAt', 'DESC']],
+      [Op.and]: [
+        {
+          accountType: FIO_ACCOUNT_TYPES.FREE,
+        },
+        {
+          accountType: FIO_ACCOUNT_TYPES.FREE_FALLBACK,
+        },
+        {
+          accountType: FIO_ACCOUNT_TYPES.PAID,
+        },
+        {
+          accountType: FIO_ACCOUNT_TYPES.PAID_FALLBACK,
+        },
+      ],
+    });
   }
 
   static accountsProfilesCount() {
@@ -72,18 +99,18 @@ export class FioAccountProfile extends Base {
   static list(limit = 25, offset = 0) {
     return this.findAll({
       order: [['createdAt', 'DESC']],
-      limit,
+      limit: limit ? limit : undefined,
       offset,
     });
   }
 
-  static format({ id, name, actor, permission, isDefault }) {
+  static format({ id, name, actor, permission, accountType }) {
     return {
       id,
       name,
       actor,
       permission,
-      isDefault,
+      accountType,
     };
   }
 }

@@ -14,15 +14,17 @@ export default class FioAccountProfileCreate extends Base {
       name: ['required', 'string'],
       actor: ['required', 'string'],
       permission: ['required', 'string'],
+      accountType: ['required', 'string'],
     };
   }
 
-  async execute({ name, actor, permission }) {
+  async execute({ name, actor, permission, accountType }) {
     const existProfile = await FioAccountProfile.findOne({
       where: {
         name,
         actor,
         permission,
+        accountType,
       },
     });
 
@@ -37,10 +39,22 @@ export default class FioAccountProfileCreate extends Base {
       });
     }
 
+    const fioAccountProfileWithExistingType = await FioAccountProfile.findOneWhere({
+      accountType,
+    });
+
+    if (fioAccountProfileWithExistingType) {
+      await fioAccountProfileWithExistingType.update({
+        ...fioAccountProfileWithExistingType,
+        accountType: null,
+      });
+    }
+
     const createdProfile = new FioAccountProfile({
       name,
       actor,
       permission,
+      accountType,
     });
     await createdProfile.save();
 
