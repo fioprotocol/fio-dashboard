@@ -7,6 +7,7 @@ import isEmpty from 'lodash/isEmpty';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
 import { BADGE_TYPES } from '../../components/Badge/Badge';
 import Loader from '../../components/Loader/Loader';
+import DangerModal from '../../components/Modal/DangerModal/DangerModal';
 import FioAccountProfileModal from './components/createNewFioAccountProfile/FioAccountProfileModal';
 
 import { FIO_ACCOUNT_TYPES } from '../../constants/fio';
@@ -40,6 +41,7 @@ const AdminFioAccountsProfilesListPage: React.FC<PageProps> = props => {
     setEditProfileData,
   ] = useState<FioAccountProfile | null>(null);
   const [showWarningModal, toggleShowWarningModal] = useState<boolean>(false);
+  const [showDeleteModal, toggleShowDeleteModal] = useState<boolean>(false);
 
   const { paginationComponent, refresh } = usePagination(
     getFioAccountsProfilesList,
@@ -123,6 +125,40 @@ const AdminFioAccountsProfilesListPage: React.FC<PageProps> = props => {
     [],
   );
 
+  const handleDeleteFioAccountProfile = useCallback(
+    (fioAccountProfile: FioAccountProfile) => {
+      toggleShowDeleteModal(true);
+      setEditProfileData(fioAccountProfile);
+    },
+    [],
+  );
+
+  const onDeleteClose = useCallback(() => {
+    toggleShowDeleteModal(false);
+    setEditProfileData(null);
+  }, []);
+
+  const deleteFioAccountProfile = useCallback(
+    (fioAccountProfileId: string) => {
+      const deleteFioAccountProfile = async () => {
+        try {
+          await apis.admin.deleteFioAccountProfile(fioAccountProfileId);
+          await refresh();
+        } catch (err) {
+          log.error(err);
+        }
+      };
+      deleteFioAccountProfile();
+    },
+    [refresh],
+  );
+
+  const onDeleteActionClick = useCallback(async () => {
+    deleteFioAccountProfile(editProfileData.id);
+    toggleShowDeleteModal(false);
+    setEditProfileData(null);
+  }, [deleteFioAccountProfile, editProfileData?.id]);
+
   const initialValues = useMemo(
     () =>
       isEmpty(editProfileData)
@@ -178,6 +214,7 @@ const AdminFioAccountsProfilesListPage: React.FC<PageProps> = props => {
               <th scope="col">Permission</th>
               <th scope="col">Type</th>
               <th scope="col">Created</th>
+              <th scope="col">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -221,6 +258,18 @@ const AdminFioAccountsProfilesListPage: React.FC<PageProps> = props => {
                           ? formatDateToLocale(fioAccountProfile.createdAt)
                           : null}
                       </th>
+                      <th>
+                        <Button
+                          onClick={event => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            handleDeleteFioAccountProfile(fioAccountProfile);
+                          }}
+                          variant="danger"
+                        >
+                          Delete
+                        </Button>
+                      </th>
                     </tr>
                   ))
               : null}
@@ -241,6 +290,17 @@ const AdminFioAccountsProfilesListPage: React.FC<PageProps> = props => {
         showWarningModal={showWarningModal}
         dangerModaActionClick={dangerModaActionClick}
         toggleShowWarningModal={toggleShowWarningModal}
+      />
+
+      <DangerModal
+        show={showDeleteModal}
+        title="Warning!"
+        subtitle={`You are trying to delete ${editProfileData?.name} account profile. Are you sure?`}
+        onClose={onDeleteClose}
+        buttonText="Yes"
+        cancelButtonText="No"
+        showCancel
+        onActionButtonClick={onDeleteActionClick}
       />
     </>
   );

@@ -49,6 +49,10 @@ export default class Admin extends Base {
     return this.apiClient.post(`admin/accounts/${id}`, data);
   }
 
+  deleteFioAccountProfile(id: string): Promise<AdminGeneralCreateResponse> {
+    return this.apiClient.delete(`admin/accounts/${id}`, {});
+  }
+
   adminUserProfile(id: string): Promise<AdminUsersListResponse> {
     return this.apiClient.get(`admin/info/${id}`);
   }
