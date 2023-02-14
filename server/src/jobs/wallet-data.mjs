@@ -216,9 +216,10 @@ class WalletDataJob extends CommonJob {
       const {
         publicWalletData: { cryptoHandles, domains },
       } = wallet;
-      const { fio_addresses, fio_domains } = await fioApi
-        .getPublicFioSDK()
-        .getFioNames(wallet.publicKey);
+      const publicFioSDK = await fioApi.getPublicFioSDK();
+      const { fio_addresses, fio_domains } = await publicFioSDK.getFioNames(
+        wallet.publicKey,
+      );
 
       let changed = false;
 
@@ -382,9 +383,8 @@ class WalletDataJob extends CommonJob {
     try {
       let balance = 0;
       try {
-        const balanceResponse = await fioApi
-          .getPublicFioSDK()
-          .getFioBalance(wallet.publicKey);
+        const publicFioSDK = await fioApi.getPublicFioSDK();
+        const balanceResponse = await publicFioSDK.getFioBalance(wallet.publicKey);
         balance = balanceResponse.balance;
       } catch (e) {
         this.logFioError(e, wallet);

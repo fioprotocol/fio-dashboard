@@ -476,12 +476,11 @@ export const useContext = (): {
     const signTxItems = [];
     for (const cartItem of cartItems) {
       if (
-        CART_ITEM_TYPE.ADD_BUNDLES === cartItem.type ||
-        ([
+        [
           CART_ITEM_TYPE.ADDRESS,
           CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
         ].includes(cartItem.type) &&
-          privateDomainList[cartItem.domain])
+        privateDomainList[cartItem.domain]
       ) {
         const domainWallet = userDomains.find(
           ({ name }) => name === cartItem.domain,

@@ -76,7 +76,8 @@ class OrdersJob extends CommonJob {
 
   async updateWalletDataBalance(publicKey) {
     try {
-      const balanceResponse = await fioApi.getPublicFioSDK().getFioBalance(publicKey);
+      const publicFioSDK = await fioApi.getPublicFioSDK();
+      const balanceResponse = await publicFioSDK.getFioBalance(publicKey);
       const balance = balanceResponse.balance;
 
       const wallets = await Wallet.findAll({
