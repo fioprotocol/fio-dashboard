@@ -36,7 +36,10 @@ export default class FioAccountProfileUpdate extends Base {
       accountType,
     });
 
-    if (fioAccountProfileWithExistingType) {
+    if (
+      fioAccountProfileWithExistingType &&
+      fioAccountProfileWithExistingType.id !== id
+    ) {
       await fioAccountProfileWithExistingType.update({
         ...fioAccountProfileWithExistingType,
         accountType: null,
