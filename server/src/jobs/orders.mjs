@@ -723,24 +723,24 @@ class OrdersJob extends CommonJob {
 
     this.postMessage(`Process order items - ${items.length}`);
 
-    const FioAccountProfiles = await FioAccountProfile.getFreePaidItems();
+    const freeAndPaidFioAccountProfilesArr = await FioAccountProfile.getFreePaidItems();
 
-    const { account: paidFioActor, permission: paidFioPermision } =
-      FioAccountProfiles.find(
+    const { actor: paidFioActor, permission: paidFioPermision } =
+      freeAndPaidFioAccountProfilesArr.find(
         fioAccountProfile => fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.PAID,
       ) || {};
-    const { account: fallbackPaidFioActor, permission: fallbackPaidFioPermision } =
-      FioAccountProfiles.find(
+    const { actor: fallbackPaidFioActor, permission: fallbackPaidFioPermision } =
+      freeAndPaidFioAccountProfilesArr.find(
         fioAccountProfile =>
           fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.PAID_FALLBACK,
       ) || {};
 
-    const { account: freeFioActor, permission: freeFioPermision } =
-      FioAccountProfiles.find(
+    const { actor: freeFioActor, permission: freeFioPermision } =
+      freeAndPaidFioAccountProfilesArr.find(
         fioAccountProfile => fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.FREE,
       ) || {};
-    const { account: fallbackFreeFioActor, permission: fallbackFreeFioPermision } =
-      FioAccountProfiles.find(
+    const { actor: fallbackFreeFioActor, permission: fallbackFreeFioPermision } =
+      freeAndPaidFioAccountProfilesArr.find(
         fioAccountProfile =>
           fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.FREE_FALLBACK,
       ) || {};
