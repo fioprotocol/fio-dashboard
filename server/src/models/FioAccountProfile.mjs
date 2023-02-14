@@ -73,23 +73,28 @@ export class FioAccountProfile extends Base {
   }
 
   static getFreePaidItems() {
-    return this.findAll({
-      order: [['createdAt', 'DESC']],
-      [Op.and]: [
-        {
-          accountType: FIO_ACCOUNT_TYPES.FREE,
-        },
-        {
-          accountType: FIO_ACCOUNT_TYPES.FREE_FALLBACK,
-        },
-        {
-          accountType: FIO_ACCOUNT_TYPES.PAID,
-        },
-        {
-          accountType: FIO_ACCOUNT_TYPES.PAID_FALLBACK,
-        },
-      ],
-    });
+    const freeAndPaidFioAccountProfiles =
+      this.findAll({
+        order: [['createdAt', 'DESC']],
+        [Op.and]: [
+          {
+            accountType: FIO_ACCOUNT_TYPES.FREE,
+          },
+          {
+            accountType: FIO_ACCOUNT_TYPES.FREE_FALLBACK,
+          },
+          {
+            accountType: FIO_ACCOUNT_TYPES.PAID,
+          },
+          {
+            accountType: FIO_ACCOUNT_TYPES.PAID_FALLBACK,
+          },
+        ],
+      }) || [];
+
+    return freeAndPaidFioAccountProfiles.map(freeAndPaidFioAccountProfile =>
+      this.format(freeAndPaidFioAccountProfile),
+    );
   }
 
   static accountsProfilesCount() {
