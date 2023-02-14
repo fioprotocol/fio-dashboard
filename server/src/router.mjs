@@ -84,6 +84,12 @@ router.post(
   checkAdminAuth,
   routes.adminUsers.updateFioAccountProfile,
 );
+router.delete(
+  '/admin/accounts/:id',
+  checkAdminAuth,
+  routes.adminUsers.deleteFioAccountProfile,
+);
+
 router.get('/admin/api-urls', checkAdminAuth, routes.adminUsers.fioApiUrlsList);
 router.post('/admin/api-urls', checkAdminAuth, routes.adminUsers.createFioApiUrlsList);
 router.patch(
