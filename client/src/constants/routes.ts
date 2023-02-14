@@ -133,7 +133,7 @@ const ADMIN_ROUTES: { [route: string]: string } = {
   ADMIN_CONFIRM_EMAIL: '/confirm-email', // ?hash=&email=
   ADMIN_RESET_PASSWORD: '/reset-password', // ?hash=&email=
   ADMIN_REGULAR_USERS: '/regular-users',
-  ADMIN_REGULAR_USER_DETAILS: '/admin/regular-user-details', // ?userId=
+  ADMIN_REGULAR_USER_DETAILS: '/regular-user-details', // ?userId=
   ADMIN_PROFILE: '/profile',
   ADMIN_ACCOUNTS: '/accounts',
   ADMIN_API_URLS: '/api-urls',
