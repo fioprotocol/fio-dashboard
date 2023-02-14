@@ -51,12 +51,14 @@ const AdminFioAccountsProfilesListPage: React.FC<PageProps> = props => {
     setEditProfileData(null);
   };
 
-  const editProfileDataExist = !isEmpty(editProfileData);
+  const editProfileDataExists = !isEmpty(editProfileData);
 
   const accountTypeAlreadyUsed = useCallback(
     (accountType: string) =>
       fioAccountsProfilesList.some(
-        fioAccountProfile => fioAccountProfile.accountType === accountType,
+        fioAccountProfile =>
+          fioAccountProfile.accountType === accountType &&
+          accountType !== FIO_ACCOUNT_TYPES.REGULAR,
       ),
     [fioAccountsProfilesList],
   );
@@ -65,7 +67,7 @@ const AdminFioAccountsProfilesListPage: React.FC<PageProps> = props => {
     async (values: FormValuesProps) => {
       setFioAccountProfileActionLoading(true);
       try {
-        await (editProfileDataExist
+        await (editProfileDataExists
           ? apis.admin.editFioAccountProfile(values, values.id)
           : apis.admin.createFioAccountProfile(values)
         ).then(async () => {
@@ -78,19 +80,30 @@ const AdminFioAccountsProfilesListPage: React.FC<PageProps> = props => {
 
       setFioAccountProfileActionLoading(false);
     },
-    [editProfileDataExist, refresh],
+    [editProfileDataExists, refresh],
   );
 
   const onSubmit = useCallback(
     async (values: FormValuesProps) => {
-      if (accountTypeAlreadyUsed(values.accountType)) {
+      const showWarningModal = editProfileDataExists
+        ? editProfileData.accountType !== values.accountType
+          ? accountTypeAlreadyUsed(values.accountType)
+          : null
+        : accountTypeAlreadyUsed(values.accountType);
+
+      if (showWarningModal) {
         toggleShowWarningModal(true);
         return;
       }
 
       await createFioAccountProfile(values);
     },
-    [createFioAccountProfile, accountTypeAlreadyUsed],
+    [
+      editProfileDataExists,
+      accountTypeAlreadyUsed,
+      editProfileData?.accountType,
+      createFioAccountProfile,
+    ],
   );
 
   const dangerModaActionClick = useCallback(
