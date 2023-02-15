@@ -2,7 +2,6 @@ import { fioApi } from '../../external/fio';
 import { getROE } from '../../external/roe';
 import logger from '../../logger';
 import Base from '../Base';
-import { FioRegApi } from '../../external/fio-reg';
 
 export default class Prices extends Base {
   static get validationRules() {
@@ -32,20 +31,6 @@ export default class Prices extends Base {
     }
     return {
       data: { pricing },
-    };
-  }
-
-  // todo: check if we could use reg api for this
-  async executeRegApi() {
-    try {
-      const res = await FioRegApi.prices();
-
-      return { data: res };
-    } catch (e) {
-      logger.error(`Get prices from reg site error: ${e}`);
-    }
-    return {
-      data: {},
     };
   }
 
