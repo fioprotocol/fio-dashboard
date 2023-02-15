@@ -2,7 +2,7 @@ import Base from '../Base';
 import X from '../Exception';
 
 import { FioAccountProfile } from '../../models';
-import { ADMIN_ROLES_IDS } from '../../config/constants.js';
+import { ADMIN_ROLES_IDS, FIO_ACCOUNT_TYPES } from '../../config/constants.js';
 
 export default class FioAccountProfileCreate extends Base {
   static get requiredPermissions() {
@@ -54,7 +54,7 @@ export default class FioAccountProfileCreate extends Base {
       name,
       actor,
       permission,
-      accountType,
+      accountType: FIO_ACCOUNT_TYPES[accountType] || null,
     });
     await createdProfile.save();
 
