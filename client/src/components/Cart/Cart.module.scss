@@ -91,6 +91,7 @@
     font-size: 1em;
     word-break: break-word;
     margin-right: 30px;
+    @include proxima-nova-medium;
   }
 
   .descriptor {

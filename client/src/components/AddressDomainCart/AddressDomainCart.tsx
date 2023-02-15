@@ -10,6 +10,7 @@ import CounterContainer from '../CounterContainer/CounterContainer';
 import { ROUTES } from '../../constants/routes';
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
+import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
 import {
   handleFreeAddressCart,
@@ -138,23 +139,12 @@ const AddressDomainCart: React.FC<Props> = props => {
                 <div className={classes.itemInfo}>
                   {item.address ? (
                     <p className={classes.itemName}>
-                      <span className="boldText">{item.address}</span>
-                      <span
-                        className={
-                          item.domainType === DOMAIN_TYPE.CUSTOM
-                            ? 'boldText'
-                            : classes.thin
-                        }
-                      >
-                        @{item.domain}
-                      </span>
+                      {`${item.address}${FIO_ADDRESS_DELIMITER}${item.domain}`}
                     </p>
                   ) : (
-                    <p className={classes.itemName}>
-                      <span className="boldText">{item.domain}</span>
-                    </p>
+                    <p className={classes.itemName}>{item.domain}</p>
                   )}
-                  <p className={classes.itemName}>
+                  <p className={classes.itemDescriptor}>
                     <span>{getCartItemDescriptor(item.type, item.period)}</span>
                   </p>
                   <p className={classes.itemPrice}>

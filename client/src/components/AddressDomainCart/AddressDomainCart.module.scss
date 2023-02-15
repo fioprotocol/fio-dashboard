@@ -68,13 +68,13 @@
   margin-top: 20px;
 
   .itemInfo {
-    .itemName, .itemPrice {
+    .itemName, .itemPrice, .itemDescriptor {
       font-size: 0.8em;
       line-height: 1.0625em;
       margin-bottom: 10px;
     }
-    .thin {
-      @include proxima-nova-thin;
+    .itemName {
+      @include proxima-nova-medium;
     }
   }
 
