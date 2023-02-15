@@ -21,6 +21,7 @@ export const FIOSDK = fiosdkLib.FIOSDK;
 export const DEFAULT_ACTION_FEE_AMOUNT = new MathOp(FIOSDK.SUFUnit).mul(1500).toNumber();
 export const INSUFFICIENT_FUNDS_ERR_MESSAGE = 'Insufficient funds to cover fee';
 export const INSUFFICIENT_BALANCE = 'Insufficient balance';
+export const PRICES_VAR_KEY = 'FIO_PRICES';
 export const FEES_VAR_KEY = 'FIO_FEES';
 export const FEES_UPDATE_TIMEOUT_SEC = 1000 * 60 * 5; // 5 min
 export const ABIS_VAR_KEY = 'FIO_RAW_ABIS';
@@ -316,6 +317,39 @@ class Fio {
     const notes = fieldError ? fieldError.error : JSON.stringify(tx);
 
     return { notes, code: tx.code, data: tx.data };
+  }
+
+  async getPrices(forceRefresh = false) {
+    let prices;
+    if (!forceRefresh) {
+      const pricesVar = await Var.getByKey(PRICES_VAR_KEY);
+      if (
+        pricesVar &&
+        !Var.updateRequired(pricesVar.updatedAt, FEES_UPDATE_TIMEOUT_SEC)
+      ) {
+        try {
+          prices = JSON.parse(pricesVar.value);
+          // eslint-disable-next-line no-empty
+        } catch (e) {}
+      }
+    }
+
+    if (!prices) {
+      const registrationAddressFeePromise = this.registrationFee();
+      const registrationDomainFeePromise = this.registrationFee(true);
+      const renewDomainFeePromise = this.getFee(FIO_ACTIONS.renewFioDomain);
+      const addBundlesFeePromise = this.getFee(FIO_ACTIONS.addBundledTransactions);
+
+      prices = {
+        address: await registrationAddressFeePromise,
+        domain: await registrationDomainFeePromise,
+        renewDomain: await renewDomainFeePromise,
+        addBundles: await addBundlesFeePromise,
+      };
+      await Var.setValue(PRICES_VAR_KEY, JSON.stringify(prices));
+    }
+
+    return prices;
   }
 }
 
