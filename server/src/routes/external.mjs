@@ -6,7 +6,7 @@ import ValidatePubAddress from '../services/external/ValidatePubAddress';
 import ApiUrls from '../services/external/ApiUrls';
 
 export default {
-  prices: makeServiceRunner(GetPrices),
+  prices: makeServiceRunner(GetPrices, req => req.query),
   initCaptcha: makeServiceRunner(Captcha),
   validatePubAddress: makeServiceRunner(ValidatePubAddress, req => req.query),
   apiUrls: makeServiceRunner(ApiUrls),
