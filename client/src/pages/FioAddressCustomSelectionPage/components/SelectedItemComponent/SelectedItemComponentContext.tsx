@@ -105,8 +105,8 @@ export const useContext = (
         ...chainPublicDomains.filter(
           chainPublicDomains =>
             ![
-              ...allDomains.dashboardDomains,
-              ...allDomains.allRefProfileDomains,
+              ...(allDomains.dashboardDomains || []),
+              ...(allDomains.allRefProfileDomains || []),
             ].some(
               dashboardPubilcDomains =>
                 dashboardPubilcDomains.name === chainPublicDomains.name,
