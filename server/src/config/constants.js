@@ -193,6 +193,12 @@ const FIO_ACCOUNT_TYPES = {
   PAID_FALLBACK: 'PAID_FALLBACK',
 };
 
+const ORDER_ERROR_TYPES = {
+  default: 'default',
+  freeAddressError: 'freeAddressError',
+  userHasFreeAddress: 'userHasFreeAddress',
+};
+
 module.exports = {
   WALLET_CREATED_FROM,
   DOMAIN_EXP_PERIOD,
@@ -223,4 +229,5 @@ module.exports = {
   DEFAULT_BUNDLE_SET_VALUE,
   QUERY_PARAMS_NAMES,
   USER_HAS_FREE_ADDRESS_MESSAGE,
+  ORDER_ERROR_TYPES,
 };

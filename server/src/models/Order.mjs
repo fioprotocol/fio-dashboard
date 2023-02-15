@@ -25,6 +25,7 @@ import {
   FIO_ACTIONS_LABEL,
   CART_ITEM_TYPE,
   FIO_ACTIONS,
+  ORDER_ERROR_TYPES,
 } from '../config/constants.js';
 
 import logger from '../logger.mjs';
@@ -39,11 +40,6 @@ const hashids = new Hashids(
 );
 
 const DEFAULT_ORDERS_LIMIT = 25;
-
-const ERROR_TYPES = {
-  default: 'default',
-  userHasFreeAddress: 'userHasFreeAddress',
-};
 
 export class Order extends Base {
   static get STATUS() {
@@ -674,8 +670,8 @@ export class Order extends Base {
             event && event.data && event.data.errorType
               ? event.data.errorType
               : isFree
-              ? ERROR_TYPES.userHasFreeAddress
-              : ERROR_TYPES.default,
+              ? ORDER_ERROR_TYPES.freeAddressError
+              : ORDER_ERROR_TYPES.default,
         });
 
         continue;
