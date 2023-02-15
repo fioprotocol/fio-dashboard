@@ -55,7 +55,7 @@ export default class UsersCreate extends Base {
     const user = new User({
       username,
       email,
-      status: User.STATUS.NEW,
+      status: User.STATUS.ACTIVE, // Todo: Return to New when emails will back to work
       refProfileId,
       isOptIn: !!addEmailToPromoList,
     });
