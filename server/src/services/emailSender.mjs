@@ -1,4 +1,7 @@
-import mailchimpProvider from '@mailchimp/mailchimp_transactional';
+import nodemailer from 'nodemailer';
+import sendmailTransport from 'nodemailer-sendmail-transport';
+import smtpTransport from 'nodemailer-smtp-transport';
+import SendinblueTransport from 'nodemailer-sendinblue-transport';
 
 import EmailTemplate, { templates } from './../emails/emailTemplate';
 import config from './../config';
@@ -9,11 +12,34 @@ import {
   QUERY_PARAMS_NAMES,
 } from '../config/constants';
 
-const EMAIL_SENT_STATUS = 'sent';
-
 class EmailSender {
   constructor() {
-    this.mailClient = mailchimpProvider(config.mail.mailchimpKey);
+    let transport;
+
+    switch (config.mail.transport) {
+      case 'SES':
+        transport = config.mail.transport_options;
+        break;
+
+      case 'SENDINBLUE':
+        transport = new SendinblueTransport({ apiKey: config.mail.sendinblueKey });
+        break;
+
+      case 'SMTP':
+        transport = smtpTransport(config.mail.smtp);
+        break;
+
+      case 'SENDMAIL':
+        transport = sendmailTransport();
+        break;
+
+      default:
+        throw new Error('transport not fount');
+    }
+
+    const options = config.mail.transport_options;
+
+    this.transport = nodemailer.createTransport(transport, options);
   }
 
   async send(type, email, data) {
@@ -30,33 +56,14 @@ class EmailSender {
       : email;
 
     const mailOptions = {
-      message: {
-        subject: template.subject,
-        html: template.body,
-        from_email: config.mail.from,
-        from_name: config.mail.fromName,
-        to: [
-          {
-            email: emailTo,
-          },
-        ],
-        images: template.images,
-        track_opens: false,
-        track_clicks: false,
-        auto_text: true,
-        view_content_link: false,
-      },
+      subject: template.subject,
+      html: template.body,
+      from: config.mail.from,
+      to: emailTo,
     };
 
     try {
-      const response = await this.sendMail(mailOptions);
-
-      if (response[0] == null)
-        throw new Error('Email send error ' + JSON.stringify(response));
-      if (response[0].status !== EMAIL_SENT_STATUS)
-        throw new Error(JSON.stringify(response[0]));
-
-      return response[0];
+      return await this.sendMail(mailOptions);
     } catch (err) {
       logger.error(err.message);
       try {
@@ -70,7 +77,14 @@ class EmailSender {
   }
 
   sendMail(mailOptions) {
-    return this.mailClient.messages.send(mailOptions);
+    return new Promise((resolve, reject) => {
+      this.transport.sendMail(mailOptions, (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(result);
+      });
+    });
   }
 
   async getTemplate(templateName, sendData) {
