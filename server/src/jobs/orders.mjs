@@ -36,6 +36,7 @@ import {
   FIO_ACCOUNT_TYPES,
   FIO_ACTIONS,
   USER_HAS_FREE_ADDRESS_MESSAGE,
+  ORDER_ERROR_TYPES,
 } from '../config/constants.js';
 
 import logger from '../logger.mjs';
@@ -375,7 +376,9 @@ class OrdersJob extends CommonJob {
     if (userHasFreeAddress) {
       logger.error(USER_HAS_FREE_ERROR);
 
-      await this.handleFail(orderItem, USER_HAS_FREE_ERROR);
+      await this.handleFail(orderItem, USER_HAS_FREE_ERROR, {
+        errorType: ORDER_ERROR_TYPES.userHasFreeAddress,
+      });
       return this.updateOrderStatus(orderId);
     }
 
@@ -397,12 +400,12 @@ class OrdersJob extends CommonJob {
         return this.updateOrderStatus(orderId);
       }
       // transaction failed
-      const { notes } = fioApi.checkTxError(result);
+      const { notes, code, data: errorData } = fioApi.checkTxError(result);
 
       // try to execute using fallback account when no funds
       if (
         (notes === INSUFFICIENT_FUNDS_ERR_MESSAGE || notes === INSUFFICIENT_BALANCE) &&
-        auth.actor !== process.env.REG_FALLBACK_ACCOUNT
+        auth.actor !== fallbackFreeFioActor
       ) {
         await sendInsufficientFundsNotification(fioName, label, auth);
         return processOrderItem({
@@ -415,20 +418,23 @@ class OrdersJob extends CommonJob {
             : process.env.REG_FALLBACK_PERMISSION,
         })();
       }
+
+      await this.handleFail(orderItem, notes, {
+        code,
+        ...errorData,
+        errorType: ORDER_ERROR_TYPES.freeAddressError,
+      });
     } catch (error) {
       let message = error.message;
       if (error.response && error.response.body) {
         message = error.response.body.error;
       }
       logger.error(`Register free address error: ${message}`);
-      await this.handleFail(orderItem, message);
-
-      return this.updateOrderStatus(orderId);
     }
 
-    logger.error(`Register free address error. No response data`);
-    await this.handleFail(orderItem, 'Server error. No response data');
-    return this.updateOrderStatus(orderId);
+    await this.updateOrderStatus(orderId);
+
+    return true;
   }
 
   async checkTokensReceived(txId, publicKey) {
@@ -813,7 +819,7 @@ class OrdersJob extends CommonJob {
           if (
             (notes === INSUFFICIENT_FUNDS_ERR_MESSAGE ||
               notes === INSUFFICIENT_BALANCE) &&
-            auth.actor !== process.env.REG_FALLBACK_ACCOUNT
+            auth.actor !== fallbackPaidFioActor
           ) {
             await sendInsufficientFundsNotification(fioName, label, auth);
             return processOrderItem({
