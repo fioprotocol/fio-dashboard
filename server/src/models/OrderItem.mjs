@@ -123,11 +123,12 @@ export class OrderItem extends Base {
     });
   }
 
-  static async listAll(limit = 25, offset = 0) {
+  static async listAll(limit = 25, offset = 0, where) {
     const orderItems = await this.findAll({
       include: [Order, OrderItemStatus, BlockchainTransaction],
       limit: limit ? limit : undefined,
       skip: offset,
+      where,
       order: [['id', 'DESC']],
     });
 
