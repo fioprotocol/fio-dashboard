@@ -1,7 +1,7 @@
 import Sequelize from 'sequelize';
 
 import '../db';
-import { User, Order, OrderItem, Notification, Var } from '../models/index.mjs';
+import { User, Order, OrderItem, Notification, Var, Action } from '../models/index.mjs';
 import CommonJob from './job.mjs';
 
 import emailSender from '../services/emailSender.mjs';
@@ -24,6 +24,7 @@ const CONTENT_TYPE_EMAIL_TEMPLATE_MAP = {
   [Notification.CONTENT_TYPE.PURCHASE_CONFIRMATION]: templates.purchaseConfirmation,
 };
 const OPT_IN_STATUS_SYNCED = 'OPT_IN_STATUS_SYNCED';
+const USER_EMAIL_RE_SENT = 'USER_EMAIL_RE_SENT';
 
 class EmailsJob extends CommonJob {
   async allowToSendBalanceChangedEmail(notification) {
@@ -157,7 +158,7 @@ class EmailsJob extends CommonJob {
             emailData,
           );
 
-          sentEmailId = emailResult ? emailResult._id : null;
+          sentEmailId = emailResult ? emailResult.messageId : null;
         } catch (e) {
           logger.error(`EMAIL SEND ERROR`, e);
         }
@@ -223,6 +224,44 @@ class EmailsJob extends CommonJob {
       }
       await Var.setValue(OPT_IN_STATUS_SYNCED, true);
     };
+    const resendUserCreatedEmails = async () => {
+      const userEmailReSent = await Var.getByKey(USER_EMAIL_RE_SENT);
+
+      if (userEmailReSent) {
+        return;
+      }
+      const users = await User.findAll({
+        where: {
+          createdAt: {
+            [Sequelize.Op.gt]: new Date('2023-02-14 13:04:00.000000 +00:00'),
+          },
+          status: User.STATUS.NEW,
+        },
+        include: ['refProfile'],
+      });
+      await Promise.all(
+        users.map(async user => {
+          const action = await Action.find({
+            where: {
+              type: Action.TYPE.CONFIRM_EMAIL,
+              data: {
+                userId: user.id,
+                email: user.email,
+              },
+            },
+            order: [['createdAt', 'DESC']],
+          });
+
+          await emailSender.send(templates.createAccount, user.email);
+
+          await emailSender.send(templates.confirmEmail, user.email, {
+            hash: action.hash,
+            refCode: user.refProfile ? user.refProfile.refCode : '',
+          });
+        }),
+      );
+      await Var.setValue(USER_EMAIL_RE_SENT, true);
+    };
 
     const notificationGroups = notifications.reduce((acc, notification) => {
       if (!notification.data || !notification.data.emailData) return acc;
@@ -265,6 +304,7 @@ class EmailsJob extends CommonJob {
     await this.executeActions(methods);
     await checkFailedNotifications();
     await checkUserOptInStatus();
+    await resendUserCreatedEmails();
 
     this.finish();
   }
