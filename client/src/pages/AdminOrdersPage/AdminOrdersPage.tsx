@@ -32,7 +32,7 @@ import classes from './styles/AdminOrdersListPage.module.scss';
 type Props = {
   loading: boolean;
   getOrdersList: (limit?: number, offset?: number) => Promise<void>;
-  exportOrdersData: () => void;
+  exportOrdersData: (filters: Partial<OrderDetails>) => void;
   adminUser: AdminUser;
   ordersList: OrderDetails[];
   orderItem: OrderDetails;
@@ -98,6 +98,10 @@ const AdminOrdersPage: React.FC<Props> = props => {
     openOrderDetails(orderId);
   };
 
+  const handleExportOrderData = useCallback(() => {
+    exportOrdersData(filters);
+  }, [exportOrdersData, filters]);
+
   useEffectOnce(
     () => {
       onClick(orderId);
@@ -111,7 +115,7 @@ const AdminOrdersPage: React.FC<Props> = props => {
       <div className={classes.tableContainer}>
         <div className="d-flex justify-content-between align-items-center mb-4">
           <div className="mr-4">
-            <Button onClick={exportOrdersData}>
+            <Button onClick={handleExportOrderData}>
               <FontAwesomeIcon icon="download" className="mr-2" /> Export
             </Button>
           </div>
