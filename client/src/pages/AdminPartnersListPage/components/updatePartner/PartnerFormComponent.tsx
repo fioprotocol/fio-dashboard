@@ -26,6 +26,7 @@ import {
   REF_PROFILE_TYPES_OPTIONS,
   REF_PROFILE_TYPE,
 } from '../../../../constants/common';
+import { FIO_ACCOUNT_TYPES } from '../../../../constants/fio';
 
 import {
   FioAccountProfile,
@@ -61,7 +62,8 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
   const fioAccountsProfilesOptions = fioAccountsProfilesList.map(
     fioAccountsProfile => ({
       id: fioAccountsProfile.id,
-      name: `${fioAccountsProfile.name}: ${fioAccountsProfile.accountType}`,
+      name: `${fioAccountsProfile.name}: ${fioAccountsProfile.accountType ||
+        FIO_ACCOUNT_TYPES.REGULAR}`,
     }),
   );
 
@@ -245,7 +247,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
             options={fioAccountsProfilesOptions}
             uiType={INPUT_UI_STYLES.BLACK_WHITE}
             errorColor={COLOR_TYPE.WARN}
-            label="FIO Account Profie for Free Registrations *"
+            label="FIO Account Profile for Free Registrations *"
             placeholder="FIO Account Profie FREE"
             loading={validating}
             disabled={submitting || loading}
@@ -257,7 +259,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
             options={fioAccountsProfilesOptions}
             uiType={INPUT_UI_STYLES.BLACK_WHITE}
             errorColor={COLOR_TYPE.WARN}
-            label="FIO Account Profie for Paid Registrations *"
+            label="FIO Account Profile for Paid Registrations *"
             placeholder="FIO Account Profie PAID"
             loading={validating}
             disabled={submitting || loading}
