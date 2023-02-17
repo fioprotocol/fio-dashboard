@@ -1,8 +1,8 @@
 import React from 'react';
 import classnames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import SubmitButton from '../common/SubmitButton/SubmitButton';
+
 import classes from './CreateAccountForm.module.scss';
 
 type State = {
@@ -11,7 +11,6 @@ type State = {
 
 type OwnProps = {
   onNext?: (page: number) => void;
-  onPrev: (page: number) => void;
   activePage: number;
   actionDisabled?: boolean;
   loading?: boolean;
@@ -48,8 +47,6 @@ export default class Wizard extends React.Component<Props, State> {
       Math.min(this.props.activePage + 1, this.props.children.length - 1),
     );
 
-  previous = () => this.props.onPrev(Math.max(this.props.activePage - 1, 0));
-
   render(): React.ReactElement {
     const { activePage, actionDisabled, loading, children } = this.props;
     const { pageIsActive } = this.state;
@@ -59,7 +56,7 @@ export default class Wizard extends React.Component<Props, State> {
       React.Children.toArray(children)[0];
     const isLastPage = activePage === React.Children.count(children) - 1;
     const {
-      props: { bottomText, hideNext, hideBack },
+      props: { bottomText, hideNext },
     } = page as { props: PageProps };
 
     return (
@@ -72,16 +69,9 @@ export default class Wizard extends React.Component<Props, State> {
         >
           {page}
         </div>
-        {activePage > 0 && !hideBack && (
-          <FontAwesomeIcon
-            icon="arrow-left"
-            className={classes.arrow}
-            onClick={this.previous}
-          />
-        )}
         {!isLastPage && !hideNext && (
           <SubmitButton
-            text="NEXT"
+            text="CREATE ACCOUNT"
             disabled={loading || actionDisabled}
             loading={loading}
             withTopMargin={true}

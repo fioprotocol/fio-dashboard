@@ -5,6 +5,8 @@ import {
 } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
+import { CheckIconComponent } from '../CheckIconComponent';
+
 import classes from './InputActionButtons.module.scss';
 
 type ClearButtonProps = {
@@ -159,5 +161,21 @@ export const ShowPasswordIcon: React.FC<ShowPasswordIconProps &
       )}
       onClick={() => !disabled && toggleShowPass(!showPass)}
     />
+  );
+};
+
+export const CheckedIcon: React.FC<DefaultProps> = ({ isVisible }) => {
+  if (!isVisible) return null;
+
+  return (
+    <div
+      className={classnames(
+        classes.inputIcon,
+        classes.hasAutoSizes,
+        classes.hasDefaultCursor,
+      )}
+    >
+      <CheckIconComponent isGreen fontSize="24px" />
+    </div>
   );
 };

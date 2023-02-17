@@ -156,14 +156,12 @@ export const SIGNUP_FAILURE = `${prefix}/SIGNUP_FAILURE`;
 export const signup = ({
   username,
   password,
-  pin,
 }: {
   username: string;
   password: string;
-  pin: string;
 }): CommonPromiseAction => ({
   types: [SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE],
-  promise: (api: Api) => api.edge.signup(username, password, pin),
+  promise: (api: Api) => api.edge.signup(username, password),
 });
 
 export const CACHED_USERS_REQUEST = `${prefix}/CACHED_USERS_REQUEST`;

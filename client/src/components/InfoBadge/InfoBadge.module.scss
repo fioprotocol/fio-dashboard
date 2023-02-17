@@ -6,10 +6,23 @@
 
 .icon {
   font-size: 20px;
+
+  &.iconOnTop {
+    align-self: flex-start;
+  }
 }
 
 .textContainer {
   text-align: left;
+
+  .messageOnNewLine {
+    display: block;
+    margin-top: 10px;
+  }
+
+  .messageOnLeft {
+    margin-left: -40px;
+  }
 }
 
 .boldMessage {

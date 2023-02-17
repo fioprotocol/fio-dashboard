@@ -120,15 +120,11 @@ export default class Edge {
     return true;
   }
 
-  async signup(
-    username: string,
-    password: string,
-    pin: string,
-  ): Promise<EdgeAccount> {
+  async signup(username: string, password: string): Promise<EdgeAccount> {
     // create account
     try {
       this.validateEdgeContext();
-      return this.edgeContext.createAccount(username, password, pin, {});
+      return this.edgeContext.createAccount(username, password, null, {});
     } catch (e) {
       this.logError(e);
       throw e;

@@ -1,5 +1,6 @@
 export type FormValues = {
   email: string;
+  confirmEmail: string;
   password: string;
   confirmPassword: string;
   pin: string;
@@ -17,6 +18,7 @@ export type PasswordValidationState = {
 export type PasswordValidation = { [rule: string]: boolean };
 export type ValidationErrors = {
   email?: string;
+  confirmEmail?: string;
   password?: string;
   confirmPassword?: string;
 };
