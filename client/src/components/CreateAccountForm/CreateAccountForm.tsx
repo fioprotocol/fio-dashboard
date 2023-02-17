@@ -4,18 +4,16 @@ import { FormApi } from 'final-form';
 import { Link } from 'react-router-dom';
 import { WithLastLocationProps } from 'react-router-last-location';
 import classnames from 'classnames';
+import isEmpty from 'lodash/isEmpty';
 
 import { EdgeAccount, EdgeCurrencyWallet } from 'edge-core-js';
 
 import Wizard from './CreateAccountFormWizard';
 import FormModalWrapper from '../FormModalWrapper/FormModalWrapper';
 import GenericErrorModal from '../Modal/GenericErrorModal/GenericErrorModal';
-import Pin from './Pin';
-import Confirmation from './Confirmation';
 import Success from './Success';
 import PageTitle from '../PageTitle/PageTitle';
 
-import { PIN_LENGTH } from '../../constants/form';
 import {
   DEFAULT_WALLET_OPTIONS,
   WALLET_CREATED_FROM,
@@ -48,25 +46,16 @@ import classes from './CreateAccountForm.module.scss';
 
 const STEPS = {
   EMAIL_PASSWORD: 'EMAIL_PASSWORD',
-  PIN: 'PIN',
-  PIN_CONFIRM: 'PIN_CONFIRM',
-  CONFIRMATION: 'CONFIRMATION',
   SUCCESS: 'SUCCESS',
 };
 
 const STEPS_ORDER = {
   [STEPS.EMAIL_PASSWORD]: 0,
-  [STEPS.PIN]: 1,
-  [STEPS.PIN_CONFIRM]: 2,
-  [STEPS.CONFIRMATION]: 3,
-  [STEPS.SUCCESS]: 4,
+  [STEPS.SUCCESS]: 1,
 };
 
 const STEPS_LINK = {
   [STEPS.EMAIL_PASSWORD]: LINKS.CREATE_ACCOUNT,
-  [STEPS.PIN]: LINKS.CREATE_ACCOUNT_PIN,
-  [STEPS.PIN_CONFIRM]: LINKS.CREATE_ACCOUNT_PIN,
-  [STEPS.CONFIRMATION]: LINKS.CREATE_ACCOUNT_CONFIRM,
   [STEPS.SUCCESS]: LINKS.CREATE_ACCOUNT_CONFIRMATION,
 };
 
@@ -221,16 +210,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     };
   };
 
-  validate = (values: FormValues) => {
-    const { step } = this.state;
-    if (step === STEPS.EMAIL_PASSWORD) {
-      return this.validateUser(values);
-    }
-    if (step === STEPS.PIN_CONFIRM) {
-      return this.validateConfirmPin(values);
-    }
-    return {};
-  };
+  validate = (values: FormValues) => this.validateUser(values);
 
   validateUser = (values: FormValues) => {
     const { passwordValidation } = this.state;
@@ -246,18 +226,6 @@ export default class CreateAccountForm extends React.Component<Props, State> {
 
     this.passwordValidation(passValid);
 
-    return errors;
-  };
-
-  validateConfirmPin = (values: FormValues) => {
-    const errors: { [field: string]: string } = {};
-    if (
-      values.confirmPin &&
-      values.confirmPin.length === PIN_LENGTH &&
-      values.pin !== values.confirmPin
-    ) {
-      errors.confirmPin = 'Invalid PIN Entry - Try again or start over';
-    }
     return errors;
   };
 
@@ -397,65 +365,26 @@ export default class CreateAccountForm extends React.Component<Props, State> {
           password,
           confirmPassword,
         );
-        this.setState({ loading: false });
-        if (!Object.values(errors).length)
-          return this.setState({ step: STEPS.PIN });
 
-        return errors;
-      }
-      case STEPS.PIN: {
-        const { pin } = values;
-        if (!pin || (pin && pin.length < PIN_LENGTH)) return;
-        this.setState({ step: STEPS.PIN_CONFIRM });
-        break;
-      }
-      case STEPS.PIN_CONFIRM: {
-        const { confirmPin } = values;
-        if (!confirmPin || (confirmPin && confirmPin.length < PIN_LENGTH))
-          return;
-        this.setState({ step: STEPS.CONFIRMATION });
-        break;
-      }
-      case STEPS.CONFIRMATION: {
-        this.setState({ step: STEPS.SUCCESS });
+        if (!Object.values(errors).length) {
+          this.setState({ step: STEPS.SUCCESS });
 
-        const { email, password, pin } = values;
-        this.setState({ loading: true });
-        const { account, fioWallet, errors } = await createAccount(
-          emailToUsername(email),
-          password,
-          pin,
-        );
-        this.setState({ loading: false });
+          const { account, fioWallet, errors } = await createAccount(
+            emailToUsername(email),
+            password,
+          );
 
-        if (!Object.values(errors).length && account && fioWallet) {
-          await this.confirm(account, fioWallet, values);
+          if (!Object.values(errors).length && account && fioWallet) {
+            await this.confirm(account, fioWallet, values);
+          }
         }
+
+        this.setState({ loading: false });
 
         return errors;
       }
       default:
         return {};
-    }
-  };
-
-  onPrevStep = () => {
-    const { step } = this.state;
-    switch (step) {
-      case STEPS.PIN: {
-        this.form?.change('pin', '');
-        this.setState({ step: STEPS.EMAIL_PASSWORD });
-        break;
-      }
-      case STEPS.PIN_CONFIRM:
-      case STEPS.CONFIRMATION: {
-        this.form?.change('pin', '');
-        this.form?.change('confirmPin', '');
-        this.setState({ step: STEPS.PIN });
-        break;
-      }
-      default:
-        this.setState({ step: STEPS.EMAIL_PASSWORD });
     }
   };
 
@@ -493,6 +422,13 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       );
     }
 
+    const showInfoBadge =
+      values.email &&
+      values.confirmEmail &&
+      values.password &&
+      values.confirmPassword &&
+      isEmpty(errors);
+
     return (
       <form
         onSubmit={handleSubmit}
@@ -509,7 +445,6 @@ export default class CreateAccountForm extends React.Component<Props, State> {
             pristine
           }
           loading={loading || submitting || serverSignUpLoading}
-          onPrev={this.onPrevStep}
         >
           <Wizard.Page
             bottomText={
@@ -526,20 +461,12 @@ export default class CreateAccountForm extends React.Component<Props, State> {
               passwordValidation={passwordValidation}
               loading={loading}
               usernameAvailableLoading={usernameAvailableLoading}
+              isEmailChecked={values.email && !errors.email}
+              isConfirmEmailChecked={
+                values.confirmEmail && !errors.confirmEmail
+              }
+              showInfoBadge={showInfoBadge}
             />
-          </Wizard.Page>
-          <Wizard.Page hideNext>
-            <Pin />
-          </Wizard.Page>
-          <Wizard.Page hideNext>
-            <Pin
-              isConfirm={true}
-              error={errors?.confirmPin}
-              startOver={this.onPrevStep}
-            />
-          </Wizard.Page>
-          <Wizard.Page hideBack hideNext>
-            <Confirmation data={values} errors={errors} />
           </Wizard.Page>
           <Wizard.Page hideBack hideNext>
             <Success onFinish={this.onFinish} signupSuccess={signupSuccess} />

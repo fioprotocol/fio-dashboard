@@ -7,6 +7,9 @@ import classnames from 'classnames';
 
 import FormHeader from '../FormHeader/FormHeader';
 import Input, { INPUT_UI_STYLES } from '../Input/Input';
+import InfoBadge from '../InfoBadge/InfoBadge';
+
+import { BADGE_TYPES } from '../Badge/Badge';
 
 import {
   FormValues,
@@ -31,6 +34,15 @@ export const validate = (
   const errors: ValidationErrors = {};
   if (!values.email || !validator.validate(values.email)) {
     errors.email = 'Invalid Email Address';
+  }
+
+  if (!values.confirmEmail) {
+    errors.confirmEmail = 'Confirm Email Field Should Be Filled';
+  }
+
+  if (values.email !== values.confirmEmail && values.confirmEmail) {
+    errors.email = 'Email and Confirm Email do not match';
+    errors.confirmEmail = 'Email and Confirm Email do not match';
   }
 
   if (!values.password) {
@@ -86,9 +98,12 @@ export const validate = (
 };
 
 type Props = {
+  isEmailChecked: boolean;
+  isConfirmEmailChecked: boolean;
   usernameAvailableLoading: boolean;
   loading: boolean;
   passwordValidation: PasswordValidationState;
+  showInfoBadge: boolean;
   onEmailBlur: (e: React.FocusEvent<HTMLInputElement>) => Promise<void | null>;
 };
 
@@ -151,30 +166,45 @@ export default class EmailPassword extends Component<Props, LocalState> {
   };
 
   render(): React.ReactElement {
-    const { onEmailBlur, loading, usernameAvailableLoading } = this.props;
+    const {
+      isEmailChecked,
+      isConfirmEmailChecked,
+      onEmailBlur,
+      loading,
+      showInfoBadge,
+      usernameAvailableLoading,
+    } = this.props;
 
     return (
       <>
         <FormHeader
           title="Create Your FIO Account"
-          header="Set 1 of 2"
-          subtitle="Simply choose a username and password. We will use these to encrypt your account."
+          subtitle="Simply enter a username and password. We will use these to encrypt your account."
         />
         <Field
           name="email"
           component={Input}
           type="text"
-          placeholder="Enter Your Email Address"
+          placeholder="Email Address"
           disabled={loading || usernameAvailableLoading}
           loading={usernameAvailableLoading}
           onBlur={onEmailBlur}
+          showCheckIcon={isEmailChecked}
+        />
+        <Field
+          name="confirmEmail"
+          component={Input}
+          type="text"
+          placeholder="Email Address Confirm"
+          disabled={loading || usernameAvailableLoading}
+          showCheckIcon={isConfirmEmailChecked}
         />
         {this.renderPassValidBadge()}
         <Field
           name="password"
           component={Input}
           type="password"
-          placeholder="Choose a Password"
+          placeholder="Password"
           disabled={loading}
         />
         <OnFocus name="password">{this.handleFocus}</OnFocus>
@@ -182,9 +212,23 @@ export default class EmailPassword extends Component<Props, LocalState> {
           name="confirmPassword"
           component={Input}
           type="password"
-          placeholder="Confirm Password"
+          placeholder="Password Confirm"
           disabled={loading}
         />
+        <div className={classes.infoBadgeContainer}>
+          <InfoBadge
+            show={showInfoBadge}
+            hideDash
+            iconOnTop
+            messageOnNewLine
+            messageOnLeft
+            type={BADGE_TYPES.INFO}
+            title="Write it down!"
+            message="If you lose your account information, you’ll lose access to your
+              account permanently."
+          />
+        </div>
+
         <Field
           name="addEmailToPromoList"
           // @ts-ignore // todo: fix type issue:  SupportedInputs | React.ComponentType<FieldRenderProps<boolean, HTMLElement>>

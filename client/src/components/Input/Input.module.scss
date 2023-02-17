@@ -385,6 +385,10 @@
 
     &.doubleIconInput {
       padding-right: 90px;
+
+      input[data-clear='true'] {
+        padding-right: 0;
+      }
     }
   }
 }

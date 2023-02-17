@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import { FieldRenderProps } from 'react-final-form';
 
 import { ErrorBadge } from './ErrorBadge';
-import { PasteButton } from './InputActionButtons';
+import { CheckedIcon, PasteButton } from './InputActionButtons';
 import CustomDropdown from '../CustomDropdown';
 import { getValueFromPaste, log } from '../../util/general';
 
@@ -26,6 +26,7 @@ type Props = {
   onClose?: (isOpen: boolean) => void;
   hideError?: boolean;
   showPasteButton?: boolean;
+  showCheckIcon?: boolean;
   loading?: boolean;
   uiType?: string;
   errorType?: string;
@@ -57,6 +58,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     onClose,
     hideError,
     showPasteButton = false,
+    showCheckIcon,
     loading,
     uiType,
     errorType = '',
@@ -151,7 +153,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
             isBW && classes.bw,
             prefix && classes.prefixSpace,
             showPasteButton && classes.hasPasteButton,
-            type === 'password' && classes.doubleIconInput,
+            (type === 'password' || showCheckIcon) && classes.doubleIconInput,
             isLowHeight && classes.lowHeight,
           )}
         >
@@ -176,7 +178,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
             icon="times-circle"
             className={classnames(
               classes.inputIcon,
-              type === 'password' && classes.doubleIcon,
+              (type === 'password' || showCheckIcon) && classes.doubleIcon,
               isBW && classes.bw,
               disabled && classes.disabled,
               uiType && classes[uiType],
@@ -201,6 +203,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
             onClick={() => !disabled && toggleShowPass(!showPass)}
           />
         )}
+        <CheckedIcon isVisible={showCheckIcon && !loading} />
         <PasteButton
           isVisible={showPasteButton && !value}
           onClick={async () => {
