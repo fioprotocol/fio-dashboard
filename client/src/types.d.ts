@@ -432,21 +432,6 @@ export type ContainedFlowQueryParams = {
   r?: string;
 } & Partial<SignNFTParams>; // could be (SignNFTParams | RenewDomainActionParams | AnyOtherActionParams )
 
-export type EmailConfirmationStateData = {
-  redirectLink?: string;
-  refCode?: string;
-  containedFlowQueryParams?: ContainedFlowQueryParams | null;
-};
-
-export type EmailConfirmationResult = {
-  email?: string;
-  newEmail?: string;
-  oldEmail?: string;
-  error?: string;
-  success?: boolean;
-  stateData?: EmailConfirmationStateData;
-};
-
 export type CommonObjectProps = { [key: string]: string };
 
 export type NFTTokenItemProps = keyof NFTTokenDoublet;

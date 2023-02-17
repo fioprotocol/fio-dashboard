@@ -7,7 +7,6 @@ const emailTemplatesPath = path.resolve('server/src/emails/');
 
 export const templates = {
   createAccount: 'createAccount',
-  confirmEmail: 'confirmEmail',
   passRecovery: 'passRecovery',
   approveFioRequest: 'approveFioRequest',
   rejectFioRequest: 'rejectFioRequest',

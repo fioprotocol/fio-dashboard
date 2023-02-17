@@ -10,19 +10,13 @@ import TwoFactorCodeModal, {
 } from './components/TwoFactorCodeModal';
 import PageTitle from '../PageTitle/PageTitle';
 
-import { CONTAINED_FLOW_LOGIN_SUBTITLES } from '../../constants/containedFlow';
 import { LINKS } from '../../constants/labels';
 
 import apis from '../../api';
 
 import { autoLogin, AutoLoginParams } from '../../util/login';
 
-import {
-  EmailConfirmationResult,
-  LastAuthData,
-  LoginFailure,
-  RefProfile,
-} from '../../types';
+import { LastAuthData, LoginFailure, RefProfile } from '../../types';
 
 type FormValues = {
   email?: string;
@@ -54,7 +48,6 @@ type Props = {
   cachedUsers: string[];
   lastAuthData: LastAuthData;
   refProfileInfo: RefProfile;
-  emailConfirmationResult: EmailConfirmationResult;
 };
 
 const LoginForm: React.FC<Props> = props => {
@@ -71,22 +64,7 @@ const LoginForm: React.FC<Props> = props => {
     resetLoginFailure,
     loginFailure,
     edgeLoginFailure,
-    emailConfirmationResult,
   } = props;
-  const isEmailVerification = !!emailConfirmationResult?.success;
-  const isContainedFlow = !!emailConfirmationResult?.stateData
-    ?.containedFlowQueryParams;
-  let subtitle = '';
-  if (
-    isContainedFlow &&
-    emailConfirmationResult.stateData?.containedFlowQueryParams?.action
-  ) {
-    subtitle =
-      CONTAINED_FLOW_LOGIN_SUBTITLES[
-        emailConfirmationResult.stateData.containedFlowQueryParams.action.toUpperCase()
-      ];
-  }
-
   const [isForgotPass, toggleForgotPass] = useState(false);
   const [usePinLogin, setUsePinLogin] = useState(false);
   const [showBlockModal, toggleBlockModal] = useState(false);
@@ -104,14 +82,6 @@ const LoginForm: React.FC<Props> = props => {
       setUsePinLogin(false);
     }
   }, [cachedUsers, lastAuthData]);
-  useEffect(() => {
-    if (emailConfirmationResult && emailConfirmationResult.success) {
-      setLoginParams({
-        email:
-          emailConfirmationResult.email || emailConfirmationResult.newEmail,
-      });
-    }
-  }, [emailConfirmationResult]);
 
   useEffect(() => {
     return () => {
@@ -236,8 +206,6 @@ const LoginForm: React.FC<Props> = props => {
             isForgotPass={isForgotPass}
             toggleForgotPass={toggleForgotPass}
             title="Sign In"
-            subtitle={subtitle}
-            hideCreateAccount={isEmailVerification}
             onClose={onCloseLogin}
             initialValues={loginParams || {}}
           />

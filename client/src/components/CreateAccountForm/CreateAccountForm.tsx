@@ -33,11 +33,9 @@ import { emailToUsername, getWalletKeys, setDataMutator } from '../../utils';
 import { emailAvailable } from '../../api/middleware/auth';
 
 import {
-  EmailConfirmationStateData,
   FioWalletDoublet,
   RedirectLinkData,
   RefProfile,
-  ContainedFlowQueryParams,
   WalletKeysObj,
 } from '../../types';
 import { FormValues, PasswordValidationState } from './types';
@@ -94,14 +92,11 @@ type OwnProps = {
     email: string;
     fioWallets: FioWalletDoublet[];
     refCode?: string;
-    stateData?: EmailConfirmationStateData;
+    redirectLink?: string;
     addEmailToPromoList: boolean;
   }) => void;
   signupSuccess: boolean;
-  isRefSet: boolean;
-  isContainedFlow: boolean;
   refProfileInfo: RefProfile | null;
-  containedFlowQueryParams: ContainedFlowQueryParams | null;
   edgeAuthLoading: boolean;
   serverSignUpLoading: boolean;
   redirectLink: RedirectLinkData;
@@ -258,14 +253,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     fioWallet: EdgeCurrencyWallet,
     values: FormValues,
   ) => {
-    const {
-      onSubmit,
-      isRefSet,
-      refProfileInfo,
-      containedFlowQueryParams,
-      redirectLink,
-      isContainedFlow,
-    } = this.props;
+    const { onSubmit, refProfileInfo, redirectLink } = this.props;
     const { email, addEmailToPromoList } = values;
 
     const fioWallets: FioWalletDoublet[] = [
@@ -280,27 +268,12 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     this.setState({ keys: getWalletKeys([fioWallet]) });
     await account.logout();
 
-    let stateData: EmailConfirmationStateData = {
-      redirectLink: redirectLink ? redirectLink.pathname : '',
-    };
-    if (isRefSet) {
-      stateData = {
-        ...stateData,
-        refCode: refProfileInfo?.code,
-      };
-    }
-    if (isContainedFlow) {
-      stateData = {
-        ...stateData,
-        containedFlowQueryParams: containedFlowQueryParams || undefined,
-      };
-    }
     return onSubmit({
       username: emailToUsername(email),
       email,
       fioWallets,
-      refCode: isRefSet ? refProfileInfo?.code : '',
-      stateData,
+      refCode: refProfileInfo?.code || '',
+      redirectLink: redirectLink ? redirectLink.pathname : '',
       addEmailToPromoList,
     });
   };

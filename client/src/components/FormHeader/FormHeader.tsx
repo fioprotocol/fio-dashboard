@@ -5,7 +5,7 @@ import classes from './FormHeader.module.scss';
 
 type Props = {
   title: string;
-  subtitle: string | React.ReactNode;
+  subtitle?: string | React.ReactNode;
   header?: string | React.ReactElement;
   isSubNarrow?: boolean;
 };

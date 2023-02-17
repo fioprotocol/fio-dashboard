@@ -31,7 +31,6 @@ export type AuthProfileResponse = User;
 export type AuthUsernameResponse = string;
 export type AuthLoginResponse = {
   jwt: string;
-  emailConfirmationToken?: string;
 };
 export type AuthAvailableResponse = boolean;
 export type AuthNonceResponse = { email: string; nonce: string };
@@ -42,9 +41,7 @@ export type AuthConfirmResponse = {
 export type AuthSetRecoveryResponse = void;
 export type AuthLogoutResponse = null;
 export type AuthResendRecoveryResponse = { success: true };
-export type AuthResendConfirmEmailResponse = { success: true };
-export type AuthUpdateEmailRequestResponse = { success: true };
-export type AuthUpdateEmailRevertResponse = { success: true };
+export type AuthUpdateEmailResponse = { success: true };
 export type AuthCreateNewDeviceRequestResponse = null;
 export type AuthDeleteNewDeviceRequestResponse =
   | { success: true }
@@ -143,9 +140,7 @@ export type ApisResponse = AccountGetWalletsResponse &
   AuthSetRecoveryResponse &
   AuthLogoutResponse &
   AuthResendRecoveryResponse &
-  AuthResendConfirmEmailResponse &
-  AuthUpdateEmailRequestResponse &
-  AuthUpdateEmailRevertResponse &
+  AuthUpdateEmailResponse &
   AuthCreateNewDeviceRequestResponse &
   AuthDeleteNewDeviceRequestResponse &
   AuthUpdateNewDeviceResponse &

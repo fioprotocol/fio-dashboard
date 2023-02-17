@@ -7,16 +7,9 @@ import {
   CHANGE_RECOVERY_QUESTIONS_OPEN,
 } from '../edge/actions';
 
-import { USER_STATUSES } from '../../constants/common';
 import { INTERNAL_SERVER_ERROR_CODE } from '../../constants/errors';
 
-import {
-  AdminUser,
-  AnyType,
-  EmailConfirmationResult,
-  LastAuthData,
-  User,
-} from '../../types';
+import { AdminUser, AnyType, LastAuthData, User } from '../../types';
 
 export default combineReducers({
   loading(state: boolean = false, action) {
@@ -27,8 +20,6 @@ export default combineReducers({
       case actions.LOGOUT_REQUEST:
       case actions.ADMIN_LOGOUT_REQUEST:
       case actions.SIGNUP_REQUEST:
-      case actions.RESEND_CONFIRM_EMAIL_REQUEST:
-      case actions.CONFIRM_EMAIL_REQUEST:
       case actions.ADMIN_LOGIN_REQUEST:
       case actions.ADMIN_PROFILE_REQUEST:
       case actions.ACTIVATE_AFFILIATE_REQUEST:
@@ -44,10 +35,6 @@ export default combineReducers({
       case actions.SIGNUP_FAILURE:
       case actions.NONCE_SUCCESS:
       case actions.NONCE_FAILURE:
-      case actions.RESEND_CONFIRM_EMAIL_SUCCESS:
-      case actions.RESEND_CONFIRM_EMAIL_FAILURE:
-      case actions.CONFIRM_EMAIL_SUCCESS:
-      case actions.CONFIRM_EMAIL_FAILURE:
       case actions.ADMIN_LOGIN_SUCCESS:
       case actions.ADMIN_LOGIN_FAILURE:
       case actions.ADMIN_LOGOUT_SUCCESS:
@@ -60,20 +47,6 @@ export default combineReducers({
       case actions.ACTIVATE_AFFILIATE_FAILURE:
       case actions.UPDATE_AFFILIATE_SUCCESS:
       case actions.UPDATE_AFFILIATE_FAILURE:
-        return false;
-      default:
-        return state;
-    }
-  },
-  updateEmailLoading(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.UPDATE_EMAIL_REQ_REQUEST:
-      case actions.UPDATE_EMAIL_REQUEST:
-        return true;
-      case actions.UPDATE_EMAIL_REQ_SUCCESS:
-      case actions.UPDATE_EMAIL_REQ_FAILURE:
-      case actions.UPDATE_EMAIL_SUCCESS:
-      case actions.UPDATE_EMAIL_FAILURE:
         return false;
       default:
         return state;
@@ -107,61 +80,7 @@ export default combineReducers({
         return { ...state, secretSet: true };
       case actions.LOGOUT_SUCCESS:
         return null;
-      case actions.CONFIRM_EMAIL_SUCCESS: {
-        if (state != null && state.email)
-          return { ...state, status: USER_STATUSES.ACTIVE };
-
-        return state;
-      }
-      case actions.UPDATE_EMAIL_REQ_SUCCESS: {
-        if (state != null && state.status)
-          return {
-            ...state,
-            status: USER_STATUSES.NEW_EMAIL_NOT_VERIFIED,
-            newEmail: action.newEmail,
-          };
-        return state;
-      }
-      case actions.UPDATE_EMAIL_REVERT_SUCCESS: {
-        if (state != null && state.status)
-          return { ...state, status: USER_STATUSES.ACTIVE, newEmail: '' };
-        return state;
-      }
-      case actions.UPDATE_STATE_EMAIL: {
-        if (state != null && state.status)
-          return {
-            ...state,
-            status: USER_STATUSES.ACTIVE,
-            email: action.data.email,
-            newEmail: '',
-          };
-        return state;
-      }
       case actions.AUTH_CHECK_SUCCESS: {
-        if (
-          !!action.data.id &&
-          state != null &&
-          state.email &&
-          state.status === USER_STATUSES.NEW
-        )
-          return { ...state, status: action.data.status };
-
-        // redirects user to settings after updated email
-        if (
-          !!action.data.id &&
-          state != null &&
-          state.id === action.data.id &&
-          state.email &&
-          state.email !== action.data.email &&
-          state.status === USER_STATUSES.NEW_EMAIL_NOT_VERIFIED
-        )
-          return {
-            ...state,
-            status: action.data.status,
-            email: action.data.email,
-            newEmail: '',
-          };
-
         if (
           state != null &&
           !!action.data.newDeviceTwoFactor &&
@@ -186,20 +105,6 @@ export default combineReducers({
         return action.data;
       case actions.ADMIN_LOGOUT_SUCCESS:
         return null;
-      default:
-        return state;
-    }
-  },
-  emailConfirmationResult(state: EmailConfirmationResult = {}, action) {
-    switch (action.type) {
-      case actions.CONFIRM_EMAIL_SUCCESS:
-      case actions.UPDATE_EMAIL_SUCCESS:
-        return { success: true, ...action.data };
-      case actions.CONFIRM_EMAIL_FAILURE:
-      case actions.UPDATE_EMAIL_FAILURE:
-        return { success: false, error: action.error.code };
-      case actions.RESET_EMAIL_CONFIRMATION_RESULT:
-        return {};
       default:
         return state;
     }
@@ -283,28 +188,6 @@ export default combineReducers({
       case CHANGE_RECOVERY_QUESTIONS_OPEN: {
         return {};
       }
-      default:
-        return state;
-    }
-  },
-  emailConfirmationToken(state: string | null = null, action) {
-    switch (action.type) {
-      case actions.LOGIN_SUCCESS:
-        return action.data.emailConfirmationToken || null;
-      case actions.CONFIRM_EMAIL_SUCCESS:
-      case actions.LOGOUT_SUCCESS:
-        return null;
-      default:
-        return state;
-    }
-  },
-  emailConfirmationSent(state: boolean = false, action) {
-    switch (action.type) {
-      case actions.RESEND_CONFIRM_EMAIL_REQUEST:
-      case actions.LOGOUT_SUCCESS:
-        return false;
-      case actions.RESEND_CONFIRM_EMAIL_SUCCESS:
-        return true;
       default:
         return state;
     }

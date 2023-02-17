@@ -18,15 +18,11 @@ import {
   containedFlowStep,
 } from '../redux/containedFlow/selectors';
 import { fioAddresses, fioAddressesLoading } from '../redux/fio/selectors';
-import {
-  isAuthenticated,
-  emailConfirmationResult,
-} from '../redux/profile/selectors';
+import { isAuthenticated } from '../redux/profile/selectors';
 
 import {
   ContainedFlowQueryParams,
   ContainedFlowQuery,
-  EmailConfirmationResult,
   AnyType,
   FioAddressDoublet,
 } from '../types';
@@ -39,7 +35,6 @@ type Props = {
   isAuthenticated: boolean;
   isContainedFlow: boolean;
   containedFlowStep: string;
-  emailConfirmationResult: EmailConfirmationResult;
   fioAddressesLoading: boolean;
   setContainedParams: (params: ContainedFlowQuery) => void;
   setStep: (
@@ -57,7 +52,6 @@ const ContainedFlow: React.FC<Props> | null = props => {
     isAuthenticated,
     isContainedFlow,
     containedFlowStep,
-    emailConfirmationResult,
     fioAddressesLoading,
     setContainedParams,
     setStep,
@@ -72,7 +66,6 @@ const ContainedFlow: React.FC<Props> | null = props => {
   const containedFlowAction = containedFlowQueryParams
     ? containedFlowQueryParams.action?.toUpperCase()
     : '';
-  const isEmailVerification = !!emailConfirmationResult?.success;
 
   useEffect(() => {
     if (!containedFlowQueryParams && query?.action) {
@@ -81,7 +74,7 @@ const ContainedFlow: React.FC<Props> | null = props => {
   }, [containedFlowQueryParams, query, setContainedParams]);
 
   useEffect(() => {
-    if (isContainedFlow && isAuthenticated && !isEmailVerification) {
+    if (isContainedFlow && isAuthenticated) {
       if (containedFlowAction !== CONTAINED_FLOW_ACTIONS.REG) {
         if (fioAddressesLoading) return;
         if (
@@ -107,7 +100,6 @@ const ContainedFlow: React.FC<Props> | null = props => {
   }, [
     isContainedFlow,
     isAuthenticated,
-    isEmailVerification,
     fioAddresses.length,
     containedFlowAction,
     containedFlowStep,
@@ -126,7 +118,6 @@ const reduxConnect = connect(
     isAuthenticated,
     isContainedFlow,
     containedFlowStep,
-    emailConfirmationResult,
     fioAddressesLoading,
   }),
   {

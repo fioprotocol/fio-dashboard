@@ -39,9 +39,7 @@ type OwnProps = {
   loginFailure: LoginFailure;
   edgeLoginFailure: { name?: string; type?: string };
   title: string;
-  subtitle?: string;
   headerIcon?: IconProp | null;
-  hideCreateAccount?: boolean;
   initialValues: { email?: string; password?: string };
 };
 type Props = OwnProps;
@@ -56,9 +54,7 @@ const UsernamePassword: React.FC<Props> = props => {
     edgeLoginFailure,
     toggleForgotPass,
     title,
-    subtitle,
     headerIcon,
-    hideCreateAccount,
     initialValues,
   } = props;
 
@@ -156,8 +152,6 @@ const UsernamePassword: React.FC<Props> = props => {
   };
 
   const renderCreateAccount = () => {
-    if (hideCreateAccount) return null;
-
     return (
       <p className="regular-text">
         Don’t have an account?{' '}
@@ -204,7 +198,7 @@ const UsernamePassword: React.FC<Props> = props => {
     return (
       <form onSubmit={login}>
         {renderIcon()}
-        <FormHeader title={title} subtitle={subtitle} />
+        <FormHeader title={title} />
         <Field
           name="email"
           type="text"
