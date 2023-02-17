@@ -3,6 +3,7 @@ import Base from './base';
 import {
   AdminDefaults,
   AdminFioAccountsProfilesListResponse,
+  AdminFioApiUrlsListResponse,
   AdminGeneralCreateResponse,
   AdminOrderItemResponse,
   AdminOrdersListResponse,
@@ -15,7 +16,7 @@ import {
   UsersDetailsResponse,
   UsersListResponse,
 } from './responses';
-import { RefProfile } from '../types';
+import { OrderDetails, RefProfile } from '../types';
 
 export default class Admin extends Base {
   adminList(limit: number, offset: number): Promise<AdminUsersListResponse> {
@@ -48,16 +49,26 @@ export default class Admin extends Base {
     return this.apiClient.post(`admin/accounts/${id}`, data);
   }
 
+  deleteFioAccountProfile(id: string): Promise<AdminGeneralCreateResponse> {
+    return this.apiClient.delete(`admin/accounts/${id}`, {});
+  }
+
   adminUserProfile(id: string): Promise<AdminUsersListResponse> {
     return this.apiClient.get(`admin/info/${id}`);
   }
 
-  ordersList(limit: number, offset: number): Promise<AdminOrdersListResponse> {
-    return this.apiClient.get('admin/orders', { limit, offset });
+  ordersList(
+    limit: number,
+    offset: number,
+    filters?: Partial<OrderDetails>,
+  ): Promise<AdminOrdersListResponse> {
+    return this.apiClient.get('admin/orders', { limit, offset, filters });
   }
 
-  exportOrdersData(): Promise<AdminOrdersListResponse> {
-    return this.apiClient.get('admin/orders/export');
+  exportOrdersData(
+    filters: Partial<OrderDetails>,
+  ): Promise<AdminOrdersListResponse> {
+    return this.apiClient.get('admin/orders/export', { filters });
   }
 
   search(value: string): Promise<AdminSearchResponse> {
@@ -111,8 +122,13 @@ export default class Admin extends Base {
   partnersList(
     limit: number,
     offset: number,
+    filters?: Partial<RefProfile>,
   ): Promise<AdminPartnersListResponse> {
-    return this.apiClient.get('admin/partners/list', { limit, offset });
+    return this.apiClient.get('admin/partners/list', {
+      limit,
+      offset,
+      filters,
+    });
   }
 
   createPartner(data: RefProfile): Promise<AdminGeneralCreateResponse> {
@@ -145,5 +161,27 @@ export default class Admin extends Base {
 
   saveDefaults(data: AdminDefaults): Promise<AdminGeneralCreateResponse> {
     return this.apiClient.post(`admin/defaults`, { data });
+  }
+
+  getFioApiUrlsList(
+    limit: number,
+    offset: number,
+  ): Promise<AdminFioApiUrlsListResponse> {
+    return this.apiClient.get('admin/api-urls', { limit, offset });
+  }
+
+  createFioApiUrl(data: { url: string }): Promise<AdminGeneralCreateResponse> {
+    return this.apiClient.post(`admin/api-urls`, data);
+  }
+
+  editFioApiUrl(data: {
+    id: string;
+    url: string;
+  }): Promise<AdminGeneralCreateResponse> {
+    return this.apiClient.patch(`admin/api-urls/${data.id}`, data);
+  }
+
+  deleteFioApiUrl(data: { id: string }): Promise<AdminGeneralCreateResponse> {
+    return this.apiClient.delete(`admin/api-urls/${data.id}`, {});
   }
 }

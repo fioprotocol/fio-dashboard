@@ -4,6 +4,8 @@ import { DEFAULT_LIMIT, DEFAULT_OFFSET } from '../../hooks/usePagination';
 
 import { minWaitTimeFunction } from '../../utils';
 
+import { OrderDetails } from '../../types';
+
 import { CommonPromiseAction } from '../types';
 
 export const prefix = 'admin';
@@ -44,26 +46,29 @@ export const GET_ORDERS_LIST_BY_ADMIN_FAILURE = `${prefix}/GET_ORDERS_LIST_BY_AD
 export const getOrdersList = (
   limit = DEFAULT_LIMIT,
   offset = DEFAULT_OFFSET,
+  filters = {},
 ): CommonPromiseAction => ({
   types: [
     GET_ORDERS_LIST_BY_ADMIN_REQUEST,
     GET_ORDERS_LIST_BY_ADMIN_SUCCESS,
     GET_ORDERS_LIST_BY_ADMIN_FAILURE,
   ],
-  promise: (api: Api) => api.admin.ordersList(limit, offset),
+  promise: (api: Api) => api.admin.ordersList(limit, offset, filters),
 });
 
 export const EXPORT_ORDERS_DATA_BY_ADMIN_REQUEST = `${prefix}/EXPORT_ORDERS_DATA_BY_ADMIN_REQUEST`;
 export const EXPORT_ORDERS_DATA_BY_ADMIN_SUCCESS = `${prefix}/EXPORT_ORDERS_DATA_BY_ADMIN_SUCCESS`;
 export const EXPORT_ORDERS_DATA_BY_ADMIN_FAILURE = `${prefix}/EXPORT_ORDERS_DATA_BY_ADMIN_FAILURE`;
 
-export const exportOrdersData = (): CommonPromiseAction => ({
+export const exportOrdersData = (
+  filters: Partial<OrderDetails>,
+): CommonPromiseAction => ({
   types: [
     EXPORT_ORDERS_DATA_BY_ADMIN_REQUEST,
     EXPORT_ORDERS_DATA_BY_ADMIN_SUCCESS,
     EXPORT_ORDERS_DATA_BY_ADMIN_FAILURE,
   ],
-  promise: (api: Api) => api.admin.exportOrdersData(),
+  promise: (api: Api) => api.admin.exportOrdersData(filters),
 });
 
 export const ADMIN_SEARCH_REQUEST = `${prefix}/ADMIN_SEARCH_REQUEST`;
@@ -146,9 +151,10 @@ export const GET_PARTNERS_FAILURE = `${prefix}/GET_PARTNERS_FAILURE`;
 export const getPartnersList = (
   limit = DEFAULT_LIMIT,
   offset = DEFAULT_OFFSET,
+  filters = {},
 ): CommonPromiseAction => ({
   types: [GET_PARTNERS_REQUEST, GET_PARTNERS_SUCCESS, GET_PARTNERS_FAILURE],
-  promise: (api: Api) => api.admin.partnersList(limit, offset),
+  promise: (api: Api) => api.admin.partnersList(limit, offset, filters),
 });
 
 export const GET_REGULAR_USERS_REQUEST = `${prefix}/GET_REGULAR_USERS_REQUEST`;
@@ -165,4 +171,20 @@ export const getRegularUsersList = (
     GET_REGULAR_USERS_FAILURE,
   ],
   promise: (api: Api) => api.admin.usersList(limit, offset),
+});
+
+export const GET_FIO_API_URLS_REQUEST = `${prefix}/GET_FIO_API_URLS_REQUEST`;
+export const GET_FIO_API_URLS_SUCCESS = `${prefix}/GET_FIO_API_URLS_SUCCESS`;
+export const GET_FIO_API_URLS_FAILURE = `${prefix}/GET_FIO_API_URLS_FAILURE`;
+
+export const getFioApiUrlsList = (
+  limit = DEFAULT_LIMIT,
+  offset = DEFAULT_OFFSET,
+): CommonPromiseAction => ({
+  types: [
+    GET_FIO_API_URLS_REQUEST,
+    GET_FIO_API_URLS_SUCCESS,
+    GET_FIO_API_URLS_FAILURE,
+  ],
+  promise: (api: Api) => api.admin.getFioApiUrlsList(limit, offset),
 });

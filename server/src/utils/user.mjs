@@ -16,8 +16,9 @@ export const getDetailedUsersInfo = async user => {
       const fioWalletObj = { publicKey, name };
       fioWalletObj.balance = 'N/A';
 
+      const publicFioSDK = await fioApi.getPublicFioSDK();
       try {
-        const balanceResponse = await fioApi.getPublicFioSDK().getFioBalance(publicKey);
+        const balanceResponse = await publicFioSDK.getFioBalance(publicKey);
         fioWalletObj.balance = await fioApi
           .sufToAmount(balanceResponse.balance)
           .toFixed(2);
@@ -30,9 +31,7 @@ export const getDetailedUsersInfo = async user => {
       fioWallets.push(fioWalletObj);
 
       try {
-        const { fio_addresses, fio_domains } = await fioApi
-          .getPublicFioSDK()
-          .getFioNames(publicKey);
+        const { fio_addresses, fio_domains } = await publicFioSDK.getFioNames(publicKey);
 
         if (fio_addresses.length > 0) {
           fio_addresses.forEach(fio_address => {

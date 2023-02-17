@@ -14,6 +14,7 @@ type Props = {
   customValue?: { id: string; name: string | React.ReactNode };
   toggleToCustom?: (isCustom: boolean) => void;
   isShort?: boolean;
+  isSmall?: boolean;
   isWidthResponsive?: boolean;
   isWhite?: boolean;
   isVoilet?: boolean;
@@ -43,6 +44,7 @@ const CustomDropdown: React.FC<Props> = props => {
     customValue,
     toggleToCustom,
     isShort,
+    isSmall,
     isWidthResponsive,
     isWhite,
     isVoilet,
@@ -96,6 +98,7 @@ const CustomDropdown: React.FC<Props> = props => {
       className={classnames(
         classes.dropdown,
         isShort && classes.isShort,
+        isSmall && classes.isSmall,
         isWidthResponsive && classes.isWidthResponsive,
         hasAutoWidth && classes.hasAutoWidth,
         fitContentWidth && classes.fitContentWidth,

@@ -38,6 +38,7 @@ export default function usePagination(
   getItemsList: (
     limit?: number,
     offset?: number,
+    filters?: AnyObject,
   ) => Promise<
     {
       data: {
@@ -46,6 +47,7 @@ export default function usePagination(
     } & AnyObject
   >,
   maxItemsPerPage: number = DEFAULT_LIMIT, // this param will be useful for query initialization in case limit is empty in query, otherwise param from query will be in prior
+  filters?: AnyObject,
 ): {
   paginationComponent: Component;
   refresh: () =>
@@ -86,14 +88,20 @@ export default function usePagination(
       queryParams.get(LIMIT_QUERY_PARAMETER_NAME) &&
       queryParams.get(OFFSET_QUERY_PARAMETER_NAME)
     ) {
-      return await getItemsList(limit, offset);
+      return await getItemsList(limit, offset, filters);
     }
     return;
   };
 
   useEffect(() => {
+    handleChangeOffset('0');
+    // handleChangeOffset refresh on each offset change, need to update only on filters change
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters]);
+
+  useEffect(() => {
     const getItems = async () => {
-      const result = await getItemsList(limit, offset);
+      const result = await getItemsList(limit, offset, filters);
       const maxCount = result.data?.maxCount || 0;
       setItemsCount(maxCount);
       setActivePage(
@@ -106,7 +114,7 @@ export default function usePagination(
       queryParams.get(OFFSET_QUERY_PARAMETER_NAME)
     )
       getItems();
-  }, [getItemsList, limit, offset, queryParams]);
+  }, [getItemsList, limit, offset, filters, queryParams]);
 
   // initialize (redirect) url query, if no params present in it
   useEffectOnce(() => {

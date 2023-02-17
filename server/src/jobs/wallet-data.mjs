@@ -44,10 +44,6 @@ const returnDayRange = timePeriod => {
 };
 
 class WalletDataJob extends CommonJob {
-  constructor() {
-    super();
-  }
-
   logFioError(e, wallet, action = '-') {
     if (e && e.errorCode !== 404) {
       if (wallet && wallet.id)
@@ -60,7 +56,7 @@ class WalletDataJob extends CommonJob {
   }
 
   async checkRequests(wallet) {
-    const walletSdk = fioApi.getWalletSdkInstance(wallet.publicKey);
+    const walletSdk = await fioApi.getWalletSdkInstance(wallet.publicKey);
     const {
       publicWalletData: {
         requests: { sent, received },
@@ -220,9 +216,10 @@ class WalletDataJob extends CommonJob {
       const {
         publicWalletData: { cryptoHandles, domains },
       } = wallet;
-      const { fio_addresses, fio_domains } = await fioApi
-        .getPublicFioSDK()
-        .getFioNames(wallet.publicKey);
+      const publicFioSDK = await fioApi.getPublicFioSDK();
+      const { fio_addresses, fio_domains } = await publicFioSDK.getFioNames(
+        wallet.publicKey,
+      );
 
       let changed = false;
 
@@ -386,9 +383,8 @@ class WalletDataJob extends CommonJob {
     try {
       let balance = 0;
       try {
-        const balanceResponse = await fioApi
-          .getPublicFioSDK()
-          .getFioBalance(wallet.publicKey);
+        const publicFioSDK = await fioApi.getPublicFioSDK();
+        const balanceResponse = await publicFioSDK.getFioBalance(wallet.publicKey);
         balance = balanceResponse.balance;
       } catch (e) {
         this.logFioError(e, wallet);

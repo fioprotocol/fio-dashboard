@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import { Table } from 'react-bootstrap';
 
@@ -18,6 +19,8 @@ import {
   PAYMENT_PROVIDER,
 } from '../../../../constants/purchase';
 import { CURRENCY_CODES } from '../../../../constants/common';
+import { ADMIN_ROUTES } from '../../../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
 
 import apis from '../../../../api';
 
@@ -128,7 +131,18 @@ const AdminOrderModal: React.FC<Props> = ({
               'Order Amount',
               isFree ? 'Free' : orderItem.total + ' ' + CURRENCY_CODES.USDC,
             )}
-            {renderOrderItemFieldData('User', orderItem.user.email)}
+            <div className="d-flex justify-content-between mb-2">
+              <div className="mr-3">
+                <b>User</b>
+              </div>
+              <div>
+                <Link
+                  to={`${ADMIN_ROUTES.ADMIN_REGULAR_USER_DETAILS}?${QUERY_PARAMS_NAMES.USER_ID}=${orderItem.user.id}`}
+                >
+                  {orderItem.user.email}
+                </Link>
+              </div>
+            </div>
             {renderOrderItemFieldData('Payment Type', paymentType)}
             {renderOrderItemFieldData(
               'Status',

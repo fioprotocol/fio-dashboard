@@ -123,11 +123,12 @@ export class OrderItem extends Base {
     });
   }
 
-  static async listAll(limit = 25, offset = 0) {
+  static async listAll(limit = 25, offset = 0, where) {
     const orderItems = await this.findAll({
       include: [Order, OrderItemStatus, BlockchainTransaction],
       limit: limit ? limit : undefined,
       skip: offset,
+      where,
       order: [['id', 'DESC']],
     });
 
@@ -180,17 +181,19 @@ export class OrderItem extends Base {
           ois."paymentId",
           rp.label,
           rp."regRefCode", 
-          rp."regRefApiToken", 
           rp.tpid,
           drp.tpid as "domainTpid",
-          fap.actor,
-          fap.permission
+          fapfree.actor as "freeActor",
+          fapfree.permission as "freePermission",
+          fappaid.actor as "paidActor",
+          fappaid.permission as "paidPermission"
         FROM "order-items" oi
           INNER JOIN "order-items-status" ois ON ois."orderItemId" = oi.id
           INNER JOIN orders o ON o.id = oi."orderId"
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId" AND rp.type = '${ReferrerProfile.TYPE.REF}'
           LEFT JOIN "referrer-profiles" drp ON drp.id = o."refProfileId"
-          LEFT JOIN "fio-account-profiles" fap ON fap.id = rp."fioAccountProfileId"
+          LEFT JOIN "fio-account-profiles" fapfree ON fapfree.id = rp."freeFioAccountProfileId"
+          LEFT JOIN "fio-account-profiles" fappaid ON fappaid.id = rp."paidFioAccountProfileId"
         WHERE ois."paymentStatus" = ${Payment.STATUS.COMPLETED} 
           AND ois."txStatus" = ${status}
         ORDER BY oi.id

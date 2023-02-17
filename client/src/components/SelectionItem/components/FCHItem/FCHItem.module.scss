@@ -4,6 +4,7 @@
   font-size: 0.9375em;
   margin: 0;
   word-break: break-all;
+  @include proxima-nova-medium;
 
   &.hasSmallFont {
     font-size: 0.8125em;
@@ -11,13 +12,5 @@
 
   &.hasCenteredText {
     text-align: center;
-  }
-
-  .address {
-    @include proxima-nova-thin;
-  }
-
-  .delimiter, .domain {
-    @include proxima-nova-bold;
   }
 }

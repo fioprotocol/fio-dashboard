@@ -46,7 +46,6 @@ export default class ActivateAffiliate extends Base {
           type: ReferrerProfile.TYPE.AFFILIATE,
           code: '',
           regRefCode: '',
-          regRefApiToken: '',
           label: 'Affiliate',
           tpid: data.fch,
           settings: {

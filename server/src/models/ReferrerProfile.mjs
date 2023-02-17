@@ -32,7 +32,6 @@ export class ReferrerProfile extends Base {
         type: { type: DT.STRING, defaultValue: this.TYPE.REF },
         code: { type: DT.STRING, allowNull: false, unique: true },
         regRefCode: { type: DT.STRING, allowNull: false },
-        regRefApiToken: { type: DT.STRING, allowNull: false },
         label: { type: DT.STRING, allowNull: true },
         title: { type: DT.STRING, allowNull: true },
         subTitle: { type: DT.STRING, allowNull: true },
@@ -67,6 +66,16 @@ export class ReferrerProfile extends Base {
           type: DT.STRING,
           allowNull: true,
         },
+        freeFioAccountProfileId: {
+          type: DT.BIGINT,
+          allowNull: true,
+          defaultValue: 1,
+        },
+        paidFioAccountProfileId: {
+          type: DT.BIGINT,
+          allowNull: true,
+          defaultValue: 1,
+        },
       },
       {
         sequelize,
@@ -83,7 +92,11 @@ export class ReferrerProfile extends Base {
       as: 'refProfile',
     });
     this.belongsTo(FioAccountProfile, {
-      foreignKey: 'fioAccountProfileId',
+      foreignKey: 'freeFioAccountProfileId',
+      targetKey: 'id',
+    });
+    this.belongsTo(FioAccountProfile, {
+      foreignKey: 'paidFioAccountProfileId',
       targetKey: 'id',
     });
   }
@@ -95,12 +108,13 @@ export class ReferrerProfile extends Base {
         'type',
         'code',
         'regRefCode',
+        'freeFioAccountProfileId',
+        'paidFioAccountProfileId',
         'label',
         'title',
         'subTitle',
         'tpid',
         'settings',
-        'regRefApiToken',
         'createdAt',
       ],
     };
@@ -118,12 +132,26 @@ export class ReferrerProfile extends Base {
     });
   }
 
-  static format({ id, type, code, regRefCode, label, title, subTitle, settings, tpid }) {
+  static format({
+    id,
+    type,
+    code,
+    regRefCode,
+    freeFioAccountProfileId,
+    paidFioAccountProfileId,
+    label,
+    title,
+    subTitle,
+    settings,
+    tpid,
+  }) {
     return {
       id,
       type,
       code,
       regRefCode,
+      freeFioAccountProfileId,
+      paidFioAccountProfileId,
       label,
       title,
       subTitle,
@@ -132,16 +160,19 @@ export class ReferrerProfile extends Base {
     };
   }
 
-  static list(limit = 25, offset = 0) {
+  static list(limit = 25, offset = 0, where) {
     return this.findAll({
       order: [['createdAt', 'DESC']],
       limit: limit ? limit : undefined,
       offset,
+      where,
     });
   }
 
-  static partnersCount() {
-    return this.count();
+  static partnersCount(where) {
+    return this.count({
+      where,
+    });
   }
 
   static generateCode(data) {

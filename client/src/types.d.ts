@@ -4,10 +4,10 @@ import { NftItem } from '@fioprotocol/fiosdk/src/entities/NftItem';
 
 import { LocationState, Path } from 'history';
 
-import { FIOSDK_LIB } from './api/fio';
+import { FIOSDK_LIB, SignedTxArgs } from './api/fio';
 
 import { CONTAINED_FLOW_ACTIONS } from './constants/containedFlow';
-import { DOMAIN_TYPE } from './constants/fio';
+import { DOMAIN_TYPE, FIO_ACCOUNT_TYPES } from './constants/fio';
 import {
   BC_TX_STATUSES,
   PAYMENT_OPTIONS,
@@ -43,6 +43,7 @@ export type Domain = { domain: string; free?: boolean };
 export type ContainedFlowActionSettingsKey = keyof typeof CONTAINED_FLOW_ACTIONS;
 export type CartItemType = typeof CART_ITEM_TYPE[keyof typeof CART_ITEM_TYPE];
 export type DomainItemType = typeof DOMAIN_TYPE[keyof typeof DOMAIN_TYPE];
+export type FioAccountProfileType = typeof FIO_ACCOUNT_TYPES[keyof typeof FIO_ACCOUNT_TYPES];
 
 export type CartItem = {
   address?: string;
@@ -122,6 +123,10 @@ export type RegistrationRegistered = {
   cartItemId: string;
   transaction_id: string;
   transactions?: string[];
+  data?: {
+    signedTx?: SignedTxArgs;
+    signingWalletPubKey?: string;
+  };
 };
 
 export type PaymentProvider = typeof PAYMENT_PROVIDER[keyof typeof PAYMENT_PROVIDER];
@@ -392,7 +397,8 @@ export type RefProfile = {
     link?: string;
   };
   tpid: string;
-  regRefApiToken: string;
+  freeFioAccountProfileId: number;
+  paidFioAccountProfileId: number;
   createdAt?: string;
 };
 
@@ -652,7 +658,7 @@ export type FioAccountProfile = {
   actor: string;
   permission: string;
   name: string;
-  isDefault: boolean;
+  accountType?: FioAccountProfileType;
   createdAt: string;
 };
 
@@ -698,6 +704,12 @@ export type AdminSearchResult = {
     orders: AdminOrderItemProfile[];
     users?: AdminUserItemProfile[];
   };
+};
+
+export type FioApiUrl = {
+  id: string;
+  url: string;
+  createdAt: string;
 };
 
 export type PaymentEventLog = {

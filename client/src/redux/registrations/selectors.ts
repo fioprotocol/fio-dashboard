@@ -83,3 +83,4 @@ export const allowCustomDomains = (state: ReduxState): boolean => {
 };
 export const hasGetPricesError = (state: ReduxState): boolean =>
   state[prefix].hasGetPricesError;
+export const apiUrls = (state: ReduxState): string[] => state[prefix].apiUrls;

@@ -22,9 +22,9 @@ export const FCHItem: React.FC<Props> = props => {
         hasCenteredText && classes.hasCenteredText,
       )}
     >
-      <span className={classes.address}>{address}</span>
-      <span className={classes.delimiter}>{FIO_ADDRESS_DELIMITER}</span>
-      <span className={classes.domain}>{domain}</span>
+      {address}
+      {FIO_ADDRESS_DELIMITER}
+      {domain}
     </p>
   );
 };

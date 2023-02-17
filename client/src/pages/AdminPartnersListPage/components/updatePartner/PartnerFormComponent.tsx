@@ -26,8 +26,13 @@ import {
   REF_PROFILE_TYPES_OPTIONS,
   REF_PROFILE_TYPE,
 } from '../../../../constants/common';
+import { FIO_ACCOUNT_TYPES } from '../../../../constants/fio';
 
-import { RefProfile, RefProfileDomain } from '../../../../types';
+import {
+  FioAccountProfile,
+  RefProfile,
+  RefProfileDomain,
+} from '../../../../types';
 
 import classes from '../../AdminPartnersListPage.module.scss';
 
@@ -38,9 +43,10 @@ type FieldsType = FieldArrayRenderProps<
 
 const RANK_REARRANGEMENT_DELAY_MS = 500;
 
-export const PartnerFormComponent: React.FC<FormRenderProps<
-  RefProfile
->> = props => {
+export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
+  loading: boolean;
+  fioAccountsProfilesList: FioAccountProfile[];
+}> = props => {
   const {
     handleSubmit,
     validating,
@@ -49,10 +55,17 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
     pristine,
     form,
     values,
-    // Passed non-API props don't work with typescript
-    // @ts-ignore
+    fioAccountsProfilesList,
     loading,
   } = props;
+
+  const fioAccountsProfilesOptions = fioAccountsProfilesList.map(
+    fioAccountsProfile => ({
+      id: fioAccountsProfile.id,
+      name: `${fioAccountsProfile.name}: ${fioAccountsProfile.accountType ||
+        FIO_ACCOUNT_TYPES.REGULAR}`,
+    }),
+  );
 
   useEffect(() => {
     const subscriptionFn = debounce((subscription: FormState<RefProfile>) => {
@@ -228,13 +241,26 @@ export const PartnerFormComponent: React.FC<FormRenderProps<
             </div>
           </div>
           <Field
-            type="text"
-            name="regRefApiToken"
+            type="dropdown"
+            name="freeFioAccountProfileId"
             component={Input}
+            options={fioAccountsProfilesOptions}
             uiType={INPUT_UI_STYLES.BLACK_WHITE}
             errorColor={COLOR_TYPE.WARN}
-            label="Registration site API token *"
-            placeholder="Registration site API token"
+            label="FIO Account Profile for Free Registrations *"
+            placeholder="FIO Account Profie FREE"
+            loading={validating}
+            disabled={submitting || loading}
+          />
+          <Field
+            type="dropdown"
+            name="paidFioAccountProfileId"
+            component={Input}
+            options={fioAccountsProfilesOptions}
+            uiType={INPUT_UI_STYLES.BLACK_WHITE}
+            errorColor={COLOR_TYPE.WARN}
+            label="FIO Account Profile for Paid Registrations *"
+            placeholder="FIO Account Profie PAID"
             loading={validating}
             disabled={submitting || loading}
           />

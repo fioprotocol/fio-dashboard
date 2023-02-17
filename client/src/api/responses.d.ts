@@ -3,7 +3,6 @@ import {
   AdminUser,
   ChainCodeProps,
   ContainedFlowQueryParams,
-  Domain,
   FioAccountProfile,
   FioWalletDoublet,
   Notification,
@@ -16,6 +15,8 @@ import {
   UserDetails,
   UserOrderDetails,
   RefProfileDomain,
+  FioApiUrl,
+  OrderDetails,
 } from '../types';
 
 export type AccountGetWalletsResponse = FioWalletDoublet[];
@@ -72,12 +73,6 @@ export type FioRegPricesResponse = {
     usdtRoe: number;
   };
 };
-export type FioRegDomainsResponse = { domains: Domain[] };
-export type FioRegRegisterResponse = {
-  success?: boolean;
-  freeAddress?: { id: number; name: string; createdAt: string };
-  error?: string;
-};
 export type FioRegCaptchaResponse = {
   success: boolean;
   gt?: string;
@@ -85,6 +80,7 @@ export type FioRegCaptchaResponse = {
   new_captcha?: number;
   error?: string;
 };
+export type FioRegApiUrlsResponse = string[];
 
 export type NotificationsListResponse = Notification[];
 export type NotificationsCreateResponse = Notification;
@@ -114,7 +110,8 @@ export type AdminFioAccountsProfilesListResponse = FioAccountProfile[];
 export type AdminPartnersListResponse = RefProfile[];
 export type AdminUsersListResponse = AdminUser[];
 export type AdminOrdersListResponse = AdminUser[];
-export type AdminOrderItemResponse = AdminUser;
+export type AdminOrderItemResponse = OrderDetails;
+export type AdminFioApiUrlsListResponse = FioApiUrl[];
 export type RemoveAdminResponse =
   | { success: true }
   | { success: false; message: 'Not Found' };
@@ -156,8 +153,6 @@ export type ApisResponse = AccountGetWalletsResponse &
   ContactsListResponse &
   ContactsCreateResponse &
   FioRegPricesResponse &
-  FioRegDomainsResponse &
-  FioRegRegisterResponse &
   FioRegCaptchaResponse &
   NotificationsListResponse &
   NotificationsCreateResponse &

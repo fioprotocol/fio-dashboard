@@ -23,6 +23,13 @@
     }
   }
 
+  &.hasSmallSize {
+    > span {
+      width: 20px !important;
+      height: 20px !important;
+    }
+  }
+
   &.isWhite {
     > span {
       color: $white;

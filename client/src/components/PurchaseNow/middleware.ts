@@ -1,235 +1,15 @@
-import isEmpty from 'lodash/isEmpty';
+import { setFioName } from '../../utils';
 
-import apis from '../../api/index';
-import { toString } from '../../redux/notify/sagas';
-import { waitForAddressRegistered } from '../../util/fio';
-import { setFioName, sleep } from '../../utils';
-import { log } from '../../util/general';
-
-import {
-  PAYMENT_PROVIDER,
-  PURCHASE_RESULTS_STATUS,
-} from '../../constants/purchase';
-import {
-  ERROR_TYPES,
-  REG_SITE_USER_HAS_FREE_ADDRESS_ERR_MESSAGE,
-} from '../../constants/errors';
 import {
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
-  DEFAULT_BUNDLE_SET_VALUE,
 } from '../../constants/common';
-import { ACTIONS, DOMAIN_TYPE } from '../../constants/fio';
+import { DOMAIN_TYPE } from '../../constants/fio';
 
 import { RegistrationType } from './types';
-import {
-  CartItem,
-  RegistrationResult,
-  WalletKeys,
-  RegistrationRegistered,
-  AnyObject,
-  PurchaseTxStatus,
-} from '../../types';
+import { CartItem } from '../../types';
 
-const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 2000;
-const wait = () =>
-  new Promise(resolve =>
-    setTimeout(resolve, TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION),
-  );
-
-const setTxStatus = (
-  hasRegItems: boolean,
-  hasFailedItems: boolean,
-): PurchaseTxStatus => {
-  if (hasRegItems && !hasFailedItems) return PURCHASE_RESULTS_STATUS.SUCCESS;
-
-  if (!hasRegItems && hasFailedItems) return PURCHASE_RESULTS_STATUS.FAILED;
-
-  if (hasRegItems && hasFailedItems)
-    return PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS;
-
-  return PURCHASE_RESULTS_STATUS.PENDING;
-};
-
-export const registerFree = async ({
-  fioName,
-  cartItemId,
-  publicKey,
-  verifyParams,
-  refCode = '',
-}: {
-  fioName: string;
-  cartItemId: string;
-  publicKey: string;
-  verifyParams: {};
-  refCode?: string;
-}): Promise<{
-  cartItemId: string;
-  fioName: string;
-  isFree: boolean;
-  error?: string;
-  errorType?: string;
-}> => {
-  let result: {
-    cartItemId: string;
-    fioName: string;
-    isFree: boolean;
-    error?: string;
-    errorType?: string;
-  } = {
-    cartItemId,
-    fioName,
-    isFree: true,
-  };
-
-  try {
-    const res = await apis.fioReg.register({
-      address: fioName,
-      publicKey,
-      verifyParams,
-      refCode,
-    });
-    if (res.error) {
-      result.error = res.error;
-      const userHasFreeAddressMessage = new RegExp(
-        REG_SITE_USER_HAS_FREE_ADDRESS_ERR_MESSAGE,
-        'gmi',
-      );
-      result.errorType = userHasFreeAddressMessage.test(res.error)
-        ? ERROR_TYPES.userHasFreeAddress
-        : ERROR_TYPES.freeAddressError;
-    } else {
-      await waitForAddressRegistered(fioName);
-      result = { ...res, ...result };
-    }
-  } catch (e) {
-    result.error = e.message || toString(e.fields);
-    result.errorType = e.errorType || ERROR_TYPES.freeAddressError;
-  }
-  return result;
-};
-
-export const register = async ({
-  fioName,
-  fee,
-  cartItemId,
-  type,
-  iteration = 0,
-}: RegistrationType): Promise<{
-  cartItemId: string;
-  fioName: string;
-  error?: string;
-  errorType?: string;
-}> => {
-  let result: {
-    cartItemId: string;
-    fioName: string;
-    error?: string;
-    errorType?: string;
-  } = { cartItemId, fioName };
-  try {
-    let res;
-    if (type === CART_ITEM_TYPE.ADD_BUNDLES) {
-      res = await apis.fio.executeActionWithoutKeys(
-        ACTIONS.addBundledTransactions,
-        {
-          fioAddress: fioName,
-          bundleSets: DEFAULT_BUNDLE_SET_VALUE,
-          maxFee: fee,
-        },
-      );
-    } else if (type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
-      if (iteration) {
-        await sleep(iteration * TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION);
-      }
-      res = await apis.fio.executeActionWithoutKeys(ACTIONS.renewFioDomain, {
-        fioDomain: fioName,
-        maxFee: fee,
-      });
-      res.other = {
-        withPeriod: true,
-      };
-    } else {
-      res = await apis.fio.register(fioName, fee);
-    }
-
-    if (!res) {
-      throw new Error('Server Error');
-    }
-
-    result = { ...result, ...res };
-  } catch (e) {
-    log.error(e.json);
-    result.error = apis.fio.extractError(e.json) || e.message;
-    result.errorType = e.errorType || ERROR_TYPES.default;
-  }
-
-  return result;
-};
-
-export const executeRegistration = async (
-  items: CartItem[],
-  keys: WalletKeys,
-  fees: { address: number; domain: number },
-  isFreeAllowed: boolean,
-  verifyParams = {},
-  refCode = '',
-): Promise<RegistrationResult> => {
-  const result: RegistrationResult = {
-    errors: [],
-    registered: [],
-    partial: [],
-    paymentProvider: PAYMENT_PROVIDER.FIO,
-    providerTxStatus: PURCHASE_RESULTS_STATUS.PENDING,
-  };
-  const registrations = makeRegistrationOrder([...items], fees, isFreeAllowed);
-  const registrationPromises = [];
-  const dependedRegistrationPromises = [];
-
-  if (keys.private) apis.fio.setWalletFioSdk(keys);
-  try {
-    let hasDepended = false;
-    for (const registration of registrations) {
-      if (registration.depended) {
-        hasDepended = true;
-        continue;
-      }
-      registrationPromises.push(
-        makeRegistrationPromise(registration, keys, verifyParams, refCode),
-      );
-    }
-
-    const responses = await Promise.allSettled(registrationPromises);
-    handleResponses(responses, result);
-
-    // todo: could be improved to handle inherit dependencies
-    // depended registrations
-    if (hasDepended) await wait();
-    for (const registration of registrations) {
-      if (!registration.depended) continue;
-      dependedRegistrationPromises.push(
-        makeRegistrationPromise(registration, keys, verifyParams, refCode),
-      );
-    }
-
-    const dependedResponses = await Promise.allSettled(
-      dependedRegistrationPromises,
-    );
-    handleResponses(dependedResponses, result);
-  } catch (e) {
-    //
-  }
-  if (keys.private) apis.fio.clearWalletFioSdk();
-
-  result.providerTxStatus = setTxStatus(
-    !isEmpty(result.registered),
-    !isEmpty(result.errors),
-  );
-
-  return result;
-};
-
-const makeRegistrationOrder = (
+export const makeRegistrationOrder = (
   cartItems: CartItem[],
   fees: { address: number; domain: number },
   isFreeAllowed: boolean,
@@ -267,10 +47,6 @@ const makeRegistrationOrder = (
           type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
           isFree: false,
           iteration: i,
-          depended:
-            cartItem.type === CART_ITEM_TYPE.DOMAIN
-              ? { domain: cartItem.domain }
-              : null,
         });
       }
     }
@@ -283,13 +59,6 @@ const makeRegistrationOrder = (
       continue;
     }
 
-    const customDomainRegistration = registrations.find(
-      item => item.isCustomDomain && item.fioName === cartItem.domain,
-    );
-    if (customDomainRegistration) {
-      registration.depended = { domain: cartItem.domain };
-    }
-
     if (!!cartItem.address && cartItem.domainType === DOMAIN_TYPE.CUSTOM) {
       registrations.push({
         cartItemId: cartItem.id,
@@ -299,99 +68,10 @@ const makeRegistrationOrder = (
         isFree: false,
         isCustomDomain: true,
       });
-      registration.depended = { domain: cartItem.domain };
     }
 
     registrations.push(registration);
   }
 
   return registrations;
-};
-
-const makeRegistrationPromise = (
-  registration: RegistrationType,
-  keys: WalletKeys,
-  verifyParams = {},
-  refCode = '',
-) => {
-  return registration.isFree
-    ? registerFree({
-        ...registration,
-        publicKey: keys.public,
-        verifyParams,
-        refCode,
-      })
-    : register(registration);
-};
-
-const handleResponses = (
-  responses: PromiseSettledResult<{
-    cartItemId: string;
-    fioName: string;
-    error?: string;
-    errorType?: string;
-    fee_collected?: number;
-    transaction_id: string;
-  }>[] &
-    AnyObject, // todo: check this ts issue, for status === 'rejected' there is no value
-  result: RegistrationResult,
-) => {
-  for (const response of responses) {
-    const responseValue = response.value;
-    const existingCartItemErrorIndex = result.errors.findIndex(
-      item =>
-        !responseValue.other?.withPeriod &&
-        item.cartItemId === responseValue.cartItemId,
-    );
-    const existingCartItemRegisteredIndex = result.registered.findIndex(
-      item =>
-        !responseValue.other?.withPeriod &&
-        item.cartItemId === responseValue.cartItemId,
-    );
-    if (response.status === 'rejected' || response.value.error) {
-      if (existingCartItemErrorIndex > -1) {
-        result.errors[existingCartItemErrorIndex] = {
-          ...result.errors[existingCartItemErrorIndex],
-          ...responseValue,
-        };
-        continue;
-      }
-      if (existingCartItemRegisteredIndex > -1) {
-        result.partial.push(responseValue.cartItemId);
-      }
-      result.errors.push(response.value);
-    } else {
-      if (existingCartItemRegisteredIndex > -1) {
-        result.registered[existingCartItemRegisteredIndex] = {
-          ...result.registered[existingCartItemRegisteredIndex],
-          ...response.value,
-          fee_collected: combineFee(
-            result.registered[existingCartItemRegisteredIndex],
-            response.value,
-          ),
-          transactions: [
-            ...result.registered[existingCartItemRegisteredIndex].transactions,
-            response.value.transaction_id,
-          ],
-        };
-        continue;
-      }
-      if (existingCartItemErrorIndex > -1) {
-        result.partial.push(response.value.cartItemId);
-      }
-      result.registered.push({
-        ...response.value,
-        transactions: [response.value.transaction_id],
-      });
-    }
-  }
-};
-
-const combineFee = (
-  registered1: RegistrationRegistered,
-  registered2: RegistrationRegistered,
-) => {
-  if (!registered1.fee_collected) return null;
-
-  return registered1.fee_collected + registered2.fee_collected;
 };
