@@ -8,7 +8,6 @@ import {
   LOGIN_FAILURE,
   logout,
   PROFILE_FAILURE,
-  UPDATE_EMAIL_FAILURE,
 } from '../profile/actions';
 import {
   CONFIRM_PIN_FAILURE,
@@ -47,16 +46,8 @@ export function* notify(history: History): Generator {
       const genericErrorIsShowing: boolean = yield select(getShowGenericError);
 
       if (!genericErrorIsShowing) {
-        const { title, redirect } = ErrorData[action.type] || {};
-        let { buttonText, message } = ErrorData[action.type] || {};
-
-        if (
-          action.type === UPDATE_EMAIL_FAILURE &&
-          action.error.code === 'NOT_FOUND'
-        )
-          message = 'Email has been already confirmed';
-
-        if (action.type === UPDATE_EMAIL_FAILURE) buttonText = 'Close';
+        const { buttonText, message, redirect, title } =
+          ErrorData[action.type] || {};
 
         yield put(showGenericErrorModal(message, title, buttonText));
         if (redirect) history.push(redirect);

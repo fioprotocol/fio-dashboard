@@ -9,7 +9,6 @@ import FioLoader from '../../components/common/FioLoader/FioLoader';
 import { APP_TITLE } from '../../constants/labels';
 
 import { handleHomePageContent } from '../../util/homePage';
-import { useNonActiveUserRedirect } from '../../util/hooks';
 import { firePageViewAnalyticsEvent } from '../../util/analytics';
 
 import {
@@ -53,7 +52,6 @@ export const RefHomePage: React.FC<Props &
     refLinkError,
     isContainedFlow,
   } = props;
-  useNonActiveUserRedirect();
   const [hideLoader, setHideLoader] = useState(false);
   const [refProfileIsLoaded, setRefProfileIsLoaded] = useState(false);
 

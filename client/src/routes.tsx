@@ -10,8 +10,6 @@ import FioLoader from './components/common/FioLoader/FioLoader';
 import { ROUTES } from './constants/routes';
 import { QUERY_PARAMS_NAMES } from './constants/queryParams';
 
-import { LocationProps as EmailConfirmationPageLocationProps } from './pages/EmailConfirmationPage/EmailConfirmationPage';
-
 const DashboardPage = React.lazy(() =>
   import(/* webpackChunkName: 'dashboardPage' */ './pages/DashboardPage'),
 );
@@ -82,16 +80,6 @@ const AccountRecoveryPage = React.lazy(() =>
     /* webpackChunkName: 'accountRecoveryPage' */ './pages/AccountRecoveryPage'
   ),
 );
-const EmailConfirmationPage = React.lazy(() =>
-  import(
-    /* webpackChunkName: 'emailConfirmationPage' */ './pages/EmailConfirmationPage'
-  ),
-);
-const EmailConfirmGatePage = React.lazy(() =>
-  import(
-    /* webpackChunkName: 'emailConfirmGatePage' */ './pages/EmailConfirmGatePage'
-  ),
-);
 const FioAddressSignaturesPage = React.lazy(() =>
   import(
     /* webpackChunkName: 'fioAddressSignaturesPage' */ './pages/FioAddressSignaturesPage'
@@ -155,14 +143,6 @@ const UnstakeTokensPage = React.lazy(() =>
     /* webpackChunkName: 'unstakeTokensPage' */ './pages/UnstakeTokensPage'
   ),
 );
-const UpdateEmailConfirmGatePage = React.lazy(() =>
-  import(
-    /* webpackChunkName: 'updateEmailConfirmGatePage' */ './pages/UpdateEmailConfirmGatePage'
-  ),
-);
-const UpdateEmailPage = React.lazy(() =>
-  import(/* webpackChunkName: 'updateEmailPage' */ './pages/UpdateEmailPage'),
-);
 const RejectFioRequestPage = React.lazy(() =>
   import(
     /* webpackChunkName: 'rejectFioRequestPage' */ './pages/RejectFioRequestPage'
@@ -171,11 +151,6 @@ const RejectFioRequestPage = React.lazy(() =>
 const CancelFioRequestPage = React.lazy(() =>
   import(
     /* webpackChunkName: 'cancelFioRequestPage' */ './pages/CancelFioRequestPage'
-  ),
-);
-const EmailConfirmationResultPage = React.lazy(() =>
-  import(
-    /* webpackChunkName: 'emailConfirmationResultPage' */ './pages/EmailConfirmationResultsPage'
   ),
 );
 const NotFoundPage = React.lazy(() =>
@@ -291,58 +266,10 @@ const Routes = (): React.ReactElement => (
             )}
             exact
           />
-          <Route
-            path={ROUTES.CONFIRM_EMAIL_OLD}
-            component={(
-              props: RouteComponentProps<{ hash?: string }> &
-                EmailConfirmationPageLocationProps,
-            ) => (
-              <Redirect
-                to={`${ROUTES.CONFIRM_EMAIL}?${QUERY_PARAMS_NAMES.HASH}=${
-                  props.match.params.hash
-                }&${QUERY_PARAMS_NAMES.REF_CODE}=${props.location.query
-                  .refCode || ''}`}
-              />
-            )}
-            exact
-          />
-          <Route
-            path={ROUTES.CONFIRM_UPDATED_EMAIL_OLD}
-            component={(props: RouteComponentProps<{ hash?: string }>) => (
-              <Redirect
-                to={`${ROUTES.CONFIRM_UPDATED_EMAIL}?${QUERY_PARAMS_NAMES.HASH}=${props.match.params.hash}`}
-              />
-            )}
-          />
 
           <Route path={ROUTES.HOME} component={HomePage} exact />
           <Route path={ROUTES.NOT_FOUND} component={NotFoundPage} exact />
           <Route path={ROUTES.REF_PROFILE_HOME} component={RefHomePage} exact />
-          <Route
-            path={ROUTES.CONFIRM_EMAIL}
-            component={EmailConfirmationPage}
-            exact
-          />
-          <Route
-            path={ROUTES.CONFIRM_EMAIL_RESULT}
-            component={EmailConfirmationResultPage}
-            exact
-          />
-          <Route
-            path={ROUTES.IS_NEW_USER}
-            component={EmailConfirmGatePage}
-            exact
-          />
-          <Route
-            path={ROUTES.NEW_EMAIL_NOT_VERIFIED}
-            component={UpdateEmailConfirmGatePage}
-            exact
-          />
-          <Route
-            path={ROUTES.CONFIRM_UPDATED_EMAIL}
-            component={UpdateEmailPage}
-            exact
-          />
           <Route
             path={ROUTES.FIO_ADDRESSES_SELECTION}
             component={FioAddressSelectionPage}

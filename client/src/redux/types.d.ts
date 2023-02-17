@@ -69,7 +69,6 @@ export type Action = {
   type: PROFILE_LOGIN_SUCCESS;
   data: {
     jwt: string;
-    emailConfirmationToken?: string;
   };
   otpKey?: string;
   voucherId?: number;

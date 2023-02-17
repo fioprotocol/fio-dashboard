@@ -36,7 +36,6 @@ import {
   pathname as pathnameSelector,
 } from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
-import { isNewUser as isNewUserSelector } from './selectors';
 
 import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
 import {
@@ -90,12 +89,6 @@ export function* loginSuccess(history: History, api: Api): Generator {
     const locationState: PrivateRedirectLocationState = yield select(
       locationStateSelector,
     );
-    const isNewUser: boolean = yield select(isNewUserSelector);
-    if (isNewUser) {
-      history.push(ROUTES.IS_NEW_USER);
-      yield put(closeLoginModal());
-      return;
-    }
     if (
       !hasRedirectTo &&
       locationState &&

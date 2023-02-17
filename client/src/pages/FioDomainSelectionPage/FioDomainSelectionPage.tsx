@@ -8,11 +8,8 @@ import { FioDomainSelectionComponent } from './components/FioDomainSelectionComp
 import { useContext } from './FioDomainSelectionPageContext';
 
 import { useCheckIfDesktop } from '../../screenType';
-import { useNonActiveUserRedirect } from '../../util/hooks';
 
 const FioDomainSelectionPage: React.FC = () => {
-  useNonActiveUserRedirect();
-
   const props = useContext();
 
   const isDesktop = useCheckIfDesktop();

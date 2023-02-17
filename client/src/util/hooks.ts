@@ -6,7 +6,6 @@ import {
   useCallback,
 } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router';
 
 import {
   getAllFioPubAddresses,
@@ -21,11 +20,7 @@ import {
   mappedPublicAddresses,
   walletsFioAddressesLoading,
 } from '../redux/fio/selectors';
-import {
-  isAuthenticated,
-  isNewEmailNotVerified as isNewEmailNotVerifiedSelector,
-  isNewUser as isNewUserSelector,
-} from '../redux/profile/selectors';
+import { isAuthenticated } from '../redux/profile/selectors';
 import { roe } from '../redux/registrations/selectors';
 
 import { getElementByFioName } from '../utils';
@@ -33,7 +28,6 @@ import useEffectOnce from '../hooks/general';
 
 import apis from '../api';
 
-import { ROUTES } from '../constants/routes';
 import { DEFAULT_BALANCES } from './prices';
 import { emptyWallet } from '../redux/fio/reducer';
 
@@ -118,21 +112,6 @@ export function useFioWallet(
     );
 
   return { currentWallet: wallet || emptyWallet, settingWallet };
-}
-
-export function useNonActiveUserRedirect(): void {
-  const isNewUser = useSelector(isNewUserSelector);
-  const isNewEmailNotVerified = useSelector(isNewEmailNotVerifiedSelector);
-  const isAuth = useSelector(isAuthenticated);
-  const history = useHistory();
-  useEffect(() => {
-    if (isAuth && isNewEmailNotVerified) {
-      history.push(ROUTES.NEW_EMAIL_NOT_VERIFIED);
-    }
-    if (isAuth && isNewUser) {
-      history.push(ROUTES.IS_NEW_USER);
-    }
-  }, [isAuth, isNewUser, isNewEmailNotVerified]);
 }
 
 export function usePublicAddresses(

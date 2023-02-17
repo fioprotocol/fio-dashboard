@@ -7,9 +7,7 @@ import {
 } from './purchase';
 
 export const USER_STATUSES = {
-  NEW: 'NEW',
   ACTIVE: 'ACTIVE',
-  NEW_EMAIL_NOT_VERIFIED: 'NEW_EMAIL_NOT_VERIFIED',
 };
 
 export const ADMIN_USER_STATUSES = {

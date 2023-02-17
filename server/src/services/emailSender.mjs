@@ -95,28 +95,6 @@ class EmailSender {
           body: EmailTemplate.get(templateName, sendData),
           images: EmailTemplate.getInlineImages(templateName),
         };
-      case templates.confirmEmail: {
-        let link = `${sendData.mainUrl}confirm-email?${QUERY_PARAMS_NAMES.HASH}=${sendData.hash}`;
-
-        if (sendData.refCode) {
-          link = `${link}&${QUERY_PARAMS_NAMES.REF_CODE}=${sendData.refCode}`;
-        }
-        delete sendData.refCode;
-
-        if (sendData.updateEmail) {
-          link = `${sendData.mainUrl}confirm-updated-email?${QUERY_PARAMS_NAMES.HASH}=${sendData.hash}`;
-          delete sendData.updateEmail;
-        }
-
-        return {
-          subject: 'FIO Dashboard - please confirm your email',
-          body: EmailTemplate.get(templateName, {
-            link,
-            ...sendData,
-          }),
-          images: EmailTemplate.getInlineImages(templateName),
-        };
-      }
       case templates.confirmAdminEmail:
         return {
           subject: 'FIO Dashboard - please confirm your email',
