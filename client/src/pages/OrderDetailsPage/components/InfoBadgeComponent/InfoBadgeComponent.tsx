@@ -98,17 +98,17 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
         failedTxsTotalCurrency === CURRENCY_CODES.USDC ||
         failedTxsTotalCurrency.toUpperCase() === CURRENCY_CODES.USD
       )
-        message = `There was an error during purchase of some items. As a result we have refunded ${failedTxsTotalAmount.usdcTotalPrice} back to your credit card. Go to your cart to try purchase again.`;
+        message = `There was an error during purchase of some items. As a result we have refunded ${failedTxsTotalAmount?.usdcTotalPrice} back to your credit card. Go to your cart to try purchase again.`;
 
       if (failedTxsTotalCurrency === CURRENCY_CODES.FIO)
-        message = `There was an error during purchase of some items. As a result we have credited ${failedTxsTotalAmount.fioTotalPrice} Tokens (${failedTxsTotalAmount.usdcTotalPrice}) to your wallet. Go to your cart to try purchase using FIO Tokens instead.`;
+        message = `There was an error during purchase of some items. As a result we have credited ${failedTxsTotalAmount?.fioTotalPrice} Tokens (${failedTxsTotalAmount?.usdcTotalPrice}) to your wallet. Go to your cart to try purchase using FIO Tokens instead.`;
     }
 
     if (paymentProvider === PAYMENT_PROVIDER.BITPAY) {
-      message = `There was an error during purchase of some items. As a result we have refunded ${failedTxsTotalAmount.usdcTotalPrice} back to your crypto wallet. Go to your cart to try purchase again.`;
+      message = `There was an error during purchase of some items. As a result we have refunded ${failedTxsTotalAmount?.usdcTotalPrice} back to your crypto wallet. Go to your cart to try purchase again.`;
 
       if (failedTxsTotalCurrency === CURRENCY_CODES.FIO)
-        message = `There was an error during purchase of some items. As a result we have credited ${failedTxsTotalAmount.fioTotalPrice} Tokens (${failedTxsTotalAmount.usdcTotalPrice}) to your wallet. Go to your cart to try purchase using FIO Tokens instead.`;
+        message = `There was an error during purchase of some items. As a result we have credited ${failedTxsTotalAmount?.fioTotalPrice} Tokens (${failedTxsTotalAmount?.usdcTotalPrice}) to your wallet. Go to your cart to try purchase using FIO Tokens instead.`;
     }
 
     if (isFree) {
@@ -133,7 +133,7 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
       if (failedTxsTotalCurrency === CURRENCY_CODES.FIO) {
         message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount.fioTotalPrice} Tokens. You can use these tokens to register FIO Crypto Handle or Domain.`;
       } else {
-        message = `There was an error during purchase. As a result we have refunded the entire amount of order, ${failedTxsTotalAmount.usdcTotalPrice} back to your crypto wallet. Click close and try purchase again.`;
+        message = `There was an error during purchase. As a result we have refunded the entire amount of order, ${failedTxsTotalAmount?.usdcTotalPrice} back to your crypto wallet. Click close and try purchase again.`;
       }
     }
 
@@ -146,9 +146,9 @@ export const InfoBadgeComponent: React.FC<Props> = props => {
           'The payment was not accepted and as a result the transaction was not processed.';
       } else {
         if (failedTxsTotalCurrency === CURRENCY_CODES.FIO) {
-          message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount.fioTotalPrice} Tokens (${failedTxsTotalAmount.usdcTotalPrice}). You can use these tokens to register FIO Crypto Handle or Domain.`;
+          message = `There was an error during registration. As a result we could not confirm the purchase, but we have credited your wallet with ${failedTxsTotalAmount?.fioTotalPrice} Tokens (${failedTxsTotalAmount?.usdcTotalPrice}). You can use these tokens to register FIO Crypto Handle or Domain.`;
         } else {
-          message = `There was an error during purchase. As a result we have refunded the entire amount of order, ${failedTxsTotalAmount.usdcTotalPrice} back to your credit card. Click close and try purchase again.`;
+          message = `There was an error during purchase. As a result we have refunded the entire amount of order, ${failedTxsTotalAmount?.usdcTotalPrice} back to your credit card. Click close and try purchase again.`;
         }
       }
     }
