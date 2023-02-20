@@ -1,6 +1,12 @@
 @import '../../assets/styles/colors.scss';
 @import '../../assets//styles/fontMixins.scss';
 
+.container {
+  &.hasBigTopMargin {
+    margin-top: 60px;
+  }
+}
+
 .baseColored {
   color: white;
   margin-bottom: 18px;

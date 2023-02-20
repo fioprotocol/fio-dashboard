@@ -16,6 +16,11 @@ import classes from './PinForm.module.scss';
 
 export const FIELD_NAME = 'pin';
 
+export const FIELD_NAMES = {
+  PIN: FIELD_NAME,
+  CONFIRM_PIN: 'confirmPin',
+};
+
 type Props = {
   onSubmit: ({ pin }: { pin: string }) => void;
   onReset: () => void;

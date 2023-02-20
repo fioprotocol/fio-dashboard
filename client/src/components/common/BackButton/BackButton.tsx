@@ -1,22 +1,27 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Link } from 'react-router-dom';
+import classnames from 'classnames';
 
 import classes from './BackButton.module.scss';
 
 type Props = {
-  link: string;
+  hide?: boolean;
+  isWhite?: boolean;
+  link?: string;
   onClick?: () => void;
 };
 
 const BackButton: React.FC<Props> = props => {
-  const { link, onClick } = props;
+  const { hide, isWhite, link, onClick } = props;
+
+  if (hide) return null;
 
   if (onClick != null) {
     return (
       <FontAwesomeIcon
         icon="arrow-left"
-        className={classes.arrow}
+        className={classnames(classes.arrow, isWhite && classes.isWhite)}
         onClick={onClick}
       />
     );
@@ -24,7 +29,10 @@ const BackButton: React.FC<Props> = props => {
 
   return (
     <Link to={link}>
-      <FontAwesomeIcon icon="arrow-left" className={classes.arrow} />
+      <FontAwesomeIcon
+        icon="arrow-left"
+        className={classnames(classes.arrow, isWhite && classes.isWhite)}
+      />
     </Link>
   );
 };
