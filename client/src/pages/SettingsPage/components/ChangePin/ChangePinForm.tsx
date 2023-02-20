@@ -46,7 +46,7 @@ const ChangePinForm: React.FC<Props> = props => {
 
   useEffect(() => {
     return () => onUnmount();
-  }, []);
+  }, [onUnmount]);
 
   const isDisabled = !pin || pin.length < PIN_LENGTH;
 

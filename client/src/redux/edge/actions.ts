@@ -126,12 +126,18 @@ export const CONFIRM_PIN_SUCCESS = `${prefix}/CONFIRM_PIN_SUCCESS`;
 export const CONFIRM_PIN_FAILURE = `${prefix}/CONFIRM_PIN_FAILURE`;
 
 export const confirmPin = (
-  { username, pin }: { username: string; pin: string },
+  {
+    username,
+    pin,
+    password,
+  }: { username: string; pin?: string; password?: string },
   { action, data }: { action: string; data: AnyObject },
 ): CommonPromiseAction => ({
   types: [CONFIRM_PIN_REQUEST, CONFIRM_PIN_SUCCESS, CONFIRM_PIN_FAILURE],
   promise: async (api: Api) => {
-    const account = await api.edge.loginPIN(username, pin);
+    const account = pin
+      ? await api.edge.loginPIN(username, pin)
+      : await api.edge.login(username, password);
 
     const keys: EdgeWalletsKeys = await waitWalletKeys(account);
 
@@ -168,6 +174,7 @@ export const signup = ({
 }): CommonPromiseAction => ({
   types: [SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE],
   promise: (api: Api) => api.edge.signup(username, password),
+  username,
 });
 
 export const CACHED_USERS_REQUEST = `${prefix}/CACHED_USERS_REQUEST`;
