@@ -56,7 +56,7 @@ const PasswordRecovery: React.FC<Props> = props => {
 
   useEffect(() => {
     username && checkRecoveryQuestions(username);
-  }, []);
+  }, [checkRecoveryQuestions, username]);
 
   const submit = async ({ edgeAccount }: SubmitActionParams) => {
     toggleDisableModal(true);

@@ -49,3 +49,5 @@ export const recoveryAccountResults = (
 
 export const hasTwoFactorAuth = (state: ReduxState): boolean =>
   state[prefix].hasTwoFactorAuth;
+export const isPinEnabled = (state: ReduxState): boolean =>
+  state[prefix].isPinEnabled;
