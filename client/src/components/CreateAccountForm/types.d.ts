@@ -3,8 +3,6 @@ export type FormValues = {
   confirmEmail: string;
   password: string;
   confirmPassword: string;
-  pin: string;
-  confirmPin: string;
   addEmailToPromoList: boolean;
 };
 
