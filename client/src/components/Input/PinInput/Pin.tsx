@@ -13,6 +13,7 @@ import classes from '../styles/PinInput.module.scss';
 
 const PinInput: React.FC<PinProps> = props => {
   const {
+    disabled,
     error,
     name,
     value,
@@ -39,6 +40,7 @@ const PinInput: React.FC<PinProps> = props => {
 
   const handleKeyChange = useCallback(
     (key: string) => {
+      if (disabled) return;
       const pinValue = valueRef && valueRef.current;
 
       if (/backspace/i.test(key)) {
@@ -57,7 +59,7 @@ const PinInput: React.FC<PinProps> = props => {
       }
       onChange(retValue);
     },
-    [error, onChange, submit], // todo: onChange changes every render - investigate
+    [disabled, error, onChange, submit], // todo: onChange changes every render - investigate
   );
 
   const onKeyUp = useCallback(

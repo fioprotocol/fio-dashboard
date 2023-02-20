@@ -135,6 +135,11 @@ const ImportWalletPage = React.lazy(() =>
 const SendPage = React.lazy(() =>
   import(/* webpackChunkName: 'sendPage' */ './pages/SendPage'),
 );
+const CreateAccountSetupPinPage = React.lazy(() =>
+  import(
+    /* webpackChunkName: 'createAccountSetupPinPage' */ './pages/CreateAccountSetupPinPage'
+  ),
+);
 const StakeTokensPage = React.lazy(() =>
   import(/* webpackChunkName: 'stakeTokensPage' */ './pages/StakeTokensPage'),
 );
@@ -365,6 +370,12 @@ const Routes = (): React.ReactElement => (
           <PrivateRoute path={ROUTES.SETTINGS} component={SettingsPage} exact />
 
           <PrivateRoute path={ROUTES.SEND} component={SendPage} exact />
+
+          <PrivateRoute
+            path={ROUTES.CREATE_ACCOUNT_PIN}
+            component={CreateAccountSetupPinPage}
+            exact
+          />
 
           <PrivateRoute
             path={ROUTES.WRAP_TOKENS}
