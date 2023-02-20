@@ -111,7 +111,13 @@ export const login = ({
         addEmailToPromoList: true,
       });
     }
-    return { account, fioWallets, options, voucherId, isPinLogin: !!pin };
+    return {
+      account,
+      fioWallets,
+      options,
+      voucherId,
+      isPinLogin: !!pin,
+    };
   },
 });
 
@@ -266,6 +272,7 @@ export const changePin = ({
 }): CommonPromiseAction => ({
   types: [CHANGE_PIN_REQUEST, CHANGE_PIN_SUCCESS, CHANGE_PIN_FAILURE],
   promise: (api: Api) => api.edge.changePin(pin, password, username),
+  username,
 });
 
 export const CLEAR_CHANGE_PIN_RESULTS = `${prefix}/CLEAR_CHANGE_PIN_RESULTS`;
@@ -374,4 +381,17 @@ export const setConfirmPinKeys = (
 ): CommonAction => ({
   type: SET_CONFIRM_PIN_KEYS,
   data: keys,
+});
+
+export const SET_IS_PIN_ENABLED_REQUEST = `${prefix}/SET_IS_PIN_ENABLED_REQUEST`;
+export const SET_IS_PIN_ENABLED_SUCCESS = `${prefix}/SET_IS_PIN_ENABLED_SUCCESS`;
+export const SET_IS_PIN_ENABLED_FAILURE = `${prefix}/SET_IS_PIN_ENABLED_FAILURE`;
+
+export const setPinEnabled = (username: string): CommonPromiseAction => ({
+  types: [
+    SET_IS_PIN_ENABLED_REQUEST,
+    SET_IS_PIN_ENABLED_SUCCESS,
+    SET_IS_PIN_ENABLED_FAILURE,
+  ],
+  promise: (api: Api) => api.edge.checkIsPinSet(username),
 });

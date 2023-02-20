@@ -229,6 +229,15 @@ export default class Edge {
     }
   }
 
+  async checkIsPinSet(username: string): Promise<boolean> {
+    try {
+      this.validateEdgeContext();
+      return await this.edgeContext.pinLoginEnabled(username);
+    } catch (e) {
+      log.error(e);
+    }
+  }
+
   async getToken(username: string): Promise<string> {
     try {
       this.validateEdgeContext();

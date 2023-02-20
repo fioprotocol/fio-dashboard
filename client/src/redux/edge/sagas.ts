@@ -1,6 +1,11 @@
 import { put, select, takeEvery } from 'redux-saga/effects';
 
-import { LOGIN_SUCCESS, setConfirmPinKeys } from './actions';
+import {
+  CHANGE_PIN_SUCCESS,
+  LOGIN_SUCCESS,
+  setConfirmPinKeys,
+  setPinEnabled,
+} from './actions';
 import { makeNonce } from '../profile/actions';
 import { refreshBalance } from '../fio/actions';
 import { logout } from './actions';
@@ -21,6 +26,8 @@ export function* edgeLoginSuccess(): Generator {
     }
     yield put<Action>(logout(account));
 
+    yield put<Action>(setPinEnabled(account.username));
+
     const locationState: PrivateRedirectLocationState = yield select(
       locationStateSelector,
     );
@@ -35,5 +42,15 @@ export function* edgeLoginSuccess(): Generator {
     yield put<
       Action
     >(makeNonce(account.username, keys, options && options.otpKey, voucherId, isPinLogin));
+  });
+}
+
+export function* edgePinUpdateSuccess(): Generator {
+  yield takeEvery(CHANGE_PIN_SUCCESS, function*(action: Action) {
+    const { username } = action;
+
+    if (username) {
+      yield put<Action>(setPinEnabled(username));
+    }
   });
 }

@@ -324,4 +324,13 @@ export default combineReducers({
         return state;
     }
   },
+  isPinEnabled(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.SET_IS_PIN_ENABLED_SUCCESS: {
+        return action.data;
+      }
+      default:
+        return state;
+    }
+  },
 });
