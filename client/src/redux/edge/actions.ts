@@ -402,3 +402,12 @@ export const setPinEnabled = (username: string): CommonPromiseAction => ({
   ],
   promise: (api: Api) => api.edge.checkIsPinSet(username),
 });
+
+export const SET_IS_PIN_POSTPONED = `${prefix}/SET_IS_PIN_POSTPONED_SUCCESS`;
+
+export const setPinSetupPostponed = (
+  isPinPostponed: boolean,
+): CommonAction => ({
+  type: SET_IS_PIN_POSTPONED,
+  data: isPinPostponed,
+});

@@ -9,6 +9,8 @@ import {
   signup,
 } from '../../redux/profile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
+import { setPinSetupPostponed } from '../../redux/edge/actions';
+import { setRedirectPath } from '../../redux/navigation/actions';
 
 import {
   successfullyRegistered,
@@ -33,6 +35,8 @@ const actions = {
   resetSuccessState,
   showLoginModal,
   makeNonce,
+  setPinSetupPostponed,
+  setRedirectPath,
 };
 
 const reduxConnect = connect(selector, actions);

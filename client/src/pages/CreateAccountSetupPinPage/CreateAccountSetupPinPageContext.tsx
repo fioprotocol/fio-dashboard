@@ -4,7 +4,9 @@ import { useHistory } from 'react-router';
 import { useDispatch } from 'react-redux';
 import { EdgeAccount } from 'edge-core-js';
 
-import { setPinEnabled } from '../../redux/edge/actions';
+import { setPinEnabled, setPinSetupPostponed } from '../../redux/edge/actions';
+import { showRecoveryModal } from '../../redux/modal/actions';
+import { setRedirectPath } from '../../redux/navigation/actions';
 
 import { PIN_LENGTH } from '../../constants/form';
 import { ROUTES } from '../../constants/routes';
@@ -61,9 +63,11 @@ export const useContext = (): UseContextProps => {
 
   const handleForcedSkip = useCallback(() => {
     history.push(ROUTES.HOME);
+    dispatch(showRecoveryModal());
+    dispatch(setRedirectPath(null));
     toggleWarningModal(false);
     toggleLoading(false);
-  }, [history]);
+  }, [dispatch, history]);
 
   const onEdgeConfirmCancel = useCallback(() => {
     setSubmitData(null);
@@ -119,6 +123,9 @@ export const useContext = (): UseContextProps => {
           const res = await edgeAccount.changePin({ pin });
           if (res) {
             dispatch(setPinEnabled(edgeAccount.username));
+            dispatch(setPinSetupPostponed(false));
+            dispatch(showRecoveryModal());
+            dispatch(setRedirectPath(null));
           }
           await edgeAccount.logout();
           history.push(ROUTES.HOME);

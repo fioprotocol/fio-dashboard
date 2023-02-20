@@ -19,6 +19,7 @@ import {
   WALLET_CREATED_FROM,
 } from '../../constants/common';
 import { LINKS } from '../../constants/labels';
+import { ROUTES } from '../../constants/routes';
 
 import EmailPassword, {
   validate as validateEmailPassword,
@@ -87,6 +88,8 @@ type OwnProps = {
     isSignUp?: boolean,
   ) => void;
   showLoginModal: () => void;
+  setPinSetupPostponed: (isPinPostponed: boolean) => void;
+  setRedirectPath: ({ pathname }: { pathname: string }) => void;
   onSubmit: (params: {
     username: string;
     email: string;
@@ -253,7 +256,13 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     fioWallet: EdgeCurrencyWallet,
     values: FormValues,
   ) => {
-    const { onSubmit, refProfileInfo, redirectLink } = this.props;
+    const {
+      redirectLink,
+      refProfileInfo,
+      onSubmit,
+      setPinSetupPostponed,
+      setRedirectPath,
+    } = this.props;
     const { email, addEmailToPromoList } = values;
 
     const fioWallets: FioWalletDoublet[] = [
@@ -268,12 +277,17 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     this.setState({ keys: getWalletKeys([fioWallet]) });
     await account.logout();
 
+    if (redirectLink) {
+      setPinSetupPostponed(true);
+    } else {
+      setRedirectPath({ pathname: ROUTES.CREATE_ACCOUNT_PIN });
+    }
+
     return onSubmit({
       username: emailToUsername(email),
       email,
       fioWallets,
       refCode: refProfileInfo?.code || '',
-      redirectLink: redirectLink ? redirectLink.pathname : '',
       addEmailToPromoList,
     });
   };
