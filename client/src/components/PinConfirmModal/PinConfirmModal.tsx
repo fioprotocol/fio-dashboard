@@ -4,6 +4,7 @@ import { isAndroid } from 'react-device-detect';
 import FormHeader from '../FormHeader/FormHeader';
 import ModalComponent from '../Modal/Modal';
 import PinForm from '../PinForm';
+import { PasswordForm } from './components/PasswordForm';
 
 import { PIN_LENGTH } from '../../constants/form';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
@@ -17,11 +18,17 @@ const TITLES = {
   [CONFIRM_PIN_ACTIONS.PURCHASE]: 'Purchase',
 };
 
+const SUBTITLES_CONFIRM_TYPE = {
+  PASSWORD: 'password',
+  PIN: '6 digit PIN',
+};
+
 const PinConfirmModal: React.FC<PinConfirmModalProps> = props => {
   const {
     showPinConfirm,
     edgeContextSet,
-    onSubmit,
+    isPinEnabled,
+    onPinSubmit,
     confirmingPin,
     onClose,
     username,
@@ -31,13 +38,21 @@ const PinConfirmModal: React.FC<PinConfirmModalProps> = props => {
   } = props;
   if (!showPinConfirm || !edgeContextSet) return null;
 
-  const handleSubmit = (pin: string) => {
+  const handleSubmit = ({
+    pin,
+    password,
+  }: {
+    pin?: string;
+    password?: string;
+  }) => {
     if (confirmingPin) return;
+
     if (pin && pin.length !== PIN_LENGTH) return;
-    onSubmit(
+    onPinSubmit(
       {
         username,
         pin,
+        password,
       },
       pinConfirmData,
     );
@@ -67,16 +82,32 @@ const PinConfirmModal: React.FC<PinConfirmModalProps> = props => {
       <div className={classes.form}>
         <FormHeader
           title={`Confirm ${TITLES[pinConfirmData.action] || 'to continue'}`}
-          subtitle="Enter your 6 digit PIN to confirm this transaction"
+          subtitle={`Enter your ${
+            isPinEnabled
+              ? SUBTITLES_CONFIRM_TYPE.PIN
+              : SUBTITLES_CONFIRM_TYPE.PASSWORD
+          } to confirm this transaction`}
           isSubNarrow
         />
-        <PinForm
-          onSubmit={handleSubmit}
-          onReset={onReset}
-          loading={confirmingPin}
-          error={error}
-          blockedTime={(error && typeof error !== 'string' && error.wait) || 0}
-        />
+        {isPinEnabled ? (
+          <PinForm
+            onSubmit={handleSubmit}
+            onReset={onReset}
+            loading={confirmingPin}
+            error={error}
+            blockedTime={
+              (error && typeof error !== 'string' && error.wait) || 0
+            }
+          />
+        ) : (
+          <PasswordForm
+            error={error}
+            loading={confirmingPin}
+            onClose={handleClose}
+            onReset={onReset}
+            onSubmit={handleSubmit}
+          />
+        )}
       </div>
     </ModalComponent>
   );

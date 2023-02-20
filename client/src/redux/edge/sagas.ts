@@ -3,6 +3,7 @@ import { put, select, takeEvery } from 'redux-saga/effects';
 import {
   CHANGE_PIN_SUCCESS,
   LOGIN_SUCCESS,
+  SIGNUP_SUCCESS,
   setConfirmPinKeys,
   setPinEnabled,
 } from './actions';
@@ -46,7 +47,9 @@ export function* edgeLoginSuccess(): Generator {
 }
 
 export function* edgePinUpdateSuccess(): Generator {
-  yield takeEvery(CHANGE_PIN_SUCCESS, function*(action: Action) {
+  yield takeEvery([CHANGE_PIN_SUCCESS, SIGNUP_SUCCESS], function*(
+    action: Action,
+  ) {
     const { username } = action;
 
     if (username) {
