@@ -80,7 +80,8 @@ const PinForm: React.FC<Props> = props => {
     () => () => {
       resetForm();
     },
-    [resetForm],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
   );
 
   const handleSubmit = (values: FormValues) => {
