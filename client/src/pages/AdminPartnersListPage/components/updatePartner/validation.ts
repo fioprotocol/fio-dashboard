@@ -17,9 +17,6 @@ export const validate = (values: RefProfile): AnyObject => {
   if (!values.code) {
     errors.code = 'Required.';
   }
-  if (isReferrer && !values.regRefCode) {
-    errors.regRefCode = 'Required.';
-  }
   if (isReferrer && !values.freeFioAccountProfileId) {
     errors.freeFioAccountProfileId = 'Required.';
   }

@@ -57,7 +57,6 @@ const AdminPartnersListPage: React.FC<Props> = props => {
   const onAddPartner = useCallback(() => {
     setSelectedPartner({
       type: REF_PROFILE_TYPE.REF,
-      regRefCode: '',
       settings: {
         domains: [
           {
