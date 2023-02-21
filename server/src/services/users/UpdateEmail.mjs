@@ -34,7 +34,7 @@ export default class UsersUpdateEmail extends Base {
   }
 
   static get paramsSecret() {
-    return ['data.id'];
+    return [];
   }
 
   static get resultSecret() {

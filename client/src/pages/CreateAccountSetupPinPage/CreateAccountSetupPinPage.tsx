@@ -4,6 +4,7 @@ import { Form, FormRenderProps, FormSpy } from 'react-final-form';
 import CancelButton from '../../components/common/CancelButton/CancelButton';
 import EdgeConfirmAction from '../../components/EdgeConfirmAction';
 import DangerModal from '../../components/Modal/DangerModal';
+import BackButton from '../../components/common/BackButton/BackButton';
 
 import { PinComponent } from './components/PinComponent';
 import { PinConfirmComponent } from './components/PinConfirmComponent';
@@ -15,7 +16,6 @@ import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
 import { useContext } from './CreateAccountSetupPinPageContext';
 
 import classes from './CreateAccountSetupPinPage.module.scss';
-import BackButton from '../../components/common/BackButton/BackButton';
 
 const CreateAccountSetupPinPage: React.FC = () => {
   const {
