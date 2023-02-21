@@ -11,13 +11,14 @@ import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Scrollbar } from 'react-scrollbars-custom';
 import classnames from 'classnames';
+import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 
 import EdgeConfirmAction from '../EdgeConfirmAction';
 import { ErrorBadge } from '../Input/ErrorBadge';
 import ModalComponent from '../Modal/Modal';
 import FormHeader from '../FormHeader/FormHeader';
 import Input from '../Input/Input';
-import SuccessModal from '../Modal/SuccessModal';
+import Modal from '../Modal/Modal';
 import PageTitle from '../PageTitle/PageTitle';
 
 import { ACTIONS } from '../Notifications/Notifications';
@@ -35,6 +36,7 @@ import { NotificationParams, StatusResponse } from '../../types';
 import { SubmitActionParams } from '../EdgeConfirmAction/types';
 
 import classes from './PasswordRecoveryForm.module.scss';
+import SubmitButton from '../common/SubmitButton/SubmitButton';
 
 const SCROLL_BAR_STYLES = { height: '350px', marginBottom: '30px' };
 
@@ -49,6 +51,7 @@ type Props = {
   show: boolean;
   edgeAuthLoading: boolean;
   username: string | null;
+  useremail: string | null;
   questions: { category: string; question: string }[];
   showPinConfirm: boolean;
   changeRecoveryQuestions: boolean;
@@ -68,6 +71,7 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
     edgeAuthLoading,
     questions,
     username,
+    useremail,
     showPinConfirm,
     changeRecoveryQuestions,
     changeRecoveryQuestionsResults,
@@ -93,16 +97,11 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
 
   useEffectOnce(
     () => {
-      if (isSettings) {
-        toggleSuccessModal(true);
-      } else {
-        closeRecoveryModal();
-        changeRecoveryQuestionsClose();
-      }
+      toggleSuccessModal(true);
       setProcessing(false);
       setDefaultValues({});
     },
-    [isSettings, changeRecoveryQuestionsClose, closeRecoveryModal],
+    [changeRecoveryQuestionsClose, closeRecoveryModal],
     status,
   );
 
@@ -421,16 +420,35 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
           {renderForm()}
         </ModalComponent>
       )}
-      {isSettings && (
-        <>
-          <SuccessModal
-            showModal={showSuccessModal}
-            title="Password Recovery Setup!"
-            subtitle="Your password recovery questions has been successfully setup"
-            onClose={onSuccessClose}
+      <Modal
+        show={showSuccessModal}
+        closeButton
+        isIndigo
+        onClose={onSuccessClose}
+      >
+        <div className={classes.modalContainer}>
+          <AssignmentTurnedInIcon className={classes.icon} />
+          <h5 className={classes.title}>
+            Password recovery questions and answers saved
+          </h5>
+          <p className={classes.text}>
+            We have sent you an email to{' '}
+            <span className="boldText">{useremail}</span> with a recovery link
+            which you should save.
+          </p>
+          <p className={classes.infoText}>
+            If you ever loose your password, click on the link, answer the
+            secret questions correctly and you will be able to create a new
+            password.
+          </p>
+          <SubmitButton
+            text="Close"
+            isWhiteBordered
+            onClick={onSuccessClose}
+            withBottomMargin
           />
-        </>
-      )}
+        </div>
+      </Modal>
       <EdgeConfirmAction
         action={CONFIRM_PIN_ACTIONS.RECOVERY}
         setProcessing={setProcessing}

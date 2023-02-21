@@ -13,6 +13,7 @@ type Props = {
   isSimple?: boolean;
   isSuccess?: boolean;
   isInfo?: boolean;
+  isIndigo?: boolean;
   onClose?: () => void;
   show: boolean;
   title?: React.ReactNode | string;
@@ -35,6 +36,7 @@ const ModalComponent: React.FC<Props> = props => {
     isSimple,
     isSuccess,
     isInfo,
+    isIndigo,
     onClose,
     show,
     title,
@@ -62,6 +64,7 @@ const ModalComponent: React.FC<Props> = props => {
         isSuccess && classes.success,
         isInfo && classes.info,
         isBlue && classes.blue,
+        isIndigo && classes.indigo,
         withoutPaggingBottom && classes.withoutPaggingBottom,
         enableOverflow && classes.enableOverflow,
       )}
