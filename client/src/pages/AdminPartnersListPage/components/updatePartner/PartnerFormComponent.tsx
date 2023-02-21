@@ -189,17 +189,6 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
       />
       {values?.type === REF_PROFILE_TYPE.REF && (
         <>
-          <Field
-            type="text"
-            name="regRefCode"
-            component={Input}
-            uiType={INPUT_UI_STYLES.BLACK_WHITE}
-            errorColor={COLOR_TYPE.WARN}
-            label="Reg Site Ref Code *"
-            placeholder="Reg Site Ref Code"
-            loading={validating}
-            disabled={submitting || loading}
-          />
           <div className="d-flex flex-column align-self-start mb-4">
             <span className={classes.label}>Wallet logo</span>
             <div

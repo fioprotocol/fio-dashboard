@@ -13,7 +13,6 @@ export default class PartnerUpdate extends Base {
     return {
       id: ['required', 'string'],
       type: ['required', 'string'],
-      regRefCode: ['string'],
       label: ['required', 'string'],
       tpid: ['string'],
       settings: [

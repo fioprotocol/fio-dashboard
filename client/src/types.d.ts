@@ -376,7 +376,6 @@ export type RefProfile = {
   id?: string;
   type: string;
   code: string;
-  regRefCode: string;
   label: string;
   title: string;
   subTitle: string;
