@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Field } from 'react-final-form';
 import validator from 'email-validator';
-import { OnFocus } from 'react-final-form-listeners';
+import { OnChange, OnFocus } from 'react-final-form-listeners';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
@@ -104,7 +104,7 @@ type Props = {
   loading: boolean;
   passwordValidation: PasswordValidationState;
   showInfoBadge: boolean;
-  onEmailBlur: (e: React.FocusEvent<HTMLInputElement>) => Promise<void | null>;
+  onEmailChange: () => void;
 };
 
 type LocalState = {
@@ -169,7 +169,7 @@ export default class EmailPassword extends Component<Props, LocalState> {
     const {
       isEmailChecked,
       isConfirmEmailChecked,
-      onEmailBlur,
+      onEmailChange,
       loading,
       showInfoBadge,
       usernameAvailableLoading,
@@ -186,11 +186,10 @@ export default class EmailPassword extends Component<Props, LocalState> {
           component={Input}
           type="text"
           placeholder="Email Address"
-          disabled={loading || usernameAvailableLoading}
           loading={usernameAvailableLoading}
-          onBlur={onEmailBlur}
           showCheckIcon={isEmailChecked}
         />
+        <OnChange name="email">{onEmailChange}</OnChange>
         <Field
           name="confirmEmail"
           component={Input}

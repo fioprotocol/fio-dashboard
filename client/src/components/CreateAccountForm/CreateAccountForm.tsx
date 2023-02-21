@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { WithLastLocationProps } from 'react-router-last-location';
 import classnames from 'classnames';
 import isEmpty from 'lodash/isEmpty';
+import debounce from 'lodash/debounce';
 
 import { EdgeAccount, EdgeCurrencyWallet } from 'edge-core-js';
 
@@ -42,6 +43,7 @@ import {
 import { FormValues, PasswordValidationState } from './types';
 
 import classes from './CreateAccountForm.module.scss';
+import { DEFAULT_DEBOUNCE_TIMEOUT } from '../../constants/timeout';
 
 const STEPS = {
   EMAIL_PASSWORD: 'EMAIL_PASSWORD',
@@ -57,6 +59,8 @@ const STEPS_LINK = {
   [STEPS.EMAIL_PASSWORD]: LINKS.CREATE_ACCOUNT,
   [STEPS.SUCCESS]: LINKS.CREATE_ACCOUNT_CONFIRMATION,
 };
+
+const EMAIL_FIELD_NAME = 'email';
 
 type Location = {
   location: {
@@ -166,9 +170,8 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     this.form &&
       this.form.mutators &&
       this.form.mutators.setDataMutator(
-        'email',
+        EMAIL_FIELD_NAME,
         {
-          // @ts-ignore
           error: !!emailError && (
             <span>
               This Email Address is already registered,{' '}
@@ -292,19 +295,20 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     });
   };
 
-  handleEmailBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+  handleEmailChange: () => void = async () => {
     this.setState({ emailWasBlurred: true });
 
     if (!this.form) return null;
 
-    const emailField = this.form.getFieldState('email');
-    if (!emailField?.valid && !emailField?.modifiedSinceLastSubmit)
-      return emailField?.blur();
+    const { value } = this.form.getFieldState(EMAIL_FIELD_NAME);
 
-    await this.isEmailExists(e.target.value || '');
-
-    return emailField?.blur();
+    await this.isEmailExists(value || '');
   };
+
+  debouncedEmailChange = debounce(
+    this.handleEmailChange,
+    DEFAULT_DEBOUNCE_TIMEOUT,
+  );
 
   handleSubmit = async (values: FormValues) => {
     const { step } = this.state;
@@ -397,7 +401,6 @@ export default class CreateAccountForm extends React.Component<Props, State> {
     } = this.state;
 
     this.form = form;
-
     if (hasSubmitErrors && submitErrors && step === STEPS.SUCCESS) {
       return (
         <GenericErrorModal
@@ -415,6 +418,9 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       values.password &&
       values.confirmPassword &&
       isEmpty(errors);
+
+    const { data } = form.getFieldState(EMAIL_FIELD_NAME) || {};
+    const emailFieldError = data?.error;
 
     return (
       <form
@@ -444,11 +450,11 @@ export default class CreateAccountForm extends React.Component<Props, State> {
             }
           >
             <EmailPassword
-              onEmailBlur={this.handleEmailBlur}
+              onEmailChange={this.debouncedEmailChange}
               passwordValidation={passwordValidation}
               loading={loading}
               usernameAvailableLoading={usernameAvailableLoading}
-              isEmailChecked={values.email && !errors.email}
+              isEmailChecked={values.email && !errors.email && !emailFieldError}
               isConfirmEmailChecked={
                 values.confirmEmail && !errors.confirmEmail
               }
