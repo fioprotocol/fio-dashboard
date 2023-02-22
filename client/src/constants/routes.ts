@@ -10,7 +10,6 @@ const ROUTES: { [route: string]: string } = {
   PASSWORD_RECOVERY: '/password-recovery',
   CREATE_ACCOUNT: '/create-account',
   CREATE_ACCOUNT_PIN: '/create-account-pin',
-  CREATE_ACCOUNT_CONFIRM: '/create-account-confirm',
   CREATE_ACCOUNT_CONFIRMATION: '/create-account-confirmation',
   CREATE_ACCOUNT_SECRET_QUESTIONS: '/create-account-secret-questions',
   CREATE_ACCOUNT_SECRET_QUESTIONS_SKIP: '/create-account-secret-questions-skip',
