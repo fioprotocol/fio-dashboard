@@ -125,6 +125,11 @@ export default class PaymentsWebhook extends Base {
           Payment.STATUS.EXPIRED,
         ].indexOf(payment.status) > -1
       ) {
+        logger.info(
+          `WEBHOOK: Payment has finished status - ${
+            Payment.STATUS[payment.status]
+          } - ${paymentProcessor.getWebhookIdentifier(webhookData)}.`,
+        );
         return { processed: true };
       }
 
@@ -144,6 +149,12 @@ export default class PaymentsWebhook extends Base {
           paymentStatus: paymentStatuses.payment,
         };
 
+        logger.info(
+          `WEBHOOK: Updating payment started - ${
+            Payment.STATUS[payment.status]
+          } - ${paymentProcessor.getWebhookIdentifier(webhookData)}.`,
+        );
+
         // Update payment
         await Order.sequelize.transaction(async t => {
           await payment.save({
@@ -159,11 +170,27 @@ export default class PaymentsWebhook extends Base {
             transaction: t,
           });
           await Order.updateStatus(order.id, payment.status, [], t);
+          logger.info(
+            `WEBHOOK: Updating payment has been finished - ${
+              Payment.STATUS[payment.status]
+            } - ${paymentProcessor.getWebhookIdentifier(webhookData)}.`,
+          );
         });
 
         // Set item is ready to process if payment is completed
         if (paymentProcessor.isCompleted(webhookData.status)) {
+          logger.info(
+            `WEBHOOK: Payment completed - ${paymentProcessor.getWebhookIdentifier(
+              webhookData,
+            )}.`,
+          );
           await Order.sequelize.transaction(async t => {
+            logger.info(
+              `WEBHOOK: Creating BCTX - ${paymentProcessor.getWebhookIdentifier(
+                webhookData,
+              )}.`,
+            );
+            const bcTxList = [];
             for (const orderItem of order.OrderItems) {
               const bcTx = await BlockchainTransaction.create(
                 {
@@ -176,6 +203,8 @@ export default class PaymentsWebhook extends Base {
                   transaction: t,
                 },
               );
+
+              bcTxList.push(bcTx.id);
 
               await OrderItemStatus.update(
                 {
@@ -192,6 +221,13 @@ export default class PaymentsWebhook extends Base {
                 },
               );
             }
+            logger.info(
+              `WEBHOOK: BCTXs has been created in count ${
+                bcTxList.length
+              } - bcTxIds ${bcTxList.join(
+                ', ',
+              )} - ${paymentProcessor.getWebhookIdentifier(webhookData)}.`,
+            );
           });
         }
       } catch (e) {
