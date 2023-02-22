@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { isAndroid } from 'react-device-detect';
 
 import SecurityItem from '../SecurityItem';
@@ -107,10 +107,10 @@ const ChangePin: React.FC<Props> = props => {
     }
   }, [status]);
 
-  const onUnmount = () => {
+  const onUnmount = useCallback(() => {
     clearChangePinError();
     clearChangePinResults();
-  };
+  }, [clearChangePinError, clearChangePinResults]);
 
   let itemContent = { ...ITEM_PROPS };
 
