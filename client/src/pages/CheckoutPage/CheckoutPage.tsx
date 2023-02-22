@@ -4,7 +4,6 @@ import { Redirect } from 'react-router';
 import PseudoModalContainer from '../../components/PseudoModalContainer';
 import { CheckoutComponent } from './components/CheckoutComponent';
 import Processing from '../../components/common/TransactionProcessing';
-import Loader from '../../components/Loader/Loader';
 import BeforeSubmitWalletConfirm from './components/BeforeSubmitWalletConfirm';
 import CancelButton from '../../components/common/CancelButton/CancelButton';
 import InfoBadge from '../../components/InfoBadge/InfoBadge';
@@ -22,6 +21,7 @@ import classes from './CheckoutPage.module.scss';
 const CheckoutPage: React.FC = () => {
   const {
     cartItems,
+    isLoading,
     isProcessing,
     payment,
     paymentWallet,
@@ -38,10 +38,7 @@ const CheckoutPage: React.FC = () => {
     ...rest
   } = useContext();
 
-  if (fioLoading || orderLoading || !paymentProvider || !paymentWalletPublicKey)
-    return <Loader />;
-
-  if (orderError)
+  if (orderError && !isLoading)
     return (
       <PseudoModalContainer title={title} onClose={onClose}>
         <InfoBadge
