@@ -66,10 +66,6 @@ const MainLayout: React.FC<Props> = props => {
   } = props;
 
   const isDesktop = useCheckIfDesktop();
-  const isConfirmEmailRoute = [
-    ROUTES.CONFIRM_EMAIL,
-    ROUTES.CONFIRM_EMAIL_RESULT,
-  ].includes(pathname);
   const routeName = getObjKeyByValue(ROUTES, pathname);
 
   useGTMGlobalTags();
@@ -93,7 +89,6 @@ const MainLayout: React.FC<Props> = props => {
     showRecovery &&
     edgeContextSet &&
     isAuthenticated &&
-    !isConfirmEmailRoute &&
     isActiveUser && <PasswordRecoveryForm />;
 
   const isHomePage = pathname === '/';

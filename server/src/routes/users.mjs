@@ -8,10 +8,8 @@ import ShowInfo from '../services/users/Show';
 import FreeAddressRegistered from '../services/users/FreeAddressRegistered';
 import UsersSetRecovery from '../services/users/SetRecovery';
 import UsersResendRecovery from '../services/users/ResendRecovery';
-import UsersResendEmailConfirm from '../services/users/ResendEmailConfirm';
 import UsersList from '../services/users/List';
-import UsersUpdateEmailRequest from '../services/users/UpdateEmailRequest';
-import UsersUpdateEmailRevert from '../services/users/UpdateEmailRevert';
+import UsersUpdateEmail from '../services/users/UpdateEmail';
 import ActivateAffiliate from '../services/users/ActivateAffiliate';
 import UpdateAffiliate from '../services/users/UpdateAffiliate';
 import UsersDetailedInfo from '../services/users/DetailedInfo';
@@ -27,12 +25,10 @@ export default {
   detailedInfo: makeServiceRunner(UsersDetailedInfo, req => req.params),
   setRecovery: makeServiceRunner(UsersSetRecovery, req => req.body),
   resendRecovery: makeServiceRunner(UsersResendRecovery, req => req.body),
-  resendEmailConfirm: makeServiceRunner(UsersResendEmailConfirm, req => req.body),
   list: makeServiceRunner(UsersList, req => req.query),
   show: makeServiceRunner(ShowInfo, req => req.params),
   freeAddress: makeServiceRunner(FreeAddressRegistered, req => req.params),
-  updateEmailRequest: makeServiceRunner(UsersUpdateEmailRequest, req => req.body),
-  updateEmailRevert: makeServiceRunner(UsersUpdateEmailRevert, req => req.body),
+  updateEmail: makeServiceRunner(UsersUpdateEmail, req => req.body),
   activateAffiliate: makeServiceRunner(ActivateAffiliate, req => req.body),
   updateAffiliate: makeServiceRunner(UpdateAffiliate, req => req.body),
   sendEvent: makeServiceRunner(UsersSendEvent, req => req.body),

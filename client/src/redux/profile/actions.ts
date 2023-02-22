@@ -3,11 +3,7 @@ import { Ecc } from '@fioprotocol/fiojs';
 import { RouterProps } from 'react-router';
 
 import { Api } from '../../api';
-import {
-  EmailConfirmationStateData,
-  FioWalletDoublet,
-  WalletKeysObj,
-} from '../../types';
+import { FioWalletDoublet, WalletKeysObj } from '../../types';
 import { minWaitTimeFunction } from '../../utils';
 
 import { GetState } from '../init';
@@ -97,7 +93,6 @@ export const signup = (data: {
   email: string;
   fioWallets: FioWalletDoublet[];
   refCode?: string;
-  stateData?: EmailConfirmationStateData;
   addEmailToPromoList: boolean;
 }): CommonPromiseAction => ({
   types: [SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE],
@@ -156,85 +151,6 @@ export const SECONDS_SINCE_LAST_ACTIVITY = `${prefix}/SECONDS_SINCE_LAST_ACTIVIT
 export const setLastActivity = (value: number): CommonAction => ({
   type: SECONDS_SINCE_LAST_ACTIVITY,
   data: value,
-});
-
-export const RESEND_CONFIRM_EMAIL_REQUEST = `${prefix}/RESEND_CONFIRM_EMAIL_REQUEST`;
-export const RESEND_CONFIRM_EMAIL_SUCCESS = `${prefix}/RESEND_CONFIRM_EMAIL_SUCCESS`;
-export const RESEND_CONFIRM_EMAIL_FAILURE = `${prefix}/RESEND_CONFIRM_EMAIL_FAILURE`;
-
-export const resendConfirmEmail = (
-  token: string,
-  stateData: EmailConfirmationStateData,
-): CommonPromiseAction => ({
-  types: [
-    RESEND_CONFIRM_EMAIL_REQUEST,
-    RESEND_CONFIRM_EMAIL_SUCCESS,
-    RESEND_CONFIRM_EMAIL_FAILURE,
-  ],
-  promise: (api: Api) =>
-    minWaitTimeFunction(() => api.auth.resendConfirmEmail(token, stateData)),
-});
-
-export const CONFIRM_EMAIL_REQUEST = `${prefix}/CONFIRM_EMAIL_REQUEST`;
-export const CONFIRM_EMAIL_SUCCESS = `${prefix}/CONFIRM_EMAIL_SUCCESS`;
-export const CONFIRM_EMAIL_FAILURE = `${prefix}/CONFIRM_EMAIL_FAILURE`;
-
-export const confirmEmail = (hash: string): CommonPromiseAction => ({
-  types: [CONFIRM_EMAIL_REQUEST, CONFIRM_EMAIL_SUCCESS, CONFIRM_EMAIL_FAILURE],
-  promise: (api: Api) => api.auth.confirm(hash),
-});
-
-export const UPDATE_EMAIL_REQ_REQUEST = `${prefix}/UPDATE_EMAIL_REQ_REQUEST`;
-export const UPDATE_EMAIL_REQ_SUCCESS = `${prefix}/UPDATE_EMAIL_REQ_SUCCESS`;
-export const UPDATE_EMAIL_REQ_FAILURE = `${prefix}/UPDATE_EMAIL_REQ_FAILURE`;
-
-export const updateEmailRequest = (
-  oldEmail: string,
-  newEmail: string,
-): CommonPromiseAction => ({
-  types: [
-    UPDATE_EMAIL_REQ_REQUEST,
-    UPDATE_EMAIL_REQ_SUCCESS,
-    UPDATE_EMAIL_REQ_FAILURE,
-  ],
-  promise: (api: Api) => api.auth.updateEmailRequest(oldEmail, newEmail),
-  newEmail,
-});
-
-export const RESET_EMAIL_CONFIRMATION_RESULT = `${prefix}/RESET_EMAIL_CONFIRMATION_RESULT`;
-
-export const resetEmailConfirmationResult = (): CommonAction => ({
-  type: RESET_EMAIL_CONFIRMATION_RESULT,
-});
-
-export const UPDATE_EMAIL_REVERT_REQUEST = `${prefix}/UPDATE_EMAIL_REVERT_REQUEST`;
-export const UPDATE_EMAIL_REVERT_SUCCESS = `${prefix}/UPDATE_EMAIL_REVERT_SUCCESS`;
-export const UPDATE_EMAIL_REVERT_FAILURE = `${prefix}/UPDATE_EMAIL_REVERT_FAILURE`;
-
-export const updateEmailRevert = (): CommonPromiseAction => ({
-  types: [
-    UPDATE_EMAIL_REVERT_REQUEST,
-    UPDATE_EMAIL_REVERT_SUCCESS,
-    UPDATE_EMAIL_REVERT_FAILURE,
-  ],
-  promise: (api: Api) => api.auth.updateEmailRevert(),
-});
-
-export const UPDATE_EMAIL_REQUEST = `${prefix}/UPDATE_EMAIL_REQUEST`;
-export const UPDATE_EMAIL_SUCCESS = `${prefix}/UPDATE_EMAIL_SUCCESS`;
-export const UPDATE_EMAIL_FAILURE = `${prefix}/UPDATE_EMAIL_FAILURE`;
-
-export const updateEmail = (hash: string): CommonPromiseAction => ({
-  types: [UPDATE_EMAIL_REQUEST, UPDATE_EMAIL_SUCCESS, UPDATE_EMAIL_FAILURE],
-  promise: (api: Api) =>
-    minWaitTimeFunction(() => api.auth.confirm(hash), 4000),
-});
-
-export const UPDATE_STATE_EMAIL = `${prefix}/UPDATE_STATE_EMAIL`;
-
-export const updateStateEmail = (email: string): CommonAction => ({
-  type: UPDATE_STATE_EMAIL,
-  data: { email },
 });
 
 export const ADMIN_LOGIN_REQUEST = `${prefix}/ADMIN_LOGIN_REQUEST`;

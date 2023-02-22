@@ -13,7 +13,6 @@ export default class PartnerCreate extends Base {
     return {
       type: ['required', 'string'],
       label: ['required', 'string'],
-      regRefCode: ['string'],
       code: ['required', 'string', 'trim', 'to_lc'],
       tpid: ['string'],
       settings: [

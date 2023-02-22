@@ -4,7 +4,7 @@ import X from '../Exception';
 import emailSender from '../emailSender';
 import marketingMailchimp from '../../external/marketing-mailchimp';
 
-import { Action, User, Notification, ReferrerProfile, Wallet } from '../../models';
+import { User, Notification, ReferrerProfile, Wallet } from '../../models';
 
 export default class UsersCreate extends Base {
   static get validationRules() {
@@ -26,7 +26,6 @@ export default class UsersCreate extends Base {
               },
             ],
             refCode: ['string'],
-            stateData: ['any_object'],
             addEmailToPromoList: ['required', 'integer', { number_between: [0, 1] }],
           },
         },
@@ -34,9 +33,7 @@ export default class UsersCreate extends Base {
     };
   }
 
-  async execute({
-    data: { username, email, fioWallets, refCode, stateData, addEmailToPromoList },
-  }) {
+  async execute({ data: { username, email, fioWallets, refCode, addEmailToPromoList } }) {
     if (await User.findOneWhere({ email })) {
       throw new X({
         code: 'NOT_UNIQUE',
@@ -55,33 +52,18 @@ export default class UsersCreate extends Base {
     const user = new User({
       username,
       email,
-      status: User.STATUS.NEW,
+      status: User.STATUS.ACTIVE,
       refProfileId,
       isOptIn: !!addEmailToPromoList,
     });
 
     await user.save();
 
-    const action = await new Action({
-      type: Action.TYPE.CONFIRM_EMAIL,
-      hash: Action.generateHash(),
-      data: {
-        userId: user.id,
-        email: user.email,
-        state: stateData,
-      },
-    }).save();
-
     if (addEmailToPromoList) {
       await marketingMailchimp.addEmailToPromoList(email);
     }
 
     await emailSender.send(templates.createAccount, email);
-
-    await emailSender.send(templates.confirmEmail, email, {
-      hash: action.hash,
-      refCode,
-    });
 
     await new Notification({
       type: Notification.TYPE.INFO,

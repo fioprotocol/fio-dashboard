@@ -14,7 +14,6 @@ import { refProfileInfo } from '../../redux/refProfile/selectors';
 import {
   error as loginFailure,
   lastAuthData,
-  emailConfirmationResult,
 } from '../../redux/profile/selectors';
 import {
   loading as edgeAuthLoading,
@@ -33,7 +32,6 @@ const reduxConnect = connect(
     loginFailure,
     lastAuthData,
     refProfileInfo,
-    emailConfirmationResult,
   }),
   {
     onSubmit: login,

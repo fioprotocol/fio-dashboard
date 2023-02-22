@@ -8,13 +8,7 @@ import {
 import { prefix } from './actions';
 
 import { ReduxState } from '../init';
-import {
-  AdminUser,
-  AnyType,
-  EmailConfirmationResult,
-  LastAuthData,
-  User,
-} from '../../types';
+import { AdminUser, AnyType, LastAuthData, User } from '../../types';
 
 export const loading = (state: ReduxState): boolean => state[prefix].loading;
 export const user = (state: ReduxState): User | null => state[prefix].user;
@@ -47,9 +41,6 @@ export const error = (
   code?: string;
   message?: string;
 } | null => state[prefix].error;
-export const emailConfirmationResult = (
-  state: ReduxState,
-): EmailConfirmationResult => state[prefix].emailConfirmationResult;
 export const successfullyRegistered = (state: ReduxState): boolean =>
   state[prefix].successfullyRegistered;
 export const lastAuthData = (state: ReduxState): LastAuthData =>
@@ -58,10 +49,6 @@ export const tokenCheckResult = (state: ReduxState): boolean | null =>
   state[prefix].tokenCheckResult;
 export const lastActivityDate = (state: ReduxState): number =>
   state[prefix].lastActivityDate;
-export const emailConfirmationToken = (state: ReduxState): string | null =>
-  state[prefix].emailConfirmationToken;
-export const emailConfirmationSent = (state: ReduxState): boolean =>
-  state[prefix].emailConfirmationSent;
 export const profileRefreshed = (state: ReduxState): boolean =>
   state[prefix].profileRefreshed;
 export const adminProfileRefreshed = (state: ReduxState): boolean =>
@@ -69,8 +56,6 @@ export const adminProfileRefreshed = (state: ReduxState): boolean =>
 export const changeRecoveryQuestionsResults = (
   state: ReduxState,
 ): { status?: number } => state[prefix].changeRecoveryQuestionsResults;
-export const updateEmailLoading = (state: ReduxState): boolean =>
-  state[prefix].updateEmailLoading;
 
 export const isAuthenticated = createSelector(user, user => !!user);
 export const isAdminAuthenticated = createSelector(
@@ -107,24 +92,6 @@ export const isNotActiveAdminUser = createSelector(
     adminProfileRefreshed &&
     isAdminAuthenticated &&
     adminUser.status.id !== ADMIN_USER_STATUSES.ACTIVE,
-);
-
-export const isNewEmailNotVerified = createSelector(
-  isAuthenticated,
-  user,
-  profileRefreshed,
-  (isAuthenticated, user, profileRefreshed) =>
-    profileRefreshed &&
-    isAuthenticated &&
-    user.status === USER_STATUSES.NEW_EMAIL_NOT_VERIFIED,
-);
-
-export const isNewUser = createSelector(
-  isAuthenticated,
-  user,
-  profileRefreshed,
-  (isAuthenticated, user, profileRefreshed) =>
-    profileRefreshed && isAuthenticated && user.status === USER_STATUSES.NEW,
 );
 
 export const hasFreeAddress = createSelector(

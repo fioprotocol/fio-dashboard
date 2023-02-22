@@ -324,4 +324,25 @@ export default combineReducers({
         return state;
     }
   },
+  isPinEnabled(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.SET_IS_PIN_ENABLED_SUCCESS: {
+        return action.data;
+      }
+      case LOGOUT_SUCCESS: {
+        return false;
+      }
+      default:
+        return state;
+    }
+  },
+  isPinSetupPostponed(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.SET_IS_PIN_POSTPONED: {
+        return action.data;
+      }
+      default:
+        return state;
+    }
+  },
 });

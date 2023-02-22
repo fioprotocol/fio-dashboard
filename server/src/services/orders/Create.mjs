@@ -4,7 +4,7 @@ import Base from '../Base';
 
 import { Order, OrderItem, OrderItemStatus, Payment, User } from '../../models';
 
-import { DAY_MS } from '../../config/constants.js';
+import { DAY_MS, PAYMENTS_STATUSES } from '../../config/constants.js';
 import X from '../Exception.mjs';
 
 export default class OrdersCreate extends Base {
@@ -74,13 +74,17 @@ export default class OrdersCreate extends Base {
         exOrder.status = Order.STATUS.CANCELED;
 
         await exOrder.save({ transaction: t });
-        await OrderItemStatus.destroy({
-          where: {
-            orderItemId: { [Sequelize.Op.in]: exOrder.OrderItems.map(({ id }) => id) },
+        await OrderItemStatus.update(
+          { paymentStatus: PAYMENTS_STATUSES.CANCELLED },
+          {
+            where: {
+              orderItemId: {
+                [Sequelize.Op.in]: exOrder.OrderItems.map(({ id }) => id),
+              },
+            },
+            transaction: t,
           },
-          force: true,
-          transaction: t,
-        });
+        );
       }
 
       order = await Order.create(

@@ -2,7 +2,6 @@ import { combineReducers } from 'redux';
 
 import * as actions from './actions';
 import { CONFIRM_PIN_SUCCESS } from '../edge/actions';
-import { PROFILE_SUCCESS } from '../profile/actions';
 
 import {
   GenericErrorDataTypes,
@@ -27,8 +26,6 @@ export default combineReducers({
         return true;
       case actions.CLOSE_RECOVERY_PASSWORD:
         return false;
-      case PROFILE_SUCCESS:
-        return !action.data.secretSet && !action.data.secretSetNotification;
       default:
         return state;
     }

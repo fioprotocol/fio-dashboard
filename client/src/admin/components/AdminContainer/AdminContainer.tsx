@@ -27,7 +27,7 @@ const AdminContainer: React.FC<Props> = props => {
 
   const isDesktop = useCheckIfDesktop();
 
-  const isConfirmEmailRoute = [
+  const isAdminConfirmEmailRoute = [
     ADMIN_ROUTES.ADMIN_CONFIRM_EMAIL,
     ADMIN_ROUTES.ADMIN_RESET_PASSWORD,
   ].includes(pathname);
@@ -36,7 +36,7 @@ const AdminContainer: React.FC<Props> = props => {
       loadProfile();
     },
     [loadProfile],
-    !isConfirmEmailRoute,
+    !isAdminConfirmEmailRoute,
   );
 
   return (

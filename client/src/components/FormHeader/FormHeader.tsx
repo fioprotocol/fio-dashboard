@@ -5,19 +5,22 @@ import classes from './FormHeader.module.scss';
 
 type Props = {
   title: string;
-  subtitle: string | React.ReactNode;
+  subtitle?: string | React.ReactNode;
+  hasBigTopMargin?: boolean;
   header?: string | React.ReactElement;
   isSubNarrow?: boolean;
 };
 
 const FormHeader: React.FC<Props> = props => {
-  const { header, isSubNarrow, title, subtitle } = props;
+  const { hasBigTopMargin, header, isSubNarrow, title, subtitle } = props;
 
   return (
     <div
       className={classnames(
         !subtitle && 'mb-4' && 'mt-4',
         'd-flex flex-column text-white align-items-center justify-center',
+        classes.container,
+        hasBigTopMargin && classes.hasBigTopMargin,
       )}
     >
       {header && <div className={classes.header}>{header}</div>}

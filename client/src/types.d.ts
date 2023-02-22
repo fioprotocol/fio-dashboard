@@ -376,7 +376,6 @@ export type RefProfile = {
   id?: string;
   type: string;
   code: string;
-  regRefCode: string;
   label: string;
   title: string;
   subTitle: string;
@@ -431,21 +430,6 @@ export type ContainedFlowQueryParams = {
   action: ContainedFlowActionSettingsKey;
   r?: string;
 } & Partial<SignNFTParams>; // could be (SignNFTParams | RenewDomainActionParams | AnyOtherActionParams )
-
-export type EmailConfirmationStateData = {
-  redirectLink?: string;
-  refCode?: string;
-  containedFlowQueryParams?: ContainedFlowQueryParams | null;
-};
-
-export type EmailConfirmationResult = {
-  email?: string;
-  newEmail?: string;
-  oldEmail?: string;
-  error?: string;
-  success?: boolean;
-  stateData?: EmailConfirmationStateData;
-};
 
 export type CommonObjectProps = { [key: string]: string };
 

@@ -11,21 +11,14 @@ import styles from './AuthContainer.module.scss';
 type Props = {
   edgeContextSet: boolean;
   isAuthenticated: boolean;
-  isNewUser: boolean;
   loading: boolean;
 };
 
 const AuthContainer: React.FC<Props & RouteComponentProps> = props => {
-  const {
-    edgeContextSet,
-    isAuthenticated,
-    isNewUser,
-    loading,
-    location,
-  } = props;
+  const { edgeContextSet, isAuthenticated, loading, location } = props;
 
   if (isAuthenticated && !loading) {
-    return <Redirect to={isNewUser ? ROUTES.IS_NEW_USER : ROUTES.DASHBOARD} />;
+    return <Redirect to={ROUTES.DASHBOARD} />;
   }
   if (location.pathname !== ROUTES.CREATE_ACCOUNT) {
     return <Redirect to={ROUTES.NOT_FOUND} />;

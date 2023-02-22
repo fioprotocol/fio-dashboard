@@ -5,11 +5,15 @@ import ActionButton from '../ActionButton';
 import ModalUIComponent from '../ModalUIComponent';
 import ChangeEmailForm from './ChangeEmailForm';
 import EdgeConfirmAction from '../../../../components/EdgeConfirmAction';
+import SuccessModal from '../../../../components/Modal/SuccessModal';
 
 import { CONFIRM_PIN_ACTIONS } from '../../../../constants/common';
 
 import { emailAvailable } from '../../../../api/middleware/auth';
 import { minWaitTimeFunction } from '../../../../utils';
+import { log } from '../../../../util/general';
+
+import apis from '../../../../api';
 
 import { User } from '../../../../types';
 import { FormValuesProps } from './types';
@@ -17,20 +21,24 @@ import { SubmitActionParams } from '../../../../components/EdgeConfirmAction/typ
 
 import classes from '../../styles/ChangeEmail.module.scss';
 
+const SUCCESS_MODAL_CONTENT = {
+  successModalTitle: 'EMAIL CHANGED!',
+  successModalSubtitle: 'Your email has been successfully changed',
+};
+
 type Props = {
   user: User;
-  updateEmailRequest: (oldEmail: string, newEmail: string) => void;
   pinModalIsOpen: boolean;
   loading: boolean;
 };
 
 const ChangeEmail: React.FC<Props> = props => {
-  const { user, updateEmailRequest, pinModalIsOpen, loading } = props;
+  const { user, pinModalIsOpen, loading } = props;
   const [showModal, toggleModal] = useState(false);
+  const [showSuccessModal, toggleSuccessModal] = useState(false);
   const [processing, setProcessing] = useState(false);
   const [submitData, setSubmitData] = useState<{
     newEmail: string;
-    oldEmail: string;
   } | null>(null);
 
   const onCancel = () => {
@@ -40,6 +48,8 @@ const ChangeEmail: React.FC<Props> = props => {
   const onSuccess = () => {
     setProcessing(false);
   };
+
+  const onSuccessClose = () => toggleSuccessModal(false);
 
   const onCloseModal = () => {
     if (!processing && !loading) toggleModal(false);
@@ -51,12 +61,20 @@ const ChangeEmail: React.FC<Props> = props => {
   };
 
   const submit = async ({ data }: SubmitActionParams) => {
-    const { oldEmail, newEmail } = data;
-    updateEmailRequest(oldEmail, newEmail);
+    const { newEmail } = data;
+    try {
+      const res = await apis.auth.updateEmail(newEmail);
+      if (res) {
+        await apis.auth.profile();
+        onCloseModal();
+        toggleSuccessModal(true);
+      }
+    } catch (err) {
+      log.error(err);
+    }
   };
 
   const onSubmit = async (values: FormValuesProps) => {
-    const { email: oldEmail } = user;
     const { newEmail } = values;
 
     const result = await minWaitTimeFunction(
@@ -66,7 +84,7 @@ const ChangeEmail: React.FC<Props> = props => {
     if (result.error)
       return { newEmail: 'This Email Address is already registered' };
 
-    setSubmitData({ oldEmail, newEmail });
+    setSubmitData({ newEmail });
     return {};
   };
 
@@ -105,6 +123,12 @@ const ChangeEmail: React.FC<Props> = props => {
           submitAction={submit}
           edgeAccountLogoutBefore={true}
           hideProcessing={true}
+        />
+        <SuccessModal
+          title={SUCCESS_MODAL_CONTENT.successModalTitle}
+          subtitle={SUCCESS_MODAL_CONTENT.successModalSubtitle}
+          onClose={onSuccessClose}
+          showModal={showSuccessModal}
         />
       </div>
     </div>

@@ -13,6 +13,8 @@ import {
 
 import X from '../Exception.mjs';
 
+import { PAYMENTS_STATUSES } from '../../config/constants';
+
 import logger from '../../logger.mjs';
 
 export default class OrdersUpdate extends Base {
@@ -94,12 +96,16 @@ export default class OrdersUpdate extends Base {
         { status: data.status },
         { where: { id, userId: this.context.id } },
       );
-      await OrderItemStatus.destroy({
-        where: {
-          orderItemId: { [Sequelize.Op.in]: order.OrderItems.map(({ id }) => id) },
+      await OrderItemStatus.update(
+        { paymentStatus: PAYMENTS_STATUSES.CANCELLED },
+        {
+          where: {
+            orderItemId: {
+              [Sequelize.Op.in]: order.OrderItems.map(({ id }) => id),
+            },
+          },
         },
-        force: true,
-      });
+      );
       await Payment.cancelPayment(order);
 
       return {

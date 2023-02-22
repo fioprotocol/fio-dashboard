@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Field, Form, FormRenderProps } from 'react-final-form';
 import { FormApi } from 'final-form';
 import isEmpty from 'lodash/isEmpty';
@@ -7,6 +6,7 @@ import isEmpty from 'lodash/isEmpty';
 import PinInput from '../Input/PinInput/PinInput';
 import Counter from '../Counter/Counter';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
+import Loader from '../Loader/Loader';
 
 import { setDataMutator } from '../../utils';
 import { PIN_LENGTH } from '../../constants/form';
@@ -16,8 +16,13 @@ import classes from './PinForm.module.scss';
 
 export const FIELD_NAME = 'pin';
 
+export const FIELD_NAMES = {
+  PIN: FIELD_NAME,
+  CONFIRM_PIN: 'confirmPin',
+};
+
 type Props = {
-  onSubmit: (pin: string) => void;
+  onSubmit: ({ pin }: { pin: string }) => void;
   onReset: () => void;
   loading: boolean;
   error?: string | (Error & { wait?: number }) | null;
@@ -75,6 +80,7 @@ const PinForm: React.FC<Props> = props => {
     () => () => {
       resetForm();
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
@@ -82,7 +88,7 @@ const PinForm: React.FC<Props> = props => {
     if (loading) return;
     const { pin } = values;
     if (!pin || error || (pin && pin.length !== PIN_LENGTH)) return;
-    onSubmit(pin);
+    onSubmit({ pin });
   };
 
   const renderForm = (formProps: FormRenderProps) => {
@@ -102,7 +108,9 @@ const PinForm: React.FC<Props> = props => {
           onReset={onReset}
         />
         {loading && (
-          <FontAwesomeIcon icon="spinner" spin className={classes.icon} />
+          <div className={classes.icon}>
+            <Loader hasSmallSize />
+          </div>
         )}
         {!isEmpty(fieldError) &&
           values.pin &&

@@ -15,6 +15,15 @@
     color: $baltic-sea;
   }
 
+  &.hasAutoSizes {
+    width: auto;
+    height: auto;
+  }
+
+  &.hasDefaultCursor {
+    cursor: default;
+  }
+
   &.iw {
     color: $light-indigo;
   }
