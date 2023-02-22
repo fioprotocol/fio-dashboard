@@ -81,6 +81,7 @@ const SIGN_TX_MAX_FEE_COEFF = 1.5;
 
 export const useContext = (): {
   cartItems: CartItem[];
+  isLoading?: boolean;
   walletBalancesAvailable: WalletBalancesItem;
   paymentWallet: FioWalletDoublet;
   paymentWalletPublicKey: string;
@@ -167,7 +168,7 @@ export const useContext = (): {
     [orderId, dispatchSetWallet],
   );
 
-  const getOrder = async () => {
+  const getOrder = useCallback(async () => {
     let result;
 
     try {
@@ -190,63 +191,67 @@ export const useContext = (): {
 
     setOrder(null);
     setGetOrderLoading(false);
-  };
-  const createOrder = async (
-    paymentWalletPublicKey: string,
-    fioWallets: FioWalletDoublet[],
-    orderParamsFromLocation: CreateOrderActionData,
-    cartItems: CartItem[],
-    isFree: boolean,
-  ) => {
-    let result;
-    let orderParams: CreateOrderActionData | null = null;
+  }, [cartItems, setWallet]);
+  const createOrder = useCallback(
+    async (
+      paymentWalletPublicKey: string,
+      fioWallets: FioWalletDoublet[],
+      orderParamsFromLocation: CreateOrderActionData,
+      cartItems: CartItem[],
+      isFree: boolean,
+    ) => {
+      let result;
+      let orderParams: CreateOrderActionData | null = null;
 
-    if (!orderParamsFromLocation && isFree) {
-      orderParams = {
-        total: '0',
-        roe,
-        publicKey: paymentWalletPublicKey,
-        paymentProcessor: PAYMENT_PROVIDER.FIO,
-        items: cartItems.map(({ address, domain, costNativeFio }) => ({
-          action: ACTIONS.registerFioAddress,
-          address,
-          domain,
-          nativeFio: `${costNativeFio || 0}`,
-          price: '0',
-          priceCurrency: CURRENCY_CODES.USDC,
-        })),
-      };
-    }
+      if (!orderParamsFromLocation && isFree) {
+        orderParams = {
+          total: '0',
+          roe,
+          publicKey: paymentWalletPublicKey,
+          paymentProcessor: PAYMENT_PROVIDER.FIO,
+          items: cartItems.map(({ address, domain, costNativeFio }) => ({
+            action: ACTIONS.registerFioAddress,
+            address,
+            domain,
+            nativeFio: `${costNativeFio || 0}`,
+            price: '0',
+            priceCurrency: CURRENCY_CODES.USDC,
+          })),
+        };
+      }
 
-    if (orderParamsFromLocation) {
-      orderParams = { ...orderParamsFromLocation };
-      if (!orderParams.publicKey)
-        orderParams.publicKey =
-          paymentWalletPublicKey ||
-          fioWallets.filter(({ from }) => from === WALLET_CREATED_FROM.EDGE)[0]
-            .publicKey;
-    }
+      if (orderParamsFromLocation) {
+        orderParams = { ...orderParamsFromLocation };
+        if (!orderParams.publicKey)
+          orderParams.publicKey =
+            paymentWalletPublicKey ||
+            fioWallets.filter(
+              ({ from }) => from === WALLET_CREATED_FROM.EDGE,
+            )[0].publicKey;
+      }
 
-    // There is no order, redirect to cart
-    if (!orderParams) return history.push(ROUTES.CART);
+      // There is no order, redirect to cart
+      if (!orderParams) return history.push(ROUTES.CART);
 
-    try {
-      result = await apis.orders.create(orderParams);
-    } catch (e) {
-      setOrderError(e);
-    }
+      try {
+        result = await apis.orders.create(orderParams);
+      } catch (e) {
+        setOrderError(e);
+      }
 
-    if (result && result.id) {
-      if (result.publicKey) setWallet(result.publicKey);
-      setOrderError(null);
-      setOrder(result);
+      if (result && result.id) {
+        if (result.publicKey) setWallet(result.publicKey);
+        setOrderError(null);
+        setOrder(result);
+        setCreateOrderLoading(false);
+        return;
+      }
+
+      setOrder(null);
       setCreateOrderLoading(false);
-      return;
-    }
-
-    setOrder(null);
-    setCreateOrderLoading(false);
-  };
+    },
+    [history, roe, setWallet],
+  );
 
   useEffectOnce(
     () => {
@@ -520,6 +525,12 @@ export const useContext = (): {
 
   return {
     cartItems,
+    isLoading:
+      fioLoading ||
+      getOrderLoading ||
+      createOrderLoading ||
+      !paymentProvider ||
+      !paymentWalletPublicKey,
     walletBalancesAvailable,
     paymentWallet,
     paymentWalletPublicKey,
