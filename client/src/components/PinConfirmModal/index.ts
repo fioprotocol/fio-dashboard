@@ -16,6 +16,7 @@ import {
   pinConfirmation,
 } from '../../redux/edge/selectors';
 import { showPinConfirm, pinConfirmData } from '../../redux/modal/selectors';
+import { pathname } from '../../redux/navigation/selectors';
 import { edgeUsername } from '../../redux/profile/selectors';
 
 import PinConfirmModal from './PinConfirmModal';
@@ -28,6 +29,7 @@ const reduxConnect = connect(
     showPinConfirm,
     cachedUsers,
     confirmingPin,
+    pathname,
     pinConfirmation,
     pinConfirmData,
   }),
