@@ -8,6 +8,7 @@ import { PasswordForm } from './components/PasswordForm';
 
 import { PIN_LENGTH } from '../../constants/form';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
+import { ROUTES } from '../../constants/routes';
 
 import { PinConfirmModalProps } from './types';
 
@@ -32,6 +33,7 @@ const PinConfirmModal: React.FC<PinConfirmModalProps> = props => {
     confirmingPin,
     onClose,
     username,
+    pathname,
     pinConfirmation,
     resetPinConfirm,
     pinConfirmData,
@@ -71,6 +73,14 @@ const PinConfirmModal: React.FC<PinConfirmModalProps> = props => {
 
   const { error } = pinConfirmation;
 
+  let subtitle = `Enter your ${
+    isPinEnabled ? SUBTITLES_CONFIRM_TYPE.PIN : SUBTITLES_CONFIRM_TYPE.PASSWORD
+  } to confirm this transaction`;
+
+  if (pathname === ROUTES.CREATE_ACCOUNT_PIN) {
+    subtitle = `Enter your password to finish PIN setup`;
+  }
+
   return (
     <ModalComponent
       show={showPinConfirm}
@@ -82,11 +92,7 @@ const PinConfirmModal: React.FC<PinConfirmModalProps> = props => {
       <div className={classes.form}>
         <FormHeader
           title={`Confirm ${TITLES[pinConfirmData.action] || 'to continue'}`}
-          subtitle={`Enter your ${
-            isPinEnabled
-              ? SUBTITLES_CONFIRM_TYPE.PIN
-              : SUBTITLES_CONFIRM_TYPE.PASSWORD
-          } to confirm this transaction`}
+          subtitle={subtitle}
           isSubNarrow
         />
         {isPinEnabled ? (

@@ -11,6 +11,7 @@ export type PinConfirmModalProps = {
   confirmingPin: boolean;
   onClose: () => void;
   username: string;
+  pathname: string;
   pinConfirmation: PinConfirmation;
   resetPinConfirm: () => void;
   pinConfirmData: PinConfirmDataTypes;
