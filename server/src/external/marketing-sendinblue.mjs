@@ -1,4 +1,5 @@
 import SibApiV3Sdk from 'sib-api-v3-sdk';
+import superagent from 'superagent';
 
 import config from '../config';
 import logger from '../logger';
@@ -39,6 +40,17 @@ class MarketingSendInBlue {
     } catch (err) {
       logger.error(err.message);
       return false;
+    }
+  }
+
+  async sendEvent(email, event) {
+    try {
+      await superagent
+        .post(`${config.mail.sendinblueEventUrl}/trackEvent`)
+        .set('ma-key', config.mail.sendinblueApiKey)
+        .send({ email, event, properties: {} });
+    } catch (err) {
+      logger.error(err.message);
     }
   }
 
