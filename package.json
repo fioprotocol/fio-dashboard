@@ -100,8 +100,6 @@
     "@lemoncode/fonk": "1.5.4",
     "@lemoncode/fonk-final-form": "2.3.4",
     "@lemoncode/fonk-is-url-validator": "1.0.0",
-    "@mailchimp/mailchimp_marketing": "3.0.80",
-    "@mailchimp/mailchimp_transactional": "1.0.50",
     "@mui/icons-material": "5.11.0",
     "@mui/material": "5.11.5",
     "@stripe/react-stripe-js": "1.14.2",
