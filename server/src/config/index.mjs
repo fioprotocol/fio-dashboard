@@ -35,6 +35,7 @@ export default {
     sendinblueKey: process.env.MAILER_SENDINBLUE_KEY,
     sendinblueApiKey: process.env.SENDINBLUE_API_KEY,
     sendinbuleListId: process.env.SENDINBLUE_MARKETING_LIST,
+    sendinblueEventUrl: process.env.SENDINBLUE_EVENT_URL,
   },
   ...dbConfig,
 };
