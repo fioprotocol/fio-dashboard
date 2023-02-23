@@ -12,6 +12,8 @@ import { PIN_LENGTH } from '../../constants/form';
 import { ROUTES } from '../../constants/routes';
 import { FIELD_NAMES } from '../../components/PinForm/PinForm';
 
+import useEffectOnce from '../../hooks/general';
+
 import { log } from '../../util/general';
 
 type UseContextProps = {
@@ -123,7 +125,6 @@ export const useContext = (): UseContextProps => {
           const res = await edgeAccount.changePin({ pin });
           if (res) {
             dispatch(setPinEnabled(edgeAccount.username));
-            dispatch(setPinSetupPostponed(false));
             dispatch(showRecoveryModal());
             dispatch(setRedirectPath(null));
           }
@@ -148,6 +149,10 @@ export const useContext = (): UseContextProps => {
       });
       setHasError(false);
     }
+  }, []);
+
+  useEffectOnce(() => {
+    dispatch(setPinSetupPostponed(false));
   }, []);
 
   return {
