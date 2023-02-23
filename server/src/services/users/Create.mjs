@@ -2,7 +2,7 @@ import { templates } from '../../emails/emailTemplate';
 import Base from '../Base';
 import X from '../Exception';
 import emailSender from '../emailSender';
-import marketingMailchimp from '../../external/marketing-mailchimp';
+import marketingSendinblue from '../../external/marketing-sendinblue.mjs';
 
 import { User, Notification, ReferrerProfile, Wallet } from '../../models';
 
@@ -60,7 +60,7 @@ export default class UsersCreate extends Base {
     await user.save();
 
     if (addEmailToPromoList) {
-      await marketingMailchimp.addEmailToPromoList(email);
+      await marketingSendinblue.addEmailToPromoList(email);
     }
 
     await emailSender.send(templates.createAccount, email);
