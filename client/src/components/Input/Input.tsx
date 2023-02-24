@@ -43,6 +43,7 @@ type Props = {
     'data-clear'?: boolean;
     value: string;
   };
+  hasErrorForced?: boolean;
   hasSmallText?: boolean;
   hasThinText?: boolean;
   showPreview?: boolean;
@@ -75,6 +76,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     options,
     isHigh,
     isSimple,
+    hasErrorForced,
     hasSmallText,
     hasThinText,
     showPreview = true,
@@ -100,6 +102,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
   const [previewUrl, setPreviewUrl] = useState('');
 
   const hasError =
+    hasErrorForced ||
     ((error || data?.error) &&
       (touched || modified || submitSucceeded || !!value) &&
       !active) || // todo: remove !active to show red border on focused field. make debounce on create account user field
