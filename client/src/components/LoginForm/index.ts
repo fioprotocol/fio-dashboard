@@ -18,6 +18,7 @@ import {
 import {
   loading as edgeAuthLoading,
   cachedUsers,
+  isPinEnabled,
   loginFailure as edgeLoginFailure,
 } from '../../redux/edge/selectors';
 
@@ -29,6 +30,7 @@ const reduxConnect = connect(
     show,
     cachedUsers,
     edgeLoginFailure,
+    isPinEnabled,
     loginFailure,
     lastAuthData,
     refProfileInfo,
