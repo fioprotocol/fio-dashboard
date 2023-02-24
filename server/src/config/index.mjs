@@ -36,6 +36,7 @@ export default {
     sendinblueApiKey: process.env.SENDINBLUE_API_KEY,
     sendinbuleListId: process.env.SENDINBLUE_MARKETING_LIST,
     sendinblueEventUrl: process.env.SENDINBLUE_EVENT_URL,
+    sendinblueEventTrackerId: process.env.SENDINBLUE_EVENT_TRACKER_ID,
   },
   ...dbConfig,
 };

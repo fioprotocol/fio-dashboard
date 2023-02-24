@@ -47,7 +47,7 @@ class MarketingSendInBlue {
     try {
       await superagent
         .post(`${config.mail.sendinblueEventUrl}/trackEvent`)
-        .set('ma-key', config.mail.sendinblueApiKey)
+        .set('ma-key', config.mail.sendinblueEventTrackerId)
         .send({ email, event, properties: {} });
     } catch (err) {
       logger.error(err.message);
