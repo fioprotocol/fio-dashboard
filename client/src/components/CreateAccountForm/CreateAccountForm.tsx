@@ -61,6 +61,7 @@ const STEPS_LINK = {
 };
 
 const EMAIL_FIELD_NAME = 'email';
+const CONFIRM_EMAIL_FIED_NAME = 'confirmEmail';
 
 type Location = {
   location: {
@@ -300,9 +301,9 @@ export default class CreateAccountForm extends React.Component<Props, State> {
 
     if (!this.form) return null;
 
-    const { value } = this.form.getFieldState(EMAIL_FIELD_NAME);
+    const { value, error } = this.form.getFieldState(EMAIL_FIELD_NAME);
 
-    await this.isEmailExists(value || '');
+    !error && (await this.isEmailExists(value || ''));
   };
 
   debouncedEmailChange = debounce(
@@ -419,8 +420,12 @@ export default class CreateAccountForm extends React.Component<Props, State> {
       values.confirmPassword &&
       isEmpty(errors);
 
-    const { data } = form.getFieldState(EMAIL_FIELD_NAME) || {};
-    const emailFieldError = data?.error;
+    const { data: emailFieldData } = form.getFieldState(EMAIL_FIELD_NAME) || {};
+    const {
+      active: confirmEmailFieldActive,
+      touched: confirmEmailFieldTouched,
+    } = form.getFieldState(CONFIRM_EMAIL_FIED_NAME) || {};
+    const emailFieldError = emailFieldData?.error;
 
     return (
       <form
@@ -457,6 +462,12 @@ export default class CreateAccountForm extends React.Component<Props, State> {
               isEmailChecked={values.email && !errors.email && !emailFieldError}
               isConfirmEmailChecked={
                 values.confirmEmail && !errors.confirmEmail
+              }
+              isConfirmEmailError={
+                values.confirmEmail &&
+                errors.confirmEmail &&
+                !confirmEmailFieldActive &&
+                confirmEmailFieldTouched
               }
               showInfoBadge={showInfoBadge}
             />
