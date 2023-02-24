@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { osName, osVersion } from 'react-device-detect';
 
 import ModalComponent from '../Modal/Modal';
@@ -15,6 +15,7 @@ import { LINKS } from '../../constants/labels';
 import apis from '../../api';
 
 import { autoLogin, AutoLoginParams } from '../../util/login';
+import useEffectOnce from '../../hooks/general';
 
 import { LastAuthData, LoginFailure, RefProfile } from '../../types';
 
@@ -33,6 +34,7 @@ type Props = {
   show: boolean;
   onSubmit: (params: FormValues) => void;
   edgeAuthLoading: boolean;
+  isPinEnabled: boolean;
   onClose: () => void;
   getCachedUsers: () => void;
   resetLastAuthData: () => void;
@@ -55,6 +57,7 @@ const LoginForm: React.FC<Props> = props => {
     show,
     onSubmit,
     edgeAuthLoading,
+    isPinEnabled,
     onClose,
     cachedUsers,
     lastAuthData,
@@ -75,13 +78,23 @@ const LoginForm: React.FC<Props> = props => {
   const timerRef = useRef(null);
 
   useEffect(getCachedUsers, []);
-  useEffect(() => {
-    if (lastAuthData && cachedUsers.indexOf(lastAuthData.username) > -1) {
+
+  const handlePinLogin = useCallback(() => {
+    if (
+      lastAuthData &&
+      cachedUsers.indexOf(lastAuthData.username) > -1 &&
+      isPinEnabled &&
+      !edgeAuthLoading
+    ) {
       setUsePinLogin(true);
     } else {
       setUsePinLogin(false);
     }
-  }, [cachedUsers, lastAuthData]);
+  }, [cachedUsers, edgeAuthLoading, isPinEnabled, lastAuthData]);
+
+  useEffectOnce(() => {
+    handlePinLogin();
+  }, [handlePinLogin]);
 
   useEffect(() => {
     return () => {
@@ -130,10 +143,11 @@ const LoginForm: React.FC<Props> = props => {
     });
   };
 
-  const onCloseLogin = () => {
+  const onCloseLogin = useCallback(() => {
     onClose();
     setLoginParams(null);
-  };
+    handlePinLogin();
+  }, [handlePinLogin, onClose]);
 
   const onForgotPassClose = () => {
     toggleForgotPass(false);
