@@ -41,7 +41,6 @@ export const validate = (
   }
 
   if (values.email !== values.confirmEmail && values.confirmEmail) {
-    errors.email = 'Email and Confirm Email do not match';
     errors.confirmEmail = 'Email and Confirm Email do not match';
   }
 
@@ -100,6 +99,7 @@ export const validate = (
 type Props = {
   isEmailChecked: boolean;
   isConfirmEmailChecked: boolean;
+  isConfirmEmailError: boolean;
   usernameAvailableLoading: boolean;
   loading: boolean;
   passwordValidation: PasswordValidationState;
@@ -169,6 +169,7 @@ export default class EmailPassword extends Component<Props, LocalState> {
     const {
       isEmailChecked,
       isConfirmEmailChecked,
+      isConfirmEmailError,
       onEmailChange,
       loading,
       showInfoBadge,
@@ -188,6 +189,8 @@ export default class EmailPassword extends Component<Props, LocalState> {
           placeholder="Email Address"
           loading={usernameAvailableLoading}
           showCheckIcon={isEmailChecked}
+          hasErrorForced={isConfirmEmailError}
+          hideError={isConfirmEmailError}
         />
         <OnChange name="email">{onEmailChange}</OnChange>
         <Field
@@ -195,7 +198,7 @@ export default class EmailPassword extends Component<Props, LocalState> {
           component={Input}
           type="text"
           placeholder="Email Address Confirm"
-          disabled={loading || usernameAvailableLoading}
+          disabled={loading}
           showCheckIcon={isConfirmEmailChecked}
         />
         {this.renderPassValidBadge()}

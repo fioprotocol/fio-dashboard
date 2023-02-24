@@ -5,7 +5,7 @@ import { User, Order, OrderItem, Notification, Var, Action } from '../models/ind
 import CommonJob from './job.mjs';
 
 import emailSender from '../services/emailSender.mjs';
-import marketingMailchimp from '../external/marketing-mailchimp';
+import marketingSendinblue from '../external/marketing-sendinblue.mjs';
 import { templates } from '../emails/emailTemplate.mjs';
 import sendEmailSenderErrorNotification from '../services/fallback-email-sender-error-email.mjs';
 
@@ -218,7 +218,7 @@ class EmailsJob extends CommonJob {
       });
 
       for (const user of users) {
-        const isOptIn = await marketingMailchimp.isSubscribed(user.email);
+        const isOptIn = await marketingSendinblue.isSubscribed(user.email);
 
         await User.update({ isOptIn }, { where: { id: user.id } });
       }
