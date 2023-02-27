@@ -15,7 +15,7 @@ const availableJobsParams = {
     name: 'emails',
     interval: process.env.EMAILS_JOB_INTERVAL,
     timeout: process.env.EMAILS_JOB_TIMEOUT,
-    closeWorkerAfterMs: 60 * 1000, // 1 min
+    closeWorkerAfterMs: 60 * 60 * 1000, // 60 min
   },
   walletData: {
     path: path.join(JOBS_PATH, 'wallet-data.mjs'),
