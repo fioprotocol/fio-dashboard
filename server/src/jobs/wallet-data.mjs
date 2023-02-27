@@ -7,7 +7,8 @@ import CommonJob from './job.mjs';
 import MathOp from '../services/math.mjs';
 
 import { fioApi } from '../external/fio.mjs';
-import { getROE } from '../external/roe.mjs';
+// TODO: hotfix for email balance change. Return back on all walets balances will be updated
+// import { getROE } from '../external/roe.mjs';
 
 import logger from '../logger.mjs';
 
@@ -99,27 +100,27 @@ class WalletDataJob extends CommonJob {
         );
         if (fetchedItem) {
           changed = true;
-          await Notification.create({
-            type: Notification.TYPE.INFO,
-            contentType:
-              fetchedItem.status === 'rejected'
-                ? Notification.CONTENT_TYPE.FIO_REQUEST_REJECTED
-                : Notification.CONTENT_TYPE.FIO_REQUEST_APPROVED,
-            userId: wallet.User.id,
-            data: {
-              pagesToShow: ['/'],
-              emailData: {
-                requestingFioCryptoHandle: fetchedItem.payee_fio_address,
-                requestSentTo: fetchedItem.payer_fio_address,
-                wallet: wallet.publicKey,
-                fioRequestId: fetchedItem.fio_request_id,
-                date: await User.formatDateWithTimeZone(
-                  wallet.User.id,
-                  fetchedItem.time_stamp,
-                ),
-              },
-            },
-          });
+          // await Notification.create({
+          //   type: Notification.TYPE.INFO,
+          //   contentType:
+          //     fetchedItem.status === 'rejected'
+          //       ? Notification.CONTENT_TYPE.FIO_REQUEST_REJECTED
+          //       : Notification.CONTENT_TYPE.FIO_REQUEST_APPROVED,
+          //   userId: wallet.User.id,
+          //   data: {
+          //     pagesToShow: ['/'],
+          //     emailData: {
+          //       requestingFioCryptoHandle: fetchedItem.payee_fio_address,
+          //       requestSentTo: fetchedItem.payer_fio_address,
+          //       wallet: wallet.publicKey,
+          //       fioRequestId: fetchedItem.fio_request_id,
+          //       date: await User.formatDateWithTimeZone(
+          //         wallet.User.id,
+          //         fetchedItem.time_stamp,
+          //       ),
+          //     },
+          //   },
+          // });
         }
       }
     } catch (e) {
@@ -168,25 +169,25 @@ class WalletDataJob extends CommonJob {
               status: fetchedItem.status,
             });
 
-            if (fetchedItem.status === 'requested')
-              await Notification.create({
-                type: Notification.TYPE.INFO,
-                contentType: Notification.CONTENT_TYPE.NEW_FIO_REQUEST,
-                userId: wallet.User.id,
-                data: {
-                  pagesToShow: ['/'],
-                  emailData: {
-                    requestor: fetchedItem.payee_fio_address,
-                    to: fetchedItem.payer_fio_address,
-                    wallet: wallet.publicKey,
-                    fioRequestId: fetchedItem.fio_request_id,
-                    date: await User.formatDateWithTimeZone(
-                      wallet.User.id,
-                      fetchedItem.time_stamp,
-                    ),
-                  },
-                },
-              });
+            // if (fetchedItem.status === 'requested')
+            // await Notification.create({
+            //   type: Notification.TYPE.INFO,
+            //   contentType: Notification.CONTENT_TYPE.NEW_FIO_REQUEST,
+            //   userId: wallet.User.id,
+            //   data: {
+            //     pagesToShow: ['/'],
+            //     emailData: {
+            //       requestor: fetchedItem.payee_fio_address,
+            //       to: fetchedItem.payer_fio_address,
+            //       wallet: wallet.publicKey,
+            //       fioRequestId: fetchedItem.fio_request_id,
+            //       date: await User.formatDateWithTimeZone(
+            //         wallet.User.id,
+            //         fetchedItem.time_stamp,
+            //       ),
+            //     },
+            //   },
+            // });
           }
         }
       }
@@ -243,46 +244,46 @@ class WalletDataJob extends CommonJob {
             cryptoHandle.remaining_bundled_tx >= LOW_BUNDLES_THRESHOLD
           ) {
             changed = true;
-            await Notification.create({
-              type: Notification.TYPE.INFO,
-              contentType: Notification.CONTENT_TYPE.LOW_BUNDLE_TX,
-              userId: wallet.User.id,
-              data: {
-                pagesToShow: ['/'],
-                emailData: {
-                  name: fetched.fio_address,
-                  bundles: fetched.remaining_bundled_tx,
-                },
-              },
-            });
+            // await Notification.create({
+            //   type: Notification.TYPE.INFO,
+            //   contentType: Notification.CONTENT_TYPE.LOW_BUNDLE_TX,
+            //   userId: wallet.User.id,
+            //   data: {
+            //     pagesToShow: ['/'],
+            //     emailData: {
+            //       name: fetched.fio_address,
+            //       bundles: fetched.remaining_bundled_tx,
+            //     },
+            //   },
+            // });
           }
           if (
             process.env.EMAILS_JOB_SIMULATION_LOW_BUNDLE_COUNT_ENABLED === 'true' &&
             fetched.fio_address.includes(LOW_BUNDLE_COUNT_DEBUG_AFFIX)
           ) {
-            const existingNotification = await Notification.findOneWhere({
-              contentType: Notification.CONTENT_TYPE.LOW_BUNDLE_TX,
-              userId: wallet.User.id,
-              data: {
-                emailData: {
-                  name: fetched.fio_address,
-                },
-              },
-            });
-            if (!existingNotification) {
-              await Notification.create({
-                type: Notification.TYPE.INFO,
-                contentType: Notification.CONTENT_TYPE.LOW_BUNDLE_TX,
-                userId: wallet.User.id,
-                data: {
-                  pagesToShow: ['/'],
-                  emailData: {
-                    name: fetched.fio_address,
-                    bundles: fetched.remaining_bundled_tx,
-                  },
-                },
-              });
-            }
+            // const existingNotification = await Notification.findOneWhere({
+            //   contentType: Notification.CONTENT_TYPE.LOW_BUNDLE_TX,
+            //   userId: wallet.User.id,
+            //   data: {
+            //     emailData: {
+            //       name: fetched.fio_address,
+            //     },
+            //   },
+            // });
+            // if (!existingNotification) {
+            // await Notification.create({
+            //   type: Notification.TYPE.INFO,
+            //   contentType: Notification.CONTENT_TYPE.LOW_BUNDLE_TX,
+            //   userId: wallet.User.id,
+            //   data: {
+            //     pagesToShow: ['/'],
+            //     emailData: {
+            //       name: fetched.fio_address,
+            //       bundles: fetched.remaining_bundled_tx,
+            //     },
+            //   },
+            // });
+            // }
           }
         } else {
           changed = true;
@@ -322,37 +323,37 @@ class WalletDataJob extends CommonJob {
         }
 
         if (domainExpPeriod) {
-          const existingNotification = await Notification.findOneWhere({
-            contentType: Notification.CONTENT_TYPE.DOMAIN_EXPIRE,
-            userId: wallet.User.id,
-            data: {
-              emailData: {
-                name: domain.fio_domain,
-                date: await User.formatDateWithTimeZone(
-                  wallet.User.id,
-                  domain.expiration,
-                ),
-                domainExpPeriod,
-              },
-            },
-          });
-          if (!existingNotification)
-            await Notification.create({
-              type: Notification.TYPE.INFO,
-              contentType: Notification.CONTENT_TYPE.DOMAIN_EXPIRE,
-              userId: wallet.User.id,
-              data: {
-                pagesToShow: ['/'],
-                emailData: {
-                  name: domain.fio_domain,
-                  date: await User.formatDateWithTimeZone(
-                    wallet.User.id,
-                    domain.expiration,
-                  ),
-                  domainExpPeriod,
-                },
-              },
-            });
+          // const existingNotification = await Notification.findOneWhere({
+          //   contentType: Notification.CONTENT_TYPE.DOMAIN_EXPIRE,
+          //   userId: wallet.User.id,
+          //   data: {
+          //     emailData: {
+          //       name: domain.fio_domain,
+          //       date: await User.formatDateWithTimeZone(
+          //         wallet.User.id,
+          //         domain.expiration,
+          //       ),
+          //       domainExpPeriod,
+          //     },
+          //   },
+          // });
+          // if (!existingNotification)
+          // await Notification.create({
+          //   type: Notification.TYPE.INFO,
+          //   contentType: Notification.CONTENT_TYPE.DOMAIN_EXPIRE,
+          //   userId: wallet.User.id,
+          //   data: {
+          //     pagesToShow: ['/'],
+          //     emailData: {
+          //       name: domain.fio_domain,
+          //       date: await User.formatDateWithTimeZone(
+          //         wallet.User.id,
+          //         domain.expiration,
+          //       ),
+          //       domainExpPeriod,
+          //     },
+          //   },
+          // });
         }
       }
 
@@ -430,52 +431,52 @@ class WalletDataJob extends CommonJob {
           );
         }
 
-        const roe = await getROE();
-        const fioNativeChangeBalance = new MathOp(balance)
-          .sub(previousBalance)
-          .toNumber();
-        const usdcChangeBalance = fioApi.convertFioToUsdc(
-          new MathOp(fioNativeChangeBalance).abs().toNumber(),
-          roe,
-        );
-        const usdcBalance = fioApi.convertFioToUsdc(balance, roe);
-        const sign = new MathOp(fioNativeChangeBalance).gt(0) ? '+' : '-';
+        // const roe = await getROE();
+        // const fioNativeChangeBalance = new MathOp(balance)
+        //   .sub(previousBalance)
+        //   .toNumber();
+        // const usdcChangeBalance = fioApi.convertFioToUsdc(
+        //   new MathOp(fioNativeChangeBalance).abs().toNumber(),
+        //   roe,
+        // );
+        // const usdcBalance = fioApi.convertFioToUsdc(balance, roe);
+        // const sign = new MathOp(fioNativeChangeBalance).gt(0) ? '+' : '-';
 
         if (alreadyHasPendingNotification) {
-          await existsNotification.update({
-            data: {
-              ...existsNotification.data,
-              emailData: {
-                ...existsNotification.data.emailData,
-                fioBalanceChange: `${sign}${fioApi.sufToAmount(
-                  new MathOp(fioNativeChangeBalance).abs().toNumber(),
-                )} FIO ($${usdcChangeBalance} USDC)`,
-                newFioBalance: `${fioApi.sufToAmount(
-                  balance,
-                )} FIO ($${usdcBalance} USDC)`,
-                date: await User.formatDateWithTimeZone(wallet.User.id),
-              },
-            },
-          });
+          // await existsNotification.update({
+          //   data: {
+          //     ...existsNotification.data,
+          //     emailData: {
+          //       ...existsNotification.data.emailData,
+          //       fioBalanceChange: `${sign}${fioApi.sufToAmount(
+          //         new MathOp(fioNativeChangeBalance).abs().toNumber(),
+          //       )} FIO ($${usdcChangeBalance} USDC)`,
+          //       newFioBalance: `${fioApi.sufToAmount(
+          //         balance,
+          //       )} FIO ($${usdcBalance} USDC)`,
+          //       date: await User.formatDateWithTimeZone(wallet.User.id),
+          //     },
+          //   },
+          // });
         } else {
-          await Notification.create({
-            type: Notification.TYPE.INFO,
-            contentType: Notification.CONTENT_TYPE.BALANCE_CHANGED,
-            userId: wallet.User.id,
-            data: {
-              pagesToShow: ['/'],
-              emailData: {
-                fioBalanceChange: `${sign}${fioApi.sufToAmount(
-                  new MathOp(fioNativeChangeBalance).abs().toNumber(),
-                )} FIO ($${usdcChangeBalance} USDC)`,
-                newFioBalance: `${fioApi.sufToAmount(
-                  balance,
-                )} FIO ($${usdcBalance} USDC)`,
-                wallet: wallet.publicKey,
-                date: await User.formatDateWithTimeZone(wallet.User.id),
-              },
-            },
-          });
+          // await Notification.create({
+          //   type: Notification.TYPE.INFO,
+          //   contentType: Notification.CONTENT_TYPE.BALANCE_CHANGED,
+          //   userId: wallet.User.id,
+          //   data: {
+          //     pagesToShow: ['/'],
+          //     emailData: {
+          //       fioBalanceChange: `${sign}${fioApi.sufToAmount(
+          //         new MathOp(fioNativeChangeBalance).abs().toNumber(),
+          //       )} FIO ($${usdcChangeBalance} USDC)`,
+          //       newFioBalance: `${fioApi.sufToAmount(
+          //         balance,
+          //       )} FIO ($${usdcBalance} USDC)`,
+          //       wallet: wallet.publicKey,
+          //       date: await User.formatDateWithTimeZone(wallet.User.id),
+          //     },
+          //   },
+          // });
         }
 
         await PublicWalletData.update(
