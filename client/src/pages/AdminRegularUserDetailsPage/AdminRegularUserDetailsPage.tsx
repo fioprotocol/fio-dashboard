@@ -9,6 +9,7 @@ import { FioDomainsTable } from './components/FioDomainsTable';
 import { UserInfo } from './components/UserInfo';
 import { UserOrders } from './components/UserOrders';
 import { WalletsTable } from './components/WalletsTable';
+import AdminOrderModal from '../AdminOrdersPage/components/AdminOrderModal/AdminOrderModal';
 
 const AdminRegularUserDetailsPage: React.FC = () => {
   const {
@@ -23,6 +24,9 @@ const AdminRegularUserDetailsPage: React.FC = () => {
     refProfile,
     status,
     timeZone,
+    handleOrderClick,
+    handleOrderClose,
+    orderInfo,
   } = useContext();
 
   if (loading) return <Loader />;
@@ -39,7 +43,12 @@ const AdminRegularUserDetailsPage: React.FC = () => {
       <WalletsTable fioWallets={fioWallets} />
       <FioDomainsTable fioDomains={fioDomains} />
       <FioCryptoHandlesTable fioAddresses={fioAddresses} />
-      <UserOrders orders={orders} />
+      <UserOrders orders={orders} handleOrderClick={handleOrderClick} />
+      <AdminOrderModal
+        isVisible={!!orderInfo}
+        onClose={handleOrderClose}
+        orderItem={orderInfo}
+      />
     </LayoutContainer>
   );
 };

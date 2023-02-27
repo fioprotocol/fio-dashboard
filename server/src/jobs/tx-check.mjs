@@ -17,14 +17,10 @@ import logger from '../logger.mjs';
 const MAX_CHECK_TIMES = 10;
 
 class TxCheckJob extends CommonJob {
-  constructor() {
-    super();
-  }
-
   async execute() {
     await fioApi.getRawAbi();
 
-    const walletSdk = fioApi.getPublicFioSDK();
+    const walletSdk = await fioApi.getPublicFioSDK();
     // get transactions need to check if exists
     const [items] = await BlockchainTransaction.checkIrreversibility();
 

@@ -28,22 +28,20 @@ import {
   createNotification,
   listNotifications,
 } from '../notifications/actions';
-import { setRedirectPath } from '../navigation/actions';
 
 import {
   locationState as locationStateSelector,
   redirectLink,
+  pathname as pathnameSelector,
 } from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
-import { isNewUser as isNewUserSelector } from './selectors';
 
 import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
 import {
   ANALYTICS_EVENT_ACTIONS,
   ANALYTICS_LOGIN_METHOD,
-  USER_STATUSES,
 } from '../../constants/common';
-import { ADMIN_ROUTES, ROUTES } from '../../constants/routes';
+import { ADMIN_ROUTES, PUBLIC_ROUTES, ROUTES } from '../../constants/routes';
 
 import { fireAnalyticsEvent } from '../../util/analytics';
 import { Api } from '../../api';
@@ -89,12 +87,6 @@ export function* loginSuccess(history: History, api: Api): Generator {
     const locationState: PrivateRedirectLocationState = yield select(
       locationStateSelector,
     );
-    const isNewUser: boolean = yield select(isNewUserSelector);
-    if (isNewUser) {
-      history.push(ROUTES.IS_NEW_USER);
-      yield put(closeLoginModal());
-      return;
-    }
     if (
       !hasRedirectTo &&
       locationState &&
@@ -133,21 +125,22 @@ export function* profileSuccess(): Generator {
     for (const fioWallet of action.data.fioWallets) {
       yield put<Action>(refreshBalance(fioWallet.publicKey));
     }
-
-    if (action.data.status === USER_STATUSES.ACTIVE) {
-      yield put(setRedirectPath(null));
-    }
   });
 }
 
 export function* logoutSuccess(history: History, api: Api): Generator {
-  yield takeEvery(LOGOUT_SUCCESS, function(action: Action) {
+  yield takeEvery(LOGOUT_SUCCESS, function*(action: Action) {
     api.client.removeToken();
 
     const { redirect } = action;
+    const pathname: string = yield select(pathnameSelector);
 
     if (redirect) history.push(redirect, {});
-    if (!redirect) history.replace(ROUTES.HOME, {});
+    if (!redirect) {
+      if (!PUBLIC_ROUTES.includes(pathname)) {
+        history.replace(ROUTES.HOME, {});
+      }
+    }
   });
 }
 

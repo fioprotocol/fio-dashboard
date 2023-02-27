@@ -10,6 +10,7 @@ import {
 } from '../../../../redux/edge/actions';
 import {
   changePinResults,
+  isPinEnabled,
   loading,
   changePinError,
 } from '../../../../redux/edge/selectors';
@@ -19,6 +20,7 @@ import ChangePin from './ChangePin';
 
 const reduxConnect = connect(
   createStructuredSelector({
+    isPinEnabled,
     results: changePinResults,
     loading,
     username: edgeUsername,

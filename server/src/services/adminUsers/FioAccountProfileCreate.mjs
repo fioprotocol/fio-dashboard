@@ -2,7 +2,7 @@ import Base from '../Base';
 import X from '../Exception';
 
 import { FioAccountProfile } from '../../models';
-import { ADMIN_ROLES_IDS } from '../../config/constants.js';
+import { ADMIN_ROLES_IDS, FIO_ACCOUNT_TYPES } from '../../config/constants.js';
 
 export default class FioAccountProfileCreate extends Base {
   static get requiredPermissions() {
@@ -14,15 +14,17 @@ export default class FioAccountProfileCreate extends Base {
       name: ['required', 'string'],
       actor: ['required', 'string'],
       permission: ['required', 'string'],
+      accountType: ['required', 'string'],
     };
   }
 
-  async execute({ name, actor, permission }) {
+  async execute({ name, actor, permission, accountType }) {
     const existProfile = await FioAccountProfile.findOne({
       where: {
         name,
         actor,
         permission,
+        accountType,
       },
     });
 
@@ -37,10 +39,22 @@ export default class FioAccountProfileCreate extends Base {
       });
     }
 
+    const fioAccountProfileWithExistingType = await FioAccountProfile.findOneWhere({
+      accountType,
+    });
+
+    if (fioAccountProfileWithExistingType) {
+      await fioAccountProfileWithExistingType.update({
+        ...fioAccountProfileWithExistingType,
+        accountType: null,
+      });
+    }
+
     const createdProfile = new FioAccountProfile({
       name,
       actor,
       permission,
+      accountType: FIO_ACCOUNT_TYPES[accountType] || null,
     });
     await createdProfile.save();
 

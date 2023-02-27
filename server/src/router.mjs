@@ -45,9 +45,7 @@ router.post('/users', routes.users.create);
 router.put('/users', checkAuth, routes.users.update);
 router.post('/users/setRecovery', checkAuth, routes.users.setRecovery);
 router.post('/users/resendRecovery', checkAuth, routes.users.resendRecovery);
-router.post('/users/resendConfirmEmail', routes.users.resendEmailConfirm);
-router.post('/users/update-email-request', checkAuth, routes.users.updateEmailRequest);
-router.post('/users/update-email-revert', checkAuth, routes.users.updateEmailRevert);
+router.post('/users/update-email', checkAuth, routes.users.updateEmail);
 router.post('/users/affiliate', checkAuth, routes.users.activateAffiliate);
 router.patch('/users/affiliate', checkAuth, routes.users.updateAffiliate);
 router.post('/users/sendEvent', checkAuthOptional, routes.users.sendEvent);
@@ -84,6 +82,24 @@ router.post(
   checkAdminAuth,
   routes.adminUsers.updateFioAccountProfile,
 );
+router.delete(
+  '/admin/accounts/:id',
+  checkAdminAuth,
+  routes.adminUsers.deleteFioAccountProfile,
+);
+
+router.get('/admin/api-urls', checkAdminAuth, routes.adminUsers.fioApiUrlsList);
+router.post('/admin/api-urls', checkAdminAuth, routes.adminUsers.createFioApiUrlsList);
+router.patch(
+  '/admin/api-urls/:id',
+  checkAdminAuth,
+  routes.adminUsers.updateFioApiUrlsList,
+);
+router.delete(
+  '/admin/api-urls/:id',
+  checkAdminAuth,
+  routes.adminUsers.deleteFioApiUrlsList,
+);
 
 router.get('/admin/partners/list', checkAdminAuth, routes.adminUsers.partnersList);
 router.post('/admin/partners', checkAdminAuth, routes.adminUsers.createPartner);
@@ -101,12 +117,11 @@ router.get('/notifications', checkAuth, routes.notifications.list);
 router.post('/notifications', checkAuth, routes.notifications.create);
 router.put('/notifications', checkAuth, routes.notifications.update);
 
-router.get('/reg/domains', routes.external.domains);
 router.get('/reg/domains/list', routes.registration.domainsList);
 router.get('/reg/domain-prefix-postfix', routes.registration.prefixPostfixList);
 router.get('/reg/prices', routes.external.prices);
-router.post('/reg/register', checkAuth, routes.external.register);
 router.post('/reg/captcha/init', checkAuth, routes.external.initCaptcha);
+router.get('/reg/api-urls', routes.external.apiUrls);
 
 router.get('/account/wallets', checkAuth, routes.account.walletsList);
 router.post('/account/wallets', checkAuth, routes.account.setWallets);

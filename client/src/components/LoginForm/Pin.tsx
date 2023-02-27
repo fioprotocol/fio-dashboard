@@ -69,7 +69,7 @@ const Pin: React.FC<Props> = props => {
     }
   }, [loginFailure]);
 
-  const handleSubmit = (pin: string) => {
+  const handleSubmit = ({ pin }: { pin: string }) => {
     if (pin && pin.length !== PIN_LENGTH) return;
     onSubmit({
       email,

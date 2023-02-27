@@ -17,11 +17,11 @@ export const validate = (values: RefProfile): AnyObject => {
   if (!values.code) {
     errors.code = 'Required.';
   }
-  if (isReferrer && !values.regRefCode) {
-    errors.regRefCode = 'Required.';
+  if (isReferrer && !values.freeFioAccountProfileId) {
+    errors.freeFioAccountProfileId = 'Required.';
   }
-  if (isReferrer && !values.regRefApiToken) {
-    errors.regRefApiToken = 'Required.';
+  if (isReferrer && !values.paidFioAccountProfileId) {
+    errors.paidFioAccountProfileId = 'Required';
   }
   if (!isReferrer && !values.tpid) {
     errors.tpid = 'Required.';

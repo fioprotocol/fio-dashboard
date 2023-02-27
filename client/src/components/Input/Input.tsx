@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import { FieldRenderProps } from 'react-final-form';
 
 import { ErrorBadge } from './ErrorBadge';
-import { PasteButton } from './InputActionButtons';
+import { CheckedIcon, PasteButton } from './InputActionButtons';
 import CustomDropdown from '../CustomDropdown';
 import { getValueFromPaste, log } from '../../util/general';
 
@@ -26,6 +26,7 @@ type Props = {
   onClose?: (isOpen: boolean) => void;
   hideError?: boolean;
   showPasteButton?: boolean;
+  showCheckIcon?: boolean;
   loading?: boolean;
   uiType?: string;
   errorType?: string;
@@ -42,6 +43,7 @@ type Props = {
     'data-clear'?: boolean;
     value: string;
   };
+  hasErrorForced?: boolean;
   hasSmallText?: boolean;
   hasThinText?: boolean;
   showPreview?: boolean;
@@ -57,6 +59,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     onClose,
     hideError,
     showPasteButton = false,
+    showCheckIcon,
     loading,
     uiType,
     errorType = '',
@@ -73,6 +76,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
     options,
     isHigh,
     isSimple,
+    hasErrorForced,
     hasSmallText,
     hasThinText,
     showPreview = true,
@@ -98,6 +102,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
   const [previewUrl, setPreviewUrl] = useState('');
 
   const hasError =
+    hasErrorForced ||
     ((error || data?.error) &&
       (touched || modified || submitSucceeded || !!value) &&
       !active) || // todo: remove !active to show red border on focused field. make debounce on create account user field
@@ -151,7 +156,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
             isBW && classes.bw,
             prefix && classes.prefixSpace,
             showPasteButton && classes.hasPasteButton,
-            type === 'password' && classes.doubleIconInput,
+            (type === 'password' || showCheckIcon) && classes.doubleIconInput,
             isLowHeight && classes.lowHeight,
           )}
         >
@@ -176,7 +181,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
             icon="times-circle"
             className={classnames(
               classes.inputIcon,
-              type === 'password' && classes.doubleIcon,
+              (type === 'password' || showCheckIcon) && classes.doubleIcon,
               isBW && classes.bw,
               disabled && classes.disabled,
               uiType && classes[uiType],
@@ -201,6 +206,7 @@ const Input: React.FC<Props & FieldRenderProps<Props>> = props => {
             onClick={() => !disabled && toggleShowPass(!showPass)}
           />
         )}
+        <CheckedIcon isVisible={showCheckIcon && !loading} />
         <PasteButton
           isVisible={showPasteButton && !value}
           onClick={async () => {

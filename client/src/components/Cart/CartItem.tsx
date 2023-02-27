@@ -12,6 +12,7 @@ import {
   CURRENCY_CODES,
 } from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
+import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
 import { getCartItemDescriptor } from '../../util/cart';
 
@@ -89,7 +90,6 @@ const CartItem: React.FC<Props> = props => {
     costUsdc,
     costNativeFio,
     showBadge,
-    hasCustomDomain,
     period,
     type,
     domainType,
@@ -112,14 +112,12 @@ const CartItem: React.FC<Props> = props => {
       >
         <div className={classes.itemContainer}>
           <div className={classes.itemNameContainer}>
-            {item.address ? (
-              <span className={classes.address}>
-                <span className="boldText">{address}@</span>
-                <span className={hasCustomDomain && 'boldText'}>{domain}</span>
-              </span>
-            ) : (
-              <span className="boldText">{domain && domain}</span>
-            )}
+            <span className={classes.address}>
+              {item.address
+                ? `${address}${FIO_ADDRESS_DELIMITER}${domain}`
+                : domain}
+            </span>
+
             <span className={classes.descriptor}>
               {getCartItemDescriptor(item.type, item.period)}
             </span>
@@ -127,7 +125,7 @@ const CartItem: React.FC<Props> = props => {
           {shouldShowPeriod && (
             <div className={classes.period}>
               <CustomDropdown
-                value={period.toString()}
+                value={period?.toString()}
                 options={CART_ITEM_PERIOD_OPTIONS}
                 onChange={onPeriodChange}
                 isDark

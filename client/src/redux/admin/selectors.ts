@@ -26,3 +26,7 @@ export const partnersList = (state: ReduxState): AdminUserProfile =>
   state[prefix].partnersList;
 export const regularUsersList = (state: ReduxState): User[] =>
   state[prefix].regularUsersList;
+export const fioApiUrlsList = (state: ReduxState): AdminUser[] =>
+  state[prefix].fioApiUrlsList;
+export const fioApiUrlsCount = (state: ReduxState): number =>
+  state[prefix].fioApiUrlsCount;

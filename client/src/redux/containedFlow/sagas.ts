@@ -27,10 +27,9 @@ import {
 } from './selectors';
 
 import { cartItems } from '../cart/selectors';
-
 import { redirectLink } from '../navigation/selectors';
-
 import { fioWallets as getFioWallets } from '../fio/selectors';
+import { isPinSetupPostponed } from '../edge/selectors';
 
 import { ROUTES } from '../../constants/routes';
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
@@ -109,7 +108,17 @@ export function* purchaseResultsClose(history: History): Generator {
       }
     }
 
-    yield history.push(isContainedFlow ? ROUTES.HOME : ROUTES.DASHBOARD);
+    const isPinSetupPostponedSelector: boolean = yield select(
+      isPinSetupPostponed,
+    );
+
+    yield history.push(
+      isPinSetupPostponedSelector
+        ? ROUTES.CREATE_ACCOUNT_PIN
+        : isContainedFlow
+        ? ROUTES.HOME
+        : ROUTES.DASHBOARD,
+    );
   });
 }
 

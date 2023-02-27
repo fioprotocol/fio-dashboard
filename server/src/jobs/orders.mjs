@@ -31,9 +31,13 @@ import {
   INSUFFICIENT_FUNDS_ERR_MESSAGE,
   INSUFFICIENT_BALANCE,
 } from '../external/fio.mjs';
-import { FioRegApi } from '../external/fio-reg.mjs';
 
-import { FIO_ACTIONS } from '../config/constants.js';
+import {
+  FIO_ACCOUNT_TYPES,
+  FIO_ACTIONS,
+  USER_HAS_FREE_ADDRESS_MESSAGE,
+  ORDER_ERROR_TYPES,
+} from '../config/constants.js';
 
 import logger from '../logger.mjs';
 
@@ -41,7 +45,9 @@ const ERROR_CODES = {
   SINGED_TX_XTOKENS_REFUND_SKIP: 'SINGED_TX_XTOKENS_REFUND_SKIP',
 };
 const MAX_STATUS_NOTES_LENGTH = 200;
-const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 2000;
+const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 5000;
+
+const USER_HAS_FREE_ERROR = `Register free address error: ${USER_HAS_FREE_ADDRESS_MESSAGE}`;
 
 class OrdersJob extends CommonJob {
   constructor() {
@@ -71,7 +77,8 @@ class OrdersJob extends CommonJob {
 
   async updateWalletDataBalance(publicKey) {
     try {
-      const balanceResponse = await fioApi.getPublicFioSDK().getFioBalance(publicKey);
+      const publicFioSDK = await fioApi.getPublicFioSDK();
+      const balanceResponse = await publicFioSDK.getFioBalance(publicKey);
       const balance = balanceResponse.balance;
 
       const wallets = await Wallet.findAll({
@@ -216,7 +223,9 @@ class OrdersJob extends CommonJob {
 
   async refundUser(orderItemProps, errorData = {}) {
     try {
-      const payment = await Payment.findOne({ where: { id: orderItemProps.paymentId } });
+      const payment = await Payment.findOne({
+        where: { id: orderItemProps.paymentId },
+      });
 
       let price;
       let nativePrice = null;
@@ -353,16 +362,67 @@ class OrdersJob extends CommonJob {
     }
   }
 
-  async registerFree(fioName, orderItem) {
-    const { regRefCode, regRefApiToken, publicKey, orderId } = orderItem;
+  async registerFree(
+    fioName,
+    auth,
+    orderItem,
+    { fallbackFreeFioActor, fallbackFreeFioPermision },
+    processOrderItem,
+  ) {
+    const { id, blockchainTransactionId, label, orderId, userId } = orderItem;
 
-    let res;
+    const userHasFreeAddress = await FreeAddress.getItem({ userId });
+
+    if (userHasFreeAddress) {
+      logger.error(USER_HAS_FREE_ERROR);
+
+      await this.handleFail(orderItem, USER_HAS_FREE_ERROR, {
+        errorType: ORDER_ERROR_TYPES.userHasFreeAddress,
+      });
+      return this.updateOrderStatus(orderId);
+    }
+
     try {
-      res = await FioRegApi.register({
-        address: fioName,
-        publicKey,
-        referralCode: regRefCode,
-        apiToken: regRefApiToken,
+      const result = await this.executeOrderItemAction(orderItem, auth);
+
+      if (result.transaction_id) {
+        this.postMessage(
+          `Processing item transactions created (FREE) - ${id} / ${result.transaction_id}`,
+        );
+        await OrderItem.setPending(result, id, blockchainTransactionId);
+
+        const freeAddressRecord = new FreeAddress({
+          name: fioName,
+          userId: orderItem.userId,
+        });
+        await freeAddressRecord.save();
+
+        return this.updateOrderStatus(orderId);
+      }
+      // transaction failed
+      const { notes, code, data: errorData } = fioApi.checkTxError(result);
+
+      // try to execute using fallback account when no funds
+      if (
+        (notes === INSUFFICIENT_FUNDS_ERR_MESSAGE || notes === INSUFFICIENT_BALANCE) &&
+        auth.actor !== fallbackFreeFioActor
+      ) {
+        await sendInsufficientFundsNotification(fioName, label, auth);
+        return processOrderItem({
+          ...orderItem,
+          freeActor: fallbackFreeFioActor
+            ? fallbackFreeFioActor
+            : process.env.REG_FALLBACK_ACCOUNT,
+          freePermission: fallbackFreeFioPermision
+            ? fallbackFreeFioPermision
+            : process.env.REG_FALLBACK_PERMISSION,
+        })();
+      }
+
+      await this.handleFail(orderItem, notes, {
+        code,
+        ...errorData,
+        errorType: ORDER_ERROR_TYPES.freeAddressError,
       });
     } catch (error) {
       let message = error.message;
@@ -370,31 +430,11 @@ class OrdersJob extends CommonJob {
         message = error.response.body.error;
       }
       logger.error(`Register free address error: ${message}`);
-      await this.handleFail(orderItem, message);
-
-      return this.updateOrderStatus(orderId);
     }
 
-    if (res) {
-      await OrderItem.setPending({}, orderItem.id, orderItem.blockchainTransactionId);
-      this.postMessage(
-        `Processing item transactions created (FREE) - ${orderItem.id} / ${JSON.stringify(
-          res,
-        )}`,
-      );
+    await this.updateOrderStatus(orderId);
 
-      const freeAddressRecord = new FreeAddress({
-        name: fioName,
-        userId: orderItem.userId,
-      });
-      await freeAddressRecord.save();
-
-      return;
-    }
-
-    logger.error(`Register free address error. No response data`);
-    await this.handleFail(orderItem, 'Server error. No response data');
-    return this.updateOrderStatus(orderId);
+    return true;
   }
 
   async checkTokensReceived(txId, publicKey) {
@@ -404,8 +444,10 @@ class OrdersJob extends CommonJob {
   }
 
   async submitSignedTx(orderItem, auth, balanceDifference = null) {
-    const { address, domain, action, orderId, roe, data } = orderItem;
+    const { address, domain, action, orderId, paymentId, roe, data } = orderItem;
     const fee = this.feesJson[orderItem.action];
+    const payment = await Payment.findOne({ where: { id: paymentId } });
+    const isFIO = payment.processor === Payment.PROCESSOR.FIO;
 
     // Spend order payment on fio action
     const fioPayment = await this.spend({
@@ -419,71 +461,79 @@ class OrdersJob extends CommonJob {
       data: { roe, sendingFioTokens: true },
     });
 
-    // Send tokens to customer
-    try {
-      const transferRes = await fioApi.executeAction(
-        FIO_ACTIONS.transferTokens,
-        fioApi.getActionParams({
-          publicKey: data.signingWalletPubKey || orderItem.publicKey,
-          amount: balanceDifference || fee,
-          action: FIO_ACTIONS.transferTokens,
-        }),
-        auth,
-      );
+    if (!isFIO) {
+      // Send tokens to customer
+      try {
+        const transferRes = await fioApi.executeAction(
+          FIO_ACTIONS.transferTokens,
+          fioApi.getActionParams({
+            publicKey: data.signingWalletPubKey || orderItem.publicKey,
+            amount: balanceDifference || fee,
+            action: FIO_ACTIONS.transferTokens,
+          }),
+          auth,
+        );
 
-      if (!transferRes.transaction_id) {
-        const transferError = fioApi.checkTxError(transferRes);
+        if (!transferRes.transaction_id) {
+          const transferError = fioApi.checkTxError(transferRes);
 
+          await this.spend({
+            fioName: fioApi.setFioName(address, domain),
+            action,
+            orderId,
+            spentType: Payment.SPENT_TYPE.ACTION_REFUND,
+            price: fioApi.sufToAmount(balanceDifference || fee),
+            currency: Payment.CURRENCY.FIO,
+            data: {
+              roe,
+              error: transferError,
+            },
+            notes: `${transferError}`,
+          });
+
+          if (transferError.notes === INSUFFICIENT_BALANCE) return transferRes;
+
+          throw new Error(JSON.stringify(transferError));
+        }
+
+        await this.checkTokensReceived(
+          transferRes.transaction_id,
+          data.signingWalletPubKey || orderItem.publicKey,
+        );
+
+        // Save transfer event
         await this.spend({
-          fioName: fioApi.setFioName(address, domain),
-          action,
-          orderId,
-          spentType: Payment.SPENT_TYPE.ACTION_REFUND,
-          price: fioApi.sufToAmount(balanceDifference || fee),
-          currency: Payment.CURRENCY.FIO,
-          data: { roe, error: transferError },
-          notes: `${transferError}`,
+          actionPaymentId: fioPayment.id,
+          updateStatus: Payment.STATUS.COMPLETED,
+          eventStatus: PaymentEventLog.STATUS.SUCCESS,
+          eventData: {
+            fioTxId: transferRes.transaction_id,
+            fioFee: transferRes.fee_collected,
+          },
+        });
+      } catch (e) {
+        // Save transfer error event
+        await this.spend({
+          actionPaymentId: fioPayment.id,
+          updateStatus: Payment.STATUS.FAILED,
+          eventStatus: PaymentEventLog.STATUS.FAILED,
+          notes: e.message,
         });
 
-        if (transferError.notes === INSUFFICIENT_BALANCE) return transferRes;
-
-        throw new Error(JSON.stringify(transferError));
+        return {
+          message: `Transfer Tokens error. Customer did not receive the tokens to execute the transaction - ${JSON.stringify(
+            e,
+          )}`,
+          data: {
+            refundUsdcAmount: fioApi.convertFioToUsdc(balanceDifference || fee, roe), // here roe has value on moment when order was created, not current value
+          },
+        };
       }
-
-      await this.checkTokensReceived(
-        transferRes.transaction_id,
-        data.signingWalletPubKey || orderItem.publicKey,
-      );
-
-      // Save transfer event
-      await this.spend({
-        actionPaymentId: fioPayment.id,
-        updateStatus: Payment.STATUS.COMPLETED,
-        eventStatus: PaymentEventLog.STATUS.SUCCESS,
-        eventData: {
-          fioTxId: transferRes.transaction_id,
-          fioFee: transferRes.fee_collected,
-        },
-      });
-    } catch (e) {
-      // Save transfer error event
-      await this.spend({
-        actionPaymentId: fioPayment.id,
-        updateStatus: Payment.STATUS.FAILED,
-        eventStatus: PaymentEventLog.STATUS.FAILED,
-        notes: e.message,
-      });
-
-      return {
-        message: `Transfer Tokens error. Customer did not receive the tokens to execute the transaction - ${JSON.stringify(
-          e,
-        )}`,
-        data: {
-          refundUsdcAmount: fioApi.convertFioToUsdc(balanceDifference || fee, roe), // here roe has value on moment when order was created, not current value
-        },
-      };
     }
 
+    if (action === FIO_ACTIONS.renewFioDomain) {
+      await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION);
+    }
     const result = await fioApi.executeTx(orderItem.action, data.signedTx);
 
     if (!result.transaction_id) {
@@ -532,7 +582,7 @@ class OrdersJob extends CommonJob {
   // returns null when success and result when error
   async handleCustomDomain(orderItem, auth) {
     const { orderId, roe, domain, data } = orderItem;
-    if (data.hasCustomDomain) {
+    if (data && data.hasCustomDomain) {
       let error;
       try {
         await this.spend({
@@ -679,7 +729,28 @@ class OrdersJob extends CommonJob {
 
     this.postMessage(`Process order items - ${items.length}`);
 
-    const defaultFioAccountProfile = await FioAccountProfile.getDefault();
+    const freeAndPaidFioAccountProfilesArr = await FioAccountProfile.getFreePaidItems();
+
+    const { actor: paidFioActor, permission: paidFioPermision } =
+      freeAndPaidFioAccountProfilesArr.find(
+        fioAccountProfile => fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.PAID,
+      ) || {};
+    const { actor: fallbackPaidFioActor, permission: fallbackPaidFioPermision } =
+      freeAndPaidFioAccountProfilesArr.find(
+        fioAccountProfile =>
+          fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.PAID_FALLBACK,
+      ) || {};
+
+    const { actor: freeFioActor, permission: freeFioPermision } =
+      freeAndPaidFioAccountProfilesArr.find(
+        fioAccountProfile => fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.FREE,
+      ) || {};
+    const { actor: fallbackFreeFioActor, permission: fallbackFreeFioPermision } =
+      freeAndPaidFioAccountProfilesArr.find(
+        fioAccountProfile =>
+          fioAccountProfile.accountType === FIO_ACCOUNT_TYPES.FREE_FALLBACK,
+      ) || {};
+
     const processOrderItem = orderItem => async () => {
       if (this.isCancelled) return false;
 
@@ -688,13 +759,14 @@ class OrdersJob extends CommonJob {
         orderId,
         address,
         domain,
-        action,
         data,
         price,
         blockchainTransactionId,
         label,
-        actor,
-        permission,
+        freeActor,
+        freePermission,
+        paidActor,
+        paidPermission,
       } = orderItem;
       const hasSignedTx = data && !!data.signedTx;
 
@@ -703,22 +775,26 @@ class OrdersJob extends CommonJob {
       try {
         const fioName = fioApi.setFioName(address, domain);
         const auth = {
-          actor: defaultFioAccountProfile.actor,
-          permission: defaultFioAccountProfile.permission,
+          actor: paidActor || paidFioActor,
+          permission: paidPermission || paidFioPermision,
         };
-
-        // Set auth from fio account profile for registerFioAddress action
-        if (
-          (action === OrderItem.ACTION.registerFioAddress && actor) ||
-          actor === process.env.REG_FALLBACK_ACCOUNT
-        ) {
-          auth.actor = actor;
-          auth.permission = permission;
-        }
+        const freeAuth = {
+          actor: freeActor || freeFioActor,
+          permission: freePermission || freeFioPermision,
+        };
 
         // Handle free addresses
         if ((!price || price === '0') && address) {
-          return this.registerFree(fioName, orderItem);
+          return this.registerFree(
+            fioName,
+            freeAuth,
+            orderItem,
+            {
+              fallbackFreeFioActor,
+              fallbackFreeFioPermision,
+            },
+            processOrderItem,
+          );
         }
 
         // Check if fee/roe changed and handle changes
@@ -743,13 +819,17 @@ class OrdersJob extends CommonJob {
           if (
             (notes === INSUFFICIENT_FUNDS_ERR_MESSAGE ||
               notes === INSUFFICIENT_BALANCE) &&
-            actor !== process.env.REG_FALLBACK_ACCOUNT
+            auth.actor !== fallbackPaidFioActor
           ) {
             await sendInsufficientFundsNotification(fioName, label, auth);
             return processOrderItem({
               ...orderItem,
-              actor: process.env.REG_FALLBACK_ACCOUNT,
-              permission: process.env.REG_FALLBACK_PERMISSION,
+              paidActor: fallbackPaidFioActor
+                ? fallbackPaidFioActor
+                : process.env.REG_FALLBACK_ACCOUNT,
+              paidPermission: fallbackPaidFioPermision
+                ? fallbackPaidFioPermision
+                : process.env.REG_FALLBACK_PERMISSION,
             })();
           }
 

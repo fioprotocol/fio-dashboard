@@ -7,15 +7,28 @@ import { FormValuesProps } from '../../types';
 import { FioAccountProfile } from '../../../../types';
 
 type Props = {
-  show: boolean;
-  loading: boolean;
-  onSubmit: (values: FormValuesProps) => Promise<void>;
-  onClose: () => void;
   initialValues?: FioAccountProfile;
+  loading: boolean;
+  show: boolean;
+  showWarningModal: boolean;
+  dangerModaActionClick: (vaues: FormValuesProps) => void;
+  toggleShowWarningModal: (showModal: boolean) => void;
+  onClose: () => void;
+  onSubmit: (values: FormValuesProps) => Promise<void>;
 };
 
 const FioAccountProfileModal: React.FC<Props> = props => {
-  const { show, loading, onSubmit, onClose, initialValues } = props;
+  const {
+    initialValues,
+    loading,
+    show,
+    showWarningModal,
+    dangerModaActionClick,
+    toggleShowWarningModal,
+    onClose,
+    onSubmit,
+  } = props;
+
   return (
     <Modal
       show={show}
@@ -23,6 +36,7 @@ const FioAccountProfileModal: React.FC<Props> = props => {
       isSimple={true}
       isWide={true}
       hasDefaultCloseColor={true}
+      enableOverflow
       onClose={onClose}
     >
       <div className="d-flex flex-column w-100">
@@ -33,6 +47,9 @@ const FioAccountProfileModal: React.FC<Props> = props => {
           onSubmit={onSubmit}
           loading={loading}
           initialValues={initialValues}
+          showWarningModal={showWarningModal}
+          dangerModaActionClick={dangerModaActionClick}
+          toggleShowWarningModal={toggleShowWarningModal}
         />
       </div>
     </Modal>

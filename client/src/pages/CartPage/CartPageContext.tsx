@@ -197,7 +197,7 @@ export const useContext = (): UseContextReturnType => {
   const getFreshPrices = async (): Promise<FioRegPricesResponse> => {
     setIsUpdatingPrices(true);
     try {
-      const freshPrices = await apis.fioReg.prices();
+      const freshPrices = await apis.fioReg.prices(true);
       updatingPricesHasError && setUpdatingPricesHasError(false);
 
       return freshPrices;

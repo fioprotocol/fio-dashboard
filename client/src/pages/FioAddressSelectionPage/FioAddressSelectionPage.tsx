@@ -7,13 +7,10 @@ import { FioAddressSelectionComponent } from './components/FioAddressSelectionCo
 import { LINK_LABELS } from '../../constants/labels';
 
 import { useCheckIfDesktop } from '../../screenType';
-import { useNonActiveUserRedirect } from '../../util/hooks';
 
 import { useContext } from './FioAddressSelectionPageContext';
 
 const FioAddressSelectionPage: React.FC = () => {
-  useNonActiveUserRedirect();
-
   const props = useContext();
 
   const isDesktop = useCheckIfDesktop();

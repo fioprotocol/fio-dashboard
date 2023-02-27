@@ -4,9 +4,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import Loader from '../../components/Loader/Loader';
 import { PartnerModal } from './components/updatePartner/PartnerModal';
+import CustomDropdown from '../../components/CustomDropdown';
 
-import { REF_PROFILE_TYPE } from '../../constants/common';
+import {
+  REF_PROFILE_TYPE,
+  REF_PROFILE_TYPES_FILTER_OPTIONS,
+} from '../../constants/common';
+import { DEFAULT_LIMIT } from '../../hooks/usePagination';
 
+import useEffectOnce from '../../hooks/general';
 import { formatDateToLocale } from '../../helpers/stringFormatters';
 import usePagination from '../../hooks/usePagination';
 import apis from '../../api';
@@ -18,7 +24,15 @@ import { RefProfile } from '../../types';
 import classes from './AdminPartnersListPage.module.scss';
 
 const AdminPartnersListPage: React.FC<Props> = props => {
-  const { loading, partnersList, getPartnersList } = props;
+  const {
+    fioAccountLoading,
+    fioAccountsProfilesList,
+    loading,
+    partnersList,
+    getFioAccountsProfilesList,
+    getPartnersList,
+  } = props;
+  const [filters, setFilters] = useState<Partial<RefProfile>>({ type: '' });
   const [showPartnerModal, setShowPartnerModal] = useState<boolean>(false);
   const [selectedPartner, setSelectedPartner] = useState<Partial<RefProfile>>(
     null,
@@ -27,13 +41,22 @@ const AdminPartnersListPage: React.FC<Props> = props => {
     false,
   );
 
-  const { paginationComponent, refresh } = usePagination(getPartnersList);
+  const { paginationComponent, refresh } = usePagination(
+    getPartnersList,
+    DEFAULT_LIMIT,
+    filters,
+  );
+
+  const handleChangeTypeFilter = useCallback((newValue: string) => {
+    setFilters(filters => ({
+      ...filters,
+      type: newValue,
+    }));
+  }, []);
 
   const onAddPartner = useCallback(() => {
     setSelectedPartner({
       type: REF_PROFILE_TYPE.REF,
-      regRefCode: '',
-      regRefApiToken: '',
       settings: {
         domains: [
           {
@@ -108,13 +131,37 @@ const AdminPartnersListPage: React.FC<Props> = props => {
     [refresh, closeModal],
   );
 
+  useEffectOnce(() => {
+    getFioAccountsProfilesList();
+  }, []);
+
   return (
     <>
       <div className={classes.tableContainer}>
-        <Button className="mb-4" onClick={onAddPartner}>
-          <FontAwesomeIcon icon="plus-square" className="mr-2" /> Add New
-          Partner
-        </Button>
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <div className="mr-4">
+            <Button onClick={onAddPartner}>
+              <FontAwesomeIcon icon="plus-square" className="mr-2" /> Add New
+              Partner
+            </Button>
+          </div>
+
+          <div>
+            <div className="d-flex align-items-center">
+              Filter Type:&nbsp;
+              <CustomDropdown
+                value={filters.type}
+                options={REF_PROFILE_TYPES_FILTER_OPTIONS}
+                onChange={handleChangeTypeFilter}
+                isDark
+                withoutMarginBottom
+                fitContentWidth
+                isSmall
+                placeholder="All"
+              />
+            </div>
+          </div>
+        </div>
         <Table className="table" striped={true}>
           <thead>
             <tr>
@@ -148,12 +195,13 @@ const AdminPartnersListPage: React.FC<Props> = props => {
 
         {paginationComponent}
 
-        {loading && <Loader />}
+        {(loading || fioAccountLoading) && <Loader />}
       </div>
 
       <PartnerModal
         initialValues={selectedPartner}
         show={showPartnerModal}
+        fioAccountsProfilesList={fioAccountsProfilesList}
         onSubmit={savePartner}
         loading={partnerActionLoading}
         onClose={closeModal}

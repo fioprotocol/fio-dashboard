@@ -1,10 +1,13 @@
 import { ROUTES } from './routes';
 import { NFTTokenItemProps } from '../types';
+import {
+  PURCHASE_RESULTS_STATUS,
+  PURCHASE_RESULTS_STATUS_LABELS,
+  FREE_STATUS,
+} from './purchase';
 
 export const USER_STATUSES = {
-  NEW: 'NEW',
   ACTIVE: 'ACTIVE',
-  NEW_EMAIL_NOT_VERIFIED: 'NEW_EMAIL_NOT_VERIFIED',
 };
 
 export const ADMIN_USER_STATUSES = {
@@ -111,6 +114,7 @@ export const CONFIRM_PIN_ACTIONS = {
   TWO_FACTOR_REQUEST: 'TWO_FACTOR_REQUEST',
   SHOW_BACKUP_CODE: 'SHOW_BACKUP_CODE',
   DETAILED_FIO_REQUEST: 'DETAILED_FIO_REQUEST',
+  SETUP_PIN: 'SETUP_PIN',
   ...CONFIRM_FIO_ACTIONS,
 };
 
@@ -676,5 +680,63 @@ export const REF_PROFILE_TYPES_OPTIONS = [
   {
     id: REF_PROFILE_TYPE.AFFILIATE,
     name: 'Affiliate',
+  },
+];
+
+export const REF_PROFILE_TYPES_FILTER_OPTIONS = [
+  {
+    id: '',
+    name: 'All',
+  },
+  {
+    id: REF_PROFILE_TYPE.REF,
+    name: 'Referrer',
+  },
+  {
+    id: REF_PROFILE_TYPE.AFFILIATE,
+    name: 'Affiliate',
+  },
+];
+
+export const ORDER_AMOUNT_FILTER_OPTIONS = [
+  {
+    id: '',
+    name: 'All',
+  },
+  {
+    id: FREE_STATUS.IS_FREE.toString(),
+    name: '0',
+  },
+  {
+    id: FREE_STATUS.IS_PAID.toString(),
+    name: '> 0',
+  },
+];
+
+export const ORDER_STATUS_FILTER_OPTIONS = [
+  {
+    id: '',
+    name: 'All',
+  },
+  {
+    id: PURCHASE_RESULTS_STATUS.SUCCESS.toString(),
+    name: PURCHASE_RESULTS_STATUS_LABELS[PURCHASE_RESULTS_STATUS.SUCCESS],
+  },
+  {
+    id: PURCHASE_RESULTS_STATUS.NEW.toString(),
+    name: PURCHASE_RESULTS_STATUS_LABELS[PURCHASE_RESULTS_STATUS.NEW],
+  },
+  {
+    id: PURCHASE_RESULTS_STATUS.CANCELED.toString(),
+    name: PURCHASE_RESULTS_STATUS_LABELS[PURCHASE_RESULTS_STATUS.CANCELED],
+  },
+  {
+    id: PURCHASE_RESULTS_STATUS.FAILED.toString(),
+    name: PURCHASE_RESULTS_STATUS_LABELS[PURCHASE_RESULTS_STATUS.FAILED],
+  },
+  {
+    id: PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS.toString(),
+    name:
+      PURCHASE_RESULTS_STATUS_LABELS[PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS],
   },
 ];

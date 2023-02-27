@@ -32,6 +32,13 @@
   &.blue {
     background-color: $bright-turquoise;
   }
+  &.indigo {
+    background-color: $light-indigo;
+  }
+
+  &.enableOverflow {
+    overflow: visible;
+  }
 }
 
 .dialog {

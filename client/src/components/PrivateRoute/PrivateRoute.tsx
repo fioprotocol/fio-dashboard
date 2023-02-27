@@ -12,8 +12,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   loading as loadingSelector,
   noProfileLoaded as noProfileLoadedSelector,
-  isNewUser as isNewUserSelector,
-  isNewEmailNotVerified as isNewEmailNotVerifiedSelector,
 } from '../../redux/profile/selectors';
 
 import { ROUTES } from '../../constants/routes';
@@ -31,8 +29,6 @@ export const PrivateRoute: React.FC<RouteProps & OwnProps> = ({
 }) => {
   const loading = useSelector(loadingSelector);
   const noProfileLoaded = useSelector(noProfileLoadedSelector);
-  const isNewUser = useSelector(isNewUserSelector);
-  const isNewEmailNotVerified = useSelector(isNewEmailNotVerifiedSelector);
 
   return (
     <Route
@@ -59,28 +55,6 @@ export const PrivateRoute: React.FC<RouteProps & OwnProps> = ({
               }}
             />
           );
-
-        if (isNewEmailNotVerified) {
-          return (
-            <Redirect
-              to={{
-                pathname: ROUTES.NEW_EMAIL_NOT_VERIFIED,
-                state: { from: props.location },
-              }}
-            />
-          );
-        }
-
-        if (isNewUser) {
-          return (
-            <Redirect
-              to={{
-                pathname: ROUTES.IS_NEW_USER,
-                state: { from: props.location },
-              }}
-            />
-          );
-        }
 
         return <Component {...props} />;
       }}

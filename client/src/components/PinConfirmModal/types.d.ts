@@ -3,13 +3,15 @@ import { PinConfirmDataTypes, PinConfirmation } from '../../types';
 export type PinConfirmModalProps = {
   showPinConfirm: boolean;
   edgeContextSet: boolean;
-  onSubmit: (
-    submitData: { username: string; pin: string },
+  isPinEnabled: boolean;
+  onPinSubmit: (
+    submitData: { username: string; pin?: string; password?: string },
     pinConfirmData: PinConfirmDataTypes,
   ) => void;
   confirmingPin: boolean;
   onClose: () => void;
   username: string;
+  pathname: string;
   pinConfirmation: PinConfirmation;
   resetPinConfirm: () => void;
   pinConfirmData: PinConfirmDataTypes;

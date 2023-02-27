@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import { isAndroid } from 'react-device-detect';
 
 import SecurityItem from '../SecurityItem';
@@ -21,6 +21,13 @@ const ITEM_PROPS = {
   successModalSubtitle: 'Your PIN has been successfully changed',
 };
 
+const NO_PIN_CONTENT = {
+  buttonText: 'Set PIN',
+  modalTitle: 'Set PIN',
+  successModalTitle: 'PIN SET!',
+  successModalSubtitle: 'Your PIN has been successfully set',
+};
+
 const CONFIRM_MODAL_ITEM_PROPS = {
   modalTitle: 'Confirm PIN Change',
   modalSubtitle:
@@ -28,6 +35,7 @@ const CONFIRM_MODAL_ITEM_PROPS = {
 };
 
 type Props = {
+  isPinEnabled: boolean;
   results: { status?: number };
   changePin: (values: {
     pin: string;
@@ -44,6 +52,7 @@ type Props = {
 const ChangePin: React.FC<Props> = props => {
   const {
     results,
+    isPinEnabled,
     changePin,
     loading,
     username,
@@ -98,14 +107,20 @@ const ChangePin: React.FC<Props> = props => {
     }
   }, [status]);
 
-  const onUnmount = () => {
+  const onUnmount = useCallback(() => {
     clearChangePinError();
     clearChangePinResults();
-  };
+  }, [clearChangePinError, clearChangePinResults]);
+
+  let itemContent = { ...ITEM_PROPS };
+
+  if (!isPinEnabled) {
+    itemContent = { ...itemContent, ...NO_PIN_CONTENT };
+  }
 
   return (
     <>
-      <SecurityItem {...ITEM_PROPS} isSmall={true} onClick={onOpenModal} />
+      <SecurityItem {...itemContent} isSmall={true} onClick={onOpenModal} />
       <ModalUIComponent
         onClose={onCloseModal}
         showModal={showModal}

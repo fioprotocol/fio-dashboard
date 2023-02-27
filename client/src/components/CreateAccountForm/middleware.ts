@@ -127,11 +127,10 @@ export const checkUsernameAndPassword = async (
 export const createAccount = async (
   username: string,
   password: string,
-  pin: string,
 ): Promise<CreateAccountRes> => {
   const result: CreateAccountRes = { errors: {} };
   try {
-    result.account = await apis.edge.signup(username, password, pin);
+    result.account = await apis.edge.signup(username, password);
     result.fioWallet = await createFioWallet(result.account);
   } catch (e) {
     log.error(e);

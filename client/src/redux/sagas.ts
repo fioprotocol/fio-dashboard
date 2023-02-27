@@ -8,7 +8,7 @@ import {
   profileSuccess,
   activateAffiliateSuccess,
 } from './profile/sagas';
-import { edgeLoginSuccess } from './edge/sagas';
+import { edgeLoginSuccess, edgePinUpdateSuccess } from './edge/sagas';
 import { notify } from './notify/sagas';
 import { cartWasCleared } from './cart/sagas';
 import {
@@ -40,6 +40,7 @@ export default function* rootSaga(history: History, api: Api) {
     nonceSuccess(),
     activateAffiliateSuccess(history),
     edgeLoginSuccess(),
+    edgePinUpdateSuccess(),
     notify(history),
     clearGenericModalError(),
     clearGenericModalSuccess(),

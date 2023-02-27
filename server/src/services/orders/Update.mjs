@@ -9,12 +9,11 @@ import {
   OrderItemStatus,
   Payment,
   BlockchainTransaction,
-  BlockchainTransactionEventLog,
 } from '../../models';
 
 import X from '../Exception.mjs';
 
-import { checkOrderStatusAndCreateNotification } from '../updateOrderStatus.mjs';
+import { PAYMENTS_STATUSES } from '../../config/constants';
 
 import logger from '../../logger.mjs';
 
@@ -97,12 +96,16 @@ export default class OrdersUpdate extends Base {
         { status: data.status },
         { where: { id, userId: this.context.id } },
       );
-      await OrderItemStatus.destroy({
-        where: {
-          orderItemId: { [Sequelize.Op.in]: order.OrderItems.map(({ id }) => id) },
+      await OrderItemStatus.update(
+        { paymentStatus: PAYMENTS_STATUSES.CANCELLED },
+        {
+          where: {
+            orderItemId: {
+              [Sequelize.Op.in]: order.OrderItems.map(({ id }) => id),
+            },
+          },
         },
-        force: true,
-      });
+      );
       await Payment.cancelPayment(order);
 
       return {
@@ -117,15 +120,34 @@ export default class OrdersUpdate extends Base {
     if (Object.values(orderUpdateParams).length)
       await Order.update(orderUpdateParams, { where: { id, userId: this.context.id } });
 
+    if (data.results) {
+      const processedOrderItems = [];
+      for (const regItem of data.results.registered) {
+        const { fioName, data: itemData } = regItem;
+
+        const orderItem = order.OrderItems.find(
+          ({ id, address, domain }) =>
+            !processedOrderItems.includes(id) &&
+            fioApi.setFioName(address, domain) === fioName,
+        );
+
+        if (orderItem && itemData) {
+          await OrderItem.update(
+            { data: { ...(orderItem.data ? orderItem.data : {}), ...itemData } },
+            { where: { id: orderItem.id } },
+          );
+          processedOrderItems.push(orderItem.id);
+        }
+      }
+    }
+
     if (data.results && data.results.paymentProvider === Payment.PROCESSOR.FIO) {
       try {
         const totalFioNativePrice = data.results.registered.reduce((acc, regItem) => {
           if (!isNaN(Number(regItem.fee_collected))) return acc + regItem.fee_collected;
           return acc;
         }, 0);
-        const processedOrderItems = [];
 
-        // todo: do we need to create PaymentEventLog here?
         await Payment.update(
           {
             status: Payment.STATUS.COMPLETED,
@@ -137,129 +159,31 @@ export default class OrdersUpdate extends Base {
           },
         );
 
-        // todo: check data.results.partial
-        for (const errorItem of data.results.errors) {
-          const { fioName, error, errorType } = errorItem;
-          const orderItem = order.OrderItems.find(
-            ({ id, address, domain }) =>
-              !processedOrderItems.includes(id) &&
-              fioApi.setFioName(address, domain) === fioName,
-          );
+        for (const orderItem of order.OrderItems) {
+          const bcTx = await BlockchainTransaction.create({
+            action: orderItem.action,
+            status: BlockchainTransaction.STATUS.READY,
+            data: { params: orderItem.params },
+            orderItemId: orderItem.id,
+          });
 
-          if (orderItem) {
-            let blockchainTransactionId =
-              orderItem.OrderItemStatus.blockchainTransactionId;
-            let bcTx = null;
-            if (blockchainTransactionId) {
-              bcTx = await BlockchainTransaction.findOneWhere({
-                id: blockchainTransactionId,
-              });
-              bcTx.status = BlockchainTransaction.STATUS.FAILED;
-              await bcTx.save();
-            } else {
-              bcTx = await BlockchainTransaction.create({
-                action: orderItem.action,
-                status: BlockchainTransaction.STATUS.FAILED,
-                data: { params: orderItem.params },
+          await OrderItemStatus.update(
+            {
+              paymentStatus: Payment.STATUS.COMPLETED,
+              txStatus: BlockchainTransaction.STATUS.READY,
+              blockchainTransactionId: bcTx.id,
+            },
+            {
+              where: {
                 orderItemId: orderItem.id,
-              });
-              blockchainTransactionId = bcTx.id;
-            }
-
-            await OrderItemStatus.update(
-              {
-                txStatus: BlockchainTransaction.STATUS.FAILED,
-                blockchainTransactionId,
+                paymentId: order.Payments[0].id,
+                txStatus: BlockchainTransaction.STATUS.NONE,
               },
-              { where: { id: orderItem.OrderItemStatus.id } },
-            );
-
-            await BlockchainTransactionEventLog.create({
-              status: BlockchainTransaction.STATUS.FAILED,
-              statusNotes: error,
-              data: errorType ? { errorType } : null,
-              blockchainTransactionId,
-            });
-            processedOrderItems.push(orderItem.id);
-          }
-        }
-
-        // todo: handle item with custom domain
-        for (const regItem of data.results.registered) {
-          const { fioName, transaction_id, fee_collected } = regItem;
-
-          const orderItem = order.OrderItems.find(
-            ({ id, address, domain }) =>
-              !processedOrderItems.includes(id) &&
-              fioApi.setFioName(address, domain) === fioName,
+            },
           );
-
-          if (orderItem) {
-            let blockchainTransactionId =
-              orderItem.OrderItemStatus.blockchainTransactionId;
-            let bcTx = null;
-            if (blockchainTransactionId) {
-              bcTx = await BlockchainTransaction.findOneWhere({
-                id: blockchainTransactionId,
-              });
-
-              bcTx.txId = transaction_id;
-              bcTx.status = BlockchainTransaction.STATUS.SUCCESS;
-              bcTx.feeCollected = fee_collected;
-              await bcTx.save();
-            } else {
-              bcTx = await BlockchainTransaction.create({
-                txId: transaction_id,
-                action: orderItem.action,
-                status: BlockchainTransaction.STATUS.SUCCESS,
-                data: { params: orderItem.params },
-                orderItemId: orderItem.id,
-                feeCollected: fee_collected,
-              });
-              blockchainTransactionId = bcTx.id;
-            }
-
-            await OrderItemStatus.update(
-              {
-                txStatus: bcTx.status,
-                blockchainTransactionId,
-              },
-              { where: { id: orderItem.OrderItemStatus.id } },
-            );
-
-            await BlockchainTransactionEventLog.create({
-              status: bcTx.status,
-              statusNotes: '',
-              blockchainTransactionId,
-            });
-            processedOrderItems.push(orderItem.id);
-          }
         }
-        await checkOrderStatusAndCreateNotification(id);
       } catch (e) {
         logger.error(`ORDER UPDATE ERROR ${order.id} #${order.number} - ${e.message}`);
-      }
-    }
-
-    const isExternalProcessor = [
-      Payment.PROCESSOR.STRIPE,
-      Payment.PROCESSOR.BITPAY,
-    ].includes(data.results.paymentProvider);
-
-    if (data.results && isExternalProcessor) {
-      for (const regItem of data.results.registered) {
-        const { fioName, data: itemData } = regItem;
-
-        const orderItem = order.OrderItems.find(
-          ({ address, domain }) => fioApi.setFioName(address, domain) === fioName,
-        );
-
-        if (orderItem && itemData) {
-          await OrderItem.update(
-            { data: { ...(orderItem.data ? orderItem.data : {}), ...itemData } },
-            { where: { id: orderItem.id } },
-          );
-        }
       }
     }
 

@@ -111,7 +111,13 @@ export const login = ({
         addEmailToPromoList: true,
       });
     }
-    return { account, fioWallets, options, voucherId, isPinLogin: !!pin };
+    return {
+      account,
+      fioWallets,
+      options,
+      voucherId,
+      isPinLogin: !!pin,
+    };
   },
 });
 
@@ -120,12 +126,18 @@ export const CONFIRM_PIN_SUCCESS = `${prefix}/CONFIRM_PIN_SUCCESS`;
 export const CONFIRM_PIN_FAILURE = `${prefix}/CONFIRM_PIN_FAILURE`;
 
 export const confirmPin = (
-  { username, pin }: { username: string; pin: string },
+  {
+    username,
+    pin,
+    password,
+  }: { username: string; pin?: string; password?: string },
   { action, data }: { action: string; data: AnyObject },
 ): CommonPromiseAction => ({
   types: [CONFIRM_PIN_REQUEST, CONFIRM_PIN_SUCCESS, CONFIRM_PIN_FAILURE],
   promise: async (api: Api) => {
-    const account = await api.edge.loginPIN(username, pin);
+    const account = pin
+      ? await api.edge.loginPIN(username, pin)
+      : await api.edge.login(username, password);
 
     const keys: EdgeWalletsKeys = await waitWalletKeys(account);
 
@@ -156,14 +168,13 @@ export const SIGNUP_FAILURE = `${prefix}/SIGNUP_FAILURE`;
 export const signup = ({
   username,
   password,
-  pin,
 }: {
   username: string;
   password: string;
-  pin: string;
 }): CommonPromiseAction => ({
   types: [SIGNUP_REQUEST, SIGNUP_SUCCESS, SIGNUP_FAILURE],
-  promise: (api: Api) => api.edge.signup(username, password, pin),
+  promise: (api: Api) => api.edge.signup(username, password),
+  username,
 });
 
 export const CACHED_USERS_REQUEST = `${prefix}/CACHED_USERS_REQUEST`;
@@ -268,6 +279,7 @@ export const changePin = ({
 }): CommonPromiseAction => ({
   types: [CHANGE_PIN_REQUEST, CHANGE_PIN_SUCCESS, CHANGE_PIN_FAILURE],
   promise: (api: Api) => api.edge.changePin(pin, password, username),
+  username,
 });
 
 export const CLEAR_CHANGE_PIN_RESULTS = `${prefix}/CLEAR_CHANGE_PIN_RESULTS`;
@@ -376,4 +388,26 @@ export const setConfirmPinKeys = (
 ): CommonAction => ({
   type: SET_CONFIRM_PIN_KEYS,
   data: keys,
+});
+
+export const SET_IS_PIN_ENABLED_REQUEST = `${prefix}/SET_IS_PIN_ENABLED_REQUEST`;
+export const SET_IS_PIN_ENABLED_SUCCESS = `${prefix}/SET_IS_PIN_ENABLED_SUCCESS`;
+export const SET_IS_PIN_ENABLED_FAILURE = `${prefix}/SET_IS_PIN_ENABLED_FAILURE`;
+
+export const setPinEnabled = (username: string): CommonPromiseAction => ({
+  types: [
+    SET_IS_PIN_ENABLED_REQUEST,
+    SET_IS_PIN_ENABLED_SUCCESS,
+    SET_IS_PIN_ENABLED_FAILURE,
+  ],
+  promise: (api: Api) => api.edge.checkIsPinSet(username),
+});
+
+export const SET_IS_PIN_POSTPONED = `${prefix}/SET_IS_PIN_POSTPONED_SUCCESS`;
+
+export const setPinSetupPostponed = (
+  isPinPostponed: boolean,
+): CommonAction => ({
+  type: SET_IS_PIN_POSTPONED,
+  data: isPinPostponed,
 });

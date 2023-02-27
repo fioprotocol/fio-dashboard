@@ -4,7 +4,7 @@ import Base from '../Base';
 import X from '../Exception';
 import { generate } from './authToken';
 
-import { User, Nonce, Wallet, Action } from '../../models';
+import { User, Nonce, Wallet } from '../../models';
 
 import { DAY_MS } from '../../config/constants.js';
 
@@ -87,25 +87,6 @@ export default class AuthCreate extends Base {
       await user.update({ timeZone });
     }
 
-    if (user.status === User.STATUS.NEW) {
-      let resendConfirmEmailAction = await Action.findOneWhere({
-        type: Action.TYPE.RESEND_EMAIL_CONFIRM,
-        data: { userId: user.id, email: user.email },
-      });
-      if (resendConfirmEmailAction)
-        await resendConfirmEmailAction.destroy({ force: true });
-      resendConfirmEmailAction = await new Action({
-        type: Action.TYPE.RESEND_EMAIL_CONFIRM,
-        hash: Action.generateHash(),
-        data: {
-          userId: user.id,
-          email: user.email,
-        },
-      }).save();
-
-      responseData.emailConfirmationToken = resendConfirmEmailAction.hash;
-    }
-
     return {
       data: responseData,
     };
@@ -116,6 +97,6 @@ export default class AuthCreate extends Base {
   }
 
   static get resultSecret() {
-    return ['data.jwt', 'data.emailConfirmationToken'];
+    return ['data.jwt'];
   }
 }

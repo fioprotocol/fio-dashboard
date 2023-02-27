@@ -6,22 +6,14 @@ const ROUTES: { [route: string]: string } = {
   SIGN_IN: '/signin',
   RESET_PASSWORD: '/reset-password',
 
-  CONFIRM_EMAIL: '/confirm-email', // ?hash=
-  CONFIRM_EMAIL_OLD: '/confirm-email/:hash', // ?refCode= (not required)
-  CONFIRM_EMAIL_RESULT: '/confirm-email-result',
   PROFILE: '/profile',
   PASSWORD_RECOVERY: '/password-recovery',
   CREATE_ACCOUNT: '/create-account',
   CREATE_ACCOUNT_PIN: '/create-account-pin',
-  CREATE_ACCOUNT_CONFIRM: '/create-account-confirm',
   CREATE_ACCOUNT_CONFIRMATION: '/create-account-confirmation',
   CREATE_ACCOUNT_SECRET_QUESTIONS: '/create-account-secret-questions',
   CREATE_ACCOUNT_SECRET_QUESTIONS_SKIP: '/create-account-secret-questions-skip',
   CREATE_ACCOUNT_SECRET_ANSWERS: '/create-account-secret-answers',
-  IS_NEW_USER: '/email-confirm-gate',
-  NEW_EMAIL_NOT_VERIFIED: '/update-email-confirm-gate',
-  CONFIRM_UPDATED_EMAIL: '/confirm-updated-email', // ?hash=
-  CONFIRM_UPDATED_EMAIL_OLD: '/confirm-updated-email/:hash',
 
   FIO_ADDRESSES_SELECTION: '/fio-crypto-handles-selection', //?address= (not required)
   FIO_ADDRESSES_CUSTOM_SELECTION: '/fio-crypto-handles-custom', //?address= (not required)
@@ -118,6 +110,13 @@ const ROUTES: { [route: string]: string } = {
   WRAP_STATUS_UNWRAP_DOMAINS: '/unwrapDomains',
 };
 
+export const PUBLIC_ROUTES: string[] = [
+  ROUTES.FIO_ADDRESSES_SELECTION,
+  ROUTES.FIO_ADDRESSES_CUSTOM_SELECTION,
+  ROUTES.FIO_DOMAIN,
+  ROUTES.FIO_DOMAINS_SELECTION,
+];
+
 const ADMIN_ROUTES: { [route: string]: string } = {
   ADMIN_HOME: '/',
   ADMIN_USERS: '/users',
@@ -126,9 +125,10 @@ const ADMIN_ROUTES: { [route: string]: string } = {
   ADMIN_CONFIRM_EMAIL: '/confirm-email', // ?hash=&email=
   ADMIN_RESET_PASSWORD: '/reset-password', // ?hash=&email=
   ADMIN_REGULAR_USERS: '/regular-users',
-  ADMIN_REGULAR_USER_DETAILS: '/admin/regular-user-details', // ?userId=
+  ADMIN_REGULAR_USER_DETAILS: '/regular-user-details', // ?userId=
   ADMIN_PROFILE: '/profile',
   ADMIN_ACCOUNTS: '/accounts',
+  ADMIN_API_URLS: '/api-urls',
   ADMIN_PARTNERS: '/partners',
   ADMIN_SEARCH_RESULT: '/search-result',
   ADMIN_DEFAULTS: '/defaults',

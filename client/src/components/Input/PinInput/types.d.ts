@@ -4,6 +4,7 @@ import { FormApi } from 'final-form';
 import { CommonObjectProps } from '../../../types';
 
 type DefaultPinProps = {
+  disabled?: boolean;
   error: string;
   name: string;
   value: string;

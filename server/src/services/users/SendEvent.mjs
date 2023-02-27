@@ -1,5 +1,5 @@
 import Base from '../Base';
-import marketingMailchimp from '../../external/marketing-mailchimp';
+import marketingSendinblue from '../../external/marketing-sendinblue.mjs';
 import { User } from '../../models';
 
 export default class SendEvent extends Base {
@@ -14,7 +14,7 @@ export default class SendEvent extends Base {
       const user = await User.findActive(this.context.id);
 
       if (user.isOptIn) {
-        await marketingMailchimp.sendEvent(user.email, event);
+        await marketingSendinblue.sendEvent(user.email, event);
       }
     }
 

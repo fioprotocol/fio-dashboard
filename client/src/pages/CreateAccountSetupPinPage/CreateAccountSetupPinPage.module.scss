@@ -1,0 +1,40 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  width: 100%;
+  background-color: $content-background;
+  display: flex;
+  align-items: center;
+  justify-content: center;    
+
+  .form {
+    max-width: 375px;
+    background-color: $baltic-sea;
+    border-radius: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 20px 10px 20px;
+    height: fit-content;
+    margin-top: 30px;
+    margin-bottom: 80px;
+    position: relative;
+
+    @include sm {
+      margin-top: 0;
+      margin-bottom: 0;
+      max-width: 100%;
+      border-radius: 0;
+      height: 100%;
+      align-items: flex-start;
+    }
+
+    .arrow {
+      position: absolute;
+      left: 30px;
+      top: 30px;
+      color: $white;
+    }
+  }
+}

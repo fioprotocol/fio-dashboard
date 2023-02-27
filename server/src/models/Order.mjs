@@ -25,6 +25,7 @@ import {
   FIO_ACTIONS_LABEL,
   CART_ITEM_TYPE,
   FIO_ACTIONS,
+  ORDER_ERROR_TYPES,
 } from '../config/constants.js';
 
 import logger from '../logger.mjs';
@@ -40,11 +41,6 @@ const hashids = new Hashids(
 
 const DEFAULT_ORDERS_LIMIT = 25;
 
-const ERROR_TYPES = {
-  default: 'default',
-  freeAddressIsNotRegistered: 'freeAddressIsNotRegistered',
-};
-
 export class Order extends Base {
   static get STATUS() {
     return {
@@ -58,6 +54,13 @@ export class Order extends Base {
       FAILED: 8,
       CANCELED: 9,
       PAYMENT_PENDING: 10, // 'waiting' webhook received / Updated from client side when purchased
+    };
+  }
+
+  static get FREE_STATUS() {
+    return {
+      IS_FREE: 1,
+      IS_PAID: 2,
     };
   }
 
@@ -196,7 +199,12 @@ export class Order extends Base {
     return this.count(query);
   }
 
-  static async listAll(limit = DEFAULT_ORDERS_LIMIT, offset = 0) {
+  static async listAll(
+    limit = DEFAULT_ORDERS_LIMIT,
+    offset = 0,
+    status = null,
+    freeStatus = null,
+  ) {
     const [orders] = await this.sequelize.query(`
         SELECT 
           o.id, 
@@ -212,7 +220,8 @@ export class Order extends Base {
           p.currency,
           p.processor as "paymentProcessor",
           u.email as "userEmail",
-          rp.label as "refProfileName"
+          rp.label as "refProfileName",
+          count(*) OVER() AS "maxCount"
         FROM "orders" o
           INNER JOIN "payments" p ON p."orderId" = o.id AND p."spentType" = ${
             Payment.SPENT_TYPE.ORDER
@@ -220,6 +229,14 @@ export class Order extends Base {
           INNER JOIN users u ON u.id = o."userId"
           LEFT JOIN "referrer-profiles" rp ON rp.id = o."refProfileId"
         WHERE o."deletedAt" IS NULL
+          ${status ? `AND o."status" = ${status}` : ``}
+          ${
+            freeStatus
+              ? freeStatus === this.FREE_STATUS.IS_FREE
+                ? `AND (o."total" = '0' OR o."total" IS NULL)`
+                : `AND o."total"::numeric > 0`
+              : ``
+          }
         ORDER BY o.id DESC
         OFFSET ${offset}
         ${limit ? `LIMIT ${limit}` : ``}
@@ -653,8 +670,8 @@ export class Order extends Base {
             event && event.data && event.data.errorType
               ? event.data.errorType
               : isFree
-              ? ERROR_TYPES.freeAddressIsNotRegistered
-              : ERROR_TYPES.default,
+              ? ORDER_ERROR_TYPES.freeAddressError
+              : ORDER_ERROR_TYPES.default,
         });
 
         continue;

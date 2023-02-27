@@ -1,7 +1,6 @@
 import { combineReducers } from 'redux';
 
 import * as actions from './actions';
-import { CONFIRM_EMAIL_SUCCESS } from '../profile/actions';
 
 import { CONTAINED_FLOW_STEPS } from '../../constants/containedFlow';
 
@@ -12,15 +11,6 @@ export default combineReducers({
     switch (action.type) {
       case actions.SET_CONTAINED_PARAMS:
         return action.data;
-      case CONFIRM_EMAIL_SUCCESS: {
-        if (
-          action.data.stateData != null &&
-          action.data.stateData.containedFlowQueryParams != null
-        ) {
-          return action.data.stateData.containedFlowQueryParams;
-        }
-        return state;
-      }
       case actions.RESET_CONTAINED_PARAMS: {
         return null;
       }

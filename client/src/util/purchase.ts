@@ -95,7 +95,7 @@ export const transformPurchaseResults = ({
 
         if (isFree) {
           retObj.isFree = isFree;
-          if (errorType === ERROR_TYPES.freeAddressIsNotRegistered) {
+          if (errorType === ERROR_TYPES.userHasFreeAddress) {
             updatedCart.splice(
               cart.findIndex(({ id }) => cartItemId === id),
               1,

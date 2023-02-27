@@ -17,12 +17,17 @@ import RegularUsersList from '../services/adminUsers/RegularUsersList.mjs';
 import FioAccountsList from '../services/adminUsers/FioAccountsList.mjs';
 import FioAccountProfileUpdate from '../services/adminUsers/FioAccountProfileUpdate.mjs';
 import FioAccountProfileCreate from '../services/adminUsers/FioAccountProfileCreate.mjs';
+import FioAccountProfileDelete from '../services/adminUsers/FioAccountProfileDelete.mjs';
 import PartnersList from '../services/adminUsers/PartnersList.mjs';
 import PartnerUpdate from '../services/adminUsers/PartnerUpdate.mjs';
 import PartnerCreate from '../services/adminUsers/PartnerCreate.mjs';
 import Search from '../services/adminUsers/Search.mjs';
 import DefaultList from '../services/adminUsers/DefaultList.mjs';
 import DefaultsSave from '../services/adminUsers/DefaultsSave.mjs';
+import FioApiUrlsList from '../services/adminUsers/FioApiUrlsList';
+import FioApiUrlCreate from '../services/adminUsers/FioApiUrlCreate';
+import FioApiUrlUpdate from '../services/adminUsers/FioApiUrlUpdate';
+import FioApiUrlDelete from '../services/adminUsers/FioApiUrlDelete';
 
 export default {
   personalInfo: makeServiceRunner(PersonalInfo),
@@ -45,6 +50,7 @@ export default {
     ...req.body,
     ...req.params,
   })),
+  deleteFioAccountProfile: makeServiceRunner(FioAccountProfileDelete, req => req.params),
   partnersList: makeServiceRunner(PartnersList, req => req.query),
   createPartner: makeServiceRunner(PartnerCreate, req => req.body),
   updatePartner: makeServiceRunner(PartnerUpdate, req => ({
@@ -54,4 +60,11 @@ export default {
   search: makeServiceRunner(Search, req => req.query),
   getDefaults: makeServiceRunner(DefaultList),
   saveDefaults: makeServiceRunner(DefaultsSave, req => req.body),
+  fioApiUrlsList: makeServiceRunner(FioApiUrlsList, req => req.query),
+  createFioApiUrlsList: makeServiceRunner(FioApiUrlCreate, req => req.body),
+  updateFioApiUrlsList: makeServiceRunner(FioApiUrlUpdate, req => ({
+    ...req.body,
+    ...req.params,
+  })),
+  deleteFioApiUrlsList: makeServiceRunner(FioApiUrlDelete, req => req.params),
 };

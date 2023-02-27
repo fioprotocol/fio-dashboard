@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { osName, osVersion } from 'react-device-detect';
 
 import ModalComponent from '../Modal/Modal';
@@ -10,19 +10,14 @@ import TwoFactorCodeModal, {
 } from './components/TwoFactorCodeModal';
 import PageTitle from '../PageTitle/PageTitle';
 
-import { CONTAINED_FLOW_LOGIN_SUBTITLES } from '../../constants/containedFlow';
 import { LINKS } from '../../constants/labels';
 
 import apis from '../../api';
 
 import { autoLogin, AutoLoginParams } from '../../util/login';
+import useEffectOnce from '../../hooks/general';
 
-import {
-  EmailConfirmationResult,
-  LastAuthData,
-  LoginFailure,
-  RefProfile,
-} from '../../types';
+import { LastAuthData, LoginFailure, RefProfile } from '../../types';
 
 type FormValues = {
   email?: string;
@@ -39,6 +34,7 @@ type Props = {
   show: boolean;
   onSubmit: (params: FormValues) => void;
   edgeAuthLoading: boolean;
+  isPinEnabled: boolean;
   onClose: () => void;
   getCachedUsers: () => void;
   resetLastAuthData: () => void;
@@ -54,7 +50,6 @@ type Props = {
   cachedUsers: string[];
   lastAuthData: LastAuthData;
   refProfileInfo: RefProfile;
-  emailConfirmationResult: EmailConfirmationResult;
 };
 
 const LoginForm: React.FC<Props> = props => {
@@ -62,6 +57,7 @@ const LoginForm: React.FC<Props> = props => {
     show,
     onSubmit,
     edgeAuthLoading,
+    isPinEnabled,
     onClose,
     cachedUsers,
     lastAuthData,
@@ -71,22 +67,7 @@ const LoginForm: React.FC<Props> = props => {
     resetLoginFailure,
     loginFailure,
     edgeLoginFailure,
-    emailConfirmationResult,
   } = props;
-  const isEmailVerification = !!emailConfirmationResult?.success;
-  const isContainedFlow = !!emailConfirmationResult?.stateData
-    ?.containedFlowQueryParams;
-  let subtitle = '';
-  if (
-    isContainedFlow &&
-    emailConfirmationResult.stateData?.containedFlowQueryParams?.action
-  ) {
-    subtitle =
-      CONTAINED_FLOW_LOGIN_SUBTITLES[
-        emailConfirmationResult.stateData.containedFlowQueryParams.action.toUpperCase()
-      ];
-  }
-
   const [isForgotPass, toggleForgotPass] = useState(false);
   const [usePinLogin, setUsePinLogin] = useState(false);
   const [showBlockModal, toggleBlockModal] = useState(false);
@@ -97,21 +78,23 @@ const LoginForm: React.FC<Props> = props => {
   const timerRef = useRef(null);
 
   useEffect(getCachedUsers, []);
-  useEffect(() => {
-    if (lastAuthData && cachedUsers.indexOf(lastAuthData.username) > -1) {
+
+  const handlePinLogin = useCallback(() => {
+    if (
+      lastAuthData &&
+      cachedUsers.indexOf(lastAuthData.username) > -1 &&
+      isPinEnabled &&
+      !edgeAuthLoading
+    ) {
       setUsePinLogin(true);
     } else {
       setUsePinLogin(false);
     }
-  }, [cachedUsers, lastAuthData]);
-  useEffect(() => {
-    if (emailConfirmationResult && emailConfirmationResult.success) {
-      setLoginParams({
-        email:
-          emailConfirmationResult.email || emailConfirmationResult.newEmail,
-      });
-    }
-  }, [emailConfirmationResult]);
+  }, [cachedUsers, edgeAuthLoading, isPinEnabled, lastAuthData]);
+
+  useEffectOnce(() => {
+    handlePinLogin();
+  }, [handlePinLogin]);
 
   useEffect(() => {
     return () => {
@@ -160,10 +143,11 @@ const LoginForm: React.FC<Props> = props => {
     });
   };
 
-  const onCloseLogin = () => {
+  const onCloseLogin = useCallback(() => {
     onClose();
     setLoginParams(null);
-  };
+    handlePinLogin();
+  }, [handlePinLogin, onClose]);
 
   const onForgotPassClose = () => {
     toggleForgotPass(false);
@@ -236,8 +220,6 @@ const LoginForm: React.FC<Props> = props => {
             isForgotPass={isForgotPass}
             toggleForgotPass={toggleForgotPass}
             title="Sign In"
-            subtitle={subtitle}
-            hideCreateAccount={isEmailVerification}
             onClose={onCloseLogin}
             initialValues={loginParams || {}}
           />

@@ -2,7 +2,6 @@ import crypto from 'crypto';
 
 import Sequelize from 'sequelize';
 
-import { User } from './User.mjs';
 import { AdminUser } from './AdminUser.mjs';
 import Base from './Base';
 
@@ -11,10 +10,7 @@ const { DataTypes: DT } = Sequelize;
 export class Action extends Base {
   static get TYPE() {
     return {
-      CONFIRM_EMAIL: 'confirmEmail',
       RESET_PASSWORD: 'resetPassword',
-      RESEND_EMAIL_CONFIRM: 'resendEmailConfirm',
-      UPDATE_EMAIL: 'updateEmail',
       CONFIRM_ADMIN_EMAIL: 'confirmAdminEmail',
       RESET_ADMIN_PASSWORD: 'resetAdminPasswordEmail',
     };
@@ -37,18 +33,6 @@ export class Action extends Base {
 
   run(data) {
     return this[this.type](data);
-  }
-
-  async confirmEmail() {
-    const user = await User.findById(this.data.userId);
-
-    return user.update({ status: User.STATUS.ACTIVE });
-  }
-
-  async updateEmail() {
-    const user = await User.findById(this.data.userId);
-
-    return user.update({ status: User.STATUS.ACTIVE, email: this.data.newEmail });
   }
 
   async confirmAdminEmail() {

@@ -57,6 +57,7 @@ export default function configureStore(api: Api, history: History): Store {
         },
         edge: {
           hasTwoFactorAuth: store.getState().edge.hasTwoFactorAuth,
+          isPinEnabled: store.getState().edge.isPinEnabled,
         },
         fio: {
           // we should save showTokenListInfoBadge state during session

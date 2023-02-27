@@ -21,6 +21,12 @@ const validationSchema: ValidationSchema = {
         message: 'Required.',
       },
     ],
+    accountType: [
+      {
+        validator: Validators.required,
+        message: 'Required',
+      },
+    ],
   },
 };
 

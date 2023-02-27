@@ -301,8 +301,6 @@ export const cartItemsToOrderItems = (
   return cartItems
     .map(({ id, type, address, domain, costNativeFio, domainType, period }) => {
       const data: {
-        hasCustomDomain?: boolean;
-        hasCustomDomainFee?: number;
         cartItemId: string;
         period?: number;
       } = {
@@ -311,10 +309,25 @@ export const cartItemsToOrderItems = (
       const nativeFio = domainType === DOMAIN_TYPE.FREE ? 0 : costNativeFio;
 
       if (!!address && domainType === DOMAIN_TYPE.CUSTOM) {
-        data.hasCustomDomain = true;
-        data.hasCustomDomainFee = new MathOp(costNativeFio)
-          .sub(prices.nativeFio.address)
-          .toNumber();
+        return [
+          {
+            action: ACTIONS.registerFioDomain,
+            domain,
+            nativeFio: prices.nativeFio.domain.toString(),
+            price: convertFioPrices(prices.nativeFio.domain || 0, roe).usdc,
+            priceCurrency: CURRENCY_CODES.USDC,
+            data,
+          },
+          {
+            action: ACTIONS.registerFioAddress,
+            address,
+            domain,
+            nativeFio: prices.nativeFio.address.toString(),
+            price: convertFioPrices(prices.nativeFio.address || 0, roe).usdc,
+            priceCurrency: CURRENCY_CODES.USDC,
+            data,
+          },
+        ];
       }
 
       const item = {
@@ -403,6 +416,8 @@ export const cartIsRelative = (
     (length, item) =>
       CART_ITEM_TYPES_WITH_PERIOD.includes(item.type) && item.period > 1
         ? length + item.period
+        : !!item.address && item.domainType === DOMAIN_TYPE.CUSTOM
+        ? length + 2
         : length + 1,
     0,
   );

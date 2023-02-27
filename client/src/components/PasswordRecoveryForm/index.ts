@@ -22,6 +22,7 @@ import {
 import {
   changeRecoveryQuestionsResults,
   edgeUsername,
+  email,
 } from '../../redux/profile/selectors';
 
 import PasswordRecoveryForm from './PasswordRecoveryForm';
@@ -35,6 +36,7 @@ const reduxConnect = connect(
     changeRecoveryQuestions,
     changeRecoveryQuestionsResults,
     username: edgeUsername,
+    useremail: email,
   }),
   {
     onSubmit: setRecoveryQuestions,

@@ -14,11 +14,11 @@ import { refProfileInfo } from '../../redux/refProfile/selectors';
 import {
   error as loginFailure,
   lastAuthData,
-  emailConfirmationResult,
 } from '../../redux/profile/selectors';
 import {
   loading as edgeAuthLoading,
   cachedUsers,
+  isPinEnabled,
   loginFailure as edgeLoginFailure,
 } from '../../redux/edge/selectors';
 
@@ -30,10 +30,10 @@ const reduxConnect = connect(
     show,
     cachedUsers,
     edgeLoginFailure,
+    isPinEnabled,
     loginFailure,
     lastAuthData,
     refProfileInfo,
-    emailConfirmationResult,
   }),
   {
     onSubmit: login,

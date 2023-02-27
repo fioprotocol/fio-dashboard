@@ -11,7 +11,7 @@ import InfoBadge from '../../components/Badges/InfoBadge/InfoBadge';
 import { ROUTES } from '../../constants/routes';
 import { CTA_BADGE_TYPE } from '../../components/ManagePageContainer/constants';
 
-import { useFioAddresses, useNonActiveUserRedirect } from '../../util/hooks';
+import { useFioAddresses } from '../../util/hooks';
 import { useCheckIfDesktop } from '../../screenType';
 
 import { FioWalletDoublet } from '../../types';
@@ -26,7 +26,6 @@ type Props = {
 const DashboardPage: React.FC<Props> = props => {
   const { fioWallets, loading } = props;
   const [fioAddresses] = useFioAddresses();
-  useNonActiveUserRedirect();
 
   const isDesktop = useCheckIfDesktop();
 

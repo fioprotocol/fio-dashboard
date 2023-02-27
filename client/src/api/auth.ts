@@ -1,6 +1,6 @@
 import Base from './base';
 
-import { EmailConfirmationStateData, FioWalletDoublet } from '../types';
+import { FioWalletDoublet } from '../types';
 import {
   AuthAvailableResponse,
   AuthCheckRejectedResponse,
@@ -11,12 +11,10 @@ import {
   AuthLogoutResponse,
   AuthNonceResponse,
   AuthProfileResponse,
-  AuthResendConfirmEmailResponse,
   AuthResendRecoveryResponse,
   AuthSetRecoveryResponse,
   AuthSignUpResponse,
-  AuthUpdateEmailRequestResponse,
-  AuthUpdateEmailRevertResponse,
+  AuthUpdateEmailResponse,
   AuthUpdateNewDeviceResponse,
   AuthUsernameResponse,
   AdminAuthLoginResponse,
@@ -82,26 +80,10 @@ export default class Auth extends Base {
     return this.apiClient.post('users/resendRecovery', { data: { token } });
   }
 
-  resendConfirmEmail(
-    token: string,
-    stateData: EmailConfirmationStateData,
-  ): Promise<AuthResendConfirmEmailResponse> {
-    return this.apiClient.post('users/resendConfirmEmail', {
-      data: { token, stateData },
+  updateEmail(newEmail: string): Promise<AuthUpdateEmailResponse> {
+    return this.apiClient.post('users/update-email', {
+      data: { newEmail },
     });
-  }
-
-  updateEmailRequest(
-    oldEmail: string,
-    newEmail: string,
-  ): Promise<AuthUpdateEmailRequestResponse> {
-    return this.apiClient.post('users/update-email-request', {
-      data: { oldEmail, newEmail },
-    });
-  }
-
-  updateEmailRevert(): Promise<AuthUpdateEmailRevertResponse> {
-    return this.apiClient.post('users/update-email-revert', {});
   }
 
   createNewDeviceRequest({

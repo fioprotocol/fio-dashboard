@@ -6,6 +6,10 @@
   transform: translateX(0);
   color: $baltic-sea;
 
+  &.isWhite {
+    color: $white;
+  }
+
 
   &:hover {
     cursor: pointer;

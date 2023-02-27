@@ -48,7 +48,6 @@ import {
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
 } from '../../constants/common';
-
 import { ERROR_TYPES } from '../../constants/errors';
 
 import { CartItem, Order, OrderDetailed } from '../../types';
@@ -57,6 +56,8 @@ import { CreateOrderActionData } from '../../redux/types';
 type ContextProps = {
   orderItem: OrderDetailed;
 };
+
+const ALREADY_REGISTERED_ERROR_TEXT = 'already registered';
 
 export const useContext = (
   props: ContextProps,
@@ -116,35 +117,35 @@ export const useContext = (
           PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
         ].includes(status)
       ) {
-        const purcahsedItems: CartItem[] = [];
+        const purchasedItems: CartItem[] = [];
         regItems.forEach(regItem => {
           const { id, period = 1 } = regItem;
-          const purcahsedItem = cart.find(cartItem => cartItem.id === id);
-          if (purcahsedItem) {
+          const purchasedItem = cart.find(cartItem => cartItem.id === id);
+          if (purchasedItem) {
             if (
-              purcahsedItem.id === id &&
-              CART_ITEM_TYPES_WITH_PERIOD.includes(purcahsedItem.type) &&
-              purcahsedItem.period > period
+              purchasedItem.id === id &&
+              CART_ITEM_TYPES_WITH_PERIOD.includes(purchasedItem.type) &&
+              purchasedItem.period > period
             ) {
-              const purcahsedItemPeriod = period;
+              const purchasedItemPeriod = period;
               const fioPrices = convertFioPrices(
-                new MathOp(purcahsedItem.costNativeFio)
-                  .mul(purcahsedItemPeriod)
+                new MathOp(purchasedItem.costNativeFio)
+                  .mul(purchasedItemPeriod)
                   .toNumber(),
                 roe,
               );
-              purcahsedItems.push({
-                ...purcahsedItem,
-                period: purcahsedItemPeriod,
+              purchasedItems.push({
+                ...purchasedItem,
+                period: purchasedItemPeriod,
                 costFio: fioPrices.fio,
                 costUsdc: fioPrices.usdc,
               });
             } else {
-              purcahsedItems.push(purcahsedItem);
+              purchasedItems.push(purchasedItem);
             }
           }
         });
-        const purchaseItems = getCartItemsDataForAnalytics(purcahsedItems);
+        const purchaseItems = getCartItemsDataForAnalytics(purchasedItems);
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED, {
           ...purchaseItems,
           payment_type: !purchaseItems.value
@@ -172,11 +173,11 @@ export const useContext = (
 
   useEffectOnce(
     () => {
+      let updatedCart: CartItem[] = [...cart];
       if (
         status === PURCHASE_RESULTS_STATUS.SUCCESS ||
         status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS
       ) {
-        let updatedCart: CartItem[] = [...cart];
         regItems.forEach(regItem => {
           const { id, period = 1 } = regItem;
           updatedCart = updatedCart
@@ -205,14 +206,30 @@ export const useContext = (
               return updatedCartItem;
             });
         });
-        dispatch(setCartItems(updatedCart));
       }
+
+      if (
+        status === PURCHASE_RESULTS_STATUS.FAILED ||
+        status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS
+      ) {
+        errItems.forEach(errorItem => {
+          const { id, error } = errorItem;
+          if (error.includes(ALREADY_REGISTERED_ERROR_TEXT)) {
+            updatedCart = updatedCart.filter(
+              updatedCartItem => updatedCartItem.id !== id,
+            );
+          }
+        });
+      }
+      dispatch(setCartItems(updatedCart));
     },
     [status],
     [
       PURCHASE_RESULTS_STATUS.SUCCESS,
       PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
-    ].includes(status) && regItems.length > 0,
+      PURCHASE_RESULTS_STATUS.FAILED,
+    ].includes(status) &&
+      (regItems.length > 0 || errItems.length > 0),
   );
 
   if (
@@ -248,9 +265,11 @@ export const useContext = (
 
   const isRetryAvailable =
     !isEmpty(errItems) &&
-    errItems.length > 1 &&
-    (errItems[0]?.errorType !== ERROR_TYPES.freeAddressIsNotRegistered ||
-      errItems[0]?.errorType !== ERROR_TYPES.userHasFreeAddress);
+    errItems.filter(
+      ({ errorType, error }) =>
+        errorType !== ERROR_TYPES.userHasFreeAddress &&
+        !error.includes(ALREADY_REGISTERED_ERROR_TEXT),
+    ).length > 0;
 
   if (isRetryAvailable) {
     actionClick = onRetry;

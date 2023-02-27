@@ -2,7 +2,7 @@ import Base from '../Base';
 import X from '../Exception';
 
 import { FioAccountProfile } from '../../models';
-import { ADMIN_ROLES_IDS } from '../../config/constants.js';
+import { ADMIN_ROLES_IDS, FIO_ACCOUNT_TYPES } from '../../config/constants.js';
 
 export default class FioAccountProfileUpdate extends Base {
   static get requiredPermissions() {
@@ -15,10 +15,11 @@ export default class FioAccountProfileUpdate extends Base {
       actor: ['required', 'string'],
       permission: ['required', 'string'],
       id: ['required', 'string'],
+      accountType: ['required', 'string'],
     };
   }
 
-  async execute({ id, name, actor, permission }) {
+  async execute({ id, name, actor, permission, accountType }) {
     const fioAccountProfile = await FioAccountProfile.findById(id);
 
     if (!fioAccountProfile) {
@@ -31,7 +32,27 @@ export default class FioAccountProfileUpdate extends Base {
       });
     }
 
-    await fioAccountProfile.update({ id, name, actor, permission });
+    const fioAccountProfileWithExistingType = await FioAccountProfile.findOneWhere({
+      accountType,
+    });
+
+    if (
+      fioAccountProfileWithExistingType &&
+      fioAccountProfileWithExistingType.id !== id
+    ) {
+      await fioAccountProfileWithExistingType.update({
+        ...fioAccountProfileWithExistingType,
+        accountType: null,
+      });
+    }
+
+    await fioAccountProfile.update({
+      id,
+      name,
+      actor,
+      permission,
+      accountType: FIO_ACCOUNT_TYPES[accountType] || null,
+    });
 
     return {
       data: fioAccountProfile.json(),

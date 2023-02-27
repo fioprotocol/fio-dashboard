@@ -4,11 +4,7 @@ import { withRouter } from 'react-router-dom';
 
 import { edgeContextInit } from '../../redux/edge/actions';
 
-import {
-  isAuthenticated,
-  isNewUser,
-  loading,
-} from '../../redux/profile/selectors';
+import { isAuthenticated, loading } from '../../redux/profile/selectors';
 import { edgeContextSet } from '../../redux/edge/selectors';
 
 import AuthContainer from './AuthContainer';
@@ -16,7 +12,6 @@ import AuthContainer from './AuthContainer';
 const selector = createStructuredSelector({
   edgeContextSet,
   isAuthenticated,
-  isNewUser,
   loading,
 });
 

@@ -74,6 +74,9 @@ const UsernamesOnCustomDomains: React.FC<UsernamesOnCustomDomainsProps> = ({
                           {...provided.dragHandleProps}
                           className={classes.listItem}
                         >
+                          <span className="d-block mr-3 font-weight-bold">
+                            {index + 1}
+                          </span>
                           <Button size="sm" variant="light" className="mr-2">
                             <FontAwesomeIcon icon="sort" />
                           </Button>
