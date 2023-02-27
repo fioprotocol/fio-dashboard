@@ -5,6 +5,7 @@ import Bitpay from '../../external/payment-processor/bitpay.mjs';
 
 import Base from '../Base';
 import X from '../Exception';
+import { getKeyByValue } from '../../utils/general.mjs';
 
 import logger from '../../logger.mjs';
 
@@ -126,9 +127,10 @@ export default class PaymentsWebhook extends Base {
         ].indexOf(payment.status) > -1
       ) {
         logger.info(
-          `WEBHOOK: Payment has finished status - ${
-            Payment.STATUS[payment.status]
-          } - ${paymentProcessor.getWebhookIdentifier(webhookData)}.`,
+          `WEBHOOK: Payment has finished status - ${getKeyByValue(
+            Payment.STATUS,
+            payment.status,
+          )} - ${paymentProcessor.getWebhookIdentifier(webhookData)}.`,
         );
         return { processed: true };
       }
@@ -150,9 +152,10 @@ export default class PaymentsWebhook extends Base {
         };
 
         logger.info(
-          `WEBHOOK: Updating payment started - ${
-            Payment.STATUS[payment.status]
-          } - ${paymentProcessor.getWebhookIdentifier(webhookData)}.`,
+          `WEBHOOK: Updating payment started - ${getKeyByValue(
+            Payment.STATUS,
+            payment.status,
+          )} - ${paymentProcessor.getWebhookIdentifier(webhookData)}.`,
         );
 
         // Update payment
@@ -171,9 +174,10 @@ export default class PaymentsWebhook extends Base {
           });
           await Order.updateStatus(order.id, payment.status, [], t);
           logger.info(
-            `WEBHOOK: Updating payment has been finished - ${
-              Payment.STATUS[payment.status]
-            } - ${paymentProcessor.getWebhookIdentifier(webhookData)}.`,
+            `WEBHOOK: Updating payment has been finished - ${getKeyByValue(
+              Payment.STATUS,
+              payment.status,
+            )} - ${paymentProcessor.getWebhookIdentifier(webhookData)}.`,
           );
         });
 

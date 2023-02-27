@@ -68,12 +68,12 @@ export class ReferrerProfile extends Base {
         freeFioAccountProfileId: {
           type: DT.BIGINT,
           allowNull: true,
-          defaultValue: 1,
+          defaultValue: null,
         },
         paidFioAccountProfileId: {
           type: DT.BIGINT,
           allowNull: true,
-          defaultValue: 1,
+          defaultValue: null,
         },
       },
       {
