@@ -359,19 +359,21 @@ export const useContext = (): {
       !!fioWallets.length,
   );
 
-  useEffectOnce(
-    () => {
-      window.addEventListener('beforeunload', e => {
-        if (order?.id) {
-          apis.orders.update(order.id, {
-            status: PURCHASE_RESULTS_STATUS.CANCELED,
-          });
-        }
-      });
-    },
-    [order],
-    !!order,
-  );
+  useEffect(() => {
+    const cancelOrder = () => {
+      if (order?.id) {
+        apis.orders.update(order.id, {
+          status: PURCHASE_RESULTS_STATUS.CANCELED,
+        });
+      }
+    };
+
+    window.addEventListener('beforeunload', cancelOrder);
+
+    return () => {
+      window.removeEventListener('beforeunload', cancelOrder);
+    };
+  }, [order?.id]);
 
   useEffect(() => {
     if (noProfileLoaded || !cartItems.length) {
@@ -426,7 +428,10 @@ export const useContext = (): {
   }, [paymentWalletFrom, cartHasItemsWithPrivateDomain, error]);
 
   useEffect(() => {
-    return () => dispatch(loadProfile());
+    return () => {
+      setOrder(null);
+      dispatch(loadProfile());
+    };
   }, [dispatch]);
 
   const onClose = useCallback(() => {
