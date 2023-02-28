@@ -520,6 +520,14 @@ class WalletDataJob extends CommonJob {
 
   async execute() {
     await fioApi.getRawAbi();
+
+    try {
+      await fioApi.checkFioChainEnvironment();
+    } catch (e) {
+      logger.error(`WALLET PROCESSING ERROR`, e);
+      this.finish();
+    }
+
     let offset = 0;
 
     const processWallet = wallet => async () => {
