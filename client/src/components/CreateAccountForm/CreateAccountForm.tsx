@@ -93,6 +93,7 @@ type OwnProps = {
     isSignUp?: boolean,
   ) => void;
   showLoginModal: () => void;
+  setPinEnabled: (username: string) => void;
   setPinSetupPostponed: (isPinPostponed: boolean) => void;
   setRedirectPath: ({ pathname }: { pathname: string }) => void;
   onSubmit: (params: {
@@ -313,6 +314,7 @@ export default class CreateAccountForm extends React.Component<Props, State> {
 
   handleSubmit = async (values: FormValues) => {
     const { step } = this.state;
+    const { setPinEnabled } = this.props;
 
     switch (step) {
       case STEPS.EMAIL_PASSWORD: {
@@ -365,6 +367,8 @@ export default class CreateAccountForm extends React.Component<Props, State> {
             emailToUsername(email),
             password,
           );
+
+          setPinEnabled(account.username || emailToUsername(email));
 
           if (!Object.values(errors).length && account && fioWallet) {
             await this.confirm(account, fioWallet, values);
