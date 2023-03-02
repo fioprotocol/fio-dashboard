@@ -9,7 +9,7 @@ import {
   signup,
 } from '../../redux/profile/actions';
 import { showLoginModal } from '../../redux/modal/actions';
-import { setPinSetupPostponed } from '../../redux/edge/actions';
+import { setPinEnabled, setPinSetupPostponed } from '../../redux/edge/actions';
 import { setRedirectPath } from '../../redux/navigation/actions';
 
 import {
@@ -35,6 +35,7 @@ const actions = {
   resetSuccessState,
   showLoginModal,
   makeNonce,
+  setPinEnabled,
   setPinSetupPostponed,
   setRedirectPath,
 };
