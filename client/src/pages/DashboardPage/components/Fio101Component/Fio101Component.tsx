@@ -1,7 +1,13 @@
 import React from 'react';
 
+import { ItemWrapper } from '../ItemWrapper';
+
 type Props = {};
 
 export const Fio101Component: React.FC<Props> = props => {
-  return <div></div>;
+  return (
+    <ItemWrapper>
+      <div></div>
+    </ItemWrapper>
+  );
 };
