@@ -16,6 +16,7 @@ export const Navigation: React.FC<NavigationProps> | null = props => {
     closeMenu,
     showLogin,
     logout,
+    cartIsHidden,
   } = props;
 
   if (isAuthenticated)
@@ -25,7 +26,11 @@ export const Navigation: React.FC<NavigationProps> | null = props => {
         toggleMenuOpen={toggleMenuOpen}
         closeMenu={closeMenu}
         showLogin={showLogin}
-        hideCart={(isContainedFlow && !!fioAddresses.length) || isNotActiveUser}
+        hideCart={
+          (isContainedFlow && !!fioAddresses.length) ||
+          isNotActiveUser ||
+          cartIsHidden
+        }
         hideOrder={isContainedFlow || isNotActiveUser}
         hideNotifications={isContainedFlow || isNotActiveUser}
         onlyAuth={isContainedFlow || isNotActiveUser}

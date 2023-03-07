@@ -11,10 +11,15 @@ import { CartItem } from '../../types';
 
 export const cartItems = (state: ReduxState): CartItem[] =>
   state[prefix].cartItems || [];
+
 export const paymentWalletPublicKey = (state: ReduxState): string =>
   state[prefix].paymentWalletPublicKey || '';
+
 export const cartDate = (state: ReduxState): number | null =>
   state[prefix].date || null;
+
+export const cartIsHidden = (state: ReduxState): boolean | null =>
+  state[prefix].isHidden || null;
 
 export const cartHasItemsWithPrivateDomain = createSelector(
   cartItems,

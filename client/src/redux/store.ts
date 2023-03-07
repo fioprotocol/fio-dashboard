@@ -50,6 +50,7 @@ export default function configureStore(api: Api, history: History): Store {
         cart: {
           cartItems: store.getState().cart.cartItems,
           date: store.getState().cart.date,
+          isHidden: store.getState().cart.isHidden,
         },
         profile: {
           lastAuthData: store.getState().profile.lastAuthData,
