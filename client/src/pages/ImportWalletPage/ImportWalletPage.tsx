@@ -103,7 +103,7 @@ const ImportWalletPage: React.FC<ContainerProps> = props => {
     if (!addWalletLoading && !processing) setShowCancelConfirm(true);
   };
   const onConfirmCancel = () => {
-    history.push(ROUTES.TOKENS);
+    history.goBack();
   };
   const onCancelConfirmClose = () => {
     setShowCancelConfirm(false);
