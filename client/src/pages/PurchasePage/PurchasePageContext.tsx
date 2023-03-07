@@ -95,6 +95,10 @@ export const useContext = (
   let buttonText = 'Close';
 
   useEffect(() => {
+    dispatch(setIsHidden(true));
+  }, []);
+
+  useEffect(() => {
     if (noProfile) {
       history.push(ROUTES.FIO_ADDRESSES_SELECTION);
     }
@@ -248,8 +252,6 @@ export const useContext = (
   }
 
   const onClose = () => {
-    console.log('status', status);
-
     if (
       ![
         PURCHASE_RESULTS_STATUS.SUCCESS,

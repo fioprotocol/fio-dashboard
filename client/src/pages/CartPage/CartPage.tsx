@@ -24,6 +24,7 @@ const CartPage: React.FC = () => {
     userWallets,
     walletBalancesAvailable,
     walletCount,
+    cartIsHidden,
     deleteItem,
     setCartItems,
     onPaymentChoose,
@@ -45,6 +46,7 @@ const CartPage: React.FC = () => {
     totalCartNativeAmount,
     walletBalancesAvailable,
     walletCount,
+    cartIsHidden,
     deleteItem,
     setCartItems,
   };
