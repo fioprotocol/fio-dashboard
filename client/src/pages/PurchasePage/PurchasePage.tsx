@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { OrderDetailsContainer } from '../../components/OrderDetailsContainer';
 import { ContextProps } from '../../components/OrderDetailsContainer/OrderDetailsContainerContext';
@@ -8,6 +8,9 @@ import Processing from '../../components/common/TransactionProcessing';
 
 import { useContext } from './PurchasePageContext';
 
+import { setIsHidden } from '../../redux/cart/actions';
+import { store } from '../../redux/init';
+
 const PurchaseComponent: React.FC<ContextProps> = props => {
   const {
     actionClick,
@@ -16,6 +19,10 @@ const PurchaseComponent: React.FC<ContextProps> = props => {
     hideTopCloseButton,
     isProcessing,
   } = useContext(props);
+
+  useEffect(() => {
+    store.dispatch(setIsHidden(true));
+  }, []);
 
   return (
     <>
