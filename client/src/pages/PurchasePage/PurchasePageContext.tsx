@@ -4,7 +4,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
-import { setCartItems } from '../../redux/cart/actions';
+import {
+  setCartItems,
+  setIsHidden,
+  clear as clearCart,
+} from '../../redux/cart/actions';
 import { fioActionExecuted } from '../../redux/fio/actions';
 import { onPurchaseResultsClose } from '../../redux/registrations/actions';
 
@@ -161,6 +165,8 @@ export const useContext = (
       if (status === PURCHASE_RESULTS_STATUS.FAILED) {
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_FAILED);
       }
+
+      dispatch(setIsHidden(false));
     },
     [status],
     [
@@ -242,6 +248,20 @@ export const useContext = (
   }
 
   const onClose = () => {
+    console.log('status', status);
+
+    if (
+      ![
+        PURCHASE_RESULTS_STATUS.SUCCESS,
+        PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
+        PURCHASE_RESULTS_STATUS.FAILED,
+        PURCHASE_RESULTS_STATUS.CANCELED,
+      ].includes(status)
+    ) {
+      dispatch(clearCart());
+      dispatch(setIsHidden(false));
+    }
+
     dispatch(onPurchaseResultsClose());
   };
 

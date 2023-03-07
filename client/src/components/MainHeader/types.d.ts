@@ -27,6 +27,7 @@ export type MainHeaderProps = {
   isContainedFlow: boolean;
   isAdminAuthenticated: boolean;
   hideNavigation?: boolean;
+  cartIsHidden?: boolean;
 };
 
 export type NavigationProps = {

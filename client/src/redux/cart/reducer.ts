@@ -43,4 +43,12 @@ export default combineReducers({
         return state;
     }
   },
+  isHidden(state: boolean = false, action = {}) {
+    switch (action.type) {
+      case actions.SET_IS_HIDDEN:
+        return action.data;
+      default:
+        return state;
+    }
+  },
 });

@@ -8,10 +8,16 @@ export const DELETE_ITEM = `${prefix}/DELETE_ITEM`;
 export const CLEAR_CART = `${prefix}/CLEAR_CART`;
 export const SET_CART_ITEMS = `${prefix}/SET_CART_ITEMS`;
 export const SET_CART_DATE = `${prefix}/SET_CART_DATE`;
+export const SET_IS_HIDDEN = `${prefix}/SET_IS_HIDDEN`;
 
 export const addItem = (item: CartItem): CommonAction => ({
   type: ADD_ITEM,
   data: item,
+});
+
+export const setIsHidden = (isHidden: boolean): CommonAction => ({
+  type: SET_IS_HIDDEN,
+  data: isHidden,
 });
 
 export const deleteItem = ({
