@@ -32,6 +32,7 @@ type Props = {
   walletBalancesAvailable: WalletBalancesItem;
   prices: Prices;
   setCartItems?: (cartItems: CartItemType[]) => void;
+  cartIsHidden?: boolean;
   isPriceChanged: boolean;
   roe: number;
   hasGetPricesError?: boolean;
@@ -41,6 +42,7 @@ type Props = {
 const Cart: React.FC<Props> = props => {
   const {
     cartItems,
+    cartIsHidden,
     deleteItem,
     prices,
     setCartItems,
@@ -107,6 +109,7 @@ const Cart: React.FC<Props> = props => {
           <h5 className={classes.title}>Cart</h5>
         </div>
         {!isCartEmpty &&
+          !cartIsHidden &&
           cartItems.map(item => (
             <div key={item.id}>
               <CartItem

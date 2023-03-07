@@ -29,6 +29,7 @@ type LoggedNavProps = {
   edgeAuthLoading: boolean;
   profileLoading: boolean;
   hideCart: boolean;
+  hideCartIcon?: boolean;
   hideOrder?: boolean;
   hideNotifications: boolean;
   showSiteLink: boolean;
@@ -50,6 +51,7 @@ type CartNavItemProps = {
   cartItems: CartItem[];
   hasMarginRight?: boolean;
   hideVerticalLine?: boolean;
+  hideCartIcon?: boolean;
   to: string;
   onClick: () => void;
 } & DefaultNavItemProps;
@@ -75,6 +77,7 @@ export const CartNavItem: React.FC<CartNavItemProps> = props => {
     cartItems,
     hasMarginRight,
     hide,
+    hideCartIcon,
     hideVerticalLine,
     isDesktop,
     to,
@@ -89,7 +92,7 @@ export const CartNavItem: React.FC<CartNavItemProps> = props => {
             icon="shopping-cart"
             className={classnames(classes.icon, hasMarginRight && 'mr-4')}
           />
-          {cartItems.length > 0 && (
+          {cartItems.length > 0 && !hideCartIcon && (
             <div
               className={classnames(
                 classes.notifActiveWrapper,
@@ -165,6 +168,7 @@ export const LoggedNav: React.FC<LoggedNavProps> = props => {
   const {
     cartItems,
     hideCart,
+    hideCartIcon,
     hideOrder,
     notifications,
     showSiteLink,
@@ -191,6 +195,7 @@ export const LoggedNav: React.FC<LoggedNavProps> = props => {
         <CartNavItem
           cartItems={cartItems}
           hide={hideCart}
+          hideCartIcon={hideCartIcon}
           isDesktop={isDesktop}
           to={
             cartItems.length > 0 ? ROUTES.CART : ROUTES.FIO_ADDRESSES_SELECTION

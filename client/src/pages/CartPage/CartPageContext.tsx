@@ -10,6 +10,7 @@ import { showGenericErrorModal } from '../../redux/modal/actions';
 
 import {
   cartItems as cartItemsSelector,
+  cartIsHidden as cartIsHiddenSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
   isCartPrivateDomainsError as isCartPrivateDomainsErrorSelector,
   cartHasItemsWithPrivateDomain as cartHasItemsWithPrivateDomainSelector,
@@ -76,6 +77,7 @@ type UseContextReturnType = {
   prices: Prices;
   roe: number;
   totalCartAmount: string;
+  cartIsHidden?: boolean;
   totalCartNativeAmount: number;
   userWallets: FioWalletDoublet[];
   walletBalancesAvailable?: WalletBalancesItem;
@@ -87,6 +89,7 @@ type UseContextReturnType = {
 
 export const useContext = (): UseContextReturnType => {
   const cartItems = useSelector(cartItemsSelector);
+  const cartIsHidden = useSelector(cartIsHiddenSelector);
   const hasFreeAddress = useSelector(hasFreeAddressSelector);
   const hasGetPricesError = useSelector(hasGetPricesErrorSelector);
   const isAuth = useSelector(isAuthenticated);
@@ -389,6 +392,7 @@ export const useContext = (): UseContextReturnType => {
     selectedPaymentProvider,
     disabled: loading || isUpdatingPrices || !!selectedPaymentProvider,
     totalCartAmount,
+    cartIsHidden,
     isPriceChanged,
     totalCartNativeAmount,
     userWallets,
