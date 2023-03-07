@@ -8,46 +8,58 @@ import { ClickEventTypes } from '../../../types';
 import classes from './SubmitButton.module.scss';
 
 type Props = {
-  onClick?: (() => void) | ((event: ClickEventTypes) => void);
   disabled?: boolean;
   loading?: boolean;
   isWhiteBordered?: boolean;
+  isTransparent?: boolean;
+  isWhite?: boolean;
   isGreen?: boolean;
   isGreenTeal?: boolean;
   isBlack?: boolean;
   isCobalt?: boolean;
+  hasHoveredBlackTextColor?: boolean;
   withBottomMargin?: boolean;
   withTopMargin?: boolean;
   withoutMargin?: boolean;
   text?: string | React.ReactNode;
+  hasAutoHeight?: boolean;
   hasLowHeight?: boolean;
   hasBoldText?: boolean;
+  hasWhiteHoverBackground?: boolean;
   isButtonType?: boolean;
   hasSmallText?: boolean;
   hasAutoWidth?: boolean;
   variant?: string;
+  hasNoSidePaddings?: boolean;
+  onClick?: (() => void) | ((event: ClickEventTypes) => void);
 };
 
 export const SubmitButton: React.FC<Props> = props => {
   const {
-    onClick,
     disabled,
-    loading,
-    isWhiteBordered,
+    hasAutoHeight,
+    hasAutoWidth,
+    hasBoldText,
+    hasHoveredBlackTextColor,
+    hasLowHeight,
+    hasNoSidePaddings,
+    hasSmallText,
+    hasWhiteHoverBackground,
+    isBlack,
+    isButtonType,
+    isCobalt,
     isGreen,
     isGreenTeal,
-    isBlack,
-    isCobalt,
-    withTopMargin,
+    isTransparent,
+    isWhite,
+    isWhiteBordered,
+    loading,
+    text,
+    variant,
     withBottomMargin,
     withoutMargin,
-    text,
-    hasLowHeight,
-    hasBoldText,
-    hasSmallText,
-    hasAutoWidth,
-    variant,
-    isButtonType,
+    withTopMargin,
+    onClick,
   } = props;
 
   return (
@@ -59,20 +71,26 @@ export const SubmitButton: React.FC<Props> = props => {
       className={classnames(
         classes.button,
         !variant && classes.defaultColor,
-        isWhiteBordered && classes.isWhiteBordered,
-        isGreen && classes.isGreen,
-        isGreenTeal && classes.isGreenTeal,
+        disabled && classes.disabled,
+        hasAutoHeight && classes.hasAutoHeight,
+        hasAutoWidth && classes.hasAutoWidth,
+        hasBoldText && classes.hasBoldText,
+        hasHoveredBlackTextColor && classes.hasHoveredBlackTextColor,
+        hasLowHeight && classes.hasLowHeight,
+        hasNoSidePaddings && classes.hasNoSidePaddings,
+        hasSmallText && classes.hasSmallText,
+        hasWhiteHoverBackground && classes.hasWhiteHoverBackground,
         isBlack && classes.isBlack,
         isCobalt && classes.isCobalt,
-        disabled && classes.disabled,
+        isGreen && classes.isGreen,
+        isGreenTeal && classes.isGreenTeal,
+        isTransparent && classes.isTransparent,
+        isWhite && classes.isWhite,
+        isWhiteBordered && classes.isWhiteBordered,
         loading && classes.loading,
-        withTopMargin && classes.topMargin,
         withBottomMargin && classes.bottomMargin,
         withoutMargin && classes.withoutMargin,
-        hasLowHeight && classes.hasLowHeight,
-        hasBoldText && classes.hasBoldText,
-        hasSmallText && classes.hasSmallText,
-        hasAutoWidth && classes.hasAutoWidth,
+        withTopMargin && classes.topMargin,
       )}
     >
       <div />
