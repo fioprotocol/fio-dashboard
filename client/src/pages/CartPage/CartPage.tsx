@@ -5,6 +5,7 @@ import Cart from '../../components/Cart/Cart';
 import CartAmount from '../../components/Cart/CartAmount';
 
 import { useContext } from './CartPageContext';
+import AddressDomainCart from '../../components/AddressDomainCart';
 
 const CartPage: React.FC = () => {
   const {
@@ -57,6 +58,7 @@ const CartPage: React.FC = () => {
     disabled,
     paymentWalletPublicKey,
     totalCartNativeAmount,
+    cartIsHidden,
     onPaymentChoose,
   };
 
@@ -64,7 +66,13 @@ const CartPage: React.FC = () => {
     <DoubleCardContainer
       title="Your Cart"
       bigCart={<Cart {...commonProps} {...cartProps} />}
-      smallCart={<CartAmount {...commonProps} {...cartAmountProps} />}
+      smallCart={
+        cartIsHidden ? (
+          <AddressDomainCart />
+        ) : (
+          <CartAmount {...commonProps} {...cartAmountProps} />
+        )
+      }
     />
   );
 };

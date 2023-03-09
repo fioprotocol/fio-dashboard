@@ -31,8 +31,9 @@ export const deleteItem = ({
   data: { id, cartItems },
 });
 
-export const clear = (): CommonAction => ({
+export const clear = (isNotify = false): CommonAction => ({
   type: CLEAR_CART,
+  data: isNotify,
 });
 
 export const setCartItems = (cartItems: CartItem[]): CommonAction => ({

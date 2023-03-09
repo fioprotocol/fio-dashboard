@@ -23,7 +23,8 @@ import { Action } from '../types';
 import { ContainedFlowQueryParams } from '../../types';
 
 export function* cartWasCleared(): Generator {
-  yield takeEvery(CLEAR_CART, function*() {
+  yield takeEvery(CLEAR_CART, function*(action: Action) {
+    const { data: isNotify } = action;
     const isContainedFlow: boolean = yield select(getIsContainedFlow);
     const containedFlowQueryParams: ContainedFlowQueryParams = yield select(
       getContainedFlowQueryParams,
@@ -33,25 +34,27 @@ export function* cartWasCleared(): Generator {
       ? containedFlowQueryParams.action.toUpperCase()
       : '';
 
-    yield put<Action>(
-      createNotification({
-        action: ACTIONS.CART_TIMEOUT,
-        type: BADGE_TYPES.WARNING,
-        contentType: NOTIFICATIONS_CONTENT_TYPE.CART_TIMEOUT,
-        title: NOTIFICATIONS_CONTENT.CART_TIMEOUT.title,
-        message:
-          isContainedFlow && containedFlowAction != null
-            ? `${NOTIFICATIONS_CONTENT.CART_TIMEOUT.message}, ${CONTAINED_FLOW_NOTIFICATION_MESSAGES[containedFlowAction]}.`
-            : `${NOTIFICATIONS_CONTENT.CART_TIMEOUT.message}. Add your items again.`,
-        pagesToShow: [
-          ROUTES.CART,
-          ROUTES.FIO_ADDRESSES_SELECTION,
-          ROUTES.FIO_DOMAINS_SELECTION,
-          ROUTES.HOME,
-          ROUTES.DASHBOARD,
-        ],
-      }),
-    );
+    if (isNotify) {
+      yield put<Action>(
+        createNotification({
+          action: ACTIONS.CART_TIMEOUT,
+          type: BADGE_TYPES.WARNING,
+          contentType: NOTIFICATIONS_CONTENT_TYPE.CART_TIMEOUT,
+          title: NOTIFICATIONS_CONTENT.CART_TIMEOUT.title,
+          message:
+            isContainedFlow && containedFlowAction != null
+              ? `${NOTIFICATIONS_CONTENT.CART_TIMEOUT.message}, ${CONTAINED_FLOW_NOTIFICATION_MESSAGES[containedFlowAction]}.`
+              : `${NOTIFICATIONS_CONTENT.CART_TIMEOUT.message}. Add your items again.`,
+          pagesToShow: [
+            ROUTES.CART,
+            ROUTES.FIO_ADDRESSES_SELECTION,
+            ROUTES.FIO_DOMAINS_SELECTION,
+            ROUTES.HOME,
+            ROUTES.DASHBOARD,
+          ],
+        }),
+      );
+    }
 
     fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.CART_EMPTIED);
   });
