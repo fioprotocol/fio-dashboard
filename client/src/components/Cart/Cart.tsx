@@ -105,7 +105,9 @@ const Cart: React.FC<Props> = props => {
       </div>
       <div className={classes.container}>
         <div className={classes.header}>
-          <CounterContainer isEmpty={isCartEmpty}>{count}</CounterContainer>
+          <CounterContainer isEmpty={isCartEmpty || cartIsHidden}>
+            {cartIsHidden ? 0 : count}
+          </CounterContainer>
           <h5 className={classes.title}>Cart</h5>
         </div>
         {!isCartEmpty &&

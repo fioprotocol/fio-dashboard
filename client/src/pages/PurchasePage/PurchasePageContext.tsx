@@ -96,6 +96,20 @@ export const useContext = (
 
   useEffect(() => {
     dispatch(setIsHidden(true));
+
+    return () => {
+      if (
+        ![
+          PURCHASE_RESULTS_STATUS.SUCCESS,
+          PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
+          PURCHASE_RESULTS_STATUS.FAILED,
+          PURCHASE_RESULTS_STATUS.CANCELED,
+        ].includes(status)
+      ) {
+        dispatch(clearCart());
+        dispatch(setIsHidden(false));
+      }
+    };
   }, []);
 
   useEffect(() => {
