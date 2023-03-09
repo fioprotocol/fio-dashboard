@@ -177,3 +177,48 @@ export const FIO_ACCOUNT_TYPES_OPTIONS = [
     name: FIO_ACCOUNT_TYPES.REGULAR,
   },
 ];
+
+export const FIO_CHAIN_ID = {
+  MAINNET: '21dcae42c0182200e93f954a074011f9048a7624c6fe81d3c9541a614a88bd1c',
+  TESTNET: 'b20901380af44ef59c5918439a1f9a41d83669020319a80574b804a5f95cbd7e',
+};
+
+export const FIO_PROXY_LIST = {
+  [FIO_CHAIN_ID.MAINNET]: [
+    'proxy1@binancestaking',
+    'proxy@greymass',
+    'finance@edge',
+    'blue@proxy',
+    'reaper@guarda',
+    'proxy@blockpane',
+    'vote@blockpane',
+    'proxy@moonstake',
+    'proxy@genereos',
+    'proxy@everstake',
+    'crypto@tribe',
+    'proxy@wallet',
+    'anyo@fiosweden',
+    'imdsc@edge',
+    'main@mycointainer',
+    'proxy@secux',
+    'lethanhmy@cm',
+    'proxy@zenblocks',
+    'andy@secux',
+  ],
+  [FIO_CHAIN_ID.TESTNET]: [
+    'congle@fiotestnet',
+    'ms2tpid@fiotestnet',
+    'autoproxy@fiotestnet',
+    'dashboard@fiotestnet',
+    'ngocdam5@fiotestnet',
+    'proxy@fiotestnet',
+    'ericstake@fiotestnet',
+    'tpid@uniqueone',
+    'smoketestproxy1@fiotestnet',
+    'anyo@fiosweden',
+    'proxy2@alohatest',
+    'proxy1@alohatest',
+    'currencyhub@fiotestnet',
+    'ericanchor@fiotestnet',
+  ],
+};
