@@ -33,6 +33,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
     fioAddresses,
     fee,
     initialValues,
+    isWalletFioAddressesLoading,
     balance,
     proxyList,
   } = props;
@@ -47,18 +48,25 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
   }, [balance]);
 
   useEffect(() => {
-    if (fioAddresses.length) {
-      setWalletMaxAvailableAmount(walletAvailableAmount);
-    } else {
-      setWalletMaxAvailableAmount(
-        new MathOp(fee.nativeFio || 0).gt(walletAvailableAmount)
-          ? 0
-          : new MathOp(walletAvailableAmount)
-              .sub(fee.nativeFio || 0)
-              .toNumber(),
-      );
+    if (!isWalletFioAddressesLoading) {
+      if (fioAddresses.length) {
+        setWalletMaxAvailableAmount(walletAvailableAmount);
+      } else {
+        setWalletMaxAvailableAmount(
+          new MathOp(fee.nativeFio || 0).gt(walletAvailableAmount)
+            ? 0
+            : new MathOp(walletAvailableAmount)
+                .sub(fee.nativeFio || 0)
+                .toNumber(),
+        );
+      }
     }
-  }, [walletAvailableAmount, fioAddresses.length, fee]);
+  }, [
+    fee,
+    fioAddresses.length,
+    isWalletFioAddressesLoading,
+    walletAvailableAmount,
+  ]);
 
   // temporary added while fio stake api can't allow accounts without crypto handles
   const renderFioAddressWarningBadge = () => {
@@ -182,11 +190,12 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           : null;
 
         const hasLowBalance =
-          walletMaxAvailableAmount === 0 ||
-          (!!walletMaxAvailableAmount &&
-            new MathOp(apis.fio.amountToSUF(amount)).gt(
-              walletMaxAvailableAmount,
-            ));
+          (walletMaxAvailableAmount === 0 ||
+            (!!walletMaxAvailableAmount &&
+              new MathOp(apis.fio.amountToSUF(amount)).gt(
+                walletMaxAvailableAmount,
+              ))) &&
+          !isWalletFioAddressesLoading;
         const notEnoughBundles =
           selectedAddress != null
             ? selectedAddress.remaining < BUNDLES_TX_COUNT.STAKE
@@ -199,6 +208,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
           loading ||
           hasLowBalance ||
           (!!selectedAddress && notEnoughBundles) ||
+          isWalletFioAddressesLoading ||
           !fioAddresses.length; // temporary added while fio stake api can't allow accounts without crypto handles
 
         return (
@@ -295,7 +305,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
             <InfoBadge
               className={classes.infoBadgeError}
               type={BADGE_TYPES.ERROR}
-              show={!fioAddresses.length}
+              show={!fioAddresses.length && !isWalletFioAddressesLoading}
               title="No Crypto Handle"
               message={<>You are not able to stake without crypto handles.</>}
             />
