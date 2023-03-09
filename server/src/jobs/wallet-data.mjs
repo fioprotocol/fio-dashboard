@@ -411,22 +411,26 @@ class WalletDataJob extends CommonJob {
         );
         balance = balanceResponse.balance;
       } catch (e) {
-        this.logFioError(e, wallet);
-        // other error (when 404 the balance is 0)
-        if (e.errorCode !== ERROR_CODES.NOT_FOUND)
-          balance = wallet.publicWalletData.balance;
         if (
           e.errorCode === ERROR_CODES.NOT_FOUND &&
           e.json &&
           e.json.message &&
           /Public key not found/i.test(e.json.message)
         ) {
-          if (wallet && wallet.id)
-            logger.error(
-              `Process wallet error - id: ${wallet.id} - error - ${e.message} - detailed message - ${e.json.message} - action - checkBalance`,
-            );
-          throw new Error(e);
+          logger.info(
+            `Process wallet skip - id: ${(wallet && wallet.id) || 'N/A'} - info - ${
+              e.message
+            } - detailed message - ${e.json.message} - action - checkBalance`,
+          );
+          return;
+        } else {
+          logger.error(
+            `Process wallet error - id: ${(wallet && wallet.id) || 'N/A'} - error - ${
+              e.message
+            } - detailed message - ${e.json.message} - action - checkBalance`,
+          );
         }
+        throw new Error(e);
       }
       const { publicWalletData } = wallet;
 
