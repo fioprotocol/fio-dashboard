@@ -11,7 +11,7 @@ import { getROE } from '../external/roe.mjs';
 
 import logger from '../logger.mjs';
 
-import { HOUR_MS, DAY_MS, DOMAIN_EXP_PERIOD } from '../config/constants.js';
+import { HOUR_MS, DAY_MS, DOMAIN_EXP_PERIOD, ERROR_CODES } from '../config/constants.js';
 
 const CHUNKS_LIMIT = parseInt(process.env.WALLET_DATA_JOB_CHUNKS_LIMIT) || 1;
 const CHUNKS_TIMEOUT = parseInt(process.env.WALLET_DATA_JOB_CHUNKS_TIMEOUT) || 1500;
@@ -387,9 +387,26 @@ class WalletDataJob extends CommonJob {
         const balanceResponse = await publicFioSDK.getFioBalance(wallet.publicKey);
         balance = balanceResponse.balance;
       } catch (e) {
-        this.logFioError(e, wallet);
-        // other error (when 404 the balance is 0)
-        if (e.errorCode !== 404) balance = wallet.publicWalletData.balance;
+        if (
+          e.errorCode === ERROR_CODES.NOT_FOUND &&
+          e.json &&
+          e.json.message &&
+          /Public key not found/i.test(e.json.message)
+        ) {
+          logger.info(
+            `Process wallet skip - id: ${(wallet && wallet.id) || 'N/A'} - info - ${
+              e.message
+            } - detailed message - ${e.json.message} - action - checkBalance`,
+          );
+          return;
+        } else {
+          logger.error(
+            `Process wallet error - id: ${(wallet && wallet.id) || 'N/A'} - error - ${
+              e.message
+            } - detailed message - ${e.json.message} - action - checkBalance`,
+          );
+        }
+        throw new Error(e);
       }
       const { publicWalletData } = wallet;
 
@@ -507,6 +524,14 @@ class WalletDataJob extends CommonJob {
 
   async execute() {
     await fioApi.getRawAbi();
+
+    try {
+      await fioApi.checkFioChainEnvironment();
+    } catch (e) {
+      logger.error(`WALLET PROCESSING ERROR`, e);
+      this.finish();
+    }
+
     let offset = 0;
 
     const processWallet = wallet => async () => {
