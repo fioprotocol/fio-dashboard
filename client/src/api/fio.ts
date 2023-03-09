@@ -665,7 +665,12 @@ export default class Fio {
       this.logError(err);
     }
 
-    return proxies || [`${process.env.REACT_APP_FIO_DEFAULT_PROXY}`];
+    return (
+      proxies ||
+      FIO_PROXY_LIST[this.fioChainIdEnvironment] || [
+        `${process.env.REACT_APP_FIO_DEFAULT_PROXY}`,
+      ]
+    );
   };
 
   getFeeFromTable = async (feeHash: string): Promise<{ fee: number }> => {
