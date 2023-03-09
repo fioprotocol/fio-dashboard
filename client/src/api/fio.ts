@@ -21,6 +21,7 @@ import { isDomain } from '../utils';
 import {
   ACTIONS,
   ACTIONS_TO_END_POINT_KEYS,
+  FIO_PROXY_LIST,
   GET_TABLE_ROWS_URL,
   TRANSACTION_ACTION_NAMES,
 } from '../constants/fio';
@@ -103,6 +104,7 @@ export default class Fio {
   };
   tpid: string = process.env.REACT_APP_DEFAULT_TPID || '';
   domainTpid: string = process.env.REACT_APP_DEFAULT_TPID || '';
+  fioChainIdEnvironment: string = process.env.REACT_APP_FIO_CHAIN_ID || '';
 
   constructor() {
     this.publicFioSDK = new FIOSDK(
@@ -651,12 +653,24 @@ export default class Fio {
         .filter(row => row.is_proxy && row.fioaddress)
         .map(row => row.fioaddress);
 
-      proxies = [...rowsProxies];
+      const defaultProxyList = FIO_PROXY_LIST[this.fioChainIdEnvironment] || [];
+
+      const rowsProxiesList =
+        rowsProxies.length !== defaultProxyList.length
+          ? defaultProxyList
+          : rowsProxies;
+
+      proxies = [...rowsProxiesList];
     } catch (err) {
       this.logError(err);
     }
 
-    return proxies || [`${process.env.REACT_APP_FIO_DEFAULT_PROXY}`];
+    return (
+      proxies ||
+      FIO_PROXY_LIST[this.fioChainIdEnvironment] || [
+        `${process.env.REACT_APP_FIO_DEFAULT_PROXY}`,
+      ]
+    );
   };
 
   getFeeFromTable = async (feeHash: string): Promise<{ fee: number }> => {
