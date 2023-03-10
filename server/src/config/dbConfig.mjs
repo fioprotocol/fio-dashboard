@@ -15,7 +15,7 @@ export default {
     logging: false,
     operatorsAliases: false,
     pool: {
-      max: 50,
+      max: process.env.SQL_MAX_POOL || 50,
       min: 0,
       acquire: 30000,
       idle: 10000,
