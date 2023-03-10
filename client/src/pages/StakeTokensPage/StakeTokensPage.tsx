@@ -103,12 +103,7 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
     });
   };
 
-  if (
-    !fioWallet ||
-    !fioWallet.id ||
-    fioWallet.balance === null ||
-    isWalletFioAddressesLoading
-  )
+  if (!fioWallet || !fioWallet.id || fioWallet.balance === null)
     return <FioLoader wrap={true} />;
 
   const onBack = () =>
@@ -162,6 +157,7 @@ const StakeTokensPage: React.FC<ContainerProps> = props => {
 
         <StakeTokensForm
           balance={balance}
+          isWalletFioAddressesLoading={isWalletFioAddressesLoading}
           loading={loading || processing}
           fioAddresses={walletFioAddresses}
           onSubmit={onStakeTokens}

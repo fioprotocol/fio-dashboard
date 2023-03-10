@@ -351,6 +351,17 @@ class Fio {
 
     return prices;
   }
+
+  async checkFioChainEnvironment() {
+    const publicFioSDK = await this.getPublicFioSDK();
+    const chainId = await publicFioSDK.transactions.getChainInfo();
+
+    if (!chainId) throw new Error('Missing FIO chain environment');
+    if (chainId.chain_id !== process.env.FIO_CHAIN_ID)
+      throw new Error(
+        `Missmatch of preffered FIO chain: ${process.env.FIO_CHAIN_ID} and Public FIO SDK chain: ${chainId.chain_id}`,
+      );
+  }
 }
 
 export const fioApi = new Fio();
