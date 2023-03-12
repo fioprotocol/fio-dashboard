@@ -10,7 +10,7 @@ import Loader from '../../components/Loader/Loader';
 import DangerModal from '../../components/Modal/DangerModal/DangerModal';
 import FioAccountProfileModal from './components/createNewFioAccountProfile/FioAccountProfileModal';
 
-import { FIO_ACCOUNT_TYPES } from '../../constants/fio';
+import { FIO_ACCOUNT_TYPES, NOT_DELETABLE_ACCOUNTS } from '../../constants/fio';
 
 import apis from '../../api';
 import { log } from '../../util/general';
@@ -259,16 +259,21 @@ const AdminFioAccountsProfilesListPage: React.FC<PageProps> = props => {
                           : null}
                       </th>
                       <th>
-                        <Button
-                          onClick={event => {
-                            event.preventDefault();
-                            event.stopPropagation();
-                            handleDeleteFioAccountProfile(fioAccountProfile);
-                          }}
-                          variant="danger"
-                        >
-                          Delete
-                        </Button>
+                        {!NOT_DELETABLE_ACCOUNTS.includes(
+                          fioAccountProfile.accountType,
+                        ) && (
+                          <Button
+                            onClick={event => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                              handleDeleteFioAccountProfile(fioAccountProfile);
+                            }}
+                            variant="danger"
+                            disabled={fioAccountProfile.referenceToPartners}
+                          >
+                            Delete
+                          </Button>
+                        )}
                       </th>
                     </tr>
                   ))

@@ -644,6 +644,7 @@ export type FioAccountProfile = {
   name: string;
   accountType?: FioAccountProfileType;
   createdAt: string;
+  referenceToPartners: boolean;
 };
 
 export type AdminUserProfile = {
