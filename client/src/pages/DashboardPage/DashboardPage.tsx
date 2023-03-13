@@ -2,9 +2,10 @@ import React from 'react';
 
 import { Fio101Component } from './components/Fio101Component';
 import { FioRequestActionComponent } from '../../components/FioRequestActionComponent';
-import { WelcomeComponent } from './components/WelcomeComponent';
 
+import { ItemWrapper } from './components/ItemWrapper';
 import { TotalBalanceComponent } from './components/TotalBalanceComponent';
+import { WelcomeComponent } from './components/WelcomeComponent';
 
 import { useContext } from './DashboardPageContext';
 
@@ -21,7 +22,9 @@ const DashboardPage: React.FC = () => {
       />
       <div className={classes.actionContainer}>
         <WelcomeComponent />
-        <FioRequestActionComponent />
+        <ItemWrapper hasFitContentWidth isShrinked>
+          <FioRequestActionComponent />
+        </ItemWrapper>
       </div>
       <Fio101Component />
     </div>
