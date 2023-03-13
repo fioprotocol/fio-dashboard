@@ -18,6 +18,10 @@
     font-size: 16px;
   }
 
+  &.withoutMaxWidth {
+    max-width: none;
+  }
+
   & > div {
     margin: 0 auto 0 20px;
     @include proxima-nova-thin;

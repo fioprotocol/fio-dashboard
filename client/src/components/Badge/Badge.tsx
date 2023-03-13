@@ -26,6 +26,7 @@ type Props = {
   show?: boolean;
   hasDefaultFontSize?: boolean;
   withoutMargin?: boolean;
+  withoutMaxWidth?: boolean;
 } & CommonBadgeProps;
 
 const Badge: React.FC<Props> = props => {
@@ -35,6 +36,7 @@ const Badge: React.FC<Props> = props => {
     type,
     show,
     withoutMargin,
+    withoutMaxWidth,
     className = '',
   } = props;
 
@@ -46,6 +48,7 @@ const Badge: React.FC<Props> = props => {
         !show && classes.hidden,
         hasDefaultFontSize && classes.hasDefaultFontSize,
         withoutMargin && classes.withoutMargin,
+        withoutMaxWidth && classes.withoutMaxWidth,
         type && classes[type.toLowerCase()],
         className,
       )}
