@@ -10,6 +10,11 @@
 
   .actionContainer {
     margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
   }
 }
 
@@ -21,8 +26,15 @@
 
 @include lg {
   .container {
-    max-width: 1200px;
+    max-width: 1240px;
     padding: 30px 80px;
+    box-sizing: content-box;
+
+    .actionContainer {
+      flex-direction: row;
+      align-items: stretch;
+      gap: 40px;
+    }
   }
 }
 

@@ -9,4 +9,12 @@
   &.hasSmallBorderRadius {
     border-radius: 14px;
   }
+
+  &.isShrinked {
+    flex-shrink: 0;
+  }
+
+  &.hasFitContentWidth {
+    width: fit-content;
+  }
 }
