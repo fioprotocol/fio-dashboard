@@ -7,6 +7,10 @@
   flex-direction: column;
   width: 100%;
   padding: 30px 20px;
+
+  .actionContainer {
+    margin-top: 25px;
+  }
 }
 
 @include md {

@@ -136,6 +136,16 @@
     }
   }
 
+  &.isRed {
+    border: $warn-red;
+    background-color: $warn-red;
+
+    &:hover {
+      border: $simple-red;
+      background-color: $simple-red;
+    }
+  }
+
   &.disabled {
     cursor: not-allowed;
   }
