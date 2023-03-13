@@ -48,7 +48,7 @@ export const TotalBalanceComponent: React.FC<Props> = props => {
   const { loading, totalBalance } = props;
 
   return (
-    <ItemWrapper>
+    <ItemWrapper hasSmallBorderRadius>
       <Badge show type={BADGE_TYPES.BLACK} hasDefaultFontSize withoutMargin>
         <div className={classes.badgeContainer}>
           <p className={classes.title}>Total FIO Wallet Balance:</p>

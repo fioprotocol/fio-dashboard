@@ -9,28 +9,29 @@ import classes from './SubmitButton.module.scss';
 
 type Props = {
   disabled?: boolean;
-  loading?: boolean;
-  isWhiteBordered?: boolean;
-  isTransparent?: boolean;
-  isWhite?: boolean;
+  hasAutoHeight?: boolean;
+  hasAutoWidth?: boolean;
+  hasBoldText?: boolean;
+  hasHoveredBlackTextColor?: boolean;
+  hasLowHeight?: boolean;
+  hasNoSidePaddings?: boolean;
+  hasSmallText?: boolean;
+  hasWhiteHoverBackground?: boolean;
+  isBlack?: boolean;
+  isButtonType?: boolean;
+  isCobalt?: boolean;
   isGreen?: boolean;
   isGreenTeal?: boolean;
-  isBlack?: boolean;
-  isCobalt?: boolean;
-  hasHoveredBlackTextColor?: boolean;
-  withBottomMargin?: boolean;
-  withTopMargin?: boolean;
-  withoutMargin?: boolean;
+  isRed?: boolean;
+  isTransparent?: boolean;
+  isWhite?: boolean;
+  isWhiteBordered?: boolean;
+  loading?: boolean;
   text?: string | React.ReactNode;
-  hasAutoHeight?: boolean;
-  hasLowHeight?: boolean;
-  hasBoldText?: boolean;
-  hasWhiteHoverBackground?: boolean;
-  isButtonType?: boolean;
-  hasSmallText?: boolean;
-  hasAutoWidth?: boolean;
   variant?: string;
-  hasNoSidePaddings?: boolean;
+  withBottomMargin?: boolean;
+  withoutMargin?: boolean;
+  withTopMargin?: boolean;
   onClick?: (() => void) | ((event: ClickEventTypes) => void);
 };
 
@@ -50,6 +51,7 @@ export const SubmitButton: React.FC<Props> = props => {
     isCobalt,
     isGreen,
     isGreenTeal,
+    isRed,
     isTransparent,
     isWhite,
     isWhiteBordered,
@@ -84,6 +86,7 @@ export const SubmitButton: React.FC<Props> = props => {
         isCobalt && classes.isCobalt,
         isGreen && classes.isGreen,
         isGreenTeal && classes.isGreenTeal,
+        isRed && classes.isRed,
         isTransparent && classes.isTransparent,
         isWhite && classes.isWhite,
         isWhiteBordered && classes.isWhiteBordered,
