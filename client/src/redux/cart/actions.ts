@@ -9,7 +9,6 @@ export const CLEAR_CART = `${prefix}/CLEAR_CART`;
 export const SET_CART_ITEMS = `${prefix}/SET_CART_ITEMS`;
 export const SET_CART_DATE = `${prefix}/SET_CART_DATE`;
 export const SET_OLD_CART = `${prefix}/SET_OLD_CART`;
-export const DELETE_OLD_CART = `${prefix}/DELETE_OLD_CART`;
 
 export const addItem = (item: CartItem): CommonAction => ({
   type: ADD_ITEM,
