@@ -47,11 +47,6 @@ export default combineReducers({
     switch (action.type) {
       case actions.SET_OLD_CART:
         return { ...state, [action.data.orderId]: action.data.cart };
-      case actions.DELETE_OLD_CART:
-        //eslint-disable-next-line no-case-declarations
-        const newState = { ...state };
-        delete newState[action.data.orderId];
-        return { ...newState };
       default:
         return state;
     }

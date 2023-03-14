@@ -16,14 +16,12 @@ export const addItem = (item: CartItem): CommonAction => ({
   data: item,
 });
 
-export const addToOldCart = (orderId: string, cart: any): CommonAction => ({
+export const addToOldCart = (
+  orderId: string,
+  cart: CartItem[],
+): CommonAction => ({
   type: SET_OLD_CART,
   data: { orderId, cart },
-});
-
-export const deleteOldCart = (orderId: string): CommonAction => ({
-  type: DELETE_OLD_CART,
-  data: { orderId },
 });
 
 export const deleteItem = ({

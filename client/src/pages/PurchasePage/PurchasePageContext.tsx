@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
 import {
@@ -24,7 +24,6 @@ import {
 } from '../../redux/containedFlow/selectors';
 import {
   cartItems,
-  currentCart as currentCartSelector,
   oldCart as oldCartSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
@@ -58,6 +57,8 @@ import { ERROR_TYPES } from '../../constants/errors';
 
 import { CartItem, Order, OrderDetailed } from '../../types';
 import { CreateOrderActionData } from '../../redux/types';
+import useQuery from '../../hooks/useQuery';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 type ContextProps = {
   orderItem: OrderDetailed;
@@ -84,13 +85,12 @@ export const useContext = (
   const isProcessing = useSelector(isProcessingSelector);
   const cart = useSelector(cartItems);
   const oldCart = useSelector(oldCartSelector);
-  const currentCart = useSelector(currentCartSelector);
   const prices = useSelector(pricesSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const userWallets = useSelector(fioWalletsSelector);
   const isContainedFlow = useSelector(isContainedFlowSelector);
-  const params: any = useLocation();
-
+  const queryParams = useQuery();
+  const orderNumber = queryParams.get(QUERY_PARAMS_NAMES.ORDER_NUMBER);
   const dispatch = useDispatch();
 
   const { orderItem } = props;
@@ -99,12 +99,12 @@ export const useContext = (
 
   let buttonText = 'Close';
 
-  useEffect(() => {
-    if (!oldCart[params.query.orderNumber]) {
-      dispatch(addToOldCart(params.query.orderNumber, currentCart));
+  useEffectOnce(() => {
+    if (!oldCart[orderNumber]) {
+      dispatch(addToOldCart(orderNumber, cart));
     }
     dispatch(clearCart());
-  }, []);
+  }, [dispatch, oldCart, orderNumber]);
 
   useEffect(() => {
     if (noProfile) {
@@ -189,9 +189,7 @@ export const useContext = (
 
   useEffectOnce(
     () => {
-      let updatedCart: CartItem[] = [
-        ...oldCart[params.query.orderNumber]?.cartItems,
-      ];
+      let updatedCart: CartItem[] = [...oldCart[orderNumber]];
       if (
         status === PURCHASE_RESULTS_STATUS.SUCCESS ||
         status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS
