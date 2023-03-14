@@ -29,15 +29,18 @@ import {
 } from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
 
+import useQuery from '../../hooks/useQuery';
+import { useEffectOnce } from '../../hooks/general';
+
 import { cartItemsToOrderItems, totalCost } from '../../util/cart';
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
-import { useEffectOnce } from '../../hooks/general';
 import { convertFioPrices } from '../../util/prices';
 import MathOp from '../../util/math';
 
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { ROUTES } from '../../constants/routes';
 import {
   CONTAINED_FLOW_CONTINUE_TEXT,
@@ -57,8 +60,6 @@ import { ERROR_TYPES } from '../../constants/errors';
 
 import { CartItem, Order, OrderDetailed } from '../../types';
 import { CreateOrderActionData } from '../../redux/types';
-import useQuery from '../../hooks/useQuery';
-import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 type ContextProps = {
   orderItem: OrderDetailed;

@@ -127,7 +127,6 @@ const AutoLogout = (
     logout({ history });
     showLoginModal();
     clearChecksTimeout();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     history,
     pathname,
