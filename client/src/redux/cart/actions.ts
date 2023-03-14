@@ -8,16 +8,22 @@ export const DELETE_ITEM = `${prefix}/DELETE_ITEM`;
 export const CLEAR_CART = `${prefix}/CLEAR_CART`;
 export const SET_CART_ITEMS = `${prefix}/SET_CART_ITEMS`;
 export const SET_CART_DATE = `${prefix}/SET_CART_DATE`;
-export const SET_IS_HIDDEN = `${prefix}/SET_IS_HIDDEN`;
+export const SET_OLD_CART = `${prefix}/SET_OLD_CART`;
+export const DELETE_OLD_CART = `${prefix}/DELETE_OLD_CART`;
 
 export const addItem = (item: CartItem): CommonAction => ({
   type: ADD_ITEM,
   data: item,
 });
 
-export const setIsHidden = (isHidden: boolean): CommonAction => ({
-  type: SET_IS_HIDDEN,
-  data: isHidden,
+export const addToOldCart = (orderId: string, cart: any): CommonAction => ({
+  type: SET_OLD_CART,
+  data: { orderId, cart },
+});
+
+export const deleteOldCart = (orderId: string): CommonAction => ({
+  type: DELETE_OLD_CART,
+  data: { orderId },
 });
 
 export const deleteItem = ({

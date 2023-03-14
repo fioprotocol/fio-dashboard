@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 
 import { useSelector, useDispatch } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
 import {
   setCartItems,
-  setIsHidden,
   clear as clearCart,
+  addToOldCart,
 } from '../../redux/cart/actions';
 import { fioActionExecuted } from '../../redux/fio/actions';
 import { onPurchaseResultsClose } from '../../redux/registrations/actions';
@@ -24,6 +24,8 @@ import {
 } from '../../redux/containedFlow/selectors';
 import {
   cartItems,
+  currentCart as currentCartSelector,
+  oldCart as oldCartSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
@@ -81,10 +83,13 @@ export const useContext = (
   const containedFlowParams = useSelector(containedFlowQueryParams);
   const isProcessing = useSelector(isProcessingSelector);
   const cart = useSelector(cartItems);
+  const oldCart = useSelector(oldCartSelector);
+  const currentCart = useSelector(currentCartSelector);
   const prices = useSelector(pricesSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const userWallets = useSelector(fioWalletsSelector);
   const isContainedFlow = useSelector(isContainedFlowSelector);
+  const params: any = useLocation();
 
   const dispatch = useDispatch();
 
@@ -95,21 +100,10 @@ export const useContext = (
   let buttonText = 'Close';
 
   useEffect(() => {
-    dispatch(setIsHidden(true));
-
-    return () => {
-      if (
-        ![
-          PURCHASE_RESULTS_STATUS.SUCCESS,
-          PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
-          PURCHASE_RESULTS_STATUS.FAILED,
-          PURCHASE_RESULTS_STATUS.CANCELED,
-        ].includes(status)
-      ) {
-        dispatch(clearCart());
-        dispatch(setIsHidden(false));
-      }
-    };
+    if (!oldCart[params.query.orderNumber]) {
+      dispatch(addToOldCart(params.query.orderNumber, currentCart));
+    }
+    dispatch(clearCart());
   }, []);
 
   useEffect(() => {
@@ -183,8 +177,6 @@ export const useContext = (
       if (status === PURCHASE_RESULTS_STATUS.FAILED) {
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_FAILED);
       }
-
-      dispatch(setIsHidden(false));
     },
     [status],
     [
@@ -197,7 +189,9 @@ export const useContext = (
 
   useEffectOnce(
     () => {
-      let updatedCart: CartItem[] = [...cart];
+      let updatedCart: CartItem[] = [
+        ...oldCart[params.query.orderNumber]?.cartItems,
+      ];
       if (
         status === PURCHASE_RESULTS_STATUS.SUCCESS ||
         status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS
@@ -266,18 +260,6 @@ export const useContext = (
   }
 
   const onClose = () => {
-    if (
-      ![
-        PURCHASE_RESULTS_STATUS.SUCCESS,
-        PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
-        PURCHASE_RESULTS_STATUS.FAILED,
-        PURCHASE_RESULTS_STATUS.CANCELED,
-      ].includes(status)
-    ) {
-      dispatch(clearCart());
-      dispatch(setIsHidden(false));
-    }
-
     dispatch(onPurchaseResultsClose());
   };
 

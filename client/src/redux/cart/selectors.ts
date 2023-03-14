@@ -9,6 +9,12 @@ import { domains } from '../registrations/selectors';
 import { ReduxState } from '../init';
 import { CartItem } from '../../types';
 
+export const currentCart = (state: ReduxState): CartItem[] => {
+  const stateWithoutOldCart = { ...state[prefix] };
+  delete stateWithoutOldCart.oldCart;
+  return stateWithoutOldCart || {};
+};
+
 export const cartItems = (state: ReduxState): CartItem[] =>
   state[prefix].cartItems || [];
 
@@ -18,8 +24,8 @@ export const paymentWalletPublicKey = (state: ReduxState): string =>
 export const cartDate = (state: ReduxState): number | null =>
   state[prefix].date || null;
 
-export const cartIsHidden = (state: ReduxState): boolean | null =>
-  state[prefix].isHidden || null;
+export const oldCart = (state: ReduxState): any | null =>
+  state[prefix].oldCart || null;
 
 export const cartHasItemsWithPrivateDomain = createSelector(
   cartItems,
