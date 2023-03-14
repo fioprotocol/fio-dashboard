@@ -134,7 +134,6 @@ const AutoLogout = (
     state,
     cartIsNotEmpty,
     logout,
-    clear,
     setRedirectPath,
     showLoginModal,
     dispatch,
@@ -218,15 +217,14 @@ const AutoLogout = (
   );
 
   //Empty cart when page loaded
-  useEffect(() => {
+  useEffectOnce(() => {
     const now = new Date();
     const lastActivity = new Date(lastActivityDate);
 
     if (now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT) {
       cartIsNotEmpty && dispatch(clear(true));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [cartIsNotEmpty, dispatch, lastActivityDate]);
 
   useEffect(() => {
     if (tokenCheckResult === null) return;
