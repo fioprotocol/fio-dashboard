@@ -3,7 +3,6 @@ import { Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import isEmpty from 'lodash/isEmpty';
 import { useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import CounterContainer from '../CounterContainer/CounterContainer';
@@ -34,7 +33,6 @@ import {
 } from '../../types';
 
 import classes from './AddressDomainCart.module.scss';
-import { cartIsHidden } from '../../redux/cart/selectors';
 
 type Props = {
   cartItems: CartItem[];
@@ -70,7 +68,6 @@ const AddressDomainCart: React.FC<Props> = props => {
   const isCartEmpty = count === 0;
   const cartHasFreeAddress = !!cartItems.find(({ allowFree }) => allowFree);
   const cartItemsJson = JSON.stringify(cartItems);
-  const cartHidden = useSelector(cartIsHidden);
 
   const history = useHistory();
 
@@ -123,12 +120,10 @@ const AddressDomainCart: React.FC<Props> = props => {
   return (
     <CartSmallContainer isAquaColor={true}>
       <div className={classes.header}>
-        <CounterContainer isEmpty={isCartEmpty || cartHidden}>
-          {cartHidden ? 0 : count}
-        </CounterContainer>
+        <CounterContainer isEmpty={isCartEmpty}>{count}</CounterContainer>
         <h5 className={classes.title}>Cart</h5>
       </div>
-      {isCartEmpty || cartHidden ? (
+      {isCartEmpty ? (
         <div className={classes.textContainer}>
           <h5 className={classes.textTitle}>Your Cart is Empty</h5>
           <p className={classes.text}>
