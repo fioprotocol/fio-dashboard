@@ -43,7 +43,7 @@ export default combineReducers({
         return state;
     }
   },
-  oldCart(state: { [key: string]: CartItem[] }, action = {}) {
+  oldCart(state: { [key: string]: CartItem[] } = {}, action = {}) {
     switch (action.type) {
       case actions.SET_OLD_CART:
         return { ...state, [action.data.orderId]: action.data.cart };
