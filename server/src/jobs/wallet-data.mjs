@@ -1,13 +1,7 @@
 import Sequelize from 'sequelize';
 
 import '../db';
-import {
-  Notification,
-  PublicWalletData,
-  User,
-  Var,
-  Wallet,
-} from '../models/index.mjs';
+import { Notification, PublicWalletData, User, Var, Wallet } from '../models/index.mjs';
 import { sleep } from '../tools.mjs';
 import CommonJob from './job.mjs';
 import MathOp from '../services/math.mjs';
@@ -17,17 +11,10 @@ import { getROE } from '../external/roe.mjs';
 
 import logger from '../logger.mjs';
 
-import {
-  HOUR_MS,
-  DAY_MS,
-  DOMAIN_EXP_PERIOD,
-  ERROR_CODES,
-  ERROR_CODES,
-} from '../config/constants.js';
+import { HOUR_MS, DAY_MS, DOMAIN_EXP_PERIOD, ERROR_CODES } from '../config/constants.js';
 
 const CHUNKS_LIMIT = parseInt(process.env.WALLET_DATA_JOB_CHUNKS_LIMIT) || 1;
-const CHUNKS_TIMEOUT =
-  parseInt(process.env.WALLET_DATA_JOB_CHUNKS_TIMEOUT) || 1500;
+const CHUNKS_TIMEOUT = parseInt(process.env.WALLET_DATA_JOB_CHUNKS_TIMEOUT) || 1500;
 const LOW_BUNDLES_THRESHOLD = 25;
 const DAYS_30 = DAY_MS * 30;
 const DOMAIN_EXP_TABLE = {
@@ -38,8 +25,7 @@ const DOMAIN_EXP_TABLE = {
   1: DOMAIN_EXP_PERIOD.EXPIRED_90,
   0: DOMAIN_EXP_PERIOD.EXPIRED,
 };
-const ITEMS_PER_FETCH =
-  parseInt(process.env.WALLET_DATA_JOB_ITEMS_PER_FETCH) || 5;
+const ITEMS_PER_FETCH = parseInt(process.env.WALLET_DATA_JOB_ITEMS_PER_FETCH) || 5;
 const DEBUG_INFO = process.env.DEBUG_INFO_LOGS;
 const DOMAIN_EXP_DEBUG_AFFIX = 'testdomainexpiration';
 const DOMAIN_EXP_DEBUG_TABLE = {
@@ -108,8 +94,7 @@ class WalletDataJob extends CommonJob {
       for (const request of sent) {
         const fetchedItem = sentRequests.find(
           fetchedRequest =>
-            Number(fetchedRequest.fio_request_id) ===
-              Number(request.fio_request_id) &&
+            Number(fetchedRequest.fio_request_id) === Number(request.fio_request_id) &&
             fetchedRequest.status !== request.status,
         );
         if (fetchedItem) {
@@ -142,8 +127,7 @@ class WalletDataJob extends CommonJob {
     }
 
     try {
-      const receivedRequestsOffset =
-        received.length > 1 ? received.length - 1 : 0;
+      const receivedRequestsOffset = received.length > 1 ? received.length - 1 : 0;
 
       try {
         const requestsResponse = await walletSdk.getReceivedFioRequests(
@@ -176,8 +160,7 @@ class WalletDataJob extends CommonJob {
         for (const fetchedItem of receivedRequests) {
           const existed = received.find(
             request =>
-              Number(fetchedItem.fio_request_id) ===
-              Number(request.fio_request_id),
+              Number(fetchedItem.fio_request_id) === Number(request.fio_request_id),
           );
           if (!existed) {
             received.push({
@@ -274,8 +257,7 @@ class WalletDataJob extends CommonJob {
             });
           }
           if (
-            process.env.EMAILS_JOB_SIMULATION_LOW_BUNDLE_COUNT_ENABLED ===
-              'true' &&
+            process.env.EMAILS_JOB_SIMULATION_LOW_BUNDLE_COUNT_ENABLED === 'true' &&
             fetched.fio_address.includes(LOW_BUNDLE_COUNT_DEBUG_AFFIX)
           ) {
             const existingNotification = await Notification.findOneWhere({
@@ -322,16 +304,14 @@ class WalletDataJob extends CommonJob {
           continue;
         }
 
-        const timePeriod =
-          new Date(domain.expiration).getTime() - new Date().getTime();
+        const timePeriod = new Date(domain.expiration).getTime() - new Date().getTime();
         let domainExpPeriod =
           DOMAIN_EXP_TABLE[
             Math.floor((returnDayRange(timePeriod) + DAYS_30 * 4) / DAYS_30)
           ];
 
         if (
-          process.env.EMAILS_JOB_SIMULATION_EXPIRING_DOMAIN_ENABLED ===
-            'true' &&
+          process.env.EMAILS_JOB_SIMULATION_EXPIRING_DOMAIN_ENABLED === 'true' &&
           domain.fio_domain.includes(DOMAIN_EXP_DEBUG_AFFIX)
         ) {
           Object.keys(DOMAIN_EXP_DEBUG_TABLE).forEach(key => {
@@ -380,9 +360,7 @@ class WalletDataJob extends CommonJob {
         (cryptoHandles.length &&
           fio_addresses.length &&
           cryptoHandles.length !== fio_addresses.length) ||
-        (domains.length &&
-          fio_domains.length &&
-          domains.length !== fio_domains.length)
+        (domains.length && fio_domains.length && domains.length !== fio_domains.length)
       ) {
         changed = true;
       }
@@ -406,9 +384,7 @@ class WalletDataJob extends CommonJob {
       let balance = 0;
       try {
         const publicFioSDK = await fioApi.getPublicFioSDK();
-        const balanceResponse = await publicFioSDK.getFioBalance(
-          wallet.publicKey,
-        );
+        const balanceResponse = await publicFioSDK.getFioBalance(wallet.publicKey);
         balance = balanceResponse.balance;
       } catch (e) {
         if (
@@ -598,8 +574,7 @@ class WalletDataJob extends CommonJob {
 
     let wallets = await this.getWallets();
     while (wallets.length) {
-      if (DEBUG_INFO)
-        this.postMessage(`Process wallets - ${wallets.length} / ${offset}`);
+      if (DEBUG_INFO) this.postMessage(`Process wallets - ${wallets.length} / ${offset}`);
 
       const methods = wallets.map(wallet => processWallet(wallet));
 
