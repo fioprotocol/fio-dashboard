@@ -253,3 +253,10 @@ export const updateAffiliate = (fch: string): CommonPromiseAction => ({
   ],
   promise: (api: Api) => api.auth.updateAffiliate(fch),
 });
+
+export const SET_IS_NEW_USER = `${prefix}/SET_IS_NEW_USER`;
+
+export const setIsNewUser = (isNewUser: boolean): CommonAction => ({
+  type: SET_IS_NEW_USER,
+  isNewUser,
+});

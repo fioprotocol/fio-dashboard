@@ -12,6 +12,7 @@ import {
   loadAdminProfile,
   loadProfile,
   login,
+  setIsNewUser,
   ADMIN_LOGIN_SUCCESS,
   ADMIN_LOGOUT_SUCCESS,
   CONFIRM_ADMIN_EMAIL_SUCCESS,
@@ -35,6 +36,7 @@ import {
   pathname as pathnameSelector,
 } from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
+import { isNewUser as isNewUserSelectors } from './selectors';
 
 import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
 import {
@@ -60,6 +62,7 @@ export function* loginSuccess(history: History, api: Api): Generator {
     api.client.setToken(action.data.jwt);
     if (action.isSignUp) {
       fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SIGN_UP);
+      yield put<Action>(setIsNewUser(true));
     }
     fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.LOGIN, {
       method: action.isPinLogin
@@ -134,6 +137,12 @@ export function* logoutSuccess(history: History, api: Api): Generator {
 
     const { redirect } = action;
     const pathname: string = yield select(pathnameSelector);
+
+    const isNewUser: boolean = yield select(isNewUserSelectors);
+
+    if (isNewUser) {
+      yield put<Action>(setIsNewUser(false));
+    }
 
     if (redirect) history.push(redirect, {});
     if (!redirect) {

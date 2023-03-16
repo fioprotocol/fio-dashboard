@@ -192,4 +192,13 @@ export default combineReducers({
         return state;
     }
   },
+  isNewUser(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.SET_IS_NEW_USER: {
+        return action.isNewUser;
+      }
+      default:
+        return state;
+    }
+  },
 });
