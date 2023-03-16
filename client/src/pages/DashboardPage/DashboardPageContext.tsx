@@ -32,19 +32,24 @@ import { user as userSelector } from '../../redux/profile/selectors';
 import useEffectOnce from '../../hooks/general';
 import { useCheckIfDesktop } from '../../screenType';
 import { isDomainExpired } from '../../util/fio';
+import { log } from '../../util/general';
 
 import {
   WELCOME_COMPONENT_ITEM_CONTENT,
   WelcomeItemProps,
 } from './components/WelcomeComponentItem/constants';
+import {
+  FIO_101_SLIDER_CONTENT,
+  Fio101SliderContentProps,
+} from './components/Fio101Component/constants';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 
 import { WalletBalancesItem } from '../../types';
-import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
-import { log } from '../../util/general';
 
 const APY_URL = 'https://services-external.fioprotocol.io/staking';
 
 type UseContextProps = {
+  fio101Items: Fio101SliderContentProps[];
   firstWelcomeItem: WelcomeItemProps | null;
   secondWelcomeItem: WelcomeItemProps | null;
   isDesktop: boolean;
@@ -214,8 +219,63 @@ export const useContext = (): UseContextProps => {
     firstWelcomeItem = WELCOME_COMPONENT_ITEM_CONTENT.RECOVERY_PASSWORD;
   }
 
+  let fio101Items = [
+    FIO_101_SLIDER_CONTENT.DEFAULT,
+    FIO_101_SLIDER_CONTENT.NO_FCH,
+    FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES,
+    FIO_101_SLIDER_CONTENT.NO_DOMAINS,
+  ];
+
+  if (!hasFCH) {
+    fio101Items = [
+      FIO_101_SLIDER_CONTENT.NO_FCH,
+      FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES,
+      FIO_101_SLIDER_CONTENT.NO_DOMAINS,
+      FIO_101_SLIDER_CONTENT.DEFAULT,
+    ];
+  }
+
+  if (
+    hasFCH &&
+    !isEmpty(mappedPublicAddresses) &&
+    Object.values(mappedPublicAddresses).every(
+      mappedPubicAddress => mappedPubicAddress.publicAddresses.length === 0,
+    )
+  ) {
+    if (hasOneFCH) {
+      fio101Items = [
+        {
+          ...FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES,
+          link:
+            FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES.oneItemLink +
+            `?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${fioAddresses[0]?.name}`,
+        },
+        FIO_101_SLIDER_CONTENT.NO_FCH,
+        FIO_101_SLIDER_CONTENT.NO_DOMAINS,
+        FIO_101_SLIDER_CONTENT.DEFAULT,
+      ];
+    } else {
+      fio101Items = [
+        FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES,
+        FIO_101_SLIDER_CONTENT.NO_FCH,
+        FIO_101_SLIDER_CONTENT.NO_DOMAINS,
+        FIO_101_SLIDER_CONTENT.DEFAULT,
+      ];
+    }
+  }
+
+  if (hasFCH && !hasDomains) {
+    fio101Items = [
+      FIO_101_SLIDER_CONTENT.NO_DOMAINS,
+      FIO_101_SLIDER_CONTENT.NO_FCH,
+      FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES,
+      FIO_101_SLIDER_CONTENT.DEFAULT,
+    ];
+  }
+
   return {
     isDesktop,
+    fio101Items,
     firstWelcomeItem,
     secondWelcomeItem,
     totalBalance,

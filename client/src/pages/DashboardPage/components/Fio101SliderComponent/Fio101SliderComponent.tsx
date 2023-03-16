@@ -11,7 +11,6 @@ type Props = {
   buttonText: string;
   imageSrc: string;
   link: string;
-  multiItemsLink?: string;
   title: string;
   text: string;
   videoId?: string;

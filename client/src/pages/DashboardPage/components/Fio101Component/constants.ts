@@ -5,7 +5,19 @@ import FchWithDomainImageSrc from '../../../../assets/images/fch-with-domain.svg
 import FchWithPlanesImageSrc from '../../../../assets/images/fch-with-planes.svg';
 import RouteImageSrc from '../../../../assets/images/route.svg';
 
-export const FIO_101_SLIDER_CONTENT = {
+export type Fio101SliderContentProps = {
+  buttonText: string;
+  imageSrc: string;
+  link: string;
+  oneItemLink?: string;
+  title: string;
+  text: string;
+  videoId?: string;
+};
+
+export const FIO_101_SLIDER_CONTENT: {
+  [key: string]: Fio101SliderContentProps;
+} = {
   NO_FCH: {
     buttonText: 'Get a FIO Crypto Handle',
     imageSrc: FchInRectangleImageSrc,
@@ -18,8 +30,8 @@ export const FIO_101_SLIDER_CONTENT = {
   NO_MAPPED_PUBLIC_ADDRESSES: {
     buttonText: 'Map Now',
     imageSrc: RouteImageSrc,
-    link: ROUTES.ADD_TOKEN,
-    multiItemsLink: ROUTES.FIO_ADDRESSES,
+    link: ROUTES.FIO_ADDRESSES,
+    oneItemLink: ROUTES.ADD_TOKEN,
     title: 'Why map your FIO Crypto Handle?',
     text:
       'By mapping your FIO Crypto Handle, users are presented with a simple to understand replacement for complicated public addresses across tokens and chains. This allows users to utilize a single crypto handle to send, recieve or request any type of crypto.',
