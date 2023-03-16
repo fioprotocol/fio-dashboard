@@ -3,7 +3,7 @@ import { ROUTES } from '../../../../constants/routes';
 import FchInRectangleImageSrc from '../../../../assets/images/fch-in-rectangle.svg';
 import FchWithDomainImageSrc from '../../../../assets/images/fch-with-domain.svg';
 import FchWithPlanesImageSrc from '../../../../assets/images/fch-with-planes.svg';
-import RouteImageSrc from '../../../../assets/images/route.svg';
+import MappingImageSrc from '../../../../assets/images/mapping-image.svg';
 
 export type Fio101SliderContentProps = {
   buttonText: string;
@@ -29,7 +29,7 @@ export const FIO_101_SLIDER_CONTENT: {
   },
   NO_MAPPED_PUBLIC_ADDRESSES: {
     buttonText: 'Map Now',
-    imageSrc: RouteImageSrc,
+    imageSrc: MappingImageSrc,
     link: ROUTES.FIO_ADDRESSES,
     oneItemLink: ROUTES.ADD_TOKEN,
     title: 'Why map your FIO Crypto Handle?',
