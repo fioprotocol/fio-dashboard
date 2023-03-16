@@ -16,7 +16,11 @@ import { setFioName } from '../utils';
 import { log } from '../util/general';
 
 import { NON_VAILD_DOMAIN } from '../constants/errors';
-import { DOMAIN_TYPE, FIO_REQUEST_STATUS_TYPES } from '../constants/fio';
+import {
+  DOMAIN_EXPIRED_DAYS,
+  DOMAIN_TYPE,
+  FIO_REQUEST_STATUS_TYPES,
+} from '../constants/fio';
 import { ANALYTICS_EVENT_ACTIONS, CHAIN_CODES } from '../constants/common';
 import { FIO_ADDRESS_DELIMITER } from '../utils';
 
@@ -299,3 +303,12 @@ export const transformCustomDomains = (
       swapAddressAndDomainPlaces,
     };
   });
+
+export const isDomainExpired = (expiration: Date): boolean => {
+  const today = new Date();
+  return (
+    expiration &&
+    new Date(expiration) <
+      new Date(today.setDate(today.getDate() + DOMAIN_EXPIRED_DAYS))
+  );
+};
