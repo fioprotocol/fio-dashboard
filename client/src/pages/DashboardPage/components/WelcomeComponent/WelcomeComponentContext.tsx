@@ -1,3 +1,7 @@
+import { useSelector } from 'react-redux';
+
+import { isNewUser as isNewUserSelector } from '../../../../redux/profile/selectors';
+
 const MAIN_CONTENT = {
   USER_IS_BACK: {
     title: 'Welcome!',
@@ -16,8 +20,12 @@ type UseContextProps = {
 };
 
 export const useContext = (): UseContextProps => {
-  const title = MAIN_CONTENT.USER_IS_BACK.title;
-  const text = MAIN_CONTENT.USER_IS_BACK.text;
+  const isNewUser = useSelector(isNewUserSelector);
+
+  const content = isNewUser
+    ? MAIN_CONTENT.USER_IS_FIRST_TIME
+    : MAIN_CONTENT.USER_IS_BACK;
+  const { text, title } = content;
 
   return {
     text,
