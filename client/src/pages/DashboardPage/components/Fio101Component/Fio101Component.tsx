@@ -6,11 +6,12 @@ import ChevronRight from '@mui/icons-material/ChevronRight';
 import { ItemWrapper } from '../ItemWrapper';
 import { Fio101SliderComponent } from '../Fio101SliderComponent';
 
-import { FIO_101_SLIDER_CONTENT } from './constants';
+import { Fio101SliderContentProps } from './constants';
 
 import classes from './Fio101Component.module.scss';
 
 type Props = {
+  fio101Items: Fio101SliderContentProps[];
   isDesktop?: boolean;
 };
 
@@ -27,13 +28,8 @@ const NextArrow = (props: CustomArrowProps) => (
 );
 
 export const Fio101Component: React.FC<Props> = props => {
-  const { isDesktop } = props;
-  const sliderData = [
-    FIO_101_SLIDER_CONTENT.NO_FCH,
-    FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES,
-    FIO_101_SLIDER_CONTENT.NO_DOMAINS,
-    FIO_101_SLIDER_CONTENT.DEFAULT,
-  ];
+  const { isDesktop, fio101Items } = props;
+
   return (
     <div className={classes.container}>
       <h2 className={classes.title}>FIO 101</h2>
@@ -54,8 +50,8 @@ export const Fio101Component: React.FC<Props> = props => {
               nextArrow={<NextArrow />}
               infinite
             >
-              {sliderData.map(sliderItem => (
-                <Fio101SliderComponent {...sliderItem} />
+              {fio101Items.map(fio101Item => (
+                <Fio101SliderComponent {...fio101Item} />
               ))}
             </Slider>
           </div>

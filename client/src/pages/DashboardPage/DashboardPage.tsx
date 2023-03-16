@@ -13,6 +13,7 @@ import classes from './DashboardPage.module.scss';
 
 const DashboardPage: React.FC = () => {
   const {
+    fio101Items,
     firstWelcomeItem,
     secondWelcomeItem,
     isDesktop,
@@ -39,7 +40,7 @@ const DashboardPage: React.FC = () => {
           <FioRequestActionComponent />
         </ItemWrapper>
       </div>
-      <Fio101Component isDesktop={isDesktop} />
+      <Fio101Component isDesktop={isDesktop} fio101Items={fio101Items} />
     </div>
   );
 };
