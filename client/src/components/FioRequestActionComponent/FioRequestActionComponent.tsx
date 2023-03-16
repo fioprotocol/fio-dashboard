@@ -7,13 +7,15 @@ import SubmitButton from '../common/SubmitButton/SubmitButton';
 import { useContext } from './FioRequestActionComponentContext';
 
 import { ROUTES } from '../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
+import { FIO_RECORD_TYPES } from '../../pages/WalletPage/constants';
 
 import SendCopyImgSrc from '../../assets/images/send-copy.svg';
 
 import classes from './FioRequestActionComponent.module.scss';
 
 export const FioRequestActionComponent: React.FC = () => {
-  const { hasFioRequest } = useContext();
+  const { fioPublicKeyHasRequest } = useContext();
 
   return (
     <div className={classes.container}>
@@ -33,11 +35,12 @@ export const FioRequestActionComponent: React.FC = () => {
           hasLowHeight
         />
       </Link>
-      {hasFioRequest && (
+      {fioPublicKeyHasRequest && (
         <Link
           to={{
             pathname: ROUTES.FIO_WALLET,
-            state: { fioRequestTab: true },
+            state: { fioRequestTab: FIO_RECORD_TYPES.RECEIVED },
+            search: `${QUERY_PARAMS_NAMES.PUBLIC_KEY}=${fioPublicKeyHasRequest}`,
           }}
           className={classes.button}
         >
