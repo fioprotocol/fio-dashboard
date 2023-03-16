@@ -11,10 +11,14 @@ export const useContext = (): UseContextProps => {
   const fioWalletsData = useSelector(fioWalletsDataSelector);
   const user = useSelector(userSelector);
 
-  const fioPublicKeyHasRequest = Object.keys(fioWalletsData[user?.id]).find(
-    fioWalletKey =>
-      fioWalletsData[user?.id][fioWalletKey].receivedFioRequests?.length > 0,
-  );
+  const fioPublicKeyHasRequest =
+    fioWalletsData &&
+    user?.id &&
+    fioWalletsData[user.id] &&
+    Object.keys(fioWalletsData[user.id]).find(
+      fioWalletKey =>
+        fioWalletsData[user.id][fioWalletKey].receivedFioRequests?.length > 0,
+    );
 
   return {
     fioPublicKeyHasRequest,
