@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="276px" height="120px" viewBox="0 0 276 120" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Bob@1x</title>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="246" height="90" rx="8"></rect>
+        <filter x="-9.1%" y="-25.0%" width="118.3%" height="150.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="2.5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.157740453 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="NEW-Domain-Landing---Post-Creation" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="FIO_Dashboard---2023-Revised---Ed-Tile---Handle" transform="translate(-174.000000, -902.000000)">
+            <g id="Group-12" transform="translate(101.000000, 847.000000)">
+                <g id="Bob" transform="translate(88.000000, 70.000000)">
+                    <g id="Rectangle-Copy-6" opacity="0.952296666">
+                        <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                        <use fill="#4C186E" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    </g>
+                    <path d="M18,8 L228,8 C232.418278,8 236,11.581722 236,16 L236,74 C236,78.418278 232.418278,82 228,82 L18,82 C13.581722,82 10,78.418278 10,74 L10,16 C10,11.581722 13.581722,8 18,8 Z" id="Rectangle" fill="#FFFFFF"></path>
+                    <text id="bob@rulez" font-family="ProximaNova-Bold, Proxima Nova" font-size="36" font-weight="bold" fill="#4C186E">
+                        <tspan x="37.446" y="56">bob@</tspan>
+                        <tspan x="128.49" y="56">rulez</tspan>
+                    </text>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

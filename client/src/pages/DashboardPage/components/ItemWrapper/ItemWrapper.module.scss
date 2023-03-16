@@ -17,4 +17,8 @@
   &.hasFitContentWidth {
     width: fit-content;
   }
+
+  &.hasFullWidth {
+    width: 100%;
+  }
 }

@@ -26,9 +26,8 @@
 
 @include lg {
   .container {
-    max-width: 1240px;
+    max-width: 1400px;
     padding: 30px 80px;
-    box-sizing: content-box;
 
     .actionContainer {
       flex-direction: row;

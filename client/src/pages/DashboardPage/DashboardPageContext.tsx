@@ -9,10 +9,12 @@ import {
 } from '../../redux/fio/selectors';
 
 import useEffectOnce from '../../hooks/general';
+import { useCheckIfDesktop } from '../../screenType';
 
 import { WalletBalancesItem } from '../../types';
 
 type UseContextProps = {
+  isDesktop: boolean;
   totalBalance: WalletBalancesItem;
   totalBalanceLoading: boolean;
 };
@@ -23,6 +25,8 @@ export const useContext = (): UseContextProps => {
   const fioLoading = useSelector(fioLoadingSelector);
 
   const dispatch = useDispatch();
+
+  const isDesktop = useCheckIfDesktop();
 
   useEffectOnce(
     () => {
@@ -35,6 +39,7 @@ export const useContext = (): UseContextProps => {
   );
 
   return {
+    isDesktop,
     totalBalance: fioWalletsBalances?.total?.total,
     totalBalanceLoading: fioLoading,
   };
