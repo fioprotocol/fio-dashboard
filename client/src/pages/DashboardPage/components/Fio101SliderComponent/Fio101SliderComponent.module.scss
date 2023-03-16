@@ -1,0 +1,126 @@
+@import '../../../../assets/styles/colors.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  padding: 30px 30px 104px 30px;
+  display: flex;
+  flex-direction: column;
+
+  .mainContentContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .img {
+      width: 100%;
+      max-width: 335px;
+    }
+
+    .textContainer {
+      margin-top: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+
+      .title {
+        margin: 0;
+        line-height: 2em;
+        @include comfortaa-bold;
+      }
+
+      .text {
+        margin-top: 15px;
+        margin-bottom: 0;
+        font-size: 0.875em;
+        @include proxima-nova-thin;
+      }
+
+      .link {
+        margin-top: 20px;
+        align-self: center;
+
+        .buttonText {
+          font-size: 0.875em;
+          @include sf-pro-display-medium;
+        }
+      }
+    }
+  }
+
+  .videoContainer {
+    position: relative;
+    margin-top: 30px;
+    width: 100%;
+    max-width: 450px;
+    height: fit-content;
+
+    .cover {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-image: url("../../../../assets/images/video-cover.png");
+      background-size: 100%;
+      background-position: center;
+      visibility: visible;
+      cursor: pointer;
+
+      &.showVideo {
+        visibility: hidden;
+      }
+
+      .icon {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        color: $white;
+        width: 54px;
+        height: 54px;
+      }
+    }
+    .videoFrame {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      visibility: hidden;
+      opacity: 0;
+
+      &.showVideo {
+        visibility: visible;
+        opacity: 1;
+      }
+    }
+  }
+}
+
+@include lg {
+  .container {
+    padding: 50px 50px 83px 70px;
+    flex-direction: row;
+    gap: 30px;
+
+    .mainContentContainer {
+      display: flex;
+      flex-direction: row;
+      gap: 50px;
+
+      &.hasVideo {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+
+        .textContainer {
+          margin-top: 0;
+        }
+      }
+
+      .textContainer {
+        .link {
+          align-self: flex-start;
+        }
+      }
+    }
+    .videoContainer {
+      margin-top: 0;
+    }
+  }
+}

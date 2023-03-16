@@ -12,7 +12,7 @@ import { useContext } from './DashboardPageContext';
 import classes from './DashboardPage.module.scss';
 
 const DashboardPage: React.FC = () => {
-  const { totalBalance, totalBalanceLoading } = useContext();
+  const { isDesktop, totalBalance, totalBalanceLoading } = useContext();
 
   return (
     <div className={classes.container}>
@@ -22,11 +22,15 @@ const DashboardPage: React.FC = () => {
       />
       <div className={classes.actionContainer}>
         <WelcomeComponent />
-        <ItemWrapper hasFitContentWidth isShrinked>
+        <ItemWrapper
+          hasFitContentWidth={isDesktop}
+          hasFullWidth={!isDesktop}
+          isShrinked
+        >
           <FioRequestActionComponent />
         </ItemWrapper>
       </div>
-      <Fio101Component />
+      <Fio101Component isDesktop={isDesktop} />
     </div>
   );
 };
