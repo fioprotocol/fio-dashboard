@@ -12,7 +12,19 @@ import OpenseaImgSrc from '../../../../assets/images/opensea.svg';
 import PackageImgSrc from '../../../../assets/images/package.svg';
 import PasswordImgSrc from '../../../../assets/images/password.svg';
 
-export const WELCOME_COMPONENT_ITEM_CONTENT = {
+export type WelcomeItemProps = {
+  title: string;
+  text: string;
+  imageSrc: string;
+  actionButtonText: string;
+  actionButtonLink: string;
+  isRed?: boolean;
+  isActionLinkExternal?: boolean;
+};
+
+export const WELCOME_COMPONENT_ITEM_CONTENT: {
+  [key: string]: WelcomeItemProps;
+} = {
   RECOVERY_PASSWORD: {
     title: 'Set-up Password Recovery',
     text:
@@ -108,7 +120,7 @@ export const WELCOME_COMPONENT_ITEM_CONTENT = {
       'FIO Domains can now be wrapped (moved to) Polygon NFT and traded on NFT exchanges such as Opensea.',
     imageSrc: PackageImgSrc,
     actionButtonText: 'Wrap Now',
-    actionButtonLink: ROUTES.WRAP_TOKENS,
+    actionButtonLink: ROUTES.WRAP_DOMAIN,
   },
   OPEN_SEA: {
     title: 'Find great domains on Opensea',

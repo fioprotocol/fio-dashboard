@@ -12,7 +12,13 @@ import { useContext } from './DashboardPageContext';
 import classes from './DashboardPage.module.scss';
 
 const DashboardPage: React.FC = () => {
-  const { isDesktop, totalBalance, totalBalanceLoading } = useContext();
+  const {
+    firstWelcomeItem,
+    secondWelcomeItem,
+    isDesktop,
+    totalBalance,
+    totalBalanceLoading,
+  } = useContext();
 
   return (
     <div className={classes.container}>
@@ -21,7 +27,10 @@ const DashboardPage: React.FC = () => {
         loading={totalBalanceLoading}
       />
       <div className={classes.actionContainer}>
-        <WelcomeComponent />
+        <WelcomeComponent
+          firstWelcomeItem={firstWelcomeItem}
+          secondWelcomeItem={secondWelcomeItem}
+        />
         <ItemWrapper
           hasFitContentWidth={isDesktop}
           hasFullWidth={!isDesktop}
