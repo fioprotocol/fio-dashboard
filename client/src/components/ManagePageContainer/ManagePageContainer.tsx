@@ -14,8 +14,9 @@ import SettingsItem from './ManagePageComponents/SettingsItem';
 import InfiniteScroll from '../InfiniteScroll/InfiniteScroll';
 import InfoBadge from '../Badges/InfoBadge/InfoBadge';
 import ActionButtonsContainer from '../../pages/WalletsPage/components/ActionButtonsContainer';
+import Title from '../../pages/WalletsPage/components/Title';
 
-import { BANNER_DATA, EXPIRED_DAYS, ITEMS_LIMIT, SUBTITLE } from './constants';
+import { BANNER_DATA, ITEMS_LIMIT, SUBTITLE } from './constants';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -29,14 +30,14 @@ import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
+import { isDomainExpired } from '../../util/fio';
 
 import { ContainerProps, HasMore } from './types';
 import { FioNameItemProps, FioWalletDoublet } from '../../types';
 
-import classes from './ManagePageContainer.module.scss';
-
 import unwrapIcon from '../../assets/images/unwrap.svg';
-import Title from '../../pages/WalletsPage/components/Title';
+
+import classes from './ManagePageContainer.module.scss';
 
 const INFO_BADGE_CONTENT = {
   address: {
@@ -47,15 +48,6 @@ const INFO_BADGE_CONTENT = {
     title: 'No FIO Domains',
     message: 'There are no FIO Domains in all your wallets',
   },
-};
-
-const isExpired = (expiration: Date): boolean => {
-  const today = new Date();
-  return (
-    expiration &&
-    new Date(expiration) <
-      new Date(today.setDate(today.getDate() + EXPIRED_DAYS))
-  );
 };
 
 const ManagePageContainer: React.FC<ContainerProps> = props => {
@@ -150,7 +142,8 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
       !!fioNameList &&
         !!showExpired &&
         fioNameList.some(
-          dataItem => dataItem.expiration && isExpired(dataItem.expiration),
+          dataItem =>
+            dataItem.expiration && isDomainExpired(dataItem.expiration),
         ),
     );
     toggleShowInfoBadge(false); // todo: set dependent on data when move to get_pub_addresses
@@ -246,7 +239,7 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
     isDesktop,
     pageName,
     showInfoBadge,
-    isExpired,
+    isDomainExpired,
     toggleShowInfoBadge,
     toggleShowWarnBadge,
     onItemModalOpen,

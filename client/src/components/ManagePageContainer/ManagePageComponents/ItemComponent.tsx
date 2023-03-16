@@ -25,7 +25,7 @@ const ItemComponent: React.FC<Props> = props => {
     toggleShowWarnBadge,
     toggleShowInfoBadge,
     pageName,
-    isExpired,
+    isDomainExpired,
     isDesktop,
     onSettingsOpen,
     showExpired,
@@ -63,7 +63,7 @@ const ItemComponent: React.FC<Props> = props => {
         <p className={classes.badgeItem}>
           <DateComponent
             expiration={expiration}
-            isExpired={isExpired}
+            isExpired={isDomainExpired}
             toggleShowWarnBadge={toggleShowWarnBadge}
           />
         </p>
