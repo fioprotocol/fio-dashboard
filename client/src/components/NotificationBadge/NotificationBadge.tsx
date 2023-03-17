@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
 import ClearButton from '@mui/icons-material/Clear';
 
-import { CheckIconComponent } from '../CheckIconComponent';
-
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
+
+import CheckMarkImageSrc from '../../assets/images/checked-circle.svg';
 
 import classes from './NotificationBadge.module.scss';
 
@@ -32,7 +32,8 @@ const MainIcon: React.FC<MainIconProps> = props => {
 
   if (mainIcon) return mainIcon;
 
-  if (type === BADGE_TYPES.INFO) return <CheckIconComponent fontSize="34px" />;
+  if (type === BADGE_TYPES.INFO)
+    return <img alt="Check Icon" src={CheckMarkImageSrc} />;
 
   return null;
 };
