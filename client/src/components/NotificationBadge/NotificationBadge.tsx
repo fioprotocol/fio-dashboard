@@ -1,19 +1,40 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IconName } from '@fortawesome/fontawesome-svg-core';
+import ClearButton from '@mui/icons-material/Clear';
 
-import Badge from '../Badge/Badge';
+import { CheckIconComponent } from '../CheckIconComponent';
+
+import Badge, { BADGE_TYPES } from '../Badge/Badge';
+
 import classes from './NotificationBadge.module.scss';
 
 type Props = {
   arrowAction?: () => void;
   noDash?: boolean;
   message: string | React.ReactNode;
-  onClose: () => void;
+  onClose: () => void | void;
   show: boolean;
   title: string | React.ReactNode;
   type: string;
   iconName?: IconName;
+  mainIcon?: React.ReactElement | null;
+  hasNewDesign?: boolean;
+};
+
+type MainIconProps = {
+  mainIcon?: React.ReactElement | null;
+  type: string;
+};
+
+const MainIcon: React.FC<MainIconProps> = props => {
+  const { mainIcon, type } = props;
+
+  if (mainIcon) return mainIcon;
+
+  if (type === BADGE_TYPES.INFO) return <CheckIconComponent fontSize="34px" />;
+
+  return null;
 };
 
 const NotificationBadge: React.FC<Props> = props => {
@@ -26,7 +47,21 @@ const NotificationBadge: React.FC<Props> = props => {
     title,
     type,
     iconName,
+    hasNewDesign,
   } = props;
+
+  if (hasNewDesign) {
+    return (
+      <Badge type={type} show={show} className={classes.badgeContainer}>
+        <MainIcon type={type} />
+        <div className={classes.contentContainer}>
+          <h5 className={classes.title}>{title}</h5>
+          <p className={classes.message}>{message}</p>
+        </div>
+        <ClearButton className={classes.clearIcon} onClick={onClose} />
+      </Badge>
+    );
+  }
 
   return (
     <Badge type={type} show={show}>
