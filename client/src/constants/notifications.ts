@@ -23,8 +23,8 @@ export const NOTIFICATIONS_CONTENT: {
     message: 'Your email is confirmed',
   },
   [NOTIFICATIONS_CONTENT_TYPE.ACCOUNT_CREATE]: {
-    title: 'Account Created',
-    message: "You're all set to start managing FIO Crypto Handles and Domains.",
+    title: 'Success',
+    message: 'Your account has been created!',
   },
   [NOTIFICATIONS_CONTENT_TYPE.CART_TIMEOUT]: {
     title: 'Cart was emptied',
