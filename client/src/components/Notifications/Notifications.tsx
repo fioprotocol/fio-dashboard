@@ -16,7 +16,6 @@ import classes from './Notifications.module.scss';
 const RELOAD_TIME = 3000;
 const AUTOCLOSE_TIME = 5000;
 export const ACTIONS = {
-  RECOVERY: 'RECOVERY',
   CART_TIMEOUT: 'CART_TIMEOUT',
   EMAIL_CONFIRM: 'EMAIL_CONFIRM',
   RESET_ADMIN_USER_PASSWORD: 'RESET_ADMIN_USER_PASSWORD',
@@ -84,11 +83,10 @@ export default class Notifications extends Component<
     }
   };
 
-  arrowAction = (last: Notification) => {
-    const { showRecoveryModal } = this.props;
+  arrowAction = (last: Notification): (() => void | null) => {
     if (!last) return null;
     if (!last.action) return null;
-    if (last.action === ACTIONS.RECOVERY) return showRecoveryModal;
+    // check action type and return any action you need
 
     return null;
   };

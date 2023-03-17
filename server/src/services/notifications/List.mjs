@@ -7,7 +7,6 @@ import { Notification } from '../../models';
 const SHOWN_NOTIFICATION_CONTENT_TYPES = [
   Notification.CONTENT_TYPE.ACCOUNT_CONFIRMATION,
   Notification.CONTENT_TYPE.ACCOUNT_CREATE,
-  Notification.CONTENT_TYPE.RECOVERY_PASSWORD,
 ];
 
 export default class NotificationsList extends Base {

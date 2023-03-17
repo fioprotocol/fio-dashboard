@@ -1,9 +1,6 @@
 import { History } from 'history';
 import { put, select, takeEvery } from 'redux-saga/effects';
 
-import { BADGE_TYPES } from '../../components/Badge/Badge';
-import { ACTIONS } from '../../components/Notifications/Notifications';
-
 import { log } from '../../util/general';
 
 import { setWallets } from '../account/actions';
@@ -25,10 +22,7 @@ import {
 } from './actions';
 
 import { closeLoginModal } from '../modal/actions';
-import {
-  createNotification,
-  listNotifications,
-} from '../notifications/actions';
+import { listNotifications } from '../notifications/actions';
 
 import {
   locationState as locationStateSelector,
@@ -38,7 +32,6 @@ import {
 import { fioWallets } from '../fio/selectors';
 import { isNewUser as isNewUserSelectors } from './selectors';
 
-import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
 import {
   ANALYTICS_EVENT_ACTIONS,
   ANALYTICS_LOGIN_METHOD,
@@ -111,20 +104,6 @@ export function* loginSuccess(history: History, api: Api): Generator {
 
 export function* profileSuccess(): Generator {
   yield takeEvery(PROFILE_SUCCESS, function*(action: Action) {
-    try {
-      if (!action.data.secretSet && action.data.secretSetNotification)
-        yield put<Action>(
-          createNotification({
-            action: ACTIONS.RECOVERY,
-            contentType: NOTIFICATIONS_CONTENT_TYPE.RECOVERY_PASSWORD,
-            type: BADGE_TYPES.ALERT,
-            pagesToShow: [ROUTES.HOME, ROUTES.DASHBOARD],
-          }),
-        );
-    } catch (e) {
-      log.error(e);
-    }
-
     for (const fioWallet of action.data.fioWallets) {
       yield put<Action>(refreshBalance(fioWallet.publicKey));
     }
