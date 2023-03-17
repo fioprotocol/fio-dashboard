@@ -21,18 +21,14 @@ import Input from '../Input/Input';
 import Modal from '../Modal/Modal';
 import PageTitle from '../PageTitle/PageTitle';
 
-import { ACTIONS } from '../Notifications/Notifications';
-import { BADGE_TYPES } from '../Badge/Badge';
-import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
 import { CONFIRM_PIN_ACTIONS } from '../../constants/common';
-import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
 
 import { formValidation } from './validation';
 import { log } from '../../util/general';
 import useEffectOnce from '../../hooks/general';
 
-import { NotificationParams, StatusResponse } from '../../types';
+import { StatusResponse } from '../../types';
 import { SubmitActionParams } from '../EdgeConfirmAction/types';
 
 import classes from './PasswordRecoveryForm.module.scss';
@@ -61,7 +57,6 @@ type Props = {
   getRecoveryQuestions: () => void;
   closeRecoveryModal: () => void;
   checkRecoveryQuestions: (username: string) => void;
-  createNotification: (params: NotificationParams) => void;
 };
 
 const PasswordRecoveryForm: React.FC<Props> = props => {
@@ -79,7 +74,6 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
     onSubmit: setProfileRecovery,
     changeRecoveryQuestionsClose,
     checkRecoveryQuestions,
-    createNotification,
   } = props;
 
   const isSettings = changeRecoveryQuestions; // todo: should be refactored on settings recovery password design task
@@ -125,12 +119,6 @@ const PasswordRecoveryForm: React.FC<Props> = props => {
   const closeSkip = () => {
     hideSkip();
     closeRecoveryModal();
-    createNotification({
-      action: ACTIONS.RECOVERY,
-      contentType: NOTIFICATIONS_CONTENT_TYPE.RECOVERY_PASSWORD,
-      type: BADGE_TYPES.ALERT,
-      pagesToShow: [ROUTES.HOME, ROUTES.DASHBOARD],
-    });
   };
 
   const showQuestions = (name: string) => {

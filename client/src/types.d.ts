@@ -330,7 +330,6 @@ export type User = {
   freeAddresses: { name: string }[];
   id: string;
   role: string;
-  secretSetNotification: boolean;
   status: string;
   secretSet?: boolean;
   newEmail?: boolean;
