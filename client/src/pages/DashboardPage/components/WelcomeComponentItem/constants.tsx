@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 
 import { ROUTES } from '../../../../constants/routes';
+import { PREOPENED_MODALS } from '../../../SettingsPage/SettingsPage';
 
 import Addbox from '../../../../assets/images/add-box.svg';
 import ExclamationCircleImgSrc from '../../../../assets/images/exclamation-circle.svg';
@@ -19,7 +20,11 @@ export type WelcomeItemProps = {
   text: ReactNode;
   imageSrc: string;
   actionButtonText: string;
-  actionButtonLink: string;
+  actionButtonLink: {
+    pathname: string;
+    state?: { openSettingsModal: string };
+    search?: string;
+  };
   isRed?: boolean;
   isActionLinkExternal?: boolean;
 };
@@ -33,7 +38,10 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       'If you lose your account information, password recovery is the only way you will be able to restore your account.',
     imageSrc: NotsetupImgSrc,
     actionButtonText: 'Set-up Now',
-    actionButtonLink: ROUTES.SETTINGS,
+    actionButtonLink: {
+      pathname: ROUTES.SETTINGS,
+      state: { openSettingsModal: PREOPENED_MODALS.RECOVERY },
+    },
     isRed: true,
   },
   EXPIRED_DOMAINS: {
@@ -42,7 +50,9 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       'You have domains which have expired. Please renew them before they are burned.',
     imageSrc: ExclamationCircleImgSrc,
     actionButtonText: 'Renew Now',
-    actionButtonLink: ROUTES.FIO_DOMAINS,
+    actionButtonLink: {
+      pathname: ROUTES.FIO_DOMAINS,
+    },
   },
   NO_FCH: {
     title: 'Get your FREE FIO Crypto Handle',
@@ -50,7 +60,9 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       'It will replace all your complicated public addresses across all tokens and coins in your wallets.',
     imageSrc: FreeImgSrc,
     actionButtonText: 'Buy Now',
-    actionButtonLink: ROUTES.FIO_ADDRESSES_SELECTION,
+    actionButtonLink: {
+      pathname: ROUTES.FIO_ADDRESSES_SELECTION,
+    },
   },
   LINK_FCH_ONE: {
     title: 'Link your Token Addresses',
@@ -58,7 +70,9 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       'You will then be able to receive crypto using a single FIO Crypto Handle instead of multiple complicated public addresses.',
     imageSrc: LocationPinImgSrc,
     actionButtonText: 'Map Now',
-    actionButtonLink: ROUTES.ADD_TOKEN,
+    actionButtonLink: {
+      pathname: ROUTES.ADD_TOKEN,
+    },
   },
   LINK_FCH: {
     title: 'Link your Token Addresses',
@@ -66,7 +80,9 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       'You will then be able to receive crypto using a single FIO Crypto Handle instead of multiple complicated public addresses.',
     imageSrc: LocationPinImgSrc,
     actionButtonText: 'Map Now',
-    actionButtonLink: ROUTES.FIO_ADDRESSES,
+    actionButtonLink: {
+      pathname: ROUTES.FIO_ADDRESSES,
+    },
   },
   SETUP_PIN: {
     title: 'Set-up PIN',
@@ -74,7 +90,10 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       'Setting up your PIN will allow you to quickly sign in as well as confirm certain transaction types easily.',
     imageSrc: PasswordImgSrc,
     actionButtonText: 'Set-up Now',
-    actionButtonLink: ROUTES.SETTINGS,
+    actionButtonLink: {
+      pathname: ROUTES.SETTINGS,
+      state: { openSettingsModal: PREOPENED_MODALS.PIN },
+    },
   },
   FIO_BALANCE: {
     title: 'Buy FIO Tokens',
@@ -82,7 +101,9 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       'Register handles & domains, pay transaction fees or earn staking rewards.',
     imageSrc: Addbox,
     actionButtonText: 'Buy Now',
-    actionButtonLink: ROUTES.FIO_TOKENS_GET,
+    actionButtonLink: {
+      pathname: ROUTES.FIO_TOKENS_GET,
+    },
   },
   GET_CUSTOM_FIO_DOMAIN: {
     title: 'Get a custom FIO Domain',
@@ -90,7 +111,9 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       'Personalize your FIO Crypto Handle! Get a FIO Domain, which lets you control who can register handles on it. It’s also an NFT which can be traded on NFT exchanges such as Opensea.',
     imageSrc: GroupImgSrc,
     actionButtonText: 'Buy a Domain',
-    actionButtonLink: ROUTES.FIO_DOMAINS_SELECTION,
+    actionButtonLink: {
+      pathname: ROUTES.FIO_DOMAINS_SELECTION,
+    },
   },
   STAKING: {
     title: 'Earn Staking Rewards',
@@ -98,7 +121,9 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       'Don’t let your FIO Tokens sit idle. Stake them now and start earning rewards from every fee paid on the FIO Chain.',
     actionButtonText: 'Start Earning',
     imageSrc: GrowthImgSrc,
-    actionButtonLink: ROUTES.STAKE,
+    actionButtonLink: {
+      pathname: ROUTES.STAKE,
+    },
   },
   AFFILIATE: {
     title: 'Share FIO Domains with others and earn FIO Tokens',
@@ -110,7 +135,9 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
     ),
     imageSrc: NetworkImgSrc,
     actionButtonText: 'Sign up Now',
-    actionButtonLink: ROUTES.FIO_AFFILIATE_PROGRAM_LANDING,
+    actionButtonLink: {
+      pathname: ROUTES.FIO_AFFILIATE_PROGRAM_LANDING,
+    },
   },
   GET_ANOTHER_FIO_DOMAIN: {
     title: 'Get another FIO Domain',
@@ -118,7 +145,9 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       'You can never have enough. FIO Domain are NFTs which can be traded on NFT exchanges such as Opensea.',
     imageSrc: Addbox,
     actionButtonText: 'Buy a Domain',
-    actionButtonLink: ROUTES.FIO_DOMAINS_SELECTION,
+    actionButtonLink: {
+      pathname: ROUTES.FIO_DOMAINS_SELECTION,
+    },
   },
   WRAP_DOMAIN: {
     title: 'Wrap your FIO Domain',
@@ -126,7 +155,9 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       'FIO Domains can now be wrapped (moved to) Polygon NFT and traded on NFT exchanges such as Opensea.',
     imageSrc: PackageImgSrc,
     actionButtonText: 'Wrap Now',
-    actionButtonLink: ROUTES.WRAP_DOMAIN,
+    actionButtonLink: {
+      pathname: ROUTES.WRAP_DOMAIN,
+    },
   },
   OPEN_SEA: {
     title: 'Find great domains on Opensea',
@@ -134,7 +165,9 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
       'You can find some rare and unique FIO Domains on Opensea NFT Marketplace. Checkout the latest listings.',
     imageSrc: OpenseaImgSrc,
     actionButtonText: 'View Now',
-    actionButtonLink: 'https://opensea.io/collection/fio-domains',
+    actionButtonLink: {
+      pathname: 'https://opensea.io/collection/fio-domains',
+    },
     isActionLinkExternal: true,
   },
 };

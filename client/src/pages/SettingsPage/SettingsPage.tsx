@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useLocation } from 'react-router';
+import { useDispatch, useSelector } from 'react-redux';
 
 import LayoutContainer from '../../components/LayoutContainer/LayoutContainer';
 
@@ -10,11 +12,48 @@ import ChangeEmail from './components/ChangeEmail';
 import TwoFactorAuth from './components/TwoFactorAuth';
 import DeleteMyAccount from './components/DeleteMyAccount';
 
+import { showRecoveryModal } from '../../redux/modal/actions';
+import { changeRecoveryQuestionsOpen } from '../../redux/edge/actions';
+
+import { showRecovery as showRecoverySelector } from '../../redux/modal/selectors';
+import {
+  loading as loadingSelector,
+  user as userSelector,
+} from '../../redux/profile/selectors';
+
+import useEffectOnce from '../../hooks/general';
+
 import classes from './styles/Settings.module.scss';
 
-type Props = { loading: boolean; user: { email: string } };
-const SettingsPage: React.FC<Props> = props => {
-  const { user, loading } = props;
+export const PREOPENED_MODALS = {
+  RECOVERY: 'recovery',
+  PIN: 'pin',
+};
+
+const SettingsPage: React.FC = () => {
+  const user = useSelector(userSelector);
+  const loading = useSelector(loadingSelector);
+  const showRecovery = useSelector(showRecoverySelector);
+
+  const dispatch = useDispatch();
+
+  const [preopenedPinModal, togglePreopenedPinModal] = useState(false);
+
+  const { state } = useLocation<{ openSettingsModal: string }>();
+  const { openSettingsModal } = state || {};
+
+  useEffectOnce(() => {
+    if (openSettingsModal) {
+      if (openSettingsModal === PREOPENED_MODALS.RECOVERY && !showRecovery) {
+        dispatch(showRecoveryModal());
+        dispatch(changeRecoveryQuestionsOpen());
+      }
+      if (openSettingsModal === PREOPENED_MODALS.PIN && !preopenedPinModal) {
+        togglePreopenedPinModal(true);
+      }
+    }
+  }, [dispatch, openSettingsModal, showRecovery]);
+
   if (loading || user == null)
     return (
       <LayoutContainer title="Settings">
@@ -34,7 +73,7 @@ const SettingsPage: React.FC<Props> = props => {
         <h5 className={classes.title}>Security</h5>
         <div className={classes.passwordPinContainer}>
           <ChangePassword />
-          <ChangePin />
+          <ChangePin preopenedModal={preopenedPinModal} />
         </div>
         <TwoFactorAuth />
         <PasswordRecovery />
