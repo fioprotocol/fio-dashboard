@@ -16,13 +16,21 @@ type Props = {
 };
 
 const PrevArrow = (props: CustomArrowProps) => (
-  <div {...props} className={classes.arrowLeft}>
+  <div
+    className={classes.arrowLeft}
+    style={props.style}
+    onClick={props.onClick}
+  >
     <ChevronLeft className={classes.arrowIcon} />
   </div>
 );
 
 const NextArrow = (props: CustomArrowProps) => (
-  <div {...props} className={classes.arrowRight}>
+  <div
+    className={classes.arrowRight}
+    style={props.style}
+    onClick={props.onClick}
+  >
     <ChevronRight className={classes.arrowIcon} />
   </div>
 );
@@ -38,7 +46,6 @@ export const Fio101Component: React.FC<Props> = props => {
         <ItemWrapper>
           <div className={classes.sliderComponentContainer}>
             <Slider
-              adaptiveHeight
               arrows
               dots={isDesktop}
               appendDots={dots => (
@@ -51,7 +58,7 @@ export const Fio101Component: React.FC<Props> = props => {
               infinite
             >
               {fio101Items.map(fio101Item => (
-                <Fio101SliderComponent {...fio101Item} />
+                <Fio101SliderComponent {...fio101Item} key={fio101Item.title} />
               ))}
             </Slider>
           </div>
