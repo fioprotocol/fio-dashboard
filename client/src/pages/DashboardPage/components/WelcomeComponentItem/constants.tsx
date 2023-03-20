@@ -102,8 +102,12 @@ export const WELCOME_COMPONENT_ITEM_CONTENT: {
   },
   AFFILIATE: {
     title: 'Share FIO Domains with others and earn FIO Tokens',
-    text:
-      'Invite friends to FIO Protocol. For every domain registration made through your link, you earn 10% 50% of that purchase value.',
+    text: (
+      <>
+        Invite friends to FIO Protocol. For every domain registration made
+        through your link, you earn <s>10%</s> 50% of that purchase value.
+      </>
+    ),
     imageSrc: NetworkImgSrc,
     actionButtonText: 'Sign up Now',
     actionButtonLink: ROUTES.FIO_AFFILIATE_PROGRAM_LANDING,
