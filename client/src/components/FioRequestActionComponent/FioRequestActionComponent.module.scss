@@ -28,6 +28,8 @@
   .button {
     margin-top: 15px;
     width: 100%;
+    display: flex;
+    justify-content: center;
 
     &:first-of-type {
       margin-top: 25px
