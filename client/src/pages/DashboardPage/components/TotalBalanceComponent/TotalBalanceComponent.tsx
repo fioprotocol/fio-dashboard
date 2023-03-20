@@ -33,7 +33,11 @@ const BalanceComponent: React.FC<BalanceProps> = props => {
   const { balance = 0, loading } = props;
 
   if (loading)
-    return <Loader isWhite styles={{ width: '16px', height: '16px' }} />;
+    return (
+      <span className="d-flex flex-direction-row">
+        <Loader isWhite styles={{ width: '16px', height: '16px' }} /> &nbsp;
+      </span>
+    );
 
   return <>{balance}</>;
 };
@@ -62,8 +66,8 @@ export const TotalBalanceComponent: React.FC<Props> = props => {
             <span className={classes.fioBalance}>
               <BalanceComponent balance={totalBalance?.fio} loading={loading} />{' '}
               FIO
-            </span>{' '}
-            (
+            </span>
+            &nbsp; (
             <BalanceComponent
               balance={totalBalance?.usdc}
               loading={loading}
@@ -72,7 +76,7 @@ export const TotalBalanceComponent: React.FC<Props> = props => {
           </div>
           <div className={classes.actionContainer}>
             <ActionButtonContainer
-              show={!loading && new MathOp(totalBalance?.fio).gt(0)}
+              show={!loading && new MathOp(totalBalance?.fio).eq(0)}
             >
               <Link to={ROUTES.FIO_TOKENS_GET}>
                 <SubmitButton
@@ -87,7 +91,7 @@ export const TotalBalanceComponent: React.FC<Props> = props => {
               </Link>
             </ActionButtonContainer>
             <ActionButtonContainer
-              show={!loading && new MathOp(totalBalance?.fio).gt(0)}
+              show={!loading && new MathOp(totalBalance?.fio).eq(0)}
             >
               <Link to={ROUTES.IMPORT_WALLET}>
                 <SubmitButton
@@ -105,7 +109,7 @@ export const TotalBalanceComponent: React.FC<Props> = props => {
               </Link>
             </ActionButtonContainer>
             <ActionButtonContainer
-              show={!loading && new MathOp(totalBalance?.fio).eq(0)}
+              show={!loading && new MathOp(totalBalance?.fio).gt(0)}
             >
               <Link to={ROUTES.TOKENS}>
                 <SubmitButton
