@@ -45,6 +45,7 @@ type Props = {
   loading: boolean;
   username: string;
   changePinError?: { type: string };
+  preopenedModal: boolean;
   clearChangePinResults: () => void;
   clearChangePinError: () => void;
 };
@@ -57,6 +58,7 @@ const ChangePin: React.FC<Props> = props => {
     loading,
     username,
     changePinError,
+    preopenedModal,
     clearChangePinResults,
     clearChangePinError,
   } = props;
@@ -106,6 +108,12 @@ const ChangePin: React.FC<Props> = props => {
       toggleSuccessModal(true);
     }
   }, [status]);
+
+  useEffect(() => {
+    if (preopenedModal) {
+      toggleShowModal(true);
+    }
+  }, [preopenedModal]);
 
   const onUnmount = useCallback(() => {
     clearChangePinError();

@@ -138,9 +138,10 @@ export const useContext = (): UseContextProps => {
     if (hasOneDomain) {
       firstWelcomeItem = {
         ...WELCOME_COMPONENT_ITEM_CONTENT.WRAP_DOMAIN,
-        actionButtonLink:
-          WELCOME_COMPONENT_ITEM_CONTENT.WRAP_DOMAIN.actionButtonLink +
-          `?${QUERY_PARAMS_NAMES.NAME}=${fioDomains[0]?.name}`,
+        actionButtonLink: {
+          ...WELCOME_COMPONENT_ITEM_CONTENT.WRAP_DOMAIN.actionButtonLink,
+          search: `${QUERY_PARAMS_NAMES.NAME}=${fioDomains[0]?.name}`,
+        },
       };
     } else {
       firstWelcomeItem = WELCOME_COMPONENT_ITEM_CONTENT.WRAP_DOMAIN;
@@ -196,9 +197,10 @@ export const useContext = (): UseContextProps => {
     if (hasOneFCH) {
       firstWelcomeItem = {
         ...WELCOME_COMPONENT_ITEM_CONTENT.LINK_FCH_ONE,
-        actionButtonLink:
-          WELCOME_COMPONENT_ITEM_CONTENT.LINK_FCH_ONE.actionButtonLink +
-          `?${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${fioAddresses[0]?.name}`,
+        actionButtonLink: {
+          ...WELCOME_COMPONENT_ITEM_CONTENT.LINK_FCH_ONE.actionButtonLink,
+          search: `${QUERY_PARAMS_NAMES.FIO_CRYPTO_HANDLE}=${fioAddresses[0]?.name}`,
+        },
       };
     } else {
       firstWelcomeItem = WELCOME_COMPONENT_ITEM_CONTENT.LINK_FCH;

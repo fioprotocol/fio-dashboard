@@ -8,7 +8,11 @@ import classes from './WelcomeComponentItem.module.scss';
 
 type Props = {
   actionButtonText: string;
-  actionButtonLink: string;
+  actionButtonLink: {
+    pathname: string;
+    state?: { openSettingsModal: string };
+    search?: string;
+  };
   imageSrc: string;
   isActionLinkExternal?: boolean;
   isRed?: boolean;
@@ -17,7 +21,11 @@ type Props = {
 };
 
 type ActionButtonProps = {
-  actionButtonLink: string;
+  actionButtonLink: {
+    pathname: string;
+    state?: { openSettingsModal: string };
+    search?: string;
+  };
   actionButtonText: string;
   isExternal: boolean;
   isRed: boolean;
@@ -28,7 +36,11 @@ const ActionButton: React.FC<ActionButtonProps> = props => {
 
   if (isExternal) {
     return (
-      <a href={actionButtonLink} target="_blank" rel="noopener noreferrer">
+      <a
+        href={actionButtonLink.pathname}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         <SubmitButton
           hasAutoHeight
           isButtonType
