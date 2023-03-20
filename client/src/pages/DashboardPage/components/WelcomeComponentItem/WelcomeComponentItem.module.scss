@@ -26,6 +26,10 @@
     font-size: 0.8125em;
     margin-bottom: 15px;
     @include proxima-nova-thin;
+
+    & > span[class="bold-text"] {
+      @include proxima-nova-semibold;
+    }
   }
 
   .actionButtonContainer {

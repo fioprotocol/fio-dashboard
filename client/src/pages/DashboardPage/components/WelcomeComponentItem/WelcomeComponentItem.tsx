@@ -13,7 +13,7 @@ type Props = {
   isActionLinkExternal?: boolean;
   isRed?: boolean;
   title: string;
-  text: string;
+  text: React.ReactNode;
 };
 
 type ActionButtonProps = {

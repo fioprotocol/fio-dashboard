@@ -161,8 +161,12 @@ export const useContext = (): UseContextProps => {
     secondWelcomeItem = firstWelcomeItem;
     firstWelcomeItem = {
       ...WELCOME_COMPONENT_ITEM_CONTENT.STAKING,
-      text:
-        WELCOME_COMPONENT_ITEM_CONTENT.STAKING.text + ` Current APY: ${APY}%`,
+      text: (
+        <>
+          {WELCOME_COMPONENT_ITEM_CONTENT.STAKING.text}
+          <span className="bold-text"> Current APY: {APY}%</span>
+        </>
+      ),
     };
   }
 
