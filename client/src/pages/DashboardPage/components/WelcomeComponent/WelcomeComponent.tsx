@@ -19,7 +19,7 @@ export const WelcomeComponent: React.FC<Props> = props => {
   const { text, title } = useContext();
 
   return (
-    <ItemWrapper>
+    <ItemWrapper hasFullWidth>
       <div className={classes.container}>
         <h2 className={classes.title}>{title}</h2>
         <p className={classes.text}>{text}</p>
