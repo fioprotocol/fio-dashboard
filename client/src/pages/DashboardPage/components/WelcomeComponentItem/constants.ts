@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 import { ROUTES } from '../../../../constants/routes';
 
 import Addbox from '../../../../assets/images/add-box.svg';
@@ -14,7 +16,7 @@ import PasswordImgSrc from '../../../../assets/images/password.svg';
 
 export type WelcomeItemProps = {
   title: string;
-  text: string;
+  text: ReactNode;
   imageSrc: string;
   actionButtonText: string;
   actionButtonLink: string;
