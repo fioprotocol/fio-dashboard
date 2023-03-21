@@ -9,6 +9,7 @@ import { AdminDefaultsRequest } from '../../../api/responses';
 import apis from '../../../api';
 import useEffectOnce from '../../../hooks/general';
 import { VARS_KEYS } from '../../../constants/vars';
+import DangerModal from '../../../components/Modal/DangerModal';
 
 interface MaintenanceSwitchProps {
   form: FormApi<AdminDefaultsRequest>;
@@ -16,6 +17,7 @@ interface MaintenanceSwitchProps {
 
 const MaintenanceSwitch: React.FC<MaintenanceSwitchProps> = ({ form }) => {
   const [isMaintenance, setIsMaintenance] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   useEffectOnce(() => {
     apis.vars.getVar(VARS_KEYS.IS_MAINTENANCE).then((data: any) => {
@@ -38,12 +40,29 @@ const MaintenanceSwitch: React.FC<MaintenanceSwitchProps> = ({ form }) => {
         value={isMaintenance ? 1 : 0}
         checked={isMaintenance}
         onChange={() => {
+          setShowModal(true);
+        }}
+      />
+
+      <DangerModal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        onActionButtonClick={() => {
           apis.vars
             .update(VARS_KEYS.IS_MAINTENANCE, isMaintenance ? 'false' : 'true')
             .then(() => {
               setIsMaintenance(!isMaintenance);
             });
+
+          setShowModal(false);
         }}
+        buttonText="Yes, switch maintenance mode"
+        title="Are you Sure?"
+        showCancel={true}
+        cancelButtonText="Cancel"
+        subtitle={`You are switching ${
+          isMaintenance ? 'off' : 'on'
+        } maintenance mode`}
       />
     </div>
   );
