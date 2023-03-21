@@ -5,8 +5,8 @@ import DangerModal from '../../../components/Modal/DangerModal';
 
 import apis from '../../../api';
 import { VarsResponse } from '../../../api/responses';
-
 import useEffectOnce from '../../../hooks/general';
+
 import { VARS_KEYS } from '../../../constants/vars';
 
 import classes from '../styles/AdminDefaultsPage.module.scss';
