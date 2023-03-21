@@ -49,8 +49,8 @@ const AdminDefaultsPage: React.FC = () => {
       >
         {({ handleSubmit, submitting, form }) => (
           <>
-            <MaintenanceSwitch form={form} />
-            <OutboundSwitch form={form} />
+            <MaintenanceSwitch />
+            <OutboundSwitch />
             <AvailableDomains form={form} />
             <DashboardDomains form={form} />
             <UsernamesOnCustomDomains form={form} />

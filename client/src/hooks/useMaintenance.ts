@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
 import apis from '../api';
+import { HealthCheckResponse, VarsResponse } from '../api/responses';
 
-import { VARS_KEYS } from '../constants/vars';
+import { VARS_KEYS, HEALTH_CHECK_TIME } from '../constants/vars';
 
 import useEffectOnce from './general';
 
@@ -12,25 +13,25 @@ export default function useMaintenance() {
   useEffectOnce(() => {
     apis.vars
       .getVar(VARS_KEYS.IS_MAINTENANCE)
-      .then((data: any) => {
+      .then((data: VarsResponse) => {
         setIsMaintenance(data.value == 'false' ? false : true);
       })
-      .catch((err: any) => {
+      .catch(() => {
         setIsMaintenance(true);
       });
 
     const healthCheckInterval = setInterval(() => {
       apis.healthCheck
         .ping()
-        .then((data: any) => {
+        .then((data: HealthCheckResponse) => {
           if (!data.success) {
             setIsMaintenance(true);
           }
         })
-        .catch((err: any) => {
+        .catch(() => {
           setIsMaintenance(true);
         });
-    }, 10000);
+    }, HEALTH_CHECK_TIME);
 
     return () => clearInterval(healthCheckInterval);
   }, []);

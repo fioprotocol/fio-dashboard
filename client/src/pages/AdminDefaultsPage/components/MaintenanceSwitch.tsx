@@ -1,21 +1,16 @@
 import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 
-import { FormApi } from 'final-form';
+import DangerModal from '../../../components/Modal/DangerModal';
+
+import apis from '../../../api';
+
+import useEffectOnce from '../../../hooks/general';
+import { VARS_KEYS } from '../../../constants/vars';
 
 import classes from '../styles/AdminDefaultsPage.module.scss';
 
-import { AdminDefaultsRequest } from '../../../api/responses';
-import apis from '../../../api';
-import useEffectOnce from '../../../hooks/general';
-import { VARS_KEYS } from '../../../constants/vars';
-import DangerModal from '../../../components/Modal/DangerModal';
-
-interface MaintenanceSwitchProps {
-  form: FormApi<AdminDefaultsRequest>;
-}
-
-const MaintenanceSwitch: React.FC<MaintenanceSwitchProps> = ({ form }) => {
+const MaintenanceSwitch: React.FC = () => {
   const [isMaintenance, setIsMaintenance] = useState(false);
   const [showModal, setShowModal] = useState(false);
 

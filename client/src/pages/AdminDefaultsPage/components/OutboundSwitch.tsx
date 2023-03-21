@@ -1,27 +1,26 @@
 import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
-import { FormApi } from 'final-form';
+
+import DangerModal from '../../../components/Modal/DangerModal';
+
+import apis from '../../../api';
+import { VarsResponse } from '../../../api/responses';
+
+import useEffectOnce from '../../../hooks/general';
+import { VARS_KEYS } from '../../../constants/vars';
 
 import classes from '../styles/AdminDefaultsPage.module.scss';
 
-import { AdminDefaultsRequest } from '../../../api/responses';
-import apis from '../../../api';
-import { VARS_KEYS } from '../../../constants/vars';
-import useEffectOnce from '../../../hooks/general';
-import DangerModal from '../../../components/Modal/DangerModal';
-
-interface OutboundSwitchProps {
-  form: FormApi<AdminDefaultsRequest>;
-}
-
-const OutboundSwitch: React.FC<OutboundSwitchProps> = ({ form }) => {
+const OutboundSwitch: React.FC = () => {
   const [isOutbound, setIsOutbound] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
   useEffectOnce(() => {
-    apis.vars.getVar(VARS_KEYS.IS_OUTBOUND_EMAIL_STOP).then((data: any) => {
-      setIsOutbound(data.value == 'false' ? false : true);
-    });
+    apis.vars
+      .getVar(VARS_KEYS.IS_OUTBOUND_EMAIL_STOP)
+      .then((data: VarsResponse) => {
+        setIsOutbound(data.value == 'false' ? false : true);
+      });
   }, []);
 
   return (

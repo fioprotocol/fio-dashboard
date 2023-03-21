@@ -106,14 +106,11 @@ export type UserOrdersListResponse = {
 export type HealthCheckResponse = { success: boolean };
 
 export type VarsResponse = {
-  data: {
-    id: string;
-    key: string;
-    value: string;
-    createdAt: string;
-    updatedAt: string;
-  };
-  status: number;
+  id: string;
+  key: string;
+  value: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type AdminFioAccountsProfilesListResponse = FioAccountProfile[];
