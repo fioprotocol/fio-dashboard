@@ -92,7 +92,10 @@ export default class Notifications extends Component<
   };
 
   handleAccountCreateBadgeClose = async (last: Notification) => {
-    if (last.contentType === NOTIFICATIONS_CONTENT_TYPE.ACCOUNT_CREATE) {
+    if (
+      last.contentType === NOTIFICATIONS_CONTENT_TYPE.ACCOUNT_CREATE &&
+      !this.props.showRecovery
+    ) {
       this.accountCreateCloseTimeout = setTimeout(
         this.onBadgeClose(last),
         AUTOCLOSE_TIME,

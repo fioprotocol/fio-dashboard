@@ -2,6 +2,7 @@ import { Notification, User } from '../../types';
 
 export type NotificationsContainer = {
   list: Notification[];
+  showRecovery: boolean;
   user: User;
   update: ({ id: number, closeDate: Date }) => void;
   listNotifications: () => void;
