@@ -1,7 +1,7 @@
 import { makeServiceRunner } from '../tools';
 
-import VarsUpdate from '../services/Vars/Update';
-import VarsGet from '../services/Vars/Get';
+import VarsUpdate from '../services/vars/Update';
+import VarsGet from '../services/vars/Get';
 
 export default {
   get: makeServiceRunner(VarsGet, req => req.params),
