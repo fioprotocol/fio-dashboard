@@ -14,7 +14,7 @@ export default function useMaintenance() {
     apis.vars
       .getVar(VARS_KEYS.IS_MAINTENANCE)
       .then((data: VarsResponse) => {
-        setIsMaintenance(data.value == 'false' ? false : true);
+        setIsMaintenance(data.value === 'false' ? false : true);
       })
       .catch(() => {
         setIsMaintenance(true);
