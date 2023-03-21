@@ -27,6 +27,7 @@ export type MainHeaderProps = {
   isContainedFlow: boolean;
   isAdminAuthenticated: boolean;
   hideNavigation?: boolean;
+  isMaintenance?: boolean;
 };
 
 export type NavigationProps = {
@@ -34,4 +35,5 @@ export type NavigationProps = {
   toggleMenuOpen: (isMenuOpen: boolean) => void;
   closeMenu: () => void;
   showLogin: () => void;
+  isMaintenance: boolean;
 } & MainHeaderProps;

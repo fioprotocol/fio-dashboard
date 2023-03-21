@@ -14,6 +14,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     isAuthenticated,
     locationState,
     refProfileLoading,
+    isMaintenance,
   } = props;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
 
@@ -71,6 +72,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
         toggleMenuOpen={toggleMenuOpen}
         closeMenu={closeMenu}
         showLogin={showLogin}
+        isMaintenance={isMaintenance}
       />
     </MainHeaderContainer>
   );

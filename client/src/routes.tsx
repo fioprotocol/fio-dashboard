@@ -238,7 +238,7 @@ const Routes = (): React.ReactElement => {
   const [isMaintenance] = useMaintenance();
 
   return (
-    <MainLayout>
+    <MainLayout isMaintenance={isMaintenance}>
       <ScrollToTop>
         <React.Suspense fallback={<FioLoader wrap />}>
           {isMaintenance ? (
