@@ -9,6 +9,10 @@
 
   .img {
     height: 55px;
+
+    &.isLoading {
+      visibility: hidden;
+    }
   }
 
   .title {

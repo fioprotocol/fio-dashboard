@@ -15,8 +15,9 @@ const DashboardPage: React.FC = () => {
   const {
     fio101Items,
     firstWelcomeItem,
-    secondWelcomeItem,
     isDesktop,
+    loading,
+    secondWelcomeItem,
     totalBalance,
     totalBalanceLoading,
   } = useContext();
@@ -31,6 +32,7 @@ const DashboardPage: React.FC = () => {
         <WelcomeComponent
           firstWelcomeItem={firstWelcomeItem}
           secondWelcomeItem={secondWelcomeItem}
+          loading={loading}
         />
         <ItemWrapper
           hasFitContentWidth={isDesktop}
@@ -40,7 +42,11 @@ const DashboardPage: React.FC = () => {
           <FioRequestActionComponent />
         </ItemWrapper>
       </div>
-      <Fio101Component isDesktop={isDesktop} fio101Items={fio101Items} />
+      <Fio101Component
+        isDesktop={isDesktop}
+        fio101Items={fio101Items}
+        loading={loading}
+      />
     </div>
   );
 };
