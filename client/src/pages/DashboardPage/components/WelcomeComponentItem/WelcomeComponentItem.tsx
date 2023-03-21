@@ -1,23 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import classnames from 'classnames';
 import { Link } from 'react-router-dom';
 
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+import Loader from '../../../../components/Loader/Loader';
 
 import classes from './WelcomeComponentItem.module.scss';
 
 type Props = {
-  actionButtonText: string;
-  actionButtonLink: {
-    pathname: string;
-    state?: { openSettingsModal: string };
-    search?: string;
+  content: {
+    actionButtonText: string;
+    actionButtonLink: {
+      pathname: string;
+      state?: { openSettingsModal: string };
+      search?: string;
+    };
+    imageSrc: string;
+    isActionLinkExternal?: boolean;
+    isRed?: boolean;
+    title: string;
+    text: React.ReactNode;
   };
-  imageSrc: string;
-  isActionLinkExternal?: boolean;
-  isRed?: boolean;
-  title: string;
-  text: React.ReactNode;
+  loading?: boolean;
 };
 
 type ActionButtonProps = {
@@ -67,6 +71,14 @@ const ActionButton: React.FC<ActionButtonProps> = props => {
 };
 
 export const WelcomeComponentItem: React.FC<Props> = props => {
+  const { content, loading } = props;
+
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  if (loading) return <Loader />;
+
+  if (!content) return null;
+
   const {
     actionButtonText,
     actionButtonLink,
@@ -75,11 +87,17 @@ export const WelcomeComponentItem: React.FC<Props> = props => {
     isRed,
     title,
     text,
-  } = props;
+  } = content;
 
   return (
     <div className={classes.container}>
-      <img src={imageSrc} alt={title} className={classes.img} />
+      <img
+        src={imageSrc}
+        alt={title}
+        className={classnames(classes.img, !imageLoaded && classes.isLoading)}
+        onLoad={() => setImageLoaded(true)}
+      />
+      {!imageLoaded && <Loader />}
       <h5 className={classnames(classes.title, isRed && classes.isRed)}>
         {title}
       </h5>

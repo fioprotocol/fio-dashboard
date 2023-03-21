@@ -13,6 +13,7 @@ import classes from './Fio101Component.module.scss';
 type Props = {
   fio101Items: Fio101SliderContentProps[];
   isDesktop?: boolean;
+  loading: boolean;
 };
 
 const PrevArrow = (props: CustomArrowProps) => (
@@ -36,7 +37,7 @@ const NextArrow = (props: CustomArrowProps) => (
 );
 
 export const Fio101Component: React.FC<Props> = props => {
-  const { isDesktop, fio101Items } = props;
+  const { isDesktop, fio101Items, loading } = props;
 
   return (
     <div className={classes.container}>
@@ -58,7 +59,11 @@ export const Fio101Component: React.FC<Props> = props => {
               infinite
             >
               {fio101Items.map(fio101Item => (
-                <Fio101SliderComponent {...fio101Item} key={fio101Item.title} />
+                <Fio101SliderComponent
+                  {...fio101Item}
+                  key={fio101Item.title}
+                  loading={loading}
+                />
               ))}
             </Slider>
           </div>
