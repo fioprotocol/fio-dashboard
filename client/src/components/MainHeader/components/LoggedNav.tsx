@@ -37,6 +37,7 @@ type LoggedNavProps = {
   hideSettings?: boolean;
   refProfileInfo: RefProfile;
   notifications: Notification[];
+  isMaintenance: boolean;
   logout: () => void;
   showLogin: () => void;
   closeMenu: () => void;
@@ -173,6 +174,7 @@ export const LoggedNav: React.FC<LoggedNavProps> = props => {
     notifications,
     showSiteLink,
     closeMenu,
+    isMaintenance,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
@@ -191,25 +193,31 @@ export const LoggedNav: React.FC<LoggedNavProps> = props => {
     <div className={classes.loggedNavContainer}>
       {showSiteLink ? <SiteLink {...props} /> : <div />}
       <Nav className="pr-0 align-items-center">
-        <OrdersListNavItem hide={hideOrder} isDesktop={isDesktop} />
-        <CartNavItem
-          cartItems={cartItems}
-          hide={hideCart}
-          hideCartIcon={hideCartIcon}
-          isDesktop={isDesktop}
-          to={
-            cartItems.length > 0 ? ROUTES.CART : ROUTES.FIO_ADDRESSES_SELECTION
-          }
-          onClick={onCartClick}
-        />
-        <ActiveButtons isDesktop={isDesktop} {...props} />
-        {/* Notifications commented due to BD-2631 task */}
-        <NotificationsNavItem
-          hide={true}
-          isDesktop={isDesktop}
-          notifications={notifications}
-          onClick={closeMenu}
-        />
+        {!isMaintenance && (
+          <>
+            <OrdersListNavItem hide={hideOrder} isDesktop={isDesktop} />
+            <CartNavItem
+              cartItems={cartItems}
+              hide={hideCart}
+              hideCartIcon={hideCartIcon}
+              isDesktop={isDesktop}
+              to={
+                cartItems.length > 0
+                  ? ROUTES.CART
+                  : ROUTES.FIO_ADDRESSES_SELECTION
+              }
+              onClick={onCartClick}
+            />
+            <ActiveButtons isDesktop={isDesktop} {...props} />
+            {/* Notifications commented due to BD-2631 task */}
+            <NotificationsNavItem
+              hide={true}
+              isDesktop={isDesktop}
+              notifications={notifications}
+              onClick={closeMenu}
+            />
+          </>
+        )}
       </Nav>
     </div>
   );

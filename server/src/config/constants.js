@@ -198,6 +198,11 @@ const ORDER_ERROR_TYPES = {
   userHasFreeAddress: 'userHasFreeAddress',
 };
 
+const VARS_KEYS = {
+  IS_MAINTENANCE: 'IS_MAINTENANCE',
+  IS_OUTBOUND_EMAIL_STOP: 'IS_OUTBOUND_EMAIL_STOP',
+};
+
 module.exports = {
   WALLET_CREATED_FROM,
   DOMAIN_EXP_PERIOD,
@@ -229,4 +234,5 @@ module.exports = {
   QUERY_PARAMS_NAMES,
   USER_HAS_FREE_ADDRESS_MESSAGE,
   ORDER_ERROR_TYPES,
+  VARS_KEYS,
 };

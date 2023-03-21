@@ -8,6 +8,8 @@ import DashboardDomains from './components/DashboardDomains';
 import UsernamesOnCustomDomains from './components/UsernamesOnCustomDomains';
 import SearchPrefixes from './components/SearchPrefixes';
 import SearchPostfixes from './components/SearchPostfixes';
+import MaintenanceSwitch from './components/MaintenanceSwitch';
+import OutboundSwitch from './components/OutboundSwitch';
 
 import api from '../../api';
 
@@ -47,6 +49,8 @@ const AdminDefaultsPage: React.FC = () => {
       >
         {({ handleSubmit, submitting, form }) => (
           <>
+            <MaintenanceSwitch />
+            <OutboundSwitch />
             <AvailableDomains form={form} />
             <DashboardDomains form={form} />
             <UsernamesOnCustomDomains form={form} />

@@ -17,6 +17,8 @@ import ChainCode from './chain-code';
 import GeneratePdfFile from './generatePdf';
 import WrapStatus from './wrap-status';
 import Registration from './registration';
+import Vars from './vars';
+import HealthCheck from './health-check';
 
 const apiClient = new ApiClient(config.apiPrefix);
 
@@ -48,6 +50,8 @@ export type Api = {
   generatePdfFile: GeneratePdfFile;
   wrapStatus: WrapStatus;
   registration: Registration;
+  vars: Vars;
+  healthCheck: HealthCheck;
 };
 
 const apis = {
@@ -68,6 +72,8 @@ const apis = {
   generatePdfFile: new GeneratePdfFile(apiClient),
   wrapStatus: new WrapStatus(apiClient),
   registration: new Registration(apiClient),
+  vars: new Vars(apiClient),
+  healthCheck: new HealthCheck(apiClient),
 };
 
 export default apis;

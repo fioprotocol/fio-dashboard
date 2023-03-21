@@ -103,6 +103,16 @@ export type UserOrdersListResponse = {
   status: number;
 };
 
+export type HealthCheckResponse = { success: boolean };
+
+export type VarsResponse = {
+  id: string;
+  key: string;
+  value: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type AdminFioAccountsProfilesListResponse = FioAccountProfile[];
 export type AdminPartnersListResponse = RefProfile[];
 export type AdminUsersListResponse = AdminUser[];
@@ -163,7 +173,9 @@ export type ApisResponse = AccountGetWalletsResponse &
   AdminConfirmResponse &
   PaymentCreateResponse &
   ChainCodesListResults &
-  UserOrdersListResponse;
+  UserOrdersListResponse &
+  HealthCheckResponse &
+  VarsResponse;
 
 export type Rankable = {
   rank: number;

@@ -47,6 +47,7 @@ type Props = {
   showRecoveryModal: () => void;
   apiUrls: string[];
   getApiUrls: () => void;
+  isMaintenance: boolean;
 };
 
 const MainLayout: React.FC<Props> = props => {
@@ -63,6 +64,7 @@ const MainLayout: React.FC<Props> = props => {
     isContainedFlow,
     apiUrls,
     getApiUrls,
+    isMaintenance,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
@@ -96,7 +98,7 @@ const MainLayout: React.FC<Props> = props => {
   return (
     <MainLayoutContainer>
       {routeName && <PageTitle link={LINKS[routeName]} />}
-      <MainHeader />
+      <MainHeader isMaintenance={isMaintenance} />
       <AutoLogout />
       <Ref />
       <Roe />

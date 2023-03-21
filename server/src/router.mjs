@@ -194,6 +194,9 @@ router.get('/wrap-status/domains/wrap', routes.history.wrapDomains);
 router.get('/wrap-status/tokens/unwrap', routes.history.unwrapTokens);
 router.get('/wrap-status/domains/unwrap', routes.history.unwrapDomains);
 
+router.get('/vars/:key', routes.vars.get);
+router.post('/vars/update/:key', routes.vars.update);
+
 let WRAPPED_DOMAIN_ABI;
 let WRAPPED_TOKEN_ABI;
 try {

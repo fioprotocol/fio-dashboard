@@ -11,7 +11,7 @@ import sendEmailSenderErrorNotification from '../services/fallback-email-sender-
 
 import logger from '../logger.mjs';
 
-import { HOUR_MS } from '../config/constants.js';
+import { HOUR_MS, VARS_KEYS } from '../config/constants.js';
 
 const NOTIFICATION_LIMIT_PER_JOB = 100;
 const CONTENT_TYPE_EMAIL_TEMPLATE_MAP = {
@@ -87,6 +87,14 @@ class EmailsJob extends CommonJob {
   }
 
   async execute() {
+    const varsData = await Var.getByKey(VARS_KEYS.IS_OUTBOUND_EMAIL_STOP);
+    const isOutboundStop = varsData === 'false' ? false : true;
+
+    if (isOutboundStop) {
+      this.postMessage('We have stopped Outbound Emails');
+      this.finish();
+    }
+
     const notifications = await Notification.findAll({
       where: {
         emailDate: {
@@ -166,7 +174,10 @@ class EmailsJob extends CommonJob {
         if (sentEmailId) {
           for (const notification of notifications) {
             await Notification.update(
-              { emailDate: new Date(), data: { ...notification.data, sentEmailId } },
+              {
+                emailDate: new Date(),
+                data: { ...notification.data, sentEmailId },
+              },
               { where: { id: notification.id } },
             );
           }
