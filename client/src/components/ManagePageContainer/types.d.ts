@@ -39,7 +39,7 @@ export interface ContainerProps extends RouteComponentProps {
 
 export type BoolStateFunc = Dispatch<SetStateAction<boolean>>;
 
-export type IsExpiredFunc = (expiration: Date) => boolean;
+export type IsExpiredFunc = (domainName: string, expiration: Date) => boolean;
 type ModalOpenActionType = (
   data: FioNameItemProps,
 ) => MouseEventHandler<HTMLDivElement> | void;

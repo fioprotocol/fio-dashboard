@@ -62,6 +62,7 @@ const ItemComponent: React.FC<Props> = props => {
         <p className={classes.badgeTitle}>Expiration Date</p>
         <p className={classes.badgeItem}>
           <DateComponent
+            domainName={name}
             expiration={expiration}
             isExpired={isDomainExpired}
             toggleShowWarnBadge={toggleShowWarnBadge}
