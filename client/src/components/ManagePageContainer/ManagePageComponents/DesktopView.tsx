@@ -80,6 +80,7 @@ const DesktopView: React.FC<DefaultProps> = props => {
         </div>
         <div className={classes.tableCol}>
           <DateComponent
+            domainName={name}
             expiration={expiration}
             isExpired={isDomainExpired}
             toggleShowWarnBadge={toggleShowWarnBadge}

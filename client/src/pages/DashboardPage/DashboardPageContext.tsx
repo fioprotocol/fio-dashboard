@@ -214,7 +214,9 @@ export const useContext = (): UseContextProps => {
 
   if (
     hasDomains &&
-    fioDomains.some(fioDomain => isDomainExpired(fioDomain.expiration))
+    fioDomains.some(fioDomain =>
+      isDomainExpired(fioDomain.name, fioDomain.expiration),
+    )
   ) {
     secondWelcomeItem = firstWelcomeItem;
     firstWelcomeItem = WELCOME_COMPONENT_ITEM_CONTENT.EXPIRED_DOMAINS;

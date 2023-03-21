@@ -143,7 +143,8 @@ const ManagePageContainer: React.FC<ContainerProps> = props => {
         !!showExpired &&
         fioNameList.some(
           dataItem =>
-            dataItem.expiration && isDomainExpired(dataItem.expiration),
+            dataItem.expiration &&
+            isDomainExpired(dataItem.name, dataItem.expiration),
         ),
     );
     toggleShowInfoBadge(false); // todo: set dependent on data when move to get_pub_addresses
