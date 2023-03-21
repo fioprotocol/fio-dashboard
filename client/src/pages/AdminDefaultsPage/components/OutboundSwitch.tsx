@@ -19,7 +19,7 @@ const OutboundSwitch: React.FC = () => {
     apis.vars
       .getVar(VARS_KEYS.IS_OUTBOUND_EMAIL_STOP)
       .then((data: VarsResponse) => {
-        setIsOutbound(data.value == 'false' ? false : true);
+        setIsOutbound(data.value === 'false' ? false : true);
       });
   }, []);
 

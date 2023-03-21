@@ -4,7 +4,7 @@ import { Form } from 'react-bootstrap';
 import DangerModal from '../../../components/Modal/DangerModal';
 
 import apis from '../../../api';
-
+import { VarsResponse } from '../../../api/responses';
 import useEffectOnce from '../../../hooks/general';
 
 import { VARS_KEYS } from '../../../constants/vars';
@@ -16,8 +16,8 @@ const MaintenanceSwitch: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
 
   useEffectOnce(() => {
-    apis.vars.getVar(VARS_KEYS.IS_MAINTENANCE).then((data: any) => {
-      setIsMaintenance(data.value == 'false' ? false : true);
+    apis.vars.getVar(VARS_KEYS.IS_MAINTENANCE).then((data: VarsResponse) => {
+      setIsMaintenance(data.value === 'false' ? false : true);
     });
   }, []);
 
