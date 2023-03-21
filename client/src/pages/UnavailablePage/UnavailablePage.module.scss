@@ -1,0 +1,82 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  background: $main-background;
+  color: white;
+  text-align: center;
+  padding: 9% 25px 0;
+  width: 100%;
+
+  .header {
+    color: white;
+    font-size: 8rem;
+  }
+
+  .subHeader {
+    color: white;
+    font-size: 4rem;
+  }
+
+  .coloredText {
+    color: $light-indigo;
+  }
+
+  .microHeader {
+    @include sf-pro-display-thin;
+    font-size: 20px;
+    line-height: 24px;
+    margin: 1% auto;
+  }
+
+  .bottom {
+    height: 110px;
+  }
+
+  @include md {
+    .header {
+      font-size: 6rem;
+    }
+
+    .subHeader {
+      font-size: 3rem;
+    }
+
+    .microHeader {
+      font-size: 16px;
+    }
+
+    .bottom {
+      height: 70px;
+    }
+  }
+
+  @include sm {
+    .header,
+    .subHeader,
+    .microHeader {
+      text-align: left;
+    }
+
+    .header {
+      font-size: 48px;
+      line-height: 58px;
+    }
+
+    .subHeader {
+      font-size: 34px;
+      line-height: 41px;
+    }
+
+    .microHeader {
+      margin: 4% 0;
+      font-size: 16px;
+      line-height: 26px;
+    }
+
+    .bottom {
+      height: 30px;
+    }
+  }
+}
