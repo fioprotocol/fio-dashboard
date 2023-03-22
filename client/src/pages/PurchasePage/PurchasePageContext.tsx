@@ -11,6 +11,7 @@ import {
 } from '../../redux/cart/actions';
 import { fioActionExecuted } from '../../redux/fio/actions';
 import { onPurchaseResultsClose } from '../../redux/registrations/actions';
+import { loadProfile } from '../../redux/profile/actions';
 
 import {
   isProcessing as isProcessingSelector,
@@ -195,6 +196,8 @@ export const useContext = (
         status === PURCHASE_RESULTS_STATUS.SUCCESS ||
         status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS
       ) {
+        dispatch(loadProfile());
+
         regItems.forEach(regItem => {
           const { id, period = 1 } = regItem;
           updatedCart = updatedCart

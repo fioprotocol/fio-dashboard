@@ -7,6 +7,7 @@ import { deleteItem, setCartItems, setWallet } from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
 import { getPrices } from '../../redux/registrations/actions';
 import { showGenericErrorModal } from '../../redux/modal/actions';
+import { loadProfile } from '../../redux/profile/actions';
 
 import {
   cartItems as cartItemsSelector,
@@ -338,6 +339,10 @@ export const useContext = (): UseContextReturnType => {
       await checkout(paymentProvider);
     setSelectedPaymentProvider(null);
   };
+
+  useEffectOnce(() => {
+    dispatch(loadProfile());
+  }, [dispatch, loadProfile]);
 
   useEffectOnce(() => {
     dispatch(getPrices());
