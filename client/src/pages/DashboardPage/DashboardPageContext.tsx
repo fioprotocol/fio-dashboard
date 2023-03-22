@@ -277,14 +277,16 @@ export const useContext = (): UseContextProps => {
         FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES,
         FIO_101_SLIDER_CONTENT.NO_DOMAINS,
       ];
-      if (!hasFCH) {
+
+      if (hasFCH && !hasDomains) {
         fio101ItemsArr = [
-          FIO_101_SLIDER_CONTENT.NO_FCH,
-          FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES,
           FIO_101_SLIDER_CONTENT.NO_DOMAINS,
           FIO_101_SLIDER_CONTENT.DEFAULT,
+          FIO_101_SLIDER_CONTENT.NO_FCH,
+          FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES,
         ];
       }
+
       if (hasFCH && noMappedPubAddresses) {
         if (hasOneFCH) {
           fio101ItemsArr = [
@@ -307,14 +309,16 @@ export const useContext = (): UseContextProps => {
           ];
         }
       }
-      if (hasFCH && !hasDomains) {
+
+      if (!hasFCH) {
         fio101ItemsArr = [
-          FIO_101_SLIDER_CONTENT.NO_DOMAINS,
-          FIO_101_SLIDER_CONTENT.DEFAULT,
           FIO_101_SLIDER_CONTENT.NO_FCH,
           FIO_101_SLIDER_CONTENT.NO_MAPPED_PUBLIC_ADDRESSES,
+          FIO_101_SLIDER_CONTENT.NO_DOMAINS,
+          FIO_101_SLIDER_CONTENT.DEFAULT,
         ];
       }
+
       setFio101Items(fio101ItemsArr);
     }
   }, [
