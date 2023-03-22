@@ -28,6 +28,7 @@ import {
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
+import { loadProfile } from '../../redux/profile/actions';
 
 import useQuery from '../../hooks/useQuery';
 import { useEffectOnce } from '../../hooks/general';
@@ -195,6 +196,8 @@ export const useContext = (
         status === PURCHASE_RESULTS_STATUS.SUCCESS ||
         status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS
       ) {
+        dispatch(loadProfile());
+
         regItems.forEach(regItem => {
           const { id, period = 1 } = regItem;
           updatedCart = updatedCart

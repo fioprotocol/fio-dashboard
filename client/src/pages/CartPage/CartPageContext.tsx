@@ -28,6 +28,7 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
+import { loadProfile } from '../../redux/profile/actions';
 
 import {
   cartItemsToOrderItems,
@@ -338,6 +339,10 @@ export const useContext = (): UseContextReturnType => {
       await checkout(paymentProvider);
     setSelectedPaymentProvider(null);
   };
+
+  useEffectOnce(() => {
+    dispatch(loadProfile());
+  }, [dispatch, loadProfile]);
 
   useEffectOnce(() => {
     dispatch(getPrices());

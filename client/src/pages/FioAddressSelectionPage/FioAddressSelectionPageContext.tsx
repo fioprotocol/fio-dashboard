@@ -17,6 +17,7 @@ import {
   isAuthenticated as isAuthenticatedSelector,
 } from '../../redux/profile/selectors';
 import { refProfileInfo as refProfileInfoSelector } from '../../redux/refProfile/selectors';
+import { loadProfile } from '../../redux/profile/actions';
 
 import { FIO_ADDRESS_ALREADY_EXISTS } from '../../constants/errors';
 import { DOMAIN_TYPE } from '../../constants/fio';
@@ -24,6 +25,8 @@ import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
 } from '../../constants/common';
+
+import useEffectOnce from '../../hooks/general';
 
 import { addCartItem } from '../../util/cart';
 import {
@@ -480,6 +483,10 @@ export const useContext = (): UseContextProps => {
   const onClick = (selectedItem: CartItem) => {
     addCartItem(selectedItem);
   };
+
+  useEffectOnce(() => {
+    dispatch(loadProfile());
+  }, [dispatch, loadProfile]);
 
   useEffect(() => {
     dispatch(getDomains());
