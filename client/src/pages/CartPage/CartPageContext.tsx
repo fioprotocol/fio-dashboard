@@ -7,6 +7,7 @@ import { deleteItem, setCartItems, setWallet } from '../../redux/cart/actions';
 import { refreshBalance } from '../../redux/fio/actions';
 import { getPrices } from '../../redux/registrations/actions';
 import { showGenericErrorModal } from '../../redux/modal/actions';
+import { loadProfile } from '../../redux/profile/actions';
 
 import {
   cartItems as cartItemsSelector,
@@ -28,7 +29,6 @@ import {
   prices as pricesSelector,
   roe as roeSelector,
 } from '../../redux/registrations/selectors';
-import { loadProfile } from '../../redux/profile/actions';
 
 import {
   cartItemsToOrderItems,

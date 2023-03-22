@@ -11,6 +11,7 @@ import {
 } from '../../redux/cart/actions';
 import { fioActionExecuted } from '../../redux/fio/actions';
 import { onPurchaseResultsClose } from '../../redux/registrations/actions';
+import { loadProfile } from '../../redux/profile/actions';
 
 import {
   isProcessing as isProcessingSelector,
@@ -28,7 +29,6 @@ import {
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
-import { loadProfile } from '../../redux/profile/actions';
 
 import useQuery from '../../hooks/useQuery';
 import { useEffectOnce } from '../../hooks/general';

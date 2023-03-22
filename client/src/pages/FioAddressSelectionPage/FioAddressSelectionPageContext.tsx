@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { refreshFioNames } from '../../redux/fio/actions';
 import { getDomains } from '../../redux/registrations/actions';
+import { loadProfile } from '../../redux/profile/actions';
 
 import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
@@ -17,7 +18,6 @@ import {
   isAuthenticated as isAuthenticatedSelector,
 } from '../../redux/profile/selectors';
 import { refProfileInfo as refProfileInfoSelector } from '../../redux/refProfile/selectors';
-import { loadProfile } from '../../redux/profile/actions';
 
 import { FIO_ADDRESS_ALREADY_EXISTS } from '../../constants/errors';
 import { DOMAIN_TYPE } from '../../constants/fio';
