@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { refreshFioNames } from '../../redux/fio/actions';
 import { getDomains } from '../../redux/registrations/actions';
-import { loadProfile } from '../../redux/profile/actions';
 
 import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
@@ -25,8 +24,6 @@ import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
 } from '../../constants/common';
-
-import useEffectOnce from '../../hooks/general';
 
 import { addCartItem } from '../../util/cart';
 import {
@@ -483,10 +480,6 @@ export const useContext = (): UseContextProps => {
   const onClick = (selectedItem: CartItem) => {
     addCartItem(selectedItem);
   };
-
-  useEffectOnce(() => {
-    dispatch(loadProfile());
-  }, [dispatch, loadProfile]);
 
   useEffect(() => {
     dispatch(getDomains());
