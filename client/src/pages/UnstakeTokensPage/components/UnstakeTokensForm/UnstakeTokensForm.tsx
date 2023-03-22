@@ -48,7 +48,7 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
         />
         <InfoBadge
           className={classes.infoBadge}
-          type={BADGE_TYPES.WARNING}
+          type={BADGE_TYPES.ERROR}
           show={true}
           title="No Crypto Handle"
           message={
@@ -260,16 +260,6 @@ const UnstakeTokensForm: React.FC<UnstakeTokensProps> = props => {
                 remaining={selectedAddress.remaining}
               />
             )}
-
-            {/*temporary added while fio stake api can't allow accounts without crypto handles*/}
-            <InfoBadge
-              className={classes.infoBadgeError}
-              type={BADGE_TYPES.ERROR}
-              show={!fioAddresses.length}
-              title="No Crypto Handle"
-              message={<>You are not able to unstake without crypto handles.</>}
-            />
-
             <SubmitButton
               text="Unstake FIO Tokens"
               disabled={submitDisabled}
