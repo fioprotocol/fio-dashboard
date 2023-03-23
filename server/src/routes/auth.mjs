@@ -1,7 +1,8 @@
-import { authCheck, makeServiceRunner } from '../tools';
+import { authCheck, makeServiceRunner, authCheckSimple } from '../tools';
 
 import AuthCreate from '../services/auth/Create';
 import AuthCheck from '../services/auth/Check';
+import AuthCheckSimple from '../services/auth/CheckSimple';
 import AuthCheckOptional from '../services/auth/CheckOptional';
 import AuthNonce from '../services/auth/Nonce';
 import AuthUsername from '../services/auth/Username';
@@ -16,6 +17,10 @@ export default {
   create: makeServiceRunner(AuthCreate, req => req.body),
   nonce: makeServiceRunner(AuthNonce, req => req.query),
   username: makeServiceRunner(AuthUsername, req => req.params),
+
+  async checkSimple(req, res, next) {
+    return await authCheckSimple(req, res, next, AuthCheckSimple);
+  },
 
   async check(req, res, next) {
     return await authCheck(req, res, next, AuthCheck);
