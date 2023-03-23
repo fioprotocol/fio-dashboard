@@ -22,6 +22,7 @@ import ContainedFlow from '../../services/ContainedFlow';
 import PageTitle from '../../components/PageTitle/PageTitle';
 import { ContentContainer } from '../../components/ContentContainer';
 import { MainLayoutContainer } from '../../components/MainLayoutContainer';
+import FioLoader from '../../components/common/FioLoader/FioLoader';
 
 import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
@@ -47,7 +48,8 @@ type Props = {
   showRecoveryModal: () => void;
   apiUrls: string[];
   getApiUrls: () => void;
-  isMaintenance: boolean;
+  isMaintenance?: boolean;
+  isLoading?: boolean;
 };
 
 const MainLayout: React.FC<Props> = props => {
@@ -65,6 +67,7 @@ const MainLayout: React.FC<Props> = props => {
     apiUrls,
     getApiUrls,
     isMaintenance,
+    isLoading,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
@@ -97,30 +100,50 @@ const MainLayout: React.FC<Props> = props => {
 
   return (
     <MainLayoutContainer>
-      {routeName && <PageTitle link={LINKS[routeName]} />}
-      <MainHeader isMaintenance={isMaintenance} />
-      <AutoLogout />
-      <Ref />
-      <Roe />
-      <ContainedFlow />
-      {isAuthenticated && <WalletsDataFlow />}
-      {isAuthenticated && <TxHistoryService />}
-      {isAuthenticated && isDesktop && <Navigation />}
-      {(!isHomePage || (isAuthenticated && !isContainedFlow)) && (
-        <Notifications />
+      {isLoading ? (
+        <ContentContainer>
+          <ContainedFlowWrapper isAuthenticated={isAuthenticated}>
+            <FioLoader />
+          </ContainedFlowWrapper>
+        </ContentContainer>
+      ) : isMaintenance ? (
+        <>
+          {routeName && <PageTitle link={LINKS.UNAVAILABLE} />}
+          <MainHeader isMaintenance={isMaintenance} />
+          <ContentContainer>
+            <ContainedFlowWrapper isAuthenticated={isAuthenticated}>
+              {children}
+            </ContainedFlowWrapper>
+          </ContentContainer>
+        </>
+      ) : (
+        <>
+          {routeName && <PageTitle link={LINKS[routeName]} />}
+          <MainHeader isMaintenance={isMaintenance} />
+          <AutoLogout />
+          <Ref />
+          <Roe />
+          <ContainedFlow />
+          {isAuthenticated && <WalletsDataFlow />}
+          {isAuthenticated && <TxHistoryService />}
+          {isAuthenticated && isDesktop && <Navigation />}
+          {(!isHomePage || (isAuthenticated && !isContainedFlow)) && (
+            <Notifications />
+          )}
+          <ContentContainer>
+            <ContainedFlowWrapper isAuthenticated={isAuthenticated}>
+              {children}
+            </ContainedFlowWrapper>
+          </ContentContainer>
+          <Footer />
+          {showLogin && edgeContextSet && loginFormModalRender()}
+          {showRecovery && edgeContextSet && recoveryFormModalRender()}
+          <PinConfirmModal />
+          <GenericErrorModal />
+          <GenericSuccessModal />
+          <TwoFactorApproveModal />
+        </>
       )}
-      <ContentContainer>
-        <ContainedFlowWrapper isAuthenticated={isAuthenticated}>
-          {children}
-        </ContainedFlowWrapper>
-      </ContentContainer>
-      <Footer />
-      {showLogin && edgeContextSet && loginFormModalRender()}
-      {showRecovery && edgeContextSet && recoveryFormModalRender()}
-      <PinConfirmModal />
-      <GenericErrorModal />
-      <GenericSuccessModal />
-      <TwoFactorApproveModal />
     </MainLayoutContainer>
   );
 };

@@ -235,10 +235,10 @@ const UnwrapTokensPage = React.lazy(() =>
 );
 
 const Routes = (): React.ReactElement => {
-  const [isMaintenance] = useMaintenance();
+  const [isMaintenance, isLoading] = useMaintenance();
 
   return (
-    <MainLayout isMaintenance={isMaintenance}>
+    <MainLayout isMaintenance={isMaintenance} isLoading={isLoading}>
       <ScrollToTop>
         <React.Suspense fallback={<FioLoader wrap />}>
           {isMaintenance ? (
