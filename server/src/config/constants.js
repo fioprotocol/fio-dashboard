@@ -204,7 +204,7 @@ const VARS_KEYS = {
 };
 
 const PASSWORDS = {
-  IS_OUTBOUND_EMAIL_STOP: 'f10EXwHXZWA!135',
+  IS_OUTBOUND_EMAIL_STOP: process.env.OUTBOUND_EMAIL_STOP_PASSWORD,
 };
 
 module.exports = {
