@@ -229,6 +229,19 @@ export async function authCheck(req, res, next, model, isAdmin) {
   }
 }
 
+export async function authCheckSimple(req, res, next, model) {
+  const promise = runService(model, {
+    params: req.params,
+  });
+
+  try {
+    req.params.value = await promise;
+    return next();
+  } catch (e) {
+    return renderPromiseAsJson(req, res, promise);
+  }
+}
+
 export function adminTfaValidate(base32secret, userToken) {
   return speakeasy.totp.verify({
     secret: base32secret,
