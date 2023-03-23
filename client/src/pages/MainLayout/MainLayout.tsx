@@ -101,25 +101,24 @@ const MainLayout: React.FC<Props> = props => {
   return (
     <MainLayoutContainer>
       {isLoading ? (
-        <ContentContainer>
-          <ContainedFlowWrapper isAuthenticated={isAuthenticated}>
-            <FioLoader />
-          </ContainedFlowWrapper>
-        </ContentContainer>
+        <>
+          <MainHeader isMaintenance />
+          <ContentContainer>
+            <FioLoader wrap />
+          </ContentContainer>
+          <Footer />
+        </>
       ) : isMaintenance ? (
         <>
           {routeName && <PageTitle link={LINKS.UNAVAILABLE} />}
-          <MainHeader isMaintenance={isMaintenance} />
-          <ContentContainer>
-            <ContainedFlowWrapper isAuthenticated={isAuthenticated}>
-              {children}
-            </ContainedFlowWrapper>
-          </ContentContainer>
+          <MainHeader isMaintenance />
+          <ContentContainer>{children}</ContentContainer>
+          <Footer isMaintenance />
         </>
       ) : (
         <>
           {routeName && <PageTitle link={LINKS[routeName]} />}
-          <MainHeader isMaintenance={isMaintenance} />
+          <MainHeader />
           <AutoLogout />
           <Ref />
           <Roe />

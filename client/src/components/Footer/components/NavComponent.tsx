@@ -10,12 +10,13 @@ import classes from './NavComponent.module.scss';
 
 type Props = {
   hideNavLinks?: boolean;
+  isMaintenance?: boolean;
 };
 
 export const NavComponent: React.FC<Props> = props => {
   return (
     <Nav className="pr-0 align-items-center">
-      <NavLinks {...props} />
+      {!props.isMaintenance && <NavLinks {...props} />}
       <Nav.Item className={classnames(classes.navItem, 'text-white', 'p-0')}>
         © {currentYear()} FIO
       </Nav.Item>
