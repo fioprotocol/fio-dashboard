@@ -9,15 +9,19 @@ import useEffectOnce from './general';
 
 export default function useMaintenance() {
   const [isMaintenance, setIsMaintenance] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffectOnce(() => {
+    setIsLoading(true);
     apis.vars
       .getVar(VARS_KEYS.IS_MAINTENANCE)
       .then((data: VarsResponse) => {
         setIsMaintenance(data.value === 'false' ? false : true);
+        setIsLoading(false);
       })
       .catch(() => {
         setIsMaintenance(true);
+        setIsLoading(false);
       });
 
     const healthCheckInterval = setInterval(() => {
@@ -26,15 +30,17 @@ export default function useMaintenance() {
         .then((data: HealthCheckResponse) => {
           if (!data.success) {
             setIsMaintenance(true);
+            setIsLoading(false);
           }
         })
         .catch(() => {
           setIsMaintenance(true);
+          setIsLoading(false);
         });
     }, HEALTH_CHECK_TIME);
 
     return () => clearInterval(healthCheckInterval);
   }, []);
 
-  return [isMaintenance];
+  return [isMaintenance, isLoading];
 }

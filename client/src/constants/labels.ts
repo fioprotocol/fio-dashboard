@@ -97,6 +97,7 @@ export const LINKS: { [linkKey: string]: string } = {
   WRAP_STATUS_UNWRAP_TOKENS: 'WRAP_STATUS_UNWRAP_TOKENS',
   WRAP_STATUS_WRAP_DOMAINS: 'WRAP_STATUS_WRAP_DOMAINS',
   WRAP_STATUS_UNWRAP_DOMAINS: 'WRAP_STATUS_UNWRAP_DOMAINS',
+  UNAVAILABLE: 'UNAVAILABLE',
 };
 
 export const LINK_LABELS: { [linkKey: string]: string } = {
@@ -127,6 +128,7 @@ export const LINK_LABELS: { [linkKey: string]: string } = {
   [LINKS.ADMIN_API_URLS]: 'API Urls',
   [LINKS.ADMIN_PARTNERS]: 'Partners',
   [LINKS.ADMIN_DEFAULTS]: 'Defaults',
+  [LINKS.UNAVAILABLE]: 'Unavailable',
 };
 
 export const APP_TITLE = 'FIO Dashboard';
@@ -215,6 +217,7 @@ export const LINK_TITLES: { [linkKey: string]: string } = {
   [LINKS.WRAP_STATUS_UNWRAP_TOKENS]: 'Unwrap FIO Tokens Status',
   [LINKS.WRAP_STATUS_WRAP_DOMAINS]: 'Wrap FIO Domains Status',
   [LINKS.WRAP_STATUS_UNWRAP_DOMAINS]: 'Unwrap FIO Domains Status',
+  [LINKS.UNAVAILABLE]: 'Unavailable',
 };
 
 export const fioNameLabels: { [fioNameType: string]: string } = {
