@@ -69,7 +69,7 @@ const handleFCHItems = async ({
   setError: (error: string) => void;
 }) => {
   const {
-    nativeFio: { address: natvieFioAddressPrice, domain: nativeFioDomainPrice },
+    nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
   } = prices;
 
   fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
@@ -121,10 +121,10 @@ const handleFCHItems = async ({
         const isCustomDomain = domainType === DOMAIN_TYPE.CUSTOM;
 
         const totalNativeFio = isCustomDomain
-          ? new MathOp(natvieFioAddressPrice)
+          ? new MathOp(nativeFioAddressPrice)
               .add(nativeFioDomainPrice)
               .toNumber()
-          : natvieFioAddressPrice;
+          : nativeFioAddressPrice;
 
         const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
 
@@ -135,6 +135,7 @@ const handleFCHItems = async ({
           costFio: fio,
           costUsdc: usdc,
           costNativeFio: totalNativeFio,
+          nativeFioAddressPrice,
           domainType,
           isSelected: false,
           isExist:

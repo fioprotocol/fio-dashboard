@@ -25,6 +25,7 @@ import {
   OrderItem,
   Prices,
 } from '../types';
+import { CreateOrderActionItem } from '../redux/types';
 
 export const setFreeCart = ({
   cartItems,
@@ -264,10 +265,23 @@ export const updateCartItemPeriod = ({
         ]),
       );
 
-      const fioPrices = convertFioPrices(
-        new MathOp(newItem.costNativeFio).mul(period).toNumber(),
-        roe,
-      );
+      const fioPrices =
+        period > 1 && newItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+          ? convertFioPrices(
+              new MathOp( // we need multiply only domain, so we subtract address price and then add it back
+                new MathOp(newItem.costNativeFio)
+                  .sub(newItem.nativeFioAddressPrice)
+                  .toNumber(),
+              )
+                .mul(period)
+                .add(newItem.nativeFioAddressPrice)
+                .toNumber(),
+              roe,
+            )
+          : convertFioPrices(
+              new MathOp(newItem.costNativeFio).mul(period).toNumber(),
+              roe,
+            );
       newItem.costFio = fioPrices.fio;
       newItem.costUsdc = fioPrices.usdc;
       newItem.period = period;
@@ -309,7 +323,7 @@ export const cartItemsToOrderItems = (
       const nativeFio = domainType === DOMAIN_TYPE.FREE ? 0 : costNativeFio;
 
       if (!!address && domainType === DOMAIN_TYPE.CUSTOM) {
-        return [
+        const items: CreateOrderActionItem[] = [
           {
             action: ACTIONS.registerFioDomain,
             domain,
@@ -328,6 +342,21 @@ export const cartItemsToOrderItems = (
             data,
           },
         ];
+        if (CART_ITEM_TYPES_WITH_PERIOD.includes(type) && period > 1) {
+          const nativeFio = prices.nativeFio.renewDomain || costNativeFio;
+          for (let i = 1; i < period; i++) {
+            items.push({
+              action: ACTIONS.renewFioDomain,
+              address: null,
+              domain,
+              nativeFio: `${nativeFio || 0}`,
+              price: convertFioPrices(nativeFio || 0, roe).usdc,
+              priceCurrency: CURRENCY_CODES.USDC,
+              data,
+            });
+          }
+        }
+        return items;
       }
 
       const item = {
@@ -389,6 +418,16 @@ export const totalCost = (
           const nativeFio =
             item.domainType === DOMAIN_TYPE.FREE
               ? 0
+              : item.period > 1 &&
+                item.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+              ? new MathOp( // we need multiply only domain, so we subtract address price and then add it back
+                  new MathOp(item.costNativeFio || 0)
+                    .sub(item.nativeFioAddressPrice)
+                    .toNumber(),
+                )
+                  .mul(item.period || 1)
+                  .add(item.nativeFioAddressPrice)
+                  .toNumber()
               : new MathOp(item.costNativeFio || 0)
                   .mul(item.period || 1)
                   .toNumber();
@@ -415,7 +454,9 @@ export const cartIsRelative = (
   const cartItemsLength = cartItems.reduce(
     (length, item) =>
       CART_ITEM_TYPES_WITH_PERIOD.includes(item.type) && item.period > 1
-        ? length + item.period
+        ? !!item.address && item.domainType === DOMAIN_TYPE.CUSTOM
+          ? length + item.period + 1
+          : length + item.period
         : !!item.address && item.domainType === DOMAIN_TYPE.CUSTOM
         ? length + 2
         : length + 1,

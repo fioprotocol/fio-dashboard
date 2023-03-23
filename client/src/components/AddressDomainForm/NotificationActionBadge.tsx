@@ -53,7 +53,7 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
 
   const { address, domain: domainName, period: periodValue } = values || {};
   const {
-    nativeFio: { address: natvieFioAddressPrice, domain: nativeFioDomainPrice },
+    nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
   } = prices;
 
   const hasOnlyDomain =
@@ -75,7 +75,7 @@ const NotificationActionBadge: React.FC<NotificationActionProps> = props => {
   let costNativeFio = 0;
 
   if (!isFree && isAddress) {
-    costNativeFio = isAddress ? natvieFioAddressPrice : nativeFioDomainPrice;
+    costNativeFio = isAddress ? nativeFioAddressPrice : nativeFioDomainPrice;
   }
   if (hasCustomDomain) {
     costNativeFio = costNativeFio

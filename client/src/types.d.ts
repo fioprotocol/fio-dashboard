@@ -52,6 +52,7 @@ export type CartItem = {
   costNativeFio?: number;
   costFio?: string;
   costUsdc?: string;
+  nativeFioAddressPrice?: number;
   hasCustomDomain?: boolean;
   period?: number;
   allowFree?: boolean;
