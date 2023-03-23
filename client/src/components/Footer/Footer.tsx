@@ -9,6 +9,7 @@ import classes from './Footer.module.scss';
 
 type Props = {
   hideNavLinks?: boolean;
+  isMaintenance?: boolean;
 };
 
 const Footer: React.FC<Props> = props => {
