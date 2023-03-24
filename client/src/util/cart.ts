@@ -141,15 +141,42 @@ export const handleFreeAddressCart = ({
 };
 
 export const addCartItem = (selectedItem: CartItem) => {
-  const { id } = selectedItem || {};
-
   const currentStore = store.getState();
 
   const cartItems: CartItem[] = currentStore.cart.cartItems;
+  const roe = currentStore.registrations.roe;
+
+  let newItem = { ...selectedItem };
+  const {
+    id,
+    costNativeFio,
+    domain,
+    domainType,
+    nativeFioAddressPrice,
+    period,
+    type,
+  } = newItem;
+
+  if (type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN && period > 1) {
+    const nativeFioAmount = handlePriceForMultiYearFchWithCustomDomain({
+      costNativeFio,
+      nativeFioAddressPrice,
+      period,
+    });
+    const { fio, usdc } = convertFioPrices(nativeFioAmount, roe);
+    newItem = {
+      ...newItem,
+      costFio: fio,
+      costUsdc: usdc,
+    };
+  }
 
   const newCartItems = [
-    ...cartItems.filter((item: CartItem) => item.id !== id),
-    selectedItem,
+    ...cartItems.filter((item: CartItem) => {
+      if (domainType === DOMAIN_TYPE.CUSTOM && item.id === domain) return false; // remove domain item if we add custom fch with the same domain
+      return item.id !== id;
+    }),
+    newItem,
   ];
 
   store.dispatch(setCartItems(newCartItems));

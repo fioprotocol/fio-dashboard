@@ -169,6 +169,12 @@ const handleSeletedDomain = ({
     cartItem => cartItem.id === fchItem.id,
   );
 
+  const existingDomainInCartItem = cartItems.find(
+    cartItem =>
+      fchItem.domainType === DOMAIN_TYPE.CUSTOM &&
+      cartItem.id === fchItem.domain,
+  );
+
   const { domainType, allowFree } = fchItem;
 
   const handleDomainType = () => {
@@ -196,6 +202,9 @@ const handleSeletedDomain = ({
 
   return {
     ...fchItem,
+    period: existingDomainInCartItem
+      ? existingDomainInCartItem.period
+      : fchItem.period,
     isSelected: !!existingCartItem,
     domainType: handleDomainType(),
   };

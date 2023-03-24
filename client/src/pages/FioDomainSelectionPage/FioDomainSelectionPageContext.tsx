@@ -53,14 +53,14 @@ const handleDomainItem = async ({
   nativeFioDomainPrice: number;
   roe: number;
 }) => {
+  const { name, rank } = domainItem;
+
   const parsedCartItems: CartItem[] = JSON.parse(cartItemsJSON);
-  const existingCartItem = parsedCartItems.find(
-    cartItem => cartItem.id === name,
+  const existingCartItem = parsedCartItems.find(cartItem =>
+    checkIsDomainItemExistsOnCart(name, cartItem),
   );
   const period = existingCartItem ? Number(existingCartItem.period) : 1;
   const costNativeFio = new MathOp(nativeFioDomainPrice).mul(period).toNumber();
-
-  const { name, rank } = domainItem;
 
   const { fio, usdc } = convertFioPrices(costNativeFio, roe);
 
@@ -370,7 +370,9 @@ export const useContext = () => {
 
       setSuggestedItem({
         ...parsedSuggestedItem,
-        period: parsedSuggestedItem.period,
+        period: existingCartItemSuggested
+          ? existingCartItemSuggested.period
+          : parsedSuggestedItem.period,
         isSelected: !!existingCartItemSuggested,
       });
     }
