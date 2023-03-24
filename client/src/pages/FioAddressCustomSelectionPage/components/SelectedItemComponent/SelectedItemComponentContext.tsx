@@ -47,7 +47,7 @@ export const useContext = (
   >([]);
 
   const {
-    nativeFio: { address: natvieFioAddressPrice, domain: nativeFioDomainPrice },
+    nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
   } = prices;
 
   const getPublicDomainsFromChain = async (domain: string) => {
@@ -121,8 +121,8 @@ export const useContext = (
   const isCustomDomain = domainType === DOMAIN_TYPE.CUSTOM;
 
   const totalNativeFio = isCustomDomain
-    ? new MathOp(natvieFioAddressPrice).add(nativeFioDomainPrice).toNumber()
-    : natvieFioAddressPrice;
+    ? new MathOp(nativeFioAddressPrice).add(nativeFioDomainPrice).toNumber()
+    : nativeFioAddressPrice;
 
   const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
 
@@ -133,6 +133,7 @@ export const useContext = (
     costFio: fio,
     costUsdc: usdc,
     costNativeFio: totalNativeFio,
+    nativeFioAddressPrice,
     domainType,
     period: 1,
     type: isCustomDomain
