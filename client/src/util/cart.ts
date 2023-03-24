@@ -211,7 +211,7 @@ export const deleteCartItem = ({
     );
   }
 
-  const { address, domain, domainType } =
+  const { address, costNativeFio, domain, domainType, period } =
     cartItems.find(item => item.id === id) || {};
   const updCart = cartItems.filter(item => item.id !== id);
 
@@ -228,14 +228,23 @@ export const deleteCartItem = ({
             domain: nativeFioDomainPrice,
           },
         } = prices || { nativeFio: {} };
+
         const retObj = {
           ...firstMatchElem,
-          costNativeFio: new MathOp(nativeFioAddressPrice)
-            .add(nativeFioDomainPrice)
-            .toNumber(),
+          costNativeFio:
+            period > 1
+              ? handlePriceForMultiYearFchWithCustomDomain({
+                  costNativeFio,
+                  nativeFioAddressPrice,
+                  period,
+                })
+              : new MathOp(nativeFioAddressPrice)
+                  .add(nativeFioDomainPrice)
+                  .toNumber(),
           hasCustomDomain: true,
           domainType: DOMAIN_TYPE.CUSTOM,
           type: CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
+          period,
         };
         const fioPrices = convertFioPrices(retObj.costNativeFio, roe);
 
