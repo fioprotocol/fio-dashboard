@@ -148,7 +148,7 @@ export const addCartItem = (selectedItem: CartItem) => {
 
   const newCartItems = [
     ...cartItems.filter(
-      (item: CartItem) => item.domain !== domain.toLowerCase(),
+      (item: CartItem) => item.domain.toLowerCase() !== domain.toLowerCase(),
     ),
     selectedItem,
   ];
