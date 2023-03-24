@@ -140,16 +140,14 @@ export const handleFreeAddressCart = ({
 };
 
 export const addCartItem = (selectedItem: CartItem) => {
-  const { domain } = selectedItem || {};
+  const { id } = selectedItem || {};
 
   const currentStore = store.getState();
 
   const cartItems: CartItem[] = currentStore.cart.cartItems;
 
   const newCartItems = [
-    ...cartItems.filter(
-      (item: CartItem) => item.domain.toLowerCase() !== domain.toLowerCase(),
-    ),
+    ...cartItems.filter((item: CartItem) => item.id !== id),
     selectedItem,
   ];
 
