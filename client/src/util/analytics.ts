@@ -80,7 +80,10 @@ export const getCartItemsDataForAnalytics = (
   return {
     currency: CURRENCY_CODES.USD,
     value: +cartItems.reduce(
-      (sum, item) => new MathOp(sum).add(item.costUsdc || 0).toNumber(),
+      (sum, item) =>
+        new MathOp(sum)
+          .add(item.domainType === DOMAIN_TYPE.FREE ? 0 : item.costUsdc)
+          .toNumber(),
       0,
     ),
     items: cartItems
