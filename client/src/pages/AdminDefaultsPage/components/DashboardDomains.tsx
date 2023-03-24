@@ -84,6 +84,7 @@ const DashboardDomains: React.FC<DashboardDomainsProps> = ({ form }) => {
                               withoutBottomMargin
                               uiType={INPUT_UI_STYLES.BLACK_WHITE}
                               colorScheme={INPUT_COLOR_SCHEMA.BLACK_AND_WHITE}
+                              lowerCased
                             />
                           </div>
                           <Field name={`${name}.isPremium`}>
