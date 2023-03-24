@@ -234,12 +234,13 @@ export const deleteCartItem = ({
             .add(nativeFioDomainPrice)
             .toNumber(),
           hasCustomDomain: true,
+          domainType: DOMAIN_TYPE.CUSTOM,
+          type: CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
         };
         const fioPrices = convertFioPrices(retObj.costNativeFio, roe);
 
         retObj.costFio = fioPrices.fio;
         retObj.costUsdc = fioPrices.usdc;
-        delete retObj.period;
 
         const retData = updCart.map(item =>
           item.id === firstMatchElem.id ? retObj : item,
