@@ -9,6 +9,7 @@ import {
   CURRENCY_CODES,
   DOMAIN,
 } from '../constants/common';
+import { DOMAIN_TYPE } from '../constants/fio';
 
 import MathOp from './math';
 import api from '../api';
@@ -85,15 +86,18 @@ export const getCartItemsDataForAnalytics = (
     items: cartItems
       .map(cartItem => {
         const item = {
-          item_name: !cartItem.costUsdc
-            ? ANALYTICS_FIO_NAME_TYPE.ADDRESS_FREE
-            : cartItem.type,
-          price: +cartItem.costUsdc,
+          item_name:
+            cartItem.domainType === DOMAIN_TYPE.FREE
+              ? ANALYTICS_FIO_NAME_TYPE.ADDRESS_FREE
+              : cartItem.type,
+          price:
+            cartItem.domainType === DOMAIN_TYPE.FREE ? 0 : +cartItem.costUsdc,
         };
 
         if (cartItem.period > 1) {
           item.price = +(item.price / cartItem.period).toFixed(2);
           const items = [item];
+
           for (let i = 1; i < cartItem.period; i++) {
             items.push({
               item_name: ANALYTICS_FIO_NAME_TYPE.DOMAIN_RENEWAL,
