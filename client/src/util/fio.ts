@@ -326,6 +326,13 @@ export const isDomainExpired = (
   );
 };
 
+export const checkIsDomainItemExistsOnCart = (
+  id: string,
+  cartItem: CartItem,
+): boolean =>
+  cartItem.id === id ||
+  (cartItem.domainType === DOMAIN_TYPE.CUSTOM && cartItem.domain === id);
+
 export const handlePriceForMultiYearFchWithCustomDomain = ({
   costNativeFio,
   nativeFioAddressPrice,
