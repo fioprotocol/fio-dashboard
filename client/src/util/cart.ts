@@ -13,6 +13,7 @@ import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
 
 import { setCartItems } from '../redux/cart/actions';
 
+import { handlePriceForMultiYearFchWithCustomDomain } from './fio';
 import MathOp from './math';
 import { setFioName } from '../utils';
 import { convertFioPrices } from './prices';
@@ -266,14 +267,11 @@ export const updateCartItemPeriod = ({
       const fioPrices =
         period > 1 && newItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
           ? convertFioPrices(
-              new MathOp( // we need multiply only domain, so we subtract address price and then add it back
-                new MathOp(newItem.costNativeFio)
-                  .sub(newItem.nativeFioAddressPrice)
-                  .toNumber(),
-              )
-                .mul(period)
-                .add(newItem.nativeFioAddressPrice)
-                .toNumber(),
+              handlePriceForMultiYearFchWithCustomDomain({
+                costNativeFio: newItem.costNativeFio,
+                nativeFioAddressPrice: newItem.nativeFioAddressPrice,
+                period,
+              }),
               roe,
             )
           : convertFioPrices(
@@ -418,14 +416,11 @@ export const totalCost = (
               ? 0
               : item.period > 1 &&
                 item.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
-              ? new MathOp( // we need multiply only domain, so we subtract address price and then add it back
-                  new MathOp(item.costNativeFio || 0)
-                    .sub(item.nativeFioAddressPrice)
-                    .toNumber(),
-                )
-                  .mul(item.period || 1)
-                  .add(item.nativeFioAddressPrice)
-                  .toNumber()
+              ? handlePriceForMultiYearFchWithCustomDomain({
+                  costNativeFio: item.costNativeFio || 0,
+                  nativeFioAddressPrice: item.nativeFioAddressPrice,
+                  period: item.period || 1,
+                })
               : new MathOp(item.costNativeFio || 0)
                   .mul(item.period || 1)
                   .toNumber();
