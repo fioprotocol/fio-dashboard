@@ -50,6 +50,7 @@ import {
 import { DOMAIN_TYPE } from '../../constants/fio';
 
 import { log } from '../../util/general';
+import { handlePriceForMultiYearFchWithCustomDomain } from '../../util/fio';
 import apis from '../../api';
 
 import { FioRegPricesResponse } from '../../api/responses';
@@ -63,7 +64,6 @@ import {
   Prices,
   WalletBalancesItem,
 } from '../../types';
-import { handlePriceForMultiYearFchWithCustomDomain } from '../../util/fio';
 
 type UseContextReturnType = {
   cartItems: CartItem[];
@@ -347,7 +347,7 @@ export const useContext = (): UseContextReturnType => {
   const onPaymentChoose = async (paymentProvider: PaymentProvider) => {
     setSelectedPaymentProvider(paymentProvider);
     if ((await allowCheckout()) && paymentProvider)
-      await checkout(paymentProvider);
+      return await checkout(paymentProvider);
     setSelectedPaymentProvider(null);
   };
 
