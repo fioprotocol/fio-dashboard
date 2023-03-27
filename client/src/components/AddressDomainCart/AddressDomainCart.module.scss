@@ -74,6 +74,8 @@
       margin-bottom: 10px;
     }
     .itemName {
+      word-break: break-all;
+      margin-right: 15px;
       @include proxima-nova-medium;
     }
   }
