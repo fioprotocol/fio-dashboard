@@ -88,7 +88,7 @@ class EmailsJob extends CommonJob {
 
   async execute() {
     const varsData = await Var.getByKey(VARS_KEYS.IS_OUTBOUND_EMAIL_STOP);
-    const isOutboundStop = varsData === 'false' ? false : true;
+    const isOutboundStop = varsData.dataValues.value === 'false' ? false : true;
 
     if (isOutboundStop) {
       this.postMessage('We have stopped Outbound Emails');
