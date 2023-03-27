@@ -137,7 +137,9 @@ export const useContext = (
         const purchasedItems: CartItem[] = [];
         regItems.forEach(regItem => {
           const { id, period = 1 } = regItem;
-          const purchasedItem = cart.find(cartItem => cartItem.id === id);
+          const purchasedItem = [...oldCart[orderNumber]].find(
+            cartItem => cartItem.id === id,
+          );
           if (purchasedItem) {
             if (
               purchasedItem.id === id &&
@@ -163,6 +165,7 @@ export const useContext = (
           }
         });
         const purchaseItems = getCartItemsDataForAnalytics(purchasedItems);
+
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED, {
           ...purchaseItems,
           payment_type: !purchaseItems.value
