@@ -183,7 +183,7 @@ export const addCartItem = (selectedItem: CartItem) => {
 
   fireAnalyticsEvent(
     ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
-    getCartItemsDataForAnalytics([selectedItem]),
+    getCartItemsDataForAnalytics([newItem]),
   );
 };
 
@@ -294,7 +294,13 @@ export const updateCartItemPeriod = ({
             type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
             period: periodDiff,
             costUsdc: convertFioPrices(
-              new MathOp(newItem.costNativeFio).mul(periodDiff).toNumber(),
+              newItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+                ? handlePriceForMultiYearFchWithCustomDomain({
+                    costNativeFio: newItem.costNativeFio,
+                    nativeFioAddressPrice: newItem.nativeFioAddressPrice,
+                    period: periodDiff,
+                  })
+                : new MathOp(newItem.costNativeFio).mul(periodDiff).toNumber(),
               roe,
             ).usdc,
           },
