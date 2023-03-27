@@ -14,6 +14,7 @@ import { AdminDomain } from '../api/responses';
 import { fireAnalyticsEventDebounced } from './analytics';
 import { setFioName } from '../utils';
 import { log } from '../util/general';
+import MathOp from './math';
 
 import { NON_VAILD_DOMAIN } from '../constants/errors';
 import {
@@ -324,3 +325,24 @@ export const isDomainExpired = (
       new Date(today.setDate(today.getDate() + DOMAIN_EXPIRED_DAYS))
   );
 };
+
+export const checkIsDomainItemExistsOnCart = (
+  id: string,
+  cartItem: CartItem,
+): boolean =>
+  cartItem.id === id ||
+  (cartItem.domainType === DOMAIN_TYPE.CUSTOM && cartItem.domain === id);
+
+export const handlePriceForMultiYearFchWithCustomDomain = ({
+  costNativeFio,
+  nativeFioAddressPrice,
+  period,
+}: {
+  costNativeFio: number;
+  nativeFioAddressPrice: number;
+  period: number | string;
+}): number =>
+  new MathOp(new MathOp(costNativeFio).sub(nativeFioAddressPrice).toNumber())
+    .mul(period)
+    .add(nativeFioAddressPrice)
+    .toNumber();

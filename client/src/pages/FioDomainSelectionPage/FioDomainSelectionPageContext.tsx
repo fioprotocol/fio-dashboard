@@ -16,7 +16,12 @@ import { DOMAIN_ALREADY_EXISTS } from '../../constants/errors';
 import apis from '../../api';
 import useEffectOnce from '../../hooks/general';
 import { convertFioPrices } from '../../util/prices';
-import { checkAddressOrDomainIsExist, vaildateFioDomain } from '../../util/fio';
+import {
+  checkAddressOrDomainIsExist,
+  checkIsDomainItemExistsOnCart,
+  handlePriceForMultiYearFchWithCustomDomain,
+  vaildateFioDomain,
+} from '../../util/fio';
 import { addCartItem } from '../../util/cart';
 import MathOp from '../../util/math';
 
@@ -48,14 +53,14 @@ const handleDomainItem = async ({
   nativeFioDomainPrice: number;
   roe: number;
 }) => {
+  const { name, rank } = domainItem;
+
   const parsedCartItems: CartItem[] = JSON.parse(cartItemsJSON);
-  const existingCartItem = parsedCartItems.find(
-    cartItem => cartItem.id === name,
+  const existingCartItem = parsedCartItems.find(cartItem =>
+    checkIsDomainItemExistsOnCart(name, cartItem),
   );
   const period = existingCartItem ? Number(existingCartItem.period) : 1;
   const costNativeFio = new MathOp(nativeFioDomainPrice).mul(period).toNumber();
-
-  const { name, rank } = domainItem;
 
   const { fio, usdc } = convertFioPrices(costNativeFio, roe);
 
@@ -200,21 +205,25 @@ export const useContext = () => {
     }
 
     const parsedCartItems: CartItem[] = JSON.parse(cartItemsJSON);
-    const existingCartItem = parsedCartItems.find(
-      cartItem => cartItem.id === id,
+    const existingCartItem = parsedCartItems.find(cartItem =>
+      checkIsDomainItemExistsOnCart(id, cartItem),
     );
 
     if (existingCartItem) {
       if (existingCartItem.period === Number(period)) return;
       const fioPrices = convertFioPrices(
-        new MathOp(existingCartItem.costNativeFio).mul(period).toNumber(),
+        handlePriceForMultiYearFchWithCustomDomain({
+          costNativeFio: existingCartItem.costNativeFio,
+          nativeFioAddressPrice: existingCartItem.nativeFioAddressPrice,
+          period,
+        }),
         roe,
       );
 
       dispatch(
         setCartItems(
           parsedCartItems.map(cartItem =>
-            cartItem.id === id
+            checkIsDomainItemExistsOnCart(id, cartItem)
               ? {
                   ...cartItem,
                   period: Number(period),
@@ -355,21 +364,23 @@ export const useContext = () => {
     );
 
     if (parsedSuggestedItem?.id) {
-      const existingCartItemSuggested = parsedCartItems.find(
-        cartItem => cartItem.id === parsedSuggestedItem.id,
+      const existingCartItemSuggested = parsedCartItems.find(cartItem =>
+        checkIsDomainItemExistsOnCart(parsedSuggestedItem.id, cartItem),
       );
 
       setSuggestedItem({
         ...parsedSuggestedItem,
-        period: existingCartItemSuggested?.period || parsedSuggestedItem.period,
+        period: existingCartItemSuggested
+          ? existingCartItemSuggested.period
+          : parsedSuggestedItem.period,
         isSelected: !!existingCartItemSuggested,
       });
     }
 
     setAdditionalItemsList(
       parsedAdditionalItemsList.map(additionalItem => {
-        const existingCartItem = parsedCartItems.find(
-          cartItem => cartItem.id === additionalItem.id,
+        const existingCartItem = parsedCartItems.find(cartItem =>
+          checkIsDomainItemExistsOnCart(additionalItem.id, cartItem),
         );
         return existingCartItem
           ? {

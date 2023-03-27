@@ -13,6 +13,7 @@ import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
 
 import { setCartItems } from '../redux/cart/actions';
 
+import { handlePriceForMultiYearFchWithCustomDomain } from './fio';
 import MathOp from './math';
 import { setFioName } from '../utils';
 import { convertFioPrices } from './prices';
@@ -140,17 +141,42 @@ export const handleFreeAddressCart = ({
 };
 
 export const addCartItem = (selectedItem: CartItem) => {
-  const { domain } = selectedItem || {};
-
   const currentStore = store.getState();
 
   const cartItems: CartItem[] = currentStore.cart.cartItems;
+  const roe = currentStore.registrations.roe;
+
+  let newItem = { ...selectedItem };
+  const {
+    id,
+    costNativeFio,
+    domain,
+    domainType,
+    nativeFioAddressPrice,
+    period,
+    type,
+  } = newItem;
+
+  if (type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN && period > 1) {
+    const nativeFioAmount = handlePriceForMultiYearFchWithCustomDomain({
+      costNativeFio,
+      nativeFioAddressPrice,
+      period,
+    });
+    const { fio, usdc } = convertFioPrices(nativeFioAmount, roe);
+    newItem = {
+      ...newItem,
+      costFio: fio,
+      costUsdc: usdc,
+    };
+  }
 
   const newCartItems = [
-    ...cartItems.filter(
-      (item: CartItem) => item.domain.toLowerCase() !== domain.toLowerCase(),
-    ),
-    selectedItem,
+    ...cartItems.filter((item: CartItem) => {
+      if (domainType === DOMAIN_TYPE.CUSTOM && item.id === domain) return false; // remove domain item if we add custom fch with the same domain
+      return item.id !== id;
+    }),
+    newItem,
   ];
 
   store.dispatch(setCartItems(newCartItems));
@@ -185,7 +211,7 @@ export const deleteCartItem = ({
     );
   }
 
-  const { address, domain, domainType } =
+  const { address, costNativeFio, domain, domainType, period } =
     cartItems.find(item => item.id === id) || {};
   const updCart = cartItems.filter(item => item.id !== id);
 
@@ -202,18 +228,28 @@ export const deleteCartItem = ({
             domain: nativeFioDomainPrice,
           },
         } = prices || { nativeFio: {} };
+
         const retObj = {
           ...firstMatchElem,
-          costNativeFio: new MathOp(nativeFioAddressPrice)
-            .add(nativeFioDomainPrice)
-            .toNumber(),
+          costNativeFio:
+            period > 1
+              ? handlePriceForMultiYearFchWithCustomDomain({
+                  costNativeFio,
+                  nativeFioAddressPrice,
+                  period,
+                })
+              : new MathOp(nativeFioAddressPrice)
+                  .add(nativeFioDomainPrice)
+                  .toNumber(),
           hasCustomDomain: true,
+          domainType: DOMAIN_TYPE.CUSTOM,
+          type: CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
+          period,
         };
         const fioPrices = convertFioPrices(retObj.costNativeFio, roe);
 
         retObj.costFio = fioPrices.fio;
         retObj.costUsdc = fioPrices.usdc;
-        delete retObj.period;
 
         const retData = updCart.map(item =>
           item.id === firstMatchElem.id ? retObj : item,
@@ -268,14 +304,11 @@ export const updateCartItemPeriod = ({
       const fioPrices =
         period > 1 && newItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
           ? convertFioPrices(
-              new MathOp( // we need multiply only domain, so we subtract address price and then add it back
-                new MathOp(newItem.costNativeFio)
-                  .sub(newItem.nativeFioAddressPrice)
-                  .toNumber(),
-              )
-                .mul(period)
-                .add(newItem.nativeFioAddressPrice)
-                .toNumber(),
+              handlePriceForMultiYearFchWithCustomDomain({
+                costNativeFio: newItem.costNativeFio,
+                nativeFioAddressPrice: newItem.nativeFioAddressPrice,
+                period,
+              }),
               roe,
             )
           : convertFioPrices(
@@ -420,14 +453,11 @@ export const totalCost = (
               ? 0
               : item.period > 1 &&
                 item.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
-              ? new MathOp( // we need multiply only domain, so we subtract address price and then add it back
-                  new MathOp(item.costNativeFio || 0)
-                    .sub(item.nativeFioAddressPrice)
-                    .toNumber(),
-                )
-                  .mul(item.period || 1)
-                  .add(item.nativeFioAddressPrice)
-                  .toNumber()
+              ? handlePriceForMultiYearFchWithCustomDomain({
+                  costNativeFio: item.costNativeFio || 0,
+                  nativeFioAddressPrice: item.nativeFioAddressPrice,
+                  period: item.period || 1,
+                })
               : new MathOp(item.costNativeFio || 0)
                   .mul(item.period || 1)
                   .toNumber();

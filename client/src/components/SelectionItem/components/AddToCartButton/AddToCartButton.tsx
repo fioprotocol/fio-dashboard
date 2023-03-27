@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 
@@ -26,29 +26,53 @@ export const AddToCartButton: React.FC<Props> = props => {
     costUsdc,
     nativeFioAddressPrice,
     domainType,
+    hasCustomDomain,
     period,
     type,
     isSelected,
     onClick,
   } = props;
 
-  const selectedItem = {
-    id,
-    allowFree,
-    address,
-    domain,
-    costFio,
-    costNativeFio,
-    costUsdc,
-    nativeFioAddressPrice,
-    domainType,
-    period,
-    type,
-  };
+  const selectedItem = useMemo(
+    () => ({
+      id,
+      allowFree,
+      address,
+      domain,
+      costFio,
+      costNativeFio,
+      costUsdc,
+      domainType,
+      hasCustomDomain,
+      nativeFioAddressPrice,
+      period,
+      type,
+    }),
+    [
+      address,
+      allowFree,
+      costFio,
+      costNativeFio,
+      costUsdc,
+      domain,
+      domainType,
+      hasCustomDomain,
+      id,
+      nativeFioAddressPrice,
+      period,
+      type,
+    ],
+  );
+
+  const onActionClick = useCallback(() => {
+    if (!isSelected) {
+      onClick(selectedItem);
+    }
+  }, [isSelected, onClick, selectedItem]);
 
   return (
     <Button
-      onClick={() => onClick(selectedItem)}
+      onClick={onActionClick}
       className={classnames(classes.button, isSelected && classes.isSelected)}
     >
       <div>

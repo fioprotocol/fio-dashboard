@@ -56,14 +56,16 @@ const SUGGESTED_TYPE: { FIRST: 'first'; SECOND: 'second'; THIRD: 'third' } = {
 } as const;
 
 const handleFCHItems = async ({
-  domainArr,
   address,
+  cartItems,
+  domainArr,
   prices,
   roe,
   setError,
 }: {
-  domainArr: DomainsArrItemType;
   address: string;
+  cartItems: CartItem[];
+  domainArr: DomainsArrItemType;
   prices: Prices;
   roe: number;
   setError: (error: string) => void;
@@ -118,7 +120,15 @@ const handleFCHItems = async ({
           );
         }
 
-        const isCustomDomain = domainType === DOMAIN_TYPE.CUSTOM;
+        const existingCustomDomainFchCartItem = cartItems.find(
+          cartItem =>
+            cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
+            cartItem.domain === domainName &&
+            cartItem.id !== setFioName(addressName, domainName),
+        );
+
+        const isCustomDomain =
+          domainType === DOMAIN_TYPE.CUSTOM && !existingCustomDomainFchCartItem;
 
         const totalNativeFio = isCustomDomain
           ? new MathOp(nativeFioAddressPrice)
@@ -136,7 +146,9 @@ const handleFCHItems = async ({
           costUsdc: usdc,
           costNativeFio: totalNativeFio,
           nativeFioAddressPrice,
-          domainType,
+          domainType: existingCustomDomainFchCartItem
+            ? DOMAIN_TYPE.PREMIUM
+            : domainType,
           isSelected: false,
           isExist:
             isAddressExist ||
@@ -146,6 +158,7 @@ const handleFCHItems = async ({
             ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
             : CART_ITEM_TYPE.ADDRESS,
           allowFree,
+          hasCustomDomain: domainType === DOMAIN_TYPE.CUSTOM,
           rank,
           swapAddressAndDomainPlaces,
         };
@@ -154,25 +167,54 @@ const handleFCHItems = async ({
   ).filter(Boolean);
 };
 
-const handleSeletedDomain = ({
+const handleSelectedDomain = ({
   fchItem,
   cartItems,
   cartHasFreeItem,
   hasFreeAddress,
+  prices,
+  roe,
 }: {
   fchItem: SelectedItemProps;
   cartItems: CartItem[];
   cartHasFreeItem: boolean;
   hasFreeAddress: boolean;
+  prices: Prices;
+  roe: number;
 }) => {
+  const {
+    nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
+  } = prices;
+
   const existingCartItem = cartItems.find(
     cartItem => cartItem.id === fchItem.id,
   );
 
-  const { domainType, allowFree } = fchItem;
+  const existingDomainInCartItem = cartItems.find(
+    cartItem =>
+      fchItem.domainType === DOMAIN_TYPE.CUSTOM &&
+      cartItem.id === fchItem.domain,
+  );
+
+  const existingCustomDomainFchCartItem = cartItems.find(
+    cartItem =>
+      fchItem.hasCustomDomain &&
+      fchItem.domain === cartItem.domain &&
+      fchItem.id !== cartItem.id,
+  );
+
+  const { domainType, allowFree, hasCustomDomain } = fchItem;
+  const isCustomDomainConvertedToPremium =
+    hasCustomDomain && !existingCustomDomainFchCartItem;
+  const isCustomDomain =
+    domainType === DOMAIN_TYPE.CUSTOM && !existingCustomDomainFchCartItem;
 
   const handleDomainType = () => {
-    if (domainType === DOMAIN_TYPE.CUSTOM) return domainType;
+    if (domainType === DOMAIN_TYPE.CUSTOM) {
+      if (existingCustomDomainFchCartItem && !existingCartItem)
+        return DOMAIN_TYPE.PREMIUM;
+      return domainType;
+    }
 
     if (domainType === DOMAIN_TYPE.FREE) {
       if (
@@ -188,16 +230,36 @@ const handleSeletedDomain = ({
     }
 
     if (domainType === DOMAIN_TYPE.PREMIUM) {
+      if (isCustomDomainConvertedToPremium) return DOMAIN_TYPE.CUSTOM;
       if (!allowFree) return domainType;
       if (!cartHasFreeItem && !hasFreeAddress) return DOMAIN_TYPE.FREE;
       return domainType;
     }
   };
 
+  const totalNativeFio =
+    isCustomDomainConvertedToPremium ||
+    domainType === DOMAIN_TYPE.CUSTOM ||
+    (existingCartItem &&
+      existingCartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN)
+      ? new MathOp(nativeFioAddressPrice).add(nativeFioDomainPrice).toNumber()
+      : nativeFioAddressPrice;
+
+  const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
+
   return {
     ...fchItem,
+    costNativeFio: totalNativeFio,
+    costFio: fio,
+    costUsdc: usdc,
+    period: existingDomainInCartItem
+      ? existingDomainInCartItem.period
+      : fchItem.period,
     isSelected: !!existingCartItem,
     domainType: handleDomainType(),
+    type: isCustomDomain
+      ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+      : CART_ITEM_TYPE.ADDRESS,
   };
 };
 
@@ -309,8 +371,15 @@ export const useContext = (): UseContextProps => {
       const parsedNonPremiumDomains = JSON.parse(nonPremiumPublicDomainsJSON);
       const parsedPremiumDomains = JSON.parse(premiumPublicDomainsJSON);
       const parsedCustomDomains = JSON.parse(customDomainsJSON);
+      const parsedCartItems: CartItem[] = JSON.parse(cartItemsJSON);
 
-      const defaultParams = { address, prices, roe, setError };
+      const defaultParams = {
+        address,
+        cartItems: parsedCartItems,
+        prices,
+        roe,
+        setError,
+      };
 
       const validatedUserFCHPromise = handleFCHItems({
         domainArr: parsedUsersDomains,
@@ -468,6 +537,7 @@ export const useContext = (): UseContextProps => {
       toggleLoading(false);
     },
     [
+      cartItemsJSON,
       customDomainsJSON,
       nonPremiumPublicDomainsJSON,
       premiumPublicDomainsJSON,
@@ -517,22 +587,26 @@ export const useContext = (): UseContextProps => {
 
     setSuggestedItemsList(
       parsedSuggestedItemsList.map(suggestedItem =>
-        handleSeletedDomain({
+        handleSelectedDomain({
           fchItem: suggestedItem,
           cartItems: parsedCartItems,
           cartHasFreeItem,
           hasFreeAddress,
+          prices,
+          roe,
         }),
       ),
     );
 
     setAdditionalItemsList(
       parsedAdditionalItemsList.map(additionalItem =>
-        handleSeletedDomain({
+        handleSelectedDomain({
           fchItem: additionalItem,
           cartItems: parsedCartItems,
           cartHasFreeItem,
           hasFreeAddress,
+          prices,
+          roe,
         }),
       ),
     );
@@ -552,6 +626,8 @@ export const useContext = (): UseContextProps => {
     usersItemsListJSON,
     cartHasFreeItem,
     hasFreeAddress,
+    prices,
+    roe,
   ]);
 
   return {

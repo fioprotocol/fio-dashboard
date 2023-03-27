@@ -50,6 +50,21 @@ export const useContext = (
     nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
   } = prices;
 
+  const fchId = setFioName(address, domain);
+
+  const existingCartItem = cartItems.find(cartItem => cartItem.id === fchId);
+
+  const existingFreeCartItem = cartItems.find(
+    cartItems => cartItems.domainType === DOMAIN_TYPE.FREE && !existingCartItem,
+  );
+
+  const existingCustomDomainFchCartItem = cartItems.find(
+    cartItem =>
+      cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
+      cartItem.domain === domain &&
+      !existingCartItem,
+  );
+
   const getPublicDomainsFromChain = async (domain: string) => {
     try {
       const params = apis.fio.setTableRowsParams(domain);
@@ -96,7 +111,7 @@ export const useContext = (
     : [];
   const userDomains = allDomains.userDomains || [];
 
-  const domainType = !isEmpty(allDomains)
+  let domainType = !isEmpty(allDomains)
     ? [
         ...nonPremiumDomains,
         ...premiumDomains,
@@ -117,6 +132,11 @@ export const useContext = (
       ].find(publicDomain => publicDomain.name === domain)?.domainType ||
       DOMAIN_TYPE.CUSTOM
     : DOMAIN_TYPE.CUSTOM;
+  if (
+    (existingFreeCartItem && domainType === DOMAIN_TYPE.FREE) ||
+    (existingCustomDomainFchCartItem && domainType === DOMAIN_TYPE.CUSTOM)
+  )
+    domainType = DOMAIN_TYPE.PREMIUM;
 
   const isCustomDomain = domainType === DOMAIN_TYPE.CUSTOM;
 
@@ -127,7 +147,7 @@ export const useContext = (
   const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
 
   const selectedItemProps = {
-    id: setFioName(address, domain),
+    id: fchId,
     address,
     domain,
     costFio: fio,
@@ -139,6 +159,7 @@ export const useContext = (
     type: isCustomDomain
       ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
       : CART_ITEM_TYPE.ADDRESS,
+    isSelected: !!existingCartItem,
   };
 
   const showPremiumInfoBadge = domainType === DOMAIN_TYPE.PREMIUM;
