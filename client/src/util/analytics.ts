@@ -14,6 +14,8 @@ import { DOMAIN_TYPE } from '../constants/fio';
 import MathOp from './math';
 import api from '../api';
 import { log } from './general';
+import { store } from '../redux/init';
+import { convertFioPrices } from './prices';
 
 import {
   AnyObject,
@@ -77,6 +79,12 @@ export const firePageViewAnalyticsEvent = (
 export const getCartItemsDataForAnalytics = (
   cartItems: CartItem[],
 ): AnyObject => {
+  const currentStore = store.getState();
+  const { prices, roe } = currentStore.registrations;
+  const {
+    nativeFio: { domain: nativeFioDomainPrice },
+  } = prices;
+  const { usdc: usdcDomainPrice } = convertFioPrices(nativeFioDomainPrice, roe);
   return {
     currency: CURRENCY_CODES.USD,
     value: +cartItems.reduce(
@@ -98,13 +106,20 @@ export const getCartItemsDataForAnalytics = (
         };
 
         if (cartItem.period > 1) {
-          item.price = +(item.price / cartItem.period).toFixed(2);
+          if (cartItem.domainType === DOMAIN_TYPE.CUSTOM) {
+            item.price = api.fio.convertFioToUsdc(cartItem.costNativeFio, roe);
+          } else {
+            item.price = +(item.price / cartItem.period).toFixed(2);
+          }
           const items = [item];
 
           for (let i = 1; i < cartItem.period; i++) {
             items.push({
               item_name: ANALYTICS_FIO_NAME_TYPE.DOMAIN_RENEWAL,
-              price: item.price,
+              price:
+                cartItem.domainType === DOMAIN_TYPE.CUSTOM
+                  ? +usdcDomainPrice
+                  : item.price,
             });
           }
 

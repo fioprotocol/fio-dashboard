@@ -20,16 +20,24 @@ import {
   fioWallets as fioWalletsSelector,
   loading as userDomainsLoadingSelector,
 } from '../../redux/fio/selectors';
+import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { ROUTES } from '../../constants/routes';
-import { CART_ITEM_TYPE } from '../../constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_TYPE,
+} from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
 
 import useQuery from '../../hooks/useQuery';
 import useEffectOnce from '../../hooks/general';
 import { addCartItem } from '../../util/cart';
 import { useCheckIfDesktop } from '../../screenType';
+import {
+  fireAnalyticsEvent,
+  getCartItemsDataForAnalytics,
+} from '../../util/analytics';
 
 import { OptionProps } from '../../components/Input/EditableSelect/EditableSelect';
 import { AllDomains, CartItem } from '../../types';
@@ -55,6 +63,7 @@ export const useContext = (): UseContextProps => {
   const publicDomainsLoading = useSelector(publicDomainsLoadingSelector);
   const fioWallets = useSelector(fioWalletsSelector);
   const userDomainsLoading = useSelector(userDomainsLoadingSelector);
+  const cartItems = useSelector(cartItemsSelector);
 
   const queryParams = useQuery();
   const dispatch = useDispatch();
@@ -96,14 +105,16 @@ export const useContext = (): UseContextProps => {
       })) || [];
 
   const onClick = (selectedItem: CartItem) => {
-    addCartItem({
+    const newItem = {
       ...selectedItem,
       allowFree: selectedItem.domainType === DOMAIN_TYPE.FREE,
       type:
         selectedItem.domainType === DOMAIN_TYPE.CUSTOM
           ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
           : CART_ITEM_TYPE.ADDRESS,
-    });
+    };
+
+    addCartItem(newItem);
 
     if (!isAuthenticated) {
       dispatch(setRedirectPath({ pathname: ROUTES.CART }));
@@ -111,6 +122,10 @@ export const useContext = (): UseContextProps => {
         ? dispatch(showLoginModal(ROUTES.CART))
         : history.push(ROUTES.CREATE_ACCOUNT);
     } else {
+      fireAnalyticsEvent(
+        ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
+        getCartItemsDataForAnalytics([...cartItems, newItem]),
+      );
       history.push(ROUTES.CART);
     }
   };

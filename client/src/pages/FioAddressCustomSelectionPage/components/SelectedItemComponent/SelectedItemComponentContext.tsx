@@ -166,6 +166,7 @@ export const useContext = (
       ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
       : CART_ITEM_TYPE.ADDRESS,
     isSelected: !!existingCartItem,
+    hasCustomDomain: isCustomDomain,
   };
 
   const showPremiumInfoBadge = domainType === DOMAIN_TYPE.PREMIUM;
