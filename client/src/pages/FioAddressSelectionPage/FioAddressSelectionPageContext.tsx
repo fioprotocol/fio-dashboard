@@ -124,6 +124,7 @@ const handleFCHItems = async ({
           cartItem =>
             cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
             cartItem.domain === domainName &&
+            !!cartItem.address &&
             cartItem.id !== setFioName(addressName, domainName),
         );
 
@@ -200,6 +201,7 @@ const handleSelectedDomain = ({
     cartItem =>
       fchItem.hasCustomDomain &&
       fchItem.domain === cartItem.domain &&
+      !!cartItem.address &&
       fchItem.id !== cartItem.id,
   );
 
