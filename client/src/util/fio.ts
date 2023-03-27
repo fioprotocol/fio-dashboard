@@ -339,10 +339,16 @@ export const handlePriceForMultiYearFchWithCustomDomain = ({
   period,
 }: {
   costNativeFio: number;
-  nativeFioAddressPrice: number;
+  nativeFioAddressPrice?: number;
   period: number | string;
-}): number =>
-  new MathOp(new MathOp(costNativeFio).sub(nativeFioAddressPrice).toNumber())
+}): number => {
+  if (!nativeFioAddressPrice)
+    return new MathOp(costNativeFio).mul(period).toNumber();
+
+  return new MathOp(
+    new MathOp(costNativeFio).sub(nativeFioAddressPrice).toNumber(),
+  )
     .mul(period)
     .add(nativeFioAddressPrice)
     .toNumber();
+};

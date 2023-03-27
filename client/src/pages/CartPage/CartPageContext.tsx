@@ -44,6 +44,7 @@ import { ROUTES } from '../../constants/routes';
 import {
   ANALYTICS_EVENT_ACTIONS,
   CART_ITEM_TYPE,
+  CART_ITEM_TYPES_WITH_PERIOD,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
@@ -62,6 +63,7 @@ import {
   Prices,
   WalletBalancesItem,
 } from '../../types';
+import { handlePriceForMultiYearFchWithCustomDomain } from '../../util/fio';
 
 type UseContextReturnType = {
   cartItems: CartItem[];
@@ -246,17 +248,27 @@ export const useContext = (): UseContextReturnType => {
         retObj.costNativeFio = updatedFioAddressPrice;
       }
 
-      if (!!item.address && item.domainType === DOMAIN_TYPE.CUSTOM) {
+      const isCustomDomainItem =
+        !!item.address && item.domainType === DOMAIN_TYPE.CUSTOM;
+
+      if (isCustomDomainItem) {
         retObj.costNativeFio = new MathOp(retObj.costNativeFio)
           .add(updatedFioDomainPrice)
           .toNumber();
       }
 
       const period = retObj.period || 1;
-      const fioPrices = convertFioPrices(
-        new MathOp(retObj.costNativeFio).mul(period).toNumber(),
-        updatedRoe,
-      );
+      const fioPrices = CART_ITEM_TYPES_WITH_PERIOD.includes(retObj.type)
+        ? convertFioPrices(
+            handlePriceForMultiYearFchWithCustomDomain({
+              costNativeFio: retObj.costNativeFio,
+              nativeFioAddressPrice:
+                isCustomDomainItem && updatedFioAddressPrice,
+              period,
+            }),
+            roe,
+          )
+        : convertFioPrices(retObj.costNativeFio, updatedRoe);
 
       retObj.costFio = fioPrices.fio;
       retObj.costUsdc = fioPrices.usdc;
