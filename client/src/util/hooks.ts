@@ -95,14 +95,14 @@ export function useFioWallet(
       const selected = getElementByFioName({ fioNameList, name });
       setPublicKey((selected && selected.walletPublicKey) || '');
     }
-  }, [wallets, fioNameList, name]);
+  }, [wallets, fioNameList, name, isAuth]);
 
   useEffect(() => {
     if (publicKey != null && publicKey) {
       dispatch(refreshBalance(publicKey));
       setWalletSetting(false);
     }
-  }, [publicKey]);
+  }, [publicKey, dispatch]);
 
   // FioWalletDoublet
   const wallet: FioWalletDoublet =

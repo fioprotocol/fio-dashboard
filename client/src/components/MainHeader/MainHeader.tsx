@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useHistory } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { MainHeaderContainer } from '../MainHeaderContainer';
@@ -17,6 +18,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     isMaintenance,
   } = props;
   const [isMenuOpen, toggleMenuOpen] = useState(false);
+  const history = useHistory();
 
   const closeMenu = useCallback(() => {
     toggleMenuOpen(false);
@@ -30,11 +32,13 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
   const logout = useCallback(() => {
     closeMenu();
     logoutFn();
-  }, [closeMenu, logoutFn]);
+    history.push('/logout=true');
+  }, [closeMenu, logoutFn, history]);
 
   useEffect(() => {
     const url = new URL(window.location.href);
-    const isSilentLogout = url.searchParams.get('logout') === 'silent';
+    const isLogout = url.searchParams.get('logout');
+    const isSilentLogout = isLogout === 'silent';
     if (isSilentLogout) return;
 
     if (
@@ -42,7 +46,8 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
       !isAuthenticated &&
       locationState &&
       locationState.from &&
-      locationState.from.pathname
+      locationState.from.pathname &&
+      !isLogout
     ) {
       showLogin();
     }
