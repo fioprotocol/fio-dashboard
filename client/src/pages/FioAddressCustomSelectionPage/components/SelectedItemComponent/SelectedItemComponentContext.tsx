@@ -16,6 +16,7 @@ import MathOp from '../../../../util/math';
 import { convertFioPrices } from '../../../../util/prices';
 import { setFioName } from '../../../../utils';
 import {
+  checkIsDomainItemExistsOnCart,
   transformCustomDomains,
   transformNonPremiumDomains,
   transformPremiumDomains,
@@ -58,10 +59,15 @@ export const useContext = (
     cartItems => cartItems.domainType === DOMAIN_TYPE.FREE && !existingCartItem,
   );
 
+  const existingDomainInCartItem = cartItems.find(cartItem =>
+    checkIsDomainItemExistsOnCart(domain, cartItem),
+  );
+
   const existingCustomDomainFchCartItem = cartItems.find(
     cartItem =>
       cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
       cartItem.domain === domain &&
+      !!cartItem.address &&
       !existingCartItem,
   );
 
@@ -155,7 +161,7 @@ export const useContext = (
     costNativeFio: totalNativeFio,
     nativeFioAddressPrice,
     domainType,
-    period: 1,
+    period: existingDomainInCartItem ? existingDomainInCartItem.period : 1,
     type: isCustomDomain
       ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
       : CART_ITEM_TYPE.ADDRESS,
