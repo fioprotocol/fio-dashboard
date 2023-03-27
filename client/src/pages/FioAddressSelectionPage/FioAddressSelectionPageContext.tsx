@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { refreshFioNames } from '../../redux/fio/actions';
 import { getDomains } from '../../redux/registrations/actions';
+import { loadProfile } from '../../redux/profile/actions';
 
 import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
@@ -350,6 +351,10 @@ export const useContext = (): UseContextProps => {
   const additionalItemsListJSON = JSON.stringify(additionalItemsList);
   const suggestedItemsListJSON = JSON.stringify(suggestedItemsList);
   const usersItemsListJSON = JSON.stringify(usersItemsList);
+
+  useEffect(() => {
+    dispatch(loadProfile());
+  }, [dispatch]);
 
   const validateAddress = useCallback(
     async (address: string) => {
