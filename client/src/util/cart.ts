@@ -97,7 +97,13 @@ export const removeFreeCart = ({
     }
 
     const fioPrices = convertFioPrices(
-      new MathOp(item.costNativeFio).mul(item.period || 1).toNumber() || 0,
+      item.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN && item.period > 1
+        ? handlePriceForMultiYearFchWithCustomDomain({
+            costNativeFio: item.costNativeFio,
+            nativeFioAddressPrice: item.nativeFioAddressPrice,
+            period: item.period,
+          })
+        : new MathOp(item.costNativeFio).mul(item.period || 1).toNumber() || 0,
       roe,
     );
     item.costFio = fioPrices.fio;
@@ -278,6 +284,8 @@ export const updateCartItemPeriod = ({
     const newItem = {
       ...item,
     };
+    const isMultipleYearCustomDomain =
+      period > 1 && newItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
     if (
       newItem.id === id &&
       CART_ITEM_TYPES_WITH_PERIOD.includes(newItem.type) &&
@@ -294,12 +302,11 @@ export const updateCartItemPeriod = ({
             type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
             period: periodDiff,
             costUsdc: convertFioPrices(
-              newItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
-                ? handlePriceForMultiYearFchWithCustomDomain({
-                    costNativeFio: newItem.costNativeFio,
-                    nativeFioAddressPrice: newItem.nativeFioAddressPrice,
-                    period: periodDiff,
-                  })
+              isMultipleYearCustomDomain
+                ? new MathOp(newItem.costNativeFio)
+                    .sub(newItem.nativeFioAddressPrice)
+                    .mul(newItem.costNativeFio)
+                    .toNumber()
                 : new MathOp(newItem.costNativeFio).mul(periodDiff).toNumber(),
               roe,
             ).usdc,
