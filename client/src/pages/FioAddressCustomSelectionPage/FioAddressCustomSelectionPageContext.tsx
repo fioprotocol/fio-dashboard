@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
@@ -95,6 +95,9 @@ export const useContext = (): UseContextProps => {
       defaultInitialLink + `?${QUERY_PARAMS_NAMES.ADDRESS}=${addressParam}`;
 
   const [link, setLink] = useState<string>(defaultInitialLink);
+  const [hasItemAddedToCart, toggleHasItemAddedToCart] = useState<boolean>(
+    false,
+  );
 
   const options =
     allDomains?.userDomains
@@ -104,7 +107,7 @@ export const useContext = (): UseContextProps => {
         label: userDomain.name,
       })) || [];
 
-  const onClick = (selectedItem: CartItem) => {
+  const onClick = useCallback((selectedItem: CartItem) => {
     const newItem = {
       ...selectedItem,
       allowFree: selectedItem.domainType === DOMAIN_TYPE.FREE,
@@ -116,19 +119,8 @@ export const useContext = (): UseContextProps => {
 
     addCartItem(newItem);
 
-    if (!isAuthenticated) {
-      dispatch(setRedirectPath({ pathname: ROUTES.CART }));
-      lastAuthData
-        ? dispatch(showLoginModal(ROUTES.CART))
-        : history.push(ROUTES.CREATE_ACCOUNT);
-    } else {
-      fireAnalyticsEvent(
-        ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
-        getCartItemsDataForAnalytics([...cartItems, newItem]),
-      );
-      history.push(ROUTES.CART);
-    }
-  };
+    toggleHasItemAddedToCart(true);
+  }, []);
 
   const onFieldChange = (value: string) => {
     if (!value) {
@@ -151,6 +143,30 @@ export const useContext = (): UseContextProps => {
       dispatch(refreshFioNames(fioWallet.publicKey));
     }
   }, [dispatch, fioWallets]);
+
+  useEffect(() => {
+    if (hasItemAddedToCart) {
+      if (!isAuthenticated) {
+        dispatch(setRedirectPath({ pathname: ROUTES.CART }));
+        lastAuthData
+          ? dispatch(showLoginModal(ROUTES.CART))
+          : history.push(ROUTES.CREATE_ACCOUNT);
+      } else {
+        fireAnalyticsEvent(
+          ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
+          getCartItemsDataForAnalytics(cartItems),
+        );
+        history.push(ROUTES.CART);
+      }
+    }
+  }, [
+    cartItems,
+    dispatch,
+    hasItemAddedToCart,
+    history,
+    isAuthenticated,
+    lastAuthData,
+  ]);
 
   return {
     allDomains,
