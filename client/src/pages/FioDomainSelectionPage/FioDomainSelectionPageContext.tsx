@@ -24,6 +24,7 @@ import {
 } from '../../util/fio';
 import { addCartItem } from '../../util/cart';
 import MathOp from '../../util/math';
+import { fireAnalyticsEventDebounced } from '../../util/analytics';
 
 import { SearchTerm } from '../../api/responses';
 import { SelectedItemProps } from '../FioAddressSelectionPage/types';
@@ -64,7 +65,10 @@ const handleDomainItem = async ({
 
   const { fio, usdc } = convertFioPrices(costNativeFio, roe);
 
-  const isDomainExist = await checkAddressOrDomainIsExist({ domain: name });
+  const isDomainExist = await checkAddressOrDomainIsExist({
+    domain: name,
+    fireAnalytics: fireAnalyticsEventDebounced,
+  });
 
   return {
     id: name,

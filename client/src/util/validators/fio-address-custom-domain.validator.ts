@@ -86,6 +86,7 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
     const isAddressExist = await checkAddressOrDomainIsExist({
       address,
       domain,
+      fireAnalytics: fireAnalyticsEventDebounced,
     });
     if (address && isAddressExist) {
       succeeded = false;
