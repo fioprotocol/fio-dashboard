@@ -11,7 +11,6 @@ import {
 
 import apis from '../api';
 import { AdminDomain } from '../api/responses';
-import { fireAnalyticsEventDebounced } from './analytics';
 import { setFioName } from '../utils';
 import { log } from '../util/general';
 import MathOp from './math';
@@ -87,18 +86,18 @@ export const validateFioAddress = async (address: string, domain: string) => {
 export const checkAddressOrDomainIsExist = async ({
   address,
   domain,
+  fireAnalytics,
 }: {
   address?: string;
   domain: string;
+  fireAnalytics: (eventName: string) => void;
 }) => {
   if (domain) {
     try {
-      fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
+      fireAnalytics(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
       const isAvail = await apis.fio.availCheck(setFioName(address, domain));
       if (isAvail && isAvail.is_registered === 1) {
-        fireAnalyticsEventDebounced(
-          ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
-        );
+        fireAnalytics(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED);
         return true;
       } else {
         return false;

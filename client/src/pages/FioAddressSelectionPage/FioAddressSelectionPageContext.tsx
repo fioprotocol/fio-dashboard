@@ -105,6 +105,7 @@ const handleFCHItems = async ({
         const isAddressExist = await checkAddressOrDomainIsExist({
           address: addressName,
           domain: domainName,
+          fireAnalytics: fireAnalyticsEventDebounced,
         });
 
         let isUsernameOnCustomDomainExist = null;
@@ -112,6 +113,7 @@ const handleFCHItems = async ({
         if (swapAddressAndDomainPlaces) {
           isUsernameOnCustomDomainExist = await checkAddressOrDomainIsExist({
             domain: domainName,
+            fireAnalytics: fireAnalyticsEventDebounced,
           });
         }
 
