@@ -17,7 +17,7 @@ import { CONTAINED_FLOW_NOTIFICATION_MESSAGES } from '../../constants/containedF
 import { ROUTES } from '../../constants/routes';
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
 
-import { fireAnalyticsEvent } from '../../util/analytics';
+import { fireAnalyticsEventDebounced } from '../../util/analytics';
 
 import { Action } from '../types';
 import { ContainedFlowQueryParams } from '../../types';
@@ -56,6 +56,6 @@ export function* cartWasCleared(): Generator {
       );
     }
 
-    fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.CART_EMPTIED);
+    fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.CART_EMPTIED);
   });
 }
