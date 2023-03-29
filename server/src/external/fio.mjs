@@ -135,12 +135,16 @@ class Fio {
   }
 
   async registrationFee(forDomain = false) {
-    const publicFioSDK = await this.getPublicFioSDK();
+    try {
+      const publicFioSDK = await this.getPublicFioSDK();
 
-    const { fee } = await publicFioSDK.getFee(
-      forDomain ? EndPoint.registerFioDomain : EndPoint.registerFioAddress,
-    );
-    return fee;
+      const { fee } = await publicFioSDK.getFee(
+        forDomain ? EndPoint.registerFioDomain : EndPoint.registerFioAddress,
+      );
+      return fee;
+    } catch (e) {
+      logger.error('Get Registration Fee Error: ', e);
+    }
   }
 
   async getRawAbi() {
@@ -157,20 +161,21 @@ class Fio {
       return;
     }
 
-    const fioPublicSdk = await fioApi.getPublicFioSDK();
     const abisObj = {};
     for (const accountName of Constants.rawAbiAccountName) {
-      if (!Transactions.abiMap.get(accountName)) {
-        try {
+      try {
+        const fioPublicSdk = await fioApi.getPublicFioSDK();
+
+        if (!Transactions.abiMap.get(accountName)) {
           const abiResponse = await fioPublicSdk.getAbi(accountName);
           Transactions.abiMap.set(abiResponse.account_name, abiResponse);
           abisObj[accountName] = {
             name: abiResponse.account_name,
             response: abiResponse,
           };
-        } catch (e) {
-          logger.error('Raw Abi Error:', e);
         }
+      } catch (e) {
+        logger.error('Raw Abi Error:', e);
       }
     }
     await Var.setValue(ABIS_VAR_KEY, JSON.stringify(abisObj));
@@ -238,7 +243,7 @@ class Fio {
 
       return fee;
     } catch (e) {
-      this.logError(e);
+      this.logError('Get fee error', e);
     }
 
     return null;
@@ -333,20 +338,24 @@ class Fio {
         } catch (e) {}
       }
     }
+    try {
+      if (!prices) {
+        const registrationAddressFeePromise = this.registrationFee();
+        const registrationDomainFeePromise = this.registrationFee(true);
+        const renewDomainFeePromise = this.getFee(FIO_ACTIONS.renewFioDomain);
+        const addBundlesFeePromise = this.getFee(FIO_ACTIONS.addBundledTransactions);
 
-    if (!prices) {
-      const registrationAddressFeePromise = this.registrationFee();
-      const registrationDomainFeePromise = this.registrationFee(true);
-      const renewDomainFeePromise = this.getFee(FIO_ACTIONS.renewFioDomain);
-      const addBundlesFeePromise = this.getFee(FIO_ACTIONS.addBundledTransactions);
+        prices = {
+          address: await registrationAddressFeePromise,
+          domain: await registrationDomainFeePromise,
+          renewDomain: await renewDomainFeePromise,
+          addBundles: await addBundlesFeePromise,
+        };
 
-      prices = {
-        address: await registrationAddressFeePromise,
-        domain: await registrationDomainFeePromise,
-        renewDomain: await renewDomainFeePromise,
-        addBundles: await addBundlesFeePromise,
-      };
-      await Var.setValue(PRICES_VAR_KEY, JSON.stringify(prices));
+        await Var.setValue(PRICES_VAR_KEY, JSON.stringify(prices));
+      }
+    } catch (e) {
+      logger.error('Get Prices Error: ', e);
     }
 
     return prices;
