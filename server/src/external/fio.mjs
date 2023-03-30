@@ -371,6 +371,11 @@ class Fio {
         `Missmatch of preffered FIO chain: ${process.env.FIO_CHAIN_ID} and Public FIO SDK chain: ${chainId.chain_id}`,
       );
   }
+
+  async getActor(publicKey) {
+    const publicFioSDK = await this.getPublicFioSDK();
+    return publicFioSDK.transactions.getActor(publicKey);
+  }
 }
 
 export const fioApi = new Fio();
