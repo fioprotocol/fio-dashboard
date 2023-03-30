@@ -19,7 +19,6 @@ export class Notification extends Base {
   }
   static get CONTENT_TYPE() {
     return {
-      RECOVERY_PASSWORD: 'RECOVERY_PASSWORD',
       ACCOUNT_CONFIRMATION: 'ACCOUNT_CONFIRMATION',
       ACCOUNT_CREATE: 'ACCOUNT_CREATE',
       BALANCE_CHANGED: 'BALANCE_CHANGED',
@@ -41,11 +40,6 @@ export class Notification extends Base {
       this.CONTENT_TYPE.FIO_REQUEST_REJECTED,
       this.CONTENT_TYPE.PURCHASE_CONFIRMATION,
     ];
-  }
-  static get ACTION() {
-    return {
-      RECOVERY: 'RECOVERY',
-    };
   }
 
   static init(sequelize) {

@@ -52,6 +52,7 @@ export type CartItem = {
   costNativeFio?: number;
   costFio?: string;
   costUsdc?: string;
+  nativeFioAddressPrice?: number;
   hasCustomDomain?: boolean;
   period?: number;
   allowFree?: boolean;
@@ -330,7 +331,6 @@ export type User = {
   freeAddresses: { name: string }[];
   id: string;
   role: string;
-  secretSetNotification: boolean;
   status: string;
   secretSet?: boolean;
   newEmail?: boolean;
@@ -529,7 +529,10 @@ export type RedirectLinkData = {
 };
 
 export type PrivateRedirectLocationState = {
-  from?: { pathname?: string; search?: string };
+  from?: {
+    pathname?: string;
+    search?: string;
+  };
   options?: { setKeysForAction?: boolean };
 };
 
@@ -644,6 +647,7 @@ export type FioAccountProfile = {
   name: string;
   accountType?: FioAccountProfileType;
   createdAt: string;
+  referenceToPartners: boolean;
 };
 
 export type AdminUserProfile = {

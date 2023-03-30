@@ -50,10 +50,12 @@ export default function configureStore(api: Api, history: History): Store {
         cart: {
           cartItems: store.getState().cart.cartItems,
           date: store.getState().cart.date,
+          oldCart: store.getState().cart.oldCart,
         },
         profile: {
           lastAuthData: store.getState().profile.lastAuthData,
           lastActivityDate: store.getState().profile.lastActivityDate,
+          isNewUser: store.getState().profile.isNewUser,
         },
         edge: {
           hasTwoFactorAuth: store.getState().edge.hasTwoFactorAuth,

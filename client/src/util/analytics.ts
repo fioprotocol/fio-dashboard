@@ -9,10 +9,13 @@ import {
   CURRENCY_CODES,
   DOMAIN,
 } from '../constants/common';
+import { DOMAIN_TYPE } from '../constants/fio';
 
 import MathOp from './math';
 import api from '../api';
 import { log } from './general';
+import { store } from '../redux/init';
+import { convertFioPrices } from './prices';
 
 import {
   AnyObject,
@@ -76,28 +79,47 @@ export const firePageViewAnalyticsEvent = (
 export const getCartItemsDataForAnalytics = (
   cartItems: CartItem[],
 ): AnyObject => {
+  const currentStore = store.getState();
+  const { prices, roe } = currentStore.registrations;
+  const {
+    nativeFio: { domain: nativeFioDomainPrice },
+  } = prices;
+  const { usdc: usdcDomainPrice } = convertFioPrices(nativeFioDomainPrice, roe);
   return {
     currency: CURRENCY_CODES.USD,
     value: +cartItems.reduce(
-      (sum, item) => new MathOp(sum).add(item.costUsdc || 0).toNumber(),
+      (sum, item) =>
+        new MathOp(sum)
+          .add(item.domainType === DOMAIN_TYPE.FREE ? 0 : item.costUsdc)
+          .toNumber(),
       0,
     ),
     items: cartItems
       .map(cartItem => {
         const item = {
-          item_name: !cartItem.costUsdc
-            ? ANALYTICS_FIO_NAME_TYPE.ADDRESS_FREE
-            : cartItem.type,
-          price: +cartItem.costUsdc,
+          item_name:
+            cartItem.domainType === DOMAIN_TYPE.FREE
+              ? ANALYTICS_FIO_NAME_TYPE.ADDRESS_FREE
+              : cartItem.type,
+          price:
+            cartItem.domainType === DOMAIN_TYPE.FREE ? 0 : +cartItem.costUsdc,
         };
 
         if (cartItem.period > 1) {
-          item.price = +(item.price / cartItem.period).toFixed(2);
+          if (cartItem.domainType === DOMAIN_TYPE.CUSTOM) {
+            item.price = api.fio.convertFioToUsdc(cartItem.costNativeFio, roe);
+          } else {
+            item.price = +(item.price / cartItem.period).toFixed(2);
+          }
           const items = [item];
+
           for (let i = 1; i < cartItem.period; i++) {
             items.push({
               item_name: ANALYTICS_FIO_NAME_TYPE.DOMAIN_RENEWAL,
-              price: item.price,
+              price:
+                cartItem.domainType === DOMAIN_TYPE.CUSTOM
+                  ? +usdcDomainPrice
+                  : item.price,
             });
           }
 

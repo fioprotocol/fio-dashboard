@@ -56,6 +56,8 @@ export const adminProfileRefreshed = (state: ReduxState): boolean =>
 export const changeRecoveryQuestionsResults = (
   state: ReduxState,
 ): { status?: number } => state[prefix].changeRecoveryQuestionsResults;
+export const isNewUser = (state: ReduxState): boolean =>
+  state[prefix].isNewUser;
 
 export const isAuthenticated = createSelector(user, user => !!user);
 export const isAdminAuthenticated = createSelector(

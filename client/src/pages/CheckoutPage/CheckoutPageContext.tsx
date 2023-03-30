@@ -20,7 +20,7 @@ import {
 } from '../../redux/fio/selectors';
 import {
   cartHasItemsWithPrivateDomain as cartHasItemsWithPrivateDomainSelector,
-  cartItems as CartItemsSelector,
+  cartItems as cartItemsSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
 import {
@@ -114,7 +114,7 @@ export const useContext = (): {
   const fioLoading = useSelector(fioLoadingSelector);
   const fioWalletsBalances = useSelector(fioWalletsBalancesSelector);
   const privateDomains = useSelector(privateDomainsSelector);
-  const cartItems = useSelector(CartItemsSelector);
+  const cartItems = useSelector(cartItemsSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const noProfileLoaded = useSelector(noProfileLoadedSelector);
   const isAuth = useSelector(isAuthenticatedSelector);

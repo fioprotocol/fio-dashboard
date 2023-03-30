@@ -13,7 +13,6 @@ import indacoinLogoSrc from '../../assets/images/indacoin-logo.svg';
 import moneroLogoSrc from '../../assets/images/monero-logo.svg';
 import binanceLogoSrc from '../../assets/images/binance-logo.svg';
 import whiteBitLogoSrc from '../../assets/images/wb-logo.svg';
-import liquidLogoSrc from '../../assets/images/liquid-logo.svg';
 import gateLogoSrc from '../../assets/images/gate-logo.svg';
 import changellyLogoSrc from '../../assets/images/changelly-logo.svg';
 import bitMartLogoSrc from '../../assets/images/bit-mart-logo.svg';
@@ -48,11 +47,6 @@ const exchangesPartners: Partner[] = [
     name: 'WhiteBIT',
     link: 'https://whitebit.com/',
     image: whiteBitLogoSrc,
-  },
-  {
-    name: 'Liquid',
-    link: 'https://www.liquid.com/',
-    image: liquidLogoSrc,
   },
   {
     name: 'Gate.io',

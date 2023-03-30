@@ -39,6 +39,19 @@ export class FioAccountProfile extends Base {
         sequelize,
         tableName: 'fio-account-profiles',
         paranoid: true,
+        getterMethods: {
+          referenceToPartners() {
+            // Check if this FioAccountProfile id exists in ReferrerProfile table
+            return sequelize.models.ReferrerProfile.findOne({
+              where: {
+                [Op.or]: [
+                  { freeFioAccountProfileId: this.id },
+                  { paidFioAccountProfileId: this.id },
+                ],
+              },
+            }).then(result => !!result);
+          },
+        },
       },
     );
   }
@@ -101,12 +114,22 @@ export class FioAccountProfile extends Base {
     return this.count();
   }
 
-  static list(limit = 25, offset = 0) {
-    return this.findAll({
+  static async list(limit = 25, offset = 0) {
+    const fioAccountProfiles = await this.findAll({
       order: [['createdAt', 'DESC']],
       limit: limit ? limit : undefined,
       offset,
     });
+
+    const fioAccountProfileJSONs = await Promise.all(
+      fioAccountProfiles.map(async fioAccountProfile => {
+        const fioAccountProfileJSON = fioAccountProfile.toJSON();
+        fioAccountProfileJSON.referenceToPartners = await fioAccountProfile.referenceToPartners;
+        return fioAccountProfileJSON;
+      }),
+    );
+
+    return fioAccountProfileJSONs;
   }
 
   static format({ id, name, actor, permission, accountType }) {

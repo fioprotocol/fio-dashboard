@@ -18,7 +18,7 @@ import classes from './UIView.module.scss';
 const DesktopView: React.FC<DefaultProps> = props => {
   const {
     fioNameList,
-    isExpired,
+    isDomainExpired,
     pageName,
     showInfoBadge,
     toggleShowInfoBadge,
@@ -80,8 +80,9 @@ const DesktopView: React.FC<DefaultProps> = props => {
         </div>
         <div className={classes.tableCol}>
           <DateComponent
+            domainName={name}
             expiration={expiration}
-            isExpired={isExpired}
+            isExpired={isDomainExpired}
             toggleShowWarnBadge={toggleShowWarnBadge}
           />
         </div>

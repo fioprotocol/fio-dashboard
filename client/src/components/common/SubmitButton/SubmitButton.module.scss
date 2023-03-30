@@ -30,6 +30,11 @@
     justify-content: center;
   }
 
+  &.hasNoSidePaddings > div {
+    min-width: auto;
+    padding: 0;
+  }
+
   &.topMargin {
     margin-top: 30px;
   }
@@ -61,6 +66,33 @@
 
     &:hover {
       border: 1px solid $white;
+    }
+  }
+
+  &.isTransparent {
+    background-color: transparent;
+  }
+
+  &.hasWhiteHoverBackground {
+    &:hover {
+      background-color: $white; 
+    }
+  }
+
+  &.hasHoveredBlackTextColor {
+    &:hover {
+      color: $baltic-sea;
+    }
+  }
+
+  &.isWhite {
+    background-color: $white;
+    border-color: $white;
+    color: $baltic-sea;
+
+    &:hover {
+      background-color: $milk;
+      border-color: $milk;
     }
   }
 
@@ -104,6 +136,16 @@
     }
   }
 
+  &.isRed {
+    border: $warn-red;
+    background-color: $warn-red;
+
+    &:hover {
+      border: $simple-red;
+      background-color: $simple-red;
+    }
+  }
+
   &.disabled {
     cursor: not-allowed;
   }
@@ -117,12 +159,18 @@
     padding: 0;
   }
 
+  &.hasAutoHeight {
+    height: auto;
+    padding: 0;
+  }
+
   &.hasBoldText {
     @include proxima-nova-bold;
   }
 
   &.hasSmallText {
     font-size: 0.875em;
+    line-height: 0.875em;
   }
 
   .loader {

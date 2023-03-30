@@ -13,6 +13,7 @@ import { CART_ITEM_DESCRIPTOR } from '../constants/labels';
 
 import { setCartItems } from '../redux/cart/actions';
 
+import { handlePriceForMultiYearFchWithCustomDomain } from './fio';
 import MathOp from './math';
 import { setFioName } from '../utils';
 import { convertFioPrices } from './prices';
@@ -25,6 +26,7 @@ import {
   OrderItem,
   Prices,
 } from '../types';
+import { CreateOrderActionItem } from '../redux/types';
 
 export const setFreeCart = ({
   cartItems,
@@ -95,7 +97,13 @@ export const removeFreeCart = ({
     }
 
     const fioPrices = convertFioPrices(
-      new MathOp(item.costNativeFio).mul(item.period || 1).toNumber() || 0,
+      item.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN && item.period > 1
+        ? handlePriceForMultiYearFchWithCustomDomain({
+            costNativeFio: item.costNativeFio,
+            nativeFioAddressPrice: item.nativeFioAddressPrice,
+            period: item.period,
+          })
+        : new MathOp(item.costNativeFio).mul(item.period || 1).toNumber() || 0,
       roe,
     );
     item.costFio = fioPrices.fio;
@@ -139,24 +147,49 @@ export const handleFreeAddressCart = ({
 };
 
 export const addCartItem = (selectedItem: CartItem) => {
-  const { domain } = selectedItem || {};
-
   const currentStore = store.getState();
 
   const cartItems: CartItem[] = currentStore.cart.cartItems;
+  const roe = currentStore.registrations.roe;
+
+  let newItem = { ...selectedItem };
+  const {
+    id,
+    costNativeFio,
+    domain,
+    domainType,
+    nativeFioAddressPrice,
+    period,
+    type,
+  } = newItem;
+
+  if (type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN && period > 1) {
+    const nativeFioAmount = handlePriceForMultiYearFchWithCustomDomain({
+      costNativeFio,
+      nativeFioAddressPrice,
+      period,
+    });
+    const { fio, usdc } = convertFioPrices(nativeFioAmount, roe);
+    newItem = {
+      ...newItem,
+      costFio: fio,
+      costUsdc: usdc,
+    };
+  }
 
   const newCartItems = [
-    ...cartItems.filter(
-      (item: CartItem) => item.domain !== domain.toLowerCase(),
-    ),
-    selectedItem,
+    ...cartItems.filter((item: CartItem) => {
+      if (domainType === DOMAIN_TYPE.CUSTOM && item.id === domain) return false; // remove domain item if we add custom fch with the same domain
+      return item.id !== id;
+    }),
+    newItem,
   ];
 
   store.dispatch(setCartItems(newCartItems));
 
   fireAnalyticsEvent(
     ANALYTICS_EVENT_ACTIONS.ADD_ITEM_TO_CART,
-    getCartItemsDataForAnalytics([selectedItem]),
+    getCartItemsDataForAnalytics([newItem]),
   );
 };
 
@@ -184,7 +217,7 @@ export const deleteCartItem = ({
     );
   }
 
-  const { address, domain, domainType } =
+  const { address, domain, domainType, period } =
     cartItems.find(item => item.id === id) || {};
   const updCart = cartItems.filter(item => item.id !== id);
 
@@ -201,18 +234,28 @@ export const deleteCartItem = ({
             domain: nativeFioDomainPrice,
           },
         } = prices || { nativeFio: {} };
+
         const retObj = {
           ...firstMatchElem,
-          costNativeFio: new MathOp(nativeFioAddressPrice)
-            .add(nativeFioDomainPrice)
+          costNativeFio: new MathOp(nativeFioDomainPrice)
+            .add(nativeFioAddressPrice)
             .toNumber(),
           hasCustomDomain: true,
+          domainType: DOMAIN_TYPE.CUSTOM,
+          type: CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN,
+          period,
         };
-        const fioPrices = convertFioPrices(retObj.costNativeFio, roe);
+        const fioPrices = convertFioPrices(
+          handlePriceForMultiYearFchWithCustomDomain({
+            costNativeFio: retObj.costNativeFio,
+            nativeFioAddressPrice,
+            period,
+          }),
+          roe,
+        );
 
         retObj.costFio = fioPrices.fio;
         retObj.costUsdc = fioPrices.usdc;
-        delete retObj.period;
 
         const retData = updCart.map(item =>
           item.id === firstMatchElem.id ? retObj : item,
@@ -241,6 +284,8 @@ export const updateCartItemPeriod = ({
     const newItem = {
       ...item,
     };
+    const isMultipleYearCustomDomain =
+      period > 1 && newItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
     if (
       newItem.id === id &&
       CART_ITEM_TYPES_WITH_PERIOD.includes(newItem.type) &&
@@ -257,17 +302,32 @@ export const updateCartItemPeriod = ({
             type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
             period: periodDiff,
             costUsdc: convertFioPrices(
-              new MathOp(newItem.costNativeFio).mul(periodDiff).toNumber(),
+              isMultipleYearCustomDomain
+                ? new MathOp(newItem.costNativeFio)
+                    .sub(newItem.nativeFioAddressPrice)
+                    .mul(newItem.costNativeFio)
+                    .toNumber()
+                : new MathOp(newItem.costNativeFio).mul(periodDiff).toNumber(),
               roe,
             ).usdc,
           },
         ]),
       );
 
-      const fioPrices = convertFioPrices(
-        new MathOp(newItem.costNativeFio).mul(period).toNumber(),
-        roe,
-      );
+      const fioPrices =
+        period > 1 && newItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+          ? convertFioPrices(
+              handlePriceForMultiYearFchWithCustomDomain({
+                costNativeFio: newItem.costNativeFio,
+                nativeFioAddressPrice: newItem.nativeFioAddressPrice,
+                period,
+              }),
+              roe,
+            )
+          : convertFioPrices(
+              new MathOp(newItem.costNativeFio).mul(period).toNumber(),
+              roe,
+            );
       newItem.costFio = fioPrices.fio;
       newItem.costUsdc = fioPrices.usdc;
       newItem.period = period;
@@ -309,7 +369,7 @@ export const cartItemsToOrderItems = (
       const nativeFio = domainType === DOMAIN_TYPE.FREE ? 0 : costNativeFio;
 
       if (!!address && domainType === DOMAIN_TYPE.CUSTOM) {
-        return [
+        const items: CreateOrderActionItem[] = [
           {
             action: ACTIONS.registerFioDomain,
             domain,
@@ -328,6 +388,21 @@ export const cartItemsToOrderItems = (
             data,
           },
         ];
+        if (CART_ITEM_TYPES_WITH_PERIOD.includes(type) && period > 1) {
+          const nativeFio = prices.nativeFio.renewDomain || costNativeFio;
+          for (let i = 1; i < period; i++) {
+            items.push({
+              action: ACTIONS.renewFioDomain,
+              address: null,
+              domain,
+              nativeFio: `${nativeFio || 0}`,
+              price: convertFioPrices(nativeFio || 0, roe).usdc,
+              priceCurrency: CURRENCY_CODES.USDC,
+              data,
+            });
+          }
+        }
+        return items;
       }
 
       const item = {
@@ -389,6 +464,13 @@ export const totalCost = (
           const nativeFio =
             item.domainType === DOMAIN_TYPE.FREE
               ? 0
+              : item.period > 1 &&
+                item.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
+              ? handlePriceForMultiYearFchWithCustomDomain({
+                  costNativeFio: item.costNativeFio || 0,
+                  nativeFioAddressPrice: item.nativeFioAddressPrice,
+                  period: item.period || 1,
+                })
               : new MathOp(item.costNativeFio || 0)
                   .mul(item.period || 1)
                   .toNumber();
@@ -415,7 +497,9 @@ export const cartIsRelative = (
   const cartItemsLength = cartItems.reduce(
     (length, item) =>
       CART_ITEM_TYPES_WITH_PERIOD.includes(item.type) && item.period > 1
-        ? length + item.period
+        ? !!item.address && item.domainType === DOMAIN_TYPE.CUSTOM
+          ? length + item.period + 1
+          : length + item.period
         : !!item.address && item.domainType === DOMAIN_TYPE.CUSTOM
         ? length + 2
         : length + 1,

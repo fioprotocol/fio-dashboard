@@ -9,10 +9,17 @@ type Props = {
   hasInheritFontSize?: boolean;
   hasSmallSize?: boolean;
   isWhite?: boolean;
+  styles?: { [key: string]: string };
 };
 
 const Loader: React.FC<Props> = props => {
-  const { hasAutoWidth, hasInheritFontSize, hasSmallSize, isWhite } = props;
+  const {
+    hasAutoWidth,
+    hasInheritFontSize,
+    hasSmallSize,
+    isWhite,
+    styles,
+  } = props;
 
   return (
     <div
@@ -24,7 +31,7 @@ const Loader: React.FC<Props> = props => {
         isWhite && classes.isWhite,
       )}
     >
-      <CircularProgress />
+      <CircularProgress style={styles} />
     </div>
   );
 };

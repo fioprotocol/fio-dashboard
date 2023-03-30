@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="34px" height="34px" viewBox="0 0 34 34" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>checked</title>
+    <g id="Email-Settings" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="FIO_AccountManagement---Main-Settings---Update" transform="translate(-563.000000, -176.000000)" fill="#FFFFFF" fill-rule="nonzero">
+            <g id="Group" transform="translate(553.000000, 166.000000)">
+                <g id="checked" transform="translate(10.000000, 10.000000)">
+                    <path d="M17,0 C7.62589453,0 0,7.62629297 0,17 C0,26.373707 7.62589453,34 17,34 C26.3741055,34 34,26.373707 34,17 C34,7.62629297 26.3741055,0 17,0 Z M24.9846211,15.1074883 L17.0895156,23.0025273 C16.2233789,23.8686641 14.8201484,23.8687305 13.9539453,23.0025273 L9.38492969,18.4335117 C8.51872656,17.567707 8.51872656,16.1638125 9.38492969,15.2979414 C10.2511328,14.4317383 11.6542969,14.4317383 12.5205,15.2979414 L15.5217305,18.2988398 L21.8490508,11.9717852 C22.7152539,11.105582 24.118418,11.105582 24.9846211,11.9717852 C25.8508242,12.8377227 25.8508242,14.2416172 24.9846211,15.1074883 Z" id="Shape"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

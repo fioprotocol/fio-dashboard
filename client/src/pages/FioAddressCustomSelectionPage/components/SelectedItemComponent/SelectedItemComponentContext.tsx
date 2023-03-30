@@ -16,6 +16,7 @@ import MathOp from '../../../../util/math';
 import { convertFioPrices } from '../../../../util/prices';
 import { setFioName } from '../../../../utils';
 import {
+  checkIsDomainItemExistsOnCart,
   transformCustomDomains,
   transformNonPremiumDomains,
   transformPremiumDomains,
@@ -47,8 +48,28 @@ export const useContext = (
   >([]);
 
   const {
-    nativeFio: { address: natvieFioAddressPrice, domain: nativeFioDomainPrice },
+    nativeFio: { address: nativeFioAddressPrice, domain: nativeFioDomainPrice },
   } = prices;
+
+  const fchId = setFioName(address, domain);
+
+  const existingCartItem = cartItems.find(cartItem => cartItem.id === fchId);
+
+  const existingFreeCartItem = cartItems.find(
+    cartItems => cartItems.domainType === DOMAIN_TYPE.FREE && !existingCartItem,
+  );
+
+  const existingDomainInCartItem = cartItems.find(cartItem =>
+    checkIsDomainItemExistsOnCart(domain, cartItem),
+  );
+
+  const existingCustomDomainFchCartItem = cartItems.find(
+    cartItem =>
+      cartItem.type === CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN &&
+      cartItem.domain === domain &&
+      !!cartItem.address &&
+      !existingCartItem,
+  );
 
   const getPublicDomainsFromChain = async (domain: string) => {
     try {
@@ -96,7 +117,7 @@ export const useContext = (
     : [];
   const userDomains = allDomains.userDomains || [];
 
-  const domainType = !isEmpty(allDomains)
+  let domainType = !isEmpty(allDomains)
     ? [
         ...nonPremiumDomains,
         ...premiumDomains,
@@ -117,27 +138,35 @@ export const useContext = (
       ].find(publicDomain => publicDomain.name === domain)?.domainType ||
       DOMAIN_TYPE.CUSTOM
     : DOMAIN_TYPE.CUSTOM;
+  if (
+    (existingFreeCartItem && domainType === DOMAIN_TYPE.FREE) ||
+    (existingCustomDomainFchCartItem && domainType === DOMAIN_TYPE.CUSTOM)
+  )
+    domainType = DOMAIN_TYPE.PREMIUM;
 
   const isCustomDomain = domainType === DOMAIN_TYPE.CUSTOM;
 
   const totalNativeFio = isCustomDomain
-    ? new MathOp(natvieFioAddressPrice).add(nativeFioDomainPrice).toNumber()
-    : natvieFioAddressPrice;
+    ? new MathOp(nativeFioAddressPrice).add(nativeFioDomainPrice).toNumber()
+    : nativeFioAddressPrice;
 
   const { fio, usdc } = convertFioPrices(totalNativeFio, roe);
 
   const selectedItemProps = {
-    id: setFioName(address, domain),
+    id: fchId,
     address,
     domain,
     costFio: fio,
     costUsdc: usdc,
     costNativeFio: totalNativeFio,
+    nativeFioAddressPrice,
     domainType,
-    period: 1,
+    period: existingDomainInCartItem ? existingDomainInCartItem.period : 1,
     type: isCustomDomain
       ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
       : CART_ITEM_TYPE.ADDRESS,
+    isSelected: !!existingCartItem,
+    hasCustomDomain: isCustomDomain,
   };
 
   const showPremiumInfoBadge = domainType === DOMAIN_TYPE.PREMIUM;

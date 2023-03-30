@@ -29,6 +29,7 @@ type RegularNavProps = {
   hideCart: boolean;
   onlyAuth: boolean;
   refProfileInfo: RefProfile;
+  isMaintenance: boolean;
   showLogin: () => void;
   closeMenu: () => void;
 };
@@ -69,7 +70,7 @@ const NavItems: React.FC<NavItemsProps> = props => {
 };
 
 export const RegularNav: React.FC<RegularNavProps> = props => {
-  const { cartItems, closeMenu } = props;
+  const { cartItems, closeMenu, isMaintenance } = props;
 
   const isDesktop = useCheckIfDesktop();
 
@@ -86,7 +87,13 @@ export const RegularNav: React.FC<RegularNavProps> = props => {
   return (
     <div className={classes.regularNavContainer}>
       <Navbar className="pr-0 w-100">
-        <NavItems isDesktop={isDesktop} onCartClick={onCartClick} {...props} />
+        {!isMaintenance && (
+          <NavItems
+            isDesktop={isDesktop}
+            onCartClick={onCartClick}
+            {...props}
+          />
+        )}
       </Navbar>
     </div>
   );

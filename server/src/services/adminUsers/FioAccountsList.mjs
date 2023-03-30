@@ -20,7 +20,7 @@ export default class FioAccountsList extends Base {
 
     return {
       data: {
-        accounts: accountsProfiles.map(account => account.json()),
+        accounts: accountsProfiles,
         maxCount: accountsProfilesCount,
       },
     };

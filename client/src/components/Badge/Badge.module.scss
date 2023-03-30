@@ -14,6 +14,14 @@
   overflow: hidden;
   transition: all 0.3s ease-out;
 
+  &.hasDefaultFontSize {
+    font-size: 16px;
+  }
+
+  &.withoutMaxWidth {
+    max-width: none;
+  }
+
   & > div {
     margin: 0 auto 0 20px;
     @include proxima-nova-thin;
@@ -23,6 +31,10 @@
     max-height: fit-content;
     margin: 30px 0 0;
     padding: 15px 20px;
+  }
+
+  &.withoutMargin {
+    margin: 0;
   }
 
   &.hidden {
@@ -36,7 +48,7 @@
     background-color: $simple-red;
   }
   &.info {
-    background-color: $blue;
+    background-color: $bright-turquoise;
   }
   &.success {
     background-color: $irish-green;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
@@ -20,16 +20,24 @@ import {
   fioWallets as fioWalletsSelector,
   loading as userDomainsLoadingSelector,
 } from '../../redux/fio/selectors';
+import { cartItems as cartItemsSelector } from '../../redux/cart/selectors';
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { ROUTES } from '../../constants/routes';
-import { CART_ITEM_TYPE } from '../../constants/common';
+import {
+  ANALYTICS_EVENT_ACTIONS,
+  CART_ITEM_TYPE,
+} from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
 
 import useQuery from '../../hooks/useQuery';
 import useEffectOnce from '../../hooks/general';
 import { addCartItem } from '../../util/cart';
 import { useCheckIfDesktop } from '../../screenType';
+import {
+  fireAnalyticsEvent,
+  getCartItemsDataForAnalytics,
+} from '../../util/analytics';
 
 import { OptionProps } from '../../components/Input/EditableSelect/EditableSelect';
 import { AllDomains, CartItem } from '../../types';
@@ -55,6 +63,7 @@ export const useContext = (): UseContextProps => {
   const publicDomainsLoading = useSelector(publicDomainsLoadingSelector);
   const fioWallets = useSelector(fioWalletsSelector);
   const userDomainsLoading = useSelector(userDomainsLoadingSelector);
+  const cartItems = useSelector(cartItemsSelector);
 
   const queryParams = useQuery();
   const dispatch = useDispatch();
@@ -86,6 +95,9 @@ export const useContext = (): UseContextProps => {
       defaultInitialLink + `?${QUERY_PARAMS_NAMES.ADDRESS}=${addressParam}`;
 
   const [link, setLink] = useState<string>(defaultInitialLink);
+  const [hasItemAddedToCart, toggleHasItemAddedToCart] = useState<boolean>(
+    false,
+  );
 
   const options =
     allDomains?.userDomains
@@ -95,25 +107,20 @@ export const useContext = (): UseContextProps => {
         label: userDomain.name,
       })) || [];
 
-  const onClick = (selectedItem: CartItem) => {
-    addCartItem({
+  const onClick = useCallback((selectedItem: CartItem) => {
+    const newItem = {
       ...selectedItem,
       allowFree: selectedItem.domainType === DOMAIN_TYPE.FREE,
       type:
         selectedItem.domainType === DOMAIN_TYPE.CUSTOM
           ? CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN
           : CART_ITEM_TYPE.ADDRESS,
-    });
+    };
 
-    if (!isAuthenticated) {
-      dispatch(setRedirectPath({ pathname: ROUTES.CART }));
-      lastAuthData
-        ? dispatch(showLoginModal(ROUTES.CART))
-        : history.push(ROUTES.CREATE_ACCOUNT);
-    } else {
-      history.push(ROUTES.CART);
-    }
-  };
+    addCartItem(newItem);
+
+    toggleHasItemAddedToCart(true);
+  }, []);
 
   const onFieldChange = (value: string) => {
     if (!value) {
@@ -136,6 +143,30 @@ export const useContext = (): UseContextProps => {
       dispatch(refreshFioNames(fioWallet.publicKey));
     }
   }, [dispatch, fioWallets]);
+
+  useEffect(() => {
+    if (hasItemAddedToCart) {
+      if (!isAuthenticated) {
+        dispatch(setRedirectPath({ pathname: ROUTES.CART }));
+        lastAuthData
+          ? dispatch(showLoginModal(ROUTES.CART))
+          : history.push(ROUTES.CREATE_ACCOUNT);
+      } else {
+        fireAnalyticsEvent(
+          ANALYTICS_EVENT_ACTIONS.BEGIN_CHECKOUT,
+          getCartItemsDataForAnalytics(cartItems),
+        );
+        history.push(ROUTES.CART);
+      }
+    }
+  }, [
+    cartItems,
+    dispatch,
+    hasItemAddedToCart,
+    history,
+    isAuthenticated,
+    lastAuthData,
+  ]);
 
   return {
     allDomains,

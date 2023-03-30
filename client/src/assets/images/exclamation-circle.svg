@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="47px" height="47px" viewBox="0 0 47 47" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>error copy@1x</title>
+    <defs>
+        <path d="M27.5000001,4.58333335 C14.8500001,4.58333335 4.58333335,14.8500001 4.58333335,27.5000001 C4.58333335,40.1500002 14.8500001,50.4166669 27.5000001,50.4166669 C40.1500002,50.4166669 50.4166669,40.1500002 50.4166669,27.5000001 C50.4166669,14.8500001 40.1500002,4.58333335 27.5000001,4.58333335 L27.5000001,4.58333335 Z M29.7916668,38.9583335 L25.2083334,38.9583335 L25.2083334,34.3750001 L29.7916668,34.3750001 L29.7916668,38.9583335 L29.7916668,38.9583335 Z M29.7916668,29.7916668 L25.2083334,29.7916668 L25.2083334,16.0416667 L29.7916668,16.0416667 L29.7916668,29.7916668 L29.7916668,29.7916668 Z" id="path-1"></path>
+    </defs>
+    <g id="NEW-Domain-Landing---Post-Creation" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="FIO-Dashboard-Action-Tiles" transform="translate(-101.000000, -90.000000)">
+            <g id="error-copy" transform="translate(97.000000, 86.000000)">
+                <polygon id="Base" points="0 1.42108547e-14 55.0000002 1.42108547e-14 55.0000002 55.0000002 0 55.0000002"></polygon>
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <g id="Icon" fill-rule="nonzero"></g>
+                <rect id="↳-🎨-Color" fill="#FFFFFF" mask="url(#mask-2)" x="1.14583358e-07" y="1.14583173e-07" width="55" height="55"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

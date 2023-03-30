@@ -42,6 +42,40 @@
   cursor: pointer;
 }
 
+.badgeContainer {
+  min-height: 54px;
+  padding: 10px 20px 10px 10px !important;
+  max-width: 335px;
+  border-radius: 100px;
+  margin-top: 25px !important;
+  margin-bottom: -5px !important;
+
+  .contentContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    .title {
+      margin: 0;
+      font-size: 1.0625em;
+      @include sf-pro-display-bold;
+    }
+    .message {
+      margin: 0;
+      font-size: 0.75em;
+      @include sf-pro-display-regular;
+    }
+  }
+  .clearIcon {
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+
+    &:hover {
+      transform: rotate(90deg);
+    }
+  }
+}
+
 @include sm {
   .icon, .closeIcon {
     font-size: 18px;

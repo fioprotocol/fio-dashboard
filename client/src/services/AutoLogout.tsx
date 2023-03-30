@@ -5,7 +5,7 @@ import React, {
   useMemo,
   useCallback,
 } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { RouterProps, withRouter } from 'react-router-dom';
 
@@ -39,7 +39,6 @@ type Props = {
   checkAuthToken: () => void;
   setLastActivity: (value: number) => void;
   logout: (routerProps: RouterProps) => void;
-  clear: () => void;
   showLoginModal: () => void;
   setRedirectPath: (route: RedirectLinkData) => void;
 };
@@ -94,11 +93,11 @@ const AutoLogout = (
     checkAuthToken,
     setLastActivity,
     logout,
-    clear,
     showLoginModal,
     setRedirectPath,
   } = props;
 
+  const dispatch = useDispatch();
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const initLoad = useMemo(
@@ -124,7 +123,7 @@ const AutoLogout = (
   activityTimeout = useCallback(() => {
     removeActivityListener();
     setRedirectPath({ pathname, state });
-    cartIsNotEmpty && clear();
+    cartIsNotEmpty && dispatch(clear(true));
     logout({ history });
     showLoginModal();
     clearChecksTimeout();
@@ -134,9 +133,9 @@ const AutoLogout = (
     state,
     cartIsNotEmpty,
     logout,
-    clear,
     setRedirectPath,
     showLoginModal,
+    dispatch,
   ]);
 
   const activityWatcher = () => {
@@ -215,6 +214,16 @@ const AutoLogout = (
     [lastActivityDate, history, logout, showLoginModal],
     initLoad,
   );
+
+  //Empty cart when page loaded
+  useEffectOnce(() => {
+    const now = new Date();
+    const lastActivity = new Date(lastActivityDate);
+
+    if (now.getTime() - lastActivity.getTime() > INACTIVITY_TIMEOUT) {
+      cartIsNotEmpty && dispatch(clear(true));
+    }
+  }, [cartIsNotEmpty, dispatch, lastActivityDate]);
 
   useEffect(() => {
     if (tokenCheckResult === null) return;

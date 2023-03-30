@@ -1,0 +1,24 @@
+
+@import '../../../../assets/styles/colors.scss';
+
+.container {
+  border-radius: 24px;
+  border: 10px solid $vista-white;
+  background-color: $vista-white;
+
+  &.hasSmallBorderRadius {
+    border-radius: 14px;
+  }
+
+  &.isShrinked {
+    flex-shrink: 0;
+  }
+
+  &.hasFitContentWidth {
+    width: fit-content;
+  }
+
+  &.hasFullWidth {
+    width: 100%;
+  }
+}
