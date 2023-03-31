@@ -1,7 +1,13 @@
 import { prefix } from './actions';
 import { ReduxState } from '../init';
 
-import { AdminUser, AdminUserProfile, OrderDetails, User } from '../../types';
+import {
+  AdminUser,
+  AdminUserProfile,
+  FioApiUrl,
+  OrderDetails,
+  User,
+} from '../../types';
 
 export const loading = (state: ReduxState): boolean => state[prefix].loading;
 export const adminUsersList = (state: ReduxState): AdminUser[] =>
@@ -26,7 +32,7 @@ export const partnersList = (state: ReduxState): AdminUserProfile =>
   state[prefix].partnersList;
 export const regularUsersList = (state: ReduxState): User[] =>
   state[prefix].regularUsersList;
-export const fioApiUrlsList = (state: ReduxState): AdminUser[] =>
+export const fioApiUrlsList = (state: ReduxState): FioApiUrl[] =>
   state[prefix].fioApiUrlsList;
 export const fioApiUrlsCount = (state: ReduxState): number =>
   state[prefix].fioApiUrlsCount;

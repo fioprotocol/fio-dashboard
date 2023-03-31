@@ -91,15 +91,16 @@ router.delete(
 
 router.get('/admin/api-urls', checkAdminAuth, routes.adminUsers.fioApiUrlsList);
 router.post('/admin/api-urls', checkAdminAuth, routes.adminUsers.createFioApiUrlsList);
-router.patch(
-  '/admin/api-urls/:id',
-  checkAdminAuth,
-  routes.adminUsers.updateFioApiUrlsList,
-);
+router.patch('/admin/api-urls/:id', checkAdminAuth, routes.adminUsers.updateFioApiUrl);
 router.delete(
   '/admin/api-urls/:id',
   checkAdminAuth,
   routes.adminUsers.deleteFioApiUrlsList,
+);
+router.put(
+  '/admin/api-urls/list-update',
+  checkAdminAuth,
+  routes.adminUsers.updateFioApiUrlsList,
 );
 
 router.get('/admin/partners/list', checkAdminAuth, routes.adminUsers.partnersList);

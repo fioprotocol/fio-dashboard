@@ -2,6 +2,8 @@ import { ChangeEvent } from 'react';
 
 import { DEFAULT_TEXT_TRUNCATE_LENGTH } from '../constants/common';
 
+import { AnyObject } from '../types';
+
 export const log = {
   error: (e: Error | string, ...rest: Array<Error | string>): void => {
     const style = 'color:red';
@@ -202,3 +204,15 @@ export const transformInputValues = ({
 export const removeExtraCharactersFromString = (
   str: string | null,
 ): string | null => (str != null ? str.replaceAll(/[^A-Za-z0-9]/g, '') : null);
+
+export const reorder = (
+  list: AnyObject[],
+  startIndex: number,
+  endIndex: number,
+) => {
+  const result = Array.from(list);
+  const [removed] = result.splice(startIndex, 1);
+  result.splice(endIndex, 0, removed);
+
+  return result;
+};

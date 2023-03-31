@@ -32,7 +32,7 @@ const WalletPage: React.FC<ContainerProps & LocationProps> = props => {
     balance,
     profileRefreshed,
     refreshBalance,
-    fioWalletsData,
+    fioWalletsData = {},
     fioWalletsTxHistory,
     location: {
       query: { publicKey } = {},

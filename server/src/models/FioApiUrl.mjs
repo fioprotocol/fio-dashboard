@@ -13,6 +13,9 @@ export class FioApiUrl extends Base {
           type: DT.STRING,
           allowNull: false,
         },
+        rank: {
+          type: DT.BIGINT,
+        },
       },
       {
         sequelize,
@@ -24,7 +27,7 @@ export class FioApiUrl extends Base {
 
   static attrs(type = 'default') {
     const attributes = {
-      default: ['id', 'url', 'createdAt'],
+      default: ['id', 'url', 'rank', 'createdAt'],
     };
 
     if (type in attributes) {
@@ -35,13 +38,14 @@ export class FioApiUrl extends Base {
   }
 
   static async getApiUrls() {
-    const urls = await this.findAll();
+    const urls = await this.findAll({ order: [['rank', 'ASC']] });
     return urls.map(item => item.url);
   }
 
-  static format({ id, url }) {
+  static format({ id, rank, url }) {
     return {
       id,
+      rank,
       url,
     };
   }
