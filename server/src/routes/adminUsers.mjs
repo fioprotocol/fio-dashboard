@@ -28,6 +28,7 @@ import FioApiUrlsList from '../services/adminUsers/FioApiUrlsList';
 import FioApiUrlCreate from '../services/adminUsers/FioApiUrlCreate';
 import FioApiUrlUpdate from '../services/adminUsers/FioApiUrlUpdate';
 import FioApiUrlDelete from '../services/adminUsers/FioApiUrlDelete';
+import FioApiUrlsUpdate from '../services/adminUsers/FioApiUrlsListUpdate';
 
 export default {
   personalInfo: makeServiceRunner(PersonalInfo),
@@ -62,9 +63,10 @@ export default {
   saveDefaults: makeServiceRunner(DefaultsSave, req => req.body),
   fioApiUrlsList: makeServiceRunner(FioApiUrlsList, req => req.query),
   createFioApiUrlsList: makeServiceRunner(FioApiUrlCreate, req => req.body),
-  updateFioApiUrlsList: makeServiceRunner(FioApiUrlUpdate, req => ({
+  updateFioApiUrl: makeServiceRunner(FioApiUrlUpdate, req => ({
     ...req.body,
     ...req.params,
   })),
+  updateFioApiUrlsList: makeServiceRunner(FioApiUrlsUpdate, req => req.body),
   deleteFioApiUrlsList: makeServiceRunner(FioApiUrlDelete, req => req.params),
 };

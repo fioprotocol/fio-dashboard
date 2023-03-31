@@ -16,7 +16,7 @@ export default class FioApiUrlsList extends Base {
 
   async execute({ limit = 25, offset = 0 }) {
     const apiUrls = await FioApiUrl.findAll({
-      order: [['createdAt', 'DESC']],
+      order: [['rank', 'ASC']],
       limit,
       offset,
     });
