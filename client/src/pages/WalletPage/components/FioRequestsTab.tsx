@@ -35,8 +35,8 @@ const FIO_REQUEST_TABS = [
     title: 'Sent',
     renderTab: (props: Props) => (
       <FioRecordsList
-        fioDataList={props.walletData.sentFioRequests}
-        paymentDataList={props.walletData.obtData}
+        fioDataList={props.walletData?.sentFioRequests}
+        paymentDataList={props.walletData?.obtData}
         fioRecordType={FIO_RECORD_TYPES.SENT}
         loading={false}
         {...props}
@@ -48,8 +48,8 @@ const FIO_REQUEST_TABS = [
     title: 'Received',
     renderTab: (props: Props) => (
       <FioRecordsList
-        fioDataList={props.walletData.receivedFioRequests}
-        paymentDataList={props.walletData.obtData}
+        fioDataList={props.walletData?.receivedFioRequests}
+        paymentDataList={props.walletData?.obtData}
         fioRecordType={FIO_RECORD_TYPES.RECEIVED}
         loading={false}
         {...props}
