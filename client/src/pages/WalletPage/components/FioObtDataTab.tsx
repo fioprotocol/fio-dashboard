@@ -19,7 +19,7 @@ type Props = {
 const FioObtDataTab: React.FC<Props> = props => {
   return (
     <FioRecordsList
-      fioDataList={props.walletData.obtData}
+      fioDataList={props.walletData?.obtData}
       fioRecordType={FIO_RECORD_TYPES.DATA}
       loading={false}
       {...props}
