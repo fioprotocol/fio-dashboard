@@ -3,4 +3,4 @@ export const VARS_KEYS = {
   IS_OUTBOUND_EMAIL_STOP: 'IS_OUTBOUND_EMAIL_STOP',
 };
 
-export const HEALTH_CHECK_TIME = 10000;
+export const HEALTH_CHECK_TIME = 5000;

@@ -13,16 +13,6 @@ export default function useMaintenance() {
 
   useEffectOnce(() => {
     setIsLoading(true);
-    apis.vars
-      .getVar(VARS_KEYS.IS_MAINTENANCE)
-      .then((data: VarsResponse) => {
-        setIsMaintenance(data.value === 'false' ? false : true);
-        setIsLoading(false);
-      })
-      .catch(() => {
-        setIsMaintenance(true);
-        setIsLoading(false);
-      });
 
     const healthCheckInterval = setInterval(() => {
       apis.healthCheck
@@ -32,6 +22,17 @@ export default function useMaintenance() {
             setIsMaintenance(true);
             setIsLoading(false);
           }
+        })
+        .catch(() => {
+          setIsMaintenance(true);
+          setIsLoading(false);
+        });
+
+      apis.vars
+        .getVar(VARS_KEYS.IS_MAINTENANCE)
+        .then((data: VarsResponse) => {
+          setIsMaintenance(data.value === 'false' ? false : true);
+          setIsLoading(false);
         })
         .catch(() => {
           setIsMaintenance(true);
