@@ -2,11 +2,13 @@ import { FioApiUrl } from '../../types';
 
 export type FormValuesProps = {
   id?: string;
+  rank: number;
   url: string;
 };
 
 export type FormValuesEditProps = {
   id: string;
+  rank: number;
   url: string;
 };
 

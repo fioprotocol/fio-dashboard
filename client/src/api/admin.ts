@@ -4,6 +4,7 @@ import {
   AdminDefaults,
   AdminFioAccountsProfilesListResponse,
   AdminFioApiUrlsListResponse,
+  AdminFioApiUrlsListUpdateResponse,
   AdminGeneralCreateResponse,
   AdminOrderItemResponse,
   AdminOrdersListResponse,
@@ -16,7 +17,7 @@ import {
   UsersDetailsResponse,
   UsersListResponse,
 } from './responses';
-import { OrderDetails, RefProfile } from '../types';
+import { FioApiUrl, OrderDetails, RefProfile } from '../types';
 
 export default class Admin extends Base {
   adminList(limit: number, offset: number): Promise<AdminUsersListResponse> {
@@ -179,6 +180,12 @@ export default class Admin extends Base {
     url: string;
   }): Promise<AdminGeneralCreateResponse> {
     return this.apiClient.patch(`admin/api-urls/${data.id}`, data);
+  }
+
+  updateFioApiUrls(
+    data: FioApiUrl[],
+  ): Promise<AdminFioApiUrlsListUpdateResponse> {
+    return this.apiClient.put(`admin/api-urls/list-update`, { data });
   }
 
   deleteFioApiUrl(data: { id: string }): Promise<AdminGeneralCreateResponse> {

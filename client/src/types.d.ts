@@ -696,8 +696,14 @@ export type AdminSearchResult = {
 
 export type FioApiUrl = {
   id: string;
+  rank: number;
   url: string;
   createdAt: string;
+};
+
+export type FioApiUrls = {
+  apiUrls: FioApiUrl[];
+  maxCount: number;
 };
 
 export type PaymentEventLog = {
