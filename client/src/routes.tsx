@@ -243,7 +243,15 @@ const Routes = (): React.ReactElement => {
         <React.Suspense fallback={<FioLoader wrap />}>
           {isMaintenance ? (
             <Switch>
-              <Route path="*" component={UnavailablePage} />
+              <Route
+                path={ROUTES.UNAVAILABLE}
+                component={UnavailablePage}
+                exact
+              />
+              <Route
+                path="*"
+                component={() => <Redirect to={ROUTES.UNAVAILABLE} />}
+              />
             </Switch>
           ) : (
             <Switch>
@@ -293,7 +301,7 @@ const Routes = (): React.ReactElement => {
               <Route path={ROUTES.NOT_FOUND} component={NotFoundPage} exact />
               <Route
                 path={ROUTES.UNAVAILABLE}
-                component={UnavailablePage}
+                component={() => <Redirect to={ROUTES.HOME} />}
                 exact
               />
               <Route
