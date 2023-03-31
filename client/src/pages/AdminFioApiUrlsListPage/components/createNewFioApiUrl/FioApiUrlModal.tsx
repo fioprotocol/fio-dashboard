@@ -11,7 +11,7 @@ type Props = {
   loading: boolean;
   onSubmit: (values: FormValuesProps) => void;
   onClose: () => void;
-  initialValues?: FioApiUrl;
+  initialValues?: Partial<FioApiUrl>;
 };
 
 const FioApiUrlModal: React.FC<Props> = props => {
@@ -27,7 +27,7 @@ const FioApiUrlModal: React.FC<Props> = props => {
     >
       <div className="d-flex flex-column w-100">
         <h3 className="text-left mb-3">
-          {initialValues ? 'Edit' : 'Create'} FIO Api Url
+          {initialValues && initialValues.id ? 'Edit' : 'Create'} FIO Api Url
         </h3>
         <ApiUrlForm
           onSubmit={onSubmit}

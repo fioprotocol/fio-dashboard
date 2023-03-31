@@ -15,7 +15,7 @@ import {
   UserDetails,
   UserOrderDetails,
   RefProfileDomain,
-  FioApiUrl,
+  FioApiUrls,
   OrderDetails,
 } from '../types';
 
@@ -118,7 +118,8 @@ export type AdminPartnersListResponse = RefProfile[];
 export type AdminUsersListResponse = AdminUser[];
 export type AdminOrdersListResponse = AdminUser[];
 export type AdminOrderItemResponse = OrderDetails;
-export type AdminFioApiUrlsListResponse = FioApiUrl[];
+export type AdminFioApiUrlsListResponse = FioApiUrls;
+export type AdminFioApiUrlsListUpdateResponse = { success: true };
 export type RemoveAdminResponse =
   | { success: true }
   | { success: false; message: 'Not Found' };

@@ -14,7 +14,7 @@ import { formValidation } from './validation';
 type Props = {
   onSubmit: (values: FormValuesProps) => void;
   loading: boolean;
-  initialValues?: FioApiUrl;
+  initialValues?: Partial<FioApiUrl>;
 };
 
 const ApiUrlForm: React.FC<Props> = props => {
@@ -42,13 +42,14 @@ const ApiUrlForm: React.FC<Props> = props => {
             loading={validating}
             disabled={submitting || loading}
           />
+          <Field name="rank" component={Input} type="hidden" />
           <SubmitButton
             text={
               loading
-                ? initialValues
+                ? initialValues && initialValues?.id
                   ? 'Updating'
                   : 'Creating'
-                : initialValues
+                : initialValues && initialValues?.id
                 ? 'Update'
                 : 'Create'
             }
