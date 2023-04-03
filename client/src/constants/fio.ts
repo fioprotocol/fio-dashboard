@@ -231,3 +231,5 @@ export const FIO_PROXY_LIST = {
     'ericanchor@fiotestnet',
   ],
 };
+
+export const DEFAULT_EDGE_WALLET_NAME = 'io.fioprotocol.app';
