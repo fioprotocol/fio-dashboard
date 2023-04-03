@@ -50,6 +50,7 @@ class EmailSender {
       mainUrl: config.mainUrl,
       adminUrl: config.adminUrl,
       supportLink: config.supportLink,
+      logoSrc: config.mainUrl + 'fio-logo-white-text.png',
       email,
     };
     const template = await this.getTemplate(type, sendData);
