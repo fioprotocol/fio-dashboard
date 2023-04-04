@@ -3,7 +3,10 @@ import { RouterProps } from 'react-router-dom';
 
 import NotificationBadge from '../NotificationBadge';
 
-import { getDefaultContent } from '../../constants/notifications';
+import {
+  getDefaultContent,
+  NOTIFICATIONS_CONTENT_TYPE,
+} from '../../constants/notifications';
 
 import { Notification } from '../../types';
 import { NotificationsContainer } from './types';
@@ -11,8 +14,8 @@ import { NotificationsContainer } from './types';
 import classes from './Notifications.module.scss';
 
 const RELOAD_TIME = 3000;
+const AUTOCLOSE_TIME = 5000;
 export const ACTIONS = {
-  RECOVERY: 'RECOVERY',
   CART_TIMEOUT: 'CART_TIMEOUT',
   EMAIL_CONFIRM: 'EMAIL_CONFIRM',
   RESET_ADMIN_USER_PASSWORD: 'RESET_ADMIN_USER_PASSWORD',
@@ -23,6 +26,7 @@ export default class Notifications extends Component<
   NotificationsContainer & RouterProps
 > {
   notificationsInterval: ReturnType<typeof setInterval> | null;
+  accountCreateCloseTimeout: ReturnType<typeof setTimeout> | null;
 
   componentDidMount(): void {
     this.notificationsInterval = setInterval(
@@ -33,6 +37,8 @@ export default class Notifications extends Component<
 
   componentWillUnmount(): void {
     this.notificationsInterval && clearInterval(this.notificationsInterval);
+    this.accountCreateCloseTimeout &&
+      clearTimeout(this.accountCreateCloseTimeout);
   }
 
   getLatest = (): Notification => {
@@ -77,18 +83,31 @@ export default class Notifications extends Component<
     }
   };
 
-  arrowAction = (last: Notification) => {
-    const { showRecoveryModal } = this.props;
+  arrowAction = (last: Notification): (() => void | null) => {
     if (!last) return null;
     if (!last.action) return null;
-    if (last.action === ACTIONS.RECOVERY) return showRecoveryModal;
+    // check action type and return any action you need
 
     return null;
+  };
+
+  handleAccountCreateBadgeClose = async (last: Notification) => {
+    if (
+      last.contentType === NOTIFICATIONS_CONTENT_TYPE.ACCOUNT_CREATE &&
+      !this.props.showRecovery
+    ) {
+      this.accountCreateCloseTimeout = setTimeout(
+        this.onBadgeClose(last),
+        AUTOCLOSE_TIME,
+      );
+    }
   };
 
   render(): React.ReactElement {
     const last = this.getLatest();
     if (!last) return null;
+
+    this.handleAccountCreateBadgeClose(last);
 
     return (
       <div className={classes.container}>
@@ -101,6 +120,9 @@ export default class Notifications extends Component<
             last.message || getDefaultContent(last.contentType, 'message')
           }
           show
+          hasNewDesign={
+            last.contentType === NOTIFICATIONS_CONTENT_TYPE.ACCOUNT_CREATE
+          }
         />
       </div>
     );

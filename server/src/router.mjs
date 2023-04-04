@@ -12,6 +12,7 @@ const router = express.Router();
 const checkAuth = routes.auth.check;
 const checkAuthOptional = routes.auth.checkOptional;
 const checkAdminAuth = routes.auth.checkAdminAuth;
+const checkSimpleAuth = routes.auth.checkSimple;
 
 router.get('/ping', routes.general.healthCheck);
 
@@ -90,15 +91,16 @@ router.delete(
 
 router.get('/admin/api-urls', checkAdminAuth, routes.adminUsers.fioApiUrlsList);
 router.post('/admin/api-urls', checkAdminAuth, routes.adminUsers.createFioApiUrlsList);
-router.patch(
-  '/admin/api-urls/:id',
-  checkAdminAuth,
-  routes.adminUsers.updateFioApiUrlsList,
-);
+router.patch('/admin/api-urls/:id', checkAdminAuth, routes.adminUsers.updateFioApiUrl);
 router.delete(
   '/admin/api-urls/:id',
   checkAdminAuth,
   routes.adminUsers.deleteFioApiUrlsList,
+);
+router.put(
+  '/admin/api-urls/list-update',
+  checkAdminAuth,
+  routes.adminUsers.updateFioApiUrlsList,
 );
 
 router.get('/admin/partners/list', checkAdminAuth, routes.adminUsers.partnersList);
@@ -193,6 +195,14 @@ router.get('/wrap-status/tokens/wrap', routes.history.wrapTokens);
 router.get('/wrap-status/domains/wrap', routes.history.wrapDomains);
 router.get('/wrap-status/tokens/unwrap', routes.history.unwrapTokens);
 router.get('/wrap-status/domains/unwrap', routes.history.unwrapDomains);
+
+router.get('/vars/:key', routes.vars.get);
+router.post('/vars/update/:key', routes.vars.update);
+router.post(
+  '/vars/update_email/:type/:password',
+  checkSimpleAuth,
+  routes.vars.updateEmail,
+);
 
 let WRAPPED_DOMAIN_ABI;
 let WRAPPED_TOKEN_ABI;

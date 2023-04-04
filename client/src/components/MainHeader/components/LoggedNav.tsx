@@ -29,6 +29,7 @@ type LoggedNavProps = {
   edgeAuthLoading: boolean;
   profileLoading: boolean;
   hideCart: boolean;
+  hideCartIcon?: boolean;
   hideOrder?: boolean;
   hideNotifications: boolean;
   showSiteLink: boolean;
@@ -36,6 +37,7 @@ type LoggedNavProps = {
   hideSettings?: boolean;
   refProfileInfo: RefProfile;
   notifications: Notification[];
+  isMaintenance: boolean;
   logout: () => void;
   showLogin: () => void;
   closeMenu: () => void;
@@ -50,6 +52,7 @@ type CartNavItemProps = {
   cartItems: CartItem[];
   hasMarginRight?: boolean;
   hideVerticalLine?: boolean;
+  hideCartIcon?: boolean;
   to: string;
   onClick: () => void;
 } & DefaultNavItemProps;
@@ -75,6 +78,7 @@ export const CartNavItem: React.FC<CartNavItemProps> = props => {
     cartItems,
     hasMarginRight,
     hide,
+    hideCartIcon,
     hideVerticalLine,
     isDesktop,
     to,
@@ -89,7 +93,7 @@ export const CartNavItem: React.FC<CartNavItemProps> = props => {
             icon="shopping-cart"
             className={classnames(classes.icon, hasMarginRight && 'mr-4')}
           />
-          {cartItems.length > 0 && (
+          {cartItems.length > 0 && !hideCartIcon && (
             <div
               className={classnames(
                 classes.notifActiveWrapper,
@@ -165,10 +169,12 @@ export const LoggedNav: React.FC<LoggedNavProps> = props => {
   const {
     cartItems,
     hideCart,
+    hideCartIcon,
     hideOrder,
     notifications,
     showSiteLink,
     closeMenu,
+    isMaintenance,
   } = props;
 
   const isDesktop = useCheckIfDesktop();
@@ -187,24 +193,31 @@ export const LoggedNav: React.FC<LoggedNavProps> = props => {
     <div className={classes.loggedNavContainer}>
       {showSiteLink ? <SiteLink {...props} /> : <div />}
       <Nav className="pr-0 align-items-center">
-        <OrdersListNavItem hide={hideOrder} isDesktop={isDesktop} />
-        <CartNavItem
-          cartItems={cartItems}
-          hide={hideCart}
-          isDesktop={isDesktop}
-          to={
-            cartItems.length > 0 ? ROUTES.CART : ROUTES.FIO_ADDRESSES_SELECTION
-          }
-          onClick={onCartClick}
-        />
-        <ActiveButtons isDesktop={isDesktop} {...props} />
-        {/* Notifications commented due to BD-2631 task */}
-        <NotificationsNavItem
-          hide={true}
-          isDesktop={isDesktop}
-          notifications={notifications}
-          onClick={closeMenu}
-        />
+        {!isMaintenance && (
+          <>
+            <OrdersListNavItem hide={hideOrder} isDesktop={isDesktop} />
+            <CartNavItem
+              cartItems={cartItems}
+              hide={hideCart}
+              hideCartIcon={hideCartIcon}
+              isDesktop={isDesktop}
+              to={
+                cartItems.length > 0
+                  ? ROUTES.CART
+                  : ROUTES.FIO_ADDRESSES_SELECTION
+              }
+              onClick={onCartClick}
+            />
+            <ActiveButtons isDesktop={isDesktop} {...props} />
+            {/* Notifications commented due to BD-2631 task */}
+            <NotificationsNavItem
+              hide={true}
+              isDesktop={isDesktop}
+              notifications={notifications}
+              onClick={closeMenu}
+            />
+          </>
+        )}
       </Nav>
     </div>
   );

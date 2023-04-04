@@ -21,20 +21,26 @@ import {
 
 // todo: set all actions types
 
+export type CreateOrderActionItem = {
+  action: string;
+  address?: string;
+  domain: string;
+  params?: AnyObject;
+  nativeFio: string;
+  price: string;
+  priceCurrency: string;
+  data?: {
+    cartItemId: string;
+    period?: number;
+  };
+};
+
 export type CreateOrderActionData = {
   total: string;
   roe: number;
   publicKey: string;
   paymentProcessor?: PaymentProvider;
-  items: {
-    action: string;
-    address?: string;
-    domain: string;
-    params?: AnyObject;
-    nativeFio: string;
-    price: string;
-    priceCurrency: string;
-  }[];
+  items: CreateOrderActionItem[];
 };
 type GetFeeAction = { data: { fee: number }; type: string; endpoint: string };
 type PricesAction = { data: { pricing: { usdtRoe: number } }; type: string };

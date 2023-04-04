@@ -4,7 +4,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router';
 import isEmpty from 'lodash/isEmpty';
 
-import { setCartItems } from '../../redux/cart/actions';
+import {
+  setCartItems,
+  clear as clearCart,
+  addToOldCart,
+} from '../../redux/cart/actions';
 import { fioActionExecuted } from '../../redux/fio/actions';
 import { onPurchaseResultsClose } from '../../redux/registrations/actions';
 
@@ -20,19 +24,23 @@ import {
 } from '../../redux/containedFlow/selectors';
 import {
   cartItems,
+  oldCart as oldCartSelector,
   paymentWalletPublicKey as paymentWalletPublicKeySelector,
 } from '../../redux/cart/selectors';
 import { fioWallets as fioWalletsSelector } from '../../redux/fio/selectors';
+
+import useQuery from '../../hooks/useQuery';
+import { useEffectOnce } from '../../hooks/general';
 
 import { cartItemsToOrderItems, totalCost } from '../../util/cart';
 import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
-import { useEffectOnce } from '../../hooks/general';
 import { convertFioPrices } from '../../util/prices';
 import MathOp from '../../util/math';
 
+import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { ROUTES } from '../../constants/routes';
 import {
   CONTAINED_FLOW_CONTINUE_TEXT,
@@ -77,11 +85,13 @@ export const useContext = (
   const containedFlowParams = useSelector(containedFlowQueryParams);
   const isProcessing = useSelector(isProcessingSelector);
   const cart = useSelector(cartItems);
+  const oldCart = useSelector(oldCartSelector);
   const prices = useSelector(pricesSelector);
   const paymentWalletPublicKey = useSelector(paymentWalletPublicKeySelector);
   const userWallets = useSelector(fioWalletsSelector);
   const isContainedFlow = useSelector(isContainedFlowSelector);
-
+  const queryParams = useQuery();
+  const orderNumber = queryParams.get(QUERY_PARAMS_NAMES.ORDER_NUMBER);
   const dispatch = useDispatch();
 
   const { orderItem } = props;
@@ -89,6 +99,13 @@ export const useContext = (
   const { paymentProcessor } = payment || {};
 
   let buttonText = 'Close';
+
+  useEffectOnce(() => {
+    if (!oldCart[orderNumber]) {
+      dispatch(addToOldCart(orderNumber, cart));
+    }
+    dispatch(clearCart());
+  }, [dispatch, oldCart, orderNumber]);
 
   useEffect(() => {
     if (noProfile) {
@@ -120,7 +137,9 @@ export const useContext = (
         const purchasedItems: CartItem[] = [];
         regItems.forEach(regItem => {
           const { id, period = 1 } = regItem;
-          const purchasedItem = cart.find(cartItem => cartItem.id === id);
+          const purchasedItem = [...oldCart[orderNumber]].find(
+            cartItem => cartItem.id === id,
+          );
           if (purchasedItem) {
             if (
               purchasedItem.id === id &&
@@ -146,6 +165,7 @@ export const useContext = (
           }
         });
         const purchaseItems = getCartItemsDataForAnalytics(purchasedItems);
+
         fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED, {
           ...purchaseItems,
           payment_type: !purchaseItems.value
@@ -173,7 +193,7 @@ export const useContext = (
 
   useEffectOnce(
     () => {
-      let updatedCart: CartItem[] = [...cart];
+      let updatedCart: CartItem[] = [...oldCart[orderNumber]];
       if (
         status === PURCHASE_RESULTS_STATUS.SUCCESS ||
         status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS

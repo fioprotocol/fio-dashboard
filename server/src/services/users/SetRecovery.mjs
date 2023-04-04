@@ -3,7 +3,7 @@ import Base from '../Base';
 import X from '../Exception';
 import emailSender from '../emailSender';
 
-import { Notification, User } from '../../models';
+import { User } from '../../models';
 
 export default class UsersSetRecovery extends Base {
   static get validationRules() {
@@ -39,20 +39,6 @@ export default class UsersSetRecovery extends Base {
 
     user.secretSet = true;
     await user.save();
-
-    try {
-      const secretSetNotification = await Notification.getItem({
-        action: Notification.ACTION.RECOVERY,
-        userId: user.id,
-        closeDate: null,
-      });
-      if (secretSetNotification) {
-        secretSetNotification.closeDate = new Date();
-        await secretSetNotification.save();
-      }
-    } catch (e) {
-      //
-    }
 
     await emailSender.send(templates.passRecovery, user.email, {
       username: user.username,

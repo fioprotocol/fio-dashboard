@@ -47,6 +47,14 @@ const availableJobsParams = {
     closeWorkerAfterMs:
       parseInt(process.env.WRAP_STATUS_JOB_CLOSE_TIMEOUT) || 60 * 60 * 1000, // 60 min
   },
+  missingBcTxs: {
+    path: path.join(JOBS_PATH, 'get-missed-bc-txs.mjs'),
+    name: 'missed-bc-txs',
+    interval: process.env.MISSED_BC_TXS_JOB_INTERVAL || 55 * 60 * 1000, // 55 min
+    timeout: 0,
+    closeWorkerAfterMs:
+      parseInt(process.env.MISSED_BC_TXS_JOB_CLOSE_TIMEOUT) || 60 * 60 * 1000, // 60 min
+  },
   payments: {
     path: path.join(JOBS_PATH, 'payments.mjs'),
     name: 'payments',

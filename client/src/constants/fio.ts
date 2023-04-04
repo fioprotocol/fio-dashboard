@@ -6,6 +6,8 @@ export const MAX_PUBLIC_ADDRESS_LENGTH = 128;
 
 export const TOKEN_LINK_MIN_WAIT_TIME = 2000;
 
+export const DOMAIN_EXPIRED_DAYS = 30;
+
 export const MAX_MEMO_SIZE = 64;
 export const MAX_TOKEN_LENGTH = 10;
 export const MAX_CHAIN_LENGTH = 10;
@@ -155,6 +157,13 @@ export const FIO_ACCOUNT_TYPES = {
   REGULAR: 'REGULAR',
 } as const;
 
+export const NOT_DELETABLE_ACCOUNTS: string[] = [
+  FIO_ACCOUNT_TYPES.FREE,
+  FIO_ACCOUNT_TYPES.FREE_FALLBACK,
+  FIO_ACCOUNT_TYPES.PAID,
+  FIO_ACCOUNT_TYPES.PAID_FALLBACK,
+];
+
 export const FIO_ACCOUNT_TYPES_OPTIONS = [
   {
     id: FIO_ACCOUNT_TYPES.FREE,
@@ -222,3 +231,5 @@ export const FIO_PROXY_LIST = {
     'ericanchor@fiotestnet',
   ],
 };
+
+export const DEFAULT_EDGE_WALLET_NAME = 'io.fioprotocol.app';

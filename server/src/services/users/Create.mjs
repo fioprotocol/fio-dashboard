@@ -69,7 +69,7 @@ export default class UsersCreate extends Base {
       type: Notification.TYPE.INFO,
       contentType: Notification.CONTENT_TYPE.ACCOUNT_CREATE,
       userId: user.id,
-      data: { pagesToShow: ['/'] },
+      data: { pagesToShow: ['/myfio'] },
     }).save();
 
     for (const { edgeId, name, publicKey } of fioWallets) {

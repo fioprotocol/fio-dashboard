@@ -66,6 +66,17 @@ export default combineReducers({
         return state;
     }
   },
+  isFioWalletsBalanceLoading(state: boolean = false, action) {
+    switch (action.type) {
+      case actions.REFRESH_BALANCE_REQUEST:
+        return true;
+      case actions.REFRESH_BALANCE_SUCCESS:
+      case actions.REFRESH_BALANCE_FAILURE:
+        return false;
+      default:
+        return state;
+    }
+  },
   walletsFioAddressesLoading(state: boolean = false, action) {
     switch (action.type) {
       case actions.GET_WALLETS_FIO_ADDRESSES_REQUEST:

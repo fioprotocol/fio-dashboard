@@ -1,6 +1,6 @@
 import Base from '../Base';
 import X from '../Exception';
-import { User, Wallet, Notification, NewDeviceTwoFactor } from '../../models';
+import { User, Wallet, NewDeviceTwoFactor } from '../../models';
 
 export default class UsersInfo extends Base {
   async execute() {
@@ -16,16 +16,7 @@ export default class UsersInfo extends Base {
     }
 
     const userObj = user.json();
-    userObj.secretSetNotification = false;
     userObj.fioWallets = userObj.fioWallets.map(item => Wallet.format(item));
-
-    if (!userObj.secretSet) {
-      const secretSetNotification = await Notification.getItem({
-        action: Notification.ACTION.RECOVERY,
-        userId: user.id,
-      });
-      userObj.secretSetNotification = !!secretSetNotification;
-    }
 
     if (userObj.newDeviceTwoFactor.length > 0) {
       const newDevicesValid = [];

@@ -1,9 +1,6 @@
 import { History } from 'history';
 import { put, select, takeEvery } from 'redux-saga/effects';
 
-import { BADGE_TYPES } from '../../components/Badge/Badge';
-import { ACTIONS } from '../../components/Notifications/Notifications';
-
 import { log } from '../../util/general';
 
 import { setWallets } from '../account/actions';
@@ -12,6 +9,7 @@ import {
   loadAdminProfile,
   loadProfile,
   login,
+  setIsNewUser,
   ADMIN_LOGIN_SUCCESS,
   ADMIN_LOGOUT_SUCCESS,
   CONFIRM_ADMIN_EMAIL_SUCCESS,
@@ -24,10 +22,7 @@ import {
 } from './actions';
 
 import { closeLoginModal } from '../modal/actions';
-import {
-  createNotification,
-  listNotifications,
-} from '../notifications/actions';
+import { listNotifications } from '../notifications/actions';
 
 import {
   locationState as locationStateSelector,
@@ -35,8 +30,8 @@ import {
   pathname as pathnameSelector,
 } from '../navigation/selectors';
 import { fioWallets } from '../fio/selectors';
+import { isNewUser as isNewUserSelectors } from './selectors';
 
-import { NOTIFICATIONS_CONTENT_TYPE } from '../../constants/notifications';
 import {
   ANALYTICS_EVENT_ACTIONS,
   ANALYTICS_LOGIN_METHOD,
@@ -60,6 +55,7 @@ export function* loginSuccess(history: History, api: Api): Generator {
     api.client.setToken(action.data.jwt);
     if (action.isSignUp) {
       fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.SIGN_UP);
+      yield put<Action>(setIsNewUser(true));
     }
     fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.LOGIN, {
       method: action.isPinLogin
@@ -108,20 +104,6 @@ export function* loginSuccess(history: History, api: Api): Generator {
 
 export function* profileSuccess(): Generator {
   yield takeEvery(PROFILE_SUCCESS, function*(action: Action) {
-    try {
-      if (!action.data.secretSet && action.data.secretSetNotification)
-        yield put<Action>(
-          createNotification({
-            action: ACTIONS.RECOVERY,
-            contentType: NOTIFICATIONS_CONTENT_TYPE.RECOVERY_PASSWORD,
-            type: BADGE_TYPES.ALERT,
-            pagesToShow: [ROUTES.HOME, ROUTES.DASHBOARD],
-          }),
-        );
-    } catch (e) {
-      log.error(e);
-    }
-
     for (const fioWallet of action.data.fioWallets) {
       yield put<Action>(refreshBalance(fioWallet.publicKey));
     }
@@ -134,6 +116,12 @@ export function* logoutSuccess(history: History, api: Api): Generator {
 
     const { redirect } = action;
     const pathname: string = yield select(pathnameSelector);
+
+    const isNewUser: boolean = yield select(isNewUserSelectors);
+
+    if (isNewUser) {
+      yield put<Action>(setIsNewUser(false));
+    }
 
     if (redirect) history.push(redirect, {});
     if (!redirect) {

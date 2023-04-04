@@ -13,7 +13,7 @@ import {
   FIO_WALLET_TYPE,
   WALLET_CREATED_FROM,
 } from '../../constants/common';
-import { FIO_CHAIN_CODE } from '../../constants/fio';
+import { DEFAULT_EDGE_WALLET_NAME, FIO_CHAIN_CODE } from '../../constants/fio';
 
 export const prefix = 'edge';
 
@@ -74,12 +74,18 @@ export const login = ({
       : await api.edge.login(username, password, options);
     const fioWallets = [];
     try {
+      let index = 1;
       for (const walletId of account.activeWalletIds) {
         const wallet = await account.waitForCurrencyWallet(walletId);
 
-        // todo: investigate why wallet name changes to 'io.fioprotocol.app'
-
         if (wallet.currencyInfo.currencyCode === FIO_CHAIN_CODE) {
+          if (wallet.name === DEFAULT_EDGE_WALLET_NAME) {
+            await wallet.renameWallet(
+              `${DEFAULT_WALLET_OPTIONS.name} ${index}`,
+            );
+
+            index++;
+          }
           fioWallets.push(wallet);
         }
       }

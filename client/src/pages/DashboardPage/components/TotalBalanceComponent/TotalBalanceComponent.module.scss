@@ -1,0 +1,72 @@
+@import '../../../../assets/styles/mediaQueriesMixings.scss';
+@import '../../../../assets/styles/fontMixins.scss';
+
+.badgeContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+
+  .title, .fioBalance {
+    font-size: 1em;
+    @include proxima-nova-semibold;
+  }
+
+  .title {
+    margin-bottom: 10px;
+  }
+
+  .balance {
+    margin-bottom: 1rem;
+    line-height: 1rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .fioBalance {
+    display: flex;
+    
+  }
+
+  .actionContainer {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+
+    .actionButtonContainer {
+      width: 100%;
+      max-width: 225px;
+    }
+
+    .actionText {
+      font-size: 0.75em;
+      margin: 5px auto;
+      @include proxima-nova-semibold;
+    }
+  }
+}
+
+@include lg {
+  .badgeContainer {
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+
+    .title, .balance {
+      margin-bottom: 0;
+    }
+
+    .actionContainer {
+      gap: 20px;
+      width: auto;
+
+      .actionButtonContainer {
+        width: auto;
+      }
+
+      .actionText {
+        margin: 5px 18px;
+      }
+    }
+  }
+}

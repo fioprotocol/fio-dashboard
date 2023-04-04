@@ -24,10 +24,21 @@ type Props = {
   children: React.ReactNode;
   type: string;
   show?: boolean;
+  hasDefaultFontSize?: boolean;
+  withoutMargin?: boolean;
+  withoutMaxWidth?: boolean;
 } & CommonBadgeProps;
 
 const Badge: React.FC<Props> = props => {
-  const { children, type, show, className = '' } = props;
+  const {
+    children,
+    hasDefaultFontSize,
+    type,
+    show,
+    withoutMargin,
+    withoutMaxWidth,
+    className = '',
+  } = props;
 
   return (
     <div
@@ -35,6 +46,9 @@ const Badge: React.FC<Props> = props => {
         classes.badge,
         show && classes.show,
         !show && classes.hidden,
+        hasDefaultFontSize && classes.hasDefaultFontSize,
+        withoutMargin && classes.withoutMargin,
+        withoutMaxWidth && classes.withoutMaxWidth,
         type && classes[type.toLowerCase()],
         className,
       )}

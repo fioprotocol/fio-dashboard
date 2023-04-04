@@ -17,18 +17,26 @@ import ChainCode from './chain-code';
 import GeneratePdfFile from './generatePdf';
 import WrapStatus from './wrap-status';
 import Registration from './registration';
+import Vars from './vars';
+import HealthCheck from './health-check';
+
+import { log } from '../util/general';
 
 const apiClient = new ApiClient(config.apiPrefix);
 
 // todo: temporary fix to prevent CORS
 const fetch = window.fetch;
-window.fetch = (uri: RequestInfo | URL, opts: RequestInit = {}) => {
+window.fetch = async (uri: RequestInfo | URL, opts: RequestInit = {}) => {
   // @ts-ignore todo: fix headers['Content-Type'] type usage
   if (opts.headers && opts.headers['Content-Type']) {
     // @ts-ignore
     delete opts.headers['Content-Type'];
   }
-  return fetch(uri, { ...opts });
+  try {
+    return await fetch(uri, { ...opts });
+  } catch (err) {
+    log.error(err);
+  }
 };
 
 export type Api = {
@@ -48,6 +56,8 @@ export type Api = {
   generatePdfFile: GeneratePdfFile;
   wrapStatus: WrapStatus;
   registration: Registration;
+  vars: Vars;
+  healthCheck: HealthCheck;
 };
 
 const apis = {
@@ -68,6 +78,8 @@ const apis = {
   generatePdfFile: new GeneratePdfFile(apiClient),
   wrapStatus: new WrapStatus(apiClient),
   registration: new Registration(apiClient),
+  vars: new Vars(apiClient),
+  healthCheck: new HealthCheck(apiClient),
 };
 
 export default apis;

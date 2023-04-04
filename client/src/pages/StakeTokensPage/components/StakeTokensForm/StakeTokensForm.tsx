@@ -80,7 +80,7 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
         />
         <InfoBadge
           className={classes.infoBadge}
-          type={BADGE_TYPES.WARNING}
+          type={BADGE_TYPES.ERROR}
           show={true}
           title="No Crypto Handle"
           message={
@@ -300,15 +300,6 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
                 remaining={selectedAddress.remaining}
               />
             )}
-
-            {/*temporary added while fio stake api can't allow accounts without crypto handles*/}
-            <InfoBadge
-              className={classes.infoBadgeError}
-              type={BADGE_TYPES.ERROR}
-              show={!fioAddresses.length && !isWalletFioAddressesLoading}
-              title="No Crypto Handle"
-              message={<>You are not able to stake without crypto handles.</>}
-            />
 
             <SubmitButton
               text="Stake FIO Tokens"

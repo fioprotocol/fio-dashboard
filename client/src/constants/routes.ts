@@ -2,6 +2,7 @@ const ROUTES: { [route: string]: string } = {
   HOME: '/',
   DASHBOARD: '/myfio',
   NOT_FOUND: '/404',
+  UNAVAILABLE: '/unavailable',
   ERROR: '/error',
   SIGN_IN: '/signin',
   RESET_PASSWORD: '/reset-password',

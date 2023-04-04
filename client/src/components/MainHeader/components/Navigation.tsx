@@ -15,7 +15,6 @@ export const Navigation: React.FC<NavigationProps> | null = props => {
     toggleMenuOpen,
     closeMenu,
     showLogin,
-    logout,
   } = props;
 
   if (isAuthenticated)
@@ -31,7 +30,6 @@ export const Navigation: React.FC<NavigationProps> | null = props => {
         onlyAuth={isContainedFlow || isNotActiveUser}
         showSiteLink={isContainedFlow}
         {...props}
-        logout={logout}
       />
     );
 

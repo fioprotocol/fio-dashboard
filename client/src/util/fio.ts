@@ -11,13 +11,18 @@ import {
 
 import apis from '../api';
 import { AdminDomain } from '../api/responses';
-import { fireAnalyticsEventDebounced } from './analytics';
 import { setFioName } from '../utils';
 import { log } from '../util/general';
+import MathOp from './math';
 
 import { NON_VAILD_DOMAIN } from '../constants/errors';
-import { DOMAIN_TYPE, FIO_REQUEST_STATUS_TYPES } from '../constants/fio';
+import {
+  DOMAIN_EXPIRED_DAYS,
+  DOMAIN_TYPE,
+  FIO_REQUEST_STATUS_TYPES,
+} from '../constants/fio';
 import { ANALYTICS_EVENT_ACTIONS, CHAIN_CODES } from '../constants/common';
+import { EXPIRED_DOMAINS_TEST_REGEX } from '../constants/regExps';
 import { FIO_ADDRESS_DELIMITER } from '../utils';
 
 import {
@@ -81,18 +86,18 @@ export const validateFioAddress = async (address: string, domain: string) => {
 export const checkAddressOrDomainIsExist = async ({
   address,
   domain,
+  fireAnalytics,
 }: {
   address?: string;
   domain: string;
+  fireAnalytics: (eventName: string) => void;
 }) => {
   if (domain) {
     try {
-      fireAnalyticsEventDebounced(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
+      fireAnalytics(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM);
       const isAvail = await apis.fio.availCheck(setFioName(address, domain));
       if (isAvail && isAvail.is_registered === 1) {
-        fireAnalyticsEventDebounced(
-          ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED,
-        );
+        fireAnalytics(ANALYTICS_EVENT_ACTIONS.SEARCH_ITEM_ALREADY_USED);
         return true;
       } else {
         return false;
@@ -299,3 +304,50 @@ export const transformCustomDomains = (
       swapAddressAndDomainPlaces,
     };
   });
+
+export const isDomainExpired = (
+  domainName: string,
+  expiration: Date,
+): boolean => {
+  const today = new Date();
+
+  if (
+    process.env.REACT_APP_IS_EXPIRE_DOMAINS_TEST_MODE &&
+    EXPIRED_DOMAINS_TEST_REGEX.test(domainName)
+  ) {
+    return true;
+  }
+
+  return (
+    expiration &&
+    new Date(expiration) <
+      new Date(today.setDate(today.getDate() + DOMAIN_EXPIRED_DAYS))
+  );
+};
+
+export const checkIsDomainItemExistsOnCart = (
+  id: string,
+  cartItem: CartItem,
+): boolean =>
+  cartItem.id === id ||
+  (cartItem.domainType === DOMAIN_TYPE.CUSTOM && cartItem.domain === id);
+
+export const handlePriceForMultiYearFchWithCustomDomain = ({
+  costNativeFio,
+  nativeFioAddressPrice,
+  period,
+}: {
+  costNativeFio: number;
+  nativeFioAddressPrice?: number;
+  period: number | string;
+}): number => {
+  if (!nativeFioAddressPrice)
+    return new MathOp(costNativeFio).mul(period).toNumber();
+
+  return new MathOp(
+    new MathOp(costNativeFio).sub(nativeFioAddressPrice).toNumber(),
+  )
+    .mul(period)
+    .add(nativeFioAddressPrice)
+    .toNumber();
+};

@@ -39,7 +39,7 @@ export interface ContainerProps extends RouteComponentProps {
 
 export type BoolStateFunc = Dispatch<SetStateAction<boolean>>;
 
-export type IsExpiredFunc = (expiration: Date) => boolean;
+export type IsExpiredFunc = (domainName: string, expiration: Date) => boolean;
 type ModalOpenActionType = (
   data: FioNameItemProps,
 ) => MouseEventHandler<HTMLDivElement> | void;
@@ -51,7 +51,7 @@ export type DefaultProps = {
   showInfoBadge: boolean;
   toggleShowInfoBadge: BoolStateFunc;
   toggleShowWarnBadge: BoolStateFunc;
-  isExpired: IsExpiredFunc;
+  isDomainExpired: IsExpiredFunc;
   onItemModalOpen?: ModalOpenActionType;
   onSettingsOpen?: ModalOpenActionType;
   showFioAddressName?: boolean;
@@ -69,7 +69,7 @@ export type NotificationsProps = {
 
 export type ItemComponentProps = {
   fioNameItem: FioNameItemProps;
-  isExpired: IsExpiredFunc;
+  isDomainExpired: IsExpiredFunc;
   isDesktop: boolean;
   onSettingsOpen: ModalOpenActionType;
   showExpired?: boolean;

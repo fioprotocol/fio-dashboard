@@ -51,7 +51,10 @@ export const PrivateRoute: React.FC<RouteProps & OwnProps> = ({
             <Redirect
               to={{
                 pathname: ROUTES.HOME,
-                state: { from: props.location, options: redirectOptions },
+                state: {
+                  from: props.location,
+                  options: redirectOptions,
+                },
               }}
             />
           );

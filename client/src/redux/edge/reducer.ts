@@ -17,6 +17,7 @@ export default combineReducers({
       case actions.CHANGE_PASSWORD_REQUEST:
       case actions.CHANGE_PIN_REQUEST:
       case actions.RECOVERY_ACCOUNT_REQUEST:
+      case actions.SET_IS_PIN_ENABLED_REQUEST:
         return true;
       case actions.LOGIN_SUCCESS:
       case actions.LOGIN_FAILURE:
@@ -30,6 +31,8 @@ export default combineReducers({
       case actions.CHANGE_PIN_FAILURE:
       case actions.RECOVERY_ACCOUNT_SUCCESS:
       case actions.RECOVERY_ACCOUNT_FAILURE:
+      case actions.SET_IS_PIN_ENABLED_SUCCESS:
+      case actions.SET_IS_PIN_ENABLED_FAILURE:
         return false;
       default:
         return state;

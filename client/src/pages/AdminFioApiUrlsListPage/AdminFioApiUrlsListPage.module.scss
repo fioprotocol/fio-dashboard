@@ -1,6 +1,38 @@
+@import '../../assets/styles/colors.scss';
+
 .tableContainer {
   width: auto;
   margin-top: 30px;
+
+  .itemsContainer {
+    width: 100%;
+    margin-bottom: 30px;
+
+    .head, .userItem {
+      display: grid;
+      grid-template-columns: 30px 20px 400px 200px 100px;
+      padding: 15px;
+    }
+
+    .head {
+      border-bottom: 1px solid $silver;
+    }
+
+    .userItem {
+      align-items: center;
+      margin-top: 15px;
+      border: 1px solid $silver;
+      border-radius: 15px;
+    }
+
+    .dragItemContainer {
+      border-radius: 15px;
+    
+      &:nth-of-type(odd) {
+        background-color: $light-gray;
+      }
+  }
+  }
 
   th {
     text-align: center;

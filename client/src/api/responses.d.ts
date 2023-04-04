@@ -15,7 +15,7 @@ import {
   UserDetails,
   UserOrderDetails,
   RefProfileDomain,
-  FioApiUrl,
+  FioApiUrls,
   OrderDetails,
 } from '../types';
 
@@ -103,12 +103,23 @@ export type UserOrdersListResponse = {
   status: number;
 };
 
+export type HealthCheckResponse = { success: boolean };
+
+export type VarsResponse = {
+  id: string;
+  key: string;
+  value: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type AdminFioAccountsProfilesListResponse = FioAccountProfile[];
 export type AdminPartnersListResponse = RefProfile[];
 export type AdminUsersListResponse = AdminUser[];
 export type AdminOrdersListResponse = AdminUser[];
 export type AdminOrderItemResponse = OrderDetails;
-export type AdminFioApiUrlsListResponse = FioApiUrl[];
+export type AdminFioApiUrlsListResponse = FioApiUrls;
+export type AdminFioApiUrlsListUpdateResponse = { success: true };
 export type RemoveAdminResponse =
   | { success: true }
   | { success: false; message: 'Not Found' };
@@ -163,7 +174,9 @@ export type ApisResponse = AccountGetWalletsResponse &
   AdminConfirmResponse &
   PaymentCreateResponse &
   ChainCodesListResults &
-  UserOrdersListResponse;
+  UserOrdersListResponse &
+  HealthCheckResponse &
+  VarsResponse;
 
 export type Rankable = {
   rank: number;

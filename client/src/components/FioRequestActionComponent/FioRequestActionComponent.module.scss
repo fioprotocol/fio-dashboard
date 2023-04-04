@@ -1,0 +1,65 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+@import '../../assets/styles/fontMixins.scss';
+
+.container {
+  width: 100%;
+  background-image: $violet-gradient;
+  border-radius: 24px;
+  color: $white;
+  padding: 65px 20px 78px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .title {
+    @include comfortaa-bold;
+    margin-top: 30px;
+    margin-bottom: 0;
+    font-size: 1.375em;
+  }
+
+  .subtitle {
+    @include proxima-nova-thin;
+    font-size: 0.8125em;
+    margin-top: 15px;
+  }
+
+  .button {
+    margin-top: 15px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    &:first-of-type {
+      margin-top: 25px
+    }
+
+    .buttonText {
+      @include sf-pro-display-regular;
+    }
+
+    .respondButtonText {
+      position: relative;
+
+      .buttonText {
+        margin: 0;
+      }
+
+      .icon {
+        position: absolute;
+        color: $light-seafoam;
+        top: -6px;
+        right: -42px;
+      }
+    }
+  }
+}
+
+@include lg {
+  .container {
+    padding: 65px 40px 40px 40px;
+    height: 100%;
+    max-width: 335px;
+  }
+}
