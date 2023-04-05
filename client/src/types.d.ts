@@ -919,7 +919,7 @@ export type ColorTypes = {
 
 export type TwitterNotification = {
   hasNotification: boolean;
-  type: 'success' | 'error';
+  type: string;
   message: string;
   title: string;
   icon: string;

@@ -1,5 +1,3 @@
-export const usernamePattern = /^[a-z0-9-]+$/;
-
 export const addressWidgetContent = {
   title: 'Your Twitter handle can now receive crypto',
   subtitle:
@@ -9,5 +7,7 @@ export const addressWidgetContent = {
   },
   formAction: false,
   fch: 'bob@twitter',
-  suffixText: '@twitter',
+  prefixText: '@twitter',
 };
+
+export const TWITTER_DOMAIN = '@twitter';
