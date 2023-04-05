@@ -10,13 +10,16 @@ type Props = {
   link: string;
   isVirtualPage?: boolean;
   shouldFireOnce?: boolean;
+  noAppName?: boolean;
 };
 
 const PageTitle: React.FC<Props> = props => {
-  const { link, shouldFireOnce = false } = props;
+  const { link, shouldFireOnce = false, noAppName } = props;
 
   const title = LINK_TITLES[link]
-    ? `${APP_TITLE} - ${LINK_TITLES[link]}`
+    ? noAppName
+      ? LINK_TITLES[link]
+      : `${APP_TITLE} - ${LINK_TITLES[link]}`
     : APP_TITLE;
 
   useEffect(() => {

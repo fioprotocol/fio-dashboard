@@ -13,13 +13,14 @@ type Props = {
   arrowAction?: () => void;
   noDash?: boolean;
   message: string | React.ReactNode;
-  onClose: () => void | void;
+  onClose?: () => void | void;
   show: boolean;
   title: string | React.ReactNode;
   type: string;
   iconName?: IconName;
   mainIcon?: React.ReactElement | null;
   hasNewDesign?: boolean;
+  marginBottomXs?: boolean;
 };
 
 type MainIconProps = {
@@ -49,17 +50,26 @@ const NotificationBadge: React.FC<Props> = props => {
     type,
     iconName,
     hasNewDesign,
+    mainIcon,
+    marginBottomXs,
   } = props;
 
   if (hasNewDesign) {
     return (
-      <Badge type={type} show={show} className={classes.badgeContainer}>
-        <MainIcon type={type} />
+      <Badge
+        type={type}
+        show={show}
+        className={`${classes.badgeContainer} ${marginBottomXs &&
+          classes.marginBottomXs}`}
+      >
+        <MainIcon type={type} mainIcon={mainIcon} />
         <div className={classes.contentContainer}>
           <h5 className={classes.title}>{title}</h5>
           <p className={classes.message}>{message}</p>
         </div>
-        <ClearButton className={classes.clearIcon} onClick={onClose} />
+        {onClose && (
+          <ClearButton className={classes.clearIcon} onClick={onClose} />
+        )}
       </Badge>
     );
   }

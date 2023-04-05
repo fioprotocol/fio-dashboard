@@ -2,7 +2,11 @@ import React from 'react';
 
 import classes from './FCHBanner.module.scss';
 
-export const FCHBanner: React.FC = () => {
+type Props = {
+  fch: string;
+};
+
+export const FCHBanner: React.FC<Props> = ({ fch }) => {
   return (
     <div className={classes.container}>
       <div className={classes.row}>
@@ -10,7 +14,7 @@ export const FCHBanner: React.FC = () => {
           Now people will be able to send crypto to
         </div>
         <div className={classes.fchWrapper}>
-          <div className={classes.fch}>bob@rulez</div>
+          <div className={classes.fch}>{fch}</div>
         </div>
       </div>
       <div className={classes.row}>
