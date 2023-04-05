@@ -48,6 +48,7 @@ export type TextInputProps = {
   errorColor?: string;
   prefix?: string;
   prefixLabel?: string;
+  suffix?: boolean;
   upperCased?: boolean;
   lowerCased?: boolean;
   disabled?: boolean;
@@ -90,6 +91,7 @@ export const TextInput: React.ForwardRefRenderFunction<
     errorColor = '',
     prefix = '',
     prefixLabel = '',
+    suffix,
     upperCased = false,
     lowerCased = false,
     disabled,
@@ -186,7 +188,12 @@ export const TextInput: React.ForwardRefRenderFunction<
     >
       <Label label={label} uiType={uiType} hasItalic={hasItalicLabel} />
       <div className={classes.inputGroup}>
-        <Prefix prefix={prefix} hasError={hasError} uiType={uiType} />
+        <Prefix
+          prefix={prefix}
+          suffix={suffix}
+          hasError={hasError}
+          uiType={uiType}
+        />
         <div
           className={classnames(
             classes.regInput,
@@ -194,7 +201,7 @@ export const TextInput: React.ForwardRefRenderFunction<
             uiType && classes[uiType],
             isBW && classes.bw,
             isIW && classes.iw,
-            prefix && classes.prefixSpace,
+            !suffix && prefix && classes.prefixSpace,
             showPasteButton && classes.hasPasteButton,
             type === 'password' && classes.doubleIconInput,
             isLowHeight && classes.lowHeight,

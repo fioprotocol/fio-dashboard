@@ -1,5 +1,6 @@
 const ROUTES: { [route: string]: string } = {
   HOME: '/',
+  TWITTER_HANDLE: '/twitter-handle',
   DASHBOARD: '/myfio',
   NOT_FOUND: '/404',
   UNAVAILABLE: '/unavailable',

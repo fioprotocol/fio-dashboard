@@ -99,13 +99,15 @@ export const Prefix: React.FC<{
   hasError?: boolean;
   uiType?: string;
   highZIndex?: boolean;
-}> = ({ prefix, hasError, uiType, highZIndex }) => {
+  suffix?: boolean;
+}> = ({ prefix, hasError, uiType, highZIndex, suffix }) => {
   if (!prefix?.length) return null;
 
   return (
     <div
       className={classnames(
         classes.prefix,
+        suffix && classes.suffix,
         hasError && classes.error,
         uiType && classes[uiType],
         highZIndex && classes.highZIndex,

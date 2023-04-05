@@ -121,6 +121,7 @@ export const RefHomePage: React.FC<Props &
           isAuthenticated={isAuthenticated}
           showSignInWidget
           isDarkWhite
+          formAction
         />
       </div>
     );
