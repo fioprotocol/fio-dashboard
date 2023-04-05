@@ -79,7 +79,11 @@
 }
 
 .marginBottomXs {
-  margin-bottom: 20px !important;
+  margin-bottom: 30px !important;
+}
+
+.marginTopZero {
+  margin-top: 0 !important;
 }
 
 @include sm {

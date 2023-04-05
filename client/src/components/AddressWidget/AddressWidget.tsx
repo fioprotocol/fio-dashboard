@@ -8,7 +8,7 @@ import SubtitleComponent from './components/SubtitleComponent';
 import ActionTextComponent from './components/ActionTextComponent';
 import { FormComponent } from './components/FormComponent';
 
-import { AnyType, TwitterNotification } from '../../types';
+import { TwitterNotification } from '../../types';
 
 import classes from './AddressWidget.module.scss';
 
@@ -27,11 +27,11 @@ type Props = {
   isDarkWhite?: boolean;
   formAction?: boolean;
   suffix?: boolean;
-  suffixText?: string;
+  prefixText?: string;
   convert?: (value: string) => string;
   formatOnFocusOut?: boolean;
   notification?: TwitterNotification;
-  customHandleSubmit?: AnyType;
+  customHandleSubmit?: ({ address }: { address: string }) => Promise<void>;
 };
 
 const AddressWidget: React.FC<Props> = props => {
@@ -48,7 +48,7 @@ const AddressWidget: React.FC<Props> = props => {
     subtitle,
     formAction,
     suffix,
-    suffixText,
+    prefixText,
     convert,
     formatOnFocusOut,
     notification,
@@ -73,7 +73,7 @@ const AddressWidget: React.FC<Props> = props => {
         isDarkWhite={isDarkWhite}
         formAction={formAction}
         suffix={suffix}
-        suffixText={suffixText}
+        prefixText={prefixText}
         convert={convert}
         formatOnFocusOut={formatOnFocusOut}
         notification={notification}

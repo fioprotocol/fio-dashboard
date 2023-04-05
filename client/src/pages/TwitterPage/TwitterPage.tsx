@@ -10,18 +10,20 @@ import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
 
 import apis from '../../api';
 import { ROUTES } from '../../constants/routes';
+import { addressWidgetContent, TWITTER_DOMAIN } from '../../constants/twitter';
+import { USERNAME_REGEX } from '../../constants/regExps';
 
 import {
   RefProfile,
   ContainedFlowQueryParams,
   TwitterNotification,
 } from '../../types';
-import { addressWidgetContent, usernamePattern } from '../../constants/twitter';
 
 import classnames from './TwitterPage.module.scss';
 
 import neverExpiresIcon from '../../assets/images/landing-page/never-expires-twitter.svg';
 import sendReceiveIcon from '../../assets/images/landing-page/send-receive-twitter.svg';
+import { BADGE_TYPES } from '../../components/Badge/Badge';
 
 type Props = {
   isAuthenticated: boolean;
@@ -32,7 +34,7 @@ type Props = {
 
 const noNotificationState: TwitterNotification = {
   hasNotification: false,
-  type: 'success',
+  type: '',
   message: '',
   title: '',
   icon: '',
@@ -53,12 +55,12 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   }, [isAuthenticated, isContainedFlow, history]);
 
   const onFocusOut = (value: string) => {
-    if (usernamePattern.test(value)) {
+    if (USERNAME_REGEX.test(value)) {
       setNotification(noNotificationState);
     } else {
       setNotification({
         hasNotification: true,
-        type: 'error',
+        type: BADGE_TYPES.ERROR,
         message:
           'The handle format is not valid. Please update the handle and try again.',
         title: 'Invalid Format',
@@ -71,18 +73,18 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
           .toLowerCase()
           .replaceAll('@', '')
           .replaceAll('_', '-')
-      : value;
+      : '';
   };
 
   const customHandleSubmit = async ({ address }: { address: string }) => {
     const isRegistered = await apis.fio.availCheckTableRows(
-      `${address}@twitter`,
+      `${address}${TWITTER_DOMAIN}`,
     );
 
     if (isRegistered) {
       setNotification({
         hasNotification: true,
-        type: 'error',
+        type: BADGE_TYPES.ERROR,
         message:
           'This handle is already registered. If you own it map it to your public addresses.',
         title: 'Existing Handle',
@@ -101,7 +103,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
           isDarkWhite={!!refProfileInfo}
           {...addressWidgetContent}
           formAction={addressWidgetContent.formAction}
-          suffixText={addressWidgetContent.suffixText}
+          prefixText={addressWidgetContent.prefixText}
           convert={onFocusOut}
           notification={notification}
           customHandleSubmit={customHandleSubmit}
