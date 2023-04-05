@@ -8,6 +8,8 @@ import SubtitleComponent from './components/SubtitleComponent';
 import ActionTextComponent from './components/ActionTextComponent';
 import { FormComponent } from './components/FormComponent';
 
+import { AnyType, TwitterNotification } from '../../types';
+
 import classes from './AddressWidget.module.scss';
 
 type Props = {
@@ -23,6 +25,13 @@ type Props = {
   isAuthenticated?: boolean;
   isReverseColors?: boolean;
   isDarkWhite?: boolean;
+  formAction?: boolean;
+  suffix?: boolean;
+  suffixText?: string;
+  convert?: (value: string) => string;
+  formatOnFocusOut?: boolean;
+  notification?: TwitterNotification;
+  customHandleSubmit?: AnyType;
 };
 
 const AddressWidget: React.FC<Props> = props => {
@@ -37,6 +46,13 @@ const AddressWidget: React.FC<Props> = props => {
     title,
     showSignInWidget,
     subtitle,
+    formAction,
+    suffix,
+    suffixText,
+    convert,
+    formatOnFocusOut,
+    notification,
+    customHandleSubmit,
   } = props;
 
   return (
@@ -55,6 +71,13 @@ const AddressWidget: React.FC<Props> = props => {
         isReverseColors={isReverseColors}
         links={links}
         isDarkWhite={isDarkWhite}
+        formAction={formAction}
+        suffix={suffix}
+        suffixText={suffixText}
+        convert={convert}
+        formatOnFocusOut={formatOnFocusOut}
+        notification={notification}
+        customHandleSubmit={customHandleSubmit}
       />
       <SignInWidget show={!isAuthenticated && showSignInWidget} />
     </div>

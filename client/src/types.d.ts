@@ -917,6 +917,14 @@ export type ColorTypes = {
   isRose?: boolean;
 };
 
+export type TwitterNotification = {
+  hasNotification: boolean;
+  type: 'success' | 'error';
+  message: string;
+  title: string;
+  icon: string;
+};
+
 declare global {
   interface Window {
     dataLayer: AnyObject[];

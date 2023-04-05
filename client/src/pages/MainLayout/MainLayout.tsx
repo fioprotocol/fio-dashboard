@@ -117,7 +117,12 @@ const MainLayout: React.FC<Props> = props => {
         </>
       ) : (
         <>
-          {routeName && <PageTitle link={LINKS[routeName]} />}
+          {routeName && (
+            <PageTitle
+              link={LINKS[routeName]}
+              noAppName={routeName === LINKS.TWITTER_HANDLE}
+            />
+          )}
           <MainHeader />
           <AutoLogout />
           <Ref />

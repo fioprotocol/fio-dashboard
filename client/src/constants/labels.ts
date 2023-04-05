@@ -98,6 +98,7 @@ export const LINKS: { [linkKey: string]: string } = {
   WRAP_STATUS_WRAP_DOMAINS: 'WRAP_STATUS_WRAP_DOMAINS',
   WRAP_STATUS_UNWRAP_DOMAINS: 'WRAP_STATUS_UNWRAP_DOMAINS',
   UNAVAILABLE: 'UNAVAILABLE',
+  TWITTER_HANDLE: 'TWITTER_HANDLE',
 };
 
 export const LINK_LABELS: { [linkKey: string]: string } = {
@@ -218,6 +219,7 @@ export const LINK_TITLES: { [linkKey: string]: string } = {
   [LINKS.WRAP_STATUS_WRAP_DOMAINS]: 'Wrap FIO Domains Status',
   [LINKS.WRAP_STATUS_UNWRAP_DOMAINS]: 'Unwrap FIO Domains Status',
   [LINKS.UNAVAILABLE]: 'Unavailable',
+  [LINKS.TWITTER_HANDLE]: 'Your Twitter Handle Can Now Receive Crypto',
 };
 
 export const fioNameLabels: { [fioNameType: string]: string } = {
