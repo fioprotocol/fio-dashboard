@@ -2,8 +2,6 @@ import React from 'react';
 import { Field, Form, useForm } from 'react-final-form';
 import { useHistory } from 'react-router-dom';
 import classnames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IconProp } from '@fortawesome/fontawesome-svg-core';
 
 import SubmitButton from '../../../common/SubmitButton/SubmitButton';
 import { ExclamationIcon } from '../../../ExclamationIcon';
@@ -26,11 +24,11 @@ type Props = {
   isDarkWhite?: boolean;
   formAction?: boolean;
   suffix?: boolean;
-  suffixText?: string;
+  prefixText?: string;
   convert?: (value: string) => string;
   formatOnFocusOut?: boolean;
   notification?: TwitterNotification;
-  customHandleSubmit?: () => void;
+  customHandleSubmit?: ({ address }: { address: string }) => Promise<void>;
 };
 
 type ActionButtonProps = {
@@ -93,7 +91,7 @@ export const FormComponent: React.FC<Props> = props => {
     links,
     formAction,
     suffix,
-    suffixText,
+    prefixText,
     convert,
     formatOnFocusOut,
     notification,
@@ -128,13 +126,8 @@ export const FormComponent: React.FC<Props> = props => {
               message={notification.message}
               title={notification.title}
               hasNewDesign={true}
-              mainIcon={
-                <FontAwesomeIcon
-                  icon={notification.icon as IconProp}
-                  size="2x"
-                />
-              }
               marginBottomXs
+              marginTopZero
             />
           )}
 
@@ -148,10 +141,11 @@ export const FormComponent: React.FC<Props> = props => {
                 component={TextInput}
                 hideError="true"
                 lowerCased
-                prefix={suffixText}
+                prefix={prefixText}
                 suffix={suffix}
                 formatOnBlur={formatOnFocusOut}
                 format={convert}
+                defaultValue=""
               />
             </div>
             <ActionButton
