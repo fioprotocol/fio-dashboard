@@ -922,7 +922,6 @@ export type TwitterNotification = {
   type: string;
   message: string;
   title: string;
-  icon: string;
 };
 
 declare global {

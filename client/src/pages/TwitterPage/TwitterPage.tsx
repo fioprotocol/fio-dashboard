@@ -37,7 +37,6 @@ const noNotificationState: TwitterNotification = {
   type: '',
   message: '',
   title: '',
-  icon: '',
 };
 
 const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
@@ -64,7 +63,6 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
         message:
           'The handle format is not valid. Please update the handle and try again.',
         title: 'Invalid Format',
-        icon: 'exclamation-triangle',
       });
     }
 
@@ -88,7 +86,6 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
         message:
           'This handle is already registered. If you own it map it to your public addresses.',
         title: 'Existing Handle',
-        icon: 'exclamation-triangle',
       });
     } else {
       setNotification(noNotificationState);
