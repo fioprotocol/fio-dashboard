@@ -55,7 +55,12 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   }, [isAuthenticated, isContainedFlow, history]);
 
   const onFocusOut = (value: string) => {
-    if (USERNAME_REGEX.test(value)) {
+    const convertedValue = value
+      .toLowerCase()
+      .replaceAll('@', '')
+      .replaceAll('_', '-');
+
+    if (USERNAME_REGEX.test(convertedValue)) {
       setNotification(noNotificationState);
     } else {
       setNotification({
@@ -67,12 +72,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       });
     }
 
-    return value
-      ? value
-          .toLowerCase()
-          .replaceAll('@', '')
-          .replaceAll('_', '-')
-      : '';
+    return convertedValue;
   };
 
   const customHandleSubmit = async ({ address }: { address: string }) => {
