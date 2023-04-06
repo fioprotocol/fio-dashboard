@@ -7,11 +7,13 @@ import TwitterMeta from '../../components/TwitterMeta/TwitterMeta';
 import { FCHBanner } from '../../components/FCHBanner';
 import { FCHSpecialsBanner } from '../../components/SpecialsBanner';
 import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
+import { BADGE_TYPES } from '../../components/Badge/Badge';
 
 import apis from '../../api';
 import { ROUTES } from '../../constants/routes';
 import { addressWidgetContent, TWITTER_DOMAIN } from '../../constants/twitter';
 import { USERNAME_REGEX } from '../../constants/regExps';
+import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
 import {
   RefProfile,
@@ -23,7 +25,6 @@ import classnames from './TwitterPage.module.scss';
 
 import neverExpiresIcon from '../../assets/images/landing-page/never-expires-twitter.svg';
 import sendReceiveIcon from '../../assets/images/landing-page/send-receive-twitter.svg';
-import { BADGE_TYPES } from '../../components/Badge/Badge';
 
 type Props = {
   isAuthenticated: boolean;
@@ -76,7 +77,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
 
   const customHandleSubmit = async ({ address }: { address: string }) => {
     const isRegistered = await apis.fio.availCheckTableRows(
-      `${address}${TWITTER_DOMAIN}`,
+      `${address}${FIO_ADDRESS_DELIMITER}${TWITTER_DOMAIN}`,
     );
 
     if (isRegistered) {

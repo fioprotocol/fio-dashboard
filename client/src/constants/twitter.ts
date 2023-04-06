@@ -10,4 +10,4 @@ export const addressWidgetContent = {
   prefixText: '@twitter',
 };
 
-export const TWITTER_DOMAIN = '@twitter';
+export const TWITTER_DOMAIN = 'twitter';
