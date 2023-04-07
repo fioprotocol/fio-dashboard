@@ -1,16 +1,17 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+
 import { useHistory } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router-dom';
 
 import AddressWidget from '../../components/AddressWidget';
 import TwitterMeta from '../../components/TwitterMeta/TwitterMeta';
+import TweetShare from '../../components/TweetShare/TweetShare';
 import { FCHBanner } from '../../components/FCHBanner';
 import { FCHSpecialsBanner } from '../../components/SpecialsBanner';
 import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
-import { BADGE_TYPES } from '../../components/Badge/Badge';
 
 import apis from '../../api';
-import { setFioName } from '../../utils';
+import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
 import { addCartItem } from '../../util/cart';
 import {
   fireAnalyticsEvent,
@@ -18,7 +19,12 @@ import {
 } from '../../util/analytics';
 
 import { ROUTES } from '../../constants/routes';
-import { addressWidgetContent, TWITTER_DOMAIN } from '../../constants/twitter';
+import {
+  ADDRESS_WIDGET_CONTENT,
+  TWITTER_DOMAIN,
+  TWITTER_NOTIFICATIONS,
+  TWITTER_SHARE_CONTENT,
+} from '../../constants/twitter';
 import { USERNAME_REGEX } from '../../constants/regExps';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import {
@@ -48,16 +54,8 @@ type Props = {
   showLoginModal: (redirectRoute: string) => void;
 };
 
-const defaultNotificationState: TwitterNotification = {
-  hasNotification: false,
-  type: '',
-  message: '',
-  title: '',
-};
-
 const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   const history = useHistory();
-
   const {
     cartItems,
     isAuthenticated,
@@ -68,11 +66,76 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   } = props;
 
   const [notification, setNotification] = useState<TwitterNotification>(
-    defaultNotificationState,
+    TWITTER_NOTIFICATIONS.EMPTY,
   );
+  const [showTwitterShare, setShowTwitterShare] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const [startVerification, setStartVerification] = useState(false);
+  const [originalUsername, setOriginalUsername] = useState('');
+  const showSubmitButton = !showTwitterShare || isVerified;
+  const intervalRef = useRef(null);
+  const userfch = `${originalUsername.replaceAll(
+    '_',
+    '-',
+  )}${FIO_ADDRESS_DELIMITER}${TWITTER_DOMAIN}`;
+
   const [enableRedirect, toggleEnabeRedirect] = useState<boolean>(false);
 
   const count = cartItems.length;
+
+  useEffect(() => {
+    if (isVerified) {
+      clearInterval(intervalRef.current);
+      setShowTwitterShare(false);
+      setNotification(TWITTER_NOTIFICATIONS.VERIFIED);
+    }
+  }, [isVerified]);
+
+  const fetchTweetsAndVerify = async () => {
+    try {
+      const response = await fetch(
+        `https://twitter154.p.rapidapi.com/user/tweets?username=${originalUsername}&limit=5&include_replies=false`,
+        {
+          headers: {
+            'X-RapidAPI-Host': 'twitter154.p.rapidapi.com',
+            'X-RapidAPI-Key':
+              '26535d9e38msh4ee3aaea04babd8p1a5ca6jsn5682d49a78b1',
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+
+      setIsVerified(
+        data.results.some((tweet: any) => {
+          return tweet.text.includes(userfch);
+        }),
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    if (startVerification) {
+      intervalRef.current = setInterval(() => {
+        fetchTweetsAndVerify();
+      }, 5000);
+
+      setTimeout(() => {
+        clearInterval(intervalRef.current);
+        setStartVerification(false);
+      }, 180000);
+
+      return () => {
+        clearInterval(intervalRef.current);
+      };
+    }
+  }, [startVerification]);
 
   const onFocusOut = (value: string) => {
     const convertedValue = value
@@ -81,15 +144,10 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       .replaceAll('_', '-');
 
     if (USERNAME_REGEX.test(convertedValue)) {
-      setNotification(defaultNotificationState);
+      setNotification(TWITTER_NOTIFICATIONS.EMPTY);
     } else {
-      setNotification({
-        hasNotification: true,
-        type: BADGE_TYPES.ERROR,
-        message:
-          'The handle format is not valid. Please update the handle and try again.',
-        title: 'Invalid Format',
-      });
+      setNotification(TWITTER_NOTIFICATIONS.INVALID_FORMAT);
+      setShowTwitterShare(false);
     }
 
     return convertedValue;
@@ -123,44 +181,55 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     ],
   );
 
-  const customHandleSubmit = async ({ address }: { address: string }) => {
-    const fch = setFioName(address, TWITTER_DOMAIN);
-    const isRegistered = await apis.fio.availCheckTableRows(
-      setFioName(address, TWITTER_DOMAIN),
-    );
-
-    if (isRegistered) {
-      setNotification({
-        hasNotification: true,
-        type: BADGE_TYPES.ERROR,
-        message:
-          'This handle is already registered. If you own it map it to your public addresses.',
-        title: 'Existing Handle',
-      });
-    } else {
-      const cartItem = {
-        id: fch,
-        address: address,
-        domain: TWITTER_DOMAIN,
-        costFio: '0',
-        costUsdc: '0',
-        costNativeFio: 0,
-        domainType: DOMAIN_TYPE.PRIVATE,
-        period: 1,
-        type: CART_ITEM_TYPE.ADDRESS,
-        allowFree: true,
-      };
-      addCartItem(cartItem);
-      setNotification(defaultNotificationState);
-      toggleEnabeRedirect(true);
-    }
-  };
-
   useEffect(() => {
     if (count && enableRedirect) {
       handleRedirect(count);
     }
   }, [count, enableRedirect, handleRedirect]);
+
+  const customHandleSubmitUnverified = async ({
+    address,
+  }: {
+    address: string;
+  }) => {
+    const isRegistered = await apis.fio.availCheckTableRows(
+      setFioName(address, TWITTER_DOMAIN),
+    );
+
+    setOriginalUsername(address.replaceAll('-', '_'));
+
+    if (isRegistered) {
+      setNotification(TWITTER_NOTIFICATIONS.EXISTING_HANDLE);
+    } else if (USERNAME_REGEX.test(address)) {
+      setNotification(TWITTER_NOTIFICATIONS.EMPTY);
+      setShowTwitterShare(true);
+      setStartVerification(true);
+    }
+  };
+
+  const customHandleSubmitVerified = async ({
+    address,
+  }: {
+    address: string;
+  }) => {
+    console.log('verified handle search', address);
+    const fch = setFioName(address, TWITTER_DOMAIN);
+    const cartItem = {
+      id: fch,
+      address: address,
+      domain: TWITTER_DOMAIN,
+      costFio: '0',
+      costUsdc: '0',
+      costNativeFio: 0,
+      domainType: DOMAIN_TYPE.PRIVATE,
+      period: 1,
+      type: CART_ITEM_TYPE.ADDRESS,
+      allowFree: true,
+    };
+    addCartItem(cartItem);
+    setNotification(TWITTER_NOTIFICATIONS.EMPTY);
+    toggleEnabeRedirect(true);
+  };
 
   return (
     <>
@@ -168,16 +237,30 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       <div className={classnames.container}>
         <AddressWidget
           isDarkWhite={!!refProfileInfo}
-          {...addressWidgetContent}
-          formAction={addressWidgetContent.formAction}
-          prefixText={addressWidgetContent.prefixText}
+          {...ADDRESS_WIDGET_CONTENT}
+          formAction={ADDRESS_WIDGET_CONTENT.formAction}
+          prefixText={ADDRESS_WIDGET_CONTENT.prefixText}
           convert={onFocusOut}
           notification={notification}
-          customHandleSubmit={customHandleSubmit}
+          customHandleSubmit={
+            isVerified
+              ? customHandleSubmitVerified
+              : customHandleSubmitUnverified
+          }
+          showSubmitButton={showSubmitButton}
           formatOnFocusOut
           suffix
         />
-        <FCHBanner fch={addressWidgetContent.fch} />
+        {showTwitterShare && (
+          <TweetShare
+            text={TWITTER_SHARE_CONTENT.text.replace('name@domain', userfch)}
+            url={TWITTER_SHARE_CONTENT.url}
+            hashtags={TWITTER_SHARE_CONTENT.hashtags}
+            actionText={TWITTER_SHARE_CONTENT.actionText}
+          />
+        )}
+
+        <FCHBanner fch={ADDRESS_WIDGET_CONTENT.fch} />
         <FCHSpecialsBanner
           customNeverExpiresIcon={neverExpiresIcon}
           customNeverExpiresMobileIcon={neverExpiresIcon}

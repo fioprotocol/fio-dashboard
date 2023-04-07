@@ -29,6 +29,7 @@ type Props = {
   formatOnFocusOut?: boolean;
   notification?: TwitterNotification;
   customHandleSubmit?: ({ address }: { address: string }) => Promise<void>;
+  showSubmitButton?: boolean;
 };
 
 type ActionButtonProps = {
@@ -96,6 +97,7 @@ export const FormComponent: React.FC<Props> = props => {
     formatOnFocusOut,
     notification,
     customHandleSubmit,
+    showSubmitButton = true,
   } = props;
 
   const history = useHistory();
@@ -148,11 +150,13 @@ export const FormComponent: React.FC<Props> = props => {
                 defaultValue=""
               />
             </div>
-            <ActionButton
-              isWhiteBordered={isReverseColors}
-              links={links}
-              buttonText={buttonText}
-            />
+            {showSubmitButton && (
+              <ActionButton
+                isWhiteBordered={isReverseColors}
+                links={links}
+                buttonText={buttonText}
+              />
+            )}
           </form>
           {formAction && (
             <div className={classes.actionTextContainer}>
