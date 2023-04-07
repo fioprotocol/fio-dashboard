@@ -42,6 +42,7 @@ import {
   totalCost,
   handleFreeAddressCart,
   cartIsRelative,
+  cartHasOnlyFreeItems,
 } from '../../util/cart';
 import { setFioName } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
@@ -280,9 +281,8 @@ export const useContext = (): {
 
   const isFree =
     !isEmpty(cartItems) &&
-    cartItems.length === 1 &&
-    !hasFreeAddress &&
-    cartItems[0].allowFree;
+    ((cartItems.length === 1 && !hasFreeAddress && cartItems[0].allowFree) ||
+      cartHasOnlyFreeItems(cartItems));
 
   const paymentWallet = fioWallets.find(
     ({ publicKey }) => publicKey === paymentWalletPublicKey,

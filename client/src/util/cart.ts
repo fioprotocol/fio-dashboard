@@ -436,6 +436,14 @@ export const cartItemsToOrderItems = (
     .flat();
 };
 
+export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
+  !cart.some(
+    item =>
+      item.domainType === DOMAIN_TYPE.CUSTOM ||
+      item.domainType === DOMAIN_TYPE.USERS ||
+      item.domainType === DOMAIN_TYPE.PREMIUM,
+  );
+
 export const totalCost = (
   cart: CartItem[],
   roe: number,
@@ -446,12 +454,13 @@ export const totalCost = (
   costUsdc?: string;
 } => {
   if (
-    cart.length === 1 &&
-    cart.some(
-      item =>
-        (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
-        !!item.address,
-    )
+    (cart.length === 1 &&
+      cart.some(
+        item =>
+          (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
+          !!item.address,
+      )) ||
+    cartHasOnlyFreeItems(cart)
   )
     return { costFree: 'FREE' };
 

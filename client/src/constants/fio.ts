@@ -106,6 +106,7 @@ export const DOMAIN_TYPE = {
   FREE: 'free',
   PREMIUM: 'premium',
   USERS: 'users',
+  PRIVATE: 'private',
 } as const;
 
 export const DOMAIN_TYPE_PARAMS: {

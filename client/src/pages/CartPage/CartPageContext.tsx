@@ -30,6 +30,7 @@ import {
 } from '../../redux/registrations/selectors';
 
 import {
+  cartHasOnlyFreeItems,
   cartItemsToOrderItems,
   handleFreeAddressCart,
   totalCost,
@@ -129,14 +130,15 @@ export const useContext = (): UseContextReturnType => {
     });
 
   const isFree =
-    !hasFreeAddress &&
     !isEmpty(cartItems) &&
-    cartItems.length === 1 &&
-    cartItems.every(
-      item =>
-        (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
-        !!item.address,
-    );
+    ((!hasFreeAddress &&
+      cartItems.length === 1 &&
+      cartItems.every(
+        item =>
+          (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
+          !!item.address,
+      )) ||
+      cartHasOnlyFreeItems(cartItems));
 
   const {
     costNativeFio: totalCartNativeAmount,
