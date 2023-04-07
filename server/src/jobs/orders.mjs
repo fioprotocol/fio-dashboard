@@ -647,7 +647,7 @@ class OrdersJob extends CommonJob {
     return null;
   }
 
-  async executeOrderItemAction(orderItem, auth, hasSignedTx) {
+  async executeOrderItemAction(orderItem, auth, hasSignedTx, disableRefund) {
     const { address, domain, action, price, orderId } = orderItem;
 
     // Register custom domain if needed
@@ -684,7 +684,7 @@ class OrdersJob extends CommonJob {
       );
 
       // No tx id. Refund order payment for fio action.
-      if (!result.transaction_id)
+      if (!result.transaction_id && !disableRefund)
         await this.spend({
           fioName: fioApi.setFioName(address, domain),
           action,
@@ -774,7 +774,7 @@ class OrdersJob extends CommonJob {
 
       try {
         const fioName = fioApi.setFioName(address, domain);
-        const auth = {
+        let auth = {
           actor: paidActor || paidFioActor,
           permission: paidPermission || paidFioPermision,
         };
@@ -783,8 +783,15 @@ class OrdersJob extends CommonJob {
           permission: freePermission || freeFioPermision,
         };
 
+        const domainOwner = await FioAccountProfile.getDomainOwner(domain);
+
+        if (domainOwner) {
+          const { actor, permission } = domainOwner;
+          auth = { actor, permission };
+        }
+
         // Handle free addresses
-        if ((!price || price === '0') && address) {
+        if ((!price || price === '0') && address && !domainOwner) {
           return this.registerFree(
             fioName,
             freeAuth,
@@ -798,10 +805,15 @@ class OrdersJob extends CommonJob {
         }
 
         // Check if fee/roe changed and handle changes
-        await this.checkPriceChanges(orderItem, roe);
+        if (!domainOwner) await this.checkPriceChanges(orderItem, roe);
 
         try {
-          const result = await this.executeOrderItemAction(orderItem, auth, hasSignedTx);
+          const result = await this.executeOrderItemAction(
+            orderItem,
+            auth,
+            hasSignedTx,
+            !!domainOwner,
+          );
 
           if (result.transaction_id) {
             this.postMessage(
@@ -822,15 +834,17 @@ class OrdersJob extends CommonJob {
             auth.actor !== fallbackPaidFioActor
           ) {
             await sendInsufficientFundsNotification(fioName, label, auth);
-            return processOrderItem({
-              ...orderItem,
-              paidActor: fallbackPaidFioActor
-                ? fallbackPaidFioActor
-                : process.env.REG_FALLBACK_ACCOUNT,
-              paidPermission: fallbackPaidFioPermision
-                ? fallbackPaidFioPermision
-                : process.env.REG_FALLBACK_PERMISSION,
-            })();
+
+            if (!domainOwner)
+              return processOrderItem({
+                ...orderItem,
+                paidActor: fallbackPaidFioActor
+                  ? fallbackPaidFioActor
+                  : process.env.REG_FALLBACK_ACCOUNT,
+                paidPermission: fallbackPaidFioPermision
+                  ? fallbackPaidFioPermision
+                  : process.env.REG_FALLBACK_PERMISSION,
+              })();
           }
 
           await this.handleFail(orderItem, notes, { code, ...errorData });
