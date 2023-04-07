@@ -33,6 +33,7 @@ import {
 } from '../../constants/common';
 
 import {
+  AnyType,
   CartItem,
   LastAuthData,
   RedirectLinkData,
@@ -111,7 +112,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       const data = await response.json();
 
       setIsVerified(
-        data.results.some((tweet: any) => {
+        data.results.some((tweet: AnyType) => {
           return tweet.text.includes(userfch);
         }),
       );
@@ -135,7 +136,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
         clearInterval(intervalRef.current);
       };
     }
-  }, [startVerification]);
+  }, [startVerification, fetchTweetsAndVerify]);
 
   const onFocusOut = (value: string) => {
     const convertedValue = value
@@ -212,7 +213,6 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   }: {
     address: string;
   }) => {
-    console.log('verified handle search', address);
     const fch = setFioName(address, TWITTER_DOMAIN);
     const cartItem = {
       id: fch,
