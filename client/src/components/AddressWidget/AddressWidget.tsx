@@ -32,6 +32,7 @@ type Props = {
   formatOnFocusOut?: boolean;
   notification?: TwitterNotification;
   customHandleSubmit?: ({ address }: { address: string }) => Promise<void>;
+  showSubmitButton?: boolean;
 };
 
 const AddressWidget: React.FC<Props> = props => {
@@ -53,6 +54,7 @@ const AddressWidget: React.FC<Props> = props => {
     formatOnFocusOut,
     notification,
     customHandleSubmit,
+    showSubmitButton = true,
   } = props;
 
   return (
@@ -78,6 +80,7 @@ const AddressWidget: React.FC<Props> = props => {
         formatOnFocusOut={formatOnFocusOut}
         notification={notification}
         customHandleSubmit={customHandleSubmit}
+        showSubmitButton={showSubmitButton}
       />
       <SignInWidget show={!isAuthenticated && showSignInWidget} />
     </div>
