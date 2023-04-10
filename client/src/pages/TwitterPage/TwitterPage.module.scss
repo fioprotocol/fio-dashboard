@@ -1,3 +1,25 @@
 .container {
   width: 100%;
+  position: relative;
+}
+
+.loader {
+  background: white;
+  opacity: 87%;
+  width: 100%;
+  margin: auto;
+  height: 16%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 6%;
+  line-height: 2.75rem;
+  font-family: 'Comfortaa Bold', cursive;
+  color: rgb(118, 92, 214);
+
+  @media only screen and (max-width: 505px) {
+    height: 13%;
+  }
 }
