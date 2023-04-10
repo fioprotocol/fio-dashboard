@@ -1,3 +1,6 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
 .tweetShareSection {
   width: 100%;
   margin: -95px auto 70px auto;
@@ -7,47 +10,27 @@
   width: 40%;
   margin: 0 auto 35px auto;
   text-align: center;
-
-  @media only screen and (max-width: 505px) {
-    margin: 35px auto;
-  }
 }
 
 .tweetShareContainer {
   width: 18%;
   margin: auto;
-  border: 1px solid #e1e8ed;
+  border: 1px solid $off-white;
   padding: 15px 23px;
   border-radius: 7px;
   box-shadow: 0 0 8px 0 RGBA(0, 0, 0, 0.11);
-
-  @media only screen and (max-width: 1400px) {
-    width: 28%;
-  }
-
-  @media only screen and (max-width: 1005px) {
-    width: 35%;
-  }
-
-  @media only screen and (max-width: 805px) {
-    width: 52%;
-  }
-
-  @media only screen and (max-width: 505px) {
-    width: 73%;
-  }
 }
 
 .tweetShareButton {
-  background: #00acee;
+  background: $twitter-blue;
   padding: 7px 20px;
   border-radius: 30px;
-  color: white;
+  color: $white;
   font-weight: bold;
 }
 
 .tweetShareButton:hover {
-  color: white;
+  color: $white;
 }
 
 .tweetShareButtonIcon {
@@ -64,5 +47,33 @@
 }
 
 .blueText {
-  color: #00acee;
+  color: $twitter-blue;
+}
+
+@include sm {
+  .tweetShareContainer {
+    width: 73%;
+  }
+
+  .tweetShareActionText {
+    margin: 35px auto;
+  }
+}
+
+@include md {
+  .tweetShareContainer {
+    width: 52%;
+  }
+}
+
+@include sds {
+  .tweetShareContainer {
+    width: 35%;
+  }
+}
+
+@include lg {
+  .tweetShareContainer {
+    width: 28%;
+  }
 }

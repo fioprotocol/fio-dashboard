@@ -1,10 +1,14 @@
+@import '../../assets/styles/colors.scss';
+@import '../../assets/styles/fontMixins.scss';
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
 .container {
   width: 100%;
   position: relative;
 }
 
 .loader {
-  background: white;
+  background: $white;
   opacity: 87%;
   width: 100%;
   margin: auto;
@@ -16,10 +20,11 @@
   position: absolute;
   top: 6%;
   line-height: 2.75rem;
-  font-family: 'Comfortaa Bold', cursive;
-  color: rgb(118, 92, 214);
-
-  @media only screen and (max-width: 505px) {
+  @include comfortaa-bold;
+  color: $bright-violet;
+}
+@include sm {
+  .loader {
     height: 13%;
   }
 }
