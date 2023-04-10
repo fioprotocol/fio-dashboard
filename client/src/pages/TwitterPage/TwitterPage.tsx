@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 
 import { useHistory } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router-dom';
+import { FadeLoader } from 'react-spinners';
 
 import AddressWidget from '../../components/AddressWidget';
 import TwitterMeta from '../../components/TwitterMeta/TwitterMeta';
@@ -24,6 +25,8 @@ import {
   TWITTER_DOMAIN,
   TWITTER_NOTIFICATIONS,
   TWITTER_SHARE_CONTENT,
+  TWITTER_VERIFY_EXPIRATION_TIME,
+  TWITTER_VERIFY_TIME,
 } from '../../constants/twitter';
 import { USERNAME_REGEX } from '../../constants/regExps';
 import { DOMAIN_TYPE } from '../../constants/fio';
@@ -41,7 +44,7 @@ import {
   TwitterNotification,
 } from '../../types';
 
-import classnames from './TwitterPage.module.scss';
+import classes from './TwitterPage.module.scss';
 
 import neverExpiresIcon from '../../assets/images/landing-page/never-expires-twitter.svg';
 import sendReceiveIcon from '../../assets/images/landing-page/send-receive-twitter.svg';
@@ -73,6 +76,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   const [isVerified, setIsVerified] = useState(false);
   const [startVerification, setStartVerification] = useState(false);
   const [originalUsername, setOriginalUsername] = useState('');
+  const [loading, setLoading] = useState(false);
   const showSubmitButton = !showTwitterShare || isVerified;
   const intervalRef = useRef(null);
   const userfch = `${originalUsername.replaceAll(
@@ -80,7 +84,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     '-',
   )}${FIO_ADDRESS_DELIMITER}${TWITTER_DOMAIN}`;
 
-  const [enableRedirect, toggleEnabeRedirect] = useState<boolean>(false);
+  const [enableRedirect, toggleEnableRedirect] = useState<boolean>(false);
 
   const count = cartItems.length;
 
@@ -93,6 +97,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   }, [isVerified]);
 
   const fetchTweetsAndVerify = async () => {
+    setLoading(true);
     try {
       const response = await fetch(
         `https://twitter154.p.rapidapi.com/user/tweets?username=${originalUsername}&limit=5&include_replies=false`,
@@ -100,7 +105,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
           headers: {
             'X-RapidAPI-Host': 'twitter154.p.rapidapi.com',
             'X-RapidAPI-Key':
-              '26535d9e38msh4ee3aaea04babd8p1a5ca6jsn5682d49a78b1',
+              '0a1150b7a1msh31903a31322ee2ep132dbcjsna3c82be2b606',
           },
         },
       );
@@ -111,26 +116,46 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
 
       const data = await response.json();
 
-      setIsVerified(
+      if (
+        data.results &&
         data.results.some((tweet: AnyType) => {
           return tweet.text.includes(userfch);
-        }),
-      );
+        })
+      ) {
+        setIsVerified(true);
+        clearInterval(intervalRef.current);
+        setStartVerification(false);
+        setShowTwitterShare(false);
+      } else {
+        setIsVerified(false);
+      }
+
+      setLoading(false);
     } catch (error) {
       console.error(error);
+      setLoading(false);
     }
   };
+
+  const convertTwitterToFCH = (value: string) =>
+    value
+      .toLowerCase()
+      .replaceAll('@', '')
+      .replaceAll('_', '-');
 
   useEffect(() => {
     if (startVerification) {
       intervalRef.current = setInterval(() => {
         fetchTweetsAndVerify();
-      }, 5000);
+      }, TWITTER_VERIFY_TIME);
 
       setTimeout(() => {
         clearInterval(intervalRef.current);
         setStartVerification(false);
-      }, 180000);
+        setShowTwitterShare(false);
+        setIsVerified(false);
+        setNotification(TWITTER_NOTIFICATIONS.TRY_AGAIN);
+      }, TWITTER_VERIFY_EXPIRATION_TIME);
 
       return () => {
         clearInterval(intervalRef.current);
@@ -139,10 +164,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   }, [startVerification, fetchTweetsAndVerify]);
 
   const onFocusOut = (value: string) => {
-    const convertedValue = value
-      .toLowerCase()
-      .replaceAll('@', '')
-      .replaceAll('_', '-');
+    const convertedValue = convertTwitterToFCH(value);
 
     if (USERNAME_REGEX.test(convertedValue)) {
       setNotification(TWITTER_NOTIFICATIONS.EMPTY);
@@ -213,28 +235,36 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   }: {
     address: string;
   }) => {
-    const fch = setFioName(address, TWITTER_DOMAIN);
-    const cartItem = {
-      id: fch,
-      address: address,
-      domain: TWITTER_DOMAIN,
-      costFio: '0',
-      costUsdc: '0',
-      costNativeFio: 0,
-      domainType: DOMAIN_TYPE.PRIVATE,
-      period: 1,
-      type: CART_ITEM_TYPE.ADDRESS,
-      allowFree: true,
-    };
-    addCartItem(cartItem);
-    setNotification(TWITTER_NOTIFICATIONS.EMPTY);
-    toggleEnabeRedirect(true);
+    if (address === convertTwitterToFCH(originalUsername)) {
+      const fch = setFioName(address, TWITTER_DOMAIN);
+      const cartItem = {
+        id: fch,
+        address: address,
+        domain: TWITTER_DOMAIN,
+        costFio: '0',
+        costUsdc: '0',
+        costNativeFio: 0,
+        domainType: DOMAIN_TYPE.PRIVATE,
+        period: 1,
+        type: CART_ITEM_TYPE.ADDRESS,
+        allowFree: true,
+      };
+      addCartItem(cartItem);
+      setNotification(TWITTER_NOTIFICATIONS.EMPTY);
+      toggleEnableRedirect(true);
+    } else {
+      setOriginalUsername(address.replaceAll('-', '_'));
+      setNotification(TWITTER_NOTIFICATIONS.EMPTY);
+      setShowTwitterShare(true);
+      setStartVerification(true);
+      setIsVerified(false);
+    }
   };
 
   return (
     <>
       <TwitterMeta />
-      <div className={classnames.container}>
+      <div className={classes.container}>
         <AddressWidget
           isDarkWhite={!!refProfileInfo}
           {...ADDRESS_WIDGET_CONTENT}
@@ -256,7 +286,9 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
             text={TWITTER_SHARE_CONTENT.text.replace('name@domain', userfch)}
             url={TWITTER_SHARE_CONTENT.url}
             hashtags={TWITTER_SHARE_CONTENT.hashtags}
+            via={TWITTER_SHARE_CONTENT.via}
             actionText={TWITTER_SHARE_CONTENT.actionText}
+            userfch={userfch}
           />
         )}
 
@@ -267,6 +299,18 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
           customSendReceiveIcon={sendReceiveIcon}
         />
         <WidelyAdoptedSection />
+        {loading && (
+          <div className={classes.loader}>
+            <FadeLoader
+              height="8"
+              width="5"
+              radius="3"
+              margin="1"
+              color="rgb(118, 92, 214)"
+            />
+            <p>Verifying account...</p>
+          </div>
+        )}
       </div>
     </>
   );

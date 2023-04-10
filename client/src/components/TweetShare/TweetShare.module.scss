@@ -7,15 +7,35 @@
   width: 40%;
   margin: 0 auto 35px auto;
   text-align: center;
+
+  @media only screen and (max-width: 505px) {
+    margin: 35px auto;
+  }
 }
 
 .tweetShareContainer {
-  width: 17%;
+  width: 18%;
   margin: auto;
   border: 1px solid #e1e8ed;
   padding: 15px 23px;
   border-radius: 7px;
   box-shadow: 0 0 8px 0 RGBA(0, 0, 0, 0.11);
+
+  @media only screen and (max-width: 1400px) {
+    width: 28%;
+  }
+
+  @media only screen and (max-width: 1005px) {
+    width: 35%;
+  }
+
+  @media only screen and (max-width: 805px) {
+    width: 52%;
+  }
+
+  @media only screen and (max-width: 505px) {
+    width: 73%;
+  }
 }
 
 .tweetShareButton {
@@ -41,4 +61,8 @@
   text-align: right;
   margin-bottom: 15px;
   margin-top: 30px;
+}
+
+.blueText {
+  color: #00acee;
 }
