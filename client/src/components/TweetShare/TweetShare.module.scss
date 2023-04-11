@@ -2,7 +2,8 @@
 @import '../../assets/styles/mediaQueriesMixings.scss';
 
 .tweetShareSection {
-  width: 100%;
+  display: flex;
+  flex-direction: column;
   margin: -95px auto 70px auto;
 }
 
@@ -13,12 +14,15 @@
 }
 
 .tweetShareContainer {
-  width: 18%;
+  width: auto;
   margin: auto;
   border: 1px solid $off-white;
   padding: 15px 23px;
   border-radius: 7px;
   box-shadow: 0 0 8px 0 RGBA(0, 0, 0, 0.11);
+  p {
+    width: 280px;
+  }
 }
 
 .tweetShareButton {
@@ -48,32 +52,4 @@
 
 .blueText {
   color: $twitter-blue;
-}
-
-@include sm {
-  .tweetShareContainer {
-    width: 73%;
-  }
-
-  .tweetShareActionText {
-    margin: 35px auto;
-  }
-}
-
-@include md {
-  .tweetShareContainer {
-    width: 52%;
-  }
-}
-
-@include sds {
-  .tweetShareContainer {
-    width: 35%;
-  }
-}
-
-@include lg {
-  .tweetShareContainer {
-    width: 28%;
-  }
 }
