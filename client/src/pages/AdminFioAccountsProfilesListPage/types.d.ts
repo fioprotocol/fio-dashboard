@@ -7,6 +7,7 @@ export type FormValuesProps = {
   actor: string;
   accountType?: FioAccountProfileType;
   permission: string;
+  domains?: string[];
 };
 
 export type PageProps = {
