@@ -1,6 +1,7 @@
 import cors from 'cors';
 import bodyParser from 'body-parser';
 import multipart from 'connect-multiparty';
+import cookieParser from 'cookie-parser';
 
 export default {
   json: bodyParser.json({
@@ -29,4 +30,5 @@ export default {
   }),
   cors: cors({ origin: '*' }),
   multipart: multipart(),
+  cookieParser: cookieParser(),
 };
