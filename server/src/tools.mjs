@@ -25,7 +25,7 @@ const defaultContextBuilder = req =>
     referer: req.headers.referer,
   });
 
-export async function runService(service, { context = {}, params = {} }) {
+export async function runService(service, { context = {}, params = {}, res }) {
   const startTime = Date.now();
   const actionName = service.name;
 
@@ -34,6 +34,7 @@ export async function runService(service, { context = {}, params = {} }) {
   try {
     const result = await new service({
       context,
+      res,
     }).run(params);
 
     if (service.resultSecret[0] !== '*') {
@@ -120,6 +121,7 @@ export function makeServiceRunner(
     const resultPromise = runService(service, {
       params,
       context: contextBuilder(req, res),
+      res,
     });
 
     return renderPromiseAsJson(req, res, resultPromise, cleanParams);
