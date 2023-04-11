@@ -104,6 +104,7 @@ export type UserOrdersListResponse = {
 };
 
 export type HealthCheckResponse = { success: boolean };
+export type VerifyTwitterResponse = { verified?: boolean; isLocked?: boolean };
 
 export type VarsResponse = {
   id: string;

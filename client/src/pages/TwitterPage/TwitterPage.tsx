@@ -3,6 +3,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { RouteComponentProps } from 'react-router-dom';
 import { FadeLoader } from 'react-spinners';
+import Cookies from 'js-cookie';
 
 import AddressWidget from '../../components/AddressWidget';
 import TwitterMeta from '../../components/TwitterMeta/TwitterMeta';
@@ -18,6 +19,7 @@ import {
   fireAnalyticsEvent,
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
+import { log } from '../../util/general';
 
 import { ROUTES } from '../../constants/routes';
 import {
@@ -36,7 +38,6 @@ import {
 } from '../../constants/common';
 
 import {
-  AnyType,
   CartItem,
   LastAuthData,
   RedirectLinkData,
@@ -96,52 +97,57 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     }
   }, [isVerified]);
 
-  const fetchTweetsAndVerify = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `https://twitter154.p.rapidapi.com/user/tweets?username=${originalUsername}&limit=5&include_replies=false`,
-        {
-          headers: {
-            'X-RapidAPI-Host': 'twitter154.p.rapidapi.com',
-            'X-RapidAPI-Key':
-              '0a1150b7a1msh31903a31322ee2ep132dbcjsna3c82be2b606',
-          },
-        },
-      );
+  const onUserVerify = useCallback(() => {
+    setIsVerified(true);
+    clearInterval(intervalRef.current);
+    setStartVerification(false);
+    setShowTwitterShare(false);
+  }, []);
 
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
+  const onUserLocked = useCallback(() => {
+    setNotification(TWITTER_NOTIFICATIONS.LOCKED);
+    clearInterval(intervalRef.current);
+    setIsVerified(false);
+    setStartVerification(false);
+    setShowTwitterShare(false);
+  }, []);
 
-      const data = await response.json();
-
-      if (
-        data.results &&
-        data.results.some((tweet: AnyType) => {
-          return tweet.text.includes(userfch);
-        })
-      ) {
-        setIsVerified(true);
-        clearInterval(intervalRef.current);
-        setStartVerification(false);
-        setShowTwitterShare(false);
-      } else {
-        setIsVerified(false);
-      }
-
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-      setLoading(false);
-    }
-  };
+  const onUsernameChangedAfterVerify = useCallback(() => {
+    clearInterval(intervalRef.current);
+    setNotification(TWITTER_NOTIFICATIONS.EMPTY);
+    setShowTwitterShare(true);
+    setStartVerification(true);
+    setIsVerified(false);
+  }, []);
 
   const convertTwitterToFCH = (value: string) =>
     value
       .toLowerCase()
       .replaceAll('@', '')
       .replaceAll('_', '-');
+
+  const fetchTweetsAndVerify = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await apis.twitter.verifyTwitter({
+        fch: userfch,
+        twh: originalUsername,
+      });
+
+      if (data.verified) {
+        onUserVerify();
+      } else if (data.isLocked) {
+        onUserLocked();
+      } else {
+        setIsVerified(false);
+      }
+
+      setLoading(false);
+    } catch (error) {
+      log.error(error);
+      setLoading(false);
+    }
+  }, [userfch, originalUsername, onUserVerify, onUserLocked, setIsVerified]);
 
   useEffect(() => {
     if (startVerification) {
@@ -225,8 +231,17 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       setNotification(TWITTER_NOTIFICATIONS.EXISTING_HANDLE);
     } else if (USERNAME_REGEX.test(address)) {
       setNotification(TWITTER_NOTIFICATIONS.EMPTY);
-      setShowTwitterShare(true);
-      setStartVerification(true);
+
+      const alreadyVerified =
+        Cookies.get(`${address}${FIO_ADDRESS_DELIMITER}${TWITTER_DOMAIN}`) !==
+        undefined;
+
+      if (alreadyVerified) {
+        onUserVerify();
+      } else {
+        setShowTwitterShare(true);
+        setStartVerification(true);
+      }
     }
   };
 
@@ -254,10 +269,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       toggleEnableRedirect(true);
     } else {
       setOriginalUsername(address.replaceAll('-', '_'));
-      setNotification(TWITTER_NOTIFICATIONS.EMPTY);
-      setShowTwitterShare(true);
-      setStartVerification(true);
-      setIsVerified(false);
+      onUsernameChangedAfterVerify();
     }
   };
 

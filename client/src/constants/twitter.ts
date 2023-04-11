@@ -46,6 +46,11 @@ export const TWITTER_NOTIFICATIONS_CONTENT = {
     title: 'Try Again',
     message: 'We could not verify your twitter handle.',
   },
+  LOCKED: {
+    title: 'Verification in Progress',
+    message:
+      'This handle is currently being verified by another user. Try again in 30 minutes.',
+  },
 };
 
 export const TWITTER_NOTIFICATIONS = {
@@ -78,5 +83,11 @@ export const TWITTER_NOTIFICATIONS = {
     type: BADGE_TYPES.ERROR,
     message: TWITTER_NOTIFICATIONS_CONTENT.TRY_AGAIN.message,
     title: TWITTER_NOTIFICATIONS_CONTENT.TRY_AGAIN.title,
+  },
+  LOCKED: {
+    hasNotification: true,
+    type: BADGE_TYPES.ERROR,
+    message: TWITTER_NOTIFICATIONS_CONTENT.LOCKED.message,
+    title: TWITTER_NOTIFICATIONS_CONTENT.LOCKED.title,
   },
 };
