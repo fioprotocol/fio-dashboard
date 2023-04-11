@@ -19,6 +19,7 @@ import WrapStatus from './wrap-status';
 import Registration from './registration';
 import Vars from './vars';
 import HealthCheck from './health-check';
+import Twitter from './twitter';
 
 import { log } from '../util/general';
 
@@ -58,6 +59,7 @@ export type Api = {
   registration: Registration;
   vars: Vars;
   healthCheck: HealthCheck;
+  twitter: Twitter;
 };
 
 const apis = {
@@ -80,6 +82,7 @@ const apis = {
   registration: new Registration(apiClient),
   vars: new Vars(apiClient),
   healthCheck: new HealthCheck(apiClient),
+  twitter: new Twitter(apiClient),
 };
 
 export default apis;
