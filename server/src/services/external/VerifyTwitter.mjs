@@ -7,8 +7,6 @@ import { Action, LockedFch } from '../../models/index.mjs';
 
 import { EXPIRED_LOCKED_PERIOD } from '../../config/constants.js';
 
-const LOCKED_FCH_COOKIE_NAME = 'locked-fch';
-
 export default class VerifyTwitter extends Base {
   static get validationRules() {
     return {
@@ -49,7 +47,7 @@ export default class VerifyTwitter extends Base {
 
       await LockedFch.create({ fch, lockedFchToken, userId });
 
-      this.res.cookie(LOCKED_FCH_COOKIE_NAME, lockedFchToken, {
+      this.res.cookie(fch, lockedFchToken, {
         maxAge: EXPIRED_LOCKED_PERIOD,
       });
 
