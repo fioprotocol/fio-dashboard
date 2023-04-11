@@ -12,6 +12,7 @@ export const {
   FioAccountProfile,
   FioApiUrl,
   FreeAddress,
+  LockedFch,
   NewDeviceTwoFactor,
   Nonce,
   Notification,

@@ -9,6 +9,7 @@ import { Wallet } from './Wallet';
 import { NewDeviceTwoFactor } from './NewDeviceTwoFactor';
 import { ReferrerProfile } from './ReferrerProfile';
 import { Order } from './Order';
+import { LockedFch } from './LockedFch.mjs';
 
 import { USER_STATUS } from '../config/constants';
 
@@ -77,6 +78,11 @@ export class User extends Base {
       foreignKey: 'affiliateProfileId',
       targetKey: 'id',
       as: 'affiliateProfile',
+    });
+    this.hasMany(LockedFch, {
+      foreignKey: 'userId',
+      sourceKey: 'id',
+      as: 'lockedFch',
     });
   }
 
