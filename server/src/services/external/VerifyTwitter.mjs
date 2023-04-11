@@ -20,11 +20,11 @@ export default class VerifyTwitter extends Base {
     const userId = this.context.id;
 
     try {
-      const lockedFch = await LockedFch.findOne({ where: { fch } });
+      const lockedFch = await LockedFch.getItem({ fch });
 
       if (lockedFch) {
-        if (!LockedFch.isExpired(lockedFch)) {
-          const isCurrentUsersLockedFch = userId === lockedFch.userId;
+        if (!(await LockedFch.isExpired(lockedFch))) {
+          const isCurrentUsersLockedFch = userId !== null && userId === lockedFch.userId;
           const hasTheSameToken = token === lockedFch.token;
 
           if (isCurrentUsersLockedFch || hasTheSameToken) {
@@ -45,7 +45,7 @@ export default class VerifyTwitter extends Base {
 
       const lockedFchToken = await Action.generateHash();
 
-      await LockedFch.create({ fch, lockedFchToken, userId });
+      await LockedFch.create({ fch, token: lockedFchToken, userId });
 
       this.res.cookie(fch, lockedFchToken, {
         maxAge: EXPIRED_LOCKED_PERIOD,
