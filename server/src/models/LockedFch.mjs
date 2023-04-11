@@ -64,15 +64,19 @@ export class LockedFch extends Base {
     };
   }
 
+  static async deleteLockedFch(where) {
+    return await this.destroy({
+      where,
+      force: true,
+    });
+  }
+
   static async isExpired(lokedFchItem) {
     const expiredTime =
       new Date(lokedFchItem.createdAt).getTime() + EXPIRED_LOCKED_PERIOD;
     if (expiredTime > new Date().getTime()) return false;
 
-    await this.destroy({
-      where: { id: lokedFchItem.id },
-      force: true,
-    });
+    await this.deleteLockedFch({ id: lokedFchItem.id });
     return true;
   }
 }

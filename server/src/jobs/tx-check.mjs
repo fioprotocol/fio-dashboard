@@ -3,6 +3,8 @@ import {
   OrderItemStatus,
   BlockchainTransaction,
   BlockchainTransactionEventLog,
+  LockedFch,
+  OrderItem,
 } from '../models/index.mjs';
 import CommonJob from './job.mjs';
 
@@ -129,6 +131,10 @@ class TxCheckJob extends CommonJob {
                   transaction: t,
                 },
               );
+              if (status === BlockchainTransaction.STATUS.SUCCESS) {
+                const fch = await OrderItem.findOne({ where: { id } });
+                await LockedFch.deleteLockedFch({ fch });
+              }
             });
           } catch (error) {
             logger.error(`TX ITEM PROCESSING ERROR ${item.id} - SQL UPDATE`, error);
