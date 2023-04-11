@@ -48,10 +48,12 @@ export class LockedFch extends Base {
     });
   }
 
-  static getItem(where) {
-    return this.findOne({
+  static async getItem(where) {
+    const lockedFch = await this.findOne({
       where: { ...where },
     });
+
+    return lockedFch ? this.format(lockedFch.get({ plain: true })) : null;
   }
 
   static format({ createdAt, fch, id, token, userId }) {
