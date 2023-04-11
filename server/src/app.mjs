@@ -5,6 +5,7 @@ import router from './router';
 
 const app = express();
 
+app.use(middlewares.cookieParser);
 app.use(middlewares.json);
 app.use(middlewares.urlencoded);
 app.use(middlewares.cors);
