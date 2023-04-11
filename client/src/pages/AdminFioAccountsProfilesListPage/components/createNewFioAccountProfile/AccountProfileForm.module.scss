@@ -1,0 +1,28 @@
+@import '../../../../assets/styles/colors.scss';
+
+.domainsContainer {
+  width: 100%;
+
+  .actionContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .subtitle {
+      font-size: 1.125em;
+      color: $baltic-sea;
+      margin-bottom: 0;
+    }
+  }
+
+  .fieldContainer {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+
+    .field {
+      width: 100%;
+    }
+  }
+}
