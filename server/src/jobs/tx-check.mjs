@@ -132,8 +132,13 @@ class TxCheckJob extends CommonJob {
                 },
               );
               if (status === BlockchainTransaction.STATUS.SUCCESS) {
-                const fch = await OrderItem.findOne({ where: { id } });
-                await LockedFch.deleteLockedFch({ fch });
+                const { address, domain } =
+                  (await OrderItem.findOne({ where: { id } })) || {};
+
+                if (address && domain)
+                  await LockedFch.deleteLockedFch({
+                    fch: fioApi.setFioName(address, domain),
+                  });
               }
             });
           } catch (error) {
