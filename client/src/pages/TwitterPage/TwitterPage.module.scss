@@ -9,20 +9,16 @@
 
 .loader {
   background: $white;
-  opacity: 87%;
+  opacity: 0.87;
   width: 100%;
   margin: auto;
-
   height: 46vh;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   position: absolute;
-
   top: 9%;
-
   line-height: 2.75rem;
   @include comfortaa-bold;
   color: $bright-violet;
