@@ -23,9 +23,8 @@ const TweetButton: React.FC<Props> = ({
   const generateShareUrl = () => {
     const encodedText = encodeURIComponent(text);
     const encodedUrl = encodeURIComponent(url);
-    const encodedHashtags = encodeURIComponent(hashtags.join(','));
 
-    return `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}&hashtags=${encodedHashtags}&via=`;
+    return `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}&via=${via}`;
   };
 
   return (
@@ -36,9 +35,10 @@ const TweetButton: React.FC<Props> = ({
           <p className={classes.tweetShareText}>
             You can now send me crypto to my {userfch}{' '}
             <span className={classes.blueText}>$FIO</span> Crypto Handle. <br />
-            <span className={classes.blueText}>#CRYPTOTWITTER</span> Get yours
-            now <br />
-            <span className={classes.blueText}>{url}</span>
+            <span className={classes.blueText}>{hashtags.join(', ')}</span> Get
+            yours now <br />
+            <span className={classes.blueText}>{url}</span> via{' '}
+            <span className={classes.blueText}>{via}</span>
           </p>
           <hr />
           <div className={classes.tweetShareBottom}>

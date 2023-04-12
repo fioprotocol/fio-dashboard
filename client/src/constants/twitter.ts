@@ -19,7 +19,7 @@ export const TWITTER_SHARE_CONTENT = {
   text:
     'You can now send me crypto to my name@domain $FIO Crypto Handle. #CRYPTOTWITTER Get yours now ',
   url: 'dashboard.fioprotocol.io/twitter-handle',
-  hashtags: [''],
+  hashtags: ['#CRYPTOTWITTER'],
   via: 'joinfio',
   actionText:
     'Please validate your twitter handle ownership by sending the tweet below',
