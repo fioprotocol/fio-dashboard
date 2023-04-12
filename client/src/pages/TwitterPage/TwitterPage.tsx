@@ -119,9 +119,11 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
 
   const convertTwitterToFCH = (value: string) =>
     value
-      .toLowerCase()
-      .replaceAll('@', '')
-      .replaceAll('_', '-');
+      ? value
+          .toLowerCase()
+          .replaceAll('@', '')
+          .replaceAll('_', '-')
+      : value;
 
   const fetchTweetsAndVerify = useCallback(async () => {
     setLoading(true);
@@ -310,10 +312,10 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
         {loading && (
           <div className={classes.loader}>
             <FadeLoader
-              height="8"
-              width="5"
-              radius="3"
-              margin="1"
+              height="8px"
+              width="5px"
+              radius="3px"
+              margin="1px"
               color="rgb(118, 92, 214)"
             />
             <p>Verifying account...</p>
