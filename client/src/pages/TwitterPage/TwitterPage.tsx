@@ -41,7 +41,6 @@ import {
   CartItem,
   LastAuthData,
   RedirectLinkData,
-  RefProfile,
   TwitterNotification,
 } from '../../types';
 
@@ -53,7 +52,6 @@ import sendReceiveIcon from '../../assets/images/landing-page/send-receive-twitt
 type Props = {
   cartItems: CartItem[];
   isAuthenticated: boolean;
-  refProfileInfo: RefProfile;
   lastAuthData: LastAuthData;
   setRedirectPath: (redirectPath: RedirectLinkData) => void;
   showLoginModal: (redirectRoute: string) => void;
@@ -65,7 +63,6 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     cartItems,
     isAuthenticated,
     lastAuthData,
-    refProfileInfo,
     setRedirectPath,
     showLoginModal,
   } = props;
@@ -278,7 +275,6 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       <TwitterMeta />
       <div className={classes.container}>
         <AddressWidget
-          isDarkWhite={!!refProfileInfo}
           {...ADDRESS_WIDGET_CONTENT}
           formAction={ADDRESS_WIDGET_CONTENT.formAction}
           prefixText={ADDRESS_WIDGET_CONTENT.prefixText}
