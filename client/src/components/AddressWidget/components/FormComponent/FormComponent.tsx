@@ -5,7 +5,10 @@ import classnames from 'classnames';
 
 import SubmitButton from '../../../common/SubmitButton/SubmitButton';
 import { ExclamationIcon } from '../../../ExclamationIcon';
-import TextInput, { INPUT_COLOR_SCHEMA } from '../../../Input/TextInput';
+import TextInput, {
+  INPUT_COLOR_SCHEMA,
+  INPUT_UI_STYLES,
+} from '../../../Input/TextInput';
 import NotificationBadge from '../../../NotificationBadge';
 
 import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
@@ -23,15 +26,13 @@ type Props = {
   isReverseColors?: boolean;
   isDarkWhite?: boolean;
   formAction?: boolean;
-  suffix?: boolean;
-  prefixText?: string;
+  suffixText?: string;
   convert?: (value: string) => string;
   formatOnFocusOut?: boolean;
   notification?: TwitterNotification;
   customHandleSubmit?: ({ address }: { address: string }) => Promise<void>;
   showSubmitButton?: boolean;
   placeHolderText?: string;
-  clearButton?: boolean;
   onInputChanged?: (value: string) => string;
 };
 
@@ -94,15 +95,13 @@ export const FormComponent: React.FC<Props> = props => {
     isDarkWhite,
     links,
     formAction,
-    suffix,
-    prefixText,
+    suffixText,
     convert,
     formatOnFocusOut,
     notification,
     customHandleSubmit,
     showSubmitButton = true,
     placeHolderText = 'Enter a Username',
-    clearButton = true,
     onInputChanged,
   } = props;
 
@@ -146,15 +145,13 @@ export const FormComponent: React.FC<Props> = props => {
                 type="text"
                 placeholder={placeHolderText}
                 colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
+                uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                 component={TextInput}
                 hideError="true"
                 lowerCased
-                prefix={prefixText}
-                suffix={suffix}
+                suffix={suffixText}
                 formatOnBlur={formatOnFocusOut}
                 format={convert}
-                defaultValue=""
-                clearButton={clearButton}
                 parse={onInputChanged}
               />
             </div>

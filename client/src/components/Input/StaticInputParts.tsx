@@ -99,21 +99,39 @@ export const Prefix: React.FC<{
   hasError?: boolean;
   uiType?: string;
   highZIndex?: boolean;
-  suffix?: boolean;
-}> = ({ prefix, hasError, uiType, highZIndex, suffix }) => {
+}> = ({ prefix, hasError, uiType, highZIndex }) => {
   if (!prefix?.length) return null;
 
   return (
     <div
       className={classnames(
         classes.prefix,
-        suffix && classes.suffix,
         hasError && classes.error,
         uiType && classes[uiType],
         highZIndex && classes.highZIndex,
       )}
     >
       {prefix}
+    </div>
+  );
+};
+
+export const Suffix: React.FC<{
+  hasIconsLeft?: boolean;
+  suffix: string;
+  uiType?: string;
+}> = ({ hasIconsLeft, suffix, uiType }) => {
+  if (!suffix.length) return null;
+
+  return (
+    <div
+      className={classnames(
+        classes.suffix,
+        uiType && classes[uiType],
+        hasIconsLeft && classes.hasIconsLeft,
+      )}
+    >
+      {suffix}
     </div>
   );
 };

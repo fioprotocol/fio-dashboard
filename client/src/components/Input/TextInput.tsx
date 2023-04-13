@@ -8,7 +8,13 @@ import {
   PasteButton,
   ShowPasswordIcon,
 } from './InputActionButtons';
-import { Label, LoadingIcon, Prefix, PrefixLabel } from './StaticInputParts';
+import {
+  Label,
+  LoadingIcon,
+  Prefix,
+  PrefixLabel,
+  Suffix,
+} from './StaticInputParts';
 import { ErrorBadge } from './ErrorBadge';
 import ConnectWalletButton from '../ConnectWallet/ConnectWalletButton/ConnectWalletButton';
 
@@ -48,7 +54,7 @@ export type TextInputProps = {
   errorColor?: string;
   prefix?: string;
   prefixLabel?: string;
-  suffix?: boolean;
+  suffix?: string;
   upperCased?: boolean;
   lowerCased?: boolean;
   disabled?: boolean;
@@ -68,7 +74,6 @@ export type TextInputProps = {
   withoutBottomMargin?: boolean;
   hasItalicLabel?: boolean;
   hasErrorForced?: boolean;
-  clearButton?: boolean;
 };
 
 export const TextInput: React.ForwardRefRenderFunction<
@@ -107,7 +112,6 @@ export const TextInput: React.ForwardRefRenderFunction<
     withoutBottomMargin,
     hasItalicLabel,
     hasErrorForced,
-    clearButton,
     ...rest
   } = props;
   const {
@@ -130,7 +134,9 @@ export const TextInput: React.ForwardRefRenderFunction<
 
   const [isWalletConnected, setIsWalletConnected] = useState(false);
 
-  const [isInputHasValue, toggleIsInputHasValue] = useState(value !== '');
+  const [isInputHasValue, toggleIsInputHasValue] = useState(
+    value !== '' && typeof value !== 'undefined',
+  );
   const [
     fieldElemActive,
     setFieldElemActive,
@@ -146,7 +152,7 @@ export const TextInput: React.ForwardRefRenderFunction<
     (submitError && !modifiedSinceLastSubmit);
 
   useEffect(() => {
-    toggleIsInputHasValue(value !== '');
+    toggleIsInputHasValue(value !== '' && typeof value !== 'undefined');
   }, [value]);
 
   const clearInputFn = () => {
@@ -182,6 +188,13 @@ export const TextInput: React.ForwardRefRenderFunction<
 
   if (type === 'hidden') return null;
 
+  const isVisibleClearButton =
+    (isInputHasValue || !!onClose) &&
+    (isWalletConnected ? true : !disabled) &&
+    !loading;
+  const isVisiblePasswordButton = isInputHasValue && type === 'password';
+  const isVisiblePasteButton = showPasteButton && !value;
+
   return (
     <div
       className={classnames(classes.regInputWrapper, {
@@ -190,12 +203,7 @@ export const TextInput: React.ForwardRefRenderFunction<
     >
       <Label label={label} uiType={uiType} hasItalic={hasItalicLabel} />
       <div className={classes.inputGroup}>
-        <Prefix
-          prefix={prefix}
-          suffix={suffix}
-          hasError={hasError}
-          uiType={uiType}
-        />
+        <Prefix prefix={prefix} hasError={hasError} uiType={uiType} />
         <div
           className={classnames(
             classes.regInput,
@@ -203,7 +211,8 @@ export const TextInput: React.ForwardRefRenderFunction<
             uiType && classes[uiType],
             isBW && classes.bw,
             isIW && classes.iw,
-            !suffix && prefix && classes.prefixSpace,
+            prefix && classes.prefixSpace,
+            suffix && classes.suffixSpace,
             showPasteButton && classes.hasPasteButton,
             type === 'password' && classes.doubleIconInput,
             isLowHeight && classes.lowHeight,
@@ -255,31 +264,34 @@ export const TextInput: React.ForwardRefRenderFunction<
             {...connectWalletProps}
           />
         ) : null}
-        {clearButton && (
-          <ClearButton
-            isVisible={
-              (isInputHasValue || !!onClose) &&
-              (isWalletConnected ? true : !disabled) &&
-              !loading
-            }
-            onClear={clearInputFn}
-            onClose={onClose}
-            inputType={type}
-            isBW={isBW}
-            isIW={isIW}
-            isBigDoubleIcon={showConnectWalletButton && !isWalletConnected}
-            disabled={isWalletConnected ? false : disabled}
-            uiType={isWalletConnected ? 'whiteBlack' : uiType}
-          />
-        )}
+        <Suffix
+          suffix={suffix}
+          uiType={uiType}
+          hasIconsLeft={
+            isVisibleClearButton ||
+            isVisiblePasswordButton ||
+            isVisiblePasteButton
+          }
+        />
+        <ClearButton
+          isVisible={isVisibleClearButton}
+          onClear={clearInputFn}
+          onClose={onClose}
+          inputType={type}
+          isBW={isBW}
+          isIW={isIW}
+          isBigDoubleIcon={showConnectWalletButton && !isWalletConnected}
+          disabled={isWalletConnected ? false : disabled}
+          uiType={isWalletConnected ? 'whiteBlack' : uiType}
+        />
         <ShowPasswordIcon
-          isVisible={isInputHasValue && type === 'password'}
+          isVisible={isVisiblePasswordButton}
           showPass={showPass}
           toggleShowPass={toggleShowPass}
           uiType={uiType}
         />
         <PasteButton
-          isVisible={showPasteButton && !value}
+          isVisible={isVisiblePasteButton}
           onClick={async () => {
             try {
               onChange(await getValueFromPaste());
