@@ -28,7 +28,7 @@ export default {
       req.rawBody = buf.toString('utf8');
     },
   }),
-  cors: cors({ origin: '*' }),
+  cors: cors({ origin: true, credentials: true }),
   multipart: multipart(),
   cookieParser: cookieParser(),
 };
