@@ -20,6 +20,7 @@ import {
   getCartItemsDataForAnalytics,
 } from '../../util/analytics';
 import { log } from '../../util/general';
+import { setCookies } from '../../util/cookies';
 
 import { ROUTES } from '../../constants/routes';
 import {
@@ -134,6 +135,11 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       });
 
       if (data.verified) {
+        if (data.token) {
+          setCookies(userfch, data.token, {
+            expires: data.expires,
+          });
+        }
         onUserVerify();
       } else if (data.isLocked) {
         onUserLocked();
