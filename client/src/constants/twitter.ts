@@ -19,7 +19,7 @@ export const ADDRESS_WIDGET_CONTENT = {
 export const TWITTER_SHARE_CONTENT = {
   text:
     'You can now send me crypto to my name@domain $FIO Crypto Handle. #CRYPTOTWITTER Get yours now ',
-  url: `${process.env.REACT_APP_API_BASE_URL}twitter-handle`,
+  url: `${document.location.href}`,
   hashtags: ['#CRYPTOTWITTER'],
   via: 'joinfio',
   actionText:
