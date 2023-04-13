@@ -6,7 +6,6 @@ import { FadeLoader } from 'react-spinners';
 import Cookies from 'js-cookie';
 
 import AddressWidget from '../../components/AddressWidget';
-import TwitterMeta from '../../components/TwitterMeta/TwitterMeta';
 import TweetShare from '../../components/TweetShare/TweetShare';
 import { FCHBanner } from '../../components/FCHBanner';
 import { FCHSpecialsBanner } from '../../components/SpecialsBanner';
@@ -198,6 +197,10 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     return value;
   };
 
+  const onTweetShareClicked = () => {
+    setStartVerification(true);
+  };
+
   const handleRedirect = useCallback(
     (count: number) => {
       fireAnalyticsEvent(
@@ -256,7 +259,6 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
         onUserVerify();
       } else {
         setShowTwitterShare(true);
-        setStartVerification(true);
       }
     }
   };
@@ -291,7 +293,6 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
 
   return (
     <>
-      <TwitterMeta />
       <div className={classes.container}>
         <AddressWidget
           {...ADDRESS_WIDGET_CONTENT}
@@ -318,6 +319,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
             hashtags={TWITTER_SHARE_CONTENT.hashtags}
             via={TWITTER_SHARE_CONTENT.via}
             actionText={TWITTER_SHARE_CONTENT.actionText}
+            onTweetShareClicked={onTweetShareClicked}
             userfch={userfch}
           />
         )}

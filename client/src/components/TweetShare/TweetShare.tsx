@@ -1,6 +1,8 @@
 import React from 'react';
 import TwitterIcon from '@mui/icons-material/Twitter';
 
+import { EventObjectType } from '../../types';
+
 import classes from './TweetShare.module.scss';
 
 type Props = {
@@ -10,6 +12,7 @@ type Props = {
   via: string;
   actionText: string;
   userfch: string;
+  onTweetShareClicked: () => void;
 };
 
 const TweetButton: React.FC<Props> = ({
@@ -19,12 +22,20 @@ const TweetButton: React.FC<Props> = ({
   via,
   actionText,
   userfch,
+  onTweetShareClicked,
 }) => {
   const generateShareUrl = () => {
     const encodedText = encodeURIComponent(text);
     const encodedUrl = encodeURIComponent(url);
 
     return `https://twitter.com/intent/tweet?text=${encodedText}&url=${encodedUrl}&via=${via}`;
+  };
+
+  const onTweetButtonClicked = (e: EventObjectType): void => {
+    e.preventDefault();
+    onTweetShareClicked();
+    window.open(generateShareUrl(), '_blank');
+    return;
   };
 
   return (
@@ -47,6 +58,7 @@ const TweetButton: React.FC<Props> = ({
               target="_blank"
               rel="noopener noreferrer"
               className={classes.tweetShareButton}
+              onClick={onTweetButtonClicked}
             >
               <TwitterIcon
                 fontSize="small"

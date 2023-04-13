@@ -23,6 +23,7 @@ import PageTitle from '../../components/PageTitle/PageTitle';
 import { ContentContainer } from '../../components/ContentContainer';
 import { MainLayoutContainer } from '../../components/MainLayoutContainer';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
+import TwitterMeta from '../../components/TwitterMeta/TwitterMeta';
 
 import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
@@ -124,6 +125,7 @@ const MainLayout: React.FC<Props> = props => {
             />
           )}
           <MainHeader />
+          <TwitterMeta />
           <AutoLogout />
           <Ref />
           <Roe />

@@ -38,6 +38,8 @@ export type ClickEventTypes = ReactMouseEvent<HTMLElement, MouseEvent> & {
   target: { blur: () => void };
 };
 
+export type EventObjectType = ReactMouseEvent<HTMLAnchorElement> | undefined;
+
 export type Domain = { domain: string; free?: boolean };
 
 export type ContainedFlowActionSettingsKey = keyof typeof CONTAINED_FLOW_ACTIONS;
