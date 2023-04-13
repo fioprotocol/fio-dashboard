@@ -47,16 +47,13 @@ export default class VerifyTwitter extends Base {
 
       await LockedFch.create({ fch, token: lockedFchToken, userId });
 
-      const cookieParams = {
-        maxAge: EXPIRED_LOCKED_PERIOD,
+      return {
+        data: {
+          verified: true,
+          token: lockedFchToken,
+          expires: (1 / (24 * 60)) * (EXPIRED_LOCKED_PERIOD / 1000 / 60), // expires shhould be in days
+        },
       };
-
-      cookieParams.secure = true;
-      cookieParams.sameSite = 'None';
-
-      this.res.cookie(fch, lockedFchToken, cookieParams);
-
-      return { data: { verified: true } };
     } catch (e) {
       logger.error(`Twitter verification error: ${e}`);
       throw new X({
