@@ -53,3 +53,11 @@
 .blueText {
   color: $twitter-blue;
 }
+
+@include sm {
+  .tweetShareActionText {
+    width: 80%;
+    margin: 35px auto;
+    text-align: center;
+  }
+}

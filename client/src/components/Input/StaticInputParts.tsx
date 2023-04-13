@@ -121,7 +121,7 @@ export const Suffix: React.FC<{
   suffix: string;
   uiType?: string;
 }> = ({ hasIconsLeft, suffix, uiType }) => {
-  if (!suffix.length) return null;
+  if (suffix && !suffix.length) return null;
 
   return (
     <div
