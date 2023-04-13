@@ -32,6 +32,7 @@ type Props = {
   showSubmitButton?: boolean;
   placeHolderText?: string;
   clearButton?: boolean;
+  onInputChanged?: (value: string) => string;
 };
 
 type ActionButtonProps = {
@@ -102,6 +103,7 @@ export const FormComponent: React.FC<Props> = props => {
     showSubmitButton = true,
     placeHolderText = 'Enter a Username',
     clearButton = true,
+    onInputChanged,
   } = props;
 
   const history = useHistory();
@@ -153,6 +155,7 @@ export const FormComponent: React.FC<Props> = props => {
                 format={convert}
                 defaultValue=""
                 clearButton={clearButton}
+                parse={onInputChanged}
               />
             </div>
             {showSubmitButton && (
