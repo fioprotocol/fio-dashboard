@@ -26,15 +26,13 @@ type Props = {
   isReverseColors?: boolean;
   isDarkWhite?: boolean;
   formAction?: boolean;
-  suffix?: boolean;
-  prefixText?: string;
+  suffixText?: string;
   convert?: (value: string) => string;
   formatOnFocusOut?: boolean;
   notification?: TwitterNotification;
   customHandleSubmit?: ({ address }: { address: string }) => Promise<void>;
   showSubmitButton?: boolean;
   placeHolderText?: string;
-  clearButton?: boolean;
   onInputChanged?: (value: string) => string;
 };
 
@@ -51,15 +49,13 @@ const AddressWidget: React.FC<Props> = props => {
     showSignInWidget,
     subtitle,
     formAction,
-    suffix,
-    prefixText,
+    suffixText,
     convert,
     formatOnFocusOut,
     notification,
     customHandleSubmit,
     showSubmitButton = true,
     placeHolderText,
-    clearButton,
     onInputChanged,
   } = props;
 
@@ -80,15 +76,13 @@ const AddressWidget: React.FC<Props> = props => {
         links={links}
         isDarkWhite={isDarkWhite}
         formAction={formAction}
-        suffix={suffix}
-        prefixText={prefixText}
+        suffixText={suffixText}
         convert={convert}
         formatOnFocusOut={formatOnFocusOut}
         notification={notification}
         customHandleSubmit={customHandleSubmit}
         showSubmitButton={showSubmitButton}
         placeHolderText={placeHolderText}
-        clearButton={clearButton}
         onInputChanged={onInputChanged}
       />
       <SignInWidget show={!isAuthenticated && showSignInWidget} />

@@ -12,7 +12,7 @@ export const ADDRESS_WIDGET_CONTENT = {
   },
   formAction: false,
   fch: 'bob@twitter',
-  prefixText: '@twitter',
+  suffixText: '@twitter',
   placeHolderText: 'Enter Twitter Handle',
 };
 
