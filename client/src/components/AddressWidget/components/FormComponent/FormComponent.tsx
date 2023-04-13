@@ -30,6 +30,8 @@ type Props = {
   notification?: TwitterNotification;
   customHandleSubmit?: ({ address }: { address: string }) => Promise<void>;
   showSubmitButton?: boolean;
+  placeHolderText?: string;
+  clearButton?: boolean;
 };
 
 type ActionButtonProps = {
@@ -98,6 +100,8 @@ export const FormComponent: React.FC<Props> = props => {
     notification,
     customHandleSubmit,
     showSubmitButton = true,
+    placeHolderText = 'Enter a Username',
+    clearButton = true,
   } = props;
 
   const history = useHistory();
@@ -138,7 +142,7 @@ export const FormComponent: React.FC<Props> = props => {
               <Field
                 name="address"
                 type="text"
-                placeholder="Enter a Username"
+                placeholder={placeHolderText}
                 colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
                 component={TextInput}
                 hideError="true"
@@ -148,6 +152,7 @@ export const FormComponent: React.FC<Props> = props => {
                 formatOnBlur={formatOnFocusOut}
                 format={convert}
                 defaultValue=""
+                clearButton={clearButton}
               />
             </div>
             {showSubmitButton && (

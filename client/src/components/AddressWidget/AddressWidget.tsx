@@ -33,6 +33,8 @@ type Props = {
   notification?: TwitterNotification;
   customHandleSubmit?: ({ address }: { address: string }) => Promise<void>;
   showSubmitButton?: boolean;
+  placeHolderText?: string;
+  clearButton?: boolean;
 };
 
 const AddressWidget: React.FC<Props> = props => {
@@ -55,6 +57,8 @@ const AddressWidget: React.FC<Props> = props => {
     notification,
     customHandleSubmit,
     showSubmitButton = true,
+    placeHolderText,
+    clearButton,
   } = props;
 
   return (
@@ -81,6 +85,8 @@ const AddressWidget: React.FC<Props> = props => {
         notification={notification}
         customHandleSubmit={customHandleSubmit}
         showSubmitButton={showSubmitButton}
+        placeHolderText={placeHolderText}
+        clearButton={clearButton}
       />
       <SignInWidget show={!isAuthenticated && showSignInWidget} />
     </div>
