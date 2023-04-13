@@ -299,6 +299,10 @@
 
       &[data-clear='true'] {
         padding-right: 35px;
+
+        &.suffixSpace {
+          padding-right: 135px;
+        }
       }
     }
 
@@ -308,6 +312,10 @@
 
     &.hasPasteButton {
       padding-right: 45px;
+    }
+
+    &.suffixSpace {
+      padding-right: 80px;
     }
 
     &.iw {
@@ -421,9 +429,19 @@
 }
 
 .suffix {
-  right: 10px;
-  background: none;
-  color: #765cd6;
+  position: absolute;
+  color: $baltic-sea;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+
+  &.indigoWhite {
+    color: $light-indigo;
+  }
+
+  &.hasIconsLeft {
+    right: 50px;
+  }
 }
 
 .pin {

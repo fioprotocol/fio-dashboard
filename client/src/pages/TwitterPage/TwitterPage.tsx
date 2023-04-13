@@ -291,7 +291,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
         <AddressWidget
           {...ADDRESS_WIDGET_CONTENT}
           formAction={ADDRESS_WIDGET_CONTENT.formAction}
-          prefixText={ADDRESS_WIDGET_CONTENT.prefixText}
+          suffixText={ADDRESS_WIDGET_CONTENT.suffixText}
           convert={onFocusOut}
           notification={notification}
           customHandleSubmit={
@@ -302,9 +302,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
           showSubmitButton={showSubmitButton}
           placeHolderText={ADDRESS_WIDGET_CONTENT.placeHolderText}
           onInputChanged={onInputChanged}
-          clearButton={false}
           formatOnFocusOut
-          suffix
         />
         {showTwitterShare && (
           <TweetShare
