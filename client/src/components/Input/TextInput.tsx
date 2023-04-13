@@ -68,6 +68,7 @@ export type TextInputProps = {
   withoutBottomMargin?: boolean;
   hasItalicLabel?: boolean;
   hasErrorForced?: boolean;
+  clearButton?: boolean;
 };
 
 export const TextInput: React.ForwardRefRenderFunction<
@@ -106,6 +107,7 @@ export const TextInput: React.ForwardRefRenderFunction<
     withoutBottomMargin,
     hasItalicLabel,
     hasErrorForced,
+    clearButton,
     ...rest
   } = props;
   const {
@@ -253,21 +255,23 @@ export const TextInput: React.ForwardRefRenderFunction<
             {...connectWalletProps}
           />
         ) : null}
-        <ClearButton
-          isVisible={
-            (isInputHasValue || !!onClose) &&
-            (isWalletConnected ? true : !disabled) &&
-            !loading
-          }
-          onClear={clearInputFn}
-          onClose={onClose}
-          inputType={type}
-          isBW={isBW}
-          isIW={isIW}
-          isBigDoubleIcon={showConnectWalletButton && !isWalletConnected}
-          disabled={isWalletConnected ? false : disabled}
-          uiType={isWalletConnected ? 'whiteBlack' : uiType}
-        />
+        {clearButton && (
+          <ClearButton
+            isVisible={
+              (isInputHasValue || !!onClose) &&
+              (isWalletConnected ? true : !disabled) &&
+              !loading
+            }
+            onClear={clearInputFn}
+            onClose={onClose}
+            inputType={type}
+            isBW={isBW}
+            isIW={isIW}
+            isBigDoubleIcon={showConnectWalletButton && !isWalletConnected}
+            disabled={isWalletConnected ? false : disabled}
+            uiType={isWalletConnected ? 'whiteBlack' : uiType}
+          />
+        )}
         <ShowPasswordIcon
           isVisible={isInputHasValue && type === 'password'}
           showPass={showPass}
