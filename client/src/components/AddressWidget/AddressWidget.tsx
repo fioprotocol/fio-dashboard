@@ -35,6 +35,7 @@ type Props = {
   showSubmitButton?: boolean;
   placeHolderText?: string;
   clearButton?: boolean;
+  onInputChanged?: (value: string) => string;
 };
 
 const AddressWidget: React.FC<Props> = props => {
@@ -59,6 +60,7 @@ const AddressWidget: React.FC<Props> = props => {
     showSubmitButton = true,
     placeHolderText,
     clearButton,
+    onInputChanged,
   } = props;
 
   return (
@@ -87,6 +89,7 @@ const AddressWidget: React.FC<Props> = props => {
         showSubmitButton={showSubmitButton}
         placeHolderText={placeHolderText}
         clearButton={clearButton}
+        onInputChanged={onInputChanged}
       />
       <SignInWidget show={!isAuthenticated && showSignInWidget} />
     </div>

@@ -188,6 +188,16 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     return convertedValue;
   };
 
+  const onInputChanged = (value: string) => {
+    if (showTwitterShare) {
+      setIsVerified(false);
+      setStartVerification(false);
+      setShowTwitterShare(false);
+    }
+
+    return value;
+  };
+
   const handleRedirect = useCallback(
     (count: number) => {
       fireAnalyticsEvent(
@@ -296,6 +306,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
           }
           showSubmitButton={showSubmitButton}
           placeHolderText={ADDRESS_WIDGET_CONTENT.placeHolderText}
+          onInputChanged={onInputChanged}
           clearButton={false}
           formatOnFocusOut
           suffix
