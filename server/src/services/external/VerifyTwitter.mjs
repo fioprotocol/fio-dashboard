@@ -4,7 +4,6 @@ import logger from '../../logger';
 import Base from '../Base';
 import X from '../Exception.mjs';
 import { Action, LockedFch } from '../../models/index.mjs';
-import config from '../../config';
 
 import { EXPIRED_LOCKED_PERIOD } from '../../config/constants.js';
 
@@ -52,10 +51,8 @@ export default class VerifyTwitter extends Base {
         maxAge: EXPIRED_LOCKED_PERIOD,
       };
 
-      if (config.isProduction) {
-        cookieParams.secure = true;
-        cookieParams.sameSite = 'None';
-      }
+      cookieParams.secure = true;
+      cookieParams.sameSite = 'None';
 
       this.res.cookie(fch, lockedFchToken, cookieParams);
 
