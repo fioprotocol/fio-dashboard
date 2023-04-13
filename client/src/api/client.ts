@@ -88,6 +88,7 @@ export default class ApiClient {
 
     if (params) req.query(params);
     if (body) req.send(body);
+    req.withCredentials();
 
     if (isAdminService(url))
       req.set('Authorization', `Bearer ${this.getAdminToken()}`);
