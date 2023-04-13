@@ -122,6 +122,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       ? value
           .toLowerCase()
           .replaceAll('@', '')
+          .replace(/^_+|_+$/g, '')
           .replaceAll('_', '-')
       : value;
 
@@ -288,6 +289,8 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
               : customHandleSubmitUnverified
           }
           showSubmitButton={showSubmitButton}
+          placeHolderText={ADDRESS_WIDGET_CONTENT.placeHolderText}
+          clearButton={false}
           formatOnFocusOut
           suffix
         />
