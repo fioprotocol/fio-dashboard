@@ -13,7 +13,10 @@ const TwitterMeta: React.FC = () => {
         content="Your Twitter handle can now receive crypto"
       />
       <meta name="twitter:description" content="Get yours now" />
-      <meta name="twitter:image" content={summaryCardImage} />
+      <meta
+        name="twitter:image"
+        content={`${window.location.origin}${summaryCardImage}`}
+      />
     </Helmet>
   );
 };
