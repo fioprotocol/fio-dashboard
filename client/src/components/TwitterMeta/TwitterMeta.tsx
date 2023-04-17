@@ -1,5 +1,5 @@
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import { Helmet } from 'react-helmet';
 
 import summaryCardImage from '../../assets/images/landing-page/twitter-summary-card.png';
 
