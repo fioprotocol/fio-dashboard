@@ -103,6 +103,7 @@ const MainLayout: React.FC<Props> = props => {
       {isLoading ? (
         <>
           <MainHeader isMaintenance />
+          <TwitterMeta />
           <ContentContainer>
             <FioLoader wrap />
           </ContentContainer>
