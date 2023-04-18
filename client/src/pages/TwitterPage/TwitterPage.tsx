@@ -85,7 +85,6 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   const [enableRedirect, toggleEnableRedirect] = useState<boolean>(false);
 
   const count = cartItems.length;
-
   useEffect(() => {
     if (isVerified) {
       clearInterval(intervalRef.current);
@@ -99,6 +98,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     clearInterval(intervalRef.current);
     setStartVerification(false);
     setShowTwitterShare(false);
+    setNotification(TWITTER_NOTIFICATIONS.VERIFIED);
   }, []);
 
   const onUserLocked = useCallback(() => {
@@ -177,7 +177,15 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   const onFocusOut = (value: string) => {
     const convertedValue = convertTwitterToFCH(value);
 
-    if (USERNAME_REGEX.test(convertedValue)) {
+    const alreadyVerified =
+      Cookies.get(
+        `${convertedValue}${FIO_ADDRESS_DELIMITER}${TWITTER_DOMAIN}`,
+      ) !== undefined;
+
+    if (alreadyVerified) {
+      onUserVerify();
+      return convertedValue;
+    } else if (USERNAME_REGEX.test(convertedValue)) {
       setNotification(TWITTER_NOTIFICATIONS.EMPTY);
     } else {
       setNotification(TWITTER_NOTIFICATIONS.INVALID_FORMAT);
