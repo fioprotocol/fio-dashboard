@@ -6,8 +6,6 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 import { LastLocationProvider } from 'react-router-last-location';
 import { HelmetProvider } from 'react-helmet-async';
 
-import TwitterMeta from './components/TwitterMeta/TwitterMeta';
-
 import icons from './icons';
 
 import { store, history } from './redux/init';
@@ -22,7 +20,6 @@ class App extends Component {
       <Provider store={store}>
         <ConnectedRouter history={history}>
           <LastLocationProvider>
-            <TwitterMeta />
             <HelmetProvider>
               <Routes />
             </HelmetProvider>
