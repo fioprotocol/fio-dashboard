@@ -67,6 +67,17 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     showLoginModal,
   } = props;
 
+  const convertTwitterToFCH = (value: string) =>
+    value
+      ? value
+          .toLowerCase()
+          .replaceAll('@', '')
+          .replaceAll('_', '-')
+      : value;
+
+  const trimDashes = (value: string) =>
+    value ? value.replace(/^-+|-+$/g, '') : value;
+
   const [notification, setNotification] = useState<TwitterNotification>(
     TWITTER_NOTIFICATIONS.EMPTY,
   );
@@ -77,9 +88,8 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   const [loading, setLoading] = useState(false);
   const showSubmitButton = !showTwitterShare || isVerified;
   const intervalRef = useRef(null);
-  const userfch = `${originalUsername.replaceAll(
-    '_',
-    '-',
+  const userfch = `${trimDashes(
+    convertTwitterToFCH(originalUsername),
   )}${FIO_ADDRESS_DELIMITER}${TWITTER_DOMAIN}`;
 
   const [enableRedirect, toggleEnableRedirect] = useState<boolean>(false);
@@ -116,15 +126,6 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     setStartVerification(true);
     setIsVerified(false);
   }, []);
-
-  const convertTwitterToFCH = (value: string) =>
-    value
-      ? value
-          .toLowerCase()
-          .replaceAll('@', '')
-          .replace(/^_+|_+$/g, '')
-          .replaceAll('_', '-')
-      : value;
 
   const fetchTweetsAndVerify = useCallback(async () => {
     setLoading(true);
@@ -277,10 +278,10 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     address: string;
   }) => {
     if (address === convertTwitterToFCH(originalUsername)) {
-      const fch = setFioName(address, TWITTER_DOMAIN);
+      const fch = setFioName(trimDashes(address), TWITTER_DOMAIN);
       const cartItem = {
         id: fch,
-        address: address,
+        address: trimDashes(address),
         domain: TWITTER_DOMAIN,
         costFio: '0',
         costUsdc: '0',
