@@ -92,6 +92,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   const [enableRedirect, toggleEnableRedirect] = useState<boolean>(false);
 
   const count = cartItems.length;
+
   useEffect(() => {
     if (isVerified) {
       clearInterval(intervalRef.current);
@@ -185,6 +186,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     }
 
     const convertedValue = convertTwitterToFCH(value);
+    setOriginalUsername(convertedValue.replaceAll('-', '_'));
 
     const alreadyVerified =
       Cookies.get(
@@ -264,8 +266,6 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     const isRegistered = await apis.fio.availCheckTableRows(
       setFioName(address, TWITTER_DOMAIN),
     );
-
-    setOriginalUsername(address.replaceAll('-', '_'));
 
     if (isRegistered) {
       setNotification(TWITTER_NOTIFICATIONS.EXISTING_HANDLE);
