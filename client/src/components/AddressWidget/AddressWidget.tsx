@@ -8,6 +8,8 @@ import SubtitleComponent from './components/SubtitleComponent';
 import ActionTextComponent from './components/ActionTextComponent';
 import { FormComponent } from './components/FormComponent';
 
+import { TwitterNotification } from '../../types';
+
 import classes from './AddressWidget.module.scss';
 
 type Props = {
@@ -23,6 +25,15 @@ type Props = {
   isAuthenticated?: boolean;
   isReverseColors?: boolean;
   isDarkWhite?: boolean;
+  formAction?: boolean;
+  suffixText?: string;
+  convert?: (value: string) => string;
+  formatOnFocusOut?: boolean;
+  notification?: TwitterNotification;
+  customHandleSubmit?: ({ address }: { address: string }) => Promise<void>;
+  showSubmitButton?: boolean;
+  placeHolderText?: string;
+  onInputChanged?: (value: string) => string;
 };
 
 const AddressWidget: React.FC<Props> = props => {
@@ -37,6 +48,15 @@ const AddressWidget: React.FC<Props> = props => {
     title,
     showSignInWidget,
     subtitle,
+    formAction,
+    suffixText,
+    convert,
+    formatOnFocusOut,
+    notification,
+    customHandleSubmit,
+    showSubmitButton = true,
+    placeHolderText,
+    onInputChanged,
   } = props;
 
   return (
@@ -55,6 +75,15 @@ const AddressWidget: React.FC<Props> = props => {
         isReverseColors={isReverseColors}
         links={links}
         isDarkWhite={isDarkWhite}
+        formAction={formAction}
+        suffixText={suffixText}
+        convert={convert}
+        formatOnFocusOut={formatOnFocusOut}
+        notification={notification}
+        customHandleSubmit={customHandleSubmit}
+        showSubmitButton={showSubmitButton}
+        placeHolderText={placeHolderText}
+        onInputChanged={onInputChanged}
       />
       <SignInWidget show={!isAuthenticated && showSignInWidget} />
     </div>

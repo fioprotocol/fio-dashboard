@@ -204,6 +204,9 @@ const FioAffiliateProgramPage = React.lazy(() =>
 const HomePage = React.lazy(() =>
   import(/* webpackChunkName: 'homePage' */ './pages/HomePage'),
 );
+const TwitterPage = React.lazy(() =>
+  import(/* webpackChunkName: 'twitterPage' */ './pages/TwitterPage'),
+);
 const PrivacyPolicyPage = React.lazy(() =>
   import(
     /* webpackChunkName: 'privacyPolicyPage' */ './pages/PrivacyPolicyPage'
@@ -298,6 +301,11 @@ const Routes = (): React.ReactElement => {
               />
 
               <Route path={ROUTES.HOME} component={HomePage} exact />
+              <Route
+                path={ROUTES.TWITTER_HANDLE}
+                component={TwitterPage}
+                exact
+              />
               <Route path={ROUTES.NOT_FOUND} component={NotFoundPage} exact />
               <Route
                 path={ROUTES.UNAVAILABLE}

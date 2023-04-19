@@ -16,10 +16,13 @@ export default class FioAccountProfileUpdate extends Base {
       permission: ['required', 'string'],
       id: ['required', 'string'],
       accountType: ['required', 'string'],
+      domains: {
+        list_of: ['string'],
+      },
     };
   }
 
-  async execute({ id, name, actor, permission, accountType }) {
+  async execute({ id, name, actor, permission, accountType, domains }) {
     const fioAccountProfile = await FioAccountProfile.findById(id);
 
     if (!fioAccountProfile) {
@@ -52,6 +55,7 @@ export default class FioAccountProfileUpdate extends Base {
       actor,
       permission,
       accountType: FIO_ACCOUNT_TYPES[accountType] || null,
+      domains,
     });
 
     return {

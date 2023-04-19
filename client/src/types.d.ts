@@ -38,6 +38,8 @@ export type ClickEventTypes = ReactMouseEvent<HTMLElement, MouseEvent> & {
   target: { blur: () => void };
 };
 
+export type EventObjectType = ReactMouseEvent<HTMLAnchorElement> | undefined;
+
 export type Domain = { domain: string; free?: boolean };
 
 export type ContainedFlowActionSettingsKey = keyof typeof CONTAINED_FLOW_ACTIONS;
@@ -648,6 +650,7 @@ export type FioAccountProfile = {
   accountType?: FioAccountProfileType;
   createdAt: string;
   referenceToPartners: boolean;
+  domains?: string[];
 };
 
 export type AdminUserProfile = {
@@ -915,6 +918,13 @@ export type ColorTypes = {
   isOrange?: boolean;
   isRed?: boolean;
   isRose?: boolean;
+};
+
+export type TwitterNotification = {
+  hasNotification: boolean;
+  type: string;
+  message: string;
+  title: string;
 };
 
 declare global {

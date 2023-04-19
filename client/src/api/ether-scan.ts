@@ -89,7 +89,7 @@ export default class EtherScan {
         module: 'account',
         action: 'tokennfttx',
         contractaddress: W_FIO_DOMAIN_NFT.address,
-        address: address,
+        address,
         offset,
         page,
       },

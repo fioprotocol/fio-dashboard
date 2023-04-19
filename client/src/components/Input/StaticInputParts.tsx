@@ -115,3 +115,23 @@ export const Prefix: React.FC<{
     </div>
   );
 };
+
+export const Suffix: React.FC<{
+  hasIconsLeft?: boolean;
+  suffix: string;
+  uiType?: string;
+}> = ({ hasIconsLeft, suffix, uiType }) => {
+  if (suffix && !suffix.length) return null;
+
+  return (
+    <div
+      className={classnames(
+        classes.suffix,
+        uiType && classes[uiType],
+        hasIconsLeft && classes.hasIconsLeft,
+      )}
+    >
+      {suffix}
+    </div>
+  );
+};

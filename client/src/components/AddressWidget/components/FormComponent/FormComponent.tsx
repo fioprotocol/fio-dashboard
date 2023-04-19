@@ -5,10 +5,16 @@ import classnames from 'classnames';
 
 import SubmitButton from '../../../common/SubmitButton/SubmitButton';
 import { ExclamationIcon } from '../../../ExclamationIcon';
-import TextInput, { INPUT_COLOR_SCHEMA } from '../../../Input/TextInput';
+import TextInput, {
+  INPUT_COLOR_SCHEMA,
+  INPUT_UI_STYLES,
+} from '../../../Input/TextInput';
+import NotificationBadge from '../../../NotificationBadge';
 
 import { QUERY_PARAMS_NAMES } from '../../../../constants/queryParams';
 import { ROUTES } from '../../../../constants/routes';
+
+import { TwitterNotification } from '../../../../types';
 
 import classes from './FormComponent.module.scss';
 
@@ -19,6 +25,15 @@ type Props = {
   };
   isReverseColors?: boolean;
   isDarkWhite?: boolean;
+  formAction?: boolean;
+  suffixText?: string;
+  convert?: (value: string) => string;
+  formatOnFocusOut?: boolean;
+  notification?: TwitterNotification;
+  customHandleSubmit?: ({ address }: { address: string }) => Promise<void>;
+  showSubmitButton?: boolean;
+  placeHolderText?: string;
+  onInputChanged?: (value: string) => string;
 };
 
 type ActionButtonProps = {
@@ -74,7 +89,21 @@ const ActionButton: React.FC<ActionButtonProps> = props => {
 };
 
 export const FormComponent: React.FC<Props> = props => {
-  const { buttonText, isReverseColors, isDarkWhite, links } = props;
+  const {
+    buttonText,
+    isReverseColors,
+    isDarkWhite,
+    links,
+    formAction,
+    suffixText,
+    convert,
+    formatOnFocusOut,
+    notification,
+    customHandleSubmit,
+    showSubmitButton = true,
+    placeHolderText = 'Enter a Username',
+    onInputChanged,
+  } = props;
 
   const history = useHistory();
 
@@ -94,43 +123,65 @@ export const FormComponent: React.FC<Props> = props => {
   };
 
   return (
-    <Form onSubmit={onSubmit}>
+    <Form onSubmit={customHandleSubmit ? customHandleSubmit : onSubmit}>
       {({ handleSubmit }) => (
         <div className={classes.formContainer}>
+          {notification && notification.hasNotification && (
+            <NotificationBadge
+              type={notification.type}
+              show={notification.hasNotification}
+              message={notification.message}
+              title={notification.title}
+              hasNewDesign={true}
+              marginBottomXs
+              marginTopZero
+            />
+          )}
+
           <form onSubmit={handleSubmit} className={classes.form}>
             <div className={classes.field}>
               <Field
                 name="address"
                 type="text"
-                placeholder="Enter a Username"
+                placeholder={placeHolderText}
                 colorSchema={INPUT_COLOR_SCHEMA.INDIGO_AND_WHITE}
+                uiType={INPUT_UI_STYLES.INDIGO_WHITE}
                 component={TextInput}
                 hideError="true"
                 lowerCased
+                suffix={suffixText}
+                formatOnBlur={formatOnFocusOut}
+                format={convert}
+                parse={onInputChanged}
               />
             </div>
-            <ActionButton
-              isWhiteBordered={isReverseColors}
-              links={links}
-              buttonText={buttonText}
-            />
+            {showSubmitButton && (
+              <ActionButton
+                isWhiteBordered={isReverseColors}
+                links={links}
+                buttonText={buttonText}
+              />
+            )}
           </form>
-          <div className={classes.actionTextContainer}>
-            <ExclamationIcon
-              isBlackWhite={!isReverseColors && !isDarkWhite}
-              isWhiteIndigo={isReverseColors && !isDarkWhite}
-              isWhiteBlack={isDarkWhite && !isReverseColors}
-            />
-            <span
-              className={classnames(
-                classes.actionText,
-                isReverseColors && classes.isReverseColors,
-                isDarkWhite && classes.isDarkWhite,
-              )}
-            >
-              You can pay with a credit card OR crypto!
-            </span>
-          </div>
+          {formAction && (
+            <div className={classes.actionTextContainer}>
+              <ExclamationIcon
+                isBlackWhite={!isReverseColors && !isDarkWhite}
+                isWhiteIndigo={isReverseColors && !isDarkWhite}
+                isWhiteBlack={isDarkWhite && !isReverseColors}
+              />
+
+              <span
+                className={classnames(
+                  classes.actionText,
+                  isReverseColors && classes.isReverseColors,
+                  isDarkWhite && classes.isDarkWhite,
+                )}
+              >
+                You can pay with a credit card OR crypto!
+              </span>
+            </div>
+          )}
         </div>
       )}
     </Form>

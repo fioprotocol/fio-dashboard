@@ -2,7 +2,6 @@
 @import '../../assets/styles/fontMixins.scss';
 @import '../../assets/styles/mediaQueriesMixings.scss';
 
-
 .regInputWrapper {
   width: 100%;
   color: white;
@@ -26,7 +25,7 @@
 
   .fullCircle {
     width: 8px;
-    height:8px;
+    height: 8px;
     border-radius: 50%;
     background-color: $light-indigo;
     margin-right: 10px;
@@ -76,9 +75,8 @@
 }
 
 .indigo {
-  color: $light-indigo!important;
+  color: $light-indigo !important;
 }
-
 
 .label {
   font-size: 0.875em;
@@ -87,7 +85,9 @@
   color: $white;
   width: 100%;
 
-  &.blackLight, &.blackWhite, &.indigoWhite {
+  &.blackLight,
+  &.blackWhite,
+  &.indigoWhite {
     color: $dark-jungle-green;
   }
 
@@ -105,7 +105,8 @@
   @include sf-pro-display-thin;
   color: $gray-main;
 
-  &.blackLight, &.blackWhite {
+  &.blackLight,
+  &.blackWhite {
     color: $baltic-sea;
   }
 
@@ -119,7 +120,7 @@
 }
 
 .additionalSubInfo {
-  font-size: 0.875em;;
+  font-size: 0.875em;
   margin: 10px 20px;
   color: $baltic-sea;
 
@@ -163,7 +164,7 @@
 
       &:focus {
         outline: none !important;
-        box-shadow: none!important;
+        box-shadow: none !important;
       }
     }
   }
@@ -201,7 +202,6 @@
       box-sizing: border-box;
       border-radius: 7px;
     }
-
   }
 
   .switchIcon {
@@ -223,7 +223,8 @@
     width: 20px !important;
     height: 20px;
 
-    &.bw, &.blackWhite {
+    &.bw,
+    &.blackWhite {
       color: $dark-gray;
     }
 
@@ -298,6 +299,10 @@
 
       &[data-clear='true'] {
         padding-right: 35px;
+
+        &.suffixSpace {
+          padding-right: 135px;
+        }
       }
     }
 
@@ -307,6 +312,10 @@
 
     &.hasPasteButton {
       padding-right: 45px;
+    }
+
+    &.suffixSpace {
+      padding-right: 80px;
     }
 
     &.iw {
@@ -339,7 +348,6 @@
       }
     }
 
-
     &.error {
       border-color: $warn-red;
     }
@@ -348,7 +356,8 @@
       height: 40px;
     }
 
-    &.blackLight, &.blackWhite {
+    &.blackLight,
+    &.blackWhite {
       border-color: transparent;
       color: $baltic-sea;
 
@@ -393,31 +402,47 @@
   }
 }
 
- .prefix {
-   background-color: $dark-gray;
-   color: white;
-   position: absolute;
-   padding: 0px 10px;
-   height: 40px;
-   display: flex;
-   align-items: center;
-   border-top-left-radius: 6px;
-   border-bottom-left-radius: 6px;
+.prefix {
+  background-color: $dark-gray;
+  color: white;
+  position: absolute;
+  padding: 0px 10px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
 
-   &.highZIndex {
+  &.highZIndex {
     z-index: 4;
-   } 
+  }
 
-   &.indigoWhite {
-     background-color: $light-indigo;
-   }
+  &.indigoWhite {
+    background-color: $light-indigo;
+  }
 
-   &.error {
-     height: 38px;
-     top: 1px;
-     left: 1px;
-   }
- }
+  &.error {
+    height: 38px;
+    top: 1px;
+    left: 1px;
+  }
+}
+
+.suffix {
+  position: absolute;
+  color: $baltic-sea;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+
+  &.indigoWhite {
+    color: $light-indigo;
+  }
+
+  &.hasIconsLeft {
+    right: 50px;
+  }
+}
 
 .pin {
   width: 219px;
@@ -430,7 +455,7 @@
     color: $baltic-sea;
   }
 
-  .dotsContainer{
+  .dotsContainer {
     position: absolute;
     top: 0;
     width: 100%;
@@ -467,7 +492,7 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  box-shadow: 0 0 8px 0 rgba(0,0,0,0.11);
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.11);
   margin-bottom: 17px;
 
   .icon {
@@ -481,7 +506,7 @@
 .fileContainer {
   background-color: $light-gray;
   border-radius: 7px;
-  box-shadow: 0 0 8px 0 rgba(0,0,0,0.11);
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.11);
   color: $baltic-sea;
   display: flex;
   flex-direction: column;
@@ -510,15 +535,16 @@
   }
 }
 
-.checkboxContainer input[type="checkbox"], .checkboxContainer input[type="checkbox"] ~ .checked {
+.checkboxContainer input[type='checkbox'],
+.checkboxContainer input[type='checkbox'] ~ .checked {
   display: none;
 }
 
-.checkboxContainer input[type="checkbox"]:checked ~ .checked {
+.checkboxContainer input[type='checkbox']:checked ~ .checked {
   display: inline-block;
 }
 
-.checkboxContainer input[type="checkbox"]:checked ~ .unchecked {
+.checkboxContainer input[type='checkbox']:checked ~ .unchecked {
   display: none;
 }
 
@@ -528,7 +554,8 @@
   display: flex;
   align-items: center;
 
-  .unchecked, .checked {
+  .unchecked,
+  .checked {
     font-size: 22.87px;
     color: $baltic-sea;
 

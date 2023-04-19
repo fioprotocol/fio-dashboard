@@ -11,33 +11,37 @@ export default function useMaintenance() {
   const [isMaintenance, setIsMaintenance] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const checkHealthAndMaintenance = () => {
+    apis.healthCheck
+      .ping()
+      .then((data: HealthCheckResponse) => {
+        if (!data.success) {
+          setIsMaintenance(true);
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        setIsMaintenance(true);
+        setIsLoading(false);
+      });
+
+    apis.vars
+      .getVar(VARS_KEYS.IS_MAINTENANCE)
+      .then((data: VarsResponse) => {
+        setIsMaintenance(data.value === 'false' ? false : true);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsMaintenance(true);
+        setIsLoading(false);
+      });
+  };
+
   useEffectOnce(() => {
     setIsLoading(true);
-
+    checkHealthAndMaintenance();
     const healthCheckInterval = setInterval(() => {
-      apis.healthCheck
-        .ping()
-        .then((data: HealthCheckResponse) => {
-          if (!data.success) {
-            setIsMaintenance(true);
-            setIsLoading(false);
-          }
-        })
-        .catch(() => {
-          setIsMaintenance(true);
-          setIsLoading(false);
-        });
-
-      apis.vars
-        .getVar(VARS_KEYS.IS_MAINTENANCE)
-        .then((data: VarsResponse) => {
-          setIsMaintenance(data.value === 'false' ? false : true);
-          setIsLoading(false);
-        })
-        .catch(() => {
-          setIsMaintenance(true);
-          setIsLoading(false);
-        });
+      checkHealthAndMaintenance();
     }, HEALTH_CHECK_TIME);
 
     return () => clearInterval(healthCheckInterval);

@@ -9,6 +9,7 @@ app.use(middlewares.json);
 app.use(middlewares.urlencoded);
 app.use(middlewares.cors);
 app.use(middlewares.multipart);
+app.use(middlewares.cookieParser);
 app.use('/api/v1', router);
 
 export default app;

@@ -34,7 +34,11 @@ export const setFreeCart = ({
   cartItems: CartItem[];
 }): CartItem[] => {
   const recalcElem = cartItems.find(
-    item => item.address && item.domain && item.allowFree,
+    item =>
+      item.address &&
+      item.domain &&
+      item.allowFree &&
+      item.domainType !== DOMAIN_TYPE.PRIVATE,
   );
   if (recalcElem) {
     recalcElem.domainType = DOMAIN_TYPE.FREE;
@@ -90,7 +94,10 @@ export const removeFreeCart = ({
   } = prices;
 
   return cartItems.map(item => {
-    if (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) {
+    if (
+      (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
+      item.domainType !== DOMAIN_TYPE.PRIVATE
+    ) {
       item.costNativeFio = nativeFioAddressPrice;
       item.showBadge = true;
       item.domainType = DOMAIN_TYPE.PREMIUM;
@@ -119,7 +126,8 @@ export const cartHasFreeItem = (cartItems: CartItem[]): boolean => {
     cartItems.some(
       item =>
         (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
-        !!item.address,
+        !!item.address &&
+        item.domainType !== DOMAIN_TYPE.PRIVATE,
     )
   );
 };
@@ -436,6 +444,15 @@ export const cartItemsToOrderItems = (
     .flat();
 };
 
+export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
+  cart.length &&
+  !cart.some(
+    item =>
+      item.domainType === DOMAIN_TYPE.CUSTOM ||
+      item.domainType === DOMAIN_TYPE.USERS ||
+      item.domainType === DOMAIN_TYPE.PREMIUM,
+  );
+
 export const totalCost = (
   cart: CartItem[],
   roe: number,
@@ -446,12 +463,13 @@ export const totalCost = (
   costUsdc?: string;
 } => {
   if (
-    cart.length === 1 &&
-    cart.some(
-      item =>
-        (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
-        !!item.address,
-    )
+    (cart.length === 1 &&
+      cart.some(
+        item =>
+          (!item.costNativeFio || item.domainType === DOMAIN_TYPE.FREE) &&
+          !!item.address,
+      )) ||
+    cartHasOnlyFreeItems(cart)
   )
     return { costFree: 'FREE' };
 

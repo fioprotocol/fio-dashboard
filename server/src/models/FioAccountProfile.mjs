@@ -34,6 +34,10 @@ export class FioAccountProfile extends Base {
           defaultValue: null,
           unique: true,
         },
+        domains: {
+          type: DT.ARRAY(DT.STRING),
+          allowNull: true,
+        },
       },
       {
         sequelize,
@@ -69,7 +73,15 @@ export class FioAccountProfile extends Base {
 
   static attrs(type = 'default') {
     const attributes = {
-      default: ['id', 'actor', 'permission', 'name', 'accountType', 'createdAt'],
+      default: [
+        'id',
+        'actor',
+        'permission',
+        'name',
+        'domains',
+        'accountType',
+        'createdAt',
+      ],
     };
 
     if (type in attributes) {
@@ -83,6 +95,17 @@ export class FioAccountProfile extends Base {
     return this.findOne({
       where: { ...where },
     });
+  }
+
+  static async getDomainOwner(domain) {
+    const domainOwner = await this.findOne({
+      where: {
+        domains: {
+          [Op.contains]: [domain],
+        },
+      },
+    });
+    return domainOwner ? this.format(domainOwner) : null;
   }
 
   static getFreePaidItems() {
@@ -132,12 +155,13 @@ export class FioAccountProfile extends Base {
     return fioAccountProfileJSONs;
   }
 
-  static format({ id, name, actor, permission, accountType }) {
+  static format({ id, name, actor, permission, domains, accountType }) {
     return {
       id,
       name,
       actor,
       permission,
+      domains,
       accountType,
     };
   }

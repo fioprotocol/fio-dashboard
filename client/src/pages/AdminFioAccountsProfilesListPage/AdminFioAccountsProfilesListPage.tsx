@@ -67,6 +67,10 @@ const AdminFioAccountsProfilesListPage: React.FC<PageProps> = props => {
 
   const createFioAccountProfile = useCallback(
     async (values: FormValuesProps) => {
+      values = {
+        ...values,
+        domains: values.domains?.filter(domain => !!domain),
+      };
       setFioAccountProfileActionLoading(true);
       try {
         await (editProfileDataExists

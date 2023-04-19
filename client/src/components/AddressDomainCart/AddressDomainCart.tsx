@@ -151,7 +151,8 @@ const AddressDomainCart: React.FC<Props> = props => {
                     <span className="boldText">
                       Cost:{' '}
                       {!Number.isFinite(item.costNativeFio) ||
-                      item.domainType === DOMAIN_TYPE.FREE
+                      item.domainType === DOMAIN_TYPE.FREE ||
+                      item.domainType === DOMAIN_TYPE.PRIVATE
                         ? 'FREE'
                         : `${item.costFio} FIO
                       (${item.costUsdc} USDC)`}

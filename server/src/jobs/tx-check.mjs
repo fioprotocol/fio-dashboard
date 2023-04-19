@@ -3,6 +3,8 @@ import {
   OrderItemStatus,
   BlockchainTransaction,
   BlockchainTransactionEventLog,
+  LockedFch,
+  OrderItem,
 } from '../models/index.mjs';
 import CommonJob from './job.mjs';
 
@@ -129,6 +131,15 @@ class TxCheckJob extends CommonJob {
                   transaction: t,
                 },
               );
+              if (status === BlockchainTransaction.STATUS.SUCCESS) {
+                const { address, domain } =
+                  (await OrderItem.findOne({ where: { id } })) || {};
+
+                if (address && domain)
+                  await LockedFch.deleteLockedFch({
+                    fch: fioApi.setFioName(address, domain),
+                  });
+              }
             });
           } catch (error) {
             logger.error(`TX ITEM PROCESSING ERROR ${item.id} - SQL UPDATE`, error);

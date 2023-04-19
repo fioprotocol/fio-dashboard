@@ -15,10 +15,13 @@ export default class FioAccountProfileCreate extends Base {
       actor: ['required', 'string'],
       permission: ['required', 'string'],
       accountType: ['required', 'string'],
+      domains: {
+        list_of: ['string'],
+      },
     };
   }
 
-  async execute({ name, actor, permission, accountType }) {
+  async execute({ name, actor, permission, accountType, domains }) {
     const existProfile = await FioAccountProfile.findOne({
       where: {
         name,
@@ -55,6 +58,7 @@ export default class FioAccountProfileCreate extends Base {
       actor,
       permission,
       accountType: FIO_ACCOUNT_TYPES[accountType] || null,
+      domains,
     });
     await createdProfile.save();
 

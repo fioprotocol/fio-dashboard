@@ -3,6 +3,7 @@ import dotenv from 'dotenv-safe';
 import dbConfig from './dbConfig';
 
 const isDev = !process.env.NODE_ENV || process.env.NODE_ENV === 'development';
+const isProduction = process.env.NODE_ENV === 'production';
 
 dotenv.load({ allowEmptyValues: isDev });
 
@@ -16,6 +17,7 @@ export default {
       algorithm: 'HS256',
     },
   },
+  isProduction,
   mainUrl: process.env.BASE_URL,
   adminUrl: process.env.ADMIN_BASE_URL,
   supportLink: process.env.FIOPROTOCOL_SUPPORT_LINK,

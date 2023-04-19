@@ -13,6 +13,7 @@ import notifications from './notifications';
 import orders from './orders';
 import payments from './payments';
 import refProfiles from './refProfiles';
+import twitter from './twitter.mjs';
 import users from './users';
 import history from './wrapStatus.mjs';
 import vars from './vars.mjs';
@@ -33,6 +34,7 @@ export default {
   orders,
   payments,
   refProfiles,
+  twitter,
   users,
   history,
   vars,
