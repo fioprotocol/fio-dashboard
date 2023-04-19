@@ -52,6 +52,16 @@ export const TWITTER_NOTIFICATIONS_CONTENT = {
     message:
       'This handle is currently being verified by another user. Try again in 30 minutes.',
   },
+  NOT_SUPPORTED: {
+    title: 'Handle not supported',
+    message:
+      'Handles which start or end with underscore are not supported at this time.',
+  },
+  CONVERTED: {
+    title: 'Underscore become dash',
+    message:
+      'FIO Handles only support dashes so all underscores are replaced with dashes.',
+  },
 };
 
 export const TWITTER_NOTIFICATIONS = {
@@ -90,5 +100,17 @@ export const TWITTER_NOTIFICATIONS = {
     type: BADGE_TYPES.ERROR,
     message: TWITTER_NOTIFICATIONS_CONTENT.LOCKED.message,
     title: TWITTER_NOTIFICATIONS_CONTENT.LOCKED.title,
+  },
+  NOT_SUPPORTED: {
+    hasNotification: true,
+    type: BADGE_TYPES.ERROR,
+    message: TWITTER_NOTIFICATIONS_CONTENT.NOT_SUPPORTED.message,
+    title: TWITTER_NOTIFICATIONS_CONTENT.NOT_SUPPORTED.title,
+  },
+  CONVERTED: {
+    hasNotification: true,
+    type: BADGE_TYPES.INFO,
+    message: TWITTER_NOTIFICATIONS_CONTENT.CONVERTED.message,
+    title: TWITTER_NOTIFICATIONS_CONTENT.CONVERTED.title,
   },
 };

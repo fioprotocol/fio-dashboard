@@ -75,9 +75,6 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
           .replaceAll('_', '-')
       : value;
 
-  const trimDashes = (value: string) =>
-    value ? value.replace(/^-+|-+$/g, '') : value;
-
   const [notification, setNotification] = useState<TwitterNotification>(
     TWITTER_NOTIFICATIONS.EMPTY,
   );
@@ -88,8 +85,8 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   const [loading, setLoading] = useState(false);
   const showSubmitButton = !showTwitterShare || isVerified;
   const intervalRef = useRef(null);
-  const userfch = `${trimDashes(
-    convertTwitterToFCH(originalUsername),
+  const userfch = `${convertTwitterToFCH(
+    originalUsername,
   )}${FIO_ADDRESS_DELIMITER}${TWITTER_DOMAIN}`;
 
   const [enableRedirect, toggleEnableRedirect] = useState<boolean>(false);
@@ -176,6 +173,17 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   }, [startVerification, fetchTweetsAndVerify]);
 
   const onFocusOut = (value: string) => {
+    let includesDash = false;
+    if (value.startsWith('_') || value.endsWith('_')) {
+      setNotification(TWITTER_NOTIFICATIONS.NOT_SUPPORTED);
+      setShowTwitterShare(false);
+      return value;
+    }
+
+    if (value.includes('_')) {
+      includesDash = true;
+    }
+
     const convertedValue = convertTwitterToFCH(value);
 
     const alreadyVerified =
@@ -187,7 +195,11 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       onUserVerify();
       return convertedValue;
     } else if (USERNAME_REGEX.test(convertedValue)) {
-      setNotification(TWITTER_NOTIFICATIONS.EMPTY);
+      if (includesDash) {
+        setNotification(TWITTER_NOTIFICATIONS.CONVERTED);
+      } else {
+        setNotification(TWITTER_NOTIFICATIONS.EMPTY);
+      }
     } else {
       setNotification(TWITTER_NOTIFICATIONS.INVALID_FORMAT);
       setShowTwitterShare(false);
@@ -278,10 +290,10 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     address: string;
   }) => {
     if (address === convertTwitterToFCH(originalUsername)) {
-      const fch = setFioName(trimDashes(address), TWITTER_DOMAIN);
+      const fch = setFioName(address, TWITTER_DOMAIN);
       const cartItem = {
         id: fch,
-        address: trimDashes(address),
+        address: address,
         domain: TWITTER_DOMAIN,
         costFio: '0',
         costUsdc: '0',
