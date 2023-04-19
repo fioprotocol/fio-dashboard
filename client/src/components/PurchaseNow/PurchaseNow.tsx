@@ -106,13 +106,17 @@ export const PurchaseNow: React.FC<PurchaseNowTypes> = props => {
     for (const item of cartItems) {
       if (
         (item.costNativeFio && item.domainType !== DOMAIN_TYPE.FREE) ||
-        hasFreeAddress
+        (hasFreeAddress && item.domainType !== DOMAIN_TYPE.PRIVATE)
       ) {
         setSubmitData({
           cartItems,
           prices,
           refProfileInfo,
-          isFreeAllowed: !hasFreeAddress,
+          isFreeAllowed:
+            !hasFreeAddress ||
+            cartItems.some(
+              cartItem => cartItem.domainType === DOMAIN_TYPE.PRIVATE,
+            ),
         });
         return;
       }
