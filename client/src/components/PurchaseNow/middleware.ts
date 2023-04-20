@@ -23,7 +23,9 @@ export const makeRegistrationOrder = (
       fioName: setFioName(cartItem.address, cartItem.domain),
       isFree:
         isFreeAllowed &&
-        (!cartItem.costNativeFio || cartItem.domainType === DOMAIN_TYPE.FREE) &&
+        (!cartItem.costNativeFio ||
+          cartItem.domainType === DOMAIN_TYPE.FREE ||
+          cartItem.domainType === DOMAIN_TYPE.PRIVATE) &&
         !!cartItem.address,
       fee: [CART_ITEM_TYPE.DOMAIN_RENEWAL, CART_ITEM_TYPE.ADD_BUNDLES].includes(
         cartItem.type,
@@ -53,6 +55,7 @@ export const makeRegistrationOrder = (
     if (
       !cartItem.costNativeFio ||
       cartItem.domainType === DOMAIN_TYPE.FREE ||
+      cartItem.domainType === DOMAIN_TYPE.PRIVATE ||
       !cartItem.address
     ) {
       registrations.push(registration);
