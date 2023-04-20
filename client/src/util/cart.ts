@@ -450,7 +450,9 @@ export const cartHasOnlyFreeItems = (cart: CartItem[]): boolean =>
     item =>
       item.domainType === DOMAIN_TYPE.CUSTOM ||
       item.domainType === DOMAIN_TYPE.USERS ||
-      item.domainType === DOMAIN_TYPE.PREMIUM,
+      item.domainType === DOMAIN_TYPE.PREMIUM ||
+      item.type === CART_ITEM_TYPE.ADD_BUNDLES ||
+      item.type === CART_ITEM_TYPE.DOMAIN_RENEWAL,
   );
 
 export const totalCost = (
