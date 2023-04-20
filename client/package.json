@@ -1,3 +1,10 @@
 {
-  "proxy": "http://localhost:9006"
+  "proxy": "http://localhost:9006",
+  "reactSnap": {
+    "port": 3000,
+    "fixWebpackChunksIssue": false,
+    "include": [
+      "/twitter-handle"
+    ]
+  }
 }
