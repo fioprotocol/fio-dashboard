@@ -203,7 +203,21 @@ export const transformInputValues = ({
 
 export const removeExtraCharactersFromString = (
   str: string | null,
-): string | null => (str != null ? str.replaceAll(/[^A-Za-z0-9]/g, '') : null);
+): string | null => {
+  if (str == null) {
+    return null;
+  }
+
+  let result = '';
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charAt(i);
+    if (/[A-Za-z0-9]/.test(char)) {
+      result += char;
+    }
+  }
+
+  return result;
+};
 
 export const reorder = (
   list: AnyObject[],

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Redirect, Route, RouteComponentProps, Switch } from 'react-router-dom';
 
+import TwitterPage from './pages/TwitterPage';
 import MainLayout from './pages/MainLayout';
 import AuthContainer from './components/AuthContainer';
 import PrivateRoute from './components/PrivateRoute';
@@ -203,9 +204,6 @@ const FioAffiliateProgramPage = React.lazy(() =>
 );
 const HomePage = React.lazy(() =>
   import(/* webpackChunkName: 'homePage' */ './pages/HomePage'),
-);
-const TwitterPage = React.lazy(() =>
-  import(/* webpackChunkName: 'twitterPage' */ './pages/TwitterPage'),
 );
 const PrivacyPolicyPage = React.lazy(() =>
   import(
