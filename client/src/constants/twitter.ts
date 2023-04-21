@@ -2,6 +2,7 @@ import { BADGE_TYPES } from '../components/Badge/Badge';
 
 export const TWITTER_VERIFY_EXPIRATION_TIME = 180000;
 export const TWITTER_VERIFY_TIME = 5000;
+export const REACT_SNAP_AGENT = 'ReactSnap';
 
 export const ADDRESS_WIDGET_CONTENT = {
   title: 'Your Twitter handle can now receive crypto',
