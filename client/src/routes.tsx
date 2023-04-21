@@ -8,6 +8,7 @@ import PrivateRoute from './components/PrivateRoute';
 import ScrollToTop from './components/ScrollToTop';
 import FioLoader from './components/common/FioLoader/FioLoader';
 
+import { REACT_SNAP_AGENT } from './constants/twitter';
 import { ROUTES } from './constants/routes';
 import { QUERY_PARAMS_NAMES } from './constants/queryParams';
 import useMaintenance from './hooks/useMaintenance';
@@ -243,17 +244,21 @@ const Routes = (): React.ReactElement => {
       <ScrollToTop>
         <React.Suspense fallback={<FioLoader wrap />}>
           {isMaintenance ? (
-            <Switch>
-              <Route
-                path={ROUTES.UNAVAILABLE}
-                component={UnavailablePage}
-                exact
-              />
-              <Route
-                path="*"
-                component={() => <Redirect to={ROUTES.UNAVAILABLE} />}
-              />
-            </Switch>
+            <>
+              {navigator.userAgent !== REACT_SNAP_AGENT && (
+                <Switch>
+                  <Route
+                    path={ROUTES.UNAVAILABLE}
+                    component={UnavailablePage}
+                    exact
+                  />
+                  <Route
+                    path="*"
+                    component={() => <Redirect to={ROUTES.UNAVAILABLE} />}
+                  />
+                </Switch>
+              )}
+            </>
           ) : (
             <Switch>
               <Route
@@ -304,7 +309,9 @@ const Routes = (): React.ReactElement => {
                 component={TwitterPage}
                 exact
               />
-              <Route path={ROUTES.NOT_FOUND} component={NotFoundPage} exact />
+              {navigator.userAgent !== REACT_SNAP_AGENT && (
+                <Route path={ROUTES.NOT_FOUND} component={NotFoundPage} exact />
+              )}
               <Route
                 path={ROUTES.UNAVAILABLE}
                 component={() => <Redirect to={ROUTES.HOME} />}
