@@ -11,6 +11,7 @@ import GenericSuccessModal from '../../components/Modal/GenericSuccessModal';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
 import TwoFactorApproveModal from '../../components/TwoFactorApproveModal';
 import ContainedFlowWrapper from '../../components/ContainedFlowWrapper';
+import TwitterMeta from '../../components/TwitterMeta/TwitterMeta';
 
 import { useCheckIfDesktop } from '../../screenType';
 import AutoLogout from '../../services/AutoLogout';
@@ -100,6 +101,7 @@ const MainLayout: React.FC<Props> = props => {
 
   return (
     <MainLayoutContainer>
+      <TwitterMeta />
       {isLoading ? (
         <>
           <MainHeader isMaintenance />

@@ -10,7 +10,6 @@ import TweetShare from '../../components/TweetShare/TweetShare';
 import { FCHBanner } from '../../components/FCHBanner';
 import { FCHSpecialsBanner } from '../../components/SpecialsBanner';
 import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
-import TwitterMeta from '../../components/TwitterMeta/TwitterMeta';
 
 import apis from '../../api';
 import { FIO_ADDRESS_DELIMITER, setFioName } from '../../utils';
@@ -315,7 +314,6 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
 
   return (
     <>
-      <TwitterMeta />
       <div className={classes.container}>
         <AddressWidget
           {...ADDRESS_WIDGET_CONTENT}
