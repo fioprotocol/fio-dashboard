@@ -6,12 +6,13 @@
   "scripts": {
     "preinstall": "npm i github:barrysteyn/node-scrypt#fb60a8d3c158fe115a624b5ffa7480f3a24b03fb",
     "client:start": "cd ./client && react-app-rewired start",
-    "client:build": "cd ./client && react-app-rewired --expose-gc --max-old-space-size=8192 build",
+    "client:build": "cd ./client && react-app-rewired --expose-gc --max-old-space-size=8192 build && react-snap",
+    "client:build:no-snap": "cd ./client && react-app-rewired --expose-gc --max-old-space-size=8192 build",
     "client:test": "cd ./client && CI=true react-app-rewired test --env=jsdom",
     "client:analyze": "cd ./client && source-map-explorer build/static/js/main.*.js",
     "server:dev": "npm run migrate && nodemon -L --inspect --es-module-specifier-resolution=node --watch server server/src/index.mjs",
     "admin:as:start": "export REACT_APP_API_BASE_URL=http://localhost:3001/ PORT=3001 REACT_APP_IS_ADMIN=true && npm run client:start",
-    "admin:as:build": "export REACT_APP_IS_ADMIN=true && npm run client:build",
+    "admin:as:build": "export REACT_APP_IS_ADMIN=true && npm run client:build:no-snap",
     "lint": "eslint ./server/src ./client/src --ext js,mjs,ts,tsx",
     "lint:fix": "eslint ./server/src ./client/src --ext js,mjs,ts,tsx --fix",
     "server:prod": "npm run migrate && node --es-module-specifier-resolution=node server/src/index.mjs",
@@ -24,7 +25,7 @@
     "test:create.db": "node --experimental-modules server/tests/createDB.mjs",
     "coinpayments:webhooks": "node --es-module-specifier-resolution=node server/tests/use-case/webhook/coinpayments-webhook.mjs",
     "landing-page-wrap-status:as:start": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:start",
-    "landing-page-wrap-status:as:build": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:build"
+    "landing-page-wrap-status:as:build": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:build:no-snap"
   },
   "license": "ISC",
   "overrides": {
@@ -81,6 +82,7 @@
     "react-app-rewired": "2.2.1",
     "react-error-overlay": "6.0.9",
     "react-scripts": "4.0.3",
+    "react-snap": "^1.23.0",
     "sass": "1.56.1",
     "source-map-explorer": "1.8.0",
     "supertest": "3.4.2",

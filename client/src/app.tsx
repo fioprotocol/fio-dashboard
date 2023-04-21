@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import { Provider } from 'react-redux';
-import ReactDOM from 'react-dom';
+import { hydrate, render } from 'react-dom';
 import { ConnectedRouter } from 'connected-react-router';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { LastLocationProvider } from 'react-router-last-location';
@@ -30,4 +30,9 @@ class App extends Component {
   }
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const rootElement = document.getElementById('root');
+if (rootElement.hasChildNodes()) {
+  hydrate(<App />, rootElement);
+} else {
+  render(<App />, rootElement);
+}
