@@ -3,6 +3,7 @@ import { useState } from 'react';
 import apis from '../api';
 import { HealthCheckResponse, VarsResponse } from '../api/responses';
 
+import { REACT_SNAP_AGENT } from '../constants/twitter';
 import { VARS_KEYS, HEALTH_CHECK_TIME } from '../constants/vars';
 
 import useEffectOnce from './general';
@@ -38,6 +39,7 @@ export default function useMaintenance() {
   };
 
   useEffectOnce(() => {
+    if (navigator.userAgent === REACT_SNAP_AGENT) return;
     setIsLoading(true);
     checkHealthAndMaintenance();
     const healthCheckInterval = setInterval(() => {
