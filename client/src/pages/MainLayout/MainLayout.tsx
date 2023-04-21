@@ -11,6 +11,7 @@ import GenericSuccessModal from '../../components/Modal/GenericSuccessModal';
 import PasswordRecoveryForm from '../../components/PasswordRecoveryForm';
 import TwoFactorApproveModal from '../../components/TwoFactorApproveModal';
 import ContainedFlowWrapper from '../../components/ContainedFlowWrapper';
+import TwitterMeta from '../../components/TwitterMeta/TwitterMeta';
 
 import { useCheckIfDesktop } from '../../screenType';
 import AutoLogout from '../../services/AutoLogout';
@@ -26,6 +27,7 @@ import FioLoader from '../../components/common/FioLoader/FioLoader';
 
 import { ROUTES } from '../../constants/routes';
 import { LINKS } from '../../constants/labels';
+import { REACT_SNAP_AGENT } from '../../constants/twitter';
 
 import useEffectOnce from '../../hooks/general';
 import { getObjKeyByValue } from '../../utils';
@@ -100,6 +102,12 @@ const MainLayout: React.FC<Props> = props => {
 
   return (
     <MainLayoutContainer>
+      <TwitterMeta />
+
+      {routeName && navigator.userAgent === REACT_SNAP_AGENT && (
+        <PageTitle link={LINKS.TWITTER_HANDLE} />
+      )}
+
       {isLoading ? (
         <>
           <MainHeader isMaintenance />
@@ -110,7 +118,9 @@ const MainLayout: React.FC<Props> = props => {
         </>
       ) : isMaintenance ? (
         <>
-          {routeName && <PageTitle link={LINKS.UNAVAILABLE} />}
+          {routeName && navigator.userAgent !== REACT_SNAP_AGENT && (
+            <PageTitle link={LINKS.UNAVAILABLE} />
+          )}
           <MainHeader isMaintenance />
           <ContentContainer>{children}</ContentContainer>
           <Footer isMaintenance />

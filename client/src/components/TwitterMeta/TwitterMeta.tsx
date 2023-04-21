@@ -15,7 +15,10 @@ const TwitterMeta: React.FC = () => {
       <meta name="twitter:description" content="Get yours now" />
       <meta
         name="twitter:image"
-        content={`${window.location.origin}${summaryCardImage}`}
+        content={`${process.env.REACT_APP_BASE_URL.slice(
+          0,
+          -1,
+        )}${summaryCardImage}`}
       />
     </Helmet>
   );
