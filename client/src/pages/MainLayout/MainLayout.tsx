@@ -103,11 +103,9 @@ const MainLayout: React.FC<Props> = props => {
   return (
     <MainLayoutContainer>
       <TwitterMeta />
-
       {routeName && navigator.userAgent === REACT_SNAP_AGENT && (
         <PageTitle link={LINKS.TWITTER_HANDLE} />
       )}
-
       {isLoading ? (
         <>
           <MainHeader isMaintenance />
