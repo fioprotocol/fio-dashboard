@@ -94,7 +94,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             {
               fioDomain: registration.fioName,
               maxFee: registration.fee,
-              tpid: apis.fio.domainTpid,
+              technologyProviderId: apis.fio.domainTpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           );
