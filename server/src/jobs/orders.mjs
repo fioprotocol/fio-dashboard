@@ -755,6 +755,7 @@ class OrdersJob extends CommonJob {
       if (this.isCancelled) return false;
 
       const {
+        action,
         id,
         orderId,
         address,
@@ -784,8 +785,10 @@ class OrdersJob extends CommonJob {
         };
 
         const domainOwner = await FioAccountProfile.getDomainOwner(domain);
+        const useDomainOwnerAuthParams =
+          domainOwner && action === FIO_ACTIONS.registerFioAddress;
 
-        if (domainOwner) {
+        if (useDomainOwnerAuthParams) {
           const { actor, permission } = domainOwner;
           auth = { actor, permission };
         }
@@ -805,14 +808,14 @@ class OrdersJob extends CommonJob {
         }
 
         // Check if fee/roe changed and handle changes
-        if (!domainOwner) await this.checkPriceChanges(orderItem, roe);
+        if (!useDomainOwnerAuthParams) await this.checkPriceChanges(orderItem, roe);
 
         try {
           const result = await this.executeOrderItemAction(
             orderItem,
             auth,
             hasSignedTx,
-            !!domainOwner,
+            useDomainOwnerAuthParams,
           );
 
           if (result.transaction_id) {
@@ -835,7 +838,7 @@ class OrdersJob extends CommonJob {
           ) {
             await sendInsufficientFundsNotification(fioName, label, auth);
 
-            if (!domainOwner)
+            if (!useDomainOwnerAuthParams)
               return processOrderItem({
                 ...orderItem,
                 paidActor: fallbackPaidFioActor
