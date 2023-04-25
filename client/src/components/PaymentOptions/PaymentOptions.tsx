@@ -79,13 +79,13 @@ const PAYMENT_OPTIONS_PROPS = {
     onPaymentChoose,
   }: PaymentOptionRenderProps) => ({
     buttonText: <BitPayButtonText width={BITPAY_LOGO_WIDTH.hasLowHeight} />,
-    disabled:
-      cartItems?.length === 0 ||
-      disabled ||
-      new MathOp(totlaCartUsdcAmount).lte(1),
     loading: selectedPaymentProvider === PAYMENT_PROVIDER.BITPAY,
     hasCobaltBackground: true,
     isTextCentered: true,
+    hideButton:
+      cartItems?.length === 0 ||
+      disabled ||
+      new MathOp(totlaCartUsdcAmount).lte(1),
     onClick: () => onPaymentChoose(PAYMENT_PROVIDER.BITPAY),
   }),
 };
@@ -97,7 +97,6 @@ export const PaymentOptions: React.FC<Props> = props => {
     <div className={classes.container}>
       {paymentOptionsList.map(paymentOption => {
         if (!has(PAYMENT_OPTIONS_PROPS, paymentOption)) return null;
-
         return (
           <PaymentButton
             key={paymentOption}
