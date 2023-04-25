@@ -334,7 +334,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
         {showTwitterShare && (
           <TweetShare
             text={TWITTER_SHARE_CONTENT.text.replace('name@domain', userfch)}
-            url={TWITTER_SHARE_CONTENT.url}
+            url={TWITTER_SHARE_CONTENT.url.split('?')[0]}
             hashtags={TWITTER_SHARE_CONTENT.hashtags}
             via={TWITTER_SHARE_CONTENT.via}
             actionText={TWITTER_SHARE_CONTENT.actionText}

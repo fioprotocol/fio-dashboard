@@ -15,7 +15,7 @@ type Props = {
   onTweetShareClicked: () => void;
 };
 
-const TweetButton: React.FC<Props> = ({
+const TweetShare: React.FC<Props> = ({
   text,
   url,
   hashtags,
@@ -73,4 +73,4 @@ const TweetButton: React.FC<Props> = ({
   );
 };
 
-export default TweetButton;
+export default TweetShare;
