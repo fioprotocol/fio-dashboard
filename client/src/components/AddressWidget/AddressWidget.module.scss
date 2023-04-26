@@ -10,14 +10,18 @@
 
   &.isReverseColors {
     background: $light-indigo;
-    .title, .subtitle, .actionInfo {
+    .title,
+    .subtitle,
+    .actionInfo {
       color: $white;
     }
   }
 
   &.isDarkWhite {
     background: $shark;
-    .title, .subtitle, .actionInfo {
+    .title,
+    .subtitle,
+    .actionInfo {
       color: $white;
     }
   }
@@ -88,4 +92,8 @@
 
 .hasMinHeight {
   min-height: 75vh;
+}
+
+.step {
+  margin-top: 30px;
 }
