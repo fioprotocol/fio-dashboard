@@ -23,6 +23,7 @@ type Props = {
   hasNewDesign?: boolean;
   marginBottomXs?: boolean;
   marginTopZero?: boolean;
+  marginAuto?: boolean;
 };
 
 type MainIconProps = {
@@ -55,6 +56,7 @@ const NotificationBadge: React.FC<Props> = props => {
     mainIcon,
     marginBottomXs,
     marginTopZero,
+    marginAuto,
   } = props;
 
   if (hasNewDesign) {
@@ -63,7 +65,8 @@ const NotificationBadge: React.FC<Props> = props => {
         type={type}
         show={show}
         className={`${classes.badgeContainer} ${marginBottomXs &&
-          classes.marginBottomXs} ${marginTopZero && classes.marginTopZero}`}
+          classes.marginBottomXs} ${marginTopZero &&
+          classes.marginTopZero} ${marginAuto && classes.marginAuto}`}
       >
         <MainIcon type={type} mainIcon={mainIcon} />
 

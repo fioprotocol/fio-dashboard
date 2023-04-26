@@ -4,6 +4,25 @@ export const TWITTER_VERIFY_EXPIRATION_TIME = 180000;
 export const TWITTER_VERIFY_TIME = 5000;
 export const REACT_SNAP_AGENT = 'ReactSnap';
 
+export const STEPS = {
+  ONE: {
+    stepId: 1,
+    stepNumber: 'Step One',
+    stepText: 'Enter YOUR Twitter handle',
+  },
+  TWO: {
+    stepId: 2,
+    stepNumber: 'Step Two',
+    stepText:
+      'Validate your twitter handle ownership by sending the tweet below.',
+  },
+  THREE: {
+    stepId: 3,
+    stepNumber: 'Step Three',
+    stepText: 'Complete your registration by clicking the “get it” button.',
+  },
+};
+
 export const ADDRESS_WIDGET_CONTENT = {
   title: 'Your Twitter handle can now receive crypto',
   subtitle:
@@ -14,7 +33,8 @@ export const ADDRESS_WIDGET_CONTENT = {
   formAction: false,
   fch: 'bob@twitter',
   suffixText: '@twitter',
-  placeHolderText: 'Enter Twitter Handle',
+  placeHolderText: 'Enter Your Twitter Handle',
+  inputButtonText: 'GO',
 };
 
 export const TWITTER_SHARE_CONTENT = {
