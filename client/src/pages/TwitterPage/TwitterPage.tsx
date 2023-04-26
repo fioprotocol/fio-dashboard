@@ -334,7 +334,11 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
           showSubmitButton={showSubmitButton}
           placeHolderText={ADDRESS_WIDGET_CONTENT.placeHolderText}
           onInputChanged={onInputChanged}
-          buttonText={ADDRESS_WIDGET_CONTENT.inputButtonText}
+          buttonText={
+            step.stepId == 3
+              ? ADDRESS_WIDGET_CONTENT.inputButtonTextLastStep
+              : ADDRESS_WIDGET_CONTENT.inputButtonText
+          }
           formatOnFocusOut
           stepNumber={step.stepNumber}
           stepText={step.stepText}
