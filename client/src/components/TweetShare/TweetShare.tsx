@@ -1,6 +1,8 @@
 import React from 'react';
 import TwitterIcon from '@mui/icons-material/Twitter';
 
+import NotificationBadge from '../NotificationBadge';
+
 import { EventObjectType } from '../../types';
 
 import classes from './TweetShare.module.scss';
@@ -13,6 +15,7 @@ type Props = {
   actionText: string;
   userfch: string;
   onTweetShareClicked: () => void;
+  stepId: number;
 };
 
 const TweetShare: React.FC<Props> = ({
@@ -23,6 +26,7 @@ const TweetShare: React.FC<Props> = ({
   actionText,
   userfch,
   onTweetShareClicked,
+  stepId,
 }) => {
   const generateShareUrl = () => {
     const encodedText = encodeURIComponent(text);
@@ -41,7 +45,6 @@ const TweetShare: React.FC<Props> = ({
   return (
     <>
       <div className={classes.tweetShareSection}>
-        <p className={classes.tweetShareActionText}>{actionText}</p>
         <div className={classes.tweetShareContainer}>
           <p className={classes.tweetShareText}>
             You can now send me crypto to my {userfch}{' '}
@@ -68,6 +71,18 @@ const TweetShare: React.FC<Props> = ({
             </a>
           </div>
         </div>
+
+        {stepId === 2 && (
+          <NotificationBadge
+            type="info"
+            show={true}
+            message="Once you've validated your twitter handle, return here and complete
+            registration"
+            title=""
+            hasNewDesign={true}
+            marginAuto
+          />
+        )}
       </div>
     </>
   );

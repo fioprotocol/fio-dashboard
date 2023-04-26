@@ -24,6 +24,7 @@ import { setCookies } from '../../util/cookies';
 import { ROUTES } from '../../constants/routes';
 import {
   ADDRESS_WIDGET_CONTENT,
+  STEPS,
   TWITTER_DOMAIN,
   TWITTER_NOTIFICATIONS,
   TWITTER_SHARE_CONTENT,
@@ -83,6 +84,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   const [startVerification, setStartVerification] = useState(false);
   const [originalUsername, setOriginalUsername] = useState('');
   const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(STEPS.ONE);
   const showSubmitButton = !showTwitterShare || isVerified;
   const intervalRef = useRef(null);
   const userfch = `${convertTwitterToFCH(
@@ -107,6 +109,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     setStartVerification(false);
     setShowTwitterShare(false);
     setNotification(TWITTER_NOTIFICATIONS.VERIFIED);
+    setStep(STEPS.THREE);
   }, []);
 
   const onUserLocked = useCallback(() => {
@@ -263,6 +266,8 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   }: {
     address: string;
   }) => {
+    setStep(STEPS.TWO);
+
     const isRegistered = await apis.fio.availCheckTableRows(
       setFioName(address, TWITTER_DOMAIN),
     );
@@ -329,7 +334,14 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
           showSubmitButton={showSubmitButton}
           placeHolderText={ADDRESS_WIDGET_CONTENT.placeHolderText}
           onInputChanged={onInputChanged}
+          buttonText={
+            step.stepId === 3
+              ? ADDRESS_WIDGET_CONTENT.inputButtonTextLastStep
+              : ADDRESS_WIDGET_CONTENT.inputButtonText
+          }
           formatOnFocusOut
+          stepNumber={step.stepNumber}
+          stepText={step.stepText}
         />
         {showTwitterShare && (
           <TweetShare
@@ -340,6 +352,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
             actionText={TWITTER_SHARE_CONTENT.actionText}
             onTweetShareClicked={onTweetShareClicked}
             userfch={userfch}
+            stepId={step.stepId}
           />
         )}
 

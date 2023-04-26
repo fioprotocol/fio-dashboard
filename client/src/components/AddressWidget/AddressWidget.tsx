@@ -34,6 +34,9 @@ type Props = {
   showSubmitButton?: boolean;
   placeHolderText?: string;
   onInputChanged?: (value: string) => string;
+  buttonText?: string;
+  stepNumber?: string;
+  stepText?: string;
 };
 
 const AddressWidget: React.FC<Props> = props => {
@@ -57,6 +60,9 @@ const AddressWidget: React.FC<Props> = props => {
     showSubmitButton = true,
     placeHolderText,
     onInputChanged,
+    buttonText,
+    stepNumber,
+    stepText,
   } = props;
 
   return (
@@ -71,6 +77,12 @@ const AddressWidget: React.FC<Props> = props => {
       <TitleComponent logoSrc={logoSrc} title={title} />
       <SubtitleComponent subtitle={subtitle} />
       <ActionTextComponent actionText={actionText} />
+      {stepNumber && stepText && (
+        <p className={classes.step}>
+          <b className="boldText">{stepNumber}:</b> {stepText}
+        </p>
+      )}
+
       <FormComponent
         isReverseColors={isReverseColors}
         links={links}
@@ -84,6 +96,7 @@ const AddressWidget: React.FC<Props> = props => {
         showSubmitButton={showSubmitButton}
         placeHolderText={placeHolderText}
         onInputChanged={onInputChanged}
+        buttonText={buttonText}
       />
       <SignInWidget show={!isAuthenticated && showSignInWidget} />
     </div>
