@@ -86,6 +86,10 @@
   margin-top: 0 !important;
 }
 
+.marginAuto {
+  margin: 30px auto !important;
+}
+
 @include sm {
   .icon,
   .closeIcon {
