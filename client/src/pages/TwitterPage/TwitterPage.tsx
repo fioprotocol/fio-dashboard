@@ -335,7 +335,7 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
           placeHolderText={ADDRESS_WIDGET_CONTENT.placeHolderText}
           onInputChanged={onInputChanged}
           buttonText={
-            step.stepId == 3
+            step.stepId === 3
               ? ADDRESS_WIDGET_CONTENT.inputButtonTextLastStep
               : ADDRESS_WIDGET_CONTENT.inputButtonText
           }
