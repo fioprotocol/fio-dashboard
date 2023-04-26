@@ -35,6 +35,7 @@ export const ADDRESS_WIDGET_CONTENT = {
   suffixText: '@twitter',
   placeHolderText: 'Enter Your Twitter Handle',
   inputButtonText: 'GO',
+  inputButtonTextLastStep: 'GET IT',
 };
 
 export const TWITTER_SHARE_CONTENT = {
