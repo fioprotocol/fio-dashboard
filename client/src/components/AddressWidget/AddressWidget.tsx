@@ -79,7 +79,7 @@ const AddressWidget: React.FC<Props> = props => {
       <ActionTextComponent actionText={actionText} />
       {stepNumber && stepText && (
         <p className={classes.step}>
-          <b>{stepNumber}:</b> {stepText}
+          <b className="boldText">{stepNumber}:</b> {stepText}
         </p>
       )}
 
