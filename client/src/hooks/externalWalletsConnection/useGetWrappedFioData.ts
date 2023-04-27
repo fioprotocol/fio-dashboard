@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ethers } from 'ethers';
 import { Web3Provider } from '@ethersproject/providers/src.ts/web3-provider';
 import { Contract } from '@ethersproject/contracts';
@@ -49,22 +49,51 @@ export function useGetWrappedFioData(
   const [isWrongNetwork, setIsWrongNetwork] = useState(false);
   const [abi, setAbi] = useState(null);
 
+  const getInfuraNfts = useCallback(async (address: string) => {
+    const nftsList = await apis.infuraNfts.getAllNfts(address);
+
+    return nftsList.length > 0
+      ? nftsList
+          .map(nftItem => {
+            const { metadata, tokenId } = nftItem;
+            const name = metadata.name && metadata.name.split(': ')[1];
+            return { name, id: tokenId };
+          })
+          .reverse()
+      : null;
+  }, []);
+
+  const getNftsWithContract = useCallback(
+    async address => {
+      const data = await tokenContract.listDomainsOfOwner(address);
+
+      return data.length > 0
+        ? data.map((nftData: string) => {
+            const nftParts = nftData.split(': ');
+            return {
+              name: nftParts[0],
+              id: nftParts[1],
+            };
+          })
+        : null;
+    },
+    [tokenContract],
+  );
+
   useEffect(() => {
     if (web3Provider && address && ethers.utils.isAddress(address)) {
-      const getNfts = async () => {
+      const getNfts = async (isFallback?: boolean) => {
         isNftsLoading.current = true;
-        const data = await tokenContract.listDomainsOfOwner(address);
-        const result =
-          data.length > 0
-            ? data.map((nftData: string) => {
-                const nftParts = nftData.split(': ');
-                return {
-                  name: nftParts[0],
-                  id: nftParts[1],
-                };
-              })
-            : null;
-        setNfts(result);
+
+        let nfts = null;
+
+        if (isFallback) {
+          nfts = await getNftsWithContract(address);
+        } else {
+          nfts = await getInfuraNfts(address);
+        }
+
+        setNfts(nfts);
         nftsOwner.current = address;
         isNftsLoading.current = false;
 
@@ -126,7 +155,13 @@ export function useGetWrappedFioData(
               tokenContract
             ) {
               setNfts(null);
-              await getNfts();
+
+              try {
+                await getNfts();
+              } catch (error) {
+                log.error('Get Infura nfts error, retry');
+                await getNfts(true);
+              }
             }
           } else
             log.error(
@@ -150,6 +185,8 @@ export function useGetWrappedFioData(
     abi,
     tokenContract,
     wFioBalance,
+    getNftsWithContract,
+    getInfuraNfts,
   ]);
 
   // clear balance, when address input has been cleared

@@ -198,6 +198,8 @@ router.get('/wrap-status/domains/wrap', routes.history.wrapDomains);
 router.get('/wrap-status/tokens/unwrap', routes.history.unwrapTokens);
 router.get('/wrap-status/domains/unwrap', routes.history.unwrapDomains);
 
+router.get('/infura-nfts', routes.external.infuraNfts);
+
 router.get('/vars/:key', routes.vars.get);
 router.post('/vars/update/:key', routes.vars.update);
 router.post(

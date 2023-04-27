@@ -79,6 +79,18 @@ export type FioRegCaptchaResponse = {
 };
 export type FioRegApiUrlsResponse = string[];
 
+export type InfuraNftsResponse = {
+  contract: string;
+  tokenId: string;
+  supply: string;
+  type: string;
+  metadata: {
+    name: string;
+    description: string;
+    image: string;
+  };
+}[];
+
 export type NotificationsListResponse = Notification[];
 export type NotificationsCreateResponse = Notification;
 export type NotificationsUpdateResponse = Notification;
