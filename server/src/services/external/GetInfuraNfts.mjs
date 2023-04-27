@@ -33,6 +33,6 @@ export default class GetInfuraNfts extends Base {
   }
 
   static get resultSecret() {
-    return [];
+    return ['*'];
   }
 }
