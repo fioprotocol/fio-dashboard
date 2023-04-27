@@ -54,6 +54,7 @@ export function useGetWrappedFioData(
 
     return nftsList.length > 0
       ? nftsList
+          .filter(nftItem => nftItem.metadata?.name)
           .map(nftItem => {
             const { metadata, tokenId } = nftItem;
             const name = metadata.name && metadata.name.split(': ')[1];
@@ -159,7 +160,7 @@ export function useGetWrappedFioData(
               try {
                 await getNfts();
               } catch (error) {
-                log.error('Get Infura nfts error, retry');
+                log.error('Get Infura nfts error, retry', error);
                 await getNfts(true);
               }
             }

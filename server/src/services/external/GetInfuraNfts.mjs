@@ -16,7 +16,14 @@ export default class GetInfuraNfts extends Base {
     try {
       const res = await infuraNftApi.getAllNftsFromAccount({ account, chainId });
 
-      return { data: res };
+      return {
+        data: res.filter(
+          nftItem =>
+            nftItem.contract.toLowerCase() ===
+              process.env.FIO_NFT_POLYGON_CONTRACT.toLowerCase() &&
+            nftItem.metadata != null,
+        ),
+      };
     } catch (error) {
       logger.error(`InfuraNfts get: ${error}`);
       throw new X({
