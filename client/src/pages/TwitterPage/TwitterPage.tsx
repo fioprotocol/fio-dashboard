@@ -76,6 +76,15 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
           .replaceAll('_', '-')
       : value;
 
+  const isValid = (address: string) => {
+    return !(
+      address.startsWith('_') ||
+      address.endsWith('_') ||
+      address.startsWith('-') ||
+      address.endsWith('-')
+    );
+  };
+
   const [notification, setNotification] = useState<TwitterNotification>(
     TWITTER_NOTIFICATIONS.EMPTY,
   );
@@ -128,6 +137,11 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
     setIsVerified(false);
   }, []);
 
+  const onNotSupported = useCallback(() => {
+    setNotification(TWITTER_NOTIFICATIONS.NOT_SUPPORTED);
+    setShowTwitterShare(false);
+  }, []);
+
   const fetchTweetsAndVerify = useCallback(async () => {
     setLoading(true);
     try {
@@ -178,9 +192,8 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
 
   const onFocusOut = (value: string) => {
     let includesDash = false;
-    if (value.startsWith('_') || value.endsWith('_')) {
-      setNotification(TWITTER_NOTIFICATIONS.NOT_SUPPORTED);
-      setShowTwitterShare(false);
+    if (!isValid(value)) {
+      onNotSupported();
       return value;
     }
 
@@ -266,25 +279,29 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   }: {
     address: string;
   }) => {
-    setStep(STEPS.TWO);
+    if (!isValid(address)) {
+      onNotSupported();
+    } else {
+      setStep(STEPS.TWO);
 
-    const isRegistered = await apis.fio.availCheckTableRows(
-      setFioName(address, TWITTER_DOMAIN),
-    );
+      const isRegistered = await apis.fio.availCheckTableRows(
+        setFioName(address, TWITTER_DOMAIN),
+      );
 
-    if (isRegistered) {
-      setNotification(TWITTER_NOTIFICATIONS.EXISTING_HANDLE);
-    } else if (USERNAME_REGEX.test(address)) {
-      setNotification(TWITTER_NOTIFICATIONS.EMPTY);
+      if (isRegistered) {
+        setNotification(TWITTER_NOTIFICATIONS.EXISTING_HANDLE);
+      } else if (USERNAME_REGEX.test(address)) {
+        setNotification(TWITTER_NOTIFICATIONS.EMPTY);
 
-      const alreadyVerified =
-        Cookies.get(`${address}${FIO_ADDRESS_DELIMITER}${TWITTER_DOMAIN}`) !==
-        undefined;
+        const alreadyVerified =
+          Cookies.get(`${address}${FIO_ADDRESS_DELIMITER}${TWITTER_DOMAIN}`) !==
+          undefined;
 
-      if (alreadyVerified) {
-        onUserVerify();
-      } else {
-        setShowTwitterShare(true);
+        if (alreadyVerified) {
+          onUserVerify();
+        } else {
+          setShowTwitterShare(true);
+        }
       }
     }
   };
