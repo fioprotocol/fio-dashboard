@@ -214,7 +214,7 @@ export const useContext = (): {
             action: ACTIONS.registerFioAddress,
             address,
             domain,
-            nativeFio: `${costNativeFio || 0}`,
+            nativeFio: '0',
             price: '0',
             priceCurrency: CURRENCY_CODES.USDC,
           })),
