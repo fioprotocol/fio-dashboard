@@ -1,6 +1,7 @@
 import MathOp from '../util/math';
 import apis from '../api';
 
+import { ACTIONS } from '../constants/fio';
 import { PAYMENT_PROVIDER } from '../constants/purchase';
 
 import {
@@ -99,8 +100,27 @@ export const calculateTotalBalances = (
 };
 
 export const DEFAULT_FEE_PRICES = convertFioPrices(0, 1);
-export const DEFAULT_ORACLE_FEE_PRICES = convertFioPrices(0, 1);
 export const DEFAULT_BALANCES = calculateBalances({}, 1);
+
+export const DEFAULT_ORACLE_FEE_PRICES = {
+  [ACTIONS.wrapFioDomain]:
+    process.env.REACT_APP_DEFAULT_WRAP_DOMAIN_ORACLE_FEES,
+  [ACTIONS.wrapFioTokens]: process.env.REACT_APP_DEFAULT_WRAP_TOKEN_ORACLE_FEES,
+};
+
+export const getDefaultOracleFeePrices = ({
+  roe,
+  action,
+}: {
+  roe?: number;
+  action: string;
+}) =>
+  convertFioPrices(
+    DEFAULT_ORACLE_FEE_PRICES[action]
+      ? Number(DEFAULT_ORACLE_FEE_PRICES[action])
+      : 0,
+    roe || 1,
+  );
 
 export const combinePriceWithDivider = ({
   totalCostPrice,

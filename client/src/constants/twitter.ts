@@ -77,7 +77,7 @@ export const TWITTER_NOTIFICATIONS_CONTENT = {
   NOT_SUPPORTED: {
     title: 'Handle not supported',
     message:
-      'Handles which start or end with underscore are not supported at this time.',
+      'Handles which start or end with underscore or dash are not supported at this time.',
   },
   CONVERTED: {
     title: 'Underscore become dash',

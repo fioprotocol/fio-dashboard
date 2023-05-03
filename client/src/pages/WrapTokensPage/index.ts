@@ -14,10 +14,12 @@ import WrapTokensPage from './WrapTokensPage';
 import { emptyWallet } from '../../redux/fio/reducer';
 import {
   DEFAULT_FEE_PRICES,
-  DEFAULT_ORACLE_FEE_PRICES,
+  getDefaultOracleFeePrices,
 } from '../../util/prices';
 
 import apis from '../../api';
+
+import { ACTIONS } from '../../constants/fio';
 
 import { ReduxState } from '../../redux/init';
 import { ContainerOwnProps } from './types';
@@ -44,7 +46,10 @@ const reduxConnect = connect(
       DEFAULT_FEE_PRICES,
     oracleFeePrice: (state: ReduxState) =>
       state.fio.oracleFees[apis.fio.actionEndPoints.wrapFioTokens] ||
-      DEFAULT_ORACLE_FEE_PRICES,
+      getDefaultOracleFeePrices({
+        roe: state.fio.roe,
+        action: ACTIONS.wrapFioTokens,
+      }),
   }),
   {
     refreshBalance,

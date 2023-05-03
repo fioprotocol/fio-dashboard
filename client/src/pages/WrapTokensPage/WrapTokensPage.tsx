@@ -9,6 +9,8 @@ import WrapTokensEdgeWallet from './components/WrapTokensEdgeWallet';
 import WrapTokenResults from '../../components/common/TransactionResults/components/WrapTokenResults';
 import PageTitle from '../../components/PageTitle/PageTitle';
 
+import apis from '../../api';
+
 import { useFioAddresses, useWalletBalances } from '../../util/hooks';
 import useEffectOnce from '../../hooks/general';
 import MathOp from '../../util/math';
@@ -19,7 +21,6 @@ import {
   WALLET_CREATED_FROM,
 } from '../../constants/common';
 import { LINKS } from '../../constants/labels';
-
 import { fireAnalyticsEvent } from '../../util/analytics';
 
 import { TrxResponsePaidBundles } from '../../api/fio';
@@ -92,8 +93,10 @@ const WrapTokensPage: React.FC<ContainerProps> = props => {
       amount: sendData.amount,
       chainCode: sendData.chainCode,
       publicAddress: sendData.publicAddress,
-      feeCollectedAmount: new MathOp(oracleFeePrice.fio)
-        .add(feePrice.fio)
+      feeCollectedAmount: new MathOp(
+        apis.fio.sufToAmount(res.oracle_fee_collected) || oracleFeePrice.fio,
+      )
+        .add(apis.fio.sufToAmount(res.fee_collected) || feePrice.fio)
         .toNumber(),
       nativeFeeCollectedAmount: new MathOp(res.oracle_fee_collected)
         .add(res.fee_collected)

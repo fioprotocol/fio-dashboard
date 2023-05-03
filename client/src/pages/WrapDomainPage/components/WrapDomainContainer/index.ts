@@ -18,12 +18,14 @@ import {
 } from '../../../../redux/fio/selectors';
 import { roe } from '../../../../redux/registrations/selectors';
 
+import { ACTIONS } from '../../../../constants/fio';
+
 import WrapDomainContainer from './WrapDomainContainer';
 import { refreshWalletDataPublicKey } from '../../../../redux/fioWalletsData/actions';
 import { ReduxState } from '../../../../redux/init';
 import {
   DEFAULT_FEE_PRICES,
-  DEFAULT_ORACLE_FEE_PRICES,
+  getDefaultOracleFeePrices,
 } from '../../../../util/prices';
 
 const reduxConnect = connect(
@@ -37,7 +39,10 @@ const reduxConnect = connect(
       DEFAULT_FEE_PRICES,
     oracleFeePrice: (state: ReduxState) =>
       state.fio.oracleFees[apis.fio.actionEndPoints.wrapFioDomain] ||
-      DEFAULT_ORACLE_FEE_PRICES,
+      getDefaultOracleFeePrices({
+        roe: state.fio.roe,
+        action: ACTIONS.wrapFioDomain,
+      }),
   }),
   {
     refreshBalance,
