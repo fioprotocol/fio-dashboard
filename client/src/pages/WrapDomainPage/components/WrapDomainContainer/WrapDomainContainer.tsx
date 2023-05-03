@@ -22,6 +22,8 @@ import {
 import { emptyWallet } from '../../../../redux/fio/reducer';
 import { LINKS } from '../../../../constants/labels';
 
+import apis from '../../../../api';
+
 import { fireAnalyticsEvent } from '../../../../util/analytics';
 
 import { TrxResponsePaidBundles } from '../../../../api/fio';
@@ -92,8 +94,10 @@ const WrapDomainContainer: React.FC<ContainerProps> = props => {
       name: sendData.name,
       chainCode: sendData.chainCode,
       publicAddress: sendData.publicAddress,
-      feeCollectedAmount: new MathOp(oracleFeePrice.fio)
-        .add(feePrice.fio)
+      feeCollectedAmount: new MathOp(
+        apis.fio.sufToAmount(res.oracle_fee_collected) || oracleFeePrice.fio,
+      )
+        .add(apis.fio.sufToAmount(res.fee_collected) || feePrice.fio)
         .toNumber(),
       nativeFeeCollectedAmount: new MathOp(res.oracle_fee_collected)
         .add(res.fee_collected)
