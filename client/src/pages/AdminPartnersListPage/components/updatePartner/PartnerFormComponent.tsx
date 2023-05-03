@@ -237,7 +237,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
             uiType={INPUT_UI_STYLES.BLACK_WHITE}
             errorColor={COLOR_TYPE.WARN}
             label="FIO Account Profile for Free Registrations *"
-            placeholder="FIO Account Profie FREE"
+            placeholder="Select..."
             loading={validating}
             disabled={submitting || loading}
           />
@@ -249,7 +249,7 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
             uiType={INPUT_UI_STYLES.BLACK_WHITE}
             errorColor={COLOR_TYPE.WARN}
             label="FIO Account Profile for Paid Registrations *"
-            placeholder="FIO Account Profie PAID"
+            placeholder="Select..."
             loading={validating}
             disabled={submitting || loading}
           />

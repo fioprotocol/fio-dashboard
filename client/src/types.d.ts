@@ -398,8 +398,8 @@ export type RefProfile = {
     link?: string;
   };
   tpid: string;
-  freeFioAccountProfileId: number;
-  paidFioAccountProfileId: number;
+  freeFioAccountProfileId: string;
+  paidFioAccountProfileId: string;
   createdAt?: string;
 };
 
