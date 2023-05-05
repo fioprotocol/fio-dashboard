@@ -218,6 +218,10 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       } else {
         setNotification(TWITTER_NOTIFICATIONS.EMPTY);
       }
+      if (step.stepId === STEPS.THREE.stepId) {
+        setStep(STEPS.TWO);
+        setShowTwitterShare(true);
+      }
     } else {
       setNotification(TWITTER_NOTIFICATIONS.INVALID_FORMAT);
       setShowTwitterShare(false);
@@ -227,10 +231,14 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
   };
 
   const onInputChanged = (value: string) => {
-    if (showTwitterShare) {
+    if (showTwitterShare || isVerified) {
       setIsVerified(false);
       setStartVerification(false);
       setShowTwitterShare(false);
+    }
+
+    if (!value) {
+      setStep(STEPS.ONE);
     }
 
     return value;
