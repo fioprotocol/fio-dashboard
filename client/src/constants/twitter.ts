@@ -40,9 +40,9 @@ export const ADDRESS_WIDGET_CONTENT = {
 
 export const TWITTER_SHARE_CONTENT = {
   text:
-    'You can now send me crypto to my name@domain $FIO Crypto Handle. #CRYPTOTWITTER Get yours now ',
+    'My name@domain Twitter handle can now receive crypto. #CRYPTO Get your own $FIO Crypto Handle for free now! ',
   url: `${document.location.href}`,
-  hashtags: ['#CRYPTOTWITTER'],
+  hashtags: ['#CRYPTO'],
   via: 'joinfio',
   actionText:
     'Please validate your twitter handle ownership by sending the tweet below',
