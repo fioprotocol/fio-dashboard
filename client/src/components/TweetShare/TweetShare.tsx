@@ -47,10 +47,11 @@ const TweetShare: React.FC<Props> = ({
       <div className={classes.tweetShareSection}>
         <div className={classes.tweetShareContainer}>
           <p className={classes.tweetShareText}>
-            You can now send me crypto to my {userfch}{' '}
-            <span className={classes.blueText}>$FIO</span> Crypto Handle. <br />
+            My <span className={classes.fch}>{userfch}</span> Twitter handle can
+            now receive crypto.{' '}
             <span className={classes.blueText}>{hashtags.join(', ')}</span> Get
-            yours now <br />
+            your own <span className={classes.blueText}>$FIO</span> Crypto
+            Handle for free now! <br />
             <span className={classes.blueText}>{url}</span> via{' '}
             <span className={classes.blueText}>{via}</span>
           </p>

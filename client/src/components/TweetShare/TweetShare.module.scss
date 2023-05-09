@@ -1,5 +1,6 @@
 @import '../../assets/styles/colors.scss';
 @import '../../assets/styles/mediaQueriesMixings.scss';
+@import '../../assets/styles/fontMixins.scss';
 
 .tweetShareSection {
   display: flex;
@@ -52,6 +53,10 @@
 
 .blueText {
   color: $twitter-blue;
+}
+
+.fch {
+  @include proxima-nova-semibold
 }
 
 @include sm {
