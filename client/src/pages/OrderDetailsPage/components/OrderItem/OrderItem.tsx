@@ -53,29 +53,31 @@ export const OrderItem: React.FC<Props> = props => {
     <>
       <CartItem item={item} primaryCurrency={primaryCurrency} />
       {transaction_ids?.length > 0 &&
-        transaction_ids.map(transaction_id => (
-          <Badge
-            key={transaction_id}
-            type={BADGE_TYPES.WHITE}
-            show={!!transaction_id}
-            className="mt-3"
-          >
-            <div className={classes.item}>
-              <span className={classnames(classes.name, 'boldText')}>
-                Transaction ID
-              </span>
-              <p className={classes.itemValue}>
-                <a
-                  href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transaction_id}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <span className="boldText">{transaction_id}</span>
-                </a>
-              </p>
-            </div>
-          </Badge>
-        ))}
+        transaction_ids
+          .filter(transaction_id => !!transaction_id)
+          .map(transaction_id => (
+            <Badge
+              key={transaction_id}
+              type={BADGE_TYPES.WHITE}
+              show={!!transaction_id}
+              className="mt-3"
+            >
+              <div className={classes.item}>
+                <span className={classnames(classes.name, 'boldText')}>
+                  Transaction ID
+                </span>
+                <p className={classes.itemValue}>
+                  <a
+                    href={`${process.env.REACT_APP_FIO_BLOCKS_TX_URL}${transaction_id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <span className="boldText">{transaction_id}</span>
+                  </a>
+                </p>
+              </div>
+            </Badge>
+          ))}
     </>
   );
 };

@@ -3,6 +3,7 @@ import React from 'react';
 import EdgeConfirmAction from '../../../components/EdgeConfirmAction';
 
 import { makeRegistrationOrder } from '../middleware';
+import { sleep } from '../../../utils';
 
 import {
   CART_ITEM_TYPE,
@@ -33,6 +34,8 @@ type Props = {
   processing: boolean;
   fee?: number | null;
 };
+
+const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 5000;
 
 const PurchaseEdgeWallet: React.FC<Props> = props => {
   const {
@@ -79,6 +82,9 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             },
           );
         } else if (registration.type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
+          if (registration.iteration === 2) {
+            await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION); // Add timeout to aviod the same sign tx hash for more than 2 years domain renew
+          }
           signedTx = await apis.fio.walletFioSDK.genericAction(
             ACTIONS.renewFioDomain,
             {
