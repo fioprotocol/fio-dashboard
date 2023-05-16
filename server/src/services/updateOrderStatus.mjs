@@ -151,6 +151,8 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith, number })
       orderItemsTotalAmount.usdcTotal,
       orderItemsTotalAmount.fioNativeTotal,
     );
+    orderPaymentInfo.paidWithTitle =
+      orderPaymentInfo.total === 'FREE' ? 'Assigned To' : 'Paid With';
 
     // we need to get all blockchain transactions that have ids
     orderItems.forEach(orderItem => {
