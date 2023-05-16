@@ -286,6 +286,7 @@ class EmailSender {
        * @param successedOrderPaymentInfo {}
        * @param successedOrderPaymentInfo.total example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
        * @param successedOrderPaymentInfo.paidWith example 'My FIO Wallet' or 'visa ending in 7676'
+       * @param successedOrderPaymentInfo.paidWithTitle example 'Paid With' for paid orders and 'Assigned To' for free orders
        * @param successedOrderPaymentInfo.orderNumber example 'ABC123',
        * @param successedOrderPaymentInfo.txIds[] example ['b33d97fe0a0f88c8e2d2bd9783af1bd9b369d4a99105a4b3f74abe3922049003',
       '0f756ad486387411d72aabbdd3b855e30b4d3d18626b13546a9c3d0573cfbac1']
@@ -301,6 +302,7 @@ class EmailSender {
        * @param failedOrderPaymentInfo {}
        * @param failedOrderPaymentInfo.total example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
        * @param failedOrderPaymentInfo.paidWith example 'My FIO Wallet' or 'visa ending in 7676'
+       * @param failedOrderPaymentInfo.paidWithTitle example 'Paid With' for paid orders and 'Assigned To' for free orders
        * @param failedOrderPaymentInfo.orderNumber example 'ABC123',
        * @param failedOrderPaymentInfo.txIds[] example ['b33d97fe0a0f88c8e2d2bd9783af1bd9b369d4a99105a4b3f74abe3922049003',
       '0f756ad486387411d72aabbdd3b855e30b4d3d18626b13546a9c3d0573cfbac1']
