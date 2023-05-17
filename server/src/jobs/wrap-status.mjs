@@ -31,7 +31,8 @@ const WRAPPED_DOMAIN_ABI = JSON.parse(
 const WRAPPED_TOKEN_ABI = JSON.parse(
   fs.readFileSync('server/static-files/abi_fio_token.json', 'utf8'),
 );
-const UNWRAP_RETRIES_LIMIT = 3;
+const UNWRAP_RETRIES_LIMIT = 5;
+const UNWRAP_APPROVED_COUNT = 3;
 
 class WrapStatusJob extends CommonJob {
   handleErrorMessage(message) {
@@ -370,19 +371,26 @@ class WrapStatusJob extends CommonJob {
         }
       };
 
-      const getUncompletedOracleVotes = async Model => {
+      const getUncompletedOracleVotes = async (Model, includeModel) => {
         const uncompletedUnwrapOravotes = await Model.findAll({
           where: {
             isComplete: {
               [Sequelize.Op.is]: false,
             },
-            attempts: {
-              [Sequelize.Op.lt]: UNWRAP_RETRIES_LIMIT,
-            },
           },
+          include: [includeModel],
         });
+
+        const uncompletedUnwrapOravotesWithFullApproved = uncompletedUnwrapOravotes
+          .map(item => Model.format(item))
+          .filter(
+            item =>
+              item[includeModel.name].length === UNWRAP_APPROVED_COUNT ||
+              item.attempts < UNWRAP_RETRIES_LIMIT,
+          );
+
         const oracleVotesList = await Promise.all(
-          uncompletedUnwrapOravotes.map(async item => {
+          uncompletedUnwrapOravotesWithFullApproved.map(async item => {
             await Model.update(
               { attempts: item.attempts + 1 },
               { where: { id: item.id } },
@@ -416,9 +424,11 @@ class WrapStatusJob extends CommonJob {
 
       const uncompletedNftsResults = await getUncompletedOracleVotes(
         WrapStatusFioUnwrapNftsOravotes,
+        WrapStatusFioUnwrapNftsLogs,
       );
       const uncompletedTokensResults = await getUncompletedOracleVotes(
         WrapStatusFioUnwrapTokensOravotes,
+        WrapStatusFioUnwrapTokensLogs,
       );
       const result = await getUnprocessedOracleVotes();
 
