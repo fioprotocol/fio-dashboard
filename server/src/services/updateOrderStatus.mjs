@@ -134,7 +134,9 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith, number })
 
   const { data: paymentData, processor } = payment;
 
-  const orderPaymentInfo = {};
+  const orderPaymentInfo = {
+    paidWithTitle: 'Paid With',
+  };
 
   const isExternalProcessor = [
     Payment.PROCESSOR.STRIPE,
@@ -151,8 +153,7 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith, number })
       orderItemsTotalAmount.usdcTotal,
       orderItemsTotalAmount.fioNativeTotal,
     );
-    orderPaymentInfo.paidWithTitle =
-      orderPaymentInfo.total === 'FREE' ? 'Assigned To' : 'Paid With';
+    if (orderPaymentInfo.total === 'FREE') orderPaymentInfo.paidWithTitle = 'Assigned To';
 
     // we need to get all blockchain transactions that have ids
     orderItems.forEach(orderItem => {
