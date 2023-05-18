@@ -9,7 +9,6 @@ import { BADGE_TYPES } from '../../components/Badge/Badge';
 
 import { ContainerProps, Partner } from './types';
 
-import indacoinLogoSrc from '../../assets/images/indacoin-logo.svg';
 import moneroLogoSrc from '../../assets/images/monero-logo.svg';
 import binanceLogoSrc from '../../assets/images/binance-logo.svg';
 import whiteBitLogoSrc from '../../assets/images/wb-logo.svg';
@@ -25,18 +24,6 @@ import simpleSwapLogoSrc from '../../assets/images/simple-swap-logo.svg';
 
 import classes from './FioTokensGetPage.module.scss';
 
-const creditCardPartners: Partner[] = [
-  {
-    name: 'Indacoin',
-    link: 'https://indacoin.io/',
-    image: indacoinLogoSrc,
-  },
-  {
-    name: 'Monero',
-    link: 'https://monero.com/',
-    image: moneroLogoSrc,
-  },
-];
 const exchangesPartners: Partner[] = [
   {
     name: 'Binance',
@@ -93,6 +80,11 @@ const exchangesPartners: Partner[] = [
     link: 'https://simpleswap.io',
     image: simpleSwapLogoSrc,
   },
+  {
+    name: 'Monero',
+    link: 'https://monero.com/',
+    image: moneroLogoSrc,
+  },
 ];
 
 const FioTokensGetPage: React.FC<ContainerProps> = props => {
@@ -124,13 +116,6 @@ const FioTokensGetPage: React.FC<ContainerProps> = props => {
         title="Registration"
         message="Some FIO partners may require registration."
       />
-
-      <p className={classes.subtitle}>Credit Card / Bank</p>
-      <div className={classes.linksList}>
-        {creditCardPartners.map(partner => (
-          <PartnerLink key={partner.name} partner={partner} />
-        ))}
-      </div>
 
       <p className={classes.subtitle}>Exchanges and Token Swapping</p>
       <div className={classes.linksList}>
