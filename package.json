@@ -26,7 +26,8 @@
     "coinpayments:webhooks": "node --es-module-specifier-resolution=node server/tests/use-case/webhook/coinpayments-webhook.mjs",
     "landing-page-wrap-status:as:start": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:start",
     "landing-page-wrap-status:as:build": "export REACT_APP_LANDING_PAGE=wrap-status REACT_APP_IS_WRAP_STATUS_PAGE=true && npm run client:build:no-snap",
-    "migration:create": "npx sequelize migration:create --name"
+    "migration:create": "npx sequelize migration:create --name",
+    "prepare": "husky install"
   },
   "license": "ISC",
   "overrides": {
@@ -75,6 +76,8 @@
     "eslint-plugin-jsx-a11y": "6.6.1",
     "eslint-plugin-prettier": "4.2.1",
     "eslint-plugin-react": "7.31.10",
+    "husky": "8.0.3",
+    "lint-staged": "13.2.2",
     "mocha": "9.2.2",
     "nodemon": "2.0.20",
     "pre-commit": "1.2.2",
@@ -209,8 +212,5 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ],
-  "pre-commit": [
-    "lint"
   ]
 }
