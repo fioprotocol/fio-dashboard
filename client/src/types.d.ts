@@ -393,6 +393,8 @@ export type RefProfile = {
         actionText?: string;
       }
     >;
+    showExplanationsSection?: false;
+    showPartnersSection?: false;
     img?: string;
     link?: string;
   };

@@ -49,6 +49,8 @@ export class ReferrerProfile extends Base {
         //   domainSalePrice: 33,
         //   domainSaleRoeActive: true,
         //   auto_bundles: false,
+        //   showExplanationsSection: false,
+        //   showPartnersSection: false,
         // },
         simpleRegEnabled: { type: DT.BOOLEAN, defaultValue: false },
         simpleRegIpWhitelist: {
