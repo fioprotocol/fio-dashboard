@@ -86,6 +86,19 @@
   }
 }
 
+.actionTextContainer {
+  color: $black;
+  font-size: 0.8125rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 20px 0;
+
+  .actionText {
+    margin-left: 10px;
+  }
+}
+
 @include sm {
   .textContainer {
     margin-top: 1.25rem;

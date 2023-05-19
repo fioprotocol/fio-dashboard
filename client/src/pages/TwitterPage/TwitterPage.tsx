@@ -347,7 +347,6 @@ const TwitterPage: React.FC<Props & RouteComponentProps> = props => {
       <div className={classes.container}>
         <AddressWidget
           {...ADDRESS_WIDGET_CONTENT}
-          formAction={ADDRESS_WIDGET_CONTENT.formAction}
           suffixText={ADDRESS_WIDGET_CONTENT.suffixText}
           convert={onFocusOut}
           notification={notification}

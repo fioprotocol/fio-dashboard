@@ -30,7 +30,6 @@ export const ADDRESS_WIDGET_CONTENT = {
   initialValues: {
     domain: 'twitter',
   },
-  formAction: false,
   fch: 'bob@twitter',
   suffixText: '@twitter',
   placeHolderText: 'Enter Your Twitter Handle',

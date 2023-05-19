@@ -49,17 +49,6 @@
     justify-content: center;
   }
 
-  .actionTextContainer {
-    color: $black;
-    font-size: 0.9375rem;
-    display: flex;
-    flex-direction: row;
-
-    .actionText {
-      margin-left: 10px;
-    }
-  }
-
   .loaderIcon {
     margin-left: 1rem;
     position: absolute;

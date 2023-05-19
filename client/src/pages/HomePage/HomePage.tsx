@@ -45,19 +45,15 @@ const HomePage: React.FC<Props & RouteComponentProps> = props => {
   }, [isAuthenticated, isContainedFlow, history]);
 
   if (isContainedFlow)
-    return <AddressWidget isDarkWhite {...addressWidgetContent} formAction />;
+    return <AddressWidget isDarkWhite {...addressWidgetContent} />;
 
   return (
     <div className={classnames.container}>
-      <AddressWidget
-        isDarkWhite={!!refProfileInfo}
-        {...addressWidgetContent}
-        formAction
-      />
+      <AddressWidget isDarkWhite={!!refProfileInfo} {...addressWidgetContent} />
       <FCHBanner fch="bob@rulez" />
       <FCHSpecialsBanner />
       <WidelyAdoptedSection />
-      <AddressWidget {...addressWidgetContent} isReverseColors formAction />
+      <AddressWidget {...addressWidgetContent} isReverseColors />
     </div>
   );
 };
