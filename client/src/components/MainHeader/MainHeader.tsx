@@ -20,7 +20,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
   const [isMenuOpen, toggleMenuOpen] = useState(false);
   const history = useHistory();
 
-  const isPreviouslyAuth = useRef(isAuthenticated);
+  const isPreviouslyAuth = useRef(false);
 
   const closeMenu = useCallback(() => {
     toggleMenuOpen(false);
@@ -48,6 +48,7 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
       (!isAuthenticated && isPreviouslyAuth && isPreviouslyAuth.current)
     )
       return;
+
     if (
       profileRefreshed &&
       !isAuthenticated &&
@@ -65,6 +66,11 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     profileRefreshed,
     isMaintenance,
   ]);
+
+  useEffect(() => {
+    if (isAuthenticated && profileRefreshed)
+      isPreviouslyAuth.current = isAuthenticated;
+  }, [isAuthenticated, profileRefreshed]);
 
   const hideSiteLink = isAuthenticated;
 
