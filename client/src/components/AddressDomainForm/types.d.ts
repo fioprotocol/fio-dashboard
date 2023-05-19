@@ -62,7 +62,6 @@ type DefaultFormContainerProps = {
     getCryptoHandle: string | React.ReactNode;
   };
   options: string[];
-  allowCustomDomains: boolean;
   isValidating: boolean;
   roe: number;
   prices: Prices;
@@ -89,7 +88,6 @@ export type AddressDomainFormProps = {
   pricesLoading: boolean;
   prices: Prices;
   roe: number;
-  allowCustomDomains: boolean;
   links: {
     getCryptoHandle: string | React.ReactNode;
   };
@@ -163,7 +161,6 @@ export type AddressFormProps = {
   showCustomDomain: boolean;
   options: string[];
   domain: string;
-  allowCustomDomains: boolean;
   toggleShowCustomDomain: (showCustomDomain: boolean) => void;
   onChangeHandleField: () => void;
 } & DefaultFormProps;

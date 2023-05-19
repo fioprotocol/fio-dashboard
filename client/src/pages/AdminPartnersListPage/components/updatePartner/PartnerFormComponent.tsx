@@ -334,14 +334,6 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
               />
             </div>
           </div>
-          <div className="d-flex align-self-start mb-4">
-            <Field
-              name="settings.allowCustomDomain"
-              type="checkbox"
-              component={Input}
-              label="Allow custom domain registration"
-            />
-          </div>
 
           <div className="d-flex align-self-start mb-2">
             <span className={classes.label}>Landing Page text</span>

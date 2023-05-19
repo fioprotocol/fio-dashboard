@@ -67,7 +67,6 @@ const AdminPartnersListPage: React.FC<Props> = props => {
             rank: 1,
           },
         ],
-        allowCustomDomain: false,
         actions: {
           SIGNNFT: {},
           REG: {},
@@ -115,7 +114,6 @@ const AdminPartnersListPage: React.FC<Props> = props => {
         if (partner.type === REF_PROFILE_TYPE.AFFILIATE) {
           partner.settings = {
             domains: [],
-            allowCustomDomain: true,
           };
         }
         partner.title = partner.title || '';

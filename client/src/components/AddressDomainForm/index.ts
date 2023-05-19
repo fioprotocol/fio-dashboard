@@ -9,7 +9,6 @@ import {
   loading as pricesLoading,
   prices,
   allDomains,
-  allowCustomDomains,
   roe,
 } from '../../redux/registrations/selectors';
 
@@ -23,7 +22,6 @@ const reduxConnect = connect(
     prices,
     domains: allDomains,
     fioWallets,
-    allowCustomDomains,
     roe,
   }),
   {
