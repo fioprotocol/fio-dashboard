@@ -43,8 +43,8 @@ type Props = {
   setRedirectPath: (route: RedirectLinkData) => void;
 };
 const TIMEOUT = 5000; // 5 sec
-const INACTIVITY_TIMEOUT = process.env.INACTIVITY_TIMEOUT
-  ? parseInt(process.env.INACTIVITY_TIMEOUT)
+const INACTIVITY_TIMEOUT = process.env.REACT_APP_INACTIVITY_TIMEOUT
+  ? parseInt(process.env.REACT_APP_INACTIVITY_TIMEOUT)
   : 1000 * 60 * 30; // 30 min
 const DEBUG_MODE = !!process.env.REACT_APP_DEBUG_AUTOLOGOUT;
 
