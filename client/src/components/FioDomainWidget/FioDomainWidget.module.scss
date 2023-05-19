@@ -37,17 +37,6 @@
     @include proxima-nova-semibold;
   }
 
-  .actionTextContainer {
-    color: $black;
-    font-size: 0.9375rem;
-    display: flex;
-    flex-direction: row;
-
-    .actionText {
-      margin-left: 10px;
-    }
-  }
-
   .form {
     max-width: 430px;
     width: 100%;

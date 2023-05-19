@@ -129,7 +129,6 @@ export const RefHomePage: React.FC<Props &
           isAuthenticated={isAuthenticated}
           showSignInWidget
           isDarkWhite
-          formAction
         />
         {showExplanationsSection && (
           <>
@@ -139,7 +138,7 @@ export const RefHomePage: React.FC<Props &
         )}
         {showPartnersSection && <WidelyAdoptedSection />}
         {(showExplanationsSection || showPartnersSection) && (
-          <AddressWidget {...addressWidgetContent} isReverseColors formAction />
+          <AddressWidget {...addressWidgetContent} isReverseColors />
         )}
       </div>
     );
