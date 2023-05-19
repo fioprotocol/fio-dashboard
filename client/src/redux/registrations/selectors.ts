@@ -33,7 +33,6 @@ export const domains = createSelector(
       refProfileInfo.code &&
       refProfileInfo.type === REF_PROFILE_TYPE.REF
     ) {
-      const allowCustomDomain = refProfileInfo.settings.allowCustomDomain;
       return {
         refProfileDomains: refProfileInfo.settings.domains.map(refDomain => ({
           name: refDomain.name,
@@ -44,12 +43,8 @@ export const domains = createSelector(
           allowFree: !refDomain.isPremium,
           rank: refDomain.rank,
         })),
-        usernamesOnCustomDomains: allowCustomDomain
-          ? regDomainItems.usernamesOnCustomDomains
-          : [],
-        availableDomains: allowCustomDomain
-          ? regDomainItems.availableDomains
-          : [],
+        usernamesOnCustomDomains: regDomainItems.usernamesOnCustomDomains,
+        availableDomains: regDomainItems.availableDomains,
       };
     }
 
@@ -74,13 +69,6 @@ export const captchaResolving = (state: ReduxState): boolean =>
   state[prefix].captchaResolving;
 export const isProcessing = (state: ReduxState): boolean =>
   state[prefix].isProcessing;
-export const allowCustomDomains = (state: ReduxState): boolean => {
-  const refProfile = refProfileInfo(state);
-  if (refProfile != null && refProfile.code) {
-    return !!refProfile.settings.allowCustomDomain;
-  }
-  return true;
-};
 export const hasGetPricesError = (state: ReduxState): boolean =>
   state[prefix].hasGetPricesError;
 export const apiUrls = (state: ReduxState): string[] => state[prefix].apiUrls;

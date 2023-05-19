@@ -30,7 +30,6 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
     pricesLoading,
     prices,
     roe,
-    allowCustomDomains,
     links,
     fioWallets,
     getDomains,
@@ -156,7 +155,6 @@ const AddressDomainForm: React.FC<AddressDomainFormProps> = props => {
           options={options}
           toggleShowAvailable={toggleShowAvailable}
           roe={roe}
-          allowCustomDomains={allowCustomDomains}
           links={links}
           isReverseColors={isReverseColors}
           isDarkWhite={isDarkWhite}
