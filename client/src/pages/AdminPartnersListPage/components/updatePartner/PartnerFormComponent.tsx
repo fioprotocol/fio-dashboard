@@ -335,6 +335,23 @@ export const PartnerFormComponent: React.FC<FormRenderProps<RefProfile> & {
             </div>
           </div>
 
+          <div className="d-flex align-self-start mb-4">
+            <Field
+              name="settings.showExplanationsSection"
+              type="checkbox"
+              component={Input}
+              label="Show Explanation section on Home Page"
+            />
+          </div>
+          <div className="d-flex align-self-start mb-4">
+            <Field
+              name="settings.showPartnersSection"
+              type="checkbox"
+              component={Input}
+              label="Show Partner section on Home Page"
+            />
+          </div>
+
           <div className="d-flex align-self-start mb-2">
             <span className={classes.label}>Landing Page text</span>
           </div>

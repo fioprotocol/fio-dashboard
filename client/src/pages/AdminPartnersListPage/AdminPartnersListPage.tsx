@@ -67,6 +67,8 @@ const AdminPartnersListPage: React.FC<Props> = props => {
             rank: 1,
           },
         ],
+        showExplanationsSection: false,
+        showPartnersSection: false,
         actions: {
           SIGNNFT: {},
           REG: {},
