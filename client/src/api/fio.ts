@@ -21,6 +21,7 @@ import { isDomain } from '../utils';
 import {
   ACTIONS,
   ACTIONS_TO_END_POINT_KEYS,
+  DEFAULT_TABLE_RAWS_LIMIT,
   FIO_PROXY_LIST,
   GET_TABLE_ROWS_URL,
   TRANSACTION_ACTION_NAMES,
@@ -642,15 +643,45 @@ export default class Fio {
   getProxies = async () => {
     let proxies;
     try {
-      const rows: Proxy[] = await this.getTableRows({
-        code: 'eosio',
-        scope: 'eosio',
-        table: 'voters',
-        limit: 2000,
-        lower_bound: '0',
-        reverse: true,
-        json: true,
-      });
+      let rows: Proxy[] = [];
+
+      const getRows = async ({
+        limit = DEFAULT_TABLE_RAWS_LIMIT,
+        offset = 0,
+      }: {
+        limit: number;
+        offset: number;
+      }) =>
+        await this.getTableRows({
+          code: 'eosio',
+          scope: 'eosio',
+          table: 'voters',
+          limit,
+          lower_bound: offset?.toString() || '0',
+          reverse: false,
+          json: true,
+        });
+
+      const getAllRows = async ({
+        limit = DEFAULT_TABLE_RAWS_LIMIT,
+        offset = 0,
+      }: {
+        limit?: number;
+        offset?: number;
+      }) => {
+        const rowsResponse = await getRows({
+          limit,
+          offset,
+        });
+
+        rows = [...rows, ...rowsResponse.rows];
+
+        if (rowsResponse.more) {
+          await getAllRows({ offset: offset + limit });
+        }
+      };
+
+      await getAllRows({});
 
       const rowsProxies = rows
         .filter(row => row.is_proxy && row.fioaddress)
@@ -659,7 +690,7 @@ export default class Fio {
       const defaultProxyList = FIO_PROXY_LIST[this.fioChainIdEnvironment] || [];
 
       const rowsProxiesList =
-        rowsProxies.length !== defaultProxyList.length
+        rowsProxies.length < defaultProxyList.length
           ? defaultProxyList
           : rowsProxies;
 
