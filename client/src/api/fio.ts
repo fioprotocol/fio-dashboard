@@ -315,7 +315,7 @@ export default class Fio {
     const params = this.setTableRowsParams(fioName);
 
     try {
-      const rows = await this.getTableRows(params);
+      const { rows } = await this.getTableRows(params);
 
       if (rows && rows.length) {
         const rowId = rows[0].id;
@@ -359,9 +359,12 @@ export default class Fio {
     try {
       const response = await superagent.post(GET_TABLE_ROWS_URL).send(params);
 
-      const { rows }: { rows: AnyObject[] } = response.body;
+      const {
+        rows,
+        more,
+      }: { rows: AnyObject[]; more: boolean } = response.body;
 
-      return rows;
+      return { rows, more };
     } catch (err) {
       this.logError(err);
       throw err;
@@ -675,10 +678,12 @@ export default class Fio {
 
   getFeeFromTable = async (feeHash: string): Promise<{ fee: number }> => {
     const resultRows: {
-      end_point: string;
-      end_point_hash: string;
-      suf_amount: number;
-    }[] = await this.getTableRows({
+      rows: {
+        end_point: string;
+        end_point_hash: string;
+        suf_amount: number;
+      }[];
+    } = await this.getTableRows({
       code: 'fio.fee',
       scope: 'fio.fee',
       table: 'fiofees',
@@ -689,6 +694,6 @@ export default class Fio {
       json: true,
     });
 
-    return { fee: resultRows[0].suf_amount };
+    return { fee: resultRows.rows[0].suf_amount };
   };
 }

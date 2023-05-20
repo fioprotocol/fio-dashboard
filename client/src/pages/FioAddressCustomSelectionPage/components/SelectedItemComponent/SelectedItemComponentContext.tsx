@@ -75,7 +75,9 @@ export const useContext = (
     try {
       const params = apis.fio.setTableRowsParams(domain);
 
-      const rows: FioDomainDoubletResponse[] = await apis.fio.getTableRows(
+      const {
+        rows,
+      }: { rows: FioDomainDoubletResponse[] } = await apis.fio.getTableRows(
         params,
       );
 

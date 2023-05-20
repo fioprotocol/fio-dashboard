@@ -473,7 +473,7 @@ export const useContext = (): {
       const params = apis.fio.setTableRowsParams(domain);
 
       try {
-        const rows = await apis.fio.getTableRows(params);
+        const { rows } = await apis.fio.getTableRows(params);
 
         if ((rows && rows.length && rows[0].is_public === 0) || !rows[0]) {
           privateDomainList[domain] = true;
