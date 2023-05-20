@@ -112,7 +112,7 @@ export const fioAddressCustomDomainValidator: FieldValidationFunctionAsync<Match
   try {
     const params = apis.fio.setTableRowsParams(domain);
 
-    const rows = await apis.fio.getTableRows(params);
+    const { rows } = await apis.fio.getTableRows(params);
 
     if (rows.length && !rows[0].is_public && !existingUserDomain) {
       succeeded = false;
