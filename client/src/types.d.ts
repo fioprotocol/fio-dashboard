@@ -540,6 +540,7 @@ export type PrivateRedirectLocationState = {
 };
 
 export type Proxy = {
+  id: string;
   is_proxy: number;
   fioaddress: string;
 };
