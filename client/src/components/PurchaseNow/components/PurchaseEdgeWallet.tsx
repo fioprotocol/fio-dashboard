@@ -35,7 +35,7 @@ type Props = {
   fee?: number | null;
 };
 
-const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 5000;
+const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 7000;
 
 const PurchaseEdgeWallet: React.FC<Props> = props => {
   const {
@@ -81,6 +81,18 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           );
+        } else if (registration.type === CART_ITEM_TYPE.DOMAIN) {
+          await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION); // Add timeout to aviod the same sign tx hash for more than 2 years domain renew
+          signedTx = await apis.fio.walletFioSDK.genericAction(
+            ACTIONS.registerOwnerFioDomain,
+            {
+              fioDomain: registration.fioName,
+              maxFee: registration.fee,
+              technologyProviderId: apis.fio.domainTpid,
+              expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
+              ownerPublicKey: keys.public,
+            },
+          );
         } else if (registration.type === CART_ITEM_TYPE.DOMAIN_RENEWAL) {
           await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION); // Add timeout to aviod the same sign tx hash for more than 2 years domain renew
           signedTx = await apis.fio.walletFioSDK.genericAction(
@@ -90,17 +102,6 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
               maxFee: registration.fee,
               tpid: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
-            },
-          );
-        } else if (registration.type === CART_ITEM_TYPE.DOMAIN) {
-          signedTx = await apis.fio.walletFioSDK.genericAction(
-            ACTIONS.registerOwnerFioDomain,
-            {
-              fioDomain: registration.fioName,
-              maxFee: registration.fee,
-              technologyProviderId: apis.fio.domainTpid,
-              expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
-              ownerPublicKey: keys.public,
             },
           );
         } else {
