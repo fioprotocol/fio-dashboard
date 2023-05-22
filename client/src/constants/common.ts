@@ -610,12 +610,6 @@ export const ANALYTICS_FIO_NAME_TYPE = {
   ADD_BUNDLES: 'add_bundles',
 };
 
-export const ANALYTICS_PAYMENT_TYPE = {
-  FIO: 'fio',
-  STRIPE: 'stripe',
-  FREE: 'free',
-};
-
 export const ANALYTICS_LOGIN_METHOD = {
   PIN: 'pin',
   PASSWORD: 'password',

@@ -1,10 +1,15 @@
-import { BlockchainTransaction, Notification, Order, Payment } from '../models';
+import { BlockchainTransaction, Notification, Order, Payment, User } from '../models';
 
 import { fioApi } from '../external/fio.mjs';
+import { sendGTMEvent } from '../external/googleapi.mjs';
+import { sendSendinblueEvent } from './external/SendinblueEvent.mjs';
+
 import { countTotalPriceAmount, getPaidWith } from '../utils/order.mjs';
 import MathOp from './math.mjs';
 import logger from '../logger.mjs';
+
 import {
+  ANALYTICS_EVENT_ACTIONS,
   FIO_ACTIONS_LABEL,
   FIO_ACTIONS,
   FIO_ACTIONS_WITH_PERIOD,
@@ -36,9 +41,58 @@ export const checkOrderStatusAndCreateNotification = async orderId => {
   }
 };
 
+const sendAnalytics = async orderId => {
+  const order = await Order.orderInfo(orderId, true);
+
+  const isSuccess = order && order.status === Order.STATUS.SUCCESS;
+  const isPartial = order && order.status === Order.STATUS.PARTIALLY_SUCCESS;
+  const isFailed = order && order.status === Order.STATUS.FAILED;
+
+  if (isSuccess || isPartial || isFailed) {
+    const user = await User.findActive(order.user.id);
+
+    const { payment, regItems, errItems, total } = order;
+
+    const data = {
+      currency: Payment.CURRENCY.USDC,
+      payment_type: total === '0' ? 'free' : payment.paymentProcessor,
+    };
+
+    let anayticsEvent = '';
+
+    if (isSuccess || isPartial) {
+      data.items = regItems.map(regItem => ({
+        type: regItem.type,
+        price: regItem.costUsdc,
+      }));
+      data.value = payment.regTotalCost.usdcTotal;
+    } else if (isFailed) {
+      data.items = errItems.map(regItem => ({
+        type: regItem.type,
+        price: regItem.costUsdc,
+      }));
+      data.value = payment.errTotalCost.usdcTotal;
+    }
+
+    if (isSuccess) {
+      anayticsEvent = ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED;
+    }
+    if (isPartial) {
+      anayticsEvent = ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_PARTIAL;
+    }
+    if (isFailed) {
+      anayticsEvent = ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_FAILED;
+    }
+
+    await sendGTMEvent({ event: anayticsEvent, data });
+    await sendSendinblueEvent({ event: anayticsEvent, user });
+  }
+};
+
 export const updateOrderStatus = async (orderId, paymentStatus, txStatuses, t) => {
   await Order.updateStatus(orderId, paymentStatus, txStatuses, t);
   await checkOrderStatusAndCreateNotification(orderId);
+  await sendAnalytics(orderId);
 };
 
 const transformFioPrice = (usdcPrice, nativeAmount) => {

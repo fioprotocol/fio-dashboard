@@ -33,12 +33,8 @@ import useQuery from '../../hooks/useQuery';
 import { useEffectOnce } from '../../hooks/general';
 
 import { cartItemsToOrderItems, totalCost } from '../../util/cart';
-import {
-  fireAnalyticsEvent,
-  getCartItemsDataForAnalytics,
-} from '../../util/analytics';
+import { getGAClientId } from '../../util/analytics';
 import { convertFioPrices } from '../../util/prices';
-import MathOp from '../../util/math';
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
 import { ROUTES } from '../../constants/routes';
@@ -46,13 +42,8 @@ import {
   CONTAINED_FLOW_CONTINUE_TEXT,
   CONTAINED_FLOW_ACTIONS,
 } from '../../constants/containedFlow';
+import { PURCHASE_RESULTS_STATUS } from '../../constants/purchase';
 import {
-  PAYMENT_PROVIDER,
-  PURCHASE_RESULTS_STATUS,
-} from '../../constants/purchase';
-import {
-  ANALYTICS_EVENT_ACTIONS,
-  ANALYTICS_PAYMENT_TYPE,
   CART_ITEM_TYPE,
   CART_ITEM_TYPES_WITH_PERIOD,
 } from '../../constants/common';
@@ -96,7 +87,6 @@ export const useContext = (
 
   const { orderItem } = props;
   const { errItems, payment, regItems, status } = orderItem || {};
-  const { paymentProcessor } = payment || {};
 
   let buttonText = 'Close';
 
@@ -125,71 +115,6 @@ export const useContext = (
       );
     }
   }, [dispatch, status, regItems]);
-
-  useEffectOnce(
-    () => {
-      if (
-        [
-          PURCHASE_RESULTS_STATUS.SUCCESS,
-          PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
-        ].includes(status)
-      ) {
-        const purchasedItems: CartItem[] = [];
-        regItems.forEach(regItem => {
-          const { id, period = 1 } = regItem;
-          const purchasedItem = [...oldCart[orderNumber]].find(
-            cartItem => cartItem.id === id,
-          );
-          if (purchasedItem) {
-            if (
-              purchasedItem.id === id &&
-              CART_ITEM_TYPES_WITH_PERIOD.includes(purchasedItem.type) &&
-              purchasedItem.period > period
-            ) {
-              const purchasedItemPeriod = period;
-              const fioPrices = convertFioPrices(
-                new MathOp(purchasedItem.costNativeFio)
-                  .mul(purchasedItemPeriod)
-                  .toNumber(),
-                roe,
-              );
-              purchasedItems.push({
-                ...purchasedItem,
-                period: purchasedItemPeriod,
-                costFio: fioPrices.fio,
-                costUsdc: fioPrices.usdc,
-              });
-            } else {
-              purchasedItems.push(purchasedItem);
-            }
-          }
-        });
-        const purchaseItems = getCartItemsDataForAnalytics(purchasedItems);
-
-        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED, {
-          ...purchaseItems,
-          payment_type: !purchaseItems.value
-            ? ANALYTICS_PAYMENT_TYPE.FREE
-            : paymentProcessor === PAYMENT_PROVIDER.STRIPE
-            ? ANALYTICS_PAYMENT_TYPE.STRIPE
-            : ANALYTICS_PAYMENT_TYPE.FIO,
-        });
-      }
-      if (status === PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS) {
-        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_PARTIAL);
-      }
-      if (status === PURCHASE_RESULTS_STATUS.FAILED) {
-        fireAnalyticsEvent(ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_FAILED);
-      }
-    },
-    [status],
-    [
-      PURCHASE_RESULTS_STATUS.SUCCESS,
-      PURCHASE_RESULTS_STATUS.PARTIALLY_SUCCESS,
-      PURCHASE_RESULTS_STATUS.FAILED,
-      PURCHASE_RESULTS_STATUS.CANCELED,
-    ].includes(status),
-  );
 
   useEffectOnce(
     () => {
@@ -276,6 +201,9 @@ export const useContext = (
           publicKey: paymentWalletPublicKey || userWallets[0].publicKey,
           paymentProcessor: payment?.paymentProcessor,
           items: cartItemsToOrderItems(cart, prices, roe),
+          data: {
+            gaClientId: getGAClientId(),
+          },
         },
       },
     });

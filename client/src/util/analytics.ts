@@ -1,4 +1,5 @@
 import debounce from 'lodash/debounce';
+import Cookies from 'js-cookie';
 
 import {
   ANALYTICS_EVENT_ACTIONS,
@@ -25,6 +26,12 @@ import {
 } from '../types';
 
 const DEBOUNCE_TIMEOUT = 1000;
+
+export const getGAClientId = () => {
+  const gaClientId = Cookies.get('_ga');
+  if (gaClientId) return gaClientId.split('GA1.1.')[1];
+  return null;
+};
 
 export const fireAnalyticsEvent = (
   event: string,
