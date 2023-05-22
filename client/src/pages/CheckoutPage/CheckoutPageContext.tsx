@@ -44,6 +44,7 @@ import {
   cartIsRelative,
   cartHasOnlyFreeItems,
 } from '../../util/cart';
+import { getGAClientId } from '../../util/analytics';
 import { setFioName } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
 import { useEffectOnce } from '../../hooks/general';
@@ -218,6 +219,9 @@ export const useContext = (): {
             price: '0',
             priceCurrency: CURRENCY_CODES.USDC,
           })),
+          data: {
+            gaClientId: getGAClientId(),
+          },
         };
       }
 

@@ -245,7 +245,7 @@ export class Order extends Base {
     return orders;
   }
 
-  static async orderInfo(id) {
+  static async orderInfo(id, useFormatDetailed) {
     const orderObj = await this.findById(id, {
       include: [
         {
@@ -262,20 +262,27 @@ export class Order extends Base {
       order: [[OrderItem, 'id', 'ASC']],
     });
 
-    const order = this.format(orderObj.get({ plain: true }));
-    const blockchainTransactionsIds = [];
+    if (useFormatDetailed) {
+      return this.formatDetailed(orderObj.get({ pain: true }));
+    } else {
+      const order = this.format(orderObj.get({ plain: true }));
 
-    order.items.forEach(orderItem => {
-      orderItem.blockchainTransactions.forEach(blockchainTransactionItem => {
-        blockchainTransactionsIds.push(blockchainTransactionItem.id);
+      const blockchainTransactionsIds = [];
+
+      order.items.forEach(orderItem => {
+        orderItem.blockchainTransactions.forEach(blockchainTransactionItem => {
+          blockchainTransactionsIds.push(blockchainTransactionItem.id);
+        });
       });
-    });
 
-    order.blockchainTransactionEvents = await BlockchainTransactionEventLog.list({
-      blockchainTransactionId: { [Sequelize.Op.in]: blockchainTransactionsIds },
-    });
+      order.blockchainTransactionEvents = await BlockchainTransactionEventLog.list({
+        blockchainTransactionId: {
+          [Sequelize.Op.in]: blockchainTransactionsIds,
+        },
+      });
 
-    return order;
+      return order;
+    }
   }
 
   static async listSearchByFioAddressItems(domain, address) {

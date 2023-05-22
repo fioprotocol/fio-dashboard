@@ -33,6 +33,11 @@ export default class OrdersCreate extends Base {
                 },
               },
             ],
+            data: {
+              nested_object: {
+                gaClientId: 'string',
+              },
+            },
           },
         },
       ],
@@ -40,7 +45,7 @@ export default class OrdersCreate extends Base {
   }
 
   async execute({
-    data: { total, roe, publicKey, paymentProcessor, refProfileId, items },
+    data: { total, roe, publicKey, paymentProcessor, refProfileId, items, data },
   }) {
     // assume user should have only one active order with status NEW
     const exOrder = await Order.findOne({
@@ -96,6 +101,7 @@ export default class OrdersCreate extends Base {
           customerIp: this.context.ipAddress,
           userId: this.context.id,
           refProfileId: refProfileId ? refProfileId : user.refProfileId,
+          data,
         },
         { transaction: t },
       );
