@@ -94,12 +94,13 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
           );
         } else if (registration.type === CART_ITEM_TYPE.DOMAIN) {
           signedTx = await apis.fio.walletFioSDK.genericAction(
-            ACTIONS.registerFioDomain,
+            ACTIONS.registerOwnerFioDomain,
             {
               fioDomain: registration.fioName,
               maxFee: registration.fee,
               technologyProviderId: apis.fio.domainTpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
+              ownerPublicKey: keys.public,
             },
           );
         } else {

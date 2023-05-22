@@ -29,6 +29,7 @@ export const ACTIONS = {
   recordObtData: 'recordObtData',
   registerFioAddress: 'registerFioAddress',
   registerFioDomain: 'registerFioDomain',
+  registerOwnerFioDomain: 'registerOwnerFioDomain',
   renewFioDomain: 'renewFioDomain',
   transferFioAddress: 'transferFioAddress',
   transferFioDomain: 'transferFioDomain',
