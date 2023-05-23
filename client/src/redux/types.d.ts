@@ -43,6 +43,7 @@ export type CreateOrderActionData = {
   items: CreateOrderActionItem[];
   data: {
     gaClientId: string | null;
+    gaSessionId: string | null;
   };
 };
 type GetFeeAction = { data: { fee: number }; type: string; endpoint: string };

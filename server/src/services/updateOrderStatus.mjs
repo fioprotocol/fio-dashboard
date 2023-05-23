@@ -51,7 +51,8 @@ const sendAnalytics = async orderId => {
   if (isSuccess || isPartial || isFailed) {
     const user = await User.findActive(order.user.id);
 
-    const { payment, regItems, errItems, total } = order;
+    const { payment, regItems, total, data: orderData } = order;
+    const { gaClientId, gaSessionId } = orderData || {};
 
     const data = {
       currency: Payment.CURRENCY.USDC,
@@ -62,16 +63,10 @@ const sendAnalytics = async orderId => {
 
     if (isSuccess || isPartial) {
       data.items = regItems.map(regItem => ({
-        type: regItem.type,
+        item_name: regItem.type,
         price: regItem.costUsdc,
       }));
       data.value = payment.regTotalCost.usdcTotal;
-    } else if (isFailed) {
-      data.items = errItems.map(regItem => ({
-        type: regItem.type,
-        price: regItem.costUsdc,
-      }));
-      data.value = payment.errTotalCost.usdcTotal;
     }
 
     if (isSuccess) {
@@ -84,7 +79,12 @@ const sendAnalytics = async orderId => {
       anayticsEvent = ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_FAILED;
     }
 
-    await sendGTMEvent({ event: anayticsEvent, data });
+    await sendGTMEvent({
+      event: anayticsEvent,
+      clientId: gaClientId,
+      data,
+      sessionId: gaSessionId,
+    });
     await sendSendinblueEvent({ event: anayticsEvent, user });
   }
 };

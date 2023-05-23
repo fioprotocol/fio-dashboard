@@ -37,7 +37,11 @@ import {
 } from '../../util/cart';
 import MathOp from '../../util/math';
 import { convertFioPrices } from '../../util/prices';
-import { fireAnalyticsEvent, getGAClientId } from '../../util/analytics';
+import {
+  fireAnalyticsEvent,
+  getGAClientId,
+  getGASessionId,
+} from '../../util/analytics';
 
 import { useEffectOnce } from '../../hooks/general';
 
@@ -340,6 +344,7 @@ export const useContext = (): UseContextReturnType => {
         items: cartItemsToOrderItems(cartItems, prices, roe),
         data: {
           gaClientId: getGAClientId(),
+          gaSessionId: getGASessionId(),
         },
       });
 

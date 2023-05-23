@@ -2,20 +2,37 @@ import superagent from 'superagent';
 
 import logger from '../logger.mjs';
 
-export const sendGTMEvent = async ({ event, clientId, data }) => {
-  const url = `https://www.google-analytics.com/collect`;
+export const sendGTMEvent = async ({ event, clientId, data, sessionId }) => {
+  const url = `https://www.google-analytics.com/mp/collect`;
 
-  const payload = {
-    v: '1', // Protocol Version
-    tid: process.env.GOOGLE_TAG_MANAGER_ID, // Tracking ID / GTM container ID
-    cid: clientId, // Client ID
-    t: 'event', // Hit type: Event
-    ea: event, // Event Action
-    data,
+  const body = {
+    client_id: clientId,
+    non_personalized_ads: false,
+    events: [
+      {
+        name: event,
+        params: {
+          items: data.items,
+          currency: data.currency,
+          value: data.value,
+          session_id: sessionId,
+          payment_type: data.payment_type,
+        },
+      },
+    ],
+  };
+
+  const query = {
+    api_secret: process.env.GOOGLE_MEASUREMENT_PROTOCOL_API_KEY,
+    measurement_id: process.env.GOOGLE_TAG_MANAGER_ID,
   };
 
   try {
-    await superagent.post(url).query(payload);
+    await superagent
+      .post(url)
+      .set('Content-Type', 'application/json')
+      .query(query)
+      .send(body);
   } catch (error) {
     logger.error('Error sending event:', error);
   }
