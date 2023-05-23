@@ -33,7 +33,7 @@ import useQuery from '../../hooks/useQuery';
 import { useEffectOnce } from '../../hooks/general';
 
 import { cartItemsToOrderItems, totalCost } from '../../util/cart';
-import { getGAClientId } from '../../util/analytics';
+import { getGAClientId, getGASessionId } from '../../util/analytics';
 import { convertFioPrices } from '../../util/prices';
 
 import { QUERY_PARAMS_NAMES } from '../../constants/queryParams';
@@ -203,6 +203,7 @@ export const useContext = (
           items: cartItemsToOrderItems(cart, prices, roe),
           data: {
             gaClientId: getGAClientId(),
+            gaSessionId: getGASessionId(),
           },
         },
       },
