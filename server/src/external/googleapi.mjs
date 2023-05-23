@@ -24,7 +24,7 @@ export const sendGTMEvent = async ({ event, clientId, data, sessionId }) => {
 
   const query = {
     api_secret: process.env.GOOGLE_MEASUREMENT_PROTOCOL_API_KEY,
-    measurement_id: process.env.GOOGLE_TAG_MANAGER_ID,
+    measurement_id: process.env.GOOGLE_ANALYTICS_ID,
   };
 
   try {
