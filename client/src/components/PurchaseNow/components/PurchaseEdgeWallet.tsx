@@ -77,7 +77,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
               fioAddress: registration.fioName,
               bundleSets: DEFAULT_BUNDLE_SET_VALUE,
               maxFee: registration.fee,
-              tpid: apis.fio.tpid,
+              technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           );
@@ -100,7 +100,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             {
               fioDomain: registration.fioName,
               maxFee: registration.fee,
-              tpid: apis.fio.tpid,
+              technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           );
@@ -110,7 +110,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             {
               fioAddress: registration.fioName,
               maxFee: registration.fee,
-              tpid: apis.fio.tpid,
+              technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           );
