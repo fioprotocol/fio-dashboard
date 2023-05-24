@@ -64,7 +64,6 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
       isFreeAllowed,
     );
     if (keys.private) {
-      console.log('KEYS', keys);
       apis.fio.setWalletFioSdk(keys);
     }
     for (const registration of registrations) {
