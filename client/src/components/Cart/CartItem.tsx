@@ -2,38 +2,31 @@ import React, { useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
-import Amount from '../common/Amount';
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import CustomDropdown from '../CustomDropdown';
+import { PriceComponent } from '../PriceComponent';
 
 import {
   CART_ITEM_PERIOD_OPTIONS,
   CART_ITEM_TYPES_WITH_PERIOD,
-  CURRENCY_CODES,
 } from '../../constants/common';
 import { DOMAIN_TYPE } from '../../constants/fio';
 import { FIO_ADDRESS_DELIMITER } from '../../utils';
 
 import { getCartItemDescriptor } from '../../util/cart';
 
-import {
-  CartItem as CartItemType,
-  DomainItemType,
-  PaymentCurrency,
-} from '../../types';
+import { CartItem as CartItemType, DomainItemType } from '../../types';
 
 import classes from './Cart.module.scss';
 
 type Props = {
   item: CartItemType;
-  primaryCurrency?: PaymentCurrency;
   onDelete?: (id: string) => void;
   onUpdatePeriod?: (id: string, period: number) => void;
   isPeriodEditable?: boolean;
 };
 
 export type CartItemProps = {
-  primaryCurrency?: PaymentCurrency;
   costFio: string;
   costUsdc: string;
   costNativeFio?: number;
@@ -41,47 +34,19 @@ export type CartItemProps = {
 };
 
 export const CartItemPrice = (props: CartItemProps) => {
-  const {
-    costFio,
-    costUsdc,
-    costNativeFio,
-    domainType,
-    primaryCurrency = CURRENCY_CODES.FIO,
-  } = props;
-
-  if (!costNativeFio || domainType === DOMAIN_TYPE.FREE)
-    return <span className="boldText">FREE</span>;
-
-  if (primaryCurrency === CURRENCY_CODES.FIO)
-    return (
-      <>
-        <span className="boldText">
-          <Amount value={costFio} /> FIO
-        </span>{' '}
-        (
-        <Amount value={costUsdc} /> USDC)
-      </>
-    );
+  const { costFio, costUsdc, costNativeFio, domainType } = props;
 
   return (
-    <>
-      <span className="boldText">
-        <Amount value={costUsdc} /> USDC
-      </span>{' '}
-      (
-      <Amount value={costFio} /> FIO)
-    </>
+    <PriceComponent
+      costFio={costFio}
+      costUsdc={costUsdc}
+      isFree={!costNativeFio || domainType === DOMAIN_TYPE.FREE}
+    />
   );
 };
 
 const CartItem: React.FC<Props> = props => {
-  const {
-    item,
-    primaryCurrency = CURRENCY_CODES.FIO,
-    onDelete,
-    onUpdatePeriod,
-    isPeriodEditable = false,
-  } = props;
+  const { item, onDelete, onUpdatePeriod, isPeriodEditable = false } = props;
 
   const {
     address,
@@ -132,20 +97,19 @@ const CartItem: React.FC<Props> = props => {
               />
             </div>
           )}
-          <p
+          <div
             className={classnames(
               classes.price,
               onDelete && classes.deletePrice,
             )}
           >
             <CartItemPrice
-              primaryCurrency={primaryCurrency}
               costFio={costFio}
               costUsdc={costUsdc}
               costNativeFio={costNativeFio}
               domainType={domainType}
             />
-          </p>
+          </div>
           {onDelete && (
             <FontAwesomeIcon
               icon="times-circle"

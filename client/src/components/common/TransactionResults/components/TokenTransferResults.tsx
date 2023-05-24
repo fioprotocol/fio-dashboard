@@ -57,7 +57,7 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
     );
     displayUsdcAmount = (
       <>
-        / <ConvertedAmount fioAmount={fioAmount} nativeAmount={nativeAmount} />
+        <ConvertedAmount fioAmount={fioAmount} nativeAmount={nativeAmount} />
       </>
     );
   }
@@ -113,7 +113,7 @@ const TokenTransferResults: React.FC<TokenTransferResultsProps> = props => {
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
           <p className={classes.title}>{titleAmount || 'Amount Sent'}</p>
           <p className={classes.item}>
-            {displayAmount} {displayUsdcAmount}
+            {displayUsdcAmount} ({displayAmount})
           </p>
         </div>
       </Badge>

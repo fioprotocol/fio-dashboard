@@ -2,6 +2,8 @@ import Sequelize from 'sequelize';
 
 import Base from './Base';
 
+import { WrapStatusFioUnwrapNftsOravotes } from './WrapStatusFioUnwrapNftsOravotes.mjs';
+
 const { DataTypes: DT } = Sequelize;
 
 export class WrapStatusFioUnwrapNftsLogs extends Base {
@@ -18,6 +20,13 @@ export class WrapStatusFioUnwrapNftsLogs extends Base {
         timestamps: false,
       },
     );
+  }
+
+  static associate() {
+    this.belongsTo(WrapStatusFioUnwrapNftsOravotes, {
+      foreignKey: 'obtId',
+      targetKey: 'obtId',
+    });
   }
 
   static attrs(type = 'default') {
@@ -54,5 +63,14 @@ export class WrapStatusFioUnwrapNftsLogs extends Base {
       { query, values },
       { type: this.sequelize.QueryTypes.INSERT },
     );
+  }
+
+  static format({ blockNumber, data, obtId, transactionId }) {
+    return {
+      blockNumber,
+      data,
+      obtId,
+      transactionId,
+    };
   }
 }

@@ -464,12 +464,10 @@ class WalletDataJob extends CommonJob {
               ...existsNotification.data,
               emailData: {
                 ...existsNotification.data.emailData,
-                fioBalanceChange: `${sign}${fioApi.sufToAmount(
+                fioBalanceChange: `${sign}$${usdcChangeBalance} (${fioApi.sufToAmount(
                   new MathOp(fioNativeChangeBalance).abs().toNumber(),
-                )} FIO ($${usdcChangeBalance} USDC)`,
-                newFioBalance: `${fioApi.sufToAmount(
-                  balance,
-                )} FIO ($${usdcBalance} USDC)`,
+                )} FIO)`,
+                newFioBalance: `$${usdcBalance} (${fioApi.sufToAmount(balance)} FIO)`,
                 date: await User.formatDateWithTimeZone(wallet.User.id),
               },
             },
@@ -482,12 +480,10 @@ class WalletDataJob extends CommonJob {
             data: {
               pagesToShow: ['/'],
               emailData: {
-                fioBalanceChange: `${sign}${fioApi.sufToAmount(
+                fioBalanceChange: `${sign}$${usdcChangeBalance} (${fioApi.sufToAmount(
                   new MathOp(fioNativeChangeBalance).abs().toNumber(),
-                )} FIO ($${usdcChangeBalance} USDC)`,
-                newFioBalance: `${fioApi.sufToAmount(
-                  balance,
-                )} FIO ($${usdcBalance} USDC)`,
+                )} FIO)`,
+                newFioBalance: `$${usdcBalance} (${fioApi.sufToAmount(balance)} FIO)`,
                 wallet: wallet.publicKey,
                 date: await User.formatDateWithTimeZone(wallet.User.id),
               },

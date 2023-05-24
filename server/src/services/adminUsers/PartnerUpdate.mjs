@@ -29,7 +29,8 @@ export default class PartnerUpdate extends Base {
               ],
             },
             preselectedDomain: 'string',
-            allowCustomDomain: 'boolean',
+            showExplanationsSection: 'boolean',
+            showPartnersSection: 'boolean',
             img: 'string',
             link: 'string',
             actions: [

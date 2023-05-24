@@ -98,7 +98,10 @@ export function* exportOrdersDataSuccess(): Generator {
           number: orderItem.order?.number,
           itemType: PAYMENT_ITEM_TYPE_LABEL[orderItem.action],
           amount: `${orderItem.price} ${orderItem.priceCurrency}`,
-          fio: apis.fio.sufToAmount(Number(orderItem.nativeFio)).toFixed(2),
+          fio:
+            orderItem.price === '0'
+              ? '0'
+              : apis.fio.sufToAmount(Number(orderItem.nativeFio)).toFixed(2),
           feeCollected: `${orderItem.feeCollected} FIO`,
           status:
             BC_TX_STATUS_LABELS[orderItem.orderItemStatus?.txStatus] ||

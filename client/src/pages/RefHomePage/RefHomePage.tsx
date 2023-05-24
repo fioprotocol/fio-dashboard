@@ -5,6 +5,9 @@ import { Helmet } from 'react-helmet-async';
 
 import AddressWidget from '../../components/AddressWidget';
 import FioLoader from '../../components/common/FioLoader/FioLoader';
+import { FCHBanner } from '../../components/FCHBanner';
+import { FCHSpecialsBanner } from '../../components/SpecialsBanner';
+import { WidelyAdoptedSection } from '../../components/WidelyAdoptedSection';
 
 import { APP_TITLE } from '../../constants/labels';
 
@@ -109,6 +112,11 @@ export const RefHomePage: React.FC<Props &
       containedFlowQueryParams,
       refProfileInfo,
     });
+
+    const {
+      settings: { showExplanationsSection, showPartnersSection } = {},
+    } = refProfileInfo;
+
     return (
       <div className={classnames.container}>
         <Helmet>
@@ -121,8 +129,17 @@ export const RefHomePage: React.FC<Props &
           isAuthenticated={isAuthenticated}
           showSignInWidget
           isDarkWhite
-          formAction
         />
+        {showExplanationsSection && (
+          <>
+            <FCHBanner fch="bob@rulez" />
+            <FCHSpecialsBanner />
+          </>
+        )}
+        {showPartnersSection && <WidelyAdoptedSection />}
+        {(showExplanationsSection || showPartnersSection) && (
+          <AddressWidget {...addressWidgetContent} isReverseColors />
+        )}
       </div>
     );
   };

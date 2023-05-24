@@ -1,10 +1,8 @@
 import React from 'react';
 import { Field, Form, useForm } from 'react-final-form';
 import { useHistory } from 'react-router-dom';
-import classnames from 'classnames';
 
 import SubmitButton from '../../../common/SubmitButton/SubmitButton';
-import { ExclamationIcon } from '../../../ExclamationIcon';
 import TextInput, {
   INPUT_COLOR_SCHEMA,
   INPUT_UI_STYLES,
@@ -24,8 +22,6 @@ type Props = {
     getCryptoHandle: React.ReactNode;
   };
   isReverseColors?: boolean;
-  isDarkWhite?: boolean;
-  formAction?: boolean;
   suffixText?: string;
   convert?: (value: string) => string;
   formatOnFocusOut?: boolean;
@@ -92,9 +88,7 @@ export const FormComponent: React.FC<Props> = props => {
   const {
     buttonText,
     isReverseColors,
-    isDarkWhite,
     links,
-    formAction,
     suffixText,
     convert,
     formatOnFocusOut,
@@ -163,25 +157,6 @@ export const FormComponent: React.FC<Props> = props => {
               />
             )}
           </form>
-          {formAction && (
-            <div className={classes.actionTextContainer}>
-              <ExclamationIcon
-                isBlackWhite={!isReverseColors && !isDarkWhite}
-                isWhiteIndigo={isReverseColors && !isDarkWhite}
-                isWhiteBlack={isDarkWhite && !isReverseColors}
-              />
-
-              <span
-                className={classnames(
-                  classes.actionText,
-                  isReverseColors && classes.isReverseColors,
-                  isDarkWhite && classes.isDarkWhite,
-                )}
-              >
-                You can pay with a credit card OR crypto!
-              </span>
-            </div>
-          )}
         </div>
       )}
     </Form>

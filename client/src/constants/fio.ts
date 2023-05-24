@@ -14,6 +14,8 @@ export const MAX_CHAIN_LENGTH = 10;
 
 export const TRANSACTION_DEFAULT_OFFSET_EXPIRATION = 2700; // 45 min
 
+export const DEFAULT_TABLE_RAWS_LIMIT = 2000;
+
 export const ACTIONS = {
   transferTokens: 'transferTokens',
   addPublicAddress: 'addPublicAddress',
@@ -27,6 +29,7 @@ export const ACTIONS = {
   recordObtData: 'recordObtData',
   registerFioAddress: 'registerFioAddress',
   registerFioDomain: 'registerFioDomain',
+  registerOwnerFioDomain: 'registerOwnerFioDomain',
   renewFioDomain: 'renewFioDomain',
   transferFioAddress: 'transferFioAddress',
   transferFioDomain: 'transferFioDomain',

@@ -2,6 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 
 import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
+import { PriceComponent } from '../../../../components/PriceComponent';
 
 import { InfoBadgeComponent } from '../InfoBadgeComponent';
 
@@ -10,7 +11,7 @@ import { OrderItemsList } from '../OrderItemsList';
 import {
   ErrBadgesProps,
   OrderItemDetailed,
-  PaymentCurrency,
+  OrderDetailedTotalCost,
 } from '../../../../types';
 import { InfoBadgeData } from '../../types';
 
@@ -20,18 +21,13 @@ type Props = {
   infoBadgeData: InfoBadgeData;
   items: OrderItemDetailed[];
   errorBadges: ErrBadgesProps;
-  primaryCurrency: PaymentCurrency;
-  totalCostPrice: string;
+  totalCostPrice: OrderDetailedTotalCost;
 };
 
 export const PartialErroredOrderItemsList: React.FC<Props> = props => {
-  const {
-    infoBadgeData,
-    items,
-    errorBadges,
-    primaryCurrency,
-    totalCostPrice,
-  } = props;
+  const { infoBadgeData, items, errorBadges, totalCostPrice } = props;
+
+  const { fioTotal, freeTotalPrice, usdcTotal } = totalCostPrice || {};
 
   if (!items) return null;
 
@@ -52,15 +48,21 @@ export const PartialErroredOrderItemsList: React.FC<Props> = props => {
           />
         ),
       )}
-      <OrderItemsList items={items} primaryCurrency={primaryCurrency} />
+      <OrderItemsList items={items} />
       <Badge type={BADGE_TYPES.ERROR} show={true}>
         <div className={classnames(classes.item, classes.hasWhiteText)}>
           <span className={classnames(classes.name, 'boldText')}>
             Remaining Cost
           </span>
-          <p className={classnames(classes.itemValue, classes.withAutoMargin)}>
-            <span className="boldText">{totalCostPrice}</span>
-          </p>
+          <div
+            className={classnames(classes.itemValue, classes.withAutoMargin)}
+          >
+            <PriceComponent
+              costFio={fioTotal}
+              costUsdc={usdcTotal?.toString()}
+              isFree={!!freeTotalPrice}
+            />
+          </div>
         </div>
       </Badge>
     </div>

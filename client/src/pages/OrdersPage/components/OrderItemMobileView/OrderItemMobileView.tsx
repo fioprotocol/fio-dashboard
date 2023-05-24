@@ -18,7 +18,6 @@ export const OrderItemMobileView: React.FC<OrderItemProps> = props => {
     number,
     roe,
     payment: { paidWith },
-    showFioPrice,
     statusTitle,
     statusColor,
     total,
@@ -31,7 +30,7 @@ export const OrderItemMobileView: React.FC<OrderItemProps> = props => {
       <div className={classes.orderNumber}>{number}</div>
       <div className={classes.defaultItem}>{date}</div>
       <div className={classes.defaultItem}>
-        <OrderItemAmount total={total} roe={roe} showFioPrice={showFioPrice} />
+        <OrderItemAmount total={total} roe={roe} />
       </div>
       <div className={classes.defaultItem}>{paidWith}</div>
       <div className={classes.status}>

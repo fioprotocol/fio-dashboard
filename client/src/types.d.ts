@@ -383,7 +383,6 @@ export type RefProfile = {
   subTitle: string;
   settings: {
     domains: RefProfileDomain[];
-    allowCustomDomain: boolean;
     preselectedDomain?: string;
     actions?: Record<
       ContainedFlowActionSettingsKey,
@@ -394,12 +393,14 @@ export type RefProfile = {
         actionText?: string;
       }
     >;
+    showExplanationsSection?: false;
+    showPartnersSection?: false;
     img?: string;
     link?: string;
   };
   tpid: string;
-  freeFioAccountProfileId: number;
-  paidFioAccountProfileId: number;
+  freeFioAccountProfileId: string;
+  paidFioAccountProfileId: string;
   createdAt?: string;
 };
 
@@ -539,6 +540,7 @@ export type PrivateRedirectLocationState = {
 };
 
 export type Proxy = {
+  id: string;
   is_proxy: number;
   fioaddress: string;
 };
@@ -839,6 +841,7 @@ export type OrderItemDetailed = {
 export type OrderDetailedTotalCost = {
   fioNativeTotal: number;
   usdcTotal: number;
+  fioTotal: string;
   freeTotalPrice?: string;
   fioTotalPrice?: string;
   usdcTotalPrice?: string;

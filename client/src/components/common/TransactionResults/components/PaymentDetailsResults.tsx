@@ -6,7 +6,6 @@ import Results from '../index';
 
 import classes from '../styles/Results.module.scss';
 import { PaymentDetailsResultValues } from '../../../../pages/TokensRequestPaymentPage/types';
-import { isFioChain } from '../../../../util/fio';
 import { priceToNumber } from '../../../../utils';
 import ConvertedAmount from '../../../ConvertedAmount/ConvertedAmount';
 import Amount from '../../Amount';
@@ -38,13 +37,8 @@ const PaymentDetailsResults: React.FC<TokenTransferResultsProps> = props => {
           <p className={classes.title}>Amount</p>
           <p className={classes.item}>
             <span>
-              <Amount value={price} /> {' ' + tokenCode}
-              {isFioChain(chainCode) && (
-                <>
-                  {' ('}
-                  <ConvertedAmount fioAmount={price} />)
-                </>
-              )}
+              <ConvertedAmount fioAmount={price} /> (<Amount value={price} />
+              {' ' + tokenCode})
             </span>
           </p>
         </div>

@@ -49,7 +49,6 @@ export default class ActivateAffiliate extends Base {
           tpid: data.fch,
           settings: {
             domains: [],
-            allowCustomDomain: true,
           },
         },
         { transaction: t },

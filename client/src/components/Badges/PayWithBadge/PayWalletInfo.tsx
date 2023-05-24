@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Amount from '../../common/Amount';
+import { PriceComponent } from '../../PriceComponent';
 
 import classes from './PayWithBadge.module.scss';
 
@@ -17,10 +17,14 @@ export const PayWalletInfo: React.FC<Props> = props => {
       <p className={classes.title}>
         <span className="boldText">{walletName || `FIO Wallet`}</span>
       </p>
-      <p className={classes.balance}>
-        (Available Balance <Amount value={fioBalance} /> FIO /{' '}
-        <Amount value={usdcBalance} /> USDC)
-      </p>
+      <div className={classes.balance}>
+        (Available Balance&nbsp;
+        <PriceComponent
+          costFio={fioBalance?.toString()}
+          costUsdc={usdcBalance?.toString()}
+        />
+        )
+      </div>
     </div>
   );
 };

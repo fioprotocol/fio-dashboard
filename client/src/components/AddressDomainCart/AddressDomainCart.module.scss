@@ -69,7 +69,7 @@
 
   .itemInfo {
     .itemName, .itemPrice, .itemDescriptor {
-      font-size: 0.8em;
+      font-size: 0.8125em;
       line-height: 1.0625em;
       margin-bottom: 10px;
     }
@@ -78,11 +78,33 @@
       margin-right: 15px;
       @include proxima-nova-medium;
     }
+    .itemPrice {
+      display: flex;
+      flex-direction: row;
+      gap: 5px;
+      margin: 10px 0 5px 0;
+    }
+    .itemDescriptor {
+      margin-right: 15px;
+    }
   }
 
   .deleteIcon {
     font-size: 1em;
     cursor: pointer;
+  }
+}
+
+.actionTextContainer {
+  color: $black;
+  font-size: 0.8125rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 20px 0;
+
+  .actionText {
+    margin-left: 10px;
   }
 }
 

@@ -1,10 +1,15 @@
-import { BlockchainTransaction, Notification, Order, Payment } from '../models';
+import { BlockchainTransaction, Notification, Order, Payment, User } from '../models';
 
 import { fioApi } from '../external/fio.mjs';
+import { sendGTMEvent } from '../external/googleapi.mjs';
+import { sendSendinblueEvent } from './external/SendinblueEvent.mjs';
+
 import { countTotalPriceAmount, getPaidWith } from '../utils/order.mjs';
 import MathOp from './math.mjs';
 import logger from '../logger.mjs';
+
 import {
+  ANALYTICS_EVENT_ACTIONS,
   FIO_ACTIONS_LABEL,
   FIO_ACTIONS,
   FIO_ACTIONS_WITH_PERIOD,
@@ -36,19 +41,68 @@ export const checkOrderStatusAndCreateNotification = async orderId => {
   }
 };
 
+const sendAnalytics = async orderId => {
+  const order = await Order.orderInfo(orderId, true);
+
+  const isSuccess = order && order.status === Order.STATUS.SUCCESS;
+  const isPartial = order && order.status === Order.STATUS.PARTIALLY_SUCCESS;
+  const isFailed = order && order.status === Order.STATUS.FAILED;
+
+  if (isSuccess || isPartial || isFailed) {
+    const user = await User.findActive(order.user.id);
+
+    const { payment, regItems, total, data: orderData } = order;
+    const { gaClientId, gaSessionId } = orderData || {};
+
+    const data = {
+      currency: Payment.CURRENCY.USDC,
+      payment_type: total === '0' ? 'free' : payment.paymentProcessor,
+    };
+
+    let anayticsEvent = '';
+
+    if (isSuccess || isPartial) {
+      data.items = regItems.map(regItem => ({
+        item_name: regItem.type,
+        price: regItem.costUsdc,
+      }));
+      data.value = payment.regTotalCost.usdcTotal;
+    }
+
+    if (isSuccess) {
+      anayticsEvent = ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED;
+    }
+    if (isPartial) {
+      anayticsEvent = ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_PARTIAL;
+    }
+    if (isFailed) {
+      anayticsEvent = ANALYTICS_EVENT_ACTIONS.PURCHASE_FINISHED_FAILED;
+    }
+
+    await sendGTMEvent({
+      event: anayticsEvent,
+      clientId: gaClientId,
+      data,
+      sessionId: gaSessionId,
+    });
+    await sendSendinblueEvent({ event: anayticsEvent, user });
+  }
+};
+
 export const updateOrderStatus = async (orderId, paymentStatus, txStatuses, t) => {
   await Order.updateStatus(orderId, paymentStatus, txStatuses, t);
   await checkOrderStatusAndCreateNotification(orderId);
+  await sendAnalytics(orderId);
 };
 
 const transformFioPrice = (usdcPrice, nativeAmount) => {
   if (!usdcPrice && !nativeAmount) return 'FREE';
-  return `${new MathOp(usdcPrice).toNumber().toFixed(2)} USDC (${fioApi
+  return `$${new MathOp(usdcPrice).toNumber().toFixed(2)} (${fioApi
     .sufToAmount(nativeAmount)
     .toFixed(2)}) FIO`;
 };
 
-const transformOrderItemsForEmail = (orderItems, showPriceWithFioAmount) =>
+const transformOrderItemsForEmail = orderItems =>
   orderItems
     .reduce((items, item) => {
       const existsItem = items.find(
@@ -98,11 +152,7 @@ const transformOrderItemsForEmail = (orderItems, showPriceWithFioAmount) =>
       let priceAmount = {};
 
       if (price && price !== '0') {
-        if (showPriceWithFioAmount) {
-          priceAmount = transformFioPrice(price, nativeFio);
-        } else {
-          priceAmount = `${price} USDC`;
-        }
+        priceAmount = transformFioPrice(price, nativeFio);
       } else {
         priceAmount = 'FREE';
       }
@@ -134,7 +184,9 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith, number })
 
   const { data: paymentData, processor } = payment;
 
-  const orderPaymentInfo = {};
+  const orderPaymentInfo = {
+    paidWithTitle: 'Paid With',
+  };
 
   const isExternalProcessor = [
     Payment.PROCESSOR.STRIPE,
@@ -144,13 +196,15 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith, number })
 
   const orderItemsTotalAmount = countTotalPriceAmount(orderItems);
 
+  orderPaymentInfo.total = transformFioPrice(
+    orderItemsTotalAmount.usdcTotal,
+    orderItemsTotalAmount.fioNativeTotal,
+  );
+
   if (isFioProcessor) {
     orderPaymentInfo.paidWith = paidWith;
     orderPaymentInfo.txIds = [];
-    orderPaymentInfo.total = transformFioPrice(
-      orderItemsTotalAmount.usdcTotal,
-      orderItemsTotalAmount.fioNativeTotal,
-    );
+    if (orderPaymentInfo.total === 'FREE') orderPaymentInfo.paidWithTitle = 'Assigned To';
 
     // we need to get all blockchain transactions that have ids
     orderItems.forEach(orderItem => {
@@ -169,7 +223,6 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith, number })
   if (isExternalProcessor && paymentData) {
     orderPaymentInfo.paidWith = paidWith;
     orderPaymentInfo.orderNumber = number;
-    orderPaymentInfo.total = `${orderItemsTotalAmount.usdcTotal.toFixed(2)} USDC`;
   }
 
   return orderPaymentInfo;
@@ -187,17 +240,12 @@ const createPurchaseConfirmationNotification = async order => {
     const payment =
       payments.find(payment => payment.spentType === Payment.SPENT_TYPE.ORDER) || {};
 
-    const isFioProcessor = payment.processor === Payment.PROCESSOR.FIO;
-
     const successedOrderItemsArr = items.filter(
       orderItem =>
         orderItem.orderItemStatus.txStatus === BlockchainTransaction.STATUS.SUCCESS,
     );
 
-    const successedOrderItems = transformOrderItemsForEmail(
-      successedOrderItemsArr,
-      isFioProcessor,
-    );
+    const successedOrderItems = transformOrderItemsForEmail(successedOrderItemsArr);
 
     const paidWith = await getPaidWith({
       paymentProcessor: payment.processor,

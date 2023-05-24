@@ -78,8 +78,8 @@ export const parseActionStatus = (
           : null,
       )
     ) {
-      badgeType = 'danger';
-      badgeText = WRAP_ITEM_STATUS.FAILED;
+      badgeType = 'secondary';
+      badgeText = WRAP_ITEM_STATUS.PENDING;
       status = WRAP_ITEM_STATUS.FAILED;
     } else {
       status = WRAP_ITEM_STATUS.PENDING;
