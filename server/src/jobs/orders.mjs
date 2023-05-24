@@ -47,6 +47,11 @@ const ERROR_CODES = {
 const MAX_STATUS_NOTES_LENGTH = 200;
 const TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION = 5000;
 
+const TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE = process.env
+  .TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE
+  ? parseInt(process.env.TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE)
+  : TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION;
+
 const USER_HAS_FREE_ERROR = `Register free address error: ${USER_HAS_FREE_ADDRESS_MESSAGE}`;
 
 class OrdersJob extends CommonJob {
@@ -532,7 +537,7 @@ class OrdersJob extends CommonJob {
     }
 
     if (action === FIO_ACTIONS.renewFioDomain) {
-      await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION);
+      await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_TX_EXECUTE);
     }
     const result = await fioApi.executeTx(orderItem.action, data.signedTx);
 
