@@ -93,7 +93,5 @@ export const makeRegistrationOrder = (
     registrations.push(registration);
   }
 
-  console.log('registrations', registrations);
-
   return registrations;
 };
