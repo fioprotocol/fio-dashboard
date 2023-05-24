@@ -2,6 +2,7 @@ import React from 'react';
 
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import PaymentsBlock from './components/PaymentsBlock';
+import { PriceComponent } from '../PriceComponent';
 
 import { totalCost } from '../../util/cart';
 
@@ -46,9 +47,14 @@ const CartAmount: React.FC<Props> = props => {
       <h5 className={classes.amountSubtitle}>Total Due</h5>
       <div className={classes.total}>
         <hr className={classes.divider} />
-        <p className={classes.cost}>
-          Cost: {isFree ? 'FREE' : `${costFio} FIO / ${costUsdc} USDC`}{' '}
-        </p>
+        <div className={classes.cost}>
+          Cost:{' '}
+          <PriceComponent
+            costFio={costFio}
+            costUsdc={costUsdc}
+            isFree={isFree}
+          />
+        </div>
         <hr className={classes.divider} />
       </div>
       <div className={classes.paymentsBlock}>

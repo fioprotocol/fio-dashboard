@@ -224,8 +224,8 @@ const SendTokensForm: React.FC<SendTokensProps> = props => {
             <PriceBadge
               title="Transaction Fee"
               type={BADGE_TYPES.BLACK}
-              paymentAmount={fee.fio}
-              convertedPaymentAmount={fee.usdc}
+              costFio={fee.fio}
+              costUsdc={fee.usdc}
             />
             {showMemo && memo ? (
               <BundledTransactionBadge

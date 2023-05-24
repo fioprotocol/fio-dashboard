@@ -97,12 +97,12 @@ export const updateOrderStatus = async (orderId, paymentStatus, txStatuses, t) =
 
 const transformFioPrice = (usdcPrice, nativeAmount) => {
   if (!usdcPrice && !nativeAmount) return 'FREE';
-  return `${new MathOp(usdcPrice).toNumber().toFixed(2)} USDC (${fioApi
+  return `$${new MathOp(usdcPrice).toNumber().toFixed(2)} (${fioApi
     .sufToAmount(nativeAmount)
     .toFixed(2)}) FIO`;
 };
 
-const transformOrderItemsForEmail = (orderItems, showPriceWithFioAmount) =>
+const transformOrderItemsForEmail = orderItems =>
   orderItems
     .reduce((items, item) => {
       const existsItem = items.find(
@@ -152,11 +152,7 @@ const transformOrderItemsForEmail = (orderItems, showPriceWithFioAmount) =>
       let priceAmount = {};
 
       if (price && price !== '0') {
-        if (showPriceWithFioAmount) {
-          priceAmount = transformFioPrice(price, nativeFio);
-        } else {
-          priceAmount = `${price} USDC`;
-        }
+        priceAmount = transformFioPrice(price, nativeFio);
       } else {
         priceAmount = 'FREE';
       }
@@ -200,13 +196,14 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith, number })
 
   const orderItemsTotalAmount = countTotalPriceAmount(orderItems);
 
+  orderPaymentInfo.total = transformFioPrice(
+    orderItemsTotalAmount.usdcTotal,
+    orderItemsTotalAmount.fioNativeTotal,
+  );
+
   if (isFioProcessor) {
     orderPaymentInfo.paidWith = paidWith;
     orderPaymentInfo.txIds = [];
-    orderPaymentInfo.total = transformFioPrice(
-      orderItemsTotalAmount.usdcTotal,
-      orderItemsTotalAmount.fioNativeTotal,
-    );
     if (orderPaymentInfo.total === 'FREE') orderPaymentInfo.paidWithTitle = 'Assigned To';
 
     // we need to get all blockchain transactions that have ids
@@ -226,7 +223,6 @@ const handleOrderPaymentInfo = async ({ orderItems, payment, paidWith, number })
   if (isExternalProcessor && paymentData) {
     orderPaymentInfo.paidWith = paidWith;
     orderPaymentInfo.orderNumber = number;
-    orderPaymentInfo.total = `${orderItemsTotalAmount.usdcTotal.toFixed(2)} USDC`;
   }
 
   return orderPaymentInfo;
@@ -244,17 +240,12 @@ const createPurchaseConfirmationNotification = async order => {
     const payment =
       payments.find(payment => payment.spentType === Payment.SPENT_TYPE.ORDER) || {};
 
-    const isFioProcessor = payment.processor === Payment.PROCESSOR.FIO;
-
     const successedOrderItemsArr = items.filter(
       orderItem =>
         orderItem.orderItemStatus.txStatus === BlockchainTransaction.STATUS.SUCCESS,
     );
 
-    const successedOrderItems = transformOrderItemsForEmail(
-      successedOrderItemsArr,
-      isFioProcessor,
-    );
+    const successedOrderItems = transformOrderItemsForEmail(successedOrderItemsArr);
 
     const paidWith = await getPaidWith({
       paymentProcessor: payment.processor,

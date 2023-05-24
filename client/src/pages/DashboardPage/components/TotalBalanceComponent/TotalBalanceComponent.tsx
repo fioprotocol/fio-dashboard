@@ -63,16 +63,19 @@ export const TotalBalanceComponent: React.FC<Props> = props => {
         <div className={classes.badgeContainer}>
           <p className={classes.title}>Total FIO Wallet Balance:</p>
           <div className={classes.balance}>
-            <span className={classes.fioBalance}>
-              <BalanceComponent balance={totalBalance?.fio} loading={loading} />{' '}
-              FIO
+            <span className={classes.mainBalance}>
+              $
+              <BalanceComponent
+                balance={totalBalance?.usdc}
+                loading={loading}
+              />{' '}
             </span>
             &nbsp; (
             <BalanceComponent
-              balance={totalBalance?.usdc}
+              balance={totalBalance?.fio}
               loading={loading}
             />{' '}
-            USDC)
+            FIO)
           </div>
           <div className={classes.actionContainer}>
             <ActionButtonContainer

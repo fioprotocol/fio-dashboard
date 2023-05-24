@@ -841,6 +841,7 @@ export type OrderItemDetailed = {
 export type OrderDetailedTotalCost = {
   fioNativeTotal: number;
   usdcTotal: number;
+  fioTotal: string;
   freeTotalPrice?: string;
   fioTotalPrice?: string;
   usdcTotalPrice?: string;

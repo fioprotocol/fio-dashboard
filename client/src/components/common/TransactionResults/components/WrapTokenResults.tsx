@@ -54,7 +54,7 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
   );
   const displayUsdcAmount = (
     <>
-      / <ConvertedAmount fioAmount={fioAmount} />
+      <ConvertedAmount fioAmount={fioAmount} />
     </>
   );
 
@@ -65,7 +65,6 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
   );
   const displayUsdcFeesAmount = (
     <>
-      /{' '}
       <ConvertedAmount
         fioAmount={feeCollectedAmount}
         nativeAmount={nativeFeeCollectedAmount}
@@ -126,7 +125,7 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
           <p className={classes.title}>FIO Wrapped</p>
           <p className={classes.item}>
-            {displayAmount} {displayUsdcAmount}
+            {displayUsdcAmount} ({displayAmount})
           </p>
         </div>
       </Badge>
@@ -134,7 +133,7 @@ const WrapTokenResults: React.FC<WrapTokenResultsProps> = props => {
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
           <p className={classes.title}>Fees</p>
           <p className={classes.item}>
-            {displayFeesAmount} {displayUsdcFeesAmount}
+            {displayUsdcFeesAmount} ({displayFeesAmount})
           </p>
         </div>
       </Badge>

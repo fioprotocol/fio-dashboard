@@ -2,17 +2,13 @@ import MathOp from '../util/math';
 import apis from '../api';
 
 import { ACTIONS } from '../constants/fio';
-import { PAYMENT_PROVIDER } from '../constants/purchase';
 
 import {
   FioBalanceRes,
   OrderDetailedTotalCost,
-  PaymentProvider,
   WalletBalances,
   WalletBalancesItem,
 } from '../types';
-
-const DEFAULT_DIVIDER = ' / ';
 
 export function convertFioPrices(
   nativeFio: number | null | undefined,
@@ -124,20 +120,12 @@ export const getDefaultOracleFeePrices = ({
 
 export const combinePriceWithDivider = ({
   totalCostPrice,
-  paymentProcessor,
-  divider = DEFAULT_DIVIDER,
 }: {
   totalCostPrice: OrderDetailedTotalCost;
-  paymentProcessor: PaymentProvider;
-  divider?: string;
 }) => {
   const { freeTotalPrice, fioTotalPrice, usdcTotalPrice } =
     totalCostPrice || {};
   if (freeTotalPrice) return freeTotalPrice;
 
-  if (paymentProcessor === PAYMENT_PROVIDER.FIO) {
-    return `${fioTotalPrice}${divider}${usdcTotalPrice}`;
-  }
-
-  return usdcTotalPrice;
+  return `${usdcTotalPrice} (${fioTotalPrice})`;
 };

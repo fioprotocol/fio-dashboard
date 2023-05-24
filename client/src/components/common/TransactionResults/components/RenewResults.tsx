@@ -23,8 +23,8 @@ const RenewResults: React.FC<ResultsProps> = props => {
     <Results {...props}>
       <h5 className={classes.label}>Renew Details</h5>
       <PriceBadge
-        paymentAmount={fio}
-        convertedPaymentAmount={usdc}
+        costFio={fio}
+        costUsdc={usdc}
         title={name}
         type={BADGE_TYPES.WHITE}
       />

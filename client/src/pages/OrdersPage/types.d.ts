@@ -24,7 +24,6 @@ export type OrdersPageProps = {
 
 export type OrderItemProps = {
   date: string;
-  showFioPrice: boolean;
   statusTitle?: string;
   statusColor: ColorTypes;
 } & ActionsProps &

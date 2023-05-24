@@ -61,8 +61,8 @@ const FioDomainStatusChangeForm: React.FC<FormProps> = props => {
         <h5 className={classes.label}>Change Change Cost</h5>
         <div className={classes.badge}>
           <PriceBadge
-            paymentAmount={fio}
-            convertedPaymentAmount={usdc}
+            costFio={fio}
+            costUsdc={usdc}
             type={BADGE_TYPES.BLACK}
             title="Status Change Fee"
           />

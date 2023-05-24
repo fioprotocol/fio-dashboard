@@ -1,31 +1,26 @@
 import React from 'react';
 
+import { PriceComponent } from '../../../components/PriceComponent';
+
 import apis from '../../../api';
 import MathOp from '../../../util/math';
 
 type AmountProps = {
   roe: string;
-  showFioPrice?: boolean;
   total: string;
 };
 
 export const OrderItemAmount: React.FC<AmountProps> = props => {
-  const { roe, showFioPrice, total } = props;
+  const { roe, total } = props;
 
-  if (total === '0' || total == null) return <>FREE</>;
+  const isFree = total === '0' || total == null;
 
-  let amount = `${total} USDC`;
+  const costFio = apis.fio
+    .convertUsdcToFio(
+      new MathOp(total || 0).toNumber(),
+      new MathOp(roe).toNumber(),
+    )
+    .toFixed(2);
 
-  if (showFioPrice) {
-    const fioAmount = apis.fio
-      .convertUsdcToFio(
-        new MathOp(total).toNumber(),
-        new MathOp(roe).toNumber(),
-      )
-      .toFixed(2);
-
-    amount += ` (${fioAmount} FIO)`;
-  }
-
-  return <>{amount}</>;
+  return <PriceComponent costFio={costFio} costUsdc={total} isFree={isFree} />;
 };

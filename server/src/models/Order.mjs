@@ -667,12 +667,9 @@ export class Order extends Base {
           isFree,
           hasCustomDomain,
           priceString: transformOrderItemCostToPriceString({
-            orderItemCostObj: {
-              fioNativeAmount: feeCollected,
-              usdcAmount: price,
-              isFree,
-            },
-            paymentCurrency,
+            fioNativeAmount: feeCollected,
+            usdcAmount: price,
+            isFree,
           }),
           errorType:
             event && event.data && event.data.errorType
@@ -700,12 +697,9 @@ export class Order extends Base {
         isFree,
         hasCustomDomain,
         priceString: transformOrderItemCostToPriceString({
-          orderItemCostObj: {
-            fioNativeAmount: feeCollected,
-            usdcAmount: price,
-            isFree,
-          },
-          paymentCurrency,
+          fioNativeAmount: feeCollected,
+          usdcAmount: price,
+          isFree,
         }),
         transaction_id: bcTx.txId,
         transaction_ids: [bcTx.txId, customDomainBcTx && customDomainBcTx.txId].filter(
@@ -723,11 +717,9 @@ export class Order extends Base {
 
     const regTotalCostPrice = transformOrderTotalCostToPriceObj({
       totalCostObj: regTotalCostAmount,
-      paymentCurrency,
     });
     const errTotalCostPrice = transformOrderTotalCostToPriceObj({
       totalCostObj: errTotalCostAmount,
-      paymentCurrency,
     });
 
     const regTotalCost = { ...regTotalCostAmount, ...regTotalCostPrice };
@@ -751,8 +743,8 @@ export class Order extends Base {
       createdAt,
       status,
       user: user ? { id: user.id, email: user.email } : null,
-      errItems: combineOrderItems({ orderItems: errItems, paymentCurrency }),
-      regItems: combineOrderItems({ orderItems: regItems, paymentCurrency }),
+      errItems: combineOrderItems({ orderItems: errItems }),
+      regItems: combineOrderItems({ orderItems: regItems }),
       errorBadges,
       isAllErrored,
       isPartial,

@@ -32,7 +32,7 @@ type Props = {
 
 export const useContext = (orderItem: OrderDetailed): Props => {
   const { createdAt, number, payment, status, regItems = [] } = orderItem || {};
-  const { paidWith, regTotalCost, paymentProcessor } = payment || {};
+  const { paidWith, regTotalCost } = payment || {};
 
   const orderDetails = {
     title: 'Order Details',
@@ -59,7 +59,6 @@ export const useContext = (orderItem: OrderDetailed): Props => {
         title: 'Total Cost',
         value: combinePriceWithDivider({
           totalCostPrice: regTotalCost,
-          paymentProcessor,
         }),
       },
       { title: 'Paid With', value: paidWith },

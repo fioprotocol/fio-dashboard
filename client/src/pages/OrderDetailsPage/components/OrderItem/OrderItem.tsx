@@ -10,15 +10,11 @@ import { DOMAIN_TYPE } from '../../../../constants/fio';
 import apis from '../../../../api';
 import MathOp from '../../../../util/math';
 
-import { OrderItemDetailed, PaymentCurrency } from '../../../../types';
+import { OrderItemDetailed } from '../../../../types';
 
 import classes from './OrderItem.module.scss';
 
-type Props = {
-  primaryCurrency: PaymentCurrency;
-} & OrderItemDetailed;
-
-export const OrderItem: React.FC<Props> = props => {
+export const OrderItem: React.FC<OrderItemDetailed> = props => {
   const {
     address,
     hasCustomDomain,
@@ -28,7 +24,6 @@ export const OrderItem: React.FC<Props> = props => {
     id,
     fee_collected,
     costUsdc,
-    primaryCurrency,
     transaction_ids,
   } = props;
 
@@ -51,7 +46,7 @@ export const OrderItem: React.FC<Props> = props => {
 
   return (
     <>
-      <CartItem item={item} primaryCurrency={primaryCurrency} />
+      <CartItem item={item} />
       {transaction_ids?.length > 0 &&
         transaction_ids
           .filter(transaction_id => !!transaction_id)

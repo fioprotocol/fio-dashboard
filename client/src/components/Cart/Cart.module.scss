@@ -152,6 +152,9 @@
     margin-top: 1.25rem;
     margin-bottom: 0;
     font-size: 0.8125em;
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
     @include proxima-nova-semibold;
 
     .light {
