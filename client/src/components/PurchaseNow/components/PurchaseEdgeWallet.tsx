@@ -84,7 +84,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
         } else if (registration.type === CART_ITEM_TYPE.DOMAIN) {
           await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION); // Add timeout to aviod the same sign tx hash for more than 2 years domain renew
           signedTx = await apis.fio.walletFioSDK.genericAction(
-            ACTIONS.registerOwnerFioDomain,
+            ACTIONS.registerFioDomain,
             {
               fioDomain: registration.fioName,
               maxFee: registration.fee,
