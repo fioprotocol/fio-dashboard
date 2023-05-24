@@ -4,7 +4,7 @@ import {
   ErrBadgesProps,
   OrderDetailed,
   OrderItemDetailed,
-  PaymentCurrency,
+  OrderDetailedTotalCost,
   PaymentProvider,
   PaymentStatus,
 } from '../../types';
@@ -44,11 +44,10 @@ export type ContextProps = {
   paymentInfo: {
     orderNumber: string;
     paidWith?: string;
-    totalCostPrice: string;
-    paymentCurrency: PaymentCurrency;
+    totalCostPrice: OrderDetailedTotalCost;
   };
   orderItemsToRender: OrderItemDetailed[];
   partialErrorItems: OrderItemDetailed[];
-  partialErrorTotalCost: string;
+  partialErrorTotalCost: OrderDetailedTotalCost;
   errorBadges: ErrBadgesProps;
 };

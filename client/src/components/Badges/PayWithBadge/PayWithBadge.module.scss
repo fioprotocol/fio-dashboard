@@ -35,6 +35,8 @@
   .balance {
     margin-bottom: 0;
     font-size: 0.875em;
+    display: flex;
+    flex-direction: row;
     @include proxima-nova-thin
   }
 }

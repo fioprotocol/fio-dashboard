@@ -183,8 +183,8 @@ class EmailSender {
       /**
        *
        * @param date example 24/03/2022 @ 5:46 pm
-       * @param fioBalanceChange example +120 FIO ($120.00 USDC)
-       * @param newFioBalance example +220 FIO ($220.00 USDC)
+       * @param fioBalanceChange example +$120.00 (120 FIO)
+       * @param newFioBalance example +$220.00 (220 FIO)
        * @param wallet example FIO82i9X4UpBC8yKRs1F59cbZomFEnryYipHNZXq921EppJheZzK6
        */
       case templates.balanceChange:
@@ -280,11 +280,11 @@ class EmailSender {
        * @param successedOrderItems.address example 'tester'
        * @param successedOrderItems.domain example 'testdomain'
        * @param successedOrderItems.hasCustomDomain example 'true'
-       * @param successedOrderItems.priceAmount example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
+       * @param successedOrderItems.priceAmount example '$17.36 (378.97 FIO)'
        * @param successedOrderItems.descriptor example 'FIO Crypto Handle Registration'
        *
        * @param successedOrderPaymentInfo {}
-       * @param successedOrderPaymentInfo.total example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
+       * @param successedOrderPaymentInfo.total example '$17.36 (378.97 FIO)'
        * @param successedOrderPaymentInfo.paidWith example 'My FIO Wallet' or 'visa ending in 7676'
        * @param successedOrderPaymentInfo.paidWithTitle example 'Paid With' for paid orders and 'Assigned To' for free orders
        * @param successedOrderPaymentInfo.orderNumber example 'ABC123',
@@ -296,11 +296,11 @@ class EmailSender {
        * @param failedOrderItems.address example 'tester'
        * @param failedOrderItems.domain example 'testdomain'
        * @param failedOrderItems.hasCustomDomain example 'true'
-       * @param failedOrderItems.priceAmount example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
+       * @param failedOrderItems.priceAmount example '$17.36 (378.97 FIO)'
        * @param failedOrderItems.descriptor example 'FIO Crypto Handle Registration'
        *
        * @param failedOrderPaymentInfo {}
-       * @param failedOrderPaymentInfo.total example '378.97 FIO (17.36 USDC)' for FIO and '17.36 USDC' for credit card
+       * @param failedOrderPaymentInfo.total example '$17.36 (378.97 FIO)'
        * @param failedOrderPaymentInfo.paidWith example 'My FIO Wallet' or 'visa ending in 7676'
        * @param failedOrderPaymentInfo.paidWithTitle example 'Paid With' for paid orders and 'Assigned To' for free orders
        * @param failedOrderPaymentInfo.orderNumber example 'ABC123',

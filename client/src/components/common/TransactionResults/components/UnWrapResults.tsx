@@ -55,7 +55,7 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
   );
   const displayUsdcAmount = (
     <>
-      / <ConvertedAmount fioAmount={fioAmount} />
+      <ConvertedAmount fioAmount={fioAmount} />
     </>
   );
 
@@ -111,7 +111,7 @@ const UnWrapResults: React.FC<UnWrapResultsProps> = props => {
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
           <p className={classes.title}>FIO Unwrapped</p>
           <p className={classes.item}>
-            {displayAmount} {displayUsdcAmount}
+            {displayUsdcAmount} ({displayAmount})
           </p>
         </div>
       </Badge>

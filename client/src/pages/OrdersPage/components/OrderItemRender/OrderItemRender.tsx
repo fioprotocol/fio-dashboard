@@ -8,7 +8,6 @@ import { commonFormatTime } from '../../../../util/general';
 
 import {
   ORDER_STATUS_LABELS,
-  PAYMENT_PROVIDER,
   PURCHASE_RESULTS_STATUS,
 } from '../../../../constants/purchase';
 
@@ -23,18 +22,12 @@ type OrderItemRenderProps = {
 
 export const OrderItemRender: React.FC<OrderItemRenderProps> = props => {
   const { isDesktop, orderItem, onDownloadClick, onPrintClick } = props;
-  const {
-    createdAt,
-    status,
-    payment: { paymentProcessor },
-  } = orderItem;
+  const { createdAt, status } = orderItem;
 
   const statusTitle =
     ORDER_STATUS_LABELS[status]?.title || ORDER_STATUS_LABELS.DEAFULT.title;
   const statusColor =
     ORDER_STATUS_LABELS[status]?.color || ORDER_STATUS_LABELS.DEAFULT.color;
-
-  const showFioPrice = paymentProcessor === PAYMENT_PROVIDER.FIO;
 
   const date = commonFormatTime(createdAt);
 
@@ -47,7 +40,6 @@ export const OrderItemRender: React.FC<OrderItemRenderProps> = props => {
     date,
     disablePrintButton: !isSuccessOrPartialStatus || !isDesktopBrowser,
     disablePdfButton: !isSuccessOrPartialStatus,
-    showFioPrice,
     statusTitle,
     statusColor,
     onDownloadClick,

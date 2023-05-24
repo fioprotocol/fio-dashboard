@@ -7,7 +7,7 @@
   align-items: flex-start;
   width: 100%;
 
-  .title, .fioBalance {
+  .title, .mainBalance {
     font-size: 1em;
     @include proxima-nova-semibold;
   }
@@ -23,9 +23,8 @@
     align-items: center;
   }
 
-  .fioBalance {
+  .mainBalance {
     display: flex;
-    
   }
 
   .actionContainer {

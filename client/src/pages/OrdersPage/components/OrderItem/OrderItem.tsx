@@ -19,7 +19,6 @@ export const OrderItem: React.FC<OrderItemProps> = props => {
     number,
     roe,
     payment: { paidWith },
-    showFioPrice,
     statusTitle,
     statusColor,
     total,
@@ -34,7 +33,7 @@ export const OrderItem: React.FC<OrderItemProps> = props => {
       </div>
       <div className={classes.tableCol}>{number}</div>
       <div className={classes.tableCol}>
-        <OrderItemAmount total={total} roe={roe} showFioPrice={showFioPrice} />
+        <OrderItemAmount total={total} roe={roe} />
       </div>
       <div className={classes.tableCol}>{paidWith}</div>
       <div className={classes.tableCol}>

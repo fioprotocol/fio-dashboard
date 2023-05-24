@@ -34,7 +34,7 @@ const StakeTokensResults: React.FC<TokenTransferResultsProps & {
   );
   const displayUsdcAmount = (
     <>
-      / <ConvertedAmount fioAmount={fioAmount} nativeAmount={nativeAmount} />
+      <ConvertedAmount fioAmount={fioAmount} nativeAmount={nativeAmount} />
     </>
   );
 
@@ -47,7 +47,7 @@ const StakeTokensResults: React.FC<TokenTransferResultsProps & {
         <div className={classnames(classes.badgeContainer, classes.longTitle)}>
           <p className={classes.title}>{titleAmount}</p>
           <p className={classes.item}>
-            {displayAmount} {displayUsdcAmount}
+            {displayUsdcAmount} ({displayAmount})
           </p>
         </div>
       </Badge>

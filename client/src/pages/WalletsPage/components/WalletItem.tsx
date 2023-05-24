@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames';
 
 import Badge, { BADGE_TYPES } from '../../../components/Badge/Badge';
-import Amount from '../../../components/common/Amount';
+import { PriceComponent } from '../../../components/PriceComponent';
 import LedgerBadge from '../../../components/Badges/LedgerBadge/LedgerBadge';
 
 import { useCheckIfDesktop } from '../../../screenType';
@@ -50,10 +50,12 @@ const WalletItem: React.FC<Props> = props => {
           <div className={classes.itemContainer}>
             <div className={classes.balanceContainer}>
               <p className={classes.totalBalance}>Total balance</p>
-              <p className={classes.balanceValue}>
-                <Amount value={walletBalancesTotal.fio} /> FIO /{' '}
-                <Amount value={walletBalancesTotal.usdc} /> USDC
-              </p>
+              <div className={classes.balanceValue}>
+                <PriceComponent
+                  costFio={walletBalancesTotal.fio}
+                  costUsdc={walletBalancesTotal.usdc}
+                />
+              </div>
             </div>
             {fioWallet.from === WALLET_CREATED_FROM.LEDGER ? (
               <div className={classes.ledgerContainer}>

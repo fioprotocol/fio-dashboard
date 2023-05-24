@@ -1,0 +1,1 @@
+export { PriceComponent } from './PriceComponent';

@@ -7,6 +7,7 @@ import { useHistory } from 'react-router-dom';
 import CartSmallContainer from '../CartSmallContainer/CartSmallContainer';
 import CounterContainer from '../CounterContainer/CounterContainer';
 import { ExclamationIcon } from '../ExclamationIcon';
+import { PriceComponent } from '../PriceComponent';
 
 import { ROUTES } from '../../constants/routes';
 import { ANALYTICS_EVENT_ACTIONS } from '../../constants/common';
@@ -149,17 +150,18 @@ const AddressDomainCart: React.FC<Props> = props => {
                   <p className={classes.itemDescriptor}>
                     <span>{getCartItemDescriptor(item.type, item.period)}</span>
                   </p>
-                  <p className={classes.itemPrice}>
-                    <span className="boldText">
-                      Cost:{' '}
-                      {!Number.isFinite(item.costNativeFio) ||
-                      item.domainType === DOMAIN_TYPE.FREE ||
-                      item.domainType === DOMAIN_TYPE.PRIVATE
-                        ? 'FREE'
-                        : `${item.costFio} FIO
-                      (${item.costUsdc} USDC)`}
-                    </span>{' '}
-                  </p>
+                  <div className={classes.itemPrice}>
+                    <span className="boldText">Cost: </span>
+                    <PriceComponent
+                      costFio={item.costFio}
+                      costUsdc={item.costUsdc}
+                      isFree={
+                        !Number.isFinite(item.costNativeFio) ||
+                        item.domainType === DOMAIN_TYPE.FREE ||
+                        item.domainType === DOMAIN_TYPE.PRIVATE
+                      }
+                    />
+                  </div>
                 </div>
 
                 <FontAwesomeIcon

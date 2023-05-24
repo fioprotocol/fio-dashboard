@@ -2,20 +2,27 @@ import React from 'react';
 import classnames from 'classnames';
 
 import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
+import { PriceComponent } from '../../../../components/PriceComponent';
+
+import { OrderDetailedTotalCost } from '../../../../types';
 
 import classes from './PaymentDetails.module.scss';
 
 type Props = {
   orderNumber: string;
   paidWith?: string;
-  totalCostPrice: string;
+  totalCostPrice: OrderDetailedTotalCost;
 };
 
 export const PaymentDetails: React.FC<Props> = props => {
-  const { orderNumber, paidWith, totalCostPrice } = props;
+  const {
+    orderNumber,
+    paidWith,
+    totalCostPrice: { fioTotal, freeTotalPrice, usdcTotal } = {},
+  } = props;
 
-  const isFree = totalCostPrice === 'FREE';
-  const paidWithTitle = totalCostPrice === 'FREE' ? 'Assigned To' : 'Paid With';
+  const isFree = freeTotalPrice === 'FREE';
+  const paidWithTitle = freeTotalPrice === 'FREE' ? 'Assigned To' : 'Paid With';
 
   return (
     <div className={classes.details}>
@@ -25,9 +32,15 @@ export const PaymentDetails: React.FC<Props> = props => {
           <span className={classnames(classes.name, 'boldText')}>
             Total Cost
           </span>
-          <p className={classnames(classes.itemValue, classes.withAutoMargin)}>
-            <span className="boldText">{totalCostPrice}</span>
-          </p>
+          <div
+            className={classnames(classes.itemValue, classes.withAutoMargin)}
+          >
+            <PriceComponent
+              costFio={fioTotal}
+              costUsdc={usdcTotal?.toString()}
+              isFree={!!freeTotalPrice}
+            />
+          </div>
         </div>
       </Badge>
       <Badge type={BADGE_TYPES.WHITE} show={!isFree && !!paidWith}>

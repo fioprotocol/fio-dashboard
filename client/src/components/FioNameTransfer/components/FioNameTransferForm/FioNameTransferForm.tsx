@@ -90,8 +90,8 @@ export const TransferForm: React.FC<FormProps> = props => {
         />
         <p className={classes.label}>{fioNameLabel} Transfer Cost</p>
         <PriceBadge
-          paymentAmount={fio}
-          convertedPaymentAmount={usdc}
+          costFio={fio}
+          costUsdc={usdc}
           title={`${fioNameLabel} Transfer Fee`}
           type={BADGE_TYPES.BLACK}
         />
