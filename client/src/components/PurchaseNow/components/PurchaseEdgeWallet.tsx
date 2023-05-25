@@ -77,14 +77,14 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
               fioAddress: registration.fioName,
               bundleSets: DEFAULT_BUNDLE_SET_VALUE,
               maxFee: registration.fee,
-              tpid: apis.fio.tpid,
+              technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           );
         } else if (registration.type === CART_ITEM_TYPE.DOMAIN) {
           await sleep(TIME_TO_WAIT_BEFORE_DEPENDED_REGISTRATION); // Add timeout to aviod the same sign tx hash for more than 2 years domain renew
           signedTx = await apis.fio.walletFioSDK.genericAction(
-            ACTIONS.registerOwnerFioDomain,
+            ACTIONS.registerFioDomain,
             {
               fioDomain: registration.fioName,
               maxFee: registration.fee,
@@ -100,7 +100,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             {
               fioDomain: registration.fioName,
               maxFee: registration.fee,
-              tpid: apis.fio.tpid,
+              technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           );
@@ -110,7 +110,7 @@ const PurchaseEdgeWallet: React.FC<Props> = props => {
             {
               fioAddress: registration.fioName,
               maxFee: registration.fee,
-              tpid: apis.fio.tpid,
+              technologyProviderId: apis.fio.tpid,
               expirationOffset: TRANSACTION_DEFAULT_OFFSET_EXPIRATION,
             },
           );
