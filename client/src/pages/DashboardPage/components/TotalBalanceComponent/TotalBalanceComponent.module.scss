@@ -7,7 +7,7 @@
   align-items: flex-start;
   width: 100%;
 
-  .title, .mainBalance {
+  .title {
     font-size: 1em;
     @include proxima-nova-semibold;
   }
@@ -25,6 +25,7 @@
 
   .mainBalance {
     display: flex;
+    font-size: 1em;
   }
 
   .actionContainer {

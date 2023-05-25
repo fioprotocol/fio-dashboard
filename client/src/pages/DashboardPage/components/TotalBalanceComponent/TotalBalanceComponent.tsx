@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Badge, { BADGE_TYPES } from '../../../../components/Badge/Badge';
 import Loader from '../../../../components/Loader/Loader';
 import SubmitButton from '../../../../components/common/SubmitButton/SubmitButton';
+import { PriceComponent } from '../../../../components/PriceComponent';
 
 import { ItemWrapper } from '../ItemWrapper';
 
@@ -20,26 +21,8 @@ type Props = {
   loading: boolean;
 };
 
-type BalanceProps = {
-  balance: string;
-  loading: boolean;
-};
-
 type ActionButtonContainerProps = {
   show: boolean;
-};
-
-const BalanceComponent: React.FC<BalanceProps> = props => {
-  const { balance = 0, loading } = props;
-
-  if (loading)
-    return (
-      <span className="d-flex flex-direction-row">
-        <Loader isWhite styles={{ width: '16px', height: '16px' }} /> &nbsp;
-      </span>
-    );
-
-  return <>{balance}</>;
 };
 
 const ActionButtonContainer: React.FC<ActionButtonContainerProps> = props => {
@@ -64,18 +47,15 @@ export const TotalBalanceComponent: React.FC<Props> = props => {
           <p className={classes.title}>Total FIO Wallet Balance:</p>
           <div className={classes.balance}>
             <span className={classes.mainBalance}>
-              $
-              <BalanceComponent
-                balance={totalBalance?.usdc}
+              <PriceComponent
+                costFio={totalBalance.fio}
+                costUsdc={totalBalance.usdc}
                 loading={loading}
-              />{' '}
+                loaderComponent={
+                  <Loader isWhite styles={{ width: '16px', height: '16px' }} />
+                }
+              />
             </span>
-            &nbsp; (
-            <BalanceComponent
-              balance={totalBalance?.fio}
-              loading={loading}
-            />{' '}
-            FIO)
           </div>
           <div className={classes.actionContainer}>
             <ActionButtonContainer
