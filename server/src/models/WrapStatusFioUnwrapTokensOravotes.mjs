@@ -2,6 +2,8 @@ import Sequelize from 'sequelize';
 
 import Base from './Base';
 
+import { WrapStatusFioUnwrapTokensLogs as WrapStatusFioUnwrapTokensLogsModel } from './WrapStatusFioUnwrapTokensLogs.mjs';
+
 const { DataTypes: DT } = Sequelize;
 
 export class WrapStatusFioUnwrapTokensOravotes extends Base {
@@ -26,9 +28,16 @@ export class WrapStatusFioUnwrapTokensOravotes extends Base {
     );
   }
 
+  static associate() {
+    this.hasMany(WrapStatusFioUnwrapTokensLogsModel, {
+      foreignKey: 'obtId',
+      sourceKey: 'obtId',
+    });
+  }
+
   static attrs(type = 'default') {
     const attributes = {
-      default: ['id', 'obtId', 'isComplete', 'data'],
+      default: ['attempts', 'id', 'obtId', 'isComplete', 'data'],
     };
 
     if (type in attributes) {
@@ -56,5 +65,28 @@ export class WrapStatusFioUnwrapTokensOravotes extends Base {
       { query, values },
       { type: this.sequelize.QueryTypes.INSERT },
     );
+  }
+
+  static format({
+    attempts,
+    id,
+    obtId,
+    isComplete,
+    data,
+    WrapStatusFioUnwrapTokensLogs,
+  }) {
+    return {
+      attempts,
+      id,
+      obtId,
+      isComplete,
+      data,
+      WrapStatusFioUnwrapTokensLogs:
+        WrapStatusFioUnwrapTokensLogs && WrapStatusFioUnwrapTokensLogs.length
+          ? WrapStatusFioUnwrapTokensLogs.map(wrapStatusFioUnwrapTokensItem =>
+              WrapStatusFioUnwrapTokensLogsModel.format(wrapStatusFioUnwrapTokensItem),
+            )
+          : [],
+    };
   }
 }

@@ -1,8 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import { ExclamationIcon } from '../ExclamationIcon';
-
 import { FioDomainForm } from './components/FioDomainForm';
 
 import { FormValues } from './types';
@@ -29,15 +27,6 @@ export const FioDomainWidget: React.FC<Props> = props => {
         Secure a FIO Domain NFT to customize your web3 identity
       </p>
       <FioDomainForm onSubmit={onSubmit} />
-      <div className={classes.actionTextContainer}>
-        <ExclamationIcon
-          isBlackWhite={!isReverseColors}
-          isWhiteIndigo={isReverseColors}
-        />
-        <span className={classes.actionText}>
-          You can pay with a credit card OR crypto!
-        </span>
-      </div>
     </div>
   );
 };

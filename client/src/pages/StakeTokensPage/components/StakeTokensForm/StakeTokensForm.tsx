@@ -291,8 +291,8 @@ const StakeTokensForm: React.FC<StakeTokensProps> = props => {
               <PriceBadge
                 title="Fees"
                 type={BADGE_TYPES.BLACK}
-                paymentAmount={fee.fio}
-                convertedPaymentAmount={fee.usdc}
+                costFio={fee.fio}
+                costUsdc={fee.usdc}
               />
             ) : (
               <BundledTransactionBadge

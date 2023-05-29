@@ -245,7 +245,7 @@ export class Order extends Base {
     return orders;
   }
 
-  static async orderInfo(id) {
+  static async orderInfo(id, useFormatDetailed) {
     const orderObj = await this.findById(id, {
       include: [
         {
@@ -262,20 +262,27 @@ export class Order extends Base {
       order: [[OrderItem, 'id', 'ASC']],
     });
 
-    const order = this.format(orderObj.get({ plain: true }));
-    const blockchainTransactionsIds = [];
+    if (useFormatDetailed) {
+      return this.formatDetailed(orderObj.get({ pain: true }));
+    } else {
+      const order = this.format(orderObj.get({ plain: true }));
 
-    order.items.forEach(orderItem => {
-      orderItem.blockchainTransactions.forEach(blockchainTransactionItem => {
-        blockchainTransactionsIds.push(blockchainTransactionItem.id);
+      const blockchainTransactionsIds = [];
+
+      order.items.forEach(orderItem => {
+        orderItem.blockchainTransactions.forEach(blockchainTransactionItem => {
+          blockchainTransactionsIds.push(blockchainTransactionItem.id);
+        });
       });
-    });
 
-    order.blockchainTransactionEvents = await BlockchainTransactionEventLog.list({
-      blockchainTransactionId: { [Sequelize.Op.in]: blockchainTransactionsIds },
-    });
+      order.blockchainTransactionEvents = await BlockchainTransactionEventLog.list({
+        blockchainTransactionId: {
+          [Sequelize.Op.in]: blockchainTransactionsIds,
+        },
+      });
 
-    return order;
+      return order;
+    }
   }
 
   static async listSearchByFioAddressItems(domain, address) {
@@ -555,6 +562,7 @@ export class Order extends Base {
     id,
     number,
     total,
+    data,
     roe,
     publicKey,
     createdAt,
@@ -659,12 +667,9 @@ export class Order extends Base {
           isFree,
           hasCustomDomain,
           priceString: transformOrderItemCostToPriceString({
-            orderItemCostObj: {
-              fioNativeAmount: feeCollected,
-              usdcAmount: price,
-              isFree,
-            },
-            paymentCurrency,
+            fioNativeAmount: feeCollected,
+            usdcAmount: price,
+            isFree,
           }),
           errorType:
             event && event.data && event.data.errorType
@@ -692,12 +697,9 @@ export class Order extends Base {
         isFree,
         hasCustomDomain,
         priceString: transformOrderItemCostToPriceString({
-          orderItemCostObj: {
-            fioNativeAmount: feeCollected,
-            usdcAmount: price,
-            isFree,
-          },
-          paymentCurrency,
+          fioNativeAmount: feeCollected,
+          usdcAmount: price,
+          isFree,
         }),
         transaction_id: bcTx.txId,
         transaction_ids: [bcTx.txId, customDomainBcTx && customDomainBcTx.txId].filter(
@@ -715,11 +717,9 @@ export class Order extends Base {
 
     const regTotalCostPrice = transformOrderTotalCostToPriceObj({
       totalCostObj: regTotalCostAmount,
-      paymentCurrency,
     });
     const errTotalCostPrice = transformOrderTotalCostToPriceObj({
       totalCostObj: errTotalCostAmount,
-      paymentCurrency,
     });
 
     const regTotalCost = { ...regTotalCostAmount, ...regTotalCostPrice };
@@ -738,12 +738,13 @@ export class Order extends Base {
       number,
       total,
       roe,
+      data,
       publicKey,
       createdAt,
       status,
       user: user ? { id: user.id, email: user.email } : null,
-      errItems: combineOrderItems({ orderItems: errItems, paymentCurrency }),
-      regItems: combineOrderItems({ orderItems: regItems, paymentCurrency }),
+      errItems: combineOrderItems({ orderItems: errItems }),
+      regItems: combineOrderItems({ orderItems: regItems }),
       errorBadges,
       isAllErrored,
       isPartial,

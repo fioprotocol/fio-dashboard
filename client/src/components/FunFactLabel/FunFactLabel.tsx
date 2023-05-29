@@ -13,7 +13,7 @@ export const FunFactLabel: React.FC<Props> = props => {
 
   return (
     <div className={classes.container}>
-      <ExclamationIcon isBlackWhite />
+      <ExclamationIcon />
       <div className={classes.textContainer}>
         <span className={classes.textLabel}>Fun Fact ..</span>
         {children}

@@ -374,7 +374,10 @@ export const cartItemsToOrderItems = (
       } = {
         cartItemId: id,
       };
-      const nativeFio = domainType === DOMAIN_TYPE.FREE ? 0 : costNativeFio;
+      const nativeFio =
+        domainType === DOMAIN_TYPE.FREE || domainType === DOMAIN_TYPE.PRIVATE
+          ? 0
+          : costNativeFio;
 
       if (!!address && domainType === DOMAIN_TYPE.CUSTOM) {
         const items: CreateOrderActionItem[] = [

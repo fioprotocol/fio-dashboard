@@ -189,8 +189,8 @@ const FioAddressAddBundlesPage: React.FC<ContainerProps &
           {renderDetails()}
           <h5 className={classes.label}>Payment Details</h5>
           <PriceBadge
-            paymentAmount={fio}
-            convertedPaymentAmount={usdc}
+            costFio={fio}
+            costUsdc={usdc}
             title="Total Cost"
             type={BADGE_TYPES.BLACK}
           />

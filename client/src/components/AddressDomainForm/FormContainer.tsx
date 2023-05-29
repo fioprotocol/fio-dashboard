@@ -6,7 +6,6 @@ import classnames from 'classnames';
 
 import Card from '../Card/Card';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
-import { ExclamationIcon } from '../ExclamationIcon';
 
 import PriceBadge from './PriceBadge';
 import AddressForm from './AddressForm';
@@ -40,7 +39,6 @@ const FormContainer: React.FC<FormContainerProps> = props => {
     showCustomDomain,
     options,
     domain,
-    allowCustomDomains,
     isValidating,
     toggleShowCustomDomain,
     toggleShowAvailable,
@@ -124,7 +122,6 @@ const FormContainer: React.FC<FormContainerProps> = props => {
       showCustomDomain,
       options,
       domain,
-      allowCustomDomains,
       isValidating,
       toggleShowCustomDomain,
       isReverseColors,
@@ -176,16 +173,6 @@ const FormContainer: React.FC<FormContainerProps> = props => {
             }
           />
         )}
-        <div className={classes.actionTextContainer}>
-          <ExclamationIcon
-            isBlackWhite={!isReverseColors && !isDarkWhite}
-            isWhiteIndigo={isReverseColors && !isDarkWhite}
-            isWhiteBlack={isDarkWhite && !isReverseColors}
-          />
-          <span className={classes.actionText}>
-            You can pay with a credit card OR crypto!
-          </span>
-        </div>
       </form>
     );
   };

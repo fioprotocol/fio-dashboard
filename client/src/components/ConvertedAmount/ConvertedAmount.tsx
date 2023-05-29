@@ -21,7 +21,7 @@ const ConvertedAmount: React.FC<Props> = props => {
 
   return (
     <span>
-      $ <Amount value={usdcPrice} /> USDC
+      $<Amount value={usdcPrice} />
     </span>
   );
 };

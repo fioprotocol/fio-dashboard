@@ -10,6 +10,7 @@ import {
   REF_PROFILE_TYPE,
   REF_PROFILE_TYPES_FILTER_OPTIONS,
 } from '../../constants/common';
+import { FIO_ACCOUNT_TYPES } from '../../constants/fio';
 import { DEFAULT_LIMIT } from '../../hooks/usePagination';
 
 import useEffectOnce from '../../hooks/general';
@@ -32,6 +33,7 @@ const AdminPartnersListPage: React.FC<Props> = props => {
     getFioAccountsProfilesList,
     getPartnersList,
   } = props;
+
   const [filters, setFilters] = useState<Partial<RefProfile>>({ type: '' });
   const [showPartnerModal, setShowPartnerModal] = useState<boolean>(false);
   const [selectedPartner, setSelectedPartner] = useState<Partial<RefProfile>>(
@@ -65,7 +67,8 @@ const AdminPartnersListPage: React.FC<Props> = props => {
             rank: 1,
           },
         ],
-        allowCustomDomain: false,
+        showExplanationsSection: false,
+        showPartnersSection: false,
         actions: {
           SIGNNFT: {},
           REG: {},
@@ -73,9 +76,17 @@ const AdminPartnersListPage: React.FC<Props> = props => {
         img: '',
         link: '',
       },
+      freeFioAccountProfileId: fioAccountsProfilesList.find(
+        fioAccountsProfile =>
+          fioAccountsProfile.accountType === FIO_ACCOUNT_TYPES.FREE,
+      )?.id,
+      paidFioAccountProfileId: fioAccountsProfilesList.find(
+        fioAccountsProfile =>
+          fioAccountsProfile.accountType === FIO_ACCOUNT_TYPES.PAID,
+      )?.id,
     });
     setShowPartnerModal(true);
-  }, []);
+  }, [fioAccountsProfilesList]);
   const onEditPartner = useCallback((partner: RefProfile) => {
     setSelectedPartner(partner);
     setShowPartnerModal(true);
@@ -105,7 +116,6 @@ const AdminPartnersListPage: React.FC<Props> = props => {
         if (partner.type === REF_PROFILE_TYPE.AFFILIATE) {
           partner.settings = {
             domains: [],
-            allowCustomDomain: true,
           };
         }
         partner.title = partner.title || '';

@@ -21,6 +21,7 @@ export default function useMaintenance() {
         }
       })
       .catch(() => {
+        if (!navigator?.onLine) return;
         setIsMaintenance(true);
         setIsLoading(false);
       });
@@ -32,6 +33,7 @@ export default function useMaintenance() {
         setIsLoading(false);
       })
       .catch(() => {
+        if (!navigator?.onLine) return;
         setIsMaintenance(true);
         setIsLoading(false);
       });

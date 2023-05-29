@@ -7,48 +7,6 @@
   display: flex;
   width: 24px;
   height: 24px;
-
-  .icon {
-    font-size: 1.5rem;
-  }
-
-  .insideIcon {
-    position: absolute;
-    font-size: 0.7rem;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  &.isBlackWhite {
-    .icon {
-      color: $baltic-sea;
-    }
-
-    .insideIcon {
-      color: $white;
-    }
-  }
-
-  &.isWhiteBlack {
-    .icon {
-      color: $white;
-    }
-
-    .insideIcon {
-      color: $baltic-sea;
-    }
-  }
-
-  &.isWhiteIndigo {
-    .icon {
-      color: $white;
-    }
-
-    .insideIcon {
-      color: $light-indigo;
-    }
-  }
 }
 
 

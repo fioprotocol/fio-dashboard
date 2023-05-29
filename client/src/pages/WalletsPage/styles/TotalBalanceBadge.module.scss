@@ -126,15 +126,8 @@
       font-size: 1.25em;
       margin-top: 15px;
       margin-bottom: 0;
-      @include proxima-nova-semibold;
     }
 
-    .totalUsdc {
-      font-size: 1em;
-      margin-top: 5px;
-      margin-bottom: 0;
-      @include proxima-nova-thin;
-    }
     .balanceContainer {
       padding: 10px;
       background-color: $tuna;

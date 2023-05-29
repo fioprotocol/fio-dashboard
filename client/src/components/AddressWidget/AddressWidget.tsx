@@ -25,7 +25,6 @@ type Props = {
   isAuthenticated?: boolean;
   isReverseColors?: boolean;
   isDarkWhite?: boolean;
-  formAction?: boolean;
   suffixText?: string;
   convert?: (value: string) => string;
   formatOnFocusOut?: boolean;
@@ -51,7 +50,6 @@ const AddressWidget: React.FC<Props> = props => {
     title,
     showSignInWidget,
     subtitle,
-    formAction,
     suffixText,
     convert,
     formatOnFocusOut,
@@ -86,8 +84,6 @@ const AddressWidget: React.FC<Props> = props => {
       <FormComponent
         isReverseColors={isReverseColors}
         links={links}
-        isDarkWhite={isDarkWhite}
-        formAction={formAction}
         suffixText={suffixText}
         convert={convert}
         formatOnFocusOut={formatOnFocusOut}

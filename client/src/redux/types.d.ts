@@ -41,6 +41,10 @@ export type CreateOrderActionData = {
   publicKey: string;
   paymentProcessor?: PaymentProvider;
   items: CreateOrderActionItem[];
+  data: {
+    gaClientId: string | null;
+    gaSessionId: string | null;
+  };
 };
 type GetFeeAction = { data: { fee: number }; type: string; endpoint: string };
 type PricesAction = { data: { pricing: { usdtRoe: number } }; type: string };

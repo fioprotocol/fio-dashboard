@@ -38,6 +38,43 @@ export const makeRegistrationOrder = (
     };
 
     if (
+      !cartItem.costNativeFio ||
+      cartItem.domainType === DOMAIN_TYPE.FREE ||
+      cartItem.domainType === DOMAIN_TYPE.PRIVATE ||
+      !cartItem.address
+    ) {
+      registrations.push(registration);
+
+      if (
+        CART_ITEM_TYPES_WITH_PERIOD.includes(cartItem.type) &&
+        cartItem.period > 1
+      ) {
+        for (let i = 1; i < cartItem.period; i++) {
+          registrations.push({
+            cartItemId: cartItem.id,
+            fioName: cartItem.domain,
+            fee: fees.domain,
+            type: CART_ITEM_TYPE.DOMAIN_RENEWAL,
+            isFree: false,
+            iteration: i,
+          });
+        }
+      }
+      continue;
+    }
+
+    if (!!cartItem.address && cartItem.domainType === DOMAIN_TYPE.CUSTOM) {
+      registrations.push({
+        cartItemId: cartItem.id,
+        fioName: cartItem.domain,
+        fee: fees.domain,
+        type: CART_ITEM_TYPE.DOMAIN,
+        isFree: false,
+        isCustomDomain: true,
+      });
+    }
+
+    if (
       CART_ITEM_TYPES_WITH_PERIOD.includes(cartItem.type) &&
       cartItem.period > 1
     ) {
@@ -51,26 +88,6 @@ export const makeRegistrationOrder = (
           iteration: i,
         });
       }
-    }
-    if (
-      !cartItem.costNativeFio ||
-      cartItem.domainType === DOMAIN_TYPE.FREE ||
-      cartItem.domainType === DOMAIN_TYPE.PRIVATE ||
-      !cartItem.address
-    ) {
-      registrations.push(registration);
-      continue;
-    }
-
-    if (!!cartItem.address && cartItem.domainType === DOMAIN_TYPE.CUSTOM) {
-      registrations.push({
-        cartItemId: cartItem.id,
-        fioName: cartItem.domain,
-        fee: fees.domain,
-        type: CART_ITEM_TYPE.DOMAIN,
-        isFree: false,
-        isCustomDomain: true,
-      });
     }
 
     registrations.push(registration);

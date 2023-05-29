@@ -3,14 +3,12 @@ import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 import classnames from 'classnames';
 
-import Amount from '../../../components/common/Amount';
 import Modal from '../../../components/Modal/Modal';
+import { PriceComponent } from '../../../components/PriceComponent';
 
 import { ROUTES } from '../../../constants/routes';
 import { US_LOCALE } from '../../../constants/common';
 import { QUERY_PARAMS_NAMES } from '../../../constants/queryParams';
-
-import { priceToNumber } from '../../../utils';
 
 import { UnlockPeriod, WalletBalances } from '../../../types';
 
@@ -37,15 +35,14 @@ const Balance = (props: {
         )}
       >
         <p className={classnames(classes.balanceTitle, 'col-sm-3')}>{title}</p>
-        <p
+        <div
           className={classnames(
             classes.balanceValues,
             viewDetails ? 'col-sm-6 mr-3' : 'col-sm-9',
           )}
         >
-          <Amount value={priceToNumber(fio)} /> FIO /{' '}
-          <Amount value={priceToNumber(usdc)} /> USDC
-        </p>
+          <PriceComponent costFio={fio} costUsdc={usdc} />
+        </div>
         {viewDetails ? (
           <Button
             onClick={viewDetails}
@@ -77,10 +74,9 @@ const LockedItemsList = ({ data }: { data?: UnlockPeriod[] }) => {
             {o.date?.toLocaleDateString(US_LOCALE)} @{' '}
             {o.date?.toLocaleTimeString(US_LOCALE)}
           </p>
-          <p className={classnames(classes.itemData, 'col-7')}>
-            <Amount value={priceToNumber(o.fio)} /> FIO (&#36;
-            <Amount value={priceToNumber(o.usdc)} /> USDC)
-          </p>
+          <div className={classnames(classes.itemData, 'col-7')}>
+            <PriceComponent costFio={o.fio} costUsdc={o.usdc} />
+          </div>
         </div>
       ))}
     </div>
@@ -115,12 +111,9 @@ const TotalBalanceBadge: React.FC<Props> = props => {
     <div className={classes.actionBadgeContainer}>
       <div className={classes.totalBadge}>
         <p className={classes.title}>Total FIO Wallets Balance</p>
-        <p className={classes.totalFio}>
-          <Amount value={total.fio} /> FIO
-        </p>
-        <p className={classes.totalUsdc}>
-          <Amount value={total.usdc} /> USDC
-        </p>
+        <div className={classes.totalFio}>
+          <PriceComponent costFio={total.fio} costUsdc={total.usdc} />
+        </div>
         {staked?.nativeFio || locked.nativeFio ? (
           <Balance
             fio={available.fio}

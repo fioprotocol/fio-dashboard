@@ -46,7 +46,7 @@ const FioRecordFieldContent: React.FC<Props> = props => {
 
     return (
       <span>
-        <Amount value={price} /> FIO (<ConvertedAmount fioAmount={price} />)
+        <ConvertedAmount fioAmount={price} /> (<Amount value={price} /> FIO)
       </span>
     );
   }

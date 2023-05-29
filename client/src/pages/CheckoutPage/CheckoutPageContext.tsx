@@ -44,6 +44,7 @@ import {
   cartIsRelative,
   cartHasOnlyFreeItems,
 } from '../../util/cart';
+import { getGAClientId, getGASessionId } from '../../util/analytics';
 import { setFioName } from '../../utils';
 import { useWalletBalances } from '../../util/hooks';
 import { useEffectOnce } from '../../hooks/general';
@@ -214,10 +215,14 @@ export const useContext = (): {
             action: ACTIONS.registerFioAddress,
             address,
             domain,
-            nativeFio: `${costNativeFio || 0}`,
+            nativeFio: '0',
             price: '0',
             priceCurrency: CURRENCY_CODES.USDC,
           })),
+          data: {
+            gaClientId: getGAClientId(),
+            gaSessionId: getGASessionId(),
+          },
         };
       }
 
@@ -473,7 +478,7 @@ export const useContext = (): {
       const params = apis.fio.setTableRowsParams(domain);
 
       try {
-        const rows = await apis.fio.getTableRows(params);
+        const { rows } = await apis.fio.getTableRows(params);
 
         if ((rows && rows.length && rows[0].is_public === 0) || !rows[0]) {
           privateDomainList[domain] = true;

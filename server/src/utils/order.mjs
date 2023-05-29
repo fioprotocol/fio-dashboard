@@ -76,25 +76,27 @@ export const countTotalPriceAmount = orderItems =>
       fioNativeTotal = new MathOp(fioNativeTotal).add(orderNativeFio).toNumber();
       usdcTotal = new MathOp(usdcTotal).add(orderPrice).toNumber();
 
-      return { fioNativeTotal, usdcTotal };
+      return {
+        fioNativeTotal,
+        usdcTotal,
+        fioTotal: fiosdkLib.FIOSDK.SUFToAmount(fioNativeTotal).toFixed(2),
+      };
     },
     { fioNativeTotal: 0, usdcTotal: 0 },
   );
 
-export const transformCostToPriceString = ({
-  fioNativeAmount,
-  usdcAmount,
-  hasDollarSign,
-}) => {
+export const transformCostToPriceString = ({ fioNativeAmount, usdcAmount }) => {
   if (fioNativeAmount)
     return `${fiosdkLib.FIOSDK.SUFToAmount(fioNativeAmount).toFixed(2)} FIO`;
+
   if (usdcAmount) {
-    if (hasDollarSign) return `$${usdcAmount.toFixed(2)}`;
-    return `${usdcAmount} USDC`;
+    if (typeof usdcAmount === 'string') return `$${usdcAmount}`;
+
+    return `$${usdcAmount.toFixed(2)}`;
   }
 };
 
-export const transformOrderTotalCostToPriceObj = ({ totalCostObj, paymentCurrency }) => {
+export const transformOrderTotalCostToPriceObj = ({ totalCostObj }) => {
   const { fioNativeTotal, usdcTotal } = totalCostObj || {};
 
   if (!fioNativeTotal && fioNativeTotal !== 0 && !usdcTotal && usdcTotal !== 0)
@@ -105,41 +107,25 @@ export const transformOrderTotalCostToPriceObj = ({ totalCostObj, paymentCurrenc
       freeTotalPrice: FREE_PRICE,
     };
 
-  if (paymentCurrency === Payment.CURRENCY.FIO)
-    return {
-      fioTotalPrice: transformCostToPriceString({ fioNativeAmount: fioNativeTotal }),
-      usdcTotalPrice: transformCostToPriceString({ usdcAmount: usdcTotal }),
-    };
-
-  if (paymentCurrency.toUpperCase() === Payment.CURRENCY.USD)
-    return {
-      fioTotalPrice: transformCostToPriceString({
-        fioNativeAmount: fioNativeTotal,
-      }),
-      usdcTotalPrice: transformCostToPriceString({
-        usdcAmount: usdcTotal,
-        hasDollarSign: true,
-      }),
-    };
-
-  return { usdcTotalPrice: `${usdcTotal} USDC` };
+  return {
+    fioTotalPrice: transformCostToPriceString({
+      fioNativeAmount: fioNativeTotal,
+    }),
+    usdcTotalPrice: transformCostToPriceString({
+      usdcAmount: usdcTotal,
+    }),
+  };
 };
 
 export const transformOrderItemCostToPriceString = ({
-  orderItemCostObj,
-  paymentCurrency,
+  usdcAmount,
+  fioNativeAmount,
+  isFree,
 }) => {
-  const { usdcAmount, fioNativeAmount, isFree } = orderItemCostObj;
-
   if (isFree) return FREE_PRICE;
 
   const fioPrice = transformCostToPriceString({ fioNativeAmount });
-
   const usdcPrice = transformCostToPriceString({ usdcAmount });
-
-  if (paymentCurrency === Payment.CURRENCY.FIO) {
-    return `${fioPrice} (${usdcPrice})`;
-  }
 
   return `${usdcPrice} (${fioPrice})`;
 };
@@ -179,7 +165,6 @@ export const generateErrBadgeItem = ({ errItems = [], paymentCurrency }) => {
 
     acc[badgeKey].total = transformOrderTotalCostToPriceObj({
       totalCostObj,
-      paymentCurrency,
     });
     acc[badgeKey].totalCurrency = totalCurrency;
 
@@ -187,7 +172,7 @@ export const generateErrBadgeItem = ({ errItems = [], paymentCurrency }) => {
   }, {});
 };
 
-export const combineOrderItems = ({ orderItems = [], paymentCurrency }) => {
+export const combineOrderItems = ({ orderItems = [] }) => {
   return orderItems
     .reduce((items, item) => {
       const existsItem = items.find(orderItem => orderItem.id === item.id);
@@ -213,12 +198,9 @@ export const combineOrderItems = ({ orderItems = [], paymentCurrency }) => {
           .add(item.costUsdc)
           .toNumber();
         existsItem.priceString = transformOrderItemCostToPriceString({
-          orderItemCostObj: {
-            fioNativeAmount: existsItem.fee_collected,
-            usdcAmount: existsItem.costUsdc,
-            isFree: existsItem.isFree,
-          },
-          paymentCurrency,
+          fioNativeAmount: existsItem.fee_collected,
+          usdcAmount: existsItem.costUsdc,
+          isFree: existsItem.isFree,
         });
         existsItem.type = CART_ITEM_TYPE.ADDRESS_WITH_CUSTOM_DOMAIN;
         existsItem.action =
@@ -238,12 +220,9 @@ export const combineOrderItems = ({ orderItems = [], paymentCurrency }) => {
           .add(item.costUsdc)
           .toNumber();
         existsItem.priceString = transformOrderItemCostToPriceString({
-          orderItemCostObj: {
-            fioNativeAmount: existsItem.fee_collected,
-            usdcAmount: existsItem.costUsdc,
-            isFree: existsItem.isFree,
-          },
-          paymentCurrency,
+          fioNativeAmount: existsItem.fee_collected,
+          usdcAmount: existsItem.costUsdc,
+          isFree: existsItem.isFree,
         });
       } else {
         if (CART_ITEM_TYPES_WITH_PERIOD.includes(item.type)) {

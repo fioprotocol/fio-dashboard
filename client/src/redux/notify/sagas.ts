@@ -12,6 +12,7 @@ import {
 import {
   CONFIRM_PIN_FAILURE,
   LOGIN_FAILURE as LOGIN_EDGE_FAILURE,
+  RECOVERY_ACCOUNT_FAILURE,
 } from '../edge/actions';
 import { LIST_FAILURE as NOTIFICATIONS_LIST_FAILURE } from '../notifications/actions';
 import { CAPTCHA_FAILURE } from '../registrations/actions';
@@ -45,7 +46,8 @@ export function* notify(history: History): Generator {
       action.type !== CAPTCHA_FAILURE &&
       action.type !== CONFIRM_PIN_FAILURE &&
       action.type !== GET_ALL_PUBLIC_ADDRESS_FAILURE &&
-      action.type !== GET_ORACLE_FEES_FAILURE
+      action.type !== GET_ORACLE_FEES_FAILURE &&
+      action.type !== RECOVERY_ACCOUNT_FAILURE
     ) {
       const genericErrorIsShowing: boolean = yield select(getShowGenericError);
 

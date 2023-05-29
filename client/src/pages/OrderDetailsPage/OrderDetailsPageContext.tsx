@@ -2,8 +2,6 @@ import { useHistory } from 'react-router';
 
 import { Title } from './components/Title';
 
-import { combinePriceWithDivider } from '../../util/prices';
-
 import { PaymentProvider, PaymentStatus } from '../../types';
 
 import { ContextProps, OrderDetailsProps } from './types';
@@ -38,7 +36,6 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
     paymentProcessor,
     regTotalCost,
     errTotalCost,
-    paymentCurrency,
     paymentStatus,
   } = payment || {};
 
@@ -46,16 +43,6 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
 
   let partialErrorItems = null;
   let partialErrorTotalCost = null;
-
-  const regTotalCostPrice = combinePriceWithDivider({
-    paymentProcessor,
-    totalCostPrice: regTotalCost,
-  });
-
-  const errTotalCostPrice = combinePriceWithDivider({
-    paymentProcessor,
-    totalCostPrice: errTotalCost,
-  });
 
   const infoBadgeData: {
     paymentProvider: PaymentProvider;
@@ -69,19 +56,16 @@ export const useContext = (props: OrderDetailsProps): ContextProps => {
 
   if (isPartial) {
     partialErrorItems = errItems;
-    partialErrorTotalCost = errTotalCostPrice;
+    partialErrorTotalCost = errTotalCost;
   }
 
   const orderItemsToRender = regItems?.length ? regItems : errItems;
-  const totalCostPrice = regItems?.length
-    ? regTotalCostPrice
-    : errTotalCostPrice;
+  const totalCostPrice = regItems?.length ? regTotalCost : errTotalCost;
 
   const paymentInfo = {
     orderNumber: number,
     paidWith,
     totalCostPrice,
-    paymentCurrency,
   };
 
   const actionButtonProps = {

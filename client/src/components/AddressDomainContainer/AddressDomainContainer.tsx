@@ -13,7 +13,6 @@ import { FioNameType, CartItem } from '../../types';
 type Props = {
   title: string;
   type: FioNameType;
-  allowCustomDomains: boolean;
   cartItems: CartItem[];
   hasFreeAddress: boolean;
   isContainedFlow: boolean;
@@ -31,7 +30,6 @@ const AddressDomainContainer: React.FC<Props &
   const {
     title,
     type,
-    allowCustomDomains,
     location: { query },
     cartItems,
     hasFreeAddress,
@@ -52,9 +50,7 @@ const AddressDomainContainer: React.FC<Props &
             hasFreeAddress={hasFreeAddress}
           />
           {!isDesktop && <AddressDomainCart />}
-          {allowCustomDomains && !isContainedFlow && (
-            <AddressDomainBadge type={type} />
-          )}
+          {!isContainedFlow && <AddressDomainBadge type={type} />}
         </>
       }
       smallCart={isDesktop && <AddressDomainCart />}

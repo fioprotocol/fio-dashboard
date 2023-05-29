@@ -29,7 +29,8 @@ export default class PartnerCreate extends Base {
               ],
             },
             preselectedDomain: 'string',
-            allowCustomDomain: 'boolean',
+            showExplanationsSection: 'boolean',
+            showPartnersSection: 'boolean',
             img: 'string',
             link: 'string',
             actions: [
@@ -63,6 +64,8 @@ export default class PartnerCreate extends Base {
       ],
       title: ['string'],
       subTitle: ['string'],
+      freeFioAccountProfileId: ['string'],
+      paidFioAccountProfileId: ['string'],
     };
   }
 

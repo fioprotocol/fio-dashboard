@@ -1,6 +1,8 @@
 import Base from '../Base';
-import marketingSendinblue from '../../external/marketing-sendinblue.mjs';
+
 import { User } from '../../models';
+
+import { sendSendinblueEvent } from '../external/SendinblueEvent.mjs';
 
 export default class SendEvent extends Base {
   static get validationRules() {
@@ -13,9 +15,7 @@ export default class SendEvent extends Base {
     if (this.context.id) {
       const user = await User.findActive(this.context.id);
 
-      if (user.isOptIn) {
-        await marketingSendinblue.sendEvent(user.email, event);
-      }
+      await sendSendinblueEvent({ event, user });
     }
 
     return { data: { success: true } };

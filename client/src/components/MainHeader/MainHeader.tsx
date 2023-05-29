@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { useHistory } from 'react-router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -20,6 +20,8 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
   const [isMenuOpen, toggleMenuOpen] = useState(false);
   const history = useHistory();
 
+  const isPreviouslyAuth = useRef(false);
+
   const closeMenu = useCallback(() => {
     toggleMenuOpen(false);
   }, []);
@@ -39,7 +41,13 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     const url = new URL(window.location.href);
     const isLogout = url.searchParams.get('logout');
     const isSilentLogout = isLogout === 'silent';
-    if (isSilentLogout) return;
+
+    if (
+      isSilentLogout ||
+      isMaintenance ||
+      (!isAuthenticated && isPreviouslyAuth && isPreviouslyAuth.current)
+    )
+      return;
 
     if (
       profileRefreshed &&
@@ -51,7 +59,18 @@ const MainHeader: React.FC<MainHeaderProps> = props => {
     ) {
       showLogin();
     }
-  }, [locationState, showLogin, isAuthenticated, profileRefreshed]);
+  }, [
+    locationState,
+    showLogin,
+    isAuthenticated,
+    profileRefreshed,
+    isMaintenance,
+  ]);
+
+  useEffect(() => {
+    if (isAuthenticated && profileRefreshed)
+      isPreviouslyAuth.current = isAuthenticated;
+  }, [isAuthenticated, profileRefreshed]);
 
   const hideSiteLink = isAuthenticated;
 
