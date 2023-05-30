@@ -109,23 +109,20 @@ export default class Auth extends Base {
   }
 
   updateNewDevice({
-    voucherId,
+    id,
     status,
     deviceDescription,
   }: {
-    voucherId: string;
+    id: string;
     status?: string;
     deviceDescription?: string;
   }): Promise<AuthUpdateNewDeviceResponse> {
-    return this.apiClient.post(
-      `auth/new-device-two-factor/update/${voucherId}`,
-      {
-        data: {
-          status,
-          deviceDescription,
-        },
+    return this.apiClient.put(`auth/new-device-two-factor/update/${id}`, {
+      data: {
+        status,
+        deviceDescription,
       },
-    );
+    });
   }
 
   checkRejected(voucherId: string): Promise<AuthCheckRejectedResponse> {
