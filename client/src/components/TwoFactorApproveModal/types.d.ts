@@ -6,3 +6,5 @@ export type PendingVoucher = {
   created: Date;
   activates: Date;
 };
+
+export type NewDeviceVoucher = PendingVoucher & { id: string };
