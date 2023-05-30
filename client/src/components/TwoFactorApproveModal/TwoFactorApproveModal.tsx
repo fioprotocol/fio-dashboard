@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 import EdgeConfirmAction from '../EdgeConfirmAction';
 import ModalComponent from './components/ModalComponent';
@@ -12,7 +12,7 @@ import { log } from '../../util/general';
 
 import { ACTION_TYPE, NEW_DEVICE_REQUEST_STATUS } from './constants';
 
-import { PendingVoucher } from './types';
+import { NewDeviceVoucher, PendingVoucher } from './types';
 import { User } from '../../types';
 import { SubmitActionParams } from '../EdgeConfirmAction/types';
 
@@ -31,40 +31,87 @@ const TwoFactorAuth: React.FC<Props> = props => {
     voucherId?: string;
     type: string;
   } | null>(null);
-  const [newDevicesList, setNewDevicesList] = useState<PendingVoucher[]>([]);
+  const [newDevicesList, setNewDevicesList] = useState<NewDeviceVoucher[]>([]);
   const [loading, setLoading] = useState({});
 
-  const getLoginMessages = async () => {
+  const username = user?.username;
+
+  const deleteUndefinedFromEdgeNewDeviceRequest = useCallback(
+    async (voucherId: string) => {
+      await apis.auth.deleteNewDeviceRequest(voucherId);
+    },
+    [],
+  );
+
+  const getLoginMessages = useCallback(async () => {
     const res = await apis.edge.loginMessages();
-    if (res && user && user.username) {
+
+    if (res && username) {
       const usersPendingVouchers: PendingVoucher[] =
-        res[user.username] && res[user.username].pendingVouchers;
-      if (!usersPendingVouchers) return;
-      const retArr = newDeviceTwoFactor
-        .filter(device => device.status === NEW_DEVICE_REQUEST_STATUS.REQUESTED)
-        .map(device => {
-          const pendingVouchers = usersPendingVouchers.find(
-            voucher => voucher.voucherId === device.voucherId,
+        res[username] && res[username].pendingVouchers;
+      const newDeviceTwoFactorRequested = newDeviceTwoFactor.filter(
+        device => device.status === NEW_DEVICE_REQUEST_STATUS.REQUESTED,
+      );
+
+      if (!usersPendingVouchers.length) {
+        toggleApproveModal(false);
+        try {
+          await Promise.all(
+            newDeviceTwoFactorRequested.map(async device =>
+              deleteUndefinedFromEdgeNewDeviceRequest(device.voucherId),
+            ),
           );
-          const deviceData = { ...pendingVouchers };
+        } catch (e) {
+          log.error(e);
+        }
+        return;
+      }
 
-          if (pendingVouchers && pendingVouchers.deviceDescription) {
-            deviceData.deviceDescription = pendingVouchers.deviceDescription;
-          } else {
-            deviceData.deviceDescription = device.deviceDescription || 'N/A';
-          }
+      const newDeviceTwoFactorRequestList: NewDeviceVoucher[] = [];
+      const undefinedTwoFactorRequestList: string[] = [];
 
-          return deviceData;
-        });
+      newDeviceTwoFactorRequested.forEach(device => {
+        const pendingVouchers = usersPendingVouchers.find(
+          voucher => voucher.voucherId === device.voucherId,
+        );
+
+        if (!pendingVouchers) {
+          undefinedTwoFactorRequestList.push(device.voucherId);
+          return;
+        }
+
+        const deviceData = { ...pendingVouchers, id: device.id };
+
+        if (pendingVouchers && pendingVouchers.deviceDescription) {
+          deviceData.deviceDescription = pendingVouchers.deviceDescription;
+        } else {
+          deviceData.deviceDescription = device.deviceDescription || 'N/A';
+        }
+
+        newDeviceTwoFactorRequestList.push(deviceData);
+      });
+
       setLoading(
-        retArr.reduce(
+        newDeviceTwoFactorRequestList.reduce(
           (acc, device) => ({ ...acc, [device.voucherId]: false }),
           {},
         ),
       );
-      setNewDevicesList(retArr as PendingVoucher[]);
+      setNewDevicesList(newDeviceTwoFactorRequestList);
+
+      if (undefinedTwoFactorRequestList.length > 0) {
+        try {
+          await Promise.all(
+            undefinedTwoFactorRequestList.map(async voucherId =>
+              deleteUndefinedFromEdgeNewDeviceRequest(voucherId),
+            ),
+          );
+        } catch (e) {
+          log.error(e);
+        }
+      }
     }
-  };
+  }, [deleteUndefinedFromEdgeNewDeviceRequest, newDeviceTwoFactor, username]);
 
   const submit = async ({ edgeAccount, data }: SubmitActionParams) => {
     const { voucherId, type } = data;
@@ -82,7 +129,7 @@ const TwoFactorAuth: React.FC<Props> = props => {
         const promises = newDevicesList.map(device => [
           edgeAccount.rejectVoucher(device.voucherId),
           apis.auth.updateNewDevice({
-            voucherId: device.voucherId,
+            id: device.id,
             status: NEW_DEVICE_REQUEST_STATUS.REJECTED,
           }),
         ]);
@@ -134,13 +181,13 @@ const TwoFactorAuth: React.FC<Props> = props => {
       setNewDevicesList([]);
       setLoading({});
     }
-  }, [JSON.stringify(newDeviceTwoFactor)]);
+  }, [getLoginMessages, newDeviceTwoFactor, user]);
 
   useEffect(() => {
     if (user) {
       getLoginMessages();
     }
-  }, []);
+  }, [getLoginMessages, user]);
 
   return (
     <>
