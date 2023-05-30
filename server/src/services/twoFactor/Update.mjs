@@ -6,7 +6,7 @@ import { NewDeviceTwoFactor } from '../../models';
 export default class NewDeviceTwoFactorUpdate extends Base {
   static get validationRules() {
     return {
-      voucherId: ['required', 'string'],
+      id: ['required', 'string'],
       data: [
         'required',
         {
@@ -18,11 +18,8 @@ export default class NewDeviceTwoFactorUpdate extends Base {
       ],
     };
   }
-  async execute({ data, voucherId }) {
-    const newDeviceTwoFactor = await NewDeviceTwoFactor.getItem({
-      voucherId,
-      userId: this.context.id,
-    });
+  async execute({ data, id }) {
+    const newDeviceTwoFactor = await NewDeviceTwoFactor.getItem({ id });
 
     if (!newDeviceTwoFactor) {
       throw new X({
