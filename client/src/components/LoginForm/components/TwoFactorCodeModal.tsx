@@ -48,7 +48,7 @@ const RenderForm = (props: FormRenderProps<BackupFormValues> & Props) => {
         error: otpError,
       });
     }
-  }, [otpError, submitSucceeded, submitFailed]);
+  }, [otpError, submitSucceeded, submitFailed, mutators]);
 
   const handleError = () => {
     mutators.setDataMutator('backupCode', {

@@ -127,7 +127,7 @@ export class User extends Base {
         {
           model: NewDeviceTwoFactor,
           as: 'newDeviceTwoFactor',
-          attributes: ['voucherId', 'deviceDescription', 'createdAt', 'status'],
+          attributes: ['id', 'voucherId', 'deviceDescription', 'createdAt', 'status'],
         },
         { model: ReferrerProfile, as: 'refProfile', attributes: ['code'] },
         { model: ReferrerProfile, as: 'affiliateProfile', attributes: ['code', 'tpid'] },
