@@ -17,12 +17,13 @@ import { User } from '../../types';
 import { SubmitActionParams } from '../EdgeConfirmAction/types';
 
 type Props = {
+  isAuthenticated: boolean;
   user: User;
   loadProfile: () => void;
 };
 
 const TwoFactorAuth: React.FC<Props> = props => {
-  const { user, loadProfile } = props;
+  const { isAuthenticated, user, loadProfile } = props;
   const { newDeviceTwoFactor = [] } = user || {};
 
   const [showApprove, toggleApproveModal] = useState(false);
@@ -171,23 +172,24 @@ const TwoFactorAuth: React.FC<Props> = props => {
     }
 
     if (
-      !user ||
-      newDeviceTwoFactor.length === 0 ||
-      newDeviceTwoFactor.every(
-        device => device.status === NEW_DEVICE_REQUEST_STATUS.REJECTED,
-      )
+      (!isAuthenticated ||
+        newDeviceTwoFactor.length === 0 ||
+        newDeviceTwoFactor.every(
+          device => device.status === NEW_DEVICE_REQUEST_STATUS.REJECTED,
+        )) &&
+      showApprove
     ) {
       toggleApproveModal(false);
       setNewDevicesList([]);
       setLoading({});
     }
-  }, [getLoginMessages, newDeviceTwoFactor, user]);
+  }, [getLoginMessages, newDeviceTwoFactor, isAuthenticated, showApprove]);
 
   useEffect(() => {
-    if (user) {
+    if (isAuthenticated) {
       getLoginMessages();
     }
-  }, [getLoginMessages, user]);
+  }, [getLoginMessages, isAuthenticated]);
 
   return (
     <>
