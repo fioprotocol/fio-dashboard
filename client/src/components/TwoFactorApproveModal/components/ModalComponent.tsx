@@ -8,7 +8,7 @@ import { ACTION_TYPE } from '../constants';
 
 import { commonFormatTime } from '../../../util/general';
 
-import { PendingVoucher } from '../types';
+import { NewDeviceVoucher } from '../types';
 
 import classes from '../styles/ModalComponent.module.scss';
 
@@ -16,7 +16,7 @@ type Props = {
   show: boolean;
   loading: { [key: string]: boolean };
   onClick: (type: { type: string; voucherId?: string }) => void;
-  newDevicesList: PendingVoucher[];
+  newDevicesList: NewDeviceVoucher[];
 };
 
 const InfoItem = ({ title, value }: { title: string; value?: string }) => (
@@ -65,7 +65,7 @@ const ModalComponent: React.FC<Props> = props => {
 
           return (
             <div
-              key={device.created.getTime()}
+              key={device.created?.getTime()}
               className={classes.devicesContainer}
             >
               <div className={classes.infoContainer}>

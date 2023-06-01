@@ -337,6 +337,7 @@ export type User = {
   secretSet?: boolean;
   newEmail?: boolean;
   newDeviceTwoFactor?: {
+    id: string;
     voucherId: string;
     deviceDescription?: string;
     status: string;
