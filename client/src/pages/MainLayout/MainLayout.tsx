@@ -105,7 +105,7 @@ const MainLayout: React.FC<Props> = props => {
       <TwitterMeta />
 
       {routeName && navigator.userAgent === REACT_SNAP_AGENT && (
-        <PageTitle link={LINKS.TWITTER_HANDLE} />
+        <PageTitle link={LINKS[routeName]} />
       )}
 
       {isLoading ? (
@@ -127,12 +127,7 @@ const MainLayout: React.FC<Props> = props => {
         </>
       ) : (
         <>
-          {routeName && (
-            <PageTitle
-              link={LINKS[routeName]}
-              noAppName={routeName === LINKS.TWITTER_HANDLE}
-            />
-          )}
+          {routeName && <PageTitle link={LINKS[routeName]} />}
           <MainHeader />
           <AutoLogout />
           <Ref />
