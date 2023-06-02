@@ -310,8 +310,8 @@ export const useContext = (): {
 
   const ownerPubKeysPrivateDomains: string[] = [];
   if (cartHasItemsWithPrivateDomain) {
-    cartItems.forEach(({ domain }) => {
-      if (privateDomains[domain]) {
+    cartItems.forEach(({ address, domain }) => {
+      if (privateDomains[domain] && !!address) {
         ownerPubKeysPrivateDomains.push(privateDomains[domain].walletPublicKey);
       }
     });
