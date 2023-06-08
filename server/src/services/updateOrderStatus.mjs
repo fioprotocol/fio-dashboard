@@ -64,9 +64,9 @@ const sendAnalytics = async orderId => {
     if (isSuccess || isPartial) {
       data.items = regItems.map(regItem => ({
         item_name: regItem.type,
-        price: regItem.costUsdc,
+        price: Number(regItem.costUsdc),
       }));
-      data.value = payment.regTotalCost.usdcTotal;
+      data.value = Number(payment.regTotalCost.usdcTotal);
     }
 
     if (isSuccess) {
