@@ -12,10 +12,12 @@ import SubmitButton from '../../../../../components/common/SubmitButton/SubmitBu
 
 import { ROUTES } from '../../../../../constants/routes';
 
-import { transformBaseUrl } from '../../../../../util/general';
+type Props = {
+  fioBaseUrl: string;
+};
 
-export const FindFioHandleForm: React.FC = () => {
-  const transformedBaseUrl = transformBaseUrl();
+export const FindFioHandleForm: React.FC<Props> = props => {
+  const { fioBaseUrl } = props;
 
   return (
     <div className={classes.container}>
@@ -57,7 +59,7 @@ export const FindFioHandleForm: React.FC = () => {
       <p className={classes.actionText}>
         Want your own?{' '}
         <a
-          href={transformedBaseUrl + ROUTES.FIO_ADDRESSES_SELECTION}
+          href={fioBaseUrl + ROUTES.FIO_ADDRESSES_SELECTION}
           target="_blank"
           rel="noopener noreferrer"
           className={classes.link}
