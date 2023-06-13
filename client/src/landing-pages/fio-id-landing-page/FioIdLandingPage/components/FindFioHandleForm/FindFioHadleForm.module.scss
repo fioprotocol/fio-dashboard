@@ -1,0 +1,53 @@
+@import '../../../../../assets/styles/colors.scss';
+@import '../../../../../assets/styles/fontMixins.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: $white;
+  flex-basis: 100%;
+
+  .title {
+    margin: 0;
+    font-size: 4.5em;
+    @include proxima-nova-bold;
+  }
+
+  .subtitle {
+    margin-top: 10px;
+    margin-bottom: 0;
+    font-size: 1.25em;
+  }
+
+  .form {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 30px;
+    margin-top: 40px;
+
+    .field {
+      width: 100%;
+      max-width: 335px;
+    }
+
+    .button {
+      font-size: 0.8125em;
+      @include proxima-nova-semibold;
+    }
+  }
+
+  .actionText {
+    @include proxima-nova-thin;
+    font-size: 0.9375em;
+
+    .link {
+      color: $white;
+      text-decoration: underline;
+      @include proxima-nova-regular;
+    }
+  }
+}
