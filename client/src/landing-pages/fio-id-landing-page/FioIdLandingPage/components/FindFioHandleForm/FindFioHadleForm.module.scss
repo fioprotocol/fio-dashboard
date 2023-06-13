@@ -36,6 +36,7 @@
 
     .button {
       font-size: 0.8125em;
+      white-space: nowrap;
       @include proxima-nova-semibold;
     }
   }
