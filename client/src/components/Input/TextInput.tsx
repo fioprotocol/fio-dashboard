@@ -74,6 +74,7 @@ export type TextInputProps = {
   withoutBottomMargin?: boolean;
   hasItalicLabel?: boolean;
   hasErrorForced?: boolean;
+  isMiddleHeight?: boolean;
 };
 
 export const TextInput: React.ForwardRefRenderFunction<
@@ -103,6 +104,7 @@ export const TextInput: React.ForwardRefRenderFunction<
     disabled,
     showErrorBorder,
     isLowHeight,
+    isMiddleHeight,
     label,
     additionalOnchangeAction,
     connectWalletProps,
@@ -216,6 +218,7 @@ export const TextInput: React.ForwardRefRenderFunction<
             showPasteButton && classes.hasPasteButton,
             type === 'password' && classes.doubleIconInput,
             isLowHeight && classes.lowHeight,
+            isMiddleHeight && classes.middleHeight,
             isWalletConnected ? classes.dark : '',
           )}
         >

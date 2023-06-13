@@ -126,6 +126,16 @@
     }
   }
 
+  &.isLightBlack {
+    border: $baltic-sea;
+    background-color: $baltic-sea;
+
+    &:hover {
+      border: $content-background;
+      background-color: $content-background;
+    }
+  }
+
   &.isCobalt {
     border: $cobalt;
     background-color: $cobalt;
@@ -143,6 +153,17 @@
     &:hover {
       border: $simple-red;
       background-color: $simple-red;
+    }
+  }
+
+  &.isWhiteViolet {
+    background-color: $white;
+    color: $light-indigo;
+    border: 1px solid;
+
+    &:hover {
+      background-color: $light-indigo;
+      color: $white;
     }
   }
 
