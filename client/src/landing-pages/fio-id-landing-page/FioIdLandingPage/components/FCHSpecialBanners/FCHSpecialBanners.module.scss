@@ -1,0 +1,42 @@
+@import '../../../../../assets/styles/colors.scss';
+@import '../../../../../assets/styles/fontMixins.scss';
+
+.container {
+  background-color: $light-lavender;
+  padding: 100px;
+
+  .title {
+    margin: 0;
+    font-size: 3.25em;
+    color: $purple-iris;
+    text-align: center;
+    @include proxima-nova-bold;
+  }
+
+  .specialBannersContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+    margin-top: 50px;
+
+    .specialBannerItem {
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.28);
+      padding: 50px 90px 50px 50px;
+      border-radius: 24px;
+
+      .image {
+        height: 175px;
+      }
+
+      .text {
+        margin-top: 40px;
+        margin-bottom: 0;
+        font-size: 1.875em;
+        line-height: 1.5em;
+        color: $purple-iris;
+        @include proxima-nova-semibold;
+      }
+    }
+  }
+}
