@@ -1,0 +1,22 @@
+@import '../../../../../assets/styles/colors.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  background-color: $light-indigo;
+  align-items: center;
+  padding: 50px;
+
+  .contentContainer{
+    display: flex;
+    flex-direction: row;
+    margin: 110px 50px 30px 50px;
+    gap: 50px;
+  }
+
+  .imageContainer {
+    .image {
+      width: 100%;
+    }
+  }
+}

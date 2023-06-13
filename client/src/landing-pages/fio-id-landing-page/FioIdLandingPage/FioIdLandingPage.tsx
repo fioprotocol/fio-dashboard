@@ -1,9 +1,14 @@
 import React from 'react';
 
-type Props = {};
+import { MainLayoutContainer } from '../../../components/MainLayoutContainer';
+import { FindFioHandleSection } from './components/FindFioHandleSection';
 
-const FioIdLandingPage: React.FC<Props> = props => {
-  return <div>FioIdLandingPage</div>;
+const FioIdLandingPage: React.FC = () => {
+  return (
+    <MainLayoutContainer>
+      <FindFioHandleSection />
+    </MainLayoutContainer>
+  );
 };
 
 export default FioIdLandingPage;

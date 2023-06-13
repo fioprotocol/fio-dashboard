@@ -1,0 +1,30 @@
+@import '../../assets/styles/fontMixins.scss'; 
+
+.badge {
+  padding: 24px 30px !important;
+  border-radius: 20px;
+  margin-top: 0 !important;
+  justify-content: space-between;
+  font-size: 0.8125em;
+  max-width: none;
+
+  & > div {
+    margin: 0;
+    @include proxima-nova-semibold;
+  }
+
+  .logo {
+    max-height: 40px;
+  }
+
+  .actionButtonsContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+
+    .button {
+      height: 40px;
+      margin-top: 0;
+    }
+  }
+}
