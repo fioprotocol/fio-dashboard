@@ -2,6 +2,8 @@ import { ChangeEvent } from 'react';
 
 import { DEFAULT_TEXT_TRUNCATE_LENGTH } from '../constants/common';
 
+import config from '../config';
+
 import { AnyObject } from '../types';
 
 export const log = {
@@ -229,4 +231,11 @@ export const reorder = (
   result.splice(endIndex, 0, removed);
 
   return result;
+};
+
+export const transformBaseUrl = () => {
+  const baseUrl = config.baseUrl;
+  return baseUrl.charAt(baseUrl.length - 1) === '/'
+    ? baseUrl.slice(0, -1)
+    : baseUrl;
 };
