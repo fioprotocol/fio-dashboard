@@ -3,6 +3,7 @@ import {
   FontAwesomeIcon,
   FontAwesomeIconProps,
 } from '@fortawesome/react-fontawesome';
+import CancelIcon from '@mui/icons-material/Cancel';
 import classnames from 'classnames';
 
 import { CheckIconComponent } from '../CheckIconComponent';
@@ -118,8 +119,7 @@ export const ClearButton: React.FC<ClearButtonProps & DefaultProps> = ({
   if (!isVisible) return null;
 
   return (
-    <FontAwesomeIcon
-      icon="times-circle"
+    <CancelIcon
       className={classnames(
         classes.inputIcon,
         inputType === 'password' && classes.doubleIcon,
