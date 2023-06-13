@@ -65,6 +65,7 @@ export type TextInputProps = {
     'data-clear'?: boolean;
     value: string;
   };
+  hasRegularHeight?: boolean;
   hasSmallText?: boolean;
   hasThinText?: boolean;
   debounceTimeout?: number;
@@ -112,6 +113,7 @@ export const TextInput: React.ForwardRefRenderFunction<
     connectWalletModalText,
     wFioBalance,
     withoutBottomMargin,
+    hasRegularHeight,
     hasItalicLabel,
     hasErrorForced,
     ...rest
@@ -213,6 +215,7 @@ export const TextInput: React.ForwardRefRenderFunction<
             uiType && classes[uiType],
             isBW && classes.bw,
             isIW && classes.iw,
+            hasRegularHeight && classes.hasRegularHeight,
             prefix && classes.prefixSpace,
             suffix && classes.suffixSpace,
             showPasteButton && classes.hasPasteButton,
