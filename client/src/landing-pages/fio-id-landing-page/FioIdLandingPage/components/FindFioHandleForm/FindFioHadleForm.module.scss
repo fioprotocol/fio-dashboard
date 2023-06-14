@@ -23,21 +23,33 @@
   .form {
     width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: flex-start;
-    justify-content: flex-start;
-    gap: 30px;
-    margin-top: 40px;
+    margin-top: 30px;
 
-    .field {
-      width: 100%;
-      max-width: 335px;
+    .notification {
+      margin-bottom: 20px;
     }
 
-    .button {
-      font-size: 0.8125em;
-      white-space: nowrap;
-      @include proxima-nova-semibold;
+    .fieldContainer {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 30px;
+      width: 100%;
+      margin-top: 10px;
+
+      .field {
+        width: 100%;
+        max-width: 335px;
+      }
+    
+      .button {
+        font-size: 0.8125em;
+        white-space: nowrap;
+        @include proxima-nova-semibold;
+      }
     }
   }
 
