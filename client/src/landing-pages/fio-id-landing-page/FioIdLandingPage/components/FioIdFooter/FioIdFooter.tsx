@@ -70,6 +70,7 @@ export const FioIdFooter: React.FC<Props> = props => {
                 isTransparent
                 isWhiteBordered
                 hasAutoWidth
+                hasNoSidePaddings
                 withoutMargin
                 className={classes.button}
               />
