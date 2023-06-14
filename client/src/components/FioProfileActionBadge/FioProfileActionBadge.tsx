@@ -69,7 +69,12 @@ export const FioProfileActionBadge: React.FC<Props> = props => {
           const linkTo = addFioBaseUrl ? fioBaseUrl + link : link;
 
           return (
-            <a href={linkTo} target="_blank" rel="noopener noreferrer">
+            <a
+              href={linkTo}
+              target="_blank"
+              rel="noopener noreferrer"
+              key={linkTo}
+            >
               <SubmitButton {...buttonProps} className={classes.button} />
             </a>
           );

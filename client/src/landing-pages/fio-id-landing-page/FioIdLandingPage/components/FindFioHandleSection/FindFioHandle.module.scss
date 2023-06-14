@@ -10,13 +10,67 @@
   .contentContainer{
     display: flex;
     flex-direction: row;
-    margin: 110px 50px 30px 50px;
+    padding: 110px 50px 30px 50px;
     gap: 50px;
+    width: 100%;
+    overflow: hidden;
   }
 
   .imageContainer {
-    .image {
-      width: 100%;
+    width: 100%;
+
+    .parallax {
+      perspective: 1px;
+      height: 500px;
+      overflow-x: visible;
+      overflow-y: visible;
+      display: flex;
+      justify-content: center;
+    }
+
+    .parallaxLayer {
+      position: relative;
+    }
+
+    .fioCard {
+      z-index: 1;
+    }
+
+    .socialIcon {
+      position: absolute;
+    
+      &:nth-child(2) {
+        top: 50px;
+        right: -30px;
+        transform: translateZ(0) scale(1);
+        z-index: -1;
+      }
+    
+      &:nth-child(3) {
+        bottom: 45px;
+        right: -35px;
+        transform: translateZ(0) scale(1);
+        z-index: -1;
+      }
+    
+      &:nth-child(4) {
+        top: -40px;
+        right: -30px;
+        transform: translateZ(0) scale(1);
+        z-index: 2;
+      }
+    
+      &:nth-child(5) {
+        top: 60px;
+        left: -60px;
+        transform: translateZ(0) scale(1);
+      }
+
+      &:nth-child(6) {
+        top: 200px;
+        left: -80px;
+        transform: translateZ(0) scale(1);
+      }
     }
   }
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="26px" height="46px" viewBox="0 0 26 46" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>down-mouse</title>
+    <defs>
+        <polygon id="path-1" points="15.0000001 9.00000004 13.9425001 7.94250003 9.75000004 12.1275001 9.75000004 3.00000001 8.25000003 3.00000001 8.25000003 12.1275001 4.06500002 7.93500003 3.00000001 9.00000004 9.00000004 15.0000001"></polygon>
+    </defs>
+    <g id="FINAL-PAYMENT-PROFILE" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="FIO---My-Profile-Lookup---Error" transform="translate(-708.000000, -662.000000)">
+            <g id="Down_Mouse" transform="translate(709.000000, 663.000000)">
+                <rect id="Rectangle" stroke="#FFFFFF" stroke-width="2" x="0" y="0" width="24" height="44" rx="12"></rect>
+                <g id="arrow_downward" transform="translate(3.000000, 23.000000)">
+                    <polygon id="Base" points="0 0 18.0000001 0 18.0000001 18.0000001 0 18.0000001"></polygon>
+                    <mask id="mask-2" fill="white">
+                        <use xlink:href="#path-1"></use>
+                    </mask>
+                    <g id="Icon"></g>
+                    <rect id="↳-🎨-Color" fill="#FFFFFF" mask="url(#mask-2)" x="3.74999871e-08" y="3.74999871e-08" width="18" height="18"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
