@@ -44,13 +44,19 @@
 }
 
 .badgeContainer {
-  min-height: 54px;
-  padding: 10px 20px 10px 10px !important;
   max-width: 465px;
   border-radius: 100px;
   margin-top: 25px !important;
   margin-bottom: -5px !important;
   text-align: left;
+  max-height: 0;
+  overflow: hidden;
+
+  &.show {
+    max-height: fit-content;
+    min-height: 54px;
+    padding: 10px 20px 10px 10px !important;
+  }
 
   .contentContainer {
     display: flex;
@@ -88,6 +94,10 @@
 
 .marginAuto {
   margin: 30px auto !important;
+}
+
+.marginBottomZero {
+  margin-bottom: 0 !important;
 }
 
 @include sm {

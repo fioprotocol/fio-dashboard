@@ -14,6 +14,7 @@ export const BADGE_TYPES = {
   WHITE: 'white',
   BLACK: 'black',
   BORDERED: 'bordered',
+  RED: 'red',
 };
 
 export type CommonBadgeProps = {
