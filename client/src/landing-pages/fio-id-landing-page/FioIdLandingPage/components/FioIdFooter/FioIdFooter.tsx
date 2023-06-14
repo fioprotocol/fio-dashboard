@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import { Form, Field } from 'react-final-form';
 
@@ -15,6 +15,7 @@ import {
 import { currentYear } from '../../../../../utils';
 
 import { ROUTES } from '../../../../../constants/routes';
+import { QUERY_PARAMS_NAMES } from '../../../../../constants/queryParams';
 
 import classes from './FioIdFooter.module.scss';
 
@@ -22,15 +23,33 @@ type Props = {
   fioBaseUrl: string;
 };
 
+type FormValues = {
+  fch: string;
+};
+
 export const FioIdFooter: React.FC<Props> = props => {
   const { fioBaseUrl } = props;
+
+  const submit = useCallback(
+    (values: FormValues) => {
+      const { fch } = values || {};
+      let url = `${fioBaseUrl}${ROUTES.FIO_ADDRESSES_SELECTION}`;
+
+      if (fch) {
+        url = `${url}?${QUERY_PARAMS_NAMES.ADDRESS}=${fch}`;
+      }
+
+      window.open(url, '_blank');
+    },
+    [fioBaseUrl],
+  );
 
   return (
     <div className={classes.container}>
       <h1 className={classes.title}>
         Get your FIO Handle and start sharing everything you.
       </h1>
-      <Form onSubmit={() => null}>
+      <Form onSubmit={submit}>
         {formProps => (
           <form onSubmit={formProps.handleSubmit} className={classes.form}>
             <div className={classes.field}>
