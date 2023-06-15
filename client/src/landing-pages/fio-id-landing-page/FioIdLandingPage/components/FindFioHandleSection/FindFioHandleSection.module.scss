@@ -1,16 +1,17 @@
 @import '../../../../../assets/styles/colors.scss';
+@import '../../../../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
   display: flex;
   flex-direction: column;
   background-color: $light-indigo;
   align-items: center;
-  padding: 50px;
+  padding: 20px 20px 60px;
 
-  .contentContainer{
+  .contentContainer {
     display: flex;
     flex-direction: row;
-    padding: 110px 50px 30px 50px;
+    padding: 60px 0 0;
     gap: 50px;
     width: 100%;
     overflow: hidden;
@@ -71,6 +72,24 @@
         left: -80px;
         transform: translateZ(0) scale(1);
       }
+    }
+  }
+
+  .mouseDown {
+    margin-top: 40px;
+  }
+}
+
+@include lg {
+  .container {
+    padding: 50px;
+
+    .contentContainer {
+      padding: 110px 50px 30px 50px;
+    }
+
+    .mouseDown {
+      margin-top: 0;
     }
   }
 }

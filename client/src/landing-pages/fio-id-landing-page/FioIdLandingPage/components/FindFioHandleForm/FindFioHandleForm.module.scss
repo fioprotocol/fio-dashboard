@@ -1,5 +1,6 @@
 @import '../../../../../assets/styles/colors.scss';
 @import '../../../../../assets/styles/fontMixins.scss';
+@import '../../../../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
   display: flex;
@@ -10,7 +11,7 @@
 
   .title {
     margin: 0;
-    font-size: 4.5em;
+    font-size: 3.25em;
     @include proxima-nova-bold;
   }
 
@@ -25,24 +26,27 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-top: 30px;
+    margin-top: 10px;
 
     .notification {
       margin-bottom: 20px;
+      width: 100%;
+
+      &.hasError {
+        margin-top: 20px;
+      }
     }
 
     .fieldContainer {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       align-items: flex-start;
       justify-content: flex-start;
-      gap: 30px;
+      gap: 0;
       width: 100%;
-      margin-top: 10px;
 
       .field {
         width: 100%;
-        max-width: 335px;
       }
     
       .button {
@@ -50,17 +54,55 @@
         white-space: nowrap;
         @include proxima-nova-semibold;
       }
+
+      &.hasError {
+        margin-top: 10px;
+      }
     }
   }
 
   .actionText {
     @include proxima-nova-thin;
     font-size: 0.9375em;
+    margin-top: 30px;
 
     .link {
       color: $white;
       text-decoration: underline;
       @include proxima-nova-regular;
+    }
+  }
+}
+
+@include lg {
+  .container {
+    .title {
+      font-size: 4.5em;
+    }
+
+    .form {
+      .notification {
+        width: auto;
+        margin-top: 0;
+      }
+
+      .fieldContainer {
+        flex-direction: row;
+        gap: 30px;
+        margin-top: 20px;
+
+        .field {
+          max-width: 335px;
+        }
+
+        &.hasError {
+          margin-top: 10px;
+        }
+      }
+
+      .actionText {
+        margin-top: 0;
+      }
     }
   }
 }

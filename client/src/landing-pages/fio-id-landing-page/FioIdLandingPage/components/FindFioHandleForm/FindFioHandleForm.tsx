@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 
 import { Form, Field } from 'react-final-form';
 import { FORM_ERROR } from 'final-form';
+import classnames from 'classnames';
 
 import TextInput, {
   INPUT_COLOR_SCHEMA,
@@ -15,7 +16,7 @@ import apis from '../../../../../api';
 import { BADGE_TYPES } from '../../../../../components/Badge/Badge';
 import { ROUTES } from '../../../../../constants/routes';
 
-import classes from './FindFioHadleForm.module.scss';
+import classes from './FindFioHandleForm.module.scss';
 
 type Props = {
   fioBaseUrl: string;
@@ -67,20 +68,32 @@ export const FindFioHandleForm: React.FC<Props> = props => {
             handleSubmit,
             hasSubmitErrors,
           } = formProps;
+          const hasError = hasSubmitErrors && !dirtySinceLastSubmit;
+
           return (
             <form onSubmit={handleSubmit} className={classes.form}>
-              <div className={classes.notification}>
+              <div
+                className={classnames(
+                  classes.notification,
+                  hasError && classes.hasError,
+                )}
+              >
                 <NotificationBadge
                   hasNewDesign
                   type={BADGE_TYPES.RED}
-                  show={hasSubmitErrors && !dirtySinceLastSubmit}
+                  show={hasError}
                   message="Please check the FIO Handle below and try again."
                   title="Doesn’t Exist"
                   marginTopZero
                   marginBottomZero
                 />
               </div>
-              <div className={classes.fieldContainer}>
+              <div
+                className={classnames(
+                  classes.fieldContainer,
+                  hasError && classes.hasError,
+                )}
+              >
                 <div className={classes.field}>
                   <Field
                     name="fch"

@@ -9,11 +9,11 @@ import { FioIdFooter } from './components/FioIdFooter';
 import { useContext } from './FioIdLandingPageContext';
 
 const FioIdLandingPage: React.FC = () => {
-  const { fioBaseUrl } = useContext();
+  const { fioBaseUrl, isDesktop } = useContext();
 
   return (
     <MainLayoutContainer>
-      <FindFioHandleSection fioBaseUrl={fioBaseUrl} />
+      <FindFioHandleSection fioBaseUrl={fioBaseUrl} isDesktop={isDesktop} />
       <FCHSpecialBanners />
       <FioPartnersSlider />
       <FioIdFooter fioBaseUrl={fioBaseUrl} />

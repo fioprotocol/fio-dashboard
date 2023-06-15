@@ -14,7 +14,7 @@ import LinkedinIconSrc from '../../../../../assets/images/fio-id-images/square-l
 import TwitterIconSrc from '../../../../../assets/images/fio-id-images/round-twitter.svg';
 import WhatsappIconSrc from '../../../../../assets/images/fio-id-images/whatsapp.svg';
 
-import classes from './FindFioHandle.module.scss';
+import classes from './FindFioHandleSection.module.scss';
 
 const socialIcons = [
   { alt: 'Facebook icon', imageSrc: FacebookIconSrc },
@@ -26,10 +26,11 @@ const socialIcons = [
 
 type Props = {
   fioBaseUrl: string;
+  isDesktop: boolean;
 };
 
 export const FindFioHandleSection: React.FC<Props> = props => {
-  const { fioBaseUrl } = props;
+  const { fioBaseUrl, isDesktop } = props;
 
   useEffect(() => {
     function parallax() {
@@ -89,31 +90,38 @@ export const FindFioHandleSection: React.FC<Props> = props => {
           ACTION_BUTTONS_NAMES.GET_FIO_HANDLE,
           ACTION_BUTTONS_NAMES.MANAGE_FIO_HANDLE,
         ]}
+        hasButtonMenu={!isDesktop}
       />
       <div className={classes.contentContainer}>
         <FindFioHandleForm fioBaseUrl={fioBaseUrl} />
-        <div className={classes.imageContainer}>
-          <div className={classes.parallax}>
-            <div className={classes.parallaxLayer}>
-              <img
-                src={FioCardSrc}
-                alt="FIO card"
-                className={classes.fioCard}
-              />
-              {socialIcons.map(socialIcon => (
+        {isDesktop && (
+          <div className={classes.imageContainer}>
+            <div className={classes.parallax}>
+              <div className={classes.parallaxLayer}>
                 <img
-                  key={socialIcon.alt}
-                  src={socialIcon.imageSrc}
-                  alt={socialIcon.alt}
-                  data-img="true"
-                  className={classes.socialIcon}
+                  src={FioCardSrc}
+                  alt="FIO card"
+                  className={classes.fioCard}
                 />
-              ))}
+                {socialIcons.map(socialIcon => (
+                  <img
+                    key={socialIcon.alt}
+                    src={socialIcon.imageSrc}
+                    alt={socialIcon.alt}
+                    data-img="true"
+                    className={classes.socialIcon}
+                  />
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
-      <img src={DownMouseIconSrc} alt="Down mouse icon" />
+      <img
+        src={DownMouseIconSrc}
+        alt="Down mouse icon"
+        className={classes.mouseDown}
+      />
     </div>
   );
 };

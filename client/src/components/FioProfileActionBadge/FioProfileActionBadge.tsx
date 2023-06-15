@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useCallback, useState } from 'react';
+import classnames from 'classnames';
 
 import Badge, { BADGE_TYPES } from '../Badge/Badge';
 import SubmitButton from '../common/SubmitButton/SubmitButton';
+import { SideMenu } from '../MainHeader/components/SideMenu/SideMenu';
 
 import { ROUTES } from '../../constants/routes';
 
@@ -47,39 +49,117 @@ const ACTION_BUTTONS_CONTENT = {
 
 type ActionButtonType = keyof typeof ACTION_BUTTONS_NAMES;
 
-type Props = {
+type DefaultProps = {
   actionButtons: ActionButtonType[];
   fioBaseUrl: string;
+  hasButtonMenu?: boolean;
+};
+
+type Props = DefaultProps;
+
+type ActionButtonsContainerProps = DefaultProps & {
+  isMenuOpen?: boolean;
+  toggleMenuOpen?: (isMenuOpen: boolean) => void;
+};
+
+type ActionButtonsProps = DefaultProps & {
+  hasNoSidePaddings?: boolean;
+  closeMenu?: () => void;
+};
+
+const ActionButtons: React.FC<ActionButtonsProps> = props => {
+  const { actionButtons, fioBaseUrl, hasNoSidePaddings, closeMenu } = props;
+
+  return (
+    <>
+      {actionButtons.map(actionButton => {
+        const { addFioBaseUrl, buttonProps, link } = ACTION_BUTTONS_CONTENT[
+          actionButton
+        ];
+
+        const linkTo = addFioBaseUrl ? fioBaseUrl + link : link;
+
+        return (
+          <a
+            href={linkTo}
+            target="_blank"
+            rel="noopener noreferrer"
+            key={linkTo}
+          >
+            <SubmitButton
+              {...buttonProps}
+              className={classes.button}
+              hasNoSidePaddings={hasNoSidePaddings}
+              onClick={closeMenu}
+            />
+          </a>
+        );
+      })}
+    </>
+  );
+};
+
+const ActionButtonsContainer: React.FC<ActionButtonsContainerProps> = props => {
+  const {
+    actionButtons,
+    fioBaseUrl,
+    hasButtonMenu,
+    isMenuOpen,
+    toggleMenuOpen,
+  } = props;
+
+  const closeMenu = useCallback(() => {
+    toggleMenuOpen(false);
+  }, [toggleMenuOpen]);
+
+  if (hasButtonMenu)
+    return (
+      <SideMenu
+        isMenuOpen={isMenuOpen}
+        toggleMenuOpen={toggleMenuOpen}
+        menuClassNames={classes.menu}
+      >
+        <div className={classes.menuActionButtons}>
+          <ActionButtons
+            actionButtons={actionButtons}
+            fioBaseUrl={fioBaseUrl}
+            hasNoSidePaddings
+            closeMenu={closeMenu}
+          />
+        </div>
+      </SideMenu>
+    );
+
+  return (
+    <div className={classes.actionButtonsContainer}>
+      <ActionButtons actionButtons={actionButtons} fioBaseUrl={fioBaseUrl} />
+    </div>
+  );
 };
 
 export const FioProfileActionBadge: React.FC<Props> = props => {
-  const { actionButtons, fioBaseUrl } = props;
+  const { fioBaseUrl, hasButtonMenu } = props;
+
+  const [isMenuOpen, toggleMenuOpen] = useState<boolean>();
 
   return (
-    <Badge show type={BADGE_TYPES.WHITE} className={classes.badge}>
+    <Badge
+      show
+      type={BADGE_TYPES.WHITE}
+      className={classnames(
+        classes.badge,
+        hasButtonMenu && classes.hasButtonMenu,
+        isMenuOpen && classes.isMenuOpen,
+      )}
+    >
       <a href={fioBaseUrl} target="_blank" rel="noopener noreferrer">
         <img src={FioLogoSrc} alt="FIO Logo" className={classes.logo} />
       </a>
-      <div className={classes.actionButtonsContainer}>
-        {actionButtons.map(actionButton => {
-          const { addFioBaseUrl, buttonProps, link } = ACTION_BUTTONS_CONTENT[
-            actionButton
-          ];
-
-          const linkTo = addFioBaseUrl ? fioBaseUrl + link : link;
-
-          return (
-            <a
-              href={linkTo}
-              target="_blank"
-              rel="noopener noreferrer"
-              key={linkTo}
-            >
-              <SubmitButton {...buttonProps} className={classes.button} />
-            </a>
-          );
-        })}
-      </div>
+      <ActionButtonsContainer
+        {...props}
+        isMenuOpen={isMenuOpen}
+        toggleMenuOpen={toggleMenuOpen}
+      />
     </Badge>
   );
 };
