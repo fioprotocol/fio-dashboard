@@ -1,13 +1,14 @@
 @import '../../../../../assets/styles/colors.scss';
 @import '../../../../../assets/styles/fontMixins.scss';
+@import '../../../../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
   background-color: $light-lavender;
-  padding: 100px;
+  padding: 60px 20px;
 
   .title {
     margin: 0;
-    font-size: 3.25em;
+    font-size: 1.75em;
     color: $purple-iris;
     text-align: center;
     @include proxima-nova-bold;
@@ -15,14 +16,14 @@
 
   .specialBannersContainer {
     display: flex;
-    flex-direction: row;
-    gap: 40px;
-    margin-top: 50px;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 30px;
 
     .specialBannerItem {
       width: 100%;
       background-color: rgba(255, 255, 255, 0.28);
-      padding: 50px 90px 50px 50px;
+      padding: 42px 30px;
       border-radius: 24px;
 
       .image {
@@ -31,12 +32,39 @@
       }
 
       .text {
-        margin-top: 40px;
+        margin-top: 30px;
         margin-bottom: 0;
-        font-size: 1.875em;
+        font-size: 1.25em;
         line-height: 1.5em;
         color: $purple-iris;
+        text-align: center;
         @include proxima-nova-semibold;
+      }
+    }
+  }
+}
+
+@include lg {
+  .container {
+    padding: 100px;
+
+    .title {
+      font-size: 3.25em;
+    }
+
+    .specialBannersContainer {
+      flex-direction: row;
+      gap: 40px;
+      margin-top: 50px;
+
+      .specialBannerItem {
+        padding: 50px 90px 50px 50px;
+
+        .text {
+          margin-top: 40px;
+          font-size: 1.875em;
+          text-align: left;
+        }
       }
     }
   }

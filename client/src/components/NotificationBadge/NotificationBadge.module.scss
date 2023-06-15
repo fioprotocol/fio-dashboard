@@ -51,6 +51,7 @@
   text-align: left;
   max-height: 0;
   overflow: hidden;
+  align-items: center;
 
   &.show {
     max-height: fit-content;

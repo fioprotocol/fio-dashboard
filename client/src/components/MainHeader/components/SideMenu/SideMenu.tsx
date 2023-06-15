@@ -8,11 +8,12 @@ import classes from './SideMenu.module.scss';
 type SideMenuProps = {
   children: React.ReactNode;
   isMenuOpen: boolean;
+  menuClassNames?: string;
   toggleMenuOpen: (openState: boolean) => void;
 };
 
 export const SideMenu: React.FC<SideMenuProps> = props => {
-  const { children, isMenuOpen, toggleMenuOpen } = props;
+  const { children, isMenuOpen, menuClassNames, toggleMenuOpen } = props;
   return (
     <>
       <div
@@ -26,7 +27,9 @@ export const SideMenu: React.FC<SideMenuProps> = props => {
         <span />
         <span />
       </div>
-      <Menu isOpen={isMenuOpen}>{children}</Menu>
+      <Menu isOpen={isMenuOpen} classNames={menuClassNames}>
+        {children}
+      </Menu>
     </>
   );
 };
