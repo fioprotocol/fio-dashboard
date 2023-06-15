@@ -45,9 +45,41 @@ export const FioPartnersSlider: React.FC<Props> = props => {
       <Slider
         dots
         className={classes.slider}
-        slidesToShow={3}
-        centerMode
-        infinite
+        infinite={false}
+        arrows={false}
+        slidesToShow={4.5}
+        responsive={[
+          {
+            breakpoint: 480,
+            settings: {
+              slidesToShow: 3,
+            },
+          },
+          {
+            breakpoint: 600,
+            settings: {
+              slidesToShow: 4,
+            },
+          },
+          {
+            breakpoint: 1024,
+            settings: {
+              slidesToShow: 5,
+            },
+          },
+          {
+            breakpoint: 1240,
+            settings: {
+              slidesToShow: 2.5,
+            },
+          },
+          {
+            breakpoint: 1440,
+            settings: {
+              slidesToShow: 3.5,
+            },
+          },
+        ]}
         appendDots={dots => <ul className={classes.sliderDots}>{dots}</ul>}
         dotsClass={classes.sliderDots}
         customPaging={() => <div className={classes.dot}></div>}
@@ -61,6 +93,14 @@ export const FioPartnersSlider: React.FC<Props> = props => {
             />
           </div>
         ))}
+        <a
+          href="https://www.fioprotocol.io/ecosystem"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={classes.actionButton}
+        >
+          Show More
+        </a>
       </Slider>
     </div>
   );
