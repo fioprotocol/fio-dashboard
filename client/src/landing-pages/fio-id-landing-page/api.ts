@@ -1,6 +1,7 @@
 import config from '../../config';
 import ApiClient from '../../api/client';
 
+import ChainCode from '../../api/chain-code';
 import Fio from '../../api/fio';
 import InfuraNfts from '../../api/infura-nfts';
 
@@ -18,12 +19,14 @@ window.fetch = (uri: RequestInfo | URL, opts: RequestInit = {}) => {
 };
 
 export type Api = {
+  chainCode: ChainCode;
   fio: Fio;
   infuraNfts: InfuraNfts;
 };
 
 const ApiObj = {
   fio: new Fio(),
+  chainCode: new ChainCode(apiClient),
   client: apiClient,
   infuraNfts: new InfuraNfts(apiClient),
 };
