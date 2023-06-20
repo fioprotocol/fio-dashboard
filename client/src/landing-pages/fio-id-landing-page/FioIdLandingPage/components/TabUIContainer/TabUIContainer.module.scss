@@ -1,0 +1,33 @@
+@import '../../../../../assets/styles/fontMixins.scss';
+@import '../../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  margin-top: 60px;
+
+  .title {
+    margin: 0; 
+    font-size: 1.5em;
+    @include proxima-nova-semibold;
+  }
+
+  .subtitle {
+    margin-top: 15px;
+    margin-bottom: 0;
+    font-size: 0.875em;
+    @include proxima-nova-thin;
+  }
+
+  .contentContainer {
+    width: 100%;
+  }
+}
+
+@include lg {
+  .container {
+    margin-top: 50px;
+
+    .subtitle {
+      font-size: 1em;
+    }
+  }
+}
