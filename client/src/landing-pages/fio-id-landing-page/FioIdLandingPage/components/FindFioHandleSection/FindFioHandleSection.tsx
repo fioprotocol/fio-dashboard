@@ -27,10 +27,11 @@ const socialIcons = [
 type Props = {
   fioBaseUrl: string;
   isDesktop: boolean;
+  setFch: (fch: string) => void;
 };
 
 export const FindFioHandleSection: React.FC<Props> = props => {
-  const { fioBaseUrl, isDesktop } = props;
+  const { fioBaseUrl, isDesktop, setFch } = props;
 
   useEffect(() => {
     function parallax() {
@@ -93,7 +94,7 @@ export const FindFioHandleSection: React.FC<Props> = props => {
         hasButtonMenu={!isDesktop}
       />
       <div className={classes.contentContainer}>
-        <FindFioHandleForm fioBaseUrl={fioBaseUrl} />
+        <FindFioHandleForm fioBaseUrl={fioBaseUrl} setFch={setFch} />
         {isDesktop && (
           <div className={classes.imageContainer}>
             <div className={classes.parallax}>

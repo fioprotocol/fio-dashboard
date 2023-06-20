@@ -5,15 +5,30 @@ import { FindFioHandleSection } from './components/FindFioHandleSection';
 import { FCHSpecialBanners } from './components/FCHSpecialBanners';
 import { FioPartnersSlider } from './components/FioPartnersSlider';
 import { FioIdFooter } from './components/FioIdFooter';
+import { FCHProfileSection } from './components/FCHProfileSection';
 
 import { useContext } from './FioIdLandingPageContext';
 
 const FioIdLandingPage: React.FC = () => {
-  const { fioBaseUrl, isDesktop } = useContext();
+  const { fch, fioBaseUrl, isDesktop, resetPath, setFch } = useContext();
 
   return (
     <MainLayoutContainer>
-      <FindFioHandleSection fioBaseUrl={fioBaseUrl} isDesktop={isDesktop} />
+      {fch ? (
+        <FCHProfileSection
+          fioBaseUrl={fioBaseUrl}
+          isDesktop={isDesktop}
+          fch={fch}
+          resetPath={resetPath}
+        />
+      ) : (
+        <FindFioHandleSection
+          fioBaseUrl={fioBaseUrl}
+          isDesktop={isDesktop}
+          setFch={setFch}
+        />
+      )}
+
       <FCHSpecialBanners />
       <FioPartnersSlider />
       <FioIdFooter fioBaseUrl={fioBaseUrl} />

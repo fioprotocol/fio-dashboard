@@ -12,6 +12,7 @@ type Props = {
   containerClass?: string;
   tabItemContainerClass?: string;
   tabItemClass?: string;
+  tabContentContainerClass?: string;
   tabContentClass?: string;
   showTabBorder?: boolean;
   tabProps?: AnyObject;
@@ -24,6 +25,7 @@ const Tabs: React.FC<Props> = props => {
     containerClass,
     tabItemContainerClass,
     tabItemClass,
+    tabContentContainerClass,
     tabContentClass,
     showTabBorder,
     tabProps,
@@ -53,7 +55,12 @@ const Tabs: React.FC<Props> = props => {
           </Nav.Item>
         ))}
       </Nav>
-      <Tab.Content className={classes.tabContentContainer}>
+      <Tab.Content
+        className={classnames(
+          classes.tabContentContainer,
+          tabContentContainerClass,
+        )}
+      >
         {list.map(tab => (
           <Tab.Pane
             key={tab.eventKey + 'content'}

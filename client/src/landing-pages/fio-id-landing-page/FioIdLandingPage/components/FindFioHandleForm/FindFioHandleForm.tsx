@@ -20,6 +20,7 @@ import classes from './FindFioHandleForm.module.scss';
 
 type Props = {
   fioBaseUrl: string;
+  setFch: (fch: string) => void;
 };
 
 type FormProps = {
@@ -27,32 +28,36 @@ type FormProps = {
 };
 
 export const FindFioHandleForm: React.FC<Props> = props => {
-  const { fioBaseUrl } = props;
+  const { fioBaseUrl, setFch } = props;
 
-  const submit = useCallback(async (values: FormProps) => {
-    const { fch } = values || {};
+  const submit = useCallback(
+    async (values: FormProps) => {
+      const { fch } = values || {};
 
-    if (!fch) return;
+      if (!fch) return;
 
-    let errors;
+      let errors;
 
-    try {
-      apis.fio.isFioAddressValid(fch);
+      try {
+        apis.fio.isFioAddressValid(fch);
 
-      const isAvail = await apis.fio.availCheck(fch);
+        const isAvail = await apis.fio.availCheck(fch);
 
-      if (isAvail && isAvail.is_registered === 1) {
-        window.history.pushState({}, null, `/${fch}`);
-        return;
-      } else {
-        return { [FORM_ERROR]: 'FIO Crypto Handle is not registered' };
+        if (isAvail && isAvail.is_registered === 1) {
+          window.history.pushState({}, null, `/${fch}`);
+          setFch(fch);
+          return;
+        } else {
+          return { [FORM_ERROR]: 'FIO Crypto Handle is not registered' };
+        }
+      } catch (error) {
+        errors = error;
       }
-    } catch (error) {
-      errors = error;
-    }
 
-    return errors;
-  }, []);
+      return errors;
+    },
+    [setFch],
+  );
 
   return (
     <div className={classes.container}>

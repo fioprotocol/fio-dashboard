@@ -14,6 +14,7 @@ type Props = {
   isYellowGreen?: boolean;
   children: React.ReactNode;
   hasRoundBorders?: boolean;
+  classNames?: string;
 };
 
 const CommonBadge: React.FC<Props> = props => {
@@ -28,6 +29,7 @@ const CommonBadge: React.FC<Props> = props => {
     isRose,
     isRed,
     isYellowGreen,
+    classNames,
   } = props;
   return (
     <div
@@ -42,6 +44,7 @@ const CommonBadge: React.FC<Props> = props => {
         isRose && classes.isRose,
         isRed && classes.isRed,
         isYellowGreen && classes.isYellowGreen,
+        classNames,
       )}
     >
       {children}
