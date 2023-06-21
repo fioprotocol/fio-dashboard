@@ -8,6 +8,7 @@ import { FioAddressesResponse } from '@fioprotocol/fiosdk/src/entities/FioAddres
 import { FioDomainsResponse } from '@fioprotocol/fiosdk/src/entities/FioDomainsResponse';
 import { PublicAddressResponse } from '@fioprotocol/fiosdk/src/entities/PublicAddressResponse';
 import { PublicAddressesResponse } from '@fioprotocol/fiosdk/src/entities/PublicAddressesResponse';
+import { PublicAddress } from '@fioprotocol/fiosdk/src/entities/PublicAddress';
 import { EndPoint } from '@fioprotocol/fiosdk/lib/entities/EndPoint';
 import { NftsResponse } from '@fioprotocol/fiosdk/src/entities/NftsResponse';
 import { BalanceResponse } from '@fioprotocol/fiosdk/src/entities/BalanceResponse';
@@ -555,7 +556,9 @@ export default class Fio {
     fioAddress: string,
     limit: number | null = null,
     offset: number | null = null,
-  ): Promise<PublicAddressesResponse> => {
+  ): Promise<
+    PublicAddressesResponse & { public_addresses?: PublicAddress[] }
+  > => {
     try {
       return this.publicFioSDK.getPublicAddresses(fioAddress, limit, offset);
     } catch (err) {
