@@ -36,11 +36,13 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
     try {
       const imagesParsed: ImageData = JSON.parse(imagesJSON);
       const pubAddressesRes = await apis.fio.getPublicAddresses(fch);
-      const pubAddresses = pubAddressesRes.public_addresses.map(pubAddress => ({
-        chainCode: pubAddress.chain_code,
-        publicAddress: pubAddress.public_address,
-        tokenCode: pubAddress.token_code,
-      }));
+      const pubAddresses = pubAddressesRes?.public_addresses.map(
+        pubAddress => ({
+          chainCode: pubAddress.chain_code,
+          publicAddress: pubAddress.public_address,
+          tokenCode: pubAddress.token_code,
+        }),
+      );
       const chainCodesList = pubAddresses.map(
         pubAddress => pubAddress.chainCode,
       );
