@@ -29,7 +29,7 @@ export const PublicAddressComponent: React.FC<Props> = props => {
         <p className={classes.tokenCodeName}>
           {tokenCodeName} <span>({tokenCode})</span>
         </p>
-        {chainCodeName === tokenCodeName && (
+        {chainCodeName !== tokenCodeName && (
           <div className={classes.chainCodeBagde}>
             <CommonBadge classNames={classes.chainCode}>
               {chainCodeName}

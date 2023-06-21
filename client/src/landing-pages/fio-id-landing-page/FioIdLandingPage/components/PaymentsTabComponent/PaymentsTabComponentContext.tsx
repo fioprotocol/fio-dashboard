@@ -68,7 +68,7 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
               imagesParsed[pubAddress.chainCode + '-' + pubAddress.tokenCode] ||
               defaultImageSrc,
             chainCodeName: chainCode.chainCodeName,
-            tokenCodeName: tokenCodeName.tokenCodeName,
+            tokenCodeName: tokenCodeName?.tokenCodeName || pubAddress.tokenCode,
             ...pubAddress,
           };
         }),
