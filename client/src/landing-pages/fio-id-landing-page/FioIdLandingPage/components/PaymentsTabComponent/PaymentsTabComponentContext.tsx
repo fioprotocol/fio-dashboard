@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import apis from '../../../api';
 import { log } from '../../../../../util/general';
+import { sleep } from '../../../../../utils';
 
 import defaultImageSrc from '../../../../../assets/images/chain.svg';
 
@@ -11,15 +12,19 @@ interface ImageData {
   [key: string]: string;
 }
 
-type PublicAddressItem = {
+export type PublicAddressItem = {
   chainCodeName: string;
   iconSrc: string;
   tokenCodeName: string;
 } & PublicAddressDoublet;
 
 type UseContextProps = {
+  activePublicAddress: PublicAddressItem | null;
   loading: boolean;
   publicAddresses: PublicAddressItem[];
+  showModal: boolean;
+  onModalClose: () => void;
+  onItemClick: (publicAddress: PublicAddressItem) => void;
 };
 
 export const useContext = ({ fch }: { fch: string }): UseContextProps => {
@@ -28,6 +33,10 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
   );
   const [loading, toggleLoading] = useState<boolean>(false);
   const [images, setImages] = useState<ImageData>({});
+  const [showModal, toggleModal] = useState<boolean>(false);
+  const [activePublicAddress, setActivePublicAddress] = useState<
+    PublicAddressItem
+  >(null);
 
   const imagesJSON = JSON.stringify(images);
 
@@ -80,6 +89,17 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
     toggleLoading(false);
   }, [fch, imagesJSON]);
 
+  const onModalClose = useCallback(async () => {
+    toggleModal(false);
+    await sleep(500);
+    setActivePublicAddress(null);
+  }, []);
+
+  const onItemClick = useCallback((publicAddress: PublicAddressItem) => {
+    setActivePublicAddress(publicAddress);
+    toggleModal(true);
+  }, []);
+
   useEffect(() => {
     getPublicAddresses();
   }, [getPublicAddresses]);
@@ -110,5 +130,12 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
     importImages();
   }, []);
 
-  return { loading, publicAddresses };
+  return {
+    activePublicAddress,
+    loading,
+    publicAddresses,
+    showModal,
+    onModalClose,
+    onItemClick,
+  };
 };

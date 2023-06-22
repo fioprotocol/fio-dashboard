@@ -1,0 +1,58 @@
+  @import '../../../../../../../assets/styles/colors.scss';
+  @import '../../../../../../../assets/styles/fontMixins.scss';
+  @import '../../../../../../../assets/styles/mediaQueriesMixings.scss';
+  
+.cotnentContainer {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 15px;
+
+  .image {
+    width: 34px;
+    height: 34px;
+
+    &.hasBigImage {
+      width: 64px;
+      height: 64px;
+    }
+
+    img {
+      width: 100%;
+    }
+  }
+
+  .tokenCodeName {
+    margin: 0;
+    font-size: 1em;
+    color: $dark-jungle-green;
+    word-break: break-all;
+    @include proxima-nova-bold;
+
+    span {
+      @include proxima-nova-thin;
+    }
+  }
+
+  .chainCodeBagde {
+    .chainCode {
+      background-color: $dodger-blue !important;
+      font-size: 0.75em;
+      border-radius: 8px;
+      padding: 10px;
+      text-transform: uppercase;
+      color: $white;
+      @include proxima-nova-bold;
+    }
+  }
+}
+
+@include lg {
+  .cotnentContainer {
+    gap: 30px;
+
+    .tokenCodeName {
+      font-size: 1.25em;
+    }
+  }
+}

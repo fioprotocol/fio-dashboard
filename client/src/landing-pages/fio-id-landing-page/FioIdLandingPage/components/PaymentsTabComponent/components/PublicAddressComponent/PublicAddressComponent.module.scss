@@ -7,6 +7,7 @@
   background-color: $alabaster !important;
   align-items: center;
   margin-top: 15px !important;
+  max-width: none;
 
   &:hover {
     cursor: pointer;
@@ -20,60 +21,11 @@
     margin: 0;
   }
 
-  .cotnentContainer {
-    display: flex;
-    flex-flow: row wrap;
-    align-items: center;
-    gap: 15px;
-
-    .image {
-      width: 34px;
-      height: 34px;
-  
-      img {
-        width: 100%;
-      }
-    }
-  
-    .tokenCodeName {
-      margin: 0;
-      font-size: 1em;
-      color: $dark-jungle-green;
-      @include proxima-nova-bold;
-  
-      span {
-        @include proxima-nova-thin;
-      }
-    }
-  
-    .chainCodeBagde {  
-      .chainCode {
-        background-color: $dodger-blue !important;
-        font-size: 0.75em;
-        border-radius: 8px;
-        padding: 10px;
-        text-transform: uppercase;
-        @include proxima-nova-bold;
-      }
-    }
-  }
-
   .arrow {
     color: $dark-jungle-green;
     margin-left: auto;
     cursor: pointer;
     transition: 0.2s ease-in-out;
     transform: translateX(0);
-  }
-}
-
-@include lg {
-  .container {
-    .cotnentContainer {
-      gap: 30px;
-      .tokenCodeName {
-        font-size: 1.25em;
-      }
-    }
   }
 }

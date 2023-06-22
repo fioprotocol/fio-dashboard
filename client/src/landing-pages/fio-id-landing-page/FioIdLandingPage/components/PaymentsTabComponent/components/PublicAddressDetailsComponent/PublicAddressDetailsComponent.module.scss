@@ -1,0 +1,82 @@
+@import '../../../../../../../assets/styles/colors.scss';
+@import '../../../../../../../assets/styles/fontMixins.scss';
+@import '../../../../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  width: 100%;
+
+  .fch {
+    margin-top: 20px;
+    margin-bottom: 0;
+    font-size: 0.9375em;
+    color: $dark-jungle-green;
+    @include proxima-nova-bold;
+  }
+
+  .qr {
+    margin-top: 20px;
+    padding: 15px 15px 8px 15px;
+    width: fit-content;
+    background-color: $white;
+    border-radius: 7px;
+    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  .mappedText {
+    margin-top: 20px;
+    margin-bottom: 0;
+    font-size: 1em;
+  }
+
+  .pubAddressBadge {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    justify-content: space-between;
+    align-items: center;
+
+    & > div {
+      margin: 0;
+    }
+
+    .publicAddress {
+      margin-top: 0;
+      margin-bottom: 0;
+      font-size: 1em;
+      color: $dark-jungle-green;
+      word-break: break-all;
+      @include proxima-nova-bold;
+    }
+
+    .iconContainer {
+      padding: 12px;
+      border-radius: 7px;
+      background-color: $gray-main;
+    }
+  }
+}
+
+@include lg {
+  .container {
+    padding: 0 10px 20px 10px;
+
+    .fch {
+      font-size: 1.125em;
+    }
+
+    .qr {
+      margin-top: 30px;
+    }
+
+    .mappedText {
+      margin-top: 30px;
+    }
+
+    .pubAddressBadge {
+      .publicAddress {
+        font-size: 15px;
+      }
+    }
+  }
+}
