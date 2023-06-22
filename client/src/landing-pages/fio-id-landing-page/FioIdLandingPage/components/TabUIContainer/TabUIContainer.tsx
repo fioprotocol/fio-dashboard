@@ -22,7 +22,13 @@ export const TabUIContainer: React.FC<Props> = props => {
       <h4 className={classes.title}>{title}</h4>
       <p className={classes.subtitle}>{subtitle}</p>
       <div className={classes.contentContainer}>
-        {showEmptyState ? <InfoBadge {...emptyState} /> : children}
+        {showEmptyState ? (
+          <div className={classes.infoBadge}>
+            <InfoBadge {...emptyState} isOrange />
+          </div>
+        ) : (
+          children
+        )}
       </div>
     </div>
   );

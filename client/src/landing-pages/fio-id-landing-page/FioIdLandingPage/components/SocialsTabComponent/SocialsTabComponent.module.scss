@@ -1,0 +1,59 @@
+@import '../../../../../assets/styles/colors.scss';
+@import '../../../../../assets/styles/fontMixins.scss';
+@import '../../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  .socialItem {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: $light-indigo;
+
+    .imageContainer {
+      display: flex;
+      flex-direction: row;
+      gap: 15px;
+      align-items: center;
+
+      .image {
+        width: 34px;
+        height: 34px;
+      }
+
+      .name {
+        margin: 0;
+        text-transform: capitalize;
+        font-size: 1.5em;
+        color: $white;
+        @include proxima-nova-bold;
+      }
+    }
+
+    .link {
+      color: $white;
+      font-size: 0.875em;
+      word-break: break-all;
+      @include proxima-nova-semibold;
+    }
+  }
+}
+
+@include lg {
+  .container {
+    margin-top: 30px;
+    flex-flow: row wrap;
+    gap: 30px;
+
+    .socialItem {
+      max-width: 275px;
+      width: 100%;
+    }
+  }
+}
