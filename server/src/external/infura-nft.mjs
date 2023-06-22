@@ -26,6 +26,23 @@ class InfuraNftApi {
     }
   }
 
+  async getNftsMetadata({ chainId, tokenAddress, tokenId, params }) {
+    try {
+      const infuraUrl = `${INFURA_NFT_BASE_URL}/networks/${chainId}/nfts/${tokenAddress}/tokens/${tokenId}`;
+
+      return await superagent
+        .get(infuraUrl)
+        .query(params)
+        .set('Authorization', `Basic ${INFURA_AUTH_BASE_64}`);
+    } catch (error) {
+      logger.error(
+        `Infura get NFTS metadata Error: chainId - ${chainId}, tokenAddress - ${tokenAddress}, tokenId - ${tokenId}`,
+        error,
+      );
+      throw new Error(error);
+    }
+  }
+
   async getAllNftsFromAccount({ account, chainId, params, nftsList = [] }) {
     try {
       const { body: res } =
@@ -46,6 +63,15 @@ class InfuraNftApi {
         }
       }
       return nftsList;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  async getNftMetadata({ chainId, tokenAddress, tokenId, params }) {
+    try {
+      const res = await this.getNftsMetadata({ chainId, tokenAddress, tokenId, params });
+      return res.body;
     } catch (error) {
       throw new Error(error);
     }
