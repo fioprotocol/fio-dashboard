@@ -20,6 +20,10 @@
   .contentContainer {
     width: 100%;
   }
+
+  .infoBadge {
+    margin-top: 35px;
+  }
 }
 
 @include lg {
@@ -28,6 +32,10 @@
 
     .subtitle {
       font-size: 1em;
+    }
+
+    .infoBadge {
+      margin-top: 50px;
     }
   }
 }

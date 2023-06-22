@@ -1,5 +1,5 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ErrorIcon from '@mui/icons-material/Error';
 import classnames from 'classnames';
 
 import classes from './InfoBadge.module.scss';
@@ -16,7 +16,7 @@ const InfoBadge: React.FC<Props> = props => {
     <div
       className={classnames(classes.infoBadge, isOrange && classes.isOrange)}
     >
-      <FontAwesomeIcon icon="exclamation-circle" className={classes.infoIcon} />
+      <ErrorIcon className={classes.infoIcon} />
       <h5 className={classes.infoTitle}>{title}</h5>
       <p className={classes.infoText}>{message}</p>
     </div>

@@ -1,4 +1,5 @@
 import { PaymentsTabComponent } from '../PaymentsTabComponent';
+import { SocialsTabComponent } from '../SocialsTabComponent';
 
 import { TabItemProps } from '../../../../../components/Tabs/types';
 
@@ -24,7 +25,7 @@ const TABS_LIST = [
   {
     eventKey: 'socials',
     title: 'Socials',
-    renderTab: (props: any) => <div>Socials tab</div>,
+    renderTab: (props: { fch: string }) => <SocialsTabComponent {...props} />,
   },
 ];
 
