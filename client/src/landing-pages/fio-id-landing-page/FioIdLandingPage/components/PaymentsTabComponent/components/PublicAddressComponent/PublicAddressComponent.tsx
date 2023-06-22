@@ -1,42 +1,49 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 import Badge, {
   BADGE_TYPES,
 } from '../../../../../../../components/Badge/Badge';
-import CommonBadge from '../../../../../../../components/Badges/CommonBadge/CommonBadge';
+
+import { PublicAddressItem } from '../../../PaymentsTabComponent/PaymentsTabComponentContext';
+
+import { ChainComponent } from '../ChainComponent';
 
 import classes from './PublicAddressComponent.module.scss';
 
 type Props = {
-  chainCodeName: string;
-  iconSrc: string;
-  publicAddress: string;
-  tokenCodeName: string;
-  tokenCode: string;
+  publicAddressItem: PublicAddressItem;
+  onItemClick: (publicAddress: PublicAddressItem) => void;
 };
 
 export const PublicAddressComponent: React.FC<Props> = props => {
-  const { chainCodeName, iconSrc, tokenCodeName, tokenCode } = props;
+  const { publicAddressItem, onItemClick } = props;
+
+  const {
+    chainCodeName,
+    iconSrc,
+    tokenCodeName,
+    tokenCode,
+  } = publicAddressItem;
+
+  const onClick = useCallback(() => {
+    onItemClick(publicAddressItem);
+  }, [onItemClick, publicAddressItem]);
 
   return (
-    <Badge show className={classes.container} type={BADGE_TYPES.WHITE}>
-      <div className={classes.cotnentContainer}>
-        <div className={classes.image}>
-          <img src={iconSrc} alt={tokenCodeName} />
-        </div>
-        <p className={classes.tokenCodeName}>
-          {tokenCodeName} <span>({tokenCode})</span>
-        </p>
-        {chainCodeName !== tokenCodeName && (
-          <div className={classes.chainCodeBagde}>
-            <CommonBadge classNames={classes.chainCode}>
-              {chainCodeName}
-            </CommonBadge>
-          </div>
-        )}
-      </div>
+    <Badge
+      show
+      className={classes.container}
+      type={BADGE_TYPES.WHITE}
+      onClick={onClick}
+    >
+      <ChainComponent
+        chainCodeName={chainCodeName}
+        iconSrc={iconSrc}
+        tokenCodeName={tokenCodeName}
+        tokenCode={tokenCode}
+      />
       <ArrowForwardIosIcon className={classes.arrow} />
     </Badge>
   );
