@@ -202,6 +202,8 @@ router.get('/wrap-status/domains/unwrap', routes.history.unwrapDomains);
 router.get('/infura-nfts', routes.external.infuraNfts);
 router.get('/infura-nfts-metadata', routes.external.infuraNftsMetadata);
 
+router.get('/fetch-image-hash', routes.general.imageToHash);
+
 router.get('/vars/:key', routes.vars.get);
 router.post('/vars/update/:key', routes.vars.update);
 router.post(
