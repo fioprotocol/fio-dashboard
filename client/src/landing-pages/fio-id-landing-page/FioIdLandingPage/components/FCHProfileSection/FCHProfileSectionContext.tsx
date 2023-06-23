@@ -1,3 +1,4 @@
+import { NftsTabComponent } from '../NftsTabComponent';
 import { PaymentsTabComponent } from '../PaymentsTabComponent';
 import { SocialsTabComponent } from '../SocialsTabComponent';
 
@@ -20,7 +21,7 @@ const TABS_LIST = [
   {
     eventKey: 'nft',
     title: 'NFT Signatures',
-    renderTab: (props: any) => <div>NFT Signatures tab</div>,
+    renderTab: (props: { fch: string }) => <NftsTabComponent {...props} />,
   },
   {
     eventKey: 'socials',
