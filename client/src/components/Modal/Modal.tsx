@@ -24,6 +24,7 @@ type Props = {
   isBlue?: boolean;
   withoutPaggingBottom?: boolean;
   enableOverflow?: boolean;
+  headerClass?: string;
 };
 
 const ModalComponent: React.FC<Props> = props => {
@@ -47,6 +48,7 @@ const ModalComponent: React.FC<Props> = props => {
     isBlue,
     withoutPaggingBottom,
     enableOverflow,
+    headerClass,
   } = props;
   const handleClose = () => {
     if (!onClose) return;
@@ -78,7 +80,9 @@ const ModalComponent: React.FC<Props> = props => {
       backdrop={backdrop}
     >
       {!hideCloseButton && (
-        <Modal.Header closeButton={closeButton}>{title}</Modal.Header>
+        <Modal.Header closeButton={closeButton} className={headerClass}>
+          {title}
+        </Modal.Header>
       )}
       <Modal.Body>{children}</Modal.Body>
     </Modal>

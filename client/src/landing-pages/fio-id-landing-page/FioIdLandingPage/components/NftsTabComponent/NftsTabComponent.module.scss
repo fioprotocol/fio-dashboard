@@ -1,4 +1,5 @@
 @import '../../../../../assets/styles/colors.scss';
+@import '../../../../../assets/styles/fontMixins.scss';
 @import '../../../../../assets/styles/mediaQueriesMixings.scss';
 
 .container {
@@ -12,44 +13,6 @@
     grid-gap: 30px;
     width: 100%;
     justify-content: center;
-
-    .nftItem {
-      width: 100%;
-      max-width: 335px;
-      padding: 15px;
-      border-radius: 8px;
-      background-color: $alabaster;
-      cursor: pointer;
-
-      .imageContainer {
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        height: 305px;
-
-        &.notImage {
-          background-color: $dark-jungle-green;
-        }
-
-        .image {
-          width: 100%;
-          border-radius: 8px;
-
-          &.notImage {
-            width: 68px;
-          }
-
-          &.hasMultipleSignatures {
-            width: 200px;
-          }
-        }
-      }
-
-      &:hover {
-        opacity: 0.7;
-      }
-    }
   }
 
   .loader {
@@ -57,15 +20,20 @@
   }
 }
 
+.modalTitle {
+  font-size: 18px;
+  margin-top: -4px;
+  justify-content: flex-start !important;
+  @include proxima-nova-bold;
+}
+
 @include lg {
   .container {
     .nftsContainer {
       margin-top: 30px;
-
-      .nftItem {
-        max-width: 335px;
-        width: 335px;
-      }
     }
+  }
+  .modalTitle {
+    font-size: 28px;
   }
 }
