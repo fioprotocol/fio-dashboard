@@ -4,12 +4,13 @@ import apis from '../../../../../api';
 
 import { NETWORKS_LIST } from '../../../../../constants/ethereum';
 import { loadImage } from '../../../../../util/general';
+import useEffectOnce from '../../../../../hooks/general';
+import { sleep } from '../../../../../utils';
 
 import noImageIconSrc from '../../../../../assets/images/no-photo.svg';
 import multipleSignatureIconSrc from '../../../../../assets/images/multiple-signature.svg';
-import useEffectOnce from '../../../../../hooks/general';
 
-type NftItem = {
+export type NftItem = {
   contractAddress: string;
   creatorUrl?: string;
   hasMultipleSignatures: boolean;
@@ -26,10 +27,14 @@ type NftItem = {
 };
 
 type UseContextProps = {
+  activeNftItem: NftItem;
   hasMore: boolean;
   loading: boolean;
   nftsList: NftItem[];
+  showModal: boolean;
   loadMore: () => void;
+  onItemClick: (nftItem: NftItem) => void;
+  onModalClose: () => void;
 };
 
 const INFURA_HOST_URL = 'ipfs.infura.io';
@@ -70,6 +75,8 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
   const [nftsList, setNftsList] = useState<NftItem[]>([]);
   const [offset, setOffset] = useState<number>(0);
   const [hasMore, toggleHasMore] = useState<boolean>(false);
+  const [showModal, toggleModal] = useState<boolean>(false);
+  const [activeNftItem, setActiveNftItem] = useState<NftItem>(null);
 
   const getNftsList = useCallback(async () => {
     toggeLoading(true);
@@ -177,6 +184,17 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
     toggeLoading(false);
   }, [fch, nftsList, offset]);
 
+  const onModalClose = useCallback(async () => {
+    toggleModal(false);
+    await sleep(500);
+    setActiveNftItem(null);
+  }, []);
+
+  const onItemClick = useCallback((nftItem: NftItem) => {
+    setActiveNftItem(nftItem);
+    toggleModal(true);
+  }, []);
+
   const loadMore = useCallback(() => {
     getNftsList();
   }, [getNftsList]);
@@ -185,5 +203,14 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
     getNftsList();
   }, [getNftsList]);
 
-  return { hasMore, loading, nftsList, loadMore };
+  return {
+    activeNftItem,
+    hasMore,
+    loading,
+    nftsList,
+    showModal,
+    loadMore,
+    onItemClick,
+    onModalClose,
+  };
 };
