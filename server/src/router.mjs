@@ -188,6 +188,7 @@ router.post('/payments/webhook/', routes.payments.webhook);
 router.post('/payments/cancel', checkAuth, routes.payments.cancel);
 
 router.get('/chain-codes/:chainCode?', routes.chainCodes.list);
+router.get('/selected-chain-codes', routes.chainCodes.selectedList);
 
 router.post('/generate-pdf', checkAuth, routes.generatePdf.create);
 
@@ -199,6 +200,9 @@ router.get('/wrap-status/tokens/unwrap', routes.history.unwrapTokens);
 router.get('/wrap-status/domains/unwrap', routes.history.unwrapDomains);
 
 router.get('/infura-nfts', routes.external.infuraNfts);
+router.get('/infura-nfts-metadata', routes.external.infuraNftsMetadata);
+
+router.get('/fetch-image-hash', routes.general.imageToHash);
 
 router.get('/vars/:key', routes.vars.get);
 router.post('/vars/update/:key', routes.vars.update);

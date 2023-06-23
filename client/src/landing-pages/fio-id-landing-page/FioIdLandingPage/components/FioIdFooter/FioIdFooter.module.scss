@@ -1,0 +1,96 @@
+@import '../../../../../assets/styles/colors.scss';
+@import '../../../../../assets/styles/fontMixins.scss';
+@import '../../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  background-color: $purple-iris;
+  padding: 60px 20px;
+
+  .title {
+    font-size: 1.75em;
+    color: $white;
+    text-align: center;
+    margin: 0 10px;
+    @include proxima-nova-bold;
+  }
+
+  .form {
+    margin-top: 20px;
+    padding: 0 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    .field {
+      width: 100%;
+    }
+  }
+
+  .actionBadge {
+    margin-top: 60px;
+  }
+
+  .links {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    .linkItemWithDevider {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+
+    .divider {
+      width: 1px;
+      height: 50%;
+      background-color: $white;
+      margin: 0 12px;
+    }
+
+    .linkItem {
+      color: $white;
+      font-size: 0.75em;
+      margin: 0;
+    }
+  }
+}
+
+@include lg {
+  .container {
+    padding: 100px 50px;
+
+    .title {
+      font-size: 3.25em;
+      margin: 0;
+    }
+
+    .form {
+      margin-top: 50px;
+      flex-direction: row;
+      align-items: flex-start;
+
+      .field {
+        max-width: 315px;
+      }
+    }
+
+    .actionBadge {
+      margin-top: 100px;
+    }
+
+    .links {
+      margin-left: 30px;
+      justify-content: flex-start;
+
+      .linkItem {
+        font-size: 0.9375em;
+      }
+
+      .divider {
+        margin: 0 18px;
+      }
+    } 
+  }
+}

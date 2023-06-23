@@ -14,6 +14,7 @@ export const BADGE_TYPES = {
   WHITE: 'white',
   BLACK: 'black',
   BORDERED: 'bordered',
+  RED: 'red',
 };
 
 export type CommonBadgeProps = {
@@ -27,6 +28,7 @@ type Props = {
   hasDefaultFontSize?: boolean;
   withoutMargin?: boolean;
   withoutMaxWidth?: boolean;
+  onClick?: () => void;
 } & CommonBadgeProps;
 
 const Badge: React.FC<Props> = props => {
@@ -38,6 +40,7 @@ const Badge: React.FC<Props> = props => {
     withoutMargin,
     withoutMaxWidth,
     className = '',
+    onClick,
   } = props;
 
   return (
@@ -52,6 +55,7 @@ const Badge: React.FC<Props> = props => {
         type && classes[type.toLowerCase()],
         className,
       )}
+      onClick={onClick}
     >
       {children}
     </div>

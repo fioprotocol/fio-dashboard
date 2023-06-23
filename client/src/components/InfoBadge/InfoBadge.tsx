@@ -1,5 +1,5 @@
 import React, { ReactElement } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ErrorIcon from '@mui/icons-material/Error';
 import classnames from 'classnames';
 
 import Badge, { CommonBadgeProps } from '../Badge/Badge';
@@ -32,8 +32,7 @@ const InfoBadge: React.FC<InfoBadgeProps> = props => {
   } = props;
   return (
     <Badge type={type} show={show} {...rest}>
-      <FontAwesomeIcon
-        icon="exclamation-circle"
+      <ErrorIcon
         className={classnames(classes.icon, iconOnTop && classes.iconOnTop)}
       />
       <div className={classes.textContainer}>

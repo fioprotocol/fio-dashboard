@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="107px" height="106px" viewBox="0 0 107 106" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>social-1_round-twitter@2x</title>
+    <defs>
+        <filter x="-22.1%" y="-22.1%" width="144.2%" height="144.2%" filterUnits="objectBoundingBox" id="filter-1">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="4.5" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.182344023 0" type="matrix" in="shadowBlurOuter1" result="shadowMatrixOuter1"></feColorMatrix>
+            <feMerge>
+                <feMergeNode in="shadowMatrixOuter1"></feMergeNode>
+                <feMergeNode in="SourceGraphic"></feMergeNode>
+            </feMerge>
+        </filter>
+    </defs>
+    <g id="FINAL-PAYMENT-PROFILE" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="FIO---My-Profile-Lookup---Error" transform="translate(-886.000000, -323.000000)" fill="#FFFFFF" fill-rule="nonzero">
+            <g id="FIO_Interaction" transform="translate(853.000000, 218.000000)">
+                <g id="social-1_round-twitter" filter="url(#filter-1)" transform="translate(46.840467, 118.800000)">
+                    <path d="M39.6342412,0 C17.8354086,0 0,17.82 0,39.6 C0,61.38 17.8354086,79.2 39.6342412,79.2 C61.4330739,79.2 79.2684825,61.38 79.2684825,39.6 C79.2684825,17.82 61.4330739,0 39.6342412,0 Z M55.4879377,31.4325 C55.4879377,31.68 55.4879377,32.175 55.4879377,32.4225 C55.4879377,43.065 47.3133755,55.44 32.450535,55.44 C27.7439689,55.44 23.5328307,54.2025 20.0648346,51.7275 C20.8079767,51.7275 21.3034047,51.7275 22.0465467,51.7275 C25.7622568,51.7275 29.4779669,50.49 32.202821,48.2625 C28.7348249,48.2625 25.7622568,45.7875 24.5236868,42.57 C25.0191148,42.57 25.5145428,42.8175 26.0099708,42.8175 C26.7531128,42.8175 27.4962549,42.8175 28.2393969,42.57 C24.5236868,41.8275 21.7988327,38.61 21.7988327,34.65 C21.7988327,34.65 21.7988327,34.65 21.7988327,34.65 C22.7896887,35.145 24.0282588,35.64 25.5145428,35.64 C23.2851167,34.155 21.7988327,31.68 21.7988327,28.9575 C21.7988327,27.4725 22.2942607,25.9875 22.7896887,24.75 C26.7531128,29.7 32.698249,32.9175 39.6342412,33.165 C39.3865272,32.67 39.3865272,31.9275 39.3865272,31.4325 C39.3865272,26.9775 43.1022374,23.265 47.5610895,23.265 C49.7905156,23.265 52.0199416,24.255 53.5062257,25.74 C55.2402237,25.4925 57.2219358,24.75 58.7082198,23.76 C58.2127918,25.74 56.7265078,27.225 55.2402237,28.215 C56.9742218,27.9675 58.4605058,27.4725 59.9467899,26.9775 C58.4605058,28.9575 56.9742218,30.4425 55.4879377,31.4325 Z" id="Shape"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

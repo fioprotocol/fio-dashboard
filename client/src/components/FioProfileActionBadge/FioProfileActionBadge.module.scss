@@ -1,0 +1,72 @@
+@import '../../assets/styles/fontMixins.scss'; 
+@import '../../assets/styles/mediaQueriesMixings.scss';
+
+.badge {
+  padding: 20px !important;
+  border-radius: 20px;
+  margin-top: 0 !important;
+  justify-content: space-between;
+  font-size: 0.8125em;
+  max-width: none;
+  flex-direction: column;
+  align-items: flex-start;
+  box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.02);
+
+  &.hasButtonMenu {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &.isMenuOpen {
+    border-radius: 0;
+    width: calc(100% + 40px);
+    margin-left: -40px;
+    margin-right: -40px;
+  }
+
+  & > div {
+    margin: 0;
+    @include proxima-nova-semibold;
+  }
+
+  .logo {
+    max-height: 40px;
+  }
+
+  .actionButtonsContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+    width: 100%;
+
+    .button {
+      height: 40px;
+      margin-top: 0;
+    }
+  }
+
+  .menuActionButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+}
+
+.menu {
+  top: 100px;
+}
+
+@include lg {
+  .badge {
+    flex-direction: row;
+    padding: 24px 30px !important;
+
+    .actionButtonsContainer {
+      flex-direction: row;
+      margin-top: 0;
+      gap: 20px;
+      width: auto;
+    }
+  }
+}

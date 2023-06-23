@@ -1,0 +1,126 @@
+@import '../../../../../assets/styles/colors.scss';
+@import '../../../../../assets/styles/fontMixins.scss';
+@import '../../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  background-color: $aqua-haze;
+  padding: 60px 20px 100px;
+  overflow: hidden;
+
+  .title {
+    margin: 0 auto;
+    font-size: 1.75em;
+    color: $baltic-sea;
+    text-align: center;
+    max-width: 1258px;
+    @include proxima-nova-bold;
+
+    .coloredTitle {
+      color: $light-indigo;
+    }
+  }
+
+  .slider {
+    margin-top: 50px;
+    padding: 0;
+
+    .imageContainer, .actionButton {
+      width: 100px !important;
+      height: 100px;
+      background-color: $white;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+
+      .image {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .actionButton {
+      background-color: $light-indigo;
+      color: $white;
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+      font-size: 1em;
+      text-align: center;
+      @include proxima-nova-semibold;
+    }
+  }
+}
+
+.sliderDots {
+  display: flex !important;
+  padding: 0;
+  gap: 20px;
+  list-style-type: none;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  bottom: -50px;
+  margin-bottom: 0;
+
+  & > li {
+    width: 10px;
+    height: 10px;
+    cursor: pointer;
+
+    & > div {
+      width: 10px;
+      height: 10px;
+      background-color: $gainsboro;
+      border-radius: 10px;
+    }
+
+    &[class="slick-active"] {
+      & > div {
+        background-color: $light-indigo;
+      }
+    }
+  }
+}
+
+@include lg {
+  .container {
+    padding: 100px 0 200px 0;
+
+    .title {
+      font-size: 3.25em;
+      padding: 0 50px;
+    }
+
+    .slider {
+      margin-top: 100px;
+
+      .imageContainer, .actionButton {
+        width: 100% !important;
+        height: 235px;
+        max-width: 335px;
+        padding: 60px;
+      }
+
+      .actionButton {
+        font-size: 2.25em;
+      }
+    }
+  }
+
+  .sliderDots {
+    bottom: -100px;
+
+    & > li {
+      width: 22px;
+      height: 22px;
+
+      & > div {
+        width: 22px;
+        height: 22px;
+        border-radius: 22px;
+      }
+    }
+  }
+}

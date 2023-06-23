@@ -91,6 +91,17 @@ export type InfuraNftsResponse = {
   };
 }[];
 
+export type InfuraNftsMetadataResponse = {
+  contract: string;
+  metadata: {
+    external_url?: string;
+    name: string;
+    description: string;
+    image: string;
+  };
+  tokenId: string;
+};
+
 export type NotificationsListResponse = Notification[];
 export type NotificationsCreateResponse = Notification;
 export type NotificationsUpdateResponse = Notification;

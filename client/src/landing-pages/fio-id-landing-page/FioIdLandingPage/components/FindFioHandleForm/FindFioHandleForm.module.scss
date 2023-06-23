@@ -1,0 +1,108 @@
+@import '../../../../../assets/styles/colors.scss';
+@import '../../../../../assets/styles/fontMixins.scss';
+@import '../../../../../assets/styles/mediaQueriesMixings.scss';
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: $white;
+  flex-basis: 100%;
+
+  .title {
+    margin: 0;
+    font-size: 3.25em;
+    @include proxima-nova-bold;
+  }
+
+  .subtitle {
+    margin-top: 10px;
+    margin-bottom: 0;
+    font-size: 1.25em;
+  }
+
+  .form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: 10px;
+
+    .notification {
+      margin-bottom: 20px;
+      width: 100%;
+
+      &.hasError {
+        margin-top: 20px;
+      }
+    }
+
+    .fieldContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: flex-start;
+      gap: 0;
+      width: 100%;
+
+      .field {
+        width: 100%;
+      }
+    
+      .button {
+        font-size: 0.8125em;
+        white-space: nowrap;
+        @include proxima-nova-semibold;
+      }
+
+      &.hasError {
+        margin-top: 10px;
+      }
+    }
+  }
+
+  .actionText {
+    @include proxima-nova-thin;
+    font-size: 0.9375em;
+    margin-top: 30px;
+
+    .link {
+      color: $white;
+      text-decoration: underline;
+      @include proxima-nova-regular;
+    }
+  }
+}
+
+@include lg {
+  .container {
+    .title {
+      font-size: 4.5em;
+    }
+
+    .form {
+      .notification {
+        width: auto;
+        margin-top: 0;
+      }
+
+      .fieldContainer {
+        flex-direction: row;
+        gap: 30px;
+        margin-top: 20px;
+
+        .field {
+          max-width: 335px;
+        }
+
+        &.hasError {
+          margin-top: 10px;
+        }
+      }
+    }
+
+    .actionText {
+      margin-top: 0;
+    }
+  }
+}
