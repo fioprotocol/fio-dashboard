@@ -19,7 +19,9 @@ export const W_FIO_DOMAIN_NFT: IERC20 = {
   decimals: 0,
 };
 
-export const NETWORKS_LIST = {
+export const NETWORKS_LIST: {
+  [key: string]: { name: string; currency: string; chainID: number };
+} = {
   Ethereum: {
     name: 'Ethereum Mainnet',
     currency: 'ETH',
@@ -44,5 +46,25 @@ export const NETWORKS_LIST = {
     name: 'Ethereum Mainnet',
     currency: 'MATIC',
     chainID: 80001,
+  },
+  ArbitrumOne: {
+    name: 'ArbitrumOne',
+    currency: 'ARB1',
+    chainID: 42161,
+  },
+  BinanceSmartChain: {
+    name: 'Binance Smart Chain',
+    currency: 'BSC',
+    chainID: 56,
+  },
+  Avalanche: {
+    name: 'Avalanche',
+    currency: 'AVAX',
+    chainID: 43114,
+  },
+  Fantom: {
+    name: 'Fantom',
+    currency: 'FTM',
+    chainID: 250,
   },
 };

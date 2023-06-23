@@ -67,5 +67,9 @@ export const useContext = (): UseContext => {
     }
   }, [pathname, validateFCH]);
 
+  useEffectOnce(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return { fioBaseUrl, fch, isDesktop, isValidating, resetPath, setFch };
 };

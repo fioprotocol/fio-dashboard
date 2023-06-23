@@ -239,3 +239,20 @@ export const transformBaseUrl = () => {
     ? baseUrl.slice(0, -1)
     : baseUrl;
 };
+
+export const loadImage = async (url?: string): Promise<string | null> => {
+  if (!url) return null;
+
+  const img = new Image();
+  img.src = url;
+
+  return new Promise<string | null>(resolve => {
+    img.onload = () => {
+      resolve(url);
+    };
+
+    img.onerror = () => {
+      resolve(null);
+    };
+  });
+};
