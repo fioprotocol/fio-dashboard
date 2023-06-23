@@ -21,6 +21,7 @@ import Vars from './vars';
 import HealthCheck from './health-check';
 import Twitter from './twitter';
 import InfuraNfts from './infura-nfts';
+import General from './general';
 
 import { log } from '../util/general';
 
@@ -62,6 +63,7 @@ export type Api = {
   healthCheck: HealthCheck;
   twitter: Twitter;
   infuraNfts: InfuraNfts;
+  general: General;
 };
 
 const apis = {
@@ -86,6 +88,7 @@ const apis = {
   healthCheck: new HealthCheck(apiClient),
   twitter: new Twitter(apiClient),
   infuraNfts: new InfuraNfts(apiClient),
+  general: new General(apiClient),
 };
 
 export default apis;
