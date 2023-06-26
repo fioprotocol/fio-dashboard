@@ -62,6 +62,10 @@
   margin-top: 15px;
   font-size: 0.875em;
 
+  &.withoutTopMargin {
+    margin-top: 0;
+  }
+
   .contentTitle,
   .contentValue {
     margin: 0;

@@ -30,14 +30,21 @@ type ContentItemProps = {
   title: string;
   value: string;
   valueClass?: string;
+  withoutTopMargin?: boolean;
 };
 
 const ConentItem: React.FC<ContentItemProps> = ({
   title,
   value,
   valueClass,
+  withoutTopMargin,
 }) => (
-  <div className={classes.contentItem}>
+  <div
+    className={classnames(
+      classes.contentItem,
+      withoutTopMargin && classes.withoutTopMargin,
+    )}
+  >
     <p className={classes.contentTitle}>{title}</p>
     <p className={classnames(classes.contentValue, valueClass)}>{value}</p>
   </div>
@@ -70,15 +77,19 @@ export const NftItemComponent: React.FC<Props> = props => {
     creatorUrl,
     fch,
     hasMultipleSignatures,
+    hash,
     infuraMetadata,
     isImage,
     isAlteredImage,
     tokenId,
+    viewNftLink,
   } = props;
 
-  const { description, externalUrl, name } = infuraMetadata || {};
+  const { description, name } = infuraMetadata || {};
 
   const isDesktop = useCheckIfDesktop();
+
+  const showBage = isImage && !!hash;
 
   return (
     <div className={classes.container}>
@@ -103,9 +114,9 @@ export const NftItemComponent: React.FC<Props> = props => {
           <div className={classes.contentContainer}>
             <div className={classes.imageContainer}>
               <NftItemImageComponent {...props} hasSmallIconSize={isDesktop} />
-              {externalUrl && (
+              {viewNftLink && (
                 <a
-                  href={externalUrl}
+                  href={viewNftLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={classes.link}
@@ -116,7 +127,7 @@ export const NftItemComponent: React.FC<Props> = props => {
             </div>
             <div className={classes.otherContentContainer}>
               <InfoBadge
-                show={isImage}
+                show={showBage}
                 title={
                   isAlteredImage
                     ? BADGE_TITLE.ALTERED.title
@@ -131,12 +142,22 @@ export const NftItemComponent: React.FC<Props> = props => {
                 hideDash
                 className={classnames(
                   classes.badge,
-                  isImage && classes.isImage,
+                  showBage && classes.isImage,
                 )}
                 icon={isAlteredImage ? ReportProblemIcon : CheckCircleIcon}
               />
-              {name && <ConentItem title="Name" value={name} />}
-              <ConentItem title="Token ID" value={tokenId} />
+              {name && (
+                <ConentItem
+                  title="Name"
+                  value={name}
+                  withoutTopMargin={!showBage}
+                />
+              )}
+              <ConentItem
+                title="Token ID"
+                value={tokenId}
+                withoutTopMargin={!showBage && !name}
+              />
               {creatorUrl && (
                 <ConentItem title="Creator URL" value={creatorUrl} />
               )}
