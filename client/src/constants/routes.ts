@@ -66,6 +66,10 @@ const ROUTES: { [route: string]: string } = {
   FIO_ADDRESS_NFT_EDIT: '/nft-signatures-edit',
   FIO_REQUEST: '/fio-request',
   FIO_REQUEST_OLD: '/fio-wallet/:publicKey/fio-request/:id',
+  FIO_SOCIAL_MEDIA_LINKS: '/fio-social-media', // fioCryptoHandle=
+  FIO_SOCIAL_MEDIA_LINKS_ADD: '/fio-social-media/add-social-media', // fioCryptoHandle=
+  FIO_SOCIAL_MEDIA_LINKS_EDIT: '/fio-social-media/edit-social-media', // fioCryptoHandle=
+  FIO_SOCIAL_MEDIA_LINKS_DELETE: '/fio-social-media/delete-social-media', // fioCryptoHandle=
 
   SEND: '/send', // ?publicKey=
   SEND_CONFIRMATION: '/send-confirmation',

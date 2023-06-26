@@ -239,6 +239,15 @@ export const toggleTokenListInfoBadge = (enabled: boolean): CommonAction => ({
   enabled,
 });
 
+export const TOGGLE_SOCIAL_MEDIA_LIST_INFO_BADGE = `${prefix}/TOGGLE_SOCIAL_MEDIA_LIST_INFO_BADGE`;
+
+export const toggleSocialMediaListInfoBadge = (
+  enabled: boolean,
+): CommonAction => ({
+  type: TOGGLE_SOCIAL_MEDIA_LIST_INFO_BADGE,
+  enabled,
+});
+
 export const UPDATE_PUBLIC_ADDRESSES = `${prefix}/UPDATE_PUBLIC_ADDRESSES`;
 
 export const updatePublicAddresses = (
