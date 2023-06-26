@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Helmet } from 'react-helmet-async';
+
 import { MainLayoutContainer } from '../../../components/MainLayoutContainer';
 import { FindFioHandleSection } from './components/FindFioHandleSection';
 import { FCHSpecialBanners } from './components/FCHSpecialBanners';
@@ -15,18 +17,25 @@ const FioIdLandingPage: React.FC = () => {
   return (
     <MainLayoutContainer>
       {fch ? (
-        <FCHProfileSection
-          fioBaseUrl={fioBaseUrl}
-          isDesktop={isDesktop}
-          fch={fch}
-          resetPath={resetPath}
-        />
+        <>
+          <Helmet>
+            <title>FIO Handle - {fch}</title>
+          </Helmet>
+          <FCHProfileSection
+            fioBaseUrl={fioBaseUrl}
+            isDesktop={isDesktop}
+            fch={fch}
+            resetPath={resetPath}
+          />
+        </>
       ) : (
-        <FindFioHandleSection
-          fioBaseUrl={fioBaseUrl}
-          isDesktop={isDesktop}
-          setFch={setFch}
-        />
+        <>
+          <FindFioHandleSection
+            fioBaseUrl={fioBaseUrl}
+            isDesktop={isDesktop}
+            setFch={setFch}
+          />
+        </>
       )}
 
       <FCHSpecialBanners />

@@ -16,6 +16,7 @@ export const NftItemImageComponent: React.FC<NftItem & {
     tokenId,
     hasSmallIconSize,
   } = props;
+
   return (
     <div
       className={classnames(
@@ -31,7 +32,7 @@ export const NftItemImageComponent: React.FC<NftItem & {
       >
         <img
           src={imageUrl}
-          alt={tokenId + contractAddress}
+          alt={tokenId + contractAddress || 'NFT Image'}
           className={classnames(
             classes.image,
             !isImage && classes.notImage,

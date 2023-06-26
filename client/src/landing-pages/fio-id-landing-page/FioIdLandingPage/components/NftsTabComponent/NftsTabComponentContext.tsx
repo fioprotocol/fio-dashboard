@@ -5,7 +5,6 @@ import apis from '../../../../../api';
 import { NETWORKS_LIST } from '../../../../../constants/ethereum';
 import { loadImage } from '../../../../../util/general';
 import useEffectOnce from '../../../../../hooks/general';
-import { sleep } from '../../../../../utils';
 
 import noImageIconSrc from '../../../../../assets/images/no-photo.svg';
 import multipleSignatureIconSrc from '../../../../../assets/images/multiple-signature.svg';
@@ -14,6 +13,7 @@ export type NftItem = {
   contractAddress: string;
   creatorUrl?: string;
   hasMultipleSignatures: boolean;
+  hash?: string;
   imageUrl: string;
   infuraMetadata?: {
     description?: (string | string[])[];
@@ -24,6 +24,7 @@ export type NftItem = {
   isAlteredImage?: boolean;
   isImage?: boolean;
   tokenId: string;
+  viewNftLink?: string;
 };
 
 type UseContextProps = {
@@ -111,6 +112,10 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
         tokenId: token_id,
       };
 
+      if (hash) {
+        nftItemObj.hash = hash;
+      }
+
       const creatorUrl = (() => {
         try {
           return JSON.parse(metadata || '').creator_url;
@@ -156,6 +161,12 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
         nftItemObj.infuraMetadata?.externalUrl,
       );
 
+      const viewNftLink = fioImageUrl || infuraImageUrl || infuraxtenalImageUrl;
+
+      if (viewNftLink) {
+        nftItemObj.viewNftLink = viewNftLink;
+      }
+
       nftItemObj.imageUrl = nftItemObj.hasMultipleSignatures
         ? multipleSignatureIconSrc
         : fioImageUrl ||
@@ -165,7 +176,12 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
       nftItemObj.isImage =
         !!fioImageUrl || !!infuraImageUrl || !!infuraxtenalImageUrl;
 
-      if (hash && nftItemObj.imageUrl && nftItemObj.isImage) {
+      if (
+        hash &&
+        nftItemObj.imageUrl &&
+        nftItemObj.isImage &&
+        !nftItemObj.hasMultipleSignatures
+      ) {
         try {
           const imageHash = await apis.general.getImageHash(
             nftItemObj.imageUrl,
@@ -186,7 +202,6 @@ export const useContext = ({ fch }: { fch: string }): UseContextProps => {
 
   const onModalClose = useCallback(async () => {
     toggleModal(false);
-    await sleep(500);
     setActiveNftItem(null);
   }, []);
 
