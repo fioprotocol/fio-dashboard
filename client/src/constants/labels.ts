@@ -99,6 +99,10 @@ export const LINKS: { [linkKey: string]: string } = {
   WRAP_STATUS_UNWRAP_DOMAINS: 'WRAP_STATUS_UNWRAP_DOMAINS',
   UNAVAILABLE: 'UNAVAILABLE',
   TWITTER_HANDLE: 'TWITTER_HANDLE',
+  FIO_SOCIAL_MEDIA_LINKS: 'FIO_SOCIAL_MEDIA_LINKS',
+  FIO_SOCIAL_MEDIA_LINKS_ADD: 'FIO_SOCIAL_MEDIA_LINKS_ADD',
+  FIO_SOCIAL_MEDIA_LINKS_EDIT: 'FIO_SOCIAL_MEDIA_LINKS_EDIT',
+  FIO_SOCIAL_MEDIA_LINKS_DELETE: 'FIO_SOCIAL_MEDIA_LINKS_DELETE',
 };
 
 export const LINK_LABELS: { [linkKey: string]: string } = {
@@ -220,6 +224,10 @@ export const LINK_TITLES: { [linkKey: string]: string } = {
   [LINKS.WRAP_STATUS_UNWRAP_DOMAINS]: 'Unwrap FIO Domains Status',
   [LINKS.UNAVAILABLE]: 'Unavailable',
   [LINKS.TWITTER_HANDLE]: 'Your Twitter Handle Can Now Receive Crypto',
+  [LINKS.FIO_SOCIAL_MEDIA_LINKS]: 'Social Media Links',
+  [LINKS.FIO_SOCIAL_MEDIA_LINKS_ADD]: 'Add Social Media Links',
+  [LINKS.FIO_SOCIAL_MEDIA_LINKS_EDIT]: 'Edit Social Media Links',
+  [LINKS.FIO_SOCIAL_MEDIA_LINKS_DELETE]: 'Delete Social Media Links',
 };
 
 export const fioNameLabels: { [fioNameType: string]: string } = {

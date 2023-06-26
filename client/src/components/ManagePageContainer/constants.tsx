@@ -73,6 +73,7 @@ export const BUTTONS_TITLE = {
   nft: 'NFT signature',
   register: 'Register FIO Crypto Handle',
   request: 'Request Funds',
+  socialLinks: 'Socials',
 };
 
 export const SUBTITLE = {

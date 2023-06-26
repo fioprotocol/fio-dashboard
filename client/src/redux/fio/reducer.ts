@@ -499,6 +499,17 @@ export default combineReducers({
         return state;
     }
   },
+  showSocialMediaListInfoBadge(state: boolean = true, action) {
+    switch (action.type) {
+      case actions.TOGGLE_SOCIAL_MEDIA_LIST_INFO_BADGE: {
+        return action.enabled;
+      }
+      case LOGOUT_SUCCESS:
+        return true;
+      default:
+        return state;
+    }
+  },
   fioNamesInitRefreshed(state: { [publicKey: string]: boolean } = {}, action) {
     switch (action.type) {
       case actions.GET_FIO_ADDRESSES_SUCCESS:
